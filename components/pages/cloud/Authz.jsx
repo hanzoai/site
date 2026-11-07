@@ -383,7 +383,7 @@ function Family() {
 
 export default function Authz() {
   return (
-    <main className="kn az" style={{ '--ac': '#bf5af2' }}>
+    <main className="kn az" style={{ '--ac': '#737373' }}>
       <KeynoteStage
         kick="hanzoai/authz"
         title={['Hanzo Authz']}

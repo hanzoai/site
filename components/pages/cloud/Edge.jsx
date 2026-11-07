@@ -21,7 +21,7 @@ import KeynoteClose from '../../v2/KeynoteClose';
 import KeynoteLines from '../../v2/KeynoteLines';
 import './Edge.css';
 
-const LIME = '#84cc16';
+const LIME = '#a3a3a3';
 const pad = (n) => String(n).padStart(2, '0');
 
 const Off = () => (

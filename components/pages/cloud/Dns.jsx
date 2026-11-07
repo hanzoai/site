@@ -310,7 +310,7 @@ function Pricing() {
 
 export default function Dns() {
   return (
-    <main className="kn dn" style={{ '--ac': '#ff2d55' }}>
+    <main className="kn dn" style={{ '--ac': '#525252' }}>
       <KeynoteStage
         look="side"
         kick="Programmable DNS Infrastructure"

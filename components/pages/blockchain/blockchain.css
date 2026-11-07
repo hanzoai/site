@@ -73,7 +73,7 @@
 .xbc-code pre { margin: 0; padding: 20px 22px 24px; max-height: 560px; overflow: auto; font: 400 13px/1.7 var(--mono); }
 .xbc-code pre:focus-visible { outline: 2px solid #fff; outline-offset: -2px; }
 .xbc-ln { display: block; white-space: pre; }
-.c-keyword { color: #c4b5fd; } .c-string { color: #86efac; } .c-key { color: #fde68a; } .c-bright { color: #fff; } .c-punctuation { color: #8e8e93; } .c-comment { color: #6e6e73; } .c-number { color: #fdba74; } .c-ink { color: #d1d1d6; }
+.c-keyword { color: #d4d4d4; } .c-string { color: #d4d4d4; } .c-key { color: #e4e4e7; } .c-bright { color: #fff; } .c-punctuation { color: #8e8e93; } .c-comment { color: #6e6e73; } .c-number { color: #d4d4d4; } .c-ink { color: #d1d1d6; }
 .xbc-chains-g { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); align-items: start; }
 .xbc-chiplist { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
 .xbc-chiplist li { padding: 10px 16px; border-radius: 999px; background: var(--card); font-size: 15px; font-weight: 500; }

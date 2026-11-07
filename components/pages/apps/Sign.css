@@ -94,9 +94,9 @@
 .sg-pad-cert .x-tick { flex: none; stroke: currentColor; }
 
 /* cost */
-.sg-run { display: inline-flex; gap: 2px; margin-top: 28px; padding: 4px; border-radius: 999px; background: var(--card); }
+.sg-run { display: inline-flex; gap: 2px; margin-top: 28px; padding: 4px; border-radius: 999px; background: #ececf0; }
 .sg-run button { height: 44px; padding: 0 20px; border: 0; border-radius: 999px; background: none; font: 500 15px/1 var(--sans); color: var(--soft); cursor: pointer; transition: background .3s var(--ease), color .3s; }
-.sg-run button[aria-pressed='true'] { color: #fff; background: var(--ink); }
+.sg-run button[aria-pressed='true'] { color: #0a0a0b; background: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, .1), 0 0 0 .5px rgba(0, 0, 0, .06); }
 .sg-plans { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; align-items: stretch; }
 .sg-plan { position: relative; display: flex; flex-direction: column; padding: 32px 28px; border-radius: 28px; background: var(--card); transition: opacity .4s var(--ease); }
 .sg-plan.dim { opacity: .38; }
@@ -168,3 +168,4 @@
   .sg-f span, .sg-page-h em, .sg-cert span, .sg-track b, .sg-five b, .sg-five em, .sg-langs span, .sg-pad-k, .sg-pop { font-size: 14px; }
 }
 @media (prefers-reduced-motion: reduce) { .sg-pad-hint { animation: none; } }
+@media (max-width: 900px) { .sg-desk-k, .sg-try-k { font-size: 14px; } }

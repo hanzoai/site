@@ -282,7 +282,7 @@ async function walk(mode) {
   const idleTop = await idleChange(page, mode + '-top', 2000);
   const topFrames = await page.evaluate(() => { const f = (window.__lab?.frames || []).slice(-40).sort((a, b) => a - b); return f.length ? f[Math.floor(f.length * 0.9)] : 0; }).catch(() => 0);
   const heavy = topFrames > 250; idleTop.p90FrameMs = topFrames; idleTop.heavy = heavy;
-  if (heavy) { await mark('heavy-top: leave the first screen before hovering'); if (D) { for (let k = 0; k < 9; k++) { await page.mouse.wheel({ deltaY: (D ? DESK.height : PHONE.height) / 9 }); await wait(40); } } else await page.evaluate((v) => window.scrollTo({ top: v, behavior: 'smooth' }), PHONE.height); await wait(1500);
+  if (heavy) { await mark('heavy-top: leave the first screen before hovering'); if (D) { for (let k = 0; k < 18; k++) { await page.mouse.wheel({ deltaY: DESK.height / 9 }); await wait(40); } } else await page.evaluate((v) => window.scrollTo({ top: v, behavior: 'smooth' }), PHONE.height * 2); // two screens: the heavy hero must be fully out of view await wait(1500);
     // a hide-on-scroll header comes back on a small scroll up
     if (D) await page.mouse.wheel({ deltaY: -160 }); else await page.evaluate(() => window.scrollBy({ top: -160, behavior: 'smooth' })); await wait(800); }
   const V = D ? DESK.height : PHONE.height;
@@ -314,7 +314,7 @@ async function walk(mode) {
   }
   // scroll the page like a person: one screen at a time, dwell, hover or tap something in view
   const screens = Math.min(Math.ceil(H / V), D ? 20 : 16);
-  const firstScreen = heavy ? 2 : 1;
+  const firstScreen = heavy ? 3 : 1;
   const budget = Math.max(500, (seconds * 1000 - (Date.now() - t0) - 4500) / Math.max(1, screens - 1) - 900);
   const perScreen = [];
   for (let s = firstScreen; s < screens; s++) {

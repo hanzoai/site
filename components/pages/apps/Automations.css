@@ -64,8 +64,8 @@
 .am2-req-node { width: 100%; padding: 26px; border-radius: 22px; background: #141416; border: 1px solid rgba(255, 255, 255, .12); }
 .am2-req-node span { display: block; font-size: 13px; color: #86868b; }
 .am2-req-node b { display: block; margin-top: 8px; font-size: clamp(32px, 3.4vw, 48px); font-weight: 600; letter-spacing: -.04em; }
-.am2-req-node.key b { color: #ff7a90; }
-.am2-req-wire { width: 2px; height: 56px; background: linear-gradient(var(--ac), rgba(255, 59, 92, .2)); }
+.am2-req-node.key b { color: #a3a3a3; }
+.am2-req-wire { width: 2px; height: 56px; background: linear-gradient(var(--ac), rgba(115, 115, 115, .2)); }
 
 @media (max-width: 1100px) { .am2-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 @media (max-width: 900px) {

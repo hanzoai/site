@@ -7,8 +7,8 @@
 .xph-hx { --w: 80px; display: flex; flex-direction: column-reverse; gap: calc(var(--w) * .07); width: var(--w); color: var(--ink); }
 .xph-hl { position: relative; display: block; width: 100%; height: calc(var(--w) * .1); padding: 0; border: 0; background: none; color: inherit; }
 .xph-hl i { position: absolute; top: 0; bottom: 0; width: 51%; background: currentColor; border-radius: calc(var(--w) * .018); transition: transform .7s cubic-bezier(.34, 1.4, .64, 1), opacity .5s var(--ease); }
-.xph-hl i:first-child { left: 0; transform-origin: 0 50%; }
-.xph-hl i:last-child { right: 0; transform-origin: 100% 50%; }
+.xph-hl i:first-child { left: 0; transform-origin: 0 50%; border-radius: calc(var(--w) * .018) 0 0 calc(var(--w) * .018); }
+.xph-hl i:last-child { right: 0; transform-origin: 100% 50%; border-radius: 0 calc(var(--w) * .018) calc(var(--w) * .018) 0; }
 .xph-hl.yin i { transform: scaleX(.82); }
 .xph-hl.off i { opacity: .1; }
 /* a changing line carries a dot beside it, as the I Ching marks one */

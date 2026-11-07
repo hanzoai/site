@@ -191,13 +191,13 @@ function Name() {
 
 export default function Visor() {
   return (
-    <main className="l2-page vs2" style={{ '--ac': '#d4379c' }}>
+    <main className="l2-page vs2" style={{ '--ac': '#525252' }}>
       <StageHero look="side" flip kick="hanzoai/visor" title="Hanzo Visor" sub="Machines from several clouds, through one API" acts={[['View on GitHub', GH]]}>
         <Fleet />
       </StageHero>
       <Tiles />
       <Name />
-      <Finale name="Visor" head="Get started with Hanzo Visor" prompt="Read https://hanzo.ai/skill.md and use Hanzo Visor in my project. Start with: hanzo visor machines list" tag="Machines, volumes, and clusters" />
+      <Finale name="Visor" head="Get started with Hanzo Visor" ask={['View on GitHub', GH]} prompt="Read https://hanzo.ai/skill.md and use Hanzo Visor in my project. Start with: hanzo visor machines list" tag="Machines, volumes, and clusters" />
     </main>
   );
 }

@@ -120,7 +120,7 @@
 .xgn-key-n { font-size: 17px; font-weight: 500; letter-spacing: -.01em; line-height: 1.2; }
 .xgn-key-f { font-size: 14px; color: var(--soft); }
 .xgn-key.on { background: var(--ink); color: #fff; }
-.xgn-key.on .xgn-key-f { color: #ff8a8e; }
+.xgn-key.on .xgn-key-f { color: #a3a3a3; }
 
 /* Beyond: the rails (7) and the command they make (5) */
 .xgn-rails { padding-top: 0; }

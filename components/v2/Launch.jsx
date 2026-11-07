@@ -14,6 +14,8 @@
    - over(W, H, wide) (optional) draws a layer over the settled film (e.g. a cube's edges); it fades in with the headline.
    - aim(W, H, wide) (optional) returns [dx, dy, zoom?]: how far the camera pans (and zooms, default 1.14) the film by
      the time it settles, so the subject sits inside the shape. focus(fx, fy, tx, ty, z) works it out for you.
+   - ask = { label, to, id }: the page's one solid ask, in Hanzo's words, on the very first screen (white on the film);
+     the headline beside the settled film carries the same ask, so one solid button shows at a time.
    - Colour: none of our own (JAMES.md 7, 0 UI hues). The film is Hanzo's own, never filtered or dimmed; the only
      dimming is the gradient under the name. --ac / --ac-ink stay as neutral ink tokens for the page files.
    - Close runs the film back into the card it opened from. Reduced motion shows the settled stage, no pin; JS off shows
@@ -21,7 +23,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, animate, useScroll, useTransform, useMotionValue, useMotionValueEvent, useReducedMotion, useInView } from 'motion/react';
 import { EASE } from '../ui';
-import { Img, Film } from '../kit';
+import { Img, Film, Cta } from '../kit';
 import { useOpener } from '../Opener';
 import { bySlug, media } from '../../lib/models';
 import '../pages/model/Model.css';
@@ -90,7 +92,7 @@ export function Lines({ as: T = 'h2', id, className = '', lines, reveal }) {
   );
 }
 
-export default function Launch({ slug, shape, aim, over, head, headClass = '', label, children }) {
+export default function Launch({ slug, shape, aim, over, head, headClass = '', label, ask, children }) {
   const m = bySlug[slug];
   const opener = useOpener();
   const stage = useRef(null), pin = useRef(null);
@@ -145,12 +147,13 @@ export default function Launch({ slug, shape, aim, over, head, headClass = '', l
             </motion.div>
             <motion.i className="lv-scrim" style={{ opacity: nameO }} aria-hidden="true" />
           </motion.div>
-          <motion.div className="lv-name x-wrap" style={{ opacity: nameO, y: nameY }}>
+          <motion.div className="lv-name x-wrap" style={{ opacity: nameO, y: nameY }} data-gone={on ? '' : undefined}>
             <h1 className="lv-name-h">
               <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={ready ? { y: 0 } : {}} transition={{ duration: 1.1, ease: EASE, delay: 0.1 }}>{m.name}</motion.span></span>
             </h1>
             <p className="lv-name-d" data-on={ready ? '' : undefined}>{m.desc}</p>
             <p className="x-mtags static lv-name-t" data-on={ready ? '' : undefined}>{m.tags.map((x) => <span key={x}>{x}</span>)}</p>
+            {ask && <p className="lv-name-ask" data-on={ready ? '' : undefined}><Cta to={ask.to} id={ask.id + '-first'}>{ask.label}</Cta></p>}
           </motion.div>
           {over && size && <div className="lv-over" data-on={on ? '' : undefined} aria-hidden="true">{over(size.W, size.H, size.wide)}</div>}
           <div className={'lv-head ' + headClass} data-on={on ? '' : undefined}>{head}</div>

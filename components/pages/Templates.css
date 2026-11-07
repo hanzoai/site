@@ -21,9 +21,9 @@
 .xtp-stage .xtp-deckwrap { max-width: 1040px; margin: 0 auto; }
 
 /* kinds */
-.xtp-kinds { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; padding: 4px; margin: 0 auto 8px; border-radius: 999px; background: #fff; width: fit-content; max-width: 100%; }
+.xtp-kinds { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; padding: 4px; margin: 0 auto 8px; border-radius: 999px; background: #e3e3e8; width: fit-content; max-width: 100%; }
 .xtp-kinds button { position: relative; height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: none; font: 500 15px/1 var(--sans); color: var(--soft); cursor: pointer; transition: color .2s, background .3s var(--ease); }
-.xtp-kinds button[aria-selected='true'] { background: var(--ink); color: #fff !important; }
+.xtp-kinds button[aria-selected='true'] { background: #fff; color: #0a0a0b !important; box-shadow: 0 1px 2px rgba(0, 0, 0, .1), 0 0 0 .5px rgba(0, 0, 0, .06); }
 .xtp-kinds button i { margin-left: 6px; font-style: normal; font-size: 12px; opacity: .6; }
 .xtp-kinds button:hover, .xtp-kinds button[aria-selected='true'] { color: var(--ink); }
 .xtp-kinds button span { position: relative; }
@@ -145,3 +145,5 @@
   .xtp-stage { padding: 16px 8px 12px; }
   .xtp-kinds { margin: 0 0 8px; }
 }
+.xtp-setup2 svg, .xtp-setup2 img, .xtp-strip svg, .xtp-strip img { filter: grayscale(1); }
+@media (max-width: 900px) { .xtp-setup2 *, .xtp-kick, .xtp-cmd-k { font-size: max(14px, 1em); } }

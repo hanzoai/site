@@ -1,5 +1,5 @@
 /* ---------- grants (v2) ---------- */
-.xgr { --xp-accent: #c58b00; }
+.xgr { --xp-accent: #a3a3a3; }
 .xgr-link { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font: 500 17px/1 var(--sans); color: inherit; text-decoration: none; }
 .xgr-link::after { content: '→'; color: var(--xp-accent); transition: transform .3s var(--xp-ease); }
 .xgr-link:hover::after { transform: translateX(4px); }
@@ -10,9 +10,9 @@
 .xgr-copy { grid-column: 1 / span 7; align-self: center; }
 .xgr-lede { margin-top: 36px; }
 .xgr-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; margin-top: 40px; }
-.xgr-art { grid-column: 8 / span 5; position: relative; min-height: 560px; border-radius: 28px; background: #fbf8f1; border: 1px solid rgba(197, 139, 0, .18); overflow: hidden; color: #a67500; }
+.xgr-art { grid-column: 8 / span 5; position: relative; min-height: 560px; border-radius: 28px; background: #fbf8f1; border: 1px solid rgba(163, 163, 163, .18); overflow: hidden; color: #737373; }
 .xgr-sigil { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.xgr-art-k { position: absolute; left: 24px; bottom: 22px; font-size: 13px; color: #7a5a00; background: #fff; padding: 8px 12px; border-radius: 999px; border: 1px solid rgba(197, 139, 0, .2); }
+.xgr-art-k { position: absolute; left: 24px; bottom: 22px; font-size: 13px; color: #525252; background: #fff; padding: 8px 12px; border-radius: 999px; border: 1px solid rgba(163, 163, 163, .2); }
 
 /* how: one line that draws across */
 .xgr-how .xp-kick { margin-bottom: 56px; }
@@ -59,8 +59,8 @@
 /* the application */
 .xgr-apply-in { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 24px clamp(40px, 6vw, 112px); align-items: start; }
 .xgr-apply-l { display: grid; gap: 28px; position: sticky; top: 110px; }
-.xgr-file { padding: 24px; border-radius: 20px; background: #fbf8f1; border: 1px solid rgba(197, 139, 0, .2); }
-.xgr-file-k { margin: 0 0 12px; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: #7a5a00; }
+.xgr-file { padding: 24px; border-radius: 20px; background: #fbf8f1; border: 1px solid rgba(163, 163, 163, .2); }
+.xgr-file-k { margin: 0 0 12px; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: #525252; }
 .xgr-file dl { margin: 0; display: grid; gap: 0; }
 .xgr-file dl > div { display: grid; grid-template-columns: 96px 1fr; gap: 12px; padding: 7px 0; border-top: 1px dashed var(--line); opacity: .55; transition: opacity .3s var(--xp-ease); }
 .xgr-file dl > div.on { opacity: 1; }
@@ -80,8 +80,8 @@
 .xgr-f input, .xgr-f textarea { width: 100%; box-sizing: border-box; padding: 0 16px; border-radius: 14px; border: 1px solid rgba(0, 0, 0, .14); background: #fff; font: 400 16px/1.4 var(--sans); color: var(--ink); outline: none; transition: border-color .2s var(--xp-ease); }
 .xgr-f input { height: 60px; font-size: 17px; }
 .xgr-f textarea { padding: 14px 16px; resize: vertical; min-height: 128px; }
-.xgr-f input:focus, .xgr-f textarea:focus { border-color: var(--xp-accent); box-shadow: 0 0 0 4px rgba(197, 139, 0, .16); }
-.xgr-err { margin: 0; font-size: 15px; color: #b42318; }
+.xgr-f input:focus, .xgr-f textarea:focus { border-color: var(--xp-accent); box-shadow: 0 0 0 4px rgba(163, 163, 163, .16); }
+.xgr-err { margin: 0; font-size: 15px; color: #404040; }
 .xgr-err a { color: inherit; }
 .xgr-send { justify-self: start; margin-top: 8px; }
 .xgr-send:disabled { opacity: .55; }

@@ -1,5 +1,5 @@
 'use client';
-/* Uta: compose beyond imagination. v2 launch page (Creative on Launch + Chapters, accent marigold). The film splits
+/* Uta: compose beyond imagination. v2 launch page (Creative on Launch + Chapters, Hanzo's black and white). The film splits
    into four stems, faders of different heights, beside the headline.
    Signature: a piano roll that plays. Two bars in D minor at 96 BPM loop by themselves across Uta's four stems
    (timpani, low strings and tuba, horns and strings, choir and cello); the playhead lights each note as it sounds.
@@ -8,6 +8,7 @@
    Beyond: "Take it to your DAW". Download MIDI writes the roll as you left it, your notes included, into a Standard
    MIDI File at the same 96 BPM, one channel per stem, so the sketch opens in any music app. Nothing leaves the page. */
 import { useEffect, useRef, useState } from 'react';
+import { Film } from '../../kit';
 import { Studio } from './Studio';
 import Creative, { Scene } from './Creative';
 import { lerp, film, focus } from '../../v2/Launch';
@@ -84,7 +85,7 @@ function Roll() {
       if (tr === 2 && !hot) { g.strokeStyle = '#8e8e93'; g.lineWidth = d; g.stroke(); }
     });
     g.globalAlpha = 1;
-    g.fillStyle = '#ff453a'; g.fillRect(x0, 0, 2 * d, h);
+    g.fillStyle = '#f5f5f5'; g.fillRect(x0, 0, 2 * d, h);
   });
 
   const save = () => {
@@ -139,7 +140,7 @@ function Roll() {
       </div>
       <div className="ut-cue">
         <figure className="ut-mon">
-          <video src={film('uta', 'webm')} poster={film('uta', 'webp')} autoPlay muted loop playsInline preload="metadata" aria-hidden="true" />
+          <Film src={film('uta', 'webm')} poster={film('uta', 'webp')} w={1200} h={1500} />
           <figcaption><span className="mb-mono mb-live">PLAYING · 4K 60FPS</span><span className="mb-mono">CINEMA SCORE</span><span className="mb-mono">SURROUND 7.1.4</span></figcaption>
         </figure>
         <div className="ut-cue-t">
@@ -169,14 +170,12 @@ export default function Uta() {
   return (
     <Creative
       slug="uta"
-      accent="#e0a106"
-      ink="#8f6500"
       shape={STEMS}
       aim={(W, H, wide) => (wide ? focus(0.72, 0.5, W * 0.7, H * 0.5, 1.1, [W * 0.5, H * 0.08, W * 0.94, H * 0.9]) : focus(0.75, 0.5, W / 2, H * 0.3, 1.3, [W * 0.06, H * 0.06, W * 0.94, H * 0.47]))(W, H)}
       headClass="ut-v2"
       first="demo"
       demo={
-        <Scene slug="uta" className="ut-scene" k="Live roll" title="Two bars that play." lede="D minor at 96 BPM across Uta's four stems. Solo a stem, switch the preset, tap the roll to add a melody note, turn on Sound, then take it to your DAW.">
+        <Scene slug="uta" className="ut-scene">
           <Studio slug="uta" specs={[['Arrangement Span', 'Full Compositions', 'Up to 4 Minutes'], ['Stem Separation', 'Isolated Codebooks', '4 Master Stems'], ['Score Synchronization', 'Frame-Accurate', 'Zero Cue Drift']]}>
             <Roll />
           </Studio>

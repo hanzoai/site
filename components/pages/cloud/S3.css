@@ -1,15 +1,15 @@
 /* Object Storage v2. Accent: gold, the colour of parity, the part that keeps the object. */
-.s3 { --acc: #d49a00; --acc-soft: #fbf3df; }
+.s3 { --acc: #a3a3a3; --acc-soft: #f2f2f2; }
 
 /* hero: the stage first, the type beneath it */
 .s3-hero { padding: clamp(28px, 3vw, 48px) 0 clamp(96px, 10vw, 160px); }
 .s3-kept { position: relative; height: clamp(360px, 29vw, 420px); border-radius: 28px; background: #fbfaf6; box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; }
 .s3-fan { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .s3-fan path { fill: none; stroke: rgba(10, 10, 10, .08); stroke-width: 1; vector-effect: non-scaling-stroke; transition: stroke .5s, opacity .5s; }
-.s3-fan path.on { stroke: rgba(212, 154, 0, .55); stroke-width: 1.4; }
+.s3-fan path.on { stroke: rgba(163, 163, 163, .55); stroke-width: 1.4; }
 .s3-fan path.cut { stroke: rgba(10, 10, 10, .1); stroke-dasharray: 3 5; }
 .s3-obj { position: absolute; left: 3%; top: 14%; width: 15%; min-width: 150px; height: 64%; display: flex; flex-direction: column; padding: 16px; border-radius: 20px; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 24px 50px -28px rgba(0, 0, 0, .3); transition: box-shadow .4s; }
-.s3-obj.reads { box-shadow: 0 0 0 2px var(--acc), 0 24px 50px -28px rgba(212, 154, 0, .5); }
+.s3-obj.reads { box-shadow: 0 0 0 2px var(--acc), 0 24px 50px -28px rgba(163, 163, 163, .5); }
 .s3-k { margin: 0; font: 500 13px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
 .s3-file { flex: 1; display: grid; grid-template-columns: repeat(4, 24px); grid-auto-rows: 24px; gap: 6px; align-content: center; justify-content: center; }
 .s3-shard { display: block; width: 24px; height: 24px; border-radius: 7px; background: var(--ink); }
