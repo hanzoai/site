@@ -148,7 +148,7 @@ export default function SmsOptIn() {
                   <Field className="xsm-f" label="Mobile phone number" name="phone" type="tel" autoComplete="tel" aria-required="true" aria-invalid={failed ? 'true' : undefined} placeholder="+1 (555) 000-0000" value={phone} onChange={(e) => { setPhone(e.target.value); setFailed(false); }} />
                   <div className="xsm-parts" role="group" aria-label="Read the consent in parts">
                     {PARTS.filter((p) => p[0]).map(([k]) => (
-                      <button key={k} type="button" aria-pressed={lit === k} onClick={() => setLit(k)} onMouseEnter={() => setLit(k)} onMouseLeave={() => setLit(null)} onFocus={() => setLit(k)} onBlur={() => setLit(null)}>{k}</button>
+                      <button key={k} type="button" aria-pressed={lit === k} onClick={() => { setTour(false); setLit(k); }} onPointerEnter={(e) => { if (e.pointerType === 'mouse') setLit(k); }} onPointerLeave={(e) => { if (e.pointerType === 'mouse') setLit(null); }} onFocus={(e) => { if (e.target.matches(':focus-visible')) setLit(k); }} onBlur={(e) => { if (e.target.matches(':focus-visible')) setLit(null); }}>{k}</button>
                     ))}
                   </div>
                   <label className="xsm-agree">
@@ -156,8 +156,8 @@ export default function SmsOptIn() {
                     <span className="xsm-box" aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
                     <span className="xsm-consent">{PARTS.map(([k, t]) => <span key={t} className={k && lit === k ? 'lit' : ''}>{t}</span>)}</span>
                   </label>
-                  <Cta type="submit" id="sms-opt-in.submit" busy={state === 'submitting'} disabled={!ready} className="xp-cta xsm-go">Yes, sign me up!</Cta>
                   {failed && <p className="xsm-err" role="alert">{failed}</p>}
+                  <Cta type="submit" id="sms-opt-in.submit" busy={state === 'submitting'} disabled={!ready} className="xp-cta xsm-go">Yes, sign me up!</Cta>
                   <p className="xsm-fine">By submitting, you agree to our <A to="/legal/terms" className="xsm-link">Terms of Service</A> and <A to="/legal/privacy" className="xsm-link">Privacy Policy</A>. We never sell or share your mobile number with third parties for marketing.</p>
                 </motion.form>
               )}
