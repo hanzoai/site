@@ -18,6 +18,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, useMotionValue, useTransform, useSpring, animate } from 'motion/react';
 import { A, More } from '../../kit';
 import { Paste, useLive } from '../cloud/Frame';
+import BizAsk from '../../v2/BizAsk';
 import BizLines from '../../v2/BizLines';
 import BizSheet from '../../v2/BizSheet';
 import { SPRING as SP } from '../../../lib/motion';
@@ -146,7 +147,7 @@ function Hero() {
           <BizLines as="h1" id="jn-h1" className="bz-display jn-title" lines={['Research on', 'learning', 'without labels']} now delay={0.05} />
           <p className="jn-byline"><span className="x-mono jn-name">Jin</span><span className="x-mono">hanzoai/jin</span></p>
           <div className="jn-acts">
-            <A to={DOCS} className="x-btn solid" data-thumb="Read the docs" data-cta="primary">Read the docs</A>
+            <BizAsk to={DOCS} thumb="Read the docs">Read the docs</BizAsk>
             <More to={GH}>View on GitHub</More>
           </div>
         </div>
@@ -391,7 +392,7 @@ function End() {
       <div className="bz-wrap">
         <div className="jn-end-top">
           <BizLines id="jn-end-h" className="bz-display" lines={['Read the code']} />
-          <A to={DOCS} className="x-btn solid jn-end-go" data-thumb="Read the docs" data-cta="primary">Read the docs</A>
+          <BizAsk to={DOCS} className="jn-end-go" thumb="Read the docs">Read the docs</BizAsk>
         </div>
         <ul className="jn-rows">
           <li><A to={GH} className="jn-row"><b>View on GitHub</b><span className="x-mono"><Gh />hanzoai</span><Arrow /></A></li>

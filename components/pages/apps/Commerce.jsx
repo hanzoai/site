@@ -20,6 +20,7 @@ import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent, 
 import { EASE_OUT_EXPO as EASE, SPRING } from '../../../lib/motion';
 import { A, More } from '../../kit';
 import { useLive } from '../cloud/Frame';
+import BizAsk from '../../v2/BizAsk';
 import BizLines from '../../v2/BizLines';
 import BizSheet from '../../v2/BizSheet';
 import BizOpen from '../../v2/BizOpen';
@@ -211,7 +212,7 @@ function Hero() {
           <p className="cm-kind x-mono">Headless E-commerce Platform</p>
           <p className="bz-lede">Products, carts, checkout, orders and returns behind an API, with no storefront attached.</p>
           <div className="cm-acts">
-            <A to={DOCS} className="x-btn solid" data-thumb="Read the docs" data-cta="primary">Read the docs</A>
+            <BizAsk to={DOCS} thumb="Read the docs">Read the docs</BizAsk>
             <More to="https://platform.hanzo.ai">API Platform</More>
           </div>
         </div>
@@ -557,7 +558,7 @@ function End() {
         <BizLines id="cm-end-h" className="bz-display md" lines={['Create a product,', 'then sell it']} />
         <div className="bz-grid cm-end-row">
           <p className="bz-lede">The whole thing runs from one container. Point your front end at it and take an order.</p>
-          <div className="cm-end-go"><A to={DOCS} className="x-btn solid" data-cta="primary">Read the docs</A></div>
+          <div className="cm-end-go"><BizAsk to={DOCS}>Read the docs</BizAsk></div>
         </div>
         <A to={GH} className="cm-row"><span>Get started with Commerce</span><em>View on GitHub<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></em></A>
       </div>

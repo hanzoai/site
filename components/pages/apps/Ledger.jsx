@@ -21,6 +21,7 @@ import { EASE } from '../../ui';
 import { A, More } from '../../kit';
 import { Code, useLive } from '../cloud/Frame';
 import BizPaste from '../../v2/BizPaste';
+import BizAsk from '../../v2/BizAsk';
 import BizLines from '../../v2/BizLines';
 import BizStage from '../../v2/BizStage';
 import BizChapters from '../../v2/BizChapters';
@@ -141,7 +142,7 @@ function Hero() {
         <BizLines as="h1" id="ld-h1" className="bz-display md ld-h1" lines={['Hanzo', 'Ledger']} now delay={0.05} />
         <p className="ld-copy"><span className="bz-lede ld-one">A double-entry ledger you post to over HTTP.</span> <span className="bz-body ld-more">Money here only ever moves: a posting names a source account, a destination account, an amount and an asset. There is no way to write a debit without its credit, because a one-sided entry is not something the API can express.</span></p>
         <div className="bz-acts ld-acts">
-          <A to={DOCS} className="x-btn solid" data-thumb="Read the docs" data-cta="primary">Read the docs</A>
+          <BizAsk to={DOCS} thumb="Read the docs">Read the docs</BizAsk>
           <More to={GH}>GitHub</More>
         </div>
         <BizStage from={1.03} over={560} lift={40} className="ld-stage"><Book /></BizStage>
@@ -356,7 +357,7 @@ function End() {
         <div className="ld-end-say">
           <BizLines id="ld-start-h" className="bz-display md" lines={['Get started', 'with Ledger']} />
           <p className="bz-lede">Post your first transaction over HTTP, or describe the whole split once in Numscript and let the ledger do the arithmetic.</p>
-          <div className="bz-acts"><A to={DOCS} className="x-btn solid" data-cta="primary">Read the docs</A></div>
+          <div className="bz-acts"><BizAsk to={DOCS}>Read the docs</BizAsk></div>
         </div>
         <div className="ld-receipt bz-obj">
           <h2 className="bz-title">Get Ledger</h2>

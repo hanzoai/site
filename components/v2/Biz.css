@@ -65,10 +65,10 @@
 
 /* BizSheet: the spec drawer */
 .bz-sheet-btn { display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 22px 0 18px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .12); background: #fff; color: var(--ink); font: 500 15px/1 var(--sans); cursor: pointer; transition: border-color .2s, transform .3s var(--ease); }
-.bz-sheet-btn:hover { border-color: rgba(0, 0, 0, .3); }
+@media (hover: hover) { .bz-sheet-btn:hover { border-color: rgba(0, 0, 0, .3); } }
 .bz-sheet-btn:active { transform: scale(.97); }
 .bz-sheet-btn svg { color: var(--acc); transition: transform .4s var(--ease); }
-.bz-sheet-btn:hover svg { transform: rotate(90deg); }
+@media (hover: hover) { .bz-sheet-btn:hover svg { transform: rotate(90deg); } }
 .bz-sheet-back { position: fixed; inset: 0; z-index: 940; background: rgba(10, 10, 10, .32); opacity: 0; visibility: hidden; transition: opacity .35s var(--ease), visibility 0s .35s; }
 .bz-sheet { color: var(--ink); text-align: left; position: fixed; z-index: 950; top: 12px; right: 12px; bottom: 12px; width: min(620px, calc(100vw - 24px)); background: #fff; border-radius: 28px; box-shadow: 0 40px 120px -30px rgba(0, 0, 0, .45); display: flex; flex-direction: column; transform: translateX(calc(100% + 24px)); visibility: hidden; transition: transform .5s var(--ease), visibility 0s .5s; outline: none; }
 .bz-sheet-wrap[data-open='true'] .bz-sheet-back { opacity: 1; visibility: visible; transition: opacity .35s var(--ease); }
@@ -76,7 +76,7 @@
 .bz-sheet-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 22px 22px 18px 32px; border-bottom: 1px solid var(--line); }
 .bz-sheet-top h2 { font-size: 22px; font-weight: 600; letter-spacing: -.02em; margin: 6px 0 0; }
 .bz-sheet-x { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--ink); display: grid; place-items: center; cursor: pointer; }
-.bz-sheet-x:hover { border-color: rgba(0, 0, 0, .25); }
+@media (hover: hover) { .bz-sheet-x:hover { border-color: rgba(0, 0, 0, .25); } }
 .bz-sheet-body { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 28px 32px 40px; }
 
 /* BizOpen: cards that open into their own full panel */
@@ -84,7 +84,7 @@
 .bz-open-card { position: relative; display: flex; flex-direction: column; align-items: flex-start; text-align: left; width: 100%; border: 0; border-radius: 16px; background: var(--card); color: var(--ink); padding: 28px; cursor: pointer; font: inherit; overflow: hidden; }
 .bz-open-card:focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; }
 .bz-open-plus { position: absolute; right: 18px; bottom: 18px; width: 40px; height: 40px; border-radius: 50%; background: #fff; display: grid; place-items: center; color: var(--ink); box-shadow: 0 6px 16px -8px rgba(0, 0, 0, .25); transition: transform .45s var(--ease); }
-.bz-open-card:hover .bz-open-plus { transform: rotate(90deg) scale(1.06); }
+@media (hover: hover) { .bz-open-card:hover .bz-open-plus { transform: rotate(90deg) scale(1.06); } }
 .bz-open-layer { position: fixed; inset: 0; z-index: 950; display: grid; place-items: center; padding: 24px; }
 .bz-open-back { position: absolute; inset: 0; background: rgba(10, 10, 10, .36); }
 .bz-open-panel { position: relative; width: min(1040px, 100%); max-height: calc(100svh - 48px); overflow: hidden; border-radius: 28px; background: #fff; display: flex; flex-direction: column; box-shadow: 0 40px 120px -30px rgba(0, 0, 0, .45); }

@@ -18,6 +18,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useInView, useReducedMotion } from 'motion/react';
 import { A, More } from '../../kit';
 import { Copy } from '../../ui';
+import BizAsk from '../../v2/BizAsk';
 import BizLines from '../../v2/BizLines';
 import './BlockchainIndex.css';
 
@@ -86,7 +87,7 @@ function Hero({ doc, chains, all }) {
           </h1>
           <div className="bci-ask">
             <div className="bci-acts">
-              <A to={GO[doc.actions[0]] || '/signup'} className="x-btn solid" data-thumb={doc.actions[0]} data-cta="primary">{doc.actions[0]}</A>
+              <BizAsk to={GO[doc.actions[0]] || '/signup'} thumb={doc.actions[0]}>{doc.actions[0]}</BizAsk>
               {doc.actions.slice(1).map((t) => <More key={t} to={GO[t] || '/signup'}>{t}</More>)}
             </div>
             <p className="bci-note"><span className="bci-chip x-mono">{doc.chip}</span>{doc.note}</p>
@@ -260,7 +261,7 @@ function End({ b }) {
             <BizLines id="bci-end-h" className="bz-display" lines={[b.title]} />
             <p className="bz-lede">{b.lede}</p>
           </div>
-          <A to={GO[ask] || '/signup'} className="x-btn solid bci-end-go" data-thumb={ask} data-cta="primary">{ask}</A>
+          <BizAsk to={GO[ask] || '/signup'} className="bci-end-go" thumb={ask}>{ask}</BizAsk>
         </div>
         <ul className="bci-rows">
           {rest.map((t) => <li key={t}><A to={GO[t] || '/signup'} className="bci-row"><b>{t}</b><Arrow /></A></li>)}

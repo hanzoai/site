@@ -194,7 +194,7 @@ a.ld-chip:active { transform: scale(.98); }
 .ld-rc-rows div { display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 48px; border-bottom: 1px dashed var(--hz-200, #c7c7cc); font-size: 14px; }
 .ld-rc-rows dt { color: var(--faint); display: inline-flex; } .ld-rc-rows dd { margin: 0; }
 .ld-rc-a { color: var(--ink); text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; }
-.ld-rc-a:hover { text-decoration: underline; text-underline-offset: 4px; }
+@media (hover: hover) { .ld-rc-a:hover { text-decoration: underline; text-underline-offset: 4px; } }
 .ld-rc-sum { margin: 4px 0 0; display: flex; justify-content: space-between; align-items: baseline; padding-top: 14px; border-top: 2px solid var(--ink); font-size: 15px; }
 .ld-rc-sum b { font-family: var(--sans); font-size: 40px; font-weight: 600; letter-spacing: -.04em; }
 
