@@ -1,5 +1,7 @@
 # /history — James-eye review
 Verdict: 7/10
+Ready: 8 Nov, held up next to /api and /agents (no score). Years never blank on scroll (entrance marker moved to an attribute), year plates carry Hanzo's real customer logos and the KANOA and Damon photos, h1 before lede, deck greys, gentler domino entrance. copycheck missing 0 of 185; taste/unique/parity OK (text 214/214, links 42/42); 0 console errors, no overflow/overlap at 1470x801 and 375x812.
+
 First complaint: "Twelve years are now a black box with the title written in it, and the same title again right next to it. That's not a picture, that's the text twice. Where are SKULLY, Damon, Triller? And there's still a red error badge in the corner."
 (walked 7 Nov at `56bc5016`, 1470×801 fine pointer and 375×812 isMobile/hasTouch; plus 320×700, 375×667, reduced motion, JS off. Scripts and frames are in `scratchpad/critic-history-q8m2/`.)
 

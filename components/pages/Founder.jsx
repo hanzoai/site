@@ -193,7 +193,7 @@ function Repos() {
   const st = useBounties();
   const room = useRef(null);
   const lit = useInView(room, { once: true, amount: 0.35 }); // the org names light one at a time, once, as the room enters
-  const items = st.kind === 'ready' ? st.open.items.slice(0, 5) : [];
+  const items = st.kind === 'ready' ? st.open.items.slice(0, 6) : [];
   const say = st.kind === 'reading' ? SAY.reading : st.kind === 'unreachable' ? SAY.unreachable : SAY.none;
   return (
     <section ref={room} className={'xp-sec xp-dark xfo-repos' + (lit ? ' lit' : '')} data-room="dark" aria-labelledby="xfo-open-h">
@@ -209,11 +209,12 @@ function Repos() {
             <ul>
               {items.map((it, i) => (
                 <motion.li key={it.url} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], delay: i * 0.06 }}>
-                  <a href={it.url} target="_blank" rel="noopener noreferrer"><span className="x-mono">{`${it.repo}#${it.number}`}</span><b>{it.title}</b><i aria-hidden="true">↗</i></a>
+                  <a href={it.url} target="_blank" rel="noopener noreferrer"><span className="x-mono">{`${it.repo}#${it.number}`}</span><b><span>{it.title}</span></b><i aria-hidden="true">↗</i></a>
                 </motion.li>
               ))}
             </ul>
-          ) : <p className={'xfo-say' + (st.kind === 'reading' ? ' reading' : '')} role={st.kind === 'reading' ? 'status' : undefined} aria-live="polite">{say}</p>}
+          ) : null}
+          {items.length ? <p className="xfo-say" hidden>{SAY.reading}</p> : <p className={'xfo-say' + (st.kind === 'reading' ? ' reading' : '')} role={st.kind === 'reading' ? 'status' : undefined} aria-live="polite">{say}</p>}
           </div>
           <Cta to={SEARCH} kind="quiet" id="founder.bounties" className="xp-ghost xfo-every">Every open bounty</Cta>
         </div>

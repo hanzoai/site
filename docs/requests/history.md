@@ -1,3 +1,5 @@
+Resolved 8 Nov: the customer logos were vendored by James; buds.webp and reveal.webp are now in public/customers/ (fetched from hanzo.ai).
+
 # /history: shared change request (7 Nov)
 
 For the owner of `public/` (shared media): the year plates reference Hanzo's own customer media, which are not mirrored into `public/`, and hanzo.ai is not reachable from the cloud sessions to fetch them:
