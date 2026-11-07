@@ -118,7 +118,6 @@
 .xtr-dark a { color: #f5f5f7; text-underline-offset: 3px; }
 .xtr-found { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); column-gap: 24px; align-items: start; }
 .xtr-found-p { margin: 0 0 24px; max-width: 46ch; font-size: clamp(21px, .8vw + 14px, 26px); line-height: 1.45; letter-spacing: -.015em; color: #f5f5f7; text-wrap: pretty; }
-.xtr-found-p a { text-decoration-thickness: 1.5px; transition: opacity .2s; }
 .xtr-band { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: clamp(24px, 6vw, 96px); align-items: end; margin-top: clamp(160px, 16vw, 240px); padding-top: 64px; border-top: 1px solid rgba(255, 255, 255, .14); }
 .xtr-band .pf-display { max-width: 11ch; }
 .xtr-band .pf-lede { margin-bottom: 32px; }
@@ -168,3 +167,7 @@
   .pf-btn.xtr-light { width: 100%; justify-content: center; text-align: center; }
   .xtr-found-p { font-size: 20px; }
 }
+
+/* every hover answers with more than colour */
+.xtr-found-p a, .xtr-dark .pf-body a { text-decoration-thickness: 1px; transition: text-underline-offset .2s var(--ease), text-decoration-thickness .2s; }
+.xtr-found-p a:hover, .xtr-dark .pf-body a:hover { text-underline-offset: 6px; text-decoration-thickness: 2px; }
