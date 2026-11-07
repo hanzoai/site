@@ -1,6 +1,6 @@
 'use client';
 /* /history, page-local motion (never shared). Two jobs, both after mount, so the server HTML is the final state:
-   1. Entrances: every [data-enter] inside the page gets .xhi-in once, when its top is about a quarter into the screen
+   1. Entrances: every [data-enter] inside the page gets data-xhi-in once, when its top is about a quarter into the screen
       (IntersectionObserver, once). history/enter.css plays that page's five entrances from that class.
    2. Words light up (Signature): every [data-wl] statement lights word by word as it is read. A passive scroll
       listener turns the statement's place on screen into a count and lights that many words (.lit on each word span,
@@ -14,7 +14,7 @@ export default function useHistoryEnter(root) {
     if (!box) return undefined;
     const io = new IntersectionObserver((es) => es.forEach((e) => {
       if (!e.isIntersecting) return;
-      e.target.classList.add('xhi-in');
+      e.target.setAttribute('data-xhi-in', ''); // an attribute, not a class: React rewrites className on re-render (a year turning .on) and would wipe a class
       io.unobserve(e.target);
     }), { rootMargin: '0px 0px -25% 0px', threshold: 0 });
     box.querySelectorAll('[data-enter]').forEach((el) => io.observe(el));

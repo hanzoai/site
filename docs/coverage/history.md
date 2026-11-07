@@ -31,7 +31,7 @@ Done here: parity links 42/42; the 13-year rail jumps to any year; "Return to Ab
 - [x] Ends in proof (clippings above), Band, footer
 - [x] Morph on "Return to About Hanzo"
 
-Done here: h1 52px with lede and links under it; beside it the hero's one big thing, a 112px Air year running 2014→2026 while the four eras' bars fill; then clippings, the pinned year scene, Your year, principles, the FDE Band.
+Done here: h1 52px with lede and links under it; beside it the hero's one big thing, a 112px Air year running 2014→2026 while the four eras' bars fill; then the statement that lights word by word, the 13 years as plain rows under a jump rail (the pinned scene is gone, motion map 7 Nov), the clippings, Your year, principles, the FDE Band. The lede and links rise in after the h1's last line has landed (0.42 s), so the h1 is the first thing seen; JS off shows them at once.
 
 ## 4. Conversion system
 - [x] kit `Cta` only; no raw `.x-btn`
@@ -82,7 +82,7 @@ Done here: rail buttons carry `aria-current`; the pause control is a 44px `aria-
 - [x] Reduced motion final states; no `setInterval`
 - [x] n/a: sound is the shared kit's
 
-Done here: signature = the scrub; the old year leaves in 180 ms and the new one rises 100 ms later, so the stage is never blank at normal scroll speed and never shows two years at rest.
+Done here: signature = word-light (the statement lights as it is read); the running hero year cuts in place (the old year leaves in 180 ms, the new one rises 100 ms later). The flick-proofing fix (review fix 4) no longer applies: the pinned scene it was for is gone, so nothing can blank under a hard flick. Entrances (domino, cover-slide, page-curl, explode-gather, split-merge) mark their sections with a `data-xhi-in` attribute, not a class, so a year turning current (React rewriting `className`) can never hide it again (8 Nov: that had left the years blank while scrolling). The domino tips 8° (3° on phones), so a column never swings into the year above.
 
 ## 10. Media
 - [x] kit `Img` and `Film` for plates; sizes set
@@ -90,7 +90,7 @@ Done here: signature = the scrub; the old year leaves in 180 ms and the new one 
 - [x] Alt: decorative plates `alt=""`, the year's figure stands in
 - [x] No dimmed photo
 
-Done here: the plates point at Hanzo's own customer photos and logos (`/logos/customers/*`, `/customers/*`), but those files are not mirrored into `public/` and hanzo.ai is not reachable from the cloud session, so 12 of 13 years would show a placeholder; round 3 sets each such year's own customer and badge as a black wordmark plate instead (2026 shows the Zen film). Mirroring the images is filed in `docs/requests/history.md`.
+Done here: 8 Nov: Hanzo's own customer logos are in `public/logos/customers/`, so each plate shows that year's logo in the plate's own ink (one tone, no hue) over the year's figure set large ($5.8M Raised, 120k ETH Raised, ...); years without a logo show the figure alone; dark and light plates alternate. The figure is no longer repeated in the text column (kept there for screen readers), and a badge that is the same words as the figure is said once, on the plate. The two photos (`/customers/kanoa/buds.webp`, `/customers/damon-motorcycles/reveal.webp`) are still not in `public/`, so those years fall back to their logo (request in `docs/requests/history.md`); 2026 shows the Zen film.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass
@@ -136,17 +136,17 @@ Done here: n/a: Story page.
 Done here: n/a: no code on the page.
 
 ## 17. States and resilience
-- [x] Image failure shows the year's figure
+- [x] Image failure shows the year's figure (a photo that is not there falls back to the year's logo; with neither, the figure plate, drawn from the first paint, never an empty box)
 - [x] n/a: no live data
 - [x] n/a: no submit
 - [x] Reduced motion and JS off designed
 
-Done here: with JS off a `noscript` rule stacks the 13 years; reduced motion holds 2026 in the hero.
+Done here: with JS off a `noscript` rule stacks the 13 years; reduced motion holds 2026 in the hero. Your year out of range or empty: the last plate stays, dimmed under a gradient, and Hanzo's sentence ("Not written yet.", "Type a year.") takes the title's place.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on primaries; no analytics wired yet
 - [x] Nothing identifier-bearing
 - [x] `V2:` line in the page file
-- [ ] Review read: `docs/review/history.md` verdict 7/10, fixes pushed, re-review pending
+- [x] Review read: `docs/review/history.md` (round 3, 7/10, 7 Nov); fixes applied 8 Nov
 
-Done here: `docs/review/history.md` (critic round 2: 7/10); all six fixes pushed.
+Done here: `docs/review/history.md` round 3 (7/10): 1 hydration (the Your year input is `suppressHydrationWarning`; 0 console errors in clean loads at both sizes; footer part filed), 2 plates are real logos plus the figure, 3 Your year keeps the dimmed plate, 4 n/a (scene gone), 5 h1 first, 6 header label filed in `docs/requests/history.md` (shared Ask), 7 deck tokens on `.xhi` (no scattered literals), hover inside `@media (hover:hover)`, the clipping counter under its figure, 8 this card. Copy: an offline copycheck against `content/live/history.json` reads missing 0 of 183 (hanzo.ai itself is not reachable from the cloud session).
