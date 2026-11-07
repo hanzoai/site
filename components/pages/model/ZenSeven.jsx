@@ -48,8 +48,9 @@ function usePhone() {
 
 function Stage({ still, setStill }) {
   const box = useRef(null);
-  const { scrollYProgress: p } = useScroll({ target: box, offset: ['start start', 'end end'] });
-  const k = useTransform(p, [0, 0.7], [1, 0], { clamp: true }); // 1 = risen from below, 0 = settled
+  const phone = usePhone(); // phone: the stage is not pinned, so the settle runs over the stage leaving the screen
+  const { scrollYProgress: p } = useScroll({ target: box, offset: phone ? ['start start', 'end start'] : ['start start', 'end end'] });
+  const k = useTransform(p, phone ? [0, 0.45] : [0, 0.7], [1, 0], { clamp: true }); // 1 = risen from below, 0 = settled
   const ke = useTransform(k, (v) => v * (2 - v)); // eased out; ZenSeven.css turns it into translate and scale
   return (
     <section className="z7-stage" ref={box} aria-labelledby="z7-h">
