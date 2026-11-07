@@ -1,24 +1,28 @@
 'use client';
 /* Philosophy: the Zen of Hanzo, told as a chapter book. Its idea is change itself, drawn in lines.
-   V2: 8/10 rebuilt as an editorial chapter book: a hero hexagram you can change line by line, the five laws as pinned chapters building one hexagram, the 64 as a calm index that opens each pattern in a sheet, and a dark close that wipes in.
+   V2: 8/10 an editorial chapter book in ink only: a hero hexagram that walks the sixty-four and changes at a press, the five laws pinned while one hexagram builds beside them, the 64 as a quiet index whose every pattern opens in a sheet, the belief statement filling in word by word, one ask that follows you.
    The hero is one hexagram that never holds still: it walks the sixty-four in King Wen order, the lines that changed
-   in ochre. Then one idea per screen: the premise as a single sentence; the five laws as chapters that pin while a
-   hexagram builds itself beside them, one line per law, each line naming its law, the last line never settling; the
-   64 patterns as a quiet index (by sequence, as the 8 x 8 matrix of trigrams, or by lens) where every pattern opens
-   into a sheet with its principle, practice and question, and steps to its neighbours; how we build, the stack, the
-   questions; and the close in the one dark room, from one line to sixty-four conditions.
-   Motion: signature, the changing line (the hexagram's lines flipping, in the hero, the laws and the small seal by each
-   section). Supporting: line-masked headings, the pattern sheet that opens, the dark room wiping in.
+   marked with a dot, and any line you press flips. Then one idea per screen: the premise as a single sentence beside one
+   line that keeps opening and closing; the five laws as chapters that pin while a hexagram builds itself beside them, one
+   line per law, its last line never settling; the 64 patterns as a quiet index (by sequence, as the 8 x 8 matrix of
+   trigrams, or by lens) where every pattern opens into a sheet with its principle, practice and question and steps to its
+   neighbours; how we build; the stack; the questions, each beside its trigram; the belief statement filling in word by
+   word as you read; and the close in the one dark room, from one line to sixty-four conditions. Ink only: hierarchy is
+   alpha steps of black and white (JAMES.md 7).
+   Motion: signature, the changing line (the hexagram's lines flipping: hero, laws, the premise's one line, the close).
+   Supporting: line-masked headings, the scroll word reveal of the belief statement, the pattern sheet that opens.
+   Idle: the hero walk, the premise line, the laws' last line. Pointer: press a line, tiles lift, the method hand
+   follows, stack rows fill. State: the view pill glides (layoutId), the sheet rises.
    Signature: the five laws pin as chapters while one hexagram builds itself beside them, a line per law, and its last line never stops changing.
    Beyond: "Change a line". Press any line of the hero hexagram and it flips, yin to yang, becoming the hexagram that change makes — its number, name and trigrams read from Hanzo's own sixty-four.
    Every word is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useInView, useReducedMotion } from 'motion/react';
-import { A } from '../kit';
+import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { A, More } from '../kit';
 import MaskLines from '../v2/MaskLines';
 import PinScenes from '../v2/PinScenes';
-import SceneWipe from '../v2/SceneWipe';
+import AskBar from '../v2/AskBar';
 import '../v2/ProofScale.css';
 import '../v2/DetailSheet.css';
 import { GROUPS, HEX, LENSES } from './philosophyData';
@@ -33,7 +37,7 @@ const hexOf = (ls) => HEX.findIndex((h) => h[2] === triOf(ls.slice(3)) && h[3] =
 const pad = (n) => String(n).padStart(2, '0');
 
 /* Six lines, bottom to top. A yang line is whole; a yin line opens in the middle (each half scales, transform only).
-   hot: lines drawn in the accent. press(i): the lines become buttons that change themselves. */
+   hot: lines marked as changing (a dot beside them). press(i): the lines become buttons that change themselves. */
 function Hexa({ ls, size = 80, drawn = 6, hot = [], press, className = '' }) {
   return (
     <span className={'xph-hx ' + className} style={{ '--w': size + 'px' }} aria-hidden={press ? undefined : true} role={press ? 'group' : undefined} aria-label={press ? 'The hexagram, line by line' : undefined}>
@@ -47,15 +51,12 @@ function Hexa({ ls, size = 80, drawn = 6, hot = [], press, className = '' }) {
   );
 }
 
-/* the small seal beside each section's kicker: three lines whose top one keeps changing */
-const Seal = () => <span className="xph-seal" aria-hidden="true"><i /><i /><i className="ch" /></span>;
-const Kick = ({ children, className = '' }) => <p className={'pf-kick xph-k ' + className}><Seal />{children}</p>;
-
 /* ---------- hero: one hexagram walking the sixty-four; press a line to change it ---------- */
 function Hero() {
   const [i, setI] = useState(0);
   const [hot, setHot] = useState([]);
   const [held, setHeld] = useState(0); // the time of the visitor's last change: the walk waits for them
+  const [steps, setSteps] = useState(0);
   const calm = useReducedMotion();
   const ref = useRef(null);
   const live = useInView(ref, { amount: 0.3 });
@@ -68,9 +69,10 @@ function Hero() {
         setHot(a.map((x, k) => (x !== b[k] ? k : -1)).filter((k) => k >= 0));
         return n;
       });
-    }, 2300);
+      setSteps((s) => s + 1);
+    }, steps ? 2300 : 900); // the first change comes within a second of arriving
     return () => clearTimeout(t);
-  }, [i, calm, live, held]);
+  }, [i, calm, live, held, steps]);
   const press = (k) => {
     const ls = lines(HEX[i]).map((x, j) => (j === k ? 1 - x : x));
     setI(hexOf(ls));
@@ -83,13 +85,13 @@ function Hero() {
     <section className="xph-hero" ref={ref} aria-labelledby="xph-h1">
       <div className="pf-wrap pf-grid xph-hero-g">
         <div className="xph-hero-copy">
-          <p className="pf-kick">Philosophy</p>
           <MaskLines as="h1" id="xph-h1" className="pf-display xph-h1" lines={['The Zen', 'of Hanzo']} amount={0.1} />
+          <p className="pf-mono xph-cap">Philosophy</p>
           <p className="pf-lede xph-sub">64 patterns for intelligent systems</p>
           <p className="pf-body xph-lede">The <em>I Ching</em> is a map of change. Its 64 hexagrams describe recurring conditions: creation, resistance, conflict, growth, decay, transformation, completion and renewal.</p>
           <div className="xph-acts">
-            <a href="#patterns" className="pf-btn solid">Explore the 64 patterns</a>
-            <A to="https://cloud.hanzo.ai" className="pf-btn">Build with Hanzo</A>
+            <a href="#patterns" className="pf-btn solid" data-thumb="Explore the 64 patterns">Explore the 64 patterns</a>
+            <More to="https://cloud.hanzo.ai">Build with Hanzo</More>
           </div>
         </div>
         <div className="xph-oracle">
@@ -99,22 +101,26 @@ function Hero() {
             <b>{main}</b>
             <span>{sub} · {h[2]} over {h[3]}</span>
           </div>
-          <p className="pf-mono xph-hint" aria-hidden="true">Press a line to change it</p>
         </div>
       </div>
     </section>
   );
 }
 
-/* ---------- the premise: one sentence, one screen ---------- */
+/* ---------- the premise: one sentence beside one line that keeps changing ---------- */
 function Premise() {
   return (
     <section className="pf-sec xph-premise">
       <div className="pf-wrap">
-        <Kick>The premise</Kick>
-        <MaskLines as="p" className="pf-display s xph-big" lines={['No intelligent system', 'remains fixed.']} />
+        <div className="pf-grid xph-premise-top">
+          <MaskLines as="p" className="pf-display s xph-big" lines={['No intelligent system', 'remains fixed.']} />
+          <div className="xph-one" aria-hidden="true"><span className="xph-hl yang xph-one-l"><i /><i /></span></div>
+        </div>
         <div className="pf-grid xph-premise-g">
-          <h2 className="pf-title xph-premise-h">Intelligence is always changing</h2>
+          <div className="xph-premise-h">
+            <h2 className="pf-title">Intelligence is always changing</h2>
+            <p className="pf-mono xph-cap">The premise</p>
+          </div>
           <div className="xph-premise-t">
             <p className="pf-body">Models learn. Data changes. Infrastructure fails. Organizations grow. Interfaces become dependencies. Successful architectures eventually meet conditions they were never designed to handle.</p>
             <p className="pf-body">The goal is not to prevent change. The goal is to build systems capable of changing without losing their integrity.</p>
@@ -161,7 +167,7 @@ function LawStage({ at }) {
           </div>
         ))}
       </div>
-      <p className="xph-law-cap" data-on={done} aria-hidden="true"><span className="pf-mono">{LAST[0]} · {sub}</span>{LAST[4]}</p>
+      <p className="xph-law-cap" data-on={done} aria-hidden="true">{LAST[4]}<span className="pf-mono">{LAST[0]} · {sub}</span></p>
     </div>
   );
 }
@@ -171,15 +177,15 @@ function Laws() {
     <>
       <section className="pf-sec xph-laws-in" aria-labelledby="xph-laws-h">
         <div className="pf-wrap">
-          <Kick>The synthesis</Kick>
           <MaskLines as="h2" id="xph-laws-h" className="pf-display m xph-laws-h" lines={['Five operating', 'laws']} />
+          <p className="pf-mono xph-cap">The synthesis</p>
         </div>
       </section>
       <PinScenes
         className="xph-laws"
         label="Five operating laws"
         per={70}
-        chapters={LAWS.map(([t, d], i) => ({ kicker: pad(i + 1), title: t, body: <p className="pf-lede">{d}</p> }))}
+        chapters={LAWS.map(([t, d]) => ({ title: t, body: <p className="pf-lede">{d}</p> }))}
         visual={(at) => <LawStage at={at} />}
       />
     </>
@@ -194,24 +200,23 @@ function Detail({ h }) {
       <div className="xph-det-h">
         <Hexa ls={lines(h)} size={92} />
         <div>
-          <span className="pf-mono xph-det-n">{h[0]}</span>
           <h3 className="xph-det-t">{main}</h3>
           <p className="xph-det-s">{sub}</p>
-          <p className="xph-det-tri">{h[2]} <i>over</i> {h[3]}</p>
+          <p className="xph-det-tri"><span className="pf-mono">{h[0]}</span> · {h[2]} <i>over</i> {h[3]}</p>
         </div>
       </div>
       <dl className="xph-det-l">
         <div><dt>Principle</dt><dd className="xph-pr">{h[4]}</dd></div>
         <div><dt>In practice</dt><dd>{h[5]}</dd></div>
         <div><dt>Ask</dt><dd className="xph-ask">{h[6]}</dd></div>
-        {h[8] && <div><dt>Lenses</dt><dd><span className="xph-chip" title={LENSES[h[8]]}>{h[8]}</span></dd></div>}
+        {h[8] && <div><dt>Lenses</dt><dd className="xph-lens-d"><span className="xph-chip">{h[8]}</span><span>{LENSES[h[8]]}</span></dd></div>}
       </dl>
     </article>
   );
 }
 
-/* One sheet for all sixty-four (built on the kit's DetailSheet look): every pattern is in the page, the chosen one
-   shows; arrows or ← → step to its neighbours in King Wen order. */
+/* One sheet for all sixty-four (the kit's DetailSheet look): every pattern is in the page, the chosen one shows; the
+   arrows or ← → step to its neighbours in King Wen order. */
 function PatternSheet({ sel, setSel }) {
   const open = sel !== null;
   const [host, setHost] = useState(null);
@@ -244,8 +249,8 @@ function PatternSheet({ sel, setSel }) {
       <div className="pf-sheet-panel" role="dialog" aria-modal="true" aria-labelledby="xph-sheet-h" inert={!open} data-lenis-prevent>
         <div className="pf-sheet-top">
           <div>
-            <p className="pf-kick">The 64 patterns</p>
             <p className="pf-title" id="xph-sheet-h">{HEX[cur][0]} / 64</p>
+            <p className="pf-kick pf-sheet-cap">The 64 patterns</p>
           </div>
           <div className="xph-sheet-nav">
             <button type="button" className="pf-sheet-x" onClick={() => setSel((s) => (s + 63) % 64)} aria-label="Previous pattern"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
@@ -282,9 +287,8 @@ function Sequence({ open }) {
         return (
           <section key={num} className="xph-grp" aria-labelledby={'xph-g-' + num}>
             <div className="xph-grp-h">
-              <span className="pf-mono xph-grp-n"><Seal />{num}</span>
               <h3 id={'xph-g-' + num}>{name}</h3>
-              <span className="pf-mono xph-grp-r">{hs[0][0][0]} – {hs[7][0][0]}</span>
+              <span className="pf-mono xph-grp-r">{num} · {hs[0][0][0]} – {hs[7][0][0]}</span>
             </div>
             <div className="xph-tiles">{hs.map(([h, i]) => <Tile key={i} h={h} i={i} open={open} />)}</div>
           </section>
@@ -308,10 +312,10 @@ function Matrix({ open }) {
       <div className="xph-mx-scroll">
         <div className={'xph-mx-g' + (hi ? ' hi' : '')}>
           <div className="xph-mx-c xph-mx-k"><span>U/L</span></div>
-          {TRI_ORDER.map((t) => <button key={t} type="button" className={'xph-mx-c xph-mx-k xph-mx-h' + (on('l', t) ? ' on' : '')} onClick={() => tog(['l', t])} aria-pressed={on('l', t)} title={'Lower: ' + t}><Hexa ls={TRI[t]} size={20} /><span>{t}</span></button>)}
+          {TRI_ORDER.map((t) => <button key={t} type="button" className={'xph-mx-c xph-mx-k xph-mx-h' + (on('l', t) ? ' on' : '')} onClick={() => tog(['l', t])} aria-pressed={on('l', t)} aria-label={'Lower: ' + t}><Hexa ls={TRI[t]} size={20} /><span>{t}</span></button>)}
           {TRI_ORDER.map((up) => (
             <div key={up} className="xph-mx-row">
-              <button type="button" className={'xph-mx-c xph-mx-k xph-mx-h' + (on('u', up) ? ' on' : '')} onClick={() => tog(['u', up])} aria-pressed={on('u', up)} title={'Upper: ' + up}><Hexa ls={TRI[up]} size={20} /><span>{up}</span></button>
+              <button type="button" className={'xph-mx-c xph-mx-k xph-mx-h' + (on('u', up) ? ' on' : '')} onClick={() => tog(['u', up])} aria-pressed={on('u', up)} aria-label={'Upper: ' + up}><Hexa ls={TRI[up]} size={20} /><span>{up}</span></button>
               {TRI_ORDER.map((lo) => {
                 const i = HEX.findIndex((h) => h[2] === up && h[3] === lo);
                 return (
@@ -335,8 +339,12 @@ function Lenses() {
   return (
     <div className="xph-lenses">
       <div className="xph-chips">
-        <button type="button" aria-pressed={lens === null} onClick={() => setLens(null)}>All lensed patterns</button>
-        {names.map((n) => <button key={n} type="button" aria-pressed={lens === n} onClick={() => setLens(n)}>{n} <span>{HEX.filter((h) => h[8] === n).length}</span></button>)}
+        {[null, ...names].map((n) => (
+          <button key={n || 'all'} type="button" aria-pressed={lens === n} onClick={() => setLens(n)}>
+            {lens === n && <motion.span layoutId="xph-lens-pill" className="xph-pill" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />}
+            <span>{n || 'All lensed patterns'}</span>{n && <span className="pf-mono">{HEX.filter((h) => h[8] === n).length}</span>}
+          </button>
+        ))}
       </div>
       <p className="pf-body xph-lens-p">{lens ? <><b>{lens}.</b> {LENSES[lens]}</> : 'Four modern minds read the same sixty-four patterns. Select one to see the conditions it illuminates.'}</p>
       <div className="xph-lens-l">{hs.map(([h, i]) => <div key={i} className="xph-lens-card"><Detail h={h} /></div>)}</div>
@@ -362,19 +370,21 @@ function Patterns() {
       <div className="pf-wrap">
         <div className="pf-grid xph-pat-h">
           <div className="xph-pat-t">
-            <Kick>The 64 patterns</Kick>
             <h2 className="pf-head">Every hexagram is active</h2>
+            <p className="pf-mono xph-cap">The 64 patterns</p>
           </div>
           <p className="pf-lede xph-pat-l">Each represents a condition that can appear in a model, an application, a company, a network or an entire technological ecosystem. The classical title names the condition. The Hanzo principle defines how we respond.</p>
         </div>
         <div className="xph-bar">
-          <div className="xph-views" role="tablist" aria-label="View" onKeyDown={keys} style={{ '--at': VIEWS.indexOf(view) }}>
-            <span className="xph-view-bg" aria-hidden="true" />
+          <div className="xph-views" role="tablist" aria-label="View" onKeyDown={keys}>
             {VIEWS.map((v) => (
-              <button key={v} type="button" role="tab" id={'tab-' + v.toLowerCase()} aria-selected={view === v} tabIndex={view === v ? 0 : -1} aria-controls={'panel-' + v.toLowerCase()} onClick={() => setView(v)}>{v}</button>
+              <button key={v} type="button" role="tab" id={'tab-' + v.toLowerCase()} aria-selected={view === v} tabIndex={view === v ? 0 : -1} aria-controls={'panel-' + v.toLowerCase()} onClick={() => setView(v)}>
+                {view === v && <motion.span layoutId="xph-view-pill" className="xph-view-bg" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />}
+                <span>{v}</span>
+              </button>
             ))}
           </div>
-          <div className="xph-hints">{VIEWS.map((v, i) => <p key={v} className="pf-mono xph-cap" hidden={view !== v}>{HINTS[i]}</p>)}</div>
+          <div className="xph-hints">{VIEWS.map((v, i) => <p key={v} className="pf-mono xph-hint" hidden={view !== v}>{HINTS[i]}</p>)}</div>
         </div>
         {/* all three views are in the page; the chosen one is shown */}
         <div id="panel-sequence" role="tabpanel" aria-labelledby="tab-sequence" hidden={view !== 'Sequence'}><Sequence open={setSel} /></div>
@@ -395,8 +405,8 @@ function Method() {
     <section className="pf-sec xph-method">
       <div className="pf-wrap pf-grid xph-method-g">
         <div className="xph-method-l">
-          <Kick>The method</Kick>
           <h2 className="pf-head">How we build</h2>
+          <p className="pf-mono xph-cap">The method</p>
           <div className="xph-ring" aria-hidden="true" style={{ '--at': at }}>
             <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="86" /></svg>
             <i className="xph-hand" />
@@ -437,9 +447,9 @@ function Stack() {
   return (
     <section className="pf-sec xph-stack">
       <div className="pf-wrap">
-        <div className="pf-grid xph-stack-h">
-          <Kick>Across the stack</Kick>
+        <div className="xph-stack-h">
           <h2 className="pf-head">One philosophy</h2>
+          <p className="pf-mono xph-cap">Across the stack</p>
         </div>
         <ul className="xph-stack-l">
           {STACK.map(([t, d, to], i) => (
@@ -458,7 +468,7 @@ function Stack() {
   );
 }
 
-/* ---------- the questions, then the one sentence that holds the page ---------- */
+/* ---------- the questions, each beside its trigram ---------- */
 const QUESTIONS = ['Is it understandable?', 'Is it composable?', 'Is it verifiable?', 'Can it operate privately?', 'Can the user leave?', 'Can it survive failure?', 'Can it evolve without being destroyed?', 'Does it increase human agency?'];
 
 function Change() {
@@ -466,25 +476,35 @@ function Change() {
     <section className="pf-sec xph-change">
       <div className="pf-wrap pf-grid xph-change-g">
         <div className="xph-change-l">
-          <p className="pf-kick xph-k" aria-hidden="true"><Seal /></p>
           <h2 className="pf-head">Build systems that can change</h2>
           <p className="pf-lede">The purpose of a philosophy is not to decorate a company. It is to make difficult decisions clearer.</p>
         </div>
         <div className="xph-change-r">
           <p className="pf-body">When we design a model, an API, an agent, a database or a network, we return to the same questions:</p>
-          <ol className="xph-qs">{QUESTIONS.map((q, i) => <li key={q}><span className="pf-mono">{pad(i + 1)}</span>{q}</li>)}</ol>
+          <ol className="xph-qs">{QUESTIONS.map((q, i) => <li key={q}><Hexa ls={TRI[TRI_ORDER[i]]} size={22} /><span className="pf-mono">{pad(i + 1)}</span><span>{q}</span></li>)}</ol>
         </div>
       </div>
     </section>
   );
 }
 
+/* ---------- the belief statement, filling in word by word as you read it ---------- */
+const WHOLE = 'The Zen of Hanzo is not a promise that systems will remain still. It is a method for building systems that remain whole while everything changes.';
+function Word({ p, a, b, children }) {
+  const o = useTransform(p, [a, b], [0.14, 1]);
+  return <motion.span className="xph-w" style={{ opacity: o }}>{children}</motion.span>;
+}
 function Whole() {
+  const ref = useRef(null);
+  const calm = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.85', 'end 0.45'] });
+  const words = WHOLE.split(' ');
   return (
-    <section className="pf-sec xph-whole">
+    <section className="pf-sec xph-whole" ref={ref}>
       <div className="pf-wrap">
-        <Kick>The Zen of Hanzo</Kick>
-        <MaskLines as="p" className="pf-display s xph-whole-t" lines={['The Zen of Hanzo is not a promise that systems will remain still.', 'It is a method for building systems that remain whole while everything changes.']} />
+        <p className="pf-display s xph-whole-t">
+          {calm ? WHOLE : words.map((w, i) => <Word key={i} p={scrollYProgress} a={i / words.length} b={(i + 1.6) / words.length}>{w}{i < words.length - 1 ? ' ' : ''}</Word>)}
+        </p>
       </div>
     </section>
   );
@@ -494,27 +514,25 @@ function Whole() {
 function Close() {
   const stanza = ['From one line, two forces.', 'From two forces, eight patterns.', 'From eight patterns, sixty-four conditions.', 'From small primitives, unbounded intelligence.'];
   return (
-    <SceneWipe className="xph-close" label="From one line to sixty-four conditions">
-      <div className="pf-sec">
-        <div className="pf-wrap">
-          <div className="xph-grow" aria-hidden="true">
-            <div className="xph-g1"><i /></div>
-            <span className="xph-gto" />
-            <div className="xph-g2"><Hexa ls={[1]} size={56} /><Hexa ls={[0]} size={56} /></div>
-            <span className="xph-gto" />
-            <div className="xph-g8">{TRI_ORDER.map((t) => <Hexa key={t} ls={TRI[t]} size={26} />)}</div>
-            <span className="xph-gto" />
-            <div className="xph-g64">{HEX.map((h, i) => <Hexa key={i} ls={lines(h)} size={15} hot={i === 63 ? [5] : []} />)}</div>
-          </div>
-          <MaskLines as="p" className="pf-head xph-stanza" lines={stanza} />
-          <div className="xph-close-acts">
-            <A to="/" className="pf-btn solid">Explore Hanzo</A>
-            <A to="https://papers.hanzo.ai" className="pf-btn">Read the research</A>
-            <A to="https://github.com/hanzoai" className="pf-btn">View the source</A>
-          </div>
+    <section className="pf-sec xph-close" data-room="dark" aria-label="From one line to sixty-four conditions">
+      <div className="pf-wrap">
+        <div className="xph-grow" aria-hidden="true">
+          <div className="xph-g1"><span className="xph-hl yang xph-one-l"><i /><i /></span></div>
+          <span className="xph-gto" />
+          <div className="xph-g2"><Hexa ls={[1]} size={56} /><Hexa ls={[0]} size={56} /></div>
+          <span className="xph-gto" />
+          <div className="xph-g8">{TRI_ORDER.map((t) => <Hexa key={t} ls={TRI[t]} size={26} />)}</div>
+          <span className="xph-gto" />
+          <div className="xph-g64">{HEX.map((h, i) => <Hexa key={i} ls={lines(h)} size={15} />)}</div>
+        </div>
+        <MaskLines as="p" className="pf-head xph-stanza" lines={stanza} />
+        <div className="xph-close-acts">
+          <A to="/" className="pf-btn solid">Explore Hanzo</A>
+          <More to="https://papers.hanzo.ai">Read the research</More>
+          <More to="https://github.com/hanzoai">View the source</More>
         </div>
       </div>
-    </SceneWipe>
+    </section>
   );
 }
 
@@ -530,6 +548,7 @@ export default function Philosophy() {
       <Change />
       <Whole />
       <Close />
+      <AskBar title="Philosophy" label="Explore the 64 patterns" to="/philosophy#patterns" />
     </main>
   );
 }

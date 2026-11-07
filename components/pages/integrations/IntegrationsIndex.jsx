@@ -171,7 +171,7 @@ export default function IntegrationsIndex({ doc }) {
       <section className="xii-hero" aria-labelledby="xin-h1">
         <div className="pf-wrap pf-grid xii-hero-g">
           <div className="xii-hero-a">
-            <h1 id="xin-h1" className="pf-display xii-h1 xii-in" style={{ '--i': 1 }} data-morph-target>{doc.title}</h1>
+            <div data-morph-target><MaskLines as="h1" id="xin-h1" className="pf-display xii-h1" lines={doc.title.split(/ (?=everything)/)} delay={0.05} amount={0.1} /></div>
             <p className="pf-lede xii-lede xii-in" style={{ '--i': 2 }}><Loose nodes={doc.lede} /></p>
             <div className="xii-acts xii-in" style={{ '--i': 3 }}>
               {doc.actions.map((a, i) => (i

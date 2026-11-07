@@ -116,8 +116,10 @@
   .xii-hero-b { margin-top: 56px; }
   .xii-lede { margin-top: 24px; }
   .xii-acts .pf-btn { flex: 1 1 100%; }
-  .xii-hub { --r: clamp(116px, 33vw, 160px); margin-inline: auto; }
-  .xii-sat { width: 48px; height: 48px; left: -24px; top: -24px; border-radius: 14px; font-size: 22px; }
+  .xii-hub { --r: min(148px, 39vw); width: calc(var(--r) * 2 + 48px); margin-inline: auto; }
+  .xii-hub::before { inset: 24px; }
+  .xii-hub::after { inset: calc(24px + var(--r) * .32); }
+  .xii-sat { width: 44px; height: 44px; left: -22px; top: -22px; border-radius: 13px; font-size: 20px; }
   .xii-hub-u { font-size: 12px; }
   .xii-hub-t { font-size: 13px; }
   .xii .x-copy.xii-copy { height: 44px; }
