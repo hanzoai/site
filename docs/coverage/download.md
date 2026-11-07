@@ -82,7 +82,7 @@ Done here: Chips, rows, card links, pickers and kit rows have hover (fine pointe
 - [x] At least 3 kinds of movement; scroll-linked is half or less
 - [x] Something moves without input; every control answers
 - [x] Reduced motion shows the final state; no `setInterval`
-- [x] Sound only on the listed moments, through the one kit (n/a: not merged; none played)
+- [x] Sound only on the listed moments, through the one kit (`data-sound="tick"` on the kit pickers; the card opening whooshes and the solid ask taps through the shared Morph and Sound; the page has no self-running demo, so no 'done')
 
 Done here: Utility page, one delight: the fan-out (arrival, 500 ms per chip, 30 ms stagger) and the ray with the centre readout (pointer). Supporting: magnetic ask (pointer), gliding pickers (state), line-mask h1 (arrival); the black room opening is the only scroll-linked effect. variety.py OK, 0 Rise.
 
@@ -133,7 +133,7 @@ Done here: `app/download/page.jsx` keeps its metadata and `<JsonLd route="/downl
 - ~~Every maker and model page linked in the DOM~~ n/a
 - ~~One price figure everywhere~~ n/a: no prices
 
-Done here: The three product cards fly their picture into /desktop's window, /cli's hero and /extension's browser stack (the Morph hold is the known shared bug in docs/review/SYSTEM.md).
+Done here: With the rebuilt Morph, the Desktop card grows into a stage and settles into /desktop's window, and the extension card's picture lands on /extension's stack (filmed at 1470×801, 0 errors). The card titles stay Hanzo's own ("Desktop", "Browser extension") and the heroes' h1s are "Hanzo Desktop" and "Hanzo Extension"; copy is frozen, so they are not made identical.
 
 ## 16. Developer experience
 - [x] One `CodeBlock`; copy equals display (the two CLI install lines copy exactly as shown)
