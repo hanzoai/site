@@ -2,7 +2,7 @@
 /* /legal, the Trust Center, v2. V2: 8/10 Stage stack (the documents arrive as a pile of paper that deals itself), the catalogue as filter chips with cards that re-flow and open into their document, the four data-use states as a ladder, calm contact rows, sepia accent
    Signature: the documents as a stack of paper that deals itself. The top sheet slides to the back every few seconds
    and the next document comes up, each with its own address on hanzo.ai/legal.
-   Beyond: "Find the one you need". Filter the eleven documents by kind (Agreements, Policies, Notices and registers)
+   Beyond: "Find the one you need". Filter the twelve documents by kind (Agreements, Policies, Notices and registers)
    and the cards re-flow; every card opens into its document.
    Motion budget: signature = the dealing stack; supporting = Stage (Settle), layout re-flow (filter), open-into-page
    (Morph navigation). Utility archetype: calm, precise, one delight. Every word and link is Hanzo's. */
