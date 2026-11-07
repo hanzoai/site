@@ -155,4 +155,4 @@ Done here: look.cjs both widths errors none.
 - [x] `V2:` line in `app/ui/page.jsx`
 - [ ] Review 8 or more (re-review pending)
 
-Done here: previous review 6/10; fixes 1–3, 5 and 6 addressed; fix 4 (chapters acting on the real board) is partly met by live specimens.
+Done here: previous review 6/10; fixes 1–6 addressed, including fix 4: the chapters now act on one real board (tags on the CSS parts, the real menu and Dialog, the focus walk, the token retune, chat/console/cloud, the stylesheet filling, the production rows). Fresh critic pending.

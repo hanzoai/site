@@ -122,7 +122,13 @@ a.ui-chip:active { transform: scale(.98); }
   .ui-term-bar > span.x-mono, .ui-tok-r { font-size: 14px; }
 }
 
-.ui-term-bar .x-copy { background: transparent !important; color: #fafafa !important; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .22) !important; }
+.ui-term-bar .x-copy { background: transparent !important; color: #fafafa !important; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .22) !important; transition: background .15s cubic-bezier(0, 0, .2, 1), box-shadow .15s, transform .09s; }
+.ui-term-bar .x-copy:active { transform: scale(.97); }
+.ui-ship { transition: background .15s cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) {
+  .ui-term-bar .x-copy:hover { background: rgba(255, 255, 255, .1) !important; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .55) !important; }
+  .ui-ship:hover { background: #262626; }
+}
 
 /* chapters: one real board, six chapters acting on it */
 .uc { padding: clamp(72px, 9vw, 140px) 0 clamp(44px, 6vw, 96px); }

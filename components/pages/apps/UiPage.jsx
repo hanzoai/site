@@ -1,14 +1,14 @@
 'use client';
 /* Persona: front-end developers building React products. Goal: add @hanzo/ui to a project. CTA: "GitHub" → github.com/hanzoai/ui. Metric: install_copy.
-   UI. V2: 7/10 the component board uses itself beside its token panel (drawn sliders), six pinned chapters with specimens, a dark init room that types once and renders its button, one ask closes; greys only
+   UI. V2: 7/10 the component board uses itself beside its token panel (drawn sliders), six chapters acting on one real sticky board (phone: a swipe rail under it), a dark init room that types once and renders its button, one ask closes; greys only
    Signature: the component board that uses itself. Buttons, a field, a panel and a table sit on a board; the
    DropdownMenu and the Dialog (the two real components) open on their own with a focus ring walking the keyboard path,
    and the tokens under everything retune now and then, so the whole board changes at once.
    Beyond: "Retune the tokens". Pick an accent, drag the radius and the density: every component on the board moves
    together because every value is a token, which is Hanzo's own claim made touchable.
-   Motion budget: signature = the self-using board; supporting = Stage (Settle), Chapters (PinChapters), magnetic
-   primary. No springs. Colour: none (0 UI hues); the token demo retunes between deck greys. Pauses sit in the token
-   panel's bar and under the chapter visual. One dark room: "From init to UI in 60 seconds". Every word and link is Hanzo's. */
+   Motion budget: signature = the self-using board; supporting = Stage (Settle), the chapter board (the chapter in
+   the middle of the screen drives one real board), magnetic primary. No springs. Colour: none (0 UI hues); the token demo
+   retunes between deck greys. Pauses sit in the token panel's bar, the chapter head row and the terminal bar. One dark room: "From init to UI in 60 seconds". Every word and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../../ui';
@@ -74,7 +74,7 @@ function Board({ tok, setTok, mine, setMine, paused }) {
           )}
         </AnimatePresence>
       </div>
-      <label className={'ui-field' + (focus === 2 && !mine ? ' ui-ring' : '')}><span>Field</span><input placeholder="@hanzo/ui" onFocus={() => setMine(true)} /></label>
+      <label className={'ui-field' + (focus === 2 && !mine ? ' ui-ring' : '')}><span>Field</span><input placeholder="@hanzo/ui" onFocus={() => setMine(true)} onInput={() => setMine(true)} /></label>
       <div className="ui-panel">
         <p className="ui-pk">Panel</p>
         <ul className="ui-table">
@@ -120,7 +120,11 @@ function Tokens({ tok, setTok, setMine, pauseBtn }) {
 
 function Hero() {
   const [tok, setTok] = useState({ a: 0, r: 14, d: 1 });
-  const [mine, setMine] = useState(false);
+  const [mine, setMineRaw] = useState(false);
+  const [poke, setPoke] = useState(0);
+  const setMine = (v) => { setMineRaw(v); setPoke((n) => n + 1); };
+  // after 8 s without a touch the board goes back to using itself, so a visitor who tried it never leaves it dead
+  useEffect(() => { if (!mine) return undefined; const t = setTimeout(() => setMineRaw(false), 8000); return () => clearTimeout(t); }, [mine, poke]);
   const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
   return (
     <section className="ui-hero" aria-labelledby="ui-h1" data-morph-target>
