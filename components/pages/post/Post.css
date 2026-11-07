@@ -99,7 +99,7 @@
 .xbg-code pre { margin: 0; padding: 20px 22px 24px; overflow-x: auto; font: 14px/1.7 var(--mono); outline: none; }
 .xbg-code pre:focus-visible { box-shadow: inset 0 0 0 2px #fff; }
 .xbg-ln { display: block; min-height: 1.7em; white-space: pre; }
-.xbg [data-k='keyword'] { color: #ff9ecf; } .xbg [data-k='string'] { color: #a8e6c2; } .xbg [data-k='key'] { color: #c7b9ff; } .xbg [data-k='bright'] { color: #fff; }
+.xbg [data-k='keyword'] { color: #a3a3a3; } .xbg [data-k='string'] { color: #d4d4d4; } .xbg [data-k='key'] { color: #d4d4d4; } .xbg [data-k='bright'] { color: #fff; }
 .xbg [data-k='punctuation'] { color: #86868b; } .xbg [data-k='comment'] { color: #86868b; font-style: italic; }
 
 /* Game of Life */

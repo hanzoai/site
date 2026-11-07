@@ -523,7 +523,7 @@ function Start() {
 
 export default function DesignPage() {
   return (
-    <main className="av dz" style={{ '--ac': '#ff2d78' }}>
+    <main className="av dz" style={{ '--ac': '#525252' }}>
       <Hero />
       <What />
       <Caps />

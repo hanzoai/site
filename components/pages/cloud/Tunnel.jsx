@@ -206,7 +206,7 @@ function One() {
 
 export default function Tunnel() {
   return (
-    <main className="l2-page tn2" style={{ '--ac': '#ff6a13' }}>
+    <main className="l2-page tn2" style={{ '--ac': '#737373' }}>
       <Hero />
       <Scene />
       <Facts />

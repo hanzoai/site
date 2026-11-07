@@ -39,9 +39,9 @@ function Globe() {
     const R = Math.min(w, h) * 0.47, cx = w / 2, cy = h / 2, a = t * 0.12, ca = Math.cos(a), sa = Math.sin(a), tl = 0.32;
     const proj = ([x, y, z]) => { const X = x * ca - z * sa, Z = x * sa + z * ca; const Y = y * Math.cos(tl) - Z * Math.sin(tl), Z2 = y * Math.sin(tl) + Z * Math.cos(tl); return [cx + X * R, cy - Y * R, Z2]; };
     const glow = g.createRadialGradient(cx, cy, R * 0.6, cx, cy, R * 1.08);
-    glow.addColorStop(0, 'rgba(64,200,255,0)'); glow.addColorStop(0.9, 'rgba(64,200,255,.2)'); glow.addColorStop(1, 'rgba(64,200,255,0)');
+    glow.addColorStop(0, 'rgba(163, 163, 163, 0)'); glow.addColorStop(0.9, 'rgba(163, 163, 163, .2)'); glow.addColorStop(1, 'rgba(163, 163, 163, 0)');
     g.fillStyle = glow; g.beginPath(); g.arc(cx, cy, R * 1.08, 0, 6.283); g.fill();
-    g.strokeStyle = 'rgba(64,200,255,.35)'; g.lineWidth = 1.2; g.beginPath(); g.arc(cx, cy, R, 0, 6.283); g.stroke();
+    g.strokeStyle = 'rgba(163, 163, 163, .35)'; g.lineWidth = 1.2; g.beginPath(); g.arc(cx, cy, R, 0, 6.283); g.stroke();
     for (const p of PTS) {
       const [x, y, z] = proj(p);
       if (z < -0.02) continue;
@@ -59,9 +59,9 @@ function Globe() {
       g.beginPath();
       for (let s = 0; s <= 28 * k; s++) { const u = s / 28, X = (1 - u) ** 2 * x1 + 2 * (1 - u) * u * mx + u * u * x2, Y = (1 - u) ** 2 * y1 + 2 * (1 - u) * u * my + u * u * y2; s ? g.lineTo(X, Y) : g.moveTo(X, Y); }
       g.stroke();
-      if (k >= 1) { g.fillStyle = '#40c8ff'; g.beginPath(); g.arc(x2, y2, 3, 0, 6.283); g.fill(); }
+      if (k >= 1) { g.fillStyle = '#a3a3a3'; g.beginPath(); g.arc(x2, y2, 3, 0, 6.283); g.fill(); }
     }
-    for (const hb of HUBS) { const [x, y, z] = proj(PTS[hb]); if (z > 0) { g.strokeStyle = 'rgba(64,200,255,.85)'; g.lineWidth = 1.2; g.beginPath(); g.arc(x, y, 6, 0, 6.283); g.stroke(); } }
+    for (const hb of HUBS) { const [x, y, z] = proj(PTS[hb]); if (z > 0) { g.strokeStyle = 'rgba(163, 163, 163, .85)'; g.lineWidth = 1.2; g.beginPath(); g.arc(x, y, 6, 0, 6.283); g.stroke(); } }
   };
   useFrame(live, (t) => draw(t));
   useEffect(() => { const id = requestIdle(() => draw(2)); return () => cancelIdle(id); }, [calm]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -180,7 +180,7 @@ function Room() {
 
 export default function World() {
   return (
-    <main className="l2-page wd2" style={{ '--ac': '#40c8ff' }}>
+    <main className="l2-page wd2" style={{ '--ac': '#a3a3a3' }}>
       <StageHero look="rise" travel={{ s: [1.3, 1], y: ['2svh', '-16svh'] }} dark kick="world.hanzo.ai" title="Hanzo World" sub="World Monitor — global AI-system observability" acts={[['Open World Monitor', 'https://world.hanzo.ai'], ['Documentation', 'https://docs.hanzo.ai/docs/cli/world']]}>
         <Hero />
       </StageHero>

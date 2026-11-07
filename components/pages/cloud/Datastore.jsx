@@ -338,7 +338,7 @@ function Ways() {
 
 export default function Datastore() {
   return (
-    <main className="kn ds" style={{ '--ac': '#0a84ff' }}>
+    <main className="kn ds" style={{ '--ac': '#737373' }}>
       <KeynoteStage
         kick="Hanzo Datastore"
         title={['A column store', 'for analytical SQL']}

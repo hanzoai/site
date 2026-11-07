@@ -318,7 +318,7 @@ function Ship() {
 
 export default function ComputerPage() {
   return (
-    <main className="av cp" style={{ '--ac': '#7a5cff' }}>
+    <main className="av cp" style={{ '--ac': '#737373' }}>
       <Hero />
       <Scenes label="How it sees and acts" items={LENSES} tone={['#fff', '#f5f5f7', '#fff']} className="cp-sc" />
       <Preflight />

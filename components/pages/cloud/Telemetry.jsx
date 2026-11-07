@@ -148,7 +148,7 @@ function YourConfig() {
 
 export default function Telemetry() {
   return (
-    <main className="l2-page tl2" style={{ '--ac': '#f2a900' }}>
+    <main className="l2-page tl2" style={{ '--ac': '#a3a3a3' }}>
       <StageHero look="split" kick="telemetry.hanzo.ai" title="Hanzo Telemetry" sub="The collector that sits between your app and wherever the data goes" acts={[['View on GitHub', GH]]}>
         <Pipe />
       </StageHero>
