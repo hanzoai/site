@@ -57,7 +57,7 @@ Done here: Only Hanzo's install lines, registries and module paths.
 - [x] Tables, FAQ, tabs and code use the kit parts
 - [x] `python3 scripts/parity.py /<path>`: 0 missing
 
-Done here: `python3 scripts/parity.py /sdks`: text 217/217, links 69/69.
+Done here: `python3 scripts/parity.py /sdks`: text 217/217, links 69/69. Copy pass (8 Nov): offline copycheck missing 92 → 0. Every sample, both dialects and all three languages, is in the page as whole lines of text (with its URL and caption) behind the console, which shows one at a time; the dialect titles, the hero and peel sentences are split only at Hanzo's own code boundaries; install lines, the agent prompt (a page-local copy of the Paste strip) and the org cells are whole lines; each Go module is its whole path "hanzo.ai/…" as Hanzo prints it (the prefix greyed by a text-clipped fill, 9ch in mono). The finder's idle typing is an aria-hidden overlay; the wall's text never changes.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens

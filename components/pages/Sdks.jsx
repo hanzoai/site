@@ -12,7 +12,6 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useVelocity, useTransform, useSpring } from 'motion/react';
 import { EASE, Copy } from '../ui';
 import { A, Cta, More } from '../kit';
-import A2Paste from '../v2/A2Paste';
 import NoJs from '../NoJs';
 import '../v2/A2.css';
 import './Sdks.css';
@@ -221,14 +220,14 @@ function Hero() {
         <div className="xsd-words">
           <p className="a2-kick"><b>SDKs</b></p>
           <H1Lines id="xsd-h1" className="a2-display s xsd-h1" lines={['SDKs for', 'every language']} />
-          <p className="a2-lede xsd-lede">A <b>full Cloud SDK</b> generated from the OpenAPI document the API itself serves, and a hand-written <b>AI + Agents</b> library.</p>
+          <p className="a2-lede xsd-lede"><span>A</span> <b>full Cloud SDK</b> <span>generated from the OpenAPI document the API itself serves, and a hand-written</span> <b>AI + Agents</b> <span>library.</span></p>
           <div className="x-row-links tight xsd-hero-links">
             <Cta to="https://docs.hanzo.ai/docs/openapi/" id="sdks.hero" thumb>API reference</Cta>
             <More to="https://github.com/hanzoai/sdk">hanzoai/sdk</More>
           </div>
           <p className="xsd-ex x-mono">Code Examples</p>
           <div className="xsd-dias">
-            {Object.values(DIALECTS).map((v) => <div key={v.name}><b>{v.title}</b><span>{v.line}</span></div>)}
+            {Object.values(DIALECTS).map((v) => <div key={v.name}><span className="xsd-dia-t">{v.title}</span><span>{v.line}</span></div>)}
           </div>
         </div>
         <motion.div className="xsd-code-first" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.15 }}>
@@ -236,7 +235,36 @@ function Hero() {
         </motion.div>
       </div>
       {/* every sample, in the page for search and find-in-page; the console shows one at a time */}
-      <div className="x-sr" inert>{Object.values(DIALECTS).map((v) => LANGS.map(([k]) => <pre key={v.name + k}>{v[k][0]} {v[k][1]}</pre>))}</div>
+      <div className="x-sr" inert>
+        {Object.values(DIALECTS).map((v) => (
+          <div key={v.name}>
+            <p>{v.url}</p>
+            {LANGS.map(([k]) => (
+              <div key={k}>
+                <p>{v[k][0]}</p>
+                {/* one text line per code line, so each line of Hanzo's sample is whole */}
+                <p>{v[k][1].split('\n').map((l, i) => <span key={i}>{l}{'\n'}</span>)}</p>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* Hanzo's "Paste and ship" strip (the shared A2Paste markup and styles, page-local so the prompt is one whole line) */
+function Paste({ text }) {
+  return (
+    <section className="a2-wrap a2-paste" aria-label="Paste and ship">
+      <div>
+        <p className="a2-paste-k">Paste and ship</p>
+        <p className="a2-paste-d">Paste this into any agent. It reads the skill manifest and calls SDKs from there.</p>
+      </div>
+      <div className="a2-paste-box">
+        <div><span className="a2-paste-l">Agent prompt</span><code><span>{text}</span></code></div>
+        <Copy text={text} />
+      </div>
     </section>
   );
 }
@@ -333,21 +361,21 @@ function Peel() {
           <div className="xsd-peel-says">
             <div className={'xsd-say' + (sel === 0 ? ' on' : '')}>
               <h2>OpenAPI</h2>
-              <p>A <b>full Cloud SDK</b> generated from the OpenAPI document the API itself serves.</p>
+              <p><span>A</span> <b>full Cloud SDK</b> <span>generated from the OpenAPI document the API itself serves.</span></p>
               <More to="https://docs.hanzo.ai/docs/openapi/">API reference</More>
             </div>
             <div className={'xsd-say' + (sel === 1 ? ' on' : '')}>
               <h2>Full Cloud SDK</h2>
-              <p>Generated from one document and never edited by hand, so every route is reachable the day it ships — models, agents, data, compute, network, security, platform and chain. Method and class names are the document&apos;s operation ids, which is what makes a client checkable against a release instead of against somebody&apos;s memory. Real code lives in <code>hanzo-&lt;lang&gt;/sdk</code>.</p>
+              <p><span>Generated from one document and never edited by hand, so every route is reachable the day it ships — models, agents, data, compute, network, security, platform and chain. Method and class names are the document&apos;s operation ids, which is what makes a client checkable against a release instead of against somebody&apos;s memory. Real code lives in</span> <code>hanzo-&lt;lang&gt;/sdk</code><span>.</span></p>
             </div>
             <div className={'xsd-say' + (sel === 2 ? ' on' : '')}>
               <h2>AI + Agents</h2>
-              <p>The hand-crafted flagship: models, agents, tools, memory, and MCP. Python <code>hanzo</code> is the most complete; Node ships <code>@hanzo/ai</code>. Distinct from the generated cloud SDK — this is the &quot;we love this language&quot; library.</p>
+              <p><span>The hand-crafted flagship: models, agents, tools, memory, and MCP. Python</span> <code>hanzo</code> <span>is the most complete; Node ships</span> <code>@hanzo/ai</code><span>. Distinct from the generated cloud SDK — this is the &quot;we love this language&quot; library.</span></p>
             </div>
             <div className={'xsd-say' + (sel === 3 ? ' on' : '')}>
               <h2>your application</h2>
               <p>Use our official SDKs to integrate Cloud into your application</p>
-              <div className="xsd-cmd"><code>pip install hanzoai</code><Copy text="pip install hanzoai" /></div>
+              <div className="xsd-cmd"><code><span>pip install hanzoai</span></code><Copy text="pip install hanzoai" /></div>
             </div>
           </div>
         </div>
@@ -395,7 +423,7 @@ function Official() {
                 <motion.div key={k === i ? 'on' : 'off'} initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.45, ease: EASE }}>
                   <h3>Hanzo {n} SDK</h3>
                   <p className="xsd-reg x-mono">{reg}</p>
-                  <div className="xsd-cmd"><code>{cmd}</code><Copy text={cmd} /></div>
+                  <div className="xsd-cmd"><code><span>{cmd}</span></code><Copy text={cmd} /></div>
                   <div className="xsd-pkg">
                     <A to={link} className="xsd-pkg-a x-mono">{pkg}</A>
                     {docs && <More to={docs}>Docs</More>}
@@ -425,9 +453,9 @@ function Orgs() {
                 <span role="cell" className="xsd-lang"><b>{l}</b>{flag && <em>Flagship</em>}<em className="ga">GA</em></span>
                 <span role="cell" className="x-mono">{org}</span>
                 <span role="cell" className="x-mono xsd-inst">{cmd}</span>
-                <span role="cell" className="x-mono"><i>sdk</i>{sdk}</span>
-                <span role="cell" className="x-mono"><i>docs</i>{docs}</span>
-                <span role="cell" className="x-mono">{ai ? <><i>ai</i>{ai}</> : '—'}</span>
+                <span role="cell" className="x-mono"><i>sdk</i><span>{sdk}</span></span>
+                <span role="cell" className="x-mono"><i>docs</i><span>{docs}</span></span>
+                <span role="cell" className="x-mono">{ai ? <><i>ai</i><span>{ai}</span></> : '—'}</span>
               </a>
             </div>
           ))}
@@ -447,7 +475,7 @@ function Flagship() {
             <div key={l} className={'xsd-lib' + (i === 0 ? ' lead' : '')}>
               <div className="xsd-lib-top"><h3>{l}</h3><em>GA</em></div>
               <p className="x-mono xsd-repo">{repo}</p>
-              <div className="xsd-cmd"><code>{cmd}</code><Copy text={cmd} /></div>
+              <div className="xsd-cmd"><code><span>{cmd}</span></code><Copy text={cmd} /></div>
               <p>{d}</p>
             </div>
           ))}
@@ -494,7 +522,7 @@ function Mods() {
         </label>
         <ul className={'xsd-modlist' + (ghost && !q ? ' ghost' : '')}>
           {MODS.map((m) => (
-            <li key={m} hidden={!shown.includes(m)}><A to={'/' + m} className={'xsd-mod' + (ghost && !q && m.includes(ghost) ? ' lit' : '')}><span>hanzo.ai/</span>{m}</A></li>
+            <li key={m} hidden={!shown.includes(m)}><A to={'/' + m} className={'xsd-mod' + (ghost && !q && m.includes(ghost) ? ' lit' : '')}>{'hanzo.ai/' + m}</A></li>
           ))}
         </ul>
         {!shown.length && <p className="xsd-none">No module at that path.</p>}
@@ -544,7 +572,7 @@ export default function Sdks() {
     <main ref={root} className="a2 xsd">
       <Hero />
       <Peel />
-      <A2Paste name="SDKs" text={PROMPT} />
+      <Paste text={PROMPT} />
       <Official />
       <Orgs />
       <Flagship />
