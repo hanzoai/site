@@ -318,7 +318,7 @@ function Send() {
 
 export default function Crawl() {
   return (
-    <main className="kn cr" style={{ '--ac': '#30b0c7' }}>
+    <main className="kn cr" style={{ '--ac': '#a3a3a3' }}>
       <KeynoteStage
         kick="AI-Ready Web Crawler"
         title={['Hanzo Crawl']}

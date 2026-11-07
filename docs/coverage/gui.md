@@ -2,14 +2,14 @@
 
 Page file: `components/pages/apps/Gui.jsx` · gallery: `docs/gallery/gui/`
 
-1. **Strategy and conversion.** One ask, Hanzo's "View on GitHub" (https://github.com/hanzoai/gui): solid in the hero (`data-thumb`, `data-cta="primary"`), carried after the hero by the v2 AskBar on desktop and the site's ask bar on phones, and the one solid button in the close (`data-cta="primary"`). "Deploy to Cloud" is the close's text row.
+1. **Strategy and conversion.** One ask, Hanzo's "View on GitHub" (https://github.com/hanzoai/gui): solid in the hero (`data-thumb`, `data-cta="primary"`), carried after the hero by the v2 site ask bar on desktop and the site's ask bar on phones, and the one solid button in the close (`data-cta="primary"`). "Deploy to Cloud" is the close's text row.
 2. **Information architecture and navigation.** Hanzo's header and footer are unchanged. Order: the one component on four platforms, five ideas about it (chapters), set its props yourself (the dark room), install and the platforms, getting it, the close.
 3. **First impression and page narrative.** A centred two-line title ("Hanzo GUI" / "One UI kit. Every platform."), the package line, the ask, then the code bar and the four frames. At 1470×801 all four frames and their Welcome are on the first screen and change within 3 seconds; at 375×812 the code bar and both phones show inside the first 660px. Nothing sits above the h1.
-4. **Conversion system.** `data-thumb="View on GitHub"` drives the site's ask bar on phones; `AskBar` carries the same label on desktop (the site's bar stands aside there via `data-dock`, so only one shows). One solid button per viewport.
+4. **Conversion system.** `data-thumb="View on GitHub"` drives the site's ask bar on phones; the site's ask bar (`components/Ask.jsx`) carries the same label on desktop (the site's bar stands aside there via `data-dock`, so only one shows). One solid button per viewport.
 5. **Trust and proof.** The proof is the component itself: the same Welcome (Hanzo's code: a YStack, a Text, a Button) rendering identically in four frames, and a real typecheck that refuses a value outside the tokens. Hanzo's "4 stars" and licence sit in Get GUI.
 6. **Content presentation (copy untouched).** Parity 70/70 text and 2/2 links. One idea per screen; the platforms open into their own panels; chapter labels sit under their headlines.
 7. **Visual design system.** Biz grammar (`components/v2/Biz.css`). Ink, greys and white only, including the shared code pane (its default syntax hues are overridden on this page). Device frames are drawn with container units so one drawing serves every size. One dark room: the token editor.
-8. **UI component library.** Kit `A`, `Go`, `More`; v2 `BizStage`, `BizChapters`, `BizOpen`, `AskBar`; `Paste` and `Code` from the cloud frame. Token chips are `role=radio` buttons; inputs are styled; every control has hover, press scale and a focus ring.
+8. **UI component library.** Kit `A`, `Go`, `More`; v2 `BizStage`, `BizChapters`, `BizOpen`, the site's ask bar (`components/Ask.jsx`); `Paste` and `Code` from the cloud frame. Token chips are `role=radio` buttons; inputs are styled; every control has hover, press scale and a focus ring.
 9. **Motion and interaction.**
    - Idle: the props change by themselves in the code bar and all four frames spring to the new state together (Pause on the bar, 44px).
    - State: tokens set all four; a drifted value fails the typecheck; platform cards open with a shared-element morph.

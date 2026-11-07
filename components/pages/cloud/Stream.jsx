@@ -170,7 +170,7 @@ function OneLine() {
 
 export default function Stream() {
   return (
-    <main className="l2-page st2" style={{ '--ac': '#12b5a6' }}>
+    <main className="l2-page st2" style={{ '--ac': '#a3a3a3' }}>
       <StageHero look="frame" dark kick="Kafka Wire Protocol" title="Hanzo Stream" sub="A Kafka port in front of Hanzo PubSub" acts={[['GitHub', GHS]]}>
         <Tape />
       </StageHero>

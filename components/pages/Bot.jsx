@@ -680,7 +680,7 @@ function Close() {
 
 export default function Bot() {
   return (
-    <main className="av bt" style={{ '--ac': '#ff5f1f' }}>
+    <main className="av bt" style={{ '--ac': '#737373' }}>
       <Hero />
       <Cases />
       <Scenes label="What a bot does" items={CHAPTERS} flip tone={['#fff', '#f7f6f4', '#fff', '#f7f6f4', '#fff']} className="bt-sc" />

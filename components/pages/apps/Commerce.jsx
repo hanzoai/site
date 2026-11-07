@@ -2,7 +2,7 @@
 /* Commerce (v2, archetype A "Launch" for a headless API; greys and ink only, JAMES.md 7).
    Persona: a developer with a front end of their own who needs carts, checkout, orders and returns behind an API (metric docs_click)
    Goal: follow one order through its five stops and the endpoints it calls, then open the docs
-   CTA: Read the docs -> https://docs.hanzo.ai/docs/cli/commerce (hero, sticky AskBar, phone thumb bar, close; data-thumb, data-cta)
+   CTA: Read the docs -> https://docs.hanzo.ai/docs/cli/commerce (hero, the site's sticky ask bar at every width, close; data-thumb, data-cta)
    Signature: an order, start to end, riding a full-bleed rail across the first screen. One order card travels five
    stops by itself (product and variant, cart, authorize, capture, refund or return), changes shape at each and shows
    the real endpoint it calls there. It pauses on its own button (WCAG 2.2.2), a tap on a stop sends it there, and it
@@ -23,7 +23,6 @@ import { useLive } from '../cloud/Frame';
 import BizLines from '../../v2/BizLines';
 import BizSheet from '../../v2/BizSheet';
 import BizOpen from '../../v2/BizOpen';
-import AskBar from '../../v2/AskBar';
 import './Commerce.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/cli/commerce';
@@ -568,7 +567,7 @@ function End() {
 
 export default function Commerce() {
   return (
-    <main className="bz cm">
+    <main className="bz cm" data-ask-name="Commerce">
       <Hero />
       <Journey />
       <Nouns />
@@ -578,7 +577,6 @@ export default function Commerce() {
       <Running />
       <Ways />
       <End />
-      <AskBar title="Commerce" label="Read the docs" to={DOCS} />
     </main>
   );
 }

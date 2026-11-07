@@ -85,7 +85,7 @@ function Roll() {
       if (tr === 2 && !hot) { g.strokeStyle = '#8e8e93'; g.lineWidth = d; g.stroke(); }
     });
     g.globalAlpha = 1;
-    g.fillStyle = '#ff453a'; g.fillRect(x0, 0, 2 * d, h);
+    g.fillStyle = '#f5f5f5'; g.fillRect(x0, 0, 2 * d, h);
   });
 
   const save = () => {

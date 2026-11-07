@@ -13,6 +13,7 @@ import Sigil from '../../Sigil';
 import { arrows } from './live';
 import Launch, { Lines, lerp, film } from '../../v2/Launch';
 import ModelCards from './ModelCards';
+import ModelFilm from '../../v2/ModelFilm';
 import Chapters from '../../v2/x-cray/Chapters';
 import './Zen.css';
 
@@ -128,11 +129,12 @@ const ARCH = (t, W, H, wide) => {
 };
 
 // a chapter's picture: Zen's film with a model card on it
-function CardArt({ ci, open, z }) {
+function CardArt({ ci, open, z, on }) {
   const c = CARDS[ci];
   return (
     <div className="ze-art" style={{ '--z': z }}>
       <Img src={film('zen', 'webp')} w={1200} h={1500} />
+      <ModelFilm slug="zen" play={on} />
       {open ? (
         <div className="ze-open" aria-hidden="true">
           {CARDS.map((k) => <p key={k.code}><code>{k.code}</code><span>{k.size}</span><em>Open weights</em></p>)}
@@ -162,15 +164,16 @@ const cardBody = (c) => (
   </>
 );
 const CHAPTERS = [
-  { k: 'Open weights', title: 'Open weights', art: <CardArt open z={1.1} />, body: <><p>Open weights: download the weights, or call them on Hanzo Cloud.</p><p><More to="https://github.com/zenlm">Docs on GitHub</More></p></> },
-  { k: CARDS[0].name, title: CARDS[0].name, art: <CardArt ci={0} z={1.35} />, body: cardBody(CARDS[0]) },
-  { k: CARDS[1].name, title: CARDS[1].name, art: <CardArt ci={1} z={1.7} />, body: cardBody(CARDS[1]) },
+  { k: 'Open weights', title: 'Open weights', art: (on) => <CardArt open z={1.1} on={on} />, body: <><p>Open weights: download the weights, or call them on Hanzo Cloud.</p><p><More to="https://github.com/zenlm">Docs on GitHub</More></p></> },
+  { k: CARDS[0].name, title: CARDS[0].name, art: (on) => <CardArt ci={0} z={1.35} on={on} />, body: cardBody(CARDS[0]) },
+  { k: CARDS[1].name, title: CARDS[1].name, art: (on) => <CardArt ci={1} z={1.7} on={on} />, body: cardBody(CARDS[1]) },
 ];
 
 export default function Zen() {
   return (
     <Launch
       slug="zen"
+      ask={{ label: 'Try Hanzo', to: '/login', id: 'zen-hero-try' }}
       shape={ARCH}
       aim={(W, H, wide) => (wide ? null : [-0.24 * W, -0.21 * H])}
       headClass="ze-head"

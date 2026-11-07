@@ -1,5 +1,5 @@
 /* Registry v2. Accent: lime, the colour of a checked signature. */
-.rg { --acc: #5a9e0f; --acc-soft: #f1f8e6; }
+.rg { --acc: #737373; --acc-soft: #f1f8e6; }
 
 /* hero: the push on the left, the words on the right */
 .rg-hero { padding: clamp(48px, 5vw, 88px) 0 clamp(120px, 13vw, 200px); }
@@ -18,8 +18,8 @@
 .rg-term-body { padding: 24px 22px; flex: 1; }
 .rg-term-body p { margin: 0 0 12px; font: 400 14px/1.45 var(--mono); opacity: 0; transform: translateY(6px); transition: opacity .35s, transform .45s cubic-bezier(.16, 1, .3, 1); }
 .rg-term-body p.in { opacity: 1; transform: none; }
-.rg-term-body p.warn { color: #ffb340; }
-.rg-term-body p.ok { color: #a6e36b; }
+.rg-term-body p.warn { color: #a3a3a3; }
+.rg-term-body p.ok { color: #d4d4d4; }
 .rg-layers { margin-top: 20px; display: grid; gap: 10px; }
 .rg-layer { display: grid; grid-template-columns: 70px 1fr; gap: 12px; align-items: center; font: 400 13px/1 var(--mono); color: #86868b; }
 .rg-layer i { display: block; height: 6px; border-radius: 6px; background: #1d1d20; overflow: hidden; }
@@ -38,7 +38,7 @@
 .rg-repo li { display: flex; justify-content: space-between; align-items: center; padding: 13px 14px; border-radius: 12px; background: var(--card); font: 500 14px/1 var(--mono); opacity: .2; transform: translateY(8px); transition: opacity .4s, transform .5s cubic-bezier(.16, 1, .3, 1); }
 .rg-repo li.in { opacity: 1; transform: none; }
 .rg-repo li span { font-family: var(--sans); font-weight: 400; color: var(--soft); }
-.rg-repo li.new.in { background: var(--acc-soft); box-shadow: inset 0 0 0 1px rgba(90, 158, 15, .35); }
+.rg-repo li.new.in { background: var(--acc-soft); box-shadow: inset 0 0 0 1px rgba(115, 115, 115, .35); }
 .rg-repo li.sig.in span { color: var(--acc); font-weight: 500; }
 .rg-org { margin: auto 0 0; padding-top: 18px; font-size: 14px; color: var(--faint); }
 
@@ -63,7 +63,7 @@
 .rg-hs li { display: grid; grid-template-columns: 120px 1fr; align-items: center; gap: 14px; padding: 13px 16px; border-radius: 12px; background: var(--card); font: 500 14px/1 var(--mono); opacity: 0; transform: translateX(-12px); transition: opacity .35s, transform .5s cubic-bezier(.16, 1, .3, 1); }
 .rg-rv[data-step='0'] .rg-hs li { opacity: 1; transform: none; transition-delay: calc(.1s + var(--i) * 90ms); }
 .rg-hs li span { color: var(--faint); }
-.rg-hs li.warn b { color: #b86e00; }
+.rg-hs li.warn b { color: #737373; }
 .rg-hs li.ok b { color: var(--acc); }
 .rg-scope { padding: 20px; border-radius: 16px; background: var(--acc-soft); display: grid; gap: 10px; }
 .rg-scope code { font: 500 18px/1.2 var(--mono); color: var(--ink); }
@@ -97,7 +97,7 @@
 .rg-people i { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: var(--ink); color: #fff; font: 500 14px/1 var(--mono); font-style: normal; text-transform: uppercase; }
 .rg-people span { font: 500 13px/1 var(--mono); color: var(--acc); }
 .rg-people li.off { opacity: .45; }
-.rg-people li.off span { color: #b42318; }
+.rg-people li.off span { color: #404040; }
 .rg-people li.off b { text-decoration: line-through; }
 
 /* the dark room */
@@ -118,9 +118,9 @@
 .rg-swap-r { display: grid; grid-template-rows: auto 1fr; min-height: 200px; padding: 24px; border-radius: 20px; background: #141416; border: 1px solid rgba(255, 255, 255, .08); overflow: hidden; }
 .rg-swap-r dt { font: 500 13px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: #8e8e93; }
 .rg-swap-r dd { grid-area: 2 / 1; margin: 18px 0 0; font-size: clamp(19px, 1.6vw, 23px); line-height: 1.3; letter-spacing: -.015em; }
-.rg-swap-r .was { color: #a1a1a6; text-decoration: line-through; text-decoration-color: rgba(255, 69, 58, 0); transition: text-decoration-color .3s, opacity .3s; }
+.rg-swap-r .was { color: #a1a1a6; text-decoration: line-through; text-decoration-color: rgba(115, 115, 115, 0); transition: text-decoration-color .3s, opacity .3s; }
 .rg-swap-r .now { color: #f5f5f7; clip-path: inset(0 100% 0 0); transition: clip-path .7s cubic-bezier(.76, 0, .24, 1); }
-.rg-swap.on .was { text-decoration-color: rgba(255, 69, 58, .9); opacity: 0; transition-delay: 0s, .35s; }
+.rg-swap.on .was { text-decoration-color: rgba(115, 115, 115, .9); opacity: 0; transition-delay: 0s, .35s; }
 .rg-swap.on .now { clip-path: inset(0 0 0 0); }
 .rg-swap.on .rg-swap-r:nth-child(2) .now { transition-delay: .08s; }
 .rg-swap.on .rg-swap-r:nth-child(3) .now { transition-delay: .16s; }

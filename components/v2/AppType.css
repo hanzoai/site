@@ -2,7 +2,7 @@
    Owned by the Apps 1 chat. Usage: import '../v2/AppType.css' once in a page, put className="av" on its <main> and set its
    one accent there (style={{ '--ac': '#…' }}). Classes are prefixed av- so they never collide with other chats' v2 files.
    Scale from docs/VISION.md: Display 128/96/80 (phone 56/48), Headline 56/36, Title 28, Lede 24/21, Body 19/17, Kicker 13. */
-.av { --ac: #0a84ff; --ac-soft: color-mix(in srgb, var(--ac) 12%, #fff); --r-hero: 28px; --r-card: 16px; --gut: 24px;
+.av { --ac: #737373; --ac-soft: color-mix(in srgb, var(--ac) 12%, #fff); --r-hero: 28px; --r-card: 16px; --gut: 24px;
   --av-ease: cubic-bezier(.16, 1, .3, 1); background: #fff; color: var(--ink); overflow-x: clip; }
 .av-wrap { width: min(100% - 48px, 1392px); margin-inline: auto; }
 .av-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gut); }

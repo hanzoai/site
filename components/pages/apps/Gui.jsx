@@ -2,7 +2,7 @@
 /* GUI (v2, archetype A "Launch"): one component, four platforms, in step.
    Persona: a front-end or mobile developer who wants one UI kit for iOS, Android, web and desktop
    Goal: see one component render the same on four platforms, set its props from the tokens, then go to the source
-   CTA: View on GitHub -> https://github.com/hanzoai/gui (hero, sticky AskBar on desktop, the site's ask bar on phones, close; data-thumb, data-cta)
+   CTA: View on GitHub -> https://github.com/hanzoai/gui (hero, the site's sticky ask bar at every width, close; data-thumb, data-cta)
    Signature: one component, four platforms, in step. Under a centred two-line title, four device frames stand in one row
    (an iOS phone, an Android phone, a web window, a desktop window) and settle as you scroll. Hanzo's own Welcome
    component (a YStack with a Text and a Button) renders in all four; its props (p, bg, rounded) change by themselves in
@@ -22,7 +22,6 @@ import { Paste, Code, useLive } from '../cloud/Frame';
 import BizStage from '../../v2/BizStage';
 import BizChapters from '../../v2/BizChapters';
 import BizOpen from '../../v2/BizOpen';
-import AskBar from '../../v2/AskBar';
 import './Gui.css';
 
 const GH = 'https://github.com/hanzoai/gui';
@@ -292,30 +291,15 @@ function End() {
   );
 }
 
-/* The sticky ask after the hero: v2 AskBar on desktops (the lead's bar), and data-dock there tells the site's own ask bar
-   (components/Ask.jsx) to stand aside, so a desktop never shows two bars and phones keep the site's thumb bar. */
-function Sticky(props) {
-  const [desk, setDesk] = useState(false);
-  useEffect(() => {
-    const mq = matchMedia('(min-width: 901px)');
-    const f = () => setDesk(mq.matches);
-    f();
-    mq.addEventListener('change', f);
-    return () => mq.removeEventListener('change', f);
-  }, []);
-  return <div data-dock={desk ? '' : undefined} style={{ display: 'contents' }}><AskBar {...props} /></div>;
-}
-
 export default function Gui() {
   return (
-    <main className="bz gu">
+    <main className="bz gu" data-ask-name="Hanzo GUI">
       <Hero />
       <Chapters />
       <Editor />
       <Ship />
       <GetGui />
       <End />
-      <Sticky title="Hanzo GUI" label="View on GitHub" to={GH} />
     </main>
   );
 }
