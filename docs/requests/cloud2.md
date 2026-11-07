@@ -18,6 +18,10 @@ above is clean. Asked for: keep the shell wrapper untouched until hydration comp
 effect, not in an inline script), or render the shell outside React's hydrated tree. Every reviewer counts this badge against
 the page it sees it on.
 
+The /guard fixer saw the same mismatch on the footer shell too (`data-x-shell="footer"`: the expected `__html` wrapper
+against a live `<footer class="is_View …">`), and the /gui fixer found a second one in `components/v2/BizStage` (under
+reduced motion it renders a transform on the server and none in the browser; owner Business 1 chat). /gui now uses its own `Settle`.
+
 ## 2. Header ask (shared chrome)
 Critics of /functions, /gui, /guard, /gateway and /flow asked for one solid fill on the phone's first screen: the header's
 "Try Hanzo" stays solid beside each page's own hero ask. Same ask as `docs/review/_shared.md` section 1: let a page name its

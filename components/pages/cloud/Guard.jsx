@@ -3,15 +3,15 @@
 // Goal: watch both directions get read, then try it on their own text.
 // CTA: View on GitHub (guard.hero, guard.close).
 // Metric: cta_click guard.hero
-// Signature: both directions, live: a request types, its secrets become typed markers, the injection is scored, the reply is read too.
+// Signature: both directions, live: a request types, its secrets become typed markers, the injection is scored, the reply is read too; below, the six facts pin as one detector board stepped by a numbered rail.
 // Beyond: Paste your own with real dials: detectors on or off and the marker text, run in the page.
 /* Guard (v2, archetype A Launch).
-   V2: 8/10 Black-room composer: a request types, its secrets turn into typed markers, the injection is scored, the reply is read too; detectors as chapters; paste-your-own with real dials; greys only, one ask.
+   V2: 8/10 round 2: the composer is at its true size from the first paint (no jump; it settles small only as you leave), lede and ask are in the HTML at t=0, the reply sits inside 801px, a 2.5° pointer tilt; the six facts are Guard's own pinned board (board on top, a numbered rail you can hover, the fact under it, h2 + h3 on the deck scale, captions under headings), hairline board, deck greys only, real hovers, a short pressed state, no 3px bar, no glow; one ask.
    Signature: both directions, live. In the composer a request types itself; as it is sent, the things people paste by
    accident turn into typed markers and the injection attempt gets a confidence (not a verdict) against the threshold;
    then the model's reply streams back and is read by the same detectors.
-   Supporting: kinetic title lines; the composer settles from huge as you scroll (Stage); the six facts as pinned
-   chapters with a detector board.
+   Supporting: kinetic title lines; a pointer tilt on the composer (fine pointers); the six facts as one pinned
+   detector board with a numbered rail (page-local, not the shared PinChapters, so it is not /gateway's stage).
    Beyond: "Paste your own" with real dials - type or paste anything, switch each detector on or off and choose the
    marker text; the same kinds of detector run in your own page and nothing is sent (Guard.redact.mjs, self-check in
    Guard.redact.test.mjs).
@@ -20,12 +20,11 @@
    Goal: watch both directions get read, then try it on their own text.
    CTA: View on GitHub (hero, the sticky ask bar and the close; one solid button per screen). */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent, useReducedMotion } from 'motion/react';
 import { A, Cta } from '../../kit';
 import { useLive } from './Frame';
 import { redact } from './Guard.redact.mjs';
-import { Lines, Lift } from '../../v2/LiftStage';
-import PinChapters from '../../v2/x-hypatia/PinChapters';
+import { Lines } from '../../v2/LiftStage';
 import ShipPrompt from '../../v2/ShipPrompt';
 import GetIt from '../../v2/GetIt';
 import LivePause, { usePause } from '../../v2/LivePause';
@@ -129,12 +128,12 @@ const BOARD = [
 
 const it = (j) => ({ in: { opacity: 0, y: 18 }, on: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE, delay: 0.05 + j * 0.05 } } });
 
-function Board({ at }) {
+function Board({ at, still }) {
   const b = BOARD[at];
   return (
-    <div className="gd-board v2-obj" aria-hidden="true">
+    <div className="gd-board" aria-hidden="true">
       <AnimatePresence mode="wait" initial={false}>
-        <motion.div key={at} className={'gd-b gd-b-' + b.kind} initial="in" animate="on" exit={{ opacity: 0, transition: { duration: 0.16 } }}>
+        <motion.div key={at} className={'gd-b gd-b-' + b.kind} initial={still ? 'on' : 'in'} animate="on" exit={{ opacity: 0, transition: { duration: 0.16 } }}>
           {b.kind === 'list' && (
             <>
               <ol>{b.items.map((t, j) => <motion.li key={t} variants={it(j)}><span>{String(j + 1).padStart(2, '0')}</span>{t}</motion.li>)}</ol>
@@ -179,7 +178,7 @@ function Yours() {
         <div className="gd-ed v2-obj">
           <div className="gd-ed-in">
             <label className="gd-ed-k" htmlFor="gd-in">request <span>→ model</span></label>
-            <textarea id="gd-in" value={text} onChange={(e) => setText(e.target.value)} rows={3} maxLength={4000} spellCheck={false} />
+            <textarea id="gd-in" suppressHydrationWarning value={text} onChange={(e) => setText(e.target.value)} rows={3} maxLength={4000} spellCheck={false} />
           </div>
           <div className="gd-ed-dials">
             <div className="gd-chips" role="group" aria-label="Detectors">
@@ -208,27 +207,111 @@ function Yours() {
   );
 }
 
+const pad = (n) => String(n).padStart(2, '0');
+
+/* Guard's own pinned stage: the detector board on top, a numbered rail beside the section title (hover a number to
+   read its fact's title), and the fact under the board. Desktop pins; phones stack each fact over its own board. */
+function Passes() {
+  const ref = useRef(null);
+  const n = FACTS.length;
+  const [at, setAt] = useState(0);
+  const [peek, setPeek] = useState(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
+  useMotionValueEvent(scrollYProgress, 'change', (p) => setAt(Math.max(0, Math.min(n - 1, Math.floor(p * n * 0.9999)))));
+  const go = (i) => {
+    const el = ref.current;
+    if (!el) return;
+    if (innerWidth <= 900) { document.getElementById('gd-f' + i)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+    const y = el.getBoundingClientRect().top + scrollY + ((i + 0.5) / n) * (el.offsetHeight - innerHeight);
+    window.__lenis ? window.__lenis.scrollTo(y, { duration: 1.1 }) : scrollTo({ top: y, behavior: 'smooth' });
+  };
+  return (
+    <section ref={ref} className="gd-ps" style={{ '--n': n }} aria-labelledby="gd-ps-h">
+      <div className="gd-ps-stage">
+        <div className="v2-wrap gd-ps-in">
+          <div className="gd-ps-top">
+            <h2 id="gd-ps-h" className="v2-headline gd-ps-h">What it looks for</h2>
+            <nav className="gd-rail" aria-label="What it looks for: go to" onPointerLeave={() => setPeek(null)}>
+              {FACTS.map(([t], i) => (
+                <button key={t} type="button" aria-label={t} aria-current={i === at ? 'step' : undefined} data-past={i < at || undefined} onClick={() => go(i)} onPointerEnter={(e) => e.pointerType === 'mouse' && setPeek(i)} onFocus={() => setPeek(i)} onBlur={() => setPeek(null)}>
+                  <span className="x-mono">{pad(i + 1)}</span><i />
+                </button>
+              ))}
+              <span className="gd-rail-peek" aria-hidden="true">{peek !== null && peek !== at ? FACTS[peek][0] : ''}</span>
+            </nav>
+          </div>
+          <div className="gd-ps-board"><Board at={at} /></div>
+          <div className="gd-ps-facts">
+            {FACTS.map(([t, d], i) => (
+              <article key={t} id={'gd-f' + i} className="gd-f" data-on={i === at || undefined} data-past={i < at || undefined}>
+                <div className="gd-f-h">
+                  <h3 className="gd-f-t"><span>{t}</span></h3>
+                  <p className="gd-f-n x-mono">{pad(i + 1)} / {pad(n)}</p>
+                </div>
+                <p className="v2-body gd-f-d">{d}</p>
+                <div className="gd-f-vis"><Board at={i} still /></div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* the hero composer: true size from the first paint; a 2.5° tilt under a fine pointer, and it settles a little
+   smaller only as the hero scrolls away (start big, shrink as things happen) */
+function HeroObject({ children }) {
+  const ref = useRef(null);
+  const calm = useReducedMotion();
+  const [tilt, setTilt] = useState(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.35', 'end start'] });
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.94]);
+  const move = (e) => {
+    if (calm || e.pointerType !== 'mouse') return;
+    const r = e.currentTarget.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5, py = (e.clientY - r.top) / r.height - 0.5;
+    setTilt({ rx: (-py * 5).toFixed(2), ry: (px * 5).toFixed(2) });
+  };
+  return (
+    <div ref={ref} className="v2-wrap gd-lift" onPointerMove={move} onPointerLeave={() => setTilt(null)}>
+      <motion.div style={calm ? undefined : { scale, transformOrigin: '50% 0%' }}>
+        <div className="gd-tilt" style={tilt ? { transform: `perspective(1400px) rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)` } : undefined}>{children}</div>
+      </motion.div>
+    </div>
+  );
+}
+
 export default function Guard() {
+  // the kit marks a cross-origin hand-off busy for 2.5 s; Guard's pressed state is short (300 ms) and clears on return
+  const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    if (!busy) return;
+    const t = setTimeout(() => setBusy(false), 300);
+    const back = () => setBusy(false);
+    addEventListener('pageshow', back); document.addEventListener('visibilitychange', back);
+    return () => { clearTimeout(t); removeEventListener('pageshow', back); document.removeEventListener('visibilitychange', back); };
+  }, [busy]);
   return (
     <main className="v2 gd">
       <section className="gd-hero v2-dark" data-room="dark">
         <div className="v2-wrap gd-hero-t">
           <Lines as="h1" className="v2-display gd-h1" lines={['Guard']} data-morph-target="" />
-          <p className="v2-lede gd-sub v2-in" style={{ animationDelay: '.25s' }}>It reads what goes into a model, and what comes back</p>
-          <div className="v2-acts gd-acts v2-in" style={{ animationDelay: '.38s' }}><Cta to="https://github.com/hanzoai" id="guard.hero" thumb>View on GitHub</Cta></div>
+          <p className="v2-lede gd-sub"><span className="v2-line"><span className="v2-cut" style={{ animationDelay: '.14s' }}>It reads what goes into a model, and what comes back</span></span></p>
+          <div className="v2-acts gd-acts"><Cta to="https://github.com/hanzoai" id="guard.hero" thumb className="gd-ask" aria-busy={busy || undefined} onClick={() => setBusy(true)}>View on GitHub</Cta></div>
         </div>
-        <Lift className="v2-wrap gd-lift" from={1.16} y={30} origin="50% 0%" offset={['start end', 'start 0.2']}>
+        <HeroObject>
           <Composer />
-        </Lift>
+        </HeroObject>
       </section>
 
-      <PinChapters className="gd-ch" label="What it looks for" items={FACTS} foot={<p className="v2-kick gd-ch-k">What it looks for</p>} visual={(at) => <Board at={at} />} />
+      <Passes />
 
-      <ShipPrompt name="Guard" prompt="Read https://hanzo.ai/skill.md and use Hanzo Guard in my project." flip />
+      <ShipPrompt name="Guard" prompt="Read https://hanzo.ai/skill.md and use Hanzo Guard in my project." flip className="gd-sp" />
 
       <Yours />
 
-      <GetIt name="Guard" tag="AI guardrails" seed="guard" data={[6, 6]} lead="Get started with Guard" ask={['View on GitHub', 'https://github.com/hanzoai', 'guard.close']} />
+      <GetIt name="Guard" tag="AI guardrails" seed="guard" data={[6, 6]} lead="Get started with Guard" ask={['View on GitHub', 'https://github.com/hanzoai', 'guard.close']} className="gd-gi" />
     </main>
   );
 }
