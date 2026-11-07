@@ -13,7 +13,7 @@
 .tl2-span.trace { background: var(--ink); color: #fff; }
 .tl2-span.metric { background: #fff; color: var(--ink); border: 1.5px solid var(--ink); }
 .tl2-span.log { background: #e4e4e7; color: var(--ink); }
-.tl2-refuse { padding: 12px 16px; border-radius: 12px; border: 1.5px dashed var(--ink); color: var(--ink); font-size: 15px; font-weight: 600; }
+.tl2-refuse { padding: 12px 16px; border-radius: 12px; border: 1.5px dashed var(--ink); color: var(--ink); font-size: 16px; font-weight: 606; }
 .tl2-sig { list-style: none; margin: 0; padding: 0; display: flex; gap: 6px; }
 .tl2-sig li { padding: 7px 10px; border-radius: 8px; font-size: 13px; background: #f5f5f5; color: #404040; }
 .tl2-sig li.trace { background: var(--ink); color: #fff; }
@@ -31,18 +31,18 @@
 .tl2-out { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; height: 304px; overflow: hidden; }
 .tl2-out li { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; border-radius: 14px; background: #f5f5f5; }
 .tl2-out li:first-child { background: #e4e4e7; }
-.tl2-out b { font-size: 17px; font-weight: 600; }
+.tl2-out b { font-size: 17px; font-weight: 606; }
 .tl2-out span { font-size: 13px; color: #404040; }
 
 /* chapters: the config file (the one dark room) */
 .tl2 .l2-pin.l2-dark .l2-ch-n { color: #a3a3a3; }
-.tl2-key { margin: 18px 0 0; font-size: 15px; color: #f5f5f5; }
+.tl2-key { margin: 18px 0 0; font-size: 16px; color: #f5f5f5; }
 .tl2-ed { display: flex; flex-direction: column; gap: 14px; }
 .tl2-strip { display: flex; flex-wrap: wrap; gap: 6px; }
 .tl2-strip span { display: inline-flex; align-items: center; gap: 6px; padding: 9px 12px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .16); font-size: 13px; color: #a3a3a3; transition: background .4s var(--ease), color .4s, border-color .4s; }
 .tl2-strip span.on { background: #f5f5f5; border-color: #f5f5f5; color: #000; }
 .tl2-strip i { display: none; }
-.tl2-win { border-radius: 28px; background: #0f0f0f; border: 1px solid rgba(255, 255, 255, .12); box-shadow: 0 60px 140px -60px rgba(255, 255, 255, .14); overflow: hidden; }
+.tl2-win { border-radius: 24px; background: #0f0f0f; border: 1px solid rgba(255, 255, 255, .12); box-shadow: 0 60px 140px -60px rgba(255, 255, 255, .14); overflow: hidden; }
 .tl2-tabs { display: flex; gap: 2px; padding: 10px 10px 0; border-bottom: 1px solid rgba(255, 255, 255, .08); }
 .tl2-tabs span { padding: 12px 16px; border-radius: 12px 12px 0 0; font-size: 13px; color: #a3a3a3; }
 .tl2-tabs span.on { background: #171717; color: #f5f5f5; }
@@ -51,10 +51,10 @@
 .tl2-ln em { display: inline-block; width: 34px; font-style: normal; color: #737373; }
 .tl2-ln b { font-weight: 400; color: #a3a3a3; }
 .tl2-ln.on { background: rgba(255, 255, 255, .08); color: #f5f5f5; box-shadow: inset 3px 0 0 #f5f5f5; }
-.tl2-ln.on b { color: #fff; font-weight: 600; }
+.tl2-ln.on b { color: #fff; font-weight: 606; }
 
 /* Beyond: your config */
-.tl2-yc { padding: 26px; border-radius: 28px; background: #f5f5f5; color: var(--ink); }
+.tl2-yc { padding: 26px; border-radius: 24px; background: #f5f5f5; color: var(--ink); }
 .tl2-yc .l2-kick { color: #404040; }
 .tl2-g { margin-top: 18px; }
 .tl2-g p { margin: 0 0 8px; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #525252; }

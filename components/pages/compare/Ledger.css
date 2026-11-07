@@ -128,17 +128,19 @@
 @media (max-width: 899px) {
   .xvs-wrap { grid-template-columns: minmax(0, 1fr); }
   .xvs-wrap > *, .xvs-hero-t, .xvs-race, .xvs-hero-a, .xvs-split > .xvs-h2, .xvs-split > .xvs-lede, .xvs-deep-h, .xvs-them, .xvs-hon-tail, .xvs-legend { grid-column: 1 / -1; grid-row: auto; }
-  .xvs-hero { padding: 88px 0 72px; }
-  .xvs-hero-g { row-gap: 20px; }
-  .xvs-h1 { font-size: 40px; }
-  .xvs-lede { font-size: 17px; margin-top: 14px; }
-  .xvs-meta { margin-top: 10px; }
-  .xvs-race { padding-top: 14px; }
+  .xvs-hero { padding: 48px 0 72px; }
+  .xvs-hero-g { row-gap: 12px; }
+  .xvs-h1 { font-size: 40px; } /* with the compact race below, the ask ends above a 667px fold */
+  .xvs-lede { font-size: 17px; margin-top: 8px; }
+  .xvs-meta { margin-top: 8px; }
+  /* the race, compact: the four routers as a 2 × 2 grid of 32px figures over 2px bars */
+  .xvs-race { padding-top: 8px; }
   .xvs-race-h { margin-bottom: 8px; }
-  .xvs-race ol { gap: 8px; }
-  .xvs-race li { grid-template-areas: 'n f' 'b b'; row-gap: 4px; }
+  .xvs-race ol { grid-template-columns: 1fr 1fr; column-gap: 17px; row-gap: 10px; }
+  .xvs-race li { grid-template-columns: 1fr; grid-template-areas: 'n' 'f' 'b'; row-gap: 4px; }
+  .xvs-race-n { font-size: 13px; }
   .xvs-race-f { font-size: 32px; }
-  .xvs-race-n { font-size: 16px; }
+  .xvs-race-b { height: 2px; }
   .xvs-race-x { display: none; }
   .xvs-split { row-gap: 10px; }
   .xvs-quote { font-size: 32px; }

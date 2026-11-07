@@ -14,6 +14,8 @@
 .knx-chip em { font-style: normal; color: var(--knx-quiet); }
 @media (hover: hover) { a.knx-chip:hover { border-color: var(--knx-quiet); } }
 a.knx-chip:active { transform: scale(.97); transition-duration: 90ms; }
+.knx-acts .x-arrow { min-height: 44px; }
+.knx:not(.light) .knx-acts .x-arrow { color: #fafafa; }
 .knx-paste { grid-column: 7 / -1; display: flex; flex-direction: column; gap: 10px; }
 .knx-pt { color: var(--knx-ink); }
 .knx-pd { margin: 0 0 6px; font-size: 16px; line-height: 1.6; color: var(--knx-soft); max-width: 52ch; }
@@ -28,6 +30,7 @@ a.knx-chip:active { transform: scale(.97); transition-duration: 90ms; }
   .knx-g { row-gap: 44px; }
   .knx-pd, .knx-api { font-size: 14px; }
   .knx-code pre { font-size: 14px; }
+  .knx-code .x-codeblock-h, .knx-code .x-copy { font-size: 14px; }
   .knx-acts > * { flex: 1 1 auto; }
   .knx-acts .x-btn { width: 100%; }
 }

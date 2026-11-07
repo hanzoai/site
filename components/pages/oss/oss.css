@@ -1,238 +1,227 @@
-/* ---------- /oss family, v3: name and ledger side by side, counted chapters, tiles that open (ink, greys, white) ---------- */
+/* ---------- /oss family, v6: the year laid flat (a light strip), each figure once, numbered rows that open ----------
+   Tokens from components/v2/fam.css (MASTER.md 3.1): ink, greys and white; flat quiet tiles, hairline rows; live
+   hanzo.ai sizes (h1 52 at rest, headings 26, figures 64); base timings, no springs. */
 @import '../../v2/fam.css';
 
-/* first screen: the name, its lede and its one ask on the left; the ledger, whole, on the right */
-.xos .v2f-wrap { width: min(100% - clamp(48px, 9vw, 144px), var(--wrap2)); }
-.xos-hero { position: relative; padding: clamp(20px, 2.4vw, 40px) 0 clamp(96px, 10vw, 160px); }
-.xos-hero-g { align-items: center; row-gap: 40px; min-height: min(700px, calc(100svh - 132px)); }
-.xos-hero-t { grid-column: 1 / span 5; container-type: inline-size; display: flex; flex-direction: column; align-items: flex-start; gap: 24px; min-width: 0; }
+/* first screen: the name left; lede, caption and the one ask right, bottom-aligned; then the year, full width */
+.xos-hero { position: relative; padding: clamp(24px, 3vw, 44px) 0 0; }
+.xos-top { align-items: end; row-gap: 17px; }
+.xos-top-l { grid-column: 1 / span 7; container-type: inline-size; min-width: 0; }
 .xos-h1 { max-width: none; overflow-wrap: normal; font-size: min(52px, calc(100cqw * 1.72 / var(--len, 8))); }
-.xos-lede { max-width: 30ch; }
-.xos-meta-l { margin-top: -4px; }
-.xos-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-top: 8px; }
+.xos-top-r { grid-column: 8 / span 5; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.xos-lede { max-width: 36ch; }
+.xos-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 24px; margin-top: 6px; }
 .xos-acts .v2f-btn { gap: 10px; }
 .xos-link { min-height: 44px; display: inline-flex; align-items: center; font-size: 16px; }
-.xos-stage { grid-column: 6 / span 7; min-width: 0; }
 
-/* the ledger: white on black over the organization's own contour */
-.xos-ledger { position: relative; overflow: hidden; container-type: inline-size; border-radius: var(--r-hero); background: #0a0a0a; color: #fafafa; padding: clamp(24px, 2.8vw, 40px); box-shadow: var(--shadow); isolation: isolate; }
-.xos-sigil { position: absolute; inset: 0; width: 100%; height: 100%; color: rgba(255, 255, 255, .36); z-index: -1; }
-.xos-ledger-h > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.xos-ledger-h > span:last-child { flex: none; }
-.xos-ledger-h { display: flex; justify-content: space-between; gap: 12px; margin: 0 0 clamp(24px, 3vw, 44px); font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: #a3a3a3; }
-.xos-lead { display: flex; flex-direction: column; gap: 10px; }
-.xos-lead b { font-size: 64px; color: #fff; white-space: nowrap; }
+/* the year: a flat quiet strip across the page, the lead figure on it, the months as bars a playhead reads */
+.xos-year { position: relative; isolation: isolate; overflow: hidden; margin-top: 44px; min-height: clamp(260px, 24vw, 320px); padding: 27px 32px 0; border-radius: var(--r-hero); background: var(--card); display: grid; grid-template-rows: auto auto 1fr; }
+.xos-year-s { position: absolute; inset: 0; width: 100%; height: 100%; color: rgba(0, 0, 0, .12); z-index: -1; }
+.xos-year-h { display: flex; justify-content: space-between; gap: 12px; margin: 0; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.xos-year-h > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.xos-year-h > span:last-child { flex: none; }
+.xos-lead { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-top: 44px; }
 .xos-lead .v2f-grow { transform-origin: 0% 100%; }
-.xos-lead-l { font-size: 16px; color: #a3a3a3; }
+.xos-lead .v2f-fig { color: var(--ink); white-space: nowrap; }
+.xos-lead-l { font-size: 16px; color: var(--soft); max-width: 46ch; }
+.xos-year-w { align-self: end; height: 120px !important; margin-top: 17px; color: #d4d4d4; gap: clamp(4px, .6vw, 10px) !important; }
+.xos-year-w b::before { background: var(--ink) !important; }
+.xos-year.tick { grid-template-rows: auto auto 1fr; }
+
 /* the lead's digits rise out of their own masks once, as Hanzo's figure (no count-up) */
 .xos-dgs { display: inline-flex; }
 .xos-dg { display: inline-block; overflow: hidden; padding-bottom: .06em; margin-bottom: -.06em; }
-.xos-dg > span { display: inline-block; animation: xos-dg .9s cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(.15s + var(--i) * 45ms); }
+.xos-dg > span { display: inline-block; animation: xos-dg 700ms cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(.15s + var(--i) * 45ms); }
 @keyframes xos-dg { from { transform: translateY(105%); } }
-/* an organization without commits this year: its own repositories pass slowly along the ledger's foot */
-.xos-tick { margin-top: clamp(20px, 2.4vw, 32px); overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+
+/* an organization without commits this year: its own repositories pass slowly along the strip's foot */
+.xos-tick { align-self: end; margin: 27px -32px 27px; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
 .xos-tick-r { display: flex; width: max-content; animation: xos-tick calc(var(--n) * 4.5s) linear infinite; }
 .xos-tick-r > span { display: flex; flex: none; }
-.xos-tick i { flex: none; padding: 10px 18px; margin-right: 10px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .16); font: 500 14px/1 var(--mono); font-style: normal; color: #d2d2d7; white-space: nowrap; }
+.xos-tick i { flex: none; padding: 10px 17px; margin-right: 10px; border-radius: 999px; background: #fff; font: 400 14px/1 var(--mono); font-style: normal; color: var(--ink); white-space: nowrap; }
 @keyframes xos-tick { to { transform: translateX(-50%); } }
-.xos-ledger-w { margin-top: clamp(20px, 2.4vw, 32px); height: clamp(56px, 6vw, 84px) !important; color: rgba(255, 255, 255, .34); }
-.xos-ledger-r { margin: clamp(20px, 2.4vw, 32px) 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gut); }
-.xos-ledger-r div { display: flex; flex-direction: column; gap: 6px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, .16); min-width: 0; }
-.xos-ledger-r dt { font-size: 15px; color: #a3a3a3; }
-.xos-ledger-r dd { margin: 0; font-size: 26px; font-weight: 400; color: #fff; }
 
-/* the waveform: bars rise once; a playhead reads them where the page wants life (the ledger, an open card, a hovered tile) */
+/* the waveform: bars rise once; a playhead reads them where the page wants life */
 .xos-wave { position: relative; display: grid; grid-template-columns: repeat(var(--n), 1fr); align-items: end; gap: 3px; height: 28px; width: 100%; }
-.xos-wave i { height: 100%; border-radius: 3px; background: currentColor; transform-origin: bottom; transform: scaleY(var(--h)); animation: xos-rise .9s cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(var(--k) * 45ms + .35s); }
+.xos-wave i { height: 100%; border-radius: 3px; background: currentColor; transform-origin: bottom; transform: scaleY(var(--h)); animation: xos-rise .8s cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(var(--k) * 45ms + .3s); }
 .xos-wave b { position: absolute; inset: -6px 0; pointer-events: none; display: none; }
-.xos-wave.play b { display: block; animation: xos-read 6.5s cubic-bezier(.45, 0, .55, 1) infinite; }
-.xos-wave b::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; border-radius: 2px; background: #fff; }
-.xos-ledger .xos-wave { gap: clamp(4px, .6vw, 10px); }
+.xos-wave.play b { display: block; animation: xos-read 6.5s cubic-bezier(.4, 0, .2, 1) infinite; }
+.xos-wave b::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; border-radius: 2px; background: var(--ink); }
 @keyframes xos-rise { from { transform: scaleY(0); } }
 @keyframes xos-read { 0% { transform: translateX(0); opacity: 0; } 8%, 92% { opacity: 1; } 100% { transform: translateX(100%); opacity: 0; } }
 
-/* counted: two chapters; the picture is the ledger at full size */
-.xos-ch-t { display: flex; flex-direction: column; gap: 24px; }
-.xos-ch-n { margin: 0; font-size: 17px; }
-.xos-ct { height: 100%; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 28px; padding: clamp(28px, 3.4vw, 52px); border-radius: var(--r-hero); background: var(--card); overflow: hidden; }
-.xos-ct dl { margin: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: var(--gut); }
-.xos-ct dl > div { display: flex; flex-direction: column; gap: 10px; padding: 22px 0; border-top: 1px solid var(--hair); min-width: 0; }
-.xos-ct.odd dl > div:first-child { grid-column: 1 / -1; border-top: 0; }
-.xos-ct:not(.odd) dl > div:nth-child(-n+2) { border-top: 0; }
-.xos-ct dd { margin: 0; font-size: 44px; color: var(--ink); white-space: nowrap; }
-.xos-ct.odd dl > div:first-child dd { font-size: 64px; }
-.xos-ct dt { font-size: 15px; line-height: 1.45; color: var(--soft); max-width: 34ch; }
-.xos-ct-w { height: 72px !important; color: #d4d4d4; gap: 6px !important; }
-.xos-ct.dark { background: #0a0a0a; }
-.xos-ct.dark dd { color: #fff; }
-.xos-ct.dark dt { color: #a3a3a3; }
-.xos-ct.dark dl > div { border-color: rgba(255, 255, 255, .14); }
-.xos-ct.dark .xos-ct-w { color: rgba(255, 255, 255, .34); }
+/* GitHub's figures, once, in a small row under the strip */
+.xos-ghr { align-items: start; row-gap: 17px; padding: 27px 0 0; }
+.xos-ghr-l { grid-column: 1 / span 5; display: flex; flex-direction: column; gap: 6px; }
+.xos-note { margin: 0; font-size: 14px; line-height: 1.5; color: var(--soft); max-width: 52ch; }
+.xos-row-figs { grid-column: 7 / span 6; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gut); }
+.xos-row-figs div { display: flex; flex-direction: column; gap: 4px; min-width: 0; padding-top: 10px; border-top: 1px solid var(--hair); }
+.xos-row-figs dd { margin: 0; font-size: 32px; color: var(--ink); }
+.xos-row-figs dt { font-size: 14px; color: var(--soft); }
 
-/* repositories: a catalogue of tiles, filtered by language, that open into cards */
-.xos-repos { padding-top: clamp(96px, 11vw, 168px); }
-.xos-repos-h { align-items: end; row-gap: 28px; margin-bottom: 32px; }
+/* the forge's own figures, once, as hairline rows with their shares */
+.xos-fg { padding: clamp(72px, 9vw, 116px) 0; }
+.xos-fg-g { align-items: start; row-gap: 27px; }
+.xos-fg-l { grid-column: 1 / span 5; display: flex; flex-direction: column; gap: 10px; position: sticky; top: 104px; }
+.xos-fg-r { grid-column: 7 / span 6; min-width: 0; }
+.xos-fr { margin: 0; }
+.xos-fr > div { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 44px 0 27px; border-top: 1px solid var(--hair); }
+.xos-fr > div:last-child { border-bottom: 1px solid var(--hair); }
+.xos-fr dd { margin: 0; color: var(--ink); white-space: nowrap; }
+.xos-fr .v2f-grow { transform-origin: 0% 100%; }
+.xos-fr dt { width: 100%; max-width: 44ch; font-size: 16px; line-height: 1.45; color: var(--soft); }
+.xos-share { display: block; margin-top: 12px; height: 6px; border-radius: 3px; background: #e5e5e5; overflow: hidden; }
+.xos-share i { display: block; height: 100%; background: var(--ink); transform-origin: 0 50%; }
+.xos-zero { display: flex; flex-wrap: wrap; gap: 4px 17px; margin: 17px 0 0; font-size: 14px; color: var(--muted); }
+.xos-zero b { font-weight: 606; color: var(--soft); font-feature-settings: 'tnum'; }
+
+/* repositories: a numbered list; each row opens into its card */
+.xos-repos { padding: clamp(72px, 9vw, 116px) 0; border-top: 1px solid var(--hair); }
+.xos-repos-h { align-items: end; row-gap: 17px; margin-bottom: 27px; }
 .xos-repos-h h2 { grid-column: 1 / span 6; }
 .xos-tools { grid-column: 7 / span 6; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: flex-end; }
-.xos-search { display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 18px; border-radius: 999px; background: var(--card); color: var(--soft); min-width: min(100%, 260px); box-sizing: border-box; transition: box-shadow var(--ui) var(--out); }
+.xos-search { display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 17px; border-radius: 999px; background: var(--card); color: var(--soft); min-width: min(100%, 260px); box-sizing: border-box; transition: box-shadow var(--ui) var(--ease-o); }
 .xos-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font: 16px/1 var(--sans); color: var(--ink); }
 .xos-search input::-webkit-search-cancel-button { -webkit-appearance: none; }
 .xos-search:focus-within { box-shadow: 0 0 0 2px var(--ink); }
 .xos-seg { display: inline-flex; gap: 2px; padding: 4px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); }
-.xos-seg button, .xos-src button { position: relative; flex: none; min-height: 40px; min-width: 48px; padding: 0 14px; border: 0; border-radius: 999px; background: none; color: var(--soft); font: 500 14px/1 var(--sans); cursor: pointer; display: grid; place-items: center; transition: color var(--ui) var(--out); }
-@media (hover: hover) { .xos-seg button:hover, .xos-src button:hover { color: var(--ink); } }
-.xos-seg button:active, .xos-src button:active { transform: scale(.96); }
-.xos-seg button[aria-pressed='true'], .xos-src button[aria-pressed='true'] { color: #fff; }
-.xos-seg button > span:not(.xos-seg-bg), .xos-src button > span:not(.xos-src-bg) { position: relative; display: grid; place-items: center; }
-.xos-seg button .xos-seg-bg, .xos-src button .xos-src-bg { position: absolute; inset: 0; border-radius: 999px; background: var(--ink); }
-.xos-chips { display: flex; gap: 8px; margin: 0 0 32px; overflow-x: auto; scrollbar-width: none; padding: 2px; }
+.xos-seg button { position: relative; flex: none; min-height: 40px; min-width: 48px; padding: 0 14px; border: 0; border-radius: 999px; background: none; color: var(--soft); cursor: pointer; display: grid; place-items: center; transition: color var(--ui) var(--ease-o), transform 150ms var(--ease-o); }
+@media (hover: hover) { .xos-seg button:hover { color: var(--ink); } }
+.xos-seg button:active { transform: scale(.97); transition-duration: var(--press); }
+.xos-seg button[aria-pressed='true'] { color: #fff; }
+.xos-seg button > span:not(.xos-seg-bg) { position: relative; display: grid; place-items: center; }
+.xos-seg button .xos-seg-bg { position: absolute; inset: 0; border-radius: 999px; background: var(--ink); }
+.xos-chips { display: flex; gap: 8px; margin: 0 0 27px; overflow-x: auto; scrollbar-width: none; padding: 2px; }
 .xos-chips::-webkit-scrollbar { display: none; }
-.xos-chips button { flex: none; display: inline-grid; place-items: center; min-height: 40px; min-width: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); background: #fff; color: var(--soft); font: 500 14px/1 var(--sans); cursor: pointer; transition: background-color var(--ui) var(--out), color var(--ui) var(--out), border-color var(--ui) var(--out), transform var(--press) var(--out); }
+.xos-chips button { flex: none; display: inline-grid; place-items: center; min-height: 40px; min-width: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); background: #fff; color: var(--soft); font: 400 14px/1 var(--sans); cursor: pointer; transition: background-color var(--ui) var(--ease-o), color var(--ui) var(--ease-o), border-color var(--ui) var(--ease-o), transform 150ms var(--ease-o); }
 @media (hover: hover) { .xos-chips button:hover { color: var(--ink); border-color: rgba(0, 0, 0, .4); } }
-.xos-chips button:active { transform: scale(.96); }
+.xos-chips button:active { transform: scale(.97); transition-duration: var(--press); }
 .xos-chips button[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: #fff; }
-.xos-list { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gut); }
+
+.xos-list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--hair); }
 .xos-list li[hidden] { display: none; }
-.xos-list li.lead { grid-column: span 2; }
-.xos-row { position: relative; height: 100%; box-sizing: border-box; display: flex; flex-direction: column; gap: 14px; padding: 24px; background: var(--card); transition: transform var(--reveal) var(--out), background-color var(--ui) var(--out); }
-@media (hover: hover) { .xos-row:hover { transform: translateY(-4px); background: #ededed; } }
-.xos-row:active { transform: scale(.99); }
-.xos-row:hover .xos-wave b, .xos-row:focus-within .xos-wave b { display: block; animation: xos-read 3.2s cubic-bezier(.45, 0, .55, 1) infinite; }
-.xos-row .xos-wave b::before { background: var(--ink); }
-.xos-open { display: block; width: 100%; min-height: 44px; padding: 0; border: 0; background: none; text-align: left; cursor: pointer; color: var(--ink); }
-.xos-open::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
+.xos-row { position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr) minmax(0, 168px) auto; align-items: center; gap: 0 27px; padding: 20px 12px; border-bottom: 1px solid var(--hair); background: #fff; transition: background-color var(--ui) var(--ease-o); }
+@media (hover: hover) { .xos-row:hover { background: #fafafa; } }
+.xos-row:hover .xos-wave b, .xos-row:focus-within .xos-wave b { display: block; animation: xos-read 3.2s cubic-bezier(.4, 0, .2, 1) infinite; }
+.xos-no { font-size: 13px; color: var(--muted); }
+.xos-row-m { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.xos-open { display: block; width: 100%; min-height: 32px; padding: 0; border: 0; background: none; text-align: left; cursor: pointer; color: var(--ink); }
+.xos-open::after { content: ''; position: absolute; inset: 0; }
 .xos-open:focus-visible { outline: none; }
-.xos-open:focus-visible::after { box-shadow: 0 0 0 2px var(--ink); }
+.xos-open:focus-visible::after { box-shadow: inset 0 0 0 2px var(--ink); }
 .xos-name { display: block; font-size: 21px; font-weight: 497; letter-spacing: -.015em; line-height: 1.2; overflow-wrap: anywhere; }
-.xos-org { color: #737373; font-weight: 500; }
+.xos-org { color: var(--muted); font-weight: 400; }
+.xos-desc { margin: 0; font-size: 15px; line-height: 1.5; color: var(--soft); display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; max-width: 72ch; }
+.xos-row-s { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; margin: 0; font-size: 13px; color: var(--muted); }
+.xos-row-s span { display: inline-flex; align-items: center; gap: 4px; }
+.xos-lang { font: 606 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink); }
+.xos-arch { padding: 3px 8px; border-radius: 99px; border: 1px solid rgba(0, 0, 0, .14); letter-spacing: .06em; text-transform: uppercase; }
+.xos-row-w { color: #d4d4d4; height: 32px !important; }
+.xos-list li.lead .xos-row { grid-template-columns: 44px minmax(0, 1fr) minmax(0, 320px) auto; padding: 32px 12px; }
 .xos-list li.lead .xos-name { font-size: 26px; letter-spacing: -.02em; }
-.xos-desc { margin: 0; flex: 1; font-size: 16px; line-height: 1.5; color: var(--soft); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.xos-list li.lead .xos-desc { font-size: 16px; max-width: 52ch; }
-.xos-row-f { display: flex; flex-wrap: wrap; align-items: end; gap: 12px 16px; font-size: 14px; color: var(--muted); }
-.xos-row-w { flex: 1 1 120px; max-width: 160px; color: #a3a3a3; }
-.xos-list li.lead .xos-row-w { max-width: none; flex-basis: 100%; height: 72px; gap: 6px; order: -1; margin-bottom: 4px; }
-.xos-row-s { display: flex; flex-wrap: wrap; gap: 4px 14px; }
-.xos-row-t { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 36px; padding-top: 12px; border-top: 1px solid var(--hair); }
-.xos-meta { display: inline-flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; font-size: 14px; color: var(--soft); }
-.xos-meta span { display: inline-flex; align-items: center; gap: 4px; }
-.xos-lang { font: 500 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink); }
-.xos-arch { padding: 3px 8px; border-radius: 99px; border: 1px solid rgba(0, 0, 0, .14); font-size: 13px; letter-spacing: .06em; text-transform: uppercase; }
+.xos-list li.lead .xos-desc { -webkit-line-clamp: 2; font-size: 16px; }
+.xos-list li.lead .xos-row-w { height: 72px !important; color: #a3a3a3; }
 .xos-ends { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 6px; flex: none; }
-.xos-gh { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; color: var(--soft); text-decoration: none; transition: background-color var(--ui) var(--out), color var(--ui) var(--out); }
-@media (hover: hover) { .xos-gh:hover { background: #fff; color: var(--ink); } }
-.xos-forge { display: inline-flex; align-items: center; min-height: 36px; color: var(--soft); text-decoration: none; padding: 0 12px; border-radius: 99px; background: #fff; font-size: 13px; transition: color var(--ui) var(--out); }
-@media (hover: hover) { .xos-forge:hover { color: var(--ink); } }
-.xos-empty { display: flex; align-items: center; gap: 10px; margin: 24px 0 0; color: var(--soft); font-size: 17px; }
-.xos-more { margin: 40px 0 0; }
+.xos-gh { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; color: var(--soft); text-decoration: none; transition: background-color var(--ui) var(--ease-o), color var(--ui) var(--ease-o), transform 150ms var(--ease-o); }
+@media (hover: hover) { .xos-gh:hover { background: var(--card); color: var(--ink); } }
+.xos-gh:active { transform: scale(.94); transition-duration: var(--press); }
+.xos-forge { display: inline-flex; align-items: center; min-height: 36px; color: var(--soft); text-decoration: none; padding: 0 12px; border-radius: 99px; border: 1px solid rgba(0, 0, 0, .14); font-size: 13px; transition: color var(--ui) var(--ease-o), border-color var(--ui) var(--ease-o), transform 150ms var(--ease-o); }
+@media (hover: hover) { .xos-forge:hover { color: var(--ink); border-color: rgba(0, 0, 0, .4); } }
+.xos-forge:active { transform: scale(.97); transition-duration: var(--press); }
+.xos-empty { display: flex; align-items: center; gap: 10px; margin: 27px 0 0; color: var(--soft); font-size: 16px; }
+.xos-more { margin: 27px 0 0; }
 .xos-plus { gap: 10px; }
 .xos-plus i { font: 400 22px/1 var(--sans); font-style: normal; }
 .xos-spin { width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgba(0, 0, 0, .14); border-top-color: var(--ink); animation: xos-spin .8s linear infinite; }
 @keyframes xos-spin { to { transform: rotate(360deg); } }
 
-/* the open card: the tile grows into it */
+/* the open card: the row grows into it */
 .xos-modal { position: fixed; inset: 0; z-index: 1200; display: grid; place-items: center; padding: 24px; }
-.xos-scrim { position: absolute; inset: 0; border: 0; background: rgba(10, 10, 10, .42); cursor: default; }
+.xos-scrim { position: absolute; inset: 0; border: 0; background: rgba(0, 0, 0, .32); cursor: default; }
 .xos-card { position: relative; width: min(960px, 100%); max-height: calc(100dvh - 48px); overflow: auto; background: #fff; box-shadow: var(--float); overscroll-behavior: contain; }
-.xos-card-in { display: flex; flex-direction: column; gap: 28px; padding: clamp(28px, 3.6vw, 48px); }
+.xos-card-in { display: flex; flex-direction: column; gap: 27px; padding: clamp(27px, 3.4vw, 44px); }
 .xos-card-h { display: flex; align-items: start; justify-content: space-between; gap: 16px; }
 .xos-card-h h3 { margin: 0; font-size: 44px; font-weight: 497; letter-spacing: -.03em; line-height: 1.05; overflow-wrap: anywhere; }
-.xos-card-k { margin-top: 14px; }
-.xos-x { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: var(--card); color: var(--ink); cursor: pointer; transition: transform var(--press) var(--out); }
-.xos-x:active { transform: scale(.94); }
+.xos-card-k { margin-top: 12px; }
+.xos-x { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: var(--card); color: var(--ink); cursor: pointer; transition: transform 150ms var(--ease-o); }
+.xos-x:active { transform: scale(.94); transition-duration: var(--press); }
 .xos-card-d { margin: 0; font-size: 20px; line-height: 1.45; color: var(--soft); max-width: 44ch; }
-.xos-stats { display: flex; flex-wrap: wrap; align-items: end; gap: 20px 48px; margin: 0; padding: 24px 0; border-block: 1px solid var(--hair); }
+.xos-stats { display: flex; flex-wrap: wrap; align-items: end; gap: 17px 44px; margin: 0; padding: 20px 0; border-block: 1px solid var(--hair); }
 .xos-stats div { min-width: 0; display: flex; flex-direction: column; gap: 10px; }
 .xos-stats dt { color: var(--muted); display: flex; }
 .xos-stats dt svg { width: 18px; height: 18px; }
 .xos-stats dd { margin: 0; font-size: 44px; color: var(--ink); overflow-wrap: anywhere; }
 .xos-stats-c dd { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-.xos-stats-c dd span { font-size: 17px; color: var(--soft); }
+.xos-stats-c dd span { font-size: 16px; color: var(--soft); }
 .xos-stats-w { margin-left: auto; }
-.xos-stats dd.xos-when { font-size: 17px; font-weight: 500; color: var(--soft); letter-spacing: 0; line-height: 1.3; }
+.xos-stats dd.xos-when { font-size: 16px; font-weight: 400; color: var(--soft); letter-spacing: 0; line-height: 1.3; }
 .xos-card-w { height: 96px; gap: 8px; color: #d4d4d4; }
-.xos-card-w b::before { background: var(--ink); }
-.xos-clone { border-radius: var(--r-card); background: #0a0a0a; color: #fafafa; padding: 16px; }
+.xos-clone { border-radius: 16px; background: #171717; color: #fafafa; padding: 16px; }
 .xos-clone-h { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; font-size: 13px; color: #a3a3a3; letter-spacing: .06em; }
-.xos-src { display: inline-flex; gap: 2px; padding: 3px; border-radius: 999px; background: rgba(255, 255, 255, .08); }
-.xos-src button { color: #a3a3a3; min-height: 36px; }
+.xos-src { position: relative; display: inline-grid; grid-template-columns: 1fr 1fr; padding: 3px; border-radius: 999px; background: rgba(255, 255, 255, .08); }
+.xos-src-bg { position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); border-radius: 999px; background: #fafafa; transition: transform var(--base) var(--out); }
+.xos-src[data-at='forge'] .xos-src-bg { transform: translateX(100%); }
+.xos-src button { position: relative; min-height: 36px; padding: 0 14px; border: 0; border-radius: 999px; background: none; color: #a3a3a3; font: 400 14px/1 var(--sans); cursor: pointer; transition: color var(--base) var(--ease-o); }
 .xos-src button[aria-pressed='true'] { color: #0a0a0a; }
-.xos-src button .xos-src-bg { background: #fafafa; }
-.xos-cmd { display: flex; align-items: center; gap: 12px; padding: 12px 12px 12px 16px; border-radius: 12px; background: rgba(255, 255, 255, .07); }
+.xos-cmd { display: flex; align-items: center; gap: 12px; padding: 12px 12px 12px 16px; border-radius: 12px; background: rgba(255, 255, 255, .06); }
 .xos-cmd code { flex: 1; min-width: 0; font-size: 14px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
-.xos-cmd .x-copy { color: #fafafa; background: transparent; border-color: rgba(255, 255, 255, .24); min-height: 36px; }
+.xos-cmd .x-copy { color: #fafafa; background: transparent; border-color: rgba(255, 255, 255, .3); width: 44px; height: 44px; padding: 0; justify-content: center; border-radius: 50%; flex: none; }
+.xos-cmd .x-copy-t { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .xos-card-l { display: flex; flex-wrap: wrap; gap: 12px; }
 .xos-card-l .v2f-btn { gap: 10px; }
 
-.xos .v2f-ch-nav { left: clamp(24px, 4.5vw, 72px); }
+/* the next organizations: the rail sits right under its link line */
+.xos-near { padding: clamp(44px, 6vw, 72px) 0; border-top: 1px solid var(--hair); }
+.xos-near-h { display: flex; margin: 0 0 17px; }
+.xos-near-h .x-arrow { min-height: 44px; font-size: 16px; }
 
-/* the next organizations */
-.xos-near-f { display: flex; justify-content: flex-end; margin: 24px 0 0; }
-.xos-near-f .x-arrow { min-height: 44px; font-size: 17px; }
+/* the close: its own moment, a quiet room with the organization's contour full width and the one ask */
+.xos .xos-close { position: relative; overflow: hidden; isolation: isolate; padding: clamp(116px, 14vw, 188px) 0; background: var(--card); color: var(--ink); text-align: center; }
+.xos-close-s { position: absolute; inset: 0; width: 100%; height: 100%; color: rgba(0, 0, 0, .2); z-index: -1; }
+.xos-close-g { display: flex; flex-direction: column; align-items: center; gap: 17px; }
+.xos .xos-close-b { gap: 10px; }
 
 @media (max-width: 900px) {
-  .xos-hero { padding: 16px 0 96px; }
-  .xos-hero-g { display: flex; flex-direction: column; align-items: stretch; min-height: 0; row-gap: 28px; }
-  .xos-hero-t { gap: 16px; }
+  .xos-hero { padding-top: 16px; }
+  .xos-top-l, .xos-top-r { grid-column: 1 / -1; }
   .xos-h1 { font-size: min(40px, calc(100cqw * 1.72 / var(--len, 8))); }
   .xos-lede { font-size: 18px; }
-  .xos-acts { gap: 8px 20px; margin-top: 4px; }
-  .xos-ledger { padding: 20px; }
-  .xos-ledger-h { margin-bottom: 18px; font-size: 13px; }
-  .xos-lead b { font-size: 52px; }
-  .xos-lead-l { font-size: 15px; }
-  .xos-ledger-w { height: 48px !important; margin-top: 16px; }
-  .xos-ledger-r { margin-top: 16px; gap: 12px; }
-  .xos-ledger-r div { padding-top: 10px; }
-  .xos-ledger-r dd { font-size: 21px; }
-  .xos-ledger-r dt { font-size: 14px; }
-  .xos-ct { padding: 24px; }
-  .xos-ct dl { grid-template-columns: minmax(0, 1fr); }
-  .xos-ct dl > div { border-top: 1px solid var(--hair) !important; }
-  .xos-ct dl > div:first-child { border-top: 0 !important; }
-  .xos-ct dd, .xos-ct.odd dl > div:first-child dd { font-size: 44px; }
-  .xos-repos { padding-top: 96px; }
+  .xos-acts { gap: 8px 20px; margin-top: 2px; }
+  .xos-year { margin-top: 27px; min-height: 0; padding: 20px 20px 0; }
+  .xos-year-h { font-size: 12px; }
+  .xos-lead .v2f-fig { font-size: 52px; }
+  .xos-lead-l { font-size: 14px; }
+  .xos-year-w { height: 72px !important; }
+  .xos-tick { margin: 17px -20px 20px; }
+  .xos-ghr-l, .xos-row-figs { grid-column: 1 / -1; }
+  .xos-row-figs dd { font-size: 26px; }
+  .xos-fg-l, .xos-fg-r { grid-column: 1 / -1; position: static; }
+  .xos-fr > div { padding: 32px 0 20px; }
+  .xos-lead { margin-top: 32px; }
+  .xos-fr .v2f-fig { font-size: 44px; }
   .xos-repos-h h2, .xos-tools { grid-column: 1 / -1; }
   .xos-tools { justify-content: flex-start; }
   .xos-search { flex: 1 1 100%; }
   .xos-chips { margin-inline: -16px; padding-inline: 16px; }
   .xos-chips button { min-height: 44px; }
-  .xos-list { grid-template-columns: minmax(0, 1fr); gap: 12px; }
-  .xos-list li.lead { grid-column: auto; }
-  .xos-row { padding: 20px; }
-  .xos-list li.lead .xos-name { font-size: 21px; }
-  .xos-list li.lead .xos-desc { font-size: 16px; }
+  /* 72px list rows on a phone: number, name, language and stars; the row opens the same card */
+  .xos-row, .xos-list li.lead .xos-row { grid-template-columns: 28px minmax(0, 1fr) auto; gap: 0 12px; min-height: 72px; padding: 12px 4px; box-sizing: border-box; }
+  .xos-row-w, .xos-desc, .xos-row-s .xos-hide-p, .xos-ends .xos-forge { display: none; }
+  .xos-name, .xos-list li.lead .xos-name { font-size: 17px; }
+  .xos-row-s { font-size: 14px; }
+  .xos-lang { font-size: 12px; }
   .xos-modal { place-items: end center; padding: 0; }
-  .xos-card { width: 100%; max-height: 90dvh; border-radius: 28px 28px 0 0 !important; }
-  .xos-card-in { padding: 24px 20px calc(24px + env(safe-area-inset-bottom)); gap: 22px; }
-  .xos-stats { gap: 18px 32px; }
+  .xos-card { width: 100%; max-height: 90dvh; border-radius: 24px 24px 0 0 !important; }
+  .xos-card-in { padding: 24px 20px calc(24px + env(safe-area-inset-bottom)); gap: 20px; }
+  .xos-card-h h3 { font-size: 32px; }
+  .xos-stats { gap: 17px 32px; }
   .xos-stats-w { margin-left: 0; flex-basis: 100%; }
   .xos-stats dd { font-size: 32px; }
-  .xos-seg button, .xos-src button, .xos-forge { min-height: 44px; }
-  .xos-gh { width: 44px; height: 44px; }
-  .xos-clone-h, .xos-forge, .xos-arch, .xos-lang, .xos-row-f, .xos-meta { font-size: 14px; }
-  .xos-near-f { justify-content: flex-start; }
+  .xos-seg button, .xos-src button { min-height: 44px; }
+  .xos-clone-h { font-size: 14px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .xos-dg > span, .xos-tick-r { animation: none; }
-  .xos-wave i { animation: none; }
+  .xos-dg > span, .xos-tick-r, .xos-wave i, .xos-spin { animation: none; }
   .xos-wave b, .xos-wave.play b { display: none !important; }
-  .xos-row, .xos-spin { transition: none; animation: none; }
-}
-
-/* the copy button in the clone box is an icon (its name stays its accessible name, PLAN-COMPONENTS 0.6) */
-.xos-cmd .x-copy { width: 44px; height: 44px; padding: 0; justify-content: center; border-radius: 50%; flex: none; }
-.xos-cmd .x-copy-t { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-
-/* the close: dark, the organization's own contour drifting behind its name */
-.xos .xos-close { position: relative; overflow: hidden; padding: clamp(120px, 14vw, 220px) 0; background: #0a0a0a; color: #fafafa; isolation: isolate; text-align: left; }
-.xos-close-s { position: absolute; inset: 0; width: 100%; height: 100%; color: rgba(255, 255, 255, .2); z-index: -1; }
-.xos-close-g { align-items: end; row-gap: 32px; }
-.xos .xos-close-h { grid-column: 1 / span 7; margin: 0; max-width: 14ch; color: #fff; letter-spacing: -.05em; }
-.xos-close-r { grid-column: 8 / span 5; display: flex; flex-direction: column; align-items: flex-start; gap: 28px; }
-.xos-close-r .v2f-lede { margin: 0; color: #a3a3a3; }
-.xos .xos-close-b { background: #fafafa; color: #0a0a0a; border-color: #fafafa; gap: 10px; }
-@media (hover: hover) { .xos .xos-close-b:hover { background: #fff; border-color: #fff; } }
-@media (max-width: 900px) {
-  .xos .xos-close { padding: 120px 0; }
-  .xos .xos-close-h, .xos-close-r { grid-column: 1 / -1; }
+  .xos-row, .xos-src-bg { transition: none; }
 }

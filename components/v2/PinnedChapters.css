@@ -13,8 +13,8 @@
 .lx-pin.flip .lx-pin-grid { grid-template-columns: 8fr 5fr; }
 .lx-pin.flip .lx-pin-copy { order: 2; }
 .lx-pin-copy { position: relative; display: flex; flex-direction: column; gap: 36px; }
-.lx-pin-k { color: var(--faint); }
-.lx-pin-t { font-weight: 497; font-size: 32px; line-height: 1.1; letter-spacing: -.025em; margin: 16px 0 0; max-width: 16ch; text-wrap: balance; color: var(--ink); }
+.lx-pin-k { color: var(--faint); margin-top: 10px; }
+.lx-pin-t { font-weight: 497; font-size: 32px; line-height: 1.1; letter-spacing: -.025em; margin: 0; max-width: 16ch; text-wrap: balance; color: var(--ink); }
 .lx-pin-d { font-size: 16px; line-height: 1.6; color: var(--muted); margin: 16px 0 0; max-width: 46ch; text-wrap: pretty; }
 /* the intro: the section's own statement, set big beside the object */
 .lx-pin-it { margin: 0; font-weight: 497; font-size: 44px; line-height: 1.04; letter-spacing: -.035em; color: var(--ink); max-width: 13ch; text-wrap: balance; }

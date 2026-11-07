@@ -1,22 +1,28 @@
 'use client';
 /* Analytics.
-   V2: 8/10 Apple-style launch: the example dashboard is the hero and runs by itself, the five reports are cards that open into their own picture, "From a visit to a number" is three pinned chapters built by the scroll, the AI panel is the dark room, security is a calm spec list, and the code and community live in drawers.
+   V2: 8/10 Launch page on the deck: a 52px title beside Hanzo's example dashboard (the one big thing, its line drawing and its figures settling by CSS from first paint, the realtime list ticking, pausable); five reports as a bento of cards that open into their own picture; "From a visit to a number" as three pinned chapters built by the scroll; the commerce board; the AI panel in the one graphite room; the script as a kit CodeBlock; a quiet close.
+   Persona: Developer who runs sites (and the team lead choosing an analytics tool).
+   Goal: start Hanzo Analytics (try it, or ask for a demo).
+   CTA: "Try Hanzo" → /login (data-cta analytics.hero, data-thumb for the ask bar; again as analytics.script after the
+   script); "Request Demo" → /contact-sales (analytics.hero-2, quiet); "Deploy to Cloud" → platform.hanzo.ai/deploy
+   (analytics.close). Metric: api_key_created (proxy on this page: the analytics.hero click).
    Signature: "From a visit to a number". Three pinned chapters whose pictures are built by the scroll itself: the
-   funnel's steps rise one by one until the cliff drops away, the retention cohorts fill in week by week, and revenue
-   bars climb beside the traffic that produced them, split by channel and campaign.
-   Supporting: the Stage hero (the live dashboard starts big and settles: its figures count in, the activity line
-   draws itself, the realtime list ticks), report cards that open in place into their own living picture, and the AI
-   anomaly line drawing itself in the dark room.
+   funnel's steps rise one by one until the cliff step stands hollow, the retention cohorts fill in week by week, and
+   revenue bars climb beside the traffic line that produced them, split by channel and campaign.
+   Supporting: the Stage hero (the dashboard settles as you scroll; its activity line draws and its figures settle by
+   CSS at first paint, never counting through other digits; the realtime list ticks while seen, with the Stage's pause),
+   report cards that open in place into their own living picture, and the anomaly line drawing itself in the dark room.
+   Motion kinds: idle (realtime list, line draws), pointer (the chart's hairline names the hour, the magnetic ask),
+   time (a visit every 2.4 s), state (cards open, questions, Apply, language tabs), arrival (title cut-in, figures
+   settle), scroll (the chapters, the Stage settle, the room opening).
    Beyond: "Ask it as a question". Pick the question you actually have (who is on the site right now, where the drop
    is, whether anyone came back...) and the report card that answers it opens; each question is the report's own words.
-   Accent: Analytics green, from its own live chart. Every word, figure and link is Hanzo's; pages and referrers in the
-   realtime list are examples. */
+   Every word, figure and link is Hanzo's; pages and referrers in the realtime list are examples (as the dashboard says). */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useTransform } from 'motion/react';
-import { EASE, Count, Copy } from '../../ui';
-import { A } from '../../kit';
-import { useLive, useEvery } from './Frame';
-import KeynoteStage from '../../v2/KeynoteStage';
+import { EASE } from '../../ui';
+import { A, Cta, CodeBlock, Tabs, TabPanel } from '../../kit';
+import KeynoteStage, { useStagePause } from '../../v2/KeynoteStage';
 import KeynoteOpen from '../../v2/KeynoteOpen';
 import KeynoteChapters from '../../v2/KeynoteChapters';
 import KeynoteRoom from '../../v2/KeynoteRoom';
@@ -27,17 +33,39 @@ import './Analytics.css';
 
 const mod = (a, n) => ((a % n) + n) % n;
 
+/* [ref, live]: live while the element is on screen and motion is allowed */
+function useSeen(amount = 0.25) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount });
+  const calm = useReducedMotion();
+  return [ref, seen && !calm];
+}
+/* calls fn every ms while run is true: a chain of timeouts (no setInterval), the latest fn each time */
+function useTick(ms, run, fn) {
+  const f = useRef(fn);
+  f.current = fn;
+  useEffect(() => {
+    if (!run) return;
+    let t = 0;
+    const next = () => { t = setTimeout(() => { f.current(); next(); }, ms); };
+    next();
+    return () => clearTimeout(t);
+  }, [ms, run]);
+}
+
 /* ---------- the hero: Hanzo's example dashboard, running ---------- */
 const HOURS = [12, 10, 8, 7, 9, 14, 22, 34, 48, 58, 64, 70, 76, 72, 80, 86, 78, 70, 62, 54, 46, 36, 26, 18];
 const VISITS = [['/pricing', 'google'], ['/docs/start', 'github.com'], ['/', 'newsletter'], ['/blog/launch', 'x.com'], ['/signup', 'direct']];
-const KPIS = [['Users', 127543, 0, '', '+12.4% vs last week'], ['Conversion Rate', 4.87, 2, '%', '+0.8% vs last week'], ['Revenue', 45892, 0, '$', '+15.2% vs last week']];
+/* Hanzo's three figures, exactly as printed: they settle into place (a line mask), they never count */
+const KPIS = [['Users', '127,543', '+12.4% vs last week'], ['Conversion Rate', '4.87%', '+0.8% vs last week'], ['Revenue', '$45,892', '+15.2% vs last week']];
 const pt = (h, i) => [(i / 23) * 100, 100 - h];
 
 /* the realtime list: a new visit slides in on top, the rest move down a row (transform only, no layout animation) */
 function Realtime({ live }) {
   const [k, setK] = useState(0);
   const ul = useRef(null);
-  useEvery(2400, live, () => setK((v) => v + 1));
+  const paused = useStagePause();
+  useTick(2400, live && !paused, () => setK((v) => v + 1));
   useLayoutEffect(() => {
     const el = ul.current;
     if (!el || !k) return;
@@ -45,7 +73,7 @@ function Realtime({ live }) {
     el.style.transition = 'none';
     el.style.transform = `translate3d(0, ${-h}px, 0)`;
     el.getBoundingClientRect();
-    el.style.transition = 'transform .55s cubic-bezier(.16, 1, .3, 1)';
+    el.style.transition = 'transform .5s cubic-bezier(.4, 0, .2, 1)';
     el.style.transform = 'translate3d(0, 0, 0)';
   }, [k]);
   return (
@@ -89,15 +117,16 @@ function curve(P) {
 }
 const poly = (P) => P.map(([x, y], i) => (i ? 'L' : 'M') + x + ' ' + y).join(' ');
 
-/* the activity chart: the line draws itself; a hairline follows the pointer and names the hour */
+/* the activity chart: the line draws itself by CSS at first paint; a hairline follows the pointer and the hour it
+   points at is read out in the chart's own header (in the flow, never over the chart) */
 function Activity() {
-  const calm = useReducedMotion();
   const [at, setAt] = useState(-1);
   const [box, wh] = useBox();
   const P = px(HOURS.map(pt), wh);
   const line = curve(P);
   const area = line + ` L${wh[0]} ${wh[1]} L0 ${wh[1]} Z`;
   const move = (e) => {
+    if (e.pointerType !== 'mouse') return;
     const r = e.currentTarget.getBoundingClientRect();
     setAt(Math.round(Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)) * 23));
   };
@@ -106,17 +135,17 @@ function Activity() {
     <div className="an-live">
       <div className="an-live-h">
         <p>Live User Activity</p>
+        <span className="an-at kn-fig" aria-hidden="true">{at >= 0 ? String(at).padStart(2, '0') + ':00' : ''}</span>
         <span>Pageviews</span><b className="kn-fig">1,240</b><b className="kn-fig dim">876</b><em>+24.5%</em>
       </div>
       <div className="an-chart" ref={box} onPointerMove={move} onPointerLeave={() => setAt(-1)}>
         <svg viewBox={`0 0 ${wh[0]} ${wh[1]}`} aria-hidden="true">
-          <defs><linearGradient id="an-g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#a3a3a3" stopOpacity=".26" /><stop offset="1" stopColor="#a3a3a3" stopOpacity="0" /></linearGradient></defs>
           {[0.25, 0.5, 0.75].map((g) => <line key={g} x1="0" x2={wh[0]} y1={g * wh[1]} y2={g * wh[1]} className="an-grid" />)}
-          <motion.path d={area} fill="url(#an-g)" initial={calm ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.6, duration: 0.9 }} />
-          <motion.path d={line} className="an-line" initial={calm ? false : { pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 2.4, ease: EASE, delay: 0.5 }} />
+          <path d={area} className="an-area" />
+          <path d={line} className="an-line" pathLength="1" />
         </svg>
         <span className={'an-now' + (at < 0 ? '' : ' hold')} style={{ left: x + '%', top: y + '%' }} aria-hidden="true" />
-        {at >= 0 && <span className="an-hair" style={{ left: x + '%' }} aria-hidden="true"><em>{String(at).padStart(2, '0')}:00</em></span>}
+        {at >= 0 && <span className="an-hair" style={{ left: x + '%' }} aria-hidden="true" />}
       </div>
       <div className="an-axis">{['00:00', '06:00', '12:00', '18:00', '24:00'].map((h) => <span key={h}>{h}</span>)}</div>
     </div>
@@ -124,15 +153,15 @@ function Activity() {
 }
 
 function Board() {
-  const [ref, live] = useLive(0.25);
+  const [ref, live] = useSeen(0.25);
   return (
     <div className="kn-obj an-board" ref={ref}>
       <div className="an-bar"><i /><i /><i /><span>Hanzo Analytics Dashboard</span><em>example</em></div>
       <div className="an-kpis">
-        {KPIS.map(([t, v, d, u, ch]) => (
+        {KPIS.map(([t, v, ch], i) => (
           <div key={t} className="an-kpi">
             <p>{t}</p>
-            <b className="kn-fig">{u === '$' ? <Count to={v} prefix="$" duration={1.8} /> : <Count to={v} decimals={d} suffix={u} duration={1.8} />}</b>
+            <b className="kn-fig an-m"><span style={{ '--an-i': i }}>{v}</span></b>
             <span>{ch}</span>
           </div>
         ))}
@@ -197,6 +226,8 @@ function ArtAttribution() {
 }
 const ARTS = [ArtRealtime, ArtJourneys, ArtFunnel, ArtEvents, ArtAttribution];
 
+const Arrow = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+
 function Reports() {
   const grid = useRef(null);
   const [q, setQ] = useState(-1);
@@ -207,19 +238,19 @@ function Reports() {
       <div className="kn-wrap">
         <div className="kn-grid an-rep-h">
           <div className="an-rep-ht">
-            <KeynoteLines className="kn-display sm" lines="The reports" />
+            <KeynoteLines className="kn-headline" lines="The reports" />
             <p className="kn-lede">Each one answers a question you would otherwise export a CSV to answer.</p>
           </div>
           <div className="an-ask">
-            <p className="kn-kick ac">Ask it as a question</p>
             <div className="an-ask-q" role="group" aria-label="Ask it as a question">
               {ask.map(([t, i], k) => (
                 <button key={t} type="button" aria-haspopup="dialog" aria-pressed={q === k} onClick={() => open(k, i)}>
                   <span>{t}</span>
-                  <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  <Arrow />
                 </button>
               ))}
             </div>
+            <p className="kn-kick">Ask it as a question</p>
           </div>
         </div>
         <div ref={grid} className="an-rep-grid">
@@ -245,7 +276,7 @@ function useBuild(p, on) {
   const full = useMotionValue(1);
   useEffect(() => {
     if (p || calm || !on) return;
-    const c = animate(own, 1, { duration: 1.8, ease: EASE });
+    const c = animate(own, 1, { duration: 1.4, ease: EASE });
     return () => c.stop();
   }, [p, on, calm, own]);
   if (calm) return full;
@@ -263,13 +294,14 @@ function useStepsOf(src, n) {
 }
 
 const STEPS = [100, 82, 76, 31, 27];
-function Bar({ b, k, w, cliff }) {
+const Drop = () => <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 6l12 12M18 9v9H9" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+function Bar({ b, k, w, cliff, drop }) {
   const s = useSpan(b, k * 0.08, 0.16 + k * 0.08);
   const sy = useTransform(s, (v) => v * w);
   return (
     <div className={'an-fb' + (cliff ? ' cliff' : '')}>
       <span className="an-fb-col"><motion.i style={{ scaleY: sy }} /></span>
-      <em>Step {k + 1}</em>
+      <em>{cliff && <motion.span className="an-cliff" style={{ opacity: drop }}><Drop /></motion.span>}Step {k + 1}</em>
     </div>
   );
 }
@@ -278,12 +310,9 @@ function FunnelScene({ p, on }) {
   const drop = useSpan(b, 0.42, 0.56);
   return (
     <div className="kn-obj an-sc an-sc-f">
-      <p className="an-sc-k">Funnels and goals</p>
+      <p className="kn-kick an-sc-k">Funnels and goals</p>
       <div className="an-fbars">
-        {STEPS.map((w, k) => <Bar key={k} b={b} k={k} w={w / 100} cliff={k === 3} />)}
-        <motion.span className="an-cliff" style={{ opacity: drop }} aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 6l12 12M18 9v9H9" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-        </motion.span>
+        {STEPS.map((w, k) => <Bar key={k} b={b} k={k} w={w / 100} cliff={k === 3} drop={drop} />)}
       </div>
       <p className="an-sc-note">The step with the cliff is the one worth a week of work.</p>
     </div>
@@ -300,7 +329,7 @@ function RetentionScene({ p, on }) {
   let idx = 0;
   return (
     <div className="kn-obj an-sc an-sc-r">
-      <p className="an-sc-k">Retention by the week someone arrived</p>
+      <p className="kn-kick an-sc-k">Retention by the week someone arrived</p>
       <div className="an-coh" aria-hidden="true">
         {Array.from({ length: COH }, (_, r) => (
           <div key={r} className="an-coh-r">
@@ -360,10 +389,10 @@ function Commerce() {
     <div className="kn-obj an-shop" ref={ref} data-in={seen ? '' : undefined}>
       <div className="an-shop-h"><p>Commerce Dashboard</p><em>example</em></div>
       <div className="an-shop-k">
-        <div><p>Sales Performance</p><b className="kn-fig">4.78%</b><span>+0.6%</span></div>
-        <div><p>Avg. Order Value</p><b className="kn-fig">$87.32</b><span>+2.4%</span></div>
+        <div><p>Sales Performance</p><b className="kn-fig an-m"><span>4.78%</span></b><span>+0.6%</span></div>
+        <div><p>Avg. Order Value</p><b className="kn-fig an-m"><span style={{ '--an-i': 1 }}>$87.32</span></b><span>+2.4%</span></div>
       </div>
-      <p className="an-shop-s">Product Recommendations</p>
+      <p className="kn-kick an-shop-s">Product Recommendations</p>
       <ul>
         {[['Premium Headphones', 98], ['Wireless Keyboard', 85], ['Smart Watch', 79]].map(([t, v], i) => (
           <li key={t} style={{ '--an-w': v / 100, '--an-i': i }}><span>{t}</span><i><b /></i><em className="kn-fig">{v}</em></li>
@@ -387,7 +416,6 @@ const ANOM = [[0, 30], [10, 28], [20, 29], [30, 27], [40, 28], [50, 26], [58, 8]
 function AiPanel() {
   const ref = useRef(null);
   const seen = useInView(ref, { once: true, amount: 0.35 });
-  const calm = useReducedMotion();
   const [box, wh] = useBox(400, 96);
   const line = poly(px(ANOM.map(([x, y]) => [x, y * 2.5]), wh));
   return (
@@ -396,21 +424,19 @@ function AiPanel() {
       <div className="an-anom">
         <div className="an-anom-h"><b>Traffic Anomaly Detection</b><span className="an-flag">Anomaly Detected</span></div>
         <div className="an-anom-plot" ref={box}>
-          <svg viewBox={`0 0 ${wh[0]} ${wh[1]}`} aria-hidden="true">
-            <motion.path d={line} initial={calm ? false : { pathLength: 0 }} animate={seen ? { pathLength: 1 } : undefined} transition={{ duration: 1.8, ease: EASE, delay: 0.2 }} />
-          </svg>
+          <svg viewBox={`0 0 ${wh[0]} ${wh[1]}`} aria-hidden="true"><path d={line} pathLength="1" /></svg>
           <span className="an-spike" aria-hidden="true" />
         </div>
         <div className="an-anom-f"><p>Unusual traffic spike</p><p className="an-conf">Confidence: 98.7%</p></div>
       </div>
-      <p className="an-ai-s">AI Insights</p>
+      <p className="kn-kick an-ai-s">AI Insights</p>
       <ul className="an-ins">
         {[['Traffic Anomaly', 'Unusual spike detected at 14:32 UTC'], ['Conversion Opportunity', 'Checkout abandonment 23% higher on mobile'], ['Performance Alert', 'API latency increased by 150ms']].map(([a, b], i) => (
           <li key={a} style={{ '--an-i': i }}><b>{a}</b><span>{b}</span></li>
         ))}
       </ul>
       <div className="an-rec">
-        <p className="an-ai-s">AI Recommendation</p>
+        <p className="kn-kick an-ai-s">AI Recommendation</p>
         <p className="an-rec-t">Based on the traffic pattern analysis, we recommend scaling your infrastructure in the US-West region for the next 3 hours.</p>
         <Apply />
       </div>
@@ -460,25 +486,16 @@ analytics.identify('user_123', {
   plan: 'premium'
 });`;
 
-/* light colour for JavaScript: comments, strings, keywords. The email in Hanzo's sample keeps Hanzo's own link. */
-const KW = /\b(import|from|const|new|true|false)\b/;
-function js(line) {
-  if (/^\s*\/\//.test(line)) return <span className="c">{line}</span>;
-  return line.split(/('[^']*')/).map((p, i) => {
-    if (i % 2) return p === "'jane@example.com'" ? <span key={i} className="s">'<A to="/cdn-cgi/l/email-protection" className="an-mail">jane@example.com</A>'</span> : <span key={i} className="s">{p}</span>;
-    return <span key={i}>{p.split(KW).map((w, j) => (j % 2 ? <span key={j} className="k">{w}</span> : w))}</span>;
-  });
-}
-function Lines({ code, num }) {
-  return <pre className="an-pre"><code>{code.split('\n').map((l, i) => <span key={i} className="an-ln">{num && <em>{i + 1}</em>}{js(l)}{'\n'}</span>)}</code></pre>;
-}
-
+/* the kit's CodeBlock, with the editor's line numbers in a gutter beside it (in the flow, the code's own column) */
 function Script() {
+  const n = JS.split('\n').length;
   return (
-    <div className="kn-obj ink an-script">
-      <div className="an-script-bar"><i /><i /><i /><span>analytics.js</span><Copy text={JS} /></div>
-      <Lines code={JS} num />
-      <div className="an-npm"><code><b>$</b> npm install hanzo-analytics</code><Copy text="npm install hanzo-analytics" /></div>
+    <div className="an-script">
+      <div className="an-script-code">
+        <ol className="an-gut" aria-hidden="true">{Array.from({ length: n }, (_, i) => <li key={i}>{i + 1}</li>)}</ol>
+        <CodeBlock code={JS} label="analytics.js" />
+      </div>
+      <CodeBlock className="an-npm" code="npm install hanzo-analytics" prompt />
     </div>
   );
 }
@@ -490,28 +507,27 @@ function ApiSheet() {
     <div className="an-api">
       <p className="kn-lede">The tag collects pageviews on its own. Everything past that is a function call.</p>
       <div className="an-code">
-        <div className="an-code-bar">
-          <div className="an-langs" role="tablist" aria-label="Language">
-            {LANGS.map((l, i) => <button key={l} type="button" role="tab" aria-selected={lang === i} onClick={() => setLang(i)}>{l}</button>)}
-          </div>
-          {lang === 0 && <Copy text={FULL} />}
-        </div>
-        <div className="an-code-b" hidden={lang !== 0}><Lines code={FULL} /></div>
-        {lang !== 0 && (
-          <div className="an-other">
-            <p className="kn-title">{LANGS[lang]}</p>
-            <A to="https://docs.hanzo.ai/docs/openapi" className="kn-btn solid">API Reference</A>
-          </div>
-        )}
+        <Tabs id="an-lang" label="Language" tabs={LANGS} value={lang} onChange={setLang} />
+        <TabPanel id="an-lang" i={0} value={lang}>
+          <CodeBlock code={FULL} label="JavaScript" />
+          {/* Hanzo's page links the sample's address (Cloudflare's email guard); the kit's CodeBlock is plain text, so the link sits under it */}
+          <p className="an-code-note"><A to="/cdn-cgi/l/email-protection">jane@example.com</A></p>
+        </TabPanel>
+        {LANGS.slice(1).map((l, j) => (
+          <TabPanel key={l} id="an-lang" i={j + 1} value={lang} className="an-other">
+            <p className="kn-title">{l}</p>
+            <Cta to="https://docs.hanzo.ai/docs/openapi" kind="quiet" id={'analytics.api-' + l.toLowerCase()}>API Reference</Cta>
+          </TabPanel>
+        ))}
       </div>
       <p className="kn-kick">What you are signing up for</p>
       <ul className="an-sign">
         {[['Your database, your rows', 'It runs against Postgres, MySQL or MariaDB — one you already operate. The raw events stay somewhere you can query directly.'], ['Many sites, one install', 'Add a site, get a tracking id. Group people into teams, and share a board with someone who should not have an account.'], ['Open source, MIT', 'Read it, fork it, run it on a small server for as long as you like. The hosted version exists so you do not have to.']].map(([t, d]) => <li key={t}><b>{t}</b><span>{d}</span></li>)}
       </ul>
       <div className="kn-acts">
-        <A to="https://docs.hanzo.ai/docs/analytics" className="kn-btn">View Documentation</A>
-        <A to="https://docs.hanzo.ai/docs/openapi" className="kn-btn">API Reference</A>
-        <A to="https://github.com/hanzoai/insights" className="kn-btn">Example Projects</A>
+        <Cta to="https://docs.hanzo.ai/docs/analytics" kind="quiet" id="analytics.api-docs">View Documentation</Cta>
+        <Cta to="https://docs.hanzo.ai/docs/openapi" kind="quiet" id="analytics.api-ref">API Reference</Cta>
+        <Cta to="https://github.com/hanzoai/insights" kind="quiet" id="analytics.api-examples">Example Projects</Cta>
       </div>
     </div>
   );
@@ -519,18 +535,17 @@ function ApiSheet() {
 
 /* ---------- community and resources ---------- */
 const RES = [['Documentation', 'Comprehensive guides and API references', 'https://docs.hanzo.ai/docs/analytics'], ['Community Forum', 'Join discussions with developers and AI experts', 'https://discord.gg/XthHQQj'], ['Examples', 'Sample projects showcasing Hanzo Analytics', 'https://github.com/hanzoai/insights'], ['Support', 'Get help from our team and community', '/support']];
-const Arrow = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 export default function Analytics() {
   return (
-    <main className="kn an" style={{ '--ac': '#a3a3a3' }}>
+    <main className="kn an">
       <KeynoteStage
         look="side"
-        size="md"
         kick="Web analytics you host yourself"
         title={['Hanzo', 'Analytics']}
         lede="Traffic, sessions and revenue for the sites you run, in a dashboard you can read without training."
         acts={[['Try Hanzo', '/login'], ['Request Demo', '/contact-sales']]}
+        cta="analytics.hero"
         from={1.06}
       >
         <Board />
@@ -542,10 +557,10 @@ export default function Analytics() {
         className="an-ch"
         head={(
           <div className="an-ch-head">
-            <KeynoteLines className="kn-display sm" lines={['From a visit', 'to a number']} />
+            <KeynoteLines className="kn-headline" lines={['From a visit', 'to a number']} />
             <div className="an-ch-r">
               <p className="kn-lede">A pageview is not worth much on its own. It gets interesting once it is joined to the step someone stopped at, the campaign that sent them and the money that followed.</p>
-              <A to="https://docs.hanzo.ai/docs/projects/hanzoai/insights" className="an-more"><span>Read how reports work</span><Arrow /></A>
+              <Cta to="https://docs.hanzo.ai/docs/projects/hanzoai/insights" kind="link" id="analytics.reports-docs">Read how reports work</Cta>
             </div>
           </div>
         )}
@@ -563,7 +578,7 @@ export default function Analytics() {
             <KeynoteLines className="kn-headline" lines="If you sell something" />
             <p className="kn-lede">Revenue is a report here, not an integration you buy on top.</p>
             <ol className="an-sell-l">
-              {[['Revenue beside the traffic', 'Send an amount and a currency with the event and it lands in the same reports as everything else. Totals, order values and the sessions behind them.'], ['Which campaign paid for itself', 'Attribution splits revenue across the channels and campaigns that touched the session, so spend can be argued with numbers rather than instinct.'], ['The checkout, step by step', 'Cart to payment as a funnel, with the abandonment rate per step. Add a goal for the one step you would defend in a meeting.']].map(([t, d]) => <li key={t}><h3 className="kn-title">{t}</h3><p>{d}</p></li>)}
+              {[['Revenue beside the traffic', 'Send an amount and a currency with the event and it lands in the same reports as everything else. Totals, order values and the sessions behind them.'], ['Which campaign paid for itself', 'Attribution splits revenue across the channels and campaigns that touched the session, so spend can be argued with numbers rather than instinct.'], ['The checkout, step by step', 'Cart to payment as a funnel, with the abandonment rate per step. Add a goal for the one step you would defend in a meeting.']].map(([t, d]) => <li key={t}><h3 className="an-h3">{t}</h3><p>{d}</p></li>)}
             </ol>
           </div>
         </div>
@@ -572,7 +587,7 @@ export default function Analytics() {
       <KeynoteRoom className="kn-sec an-ai">
         <div className="kn-wrap kn-grid an-ai-g">
           <div className="an-ai-t">
-            <KeynoteLines className="kn-display sm" lines={['AI-Powered', 'Observability', '& Monitoring']} />
+            <KeynoteLines className="kn-headline" lines={['AI-Powered', 'Observability', '& Monitoring']} />
             <p className="kn-lede">Proactively identify issues and opportunities with AI-powered insights and monitoring.</p>
             <ul className="an-ai-l">
               {[['Real-time anomaly detection', 'Automatically identify unusual patterns and potential issues before they impact your business.'], ['Predictive alerts and proactive monitoring', 'Get alerted about potential problems before they occur with AI-powered predictive monitoring.'], ['Deep integration with Hanzo Cloud and Base', 'Connect your analytics with your entire infrastructure for comprehensive visibility.']].map(([t, d]) => <li key={t}><b>{t}</b><span>{d}</span></li>)}
@@ -585,14 +600,14 @@ export default function Analytics() {
       <section className="kn-sec an-add">
         <div className="kn-wrap kn-grid an-add-g">
           <div className="an-add-t">
-            <KeynoteLines className="kn-display sm" lines="Add the script" />
+            <KeynoteLines className="kn-headline" lines="Add the script" />
             <p className="kn-lede">One tag on the page and the dashboard fills in on its own. Host it yourself or let us run it — the software is the same either way.</p>
             <ol className="an-add-l">
               {[['One tag', 'Paste it into the head of your site. Pageviews start arriving before you have decided what to name anything.'], ['Your data stays yours', 'The events live in your own Postgres, MySQL or MariaDB. Nothing is sampled, and nothing is held back from an export.'], ['Open source, MIT', 'Run it on a small server for as long as you like. The hosted version is the same code with the operations taken care of.']].map(([t, d], i) => <li key={t}><span className="kn-fig">{String(i + 1).padStart(2, '0')}</span><div><b>{t}</b><p>{d}</p></div></li>)}
             </ol>
             <div className="kn-acts">
-              <A to="/login" className="kn-btn solid">Try Hanzo</A>
-              <A to="/contact-sales" className="kn-btn">Request Demo</A>
+              <Cta to="/login" id="analytics.script">Try Hanzo</Cta>
+              <Cta to="/contact-sales" kind="link" id="analytics.script-2">Request Demo</Cta>
               <KeynoteSheet label="A script, then an API" title="A script, then an API"><ApiSheet /></KeynoteSheet>
             </div>
             <p className="an-nocard">No credit card required.</p>
@@ -623,31 +638,34 @@ export default function Analytics() {
             <KeynoteSheet label="Open Source at Our Core" title="Open Source at Our Core">
               <div className="an-oss">
                 <p className="kn-lede">Hanzo Analytics is fully open-source, fostering innovation and collaboration among thousands of global developers.</p>
-                <div className="kn-acts"><A to="https://docs.hanzo.ai" className="kn-btn solid">View Docs</A><A to="https://github.com/hanzoai" className="kn-btn">View Repository</A></div>
-                <ul className="an-stats">{[['M+', 'Downloads'], ['K+', 'GitHub Stars'], ['', 'Contributors']].map(([a, b]) => <li key={b}><b className={'kn-fig' + (a ? '' : ' none')}>{a || <span aria-hidden="true">—</span>}</b><span>{b}</span></li>)}</ul>
-                <h3 className="kn-title">Open Source</h3>
+                <div className="kn-acts">
+                  <Cta to="https://docs.hanzo.ai" kind="quiet" id="analytics.oss-docs">View Docs</Cta>
+                  <Cta to="https://github.com/hanzoai" kind="quiet" id="analytics.oss-repo">View Repository</Cta>
+                </div>
+                <h3 className="an-h3">Open Source</h3>
                 <p className="an-oss-p">Hanzo Analytics is fully open source, with a vibrant community of developers contributing from around the world. Join us on GitHub to collaborate on the future of analytics.</p>
-                <div className="kn-acts"><A to="https://github.com/hanzoai/insights" className="kn-btn">GitHub Repo</A></div>
+                <div className="kn-acts"><Cta to="https://github.com/hanzoai/insights" kind="quiet" id="analytics.oss-github">GitHub Repo</Cta></div>
+                <ul className="an-stats">{[['M+', 'Downloads'], ['K+', 'GitHub Stars'], ['', 'Contributors']].map(([a, b]) => <li key={b}><b className={'kn-fig' + (a ? '' : ' none')}>{a || <span aria-hidden="true">—</span>}</b><span>{b}</span></li>)}</ul>
               </div>
             </KeynoteSheet>
           </div>
           <div className="an-res">
-            <h3 className="kn-title">Resources</h3>
+            <h3 className="an-h3">Resources</h3>
             <p className="an-res-p">Access comprehensive documentation, tutorials, and examples to help you make the most of Hanzo Analytics.</p>
             <ul className="an-res-l">
               {RES.map(([t, d, to]) => (
                 <li key={t}><A to={to} className="an-r"><b>{t}</b><span>{d}</span><Arrow /></A></li>
               ))}
             </ul>
-            <A to="https://docs.hanzo.ai/docs/analytics" className="an-more"><span>Browse All Resources</span><Arrow /></A>
+            <Cta to="https://docs.hanzo.ai/docs/analytics" kind="link" id="analytics.resources">Browse All Resources</Cta>
           </div>
         </div>
       </section>
 
-      <KeynoteClose light className="an-close" name="Analytics" tag="Product analytics on your data" lead="Get started with Analytics">
+      <KeynoteClose light className="an-close" name="Analytics" tag="Product analytics on your data" lead="Get started with Analytics" cta="analytics.close">
         <div className="kn-acts an-close-l">
-          <A to="https://docs.hanzo.ai/docs/projects/hanzoai/insights" className="kn-btn">Read the docs</A>
-          <A to="https://github.com/hanzoai" className="kn-btn">View on GitHub</A>
+          <Cta to="https://docs.hanzo.ai/docs/projects/hanzoai/insights" kind="link" id="analytics.close-docs">Read the docs</Cta>
+          <Cta to="https://github.com/hanzoai" kind="link" id="analytics.close-github">View on GitHub</Cta>
         </div>
       </KeynoteClose>
     </main>

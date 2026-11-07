@@ -11,8 +11,8 @@
            'side' (title and lede on 5 columns, the object on 7 bleeding to the right edge).
    - from: the object's starting scale (1.1–1.25). Phones use a gentler start automatically. Do not use motion
      layoutId/layout animations inside the object (the scroll scale breaks layout projection); use CSS state.
-   - acts: [label, to]; the first is the page's one ask (the kit's solid <Cta>, magnetic, data-thumb for the sticky ask
-     bar, data-cta = cta); the rest are quiet <Cta>s.
+   - cta: pass '<page>.hero' (the data-cta id of the ask). acts: [label, to]; the first is the page's one ask (the kit's solid <Cta>, magnetic, data-thumb for the sticky ask
+     bar, data-cta = cta); the rest are text-link <Cta>s (the header's "Try Hanzo" is always solid, so one own solid).
    - kick: Hanzo's small label. It is never set above the h1 (a banned tell); it sits under the actions with meta.
    - pause: true gives the demo its pause control (WCAG 2.2.2), in the flow beside the meta line (first in the DOM,
      never over the product). Read it with useStagePause() and run JS loops only while !paused; CSS loops inside the
@@ -54,7 +54,7 @@ export default function KeynoteStage({ kick, title, lede, acts = [], meta, look 
             <div className="kn-acts kns-acts kns-in" style={{ '--d': '.42s' }}>
               {acts.map(([t, to], i) => i === 0
                 ? <Magnetic key={t} strength={0.22}><Cta to={to} id={cta} thumb size="md">{t}</Cta></Magnetic>
-                : <Cta key={t} to={to} kind="quiet" id={cta + '-' + (i + 1)}>{t}</Cta>)}
+                : <Cta key={t} to={to} kind="link" id={cta + '-' + (i + 1)}>{t}</Cta>)}
             </div>
           )}
           {(kick || meta || pause) && (

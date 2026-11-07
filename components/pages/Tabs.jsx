@@ -138,7 +138,7 @@ function Hero() {
         <div ref={ref}>
           <Settle from={1.02} lift={20}>
             <LayoutGroup>
-              <div className={'xtb-stage' + (paused ? ' paused' : '')}>
+              <div className={'xtb-stage' + (paused ? ' paused' : '')} data-room="dark">
                 <div className="xtb-win-bar">
                   <i /><i /><i />
                   <b className="xtb-name">Hanzo Tabs</b>
@@ -252,15 +252,16 @@ function Why() {
 const MACHINES = ['a laptop', 'a workstation', 'a GPU box'];
 
 function Machines() {
+  const [ref, live] = useLive(0.3);
   return (
-    <section className="w2-sec xtb-link" aria-labelledby="xtb-link">
+    <section className="w2-sec xtb-link" aria-labelledby="xtb-link" ref={ref}>
       <div className="w2-wrap xtb-link-grid">
         <div className="xtb-link-copy">
           <h2 id="xtb-link" className="w2-headline">Link a machine, and it appears here</h2>
           <p className="w2-body">Run <code className="x-mono">hanzo link</code> on a laptop, a workstation, a GPU box — anything with a shell. The machine keeps the connection, and nothing is exposed to the network it sits on. Open Tabs and the shells are there.</p>
-          <div className="xtb-cmd"><span className="x-mono">$ hanzo link</span><Copy text="hanzo link" /></div>
+          <div className="xtb-cmd" data-room="dark"><span className="x-mono">$ hanzo link</span><Copy text="hanzo link" /></div>
         </div>
-        <div className="xtb-map" aria-hidden="true">
+        <div className={'xtb-map' + (live ? ' on' : '')} aria-hidden="true">
           <div className="xtb-lan">
             <span className="xtb-lan-k x-mono">its own network · nothing exposed</span>
             {MACHINES.map((m, i) => (
@@ -285,11 +286,12 @@ const GET = [
 ];
 
 function What() {
+  const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
   return (
     <section className="w2-sec xtb-what w2-dark" data-room="dark" aria-labelledby="xtb-what">
       <div className="w2-wrap">
-        <LineMask as="h2" id="xtb-what" className="w2-display s xtb-what-h" lines={['What you get']} inView />
-        <div className="xtb-tiles">
+        <div className="xtb-what-top"><LineMask as="h2" id="xtb-what" className="w2-display s xtb-what-h" lines={['What you get']} /><span className="xtb-what-pause">{pauseBtn}</span></div>
+        <div className={'xtb-tiles' + (paused ? ' paused' : '')}>
           {GET.map(([t, d, k]) => (
             <article key={t} className={'xtb-tile ' + k}>
               {k === 'mit' ? (
@@ -297,7 +299,7 @@ function What() {
               ) : (
                 <div className="xtb-tile-v" aria-hidden="true">
                   {k === 'term' && <div className="xtb-sb">{[62, 80, 45, 70, 90, 38, 66, 84, 52, 74, 40, 88].map((w, i) => <i key={i} style={{ width: w + '%' }} />)}<span className="x-mono"><b>$</b><em /></span></div>}
-                  {k === 'keep' && <div className="xtb-keep"><i><span className="x-mono">build</span></i><i className="go"><span className="x-mono">work</span></i><i><span className="x-mono">shell 3</span></i></div>}
+                  {k === 'keep' && <div className="xtb-keep"><span className="xtb-keep-p"><span className="x-mono">build</span></span><span className="xtb-keep-p go"><span className="x-mono">work</span></span><span className="xtb-keep-p"><span className="x-mono">shell 3</span></span></div>}
                   {k === 'phone' && <div className="xtb-mphone"><div className="xtb-mphone-s"><i /><i /><i /></div><div className="xtb-mphone-k">{KEYS.map((x, i) => <b key={x} className="x-mono" style={{ '--i': i }}>{x}</b>)}</div></div>}
                 </div>
               )}
@@ -306,9 +308,19 @@ function What() {
             </article>
           ))}
         </div>
-        <div className="xtb-what-ask">
-          <Magnetic strength={0.25}><A to="https://tabs.hanzo.ai" className="w2-cta" data-thumb="Open Tabs" data-cta="tabs.close">Open Tabs <i aria-hidden="true">↗</i></A></Magnetic>
-        </div>
+      </div>
+    </section>
+  );
+}
+
+/* The close: one band in the page's own words, a small window keeping its tabs, and the one ask. */
+function Band() {
+  return (
+    <section className="w2-sec tight xtb-band" aria-label="Open Tabs">
+      <div className="w2-wrap xtb-band-in">
+        <div className="xtb-band-win" aria-hidden="true"><span className="xtb-keep-p"><span className="x-mono">build</span></span><span className="xtb-keep-p go"><span className="x-mono">work</span></span><span className="xtb-keep-p"><span className="x-mono">shell 3</span></span></div>
+        <p className="xtb-band-t">Keep tabs on your agents.</p>
+        <Magnetic strength={0.25}><A to="https://tabs.hanzo.ai" className="w2-cta" data-thumb="Open Tabs" data-cta="tabs.close">Open Tabs <i aria-hidden="true">↗</i></A></Magnetic>
       </div>
     </section>
   );
@@ -322,6 +334,7 @@ export default function Tabs() {
       <Why />
       <Machines />
       <What />
+      <Band />
     </main>
   );
 }

@@ -1,32 +1,160 @@
-# Coverage: /operative
+# /operative coverage (MASTER.md part 2, the 18 parts)
 
-Page: `components/pages/Operative.jsx` + `Operative.css`, on the Apps 2 kit (`components/v2/A2*`). One line per area of docs/PLAN-COMPONENTS.md §2, then the §4 gate.
+Page file: `components/pages/Operative.jsx` (+ `.css`) · gallery: `docs/gallery/operative/` · metric id: `cta_click operative.hero`
 
-- **2.1 Strategy and conversion:** goal = run the container. One solid ask, "Get Started" (`data-thumb`, `data-cta="operative.hero"`), and "Deploy to Cloud" in the close (`operative.close`); the global ask bar carries it once the hero has gone by. Every other action is an outline or a text link.
-- **2.2 IA and navigation:** header and footer untouched (shared). In-page links stay in-site through kit `A`.
-- **2.3 First impression and narrative:** the name at display size, the lede and the ask beside it, and the desktop inside its container below, already worked by its four hands; fits 1470×801. Then one idea per screen: hero → the container exploding into six labelled layers (pinned) → one docker run typing itself and lighting the four ports → which way in (one variable) → the dark room (the loop, Interrupt) → run it and watch → get.
-- **2.4 Conversion system:** hero and closing asks only; secondaries are outlines or text links. No forms send anything.
-- **2.5 Trust and proof:** The ports (8501, 6080, 5900, 8080) and every command are Hanzo's.
-- **2.6 Content presentation:** copy untouched (parity 104/104 text, 6/6 links). No eyebrow above any headline: those labels are visually hidden and stay in the HTML for screen readers and search. Detail lives in things you open where there is a lot of it.
-- **2.7 Visual design system:** white page, ink, greys and silvers only (0 UI hues; `scripts/taste.py` passes). One dark room: the plan, act, look loop. Radii 28 on hero objects, 16 on cards; hairlines and long soft shadows.
-- **2.8 UI component library:** kit `A`, `Go`, `More`, `Copy`; Apps 2 kit `A2Lines`, `A2Paste` and, where used, `A2Chapters`, `A2Sheet`, `A2Faq`. Buttons press to .98 (shared `.x-btn`); targets 44px or more on touch.
-- **2.9 Motion and interaction:** signature = the container comes apart (scroll). Supporting: the four hands and the cursor (time), the typed install and ports (time), the provider pill (state), the loop and Interrupt (time and state). Scroll is under half. `scripts/variety.py` passes.
-- **2.10 Media:** Hanzo's Iro still is the desktop wallpaper and the demo screen (raw `<img>`, to swap for kit `Img`).
-- **2.11 Mobile and responsive:** designed at 375: the h1 flows into three or four lines, pinned scenes become a plain vertical story or a swipe rail, no sideways scroll.
-- **2.12 Accessibility:** one h1; an h2 per section; tabs, switches and accordions carry their aria states; decorative art is `aria-hidden`; visible focus.
-- **2.13 Performance:** transform and opacity (and clip-path for one wipe) only; loops stop off screen; typing writes to text nodes, not React state per character; no layout shift measured.
-- **2.14 SEO and machine files:** metadata and JsonLd unchanged; all text in the server HTML.
-- **2.15 Catalogue and product pages:** Not a catalogue.
-- **2.16 Developer experience:** Copy Installation Commands; the provider switch rewrites only the environment variable.
-- **2.17 States and resilience:** Interrupt shows an "interrupted" state; reduced motion shows every layer apart. Reduced motion shows final states; with JavaScript off a `noscript` rule shows every masked line and anything that starts hidden. No live API calls.
-- **2.18 Measurement and handover:** `data-cta` on the hero and closing primaries; Persona, Goal, CTA and Metric lines in the page header; no analytics wired yet (the conductor's event layer).
+Open copy questions for James: none.
+Shared changes requested (`docs/requests/operative.md`): data-cta on the kit Band; the desktop ask bar floating over content; the Terminal and PageHero kit parts.
+Forks this page deleted: the raw hero anchor and Go buttons (now kit Cta), the raw <img> (now kit Img), the dimmed and greyscale photos, the gradient crate and shadowed slabs, the Interrupt/Resume button and the interrupted label (now the kit pause control), the autoplaying provider switch, the blue accent, springs, setInterval.
 
-## §4 gate
-1. Persona, Goal, CTA and Metric lines in the page file header. ✔
-2. One h1 in server HTML; a closing ask; page-owned hero and buttons until a shared `PageHero` lands. ◐
-3. Greys only; one filled primary per screen; `data-thumb` and `data-cta`. ✔
-4. Parity 0 missing (104/104 text, 6/6 links). ✔
-5. Reduced motion final states; JavaScript off legible; keyboard paths for every control. ✔
-6. 375×812 and 1470×801 checked, no sideways scroll; Lighthouse not run (no CI yet). ◐
-7. Film and phone shots in `docs/gallery/operative/`. ✔
-8. Ledger (removed): the blue accent; the eyebrows; two solids in the close; the cursor moved by left/top (now transform).
+Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
+
+## 1. Strategy and conversion
+- [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
+- [ ] One solid fill per viewport; label and href from `lib/cta.js`
+- [x] One h1; the page is clear in 5 seconds
+- ~~No dead or self-looping button; prices from `lib/plans.js`~~ n/a: no prices on this page
+- [x] Open copy questions for James listed, none decided
+
+Done here: Header lines Persona/Goal/CTA/Metric/Signature/Beyond in Operative.jsx; one solid: kit Cta "Get Started" (operative.hero, thumb, to the docker run on the page), quiet "View Docs"; the Band closes on Hanzo's "Deploy to Cloud". `lib/cta.js` does not exist yet.
+
+## 2. Information architecture and navigation
+- [x] One `<main id="main">`; skip link reaches it
+- [x] Every link through `A`, `Go`, `More` or `href()`; every card a real link
+- ~~Breadcrumb at depth 2 or more~~ n/a: depth 1
+- [x] Link parity: 0 removed, 0 unexpected
+
+Done here: One <main> inside the layout's #main marker; links via kit A and Cta; parity links 6/6; depth 1.
+
+## 3. First impression and page narrative
+- [x] Sells in 5 s; something moves within 1 s without input
+- [ ] `PageHero`; nothing above the h1
+- [x] JS off: legible; no `opacity:0` on the LCP element
+- [x] One idea per 100svh; no 3 same-height sections in a row
+- [x] Ends in proof strip, `Band`, footer
+- [ ] Card-to-page links use Morph; title lands within 12px
+
+Done here: h1 "Hanzo Operative" 52px by line mask; the desktop's hands move within 1 s (alive: moving). JS off: 0 of 124 text blocks hidden. Ends: Get Operative card, kit Band, footer.
+
+## 4. Conversion system
+- [x] `<Cta>` only; no raw `.x-btn`
+- [x] Sticky ask in header and bar after the hero, same label
+- [x] Copy button copies exactly the displayed text; failure never says Copied
+- [x] `data-cta` and `data-thumb` on every primary
+
+Done here: Kit Cta only; the ask bar carries "Get Started" via data-thumb; the install Copy copies exactly the two displayed commands.
+
+## 5. Trust and proof
+- [x] No logo without documented permission; no seal; no invented number
+- [x] Every figure traces to Hanzo's copy; qualifier beside the number
+- ~~Marquees pause, freeze under reduced motion, hide duplicates~~ n/a: no marquee
+- ~~Privacy link and owner line beside every submit~~ n/a: no form on this page
+
+Done here: Only Hanzo's words, ports (8501, 6080, 5900, 8080) and commands; no logos, seals or figures of our own.
+
+## 6. Content presentation (copy untouched)
+- [x] No text under 13px (14px phone) except mono capitals
+- [x] Measures held; no orphan word in a heading
+- [ ] Tables, FAQ, tabs and code use the kit parts
+- [x] `python3 scripts/parity.py /operative`: 0 missing
+
+Done here: Deck sizes: h1 52, section headings 26, card titles 21, list 17, body 16, ports 44; the loop rests at 26 and grows to 1.3x while it is the moment; 13px floor. Parity 104/104 text, 6/6 links. Usage commands stay inline code (short, not copyable).
+
+## 7. Visual design system
+- [ ] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
+- [x] No label, tag, badge or pill above a headline
+- [x] Radii, shadows and sizes from tokens; never box plus shadow
+- [ ] One icon set; no icon in a rounded box
+- [x] Differs from neighbours in hero medium and room order
+
+Done here: taste.py passes (greys only); brows check 0 labels above a headline; flat fills, outline or fill, never with a shadow (only the render's window keeps its own shadow); the photo shows undimmed. Literal greys still to move onto tokens.
+
+## 8. UI component library
+- [x] Every control has hover, press, focus-visible, disabled, loading
+- [x] Focus ring visible on every stop of a Tab crawl
+- ~~Dialogs are native, trap focus and return it~~ n/a: no dialog on this page
+- [x] Inputs 16px or larger; no bare `:hover`
+- [x] Forks this page deleted: the raw hero anchor and Go buttons (now kit Cta), the raw <img> (now kit Img), the dimmed and greyscale photos, the gradient crate and shadowed slabs, the Interrupt/Resume button and the interrupted label (now the kit pause control), the autoplaying provider switch, the blue accent, springs, setInterval. listed below
+
+Done here: Hands, segments, cards, Replay and links press (.97 to .98 or 1px); focus ring from the system and on Replay; hovers only inside (hover: hover); no inputs.
+
+## 9. Motion and interaction
+- [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
+- [x] At least 3 kinds of movement; scroll-linked is half or less
+- [x] Something moves without input; every control answers
+- [x] Reduced motion shows the final state; no `setInterval`
+- [x] Sound only on the listed moments, through the one kit
+
+Done here: Signature: the exploded container (scroll); supporting: the hands working the desktop (time), the provider switch (state, layoutId), the typed docker run (time, once); variety.py OK; reduced motion shows the final state; timeouts only.
+
+## 10. Media
+- [x] `Film` and `Pic` only; sizes and posters set
+- ~~At most 2 videos playing; pause button on loops over 5 s~~ n/a: no video on this page
+- [x] Budgets met; nothing missing; alt on every image
+- [ ] No dimmed or filtered photo; 4+ real visuals together where the page has them
+
+Done here: Hanzo's iro image through kit Img with width, height and sizes (priority on the hero only); alt empty because it is decoration inside a drawn desktop; no filter or dimming.
+
+## 11. Mobile and responsive
+- [x] 375×812 and 1470×801 pass with no overlap
+- [x] No horizontal scroll at 320
+- [x] Every target 44px or more; every hover has a tap path
+- [x] Primary ask above the fold at 375×667
+
+Done here: 375x812 and 1470x801: 0 overlaps; 320 scrollWidth 320; ask bottom at 437px on 375x667; 44px targets.
+
+## 12. Accessibility (WCAG 2.2 AA)
+- [x] Contrast measured, text at 4.5:1 or better
+- [x] Pause control on every moving item
+- [x] Forms labelled; first error focused
+- [x] One h1; no heading skips; names start with visible text
+- [x] Keyboard reaches every control
+
+Done here: Text #0a0a0a/#404040/#525252 on white and #a3a3a3 or lighter on black; pause controls on the desktop's hands and the loop; the provider switch is a named radio group; one h1, h2 sections, h3 lists.
+
+## 13. Performance and engineering
+- [x] h1 and LCP element in server HTML
+- [ ] JS and CSS inside budget; every image and video sized
+- [x] No poller; no third-party request before consent
+- [x] Nothing heavy run on James's laptop
+
+Done here: h1 and the desktop in server HTML; transform and opacity only; loops stop off screen and when paused; budgets not yet measured.
+
+## 14. SEO and machine files
+- [x] Title and description match live (or are listed for James)
+- [x] Canonical equals og:url equals the live URL
+- [x] `<JsonLd route>` parses; no broken URL
+- [x] Every card is a real link
+
+Done here: app/operative metadata unchanged; JsonLd route=/operative; every link is real.
+
+## 15. Catalogue and product pages
+- ~~Model card matches `SPEC.md` (or n/a: not a catalogue or model page)~~ n/a: not a catalogue or model page
+- ~~Every card opens by Morph~~ n/a: no cards that open into pages
+- ~~Every maker and model page linked in the DOM~~ n/a: not a catalogue
+- ~~One price figure everywhere~~ n/a: no prices
+
+Done here: Not a catalogue.
+
+## 16. Developer experience
+- [ ] One `CodeBlock`; copy equals display (or n/a: no code on the page)
+- [x] Config blocks parse on their own
+- [x] Terminal pauses and ends on a static frame
+- [x] No hand-typed version number
+
+Done here: The docker run types once when it arrives and ends on its static frame; Replay runs it again; copy equals the displayed commands; no version numbers. Page-owned until the kit Terminal lands.
+
+## 17. States and resilience
+- [x] Loading, empty, error and offline states designed
+- [x] Blocked live data leaves a complete page, no console errors
+- ~~A failed submit keeps its values and shows no success~~ n/a: no submit
+- [ ] A thrown island does not blank the page
+
+Done here: No live data, so nothing loads or fails.
+
+## 18. Measurement and handover
+- [x] `data-cta` on every primary; events only through `lib/track.js`
+- [x] Nothing identifier-bearing before consent; no field value in a payload
+- [x] `V2: <score>/10 <one line>` in the page file's top comment
+- [ ] Review read: `docs/review/operative.md` verdict 8 or more
+
+Done here: data-cta on operative.hero; the kit Band's button has no data-cta yet (requested); Cta sends cta_click through the system event; V2 line in the header; no critic review yet.

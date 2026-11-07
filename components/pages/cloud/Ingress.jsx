@@ -1,6 +1,12 @@
 'use client';
+// Persona: a platform engineer choosing what sits on ports 80 and 443 of a cluster.
+// Goal: see routes, certificates and middleware handled from what they already wrote, without restarts.
+// CTA: View on GitHub (ingress.hero, ingress.close).
+// Metric: cta_click ingress.hero
+// Signature: the routing board, live: requests by host and path, a backend leaving and rejoining rotation, a certificate arriving.
+// Beyond: Chain your own pipeline: pick and reorder Hanzo's middleware and watch a request walk it.
 /* Ingress (v2, archetype A Launch).
-   V2: 8/10 Ports 80 and 443 as hero figures over a live routing board; the six edge facts as full-screen scenes that wipe up over each other; chain-your-own-pipeline as the dark room.
+   V2: 8/10 Ports 80 and 443 as figures over a live routing board; the six edge facts as scenes that wipe up; chain-your-own-pipeline in the dark room; greys only, one ask.
    Signature: the routing board, live. Requests arrive by hostname and path, pass the middleware named in annotations
    and land on backends; a backend that stops answering health checks drops out of rotation and comes back when it
    recovers; a new hostname fetches its own certificate; a docs path is served from disk with no pod at all.
@@ -8,15 +14,19 @@
    clip-path scene changes (WipeScenes), each scene in its own tint.
    Beyond: "Chain your own pipeline" - press Hanzo's middleware to add it, drag (or use the arrows) to change the order,
    and a request walks the chain top to bottom each time it changes.
-   Accent: blue, from the port light. Every word and link is Hanzo's; hostnames are examples. */
+   Greys only (Hanzo's deck). Every word and link is Hanzo's; hostnames are examples.
+   Persona: a platform engineer choosing what sits on ports 80 and 443 of a Kubernetes cluster.
+   Goal: see routes, certificates and middleware handled from what they already wrote, without restarts.
+   CTA: View on GitHub (hero, the sticky ask bar and the close; one solid button per screen). */
 import { useState } from 'react';
 import { motion, AnimatePresence, Reorder } from 'motion/react';
-import { A } from '../../kit';
-import { useLive, useEvery } from './Frame';
-import { Lines, Lift } from '../../v2/LiftStage';
+import { A, Cta } from '../../kit';
+import { useLive } from './Frame';
+import { Lines, Lift, useTick } from '../../v2/LiftStage';
 import WipeScenes from '../../v2/WipeScenes';
 import ShipPrompt from '../../v2/ShipPrompt';
 import GetIt from '../../v2/GetIt';
+import LivePause, { usePause } from '../../v2/LivePause';
 import '../../v2/v2scale.css';
 import './Ingress.css';
 
@@ -29,15 +39,20 @@ const ROUTES = [
 
 /* The routing board: host and path, middleware, backends; a failing backend, a new certificate, a recovery. */
 function Board() {
-  const [ref, live, calm] = useLive(0.3);
+  const [ref, seen, calm] = useLive(0.3);
+  const [paused, togglePause] = usePause();
+  const live = seen && !paused;
   const [tick, setTick] = useState(0);
-  useEvery(1000, live, () => setTick((t) => t + 1));
+  useTick(1000, live, () => setTick((t) => t + 1));
   const phase = Math.floor(tick / 5) % 4; // 0 normal, 1 a backend fails, 2 new hostname gets a certificate, 3 recovered
   const req = tick % 3;
   const down = phase === 1 || phase === 2;
   const cert = phase >= 2 || calm;
   return (
+    <div className="lp-host">
+    <LivePause paused={paused} onToggle={togglePause} className="ig-pause" />
     <div className="ig-board" ref={ref} aria-hidden="true">
+      <p className="ig-board-t"><i />hanzoai/ingress</p>
       <div className="ig-col">
         <p className="ig-k">host · path</p>
         {ROUTES.map(([h, p], i) => (
@@ -64,6 +79,7 @@ function Board() {
         <div className={'ig-svc' + (req === 2 ? ' hit' : '')}><b>shop</b><span className="ig-pods"><i /><i /></span></div>
         <p className={'ig-note' + (down ? ' down' : '')}>{down ? 'health check failed · out of rotation' : phase === 3 ? 'recovered · back in rotation' : 'no reload, no dropped connection'}</p>
       </div>
+    </div>
     </div>
   );
 }
@@ -117,8 +133,8 @@ function Pipeline() {
     <section className="ig-pipe v2-dark" data-room="dark">
       <div className="v2-wrap v2-grid">
         <div className="ig-pipe-l">
-          <p className="v2-kick acc">Middleware you compose by annotation</p>
           <h2 className="v2-display s">Chain your own pipeline</h2>
+          <p className="v2-kick acc ig-pipe-cap">Middleware you compose by annotation</p>
           <p className="v2-lede">Name one in an annotation, or chain several into a named pipeline and name that.</p>
           <div className="ig-pipe-pick" role="group" aria-label="Middleware">
             {MW.map((m) => <button key={m} type="button" aria-pressed={chain.includes(m)} onClick={() => toggle(m)}>{m}</button>)}
@@ -128,7 +144,7 @@ function Pipeline() {
           <p className="ig-pipe-end">request</p>
           <Reorder.Group as="ol" axis="y" values={chain} onReorder={setChain} className="ig-pipe-chain" data-swipe-own="">
             {chain.map((m, i) => (
-              <Reorder.Item as="li" key={m} value={m} data-cursor="Drag" whileDrag={{ scale: 1.03, boxShadow: '0 18px 40px -18px rgba(0,0,0,.6)' }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+              <Reorder.Item as="li" key={m} value={m} data-cursor="Drag" whileDrag={{ scale: 1.03, boxShadow: '0 18px 40px -18px rgba(0,0,0,.6)' }} transition={{ duration: 0.3, ease: EASE }}>
                 <span className="ig-pipe-n">{String(i + 1).padStart(2, '0')}</span>{m}
                 <span className="ig-pipe-mv">
                   <button type="button" aria-label={'Move ' + m + ' up'} disabled={i === 0} onClick={() => move(i, -1)}>↑</button>
@@ -152,16 +168,15 @@ export default function Ingress() {
       <section className="ig-hero">
         <div className="v2-wrap v2-grid ig-hero-t">
           <div className="ig-hero-l">
-            <p className="v2-kick acc">hanzoai/ingress</p>
             <Lines as="h1" className="v2-display ig-h1" lines={['Hanzo', 'Ingress']} data-morph-target="" />
           </div>
           <div className="ig-ports" aria-hidden="true"><span>:80</span><span>:443</span></div>
           <div className="ig-hero-b">
-            <p className="v2-lede ig-sub">The entry point of a Kubernetes cluster</p>
-            <A to="https://github.com/hanzoai" className="v2-btn solid">View on GitHub</A>
+            <p className="v2-lede ig-sub v2-in" style={{ animationDelay: '.3s' }}>The entry point of a Kubernetes cluster</p>
+            <Cta to="https://github.com/hanzoai" id="ingress.hero" thumb className="v2-in" style={{ animationDelay: '.42s' }}>View on GitHub</Cta>
           </div>
         </div>
-        <Lift className="v2-wrap ig-lift" from={1.12} y={30} origin="50% 0%" offset={['start end', 'start 0.18']}>
+        <Lift className="v2-wrap ig-lift" from={1.05} y={20} origin="50% 0%" offset={['start end', 'start 0.4']}>
           <Board />
         </Lift>
       </section>
@@ -188,11 +203,11 @@ export default function Ingress() {
         )}
       />
 
-      <Pipeline />
-
       <ShipPrompt name="Ingress" prompt="Read https://hanzo.ai/skill.md and use Hanzo Ingress in my project. Start with: hanzo ingress routes list" flip />
 
-      <GetIt name="Ingress" tag="K8s ingress + static plugin" seed="ingress" data={[80, 443, 6]} lead="Get started with Hanzo Ingress" />
+      <Pipeline />
+
+      <GetIt name="Ingress" tag="K8s ingress + static plugin" seed="ingress" data={[80, 443, 6]} lead="Get started with Hanzo Ingress" ask={['View on GitHub', 'https://github.com/hanzoai', 'ingress.close']} />
     </main>
   );
 }

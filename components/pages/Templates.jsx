@@ -2,8 +2,9 @@
 // Signature: a deck of live browser windows that riffles itself; pull one forward (drag, arrows or a dot) and its address bar types its .hanzo.app name.
 // Beyond: the commands for the template in front, with its slug and its source repository filled in, ready to copy.
 /* Persona: builders who want a finished product to start from. Goal: open a template in Hanzo. CTA: "Edit in Hanzo" → /chat?template=<slug>. Metric: first_chat.
-   Templates, v2. V2: 8/10 Stage deck (the riffling deck of live windows arrives huge and settles), a shelf of all twelve whose tiles open into sheets, the setup room in the dark, orange accent
-   Motion budget: signature = the riffling deck (drag); supporting = Stage (Settle), Open (shelf sheets), layout chips.
+   Templates. The deck of live windows is the first screen's object; a dense wall of all twelve previews opens into
+   sheets; the setup room in the dark; a closing band with the one ask. Greys only.
+   Motion budget: signature = the riffling deck (drag); supporting = Settle, Open (wall sheets), magnetic. No springs.
    Templates. Hanzo's twelve products with previews, as a deck of browser windows: the one in front is the one you
    open, the next three wait behind it, the ones you passed fly off to the left. The chips re-deal the deck by kind.
    Under it, Hanzo's own setup prompt is spelled out as the commands it runs, for whichever template is in front. */
@@ -71,25 +72,27 @@ function Strip() {
   );
 }
 
-function Card({ t, d, onPrev, onNext, calm }) {
+function Card({ t, d, onPrev, onNext, calm, narrow }) {
   const [slug, title, kind, what] = t;
   const front = d === 0;
   const gone = d < 0;
-  const pose = gone ? { x: '-115%', y: 0, scale: 0.92, rotate: -8, opacity: 0 } : { x: d * 22, y: -d * 26, scale: 1 - d * 0.06, rotate: d * 1.2, opacity: d > 3 ? 0 : 1 - d * 0.18 };
+  const moved = useRef(false); // a drag flips the deck; it never also opens the card
+  const pose = gone ? { x: '-115%', y: 0, scale: 0.92, rotate: -8, opacity: 0 } : { x: d * (narrow ? 12 : 48), y: -d * (narrow ? 14 : 30), scale: 1 - d * 0.035, rotate: 0, opacity: d > 3 ? 0 : 1 - d * 0.16 };
   return (
     <motion.article
       className={'xtp-card' + (front ? ' front' : '')}
-      style={{ zIndex: 50 - Math.abs(d) }}
+      style={{ zIndex: 50 - Math.abs(d), transformOrigin: '100% 100%' }}
       initial={false}
       animate={pose}
       transition={calm ? { duration: 0 } : { duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
       drag={front ? 'x' : false}
       dragSnapToOrigin
       dragElastic={0.5}
-      onDragEnd={(e, i) => { if (i.offset.x < -80 || i.velocity.x < -500) onNext(); else if (i.offset.x > 80 || i.velocity.x > 500) onPrev(); }}
+      onDragStart={() => { moved.current = true; }}
+      onDragEnd={(e, i) => { if (i.offset.x < -80 || i.velocity.x < -500) onNext(); else if (i.offset.x > 80 || i.velocity.x > 500) onPrev(); setTimeout(() => { moved.current = false; }, 0); }}
+      onClickCapture={(e) => { if (moved.current) { e.preventDefault(); e.stopPropagation(); } }}
       aria-hidden={!front}
       data-swipe-own
-      data-cursor={front ? 'Drag' : undefined}
     >
       <div className="xtp-bar">
         <span className="xtp-lights" aria-hidden="true"><i /><i /><i /></span>
@@ -97,22 +100,25 @@ function Card({ t, d, onPrev, onNext, calm }) {
         <span className="xtp-kind x-mono">{kind}</span>
       </div>
       <A to={'/chat?template=' + encodeURIComponent(slug)} className="xtp-shot" tabIndex={front ? 0 : -1} draggable={false}>
-        <Img src={`https://hanzo.ai/templates/${slug}.webp`} alt={`${title} template preview`} w={1280} h={800} draggable={false} />
+        <span className="xtp-shot-name" aria-hidden="true">{title}</span>
+        <Img src={`https://hanzo.ai/templates/${slug}.webp`} alt={`${title} template preview`} w={1280} h={800} draggable={false} priority={front} />
       </A>
       <div className="xtp-foot">
         <div><h3>{title}</h3><p>{what}</p></div>
-        <A to={'/chat?template=' + encodeURIComponent(slug)} className="xtp-edit" tabIndex={front ? 0 : -1}>Edit in Hanzo <span aria-hidden="true">→</span></A>
+        <A to={'/chat?template=' + encodeURIComponent(slug)} className="xtp-edit" tabIndex={front ? 0 : -1} data-cta="templates.card">Edit in Hanzo <span aria-hidden="true">→</span></A>
       </div>
     </motion.article>
   );
 }
 
-function Deck({ kind, setKind, at, setAt, list }) {
+function Deck({ kind, setKind, at, setAt, list, front }) {
   const [mine, setMine] = useState(false);
-  const [paused, pauseBtn] = usePause({ right: 0, top: 0 });
+  const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
   const calm = useReducedMotion();
   const ref = useRef(null);
   const seen = useInView(ref, { amount: 0.35 });
+  const [narrow, setNarrow] = useState(false); // phones peek the back cards less, so the front window keeps its width
+  useEffect(() => { const m = matchMedia('(max-width: 899px)'); const f = () => setNarrow(m.matches); f(); m.addEventListener('change', f); return () => m.removeEventListener('change', f); }, []);
   const go = (k) => { setMine(true); setAt((k + list.length) % list.length); };
   useEffect(() => {
     if (mine || calm || !seen || paused || list.length < 2) return;
@@ -121,10 +127,9 @@ function Deck({ kind, setKind, at, setAt, list }) {
   }, [at, mine, calm, seen, paused, list.length, setAt]);
   return (
     <div className={'xtp-deckwrap' + (paused ? ' paused' : '')} ref={ref}>
-      {pauseBtn}
-      <div className="xtp-kinds" role="tablist" aria-label="Kind of template">
+      <div className="xtp-kinds" role="group" aria-label="Kind of template">
         {KINDS.map((k) => (
-          <button key={k} type="button" role="tab" aria-selected={kind === k} onClick={() => { setKind(k); setAt(0); setMine(true); }}>
+          <button key={k} type="button" aria-pressed={kind === k} onClick={() => { setKind(k); setAt(0); setMine(true); }}>
             <span>{k}<i className="x-mono">{pad(k === 'All' ? ALL.length : ALL.filter((t) => t[2] === k).length)}</i></span>
           </button>
         ))}
@@ -133,18 +138,20 @@ function Deck({ kind, setKind, at, setAt, list }) {
         {ALL.map((t) => {
           const i = list.indexOf(t);
           const d = i < 0 ? 9 : i - at;
-          return <div key={t[0]} hidden={i < 0} className="xtp-slot"><Card t={t} d={d} onNext={() => go(at + 1)} onPrev={() => go(at - 1)} calm={calm} /></div>;
+          return <div key={t[0]} hidden={i < 0} className="xtp-slot"><Card t={t} d={d} onNext={() => go(at + 1)} onPrev={() => go(at - 1)} calm={calm} narrow={narrow} /></div>;
         })}
       </div>
       <div className="xtp-nav">
+        <p className="xtp-front"><span className="x-mono">{front[2]}</span><b>{front[1]}</b></p>
         <button type="button" className="xtp-arrow" aria-label="Previous template" onClick={() => go(at - 1)}>←</button>
-        <span className="x-mono xtp-count" aria-live="polite">{pad(at + 1)} / {pad(list.length)}</span>
+        <span className="x-mono xtp-count" aria-live={mine ? 'polite' : 'off'}>{pad(at + 1)} / {pad(list.length)}</span>
         <div className="xtp-dots">
-          {list.slice(0, 10).map((t, i) => (
-            <button key={t[0]} type="button" aria-label={'Go to slide ' + (i + 1)} aria-current={i === at % 10 ? 'true' : undefined} onClick={() => go(i)}><i /></button>
+          {list.map((t, i) => (
+            <button key={t[0]} type="button" aria-label={t[1]} aria-current={i === at ? 'true' : undefined} onClick={() => go(i)}><i /></button>
           ))}
         </div>
         <button type="button" className="xtp-arrow" aria-label="Next template" onClick={() => go(at + 1)}>→</button>
+        <span className="xtp-pause">{pauseBtn}</span>
       </div>
     </div>
   );
@@ -156,7 +163,6 @@ function Commands({ t }) {
     ['hanzo login', 'register or sign in'],
     ['hanzo template list', 'pick a starter'],
     [`hanzo template get ${slug}`, 'names the repository to clone, in its source'],
-    [`git clone https://github.com/hanzo-apps/template-${slug}`, null],
     ['hanzo dev', 'in it, to start building'],
   ];
   return (
@@ -195,16 +201,17 @@ function Commands({ t }) {
 /* The shelf: all twelve as tiles; each opens into a sheet with its preview, what it is, and its commands. */
 function Shelf() {
   return (
-    <section className="w2-sec xtp-shelf" aria-label="Every template">
+    <section className="w2-sec tight xtp-shelf" aria-labelledby="xtp-shelf-h">
       <div className="w2-wrap">
+        <h2 id="xtp-shelf-h" className="x-sr">Templates</h2>
         <p className="xtp-shelf-k w2-kicker">All <span className="x-mono">{pad(ALL.length)}</span></p>
-        <OpenCards cols={3} className="xtp-tiles" items={ALL.map(([slug, title, kind, what]) => ({
-          id: 'xtp-' + slug, k: kind, t: title, d: what,
+        <OpenCards cols={4} className="xtp-tiles" items={ALL.map(([slug, title, kind, what]) => ({
+          id: 'xtp-' + slug, k: kind, t: title,
           art: <span className="xtp-tile-img"><Img src={`https://hanzo.ai/templates/${slug}.webp`} alt="" w={1280} h={800} /><span className="x-mono">{slug}.hanzo.app</span></span>,
           body: (<>
             <p>{what}</p>
-            <p className="xtp-sheet-cmd x-mono">git clone https://github.com/hanzo-apps/template-{slug}</p>
-            <p><A to={'/chat?template=' + encodeURIComponent(slug)} className="w2-cta">Edit in Hanzo <i aria-hidden="true">→</i></A></p>
+            <p><A to={'/chat?template=' + encodeURIComponent(slug)} className="w2-cta" data-cta="templates.sheet">Edit in Hanzo <i aria-hidden="true">→</i></A></p>
+            <p className="xtp-sheet-cmd x-mono">hanzo template get {slug}</p>
           </>),
         }))} />
       </div>
@@ -229,25 +236,24 @@ export default function Templates() {
             </div>
             <motion.div className="xtp-top-r" initial={{ y: 14 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
               <p className="w2-lede xtp-lede">Open one. Edit it in Hanzo.</p>
-              <div className="xtp-front" aria-live="polite">
-                <AnimatePresence mode="wait" initial={false}>
-                  <motion.p key={front[0]} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.35, ease: EASE }}>
-                    <span className="x-mono">{front[2]}</span><b>{front[1]}</b>
-                  </motion.p>
-                </AnimatePresence>
-                <Magnetic strength={0.25}><A to={'/chat?template=' + encodeURIComponent(front[0])} className="w2-cta" data-thumb="Edit in Hanzo" data-cta="templates.hero">Edit in Hanzo <i aria-hidden="true">→</i></A></Magnetic>
-              </div>
+              <Magnetic strength={0.25}><A to={'/chat?template=' + encodeURIComponent(front[0])} className="w2-cta" data-thumb="Edit in Hanzo" data-cta="templates.hero">Edit in Hanzo <i aria-hidden="true">→</i></A></Magnetic>
             </motion.div>
           </div>
-          <Settle from={1.06} lift={60}>
+          <Settle from={1.02} lift={0}>
             <div className="xtp-stage">
-              <Deck kind={kind} setKind={setKind} at={Math.min(at, list.length - 1)} setAt={setAt} list={list} />
+              <Deck kind={kind} setKind={setKind} at={Math.min(at, list.length - 1)} setAt={setAt} list={list} front={front} />
             </div>
           </Settle>
         </div>
       </section>
       <Shelf />
       <Commands t={front} />
+      <section className="w2-sec tight xtp-band" aria-label="Edit in Hanzo">
+        <div className="w2-wrap xtp-band-in">
+          <p className="xtp-band-t">{front[1]} <span className="x-mono">{front[0]}.hanzo.app</span></p>
+          <Magnetic strength={0.25}><A to={'/chat?template=' + encodeURIComponent(front[0])} className="w2-cta" data-thumb="Edit in Hanzo" data-cta="templates.close">Edit in Hanzo <i aria-hidden="true">→</i></A></Magnetic>
+        </div>
+      </section>
     </main>
   );
 }

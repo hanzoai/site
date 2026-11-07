@@ -1,8 +1,9 @@
 'use client';
 /* Flow (v2, archetype A "Launch"): the canvas is the hero, and a run travels it.
    Persona: a developer building an AI workflow (retrieval, a model, a parser) who wants to ship it as an API
+   Metric: app_handoff
    Goal: see a flow run node by node, find out how it is published and run, then open Flow
-   CTA: Open Flow -> https://flow.hanzo.ai (hero, the site's sticky ask bar at every width, close; data-thumb, data-cta)
+   CTA: Open Flow -> https://flow.hanzo.ai (hero, the site's sticky ask bar at every width, close; data-thumb, data-cta flow.hero / flow.close)
    Signature: the canvas, running. Hanzo's own components (a document loader, a text splitter, a vector store, a
    retriever, a model, an output parser) are wired on a full-bleed dotted canvas with "Hanzo Flow" sitting among them;
    a run leaves each node as a pulse that travels its edge to the next, the node runs, and what it returned appears on it.
@@ -13,13 +14,14 @@
    ways (REST, JSON, MCP) as tabs.
    Not only scroll: the run is idle motion; the playground answers the hand; the facts open (state); chapters are scroll.
    Motion: the running canvas (signature) + line-masked headings + sticky chapters + nodes that open into their page.
-V2: 8/10 the first screen is the dotted canvas with the title among running nodes and a Pause on it; six sticky chapters step the run with its inspector; the playground dark room steps it by hand; four facts are nodes that open (REST into three tabs); the close is the two commands and one ask; greys only, nothing above a headline
+V2: 8/10 the dotted canvas is the hero with the run travelling it and a Pause (h1 52 among the nodes); six sticky chapters step the run with its inspector; a graphite playground steps it by hand; four facts are nodes that open (REST into three tabs); the close is the two commands and one ask; deck colours, radii and scale, outlined nodes, no springs
    Every word and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Copy } from '../../ui';
 import { EASE_OUT_EXPO, DUR } from '../../../lib/motion';
-import { A, Go, More } from '../../kit';
+import { A, More } from '../../kit';
+import BizAsk from '../../v2/BizAsk';
 import { useLive } from '../cloud/Frame';
 import BizPaste from '../../v2/BizPaste';
 import BizLines from '../../v2/BizLines';
@@ -118,7 +120,7 @@ function Graph({ lay, s, lit = -1, pulse = true, pick, cls = '' }) {
         ))}
       </svg>
       {pulse && go >= 0 && E[go] && (
-        <motion.i key={'p' + go} className="fl-pulse" aria-hidden="true" initial={{ x: E[go].xs[0], y: E[go].ys[0], opacity: 0 }} animate={{ x: E[go].xs, y: E[go].ys, opacity: [0, 1, 1, 1, 0] }} transition={{ duration: 0.9, ease: 'easeInOut' }} />
+        <motion.i key={'p' + go} className="fl-pulse" aria-hidden="true" initial={{ x: E[go].xs[0], y: E[go].ys[0], opacity: 0 }} animate={{ x: E[go].xs, y: E[go].ys, opacity: [0, 1, 1, 1, 0] }} transition={{ duration: 0.9, ease: [0.4, 0, 0.2, 1] }} />
       )}
       {NODES.map((n, i) => {
         const run = s === 2 * i && s < END;
@@ -148,7 +150,7 @@ function Inspect({ s, i, cls = '', ctl }) {
     <div className={'fl-insp ' + cls}>
       <p className="fl-insp-k x-mono"><span>playground</span><span>{two(i + 1)} / 06</span>{ctl}</p>
       <AnimatePresence mode="wait" initial={false}>
-        <motion.div key={i + (done ? 'd' : 'r')} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6, transition: { duration: 0.12 } }} transition={{ duration: DUR.fade, ease: EASE_OUT_EXPO }}>
+        <motion.div key={i + (done ? 'd' : 'r')} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }} transition={{ duration: DUR.fade, ease: EASE_OUT_EXPO }}>
           <h3>{n.t}</h3>
           <p><span className="x-mono">received</span><b>{n.r}</b></p>
           <p><span className="x-mono">returned</span><b className={done ? 'out' : ''}>{done ? n.o : '…'}</b></p>
@@ -184,7 +186,7 @@ function Hero() {
             <div className="fl-intro">
               <p className="bz-lede">Build an AI workflow on a canvas, ship it as an API</p>
               <div className="bz-acts">
-                <span data-thumb="Open Flow" data-cta="primary"><Go to={APP} solid>Open Flow</Go></span>
+                <BizAsk to={APP} thumb="Open Flow" cta="flow.hero">Open Flow</BizAsk>
                 <More to={DOCS}>Documentation</More>
               </div>
             </div>
@@ -222,7 +224,7 @@ function Chapters() {
       )}
     >
       <header className="bz-wrap fl-ch-head">
-        <BizLines className="bz-display md" lines={['The canvas is', 'not the ceiling']} />
+        <BizLines className="bz-headline" lines={['The canvas is not the ceiling']} />
       </header>
     </BizChapters>
   );
@@ -243,7 +245,7 @@ function Playground() {
   return (
     <section ref={ref} className="bz-sec fl-play" data-room="dark" aria-labelledby="fl-play-h">
       <div className="bz-wrap fl-play-top">
-        <BizLines id="fl-play-h" className="bz-display md" lines={['Step through it']} />
+        <BizLines id="fl-play-h" className="bz-headline" lines={['Step through it']} />
       </div>
       <div className="bz-wrap">
         <div className="fl-pg">
@@ -377,7 +379,7 @@ function End() {
         <div className="fl-end-copy">
           <BizLines id="fl-end-h" className="bz-display md" lines={['Run it', 'locally first']} />
           <p className="bz-body">uv pip install hanzoflow, then uv run hanzoflow run. It opens on 127.0.0.1:7860. Docker works too.</p>
-          <div className="bz-acts"><span data-cta="primary"><Go to={APP} solid>Open Flow</Go></span></div>
+          <div className="bz-acts"><BizAsk to={APP} cta="flow.close">Open Flow</BizAsk></div>
         </div>
         <div className="fl-term">
           <div className="fl-term-bar"><span aria-hidden="true"><i /><i /><i /></span><span className="x-mono">terminal</span><Copy text={'uv pip install hanzoflow\nuv run hanzoflow run'} /></div>

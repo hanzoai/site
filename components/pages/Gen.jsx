@@ -6,7 +6,7 @@
 // CTA: Get API key (platform.hanzo.ai/keys): hero solid + ask bar (data-thumb) + the closing band; everything else is a text link.
 // Metric: api_key_created
 /* Hanzo Gen (Archetype: Developer, the agent is a flag).
-   V2: 8/10 round 2: kickers gone (their words became the page's own index under the hero); the h1 paints first (no mask holding it); no floating ask bar (data-ask="off"); Read and Paste moved above the FAQ; one solid ask in the hero and again in the one closing band with Read the docs beside it (the black "MIT, in the open." room, which now opens out of a rounded card); the board flips each tile once (no scrambled letters), walks the 23 once and rests, with Pause; deck scale (h1 52); kit Tabs and FAQ; the native select became Previous/Next; no springs
+   V2: 8/10 round 2: kickers gone (their words became the page's own index under the hero); the h1 paints first (no mask holding it); the shared ask (header Try Hanzo, the slim phone bar carries Get API key); the walk ends on the faint chime; Read and Paste moved above the FAQ; one solid ask in the hero and again in the one closing band with Read the docs beside it (the black "MIT, in the open." room, which now opens out of a rounded card); the board flips each tile once (no scrambled letters), walks the 23 once and rests, with Pause; deck scale (h1 52); kit Tabs and FAQ; the native select became Previous/Next; no springs
    Motion: signature = the split-flap board (tiles written through refs, stopped off screen, one pass then rest).
    Supporting: the line-masked headlines, the black room opening to full width as it arrives (clip, scroll-linked),
    the added rail switches. Colour: Hanzo's deck greys only. Every word and link is Hanzo's. */
@@ -14,6 +14,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { Copy } from '../ui';
 import { A, Cta, Tabs, TabPanel, Faq } from '../kit';
+import { play } from '../../lib/sound';
 import Lines from '../v2/x-edison/AppLines';
 import '../v2/AppType.css';
 import './Gen.css';
@@ -98,6 +99,7 @@ function Board({ at, setAt, mine }) {
     const t = setTimeout(() => { setWalked((w) => w + 1); setAt((at + 1) % AGENTS.length, false); }, 2200);
     return () => clearTimeout(t);
   }, [at, mine, live, paused, walked, setAt]);
+  useEffect(() => { if (walked === AGENTS.length - 1) play('done'); }, [walked]); // the walk is over: the faint chime
   const [name, f] = AGENTS[at];
   const step = (d) => setAt((at + d + AGENTS.length) % AGENTS.length, true);
   const walking = !mine && !calm && walked < AGENTS.length - 1;
@@ -481,7 +483,7 @@ export default function Gen() {
   const setAt = (i, byHand) => { setAtState(i); if (byHand) setMine(true); };
   const pick = (i) => setAt(i, true);
   return (
-    <main className="av xgn" style={{ '--ac': '#737373' }} data-ask="off">
+    <main className="av xgn" style={{ '--ac': '#737373' }}>
       <Hero at={at} setAt={setAt} mine={mine} />
       <Index />
       <Install />

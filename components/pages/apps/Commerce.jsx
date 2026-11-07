@@ -1,8 +1,9 @@
 'use client';
-/* Commerce (v2, archetype A "Launch" for a headless API; greys and ink only, JAMES.md 7).
-   Persona: a developer with a front end of their own who needs carts, checkout, orders and returns behind an API (metric docs_click)
+/* Commerce (v2, archetype A "Launch" for a headless API; Hanzo's deck only: greys and ink, MASTER §3).
+   Persona: a developer with a front end of their own who needs carts, checkout, orders and returns behind an API
    Goal: follow one order through its five stops and the endpoints it calls, then open the docs
-   CTA: Read the docs -> https://docs.hanzo.ai/docs/cli/commerce (hero, the site's sticky ask bar at every width, close; data-thumb, data-cta)
+   CTA: Read the docs -> https://docs.hanzo.ai/docs/cli/commerce (solid kit Cta in the hero, with thumb, and the close; the header carries the site's ask; data-cta commerce.hero / commerce.close)
+   Metric: docs_click
    Signature: an order, start to end, riding a full-bleed rail across the first screen. One order card travels five
    stops by itself (product and variant, cart, authorize, capture, refund or return), changes shape at each and shows
    the real endpoint it calls there. It pauses on its own button (WCAG 2.2.2), a tap on a stop sends it there, and it
@@ -11,16 +12,15 @@
    answer at once, in five columns, instead of hunting tab by tab. Built only from Hanzo's own endpoint list.
    Motion: the order on the rail (idle, signature) + the same journey as a sticky horizontal scene that the scroll drives
    (scroll) + the ten nouns as a type index of cards that open into their endpoints (state, BizOpen) + headlines cut
-   into their line; the processor switch glides (state) and the endpoints answer as you type (time).
+   into their line; the processor switch glides (state) and the endpoints answer as you type (time). Tweens only.
    Every word and link is Hanzo's; each endpoint list sits inside an open card or a sheet.
-V2: 8/10 the order riding a full-bleed rail on the first screen at both sizes, a scroll-driven horizontal journey, the ten nouns as a type index that opens, find-an-endpoint dark room, greys only, one ask everywhere
+V2: 8/10 on the deck: h1 52, headings 26, figures 64; the order rides a full-bleed rail on the first screen at both sizes, a scroll-driven horizontal journey, the ten nouns as a type index that opens, find-an-endpoint black room, one ask
 */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent, useReducedMotion } from 'motion/react';
-import { EASE_OUT_EXPO as EASE, SPRING } from '../../../lib/motion';
-import { A, More } from '../../kit';
+import { EASE_OUT_EXPO as EASE } from '../../../lib/motion';
+import { A, More, Cta } from '../../kit';
 import { useLive } from '../cloud/Frame';
-import BizAsk from '../../v2/BizAsk';
 import BizLines from '../../v2/BizLines';
 import BizSheet from '../../v2/BizSheet';
 import BizOpen from '../../v2/BizOpen';
@@ -178,15 +178,15 @@ function Rail() {
           <p className="x-mono"><span>An order, start to end</span><span className="cm-band-n">{two(at + 1)} / 05</span></p>
           {!calm && <button type="button" className="cm-pause" onClick={() => setPaused(!paused)} aria-pressed={paused} aria-label={paused ? 'Play' : 'Pause'}><PauseIcon on={paused} /></button>}
         </div>
-        <div className="cm-track" data-cursor="Follow">
+        <div className="cm-track">
           <div className="cm-ride">
-            <motion.div className="cm-rider" initial={false} animate={{ x: `${at * 100}%` }} transition={SPRING.morph}>
+            <motion.div className="cm-rider" initial={false} animate={{ x: `${at * 100}%` }} transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}>
               <Order at={at} />
               <i className="cm-stem" aria-hidden="true" />
             </motion.div>
           </div>
           <ol className="cm-stops">
-            <li className="cm-line" aria-hidden="true"><motion.b initial={false} animate={{ scaleX: at / 4 }} transition={SPRING.morph} /></li>
+            <li className="cm-line" aria-hidden="true"><motion.b initial={false} animate={{ scaleX: at / 4 }} transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }} /></li>
             {STOPS.map(([t], i) => (
               <li key={t} className={(at === i ? 'on' : '') + (i < at ? ' past' : '')}>
                 <button type="button" aria-pressed={at === i} onClick={() => { setAt(i); setHeld(true); }}>
@@ -207,13 +207,13 @@ function Hero() {
   return (
     <section className="cm-hero" aria-labelledby="cm-h1">
       <div className="bz-wrap bz-grid cm-head">
-        <BizLines as="h1" id="cm-h1" className="bz-display cm-h1" lines={['Hanzo', 'Commerce']} now />
+        <BizLines as="h1" id="cm-h1" className="bz-display cm-h1" lines={['Hanzo Commerce']} now />
         <div className="cm-intro">
           <p className="cm-kind x-mono">Headless E-commerce Platform</p>
           <p className="bz-lede">Products, carts, checkout, orders and returns behind an API, with no storefront attached.</p>
           <div className="cm-acts">
-            <BizAsk to={DOCS} thumb="Read the docs">Read the docs</BizAsk>
-            <More to="https://platform.hanzo.ai">API Platform</More>
+            <Cta to={DOCS} id="commerce.hero" thumb>Read the docs</Cta>
+            <Cta kind="link" to="https://platform.hanzo.ai" id="commerce.platform">API Platform</Cta>
           </div>
         </div>
       </div>
@@ -315,7 +315,7 @@ function Nouns() {
     <section className="bz-sec cm-nouns" aria-labelledby="cm-nouns-h">
       <div className="bz-wrap bz-grid">
         <div className="cm-nouns-l">
-          <BizLines id="cm-nouns-h" className="bz-display sm" lines={['What it keeps', 'track of']} />
+          <BizLines id="cm-nouns-h" className="bz-headline" lines={['What it keeps track of']} />
           <p className="bz-body">The nouns a shop is made of, each one addressable and none of them assuming what your site looks like.</p>
           <div className="cm-pv" aria-hidden="true">
             <AnimatePresence mode="wait" initial={false}>
@@ -339,7 +339,7 @@ function Nouns() {
               card: <><span className="cm-row-n x-mono">{two(i + 1)}</span><span className="cm-row-t">{nt}</span><span className="cm-row-c x-mono">{np.length}</span></>,
               panel: (
                 <div className="cm-np">
-                  <h3 className="bz-display sm">{nt}</h3>
+                  <h3 className="bz-headline">{nt}</h3>
                   <p className="cm-np-k x-mono">{two(i + 1)} / 10</p>
                   <p className="bz-lede">{nd}</p>
                   <EpList list={eps(np)} group />
@@ -371,7 +371,7 @@ function Find() {
     <section className="bz-sec cm-find" data-room="dark" aria-labelledby="cm-find-h">
       <div className="bz-wrap">
         <div className="bz-grid cm-find-top">
-          <BizLines id="cm-find-h" className="bz-display md" lines={['The endpoints']} />
+          <BizLines id="cm-find-h" className="bz-headline" lines={['The endpoints']} />
           <p className="bz-body">Grouped by what they are about. Every one of them is scoped to your organisation by the token you call with, so multi-tenancy is not something you implement on top.</p>
         </div>
         <div className="cm-q">
@@ -438,7 +438,7 @@ function Money() {
           <div className="cm-gw" role="radiogroup" aria-label="Payment Gateways" onKeyDown={key}>
             {g.map((t, i) => (
               <button key={t} type="button" role="radio" aria-checked={pick === i} tabIndex={pick === i ? 0 : -1} onClick={() => setPick(i)}>
-                {pick === i && <motion.span layoutId="cm-gw" className="cm-gw-bg" transition={SPRING.pill} />}
+                {pick === i && <motion.span layoutId="cm-gw" className="cm-gw-bg" transition={{ duration: 0.3, ease: EASE }} />}
                 <span>{t}</span>
               </button>
             ))}
@@ -480,7 +480,7 @@ function Shapes() {
     <section className="bz-sec cm-shapes" aria-labelledby="cm-shapes-h">
       <div className="bz-wrap">
         <div className="bz-grid cm-shapes-top">
-          <h2 id="cm-shapes-h" className="bz-display sm">When to reach for it</h2>
+          <h2 id="cm-shapes-h" className="bz-headline">When to reach for it</h2>
           <p className="bz-lede">Four shapes that fit. If none of them is yours, a hosted shop is probably the easier answer.</p>
         </div>
         <ol className="cm-tiles">
@@ -558,9 +558,9 @@ function End() {
         <BizLines id="cm-end-h" className="bz-display md" lines={['Create a product,', 'then sell it']} />
         <div className="bz-grid cm-end-row">
           <p className="bz-lede">The whole thing runs from one container. Point your front end at it and take an order.</p>
-          <div className="cm-end-go"><BizAsk to={DOCS}>Read the docs</BizAsk></div>
+          <div className="cm-end-go"><Cta to={DOCS} id="commerce.close">Read the docs</Cta></div>
         </div>
-        <A to={GH} className="cm-row"><span>Get started with Commerce</span><em>View on GitHub<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></em></A>
+        <A to={GH} className="cm-endrow"><span>Get started with Commerce</span><em>View on GitHub<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></em></A>
       </div>
     </section>
   );

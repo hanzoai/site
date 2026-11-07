@@ -1,26 +1,36 @@
 'use client';
+// Persona: an engineer whose CI keeps going red.
+// Goal: get an API key.
+// CTA: Get API key (kata.hero; the close repeats it in the Band).
+// Metric: cta_click kata.hero
+// Signature: the headline is the loop: Test. Repair. Verify. light in turn while a live session runs beside them.
+// Beyond: pick your runner, your CI and your language, and Hanzo's own sentence lights the words you use.
 /* Kata.
-   V2: 8/10 the headline is the loop (Test. Repair. Verify. light in turn with a live session), a scrubbed dial through the four stations, and one dark room that a green wipe turns into a passing suite.
-   Persona: an engineer whose CI keeps going red. Goal: get an API key. CTA: Get API key (kata.hero, sticky in the ask bar).
-   Metric: cta_click on kata.hero and kata.close (data-cta; the event layer is the conductor's).
-   Signature: the page turns green. The hero headline is the loop itself: "Test." lights while the suite runs and one
-   test goes red, "Repair." while Kai triages and Enso writes the edit, "Verify." when 13 passed · 0 failed lands; the
-   terminal and the test board beside it run Hanzo's session on their own. The loop is a dial pinned on screen while
-   its four stations come in one by one. The one dark room holds "12 passed · 1 failed" until a green clip-path wipe,
-   scrubbed by your scroll, turns it into "13 passed · 0 failed". Capabilities read as a report that passes.
-   Beyond: "Will it fit my stack?" Pick your test runner, your CI and your language; the answer comes only from what
-   Hanzo says Kata supports. Accent: green, from the passing suite. Every word and figure is Hanzo's; the diff is drawn
-   as bars, not invented code. */
+   V2: 8/10 the deck scale (h1 52, sections 26, figures 64; the one big figure grows only while the suite turns); the headline is the loop (Test. Repair. Verify. light in turn with a live session that has a pause control), a pinned dial through the four stations, one dark room that opens from a rounded card and wipes 1 failed into 0 failed, Hanzo's own sentences lighting your stack, kit Cta and Band. Greys only.
+   Signature: the headline is the loop itself: "Test." lights while the suite runs and one test fails, "Repair." while
+   Kai triages and Enso writes the edit, "Verify." when 13 passed · 0 failed lands; the terminal and the test board
+   beside it run Hanzo's session on their own (pause control first in the box). The loop is a dial pinned on screen
+   while its four stations come in one by one. The one dark room enters as a rounded card, holds "1 failed" until a
+   white wipe, scrubbed by your scroll, turns it into "0 failed"; that figure is the page's one big moment, growing
+   from 64px while the wipe runs and settling back after it. Capabilities tick in as a list.
+   Beyond: pick your test runner, your CI and your example language; the words you pick light up inside Hanzo's own
+   sentences about what Kata supports, and a tick draws beside each one that holds them. Nothing is invented: every
+   option and sentence is Hanzo's. Greys only; the diff is drawn as bars, not invented code. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { A, Tick } from '../kit';
+import { A, Cta, Band, Tick } from '../kit';
 import A2Lines from '../v2/A2Lines';
 import A2Paste from '../v2/A2Paste';
 import A2Chapters from '../v2/A2Chapters';
 import A2Faq from '../v2/A2Faq';
+import A2Pause from '../v2/A2Pause';
+import A2Room from '../v2/A2Room';
+import useNarrow from '../v2/A2Narrow';
+import { T, EMPH, MOVE } from '../v2/A2Motion';
 import '../v2/A2.css';
 import './Kata.css';
 
+const KEYS = 'https://platform.hanzo.ai/keys';
 const SESSION = [
   ['kata run --suite tests/unit', '12 passed · 1 failed (test_token_expiry)', 'bad'],
   ['kata triage', 'Kai decision: patch · confidence: 0.96 · root cause: off-by-one jitter', ''],
@@ -31,37 +41,38 @@ const DIFF = ['ctx', 'ctx', 'out', 'in', 'in', 'ctx']; // the diff's shape only:
 const WORDS = ['Test.', 'Repair.', 'Verify.'];
 const wordAt = (s) => (s <= 1 ? 0 : s <= 3 ? 1 : 2);
 
-/* One clock for the hero: 0 running, 1 one red, 2 triage, 3 repair, 4 green. The server and reduced motion show green. */
-function useLoop(ref) {
+/* One clock for the hero: 0 running, 1 one failing, 2 triage, 3 repair, 4 passing. Server and reduced motion show 4.
+   A chain of timeouts (no setInterval) that stops off screen and while paused. */
+function useLoop(ref, paused) {
   const [step, setStep] = useState(4);
   const [run, setRun] = useState(0);
   const seen = useInView(ref, { amount: 0.2 });
   const calm = useReducedMotion();
   useEffect(() => { if (!calm) setStep(0); }, [calm]);
   useEffect(() => {
-    if (calm || !seen) return;
+    if (calm || !seen || paused) return;
     const t = setTimeout(() => (step < 4 ? setStep(step + 1) : (setStep(0), setRun((r) => r + 1))), step === 4 ? 3800 : step === 0 ? 1000 : 1900);
     return () => clearTimeout(t);
-  }, [step, seen, calm]);
+  }, [step, seen, calm, paused]);
   return [step, run, () => { setStep(0); setRun((r) => r + 1); }];
 }
 
 function Board({ step, run }) {
-  const green = step >= 4;
-  const red = step >= 1 && !green;
+  const pass = step >= 4;
+  const fail = step >= 1 && !pass;
   return (
     <div className="xkt-board" aria-hidden="true">
       <div className="xkt-figs">
-        <span className="xkt-fig"><b className="a2-fig">{green ? 13 : 12}</b><span>passed</span></span>
-        <span className={'xkt-fig f' + (red ? ' bad' : '')}><b className="a2-fig">{green ? 0 : 1}</b><span>failed</span></span>
+        <span className="xkt-fig"><b>{pass ? 13 : 12}</b><span>passed</span></span>
+        <span className={'xkt-fig' + (fail ? ' bad' : '')}><b>{pass ? 0 : 1}</b><span>failed</span></span>
       </div>
       <div className="xkt-dots">
         {Array.from({ length: 13 }).map((_, i) => {
           const bad = i === 8;
-          const state = step === 0 ? 'wait' : bad && !green ? 'red' : 'green';
+          const state = step === 0 ? 'wait' : bad && !pass ? 'fail' : 'pass';
           return (
-            <motion.i key={i + '-' + run} className={state} initial={{ scale: 0.4, opacity: 0.3 }} animate={{ scale: step === 0 ? 0.55 : 1, opacity: step === 0 ? 0.35 : 1 }} transition={{ type: 'spring', stiffness: 300, damping: 30, delay: step === 1 ? i * 0.03 : 0 }}>
-              {bad && green && <motion.b initial={{ scale: 0.6, opacity: 0.8 }} animate={{ scale: 2.8, opacity: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }} />}
+            <motion.i key={i + '-' + run} className={state} initial={{ scale: 0.4, opacity: 0.3 }} animate={{ scale: step === 0 ? 0.55 : 1, opacity: step === 0 ? 0.35 : 1 }} transition={{ ...MOVE, delay: step === 1 ? i * 0.03 : 0 }}>
+              {bad && pass && <motion.b initial={{ scale: 0.6, opacity: 0.8 }} animate={{ scale: 2.8, opacity: 0 }} transition={{ duration: T.scene, ease: EMPH }} />}
             </motion.i>
           );
         })}
@@ -77,7 +88,7 @@ function Board({ step, run }) {
 function Term({ step, run, replay }) {
   return (
     <div className="xkt-term" role="log" aria-label="A Kata session">
-      <div className="xkt-term-bar"><i /><i /><i /><span className="x-mono">terminal</span>
+      <div className="xkt-term-bar"><i /><i /><i />
         <button type="button" className="xkt-replay" onClick={replay}>Replay</button>
       </div>
       <pre className="xkt-term-body x-mono">
@@ -98,31 +109,33 @@ function Term({ step, run, replay }) {
 
 function Hero() {
   const ref = useRef(null);
-  const [step, run, replay] = useLoop(ref);
+  const [paused, setPaused] = useState(false);
+  const [step, run, replay] = useLoop(ref, paused);
   const lit = wordAt(step);
   return (
     <section className="xkt-hero" ref={ref} aria-labelledby="xkt-h1">
       <div className="a2-wrap">
-        <p className="a2-kick"><b>Hanzo Kata</b> · Test repair</p>
-        {/* the loop on one line across the page; the word the loop is on is the one in ink */}
+        {/* the loop on one line; the word the loop is on is the one in ink */}
         <h1 id="xkt-h1" className="a2-display xkt-h1">
           {WORDS.map((w, i) => (
             <span className="a2-ln" key={w}>
-              <motion.span className={'a2-ln-in xkt-w' + (i === lit ? ' on' : '')} initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.05, ease: [0.16, 1, 0.3, 1], delay: 0.05 + i * 0.09 }}>{w}</motion.span>{' '}
+              <motion.span className={'a2-ln-in xkt-w' + (i === lit ? ' on' : '')} initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: T.line, ease: EMPH, delay: 0.05 + i * T.stagger }}>{w}</motion.span>{' '}
             </span>
           ))}
           <span className="xkt-auto">Autonomous loop.</span>
         </h1>
+        <p className="a2-kick"><b>Hanzo Kata</b> · Test repair</p>
         <div className="a2-grid xkt-hero-grid">
           <div className="xkt-hero-copy">
             <p className="a2-lede">Kata keeps your tests green. It triages a failing CI run, finds the regression, writes the fix and runs the suite again before anything lands.</p>
             <div className="a2-acts">
-              <A to="https://platform.hanzo.ai/keys" className="x-btn solid" data-thumb="Get API key" data-cta="kata.hero">Get API key</A>
-              <A to="https://github.com/hanzoai/kata" className="x-btn">Explore GitHub examples →</A>
+              <Cta to={KEYS} id="kata.hero" thumb>Get API key</Cta>
+              <Cta to="https://github.com/hanzoai/kata" kind="quiet">Explore GitHub examples →</Cta>
             </div>
             <p className="xkt-docs"><A to="https://docs.hanzo.ai/docs/coding" className="xkt-doc">Read the docs →</A></p>
           </div>
-          <motion.div className="xkt-hero-obj" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}>
+          <motion.div className={'xkt-hero-obj' + (paused ? ' a2-paused' : '')} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: T.slower, ease: EMPH, delay: 0.15 }}>
+            <A2Pause paused={paused} onChange={setPaused} label="Pause" className="xkt-pause" />
             <Board step={step} run={run} />
             <Term step={step} run={run} replay={replay} />
           </motion.div>
@@ -161,8 +174,8 @@ function TheLoop() {
     <>
       <section className="a2-sec xkt-intro" aria-labelledby="xkt-loop-h">
         <div className="a2-wrap a2-grid">
-          <p className="a2-kick xkt-intro-k">The loop</p>
-          <A2Lines id="xkt-loop-h" className="a2-display m xkt-intro-h" lines={['From a failing test', 'to a verified fix.']} />
+          <p className="a2-kick">The loop</p>
+          <A2Lines id="xkt-loop-h" className="a2-headline xkt-intro-h" lines={['From a failing test', 'to a verified fix.']} />
           <p className="a2-lede xkt-intro-l">Kata never submits speculative code: Kai triages every failure, Enso writes the fix, and your own test suite decides whether it lands.</p>
         </div>
       </section>
@@ -171,27 +184,43 @@ function TheLoop() {
   );
 }
 
-/* The one dark room: red until a green wipe, scrubbed by scroll, turns the suite. */
+/* The one dark room: it enters as a rounded card, holds "1 failed" until a white wipe, scrubbed by scroll, turns the
+   suite. The figure is the page's moment: it rests at 64px, grows while the wipe runs, and settles after it. */
+const ease3 = (k) => k * k * (3 - 2 * k);
 function Wipe() {
   const ref = useRef(null);
   const calm = useReducedMotion();
+  const narrow = useNarrow();
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
-  const clip = useTransform(p, (v) => `circle(${calm ? 150 : Math.max(0, Math.min(1, (v - 0.18) / 0.5)) * 150}% at 50% 62%)`);
+  const clip = useTransform(p, (v) => `circle(${calm ? 150 : Math.max(0, Math.min(1, (v - 0.22) / 0.42)) * 150}% at 50% 56%)`);
+  const scale = useTransform(p, (v) => {
+    if (calm || narrow) return 1;
+    const r = 1 / 3; // 64px of the 192px the figure is set at
+    if (v < 0.08) return r;
+    if (v < 0.4) return r + (1 - r) * ease3((v - 0.08) / 0.32);
+    if (v < 0.7) return 1;
+    if (v < 0.94) return 1 - (1 - r) * ease3((v - 0.7) / 0.24);
+    return r;
+  });
   return (
-    <section className="xkt-wipe" ref={ref} data-room="dark" aria-label="The suite turns green">
-      <div className="xkt-wipe-stick">
-        <div className="xkt-wipe-l red" aria-hidden="true">
-          <p className="a2-kick">kata run --suite tests/unit</p>
-          <p className="xkt-wipe-fig a2-fig">1 <span>failed</span></p>
-          <p className="xkt-wipe-cap x-mono">12 passed · 1 failed (test_token_expiry)</p>
+    <A2Room className="xkt-room" room={null} aria-label="The suite turns">
+      <div className="xkt-wipe" ref={ref}>
+        {/* the header is dark only while black is under it: until the white wipe passes the top of the screen */}
+        <i className="xkt-wipe-dark" data-room="dark" aria-hidden="true" />
+        <div className="xkt-wipe-stick">
+          <div className="xkt-wipe-l fail" aria-hidden="true">
+            <p className="xkt-wipe-cmd x-mono">kata run --suite tests/unit</p>
+            <motion.p className="xkt-wipe-fig" style={{ scale }}>1 <span>failed</span></motion.p>
+            <p className="xkt-wipe-cap x-mono">12 passed · 1 failed (test_token_expiry)</p>
+          </div>
+          <motion.div className="xkt-wipe-l pass" style={{ clipPath: clip }}>
+            <p className="xkt-wipe-cmd x-mono">kata repair --model enso-ultra</p>
+            <motion.p className="xkt-wipe-fig" style={{ scale }}>0 <span>failed</span></motion.p>
+            <p className="xkt-wipe-cap x-mono">13 passed · 0 failed · 100% green verification</p>
+          </motion.div>
         </div>
-        <motion.div className="xkt-wipe-l green" style={{ clipPath: clip }}>
-          <p className="a2-kick">kata repair --model enso-ultra</p>
-          <p className="xkt-wipe-fig a2-fig">0 <span>failed</span></p>
-          <p className="xkt-wipe-cap x-mono">13 passed · 0 failed · 100% green verification</p>
-        </motion.div>
       </div>
-    </section>
+    </A2Room>
   );
 }
 
@@ -201,36 +230,36 @@ const CAPS = [
   ['Models picked by Enso', 'Each attempt runs on enso-auto, enso-flash or enso-ultra, trading cost against accuracy.'],
   ['Runs in your pipeline', 'In GitHub Actions, GitLab CI or a pre-push hook in your terminal.'],
 ];
-// what Hanzo says Kata supports, word for word from this page
-const RUNNERS = ['pytest', 'vitest', 'jest', 'cargo test', 'go test', 'TAP or JUnit XML'];
-const CIS = ['GitHub Actions', 'GitLab CI', 'pre-push hook'];
-const LANGS = ['Python', 'TypeScript', 'Go', 'Rust', 'cURL'];
+/* What Hanzo says Kata supports, and the sentence on this page that says it. Picking an option lights it there. */
+const FIT = [
+  { name: 'Test runner', opts: ['pytest', 'vitest', 'jest', 'cargo test', 'go test', 'TAP or JUnit XML'], says: 'Kata natively supports pytest, vitest, jest, cargo test, go test, and custom test runners emitting standard TAP or JUnit XML output.' },
+  { name: 'CI', opts: ['GitHub Actions', 'GitLab CI', 'pre-push hook'], says: 'In GitHub Actions, GitLab CI or a pre-push hook in your terminal.' },
+  { name: 'Language', opts: ['Python', 'TypeScript', 'Go', 'Rust', 'cURL'], says: 'runnable examples in Python, TypeScript, Go, Rust, and cURL' },
+];
 
-function Pick({ label, opts, v, set }) {
-  return (
-    <div className="xkt-pick">
-      <span className="xkt-pick-l x-mono">{label}</span>
-      <div role="radiogroup" aria-label={label} className="xkt-chips">
-        {opts.map((o) => <button key={o} type="button" role="radio" aria-checked={v === o} onClick={() => set(v === o ? null : o)}>{o}</button>)}
-      </div>
-    </div>
-  );
+function Lit({ text, word }) {
+  if (!word) return <span>{text}</span>;
+  const i = text.indexOf(word);
+  if (i < 0) return <span>{text}</span>;
+  return <span>{text.slice(0, i)}<mark>{word}</mark>{text.slice(i + word.length)}</span>;
 }
 
 function Fit() {
-  const [r, setR] = useState(null);
-  const [c, setC] = useState(null);
-  const [l, setL] = useState(null);
-  const picked = [r, c, l].filter(Boolean);
+  const [pick, setPick] = useState([null, null, null]);
+  const set = (g, o) => setPick((p) => p.map((v, k) => (k === g ? (v === o ? null : o) : v)));
   return (
     <div className="xkt-fit">
-      <p className="a2-title">Will it fit my stack?</p>
-      <Pick label="Test runner" opts={RUNNERS} v={r} set={setR} />
-      <Pick label="Where it runs" opts={CIS} v={c} set={setC} />
-      <Pick label="Example language" opts={LANGS} v={l} set={setL} />
-      <p className={'xkt-fit-out' + (picked.length ? ' on' : '')} aria-live="polite">
-        {picked.length ? <><span className="xkt-ok" aria-hidden="true">✓</span><span><b>{picked.join(' · ')}</b>: on Hanzo&apos;s list.{l && ' Runnable examples are in hanzoai/kata.'}</span></> : <span>Choose what you use; every option here is one Hanzo names.</span>}
-      </p>
+      {FIT.map((g, gi) => (
+        <div className="xkt-fit-row" key={g.name}>
+          <div role="radiogroup" aria-label={g.name} className="xkt-chips">
+            {g.opts.map((o) => <button key={o} type="button" role="radio" aria-checked={pick[gi] === o} onClick={() => set(gi, o)}>{o}</button>)}
+          </div>
+          <p className={'xkt-says' + (pick[gi] ? ' on' : '')} aria-live="polite">
+            <span className="xkt-says-t" aria-hidden="true">{pick[gi] ? <Tick key={pick[gi]} size={22} /> : null}</span>
+            <Lit text={g.says} word={pick[gi]} />
+          </p>
+        </div>
+      ))}
     </div>
   );
 }
@@ -241,21 +270,17 @@ function Capabilities() {
       <div className="a2-wrap a2-grid">
         <div className="xkt-caps-head">
           <p className="a2-kick">Capabilities</p>
-          <A2Lines id="xkt-caps-h" className="a2-display s" lines={['Built for', 'the pipeline.']} />
+          <A2Lines id="xkt-caps-h" className="a2-headline" lines={['Built for', 'the pipeline.']} />
           <p className="a2-lede">Test repair, triage and the choice of model, in the CI you already run.</p>
         </div>
-        <div className="xkt-report">
-          <div className="xkt-report-top x-mono"><span>capabilities</span><span className="good">4 passed</span></div>
-          <ul>
-            {CAPS.map(([t, d], i) => (
-              <li key={t}>
-                <Tick delay={0.15 + i * 0.12} size={26} />
-                <span><h3>{t}</h3><span>{d}</span></span>
-                <span className="xkt-pass x-mono" aria-hidden="true">PASS</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <ul className="xkt-report">
+          {CAPS.map(([t, d], i) => (
+            <li key={t}>
+              <Tick delay={0.1 + i * 0.1} size={24} />
+              <span><h3 className="a2-title">{t}</h3><span>{d}</span></span>
+            </li>
+          ))}
+        </ul>
         <Fit />
       </div>
     </section>
@@ -270,7 +295,7 @@ const READ = [
 
 function Read() {
   return (
-    <section className="a2-sec tight xkt-read" aria-labelledby="xkt-read-h">
+    <section className="a2-sec xkt-read" aria-labelledby="xkt-read-h">
       <div className="a2-wrap">
         <div className="xkt-read-head">
           <p className="a2-kick">Read</p>
@@ -279,10 +304,15 @@ function Read() {
         </div>
         <div className="xkt-cols">
           {READ.map(([h, items]) => (
-            <div key={h}>
-              <h3 className="xkt-col-h x-mono">{h}</h3>
+            <div key={h} className="xkt-col">
+              <h3 className="xkt-col-h">{h}</h3>
               <ul className="xkt-links">
-                {items.map(([to, t, d]) => <li key={t}><A to={to} className="xkt-link"><span><b>{t}</b>{d && <span>{d}</span>}</span><em className="x-mono" aria-hidden="true">{to.replace('https://', '')}</em><i aria-hidden="true">→</i></A></li>)}
+                {items.map(([to, t, d]) => (
+                  <li key={t}>
+                    {/* site pages open by Morph: the title you click becomes the next page's hero */}
+                    <A to={to} className="xkt-link"><span><b {...(to.startsWith('/') ? { 'data-morph': '' } : {})}>{t}</b>{d && <span>{d}</span>}</span><i aria-hidden="true">→</i></A>
+                  </li>
+                ))}
               </ul>
             </div>
           ))}
@@ -313,18 +343,6 @@ function Questions() {
   );
 }
 
-/* The close: one line, one ask (no second dark room: ink on paper). */
-function Close() {
-  return (
-    <section className="a2-sec xkt-close" aria-label="Get API key">
-      <div className="a2-wrap xkt-close-in">
-        <p className="xkt-close-h a2-display" aria-hidden="true">{WORDS.join(' ')}</p>
-        <div className="a2-acts"><A to="https://platform.hanzo.ai/keys" className="x-btn solid" data-cta="kata.close">Get API key</A></div>
-      </div>
-    </section>
-  );
-}
-
 export default function Kata() {
   return (
     <main className="a2 xkt">
@@ -335,7 +353,7 @@ export default function Kata() {
       <Capabilities />
       <Read />
       <Questions />
-      <Close />
+      <Band title={WORDS.join(' ')} action="Get API key" to={KEYS} />
     </main>
   );
 }

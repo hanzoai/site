@@ -1,18 +1,22 @@
 'use client';
-/* Automations (v2, Cloud 4 chat). Archetype C, Catalogue: a hero where apps drop off a dock onto the canvas → the full
-   catalogue with chips that re-flow it → "not here?" in the one dark room. Accent: connector red.
-   V2: 8/10 apps you drag off a dock onto a live Hanzo Auto canvas as the hero, the catalogue filtered by chips with cards that re-flow into place
+/* Automations (v2, Cloud 4 chat). Archetype C, Catalogue: a hero where the most reached-for apps drop onto a Hanzo Auto
+   canvas → the full catalogue with chips that re-flow it and a search → "Not here?" as the one dark closing band.
+   Persona: a builder checking whether the apps they use can be steps. Goal: find their app, then open Auto or ask for one.
+   CTA: "All Integrations" (hero, ask bar; data-cta primary); the band's ask is Hanzo's "Request Integration" (data-cta
+   close). Metric: cta_click:automations.primary.
+   V2: 8/10 apps drop off a dock onto a live Hanzo Auto canvas and wire themselves into a flow; the catalogue filtered by chips and search with cards that re-flow; greys only, one ask per screen, a closing band
    Signature: apps dropping onto a canvas. The twelve most-reached-for apps sit in a dock beside a Hanzo Auto canvas; one by
    one they drop in and wire themselves into a flow (a change in one starts the run, the next is read, the last is
-   written). Drag any app off the dock (springs, snap-back) or tap it to drop it in yourself.
-   Beyond: "Is my app here?". Type an app's name: the catalogue answers at once, and if it is not there it says what Hanzo
-   says, that anything with an HTTP API can be a step today, with the request link beside it.
-   Motion: drag with springs (signature) + chip pill and card re-flow + magnetic primary. Every word and link is Hanzo's. */
+   written). Tap any app to drop it in yourself.
+   Beyond: type an app's name and the catalogue answers at once; if it is not there, Hanzo's own "Not here?" answer shows
+   in place, with the request link beside it.
+   Motion: the dock dropping apps in (signature, time, pausable) + chip pill and card re-flow (state).
+   Every word and link is Hanzo's. */
 import { useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { EASE, Magnetic } from '../../ui';
-import { A } from '../../kit';
-import { useLive, useEvery } from '../cloud/Frame';
+import { EASE } from '../../ui';
+import { A, Cta } from '../../kit';
+import { useDemo, PauseBtn, useTick } from '../../v2/x-hamilton/Demo';
 import '../../v2/x-hamilton/Launch.css';
 import './Automations.css';
 
@@ -104,23 +108,18 @@ const DOCK = ['OpenAI', 'Anthropic Claude', 'Google Gemini', 'Slack', 'Discord',
 const BY = Object.fromEntries(APPS.map((a) => [a[1], a]));
 const slug = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const ROLE = ['a change in it starts a run', 'read from it', 'write to it'];
-const up = (d) => ({ initial: { opacity: 0, y: 18 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
+const up = (d) => ({ initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.7, ease: EASE, delay: d } });
 
 /* Signature: the dock and the canvas. Apps drop in by themselves while the canvas is seen; drag one (or tap it) to drop it
    in yourself, and the flow re-wires: the first starts the run, the next is read, the last is written. */
 function Canvas() {
-  const [ref, live] = useLive(0.3);
+  const [ref, live, , paused, toggle] = useDemo(0.3);
   const [flow, setFlow] = useState(['Slack', 'OpenAI', 'Notion']);
   const [mine, setMine] = useState(false);
   const k = useRef(3);
   const canvas = useRef(null);
   const add = (t) => setFlow((f) => (f.length >= 3 ? [t] : [...f.filter((x) => x !== t), t]));
-  useEvery(1600, live && !mine, () => { add(DOCK[k.current % DOCK.length]); k.current += 5; });
-  const dropped = (t, info) => {
-    const r = canvas.current.getBoundingClientRect();
-    const x = info.point.x - scrollX, y = info.point.y - scrollY;
-    if (x > r.left && x < r.right && y > r.top && y < r.bottom) { setMine(true); add(t); }
-  };
+  useTick(1600, live && !mine, () => { add(DOCK[k.current % DOCK.length]); k.current += 5; });
   return (
     <div className="am2-stage" ref={ref}>
       <div className="am2-dock-wrap">
@@ -128,29 +127,30 @@ function Canvas() {
         <ul className="am2-dock">
           {DOCK.map((t) => (
             <li key={t}>
-              <motion.button type="button" className={flow.includes(t) ? 'in' : ''} drag dragSnapToOrigin dragElastic={0.6} whileDrag={{ scale: 1.15, zIndex: 20 }} whileTap={{ scale: 0.95 }} onDragEnd={(e, info) => dropped(t, info)} onClick={() => { setMine(true); add(t); }} aria-label={'Drop ' + t + ' onto the canvas'}>
+              <button type="button" className={flow.includes(t) ? 'in' : ''} aria-pressed={flow.includes(t)} onClick={() => { setMine(true); add(t); }}>
                 <span className="am2-em" aria-hidden="true">{BY[t][0]}</span><span className="am2-dn">{t}</span>
-              </motion.button>
+              </button>
             </li>
           ))}
         </ul>
       </div>
       <div className="am2-canvas" ref={canvas} aria-live="polite">
-        <span className="am2-canvas-k l2-mono">Hanzo Auto canvas</span>
+        <span className="am2-canvas-k l2-mono">Hanzo Auto</span>
+        <PauseBtn paused={paused} onClick={toggle} />
         <ol className="am2-flow">
           <AnimatePresence initial={false} mode="popLayout">
             {flow.map((t, i) => (
               <motion.li key={t} layout initial={{ opacity: 0, y: 80, scale: 0.8 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.2 } }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
                 {i > 0 && <motion.i className="am2-wire" initial={{ scaleY: 0 }} animate={{ scaleY: 1 }} transition={{ duration: 0.5, ease: EASE, delay: 0.2 }} aria-hidden="true" />}
-                <a href={'#' + slug(t)} className="am2-node">
+                <A to={'#' + slug(t)} className="am2-node">
                   <span className="am2-em" aria-hidden="true">{BY[t][0]}</span>
                   <b>{t}</b>
                   <em className="l2-mono">{ROLE[i]}</em>
-                </a>
+                </A>
               </motion.li>
             ))}
           </AnimatePresence>
-          {flow.length < 3 && <li className="am2-slot l2-mono" aria-hidden="true">drop an app here</li>}
+          {flow.length < 3 && <li className="am2-slot" aria-hidden="true" />}
         </ol>
       </div>
     </div>
@@ -162,16 +162,18 @@ function Hero() {
     <section className="am2-hero" aria-labelledby="am2-h1">
       <div className="l2-wrap">
         <div className="am2-top">
-          <motion.p className="l2-kick ac am2-kick" {...up(0)}>Hanzo Auto · Connectors</motion.p>
-          <h1 id="am2-h1" className="l2-display">
-            {['The apps', 'a workflow', 'can reach'].map((t, i) => <span key={t} className="l2-ln"><motion.span initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.15, ease: EASE, delay: 0.06 + i * 0.1 }}>{t}{' '}</motion.span></span>)}
-          </h1>
+          <div className="am2-name">
+            <h1 id="am2-h1" className="l2-display">
+              {['The apps', 'a workflow', 'can reach'].map((t, i) => <span key={t} className="l2-ln"><motion.span initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 0.7, ease: EASE, delay: 0.06 + i * 0.06 }}>{t}{' '}</motion.span></span>)}
+            </h1>
+            <motion.p className="l2-stage-kick l2-mono am2-kick" {...up(0.3)}>Hanzo Auto · Connectors</motion.p>
+          </div>
           <div className="am2-side">
             <motion.p className="l2-lede" {...up(0.4)}>Every one of these is a step you can drop onto a Hanzo Auto canvas: read from it, write to it, or let a change in it start a run.</motion.p>
-            <motion.div className="l2-acts" {...up(0.5)}><Magnetic strength={0.25}><a href="#all" className="x-btn solid" data-thumb="All Integrations">All Integrations</a></Magnetic></motion.div>
+            <motion.div className="l2-acts" {...up(0.5)}><Cta to="#all" id="primary" size="lg" thumb data-thumb="All Integrations">All Integrations</Cta></motion.div>
           </div>
         </div>
-        <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.22 }}><Canvas /></motion.div>
+        <motion.div initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE, delay: 0.2 }}><Canvas /></motion.div>
       </div>
     </section>
   );
@@ -190,13 +192,12 @@ function Catalog() {
       <div className="l2-wrap">
         <div className="am2-cat-top">
           <div>
-            <h2 className="l2-display m">All Integrations</h2>
+            <h2 className="l2-head">All Integrations</h2>
             <p className="am2-count l2-mono" aria-live="polite">{list.length === 81 ? '81 integrations' : `${list.length} of 81 integrations`}</p>
           </div>
           <label className="am2-find">
             <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="M10.5 10.5 14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-            <span className="x-sr">Is my app here?</span>
-            <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Is my app here? Type its name" />
+            <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search integrations..." aria-label="Search integrations..." />
           </label>
         </div>
         <div className="am2-chips" role="group" aria-label="Category" data-swipe-own>
@@ -210,8 +211,8 @@ function Catalog() {
         <AnimatePresence>
           {nothing && (
             <motion.div className="am2-none" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.35, ease: EASE }}>
-              <p><b>“{q}” is not in the catalogue yet.</b> Anything with an HTTP API can be a step today — a request node and a connection holding the credential.</p>
-              <div className="am2-none-acts"><A to="/contact" className="x-btn sm solid">Request Integration</A><A to="https://docs.hanzo.ai/docs/cli/auto" className="x-btn sm">Build Custom Integration</A></div>
+              <p><b>Not here?</b> Anything with an HTTP API can be a step today — a request node and a connection holding the credential.</p>
+              <div className="am2-none-acts"><Cta to="#not-here" kind="link" id="find-not-here">Request Integration</Cta></div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -235,12 +236,12 @@ function Catalog() {
 
 function NotHere() {
   return (
-    <section className="l2-sec l2-dark am2-not" data-room="dark">
+    <section className="l2-sec l2-dark am2-not" id="not-here" data-room="dark" data-ask-hide>
       <div className="l2-wrap l2-grid">
         <div className="am2-not-l">
-          <h2 className="l2-display m">Not here?</h2>
+          <h2 className="l2-head am2-not-h">Not here?</h2>
           <p className="l2-lede">Anything with an HTTP API can be a step today — a request node and a connection holding the credential. If it deserves a proper connector, tell us and we will add one.</p>
-          <div className="l2-acts"><A to="/contact" className="x-btn solid">Request Integration</A><A to="https://docs.hanzo.ai/docs/cli/auto" className="x-btn">Build Custom Integration</A></div>
+          <div className="l2-acts"><Cta to="/contact" id="close" size="lg">Request Integration</Cta><Cta to="https://docs.hanzo.ai/docs/cli/auto" kind="link" id="close-build">Build Custom Integration</Cta></div>
         </div>
         <div className="am2-req" aria-hidden="true">
           <div className="am2-req-node"><span className="l2-mono">request node</span><b>HTTP</b></div>
@@ -254,7 +255,7 @@ function NotHere() {
 
 export default function Automations() {
   return (
-    <main className="l2-page am2" style={{ '--ac': '#737373' }}>
+    <main id="main" className="l2-page am2">
       <Hero />
       <Catalog />
       <NotHere />

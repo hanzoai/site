@@ -7,6 +7,9 @@
    - never while scrolling (it settles in at rest), and never where text, a picture or a control sits under it;
    - never over the footer, the closing band (.x-band), [data-ask-hide], menus, search, sheets, the cookie note or the
      keyboard.
+   Desktop (> 700 px), the Apple local-nav move: once the hero's own ask has scrolled away, the header's solid button
+   carries the page's ask (its words and link); while the hero's ask is on screen the header's button is an outline,
+   so one solid ask shows at a time. Pages without data-thumb keep Hanzo's "Try Hanzo".
    HOW TO USE on a page: data-thumb on your hero's main button (<Cta thumb> or data-thumb="Talk to sales"). That's all. */
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
@@ -91,6 +94,48 @@ export default function Ask() {
     const t = setTimeout(start, 150);
     mq.addEventListener('change', start);
     return () => { clearTimeout(t); stop(); mq.removeEventListener('change', start); };
+  }, [path]);
+
+  // desktop: the header's ask slot carries the page's own ask after the hero
+  useEffect(() => {
+    const H = document.documentElement;
+    const btn = document.querySelector('header[data-slot=masthead] a[href="https://hanzo.ai/signup"], header[data-slot=masthead] a[data-x-ask]');
+    if (!btn) return;
+    if (!btn.dataset.xAsk) { btn.dataset.xAsk = btn.textContent; btn.dataset.xHref = btn.getAttribute('href'); }
+    const restore = () => { btn.textContent = btn.dataset.xAsk; btn.setAttribute('href', btn.dataset.xHref); btn.removeAttribute('data-cta'); delete H.dataset.ask; };
+    restore();
+    const mq = matchMedia('(min-width: 701px)');
+    let off = () => {};
+    const start = () => {
+      off(); restore();
+      const main = document.querySelector('main');
+      const own = main?.querySelector('[data-thumb]');
+      if (!mq.matches || !own || main.matches('[data-ask="off"]')) return;
+      const label = own.getAttribute('data-thumb') || own.textContent.trim();
+      const href = own.getAttribute('href') || own.querySelector('a')?.getAttribute('href') || own.dataset.href;
+      if (!label || !href) return;
+      const twins = () => [...main.querySelectorAll('a, button, [data-thumb]')].filter((el) => el === own || words(el.getAttribute('data-thumb') || el.textContent) === words(label));
+      let shown = null, t = 0;
+      const update = () => {
+        const heroAsk = twins().some((el) => visible(boxOf(el)));
+        const page = boxOf(own).getBoundingClientRect().bottom < 60 || !heroAsk; // the hero's ask has gone by
+        if (page !== shown) {
+          shown = page;
+          btn.textContent = page ? label : btn.dataset.xAsk;
+          btn.setAttribute('href', page ? href : btn.dataset.xHref);
+          if (page) btn.setAttribute('data-cta', 'header-ask'); else btn.removeAttribute('data-cta');
+        }
+        if (heroAsk) H.dataset.ask = 'quiet'; else delete H.dataset.ask; // one solid at a time
+      };
+      const onScroll = () => { clearTimeout(t); t = setTimeout(update, 80); };
+      addEventListener('scroll', onScroll, { passive: true });
+      const offDom = onDomChange(update);
+      const timers = [200, 1300, 2600].map((ms) => setTimeout(update, ms));
+      off = () => { clearTimeout(t); timers.forEach(clearTimeout); removeEventListener('scroll', onScroll); offDom(); };
+    };
+    const k = setTimeout(start, 150);
+    mq.addEventListener('change', start);
+    return () => { clearTimeout(k); off(); mq.removeEventListener('change', start); restore(); };
   }, [path]);
 
   if (!ask) return null;

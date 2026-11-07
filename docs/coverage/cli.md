@@ -3,7 +3,7 @@
 Page file: `components/pages/CliPage.jsx` · gallery: `docs/gallery/cli/` · metric id: `api_key_created`
 
 Open copy questions for James: the CLI docs link (MASTER part 1 lists it): the live page sends both "Install from hanzo.sh" and "Install the CLI" to `https://docs.hanzo.ai/docs/cli`, kept as is. The hero says "Open source (MIT)" while the repo card says "License: Apache-2.0"; both are live strings, kept.
-Shared changes requested (`docs/requests/cli.md`): none.
+Shared changes requested (`docs/requests/apps1.md`): only the `Band` `id` prop is still open (this page closes on its own ask row with `<Cta id>`); the header ask and the ask bar landed with the shared system.
 Forks this page deleted: the lime `.cli-go` button and the ghost `.x-btn` "View on GitHub" (now `<Cta>` solid and `<Cta kind="link">`); the second ending (the "Get CLI" card's solid "Deploy to Cloud" is a text link above the one Band); the 4 kickers over headlines; the tilted v1 terminal (`useTilt`); `Magnetic`; the hidden `<i data-thumb>`.
 
 ## 1. Strategy and conversion
@@ -31,7 +31,7 @@ Done here: every link is `A` or `<Cta>` (which renders `A`); parity links 10/10;
 - [x] Ends in proof strip, `Band`, footer
 - [x] Card-to-page links use Morph; title lands within 12px (n/a: no cards open into pages here; in-site links morph through the shell)
 
-Done here: the session starts typing at 350 ms (check.mjs: 101 changes in the first second). Nothing sits above the h1 (the old kicker now titles the terminal bar). JS off: 0 invisible text blocks (every hidden state is scoped `.js`). Order: dark terminal, paste line, tree window, struck-command list, swipe rail, script builder, repo card, white closing band. `PageHero` is not in the kit yet; the hero is page-local.
+Done here: the session starts typing at 350 ms (check.mjs: 101 changes in the first second). Nothing sits above the h1 (the old kicker now titles the terminal bar), and the h1 is plain server HTML, so it paints first. JS off: 0 invisible text blocks (every hidden state is scoped `.js`). Order: dark terminal, paste line, tree window, struck-command list, swipe rail, script builder, repo card, white closing band. `PageHero` is not in the kit yet; the hero is page-local.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -39,7 +39,7 @@ Done here: the session starts typing at 350 ms (check.mjs: 101 changes in the fi
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: `<Cta id="cli.hero" thumb>` and `<Cta id="cli.band">`; the ask bar reads "Install from hanzo.sh". Every Copy copies the shown command; the `$` is `user-select: none` and not in the copied text (`Copy` uses `copyText`).
+Done here: `<Cta id="cli.hero" thumb>` and `<Cta id="cli.band">`. The header carries the solid "Try Hanzo"; there is no floating bar on desktop, and on phones the slim shared bar carries this page's own `data-thumb` ask.md item 1 lands. Every Copy copies the shown command; the `$` is `user-select: none` and not in the copied text (`Copy` uses `copyText`).
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -80,9 +80,9 @@ Done here: tree rows, add toggles, rail arrows, pause/replay, repo links press a
 - [x] At least 3 kinds of movement; scroll-linked is half or less
 - [x] Something moves without input; every control answers
 - [x] Reduced motion shows the final state; no `setInterval`
-- [x] Sound only on the listed moments, through the one kit (n/a: the shared sound kit has not landed)
+- [x] Sound only on the listed moments, through the one kit
 
-Done here: signature typed session (time), tree selection glide (state, layoutId at 300 ms ease, no spring), added script block clip wipe (state), line-mask headlines (arrival); variety.py: 2 techniques, 0 Rise. Nothing is scroll-linked. The session runs once and rests on its final frame; reduced motion shows that frame.
+Done here: signature typed session (time), tree selection glide (state, layoutId at 300 ms ease, no spring), added script block clip wipe (state), line-mask headlines (arrival); variety.py: 2 techniques, 0 Rise. Nothing is scroll-linked. The session runs once and rests on its final frame; reduced motion shows that frame. The session's end plays the kit's faint 'done' chime (`play('done')` from `lib/sound.js`); tree rows tick (`data-sound="tick"`); toggles and the pause tick through the kit's own `[aria-pressed]` rule.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set (n/a: no images or films)

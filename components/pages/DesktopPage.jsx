@@ -14,6 +14,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { Copy, Mark, Magnetic } from '../ui';
 import { A, Cta } from '../kit';
+import { play } from '../../lib/sound';
 import Lines from '../v2/x-edison/AppLines';
 import Scenes from '../v2/AppScenes';
 import Sheet from '../v2/AppSheet';
@@ -73,7 +74,7 @@ function Window({ os }) {
         setS(5); await wait(1900); // it reads the repo
         setS(6); await wait(1600); // writes limit.go
         setS(7); await wait(1700); // the test runs
-        setS(8); await wait(700); // and passes
+        setS(8); if (first) play('done'); await wait(700); // and passes: a faint chime, the first time only
         setS(9); await wait(5600);
         first = false;
       }
@@ -269,8 +270,8 @@ function Offline() {
           <div className="dk-off-l">
             <label className="dk-job"><span className="dk-job-k x-mono">Give it a job</span><input value={job} onChange={(e) => setJob(e.target.value)} maxLength={90} /></label>
             <div className="dk-radio" role="radiogroup" aria-label="Model">
-              <button type="button" role="radio" aria-checked={local} onClick={() => pick(true)}>Local model</button>
-              <button type="button" role="radio" aria-checked={!local} onClick={() => pick(false)}>Hanzo Cloud</button>
+              <button type="button" role="radio" aria-checked={local} data-sound="tick" onClick={() => pick(true)}>Local model</button>
+              <button type="button" role="radio" aria-checked={!local} data-sound="tick" onClick={() => pick(false)}>Hanzo Cloud</button>
             </div>
             <button type="button" role="switch" aria-checked={net} className={'dk-net' + (net ? '' : ' off')} onClick={cut}><i />{net ? 'Network on' : 'Network off'}</button>
             <ol className="dk-notes">
@@ -278,7 +279,7 @@ function Offline() {
                 const i = j + 3, open = note === i;
                 return (
                   <li key={t} className={open ? 'open' : ''}>
-                    <button type="button" aria-expanded={open} onClick={() => setNote(open ? -1 : i)}>
+                    <button type="button" aria-expanded={open} data-sound="tick" onClick={() => setNote(open ? -1 : i)}>
                       <span className="x-mono av-num">{String(i + 1).padStart(2, '0')}</span><span>{t}</span><i aria-hidden="true" />
                     </button>
                     <p>{d}</p>
@@ -407,7 +408,7 @@ function End() {
 export default function DesktopPage() {
   const [os, setOs, mine] = useOs();
   return (
-    <main className="av dk" data-ask="off" data-cursor="" style={{ '--ac': '#737373' }}>
+    <main className="av dk" style={{ '--ac': '#737373' }}>
       <Hero os={os} setOs={setOs} mine={mine} />
       <Build />
       <Offline />
