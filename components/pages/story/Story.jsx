@@ -4,14 +4,18 @@
    headline figures stand huge on a hairline rule; then each chapter of the campaign is one full screen, and the next
    chapter wipes up over the last like a sheet, bringing its own picture, its own tint and its own words, while a reel
    counts 01 / 06. The gallery is an asymmetric wall of the campaign's frames, and the page ends on the next launch,
-   a card that opens into its page. Every word, figure and picture is Hanzo's; each launch carries its own accent and
-   Sigil seed. When a picture cannot load, its frame shows Hanzo's own caption on the accent plate instead.
+   a card that opens into its page. Every word, figure and picture is Hanzo's. The UI has no hue of its own (greys,
+   silver, ink): colour comes only from the launch's own pictures; each launch carries its own Sigil seed. When a
+   picture cannot load, its frame shows Hanzo's own caption on a silver plate instead. One solid ask, Hanzo's
+   "The original case study (PDF)", in the stage and at the close; everything else is a text link.
    Signature: the campaign as scene changes. Chapters are 100svh scenes; each new one wipes up over the last with a
    scroll-scrubbed clip-path, its picture pushing in and the outgoing words lifting away (phone: each scene's picture
    wipes open as it arrives).
    Beyond: where each figure comes from. Press a headline figure and the page travels to the chapter that states it and
    marks the words; a figure the page never states opens Hanzo's original case study (PDF) instead.
-   V2: 8.5/10 rebuilt as an editorial feature: stage hero, statement lede, huge figures on a rule, chapters as wiping 100svh scenes, asymmetric media wall, next-launch card */
+   Motion is not only scroll: the name cuts in, the Sigil drifts by itself and leans to the pointer, the figures spin
+   to their value, a pressed figure travels and marks its words, tiles wipe open on arrival and answer the hover.
+   V2: 8.5/10 rebuilt as an editorial feature: stage hero with one ask, statement lede, huge figures on a rule, chapters as wiping 100svh scenes, asymmetric media wall, next-launch card; no UI hues */
 // Signature: the campaign as scene changes: each chapter a 100svh scene that wipes up over the last (scrubbed clip-path), picture pushing in, reel counting
 // Beyond: where each figure comes from: press a headline figure, the page travels to the sentence that states it and marks it, else the case study PDF
 import { useEffect, useRef, useState } from 'react';
@@ -50,7 +54,7 @@ function useMissing(root) {
   }, [root]);
 }
 
-function Hero({ doc }) {
+function Hero({ doc, ask }) {
   const box = useRef(null);
   const [ready, setReady] = useState(false);
   const { scrollYProgress: p } = useScroll({ target: box, offset: ['start start', 'end start'] });
@@ -78,10 +82,13 @@ function Hero({ doc }) {
       </motion.div>
       <A to={doc.back.href} className="xst-back">{doc.back.label}</A>
       <motion.div className="xst-hero-t" style={{ y: rise }}>
-        <p className="xst-kick x-mono"><span>{doc.year}</span><i aria-hidden="true" /><span>{doc.kind}</span></p>
         <h1 id="xst-h1" className="xst-h1">
           <span className="x-line"><motion.span className="x-line-in" initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.15, ease: EASE, delay: 0.2 }}>{doc.name}</motion.span></span>
         </h1>
+        <div className="xst-hero-b">
+          <p className="xst-kick x-mono"><span>{doc.year}</span><i aria-hidden="true" /><span>{doc.kind}</span></p>
+          {ask && <A to={ask.href} className="x-btn solid xst-ask">{ask.label}</A>}
+        </div>
       </motion.div>
     </section>
   );
@@ -114,7 +121,7 @@ function Figures({ doc, mark, onPress }) {
 }
 
 /* one chapter: a full scene that wipes up over the one before it, then lifts its words away as the next arrives */
-function Scene({ s, i, n, p, mark, last }) {
+function Scene({ s, i, n, p, mark }) {
   const t = (v) => v * (n - 1);
   const enter = (v) => (i ? c01((t(v) - (i - 0.8)) / 0.55) : 1);
   const leave = (v) => c01((t(v) - (i + 0.2)) / 0.55);
@@ -126,7 +133,6 @@ function Scene({ s, i, n, p, mark, last }) {
     <motion.article className={'xst-scene' + (s.img ? '' : ' bare')} id={'xst-step-' + i} data-step={i} data-tone={i % 2 ? 'b' : 'a'} style={i ? { clipPath: clip } : undefined} aria-labelledby={'xst-st-' + i}>
       <div className="xst-g xst-scene-g">
         <motion.div className="xst-scene-t" style={{ y: words, opacity: fade }}>
-          <p className="xst-n x-mono">{s.n} <span>/ {last}</span></p>
           <h3 id={'xst-st-' + i} className="xst-h3">{s.title}</h3>
           <p className="xst-t">{marked(s.text, mark)}</p>
         </motion.div>
@@ -145,7 +151,7 @@ function Chapters({ how, mark, box }) {
   return (
     <div className="xst-scenes" ref={box} style={{ '--n': n }}>
       <div className="xst-stage">
-        {how.steps.map((s, i) => <Scene key={s.n} s={s} i={i} n={n} p={p} mark={mark} last={last} />)}
+        {how.steps.map((s, i) => <Scene key={s.n} s={s} i={i} n={n} p={p} mark={mark} />)}
         <div className="xst-reel x-mono" aria-hidden="true">
           <span className="xst-reel-n"><b key={at}>{how.steps[at].n}</b> / {last}</span>
           <span className="xst-reel-bar">{how.steps.map((s, i) => <i key={s.n} data-on={i <= at || undefined} />)}</span>
@@ -175,6 +181,7 @@ export default function Story({ doc, next }) {
   const root = useRef(null);
   const scenes = useRef(null);
   const [mark, setMark] = useState(null);
+  const ask = doc.links[0]; // Hanzo's own first action on the page: the original case study
   useMissing(root);
   // scenes and wall tiles that have arrived (phones and the media wall wipe open once, on arrival)
   useEffect(() => {
@@ -198,8 +205,8 @@ export default function Story({ doc, next }) {
     }
   };
   return (
-    <main className="xst" ref={root} style={{ '--acc': doc.tone }}>
-      <Hero doc={doc} />
+    <main className="xst" ref={root}>
+      <Hero doc={doc} ask={ask} />
 
       <section className="xst-intro" aria-label={doc.name}>
         <div className="xst-g">
@@ -212,7 +219,6 @@ export default function Story({ doc, next }) {
         <section className="xst-report" id="xst-report" aria-labelledby="xst-rep-h">
           <div className="xst-g">
             <div className="xst-report-t">
-              <p className="xst-kicker x-mono">{doc.year}</p>
               <h2 id="xst-rep-h" className="xst-h2">{doc.report.h2}</h2>
               <p className="xst-t">{marked(doc.report.text, mark)}</p>
             </div>
@@ -246,11 +252,11 @@ export default function Story({ doc, next }) {
               : <A key={l.href} to={l.href} className="xst-all">{l.label}</A>))}
           </div>
           {next && (
-            <A to={next.href} className="xst-next" style={{ '--acc2': next.tone }} aria-label={next.name + ', ' + next.year + ' · ' + next.kind}>
+            <A to={next.href} className="xst-next" aria-label={next.name + ', ' + next.year + ' · ' + next.kind}>
               <span className="xst-next-pic" data-morph>{next.cover && <Pic img={next.cover} />}</span>
               <span className="xst-next-t">
-                <span className="xst-kicker x-mono">{next.year} · {next.kind}</span>
                 <span className="xst-next-n">{next.name}</span>
+                <span className="xst-kicker x-mono">{next.year} · {next.kind}</span>
                 {next.figure && <span className="xst-next-f"><b>{next.figure.value}</b> {next.figure.label}</span>}
               </span>
               <span className="xst-next-go" aria-hidden="true"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
