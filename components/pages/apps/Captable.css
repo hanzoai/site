@@ -360,3 +360,7 @@ a.ct-chip:active { transform: scale(.97); }
 @media (prefers-reduced-motion: reduce) {
   .ct-seg, .ct-sep, .ct-fall-bar b, .ct-table td, .ct-exit b { transition: none; }
 }
+
+/* 8 Nov (Ready pass): the inline "Captable, Inc." link answers a hover like the page's other links */
+.ct-oss .bz-body a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; transition: text-underline-offset .2s var(--ease), text-decoration-thickness .2s var(--ease); }
+@media (hover: hover) { .ct-oss .bz-body a:hover { text-decoration-thickness: 2px; text-underline-offset: 5px; } }

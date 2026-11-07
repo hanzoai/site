@@ -3,7 +3,7 @@
 Reviewed 2026-11-07, walked moving at 1470x801 and 375x812 (Playwright, wheel steps of 400px every 700ms, rest pairs on the first screen and mid-page, hover/press/tap on the hero ask, links, (+) sheets, frontier tabs, board toggles, race tabs, sub-nav rail, "/" search and the context dial).
 
 Verdict: 5/10
-Ready: 8 Nov, held up next to /api and /affiliate (James's new bar, no score). On top of the 7 Nov fixes already in (page-local sheets inside the viewport, opaque rail, folded lists, hero arrival after the h1), the context dial no longer moves the page as it steps (phone CLS 0.336 to 0.000, desktop 0.049 to 0.002) and the phone rail tabs are 44px. taste/unique/parity OK (text 860/860, links 134/134); 0 console errors, no overflow at 1470 and 375; benchmarks/* untouched (it does not import Benchmarks.css), /benchmarks/zen-6 rechecked clean. Phone is still about 33 screens (was 47); the rest of the volume cut would mean restructuring sections.
+Held (8 Nov, copy rule): the 8 Nov design pass is in (see git log), but James's copycheck run found 193 of 354 live lines missing, so not Ready until `copycheck.mjs /benchmarks` says missing 0.
 
 First complaint: "I pressed one of the plus buttons and the whole page slid off to the left with a stack of panels on top, and Escape didn't bring it back. On the phone it threw me to the top and opened the wrong panel. That's broken, not premium."
 

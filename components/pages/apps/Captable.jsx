@@ -155,7 +155,7 @@ function Hero({ c, set, mine, setMine }) {
         </div>
         <p className="bz-lede ct-lede">Who owns what, and what happens to that when you raise again.</p>
         <div className="ct-acts">
-          <Cta kind="quiet" to="/login" id="captable.hero" thumb>Try Hanzo</Cta>
+          <Cta to="/login" id="captable.hero" thumb>Try Hanzo</Cta>
           <Cta kind="link" to={DOCS} id="captable.docs">Documentation</Cta>
         </div>
         <div className="ct-obj bz-obj">
@@ -447,7 +447,25 @@ function End() {
   );
 }
 
+/* phones: while the hero's solid "Try Hanzo" is on screen the header's button reads as an outline (the shell's own
+   html[data-ask=quiet] switch, which it already sets on desktop), so one solid fill shows at a time */
+function useOneSolidOnPhone() {
+  useEffect(() => {
+    const H = document.documentElement, mq = matchMedia('(max-width: 700px)');
+    const el = document.querySelector('[data-cta="captable.hero"]');
+    if (!el) return;
+    let vis = false, mine = false;
+    const apply = () => { if (mq.matches && vis) { H.dataset.ask = 'quiet'; mine = true; } else if (mine) { delete H.dataset.ask; mine = false; } };
+    const io = new IntersectionObserver(([e]) => { vis = e.isIntersecting; apply(); });
+    io.observe(el);
+    const t = [300, 1400].map((ms) => setTimeout(apply, ms));
+    mq.addEventListener('change', apply);
+    return () => { io.disconnect(); t.forEach(clearTimeout); mq.removeEventListener('change', apply); if (mine) delete H.dataset.ask; };
+  }, []);
+}
+
 export default function Captable() {
+  useOneSolidOnPhone();
   // the calculator: one state for the whole page; every section reads it, so any input re-plans everything at once
   const [c, setC] = useState(START);
   const set = useCallback((k, v) => setC((o) => (o[k] === v ? o : { ...o, [k]: v })), []);
