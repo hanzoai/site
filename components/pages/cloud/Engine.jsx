@@ -88,7 +88,7 @@ function Term() {
         <span className="en-bar-t">hanzoai/engine</span>
         <div className="en-verbs" role="tablist" aria-label="Verbs">
           {VERBS.map((v, i) => (
-            <button key={v} type="button" role="tab" aria-selected={at === i} onClick={() => choose(i)}>
+            <button key={v} type="button" role="tab" data-sound="tick" aria-selected={at === i} onClick={() => choose(i)}>
               <span>{v}</span>
             </button>
           ))}
@@ -237,10 +237,10 @@ function Write() {
           <KeynoteLines className="kn-headline" lines="One binary, three verbs" />
           <p className="kn-kick">run, serve, bench</p>
           <div className="en-write-verbs" role="radiogroup" aria-label="Verb">
-            {VERBS.map((v) => <button key={v} type="button" role="radio" aria-checked={verb === v} onClick={() => setVerb(v)}>{v}</button>)}
+            {VERBS.map((v) => <button key={v} type="button" role="radio" data-sound="tick" aria-checked={verb === v} onClick={() => setVerb(v)}>{v}</button>)}
           </div>
           <Field label="Hugging Face model" name="model" value={model} onChange={(e) => setModel(e.target.value)} placeholder="<model>" spellCheck={false} autoComplete="off" autoCapitalize="none" enterKeyHint="done" maxLength={96} />
-          {verb === 'serve' && <button type="button" role="switch" aria-checked={ui} className="en-switch" onClick={() => setUi(!ui)}><i aria-hidden="true" />The built-in UI at /ui</button>}
+          {verb === 'serve' && <button type="button" role="switch" data-sound="tick" aria-checked={ui} className="en-switch" onClick={() => setUi(!ui)}><i aria-hidden="true" />The built-in UI at /ui</button>}
         </div>
         <div className="en-write-out">
           <code className="en-write-cmd"><b>$</b> {cmd}</code>
