@@ -35,7 +35,7 @@ Done here: one `<main class="xst">`; the shell's skip link targets it. Every lin
 - [x] Ends in proof strip, `Band`, footer (Story type: the page's own closing link)
 - [x] Card-to-page links use Morph; title lands within 12px
 
-Done here: the first screen is the black room opening (800ms) with the name cutting in by line mask (700ms, ease-emphasis, 200ms delay) and the Sigil drifting. h1 baseline at about 38% (desktop: h1 box 240–334px at 1470×801). Above the h1 there is only the breadcrumb; the year and kind sit under it. No kit `PageHero` exists yet, so the hero is page-local and follows its spec. When the launch's picture cannot load (every run here; hanzo.ai is blocked), the room is not left as a bare contour. A graphite ledger plate (#262626, radius 20) holds the launch's own figures: the first at 64px Air with its label, the rest as hairline rows. It wipes open (500ms) and its characters rise. It sits at x 919–1311, y 379–701 at 1470×801, clear of the h1 (240–334) and the ask (405–457). At 375×812 it sits at y 132–387, above the h1 (496) and the ask (660–712). It is `aria-hidden`, because the figures section below is the readable copy. With JS off, a `<noscript>` style plus `.js`-scoped CSS shows every word (checked with Playwright `javaScriptEnabled:false`). The sections run black room, paper, quiet room, 100svh scenes, paper wall, paper close. It ends on Hanzo's own closing links and the next case; per the Story type there is no Band. The next-launch picture carries `data-morph` into the sibling's `data-morph-target` stage.
+Done here: the first screen is the black room opening (800ms) with the name cutting in by line mask (700ms, ease-emphasis, 200ms delay) and the Sigil drifting. h1 baseline at about 38% (desktop: h1 box 240–334px at 1470×801). Above the h1 there is only the breadcrumb; the year and kind sit under it. No kit `PageHero` exists yet, so the hero is page-local and follows its spec. **Fallback room (round 2):** the room is decided on time. If the cover has not decoded about 1.2s after mount, a graphite plate (#262626, radius 20) holds only Hanzo's lead figure and its label ($8.4M / $7M+). The full set stays in the figures row, so no number repeats back to back. If the picture arrives later, it takes the room back. Warm loads: the plate appeared 1.0–1.5s after DOMContentLoaded (it was 5.3–5.8s on the error event). Desktop: plate x 951–1311, y 550–701, clear of the h1 (240–334) and the ask (405–457). Phone: the name and ask come first (h1 y 156, ask 320–372), and the plate sits under them at y 664–732 with a 32px figure, smaller than the 44px h1. It is `aria-hidden`; the figures row is the readable copy. The room's opening is now a CSS keyframe, inset 32px on desktop and 8px on phones, so the crumb and meta at the 16px gutter are never cut off. With JS off, a `<noscript>` style plus `.js`-scoped CSS shows every word (checked with Playwright `javaScriptEnabled:false`). The sections run black room, paper, quiet room, 100svh scenes, paper wall, paper close. It ends on Hanzo's own closing links and the next case; per the Story type there is no Band. The next-launch picture carries `data-morph` into the sibling's `data-morph-target` stage.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -79,7 +79,7 @@ Done here: `taste.py` OK on Story.jsx and Story.css. The colours are the deck's 
 - [x] Inputs 16px or larger; no bare `:hover` (n/a inputs: none)
 - [x] Forks this page deleted: listed below
 
-Done here: figure buttons have a hover rule line and arrow nudge, press scale .97 (90ms), a focus-visible rule line and a disabled state. The breadcrumb, "Every launch →" and the next card each have hover, press and focus states, and the asks use the kit `Cta` states. Every `:hover` is inside `@media (hover: hover)`. Forks deleted: see the top of this card.
+Done here: every figure now carries its source hint in Hanzo's own words. $8.4M, which the lede states, shows "↑ Damon Motorcycles", and its arrow lifts on hover; its siblings point down to their chapter or out to the PDF. The closing ask's Tab stop is brought into view at once: Tab landed it at y 374–426 of 801 on desktop and 380–432 of 812 on phone (Playwright). Figure buttons have a hover rule line and arrow nudge, press scale .97 (90ms), a focus-visible rule line and a disabled state. The breadcrumb, "Every launch →" and the next card each have hover, press and focus states, and the asks use the kit `Cta` states. Every `:hover` is inside `@media (hover: hover)`. Forks deleted: see the top of this card.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -88,7 +88,11 @@ Done here: figure buttons have a hover rule line and arrow nudge, press scale .9
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit (n/a: no sound kit merged yet)
 
-Done here: the signature is the scenes wiping up (scroll-scrubbed clip-path). Supporting: the Sigil and the frame wipe on arrival; `variety.py` counts 3 techniques and 0 fade-ups. Kinds of motion: arrival (room opens, name cuts in), idle (Sigil drift), pointer (Sigil leans, hovers), state (figure press travels and marks; figures rise once), and scroll (name settles 84→52, scenes). Durations are deck tokens (90/150/300/400/500ms; scene moves 700–800ms), with ease-emphasis and no springs. Under reduced motion nothing is bound to scroll. The hero contour gets `still={calm}` from `useCalm`, so its rAF loop stops (one frame), even when the setting is switched on later. The cover opens with no clip animation. `getAnimations()` shows 0 running after 3s on both members at 1470 and 375 (Playwright `reducedMotion: 'reduce'`).
+Done here: the signature is the scenes wiping up (scroll-scrubbed clip-path), still pinned.
+
+Round 2 changes to the scenes:
+- **Compositions vary by chapter.** a: words left, plate right. b: plate left, words right. c: a wide plate over two columns of words. d: a wide column with a 44px title beside a narrow portrait plate. The picture-less last chapter is words only. Damon runs a, b, c, d, a, words; KANOA runs a, b, c. Phones stack each one.
+- **Outgoing words leave before the next wipe begins.** They lift and fade out over t+0.06 to t+0.2, and the wipe starts at t+0.2. Measured by stepping the whole stage in 24px scroll steps: the outgoing text's opacity is 0 every time the wipe edge crosses its box, on both members (it was up to 0.36 with the previous timing). No two paragraphs splice. Supporting: the Sigil and the frame wipe on arrival; `variety.py` counts 3 techniques and 0 fade-ups. Kinds of motion: arrival (room opens, name cuts in), idle (Sigil drift), pointer (Sigil leans, hovers), state (figure press travels and marks; figures rise once), and scroll (name settles 84→52, scenes). Durations are deck tokens (90/150/300/400/500ms; scene moves 700–800ms), with ease-emphasis and no springs. Under reduced motion nothing is bound to scroll. The hero contour gets `still={calm}` from `useCalm`, so its rAF loop stops (one frame), even when the setting is switched on later. The cover opens with no clip animation. `getAnimations()` shows 0 running after 3s on both members at 1470 and 375 (Playwright `reducedMotion: 'reduce'`).
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set
@@ -96,7 +100,11 @@ Done here: the signature is the scenes wiping up (scroll-scrubbed clip-path). Su
 - [x] Budgets met; nothing missing; alt on every image
 - [x] No dimmed or filtered photo; 4+ real visuals together where the page has them
 
-Done here: when a chapter, report or first-three wall picture cannot load, its plate carries a slow Sigil contour seeded by that picture's own path (MASTER part 10, media failure falls back to an aspect-ratio box with Sigil). Only the chapter on stage drifts; the others hold one still frame. The contour is still under reduced motion. That is at most 10 canvases on Damon. Film run 2 (Damon desktop): 0 still screens, against 10 before. Measured in the DOM, 14/14 images on Damon and 7/7 on KANOA carry width and height attributes. Every picture is kit `Img` with width and height (hero 1920×1080 with `priority`, scenes and tiles 1200×1500, report 1600×1000, next 1600×900) inside a box reserved in CSS. Alt comes from Hanzo's own captions. The only dimming is a left gradient under the stage text. Damon's wall shows 6 frames. Gap: the pictures are not in the repository and hanzo.ai is blocked in this sandbox, so here every frame shows its silver caption plate. The dev server falls back to hanzo.ai for missing files, so they should load on an online localhost.
+Done here:
+- **Every plate falls back the same way:** chapters, the report, all wall tiles and the next-launch card. When the picture has not decoded 1.2s after its plate comes into view (or it fails), the plate carries a slow Sigil contour seeded by the picture's own path (MASTER part 10, media failure falls back to an aspect-ratio box with Sigil).
+- **Few canvases at once:** a canvas exists only while its plate is within 200px of the screen, so a run counted 2–4 canvases at a time.
+- **One mover in view:** only the chapter on stage drifts; the others hold one still frame. The contour is still under reduced motion.
+- **If the picture arrives, it wins.** Measured in the DOM, 14/14 images on Damon and 7/7 on KANOA carry width and height attributes. Every picture is kit `Img` with width and height (hero 1920×1080 with `priority`, scenes and tiles 1200×1500, report 1600×1000, next 1600×900) inside a box reserved in CSS. Alt comes from Hanzo's own captions. The only dimming is a left gradient under the stage text. Damon's wall shows 6 frames. Gap: the pictures are not in the repository and hanzo.ai is blocked in this sandbox, so here every frame shows its silver caption plate. The dev server falls back to hanzo.ai for missing files, so they should load on an online localhost.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -153,7 +161,12 @@ Done here: n/a: no code, terminal or version on a customer story.
 - [x] A failed submit keeps its values and shows no success (n/a: no form)
 - [x] A thrown island does not blank the page
 
-Done here: a picture that fails (including one that failed before hydration) hides and leaves Hanzo's caption on a silver plate. With no cover, the stage lets the Sigil fill the room and shows the caption. Boxes are reserved, so loading never shifts layout. The page is fully static from `content/pages`, with no live data. With hanzo.ai blocked there were 0 console errors at both sizes. Islands such as Sigil sit under the shell's error boundary (`app/error.jsx`).
+Done here: a picture that fails (including one that failed before hydration) hides and leaves Hanzo's caption on a silver plate. With no cover, the stage lets the Sigil fill the room and shows the caption. Boxes are reserved, so loading never shifts layout. The page is fully static from `content/pages`, with no live data. **Console, with hanzo.ai blocked:**
+- Each load logs one 404 resource line per page picture that cannot be fetched (7 on KANOA, 14 on Damon; the blocked-media exemption, `docs/requests/customers.md`).
+- Some loads also log a hydration mismatch from the shared `FooterHTML` (`dangerouslySetInnerHTML` differs). That is shared chrome, not this page.
+- No other errors were seen at either size, with or without reduced motion, in this round's Playwright runs.
+
+Islands such as Sigil sit under the shell's error boundary (`app/error.jsx`).
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary; events only through `lib/track.js`
@@ -167,4 +180,13 @@ Done here: `data-cta="customers.hero"` and `"customers.close"`, sent as `cta_cli
 - the contour stops under reduced motion (0 running animations);
 - `data-cta` is in the DOM (`customers.hero`, `customers.close`).
 
-The fallback hero now holds the figure ledger, so it is not left empty. A re-review is pending.
+The round 2 review (7/10, `70d1547e`) was also read, and all its fixes are in:
+- the room holds only the lead figure, and on phones it sits below the name and ask;
+- the six scenes vary their composition, and the words leave before each wipe;
+- the fallback is decided on a 1.2s timeout, with the same contour on every plate including the next card and every wall tile;
+- $8.4M has its source hint;
+- the phone opening no longer clips the crumb;
+- the closing ask's Tab stop is brought into view;
+- the console line is corrected (above).
+
+A re-review is pending.

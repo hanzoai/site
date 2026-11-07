@@ -1,101 +1,83 @@
 # /customers — James-eye review
 
 Verdict: 7/10
-First complaint: "On the phone, 'Every launch' is still four screens of names and numbers with nothing coming in or going out. And on the desktop, when the big number changes, the old one is still showing under the new one."
+First complaint: "It's all shouting. The headline is huge, the number under it is even bigger, every section heading is massive, and the index names are big too. Where's the small and the medium? One big thing per screen, then let it settle."
 
-Walked 7 Nov, page file at `d996c96` (`components/pages/Customers.jsx`, `Customers.css`). I filmed it moving at 1470×801 and at 375×812 (isMobile, hasTouch), on a fresh visit and on a return visit. The walk scrolled with the wheel and by touch, dwelling on every screen. On desktop it hovered and pressed; on the phone it tapped. It used the year filter, the case tabs (mouse and arrow keys) and opened both cases. I also checked reduced motion, JS off, 320 and 375 wide, a Tab crawl, CLS and the console. Stills: `review/customers/desktop-walk.jpg`, `review/customers/phone-walk.jpg`.
+Walked on build `9eec64ee` (the page files are unchanged since `70d1547e`) on the dev server at http://localhost:4180/customers/. I used my own Playwright scripts with a real mouse, not the film tool's headless hover check:
+- **Desktop 1470×801:** recorded on video. I watched the first screen with no input and probed the arrival timeline every ~95 ms. I wheel-scrolled the whole page in 200 px steps with dwells, and hovered and pressed both asks, the plate, the case tabs, index rows, year chips and backer links. I filtered by year and cleared it, and opened the Damon plate (doorway) and came back.
+- **Phone 375×812** (isMobile, hasTouch): recorded on video. I touch-dragged the whole page in 260 px swipes, tapped a year chip, tapped the KANOA tab, measured tap targets and watched for any bottom bar.
+- **Also checked:** reduced motion and JS off at both sizes, layout shift (PerformanceObserver), console errors across about 22 loads, `scripts/parity.py /customers` (OK, text 72/72, links 10/10) and `scripts/taste.py` on `components/pages/Customers.jsx` and `.css` (OK).
+- **Stills:** `docs/review/customers/desktop-walk.jpg` and `docs/review/customers/phone-walk.jpg`.
 
-The arrival curtain never shows on /customers. It is home-only, and I tested that with automation hidden, so a first visit and a return visit behave the same here. Covers and logos come from hanzo.ai through the dev rewrite, which is blocked in this box, so I judged the plate's Sigil fallback and the name fallbacks. On the phone, the dev "1 Issue" badge is a hydration mismatch in the shared `FooterHTML` (`dangerouslySetInnerHTML` differs). It is not this page's fault: it showed 5 of 5 times when screenshots ran during load and 0 of 8 times otherwise.
+Remote hanzo.ai covers and logos are blocked in this sandbox, so I judged the fallbacks: a Sigil line drawing on the plate, and names in place of logos.
 
 ## What works
-- **Every fix from the last review is in, and I verified each one moving:**
-  - The year chips filter: 11 rows become 3, the rest glide up 466px in about 200ms, and the page shortens from 5,608 to 4,346px.
-  - The pill shows (111×48, `#ededed`).
-  - The row sheet paints (`#f5f5f5`, opacity 1).
-  - The pointer preview is gone, and a pinned stage beside the rows does its job.
-  - The ask sits beside the lede (x=820, y=425 at 1470).
-  - The shared bar takes over at about scroll 719 on desktop and 600 on the phone, so there is no gap.
-  - The case tabs are kit `Tabs`; arrow keys move both the selection and focus.
-  - The 01/02 marks and the seven tiles are gone.
-- **The desktop index is now a scene.** As each row crosses the middle, the stage brings in that launch's figure at 84px Air and lifts the last one out: Bellabeat 250,000 → STONED $135K → Unikrn 120,000 ETH → Arca $500M → … → Personas Social. Pointing at a row answers at once: sheet, name 8px, stage. The hover tells you a number, which is exactly James's rule.
-- **The first screen moves on its own.**
-  - The plate's line starts filling as soon as the page is up (12% threshold).
-  - The h1 cuts in by line.
-  - The plate wipes to KANOA at about 6s, then back, and rests.
-  - Even the Sigil fallback drifts.
-  - The h1 is the deck's 84px/1.02, one h1, with nothing above it.
-- **The close is its own room.** "Launch with us" sits over two rows of Hanzo's own figures in `#262626` that slide against each other with the scroll. White "Talk to us"; the bar steps aside. There is no third Sigil room.
-- **The doorway open works.** On a warm load, ink grows from the plate (640ms) and lifts off the Damon page about 750ms after the click. Back returns to scroll 250.
-- **Housekeeping is clean.**
-  - CLS is 0.000005 on desktop and 0.000018 on the phone, with no font swap.
-  - Parity is 72/72 text and 10/10 links; `taste.py`, `unique.py` and `variety.py` pass.
-  - Reduced motion leaves 0 running animations, the plate holds, and the h1 is final.
-  - No sideways scroll at 320 or 375, and no phone tap target in `main` is under 44px.
-  - On a Tab crawl every stop shows the 2px ink ring with a white halo, and none sits under the header or the bar.
+- **The launch stage is a real signature.** On desktop, wheel-scrolling the index swaps the pinned stage one launch at a time: SKULLY → STONED Audio → Unikrn → Casper → Triller → Personas, with exactly 1 layer each time. Pointing at a row answers at once: Arca gave $500M, Palladium €150M, Triller 169M, and the row's quiet `#f5f5f5` fill comes up behind it. This is the "pinned stage where one panel changes" from his list. It is the page's own, and it tells you something on hover.
+- **Phones get their own scene.** A sticky year rail and a 64px figure strip sit under the header, and the strip swaps through every launch as you swipe (always 1 layer). Row names go from grey to ink and the figures roll up once. It is not a shrunk desktop.
+- **Arrival is authored.** The h1 line mask starts at first paint (translateY about 103px down to 0 by +1.4 s). The lede and ask follow at about +1.0 s, the plate at about +1.2 s. The plate's progress line then fills over 5.2 s, the plate wipes Damon → KANOA → back to Damon, and then it rests. Something moves inside 1 s.
+- **Every control answers, with no jump:**
+  - Hero ask: `#0a0a0a` → `#262626`, press scale .97.
+  - Close ask: white → `#e5e5e5`, press .97.
+  - Plate arrow: fills white and slides 4px.
+  - Case tab: grey → ink.
+  - Backer names: `#737373` → ink.
+  - Year chip: gliding pill, 111×48. Filter 11 → 3 → 11 rows, with one `role=status` line.
+- **The plate opens into its page.** The ink grows from the plate, and the Damon case page is up by about 1.2 s. Back returns to /customers.
+- **It is clean:**
+  - Layout shift 0.0003 on desktop and 0 on phone.
+  - No horizontal scroll at either size.
+  - 0 phone tap targets under 44px.
+  - No hue; taste passes.
+  - Nothing sits above an h1 or h2. "Case studies" is a mono caption under the plate.
+  - JS off stacks both cases readably at both sizes with 0 faint text.
+  - Reduced motion leaves 0 running animations, and only the inactive case panel is hidden.
+- **The desktop header ask works.** After the hero it turns into a solid "Talk to us" (outline while the hero ask shows). There is no floating bar on desktop. The phone's slim bar shows only between the index and the close and never covers the page's own ask.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Yes at both sizes: the headline, the lede and "Talk to us" are all on the first screen.
-   - **The order is wrong.** The plate (CSS, 0.25s delay) and the lede (0.5s) are timed from first paint, but the h1 waits for hydration. On a warm desktop load the plate is 65% in by 0.9s and the h1 cuts in at 1.2–2.0s. On the phone at 1.0s, the plate is the only thing in `main`. The headline arrives last.
-   - **The plate shows almost nothing on the first desktop screen.** At 1470×801 only its top 45% (275px) is on screen, so the screen shows a dark slab with "Damon Motorcycles 2020" and a 2px line. The $8.4M sits at y≈1,000–1,080, below the fold.
-2. **One in, one out, or a document?** On desktop, it is a scene now: the stage swaps one launch for the next and the filter closes the list up. On the phone, the stage is `display:none`. "Every launch" runs from y≈1,157 to ≈4,450 (about four screens) of rows with inline 40px figures. Only the sticky year rail's underline changes, so on the phone it is still a document.
-3. **A real visual object in every section?**
-   - Hero: the plate. With the fallback it is a dark slab with a faint contour, and during the turn it is blank for about 1s between the two cases' text, because both fallbacks are the same dark gradient and the wipe edge cannot be seen.
-   - Index: the stage on desktop, and nothing on the phone.
-   - Backers: a still row of grey names (logos when they load).
-   - Close: the sliding figures.
-4. **One ask, sticky after the hero?** Yes. "Talk to us" sits beside the lede, then in the shared bar from scroll ≈719 (desktop) and ≈600 (phone), then in the close. The header's "Try Hanzo" goes to outline once the page hydrates.
-5. **Every hover and press answers, no jumps?** Mostly.
-   - What answers: the hero ask darkens and presses at .97; the plate's arrow fills white, moves 4px and presses at .97, with the "Open" cursor label; tabs ink on hover; rows get the sheet, the 8px name move and the stage; years and wall go grey to ink; the close ask answers.
-   - **The stage swap overprints.** Enter and exit run together at the same spot, so for about 100ms "$135K", "in sales from a $20K budget", "70,000" and "2016" ghost under the incoming "120,000 ETH" (`desktop-walk.jpg`, row 2, first still). It happens at every handoff, 10 times down the list.
-   - **"120,000 ETH" breaks onto two lines in the stage.** The stage is 368px wide and the figure is set at 84px.
-   - **The hovered row's sheet runs into the stage.** The sheet's right edge is at x=943 and the stage starts at x=943, so the two rounded shapes join.
-   - The years and the wall press at .98, not the deck's .97.
-6. **Overlaps, font swap, layout shift?** At rest: none at either size, no swap, CLS ≈0. In motion: the stage overprint above.
-7. **Which reference, is its motion there?** The index plus the stage is osply/hamol with an Apple-style pinned panel, and it is there on desktop. The plate is an Apple product tile. synchronized.studio's card-becomes-hero is not attempted. The doorway ink stands in for it (Morph is broken site-wide), which is acceptable, but `doorway.js` has no 700ms hold cap. On a cold destination the screen stays black until the next page lifts the ink, with only an 8s failsafe; the phone held over 1.3s here.
-8. **Different from neighbours?** Yes. The full-width case plate, the index stage and a figure-slide close are this page's own, and `unique.py` passes.
-9. **18 parts?** Mostly covered. The card is wrong in places (listed below).
-10. **Banned tells?** None. No hue, no eyebrow above a heading ("Case studies" is a caption under the plate), no gradient text, no tiles.
-11. **Copy untouched?** Parity is clean.
-    - The $8.4M / $7M+ lines come from the case pages, and that question is already on the card.
-    - **SKULLY has moved.** It is first on live and here sits after Triller, because undated launches go to the end. That order change is not on the card's copy questions.
+1. **First screen sells in 5 s; something moves in 1 s? Yes.** The h1, lede, "Talk to us" and the $8.4M plate are all on the first screen at 1470×801. The h1 cut-in starts at first paint. After the arrival, the only motion for 5 s is a 2px progress line, which is quiet but alive.
+2. **One in, one out, or a document? Mostly one in, one out.**
+   - The index is a scene on both sizes.
+   - Weak spot: during a continuous wheel scroll the desktop stage is empty in about 20% of samples (6 of 30). That is the exit-then-enter gap.
+   - Phone weak spot: the strip shows the same figure as the row right under it ($135K in the strip and $135K in the row, on one screen).
+3. **A real visual object in every section? Yes, with fallbacks.** The objects are the plate, the stage, and the dark close with its figure rows. "Backed by builders" falls back to grey names because the logos are blocked. On the plate, the logo fallback prints the case name, and the h3 below prints it again, so "Damon Motorcycles" shows twice on the plate at both sizes.
+4. **One ask, nothing floating, and scale rhythm? The ask passes; scale fails.**
+   - The ask is "Talk to us": in the hero, then in the header, then in the close.
+   - Scale is the failure. I measured:
+     - h1 84px with the plate figure at 112px on the same first screen;
+     - section h2s at 64px ("Every launch", "Backed by builders."), against the 26px resting size;
+     - index names at 40px;
+     - stage figure 84px;
+     - close headline 84px over figure rows at 176px.
+   - Little is medium and nothing grows into the moment and settles; it is big everywhere. JAMES.md rule 1 says one big thing per screen, with resting sizes h1 52, sections 26, figures 64.
+5. **Every hover and press answers, no jumps? Yes.** All measured with a real mouse (see above). The case tab, row, chip and backer hovers change colour or fill rather than opacity. Press is .97 everywhere.
+6. **Overlaps, font swap, layout shift? None from the page.**
+   - Layout shift is about 0.
+   - The cookie card covers the plate figure at both sizes, but that is shared chrome.
+   - Once, in about 22 loads (the first desktop run), React logged "A tree hydrated but some attributes of the server rendered HTML didn't match" and the dev "1 Issue" badge showed. I could not reproduce it in the other 21 loads, so I cannot pin it on this page. Worth one check of the plate's `inert` and `aria-hidden` attributes and of `useCalm`.
+7. **Which reference? Apple's pinned stage where one panel changes; synchronized.studio's card that opens into its page (the doorway); chatgpt enterprise's calm proof listing.** All three are actually present in motion. The Apple-style "huge type" has been applied to every heading, not just the moment.
+8. **Different from its neighbours? Yes.** The hero medium is a turning case plate, the signature is the pinned launch stage, and it adds a year index. The black close with sliding figures is its own.
+9. **All 18 parts covered? Yes.** The card has 18 `## N.` headings, each with a `Done here:` line.
+10. **Banned tells? No hue, eyebrow-over-headline, gradient text, Inter or glow.** The one hit is from the rejected list: "everything big at once" (see 4).
+11. **Copy untouched? Yes.** Parity is 0 missing (72/72 text, 10/10 links).
 
-## Missing from the 18 areas
-- **3 / 11 (phone composition):** the page's signature has no phone version. "Every launch" is about 3,300px of static rows at 375, so the phone gets no one-in-one-out.
-- **3 (first screen):** the h1 lands after the plate and the lede, because CSS arrivals race a hydration-gated cut-in. The desktop plate's figure is below the fold.
-- **8 / 9 (craft):**
-  - The stage enter and exit overprint.
-  - "120,000 ETH" wraps.
-  - The row sheet touches the stage.
-  - The years and wall press at .98.
-- **9 (transition):** the doorway has no hold cap (MASTER part 9: cap at 700ms).
-- **3 (JS off):** everything is legible, but the KANOA panel sits under Damon, so its copy cannot be seen, and the tabs do nothing. The blocked cover's alt text ("The Damon Hypersport") and a broken-image box show over the plate's top edge; that part is minor, as the images are remote.
-- **Card corrections:**
-  - Part 7 says "Radii … from tokens", but radii are literals. The plate and the stage use 28px (the composer radius) where the deck gives art cards 20 and tiles 24.
-  - Part 8 says "Press is .97"; the years and the wall press at .98.
-  - Part 10 says covers and logos "come from Hanzo's /public … on localhost they load". Nothing is mirrored into `public/`: dev pulls them from hanzo.ai by rewrite, and the static export has no fallback (MASTER part 10, mirror into `public/`).
-  - Part 9 says the plate turns "once", but it goes Damon → KANOA → Damon and then rests. Its line then shows only the first segment filled.
-  - Part 12 says "the list is aria-live", which means the whole 11-row `ol` is a polite live region, so a year tap would read the entire list.
-  - The SKULLY order question is missing.
+## Card check
+The card follows the 18-part format with all `Done here:` lines filled. I spot-checked five claims:
+- **Ask beside the lede at x=820, y=425–473: true.** Measured 820, 425, 128×48.
+- **Year pill 111×48, filter 11 → 3 → 11: true.**
+- **$8.4M on the first screen at y 638–739: true.** Measured top 638.
+- **Phone strip swaps one layer at a time through every launch: true.**
+- **Hovers live inside `@media (hover: hover)` and press is .97: true.** The CSS comment still says ".98", which is harmless.
+
+No false claim found, so no cap. The card presents the deck's clamp(52px, 7vw, 84px) h1 as if it were on-brief. It doesn't address JAMES rule 1's resting sizes, and that gap is this verdict.
 
 ## Fixes (in order)
-1. **Give the phone index its scene.**
-   - Put a slim sticky figure strip under the year rail. It shows the figure and label of the row crossing the middle, and swaps it as the desktop stage does: same copy, 300ms ease-emphasis, one in and one out.
-   - Or settle each row's figure once as it becomes `.on`.
-   - Either way, the four screens should read as one moving thing, not a list.
-2. **Stop the stage overprint.**
-   - Run the handoff in sequence: `AnimatePresence mode="wait"`, out in 150ms (rise 16px), in in 300ms. Or give each figure its own line mask, so outgoing and incoming never share pixels.
-   - Keep every figure on one line: `white-space: nowrap`, and step a figure longer than 8ch (120,000 ETH) down to clamp(40px, 4.4vw, 64px).
-3. **Let the headline lead, and show the plate's number on the first screen.**
-   - Start the `.xcu-in` and `.xcu-in2` arrivals only once the h1 cut-in starts, by adding the class after hydration or by putting the h1 mask on CSS keyframes too. The order should be h1, then lede and ask, then plate.
-   - At ≥900px, set the figure and name block in the plate's upper half, or trim hero padding, so $8.4M is on screen at 1470×801.
-   - Make the fallback turn readable: give each case its own Sigil tone or seed so the wipe edge shows, and bring the incoming text in at 0.25s, not 0.55s.
-4. **Craft.**
-   - End the row sheet 12px short of the stage, e.g. `inset: 0 -12px 0 -24px`.
-   - Set years and wall press to .97.
-   - Use deck radii: plate 20 (art card), stage 24 (tile).
-   - Cap the doorway hold at 700ms, then cut to the page.
-5. **Housekeeping.**
-   - Correct the coverage card (radii, press, media mirroring, plate turns, aria-live).
-   - Add "SKULLY moved from first to after Triller" to the copy questions, or keep Hanzo's order.
-   - Narrow `aria-live` to a one-line count, e.g. the year chip's existing label.
-   - With JS off, show both cases stacked instead of KANOA hidden under Damon.
+1. **Give scale its rhythm** (JAMES 1, MASTER 3.1). Rest the h1 at 52px and the section h2s ("Every launch", "Backed by builders.", "Launch with us") at 26px. Bring the index names down to 17–21px. Let one thing per screen be big:
+   - the plate figure on the first screen;
+   - the stage figure in the index, at a 64px rest, growing only while it is the row being read, then settling;
+   - the sliding close figures.
+
+   The h1 and the $8.4M must not both be giants on the first screen.
+2. **Stop the phone strip from doubling the row figure.** While a row is "being read", fade or collapse that row's own first figure, or have the strip carry the second figure or the year. One number should appear once per screen.
+3. **Don't print the name twice on the plate.** When the case logo is missing, the fallback should be empty (the h3 already carries the name) or show the year only.
+4. **Close the empty-stage gap on desktop.** Shorten the exit, or let the outgoing and incoming figures overlap by the 40px MASTER part 3 allows, so the stage never reads blank while you scroll.
+5. **Check the one-off hydration attribute mismatch.** Look at the plate's `inert` and `aria-hidden` on the first client render and at `useCalm`, so the dev badge can't come from this page.

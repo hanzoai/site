@@ -45,7 +45,7 @@ Done here: Rooms in order: the patch panel hero, the dark Visit room with the li
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: Measured at 1470×801 (Playwright, every 300px): the shared header button reads "Try Hanzo" while the hero's own solid ask is on screen (header quiet), then "Talk to sales" → /contact-sales/ from scroll 600 to the end, solid ink from 1500; no floating bar on desktop (removed site-wide). At 375×812 the header keeps the shared "Try Hanzo" at every scroll; the slim "Talk to sales" bar rested once (scroll 1800, Visit room) and covered nothing, never over a community row (cookie note dismissed; it stays hidden while the cookie note shows). The phone header ask is requested in `docs/requests/contact.md`. The copy button uses the kit `copyText`; clipboard read back "hello@hanzo.ai" at both widths.
+Done here: Measured at 1470×801 (Playwright, every 300px): the shared header button reads "Try Hanzo" while the hero's own solid ask is on screen (header quiet), then "Talk to sales" → /contact-sales/ from scroll 600 to the end, solid ink from 1500; no floating bar on desktop (removed site-wide). At 375×812 the header keeps the shared "Try Hanzo" at every scroll. The slim "Talk to sales" bar is shared chrome and rests only where nothing sits under it, so it is rare and not dependable: in my round-2 scan (cookie note rejected, 220px steps, 1.1s rest each) it showed at exactly one step (scroll 1760, top 758, in the Visit room's empty bottom) and never over a community row; the round-2 critic saw it at none of 24 steps. Treat the phone as having no sticky page ask beyond the header's "Try Hanzo" and the closing Band. The phone header ask is requested in `docs/requests/contact.md`. The copy button uses the kit `copyText`; clipboard read back "hello@hanzo.ai" at both widths.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -61,7 +61,7 @@ Done here: The page's only proof is Hanzo's address ("1 Ferry Building, San Fran
 - [ ] Tables, FAQ, tabs and code use the kit parts: n/a for kit tabs, the patch panel is a page-local APG tablist because it is the signature
 - [x] `python3 scripts/parity.py /contact`: 0 missing
 
-Done here: Parity 29/29 text, 15/15 links (7 Nov). The community list now has three sizes: names at 26px (24px phone, measured), each over its address in 13px mono (14px on phones, breaking only after a slash), and the plate's 40–52px name on desktop. Route lede 17px, route headings 26–32px.
+Done here: Parity 29/29 text, 15/15 links (7 Nov). Resting type follows live hanzo.ai (JAMES rule 1), measured: h1 52px at 1470 (41px at 375), "Visit" and "Join the community" 26px, route headings 26px. The Visit room has one big thing, the 440px live clock; "Visit" 26px, "1 Ferry Building" 21px, the city 17px grey. The community list has three sizes: names at 26px (24px phone), each over its address in 13px mono (14px on phones, breaking only after a slash), and the plate's 40–52px name on desktop. The kit Band's heading keeps the kit's size (the closing moment; kit-owned).
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
@@ -70,7 +70,7 @@ Done here: Parity 29/29 text, 15/15 links (7 Nov). The community list now has th
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: `taste.py` on `Contact.jsx`, `Contact.css`, `app/contact/page.jsx`: OK (3 checked). Only deck neutrals and black/white alpha steps. The phone plate rides on a plain white mat (no shadow). `unique.py`: OK, 136 pages unique.
+Done here: `taste.py` on `Contact.jsx`, `Contact.css`, `app/contact/page.jsx`: OK (3 checked). Only deck neutrals and black/white alpha steps. The plate's contour is drawn in `--ink2` (#525252, measured rgb(82,82,82)), one step darker than the old 50% black. `unique.py`: OK, 136 pages unique.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
@@ -88,7 +88,7 @@ Done here: Route buttons and the copy button are 48px; jacks 120px tall on deskt
 - [x] Reduced motion shows the final state; no `setInterval` (the clock ticks on one interval only while on screen, once a minute under reduced motion)
 - [ ] Sound only on the listed moments, through the one kit (copy success plays the kit's chime via `copyText`; the copy button's own click tick is silenced)
 
-Done here: No springs remain: the plug moves socket to socket on `{ duration: 0.4, ease: [.16,1,.3,1] }` and the plate name rises on 0.3s ease-emphasis (no overshoot). Kinds: arrival (h1 cut-in, panel rise), idle (the cable's sweep then a slow sway; the clock), pointer (wire leans to a hovered jack; jack swaps to its action from 1400px; plate redraws), scroll (only the row you are on grows to 1.3x over 400ms ease-emphasis and settles back as you leave it), state (the drawn tick and "Copied" sliding out). Reduced motion: transitions on the rows and "Copied" are 0s.
+Done here: No springs remain: the plug moves socket to socket on `{ duration: 0.4, ease: [.16,1,.3,1] }` and the plate name rises on 0.3s ease-emphasis (no overshoot). Kinds: arrival (h1 cut-in, panel rise), idle (the cable's sweep then a slow sway; the clock), pointer (wire leans to a hovered jack; jack swaps to its action from 1400px; the plate's new contour draws on left to right over the last one in 500ms ease-emphasis behind a moving ink hairline, no cross-fade; seen mid-wipe in a still 160ms after hovering Facebook), scroll (only the row you are on grows to 1.3x over 400ms ease-emphasis and settles back as you leave it), state (the drawn tick and "Copied" sliding out). Reduced motion: transitions on the rows and "Copied" are 0s.
 
 ## 10. Media
 - [ ] `Film` and `Pic` only; sizes and posters set: n/a, Hanzo has no photo or film for this page
@@ -104,7 +104,7 @@ Done here: The objects are drawn: the patch panel and cable (SVG), the live cloc
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: Horizontal overflow 0px at 1470 and 375 (measured). On phones the plate rides at the top (sticky at 60px, the header's measured bottom) as a contour strip on a white mat, without its name, so "Discord" is no longer shown twice; the active row below says the name. "Copied" lands at x 284–333 inside 375. Jacks are one swipe row; a short wire drops into the route.
+Done here: Horizontal overflow 0px at 1470 and 375 (measured). On phones the plate (16:7, no name) sits under "Join the community" and scrolls away with it: 700px into the section its box is at -578..-431, so nothing is pinned under the glass header and no row shows through above it; the active row says the name, so it is never shown twice. "Copied" lands at x 284–333 inside 375. Jacks are one swipe row; a short wire drops into the route.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -113,7 +113,7 @@ Done here: Horizontal overflow 0px at 1470 and 375 (measured). On phones the pla
 - [x] One h1; no heading skips; names start with visible text
 - [x] Keyboard reaches every control
 
-Done here: The panel is an APG tablist (arrow keys move and select; hidden routes `inert` only after hydration). Copy: after a real copy a visible "Copied" sits in a `role="status"` live region (measured: text "Copied", role status, opacity 1 at 1470 and on a 375 tap), and a failed copy shows nothing. Community addresses are `aria-hidden`, so link names are the channel names. Clock `role=img` named "San Francisco, <time>".
+Done here: The panel is an APG tablist (arrow keys move and select; hidden routes `inert` only after hydration). Copy: after a real copy a visible "Copied" sits in a `role="status"` live region (measured: text "Copied", role status, opacity 1 at 1470 and on a 375 tap), and a failed copy shows nothing. Community addresses are `aria-hidden`, so link names are the channel names; the rows carry no `data-cursor` (0 in the DOM). Clock `role=img` named "San Francisco, <time>".
 
 ## 13. Performance and engineering
 - [x] h1 and LCP element in server HTML
@@ -161,4 +161,4 @@ Done here: Console errors 0 at 1470×801 and 375×812, with and without reduced 
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/contact.md` verdict 8 or more (it is 7; this pass answers its five fixes)
 
-Done here: `data-cta` on contact.hero, .dispatch, .support, .press. Review 7/10 answered: (1) desktop header carries "Talk to sales" via shared `Ask.jsx` (measured), phone header ask requested; (2) community list rhythm and no duplicate phone name; (3) springs replaced; (4) visible "Copied"; (5) this card in template format with Part 4 corrected. Gallery: `docs/gallery/contact/desktop-hero.jpg`, `desktop-community.jpg`, `phone-sheet.jpg` (film run contact-run2: 1470 desktop 0 still screens, 0 dead controls, layout shift 0.000; phone width 375/375).
+Done here: `data-cta` on contact.hero, .dispatch, .support, .press. Round-2 review (7/10 at e3f60107) answered: (1) Visit room's one big thing is the clock, resting type 52/26px; (2) phone plate scrolls away, nothing pinned under the header; (3) desktop contour a step darker with a visible draw-on; (4) `data-cursor` removed and the phone ask-bar line above corrected. Measured CLS 0.0014 desktop, 0.0021 phone in my probe. Gallery: `docs/gallery/contact/desktop-hero.jpg`, `desktop-visit.jpg`, `desktop-community.jpg`, `phone-sheet.jpg` (film run contact-run3: desktop 0 still screens, 0 dead controls, layout shift 0.004; phone width 375/375).

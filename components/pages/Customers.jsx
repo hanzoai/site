@@ -4,7 +4,7 @@
 // CTA: "Talk to us" (/contact), data-cta customers.hero / customers.close; metric contact_sales_submit
 // Signature: the launch stage (desktop: a pinned stage; phones: a sticky figure strip under the year rail), one in, one out
 // Beyond: a year index over Hanzo's own launch list that narrows the index to one year
-// V2: 8/10 phone index now a scene (sticky figure strip swaps with the row crossing the middle, 150ms out then 300ms in), JS-off stacks both cases on phones too, press .97 throughout
+// V2: 8/10 scale with rhythm (h1 52, headings 26, names 21; one big figure per screen), stage rolls edge to edge (never blank, no overprint), phone strip never doubles a figure, plate never prints the name twice; earlier: phone index now a scene (sticky figure strip swaps with the row crossing the middle, 150ms out then 300ms in), JS-off stacks both cases on phones too, press .97 throughout
 /* /customers (v3.2, the re-review's fixes). No hues, no eyebrows. A two-line kinetic headline with its lede and
    its one ask side by side; one big case plate coloured only by the case's own picture, whose progress line starts the
    moment the curtain lifts and which opens into its story; every launch as a scene: the rows scroll past a pinned stage
@@ -67,7 +67,7 @@ const door = (e, to, router) => {
   setTimeout(() => document.querySelectorAll('[data-door]').forEach((d) => { if (!d.dataset.landing) d.remove(); }), 640 + 700);
 };
 // JS off: both cases show stacked and readable; the figures on phones stand in place
-const NOJS = { __html: '<style>.xcu-plate{aspect-ratio:auto!important}.xcu-case{position:relative!important;clip-path:none!important;aspect-ratio:16/8.4}.xcu-case-txt{opacity:1!important}.xcu-row-f dt,.xcu-row-f dd{transform:none!important}.xcu-line{display:none}.xcu-strip{display:none!important}.xcu-mark{display:none}.xcu-ph img{color:transparent}@media (max-width:899px){.xcu-case{aspect-ratio:4/5.4}}</style>' };
+const NOJS = { __html: '<style>.xcu-plate{aspect-ratio:auto!important}.xcu-case{position:relative!important;clip-path:none!important;aspect-ratio:16/8.4}.xcu-case-txt{opacity:1!important}.xcu-row-f dt,.xcu-row-f dd{transform:none!important}.xcu-line{display:none}.xcu-strip{display:none!important}.xcu-row-f>div{opacity:1!important}.xcu-mark{display:none}.xcu-ph img{color:transparent}@media (max-width:899px){.xcu-case{aspect-ratio:4/5.4}}</style>' };
 const FIGS = LAUNCHES.flatMap((l) => l.f.map(([n]) => n));
 
 // Hanzo's own list, as live shows it (the same names and links as /investors; a shared module is the Data chat's, PLAN 2.5)
@@ -122,7 +122,8 @@ function Plate() {
               <motion.span className="xcu-case-txt" initial={false} animate={{ opacity: i === at ? 1 : 0 }}
                 transition={i === at ? { duration: 0.4, delay: 0.25, ease: EASE } : { duration: 0.15 }}>
                 <span className="xcu-case-top">
-                  <Pic className="xcu-mark" src={c.logo} alt="" w={180} h={28} fallback={<span className="xcu-alt">{c.name}</span>} />
+                  {/* a missing logo leaves the corner to the year: the h3 below already names the case, never twice */}
+                  <Pic className="xcu-mark" src={c.logo} alt="" w={180} h={28} fallback={<span />} />
                   <span className="vc-kick vc-num">{c.year}</span>
                 </span>
                 <span className="xcu-case-in">
@@ -148,19 +149,27 @@ function Plate() {
   );
 }
 
-/* The launch stage: the logo and figures of the launch being read, rising in as the last one leaves. */
-function Stage({ l, list }) {
+/* The launch stage: the logo and figures of the launch being read. The panel rolls like a slot: the outgoing launch
+   rises out of the stage's mask while the incoming one rises in right behind it (same 400ms ease-in-out, edge to edge),
+   so the stage is never blank during a continuous scroll and the two never share a pixel. The lead figure arrives as
+   the moment (84px) and settles to its 64px rest while you read. */
+const ROLL = { duration: 0.4, ease: [0.4, 0, 0.2, 1] };
+function Stage({ l, list, calm }) {
   return (
     <div className="xcu-st" aria-hidden="true">
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.div key={l.id} className="xcu-st-in" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0, transition: { duration: 0.3, ease: EASE } }}
-          exit={{ opacity: 0, y: -16, transition: { duration: 0.15, ease: [0.4, 0, 0.2, 1] } }}>
+      <AnimatePresence initial={false}>
+        <motion.div key={l.id} className="xcu-st-in" initial={calm ? false : { y: '100%' }} animate={{ y: '0%', transition: calm ? { duration: 0 } : ROLL }}
+          exit={calm ? { opacity: 0, transition: { duration: 0 } } : { y: '-100%', transition: ROLL }}>
           <span className="xcu-st-top">
             <span className="xcu-st-logo">{l.logo ? <Pic src={'/logos/customers/' + l.logo} alt="" w={200} h={40} fallback={<b>{l.name}</b>} /> : <b>{l.name}</b>}</span>
             <span className="vc-kick vc-num">{l.year || ''}</span>
           </span>
           {l.f.length > 0
-            ? <span className="xcu-st-f">{l.f.map(([n, w], k) => <span key={w} className={(k ? 'b' : 'a') + (n.length > 8 ? ' long' : '')}><b className="vc-num">{n}</b><span>{w}</span></span>)}</span>
+            ? <span className="xcu-st-f">{l.f.map(([n, w], k) => (
+              <span key={w} className={(k ? 'b' : 'a') + (n.length > 8 ? ' long' : '')}>
+                {k ? <b className="vc-num">{n}</b> : <motion.b className="vc-num" initial={calm ? false : { scale: n.length > 8 ? 1.15 : 84 / 64 }} animate={{ scale: 1, transition: { duration: 0.5, delay: 1.1, ease: [0.4, 0, 0.2, 1] } }}>{n}</motion.b>}
+                <span>{w}</span>
+              </span>))}</span>
             : <span className="xcu-st-f"><span className="a nm"><b>{l.name}</b><span>{l.kind}</span></span></span>}
         </motion.div>
       </AnimatePresence>
@@ -243,7 +252,7 @@ function Every() {
             </motion.li>
           ))}
         </ol>
-        <div className="xcu-aside"><Stage l={cur} list={shown} /></div>
+        <div className="xcu-aside"><Stage l={cur} list={shown} calm={calm} /></div>
       </div>
     </section>
   );

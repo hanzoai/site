@@ -3,7 +3,8 @@
 Family template: `components/pages/CareerRole.jsx` + `CareerRole.css`, data `components/pages/careersData.js` (`role`, `peers`, `deckNo`), route `app/careers/[slug]/page.jsx` · eight members · checked: `/careers/compiler-engineer`, `/careers/academic-research-intern` (also `/careers/open`, `/careers/ai-ml-research-engineer`) · gallery: `docs/gallery/careers/compiler-engineer-*`, `academic-research-intern-*` (the other files there are the /careers index's) · metric id: one contact click (the application email)
 
 Open copy questions for James: none.
-Shared changes requested (`docs/requests/<page>.md`): one note for the chrome owner: with `data-ask="off"` (careers, per MASTER part 4) the header's "Try Hanzo" stays solid beside the hero's "Apply for this position", so two fills share the first screen; the header could turn quiet when a page turns its ask bar off.
+Review fixes (`docs/review/careers-family.md`, 6/10): 1 tag line under the title (done); 2 grey deck for every member, no orange (done; taste OK); 3 contents plate fully in the first screen with one quiet move (hairlines draw, counts fill, contour drifts); 4 chapter hidden states scoped to `html.js` (in shared `v2/fam.css`; measured JS off: 0 hidden text blocks on both members at 1470); 5 one Hanzo object per team: only roles whose words name Hanzo models get renders, since `public/` has no Engine render (decision, noted). Scale: h1 rests at 52 (arrives up to 72 and settles on scroll), section heads 26, one figure at 64 per screen; it already met the lead's scale-rhythm note.
+Shared changes requested (`docs/requests/careers.md`): one note for the chrome owner: with `data-ask="off"` (careers, per MASTER part 4) the header's "Try Hanzo" stays solid beside the hero's "Apply for this position", so two fills share the first screen; the header could turn quiet when a page turns its ask bar off.
 Forks this page deleted: the orange accent, the kicker over the h1 and the counters over every headline, the separate contents plate (folded into the hero sheet), the hero sheet's shadow (outline only), the 88–184px numeral and 48–96px figures, the hover nudges (contents, ticks), the red required mark, the browser checkbox, the invented "Back", "Next", "· Copied" and "Your email is ready" strings, and the sticky ask bar.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -33,7 +34,7 @@ Done here: compiler-engineer links 2/2, academic-research-intern 2/2, /careers i
 - [x] Ends in the application room, then the other roles, then the footer
 - [x] Morph: the hero sheet is the `data-morph-target` for the role's sheet clicked on /careers (docs/review/careers.md fix 5)
 
-Done here: the whole sheet sits on the first screen at 1470×801 and its asks at 375×812; the title cuts in and the role's contour drifts (the internship plays its Zen render). JS off: 0 of 40 (compiler) and 0 of 42 (internship) text blocks hidden, measured; chapters stack without scripts.
+Done here: the whole sheet, contents plate included, sits on the first screen at 1470×801 (toc ends about y 727, sheet bottom about 780) and its asks at 375×812 (ask bottom 532). Idle on arrival: the contour drifts (opacity .22), the contents' hairlines draw in once (900ms, 60ms apart) and the chapter counts fill once from 0 (150ms steps), then rest at the true value (server HTML has the true value). Arriving from /careers, the clicked sheet's title and numeral fly onto this h1 and numeral (`careers/door.js`). JS off: 0 of 40 (compiler) and 0 of 42 (internship) text blocks hidden, measured; chapters stack without scripts.
 
 ## 4. Conversion system
 - [x] Kit-style buttons (`v2f-btn`, `xcj-btn`); no raw `.x-btn`
@@ -82,9 +83,9 @@ Done here: step arrows are round icon buttons named from `content/ui-strings.jso
 - [x] At least 3 kinds of movement; scroll-linked is half or less
 - [x] Something moves without input; every control answers
 - [x] Reduced motion shows the final state; no `setInterval`
-- [ ] Sound: n/a: the shared sound kit has not merged
+- [x] Sound: the open from /careers plays the kit's whoosh (lib/sound.js); nothing else here adds sound
 
-Done here: arrival (title cut-in), idle (the contour drifts in the sheet, or the Zen render plays), state (ticks draw and meters fill, the form slides step to step, share swaps to a tick), pointer (magnetic apply, the sibling rail drags with inertia), scroll (the chapter wipes; the total by the form grows past 64px only while it crosses the middle).
+Done here: arrival (title cut-in, or the /careers sheet's title landing on it), idle (the contour drifts in the sheet, or the Zen render plays; the contents draw and count once; Why Join and the application room each hold a drifting contour so neither screen is still), state (ticks draw and meters fill, the form slides step to step, share swaps to a tick), pointer (magnetic apply, the sibling rail drags with inertia), scroll (the chapter wipes; the total by the form grows past 64px only while it crosses the middle).
 
 ## 10. Media
 - [x] Kit `Film` and `Img` only, sizes and posters set
@@ -157,4 +158,4 @@ Done here: tested with outgoing requests blocked: step 1 → 2 → back works; t
 - [x] `V2:` line in the page file's top comment
 - [ ] Review read: `docs/review/careers-family.md` verdict 8 or more: awaiting the critic's re-score after this round
 
-Done here: round 5 answers MASTER's scale, material and ask rules on top of the critic's round 4 list.
+Done here: this round answers the 6/10 family review's five fixes (see the line above part 1); parity compiler-engineer 47/47, ai-ml-research-engineer 48/48; console clean at 1470 (js, reduced motion); the role note link is now a 44px target.
