@@ -52,7 +52,8 @@ def row(key, route, page, members=0):
     cv = HZ / "docs/coverage" / f"{name}.md"
     ctext = cv.read_text(errors="ignore") if cv.is_file() else ""
     parts = sum(1 for sec in re.split(r"\n(?=## \d+\.)", ctext)[1:] if re.search(r"Done here:\s*\S", sec))  # 18-part card: a part counts once its "Done here:" line is filled  # the critic's verdict outranks the chat's own
-    state = ("ready" if review is not None and review >= 8 and var_ok and media and parts >= 18 else
+    held = bool(re.search(r"^Ready:", rtext, re.M))  # James, 7 Nov: no more scores; Ready = holds up next to the Ready pages
+    state = ("ready" if (held or (review is not None and review >= 8)) and var_ok and media and parts >= 18 else
              "v2" if score is not None else "todo")
     title = (INDEX.get(route) or {}).get("title", route).split(" — ")[0]
     return dict(key=key, route=route, title=title, members=members, score=score, note=note, var_ok=var_ok,
