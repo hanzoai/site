@@ -52,7 +52,7 @@
 .xbm-stage { position: relative; }
 .xbm-stage.run { height: 230svh; }
 .xbm-stage.run .xbm-stage-stick { position: sticky; top: 0; height: 100svh; overflow: hidden; }
-.xbm-stage.run .xbm-stage-head { position: absolute; left: 0; right: 0; top: clamp(92px, 12svh, 132px); z-index: 2; }
+.xbm-stage.run .xbm-stage-head { position: absolute; left: 0; right: 0; top: clamp(84px, 10svh, 120px); z-index: 2; }
 .xbm-stage.flat { padding: clamp(120px, 12vw, 180px) 0 clamp(80px, 8vw, 120px); }
 .xbm-pill { display: flex; align-items: center; gap: 10px; margin: 22px 0 0; font: 500 13px/1.35 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
 .xbm-pill i { flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 0 rgba(0, 0, 0, .35); animation: xbm-pulse 2.2s var(--ease) infinite; }
@@ -576,6 +576,16 @@
 .xbm-src a, .xbm-duel-l a, .xbm-duel-d a, .xbm-run, .xbm-srcl a, .xbm-runl a, .xbm-laws a, .xbm-papers .pf-body a, .xbm-paper a { text-underline-offset: 3px; transition: text-underline-offset .2s var(--ease), color .2s, text-decoration-color .2s; }
 .xbm-src a:hover, .xbm-duel-l a:hover, .xbm-duel-d a:hover, .xbm-run:hover, .xbm-srcl a:hover, .xbm-runl a:hover, .xbm-laws a:hover, .xbm-papers .pf-body a:hover, .xbm-paper a:hover { text-underline-offset: 6px; text-decoration-color: currentColor; }
 
+/* ---------- 12. the close ---------- */
+.xbm-close { background: #0a0a0b; color: #f5f5f7; padding: clamp(120px, 15vw, 240px) 0; }
+.xbm-close-g { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 32px 64px; align-items: end; }
+.xbm-close .pf-display { color: #f5f5f7; }
+.xbm-close .pf-btn.solid { background: #f5f5f7; color: #0a0a0b; border-color: #f5f5f7; }
+.xbm-close .pf-btn.solid:hover { background: #fff; }
+.xbm-close-n { margin: 20px 0 0; font-size: 15px; color: #a1a1a6; }
+.xbm-close-n a { color: #f5f5f7; text-underline-offset: 3px; transition: text-underline-offset .2s var(--ease); }
+.xbm-close-n a:hover { text-underline-offset: 6px; }
+
 @media (prefers-reduced-motion: reduce) {
   .xbm-pill i, .xbm-run-b:disabled svg { animation: none; }
   .xbm-stack-i { transition: opacity .01s; transform: none; }
@@ -584,10 +594,10 @@
 /* ---------- phone ---------- */
 @media (max-width: 900px) {
   .xbm-stage.run, .xbm-stage.flat { height: auto; padding: 88px 0 24px; }
-  .xbm-stage .xbm-stage-stick { position: static; height: auto; overflow: visible; }
-  .xbm-stage .xbm-stage-head { position: static; opacity: 1 !important; transform: none !important; }
+  .xbm-stage.run .xbm-stage-stick, .xbm-stage.flat .xbm-stage-stick { position: static; height: auto; overflow: visible; }
+  .xbm-stage.run .xbm-stage-head, .xbm-stage.flat .xbm-stage-head { position: static; opacity: 1 !important; transform: none !important; }
   .xbm-stage-hgrid { grid-template-columns: minmax(0, 1fr); gap: 20px; margin-top: 22px; }
-  .xbm-stage .xbm-stage-grid { display: flex; flex-direction: column; gap: 32px; height: auto; margin-top: 48px; padding-top: 0; }
+  .xbm-stage.run .xbm-stage-grid, .xbm-stage.flat .xbm-stage-grid { display: flex; flex-direction: column; gap: 32px; height: auto; margin-top: 48px; padding-top: 0; }
   .xbm-stage-slot { order: -1; }
   .xbm-stage-obj, .xbm-stage.run:not([data-ready]) .xbm-stage-obj { opacity: 1; padding: 14px 12px 8px; }
   .xbm-stage-cap { opacity: 1 !important; transform: none !important; padding: 0; }
@@ -601,7 +611,7 @@
   .xbm-jump > button { width: 44px; height: 44px; justify-content: center; padding: 0; }
   .xbm-jump-p { position: fixed; left: 12px; right: 12px; top: 124px; width: auto; }
   .xbm-rail-l a { padding: 12px; }
-  .xbm-kt, .xbm-kt.two, .xbm-pps.mem, .xbm-enso-g, .xbm-kai-g, .xbm-board-head, .xbm-h-top, .xbm-two, .xbm-race-top, .xbm-plat-top, .xbm-meth-g, .xbm-shelf-h { grid-template-columns: minmax(0, 1fr); }
+  .xbm-close-g, .xbm-kt, .xbm-kt.two, .xbm-pps.mem, .xbm-enso-g, .xbm-kai-g, .xbm-board-head, .xbm-h-top, .xbm-two, .xbm-race-top, .xbm-plat-top, .xbm-meth-g, .xbm-shelf-h { grid-template-columns: minmax(0, 1fr); }
   .xbm-enso-obj { padding: 14px 12px 10px; margin-inline: -4px; }
   .xbm-obj-t { flex-basis: 100%; }
   .xbm-tools { margin-left: 0; }
@@ -652,7 +662,9 @@
   .xbm-sc .xbm-lab { font-size: 19px; }
   .xbm-pt.router .xbm-lab { font-size: 21px; }
   .xbm-enso-obj .xbm-sc .xbm-tick, .xbm-enso-obj .xbm-sc .xbm-axl, .xbm-enso-obj .xbm-sc .xbm-lab { font-size: 26px; }
-  .xbm-sc { display: flex; flex-direction: column; }
-  .xbm-read, .xbm-read.r, .xbm-read.b, .xbm-read.r.b { position: static; display: none; width: auto; max-width: none; margin-top: 10px; transform: none; opacity: 1; }
-  .xbm-read.on, .xbm-read.r.on, .xbm-read.b.on, .xbm-read.r.b.on { display: block; transform: none; }
+  /* the record in reach reads in a reserved band under the chart, so nothing below it moves */
+  .xbm-sc { padding-bottom: 132px; }
+  .xbm-read, .xbm-read.r, .xbm-read.b, .xbm-read.r.b { left: 0 !important; right: 0; top: auto !important; bottom: 0; width: auto; max-width: none; transform: translateY(6px); opacity: 0; }
+  .xbm-read.on, .xbm-read.r.on, .xbm-read.b.on, .xbm-read.r.b.on { transform: none; opacity: 1; }
 }
+@media (max-width: 900px) { .xbm-enso-obj .xbm-sc { padding-bottom: 92px; } }
