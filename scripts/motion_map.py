@@ -61,6 +61,42 @@ RULES = [
         ["drag-canvas", "h-gallery", "rows-open", "graph", "morph-panel", "ribbons"]),
 ]
 ALL = [s for s in SIGS if s != "keep"]
+# James, 7 Nov: "make them enter the screen different, vertical or merge together ... hundreds of different types".
+# Each page's sections each enter a different way: PER_PAGE entrances per page, none repeated inside a page, none
+# shared with the page before it in the tour, and the whole library used evenly.
+ENTRANCES = {
+    "split-merge": "two halves slide in from left and right and merge into one", "curtain-rise": "rises from below behind a clip, like a curtain",
+    "drop-in": "falls in from above and settles with a small bounce", "iris": "a circular clip opens from the centre",
+    "diagonal-wipe": "a diagonal clip sweeps across", "letter-cascade": "letters fall into place one by one",
+    "word-shuffle": "words arrive out of order and swap into place", "grow-from-point": "grows from the point the visitor last clicked or the cursor",
+    "fold-out": "unfolds like paper (rotateX from a hinge)", "card-deal": "items are dealt from a deck onto their places",
+    "slot-roll": "text rolls vertically into place like a slot machine", "typewriter": "types itself out with a caret",
+    "rack-focus": "comes into focus from a blur, like a camera pulling focus", "pixel-resolve": "resolves from coarse pixels to sharp",
+    "tile-flip": "a grid of tiles flips in to form it", "blinds": "venetian-blind strips open",
+    "zoom-through": "flies in from far behind the screen", "swing-door": "swings in on a vertical hinge (rotateY)",
+    "spring-snap": "snaps in from the side and overshoots on a spring", "magnet-gather": "scattered pieces are pulled together into it",
+    "explode-gather": "starts as fragments and collapses into the whole", "ink-spread": "an organic ink-blot mask spreads to reveal it",
+    "line-draw": "its outlines draw themselves, then it fills", "count-roll": "its numbers count and roll into their values",
+    "stack-drop": "layers drop and stack onto each other", "depth-parallax": "layers at different depths move at different speeds",
+    "conveyor": "rides in on a horizontal conveyor", "shutter": "bars close from top and bottom, then open on it",
+    "glitch-in": "a short monochrome glitch, then it holds still", "ripple": "a ripple spreads from the centre and leaves it behind",
+    "domino": "items tip into place one after another like dominoes", "accordion": "unfolds section by section like an accordion",
+    "page-curl": "the previous surface curls away at the corner to show it", "pendulum": "swings in and settles like a pendulum",
+    "orbit-in": "items orbit into their places on a curve", "squash-land": "lands with a squash and stretch",
+    "focus-pull-scroll": "the background blurs and the subject sharpens as it scrolls in", "invert-flash": "a black/white inversion flash, then normal",
+    "grid-wave": "a grid ripples in by distance from the cursor", "scroll-tilt": "tilts on rotateX with scroll speed and levels out",
+    "sticky-stack": "cards stack at the top as you scroll past them", "snap-sections": "sections snap one screen at a time",
+    "side-carousel": "a horizontal snapping carousel", "text-mask-film": "a film plays through the letters of a headline",
+    "opposite-drift": "left and right halves drift in opposite directions with scroll", "shrink-to-card": "the section shrinks into a card as you leave it",
+    "cover-slide": "the next section slides up over the previous one", "pull-back": "starts zoomed right in and pulls back to reveal the whole",
+    "tilt-3d-hover": "tilts in 3D toward the pointer", "cursor-trail": "a trail follows the cursor across it",
+    "velocity-skew": "skews with scroll speed and straightens when still", "inertia-drag": "can be dragged and thrown with inertia",
+    "scramble": "characters scramble and decode into it", "underline-sweep": "underlines sweep under key words in sequence",
+    "stretch-scroll": "stretches vertically with scroll and relaxes", "noise-dissolve": "dissolves in from grain/noise",
+    "cursor-lens": "a circular lens follows the cursor and magnifies", "vertical-ticker": "rides a vertical ticker into place",
+    "spiral-in": "spirals in from the edge to its place", "venetian-type": "each line of type slides in from alternating sides",
+}
+PER_PAGE = 5
 
 def group(k):  # same chapters as the tour (public/wall/index.html)
     if k == "/": return 0
@@ -87,9 +123,20 @@ for p in order:
     used[pick] += 1; prev = pick
     out.append({"key": k, "title": p["title"], "signature": pick})
 
+import random
+rng = random.Random(7)  # fixed seed: the map is stable between runs
+ent_used, prev_set = {e: 0 for e in ENTRANCES}, set()
+for r in out:
+    if r["signature"] == "keep": r["entrances"] = []; continue
+    pool = sorted((e for e in ENTRANCES if e not in prev_set), key=lambda e: (ent_used[e], rng.random()))
+    r["entrances"] = pool[:PER_PAGE]
+    for e in r["entrances"]: ent_used[e] += 1
+    prev_set = set(r["entrances"])
+assert all(not (set(a["entrances"]) & set(b["entrances"])) for a, b in zip(out, out[1:])), "neighbours share an entrance"
+assert max(ent_used.values()) - min(ent_used.values()) <= 1
 assert all(a["signature"] != b["signature"] for a, b in zip(out, out[1:])), "two neighbours share a signature"
 assert max(v for s, v in used.items() if s != "keep") <= CAP
-(HZ / "docs/motion-map.json").write_text(json.dumps({"signatures": {k: {"name": n, "what": w} for k, (n, w) in SIGS.items()}, "pages": out}, indent=1))
+(HZ / "docs/motion-map.json").write_text(json.dumps({"signatures": {k: {"name": n, "what": w} for k, (n, w) in SIGS.items()}, "entrances": ENTRANCES, "pages": out}, indent=1))
 
 md = ["# Motion map: one signature per page (James, 7 Nov)", "",
       "Every page used to move the same way: hero, then pinned scroll chapters, then proof, then a closing band. James:",
@@ -100,11 +147,15 @@ md = ["# Motion map: one signature per page (James, 7 Nov)", "",
       "3. **The pinned-chapters scene (`split`) only where this map assigns it.** Elsewhere, remove pinned/sticky chapter scenes and scroll-scrubbed reveals that every page shares; replace them with the signature or plain, quick sections.",
       "4. **Supporting motion differs too:** no shared reveal on every section. At most one reveal style per page, and not the line-mask cut-in on every heading.",
       "5. Never remove motion James approved (`keep`), hover effects, counters or marquees. Layouts, copy and Hanzo's colours stay.",
-      f"6. A signature is used by at most {CAP} pages and never by two neighbours in the tour (`/wall/`). Regenerate with `python3 scripts/motion_map.py`.", "",
+      f"6. A signature is used by at most {CAP} pages and never by two neighbours in the tour (`/wall/`). Regenerate with `python3 scripts/motion_map.py`.",
+      f"7. **Entrances (James: \"make them enter the screen different ... vertical or merge together\").** Each page also gets {PER_PAGE} entrances from the library below: its main sections each arrive a different way, in the order listed. No entrance repeats inside a page or with the page before it. Build them page-local (`components/pages/<page>/...`), not as one shared reveal.", "",
+      "## Entrance library", ""]
+md += [f"- **`{e}`**: {w}" for e, w in ENTRANCES.items()]
+md += ["",
       "## Signatures", ""]
 for s, (n, w) in SIGS.items():
     md.append(f"- **`{s}` {n}** ({used[s]} pages): {w}")
-md += ["", "## Pages, in tour order", "", "| Page | Signature |", "|---|---|"]
-md += [f"| `{r['key']}` | `{r['signature']}` {SIGS[r['signature']][0]} |" for r in out]
+md += ["", "## Pages, in tour order", "", "| Page | Signature | Section entrances, in order |", "|---|---|---|"]
+md += [f"| `{r['key']}` | `{r['signature']}` {SIGS[r['signature']][0]} | {', '.join('`' + e + '`' for e in r['entrances']) or 'keep as is'} |" for r in out]
 (HZ / "docs/MOTION-MAP.md").write_text("\n".join(md) + "\n")
 print(f"{len(out)} pages; signatures used: " + ", ".join(f"{s} {v}" for s, v in sorted(used.items(), key=lambda x: -x[1])))
