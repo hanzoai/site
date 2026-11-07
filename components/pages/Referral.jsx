@@ -1,26 +1,23 @@
 'use client';
 /* Referrals.
    Persona: a builder already on Hanzo who wants to bring a friend or teammate. Goal: get their referral link.
-   CTA: "Get your link" (/signup?next=/referral; data-cta referral.hero, referral.close; thumb). Metric: signup_start.
-   Signature: one referral's journey. A pinned screen where a single builder leaves your link (shown once) and travels
-   Referred → Pending → Qualified as you scroll: one word at display size at a time, cut in by line mask, the rider
-   on its track below. On phones (no pin under 900px) the same journey plays once by itself when it is reached.
-   Beyond: the four steps as one continuous strip under their four sentences: the link fans out, one account locks to
-   it, the needle swings, the bar rises. It runs once, then rests; pick any step to replay its drawing.
-   Supporting (3): the line-masked h1 (arrival); hanzo.ai's own signed-out card with one builder riding in, once, from
-   the link through the three counts (time); the dark room opening from a rounded card to full width, with what each
-   referral pays drawn as two tracks (scroll, idle).
-   One thing in, one out: the card is the link and its counts; the journey is one referral moving; the strip is the
-   steps; the dark room is the one difference; the close is the card at rest beside the sign-in line and the ask.
-   Scale: the h1 at 52 is the first screen's one big thing; the journey's one word at 112 over a 17px link pill;
-   step titles 17; the dark room's two sentences 44; the close 26 beside a small card.
-   V2: 8/10 the journey is one referral at a time, not a tiled marquee; the steps are one strip, not a list and a box;
-   the close ends on the card you get; the dark room never crops its text on phones; one solid ask at a time.
-   Every word is Hanzo's; no figure is shown that Hanzo does not show. */
-import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
+   CTA: "Get your link" (/signup?next=/referral; data-cta referral.hero, referral.flow, referral.close; thumb).
+   Metric: signup_start.
+   Signature (motion map: one-question): How it works, one question at a time. Each of Hanzo's four step sentences gets
+   its own screen with its drawing; Next slides to the following one (or swipe on touch), and the answer builds beside
+   it as a summary: your link, then each step as it is done. The last one hands over to "Get your link" (a link to the
+   signup page; nothing is submitted).
+   Entrances (motion map, in page order): 1 hero: slot-roll (the h1's words roll into place like reels); 2 the
+   question flow: word-shuffle (its words arrive out of order and swap into place); 3 the dark room: cursor-lens (a
+   round lens sweeps across the two sentences magnifying them, then follows the pointer); 4 the counts: card-deal
+   (three tiles dealt from one deck onto their places); 5 the close: sticky-stack (the card sticks at the top and the
+   sign-in line and ask stack over it as you scroll).
+   Beyond: the summary that builds as you answer.
+   V2: 8/10 motion-map: one-question + slot-roll, word-shuffle, cursor-lens, card-deal, sticky-stack
+   Every word is Hanzo's (Next, Previous and Replay from content/ui-strings.json); no figure is invented. */
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { A, Cta } from '../kit';
-import LineReveal from '../v2/LineReveal';
 import '../v2/ProgramScale.css';
 import './Referral.css';
 
@@ -34,17 +31,7 @@ const STEPS = [
   ['It qualifies with its first metered spend.', 'meter'],
   ['Each one moves you up the beta waitlist.', 'up'],
 ];
-
-function useWide() {
-  const [wide, setWide] = useState(true);
-  useEffect(() => {
-    const mq = matchMedia('(min-width: 900px)');
-    const on = () => setWide(mq.matches);
-    on(); mq.addEventListener('change', on);
-    return () => mq.removeEventListener('change', on);
-  }, []);
-  return wide;
-}
+const useIso = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 
 /* Phones: Hanzo's header carries this page's ask in the same words, as it does on desktop (components/Ask.jsx does it
    above 700px; see docs/requests/referral.md). */
@@ -63,31 +50,54 @@ function usePhoneHeaderAsk() {
     const start = () => {
       undo();
       const own = document.querySelector('main [data-cta="referral.hero"]');
-      const close = document.querySelector('main [data-cta="referral.close"]');
+      const ends = [...document.querySelectorAll('main [data-cta="referral.close"], main [data-cta="referral.flow"]')];
       if (!mq.matches || !own) return;
       btn = document.querySelector('header[data-slot=masthead] a[data-x-ask], header[data-slot=masthead] a[href="https://hanzo.ai/signup"]');
       if (!btn) return;
       text = btn.dataset.xAsk || btn.textContent; link = btn.dataset.xHref || btn.getAttribute('href');
       const label = own.getAttribute('data-thumb'), href = own.getAttribute('href');
       const vis = new Map();
-      // the hero's ask on screen: quiet "Try Hanzo"; past it: solid "Get your link"; the closing ask on screen: quiet
-      // "Get your link" (one solid fill at a time, as Ask.jsx does on desktop)
+      // the hero's ask on screen: quiet "Try Hanzo"; past it: solid "Get your link"; another "Get your link" on screen:
+      // quiet "Get your link" (one solid fill at a time, as Ask.jsx does on desktop)
       io = new IntersectionObserver((list) => {
         if (!btn) return;
         list.forEach((e) => vis.set(e.target, e.isIntersecting));
-        const hero = vis.get(own), end = close && vis.get(close);
-        if (hero) { H.dataset.ask = 'quiet'; btn.textContent = text; btn.setAttribute('href', link); btn.removeAttribute('data-ask-hide'); btn.removeAttribute('data-cta'); return; }
+        if (vis.get(own)) { H.dataset.ask = 'quiet'; btn.textContent = text; btn.setAttribute('href', link); btn.removeAttribute('data-ask-hide'); btn.removeAttribute('data-cta'); return; }
         btn.textContent = label; btn.setAttribute('href', href); btn.setAttribute('data-ask-hide', ''); btn.setAttribute('data-cta', 'header-ask');
-        if (end) H.dataset.ask = 'quiet'; else delete H.dataset.ask;
+        if (ends.some((e) => vis.get(e))) H.dataset.ask = 'quiet'; else delete H.dataset.ask;
       }, { rootMargin: '-60px 0px 0px 0px' });
       io.observe(own);
-      if (close) io.observe(close);
+      ends.forEach((e) => io.observe(e));
     };
     // Ask.jsx restores the header on its own schedule after a route change, so set up again a few times
     const ts = [300, 1500, 3200].map((ms) => setTimeout(start, ms));
     mq.addEventListener('change', start);
     return () => { ts.forEach(clearTimeout); mq.removeEventListener('change', start); undo(); };
   }, []);
+}
+
+/* Runs `fn` once when the element is well inside the screen. */
+function useEnter(ref, fn, amount = 0.35) {
+  const seen = useInView(ref, { once: true, amount });
+  const done = useRef(false);
+  useEffect(() => { if (seen && !done.current) { done.current = true; fn(); } }, [seen]); // eslint-disable-line react-hooks/exhaustive-deps
+  return seen;
+}
+
+/* ---------- 1. slot-roll: each word of the h1 rolls down through a reel of the page's own words and stops ---------- */
+function Slot({ word, n }) {
+  // the reel above the word is drawn by CSS (::before, from data-reel), so the h1's text stays exactly Hanzo's
+  const reel = [COUNTS[(n + 2) % 3], COUNTS[(n + 1) % 3], COUNTS[n % 3]].join('\n');
+  return <span className="xrf-slot" style={{ '--n': n }}><span className="xrf-slot-i" data-reel={reel}>{word}</span></span>;
+}
+function SlotH1() {
+  let n = 0;
+  const line = (s) => s.split(' ').map((w, i, a) => <span key={w + i}><Slot word={w} n={n++} />{i < a.length - 1 ? ' ' : ''}</span>);
+  return (
+    <h1 id="xrf-h1" className="xp-display md xrf-h1">
+      <span className="xrf-h1-l">{line('Bring a builder')}</span> <span className="xrf-h1-l">{line('to Hanzo.')}</span>
+    </h1>
+  );
 }
 
 /* hanzo.ai's own signed-out card. One builder rides in from the link, once, and lands in each count in turn.
@@ -98,7 +108,7 @@ function Card({ onCopy, rest, small }) {
   const [nudge, setNudge] = useState(0);
   useEffect(() => {
     if (calm) { setAt(3); return; }
-    const t = [900, 2300, 3700, 5100].map((ms, i) => setTimeout(() => setAt(i), ms));
+    const t = [1500, 2700, 3900, 5100].map((ms, i) => setTimeout(() => setAt(i), ms));
     return () => t.forEach(clearTimeout);
   }, [calm]);
   return (
@@ -131,7 +141,7 @@ function Hero() {
     <section className="xrf-hero" aria-labelledby="xrf-h1">
       <div className="xp-wrap xp-grid">
         <div className="xrf-words">
-          <LineReveal as="h1" id="xrf-h1" className="xp-display md" lines={['Bring a builder', 'to Hanzo.']} />
+          <SlotH1 />
           <div className="xrf-rest">
             <p className="xp-lede xrf-lede">One link counts everyone who signs up through it, and who goes on to use Hanzo.</p>
             <div className="xrf-acts">
@@ -147,51 +157,39 @@ function Hero() {
   );
 }
 
-/* One referral's journey: the link once, one builder, one word big at a time. Pinned and scrubbed on wide screens;
-   on phones it plays once by itself when reached; reduced motion shows it landed. */
-function Journey() {
+/* ---------- 2. word-shuffle: words arrive out of order and swap into place (FLIP from a shuffled position) ---------- */
+function Shuffle({ text, as: Tag = 'span', className, go }) {
   const box = useRef(null);
-  const wide = useWide();
   const calm = useReducedMotion();
-  const seen = useInView(box, { once: true, amount: 0.5 });
-  const { scrollYProgress } = useScroll({ target: box, offset: ['start start', 'end end'] });
-  const [i, setI] = useState(calm ? 2 : 0);
-  const [t, setT] = useState(calm ? 1 : 0);
-  useMotionValueEvent(scrollYProgress, 'change', (p) => {
-    if (!wide || calm) return;
-    const k = Math.min(1, Math.max(0, (p - 0.08) / 0.8));
-    setT(k); setI(Math.round(k * 2));
-  });
-  useEffect(() => {
-    if (wide || calm || !seen) return;
-    const ts = [[0, 0], [1100, 0.5], [2400, 1]].map(([ms, k], n) => setTimeout(() => { setI(n); setT(k); }, ms + 300));
-    return () => ts.forEach(clearTimeout);
-  }, [wide, calm, seen]);
+  const ran = useRef(false);
+  useIso(() => {
+    const el = box.current;
+    if (!el || !go || ran.current || calm) return;
+    ran.current = true;
+    const ws = [...el.querySelectorAll('.xrf-w')];
+    const at = ws.map((w) => { const r = w.getBoundingClientRect(); return [r.left, r.top]; });
+    const order = ws.map((_, i) => i);
+    for (let i = order.length - 1; i > 0; i--) { const j = (i * 7 + 3) % (i + 1); [order[i], order[j]] = [order[j], order[i]]; }
+    if (order.every((v, i) => v === i) && order.length > 1) order.push(order.shift());
+    ws.forEach((w, i) => {
+      const [x, y] = at[order[i]], dx = x - at[i][0], dy = y - at[i][1];
+      const d = 120 + order[i] * 70;
+      w.animate([
+        { transform: `translate(${dx}px, ${dy + 18}px)`, opacity: 0 },
+        { transform: `translate(${dx}px, ${dy}px)`, opacity: 1, offset: 0.35 },
+        { transform: 'none', opacity: 1 },
+      ], { duration: 1000, delay: d, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards' });
+    });
+  }, [go, calm]);
+  const words = text.split(' ');
   return (
-    <section className="xrf-jour" ref={box} aria-label="Referred, Pending, Qualified">
-      <div className="xrf-jour-pin">
-        <div className="xp-wrap xrf-jour-in">
-          <div className="xrf-jour-word" aria-hidden="true">
-            <AnimatePresence initial={false}>
-              <motion.span key={i} className="xrf-jour-w" initial={{ y: '105%' }} animate={{ y: 0 }} exit={{ y: '-105%' }} transition={{ duration: 0.7, ease: EASE }}>{COUNTS[i]}</motion.span>
-            </AnimatePresence>
-          </div>
-          <div className="xrf-jour-track" aria-hidden="true">
-            <span className="x-mono xrf-jour-pill">hanzo.ai/?ref=…</span>
-            <div className="xrf-jour-line">
-              <i className="xrf-jour-fill" style={{ transform: `scaleX(${t})` }} />
-              {COUNTS.map((c, n) => <b key={c} className={'xrf-jour-stop' + (t >= n / 2 - 0.01 ? ' on' : '')} style={{ left: `${n * 50}%` }} />)}
-              <em className="xrf-jour-rider" style={{ left: `${t * 100}%` }} />
-            </div>
-          </div>
-          <span className="xp-count xrf-jour-of">{String(i + 1).padStart(2, '0')} / 03</span>
-        </div>
-      </div>
-    </section>
+    <Tag ref={box} className={className}>
+      {words.map((w, i) => <span key={i}><span className="xrf-w">{w}</span>{i < words.length - 1 ? ' ' : ''}</span>)}
+    </Tag>
   );
 }
 
-/* The four steps' drawings, wordless; each sentence sits above its own. */
+/* The four steps' drawings, wordless. The needle turns on the hub (200, 220) in viewBox units. */
 function Scene({ k }) {
   const draw = (d = 0) => ({ initial: { pathLength: 0 }, animate: { pathLength: 1 }, transition: { duration: 0.8, ease: EASE, delay: d } });
   return (
@@ -218,10 +216,7 @@ function Scene({ k }) {
         <path d="M80 220a120 120 0 0 1 240 0" className="xrf-s-track" />
         <motion.path d="M80 220a120 120 0 0 1 240 0" className="xrf-s-line thick" {...draw(0)} />
         {[0, 1, 2, 3, 4, 5, 6].map((i) => { const a = Math.PI - (i / 6) * Math.PI; return <path key={i} d={`M${200 + Math.cos(a) * 104} ${220 - Math.sin(a) * 104}L${200 + Math.cos(a) * 92} ${220 - Math.sin(a) * 92}`} className="xrf-s-tick" />; })}
-        {/* pivots on the hub (200, 220): CSS rotate with transform-box view-box, so the origin is in viewBox units */}
-        <g className="xrf-s-swing">
-          <path d="M200 220V128" className="xrf-s-needle" />
-        </g>
+        <g className="xrf-s-swing"><path d="M200 220V128" className="xrf-s-needle" /></g>
         <circle cx="200" cy="220" r="8" className="xrf-s-ink" />
       </g>}
       {k === 'up' && <g>
@@ -233,99 +228,162 @@ function Scene({ k }) {
   );
 }
 
-/* One step: its sentence over its drawing. On phones (stacked, no strip) each drawing plays when it is reached. */
-function Step({ n, t, k, i, run, wide, onPick, onSeen }) {
-  const ref = useRef(null);
-  const seen = useInView(ref, { once: true, amount: 0.6 });
-  useEffect(() => { if (seen && !wide) onSeen(); }, [seen, wide]); // eslint-disable-line react-hooks/exhaustive-deps
-  return (
-    <li className={'xrf-st' + (n <= i ? ' on' : '') + (n === i ? ' now' : '')}>
-      <button type="button" className="xrf-step" aria-pressed={n === i} data-sound="tick" onClick={() => onPick(n)}>
-        <span className="xrf-n x-mono">{String(n + 1).padStart(2, '0')}</span>
-        <span className="xrf-st-t">{t}</span>
-      </button>
-      <div className="xrf-st-art" ref={ref}>
-        {n <= i ? <Scene key={run} k={k} /> : <svg viewBox="0 0 400 280" className="xrf-scene" aria-hidden="true"><path d="M20 140H380" className="xrf-s-wait" /></svg>}
-      </div>
-    </li>
-  );
-}
-
-/* The four steps as one strip: four sentences in a row, each over its drawing, one hairline running through all four.
-   The strip draws itself step by step once it is reached, then rests; press a step to replay its drawing. */
-function How() {
-  const ref = useRef(null);
-  const seen = useInView(ref, { once: true, amount: 0.35 });
-  const calm = useReducedMotion();
-  const [i, setI] = useState(calm ? 3 : -1);
-  const [auto, setAuto] = useState(!calm);
-  const [runs, setRuns] = useState([0, 0, 0, 0]);
-  const wide = useWide();
-  useEffect(() => {
-    if (!seen || !auto || calm || !wide) return;
-    if (i >= STEPS.length - 1) { setAuto(false); return; }
-    const t = setTimeout(() => setI((v) => v + 1), i < 0 ? 200 : 2200);
-    return () => clearTimeout(t);
-  }, [seen, auto, i, calm]);
-  const pick = (n) => { setAuto(false); setI((v) => Math.max(v, n)); setRuns((r) => r.map((x, j) => (j === n ? x + 1 : x))); };
-  return (
-    <section className="xp-sec xrf-how" aria-labelledby="xrf-how-h">
-      <div className="xp-wrap">
-        <h2 id="xrf-how-h" className="xp-head">How it works</h2>
-        <ol className="xrf-strip" ref={ref}>
-          {STEPS.map(([t, k], n) => (
-            <Step key={k} n={n} t={t} k={k} i={i} run={runs[n]} wide={wide} onPick={pick} onSeen={() => setI((v) => Math.max(v, n))} />
-          ))}
-        </ol>
-      </div>
-    </section>
-  );
-}
-
-/* The one difference, as the dark room: Hanzo's two sentences, each over its own track. Builders ride both; the
-   referral track never fills, the affiliate track fills with what they spend. The room enters as a rounded card inside
-   the gutters and opens to full width as it is reached (on phones from an 8px inset, inside the text's own margin). */
-function Which() {
+/* ---------- Signature: How it works, one question at a time, with the answer summarised as it builds ---------- */
+function Flow() {
   const box = useRef(null);
   const calm = useReducedMotion();
-  const wide = useWide();
-  const { scrollYProgress } = useScroll({ target: box, offset: ['start end', 'start 0.25'] });
-  const g0 = calm ? '0px' : wide ? '32px' : '8px';
-  const g = useTransform(scrollYProgress, [0, 1], [g0, '0px']);
-  const r = useTransform(scrollYProgress, [0, 1], calm ? ['0px', '0px'] : ['24px', '0px']);
-  const clip = useTransform([g, r], ([a, b]) => `inset(0 ${a} round ${b})`);
-  const seen = useInView(box, { once: true, amount: 0.35 });
+  const [go, setGo] = useState(false);
+  useEnter(box, () => setGo(true), 0.3);
+  const [i, setI] = useState(0);
+  const [done, setDone] = useState(calm ? 4 : 0); // how many steps the summary holds
+  const sx = useRef(null);
+  const to = (n) => { const m = Math.max(0, Math.min(3, n)); setI(m); setDone((d) => Math.max(d, m)); };
+  const next = () => { if (i === 3) setDone(4); else to(i + 1); };
+  const replay = () => { setI(0); setDone(0); };
+  const last = i === 3 && done === 4;
   return (
-    <section className="xrf-which" ref={box} aria-labelledby="xrf-which-h">
-      <motion.div className="xp-sec xp-dark xrf-which-in" data-room="dark" style={{ clipPath: clip }}>
-        <div className="xp-wrap">
-          <h2 id="xrf-which-h" className="xp-display sm xrf-which-h">
-            <span className="xrf-half a">A referral pays nothing. </span>
-            <span className="xrf-half b"><A to="/affiliate">Affiliates</A> are paid on what their referrals spend.</span>
-          </h2>
-          <div className={'xrf-tracks' + (seen ? ' on' : '')} aria-hidden="true">
-            <div className="xrf-track a"><i className="xrf-fill" />{[0, 1, 2].map((k) => <b key={k} style={{ '--k': k }} />)}<em /></div>
-            <div className="xrf-track b"><i className="xrf-fill" />{[0, 1, 2].map((k) => <b key={k} style={{ '--k': k }} />)}<em /></div>
+    <section className="xp-sec xrf-flow-s" ref={box} aria-labelledby="xrf-how-h">
+      <div className="xp-wrap">
+        <Shuffle as="h2" text="How it works" className="xp-head xrf-how-h" go={go} />
+        <div className="xrf-qa">
+          <div className="xrf-ask-box" onPointerDown={(e) => { sx.current = e.clientX; }}
+            onPointerUp={(e) => { if (sx.current == null) return; const dx = e.clientX - sx.current; sx.current = null; if (Math.abs(dx) > 50) (dx < 0 ? next() : to(i - 1)); }}>
+            <div className="xrf-slides" style={{ transform: `translateX(${-i * 100}%)` }}>
+              {STEPS.map(([t, k], n) => (
+                <div key={k} className={'xrf-slide' + (n === i ? ' on' : '')} aria-hidden={n !== i} inert={n !== i || undefined}>
+                  <span className="xp-count">{String(n + 1).padStart(2, '0')} / 04</span>
+                  {n === 0 ? <Shuffle as="h3" text={t} className="xrf-qt" go={go} /> : <h3 className="xrf-qt">{t}</h3>}
+                  <div className="xrf-qart">{(n === i && go) || calm ? <Scene key={`${k}${done}`} k={k} /> : <svg viewBox="0 0 400 280" className="xrf-scene" aria-hidden="true" />}</div>
+                </div>
+              ))}
+            </div>
+            <div className="xrf-qnav">
+              <button type="button" className="xrf-qbtn ghost" onClick={() => to(i - 1)} disabled={i === 0} data-sound="tick">Previous</button>
+              {last
+                ? <>
+                    <button type="button" className="xrf-qbtn ghost" onClick={replay} data-sound="tick">Replay</button>
+                    <Cta to={SIGNUP} id="referral.flow" className="xp-cta">Get your link</Cta>
+                  </>
+                : <button type="button" className="xrf-qbtn" onClick={next} data-sound="tick">Next</button>}
+            </div>
           </div>
+          <aside className="xrf-sum" aria-live="polite">
+            <span className="x-mono xrf-sum-k">Your referral link</span>
+            <span className="x-mono xrf-sum-pill">hanzo.ai/?ref=…</span>
+            <ol className="xrf-sum-list">
+              {STEPS.map(([t, k], n) => (
+                <li key={k} className={n < done ? 'on' : ''} aria-hidden={n >= done}>
+                  <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  <span className="xrf-n x-mono">{String(n + 1).padStart(2, '0')}</span>
+                  <span>{t}</span>
+                </li>
+              ))}
+            </ol>
+          </aside>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }
 
-/* The closing band: the card you get, at rest, beside the sign-in line from hanzo.ai's card and the one ask again. */
+/* ---------- 3. cursor-lens: a round lens sweeps across the dark room's sentences magnifying them, then follows the
+   pointer (fine pointers). The lens is an aria-hidden copy of the words, scaled 1.5x inside a circle. ---------- */
+function Which() {
+  const box = useRef(null);
+  const stage = useRef(null);
+  const calm = useReducedMotion();
+  const [on, setOn] = useState(false);
+  const raf = useRef(0);
+  const put = (x, y, r) => { const s = stage.current; if (!s) return; s.style.setProperty('--lx', x + 'px'); s.style.setProperty('--ly', y + 'px'); s.style.setProperty('--lr', r + 'px'); };
+  useEnter(box, () => {
+    setOn(true);
+    const s = stage.current; if (!s || calm) return;
+    const w = s.offsetWidth, h = s.offsetHeight, t0 = performance.now(), D = 1700;
+    s.classList.add('lens');
+    const tick = (t) => {
+      const k = Math.min(1, (t - t0) / D), e = 1 - Math.pow(1 - k, 3);
+      const r = k < 0.85 ? Math.min(110, 110 * k / 0.15) : 110 * (1 - (k - 0.85) / 0.15);
+      put(w * (0.04 + 0.92 * e), h * (0.3 + 0.25 * Math.sin(k * Math.PI)), r);
+      if (k < 1) raf.current = requestAnimationFrame(tick); else s.classList.remove('lens');
+    };
+    raf.current = requestAnimationFrame(tick);
+  });
+  useEffect(() => () => cancelAnimationFrame(raf.current), []);
+  const fine = () => typeof window !== 'undefined' && matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const move = (e) => { if (calm || !fine()) return; const r = stage.current.getBoundingClientRect(); stage.current.classList.add('lens'); put(e.clientX - r.left, e.clientY - r.top, 96); };
+  const leave = () => stage.current?.classList.remove('lens');
+  const seen = on;
+  const words = (link) => <>
+    <span className="xrf-half a">A referral pays nothing. </span>
+    <span className="xrf-half b">{link ? <A to="/affiliate">Affiliates</A> : <u>Affiliates</u>} are paid on what their referrals spend.</span>
+  </>;
+  return (
+    <section className="xp-sec xp-dark xrf-which" data-room="dark" ref={box} aria-labelledby="xrf-which-h">
+      <div className="xp-wrap">
+        <div className="xrf-lens-stage" ref={stage} onPointerMove={move} onPointerLeave={leave}>
+          <h2 id="xrf-which-h" className="xp-display sm xrf-which-h">{words(true)}</h2>
+          <div className="xrf-lens" aria-hidden="true"><div className="xp-display sm xrf-which-h">{words(false)}</div></div>
+        </div>
+        <div className={'xrf-tracks' + (seen ? ' on' : '')} aria-hidden="true">
+          <div className="xrf-track a"><i className="xrf-fill" />{[0, 1, 2].map((k) => <b key={k} style={{ '--k': k }} />)}<em /></div>
+          <div className="xrf-track b"><i className="xrf-fill" />{[0, 1, 2].map((k) => <b key={k} style={{ '--k': k }} />)}<em /></div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- 4. card-deal: the three counts are dealt from one deck onto their places ---------- */
+function Deal() {
+  const box = useRef(null);
+  const row = useRef(null);
+  const calm = useReducedMotion();
+  useEnter(box, () => {
+    const el = row.current; if (!el || calm) return;
+    const tiles = [...el.children], R = el.getBoundingClientRect();
+    const deckX = R.left + R.width / 2, deckY = R.bottom + 40;
+    tiles.forEach((t, i) => {
+      const r = t.getBoundingClientRect();
+      const dx = deckX - (r.left + r.width / 2), dy = deckY - (r.top + r.height / 2);
+      t.animate([
+        { transform: `translate(${dx}px, ${dy}px) rotate(${-8 + i * 3}deg)`, opacity: 0 },
+        { transform: `translate(${dx}px, ${dy}px) rotate(${-8 + i * 3}deg)`, opacity: 1, offset: 0.15 },
+        { transform: `translate(0, -10px) rotate(${(i - 1) * 2}deg)`, offset: 0.8 },
+        { transform: 'none' },
+      ], { duration: 900, delay: 200 + i * 220, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'backwards' });
+    });
+  }, 0.4);
+  return (
+    <section className="xp-sec xrf-deal" ref={box} aria-label="Referred, Pending, Qualified">
+      <div className="xp-wrap">
+        <div className="xrf-deal-row" ref={row}>
+          {COUNTS.map((c, i) => (
+            <div key={c} className={'xrf-dcard d' + i}>
+              <span className="x-mono">{String(i + 1).padStart(2, '0')}</span>
+              <b className="xrf-dash" aria-hidden="true">—</b>
+              <span className="xrf-dl">{c}</span>
+            </div>
+          ))}
+        </div>
+        <p className="xp-lede xrf-deal-q">An account qualifies with its first metered spend.</p>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- 5. sticky-stack: the card sticks at the top, and the sign-in line and the ask stack over it ---------- */
 function Close() {
   return (
-    <section className="xp-sec xrf-close" aria-labelledby="xrf-signin">
-      <div className="xp-wrap xp-grid xrf-close-in">
-        <div className="xrf-close-l">
+    <section className="xrf-stack" aria-labelledby="xrf-signin">
+      <div className="xp-wrap xrf-stack-in">
+        <div className="xrf-sc xrf-sc1"><Card rest small /></div>
+        <div className="xrf-sc xrf-sc2">
           <p id="xrf-signin" className="xp-head xrf-signin" role="heading" aria-level="2">Sign in and your link, and everyone it brings, is here.</p>
           <div className="xrf-acts">
             <Cta to={SIGNUP} id="referral.close" className="xp-cta">Get your link</Cta>
             <Cta to={LOGIN} kind="link" id="referral.close-signin">Sign in</Cta>
           </div>
         </div>
-        <div className="xrf-close-r"><Card rest small /></div>
       </div>
     </section>
   );
@@ -336,9 +394,9 @@ export default function Referral() {
   return (
     <main className="xp xrf">
       <Hero />
-      <Journey />
-      <How />
+      <Flow />
       <Which />
+      <Deal />
       <Close />
     </main>
   );

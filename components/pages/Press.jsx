@@ -21,12 +21,15 @@
    Deletes: the second copy of the kit plates (the stack becomes the spread), the 3×3 channel tiles and their icon
    circles, the six partner boxes, the page tokens that overrode deck.css's greys, the hidden-only "Press & Media" and
    "Leadership" (now captions under their headings), springs, filters on photos. */
-import { useLayoutEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useMotionValue, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import LivePause, { usePause } from '../v2/LivePause';
+import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { Copy, Mark } from '../ui';
 import { A, Img } from '../kit';
 import Sigil from '../Sigil';
 import MaskLines from './company/MaskLines';
+import MagnetGrid from './press/MagnetGrid';
+import { Conveyor, PullBack, VelocitySkew, OrbitItem, StackDrop } from './press/Enter';
 import '../v2/vc-type.css';
 import './company/deck.css';
 import './Press.css';
@@ -38,7 +41,7 @@ const PLATES = [['Logo - Dark Background', 'White logo for use on dark backgroun
 const ARROW = <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const DOWN = <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 2.5v8M4.5 7.5 8 11l3.5-3.5M3 13.5h10" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 // JS off: every word visible and in place, the pinned stage laid out flat, no empty pointer card
-const NOJS = { __html: '<style>.xpe-w{opacity:1!important}.xpe-fig span,.xpe-mail-i{transform:none!important}.xpe-kp,.xpe-hk-in{transform:none!important}.xpe-kitc-t,.xpe-hero-c{opacity:1!important}.xpe-hk{height:auto!important}.xpe-hk-st{position:static!important;height:auto!important}.xpe-card{display:none!important}.xpe-ts2{display:block!important}.xpe-copy-w{opacity:1!important;transform:none!important;pointer-events:auto!important}.xpe-face{clip-path:none!important}.xpe-partners li::before,.xpe-p-img{transform:none!important}.xpe-guide-p svg{clip-path:none!important}.xpe-caret{display:none!important}</style>' };
+const NOJS = { __html: '<style>.xen{transform:none!important;opacity:1!important}.xen-belt{display:none!important}.xpe-fig span,.xpe-mail-i{transform:none!important}.xpe-card{display:none!important}.xpe-ts2{display:block!important}.xpe-copy-w{opacity:1!important;transform:none!important;pointer-events:auto!important}.xpe-face{clip-path:none!important}.xpe-partners li::before,.xpe-p-img{transform:none!important}.xpe-guide-p svg{clip-path:none!important}.xpe-caret{display:none!important}.xmg-cv{display:none}</style>' };
 
 /* A Hanzo picture that steps aside for its fallback when it cannot load (MASTER part 17). */
 function Pic({ fallback = null, ...p }) {
@@ -104,83 +107,54 @@ function useBeat(n, ms, amount = 0.5) {
 /* Keep "10-54%"-style tokens whole: a break after their hyphen reads as broken copy. Words unchanged. */
 const keep = (t) => t.split(/(\S*\d-\d\S*)/).map((w, i) => (i % 2 ? <span key={i} className="xpe-nb">{w}</span> : w));
 
-const clamp = (v) => Math.max(0, Math.min(1, v));
-const io = (t) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2); // ease-in-out along the scroll
-const STACK = [[0, 0, -4], [30, -34, 2], [60, -68, 7]]; // the hero stack: offset x, y and turn of each plate
-
-/* One kit plate. In the hero it sits in the stack; as the stage scrolls it travels to its own place in the spread. */
-function KitPlate({ i, t, p, m, tick }) {
-  const g = (v) => io(clamp((v - 0.12) / 0.6));
-  const x = useTransform([p, tick], ([v]) => (m.current ? m.current[i].x * (1 - g(v)) : 0));
-  const y = useTransform([p, tick], ([v]) => (m.current ? m.current[i].y * (1 - g(v)) : 0));
-  const s = useTransform([p, tick], ([v]) => (m.current ? 1 + (m.current[i].s - 1) * (1 - g(v)) : 1));
-  const r = useTransform([p, tick], ([v]) => (m.current ? STACK[i][2] * (1 - g(v)) : 0));
-  const o = useTransform([p, tick], ([v]) => (m.current ? clamp((v - 0.62) / 0.16) : 1));
+/* One kit plate, in a plain row (no pinned stage). */
+function KitPlate({ t }) {
   const [title, desc, fmt, kind] = t;
   return (
-    <li className={'xpe-kitc-w ' + kind} style={{ zIndex: 3 - i }}>
-      <motion.a href={KIT} download className="xpe-kp" aria-label={'Download Press Kit: ' + title} style={{ x, y, scale: s, rotate: r }}>
+    <li className={'xpe-kitc-w ' + kind}>
+      <a href={KIT} download className="xpe-kp" aria-label={'Download Press Kit: ' + title}>
         <Plate kind={kind} />
         <span className="xpe-fmt">{fmt.split(', ').map((f) => <i key={f}>{f}</i>)}<span className="x-sr">{fmt}</span></span>
-      </motion.a>
-      <motion.span className="xpe-kitc-t" style={{ opacity: o }}><h2 className="vc-title">{title}</h2><span>{desc}</span></motion.span>
+      </a>
+      <span className="xpe-kitc-t"><h2 className="vc-title">{title}</h2><span>{desc}</span></span>
     </li>
   );
 }
 
-/* The hero and the kit are one pinned stage: the headline leaves as the stack fans out into the three plates. */
-function HeroKit() {
-  const ref = useRef(null), inner = useRef(null), text = useRef(null), list = useRef(null);
-  const m = useRef(null);
-  const lift = useRef(0);
-  const tick = useMotionValue(0);
-  const calm = useReducedMotion();
-  useLayoutEffect(() => {
-    const measure = () => {
-      const el = inner.current, tx = text.current, ul = list.current;
-      if (!el || !tx || !ul || innerWidth < 900 || calm) { m.current = null; lift.current = 0; tick.set(tick.get() + 1); return; }
-      const W = el.offsetWidth;
-      const cx = W * 0.78, cy = tx.offsetTop + tx.offsetHeight * 0.55; // the stack sits right of the headline
-      m.current = [...ul.children].map((li, i) => {
-        const a = li.firstChild; // the plate
-        const px = ul.offsetLeft + li.offsetLeft + a.offsetLeft + a.offsetWidth / 2;
-        const py = ul.offsetTop + li.offsetTop + a.offsetTop + a.offsetHeight / 2;
-        const s = 400 / a.offsetWidth;
-        return { x: cx - px + STACK[i][0], y: cy - py + STACK[i][1], s };
-      });
-      lift.current = ul.offsetTop - 120; // the spread ends near the top of the stage
-      tick.set(tick.get() + 1);
-    };
-    measure();
-    addEventListener('resize', measure);
-    return () => removeEventListener('resize', measure);
-  }, [calm, tick]);
-  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
-  const up = useTransform([p, tick], ([v]) => (m.current ? -lift.current * io(clamp(v / 0.72)) : 0));
-  const fade = useTransform([p, tick], ([v]) => (m.current ? 1 - clamp(v / 0.3) : 1));
+/* 1. Hero (entrance: conveyor). The headline, its asks and the signature, the magnet grid, ride in on one belt. */
+function Hero() {
   return (
-    <section className="xpe-hk" ref={ref} aria-labelledby="xpe-h1">
-      <div className="xpe-hk-st">
-        <motion.div className="vc-grid xpe-hk-in" ref={inner} style={{ y: up }}>
-          <motion.div className="xpe-hero-c" ref={text} style={{ opacity: fade }}>
-            <div className="xpe-hero-h" data-ask-name="Press & Media">
-              <MaskLines as="h1" id="xpe-h1" now delay={0.05} lines={['Press', 'Resources.']} className="vc-display xpe-h1" />
-              <p className="vc-kick xpe-cap">Press &amp; Media</p>
+    <section className="xpe-hero" aria-labelledby="xpe-h1">
+      <Conveyor className="vc-grid xpe-hero-g">
+        <div className="xpe-hero-c">
+          <div className="xpe-hero-h" data-ask-name="Press & Media">
+            <h1 id="xpe-h1" className="vc-display xpe-h1">Press Resources.</h1>
+            <p className="vc-kick xpe-cap">Press &amp; Media</p>
+          </div>
+          <div className="xpe-hero-f">
+            <p className="vc-lede">Press kit, brand assets, and who to email — for anyone writing about Hanzo AI, Inc.</p>
+            <div className="xpe-acts">
+              <a href={MAIL} className="xpe-cta" data-thumb="Contact Press Team" data-cta="press.hero">Contact Press Team</a>
+              <Download className="xpe-cta q" data-cta="press.kit">Download Press Kit</Download>
             </div>
-            <div className="xpe-hero-f xpe-in">
-              <p className="vc-lede">Press kit, brand assets, and who to email — for anyone writing about Hanzo AI, Inc.</p>
-              <div className="xpe-acts">
-                <a href={MAIL} className="xpe-cta" data-thumb="Contact Press Team" data-cta="press.hero">Contact Press Team</a>
-                <Download className="xpe-cta q" data-cta="press.kit">Download Press Kit</Download>
-              </div>
-            </div>
-          </motion.div>
-          <ul className="xpe-plates" ref={list} aria-label="Press kit">
-            {PLATES.map((t, i) => <KitPlate key={t[3]} i={i} t={t} p={p} m={m} tick={tick} />)}
-          </ul>
-          <p className="xpe-zip"><span className="vc-num">hanzo-press-kit.zip</span><span>SVG · PNG</span></p>
-        </motion.div>
-      </div>
+          </div>
+        </div>
+        <MagnetGrid className="xpe-field" />
+      </Conveyor>
+    </section>
+  );
+}
+
+/* 2. The kit (entrance: pull-back). It opens zoomed right in on the dark plate and pulls back to the three plates. */
+function Kit() {
+  return (
+    <section className="xpe-kit" aria-label="Press kit">
+      <PullBack className="vc-grid xpe-kit-g">
+        <ul className="xpe-plates">
+          {PLATES.map((t) => <KitPlate key={t[3]} t={t} />)}
+        </ul>
+        <p className="xpe-zip"><span className="vc-num">hanzo-press-kit.zip</span><span>SVG · PNG</span></p>
+      </PullBack>
     </section>
   );
 }
@@ -188,22 +162,6 @@ function HeroKit() {
 const BOILER = 'Hanzo AI, Inc. is an AI technology company building the infrastructure for the next generation of intelligent applications. Founded in 2016 and headquartered in San Francisco, Hanzo is led by CEO Antje Worring and CTO Zach Kelling, providing AI platforms, developer tools, and cloud services to companies worldwide. Our mission is to make AI accessible, safe, and beneficial for everyone.';
 const FACTS = [['2016', 'Founded'], ['San Francisco, CA', 'Headquarters'], ['Hanzo AI, Inc.', 'Entity'], ['Techstars ’17', 'Backing']];
 
-/* The signature: the belief line, read word by word as it scrolls through the screen. */
-function Word({ p, a, b, children }) {
-  const o = useTransform(p, [a, b], [0.16, 1]);
-  return <motion.span className="xpe-w" style={{ opacity: o }}>{children} </motion.span>;
-}
-function Belief({ text }) {
-  const ref = useRef(null);
-  const calm = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.85', 'end 0.55'] });
-  const words = text.split(' ');
-  return (
-    <p ref={ref} className="xpe-boiler">
-      {calm ? text : words.map((w, i) => <Word key={i} p={scrollYProgress} a={i / words.length} b={(i + 1.5) / words.length}>{w}</Word>)}
-    </p>
-  );
-}
 /* A fact that settles into its place once, out of its own mask. */
 function Fact({ v, k, big }) {
   const ref = useRef(null);
@@ -211,19 +169,20 @@ function Fact({ v, k, big }) {
   return <div ref={ref} className={big ? 'big' : ''}><dd className={'xpe-fig' + (seen ? ' in' : '')}><span>{v}</span></dd><dt className="vc-kick">{k}</dt></div>;
 }
 
+/* 3. About (entrance: velocity-skew). The boilerplate and facts lean with the scroll speed and level out at rest. */
 function About() {
   return (
     <section className="vc-sec xpe-about" aria-labelledby="xpe-about-h">
-      <div className="vc-grid xpe-about-g">
+      <VelocitySkew className="vc-grid xpe-about-g">
         <div className="xpe-about-h">
-          <MaskLines id="xpe-about-h" lines={['About Hanzo', 'AI, Inc.']} className="vc-headline" />
+          <h2 id="xpe-about-h" className="vc-headline">About Hanzo AI, Inc.</h2>
           <CopyIt text={BOILER} label="Copy boilerplate" className="xpe-icon" />
         </div>
-        <Belief text={BOILER} />
+        <p className="xpe-boiler">{BOILER}</p>
         <dl className="xpe-facts">
           {FACTS.map(([v, k], i) => <Fact key={k} v={v} k={k} big={i === 0} />)}
         </dl>
-      </div>
+      </VelocitySkew>
     </section>
   );
 }
@@ -244,14 +203,17 @@ function News() {
   const [at, setAt] = useState(0);
   const [pointing, setPointing] = useState(false);
   const calm = useReducedMotion();
-  const [narrow, setNarrow] = useState(false);
-  const [ck, , cref] = useBeat(NEWS.length - 1, 2400, 0.6); // phone: under the list, the card walks the six stories once
-  useLayoutEffect(() => {
-    const m = matchMedia('(max-width: 899px), (hover: none)');
-    const f = () => setNarrow(m.matches); f();
-    m.addEventListener('change', f);
-    return () => m.removeEventListener('change', f);
-  }, []);
+  // idle: while the card is in view and nothing holds it, it keeps walking the six stories slowly (4 s each);
+  // pointer and focus hold it, the pause control stops it, reduced motion never starts it
+  const [paused, pause] = usePause();
+  const cref = useRef(null);
+  const cardIn = useInView(cref, { amount: 0.5 });
+  const go = useInView(box, { once: true, amount: 0.1 }); // orbit-in starts when the list's box arrives
+  useEffect(() => {
+    if (calm || paused || !cardIn) return undefined;
+    const id = setInterval(() => { if (!box.current?.dataset.hold) setAt((a) => (a + 1) % NEWS.length); }, 4000);
+    return () => clearInterval(id);
+  }, [calm, paused, cardIn]);
   useLayoutEffect(() => {
     const rows = box.current ? [...box.current.querySelectorAll('.xpe-feed li')] : [];
     const ob = new IntersectionObserver((es) => {
@@ -262,18 +224,18 @@ function News() {
   }, []);
   const hold = (i) => { box.current.dataset.hold = '1'; setPointing(true); setAt(i); };
   const free = () => { delete box.current.dataset.hold; setPointing(false); };
-  const cur = narrow ? ck : at;
+  const cur = at;
   const [d, , s] = NEWS[cur];
   return (
     <section className="vc-sec xpe-news" aria-labelledby="xpe-news-h">
       <div className="vc-grid xpe-news-g">
-        <MaskLines id="xpe-news-h" lines={['Recent News']} className="vc-headline" />
+        <h2 id="xpe-news-h" className="vc-headline">Recent News</h2>
         <p className="vc-lede xpe-news-l">Latest press releases and company announcements.</p>
       </div>
       <div className="vc-wrap xpe-news-w" ref={box} onPointerLeave={free}>
         <ol className={'xpe-feed' + (pointing ? ' pointing' : '')}>
           {NEWS.map(([dd, t, ss], i) => (
-            <li key={t} data-i={i} className={i === at ? 'on' : ''}>
+            <OrbitItem key={t} i={i} go={go} data-i={i} className={i === at ? 'on' : ''}>
               <A to="/blog" className="xpe-item" onPointerEnter={(e) => { if (e.pointerType === 'mouse') hold(i); }} onFocus={() => hold(i)} onBlur={free}>
                 <span className="xpe-no vc-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
                 <span className="xpe-tt">{keep(t)}</span>
@@ -281,13 +243,14 @@ function News() {
                 <span className="xpe-ts2">{ss}</span>
                 <span className="xpe-go" aria-hidden="true">{ARROW}</span>
               </A>
-            </li>
+            </OrbitItem>
           ))}
         </ol>
-        <aside className="xpe-card" aria-hidden="true" ref={cref}>
-          <span className="xpe-card-n vc-num"><b>{String(cur + 1).padStart(2, '0')}</b> / {String(NEWS.length).padStart(2, '0')}</span>
-          <span className="xpe-card-bar"><i style={{ transform: `scaleX(${(cur + 1) / NEWS.length})` }} /></span>
-          <span className="xpe-card-st">
+        <OrbitItem as="aside" i={1} go={go} className="xpe-card" ref={cref}>
+          {!calm && <LivePause paused={paused} onToggle={pause} dark className="xpe-pause" />}
+          <span className="xpe-card-n vc-num" aria-hidden="true"><b>{String(cur + 1).padStart(2, '0')}</b> / {String(NEWS.length).padStart(2, '0')}</span>
+          <span className="xpe-card-bar" aria-hidden="true"><i style={{ transform: `scaleX(${(cur + 1) / NEWS.length})` }} /></span>
+          <span className="xpe-card-st" aria-hidden="true">
             {NEWS.map(([dd, tt, ss]) => <span key={tt} className="xpe-card-b xpe-card-z"><span className="xpe-card-tt">{keep(tt)}</span><span className="xpe-card-s">{ss}</span><span className="vc-kick vc-num">{dd}</span></span>)}
           <AnimatePresence mode="wait" initial={false}>
             <motion.span key={cur} className="xpe-card-b" initial={calm ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={calm ? undefined : { opacity: 0, y: -10 }} transition={{ duration: 0.3, ease: EASE }}>
@@ -297,7 +260,7 @@ function News() {
             </motion.span>
           </AnimatePresence>
           </span>
-        </aside>
+        </OrbitItem>
       </div>
     </section>
   );
@@ -310,9 +273,9 @@ function Contact() {
   const seen = k > 0 || done;
   return (
     <section className="xpe-contact" data-room="dark" aria-labelledby="xpe-contact-h">
-      <div className="vc-grid xpe-contact-g">
+      <StackDrop className="vc-grid xpe-contact-g">
         <div className="xpe-contact-h">
-          <MaskLines id="xpe-contact-h" lines={['Press Contact']} className="vc-headline" />
+          <h2 id="xpe-contact-h" className="vc-headline">Press Contact</h2>
           <p className="vc-lede">Get in touch with our media relations team.</p>
         </div>
         <div className="xpe-contact-m" ref={ref}>
@@ -327,7 +290,7 @@ function Contact() {
           <address>Hanzo AI, Inc.<br />1 Ferry Building<br />San Francisco, CA 94105<br />United States</address>
           <h3 className="vc-kick">Headquarters</h3>
         </div>
-      </div>
+      </StackDrop>
     </section>
   );
 }
@@ -437,7 +400,8 @@ export default function Press() {
   return (
     <main className="vc xpe" style={{ '--acc': '#0a0a0a' }}>
       <noscript dangerouslySetInnerHTML={NOJS} />
-      <HeroKit />
+      <Hero />
+      <Kit />
       <About />
       <News />
       <Contact />

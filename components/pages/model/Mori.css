@@ -66,6 +66,35 @@ main:has([data-hero='mori']) .cr-band-note a:active { transform: translateY(1px)
 .lv-stage[data-hero='mori'][data-mid='head'] .lv-head > * { opacity: 1; transform: none; }
 .lv-stage[data-hero='mori'][data-mid='head'] .lv-head { pointer-events: auto; }
 
+/* motion map (MoriMotion.jsx). 1 shrink-to-card: the room is a card on the way in and out */
+.mr-shrink { overflow: hidden; transform-origin: 50% 50%; will-change: transform; }
+.mr-px-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+/* 2 side-carousel: the capabilities on a snapping track, a card and a peek */
+.mr-caps { overflow: hidden; }
+.mr-caps-sh { display: flex; align-items: flex-end; justify-content: space-between; gap: 17px; margin: 0 0 27px; }
+.mr-caps-sh .lv-side { margin: 6px 0 0; }
+.mr-caps-nav { display: flex; align-items: center; gap: 10.5px; }
+.mr-caps-n { font: 606 13px/1 var(--mono); letter-spacing: .14em; color: #737373; min-width: 7ch; text-align: center; }
+.mr-caps-b { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); background: #fff; color: #0a0a0a; cursor: pointer; transition: background-color .15s cubic-bezier(0, 0, .2, 1), transform .09s; }
+.mr-caps-b:disabled { color: #a3a3a3; cursor: default; }
+.mr-caps-b:not(:disabled):active { transform: scale(.97); }
+@media (hover: hover) { .mr-caps-b:not(:disabled):hover { background: #0a0a0a; color: #fafafa; border-color: #0a0a0a; } }
+.mr-track { list-style: none; margin: 0; display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding: 0 max(16px, calc((100% - var(--wrap, 1152px)) / 2)) 8px; scroll-padding-inline: max(16px, calc((100% - var(--wrap, 1152px)) / 2)); cursor: grab; outline-offset: -2px; }
+.mr-track::-webkit-scrollbar { display: none; }
+.mr-track[data-drag] { cursor: grabbing; scroll-snap-type: none; user-select: none; }
+.mr-card { flex: 0 0 min(560px, 44%); scroll-snap-align: start; display: grid; gap: 10.5px; align-content: start; }
+.mr-card-art { position: relative; aspect-ratio: 4 / 3; border-radius: 24px; overflow: hidden; background: #000; }
+.mr-card-art .mr-art { position: absolute; inset: 0; }
+.mr-card h3 { margin: 17px 0 0; font-size: 21px; font-weight: 497; letter-spacing: -.015em; line-height: 1.25; color: #0a0a0a; text-wrap: balance; }
+.mr-card p { margin: 0; max-width: 58ch; font-size: 16px; line-height: 1.6; color: #525252; text-wrap: pretty; }
+.mr-card:not([data-on]) .mr-card-art { transform: scale(.97); }
+.mr-card-art { transition: transform .4s cubic-bezier(.16, 1, .3, 1); }
+@media (max-width: 899px) {
+  .mr-card { flex-basis: 84%; }
+  .mr-card p { font-size: 15px; }
+}
+
 /* the drawn objects (MoriArt.jsx): each canvas fills its chapter's black pane or the fits frame */
 .mr-art canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .mr-fits-art { background: #000; }

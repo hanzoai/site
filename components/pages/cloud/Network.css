@@ -63,11 +63,6 @@
 .nw-seg button:active { transform: scale(.97); transition-duration: .09s; }
 
 /* the chapter count is Hanzo's own caption: set under the chapter title, never above it (MASTER part 7) */
-.nw .lx-pin-step { display: flex; flex-direction: column; align-items: flex-start; }
-.nw .lx-pin-t { order: 0; margin-top: 0; }
-.nw .lx-pin-k { order: 1; margin-top: 12px; }
-.nw .lx-pin-d { order: 2; }
-.nw .lx-pin-step > :not(.lx-pin-t):not(.lx-pin-k):not(.lx-pin-d) { order: 3; }
 
 /* the chapters' object: the same fabric zoomed in, on one flat quiet tile; each fact changes the map */
 .nw-sm { display: flex; flex-direction: column; border-radius: 24px; background: #f5f5f5; overflow: hidden; }
@@ -136,7 +131,7 @@ html.js .nw-sm[data-st='intro'] .nw-sp:not(.you) > i { animation: nw-found 4.4s 
 .nw-lend-a code { font: 600 15px/1 var(--mono); color: #0a0a0a; }
 
 /* the black room: two ends, and the strand between them */
-.nw-ends { padding: clamp(72px, 11vw, 188px) 0; }
+.nw-ends { padding: clamp(72px, 11vw, 188px) 0; background: #000; }
 .nw-ends-h { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 5fr); column-gap: clamp(24px, 4vw, 56px); align-items: end; margin-bottom: clamp(40px, 5vw, 72px); }
 .nw-strand { position: relative; height: clamp(120px, 11vw, 160px); margin: 0 4px 24px; }
 .nw-strand svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
@@ -173,7 +168,7 @@ html.js .nw-sm[data-st='intro'] .nw-sp:not(.you) > i { animation: nw-found 4.4s 
 .nw-gh { margin-top: 40px; }
 
 /* the agent prompt, in the black room under the two ends: the kit's 8/5 split, section-heading size, graphite box */
-.nw-paste { margin-top: clamp(72px, 8vw, 116px); padding-top: clamp(40px, 4vw, 56px); border-top: 1px solid var(--line); }
+.nw-pastes { padding: clamp(72px, 11vw, 188px) 0; background: #fff; }
 .nw .cf-paste { grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: clamp(24px, 4vw, 56px); }
 .nw .cf-paste-t { font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.15; }
 .nw .cf-paste.dark .cf-paste-t { color: #fafafa; }
@@ -207,7 +202,8 @@ html.js .nw-sm[data-st='intro'] .nw-sp:not(.you) > i { animation: nw-found 4.4s 
   .nw-lede { max-width: none; }
   .nw-fab-win { flex: none; height: 240px; min-height: 0; margin: 0 calc(-1 * var(--gut)); }
   .nw-map { inset: 16px 20px 18px 16px; }
-  .nw-peer:not(.lit):not(.you) .nw-tags { display: none; }
+  .nw-peer:not(.lit):not(.you):not(.named) .nw-tags { display: none; }
+  .nw-peer.named:not(.lit) .nw-tag:not(.nm) { display: none; }
   .nw-tags { left: 12px; }
   .nw-peer.l .nw-tags { right: 12px; }
   .nw-tag { padding: 5px 7px; font-size: 14px; }
@@ -261,3 +257,92 @@ html.js .nw-sm[data-st='intro'] .nw-sp:not(.you) > i { animation: nw-found 4.4s 
 /* the resting bead: smaller and quieter than the demo's packet */
 .nw-packet.idle { left: -5px; top: -5px; width: 10px; height: 10px; }
 
+
+/* ---------- motion map (James, 7 Nov): signature `graph`; entrances split-merge, grow-from-point, typewriter,
+   zoom-through, invert-flash, one per section in page order ---------- */
+
+/* the living graph: a peer can be picked up (mouse) and its paths light and name themselves */
+.nw-peer::before { cursor: grab; }
+.nw-map:active .nw-peer::before { cursor: grabbing; }
+.nw-links line.nb:not(.on) { stroke: #0a0a0a; stroke-width: 1.5; }
+.nw-tag.nm { padding: 7px 9px; background: #fff; color: #0a0a0a; outline: 1px solid #d4d4d4; outline-offset: -1px; }
+.nw-peer.peek .nw-tag.nm { background: #0a0a0a; color: #fafafa; outline: 0; }
+.nw-peer.named:not(.peek):not(.lit):not(.you) > i { box-shadow: inset 0 0 0 2px #0a0a0a; }
+.nw-h1 span { display: block; }
+
+/* 1 split-merge (hero): the words slide in from the left, the graph from the right, the title's two words from
+   opposite sides, and they meet. Transform only, so the h1 is never invisible. */
+.nw-en-split .nw-hero-copy, .nw-en-split .nw-fab, .nw-en-split .nw-h1 span { transition: transform 1s var(--lx-ease); }
+@media (prefers-reduced-motion: no-preference) {
+  html.js .nw-en-split:not([data-enter='in']) .nw-hero-copy { transform: translateX(-22vw); }
+  html.js .nw-en-split:not([data-enter='in']) .nw-fab { transform: translateX(22vw); }
+  html.js .nw-en-split:not([data-enter='in']) .nw-h1-a { transform: translateX(-30vw); }
+  html.js .nw-en-split:not([data-enter='in']) .nw-h1-b { transform: translateX(30vw); }
+}
+
+/* 2 grow-from-point (the black room): a circle opens from where the pointer last was and the room grows out of it */
+/* the clip sits on a backdrop layer (a clipped section would never report itself in view) */
+.nw-en-grow { position: relative; }
+.nw-en-grow > .lx-wrap { position: relative; }
+html.js .nw-en-grow:not([data-enter='rest']) { background: transparent; }
+html.js .nw-en-grow:not([data-enter='rest'])::before { content: ''; position: absolute; inset: 0; background: #000; }
+html.js .nw-en-grow[data-enter='armed']::before { clip-path: circle(0 at 50% 50%); }
+html.js .nw-en-grow[data-enter='armed'] > .lx-wrap { opacity: 0; }
+html.js .nw-en-grow[data-enter='in']::before { animation: nw-grow 1.1s var(--lx-ease) both; }
+html.js .nw-en-grow[data-enter='in'] > .lx-wrap { transform-origin: var(--ox, 50%) var(--oy, 50%); animation: nw-grow-in 1.1s var(--lx-ease) both; }
+@keyframes nw-grow { from { clip-path: circle(0 at var(--ox, 50%) var(--oy, 50%)); } to { clip-path: circle(160% at var(--ox, 50%) var(--oy, 50%)); } }
+@keyframes nw-grow-in { from { transform: scale(.3); opacity: 0; } 40% { opacity: 1; } to { transform: none; opacity: 1; } }
+
+/* 3 typewriter (how it works): the heading types itself with a caret; then the facts and the map arrive */
+.nw-typed { position: relative; display: inline-block; }
+.nw-typed-on { display: none; }
+.nw-typed[data-armed] .nw-typed-ghost { color: transparent; }
+.nw-typed[data-armed] .nw-typed-on { display: block; position: absolute; inset: 0; }
+.nw-caret { display: inline-block; width: .07em; height: .95em; margin-left: .05em; background: currentColor; vertical-align: -.1em; opacity: 0; }
+.nw-caret.on { animation: nw-blink 1s steps(1) 4; }
+@keyframes nw-blink { 0% { opacity: 1; } 50% { opacity: 0; } }
+html.js .nw-en-type[data-enter='armed'] .nw-how-grid { opacity: 0; }
+html.js .nw-en-type[data-enter='in'] .nw-how-grid { animation: nw-after 0.5s var(--lx-ease) 1.15s both; }
+@keyframes nw-after { from { opacity: 0; transform: translateY(16px); } }
+
+/* 4 zoom-through (the agent prompt): flies in from far behind the screen */
+.nw-en-zoom { perspective: 900px; overflow: hidden; }
+html.js .nw-en-zoom[data-enter='armed'] > .lx-wrap { transform: translateZ(-1800px); opacity: 0; }
+html.js .nw-en-zoom[data-enter='in'] > .lx-wrap { animation: nw-zoom 1s var(--lx-ease) both; }
+@keyframes nw-zoom { from { transform: translateZ(-1800px); opacity: 0; } 25% { opacity: 1; } to { transform: none; opacity: 1; } }
+
+/* 5 invert-flash (the close): it arrives inverted, black for white, holds a beat, then turns to paper */
+.nw-en-flash { background: #fff; }
+html.js .nw-en-flash[data-enter='in'] { animation: nw-flash .9s var(--e-io) both; }
+@keyframes nw-flash { 0%, 38% { filter: invert(1); } 100% { filter: invert(0); } }
+
+/* how it works, not pinned: six facts as rows (the open one shows its words) beside the fabric they change */
+.nw-how { padding: clamp(72px, 11vw, 188px) 0; }
+.nw-how-h { margin: 0 0 clamp(32px, 4vw, 56px); }
+.nw-how-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: clamp(24px, 4vw, 56px); align-items: start; }
+.nw-facts { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.nw-fact { border-bottom: 1px solid var(--line); padding: 8px 0; }
+.nw-fact-t { margin: 0; font: 497 21px/1.25 var(--sans); letter-spacing: -.015em; }
+.nw-fact-t button { display: flex; align-items: baseline; gap: 14px; width: 100%; min-height: 48px; padding: 8px 0; border: 0; background: none; font: inherit; letter-spacing: inherit; text-align: left; color: #737373; cursor: pointer; transition: color .15s var(--e-out), transform .15s var(--e-out); touch-action: manipulation; }
+.nw-fact-t button:active { transform: translateY(1px); transition-duration: .09s; }
+.nw-fact.on .nw-fact-t button { color: #0a0a0a; }
+.nw-fact-n { flex: none; width: 22px; font: 500 13px/1 var(--mono); color: #737373; }
+.nw-fact.on .nw-fact-n { color: #0a0a0a; }
+.nw-fact-d { margin: 0; padding: 0 0 12px 36px; font-size: 16px; line-height: 1.55; color: #525252; max-width: 46ch; }
+.nw-fact .nw-lend { margin: 4px 0 12px 36px; }
+html.js .nw-fact:not(.on) .nw-fact-d, html.js .nw-fact:not(.on) .nw-lend { display: none; }
+html.js .nw-fact.on .nw-fact-d, html.js .nw-fact.on .nw-lend { animation: nw-after .3s var(--lx-ease) both; }
+@media (hover: hover) { .nw-fact:not(.on) .nw-fact-t button:hover { color: #0a0a0a; } }
+.nw-how-obj { min-width: 0; }
+
+@media (max-width: 899px) {
+  .nw-how-grid { grid-template-columns: minmax(0, 1fr); row-gap: 20px; }
+  .nw-how-obj { order: -1; }
+  .nw-how .nw-sm { height: 42svh; }
+  .nw-fact-t { font-size: 17px; }
+  .nw-fact-d { padding-left: 36px; font-size: 15px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nw-caret { display: none; }
+}
+.nw-how-count { margin: 14px 0 0; color: #525252; font-variant-numeric: tabular-nums; }

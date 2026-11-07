@@ -1,6 +1,6 @@
 'use client';
 /* Persona: enterprise buyer (fraud, AML and trust-and-safety leads). Goal: start a sales conversation. CTA: "Talk to us" → /contact-sales. Metric: contact_sales_submit.
-   Risk. V2: 8/10 an unframed gauge decides beside the h1 (needle, reasons, action; no invented digits); one engine with two faces; then one object per screen (rule card, declare stack, request flow, tier ladder) with the words folded in; no voids; deck greys and radii
+   Risk. V2: 8/10 a first screen of h1 + dial side by side (next section peeking); an unframed gauge decides beside the h1 (needle, reasons, action; no invented digits); one engine with two faces; then one object per screen (rule card, declare stack, request flow, tier ladder) with the words folded in; no voids; deck greys and radii
    Signature: the dial that decides, and shows its work. Pick a stage (signup, payment, post-purchase; the stage is a
    field) and signals light; the needle swings to a score and the plane returns an action and its reasons. It never
    declines on its own: past the line it summons a person, the ceiling Hanzo's engine refuses to start above.
@@ -11,19 +11,19 @@
    Colour: none (JAMES.md, 0 UI hues); the hot side of the dial is ink, status reads by shape and word. Every self-running
    demo has a pause control. One dark room: "Your data, your model". Every word and link is Hanzo's. */
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { EASE, Magnetic } from '../../ui';
 import { A } from '../../kit';
 import { useLive, useEvery, useSteps } from '../cloud/Frame';
-import LineMask from '../../v2/x-gauss/LineMask';
 import Settle from '../../v2/Settle';
-import PinChapters from '../../v2/x-gauss/PinChapters';
 import { OpenCards, Detail } from '../../v2/OpenSheet';
 import NoJs from '../../v2/x-gauss/NoJs';
 import { usePause } from '../../v2/x-gauss/Pause';
 import Sigil from '../../Sigil';
 import '../../v2/Scale.css';
 import '../../v2/x-gauss/Rhythm.css';
+import Decode, { DecodeLines } from '../risk/Decode';
+import { OrbitIn, InkSpread, SquashLand, VelocitySkew, DepthParallax } from '../risk/Enter';
 import './Risk.css';
 
 // illustrative weights for the dial (not measured, not a customer result)
@@ -33,6 +33,15 @@ const STAGES = [
   ['post-purchase', 'Ongoing and post-purchase', [['payout fraud', 30], ['negative balances', 16], ['disputes', 11]]],
 ];
 const LINE = 50;
+
+/* Runs a short sequence once each time its section comes into view (0 … n-1, ms apart), then rests on `rest`. */
+function useRun(n, ms, on, rest) {
+  const [i, setI] = useState(rest);
+  const [go, setGo] = useState(false);
+  useEffect(() => { if (on) { setI(0); setGo(true); } else setGo(false); }, [on]);
+  useEvery(ms, on && go, () => { if (i >= n - 1) { setGo(false); setI(rest); } else setI(i + 1); });
+  return [i, setI, go];
+}
 
 /* The hero object: a gauge on the left, the decision and its reasons on the right. */
 function Dial() {
@@ -56,7 +65,6 @@ function Dial() {
   const rot = -90 + (score / 100) * 180;
   const pick = (i) => { setMine(true); setSt(i); setOff([false, false, false]); };
   const flip = (i) => { setMine(true); setOff((o) => o.map((v, k) => (k === i ? !v : v))); };
-  const roll = { initial: { y: '40%', opacity: 0 }, animate: { y: 0, opacity: 1, transition: { duration: 0.22, ease: EASE } }, exit: { y: '-40%', opacity: 0, transition: { duration: 0.12 } } };
   return (
     <div className="rk-dial" ref={ref}>
       <div className="rk-dial-l">
@@ -71,7 +79,7 @@ function Dial() {
           <span className="rk-l0 x-mono">0</span><span className="rk-lline x-mono">the line</span><span className="rk-l1 x-mono">100</span>
         </div>
         <div className="rk-out" aria-live={mine ? 'polite' : 'off'}>
-          <div className="rk-action"><span className="rk-action-box"><AnimatePresence mode="wait" initial={false}><motion.b key={act} className={hot ? 'hot' : ''} {...roll}>{act}</motion.b></AnimatePresence></span><span className="rk-action-k x-mono">action</span></div>
+          <div className="rk-action"><span className="rk-action-box"><b className={hot ? 'hot' : ''}><Decode text={act} start="change" ms={520} /></b></span><span className="rk-action-k x-mono">action</span></div>
         </div>
       </div>
       <div className="rk-dial-r">
@@ -105,7 +113,7 @@ function Hero() {
     <section className="rk-hero" aria-labelledby="rk-h1" data-morph-target>
       <div className="w2-wrap rk-hero-g">
         <div className="rk-hero-copy">
-          <LineMask as="h1" id="rk-h1" now className="w2-display rk-h1" lines={['One risk plane', 'for accounts,', 'payments', 'and agents']} />
+          <DecodeLines as="h1" id="rk-h1" className="w2-display rk-h1" lines={['One risk plane', 'for accounts, payments', 'and agents']} />
           <motion.div className="rk-hero-act" initial={{ y: 12 }} animate={{ y: 0 }} transition={{ duration: 0.8, ease: EASE, delay: 0.45 }}>
             <Magnetic strength={0.25}><A to="/contact-sales" className="w2-cta" data-thumb="Talk to us" data-cta="risk.hero">Talk to us <i aria-hidden="true">→</i></A></Magnetic>
           </motion.div>
@@ -123,12 +131,12 @@ function Faces() {
   return (
     <section className={'w2-sec rk-say' + (live ? ' on' : '')} aria-labelledby="rk-today" ref={ref}>
       <div className="w2-wrap">
-        <h2 id="rk-today" className="w2-headline rk-today-h">Where this is today</h2>
+        <Decode as="h2" id="rk-today" className="w2-headline rk-today-h" text="Where this is today" />
         <p className="rk-say-h">Two faces over one engine, at two different stages.</p>
-        <div className="rk-engine">
-          <p className="rk-say-c live"><b>Available now</b> — the compliance face, at api.hanzo.ai/v1/aml: monitoring, alerts, cases, rules, sanctions screening, relationship lookback and a retained-record clock.</p>
-          <p className="rk-say-c dev"><b>In development</b> — the decide plane, which will score an account, a transaction, a session or an agent and return a decision you can explain, from a model trained on your organization's own data rather than a pooled model of somebody else's traffic.</p>
-          <div className="rk-eng-core" aria-hidden="true">
+        <OrbitIn><div className="rk-engine">
+          <p className="rk-say-c live" data-enter><b>Available now</b> — the compliance face, at api.hanzo.ai/v1/aml: monitoring, alerts, cases, rules, sanctions screening, relationship lookback and a retained-record clock.</p>
+          <p className="rk-say-c dev" data-enter><b>In development</b> — the decide plane, which will score an account, a transaction, a session or an agent and return a decision you can explain, from a model trained on your organization's own data rather than a pooled model of somebody else's traffic.</p>
+          <div className="rk-eng-core" aria-hidden="true" data-enter>
             <span className="rk-eng-w live"><i /></span>
             <span className="rk-eng-box x-mono">one engine</span>
             <span className="rk-eng-w dev" />
@@ -140,7 +148,7 @@ function Faces() {
           <Detail className="rk-d-dev" label="decide plane" title="decide plane" kicker="/v1/risk">
             <p>The <strong>decide plane</strong> — <strong>/v1/risk</strong>, everything else on this page — and the shared model plane behind both are being built. Every capability below says which of the two it is.</p>
           </Detail>
-        </div>
+        </div></OrbitIn>
       </div>
     </section>
   );
@@ -234,8 +242,6 @@ function Lanes({ on }) {
 }
 
 function Chapters() {
-  const [ref, live] = useLive(0.05);
-  const [paused, pauseBtn] = usePause({ right: 0, bottom: 0, top: 'auto' });
   const chapters = [
     {
       t: 'Available now: the compliance face',
@@ -268,19 +274,33 @@ function Chapters() {
     },
   ];
   return (
-    <div ref={ref}>
-      <PinChapters id="rk-how" label="Where the plane stands" className="rk-pin" chapters={chapters}
-        visual={(at) => (
-          <div className={'rk-vis' + (paused ? ' paused' : '')}>
-            {pauseBtn}
-            {[CaseFile, Track, Lanes].map((V, i) => (
-              <motion.div key={i} className="rk-vis-i" initial={false} animate={{ opacity: at === i ? 1 : 0, scale: at === i ? 1 : 0.96 }} transition={{ duration: 0.6, ease: EASE }} style={{ pointerEvents: at === i ? 'auto' : 'none' }} aria-hidden={at !== i}>
-                <V on={live && !paused && at === i} />
-              </motion.div>
-            ))}
-          </div>
-        )} />
-    </div>
+    <section className="w2-sec rk-ch" aria-label="Where the plane stands">
+      <div className="w2-wrap">
+        <SquashLand className="rk-ch-list">
+          {chapters.map((c, i) => <ChapterRow key={c.t} c={c} i={i} />)}
+        </SquashLand>
+      </div>
+    </section>
+  );
+}
+
+/* One chapter: its words beside its own stepping object, which runs while it is in view (pause in the card's corner). */
+function ChapterRow({ c, i }) {
+  const [ref, live] = useLive(0.35);
+  const [paused, pauseBtn] = usePause({ right: 12, top: 12 });
+  const V = [CaseFile, Track, Lanes][i];
+  return (
+    <article className={'rk-ch-row' + (i % 2 ? ' flip' : '')} ref={ref}>
+      <div className="rk-ch-t">
+        <Decode as="h2" className="w2-headline" text={c.t} />
+        <span className="rk-ch-n x-mono" aria-hidden="true">{String(i + 1).padStart(2, '0')} / 03</span>
+        <div className="rk-ch-b">{c.b}</div>
+      </div>
+      <div className={'rk-vis' + (paused ? ' paused' : '')} data-enter>
+        {pauseBtn}
+        <V on={live && !paused} />
+      </div>
+    </article>
   );
 }
 
@@ -305,10 +325,10 @@ function DecidesOn() {
     <section className={'w2-sec rk-on' + (live ? ' on' : '')} ref={ref}>
       <div className="w2-wrap">
         <div className="rk-split">
-          <h2 className="w2-headline">What it decides on</h2>
+          <Decode as="h2" className="w2-headline" text="What it decides on" />
           <p className="w2-lede">In development. Fraud is a use of a scoring plane, not a product that sits beside one. One call will judge an account, a transaction, a session or an agent.</p>
         </div>
-        <OpenCards cols={4} className="rk-cards" items={ON.map(([t, d], i) => ({ id: 'rk-' + t, k: String(i + 1).padStart(2, '0'), t, art: <OnArt i={i} />, body: <p>{d}</p> }))} />
+        <InkSpread><OpenCards cols={4} className="rk-cards" items={ON.map(([t, d], i) => ({ id: 'rk-' + t, k: String(i + 1).padStart(2, '0'), t, art: <OnArt i={i} />, body: <p>{d}</p> }))} /></InkSpread>
       </div>
     </section>
   );
@@ -319,13 +339,13 @@ function Model() {
   const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
   return (
     <section className={'w2-sec rk-model w2-dark' + (live && !paused ? ' on' : '')} data-room="dark" ref={ref}>
-      <div className="w2-wrap">
+      <VelocitySkew className="w2-wrap">
         <div className="rk-split">
-          <h2 className="w2-headline">Your data, your model</h2>
+          <Decode as="h2" className="w2-headline" text="Your data, your model" />
           <p className="w2-lede">In development. The endpoint your events already arrive through is live; reading those events as features, and training on them, is what is being built.</p>
         </div>
         <div className="rk-endpoint" aria-hidden="true">
-          <span className="rk-ep x-mono">POST /v1/event</span>
+          <Decode className="rk-ep x-mono" text="POST /v1/event" />
           <div className="rk-stream">{Array.from({ length: 14 }).map((_, i) => <i key={i} style={{ animationDelay: i * 0.29 + 's' }} />)}</div>
           <span className="rk-shadow x-mono">shadow</span>
           <span className="rk-pause">{pauseBtn}</span>
@@ -335,7 +355,7 @@ function Model() {
           <p>The boundary is the hard part, and the commitment is that it will be enforced in the code rather than asserted in a policy. A feature read will not be expressible without a tenant. The organization will come from your verified identity, never from a field a caller can set. Anything shared across organizations will be an <strong>aggregate</strong> — published quantiles, with no organization, no subject and no identifier in the row — and a bucket too few organizations contributed to will not be published at all. The model is meant to be per organization down to its geometry, so that two organizations do not merely keep separate counters; they have separate models.</p>
           <p>Two of the properties that plane needs are already in the engine’s behavioural model, and it is those that will be carried forward. A score there is attributable by construction: move one input back to its neutral value, score again, and the drop is that input’s contribution — no second model is asked to explain the first. And a statistical judgement may summon a person; it may not decline anything on its own, a ceiling the engine refuses to start above. On the live deployment that model runs in <strong>shadow</strong>: it scores, and it contributes nothing to any transaction’s outcome.</p>
         </Detail>
-      </div>
+      </VelocitySkew>
     </section>
   );
 }
@@ -357,19 +377,19 @@ function Rules() {
   const hit = [2, 4, 1, 5, 0, 3][n % 6];
   return (
     <section className="w2-sec rk-rules" ref={ref}>
-      <div className="w2-wrap rk-pair">
-        <div className="rk-pair-h">
-          <h2 className="w2-headline">Rules, lists and suppression</h2>
+      <DepthParallax className="w2-wrap rk-pair">
+        <div className="rk-pair-h" data-depth="0.5">
+          <Decode as="h2" className="w2-headline" text="Rules, lists and suppression" />
           <p className="rk-dev">In development.</p>
         </div>
-        <div className={'rk-rule s' + at}>
+        <div className={'rk-rule s' + at} data-depth="1.6">
           <div className="rk-rule-tabs" role="tablist" aria-label="Rules, lists and suppression" onKeyDown={(e) => { const k = { ArrowRight: (at + 1) % 3, ArrowLeft: (at + 2) % 3, Home: 0, End: 2 }[e.key]; if (k === undefined) return; e.preventDefault(); setMine(true); setAt(k); e.currentTarget.children[k]?.focus(); }}>
             {RULES.map(([t], i) => (
               <button key={t} type="button" role="tab" aria-selected={at === i} tabIndex={at === i ? 0 : -1} onClick={() => { setMine(true); setAt(i); }}><h3>{t}</h3></button>
             ))}
             <span className="rk-pause">{pauseBtn}</span>
           </div>
-          <div className="rk-rule-stage" aria-hidden="true">
+          <div className="rk-rule-stage" aria-hidden="true" data-depth="1.2">
             <p className="rk-rule-r x-mono"><b>rule</b><span>your own fields</span></p>
             <ul className="rk-rule-l">{LISTS.map((t, i) => <li key={t} className={at >= 1 && i === hit ? 'on' : ''}>{t}</li>)}</ul>
             <div className="rk-rule-h">
@@ -382,7 +402,7 @@ function Rules() {
             {RULES.map(([t, d], i) => <p key={t} className={at === i ? 'on' : ''} aria-hidden={at !== i}>{d}</p>)}
           </div>
         </div>
-      </div>
+      </DepthParallax>
     </section>
   );
 }
@@ -390,13 +410,12 @@ function Rules() {
 /* Platforms: the declare stack is the screen; the paragraph on why the two planes stay apart opens from its words. */
 function Platforms() {
   const [ref, live] = useLive(0.25);
-  const [d, setD] = useState(0);
-  useEvery(1400, live, () => setD((v) => (v + 1) % 5));
+  const [d] = useRun(5, 1100, live, 4);
   return (
     <section className="w2-sec rk-platsec" ref={ref}>
       <div className="w2-wrap rk-pair flip">
         <div className="rk-pair-h">
-          <h2 className="w2-headline">Platforms and marketplaces</h2>
+          <Decode as="h2" className="w2-headline" text="Platforms and marketplaces" />
           <p className="rk-dev">In development.</p>
           <p className="rk-plat-l">If you run a platform, your risk is your sellers as much as your buyers. Risk will <em>declare</em> a control against a subject — hold a payout, set a reserve, restrict a merchant, block a suspect transaction — and the money plane will read it. Risk will never move money itself.</p>
           <Detail label="That separation is deliberate." title="Platforms and marketplaces" kicker="In development">
@@ -436,16 +455,16 @@ function Flow() {
 }
 
 function ConnectPlans() {
-  const [ref, live] = useLive(0.1);
-  const [tier, setTier] = useState(0);
+  const [ref] = useLive(0.1);
   const [mine, setMine] = useState(false);
-  useEvery(2600, live && !mine, () => setTier((v) => (v + 1) % 4));
+  const [lref, llive] = useLive(0.6);
+  const [tier, setTier] = useRun(4, 1400, llive && !mine, 3);
   return (
     <section className="w2-sec rk-plans" ref={ref}>
       <div className="w2-wrap">
         <div className="rk-conn">
           <div>
-            <h2 className="w2-headline">How it connects</h2>
+            <Decode as="h2" className="w2-headline" text="How it connects" />
             <p className="w2-lede rk-conn-l">In development. Risk will ingest signals and return a decision. Everything about how you take money stays where it is.</p>
           </div>
           <div className="rk-conn-r">
@@ -458,10 +477,10 @@ function ConnectPlans() {
           </div>
         </div>
         <div className="rk-split">
-          <h2 className="w2-headline">Plans</h2>
+          <Decode as="h2" className="w2-headline" text="Plans" />
           <p className="w2-lede">In development. Four tiers, each a subscription with screens included and metered beyond that on the Hanzo bill you already have. A screen is one decision about one transaction, account or customer. Nothing here is priced yet.</p>
         </div>
-        <ol className="rk-ladder">
+        <ol className="rk-ladder" ref={lref}>
           {TIERS.map(([t], i) => (
             <li key={t} className={i === tier ? 'on' : ''} style={{ '--h': 52 + i * 16 + '%' }}>
               <button type="button" aria-pressed={i === tier} onClick={() => { setMine(true); setTier(i); }} onPointerEnter={() => { setMine(true); setTier(i); }}>
@@ -481,13 +500,12 @@ function ConnectPlans() {
 
 function Not() {
   const [ref, live] = useLive(0.2);
-  const [g, setG] = useState(-1);
-  useEvery(1500, live, () => setG((v) => (v + 1) % 4));
+  const [g] = useRun(3, 1200, live, -1);
   return (
     <section className="w2-sec rk-not" ref={ref}>
       <div className="w2-wrap rk-not-grid">
         <div>
-          <h2 className="w2-headline">What this is not</h2>
+          <Decode as="h2" className="w2-headline" text="What this is not" />
           <ul className="rk-gaps" aria-label="Three unmet requirements">
             {['There is no report workflow', 'There is no filing clock', 'There is no confidentiality marking on a case'].map((x, i) => <li key={x} className={i === g ? 'on' : ''}>{x}</li>)}
           </ul>
@@ -515,8 +533,8 @@ export default function Risk() {
       <NoJs />
       <Hero />
       <Faces />
-      <Chapters />
       <DecidesOn />
+      <Chapters />
       <Model />
       <Rules />
       <Platforms />

@@ -13,7 +13,8 @@
    V2: 8/10 Request access is the one solid at both widths; every chapter its own drawn object, never a blank pane; words through the settle; labels fit at 375. */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Specs } from './Studio';
-import { MoriCap, MoriFits } from './MoriArt';
+import { MoriFits } from './MoriArt';
+import { ShrinkCard, CapsCarousel, PixelFilters, useEntrances } from './MoriMotion';
 import { usePaused } from '../../v2/ModelFilm';
 import Creative from './Creative';
 import { poly, dense, focus } from '../../v2/Launch';
@@ -47,7 +48,7 @@ function Viewport() {
   const stage = useRef(null), cv = useRef(null), deg = useRef(null);
   const geo = useMemo(mesh, []);
   const [mode, setMode] = useState(0);
-  const S = useRef({ yaw: 0.6, pitch: 0.42, vy: 0, vp: 0, drag: null, born: 0, q: new Float32Array(U * V * 3), proj: new Float32Array(U * V * 3), nz: new Float32Array(U * V * 3) });
+  const S = useRef({ yaw: 0.6, pitch: 0.42, vy: 0, vp: 0, drag: null, born: 0, q: new Float32Array(U * V * 3), proj: new Float32Array(U * V * 3), nz: new Float32Array(U * V * 3), ox: new Float32Array(U * V), oy: new Float32Array(U * V), ptr: null, tap: null });
 
   const paused = usePaused();
   const pausedRef = useRef(paused);
@@ -78,6 +79,19 @@ function Viewport() {
       const a = N[k], b = N[k + 1], cc = N[k + 2];
       const nx = a * cyw - cc * syw, nzz = a * syw + cc * cyw;
       nz[k] = nx; nz[k + 1] = b * cp - nzz * sp; nz[k + 2] = b * sp + nzz * cp;
+    }
+    // the cursor scatters the cloud: points near it are pushed out along the line from the cursor and ease back into
+    // the shape once it moves on (a finger does the same while it rests on the canvas)
+    const ptr = s.ptr, R = 120 * d, ox = s.ox, oy = s.oy, k8 = Math.min(1, (still ? 1 : dt) * 9);
+    for (let i = 0; i < n; i++) {
+      const k = i * 3;
+      let tx = 0, ty = 0;
+      if (ptr && !still) {
+        const ddx = proj[k] - ptr.x * d, ddy = proj[k + 1] - ptr.y * d, dist = Math.hypot(ddx, ddy);
+        if (dist < R) { const f = ((R - dist) / R) ** 1.4 * R * 0.9 / (dist + 1); tx = ddx * f; ty = ddy * f; }
+      }
+      ox[i] += (tx - ox[i]) * k8; oy[i] += (ty - oy[i]) * k8;
+      proj[k] += ox[i]; proj[k + 1] += oy[i];
     }
     g.clearRect(0, 0, w, h);
     const settled = s.born > 2.2;
@@ -121,21 +135,36 @@ function Viewport() {
     if (deg.current) deg.current.style.transform = `rotate(${(s.yaw * 180) / Math.PI}deg)`;
   });
 
-  const down = (e) => { e.currentTarget.setPointerCapture(e.pointerId); S.current.drag = { x: e.clientX, y: e.clientY, t: performance.now() }; };
+  const at = (e) => { const r = e.currentTarget.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+  const down = (e) => {
+    e.currentTarget.setPointerCapture(e.pointerId);
+    const s = S.current;
+    s.drag = { x: e.clientX, y: e.clientY, t: performance.now() };
+    s.tap = { x: e.clientX, y: e.clientY, t: performance.now() };
+    s.ptr = at(e);
+  };
   const move = (e) => {
     const s = S.current, dr = s.drag;
+    s.ptr = at(e);
     if (!dr) return;
     const dx = e.clientX - dr.x, dy = e.clientY - dr.y, dtm = Math.max(16, performance.now() - dr.t) / 1000;
     s.yaw += dx * 0.01; s.pitch = Math.max(-1.1, Math.min(1.3, s.pitch + dy * 0.008));
     s.vy = (dx * 0.01) / dtm * 0.5; s.vp = (dy * 0.008) / dtm * 0.5;
     s.drag = { x: e.clientX, y: e.clientY, t: performance.now() };
   };
-  const up = () => { S.current.drag = null; };
+  // a tap (no drag) blows the whole shape back into a cloud, and it assembles again
+  const up = (e) => {
+    const s = S.current, tp = s.tap;
+    s.drag = null; s.tap = null;
+    if (tp && e && Math.hypot(e.clientX - tp.x, e.clientY - tp.y) < 6 && performance.now() - tp.t < 350) s.born = 0.15;
+    if (e && e.pointerType !== 'mouse') s.ptr = null;
+  };
+  const leave = () => { S.current.ptr = null; };
 
   return (
     <div className="mr-view" ref={stage}>
       <div className="mb-bar mr-bar"><i /><i /><i /><b>studio.hanzo.ai / <span>mori-1</span></b><em>mori</em><em>example</em></div>
-      <canvas ref={cv} className="mr-cv" role="img" aria-label="A 3D mesh turning; drag or use the arrow keys to orbit" tabIndex={0} onKeyDown={(e) => { const s = S.current, k = { ArrowLeft: [-0.3, 0], ArrowRight: [0.3, 0], ArrowUp: [0, -0.2], ArrowDown: [0, 0.2] }[e.key]; if (k) { e.preventDefault(); s.yaw += k[0]; s.pitch = Math.max(-1.1, Math.min(1.3, s.pitch + k[1])); } }} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} />
+      <canvas ref={cv} className="mr-cv" role="img" aria-label="A 3D mesh turning; drag or use the arrow keys to orbit" tabIndex={0} onKeyDown={(e) => { const s = S.current, k = { ArrowLeft: [-0.3, 0], ArrowRight: [0.3, 0], ArrowUp: [0, -0.2], ArrowDown: [0, 0.2] }[e.key]; if (k) { e.preventDefault(); s.yaw += k[0]; s.pitch = Math.max(-1.1, Math.min(1.3, s.pitch + k[1])); } }} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} onPointerLeave={leave} />
       <div className="mr-hud mr-tl">
         <p className="mb-mono">SDF ➔ QUAD MESH: 245,820 TRIS</p>
         <p className="mb-mono mr-spin"><i ref={deg} aria-hidden="true" />SPINNING · 360°</p>
@@ -218,6 +247,7 @@ function useMidWords() {
 export default function Mori() {
   usePhoneAsk();
   useMidWords();
+  useEntrances();
   return (
     <Creative
       slug="mori"
@@ -227,20 +257,23 @@ export default function Mori() {
       aim={(W, H, wide) => (wide ? null : focus(0.6, 0.62, W / 2, H * 0.25, 1.3, [W * 0.1, H * 0.04, W * 0.9, H * 0.46], [0.5, 0.75])(W, H))}
       over={EDGES}
       headClass="mr-v2"
-      first="tail"
+      first="demo"
       flip
-      capArt={(i, on) => <MoriCap i={i} on={on} />}
+      renderCaps={(d) => <CapsCarousel d={d} />}
       fitsArt={(seen) => <MoriFits seen={seen} />}
       demo={
-        <section className="lv-room mr-room" data-room="dark" aria-label="Mori">
-          <div className="mr-stage">
-            <Viewport />
-          </div>
-          <div className="mr-below x-wrap">
-            <div className="mr-specs"><Specs rows={[['Topology Quality', 'Quad-Dominant', 'Animation Ready'], ['UV Unwrapping', 'Automatic Atlas', 'On'], ['Geometry Engine', 'Hanzo Mori-1 Engine', 'SDF to mesh']]} /></div>
-            <p className="mb-cap">An example of the canvas in Hanzo Design. Generation runs on Hanzo Cloud.</p>
-          </div>
-        </section>
+        <ShrinkCard>
+          <section className="lv-room mr-room" data-room="dark" aria-label="Mori">
+            <div className="mr-stage">
+              <Viewport />
+            </div>
+            <div className="mr-below x-wrap">
+              <div className="mr-specs"><Specs rows={[['Topology Quality', 'Quad-Dominant', 'Animation Ready'], ['UV Unwrapping', 'Automatic Atlas', 'On'], ['Geometry Engine', 'Hanzo Mori-1 Engine', 'SDF to mesh']]} /></div>
+              <p className="mb-cap">An example of the canvas in Hanzo Design. Generation runs on Hanzo Cloud.</p>
+            </div>
+            <PixelFilters />
+          </section>
+        </ShrinkCard>
       }
     />
   );

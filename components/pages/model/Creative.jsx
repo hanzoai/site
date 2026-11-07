@@ -209,10 +209,10 @@ export function Scene({ slug, dark, className = '', children }) {
    fitsArt(seen) (replaces the fits picture), map={false} (no studio map), band (a page's own closing band),
    first='tail' (the demo sits between the studio map and the model cards), headThumb={false} (the header keeps its own
    solid ask until the band), onHeadFocus (focus enters the headline's actions), fitsFirst (where-it-fits comes before
-   the capability chapters). */
-export default function Creative({ slug, shape, aim, over, pos, subject = [0.55, 0.5], headClass, demo, first = 'demo', flip, capArt, fitsArt, map = true, band, headThumb = true, onHeadFocus, fitsFirst = false }) {
+   the capability chapters), renderCaps(d) (the model draws its own capabilities section in place of the pinned chapters). */
+export default function Creative({ slug, shape, aim, over, pos, subject = [0.55, 0.5], headClass, demo, first = 'demo', flip, capArt, fitsArt, map = true, band, headThumb = true, onHeadFocus, fitsFirst = false, renderCaps }) {
   const d = C[slug];
-  const caps = <Caps slug={slug} flip={flip} subject={subject} pos={pos} capArt={capArt} />;
+  const caps = renderCaps ? renderCaps(d) : <Caps slug={slug} flip={flip} subject={subject} pos={pos} capArt={capArt} />;
   const fits = <Fits slug={slug} flip={flip} subject={subject} pos={pos} fitsArt={fitsArt} />;
   const tail = first === 'tail';
   return (

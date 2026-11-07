@@ -493,3 +493,69 @@
 .rk-ladder h3 { font-size: clamp(26px, 2.4vw, 32px) !important; line-height: 1 !important; letter-spacing: -.03em !important; }
 .rk.gx .rk-plans.w2-sec, .rk.gx .rk-rules.w2-sec { padding-bottom: clamp(56px, 6vw, 96px) !important; }
 .rk.gx .rk-not.w2-sec { padding-top: clamp(56px, 6vw, 96px) !important; }
+
+/* v4 (critic round 2): the first screen. h1 lifted to ~38% (3 lines), the dial beside it as the hero object
+   (copy column 560px, dial the rest, no dead gutter), the next section peeking 56px at the bottom. */
+@media (min-width: 900px) {
+  .rk-hero { box-sizing: border-box; height: calc(100svh - 148px); min-height: 580px; padding: clamp(96px, 14svh, 116px) 0 0 !important; }
+  .rk-stage button { padding: 0 10px !important; }
+  .rk-reasons { margin: 0; }
+  .rk-hero-g { grid-template-columns: minmax(0, 560px) minmax(0, 1fr); gap: 24px clamp(32px, 3vw, 48px); align-items: start; min-height: 0; }
+  .rk-hero-g > :last-child { margin-top: -28px; }
+  .rk-hero-copy { gap: 32px; }
+  .rk-h1 { max-width: 11.5em; }
+  .rk.gx .rk-say.w2-sec { padding-top: 32px !important; }
+  .rk-hero-g .rk-dial { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; gap: clamp(24px, 2.4vw, 40px) !important; }
+}
+/* the verdict word holds one line, its caption right under it */
+.rk-action { gap: 6px; }
+.rk-action-box { min-height: 0 !important; height: 1.2em; overflow: hidden; }
+.rk-action b { white-space: nowrap !important; }
+/* the stage row stays inside the container */
+.rk-dial-r { padding-right: 0; }
+.rk-stage-row { max-width: 100%; }
+.rk-stage-row .rk-pause .w2-pause { position: static !important; }
+/* phone: the shared header's "Try Hanzo" is the one solid; the hero ask is the quiet ring there */
+@media (max-width: 700px) {
+  .rk .rk-hero-act .w2-cta { background: transparent; color: #0a0a0a; box-shadow: inset 0 0 0 2px #0a0a0a; }
+}
+/* chapter cards: flat tiles, like the rule and declare cards (no outline, no float) */
+.rk-vis .w2-object { box-shadow: none !important; border: 0 !important; background: #f5f5f5 !important; }
+/* the chapter pause sits in its card's top-right corner; the card's label row stops short of it */
+.rk-vis { padding-bottom: 0 !important; }
+.rk-vis > .w2-pause { top: 12px !important; bottom: auto !important; right: 12px !important; z-index: 2; }
+.rk-case-k, .rk-track-call { padding-right: 52px; }
+.rk-lanes.w2-object { padding-top: 64px !important; }
+/* the Abuse bars keep clear of the card's + */
+.rk-art.ab { margin-right: 52px; }
+.rk-hero-g > .w2-settle { transform-origin: 100% 0 !important; }
+.rk-vis-i { align-items: flex-start !important; }
+
+/* v5 motion map: signature `decode` + entrances orbit-in, ink-spread, squash-land, velocity-skew, depth-parallax */
+.rk-dc { position: relative; }
+.rk-dc[data-on] > .rk-dc-t { color: transparent; text-decoration-color: transparent; }
+.rk-dc-fx { position: absolute; left: 0; top: 0; right: 0; pointer-events: none; color: inherit; white-space: inherit; }
+span.rk-dc { display: inline-block; }
+.rk-dc-lines .rk-dc-line { display: block; }
+.rk-action-box .rk-dc { display: inline-block; }
+.rk-action b.hot .rk-dc-t { text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 8px; }
+.rk-action b.hot { text-decoration: none !important; }
+.rk-ep.rk-dc { display: inline-block; }
+@media (hover: hover) { h2.rk-dc, .rk-dc-line, .rk-ep.rk-dc, .rk-action-box .rk-dc { cursor: default; } }
+/* the three chapters, plain: words beside their object, alternating sides (no pinned stage) */
+.rk-ch-list { display: flex; flex-direction: column; gap: clamp(72px, 9vw, 140px); }
+.rk-ch-row { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 32px clamp(40px, 6vw, 112px); align-items: center; }
+.rk-ch-row.flip .rk-ch-t { order: 2; }
+.rk-ch-t { display: flex; flex-direction: column; gap: 18px; align-items: flex-start; }
+.rk-ch-n { font-size: 13px; letter-spacing: .04em; color: #737373; }
+.rk-ch-b { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+.rk-ch-b > p { margin: 0; font-size: 17px; line-height: 1.6; color: #525252; max-width: 46ch; }
+.rk-ch .rk-vis { position: relative; display: block; }
+.rk-ch .rk-vis > .w2-object { width: 100%; }
+.rk.gx .rk-ch.w2-sec { padding-top: clamp(40px, 5vw, 72px) !important; }
+@media (max-width: 899px) {
+  .rk-ch-row, .rk-ch-row.flip { grid-template-columns: minmax(0, 1fr); }
+  .rk-ch-row.flip .rk-ch-t { order: 0; }
+  .rk-ch-b > p { font-size: 16px; }
+}
+.rk-en-orbit, .rk-en-squash, .rk-en-depth { position: relative; }
