@@ -1,4 +1,4 @@
-/* ---------- sign v2 (sg-): ink indigo, one dark room ---------- */
+/* ---------- sign (sg-): ink and greys, one dark room ---------- */
 .sg { --acc: #0a0a0b; --acc-ink: #fff; --acc-soft: #f5f5f7; --acc-line: #c7c7cc; }
 .sg-desk-k { position: absolute; left: clamp(32px, 4vw, 64px); top: 24px; margin: 0; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--soft); }
 .sg-try-k { margin: 0; font-size: 14px; letter-spacing: .08em; color: var(--soft); }
@@ -99,7 +99,8 @@
 .sg-run button[aria-pressed='true'] { color: #0a0a0b; background: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, .1), 0 0 0 .5px rgba(0, 0, 0, .06); }
 .sg-plans { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; align-items: stretch; }
 .sg-plan { position: relative; display: flex; flex-direction: column; padding: 32px 28px; border-radius: 28px; background: var(--card); transition: opacity .4s var(--ease); }
-.sg-plan.dim { opacity: .38; }
+.sg-plan.dim { opacity: 1; }
+.sg-plan.dim .sg-price b, .sg-plan.dim h3 { color: #737373; }
 .sg-plan.pop { background: #fff; box-shadow: var(--shadow); outline: 2px solid var(--acc); }
 .sg-pop { position: absolute; top: -14px; left: 26px; padding: 7px 12px; border-radius: 999px; background: var(--acc); color: #fff; font: 500 13px/1 var(--mono); }
 .sg-plan h3 { margin: 0; font-size: 21px; font-weight: 600; letter-spacing: -.02em; }
@@ -125,7 +126,7 @@
 .sg-first-a.first { background: #f5f5f7; color: #0a0a0b; }
 .sg-first-a.first h3 { color: #0a0a0b; }
 .sg-first-a.first p { color: #48484a; }
-.sg-first-a.first:hover { background: #fff; }
+@media (hover: hover) { .sg-first-a.first:hover { background: #fff; } }
 .sg-first-a > span { font-size: 14px; color: #86868b; }
 .sg-first-a.first > span { color: #6e6e73; }
 .sg-first-a h3 { margin: 0; font-size: clamp(24px, 2.2vw, 32px); font-weight: 600; letter-spacing: -.03em; }
@@ -138,7 +139,7 @@
 .sg-gs h2.w2-title { color: var(--ink); }
 .sg-gs-links { display: flex; flex-wrap: wrap; gap: 12px 28px; }
 .sg-gs-links a { font-weight: 500; text-decoration: none; }
-.sg-gs-links a:hover { text-decoration: underline; text-underline-offset: 4px; }
+@media (hover: hover) { .sg-gs-links a:hover { text-decoration: underline; text-underline-offset: 4px; } }
 .sg-get { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px; margin-top: clamp(96px, 10vw, 160px); padding-top: 40px; border-top: 1px solid rgba(255, 255, 255, .1); }
 .sg-get-tag { margin: 12px 0 0; font-size: 19px; color: #a1a1a6; }
 .sg-get-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
@@ -199,3 +200,29 @@
   .sg-first-row { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 900px) { .sg-pin .sg-desk-r { padding-right: 52px; } .sg-pin .sg-desk-k { top: 18px; } }
+
+/* v2.3: the desk's own bar holds its name and pause (nothing floats over the page); collisions cleared */
+.sg-desk-bar { position: absolute; left: clamp(20px, 2.4vw, 36px); right: 8px; top: 6px; display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 44px; }
+.sg-desk-bar .sg-desk-k { position: static; }
+.sg-pause { display: grid; place-items: center; width: 44px; height: 44px; }
+.sg-pin .sg-desk { padding-top: 64px; }
+.sg-five { padding-top: 64px; }
+.sg-langs { padding-right: 56px; }
+.sg-langs b { font-size: 44px !important; letter-spacing: -.03em; }
+.sg-langs b.long { font-size: 30px !important; white-space: normal; }
+.sg-f.box { min-height: 52px; }
+.sg-f.box::before { content: ''; position: absolute; left: 9px; top: 7px; width: 16px; height: 16px; border-radius: 4px; border: 1.5px solid currentColor; opacity: .5; }
+.sg-f .x-tick { left: 9px; right: auto; top: 7px; translate: none; }
+.sg-gs { padding: 28px 0 0; border-radius: 0; background: none; color: inherit; border-top: 1px solid rgba(255, 255, 255, .14); }
+.sg-gs h2.w2-title { color: inherit; }
+.sg-chip { height: 44px; transition: background .15s cubic-bezier(0, 0, .2, 1), color .15s, transform .09s; }
+a.sg-chip:active { transform: scale(.97); }
+@media (hover: hover) { a.sg-chip:hover { background: #fafafa; color: #0a0a0a; } }
+@media (max-width: 899px) {
+  .sg-desk-bar { position: static; order: -2; height: 44px; margin: -8px -6px 0 0; }
+  .sg-pin .sg-desk { padding-top: 14px; }
+  .sg-pin .sg-desk-r { padding-right: 0 !important; }
+  .sg-langs b { font-size: 32px !important; }
+  .sg-langs b.long { font-size: 24px !important; }
+  .sg-pop { font-size: 14px; }
+}

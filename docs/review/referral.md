@@ -4,11 +4,15 @@ Reviewed: main, page files at `4b53974` (re-walked after the site-wide palette r
 
 Note (7 Nov 14:12): a hydration error seen in the first walks came from the shared shell and is gone on main; it is not counted against this page. Text is now legible with JavaScript off (shared fix at 14:05, re-checked).
 
-Verdict: 6/10
+Verdict: 5/10 (scale fails; no card)
 
 What changed: the palette recolour took the lime out (0 UI hues measured). Nothing else on the page changed: the eyebrow, the icon boxes and the fading Copy are still there.
 
-First complaint: "The green is gone, good. But there's still a 'REFERRALS' label on top of the headline, and 'How it works' is still four little icons in boxes in a row."
+First complaint: "That second screen is just giant words, LinkedIn, Facebook, Reddit, all the same huge size, nothing small anywhere. And there's still a label on top of the headline."
+
+**Cap: part card (MASTER section 6).** There is no `docs/coverage/referral.md`. Capped at 7 until the card is copied from `docs/coverage/_TEMPLATE.md` with 18 `Done here:` lines true on the page. The shared desktop ask bar floats over content (site-wide, see `_shared.md`); not counted against this page.
+
+**Scale (MASTER 3.1, fail):** the rails screen holds about 25 words at 128px ("LinkedIn", "Facebook", "Bluesky", "Reddit", "Hacker News" …) and nothing medium or small: everything big at once (52px on the phone, same effect). Fix: one rail at display size that grows as it passes the centre, the other at 26–32px, or one big word at a time.
 
 ## The 11 answers
 1. **Sells in 5 seconds, moves within 1 second?** It reads: "Bring a builder to Hanzo." and Hanzo's line, "Get your link", beside hanzo.ai's own referral card. But the card is small and nearly still: after arrival the first screen changes by 0.2% (a few dots moving in the counts). It does not feel alive.
@@ -32,6 +36,7 @@ First complaint: "The green is gone, good. But there's still a 'REFERRALS' label
 
 ## Fixes
 1. Remove "• REFERRALS" from above the h1.
-2. Replace the four icon boxes with one object (for example the referral card itself stepping through Share → Signs up → Qualifies → Moves up), so the steps happen rather than sit in boxes.
-3. Make the hero card larger and let one builder visibly land in it, once, so the first screen moves.
-4. Give "Copy" a real hover (not opacity) and the copy confirmation from the brief.
+2. Give the rails rhythm: one big moment, the rest medium and small (see Scale).
+3. Replace the four icon boxes with one object (for example the referral card itself stepping through Share → Signs up → Qualifies → Moves up), so the steps happen rather than sit in boxes.
+4. Make the hero card larger and let one builder visibly land in it, once, so the first screen moves.
+5. Give "Copy" a real hover (not opacity) and the copy confirmation from the brief.

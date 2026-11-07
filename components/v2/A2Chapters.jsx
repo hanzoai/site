@@ -10,6 +10,7 @@
    JavaScript off a <noscript> rule lays the chapters out as that phone story. */
 import { useRef, useState } from 'react';
 import { useScroll, useMotionValueEvent } from 'motion/react';
+import NoJs from '../NoJs';
 
 export default function A2Chapters({ items, visual, flip, dark, label, className = '', head }) {
   const ref = useRef(null);
@@ -28,7 +29,7 @@ export default function A2Chapters({ items, visual, flip, dark, label, className
   };
   return (
     <>
-    <noscript><style>{'.a2-ch{height:auto!important;padding:120px 0 40px}.a2-ch-stick{position:static!important;height:auto!important;display:block!important}.a2-ch-nav,.a2-ch>.a2-ch-stick .a2-ch-vis{display:none!important}.a2-ch-items{gap:88px}.a2-ch-item{grid-area:auto!important;opacity:1!important;transform:none!important}.a2-ch-pv{display:block!important;margin-bottom:32px}'}</style></noscript>
+    <NoJs css={'.a2-ch{height:auto!important;padding:120px 0 40px}.a2-ch-stick{position:static!important;height:auto!important;display:block!important}.a2-ch-nav,.a2-ch>.a2-ch-stick .a2-ch-vis{display:none!important}.a2-ch-items{gap:88px}.a2-ch-item{grid-area:auto!important;opacity:1!important;transform:none!important}.a2-ch-pv{display:block!important;margin-bottom:32px}'} />
     <section ref={ref} className={'a2-ch' + (flip ? ' flip' : '') + (dark ? ' a2-dark' : '') + ' ' + className} style={{ '--n': items.length }} aria-label={label} {...(dark ? { 'data-room': 'dark' } : {})}>
       <div className="a2-ch-stick">
         <div className="a2-wrap a2-ch-grid">

@@ -18,12 +18,14 @@
      the headline beside the settled film carries the same ask, so one solid button shows at a time.
    - Colour: none of our own (JAMES.md 7, 0 UI hues). The film is Hanzo's own, never filtered or dimmed; the only
      dimming is the gradient under the name. --ac / --ac-ink stay as neutral ink tokens for the page files.
+   - One pause (the shared FilmPause, bottom right of the stage) stops every film and self-running demo on the page.
    - Close runs the film back into the card it opened from. Reduced motion shows the settled stage, no pin; JS off shows
      every word (hidden entrance states are scoped to html.js). */
 import { useEffect, useRef, useState } from 'react';
 import { motion, animate, useScroll, useTransform, useMotionValue, useMotionValueEvent, useReducedMotion, useInView } from 'motion/react';
 import { EASE } from '../ui';
-import { Img, Film, Cta } from '../kit';
+import { Img, Cta } from '../kit';
+import ModelFilm, { FilmPause } from './ModelFilm';
 import { useOpener } from '../Opener';
 import { bySlug, media } from '../../lib/models';
 import '../pages/model/Model.css';
@@ -123,7 +125,6 @@ export default function Launch({ slug, shape, aim, over, head, headClass = '', l
   const panY = useTransform(t, pan(1));
   const nameO = useTransform(t, [0, 0.28], [1, 0]);
   const nameY = useTransform(t, [0, 0.28], [0, -72]);
-  const cueO = useTransform(t, [0, 0.08], [1, 0]);
 
   useEffect(() => {
     const img = stage.current.querySelector('.lv-film img');
@@ -143,7 +144,7 @@ export default function Launch({ slug, shape, aim, over, head, headClass = '', l
           <motion.div className="lv-film" style={{ clipPath: clip }}>
             <motion.div className="lv-film-in" style={{ scale: zoom, x: panX, y: panY }}>
               <Img src={film(slug, 'webp')} w={1200} h={1500} priority />
-              <Film src={film(slug, 'webm')} w={1200} h={1500} className="lv-film-v" onPlaying={(e) => e.currentTarget.classList.add('on')} />
+              <ModelFilm slug={slug} className="lv-film-v" />
             </motion.div>
             <motion.i className="lv-scrim" style={{ opacity: nameO }} aria-hidden="true" />
           </motion.div>
@@ -153,7 +154,7 @@ export default function Launch({ slug, shape, aim, over, head, headClass = '', l
             </h1>
             <p className="lv-name-d" data-on={ready ? '' : undefined}>{m.desc}</p>
             <p className="x-mtags static lv-name-t" data-on={ready ? '' : undefined}>{m.tags.map((x) => <span key={x}>{x}</span>)}</p>
-            {ask && <p className="lv-name-ask" data-on={ready ? '' : undefined}><Cta to={ask.to} id={ask.id + '-first'}>{ask.label}</Cta></p>}
+            {ask && <p className="lv-name-ask" data-on={ready ? '' : undefined}><Cta to={ask.to} id={ask.id}>{ask.label}</Cta></p>}
           </motion.div>
           {over && size && <div className="lv-over" data-on={on ? '' : undefined} aria-hidden="true">{over(size.W, size.H, size.wide)}</div>}
           <div className={'lv-head ' + headClass} data-on={on ? '' : undefined}>{head}</div>
@@ -167,7 +168,7 @@ export default function Launch({ slug, shape, aim, over, head, headClass = '', l
           >
             <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
           </motion.a>
-          <motion.span className="lv-cue" style={{ opacity: cueO }} aria-hidden="true"><i /></motion.span>
+          <FilmPause className="dark lv-pause" />
         </div>
       </section>
       <div className="x-model-body lv-body">{children}</div>

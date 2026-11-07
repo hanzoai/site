@@ -102,7 +102,7 @@ export default function ProviderShelf({ doc }) {
             <div className="xmf-seg" role="group" aria-label="Sort">
               {SORTS.map(([k, t]) => (
                 <button key={k} type="button" aria-pressed={sort === k} onClick={() => setSort(k)}>
-                  {sort === k && <motion.span layoutId="xmf-seg" className="xmf-seg-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+                  {sort === k && <motion.span layoutId="xmf-seg" className="xmf-seg-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
                   <span>{t}</span>
                 </button>
               ))}
@@ -111,7 +111,7 @@ export default function ProviderShelf({ doc }) {
               <div className="xmf-seg" role="group" aria-label="Modality">
                 {['all', ...mods].map((k) => (
                   <button key={k} type="button" aria-pressed={mod === k} onClick={() => setMod(k)}>
-                    {mod === k && <motion.span layoutId="xmf-mod" className="xmf-seg-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+                    {mod === k && <motion.span layoutId="xmf-mod" className="xmf-seg-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
                     <span>{k === 'all' ? 'All' : k}</span>
                   </button>
                 ))}
@@ -121,7 +121,7 @@ export default function ProviderShelf({ doc }) {
           <LayoutGroup>
             <ul className="xmf-grid">
               {[...shown, ...cards.filter((c) => hidden.has(c.href))].map((c) => (
-                <motion.li key={c.href} layout={anim ? 'position' : false} transition={{ type: 'spring', stiffness: 260, damping: 30 }} hidden={hidden.has(c.href)}>
+                <motion.li key={c.href} layout={anim ? 'position' : false} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} hidden={hidden.has(c.href)}>
                   <SpecCard to={c.href} title={c.name} desc={c.desc} tags={[...(c.ctx ? [c.ctx] : []), ...c.tags]} meta={c.rate ? <b>{`${money(c.rate.in)} → ${money(c.rate.out)}`}</b> : null} />
                 </motion.li>
               ))}
