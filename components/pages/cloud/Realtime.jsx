@@ -19,9 +19,11 @@
    tenant map, "Get Realtime" growing at the close. Tweens only (ease-emphasis 300 ms, ease-in-out 400–500 ms).
    States differ by fill, weight, dash and a shape, never by hue. Every word and link is Hanzo's; record contents,
    ids and org names are examples.
-   V2: three live clients under the two-line title beside the one ask; then the living graph of the stream with its
-   words beside it; the statement and the subscribe call; use cases on a drag rail; the handshake in the black room;
-   growth beside the tenant map; a calm card strip; the close. Deck greys, tweens only. */
+   V2: 8/10 three live clients under the two-line title beside the one ask; then the living graph of the stream with
+   its words beside it (rests spaced so no name touches another; phones keep the hub's link names in its panel); the
+   statement and the subscribe call close under it; use cases on a drag rail; the handshake in the black room; growth
+   beside the tenant map; the card drawn as three clients taking one record (the close keeps the one contour); the
+   close. Deck greys, tweens only. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useMotionValue, animate } from 'motion/react';
 import { A } from '../../kit';

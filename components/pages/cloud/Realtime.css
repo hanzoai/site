@@ -287,6 +287,14 @@
 .rt-open-acts { display: flex; flex-wrap: wrap; gap: 4px 28px; margin-top: 20px; }
 .rt-open .lx-rel-h, .rt-open .lx-rel-grid { grid-column: 2; }
 .rt-open .lx-rel-grid[data-n='1'] .lx-rel-art { height: 160px; }
+/* the card's own drawing (not a Sigil, so the close keeps the page's one contour): the hero's idea in three lines —
+   three clients' timelines and the same record landing on all three at once; hover carries it along together */
+.rt-open .lx-rel-sigil { display: none; }
+.rt-open .lx-rel-art { position: relative; }
+.rt-open .lx-rel-art::before { content: ''; position: absolute; inset: 0 24px; background: linear-gradient(#a3a3a3, #a3a3a3) 0 30% / 100% 1px no-repeat, linear-gradient(#a3a3a3, #a3a3a3) 0 50% / 100% 1px no-repeat, linear-gradient(#a3a3a3, #a3a3a3) 0 70% / 100% 1px no-repeat; }
+.rt-open .lx-rel-art::after { content: ''; position: absolute; left: 32%; top: calc(30% - 6px); width: 36px; height: 12px; border-radius: 6px; background: #0a0a0a; box-shadow: 0 calc(var(--rt-gap, 32px)) 0 #0a0a0a, 0 calc(var(--rt-gap, 32px) * 2) 0 #0a0a0a; transition: transform .5s cubic-bezier(.4, 0, .2, 1); }
+.rt-open .lx-rel-grid[data-n='1'] .lx-rel-art { --rt-gap: 32px; }
+@media (hover: hover) { .rt-open .lx-rel-card:hover .lx-rel-art::after { transform: translateX(72px); } }
 .rt .lx-close { padding-top: clamp(72px, 9vw, 150px); }
 /* text links answer a press too (the kit's lx-text has a hover but no press) */
 .rt .lx-text, .rt .lx-close-repo { transition: text-decoration-color .15s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); }
@@ -397,7 +405,7 @@
 .rt-frame { position: relative; background: #fff; border: 1px solid var(--line); border-radius: 24px; overflow: hidden; }
 
 /* the signature: what the stream gives you, as a living graph (8) beside the words of the part it lights (5) */
-.rt-gives.lx-sec { padding-top: clamp(40px, 5vw, 80px); }
+.rt-gives.lx-sec { padding-top: clamp(40px, 5vw, 80px); padding-bottom: clamp(40px, 5vw, 80px); }
 .rt-gives-h { display: grid; grid-template-columns: 8fr 5fr; gap: clamp(32px, 5vw, 72px); align-items: end; margin-bottom: clamp(24px, 3vw, 40px); }
 .rt-gives-b { display: grid; grid-template-columns: 8fr 5fr; gap: clamp(32px, 5vw, 72px); align-items: center; }
 .rt-graph-w { position: relative; border-radius: 24px; background: #f5f5f5; padding: 8px 12px 12px; }

@@ -66,7 +66,7 @@ Done here: `parity.py /realtime`: 138/138 text, 4/4 links. `c3pal.cjs`: 0 runs u
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: `taste.py` OK; `c3pal.cjs`: 0 computed colours off the deck at both widths. The stream map and tenant map are outlined (1px, radius 24), the wire a flat #171717 tile, the subscribe call white with one hairline, use cases flat #f5f5f5 at 24 with 8px inner art (concentric), nothing shadowed. Two-part sections sit on the 8/5 split, bottom-aligned. Chapter numbers sit under their titles (kit). Hero medium: three devices of three sizes receiving one record, unlike any neighbour.
+Done here: `taste.py` OK; `c3pal.cjs`: 0 computed colours off the deck at both widths. The graph tile is flat #f5f5f5 and the tenant map outlined (1px, radius 24), the wire a flat #171717 tile, the subscribe call white with one hairline, use cases flat #f5f5f5 at 24 with 8px inner art (concentric), nothing shadowed. Two-part sections sit on the 8/5 split, bottom-aligned. The graph names every node and, when lit, its links, each with a #f5f5f5 halo, and its rests keep every name clear of the others. Hero medium: three devices of three sizes receiving one record, unlike any neighbour.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading (n/a for disabled/loading: nothing waits on a network)
@@ -92,7 +92,7 @@ Done here: Signature `graph` (MOTION-MAP, 7 Nov), second screen: "What the strea
 - [x] Budgets met; nothing missing; alt on every image (n/a: no images)
 - [x] No dimmed or filtered photo; 4+ real visuals together where the page has them (n/a: Hanzo has no Realtime media)
 
-Done here: Objects are product UI (three clients, the subscribe call, the stream map, six use-case vignettes, realtime.js, the tenant map) and Sigils drawn from the page's own figures [30, 3, 2].
+Done here: Objects are product UI (three clients, the living graph, the subscribe call, six use-case vignettes, realtime.js, the tenant map). The "Open a stream" card no longer repeats the close's contour: its picture is the hero's idea drawn in three lines (three clients' timelines with the same record landing on all three at once, carried along together on hover), so the close's Sigil from [30, 3, 2] is the page's one contour.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -100,7 +100,7 @@ Done here: Objects are product UI (three clients, the subscribe call, the stream
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: `c3w320.cjs`: scrollWidth 320 at 320 wide; the ask's bottom at 259px at 375×667 (critic's measurement); 0 targets under 44px at 375 (the eight-tick rail uses the gutters; at 320 its ticks are 39px wide, listed in the request). The stream map sits in a fixed 38svh window so chapter words never move; `pinchk.cjs` 9/9 ok. Hover previews have tap paths (the figures and calls are buttons).
+Done here: No sideways scroll at 375 or 320 (check, 7 Nov); the ask's bottom at 259px at 375×667 (measured 7 Nov). The graph has its own tall layout on phones (360×620) with rests spaced so no name touches another; the stream hub's seven link names are left to its panel there, since they cannot fit round one hub at that width. Hover previews have tap paths (nodes are buttons; tapping one opens its words).
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -157,4 +157,4 @@ Done here: The product's states are designed in the demo: connected, a dropped n
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [x] Review read: `docs/review/realtime.md` (7/10 on the walk before this build). In this build the pinned chapters are shorter (42 per step, was 66: about 3,500px instead of 5,559), "Deletes are checked too" is the run's scale moment (the three clients grow 12% while it is the chapter), and the empty bands after the pin and under the growth list are cut. The close's ask is the shared `LaunchClose` (its magnetic pull is that component's; not claimed for this page). CLS after the change: 0.002 at 1470, 0.001 at 375 and 320.
 
-Done here: `realtime.hero` and `realtime.close` are set; `V2:` heads `Realtime.jsx` and the route (the builder's own line; the verdict that counts is `docs/review/realtime.md`). Gallery: `docs/gallery/realtime/d.mp4`, `d.jpg`, `p.jpg`. Checks at push: 200, parity 0 missing, taste OK, variety OK, unique OK, fs-audit clear, pinchk 9/9.
+Done here: `realtime.hero` and `realtime.close` are set; `V2:` heads `Realtime.jsx`. Review: `docs/review/realtime.md` marked Ready 7 Nov (slice D) after the graph's crowded hub was re-spaced, the gap under the graph closed and the card's art made the page's own. Gallery: `docs/gallery/realtime/` (d.jpg, p.jpg, d-graph.jpg, d.mp4). Checks: 0 console errors, no sideways scroll, parity 0 missing, taste OK, unique OK.
