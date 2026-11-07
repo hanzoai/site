@@ -143,8 +143,8 @@ function Graph({ lay, s, lit = -1, pulse = true, pick, upto = 5, cls = '' }) {
             </span>
             {/* received and returned share one box: the run (or a hover) swaps which one shows, so the card never grows */}
             <span className={'fl-node-o x-mono' + (done ? ' is-out' : '')}>
-              <span className="fl-io-r"><em>received</em>{n.r}</span>
-              <span className="fl-io-o"><em>returned</em>{n.o}</span>
+              <span className="fl-io-r"><em>received</em> {n.r}</span>
+              <span className="fl-io-o"><em>returned</em> {n.o}</span>
             </span>
             <i className="fl-node-bar" aria-hidden="true" />
           </Tag>

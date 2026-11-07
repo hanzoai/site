@@ -49,7 +49,7 @@ function Steps() {
           </li>
         ))}
       </ol>
-      <p className="flp-steps-k x-mono"><span>received</span><span>returned</span></p>
+      <p className="flp-steps-k x-mono"><span><i aria-hidden="true" />received</span><span><i aria-hidden="true" />returned</span></p>
       <p className="flp-steps-found"><i aria-hidden="true" />the node that caused it</p>
     </div>
   );
@@ -85,7 +85,7 @@ function Keys() {
   return (
     <div className="flp flp-keys">
       <div className="flp-keys-graph">
-        <span className="flp-keys-n" aria-hidden="true" /><span className="flp-keys-n" aria-hidden="true" /><span className="flp-keys-n" aria-hidden="true" />
+        {[1, 2, 3].map((k) => <span key={k} className="flp-keys-n x-mono" aria-hidden="true"><i />{two(k)}</span>)}
         <p className="flp-keys-ref x-mono">references by name</p>
       </div>
       <i className="flp-keys-arrow" aria-hidden="true" />

@@ -6,7 +6,13 @@
 // CTA: "Download Extension" (github.com/hanzoai/extension/releases/latest): the hero's one solid with data-thumb, repeated by the closing band
 // Metric: extension_download (data-cta extension-download, extension-download-end)
 /* Hanzo Extension (Launch: the side panel leads).
-   V2: 8/10 round 4 (critic round 2, 6/10 fixes): the browser frame lives in the hero only (with a 2.5° pointer tilt; Firefox now draws its own chrome) and its panel text never reaches the 01–05 steps at 1470, 375 or 320; "Read a page as text" types the page's words out on graphite; the browser list's aside is one rolling size figure with hairline size bars, your browser's row is the one filled ask and the others are links that show their size on hover; each use has its own object (the page ringed with its console, three logins unlocking, the request's own hops as a trace, a form stopping where it got stuck), no placeholder bars; the zip list shows once; six distinct hop captions with passed/current/ahead dots; 26px section heads; the download's pressed state clears in 300 ms; dead gaps closed
+   V2: 8/10 round 5 (critic round 3, 6/10 fixes): the path runs down a left rail up to 599px (no colliding labels); the
+   headlines are a page-local CSS line mask and the window stack renders its final slots from the server, so a
+   reduced-motion load hydrates clean and "How it works" always shows; the hub keeps its full height on phones; your
+   browser's build row is an ink-outlined ask (the header holds the one solid); only Hanzo's words (stops named as its
+   sentences write them, uses built from their own sentences, no invented captions, the spec sheet's made-up labels gone);
+   no size beside "Safari & Others"; "Get started" folds into one two-part card; text links draw their underline.
+   Round 4: the browser frame lives in the hero only (with a 2.5° pointer tilt; Firefox now draws its own chrome) and its panel text never reaches the 01–05 steps at 1470, 375 or 320; "Read a page as text" types the page's words out on graphite; the browser list's aside is one rolling size figure with hairline size bars, your browser's row is the one filled ask and the others are links that show their size on hover; each use has its own object (the page ringed with its console, three logins unlocking, the request's own hops as a trace, a form stopping where it got stuck), no placeholder bars; the zip list shows once; six distinct hop captions with passed/current/ahead dots; 26px section heads; the download's pressed state clears in 300 ms; dead gaps closed
    Motion: signature = the stack and its panel (a step loop that stops off screen). Supporting: pinned chapters with
    wipes (components/v2/AppScenes), the request travelling the path, line-masked headlines.
    Greys only; every word and link is Hanzo's; the pages inside the windows are Hanzo's own pictures. */
