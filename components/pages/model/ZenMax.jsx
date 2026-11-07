@@ -1,13 +1,14 @@
 'use client';
 /* Zen 6 Max (/zen/zen6-max): a model launch read like a product film, one idea per screen.
-   Stage: the Zen film opens full screen under the name and settles into its 28px card as you scroll.
+   Stage: the Zen film opens full width under the header and the name, then settles into its 28px card as you scroll.
+   Not only scroll: the film plays, the count runs, the asks lean to the pointer, the rack answers its switches.
    Signature: the rack builds itself, chapter by chapter. The black rack pins while four chapters pass beside it:
    four 8-GPU servers slide in and the GPU memory counts to Hanzo's own total (9,216 GB on B300, 5,760 GB on B200);
    qualification brackets the four; the GPUs split into one pool per specialist; a twin rack lands across a failure
    domain. Switch the server and the rack reloads.
    Beyond: B300 against B200 in one spec sheet, the rows Hanzo lists for each server side by side with the four-server
    total, so the server choice reads at a glance (and the rack above follows the column you pick).
-V2: 8/10 film Stage hero settles into a card; the rack as four pinned scroll chapters; B300 vs B200 spec sheet with a drawer; one CTA
+V2: 8/10 film Stage hero settles into a card; the rack as four pinned scroll chapters; B300 vs B200 spec sheet with a drawer; greys only, one solid ask per screen, no kicker above a headline
 */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
@@ -33,24 +34,23 @@ function Stage() {
   const box = useRef(null);
   const { scrollYProgress: p } = useScroll({ target: box, offset: ['start start', 'end end'] });
   const k = useTransform(p, [0, 0.62], [1, 0], { clamp: true }); // 1 = full screen, 0 = settled
-  const ke = useTransform(k, (v) => v * (2 - v)); // eased out; ZenMax.css turns it into translate and scale (2.74 covers the screen from a 38vw card)
-  const show = useTransform(k, [0.55, 0.1], [0, 1]);
-  const lift = useTransform(k, [0.55, 0.1], [24, 0]);
+  const ke = useTransform(k, (v) => v * (2 - v)); // eased out; ZenMax.css turns it into translate and scale 
+  const show = useTransform(k, [0.32, 0.06], [0, 1]); // only once the card has cleared the text (no overlap at 1470x801)
+  const lift = useTransform(k, [0.32, 0.06], [24, 0]);
   return (
     <section className="zx-stage" ref={box} aria-labelledby="zx-h">
       <div className="zx-stage-pin">
-        <motion.div className="zx-card" data-room="dark" style={{ '--k': ke }}>
+        <motion.div className="zx-card" style={{ '--k': ke }}>
           <video className="zx-film" src={media('zen', 'webm')} poster={media('zen', 'webp')} autoPlay muted loop playsInline aria-hidden="true" />
         </motion.div>
         <div className="zx-w zx-stage-t">
-          <p className="zx-kick zx-blend"><A to="/zen">Zen</A></p>
           <div className="zx-stage-b">
             <h1 id="zx-h" className="zx-name zx-blend" data-morph-target>Zen 6 Max</h1>
             <motion.div className="zx-stage-more" style={{ opacity: show, y: lift }}>
               <p className="zx-sub">Zen 6 Max. Built for the hardest work: deep reasoning, long context, and code.</p>
               <div className="zx-acts">
                 <Magnetic><A to="/contact-sales" className="x-btn solid zx-btn" data-thumb="Talk to sales">Talk to sales</A></Magnetic>
-                <A to="/enterprise" className="x-btn zx-btn">Run it on your own GPUs</A>
+                <More to="/enterprise">Run it on your own GPUs</More>
               </div>
             </motion.div>
           </div>
@@ -132,8 +132,8 @@ function Chapters({ k, setK }) {
   return (
     <section className="zx-dep" aria-labelledby="zx-dep-h">
       <div className="zx-w zx-dep-head">
-        <p className="zx-kick">Enterprise deployment</p>
         <h2 id="zx-dep-h" className="zx-h2">On your own premises</h2>
+        <p className="zx-kick zx-under">Enterprise deployment</p>
       </div>
       <div className="zx-w zx-ch">
         <div className="zx-steps">
@@ -144,7 +144,6 @@ function Chapters({ k, setK }) {
           </div>
           {PLAN.map(([t, x], i) => (
             <div key={t} className="zx-step" data-step={i + 1} ref={(el) => { steps.current[i + 1] = el; }} data-on={at === i + 1 || undefined}>
-              {i === 0 && <h3 className="zx-kick">Planning range</h3>}
               <h4 className="zx-step-t">{t}</h4>
               <p className="zx-body">{x}</p>
             </div>
@@ -161,7 +160,8 @@ function Chapters({ k, setK }) {
             <Rack k={k} plan={plan} q={at === 1} on={on} calm={calm} />
             <div className="zx-foot">
               <p className="zx-total"><Count key={k} to={DGX[k].total} suffix=" GB" className="zx-num" /><span>GPU memory in four {DGX[k].chip} servers</span></p>
-              <div className="zx-plan" role="group" aria-label="Planning range">
+              <div className="zx-plan" role="group" aria-labelledby="zx-plan-l">
+                <h3 id="zx-plan-l" className="zx-plan-l">Planning range</h3>
                 {PLAN.map(([t], i) => <button key={t} type="button" aria-pressed={plan === i && at > 0} className="zx-chip sm" onClick={() => go(i)}>{t}</button>)}
               </div>
             </div>

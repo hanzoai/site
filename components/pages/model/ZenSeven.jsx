@@ -2,10 +2,11 @@
 /* Zen 7 (/zen/7): the next generation, not yet published. A teaser in three calm screens.
    Signature: the 7 rises. A giant 7, Zen 7's own living field showing only through the numeral (the weights are there,
    not yet out), sweeps in from the bottom right of the first screen and settles beside the title as you scroll
-   (scale and position only).
+   (scale and position only). Not only scroll: the title cuts in on arrival, the field drifts and bends to the pointer,
+   the lineage draws itself and its stations spring in, and the asks lean to the pointer.
    Beyond: the lineage line. Zen 6's own facts on one end, Zen 7 on the other, and the three things Hanzo says Zen 7
    expands landing on the line as it draws, so the step from one to the other reads at a glance.
-V2: 8/10 Stage numeral that rises and settles on scroll, line-masked title, drawn lineage line, one dark room for access
+V2: 8/10 Stage numeral that rises and settles on scroll, line-masked title, drawn lineage line, one dark room for access; no kicker over the title (its words are the title)
 */
 import { useRef } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
@@ -37,7 +38,6 @@ function Stage() {
           </svg>
         </motion.div>
         <div className="z7-w z7-copy">
-          <p className="z7-kick">Zen 7</p>
           <h1 id="z7-h" className="z7-h" data-morph-target>
             {LINES.map((l, i) => (
               <span key={l} className="x-line">

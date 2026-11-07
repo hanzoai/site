@@ -1,13 +1,12 @@
 /* Zen 7 (z7-) v2: the 7 that rises and settles, the lineage line, the research room (the page's one dark room) */
 .z7-w { width: min(100% - 48px, 1440px); margin-inline: auto; }
-.z7-kick { margin: 0 0 20px; font: 500 13px/1.3 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
 .z7-lede { margin: 32px 0 0; max-width: 28ch; font-size: clamp(19px, 1.7vw, 24px); line-height: 1.38; color: var(--soft); text-wrap: pretty; }
 .z7-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 28px; margin-top: 36px; }
 .z7-acts .x-arrow { min-height: 44px; }
 .z7-btn { height: 52px; padding: 0 28px; font-size: 16px; }
 
 /* Stage: the numeral's settled box is fixed in viewport units; --k (1 → 0) carries it up from the bottom right */
-.z7-stage { position: relative; height: 210svh; }
+.z7-stage { position: relative; height: 210svh; margin-top: -60px; } /* under the 60px header: pinned from the first frame, nothing jumps */
 .z7-pin { position: sticky; top: 0; height: 100svh; overflow: hidden; }
 .z7-art {
   --k: 1; --gap: max(4vw, calc((100vw - 1440px) / 2 + 24px));
@@ -17,8 +16,9 @@
 .z7-sig { position: absolute; inset: 0; width: 100%; height: 100%; color: rgba(255, 255, 255, .85); }
 .z7-mask { position: absolute; inset: 0; width: 100%; height: 100%; }
 .z7-glyph { font: 600 820px/1 var(--sans); letter-spacing: -.06em; fill: #000; }
-.z7-copy { position: relative; padding-top: 16svh; }
-.z7-h { margin: 0; font-size: clamp(56px, 7.4vw, 112px); font-weight: 600; line-height: .92; letter-spacing: -.05em; }
+.z7-copy { position: relative; padding-top: 13svh; }
+.z7-h { margin: 0; font-size: min(clamp(56px, 7.4vw, 112px), 12.5svh); font-weight: 600; line-height: .92; letter-spacing: -.05em; }
+.z7-h .x-line { padding: .03em 0 .07em; } /* line pitch 1.02: display type reads like a logo */
 
 /* Beyond: the lineage line */
 .z7-brings { padding: clamp(120px, 15vw, 240px) 0; }
@@ -53,7 +53,7 @@ a.z7-node:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 
 @media (max-width: 900px) {
   .z7-w { width: min(100% - 32px, 1440px); }
-  .z7-stage { height: auto; }
+  .z7-stage { height: auto; margin-top: 0; }
   .z7-pin { position: relative; height: auto; overflow: visible; display: flex; flex-direction: column; }
   .z7-copy { padding-top: 104px; }
   .z7-h { font-size: clamp(48px, 14vw, 56px); }
