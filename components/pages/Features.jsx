@@ -99,7 +99,7 @@ function Instrument() {
       </div>
       <form className="xft-find" role="search" onSubmit={(e) => { e.preventDefault(); if (hits?.length) press(hits[0], true); }}>
         <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><circle cx="9" cy="9" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.7" /><path d="m13.2 13.2 3.6 3.6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></svg>
-        <input value={q} onChange={(e) => { setMine(true); setQ(e.target.value); }} aria-label="Find a feature" maxLength={80} />
+        <input value={q} onChange={(e) => { setMine(true); setQ(e.target.value); }} aria-label="Find a feature" placeholder="Find a feature" maxLength={80} />
         <span className="xft-find-n x-mono" aria-live="polite">{hits ? `${hits.length} of 10` : ''}</span>
       </form>
       <div className="xft-board">
@@ -165,7 +165,7 @@ function Product({ gi }) {
   }, [row, seen, calm, mine, paused, fs.length]);
   const pick = (i) => { setMine(true); setRow(i); };
   return (
-    <section ref={ref} className={'xft-prod p' + gi} aria-labelledby={'xft-p' + gi}>
+    <section ref={ref} className={'xft-prod p' + gi} aria-labelledby={'xft-p' + gi} style={{ '--r': row }} {...(gi === 1 ? { 'data-room': 'dark' } : {})}>
       <div className="w2-wrap xft-prod-in">
         <div className="xft-prod-w">
           <h2 id={'xft-p' + gi} className="w2-headline xft-prod-h"><A to={TO[gi]}>{g}</A></h2>
@@ -184,7 +184,7 @@ function Product({ gi }) {
         <div className="xft-film-w">
           <A to={TO[gi]} className="xft-film" tabIndex={-1} aria-hidden="true">
             <ModelFilm slug={FILMS[gi]} play={seen && !paused} />
-            <span className="xft-film-cap"><b data-morph="">{g}</b><span className="x-mono">{pad(row + 1)} / {pad(fs.length)}</span><i>→</i></span>
+            <span className="xft-film-cap"><span className="x-mono">{pad(row + 1)} / {pad(fs.length)}</span><b className="xft-film-t">{fs[row][0]}</b><i>→</i></span>
             <span className="xft-film-bar">{fs.map((f, i) => <i key={i} className={row === i ? 'on' : i < row ? 'done' : ''} />)}</span>
           </A>
           {gi === 0 && <span className="xft-film-p"><FilmPause className="dark" /></span>}
@@ -199,7 +199,7 @@ function Band() {
   return (
     <section className="w2-sec tight xft-band" aria-label="Open Chat">
       <div className="w2-wrap xft-band-in">
-        <div className="xft-band-cards" aria-hidden="true">{GROUPS.map(([g], gi) => <A key={g} to={TO[gi]} tabIndex={-1} className={'xft-bc b' + gi}><ModelFilm slug={FILMS[gi]} play={false} /><b>{g}</b></A>)}</div>
+        <div className="xft-band-cards">{GROUPS.map(([g], gi) => <A key={g} to={TO[gi]} className={'xft-bc b' + gi}><ModelFilm slug={FILMS[gi]} play={false} /><b>{g}</b></A>)}</div>
         <div className="xft-acts">
           <Magnetic strength={0.25}><A to="/chat?skip=login" className="w2-cta" data-thumb="Open Chat" data-cta="features.close">Open Chat <i aria-hidden="true">→</i></A></Magnetic>
           <A to="/dev" className="xft-tlink">Launch Dev</A>

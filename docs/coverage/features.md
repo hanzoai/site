@@ -27,9 +27,9 @@ Done here: see the parity note above; page links 2/2.
 - [x] Sells in 5 s; a key presses within 2.1 s and the display changes
 - [x] h1 CSS cut-in painted by the server; "Platform Features" sits below the h1
 - [x] JS off: one feature shows on the display (no overlap)
-- [x] Hero keyboard → three product rooms (rows beside Hanzo's films, the second room flipped and on quiet grey) → closing band
+- [x] Hero keyboard → three product rooms, each its own layout (Chat: rows beside the film; Dev: a full-bleed black room with the film as its ground; Design & Cloud: a wide film over two side-by-side rows) → closing band
 - [x] Ends on the band (three film cards and the one ask), then footer
-- [x] Each room's film card and heading open its product (/chat, /dev, /design); the card's title carries `data-morph`
+- [x] Each room's film card and heading open its product (/chat, /dev, /design) as a page transition; no `data-morph` (its title would not land on those pages' h1s)
 
 Done here: the display and the top row of keys sit on the first screen at 1470×801; on phone the display is sticky above the board, so a tapped key answers in view.
 
@@ -82,7 +82,7 @@ Done here: hovering a key with a mouse previews its feature on the display.
 - [x] Reduced motion: the keyboard rests; no springs
 - [x] n/a sound (shared kit)
 
-Done here: in each product room one feature row opens at a time (stepping every 2.6 s while in view; hover, tap or focus takes over), and the film card's counter and progress bar answer it. The pinned chapters and their word mocks are gone.
+Done here: in each product room one feature row opens at a time (stepping every 2.6 s while in view; hover, tap or focus takes over), and the film answers it: it moves to a new crop (scale and origin, 500 ms ease-in-out) and its caption names the open feature, with the counter and progress bar. The pinned chapters and their word mocks are gone.
 
 ## 10. Media
 - [x] Hanzo's own model films through the shared `ModelFilm` (poster first, plays only in view, never under reduced motion)
