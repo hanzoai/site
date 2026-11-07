@@ -1,57 +1,57 @@
 'use client';
-/* A customer story (/customers/<launch>, one template), told like a magazine feature. The launch's own picture fills a
-   dark first screen and settles into a framed plate as you leave it; the lede reads as one large statement; the
-   headline figures stand huge on a hairline rule; then each chapter of the campaign is one full screen, and the next
-   chapter wipes up over the last like a sheet, bringing its own picture, its own tint and its own words, while a reel
-   counts 01 / 06. The gallery is an asymmetric wall of the campaign's frames, and the page ends on the next launch,
-   a card that opens into its page. Every word, figure and picture is Hanzo's. The UI has no hue of its own (greys,
-   silver, ink): colour comes only from the launch's own pictures; each launch carries its own Sigil seed. When a
-   picture cannot load, its frame shows Hanzo's own caption on a silver plate instead. One solid ask, Hanzo's
-   "The original case study (PDF)", in the stage and at the close; everything else is a text link.
-   Signature: the campaign as scene changes. Chapters are 100svh scenes; each new one wipes up over the last with a
-   scroll-scrubbed clip-path, its picture pushing in and the outgoing words lifting away (phone: each scene's picture
-   wipes open as it arrives).
-   Beyond: where each figure comes from. Press a headline figure and the page travels to the chapter that states it and
-   marks the words; a figure the page never states opens Hanzo's original case study (PDF) instead.
-   Motion is not only scroll: the name cuts in, the Sigil drifts by itself and leans to the pointer, each figure's own
-   characters rise into place on arrival (only Hanzo's figure is ever shown, never an in-between number), a pressed
-   figure travels and marks its words, tiles wipe open on arrival and answer the hover.
-   V2: 8/10 editorial feature: stage hero with one ask (Cta thumb), statement lede, Hanzo's figures rising char by char (never an in-between number), chapters as wiping 100svh scenes, media wall, next-launch card; no UI hues; reduced motion unbinds the scroll */
-// Signature: the campaign as scene changes: each chapter a 100svh scene that wipes up over the last (scrubbed clip-path), picture pushing in, reel counting
+/* A customer story (/customers/<launch>, one template), told like a magazine feature on Hanzo's deck. The launch's own
+   picture fills a black room that enters as a rounded card inside the gutters and opens to full width; the name cuts in
+   at 84px, the moment of the first screen, and settles to the 52px rest as you leave. The lede reads at 21px beside the
+   figures, which stand at 64px in Air weight on a hairline rule. Then each chapter of the campaign is one full screen,
+   and the next chapter wipes up over the last like a sheet, bringing its own picture and words, numbered "02 / 06" in
+   its own caption. The campaign's frames close on an asymmetric wall, and the page ends on Hanzo's closing links and the
+   next launch, a card that opens into its page. Every word, figure and picture is Hanzo's. No UI hue (the deck's
+   neutrals): colour comes only from the launch's pictures; each launch carries its own Sigil seed. When a picture cannot
+   load, its frame shows Hanzo's caption on a silver plate. Nothing floats over the content.
+   Motion is not only scroll: the room opens and the name cuts in on arrival, the Sigil drifts by itself and leans to the
+   pointer, each figure's own characters rise into place (only Hanzo's figure is ever drawn, never an in-between
+   number), a pressed figure travels to its sentence and marks it, the wall's frames wipe open on arrival. Deck motion
+   tokens only (90/150/300/400/500 ms, ease-emphasis), no springs.
+   V2: 8/10 on the deck: black room opening from a card, 84→52 name, 21px lede and 64px Air figures (never an in-between number), chapters as wiping 100svh scenes, frames wall, next-launch card; kit Img and Cta; nothing floating */
+// Signature: the campaign as scene changes: each chapter a 100svh scene that wipes up over the last (scrubbed clip-path), its picture pushing in
 // Beyond: where each figure comes from: press a headline figure, the page travels to the sentence that states it and marks it, else the case study PDF
 // Persona: enterprise buyer or founder checking that Hanzo has delivered results for others (Buy journey)
-// Goal: proof of a past launch, every headline figure traceable to its sentence or the PDF; metric contact_sales_submit (journey level, no event wired yet)
-// CTA: "The original case study (PDF)", Hanzo's label, the one solid ask in the stage and at the close; "Every launch →" stays a text link
+// Goal: proof of a past launch, every headline figure traceable to its sentence or the PDF
+// CTA: "The original case study (PDF)", Hanzo's label: data-cta customers.hero (thumb) and customers.close; "Every launch →" stays a text link
+// Metric: contact_sales_submit (journey level)
 import { useEffect, useRef, useState } from 'react';
 import { motion, useMotionValueEvent, useScroll, useTransform } from 'motion/react';
-import { EASE, useCalm } from '../../ui';
-import { A, Cta } from '../../kit';
+import { useCalm } from '../../ui';
+import { A, Cta, Img } from '../../kit';
 import Sigil from '../../Sigil';
 import { useArrival } from '../doorway';
 import './Story.css';
 
+const EM = [0.16, 1, 0.3, 1]; // the deck's ease-emphasis
+const EASE_IO = [0.4, 0, 0.2, 1]; // the deck's ease-in-out: things that move and stay
 const c01 = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
 // with scripts off, everything that starts hidden or offset for its entrance is shown, and the chapters stand in a column
-const NOJS = '.xst .x-line-in,.xst-cover-in,.xst-scene-t,.xst-scene-pic img,.xst-shot{transform:none!important;opacity:1!important}'
-  + '.xst-scenes{height:auto!important}.xst-stage{position:relative!important;height:auto!important;overflow:visible!important}'
-  + '.xst-scene{position:relative!important;inset:auto!important;display:block!important;clip-path:none!important;padding:clamp(96px,10vw,160px) 0!important}'
-  + '.xst-scene-pic,.xst-tile .xst-pic{clip-path:none!important}.xst-reel{display:none!important}';
-const calm = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
-const travel = (y) => { if (window.__lenis) window.__lenis.scrollTo(y, { duration: 1.4 }); else window.scrollTo({ top: y, behavior: calm() ? 'auto' : 'smooth' }); };
+const NOJS = '.xst .x-line-in,.xst-h1-s,.xst-scene-t,.xst-scene-pic img,.xst-shot{transform:none!important;opacity:1!important}'
+  + '.xst-cover{clip-path:none!important}.xst-scenes{height:auto!important}.xst-stage{position:relative!important;height:auto!important;overflow:visible!important}'
+  + '.xst-scene{position:relative!important;inset:auto!important;display:block!important;clip-path:none!important;padding:clamp(72px,11vw,188px) 0!important}'
+  + '.xst-scene-pic,.xst-tile .xst-pic{clip-path:none!important}';
+const calmNow = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+const travel = (y) => { if (window.__lenis) window.__lenis.scrollTo(y, { duration: 1.2 }); else window.scrollTo({ top: y, behavior: calmNow() ? 'auto' : 'smooth' }); };
 const marked = (text, m) => {
   if (!m || !text.includes(m)) return text;
   const i = text.indexOf(m);
   return <>{text.slice(0, i)}<mark className="xst-mark">{m}</mark>{text.slice(i + m.length)}</>;
 };
 
-/* a picture over its own caption plate: if the file cannot load, the plate (Hanzo's caption on the accent) is what shows */
+/* a picture (kit Img, its box reserved) over its own caption plate: if the file cannot load, the plate is what shows
+   (quiet: the caption already sits under the frame, so the plate stays plain) */
 const BOX = { hero: [1920, 1080], scene: [1200, 1500], tile: [1200, 1500], shot: [1600, 1000], next: [1600, 900] };
-function Pic({ img, className = '', eager, style, n, box = 'tile' }) {
+function Pic({ img, className = '', priority, style, n, box = 'tile', quiet }) {
   const [w, h] = BOX[box];
   return (
     <span className={'xst-pic ' + className} data-plate>
-      <span className="xst-plate" aria-hidden="true">{n && <b className="x-mono">{n}</b>}<span>{img.alt}</span></span>
-      <motion.img src={img.src} alt={img.alt} width={w} height={h} loading={eager ? 'eager' : 'lazy'} decoding="async" style={style} {...(eager ? { fetchPriority: 'high' } : {})} />
+      <span className="xst-plate" aria-hidden="true">{n && <b className="x-mono">{n}</b>}{!quiet && <span>{img.alt}</span>}</span>
+      <motion.span className="xst-pic-in" style={style}><Img src={img.src} alt={img.alt} w={w} h={h} priority={priority} /></motion.span>
     </span>
   );
 }
@@ -76,14 +76,12 @@ function useMissing(root) {
 
 function Hero({ doc, ask }) {
   const box = useRef(null);
-  const calm = useCalm(); // reduced motion: nothing is tied to the scroll, the stage simply stands
+  const calm = useCalm(); // reduced motion: the room is simply open and nothing follows the scroll
   const [ready, setReady] = useState(false);
-  const [bare, setBare] = useState(false); // the launch's picture could not load: the contour and Hanzo's caption carry the stage
+  const [bare, setBare] = useState(false); // the launch's picture could not load: the contour and Hanzo's caption carry the room
   const { scrollYProgress: p } = useScroll({ target: box, offset: ['start start', 'end start'] });
-  // the stage settles: the full-bleed picture insets into a framed plate with 28px corners, the name drifts up slower
-  const frame = useTransform(p, [0, 0.9], ['inset(0% 0% 0% 0% round 0px)', 'inset(7% 4% 12% 4% round 28px)']);
-  const sink = useTransform(p, [0, 1], [1, 0.92]);
-  const rise = useTransform(p, [0, 1], [0, -120]);
+  // the name is the moment at 84px, then settles to the 52px rest as the room is left behind
+  const settle = useTransform(p, [0, 0.55], [1, 52 / 84]);
   const nums = doc.figures.map((f) => parseFloat(f.value.replace(/[^\d.]/g, ''))).filter(Number.isFinite);
   useEffect(() => {
     const el = box.current.querySelector('.xst-cover img');
@@ -94,25 +92,27 @@ function Hero({ doc, ask }) {
   }, []);
   return (
     <section ref={box} className="xst-hero" data-room="dark" data-hero={doc.slug} data-ready={ready ? '' : undefined} data-bare={bare || undefined} aria-labelledby="xst-h1">
-      <motion.div className="xst-cover" data-morph-target style={calm ? undefined : { clipPath: frame, scale: sink }}>
-        {doc.cover && (
-          <motion.span className="xst-cover-in" initial={{ scale: 1.14 }} animate={{ scale: 1 }} transition={{ duration: 2.2, ease: EASE }}>
-            <Pic img={doc.cover} eager box="hero" />
-          </motion.span>
-        )}
+      {/* the black room enters as a rounded card inside the gutters and opens to full width */}
+      <motion.div className="xst-cover" data-morph-target initial={{ clipPath: 'inset(0px 32px 0px 32px round 24px)' }} animate={{ clipPath: 'inset(0px 0px 0px 0px round 0px)' }} transition={{ duration: 0.8, ease: EASE_IO, delay: 0.1 }}>
+        {doc.cover && <span className="xst-cover-in"><Pic img={doc.cover} priority box="hero" /></span>}
         <span className="xst-scrim" aria-hidden="true" />
         <Sigil seed={doc.route} data={nums} className="xst-sigil" />
       </motion.div>
-      <A to={doc.back.href} className="xst-back">{doc.back.label}</A>
-      <motion.div className="xst-hero-t" style={calm ? undefined : { y: rise }}>
-        <h1 id="xst-h1" className="xst-h1">
-          <span className="x-line"><motion.span className="x-line-in" initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.15, ease: EASE, delay: 0.2 }}>{doc.name}</motion.span></span>
-        </h1>
-        <div className="xst-hero-b">
-          <p className="xst-kick x-mono"><span>{doc.year}</span><i aria-hidden="true" /><span>{doc.kind}</span></p>
-          {ask && <Cta to={ask.href} id="customers-case-study" size="lg" thumb className="xst-ask">{ask.label}</Cta>}
+      <div className="xst-hero-in">
+        <nav className="xst-crumb" aria-label="Breadcrumb">
+          <ol>
+            <li><A to={doc.back.href}>{doc.back.label}</A></li>
+            <li aria-current="page">{doc.name}</li>
+          </ol>
+        </nav>
+        <div className="xst-hero-t">
+          <motion.h1 id="xst-h1" className="xst-h1" style={calm ? undefined : { scale: settle }}>
+            <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 0.7, ease: EM, delay: 0.2 }}>{doc.name}</motion.span></span>
+          </motion.h1>
+          <p className="xst-meta x-mono"><span>{doc.year}</span><i aria-hidden="true" /><span>{doc.kind}</span></p>
+          {ask && <Cta to={ask.href} id="customers.hero" size="lg" thumb className="xst-ask">{ask.label}</Cta>}
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }
@@ -144,20 +144,21 @@ function Figures({ doc, mark, onPress }) {
 }
 
 /* one chapter: a full scene that wipes up over the one before it, then lifts its words away as the next arrives */
-function Scene({ s, i, n, p, mark, calm }) {
+function Scene({ s, i, n, p, mark, calm, last }) {
   const t = (v) => v * (n - 1);
   const enter = (v) => (i ? c01((t(v) - (i - 0.8)) / 0.55) : 1);
   const leave = (v) => c01((t(v) - (i + 0.2)) / 0.55);
   const clip = useTransform(p, (v) => `inset(${((1 - enter(v)) * 100).toFixed(2)}% 0% 0% 0%)`);
-  const words = useTransform(p, (v) => (1 - enter(v)) * 90 - leave(v) * 70);
+  const words = useTransform(p, (v) => (1 - enter(v)) * 72 - leave(v) * 44);
   const fade = useTransform(p, (v) => 1 - leave(v) * 0.85);
-  const push = useTransform(p, (v) => 1 + (1 - enter(v)) * 0.16 + leave(v) * 0.04);
+  const push = useTransform(p, (v) => 1 + (1 - enter(v)) * 0.12 + leave(v) * 0.03);
   return (
     <motion.article className={'xst-scene' + (s.img ? '' : ' bare')} id={'xst-step-' + i} data-step={i} data-tone={i % 2 ? 'b' : 'a'} style={i && !calm ? { clipPath: clip } : undefined} aria-labelledby={'xst-st-' + i}>
       <div className="xst-g xst-scene-g">
         <motion.div className="xst-scene-t" style={calm ? undefined : { y: words, opacity: fade }}>
           <h3 id={'xst-st-' + i} className="xst-h3">{s.title}</h3>
           <p className="xst-t">{marked(s.text, mark)}</p>
+          <p className="xst-n x-mono" aria-hidden="true">{s.n} / {last}</p>
         </motion.div>
         {s.img && <Pic img={s.img} className="xst-scene-pic" n={s.n} style={calm ? undefined : { scale: push }} box="scene" />}
       </div>
@@ -167,19 +168,15 @@ function Scene({ s, i, n, p, mark, calm }) {
 
 function Chapters({ how, mark, box }) {
   const n = how.steps.length;
-  const [at, setAt] = useState(0);
   const { scrollYProgress: p } = useScroll({ target: box, offset: ['start start', 'end end'] });
   const calm = useCalm();
-  useMotionValueEvent(p, 'change', (v) => { const k = Math.max(0, Math.min(n - 1, Math.floor(v * (n - 1) + 0.45))); setAt(k); });
+  const [, setAt] = useState(0);
+  useMotionValueEvent(p, 'change', (v) => setAt(Math.max(0, Math.min(n - 1, Math.floor(v * (n - 1) + 0.45)))));
   const last = how.steps[n - 1].n;
   return (
     <div className="xst-scenes" ref={box} style={{ '--n': n }}>
       <div className="xst-stage">
-        {how.steps.map((s, i) => <Scene key={s.n} s={s} i={i} n={n} p={p} mark={mark} calm={calm} />)}
-        <div className="xst-reel x-mono" aria-hidden="true">
-          <span className="xst-reel-n"><b key={at}>{how.steps[at].n}</b> / {last}</span>
-          <span className="xst-reel-bar">{how.steps.map((s, i) => <i key={s.n} data-on={i <= at || undefined} />)}</span>
-        </div>
+        {how.steps.map((s, i) => <Scene key={s.n} s={s} i={i} n={n} p={p} mark={mark} calm={calm} last={last} />)}
       </div>
     </div>
   );
@@ -191,7 +188,7 @@ function Wall({ g }) {
       {g.imgs.map((p, i) => (
         <li key={p.src} className="xst-tile" style={{ '--i': i }}>
           <figure>
-            <Pic img={p} />
+            <Pic img={p} quiet />
             <figcaption>{p.alt}</figcaption>
           </figure>
         </li>
@@ -207,7 +204,7 @@ export default function Story({ doc, next }) {
   const [mark, setMark] = useState(null);
   const ask = doc.links[0]; // Hanzo's own first action on the page: the original case study
   useMissing(root);
-  // scenes and wall tiles that have arrived (phones and the media wall wipe open once, on arrival)
+  // what has arrived: figures rise, frames wipe open, phone scenes open their picture (once each)
   useEffect(() => {
     const els = [...root.current.querySelectorAll('.xst-scene, .xst-tile, .xst-shot, .xst-fig')];
     const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.setAttribute('data-in', ''); io.unobserve(e.target); } }), { rootMargin: '0px 0px -18% 0px' });
@@ -256,7 +253,7 @@ export default function Story({ doc, next }) {
         <section className="xst-how" aria-labelledby="xst-how-h">
           <div className="xst-g xst-how-head">
             <h2 id="xst-how-h" className="xst-h2">{doc.how.h2}</h2>
-            <p className="xst-kicker x-mono">{doc.how.steps[0].n} – {doc.how.steps[doc.how.steps.length - 1].n}</p>
+            <p className="xst-cap x-mono">{doc.how.steps[0].n} – {doc.how.steps[doc.how.steps.length - 1].n}</p>
           </div>
           <Chapters how={doc.how} mark={mark} box={scenes} />
         </section>
@@ -273,7 +270,7 @@ export default function Story({ doc, next }) {
         <div className="xst-g xst-end-g">
           <div className="xst-end-a">
             {doc.links.map((l, i) => (i === 0
-              ? <Cta key={l.href} to={l.href} id="customers-case-study-close" size="lg" className="xst-pdf">{l.label}</Cta>
+              ? <Cta key={l.href} to={l.href} id="customers.close" size="lg" className="xst-pdf">{l.label}</Cta>
               : <A key={l.href} to={l.href} className="xst-all">{l.label}</A>))}
           </div>
           {next && (
@@ -281,10 +278,10 @@ export default function Story({ doc, next }) {
               <span className="xst-next-pic" data-morph>{next.cover && <Pic img={next.cover} box="next" />}</span>
               <span className="xst-next-t">
                 <span className="xst-next-n">{next.name}</span>
-                <span className="xst-kicker x-mono">{next.year} · {next.kind}</span>
+                <span className="xst-cap x-mono">{next.year} · {next.kind}</span>
                 {next.figure && <span className="xst-next-f"><b>{next.figure.value}</b> {next.figure.label}</span>}
               </span>
-              <span className="xst-next-go" aria-hidden="true"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
+              <span className="xst-next-go" aria-hidden="true"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
             </A>
           )}
         </div>
