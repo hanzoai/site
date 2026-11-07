@@ -1,25 +1,31 @@
 'use client';
-// Signature: the scroll reads the routing table one row per screen — the row pins on the left while a four-lane verdict board flips Enso, OpenRouter, Portkey and LiteLLM to that row's answer.
-// Beyond: "Count the Yes" — untick the rows that do not matter to you and each API's tally of Yes re-counts, as huge figures, over the rows you kept, straight from the table's own cells.
-/* Compare. Its idea is the row you can check.
-   V2: 8/10 chaptered: the featured table is the crisp hero object (Hanzo's column raised, a reading line walking it), then one row per screen with a flipping verdict board, a giant-figure tally, the comparison as a card that opens into its page, and the "different question" as the one dark room.
-   First screen: the headline in masked lines and the featured comparison as a big table, Hanzo's column raised and
-   pinned, a reading line walking its seven rows by itself (press a row to go to its chapter). Every cell's full
-   detail lives in a sheet. Then the chapters, the tally (Beyond), the index card that opens into its page
-   (synchronized.studio), and the dark room that opens into /comparison. Accent #00a37a, from the Yes.
-   Motion: signature = the pinned row chapters; supporting = masked headline lines, the hero reading line, the dark
-   room's wipe. Every word is Hanzo's. */
+// Signature: a verdict board that reads the routing table to you — a pill glides along the seven rows by itself and four lanes, Enso raised among OpenRouter, Portkey and LiteLLM, flip to that row's answer; press a row to hold it.
+// Beyond: "Count the Yes" — untick the rows that do not matter to you and the table's foot re-counts each API's Yes over the rows you kept, as large figures, straight from the table's own cells.
+/* Compare. Its idea is the row you can check, one row at a time.
+   1. Hero: the headline in masked lines (Hanzo's "Hanzo vs" sits under it as a caption), one ask, and the live object:
+      the verdict board. It walks the seven rows on its own (a pill glides, the four lanes flip, a hairline times the
+      next row), pauses under the hand, and every row's full sentence is one press away in a sheet.
+   2. The table itself, crisp, Enso's column raised in white; the rows you count carry a switch and the foot re-counts.
+   3. The comparison as a card that opens into its page (synchronized.studio).
+   4. The one dark room wipes in: a different question, as a card that opens into /comparison.
+   Colour: none of its own (JAMES.md): ink and its alpha steps; Yes is ink with a tick, No is grey with a dash.
+   Motion: idle (the board walks the rows), state (gliding pill, flipping lanes, re-counting figures, sheet), pointer
+   (rows fill, lanes answer, cards lift, presses give), scroll only for the dark room's wipe.
+   One ask, Hanzo's "Model routing APIs": in the hero, sticky after it (AskBar on desktop, the thumb bar on phones).
+   Every word is Hanzo's.
+   V2: 8/10 hero is a self-running verdict board (gliding row pill, flipping lanes) beside the masked headline; the crisp table counts the Yes in its foot; card that opens; wiped dark room; greys only, one sticky ask. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { A } from '../kit';
 import MaskLines from '../v2/MaskLines';
-import PinScenes from '../v2/PinScenes';
 import DetailSheet from '../v2/DetailSheet';
 import SceneWipe from '../v2/SceneWipe';
+import AskBar from '../v2/AskBar';
 import '../v2/ProofScale.css';
 import './Compare.css';
 
 const EASE = [0.16, 1, 0.3, 1];
+const STEP = 3400; // ms a row is read for
 const COLS = ['Enso', 'OpenRouter', 'Portkey', 'LiteLLM'];
 const ROWS = [
   ['Models reachable', 'Enso: 600+. OpenRouter: 500+ (80+ providers). Portkey: 1,600+. LiteLLM: 1,800+ (140+ providers).'],
@@ -43,88 +49,90 @@ const pad = (i) => String(i + 1).padStart(2, '0');
 // Beyond: only rows where some cell answers Yes or No can be counted
 const YN = TABLE.map((r, i) => (r.c.some((c) => c.v === 'Yes' || c.v === 'No') ? i : -1)).filter((i) => i >= 0);
 const tone = (c) => (c.v === 'Yes' ? 'y' : c.v === 'No' ? 'n' : c.v ? 'v' : 't');
+const ASK = { label: 'Model routing APIs', to: '/compare/model-routing' };
 
-const Check = ({ s = 14 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+const Tick = ({ s = 14 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+const Dash = ({ s = 14 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M4 8h8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>;
+const Mark = ({ c, s }) => (c.v === 'Yes' ? <Tick s={s} /> : c.v === 'No' ? <Dash s={s} /> : null);
+const Arrow = ({ s = 18 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
-/* go to row i's chapter, wherever the chapters are laid out (pinned on desktop, stacked on phones) */
-function toChapter(i) {
-  const sec = document.querySelector('.xcp-rows');
-  if (!sec) return;
-  const flat = sec.querySelectorAll('.pf-pin-flat-c');
-  const top = sec.getBoundingClientRect().top + scrollY;
-  const y = flat.length ? flat[i].getBoundingClientRect().top + scrollY - 90 : top + (sec.offsetHeight - innerHeight) * ((i + 0.5) / ROWS.length);
-  window.__lenis ? window.__lenis.scrollTo(y, { duration: 1.4 }) : scrollTo({ top: y, behavior: 'smooth' });
-}
-
-/* ---------- the hero object: the featured table, Hanzo's column raised, a reading line walking it ---------- */
-function HeroTable() {
+/* ---------- the signature: the verdict board ---------- */
+function Board() {
   const [at, setAt] = useState(0);
   const [held, setHeld] = useState(false);
   const calm = useReducedMotion();
   const ref = useRef(null);
-  const live = useInView(ref, { amount: 0.35 });
+  const live = useInView(ref, { amount: 0.4 });
+  const run = !held && !calm && live;
   useEffect(() => {
-    if (held || calm || !live) return;
-    const t = setTimeout(() => setAt((v) => (v + 1) % ROWS.length), 2600);
+    if (!run) return;
+    const t = setTimeout(() => setAt((v) => (v + 1) % ROWS.length), STEP);
     return () => clearTimeout(t);
-  }, [at, held, calm, live]);
+  }, [at, run]);
+  const keys = (e) => {
+    const k = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+    if (!k) return;
+    e.preventDefault();
+    const n = (at + k + ROWS.length) % ROWS.length;
+    setAt(n);
+    document.getElementById('xcp-pill-' + n)?.focus();
+  };
+  const r = TABLE[at];
   return (
-    <motion.div className="xcp-obj pf-obj" ref={ref} initial={{ opacity: 0, y: 48 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.35 }}
+    <motion.div className="xcp-board pf-obj" ref={ref} initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.3 }}
       onPointerEnter={(e) => e.pointerType === 'mouse' && setHeld(true)} onPointerLeave={() => setHeld(false)}>
-      <div className="xcp-obj-h">
-        <img src="/models/enso.webp" alt="" className="xcp-obj-img" />
-        <div className="xcp-obj-q">
-          <p className="pf-kick">Model routing APIs</p>
-          <A to="/compare/model-routing" className="xcp-obj-link">Which API should you route your model calls through? <span aria-hidden="true">→</span></A>
-        </div>
-        <span className="xcp-obj-n pf-mono" aria-live="polite">{pad(at)} / 07<i key={at} className={'xcp-obj-tick' + (held || calm || !live ? ' held' : '')} aria-hidden="true" /></span>
+      <div className="xcp-b-head">
+        <img src="/models/enso.webp" alt="" width="56" height="56" className="xcp-b-img" />
+        <A to={ASK.to} className="xcp-b-q">Which API should you route your model calls through? <span aria-hidden="true">→</span></A>
       </div>
-      <div className="xcp-scroll">
-        <table className="xcp-t">
-          <thead>
-            <tr>
-              <th scope="col" className="xcp-t-k"><span className="x-sr">Row</span></th>
-              {COLS.map((c, i) => <th key={c} scope="col" className={i === 0 ? 'me' : ''}>{i === 0 && <small>Hanzo</small>}{c}</th>)}
-            </tr>
-          </thead>
-          <tbody>
-            {TABLE.map((r, i) => (
-              <tr key={r.k} className={at === i ? 'on' : ''} onClick={() => { setAt(i); toChapter(i); }} onPointerEnter={(e) => e.pointerType === 'mouse' && setAt(i)} data-cursor="Read">
-                <th scope="row">
-                  <button type="button" className="xcp-t-row" onClick={(e) => { e.stopPropagation(); setAt(i); toChapter(i); }} onFocus={() => setAt(i)}>
-                    <span className="pf-mono">{pad(i)}</span>{r.k}
-                  </button>
-                </th>
-                {r.c.map((c, j) => (
-                  <td key={j} className={'xcp-td ' + tone(c) + (j === 0 ? ' me' : '')}>
-                    {c.v && <span className="xcp-v">{c.v === 'Yes' && <Check />}{c.v}</span>}
-                    {c.d && <span className="xcp-d">{c.d}</span>}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+
+      <div className="xcp-b-rows">
+        <div className="xcp-pills" role="tablist" aria-label="Rows" onKeyDown={keys}>
+          {TABLE.map((row, i) => (
+            <button key={row.k} id={'xcp-pill-' + i} type="button" role="tab" aria-selected={at === i} aria-controls="xcp-b-panel" tabIndex={at === i ? 0 : -1} aria-label={row.k}
+              onClick={() => { setAt(i); setHeld(true); }}>
+              {at === i && <motion.span layoutId="xcp-pill" className="xcp-pill-bg" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />}
+              <span className="pf-mono">{pad(i)}</span>
+            </button>
+          ))}
+        </div>
+        <span className="xcp-b-n pf-mono" aria-live="polite">{pad(at)} / 07<i key={at + (run ? 'r' : 'h')} className={'xcp-b-tick' + (run ? '' : ' held')} aria-hidden="true" /></span>
+      </div>
+
+      <div id="xcp-b-panel" role="tabpanel" aria-label={r.k} className="xcp-b-panel">
+        <div className="xcp-b-k">
+          <AnimatePresence initial={false}>
+            <motion.p key={at} className="xcp-b-title" initial={{ y: '100%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-60%', opacity: 0, transition: { duration: 0.25, ease: EASE } }} transition={{ duration: 0.7, ease: EASE }}>{r.k}</motion.p>
+          </AnimatePresence>
+        </div>
+        <div className="xcp-lanes">
+          {r.c.map((c, j) => (
+            <div key={j} className={'xcp-lane ' + tone(c) + (j === 0 ? ' me' : '')}>
+              <p className="xcp-lane-n">{COLS[j]}{j === 0 && <small>Hanzo</small>}</p>
+              <div className="xcp-lane-v">
+                <AnimatePresence initial={false}>
+                  <motion.div key={at} className="xcp-lane-in" initial={{ y: '70%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-40%', opacity: 0, transition: { duration: 0.22, ease: EASE } }} transition={{ duration: 0.7, ease: EASE, delay: 0.06 + j * 0.05 }}>
+                    {c.v ? <b><Mark c={c} s={22} />{c.v}</b> : <b className="xcp-lane-t">{c.d}</b>}
+                    {c.v && c.d && <span>{c.d}</span>}
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </motion.div>
   );
 }
 
-/* every cell in full, for the sheet */
-function AllCells() {
+/* every row's sentence, as Hanzo writes it, for the sheet */
+function Sentences() {
   return (
     <div className="xcp-all">
       {TABLE.map((r, i) => (
-        <section key={r.k} className="xcp-all-r" aria-labelledby={'xcp-all-' + i}>
-          <h3 id={'xcp-all-' + i}><span className="pf-mono">{pad(i)}</span> {r.k}</h3>
-          <dl>
-            {r.c.map((c, j) => (
-              <div key={j} className={'xcp-all-c ' + tone(c) + (j === 0 ? ' me' : '')}>
-                <dt>{COLS[j]}</dt>
-                <dd>{c.v && <b>{c.v}</b>}{c.v && c.d ? ' — ' : ''}{c.d}</dd>
-              </div>
-            ))}
-          </dl>
+        <section key={r.k} aria-labelledby={'xcp-all-' + i}>
+          <h3 id={'xcp-all-' + i}><span className="pf-mono">{pad(i)}</span>{r.k}</h3>
+          <p>{r.s}</p>
         </section>
       ))}
     </div>
@@ -134,86 +142,88 @@ function AllCells() {
 function Hero() {
   return (
     <section className="xcp-hero" aria-labelledby="xcp-h1">
-      <div className="pf-wrap">
-        <div className="xcp-hero-g">
-          <div className="xcp-hero-h">
-            <motion.p className="pf-kick" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, ease: EASE }}>Hanzo vs</motion.p>
-            <MaskLines as="h1" id="xcp-h1" className="pf-display s" lines={['How we compare,', 'row by row, with the', 'source on every row']} />
-          </div>
-          <div className="xcp-hero-side">
+      <div className="pf-wrap xcp-hero-g">
+        <div className="xcp-hero-l">
+          <MaskLines as="h1" id="xcp-h1" className="pf-display s" lines={['How we compare,', 'row by row, with the', 'source on every row']} />
+          <motion.div className="xcp-hero-sub" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.45 }}>
+            <p className="pf-kick xcp-cap">Hanzo vs</p>
             <p className="pf-lede">Each page sets a Hanzo product beside a named alternative.</p>
-            <DetailSheet label="Every cell, in full" kicker="Model routing APIs" title="Which API should you route your model calls through?" wide>
-              <AllCells />
-            </DetailSheet>
-          </div>
+            <div className="xcp-acts">
+              <A to={ASK.to} className="pf-btn solid xcp-ask" data-thumb={ASK.label}>{ASK.label}<Arrow s={15} /></A>
+              <DetailSheet label="Every row, in full" kicker="Model routing APIs" title="Which API should you route your model calls through?" ghost wide>
+                <Sentences />
+              </DetailSheet>
+            </div>
+          </motion.div>
         </div>
-        <HeroTable />
+        <div className="xcp-hero-r"><Board /></div>
       </div>
     </section>
   );
 }
 
-/* ---------- the signature: one row per screen, a verdict board that flips to it ---------- */
-function Board({ i }) {
-  const r = TABLE[i];
-  return (
-    <div className="xcp-board" aria-hidden="true">
-      {r.c.map((c, j) => (
-        <div key={j} className={'xcp-lane ' + tone(c) + (j === 0 ? ' me' : '')}>
-          <p className="xcp-lane-n">{j === 0 && <small>Hanzo</small>}{COLS[j]}</p>
-          <div className="xcp-lane-v">
-            <AnimatePresence initial={false}>
-              <motion.div key={i} className="xcp-lane-in" initial={{ y: '60%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-40%', opacity: 0, transition: { duration: 0.25, ease: EASE } }} transition={{ duration: 0.7, ease: EASE, delay: j * 0.05 }}>
-                {c.v ? <b>{c.v === 'Yes' && <Check s={30} />}{c.v}</b> : <b className="xcp-lane-t">{c.d}</b>}
-                {c.v && c.d && <span>{c.d}</span>}
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function Rows() {
-  const chapters = TABLE.map((r, i) => ({
-    kicker: `${pad(i)} / 07`,
-    title: r.k,
-    body: <p className="pf-body xcp-row-s">{r.s}</p>,
-  }));
-  return <PinScenes className="xcp-rows" label="The comparison, row by row" chapters={chapters} per={70} visual={(i) => <Board i={i} />} />;
-}
-
-/* ---------- Beyond: count the Yes ---------- */
-function Tally() {
+/* ---------- the table, crisp; the foot counts the Yes (Beyond) ---------- */
+function Table() {
   const [keep, setKeep] = useState(YN);
   const flip = (i) => setKeep((k) => (k.includes(i) ? k.filter((x) => x !== i) : [...k, i].sort()));
   return (
-    <section className="pf-sec xcp-tally" aria-labelledby="xcp-tally-h">
-      <div className="pf-wrap pf-grid">
-        <div className="xcp-tally-l">
-          <h2 id="xcp-tally-h" className="pf-kick">Count the Yes</h2>
-          <div className="xcp-chips" role="group" aria-label="Rows to count">
-            {YN.map((i) => (
-              <button key={i} type="button" aria-pressed={keep.includes(i)} onClick={() => flip(i)}>
-                <i aria-hidden="true"><Check s={12} /></i>
-                <span className="pf-mono">{pad(i)}</span>{TABLE[i].k}
-              </button>
-            ))}
-          </div>
+    <section className="pf-sec xcp-table" aria-labelledby="xcp-t-h">
+      <div className="pf-wrap">
+        <div className="xcp-t-top">
+          <h2 id="xcp-t-h" className="pf-head">Which API should you route your model calls through?</h2>
+          <p className="pf-kick xcp-cap">Model routing APIs</p>
         </div>
-        <ul className="xcp-tally-r" aria-live="polite">
-          {COLS.map((c, j) => {
-            const yes = keep.filter((i) => TABLE[i].c[j].v === 'Yes').length;
-            return (
-              <li key={c} className={j === 0 ? 'me' : ''}>
-                <span className="xcp-tally-n">{j === 0 && <small>Hanzo</small>}{c}</span>
-                <span className="pf-num">{keep.length ? yes : '—'}<em>{keep.length ? ` / ${keep.length}` : ''}</em></span>
-                <i aria-hidden="true"><b style={{ transform: `scaleX(${keep.length ? yes / keep.length : 0})` }} /></i>
-              </li>
-            );
-          })}
-        </ul>
+        <div className="xcp-scroll pf-obj">
+          <table className="xcp-t">
+            <thead>
+              <tr>
+                <th scope="col" className="xcp-t-k"><span className="x-sr">Row</span></th>
+                {COLS.map((c, i) => <th key={c} scope="col" className={i === 0 ? 'me' : ''}>{c}{i === 0 && <small>Hanzo</small>}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {TABLE.map((r, i) => {
+                const can = YN.includes(i);
+                const on = keep.includes(i);
+                return (
+                  <tr key={r.k} className={can && !on ? 'off' : ''}>
+                    <th scope="row">
+                      <span className="xcp-t-row">
+                        {can ? (
+                          <button type="button" className="xcp-sw" aria-pressed={on} onClick={() => flip(i)} aria-label={(on ? 'Stop counting ' : 'Count ') + r.k}>
+                            <i aria-hidden="true"><Tick s={12} /></i>
+                          </button>
+                        ) : <span className="xcp-sw-gap" aria-hidden="true" />}
+                        <span className="pf-mono">{pad(i)}</span>
+                        <span className="xcp-t-name">{r.k}</span>
+                      </span>
+                    </th>
+                    {r.c.map((c, j) => (
+                      <td key={j} className={'xcp-td ' + tone(c) + (j === 0 ? ' me' : '')}>
+                        {c.v && <span className="xcp-v"><Mark c={c} s={14} />{c.v}</span>}
+                        {c.d && <span className="xcp-d">{c.d}</span>}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+            <tfoot aria-live="polite">
+              <tr>
+                <th scope="row"><span className="xcp-count">Count the Yes</span></th>
+                {COLS.map((c, j) => {
+                  const yes = keep.filter((i) => TABLE[i].c[j].v === 'Yes').length;
+                  return (
+                    <td key={c} className={j === 0 ? 'me' : ''}>
+                      <span className="xcp-fig">{keep.length ? yes : '—'}<em>{keep.length ? ` / ${keep.length}` : ''}</em></span>
+                      <i className="xcp-bar" aria-hidden="true"><b style={{ transform: `scaleX(${keep.length ? yes / keep.length : 0})` }} /></i>
+                    </td>
+                  );
+                })}
+              </tr>
+            </tfoot>
+          </table>
+        </div>
       </div>
     </section>
   );
@@ -224,16 +234,15 @@ function Index() {
   return (
     <section className="pf-sec xcp-index" aria-labelledby="xcp-index-h">
       <div className="pf-wrap">
-        <h2 id="xcp-index-h" className="pf-kick">Comparisons</h2>
+        <h2 id="xcp-index-h" className="pf-head">Comparisons</h2>
         <ol className="xcp-list">
           <li>
             <A to="/compare/model-routing" className="xcp-card" data-cursor="Open">
-              <span className="xcp-card-img" data-morph><img src="/models/enso.webp" alt="" /></span>
+              <span className="xcp-card-img" data-morph><img src="/models/enso.webp" alt="" width="1200" height="1500" /></span>
               <span className="xcp-card-b">
-                <span className="xcp-card-n pf-mono">01</span>
-                <span className="xcp-card-q pf-head">Which API should you route your model calls through?</span>
+                <span className="xcp-card-q pf-title">Which API should you route your model calls through?</span>
                 <span className="xcp-card-v pf-lede">— Hanzo <b>Enso</b> against <span>OpenRouter, Portkey, LiteLLM</span> .</span>
-                <span className="xcp-card-go" aria-hidden="true"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
+                <span className="xcp-card-f"><span className="xcp-card-n pf-mono">01</span><span className="xcp-card-go" aria-hidden="true"><Arrow /></span></span>
               </span>
             </A>
           </li>
@@ -249,12 +258,12 @@ function Different() {
     <SceneWipe className="xcp-diff" label="A different question">
       <div className="pf-wrap pf-grid xcp-diff-g">
         <div className="xcp-diff-l">
-          <p className="pf-kick">A different question</p>
-          <p className="xcp-diff-p">If what you are weighing is whether to run it yourself rather than buy it, that page is separate.</p>
+          <h2 className="pf-head">A different question</h2>
+          <p className="pf-lede">If what you are weighing is whether to run it yourself rather than buy it, that page is separate.</p>
         </div>
         <A to="/comparison" className="xcp-diff-c" data-morph data-cursor="Open">
           <span className="xcp-diff-a">Buy it, or run it</span>
-          <i aria-hidden="true"><svg viewBox="0 0 16 16" width="20" height="20"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></i>
+          <i aria-hidden="true"><Arrow s={20} /></i>
         </A>
       </div>
     </SceneWipe>
@@ -265,10 +274,10 @@ export default function Compare() {
   return (
     <main className="xcp">
       <Hero />
-      <Rows />
-      <Tally />
+      <Table />
       <Index />
       <Different />
+      <AskBar title="Hanzo vs" label={ASK.label} to={ASK.to} />
     </main>
   );
 }
