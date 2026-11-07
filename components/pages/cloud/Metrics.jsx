@@ -74,7 +74,7 @@ function Plot({ g, n = 3, start, calm, id, hl = null }) {
     <svg className="mt-plot" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
       <defs><linearGradient id={id} x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="currentColor" stopOpacity=".1" /><stop offset="1" stopColor="currentColor" stopOpacity="0" /></linearGradient></defs>
       {[40, 60, 80].map((y) => <line key={y} x1="0" x2="100" y1={y} y2={y} className="grid" />)}
-      <g ref={g} className="mt-slide" style={{ animationDelay: `${(-(start / W) * PER).toFixed(3)}s`, ...(calm ? { animation: 'none', transform: `translateX(${(-(TS / W) * 100).toFixed(3)}px)` } : null) }}>
+      <g ref={g} className="mt-slide" style={{ animationDuration: `${PER.toFixed(3)}s`, animationDelay: `${(-(start / W) * PER).toFixed(3)}s`, ...(calm ? { animation: 'none', transform: `translateX(${(-(TS / W) * 100).toFixed(3)}px)` } : null) }}>
         <path className="fill" d={AREA} fill={`url(#${id})`} />
         {Array.from({ length: n }, (_, k) => n - 1 - k).map((k) => <path key={k} className={'s' + k + (hl === k ? ' hl' : '')} d={PATHS[k]} />)}
       </g>

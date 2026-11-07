@@ -10,7 +10,7 @@
    The stack has a pause button. Every word and link is Hanzo's.
    Ledger: deletes the 3-up grey boxes, the second black pill, the sepia accent and the stamp on every sheet. */
 import { useEffect, useRef, useState } from 'react';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { EASE } from '../ui';
 import { play } from '../../lib/sound';
 import { A } from '../kit';
@@ -18,7 +18,6 @@ import { Nodes } from './DocNodes';
 import { useArrival } from './doorway';
 import { useLive, useEvery } from './cloud/Frame';
 import LineMask from '../v2/x-gauss/LineMask';
-import Settle from '../v2/Settle';
 import NoJs from '../v2/x-gauss/NoJs';
 import { usePause } from '../v2/x-gauss/Pause';
 import '../v2/Scale.css';
@@ -30,17 +29,40 @@ const LADDER = [['service-only', 'by default'], ['private improvement'], ['resea
 const flat = (n) => (typeof n === 'string' ? n : n && n.c ? n.c.map(flat).join('') : '');
 const lineOf = (it) => it.note.map(flat).join('').replace(/^\s*—\s*/, '').trim();
 
+/* The Stage, legal-local (the shared Settle reads reduced motion during render, so its server HTML and first client
+   render disagree): the pile arrives a touch large and low and settles as the first screen scrolls away. Reduced motion
+   is read after hydration; the CSS holds it settled before that. */
+function Rise({ children, from = 1.02, lift = 10 }) {
+  const rm = useReducedMotion();
+  const [calm, setCalm] = useState(false);
+  const [end, setEnd] = useState(560);
+  useEffect(() => { setCalm(!!rm); setEnd(innerHeight * 0.7); }, [rm]);
+  const { scrollY } = useScroll();
+  const scale = useTransform(scrollY, [0, end], [from, 1], { clamp: true });
+  const y = useTransform(scrollY, [0, end], [lift, 0], { clamp: true });
+  return <motion.div className="w2-settle lgi-settle" style={calm ? undefined : { scale, y, transformOrigin: '50% 0%' }}>{children}</motion.div>;
+}
+
 /* The hero object: the documents as a stack of paper; the top sheet goes to the back on its own. */
 function Stack({ docs }) {
   const [ref, live] = useLive(0.3);
   const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
   const [top, setTop] = useState(0);
   const [out, setOut] = useState(-1); // the sheet leaving: it travels out on top first, then tucks under the pile
+  const rm = useReducedMotion();
+  const [calm, setCalm] = useState(false);
+  useEffect(() => setCalm(!!rm), [rm]);
+  const tuck = useRef(0);
+  useEffect(() => () => clearTimeout(tuck.current), []);
   useEvery(2600, live && !paused, () => {
+    // reduced motion: a plain cut to the next sheet
+    if (calm) { setTop((t) => (t + 1) % docs.length); return; }
     setOut(top);
-    setTimeout(() => { setTop((t) => (t + 1) % docs.length); setOut(-1); }, 450);
+    clearTimeout(tuck.current);
+    tuck.current = setTimeout(() => { setTop((t) => (t + 1) % docs.length); setOut(-1); }, 450);
   });
   const order = docs.map((_, i) => (i - top + docs.length) % docs.length);
+  const last = docs.length - 1;
   return (
     <div className="lgi-stack" ref={ref}>
       <div className="lgi-pile">
@@ -51,7 +73,13 @@ function Stack({ docs }) {
           const pose = leaving
             ? { x: '-110%', y: 0, rotate: -8, scale: 1, opacity: 1, zIndex: 40 }
             : { x: k * 24, y: k * -20, rotate: k * 2 - 2, scale: 1 - k * 0.04, opacity: back ? 0 : 1, zIndex: 20 - order[i] };
-          const tr = leaving ? { duration: 0.45, ease: [0.16, 1, 0.3, 1] } : order[i] === 0 ? { duration: 0.4, ease: [0.16, 1, 0.3, 1], delay: 0.2 } : { duration: 0.4, ease: [0.4, 0, 0.2, 1] };
+          // leaving: out on top (450ms); then it slides in under the pile, seen going under before it fades at the back;
+          // the next sheet comes forward 200ms after the leaving one has cleared
+          const tr = calm ? { duration: 0 }
+            : leaving ? { duration: 0.45, ease: [0.16, 1, 0.3, 1] }
+            : order[i] === 0 ? { duration: 0.4, ease: [0.16, 1, 0.3, 1], delay: 0.2 }
+            : order[i] === last ? { duration: 0.5, ease: [0.4, 0, 0.2, 1], opacity: { duration: 0.25, delay: 0.35 } }
+            : { duration: 0.4, ease: [0.4, 0, 0.2, 1] };
           return (
             <motion.div key={it.href} className="lgi-sheet" aria-hidden="true" initial={false} animate={pose} transition={tr}>
               <span className="lgi-sheet-u x-mono">hanzo.ai{it.href}</span>
@@ -159,7 +187,7 @@ export default function LegalIndex({ d }) {
             <p className="lgi-kick x-mono">{d.kicker}</p>
             <motion.p className="w2-lede lgi-lede" initial={{ y: 14 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>{d.lede}</motion.p>
           </div>
-          <Settle from={1.02} lift={10}><Stack docs={docs} /></Settle>
+          <Rise from={1.02} lift={10}><Stack docs={docs} /></Rise>
         </div>
       </section>
 

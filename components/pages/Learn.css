@@ -1,6 +1,7 @@
 /* ---------- learn (v2, grey deck) ---------- */
 .xlr-line-tag { font: 606 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--hz-950); }
-.xlr-link { min-height: 44px; font: 500 17px/1 var(--sans); }
+.xlr-link { min-height: 44px; font: 500 17px/1 var(--sans); transition: transform .15s var(--xp-ease); }
+.xlr-link:active { transition-duration: 90ms; }
 .xlr-link svg { color: var(--hz-500); }
 @media (hover: hover) { .xlr-link:hover svg { color: var(--ink); } }
 .xlr-link:active { transform: scale(.97); }
@@ -65,6 +66,8 @@ html:has(main.xlr[data-ask-on]) header[data-slot=masthead] a[data-x-ask] { backg
 .xlr-card-d { font-size: 16px; line-height: 1.5; color: var(--soft); max-width: 34ch; }
 .xlr-card i { position: absolute; top: 32px; right: 28px; font-style: normal; color: var(--hz-400); transition: transform .3s var(--xp-ease), color .15s; }
 @media (hover: hover) { .xlr-card:hover { background: var(--hz-100); } .xlr-card:hover .xlr-card-n { color: var(--ink); transform: translateY(-4px); } .xlr-card:hover .xlr-card-t { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; } .xlr-card:hover i { transform: translateX(4px); color: var(--ink); } }
+.xlr-card.lit { background: var(--hz-100); }
+.xlr-card.lit .xlr-card-n { color: var(--ink); transform: translateY(-4px); }
 .xlr-card:active { transform: scale(.97); transition-duration: 90ms; }
 .xlr-card:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 .xlr-rail-bar { display: block; position: relative; height: 2px; margin-top: 28px; background: var(--line); overflow: hidden; }
@@ -73,14 +76,21 @@ html:has(main.xlr[data-ask-on]) header[data-slot=masthead] a[data-x-ask] { backg
 /* the index, scene 2: Hanzo University's film beside where to go further */
 .xlr-further { margin-top: clamp(96px, 10vw, 160px); align-items: center; row-gap: 48px; }
 .xlr-uni-a { grid-column: 1 / span 5; position: relative; display: grid; gap: 20px; color: var(--ink); text-decoration: none; transition: transform .15s var(--xp-ease); }
-.xlr-uni-m { display: block; aspect-ratio: 4 / 5; max-height: 560px; border-radius: 24px; overflow: hidden; background: var(--hz-100); outline: 1px solid rgba(0, 0, 0, .08); outline-offset: -1px; }
+.xlr-uni-l { color: inherit; text-decoration: none; }
+.xlr-uni-l::after { content: ''; position: absolute; inset: 0; z-index: 1; border-radius: 24px; }
+.xlr-uni-m { position: relative; display: block; aspect-ratio: 4 / 5; max-height: 560px; border-radius: 24px; overflow: hidden; background: var(--hz-100); outline: 1px solid rgba(0, 0, 0, .08); outline-offset: -1px; }
+.xlr-pause { position: absolute; left: 16px; top: 16px; z-index: 2; display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .92); color: var(--ink); cursor: pointer; transition: background-color .15s, transform .15s var(--xp-ease); }
+@media (hover: hover) { .xlr-pause:hover { background: #fff; transform: scale(1.06); } }
+.xlr-pause:active { transform: scale(.97); transition-duration: 90ms; }
+.xlr-pause:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .xlr-uni-m video { width: 100%; height: 100%; object-fit: cover; transition: transform .6s var(--xp-ease); }
 .xlr-uni-c b { display: block; font: 497 26px/1.15 var(--sans); letter-spacing: -.02em; }
 .xlr-uni-c span { display: block; margin-top: 8px; font-size: 16px; line-height: 1.5; color: var(--soft); }
 .xlr-uni-a > i { position: absolute; right: 0; bottom: 34px; font-style: normal; font-size: 21px; color: var(--hz-500); transition: transform .3s var(--xp-ease), color .15s; }
-@media (hover: hover) { .xlr-uni-a:hover video { transform: scale(1.03); } .xlr-uni-a:hover b { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; } .xlr-uni-a:hover > i { transform: translate(3px, -3px); color: var(--ink); } }
-.xlr-uni-a:active { transform: scale(.97); transition-duration: 90ms; }
-.xlr-uni-a:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; border-radius: 24px; }
+@media (hover: hover) { .xlr-uni-a:has(.xlr-uni-l:hover) video { transform: scale(1.03); } .xlr-uni-a:has(.xlr-uni-l:hover) b { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; } .xlr-uni-a:has(.xlr-uni-l:hover) > i { transform: translate(3px, -3px); color: var(--ink); } }
+.xlr-uni-a:has(.xlr-uni-l:active) { transform: scale(.97); transition-duration: 90ms; }
+.xlr-uni-l:focus-visible { outline: none; }
+.xlr-uni-l:focus-visible::after { outline: 2px solid var(--focus); outline-offset: 4px; }
 .xlr-col.further { grid-column: 7 / span 6; }
 .xlr-col .xp-head { margin-bottom: 24px; }
 .xlr-rows { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink); }
@@ -104,11 +114,21 @@ html:has(main.xlr[data-ask-on]) header[data-slot=masthead] a[data-x-ask] { backg
 .lead .xlr-post { justify-content: flex-end; min-height: 440px; padding: clamp(28px, 3vw, 44px); }
 .lead .xlr-post b { font-size: clamp(30px, 3.2vw, 44px); line-height: 1.08; letter-spacing: -.03em; max-width: 18ch; }
 .lead .xlr-post > span:last-child { max-width: 52ch; }
-.xlr-post-m { display: block; margin: -16px -16px 4px; aspect-ratio: 16 / 10; border-radius: 16px; overflow: hidden; }
-.xlr-post-m img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; transition: transform .6s var(--xp-ease); }
-@media (hover: hover) { .xlr-post:hover { background: #262626; } .xlr-post:hover b { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; } .xlr-post:hover time { color: #fafafa; } .xlr-post:hover img { transform: scale(1.03); } }
-.xlr-post:active { transform: scale(.97); transition-duration: 90ms; }
+.xlr-post-m { position: relative; display: block; margin: -16px -16px 4px; aspect-ratio: 16 / 10; border-radius: 16px; overflow: hidden; background: #000; }
+.xlr-post-m video { width: 100%; height: 100%; object-fit: cover; object-position: 70% 45%; transition: transform .6s var(--xp-ease); }
+.xlr-post-m .xlr-pause { left: 12px; top: 12px; }
+.xlr-post-l { color: inherit; text-decoration: none; }
+.xlr-post-l::after { content: ''; position: absolute; inset: 0; z-index: 1; border-radius: 24px; }
+@media (hover: hover) {
+  .xlr-post:not(.has-film):hover, .has-film:has(.xlr-post-l:hover) { background: #262626; }
+  .xlr-post:not(.has-film):hover b, .has-film:has(.xlr-post-l:hover) b { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+  .xlr-post:not(.has-film):hover time, .has-film:has(.xlr-post-l:hover) time { color: #fafafa; }
+  .has-film:has(.xlr-post-l:hover) video { transform: scale(1.03); }
+}
+.xlr-post:not(.has-film):active, .has-film:has(.xlr-post-l:active) { transform: scale(.97); transition-duration: 90ms; }
 .xlr-post:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.xlr-post-l:focus-visible { outline: none; }
+.xlr-post-l:focus-visible::after { outline: 2px solid #fff; outline-offset: 3px; }
 .xlr-thk { margin-top: clamp(56px, 6vw, 88px); padding-top: 28px; border-top: 1px solid rgba(255, 255, 255, .3); align-items: start; row-gap: 16px; }
 .xlr-thk .xp-head { grid-column: 1 / span 3; margin: 0; padding-top: 18px; }
 .xlr-think-grid { grid-column: 4 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 32px; }
@@ -124,6 +144,9 @@ html:has(main.xlr[data-ask-on]) header[data-slot=masthead] a[data-x-ask] { backg
 .xlr-qa .xp-grid { align-items: start; row-gap: 40px; }
 .xlr-sticky { grid-column: 1 / span 4; position: sticky; top: 110px; display: grid; gap: 20px; justify-items: start; }
 .xlr-qa-l { grid-column: 6 / span 7; }
+.xlr-qa-fig { display: flex; align-items: baseline; gap: 10px; }
+.xlr-qa-mask { display: block; overflow: hidden; padding-bottom: .06em; }
+.xlr-qa-mask b { display: block; font-size: 64px; color: var(--ink); }
 .xlr-qa .x-faq button { padding: 24px 0; font-size: 17px; }
 @media (hover: hover) { .xlr-qa .x-faq button:hover { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; } }
 .xlr-qa .x-faq-a > div { font-size: 16px; }

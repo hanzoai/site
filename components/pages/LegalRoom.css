@@ -197,13 +197,16 @@
 /* reduced motion: the cover is settled at first paint (FamStage only settles after hydration, so this holds it before) */
 @media (prefers-reduced-motion: reduce) {
   .xlg2-stage-o > * { transform: none !important; }
+  .xlg2-read-bar { display: none; }
   .xlg2-cl, .xlg2-cl-ok, .xlg2-clear { transition: none; animation: none; }
 }
 
 /* print: the document only (header, footer, skip link, cover, rail, find, copy links and siblings hidden), the date
    and version on page 1, each heading kept with its first paragraph */
 @media print {
-  body:has(.xlg2) .x-skip, .xlg2-cl, .xlg2-clear, .xlg2-stage-o { display: none !important; }
+  body:has(.xlg2) .x-skip, body:has(.xlg2) a[href="#main"], body:has(.xlg2) header:not(main header), body:has(.xlg2) footer:not(main footer), body:has(.xlg2) .x-cookie, .xlg2-cl, .xlg2-clear, .xlg2-stage-o { display: none !important; }
+  body:has(.xlg2) main.xlg2 { padding-top: 0 !important; margin-top: 0 !important; }
+  .xlg2-stage { padding-top: 0 !important; }
   .xlg2 { --xlg-top: 0; }
   .xlg2-top { display: block; }
   .xlg2-head, .xlg2-side { display: block; }

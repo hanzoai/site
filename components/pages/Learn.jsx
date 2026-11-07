@@ -2,14 +2,15 @@
 /* Learn Hanzo. The page is the map of the documentation, so it is drawn as one.
    Signature: the docs as a transit map: a train rides the Start-here line once and stops at each station, whose guide opens beneath it.
    Persona: a developer arriving to learn Hanzo (PLAN-COMPONENTS 1.1 developer row). Goal: a first working request.
-   CTA: "Get started" (the quickstart). Metric: api_key_created (via the quickstart).
-   V2: 8/10 MASTER scale: "Learn Hanzo" at 52px over a full-width transit map whose train rides the Start-here line once and rests, each station's guide opening beneath it and linked by its own name; what to try and go further as one index; the blog and the thinking together in the dark room; questions.
-   Motion: the riding train (signature, time) + station dots answering the pointer + stations you pick (state) +
-   line-mask headline from the first paint; rows open into their pages through the site's morph.
+   CTA: "Get started" (the quickstart; data-cta learn.hero, data-thumb). Metric: api_key_created (via the quickstart).
+   Beyond: the documentation drawn as a line you ride: each station opens its own guide in place, linked by its own name.
+   V2: 8/10 after the map, three scenes with one big thing each: the 01–06 rail you can throw (64px numerals), Hanzo University's own Zen film (pausable) beside Go further, the newest post at 44px leading the dark room with the thinking along its foot, and questions collapsed under a 64px question number that follows the pointer.
+   Motion: the riding train (signature, idle) + the rail thrown with inertia and the question number (pointer) +
+   stations you pick and answers that open (state) + line-mask headline (arrival); scroll-linked: none.
    0 UI hues. Every line and link is Hanzo's own. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
-import { A, Cta, More, Faq, Img, Film } from '../kit';
+import { A, Cta, More, Faq, Film } from '../kit';
 import LineReveal, { NoJs } from '../v2/LineReveal';
 import '../v2/ProgramScale.css';
 import './Learn.css';
@@ -132,6 +133,22 @@ function Rail() {
   const [prog, setProg] = useState(0);
   const calm = useReducedMotion();
   const drag = useRef(null);
+  /* idle: when the rail is first in view, its numerals ink one after another across the cards on screen, like the train
+     riding its stops (about 0.7 s each, under 5 s), then rest; any touch of the rail ends it. */
+  const seen = useInView(ref, { amount: 0.6, once: true });
+  const [lit, setLit] = useState(-1);
+  const touched = useRef(false);
+  const stop = () => { touched.current = true; setLit(-1); };
+  useEffect(() => {
+    const el = ref.current;
+    if (!seen || calm || touched.current || !el) return;
+    const edge = el.getBoundingClientRect().right + 1;
+    const n = Math.min(TRY.length, [...el.children].filter((c) => c.getBoundingClientRect().right <= edge).length);
+    let i = 0, t;
+    const tick = () => { if (touched.current || i >= n) { setLit(-1); return; } setLit(i++); t = setTimeout(tick, 700); };
+    t = setTimeout(tick, 250);
+    return () => clearTimeout(t);
+  }, [seen, calm]);
   const step = () => { const el = ref.current; const c = el?.children[0]; return c ? c.getBoundingClientRect().width + parseFloat(getComputedStyle(el).columnGap || 0) : 0; };
   const onScroll = () => {
     const el = ref.current; if (!el) return;
@@ -139,8 +156,9 @@ function Rail() {
     setProg(max > 0 ? el.scrollLeft / max : 0);
     const s = step(); if (s) setAt(Math.min(TRY.length - 1, Math.round(el.scrollLeft / s)));
   };
-  const go = (d) => { const el = ref.current; if (el) el.scrollBy({ left: d * step(), behavior: calm ? 'auto' : 'smooth' }); };
+  const go = (d) => { stop(); const el = ref.current; if (el) el.scrollBy({ left: d * step(), behavior: calm ? 'auto' : 'smooth' }); };
   const down = (e) => {
+    if (lit >= 0) stop();
     if (e.pointerType !== 'mouse' || e.button !== 0) return;
     drag.current = { x: e.clientX, left: ref.current.scrollLeft, last: e.clientX, t: performance.now(), v: 0, moved: false };
   };
@@ -175,10 +193,10 @@ function Rail() {
           <button type="button" className="xlr-step" aria-label="Next" disabled={prog > 0.99} onClick={() => go(1)}><i aria-hidden="true">→</i></button>
         </div>
       </div>
-      <ul className="xlr-try" ref={ref} onScroll={onScroll} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} onClickCapture={click} aria-labelledby="xlr-try-h">
+      <ul className="xlr-try" ref={ref} onScroll={onScroll} onWheel={(e) => { if (lit >= 0 && Math.abs(e.deltaX) > Math.abs(e.deltaY)) stop(); }} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} onClickCapture={click} aria-labelledby="xlr-try-h">
         {TRY.map(([t, d, h], i) => (
           <li key={t + h}>
-            <A to={h} className="xlr-card" draggable={false}>
+            <A to={h} className={'xlr-card' + (lit === i ? ' lit' : '')} draggable={false}>
               <span className="xlr-card-n xp-fig" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
               <b className="xlr-card-t" data-morph>{t}</b>
               <span className="xlr-card-d">{d}</span>
@@ -208,6 +226,43 @@ function Rows({ items }) {
   );
 }
 
+/* A Hanzo film in a card: the kit Film (plays only in view, poster under reduced motion and Save-Data) with a pause
+   first in the card, since the loops run 6 and 8 s. The card's link is a sibling whose ::after covers the card, so the
+   pause button is never nested inside a link. Films are 640–720px re-encodes of public/models (30 and 130 KB). */
+function Loop({ src, poster, className }) {
+  const box = useRef(null);
+  const [held, setHeld] = useState(false);
+  const calm = useReducedMotion();
+  const once = useRef(true);
+  useEffect(() => {
+    const v = box.current?.querySelector('video'); if (!v) return;
+    const stay = () => { if (held) v.pause(); };
+    if (held) v.pause(); else if (!once.current && !calm) v.play?.().catch(() => {});
+    once.current = false;
+    v.addEventListener('play', stay);
+    return () => v.removeEventListener('play', stay);
+  }, [held, calm]);
+  return (
+    <span className={className} ref={box}>
+      <button type="button" className="xlr-pause" aria-label="Pause" aria-pressed={held} onClick={() => setHeld((x) => !x)}>
+        {held ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9l7-4.5z" fill="currentColor" /></svg> : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>}
+      </button>
+      <Film src={src} poster={poster} w={1200} h={1500} />
+    </span>
+  );
+}
+
+/* Hanzo University's card: Zen's own film, the name as the link. */
+function Uni() {
+  return (
+    <div className="xlr-uni-a">
+      <Loop className="xlr-uni-m" src="/learn/zen-720.webm" poster="/models/zen.webp" />
+      <span className="xlr-uni-c"><A to="https://hanzo.university" className="xlr-uni-l"><b id="xlr-uni-h">Hanzo University</b></A><span>Courses and certifications live on Hanzo University.</span></span>
+      <i aria-hidden="true">↗</i>
+    </div>
+  );
+}
+
 /* The index: the rail, then where to go further beside Hanzo University's own film (Zen). */
 function Index() {
   return (
@@ -215,11 +270,7 @@ function Index() {
       <div className="xp-wrap">
         <Rail />
         <div className="xp-grid xlr-further">
-          <A to="https://hanzo.university" className="xlr-uni-a">
-            <span className="xlr-uni-m"><Film src="/models/zen.webm" poster="/models/zen.webp" w={1200} h={1500} /></span>
-            <span className="xlr-uni-c"><b id="xlr-uni-h">Hanzo University</b><span>Courses and certifications live on Hanzo University.</span></span>
-            <i aria-hidden="true">↗</i>
-          </A>
+          <Uni />
           <div className="xlr-col further">
             <h2 id="xlr-further-h" className="xp-head">Go further</h2>
             <Rows items={FURTHER} />
@@ -246,16 +297,24 @@ function Read() {
               <span>{lead[2]}</span>
             </A>
           </li>
-          {rest.map(([t, date, d, h]) => (
+          {rest.map(([t, date, d, h]) => (/introducing-kai/.test(h) ? (
+            <li key={h}>
+              <div className="xlr-post has-film">
+                <Loop className="xlr-post-m" src="/learn/kai-640.webm" poster="/models/kai.webp" />
+                <time className="x-mono" dateTime={date}>{date}</time>
+                <A to={h} className="xlr-post-l"><b>{t}</b></A>
+                <span>{d}</span>
+              </div>
+            </li>
+          ) : (
             <li key={h}>
               <A to={h} className="xlr-post">
-                {/introducing-kai/.test(h) && <span className="xlr-post-m"><Img src="/models/kai.webp" w={1200} h={1500} alt="" /></span>}
                 <time className="x-mono" dateTime={date}>{date}</time>
                 <b>{t}</b>
                 <span>{d}</span>
               </A>
             </li>
-          ))}
+          )))}
         </ol>
         <div className="xp-grid xlr-thk">
           <h2 id="xlr-think-h" className="xp-head">Read the thinking</h2>
@@ -281,6 +340,31 @@ function useHeroAsk(ref) {
   }, [ref]);
 }
 
+/* Questions: the section's one big thing is the number of the question under the pointer or focus, at figure size,
+   cut in by line mask as it changes; the answers are the kit's multi-open accordion (#q-slug opens one). */
+function Questions() {
+  const [n, setN] = useState(1);
+  const pick = (e) => {
+    const li = e.target.closest?.('.x-faq > li'); if (!li) return;
+    const i = Array.prototype.indexOf.call(li.parentNode.children, li) + 1;
+    if (i > 0) setN(i);
+  };
+  return (
+    <section className="xp-sec tight xlr-qa" aria-labelledby="xlr-qa-h">
+      <div className="xp-wrap xp-grid">
+        <div className="xlr-sticky">
+          <h2 id="xlr-qa-h" className="xp-head">Questions</h2>
+          <span className="xlr-qa-fig" aria-hidden="true">
+            <span className="xlr-qa-mask"><motion.b key={n} className="xp-fig" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 0.4, ease: EASE }}>{String(n).padStart(2, '0')}</motion.b></span>
+            <span className="xp-count">/ {String(QA.length).padStart(2, '0')}</span>
+          </span>
+        </div>
+        <div className="xlr-qa-l" onPointerOver={pick} onFocus={pick}><Faq items={QA} multi first={-1} /></div>
+      </div>
+    </section>
+  );
+}
+
 export default function Learn() {
   const ref = useRef(null);
   useHeroAsk(ref);
@@ -290,12 +374,7 @@ export default function Learn() {
       <Hero />
       <Index />
       <Read />
-      <section className="xp-sec tight xlr-qa" aria-labelledby="xlr-qa-h">
-        <div className="xp-wrap xp-grid">
-          <div className="xlr-sticky"><h2 id="xlr-qa-h" className="xp-head">Questions</h2></div>
-          <div className="xlr-qa-l"><Faq items={QA} multi first={-1} /></div>
-        </div>
-      </section>
+      <Questions />
     </main>
   );
 }

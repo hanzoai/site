@@ -1,19 +1,19 @@
 # /ledger coverage (MASTER.md part 2, the 18 parts)
 
-Page file: `components/pages/apps/Ledger.jsx` · gallery: `docs/gallery/ledger/` · metric id: `docs_click`
+Page file: `components/pages/apps/Ledger.jsx` (+ `Ledger.css`, `app/ledger/page.jsx`) · gallery: `docs/gallery/ledger/` · metric id: `api_key_created` (developers; on this page through the docs clicks `ledger.hero` / `ledger.close`)
 
-Open copy questions for James: none.
-Shared changes requested (`docs/requests/<page>.md`): none. 
-Forks this page deleted: the group's `BizAsk` button (now kit `Cta`), the v1 hero step accordion, the cloud `Get` block and the v1 three-box capability grid (now one tabbed object). The page's own AskBar pill (duplicate sticky ask) and the cursor label "Watch" are also gone.
+Open copy questions for James: none. (The ask "Read the docs" and its docs.hanzo.ai/docs/cli/books link are kept as live; "the CLI docs link" is on MASTER's list, so James may want to confirm it is the right docs URL for Ledger.)
+Shared changes requested (`docs/requests/<page>.md`): none. Everything this page needed from the shared kit (header ask outline, paste-box greys, close as a Band) is done page-locally in `Ledger.css` / `Ledger.jsx`.
+Forks this page deleted: the group's `BizAsk` button (now kit `Cta`), the v1 hero step accordion, the v1 three-box capability grid (now one tabbed object), the page's own AskBar pill, the "Watch" cursor label, `kick="bash"` on the sheet, the "Get X" receipt-beside-close block of the Biz template (now a hairline receipt strip, then a closing Band).
 
 ## 1. Strategy and conversion
 - [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
-- [x] One solid fill per viewport; label and href from `lib/cta.js` (n/a for the label source: no `lib/cta.js` yet, so it uses Hanzo's own "Read the docs" → docs.hanzo.ai/docs/cli/books)
+- [x] One solid fill per viewport; label and href from `lib/cta.js` (n/a for the label source: Hanzo's own "Read the docs" → docs.hanzo.ai/docs/cli/books)
 - [x] One h1; the page is clear in 5 seconds
 - [x] No dead or self-looping button; prices from `lib/plans.js` (n/a: no prices)
 - [x] Open copy questions for James listed, none decided
 
-Done here: Header has Persona, Goal, CTA, a `Metric: docs_click` line, Signature, Beyond and V2. The one solid ask "Read the docs" appears in the hero and the close; the gate measures 1 solid fill per viewport at 1470×801 and 375×812.
+Done here: Header has Persona, `Metric: api_key_created`, Goal, CTA, Signature, Beyond and V2. The page's ask is solid in the hero and the Band only; while either is on screen `main[data-ask-on]` turns the header's ask into an outline (Ledger.css), so a probe of every screen at 1470×801 and 375×812 counts at most 1 dark solid button.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it (the layout's `#main` mark sits before `<main>`)
@@ -21,29 +21,27 @@ Done here: Header has Persona, Goal, CTA, a `Metric: docs_click` line, Signature
 - [x] Breadcrumb at depth 2 or more (n/a: depth 1)
 - [x] Link parity: 0 removed, 0 unexpected
 
-Done here: One `<main>`, and the layout's skip link targets `#main` above it. Parity shows links 3/3 (docs, GitHub, Deploy) through `A`, `More` and kit `Cta`.
+Done here: One `<main>`. Parity shows links 3/3 (docs, GitHub, Deploy) through `A`, `More` and kit `Cta`.
 
 ## 3. First impression and page narrative
 - [x] Sells in 5 s; something moves within 1 s without input
-- [x] `PageHero`; nothing above the h1 (n/a for `PageHero`: not merged yet, so the page uses `BizLines` with the same line-mask spec)
+- [x] `PageHero`; nothing above the h1 (n/a for `PageHero`: not merged; `BizLines` has the same line-mask spec)
 - [x] JS off: legible; no `opacity:0` on the LCP element
 - [x] One idea per 100svh; no 3 same-height sections in a row
-- [x] Ends in proof strip, `Band`, footer (n/a for kit `Band`: it fades in with `Rise` and would be a second dark room, so the close is one 44px sentence, the same ask and a full-width row)
+- [x] Ends in proof strip, `Band`, footer (a page-local Band: kit `Band` uses `Rise`/`Magnetic`, over the motion budget)
 - [x] Card-to-page links use Morph; title lands within 12px (n/a: no cards lead to pages)
 
 Done here:
-- First screen at 1470×801: "Hanzo Ledger" at 52px, cut in by line mask (700ms, 60ms per line), one lede line, the ask, and the live book posting by itself within the first second.
-- JS off: 0 hidden text runs (gate script).
-- Order: hero book → three chapters → dark capability room → splitter → receipt close.
-- "Every cent lands somewhere" (26px) sits on the pinned stage above the first scene, not alone on a white screen. The Numscript and bash labels sit under their headings.
+- First screen at 1470×801: "Hanzo Ledger" at 52px cut in by line mask, the lede, the ask and the live book posting by itself in the first second.
+- Order: hero book → three chapters (the 26px "Every cent lands somewhere" heads the pinned stage, not a screen of its own) → dark capability room → splitter (its words ride sticky beside it, so no empty column) → "Get Ledger" receipt strip and Deploy row → closing Band ("Get started with Ledger", lede, the ask) in a black room that opens from a rounded card to full width, then the footer with no gap.
 
 ## 4. Conversion system
-- [x] `<Cta>` only; no raw `.x-btn` (kit `Cta` for the hero ask, the GitHub link and the close ask; 0 raw `.x-btn`)
-- [x] Sticky ask in header and bar after the hero, same label
+- [x] `<Cta>` only; no raw `.x-btn`
+- [x] Sticky ask in header and bar after the hero, same label (header only: JAMES.md 6 bans a floating bar on desktop; the header's own ask is the sticky one)
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: kit `Cta` ids `ledger.hero`, `ledger.github` and `ledger.close` are written as `data-cta` and sent as `cta_click`; `ledger.deploy` is on the row. `Cta thumb` gives the header and the phone bar the same "Read the docs", and nothing floats on desktop (measured: 0 fixed bars). Copy is the kit `Copy`.
+Done here: kit `Cta` writes `data-cta="ledger.hero"` (with `data-thumb`), `ledger.github` and `ledger.close`; the Deploy row carries `ledger.deploy`. No bar of the page's own floats at any width. Copy is the kit `Copy` in `BizPaste`.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -51,7 +49,7 @@ Done here: kit `Cta` ids `ledger.hero`, `ledger.github` and `ledger.close` are w
 - [x] Marquees pause, freeze under reduced motion, hide duplicates (n/a: no marquee)
 - [x] Privacy link and owner line beside every submit (n/a: no form)
 
-Done here: Every figure (10,000, 9,500, 500, USD/2, order_42_payout) comes from Hanzo's own curl and Numscript example on the page. There are no logos and no seals.
+Done here: Every figure (10,000, 9,500, 500, USD/2, order_42_payout) comes from Hanzo's own curl and Numscript example on the page. No logos, no seals.
 
 ## 6. Content presentation (copy untouched)
 - [x] No text under 13px (14px phone) except mono capitals
@@ -61,8 +59,8 @@ Done here: Every figure (10,000, 9,500, 500, USD/2, order_42_payout) comes from 
 
 Done here:
 - Parity 55/55 text, 3/3 links.
-- Phone text is 14px or more; the only 12px items are Zen Mono capital labels.
-- The request uses kit `Code` inside `BizSheet`. The capabilities are `role=tab` tabs with every panel in the HTML.
+- Probe at 375×812: page text is 14px or more; the only smaller runs are 12px Zen Mono capital labels (source, amount, Numscript…) and the header's 13px ask (shared chrome).
+- At 375 the Numscript panes keep their shape and scroll sideways, focusable (`tabIndex=0`, labelled), with a fade at the right edge instead of cutting off mid-word.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
@@ -72,22 +70,22 @@ Done here:
 - [x] Differs from neighbours in hero medium and room order
 
 Done here:
-- `taste.py` is OK. Colours are the deck ramp only (#0a0a0a, #525252, #737373, #171717, #f2f2f2, #e4e4e7), via `--bz-*`.
-- Radii are 6/8/12/16/24/full. Objects are outlined with no shadow.
-- Scale: h1 52, headings 26, one figure big per screen (Σ 0 at 84 while its chapter is lit, the amount at 64).
-- The hero is a ledger book beside the title, unlike the shells, phones and canvases of its neighbours.
+- `taste.py` OK. `Ledger.css` uses only `var(--bz-*)` and five `--ld-*` deck steps declared once on `.ld` (#000000, #fafafa, #e4e4e7, #a3a3a3, #262626) plus white-alpha steps from the deck list; no other literal hex.
+- "Numscript" is a caption under its h2; the sheet has no `kick`.
+- Scale: h1 52, section heads 26 ("Every cent lands somewhere", "One transaction, however many parties", "Get Ledger"), figures capped at 64 (Σ 0, the "1", 10000/100.00, the amount); one big figure per screen.
+- Objects are outlined (`bz-obj`), tiles flat; only the slider thumb (a floating control) has the float shadow.
+- Unlike the Biz template: the book reads back what the pointer is on, the close is a Band that opens to full width rather than the "Get X" receipt beside the close.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
 - [x] Focus ring visible on every stop of a Tab crawl
-- [x] Dialogs are native, trap focus and return it (`BizSheet` is a role=dialog with focus in and back, Esc closes, aria-modal only while open)
+- [x] Dialogs are native, trap focus and return it (`BizSheet`: role=dialog, focus in and back, Esc closes)
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: listed above
 
 Done here:
-- Every hover sits inside `@media (hover: hover)`.
-- Press is scale .97 on the pause, tabs, chips and sheet button.
-- The amount input is 64px (`--text-control` 52px on touch). The slider thumb answers hover with a ring.
+- Every `:hover` in `Ledger.css` sits inside `@media (hover: hover)`, including the selected tab (underline) and the slider thumb (grows).
+- Press is scale .97 / 90ms on the pause, tabs, Copy, the Band ask and the slider thumb; journal rows and accounts are focusable with a 2px ink ring.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -97,10 +95,9 @@ Done here:
 - [x] Sound only on the listed moments, through the one kit
 
 Done here:
-- Signature: the book posts by itself. Supporting: Stage settle, pinned chapters, line-mask cut-in.
-- Kinds of movement: idle (the book), pointer (a journal row lights its accounts), state (the tab pill glides), arrival (h1), scroll (chapters).
-- No springs: tweens of 300ms on ease-emphasis or in-out. `variety.py` OK; the book uses `setTimeout`.
-- Sound comes from the site kit (tabs, toggles, asks).
+- Signature: the book posts by itself. Pointer: hovering a journal row lights the accounts it touched and the note reads it back ("tx 2 · @users:001 · @merchants:042 · @platform:fees · Σ 0"); an account lights its postings; the film holds still while you read. No cursor labels anywhere.
+- Idle: chapter scenes (also stacked on phone) draw a hairline along each chain entry / retry in turn; the dark-room rows sweep; the split bar carries a flowing band. Time: the split slides from 50 to 95 once when first seen. State: the tab pill glides (`layoutId`, ease-emphasis 300ms; the balance roll is the same tween — no springs). Scroll: pinned chapters, the Band opening.
+- `variety.py`: 2 techniques (layoutId, useScroll). Reduced motion stops every keyframe and skips the slide.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set (n/a: no images or films on this page)
@@ -108,7 +105,7 @@ Done here:
 - [x] Budgets met; nothing missing; alt on every image (n/a: no images)
 - [x] No dimmed or filtered photo; 4+ real visuals together where the page has them (n/a: Hanzo's ledger page has no media)
 
-Done here: The page has no Hanzo media. Its objects are product UI drawn in HTML: the book, the posting, the chain, the retries, the capability objects, the splitter and the receipt.
+Done here: No Hanzo media on this page; its objects are product UI drawn in HTML (book, posting, chain, retries, capability objects, splitter, receipt).
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -117,9 +114,8 @@ Done here: The page has no Hanzo media. Its objects are product UI drawn in HTML
 - [x] Primary ask above the fold at 375×667
 
 Done here:
-- At 375 the order is title, lede, ask (y≈350), then the book with 2×2 accounts.
-- Chapters stack, each with its own scene; nothing pins under 900px.
-- No sideways scroll and no target under 44px (gate script).
+- Under 900px nothing pins: `BizChapters` stacks and each chapter's scene sits above its own words; the Numscript copy's sticky is switched off.
+- Book rows and accounts answer a tap (pin the reading, tap again to let go). scrollWidth equals the viewport at 320 and 375 (check script).
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -129,10 +125,8 @@ Done here:
 - [x] Keyboard reaches every control
 
 Done here:
-- Body grey is #525252 on white (7.8:1) and quiet labels #737373 (4.7:1).
-- The book has a pause button with `aria-pressed`.
-- Tabs use arrow keys; the sheet closes on Esc and returns focus.
-- One h1; h2 per section, h3 inside.
+- Selected tab: #0a0a0a on the #fafafa pill (19:1); unselected #a3a3a3 on #262626 (6.1:1).
+- The book has a pause with `aria-pressed`; journal rows and accounts take Enter/Space to pin a reading and Esc to clear.
 
 ## 13. Performance and engineering
 - [x] h1 and LCP element in server HTML
@@ -140,7 +134,7 @@ Done here:
 - [x] No poller; no third-party request before consent
 - [x] Nothing heavy run on James's laptop
 
-Done here: The h1 and the book render on the server, and the book's loop runs only on screen (`useLive`). Filming and checks ran in the cloud session.
+Done here: The h1 and the book render on the server; the book's loop runs only on screen (`useLive`, `setTimeout`). Filming and checks ran in the cloud session.
 
 ## 14. SEO and machine files
 - [x] Title and description match live (or are listed for James)
@@ -148,20 +142,20 @@ Done here: The h1 and the book render on the server, and the book's loop runs on
 - [x] `<JsonLd route>` parses; no broken URL
 - [x] Every card is a real link (n/a: no cards)
 
-Done here: The title is "Hanzo Ledger — Hanzo AI" from `content/pages.json`. Canonical and og:url are both https://hanzo.ai/ledger/. `app/ledger/page.jsx` renders `<JsonLd route="/ledger" />`, unchanged.
+Done here: `app/ledger/page.jsx` (unchanged) takes title and description from `content/pages.json` and renders `<JsonLd route="/ledger" />`.
 
 ## 15. Catalogue and product pages
-- [x] n/a: not a catalogue or model page (a product page; no model cards, no prices)
+- [x] n/a: not a catalogue or model page
 
-Done here: n/a. It follows the product anatomy: identity, the book as console, three chapters, the "See the request" spec sheet, and one closing ask.
+Done here: n/a. It follows the product anatomy: identity, the book as console, three chapters, the "See the request" spec sheet, the Band.
 
 ## 16. Developer experience
-- [x] One `CodeBlock`; copy equals display (kit `Code` until `CodeBlock` merges; Copy takes the displayed text)
-- [x] Config blocks parse on their own (n/a: no JSON config block; the curl is shell)
+- [x] One `CodeBlock`; copy equals display (kit `Code` until `CodeBlock` merges)
+- [x] Config blocks parse on their own (n/a: the curl is shell)
 - [x] Terminal pauses and ends on a static frame (n/a: no terminal)
 - [x] No hand-typed version number
 
-Done here: The curl request (Hanzo's own) sits in one `Code` pane with Copy in "See the request". The splitter writes the postings and Numscript live from the amount and percentage.
+Done here: Hanzo's curl sits in one `Code` pane with Copy in "See the request"; the splitter writes the postings and Numscript live from the amount and percentage.
 
 ## 17. States and resilience
 - [x] Loading, empty, error and offline states designed
@@ -169,21 +163,12 @@ Done here: The curl request (Hanzo's own) sits in one `Code` pane with Copy in "
 - [x] A failed submit keeps its values and shows no success (n/a: no submit)
 - [x] A thrown island does not blank the page
 
-Done here:
-- Splitter: an empty or zero amount reads "Type an amount above zero" and the seal shows "—".
-- Book: refusals read as an inverted note with a × cue.
-- Nothing is fetched, so blocked networks change nothing; the film showed no console errors.
+Done here: Splitter: an empty amount reads "Type an amount above zero" and the seal shows "—". The book's refusals read as an inverted note with a × cue. Nothing is fetched.
 
 ## 18. Measurement and handover
-- [x] `data-cta` on every primary; events only through `lib/track.js` (data-cta ready; `lib/track.js` not in the repo yet)
+- [x] `data-cta` on every primary; events only through `lib/track.js` (kit `Cta` dispatches `cta_click`; `lib/track.js` is the shared owner's)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/ledger.md` verdict 8 or more (6/10 at 069c088; every listed fix is applied since, awaiting re-walk)
+- [ ] Review read: `docs/review/ledger.md` verdict 8 or more (6/10; this pass answers its Fixes 1–6, awaiting a re-walk)
 
-Done here: The page has `V2: 8/10 …` and `data-cta` ids `ledger.hero`, `ledger.close` and `ledger.deploy`. The 6/10 review's six fixes are in at d66e1ef and later:
-- one sticky bar;
-- a grey code sheet;
-- the tab pill draws;
-- the book answers the pointer;
-- 14px phone floors and hover-only hovers;
-- chapters stacked on phones.
+Done here: `V2:` line updated (no sticky-bar claim). `data-cta` ids `ledger.hero`, `ledger.github`, `ledger.close`, `ledger.deploy`. The 6/10 review was read and each fix is answered in this commit.

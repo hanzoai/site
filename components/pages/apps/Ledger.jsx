@@ -1,9 +1,10 @@
 'use client';
 /* Ledger (v2, archetype A "Launch"; greys and ink only, JAMES.md 7).
    Persona: a developer building payments or a marketplace who needs money to balance
-   Metric: docs_click
+   Metric: api_key_created (developers, MASTER §1); on this page counted through the docs clicks data-cta="ledger.hero" / "ledger.close"
    Goal: see that a one-sided entry cannot be written, then open the docs
-   CTA: Read the docs -> https://docs.hanzo.ai/docs/cli/books (hero, the site's sticky ask bar at every width, close; data-thumb, data-cta)
+   CTA: Read the docs -> https://docs.hanzo.ai/docs/cli/books (hero and the closing Band; data-cta ledger.hero / ledger.close, data-thumb
+   on the hero). No floating bar: between them the header's own ask carries it, and it draws as an outline while either is on screen.
    Signature: the book that balances itself. The live ledger sits beside the title on the first screen: four accounts
    (world, users:001, merchants:042, platform:fees) with huge balances, and Hanzo's own split payment posting by itself:
    new money enters from world, the split posts as one transaction, an overdraft is refused whole, a mistake is reversed
@@ -11,9 +12,13 @@
    It pauses on its own button (WCAG 2.2.2) and stops off screen.
    Beyond: "Split it yourself". Type an amount and drag the split: the postings, in the asset's smallest unit, and the
    Numscript that says the same thing are written for you, and the two sides always balance.
-   Motion: the book (idle, signature) + Stage (it settles as you scroll) + sticky chapters (scroll) + the capability
-   switch in the dark room (state, a gliding pill); headlines cut into their line. The request lives in a sheet.
-V2: 8/10 deck scale (h1 52, headings 26, one figure big per screen), the live book beside the title at both sizes, chapters stacked on phones, the receipt close; greys only, no springs, nothing floating
+   Pointer: the book answers the pointer itself (no cursor label): a journal row lights the accounts it touched and the
+   note reads it back ("tx 2 · @users:001 · @merchants:042 · @platform:fees · Σ 0"); an account lights its postings.
+   A tap or Enter pins the reading on touch and keyboard.
+   Motion: the book (idle, signature) + Stage (it settles as you scroll) + sticky chapters (scroll; stacked under 900px,
+   each scene idling on its own) + the capability switch in the dark room (state, a gliding pill, ease-emphasis 300ms)
+   + the split sliding to 95 / 5 once when seen (time) + the Band opening to full width (scroll); headlines cut in.
+V2: 8/10 the book reads back what the pointer is on (no cursor labels), deck scale (figures ≤64, heads 26), Numscript as a caption, a closing Band that opens to full width, phone scenes idle and code scrolls with an edge, one solid per screen, deck tokens only
 */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useInView, useReducedMotion, animate } from 'motion/react';
@@ -57,6 +62,7 @@ function Book() {
   const [ref, seen, calm] = useLive(0.2);
   const [held, setHeld] = useState(false);
   const [pt, setPt] = useState(null); // what the pointer is on: { tx } or { acct }
+  const kind = useRef('mouse');
   const live = seen && !held && !pt; // reading a row holds the page still under the pointer
   const [at, setAt] = useState(0);
   const [f, setF] = useState(2);
@@ -80,6 +86,17 @@ function Book() {
   const read = ptTx ? 'tx ' + ptTx.id + ' · ' + [...new Set(touched(ptTx))].map((i) => '@' + ACC[i]).join(' · ') + ' · Σ 0'
     : pt?.acct != null ? '@' + ACC[pt.acct] + ' · ' + fmt(fr.b[pt.acct]) + (ptAcctTx.length ? ' · ' + ptAcctTx.map((t) => 'tx ' + t.id).join(', ') : '') : null;
   const note = read || fr.n;
+  // one way in for every pointer: a mouse reads on hover, a tap or Enter pins the reading (tap again to let go)
+  const same = (q) => (q.tx != null ? pt?.tx === q.tx : pt?.acct === q.acct);
+  const reader = (q) => ({
+    tabIndex: 0,
+    onPointerEnter: (e) => { if (e.pointerType === 'mouse') setPt(q); },
+    onPointerLeave: (e) => { if (e.pointerType === 'mouse') setPt(null); },
+    onPointerDown: (e) => { kind.current = e.pointerType; },
+    onClick: () => { if (kind.current !== 'mouse') setPt(same(q) ? null : q); },
+    onKeyDown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setPt(same(q) ? null : q); } if (e.key === 'Escape') setPt(null); },
+    onBlur: () => setPt(null),
+  });
   return (
     <div className="ld-book bz-obj" ref={ref}>
       <div className="ld-bar">
@@ -99,7 +116,7 @@ function Book() {
       <div className="ld-body">
         <div className="ld-accts">
           {ACC.map((a, i) => (
-            <div key={a} className={'ld-acct' + (i === 0 ? ' world' : '') + (hot.has(i) ? ' hot' : '')} onPointerEnter={() => setPt({ acct: i })} onPointerLeave={() => setPt(null)}>
+            <div key={a} className={'ld-acct' + (i === 0 ? ' world' : '') + (hot.has(i) ? ' hot' : '')} {...reader({ acct: i })}>
               <span className="x-mono">@{a}</span>
               <span className="ld-bal">
                 <AnimatePresence mode="popLayout" initial={false}>
@@ -115,7 +132,7 @@ function Book() {
           <ol>
             <AnimatePresence initial={false}>
               {fr.j.map((t, k) => (
-                <motion.li key={t.id} layout="position" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.5, ease: EASE }} className={(fr.hit === t.id ? 'hit' : '') + (t.back ? ' back' : '') + (lit(t) ? ' lit' : '')} onPointerEnter={() => setPt({ tx: t.id })} onPointerLeave={() => setPt(null)}>
+                <motion.li key={t.id} layout="position" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.5, ease: EASE }} className={(fr.hit === t.id ? 'hit' : '') + (t.back ? ' back' : '') + (lit(t) ? ' lit' : '')} {...reader({ tx: t.id })}>
                   <span className="ld-tx x-mono">tx {t.id}{t.back ? ` ↩ ${t.back}` : ''}</span>
                   <div className="ld-posts">
                     {t.p.map(([s, d, v], i) => (
@@ -222,7 +239,7 @@ const NS = `send [USD/2 10000] (
 function CapObject({ i }) {
   if (i === 0) return (
     <div className="ld-cobj">
-      <pre className="ld-cobj-code x-mono">{NS}</pre>
+      <pre className="ld-cobj-code x-mono" tabIndex={0} aria-label="Numscript">{NS}</pre>
       <div className="ld-cobj-out x-mono"><p><span>@merchants:042</span><b>9,500</b></p><p><span>@platform:fees</span><b>500</b></p><p className="sum"><span>tx 2</span><b>Σ 0</b></p></div>
     </div>
   );
@@ -303,12 +320,23 @@ curl -X POST http://localhost:3068/v2/main/transactions \\
 function Splitter() {
   const [amt, setAmt] = useState('100.00');
   const [pct, setPct] = useState(95);
+  // the first time it is seen, the split slides from even to Hanzo's 95 / 5 once (ease-emphasis), so the
+  // postings and the Numscript visibly rewrite themselves; a hand on the slider stops it, reduced motion skips it
+  const box = useRef(null);
+  const seen = useInView(box, { once: true, amount: 0.5 });
+  const calm = useReducedMotion();
+  const touched = useRef(false);
+  useEffect(() => {
+    if (!seen || calm || touched.current) return;
+    const run = animate(50, 95, { duration: 1.2, ease: EASE, onUpdate: (v) => { if (!touched.current) setPct(Math.round(v)); } });
+    return () => run.stop();
+  }, [seen, calm]);
   const units = Math.max(0, Math.round((parseFloat(amt) || 0) * 100));
   const vend = Math.floor((units * pct) / 100);
   const fee = units - vend;
   const ok = units > 0;
   return (
-    <div className="ld-split bz-obj">
+    <div className="ld-split bz-obj" ref={box}>
       <p className="ld-split-k"><span className="bz-kick">Split it yourself</span><span className="ld-split-ok x-mono">{ok ? 'Σ 0' : '—'}</span></p>
       <label className="ld-amt">
         <span className="bz-kick">Amount, USD</span>
@@ -316,7 +344,7 @@ function Splitter() {
       </label>
       <label className="ld-pct">
         <span>to @merchants:042 <b className="x-mono">{pct}%</b></span>
-        <input type="range" min="50" max="100" value={pct} onChange={(e) => setPct(+e.target.value)} style={{ '--p': ((pct - 50) / 50) * 100 + '%' }} />
+        <input type="range" min="50" max="100" value={pct} onPointerDown={() => { touched.current = true; }} onKeyDown={() => { touched.current = true; }} onChange={(e) => { touched.current = true; setPct(+e.target.value); }} style={{ '--p': ((pct - 50) / 50) * 100 + '%' }} />
       </label>
       <div className="ld-split-bar" aria-hidden="true"><i style={{ transform: `scaleX(${pct / 100})` }} /></div>
       <p id="ld-units" className="ld-units x-mono">{ok ? `${units.toLocaleString('en-US')} in USD/2, the smallest unit: whole numbers, nothing rounds on the way in` : 'Type an amount above zero'}</p>
@@ -326,7 +354,7 @@ function Splitter() {
           <p><span>@users:001</span><i>→</i><span>@platform:fees</span><b>{fee.toLocaleString('en-US')}</b></p>
           <p className="sum"><span>sent</span><b>{units.toLocaleString('en-US')}</b><span>received</span><b>{(vend + fee).toLocaleString('en-US')}</b></p>
         </div>
-        <pre className="ld-ns x-mono">{`send [USD/2 ${units}] (
+        <pre className="ld-ns x-mono" tabIndex={0} aria-label="Numscript">{`send [USD/2 ${units}] (
   source = @users:001
   destination = { ${pct}% to @merchants:042
                   ${100 - pct}% to @platform:fees }
@@ -357,27 +385,24 @@ function Numscript() {
 
 const Gh = () => <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" /></svg>;
 
-/* The close: one sentence at Display size and the same one ask; beside it the "Get Ledger" receipt (licence, source,
-   the agent prompt) that balances to Σ 0 like everything else here; then one full-width row for the secondary. */
-function End() {
+/* "Get Ledger" as the book's last entry: a receipt in hairlines (licence, source) beside the agent prompt, totalling
+   Σ 0 like everything else here; then one full-width row for the secondary. Quiet, so the Band after it is the loud one. */
+function Get() {
   return (
-    <section className="bz-sec ld-end" aria-labelledby="ld-start-h">
-      <div className="bz-wrap bz-grid">
-        <div className="ld-end-say">
-          <BizLines id="ld-start-h" className="bz-display md" lines={['Get started', 'with Ledger']} />
-          <p className="bz-lede">Post your first transaction over HTTP, or describe the whole split once in Numscript and let the ledger do the arithmetic.</p>
-          <div className="bz-acts"><Cta to={DOCS} id="ledger.close">Read the docs</Cta></div>
-        </div>
-        <div className="ld-receipt bz-obj">
-          <h2 className="bz-title">Get Ledger</h2>
+    <section className="ld-get" aria-labelledby="ld-get-h">
+      <div className="bz-wrap bz-grid ld-get-grid">
+        <div className="ld-receipt">
+          <h2 id="ld-get-h" className="bz-headline">Get Ledger</h2>
           <p className="ld-rc-tag">Double-entry accounting ledger</p>
           <dl className="ld-rc-rows x-mono">
             <div><dt>License:</dt><dd>Apache-2.0</dd></div>
             <div><dt><Gh /></dt><dd><A to={GH} className="ld-rc-a">hanzoai</A></dd></div>
           </dl>
           <div className="ld-links"><More to={GH}>View on GitHub</More></div>
-          <BizPaste name="Ledger" prompt="Read https://hanzo.ai/skill.md and use Hanzo Ledger in my project." className="ld-paste" />
           <p className="ld-rc-sum x-mono" aria-hidden="true"><span>Σ</span><b>0</b></p>
+        </div>
+        <div className="ld-get-paste">
+          <BizPaste name="Ledger" prompt="Read https://hanzo.ai/skill.md and use Hanzo Ledger in my project." className="ld-paste" />
         </div>
       </div>
       <div className="bz-wrap"><A to={DEPLOY} className="ld-row" data-cta="ledger.deploy"><span>Deploy to Cloud</span><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A></div>
@@ -385,9 +410,41 @@ function End() {
   );
 }
 
-export default function Ledger() {
+/* The closing Band: the page's own sentence and the one ask, centred in the one black room after the dark capabilities.
+   It arrives as a rounded card inside the gutters and opens to the full width as it is reached (transform only), then
+   meets the footer with no gap. */
+function End() {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.35'] });
+  const open = useTransform(scrollYProgress, [0, 1], [0.94, 1]);
   return (
-    <main className="bz ld">
+    <section ref={ref} className="ld-band" data-room="dark" aria-labelledby="ld-start-h">
+      <motion.div className="ld-band-bg" style={{ scaleX: open }} aria-hidden="true" />
+      <div className="bz-wrap ld-band-in">
+        <BizLines id="ld-start-h" className="bz-display md" lines={['Get started', 'with Ledger']} />
+        <p className="bz-lede">Post your first transaction over HTTP, or describe the whole split once in Numscript and let the ledger do the arithmetic.</p>
+        <div className="bz-acts"><Cta to={DOCS} id="ledger.close">Read the docs</Cta></div>      </div>
+    </section>
+  );
+}
+
+export default function Ledger() {
+  // one solid fill per screen: while the page's own ask (hero or Band) is on screen, the header's ask draws as an
+  // outline (Ledger.css, html:has(main.ld[data-ask-on]))
+  const ref = useRef(null);
+  useEffect(() => {
+    const main = ref.current;
+    const asks = [...main.querySelectorAll('[data-cta="ledger.hero"], [data-cta="ledger.close"]')];
+    const on = new Set();
+    const io = new IntersectionObserver((es) => {
+      es.forEach((e) => (e.isIntersecting ? on.add(e.target) : on.delete(e.target)));
+      if (on.size) main.setAttribute('data-ask-on', ''); else main.removeAttribute('data-ask-on');
+    });
+    asks.forEach((a) => io.observe(a));
+    return () => io.disconnect();
+  }, []);
+  return (
+    <main className="bz ld" data-ask-on="" ref={ref}>
       <span data-ask-name="Hanzo Ledger" hidden />
       <Hero />
       <BizChapters label="Every cent lands somewhere" className="ld-ch" items={STEPS.map(([t, d]) => ({ t, d }))} stage={(at) => <><h2 className="bz-headline ld-ch-h">Every cent lands somewhere</h2><Scenes at={at} /></>}>
@@ -397,6 +454,7 @@ export default function Ledger() {
       </BizChapters>
       <Caps />
       <Numscript />
+      <Get />
       <End />
     </main>
   );

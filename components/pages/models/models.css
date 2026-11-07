@@ -535,3 +535,117 @@
 .xmf-obj.film .xmf-crumbs, .xmf-obj.film .xmf-crumbs a, .xmf-obj.film .xmf-crumbs span, .xmf-obj.film .xmf-obj-l { color: rgba(255, 255, 255, .78); }
 .xmf-obj.film .xmf-crumbs [aria-current] { color: #fafafa; }
 .xmf-obj.film :focus-visible { outline-color: #fafafa; box-shadow: 0 0 0 6px #000; }
+
+/* ======================= v3 (critic 7 Nov): one object a screen, nothing leaves the site unannounced ======================= */
+/* the spec sheet sits right under the hero; its left column holds the heading and the rates drawn to scale */
+.xmf-model .xmf-specs { padding: 72px 0 96px; }
+.xmf-spec-l { grid-column: 1 / 5; min-width: 0; padding-right: 24px; }
+.xmf-spec-l .xmf-spec-h { margin: 0; }
+.xmf-rb { display: grid; gap: 17px; margin-top: 44px; max-width: 300px; }
+.xmf-rb-r { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; align-items: center; gap: 10.5px; }
+.xmf-rb-r > span { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
+.xmf-rb-r i { position: relative; height: 8px; border-radius: 99px; background: #ededed; overflow: hidden; }
+.xmf-rb-r i b { position: absolute; inset: 0; border-radius: inherit; background: var(--ink); transform-origin: 0 50%; transition: transform .9s cubic-bezier(.16, 1, .3, 1) .15s; }
+.xmf-rb-r + .xmf-rb-r i b { transition-delay: .3s; }
+.xmf-rb-r em { font-style: normal; font-size: 14px; color: var(--ink); text-align: right; min-width: 6ch; }
+/* a long spec, in MASTER 4.7's four groups */
+.xmf-spec-p + .xmf-spec-p { margin-top: 27px; }
+.xmf-spec-p h4 { margin: 0 0 6.5px; font: 500 12px/1.3 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
+.xmf-spec-p dl > div:first-child { padding-top: 10.5px; }
+
+/* Kai's "Limits" (and any section Hanzo adds later) on the deck scale, with its drawn object beside it */
+.xmf-loose h2 { margin: 0 0 17px; font-size: 26px; font-weight: 497; line-height: 1.2; letter-spacing: -.02em; }
+.xmf-model .xmf-loose { padding: 96px 0; border-top: 1px solid var(--line); }
+.xmf-loose.drawn .xmf-loose-g { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); column-gap: 24px; align-items: center; }
+.xmf-loose.drawn .xmf-loose-t { grid-column: 1 / 8; }
+.xmf-loose.drawn .xmf-reach { grid-column: 9 / 14; }
+.xmf-reach { margin: 0; padding: 27px; border-radius: 24px; background: #f5f5f5; }
+.xmf-reach-bar { position: relative; height: 44px; border-radius: 12px; background: #fff; overflow: hidden; }
+.xmf-reach-bar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: inherit; transform-origin: 0 50%; transform: scaleX(0); transition: transform 1.1s cubic-bezier(.16, 1, .3, 1); }
+.xmf-reach-bar i.all { right: 0; background: #d4d4d4; }
+.xmf-reach.on .xmf-reach-bar i { transform: scaleX(1); }
+.xmf-reach-bar.cells { display: flex; gap: 3px; background: transparent; border-radius: 0; overflow: visible; }
+.xmf-reach-bar.cells i { position: relative; flex: 1; border-radius: 3px; background: #d4d4d4; transform: scaleY(0); transform-origin: 50% 100%; transition: transform .5s cubic-bezier(.16, 1, .3, 1) calc(var(--i) * 22ms); }
+.xmf-reach-bar.cells i.tr { background: var(--ink); }
+.xmf-reach.on .xmf-reach-bar.cells i { transform: scaleY(1); }
+.xmf-reach figcaption { position: relative; height: 20px; margin-top: 10.5px; }
+.xmf-reach figcaption span { position: absolute; top: 0; font-size: 13px; color: var(--soft); white-space: nowrap; }
+.xmf-reach figcaption .tr { left: 0; color: var(--ink); }
+.xmf-reach figcaption .all { right: 0; }
+
+/* the sibling field: the page's own model is named at rest; models without a page here are points, not links */
+.xmf-dot.far b { opacity: .28; }
+.xmf-dot.far { cursor: default; }
+.xmf-me-l { position: absolute; z-index: 3; margin: -9px 0 0 18px; padding: 3px 8px; border-radius: 6px; background: #0a0a0a; color: #fafafa; font-size: 13px; font-weight: 500; line-height: 1.3; white-space: nowrap; pointer-events: none; }
+.xmf-me-l.l { translate: calc(-100% - 36px) 0; }
+
+/* the rail: six siblings at most, all pages of this site */
+.xmf-rail.few { grid-auto-columns: minmax(280px, calc((100% - 28px) / 3)); }
+@media (hover: hover) and (min-width: 900px) { .xmf-rail .sc-card.hush { min-height: 176px; } }
+/* Hanzo's other "More from" cards: one line each, the description on hover or focus */
+.xmf-also { margin: 44px 0 0; padding: 0; list-style: none; border-top: 1px solid var(--ink); }
+.xmf-also li { border-bottom: 1px solid var(--line); }
+.xmf-also-a { position: relative; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr) auto; align-items: center; gap: 0 24px; min-height: 72px; padding: 12px 16px; border-radius: 12px; color: var(--ink); text-decoration: none; transition: background-color .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(0, 0, .2, 1); }
+.xmf-also-a b { font-size: 17px; font-weight: 500; letter-spacing: -.01em; }
+.xmf-also-a b i { display: inline-block; margin-left: 8px; font-style: normal; transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
+.xmf-also-c { grid-column: 3; grid-row: 1; font-size: 13px; color: var(--soft); }
+.xmf-also-d { grid-column: 2; grid-row: 1; font-size: 13px; line-height: 18px; color: var(--soft); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0; transform: translateY(4px); transition: opacity .3s cubic-bezier(.16, 1, .3, 1), transform .3s cubic-bezier(.16, 1, .3, 1); }
+@media (hover: hover) {
+  .xmf-also-a:hover { background: #f5f5f5; }
+  .xmf-also-a:hover b i { transform: translateX(4px); }
+  .xmf-also-a.far:hover b i { transform: translate(3px, -3px); }
+  .xmf-also-a:hover .xmf-also-d { opacity: 1; transform: none; }
+}
+.xmf-also-a:focus-visible .xmf-also-d { opacity: 1; transform: none; }
+.xmf-also-a:active { transform: scale(.995); }
+.xmf-also-a:focus-visible { outline-offset: -2px; }
+
+/* a maker's shelf: h1 on the deck scale so the count is the one big thing; the shelf is a list of 72px rows */
+.xmf-prov .xmf-name.m, .xmf-prov .xmf-name.l { font-size: 52px; line-height: 1.05; }
+.xmf-maker-n b { font-size: 64px; }
+.xmf-prov .xmf-grid { display: block; border-top: 1px solid var(--ink); }
+.xmf-prov .xmf-grid > li { border-bottom: 1px solid var(--line); }
+.xmf-prov .sc-card.xmf-row { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr) auto; align-items: center; gap: 0 24px; min-height: 72px; height: auto; padding: 12px 16px; border-radius: 12px; background: transparent; color: var(--ink); transform: none !important; transition: background-color .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(0, 0, .2, 1); }
+.xmf-row .sc-top { display: contents; }
+.xmf-row .sc-t { grid-column: 1; grid-row: 1; font-size: 17px; line-height: 24px; letter-spacing: -.01em; color: var(--ink); transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
+.xmf-row .sc-meta { grid-column: 2; grid-row: 1; margin: 0; font-size: 13px; color: var(--soft); transition: opacity .3s cubic-bezier(.16, 1, .3, 1); }
+.xmf-row .sc-meta b { color: var(--ink); }
+.xmf-row .sc-d { grid-column: 2; grid-row: 1; margin: 0; max-width: none; font-size: 13px; line-height: 18px; color: var(--soft); -webkit-line-clamp: 2; opacity: 0; transform: translateY(4px); transition: opacity .3s cubic-bezier(.16, 1, .3, 1), transform .3s cubic-bezier(.16, 1, .3, 1); }
+.xmf-row .sc-tags { grid-column: 3; grid-row: 1; flex-wrap: nowrap; justify-content: flex-end; }
+.xmf-row .sc-pill { border-color: rgba(0, 0, 0, .15); color: var(--soft); }
+.xmf-row.sc-card:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; box-shadow: none; }
+@media (hover: hover) {
+  .xmf-prov .sc-card.xmf-row:hover { background: #f5f5f5; }
+  .xmf-row:hover .sc-t { transform: translateX(4px); }
+  .xmf-row:hover .sc-d { opacity: 1; transform: none; }
+  .xmf-row:hover .sc-meta { opacity: 0; }
+}
+.xmf-row:focus-visible .sc-d { opacity: 1; transform: none; }
+.xmf-row:focus-visible .sc-meta { opacity: 0; }
+.xmf-prov .sc-card.xmf-row:active { transform: scale(.995) !important; }
+
+@media (max-width: 899px) {
+  .xmf-model .xmf-specs { padding: 56px 0 72px; }
+  .xmf-spec-l { padding: 0; }
+  .xmf-rb { margin: 20px 0 27px; max-width: none; }
+  .xmf-model .xmf-loose { padding: 72px 0; }
+  .xmf-loose.drawn .xmf-loose-g { display: block; }
+  .xmf-reach { margin-top: 27px; padding: 17px; }
+  .xmf-me-l { font-size: 13px; }
+  .xmf-rail.few { grid-auto-columns: 82%; }
+  .xmf-also-a { grid-template-columns: minmax(0, 1fr) auto; padding: 12px 0; }
+  .xmf-also-d { display: none; }
+  .xmf-also-c { grid-column: 2; }
+  .xmf-prov .xmf-name.m, .xmf-prov .xmf-name.l { font-size: 40px; }
+  .xmf-prov .sc-card.xmf-row { grid-template-columns: minmax(0, 1fr) auto; padding: 12px 0; border-radius: 0; }
+  .xmf-row .sc-meta { grid-column: 1; grid-row: 2; margin-top: 2px; }
+  .xmf-row .sc-d { display: none; }
+  .xmf-row .sc-tags { grid-column: 2; grid-row: 1 / 3; }
+  .xmf-row .sc-tags .sc-pill + .sc-pill { display: none; }
+  .xmf-prov .sc-card.xmf-row:active { background: #f5f5f5; }
+  /* the maker's contour field sits below the words, never through the lede */
+  .xmf-maker .xmf-art { inset: 400px -30% auto 15%; height: 480px; -webkit-mask-image: linear-gradient(transparent, #000 30%); mask-image: linear-gradient(transparent, #000 30%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .xmf-rb-r i b, .xmf-reach-bar i, .xmf-row .sc-d, .xmf-row .sc-meta, .xmf-also-d { transition: none; }
+}

@@ -1,6 +1,6 @@
-// Signature: the spike that opens — the live chart runs full-bleed behind the title, split by the label you pick; every seven seconds a spike rises, the cursor lands on it and the traces for that window open beside it
-// Beyond: label check — tick per-model, per-route, per-tenant and the pinned table grows a column for each while a time-series database would multiply series
-// V2: 8/10 MASTER: title, lede and ask on the 8/5 split with the query toolbar; live chart and its traces side by side on one flat tile (a spike every ~5.5 s, flag rides it, traces open 3 s then rest dimmed; crosshair names the series); pinned table with its own intro and a replayed spike; black room where a point lands on the console; deck greys
+// Signature: the spike that opens — the live chart sits under the title, split by the label you pick; about every six seconds a spike rises, the cursor lands on it and the traces for that window open beside it
+// Beyond: label check — tick per-model, per-route, per-tenant and the table grows a column for each while a time-series database would multiply series
+// V2: 8/10 chapters play by themselves once in view (desktop pinned, phone stacked); the black room is Metrics' own chart set dark, where the prompt's query lands on the line and opens its traces; the line slides by transform; one solid fill per screen
 // Persona: Developer · Goal: try Hanzo Metrics · CTA: "View on GitHub" → https://github.com/hanzoai/metrics (metrics.hero, metrics.close) · Metric: api_key_created
 import Metrics from '../../components/pages/cloud/Metrics';
 import JsonLd from '../../components/JsonLd';

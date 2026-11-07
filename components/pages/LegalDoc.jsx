@@ -10,17 +10,17 @@
    title, where Hanzo numbers none) and its first sentence, and a hover or focus on any index row shows that clause instead. Then the reading room: a sticky contents
    rail beside 19px prose at 64 characters a line, each section opened by a big number plate that turns ink when you
    reach it. The other documents close the page as cards that open into their page.
-   Signature: the reading rail. The contents marker springs to the section you are in while the line fills with your
+   Signature: the reading rail. The contents marker glides (300ms, ease-emphasis) to the section you are in while the line fills with your
    progress, and the percentage read counts beside it.
    Beyond: find in this document. Type a word and the contents show how often each section says it, the matches light
    up in the text, and sections without it dim, so you can go straight to the clause you came for.
    Motion, not only scroll: idle (the cover masks through its clauses, its contour drifts), pointer (index rows preview
-   their clause, sibling rail drags with inertia), state (marker springs, find lights and dims), time (the cover's
+   their clause, sibling rail drags with inertia), state (marker glides, find lights and dims), time (the cover's
    timing bar), scroll (rail line and percentage). 0 UI hues: ink, greys, white.
    Ledger: deletes the "Legal" kicker over the title, the invented "sections" and "min read" figures, the accent colour,
    and the find feature's invented sentences (numbers now, names from content/ui-strings.json).
    V2: 8/10 the cover plate turns inside one stable node (masks out, masks in; a finger pauses it), its numeral 44px so the title leads, whole first sentences only, no invented numbers; the rail keeps the reader's row a third down; Hanzo's tables fit the reading column and stack as cards on phones; one index on phones with a chevroned Contents; ink 44px clear and copy controls; print sheet; reduced motion settled at first paint */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, useMotionValueEvent, useScroll, useReducedMotion } from 'motion/react';
 import Sigil from '../Sigil';
 import { A, DataTable } from '../kit';
@@ -60,8 +60,9 @@ function LCopy({ id }) {
     <button type="button" className="xlg2-cl" aria-label={ui('int_copy')} data-ok={ok || undefined}
       onClick={async () => {
         const url = location.origin + location.pathname + '#' + id;
-        try { await navigator.clipboard.writeText(url); } catch { /* blocked: the mark still confirms the press */ }
         history.replaceState(null, '', '#' + id);
+        // the check shows only when the link was really written; a blocked clipboard leaves it in the address bar
+        try { await navigator.clipboard.writeText(url); } catch { return; }
         setOk(true); play('chime');
         clearTimeout(t.current);
         t.current = setTimeout(() => setOk(false), 1600);
@@ -146,12 +147,12 @@ function Rail({ toc, active, art }) {
         </div>
         <div className={'xlg-track' + (hits ? ' finding' : '')}>
           <span className="xlg-line" aria-hidden="true"><motion.i style={{ scaleY: scrollYProgress }} /></span>
-          <nav aria-label="Contents">
+          <nav aria-label={ui('contents')}>
             <ul>
               {toc.map((t) => (
                 <li key={t.id}>
                   <a href={'#' + t.id} aria-current={active === t.id ? 'location' : undefined} data-none={hits && !hits[t.id] ? '' : undefined}>
-                    {active === t.id && <motion.i layoutId="xlg-mark" className="xlg-mark" transition={{ type: 'spring', stiffness: 380, damping: 32 }} aria-hidden="true" />}
+                    {active === t.id && <motion.i layoutId="xlg-mark" className="xlg-mark" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} aria-hidden="true" />}
                     <span>{t.label}</span>
                     {hits && hits[t.id] > 0 && <em className="xlg-hit x-mono">{hits[t.id]}</em>}
                   </a>
@@ -220,7 +221,11 @@ const firstSentence = (nodes) => {
 /* the cover: the document as an object. Its contour, and a plate that turns through its clauses by itself (number
    huge, first sentence); hover or focus on an index row shows that clause and holds it */
 function Cover({ doc }) {
-  const calm = useReducedMotion();
+  // reduced motion is read after hydration, so the server's HTML and the first client render agree (the CSS already
+  // holds the plate still under reduced motion before that)
+  const rm = useReducedMotion();
+  const [calm, setCalm] = useState(false);
+  useEffect(() => setCalm(!!rm), [rm]);
   // only Hanzo's own section numbers are shown ("1."), never a count of ours
   const secs = doc.toc.map((t, k) => { const s = doc.sections.find((x) => x.id === t.id); const [num, text] = split(t.label); return { ...t, k, num, text, first: s ? firstSentence(s.nodes) : '' }; });
   const [at, setAt] = useState(0);
@@ -238,23 +243,24 @@ function Cover({ doc }) {
   // (no remount, so a swipe that starts on the card survives the turn)
   const [shown, setShown] = useState(0);
   const read = useRef(null);
+  const leave = useRef(null); // the running mask-out, held until the next clause is in the DOM
   useEffect(() => {
     if (at === shown) return;
     const el = read.current;
     if (calm || !el || !el.animate) { setShown(at); return; }
     let live = true;
     const o = el.animate([{ clipPath: 'inset(0 0 0 0)', transform: 'none' }, { clipPath: 'inset(0 0 100% 0)', transform: 'translateY(-10px)' }], { duration: 220, easing: 'cubic-bezier(.4,0,1,1)', fill: 'forwards' });
-    o.onfinish = () => {
-      if (!live) return;
-      setShown(at);
-      requestAnimationFrame(() => {
-        if (!live) return;
-        el.animate([{ clipPath: 'inset(100% 0 0 0)', transform: 'translateY(12px)' }, { clipPath: 'inset(0 0 0 0)', transform: 'none' }], { duration: 460, easing: 'cubic-bezier(.16,1,.3,1)' });
-        o.cancel();
-      });
-    };
+    o.onfinish = () => { if (live) { leave.current = o; setShown(at); } };
     return () => { live = false; };
   }, [at, shown, calm]);
+  // the next clause is in the DOM now (before paint): it masks in from below, and the held mask-out lets go
+  useLayoutEffect(() => {
+    const el = read.current, o = leave.current;
+    if (!o || !el) return;
+    leave.current = null;
+    el.animate([{ clipPath: 'inset(100% 0 0 0)', transform: 'translateY(12px)' }, { clipPath: 'inset(0 0 0 0)', transform: 'none' }], { duration: 460, easing: 'cubic-bezier(.16,1,.3,1)' });
+    o.cancel();
+  }, [shown]);
   const cur = secs[shown] || secs[0];
   const pick = (k) => { setAt(k); setHeld(true); };
   // a finger on the cover pauses the turning (and it picks up again a while after)
