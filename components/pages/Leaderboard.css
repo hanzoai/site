@@ -4,7 +4,7 @@
 /* 1. hero: the headline, then the podium as the hero object */
 .xlb-hero { padding: clamp(104px, 9vw, 128px) 0 clamp(96px, 10vw, 160px); }
 .xlb-hero-top { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); gap: 24px; align-items: end; margin-bottom: clamp(40px, 3.6vw, 52px); }
-.xlb-hero-h .pf-kick { margin-bottom: 24px; }
+.xlb-cap { margin: 24px 0 0; }
 .xlb-lede { margin: 0 0 28px; max-width: 34ch; font-size: clamp(17px, 1.3vw, 19px); line-height: 1.55; color: var(--soft); text-wrap: pretty; }
 .xlb-acts { display: flex; flex-wrap: wrap; gap: 12px; }
 
