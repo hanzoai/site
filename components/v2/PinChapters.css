@@ -8,10 +8,12 @@
 .pc-idx { grid-column: 1 / 6; grid-row: 1; display: flex; flex-wrap: wrap; gap: 4px 2px; align-self: start; }
 .pc-idx button {
   position: relative; display: inline-flex; align-items: baseline; gap: 8px; min-height: 44px; padding: 0 14px 0 0; border: 0; background: none;
-  font: 500 15px/1 var(--sans); color: var(--faint); cursor: pointer; transition: color .3s;
+  font: 500 15px/1 var(--sans); color: var(--soft); cursor: pointer; transition: color .3s, transform .1s;
 }
-.pc-idx button:hover, .pc-idx button.on { color: var(--ink); }
-.pc-n { font: 500 12px/1 var(--mono); letter-spacing: .08em; }
+.pc-idx button.on { color: var(--ink); }
+.pc-idx button:active { transform: translateY(1px); }
+@media (hover: hover) { .pc-idx button:hover { color: var(--ink); } }
+.pc-n { font: 500 13px/1 var(--mono); letter-spacing: .08em; }
 .pc-bar { position: absolute; left: 0; right: 14px; bottom: 6px; height: 2px; border-radius: 2px; background: rgba(0, 0, 0, .1); overflow: hidden; }
 .pc-bar b { position: absolute; inset: 0; background: var(--pc-acc); transform-origin: 0 50%; }
 .pc-copy {

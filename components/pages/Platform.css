@@ -294,12 +294,8 @@
 .xpl-win-tiles a { display: flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 10px; border-radius: 12px; background: rgba(255, 255, 255, .05); font-size: 13px; color: #e8e8ed; text-decoration: none; transition: background .2s; }
 @media (hover: hover) { .xpl-win-tiles a:hover { background: rgba(255, 255, 255, .1); } }
 .xpl-win-tiles i { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 7px; background: #fff; color: #000; font: 600 11px/1 var(--sans); font-style: normal; }
-.xpl-tabs { display: inline-flex; align-self: flex-start; gap: 2px; padding: 3px; border-radius: 999px; background: rgba(255, 255, 255, .07); }
-.xpl-tabs button { position: relative; min-height: 34px; padding: 0 14px; border: 0; border-radius: 999px; background: none; color: #a1a1a6; font: 500 13px/1 var(--sans); cursor: pointer; }
-.xpl-tabs button[aria-selected='true'] { color: #000; }
-.xpl-tabs button > span { position: relative; }
-.xpl-tabs button > .xpl-tab-bg { position: absolute; inset: 0; border-radius: 999px; background: #fff; }
-.xpl-pane { margin: 0; min-height: 3em; font-size: 14px; line-height: 1.5; color: #c7c7cc; }
+.xpl-tabs { align-self: flex-start; }
+.xpl-pane p { margin: 0; min-height: 3em; font-size: 14px; line-height: 1.5; color: #c7c7cc; }
 .xpl-win-rows { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
 .xpl-win-rows li { position: relative; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px; padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, .08); }
 .xpl-win-rows b { font: 500 13.5px/1.4 var(--mono); }
@@ -565,10 +561,22 @@
   .xpl-tty { margin-top: 48px; border-radius: 22px; }
   .xpl-cmd code { font-size: 14px; }
   .xpl-band-cmd code { font-size: 12.5px; }
-  .xpl-tag, .xpl-ring-n, .xpl-bar, .xpl-ask-n, .xpl-cap, .xpl-st, .xpl-win-rows small, .xpl-win-f small, .xpl-ep, .xpl-proof-sd, .xpl-ins-f p, .xpl-cmd > span { font-size: 14px; }
+  .xpl-tag, .xpl-ring-n, .xpl-bar, .xpl-ask-n, .xpl-cap, .xpl-st, .xpl-win-rows small, .xpl-win-f small, .xpl-ep, .xpl-proof-sd, .xpl-ins-f p, .xpl-cmd > span,
+  .xpl-row-n, .xpl-zap, .xpl-zap b, .xpl-win-t, .xpl-win-nav a, .xpl-win-tiles a, .xpl-win-rows b, .xpl-plane span, .xpl-meters p, .xpl-tags span, .xpl-dir-h span, .xpl .x-copy-t { font-size: 14px; }
+  .xpl-band-cmd code { font-size: 13px; }
+  .xpl-call em { font-size: 14px; }
 }
 
 /* touch: every target at least 44px (PLAN-COMPONENTS 2.11) */
 @media (pointer: coarse) {
   .xpl-pill, .xpl-zap a, .xpl-tabs button, .xpl-win-nav a, .xpl-win-tiles a, .xpl-cmd .x-copy, .xpl-run .x-copy, .xpl-band-cmd .x-copy { min-height: 44px; }
+}
+
+.xpl .x-copy-t { font-size: 13px; }
+.xpl-call em { font-size: max(.5em, 13px); }
+.xpl-band-n .x-link { display: inline-flex; align-items: center; min-height: 44px; }
+@media (pointer: coarse) { .xpl-win-t { min-height: 44px; } }
+@media (max-width: 900px) {
+  .xpl .x-copy-t, .xpl-call em, .xpl-band-cmd code { font-size: 14px; }
+  .xpl-band-cmd code { max-width: 58vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 }

@@ -1,7 +1,8 @@
 'use client';
 /* Platform (/platform), v3. Archetype B, System: a map you travel, from the whole into one part.
    Persona: Developer (PLAN-COMPONENTS 1.1), with the enterprise buyer second.
-   Goal: api_key_created.   CTA: "Start building" → platform.hanzo.ai/api-keys (hero, sticky AskBar, closing Band).
+   Goal: api_key_created.   CTA: "Start building" → platform.hanzo.ai/api-keys (hero, the site's sticky ask bar via data-thumb,
+   the closing Band).
    Signature: the camera. The first screen is the whole stack, eleven plates as one white slab beside the headline,
    turning toward the pointer. Scroll and the night opens as a circle from the stack, the plates pull apart and the
    camera travels down the stack group by group (API, MIND, ACT, RUN, SILICON), lighting that group's plates while its
@@ -18,12 +19,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { Copy, Mark } from '../ui';
-import { A, Band } from '../kit';
+import { A, Band, Tabs, TabPanel } from '../kit';
 import Sigil from '../Sigil';
 import IsoStack, { zOf, LIFT } from '../v2/IsoStack';
 import PinChapters from '../v2/PinChapters';
 import SheetPanel from '../v2/SheetPanel';
-import AskBar from '../v2/AskBar';
 import useCalm from '../v2/useCalm';
 import { CAT } from './platformData';
 import './Platform.css';
@@ -551,16 +551,8 @@ const DEPLOY = [['Containers', "Deploy an image and invoke it. Deployments, trig
 
 function ConsoleWin() {
   const [tab, setTab] = useState(0);
-  const keys = (ev) => {
-    const d = { ArrowRight: 1, ArrowLeft: -1 }[ev.key];
-    if (!d) return;
-    ev.preventDefault();
-    const n = (tab + d + DEPLOY.length) % DEPLOY.length;
-    setTab(n);
-    document.getElementById('xpl-tab-' + n)?.focus();
-  };
   return (
-    <div className="xpl-win">
+    <div className="xpl-win" data-room="dark">
       <div className="xpl-win-bar">
         <span className="xpl-dots" aria-hidden="true"><i /><i /><i /></span>
         <A to="https://hanzo.team/" className="xpl-win-t"><Mark size={13} /> <span>API Platform</span> <span className="xpl-win-h">— Hanzo</span></A>
@@ -569,15 +561,8 @@ function ConsoleWin() {
         <ul className="xpl-win-nav">{NAV.map(([t, h], i) => <li key={t}><A to={h} className={i === 0 ? 'on' : ''}>{t}</A></li>)}</ul>
         <div className="xpl-win-main">
           <ul className="xpl-win-tiles">{TILES.map(([t, h]) => <li key={t}><A to={h}><i aria-hidden="true">{t[0]}</i>{t}</A></li>)}</ul>
-          <div className="xpl-tabs" role="tablist" aria-label="Kinds of work" onKeyDown={keys}>
-            {DEPLOY.map(([t], i) => (
-              <button key={t} id={'xpl-tab-' + i} type="button" role="tab" aria-selected={tab === i} aria-controls={'xpl-pane-' + i} tabIndex={tab === i ? 0 : -1} onClick={() => setTab(i)}>
-                {tab === i && <motion.span layoutId="xpl-tab-bg" className="xpl-tab-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
-                <span>{t}</span>
-              </button>
-            ))}
-          </div>
-          {DEPLOY.map(([t, d], i) => <p key={t} id={'xpl-pane-' + i} role="tabpanel" aria-labelledby={'xpl-tab-' + i} hidden={tab !== i} className="xpl-pane">{d}</p>)}
+          <Tabs id="xpl-work" tabs={DEPLOY.map(([t]) => t)} value={tab} onChange={setTab} label="Kinds of work" className="xpl-tabs" />
+          {DEPLOY.map(([t, d], i) => <TabPanel key={t} id="xpl-work" i={i} value={tab} className="xpl-pane"><p>{d}</p></TabPanel>)}
           <ul className="xpl-win-rows">
             {ROWS.map(([n, s], i) => (
               <li key={n} className={s === 'Building' ? 'busy' : ''}>
@@ -847,7 +832,7 @@ function Catalog({ about = {} }) {
 }
 
 /* JS off: every scene readable in flow (PLAN-COMPONENTS 2.3 and 2.17) */
-const NOJS = `.xpl .xpl-l>span{transform:none!important}.xpl-jr{height:auto!important;margin-top:0!important}.xpl-jr-dark,.xpl-jr-bg{display:none!important}.xpl-jr-stage{position:relative!important;height:auto!important;overflow:visible!important}.xpl-hero{position:relative!important;inset:auto!important;display:block!important;padding:72px 0 0!important;opacity:1!important;transform:none!important}.xpl-hero-t{width:auto!important}.xpl-art{position:relative!important;width:100%!important;height:420px!important}.xpl-chips{position:relative!important;bottom:auto!important;opacity:1!important}.xpl-map{position:relative!important;inset:auto!important;opacity:1!important;pointer-events:auto!important;padding:96px var(--side) 72px!important;background:#070708}.xpl-map-room{display:block!important;position:absolute;inset:0}.xpl-bar-t,.xpl-bar-b,.xpl-intro,.xpl-groups{position:relative!important;inset:auto!important;width:auto!important;opacity:1!important;transform:none!important}.xpl-groups{display:block!important}.xpl-grp{opacity:1!important;transform:none!important;margin-top:72px}.pc{height:auto!important}.pc-stage{position:static!important;height:auto!important}.pc-grid{display:flex!important;flex-direction:column;height:auto!important}.pc-idx{display:none!important}.pc-copy{order:calc(var(--i)*2);opacity:1!important;transform:none!important;padding-top:96px}.pc-vis{order:calc(var(--i)*2 + 1);clip-path:none!important;margin-top:40px}.xpl-term-b{display:block!important}.xpl-step{opacity:1!important;transform:none!important;margin-bottom:28px}.v2s{position:static!important;visibility:visible!important}.v2s-scrim{display:none}.v2s-panel{position:static!important;transform:none!important;width:auto!important;margin:0 var(--side);box-shadow:none!important}.xpl-ins[hidden]{display:block!important;margin-bottom:48px}`;
+const NOJS = `.xpl .xpl-l>span{transform:none!important}.xpl-jr{height:auto!important;margin-top:0!important}.xpl-jr-dark,.xpl-jr-bg{display:none!important}.xpl-jr-stage{position:relative!important;height:auto!important;overflow:visible!important}.xpl-hero{position:relative!important;inset:auto!important;display:block!important;padding:72px 0 0!important;margin:0 var(--side)!important;opacity:1!important;transform:none!important}.xpl-hero-t{width:auto!important}.xpl-art{position:relative!important;width:100%!important;height:420px!important}.xpl-chips{position:relative!important;bottom:auto!important;opacity:1!important}.xpl-map{position:relative!important;inset:auto!important;opacity:1!important;pointer-events:auto!important;padding:96px var(--side) 72px!important;background:#070708}.xpl-map-room{display:block!important;position:absolute;inset:0}.xpl-bar-t,.xpl-bar-b,.xpl-intro,.xpl-groups{position:relative!important;inset:auto!important;width:auto!important;opacity:1!important;transform:none!important}.xpl-groups{display:block!important}.xpl-grp{opacity:1!important;transform:none!important;margin-top:72px}.pc{height:auto!important}.pc-stage{position:static!important;height:auto!important}.pc-grid{display:flex!important;flex-direction:column;height:auto!important}.pc-idx{display:none!important}.pc-copy{order:calc(var(--i)*2);opacity:1!important;transform:none!important;padding-top:96px}.pc-vis{order:calc(var(--i)*2 + 1);clip-path:none!important;margin-top:40px}.xpl-term-b{display:block!important}.xpl-step{opacity:1!important;transform:none!important;margin-bottom:28px}.v2s{position:static!important;visibility:visible!important}.v2s-scrim{display:none}.v2s-panel{position:static!important;transform:none!important;width:auto!important;margin:0 var(--side);box-shadow:none!important}.xpl-ins[hidden]{display:block!important;margin-bottom:48px}.x-band .x-word,.x-band p,.x-band-act{opacity:1!important;transform:none!important;filter:none!important}[role=tabpanel][hidden]{display:block!important}`;
 
 export default function Platform({ about }) {
   const [sel, setSel] = useState(0);
@@ -855,7 +840,7 @@ export default function Platform({ about }) {
   const openLayer = (i) => { setSel(i); setOpen(true); };
   const step = (d) => setSel((s) => (s + d + N) % N);
   return (
-    <main className="xpl">
+    <main className="xpl" data-ask-name="Hanzo Platform">
       <noscript><style>{NOJS}</style></noscript>
       <Journey openLayer={openLayer} />
       <Kernel />
@@ -873,7 +858,6 @@ export default function Platform({ about }) {
         note={<span className="xpl-band-n"><span className="xpl-band-cmd"><code>docker run -p 8080:8080 ghcr.io/hanzoai/cloud</code><Copy text="docker run -p 8080:8080 ghcr.io/hanzoai/cloud" /></span><A to="https://docs.hanzo.ai/docs/quickstart" className="x-link">Read the docs</A></span>}
       />
       <Inspector sel={sel} open={open} onClose={() => setOpen(false)} step={step} />
-      <AskBar title="Hanzo Platform" label="Start building" to={KEY_URL} hero=".xpl-jr" />
     </main>
   );
 }
