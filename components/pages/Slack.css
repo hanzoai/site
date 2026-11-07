@@ -187,7 +187,7 @@
 .xsq-notes-h .a2-headline { margin-bottom: 20px; }
 .xsq-notes-h .a2-body { font-size: 15px; }
 .xsq-points li { transition: opacity .3s cubic-bezier(.4, 0, .2, 1); }
-.xsq-points li:not(.on) { opacity: .5; }
+.xsq-points li:not(.on) { opacity: .56; }
 .xsq-points li > span { transition: color .3s cubic-bezier(.4, 0, .2, 1); }
 
 /* the crop: a light piece of the same channel; the part the promise you are reading talks about is drawn in full */

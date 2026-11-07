@@ -25,7 +25,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useMotionValueEvent } from 'motion/react';
 import { Copy } from '../../ui';
-import { A, Cta } from '../../kit';
+import { A, Cta, Film, Img } from '../../kit';
 import Sigil from '../../Sigil';
 import './ZenCatalog.css';
 
@@ -88,6 +88,8 @@ function Stage() {
       <div className="zc-frame" data-room="dark" data-morph-target ref={frame}>
           <div className="zc-filmbox">
             <Sigil seed="/zen/models/zen5" data={ZEN5} still={held} className="zc-film" />
+            {/* JS off: the canvas cannot draw, so the room shows Hanzo's own Zen still instead of an empty slab */}
+            <noscript><Img src="/models/zen.webp" w={1200} h={1500} alt="" className="zc-film zc-film-still" /></noscript>
             <button type="button" className="zc-hold" aria-pressed={held} aria-label={held ? 'Play' : 'Pause'} onClick={() => setHeld((x) => !x)}>
               {held
                 ? <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M5 3.5v9l7.5-4.5z" fill="currentColor" /></svg>
@@ -174,9 +176,9 @@ const BY_CTX = [...ROWS].sort((a, b) => b.ck - a.ck || b.tot - a.tot);
 const grow = (k, prop = 'scaleX', step = 0.04) => ({
   initial: { [prop]: 0 }, animate: { [prop]: 1 }, transition: { duration: T.slower, ease: EMPH, delay: T.fast + k * step },
 });
-function FigArt({ i }) {
+function FigArt({ i, still = false }) {
   if (i === 0) return (
-    <div className="zc-fa zc-fa-18">{Array.from({ length: 18 }, (_, k) => <motion.i key={k} data-z={k < 5 || undefined} style={{ '--k': k }} {...grow(k, 'scaleY', 0.025)} />)}</div>
+    <div className="zc-fa zc-fa-18">{Array.from({ length: 18 }, (_, k) => <motion.i key={k} data-z={k < 5 || undefined} style={{ '--k': k }} {...(still ? {} : grow(k, 'scaleY', 0.025))} />)}</div>
   );
   if (i === 1) return (
     <div className="zc-fa zc-fa-ctx">
@@ -227,7 +229,8 @@ function Figures() {
                   animate={!on || i === at ? { y: '0%' } : { y: i < at ? '-104%' : '104%' }}
                   transition={!on || i === at ? { duration: T.slower, ease: EMPH, delay: T.fast } : { duration: T.fast, ease: EXIT }}>
                   <dt>{l}</dt>
-                  <dd>{v}</dd>
+                  {/* not pinned (phone, reduced motion): the lead figure keeps its own drawing, the 18 marks, under it */}
+                  <dd>{v}{!on && i === 0 && <div className="zc-fig-art" aria-hidden="true"><FigArt i={0} still /></div>}</dd>
                 </motion.div>
               </div>
             ))}
@@ -260,13 +263,33 @@ const tilt = (e) => {
 };
 const flat = (e) => { e.currentTarget.style.transform = ''; };
 
+/* the card's media is Hanzo's own: every Zen5 page opens on the Zen film (/models/zen.webm over zen.webp), so the card
+   shows that picture and the Morph lands on the picture you clicked. The leader plays the film over its still (a 600 ms
+   crossfade once it is playing; Film keeps the still under reduced motion and Data Saver, and pauses off screen, so at
+   most one film plays here); the four others hold the still, each framed on its own part of the ripples. A model
+   without media would fall back to its Sigil. */
+const MEDIA = { zen5: 'zen', 'zen5-coder': 'zen', 'zen5-flash': 'zen', 'zen5-mini': 'zen', 'zen5-pro': 'zen' };
+const CROP = { zen5: '62% 56%', 'zen5-coder': '22% 72%', 'zen5-flash': '80% 88%', 'zen5-mini': '60% 50%', 'zen5-pro': '40% 64%' };
+const ready = (e) => e.currentTarget.setAttribute('data-on', '');
+function CardArt({ r, big }) {
+  const m = MEDIA[r.slug];
+  if (!m) return <Sigil seed={'/models/hanzo/' + r.slug} data={[r.tot, r.act || r.tot, r.ck]} className="zc-mc-art" />;
+  const pos = { objectPosition: CROP[r.slug] };
+  return (
+    <span className="zc-mc-art zc-mc-media" aria-hidden="true">
+      {big && <Film src={`/models/${m}.webm`} poster={`/models/${m}.webp`} w={1200} h={1500} className="zc-mc-film" style={pos} onPlaying={ready} />}
+      <Img src={`/models/${m}.webp`} w={1200} h={1500} alt="" className="zc-mc-still" style={pos} />
+    </span>
+  );
+}
+
 function ModelCard({ r, big }) {
   return (
     <motion.li layout className="zc-cell" data-big={big || undefined}
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: T.fast, ease: EXIT } }}
       transition={{ layout: GLIDE, duration: T.base, ease: EMPH }}>
       <A to={'/models/hanzo/' + r.slug} className="zc-mc" data-morph data-cursor="" data-cta={'zen-models.card-' + r.slug} onPointerMove={tilt} onPointerLeave={flat}>
-        <Sigil seed={'/models/hanzo/' + r.slug} data={[r.tot, r.act || r.tot, r.ck]} className="zc-mc-art" />
+        <CardArt r={r} big={big} />
         <span className="zc-mc-t">{r.n} <span aria-hidden="true">→</span></span>
         <span className="zc-mc-d">{r.big}{r.small ? ' ' + r.small : ''} · {r.ctx}</span>
         <span className="zc-mc-tag">{r.tier}</span>
@@ -358,7 +381,7 @@ function Shelf() {
         <div className="zc-sheet" ref={sheet}>
           <div className="zc-row zc-row-h">
             <span>Model</span><span>Params</span>
-            <span className="zc-key"><i className="zc-k-tot" />total params <i className="zc-k-act" />active per token <i className="zc-k-ctx" />context</span>
+            <span className="zc-key"><span><i className="zc-k-tot" />total params</span> <span><i className="zc-k-act" />active per token</span> <span><i className="zc-k-ctx" />context</span></span>
             <span>Context</span><span>Arch</span><span>Availability</span><span />
           </div>
           <ol className="zc-rows" aria-label="Zen5 models, per token">

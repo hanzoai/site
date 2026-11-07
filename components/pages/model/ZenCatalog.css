@@ -23,11 +23,16 @@
 
 /* 1. the stage: the Zen5 field on black, a rounded card inside the gutters that opens to full width as it is scrolled
    (--open 0 to 1, set from scroll; clip-path only), the name at rest size with Hanzo's lede and the ask */
-.zc-stage { padding: 84px 0 0; }
-.zc-frame { --side: max(var(--gut), calc((100% - 1152px) / 2)); --r: 24px; position: relative; height: calc(100svh - 84px - 56px); min-height: 560px; max-height: 900px; overflow: hidden; background: #000; color: var(--on-black); isolation: isolate; clip-path: inset(0 calc(var(--side) * (1 - var(--open, 0))) round calc(var(--r) * (1 - var(--open, 0)))); }
+/* the room starts 27px under the 60px header (no white band), and ends 56px above the fold so Quick Start's terminal
+   already shows in the first screen */
+.zc-stage { padding: 27px 0 0; }
+.zc-frame { --side: max(var(--gut), calc((100% - 1152px) / 2)); --r: 24px; position: relative; height: calc(100svh - 27px - 60px - 56px); min-height: 560px; max-height: 900px; overflow: hidden; background: #000; color: var(--on-black); isolation: isolate; clip-path: inset(0 calc(var(--side) * (1 - var(--open, 0))) round calc(var(--r) * (1 - var(--open, 0)))); }
 .zc-filmbox { position: absolute; inset: 0; z-index: 0; }
 .zc-filmbox::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0, 0, 0, .6) 0%, rgba(0, 0, 0, .3) 45%, transparent 70%); pointer-events: none; }
 .zc-filmbox .zc-film { position: absolute; inset: 0; width: 100%; height: 100%; color: rgba(255, 255, 255, .6); }
+.zc-filmbox .zc-film-still { object-fit: cover; object-position: 70% 58%; }
+/* JS off: the field cannot run, so there is nothing to pause */
+html:not(.js) .zc-hold { display: none; }
 .zc-hold { position: absolute; top: 21px; right: calc(var(--side) + 21px); z-index: 2; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .3); background: transparent; color: var(--on-black); cursor: pointer; transition: background .15s var(--eo), transform .09s var(--eo); }
 .zc-hold:active { transform: scale(.97); }
 @media (hover: hover) { .zc-hold:hover { background: rgba(255, 255, 255, .14); } }
@@ -44,6 +49,9 @@
 .zc-lede a { color: var(--on-black); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
 .zc-frame-in > .zc-acts { margin-top: 27px; }
 .zc-frame .x-arrow { color: var(--on-black); }
+/* "Explore Models" points down the page, so its arrow drops on hover instead of nudging sideways */
+.zc-frame .x-arrow[href="#zen5"] svg { transition: transform .3s var(--e); }
+.zc-frame .x-arrow[href="#zen5"]:hover svg { transform: translateY(3px); }
 
 /* 2. Quick Start: one line changes */
 .zc-quick-g { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); gap: 24px; align-items: center; }
@@ -75,15 +83,20 @@
 .zc-fig-in { display: flex; flex-direction: column; gap: 10px; }
 .zc-fig dt { font: 500 12px/1.3 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--quiet); }
 .zc-fig dd { margin: 0; font-size: 64px; font-weight: 220; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+/* the lead figure's own drawing when the scene is not pinned: the 18 marks, a 56px strip under the number */
+.zc-fig-art { position: relative; height: 56px; margin-top: 21px; }
+.zc-fig-art .zc-fa-18 i { width: 4px; border-radius: 2px; }
 .zc-figs[data-live] { height: 200svh; }
 .zc-figs[data-live] .zc-figs-pin { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; overflow: hidden; isolation: isolate; }
 /* the figure sits high and its drawing fills the rest of the screen down to 44px above the fold, so the scene hands
    over to the Zen5 heading without an empty band */
 .zc-figs[data-live] .zc-figs-g { height: 100%; }
 .zc-figs[data-live] .zc-figs-idx { align-self: center; }
-.zc-figs[data-live] .zc-figs-r { grid-column: 6 / -1; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 44px; padding: max(104px, 15svh) 0 44px; }
+/* one big thing per screen: the 112px figure is the moment; its drawing sits under it at a medium 220px, the index is
+   the small thing beside them */
+.zc-figs[data-live] .zc-figs-r { grid-column: 6 / -1; display: grid; grid-template-rows: auto auto; align-content: center; gap: 44px; padding: 60px 0 0; }
 /* the stage object: each figure draws its own number as data under it, crossfading as the figure cuts in */
-.zc-figs-art { position: relative; min-height: 200px; pointer-events: none; }
+.zc-figs-art { position: relative; height: clamp(180px, 28svh, 220px); pointer-events: none; }
 .zc-figs-draw { position: absolute; inset: 0; }
 .zc-fa { position: absolute; inset: 0; }
 .zc-fa i { display: block; }
@@ -118,8 +131,8 @@
 .zc-fa-srow .zc-fa-tot { background: var(--track); }
 .zc-fa-srow .zc-fa-act { background: var(--ink); animation: zc-wave 3.6s var(--eio) calc(var(--k) * .3s + .9s) infinite; }
 /* 7 modalities: seven capsules, each filling from the floor in turn */
-.zc-fa-7 { display: flex; align-items: stretch; justify-content: space-between; }
-.zc-fa-7 i { position: relative; width: 11%; border-radius: 999px; border: 1.5px solid var(--ink); overflow: hidden; transform-origin: 50% 100%; }
+.zc-fa-7 { display: flex; align-items: stretch; gap: 27px; }
+.zc-fa-7 i { position: relative; flex: none; width: 44px; border-radius: 999px; border: 1.5px solid var(--ink); overflow: hidden; transform-origin: 50% 100%; }
 .zc-fa-7 i::after { content: ''; position: absolute; inset: 0; background: var(--ink); transform: scaleY(0); transform-origin: 50% 100%; animation: zc-fill 4.2s var(--eio) calc(var(--k) * .6s + .6s) infinite; }
 @keyframes zc-fill { 0%, 40%, 100% { transform: scaleY(0); } 14%, 26% { transform: none; } }
 .zc-figs[data-live] .zc-figs-idx { grid-column: 1 / span 5; display: grid; gap: 10px; align-content: center; margin: 0; padding: 0; list-style: none; }
@@ -162,6 +175,11 @@
 .zc-mc { position: relative; display: block; height: 100%; border-radius: 20px; background: #000; color: #fff; text-decoration: none; overflow: hidden; cursor: pointer; transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
 .zc-mc:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; box-shadow: 0 0 0 5px #fff; }
 .zc-mc-art { position: absolute; inset: 0; width: 100%; height: 100%; color: rgba(255, 255, 255, .3); }
+/* Hanzo's Zen media, never filtered or dimmed: the film fades in over its still (600 ms, the SPEC crossfade) */
+.zc-mc-media { display: block; overflow: hidden; }
+.zc-mc-media img, .zc-mc-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.zc-mc-film { z-index: 1; opacity: 0; transition: opacity .6s var(--eo); }
+.zc-mc-film[data-on] { opacity: 1; }
 .zc-mc-t { position: absolute; left: 21px; top: 21px; right: 21px; font-size: 22px; font-weight: 500; line-height: 28px; letter-spacing: -.44px; color: #fff; }
 .zc-mc-d { position: absolute; left: 21px; top: 57px; right: 21px; font-size: 13px; line-height: 18px; color: rgba(255, 255, 255, .8); }
 .zc-mc-tag { position: absolute; left: 21px; bottom: 21px; padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .2); font: 500 10px/14px var(--mono); letter-spacing: .8px; text-transform: uppercase; color: rgba(255, 255, 255, .8); }
@@ -181,9 +199,10 @@
 .zc-sheet { margin-top: 72px; }
 .zc-row { display: grid; grid-template-columns: minmax(0, 2.6fr) minmax(0, 2.2fr) minmax(0, 2.6fr) minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1.4fr) 44px; gap: 17px; align-items: center; min-height: 64px; padding: 10px 0; }
 .zc-row-h { min-height: 44px; border-bottom: 1px solid var(--line); font: 500 12px/1.3 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--quiet); }
-.zc-key { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; letter-spacing: .06em; }
-.zc-key i { width: 14px; height: 4px; border-radius: 2px; margin-left: 6px; }
-.zc-key i:first-child { margin-left: 0; }
+/* each swatch stays with its own label when the key wraps */
+.zc-key { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 13px; letter-spacing: .06em; }
+.zc-key > span { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.zc-key i { flex: none; width: 14px; height: 4px; border-radius: 2px; }
 .zc-k-tot { background: var(--track); } .zc-k-act { background: var(--ink); } .zc-k-ctx { background: var(--quiet); }
 .zc-rows { margin: 0; padding: 0; list-style: none; }
 .zc-li { position: relative; border-bottom: 1px solid var(--line); }
@@ -221,6 +240,8 @@
 .zc-shelf { padding-bottom: 44px; }
 /* no dead bands: Quick Start hands straight to the figures, and the Zen5 heading rises 40px over the figures' tail */
 .zc-quick { padding-bottom: 44px; }
+/* Quick Start rises under the hero's tail: its box overlaps the room by 40px, so the terminal starts 32px below it */
+.zc-quick { margin-top: -40px; padding-top: 72px; }
 .zc-shelf { position: relative; z-index: 1; margin-top: -40px; padding-top: 72px; }
 .zc-end { position: relative; margin-top: -40px; padding-top: clamp(72px, 8vw, 120px); overflow: hidden; isolation: isolate; text-align: center; }
 /* the close's object: a fine context ruler (minor tick per 128K, major per 1M) drifting slowly along the bottom edge */
@@ -264,8 +285,17 @@
   .zc-fig-in { gap: 6px; }
   .zc-shelf { padding-top: 44px; margin-top: 0; }
   .zc-seg button { min-height: 44px; }
-  .zc-grid, .zc-grid[data-n] { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-auto-rows: 220px; }
-  .zc-cell, .zc-cell[data-big], .zc-grid[data-n] .zc-cell:not([data-big]), .zc-grid[data-n='1'] .zc-cell[data-big] { grid-column: 1; grid-row: auto; }
+  /* phone shelf: the leader full width on top (with the film), the others a snap rail under it with a 16% peek of the
+     next card; the leader is sticky inside the rail, so a swipe moves only the rail */
+  .zc-grid, .zc-grid[data-n] { grid-template-columns: none; grid-template-rows: 260px 220px; grid-auto-flow: column; grid-auto-columns: 84%; grid-auto-rows: auto; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; scroll-snap-type: x proximity; scrollbar-width: none; }
+  .zc-grid::-webkit-scrollbar { display: none; }
+  .zc-grid[data-n='1'] { grid-template-rows: 260px; }
+  .zc-cell, .zc-grid[data-n] .zc-cell:not([data-big]) { grid-column: auto; grid-row: 2; scroll-snap-align: start; }
+  .zc-cell[data-big], .zc-grid[data-n] .zc-cell[data-big] { grid-row: 1; grid-column: 1 / span 4; position: sticky; left: 0; width: calc(100vw - 2 * var(--gut)); }
+  .zc-grid[data-n='4'] .zc-cell[data-big] { grid-column: 1 / span 3; }
+  .zc-grid[data-n='3'] .zc-cell[data-big] { grid-column: 1 / span 2; }
+  .zc-grid[data-n='2'] .zc-cell[data-big], .zc-grid[data-n='1'] .zc-cell[data-big] { grid-column: 1; }
+  .zc-grid[data-n='2'], .zc-grid[data-n='1'] { grid-auto-columns: 100%; }
   .zc-cell[data-big] .zc-mc-t { font-size: 32px; line-height: 36px; letter-spacing: -.64px; }
   .zc-cell[data-big] .zc-mc-d { top: 65px; }
   .zc-sheet { margin-top: 44px; }
@@ -280,4 +310,5 @@
   .zc-bar i, .zc-mc, .zc-li::before, .zc-figs-idx li, .zc-mc-sz, .zc-mc-bar i, .zc-bar::before, .zc-tot::after, .zc-ctx::after { transition: none; }
   .zc-hold { display: none; } /* the field is already still: nothing to pause */
   .zc-end-rule span, .zc-seg button::before { animation: none; transition: none; }
+  .zc-fa i, .zc-fa i::after, .zc-fa-head, .zc-mc-film, .zc-frame .x-arrow[href="#zen5"] svg { animation: none; transition: none; }
 }

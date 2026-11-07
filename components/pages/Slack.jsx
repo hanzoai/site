@@ -1,6 +1,6 @@
 'use client';
 /* Hanzo Tag for Slack.
-   V2: 8/10 the hero now sells first (52px h1 at the 38% line, the window peeking), faces are drawn discs, the three rooms are one tile with three states, the promises light a window crop as you read, the platform is a runtime map, and the close has one solid ask.
+   V2: 8/10 the scene's thread now scrolls inside the window so the merged PR and Archive Channel land in view at step 6, every heading is Hanzo's own (the setup card is labelled by its own name; Hanzo's sentence heads the close only), the setup demo plays once from the ask and ends at rest in one 429px card, sections hand over at 72px, and the lit promise alone grows to 21px.
    Persona: an engineering lead whose team lives in Slack. Goal: set up Hanzo Tag. CTA: Set up Hanzo Tag (slack.hero).
    Metric: cta_click on slack.hero and slack.close (data-cta; the event layer is the conductor's).
    Signature: scroll plays the thread. A white first screen with the headline hands over to the one dark room, where
@@ -8,7 +8,7 @@
    (1. Code trace … 6. Session complete) while the Code, View and Canvas artifacts follow the step. The step rail on
    top jumps to any step. Phones pin a compact window under a 44px snap rail, and scroll plays it the same way.
    After it: the promises light the matching part of a window crop as each is read; the setup card connects in three
-   steps and the first exchange plays; the three rooms as one tile that swaps; the six features open in a sheet; the
+   steps beside its channel and the first exchange plays once, then rests; the three rooms as one tile that swaps; the six features open in a sheet; the
    platform as one runtime with the product you point at drawn in ink; questions; the close.
    Beyond: Contrast slider: drag between the before (1.9:1) and after (8.9:1) Buy Now button, using only Hanzo's own
    figures; both colourways are drawn as greys of equal luminance, so no hue reaches the page.
@@ -328,12 +328,14 @@ function Setup() {
   useEffect(() => {
     if (!live || calm || pos.current >= 9) return;
     if (pos.current < 0) { pos.current = 0; setK(0); }
-    const id = setInterval(() => {
+    let t = 0;
+    const tick = () => {
       pos.current = Math.min(9, pos.current + 1);
       setK(pos.current);
-      if (pos.current >= 9) clearInterval(id);
-    }, 1000);
-    return () => clearInterval(id);
+      if (pos.current < 9) t = setTimeout(tick, 1000);
+    };
+    t = setTimeout(tick, 1000);
+    return () => clearTimeout(t);
   }, [live, calm]);
   const s = calm ? 9 : k;
   return (

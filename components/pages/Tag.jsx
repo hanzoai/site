@@ -1,14 +1,15 @@
 'use client';
 /* Hanzo Tag (governance view of the same product as /slack).
-   V2: 8/10 after the hero every section now holds an object (a live PR card, a stage that follows scroll through the three rooms, product frames around the runtime), row titles rest at 21px, the Built panel is a quiet room, the close has one solid ask, and the phone shows the map on its first screen.
+   V2: 8/10 the thread panel is a fixed 216px drawer whose long moments read themselves upward (no empty slab, no jump), sections sit at the low end of the spacing scale, Built is a pinned numbered strip (not a second rows-and-stage), each progress cue has its own shape (dots, rail, ring, outline), the dark room holds only the picker, the FAQ opens closed in a quiet room, and the platform frames are drawn from Hanzo's own thread, channels, trace and preview.
    Persona: a workspace owner weighing what Hanzo can see. Goal: set up Hanzo Tag. CTA: Set up Hanzo Tag (tag.hero).
    Metric: cta_click on tag.hero and tag.close (data-cta; the event layer is the conductor's).
    Signature: Mention map: one @Hanzo at the centre, rings spreading out across a field of channels, then branching into
    Canvas, Diff, Preview and the merged PR #418; click any node to read that moment of the thread.
    Beyond: "Will Hanzo see this?": pick where a message lives (a channel with @Hanzo added or not, tagged or not,
    scheduled work, a direct message) and get the answer from Hanzo's own FAQ sentences.
-   Idle movers are the map and the "see" picker; the three rooms and the Built index follow your scroll (a click takes
-   over), and the four promises take the light in turn under the PR card they describe.
+   Idle movers are the map and the "see" picker; the three rooms follow your scroll beside a sticky stage, the Built strip
+   pins and steps through its six as you scroll past (a click takes over), and the four promises take the light in turn
+   under the PR card they describe (seven dots count each one's turn).
    The field holds 42 points because Hanzo's setup card says 42 channels enabled; only the tagged one lights.
    Every word, figure and link is Hanzo's (components/pages/slackData.js). */
 import { useEffect, useRef, useState } from 'react';
@@ -19,7 +20,7 @@ import A2Lines from './skills/Lines';
 import A2Paste from '../v2/A2Paste';
 import A2Faq from '../v2/A2Faq';
 import '../v2/A2.css';
-import { HERO, SETUP, ASK, ANSWER, STEPS, SESSION, CANVAS, WINDOW, TABS, DIFF, VIEW, WHAT, BUILT, PLATFORM, CODE, FAQ, CLOSE, Parts, Msg } from './slackData';
+import { HERO, SETUP, ASK, ANSWER, STEPS, SESSION, CANVAS, WINDOW, TABS, DIFF, VIEW, WHAT, BUILT, PLATFORM, CODE, FAQ, CLOSE, PEOPLE, Parts, Msg, Face } from './slackData';
 import './Tag.css';
 
 const P = 'xtg';
@@ -92,7 +93,8 @@ function Moment({ n, archived, setArchived }) {
   if (n.k === 'code') return (
     <div className={`${P}-df`}>
       <p className={`${P}-df-h`}>{DIFF.head} · {DIFF.stat} <b className="add">{DIFF.add}</b> <b className="del">{DIFF.del}</b></p>
-      <pre>{DIFF.lines.map(([, , s, t], i) => <span key={i} className={s === '+' ? 'add' : s === '-' ? 'del' : ''}>{s.trim() || ' '} {t}{'\n'}</span>)}</pre>
+      {/* only the changed lines: the whole file diff is the PR card just below the hero */}
+      <pre>{DIFF.lines.slice(3, 8).map(([, , s, t], i) => <span key={i} className={s === '+' ? 'add' : s === '-' ? 'del' : ''}>{s.trim() || ' '} {t}{'\n'}</span>)}</pre>
     </div>
   );
   if (n.k === 'canvas') return (
@@ -130,6 +132,24 @@ function MentionMap() {
   }, [mine, k, calm]);
   const pick = (i) => { setK(i); setMine(true); setAgain((v) => v + 1); };
   const done = cur === NODES.length - 1;
+  /* the drawer is a fixed height; a moment taller than it reads itself upward (transform only), so nothing below jumps
+     and short moments leave no slab of black. The overflow is measured after paint and on resize. */
+  const panel = useRef(null);
+  useEffect(() => {
+    const box = panel.current;
+    if (!box) return;
+    const fit = () => {
+      const m = box.querySelector('.xtg-m.on');
+      const inn = m && m.firstElementChild;
+      if (!inn) return;
+      const o = Math.ceil(inn.scrollHeight - m.clientHeight);
+      m.style.setProperty('--over', Math.max(0, o + 14) + 'px');
+      m.dataset.long = o > 0 ? '1' : '';
+    };
+    fit();
+    window.addEventListener('resize', fit);
+    return () => window.removeEventListener('resize', fit);
+  }, [cur, again]);
   const parent = (n, i) => (n.from !== undefined ? NODES[n.from].xy : i === 0 ? null : [50, 50]);
   return (
     <>
@@ -153,7 +173,7 @@ function MentionMap() {
             })}
           </svg>
           {[0, 1, 2].map((i) => <i key={i} className={`${P}-ring`} style={{ animationDelay: i * 1.6 + 's' }} aria-hidden="true" />)}
-          {NAMED.map(([c, [x, y]]) => <span key={c} className={`${P}-chan`} style={{ left: x + '%', top: y + '%' }}># {c}</span>)}
+          {NAMED.map(([c, [x, y]], j) => <span key={c} className={`${P}-chan c${j}`} style={{ left: x + '%', top: y + '%' }}># {c}</span>)}
           {NODES.map((n, i) => (
             <button
               key={n.k} type="button" aria-pressed={cur === i} aria-controls={`${P}-m-${n.k}`} aria-label={n.k === 'mention' ? '@Hanzo in #bug-button-darkmode' : n.label}
@@ -179,12 +199,14 @@ function MentionMap() {
           <button key={n.k} type="button" aria-pressed={cur === i} tabIndex={-1} onClick={() => pick(i)}>{n.k === 'mention' ? '@Hanzo' : n.label}</button>
         ))}
       </div>
-      {/* every moment sits in one cell, so the panel keeps the height of the tallest and nothing below it jumps */}
-      <div className={`${P}-moment` + (archived ? ' archived' : '')} aria-live="polite">
+      {/* every moment sits in one cell of a fixed-height drawer docked under the map */}
+      <div className={`${P}-moment` + (archived ? ' archived' : '')} aria-live="polite" ref={panel}>
         {NODES.map((n, i) => (
           <div key={cur === i ? n.k + again : n.k} id={`${P}-m-${n.k}`} className={`${P}-m` + (cur === i ? ' on' : '')} aria-hidden={cur !== i} inert={cur !== i}>
-            <p className={`${P}-m-k`}><span>{String(i + 1).padStart(2, '0')} / {String(NODES.length).padStart(2, '0')}</span>{n.k === 'mention' ? '@Hanzo · #bug-button-darkmode' : n.label}</p>
-            <Moment n={n} archived={archived} setArchived={setArchived} />
+            <div className={`${P}-m-in`}>
+              <p className={`${P}-m-k`}><span>{String(i + 1).padStart(2, '0')} / {String(NODES.length).padStart(2, '0')}</span>{n.k === 'mention' ? '@Hanzo · #bug-button-darkmode' : n.label}</p>
+              <Moment n={n} archived={archived} setArchived={setArchived} />
+            </div>
           </div>
         ))}
       </div>
@@ -214,6 +236,7 @@ function Hero() {
   );
 }
 
+const DOTS = [0, 1, 2, 3, 4, 5, 6]; // seven dots light across each promise's 2.8s turn
 /* The four promises under the one thing they produce: the pull request, drawn in as it arrives. Each promise takes the
    light in turn; pointing at one gives it the light. */
 function Channels() {
@@ -239,7 +262,12 @@ function Channels() {
           </div>
         </div>
         <ul className={`${P}-quad`}>
-          {HERO.points.map((t, k) => <li key={t} className={i === k ? 'on' : ''} onPointerEnter={() => setI(k)}><span className="x-mono">{String(k + 1).padStart(2, '0')}</span><p>{t}</p><b className={`${P}-timer`} aria-hidden="true" /></li>)}
+          {HERO.points.map((t, k) => (
+            <li key={t} className={i === k ? 'on' : ''} onPointerEnter={() => setI(k)}>
+              <span className={`${P}-quad-n`}><span className="x-mono">{String(k + 1).padStart(2, '0')}</span><b className={`${P}-dots`} aria-hidden="true">{DOTS.map((d) => <i key={d} style={{ '--d': d }} />)}</b></span>
+              <p>{t}</p>
+            </li>
+          ))}
         </ul>
         <p className={`${P}-safe`}>{HERO.safe}</p>
       </div>
@@ -319,7 +347,8 @@ function What() {
               <li key={n} className={i === k ? 'on' : ''} onPointerEnter={() => setI(k)}>
                 <span className="x-mono">{n}</span><h3>{t}</h3><p>{d}</p>
                 <div className={`${P}-row-art`} aria-hidden="true"><RoomArt k={k} /></div>
-                {i === k ? <motion.b className={`${P}-timer`} style={{ scaleX: fill }} aria-hidden="true" /> : <b className={`${P}-timer`} aria-hidden="true" />}
+                {/* the row being read fills a rail down its left edge as you scroll through it */}
+                {i === k ? <motion.b className={`${P}-rail-y`} style={{ scaleY: fill }} aria-hidden="true" /> : <b className={`${P}-rail-y`} aria-hidden="true" />}
               </li>
             ))}
           </ol>
@@ -332,40 +361,56 @@ function What() {
   );
 }
 
-/* Six features as an index you read one at a time; it follows your scroll until you choose one. */
+/* Six features on one numbered strip that pins while you scroll past it: the strip steps through the six and the sheet
+   under it changes in place (a click takes over). Each number's ring fills as its turn runs. */
+const two = (k) => String(k + 1).padStart(2, '0');
 function Built() {
-  const list = useRef(null);
+  const run = useRef(null);
+  const rail = useRef(null);
   const [i, setI] = useState(0);
   const [mine, setMine] = useState(false);
+  const calm = useReducedMotion();
+  const mounted = useMounted();
   const n = BUILT.items.length;
-  const { scrollYProgress: p } = useScroll({ target: list, offset: ['start 0.75', 'end 0.4'] });
+  const { scrollYProgress: p } = useScroll({ target: run, offset: ['start 0.66', 'end 0.66'] });
   useMotionValueEvent(p, 'change', (v) => { if (!mine) setI(Math.min(n - 1, Math.max(0, Math.floor(v * n)))); });
   const fill = useTransform(p, (v) => { const x = Math.min(1, Math.max(0, v)) * n; return x >= n ? 1 : x - Math.floor(x); });
+  useEffect(() => { // on the phone the strip is a pill rail: keep the lit pill in view (the rail scrolls, never the page)
+    const r = rail.current;
+    const b = r && r.children[i];
+    if (!b || r.scrollWidth <= r.clientWidth) return;
+    r.scrollTo({ left: Math.max(0, b.offsetLeft - 16), behavior: mounted && !calm ? 'smooth' : 'auto' });
+  }, [i, mounted, calm]);
   return (
     <section className={`a2-sec ${P}-built`}>
       <div className="a2-wrap">
         <Head kick={BUILT.kick} title={BUILT.title} />
-        <div className={`${P}-idx`}>
-          <div role="tablist" aria-label={BUILT.kick} aria-orientation="vertical" className={`${P}-idx-l`} ref={list}>
-            {BUILT.items.map(([t], k) => (
-              <button key={t} type="button" role="tab" aria-selected={i === k} aria-controls={`${P}-b-${k}`} onClick={() => { setI(k); setMine(true); }}>
-                <span className="x-mono">{String(k + 1).padStart(2, '0')}</span>{t}
-                {i === k && !mine && <motion.i className={`${P}-idx-t`} style={{ scaleX: fill }} aria-hidden="true" />}
-              </button>
-            ))}
-          </div>
-          <div className={`${P}-idx-r`}>
-            <div className={`${P}-idx-stack`}>
-            {BUILT.items.map(([t, d], k) => (
-              <div key={t} id={`${P}-b-${k}`} role="tabpanel" aria-hidden={i !== k} inert={i !== k} className={`${P}-idx-p` + (i === k ? ' on' : '')}>
-                <span className={`${P}-idx-n`} aria-hidden="true">{String(k + 1).padStart(2, '0')}</span>
-                <h3>{t}</h3>
-                <p>{d}</p>
-              </div>
-            ))}
+        <div className={`${P}-pin`}>
+          <div className={`${P}-pin-stage`}>
+            <div role="tablist" aria-label={BUILT.kick} className={`${P}-strip`} ref={rail}>
+              {BUILT.items.map(([t], k) => (
+                <button key={t} type="button" role="tab" aria-selected={i === k} aria-controls={`${P}-b-${k}`} className={k < i ? 'past' : ''} onClick={() => { setI(k); setMine(true); }}>
+                  <span className={`${P}-nring`} aria-hidden="true">
+                    <svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="16" className="trk" />{i === k && (mine ? <circle cx="18" cy="18" r="16" className="run" /> : <motion.circle cx="18" cy="18" r="16" className="run" style={{ pathLength: fill }} />)}</svg>
+                    <span className="x-mono">{two(k)}</span>
+                  </span>
+                  <span className={`${P}-strip-t`}>{t}</span>
+                </button>
+              ))}
             </div>
-            <More to={BUILT.console[1]}>{BUILT.console[0]}</More>
+            <div className={`${P}-sheet`}>
+              <div className={`${P}-sheet-stack`}>
+                {BUILT.items.map(([t, d], k) => (
+                  <div key={t} id={`${P}-b-${k}`} role="tabpanel" aria-hidden={i !== k} inert={i !== k} className={`${P}-sheet-p` + (i === k ? ' on' : '')}>
+                    <span className={`${P}-sheet-n`} aria-hidden="true">{two(k)}<small> / {two(n - 1)}</small></span>
+                    <div><h3>{t}</h3><p>{d}</p></div>
+                  </div>
+                ))}
+              </div>
+              <More to={BUILT.console[1]}>{BUILT.console[0]}</More>
+            </div>
           </div>
+          <div className={`${P}-pin-run`} ref={run} aria-hidden="true" />
         </div>
       </div>
     </section>
@@ -396,6 +441,7 @@ function See() {
             {SEE.map(([q], k) => (
               <button key={q} type="button" role="radio" aria-checked={i === k} onClick={() => { setI(k); setMine(true); }}>
                 <i aria-hidden="true" />{q}
+                {/* the picked option's outline draws round it across its turn */}
                 {i === k && !mine && <b className={`${P}-see-t`} aria-hidden="true" />}
               </button>
             ))}
@@ -414,12 +460,55 @@ function See() {
             <p className={`${P}-see-train`}><b>{FAQ[5][0]}</b> {FAQ[5][1]}</p>
           </div>
         </div>
-        <div className={`${P}-see-faq`}>
-          <h3 className={`${P}-see-qh`}>Questions</h3>
-          <A2Faq items={FAQ} dark />
-        </div>
       </div>
     </section>
+  );
+}
+
+/* Every question in full, after the room: a quiet sheet that opens closed, so it never repeats the picker's answer
+   unasked. The heading is for screen readers; the questions are the visible words. */
+function Questions() {
+  return (
+    <section className={`a2-sec ${P}-faqs`} aria-labelledby="xtg-q">
+      <div className="a2-wrap">
+        <h2 id="xtg-q" className={`${P}-sr`}>Questions</h2>
+        <A2Faq items={FAQ} first={-1} />
+      </div>
+    </section>
+  );
+}
+
+/* Each product's surface, drawn from what this page already shows: the tagged thread, the workspace's channels, the
+   resident bot's trace, and the side panel beside the button it fixed. Pointing at a frame lifts it; the Chrome frame
+   then shows the button after the fix. */
+const TRACE = SESSION[0].msgs[0].trace.map(([k]) => k);
+function Frame({ k }) {
+  if (k === 0) return (
+    <span className={`${P}-frame f0`} aria-hidden="true">
+      <span className={`${P}-fr-h`}># {SETUP.channel.slice(1)}</span>
+      <span className={`${P}-fr-row`}><Face who="harry" p={`${P}-fr`} /><span className={`${P}-fr-at`}>@Hanzo</span></span>
+      <span className={`${P}-fr-row`}><Face who="hanzo" p={`${P}-fr`} /><span className={`${P}-fr-chip`}>{WINDOW.prReady}</span></span>
+    </span>
+  );
+  if (k === 1) return (
+    <span className={`${P}-frame f1`} aria-hidden="true">
+      {WINDOW.groups.map(([g, chans]) => (
+        <span key={g} className={`${P}-fr-g`}><span className={`${P}-fr-gl`}>{g}</span>{chans.map((c) => <span key={c} className={c === 'bug-button-darkmode' ? 'on' : ''}># {c}</span>)}</span>
+      ))}
+    </span>
+  );
+  if (k === 2) return (
+    <span className={`${P}-frame f2`} aria-hidden="true">
+      <span className={`${P}-fr-row`}><Face who="dev" p={`${P}-fr`} /><b>{PEOPLE.dev.name}</b><i className={`${P}-fr-live`} /></span>
+      <span className={`${P}-fr-tr`}>{TRACE.map((t, j) => <span key={t} style={{ '--j': j }}>{t}</span>)}</span>
+    </span>
+  );
+  return (
+    <span className={`${P}-frame f3`} aria-hidden="true">
+      <span className={`${P}-fr-bar`}><i /><i /><i /></span>
+      <span className={`${P}-fr-page`}><b style={VIEW.old}>{VIEW.button}</b><b style={VIEW.fix}>{VIEW.button}</b></span>
+      <span className={`${P}-fr-side`}><Face who="hanzo" p={`${P}-fr`} /></span>
+    </span>
   );
 }
 
@@ -435,7 +524,7 @@ function Platform() {
           <i className={`${P}-cross-c`} aria-hidden="true" />
           {PLATFORM.items.map(([t, d], k) => (
             <div key={t} className={`${P}-cross-i`}>
-              <span className={`${P}-frame f${k}`} aria-hidden="true"><i /><i /><i /><i /><i /></span>
+              <Frame k={k} />
               <div><h3>{t}</h3><p>{d}</p></div>
             </div>
           ))}
@@ -485,6 +574,7 @@ export default function Tag() {
       <What />
       <Built />
       <See />
+      <Questions />
       <Platform />
       <Close />
     </main>
