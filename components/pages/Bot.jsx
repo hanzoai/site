@@ -5,7 +5,7 @@
    V2: 8/10 centred display headline over a full-width live org chart on Stage; ten workflows open as thread drawers; five pinned chapters with live product UI; one dark room to install; the plan slider as the pricing hero
    Motion: signature = the live org chart (packets route person → bot → verifier, the thread fills beneath). Supporting: Stage
    settle, pinned chapters with clip wipes (components/v2/AppScenes), line-masked headline. Accent: tangerine, from the
-   mention pill. Bot faces are drawn, not fetched. Every word, figure and link is Hanzo's. */
+   mention pill. Bot faces are Hanzo's memoji, with a drawn face beneath in case a picture can't load. Every word, figure and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { Copy, Magnetic } from '../ui';
@@ -20,9 +20,18 @@ import './Bot.css';
 
 const CREW = [['dev', 'Dev', 'Software'], ['qa', 'Qa', 'Quality'], ['cyber', 'Cyber', 'Security'], ['des', 'Des', 'Designer'], ['mark', 'Mark', 'Marketing'], ['su', 'Su', 'Support'], ['doc', 'Doc', 'Docs'], ['opera', 'Opera', 'Operations'], ['sci', 'Sci', 'Research'], ['data', 'Data', 'Analytics'], ['sal', 'Sal', 'Sales'], ['fin', 'Fin', 'Finance'], ['law', 'Law', 'Legal']];
 
-/* A bot's face: a little screen with two eyes (each bot has its own computer). */
-function Face({ k = '', size }) {
-  return <span className={'bt-face ' + k} style={size ? { '--s': size + 'px' } : undefined} aria-hidden="true"><i /><i /></span>;
+/* A picture that steps aside if it cannot load (the drawn version underneath stays). */
+function Pic({ src, alt = '', className = '' }) {
+  const ref = useRef(null);
+  const [bad, setBad] = useState(false);
+  useEffect(() => { const i = ref.current; if (i && i.complete && !i.naturalWidth) setBad(true); }, [src]);
+  return bad ? null : <img ref={ref} src={src} alt={alt} className={className} loading="lazy" onError={() => setBad(true)} />;
+}
+
+/* A bot's face: Hanzo's memoji for that bot, over a little drawn screen with two eyes that shows if the picture can't load. */
+const memoji = (id) => `/memoji/${id === 'qa' ? 'sci' : id}.svg`;
+function Face({ k = '', size, id }) {
+  return <span className={'bt-face ' + k + (id ? ' has-id' : '')} style={size ? { '--s': size + 'px' } : undefined} aria-hidden="true"><i /><i />{id && <Pic src={memoji(id)} className="bt-face-img" />}</span>;
 }
 
 /* ---------- the signature: the org chart ---------- */
@@ -129,7 +138,7 @@ function Org() {
             const lit = (k === 'p' && b >= 2) || (k === 'v' && b >= 4);
             return (
               <li key={id} className={(k ? 'is-' + k : '') + (lit ? ' lit' : '') + (k === 'p' && b < 2 ? ' called' : '')}>
-                <Face k={lit ? k : ''} />
+                <Face k={lit ? k : ''} id={id} />
                 <b>{n}</b>
                 <span>{role}</span>
                 {k === 'v' && <em className={'bt-ok x-mono' + (b >= 4 ? ' on' : '') + (i < 2 ? ' s' : i > 10 ? ' e' : '')}>{w.verifier.badge}</em>}
@@ -142,7 +151,7 @@ function Org() {
       </div>
       <div className="bt-log">
         <div className={'bt-msg' + (b >= 2 ? ' on' : '')}>
-          <Face k="p" size={36} />
+          <Face k="p" size={36} id={w.primary.id} />
           <div>
             <p className="bt-meta"><b>{w.primary.name}</b> <span>{w.primary.role} · {w.primary.time}</span></p>
             <p>{w.primary.reply}</p>
@@ -150,7 +159,7 @@ function Org() {
           </div>
         </div>
         <div className={'bt-msg' + (b >= 4 ? ' on' : '')}>
-          <Face k="v" size={36} />
+          <Face k="v" size={36} id={w.verifier.id} />
           <div>
             <p className="bt-meta"><b>{w.verifier.name}</b> <span>{w.verifier.role} · {w.verifier.time}</span> <span className="bt-badge x-mono">{w.verifier.badge}</span></p>
             <p>{w.verifier.reply}</p>
@@ -211,8 +220,8 @@ function Case({ w }) {
       <p className="bt-case-sum">{w.summary}</p>
       <div className="bt-thread">
         <div className="bt-line"><span className="bt-ini">{w.human.initials}</span><div><p className="bt-meta"><b>{w.human.name}</b> <span>{w.human.time}</span></p><p>{w.human.before}<b className="bt-at">{w.human.mention}</b>{w.human.after}</p></div></div>
-        <div className="bt-line"><Face k="p" size={36} /><div><p className="bt-meta"><b>{w.primary.name}</b> <span>{w.primary.role} · {w.primary.time}</span></p><p>{w.primary.reply}</p><p className="bt-art x-mono">{w.primary.codeOrArtifact}</p></div></div>
-        <div className="bt-line"><Face k="v" size={36} /><div><p className="bt-meta"><b>{w.verifier.name}</b> <span>{w.verifier.role} · {w.verifier.time}</span></p><span className="bt-badge x-mono">{w.verifier.badge}</span><p>{w.verifier.reply}</p></div></div>
+        <div className="bt-line"><Face k="p" size={36} id={w.primary.id} /><div><p className="bt-meta"><b>{w.primary.name}</b> <span>{w.primary.role} · {w.primary.time}</span></p><p>{w.primary.reply}</p><p className="bt-art x-mono">{w.primary.codeOrArtifact}</p></div></div>
+        <div className="bt-line"><Face k="v" size={36} id={w.verifier.id} /><div><p className="bt-meta"><b>{w.verifier.name}</b> <span>{w.verifier.role} · {w.verifier.time}</span></p><span className="bt-badge x-mono">{w.verifier.badge}</span><p>{w.verifier.reply}</p></div></div>
       </div>
       <p className="bt-case-h x-mono">AUTOMATED WORKFLOW <span>{w.steps.length} / {w.steps.length} steps complete</span></p>
       <ol className="bt-steps">{w.steps.map((s, i) => <li key={s}><Tick size={18} delay={0.15 + i * 0.12} />{s}</li>)}</ol>
@@ -245,7 +254,7 @@ function Cases() {
           {WORKFLOWS.map((w) => (
             <li key={w.id}>
               <Sheet trigger="bt-idx-row" title={w.title}
-                label={<><span className="bt-idx-n x-mono av-num">{w.num}</span><span className="bt-idx-c x-mono"># {w.channel}</span><span className="bt-idx-t">{w.title}</span><span className="bt-idx-p"><Face k="p" size={28} /><Face k="v" size={28} /><span className="x-mono">@{w.primary.name} → @{w.verifier.name}</span></span></>}>
+                label={<><span className="bt-idx-n x-mono av-num">{w.num}</span><span className="bt-idx-c x-mono"># {w.channel}</span><span className="bt-idx-t">{w.title}</span><span className="bt-idx-p"><Face k="p" size={28} id={w.primary.id} /><Face k="v" size={28} id={w.verifier.id} /><span className="x-mono">@{w.primary.name} → @{w.verifier.name}</span></span></>}>
                 <Case w={w} />
               </Sheet>
             </li>
@@ -308,7 +317,7 @@ function Board({ on }) {
 function Msg({ on, children, cls = '', face }) {
   return (
     <div className={'bt-tm ' + cls + (on ? ' on' : '')} aria-hidden={!on}>
-      {face && <Face k={face === 'des' ? 'v' : 'p'} size={30} />}
+      {face && <Face k={face === 'des' ? 'v' : 'p'} size={30} id={face} />}
       <div>{children}</div>
     </div>
   );
@@ -335,12 +344,12 @@ function Thread({ on }) {
         <p className="bt-side-h">Teammates <span className="x-mono">{desOn ? '2 working' : '1 working'}</span></p>
         <ul className="bt-mates">
           {[['mark', 'Mark', true], ['des', 'Des', desOn]].map(([id, n, w]) => (
-            <li key={id} className={w ? 'on' : ''}><Face k={w ? (id === 'des' ? 'v' : 'p') : ''} size={30} /><span><b>{n}</b><span>{w ? 'Working' : ' '}</span></span></li>
+            <li key={id} className={w ? 'on' : ''}><Face k={w ? (id === 'des' ? 'v' : 'p') : ''} size={30} id={id} /><span><b>{n}</b><span>{w ? 'Working' : ' '}</span></span></li>
           ))}
         </ul>
       </aside>
       <div className="bt-main">
-        <div className="bt-main-h"><Face k="p" size={26} /><b>Mark · Marketing</b><span className="bt-plus x-mono">+<span>1</span></span></div>
+        <div className="bt-main-h"><Face k="p" size={26} id="mark" /><b>Mark · Marketing</b><span className="bt-plus x-mono">+<span>1</span></span></div>
         <div className="bt-tlog">
           <Msg on={at(0)} cls="you"><p>Write the launch post for crypto top-ups, and ask Des for a header.</p></Msg>
           <Msg on={at(1)} face="mark"><p>Drafted. Agents can now top up in USDC or USDT over the API and pay as they go.</p></Msg>
@@ -368,7 +377,7 @@ function Routines({ on }) {
   return (
     <div className={'bt-vis bt-rt' + (on ? ' on' : '')}>
       <div className="bt-rt-card">
-        <div className="bt-rt-top"><Face k="p" size={40} /><b>Mark · Marketing</b></div>
+        <div className="bt-rt-top"><Face k="p" size={40} id="mark" /><b>Mark · Marketing</b></div>
         <div className="bt-rt-tabs" aria-hidden="true"><span>Details</span><span>Library</span><span>Computer</span><span className="on">Routines</span></div>
         <ul>
           {list.map(([t, wh], i) => (
@@ -435,7 +444,7 @@ function Tools() {
           </div>
           {TOOLS.map(([c, list], i) => (
             <ul key={c} id={'bt-tc' + i} role="tabpanel" aria-labelledby={'bt-tt' + i} className="bt-names" hidden={i !== cat}>
-              {list.map(([f, n]) => <li key={f}><span>{n}</span><i aria-hidden="true">✓</i></li>)}
+              {list.map(([f, n]) => <li key={f}><span className="bt-logo"><Pic src={`/connectors/${f}.png`} alt={n} /></span><span>{n}</span><i aria-hidden="true">✓</i></li>)}
             </ul>
           ))}
         </div>
