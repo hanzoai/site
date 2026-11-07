@@ -92,6 +92,17 @@
 }
 @media (prefers-reduced-motion: reduce) { .st2-strip, .st2-bad { animation: none; } }
 
+/* deck rhythm: the offsets and the four words rest at 32, so the moving tape stays the one big thing */
+.st2-big { font-size: 32px; padding-bottom: 24px; -webkit-text-stroke-width: 1px; }
+.st2-figs b { font-size: 32px; font-weight: 400; letter-spacing: -.03em; }
+.st2-figs { gap: 32px 40px; }
+.st2-rec { min-height: min(440px, 56svh); }
+/* the committed-offset line keeps moving while the tape is pinned: records still arriving (transform only) */
+.st2-commit i { position: relative; overflow: hidden; background: none; }
+.st2-commit i::before { content: ''; position: absolute; inset: 0 -14px 0 0; background: repeating-linear-gradient(90deg, rgba(0, 0, 0, .22) 0 2px, transparent 2px 14px); animation: st2-ants 1.4s linear infinite; }
+@keyframes st2-ants { to { transform: translateX(-14px); } }
+@media (prefers-reduced-motion: reduce) { .st2-commit i::before { animation: none; } }
+@media (max-width: 900px) { .st2-big { font-size: 28px; } .st2-figs b { font-size: 28px; } }
 /* the close's object: one partition and the committed offset */
 .st2-mini { position: relative; padding: 24px 0 22px; border-radius: 24px; background: #0a0a0a; border: 1px solid rgba(255, 255, 255, .12); overflow: hidden; color: #f5f5f5; }
 .st2-mini-k { display: flex; justify-content: space-between; gap: 12px; margin: 0 76px 18px 24px; font-size: 13px; color: #a3a3a3; }

@@ -12,8 +12,8 @@
    Motion: horizontal scroll scrub (signature) + the hero's running partitions (idle, with Pause) + the clip-to-card
    settle (scroll) + the API checker (state). Offset labels sit under their headlines.
    Every word, figure and link is Hanzo's; offsets and records are examples. */
-import { useRef, useState } from 'react';
-import { motion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
+import { motion, useScroll, useTransform, useMotionValueEvent, useInView } from 'motion/react';
 import useCalm from '../../v2/useCalm';
 import { Code } from './Frame';
 import { useDemo, PauseBtn, useTick } from '../../v2/x-hamilton/Demo';
@@ -124,14 +124,25 @@ const APIS = ['Produce', 'Fetch', 'ListOffsets', 'Metadata', 'OffsetCommit', 'Of
 /* Beyond: answer "does my client's call work?" from the twelve APIs Hanzo lists. */
 function Check() {
   const [q, setQ] = useState('');
+  // once, when it comes into view, it types one of Hanzo's twelve by itself (so you see it answer), then waits for you
+  const box = useRef(null);
+  const seen = useInView(box, { once: true, amount: 0.6 });
+  const calm = useCalm();
+  const [mine, setMine] = useState(false);
+  useEffect(() => {
+    if (!seen || calm || mine) return;
+    const word = 'JoinGroup';
+    const ids = [...word].map((_, i) => setTimeout(() => setQ(word.slice(0, i + 1)), 400 + i * 110));
+    return () => ids.forEach(clearTimeout);
+  }, [seen, calm, mine]);
   const s = q.trim().toLowerCase().replace(/\s+/g, '');
   const hits = s ? APIS.filter((a) => a.toLowerCase().includes(s)) : [];
   const exact = APIS.find((a) => a.toLowerCase() === s);
   return (
-    <div className="st2-check">
+    <div className="st2-check" ref={box}>
       <label>
         <span className="l2-kick ac">Does my client's call work?</span>
-        <input type="text" value={q} onChange={(e) => setQ(e.target.value)} placeholder="JoinGroup" spellCheck="false" autoComplete="off" />
+        <input type="text" value={q} onFocus={() => setMine(true)} onChange={(e) => { setMine(true); setQ(e.target.value); }} placeholder="JoinGroup" spellCheck="false" autoComplete="off" />
       </label>
       <p className="st2-ans" aria-live="polite">
         {!s ? 'Type a Kafka API.' : exact ? <><b>{exact}</b> is one of the twelve, at the versions modern clients negotiate.</> : hits.length ? <>Did you mean {hits.map((h, i) => <button key={h} type="button" onClick={() => setQ(h)}>{h}{i < hits.length - 1 ? '' : ''}</button>)}?</> : <><b>{q.trim()}</b> is not among the twelve APIs Hanzo lists.</>}
@@ -194,7 +205,7 @@ function MiniTape() {
 
 export default function Stream() {
   return (
-    <main id="main" className="l2-page st2" data-ask="off">
+    <main id="main" className="l2-page st2">
       <StageHero look="frame" dark kick="Kafka Wire Protocol" title="Hanzo Stream" sub="A Kafka port in front of Hanzo PubSub" acts={[['GitHub', GHS]]}>
         <Tape />
       </StageHero>
