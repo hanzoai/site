@@ -228,6 +228,18 @@
       "where": "/integrations/* editor side pane (icon)",
       "reason": "control label",
       "needs_james": true
+    },
+    "copied": {
+      "string": "Copied",
+      "where": "/careers/* share (the link is on the clipboard): a drawn tick, this as its status",
+      "reason": "status message",
+      "needs_james": true
+    },
+    "email_ready": {
+      "string": "Your email is ready to send",
+      "where": "/careers/* application, after the form writes the email (a tick and the address show; this is the status)",
+      "reason": "status message",
+      "needs_james": true
     }
   }
 }
