@@ -309,3 +309,9 @@
   .cht-again-field { border-radius: 26px; }
   .cht .x-btn.sm { min-height: 44px; font-size: 14px; }
 }
+
+/* phones: every control is at least a thumb high */
+@media (max-width: 900px) {
+  .cht-peek a { display: inline-flex; align-items: center; min-height: 44px; }
+  .cht .x-copy, .cht-listen { min-height: 44px; padding-inline: 14px; }
+}

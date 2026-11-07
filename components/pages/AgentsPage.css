@@ -193,3 +193,9 @@
   .agt-faq-l { margin-bottom: 20px; }
   .agt-end-t { font-size: clamp(2.8rem, 13vw, 3.5rem); }
 }
+
+/* phones: every control is at least a thumb high */
+@media (max-width: 900px) {
+  .agt .x-arrow { min-height: 44px; }
+  .agt .x-copy { min-height: 44px; padding-inline: 14px; }
+}

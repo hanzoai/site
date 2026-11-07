@@ -100,11 +100,12 @@
 .xdv-high li span { font-size: 13px; color: var(--acc-ink); letter-spacing: .08em; }
 
 /* ---------- 2. the race: the dark room ---------- */
-.xdv-race { position: relative; padding: clamp(140px, 15vw, 240px) 0 clamp(120px, 14vw, 220px); background: #000; color: #f5f5f7; }
-.xdv-race-h { margin: 0; display: flex; flex-direction: column; gap: 10px; }
-.xdv-big { display: block; font-size: clamp(7rem, 17vw, 16rem); color: var(--acc-term); }
-.xdv-race-t { display: block; font-size: clamp(2.25rem, 3.9vw, 3.5rem); font-weight: 600; line-height: 1.02; letter-spacing: -.045em; max-width: 16ch; color: #f5f5f7; }
-.xdv-race-l { margin: 28px 0 clamp(56px, 6vw, 88px); max-width: 52ch; font-size: clamp(1.0625rem, 1.3vw, 1.1875rem); line-height: 1.55; color: #a1a1a6; }
+.xdv-race { position: relative; padding: clamp(120px, 11vw, 180px) 0 clamp(120px, 14vw, 220px); background: #000; color: #f5f5f7; }
+.xdv-race-top { align-items: end; margin-bottom: clamp(40px, 4vw, 64px); }
+.xdv-race-h { grid-column: 1 / 13; margin: 0; display: grid; grid-template-columns: subgrid; align-items: end; }
+.xdv-big { grid-column: 1 / 8; display: block; font-size: clamp(7rem, 15.5vw, 14.5rem); color: var(--acc-term); }
+.xdv-race-t { grid-column: 8 / 13; display: block; padding-bottom: 1.4rem; font-size: clamp(2rem, 3.1vw, 2.75rem); font-weight: 600; line-height: 1.04; letter-spacing: -.04em; max-width: 13ch; color: #f5f5f7; }
+.xdv-race-l { grid-column: 8 / 13; margin: 18px 0 0; max-width: 46ch; font-size: clamp(1rem, 1.2vw, 1.0625rem); line-height: 1.55; color: #a1a1a6; }
 .xdv-split { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; position: relative; }
 .xdv-side { position: relative; overflow: hidden; padding: clamp(24px, 3vw, 40px); border-radius: 28px; background: #0f0f11; border: 1px solid rgba(255, 255, 255, .07); }
 .xdv-side header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
@@ -351,7 +352,10 @@
   .xdv-high { grid-template-columns: 1fr 1fr; gap: 20px 16px; }
   .xdv-high li { font-size: 15px; }
   .xdv-race { padding: 120px 0; }
+  .xdv-race-h { display: flex; flex-direction: column; gap: 8px; }
   .xdv-big { font-size: clamp(6rem, 30vw, 8rem); }
+  .xdv-race-t { padding-bottom: 0; font-size: 2rem; }
+  .xdv-race-l { margin: 22px 0 0; }
   .xdv-split { grid-template-columns: 1fr; }
   .xdv-cells { gap: 2px; }
   .xdv-cells span { height: 26px; }
@@ -390,4 +394,12 @@
 @media (max-width: 560px) {
   .xdv-clock { font-size: 3.4rem; }
   .xdv-high { grid-template-columns: 1fr; }
+}
+
+/* phones: every control is at least a thumb high, nothing reads under 12px */
+@media (max-width: 900px) {
+  .xdv .x-arrow { min-height: 44px; }
+  .xdv .x-copy { min-height: 44px; padding-inline: 14px; }
+  .xdv-info, .xdv-replay { min-width: 44px; min-height: 44px; }
+  .xdv-src { font-size: 12px; }
 }

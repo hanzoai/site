@@ -95,8 +95,12 @@ function Run() {
     return () => { live = false; };
   }, [mine, calm, seen]);
 
-  const pick = (i) => {
-    setMine(true); setAt(i); setDone(i - 1);
+  // reduced motion: the run is shown finished, its last step open with its request
+  useEffect(() => { if (calm) pick(STEPS.length - 1, true); }, [calm]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const pick = (i, still) => {
+    if (!still) setMine(true);
+    setAt(i); setDone(still ? i : i - 1);
     outs.current.forEach((o, j) => { if (o) o.textContent = ''; });
     const el = outs.current[i];
     if (el) CALLS[i].forEach((c) => { const d = document.createElement('p'); d.className = 'agt-req'; const [verb, ...rest] = c.split(' '); const v = document.createElement('b'); v.textContent = verb; d.append(v, ' ' + rest.join(' ')); el.appendChild(d); });
@@ -255,6 +259,8 @@ function Script() {
   const { scrollYProgress } = useScroll({ target: track, offset: ['start start', 'end end'] });
   useMotionValueEvent(scrollYProgress, 'change', (v) => { if (scrub) setLn(Math.min(lines.length - 1, Math.floor(Math.max(0, v) * 1.04 * lines.length) - 1)); });
 
+  // reduced motion: the whole file is shown as run
+  useEffect(() => { if (calm) setLn(lines.length - 1); }, [calm, lines.length]);
   // phones: the file plays itself once when it is reached
   const [play, setPlay] = useState(false);
   useEffect(() => { if (!scrub && seen && !calm && ln === -1) setPlay(true); }, [scrub, seen, calm, ln]);
