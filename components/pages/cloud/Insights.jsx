@@ -213,7 +213,7 @@ function View({ k, v, on }) {
         {MODES.map((t, i) => (
           <div key={t} className={'in-row' + (!off && v === i ? ' hi' : '')}>
             <i className="in-radio" /><span>{t}</span>
-            <b className="in-reach">{Array.from({ length: 24 }).map((_, j) => <i key={j} className={!off && (i === 0 ? order[j] % 10 < 3 : i === 1 ? j >= 8 && j < 16 : j === 11) ? 'on' : ''} style={{ '--d': j }} />)}</b>
+            <b className="in-reach">{Array.from({ length: 24 }).map((_, j) => <i key={j} className={!off && (i === 0 ? order[j] % 10 < 3 : i === 1 ? j >= 8 && j < 16 : j === 11) ? 'on' : ''} style={{ '--id': j }} />)}</b>
           </div>
         ))}
         <div className={'in-row in-row-k' + (off ? ' hi' : '')}><span>kill switch</span><i className={'in-sw' + (off ? '' : ' on')} /></div>
@@ -231,7 +231,7 @@ function View({ k, v, on }) {
           <rect className="ln" x="32" y="140" width="96" height="34" rx="12" />
           <rect className="ln" x="232" y="132" width="96" height="52" rx="8" />
           {[[80, 157, 0], [280, 158, 1], [108, 67, 2]].map(([x, y, i]) => (
-            <g key={i} className="in-heat" style={{ '--d': i }} transform={`translate(${x} ${y})`}><circle r="26" /><circle r="16" /><circle r="7" /></g>
+            <g key={i} className="in-heat" style={{ '--id': i }} transform={`translate(${x} ${y})`}><circle r="26" /><circle r="16" /><circle r="7" /></g>
           ))}
           <line className="in-depth-t" x1="340" y1="40" x2="340" y2="208" />
           <line className="in-depth" x1="340" y1="40" x2="340" y2="140" pathLength="1" />
@@ -250,8 +250,8 @@ function View({ k, v, on }) {
     <div className={'in-v in-v-ab' + (v === 1 ? ' bars' : ' wire')}>
       <div className="in-wire"><code>new-dashboard</code><svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><line x1="0" y1="5" x2="100" y2="5" pathLength="1" /></svg><code>button_clicked</code></div>
       <div className="in-bars">
-        <div><b style={{ '--h': 0.58 }} /><span>A</span></div>
-        <div className="b"><b style={{ '--h': 0.78 }} /><span>B</span></div>
+        <div><b style={{ '--ih': 0.58 }} /><span>A</span></div>
+        <div className="b"><b style={{ '--ih': 0.78 }} /><span>B</span></div>
       </div>
     </div>
   );
@@ -259,23 +259,23 @@ function View({ k, v, on }) {
     if (v === 1) return (
       <div className="in-v in-v-rt">
         {Array.from({ length: 6 }).map((_, r) => (
-          <div key={r} className="in-rt-r">{Array.from({ length: 6 - r }).map((_, c) => <i key={c} style={{ '--d': r + c, '--s': c }} />)}</div>
+          <div key={r} className="in-rt-r">{Array.from({ length: 6 - r }).map((_, c) => <i key={c} style={{ '--id': r + c, '--is': c }} />)}</div>
         ))}
       </div>
     );
     if (v === 2) return (
       <div className="in-v in-v-pa">
         <svg viewBox="0 0 360 200" aria-hidden="true">
-          {[['M30 100 C 110 100, 110 40, 180 40', 0], ['M30 100 C 110 100, 110 100, 180 100', 1], ['M180 40 C 250 40, 250 60, 330 60', 2], ['M180 100 C 250 100, 250 60, 330 60', 3]].map(([d, i]) => <path key={i} d={d} pathLength="1" className="in-pa-l" style={{ '--d': i }} />)}
+          {[['M30 100 C 110 100, 110 40, 180 40', 0], ['M30 100 C 110 100, 110 100, 180 100', 1], ['M180 40 C 250 40, 250 60, 330 60', 2], ['M180 100 C 250 100, 250 60, 330 60', 3]].map(([d, i]) => <path key={i} d={d} pathLength="1" className="in-pa-l" style={{ '--id': i }} />)}
           <path d="M30 100 C 90 160, 140 180, 200 160 S 300 150, 330 140" pathLength="1" className="in-pa-l odd" />
-          {[[30, 100], [180, 40], [180, 100], [330, 60], [330, 140]].map(([x, y], i) => <circle key={i} cx={x} cy={y} r="7" className={'in-pa-n' + (i === 4 ? ' odd' : '')} style={{ '--d': i }} />)}
+          {[[30, 100], [180, 40], [180, 100], [330, 60], [330, 140]].map(([x, y], i) => <circle key={i} cx={x} cy={y} r="7" className={'in-pa-n' + (i === 4 ? ' odd' : '')} style={{ '--id': i }} />)}
         </svg>
       </div>
     );
     return (
       <div className="in-v in-v-fn">
         {[['Start with autocapture', 1], ['Paste and ship', 0.72], ['Get Insights', 0.48], ['Open Insights', 0.3]].map(([t, w], i) => (
-          <div key={t} className="in-row"><span>{t}</span><b><i style={{ '--w': w, '--d': i }} /></b></div>
+          <div key={t} className="in-row"><span>{t}</span><b><i style={{ '--iw': w, '--id': i }} /></b></div>
         ))}
       </div>
     );
@@ -283,7 +283,7 @@ function View({ k, v, on }) {
   if (v === 1) return (
     <div className="in-v in-v-cost">
       {[['traces', 0, 1], ['latency', 0.12, 0.7], ['cost per generation', 0.3, 0.5]].map(([t, x, w], i) => (
-        <div key={t} className="in-row"><span>{t}</span><b><i style={{ '--x': x, '--w': w, '--d': i }} /></b></div>
+        <div key={t} className="in-row"><span>{t}</span><b><i style={{ '--ix': x, '--iw': w, '--id': i }} /></b></div>
       ))}
     </div>
   );
@@ -292,7 +292,7 @@ function View({ k, v, on }) {
       <div className="in-spike"><span>rage clicks</span><svg viewBox="0 0 200 40" preserveAspectRatio="none" aria-hidden="true"><polyline points="0,34 30,33 60,34 90,32 112,30 124,6 136,30 160,33 200,34" pathLength="1" /></svg></div>
       <p className="in-cap">the exception behind it</p>
       <ol className="in-trace">
-        {['useFeatureFlag("new-dashboard")', 'MyApp', 'InsightsProvider', 'App'].map((t, i) => <li key={t} style={{ '--d': i }}><code>{t}</code></li>)}
+        {['useFeatureFlag("new-dashboard")', 'MyApp', 'InsightsProvider', 'App'].map((t, i) => <li key={t} style={{ '--id': i }}><code>{t}</code></li>)}
       </ol>
     </div>
   );
@@ -339,7 +339,7 @@ function Tour() {
       <div className="v2-wrap">
         <div className="v2-grid in-tour-h">
           <h2 className="v2-display s">Ship it, then find out</h2>
-          <ul className="in-figs">{[['Events', 'Auto-capture'], ['Flags', 'A/B'], ['OSS', 'Self-hosted']].map(([a, b], i) => <li key={a} style={{ '--d': i }}><b>{a}</b><span>{b}</span></li>)}</ul>
+          <ul className="in-figs">{[['Events', 'Auto-capture'], ['Flags', 'A/B'], ['OSS', 'Self-hosted']].map(([a, b], i) => <li key={a} style={{ '--id': i }}><b>{a}</b><span>{b}</span></li>)}</ul>
         </div>
         <div className="in-win v2-obj" ref={ref} onPointerEnter={(e) => fine(e) && setHold(true)} onPointerLeave={() => { setHold(false); setPeek(-1); }}>
           <div className="in-win-bar"><span className="in-dots"><i /><i /><i /></span><span>insights.hanzo.ai</span><LivePause paused={paused} onToggle={togglePause} inline className="in-pause" /></div>
@@ -427,10 +427,10 @@ function Flip() {
           {on ? (
             <>
               <svg className="in-app-c" viewBox="0 0 300 90" preserveAspectRatio="none"><polyline points="0,80 40,70 80,74 120,52 160,58 200,34 240,40 300,14" pathLength="1" /></svg>
-              <div className="in-app-r">{[0.9, 0.62, 0.4].map((w, i) => <i key={i} style={{ '--w': w, '--d': i }} />)}</div>
+              <div className="in-app-r">{[0.9, 0.62, 0.4].map((w, i) => <i key={i} style={{ '--iw': w, '--id': i }} />)}</div>
             </>
           ) : (
-            <div className="in-app-r old">{[0.7, 0.7, 0.7, 0.7].map((w, i) => <i key={i} style={{ '--w': w, '--d': i }} />)}</div>
+            <div className="in-app-r old">{[0.7, 0.7, 0.7, 0.7].map((w, i) => <i key={i} style={{ '--iw': w, '--id': i }} />)}</div>
           )}
         </motion.div>
       </AnimatePresence>

@@ -68,10 +68,10 @@ function Roll({ v, k }) {
 }
 
 /* The rack of four H100 cards; `on` of them are lit (each wakes 90 ms after the one above). */
-function Rack({ on, className = '' }) {
+function Rack({ on, count = 4, className = '' }) {
   return (
     <div className={'mc-rack ' + className} aria-hidden="true">
-      {[0, 1, 2, 3].map((i) => (
+      {Array.from({ length: count }, (_, i) => i).map((i) => (
         <div key={i} className={'mc-card' + (i < on ? ' on' : '')} style={{ '--i': i }}>
           <span className="mc-card-n">H100</span>
           <span className="mc-fins">{Array.from({ length: 14 }).map((_, k) => <i key={k} />)}</span>
@@ -217,10 +217,10 @@ const CALLS = [
 const lineIn = (d) => ({ in: { y: '105%' }, on: { y: 0, transition: { duration: 0.5, ease: EASE, delay: d } } });
 
 /* The cards in the console wake one after another once the step is on. */
-function WakeRack({ n }) {
+function WakeRack({ n, count = 4 }) {
   const [on, setOn] = useState(0);
   useEffect(() => { const t = setTimeout(() => setOn(n), 300); return () => clearTimeout(t); }, [n]);
-  return <Rack on={on} className="rest mc-con-rack" />;
+  return <Rack on={on} count={count} className="rest mc-con-rack" />;
 }
 
 function ConFig({ kind }) {
@@ -229,7 +229,7 @@ function ConFig({ kind }) {
   // metered: one card up while the org's balance draws down
   return (
     <div className="mc-meter">
-      <WakeRack n={1} />
+      <WakeRack n={1} count={1} />
       <span className="mc-meter-t"><i /></span>
     </div>
   );

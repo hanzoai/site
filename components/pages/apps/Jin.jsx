@@ -675,7 +675,6 @@ function usePhoneAsk() {
       const btn = document.querySelector('header[data-slot=masthead] a[data-x-ask], header[data-slot=masthead] a[href="https://hanzo.ai/signup"]');
       if (!mq.matches || !main || !btn) { main?.removeAttribute('data-ask'); return; }
       main.setAttribute('data-ask', 'off');
-      H.dataset.jnAsk = ''; // Jin.css: the header's spacing tightens a little so the longer label fits at 375
       if (!btn.dataset.xAsk) { btn.dataset.xAsk = btn.textContent; btn.dataset.xHref = btn.getAttribute('href'); }
       const asks = [...document.querySelectorAll('main [data-cta="jin.hero"], main [data-cta="jin.close"]')];
       const seen = new Map();
@@ -690,7 +689,7 @@ function usePhoneAsk() {
       off = () => {
         io.disconnect();
         btn.textContent = btn.dataset.xAsk; btn.setAttribute('href', btn.dataset.xHref); btn.removeAttribute('data-cta');
-        delete H.dataset.ask; delete H.dataset.jnAsk;
+        delete H.dataset.ask;
       };
     };
     const t = setTimeout(start, 300);

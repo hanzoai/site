@@ -223,7 +223,7 @@ html:not(.js) .mc .v2-in, html:not(.js) .mc .v2-cut { animation: none; opacity: 
 .mc-own-i[data-on] .v2-title { transform: translateX(6px); }
 .mc-own-i[data-on] .mc-own-n { color: var(--mc-ink); }
 
-.mc-map { grid-column: 9 / -1; display: grid; justify-items: center; gap: 0; padding: clamp(28px, 3vw, 44px); border-radius: 24px; background: var(--mc-w3); font: 500 13px/1 var(--mono); color: var(--mc-g5); }
+.mc-map { grid-column: 9 / -1; display: grid; justify-items: center; gap: 0; padding: clamp(28px, 3vw, 44px); border-radius: 24px; background: var(--mc-w3); font: 500 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--mc-g5); }
 .mc-map > * { transition: opacity .4s var(--mc-io); }
 .mc-map[data-at='0'] > :not(.g0), .mc-map[data-at='1'] > :not(.g1):not(.mc-map-org), .mc-map[data-at='2'] > :not(.g2):not(.mc-map-org) { opacity: .4; }
 /* accounts, links and machines share three columns, so each account drops straight onto a machine */
@@ -239,7 +239,7 @@ html:not(.js) .mc .v2-in, html:not(.js) .mc .v2-cut { animation: none; opacity: 
 .mc-map[data-at='0'] .mc-map-org { box-shadow: inset 0 0 0 1.5px var(--mc-ink); }
 .mc-map-org em { display: block; font-style: normal; margin-bottom: 12px; color: var(--mc-ink); }
 .mc-map-ms { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-.mc-map-ms b { display: grid; place-items: center; height: 44px; border-radius: 12px; background: var(--mc-w1); font-weight: 500; font-size: 12px; color: var(--mc-g5); transition: background-color .4s var(--mc-io), color .4s var(--mc-io); transition-delay: calc(var(--k) * 90ms); }
+.mc-map-ms b { display: grid; place-items: center; height: 44px; border-radius: 12px; background: var(--mc-w1); font-weight: 500; color: var(--mc-g5); transition: background-color .4s var(--mc-io), color .4s var(--mc-io); transition-delay: calc(var(--k) * 90ms); }
 .mc-map[data-at='0'] .mc-map-ms b, .mc-map[data-at='1'] .mc-map-ms b { background: var(--mc-k3); color: var(--mc-w5); }
 .mc-map-reg { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); }
 .mc-map-reg em { font-style: normal; color: var(--mc-ink); }
@@ -278,6 +278,7 @@ a.mc-chip:focus-visible { outline: 2px solid var(--mc-ink); outline-offset: 3px;
 .mc-close-acts .x-btn:active, .mc-close-acts .x-arrow:active { transform: scale(.97); transition: transform 90ms var(--mc-out); }
 .mc-close-art { grid-column: 7 / -1; padding: clamp(28px, 3vw, 44px); border-radius: 24px; background: var(--mc-k); }
 .mc-close-body { margin-top: 18px; }
+.mc-close-body b { color: var(--mc-w5); }
 .mc-rack.rest .mc-card { transform: none; }
 
 @media (max-width: 900px) {
@@ -334,7 +335,9 @@ a.mc-chip:focus-visible { outline: 2px solid var(--mc-ink); outline-offset: 3px;
   .mc-own-i { grid-template-columns: 40px minmax(0, 1fr); row-gap: 10px; padding: 20px 12px; }
   .mc-map { width: 100%; box-sizing: border-box; padding: 20px; }
   .mc-map-links { height: 24px; }
-  .mc-map-accts span { padding: 10px 8px; font-size: 12px; }
+  /* the first column is wider so "DigitalOcean" fits whole; machines follow the same columns */
+  .mc-map-accts, .mc-map-links, .mc-map-ms { grid-template-columns: 1.5fr 1fr 1fr; }
+  .mc-map-accts span { padding: 10px 6px; }
   .mc-ship .sp-rel-a { margin-left: 0; }
   .mc-ship.v2-sec { padding: 72px 0; }
   .mc-close { padding: 72px 0; }

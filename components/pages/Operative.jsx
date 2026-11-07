@@ -60,27 +60,62 @@ function useSteps(n, ms, live, paused) {
   return [at, (i) => { setAt(i); setMine(true); }];
 }
 
-/* The desktop inside the box, worked by one hand at a time; a hovered hand shows as a ghost. */
-function Desk({ at, peek }) {
-  const [x, y] = AIM[at];
-  const g = AIM[peek ?? at];
+/* The desktop inside the box, worked by one hand at a time; a hovered hand shows as a ghost.
+   It is a working screen at every moment: the objective (Hanzo's own words on this page) types itself in the first
+   second and stays, the caret sits at the end of what is typed, the window's button and the keys carry Hanzo's words,
+   and each hand's cursor goes to the real thing it works (measured, so it lands on the button at any width). With
+   JavaScript off or reduced motion it rests finished: the objective typed and the reading chip showing. */
+const GOAL = 'Star on GitHub'; // the objective it is given
+const GO = 'Run it and watch'; // the window's button
+const KEYS = GOAL.split(' '); // the keys it presses are the objective's own words
+
+function Desk({ at, peek, rest, live }) {
+  const box = useRef(null), typed = useRef(null), chip = useRef(null), btn = useRef(null), caret = useRef(null);
+  const [aim, setAim] = useState(AIM);
+  const read = useRef(() => {});
+  useEffect(() => { read.current(); }, [at, peek]); // the caret moves as it types: measure again when a hand moves
+  useEffect(() => { // the objective types itself once, early; an interrupted run leaves it whole
+    const el = typed.current;
+    if (!live || !el || el.dataset.done) return;
+    let i = 0, t;
+    el.textContent = GOAL.slice(0, 1);
+    const step = () => { i += 1; el.textContent = GOAL.slice(0, i + 1); if (i + 1 < GOAL.length) t = setTimeout(step, 70); else el.dataset.done = '1'; };
+    t = setTimeout(step, 70);
+    return () => { clearTimeout(t); el.textContent = GOAL; };
+  }, [live]);
+  useEffect(() => { // where each hand's cursor goes, as fractions of the screen
+    const b = box.current;
+    if (!b) return;
+    const at2 = (el, fx, fy) => { const r = el.getBoundingClientRect(), o = b.getBoundingClientRect(); return [clamp((r.left + r.width * fx - o.left) / o.width), clamp((r.top + r.height * fy - o.top) / o.height)]; };
+    const next = () => {
+      const v = [AIM[0], at2(chip.current, 0.2, 0.55), at2(btn.current, 0.55, 0.6), at2(caret.current, 0.5, 0.7)];
+      setAim((o) => (o.every((p, i) => p[0] === v[i][0] && p[1] === v[i][1]) ? o : v));
+    };
+    read.current = next;
+    next();
+    const ro = new ResizeObserver(next);
+    ro.observe(b);
+    return () => ro.disconnect();
+  }, []);
+  const [x, y] = aim[at];
+  const g = aim[peek ?? at];
   return (
-    <div className={'xov-desk h' + at + (peek != null && peek !== at ? ' pk' + peek : '')} aria-hidden="true">
+    <div className={'xov-desk h' + at + (peek != null && peek !== at ? ' pk' + peek : '') + (rest ? ' rest' : '')} aria-hidden="true">
       <div className="xov-desk-bar"><i /><i /><i /><span className="x-mono">Xvfb</span><span className="x-mono xov-desk-r">localhost:8501</span></div>
-      <div className="xov-desk-in">
+      <div className="xov-desk-in" ref={box}>
         <Img className="xov-wall" src="/models/iro.webp" alt="" w={1200} h={1500} sizes="(max-width: 900px) 100vw, 1152px" priority />
         <div className="xov-win">
           <div className="xov-win-bar"><i /><i /><i /></div>
           <div className="xov-win-body">
             <p className="xov-win-h">Say what you want</p>
             <p className="xov-win-p">Type an objective and it plans, acts, looks at the result, and goes again.</p>
-            <div className="xov-field"><span className="xov-typed x-mono">objective</span><b /></div>
-            <div className="xov-win-btn" />
+            <div className="xov-field"><span className="xov-typed x-mono" ref={typed}>{GOAL}</span><b ref={caret} /></div>
+            <div className="xov-win-btn" ref={btn}>{GO}</div>
           </div>
         </div>
         <div className="xov-scan" />
-        <div className="xov-read"><Mark size={14} /><span>Multimodal Models</span></div>
-        <div className="xov-keys">{[40, 52, 44, 36, 64].map((w, i) => <b key={i} style={{ '--k': i, width: w }} />)}</div>
+        <div className="xov-read" ref={chip}><Mark size={14} /><span>Multimodal Models</span></div>
+        <div className="xov-keys">{KEYS.map((w, i) => <b key={w} className="x-mono" style={{ '--k': i }}>{w}</b>)}</div>
         {/* the layer is the screen's size, so a % translate is a % of the screen: the cursor moves by transform only */}
         <motion.div className={'xov-aim-w xov-ghost-w' + (peek != null && peek !== at ? ' on' : '')} animate={{ x: g[0] * 100 + '%', y: g[1] * 100 + '%' }} transition={{ duration: T.slow, ease: EMPH }}>
           <span className="xov-aim"><svg viewBox="0 0 20 20" width="22" height="22"><path d="M3 2l12 7-5.2 1.3L7 16z" fill="none" stroke="#fff" strokeWidth="1.4" strokeLinejoin="round" /></svg></span>
@@ -99,6 +134,8 @@ function Hero() {
   const [paused, setPaused] = useState(false);
   const [peek, setPeek] = useState(null);
   const [at, choose] = useSteps(4, 2400, live, paused);
+  const [ready, setReady] = useState(false); // before hydration (and with JS off) the desktop rests finished
+  useEffect(() => setReady(true), []);
   const tilt = (ev) => { // a pointer tilt of 2.5° at most, fine pointers only
     if (calm || ev.pointerType !== 'mouse') return;
     const r = ev.currentTarget.getBoundingClientRect();
@@ -120,7 +157,7 @@ function Hero() {
       <motion.div className={'a2-wrap xov-stage' + (paused ? ' a2-paused' : '')} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: T.slower, ease: EMPH, delay: 0.15 }}>
         <div className="xov-crate" onPointerMove={tilt} onPointerLeave={flat}>
           <span className="xov-crate-tag x-mono">ghcr.io/hanzoai/operative:latest</span>
-          <Desk at={at} peek={peek} />
+          <Desk at={at} peek={peek} rest={!ready || !!calm} live={live && !paused} />
         </div>
         <div className="xov-hands">
           <A2Pause paused={paused} onChange={setPaused} label="Pause" className="xov-pause" />

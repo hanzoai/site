@@ -358,12 +358,12 @@
   @keyframes jn-dlg-in { from { transform: translateY(calc(100% + 16px)); } }
   @keyframes jn-dlg-out { to { transform: translateY(calc(100% + 16px)); } }
 }
-/* phones: the header carries "Read the docs" after the hero (Jin.jsx usePhoneAsk sets html[data-jn-ask]); its gaps
-   tighten by a few px so the longer label fits beside the logo, search and language at 375 */
+/* phones: the header carries "Read the docs" after the hero (Jin.jsx usePhoneAsk); on this page its gaps tighten by a
+   few px from the first paint (so nothing shifts later) and the longer label fits beside the logo, search and language */
 @media (max-width: 700px) {
-  html[data-jn-ask] header[data-slot=masthead] { padding-inline: 16px; gap: 2px; }
-  html[data-jn-ask] header[data-slot=masthead] :has(> a[data-x-ask]) { gap: 2px; }
-  html[data-jn-ask] header[data-slot=masthead] a[data-x-ask] { padding: 0 12px; }
+  html:has(main.jn) header[data-slot=masthead] { padding-inline: 16px; gap: 2px; }
+  html:has(main.jn) header[data-slot=masthead] :has(> a[href='https://hanzo.ai/signup'], > a[data-x-ask]) { gap: 2px; }
+  html:has(main.jn) header[data-slot=masthead] :is(a[href='https://hanzo.ai/signup'], a[data-x-ask]) { padding: 0 12px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .jn-hero-fig { animation: none; }
