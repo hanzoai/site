@@ -2,19 +2,25 @@
 // Signature: a receipt that prints itself — the open-source stacks run down the left as switches, a paper bill pinned on the right prints them line by line and rolls its total digit by digit to the new figure as you take stacks out or put them back.
 // Beyond: "The same image, more than once" — the receipt notices when your selection runs one image in several stacks (postgres:16-alpine sits under four of them) and adds up what those copies reserve, from the same compose figures, beside Hanzo's own line on upgrades.
 /* Comparison: buy it, or run it. Its idea is the bill.
-   V2: 8/10 utility page rebuilt around one object: the receipt is the hero (prints on arrival, odometer total, pinned beside the switches), then the unpriced duties as the one dark room — a second receipt whose every line reads $ ?, one duty per screen.
-   First screen: "Buy it, or run it" in masked lines and the receipt already printing. The stacks are switches beside
-   it; open a line to see the images in it and what each reserves. Phones get the receipt first and a total that
-   follows your thumb. Then the dark room wipes in: the part that is not a line item, one duty per screen, each
-   printed on a bill that cannot price it. Accent #ff6a1a, the receipt's ink.
-   Motion: signature = the printing receipt and its rolling total; supporting = masked headline lines, the dark
-   room's wipe, the pinned duty chapters. Figures are Hanzo's: each stack's compose footprint and compute cost, as
-   api.hanzo.ai/v1/blueprint/sbom serves them. */
+   1. First screen: "Buy it, or run it" cut into its lines (Hanzo's "Comparison" sits under it as a caption), one ask,
+      and the receipt, which prints itself line by line once the page has arrived, its total rolling digit by digit.
+   2. The stacks are switches beside it while the receipt stays pinned; open a line to see the images in it and what
+      each reserves. Phones get the receipt first and a total that follows the thumb.
+   3. The one dark room wipes in: the part that is not a line item, one duty per screen, each printed on a second
+      receipt that cannot price it ($ ?), then Hanzo's own closing line.
+   Colour: none of its own (JAMES.md): paper white, ink and its alpha steps.
+   Motion: time (the receipt prints, the total rolls), state (switches spring, lines re-stack, image lists open),
+   pointer (switches swell, rows slide, the plus turns, presses give), scroll (the dark room's wipe, the duty chapters).
+   One ask, Hanzo's "Try Hanzo": in the hero, sticky after it (AskBar on desktop, the thumb bar on phones).
+   Figures are Hanzo's: each stack's compose footprint and compute cost, as api.hanzo.ai/v1/blueprint/sbom serves them.
+   V2: 8/10 the receipt is the hero (prints after arrival, odometer total, pinned beside the stack switches), unpriced duties as a dark-room chapter receipt; greys only, no labels above headlines, one sticky ask. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
+import { A } from '../kit';
 import MaskLines from '../v2/MaskLines';
 import PinScenes from '../v2/PinScenes';
 import SceneWipe from '../v2/SceneWipe';
+import AskBar from '../v2/AskBar';
 import '../v2/ProofScale.css';
 import './Comparison.css';
 
@@ -37,6 +43,7 @@ const ALL = STACKS.reduce((a, s) => a + s.c, 0); // 22,557 cents
 const usd = (c) => '$' + (c / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '/mo';
 const n = (v) => String(+v.toFixed(2));
 const MAX = Math.max(...STACKS.map((s) => s.c));
+const ASK = { label: 'Try Hanzo', to: 'https://hanzo.ai/signup' };
 
 const DUTIES = [
   ['Upgrades', 'Every image above has a release cadence, and a CVE in any of them is yours to notice and roll.'],
@@ -74,34 +81,43 @@ function Odo({ cents, className = '' }) {
 function Bill() {
   const [on, setOn] = useState(() => STACKS.map(() => true));
   const [open, setOpen] = useState(-1);
-  const [printed, setPrinted] = useState(STACKS.length); // the HTML carries the full bill; the browser prints it line by line
-  const ref = useRef(null);
-  const seen = useInView(ref, { once: true, amount: 0.2 });
+  // the HTML carries every line of the bill (waiting, unprinted) and the full figure; the browser prints it line by line
+  const [printed, setPrinted] = useState(0);
+  const ref = useRef(null); // the receipt: it prints once it is on screen (first screen on desktop, under the hero on phones)
+  const seen = useInView(ref, { once: true, amount: 0.25 });
   const calm = useReducedMotion();
-  useEffect(() => { if (!calm) setPrinted(0); }, [calm]);
+  useEffect(() => { if (calm) setPrinted(STACKS.length); }, [calm]);
   useEffect(() => {
     if (!seen || calm) return;
-    let i = 0, t;
-    const t0 = setTimeout(() => {
-      t = setInterval(() => { i += 1; setPrinted(i); if (i >= STACKS.length) clearInterval(t); }, 150);
-    }, 650);
-    return () => { clearTimeout(t0); clearInterval(t); };
+    let i = 0, t, t0;
+    const run = () => { t0 = setTimeout(() => { t = setInterval(() => { i += 1; setPrinted(i); if (i >= STACKS.length) clearInterval(t); }, 150); }, 450); };
+    // on a first visit the arrival curtain is still up: print once it lifts, so the printing is seen
+    const H = document.documentElement;
+    if (H.classList.contains('x-arriving')) addEventListener('hz-arrived', run, { once: true }); else run();
+    return () => { removeEventListener('hz-arrived', run); clearTimeout(t0); clearInterval(t); };
   }, [seen, calm]);
-  const lines = STACKS.map((s, i) => ({ ...s, i })).filter((s) => on[s.i] && s.i < printed);
+  // every switched-on stack keeps its line on the paper from the start (no jump as the bill prints); a line not yet
+  // printed waits invisible in its place
+  const act = STACKS.map((s, i) => ({ ...s, i })).filter((s) => on[s.i]);
+  const lines = act.filter((s) => s.i < printed);
+  const done = printed >= STACKS.length;
   const cents = lines.reduce((a, s) => a + s.c, 0);
   const all = on.every(Boolean);
   // Beyond: images the selection runs more than once, and what the copies reserve together
-  const twice = Object.entries(lines.flatMap((s) => s.imgs).reduce((a, [, img, c, g]) => { const x = (a[img] ||= { k: 0, c: 0, g: 0 }); x.k += 1; x.c += c; x.g += g; return a; }, {})).filter(([, x]) => x.k > 1);
+  const twice = Object.entries(act.flatMap((s) => s.imgs).reduce((a, [, img, c, g]) => { const x = (a[img] ||= { k: 0, c: 0, g: 0 }); x.k += 1; x.c += c; x.g += g; return a; }, {})).filter(([, x]) => x.k > 1);
   const flip = (i) => setOn((o) => o.map((v, k) => (k === i ? !v : v)));
 
   return (
     <section className="xcm-bill" aria-labelledby="xcm-h1">
-      <div className="pf-wrap xcm-grid" ref={ref}>
+      <div className="pf-wrap xcm-grid">
         <div className="xcm-left">
           <header className="xcm-hero">
-            <motion.p className="pf-kick" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, ease: EASE }}>Comparison</motion.p>
             <MaskLines as="h1" id="xcm-h1" className="pf-display" lines={['Buy it,', 'or run it']} />
-            <motion.p className="pf-lede xcm-lede" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.4 }}>Everything Hanzo does is open source, so the honest question is not whether you could run it — you could — but what that costs. These are real numbers from real compose files.</motion.p>
+            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.4 }}>
+              <p className="pf-kick xcm-cap">Comparison</p>
+              <p className="pf-lede xcm-lede">Everything Hanzo does is open source, so the honest question is not whether you could run it — you could — but what that costs. These are real numbers from real compose files.</p>
+              <A to={ASK.to} className="pf-btn solid xcm-ask" data-thumb={ASK.label}>{ASK.label}<svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A>
+            </motion.div>
           </header>
 
           <div className="xcm-menu">
@@ -124,7 +140,7 @@ function Bill() {
                   <td className="xcm-img">
                     <button type="button" className="xcm-more" aria-expanded={open === i} onClick={() => setOpen(open === i ? -1 : i)} aria-label={'Images in ' + s.name}>
                       <span className="xcm-img-l">{s.imgs.map((m) => m[1]).join(' · ')}</span>
-                      <motion.i aria-hidden="true" animate={{ rotate: open === i ? 45 : 0 }} transition={{ duration: 0.3, ease: EASE }}>+</motion.i>
+                      <span className="xcm-plus" aria-hidden="true"><motion.i animate={{ rotate: open === i ? 45 : 0 }} transition={{ duration: 0.3, ease: EASE }}>+</motion.i></span>
                     </button>
                     <motion.span className="xcm-imgs" initial={false} animate={open === i ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 }} transition={{ duration: 0.4, ease: EASE }} aria-hidden={open !== i}>
                       {s.imgs.map(([svc, img, c, g]) => <span key={svc + img}><b>{svc}</b> {img} <em>{n(c)} vCPU · {n(g)} GB</em></span>)}
@@ -146,24 +162,25 @@ function Bill() {
         </div>
 
         <aside className="xcm-right" aria-label="The bill">
-          <div className="xcm-receipt" data-morph-target>
+          <div className="xcm-receipt" data-morph-target ref={ref}>
+            <noscript><style>{'.xcm-lines li,.xcm-twice{opacity:1!important;transform:none!important}.xcm-stackbar i{transform:none!important}'}</style></noscript>
             <div className="xcm-paper">
               <p className="xcm-r-h"><span>Run it yourself</span><span className="pf-mono">{lines.length} / {STACKS.length}</span></p>
               <div className="xcm-stackbar" aria-hidden="true">
-                {lines.map((s) => <motion.i key={s.name} layout initial={{ scaleY: 0 }} animate={{ scaleY: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} style={{ flexGrow: s.c }} />)}
+                {act.map((s) => <motion.i key={s.name} layout initial={{ scaleY: 0 }} animate={{ scaleY: s.i < printed ? 1 : 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} style={{ flexGrow: s.c }} />)}
               </div>
               <ol className="xcm-lines">
                 <AnimatePresence initial={false}>
-                  {lines.map((s) => (
-                    <motion.li key={s.name} layout initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, x: 24, transition: { duration: 0.2 } }} transition={{ type: 'spring', stiffness: 380, damping: 32 }}>
+                  {act.map((s) => (
+                    <motion.li key={s.name} layout initial={{ opacity: 0, y: -12 }} animate={s.i < printed ? { opacity: 1, y: 0 } : { opacity: 0, y: -12 }} exit={{ opacity: 0, x: 24, transition: { duration: 0.2 } }} transition={{ type: 'spring', stiffness: 380, damping: 32 }}>
                       <span>{s.name}</span><i aria-hidden="true" /><span className="pf-mono">{usd(s.c)}</span>
                     </motion.li>
                   ))}
                 </AnimatePresence>
               </ol>
-              {!lines.length && printed >= STACKS.length && <p className="xcm-empty">Nothing running, nothing to pay. Add a stack back.</p>}
+              {!act.length && done && <p className="xcm-empty">Nothing running, nothing to pay. Add a stack back.</p>}
               {twice.length > 0 && (
-                <div className="xcm-twice">
+                <div className={'xcm-twice' + (done ? '' : ' wait')}>
                   {twice.map(([img, x]) => <p key={img} className="pf-mono"><b>{img} ×{x.k}</b><span>{n(x.c)} vCPU · {n(x.g)} GB</span></p>)}
                   <p className="xcm-twice-d">{DUTIES[0][1]}</p>
                 </div>
@@ -172,9 +189,9 @@ function Bill() {
                 <span>{all ? 'All of them, running' : 'Your selection'}</span>
                 <Odo cents={cents} className="big" />
                 {/* the full figure stays in the page whatever is selected */}
-                {!all && <span className="x-sr">All of them, running: {usd(ALL)}</span>}
+                {(!all || !done) && <span className="x-sr">All of them, running: {usd(ALL)}</span>}
               </div>
-              {!all && <button type="button" className="xcm-reset" onClick={() => setOn(STACKS.map(() => true))}>Put them all back</button>}
+              {!all && <button type="button" className="xcm-reset" onClick={() => setOn(STACKS.map(() => true))}><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.5 8a4.5 4.5 0 1 0 1.4-3.3M3.5 2.5v2.6h2.6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>Put them all back</button>}
             </div>
           </div>
         </aside>
@@ -225,6 +242,7 @@ export default function Comparison() {
     <main className="xcm">
       <Bill />
       <Holding />
+      <AskBar title="Buy it, or run it" label={ASK.label} to={ASK.to} />
     </main>
   );
 }
