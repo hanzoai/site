@@ -376,3 +376,7 @@ a.ui-chip:active { transform: scale(.98); }
 /* the rendered button's slot: fixed height so nothing moves when it lands; dashed until the code reaches return */
 .ui-slot { display: grid; place-items: center; height: 60px; min-width: 150px; border-radius: 16px; box-shadow: inset 0 0 0 1px transparent; transition: box-shadow .3s cubic-bezier(0, 0, .2, 1); }
 .ui-slot:not(.in) { outline: 1px dashed #d4d4d4; outline-offset: -1px; }
+/* Hanzo's Enso art (live: the black card behind the six props), kept beside the heading (COPY-RULE.md rule 5) */
+.uc-artside { display: flex; align-items: flex-end; gap: 16px; }
+.uc-head:has(.uc-artside) { align-items: flex-end; }
+.art-card.ui-art { width: clamp(120px, 11vw, 168px); }

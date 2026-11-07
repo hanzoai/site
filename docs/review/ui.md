@@ -1,5 +1,6 @@
 # /ui: James-eye review (fourth walk)
 
+Ready: 8 Nov 23:27, copycheck missing 0 of 28 (captured page), Hanzo's images kept. 'View on GitHub' reads as its own line, and Hanzo's Enso art stands beside 'Components your design team will sign off on'. taste/unique/parity OK (59/59); 0 console errors, no overlap at 1470 and 375.
 
 Reviewed: `main` @ `c7106d43`. The page's own last change is `788a0b2a`. Files: `components/pages/apps/UiPage.jsx`, `UiPage.css`, shared `components/v2/Settle.jsx` and `components/v2/x-gauss/*`.
 

@@ -26,6 +26,7 @@ import '../../v2/Scale.css';
 import '../../v2/x-gauss/Rhythm.css';
 import { MagnetGrid, Curl, Trail, In } from './ui/Motion';
 import './UiPage.css';
+import ArtCard from '../cloud/ArtCard';
 
 const GH = 'https://github.com/hanzoai/ui';
 const ACCENTS = [['graphite', '#404040'], ['steel', '#525252'], ['silver', '#737373']]; // deck greys: the board never shows a second ink pill beside the ask
@@ -372,7 +373,7 @@ function Props() {
       <div className="w2-wrap">
         <div className="uc-head">
           <h2 id="uc-h" className="w2-title uc-h">Components your design team will sign off on</h2>
-          <span className="ui-pause">{pauseBtn}</span>
+          <span className="uc-artside"><ArtCard slug="enso" className="ui-art" /><span className="ui-pause">{pauseBtn}</span></span>
         </div>
         <In as="ol" className="uc-cards ux-gather" amount={0.1}>
           {PROPS.map(([t, d], i) => <Card key={t} i={i} t={t} d={d} paused={paused} />)}
@@ -468,7 +469,7 @@ function Stop() {
             <h2 className="w2-display gx-stay">Stop reinventing buttons.</h2>
             <p className="w2-lede">Hanzo UI gives you the components — you focus on what makes your product different.</p>
             <div className="ui-stop-acts">
-              <Magnetic strength={0.25}><A to={GH} className="w2-cta" data-thumb="GitHub" data-cta="ui.close">View on GitHub <i aria-hidden="true">↗</i></A></Magnetic>
+              <Magnetic strength={0.25}><A to={GH} className="w2-cta" data-thumb="GitHub" data-cta="ui.close"><span>View on GitHub</span> <i aria-hidden="true">↗</i></A></Magnetic>
               <span className="ui-pnpm x-mono">pnpm add @hanzo/ui <Copy text="pnpm add @hanzo/ui" /></span>
             </div>
           </div>
