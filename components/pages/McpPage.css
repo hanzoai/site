@@ -312,8 +312,11 @@ main.mcp .x-copy { height: 44px; padding: 0 16px; }
   .mcp-cmp-in { grid-template-columns: minmax(0, 1fr); gap: 20px; }
   .mcp-cmp-l { padding: 20px 16px; }
   .mcp-cmp-side { margin-bottom: 16px; }
-  .mcp-cmp-code { padding: 14px 16px; }
+  .mcp-cmp-code { padding: 14px 12px; }
   .mcp-cmp-code pre { font-size: 13px; }
+  /* the stream's tool names get the wider column so the longest (kai_command_guard) is never cut */
+  .mcp-row { grid-template-columns: minmax(0, 62%) minmax(0, 1fr); }
+  .mcp-tool { font-size: 13px; }
   .mcp-cmp-tools li { padding: 8px 11px; font-size: 13px; }
   .mcp-stream-top { height: 44px; }
   .mcp-pause { top: 0; }
@@ -335,6 +338,9 @@ main.mcp .x-copy { height: 44px; padding: 0 16px; }
   .mcp-art.a1 { grid-template-columns: repeat(13, 10px); gap: 7px; }
   .mcp-art.a1 i { width: 10px; height: 10px; }
   .mcp-art.a2 { min-height: 220px; }
+  /* the gate moves left so Hanzo's two guard names fit inside the panel at 375 and 320 */
+  .mcp-gate { left: 30%; }
+  .mcp-gate span { font-size: 12px; left: 12px; }
   .mcp-doms-head { margin-bottom: 32px; }
   .mcp-doms-t, .mcp-doms-r { grid-column: 1 / -1; }
   .mcp-rail { padding-inline: var(--gut); scroll-padding-inline: var(--gut); gap: 12px; }
@@ -353,6 +359,9 @@ main.mcp .x-copy { height: 44px; padding: 0 16px; }
   .mcp-h1 { font-size: calc((100vw - 32px) / 8.7) !important; }
 }
 @media (max-width: 360px) {
+  /* at 320 the longest .mcp.json line cannot fit at a readable size: it wraps once instead of being cut */
+  .mcp-cmp-l { padding: 18px 12px; }
+  .mcp-cmp-code pre { white-space: pre-wrap; }
   .mcp-art.a0 { padding: 16px 12px; gap: 6px; }
   .mcp-art.a0 span { padding: 8px 10px; }
 }
