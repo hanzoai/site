@@ -156,7 +156,7 @@
 /* what + studio or design */
 /* tight to the paste strip above and the reel below: the copy and the card share one bottom line (8/5, bottom aligned) */
 .xst-what { padding: 56px 0 27px; }
-.xst-what .a2-grid { align-items: end; row-gap: 48px; }
+.xst-what .a2-grid { align-items: center; row-gap: 48px; }
 .xst-what-copy { grid-column: 1 / span 6; }
 .xst-what-copy .a2-headline { max-width: 18ch; margin-bottom: 28px; }
 .xst-what-copy a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; padding-block: 13px; }
@@ -316,7 +316,7 @@
   .xst-hero .a2-acts { flex-wrap: nowrap; gap: 20px; }
   .xst-hero .a2-acts .x-btn { padding: 0 20px; }
   .xst-hero .xst-ask::after, .xst-hero .xst-jump svg { display: none; }
-  .xst-desk { grid-template-columns: minmax(0, 1fr); }
+  .xst-desk { grid-template-columns: minmax(0, 1fr); grid-template-areas: "mon" "insp" "specs"; grid-template-rows: auto; row-gap: 14px; }
   .xst-mon { padding: 6px; border-radius: 16px; }
   .xst-view { aspect-ratio: 16 / 9; }
   .xst-hud { font-size: 13px; }
@@ -380,3 +380,24 @@
 .xst-film, .xst-get { --acc: #fafafa; }
 .xst-get .x-btn { background: transparent; color: #fff; border-color: rgba(255, 255, 255, .3); }
 @media (hover: hover) { .xst-get .x-btn:hover { border-color: rgba(255, 255, 255, .6); } }
+
+/* "Studio or Design?" reads as the card's own question (a caption over the chips, not over a heading) */
+.xst-which .xst-which-k { margin: 0 0 16px; }
+.xst-ans-c .x-arrow { min-height: 44px; font-weight: 560; }
+/* on wide screens the whole strip fits: six frames, none past the edge; the rail scrolls only below 1200px */
+@media (min-width: 1200px) {
+  .xst-film { justify-content: center; }
+  .xst-fr { width: calc((min(100vw, 1440px) - 48px - 60px - 15px) / 6); }
+  .xst-fr-t { padding: 40px 16px 16px; }
+  .xst-fr-t b { font-size: 22px; }
+  .xst-fr-t span { font-size: 13px; }
+}
+/* the close card holds the reel's last still under the tally, drifting like a held shot */
+.xst-get-shot { position: relative; display: block; width: 100%; aspect-ratio: 2.39 / 1; margin: 0 0 14px; border-radius: 12px; overflow: hidden; background: #000; }
+.xst-get-shot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 44%; transform: scale(1.12); }
+.xst-get-shot .xst-mark { position: absolute; left: 12px; top: 12px; margin: 0; color: #fff; }
+.xst-get-tc { position: absolute; right: 12px; top: 12px; font-size: 12px; color: #d4d4d4; }
+@media (prefers-reduced-motion: no-preference) {
+  .xst-get-shot img { animation: xst-hold 9s cubic-bezier(.4, 0, .2, 1) infinite alternate; }
+}
+@keyframes xst-hold { from { transform: scale(1.12) translate3d(2%, 0, 0); } to { transform: scale(1.22) translate3d(-3%, -2%, 0); } }
