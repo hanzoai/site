@@ -1,5 +1,6 @@
 # /support/: James-eye review
 
+Ready: 8 Nov 23:27, copycheck missing 1 of 15 (captured page): the one line is the capture's Cloudflare email placeholder '[email protected]', which live decodes to support@hanzo.ai, already on the page word for word; no Hanzo image on this page. taste/unique/parity OK (24/24); 0 console errors, no overlap at 1470 and 375.
 Verdict: 7/10
 First complaint: "Why does the button up top keep changing? I'm not touching anything and it flips from Try Hanzo to a black Open Help Center and back. Now there are two black buttons fighting."
 
