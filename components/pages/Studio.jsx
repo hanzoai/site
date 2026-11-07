@@ -188,7 +188,7 @@ function Cinema() {
             <li key={t}>
               <button type="button" aria-pressed={shot === k && SHOTS[k].title === t} className={MODELS[model] === NAME[m] ? 'mine' : ''} onClick={() => go(k)}>
                 <img src={`/models/${m}.webp`} alt={`${t}, made with ${NAME[m]}`} loading="lazy" />
-                <span><b>{NAME[m]}</b><em>{t}</em></span>
+                <span><b>{NAME[m]}</b><em><span>{t}</span></em></span>
               </button>
             </li>
           ))}
@@ -217,7 +217,7 @@ function Hero() {
       <div className="a2-wrap">
         <div className="a2-grid xst-top">
           <div className="xst-top-l">
-            <p className="a2-kick xst-kick"><i aria-hidden="true" />Hanzo Studio · AI Cinema & Production Engine</p>
+            <p className="a2-kick xst-kick"><i aria-hidden="true" /><span>Hanzo Studio · AI Cinema & Production Engine</span></p>
             <A2Lines as="h1" id="xst-h1" className="a2-display xst-h1" lines={['Direct AI cinema', 'with precision camera rigs', '& multi-shot timelines']} now />
           </div>
           <div className="xst-top-r">
@@ -279,7 +279,7 @@ function What() {
         <div className="xst-what-copy">
           <p className="a2-kick">What is Hanzo Studio</p>
           <A2Lines id="xst-what-h" className="a2-headline" lines={['Production-grade AI film direction', 'and node-graph VFX']} />
-          <p className="a2-body">Where Hanzo Design (<A to="/design">/design</A>) builds everyday visuals, decks, docs, and interactive apps inside your workspace, Hanzo Studio (<A to="https://studio.hanzo.ai">studio.hanzo.ai</A>) is a full cinema production suite built for directors, filmmakers, and VFX teams.</p>
+          <p className="a2-body">Where Hanzo Design (/design) builds everyday visuals, decks, docs, and interactive apps inside your workspace, Hanzo Studio (studio.hanzo.ai) is a full cinema production suite built for directors, filmmakers, and VFX teams.</p>
         </div>
         <Which />
       </div>

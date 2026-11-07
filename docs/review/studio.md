@@ -1,4 +1,5 @@
 # /studio — James-eye review
+Ready: 8 Nov 00:20, copycheck missing 0 of 58 (captured page), Hanzo's images kept (6 of 6). The Studio badge, the six shot titles and the "Where Hanzo Design (/design) …" paragraph now read as Hanzo's own lines (the paragraph as Hanzo's plain text); See plans, from $8/month stays beside Launch studio.hanzo.ai. taste/unique/parity OK (87/87, 16/16); 0 console errors, no overlap at 1470 and 375. The agent prompt line sits in the shared A2Paste <code> (counted on Hanzo's rendered capture only).
 
 Verdict: 7/10
 First complaint: "The top is a whole editing suite at once: five rigs, six model chips, a prompt, six library tiles, four tracks, and then a list of specs under it in a big black empty space. It's the overload again. Then further down there's a row of pills with nothing telling me what they're for, and the film strip runs off the edge with the playing frame somewhere I can't see."
