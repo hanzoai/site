@@ -2,7 +2,7 @@
 // Signature: The request is the hero: a big API console types each endpoint's path after https://api.hanzo.ai and streams back what it returns, the model that serves it playing beside, then settles into the page as you scroll
 // Beyond: Same host, same key: pick any endpoint and only the path wipes in; the host and the bearer header never change, which is the page's own claim (no second base URL) made visible, and it copies as curl
 /* Hanzo API, v2 (Archetype F, developer: the request is the hero).
-   V2: 8/10 round 3: h1 rises by CSS from first paint and the console waits for it; base URL fits 375; Next folded into the Band as two text rows; header carries the ask via thumb; console link stays in its sentence
+   V2: 8/10 round 4: no reduced-motion hydration mismatch (page-local h2 mask, CSS-dropped clip); one solid on phone (quiet header while our ask shows); Core endpoints six then Show all; stage arrives with its heading; chip hover previews the model; JS-off film without controls
    Persona: a developer who has used the OpenAI API and wants every Hanzo capability behind one key.
    Metric: api_key_created (data-cta api-hero-key, api-close-key).
    Goal: see that one base URL and one key reach every endpoint, then get a key.
@@ -15,7 +15,7 @@ import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTra
 import { EASE, Copy, Magnetic } from '../ui';
 import { A, Cta, Img, Film } from '../kit';
 import { play } from '../../lib/sound';
-import Lines from '../v2/x-edison/AppLines';
+import NoJs from '../NoJs';
 import Scenes from '../v2/AppScenes';
 import '../v2/AppType.css';
 import './ApiPage.css';
@@ -89,7 +89,10 @@ function Console() {
     return () => clearTimeout(t);
   }, [at, mine, live, walked]);
   const pick = (i) => { setAt(i); setMine(true); };
-  const [m, p, d, doc, model] = HERO[at];
+  const [m, p, d, doc] = HERO[at];
+  // hover detail: pointing at a chip previews the model that serves it in the frame (fine pointers only)
+  const [peek, setPeek] = useState(-1);
+  const model = HERO[peek >= 0 ? peek : at][4];
   return (
     <div className={'api-con av-obj' + (held ? ' held' : '')} ref={box}>
       <div className="api-con-bar">
@@ -126,12 +129,14 @@ function Console() {
             </motion.div>
           </AnimatePresence>
           <span className="api-model-k x-mono">{model}</span>
+          <NoJs css=".api-model video{display:none!important}" />
         </div>
       </div>
-      <ol className="api-chips" role="tablist" aria-label="Endpoints">
+      <ol className="api-chips" role="tablist" aria-label="Endpoints" onPointerLeave={() => setPeek(-1)}>
         {HERO.map(([mm, pp], i) => (
           <li key={pp}>
-            <button type="button" role="tab" aria-selected={at === i} data-sound="tick" onClick={() => pick(i)}>
+            <button type="button" role="tab" aria-selected={at === i} data-sound="tick" onClick={() => { setPeek(-1); pick(i); }}
+              onPointerEnter={(e) => { if (e.pointerType === 'mouse') setPeek(i); }}>
               {at === i && <motion.span layoutId="api-chip" className="api-chip-bg" transition={{ duration: 0.3, ease: EASE }} />}
               <span className="x-mono">{mm + ' ' + pp}</span>
               {at === i && !mine && live && !walked && <i key={'t' + at} className="api-chip-t" aria-hidden="true" />}
@@ -268,12 +273,26 @@ const FITS = [
   { title: 'Every route lives under /v1', body: <p className="av-body">Every route lives under <code>/v1</code>, and every service answers on the same host — there is no second base URL to configure and no v2 waiting to break the first one. Rate limits are applied per caller and across the edge as a whole; a rejected request comes back as a <code>429</code> with a <code>Retry-After</code> rather than a dropped connection.</p>, visual: (on) => <Gateway on={on} /> },
 ];
 
+/* a page-local line mask: the same markup on server and client (no reduced-motion branch at render); the rise is CSS,
+   held under html.js until the heading is half in view, and @media (prefers-reduced-motion) shows it in place */
+function Mask({ lines, className }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.5 });
+  return (
+    <h2 ref={ref} className={className + ' api-mask' + (seen ? ' on' : '')}>
+      {lines.map((l, i, a) => (
+        <span key={l} className="api-h1-ln"><span style={{ '--i': i }}>{l}{i < a.length - 1 ? ' ' : ''}</span></span>
+      ))}
+    </h2>
+  );
+}
+
 function Fits() {
   return (
     <>
       <section className="api-fits-in">
         <div className="av-wrap">
-          <Lines as="h2" className="av-display s api-fits-h" lines={['How it fits', 'together']} />
+          <Mask className="av-display s api-fits-h" lines={['How it fits', 'together']} />
         </div>
       </section>
       <Scenes label="How it fits together" items={FITS} />
@@ -306,11 +325,11 @@ function Call() {
 function Base() {
   // the scene change: the dark room opens out of a rounded card to the full width as it arrives (no hard edge)
   const ref = useRef(null);
-  const calm = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.15'] });
   const clip = useTransform(scrollYProgress, [0, 1], ['inset(0% 3% 0% 3% round 48px)', 'inset(0% 0% 0% 0% round 0px)']);
+  // the same style on server and client; reduced motion drops the clip in CSS (ApiPage.css), never by a render branch
   return (
-    <motion.section ref={ref} className="av-sec api-dark av-dark" data-room="dark" style={calm ? undefined : { clipPath: clip }}>
+    <motion.section ref={ref} className="av-sec api-dark av-dark" data-room="dark" style={{ clipPath: clip }}>
       <div className="av-wrap">
         <h2 className="av-head api-base-h">Base URL</h2>
         <div className="api-big">
@@ -332,12 +351,23 @@ function Base() {
 
 /* ---------- the core endpoints: a list you filter; each row opens to say what it does ---------- */
 const FILTERS = ['All', 'POST', 'GET'];
+const SHOW = 6;
 
 function Table() {
   const [f, setF] = useState(0);
   const [q, setQ] = useState('');
   const [open, setOpen] = useState(0);
   const rows = ALL.filter(([m, p, d]) => (f === 0 || m.includes(FILTERS[f])) && (!q || (p + ' ' + d).toLowerCase().includes(q.toLowerCase())));
+  // six rows first, the rest one tap away; every row stays in the HTML (hidden="until-found", so Find in page opens them)
+  const [all, setAll] = useState(false);
+  const full = all || f !== 0 || !!q;
+  const list = useRef(null);
+  useEffect(() => {
+    const els = [...list.current.querySelectorAll('li[data-more]')];
+    const show = () => setAll(true);
+    els.forEach((el) => { if (full) el.removeAttribute('hidden'); else el.setAttribute('hidden', 'until-found'); el.addEventListener('beforematch', show); });
+    return () => els.forEach((el) => el.removeEventListener('beforematch', show));
+  }, [full, rows.length]);
   return (
     <section className="av-sec api-core">
       <div className="av-wrap av-grid">
@@ -360,12 +390,12 @@ function Table() {
             <span className="api-count x-mono av-num">{rows.length} / {ALL.length}</span>
           </div>
         </div>
-        <ul className="api-rows">
-          {rows.map(([m, p, d, doc]) => {
+        <ul className="api-rows" ref={list}>
+          {rows.map(([m, p, d, doc], n) => {
             const k = ALL.findIndex((r) => r[1] === p);
             const isOpen = open === k;
             return (
-              <li key={p} className={isOpen ? 'open' : ''}>
+              <li key={p} className={isOpen ? 'open' : ''} data-more={n >= SHOW ? '' : undefined}>
                 <button type="button" className="api-row" aria-expanded={isOpen} data-sound="tick" onClick={() => setOpen(isOpen ? -1 : k)}>
                   <span className={'api-row-m x-mono m-' + m.split(' ')[0].toLowerCase()}>{m}</span>
                   <span className="api-row-p x-mono">{p}</span>
@@ -378,6 +408,13 @@ function Table() {
               </li>
             );
           })}
+          {!full && rows.length > SHOW && (
+            <li className="api-more">
+              <button type="button" data-sound="tick" onClick={() => setAll(true)}>
+                <span>Show all</span><span className="x-mono av-num">+{rows.length - SHOW}</span>
+              </button>
+            </li>
+          )}
           {rows.length === 0 && <li className="api-none">No endpoint matches. <button type="button" onClick={() => { setQ(''); setF(0); }}>Show all</button></li>}
         </ul>
       </div>
@@ -417,7 +454,31 @@ function Next() {
   );
 }
 
+/* Phones keep Hanzo's "Try Hanzo" solid in the header; while this page's own solid ask (hero or Band) is on screen the
+   header's button reads as an outline (the same html[data-ask=quiet] the shell sets on desktop), so one solid shows at a time.
+   Same page-local move as /bounty. */
+function useOneSolidOnPhone() {
+  useEffect(() => {
+    const H = document.documentElement;
+    const mq = matchMedia('(max-width: 700px)');
+    const els = [...document.querySelectorAll('main.api [data-cta="api-hero-key"], main.api [data-cta="api-close-key"]')];
+    if (!els.length) return;
+    const vis = new Set();
+    let mine = false;
+    const apply = () => {
+      if (mq.matches && vis.size) { H.dataset.ask = 'quiet'; mine = true; }
+      else if (mine) { delete H.dataset.ask; mine = false; }
+    };
+    const io = new IntersectionObserver((es) => { es.forEach((e) => (e.isIntersecting ? vis.add(e.target) : vis.delete(e.target))); apply(); });
+    els.forEach((el) => io.observe(el));
+    const timers = [300, 1400].map((ms) => setTimeout(apply, ms)); // after the shell's own first pass
+    mq.addEventListener('change', apply);
+    return () => { io.disconnect(); timers.forEach(clearTimeout); mq.removeEventListener('change', apply); if (mine) delete H.dataset.ask; };
+  }, []);
+}
+
 export default function ApiPage() {
+  useOneSolidOnPhone();
   return (
     <main className="av api">
       <Hero />

@@ -41,7 +41,7 @@ Done here: At 1470×801 the h1, lede, ask and the live console share the first s
 - [x] Copy button copies exactly the displayed text; failure never says Copied (kit `Copy`)
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: The primary appears twice: `data-cta="api-hero-key"` (thumb) and `data-cta="api-close-key"` in the Band; the desktop header shows "Get an API key, free" mid-page (Playwright, 7 Nov). The two Next doors are no longer boxes before the Band: they are text rows under its ask. The "same host, same key" box shows exactly the curl it copies (`curl -X POST https://api.hanzo.ai/v1/… \` + `-H "Authorization: Bearer <your key>"`).
+Done here: The primary appears twice: `data-cta="api-hero-key"` (thumb) and `data-cta="api-close-key"` in the Band; the desktop header shows "Get an API key, free" mid-page (Playwright, 7 Nov). On phones, while the hero or Band ask is on screen, `useOneSolidOnPhone` sets `html[data-ask=quiet]` (the /bounty move), so the header's "Try Hanzo" is an outline and one solid shows (measured: transparent at hero and Band, solid in between). The two Next doors are no longer boxes before the Band: they are text rows under its ask. The "same host, same key" box shows exactly the curl it copies (`curl -X POST https://api.hanzo.ai/v1/… \` + `-H "Authorization: Bearer <your key>"`).
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -57,7 +57,7 @@ Done here: No counters and no invented status. The "200" status and the green li
 - [x] Tables, FAQ, tabs and code use the kit parts (the endpoint list is an accordion of buttons with `aria-expanded`; the request line is its own `<pre>`, kept for the Beyond's path wipe)
 - [x] `python3 scripts/parity.py /api`: 0 missing
 
-Done here: Body 16px, lede 21px, mono labels 12–13px. Core endpoints disclose one row at a time and every description stays in the HTML. Parity: text 80/80, links 18/18.
+Done here: Body 16px, lede 21px, mono labels 12–13px. Core endpoints show six rows, the other nine one tap away ("Show all +9"), kept in the HTML as `hidden="until-found"` (Find in page opens them; JS off shows all 15 and no button); rows disclose one at a time. The Core section's bottom padding and the Band's top padding were cut, so the close follows the list. Parity: text 80/80, links 18/18.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens (deck greys only; some literals remain from the deck ramp)
@@ -75,7 +75,7 @@ Done here: taste.py OK. The scale has rhythm: h1 52px, section heads 26px, chapt
 - [x] Inputs 16px or larger; no bare `:hover` (the filter input is 15px mono on desktop and 16px on phone; hovers sit in `@media (hover: hover)`)
 - [x] Forks this page deleted: listed above
 
-Done here: Chips, filter segments, endpoint rows, the endpoint list and the pause button each have hover (fine pointers), press (scale .97/.98), focus-visible and selected states. Tab pills move with a 300 ms ease-emphasis tween (no springs).
+Done here: Chips, filter segments, endpoint rows, the endpoint list and the pause button each have hover (fine pointers), press (scale .97/.98), focus-visible and selected states. Tab pills move with a 300 ms ease-emphasis tween (no springs). Chip hover (mouse) previews the model that serves that endpoint in the console's frame (e.g. /v1/decisions → kai) and returns on leave; chips press at .98.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -84,7 +84,7 @@ Done here: Chips, filter segments, endpoint rows, the endpoint list and the paus
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit (`play('done')` when the console's walk ends; `data-sound="tick"` on chips, filter tabs, the endpoint list, rows and the pause; Copy chimes through the kit)
 
-Done here: The signature is the live console (time: path typing, answer streaming; idle: model film). Supporting: pinned chapters with clip wipes (scroll), the line-mask h1 (arrival), and the tab pill (state); the magnetic ask is pointer. variety.py OK, 0 Rise. The console walks all eight endpoints once, then rests.
+Done here: The signature is the live console (time: path typing, answer streaming; idle: model film). Supporting: pinned chapters with clip wipes (scroll), the line-mask h1 (arrival), and the tab pill (state); the magnetic ask is pointer. variety.py OK, 0 Rise. The console walks all eight endpoints once, then rests. Server and client render identical markup under reduced motion: the dark room always carries its clip style (CSS drops it under `prefers-reduced-motion`), and "How it fits together" uses a page-local CSS line mask instead of AppLines. 0 console errors with `reducedMotion: 'reduce'` and without, at 1470×801 and 375×812. The pinned chapters sit just under the header on desktop, so the stage arrives with its heading (gap ≈ 64px, was ≈ 200px).
 
 ## 10. Media
 - [x] `Film` and `Pic` only (kit `Img` + `Film`); sizes and posters set (1200×1500, poster = the model still)
@@ -92,7 +92,7 @@ Done here: The signature is the live console (time: path typing, answer streamin
 - [x] Budgets met; nothing missing; alt on every image (decorative model art has `alt=""`)
 - [x] No dimmed or filtered photo; 4+ real visuals together (n/a: one model film at a time is the console's design)
 
-Done here: The model films are Hanzo's own `/models/*.webm` over `.webp` posters, which are the only colour on the page. Film plays only on screen and never under reduced motion or Save-Data.
+Done here: The model films are Hanzo's own `/models/*.webm` over `.webp` posters, which are the only colour on the page. Film plays only on screen and never under reduced motion or Save-Data. With JS off the hero film is hidden by `<NoJs>` (poster only, no native control bar; measured `display: none`).
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -157,4 +157,4 @@ Done here: With hanzo.ai and the API blocked in the cloud sandbox, the page rend
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [x] Review read: `docs/review/api.md` verdict 8 or more (read; the 7 Nov verdict was 6/10, and every fix in its list is done in round 2 and awaits a re-walk)
 
-Done here: `data-cta` = api-hero-key, api-hero-ref, api-close-key, api-close-ref. Review 7 Nov (7/10) fixes: header ask via `thumb`, base URL fits 375, Next folded into the Band, h1 paints before the console types. Earlier fixes: (1) console in the first screen, (2) no phone jump (CLS 0.000), (3) no hue, no green dot, no kickers, (4) one ask repeated at the close, (5) real lines in the chapters and a styled list instead of the native select.
+Done here: `data-cta` = api-hero-key, api-hero-ref, api-close-key, api-close-ref. Review round 2 (7/10) fixes: reduced-motion hydration mismatch, phone one-solid, Core endpoints six-then-Show-all, blank under "How it fits together", chip hover preview, JS-off film controls. Review 7 Nov (7/10) fixes: header ask via `thumb`, base URL fits 375, Next folded into the Band, h1 paints before the console types. Earlier fixes: (1) console in the first screen, (2) no phone jump (CLS 0.000), (3) no hue, no green dot, no kickers, (4) one ask repeated at the close, (5) real lines in the chapters and a styled list instead of the native select.
