@@ -3,6 +3,7 @@
 // Beyond: pick your language and its install line, registry, docs and org line up in one place, ready to copy; and a Go import path you can type to find.
 /* SDKs.
    V2: 8/10 code as the hero: one big console where only the lines that differ between the OpenAI and Anthropic dialects re-set, Hanzo's six languages as a picker, the per-language orgs as the one dark room, and the Go modules as a type wall you filter by typing.
+   Persona: a developer choosing a client library. Goal: call the API from their language. CTA: API reference (sdks.hero).
    SDKs. The first screen is the gateway's own request, written three ways and spoken two ways: the console flips
    between the OpenAI and Anthropic dialects by itself (until you take over), and only the lines that change between
    them are re-set, so the difference reads at a glance (base URL, header, max_tokens). Every sample is Hanzo's. */
