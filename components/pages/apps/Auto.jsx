@@ -11,7 +11,7 @@
    Motion: the running canvas (signature) + spring-follow preview + layout re-flow of the connector path + magnetic
    primary. Every word and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useSpring, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence, useSpring } from 'motion/react';
 import { EASE, Magnetic, fine } from '../../ui';
 import { A } from '../../kit';
 import { useLive, useEvery } from '../cloud/Frame';
@@ -90,20 +90,19 @@ function Run() {
 }
 
 function Hero() {
-  const calm = useReducedMotion();
   return (
     <section className="au2-hero" aria-labelledby="au2-h1">
       <div className="l2-wrap">
         <div className="au2-top">
           <motion.p className="au2-url l2-mono" {...up(0)}><img src="/models/zen.webp" alt="" />auto.hanzo.ai</motion.p>
-          <h1 id="au2-h1" className="l2-display"><span className="l2-ln"><motion.span initial={calm ? false : { y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.15, ease: EASE, delay: 0.08 }}>Hanzo Auto</motion.span></span></h1>
+          <h1 id="au2-h1" className="l2-display"><span className="l2-ln"><motion.span initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.15, ease: EASE, delay: 0.08 }}>Hanzo Auto</motion.span></span></h1>
           <motion.p className="l2-lede" {...up(0.3)}>Workflow automation in one binary</motion.p>
           <motion.div className="l2-acts" {...up(0.42)}>
             <Magnetic strength={0.25}><A to={OPEN} className="x-btn solid" data-thumb="Open Auto">Open Auto</A></Magnetic>
             <A to={DOCS} className="x-btn">Documentation</A>
           </motion.div>
         </div>
-        <motion.div initial={calm ? false : { opacity: 0, y: 48 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.2 }}>
+        <motion.div initial={{ opacity: 0, y: 48 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.2 }}>
           <Run />
         </motion.div>
       </div>

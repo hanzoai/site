@@ -15,7 +15,7 @@ import { EASE } from '../../ui';
 import { A, More } from '../../kit';
 import { Code, Console, useLive, useEvery } from '../cloud/Frame';
 import StageHero from '../../v2/StageHero';
-import PinScenes from '../../v2/PinScenes';
+import PinScenes from '../../v2/x-hamilton/PinScenes';
 import Finale, { Prompt } from '../../v2/Finale';
 import Drawer from '../../v2/Drawer';
 import './Billing.css';
