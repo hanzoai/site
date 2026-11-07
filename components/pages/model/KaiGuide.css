@@ -369,6 +369,7 @@ html:not(.js) .kg-rx-top { display: none; }
   .kg-shape { margin-top: 27px; max-width: none; }
   .kg-code .x-codeblock, .kg-cap { border-radius: 20px; }
   .kg-code .x-codeblock pre { padding: 17px 27px 17px 17px; }
+  .kg-code .x-tab { padding: 0 10px; font-size: 13px; }
   .kg-dl { margin-top: 27px; }
   .kg-dl dt button { padding-right: 10px; }
   .kg-dl > div + div dt button { padding-left: 6px; }
@@ -402,6 +403,7 @@ html:not(.js) .kg-rx-top { display: none; }
   .kg-end-h { font-size: 26px; }
   .kg-close { margin-top: 27px; }
 }
+@media (max-width: 359px) { .kg-dl dt button { letter-spacing: .02em; } }
 @media (prefers-reduced-motion: reduce) {
   .kg-sess-req code::after { animation: none !important; }
   .js .kg-rows li .kg-glyph i { animation: none !important; }

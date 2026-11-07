@@ -35,6 +35,8 @@
 .xos-tip span { font: 400 12px/1.3 var(--mono); color: #525252; }
 .xos-hero-c { position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: space-between; gap: 27px; padding: 144px 0 27px; pointer-events: none; }
 .xos-hero-c a, .xos-hero-c button { pointer-events: auto; }
+/* the hero room is 100svh tall but starts under the 60px header: the figures rest above the fold, not on it */
+@media (min-width: 900px) { .xos-hero-c { padding-bottom: calc(60px + 44px); } }
 .xos-hero-a { max-width: 640px; }
 .xos-hero .xos-cap { color: rgba(255, 255, 255, .55); }
 .xos-h1 { color: #fafafa; }

@@ -174,8 +174,12 @@
 .xlb-stepper button:disabled { opacity: .35; cursor: default; }
 .xlb-stepper output { min-width: 40px; text-align: center; font-size: 17px; }
 .xlb-stepper output { min-width: 52px; }
-.xlb-calc-org { min-height: 56px; flex-wrap: wrap; gap: 4px 16px; font-size: 16px; color: var(--k-body); }
+.xlb-calc-orgs { display: grid; padding: 17px 0 4px; }
+.xlb-calc-org { grid-area: 1 / 1; display: grid; gap: 6px; align-content: start; font-size: 16px; line-height: 1.45; color: var(--k-body); visibility: hidden; opacity: 0; transform: translate3d(0, 8px, 0); transition: opacity var(--k-base) var(--k-out), transform var(--k-base) var(--k-emph), visibility 0s var(--k-base); }
+.xlb-calc-org[data-on='true'] { visibility: visible; opacity: 1; transform: none; transition-delay: 0s; }
+.xlb-calc-org p { margin: 0; }
 .xlb-calc-org b { font-weight: 606; color: var(--k-ink); overflow-wrap: anywhere; }
+.xlb-calc-org span { color: var(--k-body); }
 .xlb-tok-in { flex-wrap: wrap; padding: 16px 0; }
 .xlb-tok-in span b { margin-left: 8px; font-weight: 606; }
 .xlb-tok-in input { flex: 1 1 100%; -webkit-appearance: none; appearance: none; height: 44px; margin: 0; background: transparent; cursor: pointer; }

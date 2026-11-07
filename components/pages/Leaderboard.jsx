@@ -420,12 +420,14 @@ function Calc() {
               <span><b className="pf-mono">{n(tokens)} tokens</b></span>
               <input type="range" min="0" max={top} step="1" value={k} onChange={(e) => setK(+e.target.value)} aria-label={EARN[3][0]} aria-valuetext={n(tokens) + ' tokens'} suppressHydrationWarning />
             </label>
-            <div className="xlb-calc-row xlb-calc-org">
-              <span><b>{org[0]}</b></span>
-              <span>{org[1]}</span>
-            </div>
-            <div className="xlb-calc-row xlb-calc-org">
-              <span>{org[2]}</span>
+            {/* every org's lines share one grid cell, so the panel keeps the tallest one's height and never shifts */}
+            <div className="xlb-calc-orgs">
+              {ORGS.map((o, i) => (
+                <div key={o[0]} className="xlb-calc-org" data-on={i === place} aria-hidden={i !== place}>
+                  <p><b>{o[0]}</b> <span>{o[1]}</span></p>
+                  <p>{o[2]}</p>
+                </div>
+              ))}
             </div>
           </div>
           <div className="xlb-calc-out" aria-live="polite">
