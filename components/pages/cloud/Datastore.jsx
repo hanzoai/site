@@ -1,20 +1,27 @@
 'use client';
 /* Datastore.
-   V2: 8/10 Apple-style launch: the query console is the hero object (press a column and the scan reads only that file); six pinned facts that scale one into the next; an exploded view of a table scrubbed by scroll; the industries as an index; one dark close.
+   V2: 8/10 The query console is the hero (press a column and the scan reads only that file); six pinned facts; a table pulled apart into its layers as you scroll; the industries as an index; a port board that settles, never flaps; one dark close. Deck greys, deck scale, no springs, no foreign digits.
+   Persona: a developer or data engineer choosing a store for events, metrics and logs.
+   Goal: see in one look why a column store answers fast, then sign in or read the documentation.
+   CTA: "Try Hanzo" → /login (solid, data-cta datastore.hero, data-thumb); "Documentation" → https://docs.hanzo.ai (link,
+        datastore.hero-2); "Deploy to Cloud" → https://platform.hanzo.ai/deploy (solid in the close, datastore.close);
+        "Self-host" → docs.hanzo.ai/…/datastore (link, datastore.close-self).
+   Metric: api_key_created (developers; the hero click is cta_click datastore.hero).
    Signature: the exploded table. "Where the speed comes from" pins a table of eight columns and pulls it apart as you
    scroll: the rows come apart into column files (read only what the query names), one column's values line up for a
-   vector instruction, each column splits into its sorted parts with a contiguous run lit, and every column shrinks by
-   its own codec (deltas, dictionary, general). Phones play the same four states by themselves, or by tap.
-   Supporting: the Stage hero (the query console starts big and settles as you scroll, scanning by itself), six pinned
-   facts that scale in (words left), and the closing dark room.
-   Beyond: "Which way in?" - pick how you connect (HTTP, the native protocol, or the MySQL and PostgreSQL wire ports) and
-   the port flips onto a split-flap board, with Hanzo's line on who connects that way.
-   Accent: query blue. Every word and link is Hanzo's; the example table's cells carry no values. */
+   vector instruction, each column splits into its sorted parts with a contiguous run in ink, and every column shrinks
+   by its own codec (deltas, dictionary, general). Phones play the same four states once by themselves, or by tap.
+   Supporting: the Stage hero (the query console settles as you scroll, scanning by itself), six pinned facts that scale
+   in (words left), and the closing dark room.
+   Beyond: "Which way in?": pick how you connect (HTTP, the native protocol, or the MySQL and PostgreSQL wire ports) and
+   the port settles onto a board, digit by digit from behind a mask (only the true digits ever show), with Hanzo's
+   line on who connects that way.
+   Every word and link is Hanzo's; the example table's cells carry no values. */
 import { useEffect, useRef, useState } from 'react';
 import { useScroll, useMotionValueEvent, useInView, useReducedMotion } from 'motion/react';
-import { Flap } from '../../kit';
 import { useLive } from './Frame';
-import KeynoteStage from '../../v2/KeynoteStage';
+import { scrollToY } from '../../../lib/scroll';
+import KeynoteStage, { useStagePause } from '../../v2/KeynoteStage';
 import KeynoteChapters, { useWide } from '../../v2/KeynoteChapters';
 import KeynoteLines from '../../v2/KeynoteLines';
 import KeynoteClose from '../../v2/KeynoteClose';
@@ -27,14 +34,15 @@ const shade = (a, b) => Math.abs(Math.sin(a * 12.9898 + b * 78.233) * 43758.5453
 /* The hero object: the query console. Press a column and it joins the query; the scan runs down only the named files. */
 function Query() {
   const [ref, live, calm] = useLive(0.3);
+  const paused = useStagePause();
   const [extra, setExtra] = useState([]);
   const [mine, setMine] = useState(false);
   const [k, setK] = useState(0);
   useEffect(() => {
-    if (mine || !live || calm) return;
+    if (mine || !live || calm || paused) return;
     const t = setTimeout(() => { const n = (k + 1) % AUTO.length; setK(n); setExtra(AUTO[n]); }, 2600);
     return () => clearTimeout(t);
-  }, [k, mine, live, calm]);
+  }, [k, mine, live, calm, paused]);
   const toggle = (c) => {
     if (c === 'event') return;
     setMine(true);
@@ -49,7 +57,7 @@ function Query() {
       <div className="ds-q-bar">
         <i /><i /><i />
         <span className="ds-q-t">events <em>example</em></span>
-        <p className="ds-q-reads">Reads <b key={reads.length}>{reads.length}</b> of 12 columns</p>
+        <p className="ds-q-reads">Reads <span className="ds-q-n"><b key={reads.length}>{reads.length}</b></span> of 12 columns</p>
       </div>
       <div className="ds-q-sql">
         <code aria-live="polite">{sql}</code>
@@ -59,8 +67,8 @@ function Query() {
         {COLS.map((c, ci) => {
           const on = reads.includes(c);
           return (
-            <button key={c} type="button" className={'ds-file' + (on ? ' on' : '') + (c === 'event' ? ' fixed' : '')} aria-pressed={on} onClick={() => toggle(c)}>
-              <span className="ds-name">{c}</span>
+            <button key={c} type="button" className={'ds-file' + (on ? ' on' : '') + (c === 'event' ? ' fixed' : '')} aria-pressed={on} aria-disabled={c === 'event' || undefined} onClick={() => toggle(c)}>
+              <span className="ds-name">{c.split('_').map((w, j) => (j ? <span key={j}>_<wbr />{w}</span> : w))}</span>
               <span className="ds-blocks" aria-hidden="true">{Array.from({ length: 10 }).map((_, i) => <i key={i} style={{ opacity: (0.25 + shade(ci, i) * 0.6).toFixed(2) }} />)}</span>
               {on && <span className="ds-beam" aria-hidden="true" />}
             </button>
@@ -75,16 +83,24 @@ function Query() {
   );
 }
 
-/* which of n steps a chapter is on: from the scroll through it on desktop (p), or by itself while seen on phones */
+/* which of n steps a chapter is on: from the scroll through it on desktop (p); on phones it steps once through by
+   itself while seen, then rests (a step a second at most, so it ends inside 5 s) */
 function useStepOf(p, n, on) {
   const [k, setK] = useState(0);
   const calm = useReducedMotion();
   useEffect(() => {
-    if (p) { const f = (v) => setK(Math.min(n - 1, Math.max(0, Math.floor(v * n)))); f(p.get()); return p.on('change', f); }
-    if (!on || calm) return;
-    const id = setInterval(() => setK((x) => (x + 1) % n), 1800);
-    return () => clearInterval(id);
-  }, [p, n, on, calm]);
+    if (!p) return;
+    const f = (v) => setK(Math.min(n - 1, Math.max(0, Math.floor(v * n))));
+    f(p.get());
+    return p.on('change', f);
+  }, [p, n]);
+  useEffect(() => {
+    if (p) return;
+    if (calm) { setK(n - 1); return; }
+    if (!on || k >= n - 1) return;
+    const t = setTimeout(() => setK((x) => Math.min(n - 1, x + 1)), Math.min(1000, 4500 / n));
+    return () => clearTimeout(t);
+  }, [p, n, on, calm, k]);
   return k;
 }
 
@@ -220,24 +236,26 @@ function Explode() {
   const apply = (s) => {
     const el = obj.current;
     if (!el) return;
-    el.style.setProperty('--ex', clamp01((s - 0.05) / 0.13).toFixed(3));
+    const ex = clamp01((s - 0.05) / 0.13);
+    el.style.setProperty('--ex', ex.toFixed(3));
     el.style.setProperty('--sp', clamp01((s - 0.52) / 0.1).toFixed(3));
     el.style.setProperty('--cz', clamp01((s - 0.77) / 0.1).toFixed(3));
+    el.toggleAttribute('data-apart', ex > 0.5);
   };
   useMotionValueEvent(p, 'change', (v) => { if (!scrub) return; apply(v); setSt(Math.min(3, Math.floor(v * 4 * 0.9999))); });
   const shown = calm && !hand ? 3 : st;
   useEffect(() => { scrub ? apply(p.get()) : apply(AT[shown]); }, [scrub, shown, p]);
+  // phones: the four states play once by themselves while seen, then rest on the last
   useEffect(() => {
-    if (scrub || calm || hand || !seen) return;
-    const id = setInterval(() => setSt((x) => (x + 1) % 4), 2600);
-    return () => clearInterval(id);
-  }, [scrub, calm, hand, seen]);
+    if (scrub || calm || hand || !seen || st >= 3) return;
+    const t = setTimeout(() => setSt((x) => Math.min(3, x + 1)), 1100);
+    return () => clearTimeout(t);
+  }, [scrub, calm, hand, seen, st]);
   const go = (i) => {
     if (!scrub) { setSt(i); setHand(true); return; }
     const el = run.current;
     const top = el.getBoundingClientRect().top + window.scrollY;
-    const y = top + ((el.offsetHeight - window.innerHeight) * (i + 0.6)) / 4;
-    window.__lenis ? window.__lenis.scrollTo(y, { duration: 1.1 }) : window.scrollTo({ top: y, behavior: 'smooth' });
+    scrollToY(top + ((el.offsetHeight - window.innerHeight) * (i + 0.6)) / 4);
   };
   return (
     <section className="ds-x" aria-labelledby="ds-x-h">
@@ -269,18 +287,18 @@ function Explode() {
             <div className="ds-x-says">
               {SPEED.map(([t, a, b], i) => (
                 <div key={t} className="ds-x-say" data-on={shown === i ? '' : undefined}>
-                  <p className="ds-x-k kn-fig">{String(i + 1).padStart(2, '0')}</p>
                   <h3 className="kn-title">{t}</h3>
                   <p className="ds-x-p">{a}</p>
                   <p className="ds-x-p sub">{b}</p>
+                  <p className="ds-x-k kn-fig">{String(i + 1).padStart(2, '0')}</p>
                 </div>
               ))}
             </div>
-            <div className="ds-x-rail" role="tablist" aria-label="Where the speed comes from">
+            <nav className="ds-x-rail" aria-label="Where the speed comes from">
               {SPEED.map(([t], i) => (
-                <button key={t} type="button" role="tab" aria-selected={shown === i} aria-label={t} onClick={() => go(i)}><span className="kn-fig">{String(i + 1).padStart(2, '0')}</span></button>
+                <button key={t} type="button" aria-current={shown === i ? 'step' : undefined} aria-label={t} onClick={() => go(i)}><span className="kn-fig">{String(i + 1).padStart(2, '0')}</span></button>
               ))}
-            </div>
+            </nav>
           </div>
         </div>
       </div>
@@ -312,6 +330,19 @@ const WAYS = [
   ['PostgreSQL', '', 'Through the PostgreSQL wire port, which is how BI tools and drivers that know nothing about it still connect.'],
 ];
 
+/* the port board: one tile per character; on a change each true digit drops in from behind its tile's mask, 60 ms
+   apart. No other digit is ever drawn (the value is in the HTML; the motion is a clip, not a count). */
+function Board({ value }) {
+  return (
+    <p className="ds-board">
+      <span className="x-sr">{value}</span>
+      {[...value].map((c, i) => (
+        <span key={i} className="ds-tile" aria-hidden="true"><b key={value + i} style={{ '--i': i }}>{c}</b></span>
+      ))}
+    </p>
+  );
+}
+
 function Ways() {
   const [at, setAt] = useState(0);
   const [name, port, line] = WAYS[at];
@@ -319,15 +350,17 @@ function Ways() {
     <section className="kn-sec ds-ways">
       <div className="kn-wrap kn-grid ds-ways-g">
         <div className="ds-ways-l">
-          <p className="kn-kick ac">SQL, on several protocols</p>
-          <KeynoteLines className="kn-headline" lines="Which way in?" />
+          <div className="ds-ways-h">
+            <KeynoteLines className="kn-headline" lines="Which way in?" />
+            <p className="kn-kick">SQL, on several protocols</p>
+          </div>
           <div className="ds-ways-pick" role="radiogroup" aria-label="Protocol">
             {WAYS.map(([n], i) => <button key={n} type="button" role="radio" aria-checked={at === i} onClick={() => setAt(i)}>{n}</button>)}
           </div>
         </div>
         <div className="ds-port" aria-live="polite">
           <p className="ds-port-k">{name}{port ? ' · port' : ' · wire port'}</p>
-          {port ? <Flap value={port} className="ds-port-n" /> : <p className="ds-port-w">{name}</p>}
+          {port ? <Board value={port} /> : <p className="ds-port-w"><span key={name}>{name}</span></p>}
           <p className="ds-port-l">{line}</p>
           <p className="ds-port-f">A CSV, a Parquet file or a JSON stream loads without a conversion step first.</p>
         </div>
@@ -338,14 +371,14 @@ function Ways() {
 
 export default function Datastore() {
   return (
-    <main className="kn ds" style={{ '--ac': '#737373' }}>
+    <main className="kn ds">
       <KeynoteStage
         kick="Hanzo Datastore"
         title={['A column store', 'for analytical SQL']}
         lede="Datastore keeps each column of a table in its own file, compressed on its own terms, so a query naming four columns out of a hundred reads four."
         acts={[['Try Hanzo', '/login'], ['Documentation', 'https://docs.hanzo.ai']]}
-        size="md"
-        from={1.15}
+        cta="datastore.hero"
+        from={1.08}
       >
         <Query />
       </KeynoteStage>
@@ -357,9 +390,9 @@ export default function Datastore() {
         count
         tall={85}
         head={
-          <div className="ds-ch-head">
-            <KeynoteLines className="kn-display sm" lines="What it does" />
-            <p className="kn-lede">Scan a great many rows. Return a small answer. Do it while the rows are still arriving.</p>
+          <div className="kn-grid ds-ch-head">
+            <KeynoteLines className="kn-headline ds-ch-h" lines="What it does" />
+            <p className="kn-lede ds-ch-l">Scan a great many rows. Return a small answer. Do it while the rows are still arriving.</p>
           </div>
         }
         items={DOES.map(([t, d]) => ({ title: t, body: <p>{d}</p> }))}
@@ -378,6 +411,7 @@ export default function Datastore() {
         stars="4 stars"
         self="https://docs.hanzo.ai/docs/projects/hanzoai/datastore"
         api="/v1/provisioning/datastore"
+        cta="datastore.close"
         prompt="Read https://hanzo.ai/skill.md and use Hanzo Datastore in my project. Start with: hanzo provisioning datastore create"
       />
     </main>

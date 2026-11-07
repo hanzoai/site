@@ -2,7 +2,7 @@
 
 Page file: `components/pages/cloud/Base.jsx` (+ `Base.css`, page-local `ExampleConsole.jsx/.css` shared with /authz) · gallery: `docs/gallery/base/` · metric id: `api_key_created` (developers; the click is `cta_click base.hero`)
 
-Open copy questions for James: the hero's primary is Hanzo's "Try Hanzo" (/login), the same words as the header's always-solid ask, so a first screen shows "Try Hanzo" twice (header and hero); keep Hanzo's order, or lead with "Read the docs"? The demo's UI labels are ours ("collection", "the moment it exists", "exists", "one stream", "declare", "it exists", "single Go binary", the step names); keep them or move them to `content/ui-strings.json`? "4 stars" is the live page's static GitHub figure. The hero lede is Hanzo's "Open source (MIT)…" line and Hanzo's hero paragraph ("Base is a single Go binary…") opens the next section: same words, new order.
+Open copy questions for James: the hero's primary is Hanzo's "Try Hanzo" (/login), the same words as the header's ask: on desktop the header outlines while the hero's solid is on screen (SYSTEM §5), but on phones the header keeps a solid "Try Hanzo" beside the hero's; keep Hanzo's order, or lead with "Read the docs"? The demo's UI labels are ours ("collection", "the moment it exists", "exists", "one stream", "declare", "it exists", "single Go binary", the step names); keep them or move them to `content/ui-strings.json`? "4 stars" is the live page's static GitHub figure. The hero lede is Hanzo's "Open source (MIT)…" line and Hanzo's hero paragraph ("Base is a single Go binary…") opens the next section: same words, new order.
 Shared changes requested (`docs/requests/base.md`): none. Kit notes for the Cloud 1 owner: KeynoteClose's text-link "Self-host" reads `--ink` inside the dark room (ink on graphite) and the kit link asks are 21px tall; this page sets them white and 44px locally.
 Forks this page deleted: Frame's `Console` (4 `title=` tooltips, a spring row, a `setInterval`) replaced by page-local `ExampleConsole`; Frame's `useEvery` interval in the admin (now one `setTimeout` per record, paused with the Stage); the phones' endless `setInterval` build loop (now one pass, 900 ms a step); the hand-made `.kn-btn` asks in "Run the binary" (now kit `Cta`s, `base.run`, `base.run-2`); the fake tabs without panels (now a two-button view switch with `aria-pressed` and a steps nav with `aria-current`); the accent `--ac` and every off-deck grey (#fbfbfd, #e3e3e8, #f2f2f5, #e8e8ed, #f5f5f7, #8e8e93, #d1d1d6, #a1a1a6, #f0f0f3); 6 box-shadows; the 72px/40px clamp sizes.
 
@@ -41,7 +41,7 @@ Done here: With Next's JS blocked (`prehyd.cjs`), the admin's newest row lands (
 - [x] Copy button copies exactly the displayed text (the close's kit `CodeBlock`); failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: Asks are kit `Cta`s only: `base.hero`, `base.hero-2`, `base.hero-3` (KeynoteStage), `base.run`, `base.run-2`, `base.close`, `base.close-self`. The header carries "Try Hanzo" at every width; the phone bar stays away because the hero's words equal the header's (SYSTEM §5).
+Done here: Asks are kit `Cta`s only: `base.hero`, `base.hero-2`, `base.hero-3` (KeynoteStage), `base.run`, `base.run-2`, `base.close`, `base.close-self`. On desktop the header's button outlines while the hero's solid is on screen and carries the ask after it; the phone bar stays away because the hero's words equal the header's (SYSTEM §5).
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
