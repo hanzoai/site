@@ -166,7 +166,9 @@
 @media (max-width: 900px) {
   .xlg2 .xlg-det summary { min-height: 48px; padding: 0 4px; cursor: pointer; gap: 12px; justify-content: flex-start; border-radius: 12px; }
   .xlg2 .xlg-det summary .xlg-pct { margin-left: auto; font-size: 14px; }
-  .xlg2-chev { display: block; }
+  .xlg2-chev { display: block; margin-left: auto; }
+  .xlg2 .xlg-det summary .xlg-pct { display: inline; }
+  .xlg2 .xlg-det summary .xlg-pct + .xlg2-chev { margin-left: 0; }
   .xlg2 .xlg-det[open] .xlg2-chev { transform: rotate(180deg); }
   .xlg2 .xlg-det summary:active { transform: translateY(1px); }
   .xlg2 .xlg-det:not([open]) summary { padding-bottom: 0; }
