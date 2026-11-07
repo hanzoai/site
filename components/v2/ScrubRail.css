@@ -1,0 +1,16 @@
+/* ScrubRail (owner: Cloud 2 chat). See ScrubRail.jsx. */
+.sr { position: relative; height: calc(100svh + var(--dist, 0px)); }
+.sr-stage { position: sticky; top: 0; height: 100svh; display: flex; flex-direction: column; justify-content: center; gap: clamp(32px, 4vw, 56px); overflow: hidden; padding-top: 56px; box-sizing: border-box; }
+.sr-view { overflow: visible; }
+.sr-rail { list-style: none; margin: 0; padding: 0 0 0 max(24px, calc((100vw - 1440px) / 2)); display: flex; gap: 24px; width: max-content; }
+.sr-item { flex: none; }
+.sr-dark { background: #000; color: #f5f5f7; }
+@media (max-width: 900px) {
+  .sr { height: auto; padding: 120px 0; }
+  .sr-stage { position: static; height: auto; padding: 0; overflow: visible; }
+  .sr-view { overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 8px; }
+  .sr-view::-webkit-scrollbar { display: none; }
+  .sr-rail { transform: none !important; padding: 0 16px; gap: 12px; }
+  .sr-rail::after { content: ''; flex: none; width: 4px; }
+  .sr-item { scroll-snap-align: start; scroll-margin-left: 16px; }
+}

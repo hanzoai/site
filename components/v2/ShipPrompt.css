@@ -15,7 +15,7 @@
 .sp-caret { display: inline-block; width: .55em; height: 1.1em; margin-left: 4px; vertical-align: -.18em; background: var(--acc); animation: sp-blink 1.1s steps(1) infinite; }
 @keyframes sp-blink { 50% { opacity: 0; } }
 [data-off] .sp-caret { animation-play-state: paused; }
-.sp-rel { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: start; padding-top: 40px; border-top: 1px solid var(--line); }
+.sp-rel { order: 3; grid-column: 1 / -1; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: start; padding-top: 40px; border-top: 1px solid var(--line); }
 .sp-rel > .v2-kick { grid-column: 1 / span 3; padding-top: 22px; }
 .sp-rel ul { grid-column: 4 / -1; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0 24px; }
 .sp-rel-a { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; min-height: 44px; padding: 18px 0; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; }
