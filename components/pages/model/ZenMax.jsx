@@ -1,5 +1,8 @@
 'use client';
 /* Zen 6 Max (/zen/zen6-max): a model launch read like a product film, one idea per screen.
+   Persona: enterprise buyer running Zen 6 Max on its own GPUs (metric contact_sales_submit)
+   Goal: understand what a rack for Zen 6 Max is made of, then reach sales
+   CTA: Talk to sales -> /contact-sales (hero and close; data-thumb on the hero ask; data-cta not wired yet)
    Stage: the Zen film opens full width under the header and the name, then settles into its 28px card as you scroll.
    Not only scroll: the film plays, the count runs, the asks lean to the pointer, the rack answers its switches.
    Signature: the rack builds itself, chapter by chapter. The black rack pins while four chapters pass beside it:

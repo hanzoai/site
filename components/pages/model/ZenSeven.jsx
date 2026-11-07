@@ -1,5 +1,8 @@
 'use client';
 /* Zen 7 (/zen/7): the next generation, not yet published. A teaser in three calm screens.
+   Persona: researcher who wants early Zen 7 access (no metric id for /beta applications in PLAN-COMPONENTS 1.1 yet)
+   Goal: know Zen 7 is coming open-weight under Apache 2.0, and apply for research access
+   CTA: Apply for research access -> /beta (hero and close; data-thumb on the hero ask; data-cta not wired yet)
    Signature: the 7 rises. A giant 7, Zen 7's own living field showing only through the numeral (the weights are there,
    not yet out), sweeps in from the bottom right of the first screen and settles beside the title as you scroll
    (scale and position only). Not only scroll: the title cuts in on arrival, the field drifts and bends to the pointer,
