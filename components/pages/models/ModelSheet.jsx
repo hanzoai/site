@@ -17,7 +17,8 @@ import { EASE, Copy } from '../../ui';
 import { A, Cta } from '../../kit';
 import MaskFig from '../../v2/MaskFig';
 import Sigil from '../../Sigil';
-import { FilmPause, usePaused } from '../../v2/ModelFilm';
+import ModelFilm, { FilmPause, usePaused } from '../../v2/ModelFilm';
+import { href } from '../../../lib/route';
 import SpecCard from '../../v2/SpecCard';
 import { Field, Bill, Codes, Loose, useCatalog, rateFrom, rateText, money } from './parts';
 import './models.css';
@@ -77,6 +78,10 @@ export default function ModelSheet({ doc }) {
   const { scrollYProgress: hp } = useScroll({ target: hero, offset: ['start start', 'end start'] });
   const artY = useTransform(hp, [0, 1], ['0%', '18%']);
   const moreTitle = (doc.more && doc.more.title) || doc.provider.name;
+  const film = (/^\/models\/hanzo\/(enso|kai|koma|zen)/.exec(doc.route) || [])[1];
+  // Hanzo's "More from" cards, those with a page in this rebuild first (they open by Morph); the rest open Hanzo's
+  // live page in a new tab and say so (SpecCard)
+  const cards = doc.more ? [...doc.more.cards].sort((a, b) => (/^https?:/.test(href(a.href)) ? 1 : 0) - (/^https?:/.test(href(b.href)) ? 1 : 0)) : [];
   return (
     <main className="xmf xmf-model">
       <section className="xmf-launch" ref={hero} aria-labelledby="xmf-h1">
@@ -100,21 +105,24 @@ export default function ModelSheet({ doc }) {
           <dl className="xmf-figs" aria-label={price}>
             <div className="xmf-fig ctx">
               <dt>{ctxLabel || 'Context Window'}</dt>
-              <dd><b>{ctxFig ? <MaskFig delay={0.5}>{ctxFig}</MaskFig> : (doc.ctx || DASH)}</b></dd>
+              <dd><b>{ctxFig ? <MaskFig now delay={0.12} dur={0.55}>{ctxFig}</MaskFig> : (doc.ctx || DASH)}</b></dd>
             </div>
             <div className="xmf-fig">
               <dt>In</dt>
-              <dd><b className="x-mono"><MaskFig delay={0.58}>{rate ? money(rate.in) : DASH}</MaskFig></b><span>per million tokens</span></dd>
+              <dd><b className="x-mono"><MaskFig now delay={0.18} dur={0.55}>{rate ? money(rate.in) : DASH}</MaskFig></b><span>per million tokens</span></dd>
             </div>
             <div className="xmf-fig">
               <dt>Out</dt>
-              <dd><b className="x-mono"><MaskFig delay={0.66}>{rate ? money(rate.out) : DASH}</MaskFig></b><span>per million tokens</span></dd>
+              <dd><b className="x-mono"><MaskFig now delay={0.24} dur={0.55}>{rate ? money(rate.out) : DASH}</MaskFig></b><span>per million tokens</span></dd>
             </div>
           </dl>
           {/* the hero object: the model's own contour field at 4:5, where it sits in the catalogue (the breadcrumb, so
               nothing labels the headline from above), its maker label and its ID to copy */}
-          <motion.figure className="xmf-obj" style={{ y: artY }} initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.1, ease: EASE, delay: 0.15 }}>
-            <Sigil seed={doc.route} data={[doc.tokens, rate && rate.in, rate && rate.out].filter((v) => v != null)} className="xmf-obj-sigil" still={paused} />
+          <motion.figure className={'xmf-obj' + (film ? ' film' : '')} style={{ y: artY }} initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.1, ease: EASE, delay: 0.15 }}>
+            {/* Hanzo's own models show their film (colour only through Hanzo's media); every other maker's model its Sigil */}
+            {film
+              ? <span className="xmf-obj-film" aria-hidden="true"><ModelFilm slug={film} /></span>
+              : <Sigil seed={doc.route} data={[doc.tokens, rate && rate.in, rate && rate.out].filter((v) => v != null)} className="xmf-obj-sigil" still={paused} />}
             <div className="xmf-obj-top">
               <nav className="xmf-crumbs" aria-label="Breadcrumb">
                 {doc.crumbs.map((c, i) => (
@@ -202,7 +210,7 @@ export default function ModelSheet({ doc }) {
             {rate && <div className="xmf-cost"><Bill self={self} others={sibs} /></div>}
             {doc.more && (
               <ul className="xmf-rail" data-swipe-own data-cursor="">
-                {doc.more.cards.map((c) => {
+                {cards.map((c) => {
                   const sib = sibs.find((x) => x.href === c.href);
                   return (
                     <li key={c.href}>

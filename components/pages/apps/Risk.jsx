@@ -1,13 +1,13 @@
 'use client';
 /* Persona: enterprise buyer (fraud, AML and trust-and-safety leads). Goal: start a sales conversation. CTA: "Talk to us" → /contact-sales. Metric: contact_sales_submit.
-   Risk, v2. V2: 8/10 Stage hero (the dial arrives huge and settles), three pinned chapters (compliance, lifecycle, agents), cards that open into sheets, one dark room, red accent
+   Risk. V2: 7/10 an unframed gauge decides beside the h1 (needle, reasons, action; no invented digits), three pinned chapters, cards that open into sheets, one dark room streaming events, a closing band; greys only
    Signature: the dial that decides, and shows its work. Pick a stage (signup, payment, post-purchase; the stage is a
    field) and signals light; the needle swings to a score and the plane returns an action and its reasons. It never
    declines on its own: past the line it summons a person, the ceiling Hanzo's engine refuses to start above.
    Beyond: "Attribution, by hand". Set any signal back to neutral and score again; the drop is that signal's
    contribution, exactly how Hanzo says its scores explain themselves. The dial is labelled an illustration, because no
    figure on this page is a customer result.
-   Motion budget: signature = the live dial; supporting = Stage (Settle), Chapters (PinChapters), Open (sheets).
+   Motion budget: signature = the live dial; supporting = Settle, Chapters (PinChapters), Open (sheets). No springs.
    Colour: none (JAMES.md, 0 UI hues); the hot side of the dial is ink, status reads by shape and word. Every self-running
    demo has a pause control. One dark room: "Your data, your model". Every word and link is Hanzo's. */
 import { useEffect, useState } from 'react';
@@ -37,7 +37,7 @@ const LINE = 50;
 /* The hero object: a gauge on the left, the decision and its reasons on the right. */
 function Dial() {
   const [ref, live] = useLive(0.3);
-  const [paused, pauseBtn] = usePause();
+  const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
   const [st, setSt] = useState(1);
   const [off, setOff] = useState([false, false, false]); // a signal set back to neutral
   const [mine, setMine] = useState(false);
@@ -58,10 +58,8 @@ function Dial() {
   const flip = (i) => { setMine(true); setOff((o) => o.map((v, k) => (k === i ? !v : v))); };
   const roll = { initial: { y: '40%', opacity: 0 }, animate: { y: 0, opacity: 1, transition: { duration: 0.22, ease: EASE } }, exit: { y: '-40%', opacity: 0, transition: { duration: 0.12 } } };
   return (
-    <div className="rk-dial w2-object" ref={ref}>
-      {pauseBtn}
+    <div className="rk-dial" ref={ref}>
       <div className="rk-dial-l">
-        <p className="rk-name x-mono">Risk</p>
         <div className="rk-gauge" aria-hidden="true">
           <svg viewBox="0 0 220 124">
             <path d="M14 112 A 96 96 0 0 1 206 112" className="rk-arc" />
@@ -73,27 +71,25 @@ function Dial() {
           <span className="rk-l0 x-mono">0</span><span className="rk-lline x-mono">the line</span><span className="rk-l1 x-mono">100</span>
         </div>
         <div className="rk-out" aria-live={mine ? 'polite' : 'off'}>
-          <div className="rk-score"><span className="w2-kicker">score</span><AnimatePresence mode="wait" initial={false}><motion.b key={score} className="w2-fig" {...roll}>{score}</motion.b></AnimatePresence></div>
-          <div className="rk-action"><span className="w2-kicker">action</span><AnimatePresence mode="wait" initial={false}><motion.b key={act} className={hot ? 'hot' : ''} {...roll}>{act}</motion.b></AnimatePresence></div>
+          <div className="rk-action"><span className="w2-kicker">action</span><span className="rk-action-box"><AnimatePresence mode="wait" initial={false}><motion.b key={act} className={hot ? 'hot' : ''} {...roll}>{act}</motion.b></AnimatePresence></span></div>
         </div>
       </div>
       <div className="rk-dial-r">
-        <div className="rk-stage" role="tablist" aria-label="Stage" onKeyDown={(e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { const n = (st + (e.key === 'ArrowRight' ? 1 : 2)) % 3; pick(n); e.currentTarget.children[n]?.focus(); } }}>
+        <div className="rk-stage-row"><div className="rk-stage" role="tablist" aria-label="Stage" onKeyDown={(e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { const n = (st + (e.key === 'ArrowRight' ? 1 : 2)) % 3; pick(n); e.currentTarget.children[n]?.focus(); } }}>
           {STAGES.map(([k], i) => (
             <button key={k} type="button" role="tab" aria-selected={st === i} tabIndex={st === i ? 0 : -1} onClick={() => pick(i)}>
               <span>{k}</span>
             </button>
           ))}
-        </div>
+        </div><span className="rk-pause">{pauseBtn}</span></div>
         <p className="rk-field x-mono">stage: '{STAGES[st][0]}'</p>
         <p className="rk-reasons-k">reasons · tap one to set it back to neutral</p>
         <ul className="rk-reasons">
           {sig.map(([t, w], i) => (
             <li key={STAGES[st][0] + t}>
-              <button type="button" aria-pressed={off[i]} onClick={() => flip(i)} className={off[i] ? 'off' : ''} data-cursor="Neutral">
+              <button type="button" aria-pressed={off[i]} onClick={() => flip(i)} className={off[i] ? 'off' : ''}>
                 <span>{t}</span>
                 <motion.i style={{ originX: 0 }} animate={{ scaleX: off[i] ? 0 : w / 40 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />
-                <b className="x-mono">{off[i] ? `−${w}` : `+${w}`}</b>
               </button>
             </li>
           ))}
@@ -114,7 +110,7 @@ function Hero() {
             <Magnetic strength={0.25}><A to="/contact-sales" className="w2-cta" data-thumb="Talk to us" data-cta="risk.hero">Talk to us <i aria-hidden="true">→</i></A></Magnetic>
           </motion.div>
         </div>
-        <Settle from={1.03} lift={24}><Dial /></Settle>
+        <Settle from={1.02} lift={10}><Dial /></Settle>
       </div>
     </section>
   );
@@ -243,7 +239,7 @@ function Lanes({ on }) {
 
 function Chapters() {
   const [ref, live] = useLive(0.05);
-  const [paused, pauseBtn] = usePause({ right: 0, top: -60 });
+  const [paused, pauseBtn] = usePause({ right: 0, bottom: 0, top: 'auto' });
   const chapters = [
     {
       t: 'Available now: the compliance face',
@@ -279,7 +275,7 @@ function Chapters() {
     <div ref={ref}>
       <PinChapters id="rk-how" label="Where the plane stands" className="rk-pin" chapters={chapters}
         visual={(at) => (
-          <div className="rk-vis">
+          <div className={'rk-vis' + (paused ? ' paused' : '')}>
             {pauseBtn}
             {[CaseFile, Track, Lanes].map((V, i) => (
               <motion.div key={i} className="rk-vis-i" initial={false} animate={{ opacity: at === i ? 1 : 0, scale: at === i ? 1 : 0.96 }} transition={{ duration: 0.6, ease: EASE }} style={{ pointerEvents: at === i ? 'auto' : 'none' }} aria-hidden={at !== i}>
@@ -323,8 +319,10 @@ function DecidesOn() {
 }
 
 function Model() {
+  const [ref, live] = useLive(0.3);
+  const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
   return (
-    <section className="w2-sec rk-model w2-dark" data-room="dark">
+    <section className={'w2-sec rk-model w2-dark' + (live && !paused ? ' on' : '')} data-room="dark" ref={ref}>
       <div className="w2-wrap">
         <div className="rk-split">
           <h2 className="w2-headline">Your data, your model</h2>
@@ -334,8 +332,9 @@ function Model() {
           <span className="rk-ep x-mono">POST /v1/event</span>
           <div className="rk-stream">{Array.from({ length: 14 }).map((_, i) => <i key={i} style={{ animationDelay: i * 0.29 + 's' }} />)}</div>
           <span className="rk-shadow x-mono">shadow</span>
+          <span className="rk-pause">{pauseBtn}</span>
         </div>
-        <Detail title="Your data, your model" kicker="In development" wide>
+        <Detail label="POST /v1/event" title="Your data, your model" kicker="In development" wide>
           <p>Most fraud products score you against a pooled model built from other people’s traffic. Hanzo already holds yours. Analytics, product events and errors arrive through one endpoint — <strong>POST /v1/event</strong> — and are stored as rows scoped to your organization, beside your model usage, in a warehouse Hanzo runs and every tenant shares. That endpoint is live today. Reading those events as features and training on them is what is coming: your users, your products, your normal.</p>
           <p>The boundary is the hard part, and the commitment is that it will be enforced in the code rather than asserted in a policy. A feature read will not be expressible without a tenant. The organization will come from your verified identity, never from a field a caller can set. Anything shared across organizations will be an <strong>aggregate</strong> — published quantiles, with no organization, no subject and no identifier in the row — and a bucket too few organizations contributed to will not be published at all. The model is meant to be per organization down to its geometry, so that two organizations do not merely keep separate counters; they have separate models.</p>
           <p>Two of the properties that plane needs are already in the engine’s behavioural model, and it is those that will be carried forward. A score there is attributable by construction: move one input back to its neutral value, score again, and the drop is that input’s contribution — no second model is asked to explain the first. And a statistical judgement may summon a person; it may not decline anything on its own, a ceiling the engine refuses to start above. On the live deployment that model runs in <strong>shadow</strong>: it scores, and it contributes nothing to any transaction’s outcome.</p>
@@ -421,7 +420,12 @@ function Not() {
       <div className="w2-wrap rk-not-grid">
         <div>
           <h2 className="w2-headline">What this is not</h2>
-          <Detail title="What this is not">
+          <ul className="rk-gaps" aria-label="Three unmet requirements">
+            <li>There is no report workflow</li>
+            <li>There is no filing clock</li>
+            <li>There is no confidentiality marking on a case</li>
+          </ul>
+          <Detail label="Three unmet requirements" title="What this is not">
           <p>Hanzo does not process payments — your processor does, and <A to="/commerce">Hanzo Commerce</A> owns the money plane. There is no dispute-network integration today: Risk assembles the evidence, you submit it. No figure on this page is a customer result, because the decide plane has not carried customer traffic yet. When it has, the numbers here will be ours and measured.</p>
           <p>Three unmet requirements decide whether this is enough on its own, and they are named here rather than left to be found. There is no report workflow — no drafting, no approval step, no filing. There is no filing clock, so no deadline is measured anywhere. And there is no confidentiality marking on a case, so nothing in the engine keeps a case note away from the customer. What is here is the detection and the record; the filing is not.</p>
           <p>Anti-money-laundering compliance and fraud prevention are related jobs, not one job. <strong>/v1/aml</strong> is the compliance face, <strong>/v1/risk</strong> is the decide plane, and one engine serves both. Nearby: <A to="/idv">identity verification</A> for proving who somebody is, <A to="/guard">Guard</A> for what a model is allowed to say, and <A to="/analytics">Analytics</A> for the event plane the model reads.</p>
@@ -429,9 +433,9 @@ function Not() {
         </div>
         <div className="rk-next">
           <div className="rk-next-art" aria-hidden="true"><Sigil seed="hanzo-risk" data={[5, 20, 4, 3]} /></div>
-          <h2 className="w2-kicker">Next</h2>
+          <h2 className="w2-kicker gx-stay rk-next-h">Next</h2>
           {[['Talk to us', 'Tell us which stage is costing you, and help shape what the tiers include.', '/contact-sales'], ['The API', 'One base URL and one key for every Hanzo capability, including this one.', '/api'], ['The engine, source available', 'The monitoring engine underneath the compliance face, under the Lux Ecosystem License. Read it and check the citations; commercial use outside a Lux network is licensed separately.', 'https://github.com/luxfi/aml']].map(([t, d, to], i) => (
-            <A key={t} to={to} className={'rk-next-a' + (i === 0 ? ' first' : '')} {...(i === 0 ? { 'data-cta': 'risk.close' } : {})}><b>{t}</b><span>{d}</span><i aria-hidden="true">→</i></A>
+            <A key={t} to={to} className={'rk-next-a' + (i === 0 ? ' first' : '')} {...(i === 0 ? { 'data-cta': 'risk.next' } : {})}><b>{t}</b><span>{d}</span><i aria-hidden="true">→</i></A>
           ))}
         </div>
       </div>
@@ -451,6 +455,12 @@ export default function Risk() {
       <RulesPlat />
       <ConnectPlans />
       <Not />
+      <section className="w2-sec tight rk-band" aria-label="Talk to us">
+        <div className="w2-wrap rk-band-in">
+          <p className="rk-band-t">One risk plane for accounts, payments and agents</p>
+          <Magnetic strength={0.25}><A to="/contact-sales" className="w2-cta" data-thumb="Talk to us" data-cta="risk.close">Talk to us <i aria-hidden="true">→</i></A></Magnetic>
+        </div>
+      </section>
     </main>
   );
 }

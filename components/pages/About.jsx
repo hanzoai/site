@@ -16,11 +16,11 @@
 // Metric: signup_start (data-cta="about.*")
 // Signature: six reasons Hanzo builds as tiles that open into their own sheet
 // Beyond: pick two? keep all four: the lede's four trade-offs as switches that never knock each other off
-// V2: 7/10 critic round 1 (long, empty gaps, overlapping Zen fade); all fixed in the MASTER rework, re-review pending
+// V2: 7/10 critic round 2 (phone commit dates, founders' empty boxes, length, ghost axes, phone hero); all fixed, re-review pending
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
 import { Count } from '../ui';
-import { A, Img, Tabs, TabPanel } from '../kit';
+import { A, Cta, Img, Tabs, TabPanel } from '../kit';
 import StoryClose from './StoryClose';
 import Sigil from '../Sigil';
 import { useOpener } from '../Opener';
@@ -32,9 +32,8 @@ import './story.css';
 import './About.css';
 
 const Arr = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-const Link2 = ({ to, children }) => <A to={to} className="v2s-link"><span>{children}</span><Arr /></A>;
-const Chev = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-const TL = ({ to, children }) => <A to={to} className="v2s-tlink">{children}<Chev /></A>;
+const Link2 = ({ to, children }) => <Cta to={to} kind="link">{children}</Cta>;
+const TL = ({ to, children }) => <Cta to={to} kind="link">{children}</Cta>;
 const pad = (n) => String(n).padStart(2, '0');
 
 /* ---------- the frontier: one curve, four ghost axes under it ---------- */
@@ -84,7 +83,7 @@ function Frontier() {
     return () => c.stop();
   }, [seen, calm, p]);
   return (
-    <div className={'xab-front-w' + (yr ? ' read' : '')} ref={ref} onPointerMove={move} onPointerLeave={() => setYr(null)} data-cursor="">
+    <div className={'xab-front-w' + (yr ? ' read' : '')} ref={ref} onPointerMove={move} onPointerLeave={() => setYr(null)}>
       <svg className="xab-front-svg" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMax meet" role="img" aria-label="The Pareto frontier: intelligence, speed, deterministic safety and equitable cost, advancing together from 2014 to 2026">
         {[0.25, 0.5, 0.75, 1].map((v) => <line key={v} x1={0} x2={W} y1={Y(v)} y2={Y(v)} className="xab-grid" />)}
         <line x1={0} x2={W} y1={Y(0)} y2={Y(0)} className="xab-base" />
@@ -118,13 +117,13 @@ function Frontier() {
 /* ---------- 1. the first screen ---------- */
 function Hero() {
   return (
-    <section className="xab-hero" aria-labelledby="xab-h1" data-ask-name="About">
+    <section className="xab-hero" aria-labelledby="xab-h1" data-ask-name="About" data-morph-target>
       <div className="v2s-wrap xab-hero-top">
         <Lines as="h1" id="xab-h1" className="v2s-display xab-h1" now delay={0.05} stagger={0.06} lines={['Chasing the', 'Pareto Frontier', 'of AI']} />
         <motion.div className="xab-hero-side" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.55 }}>
           <p className="v2s-lede">From SKULLY and open-source commerce, through Techstars ’17, to 1700+ open repositories and the sovereign AI cloud today — advancing intelligence, speed, deterministic safety, and equitable cost together.</p>
           <div className="v2s-acts">
-            <A to="/pricing" className="v2s-btn solid" data-thumb="Get Started" data-cta="about.hero">Get Started</A>
+            <Cta to="/pricing" id="about.hero" thumb>Get Started</Cta>
             <TL to="/history">Our History</TL>
             <TL to="/open-source">Open Source</TL>
           </div>
@@ -204,7 +203,7 @@ function Tile({ p, i, cue, onOpen }) {
   const [t, k, d, l, to] = p;
   return (
     <li className={SPANS[i]}>
-      <motion.button type="button" layoutId={'xab-p' + i} className={'xab-tile' + (cue ? ' cue' : '')} style={{ borderRadius: 24 }} onClick={() => onOpen(i)} aria-haspopup="dialog" data-cursor="Open" aria-label={`${t}: ${k}. Open`}>
+      <motion.button type="button" layoutId={'xab-p' + i} className={'xab-tile' + (cue ? ' cue' : '')} style={{ borderRadius: 24 }} onClick={() => onOpen(i)} aria-haspopup="dialog" aria-label={`${t}: ${k}. Open`}>
         <span className="xab-tile-n v2s-num" aria-hidden="true">{pad(i + 1)}</span>
         <span className="xab-tile-art" aria-hidden="true"><Radar at={i} /></span>
         <span className="xab-tile-t" aria-hidden="true">
@@ -318,7 +317,7 @@ function Record() {
         <div className="v2s-grid xab-rec-foot">
           <p className="v2s-body v2s-c-1-7">From SKULLY and open-source commerce through Techstars ’17 to Damon Motors and Triller listing on Nasdaq in 2024, Hanzo has engineered sovereign commerce and AI systems for hundreds of venture-backed companies. Read the complete 2014–2026 archive on our history page, or start building today.</p>
           <div className="v2s-acts v2s-c-8-12 xab-rec-acts">
-            <A to="/pricing" className="v2s-btn solid" data-cta="about.record">Start Building</A>
+            <Cta to="/pricing" id="about.record">Start Building</Cta>
             <TL to="/history">Read Our Full History</TL>
             <TL to="/customers">Customer Stories</TL>
           </div>
@@ -340,6 +339,8 @@ function Portrait({ p }) {
   useEffect(() => { const el = img.current; if (el?.complete) setState(el.naturalWidth ? 'ok' : 'none'); }, []);
   return (
     <figure className={'xab-pic ' + state}>
+      {/* when the portrait cannot load: the designed fallback, a contour field from the founder's name, initials in the corner */}
+      {state === 'none' && <Sigil seed={p.name} className="xab-pic-sigil" />}
       <span className="xab-mono" aria-hidden="true">{p.mono}</span>
       <Img ref={img} src={p.img} alt={p.name} w={640} h={800} onLoad={() => setState('ok')} onError={() => setState('none')} />
     </figure>
@@ -455,7 +456,7 @@ function Log() {
       </ul>
       <div className="xab-log-f">
         <p>Every line written, reviewed, and shipped in the open by Hanzo engineers.</p>
-        <A to="/open-source" className="v2s-btn">View Open Source Dashboard</A>
+        <Cta to="/open-source" kind="quiet">View Open Source Dashboard</Cta>
       </div>
     </div>
   );

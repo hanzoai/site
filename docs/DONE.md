@@ -17,3 +17,8 @@ There is one version: the final one. ("v2" was only a label; there is no v3, v4 
 
 ## Then
 All chats stop, the conductor's loops stop, everything is pushed to GitHub in one clean commit, and James reviews. Nothing else gets built. No extras nobody asked for.
+
+## Paused, 7 Nov 15:25 (James nearly out of usage; resets Sat 14 Nov 06:00)
+- Board then: 6 ready, 130 v2, 15 todo of 151; taste 0 fails; 109 pages with 18/18 cards; reviews are the bottleneck (68 built designs unreviewed).
+- Conductor loops deleted. Critics 1 and 3 stopped mid-run; running builders told to push and stop. Home and Zen left waiting on a prompt.
+- To resume: merge every `origin/claude/*` branch into main, then give critics their unreviewed lists first (fewer chats: 3 critics + the owners of pages under 8).

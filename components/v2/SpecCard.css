@@ -6,8 +6,8 @@
 .sc-top { position: relative; display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
 .sc-t { font-size: 22px; font-weight: 500; letter-spacing: -.44px; line-height: 28px; color: #fff; }
 .sc-arr { display: inline-block; transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
-@media (hover: hover) { .sc-card:hover .sc-arr { transform: translateX(4px); } }
-.sc-meta { margin-top: 6px; font: 400 13px/18px var(--mono); color: rgba(255, 255, 255, .6); overflow-wrap: anywhere; }
+@media (hover: hover) { .sc-card:hover .sc-arr { transform: translateX(4px); } .sc-card:hover .sc-arr.away { transform: translate(3px, -3px); } }
+.sc-meta { margin-top: 6px; font: 400 13px/18px var(--mono); color: rgba(255, 255, 255, .6); overflow-wrap: break-word; }
 .sc-meta b { font-weight: 400; color: #fff; }
 .sc-d { margin-top: 8px; max-width: 46ch; font-size: 13px; line-height: 18px; color: rgba(255, 255, 255, .8); display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
 .sc-card.film .sc-d { max-width: 150px; }
@@ -16,6 +16,15 @@
 .sc-flag { margin-bottom: 22px; }
 .sc-card.big { padding: 28px; }
 .sc-card.big .sc-t { font-size: 44px; letter-spacing: -.88px; line-height: 48px; }
-.sc-card.big .sc-d { margin-top: 18px; max-width: 160px; font-size: 15px; line-height: 21px; }
+.sc-card.big .sc-d { margin-top: 18px; max-width: 160px; }
 @media (max-width: 640px) { .sc-card { padding: 16px; } .sc-d { font-size: 14px; line-height: 19px; } }
-@media (prefers-reduced-motion: reduce) { .sc-card { transition: none; } }
+/* hush (wide screens with a pointer): a shorter card shows the name, id, price and pills; on hover or focus the
+   description takes their place at SPEC's 57px from the top (still in the HTML, so read by every screen reader) */
+@media (hover: hover) and (min-width: 900px) {
+  .sc-card.hush { min-height: 168px; }
+  .sc-card.hush .sc-meta, .sc-card.hush .sc-tags { transition: opacity .3s cubic-bezier(.16, 1, .3, 1); }
+  .sc-card.hush .sc-d { position: absolute; left: 0; right: 0; top: 36px; margin: 0; max-width: 52ch; opacity: 0; transform: translateY(6px); transition: opacity .3s cubic-bezier(.16, 1, .3, 1), transform .3s cubic-bezier(.16, 1, .3, 1); pointer-events: none; }
+  .sc-card.hush:hover .sc-d, .sc-card.hush:focus-visible .sc-d { opacity: 1; transform: none; }
+  .sc-card.hush:hover .sc-meta, .sc-card.hush:focus-visible .sc-meta, .sc-card.hush:hover .sc-tags, .sc-card.hush:focus-visible .sc-tags { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .sc-card, .sc-card.hush .sc-d, .sc-card.hush .sc-meta, .sc-card.hush .sc-tags { transition: none; } }

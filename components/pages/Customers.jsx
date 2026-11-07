@@ -9,8 +9,9 @@
    CTA: "Talk to us" (/contact) beside the lede, in the shared sticky ask bar (data-thumb) and in the close;
    data-cta customers.hero / customers.close; metric contact_sales_submit.
    Signature: the launch stage. Scroll the index and each launch's logo and figures rise into a pinned stage as its row
-   reaches the middle, the last one leaving upward; point at a row and the stage answers at once; phones get the
-   figures in each row and a sticky year rail that marks the year you are reading.
+   reaches the middle, the last one leaving first (150ms out, then 300ms in); point at a row and the stage answers at
+   once. Phones: rows read in as they reach the middle (name to ink, figures settle out of their mask, once) under a
+   sticky year rail that marks the year you are reading.
    Supporting (3): masked headline cut-in once, after the curtain; the case plate's one turn (wipe, kit Tabs pill); the
    close's figure rows sliding with the scroll. State: the year filter closes the list up with a layout glide.
    Beyond: a year index over Hanzo's own launch list: each year shows its launches as dots, and a tap narrows the index
@@ -50,9 +51,16 @@ const LAUNCHES = [
   { id: 'keek-social', name: 'Personas Social', kind: 'AI platform', d: 'Built the recommendation, moderation and creator tools inside Keek.', f: [], logo: 'keek-social.svg' },
 ];
 
-// years exactly as the case copy prints them; launches without one keep Hanzo's order at the end of the index
+// years exactly as the case copy prints them; the index keeps Hanzo's own order (SKULLY first, as on hanzo.ai)
 const YEARS = [...new Set(LAUNCHES.map((l) => l.year).filter(Boolean))].sort();
-const ORDER = [...YEARS.flatMap((y) => LAUNCHES.filter((l) => l.year === y)), ...LAUNCHES.filter((l) => !l.year)];
+const ORDER = LAUNCHES;
+// the doorway's hold is capped (MASTER part 9): if the case page has not lifted the ink by then, cut to it
+const door = (e, to, router) => {
+  openDoor(e, to, router, '#0a0a0a');
+  setTimeout(() => document.querySelectorAll('[data-door]').forEach((d) => { if (!d.dataset.landing) d.remove(); }), 640 + 700);
+};
+// JS off: both cases show stacked and readable; the figures on phones stand in place
+const NOJS = { __html: '<style>.xcu-plate{aspect-ratio:auto!important}.xcu-case{position:relative!important;clip-path:none!important;aspect-ratio:16/8.4}.xcu-case-txt{opacity:1!important}.xcu-row-f dt,.xcu-row-f dd{transform:none!important}.xcu-line{display:none}</style>' };
 const FIGS = LAUNCHES.flatMap((l) => l.f.map(([n]) => n));
 
 // Hanzo's own list, as live shows it (the same names and links as /investors; a shared module is the Data chat's, PLAN 2.5)
@@ -94,18 +102,18 @@ function Plate() {
           {CASES.map((c, i) => <i key={c.name}>{(i < at || (i === at && rest)) && <u className="done" />}{i === at && run && <u key={at} className="run" />}</i>)}
         </span>
         {CASES.map((c, i) => (
-          <motion.div key={c.name} className="xcu-case" role="tabpanel" id={`xcu-case-panel-${i}`} aria-labelledby={`xcu-case-tab-${i}`}
+          <motion.div key={c.name} className={'xcu-case t' + i} role="tabpanel" id={`xcu-case-panel-${i}`} aria-labelledby={`xcu-case-tab-${i}`}
             aria-hidden={i !== at ? true : undefined} inert={i !== at}
             initial={false}
             animate={{ clipPath: i === at ? 'inset(0% 0% 0% 0%)' : 'inset(0% 0% 0% 100%)', zIndex: i === at ? 2 : 1 }}
             transition={{ clipPath: { duration: i === at ? 1.1 : 0.01, delay: i === at ? 0 : 1.1, ease: [0.76, 0, 0.24, 1] } }}>
-            <A to={c.to} className="xcu-case-a" data-no-morph onClick={(e) => openDoor(e, c.to, router, '#0a0a0a')}>
+            <A to={c.to} className="xcu-case-a" data-no-morph onClick={(e) => door(e, c.to, router)}>
               <span className="xcu-ph">
                 <Pic src={c.img} alt={c.alt} w={1600} h={840} priority={i === 0}
                   fallback={<span className="xcu-ph-s"><Sigil seed={c.to} data={[parseFloat(c.n.replace(/[^\d.]/g, ''))]} /></span>} />
               </span>
               <motion.span className="xcu-case-txt" initial={false} animate={{ opacity: i === at ? 1 : 0 }}
-                transition={i === at ? { duration: 0.5, delay: 0.55, ease: EASE } : { duration: 0.18 }}>
+                transition={i === at ? { duration: 0.4, delay: 0.25, ease: EASE } : { duration: 0.15 }}>
                 <span className="xcu-case-top">
                   <Pic className="xcu-mark" src={c.logo} alt="" w={180} h={28} fallback={<span className="xcu-alt">{c.name}</span>} />
                   <span className="vc-kick vc-num">{c.year}</span>
@@ -137,15 +145,15 @@ function Plate() {
 function Stage({ l, list }) {
   return (
     <div className="xcu-st" aria-hidden="true">
-      <AnimatePresence mode="popLayout" initial={false}>
-        <motion.div key={l.id} className="xcu-st-in" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -24 }}
-          transition={{ duration: 0.3, ease: EASE }}>
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div key={l.id} className="xcu-st-in" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0, transition: { duration: 0.3, ease: EASE } }}
+          exit={{ opacity: 0, y: -16, transition: { duration: 0.15, ease: [0.4, 0, 0.2, 1] } }}>
           <span className="xcu-st-top">
             <span className="xcu-st-logo">{l.logo ? <Pic src={'/logos/customers/' + l.logo} alt="" w={200} h={40} fallback={<b>{l.name}</b>} /> : <b>{l.name}</b>}</span>
             <span className="vc-kick vc-num">{l.year || ''}</span>
           </span>
           {l.f.length > 0
-            ? <span className="xcu-st-f">{l.f.map(([n, w], k) => <span key={w} className={k ? 'b' : 'a'}><b className="vc-num">{n}</b><span>{w}</span></span>)}</span>
+            ? <span className="xcu-st-f">{l.f.map(([n, w], k) => <span key={w} className={(k ? 'b' : 'a') + (n.length > 8 ? ' long' : '')}><b className="vc-num">{n}</b><span>{w}</span></span>)}</span>
             : <span className="xcu-st-f"><span className="a nm"><b>{l.name}</b><span>{l.kind}</span></span></span>}
         </motion.div>
       </AnimatePresence>
@@ -158,7 +166,9 @@ function Every() {
   const [year, setYear] = useState(null);
   const shown = year ? ORDER.filter((l) => l.year === year) : ORDER;
   const [at, setAt] = useState(ORDER[0].id);
+  const [read, setRead] = useState(() => new Set());
   const rows = useRef({});
+  useEffect(() => { setRead((r) => (r.has(at) ? r : new Set(r).add(at))); }, [at]);
   useEffect(() => { setAt(shown[0].id); }, [year]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     // the row crossing the middle of the screen is the one being read
@@ -175,6 +185,7 @@ function Every() {
   }, [cur.year]);
   return (
     <section className="vc-sec xcu-every" id="every" aria-labelledby="xcu-every-h">
+      <noscript dangerouslySetInnerHTML={NOJS} />
       <div className="vc-grid xcu-every-g">
         <h2 id="xcu-every-h" className="vc-headline">Every launch</h2>
         <div className="xcu-years" role="group" aria-labelledby="xcu-every-h" ref={rail}>
@@ -190,10 +201,11 @@ function Every() {
             );
           })}
         </div>
-        <ol className="xcu-index" aria-live="polite">
+        <p className="x-sr" role="status">{year ? `${year}: ${shown.length} ${shown.length === 1 ? 'launch' : 'launches'}` : ''}</p>
+        <ol className="xcu-index">
           {ORDER.map((l) => (
             <motion.li layout="position" transition={{ duration: 0.3, ease: EASE }} key={l.id} id={l.id}
-              ref={(el) => { rows.current[l.id] = el; }} className={'xcu-row' + (l.id === cur.id ? ' on' : '')}
+              ref={(el) => { rows.current[l.id] = el; }} className={'xcu-row' + (l.id === cur.id ? ' on' : '') + (read.has(l.id) ? ' read' : '')}
               hidden={!!year && l.year !== year} onPointerEnter={(e) => { if (e.pointerType === 'mouse') setAt(l.id); }}>
               <span className="xcu-row-y vc-num">{l.year || <span aria-hidden="true">—</span>}</span>
               <div className="xcu-row-n">

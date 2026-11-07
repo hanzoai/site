@@ -14,7 +14,8 @@
 .v2s-scrim { position: absolute; inset: 0; background: rgba(0, 0, 0, .4); opacity: 0; transition: opacity 300ms cubic-bezier(0, 0, .2, 1); }
 .v2s[data-open='true'] .v2s-scrim { opacity: 1; }
 .v2s-panel {
-  position: absolute; top: 12px; right: 12px; bottom: 12px; width: min(560px, calc(100vw - 24px)); display: flex; flex-direction: column;
+  /* the panel starts below the site's sticky header (60px), so its counter and close button are never under it */
+  position: absolute; top: 72px; right: 12px; bottom: 12px; width: min(560px, calc(100vw - 24px)); display: flex; flex-direction: column;
   border-radius: 24px; background: var(--k-white); color: var(--k-ink); box-shadow: 0 24px 60px -16px rgba(0, 0, 0, .18);
   transform: translateX(calc(100% + 24px)); transition: transform 400ms cubic-bezier(.4, 0, .2, 1);
 }

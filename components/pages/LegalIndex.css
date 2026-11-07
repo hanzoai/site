@@ -1,5 +1,5 @@
 /* ---------- /legal index v2 (lgi-): sepia, calm; no dark room ---------- */
-.lgi { --acc: #0a0a0b; --acc-ink: #fff; }
+.lgi { --acc: #0a0a0a; --acc-ink: #fff; }
 .lgi-kick { margin: -8px 0 0; font-size: 14px; letter-spacing: .12em; text-transform: uppercase; color: var(--soft); }
 .lgi-stack > .w2-pause { z-index: 20; }
 .lgi-anchor { position: relative; top: -120px; }
@@ -38,13 +38,13 @@
 .lgi-chips { position: sticky; top: 60px; z-index: 5; display: flex; flex-wrap: wrap; gap: 8px; margin: 0 -8px clamp(16px, 2vw, 24px); padding: 12px 8px; background: rgba(255, 255, 255, .96); }
 .lgi-chips button { display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 22px; border: 1px solid rgba(0, 0, 0, .1); border-radius: 999px; background: #fff; color: var(--ink); font: 600 clamp(16px, 1.3vw, 19px)/1 var(--sans); letter-spacing: -.015em; cursor: pointer; transition: background .3s var(--ease), color .3s, border-color .3s; }
 .lgi-chips button .x-mono { font-size: 13px; font-weight: 500; color: var(--faint); }
-.lgi-chips button:hover { border-color: var(--ink); }
+@media (hover: hover) { .lgi-chips button:hover { border-color: var(--ink); } }
 .lgi-chips button[aria-pressed='true'] { background: #fff; border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); color: var(--ink); }
 .lgi-chips button[aria-pressed='true'] .x-mono { color: var(--ink); }
 .lgi-cards { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
 .lgi-cards > li { display: flex; }
 .lgi-card { position: relative; display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 4fr) minmax(0, 5fr) 48px; align-items: center; gap: 24px; width: 100%; min-height: 96px; padding: 20px 4px; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; transition: background .25s var(--ease), padding .0s; }
-.lgi-card:active { transform: scale(.995); }
+.lgi-card:active { transform: translateY(1px); }
 .lgi-card-u { position: absolute; right: 64px; top: 10px; font-size: 13px; color: var(--soft); opacity: 0; transform: translateY(4px); transition: opacity .25s, transform .25s var(--ease); }
 @media (hover: hover) { .lgi-card:hover { background: var(--card); } .lgi-card:hover .lgi-card-u { opacity: 1; transform: none; } }
 .lgi-card-k { font-size: 13px; color: var(--soft); }
@@ -53,7 +53,7 @@
 .lgi-card-d code { padding: 1px 6px; border-radius: 6px; background: #fff; font: 400 .9em var(--mono); color: var(--ink); }
 .lgi-dash { color: var(--faint); }
 .lgi-card-go { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--card); transition: background .3s, color .3s, transform .45s var(--ease); }
-@media (hover: hover) { .lgi-card:hover .lgi-card-go { background: #0a0a0b; color: #fff; transform: translateX(3px); } }
+@media (hover: hover) { .lgi-card:hover .lgi-card-go { background: #0a0a0a; color: #fff; transform: translateX(3px); } }
 
 /* how these fit together */
 .lgi-how { background: var(--card); }
@@ -62,7 +62,7 @@
 .lgi-ladder { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; align-items: end; height: clamp(320px, 30vw, 440px); }
 .lgi-ladder li { display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; height: calc(40% + var(--k) * 20%); padding: 18px; border-radius: 20px; background: #fff; }
 .lgi-ladder li:first-child { background: var(--acc); color: #fff; }
-.lgi-ladder li:first-child .lgi-step-n, .lgi-ladder li:first-child em { color: #c7c7cc; }
+.lgi-ladder li:first-child .lgi-step-n, .lgi-ladder li:first-child em { color: #a3a3a3; }
 .lgi-step-n { font-size: 13px; color: var(--acc); margin-bottom: auto; }
 .lgi-ladder b { font-size: clamp(15px, 1.3vw, 20px); font-weight: 600; letter-spacing: -.02em; line-height: 1.1; hyphens: auto; overflow-wrap: break-word; }
 .lgi-ladder em { font-style: normal; font-size: 14px; color: var(--soft); }
@@ -97,3 +97,24 @@
   .lgi-sheet-u, .lgi-sheet-s, .lgi-card-k, .lgi-step-n, .lgi-chips button .x-mono { font-size: 14px; }
 }
 @media (prefers-reduced-motion: reduce) { .lgi-status-dot { animation: none; } }
+
+/* v2.3: the pile stays inside its sheets; the pause sits under the pile; opaque chip bar; print */
+.lgi-pile { position: absolute; inset: 0; }
+.lgi-sheet { overflow: hidden; }
+.lgi-sheet-s { white-space: normal !important; max-width: 100%; }
+.lgi-pause { position: absolute; left: 0; bottom: -8px; display: grid; place-items: center; width: 44px; height: 44px; z-index: 50; }
+.lgi-pause .w2-pause { background: #f2f2f2; color: #0a0a0a; box-shadow: none; }
+.lgi-big p { font-size: 32px !important; font-weight: 500; line-height: 1.2 !important; letter-spacing: -.022em !important; }
+.lgi-chips { background: #fff !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; border-bottom: 1px solid rgba(0, 0, 0, .1); }
+.lgi-group[hidden] { display: none; }
+@media (max-width: 899px) {
+  .lgi-big p { font-size: 26px !important; }
+  .lgi-card-k { display: none !important; }
+  .lgi-sheet-s { font-size: 14px !important; }
+}
+@media print {
+  .lgi-stack, .lgi-chips, .w2-pause, .lgi-card-go, .lgi-card-u { display: none !important; }
+  .lgi-group[hidden] { display: block !important; }
+  .lgi-card { display: block; padding: 8px 0; break-inside: avoid; }
+  .lgi-hero-g, .lgi-intro-g, .lgi-how-g, .lgi-contact-g { display: block !important; }
+}
