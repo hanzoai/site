@@ -25,7 +25,7 @@ Filmed 7 Nov 2026 (home page, then a click on the first extension card). Films: 
 |---|---|---|
 | Hero arrival | h1 then subline: opacity 0→1 and translateY(20 px)→0, **1,000 ms ease**, subline 1 s later | measured (getAnimations) + from code (`fadeInUpStagger`) |
 | Header asks arrive | visible at 1.13 s, 200 ms ease-in-out | measured |
-| Launcher window runs itself | with no input, the search field types its query a few characters per 500 ms sample, then the dock switches tool: Clipboard History → AI (about 13 s) → Emoji Picker (about 18 s). Active dock icon 68×68, others 54×54 | measured (probe, 500 ms sampling) |
+| Launcher window runs itself | with no input, the search field types its query a few characters per 500 ms sample, then the dock switches tool: Clipboard History → AI (about 13 s after it scrolls into view) → Emoji Picker (about 18 s). Active dock icon 68×68, others 54×54 | measured (probe, 500 ms sampling) |
 | Star field in that frame | 92 stars; opacity toggles of **250 ms ease**, 979 seen in a 68 s walk, with and without input | measured |
 | Keyboard types itself | keys go opacity 0.2 → 1 one after another, about one key per 250 ms, each **400 ms cubic-bezier(0.23, 1, 0.32, 1)** | measured (probe + getAnimations) |
 | Phrase wall drives a screen | 13 phrases at 24/38.4 px in grey `#434345`; one lights white every **5,000 ms** with a progress bar (scaleX 0 → 0.1 at 5% → 0.95, linear); the screenshot enters over **600 ms cubic-bezier(0.4, 0, 0.22, 0.96)** and exits in 300 ms | measured (probe) + from code |
@@ -63,7 +63,7 @@ Filmed 7 Nov 2026 (home page, then a click on the first extension card). Films: 
 ## The 5 moves it gives Hanzo
 1. **The window that runs itself.** A real Hanzo product window types its own query, then a dock swaps to the next tool (about 13 s, then 5 s); the active dock icon grows from 54 to 68 px. *Suits: home product moment, Hanzo Chat, Dev/CLI, agents.*
 2. **The object that types.** A keyboard (or a command grid) lights one key every 250 ms, each 0.2 → 1 over 400 ms `(0.23, 1, 0.32, 1)`, with Hanzo's own short claims printed on keys. *Suits: Dev/CLI, docs-style pages, careers.*
-3. **The phrase wall that drives a screen.** A list of short capability lines in grey; one lights white every 5 s with a thin progress bar, and the screenshot beside it enters over 600 ms `(0.4, 0, 0.22, 0.96)`. Clicking a line jumps to it. *Suits: product pages, solutions, model pages (capabilities list).*
+3. **The phrase wall that drives a screen.** A list of short capability lines in grey; one lights white every 5 s with a thin progress bar, and the screenshot beside it enters over 600 ms `(0.4, 0, 0.22, 0.96)`. Each line has a pointer cursor and a hover colour (from code). *Suits: product pages, solutions, model pages (capabilities list).*
 4. **Figure plates.** Hairline grid, mono `FIG_0n` labels and line drawings where one part settles 37 px over 1.5 s `(0.165, 0.84, 0.44, 1)` as it scrolls in. *Suits: docs-style pages, cloud, Dev/CLI, model specs.*
 5. **Glass header with a lit key for an ask.** Floating 76 px bar inset 16 px, radius 16, dark gradient at 75–90%, blur 5 px, 1 px hairline; the ask is a light key (`#e6e6e6`, 2 px dark ring, inset light) that goes to white in 200 ms and to `#cdcece` on press. Monochrome, so it fits rule 7. *Suits: the shared header on every page; pricing asks.*
 
