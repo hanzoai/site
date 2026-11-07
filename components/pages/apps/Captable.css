@@ -241,13 +241,13 @@
 a.ct-chip:active { transform: scale(.97); }
 .ct-ways { list-style: none; margin-top: 0; margin-bottom: 0; padding: 0; }
 .ct-way { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin: 0 -16px; padding: 22px 16px; border-top: 1px solid var(--bz-line); color: var(--bz-ink); text-decoration: none; transition: background-color .15s var(--bz-out); }
-.ct-way b { font-size: 17px; font-weight: 497; }
+.ct-way b, .ct-way .ct-way-t { font-size: 17px; font-weight: 497; line-height: 1.3; color: var(--bz-ink); }
 .ct-way span { font-size: 16px; line-height: 1.5; color: var(--bz-muted); }
-.ct-way em { font-style: normal; font-size: 16px; font-weight: 497; color: var(--bz-ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; transition: transform .3s var(--bz-out); }
+.ct-way em, .ct-way .ct-way-go { font-style: normal; line-height: 1.5; font-size: 16px; font-weight: 497; color: var(--bz-ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; transition: transform .3s var(--bz-out); }
 /* each row fills grey under the hand, like the close row, and its link steps right */
 @media (hover: hover) {
   .ct-way:hover { background-color: var(--bz-card); }
-  .ct-way:hover em { transform: translateX(4px); }
+  .ct-way:hover em, .ct-way:hover .ct-way-go { transform: translateX(4px); }
 }
 .ct-way:active { background-color: var(--bz-tile); }
 .ct-way:focus-visible { outline: 2px solid var(--bz-ink); outline-offset: -2px; }
@@ -261,7 +261,7 @@ a.ct-chip:active { transform: scale(.97); }
 .ct-end-go p { margin: 0; display: flex; flex-direction: column; gap: 4px; font-size: 16px; color: var(--bz-muted); }
 .ct-end-go b { font-weight: 497; color: var(--bz-ink); }
 .ct-row { display: flex; justify-content: space-between; align-items: center; gap: 20px; min-height: 56px; margin-top: clamp(44px, 5vw, 72px); padding: 0 16px; border-top: 1px solid var(--bz-ink); border-bottom: 1px solid var(--bz-line); color: var(--bz-ink); text-decoration: none; font-size: 17px; font-weight: 497; transition: background-color .15s var(--bz-out); }
-.ct-row em { display: inline-flex; align-items: center; gap: 10px; font-style: normal; white-space: nowrap; }
+.ct-row em, .ct-row .ct-row-go { display: inline-flex; align-items: center; gap: 10px; font-style: normal; white-space: nowrap; }
 .ct-row > span { white-space: nowrap; }
 @media (hover: hover) { .ct-row:hover { background-color: var(--bz-room); } }
 .ct-row:active { background-color: var(--bz-tile); }
@@ -296,7 +296,7 @@ a.ct-chip:active { transform: scale(.97); }
 @media (max-width: 599px) {
   /* the close row stacks: the label on its line, "Read the docs →" under it on the right */
   .ct-row { flex-direction: column; align-items: stretch; gap: 6px; padding: 14px 16px; }
-  .ct-row em { align-self: flex-end; }
+  .ct-row em, .ct-row .ct-row-go { align-self: flex-end; }
 }
 
 @media (max-width: 899px) {

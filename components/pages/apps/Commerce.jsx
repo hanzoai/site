@@ -137,7 +137,8 @@ const FIND = Object.fromEntries(GROUPS.flatMap((g) => EP[g].map(([p, d]) => [p, 
 const eps = (paths) => paths.map((p) => FIND[p]);
 /* a path may only break after a slash, never inside a word ("/order/{id}/capture") */
 const brk = (s, k = '') => s.split(/(?<=\/)/).flatMap((x, i) => (i ? [<wbr key={k + 'w' + i} />, x] : [x]));
-const P = ({ p }) => <>{brk(p)}</>;
+// an endpoint is one run of text (copy checks read it whole); CSS lets it wrap anywhere on narrow screens
+const P = ({ p }) => <span>{p}</span>;
 
 /* What the order card shows at each stop: the shape changes, the endpoint is the real one. */
 const Lock = () => <svg viewBox="0 0 24 24" width="1.4em" height="1.4em" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.4" fill="none" stroke="currentColor" strokeWidth="1.7" /><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3" fill="none" stroke="currentColor" strokeWidth="1.7" /></svg>;
@@ -557,7 +558,7 @@ function Running() {
             <div key={t} className={'cm-spec-row' + (open === i ? ' open' : '')}>
               <dt>
                 <button type="button" id={'cm-run-b' + i} aria-expanded={open === i} aria-controls={'cm-run-d' + i} onClick={() => setOpen(i)}>
-                  <span className="x-mono">{two(i + 1)}</span><b>{t}</b><i className="cm-spec-pm" aria-hidden="true" />
+                  <span className="x-mono">{two(i + 1)}</span><span className="cm-spec-t">{t}</span><i className="cm-spec-pm" aria-hidden="true" />
                 </button>
               </dt>
               <dd id={'cm-run-d' + i} role="region" aria-labelledby={'cm-run-b' + i}><div><p>{d}</p></div></dd>
@@ -579,7 +580,7 @@ function Ways() {
         <h2 id="cm-ways-h" className="x-sr">Get Commerce</h2>
         <ul className="cm-way-list">
           {[['Start Selling', 'Launch your store with our easy-to-use platform', 'Try Hanzo', '/login'], ['Documentation', 'Explore our guides and API references', 'View Docs', DOCS], ['For Developers', 'Integrate our APIs into your applications', 'API Reference', 'https://docs.hanzo.ai/docs'], ['Need a Custom Solution?', 'Our team of experts can help you design and implement a tailored e-commerce solution for your unique business needs.', 'Contact Sales', '/contact-sales']].map(([t, d, a, to]) => (
-            <li key={t}><A to={to} className="cm-way"><b>{t}</b><span>{d}</span><em>{a} →</em></A></li>
+            <li key={t}><A to={to} className="cm-way"><span className="cm-way-t">{t}</span><span>{d}</span><span className="cm-way-go">{a} →</span></A></li>
           ))}
         </ul>
         <div className="cm-get">
@@ -601,12 +602,12 @@ function End() {
   return (
     <section className="bz-sec cm-end" aria-labelledby="cm-end-h">
       <div className="bz-wrap">
-        <h2 id="cm-end-h" className="bz-display md">Create a product,<br /> then sell it</h2>
+        <h2 id="cm-end-h" className="bz-display md"><span className="cm-end-l">Create a product,</span> <span className="cm-end-l">then sell it</span></h2>
         <div className="bz-grid cm-end-row">
           <p className="bz-lede">The whole thing runs from one container. Point your front end at it and take an order.</p>
           <div className="cm-end-go"><Cta to={DOCS} id="commerce.close">Read the docs</Cta></div>
         </div>
-        <A to={GH} className="cm-endrow"><span>Get started with Commerce</span><em>View on GitHub<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></em></A>
+        <A to={GH} className="cm-endrow"><span>Get started with Commerce</span><span className="cm-endrow-go">View on GitHub<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></span></A>
       </div>
     </section>
   );

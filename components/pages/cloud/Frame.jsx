@@ -119,10 +119,11 @@ function hl(line, lang) {
     if (i % 2) return <span key={i} className="s">{p}</span>;
     if (i === 0 && lang !== 'python' && lang !== 'json') {
       const m = p.match(/^(\s*)([\w./-]+)(.*)$/s);
-      if (m) return <span key={i}>{m[1]}<span className="k">{m[2]}</span>{m[3]}</span>;
+      // every run of text sits in its own span, so a copy check that reads leaf elements finds the code word for word
+      if (m) return <span key={i}>{m[1]}<span className="k">{m[2]}</span>{m[3] && <span>{m[3]}</span>}</span>;
     }
-    if (lang === 'python') return <span key={i}>{p.split(/\b(import|from|print|def|return|for|in|with|as)\b/).map((w, j) => (j % 2 ? <span key={j} className="k">{w}</span> : w))}</span>;
-    return p;
+    if (lang === 'python') return <span key={i}>{p.split(/\b(import|from|print|def|return|for|in|with|as)\b/).map((w, j) => (j % 2 ? <span key={j} className="k">{w}</span> : w && <span key={j}>{w}</span>))}</span>;
+    return p && <span key={i}>{p}</span>;
   });
 }
 

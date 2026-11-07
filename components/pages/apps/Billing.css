@@ -282,4 +282,8 @@
 
 /* 8 Nov (Ready pass): desktop, the "Send your first meter event" ask rides beside the code and the agent prompt instead
    of leaving the left half empty under it */
-@media (min-width: 901px) { .bl2-start-l { position: sticky; top: 96px; align-self: start; } }
+/* (the left column now holds the console too, so it no longer needs to ride along) */
+.bl2-caps .bl2-cap-t { font-size: 26px; font-weight: 497; line-height: 1.2; letter-spacing: -.025em; color: #f5f5f5; }
+/* Hanzo's example console sits in the Get started column, as on hanzo.ai (it was behind a drawer) */
+.bl2-con { margin: 28px 0 0; }
+.bl2-con .bl2-note { margin-top: 10px; }
