@@ -317,8 +317,10 @@ function Jev() {
 function Bench() {
   const box = useRef(null);
   const seen = useInView(box, { once: true, amount: 0.5 });
+  const [armed, setArmed] = useState(false);
+  useEffect(() => { if (!matchMedia('(prefers-reduced-motion: reduce)').matches) setArmed(true); }, []);
   return (
-    <div className="kg-bench-f" ref={box} data-on={seen || undefined} aria-hidden="true">
+    <div className="kg-bench-f" ref={box} data-arm={armed || undefined} data-on={seen || undefined} aria-hidden="true">
       {[['kai-1.4', '84.4%', 84.4], ['Jev', '76.6%', 76.6]].map(([n, v, x]) => (
         <div key={n} className="kg-bf">
           <span className="kg-bf-n">{n}</span>
@@ -337,6 +339,7 @@ export default function KaiGuide() {
         <div className="kg-wrap kg-hero-g">
           <div className="kg-hero-t">
             <h1 id="kg-h" className="kg-h1">
+              <noscript><style>{'.kg-h1 .x-line-in,.kg-verdict b{transform:none!important;opacity:1!important}.kg-replay{display:none!important}'}</style></noscript>
               <span className="x-line"><motion.span className="x-line-in" initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.05, ease: EASE, delay: 0.1 }}>How to</motion.span></span>
               <span className="x-line"><motion.span className="x-line-in" initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.05, ease: EASE, delay: 0.2 }}>Use Kai</motion.span></span>
             </h1>

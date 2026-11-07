@@ -22,6 +22,8 @@ import { A } from '../../kit';
 import './Ledger.css';
 
 const INK = { type: 'spring', stiffness: 300, damping: 30 };
+/* JavaScript off: the headline and lede that cut in, the race bars at their real lengths, the dark room unclipped */
+const NOJS = '.xvs .x-line-in,.xvs-lede{transform:none!important;opacity:1!important}.xvs-race-b i{transform:scaleX(var(--w))!important}.xvs-honest{clip-path:none!important}';
 const Chev = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 /* the page's one ask, in Hanzo's words: its own product, the first door in "Go deeper"; solid once per screen */
 function Ask({ to, big }) {
@@ -61,7 +63,7 @@ function Race({ row, cols, stamp }) {
           return (
             <li key={cols[i]} data-us={i === 0 || undefined}>
               <span className="xvs-race-n">{cols[i]}</span>
-              <span className="xvs-race-b" aria-hidden="true"><motion.i initial={false} animate={{ scaleX: seen ? (vals[i] || 0) / max : 0.02 }} transition={{ duration: 1.4, ease: EASE, delay: 0.15 + i * 0.12 }} /></span>
+              <span className="xvs-race-b" aria-hidden="true"><motion.i style={{ '--w': (vals[i] || 0) / max }} initial={false} animate={{ scaleX: seen ? (vals[i] || 0) / max : 0.02 }} transition={{ duration: 1.4, ease: EASE, delay: 0.15 + i * 0.12 }} /></span>
               <span className="xvs-race-f x-mono">{vals[i] !== null ? <Count to={vals[i]} suffix={f[2] || ''} run={seen} delay={0.15 + i * 0.12} duration={1.4} /> : c.t}</span>
               {f[3] && <span className="xvs-race-x">{f[3]}</span>}
             </li>
@@ -207,6 +209,7 @@ export default function Versus({ doc }) {
         <div className="xvs-wrap xvs-hero-g">
           <div className="xvs-hero-t">
             <h1 id="xvs-h1" className="xvs-h1" data-morph-target>
+              <noscript><style>{NOJS}</style></noscript>
               <span className="x-line"><motion.span className="x-line-in" initial={{ y: '106%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.1 }}>{doc.h1}</motion.span></span>
             </h1>
             {doc.label && <p className="xvs-meta">{doc.label}</p>}

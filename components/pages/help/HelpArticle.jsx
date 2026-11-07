@@ -23,6 +23,8 @@ import { A, Tick } from '../../kit';
 import './HelpArticle.css';
 
 const SPRING = { stiffness: 300, damping: 30, mass: 1.3 };
+// with scripts off, the question and lede show at once and the hand (which needs scripts to walk) is hidden
+const NOJS = '.xhp .x-line-in,.xhp-lede{transform:none!important;opacity:1!important}.xhp-hand{display:none!important}';
 const say = (inl) => inl.map((x) => (typeof x === 'string' ? x : x.b || x.t)).join('').replace(/\s+/g, ' ').trim();
 
 /* an address Hanzo's page protects: its own link stays in the HTML, and in the browser it becomes a direct mailto */
@@ -213,6 +215,7 @@ function Section({ s, i, setting, w }) {
 function Layout({ doc, w, aside }) {
   return (
     <main className="xhp">
+      <noscript><style>{NOJS}</style></noscript>
       <div className="xhp-g">
         <header className="xhp-hero">
           <h1 className="xhp-h1" data-morph-target>

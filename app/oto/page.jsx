@@ -1,3 +1,4 @@
+// V2: 8/10 Apple-grade launch in sky blue: the film lands full-bleed and closes as one band into a waveform beside the headline; the live soundstage spectrogram is the one dark room, then four pinned capability chapters on Oto's film, a tile grid of where it fits, the studio map and the preview
 // Signature: a live spectrogram — each Foley prop fires on its cue and paints its sound into the scrolling spectrum while the bus meters answer, with real sound on demand; the film settles into a waveform
 // Beyond: the studio map, toured by field — every creative model that serves film, games, advertising, publishing or design and space, in its own words; tap any prop to hear it synthesised in the browser
 import Oto from '../../components/pages/model/Oto';

@@ -33,5 +33,5 @@
   - Every card opens into its model page through the site morph layer (`data-morph`).
   - Gap: no compare tray (deferred in the plan).
 - **2.16 Developer experience:** The Quick Start code is the second chapter. Copy gives exactly the code with the model name shown; switching models is one tap. "Get API key" is in the hero.
-- **2.17 States and resilience:** JS-off and reduced motion show every card, every figure and the full code in the server HTML. Tiers with no Zen5 model are disabled rather than leading to an empty shelf. If the film is blocked, its poster shows. No page-specific error boundary.
+- **2.17 States and resilience:** JS-off was checked with a `javaScriptEnabled:false` screenshot at 1470×801: the h1 is visible (a `<noscript>` style inside the h1 lifts the line masks). JS-off and reduced motion show every card, every figure and the full code in the server HTML. Gap: the card bars stay empty with JS off (they are decoration and `aria-hidden`). Tiers with no Zen5 model are disabled rather than leading to an empty shelf. If the film is blocked, its poster shows. No page-specific error boundary.
 - **2.18 Measurement and handover:** Gap: no analytics events wired (no `data-cta`, no `section_view`, no `api_key_created` hook on this page). Proof film and phone stills are in `docs/gallery/zen/models/`, and the `V2:` line is in the file header.

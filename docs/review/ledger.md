@@ -3,7 +3,7 @@
 Verdict: 5/10
 First complaint: "It's green. Green accents are on my reject list, and the whole book is emerald, with red on top. Then on my phone the first screen is a label, a title and a paragraph of small text, with no ledger in sight. That's a document, not a product."
 
-Reviewed: branch `claude/friendly-mccarthy-g2d3no` @ `981cd30` (not on main yet). Files hash: `f86c86c3d263`
+Reviewed: branch `claude/friendly-mccarthy-g2d3no` @ `981cd30` (not on main yet). Files hash: `559dd4e16356`
 Walked 7 Nov 13:39–13:45 UTC on the dev server, moving, at 1470×801 and 375×812 (videos, frame sheets and a frame-difference motion log kept by the critic; the site loader was skipped).
 Proof: `img/ledger.jpg` (desktop first screen | phone first screen).
 

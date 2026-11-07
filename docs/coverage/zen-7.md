@@ -16,5 +16,5 @@
 - **2.14 SEO and machine files:** Title, description and JSON-LD come unchanged from `app/zen/7/page.jsx`, and all words are in the server HTML.
 - **2.15 Catalogue and product pages:** A model teaser: `data-morph-target` on the h1. There is no spec matrix because Hanzo publishes none for Zen 7 yet.
 - **2.16 Developer experience:** Does not apply: no code, install command or API sample on this page.
-- **2.17 States and resilience:** Gap: with JS off, the title lines keep their inline `translateY(108%)` under the line mask and the lineage stations stay at opacity 0, so the title is not legible without JS. No error boundary around the Sigils.
+- **2.17 States and resilience:** With JS off, a `<noscript>` style in the hero shows the title lines, settles the 7 (solid black, since the field needs JS) and shows the lineage stations and line. I checked this with a Playwright `javaScriptEnabled:false` run at 1470×801 and 375×812; the h1, ledes and asks are visible at opacity 1. Gap: no error boundary around the Sigils.
 - **2.18 Measurement and handover:** Gap: no events wired (no `lib/track.js`, no `data-cta`). Proof is in `docs/gallery/zen/7/` (desktop film and three phone stills); the checks were 200, parity 0 and `variety.py` OK.

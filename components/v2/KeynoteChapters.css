@@ -36,7 +36,7 @@
 
 /* the chapter rail: numbers you can click, a hairline that fills with the scroll */
 .knc-rail { position: absolute; left: 0; bottom: -8px; grid-column: 1 / span 5; display: flex; align-items: center; gap: 4px; z-index: 3; }
-.knc.right .knc-rail { left: auto; right: 0; }
+.knc.right .knc-rail { grid-column: 8 / span 5; }
 .knc-track { position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--line); overflow: hidden; }
 .knc-track i { position: absolute; inset: 0; background: var(--ink); transform-origin: 0 50%; }
 .knc-rail { flex-direction: row; padding-bottom: 10px; }

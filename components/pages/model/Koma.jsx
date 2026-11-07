@@ -140,7 +140,7 @@ export default function Koma() {
       accent="#f29a1f"
       ink="#a85f00"
       shape={SCOPE}
-      aim={(W, H, wide) => (wide ? focus(0.72, 0.5, W * 0.64, H * 0.31)(W, H) : focus(0.72, 0.5, W / 2, H * 0.25, 1.25)(W, H))}
+      aim={(W, H, wide) => (wide ? focus(0.72, 0.5, W * 0.64, H * 0.31, 1.14, [W * 0.06, H * 0.06, W * 0.94, H * 0.56])(W, H) : focus(0.72, 0.5, W / 2, H * 0.25, 1.3, [16, H * 0.08, W - 16, H * 0.42])(W, H))}
       headClass="kf-v2"
       first="chapters"
       flip

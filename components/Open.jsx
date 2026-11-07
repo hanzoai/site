@@ -52,7 +52,6 @@ function Calendar() {
   const hc = hot !== null ? Math.floor((hot + LEAD) / 7) : 0, hr = hot !== null ? (hot + LEAD) % 7 : 0;
   return (
     <div className="x-cal hv-cal">
-      <p className="v2-kicker">Commits a day</p>
       <div className="x-cal-months" aria-hidden="true">{MONTHS.map(([m, c]) => <span key={m + c} style={{ gridColumn: c + 1 }}>{m}</span>)}</div>
       <div
         ref={ref}
@@ -86,6 +85,7 @@ function Calendar() {
           )}
         </AnimatePresence>
       </div>
+      <p className="hv-cal-k">Commits a day</p>
       <div className="x-cal-f">
         <span aria-live="polite">{h ? `${h.label} · ${h.c.toLocaleString('en-US')} commits across ${h.r.toLocaleString('en-US')} repositories` : 'Commits a day, from Nov 7, 2025 to Nov 6, 2026'}</span>
         <span className="x-cal-key">Less <i className="l0" /><i className="l1" /><i className="l2" /><i className="l3" /><i className="l4" /> More</span>
@@ -98,8 +98,8 @@ function Tile({ t, i }) {
   const [label, n, sub, href, spark] = t;
   return (
     <a href={href} className={'hv-stat' + (i === 0 ? ' hero' : '')}>
-      <span className="v2-kicker">{label}</span>
       {i === 0 ? <Count className="v2-figure hv-stat-n" to={n} duration={2.2} /> : <span className="hv-stat-n">{n.toLocaleString('en-US')}</span>}
+      <span className="hv-stat-k">{label}</span>
       <span className="hv-stat-s">{sub}</span>
       {spark !== undefined && <span className="hv-stat-spark" dangerouslySetInnerHTML={{ __html: C.spark[spark] }} />}
     </a>
@@ -137,11 +137,11 @@ function Rail() {
 
 function Way({ w, i }) {
   return (
-    <a href={w[3]} className="hv-way">
-      <span className="v2-kicker">0{i + 1}</span>
+    <a href={w[3]} className="hv-way" data-cta={`home.oss.way${i + 1}`}>
+      <span className="hv-way-n x-mono" aria-hidden="true">0{i + 1}</span>
       <b className="v2-title">{w[0]}</b>
-      <span>{w[1]}</span>
-      <em>{w[2]} →</em>
+      <span className="hv-way-d">{w[1]}</span>
+      <em>{w[2]} <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></em>
     </a>
   );
 }

@@ -33,7 +33,7 @@ Sources:
 4. **Every tap answers.** Hover and press change something other than opacity, with no layout jump. Press is translateY(1px) or a scale of 0.98, and the hover detail tells you something (a number, a preview).
 5. **One solid ask in Hanzo's words.** It sits in the header and in a sticky bar after the hero at every width. Never 3 or more equal buttons.
 6. **Many real visuals at once.** A block of 4 or more real Hanzo images or videos on screen together where the page has them (model media, product UI).
-7. **Colour from the brand, not from boxes.** Hanzo's logo is black and white, so the UI has 0 brand hues: greys, silvers, blacks and whites (his "brand deck"). Colour arrives only through Hanzo's own media and model imagery. This replaces VISION.md's "one accent per page".
+7. **Colour = Hanzo's live palette, nothing else.** (James, 7 Nov: "Hanzo's website is their brand deck… that's all the colours they use.") The values are in `docs/original/brand-deck.html`, read from Hanzo's own `@hanzo/design` tokens: monochrome, true black, white type, colour only as state, never as decoration. Use the deck's neutral ramp only, enforced by `scripts/taste.py`. Eyebrow labels in 11-12px Zen Mono capitals are Hanzo's own system, so they are allowed in ink or grey only. Earlier wording here: Hanzo's logo is black and white, so the UI has 0 brand hues: greys, silvers, blacks and whites (his "brand deck"). Colour arrives only through Hanzo's own media and model imagery. This replaces VISION.md's "one accent per page".
 8. **Variation.** Neighbouring pages differ in hero medium, layout and signature move.
 
 9. **Movement that is not just scroll.** (James, 7 Nov 14:20: "Not everything is a scroll animation.") Every page mixes kinds of motion:
@@ -44,6 +44,17 @@ Sources:
    - **Arrival:** headline cut-in and the page transition.
 
    Scroll-linked effects are **at most half** of a page's motion. A page whose only motion is scroll fails.
+
+10. **Sound feedback, subtle.** (James, 7 Nov: "sound feedback… not an overwhelming amount.") The shared system owns one tiny sound kit, synthesized with Web Audio so it needs no audio files. It is very quiet (about -24 dB) and plays only after the visitor's first interaction. A mute toggle sits in the header and the choice is remembered. Sounds go only on meaningful moments:
+    - a card opening into its page (a soft whoosh);
+    - pressing the primary ask (a soft tap);
+    - tabs, toggles and switches (a tick);
+    - copy-to-clipboard succeeding (a confirm chime);
+    - ⌘K opening (a soft pop);
+    - a self-running demo finishing (a faint chime).
+
+    Never on hover, scroll or page load, and never more than one sound at once.
+11. **Hanzo's black model cards are copied exactly.** The size, grid, type, pills, video and pointer-tilt are in `docs/refs/hanzo-model-cards/SPEC.md`, measured from live hanzo.ai.
 
 ## What he reliably rejects (a page with any of these fails)
 - **Clutter:** walls of text, explaining sentences under every tile, 3 equal boxes in a row, overload.

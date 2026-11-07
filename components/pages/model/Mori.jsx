@@ -157,7 +157,7 @@ export default function Mori() {
       accent="#1f9d55"
       ink="#137a3f"
       shape={HEX}
-      aim={(W, H, wide) => (wide ? null : focus(0.6, 0.6, W / 2, H * 0.25, 1.3)(W, H))}
+      aim={(W, H, wide) => (wide ? null : focus(0.6, 0.6, W / 2, H * 0.25, 1.3, [W * 0.1, H * 0.04, W * 0.9, H * 0.46])(W, H))}
       over={EDGES}
       headClass="mr-v2"
       first="chapters"

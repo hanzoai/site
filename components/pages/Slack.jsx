@@ -1,20 +1,28 @@
 'use client';
 /* Hanzo Tag for Slack.
-   Signature: Session replay: the #bug-button-darkmode thread plays message by message on a six-step rail you can scrub
-   (1. Code trace … 6. Session complete), while the Code, View and Canvas artifacts fill in beside it.
+   V2: 8/10 the code channel as an Apple-style pinned scene: your scroll plays the thread from @Hanzo to merged PR in one dark room, with the setup card, the promises and the details chaptered after it.
+   Persona: an engineering lead whose team lives in Slack. Goal: set up Hanzo Tag. CTA: Set up Hanzo Tag (slack.hero).
+   Signature: scroll plays the thread. A white first screen with the headline hands over to the one dark room, where
+   the Slack window pins and settles to full size; each stretch of scroll plays the next step of #bug-button-darkmode
+   (1. Code trace … 6. Session complete) while the Code, View and Canvas artifacts follow the step. The step rail on
+   top jumps to any step. After it: the setup card connects in three steps and the first exchange plays; the three
+   rooms; the six features open in a sheet; the platform; questions; the close.
    Beyond: Contrast slider: drag between the before (1.9:1) and after (8.9:1) Buy Now button, using only Hanzo's own
-   figures and colours (#e5e7eb/#ec4899 → #1a1a1a/#f472b6).
+   figures and colours (#e5e7eb/#ec4899 → #1a1a1a/#f472b6). Accent: aubergine, Slack's own sidebar.
    Every word, figure and link is Hanzo's (components/pages/slackData.js). */
 import { useEffect, useRef, useState } from 'react';
-import { motion } from 'motion/react';
-import { EASE, Rise } from '../ui';
-import { A, More, SecHead, Faq } from '../kit';
-import { Get, Paste, useLive, useEvery, useFrame } from './cloud/Frame';
+import { motion, useInView, useReducedMotion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
+import { A, Go, More } from '../kit';
+import A2Lines from '../v2/A2Lines';
+import A2Paste from '../v2/A2Paste';
+import A2Faq from '../v2/A2Faq';
+import A2Sheet from '../v2/A2Sheet';
+import useNarrow from '../v2/A2Narrow';
 import { HERO, SETUP, ASK, ANSWER, PEOPLE, MEMBERS, STEPS, SESSION, CANVAS, WINDOW, TABS, DIFF, VIEW, WHAT, BUILT, PLATFORM, CODE, FAQ, CLOSE, Parts, Face, Msg } from './slackData';
+import '../v2/A2.css';
 import './Slack.css';
 
 const P = 'xsq';
-const up = (d) => ({ initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
 
 /* Beyond: the same button in both colourways, split by a handle you drag (it sweeps by itself until you do). */
 function Contrast({ live }) {
@@ -22,7 +30,13 @@ function Contrast({ live }) {
   const knob = useRef(null);
   const [mine, setMine] = useState(false);
   const set = (v) => { box.current?.style.setProperty('--cut', v + '%'); };
-  useFrame(live && !mine, (t) => { const v = 50 + Math.sin(t * 0.8) * 34; set(v); if (knob.current) knob.current.value = String(Math.round(v)); });
+  useEffect(() => {
+    if (!live || mine) return;
+    let raf = 0;
+    const loop = (now) => { const v = 50 + Math.sin(now / 1000 * 0.8) * 34; set(v); if (knob.current) knob.current.value = String(Math.round(v)); raf = requestAnimationFrame(loop); };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, [live, mine]);
   const btn = (c) => <span className={`${P}-buy`} style={c}>{VIEW.button}</span>;
   return (
     <div className={`${P}-view`}>
@@ -31,14 +45,8 @@ function Contrast({ live }) {
         <div className={`${P}-cmp-half old`}>{btn(VIEW.old)}</div>
         <div className={`${P}-cmp-half fix`} aria-hidden="true">{btn(VIEW.fix)}</div>
         <i className={`${P}-cmp-line`} aria-hidden="true" />
-        <input
-          ref={knob}
-          type="range" min="0" max="100" defaultValue="50"
-          className={`${P}-cmp-knob`}
-          aria-label="Before and after the fix"
-          aria-valuetext="Drag left for the fix, right for the original"
-          onInput={(e) => { setMine(true); set(e.currentTarget.value); }}
-        />
+        <input ref={knob} type="range" min="0" max="100" defaultValue="50" className={`${P}-cmp-knob`} aria-label="Before and after the fix" aria-valuetext="Drag left for the fix, right for the original"
+          onInput={(e) => { setMine(true); set(e.currentTarget.value); }} />
       </div>
       <p className={`${P}-view-note`}>{VIEW.note}</p>
     </div>
@@ -75,179 +83,170 @@ function Canvas() {
   );
 }
 
-/* The signature: the code channel, replayed step by step. The rail scrubs; the artifacts follow the step. */
-function Session() {
-  const [ref, live, calm] = useLive(0.25);
-  const [at, setAt] = useState(0);
-  const [mine, setMine] = useState(false);
-  const [tabHand, setTabHand] = useState(null);
-  const [archived, setArchived] = useState(false);
-  const rail = useRef(null);
-  const drag = useRef(false);
+/* The window, drawn at a given step. */
+function Window({ shown, live, tabHand, setTabHand, archived, setArchived }) {
   const list = useRef(null);
-  const shown = calm && !mine ? 5 : at;
-  useEffect(() => {
-    if (!live || mine) return;
-    const t = setTimeout(() => setAt((v) => (v + 1) % 6), at === 5 ? 5600 : 3600); // hold on the merged PR, then replay
-    return () => clearTimeout(t);
-  }, [at, live, mine]);
-  useEffect(() => { // the replay picks up again a while after your last scrub
-    if (!mine || calm) return;
-    const t = setTimeout(() => setMine(false), 9000);
-    return () => clearTimeout(t);
-  }, [mine, at, calm]);
-  // the thread scrolls inside itself, so a new message never pushes the page (no layout shift)
+  const calm = useReducedMotion();
   useEffect(() => { const el = list.current; if (el) el.scrollTo({ top: el.scrollHeight, behavior: calm ? 'auto' : 'smooth' }); }, [shown, calm]);
-  const choose = (i) => { setAt(i); setMine(true); setTabHand(null); setArchived(false); };
-  const fromX = (x) => { const r = rail.current.getBoundingClientRect(); choose(Math.max(0, Math.min(5, Math.floor(((x - r.left) / r.width) * 6)))); };
-  const key = (e) => {
-    const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
-    if (k) { e.preventDefault(); const n = Math.max(0, Math.min(5, shown + k)); choose(n); rail.current.querySelectorAll('[role=tab]')[n]?.focus(); }
-  };
   const tab = tabHand ?? SESSION[shown].tab;
   const done = shown === 5;
   return (
-    <div className={`${P}-sess` + (archived ? ' archived' : '')} ref={ref}>
-      <div
-        className={`${P}-rail`} role="tablist" aria-label="Session steps" ref={rail} data-swipe-own data-cursor="Scrub"
-        onKeyDown={key}
-        onPointerDown={(e) => { if (e.pointerType === 'mouse') { drag.current = true; fromX(e.clientX); } }}
-        onPointerMove={(e) => { if (drag.current) fromX(e.clientX); }}
-        onPointerUp={() => { drag.current = false; }} onPointerLeave={() => { drag.current = false; }}
-      >
-        {STEPS.map((s, i) => (
-          <button key={s} type="button" role="tab" aria-selected={shown === i} tabIndex={shown === i ? 0 : -1} className={i < shown ? 'past' : ''} onClick={() => choose(i)}>
-            <span>{s}</span>
-            <i className={`${P}-rail-bar`}>{shown === i && <b key={at + (mine ? 'm' : '')} className={mine || calm ? 'full' : ''} style={{ animationDuration: (at === 5 ? 5.6 : 3.6) + 's' }} />}</i>
-          </button>
-        ))}
+    <div className={`${P}-win` + (archived ? ' archived' : '')}>
+      <div className={`${P}-win-bar`}>
+        <i /><i /><i />
+        <span className={`${P}-win-t`}>{WINDOW.title}</span>
+        <span className={`${P}-win-st` + (done ? ' ok' : '')}><i aria-hidden="true" /><span className={`${P}-swap`}><span aria-hidden={done}>{WINDOW.working}</span><span aria-hidden={!done}>{WINDOW.ready}</span></span></span>
       </div>
-      <div className={`${P}-win`}>
-        <div className={`${P}-win-bar`}>
-          <i /><i /><i />
-          <span className={`${P}-win-t`}>{WINDOW.title}</span>
-          <span className={`${P}-win-st` + (done ? ' ok' : '')}><i aria-hidden="true" /><span className={`${P}-swap`}><span aria-hidden={done}>{WINDOW.working}</span><span aria-hidden={!done}>{WINDOW.ready}</span></span></span>
-        </div>
-        <div className={`${P}-win-body`}>
-          <nav className={`${P}-side`} aria-label="Workspace">
-            <p className={`${P}-team`}><b>{WINDOW.team}</b><span>{WINDOW.host}</span></p>
-            <ul className={`${P}-nav`}>{WINDOW.nav.map((n) => <li key={n}>{n}</li>)}</ul>
-            {WINDOW.groups.map(([g, chans]) => (
-              <div key={g} className={`${P}-grp`}>
-                <p>{g}</p>
-                <ul>
-                  {chans.map((c) => (
-                    <li key={c} className={c === 'bug-button-darkmode' ? 'on' : ''}>
-                      <span># {c}</span>
-                      {c === 'bug-button-darkmode' && <em className={`${P}-swap` + (done ? ' ok' : '')}><span aria-hidden={done}>{WINDOW.badge}</span><span aria-hidden={!done}>{WINDOW.prReady}</span></em>}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </nav>
-          <div className={`${P}-thread`}>
-            <div className={`${P}-th-h`}>
-              <p><b># bug-button-darkmode</b><span>{WINDOW.repo}</span><span className={`${P}-branch`}>{WINDOW.branch}</span></p>
-              <div className={`${P}-who`}>
-                {MEMBERS.map((w) => (
-                  <button key={w} type="button" className={`${P}-who-i`} aria-label={`${PEOPLE[w].name}, ${PEOPLE[w].role}`}>
-                    <Face who={w} p={P} size={26} />
-                    <span className={`${P}-tip`}><b>{PEOPLE[w].name}</b>{PEOPLE[w].role}</span>
-                  </button>
+      <div className={`${P}-win-body`}>
+        <nav className={`${P}-side`} aria-label="Workspace">
+          <p className={`${P}-team`}><b>{WINDOW.team}</b><span>{WINDOW.host}</span></p>
+          <ul className={`${P}-nav`}>{WINDOW.nav.map((n) => <li key={n}>{n}</li>)}</ul>
+          {WINDOW.groups.map(([g, chans]) => (
+            <div key={g} className={`${P}-grp`}>
+              <p>{g}</p>
+              <ul>
+                {chans.map((c) => (
+                  <li key={c} className={c === 'bug-button-darkmode' ? 'on' : ''}>
+                    <span># {c}</span>
+                    {c === 'bug-button-darkmode' && <em className={`${P}-swap` + (done ? ' ok' : '')}><span aria-hidden={done}>{WINDOW.badge}</span><span aria-hidden={!done}>{WINDOW.prReady}</span></em>}
+                  </li>
                 ))}
-              </div>
-              <span className={`${P}-arts`}>{WINDOW.artifacts}</span>
+              </ul>
             </div>
-            <div className={`${P}-msgs`} aria-live="polite" ref={list}>
-              {SESSION.map((s, i) => (
-                <div key={i} className={`${P}-step`} hidden={i > shown}>
-                  {s.msgs.map((m, k) => (
-                    <div key={k}>
-                      {m.canvas
-                        ? <Msg m={{ ...m, canvas: false }} p={P} />
-                        : <Msg m={m} p={P} />}
-                      {m.canvas && (
-                        <button type="button" className={`${P}-canvas-card`} onClick={() => setTabHand(2)} aria-label={`${CANVAS.title}: open in Canvas`}>
-                          <span className={`${P}-canvas-ico`} aria-hidden="true" />
-                          <span><b>{CANVAS.title}</b><span>{CANVAS.meta}</span></span>
-                          <span className={`${P}-canvas-open`}>{CANVAS.open}</span>
-                        </button>
-                      )}
-                      {m.done && (
-                        <button type="button" className={`${P}-archive`} aria-pressed={archived} onClick={() => setArchived((v) => !v)}>{WINDOW.archive}</button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              ))}
-              {!done && <p className={`${P}-busy in`} aria-hidden="true"><i /><i /><i /></p>}
-            </div>
-          </div>
-          <div className={`${P}-art`}>
-            <p className={`${P}-art-k`}>Artifacts</p>
-            <div className={`${P}-tabs`} role="tablist" aria-label="Artifacts">
-              {TABS.map((t, i) => (
-                <button key={t} type="button" role="tab" aria-selected={tab === i} onClick={() => setTabHand(i)}>
-                  {tab === i && <motion.span layoutId="xsq-tab" className={`${P}-tab-bg`} transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
-                  <span>{t}</span>
+          ))}
+        </nav>
+        <div className={`${P}-thread`}>
+          <div className={`${P}-th-h`}>
+            <p><b># bug-button-darkmode</b><span>{WINDOW.repo}</span><span className={`${P}-branch`}>{WINDOW.branch}</span></p>
+            <div className={`${P}-who`}>
+              {MEMBERS.map((w) => (
+                <button key={w} type="button" className={`${P}-who-i`} aria-label={`${PEOPLE[w].name}, ${PEOPLE[w].role}`}>
+                  <Face who={w} p={P} size={26} />
+                  <span className={`${P}-tip`}><b>{PEOPLE[w].name}</b>{PEOPLE[w].role}</span>
                 </button>
               ))}
             </div>
-            <div className={`${P}-pane`} hidden={tab !== 0}><Diff /></div>
-            <div className={`${P}-pane`} hidden={tab !== 1}><Contrast live={live && tab === 1} /></div>
-            <div className={`${P}-pane`} hidden={tab !== 2}><Canvas /></div>
+            <span className={`${P}-arts`}>{WINDOW.artifacts}</span>
           </div>
+          <div className={`${P}-msgs`} aria-live="polite" ref={list}>
+            {SESSION.map((s, i) => (
+              <div key={i} className={`${P}-step`} hidden={i > shown}>
+                {s.msgs.map((m, k) => (
+                  <div key={k}>
+                    <Msg m={m.canvas ? { ...m, canvas: false } : m} p={P} />
+                    {m.canvas && (
+                      <button type="button" className={`${P}-canvas-card`} onClick={() => setTabHand(2)} aria-label={`${CANVAS.title}: open in Canvas`}>
+                        <span className={`${P}-canvas-ico`} aria-hidden="true" />
+                        <span><b>{CANVAS.title}</b><span>{CANVAS.meta}</span></span>
+                        <span className={`${P}-canvas-open`}>{CANVAS.open}</span>
+                      </button>
+                    )}
+                    {m.done && <button type="button" className={`${P}-archive`} aria-pressed={archived} onClick={() => setArchived((v) => !v)}>{WINDOW.archive}</button>}
+                  </div>
+                ))}
+              </div>
+            ))}
+            {!done && <p className={`${P}-busy in`} aria-hidden="true"><i /><i /><i /></p>}
+          </div>
+        </div>
+        <div className={`${P}-art`}>
+          <p className={`${P}-art-k`}>Artifacts</p>
+          <div className={`${P}-tabs`} role="tablist" aria-label="Artifacts">
+            {TABS.map((t, i) => (
+              <button key={t} type="button" role="tab" aria-selected={tab === i} onClick={() => setTabHand(i)}>
+                {tab === i && <motion.span layoutId="xsq-tab" className={`${P}-tab-bg`} transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
+                <span>{t}</span>
+              </button>
+            ))}
+          </div>
+          <div className={`${P}-pane`} hidden={tab !== 0}><Diff /></div>
+          <div className={`${P}-pane`} hidden={tab !== 1}><Contrast live={live && tab === 1} /></div>
+          <div className={`${P}-pane`} hidden={tab !== 2}><Canvas /></div>
         </div>
       </div>
     </div>
   );
 }
 
-function Hero() {
-  const line = (t, d) => (
-    <span className="x-line" key={t}><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: d }}>{t}</motion.span></span>
-  );
+/* The signature: the one dark room pins the window; scroll plays the steps. Phones tap the rail instead. */
+function Scene() {
+  const ref = useRef(null);
+  const narrow = useNarrow();
+  const calm = useReducedMotion();
+  const live = useInView(ref, { amount: 0.2 });
+  const [at, setAt] = useState(0);
+  const [tabHand, setTabHand] = useState(null);
+  const [archived, setArchived] = useState(false);
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
+  const scale = useTransform(p, (v) => (narrow || calm ? 1 : 0.9 + Math.min(1, v / 0.08) * 0.1));
+  useMotionValueEvent(p, 'change', (v) => {
+    if (narrow) return;
+    const k = Math.min(5, Math.max(0, Math.floor(((v - 0.06) / 0.94) * 6)));
+    setAt((o) => { if (o !== k) { setTabHand(null); setArchived(false); } return k; });
+  });
+  const go = (i) => {
+    if (narrow) { setAt(i); setTabHand(null); return; }
+    const el = ref.current;
+    const y = el.getBoundingClientRect().top + scrollY + (el.offsetHeight - innerHeight) * (0.06 + ((i + 0.5) / 6) * 0.94);
+    window.__lenis ? window.__lenis.scrollTo(y, { duration: 1.1 }) : scrollTo({ top: y, behavior: 'smooth' });
+  };
+  const key = (e) => {
+    const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+    if (k) { e.preventDefault(); go(Math.max(0, Math.min(5, at + k))); }
+  };
   return (
-    <section className={`${P}-hero`} data-room="dark" aria-labelledby="xsq-h1">
-      <div className="x-wrap">
-        <div className={`${P}-top`}>
-          <div>
-            <motion.p className={`${P}-kick`} {...up(0)}><i aria-hidden="true" />{HERO.kick}</motion.p>
-            <h1 id="xsq-h1" className={`${P}-h1`}>{HERO.title.map((t, i) => line(t, 0.05 + i * 0.1))}</h1>
+    <section className={`a2-dark ${P}-scene`} data-room="dark" ref={ref} aria-label="A code channel, step by step">
+      <div className={`${P}-stick`}>
+        <div className="a2-wrap">
+          <div className={`${P}-rail`} role="tablist" aria-label="Session steps" onKeyDown={key}>
+            {STEPS.map((s, i) => (
+              <button key={s} type="button" role="tab" aria-selected={at === i} tabIndex={at === i ? 0 : -1} className={i < at ? 'past' : ''} onClick={() => go(i)}>
+                <span>{s}</span><i className={`${P}-rail-bar`}><b /></i>
+              </button>
+            ))}
           </div>
-          <div className={`${P}-top-r`}>
-            <motion.p className={`${P}-lede`} {...up(0.35)}>{HERO.lede}</motion.p>
-            <motion.div className={`${P}-acts`} {...up(0.48)}>
-              <A to={HERO.acts[0][1]} className="x-btn solid" data-thumb>{HERO.acts[0][0]}</A>
-              <A to={HERO.acts[1][1]} className="x-btn">{HERO.acts[1][0]}</A>
-              <More to={HERO.acts[2][1]}>{HERO.acts[2][0]}</More>
-            </motion.div>
-          </div>
+          <motion.div className={`${P}-obj`} style={{ scale }}>
+            <Window shown={at} live={live} tabHand={tabHand} setTabHand={setTabHand} archived={archived} setArchived={setArchived} />
+          </motion.div>
         </div>
-        <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.3 }}>
-          <Session />
-        </motion.div>
       </div>
     </section>
   );
 }
 
-/* The four promises, read beside the channel's own head. The line you are reading is lit. */
-function Notes() {
-  const [ref, live] = useLive(0.1);
-  const [at, setAt] = useState(0);
-  useEvery(2600, live, () => setAt((v) => (v + 1) % HERO.points.length));
+function Hero() {
   return (
-    <section className={`x-sec ${P}-notes`} ref={ref}>
-      <div className={`x-wrap ${P}-split`}>
-        <SecHead kicker={CODE.kick} title={CODE.title} lede={CODE.lede} />
-        <div>
-          <ol className={`${P}-points`}>
-            {HERO.points.map((t, i) => (
-              <li key={t} className={at === i ? 'on' : ''}><span className="x-mono">{String(i + 1).padStart(2, '0')}</span><p>{t}</p><b className={`${P}-timer`} aria-hidden="true" /></li>
-            ))}
-          </ol>
+    <section className={`${P}-hero`} aria-labelledby="xsq-h1">
+      <div className="a2-wrap a2-grid">
+        <div className={`${P}-hero-l`}>
+          <p className="a2-kick"><i className={`${P}-dot`} aria-hidden="true" />{HERO.kick}</p>
+          <A2Lines as="h1" id="xsq-h1" className={`a2-display s ${P}-h1`} lines={HERO.title} now />
+        </div>
+        <div className={`${P}-hero-r`}>
+          <p className="a2-lede">{HERO.lede}</p>
+          <div className="a2-acts">
+            <A to={HERO.acts[0][1]} className="x-btn solid" data-thumb={HERO.acts[0][0]} data-cta="slack.hero">{HERO.acts[0][0]}</A>
+            <A to={HERO.acts[1][1]} className="x-btn">{HERO.acts[1][0]}</A>
+          </div>
+          <p className={`${P}-docs`}><More to={HERO.acts[2][1]}>{HERO.acts[2][0]}</More></p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* The four promises beside the code-channel headline; the safety line under them. */
+function Notes() {
+  return (
+    <section className={`a2-sec ${P}-notes`} aria-labelledby="xsq-notes-h">
+      <div className="a2-wrap a2-grid">
+        <div className={`${P}-notes-h`}>
+          <p className="a2-kick"><b>{CODE.kick}</b></p>
+          <A2Lines id="xsq-notes-h" className="a2-headline" lines={[CODE.title]} />
+          <p className="a2-body">{CODE.lede}</p>
+        </div>
+        <div className={`${P}-notes-l`}>
+          <ol className={`${P}-points`}>{HERO.points.map((t, i) => <li key={t}><span className="x-mono">{String(i + 1).padStart(2, '0')}</span><p>{t}</p></li>)}</ol>
           <p className={`${P}-safe`}><i aria-hidden="true">✓</i><span>{HERO.safe}</span></p>
         </div>
       </div>
@@ -257,20 +256,28 @@ function Notes() {
 
 /* The setup card: three steps connect in turn, then the first exchange plays in the channel. */
 function Setup() {
-  const [ref, live, calm] = useLive(0.2);
-  const [k, setK] = useState(0); // 0-2 steps connecting, 3 asked, 4 Hanzo busy, 5 answered
-  useEvery(1300, live, () => setK((v) => (v >= 9 ? 0 : v + 1)));
+  const ref = useRef(null);
+  const live = useInView(ref, { amount: 0.2 });
+  const calm = useReducedMotion();
+  const [k, setK] = useState(0);
+  useEffect(() => {
+    if (!live || calm) return;
+    const t = setInterval(() => setK((v) => (v >= 9 ? 0 : v + 1)), 1300);
+    return () => clearInterval(t);
+  }, [live, calm]);
   const s = calm ? 9 : k;
   return (
-    <section className={`x-sec ${P}-setup`} ref={ref}>
-      <div className={`x-wrap ${P}-setup-grid`}>
-        <Rise className={`${P}-card`}>
+    <section className={`a2-sec ${P}-setup`} ref={ref} aria-labelledby="xsq-setup-h">
+      <div className="a2-wrap a2-grid">
+        <div className={`${P}-setup-copy`}>
+          <A2Lines id="xsq-setup-h" className="a2-display s" lines={['Connect @Hanzo', 'in three steps']} />
+          <p className="a2-lede">{CLOSE.lede}</p>
+        </div>
+        <div className={`${P}-card`}>
           <p className={`${P}-card-t`}><span>{SETUP.title}</span><b className={s >= 3 ? 'on' : ''}><i aria-hidden="true" />{SETUP.verified}</b></p>
           <div className={`${P}-card-h`}><Face who="hanzo" p={P} size={34} /><span><b>{SETUP.name}</b><span>{SETUP.sub}</span></span></div>
           <ol className={`${P}-card-steps`}>
-            {SETUP.steps.map(([t, d], i) => (
-              <li key={t} className={s > i ? 'on' : ''}><i aria-hidden="true">{s > i ? '✓' : i + 1}</i><span><b>{t}</b><span>{d}</span></span></li>
-            ))}
+            {SETUP.steps.map(([t, d], i) => <li key={t} className={s > i ? 'on' : ''}><i aria-hidden="true">{s > i ? '✓' : i + 1}</i><span><b>{t}</b><span>{d}</span></span></li>)}
           </ol>
           <p className={`${P}-card-m`}><span>{SETUP.model}</span><span>{SETUP.retention}</span></p>
           <div className={`${P}-mini`}>
@@ -282,75 +289,55 @@ function Setup() {
               <p className={`${P}-chips`}>{SETUP.chips.map((c) => <span key={c}>{c}</span>)}</p>
             </div>
           </div>
-        </Rise>
-        <Paste name="Slack" prompt="Read https://hanzo.ai/skill.md and use Hanzo Slack in my project." className={`${P}-paste`} />
-      </div>
-    </section>
-  );
-}
-
-function What() {
-  const [ref, live] = useLive(0.3);
-  const [at, setAt] = useState(0);
-  useEvery(3000, live, () => setAt((v) => (v + 1) % 3));
-  return (
-    <section className={`x-sec ${P}-what`} ref={ref}>
-      <div className="x-wrap">
-        <SecHead kicker={WHAT.kick} title={WHAT.title} lede={WHAT.lede} />
-        <ol className={`${P}-what-l`}>
-          {WHAT.items.map(([n, t, d], i) => (
-            <li key={n} className={at === i ? 'on' : ''} onPointerEnter={() => setAt(i)}>
-              <span className={`${P}-what-n x-mono`}>{n}</span>
-              <h3>{t}</h3>
-              <p>{d}</p>
-              <i className={`${P}-what-bar`} aria-hidden="true" />
-            </li>
-          ))}
-        </ol>
-      </div>
-    </section>
-  );
-}
-
-/* Six features, run like a scheduled routine: each row takes its turn, a timestamp-free tick beside it. */
-function Built() {
-  const [ref, live] = useLive(0.05);
-  const [at, setAt] = useState(0);
-  useEvery(2200, live, () => setAt((v) => (v + 1) % BUILT.items.length));
-  return (
-    <section className={`x-sec ${P}-built`} ref={ref}>
-      <div className={`x-wrap ${P}-split`}>
-        <div className={`${P}-sticky`}>
-          <SecHead kicker={BUILT.kick} title={BUILT.title} />
-          <More to={BUILT.console[1]}>{BUILT.console[0]}</More>
         </div>
-        <ul className={`${P}-runs`}>
-          {BUILT.items.map(([t, d], i) => (
-            <li key={t} className={at === i ? 'on' : i < at ? 'ran' : ''}>
-              <i className={`${P}-run-dot`} aria-hidden="true" />
-              <span><b>{t}</b><span>{d}</span></span>
-            </li>
-          ))}
-        </ul>
       </div>
     </section>
   );
 }
 
-/* One runtime, four places: a pulse runs the line through each of them. */
+/* What it is: three rooms, and the six features one tap away. */
+function What() {
+  return (
+    <section className={`a2-sec ${P}-what`} aria-labelledby="xsq-what-h">
+      <div className="a2-wrap">
+        <div className={`a2-grid ${P}-what-head`}>
+          <p className="a2-kick">{WHAT.kick}</p>
+          <A2Lines id="xsq-what-h" className="a2-display s" lines={[WHAT.title]} />
+          <p className="a2-lede">{WHAT.lede}</p>
+        </div>
+        <ol className={`${P}-rooms`}>
+          {WHAT.items.map(([n, t, d]) => <li key={n}><span className="a2-fig">{n}</span><h3 className="a2-title">{t}</h3><p>{d}</p></li>)}
+        </ol>
+        <div className={`${P}-built`}>
+          <div>
+            <p className="a2-kick">{BUILT.kick}</p>
+            <h2 className="a2-headline">{BUILT.title}</h2>
+          </div>
+          <ul className={`${P}-built-l`}>{BUILT.items.map(([t]) => <li key={t}>{t}</li>)}</ul>
+          <div className={`${P}-built-acts`}>
+            <A2Sheet label="How each one works" title={BUILT.title}>
+              <ul className={`${P}-runs`}>{BUILT.items.map(([t, d]) => <li key={t}><b>{t}</b><span>{d}</span></li>)}</ul>
+              <p className={`${P}-runs-more`}><More to={BUILT.console[1]}>{BUILT.console[0]}</More></p>
+            </A2Sheet>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* One runtime, four places. */
 function Platform() {
   return (
-    <section className={`x-sec ${P}-plat`}>
-      <div className="x-wrap">
-        <SecHead kicker={PLATFORM.kick} title={PLATFORM.title} />
-        <div className={`${P}-line`}>
-          <i className={`${P}-line-w`} aria-hidden="true"><b /></i>
-          <ol>
-            {PLATFORM.items.map(([t, d], i) => (
-              <li key={t} style={{ '--i': i }}><i className={`${P}-stop`} aria-hidden="true" /><h3>{t}</h3><p>{d}</p></li>
-            ))}
-          </ol>
+    <section className={`a2-sec ${P}-plat`} aria-labelledby="xsq-plat-h">
+      <div className="a2-wrap">
+        <div className={`${P}-plat-head`}>
+          <p className="a2-kick">{PLATFORM.kick}</p>
+          <h2 id="xsq-plat-h" className="a2-headline">{PLATFORM.title}</h2>
         </div>
+        <ol className={`${P}-plat-l`}>
+          {PLATFORM.items.map(([t, d], i) => <li key={t} className={i === 0 ? 'on' : ''}><h3>{t}</h3><p>{d}</p></li>)}
+        </ol>
         <div className={`${P}-runtime`}>
           <p>{PLATFORM.runtime}</p>
           <ul>{PLATFORM.links.map(([t, to]) => <li key={t}><A to={to} className={`${P}-rt`}>{t}</A></li>)}</ul>
@@ -363,13 +350,10 @@ function Platform() {
 
 function Questions() {
   return (
-    <section className={`x-sec ${P}-faq`}>
-      <i className={`${P}-wire`} aria-hidden="true"><b /></i>
-      <div className={`x-wrap ${P}-split`}>
-        <div className={`${P}-sticky`}>
-          <SecHead title="Questions" />
-        </div>
-        <Faq items={FAQ} />
+    <section className={`a2-sec ${P}-faq`} aria-labelledby="xsq-faq-h">
+      <div className="a2-wrap a2-grid">
+        <div className={`${P}-faq-h`}><h2 id="xsq-faq-h" className="a2-display s">Questions</h2></div>
+        <div className={`${P}-faq-l`}><A2Faq items={FAQ} /></div>
       </div>
     </section>
   );
@@ -377,18 +361,21 @@ function Questions() {
 
 function Close() {
   return (
-    <section className={`x-sec ${P}-close`}>
-      <i className={`${P}-wire`} aria-hidden="true"><b /></i>
-      <div className="x-wrap">
-        <Rise>
-          <p className="x-kick">{CLOSE.title}</p>
-          <h2 className={`${P}-close-h`}>{CLOSE.lede}</h2>
-          <p className={`${P}-close-n`}>{CLOSE.note}</p>
-        </Rise>
-        <div className={`${P}-acts`}>
-          <A to={CLOSE.acts[0][1]} className="x-btn solid">{CLOSE.acts[0][0]}</A>
-          <A to={CLOSE.acts[1][1]} className="x-btn">{CLOSE.acts[1][0]}</A>
-          <A to={CLOSE.acts[2][1]} className="x-btn">{CLOSE.acts[2][0]}</A>
+    <section className={`a2-sec ${P}-close`} aria-labelledby="xsq-close-h">
+      <div className="a2-wrap a2-grid">
+        <div className={`${P}-close-copy`}>
+          <p className="a2-kick">{CLOSE.title}</p>
+          <h2 id="xsq-close-h" className="a2-display s">{CLOSE.lede}</h2>
+          <p className="a2-lede">{CLOSE.note}</p>
+          <div className="a2-acts">
+            <A to={CLOSE.acts[0][1]} className="x-btn solid" data-cta="slack.close">{CLOSE.acts[0][0]}</A>
+            <A to={CLOSE.acts[1][1]} className="x-btn">{CLOSE.acts[1][0]}</A>
+            <A to={CLOSE.acts[2][1]} className="x-btn">{CLOSE.acts[2][0]}</A>
+          </div>
+        </div>
+        <div className={`${P}-get`}>
+          <h2>Get Hanzo Tag</h2>
+          <Go to="https://platform.hanzo.ai/deploy">Deploy to Cloud</Go>
         </div>
       </div>
     </section>
@@ -397,16 +384,16 @@ function Close() {
 
 export default function Slack() {
   return (
-    <main className={P}>
+    <main className={`a2 ${P}`}>
       <Hero />
+      <Scene />
       <Notes />
       <Setup />
+      <A2Paste name="Slack" text="Read https://hanzo.ai/skill.md and use Hanzo Slack in my project." />
       <What />
-      <Built />
       <Platform />
       <Questions />
       <Close />
-      <Get name="Hanzo Tag" license={null} repo={null} />
     </main>
   );
 }

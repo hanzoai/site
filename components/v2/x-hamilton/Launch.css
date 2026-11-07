@@ -150,6 +150,8 @@ a.l2-chip:hover { border-color: var(--ink); }
 .l2-get-acts { grid-column: 9 / span 4; justify-self: end; display: flex; flex-wrap: wrap; gap: 12px; justify-content: flex-end; }
 .l2-get-acts .x-btn.solid { height: 56px; padding: 0 30px; font-size: 17px; }
 .l2-rel { margin-top: 64px; }
+.l2-rel:first-child { margin-top: 0; }
+.l2-rel:first-child + .l2-get { margin-top: clamp(72px, 9vw, 120px); }
 .l2-rel ul { list-style: none; margin: 16px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .l2-rel a { display: flex; flex-direction: column; gap: 6px; padding: 22px 24px; border-radius: 16px; background: var(--card); color: var(--ink); text-decoration: none; transition: background .25s; }
 .l2-rel a:hover { background: #ececf0; }

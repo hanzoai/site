@@ -131,7 +131,7 @@ export default function Koe() {
       accent="#7b4dff"
       ink="#5b32d6"
       shape={CAPSULE}
-      aim={(W, H, wide) => (wide ? focus(0.66, 0.45, W * 0.26, H * 0.5, 1.25) : focus(0.68, 0.45, W / 2, H * 0.22, 1.5))(W, H)}
+      aim={(W, H, wide) => (wide ? focus(0.66, 0.45, W * 0.26, H * 0.5, 1.25) : focus(0.68, 0.45, W / 2, H * 0.22, 1.35, [20, H * 0.07, W - 20, H * 0.37]))(W, H)}
       headClass="ko-v2"
       first="chapters"
       demo={

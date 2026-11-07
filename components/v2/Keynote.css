@@ -1,8 +1,9 @@
 /* Keynote: the v2 type, space and colour tokens for Apple-grade launch pages (docs/VISION.md, "The v2 system").
    Owned by the Cloud 1 chat. Imported by every components/v2/Keynote*.jsx, so a page that uses one piece has them all.
    How to use: put className="kn" on the page's <main> and set its one accent there: style={{ '--ac': '#ff453a' }}.
-   Then use the classes below instead of inventing sizes: at most three sizes per screen. */
-.kn { --ac: #0a84ff; --ac-ink: #fff; --kn-r: 28px; --kn-rc: 16px; --kn-g: 24px; --kn-shadow: 0 1px 0 rgba(0, 0, 0, .04), 0 40px 80px -40px rgba(0, 0, 0, .22); background: #fff; color: var(--ink); overflow-x: clip; }
+   Then use the classes below instead of inventing sizes: at most three sizes per screen.
+   A light accent (yellow, lime) that is too faint for text: also set '--ac-text' to a deeper shade for accent words. */
+.kn { --ac: #0a84ff; --ac-text: var(--ac); --ac-ink: #fff; --kn-r: 28px; --kn-rc: 16px; --kn-g: 24px; --kn-shadow: 0 1px 0 rgba(0, 0, 0, .04), 0 40px 80px -40px rgba(0, 0, 0, .22); background: #fff; color: var(--ink); overflow-x: clip; }
 .kn-wrap { width: min(100% - 48px, 1440px); margin-inline: auto; }
 .kn-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--kn-g); }
 .kn-sec { padding: clamp(120px, 15vw, 240px) 0; position: relative; }
@@ -16,9 +17,9 @@
 .kn-body { margin: 0; font-size: clamp(17px, 1.32vw, 19px); line-height: 1.58; color: var(--soft); max-width: 64ch; text-wrap: pretty; }
 .kn-body b, .kn-lede b { color: var(--ink); font-weight: 600; }
 .kn-kick { margin: 0; font: 500 13px/1.2 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
-.kn-kick.ac { color: var(--ac); }
+.kn-kick.ac { color: var(--ac-text); }
 .kn-fig { font-feature-settings: 'tnum'; font-variant-numeric: tabular-nums; letter-spacing: -.04em; }
-.kn-ac { color: var(--ac); }
+.kn-ac { color: var(--ac-text); }
 .kn-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
 .kn-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 24px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--ink); font: 500 16px/1 var(--sans); text-decoration: none; white-space: nowrap; cursor: pointer; transition: border-color .2s, background .2s; }
 .kn-btn:hover { border-color: rgba(0, 0, 0, .2); }

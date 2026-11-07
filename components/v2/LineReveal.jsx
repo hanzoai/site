@@ -3,6 +3,8 @@
    Each line of a headline rises out of its own mask, once, 90 ms apart. The words are in the HTML from the server;
    reduced motion shows them in place (MotionConfig reducedMotion="user").
    Usage: <LineReveal as="h1" className="xp-display" lines={['Refer customers', 'to Hanzo']} />
+   Also exports <NoJs />: put it once in a Programs page's <main>; with JavaScript off it shows every final state
+   (no transform or opacity left from an entrance) and lays sticky chapters out as their plain story.
    - onView: play when it scrolls into view (default: on arrival, for a hero);
    - delay: seconds before the first line. Needs components/v2/ProgramScale.css for the .xp-l masks. */
 import { useRef } from 'react';
@@ -24,4 +26,10 @@ export default function LineReveal({ lines, as = 'h2', className = '', id, delay
       ))}
     </Tag>
   );
+}
+
+/* With JavaScript off nothing animates, so every element shows its final state. */
+const NOJS = '<style>.xp [style]{transform:none!important;opacity:1!important;clip-path:none!important}.xpc{height:auto!important}.xpc-pin{display:none!important}.xpc-story{display:grid!important}</style>';
+export function NoJs() {
+  return <noscript dangerouslySetInnerHTML={{ __html: NOJS }} />;
 }

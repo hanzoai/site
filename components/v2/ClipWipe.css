@@ -3,4 +3,8 @@
    makes a stacking context, so fixed sheets inside still rise above the header */
 .lx-wipe-bg { position: absolute; inset: 0; background: var(--wipe, #0a0a0a); }
 .lx-wipe:not(.lx-dark) .lx-wipe-bg { background: var(--wipe, var(--card)); }
-.lx-wipe-in { position: relative; }
+.lx-wipe-in { position: relative; transition: opacity .5s .25s; }
+.lx-wipe[data-wipe='armed'] .lx-wipe-bg { clip-path: inset(5% 14px 0 round 44px); }
+.lx-wipe[data-wipe='armed'] .lx-wipe-in { opacity: 0; }
+.lx-wipe[data-wipe='play'] .lx-wipe-bg { animation: lx-wipe .9s cubic-bezier(.76, 0, .24, 1) both; }
+@keyframes lx-wipe { from { clip-path: inset(5% 14px 0 round 44px); } to { clip-path: inset(0 0 0 round 0); } }
