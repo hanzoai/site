@@ -150,14 +150,15 @@ function Way({ at }) {
             </div>
           )}
           {at === 1 && (
-            <svg className="se2-w1" viewBox="0 0 100 100" preserveAspectRatio="none">
-              {DOTS.map(([x, y], i) => <circle key={i} cx={x} cy={y} r="0.9" />)}
-              {NEAR.map(([x, y], i) => <line key={i} x1="58" y1="46" x2={x} y2={y} style={{ animationDelay: 0.2 + i * 0.12 + 's' }} />)}
-              {NEAR.map(([x, y], i) => <circle key={'n' + i} className="near" cx={x} cy={y} r="1.6" />)}
-              <circle className="q" cx="58" cy="46" r="2.4" />
-            </svg>
+            <div className="se2-w1">
+              <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">{NEAR.map(([x, y], i) => <line key={i} x1="58" y1="46" x2={x} y2={y} style={{ animationDelay: 0.2 + i * 0.12 + 's' }} />)}</svg>
+              {DOTS.map(([x, y], i) => <i key={i} style={{ left: x + '%', top: y + '%' }} />)}
+              {NEAR.map(([x, y], i) => <i key={'n' + i} className="near" style={{ left: x + '%', top: y + '%' }} />)}
+              <i className="q" style={{ left: '58%', top: '46%' }} />
+            </div>
           )}
           {at === 1 && <ul className="se2-w1-l">{NEAR.map(([x, y, t]) => <li key={t} className={x >= 60 ? 'r' : ''} style={{ left: x + '%', top: y + '%' }}>{t}</li>)}<li className="q" style={{ left: '58%', top: '46%' }}>{Q}</li></ul>}
+          {at === 1 && <ol className="se2-w1-list">{NEAR.map(([, , t], i) => <li key={t}><span className="l2-mono">{i + 1}</span>{t}</li>)}</ol>}
           {at === 2 && (
             <div className={'se2-w2' + (fused ? ' fused' : '')}>
               {!fused && <ol className="a">{TEXT.map((r) => <motion.li key={r} layoutId={'f-' + r}>{r}</motion.li>)}</ol>}
@@ -234,16 +235,28 @@ function How() {
 
 const FW = ['Hanzo Docs', 'Fumadocs', 'Nextra', 'Docusaurus', 'REST API'];
 
+/* Frameworks: pick one and the bar shows where its docs come from (native, or the REST API for everything else). */
 function Frameworks() {
+  const [at, setAt] = useState(0);
   return (
     <section className="l2-sec tight se2-fw">
       <div className="l2-wrap l2-grid">
         <div className="se2-fw-h">
           <h2 className="l2-head">Works with any docs framework</h2>
           <p className="l2-body">Native support for Hanzo Docs, Fumadocs, Nextra, and Docusaurus. REST API for everything else.</p>
+          <div className="se2-fw-bar" aria-live="polite">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" strokeWidth="2" /><path d="M15.5 15.5 21 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
+            <AnimatePresence mode="wait" initial={false}><motion.b key={at} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6, transition: { duration: 0.12 } }} transition={{ duration: 0.3, ease: EASE }}>{FW[at]}</motion.b></AnimatePresence>
+            <span className="l2-mono">{at === 4 ? 'everything else' : 'native'}</span>
+            <i className="l2-mono">/v1/search</i>
+          </div>
         </div>
         <ul className="se2-fw-l">
-          {FW.map((f, i) => <li key={f} className={i === 4 ? 'rest' : ''}><span>{f}</span><em className="l2-mono">{i === 4 ? 'everything else' : 'native'}</em></li>)}
+          {FW.map((f, i) => (
+            <li key={f} className={(i === 4 ? 'rest' : '') + (at === i ? ' on' : '')}>
+              <button type="button" aria-pressed={at === i} onClick={() => setAt(i)} onPointerEnter={(e) => e.pointerType === 'mouse' && setAt(i)} onFocus={() => setAt(i)}><span>{f}</span><em className="l2-mono">{i === 4 ? 'everything else' : 'native'}</em></button>
+            </li>
+          ))}
         </ul>
       </div>
     </section>
@@ -260,9 +273,13 @@ const DOCN = [1000, 5000, 10000, 25000, 50000, 100000, 250000, 1000000];
 const k = (n) => (n >= 1000000 ? n / 1000000 + 'M' : n >= 1000 ? n / 1000 + 'k' : String(n));
 
 /* Beyond: set projects and docs per project; the plan whose limits cover both lights up. */
+const fillOf = (el, i, n) => el && el.style.setProperty('--p', (i / (n - 1)) * 100 + '%');
+
 function Pricing() {
   const [p, setP] = useState(3);
   const [d, setD] = useState(2);
+  const pr = useRef(null), dr = useRef(null);
+  useEffect(() => { fillOf(pr.current, p, PROJ.length); fillOf(dr.current, d, DOCN.length); }, [p, d]);
   const proj = PROJ[p], docs = DOCN[d];
   const fit = PLANS.findIndex(([, , , , , [mp, md]]) => proj <= mp && docs <= md);
   return (
@@ -273,8 +290,8 @@ function Pricing() {
           <p className="l2-body">Pay for hosted search, vector, and AI. Self-host Meilisearch free forever.</p>
           <div className="se2-fit" role="group" aria-label="Which plan fits">
             <p className="l2-kick">Which plan fits</p>
-            <label><span>Projects</span><b className="l2-mono">{proj}</b><input className="l2-range" style={{ '--p': (p / (PROJ.length - 1)) * 100 + '%' }} type="range" min="0" max={PROJ.length - 1} value={p} onChange={(e) => setP(+e.target.value)} aria-valuetext={proj + ' projects'} /></label>
-            <label><span>Docs per project</span><b className="l2-mono">{k(docs)}</b><input className="l2-range" style={{ '--p': (d / (DOCN.length - 1)) * 100 + '%' }} type="range" min="0" max={DOCN.length - 1} value={d} onChange={(e) => setD(+e.target.value)} aria-valuetext={k(docs) + ' docs per project'} /></label>
+            <label><span>Projects</span><b className="l2-mono">{proj}</b><input ref={pr} className="l2-range" type="range" min="0" max={PROJ.length - 1} value={p} onChange={(e) => setP(+e.target.value)} aria-valuetext={proj + ' projects'} /></label>
+            <label><span>Docs per project</span><b className="l2-mono">{k(docs)}</b><input ref={dr} className="l2-range" type="range" min="0" max={DOCN.length - 1} value={d} onChange={(e) => setD(+e.target.value)} aria-valuetext={k(docs) + ' docs per project'} /></label>
             <p className="se2-fit-r" aria-live="polite"><span className="l2-mono">fits</span> <b>{PLANS[fit][0]}</b></p>
           </div>
         </div>
@@ -296,6 +313,16 @@ function Pricing() {
   );
 }
 
+/* The close's object: the page ends where it began, the bar answering "Kubernets" with one merged rank. */
+function EndBar() {
+  return (
+    <div className="se2-end" aria-hidden="true">
+      <div className="se2-hb-bar"><svg viewBox="0 0 24 24" width="18" height="18"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" strokeWidth="2" /><path d="M15.5 15.5 21 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg><span>{Q}</span><b className="l2-mono">one merged rank</b></div>
+      <ol>{RRF.map((r, i) => <li key={r}><span className="l2-mono">{i + 1}</span>{r}<em className="l2-mono">{FROM[r]}</em></li>)}</ol>
+    </div>
+  );
+}
+
 export default function Search() {
   return (
     <main className="l2-page se2">
@@ -313,6 +340,7 @@ export default function Search() {
         small="Full-text, vector, hybrid, and RAG -- all from one API."
         ask={['Read the docs', DOCS]}
         links={[['View on GitHub', GH]]}
+        object={<EndBar />}
         prompt="Read https://hanzo.ai/skill.md and use Hanzo Search in my project. Start with: hanzo search create"
         api="/v1/search"
         related={[['Chat', '/cloud/chat', 'Conversational AI'], ['Bot', '/bot', 'Multi-agent platform'], ['Crawl', '/crawl', 'Web crawler']]}

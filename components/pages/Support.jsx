@@ -18,6 +18,7 @@ import { motion, useInView, useReducedMotion } from 'motion/react';
 import { A } from '../kit';
 import Sigil from '../Sigil';
 import MaskLines from './company/MaskLines';
+import useArrived from './company/useArrived';
 import '../v2/vc-type.css';
 import './Support.css';
 
@@ -32,7 +33,6 @@ const DOORS = [
 ];
 // the arrival demo types three of Hanzo's own phrases, once
 const DEMO = ['support ticket', 'API references', 'incident history'];
-const host = (u) => u.replace(/^mailto:/, '').replace(/^https:\/\//, '');
 const pad = (n) => String(n).padStart(2, '0');
 
 const words = (s) => s.toLowerCase().match(/[a-z0-9]+/g) || [];
@@ -59,6 +59,9 @@ function Lit({ text, q }) {
 const Arrow = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const Mail = () => <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="4.5" width="15" height="11" rx="2" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="m3 5.5 7 5.5 7-5.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" /></svg>;
 
+// JS off: all six answers readable in order; the numeral and the demo's pause step aside (PLAN 2.3)
+const NOJS = { __html: '<style>.xsp-panes{display:flex;flex-direction:column;gap:40px}.xsp-pane{opacity:1!important;transform:none!important}.xsp-fig,.xsp-pause{display:none!important}.xsp-in,.xsp-up{animation:none!important}</style>' };
+
 function mailTo(subject) { return 'mailto:support@hanzo.ai' + (subject ? '?subject=' + encodeURIComponent(subject) : ''); }
 
 export default function Support() {
@@ -71,6 +74,9 @@ export default function Support() {
   const go = useRef(null);
   const seen = useInView(form, { amount: 0.6 });
   const calm = useReducedMotion();
+  const ok = useArrived(); // the demo starts once the site's arrival curtain has lifted
+  const [hyd, setHyd] = useState(false);
+  useEffect(() => setHyd(true), []);
   const ranked = useMemo(() => rank(q), [q]);
   const typed = terms(q).length > 0;
   const hit = typed && ranked[0].score > 0;
@@ -82,7 +88,7 @@ export default function Support() {
 
   // arrival: type three phrases into the pill (text written straight to the input), once, then rest empty
   useEffect(() => {
-    if (mine || calm || !seen || done) return;
+    if (mine || calm || !seen || done || !ok) return;
     let alive = true, timer = 0;
     const el = input.current;
     const sleep = (ms) => new Promise((r) => { timer = setTimeout(r, ms); });
@@ -105,7 +111,7 @@ export default function Support() {
     })();
     // leaving the pill (scrolled away): clear the demo's words, so the list is not left dimmed
     return () => { alive = false; clearTimeout(timer); if (el && el.value && document.activeElement !== el) { el.value = ''; setQ(''); } };
-  }, [mine, calm, seen, done]);
+  }, [mine, calm, seen, done, ok]);
 
   const take = () => { if (!mine) { setMine(true); setDone(true); input.current.value = ''; setQ(''); } };
   const stop = () => { setDone(true); if (input.current) input.current.value = ''; setQ(''); };
@@ -135,6 +141,7 @@ export default function Support() {
             </form>
 
             <div className="xsp-answer vc-obj">
+              <noscript dangerouslySetInnerHTML={NOJS} />
               <span className="xsp-fig vc-num" aria-hidden="true">
                 <motion.span key={best} initial={calm ? false : { y: '60%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>{pad(best + 1)}</motion.span>
               </span>
@@ -148,7 +155,7 @@ export default function Support() {
                     <motion.div key={d.t} className="xsp-pane" initial={false}
                       animate={on ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
                       transition={{ duration: on ? 0.5 : 0.18, ease: EASE, delay: on ? 0.06 : 0 }}
-                      aria-hidden={!on} inert={!on}>
+                      {...(hyd && !on ? { 'aria-hidden': true, inert: true } : {})}>
                       <h2 className="xsp-answer-t">{d.t}</h2>
                       <p className="xsp-answer-d"><Lit text={d.d} q={q} /></p>
                       {mail && mine && subject && <p className="xsp-subj"><Mail /><span>“{subject}”</span></p>}
@@ -158,7 +165,6 @@ export default function Support() {
                           {...(href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
                           {mail && mine && subject ? 'Email support@hanzo.ai' : d.go} <kbd aria-hidden="true">↵</kbd>
                         </a>
-                        <span className="xsp-host">{host(d.to)}</span>
                       </div>
                     </motion.div>
                   );
@@ -176,9 +182,7 @@ export default function Support() {
                 return (
                   <motion.li key={o.t} layout transition={{ type: 'spring', stiffness: 300, damping: 30 }} className={(top ? 'best ' : '') + (typed && !score ? 'dim' : '')}>
                     <A to={i === 5 ? mailTo(mine ? subject : '') : o.to} className="xsp-door" onPointerEnter={() => setPeek(i)} onFocus={() => setPeek(i)} onBlur={() => setPeek(-1)}>
-                      <span className="xsp-n vc-num" aria-hidden="true">{pad(i + 1)}</span>
                       <span className="xsp-door-t">{o.t}</span>
-                      <span className="xsp-door-h">{host(o.to)}</span>
                       <Arrow />
                     </A>
                   </motion.li>

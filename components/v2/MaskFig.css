@@ -1,0 +1,4 @@
+/* MaskFig (see MaskFig.jsx): the figure's own line is its mask */
+.v2-maskfig { display: inline-block; overflow: hidden; vertical-align: bottom; padding: .04em 0 .06em; margin: -.04em 0 -.06em; }
+.v2-maskfig-in { display: inline-block; }
+@media (prefers-reduced-motion: reduce) { .v2-maskfig-in { transform: none !important; } }

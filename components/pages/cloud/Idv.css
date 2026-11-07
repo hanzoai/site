@@ -1,5 +1,6 @@
 /* IDV v2. Accent: teal (the verified tick). One dark room: Sign one, forge one. */
-.iv { --acc: #737373; --glow: #a3a3a3; }
+.iv { --acc: #0a0a0a; --glow: #525252; }
+.iv .v2-dark, .iv [data-room='dark'] { --acc: #f5f5f7; --glow: #e5e5e5; }
 
 /* hero: one huge name on one line, the switchboard under it */
 .iv-hero { padding: clamp(112px, 10vw, 150px) 0 clamp(40px, 5vw, 72px); }
@@ -37,7 +38,7 @@
 /* the six facts: sheets that stack */
 .iv-sheets { padding: 0 0 clamp(120px, 14vw, 200px); }
 .iv-sheet { position: sticky; top: calc(84px + var(--k) * 16px); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; align-items: start; min-height: min(68svh, 620px); box-sizing: border-box; margin-bottom: 18svh; padding: clamp(32px, 4vw, 64px); border-radius: 28px; background: #f5f5f7; box-shadow: 0 -1px 0 rgba(0, 0, 0, .04), 0 -30px 60px -40px rgba(0, 0, 0, .25); }
-.iv-sheet:nth-child(even) { background: #eef7f7; }
+.iv-sheet:nth-child(even) { background: #f5f5f5; }
 .iv-sheet:last-child { margin-bottom: 0; }
 .iv-sheet-l { grid-column: 1 / span 6; }
 .iv-sheet-l .v2-headline { margin-top: 20px; }
@@ -57,8 +58,8 @@
 .iv-forge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 .iv-pane { padding: clamp(24px, 2.8vw, 40px); border-radius: 28px; background: #161617; }
 .iv-pane.in { background: #1d1d1f; }
-.iv-pane .v2-kick { margin-bottom: 24px; color: #a1a1a6; }
-.iv-l { display: block; margin: 18px 0 8px; font: 500 13px/1 var(--mono); color: #86868b; }
+.iv-pane .v2-kick { margin-bottom: 24px; color: #a3a3a3; }
+.iv-l { display: block; margin: 18px 0 8px; font: 500 13px/1 var(--mono); color: #737373; }
 .iv-in { width: 100%; box-sizing: border-box; min-height: 48px; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, .14); background: #000; color: #f5f5f7; font: 400 16px/1.4 var(--mono); outline: none; resize: vertical; }
 .iv-in:focus { border-color: var(--glow); }
 .iv-code { display: block; padding: 12px 14px; border-radius: 12px; background: rgba(255, 255, 255, .05); font: 400 15px/1.4 var(--mono); color: #f5f5f7; word-break: break-all; }

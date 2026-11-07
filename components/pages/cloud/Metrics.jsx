@@ -205,8 +205,8 @@ export default function Metrics() {
   const [on, setOn] = useState([true, false, false]);
   const steps = POINTS.map(([t, d], i) => ({ t, d, extra: i === 2 ? <LabelCheck on={on} setOn={setOn} where="in-copy" /> : null }));
   return (
-    <main className="lx mt" data-ask-name="Hanzo Metrics">
-      <section className="mt-hero" data-morph-target>
+    <main className="lx mt">
+      <section className="mt-hero" data-morph-target data-ask-name="Hanzo Metrics">
         <div className="lx-wrap"><LineMask as="h1" className="lx-display mt-h1" lines={['Hanzo Metrics']} /></div>
         <Field lead={(
           <div className="mt-lead">

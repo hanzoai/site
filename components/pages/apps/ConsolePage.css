@@ -350,7 +350,7 @@ a.cs-chip:hover { border-color: rgba(0, 0, 0, .25); }
   .cs-pal-hits li { grid-template-columns: 16px minmax(0, 1fr) auto; height: 44px; padding: 0 10px; font-size: 14px; }
   .cs-pal-hits li em { display: none; }
   .cs-foot { height: 46px; padding: 0 8px 0 14px; }
-  .cs-open { height: 32px; }
+  .cs-open { height: 44px; }
 
   .cs-ch-head { margin-bottom: 24px; }
   .cs-ch .bz-ch-i > .bz-kick { font-size: 14px; }

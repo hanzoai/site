@@ -279,9 +279,6 @@
 .dr-row svg:last-child { transition: transform .2s var(--ease); }
 .dr-row:hover svg:last-child { transform: translateX(4px); }
 .dr-gh { display: inline-flex; align-items: center; gap: 10px; font-size: 16px !important; font-weight: 500 !important; }
-.dr[data-end] .pf-ask { opacity: 0 !important; transform: translate3d(-50%, 16px, 0) scale(.96) !important; pointer-events: none !important; }
-/* the v2 AskBar is this page's sticky ask on desktops; the site bar (.x-ask) would stack a second one under it */
-@media (min-width: 901px) { body:has(main.dr) .x-ask { display: none !important; } }
 
 @media (max-width: 1180px) {
   .dr-live-top { grid-template-columns: minmax(0, 1fr); }
