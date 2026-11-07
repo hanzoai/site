@@ -465,7 +465,7 @@
   .xtg-stage { display: none; }
   .xtg-row-art { display: block; grid-column: 1 / -1; margin-top: 8px; }
   .xtg-row-art .xtg-art { background: #f5f5f5; padding: 14px; }
-  .xtg-rows li .xtg-art p { max-width: none; font-size: 14px; color: var(--ink); }
+  .xtg-rows li .xtg-art p { grid-column: auto; max-width: none; font-size: 14px; color: var(--ink); }
   .xtg-rows li .xtg-art p.xtg-art-v { color: #fff; font-size: 12.5px; }
   .xtg-rows li .xtg-art p.xtg-msg-t { color: var(--soft); }
 
@@ -501,3 +501,14 @@
   /* the window title truncates on a phone: the status chip says enough */
   .xtg-map-bar > span { display: none; }
 }
+
+/* Ready pass (7 Nov): what is in focus keeps a small pulse at rest, so no screen sits dead between scrolls */
+@media (prefers-reduced-motion: no-preference) {
+  .xtg-pr-c em::before { content: ''; display: inline-block; width: 6px; height: 6px; margin-right: 8px; border-radius: 50%; background: #fff; vertical-align: 1px; animation: xtg-blink 1.6s steps(1) infinite; }
+  .xtg-stage-p.on .xtg-art-tok i { animation: xtg-tok .5s var(--e-em) both, xtg-tokp 2.4s var(--e-io) 1.2s infinite; animation-delay: calc(var(--i) * 60ms + .15s), calc(var(--i) * 150ms + 1.2s); }
+  .xtg-stage-p.on .xtg-art pre .add { animation: xtg-addp 2.8s var(--e-io) 1s infinite; }
+  .xtg-strip button[aria-selected='true'] .xtg-nring { animation: xtg-ringp 2s var(--e-io) infinite; border-radius: 50%; }
+}
+@keyframes xtg-tokp { 50% { opacity: .35; } }
+@keyframes xtg-addp { 50% { background-color: #e4e4e7; } }
+@keyframes xtg-ringp { 0%, 100% { box-shadow: 0 0 0 0 rgba(10, 10, 10, .18); } 50% { box-shadow: 0 0 0 6px rgba(10, 10, 10, 0); } }

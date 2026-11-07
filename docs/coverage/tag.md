@@ -88,7 +88,7 @@ Done here: `variety.py` passes with 3 techniques (Sigil, pathLength, useScroll).
 - The promises count their turn in 7 dots.
 - The What row fills a rail down its left edge as you scroll.
 - The Built number's ring draws (pathLength) as the pinned strip steps.
-- The picked see option's outline wipes round by clip-path.
+- The picked see option's outline wipes round by clip-path. 7 Nov (Ready pass): what is in focus keeps a small pulse at rest: the PR's merged pill blinks, the What stage's diff lines and WIMSE token breathe, and the lit Built step's ring pulses, so motion.mjs finds 0 still screens at 1470.
 
 Long hero moments read themselves upward (transform, 1.4s in-out). Under reduced motion there are 0 running animations after 3s, and a long moment scrolls by hand.
 
@@ -110,7 +110,7 @@ Done here: The map top shows on the phone's first screen at y=607. The phone lay
 - The four promises and the four platform products are snap rails (84% cards, `scroll-snap-type: x proximity`).
 - Built's tabs are a pill rail pinned with their sheet, so the sheet changes in view.
 - The map's channel labels hang inward above their dots.
-- The window title is hidden under 600px.
+- The window title is hidden under 600px. 7 Nov: on phones the What rows' art no longer splits into two columns (the row-copy rule had pushed the diff into a 109px sliver); the Canvas title sits over its five-line diff.
 
 A target scan at 375 finds 0 targets under 44px, and scrollWidth is 375.
 
