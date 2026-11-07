@@ -76,14 +76,14 @@ function Lane() {
             const no = m % 5 === 4;
             return (
               <motion.li key={m} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1 - k * 0.3, x: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.45, ease: EASE }}>
-                <b>{CALLERS[m % CALLERS.length]}</b><span className={no ? 'x' : ''}>{no ? '429' : 'X-Org-Id ✓'}</span>
+                <b>{CALLERS[m % CALLERS.length]}</b><span className={no ? 'x' : ''}>{no ? '429' : <>X-Org-Id <i className="gw-tk">✓</i></>}</span>
               </motion.li>
             );
           })}
         </AnimatePresence>
       </ul>
       <div className="gw-bucket">
-        <span>Token bucket</span>
+        <span>Token-bucket</span>
         <div>{[0, 1, 2, 3].map((i) => <motion.i key={i} animate={{ opacity: i < left ? 1 : 0.14, scaleY: i < left ? 1 : 0.5 }} transition={{ duration: 0.3, ease: EASE }} />)}</div>
       </div>
       <AnimatePresence initial={false}>
@@ -95,13 +95,13 @@ function Lane() {
           exit={{ opacity: 0, transition: { duration: 0.15 } }}
           transition={{ x: { duration: phase === 0 ? 1.0 : 0.95, ease: EASE }, opacity: { duration: gone ? 0.7 : 0.4, delay: gone ? 0.25 : 0 } }}
         >
-          <p className="gw-req-top"><b>GET</b> api.hanzo.ai/v1/…<span>{who}</span></p>
-          <p className={'gw-h' + (phase >= 1 && !limited ? ' ok' : '')}><span>Authorization: Bearer <em>JWT</em></span>
-            {phase >= 1 && !limited && <motion.span className="gw-chip" initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.3, ease: EASE }}>✓ JWKS</motion.span>}
+          <p className="gw-req-top"><b>api.hanzo.ai</b> <i className="gw-tk">/*</i><span>{who}</span></p>
+          <p className={'gw-h' + (phase >= 1 && !limited ? ' ok' : '')}><span><em>JWT</em></span>
+            {phase >= 1 && !limited && <motion.span className="gw-chip" initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.3, ease: EASE }}><i className="gw-tk">✓</i> JWKS</motion.span>}
           </p>
           <AnimatePresence>
             {(phase < 2 || limited) && (
-              <motion.p className="gw-h forged" exit={{ opacity: 0, y: 40, rotate: -8, transition: { duration: 0.5, ease: [0.4, 0, 1, 1] } }}>X-Org-Id: <em>anything</em></motion.p>
+              <motion.p className="gw-h forged" exit={{ opacity: 0, y: 40, rotate: -8, transition: { duration: 0.5, ease: [0.4, 0, 1, 1] } }}>X-Org-Id <em className="gw-tk">…</em></motion.p>
             )}
           </AnimatePresence>
           <div className="gw-stamps">
@@ -129,7 +129,8 @@ const RULES = [
 ];
 
 const FAKE = [['X-User-Id', 'sub'], ['X-Org-Id', 'owner'], ['X-Roles', 'roles'], ['X-IAM-*', '']];
-const CRED = ['JWT', 'API key', 'None'];
+// the three ways a request arrives, in Hanzo's words: a JWT, an opaque API key, or only what a curl flag sets
+const CRED = ['JWT', 'API key', 'curl'];
 
 /* Beyond: forge one yourself. What you send, and what the service behind the gate receives. */
 function Forge() {
@@ -141,10 +142,9 @@ function Forge() {
       <div className="v2-wrap">
         <div className="gw-forge-head v2-grid">
           <div className="gw-forge-hl">
-            <h2 className="v2-display s">Forge one yourself</h2>
-            <p className="v2-kick acc gw-forge-cap">Identity headers are written, not trusted</p>
+            <h2 className="v2-display s" id="gw-forge-h">Identity headers are written, not trusted</h2>
           </div>
-          <div className="gw-forge-pick" role="radiogroup" aria-label="Credential">
+          <div className="gw-forge-pick" role="radiogroup" aria-labelledby="gw-forge-h">
             {CRED.map((c, i) => (
               <button key={c} type="button" role="radio" data-sound="tick" aria-checked={cred === i} onClick={() => setCred(i)}>
                 {cred === i && <motion.span layoutId="gw-pick" className="gw-pick-bg" transition={{ duration: 0.3, ease: EASE }} />}
@@ -155,15 +155,15 @@ function Forge() {
         </div>
         <div className="gw-forge-grid">
           <div className="gw-pane">
-            <p className="v2-kick">You send</p>
+            <p className="v2-kick">client</p>
             <ul className="gw-forge-hs">
-              {cred < 2 && <li className="gw-forge-auth"><span>Authorization: Bearer <em>{jwt ? 'JWT' : 'API key'}</em></span></li>}
+              {cred < 2 && <li className="gw-forge-auth"><span><em>{jwt ? 'JWT' : 'API key'}</em></span></li>}
               {FAKE.map(([h], i) => (
                 <li key={h}>
                   <label className="gw-tog">
                     <input type="checkbox" suppressHydrationWarning checked={fake[i]} onChange={() => setFake((f) => f.map((v, k) => (k === i ? !v : v)))} />
                     <span className="gw-tog-ui" aria-hidden="true" />
-                    <span>{h}: <em>anything</em></span>
+                    <span>{h} <em className="gw-tk">…</em></span>
                   </label>
                 </li>
               ))}
@@ -171,11 +171,11 @@ function Forge() {
           </div>
           <div className="gw-arrow" aria-hidden="true"><span>Gateway</span><i /></div>
           <div className="gw-pane out" aria-live="polite">
-            <p className="v2-kick">The service behind it receives</p>
+            <p className="v2-kick">every service behind it</p>
             <ul className="gw-forge-hs">
               <AnimatePresence initial={false}>
                 {FAKE.map(([h], i) => fake[i] && (
-                  <motion.li key={h} className="gone" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.35, ease: EASE }}>{h}: anything <span>stripped</span></motion.li>
+                  <motion.li key={h} className="gone" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.35, ease: EASE }}>{h} <span>stripped</span></motion.li>
                 ))}
                 {jwt && FAKE.filter(([, c]) => c).map(([h, c], i) => (
                   <motion.li key={'w' + h} className="set" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.4, ease: EASE, delay: 0.05 * i }}><span>{h} <em>← {c}</em></span></motion.li>
@@ -183,10 +183,10 @@ function Forge() {
               </AnimatePresence>
             </ul>
             <p className="gw-forge-why">{jwt
-              ? "A JWT is validated against Hanzo IAM's JWKS before anything else reads the request, then the headers are written back from the verified claims — sub, owner, roles."
+              ? 'X-User-Id, X-Org-Id, X-Roles and every X-IAM-* variant are stripped from every inbound request, then written back from the verified claims — sub, owner, roles.'
               : cred === 1
                 ? "Opaque API keys aren't JWTs, so they go on to the service that issued them and it decides."
-                : 'With no verified claims, nothing is written back. A curl flag can\'t set them.'}</p>
+                : "A curl flag can't set them."}</p>
           </div>
         </div>
       </div>
@@ -238,7 +238,7 @@ function Say() {
         <p className="v2-lede gw-say-l">Gateway answers that once, at the edge, so every service behind it can read an org id and believe it.</p>
         <div className="gw-rail" aria-hidden="true">
           <span className="gw-rail-end">client</span>
-          <span className="gw-rail-line"><i className="gw-rail-gate" /><span className="gw-rail-mov"><b className="gw-rail-dot"><em className="gw-rail-in">X-Org-Id: anything</em><em className="gw-rail-out">X-Org-Id ← owner</em></b></span></span>
+          <span className="gw-rail-line"><i className="gw-rail-gate" /><span className="gw-rail-mov"><b className="gw-rail-dot"><em className="gw-rail-in">X-Org-Id <i className="gw-tk">…</i></em><em className="gw-rail-out">X-Org-Id <i className="gw-tk">←</i> owner</em></b></span></span>
           <span className="gw-rail-end r">Hanzo Cloud <b>/v1</b></span>
         </div>
       </div>
@@ -269,7 +269,7 @@ export default function Gateway() {
 
       <Say />
 
-      <GwChapters className="gw-ch" label="How Gateway decides" items={RULES} scene={(at) => <GwScene at={at} total={RULES.length} />} />
+      <GwChapters className="gw-ch" label="Gateway" items={RULES} scene={(at) => <GwScene at={at} total={RULES.length} />} />
 
       <ShipPrompt
         name="Gateway"

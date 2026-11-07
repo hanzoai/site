@@ -200,7 +200,7 @@ function Panel({ setting, w, doc, cur }) {
   return (
     <div className="xhp-panel" ref={box} role="group" aria-label={setting.name}>
       <div className="xhp-panel-bar">
-        <button type="button" className="xhp-pause" aria-pressed={w.paused} aria-label={w.paused ? 'Play' : 'Pause'} onClick={w.pause}>
+        <button type="button" className="xhp-pause" aria-pressed={w.paused} aria-label="Pause" onClick={w.pause}>
           {w.paused
             ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9l7-4.5z" fill="currentColor" /></svg>
             : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>}
@@ -323,7 +323,7 @@ function Section({ s, i, setting, w, still, after, what, end }) {
       {out.map((x) => (x === 'cards' ? <div key="cards" className="xhp-flows">{cards}</div> : x))}
       {end && (
         <A to="/support" className="xhp-next">
-          <span>Help center</span>
+          <span>Help Center</span>
           <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </A>
       )}
@@ -373,9 +373,9 @@ function Layout({ doc, w, aside, cur, stillId, offId, whatId }) {
       <noscript><style>{NOJS}</style></noscript>
       <div className="xhp-g">
         <header className="xhp-hero">
-          <nav className="xhp-crumb" aria-label="Breadcrumb">
+          <nav className="xhp-crumb">
             <ol>
-              <li><A to="/support">Help center</A></li>
+              <li><A to="/support">Help Center</A></li>
               {doc.kicker.split(' · ').slice(1).map((t) => <li key={t}>{t}</li>)}
               <li aria-current="page"><span>{doc.title}</span></li>
             </ol>

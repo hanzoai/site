@@ -14,13 +14,13 @@ function Jwks() {
         <span className="gws-pill gws-go">JWT</span>
         <i className="gws-gate" />
         <span className="gws-wire gws-draw" />
-        <span className="gws-stamp gws-pop">JWKS ✓</span>
+        <span className="gws-stamp gws-pop">JWKS <i className="gws-tick">✓</i></span>
       </div>
       <div className="gws-lane q">
         <span className="gws-pill gws-go d2">API key</span>
         <i className="gws-gate" />
         <span className="gws-wire gws-draw d2" />
-        <span className="gws-end gws-pop d2">to its issuer</span>
+        <span className="gws-end gws-pop d2">the service that issued them</span>
       </div>
     </div>
   );
@@ -34,7 +34,7 @@ function Headers() {
     <div className="gws-two">
       <ul className="gws-col">
         {FORGED.map((h, i) => (
-          <li key={h} className="gws-row struck" style={{ '--i': i }}><span>{h}: anything</span><b>stripped</b></li>
+          <li key={h} className="gws-row struck" style={{ '--i': i }}><span>{h}</span><b>stripped</b></li>
         ))}
       </ul>
       <i className="gws-gate v" />
@@ -52,7 +52,7 @@ function Headers() {
 function Routes() {
   return (
     <div className="gws-route">
-      <span className="gws-pill">api.hanzo.ai/*</span>
+      <span className="gws-pill">api.hanzo.ai<i className="gws-glob">/*</i></span>
       <span className="gws-track"><i className="gws-dot" /></span>
       <div className="gws-empty" aria-hidden="true"><i /><i /><i /></div>
       <span className="gws-track"><i className="gws-dot b" /></span>
@@ -75,7 +75,7 @@ function Bucket() {
           <span>{k}</span>
         </div>
       ))}
-      <p className="gws-429 gws-pop d4">429 · Retry-After</p>
+      <p className="gws-429 gws-pop d4">429 <i>·</i> <span>Retry-After</span></p>
     </div>
   );
 }
@@ -86,7 +86,7 @@ function Health() {
     <div className="gws-health">
       <span className="gws-pill">health</span>
       <span className="gws-ping"><i /><i /></span>
-      <span className="gws-box on">process up</span>
+      <span className="gws-box on">the process is up</span>
       <span className="gws-cut" />
       <span className="gws-box off">backends <em>dialed lazily</em></span>
     </div>
@@ -105,7 +105,7 @@ function Hop() {
           <b>Hanzo Cloud</b>
         </div>
       </div>
-      <p className="gws-hop-k"><span className="a">own service · one hop</span><span className="b">inside the cloud binary · no hop</span></p>
+      <p className="gws-hop-k"><span className="a">its own service</span><span className="b">inside the cloud binary</span></p>
     </div>
   );
 }

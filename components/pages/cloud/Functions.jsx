@@ -85,12 +85,12 @@ function Life() {
         <span className="fn-calls"><i /><i /><i /><i /><i /></span>
       </div>
       <div className="fn-code">
-        <div className="fn-file"><span className="fn-dots" aria-hidden="true"><i /><i /><i /></span><b>handler.js</b><em className={going ? 'on' : ''}>{going ? 'deployed' : 'editing'}</em></div>
+        <div className="fn-file"><span className="fn-dots" aria-hidden="true"><i /><i /><i /></span><b>handler.js</b><em className={going ? 'on' : ''}><i aria-hidden="true" />{going && 'deployed'}</em></div>
         <pre><code>{LINES.map((l, i) => <Fragment key={i}><span className="fn-ln" style={{ '--i': i }}>{hlJs(l)}</span>{'\n'}</Fragment>)}</code></pre>
       </div>
       <div className="fn-k8s" aria-hidden="true">
         <p className="fn-col-k">Kubernetes</p>
-        <p className="fn-count" data-zero={pods ? undefined : ''}><i /><span>{pods ? 'replicas' : 'scaled to zero'}</span></p>
+        <p className="fn-count" data-zero={pods ? undefined : ''}><i /><span>{pods ? 'replicas' : 'Scale to zero'}</span></p>
         <div className="fn-nodes">
           {[0, 1, 2].map((nd) => (
             <div key={nd} className="fn-node">
@@ -99,7 +99,7 @@ function Life() {
             </div>
           ))}
         </div>
-        <p className="fn-warm"><i />warm pool</p>
+        <p className="fn-warm"><i />Pools are prewarmed</p>
       </div>
     </div>
   );
@@ -130,13 +130,13 @@ function useStepOf(p, n, on) {
   return k;
 }
 
-const RUNTIMES = ['Python', 'Go', 'Node.js', 'Rust', 'Your container'];
+const RUNTIMES = ['Python', 'Go', 'Node.js', 'Rust', 'a container you built yourself'];
 
 function RuntimeScene({ p, on }) {
   const k = useStepOf(p, 5, on);
   return (
     <div className="kn-obj fn-sc fn-sc-rt">
-      <div className="fn-rts">{RUNTIMES.map((r, i) => <div key={r} className={'fn-rt' + (i === 4 ? ' box' : '') + (k === i ? ' on' : '')}><b>{r}</b><span>{i === 4 ? 'a container you built yourself' : 'handler file'}</span></div>)}</div>
+      <div className="fn-rts">{RUNTIMES.map((r, i) => <div key={r} className={'fn-rt' + (i === 4 ? ' box' : '') + (k === i ? ' on' : '')}><b>{r}</b>{i < 4 && <span>handler file</span>}</div>)}</div>
     </div>
   );
 }
@@ -222,8 +222,17 @@ function VersionScene({ p, on }) {
 
 const SCENES = [RuntimeScene, WarmScene, ClusterScene, GpuScene, TriggerScene, VersionScene];
 
-/* ---------- Beyond: compose yours ---------- */
-const MOVES = ['One version', 'Blue/green', 'Canary'];
+/* ---------- Beyond: compose a function from the page's own choices (no heading of its own: Hanzo's page has none) ---------- */
+const MOVES = ['Blue/green', 'canary'];
+/* the read-back is Hanzo's own sentences, whole, one per choice */
+const SAY = {
+  rt: 'Name a runtime and point at a handler file.',
+  box: 'When the language you want is not one of them, bring a container you built yourself and deploy that instead.',
+  tr: 'The trigger is its own object, so the same handler can answer to several without knowing about any of them.',
+  gpu: 'A function can request an NVIDIA GPU and be scheduled onto a node that has one.',
+  mv: 'Blue/green and canary between versions of a function, so backing out a bad deploy is a traffic decision rather than another build.',
+  zero: 'Scale to zero is still the default when nothing is calling.',
+};
 
 /* a radio row: one ink pill glides to the choice (300 ms, ease-emphasis); arrows move it */
 function Radios({ id, label, items, value, onChange, onPeek = () => {} }) {
@@ -254,31 +263,21 @@ function Compose() {
   const [rtC, setRt] = useState(2);
   const [trC, setTr] = useState([true, false, false, false]);
   const [gpuC, setGpu] = useState(false);
-  const [mvC, setMv] = useState(0);
+  const [mvC, setMv] = useState(-1); // -1: no move between versions chosen (shown by shape: no pill is filled)
   // hovering a choice (fine pointers) previews its effect on the card before you commit; the card marks it as a preview
   const [peek, setPeek] = useState(null);
   const at = (k) => (peek && peek.k === k ? peek : null);
   const rt = at('rt') ? peek.i : rtC;
   const tr = at('tr') ? trC.map((x, j) => (j === peek.i ? !x : x)) : trC;
   const gpu = at('gpu') ? !gpuC : gpuC;
-  const mv = at('mv') ? peek.i : mvC;
+  const mv = at('mv') ? (mvC === peek.i ? -1 : peek.i) : mvC;
   const hover = (k, i) => ({ onPointerEnter: (e) => e.pointerType === 'mouse' && setPeek({ k, i }), onPointerLeave: () => setPeek(null) });
   const n = tr.filter(Boolean).length;
-  const lines = [
-    rt === 4 ? 'Bring a container you built yourself and deploy that instead.' : `${RUNTIMES[rt]}: name a runtime and point at a handler file.`,
-    n === 1 ? `${TRIGGERS[tr.indexOf(true)]}: the trigger is its own object.` : n > 1 && `${n} triggers: the same handler can answer to several without knowing about any of them.`,
-    gpu && 'An NVIDIA GPU: scheduled onto a node that has one.',
-    mv > 0 && `${MOVES[mv]}: backing out a bad deploy is a traffic decision rather than another build.`,
-    'Pools are prewarmed. Scale to zero is still the default when nothing is calling.',
-  ].filter(Boolean);
+  const lines = [rt === 4 ? SAY.box : SAY.rt, n > 0 && SAY.tr, gpu && SAY.gpu, mv >= 0 && SAY.mv, SAY.zero].filter(Boolean);
   return (
-    <section className="kn-sec fn-mix" aria-labelledby="fn-mix-h">
+    <section className="kn-sec fn-mix" aria-labelledby="fn-ch-h">
       <div className="kn-wrap kn-grid fn-mix-g">
         <div className="fn-mix-in">
-          <div className="fn-mix-h">
-            <KeynoteLines id="fn-mix-h" className="kn-headline" lines="One handler, your choices" />
-            <p className="kn-kick">Compose yours</p>
-          </div>
           <fieldset><legend>Runtime</legend><Radios id="fn-rt" label="Runtime" items={RUNTIMES} value={rtC} onChange={(i) => { setRt(i); setPeek(null); }} onPeek={(i) => setPeek(i == null ? null : { k: 'rt', i })} /></fieldset>
           <fieldset><legend>Triggers</legend><div className="fn-row">{TRIGGERS.map((t, i) => <button key={t} type="button" aria-pressed={trC[i]} onClick={() => { setTr((v) => v.map((x, j) => (j === i ? !x : x))); setPeek(null); }} {...hover('tr', i)}><Tick /><span>{t}</span></button>)}</div></fieldset>
           <fieldset><legend>GPU</legend><div className="fn-row"><button type="button" aria-pressed={gpuC} onClick={() => { setGpu(!gpuC); setPeek(null); }} {...hover('gpu', 0)}><Tick /><span>NVIDIA GPU</span></button></div></fieldset>
@@ -345,7 +344,8 @@ function Hero() {
             </button>
             <div className="fn-hero-mt">
               <p className="kn-kick">Serverless Computing</p>
-              <span>Python · Go · Node.js · Rust · /v1/function</span>
+              <span>Python, Go, Node.js, Rust</span>
+              <span>/v1/function</span>
             </div>
           </div>
         </div>

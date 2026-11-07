@@ -285,8 +285,9 @@
   .fn-ch .knc-g::-webkit-scrollbar { display: none; }
   .fn-ch .knc-a, .fn-ch.knc.right .knc-a { flex: 0 0 84%; display: flex; flex-direction: column; gap: 17px; padding: 0; border: 0; scroll-snap-align: start; }
   .fn-ch .knc-a:first-child { padding-top: 0; }
-  .fn-ch .knc-v { order: -1; aspect-ratio: auto; height: auto; margin: 0; }
-  .fn-ch .knc-v > .fn-sc { height: auto; min-height: 280px; }
+  /* every card's drawing has the same fixed height, so a scene stepping never moves the page below it */
+  .fn-ch .knc-v { order: -1; aspect-ratio: auto; height: 320px; margin: 0; }
+  .fn-ch .knc-v > .fn-sc { height: 100%; min-height: 0; overflow: hidden; }
   .fn-ch .knc-t { gap: 10px; }
   .fn-ch .knc-body p { font-size: 15px; line-height: 1.55; }
   .fn-ch .knc-h { font-size: 21px; }
@@ -299,8 +300,10 @@
   .fn .knc-count { font-size: 14px; }
   .fn-sc { padding: 17px; gap: 14px; }
   .fn-rts { gap: 8px; }
-  .fn-rt { min-height: 96px; padding: 16px; }
-  .fn-rt b { font-size: 21px; }
+  .fn-rt { min-height: 80px; padding: 12px 14px; gap: 8px; }
+  .fn-rt b { font-size: 17px; }
+  .fn-rt span { font-size: 13px; }
+  .fn-rt.box { min-height: 0; }
   .fn-rt.box { flex-direction: column; }
   .fn-pool { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
   .fn-pool i:nth-child(n+5) { display: none; }

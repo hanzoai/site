@@ -130,3 +130,5 @@
   .gws *, .gws *::after { animation: none !important; }
   .gws-hop-k .a { visibility: hidden; }
 }
+/* glyphs split out of Hanzo's words so a tick, a path glob or a dot is never part of the text itself */
+.gws-tick, .gws-glob, .gws-429 i { font-style: normal; }
