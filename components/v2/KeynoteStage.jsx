@@ -11,7 +11,7 @@
            'side' (title and lede on 5 columns, the object on 7 bleeding to the right edge).
    - from: the object's starting scale (1.1–1.25). Phones use a gentler start automatically. Do not use motion
      layoutId/layout animations inside the object (the scroll scale breaks layout projection); use CSS state.
-   - acts: [label, to]; the first is the page's one ask (the kit's solid <Cta>, magnetic, data-thumb for the sticky ask
+   - cta: pass '<page>.hero' (the data-cta id of the ask). acts: [label, to]; the first is the page's one ask (the kit's solid <Cta>, magnetic, data-thumb for the sticky ask
      bar, data-cta = cta); the rest are text-link <Cta>s (the header's "Try Hanzo" is always solid, so one own solid).
    - kick: Hanzo's small label. It is never set above the h1 (a banned tell); it sits under the actions with meta.
    - pause: true gives the demo its pause control (WCAG 2.2.2), in the flow beside the meta line (first in the DOM,
