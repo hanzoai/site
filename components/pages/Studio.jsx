@@ -16,7 +16,7 @@ import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useMot
 import { A, Cta, Go, More } from '../kit';
 import { scrollToEl } from '../../lib/scroll';
 import { useOpener } from '../Opener';
-import A2Lines from '../v2/A2Lines';
+import A2Lines from './skills/Lines'; // page-local A2Lines: no reduced-motion hydration mismatch (docs/requests/skills.md)
 import A2Paste from '../v2/A2Paste';
 import '../v2/A2.css';
 import './Studio.css';
