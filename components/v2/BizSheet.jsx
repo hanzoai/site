@@ -34,7 +34,7 @@ export default function BizSheet({ label, title, kick, children, className = '',
   }, [open]);
   return (
     <div className={'bz-sheet-wrap ' + className} data-open={open}>
-      <button ref={btn} type="button" className={'bz-sheet-btn ' + btnClass} aria-expanded={open} aria-controls={id} onClick={() => setOpen(true)} data-cursor="Open">
+      <button ref={btn} type="button" className={'bz-sheet-btn ' + btnClass} aria-expanded={open} aria-controls={id} onClick={() => setOpen(true)}>
         <Plus />{label}
       </button>
       <div className="bz-sheet-back" onClick={() => setOpen(false)} aria-hidden="true" />
