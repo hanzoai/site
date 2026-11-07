@@ -1,0 +1,54 @@
+/* ---------- /benchmarks/*: the five entrances (entrances.jsx). Hidden states only under html.js, never for reduced motion ---------- */
+
+/* 1. venetian-type: each line of the title, then each block after it, slides in from alternating sides */
+.xbe-w { display: inline-block; }
+@media (prefers-reduced-motion: no-preference) {
+  html.js .xbe-vt:not([data-in]) .xbe-w, html.js .xbe-vt:not([data-in]) .xbe-vl { opacity: 0; transform: translateX(var(--x, -72px)); }
+  .xbe-vt[data-in] .xbe-w, .xbe-vt[data-in] .xbe-vl { transition: transform .9s cubic-bezier(.16, 1, .3, 1) calc(var(--k, 0) * 90ms), opacity .45s linear calc(var(--k, 0) * 90ms); }
+}
+
+/* 2. pull-back: the room's contents start zoomed right in on the reply and pull back to the whole */
+[data-enter='pull-back'] { overflow: clip; }
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-enter='pull-back']:not([data-in]) > .xbe-pb { transform: scale(2.3); opacity: 0; }
+  [data-enter='pull-back'] > .xbe-pb { transform-origin: 76% 45%; }
+  [data-enter='pull-back'][data-in] > .xbe-pb { transition: transform 1.35s cubic-bezier(.19, 1, .22, 1), opacity .5s linear; }
+}
+@media (max-width: 900px) { [data-enter='pull-back'] > .xbe-pb { transform-origin: 50% 78%; } }
+
+/* 3. blinds: slats in the page's white cover the section, then turn edge-on, top to bottom */
+[data-enter='blinds'] { position: relative; }
+.xbe-blinds { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+  html.js .xbe-blinds { position: absolute; inset: 0; z-index: 3; display: grid; grid-template-rows: repeat(9, 1fr); pointer-events: none; }
+  html.js .xbe-blinds i { display: block; background: #fff; transform: perspective(900px) rotateX(0deg) scaleY(1.04); transform-origin: 50% 50%; }
+  [data-enter='blinds'][data-in] .xbe-blinds i { transform: perspective(900px) rotateX(90deg); transition: transform .75s cubic-bezier(.65, 0, .35, 1) calc(var(--k) * 55ms); }
+}
+
+/* 4. glitch-in: a short monochrome glitch (slices jump sideways, a grey ghost offset), then it holds still */
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-enter='glitch-in']:not([data-in]) > .xbe-gl { opacity: 0; }
+  [data-enter='glitch-in'][data-in] > .xbe-gl { animation: xbe-glitch .64s steps(1, end) backwards; }
+}
+@keyframes xbe-glitch {
+  0% { opacity: 0; }
+  7% { opacity: 1; transform: translateX(-16px); clip-path: inset(10% 0 66% 0); filter: grayscale(1) contrast(1.6) drop-shadow(7px 0 0 rgba(0, 0, 0, .3)); }
+  15% { opacity: 1; transform: translateX(11px); clip-path: inset(46% 0 24% 0); filter: grayscale(1) drop-shadow(-6px 0 0 rgba(0, 0, 0, .28)); }
+  23% { opacity: .7; transform: translateX(-7px) skewX(-6deg); clip-path: inset(0 0 74% 0); filter: grayscale(1) contrast(2); }
+  31% { opacity: 1; transform: translateX(5px); clip-path: inset(68% 0 0 0); filter: grayscale(1) drop-shadow(4px 0 0 rgba(0, 0, 0, .3)); }
+  39% { opacity: 1; transform: translateX(-3px); clip-path: inset(0 0 0 0); filter: grayscale(1) drop-shadow(-2px 0 0 rgba(0, 0, 0, .25)); }
+  48% { opacity: 1; transform: translateX(2px); clip-path: inset(0 0 0 0); filter: none; }
+  56%, 100% { opacity: 1; transform: none; clip-path: inset(0 0 0 0); filter: none; }
+}
+
+/* 5. slot-roll: every word is a reel that rolls down through two blurred copies and lands with a small overshoot */
+.xbe-reel-m { display: inline-block; overflow: hidden; vertical-align: top; padding: .08em .02em .16em; margin: -.08em -.02em -.16em; }
+.xbe-reel { position: relative; display: inline-block; }
+.xbe-ghost { position: absolute; left: 0; top: -115%; opacity: .32; filter: blur(1.5px); }
+.xbe-ghost.g2 { top: -230%; opacity: .16; filter: blur(3px); }
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-enter='slot-roll']:not([data-in]) .xbe-reel { transform: translateY(345%); }
+  [data-enter='slot-roll'][data-in] .xbe-reel { transition: transform .95s cubic-bezier(.3, 1.32, .5, 1) calc(var(--r, 0) * 110ms + var(--i, 0) * 70ms); }
+  html.js [data-enter='slot-roll']:not([data-in]) .xbe-roll { opacity: 0; transform: translateY(28px); }
+  [data-enter='slot-roll'][data-in] .xbe-roll { transition: transform .8s cubic-bezier(.16, 1, .3, 1) calc(var(--r, 0) * 110ms + .25s), opacity .5s linear calc(var(--r, 0) * 110ms + .25s); }
+}

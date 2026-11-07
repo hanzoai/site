@@ -1,0 +1,54 @@
+/* Page-local entrances for the /blockchain family (entrances.jsx). Every starting frame hangs off [data-st], which only
+   script sets after hydration and only under html.js, so JS off and reduced motion read the final frame. */
+
+/* accordion: the rows unfold one after another, folding alternately from their top and bottom edge (a bellows) */
+html.js .bce[data-fx='accordion'][data-st='armed'] .bce-fold-a { transform: perspective(900px) rotateX(-88deg); transform-origin: 50% 0; opacity: .15; }
+html.js .bce[data-fx='accordion'][data-st='armed'] .bce-fold-b { transform: perspective(900px) rotateX(88deg); transform-origin: 50% 100%; opacity: .15; }
+html.js .bce[data-fx='accordion'][data-st='play'] .bce-fold-a { transform-origin: 50% 0; }
+html.js .bce[data-fx='accordion'][data-st='play'] .bce-fold-b { transform-origin: 50% 100%; }
+html.js .bce[data-fx='accordion'][data-st='play'] :is(.bce-fold-a, .bce-fold-b) { transition: transform .62s cubic-bezier(.2, .9, .25, 1) calc(var(--k, 0) * 85ms), opacity .4s ease-out calc(var(--k, 0) * 85ms); }
+html.js .bce[data-fx='accordion'][data-st='armed'] .bce-acc-h { transform: perspective(900px) rotateX(-70deg); transform-origin: 50% 0; opacity: .15; }
+html.js .bce[data-fx='accordion'][data-st='play'] .bce-acc-h { transform-origin: 50% 0; transition: transform .6s cubic-bezier(.2, .9, .25, 1), opacity .4s ease-out; }
+
+/* grid-wave: each cell pops in on a delay set by its distance from where the visitor last pointed */
+html.js .bce[data-fx='grid-wave'][data-st='armed'] .bce-gw { opacity: 0; transform: scale(.25); }
+html.js .bce[data-fx='grid-wave'][data-st='play'] .bce-gw { transition: opacity .35s ease-out var(--gw, 0ms), transform .55s cubic-bezier(.34, 1.56, .64, 1) var(--gw, 0ms); }
+
+/* grow-from-point: a circle opens from the visitor's last point and the section scales up out of it */
+html.js .bce[data-fx='grow-from-point'][data-st='armed'] { clip-path: circle(0 at var(--gx, 50%) var(--gy, 50%)); transform: scale(.94); }
+html.js .bce[data-fx='grow-from-point'][data-st='play'] { clip-path: circle(0 at var(--gx, 50%) var(--gy, 50%)); transform: scale(.94); transform-origin: var(--gx, 50%) var(--gy, 50%); animation: bce-grow 1s cubic-bezier(.65, 0, .35, 1) forwards; }
+@keyframes bce-grow { to { clip-path: circle(150% at var(--gx, 50%) var(--gy, 50%)); transform: none; } }
+
+/* diagonal-wipe: a diagonal edge sweeps across from left to right */
+html.js .bce[data-fx='diagonal-wipe'][data-st='armed'] { clip-path: polygon(0 0, 0 0, -35% 100%, 0 100%); }
+html.js .bce[data-fx='diagonal-wipe'][data-st='play'] { animation: bce-wipe 1.05s cubic-bezier(.7, 0, .3, 1) both; }
+@keyframes bce-wipe {
+  from { clip-path: polygon(0 0, 0 0, -35% 100%, 0 100%); }
+  to { clip-path: polygon(0 0, 135% 0, 100% 100%, 0 100%); }
+}
+
+/* the drift and the stretch move parts in transform only; their sections never scroll sideways */
+.bce[data-fx='opposite-drift'], .bce[data-fx='stretch-scroll'] { overflow-x: clip; }
+.bce [data-drift], .bce [data-stretch] { will-change: transform; }
+
+/* text-mask-film: the headline's letters become windows onto a grey film, then the ink returns */
+.bce-film { position: relative; }
+.bce-film-m { display: none; }
+html.js .bce-film:is([data-st='armed'], [data-st='play'], [data-st='done']) .bce-film-m { display: block; position: absolute; inset: 0; overflow: hidden; background: #000; pointer-events: none; transition: opacity .8s ease-out; }
+.bce-film-m video { position: absolute; inset: -10% 0; width: 100%; height: 120%; object-fit: cover; filter: grayscale(1) contrast(1.5) brightness(.85); transform: scale(1.15); }
+html.js .bce-film[data-st='play'] .bce-film-m video { animation: bce-film-pan 2.6s linear both; }
+@keyframes bce-film-pan { from { transform: scale(1.35) translateX(-6%); } to { transform: scale(1.1) translateX(4%); } }
+.bce-film-t { position: absolute; inset: 0; margin: 0; background: var(--film-bg, #fff); color: #000; mix-blend-mode: screen; }
+html.js .bce-film[data-st='done'] .bce-film-m { opacity: 0; }
+
+/* cursor-lens: the magnified copy in a circle; on arrival the content develops behind the sweeping lens */
+.bce-lensbox { position: relative; }
+.bce-lens { position: absolute; left: calc(var(--lx, -999px) - 90px); top: calc(var(--ly, -999px) - 90px); width: 180px; height: 180px; border-radius: 50%; overflow: hidden; pointer-events: none; background: var(--lens-bg, #fff); box-shadow: 0 0 0 1px #0a0a0a, 0 18px 40px rgba(0, 0, 0, .14); opacity: 0; transform: scale(.6); transition: opacity .2s ease-out, transform .25s cubic-bezier(.16, 1, .3, 1); z-index: 3; }
+.bce-lens[data-on] { opacity: 1; transform: none; }
+.bce-lens-in { position: absolute; left: calc(90px - var(--lx, 0px) * var(--z)); top: calc(90px - var(--ly, 0px) * var(--z)); width: var(--bw, 100%); transform: scale(var(--z)); transform-origin: 0 0; }
+html.js .bce-lensbox:is([data-st='armed'], [data-st='play']) > .bce-lens-base { -webkit-mask-image: linear-gradient(90deg, #000 calc(var(--rev, 0%) - 12%), rgba(0, 0, 0, .08) var(--rev, 0%)); mask-image: linear-gradient(90deg, #000 calc(var(--rev, 0%) - 12%), rgba(0, 0, 0, .08) var(--rev, 0%)); }
+
+@media (prefers-reduced-motion: reduce) {
+  .bce[data-st], .bce[data-st] * { animation: none !important; transition: none !important; }
+  .bce-lens, .bce-film-m { display: none !important; }
+}
