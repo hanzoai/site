@@ -85,3 +85,16 @@
   .xsm-big-keys span { height: 56px; font-size: 16px; }
   .xsm-big-keys .xp-lede { grid-column: 1 / -1; margin-left: 0; }
 }
+/* the phone's live clock */
+.xsm-colon { font-style: normal; transition: opacity .15s cubic-bezier(0, 0, .2, 1); }
+.xsm-colon.off { opacity: .3; }
+/* the dark room's sender row: who the texts come from, as on the phone (not a label over a headline) */
+.xsm-sender { display: flex; align-items: center; gap: 10px; margin: 0 0 24px; font-size: 16px; font-weight: 606; color: #fafafa; }
+.xsm-sender .xsm-av { background: #fafafa; color: #000; }
+@media (prefers-reduced-motion: reduce) { .xsm-colon.off { opacity: 1; } }
+/* desktop: the h1, the form and its submit all fit the first screen at 1470×801 */
+@media (min-width: 900px) {
+  .xsm-hero { padding-top: clamp(32px, 3.5vw, 56px); }
+  .xsm-card { margin-top: 32px; }
+  .xsm-form { gap: 20px; }
+}
