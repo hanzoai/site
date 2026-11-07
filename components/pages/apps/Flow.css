@@ -47,7 +47,8 @@ button.fl-node:active { scale: .97; }
 .fl-node-h { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .fl-node-h b { display: block; font-size: 14px; font-weight: 606; letter-spacing: -.01em; line-height: 1.25; text-wrap: balance; }
 /* Hanzo writes its component kinds in lower case inside a sentence; as a node's name it takes a first capital */
-.fl-node-h b::first-letter, .fl-pg-node b::first-letter, .fl-pg-steps b::first-letter, .fl-pg-io b::first-letter, .flp-lib li span::first-letter { text-transform: uppercase; }
+.fl-pg-v { display: block; }
+.fl-node-h b::first-letter, .fl-pg-node b::first-letter, .fl-pg-v::first-letter, .fl-pg-steps b::first-letter, .fl-pg-io b::first-letter, .flp-lib li span::first-letter { text-transform: uppercase; }
 .fl-node, .fl-node b, .fl-node-o { overflow-wrap: normal; word-break: normal; hyphens: none; }
 /* received and returned share one box, so swapping them never changes the card's size */
 .fl-node-o { display: grid; padding-top: 10px; border-top: 1px solid var(--line); font-size: 13px; line-height: 1.35; color: var(--faint); }
@@ -129,20 +130,20 @@ button.fl-node:active { scale: .97; }
 .flp-steps { flex-direction: row; align-items: center; gap: clamp(20px, 3vw, 40px); }
 .flp-chain { position: relative; flex: none; display: flex; flex-direction: column; align-items: center; gap: 26px; padding: 6px 0; }
 .flp-chain::before { content: ''; position: absolute; top: 10px; bottom: 10px; left: 50%; border-left: 1.6px solid var(--ink); transform-origin: 50% 0; animation: flp-spine .9s var(--e) both; }
-.flp-chain i { position: relative; width: 18px; height: 18px; border-radius: 50%; border: 1.6px solid var(--ink); background: #ffffff; animation: flp-ink .3s var(--e) forwards; animation-delay: calc(.2s + var(--i) * 260ms); }
+.flp-chain i { position: relative; width: 18px; height: 18px; border-radius: 50%; border: 1.6px solid var(--ink); background: #ffffff; animation: flp-ink .25s var(--e) forwards; animation-delay: calc(.1s + var(--i) * 160ms); }
 .flp-chain i.at { width: 26px; height: 26px; box-shadow: 0 0 0 6px rgba(0, 0, 0, .08); }
-.flp-chain i.at::after { content: ''; position: absolute; left: calc(100% + 8px); top: 50%; width: clamp(20px, 3vw, 40px); border-top: 1.6px solid var(--ink); transform-origin: 0 50%; animation: flp-draw .4s var(--e) both 1.2s; }
-.flp-cause { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0; border-radius: 20px; border: 1.5px solid var(--ink); background: #ffffff; box-shadow: 0 0 0 6px rgba(0, 0, 0, .06); overflow: hidden; animation: flp-in .5s var(--e) both 1.3s; }
+.flp-chain i.at::after { content: ''; position: absolute; left: calc(100% + 8px); top: 50%; width: clamp(20px, 3vw, 40px); border-top: 1.6px solid var(--ink); transform-origin: 0 50%; animation: flp-draw .3s var(--e) both .65s; }
+.flp-cause { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0; border-radius: 20px; border: 1.5px solid var(--ink); background: #ffffff; box-shadow: 0 0 0 6px rgba(0, 0, 0, .06); overflow: hidden; animation: flp-in .4s var(--e) both .75s; }
 .flp-cause-h { display: flex; align-items: center; gap: 12px; margin: 0; padding: 18px 22px; border-bottom: 1px solid var(--line); font-size: 21px; font-weight: 497; letter-spacing: -.01em; }
 .flp-cause-h i { flex: none; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--ink); }
 .flp-cause-row { display: grid; grid-template-columns: 96px minmax(0, 1fr); align-items: center; gap: 16px; margin: 0; padding: 16px 22px; border-bottom: 1px solid var(--line); color: #525252; }
 .flp-cause-row b { display: flex; gap: 8px; height: 10px; }
-.flp-cause-row b.ok { border-radius: 5px; background: var(--ink); transform-origin: 0 50%; animation: flp-draw .5s var(--e) both 1.6s; }
-.flp-cause-row b.bad i { height: 10px; border-radius: 5px; border: 1.6px dashed var(--ink); animation: flp-in .3s var(--e) both; }
-.flp-cause-row b.bad i:nth-child(1) { width: 34%; animation-delay: 2s; }
-.flp-cause-row b.bad i:nth-child(2) { width: 14%; translate: 0 6px; animation-delay: 2.15s; }
-.flp-cause-row b.bad i:nth-child(3) { width: 22%; translate: 0 -5px; animation-delay: 2.3s; }
-.flp-cause-k { margin: 0; padding: 14px 22px 18px; font-size: 16px; font-weight: 606; animation: flp-in .5s var(--e) both 2.5s; }
+.flp-cause-row b.ok { border-radius: 5px; background: var(--ink); transform-origin: 0 50%; animation: flp-draw .4s var(--e) both .95s; }
+.flp-cause-row b.bad i { height: 10px; border-radius: 5px; border: 1.6px dashed var(--ink); animation: flp-in .25s var(--e) both; }
+.flp-cause-row b.bad i:nth-child(1) { width: 34%; animation-delay: 1.15s; }
+.flp-cause-row b.bad i:nth-child(2) { width: 14%; translate: 0 6px; animation-delay: 1.25s; }
+.flp-cause-row b.bad i:nth-child(3) { width: 22%; translate: 0 -5px; animation-delay: 1.35s; }
+.flp-cause-k { margin: 0; padding: 14px 22px 18px; font-size: 16px; font-weight: 606; animation: flp-in .4s var(--e) both 1.45s; }
 /* 04 multi-agent: three agents on one canvas, two messages hopping between them, retrieval underneath */
 .flp-agents { align-items: stretch; justify-content: flex-start; gap: 0; }
 .flp-agents-row { position: relative; display: flex; justify-content: space-between; align-items: center; margin: 8% 12% 0; height: 44px; }
@@ -286,7 +287,9 @@ button.fl-node:active { scale: .97; }
 /* "…" and the returned chip occupy the same box (same padding, same reserved two lines), so the controls below never bob */
 /* the returned value: the same 32px as received, centred in its card with even padding; while the node runs the card
    holds a running bar instead of an empty placeholder */
-.fl-pg-io b.out, .fl-pg-io b.wait { display: flex; align-items: center; align-self: stretch; padding: 18px 22px; border-radius: 16px; font-size: 32px; }
+.fl-pg-io b.out, .fl-pg-io b.wait { display: flex; align-items: center; align-self: stretch; box-sizing: border-box; height: 76px; min-height: 0; padding: 0 22px; border-radius: 16px; font-size: 32px; }
+/* the received value sits on the same line as the returned one */
+.fl-pg-io p:first-child b { padding-top: 21px; }
 .fl-pg-io b.out { background: #f5f5f5; color: #0a0a0a; }
 .fl-pg-io b.wait { background: transparent; border: 1px solid rgba(255, 255, 255, .16); }
 .fl-pg-wait { position: relative; display: block; width: 100%; height: 4px; border-radius: 2px; background: rgba(255, 255, 255, .12); overflow: hidden; }
@@ -502,7 +505,8 @@ button.fl-node:active { scale: .97; }
   .fl-pg-flow { width: 96px; margin: 2px 0; }
   .fl-pg-io p { gap: 8px; }
   .fl-pg-io b { font-size: 26px; }
-  .fl-pg-io b.out, .fl-pg-io b.wait { font-size: 26px; padding: 14px 18px; }
+  .fl-pg-io b.out, .fl-pg-io b.wait { font-size: 26px; height: 64px; padding: 0 18px; }
+  .fl-pg-io p:first-child b { padding-top: 0; min-height: 0; }
   .fl-pg-io b { min-height: 84px; }
   .fl-pg-io .fl-pg-flow { margin-top: 0; align-self: start; }
 

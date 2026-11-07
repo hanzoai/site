@@ -19,7 +19,7 @@
    Persona: a team shipping an LLM feature that worries about pasted secrets and prompt injection.
    Goal: watch both directions get read, then try it on their own text.
    CTA: View on GitHub (hero, the sticky ask bar and the close; one solid button per screen). */
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent, useReducedMotion } from 'motion/react';
 import { A, Cta } from '../../kit';
 import { useLive } from './Frame';
@@ -111,15 +111,33 @@ const FACTS = [
   ['Nothing to rewrite', 'Start the proxy with your provider as the upstream and point the base URL at it. Or wrap a CLI tool over a pseudo-terminal and everything you type is filtered on its way in. Or put it in front of an MCP server and filter the tool calls.'],
 ];
 
-/* The detector board: what each fact looks like, in its own words. */
+/* The detector board: what each fact looks like, in its own words. The second fact is one run of data-shaped values
+   (no prose), each read into Hanzo's typed marker in turn; the card number carries its Luhn tick. */
 const BOARD = [
   { kind: 'list', items: ['Overriding the instructions', 'role-play', 'asking for the system prompt', 'bypassing a rule', 'hiding the ask in an encoding', 'reframing the context'], foot: 'confidence' },
-  { kind: 'tiles', items: [['SSN', ''], ['CARD', 'Luhn'], ['EMAIL', ''], ['PHONE', ''], ['IP', ''], ['API_KEY', '']] },
+  { kind: 'redact', items: [['CARD', '4111 1111 1111 1111', 'Luhn'], ['EMAIL', 'jane@example.com'], ['SSN', '078-05-1120'], ['PHONE', '202-555-0143'], ['IP', '192.0.2.1'], ['API_KEY', 'sk-test-51Hx9Qb2aZ']] },
   { kind: 'lanes', items: [['request', false], ['reply', true]], foot: 'machine-learning classifier' },
-  { kind: 'dials', items: ['each detector', 'injection threshold', 'your own patterns', 'marker text', 'token bucket'] },
+  { kind: 'dials' },
   { kind: 'log', items: [['content', false], ['hash of the content', true]] },
   { kind: 'modes', items: [['proxy', 'base URL'], ['CLI tool', 'pseudo-terminal'], ['MCP server', 'tool calls']] },
 ];
+
+/* the playground's dials, shared with the board's "You set the dials" panel: flipping one changes the other */
+const Dials = createContext(null);
+const GLYPH = ['[ ]', '< >', '███'];
+function DialsList() {
+  const d = useContext(Dials);
+  const all = KINDS.every((k) => d.det[k]);
+  return (
+    <ul>
+      <motion.li variants={it(0)} style={{ '--j': 0 }}><span>each detector</span><button type="button" role="switch" aria-checked={all} aria-label="each detector" className="sw" onClick={() => d.setDet(Object.fromEntries(KINDS.map((k) => [k, !all])))} /></motion.li>
+      <motion.li variants={it(1)} style={{ '--j': 1 }}><span>injection threshold</span><i className="thr" aria-hidden="true" /></motion.li>
+      <motion.li variants={it(2)} style={{ '--j': 2 }}><span>your own patterns</span><i className="pat" aria-hidden="true" /></motion.li>
+      <motion.li variants={it(3)} style={{ '--j': 3 }}><span>marker text</span><button type="button" aria-label="marker text" className="mkb" onClick={() => d.setSty((s) => (s + 1) % 3)}>{GLYPH[d.sty]}</button></motion.li>
+      <motion.li variants={it(4)} style={{ '--j': 4 }}><span>token bucket</span><i className="bucket" aria-hidden="true" /></motion.li>
+    </ul>
+  );
+}
 
 const it = (j) => ({ in: { opacity: 0, y: 18 }, on: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE, delay: 0.05 + j * 0.05 } } });
 
@@ -130,7 +148,7 @@ const it = (j) => ({ in: { opacity: 0, y: 18 }, on: { opacity: 1, y: 0, transiti
 function Board({ at, still }) {
   const b = BOARD[at];
   return (
-    <div className="gd-board" data-k={b.kind} aria-hidden="true">
+    <div className="gd-board" data-k={b.kind} aria-hidden={b.kind === 'dials' ? undefined : 'true'}>
       <AnimatePresence mode="wait" initial={false}>
         <motion.div key={at} className={'gd-b gd-b-' + b.kind} initial={still ? 'on' : 'in'} animate="on" exit={{ opacity: 0, transition: { duration: 0.16 } }}>
           {b.kind === 'list' && (
@@ -139,14 +157,14 @@ function Board({ at, still }) {
               <motion.div className="gd-b-conf" variants={it(6)}><span>{b.foot}</span><div><motion.i variants={{ in: { scaleX: 0 }, on: { scaleX: 0.82, transition: { duration: 1.2, ease: EASE, delay: 0.5 } } }} /></div></motion.div>
             </>
           )}
-          {b.kind === 'tiles' && <div className="gd-tiles">{b.items.map(([t, s], j) => <motion.p key={t} variants={it(j)}><b className="gd-mkt">{NAME[t]}</b>{s && <span className="gd-luhn">{s} ✓</span>}</motion.p>)}</div>}
+          {b.kind === 'redact' && <div className="gd-red">{b.items.map(([k, v, s], j) => <motion.p key={k} variants={it(j)} style={{ '--j': j }}><span className="gd-rv">{v}</span><Arrow /><b className="gd-mkt">{NAME[k]}</b>{s && <span className="gd-luhn">{s} ✓</span>}</motion.p>)}</div>}
           {b.kind === 'lanes' && (
             <>
               {b.items.map(([t, back], j) => <motion.div key={t} className={'gd-lane' + (back ? ' back' : '')} variants={it(j)}><b>{t}</b><s /><i>Guard</i><s /><span><Arrow back={back} /> model</span><em className="gd-tokw"><em className="gd-tok" /></em></motion.div>)}
               <motion.p className="gd-b-off" variants={it(3)}><i />{b.foot}</motion.p>
             </>
           )}
-          {b.kind === 'dials' && <ul>{b.items.map((t, j) => <motion.li key={t} variants={it(j)} style={{ '--j': j }}><span>{t}</span><i className={j === 4 ? 'bucket' : 'sw'} /></motion.li>)}</ul>}
+          {b.kind === 'dials' && <DialsList />}
           {b.kind === 'log' && b.items.map(([t, ok], j) => <motion.p key={t} className={'gd-logl' + (ok ? ' ok' : ' no')} variants={it(j)}><b>{ok ? '✓' : '×'}</b><span>{t}</span></motion.p>)}
           {b.kind === 'modes' && (
             <div className="gd-modes">
@@ -170,8 +188,7 @@ const STYLES = [(m) => `[${m}]`, (m) => `<${m}>`, (m) => '█'.repeat(Math.max(4
 const SAMPLE = '4111 1111 1111 1111\njane@example.com\n192.0.2.1';
 function Yours() {
   const [text, setText] = useState(SAMPLE);
-  const [on, setOn] = useState(() => Object.fromEntries(KINDS.map((k) => [k, true])));
-  const [sty, setSty] = useState(0);
+  const { det: on, setDet: setOn, sty, setSty } = useContext(Dials);
   const { parts, found, inject } = useMemo(() => redact(text), [text]);
   const shown = parts.map(([t, m]) => (m && on[m] ? [t, m] : [t, null]));
   const kinds = Object.entries(found).filter(([m]) => on[m]);
@@ -218,7 +235,6 @@ function Passes() {
   const ref = useRef(null);
   const n = FACTS.length;
   const [at, setAt] = useState(0);
-  const [peek, setPeek] = useState(null);
   const [open, setOpen] = useState({});
   // phones: a panel plays its arrival once its card is mostly on screen in the sideways rail
   useEffect(() => {
@@ -233,7 +249,7 @@ function Passes() {
   const go = (i) => {
     const el = ref.current;
     if (!el) return;
-    if (innerWidth <= 900) { document.getElementById('gd-f' + i)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+    if (innerWidth <= 900 || matchMedia('(prefers-reduced-motion: reduce)').matches) return; // phones and the stacked reduced-motion page: every fact is already in view as a card
     const y = el.getBoundingClientRect().top + scrollY + ((i + 0.5) / n) * (el.offsetHeight - innerHeight);
     window.__lenis ? window.__lenis.scrollTo(y, { duration: 1.1 }) : scrollTo({ top: y, behavior: 'smooth' });
   };
@@ -241,31 +257,28 @@ function Passes() {
     <section ref={ref} className="gd-ps" style={{ '--n': n }} aria-labelledby="gd-ps-h">
       <div className="gd-ps-stage">
         <div className="v2-wrap gd-ps-in">
-          <div className="gd-ps-top">
-            <h2 id="gd-ps-h" className="v2-headline gd-ps-h">What it looks for</h2>
-            <nav className="gd-rail" aria-label="What it looks for" onPointerLeave={() => setPeek(null)}>
-              {FACTS.map(([t], i) => (
-                <button key={t} type="button" aria-label={t} aria-current={i === at ? 'step' : undefined} data-past={i < at || undefined} onClick={() => go(i)} onPointerEnter={(e) => e.pointerType === 'mouse' && setPeek(i)} onFocus={() => setPeek(i)} onBlur={() => setPeek(null)}>
-                  <span className="x-mono">{pad(i + 1)}</span><i />
-                </button>
+          <h2 id="gd-ps-h" className="v2-headline gd-ps-h">What it looks for</h2>
+          {/* one board, six states: the six facts are its rows and light in turn as you scroll (press one to go to it);
+              the lit row's own panel fills the board's right side, and its words sit under the board as a caption */}
+          <div className="gd-ps-panel">
+            <div className="gd-ps-facts">
+              {FACTS.map(([t, d], i) => (
+                <article key={t} id={'gd-f' + i} className="gd-f" data-on={i === at || undefined} data-past={i < at || undefined}>
+                  <h3 className="gd-f-t" id={'gd-ft' + i}>
+                    <button type="button" className="gd-f-go" aria-current={i === at ? 'step' : undefined} onClick={() => go(i)}><span className="gd-f-i x-mono" aria-hidden="true">{pad(i + 1)}</span><span className="gd-f-tt">{t}</span></button>
+                  </h3>
+                  <div className="gd-f-cap">
+                    <p className="gd-f-n x-mono">{pad(i + 1)} / {pad(n)}</p>
+                    <p className="v2-body gd-f-d" id={'gd-fd' + i} data-open={open[i] || undefined}>{d}</p>
+                    {!open[i] && <button type="button" className="gd-f-more" aria-expanded="false" aria-controls={'gd-fd' + i} onClick={() => setOpen((o) => ({ ...o, [i]: true }))}>Read more</button>}
+                  </div>
+                  <div className="gd-f-vis"><Board at={i} still /></div>
+                </article>
               ))}
-              <span className="gd-rail-peek" aria-hidden="true">{peek !== null && peek !== at ? FACTS[peek][0] : ''}</span>
-            </nav>
+            </div>
+            <div className="gd-ps-board"><Board at={at} /></div>
           </div>
-          <div className="gd-ps-board"><Board at={at} /></div>
-          <div className="gd-ps-facts">
-            {FACTS.map(([t, d], i) => (
-              <article key={t} id={'gd-f' + i} className="gd-f" data-on={i === at || undefined} data-past={i < at || undefined}>
-                <div className="gd-f-h">
-                  <h3 className="gd-f-t" id={'gd-ft' + i}><span>{t}</span></h3>
-                  <p className="gd-f-n x-mono">{pad(i + 1)} / {pad(n)}</p>
-                </div>
-                <p className="v2-body gd-f-d" id={'gd-fd' + i} data-open={open[i] || undefined}>{d}</p>
-                {!open[i] && <button type="button" className="gd-f-more" aria-expanded="false" aria-controls={'gd-fd' + i} onClick={() => setOpen((o) => ({ ...o, [i]: true }))}>Read more</button>}
-                <div className="gd-f-vis"><Board at={i} still /></div>
-              </article>
-            ))}
-          </div>
+          <div className="gd-ps-capspace" aria-hidden="true" />
         </div>
       </div>
     </section>
@@ -291,7 +304,7 @@ function HeroObject({ children }) {
     setTilt({ rx: (-py * 5).toFixed(2), ry: (px * 5).toFixed(2) });
   };
   return (
-    <div ref={ref} className="v2-wrap gd-lift" onPointerMove={move} onPointerLeave={() => setTilt(null)}>
+    <div ref={ref} className="gd-lift" onPointerMove={move} onPointerLeave={() => setTilt(null)}>
       <motion.div style={mounted && calm ? undefined : { scale, transformOrigin: '50% 0%' }}>
         <div className="gd-tilt" style={tilt ? { transform: `perspective(1400px) rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)` } : undefined}>{children}</div>
       </motion.div>
@@ -309,17 +322,24 @@ export default function Guard() {
     addEventListener('pageshow', back); document.addEventListener('visibilitychange', back);
     return () => { clearTimeout(t); removeEventListener('pageshow', back); document.removeEventListener('visibilitychange', back); };
   }, [busy]);
+  // the playground's dials and the board's "You set the dials" panel share one state
+  const [det, setDet] = useState(() => Object.fromEntries(KINDS.map((k) => [k, true])));
+  const [sty, setSty] = useState(0);
+  const dials = useMemo(() => ({ det, setDet, sty, setSty }), [det, sty]);
   return (
+    <Dials.Provider value={dials}>
     <main className="v2 gd">
       <section className="gd-hero v2-dark" data-room="dark">
-        <div className="v2-wrap gd-hero-t">
-          <Lines as="h1" className="v2-display gd-h1" lines={['Guard']} data-morph-target="" />
-          <p className="v2-lede gd-sub"><span className="v2-line"><span className="v2-cut" style={{ animationDelay: '.14s' }}>It reads what goes into a model, and what comes back</span></span></p>
-          <div className="v2-acts gd-acts"><Cta to="https://github.com/hanzoai" id="guard.hero" thumb className="gd-ask" aria-busy={busy || undefined} onClick={() => setBusy(true)}>View on GitHub</Cta></div>
+        <div className="v2-wrap gd-hero-g">
+          <div className="gd-hero-t">
+            <Lines as="h1" className="v2-display gd-h1" lines={['Guard']} data-morph-target="" />
+            <p className="v2-lede gd-sub"><span className="v2-line"><span className="v2-cut" style={{ animationDelay: '.14s' }}>It reads what goes into a model, and what comes back</span></span></p>
+            <div className="v2-acts gd-acts"><Cta to="https://github.com/hanzoai" id="guard.hero" thumb className="gd-ask" aria-busy={busy || undefined} onClick={() => setBusy(true)}>View on GitHub</Cta></div>
+          </div>
+          <HeroObject>
+            <Composer />
+          </HeroObject>
         </div>
-        <HeroObject>
-          <Composer />
-        </HeroObject>
       </section>
 
       <Passes />
@@ -330,5 +350,6 @@ export default function Guard() {
 
       <GetIt name="Guard" tag="AI guardrails" seed="guard" data={[6, 6]} lead="Get started with Guard" ask={['View on GitHub', 'https://github.com/hanzoai', 'guard.close']} className="gd-gi" />
     </main>
+    </Dials.Provider>
   );
 }

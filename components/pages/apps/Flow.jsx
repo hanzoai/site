@@ -169,6 +169,9 @@ function Hero() {
   const [ref, live, calm] = useLive(0.2);
   const [hold, setHold] = useState(false);
   const [s, setS] = useRun(live, calm, !hold);
+  // reduced motion is known only in the browser; taken after mount so the server HTML and first render match
+  const [still, setStill] = useState(false);
+  useEffect(() => setStill(!!calm), [calm]);
   // tap or click a node: the run holds there, that node lit with what it returned
   const pick = (k) => { setHold(true); setS(2 * k + 1); };
   return (
@@ -177,7 +180,7 @@ function Hero() {
       {/* the run's own pause (WCAG 2.2.2): icon only, its name from the register; pressed while held */}
       {/* it sits on the canvas under node 06, inside the graph; under reduced motion the run is shown finished and the
           control is only its counter, out of the tab order */}
-      <button type="button" className="fl-hold" onClick={() => setHold(!hold)} aria-label="Pause" aria-pressed={hold} tabIndex={calm ? -1 : undefined} aria-hidden={calm || undefined}><Ico k={hold ? 'play' : 'pause'} /><span className="fl-hold-n x-mono" aria-hidden="true">{two(nodeOf(s) + 1)} / 06</span></button>
+      <button type="button" className="fl-hold" onClick={() => setHold(!hold)} aria-label="Pause" aria-pressed={hold} tabIndex={still ? -1 : undefined} aria-hidden={still || undefined}><Ico k={hold ? 'play' : 'pause'} /><span className="fl-hold-n x-mono" aria-hidden="true">{two(nodeOf(s) + 1)} / 06</span></button>
       <div className="fl-hero-in">
         <div className="bz-wrap">
           <div className="fl-copy">
@@ -261,7 +264,7 @@ function Playground() {
             <div className="fl-pg-io">
               <p><span className="x-mono">received</span><b>{NODES[i].r}</b></p>
               <i className={'fl-pg-flow' + (s % 2 && s < END ? ' go' : '') + (done ? ' done' : '')} aria-hidden="true"><em key={s} /></i>
-              <p><span className="x-mono">returned</span><b className={done ? 'out' : 'wait'}>{done ? <Typed key={i} text={NODES[i].o} calm={calm} /> : <i className="fl-pg-wait" aria-hidden="true" />}</b></p>
+              <p><span className="x-mono">returned</span><b className={done ? 'out' : 'wait'}>{done ? <span className="fl-pg-v"><Typed key={i} text={NODES[i].o} calm={calm} /></span> : <i className="fl-pg-wait" aria-hidden="true" />}</b></p>
             </div>
           </div>
           <div className="fl-pg-bot">

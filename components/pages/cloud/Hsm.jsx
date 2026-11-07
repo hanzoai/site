@@ -6,7 +6,7 @@
 // Signature: the module, exploded: a plate stack that signs in the hero and opens layer by layer as the facts are read.
 // Beyond: bring the module you already have: in chapter 06, pick AWS KMS, Google Cloud KMS, Azure Key Vault, Zymbit or the in-memory signer and the module's bottom plate and lit layer change.
 /* HSM (v2, archetype A Launch).
-   V2: 8/10 round 4: the hero module is the one big object (no framed box), h1 near 38% with a 56px peek of the dark room; the dark room enters as a rounded card and opens to full width; page-local chapters with h2 titles in normal flow (a sticky drawing on desktop, a drawing per chapter on phone; never overlapping, also with reduced motion); the vendor tabs live in chapter 06 (said once, no per-vendor claims); the close shows the module at rest instead of a contour; every word is Hanzo's, said once.
+   V2: 8/10 round 5: one module drawing, never repeated: hero, then the dark room (sticky beside the words on desktop; one pinned frame on phone where only the chapter's words swap); the lit layer carries one noun, the sentence says the rest; the active chapter title grows and settles; Paste and ship keys its prompt in once with Copy as the payoff; the close is a large type row of the modules Hanzo names; "hanzoai" is a meta line, so the one GitHub link is the button; the call line is left-aligned with a fixed-width name; the pause docks to the module and hides under reduced motion; ticks and arrows are drawn, not typed; every word is Hanzo's, said once.
    Signature: the module, exploded. One hardware module drawn as a stack of plates (the handle Hanzo holds, the
    boundary, the key, the firmware, the module itself). In the hero it is closed and signing: key id and bytes go in, a
    signature comes out, and the module under the interface changes (AWS KMS, Azure Key Vault, Google Cloud KMS, a Zymbit
@@ -15,11 +15,12 @@
    Supporting: kinetic title lines; the dark room opening from a card (clip-path on scroll); plates parting to the pointer.
    Greys only (Hanzo's deck): the module is silver and ink. Every word and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
-import { A, Cta } from '../../kit';
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent, useInView, useReducedMotion } from 'motion/react';
+import { Cta } from '../../kit';
+import { Copy } from '../../ui';
 import { useLive, useSteps } from './Frame';
 import { Lines } from '../../v2/LiftStage';
-import ShipPrompt from '../../v2/ShipPrompt';
+import '../../v2/ShipPrompt.css';
 import LivePause, { usePause } from '../../v2/LivePause';
 import '../../v2/v2scale.css';
 import '../../v2/GetIt.css';
@@ -29,6 +30,9 @@ const EASE = [0.16, 1, 0.3, 1];
 const MODULES = ['AWS KMS', 'Azure Key Vault', 'Google Cloud KMS', 'Zymbit'];
 const LAYERS = ['handle', 'boundary', 'key', 'firmware', 'module'];
 const pad = (n) => String(n).padStart(2, '0');
+/* drawn marks, kept apart from Hanzo's words (a tick, an arrow): shapes, not text */
+const Tk = () => <svg className="hs-tk" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+const Arr = () => <svg className="hs-arr" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 /* The hero object's settle, page-local: it paints at its final size (server and client agree, nothing snaps at load),
    then eases back and down a little as the hero scrolls away. Reduced motion holds it still in CSS (.hs-settle). */
@@ -93,9 +97,9 @@ function Sign() {
         <i key={'p' + m} className="hs-pulse" />
         <AnimatePresence mode="popLayout">
           <motion.p key={'in' + m} className="hs-io in" initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 30, transition: { duration: 0.3 } }} transition={{ duration: 0.8, ease: EASE }}>a key id and some bytes</motion.p>
-          <motion.p key={'out' + m} className="hs-io out" initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, transition: { duration: 0.2 } }} transition={{ duration: 0.8, ease: EASE, delay: 1.1 }}>a signature <i className="hs-tk">✓</i></motion.p>
+          <motion.p key={'out' + m} className="hs-io out" initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, transition: { duration: 0.2 } }} transition={{ duration: 0.8, ease: EASE, delay: 1.1 }}>a signature<Tk /></motion.p>
         </AnimatePresence>
-        <p className="hs-call">One interface <span>→</span> <AnimatePresence mode="wait" initial={false}><motion.b key={m} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }} transition={{ duration: 0.4, ease: EASE }}>{MODULES[m]}</motion.b></AnimatePresence></p>
+        <p className="hs-call">One interface<Arr /><span className="hs-call-m"><AnimatePresence mode="wait" initial={false}><motion.b key={m} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }} transition={{ duration: 0.4, ease: EASE }}>{MODULES[m]}</motion.b></AnimatePresence></span></p>
       </div>
     </div>
   );
@@ -110,13 +114,14 @@ const FACTS = [
   ['Bring the module you already have', 'AWS KMS, Google Cloud KMS, Azure Key Vault, a Zymbit secure compute module over local PKCS#11, or an in-memory signer for development. One Go interface behind all of them, so which module you use is a line of configuration rather than a rewrite.'],
 ];
 
-/* Each fact opens the module its own way (gap), lights its layer and labels it in the fact's own words. */
+/* Each fact opens the module its own way (gap) and lights its layer. The lit layer carries one noun from the fact (the
+   sentence beside it says the rest), so nothing is said twice. */
 const SCENES = [
-  { gap: 62, lit: [0, 2], labels: { 0: 'a handle', 2: 'the key' } },
-  { gap: 80, lit: [2], labels: { 0: 'a key id and some bytes', 2: 'the private key' } },
-  { gap: 80, lit: [1], labels: { 1: 'the password', 2: 'decrypts it at boot' } },
-  { gap: 96, lit: [3], labels: { 0: 'it runs in the process', 3: 'ML-DSA-65' } },
-  { gap: 96, lit: [2], labels: { 1: 'no share is ever assembled', 2: 'Shares are attested' }, shares: true },
+  { gap: 62, lit: [0, 2], labels: { 0: 'handle', 2: 'key' } },
+  { gap: 80, lit: [2], labels: { 2: 'key' } },
+  { gap: 80, lit: [1], labels: { 1: 'password' } },
+  { gap: 96, lit: [3], labels: { 3: 'firmware' } },
+  { gap: 96, lit: [2], labels: { 2: 'shares' }, shares: true },
   { gap: 70, lit: [4], labels: {} },
 ];
 
@@ -137,36 +142,45 @@ function Exploded({ at, vendor }) {
 }
 
 /* The dark room: a rounded card inside the gutters that opens to full width as it is reached (clip-path, scroll-linked).
-   Chapters are in normal flow (never stacked on one another). Desktop: the drawing sticks beside them and follows the
-   chapter crossing the middle of the screen. Phone: each chapter carries its own drawing above its words. */
+   Desktop: the chapters are in normal flow and the drawing sticks beside them, following the chapter crossing the middle
+   of the screen. Phone (motion allowed, scripts on): one pinned frame, the drawing on top and one chapter's words under
+   it, swapping as the room scrolls past (one chapter per stretch of scroll), so words never slide under the drawing.
+   Reduced motion or no scripts on a phone: one drawing, then the chapters as a plain list. */
 function Chapters() {
   const room = useRef(null);
+  const track = useRef(null);
   const arts = useRef([]);
+  const pinned = useRef(false);
   const [at, setAt] = useState(0);
   const [inView, setInView] = useState(false);
   const { scrollYProgress } = useScroll({ target: room, offset: ['start end', 'start 0.15'] });
   const inset = useTransform(scrollYProgress, [0, 1], [24, 0]);
   const round = useTransform(scrollYProgress, [0, 1], [28, 0]);
   const clipPath = useTransform([inset, round], ([i, r]) => `inset(0px ${i}px round ${r}px)`);
+  const { scrollYProgress: tp } = useScroll({ target: track, offset: ['start start', 'end end'] });
+  useMotionValueEvent(tp, 'change', (v) => { if (pinned.current) setAt(Math.min(FACTS.length - 1, Math.max(0, Math.floor(v * FACTS.length)))); });
   const [vendor, pick] = useSteps(VENDORS.length, 1800, at === 5 && inView);
 
   useEffect(() => {
-    const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && setAt(+e.target.dataset.i)), { rootMargin: '-45% 0px -45% 0px' });
+    const mq = matchMedia('(max-width: 900px) and (prefers-reduced-motion: no-preference)');
+    const sync = () => { pinned.current = mq.matches; };
+    sync();
+    mq.addEventListener('change', sync);
+    const io = new IntersectionObserver((es) => es.forEach((e) => !pinned.current && e.isIntersecting && setAt(+e.target.dataset.i)), { rootMargin: '-45% 0px -45% 0px' });
     arts.current.forEach((a) => a && io.observe(a));
     const seen = new IntersectionObserver(([e]) => setInView(e.isIntersecting));
     if (room.current) seen.observe(room.current);
-    return () => { io.disconnect(); seen.disconnect(); };
+    return () => { io.disconnect(); seen.disconnect(); mq.removeEventListener('change', sync); };
   }, []);
 
   return (
     <motion.section ref={room} className="hs-ch hc" data-room="dark" aria-label="What it is" style={{ clipPath }}>
-      <div className="v2-wrap hc-in">
+      <div className="v2-wrap hc-in" ref={track}>
         <div className="hc-copy">
           {FACTS.map(([t, d], i) => (
             <article key={t} ref={(el) => (arts.current[i] = el)} data-i={i} className="hc-art" data-on={i === at ? '' : undefined}>
-              <div className="hc-vis-m"><Exploded at={i} vendor={vendor} /></div>
               <h2 className="hc-t" id={'hs-ch-' + i}>{t}</h2>
-              <p className="hc-n v2-kick">{pad(i + 1)} / {pad(FACTS.length)}</p>
+              <p className="hc-n v2-kick">{pad(i + 1)} / {pad(FACTS.length)}{i === 0 && <span className="hc-what">What it is</span>}</p>
               <p className="hc-d">{d}</p>
               {i === 5 && (
                 <div className="hs-vendors" role="tablist" aria-labelledby="hs-ch-5">
@@ -184,7 +198,6 @@ function Chapters() {
         <div className="hc-vis">
           <div className="hc-vis-in">
             <Exploded at={at} vendor={vendor} />
-            <p className="v2-kick hc-k">What it is</p>
           </div>
         </div>
       </div>
@@ -194,11 +207,51 @@ function Chapters() {
 
 const Gh = () => <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" /></svg>;
 
-/* The close: the shared GetIt's words and styles, with the module at rest (line art, the key lit) as its object
-   instead of the contour field. */
-function Close() {
+/* Paste and ship, page-local (the shared ShipPrompt's words and layout, its own stage): the prompt keys itself in once
+   as it arrives, a caret at its end, and Copy answers when the line is whole. The full prompt is in the HTML (screen
+   readers and scripts-off read it whole); Copy copies exactly that. Reduced motion: the whole line, no keying. */
+const PROMPT = 'Read https://hanzo.ai/skill.md and use Hanzo HSM in my project.';
+function Ship() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.6 });
+  const calm = useReducedMotion();
+  const [n, setN] = useState(PROMPT.length);
+  const armed = useRef(false);
+  // before the stage is reached (it starts well below the fold), clear the line so it can key in on arrival
+  useEffect(() => { if (!calm && !seen && ref.current && ref.current.getBoundingClientRect().top > innerHeight) { armed.current = true; setN(0); } }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (!seen || !armed.current || n >= PROMPT.length) return;
+    const t = setTimeout(() => setN((k) => Math.min(PROMPT.length, k + 2)), n === 0 ? 260 : 26);
+    return () => clearTimeout(t);
+  }, [seen, n]);
+  const done = n >= PROMPT.length;
   return (
-    <section className="gi hs-close">
+    <section className="sp v2-sec hs-ship">
+      <div className="v2-wrap v2-grid sp-grid">
+        <div className="sp-copy">
+          <h2 className="v2-headline sp-h">Paste and ship</h2>
+          <p className="v2-body sp-d">Paste this into any agent. It reads the skill manifest and calls HSM from there.</p>
+        </div>
+        <figure ref={ref} className={'hs-ship-card' + (done && armed.current ? ' done' : '')}>
+          <figcaption className="hs-ship-h"><span>Agent prompt</span><Copy text={PROMPT} /></figcaption>
+          <pre tabIndex={0} aria-label="Agent prompt"><code>
+            <span className="hs-sr">{PROMPT}</span>
+            <span aria-hidden="true">{PROMPT.slice(0, n)}<i className={'hs-caret' + (done ? ' off' : '')} /><span className="hs-rest">{PROMPT.slice(n)}</span></span>
+          </code></pre>
+        </figure>
+      </div>
+    </section>
+  );
+}
+
+/* The close: the shared GetIt's words and styles. Its object is type: the modules Hanzo names, set large in the order
+   Hanzo lists them, each taking the light in turn (the module drawing is not shown a third time). "hanzoai" is a quiet
+   meta line beside the licence, so the one GitHub link is the button. */
+function Close() {
+  const [ref, live] = useLive(0.4);
+  const [k] = useSteps(MODULES.length, 1600, live);
+  return (
+    <section className="gi hs-close" ref={ref}>
       <div className="v2-wrap gi-in">
         <div className="gi-copy">
           <h2 className="v2-display m gi-h">Get HSM</h2>
@@ -206,16 +259,16 @@ function Close() {
           <p className="v2-lede gi-tag">Hardware security module</p>
           <div className="gi-meta">
             <span className="gi-chip"><span>License:</span> Apache-2.0</span>
-            <A to="https://github.com/hanzoai" className="gi-chip"><Gh />hanzoai</A>
+            <span className="hs-meta"><Gh />hanzoai</span>
           </div>
           <div className="gi-acts">
             <Cta to="https://github.com/hanzoai" id="hsm.close" size="lg">View on GitHub</Cta>
             <p className="gi-more"><Cta to="https://platform.hanzo.ai/deploy" kind="link" id="hsm.deploy">Deploy to Cloud</Cta></p>
           </div>
         </div>
-        <div className="hs-close-art" aria-hidden="true">
-          <Module gap={18} lit={[2]} base="HSM" small />
-        </div>
+        <ul className="hs-names">
+          {MODULES.map((v, i) => <li key={v} data-on={i === k ? '' : undefined}>{v}</li>)}
+        </ul>
       </div>
     </section>
   );
@@ -239,7 +292,7 @@ export default function Hsm() {
 
       <Chapters />
 
-      <ShipPrompt name="HSM" prompt="Read https://hanzo.ai/skill.md and use Hanzo HSM in my project." />
+      <Ship />
 
       <Close />
     </main>

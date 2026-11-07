@@ -10,7 +10,7 @@
    for the chosen platform, screens opening as it goes, the matching step lit in the text and a drawn tick when it saves.
    Beyond: try the choice. Flip the switch and the panel answers with what that choice means, in the article's own
    words: on, what Hanzo may use; off, what turning it off changes.
-   V2: 8/10 round 5 (critic 7): the handset is tall enough that its switch shows whole when it flips; a pressed step lights that same step (the lit step is the one the hand is on) and stops autoplay; pressing a step in 02 puts the panel on the walk whatever section is in view; the caption counts the walk's own steps (0N / 04) during the walk and the sections otherwise; the tabs say Hanzo's own "On the web and the desktop app" / "On mobile"; the first paint (server and client) is the walk's finished state, so reduced motion never flips at hydration; 05 on phones shows the two documents as named rows instead of three identical glyphs; pause sits in the stage corner on phones; the phone breadcrumb ends on its topic with no dangling slash; 04's hairlines and fill share one edge; no box inside a box; the topic line sits under the lede; the switch answers hover; the drawn mock toggle is a hidden span. Round 4 (critic 7): one section counter on the panel (the walk's steps are its dots), 01 has its own scene (the setting, turning on), 04 turns the switch off and lights the row being read, the panel keeps the section just read and stops 56px above the closing band, platform labels on one line at every width, phone demo card at 56% of the screen with the contents inside 1.25 screens, phone 01 and 05 carry small objects, contents rows show an arrow and press 1px, every hairline on the text edge, the question visible from first paint (CSS cut-in), Hanzo's own "Help Center" and no invented labels. Round 3: the demo agrees with itself (both switches mirror; every walk starts on and ends off; 03 and 04 show it off), tabs fit at 320, placeholder bars stay inside both windows, a tap mark on touch and the hand rests inside the window, two caption lines reserved, phone 03 and 04 carry their own inline stage, phone demo shorter, breadcrumb separators trail (no lone slash), "More" at 26px with a Help center next step, a real breadcrumb hover, no white gap before the footer on phones. Round 2: the panel now follows the reading (01-02 the walk, 03 a drawn line where the switch turns off and later chats go hollow, 04 the other settings lit row by row in step with its rows), the switch answers with the tick and saved line instead of repeating 03, panel capped to the viewport, 62ch column, flat step tiles that become tabs on phones, full breadcrumb, real hovers on index rows and links, hairlines that draw in, the last section closes as a quiet room into the footer */
+   V2: 8/10 round 6 (critic 7): the walk starts at its step 01 on the server and on the first client paint (no finished state, no rewind); reduced motion shows the walk's last screen through CSS alone, so nothing flips at hydration; phones show "On mobile" from the first paint (both platforms are in the HTML and a media query picks one until a choice is made); screens slide in opaque at 300ms, never cross-fade; 04 has its own object (the four things the switch leaves alone, as a ledger beside the switch off) on the desktop panel and on phones; phones show the settings mock once (01 is the switch alone); presses scale to .98; the 320 tabs share one row; the lower card shows Hanzo's whole "When it is on… When it is off…" pair at a fixed height, so a step tap never moves the page; "More" lists its documents once. Round 5 (critic 7): the handset is tall enough that its switch shows whole when it flips; a pressed step lights that same step and stops autoplay; pressing a step in 02 puts the panel on the walk; one counter at a time; Hanzo's own tab labels; the phone breadcrumb ends on its topic; no box inside a box; the topic line sits under the lede. Round 4: one section counter, 01 its own scene, 04 lit row by row, panel stops above the close, contents rows answer, hairlines on the text edge, the question visible from first paint, no invented labels. Round 3: both switches agree, tabs fit at 320, bars inside both windows, a tap mark on touch, captions reserve two lines, phone 03/04 inline stages. Round 2: the panel follows the reading, the switch answers with the tick and saved line, panel capped to the viewport, 62ch column, real hovers, hairlines that draw in, a quiet closing room */
 // Signature: the setting, walked: a live settings panel where a gliding cursor presses through the article's own steps, the matching step lit in the text
 // Beyond: try the choice: flip the switch and the panel answers with what that choice means, in the article's own words
 // Persona: a Hanzo Chat or Dev user deciding whether their chats and coding sessions may train Hanzo's models
@@ -25,8 +25,10 @@ import './HelpArticle.css';
 
 const GLIDE = { duration: 0.5, ease: EASE }; // the hand travels on the deck's ease-emphasis: no spring, no overshoot
 // with scripts off, the question and lede show at once and the hand (which needs scripts to walk) is hidden
-const NOJS = '.xhp .x-line-in,.xhp-lede{transform:none!important;opacity:1!important}.xhp-hand{display:none!important}.xhp-flow ol{display:block!important}.xhp-ul li::after{transform:none!important}.xhp-page{opacity:1!important;transform:none!important}.xhp-page *{stroke-dashoffset:0!important}';
+const NOJS = '.xhp .x-line-in,.xhp-lede{transform:none!important;opacity:1!important}.xhp-hand{display:none!important}.xhp-flow ol{display:block!important}.xhp-ul li::after{transform:none!important}';
 const say = (inl) => inl.map((x) => (typeof x === 'string' ? x : x.b || x.t)).join('').replace(/\s+/g, ' ').trim();
+const targetsOf = (flow) => flow.steps.flatMap((s, i) => s.targets.map((t) => ({ t, step: i })));
+const pad = (v) => String(v).padStart(2, '0');
 
 /* an address Hanzo's page protects: its own link stays in the HTML, and in the browser it becomes a direct mailto */
 function Mail({ k }) {
@@ -49,13 +51,15 @@ function Inline({ inl }) {
 /* the walk: which platform, how far the hand has pressed, the switch, and whether it plays by itself */
 function useWalk(setting, live, mode, row, onStep) {
   const calm = useReducedMotion();
-  const n0 = setting.flows[0].steps.reduce((m, s) => m + s.targets.length, 0);
+  const mi = setting.flows.findIndex((f) => /mobile/i.test(f.label)); // the phone's own steps, when the article has them
   const [plat, setPlat] = useState(0);
-  // the first paint (server and client alike) is the walk's finished state: the switch off and saved. With motion
-  // allowed, the walk starts from the top once the page is live; with reduced motion it simply stays there.
-  const [level, setLevel] = useState(n0);
-  const [aimAt, setAimAt] = useState(n0 - 1); // the target the hand is on: its step is the one lit
-  const [on, setOn] = useState(false);
+  // the server and the first client paint are both the walk at its step 01 (the switch on), so nothing rewinds; until the
+  // page is live both platforms are in the HTML and a media query shows the phone's own on phones (no tab flip)
+  const [ready, setReady] = useState(false);
+  const [level, setLevel] = useState(0);
+  const [aimAt, setAimAt] = useState(0); // the target the hand is on: its step is the one lit
+  const [on, setOn] = useState(true);
+  const [touched, setTouched] = useState(false); // the reader has pressed, chosen or flipped something
   const stepping = useRef(false); // a step was pressed in the text: the walk must not restart over it
   const [auto, setAuto] = useState(true);
   const [hold, setHold] = useState(false);
@@ -69,7 +73,7 @@ function useWalk(setting, live, mode, row, onStep) {
   const stage = useRef(null);
   const x = useMotionValue(0), y = useMotionValue(0);
   const flow = setting.flows[plat];
-  const targets = flow.steps.flatMap((s, i) => s.targets.map((t) => ({ t, step: i })));
+  const targets = targetsOf(flow);
   const n = targets.length;
   // the hand rests inside the drawn window (the phone is narrower than the stage), never half outside it
   const rest = () => {
@@ -90,20 +94,18 @@ function useWalk(setting, live, mode, row, onStep) {
     if (targets[k] && targets[k].t === 'switch') { setOn(false); setSaved((v) => v + 1); } // the walk always turns it off
     setLevel(k + 1);
   };
-  // on a phone, start with the phone's own steps (when the article has them); a touch screen gets the tap mark
+  // live: on a phone the phone's own steps (already the ones on screen), a touch screen gets the tap mark
   useEffect(() => {
     setTouch(matchMedia('(pointer: coarse)').matches);
-    if (setting.flows.length > 1 && matchMedia('(max-width: 900px)').matches) setPlat(setting.flows.findIndex((f) => /mobile/i.test(f.label)) > 0 ? setting.flows.findIndex((f) => /mobile/i.test(f.label)) : 0);
+    if (mi > 0 && matchMedia('(max-width: 899px)').matches) setPlat(mi);
+    setReady(true);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { const t = setTimeout(rest, 40); return () => clearTimeout(t); }, [plat]); // eslint-disable-line react-hooks/exhaustive-deps
-  // reduced motion: the finished state, the switch already off
-  useEffect(() => { if (calm) { setAuto(false); setLevel(n); setAimAt(n - 1); setOn(false); } }, [calm]); // eslint-disable-line react-hooks/exhaustive-deps
   // each part of the document sets the switch, and both switches (in the picture and under it) agree:
   // 01 shows the setting itself (it turns on once), 03 shows it off, 04 turns it off once while its rows stay put,
-  // and coming back to the walk starts it again from the top, switched on
+  // and coming back to the walk starts it again from the top, switched on (with reduced motion it rests there)
   useEffect(() => {
     if (mode === 'walk') {
-      if (calm) { setLevel(n); setAimAt(n - 1); setOn(false); return undefined; } // reduced motion: the walk's finished state
       if (stepping.current) { stepping.current = false; return undefined; } // a pressed step already set the walk
       setLevel(0); setAimAt(0); setOn(true); setTimeout(rest, 30); return undefined;
     }
@@ -133,30 +135,36 @@ function useWalk(setting, live, mode, row, onStep) {
   // the lit step is the one the hand is on (or has just pressed), so pressing step 01 lights 01
   const active = targets[Math.max(0, Math.min(aimAt, n - 1))].step;
   return {
-    plat, level, on, auto, press, saved, stage, x, y, flow, targets, active, n, mode, lit: shown, touch, placed,
+    plat, level, on, auto, press, saved, stage, x, y, flow, targets, active, n, mode, lit: shown, touch, placed, mi,
+    pre: !ready && mi > 0, // both platforms in the HTML, a media query picks one (until the page is live)
+    rest: mode === 'walk' && level === 0 && !touched, // reduced motion shows the walk's last screen here, by CSS alone
     hold: setHold,
     light: (k) => { if (k === null) { setLitHold(false); return; } setLit(k); setLitHold(true); },
     paused: !auto,
     pause: () => setAuto((v) => !v), // the walk's own pause control (it loops), first in the panel
-    platform: (p) => { if (p === plat) return; setPlat(p); setLevel(0); setAimAt(0); setWant(null); setTimeout(rest, 30); },
+    platform: (p) => { setTouched(true); if (p === plat) return; setPlat(p); setLevel(0); setAimAt(0); setWant(null); setTimeout(rest, 30); },
     // a pressed step: autoplay stops, the panel switches to the walk (whatever section is in view) and shows that step
     step: (p, i) => {
-      setAuto(false); setPlat(p);
+      setTouched(true); setAuto(false); setPlat(p);
       const k = setting.flows[p].steps.slice(0, i).reduce((m, s) => m + s.targets.length, 0);
       if (mode !== 'walk') stepping.current = true;
       if (onStep) onStep();
       setAimAt(k); setOn(true); setLevel(k); setWant(k);
     },
-    flip: () => { setAuto(false); setOn((o) => !o); setSaved((v) => v + 1); setLevel(n); setAimAt(n - 1); setWant(null); },
+    flip: () => { setTouched(true); setAuto(false); setOn((o) => !o); setSaved((v) => v + 1); setLevel(n); setAimAt(n - 1); setWant(null); },
   };
 }
 
-function Screen({ w, setting }) {
+/* which platform a pre-rendered piece belongs to, while both are in the HTML */
+const pfOf = (w, p) => (w.pre ? (p === w.mi ? 'mobile' : 'other') : undefined);
+
+function Screen({ w, setting, p }) {
+  const targets = targetsOf(setting.flows[p]);
   const walk = w.mode === 'walk';
   const lv = walk ? Math.min(w.level, 3) : 3;
-  const label = (k) => (w.targets[k] ? w.targets[k].t : '');
+  const label = (k) => (targets[k] ? targets[k].t : '');
   return (
-    <div className="xhp-screen" data-device={w.plat ? 'phone' : 'desk'} data-level={lv} data-mode={w.mode} aria-hidden="true">
+    <div className="xhp-screen" data-pf={pfOf(w, p)} data-device={p ? 'phone' : 'desk'} data-level={lv} data-mode={w.mode} aria-hidden="true">
       <div className="xhp-app">
         <div className="xhp-top">
           <span className="xhp-dots"><i /><i /><i /></span>
@@ -174,7 +182,7 @@ function Screen({ w, setting }) {
             <span className="xhp-row-t">{setting.name}</span>
             <span className="xhp-sw" data-t="3" data-on={w.on || undefined} onClick={w.flip}><i /></span>
           </div>
-          {[0, 1, 2, 3].map((k) => <span key={k} className="xhp-skel" data-on={(w.mode === 'still' && w.lit === k) || undefined}><i /><i /></span>)}
+          {[0, 1, 2, 3].map((k) => <span key={k} className="xhp-skel"><i /><i /></span>)}
         </div>
       </div>
     </div>
@@ -202,20 +210,34 @@ function After({ calm }) {
   );
 }
 
-function Panel({ setting, w, doc, cur }) {
-  const box = useRef(null);
+/* section 04: what the switch leaves alone. The switch, off, above the four things it does not change (Hanzo's own leads),
+   each with a mark that it stays as it was; the row being read is lit. Its own object, not the settings screen again. */
+function Ledger({ setting, leads, lit, mini }) {
+  return (
+    <div className={mini ? 'xhp-ledger xhp-ledger-mini' : 'xhp-ledger'} aria-hidden="true">
+      <div className="xhp-ledger-h"><span className="xhp-row-t">{setting.name}</span><span className="xhp-sw"><i /></span></div>
+      <ul>
+        {leads.map((t, k) => (
+          <li key={t} data-on={lit === k || undefined}>
+            <span>{t}</span>
+            <svg viewBox="0 0 16 16" width="16" height="16"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function Panel({ setting, w, doc, cur, leads, offLine }) {
   const calm = useReducedMotion();
-  const total = w.flow.steps.length;
   const walk = w.mode === 'walk';
   const si = doc.sections.findIndex((s) => s.id === cur);
-  // one counter, always the document's sections: the walk is the steps section, its steps are the dots
   const stepsIdx = doc.sections.findIndex((s) => s.blocks.some((b) => b.k === 'h3' && setting.flows.some((f) => f.label === b.text)));
   const at = walk ? Math.max(stepsIdx, 0) : Math.max(si, 0);
-  // one counter at a time: during the walk its own steps (with the dashes), otherwise the document's sections
-  const pad = (v) => String(v).padStart(2, '0');
-  const count = walk ? pad(w.active + 1) + ' / ' + pad(total) : pad(at + 1) + ' / ' + pad(doc.sections.length);
+  // until the page is live both platforms are drawn; a media query shows the right one
+  const plats = w.pre ? [0, w.mi] : [w.plat];
   return (
-    <div className="xhp-panel" ref={box} role="group" aria-label={setting.name}>
+    <div className="xhp-panel" role="group" aria-label={setting.name} data-rest={w.rest || undefined}>
       <div className="xhp-panel-bar">
         <button type="button" className="xhp-pause" aria-pressed={w.paused} aria-label="Pause" onClick={w.pause}>
           {w.paused
@@ -224,15 +246,16 @@ function Panel({ setting, w, doc, cur }) {
         </button>
         <div className="xhp-seg" role="radiogroup" aria-label={setting.flows.map((f) => f.label).join(' / ')}>
           {setting.flows.map((f, i) => (
-            <button key={f.label} type="button" role="radio" aria-checked={w.plat === i} onClick={() => w.platform(i)}>
+            <button key={f.label} type="button" role="radio" data-pf={pfOf(w, i)} aria-checked={w.plat === i} onClick={() => w.platform(i)}>
               {f.label}
             </button>
           ))}
         </div>
       </div>
       <div className="xhp-stage" data-mode={w.mode} ref={w.stage} onPointerEnter={(e) => e.pointerType === 'mouse' && w.hold(true)} onPointerLeave={() => w.hold(false)}>
-        <Screen w={w} setting={setting} />
+        {plats.map((p) => <Screen key={p} w={w} setting={setting} p={p} />)}
         {w.mode === 'after' && <After key="after" calm={calm} />}
+        {w.mode === 'still' && leads.length > 0 && <Ledger setting={setting} leads={leads} lit={w.lit} />}
         <motion.span className="xhp-hand" data-touch={w.touch || undefined} data-placed={w.placed || undefined} style={{ x: w.x, y: w.y }} aria-hidden="true">
           {w.press > 0 && <motion.i key={w.press} className="xhp-ring" initial={{ scale: 0.2, opacity: 0.55 }} animate={{ scale: 1.6, opacity: 0 }} transition={{ duration: 0.4, ease: EASE }} />}
           {w.touch
@@ -240,73 +263,61 @@ function Panel({ setting, w, doc, cur }) {
             : <svg viewBox="0 0 20 24" width="20" height="24"><path d="M2 1.5v17.2l4.6-4.3 3 6.9 3.2-1.4-3-6.8 6.3-.3L2 1.5z" fill="#0a0a0a" stroke="#fff" strokeWidth="1.4" strokeLinejoin="round" /></svg>}
         </motion.span>
       </div>
-      <div className="xhp-cap" aria-hidden="true">
-        <span className="xhp-cap-n x-mono">{count}</span>
-        {walk
-          ? <span className="xhp-cap-t" key={w.plat + '-' + w.active}>{say(w.flow.steps[w.active].inl)}</span>
-          : <span className="xhp-cap-t" key={'s-' + at}>{doc.sections[at].title}</span>}
-        <span className="xhp-cap-dots" data-walk={walk || undefined}>{Array.from({ length: total }, (_, i) => <i key={i} data-on={(walk && i <= w.active) || undefined} />)}</span>
-      </div>
+      {walk
+        ? plats.map((p) => {
+          const fl = setting.flows[p], total = fl.steps.length, act = p === w.plat ? w.active : 0;
+          return (
+            <div className="xhp-cap" data-pf={pfOf(w, p)} aria-hidden="true" key={p}>
+              {/* the step the hand is on; with reduced motion at rest, the walk's last step (CSS shows one or the other) */}
+              <span className="xhp-cap-n x-mono xhp-cap-now">{pad(act + 1) + ' / ' + pad(total)}</span>
+              <span className="xhp-cap-t xhp-cap-now" key={p + '-' + act}>{say(fl.steps[act].inl)}</span>
+              <span className="xhp-cap-n x-mono xhp-cap-last">{pad(total) + ' / ' + pad(total)}</span>
+              <span className="xhp-cap-t xhp-cap-last">{say(fl.steps[total - 1].inl)}</span>
+              <span className="xhp-cap-dots" data-walk>{Array.from({ length: total }, (_, i) => <i key={i} data-on={i <= act || undefined} />)}</span>
+            </div>
+          );
+        })
+        : (
+          <div className="xhp-cap" aria-hidden="true">
+            <span className="xhp-cap-n x-mono">{pad(at + 1) + ' / ' + pad(doc.sections.length)}</span>
+            <span className="xhp-cap-t" key={'s-' + at}>{doc.sections[at].title}</span>
+            <span className="xhp-cap-dots">{Array.from({ length: w.flow.steps.length }, (_, i) => <i key={i} />)}</span>
+          </div>
+        )}
       <div className="xhp-try">
         <button type="button" role="switch" aria-checked={w.on} className="xhp-try-b" onClick={w.flip}>
           <span className="xhp-sw" data-on={w.on || undefined} aria-hidden="true"><i /></span>
           <span>{setting.name}</span>
         </button>
+        {/* Hanzo's whole pair, always there at one height (a step never moves the page); the half that holds now is in ink */}
         <div className="xhp-means" aria-live="polite">
-          {w.on
-            ? (setting.on && <p className="xhp-means-on" key="on">{setting.on}</p>)
-            : (setting.saved && <p className="xhp-saved" key={'off-' + w.saved}><Tick key={w.saved} size={18} /><span>{setting.saved}</span></p>)}
+          {setting.saved && <p className="xhp-saved" data-show={!w.on || undefined}><Tick key={w.saved} size={18} /><span>{setting.saved}</span></p>}
+          <p className="xhp-pair">
+            {setting.on && <span data-cur={w.on || undefined}>{setting.on}</span>}
+            {offLine && <>{' '}<span data-cur={!w.on || undefined}>{offLine}</span></>}
+          </p>
         </div>
       </div>
     </div>
   );
 }
 
-/* on a phone the panel is not beside the text, so sections 03 and 04 carry their own small stage inline: 03 the line where
-   the switch turns off, 04 the Privacy pane with the switch off and the other settings lit in step with its rows */
-function Mini({ kind, setting, w }) {
+/* on a phone the panel is not beside the text, so 01, 03 and 04 carry their own small object inline: 01 the switch alone,
+   turning on once; 03 the line where the switch turns off; 04 the ledger of what it leaves alone. The settings screen
+   itself appears once, in the demo at the top. */
+function Mini({ kind, setting, w, leads }) {
   const calm = useReducedMotion();
   const here = w.mode === kind;
-  if (kind === 'after') {
-    return <div className="xhp-mini" aria-hidden="true"><After key={here ? 'play' : 'rest'} calm={calm || !here} /></div>;
-  }
-  // 01: the setting itself, turning on once as the section is read; 04: the switch off, the settings it leaves alone lit
-  const what = kind === 'what';
-  const sw = what ? (here ? w.on : true) : here ? w.on : false;
+  if (kind === 'after') return <div className="xhp-mini" aria-hidden="true"><After key={here ? 'play' : 'rest'} calm={calm || !here} /></div>;
+  if (kind === 'still') return <div className="xhp-mini xhp-mini-auto" aria-hidden="true"><Ledger setting={setting} leads={leads} lit={here ? w.lit : null} mini /></div>;
   return (
-    <div className={'xhp-mini xhp-mini-pane' + (what ? ' xhp-mini-what' : '')} aria-hidden="true">
-      <p className="xhp-pane-h">{w.targets[2] ? w.targets[2].t : ''}</p>
-      <div className="xhp-row" data-on={what || undefined}><span className="xhp-row-t">{setting.name}</span><span className="xhp-sw" data-on={sw || undefined}><i /></span></div>
-      {(what ? [0, 1] : [0, 1, 2, 3]).map((k) => <span key={k} className="xhp-skel" data-on={(!what && here && w.lit === k) || undefined}><i /><i /></span>)}
+    <div className="xhp-mini xhp-mini-auto" aria-hidden="true">
+      <div className="xhp-chip"><span className="xhp-row-t">{setting.name}</span><span className="xhp-sw" data-on={(here ? w.on : true) || undefined}><i /></span></div>
     </div>
   );
 }
 
-/* 05 on a phone: the documents the last section points to, as named rows (the link's own words and the section it
-   names, both Hanzo's), each one laying down its hairline in turn as the section arrives. The links stay in the text;
-   these rows repeat them for the eye only. */
-function Docs({ s }) {
-  const rows = [];
-  s.blocks.forEach((b) => (b.inl || []).forEach((k, j, all) => {
-    // the documents only: the protected address stays as Hanzo's page has it, in the text
-    if (typeof k === 'string' || !k.a || k.cf || /^(#|mailto:)/.test(k.a)) return;
-    const after = typeof all[j + 1] === 'string' ? all[j + 1].match(/^\s*(\([^)]*\))/) : null;
-    rows.push({ t: k.t, to: k.a, sec: after ? after[1] : null });
-  }));
-  if (!rows.length) return null;
-  return (
-    <ul className="xhp-docs" aria-hidden="true">
-      {rows.map((r, i) => (
-        <li key={r.t} className="xhp-page" style={{ '--i': i }}>
-          <A to={r.to} tabIndex={-1}><span>{r.t}</span>{r.sec && <span className="x-mono">{r.sec}</span>}<Arrow /></A>
-        </li>
-      ))}
-    </ul>
-  );
-}
-const Arrow = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-
-function Section({ s, i, setting, w, still, after, what, end }) {
+function Section({ s, i, setting, w, still, after, what, end, leads }) {
   const flows = setting ? setting.flows : [];
   const out = [], cards = [];
   for (let k = 0; k < s.blocks.length; k++) {
@@ -315,11 +326,11 @@ function Section({ s, i, setting, w, still, after, what, end }) {
     if (f >= 0) { // a platform's steps: a card whose steps drive the panel; on a phone the two headings are its tabs
       if (!cards.length) out.push('cards');
       cards.push(
-        <div key={k} className="xhp-flow" data-on={w.plat === f || undefined}>
+        <div key={k} className="xhp-flow" data-pf={pfOf(w, f)} data-on={w.plat === f || undefined}>
           <h3 className="xhp-h3 x-mono"><button type="button" className="xhp-flow-tab" aria-pressed={w.plat === f} onClick={() => w.platform(f)}>{b.text}</button></h3>
           <ol>{s.blocks[k + 1].items.map((it, j) => (
             <li key={j} data-on={(w.plat === f && w.active === j) || undefined}>
-              <button type="button" onClick={() => w.step(f, j)}><span className="xhp-step-n x-mono">{String(j + 1).padStart(2, '0')}</span><span><Inline inl={it.inl} /></span></button>
+              <button type="button" onClick={() => w.step(f, j)}><span className="xhp-step-n x-mono">{pad(j + 1)}</span><span><Inline inl={it.inl} /></span></button>
             </li>
           ))}</ol>
         </div>,
@@ -344,9 +355,8 @@ function Section({ s, i, setting, w, still, after, what, end }) {
   }
   return (
     <section id={s.id} className={end ? 'xhp-sec xhp-end' : 'xhp-sec'} aria-labelledby={s.id + '-h'} tabIndex={-1}>
-      <h2 id={s.id + '-h'} className="xhp-h2"><span className="xhp-sec-n x-mono" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>{s.title}</h2>
-      {w && (after || still || what) && <Mini kind={after ? 'after' : still ? 'still' : 'what'} setting={setting} w={w} />}
-      {end && <Docs s={s} />}
+      <h2 id={s.id + '-h'} className="xhp-h2"><span className="xhp-sec-n x-mono" aria-hidden="true">{pad(i + 1)}</span>{s.title}</h2>
+      {w && (after || still || what) && <Mini kind={after ? 'after' : still ? 'still' : 'what'} setting={setting} w={w} leads={leads} />}
       {out.map((x) => (x === 'cards' ? <div key="cards" className="xhp-flows">{cards}</div> : x))}
       {end && (
         <A to="/support" className="xhp-next">
@@ -392,11 +402,11 @@ function useModes(doc) {
   return { cur, mode, row, stillId, whatId, offId: off >= 0 ? doc.sections[off].id : null };
 }
 
-function Layout({ doc, w, aside, cur, stillId, offId, whatId }) {
+function Layout({ doc, w, aside, cur, stillId, offId, whatId, leads, offLine }) {
   const body = doc.sections.length > 1 ? doc.sections.slice(0, -1) : doc.sections;
   const last = doc.sections.length > 1 ? doc.sections[doc.sections.length - 1] : null;
   return (
-    <main className="xhp">
+    <main className="xhp" data-pre={(w && w.pre) || undefined}>
       <noscript><style>{NOJS}</style></noscript>
       <div className="xhp-g">
         <header className="xhp-hero">
@@ -417,18 +427,18 @@ function Layout({ doc, w, aside, cur, stillId, offId, whatId }) {
             <h2 className="xhp-toc-h x-mono">{doc.contents.label}</h2>
             <ol>
               {doc.contents.items.map((c, i) => (
-                <li key={c.id}><a href={'#' + c.id}><span className="x-mono">{String(i + 1).padStart(2, '0')}</span><span>{c.text}</span><svg className="xhp-toc-go" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 3v10M4 9l4 4 4-4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg></a></li>
+                <li key={c.id}><a href={'#' + c.id}><span className="x-mono">{pad(i + 1)}</span><span>{c.text}</span><svg className="xhp-toc-go" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 3v10M4 9l4 4 4-4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg></a></li>
               ))}
             </ol>
           </nav>
         </header>
 
         <aside className="xhp-aside" ref={aside}>
-          {w && <Panel setting={doc.setting} w={w} doc={doc} cur={cur} />}
+          {w && <Panel setting={doc.setting} w={w} doc={doc} cur={cur} leads={leads} offLine={offLine} />}
         </aside>
 
         <article className="xhp-doc">
-          {body.map((s, i) => <Section key={s.id} s={s} i={i} setting={doc.setting} w={w} still={s.id === stillId} after={s.id === offId} what={s.id === whatId} />)}
+          {body.map((s, i) => <Section key={s.id} s={s} i={i} setting={doc.setting} w={w} leads={leads} still={s.id === stillId} after={s.id === offId} what={s.id === whatId} />)}
         </article>
       </div>
       {last && (
@@ -449,7 +459,14 @@ function Walked({ doc }) {
   useEffect(() => { setForce(false); }, [cur]);
   const mode = force ? 'walk' : read;
   const w = useWalk(doc.setting, live, mode, row, () => setForce(true));
-  return <Layout doc={doc} w={w} aside={aside} cur={cur} stillId={stillId} offId={offId} whatId={whatId} />;
+  // 04's ledger: Hanzo's own leads for the things the switch leaves alone
+  const stillSec = doc.sections.find((s) => s.id === stillId);
+  const ul = stillSec && stillSec.blocks.find((b) => b.k === 'ul' && b.items.some((it) => it.lead));
+  const leads = ul ? ul.items.map((it) => it.lead).filter(Boolean) : [];
+  // the second half of Hanzo's on/off pair, from the same sentence run as "When it is on…"
+  const first = doc.sections[0] && doc.sections[0].blocks.find((b) => b.k === 'p');
+  const offLine = first ? say(first.inl).split(/(?<=\.)\s+/).find((t) => /^When it is off/i.test(t)) || null : null;
+  return <Layout doc={doc} w={w} aside={aside} cur={cur} stillId={stillId} offId={offId} whatId={whatId} leads={leads} offLine={offLine} />;
 }
 
 function Plain({ doc }) {
