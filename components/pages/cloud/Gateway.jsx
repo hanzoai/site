@@ -39,6 +39,16 @@ const CALLERS = ['payments-api', 'checkout-web', 'docs-site'];
    through), or a 429 when the bucket is empty. Runs only while on screen. */
 function Lane() {
   const [ref, seen, calm] = useLive(0.25);
+  // a fine pointer leans the lane toward it (2.5° at most), written straight to the element; flat on leave, none with
+  // reduced motion or touch
+  const tilt = (e) => {
+    const el = ref.current;
+    if (!el || calm || e.pointerType !== 'mouse') return;
+    const r = el.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+    el.style.transform = `perspective(1600px) rotateX(${(-y * 5).toFixed(2)}deg) rotateY(${(x * 5).toFixed(2)}deg)`;
+  };
+  const flat = () => { if (ref.current) ref.current.style.transform = ''; };
   const [paused, togglePause] = usePause();
   const live = seen && !paused;
   const [n, setN] = useState(1); // one request has already landed, so the log is never empty
@@ -64,18 +74,18 @@ function Lane() {
   return (
     <div className="lp-host">
     <LivePause paused={paused} onToggle={togglePause} className="gw-pause" />
-    <div className="gw-lane" ref={ref} aria-hidden="true">
+    <div className="gw-lane" ref={ref} aria-hidden="true" onPointerMove={tilt} onPointerLeave={flat}>
       <div className="gw-gate"><span className="gw-gate-k">Gateway</span><i /></div>
       <p className="gw-side l">client</p>
       <p className="gw-side r">Hanzo Cloud <b>/v1</b></p>
       <ul className="gw-queue">{[1, 2, 3].map((k) => <li key={n + k} style={{ opacity: 1 - k * 0.22 }}>{CALLERS[(n + k) % CALLERS.length]}</li>)}</ul>
       <ul className="gw-log">
         <AnimatePresence initial={false}>
-          {Array.from({ length: Math.min(3, n) }).map((_, k) => {
+          {Array.from({ length: Math.min(2, n) }).map((_, k) => {
             const m = n - 1 - k;
             const no = m % 5 === 4;
             return (
-              <motion.li key={m} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1 - k * 0.3, x: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.45, ease: EASE }}>
+              <motion.li key={m} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1 - k * 0.35, x: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.45, ease: EASE }}>
                 <b>{CALLERS[m % CALLERS.length]}</b><span className={no ? 'x' : ''}>{no ? '429' : <>X-Org-Id <i className="gw-tk">✓</i></>}</span>
               </motion.li>
             );

@@ -303,11 +303,11 @@
 }
 @media (max-width: 359px) {
   .xhp-cap-t { min-height: 4.35em; } /* the narrowest phones: a step can take three lines */
-  /* the narrowest phones: pause still sits in the stage corner, the tabs keep one row in Hanzo's full words */
-  .xhp-panel-bar { padding: 8px; }
-  .xhp-seg { padding: 3px; }
-  .xhp-seg button { padding: 0 6px; font-size: 11.5px; letter-spacing: -.02em; }
-  .xhp-pause { top: 66px; left: 8px; }
+  /* the narrowest phones: Hanzo's two full labels don't share a line at 13px, so the two tabs stack as one control
+     (each label still on one line); pause stays in the stage's corner, never on a row of its own */
+  .xhp-seg { flex-direction: column; border-radius: 22px; }
+  .xhp-seg button { flex: none; width: 100%; }
+  .xhp-pause { top: 124px; }
   .xhp-stage { height: 196px; }
   .xhp-flow-tab { padding: 8px 8px; font-size: 12.5px; letter-spacing: -.01em; }
 }

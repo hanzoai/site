@@ -213,51 +213,7 @@
 .fn-sc-ver[data-k='1'] .fn-traffic i.b { transform: scaleX(.12); }
 .fn-sc-ver[data-k='2'] .fn-traffic i.b { transform: scaleX(1); }
 
-/* ---------- Beyond: compose yours (the quiet room) ---------- */
-.fn-mix { background: #f5f5f5; }
-.fn-mix-g { align-items: start; row-gap: 44px; }
-.fn-mix-in { grid-column: 1 / span 6; display: flex; flex-direction: column; gap: 27px; }
-.fn-mix-h { display: flex; flex-direction: column; gap: 10px; }
-.fn-mix-h .kn-kick { color: #525252; }
-.fn-mix fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
-.fn-mix legend { margin: 0 0 10px; padding: 0; font: 606 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #525252; }
-.fn-row { display: flex; flex-wrap: wrap; gap: 8px; }
-.fn-row button { position: relative; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 17px; border: 0; border-radius: 999px; background: #fff; font: 400 16px/1 var(--sans); color: #525252; cursor: pointer; transition: color .15s var(--e-out), background-color .15s var(--e-out), transform .15s var(--e-out); }
-.fn-row button > :not(.fn-pill) { position: relative; }
-.fn-row button[aria-checked='true'] { color: #fafafa; }
-.fn-pill { position: absolute; inset: 0; border-radius: 999px; background: #0a0a0a; }
-.fn-tick { opacity: .3; transition: opacity .15s var(--e-out); }
-.fn-row button[aria-pressed='true'] { background: #0a0a0a; color: #fafafa; }
-.fn-row button[aria-pressed='true'] .fn-tick { opacity: 1; }
-.fn-row button:active { transform: scale(.97); transition-duration: 90ms; }
-.fn-row button:focus-visible { outline: 2px solid var(--focus, #0a0a0a); outline-offset: 2px; }
-@media (hover: hover) { .fn-row button:not([aria-checked='true']):not([aria-pressed='true']):hover { color: #0a0a0a; background: #fafafa; } }
-.fn-card { grid-column: 8 / -1; position: sticky; top: 120px; display: flex; flex-direction: column; padding: clamp(27px, 3vw, 44px); border-radius: 24px; background: #fff; }
-.fn-card-h { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding-bottom: 17px; border-bottom: 1px solid var(--hair); }
-.fn-card-h b { margin-right: 6px; font: 497 26px/1 var(--mono); letter-spacing: -.02em; color: #0a0a0a; }
-.fn-card-h span { padding: 8px 12px; border-radius: 999px; background: #0a0a0a; color: #fafafa; font: 400 14px/1 var(--mono); }
-.fn-card-h span.gpu { background: transparent; color: #0a0a0a; border: 1px solid #0a0a0a; padding: 7px 11px; }
-.fn-card-t { display: flex; flex-wrap: wrap; gap: 6px; padding: 17px 0; }
-.fn-card-t span { padding: 7px 10px; border-radius: 6px; background: #f5f5f5; font: 400 13px/1 var(--mono); color: #525252; transition: background-color .3s var(--e-out), color .3s var(--e-out); }
-.fn-card-t span.on { background: #0a0a0a; color: #fafafa; }
-.fn-card-l { margin: 0; padding: 17px 0 0; border-top: 1px solid var(--hair); list-style: none; counter-reset: fn; display: grid; gap: 14px; }
-.fn-card-l li { counter-increment: fn; display: grid; grid-template-columns: 28px minmax(0, 1fr); align-items: baseline; font-size: 16px; line-height: 1.5; color: #525252; }
-.fn-card-l li::before { content: counter(fn) '.'; font: 400 13px/1 var(--mono); color: #737373; }
-/* each read-back line arrives by line mask */
-.fn-m { display: block; overflow: hidden; }
-.fn-m > span { display: block; }
-.js .fn-m > span { animation: fn-mask .4s var(--e-in) both; }
-@keyframes fn-mask { from { transform: translate3d(0, 105%, 0); } to { transform: none; } }
-
-/* composer: while a choice is hovered, the card shows its effect as a preview (a dashed inner line), until you commit */
-.fn-card { outline: 1.5px dashed transparent; outline-offset: -10px; transition: outline-color .15s var(--e-out); }
-.fn-card[data-peek] { outline-color: #a3a3a3; }
-
 /* ---------- common use cases: see functions/FnUses ---------- */
-/* the quiet proof row before the close: stationary, hairline-divided, what the page has already said */
-.fn-facts { list-style: none; margin: 44px 0 0; padding: 17px 0; display: flex; flex-wrap: wrap; gap: 10px 0; border-top: 1px solid var(--hair); border-bottom: 1px solid var(--hair); }
-.fn-facts li { padding: 6px 27px; font: 400 14px/1.3 var(--mono); color: #525252; border-left: 1px solid var(--hair); }
-.fn-facts li:first-child { padding-left: 0; border-left: 0; }
 /* the close's buttons on deck values (the shared room draws them in Apple greys) */
 .fn .knx .x-btn.solid { background: #fafafa; border-color: #fafafa; color: #0a0a0a; height: 48px; }
 @media (hover: hover) { .fn .knx .x-btn.solid:hover { background: #e4e4e7; border-color: #e4e4e7; } }
@@ -301,17 +257,19 @@
   @keyframes fn-rise { from { opacity: 0; transform: translate3d(0, 24px, 0); } to { opacity: 1; transform: none; } }
   .fn-life { min-height: 0; grid-template-columns: minmax(0, 1fr); grid-template-areas: 'trig' 'code' 'k8s'; padding: 17px; gap: 17px; }
   .fn-trigs { grid-template-columns: minmax(0, 1fr); row-gap: 10px; }
-  .fn-trigs ul { grid-template-columns: 1fr 1fr; gap: 8px; }
-  .fn-trigs li { white-space: normal; }
+  .fn-trig-b { grid-template-columns: 1fr 1fr; gap: 8px; }
   .fn-calls { display: none; }
   .fn-ch-hw, .fn-join { grid-column: 1 / -1; }
   .fn-join-n { padding: 8px 10px; font-size: 14px; }
   .fn-join { gap: 4px; }
   .fn-join svg { min-width: 8px; }
   /* phones: the six chapters become a swipe rail, one card per chapter with its drawing first (one in, one out) */
-  .fn-ch .knc-g { display: flex; align-items: flex-start; gap: 12px; margin: 0 -16px; padding: 0 16px 17px; overflow-x: auto; scroll-snap-type: x proximity; scroll-padding-inline: 16px; scrollbar-width: none; overscroll-behavior-x: contain; }
+  /* the rail spans the screen: it starts on the 16px gutter and runs out to the right edge, the next card peeking */
+  .fn-ch .knc-g { display: flex; align-items: flex-start; gap: 12px; width: 100%; margin: 0; padding: 0 var(--kn-g) 17px; overflow-x: auto; scroll-snap-type: x proximity; scroll-padding-inline: var(--kn-g); scrollbar-width: none; overscroll-behavior-x: contain; }
   .fn-ch .knc-g::-webkit-scrollbar { display: none; }
-  .fn-ch .knc-a, .fn-ch.knc.right .knc-a { flex: 0 0 84%; display: flex; flex-direction: column; gap: 17px; padding: 0; border: 0; scroll-snap-align: start; }
+  .fn-ch .knc-g::after { content: ''; flex: 0 0 1px; }
+  .fn-ch .knc-a, .fn-ch.knc.right .knc-a { flex: 0 0 82%; min-width: 0; display: flex; flex-direction: column; gap: 17px; padding: 0; border: 0; scroll-snap-align: start; }
+  .fn-ch .knc-h, .fn-ch .knc-body p { overflow-wrap: normal; hyphens: none; }
   .fn-ch .knc-a:first-child { padding-top: 0; }
   /* every card's drawing has the same fixed height, so a scene stepping never moves the page below it */
   .fn-ch .knc-v { order: -1; aspect-ratio: auto; height: 320px; margin: 0; }
@@ -319,11 +277,9 @@
   .fn-ch .knc-t { gap: 10px; }
   .fn-ch .knc-body p { font-size: 15px; line-height: 1.55; }
   .fn-ch .knc-h { font-size: 21px; }
-  .fn-facts li { padding: 6px 17px; }
-  .fn-facts { margin-top: 44px; }
   .fn-col-k { margin-bottom: 10px; }
   .fn-code pre { padding: 14px; white-space: pre-wrap; overflow-wrap: anywhere; }
-  .fn-file em, .fn-node > span, .fn-warm { font-size: 14px; }
+  .fn-warm { font-size: 14px; }
 
   .fn .knc-count { font-size: 14px; }
   .fn-sc { padding: 17px; gap: 14px; }
@@ -335,10 +291,6 @@
   .fn-rt.box { flex-direction: column; }
   .fn-pool { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
   .fn-pool i:nth-child(n+5) { display: none; }
-  .fn-sc-warm[data-k='0'] .fn-req-dot { transform: translateX(180px); }
-  .fn-sc-warm[data-k='0'] .fn-req-l { transform: translate(180px, -50%); }
-  .fn-sc-warm[data-k='1'] .fn-req-dot { transform: translateX(90px); }
-  .fn-sc-warm[data-k='1'] .fn-req-l { transform: translate(90px, -50%); }
   .fn-zero > span:last-child { font-size: 14px; }
   .fn-pool-r { grid-template-columns: repeat(5, minmax(0, 1fr)); }
   .fn-pool-r i:nth-child(n+6) { display: none; }
@@ -349,32 +301,16 @@
   .fn-tr-lines { height: 110px; }
   .fn-tr-h { padding: 16px 24px; }
   .fn-tr-h b { font-size: 17px; }
-  .fn-ver b { font-size: 32px; }
-  /* phones: the card that answers sits above the choices, and each choice is one compact rail, so a tap and its answer
-     share the screen */
-  .fn-mix-g { row-gap: 17px; }
-  .fn-mix-in { display: contents; }
-  .fn-mix-h, .fn-card, .fn-mix fieldset { grid-column: 1 / -1; }
-  .fn-mix-h { order: 0; }
-  .fn-card { order: 1; position: static; padding: 17px; border-radius: 20px; }
-  .fn-mix fieldset { order: 2; }
-  .fn-mix legend { margin-bottom: 6px; }
-  .fn-mix .fn-row { flex-wrap: nowrap; overflow-x: auto; margin: 0 calc(-1 * var(--kn-g)); padding: 0 var(--kn-g) 2px; scrollbar-width: none; scroll-snap-type: x proximity; }
-  .fn-mix .fn-row::-webkit-scrollbar { display: none; }
-  .fn-row button { flex: none; scroll-snap-align: start; padding: 0 14px; font-size: 15px; }
-  .fn-card-h { padding-bottom: 10px; }
-  .fn-card-t { padding: 10px 0; }
-  .fn-card-t span { font-size: 13px; }
-  .fn-card-h b { font-size: 17px; }
-  .fn-card-l { padding-top: 10px; gap: 8px; }
-  .fn-card-l li { font-size: 14px; line-height: 1.45; grid-template-columns: 22px minmax(0, 1fr); }
+  .fn-ver { padding: 17px; }
+  .fn-modes button { padding: 0 14px; }
+  .fn-tr-l li { font-size: 13px; }
   .fn .knx-h { font-size: 32px; }
   .fn-rel-a { padding: 10px 6px; }
   .fn-rel-p { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .fn-calls i, .js .fn-ln, .js .fn-ln::after, .js .fn-m > span, .js .fn-hero-oi, .js .fn-hero-in, .js .fn-hero-o { animation: none !important; }
-  .fn-rel-p, .fn-card { transition: none !important; }
+  .fn-calls i, .js .fn-ln, .js .fn-ln::after, .js .fn-hero-oi, .js .fn-hero-in, .js .fn-hero-o { animation: none !important; }
+  .fn-rel-p { transition: none !important; }
   .js .fn-ln::after { display: none; }
   .fn-rt, .fn-pool i, .fn-req-dot, .fn-req-l, .fn-slots i, .fn-pod, .fn-traffic i.b, .fn-ver, .fn-gnode { transition: none !important; }
 }

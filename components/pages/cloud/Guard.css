@@ -3,7 +3,7 @@
 .gd .v2-dark, .gd [data-room='dark'] { --acc: #f5f5f5; --glow: #e5e5e5; }
 
 /* hero: the black room, centred title over one composer */
-.gd-hero { padding: clamp(84px, 6vw, 96px) 0 clamp(72px, 8vw, 116px); }
+.gd-hero { padding: clamp(84px, 6vw, 96px) 0 clamp(44px, 5vw, 72px); }
 .gd-hero .v2-kick.acc { color: var(--glow); }
 .gd-hero-t { text-align: center; display: flex; flex-direction: column; align-items: center; }
 .gd-h1 { margin: 0; }
@@ -26,6 +26,9 @@
 .gd-w { display: inline-block; width: calc(var(--l) * .62em); height: .5em; margin: 0 .3em .22em 0; vertical-align: middle; border-radius: 99px; background: rgba(255, 255, 255, .22); transform-origin: left; animation: gd-grow 220ms cubic-bezier(.16, 1, .3, 1) both; }
 .gd-w.sec { background: rgba(255, 255, 255, .55); }
 @keyframes gd-grow { from { transform: scaleX(0); } to { transform: none; } }
+/* the typed values: data in mono, the injection's name in the sans; a gap between them, no punctuation invented */
+.gd-tv { margin-right: .5em; }
+.gd-tv.sec { font-family: var(--mono); font-size: .82em; color: #fafafa; }
 .gd-injr { display: inline; border-bottom: 1.5px solid transparent; padding-bottom: 6px; transition: border-color 300ms cubic-bezier(0, 0, .2, 1); }
 .gd-injr.on { border-bottom-style: dashed; border-color: #a3a3a3; }
 .gd-mk::before, .gd-mkt::before { content: '['; }
@@ -63,7 +66,7 @@
 .gd-ps { position: relative; height: calc(var(--n) * 64svh + 100svh); margin-bottom: -12svh; border-top: 1px solid var(--line); }
 .gd-ps + * { position: relative; }
 .gd-ps-stage { position: sticky; top: 0; height: 100svh; }
-.gd-ps-in { height: 100%; box-sizing: border-box; padding: 88px 0 27px; display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); grid-template-rows: auto auto; column-gap: 17px; row-gap: 27px; align-content: center; }
+.gd-ps-in { height: 100%; box-sizing: border-box; padding: clamp(96px, 13svh, 116px) 0 27px; display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); grid-template-rows: auto auto; column-gap: 17px; row-gap: 27px; align-content: start; }
 .gd-ps-top { grid-column: 1 / span 5; grid-row: 1; align-self: end; display: flex; flex-wrap: wrap; flex-direction: column; align-items: flex-start; gap: 10px; padding-bottom: 17px; border-bottom: 1px solid var(--line); }
 .gd-ps-facts { grid-column: 1 / span 5; grid-row: 2; align-self: start; }
 .gd-ps-board { grid-column: 7 / -1; grid-row: 1 / span 2; align-self: center; height: min(52svh, 400px); }
@@ -99,8 +102,12 @@
 .gd-board[data-k='tiles'] { background: #ededed; }
 .gd-board[data-k='lanes'] { background: #171717; color: #fafafa; }
 .gd-board[data-k='dials'] { background: #fff; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .1); }
-.gd-board[data-k='log'] { background: #fff; }
-.gd-board[data-k='log'] .gd-logl { background: #f5f5f5; }
+.gd-board[data-k='log'] { background: #e4e4e7; }
+.gd-board[data-k='log'] .gd-logl { background: #fff; }
+/* panel 05's own moment: the content is struck, then the hash's tick lands */
+.gd-ps-board .gd-logl b, .gd-f-vis.on .gd-logl b { animation: gd-pop 400ms cubic-bezier(.16, 1, .3, 1) both; }
+.gd-ps-board .gd-logl.no b, .gd-f-vis.on .gd-logl.no b { animation-delay: 300ms; }
+.gd-ps-board .gd-logl.ok b, .gd-f-vis.on .gd-logl.ok b { animation-delay: 1800ms; }
 .gd-board[data-k='lanes'] .gd-lane { background: #262626; }
 .gd-board[data-k='lanes'] .gd-lane span, .gd-board[data-k='lanes'] .gd-b-off { color: #a3a3a3; }
 .gd-board[data-k='lanes'] .gd-lane s { background: rgba(255, 255, 255, .2); }
@@ -150,10 +157,10 @@
 .gd-b-conf div { height: 8px; border-radius: 99px; background: #e4e4e4; overflow: hidden; }
 .gd-b-conf i { display: block; height: 100%; background: linear-gradient(90deg, #d4d4d4, #737373); transform-origin: left; border-radius: 99px; }
 .gd-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.gd-tiles p { margin: 0; position: relative; display: flex; align-items: center; justify-content: space-between; min-height: 84px; padding: 0 24px; border-radius: 16px; background: #fff; }
+/* the Luhn tick sits under its label on its own line, so neither wraps into the other */
+.gd-tiles p { margin: 0; position: relative; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 8px; min-height: 84px; padding: 12px 20px; border-radius: 16px; background: #fff; }
 .gd-tiles b { font: 500 15px/1.25 var(--mono); color: var(--ink); letter-spacing: -.01em; }
-.gd-tiles p { gap: 10px; }
-.gd-tiles span { font: 500 12px/1 var(--mono); padding: 6px 10px; border-radius: 999px; background: var(--ink); color: #fff; }
+.gd-tiles span { flex: none; white-space: nowrap; font: 500 12px/1 var(--mono); padding: 6px 10px; border-radius: 999px; background: var(--ink); color: #fff; }
 /* both directions as two lanes through the same gate */
 .gd-b-lanes { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
 .gd-lane { display: grid; grid-template-columns: 84px minmax(16px, 1fr) auto minmax(16px, 1fr) auto; align-items: center; gap: 12px; padding: 22px 24px; border-radius: 16px; background: #fff; }
@@ -194,30 +201,35 @@
 .gd-gi .gi-lead { margin-top: 17px; }
 .gd-gi .gi-tag { margin-top: 10px; }
 .gd-gi .gi-meta { margin-top: 27px; }
-/* "View on GitHub" is the hero's and the header's solid already; at the close it is the quiet, outlined form */
-.gd .gd-gi .x-btn.solid { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); transition: background-color 150ms cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
-@media (hover: hover) and (pointer: fine) { .gd .gd-gi .x-btn.solid:hover { background: #f5f5f5; } }
+/* "View on GitHub" is the hero's and the header's solid already; at the close it is the quiet, outlined form, and it
+   fills with ink on hover (a real change, not a faint wash) */
+.gd .gd-gi .x-btn.solid { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); transition: background-color 150ms cubic-bezier(0, 0, .2, 1), color 150ms cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) and (pointer: fine) { .gd .gd-gi .x-btn.solid:hover { background: var(--ink); color: #fafafa; } }
 .gd .gd-gi .x-btn.solid:active { transform: scale(.97); }
-.gd-yours-h { grid-column: 1 / span 4; position: sticky; top: 120px; }
-.gd-yours-h .v2-headline { margin: 0 0 16px; }
-.gd-yours-cap { margin-bottom: 24px; }
-.gd-ed { grid-column: 6 / -1; overflow: hidden; border-radius: 24px; background: #fff; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .1); }
-.gd-ed-in { padding: 28px 32px 8px; }
+/* the close ends on standard padding, not a band of white before the footer */
+.gd .gd-gi { padding-bottom: clamp(44px, 5vw, 72px); }
+.gd-gi .gi-more a { display: inline-flex; align-items: center; min-height: 44px; }
+/* the playground is one object across the grid: the dials down the left (5/13), the request and what the model reads on the right */
+.gd-ed { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); grid-template-areas: 'dials in' 'dials out'; overflow: hidden; border-radius: 24px; background: #fff; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .1); }
+.gd-ed-in { grid-area: in; padding: 28px 32px 8px; }
 .gd-ed-k { display: block; margin: 0 0 12px; font: 500 13px/1 var(--mono); color: var(--faint); }
 .gd-ed-k span { color: var(--soft); }
 .gd-ed textarea { width: 100%; box-sizing: border-box; border: 0; resize: none; field-sizing: content; min-height: 4.4em; max-height: 14em; padding: 0; font: 400 clamp(18px, 1.6vw, 22px)/1.45 var(--sans); letter-spacing: -.01em; color: var(--ink); background: transparent; outline: none; }
 .gd-ed-in:focus-within { outline: 2px solid var(--ink); outline-offset: -6px; border-radius: 20px; }
-.gd-ed-dials { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center; padding: 16px 24px; border-block: 1px solid var(--line); background: #fafafa; }
-.gd-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.gd-chips button, .gd-seg button { min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: #fff; font: 500 13px/1 var(--mono); color: var(--faint); cursor: pointer; transition: background-color 150ms cubic-bezier(0, 0, .2, 1), color 150ms cubic-bezier(0, 0, .2, 1), border-color 150ms cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
+.gd-ed-dials { grid-area: dials; display: flex; flex-direction: column; align-items: flex-start; gap: 27px; padding: 28px 32px; border-right: 1px solid var(--line); background: #fafafa; }
+.gd-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+/* the detectors are outlined toggles: on is an ink outline with a tick, off a hairline; no wall of solid fills */
+.gd-chips button, .gd-seg button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: #fff; font: 500 13px/1 var(--mono); color: var(--faint); white-space: nowrap; cursor: pointer; transition: background-color 150ms cubic-bezier(0, 0, .2, 1), color 150ms cubic-bezier(0, 0, .2, 1), border-color 150ms cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
+.gd-chips button::before { content: ''; flex: none; width: 9px; height: 5px; margin-top: -3px; border-left: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(-45deg) scale(0); transition: transform 300ms cubic-bezier(.16, 1, .3, 1); }
+.gd-chips button[aria-pressed='true'] { border-color: var(--ink); color: var(--ink); }
+.gd-chips button[aria-pressed='true']::before { transform: rotate(-45deg) scale(1); }
 .gd-chips button:active, .gd-seg button:active, .gd-ed-x:active { transform: scale(.97); }
-@media (hover: hover) and (pointer: fine) { .gd-chips button:hover { border-color: var(--ink); color: var(--ink); } .gd-chips button[aria-pressed='true']:hover { background: #262626; } .gd-seg button:hover:not([aria-checked='true']) { background: rgba(0, 0, 0, .05); color: var(--ink); } .gd-ed-x:hover { background: #f5f5f5; } }
-.gd-chips button[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: #fff; }
-.gd-seg { display: inline-flex; gap: 4px; padding: 3px; border-radius: 999px; background: #ededed; }
+@media (hover: hover) and (pointer: fine) { .gd-chips button:hover { border-color: var(--ink); color: var(--ink); background: #f5f5f5; } .gd-seg button:hover:not([aria-checked='true']) { background: rgba(0, 0, 0, .05); color: var(--ink); } .gd-ed-x:hover { background: #f5f5f5; } }
+.gd-seg { display: inline-flex; flex-wrap: wrap; gap: 4px; padding: 3px; border-radius: 24px; background: #ededed; }
 .gd-seg button { border: 0; background: none; }
 .gd-seg button[aria-checked='true'] { background: #fff; color: var(--ink); }
 .gd-chips button:focus-visible, .gd-seg button:focus-visible, .gd-ed-x:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-.gd-ed-out { padding: 24px 32px 28px; }
+.gd-ed-out { grid-area: out; padding: 24px 32px 28px; border-top: 1px solid var(--line); }
 .gd-out { margin: 0; font-size: clamp(18px, 1.6vw, 22px); line-height: 1.5; letter-spacing: -.01em; min-height: 3em; word-break: break-word; }
 .gd-out .gd-mk { background: rgba(82, 82, 82, .1); color: var(--ink); }
 .gd-ed-f { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 20px 0 0; font: 500 13px/1 var(--mono); color: var(--soft); }
@@ -258,7 +270,7 @@
   .gd-rail, .gd-ps-board { display: none; }
   /* phones: one chapter per screen on a sideways snap rail (the next card peeks); the panel first, then the title,
      its "0N / 06", and the words clamped to three lines behind Read more (the full text stays in the page) */
-  .gd-ps-facts { display: flex; gap: 12px; margin-inline: calc(-1 * clamp(16px, 4vw, 32px)); padding: 0 clamp(16px, 4vw, 32px) 4px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: clamp(16px, 4vw, 32px); scrollbar-width: none; overscroll-behavior-x: contain; }
+  .gd-ps-facts { display: flex; gap: 12px; margin-inline: calc(-1 * clamp(16px, 4vw, 32px)); padding: 0 clamp(16px, 4vw, 32px) 4px; overflow-x: auto; scroll-snap-type: x proximity; scroll-padding-inline: clamp(16px, 4vw, 32px); scrollbar-width: none; overscroll-behavior-x: contain; }
   .gd-ps-facts::-webkit-scrollbar { display: none; }
   .gd-f, .js .gd-f { flex: 0 0 84%; display: flex; flex-direction: column; opacity: 1; pointer-events: auto; padding: 0; border: 0; scroll-snap-align: start; }
   .js .gd-f .gd-f-t > span { transform: none; }
@@ -284,11 +296,26 @@
   .gd-logl { padding: 16px; font-size: 16px; }
   .gd-modes div { padding: 16px; }
   .gd-modes b { font-size: 19px; }
-  .gd-yours-h { position: static; }
+  .gd-ed { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'in' 'dials' 'out'; }
   .gd-ed-in, .gd-ed-out { padding-inline: 20px; }
-  .gd-ed-dials { padding: 14px 16px; }
+  .gd-ed-dials { gap: 17px; padding: 16px 20px; border-right: 0; border-top: 1px solid var(--line); }
+  .gd-chips button, .gd-seg button { padding: 0 12px; }
   .gd-sp pre, .gd-sp code { white-space: pre-wrap; word-break: break-word; }
   .gd-gi .gi-art { position: relative; right: auto; top: auto; width: 72%; margin: 27px auto 0; opacity: 1; }
+}
+/* reduced motion on desktop: nothing pins; the six facts stack in the flow, each beside its own board at rest */
+@media (prefers-reduced-motion: reduce) and (min-width: 901px) {
+  .gd-ps { height: auto; margin-bottom: 0; }
+  .gd-ps-stage { position: static; height: auto; }
+  .gd-ps-in { display: block; height: auto; padding: clamp(72px, 8vw, 116px) 0 0; }
+  .gd-rail, .gd-ps-board { display: none; }
+  .gd-ps-top { padding-bottom: 27px; }
+  .gd-ps-facts { display: block; }
+  .gd-f, .js .gd-f { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); column-gap: 44px; align-items: center; opacity: 1; pointer-events: auto; padding: 44px 0; border-top: 1px solid var(--line); }
+  .gd-f > :not(.gd-f-vis) { grid-column: 1; }
+  .js .gd-f .gd-f-t > span, .js .gd-f[data-past] .gd-f-t > span { transform: none; }
+  .gd-f-vis { display: block; grid-column: 2; grid-row: 1 / span 3; }
+  .gd-f-vis .gd-board { height: auto; min-height: 320px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .gd-tilt { transform: none !important; }
