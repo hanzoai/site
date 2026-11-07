@@ -1,6 +1,6 @@
 'use client';
 /* Persona: buyers, security and legal reviewers, and users checking their terms. Goal: reach the right document in one step. CTA: none (legal pages carry no ask; PLAN-COMPONENTS 2.4), so the ask bar is off. Metric: document open (data-cta legal.doc.<slug>).
-   /legal, the Trust Center. V2: 9/10 motion-map pass (7 Nov): the twelve documents are rows that open in place (hover, tap or keys) into Hanzo's own sentence and address; each of the five rooms arrives its own way (ripple, grid wave, cursor trail, scramble, ink spread); the pile still deals; no line-mask cut-ins, no lamp
+   /legal, the Trust Center. V2: motion-map pass (7 Nov, styles finished 8 Nov): the twelve documents are rows that open in place (hover, tap or keys) into Hanzo's own sentence and address; each of the five rooms arrives its own way (ripple, grid wave, cursor trail, scramble, ink spread); the pile still deals; no line-mask cut-ins, no lamp
    Signature: rows-open. The document index is a tight list of kind and title; a row opens in place into its detail
    panel (Hanzo's own line for that document and its address, which opens it). A resting mouse opens the row under it
    (only on a real move, so rows sliding under a still pointer never cascade), a tap or Enter/Space toggles it, the arrow
@@ -176,7 +176,9 @@ function gridWave(sec) {
 /* ---------- the signature: rows that open ---------- */
 function Row({ it, group, open, onOpen, onToggle, onKey }) {
   const slug = slugOf(it.href);
-  const note = it.note.map((n, k) => (k === 0 && typeof n === 'string' ? n.replace(/^\s*—\s*/, '') : n));
+  // Hanzo's line as written, its leading dash set faint
+  const lead = typeof it.note[0] === 'string' && /^\s*—/.test(it.note[0]);
+  const note = lead ? [it.note[0].replace(/^\s*—\s*/, ' '), ...it.note.slice(1)] : it.note;
   const rest = useRef(0);
   useEffect(() => () => clearTimeout(rest.current), []);
   // a resting mouse opens the row under it; only a real move counts (movement 0 = the row slid under a still pointer)
@@ -199,7 +201,7 @@ function Row({ it, group, open, onOpen, onToggle, onKey }) {
       </div>
       <div className="lgi-row-p" id={'lgi-p-' + slug} role="region" aria-label={it.title} inert={!open}>
         <div className="lgi-row-pi">
-          <p className="lgi-card-d"><Nodes nodes={note} /></p>
+          <p className="lgi-card-d">{lead && <span className="lgi-dash">—</span>}<Nodes nodes={note} /></p>
           <A to={it.href} className="lgi-row-go" data-cta={'legal.doc.' + slug}>
             <span className="x-mono">hanzo.ai{it.href}</span>
             <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
