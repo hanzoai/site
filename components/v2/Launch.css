@@ -9,12 +9,10 @@
 
 /* ---------- Stage ---------- */
 .lv-stage { position: relative; height: calc(210svh - 60px); background: #fff; }
-.lv[data-calm] .lv-stage { height: auto; }
 .lv-pin { position: sticky; top: var(--x-top, 60px); height: calc(100svh - 60px); min-height: 560px; overflow: hidden; }
-.lv[data-calm] .lv-pin { position: relative; top: 0; }
 .lv-film { position: absolute; inset: 0; background: #000; overflow: hidden; }
 .lv-film-in { position: absolute; inset: 0; transform-origin: 50% 50%; }
-.lv-film-in img, .lv-film-in video { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; background: #000; }
+.lv-film-in img, .lv-film-in video { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; object-position: var(--fpos, 50% 50%); background: #000; }
 .lv-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0, 0, 0, .4), transparent 36%, transparent 55%, rgba(0, 0, 0, .6)); pointer-events: none; }
 .lv-name { position: absolute; left: 0; right: 0; bottom: 0; padding-bottom: clamp(40px, 8vh, 96px); color: #f5f5f7; pointer-events: none; }
 .lv-name .lv-name-h { margin: 0; color: #fff; font-size: clamp(3.5rem, 8vw, 7rem); font-weight: 497; letter-spacing: -.045em; line-height: .95; }
@@ -30,6 +28,16 @@
 @media (hover: hover) { .lv-name-ask .x-btn.solid:hover { background: #ffffff; border-color: #ffffff; } }
 .lv-close { top: 20px; }
 .lv-pause { position: absolute; right: 24px; bottom: 24px; z-index: 3; }
+
+/* JS off and reduced motion: the film stays a full-bleed poster with the name on it, and the headline, lede and asks read below it
+   (Chrome forces native controls onto a video without JS, so films hide and their posters stand in) */
+html:not(.js) .lv video { display: none; }
+html:not(.js) .lv-stage, html:not(.js) .lv-pin, .lv[data-calm] .lv-stage, .lv[data-calm] .lv-pin { height: auto; min-height: 0; position: relative; top: 0; overflow: visible; }
+html:not(.js) .lv-film, .lv[data-calm] .lv-film { position: relative; height: calc(100svh - 60px); min-height: 560px; }
+html:not(.js) .lv-name, .lv[data-calm] .lv-name { top: 0; height: calc(100svh - 60px); min-height: 560px; display: flex; flex-direction: column; justify-content: flex-end; }
+html:not(.js) .lv-head, .lv[data-calm] .lv-head { position: relative; top: auto; bottom: auto; left: auto; right: auto; transform: none; width: min(100% - 48px, 760px); margin: 0 auto; padding: clamp(44px, 6vw, 72px) 0; }
+html:not(.js) .lv-over, .lv[data-calm] .lv-over { display: none; }
+html:not(.js) .lv-pause { display: none; }
 
 /* an optional drawing over the settled film */
 .lv-over { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .4s ease-out; }
@@ -110,6 +118,7 @@
 .lv-ch-b p { margin: 0; }
 .lv-ch-b p + p, .lv-ch-b > * + * { margin-top: 16px; }
 .lv-ch-art { position: relative; }
+.lv-ch-art img, .lv-ch-art video { object-position: var(--fpos, 50% 50%); }
 .lv-ch[data-live] .lv-ch-art { position: absolute; inset: 0; }
 .lv-ch-art-in { position: absolute; inset: 0; }
 .lv-ch:not([data-live]) .lv-ch-words, .lv-ch:not([data-live]) .lv-ch-stack, .lv-ch:not([data-live]) .lv-ch-texts { display: contents; }

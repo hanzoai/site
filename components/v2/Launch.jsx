@@ -12,6 +12,7 @@
      headline then rises beside it, line by line. No eyebrow above the h1 (JAMES.md).
    - shape(t, W, H, wide) returns a CSS clip-path for t in 0..1 (0 = full-bleed). Helpers below: ring, box, poly.
    - over(W, H, wide) (optional) draws a layer over the settled film (e.g. a cube's edges); it fades in with the headline.
+   - pos (optional): the film's object-position, e.g. '50% 88%' when the subject sits low in Hanzo's 4:5 frame.
    - aim(W, H, wide) (optional) returns [dx, dy, zoom?]: how far the camera pans (and zooms, default 1.14) the film by
      the time it settles, so the subject sits inside the shape. focus(fx, fy, tx, ty, z) works it out for you.
    - ask = { label, to, id }: the page's one solid ask, in Hanzo's words, on the very first screen (white on the film);
@@ -19,8 +20,8 @@
    - Colour: none of our own (JAMES.md 7, 0 UI hues). The film is Hanzo's own, never filtered or dimmed; the only
      dimming is the gradient under the name. --ac / --ac-ink stay as neutral ink tokens for the page files.
    - One pause (the shared FilmPause, bottom right of the stage) stops every film and self-running demo on the page.
-   - Close runs the film back into the card it opened from. Reduced motion shows the settled stage, no pin; JS off shows
-     every word (hidden entrance states are scoped to html.js). */
+   - Close runs the film back into the card it opened from. Reduced motion and JS off share one calm layout: the full
+     film with the name and the ask, then the headline, lede and actions below it, nothing pinned or hidden. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, animate, useScroll, useTransform, useMotionValue, useMotionValueEvent, useReducedMotion, useInView } from 'motion/react';
 import { EASE } from '../ui';
@@ -68,10 +69,11 @@ export const poly = (pts) => (t, W, H, wide) => {
 };
 // aim helper: the film's subject sits at (fx, fy) of the 4:5 frame (fractions); land it on (tx, ty) px at zoom z.
 // box = [l, t, r, b], the settled shape's bounds in px: the pan is held back so the zoomed film always covers it.
+// pos = the film's object-position as fractions (Launch's pos prop), when the page moves it off centre.
 // Returns [dx, dy, z] for Launch's aim.
-export const focus = (fx, fy, tx, ty, z = 1.14, box) => (W, H) => {
+export const focus = (fx, fy, tx, ty, z = 1.14, box, pos = [0.5, 0.5]) => (W, H) => {
   const s0 = Math.max(W / 1200, H / 1500), iw = 1200 * s0, ih = 1500 * s0;
-  const px = fx * iw - (iw - W) / 2, py = fy * ih - (ih - H) / 2, cx = W / 2, cy = H / 2;
+  const px = fx * iw - (iw - W) * pos[0], py = fy * ih - (ih - H) * pos[1], cx = W / 2, cy = H / 2;
   let dx = tx - (cx + (px - cx) * z), dy = ty - (cy + (py - cy) * z);
   if (box) {
     dx = Math.min(Math.max(dx, box[2] - cx - cx * z), box[0] - cx + cx * z);
@@ -94,7 +96,7 @@ export function Lines({ as: T = 'h2', id, className = '', lines, reveal }) {
   );
 }
 
-export default function Launch({ slug, shape, aim, over, head, headClass = '', label, ask, children }) {
+export default function Launch({ slug, shape, aim, over, head, headClass = '', label, ask, pos, children }) {
   const m = bySlug[slug];
   const opener = useOpener();
   const stage = useRef(null), pin = useRef(null);
@@ -111,7 +113,7 @@ export default function Launch({ slug, shape, aim, over, head, headClass = '', l
   const tv = useMotionValue(0);
   const mode = useRef({ narrow: false, still: false });
   mode.current = { narrow, still };
-  const t = useTransform([p, tv], ([a, b]) => (mode.current.still ? 1 : mode.current.narrow ? b : clamp01(a / 0.8)));
+  const t = useTransform([p, tv], ([a, b]) => (mode.current.still ? 0 : mode.current.narrow ? b : clamp01(a / 0.8))); // reduced motion: the calm layout (film with the name, then the headline below)
   useEffect(() => {
     if (!ready || !narrow || still) return;
     const c = animate(tv, 1, { duration: 1.5, ease: EASE, delay: 1.1 });
@@ -135,10 +137,12 @@ export default function Launch({ slug, shape, aim, over, head, headClass = '', l
     return () => ro.disconnect();
   }, []);
   useEffect(() => { if (still || t.get() > 0.7) setOn(true); }, [still, t, size]);
-  useMotionValueEvent(t, 'change', (v) => { if (v > 0.7) setOn(true); else if (v < 0.45) setOn(false); }); // back up the stage, the headline steps aside for the name
+  const [gone, setGone] = useState(false);
+  useEffect(() => { if (still) setGone(false); }, [still]);
+  useMotionValueEvent(t, 'change', (v) => { setGone(v > 0.2); if (v > 0.7) setOn(true); else if (v < 0.45) setOn(false); }); // back up the stage, the headline steps aside for the name
 
   return (
-    <main className="x-model lv" data-calm={still ? '' : undefined} data-narrow={narrow ? '' : undefined}>
+    <main className="x-model lv" data-cursor="" style={pos ? { '--fpos': pos } : undefined} data-calm={still ? '' : undefined} data-narrow={narrow ? '' : undefined}>
       <section className="lv-stage" ref={stage} data-hero={slug} data-ready={ready ? '' : undefined} aria-label={label || m.name}>
         <div className="lv-pin" ref={pin}>
           <motion.div className="lv-film" style={{ clipPath: clip }}>
@@ -148,7 +152,7 @@ export default function Launch({ slug, shape, aim, over, head, headClass = '', l
             </motion.div>
             <motion.i className="lv-scrim" style={{ opacity: nameO }} aria-hidden="true" />
           </motion.div>
-          <motion.div className="lv-name x-wrap" style={{ opacity: nameO, y: nameY }} data-gone={on ? '' : undefined}>
+          <motion.div className="lv-name x-wrap" style={{ opacity: nameO, y: nameY }} data-gone={gone ? '' : undefined}>
             <h1 className="lv-name-h">
               <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={ready ? { y: 0 } : {}} transition={{ duration: 1.1, ease: EASE, delay: 0.1 }}>{m.name}</motion.span></span>
             </h1>
