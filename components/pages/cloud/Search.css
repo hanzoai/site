@@ -101,7 +101,6 @@ html.js .se2-w1:not(.go) i.near { transform: scale(.4); }
 .se2-hb-call span i { display: block; width: 2px; height: 70px; margin-top: 18px; background: var(--ink); }
 .se2-hb-call b { grid-column: 1 / -1; padding: 22px; border-radius: 16px; background: var(--ink); color: var(--se-paper); text-align: center; font-size: 17px; font-weight: 500; }
 .se2-hb .se2-rag { padding: 0; }
-.se2-con-open { margin-top: 24px; }
 .se2-note { margin: 16px 0 0; font-size: 14px; color: var(--se-body); }
 .se2-steps { grid-column: 9 / span 4; list-style: none; margin: 0; padding: 0; align-self: center; display: flex; flex-direction: column; gap: 10px; }
 .se2-steps li { position: relative; padding: 24px 24px 26px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, .14); transition: background .3s, border-color .3s, color .3s; }
@@ -323,3 +322,10 @@ html.js .se2-e-grow:not(.in) .se2-e-in { clip-path: circle(0 at var(--gx, 50%) v
   .se2-tile { animation: none; }
   html.js .se2-e-zoom:not(.in) .se2-e-in, html.js .se2-e-pull:not(.in) .se2-e-in, html.js .se2-e-grow:not(.in) .se2-e-in { transform: none; opacity: 1; clip-path: none; }
 }
+
+/* use it: the example console (7) and the agent prompt (5), side by side before the closing band */
+.se2-use { display: grid; grid-template-columns: 7fr 5fr; gap: clamp(24px, 4vw, 56px); align-items: start; }
+.se2-use-con { min-width: 0; }
+.se2-use-pr { min-width: 0; }
+.se2-con-api span { color: inherit; }
+@media (max-width: 899px) { .se2-use { grid-template-columns: minmax(0, 1fr); } }

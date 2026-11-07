@@ -24,8 +24,7 @@ import { EASE } from '../../ui';
 import { A, Cta } from '../../kit';
 import { useSteps } from './Frame';
 import { useDemo, PauseBtn } from '../../v2/x-hamilton/Demo';
-import Console from '../../v2/x-hamilton/Console';
-import Drawer from '../../v2/Drawer';
+import { SeConsole, SePrompt } from './search/SeUse';
 import StageHero from '../../v2/StageHero';
 import Finale from '../../v2/Finale';
 import './Search.css';
@@ -342,12 +341,6 @@ function How() {
           <h2 className="l2-head">How it works</h2>
           <p className="l2-lede">Content in, ranked results out, and a model over the top if you want one.</p>
           <HowBar at={at} />
-          <div className="se2-con-open">
-            <Drawer label="Console" title="Hanzo Search">
-              <Console name="Search" api="/v1/search" side={SIDE} />
-              <p className="se2-note">Example project. Every name in it is one you would give your own.</p>
-            </Drawer>
-          </div>
         </div>
         <ol className="se2-steps">
           {STEPS.map(([t, d], i) => (
@@ -526,12 +519,19 @@ export default function Search() {
         ask={['Read the docs', DOCS]}
         links={[['View on GitHub', GH]]}
         object={<EndBar />}
-        prompt="Read https://hanzo.ai/skill.md and use Hanzo Search in my project. Start with: hanzo search create"
-        api="/v1/search"
         related={[['Chat', '/cloud/chat', 'Conversational AI'], ['Bot', '/bot', 'Multi-agent platform'], ['Crawl', '/crawl', 'Web crawler']]}
         tag="AI-powered search"
         className="se2-fin"
-      />
+      >
+        {/* use it: Hanzo's example console and the agent prompt, on the page as Hanzo prints them */}
+        <div className="se2-use">
+          <div className="se2-use-con">
+            <SeConsole name="Search" api="/v1/search" side={SIDE} />
+            <p className="se2-note">Example project. Every name in it is one you would give your own.</p>
+          </div>
+          <SePrompt name="Search" prompt="Read https://hanzo.ai/skill.md and use Hanzo Search in my project. Start with: hanzo search create" api="/v1/search" className="se2-use-pr" />
+        </div>
+      </Finale>
     </main>
   );
 }
