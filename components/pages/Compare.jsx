@@ -66,13 +66,24 @@ function Board() {
   const ref = useRef(null);
   const live = useInView(ref, { amount: 0.4 });
   const run = !held && !pinned && !calm && live;
+  // the countdown keeps its progress across pauses: a hand on the board stops the clock, it does not reset it
+  const runRef = useRef(run);
+  runRef.current = run;
+  const spent = useRef(0);
+  useEffect(() => { spent.current = 0; }, [at]);
+  useEffect(() => {
+    if (calm || !live) return;
+    let last = performance.now();
+    const id = setInterval(() => {
+      const now = performance.now();
+      if (runRef.current) spent.current += now - last;
+      last = now;
+      if (spent.current >= STEP) { spent.current = 0; setAt((v) => (v + 1) % ROWS.length); }
+    }, 100);
+    return () => clearInterval(id);
+  }, [calm, live]);
   useEffect(() => () => clearTimeout(rest.current), []);
   const moved = (e) => { if (e.pointerType !== 'mouse') return; setHeld(true); clearTimeout(rest.current); rest.current = setTimeout(() => setHeld(false), 2500); };
-  useEffect(() => {
-    if (!run) return;
-    const t = setTimeout(() => setAt((v) => (v + 1) % ROWS.length), STEP);
-    return () => clearTimeout(t);
-  }, [at, run]);
   const keys = (e) => {
     const k = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
     if (!k) return;
@@ -100,7 +111,7 @@ function Board() {
             </button>
           ))}
         </div>
-        <span className="xcp-b-n pf-mono" aria-live="polite">{pad(at)} / 07<i key={at + (run ? 'r' : 'h')} className={'xcp-b-tick' + (run ? '' : ' held')} aria-hidden="true" /></span>
+        <span className="xcp-b-n pf-mono" aria-live="polite">{pad(at)} / 07<i key={at} className={'xcp-b-tick' + (run ? '' : ' held')} aria-hidden="true" /></span>
       </div>
 
       <div id="xcp-b-panel" role="tabpanel" aria-label={r.k} className="xcp-b-panel">

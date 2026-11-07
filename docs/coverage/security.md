@@ -11,7 +11,7 @@ Page file: `components/pages/Security.jsx` · gallery: `docs/gallery/security/`
 7. **Visual design system.** v2 scale from `components/v2/ProofScale.css` (display 96, headline 56, body 19, Zen Mono captions). Ink, greys and silvers only, with no UI hue. The one image is Hanzo's own (koma.webp) on the organization's-file layer. Hero objects use a 28px radius. There is one dark room: the sign-off and the close.
 8. **UI component library.** Uses the kit (`A`, `More`, `Copy`) and the v2 pieces `MaskLines`, `SceneWipe`, `DetailSheet` and `AskBar`. The tablist, the worksheet toggles and the copy button are styled; no control uses browser defaults.
 9. **Motion and interaction.**
-   - Idle: the hero request pulse; the layer stage advances by itself every 6.5s while on screen, with a dwell line filling under the current tab.
+   - Idle: the hero request pulse; the layer stage advances by itself every 5s while on screen, with a dwell line filling under the current tab.
    - Pointer: map labels fill and their plate lifts; tabs nudge; rack rows wipe-fill and shift; option numerals darken and rise; buttons lift 1px and press at .98; the email's underline retracts.
    - State: the selected layer lifts out of the stack and turns face-on on a spring; the tab pill glides (layoutId); worksheet ticks; the sheet rises.
    - Scroll: only the dark-room wipe (and the line-mask cut-ins on arrival).
