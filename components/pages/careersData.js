@@ -59,7 +59,10 @@ export function role(slug) {
 }
 
 /* every role in brief (title, chips), for the siblings at the foot of a role */
-export const peers = () => SLUGS.map((s) => { const r = role(s); return { slug: s, at: r.at, title: r.title, chips: r.chips }; });
+export const peers = () => SLUGS.map((s) => { const r = role(s); return { slug: s, at: r.at, title: r.title, chips: r.chips, lede: r.lede }; });
+
+/* the number a role wears on the /careers deck (its sheet's numeral), so the role page's hero can be that same sheet */
+export const deckNo = (slug) => { const i = board().pos.leaves.findIndex((l) => l.href === '/careers/' + slug); return i < 0 ? null : String(i + 1).padStart(2, '0'); };
 
 export function board() {
   const root = load('careers');
