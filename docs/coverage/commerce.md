@@ -2,14 +2,14 @@
 
 Page file: `components/pages/apps/Commerce.jsx` · gallery: `docs/gallery/commerce/`
 
-1. **Strategy and conversion.** One ask, Hanzo's "Read the docs" (docs.hanzo.ai/docs/cli/commerce): solid in the hero, in the sticky AskBar, on the phone thumb bar and as the one solid button in the close. "API Platform", the ways in, "Deploy to Cloud" and "View on GitHub" are text links.
+1. **Strategy and conversion.** One ask, Hanzo's "Read the docs" (docs.hanzo.ai/docs/cli/commerce): solid in the hero, in the sticky site ask bar, on the phone thumb bar and as the one solid button in the close. "API Platform", the ways in, "Deploy to Cloud" and "View on GitHub" are text links.
 2. **Information architecture and navigation.** Hanzo's header and footer are unchanged. Order: an order's life (rail, then the scroll-driven journey), the ten nouns, the endpoints (find), who takes the money, when to reach for it, what you are running, the ways in, the close.
 3. **First impression and page narrative.** A full-bleed rail fills the top of the first screen, with one order card riding its five stops by itself and showing the endpoint it calls; the title sits bottom-left, the line and the ask to its right. At 375×812 the title, line and ask come first and the rail starts inside the first 660px.
-4. **Conversion system.** `data-thumb="Read the docs"` and `data-cta="primary"` on the hero ask; `data-cta="primary"` on the close; `AskBar title="Commerce"` as the last child of main. One solid button per screen.
+4. **Conversion system.** `data-thumb="Read the docs"` and `data-cta="primary"` on the hero ask; `data-cta="primary"` on the close; `site ask bar title="Commerce"` as the last child of main. One solid button per screen.
 5. **Trust and proof.** Every endpoint shown is Hanzo's own (path and description), and the counts are counts of Hanzo's list. "What you are running" is kept as a spec sheet.
 6. **Content presentation (copy untouched).** Parity 272/272 text, 7/7 links. Detail lives in things you open: each noun opens into its endpoints; each endpoint group opens a sheet with its full list. No label sits above a headline.
 7. **Visual design system.** Biz grammar; ink, greys and white only (held and captured cards invert to ink, a return is a dashed outline). The only colour is Hanzo's own Zen image on the order card. One dark room: find an endpoint.
-8. **UI component library.** Kit `A`, `More`; v2 `BizLines`, `BizSheet`, `BizOpen`, `AskBar`. Styled stops, pause button, search field, suggestion chips, processor radio pills.
+8. **UI component library.** Kit `A`, `More`; v2 `BizLines`, `BizSheet`, `BizOpen`, the site's ask bar (`components/Ask.jsx`). Styled stops, pause button, search field, suggestion chips, processor radio pills.
 9. **Motion and interaction.**
    - Idle: the order rides the rail and changes shape at each stop (signature), with a pause button.
    - Scroll: the same journey as a sticky horizontal scene; the text pins while the five stops pass sideways (useScroll/useTransform).

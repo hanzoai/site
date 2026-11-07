@@ -2,7 +2,7 @@
 /* Ledger (v2, archetype A "Launch"; greys and ink only, JAMES.md 7).
    Persona: a developer building payments or a marketplace who needs money to balance (metric docs_click)
    Goal: see that a one-sided entry cannot be written, then open the docs
-   CTA: Read the docs -> https://docs.hanzo.ai/docs/cli/books (hero, sticky AskBar, phone thumb bar, close; data-thumb, data-cta)
+   CTA: Read the docs -> https://docs.hanzo.ai/docs/cli/books (hero, the site's sticky ask bar at every width, close; data-thumb, data-cta)
    Signature: the book that balances itself. The live ledger sits beside the title on the first screen: four accounts
    (world, users:001, merchants:042, platform:fees) with huge balances, and Hanzo's own split payment posting by itself:
    new money enters from world, the split posts as one transaction, an overdraft is refused whole, a mistake is reversed
@@ -18,7 +18,6 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { EASE } from '../../ui';
 import { A, More } from '../../kit';
-import AskBar from '../../v2/AskBar';
 import { Paste, Code, useLive } from '../cloud/Frame';
 import BizLines from '../../v2/BizLines';
 import BizStage from '../../v2/BizStage';
@@ -363,7 +362,7 @@ function End() {
 
 export default function Ledger() {
   return (
-    <main className="bz ld">
+    <main className="bz ld" data-ask-name="Hanzo Ledger">
       <Hero />
       <BizChapters label="Every cent lands somewhere" className="ld-ch" items={STEPS.map(([t, d]) => ({ t, d }))} stage={(at) => <Scenes at={at} />}>
         <header className="bz-wrap ld-ch-head">
@@ -373,7 +372,6 @@ export default function Ledger() {
       <Caps />
       <Numscript />
       <End />
-      <AskBar title="Hanzo Ledger" label="Read the docs" to={DOCS} />
     </main>
   );
 }
