@@ -131,7 +131,7 @@ function Exploded({ at, vendor }) {
   const six = at === 5;
   return (
     <div className="hs-exp" aria-hidden="true">
-      <Module gap={s.gap} lit={six ? VENDOR_LIT[vendor] : s.lit} labels={s.labels} shares={s.shares || (six && vendor === 3)} base={six ? VENDORS[vendor] : 'HSM'} />
+      <Module gap={s.gap} lit={six ? VENDOR_LIT[vendor] : s.lit} labels={six ? { 4: VENDORS[vendor] } : s.labels} shares={s.shares || (six && vendor === 3)} base={six ? VENDORS[vendor] : 'HSM'} />
     </div>
   );
 }

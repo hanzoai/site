@@ -1,41 +1,70 @@
 # /extension — James-eye review
-7 Nov, round 3, walked at 1470x801, 375x812 and 320 (isMobile, hasTouch) with Playwright: frames at 0, 1 and 3 s with no input, then a screen at a time by wheel (desktop) or scroll (phone) with a 1.5 s dwell, hover and press on 14 main controls on desktop and taps on phone, horizontal overflow checked, console collected, and a prefers-reduced-motion load at 1470 and 375. The cookie card was dismissed before judging. Visible words were checked against content/live/extension.json, content/live/download.json and content/ui-strings.json.
+7 Nov, round 4. Walked in Playwright Chromium at 1470x801, at 375x812 and at 320 (isMobile, hasTouch), and with prefers-reduced-motion at 1470 and 375. At each size I took frames at 0, 1 and 3 s with no input, scrolled one screen at a time with the wheel (a touch scroll on phone) and dwelt 1.5 s on each screen. I hovered and pressed every main control on desktop, tapped them on phone, ran one fast-scroll pass, and dismissed the cookie card with Reject all.
 
-Verdict: 6/10
+Verdict: 7/10
 
-First complaint: "On my phone the 'How it works' bit is a mess. The words are on top of each other, 'Extens' and 'Native' and 'socket' all mashed together. I said no overlap, ever. And turn the motion off and the heading for that section just isn't there."
+First complaint: "On my phone the one moving thing in the hero is a thin black strip with its frame chopped off at the bottom, and I've read 'Hanzo Extension' four times before I've scrolled. Then right at the end there's a grey box with four buttons in it that just sits there. Most of it is alive, but that box looks like a template."
 
 ## The 11 answers
-1. **Sells in 5 s, moves in 1 s: yes.** The h1 cuts in by line mask (blank at 0 s, set by 1 s). A stack of three browser windows settles in, and the front window runs a self-playing 01/05 tour of Hanzo's five points with a progress bar, a pause control and Chrome, Firefox and Safari tabs. At 1470 the h1 sits at about 34% of the height and the black room peeks in at the bottom. At 375 the h1, lede, primary and the top of the window all fit inside 660px. This is the strongest screen on the page.
-2. **One in, one out: mostly.** "How it works" is a black room whose six-step pipeline scrubs with scroll, one step lit at a time with its caption underneath. Next comes a pinned stage at 1470 where one panel swaps per step: connectors hub (01), a "read a page" card that types itself out (02), then the build tree with the three zips (03). After that the builds list has a sticky size card that changes with the active row, and the use cases are tabs. The weak spot is "Get started with Extension" at 1470: a 26px heading and one link floating in an empty left half, beside a grey card. It reads as a leftover document block between two better sections.
-3. **A real visual in every section: nearly.** Hero window stack, pipeline, hub, typed page reader, build tree, size bars, and a use-case preview. Two are thin. The use-case 01 preview's dark box reads "CONSOLE MESSAGES / page content / console messages", which is filler that repeats itself. The "Get started" left half has nothing in it.
-4. **One ask and scale rhythm: partly.** The header ask changes from Try Hanzo to the solid "Download Extension" once the hero ask leaves view (desktop), and nothing floats over content. But in the builds section the header's solid "Download Extension" and the row's solid "Download for Chrome" share one viewport at 1470 and at 375, so there are two solid fills on one screen. On phone the header ask stays "Try Hanzo" the whole way down, which is shared chrome, noted and not counted. Scale has rhythm: h1 52px (40px on phone), section heads 26px, h3 17 to 21px, one 64px size figure, and a 44px closing head. Nothing is everything-big.
-5. **Every hover and press answers: mostly.** The primary darkens on hover and presses to 0.98. The tour tabs and step buttons change ink and press to about 0.97. Build rows light up and drive the sticky card. Text links (Availability, Use Hanzo Chat, Read the docs) do not change colour or transform on hover in computed style. Only the arrow or underline is left to answer, and none of them gives a number or a preview. No layout jumps were seen.
-6. **Overlap, font swap, shift: fails at 375.** In "How it works" at 375x812 the six steps stay in a horizontal row, 37px per column. The labels collide ("ExtensNative", "messagsocket", "Hanzofabric") and "fabric" is clipped at the right edge. The step dots also sit on top of the 01 to 06 numbers. At 320 the same section stacks vertically and is clean, so the breakpoint is wrong. With reduced motion at 375, the connectors hub stays clipped to a short pill: lines cut off, all six chips missing. No horizontal overflow at any width. No font swap seen.
-7. **References: apple.com and motion.dev are present.** You get a pinned stage where one panel changes, a scrubbed step strip and a product-as-hero live demo. That is the Apple product-page grammar. There is no synchronized.studio card-to-page move (data-morph-target exists on the hero stack, but nothing on this page opens into it) and no osply-style pointer detail beyond the hero tilt.
-8. **Different from its neighbours: plausibly.** The hero medium is a self-running browser-window stack, and the signature is the tab-to-fabric pipeline. Neighbouring pages were not walked in this review, so this is not proven.
-9. **18 parts: gaps.** Part 3 fails: under reduced motion the "How it works" h2 never appears, at 1470 or at 375. The hydration diff below is the cause: the Lines mask is rendered server-side at translateY(108%), and React does not patch the mismatch. Part 4 fails: two solid fills in one viewport. Part 5 fails: "Safari & Others" shows 310 KB, the Safari zip's size, against a sentence about Brave, Opera and Arc, so the number is attached to the wrong claim. Parts 9 and 12: the hero tour has a pause control, which is good. The pipeline and hub have no pause, but they are scroll-driven, so that is acceptable. Part 11: 44px targets were measured everywhere, but the 375 pipeline is not its own composition.
-10. **Banned tells.** No hue (0 chromatic colours in main), Zen and Zen Mono only, no gradient text, no eyebrow above an h1 or h2 ("What you would use it for" is correctly set below its heading). The tells that do appear are the 375 overlap and the hydration "1 Issue" badge on a reduced-motion load. In the glass header, a grey shadow from content scrolling underneath shows as a dirty smudge (seen at 1470 in the builds and use-case screens and at 375 over the reader card). Not a banned tell, but it looks unfinished.
-11. **Copy untouched: no, some words are invented.** These visible strings are not in extension.json, download.json or ui-strings.json:
-    - "You are on Chrome"
-    - "See the spec"
-    - "Source"
-    - the mono captions "CONNECTORS", "READ" and "BUILD"
-    - the pipeline labels "A tab", "Native messaging host", "Local Hanzo daemon" and "The fabric" (pulled out of Hanzo's sentences, but not Hanzo's labels)
-    - "page content / console messages" in the use-case demo
-
-    Zip names and sizes trace to download.json and are fine.
-
-Console: 0 errors on normal loads at all three sizes. On a prefers-reduced-motion load (1470 and 375), there is a hydration mismatch **in this page**, not the shared header or footer. It is in ExtensPage, Hero, the Lines h1 spans (server translateY(108%), client none) and the xe-win stack styles (server translateY(6%) scale(0.94), client final transforms and z-index). It counts.
+1. **Sells in 5 s; moves within 1 s?** Yes on desktop. The h1, the lede, one solid "Download Extension" and a browser-window object all fit the first screen. The window runs its own 01 to 05 slideshow: a progress bar fills, the slide copy changes, the Hanzo film plays in the page pane, and a pause control and Chrome/Firefox/Safari switcher sit under it. All of it is moving by 1 s. On phone the h1, lede and ask fit, but the film inside the window is cropped to a strip about 46px tall. Its outlined frame is cut off with no bottom edge, so the hero's only real visual reads as a mistake. The browser switcher falls below the fold at 375.
+2. **One in, one out, or a document?** Mostly one in, one out on desktop. "How it works" is a black room with a node rail that lights 01 to 06 as you go and swaps a single caption line. "The rest of your tools / Read a page as text / Installs from a file" is a pinned stage: one panel changes, with a 01/02/03 pager. The browser section ties a big figure to the row you point at. The use-cases are tabs. Two weak spots:
+   - On a fast scroll the "Read a page as text" panel arrives as a big empty graphite slab with only "PAGE CONTENT" in it, and the outgoing white card peeks out above it. The room tone also shifts from white to #fafafa to #f5f5f5 inside the one pinned stage.
+   - The last two screens drop back to a document: a static "Get started" card, then the Band.
+   On phone the stages stack, as the rules require.
+3. **A real visual in every section?** Yes, except one:
+   - hero: the browser window and film
+   - How it works: the node rail
+   - tools: the hub diagram (an SVG)
+   - read as text: a typed panel
+   - installs: a repo-to-zip tree using the real build file names
+   - browsers: the 976/956/310 KB figure with bars
+   - use-cases: a staged mock for each tab
+   The exception is the "Get started with Extension" card. Its only visual is the Hanzo mark in a rounded black square, which is an icon in a box. The film is the page's only Hanzo media and it is reused in the use-case mock, so a 4-up block does not apply.
+4. **One ask in the sticky header; nothing floating; scale has rhythm?**
+   - **Desktop:** the header swaps "Try Hanzo" for a solid "Download Extension" once the hero ask leaves view, and goes quiet again while the Band's solid ask is on screen. That is right, and nothing floats over content.
+   - **Phone (375 and 320):** the header keeps "Try Hanzo" for the whole page and never carries the page's ask. That is shared header chrome, so I note it and don't count it.
+   - **Scale:** the rhythm is mostly good. The h1 is 52px, section heads 26px, and the browser figure (64px) is the one big thing on its screen.
+   - **Too many asks:** the page carries too many of them. The hero has 3 (a solid button and two text links). "Download for Chrome" is an outlined button while Firefox and Edge are text links. The "Get started" card has 4 more ("Read the docs", "hanzoai", "Deploy to Cloud" as a white outlined pill, plus its own "Get Extension" heading). The Band has 2. That makes 3 button styles in the lower half.
+5. **Every hover and press answers, no jumps?**
+   - **Mostly yes.** The solid ask darkens and presses to 0.98. The tabs and pause press to 0.97. The text links press translateY(1px). Hovering a browser row fills it and changes the big figure to that build's size or version, which is the best hover on the page because it tells you a number. The 01 to 06 nodes press to 0.98. No layout jumps were measured.
+   - **Text links:** "Availability" and "Use Hanzo Chat" showed no colour, background or transform change on hover in the computed styles. If they answer, they do it with something subtle I couldn't measure.
+   - **Hero switcher:** choosing Firefox moves the pill, but the dot stays on "Chrome", so the control half-contradicts itself.
+6. **Overlaps, font swap or layout shift?**
+   - **No page overlap** at 1470 or 375, and no font swap: Zen and Zen Mono load, with no Inter.
+   - **No horizontal page scroll** at 375 or 320 (scrollWidth equals clientWidth). The side windows of the hero stack bleed past the edge but are clipped, which is intended.
+   - **At 320** the header's "Try Hanzo" is clipped at the right edge. That is shared chrome; noted, not counted.
+   - **At 375** the build file names break mid-string ("hanzo-ai-chrome-" / "v1.9.31.zip").
+   - **No hydration diff from this page.** The console was clean on every normal load. The only error was a Turbopack build error in `components/pages/cloud/Functions.jsx` ("the name `MOVES` is defined multiple times"). That is another page on the shared dev server, so I note it and don't count it.
+   - **Reduced motion** at 1470 and 375 shows the final states: `getAnimations()` is empty, the rail, hub, tree and figure are all at rest, and nothing is left hidden except slides that are off-screen.
+7. **Which reference, and is its motion there?** It feels like an apple.com product page: one idea per screen, a pinned stage where one panel changes, the product (a browser window) as the hero, and the persistent ask in the header on desktop. The motion is genuinely there: an idle self-running slideshow, pointer previews in the browser rows, typed text, state-changing tabs and a scroll-driven rail. That is more than half non-scroll motion. There is no osply/hamol-style asymmetry or pointer-aware detail beyond the row hover, and no card-to-page Morph. Nothing on the page is a card that opens a page, so the Morph does not apply.
+8. **Different from its neighbours?** The browser-window hero with a running slideshow is its own medium, and the repo-to-zip tree and size figure are specific to this page. One risk: /download uses the same build file names and sizes, so the file-tree and figure moments should not repeat there. I did not walk /download this round.
+9. **All 18 parts covered?** From the walk, without reading the card:
+   - **Covered:** one h1, one primary, the header and footer kept, a closing Band, a pause control on the self-running hero, reduced motion, no overflow at 320, monochrome tokens, tabs and the hairline-divided rows.
+   - **Weak:**
+     - Part 3, "end on one proof strip, one Band": the proof (Apache-2.0, hanzoai) is buried in a static CTA card rather than sitting in a quiet strip.
+     - Part 4: the primary appears at most 3 times, which passes, but the secondaries multiply.
+     - Part 6: "Browser extension", Hanzo's own label from the live hero, does not appear as a visible caption anywhere. The rule is to keep the words and move them below the heading, not to drop them.
+     - Part 11: the hero object is cropped to a sliver on phone instead of being cropped at true size.
+10. **Banned tells?**
+    - None of the hard ones:
+      - no hue (the only gradients are ink-to-ink and a white fade)
+      - no gradient text
+      - no badge or pill above a headline ("WHAT YOU WOULD USE IT FOR" sits correctly below its h2)
+      - no Inter
+      - no fading buttons
+      - nothing floating
+    - **Borderline:** the Hanzo mark in a rounded black tile on the "Get started" card (an icon in a box). The h1's words are also repeated 4 times on the first screen (h1, browser tab, card title, slide header), which reads as filler.
+11. **Copy untouched?** Yes, as far as I can trace. Every visible sentence and label I read is in `content/live/extension.json`, or comes from the build names and sizes in `content/live/download.json`, or is "Pause" from `ui-strings.json`. The node labels, hub words and typed lines are fragments of Hanzo's own sentences. "hanzo.ai/extension" in the fake address bar is the page's own route. The one gap is the dropped "Browser extension" label (see 9). Nothing is invented.
 
 ## Fixes, in order
-1. **How it works at 375 to 599:** switch the pipeline to the vertical stacked layout that 320 already uses, with dots on a left rail and numbers clear of the dots. No step label may share a line box with its neighbour.
-2. **Reduced motion and hydration:** render the Lines mask and the hero window stack in their final state on the server (no translateY(108%) or 6%/0.94 inline styles in SSR), and apply the starting offset only after mount when motion is allowed. That fixes the hydration badge and the missing "How it works" h2 in one move. Re-check with getAnimations() empty after 3 s.
-3. **Connectors hub at 375 with reduced motion:** the final state must be the full hub (six chips, full lines, full card height), not the collapsed pill it animates from.
-4. **One solid fill per viewport:** in the builds list, make "Download for Chrome" quiet while the header ask is solid (or drop the header's solid while the row's solid is on screen).
-5. **Remove the invented words** or replace them with register strings: "You are on Chrome", "See the spec" (and its + control), "Source", "CONNECTORS", "READ", "BUILD", and "page content / console messages". The pipeline nodes need labels Hanzo actually uses, or should be numbered with Hanzo's own sentence as the caption.
-6. **Safari & Others row:** do not attach 310 KB (the Safari zip) to the "Brave, Opera, Arc… Chromium-based" sentence. Show no figure there.
-7. **"Get started with Extension" at 1470:** give the left half its object, or fold the heading into the grey card's top so the section is not a lone heading next to empty space.
-8. **Use-case previews:** give each of the four tabs a real preview built from its own sentence (a console, a login wall, a network list, a form), instead of the repeated "console messages" box.
-9. **Text-link hover:** the arrow moves or the underline draws (transform, not opacity) on Availability, Use Hanzo Chat, Read the docs, Open Hanzo Chat and the Download-for rows.
-10. **Header smudge:** stop content shadows showing through the glass header (clip the shadowed panels, or give the header's backdrop a solid enough paper fill).
+1. **Phone hero film:** stop squashing the film into a 46px strip with a cut outline. Under 600px, give the page pane a fixed aspect ratio (true-size crop, at least 160px tall) and close the outlined frame. If it won't fit, drop the right-hand slide copy below the window instead of shrinking the film. Move the Chrome/Firefox/Safari switcher up so it is visible at 375x812.
+2. **"Get started" card:** replace it with one quiet proof strip: "Browser extension + MCP bridge · License: Apache-2.0 · hanzoai", in a hairline row with no box and no icon tile. Keep "Read the docs" as the one text link. Move "Deploy to Cloud" into that strip as a text link, not a third button style. The Band stays as the single closing ask.
+3. **First-screen repetition:** cut the h1 words to at most one echo on the first screen. Inside the mock, let the page pane carry the film and the card title, and drop the repeated "Hanzo Extension / Your browser, as a tool…" pair under the film (or show it only on slide 01).
+4. **Pinned stage:** fix the fast-scroll arrival. The incoming "Read a page as text" panel must already hold its three rows (PAGE CONTENT, CONSOLE MESSAGES, NETWORK REQUESTS) and type into them; never show an empty graphite slab. Hold one room tone for the whole pinned stage instead of shifting white, #fafafa, #f5f5f5. Remove the stray hairline that floats above the hub diagram as the stage enters.
+5. **Hero switcher dot:** make the dot follow the selected browser, or remove it.
+6. **Browser rows:** use one ask style. Make all four row asks the same text link with an arrow, and show the size in every row that has one (Chrome 976 KB, Firefox 956 KB; Safari's 310 KB under "Safari & Others"), not only the hovered or active row.
+7. **Hero text links:** give "Availability" and "Use Hanzo Chat" a hover that changes something, such as the arrow nudging 3px or the underline drawing in. Use ease-out at 150 ms, not opacity.
+8. **Missing label:** restore "Browser extension" as a 12px Zen Mono caption below the hero lede (not above the h1).
+9. **Phone file names:** keep them on one line. Let the file name truncate with an ellipsis and a full accessible name, or shrink the size column, so it never breaks mid-name.
+10. **Heading levels:** the five slide titles inside the hero mock are h2 at 17px ahead of "How it works" (h2 at 26px), and "The rest of your tools, too" is an h3 at 26px. Make the slide titles h3 (or non-headings) so the outline matches the visual scale.
+11. **For the shared owners, not this page:** the phone header keeps "Try Hanzo" instead of the page's ask, and "Try Hanzo" clips at 320. Both are in the shared header (request only).

@@ -2,8 +2,8 @@
 /* Gateway's own pinned chapters (page-local, from the shared PinChapters, prefix gwc-).
    Desktop (> 900px): the section is n screens tall; a sticky stage holds one chapter's words at a time beside the
    scene that acts that chapter out. The dots show the chapter's title on hover or focus, press, and jump to it.
-   Phone: one short scene sticks under the header and swaps as each chapter's words cross the middle of the screen, so
-   one thing comes in as one goes out; the words scroll beneath it on an opaque stage, never through it.
+   Phone: nothing is pinned over the words. Each chapter carries its own scene above its heading, and the scene plays
+   once when that chapter reaches the middle of the screen (its animations wait, paused, until then).
    Every chapter's words and its "01 / 06" caption are in the HTML. Reduced motion: chapters swap without moving. */
 import { useEffect, useRef, useState } from 'react';
 import { useScroll, useMotionValueEvent } from 'motion/react';
@@ -35,7 +35,7 @@ export default function GwChapters({ items, scene, label, className = '' }) {
   // phone: the chapter whose words cross the lower middle of the screen is the one the scene shows
   useEffect(() => {
     if (wide) return;
-    const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && setAt(+e.target.dataset.i)), { rootMargin: '-62% 0px -30% 0px' });
+    const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && setAt(+e.target.dataset.i)), { rootMargin: '-40% 0px -40% 0px' });
     arts.current.forEach((a) => a && io.observe(a));
     return () => io.disconnect();
   }, [wide]);
@@ -58,7 +58,8 @@ export default function GwChapters({ items, scene, label, className = '' }) {
             <div className="gwc-arts">
               {items.map(([t, d], i) => (
                 <article key={t} ref={(el) => (arts.current[i] = el)} data-i={i} className="gwc-art" data-on={i === at ? '' : undefined} data-past={i < at ? '' : undefined}>
-                  <h3 className="gwc-t"><span>{t}</span></h3>
+                  <div className="gwc-vis-m">{scene(i)}</div>
+                  <h3 className="gwc-t" id={'gwc-t-' + i}><span>{t}</span></h3>
                   <p className="gwc-n v2-kick">{pad(i + 1)} / {pad(n)}</p>
                   <p className="gwc-d">{d}</p>
                 </article>

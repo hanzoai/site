@@ -1,5 +1,8 @@
 /* IDV v2. Greys only (Hanzo's deck): ink, white, the neutral ramp. One dark room: the forge. */
-.iv { --acc: #0a0a0a; --glow: #525252; --card: #f5f5f5; --focus: #0a0a0a; }
+.iv { --acc: #0a0a0a; --glow: #525252; --card: #f5f5f5; --focus: #0a0a0a; --btn-solid-hover: #262626; }
+/* the agent prompt's Copy label on its dark code block: white 78% (the deck), not the shared off-deck grey */
+.iv .x-codeblock .x-copy { color: rgba(255, 255, 255, .78); }
+@media (hover: hover) { .iv .x-codeblock .x-copy:hover { color: #fff; } }
 .iv .v2-dark, .iv [data-room='dark'] { --acc: #f5f5f5; --glow: #e5e5e5; --card: #171717; --focus: #fafafa; color: #fafafa; }
 /* the shared dark-room buttons, on the deck's whites (no off-deck greys on this page) */
 .iv .v2-dark .v2-btn { color: #fafafa; }
@@ -13,10 +16,9 @@
 .iv-hero-g { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: clamp(27px, 3.4vw, 44px); align-items: start; margin-top: clamp(27px, 2.6vw, 44px); }
 .iv-lift { position: sticky; top: 96px; }
 
-/* the lede: the first sentence in ink from the first paint, the rest inks in with the scroll; only the closing clause grows */
+/* the lede: the first sentence in ink from the first paint, the rest inks in word by word just after load (1.4 s) */
 .iv-lede { margin: 0; max-width: 44ch; font-weight: 400; font-size: 21px; line-height: 1.5; letter-spacing: -.01em; color: #0a0a0a; text-wrap: pretty; }
-.js .iv-lede span:not(.on):not(.iv-say-end) { opacity: clamp(.22, calc((var(--p) - var(--i)) * 12 + .22), 1); transition: opacity .2s linear; }
-.iv-say-end { display: inline-block; transform-origin: 0 50%; scale: calc(1 + .04 * max(0, 1 - abs(var(--p) - .92) * 8)); }
+.js .iv-lede span:not(.on) { opacity: clamp(.22, calc((var(--p) - var(--i)) * 12 + .22), 1); }
 
 .iv-board { border-radius: 28px; background: #f5f5f5; padding: clamp(20px, 2.2vw, 28px); will-change: transform; }
 .iv-vendors { display: flex; flex-wrap: wrap; gap: 4px; padding: 5px; margin-right: 52px; border-radius: 26px; background: #fff; width: max-content; max-width: calc(100% - 52px); box-sizing: border-box; box-shadow: 0 0 0 1px rgba(0, 0, 0, .05); }
@@ -43,15 +45,30 @@
 .iv-tk path { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 30; stroke-dashoffset: 0; animation: iv-draw 400ms cubic-bezier(.4, 0, .2, 1) both; }
 @keyframes iv-draw { from { stroke-dashoffset: 30; } }
 
-/* the six facts: sheets that stack; words under the heading (never covered), the object on the right */
+/* the six facts: sheets that stack. A sheet's words fade before the next sheet's edge can reach them (never sliced);
+   the sides alternate, the surfaces change down the deck, and each sheet has its own big moment. */
 .iv-sheets { padding: clamp(44px, 6vw, 72px) 0 clamp(17px, 2vw, 27px); }
-.iv-sheet { position: sticky; top: calc(84px + var(--k) * 16px); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; align-items: center; min-height: min(44svh, 400px); box-sizing: border-box; margin-bottom: 16svh; padding: clamp(32px, 3.6vw, 56px); border-radius: 28px; background: #f5f5f5; box-shadow: 0 -24px 48px -36px rgba(0, 0, 0, .18); }
-.iv-sheet:nth-child(even) { background: #f2f2f2; }
+.iv-mark { display: block; height: 0; }
+.iv-sheet { position: sticky; top: calc(84px + var(--k) * 16px); min-height: min(44svh, 400px); box-sizing: border-box; margin-bottom: 16svh; padding: clamp(32px, 3.6vw, 56px); border-radius: 28px; background: #f5f5f5; box-shadow: 0 -24px 48px -36px rgba(0, 0, 0, .18); transform-origin: 50% 0; }
+.iv-sheet-in { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; align-items: center; }
 .iv-sheet:last-child { margin-bottom: 0; }
-.iv-sheet-l { grid-column: 1 / span 6; align-self: start; }
+.iv-sheet-l { grid-column: 1 / span 6; grid-row: 1; align-self: start; }
 .iv-sheet-n { margin-top: 10px; }
 .iv-sheet-l .v2-body { margin-top: 17px; max-width: 58ch; }
-.iv-sheet-r { grid-column: 8 / -1; }
+.iv-sheet-r { grid-column: 8 / -1; grid-row: 1; }
+.iv-sheet.s2 .iv-sheet-l, .iv-sheet.s4 .iv-sheet-l, .iv-sheet.s6 .iv-sheet-l { grid-column: 8 / -1; }
+.iv-sheet.s2 .iv-sheet-r, .iv-sheet.s4 .iv-sheet-r, .iv-sheet.s6 .iv-sheet-r { grid-column: 1 / span 6; }
+.iv-sheet.s2 { background: #ededed; }
+.iv-sheet.s4 { background: #f2f2f2; }
+.iv-sheet.s5 { background: #e4e4e7; }
+/* 03 is the graphite sheet: the signature resolves on black */
+.iv-sheet.s3 { background: #171717; color: #fafafa; --soft: rgba(255, 255, 255, .78); --faint: #a3a3a3; --acc: #fafafa; }
+.iv-sheet.s3 .iv-o { background: #0a0a0a; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .1); }
+.iv-sheet.s3 .iv-o-tag { color: #a3a3a3; }
+.iv-sheet.s3 .iv-o-code { color: #fafafa; }
+.iv-sheet.s3 .iv-o-code span { color: #404040; }
+.iv-sheet.s3 .iv-o-tick { color: #737373; }
+.iv-sheet.s3 .iv-o-tick[data-on] { color: #fafafa; }
 
 /* sheet objects: flat white tiles, hairlines, ink against hollow */
 .iv-o { margin: 0; padding: 27px; border-radius: 24px; background: #fff; }
@@ -61,7 +78,7 @@
 .iv-o-tick:not([data-on]) .iv-tk { visibility: hidden; }
 
 .iv-o-row { display: flex; align-items: center; gap: 27px; }
-.iv-o-n { flex: none; min-width: 1ch; margin: 0; font: 220 84px/1 var(--sans); letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+.iv-o-n { flex: none; min-width: 1ch; margin: 0; font: 220 112px/1 var(--sans); letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
 .iv-o-calls { flex: 1; list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 .iv-o-calls li { display: flex; gap: 12px; padding: 8px 12px; border-radius: 10px; font: 500 14px/1.3 var(--mono); color: #a3a3a3; background: #fafafa; transition: color 300ms cubic-bezier(0, 0, .2, 1), background-color 300ms cubic-bezier(0, 0, .2, 1); }
 .iv-o-calls li[data-on] { color: #0a0a0a; background: #ededed; }
@@ -71,10 +88,12 @@
 .iv-o-was { position: relative; display: inline-block; margin: 0; font: 497 26px/1.2 var(--sans); color: #737373; }
 .iv-o-was i { position: absolute; left: -2px; right: -2px; top: 54%; height: 2px; background: #0a0a0a; transform: scaleX(0); transform-origin: left; transition: transform 400ms cubic-bezier(.4, 0, .2, 1); }
 .iv-o-ref[data-s='1'] .iv-o-was i, .iv-o-ref[data-s='2'] .iv-o-was i { transform: none; }
-.iv-o-now { margin: 10px 0 0; font: 497 44px/1 var(--sans); letter-spacing: -.04em; opacity: 0; transform: translateY(16px); transition: opacity 400ms cubic-bezier(.16, 1, .3, 1), transform 400ms cubic-bezier(.16, 1, .3, 1); }
+.iv-o-now { margin: 10px 0 0; font: 497 84px/1 var(--sans); letter-spacing: -.04em; opacity: 0; transform: translateY(16px); transition: opacity 400ms cubic-bezier(.16, 1, .3, 1), transform 400ms cubic-bezier(.16, 1, .3, 1); }
 .iv-o-ref[data-s='2'] .iv-o-now { opacity: 1; transform: none; }
 
-.iv-o-code { display: block; font: 400 15px/1.6 var(--mono); color: #0a0a0a; word-break: break-all; }
+.iv-o-code { display: block; font: 400 19px/1.6 var(--mono); color: #0a0a0a; word-break: break-all; }
+.iv-o-poll .iv-o-tick { font-size: 26px; letter-spacing: -.02em; }
+.iv-o-poll .iv-o-ticks i { width: 16px; height: 16px; }
 .iv-o-code span { color: #d4d4d4; }
 
 .iv-o-track { display: flex; align-items: center; gap: 12px; }
@@ -122,10 +141,13 @@
 
 /* the three actions: one segmented control of toggles (pressed = filled); Reset hands the room back to the scroll */
 .iv-seg { display: flex; flex-wrap: wrap; margin-top: 24px; border-radius: 16px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .2); overflow: hidden; }
-.iv-seg button { flex: 1 1 auto; min-height: 48px; padding: 0 16px; border: 0; border-left: 1px solid rgba(255, 255, 255, .14); background: transparent; color: #f5f5f5; font: 500 15px/1.2 var(--sans); cursor: pointer; transition: background-color 150ms cubic-bezier(0, 0, .2, 1), color 150ms cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
+.iv-seg button { position: relative; flex: 1 1 auto; min-height: 48px; padding: 0 16px; border: 0; border-left: 1px solid rgba(255, 255, 255, .14); background: transparent; color: #f5f5f5; font: 500 15px/1.2 var(--sans); cursor: pointer; transition: background-color 150ms cubic-bezier(0, 0, .2, 1), color 150ms cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
 .iv-seg button:first-child { border-left: 0; }
 .iv-seg button:active { transform: scale(.97); }
-.iv-seg button[aria-pressed='true'] { background: #f5f5f5; color: #000; }
+.iv-seg button[aria-pressed='true'] { color: #000; }
+/* one lit segment: a single pill that glides to the choice (300 ms ease-emphasis) */
+.iv-seg-pill { position: absolute; inset: 0; background: #f5f5f5; }
+.iv-seg-t { position: relative; }
 .iv-seg button:focus-visible { outline: 2px solid #fff; outline-offset: -4px; }
 
 /* the verdict sits right under the actions: filled with a tick when accepted, hollow with a cross when not */
@@ -152,7 +174,11 @@
 .iv .gi-lead { margin-top: 17px; }
 .iv .gi-tag { margin-top: 10px; }
 
+/* the close's text links answer: the arrow moves and the label underlines */
+.iv .gi-more .x-arrow svg { transition: transform 150ms cubic-bezier(0, 0, .2, 1); }
 @media (hover: hover) {
+  .iv .gi-more .x-arrow:hover svg { transform: translateX(6px); }
+  .iv .gi-more .x-arrow:hover span { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
   .iv-vendors button:hover:not([aria-selected='true']) { color: #0a0a0a; background: #ededed; }
   .iv-seg button:hover:not([aria-pressed='true']) { background: rgba(255, 255, 255, .08); }
   .iv-x:hover { color: #fafafa; text-underline-offset: 5px; }
@@ -161,13 +187,15 @@
 @media (max-width: 900px) {
   .iv-hero { padding: 88px 0 32px; }
   .iv-hero-r { justify-content: flex-start; padding: 0; }
-  .iv-hero-g { grid-template-columns: minmax(0, 1fr); margin-top: 24px; gap: 24px; }
-  .iv-lift { position: relative; top: auto; }
+  .iv-hero-g { grid-template-columns: minmax(0, 1fr); margin-top: 20px; gap: 24px; }
+  /* the switchboard comes first on a phone (inside the first screen), Hanzo's intro right under it */
+  .iv-lift { position: relative; top: auto; order: -1; }
   .iv-lede { font-size: 17px; }
   .iv-board { padding: 14px; border-radius: 24px; }
-  /* the vendor tabs wrap: every vendor stays visible and the pill sits on its own label */
-  .iv-vendors { width: auto; }
-  .iv-vendors button { padding: 0 14px; font-size: 14px; }
+  /* the vendor tabs: one sideways rail that snaps, the next vendor peeking at the edge; the shown one scrolls into view */
+  .iv-vendors { flex-wrap: nowrap; width: auto; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; scroll-padding: 0 16px; -webkit-mask-image: linear-gradient(90deg, #000 82%, transparent); mask-image: linear-gradient(90deg, #000 82%, transparent); }
+  .iv-vendors::-webkit-scrollbar { display: none; }
+  .iv-vendors button { padding: 0 14px; font-size: 14px; scroll-snap-align: start; }
   /* the verdict first, then the line, then the four calls */
   .iv-wire { grid-template-columns: minmax(0, 1fr); gap: 10px; min-height: 0; }
   .iv-vslot { order: -2; min-height: 150px; }
@@ -178,15 +206,26 @@
   .iv-verdict { padding: 20px; }
   .iv-vn { font-size: 32px; }
   .iv-how { margin: 10px 0 14px; }
-  /* each sheet is one screen tall, so the next one always covers the last (one in, one out) */
-  .iv-sheet { display: block; top: calc(68px + var(--k) * 10px); min-height: calc(100svh - 96px); margin-bottom: 12svh; padding: 24px; }
-  .iv-sheet-r { margin-top: 20px; }
+  /* phones: the sheets do not stack, so nothing ever covers a card before its object and words are read; each card
+     leads with its object (the one big thing), then its heading and words */
+  .iv-sheet { position: relative; top: auto; transform: none !important; min-height: 0; margin-bottom: 12px; padding: 24px; box-shadow: none; }
+  .iv-sheet-in { display: flex; flex-direction: column; opacity: 1 !important; }
+  .iv-sheet-r { order: -1; margin: 0 0 24px; }
+  .iv-sheet-l, .iv-sheet-r { grid-column: auto !important; }
   .iv-o { padding: 20px; }
-  .iv-o-n { font-size: 64px; }
+  .iv-o-n { font-size: 84px; }
   .iv-o-row { gap: 17px; }
-  .iv-o-now { font-size: 32px; }
+  .iv-o-now { font-size: 52px; }
+  .iv-o-code { font-size: 15px; }
+  .iv-o-poll .iv-o-tick { font-size: 21px; }
   .iv-o-split { gap: 12px; }
+  /* the forge on a phone: the callback comes first, its choice and verdict on top, so a choice and its result share
+     one screen; the fields follow */
   .iv-forge-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .iv-pane.in { order: -1; display: flex; flex-direction: column; }
+  .iv-pane.in .iv-ctl { order: -1; }
+  .iv-pane.in .iv-ctl .iv-seg { margin-top: 0; }
+  .iv-pane.in .iv-fields { margin-top: 10px; }
   .iv-seg { flex-direction: column; }
   .iv-seg button { border-left: 0; border-top: 1px solid rgba(255, 255, 255, .14); }
   .iv-seg button:first-child { border-top: 0; }
@@ -204,6 +243,8 @@
 @media (prefers-reduced-motion: reduce) {
   .iv-settle, .iv-board { transform: none !important; }
   .js .iv-lede span { opacity: 1 !important; }
-  .iv-say-end { scale: none; }
+  /* the sheets unstack completely: each reads whole, in order */
+  .iv-sheet { position: relative; top: auto; transform: none !important; margin-bottom: 12px; box-shadow: none; }
+  .iv-sheet-in { opacity: 1 !important; }
   .iv-o *, .iv-stamp, .iv-tk path { transition: none !important; animation: none !important; }
 }

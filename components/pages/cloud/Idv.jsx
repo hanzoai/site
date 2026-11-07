@@ -6,11 +6,11 @@
 // Signature: a verdict, or nothing: four calls stay put while the vendor turns and each answers its honest way.
 // Beyond: a real HMAC-SHA256 check in the browser, played as you scroll: a changed body, a forgery, an empty signing secret.
 /* IDV (v2, archetype A Launch).
-   V2: 8/10 round 3: every word is Hanzo's (the forge room is labelled with the page's own phrases, its demo secret and body are Hanzo's words and the signature is computed live); Hanzo's intro is the hero lede beside the switchboard, its first sentence in ink from the first paint and the rest inking in with the scroll; the vendor tabs wrap (all four visible on a phone) and a hover previews that vendor's verdict; the switchboard tilts to a fine pointer; the forge pins and plays its four states as you scroll (accepted, a changed body, a forgery, an empty secret) and its three actions are toggles with a pressed state, never disabled; the sheet stack releases straight into Paste and ship; deck greys only, one ask.
+   V2: 8/10 round 4: the stacked sheets never slice a word (each sheet's words fade and it sinks before the next sheet's edge arrives; phones and reduced motion unstack); the six sheets alternate sides, change surface down the deck (one graphite) and each has its own big moment (the 4 at 112px, "refuses" at 84px, the HMAC resolving); the forge's control is single-select with one gliding pill and its verdict always agrees with the state; on a phone the choice and its verdict share one screen; the lede inks in over 1.4 s after load with no break of ours; the switchboard leads on a phone with the vendors on one snapping rail; deck greys only, one ask.
    Signature: a verdict, or nothing. In the hero, the same four calls go to whichever vendor is configured; the vendor
    turns (Jumio, Onfido, Plaid, the rest) and the verdict lane shows how each answers: a signed webhook that proves
    itself, a poll to the source, or a refusal until the parsing is written.
-   Supporting: kinetic title lines; Hanzo's intro inks in word by word as you scroll (scroll-linked type); the six facts
+   Supporting: kinetic title lines; Hanzo's intro inks in word by word just after load (staged type); the six facts
    as sticky sheets that stack over each other, each playing its own small object once when it arrives.
    Beyond: a real HMAC-SHA256 over the raw body, in your browser (Idv.sign.mjs, self-check Idv.sign.test.mjs). The
    secret is "a key everybody knows" and the body is "rejected", both Hanzo's words; changing the body to "approved" or
@@ -78,11 +78,18 @@ function Board() {
     rx.set(-((e.clientY - r.top) / r.height - 0.5) * 5);
   };
   const rest = () => { animate(rx, 0, { duration: 0.4, ease: EASE }); animate(ry, 0, { duration: 0.4, ease: EASE }); };
+  // on a phone the vendors are one sideways rail: keep the vendor being shown in view (the rail scrolls, never the page)
+  const rail = useRef(null);
+  useEffect(() => {
+    const r = rail.current, b = r && r.children[v];
+    if (!r || !b || r.scrollWidth <= r.clientWidth) return;
+    r.scrollTo({ left: Math.max(0, b.offsetLeft - 16), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  }, [v]);
   return (
     <div className="lp-host">
     <LivePause paused={paused} onToggle={togglePause} className="iv-pause" />
     <motion.div className="iv-board" ref={ref} style={{ rotateX: rx, rotateY: ry, transformPerspective: 1400 }} onPointerMove={lean} onPointerLeave={rest}>
-      <div className="iv-vendors" role="tablist" aria-label="identity-verification vendors">
+      <div className="iv-vendors" role="tablist" aria-label="identity-verification vendors" ref={rail}>
         {VENDORS.map(([n], i) => (
           <button key={n} type="button" role="tab" aria-selected={v === i} onClick={() => pick(i)}
             onPointerEnter={(e) => e.pointerType === 'mouse' && setPeek(i)} onPointerLeave={() => setPeek(null)}>
@@ -114,22 +121,21 @@ function Board() {
 const INTRO = 'Hanzo IDV is one interface in front of the identity-verification vendors, so which vendor you use is a line of configuration rather than a rewrite of your onboarding. It does not verify anybody itself. It starts a check with the provider you chose, reads the verdict back, and proves that a callback came from them and not from someone who guessed the URL. Jumio and Onfido work end to end today; Plaid works by polling; the rest refuse until their response parsing is written, which is stated here because a verification service that guesses is worse than one that says it cannot tell.';
 const WORDS = INTRO.split(' ');
 const FIRST = WORDS.indexOf('onboarding.') + 1; // the first sentence: in ink from the first paint
-const END = WORDS.indexOf('which', WORDS.indexOf('written,')); // the closing clause: the one part that grows
 
-/* Hanzo's intro is the hero lede: one paragraph (as Hanzo wrote it), the first sentence in ink from the first paint,
-   the rest inked in word by word with the scroll (one CSS variable; no per-word state). Only the closing clause grows
-   while it is the moment, then settles. */
+/* Hanzo's intro is the hero lede: one paragraph (as Hanzo wrote it, one flowing line of text with no break of ours),
+   the first sentence in ink from the first paint, the rest inked in word by word over 1.4 s after load (one CSS
+   variable; no per-word state). The closing clause inks last. Reduced motion: all ink at once (CSS). */
 function Lede() {
   const ref = useRef(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.42', 'end 0.55'] });
-  useMotionValueEvent(scrollYProgress, 'change', (p) => ref.current?.style.setProperty('--p', p.toFixed(3)));
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { el.style.setProperty('--p', '1'); return; }
+    const p = animate(0, 1, { duration: 1.4, delay: 0.35, ease: [0.4, 0, 0.2, 1], onUpdate: (v) => el.style.setProperty('--p', v.toFixed(3)) });
+    return () => p.stop();
+  }, []);
   const word = (w, i) => <span key={i} className={i < FIRST ? 'on' : undefined} style={{ '--i': ((i - FIRST) / (WORDS.length - FIRST)).toFixed(3) }}>{w} </span>;
-  return (
-    <p className="iv-lede" ref={ref} style={{ '--p': 0 }}>
-      {WORDS.slice(0, END).map(word)}
-      <span className="iv-say-end">{WORDS.slice(END).map((w, j) => word(w, END + j))}</span>
-    </p>
-  );
+  return <p className="iv-lede" ref={ref} style={{ '--p': 0 }}>{WORDS.map(word)}</p>;
 }
 
 /* One sheet object's little script: it renders finished (server and first client frame), rewinds after mount while
@@ -255,6 +261,44 @@ const FACTS = [
   ['Verification is not screening', 'Proving somebody is who they say is a different job from watching what they do afterwards. Sanctions lists, transaction monitoring, cases and the five-year record clock live in Hanzo Risk, and this does not duplicate them.', Split],
 ];
 
+/* One fact sheet. The sheets still stack (each sticks a little lower than the last), but nothing is ever sliced: a
+   sheet's words and object fade out (and the sheet sinks a touch) while the next sheet is still rising below it, before
+   its edge can reach them. The timing comes from a marker in the flow just above the next sheet (sticky sheets cannot
+   be measured themselves). Server and first client render are identical (opacity 1, no transform); phones and reduced
+   motion drop the stacking in CSS, so every sheet and its object read whole. */
+function Sheet({ i, t, d, Obj, next }) {
+  const { scrollYProgress } = useScroll({ target: next, offset: ['start end', 'start start'] });
+  const last = i === FACTS.length - 1;
+  const fade = useTransform(scrollYProgress, [0.1, 0.28], [1, last ? 1 : 0]);
+  const sink = useTransform(scrollYProgress, [0.1, 0.5], [1, last ? 1 : 0.96]);
+  return (
+    <motion.article className={'iv-sheet s' + (i + 1)} style={{ '--k': i, scale: sink }}>
+      <motion.div className="iv-sheet-in" style={{ opacity: fade }}>
+        <div className="iv-sheet-l">
+          <h3 className="v2-headline" id={'iv-f' + i}>{t}</h3>
+          <p className="v2-kick acc iv-sheet-n">{String(i + 1).padStart(2, '0')} / 06</p>
+          <p className="v2-body">{d}</p>
+        </div>
+        <div className="iv-sheet-r"><Obj /></div>
+      </motion.div>
+    </motion.article>
+  );
+}
+
+function Sheets() {
+  const marks = useRef(FACTS.map(() => ({ current: null }))).current;
+  return (
+    <section className="iv-sheets" aria-label="What it is">
+      <div className="v2-wrap">
+        {FACTS.map(([t, d, Obj], i) => [
+          i > 0 && <i key={'m' + i} className="iv-mark" ref={marks[i]} aria-hidden="true" />,
+          <Sheet key={t} i={i} t={t} d={d} Obj={Obj} next={marks[Math.min(i + 1, FACTS.length - 1)]} />,
+        ])}
+      </div>
+    </section>
+  );
+}
+
 // what each verdict means, in Hanzo's own sentences (fact 03 and fact 04)
 const SAYS = {
   accepted: 'A webhook whose signature we can check is accepted',
@@ -294,12 +338,16 @@ function Forge() {
     return () => { on = false; };
   }, [cur.secret, cur.body, header]);
   const set = (k) => setMine({ ...cur, ...k });
+  // one choice at a time: the lit segment is the state the callback is in (an empty secret first, then a forgery,
+  // then a changed body); pressing it again returns to the callback as sent
+  const lit = !cur.secret ? 'empty' : cur.forgery ? 'forgery' : cur.body === TAMPER ? 'approved' : null;
+  const choose = (c) => setMine(c === lit ? { ...SCENES[0] } : { ...SCENES[{ approved: 1, forgery: 2, empty: 3 }[c]] });
   const ok = verdict === 'accepted';
   return (
     <section className="iv-forge v2-dark" data-room="dark" aria-labelledby="iv-f2" ref={room}>
       <div className="iv-forge-pin">
         <div className="v2-wrap">
-          <p className="iv-forge-q"><span aria-hidden="true">…</span>an HMAC under a key everybody knows is one anybody can compute.</p>
+          <p className="iv-forge-q">An empty signing secret is a refusal, never a skip — an HMAC under a key everybody knows is one anybody can compute.</p>
           <div className="iv-forge-grid">
             <div className="iv-pane">
               <p className="v2-kick">the provider you chose</p>
@@ -312,14 +360,20 @@ function Forge() {
             </div>
             <div className="iv-pane in">
               <p className="v2-kick">a callback</p>
-              <label className="iv-l" htmlFor="iv-got">raw body</label>
-              <textarea id="iv-got" className={'iv-in' + (cur.body !== BODY ? ' bad' : '')} rows={1} value={cur.body} onChange={(e) => set({ body: e.target.value })} spellCheck={false} suppressHydrationWarning />
-              <p className="iv-l">HMAC-SHA256</p>
-              <code className={'iv-code sig' + (cur.forgery ? ' bad' : '')}>{header || '—'}</code>
+              <div className="iv-fields">
+                <label className="iv-l" htmlFor="iv-got">raw body</label>
+                <textarea id="iv-got" className={'iv-in' + (cur.body !== BODY ? ' bad' : '')} rows={1} value={cur.body} onChange={(e) => set({ body: e.target.value })} spellCheck={false} suppressHydrationWarning />
+                <p className="iv-l">HMAC-SHA256</p>
+                <code className={'iv-code sig' + (cur.forgery ? ' bad' : '')}>{header || '—'}</code>
+              </div>
+              <div className="iv-ctl">
               <div className="iv-seg" role="group" aria-label="a callback">
-                <button type="button" aria-pressed={cur.body === TAMPER} onClick={() => set({ body: cur.body === TAMPER ? BODY : TAMPER })}>approved</button>
-                <button type="button" aria-pressed={cur.forgery} onClick={() => set({ forgery: !cur.forgery })}>a forgery</button>
-                <button type="button" aria-pressed={!cur.secret} onClick={() => set({ secret: cur.secret ? '' : SECRET })}>An empty signing secret</button>
+                {[['approved', 'approved'], ['forgery', 'a forgery'], ['empty', 'An empty signing secret']].map(([c, label]) => (
+                  <button key={c} type="button" aria-pressed={lit === c} onClick={() => choose(c)}>
+                    {lit === c && <motion.span layoutId="iv-seg-pill" className="iv-seg-pill" transition={{ duration: 0.3, ease: EASE }} />}
+                    <span className="iv-seg-t">{label}</span>
+                  </button>
+                ))}
               </div>
               <div className={'iv-stamp ' + (ok ? 'ok' : 'no')} aria-live="polite">
                 <AnimatePresence mode="wait" initial={false}>
@@ -330,6 +384,7 @@ function Forge() {
                 </AnimatePresence>
               </div>
               <button type="button" className="iv-x" onClick={() => setMine(null)} disabled={!mine}>Reset</button>
+              </div>
             </div>
           </div>
           <ol className="iv-forge-steps" aria-hidden="true">
@@ -348,7 +403,7 @@ export default function Idv() {
         <div className="v2-wrap v2-grid iv-hero-t">
           <Lines as="h1" className="v2-display iv-h1" lines={['Hanzo IDV']} data-morph-target="" />
           <div className="iv-hero-r">
-            <Cta to="https://github.com/hanzoai" id="idv.hero" thumb className="v2-in" style={{ animationDelay: '.3s' }}>View on GitHub</Cta>
+            <Cta to="https://github.com/hanzoai" id="idv.hero" thumb>View on GitHub</Cta>
           </div>
         </div>
         <div className="v2-wrap iv-hero-g">
@@ -359,20 +414,7 @@ export default function Idv() {
         </div>
       </section>
 
-      <section className="iv-sheets" aria-label="What it is">
-        <div className="v2-wrap">
-          {FACTS.map(([t, d, Obj], i) => (
-            <article key={t} className="iv-sheet" style={{ '--k': i }}>
-              <div className="iv-sheet-l">
-                <h3 className="v2-headline" id={'iv-f' + i}>{t}</h3>
-                <p className="v2-kick acc iv-sheet-n">{String(i + 1).padStart(2, '0')} / 06</p>
-                <p className="v2-body">{d}</p>
-              </div>
-              <div className="iv-sheet-r"><Obj /></div>
-            </article>
-          ))}
-        </div>
-      </section>
+      <Sheets />
 
       <ShipPrompt name="Identity verification" prompt="Read https://hanzo.ai/skill.md and use Hanzo Identity verification in my project." />
 

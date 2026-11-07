@@ -331,6 +331,7 @@
 
 /* the live object's pause control */
 .gd-pause { top: auto; bottom: 16px; right: 16px; }
+.gd .gd-pause { width: 44px; height: 44px; }
 
 /* phones: no text under 14px except 11-12px mono capitals */
 @media (max-width: 900px) { .gd-ed-k, .gd-ed-k span, .gd-chips button, .gd-seg button { font-size: 14px; } }

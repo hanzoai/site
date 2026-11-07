@@ -36,7 +36,7 @@
 .hs-lede { margin-bottom: 36px; max-width: 44ch; }
 .hs .hs-hero .v2-in { animation-name: hs-rise; }
 @keyframes hs-rise { from { transform: translate3d(0, 16px, 0); } }
-.hs-hero-obj { grid-column: 6 / -1; height: clamp(460px, 44vw, 640px); }
+.hs-hero-obj { grid-column: 6 / -1; height: clamp(420px, 38vw, 560px); }
 .hs-hero-obj > div { height: 100%; }
 .hs-sign { position: relative; height: 100%; }
 .hs-sign .hm { --s: clamp(240px, 25vw, 360px); }
@@ -84,8 +84,8 @@
 .hc-vis-in { position: sticky; top: var(--x-top, 64px); height: calc(100svh - var(--x-top, 64px)); }
 .hc-k { position: absolute; left: 0; bottom: 32px; color: rgba(255, 255, 255, .55); }
 /* chapter 06: the modules Hanzo lists, as one segmented control; picking one changes the drawing only */
-.hs-vendors { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 27px; padding: 5px; border-radius: 24px; background: rgba(255, 255, 255, .06); width: max-content; max-width: 100%; box-sizing: border-box; }
-.hs-vendors button { position: relative; min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: none; font: 500 14px/1 var(--sans); color: rgba(255, 255, 255, .55); cursor: pointer; white-space: nowrap; transition: color .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(.4, 0, .2, 1); }
+.hs-vendors { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 27px; max-width: 100%; }
+.hs-vendors button { position: relative; min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: none; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .16); font: 500 14px/1 var(--sans); color: rgba(255, 255, 255, .55); cursor: pointer; white-space: nowrap; transition: color .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(.4, 0, .2, 1); }
 .hs-vendors button:active { transform: scale(.97); }
 .hs-vendors button[aria-selected='true'] { color: #0a0a0a; }
 .hs-vendors button:focus-visible { outline: 2px solid #fafafa; outline-offset: 2px; }

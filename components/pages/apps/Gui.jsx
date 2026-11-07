@@ -129,13 +129,14 @@ function Bar({ v, hold, setHold, off }) {
 }
 
 /* Cycles the presets (or a given list of them) while on and on screen. */
-function useCycle(on, ms = 2600, list = PRESETS) {
+function useCycle(on, ms = 2600, list = PRESETS, first = ms) {
   const [i, setI] = useState(0);
+  const n = useRef(0); // how many changes so far: the first comes sooner (first), then every ms
   useEffect(() => {
     if (!on) return;
-    const t = setTimeout(() => setI((n) => (n + 1) % list.length), ms);
+    const t = setTimeout(() => { n.current += 1; setI((k) => (k + 1) % list.length); }, n.current ? ms : first);
     return () => clearTimeout(t);
-  }, [i, on, ms, list.length]);
+  }, [i, on, ms, first, list.length]);
   return list[i % list.length];
 }
 const WAVE = [PRESETS[1], PRESETS[2]]; // chapter 05 never rests on the plain default card
@@ -193,7 +194,7 @@ function Run() {
   const [seen, live] = useLive(0.15);
   const { scrollYProgress } = useScroll({ target: box, offset: ['start start', 'end end'] });
   useMotionValueEvent(scrollYProgress, 'change', (p) => setStep(p <= 0.002 ? -1 : Math.min(4, Math.floor((p / 0.94) * 5))));
-  const intro = useCycle(live && !hold && step === -1);
+  const intro = useCycle(live && !hold && step === -1, 2600, PRESETS, 800); // the first change lands at ~0.8 s
   const wave = useCycle(live && !hold && step === 4, 1500, WAVE);
   const v = step === -1 ? intro : step === 4 ? wave : step === 1 ? PRESETS[2] : PRESETS[0];
   const lit = Math.max(step, 0);
@@ -230,6 +231,8 @@ function Editor() {
     setDraft((d) => ({ ...d, [k]: val }));
     if (OK(k, val)) setV((o) => ({ ...o, [k]: val }));
   };
+  // a chip sets the token and clears anything typed: the field only ever holds what the visitor typed
+  const pick = (k, val) => { setDraft((d) => ({ ...d, [k]: undefined })); setV((o) => ({ ...o, [k]: val })); };
   const bad = Object.entries(draft).filter(([k, val]) => !OK(k, val));
   return (
     <section className="bz-sec gu-api" data-room="dark" aria-labelledby="gu-api-h">
@@ -245,17 +248,20 @@ function Editor() {
               <label className="x-mono" id={'gu-lb-' + k} htmlFor={'gu-in-' + k}>{k}=</label>
               <div className="gu-opts" role="radiogroup" aria-labelledby={'gu-lb-' + k}>
                 {Object.keys(TOK[k]).map((o) => (
-                  <button key={o} type="button" role="radio" aria-checked={v[k] === o && !(draft[k] && !OK(k, draft[k]))} onClick={() => set(k, o)} className="x-mono">{o}</button>
+                  <button key={o} type="button" role="radio" aria-checked={v[k] === o && !(draft[k] && !OK(k, draft[k]))} onClick={() => pick(k, o)} className="x-mono">{o}</button>
                 ))}
+                {/* the typed value: an empty dashed slot at the end of the row; type a drifted value and the typecheck fails */}
+                <input id={'gu-in-' + k} className={'x-mono' + (draft[k] && !OK(k, draft[k]) ? ' bad' : '')} value={draft[k] ?? ''} onChange={(e) => set(k, e.target.value)} spellCheck="false" autoComplete="off" />
               </div>
-              <input id={'gu-in-' + k} className={'x-mono' + (draft[k] && !OK(k, draft[k]) ? ' bad' : '')} value={draft[k] ?? v[k]} onChange={(e) => set(k, e.target.value)} spellCheck="false" autoComplete="off" />
             </div>
           ))}
-          <p className="gu-ed-k x-mono">{'/>'}</p>
-          {/* the typecheck, by shape: a tick while every value is a token; a cross and the drifted value once one is not */}
-          <p className={'gu-tc x-mono' + (bad.length ? ' bad' : '')} aria-live="polite">
-            <i aria-hidden="true">{bad.length ? '✕' : '✓'}</i>
-            {bad.length > 0 && <s>{bad.map(([k, val]) => `${k}="${val}"`).join(' ')}</s>}
+          {/* the typecheck sits on the closing line, by shape: a tick while every value is a token; a cross and the drifted value once one is not */}
+          <p className="gu-ed-k gu-ed-end x-mono">
+            <span>{'/>'}</span>
+            <span className={'gu-tc' + (bad.length ? ' bad' : '')} aria-live="polite">
+              {bad.length > 0 && <s>{bad.map(([k, val]) => `${k}="${val}"`).join(' ')}</s>}
+              <i aria-hidden="true">{bad.length ? '✕' : '✓'}</i>
+            </span>
           </p>
         </div>
         <figure className="gu-api-one"><Dev k="web" v={v} /></figure>
@@ -285,7 +291,7 @@ const PRIMS = ['Stack', 'XStack', 'YStack', 'Text', 'Button', 'Sheet', 'Dialog']
 /* which chapter's words each opened platform carries: native for the phones, the primitives for the Android list,
    compile-time CSS for the web, tokens for the desktop's split pane */
 const PANEL = { ios: 0, android: 3, web: 2, desk: 1 };
-function PlatScreen({ k, v }) {
+function PlatScreen({ k, v, wake }) {
   if (k === 'ios') return (
     <Dev k="ios" v={v}>
       <div className="gu-s gu-s-ios"><span className="gu-s-bars" aria-hidden="true"><i /><i /><i /></span>
@@ -294,12 +300,12 @@ function PlatScreen({ k, v }) {
   );
   if (k === 'android') return (
     <Dev k="android" v={v}>
-      <div className="gu-s gu-s-list">{PRIMS.slice(0, 5).map((t, i) => <span key={t} className={'gu-li' + (i === 2 ? ' on' : '')}><b>{t}</b><i aria-hidden="true" /></span>)}</div>
+      <div className="gu-s gu-s-list">{PRIMS.slice(0, 5).map((t, i) => <span key={t} className={'gu-li' + (i === (wake ? 4 : 2) ? ' on' : '')}><b>{t}</b><i aria-hidden="true" /></span>)}</div>
     </Dev>
   );
   if (k === 'web') return (
     <Dev k="web" v={v}>
-      <div className="gu-s gu-s-form"><span className="gu-t">Hello, Hanzo</span><span className="gu-field" aria-hidden="true"><i /></span><span className="gu-field short" aria-hidden="true" /><span className="gu-b gu-b-solid">Get started</span></div>
+      <div className={'gu-s gu-s-form' + (wake ? ' wake' : '')}><span className="gu-t">Hello, Hanzo</span><span className="gu-field" aria-hidden="true"><i /></span><span className="gu-field short" aria-hidden="true" /><span className="gu-b gu-b-solid">Get started</span></div>
     </Dev>
   );
   return (
@@ -324,29 +330,48 @@ function useBackCloses(ref) {
     let ours = false;
     const layer = () => box.querySelector('.bz-open-layer');
     const pop = () => { if (!ours) return; ours = false; layer()?.querySelector('.bz-open-x')?.click(); };
+    // while a card flies to its sheet and back, its own content is hidden and fades back once it has landed,
+    // so nothing inside it is stretched by the morph (a crossfade, not a counter-scale)
+    let t;
     const mo = new MutationObserver(() => {
       const open = !!layer();
-      if (open && !ours) { ours = true; history.pushState({ guOpen: 1 }, ''); }
-      else if (!open && ours) { ours = false; if (history.state?.guOpen) history.back(); }
+      if (open && !ours) { ours = true; clearTimeout(t); box.classList.add('gu-morph'); history.pushState({ guOpen: 1 }, ''); }
+      else if (!open && ours) { ours = false; clearTimeout(t); t = setTimeout(() => box.classList.remove('gu-morph'), 640); if (history.state?.guOpen) history.back(); }
     });
     mo.observe(box, { childList: true, subtree: true });
     addEventListener('popstate', pop);
-    return () => { mo.disconnect(); removeEventListener('popstate', pop); };
+    return () => { clearTimeout(t); mo.disconnect(); removeEventListener('popstate', pop); };
   }, [ref]);
 }
 
-/* A card's device tilts toward the pointer (2.5° at most, fine pointers only, flat on leave). */
-function Tilt({ children }) {
+/* A card's device: it tilts toward the pointer (2.5° at most, fine pointers only, flat on leave), and wakes while the
+   card is pointed at or focused: its props take the next state once (the list moves to Button, the form fills). */
+function CardDev({ k }) {
   const ref = useRef(null);
+  const [wake, setWake] = useState(false);
   useEffect(() => {
     const el = ref.current, card = el && el.closest('.gu-plat');
-    if (!card || !matchMedia('(hover: hover) and (pointer: fine)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const move = (e) => { const r = card.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5; el.style.transform = `perspective(900px) rotateY(${(x * 5).toFixed(2)}deg) rotateX(${(-y * 5).toFixed(2)}deg)`; };
-    const leave = () => { el.style.transform = ''; };
-    card.addEventListener('pointermove', move); card.addEventListener('pointerleave', leave);
-    return () => { card.removeEventListener('pointermove', move); card.removeEventListener('pointerleave', leave); };
+    if (!card) return;
+    const on = () => setWake(true), off = () => setWake(false);
+    card.addEventListener('focus', on); card.addEventListener('blur', off);
+    const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+    if (!fine) return () => { card.removeEventListener('focus', on); card.removeEventListener('blur', off); };
+    const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const move = (e) => {
+      if (calm) return;
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+      el.style.transform = `perspective(900px) rotateY(${(x * 5).toFixed(2)}deg) rotateX(${(-y * 5).toFixed(2)}deg)`;
+    };
+    const enter = () => setWake(true);
+    const leave = () => { el.style.transform = ''; setWake(false); };
+    card.addEventListener('pointerenter', enter); card.addEventListener('pointermove', move); card.addEventListener('pointerleave', leave);
+    return () => {
+      card.removeEventListener('focus', on); card.removeEventListener('blur', off);
+      card.removeEventListener('pointerenter', enter); card.removeEventListener('pointermove', move); card.removeEventListener('pointerleave', leave);
+    };
   }, []);
-  return <span ref={ref} className="gu-plat-dev" aria-hidden="true">{children}</span>;
+  return <span ref={ref} className="gu-plat-dev" aria-hidden="true"><PlatScreen k={k} v={wake ? PRESETS[1] : PRESETS[0]} wake={wake} /></span>;
 }
 
 /* Drop it in: the install and the code, and the four platforms as cards that open into their device. */
@@ -368,7 +393,7 @@ function Ship() {
         <BizOpen className="gu-plats" cardClass="gu-plat" items={PLAT.map(([t, s, k]) => ({
           id: k,
           className: 'gu-plat-' + k,
-          card: <><Tilt><PlatScreen k={k} v={PRESETS[0]} /></Tilt><span className="gu-plat-t"><b>{t}</b><span>{s}</span></span></>,
+          card: <><CardDev k={k} /><span className="gu-plat-t"><b>{t}</b><span>{s}</span></span></>,
           panel: (
             <div className="gu-pp">
               <PlatLive k={k} />

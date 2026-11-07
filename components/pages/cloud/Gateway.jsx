@@ -21,7 +21,7 @@
    CTA: Read the docs (hero, the sticky ask bar and the close; one solid button per screen). */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent, useReducedMotion } from 'motion/react';
-import { Cta } from '../../kit';
+import { A, Cta } from '../../kit';
 import { Console, useLive } from './Frame';
 import { Lines } from '../../v2/LiftStage';
 import GwChapters from './gateway/GwChapters';
@@ -138,23 +138,28 @@ const RULES = [
   ['A hop, or no hop at all', "Run it as its own service in front of the API, or mount it inside the cloud binary with one call. Same checks either way — one less network hop when you don't want one."],
 ];
 
+const RELATED = [['Gateway docs →', 'https://docs.hanzo.ai/docs/projects/hanzoai/gateway'], ['DNS', '/dns', 'Authoritative DNS + DNSSEC'], ['Service Mesh', '/cloud/service-mesh'], ['Nodes', '/cloud/nodes']];
+const ARROW = <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+
 const FAKE = [['X-User-Id', 'sub'], ['X-Org-Id', 'owner'], ['X-Roles', 'roles'], ['X-IAM-*', '']];
 // the three ways a request arrives, in Hanzo's words: a JWT, an opaque API key, or only what a curl flag sets
 const CRED = ['JWT', 'API key', 'curl'];
 
-/* Beyond: forge one yourself. What you send, and what the service behind the gate receives. */
+/* Beyond: chapter 02, opened. It has no heading of its own (the chapter's h3 names it, and its words are not repeated
+   here): pick how the request arrives and which identity headers the client fakes; the right pane shows what every
+   service behind the gate receives. Each switch really changes that pane. */
 function Forge() {
   const [cred, setCred] = useState(0);
   const [fake, setFake] = useState([true, true, false, false]);
   const jwt = cred === 0;
   return (
-    <section className="gw-forge v2-dark" data-room="dark">
+    <section className="gw-forge v2-dark" data-room="dark" aria-labelledby="gwc-t-1">
       <div className="v2-wrap">
         <div className="gw-forge-head v2-grid">
           <div className="gw-forge-hl">
-            <h2 className="v2-display s" id="gw-forge-h">Identity headers are written, not trusted</h2>
+            <p className="gw-forge-n v2-kick" aria-hidden="true">02 / 06</p>
           </div>
-          <div className="gw-forge-pick" role="radiogroup" aria-labelledby="gw-forge-h">
+          <div className="gw-forge-pick" role="radiogroup" aria-labelledby="gwc-t-1">
             {CRED.map((c, i) => (
               <button key={c} type="button" role="radio" data-sound="tick" aria-checked={cred === i} onClick={() => setCred(i)}>
                 {cred === i && <motion.span layoutId="gw-pick" className="gw-pick-bg" transition={{ duration: 0.3, ease: EASE }} />}
@@ -169,12 +174,11 @@ function Forge() {
             <ul className="gw-forge-hs">
               {cred < 2 && <li className="gw-forge-auth"><span><em>{jwt ? 'JWT' : 'API key'}</em></span></li>}
               {FAKE.map(([h], i) => (
-                <li key={h}>
-                  <label className="gw-tog">
-                    <input type="checkbox" suppressHydrationWarning checked={fake[i]} onChange={() => setFake((f) => f.map((v, k) => (k === i ? !v : v)))} />
+                <li key={h} className={fake[i] ? 'on' : ''}>
+                  <button type="button" role="switch" aria-checked={fake[i]} data-sound="tick" className="gw-tog" onClick={() => setFake((f) => f.map((v, k) => (k === i ? !v : v)))}>
                     <span className="gw-tog-ui" aria-hidden="true" />
                     <span>{h} <em className="gw-tk">…</em></span>
-                  </label>
+                  </button>
                 </li>
               ))}
             </ul>
@@ -192,11 +196,6 @@ function Forge() {
                 ))}
               </AnimatePresence>
             </ul>
-            <p className="gw-forge-why">{jwt
-              ? 'X-User-Id, X-Org-Id, X-Roles and every X-IAM-* variant are stripped from every inbound request, then written back from the verified claims — sub, owner, roles.'
-              : cred === 1
-                ? "Opaque API keys aren't JWTs, so they go on to the service that issued them and it decides."
-                : "A curl flag can't set them."}</p>
           </div>
         </div>
       </div>
@@ -232,6 +231,15 @@ function Say() {
   const head = useRef(null);
   const calm = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
+  // the line cuts in once as the statement arrives (a class added after mount, so the server HTML shows it whole)
+  useEffect(() => {
+    const el = head.current;
+    if (!el) return;
+    el.classList.add('cut');
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { el.classList.add('in'); io.disconnect(); } }, { threshold: 0.4 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
   // 44px grows toward 64px on desktop; a phone grows a little (32px toward 38px). Written after mount, so the server
   // HTML and the first client render carry no transform.
   useMotionValueEvent(scrollYProgress, 'change', (p) => {
@@ -244,7 +252,7 @@ function Say() {
   return (
     <section className="v2-sec gw-say" ref={ref}>
       <div className="v2-wrap v2-grid">
-        <h2 ref={head} className="v2-display m gw-say-h">Nothing downstream has to ask who is calling</h2>
+        <h2 ref={head} className="v2-display m gw-say-h"><span className="gw-say-in">Nothing downstream has to ask who is calling</span></h2>
         <p className="v2-lede gw-say-l">Gateway answers that once, at the edge, so every service behind it can read an org id and believe it.</p>
         <div className="gw-rail" aria-hidden="true">
           <span className="gw-rail-end">client</span>
@@ -281,14 +289,14 @@ export default function Gateway() {
 
       <GwChapters className="gw-ch" label="Gateway" items={RULES} scene={(at) => <GwScene at={at} total={RULES.length} />} />
 
+      <Forge />
+
       <ShipPrompt
         name="Gateway"
         api="/v1/gateway"
         prompt="Read https://hanzo.ai/skill.md and use Hanzo Gateway in my project. Start with: hanzo gateway config get"
-        related={[['Gateway docs →', 'https://docs.hanzo.ai/docs/projects/hanzoai/gateway'], ['DNS', '/dns', 'Authoritative DNS + DNSSEC'], ['Service Mesh', '/cloud/service-mesh'], ['Nodes', '/cloud/nodes']]}
+        className="gw-ship"
       />
-
-      <Forge />
 
       <section className="v2-sec gw-proj">
         <div className="v2-wrap v2-grid">
@@ -302,6 +310,22 @@ export default function Gateway() {
       </section>
 
       <GetIt name="Gateway" tag="API gateway" seed="gateway" data={[429, 6]} self="https://docs.hanzo.ai/docs/projects/hanzoai/gateway" ask={['Read the docs', 'https://docs.hanzo.ai/docs/projects/hanzoai/gateway', 'gateway.close']} />
+
+      {/* related capabilities: the last thing before the footer (ShipPrompt's own row, composed here so it can move) */}
+      <section className="sp v2-sec gw-relsec">
+        <div className="v2-wrap v2-grid sp-grid">
+          <nav className="sp-rel" aria-label="Related capabilities">
+            <p className="v2-kick">Related capabilities</p>
+            <ul>
+              {RELATED.map(([t, to, d]) => (
+                <li key={t}>
+                  <A to={to} className="sp-rel-a"><b>{t}</b>{d && <span>{d}</span>}{!t.endsWith('→') && ARROW}</A>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+      </section>
     </main>
   );
 }
