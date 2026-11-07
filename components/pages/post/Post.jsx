@@ -1,8 +1,7 @@
 'use client';
 /* A blog post (/blog/<post>, one template), v2: an editorial chapter book (osply / hamol / grubogrubo).
-   Screen one is the title alone at display size, the lede set off to the right. The post's own Sigil is the cover
-   plate: a dark room that grows from an inset card to full bleed as it arrives (Stage), carrying the post's own figures
-   as heroes. Then the text runs in chapters: each opens with its number and a headline, the copy at 66ch on the right
+   Screen one is the title at display size with the post's own ask, and beside it the post's own film (or its Sigil)
+   already playing in a card; as you scroll the card opens to full bleed (Stage) and the post's figures arrive on it. Then the text runs in chapters: each opens with its number and a headline, the copy at 66ch on the right
    of an 8/4 split, figures and code breaking wide. It closes on Hanzo's own next steps as big rows and the other posts
    as cards that open into their page (the card's title becomes the next hero; synchronized.studio).
    No brand hues (JAMES.md): greys, black and white; colour and imagery come only from Hanzo's own model films, on the
@@ -10,16 +9,16 @@
    Signature: the reading thread. A margin rail holds the chapter you are in as a big numeral that hands over to the
    next, and a spine that fills as you read, each chapter a knot, the one you are in ringed (on a phone, a reading bar that opens the contents).
    Beyond: minutes left. The post's own stated read time counts down as you read, and any chapter is one press away.
-   V2: 8.5/10 chaptered editorial rebuild: display cover (no eyebrow over the h1), a plate with the post's own model film or Sigil that opens to full bleed with hero figures, chapter openers, model films on the parts, next posts that open into their page; monochrome; Flap and decor sparks removed (5 → 4 techniques). */
+   V2: 8.5/10 chaptered editorial rebuild: first screen = display title + the post's ask + its film or Sigil playing in a card that opens to full bleed with hero figures (critic 6/10 fix), chapter openers, model films on the parts, next posts that open into their page; monochrome; Flap and decor sparks removed (5 → 4 techniques). */
 // Persona: a developer or founder reading Hanzo's thinking (arrives from /blog, search or a shared link)
 // Goal: finish the post, understand the one idea, take the post's own next step
-// CTA: the post's own closing links (first one is the phone thumb bar's ask); the header keeps Try Hanzo
+// CTA: the post's first closing link as the one solid ask (hero, data-thumb for the ask bar, data-cta); the rest as rows at the end
 // Signature: the reading thread: a rail whose chapter numeral hands over as you read and a spine that fills, each chapter a knot
 // Beyond: minutes left: the post's own read time counting down as you read, with a jump to any chapter
 import { Fragment, useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useMotionValueEvent, useReducedMotion, useScroll, useSpring, useTransform } from 'motion/react';
+import { motion, AnimatePresence, useMotionValueEvent, useScroll, useSpring, useTransform } from 'motion/react';
 import { EASE, Copy } from '../../ui';
-import { A } from '../../kit';
+import { A, Cta, Film as KitFilm } from '../../kit';
 import Sigil from '../../Sigil';
 import Life from './Life';
 import Frontier from './Frontier';
@@ -29,26 +28,9 @@ const pad = (n) => String(n).padStart(2, '0');
 const FILMS = ['enso', 'kai', 'zen', 'iro', 'koe', 'koma', 'mori', 'oto', 'uta'];
 const film = (slug, ext) => '/models/' + slug + '.' + ext;
 
-/* Hanzo's model films play only while on screen, and stay on their poster for reduced motion */
-function Film({ slug, className }) {
-  const ref = useRef(null);
-  useEffect(() => {
-    const v = ref.current;
-    if (!v) return;
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { v.pause(); return; }
-    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) v.play().catch(() => {}); else v.pause(); });
-    io.observe(v);
-    return () => io.disconnect();
-  }, []);
-  return <video ref={ref} className={className} src={film(slug, 'webm')} poster={film(slug, 'webp')} muted loop playsInline preload="metadata" aria-hidden="true" />;
-}
-
-const go = (id) => {
-  const el = document.getElementById(id);
-  if (!el) return;
-  if (window.__lenis) window.__lenis.scrollTo(el, { offset: -120 }); else el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
-  el.focus({ preventScroll: true });
-};
+/* Hanzo's model films, through the shared Film part (plays only on screen and in a visible tab; poster under reduced
+   motion or Data Saver) */
+const Film = ({ slug, className }) => <KitFilm src={film(slug, 'webm')} poster={film(slug, 'webp')} w={1200} h={1500} className={className} />;
 
 function Inline({ inl }) {
   return inl.map((k, i) => {
@@ -71,7 +53,7 @@ function Code({ tabs }) {
             {tabs.map((t, i) => (
               <button key={t.lang} type="button" role="tab" id={'xbg-tab-' + i} aria-controls={'xbg-pan-' + i} aria-selected={i === at} tabIndex={i === at ? 0 : -1} onClick={() => setAt(i)}
                 onKeyDown={(e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { const n = (i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length; setAt(n); document.getElementById('xbg-tab-' + n)?.focus(); } }}>
-                {t.lang}{i === at && <motion.i layoutId="xbg-tab-ink" className="xbg-tab-ink" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
+                {t.lang}
               </button>
             ))}
           </div>
@@ -131,32 +113,76 @@ function Title({ text }) {
   );
 }
 
-/* the cover plate: an inset card that opens to full bleed as it arrives, the post's figures on it */
-function Plate({ doc, nums }) {
+/* The first screen and the plate in one scene. On a desktop the post's own film (or its Sigil) plays in a card beside
+   the title from the first second; as you scroll the scene holds, the card opens to full bleed (clip-path), the title
+   steps back and the post's figures arrive on the film. Phones, reduced motion and no-JS get the same parts stacked:
+   title, ask, then the plate. The header turns dark only once the plate fills the screen (a room marker slides in). */
+const PIN = '(min-width: 901px) and (prefers-reduced-motion: no-preference)';
+function Stage({ doc, nums, ask }) {
   const ref = useRef(null);
-  const calm = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.15'] });
-  const scale = useTransform(scrollYProgress, [0, 1], [0.86, 1]);
+  const plate = useRef(null);
+  const [pin, setPin] = useState(false);
+  const [paused, setPaused] = useState(false);
+  useEffect(() => {
+    const m = matchMedia(PIN);
+    const on = () => setPin(m.matches);
+    on();
+    m.addEventListener('change', on);
+    return () => m.removeEventListener('change', on);
+  }, []);
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
+  const clipPath = useTransform(p, (t) => { const v = Math.min(1, t / 0.55); const k = 1 - v; return `inset(${(14 * k).toFixed(2)}% ${(3.4 * k).toFixed(2)}% ${(10 * k).toFixed(2)}% ${(58 * k).toFixed(2)}% round ${(28 * k).toFixed(1)}px)`; });
+  // function maps, so Motion keeps them on the main thread (its native scroll-timeline shortcut mis-mapped these ranges)
+  const ramp = (a, b) => (v) => Math.min(1, Math.max(0, (v - a) / (b - a)));
+  const coverO = useTransform(p, (v) => 1 - ramp(0, 0.28)(v));
+  const coverY = useTransform(p, (v) => -48 * ramp(0, 0.28)(v));
+  const factsO = useTransform(p, ramp(0.48, 0.72));
+  const markY = useTransform(p, (v) => (v >= 0.54 ? '0%' : '100%'));
+  useMotionValueEvent(coverO, 'change', (v) => { if (ref.current) ref.current.dataset.gone = String(pin && v < 0.04); });
   const figs = doc.facts.some((c) => /\d/.test(c[1]));
+  const toggle = () => {
+    const v = plate.current?.querySelector('video');
+    if (!v) return;
+    if (v.paused) { v.play().catch(() => {}); setPaused(false); } else { v.pause(); setPaused(true); }
+  };
   return (
-    <section className={'xbg-plate' + (doc.film ? ' film' : '')} data-room="dark" ref={ref} aria-label={doc.chip}>
-      <motion.div className="xbg-plate-in" style={{ scale: calm ? 1 : scale }}>
-        {doc.film ? <Film slug={doc.film} className="xbg-plate-film" /> : <Sigil seed={doc.route} data={nums} className="xbg-sigil" />}
-        <div className="xbg-plate-c xbg-w">
-          <p className="xbg-plate-k x-mono"><span>{doc.chip}</span><span>{doc.date}</span></p>
-          {doc.facts.length > 0 ? (
-            <ul className={'xbg-facts' + (figs ? ' figs' : '')} style={{ '--n': doc.facts.length > 3 ? 2 : doc.facts.length }}>
-              {doc.facts.map(([role, name, note], i) => (
-                <li key={name + i}>
-                  <span className="xbg-role x-mono">{role}</span>
-                  <b className="xbg-fig">{name}</b>
-                  <span className="xbg-note">{note}</span>
-                </li>
-              ))}
-            </ul>
-          ) : <p className="xbg-plate-t" aria-hidden="true">{doc.chip}</p>}
-        </div>
-      </motion.div>
+    <section className={'xbg-stage' + (doc.film ? ' film' : '')} ref={ref} aria-labelledby="xbg-h1">
+      <div className="xbg-stage-in">
+        <motion.div className="xbg-plate-in" ref={plate} style={pin ? { clipPath } : undefined}>
+          <motion.i className="xbg-room" data-room="dark" aria-hidden="true" style={pin ? { y: markY } : undefined} />
+          {doc.film ? <Film slug={doc.film} className="xbg-plate-film" /> : <Sigil seed={doc.route} data={nums} className="xbg-sigil" />}
+          <motion.div className="xbg-plate-c xbg-w" style={pin ? { opacity: factsO } : undefined} aria-label={doc.chip} role="group">
+            <p className="xbg-plate-k x-mono"><span>{doc.chip}</span><span>{doc.date}</span></p>
+            {doc.facts.length > 0 ? (
+              <ul className={'xbg-facts' + (figs ? ' figs' : '')} style={{ '--n': doc.facts.length > 3 ? 2 : doc.facts.length }}>
+                {doc.facts.map(([role, name, note], i) => (
+                  <li key={name + i}>
+                    <b className="xbg-fig">{name}</b>
+                    <span className="xbg-role x-mono">{role}</span>
+                    <span className="xbg-note">{note}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : <p className="xbg-plate-t" aria-hidden="true">{doc.chip}</p>}
+          </motion.div>
+          {doc.film && (
+            <button type="button" className="xbg-pause" onClick={toggle} aria-label={paused ? 'Play' : 'Pause'} aria-pressed={paused}>
+              <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">{paused ? <path d="M5 3.5v9l7.5-4.5z" fill="currentColor" /> : <path d="M5 3.5h2v9H5zM9 3.5h2v9H9z" fill="currentColor" />}</svg>
+            </button>
+          )}
+        </motion.div>
+        <motion.div className="xbg-cover" style={pin ? { opacity: coverO, y: coverY } : undefined}>
+          <div className="xbg-w xbg-cover-g">
+            <div className="xbg-top">
+              <A to={doc.back.href} className="xbg-back"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M13 8H4M7.5 4.5 4 8l3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg><span>{doc.back.label}</span></A>
+            </div>
+            <Title text={doc.title} />
+            <p className="xbg-meta x-mono"><span className="xbg-chip">{doc.chip}</span><span>{doc.date}</span><span>{doc.read}</span></p>
+            <motion.p className="xbg-lede" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.9, ease: EASE, delay: 0.55 }}>{doc.lede}</motion.p>
+            {ask && <div className="xbg-ask"><Cta to={ask.href} id={'blog-' + doc.slug + '-ask'} thumb>{ask.label}</Cta></div>}
+          </div>
+        </motion.div>
+      </div>
     </section>
   );
 }
@@ -233,7 +259,7 @@ function End({ doc, cta, sources }) {
             <p className="xbg-end-l">{cta.label}</p>
             <ul className="xbg-rows">
               {cta.links.map((l, i) => (
-                <li key={l.href}><A to={l.href} className="xbg-row" {...(i === 0 ? { 'data-thumb': '' } : {})}><span>{l.label}</span><Arrow /></A></li>
+                <li key={l.href}><A to={l.href} className="xbg-row" data-cta={'blog-' + doc.slug + '-next-' + (i + 1)}><span>{l.label}</span><Arrow /></A></li>
               ))}
             </ul>
           </div>
@@ -276,18 +302,7 @@ export default function Post({ doc }) {
   const nums = [doc.minutes, doc.title.length];
   return (
     <main className="xbg">
-      <section className="xbg-cover" aria-labelledby="xbg-h1">
-        <div className="xbg-w xbg-cover-g">
-          <div className="xbg-top">
-            <A to={doc.back.href} className="xbg-back"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M13 8H4M7.5 4.5 4 8l3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg><span>{doc.back.label}</span></A>
-          </div>
-          <Title text={doc.title} />
-          <p className="xbg-meta x-mono"><span className="xbg-chip">{doc.chip}</span><span>{doc.date}</span><span>{doc.read}</span></p>
-          <motion.p className="xbg-lede" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.9, ease: EASE, delay: 0.55 }}>{doc.lede}</motion.p>
-        </div>
-      </section>
-
-      <Plate doc={doc} nums={nums} />
+      <Stage doc={doc} nums={nums} ask={cta && cta.links[0]} />
 
       <section className="xbg-body">
         <div className="xbg-w xbg-room">
