@@ -32,6 +32,15 @@ Found by the /extension fixer: `public/hanzo.css` registers `@property --w`, so 
 now uses `--xw`, and /help uses per-bar widths in CSS. Other pages that use `--w` this way may have the same hidden bug. Asked for:
 rename the registered property, or list it as reserved.
 
+## 1c. Parity does not catch invented copy (owner: conductor / scripts)
+`scripts/parity.py` checks that Hanzo's words are present, not that nothing else was added. An audit of this group's 11 pages
+(every visible text node in `<main>` matched against `content/live/<page>.json`, `content/pages/<page>.html` and
+`content/ui-strings.json`) found invented section headings and labels on most of them, e.g. "Sign one, forge one" (/idv),
+"Forge one yourself" (/gateway), "Pick your module" (/hsm), "Wear your name" (/identity), "Paste your own" (/guard),
+"You are on Chrome" (/extension), "One handler, your choices" (/functions). They are being replaced with Hanzo's own words.
+Other chats' pages built the same way likely have the same problem. Suggested: a reverse check in `parity.py` (page text
+not found in the source, excluding code fragments and ui-strings).
+
 ## 2. Header ask (shared chrome)
 Critics of /functions, /gui, /guard, /gateway and /flow asked for one solid fill on the phone's first screen: the header's
 "Try Hanzo" stays solid beside each page's own hero ask. Same ask as `docs/review/_shared.md` section 1: let a page name its
