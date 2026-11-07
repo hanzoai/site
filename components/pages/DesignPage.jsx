@@ -102,7 +102,7 @@ function MusicApp({ live }) {
         </div>
       </div>
       <div className="dz-track">
-        <b>Neon Horizon (Master Stem)</b>
+        <span className="dz-track-t">Neon Horizon (Master Stem)</span>
         <span className="x-mono">124 BPM · F# Minor · WebAudio 60fps FFT Visualizer</span>
       </div>
       <div className="dz-viz">
@@ -259,7 +259,7 @@ function Workspace({ at, pick, live, mine, calm, paused, onPause }) {
       <div className="dz-chat">
         <div className="dz-file"><span className="dz-file-i" aria-hidden="true">♪</span><span className="x-mono">neon-horizon-master.mp3 (4.8 MB)</span></div>
         <p className="dz-msg">Uploaded neon-horizon-master.mp3 — build a full interactive music player app with a 60fps FFT spectrum visualizer, 3-band EQ, and synth pads.</p>
-        <div className="dz-drop"><span aria-hidden="true">＋</span>Drop audio, image, PDF, CSV or video</div>
+        <div className="dz-drop"><span aria-hidden="true">＋</span><span>Drop audio, image, PDF, CSV or video</span></div>
       </div>
     </div>
   );
@@ -325,27 +325,51 @@ function rollIn(root) {
   });
 }
 
-/* The h1's lines rise out of their own masks at first paint (CSS only, so the server and client render the same;
-   reduced motion and JS off show them in place). The page's one reveal style. */
-function Lines({ as: Tag = 'h1', id, className, lines }) {
+/* The h1 is one line of Hanzo's text (it breaks where the old line masks broke). Its words are also the tabs: an ink
+   block sits over the word whose artifact is on screen, holding a white copy of the headline clipped to that word, so
+   the word reads white on ink; it is measured from the text itself, and pointing at a word picks its tab. It wipes in from the top at first paint (CSS). */
+const H1 = 'Create visuals,\ndecks, docs, ads,\nvideos &\ninteractive apps';
+const H1W = [['visuals', 3], ['decks', 1], ['docs', 4], ['ads', 2], ['videos', 5], ['interactive apps', 0]];
+function Headline({ at, pick }) {
+  const box = useRef(null);
+  const txt = useRef(null);
+  const [rs, setRs] = useState(null);
+  useEffect(() => {
+    const node = txt.current?.firstChild;
+    if (!node || !box.current) return;
+    const measure = () => {
+      const b = box.current.getBoundingClientRect();
+      const px = parseFloat(getComputedStyle(box.current).fontSize) * 0.06;
+      const r = { W: b.width };
+      H1W.forEach(([w, k]) => {
+        const i = H1.indexOf(w);
+        const g = document.createRange(); g.setStart(node, i); g.setEnd(node, i + w.length);
+        const q = [...g.getClientRects()]; if (!q.length) return;
+        r[k] = { l: q[0].left - b.left - px, t: q[0].top - b.top + px, w: q[q.length - 1].right - q[0].left + 2 * px, h: q[0].height - 2 * px };
+      });
+      setRs(r);
+    };
+    measure();
+    const ro = new ResizeObserver(measure); ro.observe(box.current);
+    document.fonts?.ready.then(measure);
+    return () => ro.disconnect();
+  }, []);
+  const hit = (e) => {
+    if (!rs) return -1;
+    const b = box.current.getBoundingClientRect(), x = e.clientX - b.left, y = e.clientY - b.top;
+    const f = Object.entries(rs).find(([k, r]) => k !== 'W' && x >= r.l && x <= r.l + r.w && y >= r.t && y <= r.t + r.h);
+    return f ? +f[0] : -1;
+  };
+  const r = rs && rs[at];
   return (
-    <Tag id={id} className={className}>
-      {lines.map((l, i) => (
-        <span key={i} className="dz-ln"><span className="dz-ln-in" style={{ '--i': i }}>{l}{i < lines.length - 1 ? ' ' : ''}</span></span>
-      ))}
-    </Tag>
-  );
-}
-
-/* Headline words that are also the tabs: the highlight follows the artifact on screen. */
-function Word({ w, k, at, pick, after = '' }) {
-  return (
-    <span className="dz-ww">
-      <span className={'dz-w' + (at === k ? ' on' : '')} onClick={() => pick(k)}>
-        {at === k && <motion.span layoutId="dz-hl" className="dz-hl" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} aria-hidden="true" />}
-        <span>{w}</span>
-      </span>{after}
-    </span>
+    <h1 id="dz-h1" ref={box} className="dz-h1" onClick={(e) => { const k = hit(e); if (k >= 0) pick(k); }} onMouseMove={(e) => { e.currentTarget.style.cursor = hit(e) >= 0 ? 'pointer' : ''; }}>
+      <span ref={txt} className="dz-h1-t">{H1}</span>
+      {r && (
+        <span className="dz-hl" aria-hidden="true" style={{ left: r.l, top: r.t, width: r.w, height: r.h }}>
+          <span className="dz-hl-t" style={{ left: -r.l, top: -r.t, width: rs.W }}>{H1}</span>
+        </span>
+      )}
+    </h1>
   );
 }
 
@@ -363,7 +387,6 @@ function Hero() {
     const t = setTimeout(() => setAtS((v) => (v + 1) % TABS.length), DWELL);
     return () => clearTimeout(t);
   }, [at, mine, live]);
-  const W = (w, k, after) => <Word w={w} k={k} at={at} pick={pick} after={after} />;
   return (
     <section className="dz-hero" ref={box} aria-labelledby="dz-h1">
       <div className="av-wrap dz-hero-g">
@@ -371,21 +394,20 @@ function Hero() {
           <Workspace at={at} pick={pick} live={live} mine={mine} calm={calm} paused={paused} onPause={() => setPaused((p) => !p)} />
         </motion.div>
         <div className="dz-hero-t">
-          <Lines as="h1" id="dz-h1" className="dz-h1"
-            lines={[<>Create {W('visuals', 3, ',')}</>, <>{W('decks', 1, ',')} {W('docs', 4, ',')} {W('ads', 2, ',')}</>, <>{W('videos', 5)} &amp;</>, W('interactive apps', 0)]} />
+          <Headline at={at} pick={pick} />
           <p className="dz-lede">Your AI design studio inside Hanzo. Upload any file — a music track, product photo, PDF, or dataset — and turn it into visuals, presentations, documents, ads, videos, or a full-blown interactive music &amp; visualizer app.</p>
           <div className="dz-acts">
             <Cta to="/design" id="design-hero-open" thumb>Open Design</Cta>
             <Cta to="https://docs.hanzo.ai/docs/apps/design" kind="link" id="design-hero-docs">Read the docs</Cta>
           </div>
-          <p className="dz-studio">Need full multi-shot AI cinema &amp; camera rigs? <A to="https://studio.hanzo.ai" data-cta="design-hero-studio">Open studio.hanzo.ai.</A></p>
+          <p className="dz-studio"><A to="https://studio.hanzo.ai" data-cta="design-hero-studio">Need full multi-shot AI cinema &amp; camera rigs? Open studio.hanzo.ai.</A></p>
         </div>
       </div>
       <div className="av-wrap av-grid dz-under">
         <span className="dz-cap x-mono">Hanzo Design · Creative AI Workspace</span>
         <ul className="dz-facts">
           {['Visuals, images, posters, presentations, documents, ads, video & music in tabs', 'Upload any file — even an MP3/WAV track to build a full interactive music player & visualizer app', 'Export vector PDFs, 16:9 slide decks, multi-aspect ads, MP4 clips, and standalone HTML5 apps'].map((t, i) => (
-            <li key={t}><span className="x-mono av-num">{String(i + 1).padStart(2, '0')}</span>{t}</li>
+            <li key={t}><span className="x-mono av-num">{String(i + 1).padStart(2, '0')}</span><span>{t}</span></li>
           ))}
         </ul>
       </div>
@@ -471,7 +493,7 @@ function Compare({ step }) {
         <div className="dz-raw">
           <div className="dz-file"><span className="dz-file-i">♪</span><span className="x-mono">neon-horizon-master.mp3 (4.8 MB)</span></div>
           <div className="dz-raw-w">{Array.from({ length: 64 }).map((_, i) => <i key={i} style={{ height: 14 + ((i * 53) % 37) + ((i * 7) % 11) + '%' }} />)}</div>
-          <div className="dz-drop"><span>＋</span>Drop audio, image, PDF, CSV or video</div>
+          <div className="dz-drop"><span>＋</span><span>Drop audio, image, PDF, CSV or video</span></div>
         </div>
       </div>
       <div className="dz-cmp-b" aria-hidden="true">
@@ -532,7 +554,7 @@ function Clip2({ m, still }) {
   return still ? <Img src={`/models/${m}.webp`} alt="" w={1200} h={1500} /> : <Film src={`/models/${m}.webm`} poster={`/models/${m}.webp`} w={1200} h={1500} />;
 }
 function CapArt({ k, still }) {
-  if (k === 'visual') return <span className="dz-ca dz-ca-visual"><Clip2 m="iro" still={still} /></span>;
+  if (k === 'visual') return <span className="dz-ca dz-ca-visual"><Clip2 m="iro" still={still} /><b>Neon<br />Horizon</b></span>;
   if (k === 'deck') return <span className="dz-ca dz-ca-deck">{[0, 1, 2].map((i) => <i key={i}><Img src={['/models/oto.webp', '/models/uta.webp', '/models/koe.webp'][i]} alt="" w={1200} h={1500} /></i>)}</span>;
   if (k === 'doc') return <span className="dz-ca dz-ca-doc">{[0, 1].map((p) => <i key={p}><b />{[90, 100, 84, 100, 62, 96, 74].map((w, j) => <em key={j} style={{ width: w + '%' }} />)}</i>)}</span>;
   if (k === 'ads') return <span className="dz-ca dz-ca-ads">{['story', 'square', 'banner'].map((s) => <i key={s} className={s}><Img src="/models/mori.webp" alt="" w={1200} h={1500} /></i>)}</span>;
@@ -639,7 +661,7 @@ function Model({ n }) {
       <a href={'/' + slug} ref={box} className="dz-model" data-cursor="" data-cta={'design-model-' + slug}
         onClick={(e) => opener.open(e, { el: box.current, src: `/models/${slug}.webp`, href: '/' + slug, key: slug })}>
         <span className="dz-model-m">
-          <Img src={`/models/${slug}.webp`} alt="" w={1200} h={1500} />
+          <Film src={`/models/${slug}.webm`} poster={`/models/${slug}.webp`} w={1200} h={1500} />
         </span>
         <span className="dz-model-t">
           <span className="dz-model-k x-mono">{kind}</span>

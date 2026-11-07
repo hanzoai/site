@@ -90,7 +90,7 @@ Done here: Motion map signature `compare`: a divider dragged (pointer, touch, ar
 - [x] `Film` and `Pic` only; sizes and posters set (kit `Img` 1200×1500 everywhere; kit `Film` with a poster for every clip: the hero's Koma tab and the capability art's Iro, Koma and Uta films)
 - [x] At most 2 videos playing; pause button on loops over 5 s (kit `Film` plays only in view; the Brief's cards show posters, so no screen runs more than two; the window's pause stops the hero clip)
 - [x] Budgets met; nothing missing; alt on every image (artwork is decorative, `alt=""`; the tiles are named by their text)
-- [x] No dimmed or filtered photo; 4+ real visuals together where the page has them (six model pictures in the black room; three on the deck sheet)
+- [x] No dimmed or filtered photo; 4+ real visuals together where the page has them (six model films with posters in the black room, as live; three on the deck sheet)
 
 Done here: Every picture is Hanzo's own model art from `/models/`, shown without a filter.
 

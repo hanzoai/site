@@ -8,21 +8,27 @@
 .dz-win-wrap { grid-column: 1 / span 7; min-width: 0; }
 .dz-hero-t { grid-column: 8 / -1; display: flex; flex-direction: column; align-items: flex-start; gap: 20px; }
 .dz-h1 { margin: 0; font-size: 52px; font-weight: 497; line-height: 1.06; letter-spacing: -.035em; color: #0a0a0a; }
-.dz-ww { white-space: nowrap; }
-.dz-w { position: relative; display: inline-block; padding: 0 .06em; margin: 0 -.06em; cursor: pointer; transition: color .3s var(--av-ease); }
-.dz-w > span:last-child { position: relative; }
-.dz-w.on { color: #fafafa; }
-.dz-hl { position: absolute; inset: .08em -.02em .02em; border-radius: .14em; background: #0a0a0a; }
+.dz-h1 { position: relative; }
+.dz-h1-t { display: block; white-space: pre-line; }
+.js .dz-h1-t { animation: dz-h1in .8s cubic-bezier(.16, 1, .3, 1) .05s both; }
+@keyframes dz-h1in { from { clip-path: inset(0 0 100% 0); transform: translateY(.25em); } to { clip-path: inset(0 0 -.2em 0); transform: none; } }
+.dz-hl { position: absolute; z-index: 1; overflow: hidden; border-radius: .14em; background: #0a0a0a; pointer-events: none; transition: left .3s cubic-bezier(.16, 1, .3, 1), top .3s cubic-bezier(.16, 1, .3, 1), width .3s cubic-bezier(.16, 1, .3, 1); }
+.dz-hl-t { position: absolute; display: block; white-space: pre-line; color: #fafafa; transition: left .3s cubic-bezier(.16, 1, .3, 1), top .3s cubic-bezier(.16, 1, .3, 1); }
+.js .dz-hl { animation: dz-hlin .4s cubic-bezier(0, 0, .2, 1) .7s both; }
+@keyframes dz-hlin { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .dz-hl, .dz-hl-t { transition: none; } }
 .dz-lede { margin: 0; font-size: 19px; line-height: 1.5; letter-spacing: -.01em; color: #525252; text-wrap: pretty; }
 .dz-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px; }
 .dz-acts .x-arrow { color: #0a0a0a; }
 .dz-studio { margin: 0; font-size: 14px; line-height: 1.5; color: #525252; }
-.dz-studio a { display: inline-flex; align-items: center; min-height: 44px; color: #0a0a0a; text-underline-offset: 3px; }
+.dz-studio a { display: inline-flex; align-items: center; min-height: 44px; color: #525252; text-decoration: underline; text-decoration-color: rgba(0, 0, 0, .25); text-underline-offset: 3px; transition: color .15s, text-decoration-color .15s; }
+@media (hover: hover) { .dz-studio a:hover { color: #0a0a0a; text-decoration-color: #0a0a0a; } }
+.dz-studio a:active { transform: translateY(1px); }
 .dz-under { margin-top: 56px; align-items: start; }
 .dz-under .dz-cap { grid-column: 1 / span 4; padding-top: 17px; border-top: 1px solid rgba(0, 0, 0, .1); }
 .dz-facts { grid-column: 6 / -1; list-style: none; margin: 0; padding: 0; border-top: 1px solid rgba(0, 0, 0, .1); }
 .dz-facts li { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 12px; padding: 14px 0; border-bottom: 1px solid rgba(0, 0, 0, .1); font-size: 16px; line-height: 1.5; color: #0a0a0a; }
-.dz-facts li span { padding-top: 3px; font-size: 12px; color: #737373; }
+.dz-facts li .av-num { padding-top: 3px; font-size: 12px; color: #737373; }
 
 /* the workspace window */
 .dz-win { position: relative; border-radius: 24px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .1); overflow: hidden; }
@@ -56,7 +62,7 @@
 .dz-file-i { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; background: #0a0a0a; color: #fafafa; font-size: 15px; flex: none; }
 .dz-msg { margin: 0; justify-self: end; padding: 9px 13px; border-radius: 16px 16px 4px 16px; background: #0a0a0a; color: #fafafa; font-size: 13px; line-height: 1.45; }
 .dz-drop { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 14px; border: 1.5px dashed rgba(0, 0, 0, .18); border-radius: 12px; font-size: 13px; color: #525252; }
-.dz-drop span { font-size: 16px; color: #737373; }
+.dz-drop > span:first-child { font-size: 16px; color: #737373; }
 
 /* the track's art: Hanzo's line art over a graphite ground */
 .dz-slide, .dz-ad, .dz-poster, .dz-disc, .dz-doc img, .dz-ca-visual, .dz-ca-deck i, .dz-ca-ads i, .dz-shapes .deck, .dz-shapes .ad { background: radial-gradient(120% 90% at 75% 85%, #404040 0%, #171717 40%, #000 78%); }
@@ -72,7 +78,7 @@
 .dz-disc img { width: 100%; height: 100%; object-fit: cover; }
 @keyframes dz-spin { to { transform: rotate(360deg); } }
 .dz-track { grid-column: 2; grid-row: 2; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.dz-track b { font-size: 13px; font-weight: 606; }
+.dz-track-t { font-size: 13px; font-weight: 606; }
 .dz-track .x-mono { font-size: 12px; line-height: 1.4; color: rgba(255, 255, 255, .55); }
 .dz-viz { grid-column: 1; grid-row: 2 / 5; position: relative; border-radius: 12px; background: #171717; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08); overflow: hidden; min-height: 140px; }
 .dz-spec { position: absolute; inset: 44px 12px 12px; display: flex; align-items: center; gap: 3px; }
@@ -190,6 +196,8 @@
 .dz-ca { position: absolute; inset: 0; display: block; }
 .dz-ca img { width: 100%; height: 100%; object-fit: cover; }
 .dz-ca video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.dz-ca-visual b { position: absolute; left: 7%; top: 9%; color: #fafafa; font-size: 44px; font-weight: 497; letter-spacing: -.03em; line-height: .95; text-transform: uppercase; }
+.dz-brief-art .dz-ca-visual b { font-size: 26px; }
 .dz-ca-deck { display: flex; align-items: center; justify-content: center; background: #f2f2f2; }
 .dz-ca-deck i { position: absolute; width: 56%; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; }
 .dz-ca-deck i:nth-child(1) { transform: translate(-22%, -22%) rotate(-5deg); }
@@ -243,8 +251,8 @@
 .dz-model:active { transform: scale(.98); }
 .dz-model-m { position: relative; display: block; aspect-ratio: 16 / 10; overflow: hidden; background: #000; }
 .dz-models li:nth-child(3n + 1) .dz-model-m { aspect-ratio: 21 / 9; }
-.dz-model-m img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .5s var(--av-ease); }
-@media (hover: hover) { .dz-model:hover .dz-model-m img { transform: scale(1.04); } }
+.dz-model-m video, .dz-model-m img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .5s var(--av-ease); }
+@media (hover: hover) { .dz-model:hover .dz-model-m video { transform: scale(1.04); } }
 .dz-model-t { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: baseline; gap: 4px 14px; padding: 17px 20px 20px; }
 .dz-model-k { grid-column: 1 / -1; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: rgba(255, 255, 255, .55); }
 .dz-model-t b { font-size: 21px; font-weight: 497; letter-spacing: -.02em; }
@@ -273,10 +281,6 @@
 .x-band h2.dz-band-h { font-size: 64px; font-weight: 497; letter-spacing: -.035em; line-height: 1.02; max-width: 14ch; }
 .dz-band .x-arrow { color: #fafafa; }
 
-.dz-ln { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; }
-.dz-ln-in { display: block; }
-.js .dz-ln-in { animation: dz-ln .7s cubic-bezier(.16, 1, .3, 1) calc(.05s + var(--i) * .06s) both; }
-@keyframes dz-ln { from { transform: translateY(108%); } to { transform: none; } }
 
 /* ---------- section entrances, one per section (set by useEnter in DesignPage.jsx) ---------- */
 /* 1 drop-in: the section's two rows fall in from above and settle with a small bounce */
@@ -359,7 +363,6 @@
   .dz-hero-g { display: flex; flex-direction: column-reverse; align-items: stretch; gap: 28px; }
   .dz-hero-t { gap: 16px; }
   .dz-h1 { font-size: 40px; }
-  .dz-ww { white-space: normal; }
   .dz-lede { font-size: 17px; }
   .dz-under { margin-top: 44px; }
   .dz-under .dz-cap { padding-top: 0; border-top: 0; }
