@@ -4,7 +4,7 @@ Page file: `components/pages/apps/ConsolePage.jsx` · gallery: `docs/gallery/con
 
 Open copy questions for James: none (every string is the live page's; "Console — Hanzo" and the six module names in the shell are product UI labels taken from Hanzo's own module headings).
 Shared changes requested (`docs/requests/<page>.md`): none; `lib/cta.js` does not exist yet, so the ask label is the live hero's own "Open Console".
-Forks this page deleted: the v1 hand-written `Hero`, the drag-to-reorder sidebar (`Reorder`), the `Get` block from cloud/Frame, raw `.x-btn` asks (now `BizAsk`), the v1 `Related` list, the duplicate desktop `AskBar` (the site's ask bar carries the ask).
+Forks this page deleted: the v1 hand-written `Hero`, the drag-to-reorder sidebar (`Reorder`), the `Get` block from cloud/Frame, raw `.x-btn` asks and wrapping data-thumb spans (now kit `Cta`), the v1 `Related` list, the duplicate desktop `AskBar` (the site's ask bar carries the ask).
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
 
@@ -15,7 +15,7 @@ Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line
 - [x] No dead or self-looping button; prices from `lib/plans.js` (n/a: no prices on /console)
 - [x] Open copy questions for James listed, none decided
 
-Done here: Header lists Persona (operator), Metric `api_key_created`, Goal, CTA "Open Console" → platform.hanzo.ai, Signature, Beyond, V2. The only solid fills are the hero ask and the close ask (`BizAsk`, `data-cta` console.hero / console.close); `lib/cta.js` is not on main yet, so the label is the live hero's own.
+Done here: Header lists Persona (operator), Metric `api_key_created`, Goal, CTA "Open Console" → platform.hanzo.ai, Signature, Beyond, V2. The only solid fills are the hero ask and the close ask (kit `Cta`, `data-cta` console.hero / console.close; one visible solid measured at 375×812 and 1470×801, white on the black room); `lib/cta.js` is not on main yet, so the label is the live hero's own.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -23,7 +23,7 @@ Done here: Header lists Persona (operator), Metric `api_key_created`, Goal, CTA 
 - [ ] ~~Breadcrumb at depth 2 or more~~ n/a: /console is depth 1
 - [x] Link parity: 0 removed, 0 unexpected
 
-Done here: One `<main class="bz cs">`; the layout's `#main` mark takes the skip link. Every link goes through `A`/`More`/`BizAsk` (the palette's products go through `href()` then `router.push`); parity shows 14/14 links.
+Done here: One `<main class="bz cs">`; the layout's `#main` mark takes the skip link. Every link goes through `A`/`More`/`Cta` (the palette's products go through `href()` then `router.push`); parity shows 14/14 links.
 
 ## 3. First impression and page narrative
 - [x] Sells in 5 s; something moves within 1 s without input
@@ -33,15 +33,15 @@ Done here: One `<main class="bz cs">`; the layout's `#main` mark takes the skip 
 - [x] Ends in proof strip, `Band`, footer (the four open facts, then the close sentence with the ask, then the footer)
 - [ ] ~~Card-to-page links use Morph~~ n/a: the fact cards open in place (BizOpen), they do not lead to another page
 
-Done here: The black hero holds a 52px h1, one line, the ask, then the console window, which opens its palette and types within 1.5 s. The intro uses a CSS arrival (no Motion opacity in server HTML). Sections alternate: black hero → pinned chapters → palette → facts → Get → close.
+Done here: The black hero holds a 52px h1, one line, the ask, then the console window, which opens its palette and types within 1.5 s. The lede and ask have no opacity arrival at all, so they read at once and with JS off. Sections alternate: black hero → pinned chapters → palette → facts → Get → close.
 
 ## 4. Conversion system
-- [x] `<Cta>` only; no raw `.x-btn` (kit `BizAsk` until `Cta` lands)
+- [x] `<Cta>` only; no raw `.x-btn`
 - [x] Sticky ask in header and bar after the hero, same label
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: `BizAsk thumb="Open Console" cta="console.hero"` feeds the site's ask bar (one bar at every width, `data-ask-name`), the close repeats it with `cta="console.close"`. The Copy buttons are the kit's (`Code`, `BizPaste`) and copy the shown text.
+Done here: `<Cta id="console.hero" thumb>Open Console</Cta>` feeds the site's ask bar (one bar at every width, `data-ask-name`), the close repeats it with `id="console.close"`. The Copy buttons are the kit's (`Code`, `BizPaste`) and copy the shown text.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -57,7 +57,7 @@ Done here: The four figures are Hanzo's own (/v1, OIDC, Per-org, OSS) with their
 - [x] Tables, FAQ, tabs and code use the kit parts
 - [x] `python3 scripts/parity.py /console`: 0 missing
 
-Done here: Parity 93/93 text, 14/14 links. Phone rules lift every 13px label to 14px (filmed with no small-text warning); code is the kit `Code` pane in greys.
+Done here: Parity 93/93 text, 14/14 links. Phone rules lift every 13px label (cs-key-n, cs-oidc included) to 14px; a phone check finds no text under 14px; code is the kit `Code` pane in greys.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens

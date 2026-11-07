@@ -6,11 +6,10 @@
 .cs-hero { position: relative; margin-top: -60px; background: #000000; color: #f5f5f5; padding: clamp(150px, 12vw, 180px) 0 clamp(104px, 10vw, 152px); overflow: clip; }
 .cs-top { position: relative; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--g); align-items: end; }
 .cs-h1 { grid-column: 1 / span 7; color: #ffffff; }
-.cs-intro { grid-column: 8 / span 5; display: flex; flex-direction: column; gap: 24px; padding-bottom: 8px; animation: cs-in .9s var(--ease) .25s both; }
+.cs-intro { grid-column: 8 / span 5; display: flex; flex-direction: column; gap: 24px; padding-bottom: 8px; }
 .cs-intro .bz-acts { gap: 8px 28px; }
 .cs-hero .x-arrow { color: #f5f5f5; min-height: 44px; }
 .cs-intro .bz-lede { color: #f5f5f5; }
-@keyframes cs-in { from { opacity: 0; transform: translateY(10px); } }
 .cs-stage { position: relative; margin-top: clamp(48px, 4.4vw, 72px); }
 
 /* the shell: dark product UI (in the hero it sits in the room; elsewhere it is an object on white) */
@@ -317,7 +316,7 @@
   .cs-key-l span { font-size: 14px; }
   .cs-key .cs-tag { grid-column: 1; grid-row: 2; justify-self: start; }
   .cs-key-b { grid-column: 2; grid-row: 1 / span 2; }
-  .cs-key-n { font-size: 13px; }
+  .cs-key-n, .cs-oidc { font-size: 14px; }
   .cs-use, .cs-win.md .cs-use { grid-template-columns: minmax(0, 1fr); gap: 14px; }
   .cs-use-fig, .cs-win.md .cs-use-fig { display: grid; grid-template-columns: auto 1fr; align-items: end; column-gap: 14px; row-gap: 6px; }
   .cs-roll, .cs-win.md .cs-roll { grid-row: span 2; font-size: 44px; }
