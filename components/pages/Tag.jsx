@@ -372,7 +372,7 @@ function Built() {
   const calm = useReducedMotion();
   const mounted = useMounted();
   const n = BUILT.items.length;
-  const { scrollYProgress: p } = useScroll({ target: run, offset: ['start 0.66', 'end 0.66'] });
+  const { scrollYProgress: p } = useScroll({ target: run, offset: ['start 0.72', 'end 0.72'] });
   useMotionValueEvent(p, 'change', (v) => { if (!mine) setI(Math.min(n - 1, Math.max(0, Math.floor(v * n)))); });
   const fill = useTransform(p, (v) => { const x = Math.min(1, Math.max(0, v)) * n; return x >= n ? 1 : x - Math.floor(x); });
   useEffect(() => { // on the phone the strip is a pill rail: keep the lit pill in view (the rail scrolls, never the page)
@@ -522,12 +522,15 @@ function Platform() {
           <i className={`${P}-cross-h`} aria-hidden="true"><b /></i>
           <i className={`${P}-cross-v`} aria-hidden="true"><b /></i>
           <i className={`${P}-cross-c`} aria-hidden="true" />
-          {PLATFORM.items.map(([t, d], k) => (
-            <div key={t} className={`${P}-cross-i`}>
-              <Frame k={k} />
-              <div><h3>{t}</h3><p>{d}</p></div>
-            </div>
-          ))}
+          {/* the four sit in the cross on a wide screen; on a phone they become a snap rail under the travelling line */}
+          <div className={`${P}-cross-r`}>
+            {PLATFORM.items.map(([t, d], k) => (
+              <div key={t} className={`${P}-cross-i`}>
+                <Frame k={k} />
+                <div><h3>{t}</h3><p>{d}</p></div>
+              </div>
+            ))}
+          </div>
         </div>
         <div className={`${P}-runtime`}>
           <p>{PLATFORM.runtime}</p>

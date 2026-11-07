@@ -6,16 +6,18 @@
    the names in Hanzo's own comment), held in state so code, pressed name and copy always match; the five figures pinned
    over 200svh, each cutting in at 112px Air over a drawing of its own number as data (18 marks, the Zen5 contexts on a
    2M ruler, one cent of a dollar, the Zen5 sizes, 7 capsules), which grows in and then idles; on phone a 64px lead
-   figure over a 2-column grid at 32px; the Zen5 shelf of model cards on the SPEC grid (385px repeat(4,192px), rows
-   220px, the leader spanning both rows) built to docs/refs/hanzo-model-cards/SPEC.md (hover draws the model's size bars
-   to scale); the per-token sheet (row hover fills #f5f5f5 and lights its bars); a calm close over a drifting context
-   ruler (the hero field is the only field outside the cards).
+   figure (with its 18 marks) over a 2-column grid at 32px; the Zen5 shelf of model cards on the SPEC grid (385px
+   repeat(4,192px), rows 220px, the leader spanning both rows) built to docs/refs/hanzo-model-cards/SPEC.md, carrying
+   Hanzo's own Zen media (the leader plays zen.webm over zen.webp, the others hold the still, each framed on its own
+   part; every Zen5 page opens on that film, so the Morph lands on the picture you clicked; hover draws the model's size
+   bars to scale; on phone the leader sits on top and the others are a snap rail with a 16% peek); the per-token sheet (row hover fills #f5f5f5 and lights its bars); a calm close over a drifting context
+   ruler (the hero field is the only Sigil field on the page).
    Signature: the sort race. Pick Hanzo's order, size or context, or a tier, and the Zen5 model cards re-flow (the leader
    takes the tall card) while the sheet below re-orders with them. Every card opens into its own model page (Morph).
    Beyond: the per-token sheet. Each Zen5 row draws total parameters against the parameters that work per token on one
    shared scale (35B with 3B active, 230B with 10B active, 284B with 37B active, from Hanzo's rows), plus context on a
    log scale; the row opens to Hanzo's own paragraph.
-   V2: 8/10 review fixes: card size bars drawn to scale (--zc-w), figures drawn as their own data instead of a repeated field, phone figures in rhythm (64 + 2x32), SPEC model grid, no dead bands (40px overlap), #ededed pill hover. */
+   V2: 8/10 review 3 fixes: cards carry Hanzo's Zen film/still (Morph lands on the same picture), figure drawings capped at 220px under the 112px figure, no white bands (27px top, Quick Start 40px overlap), phone 18-mark drawing and card snap rail, legend swatches kept with labels, Explore arrow drops, JS-off still. */
 // Persona: Developer choosing a Zen model to call (MASTER 1: developers).
 // Goal: pick a Zen5 model, open its page, then get a key.
 // CTA: Get API key (Cta solid, data-cta zen-models.hero, data-thumb); close: Get Started (zen-models.close).
@@ -269,16 +271,17 @@ const flat = (e) => { e.currentTarget.style.transform = ''; };
    most one film plays here); the four others hold the still, each framed on its own part of the ripples. A model
    without media would fall back to its Sigil. */
 const MEDIA = { zen5: 'zen', 'zen5-coder': 'zen', 'zen5-flash': 'zen', 'zen5-mini': 'zen', 'zen5-pro': 'zen' };
-const CROP = { zen5: '62% 56%', 'zen5-coder': '22% 72%', 'zen5-flash': '80% 88%', 'zen5-mini': '60% 50%', 'zen5-pro': '40% 64%' };
+// [object-position, zoom, zoom origin]: the sphere, the ripples, a close-up, so five cards are not one picture five times
+const CROP = { zen5: ['62% 56%', 1, '50% 50%'], 'zen5-coder': ['50% 100%', 1, '50% 50%'], 'zen5-flash': ['50% 52%', 1.8, '66% 52%'], 'zen5-mini': ['50% 100%', 2.2, '15% 85%'], 'zen5-pro': ['50% 50%', 1, '50% 50%'] };
 const ready = (e) => e.currentTarget.setAttribute('data-on', '');
 function CardArt({ r, big }) {
   const m = MEDIA[r.slug];
   if (!m) return <Sigil seed={'/models/hanzo/' + r.slug} data={[r.tot, r.act || r.tot, r.ck]} className="zc-mc-art" />;
-  const pos = { objectPosition: CROP[r.slug] };
+  const [at, z, o] = CROP[r.slug] || ['50% 50%', 1, '50% 50%'];
   return (
     <span className="zc-mc-art zc-mc-media" aria-hidden="true">
-      {big && <Film src={`/models/${m}.webm`} poster={`/models/${m}.webp`} w={1200} h={1500} className="zc-mc-film" style={pos} onPlaying={ready} />}
-      <Img src={`/models/${m}.webp`} w={1200} h={1500} alt="" className="zc-mc-still" style={pos} />
+      {big && <Film src={`/models/${m}.webm`} poster={`/models/${m}.webp`} w={1200} h={1500} className="zc-mc-film" style={{ objectPosition: CROP.zen5[0] }} onPlaying={ready} />}
+      <Img src={`/models/${m}.webp`} w={1200} h={1500} alt="" className="zc-mc-still" style={big ? { objectPosition: CROP.zen5[0] } : { objectPosition: at, '--zc-z': z, '--zc-o': o }} />
     </span>
   );
 }
