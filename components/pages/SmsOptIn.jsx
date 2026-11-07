@@ -60,6 +60,7 @@ function Kinds() {
   const ref = useRef(null);
   const calm = useReducedMotion();
   const [at, setAt] = useState(0);
+  const [key, setKey] = useState(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.7', 'end 0.4'] });
   useMotionValueEvent(scrollYProgress, 'change', (v) => { if (!calm) setAt(Math.min(KINDS.length - 1, Math.floor(v * KINDS.length))); });
   return (
@@ -71,9 +72,12 @@ function Kinds() {
             <motion.li key={k} className={'b' + i + (at === i ? ' on' : '')} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.6 }} transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1], delay: i * 0.06 }}>{k}</motion.li>
           ))}
         </ul>
+        {/* the keys answer: press one and its half of Hanzo's sentence lights (what that reply does) */}
         <div className="xsm-big-keys">
-          <span className="x-mono">STOP</span><span className="x-mono">HELP</span>
-          <p className="xp-lede">Reply STOP to opt out at any time, or HELP for help.</p>
+          {['STOP', 'HELP'].map((k) => (
+            <button key={k} type="button" className="x-mono" aria-pressed={key === k} onClick={() => setKey(key === k ? null : k)}>{k}</button>
+          ))}
+          <p className="xp-lede"><span className={key === 'STOP' ? 'lit' : ''}>Reply STOP to opt out at any time,</span> <span className={key === 'HELP' ? 'lit' : ''}>or HELP for help.</span></p>
         </div>
       </div>
     </section>
@@ -127,7 +131,7 @@ export default function SmsOptIn() {
           <motion.div className="xsm-side" initial={{ opacity: 0, y: 48 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}>
             <Handset phone={phone} lit={lit} done={state === 'done'} />
           </motion.div>
-          <motion.div className="xsm-card" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.4 }}>
+          <motion.div className="xsm-card" initial={{ y: 16 }} animate={{ y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.4 }}>
             <AnimatePresence mode="wait" initial={false}>
               {state === 'done' ? (
                 <motion.div key="done" className="xsm-done" role="status" tabIndex={-1} ref={(el) => el?.focus()} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>

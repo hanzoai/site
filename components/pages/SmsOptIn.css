@@ -85,6 +85,26 @@
   .xsm-big-keys span { height: 56px; font-size: 16px; }
   .xsm-big-keys .xp-lede { grid-column: 1 / -1; margin-left: 0; }
 }
+/* STOP and HELP are real keys: hover, press, and the half of the sentence they answer lights */
+.xsm-big-keys button { display: grid; place-items: center; height: 64px; border: 0; border-radius: 16px; background: #fafafa; color: #0a0a0a; font-size: 17px; font-weight: 606; letter-spacing: .08em; cursor: pointer; transition: background .15s cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) { .xsm-big-keys button:hover { background: #e4e4e7; } }
+.xsm-big-keys button:active { transform: scale(.97); }
+.xsm-big-keys button[aria-pressed='true'] { background: #404040; color: #fafafa; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .3); }
+.xsm-big-keys button:focus-visible { outline: 2px solid #fff; outline-offset: 3px; box-shadow: 0 0 0 5px #000; }
+.xsm-big-keys .xp-lede span { display: inline; height: auto; place-items: initial; background: none; color: inherit; font: inherit; letter-spacing: inherit; border-radius: 4px; transition: color .25s cubic-bezier(0, 0, .2, 1), background .25s; }
+.xsm-big-keys .xp-lede span.lit { color: #fafafa; background: rgba(255, 255, 255, .14); box-shadow: 0 0 0 3px rgba(255, 255, 255, .14); }
+/* the phone is as tall as its texts need (no empty half) */
+.xsm-phone { aspect-ratio: 9 / 15; }
+/* the submit: deck hover and a press */
+@media (hover: hover) { .xsm .xsm-go:not(:disabled):hover { background: #262626; } }
+.xsm .xsm-go:active { transform: scale(.97); }
+@media (max-width: 899px) {
+  /* phones: the submit comes before the consent's part-chips, so the ask sits higher */
+  .xsm-form > * { order: 1; }
+  .xsm-form > .xsm-parts { order: 5; }
+  .xsm-form > .xsm-fine { order: 6; }
+  .xsm-consent { font-size: 15px; line-height: 1.55; }
+}
 /* no dead white between the form and the dark room */
 .xsm-hero { padding-bottom: clamp(64px, 7vw, 112px); }
 /* a refused send says why, in words, beside the submit (the number stays in the field) */
