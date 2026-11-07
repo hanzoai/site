@@ -3,7 +3,7 @@
 Page file: `components/pages/ApiPage.jsx` (+ `ApiPage.css`, shared `components/v2/AppType.css`, `AppScenes`, `x-edison/AppLines`) · gallery: `docs/gallery/api/` · metric id: `api_key_created`
 
 Open copy questions for James: none decided. The "cURL text" question in MASTER part 1 applies: the page shows no Hanzo cURL sample, so the request line is built from Hanzo's own base URL, paths and bearer header only.
-Shared changes requested (`docs/requests/api.md`): none yet. `Band` takes no `id`, so a closing Band would carry no `data-cta`. The page closes on its own row with `<Cta id>` instead.
+Shared changes requested (`docs/requests/apps1.md`): the header ask should carry the page's own label; a desktop-off mode for the ask bar (until then `data-ask="off"` on `<main>`, because a floating pill over content is banned); and `Band` with an `id` prop.
 Forks this page deleted: the native endpoint `<select>` (now a styled list), raw `<img>`/`<video>` (now kit `Img`/`Film`), the hidden `data-thumb` `<i>` (now `<Cta thumb>`), raw `.x-btn` `Go` asks (now `<Cta>`), the Stage hero wrapper, four kickers over headlines, spring transitions.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -37,7 +37,7 @@ Done here: At 1470×801 the h1, lede, ask and the live console share the first s
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
-- [x] Sticky ask in header and bar after the hero, same label (the shared ask bar reads `data-thumb` from the hero Cta)
+- [x] Sticky ask in header and bar after the hero, same label (the header's ask stays; the floating bar is off on this page because MASTER 3.3 bans a pill over content; the request for the header to carry "Get an API key, free" is in `docs/requests/apps1.md`)
 - [x] Copy button copies exactly the displayed text; failure never says Copied (kit `Copy`)
 - [x] `data-cta` and `data-thumb` on every primary
 
