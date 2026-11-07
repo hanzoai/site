@@ -1,0 +1,4 @@
+# /world: shared changes requested
+
+1. **StageHero on phones keeps its sticky offset** (`components/v2/x-hamilton/Launch.css`). Under 900px `.l2-stage-pin` becomes `position: relative` but keeps `top: var(--x-top, 60px)`, so the whole hero is pushed 60px down and its last 60px overlap the next section (on /world the latency panel ran into the white room). Fix: add `top: auto` (or `0`) to the `@media (max-width: 900px) .l2-stage-pin` rule. /world works around it in its own CSS (`.wd2 .l2-stage-pin { top: 0 }` under 900px); every other StageHero page still has the offset.
+2. **Footer hydration mismatch** (shared chrome). The critic's walk of /world (docs/review/world.md, fix 4) logged a React hydration mismatch on the footer HTML. It did not reproduce in this pass (0 console errors at 1470 and 375), but the footer owner should check it. The page's own mismatch (the Replay range input) is fixed in World.jsx.

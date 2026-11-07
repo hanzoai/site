@@ -281,6 +281,58 @@
 @media (hover: hover) { .cs-row:hover { background: var(--bz-room); } }
 .cs-row:active { transform: translateY(1px); }
 
+/* round 3 (critic, 7 Nov) */
+/* the key row never stacks a letter per line: the name and its scope keep one line, and in the narrow chapter
+   windows the state chip drops under the name while the button holds the right edge */
+.cs-key-l b, .cs-key-l span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cs-win.md .cs-key { grid-template-columns: auto minmax(0, 1fr) auto; row-gap: 8px; }
+.cs-win.md .cs-key-i { grid-row: 1 / span 2; }
+.cs-win.md .cs-key .cs-tag { grid-column: 2; grid-row: 2; justify-self: start; }
+.cs-win.md .cs-key-b { grid-column: 3; grid-row: 1 / span 2; }
+/* the four facts: /v1 is the one big tile, with a peek of the code it opens to; the other three are medium */
+.cs-facts > :first-child { grid-column: 1; grid-row: span 2; align-self: stretch; }
+.cs-facts > :first-child .cs-fact-peek { max-height: 13em; }
+.cs-facts > :first-child > .cs-fact { height: 100%; }
+.cs-facts > :last-child { grid-column: 1 / -1; }
+.cs-fact { min-height: 216px; }
+.cs-fact .bz-fig { font-size: 44px; }
+.cs-facts > :first-child .cs-fact .bz-fig, .cs-facts > .cs-fact:first-child .bz-fig { font-size: 64px; }
+.cs-fact-peek { display: block; margin: 17px 0 0; max-height: 8.3em; overflow: hidden; white-space: pre; font-size: 13px; line-height: 1.65; color: var(--soft); text-align: left; mask-image: linear-gradient(#000 55%, transparent); }
+/* text links answer a hover: the arrow steps forward and the words underline */
+@media (hover: hover) {
+  .cs .x-arrow svg { transition: transform .15s cubic-bezier(0, 0, .2, 1); }
+  .cs .x-arrow:hover svg { transform: translateX(4px); }
+  .cs .x-arrow:hover span { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+}
+.cs .x-arrow:active { transform: translateY(1px); }
+/* 44px targets: the agent-prompt Copy and the window title link (the bar keeps its height) */
+.cs-paste .x-copy { min-height: 44px; }
+.cs-wt { display: inline-flex; align-items: center; min-height: 44px; margin: -14px 0; }
+/* no void before Get Console */
+.cs .cs-get { padding-top: clamp(44px, 5vw, 72px); }
+/* the hero shell leans toward a fine pointer */
+.cs-lean { --rx: 0deg; --ry: 0deg; transform: perspective(1600px) rotateX(var(--rx)) rotateY(var(--ry)); transition: transform .4s cubic-bezier(0, 0, .2, 1); }
+/* the close: words left, the organization switcher right */
+.cs-end .bz-wrap { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: 44px; align-items: center; }
+.cs-end .cs-row { grid-column: 1 / -1; }
+.cs-end-org { padding: 17px; border-radius: 24px; background: #f5f5f5; }
+.cs-end-k { margin: 0 0 12px 6px; font-size: 12px; letter-spacing: .14em; color: #737373; }
+.cs-end-org ul { position: relative; list-style: none; margin: 0; padding: 6px; border-radius: 16px; background: #fff; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .1); }
+.cs-end-org li { position: relative; display: flex; align-items: center; gap: 12px; height: 56px; padding: 0 12px; z-index: 1; }
+.cs-end-org li b { flex: 1; font-size: 17px; font-weight: 497; color: #0a0a0a; }
+.cs-end-org li em { font-style: normal; font-size: 12px; color: #737373; }
+.cs-end-org .cs-ava { background: #0a0a0a; color: #fafafa; }
+.cs-end-pill { position: absolute; left: 6px; right: 6px; top: 6px; height: 56px; border-radius: 12px; background: #f2f2f2; box-shadow: inset 0 0 0 1px #0a0a0a; }
+.cs-end-org.on .cs-end-pill { animation: cs-org 5s cubic-bezier(.4, 0, .2, 1) .6s 2 both; }
+@keyframes cs-org { 0%, 38% { transform: none; } 50%, 88% { transform: translateY(56px); } 100% { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .cs-lean { transform: none; } .cs-end-org.on .cs-end-pill { animation: none; } }
+
+@media (max-width: 900px) {
+  .cs-end .bz-wrap { grid-template-columns: minmax(0, 1fr); row-gap: 44px; }
+  .cs-facts > :first-child, .cs-facts > :last-child { grid-column: auto; grid-row: auto; }
+  .cs-fact-peek { display: none; }
+}
+
 @media (max-width: 900px) {
   .cs-hero { padding: 140px 0 88px; }
   .cs-top { display: flex; flex-direction: column; align-items: stretch; gap: 24px; }

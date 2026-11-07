@@ -1,6 +1,6 @@
 'use client';
 /* Authz.
-   V2: 8/10 The check is the hero: a graph that asks itself who may touch what and answers true or false at figure size, then six pinned rules, a delegation you write yourself, the spec, one dark close. Deck greys, deck scale, no springs.
+   V2: 8/10 First screen tightened so the true/false answer is above the fold (phones get a compact answer line); the statement gets a drawn token → question → true line; spec figures count up with hairlines drawing; related rows point the console; phone rules become a snap swipe rail; request marks name themselves on hover.
    Persona: a developer adding authorization to a service (Hanzo's own words: "a library, not a service").
    Goal: understand the one rule in one look, then read the docs or take the library.
    CTA: "Read the docs" → https://docs.hanzo.ai/docs/projects/hanzoai/authz (solid, data-cta authz.hero, data-thumb);
@@ -17,7 +17,8 @@
    be delegated, with Hanzo's own sentence on why. Built only from the path rule on this page.
    Every word and link is Hanzo's; the demo's labels (caller, location, can, grant, target) are UI. */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { motion, useReducedMotion } from 'motion/react';
+import { motion, useInView, useReducedMotion } from 'motion/react';
+import { Count } from '../../ui';
 import { useLive, useSteps } from './Frame';
 import KeynoteStage, { useStagePause } from '../../v2/KeynoteStage';
 import KeynoteChapters from '../../v2/KeynoteChapters';
@@ -90,21 +91,31 @@ function Check() {
   const land = d(3 + walk);
   const lit = (i) => ok && i >= g && i <= t;
   const pick = (nw, nt) => setMine([nw, nt]);
+  /* hovering a request mark names it in the bar (pointer only; the bar's own label returns on leave) */
+  const [peek, setPeek] = useState(null);
   return (
     <div className="kn-obj az-obj" ref={ref}>
       <div className={'az-bar' + (mine ? ' held' : '')}>
         <i /><i /><i />
-        <span className="az-bar-t">hanzoai/authz</span>
-        <div className="az-reqs" role="group" aria-label="Requests">
+        <span className={'az-bar-t' + (peek !== null ? ' peek' : '')}>
+          <span className="az-bar-n">hanzoai/authz</span>
+          <span className="az-bar-p" aria-hidden="true">{peek !== null ? WHO[SCRIPT[peek][0]][0] + ' → ' + LOC[SCRIPT[peek][1]] : ''}</span>
+        </span>
+        <div className="az-reqs" role="group" aria-label="Requests" onPointerLeave={() => setPeek(null)}>
           {SCRIPT.map(([a, b], i) => {
             const on = mine ? mine[0] === a && mine[1] === b : step === i;
-            return <button key={i} type="button" aria-pressed={on} aria-label={WHO[a][0] + ', ' + LOC[b]} onClick={() => pick(a, b)}><i /></button>;
+            return <button key={i} type="button" aria-pressed={on} aria-label={WHO[a][0] + ', ' + LOC[b]} onPointerEnter={(e) => e.pointerType === 'mouse' && setPeek(i)} onClick={() => pick(a, b)}><i /></button>;
           })}
           {mine && <button type="button" className="az-resume" onClick={() => setMine(null)}>Replay</button>}
         </div>
         <code className="az-bar-c"><b aria-hidden="true">$</b>hanzo authz check</code>
       </div>
       <div className="az-graph" ref={box}>
+        {/* phones: the answer and its question in one line, on the first screen (the full panel stays below) */}
+        <p className="az-mini" aria-hidden="true">
+          <span className={'az-mini-a ' + (ok ? 'ok' : 'no')}><span key={'m' + key} className="az-a-t" style={{ animationDelay: land + 's' }}>{ok ? 'true' : 'false'}</span></span>
+          <span className="az-mini-q"><b>{WHO[w][0]}</b><span>{LOC[t]}</span></span>
+        </p>
         {G && (
           <svg className="az-edges" width={G.W} height={G.H} aria-hidden="true">
             {WHO.map(([, gi], i) => <path key={'b' + i} className="az-e who" d={whoPath(G, i, gi)} />)}
@@ -164,6 +175,33 @@ function Check() {
           </ol>
           <p className="az-why" key={'y' + key} style={{ animationDelay: land + 's' }}>{LOC[g]} {ok ? 'prefixes' : 'does not prefix'} {LOC[t]}</p>
         </div>
+      </div>
+    </div>
+  );
+}
+
+/* The statement's object: a token in, one question, the answer out, drawn once as it is seen (about 1.4 s): the
+   token, a hairline, the question, a hairline, then true cuts in. Reduced motion: drawn. */
+function SayLine() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.6 });
+  const calm = useReducedMotion();
+  return (
+    <div className="az-line" ref={ref} data-go={seen || calm ? '' : undefined} aria-hidden="true">
+      <div className="az-line-n tok">
+        <span className="az-line-k">JWT</span>
+        <span className="az-jwt"><i /><i /><i /></span>
+      </div>
+      <span className="az-line-l" style={{ '--d': '.2s' }}><i /></span>
+      <div className="az-line-n q">
+        <span className="az-line-k">one question</span>
+        <span className="az-line-t">{STEPS[1]}</span>
+        <span className="az-line-t">{STEPS[2]}</span>
+      </div>
+      <span className="az-line-l" style={{ '--d': '.75s' }}><i /></span>
+      <div className="az-line-n a">
+        <span className="az-line-k">can</span>
+        <span className="az-line-w"><span className="az-a-t">true</span></span>
       </div>
     </div>
   );
@@ -413,7 +451,7 @@ export default function Authz() {
         acts={[['Read the docs', DOCS], ['View on GitHub', GH]]}
         meta={<span>Apache-2.0 · a library, not a service</span>}
         cta="authz.hero"
-        from={1.08}
+        from={1.05}
       >
         <Check />
       </KeynoteStage>
@@ -427,6 +465,7 @@ export default function Authz() {
           <div className="kn-grid az-say">
             <KeynoteLines className="kn-headline az-say-h" lines="Hanzo Authz reads a token and answers whether the caller may do the thing." />
             <p className="kn-body az-say-p">It verifies the JWT that IAM signed, then asks one question: does a grant this caller holds cover this path, and does its role admit this verb. It is a library, not a service — no store, no configuration, no network call on any path — so every Hanzo service asks that question the same way and gets the same answer.</p>
+            <SayLine />
           </div>
         }
         items={RULES.map(([t, d]) => ({ title: t, body: <p>{d}</p> }))}
@@ -436,14 +475,15 @@ export default function Authz() {
       <Delegate />
 
       <KeynoteSpec
+        className="az-spec"
         kick="Hanzo Authz"
         title="Tech specs"
         rows={[
-          ['The question', <><Fig n="1" u="rule" /><p>Does a grant this caller holds cover this path, and does its role admit this verb.</p></>],
+          ['The question', <><Fig n={<Count to={1} duration={0.9} />} u="rule" /><p>Does a grant this caller holds cover this path, and does its role admit this verb.</p></>],
           ['On the path', <p>No store, no config, no init, no network call. A leaf package a service imports; the check is a function call.</p>],
           ['Delegation', <p>A grant deeper in the path than your own, with an expiry if you want one.</p>],
           ['Token', <p>The resolved path and role, the same size no matter how many grants a person has.</p>],
-          ['Verification', <><Fig n="3" u="RSA, EC, ML-DSA-65" /><p>HMAC and alg none are rejected. Key material is an argument.</p></>],
+          ['Verification', <><Fig n={<Count to={3} duration={1.2} />} u="RSA, EC, ML-DSA-65" /><p>HMAC and alg none are rejected. Key material is an argument.</p></>],
           ['License', <p><b>Apache-2.0</b></p>],
         ]}
       />

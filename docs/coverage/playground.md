@@ -1,32 +1,157 @@
-# /playground coverage (PLAN-COMPONENTS areas 2.1–2.18)
+# /playground coverage (MASTER.md part 2, the 18 parts)
 
-Page file: `components/pages/cloud/Playground.jsx` (+ `Playground.css`) · route: `app/playground/page.jsx` · gallery: `docs/gallery/playground/`
+Page file: `components/pages/cloud/Playground.jsx` (+ `Playground.css`, route `app/playground/page.jsx`) · gallery: `docs/gallery/playground/` · metric id: `api_key_created`
 
-1. **Strategy and conversion.** Persona Developer; goal: open the Playground and run a first request. One ask in Hanzo's words, "Open the Playground" (platform.hanzo.ai/playground): solid in the hero (`data-cta="playground.hero"`), carried by the site's sticky ask bar after the hero, and the one solid button of the close (`playground.close`). "Read the API" is a ghost button; "Deploy to Cloud" a text link. Metric: `api_key_created`.
-2. **Information architecture and navigation.** Hanzo's header and footer are unchanged. Order: the Playground running → the anatomy of the first request (curl, then Python) → paste into an agent (the dark room) → related → get it.
-3. **First impression and page narrative.** Split Stage hero: the title and ask on the left, the Playground itself running on the right. It opens on Image, so Iro develops tile by tile within the first second and the first screen carries Hanzo's own media; then the eight kinds of run take turns. The "● Playground" kicker above the h1 is gone (the word stays in the window's own bar). On a 390×664 phone both hero buttons sit on one row and the running window starts on the first screen.
-4. **Conversion system.** `data-thumb="Open the Playground"` feeds the site's ask bar (desktop pill, phone thumb bar); `data-ask-name` carries the h1's words; the close's ask has its own `data-thumb`, so the bar steps aside there. The header's "Try Hanzo" stays outlined on this page: one solid button per screen.
-5. **Trust and proof.** No figures are invented: the run meter shows proportions only, never numbers; the code is Hanzo's own request and client, character for character (copy decision 5 in PLAN 1.3 is left to James).
-6. **Content presentation (copy untouched).** Parity 48/48 text and 7/7 links. The "curl · python" kicker above the section's heading is gone (both words stay on the code's own tabs). Hanzo's sentence is the scene: one phrase lit at a time.
-7. **Visual design system.** LaunchType scale (display.s 80, title 28, body 19, Zen Mono 13). 0 UI hues: the coral accent is gone from the timer, send button, cost bar, tree, embeddings, wave, vision label, code marks and related arrows. States read by fill, weight, dash and outline: the cost bar is ink and twice as tall, the model's own words are outlined bars, the unchosen branch is dashed, the three embedding clusters are ink, grey and outlined, the lit phrase is ink, heavier and underlined. Colour comes only from Iro, Koma and Kai inside the window. One dark room: the agent prompt.
-8. **UI component library.** Kit: `LineMask`, `SettleStage`, `ClipWipe`, `LivePause`, `RelatedCards`, `LaunchClose`, `Img` and `Film` (replace the raw `<img>` and `<video>`). curl/python are now real buttons (they scroll the scene to that part); kinds are tabs with a `layoutId` pill.
-9. **Motion and interaction.**
-   - Idle: the window runs the eight kinds every 3.8 s (Iro develops, Koma's film plays, Kai's subject is found, the meter fills).
-   - Pointer: hovering a kind previews its run and holds it while hovered; hovering a phrase marks its token in the request (and "is the whole first request." turns to the Python client); the close's ask is magnetic; related cards lift.
-   - State: the kind pill glides (spring {420,34}), pause/play, curl/python.
-   - Arrival: the cut-in title, the timed wipe into the dark room.
-   - Scroll (under half): the Stage settle and the scrubbed sentence.
-10. **Media.** Hanzo's own model media only, through `Img` (Iro has `priority`, width/height reserved) and `Film`. In the window, Koma plays only on screen, never under reduced motion or Data Saver, and stops with the pause button.
-   - The dark room holds the wall: all nine model renders together (Zen, Enso, Kai, Iro, Koma, Koe, Mori, Oto, Uta), in full colour with no filters.
-   - One film plays at a time: the hovered or focused tile, otherwise the next in turn every 3.6 s. It has its own 44px pause button.
-   - Each tile is a link that opens its model page (`data-morph` on the picture). This answers JAMES 6, "many real visuals at once".
-11. **Mobile and responsive.** 390×664: hero buttons on one row, the window on the first screen, kinds scroll sideways inside the window at 44px, the run meter as a 2×2 grid, the request's Python pane masked to its first lines while pinned. Pinned text clears the thumb bar (pinchk 4/4 ok). No text under 14px, all targets ≥44px (the phrases get a 44px hit area without moving the text), no sideways scroll at 320.
-12. **Accessibility.** Pause for the live demo (WCAG 2.2.2); `role=tab`/`aria-selected` on kinds, `aria-pressed` on phrases and curl/python; the canvas is `aria-hidden` (the run's name is in the meter's heading). Unlit phrases are #6e6e73 on #f5f5f7 (4.6:1), not the old #c7c7cc (1.5:1). Reduced motion: tiles, timers, wave and marks at rest.
-13. **Performance and engineering.** No setInterval in the page (Frame's `useSteps` timeouts, stopped off screen, while paused and while hovered). Iro's tiles clear with CSS, not 60 motion nodes. Transform, opacity and clip only.
-14. **SEO and machine files.** Metadata and JSON-LD unchanged. JS off: 54/54 of Hanzo's units visible; the first-request scene unpins and shows the curl and the Python client in order (it pins only once the page is live).
-15. **Catalogue and product pages.** Own hero medium (the running app window on model media), own signature (the playground, running) and own beyond (the anatomy of a first request).
-16. **Developer experience.** The first request as curl and Python with copy (copies exactly what is shown), the agent prompt with copy, "Read the API".
-17. **States and resilience.** The window has running, paused, hovered and held states; Koma shows its poster until it can play. Figures are static, so there is no loading or failure state.
-18. **Measurement and handover.** `data-cta` ids `playground.hero` and `playground.close`; the ask bar fires `cta_click`. Filmed with `film.cjs`; shots at 1470×801 and 390×664.
+Open copy questions for James: the Python sample ends in `KeysApi(api).get_keys().keys` (lists keys, does not call a model); kept word for word, question left to James. The window labels ("Tokens in", "Tokens out", "Time", "Cost", "Run ·") are not yet in the UI-string register.
+Shared changes requested (`docs/requests/playground.md`): UI-string register entries; a hover and press for "Deploy to Cloud" in `LaunchClose`; the 14px phone floor for `LaunchClose`'s facts row; `scroll-behavior: auto` in the motion probe's phone walk.
+Forks this page deleted: the page CSS that outlined the header's "Try Hanzo"; the `SettleStage` wrapper on the hero (replaced by a page-local CSS arrival that cannot snap); the springs on the kind pill and the decision tree.
 
-Ledger: deleted the dark room's lone text box (now the Paste beside the model wall), the coral accent (14 uses, incl. the code highlight and the timer), the kicker above the h1 and the "curl · python" kicker, raw `<img>`/`<video>` (now `Img`/`Film`), 60 motion tiles (now CSS), the hand-built related tiles and their CSS, 2 bare `:hover` rules, the decorative fake tabs (now buttons).
+## 1. Strategy and conversion
+- [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
+- [x] One solid fill per viewport; label and href from the page's own CTA ("Open the Playground")
+- [x] One h1; the page is clear in 5 seconds
+- [x] No dead or self-looping button
+- [x] Open copy questions for James listed, none decided
+
+Done here: Persona Developer, Goal "open the Playground and run a first request", metric `api_key_created` in both file headers. Hero has one solid "Open the Playground" beside the quiet "Read the API"; once it leaves view the header's own ask is solid (walk 7 Nov 16:36: header `rgb(10,10,10)` from s1 on desktop), and the close repeats "Open the Playground".
+
+## 2. Information architecture and navigation
+- [x] One `<main>` (shared chrome supplies `id="main"` and the skip link)
+- [x] Every link through `A`; every card a real link
+- n/a: breadcrumb (depth 1)
+- [x] Link parity: 0 removed, 0 unexpected
+
+Done here: parity.py `links 7/7`; the nine wall tiles and three related cards are `A` links to `/zen`…`/uta`, `/cli`, `/desktop`, `/cloud/api-keys`.
+
+## 3. First impression and page narrative
+- [x] Sells in 5 s; something moves within 1 s without input
+- n/a: `PageHero` (not in the kit yet); the hero is LineMask h1 + lede + one ask + the running window, nothing above the h1
+- [x] JS off: legible; no `opacity:0` on the LCP element
+- [x] One idea per 100svh
+- [x] Ends in the room of model films, related, `LaunchClose`, footer
+- [x] Card-to-page links use Morph (`data-morph` on the wall art, `data-morph-target` on the hero)
+
+Done here: the window arrives once by CSS from first paint (translateY 24px, scale 1.04 → rest, 900 ms ease-emphasis), so the server frame equals the first client frame and nothing snaps. The first-request scene is 240svh (was 380) and reads itself once on arrival (a key, a model name, a message, 1.2 s apart), then hands over to scroll.
+
+## 4. Conversion system
+- [x] Kit asks (`lx-cta`, `lx-ghost`); no raw `.x-btn`
+- [x] Sticky ask: the header's solid ask after the hero; phone bar "Open the Playground" (shared `Ask.jsx`)
+- [x] Copy copies exactly the displayed curl or Python text (`Copy text={tab ? PY : CURL}`); the caret is an `aria-hidden` element, not text
+- [x] `data-cta` (playground.hero, playground.close) and `data-thumb` on both primaries
+
+Done here: the page no longer outlines the header's "Try Hanzo"; the solid fill sits on the hero ask, then the header. "Deploy to Cloud" now leans 3px with a 2px underline on hover and presses 1px (page-local, request filed).
+
+## 5. Trust and proof
+- [x] No logo, no seal, no invented number
+- [x] The meter shows proportions only, never numbers
+- n/a: marquees (none)
+- n/a: forms (none)
+
+Done here: the run meter's bars are relative shapes (`RUN` array) with no figures printed; every figure-like word on the page is Hanzo's.
+
+## 6. Content presentation (copy untouched)
+- [x] No text under 13px (14px phone) except mono capitals
+- [x] Measures held
+- [x] Tabs use APG roles; code shown in `pre` with Copy
+- [x] `python3 scripts/parity.py /playground`: 0 missing
+
+Done here: parity `text 48/48 links 7/7`. The scene sentence rests at 44px Book 497 (was 56px/600) under a 26px h2; the only sub-13 run left is the shared "RELATED CAPABILITIES" mono capitals (12px). The LaunchClose facts row is lifted to 14px on phones.
+
+## 7. Visual design system
+- [x] `taste.py` passes
+- [x] No label, tag, badge or pill above a headline
+- [x] Radii 6/8/12/16/24/28/full only; never box plus shadow
+- [x] One icon set
+- [x] Differs from neighbours (the running Playground window and the self-reading request are its own)
+
+Done here: `taste: OK (2 checked)`. Off-deck greys mapped (`#f5f5f7`→`#f5f5f5`, `#8e8e93`/`#aeaeb2`/`#a1a1a6`→`#a3a3a3`, `#d9d9de`→`#d4d4d4`, `#161618`/`#111`→`#171717`, `#ececf0`→`#ededed`); radii 10/14/22/5/3 → 8/12/24/6/full. `.pg-req` is outlined only (the 0 40px 100px shadow is gone); `.pg-input` and the selected code tab lost their shadows. The window's hairline is drawn above its own fills (`.pg-win::after`), so its right and bottom edges show. The UI is greyscale and so is Hanzo's model media on this page.
+
+## 8. UI component library
+- [x] Hover (inside `hover:hover`), press (.97 / 1px, 90 ms), focus-visible on kinds, phrases, code tabs, Copy, asks
+- [x] Focus ring on the kind tabs (2px ink)
+- n/a: dialogs (none)
+- n/a: inputs (none; the window's "Hello" field is a drawing)
+
+Done here: the kinds are an APG tablist (roving tabindex, ← → Home End, `aria-controls` to a `tabpanel`); the off code pane is `inert`. New hovers: the hero ask's arrow leans 4px, Copy fills, the selected code tab fills, the repo link's mark turns, a resting phrase greys and starts its underline.
+
+## 9. Motion and interaction
+- [x] One signature (the Playground running) + 3 supporting (line-mask title, the self-reading request, the clip wipe into the dark room)
+- [x] Kinds: idle (window, caret, wall films, drifting related art), pointer (kind preview, phrase marks), time (the request reads itself once), state (kind pill, code tabs, pause), arrival (title, window)
+- [x] Something moves without input on every screen above the footer (own walk 7 Nov 16:36: desktop s0–s6 move, phone s0–s8 move)
+- [x] Reduced motion: the arrival, caret, rolling code, drift and meters are off; no `setInterval`
+- [x] Sound only through the shared kit
+
+Done here: no springs or overshoot (kind pill and tree nodes on ease-emphasis 300 ms, drop 1.25). The phrase no longer animates weight (no 480→700 reflow): it lights by colour and underline only. A picked kind holds two turns (with its timer showing) and then the window carries on.
+
+## 10. Media
+- [x] `Film` and `Img` only; sizes and posters set
+- [x] One film at a time in the window and one on the wall; both have a pause
+- [x] Alt from labels; decorative art `alt=""`
+- [x] No dimmed photo; nine real model renders together in the dark room
+
+Done here: Video paints `koma.webp` under the film (no blank panel while it loads); Audio now plays Oto's own film with the waveform along its foot; each kind names the model it shows (zen, iro, koma, oto, kai) in the bar and the run panel.
+
+## 11. Mobile and responsive
+- [x] 375×812 and 1470×801: no overlap
+- [x] No horizontal scroll (`scrollWidth` 375 at 375)
+- [x] Targets 44px on phones; hover previews have tap paths
+- [x] Primary ask above the fold at 375×667
+
+Done here: the lit kind is scrolled into the centre of the phone tab strip on every change; the hero asks wrap so the ask keeps its arrow; the clipped Python client rolls slowly through its window on phones.
+
+## 12. Accessibility (WCAG 2.2 AA)
+- [x] Contrast: body on white `#525252`/`#737373`; the 44px scene sentence at `#737373` on `#f5f5f5` is large text (3:1)
+- [x] Pause control on the window and the wall
+- n/a: forms
+- [x] One h1; h2s below
+- [x] Keyboard reaches every control (kinds by arrows)
+
+Done here: the kind labels fade with the pill (300 ms) so the new label is never white on white mid-glide; the off code pane is `inert`; 0 `title=`.
+
+## 13. Performance and engineering
+- [x] h1 and lede in server HTML; Iro's image `priority`
+- [x] Every image and film sized (1200×1500)
+- [x] No poller; no third party
+- [x] Nothing heavy run on James's laptop (all walks in the cloud)
+
+Done here: the hero arrival is pure CSS (no layout work on hydration); the scroll ease-back is one `useTransform` on transform only.
+
+## 14. SEO and machine files
+- [x] Title and description from `content/pages.json`
+- [x] Canonical from the shared layout
+- [x] `<JsonLd route="/playground" />`
+- [x] Every card is a real link
+
+Done here: `app/playground/page.jsx` reads `INDEX['/playground']` for metadata and renders `JsonLd`.
+
+## 15. Catalogue and product pages
+- n/a: model card (`SPEC.md`): not a catalogue or model page; the wall uses model renders, not the model card
+- [x] Wall tiles carry `data-morph` and open their model pages
+- n/a: maker lists
+- n/a: prices (none on the page)
+
+Done here: the nine wall tiles link to `/zen`, `/enso`, `/kai`, `/iro`, `/koma`, `/koe`, `/mori`, `/oto`, `/uta`.
+
+## 16. Developer experience
+- [x] Copy equals display (the shared `Copy` copies the same `CURL`/`PY` string the `pre` renders)
+- n/a: config blocks (no JSON config)
+- [x] The scene ends static under reduced motion
+- [x] No hand-typed version number
+
+Done here: curl and Python are Hanzo's own, unchanged; the active token is marked inside the real request; the shared `CodeBlock` is not used here (the `pre` is page-local), listed as a known gap.
+
+## 17. States and resilience
+- [x] Video and Audio show their poster until the film plays
+- [x] No live data on the page; complete with the API blocked; 0 console errors
+- n/a: forms
+- [x] Islands are self-contained; a failed film leaves its poster
+
+Done here: own walk 7 Nov 16:36 at 1470×801 and 375×812: status 200, 0 console errors from this page.
+
+## 18. Measurement and handover
+- [x] `data-cta` on both primaries; events through the shared ask
+- [x] Nothing identifier-bearing before consent
+- [x] `V2:` line in `Playground.jsx` and `app/playground/page.jsx`
+- [ ] Review read: `docs/review/playground.md` (6/10 at 15:24 read and answered; the re-walk is pending)
+
+Done here: every fix in the 15:24 review's "Fixes (in order)" list is answered above; proof in `docs/gallery/playground/` (d.jpg, p.jpg, d-0..2.png, p-0..2.png, d.mp4).

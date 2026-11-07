@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hanzo Tour</title>
+<style>
+/* The tour: every redesigned page, live (same origin, so motion, hover and scroll are the real thing), flown
+   through one after another. Each page scrolls itself top to bottom, then the next one flies in. Two frames only
+   (the one on stage and the next, preloading behind), so an 8 GB Mac copes. Keys: space pause, arrows prev/next,
+   / or L the index, P phone, F full screen. Scroll or click inside a page to take over; it resumes after 4 s. */
+:root { --bg: #050505; --ink: #fafafa; --soft: #a1a1aa; --faint: #52525b; --line: rgba(255,255,255,.1); --card: #111113; }
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); font: 14px/1.4 -apple-system, "Inter", system-ui, sans-serif; overflow: hidden; }
+button { font: inherit; color: inherit; }
+
+#stage { position: fixed; inset: 0; perspective: 2200px; }
+.frame { position: absolute; left: 50%; top: 52%; width: 1470px; height: 801px; border-radius: 18px; overflow: hidden;
+  background: #fff; box-shadow: 0 60px 160px -40px rgba(0,0,0,.9), 0 0 0 1px var(--line);
+  transform-origin: 50% 50%; transition: transform 1.15s cubic-bezier(.16,1,.3,1), opacity .9s cubic-bezier(.16,1,.3,1), filter 1.15s cubic-bezier(.16,1,.3,1), width .6s cubic-bezier(.16,1,.3,1), border-radius .6s; }
+.frame iframe { width: 100%; height: 100%; border: 0; display: block; background: #fff; }
+.frame.phone { width: 375px; height: 812px; border-radius: 44px; }
+.frame.wait { opacity: 0; visibility: hidden; } /* the preloading page waits unpainted, so only one page costs frames */
+.frame.out { opacity: 0; pointer-events: none; }
+.frame .veil { position: absolute; inset: 0; display: grid; place-items: center; background: #fff; color: #71717a; font-size: 13px; letter-spacing: .02em; transition: opacity .5s; }
+.frame.ready .veil { opacity: 0; pointer-events: none; }
+
+#hud { position: fixed; left: 28px; top: 22px; right: 28px; display: flex; align-items: flex-start; justify-content: space-between; pointer-events: none; z-index: 5; }
+#hud > * { pointer-events: auto; }
+#now { max-width: 60vw; }
+#count { font: 500 12px/1 ui-monospace, "SF Mono", monospace; color: var(--soft); letter-spacing: .08em; }
+#name { margin-top: 8px; font-size: 26px; font-weight: 600; letter-spacing: -.025em; line-height: 1.1; }
+#name span { display: inline-block; animation: rise .8s cubic-bezier(.16,1,.3,1) both; }
+#route { margin-top: 6px; font: 12px/1 ui-monospace, monospace; color: var(--faint); }
+#route a { color: var(--soft); text-decoration: none; }
+#route a:hover { color: var(--ink); }
+@keyframes rise { from { opacity: 0; transform: translateY(14px); filter: blur(4px); } }
+.tools { display: flex; gap: 6px; }
+.tools button, #idx-close { height: 34px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: rgba(17,17,19,.8); backdrop-filter: blur(10px); cursor: pointer; color: var(--soft); transition: color .2s, border-color .2s, transform .15s; }
+.tools button:hover { color: var(--ink); border-color: rgba(255,255,255,.25); }
+.tools button:active { transform: scale(.96); }
+.tools button[aria-pressed="true"] { color: var(--bg); background: var(--ink); border-color: var(--ink); }
+kbd { font: 11px ui-monospace, monospace; color: var(--faint); margin-left: 6px; }
+
+#bar { position: fixed; left: 0; right: 0; bottom: 0; height: 3px; background: var(--line); z-index: 5; }
+#bar i { display: block; height: 100%; width: 0; background: var(--ink); }
+#strip { position: fixed; left: 0; right: 0; bottom: 14px; display: flex; gap: 3px; justify-content: center; z-index: 5; padding: 0 28px; }
+#strip b { flex: 1; max-width: 10px; height: 18px; border-radius: 2px; background: #27272a; cursor: pointer; transition: background .2s, transform .2s; }
+#strip b:hover { background: var(--soft); transform: scaleY(1.5); }
+#strip b.seen { background: #52525b; }
+#strip b.on { background: var(--ink); transform: scaleY(1.6); }
+#tip { position: fixed; bottom: 44px; padding: 6px 10px; border-radius: 8px; background: var(--card); border: 1px solid var(--line); font-size: 12px; white-space: nowrap; pointer-events: none; opacity: 0; transform: translateX(-50%); transition: opacity .15s; z-index: 6; }
+
+#idx { position: fixed; inset: 0; z-index: 10; background: rgba(5,5,5,.92); backdrop-filter: blur(20px); display: none; flex-direction: column; padding: 28px; }
+#idx.open { display: flex; animation: fade .35s ease both; }
+@keyframes fade { from { opacity: 0; } }
+#idx header { display: flex; gap: 10px; align-items: center; }
+#q { flex: 1; height: 52px; padding: 0 20px; border-radius: 14px; border: 1px solid var(--line); background: var(--card); color: var(--ink); font-size: 18px; outline: none; }
+#q:focus { border-color: rgba(255,255,255,.35); }
+#list { margin-top: 20px; overflow: auto; columns: 4 220px; column-gap: 24px; }
+#list section { break-inside: avoid; margin-bottom: 18px; }
+#list h3 { margin: 0 0 6px; font: 500 11px/1 ui-monospace, monospace; color: var(--faint); letter-spacing: .1em; text-transform: uppercase; }
+#list button { display: flex; width: 100%; justify-content: space-between; gap: 8px; padding: 6px 8px; margin: 0 -8px; border: 0; border-radius: 8px; background: none; text-align: left; cursor: pointer; color: var(--soft); }
+#list button:hover, #list button.hit { background: var(--card); color: var(--ink); }
+#list button.on { color: var(--ink); font-weight: 600; }
+#list small { color: var(--faint); font: 11px ui-monospace, monospace; }
+#help { position: fixed; right: 28px; bottom: 44px; color: var(--faint); font-size: 12px; z-index: 5; }
+@media (prefers-reduced-motion: reduce) { .frame { transition: opacity .3s; } #name span { animation: none; } }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="hud">
+  <div id="now"><div id="count">— / —</div><div id="name"><span>Loading the tour…</span></div><div id="route"></div></div>
+  <div class="tools">
+    <button id="b-play" aria-pressed="true" title="Pause or play (space)">Playing</button>
+    <button id="b-prev" title="Previous page (←)">←</button>
+    <button id="b-next" title="Next page (→)">→</button>
+    <button id="b-phone" aria-pressed="false" title="Phone size (P)">Phone</button>
+    <button id="b-speed" title="Seconds per page">6 s a page</button>
+    <button id="b-idx" title="Every page (/)">All pages<kbd>/</kbd></button>
+  </div>
+</div>
+<div id="strip"></div><div id="tip"></div>
+<div id="bar"><i></i></div>
+<div id="help">Scroll inside a page to take over · space pause · ← → · / search · P phone · F full screen</div>
+<div id="idx" role="dialog" aria-label="Every page">
+  <header><input id="q" placeholder="Jump to a page… (type, then Enter)" autocomplete="off"><button id="idx-close">Close<kbd>esc</kbd></button></header>
+  <div id="list"></div>
+</div>
+<script>
+const $ = (s) => document.querySelector(s);
+// same origin as the pages: answer the cookie banner once (essential only) so it never covers a page in the tour
+try { if (!localStorage.getItem('hz-consent')) localStorage.setItem('hz-consent', JSON.stringify({ necessary: true, performance: false, marketing: false, sale: false, at: Date.now() })); } catch {}
+// every page gets the same short visit, whatever its length: hold on the hero, one eased scroll to the bottom, a beat
+const SPEEDS = [1, 2, 0.5], HOLD = 1500, SCROLL = 4000, END = 500; // ms at 1x: about 6 s a page, 15 min for the site
+const ease = (p) => (1 - Math.cos(Math.PI * p)) / 2, unease = (r) => Math.acos(1 - 2 * Math.min(1, Math.max(0, r))) / Math.PI;
+let pages = [], at = 0, playing = true, phone = false, speed = 0, held = 0, cur = null, nxt = null, raf = 0, lastT = 0;
+const seen = new Set();
+
+const group = (p) => p.route === '/' ? 'Home' : p.key.endsWith('/*') ? 'Families' : ({
+  enso:'Models',kai:'Models',koe:'Models',koma:'Models',mori:'Models',oto:'Models',uta:'Models',iro:'Models',zen:'Models',models:'Models',
+}[p.key.slice(1)] || (/^\/(about|history|team|careers|press|investors|brand|contact|customers|philosophy|founder|support|trust|security|legal|newsletter)/.test(p.key) ? 'Company' :
+  /^\/(pricing|enterprise|startups|grants|affiliate|referral|beta|bounty|buying|contact-sales|sms)/.test(p.key) ? 'Pricing & programs' :
+  /^\/(chat|dev|agents|api|bot|chrome|cli|computer|design|desktop|download|extension|gen|ide|kata|mcp|operative|operator|skills|slack|studio|tag|sdks|playground|console|gui|templates|ui)/.test(p.key) ? 'Apps & tools' : 'Cloud & platform'));
+const label = (p) => p.route === '/' ? 'Home' : (p.title && p.title !== p.route ? p.title.replace(/^Hanzo\s+/, '') : p.key);
+const url = (p) => (p.route === '/' ? '/' : p.route.replace(/\/?$/, '/'));
+
+function frame(p) {
+  const f = document.createElement('div');
+  f.className = 'frame wait' + (phone ? ' phone' : '');
+  f.innerHTML = '<div class="veil">Loading ' + label(p) + '…</div>';
+  const i = document.createElement('iframe');
+  i.src = url(p); i.loading = 'eager'; i.title = label(p);
+  i.addEventListener('load', () => {
+    f.classList.add('ready');
+    try { // the viewer scrolling or clicking inside the page takes over from the auto-scroll for 4 s
+      const w = i.contentWindow;
+      ['wheel', 'pointerdown', 'touchstart'].forEach((ev) => w.addEventListener(ev, () => { held = performance.now(); }, { passive: true }));
+      w.addEventListener('keydown', onKey); // the tour's keys work while focus is inside the page too
+    } catch {}
+  });
+  f.appendChild(i); f.page = p;
+  $('#stage').appendChild(f);
+  return f;
+}
+function fit(f, mode) {
+  if (!f) return;
+  const w = phone ? 375 : 1470, h = phone ? 812 : 801;
+  const s = Math.min((innerWidth - 56) / w, (innerHeight - 150) / h, phone ? 1 : 1);
+  const t = { stage: `translate(-50%,-50%) scale(${s})`,
+    behind: `translate(-50%,-50%) translateZ(-900px) rotateX(8deg) scale(${s})`,
+    gone: `translate(-50%,-50%) translateZ(500px) rotateY(-14deg) translateX(-40%) scale(${s})` }[mode];
+  f.style.transform = t;
+}
+function scrollerOf(f) {
+  try { const w = f.querySelector('iframe').contentWindow; return w.document ? w : null; } catch { return null; }
+}
+function show(i, dir = 1) {
+  at = (i + pages.length) % pages.length;
+  const p = pages[at];
+  const old = cur;
+  cur = nxt && nxt.page === p ? nxt : frame(p);
+  if (nxt && nxt !== cur) nxt.remove();
+  nxt = null;
+  fit(cur, 'behind');
+  requestAnimationFrame(() => requestAnimationFrame(() => { cur.classList.remove('wait'); fit(cur, 'stage'); }));
+  if (old) { old.classList.add('out'); fit(old, 'gone'); setTimeout(() => old.remove(), 900); }
+  seen.add(at);
+  $('#count').textContent = String(at + 1).padStart(3, '0') + ' / ' + pages.length + '  ·  ' + group(p).toUpperCase();
+  $('#name').innerHTML = '<span></span>'; $('#name span').textContent = label(p) + (p.members ? '  ·  ' + p.members + ' pages share this design' : '');
+  $('#route').innerHTML = '<a href="' + url(p) + '" target="_blank" rel="noopener">' + p.key + ' ↗</a>';
+  [...$('#strip').children].forEach((b, k) => { b.className = (k === at ? 'on' : seen.has(k) ? 'seen' : ''); });
+  [...document.querySelectorAll('#list button')].forEach((b) => b.classList.toggle('on', +b.dataset.i === at));
+  $('#bar i').style.width = '0';
+  lastT = 0;
+  // preload the next page behind, after this one has settled, so the next fly-in is instant
+  setTimeout(() => { if (cur && cur.page === p && !nxt) { nxt = frame(pages[(at + 1) % pages.length]); fit(nxt, 'behind'); } }, 600);
+}
+function tick(t) {
+  raf = requestAnimationFrame(tick);
+  if (!cur || !cur.classList.contains('ready')) { lastT = t; return; }
+  const dt = lastT ? Math.min(t - lastT, 1000) : 0; lastT = t; // wall-clock time, so a slow machine still keeps ~6 s a page
+  const w = scrollerOf(cur); if (!w) return;
+  const el = w.document.documentElement, max = Math.max(1, el.scrollHeight - w.innerHeight), y = w.scrollY;
+  $('#bar i').style.width = Math.min(100, (y / max) * 100) + '%';
+  if (!playing) return;
+  if (performance.now() - held < 2500) { cur.p = unease(y / max); return; } // the viewer is driving; pick up from where they leave it
+  const k = SPEEDS[speed];
+  cur.wait = (cur.wait || 0) + dt * k;
+  if (cur.wait < HOLD) return; // let the hero play first
+  if ((cur.p || 0) >= 1) { if (cur.wait > HOLD + SCROLL + END) show(at + 1); else cur.wait = Math.max(cur.wait, HOLD + SCROLL); return; }
+  cur.p = Math.min(1, (cur.p || 0) + (dt * k) / SCROLL);
+  const to = ease(cur.p) * max;
+  if (w.__lenis) w.__lenis.scrollTo(to, { immediate: true }); else w.scrollTo(0, to);
+}
+function setPlay(v) { playing = v; $('#b-play').setAttribute('aria-pressed', v); $('#b-play').textContent = v ? 'Playing' : 'Paused'; }
+function setPhone(v) {
+  phone = v; $('#b-phone').setAttribute('aria-pressed', v);
+  [cur, nxt].forEach((f) => { if (!f) return; f.classList.toggle('phone', v); });
+  fit(cur, 'stage'); fit(nxt, 'behind');
+}
+function openIdx(v) {
+  $('#idx').classList.toggle('open', v);
+  if (v) { $('#q').value = ''; filter(''); setTimeout(() => $('#q').focus(), 30); setPlay(false); }
+}
+function filter(q) {
+  q = q.trim().toLowerCase(); let first = null;
+  document.querySelectorAll('#list button').forEach((b) => {
+    const hit = !q || b.dataset.s.includes(q); b.style.display = hit ? '' : 'none'; b.classList.remove('hit');
+    if (hit && q && !first) first = b;
+  });
+  document.querySelectorAll('#list section').forEach((s) => { s.style.display = [...s.querySelectorAll('button')].some((b) => b.style.display !== 'none') ? '' : 'none'; });
+  if (first) first.classList.add('hit');
+}
+function build() {
+  const strip = $('#strip'), tip = $('#tip');
+  pages.forEach((p, k) => {
+    const b = document.createElement('b');
+    b.onclick = () => { setPlay(true); show(k); };
+    b.onmouseenter = () => { tip.textContent = label(p); tip.style.left = b.getBoundingClientRect().left + 5 + 'px'; tip.style.opacity = 1; };
+    b.onmouseleave = () => { tip.style.opacity = 0; };
+    strip.appendChild(b);
+  });
+  const groups = {};
+  pages.forEach((p, k) => (groups[group(p)] ||= []).push([p, k]));
+  const order = ['Home', 'Models', 'Apps & tools', 'Cloud & platform', 'Pricing & programs', 'Company', 'Families'];
+  $('#list').innerHTML = '';
+  order.filter((g) => groups[g]).forEach((g) => {
+    const s = document.createElement('section'); s.innerHTML = '<h3>' + g + ' · ' + groups[g].length + '</h3>';
+    groups[g].forEach(([p, k]) => {
+      const b = document.createElement('button'); b.dataset.i = k; b.dataset.s = (label(p) + ' ' + p.key).toLowerCase();
+      b.innerHTML = '<span></span><small></small>'; b.firstChild.textContent = label(p); b.lastChild.textContent = p.key;
+      b.onclick = () => { openIdx(false); setPlay(true); show(k); };
+      s.appendChild(b);
+    });
+    $('#list').appendChild(s);
+  });
+}
+$('#b-play').onclick = () => setPlay(!playing);
+$('#b-prev').onclick = () => show(at - 1, -1);
+$('#b-next').onclick = () => show(at + 1);
+$('#b-phone').onclick = () => setPhone(!phone);
+$('#b-speed').onclick = () => { speed = (speed + 1) % SPEEDS.length; $('#b-speed').textContent = Math.round((HOLD + SCROLL + END) / 1000 / SPEEDS[speed]) + ' s a page'; };
+$('#b-idx').onclick = () => openIdx(true);
+$('#idx-close').onclick = () => openIdx(false);
+$('#q').addEventListener('input', (e) => filter(e.target.value));
+$('#q').addEventListener('keydown', (e) => { if (e.key === 'Enter') { const b = document.querySelector('#list button.hit') || [...document.querySelectorAll('#list button')].find((b) => b.style.display !== 'none'); if (b) b.click(); } });
+function onKey(e) {
+  if ($('#idx').classList.contains('open')) { if (e.key === 'Escape') openIdx(false); return; }
+  if (e.target.closest && e.target.closest('input, textarea, select, [contenteditable]')) { held = performance.now(); return; } // typing into a page's own form
+  if (e.key === ' ') { e.preventDefault(); setPlay(!playing); }
+  else if (e.key === 'ArrowRight') show(at + 1);
+  else if (e.key === 'ArrowLeft') show(at - 1, -1);
+  else if (e.key === '/' || e.key.toLowerCase() === 'l') { e.preventDefault(); openIdx(true); }
+  else if (e.key.toLowerCase() === 'p') setPhone(!phone);
+  else if (e.key.toLowerCase() === 'f') (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()).catch(() => {});
+}
+addEventListener('keydown', onKey);
+addEventListener('resize', () => { fit(cur, 'stage'); fit(nxt, 'behind'); });
+fetch('pages.json').then((r) => r.json()).then((list) => {
+  // home first, then the rest in their groups so the tour moves through the site in chapters
+  const order = ['Home', 'Models', 'Apps & tools', 'Cloud & platform', 'Pricing & programs', 'Company', 'Families'];
+  pages = list.slice().sort((a, b) => order.indexOf(group(a)) - order.indexOf(group(b)) || a.key.localeCompare(b.key));
+  build();
+  const start = Math.max(0, pages.findIndex((p) => p.key === decodeURIComponent(location.hash.slice(1))));
+  show(start);
+  raf = requestAnimationFrame(tick);
+}).catch(() => { $('#name span').textContent = 'Could not load the page list (pages.json).'; });
+addEventListener('hashchange', () => { const k = pages.findIndex((p) => p.key === decodeURIComponent(location.hash.slice(1))); if (k >= 0) show(k); });
+</script>
+</body>
+</html>

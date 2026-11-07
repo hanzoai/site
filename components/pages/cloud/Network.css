@@ -100,7 +100,7 @@ html.js .nw-sp.new .nw-tags { animation-delay: .7s; }
 .nw-sm .nw-tag.q { background: #fff; color: #0a0a0a; }
 .nw-sm .nw-tag.x { background: none; color: #525252; outline: 1.5px dashed #a3a3a3; outline-offset: -1.5px; text-decoration: line-through; }
 .nw-sm .nw-tag.place { background: #fff; color: #0a0a0a; outline: 1.5px dashed #0a0a0a; outline-offset: -1.5px; }
-.nw-region { position: absolute; padding: 9px 14px; border-radius: 8px; background: #fff; font: 500 14px/1 var(--mono); color: #737373; text-decoration: line-through; text-decoration-color: #0a0a0a; text-decoration-thickness: 1.5px; }
+.nw-region { position: absolute; padding: 12px 18px; border-radius: 8px; background: #fff; font: 500 16px/1 var(--mono); color: #737373; text-decoration: line-through; text-decoration-color: #0a0a0a; text-decoration-thickness: 1.5px; }
 .nw-root { position: absolute; transform: translate(-50%, -50%); padding: 10px 14px; border-radius: 8px; background: #0a0a0a; color: #fafafa; font: 500 13px/1 var(--mono); white-space: nowrap; }
 html.js .nw-root { animation: nw-in .3s var(--lx-ease) .2s both; }
 .nw-root b { color: #a3a3a3; font-weight: 500; margin-right: 6px; }
@@ -115,6 +115,19 @@ html.js .nw-sm-cap > * { animation: nw-in .3s var(--lx-ease) both; }
 .nw-ten i.ai { background: #0a0a0a; }
 .nw-cmd { margin: 0; padding: 10px 16px; border-radius: 8px; background: #171717; color: #fafafa; font: 500 15px/1 var(--mono); }
 .nw-cmd span { color: #a3a3a3; margin-right: 6px; }
+
+/* the chapter's dash: a short ink stroke runs its links, 2.4s ease-in-out, staggered, forever while pinned */
+.nw-sm-links line.flow { stroke: #0a0a0a; stroke-width: 9; stroke-linecap: round; stroke-dasharray: .001 .999; stroke-dashoffset: .001; opacity: 0; }
+html.js .nw-sm-links line.flow { opacity: 1; animation: nw-flow 2.4s var(--e-io) infinite; }
+@keyframes nw-flow { from { stroke-dashoffset: .001; } to { stroke-dashoffset: -1; } }
+/* the intro: peers only, nothing linked yet; each one is discovered in turn (a ring pings round the fabric), so
+   chapter one drawing the topology in is a real change, not the same picture twice */
+html.js .nw-sm[data-st='intro'] .nw-sm-links line { opacity: 0; }
+.nw-sm[data-st='intro'] .nw-sp:not(.you) > i::after { content: ''; position: absolute; inset: -10px; border-radius: 50%; border: 1.5px solid #0a0a0a; opacity: 0; }
+html.js .nw-sm[data-st='intro'] .nw-sp:not(.you) > i::after { animation: nw-ping 4.4s var(--e-out) infinite; animation-delay: calc(var(--i) * 400ms); }
+html.js .nw-sm[data-st='intro'] .nw-sp:not(.you) > i { animation: nw-found 4.4s var(--e-out) infinite; animation-delay: calc(var(--i) * 400ms); }
+@keyframes nw-ping { 0% { opacity: .5; transform: scale(.5); } 14%, 100% { opacity: 0; transform: scale(1.3); } }
+@keyframes nw-found { 0%, 18% { box-shadow: inset 0 0 0 2px #0a0a0a; } 30%, 100% { box-shadow: inset 0 0 0 2px #a3a3a3; } }
 
 /* Lend it to (chapter five) */
 .nw-lend { margin-top: 24px; display: grid; gap: 14px; justify-items: start; }
@@ -213,6 +226,7 @@ html.js .nw-sm-cap > * { animation: nw-in .3s var(--lx-ease) both; }
   /* phone: only the tags that carry the chapter (the route and the placement; declared, not attested; idle) */
   .nw-sm[data-st='3'] .nw-sp:not(.lit):not(.you) .nw-tag:not(.place) { display: none; }
   .nw-sm[data-st='2'] .nw-tag.q { display: none; }
+  .nw-sm[data-st='1'] .nw-sp[data-p='2'] .nw-tag.q { display: none; }
   .nw-lend { margin-top: 12px; }
   .nw-lend-a, .nw-lend .x-copy { display: none; }
   .nw-ends-h { grid-template-columns: minmax(0, 1fr); row-gap: 16px; }
@@ -227,6 +241,23 @@ html.js .nw-sm-cap > * { animation: nw-in .3s var(--lx-ease) both; }
 }
 @media (prefers-reduced-motion: reduce) {
   .nw-peer > i, .nw-peer > i::after, .nw-links line, .nw-sp > i, .nw-sm-links line { transition: none; }
-  html.js .nw-sm-links line.draw, html.js .nw-sp.new > i, html.js .nw-sp .nw-tags, html.js .nw-root, html.js .nw-sm-cap > * { animation: none; stroke-dashoffset: 0; }
+  html.js .nw-sm-links line.draw, html.js .nw-sm-links line.flow, html.js .nw-sp.new > i, html.js .nw-sm[data-st='intro'] .nw-sp > i, html.js .nw-sm[data-st='intro'] .nw-sp > i::after, html.js .nw-sp .nw-tags, html.js .nw-root, html.js .nw-sm-cap > * { animation: none; stroke-dashoffset: 0; }
   .nw-strand .pulse { animation: none; display: none; }
+  .nw-sm-links line.flow { display: none; }
 }
+.nw-sm .nw-sp[data-p='4'] .nw-tags { top: 12px; }
+/* chapter four: peer 03's tags open to its left, so peer 04's ring never sits on them */
+.nw-sm[data-st='3'] .nw-sp[data-p='3'] .nw-tags { left: auto; right: 16px; }
+@media (max-width: 899px) {
+  .nw-sm[data-st='3'] .nw-sp[data-p='3'] .nw-tag:not(.hit) { display: none; }
+  /* the placement tag lifts above peer 07 and shows only uta's render (the caption names it), clear of peer 06's ring */
+  .nw-sm[data-st='3'] .nw-sp[data-p='7'] .nw-tags { top: -54px; right: -20px; }
+  .nw-sm[data-st='3'] .nw-tag.place { font-size: 0; gap: 0; padding: 4px; }
+}
+/* the replay control stays quiet when it shows play: white with a hairline ring and an ink glyph, never a solid
+   disc beside the one solid ask */
+.nw .nw-pause[aria-pressed='true'] { background: #fff; color: #0a0a0a; border-color: #d4d4d4; }
+@media (hover: hover) { .nw .nw-pause:hover, .nw .nw-pause[aria-pressed='true']:hover { background: #f2f2f2; color: #0a0a0a; } }
+/* the resting bead: smaller and quieter than the demo's packet */
+.nw-packet.idle { left: -5px; top: -5px; width: 10px; height: 10px; }
+

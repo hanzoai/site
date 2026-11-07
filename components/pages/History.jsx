@@ -28,6 +28,7 @@ import Lines from '../v2/Lines';
 import '../v2/system.css';
 import { YEARS, ERAS } from './historyData';
 import './story.css';
+import usePhoneAsk from './usePhoneAsk';
 import './History.css';
 
 const TL = ({ to, children }) => <Cta to={to} kind="link">{children}</Cta>;
@@ -70,7 +71,7 @@ function Hero() {
           <motion.div className="xhi-hero-side" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.5 }}>
             <p className="v2s-lede">From open-source commerce and early AI head-up displays with SKULLY in 2014, through Techstars ’17 and over $1B in venture-backed client revenue, to 1,600+ repositories and sovereign intelligence today.</p>
             <div className="v2s-acts">
-              <Cta to="#timeline" kind="link" id="history.hero">Explore Our History</Cta>
+              <Cta to="/history#timeline" kind="link" id="history.hero">Explore Our History</Cta>
               <TL to="/about">About Hanzo</TL>
               <TL to="/open-source">Open Source</TL>
             </div>
@@ -361,6 +362,7 @@ function Fde() {
 }
 
 export default function History() {
+  usePhoneAsk();
   return (
     <main id="main" className="xhi v2s">
       {/* JavaScript off: every line shows at rest, and the years stack */}

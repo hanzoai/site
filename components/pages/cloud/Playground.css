@@ -2,8 +2,7 @@
    own model media inside the window (Iro, Koma, Kai). States read by fill, weight, dash and outline. Hover lives in
    (hover: hover); press is .98 or 1px. */
 
-/* one solid button per screen (PLAN 0.9): the header's "Try Hanzo" stays outlined on this page */
-html:has(main.pg) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
+/* the header's "Try Hanzo" stays solid on this page (SYSTEM.md 5): nothing here outlines it */
 
 /* hero: copy left, the running window right */
 .pg-hero { padding: clamp(40px, 4.4vw, 80px) 0 clamp(120px, 13vw, 200px); }
@@ -13,37 +12,44 @@ html:has(main.pg) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
 .pg-acts { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 36px; }
 
 /* the window */
-.pg-win { background: #fff; }
+/* the hero stage: arrives once from first paint (CSS, so server and client agree), radius 24, a hairline drawn above
+   the window's own fills so its right and bottom edges show against the page */
+.pg-stage { position: relative; }
+.pg-stage-in { transform-origin: 50% 0; animation: pg-arrive .9s cubic-bezier(.16, 1, .3, 1) .15s both; }
+@keyframes pg-arrive { from { transform: translateY(24px) scale(1.04); } }
+.pg-win { position: relative; background: #fff; border-radius: 24px; overflow: hidden; isolation: isolate; }
+.pg-win::after { content: ''; position: absolute; inset: 0; z-index: 5; border-radius: inherit; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .1); pointer-events: none; }
 .pg-bar { display: flex; align-items: center; gap: 7px; height: 56px; padding: 0 8px 0 18px; border-bottom: 1px solid var(--line); background: #fafafa; }
-.pg-bar i { width: 11px; height: 11px; border-radius: 50%; background: #e0e0e5; }
+.pg-bar i { width: 11px; height: 11px; border-radius: 50%; background: #e4e4e7; }
 .pg-bar span { margin-left: 12px; font: 500 14px/1 var(--sans); color: var(--muted); }
 .pg-bar b { margin-left: auto; padding: 7px 11px; border-radius: 999px; background: var(--ink); color: #fff; font: 500 13px/1 var(--mono); }
 .pg .pg-pause { position: static; order: 9; flex: none; margin-left: 6px; }
 .pg-modes { display: flex; gap: 2px; padding: 8px 12px; border-bottom: 1px solid var(--line); overflow-x: auto; scrollbar-width: none; }
 .pg-modes::-webkit-scrollbar { display: none; }
-.pg-modes button { position: relative; flex: none; border: 0; background: none; height: 40px; padding: 0 13px; border-radius: 999px; font: 500 14px/1 var(--sans); color: var(--muted); cursor: pointer; touch-action: manipulation; transition: color .2s, transform .12s var(--lx-ease); }
-.pg-modes button:active { transform: scale(.98); }
+.pg-modes button { position: relative; flex: none; border: 0; background: none; height: 40px; padding: 0 13px; border-radius: 999px; font: 500 14px/1 var(--sans); color: var(--muted); cursor: pointer; touch-action: manipulation; transition: color .3s cubic-bezier(.4, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); }
+.pg-modes button:active { transform: scale(.97); transition-duration: 90ms; }
+.pg-modes button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .pg-modes button[aria-selected='true'] { color: #fff; }
 .pg-modes button span { position: relative; }
 .pg-mode-bg { position: absolute; inset: 0; border-radius: 999px; background: var(--ink); }
-.pg-mode-t { position: absolute; left: 14px; right: 14px; bottom: 6px; height: 2px; border-radius: 2px; background: rgba(255, 255, 255, .7); transform-origin: 0 50%; animation: pg-timer 3.8s linear both; }
+.pg-mode-t { position: absolute; left: 14px; right: 14px; bottom: 6px; height: 2px; border-radius: 999px; background: rgba(255, 255, 255, .78); transform-origin: 0 50%; animation: pg-timer 3.8s linear both; }
 @keyframes pg-timer { from { transform: scaleX(0); } }
-@media (hover: hover) { .pg-modes button[aria-selected='false']:hover { color: var(--ink); background: #f2f2f4; } }
+@media (hover: hover) { .pg-modes button[aria-selected='false']:hover { color: var(--ink); background: #f2f2f2; } }
 .pg-body { display: grid; grid-template-columns: minmax(0, 1fr) 210px; }
-.pg-canvas { position: relative; display: flex; flex-direction: column; padding: 24px; background: radial-gradient(circle, rgba(0, 0, 0, .07) 1px, transparent 1.5px) 0 0 / 22px 22px, radial-gradient(circle at 50% 40%, #fbfbfd, #f1f1f4); overflow: hidden; }
+.pg-canvas { position: relative; display: flex; flex-direction: column; padding: 24px; background: radial-gradient(circle, rgba(0, 0, 0, .07) 1px, transparent 1.5px) 0 0 / 22px 22px, radial-gradient(circle at 50% 40%, #fbfbfb, #f2f2f2); overflow: hidden; }
 .pg-stagebox { position: relative; flex: 1; min-height: clamp(260px, 25vw, 360px); }
 .pg-cv { position: absolute; inset: 0; display: grid; place-items: center; }
-.pg-input { display: flex; align-items: center; gap: 10px; margin-top: 16px; height: 48px; padding: 0 6px 0 18px; border-radius: 14px; background: #fff; border: 1px solid var(--line); box-shadow: 0 6px 18px -12px rgba(0, 0, 0, .2); font-size: 15px; color: var(--ink); }
+.pg-input { display: flex; align-items: center; gap: 10px; margin-top: 16px; height: 48px; padding: 0 6px 0 18px; border-radius: 12px; background: #fff; border: 1px solid var(--line); font-size: 15px; color: var(--ink); }
 .pg-input span { flex: 1; }
-.pg-input b { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; background: var(--ink); color: #fff; }
+.pg-input b { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 8px; background: var(--ink); color: #fff; }
 .pg-run { padding: 22px 20px; border-left: 1px solid var(--line); display: flex; flex-direction: column; gap: 18px; }
 .pg-run-k { margin: 0; font: 500 13px/1.2 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
 .pg-model { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 14px; border-bottom: 1px solid var(--line); font-size: 14px; color: var(--muted); }
 .pg-model b { font: 500 15px/1 var(--mono); color: var(--ink); }
 .pg-meter { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
 .pg-meter li { display: grid; gap: 8px; font-size: 14px; color: var(--muted); }
-.pg-meter li i { display: block; height: 8px; border-radius: 8px; background: #ececf0; overflow: hidden; }
-.pg-meter li b { display: block; height: 100%; border-radius: 8px; background: #8e8e93; transform-origin: 0 50%; transform: scaleX(var(--v)); animation: pg-fill 1.2s cubic-bezier(.16, 1, .3, 1) var(--d) both; }
+.pg-meter li i { display: block; height: 8px; border-radius: 8px; background: #ededed; overflow: hidden; }
+.pg-meter li b { display: block; height: 100%; border-radius: 8px; background: #a3a3a3; transform-origin: 0 50%; transform: scaleX(var(--v)); animation: pg-fill 1.2s cubic-bezier(.16, 1, .3, 1) var(--d) both; }
 /* the cost reads by weight: an ink bar, twice as tall, and a bold label */
 .pg-meter li.cost { color: var(--ink); font-weight: 600; }
 .pg-meter li.cost i { height: 14px; }
@@ -56,94 +62,124 @@ html:has(main.pg) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
 .pg-bub { margin: 0; padding: 16px 20px; border-radius: 20px; font-size: 17px; }
 .pg-bub.me { align-self: flex-end; background: var(--ink); color: #fff; border-bottom-right-radius: 6px; }
 .pg-bub.ai { align-self: flex-start; width: 80%; background: #fff; border: 1px solid var(--line); border-bottom-left-radius: 6px; display: flex; flex-direction: column; gap: 9px; }
-.pg-bub.ai i, .pg-comp i { display: block; height: 12px; border-radius: 6px; background: #d9d9de; transform-origin: 0 50%; }
+.pg-bub.ai i, .pg-comp i { display: block; height: 12px; border-radius: 6px; background: #d4d4d4; transform-origin: 0 50%; }
 .pg-comp { width: min(100%, 560px); display: flex; flex-direction: column; gap: 12px; }
 /* what you gave is ink; what the model wrote is outlined grey */
-.pg-comp i { height: 14px; background: #fff; box-shadow: inset 0 0 0 1.5px #8e8e93; }
+.pg-comp i { height: 14px; background: #fff; box-shadow: inset 0 0 0 1.5px #a3a3a3; }
 .pg-comp i.given { background: var(--ink); box-shadow: none; }
 .pg-tree { width: min(100%, 460px); overflow: visible; }
-.pg-tree path { fill: none; stroke: #aeaeb2; stroke-width: 2; stroke-dasharray: 5 5; }
+.pg-tree path { fill: none; stroke: #a3a3a3; stroke-width: 2; stroke-dasharray: 5 5; }
 .pg-tree path.on { stroke: var(--ink); stroke-width: 3; stroke-dasharray: none; }
-.pg-tree circle { fill: #fff; stroke: #aeaeb2; stroke-width: 2; transform-box: fill-box; transform-origin: center; }
+.pg-tree circle { fill: #fff; stroke: #a3a3a3; stroke-width: 2; transform-box: fill-box; transform-origin: center; }
 .pg-tree .root, .pg-tree .pick { fill: var(--ink); stroke: var(--ink); }
 .pg-emb { width: min(100%, 520px); overflow: visible; }
 .pg-emb .c0 { fill: var(--ink); }
-.pg-emb .c1 { fill: #8e8e93; }
+.pg-emb .c1 { fill: #a3a3a3; }
 .pg-emb .c2 { fill: #fff; stroke: var(--ink); stroke-width: 1.5; }
 .pg-img, .pg-vis { position: relative; height: 100%; max-width: 100%; aspect-ratio: 4 / 3; border-radius: 16px; overflow: hidden; background: #000; }
 .pg-img img, .pg-vis img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .pg-tiles { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(10, 1fr); }
-.pg-tiles i { background: #ececf0; border: .5px solid #f5f5f7; animation: pg-dev .35s linear var(--d) both; }
+.pg-tiles i { background: #ededed; border: .5px solid #f5f5f5; animation: pg-dev .35s linear var(--d) both; }
 @keyframes pg-dev { to { opacity: 0; } }
-.pg-vid { position: relative; height: 100%; aspect-ratio: 16 / 10; max-width: 100%; border-radius: 16px; overflow: hidden; background: #111; }
-.pg-vid video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pg-vid { position: relative; height: 100%; aspect-ratio: 16 / 10; max-width: 100%; border-radius: 16px; overflow: hidden; background: #171717 url(/models/koma.webp) center / cover no-repeat; }
+.pg-vid video, .pg-aud video { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* Audio: Oto's film (its poster painted under it, so it is never blank), the waveform along its foot */
+.pg-aud { position: relative; height: 100%; aspect-ratio: 16 / 10; max-width: 100%; border-radius: 16px; overflow: hidden; background: #171717 url(/models/oto.webp) center / cover no-repeat; }
+.pg-aud .pg-wave { position: absolute; left: 16px; right: 16px; bottom: 14px; height: 28%; }
+.pg-aud .pg-wave i { background: #fafafa; }
+.pg-aud .pg-wave i:nth-child(5n) { background: rgba(255, 255, 255, .55); }
 .pg-head { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: rgba(255, 255, 255, .25); }
 .pg-head::after { content: ''; position: absolute; inset: 0; background: #fff; transform-origin: 0 50%; animation: pg-timer 3.6s linear both; }
 .pg-win.paused .pg-head::after { animation-play-state: paused; }
 .pg-wave { width: 100%; height: 60%; display: flex; align-items: center; gap: 3px; }
-.pg-wave i { flex: 1; border-radius: 3px; background: var(--ink); transform-origin: 50% 50%; animation: pg-wave 1.2s ease-in-out infinite alternate; }
-.pg-wave i:nth-child(5n) { background: #aeaeb2; }
+.pg-wave i { flex: 1; border-radius: 999px; background: var(--ink); transform-origin: 50% 50%; animation: pg-wave 1.2s ease-in-out infinite alternate; }
+.pg-wave i:nth-child(5n) { background: #a3a3a3; }
 @keyframes pg-wave { from { transform: scaleY(.2); } to { transform: scaleY(1); } }
-.pg-box { position: absolute; border: 2px solid #fff; border-radius: 10px; box-shadow: 0 0 0 999px rgba(0, 0, 0, .35); }
+.pg-box { position: absolute; border: 2px solid #fff; border-radius: 8px; box-shadow: 0 0 0 999px rgba(0, 0, 0, .3); }
 .pg-box span { position: absolute; left: -2px; top: -30px; padding: 6px 9px; border-radius: 6px; background: #fff; color: var(--ink); font: 500 13px/1 var(--mono); }
 
 /* the first request: JS off it is an ordinary section, both panes in order; JS on it pins and scrubs */
 .pg-first { position: relative; background: var(--card); padding: clamp(96px, 10vw, 160px) 0; }
-.pg-first[data-live] { height: 380svh; padding: 0; }
+.pg-first[data-live] { height: 240svh; padding: 0; }
 .pg-first[data-live] .pg-first-stick { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; }
-.pg-first-grid { display: grid; grid-template-columns: 5fr 7fr; gap: clamp(32px, 5vw, 96px); align-items: center; padding-top: 60px; }
-.pg-first-h { margin: 0; }
-.pg-anat { margin: 32px 0 0; font-size: clamp(36px, 3.9vw, 56px); line-height: 1.08; letter-spacing: -.04em; font-weight: 600; color: #6e6e73; text-wrap: balance; }
+.pg-first-grid { display: grid; grid-template-columns: 5fr 7fr; gap: clamp(32px, 5vw, 96px); align-items: start; padding-top: 60px; }
+.pg-first-h { margin: 0; font-size: 26px; }
+.pg-anat { margin: 32px 0 0; font-size: clamp(32px, 3vw, 44px); line-height: 1.12; letter-spacing: -.03em; font-weight: 497; color: #737373; text-wrap: balance; }
 .pg-g { white-space: nowrap; }
 .pg-g + .pg-g::before { content: ' '; white-space: normal; }
 /* a lit phrase: ink, heavier, and underlined by a bar that draws in (never a colour) */
-.pg-ph { position: relative; border: 0; padding: 4px 0; margin: -4px 0; background: none; font: inherit; letter-spacing: inherit; color: inherit; cursor: pointer; text-align: left; font-variation-settings: 'wght' 480; transition: color .45s, font-variation-settings .6s cubic-bezier(.16, 1, .3, 1), transform .12s; touch-action: manipulation; }
+.pg-ph { position: relative; border: 0; padding: 4px 0; margin: -4px 0; background: none; font: inherit; letter-spacing: inherit; color: inherit; cursor: pointer; text-align: left; transition: color .3s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); touch-action: manipulation; }
 .pg-ph::after { content: ''; position: absolute; left: 0; right: 0; bottom: .02em; height: .07em; border-radius: 2px; background: currentColor; transform: scaleX(0); transform-origin: 0 50%; transition: transform .5s cubic-bezier(.16, 1, .3, 1); }
-.pg-ph:active { transform: translateY(1px); }
-.pg-ph.on { color: var(--ink); font-variation-settings: 'wght' 700; }
+@media (hover: hover) { .pg-ph:not(.on):hover { color: #404040; } .pg-ph:not(.on):hover::after { transform: scaleX(.35); } }
+.pg-ph:active { transform: translateY(1px); transition-duration: 90ms; }
+.pg-ph.on { color: var(--ink); }
 .pg-ph.on:not(:last-child)::after { transform: scaleX(1); }
-.pg-ph.all { color: var(--ink); }
-.pg-req { background: #fff; border-radius: 28px; box-shadow: 0 0 0 1px var(--line), 0 40px 100px -40px rgba(0, 0, 0, .22); overflow: hidden; }
+.pg-ph.all, .pg-anat[data-at='3'] { color: var(--ink); }
+.pg-req { background: #fff; border-radius: 28px; box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; }
 .pg-req-bar { display: flex; align-items: center; gap: 7px; height: 60px; padding: 0 10px 0 20px; border-bottom: 1px solid var(--line); }
-.pg-req-bar > i { width: 11px; height: 11px; border-radius: 50%; background: #e3e3e6; }
-.pg-req-tabs { display: inline-flex; margin: 0 auto 0 14px; padding: 3px; border-radius: 999px; background: #f2f2f4; }
-.pg-req-tabs button { min-height: 38px; padding: 0 16px; border: 0; border-radius: 999px; background: none; font: 500 14px/1 var(--mono); color: var(--muted); cursor: pointer; touch-action: manipulation; transition: background-color .3s, color .3s, transform .12s; }
-.pg-req-tabs button:active { transform: scale(.98); }
-.pg-req-tabs button.on { background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(0, 0, 0, .1); }
+.pg-req-bar > i { width: 11px; height: 11px; border-radius: 50%; background: #e4e4e7; }
+.pg-req-tabs { display: inline-flex; margin: 0 auto 0 14px; padding: 3px; border-radius: 999px; background: #f2f2f2; }
+.pg-req-tabs button { min-height: 38px; padding: 0 16px; border: 0; border-radius: 999px; background: none; font: 500 14px/1 var(--mono); color: var(--muted); cursor: pointer; touch-action: manipulation; transition: background-color .3s cubic-bezier(0, 0, .2, 1), color .3s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); }
+.pg-req-tabs button:active { transform: scale(.97); transition-duration: 90ms; }
+.pg-req-tabs button.on { background: #fff; color: var(--ink); }
 @media (hover: hover) { .pg-req-tabs button:not(.on):hover { color: var(--ink); background: rgba(0, 0, 0, .05); } }
-.pg-req-panes { display: grid; }
+.pg-req-panes { position: relative; }
 .pg-req-pane { padding: 22px 28px 30px; }
-.pg-first[data-live] .pg-req-pane { grid-area: 1 / 1; opacity: 0; transform: translateY(12px); transition: opacity .35s, transform .55s cubic-bezier(.16, 1, .3, 1); }
-.pg-first[data-live] .pg-req-pane[data-on] { opacity: 1; transform: none; }
+.pg-first[data-live] .pg-req-pane { position: absolute; inset: 0 0 auto 0; opacity: 0; transform: translateY(12px); transition: opacity .35s, transform .55s cubic-bezier(.16, 1, .3, 1); }
+.pg-first[data-live] .pg-req-pane[data-on] { position: relative; opacity: 1; transform: none; }
+/* the request is live: a caret blinks after the last line, like the terminal it is pasted into */
+.pg-caret { display: inline-block; width: .55em; height: 1.1em; margin-left: 2px; vertical-align: -.18em; background: var(--ink); animation: pg-caret .8s cubic-bezier(.4, 0, .2, 1) infinite alternate; }
+.pg-req-pane:not([data-on]) .pg-caret { animation: none; }
+@keyframes pg-caret { to { opacity: .12; } }
 .pg-req-l { margin: 0 0 14px; font: 500 13px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
 .pg-req pre { margin: 0; font: 400 clamp(14px, 1.1vw, 16px)/1.7 var(--mono); color: var(--ink); white-space: pre-wrap; word-break: break-word; }
 .pg-ln.c { color: var(--muted); }
-.pg-req mark { background: var(--ink); color: #fff; border-radius: 5px; padding: 1px 3px; margin: 0 -3px; box-decoration-break: clone; animation: pg-mark .5s cubic-bezier(.16, 1, .3, 1); }
+.pg-req mark { background: var(--ink); color: #fff; border-radius: 6px; padding: 1px 3px; margin: 0 -3px; box-decoration-break: clone; animation: pg-mark .5s cubic-bezier(.16, 1, .3, 1); }
 @keyframes pg-mark { from { background: transparent; color: inherit; } }
 
 /* the dark room: the agent prompt. Hanzo's words are in the server HTML, so the shared fade-up never hides them */
 .pg-paste { padding: clamp(160px, 17vw, 260px) 0; }
 .pg .cf-paste { opacity: 1 !important; transform: none !important; }
 .pg .x-copy-t { font-size: 13px; }
-.pg-paste .cf-paste-t { font-size: clamp(36px, 3.9vw, 56px); font-weight: 600; letter-spacing: -.042em; }
+.pg-paste .cf-paste-t { font-size: clamp(32px, 3vw, 44px); font-weight: 497; letter-spacing: -.042em; }
 .pg-paste-grid { display: grid; grid-template-columns: 5fr 7fr; gap: clamp(32px, 5vw, 88px); align-items: center; }
 /* the wall: nine of Hanzo's model films; one plays at a time (the hovered one, or the next in turn) */
 .pg-wall { position: relative; }
 .pg-wall-pause { top: -58px; right: 0; }
 .pg-wall-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-.pg-tile { position: relative; display: block; aspect-ratio: 3 / 2; border-radius: 16px; overflow: hidden; background: #161618; color: #f5f5f7; text-decoration: none; transform: translateZ(0); transition: transform .5s cubic-bezier(.16, 1, .3, 1), box-shadow .5s cubic-bezier(.16, 1, .3, 1); }
+.pg-tile { position: relative; display: block; aspect-ratio: 3 / 2; border-radius: 16px; overflow: hidden; background: #171717; color: #f5f5f5; text-decoration: none; transform: translateZ(0); transition: transform .5s cubic-bezier(.16, 1, .3, 1), box-shadow .5s cubic-bezier(.16, 1, .3, 1); }
 .pg-tile-img, .pg-tile-film { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .pg-tile-img { transition: transform .9s cubic-bezier(.16, 1, .3, 1); }
 .pg-tile.on .pg-tile-img { transform: scale(1.05); }
-.pg-tile.on { box-shadow: 0 0 0 2px #f5f5f7; }
+.pg-tile.on { box-shadow: 0 0 0 2px #f5f5f5; }
 .pg-tile-film { opacity: 0; animation: pg-film-in .6s .2s both; }
 @keyframes pg-film-in { to { opacity: 1; } }
 .pg-tile-n { position: absolute; left: 12px; bottom: 10px; padding: 6px 10px; border-radius: 999px; background: rgba(10, 10, 10, .72); font: 500 14px/1 var(--sans); letter-spacing: -.01em; transform: translateY(4px); transition: transform .4s cubic-bezier(.16, 1, .3, 1), background-color .3s; }
-.pg-tile.on .pg-tile-n { transform: none; background: #f5f5f7; color: #0a0a0a; }
-.pg-tile:active { transform: scale(.98); }
+.pg-tile.on .pg-tile-n { transform: none; background: #f5f5f5; color: #0a0a0a; }
+.pg-tile:active { transform: scale(.98); transition-duration: 90ms; }
 @media (hover: hover) { .pg-tile:hover .pg-tile-img { transform: scale(1.05); } }
-.pg-paste .cf-paste-d { font-size: clamp(17px, 1.32vw, 19px); color: #a1a1a6; }
+.pg-paste .cf-paste-d { font-size: clamp(17px, 1.32vw, 19px); color: #a3a3a3; }
 .pg-paste .cf-paste-code { font-size: clamp(15px, 1.25vw, 18px); padding: 28px 28px 34px; }
+
+/* the close: "Deploy to Cloud" answers hover (it leans and its underline thickens) and press */
+.pg .lx-close-acts .lx-text { display: inline-block; transition: transform .15s cubic-bezier(0, 0, .2, 1), text-decoration-thickness .15s; }
+@media (hover: hover) { .pg .lx-close-acts .lx-text:hover { transform: translateX(3px); text-decoration-thickness: 2px; } }
+.pg .lx-close-acts .lx-text:active { transform: translateY(1px); transition-duration: 90ms; }
+
+/* hovers that tell you where you go: the asks' arrows lean on; Copy and the repo fill */
+.pg .pg-acts .lx-cta svg, .pg .lx-close-repo svg { transition: transform .15s cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) {
+  .pg .pg-acts .lx-cta:hover svg { transform: translateX(4px); }
+  .pg .pg-req .x-copy:hover { background: #f5f5f5; }
+  .pg .lx-close-repo:hover svg { transform: translateX(2px) rotate(-8deg); }
+  .pg-req-tabs button.on:hover { background: #fafafa; }
+}
+
+/* related: each card's Sigil drifts slowly, so the row is never dead (art drift, well under 140px) */
+.pg-rel .lx-rel-sigil { animation: pg-drift 12s cubic-bezier(.4, 0, .2, 1) infinite alternate; }
+.pg-rel li:nth-child(2) .lx-rel-sigil { animation-delay: -4s; }
+.pg-rel li:nth-child(3) .lx-rel-sigil { animation-delay: -8s; }
+@keyframes pg-drift { from { transform: translate3d(-14px, 0, 0) scale(1.06); } to { transform: translate3d(14px, -6px, 0) scale(1.06); } }
 
 /* related: one tall card and two stacked beside it, not three equal boxes in a row */
 .pg-rel .lx-rel-grid[data-n='3'] { grid-template-columns: 7fr 5fr; grid-template-rows: auto auto; }
@@ -156,7 +192,7 @@ html:has(main.pg) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
   .pg-hero { padding: 24px 0 96px; }
   .pg-hero-grid { grid-template-columns: minmax(0, 1fr); gap: 32px; }
   .pg-lede { margin-top: 16px; }
-  .pg-acts { margin-top: 22px; gap: 8px; flex-wrap: nowrap; }
+  .pg-acts { margin-top: 22px; gap: 8px; flex-wrap: wrap; }
   .pg-acts .lx-cta { padding: 0 18px; }
   .pg-acts .lx-ghost { padding: 0 16px; }
   .pg-bar { padding-left: 14px; }
@@ -173,17 +209,21 @@ html:has(main.pg) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
   .pg-first-grid { grid-template-columns: minmax(0, 1fr); gap: 22px; padding-top: 76px; }
   .pg-anat { margin-top: 14px; font-size: 32px; }
   .pg-ph { padding: 5px 0; margin: -5px 0; }
-  .pg-req { border-radius: 22px; }
+  .pg-req { border-radius: 24px; }
   .pg-req-bar { padding-left: 14px; }
   .pg-req-tabs button { min-height: 44px; }
   .pg-req-pane { padding: 16px 16px 20px; }
   .pg-req pre { font-size: 14px; line-height: 1.6; }
   .pg-first[data-live] .pg-req-pane:last-child pre { max-height: 190px; overflow: hidden; -webkit-mask-image: linear-gradient(#000 75%, transparent); mask-image: linear-gradient(#000 75%, transparent); }
+  /* the clipped Python client reads itself: the code rolls slowly up through the window and back */
+  .pg-first[data-live] .pg-req-pane:last-child[data-on] pre code { display: block; animation: pg-read 9s cubic-bezier(.4, 0, .2, 1) 1s infinite alternate; }
+  @keyframes pg-read { 0%, 12% { transform: none; } 88%, 100% { transform: translateY(calc(-100% + 150px)); } }
   .pg-paste { padding: 120px 0; }
   .pg-paste-grid { grid-template-columns: minmax(0, 1fr); gap: 48px; }
   .pg-wall-pause { top: -54px; }
   .pg-wall-grid { gap: 6px; }
   .pg-tile { aspect-ratio: 4 / 5; border-radius: 12px; }
+  .pg .lx-close-mark span, .pg .lx-close-facts { font-size: 14px; }
   .pg-tile-n { left: 6px; bottom: 6px; padding: 5px 8px; font-size: 14px; }
   .pg-rel .lx-rel-grid[data-n='3'] { grid-template-columns: minmax(0, 1fr); }
   .pg-rel .lx-rel-grid[data-n='3'] > li:first-child { grid-row: auto; }
@@ -191,6 +231,6 @@ html:has(main.pg) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
   .pg-rel .lx-rel-grid[data-n='3'] > li:not(:first-child) .lx-rel-art { height: 100px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .pg-wave i, .pg-mode-t, .pg-head::after, .pg-meter li b, .pg-req mark, .pg-ph::after { animation: none; transition: none; }
+  .pg-stage-in, .pg-caret, .pg-req-pane pre code, .pg-rel .lx-rel-sigil, .pg-wave i, .pg-mode-t, .pg-head::after, .pg-meter li b, .pg-req mark, .pg-ph::after { animation: none; transition: none; }
   .pg-tiles { display: none; }
 }

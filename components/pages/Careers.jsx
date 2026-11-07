@@ -1,35 +1,42 @@
 'use client';
-/* /careers. V2: 8/10 to MASTER.md (deck type and greys, kit Cta, no ask bar, still perks). Earlier: v3 to JAMES.md: no labels over headlines, ink and greys only, the hero and its one ask fit
-   1470×801, one solid per screen with the ask sticky after the hero (the site's Ask bar, from data-thumb), every section holds an object, perks pinned.
+/* /careers.
+   V2: 8/10 re-review fixes: JS-off and reduced motion clean; the 21-button toolbar is one quiet skill row with a gliding
+   ink pill; perks crossfade (300ms) and stay in view on phones; phone numerals in their own row; a sheet opens in its own
+   white carrying its title and numeral onto the role page's h1 and numeral (page-local careers/door.js); the next
+   section peeks at 1470×801.
    Persona: an engineer or researcher deciding whether to apply (PLAN 1.1 "one contact click").
-   Goal: open a role and apply.  CTA: "View Open Positions" (careers.hero), the same ask in the site Ask bar (data-thumb) and the close.
+   Goal: open a role and apply.  CTA: "View Open Positions" (careers.hero), again only in the dark close (careers has no
+   sticky ask: data-ask="off", MASTER part 4).
    Metric: cta_click careers.* leading to a role page.
    Signature: the open roles are a deck of sheets. Scroll and each role rises over the last while the stack behind it
-   settles back; click a sheet and its title flies into the role page's headline (Morph, synchronized.studio).
-   Supporting (3): masked kinetic headline, once; the How-we-hire card sliding its steps by itself; the perk list's
-   Sigil field redrawing for the perk you point at. A Utility page (MASTER 4.5): the deck is its one delight, no
-   sticky ask (careers has none), entries 0.4s.
-   Beyond: match what you know. Tap the skills you have, taken word for word from the role descriptions (LLVM, RLHF,
-   zero-knowledge, data visualization…): the roles that ask for them stay lit with the words marked, the rest step back.
-   Deletes: the orange accent, the kicker over the h1 and over every headline, "Link" / "Copied" / "Clear" / "Match what
-   you know" / "ask for it" as visible words (icons with aria-labels now), native title= tooltips, the cross-fade in the
-   hiring card, the second solid button in Academic, solid "Apply" on every sheet.
-   The role pages (/careers/<slug>) keep Careers.css; this index has its own CareersBoard.css. */
+   settles back; click a sheet and it grows to fill the screen in its own white, its title and numeral flying onto the
+   role page's h1 and numeral (synchronized.studio; the site Morph times out, docs/requests/careers.md).
+   Supporting (3): masked kinetic headline, once, from first paint (CSS); the How-we-hire card sliding its steps by
+   itself; the perk tile crossfading its Sigil field and numeral to the perk you point at or tap. A Utility page (MASTER
+   4.5): the deck is its one delight, entries 0.4s.
+   Beyond: match what you know. Pick a skill, word for word from the role descriptions (LLVM, RLHF, zero-knowledge, data
+   visualization…): the ink pill glides to it, the roles that ask for it stay lit with the words marked, the rest step back.
+   Deletes: the orange accent, the kicker over the h1 and over every headline, the 8-pill team filter (each team had one
+   role), "Link" / "Copied" / "Clear" / "Match what you know" as visible words (icons with aria-labels), native title=
+   tooltips, the second solid button in Academic, solid "Apply" on every sheet.
+   The role pages (/careers/<slug>) are CareerRole.jsx; this index has its own CareersBoard.css. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { AnimatePresence, motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { useRouter } from 'next/navigation';
 import { A, Cta } from '../kit';
 import Sigil from '../Sigil';
 import MaskLines from './careers/MaskLines'; // careers' own variant; main's v2/MaskLines differs
 import useArrived from './company/useArrived';
-import { openDoor, useArrival } from './doorway';
+import { openSheet, useSheetLanding } from './careers/door';
 import { href as hrefOf } from '../../lib/route';
+import { play } from '../../lib/sound';
 import '../v2/vc-type.css';
 import './company/deck.css';
 import './CareersBoard.css';
 
 const EASE = [0.16, 1, 0.3, 1];
-const NOJS = { __html: '<style>.xcb-hero-f,.xcb-hero-o{opacity:1!important;transform:none!important}.xcb-hire-stage{display:block!important;overflow:visible!important}.xcb-hire-s{transform:none!important;margin-top:20px}.xcb-hire-n{display:none!important}</style>' }; // JS off: the hero is legible
+// JS off: the hero is legible; the hiring steps read as a plain list (only one step per row, no counter, no bars)
+const NOJS = { __html: '<style>.xcb-hero-f,.xcb-hero-o{opacity:1!important;transform:none!important}.xcb-hire-stage{display:block!important;overflow:visible!important}.xcb-hire-s{transform:none!important;margin-top:20px}.xcb-hire-n,.xcb-hire-h .vc-num{display:none!important}</style>' };
 
 /* How we hire: the four steps slide through a mask by themselves (never two titles at once); tap a step to hold it. */
 function Hire({ how }) {
@@ -105,9 +112,10 @@ function Marked({ text, know }) {
 }
 
 /* One role, one sheet. It sticks a little lower than the one before, and settles back as later sheets cover it. */
-/* The sheet opens into its page: its rectangle grows to fill the screen in the sheet's own grey, the role page
-   arrives, and the cover wipes away (doorway.js). The site Morph is skipped here (data-no-morph): it times out today. */
-const open = (e, to, router, el) => openDoor(e, hrefOf(to), router, '#fff', el);
+/* The sheet opens into its page: the whole sheet grows to fill the screen in its own white, carrying its title and
+   numeral, which then land on the role page's h1 and numeral (careers/door.js). The site Morph is skipped here
+   (data-no-morph): it times out today (docs/requests/careers.md). */
+const open = (e, to, router, el) => openSheet(e, hrefOf(to), router, el || e.currentTarget.closest('.xcb-sheet-in'));
 
 function Sheet({ r, i, n, know, progress }) {
   const router = useRouter();
@@ -158,11 +166,18 @@ function Deck({ roles, know, dont, dontA }) {
 function Perks({ perks }) {
   const [at, setAt] = useState(0);
   const [t, p] = perks.items[at];
+  const calm = useReducedMotion();
+  const fade = { duration: calm ? 0 : 0.3, ease: EASE };
   return (
     <div className="vc-grid xcb-perk-g">
       <div className="xcb-perk-v" aria-hidden="true">
-        <Sigil seed={'careers/' + t} data={[t.length, p.length, at + 1]} className="xcb-perk-sig" />
-        <span className="xcb-perk-big vc-num">{String(at + 1).padStart(2, '0')}</span>
+        {/* the field and numeral crossfade (300ms, ease-emphasis) to the perk you point at, tap or focus */}
+        <AnimatePresence initial={false}>
+          <motion.div key={at} className="xcb-perk-f" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={fade}>
+            <Sigil seed={'careers/' + t} data={[t.length, p.length, at + 1]} className="xcb-perk-sig" />
+            <motion.span className="xcb-perk-big vc-num" initial={{ y: calm ? 0 : 12 }} animate={{ y: 0 }} exit={{ y: calm ? 0 : -12 }} transition={fade}>{String(at + 1).padStart(2, '0')}</motion.span>
+          </motion.div>
+        </AnimatePresence>
       </div>
       <ol className="xcb-perk-l">
         {perks.items.map(([pt, pp], i) => (
@@ -180,9 +195,10 @@ function Perks({ perks }) {
 const fig = (t) => /^([\d,]+\+)\s+(.*)$/.exec(t);
 
 export default function Careers({ d }) {
-  useArrival();
+  useSheetLanding();
   const roles = d.pos.leaves;
-  const [know, setKnow] = useState([]);
+  const [pick, setPick] = useState(null); // one skill at a time: the ink pill glides to it
+  const know = pick ? [pick] : [];
   const shown = roles;
   const skills = SKILLS.filter((k) => roles.some((r) => asks(r, k)));
   const hits = shown.filter((r) => know.some((k) => asks(r, k))).length;
@@ -198,7 +214,7 @@ export default function Careers({ d }) {
       <section className="xcb-hero vc-scene" aria-label={d.kicker} data-ask-name={d.kicker}>
         <div className="vc-grid xcb-hero-g">
           <div className="xcb-hero-c">
-            <MaskLines as="h1" id="xcb-h1" now delay={0.05} lines={lines} className="vc-display xcb-h1" />
+            <MaskLines as="h1" id="xcb-h1" now delay={-0.38} lines={lines} className="vc-display xcb-h1" />
             <motion.div className="xcb-hero-f" initial={{ opacity: 0, y: 12 }} animate={arrived ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 0.4, ease: EASE, delay: 0.45 }}>
               <p className="vc-lede">{d.lede}</p>
               <div className="xcb-acts">
@@ -227,19 +243,25 @@ export default function Careers({ d }) {
             <h2 id="xcb-pos-h" className="vc-display s">{d.pos.title}</h2>
             <p className="vc-lede">{d.pos.lede}</p>
           </div>
+          {/* one quiet row: the skills, word for word from the roles; pick one and the ink pill glides to it */}
           <div className="xcb-tools">
+            <span className="xcb-know-i" aria-hidden="true"><svg viewBox="0 0 20 20" width="20" height="20"><circle cx="10" cy="10" r="7.2" fill="none" stroke="currentColor" strokeWidth="1.4" /><circle cx="10" cy="10" r="3.2" fill="none" stroke="currentColor" strokeWidth="1.4" /><circle cx="10" cy="10" r=".9" fill="currentColor" /></svg></span>
             <div className="xcb-know" role="group" aria-label="Match what you know">
-              <span className="xcb-know-i" aria-hidden="true"><svg viewBox="0 0 20 20" width="20" height="20"><circle cx="10" cy="10" r="7.2" fill="none" stroke="currentColor" strokeWidth="1.4" /><circle cx="10" cy="10" r="3.2" fill="none" stroke="currentColor" strokeWidth="1.4" /><circle cx="10" cy="10" r=".9" fill="currentColor" /></svg></span>
               {skills.map((k) => {
-                const on = know.includes(k);
-                return <button key={k} type="button" aria-pressed={on} onClick={() => setKnow((v) => (on ? v.filter((x) => x !== k) : [...v, k]))}>{k}</button>;
+                const on = pick === k;
+                return (
+                  <button key={k} type="button" aria-pressed={on} onClick={(e) => { play('tick'); setPick(on ? null : k); e.currentTarget.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' }); }}>
+                    {on && <motion.span layoutId="xcb-know-pill" className="xcb-pill" transition={{ duration: 0.3, ease: EASE }} />}
+                    <span>{k}</span>
+                  </button>
+                );
               })}
-              {know.length > 0 && (
-                <button type="button" className="xcb-know-x" aria-label="Clear" onClick={() => setKnow([])}>
-                  <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
-                </button>
-              )}
             </div>
+            {pick && (
+              <button type="button" className="xcb-know-x" aria-label="Clear" onClick={() => setPick(null)}>
+                <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
+              </button>
+            )}
             <p className="xcb-count vc-num" role="status" aria-label={`${shown.length} of ${roles.length} roles${know.length ? `, ${hits} ask for what you know` : ''}`}>
               <b>{know.length ? hits : shown.length}</b> / {know.length ? shown.length : roles.length}
             </p>

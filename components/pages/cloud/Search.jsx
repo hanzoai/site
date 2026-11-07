@@ -2,21 +2,23 @@
 /* Search (v2, Cloud 4 chat). Archetype A, Launch: Stage hero → four chapters → a dark "how it works" room driven by its
    three steps → frameworks → pricing with a fit-finder → Get Search → one closing band. Ink, greys and white only.
    Persona: a developer adding search to their docs or product. Goal: read the docs and create an index.
-   CTA: "Read the docs" (hero, ask bar, close; data-cta primary / close). Metric: cta_click:search.primary.
-   V2: 8/10 a Spotlight-size search types on arrival and settles; one query answered four ways in pinned chapters; the dark room is the bar itself driven by its three steps; greys only, one ask, a closing band
+   CTA: "Read the docs" (hero, sticky header on desktop, close; data-cta primary / close).
+   Metric: api_key_created (developers, MASTER §1).
+   V2: 8/10 a Spotlight-size search types on arrival and settles; one query answered four ways in pinned chapters (phone pictures run when seen); the dark room runs its three steps by itself (pausable, hover holds); the close replays the hero query centred under one merged rank; page-scoped deck tokens, 44px phone targets
    Signature: one query, four answers. "Kubernets" types itself into a search bar the size of the screen, and as you scroll
    the same index answers it four ways: the typo fixed, the neighbours by meaning, the two lists fused by rank (the rows
    re-flow into one), then a streamed answer with its sources.
    Beyond: "Which plan fits?" Set your projects and docs per project and the plan whose limits cover them lights up, read
    straight from Hanzo's own plan limits.
    Motion: scroll-pinned chapters (signature) + typing and streaming (time) + tab pill and step re-flow (state) + the
-   stage settle (scroll). The hero object runs on arrival and carries a pause control. Every word, price and link is
+   stage settle (scroll). Idle below the chapters: the dark room steps through index, query and ask on its own while in
+   view (pause first in the room), and the closing bar retypes the query and fuses its two lists once at 60% in view. The hero object runs on arrival and carries a pause control. Every word, price and link is
    Hanzo's; the query, the results and the RAG question are examples, and the streamed answer is Hanzo's own sentence. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useInView } from 'motion/react';
 import useCalm from '../../v2/useCalm';
 import { EASE } from '../../ui';
-import { Cta } from '../../kit';
+import { A, Cta } from '../../kit';
 import { useSteps } from './Frame';
 import { useDemo, PauseBtn } from '../../v2/x-hamilton/Demo';
 import Console from '../../v2/x-hamilton/Console';
@@ -61,7 +63,7 @@ function Streamed({ run, big }) {
   return (
     <div className={'se2-rag' + (big ? ' big' : '')}>
       <p className="se2-rag-q">{RAG_Q}</p>
-      <p className="se2-rag-a"><span ref={out}>{RAG_A}</span>{!done && <i className="se2-caret sm" aria-hidden="true" />}</p>
+      <p className="se2-rag-a"><span className="se2-ghost" aria-hidden="true">{RAG_A}</span><span className="se2-live"><span ref={out}>{RAG_A}</span>{!done && <i className="se2-caret sm" aria-hidden="true" />}</span></p>
       <div className={'se2-srcs' + (done ? ' on' : '')}>{SRC.map((x, i) => <span key={x} className="l2-mono">[{i + 1}] {x}</span>)}</div>
     </div>
   );
@@ -137,24 +139,38 @@ const WAYS = [
 const DOTS = Array.from({ length: 46 }, (_, i) => { const a = Math.sin(i * 12.9898) * 43758.5453, b = Math.sin(i * 78.233) * 12543.1; return [Math.round(60 + (a - Math.floor(a)) * 880) / 10, Math.round(80 + (b - Math.floor(b)) * 840) / 10]; });
 const NEAR = [[60, 30, 'Running containers in production'], [70, 52, 'Deploy to Kubernetes'], [44, 58, 'Scaling a service']];
 
+/* Chapter 01's word: "Kubernets" as typed, then the missing "e" drops in and is underlined (once, when seen). */
+function FixWord({ run }) {
+  const [fixed, setFixed] = useState(true);
+  useEffect(() => {
+    if (!run) return;
+    setFixed(false);
+    const t = setTimeout(() => setFixed(true), 1100);
+    return () => clearTimeout(t);
+  }, [run]);
+  return <p className="se2-w0-q">Kubern<mark className={fixed ? 'on' : ''}>e</mark>tes</p>;
+}
+
 /* One chapter's picture, for the chapter reached. */
 function Way({ at }) {
   const calm = useCalm();
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount: 0.6 });
   const [fused, setFused] = useState(false);
-  useEffect(() => { if (at !== 2) return; if (calm) { setFused(true); return; } setFused(false); const t = setTimeout(() => setFused(true), 900); return () => clearTimeout(t); }, [at, calm]);
+  useEffect(() => { if (at !== 2) return; if (calm) { setFused(true); return; } if (!seen) { setFused(false); return; } const t = setTimeout(() => setFused(true), 900); return () => clearTimeout(t); }, [at, calm, seen]);
   return (
-    <div className="l2-obj se2-way">
+    <div className="l2-obj se2-way" ref={ref}>
       <AnimatePresence mode="wait" initial={false}>
         <motion.div key={at} className="se2-way-in" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16, transition: { duration: 0.2 } }} transition={{ duration: 0.55, ease: EASE }}>
           {at === 0 && (
             <div className="se2-w0">
-              <p className="se2-w0-q">Kubern<mark>e</mark>tes</p>
+              <FixWord run={!calm && seen} />
               <div className="se2-w0-f l2-mono"><span>docs</span><span className="on">last quarter</span></div>
               <ol>{TEXT.map((r, i) => <li key={r}><span className="l2-mono">{i + 1}</span>{r}{i === 0 && <em className="se2-fixc l2-mono">typo fixed</em>}</li>)}</ol>
             </div>
           )}
           {at === 1 && (
-            <div className="se2-w1">
+            <div className={'se2-w1' + (seen || calm ? ' go' : '')}>
               <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">{NEAR.map(([x, y], i) => <line key={i} x1="58" y1="46" x2={x} y2={y} style={{ animationDelay: 0.2 + i * 0.12 + 's' }} />)}</svg>
               {DOTS.map(([x, y], i) => <i key={i} style={{ left: x + '%', top: y + '%' }} />)}
               {NEAR.map(([x, y], i) => <i key={'n' + i} className="near" style={{ left: x + '%', top: y + '%' }} />)}
@@ -171,7 +187,7 @@ function Way({ at }) {
             </div>
           )}
           {at === 3 && (
-            <div className="se2-w3"><Streamed run={!calm} big /></div>
+            <div className="se2-w3"><Streamed run={!calm && seen} big /></div>
           )}
         </motion.div>
       </AnimatePresence>
@@ -189,8 +205,8 @@ const CALLERS = ['React hook', 'REST API', 'MCP tool'];
 const LANDING = ['Deploy to Kubernetes', 'Kubernetes ingress', 'Cluster quotas', 'Scaling a service'];
 
 /* The dark room's object is the bar itself, small, showing what each step does: documents landing in the index, the
-   three callers reaching the same index, and an answer with its two linked sources. A step is chosen by hand (hover,
-   focus or tap); nothing here runs by itself. */
+   three callers reaching the same index, and an answer with its two linked sources. While the room is in view the steps
+   take turns by themselves (4.2 s each); hover, focus or tap holds one, and the pause sits first in the room. */
 function HowBar({ at }) {
   return (
     <div className="se2-hb" aria-hidden="true">
@@ -207,17 +223,19 @@ function HowBar({ at }) {
 }
 
 function How() {
-  const [at, setAt] = useState(0);
+  const [ref, live, , paused, toggle] = useDemo(0.35);
+  const [at, setAt] = useSteps(3, 4200, live);
   return (
-    <section className="l2-sec l2-dark se2-how" data-room="dark">
+    <section className="l2-sec l2-dark se2-how" data-room="dark" ref={ref}>
       <div className="l2-wrap l2-grid">
         <div className="se2-how-l">
+          <PauseBtn paused={paused} onClick={toggle} className="se2-how-pause" />
           <h2 className="l2-head">How it works</h2>
           <p className="l2-lede">Content in, ranked results out, and a model over the top if you want one.</p>
           <HowBar at={at} />
           <div className="se2-con-open">
             <Drawer label="Console" title="Hanzo Search">
-              <Console name="Search" api="/v1/search" side={[['Search', '/search'], ['Chat', '/cloud/chat'], ['Bot', '/bot'], ['Crawl', '/crawl'], ['Studio', '/studio'], ['Console', '/console'], ['Referrals', '/cloud/referrals'], ['Marketplace', '/cloud/marketplace']]} />
+              <Console name="Search" api="/v1/search" side={SIDE} />
               <p className="se2-note">Example project. Every name in it is one you would give your own.</p>
             </Drawer>
           </div>
@@ -241,9 +259,10 @@ const FW = ['Hanzo Docs', 'Fumadocs', 'Nextra', 'Docusaurus', 'REST API'];
 
 /* Frameworks: pick one and the bar shows where its docs come from (native, or the REST API for everything else). */
 function Frameworks() {
-  const [at, setAt] = useState(0);
+  const [ref, live] = useDemo(0.5);
+  const [at, setAt] = useSteps(FW.length, 2600, live);
   return (
-    <section className="l2-sec tight se2-fw">
+    <section className="l2-sec tight se2-fw" ref={ref}>
       <div className="l2-wrap l2-grid">
         <div className="se2-fw-h">
           <h2 className="l2-head">Works with any docs framework</h2>
@@ -283,6 +302,19 @@ function Pricing() {
   const [p, setP] = useState(3);
   const [d, setD] = useState(2);
   const pr = useRef(null), dr = useRef(null);
+  const box = useRef(null);
+  const seen = useInView(box, { amount: 0.6, once: true });
+  const calm = useCalm();
+  const touched = useRef(false);
+  useEffect(() => {
+    if (!seen || calm || touched.current) return;
+    // roll from the smallest setting up to the default (5 projects, 10k docs): Build lights as the limits are reached
+    let i = 0, t = 0;
+    const steps = [[0, 0], [1, 0], [1, 1], [2, 1], [2, 2], [3, 2]];
+    const go = () => { if (touched.current) return; const [a, b] = steps[i]; setP(a); setD(b); i++; if (i < steps.length) t = setTimeout(go, 260); };
+    t = setTimeout(go, 200);
+    return () => clearTimeout(t);
+  }, [seen, calm]);
   useEffect(() => { fillOf(pr.current, p, PROJ.length); fillOf(dr.current, d, DOCN.length); }, [p, d]);
   const proj = PROJ[p], docs = DOCN[d];
   const fit = PLANS.findIndex(([, , , , , [mp, md]]) => proj <= mp && docs <= md);
@@ -292,7 +324,7 @@ function Pricing() {
         <div className="se2-price-h">
           <h2 className="l2-head">Pricing</h2>
           <p className="l2-body">Pay for hosted search, vector, and AI. Self-host Meilisearch free forever.</p>
-          <div className="se2-fit" role="group" aria-label="Which plan fits">
+          <div className="se2-fit" role="group" aria-label="Which plan fits" ref={box} onPointerDown={() => { touched.current = true; }} onKeyDown={() => { touched.current = true; }}>
             <p className="l2-kick">Which plan fits</p>
             <label><span>Projects</span><b className="l2-mono">{proj}</b><input ref={pr} className="l2-range" type="range" min="0" max={PROJ.length - 1} value={p} onChange={(e) => setP(+e.target.value)} aria-valuetext={proj + ' projects'} /></label>
             <label><span>Docs per project</span><b className="l2-mono">{k(docs)}</b><input ref={dr} className="l2-range" type="range" min="0" max={DOCN.length - 1} value={d} onChange={(e) => setD(+e.target.value)} aria-valuetext={k(docs) + ' docs per project'} /></label>
@@ -317,15 +349,43 @@ function Pricing() {
   );
 }
 
-/* The close's object: the page ends where it began, the bar answering "Kubernets" with one merged rank. */
+/* The close's object: the page ends where it began. At 60% in view the bar types "Kubernets" again, the text and
+   vector lists stand side by side, then fuse into one merged rank and rest (once; reduced motion shows the rank). */
 function EndBar() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount: 0.6, once: true });
+  const calm = useCalm();
+  const box = useRef(null);
+  const [phase, setPhase] = useState(2); // 0 typing, 1 two lists, 2 one merged rank
+  useEffect(() => {
+    if (!seen || calm) return;
+    setPhase(0);
+    let i = 0, t = 0;
+    if (box.current) box.current.textContent = '';
+    const step = () => {
+      i++;
+      if (box.current) box.current.textContent = Q.slice(0, i);
+      if (i < Q.length) t = setTimeout(step, 110);
+      else { setPhase(1); t = setTimeout(() => setPhase(2), 1400); }
+    };
+    t = setTimeout(step, 300);
+    return () => clearTimeout(t);
+  }, [seen, calm]);
   return (
-    <div className="se2-end" aria-hidden="true">
-      <div className="se2-hb-bar"><svg viewBox="0 0 24 24" width="18" height="18"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" strokeWidth="2" /><path d="M15.5 15.5 21 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg><span>{Q}</span><b className="l2-mono">one merged rank</b></div>
-      <ol>{RRF.map((r, i) => <li key={r}><span className="l2-mono">{i + 1}</span>{r}<em className="l2-mono">{FROM[r]}</em></li>)}</ol>
+    <div className={'se2-end p' + phase} aria-hidden="true" ref={ref}>
+      <div className="se2-hb-bar se2-end-bar"><svg viewBox="0 0 24 24" width="22" height="22"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" strokeWidth="2" /><path d="M15.5 15.5 21 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg><span ref={box}>{Q}</span>{phase === 0 && <i className="se2-caret sm" />}<b className="l2-mono">{phase === 2 ? 'one merged rank' : 'text · vector'}</b></div>
+      <div className={'se2-end-out' + (phase === 2 ? ' fused' : '')}>
+        {phase === 1 && <ol className="a">{TEXT.map((r) => <motion.li key={r} layoutId={'e-' + r}>{r}<em className="l2-mono">text</em></motion.li>)}</ol>}
+        {phase === 1 && <ol className="b">{VEC.filter((r) => !TEXT.includes(r)).map((r) => <motion.li key={r} layoutId={'e-' + r}>{r}<em className="l2-mono">vector</em></motion.li>)}</ol>}
+        {phase === 2 && <ol className="m">{RRF.map((r, i) => <motion.li key={r} layoutId={'e-' + r} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], delay: i * 0.05 }}><span className="l2-mono">{i + 1}</span>{r}<em className="l2-mono">{FROM[r]}</em></motion.li>)}</ol>}
+        {phase === 0 && <ol className="m wait">{RRF.map((r, i) => <li key={r}><span className="l2-mono">{i + 1}</span>{r}<em className="l2-mono">{FROM[r]}</em></li>)}</ol>}
+      </div>
     </div>
   );
 }
+
+// The drawer holds live hanzo.ai/search's own example console (its rows are Hanzo copy, so they stay as they are).
+const SIDE = [['Search', '/search'], ['Chat', '/cloud/chat'], ['Bot', '/bot'], ['Crawl', '/crawl'], ['Studio', '/studio'], ['Console', '/console'], ['Referrals', '/cloud/referrals'], ['Marketplace', '/cloud/marketplace']];
 
 export default function Search() {
   return (
@@ -349,6 +409,7 @@ export default function Search() {
         api="/v1/search"
         related={[['Chat', '/cloud/chat', 'Conversational AI'], ['Bot', '/bot', 'Multi-agent platform'], ['Crawl', '/crawl', 'Web crawler']]}
         tag="AI-powered search"
+        className="se2-fin"
       />
     </main>
   );

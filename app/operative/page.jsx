@@ -1,5 +1,5 @@
-// Signature: the container opens — its doors swing back to show a desktop worked by the model's four hands, then one docker run types itself and the four ports light up
-// Beyond: which way in — say what matters most and the provider that gives it lights up with its one variable, around a container that never changes
+// Signature: the container comes apart: six slabs pressed into one box explode upward, then each layer lifts out and opens as you scroll (components/pages/Operative.jsx)
+// Beyond: pick the provider and only the one environment variable in the command changes; the container stays the same
 import Operative from '../../components/pages/Operative';
 import JsonLd from '../../components/JsonLd';
 import INDEX from '../../content/pages.json';
