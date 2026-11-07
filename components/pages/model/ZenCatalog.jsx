@@ -9,7 +9,7 @@
    Beyond: the per-token meter. Each card draws its total parameters and the parameters that work per token on one
    shared scale (35B with 3B active, 230B with 10B active, 284B with 37B active, from Hanzo's rows), plus context on a log
    scale, so the mixture-of-experts trade is visible at a glance.
-   V2: 8.5/10 Rebuilt as chapters: film stage hero, one-line Quick Start retype, pinned one-figure-per-screen scrub, a bento shelf that re-flows on sort and filter, cards that open into their model pages. */
+   V2: 8.5/10 Rebuilt as chapters (JAMES.md: no UI hues, nothing above the h1, one solid ask per screen): film stage hero, one-line Quick Start retype, pinned one-figure-per-screen scrub, a bento shelf that re-flows on sort and filter, cards that open into their model pages. */
 // Signature: the sort race: Zen5 cards re-flow into a new bento on sort or tier filter, each card opening into its model page
 // Beyond: the per-token meter: total vs active parameters and context on one shared scale for every Zen5 model
 import { useEffect, useRef, useState } from 'react';
@@ -72,17 +72,17 @@ function Stage() {
         <div className="zc-frame" data-morph-target>
           <video ref={film} className="zc-film" src="/models/zen.webm" poster="/models/zen.webp" muted loop playsInline preload="metadata" aria-hidden="true" />
           <div className="zc-frame-in">
-            <p className="zc-badge"><i aria-hidden="true" />Zen 6 and Zen 6 Flash available now · Zen 7 in research preview</p>
             <h1 id="zc-h" className="zc-h1">
               <span className="x-line"><motion.span className="x-line-in" initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.1 }}>Zen Models</motion.span></span>
               <span className="x-line zc-h1-2"><motion.span className="x-line-in" initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.22 }}>Complete API Catalog</motion.span></span>
             </h1>
+            <p className="zc-badge"><i aria-hidden="true" />Zen 6 and Zen 6 Flash available now · Zen 7 in research preview</p>
             <div className="zc-frame-foot">
               <p className="zc-lede">Built for agentic coding and multimodal work. <b>18</b> foundation models from <A to="https://zoo.industries">Zoo Labs Foundation</A> across language, code, vision, image, audio, and retrieval. Zen MoDE (Mixture of Diverse Experts) architecture. From $0.01/MTok.</p>
               <div className="zc-acts">
-                <a href="#zen5" className="x-btn solid">Explore Models</a>
-                <A to="/pricing" className="x-btn">Full Pricing</A>
-                <More to="https://platform.hanzo.ai/api-keys">Get API key</More>
+                <A to="https://platform.hanzo.ai/api-keys" className="x-btn solid" data-thumb="Get API key">Get API key</A>
+                <a href="#zen5" className="x-arrow"><span>Explore Models</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 3v9M4.5 8.5 8 12l3.5-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></a>
+                <More to="/pricing">Full Pricing</More>
               </div>
             </div>
           </div>
@@ -117,7 +117,6 @@ function Quick() {
     <section className="zc-quick" aria-labelledby="zc-q-h" ref={box}>
       <div className="zc-wrap zc-quick-g">
         <div className="zc-quick-t">
-          <p className="zc-kick">python</p>
           <h2 id="zc-q-h" className="zc-h2">Quick Start</h2>
           <p className="zc-lede-d">Drop-in OpenAI-compatible API. Switch models with one line.</p>
           <div className="zc-picks" role="group" aria-label="model=">
@@ -207,10 +206,12 @@ function Shelf() {
       <div className="zc-wrap">
         <div className="zc-shelf-head">
           <div>
-            <p className="zc-kick">Zen5</p>
             <h2 id="zc-cat-h" className="zc-h2">Zen5 -- Agentic Frontier</h2>
           </div>
-          <p className="zc-lede-d">Agentic frontier models trained on 10B+ tokens of real-world tool use and multi-step reasoning.</p>
+          <div className="zc-shelf-side">
+            <p className="zc-kick">Zen5</p>
+            <p className="zc-lede-d">Agentic frontier models trained on 10B+ tokens of real-world tool use and multi-step reasoning.</p>
+          </div>
         </div>
         <div className="zc-ctl">
           <div className="zc-seg" role="group" aria-label="Tier">
@@ -254,8 +255,8 @@ export default function ZenCatalog() {
           <div className="zc-end-r">
             <p className="zc-lede-d">All 18 Zen models available via OpenAI-compatible API. Start building today.</p>
             <div className="zc-acts">
-              <A to="/signup" className="x-btn solid" data-thumb="Get Started">Get Started</A>
-              <A to="/dev" className="x-btn">Try Hanzo Dev</A>
+              <A to="/signup" className="x-btn solid">Get Started</A>
+              <More to="/dev">Try Hanzo Dev</More>
               <More to="/pricing">View Pricing</More>
             </div>
           </div>

@@ -9,7 +9,7 @@
    Beyond: the request checker. Pick a limit and the checker loads that case (101 questions, a 3,982-token state, a
    state past 32,768, kai-1.4); drag the rulers to check your own request and see its input price at $0.021 per million
    tokens beside Jev's $0.042.
-   V2: 8.5/10 Rebuilt terminal-first: a self-running typed session as hero, a spec-sheet of question types, sticky copy-and-run code, limits that drive the checker, recipes room, Jev move as a landing diff with the benchmark as hero figures. */
+   V2: 8.5/10 Rebuilt terminal-first in greys only (JAMES.md: no UI hues, nothing above the h1, one solid ask per screen): a self-running typed session as hero, a spec-sheet of question types, sticky copy-and-run code, limits that drive the checker, recipes room, Jev move as a landing diff with the benchmark as hero figures. */
 // Signature: the session runs itself: the guide's curl request typing into a terminal and its response shape streaming back
 // Beyond: the request checker, driven by the limit you pick or by your own rulers, priced against Jev
 import { useEffect, useRef, useState } from 'react';
@@ -259,8 +259,8 @@ function Limits() {
     <section className="kg-limits kg-sec" ref={box} aria-labelledby="kg-l">
       <div className="kg-wrap kg-limits-g">
         <div className="kg-limits-t">
-          <p className="kg-kick">Limits</p>
           <h2 id="kg-l" className="kg-h2">What a request may hold</h2>
+          <p className="kg-kick kg-sub">Limits</p>
           <dl className="kg-dl">
             {LIMITS.map(([k, v], i) => (
               <div key={k} data-on={lit === i || undefined}>
@@ -333,17 +333,17 @@ export default function KaiGuide() {
       <section className="kg-hero" aria-labelledby="kg-h">
         <div className="kg-wrap kg-hero-g">
           <div className="kg-hero-t">
-            <p className="kg-crumb"><A to="/models">Models</A> <span aria-hidden="true">/</span> <span>Kai Guide</span></p>
-            <p className="kg-kick">Hanzo decision model · 0 output tokens</p>
             <h1 id="kg-h" className="kg-h1">
               <span className="x-line"><motion.span className="x-line-in" initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.05, ease: EASE, delay: 0.1 }}>How to</motion.span></span>
               <span className="x-line"><motion.span className="x-line-in" initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.05, ease: EASE, delay: 0.2 }}>Use Kai</motion.span></span>
             </h1>
+            <p className="kg-kick kg-sub">Hanzo decision model · 0 output tokens</p>
             <p className="kg-lede">Send a state and typed questions to <code>POST /v1/decisions</code> with <code>model: &quot;kai&quot;</code>. Kai answers each question with a probability for every answer it allows, and writes no text.</p>
             <div className="kg-acts">
               <A to="https://platform.hanzo.ai/api-keys" className="x-btn solid" data-thumb="Get an API key">Get an API key</A>
               <More to="https://docs.hanzo.ai/docs/decisions">Read the reference</More>
             </div>
+            <p className="kg-crumb"><A to="/models">Models</A> <span aria-hidden="true">/</span> <span>Kai Guide</span></p>
           </div>
           <Session />
         </div>
@@ -352,8 +352,8 @@ export default function KaiGuide() {
       <section className="kg-types kg-sec" aria-labelledby="kg-q">
         <div className="kg-wrap">
           <div className="kg-head">
-            <div><p className="kg-kick">Questions</p><h2 id="kg-q" className="kg-h2">Three question types</h2></div>
-            <p className="kg-lede-s">Name each question; its answer comes back under the same name.</p>
+            <div><h2 id="kg-q" className="kg-h2">Three question types</h2></div>
+            <div className="kg-side"><p className="kg-kick">Questions</p><p className="kg-lede-s">Name each question; its answer comes back under the same name.</p></div>
           </div>
           <ol className="kg-rows">
             {TYPES.map(([n, send, get], i) => (
@@ -370,8 +370,8 @@ export default function KaiGuide() {
       <section className="kg-call kg-sec" aria-labelledby="kg-c">
         <div className="kg-wrap kg-call-g">
           <div className="kg-call-t">
-            <p className="kg-kick">Call it</p>
             <h2 id="kg-c" className="kg-h2">One request, three questions</h2>
+            <p className="kg-kick kg-sub">Call it</p>
             <p className="kg-lede-s">Every response also carries id, model, usage (output_tokens is 0), routing (the checkpoint that answered: kai-1.3 for the model id kai), state_hash and latency_ms.</p>
           </div>
           <CallIt />
@@ -383,15 +383,15 @@ export default function KaiGuide() {
       <section className="kg-recipes kg-sec" data-room="dark" aria-labelledby="kg-r">
         <div className="kg-wrap">
           <div className="kg-head">
-            <div><p className="kg-kick">Recipes &amp; Blueprints</p><h2 id="kg-r" className="kg-h2">Composable Decision Recipes</h2></div>
-            <p className="kg-lede-s">Modular Rust structs and TypeScript workflows that sit inside your pipelines: retail triage, industrial diagnostics, confidence routing, and agent loops.</p>
+            <div><h2 id="kg-r" className="kg-h2">Composable Decision Recipes</h2></div>
+            <div className="kg-side"><p className="kg-kick">Recipes &amp; Blueprints</p><p className="kg-lede-s">Modular Rust structs and TypeScript workflows that sit inside your pipelines: retail triage, industrial diagnostics, confidence routing, and agent loops.</p></div>
           </div>
           <ul className="kg-rec">
             {RECIPES.map(([n, d]) => <li key={n}><code>{n}</code><p>{d}</p></li>)}
           </ul>
           <div className="kg-acts">
             <A to="https://docs.hanzo.ai/docs/guides/cookbook/recipes" className="x-btn solid">Read the Recipes Guide</A>
-            <A to="https://docs.hanzo.ai/docs/guides/cookbook" className="x-btn">View All Cookbook Pipelines</A>
+            <More to="https://docs.hanzo.ai/docs/guides/cookbook">View All Cookbook Pipelines</More>
             <A to="https://github.com/hanzoai/kai/tree/main/recipes" className="kg-gh">Kai recipes on GitHub ↗</A>
           </div>
         </div>
@@ -400,8 +400,8 @@ export default function KaiGuide() {
       <section className="kg-jev kg-sec" aria-labelledby="kg-j">
         <div className="kg-wrap">
           <div className="kg-head">
-            <div><p className="kg-kick">Coming from Jev</p><h2 id="kg-j" className="kg-h2">Change the URL, the key and the model</h2></div>
-            <p className="kg-lede-s">Kai takes the request body Jev takes. The same endpoint also serves typesafe/jev-1.13 with a Hanzo key, at Jev’s price.</p>
+            <div><h2 id="kg-j" className="kg-h2">Change the URL, the key and the model</h2></div>
+            <div className="kg-side"><p className="kg-kick">Coming from Jev</p><p className="kg-lede-s">Kai takes the request body Jev takes. The same endpoint also serves typesafe/jev-1.13 with a Hanzo key, at Jev’s price.</p></div>
           </div>
           <Jev />
           <div className="kg-jev-g">
@@ -410,6 +410,10 @@ export default function KaiGuide() {
               <Bench />
               <p>On the frozen harness, kai-1.4 averaged 84.4% accuracy against Jev’s 76.6% across the 11 suites it leads, both models on the same questions. <A to="/kai#benchmarks" className="kg-runs">The runs →</A></p>
             </div>
+          </div>
+          <div className="kg-acts kg-close">
+            <A to="https://platform.hanzo.ai/api-keys" className="x-btn solid">Get an API key</A>
+            <More to="https://docs.hanzo.ai/docs/decisions">Read the reference</More>
           </div>
         </div>
       </section>
