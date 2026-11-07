@@ -1,5 +1,7 @@
 # /uta: James-eye review (third walk)
 
+Ready: 7 Nov 22:40, held up next to /api and /affiliate. The scrub screen no longer rests still (at rest the film loops inside the capability being read), the scrub keeps its gutters (copy was flush to the viewport edge), the films are framed on Uta's fan, the closing band has its own object (four stems breathing behind the words), and the studio's own control words (Play, Download MIDI, Sound) render icon-only with those words as accessible names. taste/unique/parity OK (74/74, 4/4); 0 console errors, no overlap at 1470 and 375; no still screen above the footer at either size.
+
 Walked on main at `54289c8b` (page last changed in `5f423b08`) against the running dev server, 7 Nov about 16:45 to 17:10 UTC, under MASTER.md and JAMES.md. Playwright Chromium, moving, at 1470×801 and 375×812:
 - a slow wheel scroll (an eighth of a screen per tick), dwelling on every screen and comparing two frames 1.5 s apart to catch what moves without input;
 - the header ask and every solid fill sampled every 40px of scroll from the top, with and without the cookie card;

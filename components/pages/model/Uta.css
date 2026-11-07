@@ -121,3 +121,7 @@
   .ut-mon figcaption span { font-size: 14px; }
   .ut-scene button, .ut-scene [role=tab] { min-height: 44px; }
 }
+/* the studio's own controls, icon-only (their words are the accessible names); a press dips, a hover inks the ring */
+.ut-ico { width: 44px; min-height: 44px; padding: 0; }
+.ut-ico svg { transition: transform .2s var(--ease); }
+@media (hover: hover) { .ut-ico:hover svg { transform: scale(1.12); } }

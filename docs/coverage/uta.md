@@ -31,7 +31,7 @@ Done here: the skip link in `app/layout.jsx` reaches `#main`. Every link goes th
 - [x] Ends in proof strip, `Band`, footer
 - [x] Card-to-page links use Morph; title lands within 12px (the model cards use the WebGL opener, which lands the picture as this page's hero)
 
-Done here: Uta's own film plays full-bleed under the h1 cut-in within the first second. On desktop the scroll settles it into four stems rising like a crescendo, with Hanzo's headline beside it. On phones the film, name, lede and ask hold until the visitor scrolls (or 6 s pass), then the film eases (1.4 s) into the stems. Then the studio with the piano roll (two bars in D minor at 96 BPM across four stems, solo, presets, tap-to-add notes, Sound, Download MIDI, Pause), then four capability chapters, each with its own picture of Uta's film: the whole fan (01), a playhead crossing three cuts (02), the film split into four stems (03), a D-minor keyboard lighting the roll's scale (04). Then where Uta fits, Hanzo's model-card grid and a closing band in the kit Band's words, its headline cut in by line mask. Entrance states are scoped to `html.js`; JS off shows every word, the band unblurred.
+Done here: Uta's own film plays full-bleed under the h1 cut-in within the first second. On desktop the scroll settles it into four stems rising like a crescendo, with Hanzo's headline beside it. On phones the film, name, lede and ask hold until the visitor scrolls (or 6 s pass), then ease into the stems. Then the signature: "What Uta does", where the scroll scrubs Uta's film frame by frame and the capability being read follows it; at rest the film keeps looping through that capability's quarter, so the pinned screen never sits still. Then the studio (the piano roll, two bars in D minor at 96 BPM across four stems), Hanzo's model cards, Where Uta fits (numbers rolling in, the film beside), and the closing band, whose four stems breathe behind the words.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -73,7 +73,7 @@ Done here: `taste.py` passes on the page and shell files. Deck greys only (#0a0a
 - [x] Inputs 16px or larger; no bare `:hover` (no inputs; hovers sit in `@media (hover: hover)`)
 - [x] Forks this page deleted: listed above
 
-Done here: kit `Cta` gives hover, press (scale), focus and the leaving state. The chapter rail buttons are 44px, ink and slide 4px on hover and press to .97; the film Pause grows to 1.08 and lightens on hover and presses to .94; the band's two links are 44px, 15px/500 alike, underline on hover, press to .97; every studio control is 44px (measured: no target under 44px at 1470 or 375 in `main`). Model cards tilt on fine pointers and press to .98. Focus uses the shared ring.
+Done here: kit `Cta` gives hover, press (scale), focus and the leaving state. The film Pause grows to 1.08 and lightens on hover and presses to .94; "Try it in Design" underlines and its arrow moves 4px; the band's two links are 44px, underline on hover, press to .97; the studio's presets, solo and the three icon controls (Pause/Play, Download MIDI, Sound) are 44px and answer hover and press (measured with a computed-style probe: no dead control in view at 1470).
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -82,7 +82,7 @@ Done here: kit `Cta` gives hover, press (scale), focus and the leaving state. Th
 - [x] Reduced motion shows the final state; no `setInterval` on /uta (the family map's tour interval is off this page)
 - [ ] n/a: sound only on the listed moments, through the one kit (the shared sound kit is not on main)
 
-Done here: Signature: the piano roll: two bars in D minor at 96 BPM across four stems, solo, presets, tap-to-add notes, Sound and Download MIDI, with Pause. Supporting: the stage settle and the chapter wipes (scroll, desktop only), the h1 and band line cut-ins (arrival), and the model-card tilt (pointer). Idle: the chapter 02 playhead (6 s, linear) and the chapter 04 keys (3.25 s) run only while their chapter is shown. Phones hold the stage until the first scroll, then settle it, with no pin. `variety.py` passes (fade-ups within budget; the settled headline's children rise in on the shared Launch). Under reduced motion the roll rests, its button reads "Play" and "STREAMING ACTIVE" is hidden (measured). Ease-emphasis throughout, no springs.
+Done here: Signature: the film scrub (scroll scrubs Uta's film forwards and back; drag across it to scrub too; at rest it loops inside the capability being read). Supporting: the stage settle into stems (scroll), the piano roll (idle, with solo, presets, tap-to-add notes, Sound and Download MIDI), the page-curl, iris, scroll-tilt, count-roll and spiral-in entrances, the band's breathing stems (idle) and the model-card tilt (pointer). Walked 7 Nov at 1470x801 and 375x812: no still screen above the footer at either size.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set (kit `Img`, `Film`, shared `ModelFilm`)
@@ -98,7 +98,7 @@ Done here: Hanzo's own films are unfiltered; the only dimming is a gradient unde
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: at 375 nothing pins. The film, name, lede and ask hold full-bleed until the first scroll (6 s at most), then the film eases into the stems. Chapters become picture-then-words, and the model grid stacks to 2 columns. Every target in `main` is 44px or more (measured). scrollWidth equals innerWidth at 375. The first-screen ask sits under the name inside the first screen.
+Done here: at 375 the scrub stacks the film over the capabilities (the film still scrubs with the scroll and loops at rest), the studio stacks its tracks two by two, and the model grid stacks to 2 columns. Every target in `main` is 44px or more. scrollWidth equals innerWidth at 375. The first-screen ask sits under the name inside the first screen, and the film Pause rides inside the stems once they settle.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -155,4 +155,4 @@ Done here: JS off shows every word, the closing band unblurred (checked at 1470)
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/uta.md` verdict 8 or more (pending a fresh walk of the current build)
 
-Done here: the `V2:` line goes in the page file once a critic scores this build. Proof is in `docs/gallery/uta/` (desktop film and phone stills). This card is refreshed after each review.
+Done here: the `V2:` line is in the page file. Proof is in `docs/gallery/uta/` (desktop hero, stems, scrub, studio and band; four phone stills), walked 7 Nov.

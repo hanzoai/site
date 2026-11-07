@@ -4,7 +4,7 @@
 /* ---- signature: scroll scrubs the film ---- */
 .ut-scrub { position: relative; height: 260svh; }
 .ut-scrub-pin { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; overflow: hidden; background: #fff; }
-.ut-scrub-in { width: 100%; display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); gap: 27px; align-items: center; padding-top: 60px; }
+.ut-scrub-in { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); gap: 27px; align-items: center; padding-top: 60px; }
 .ut-scrub-l { grid-column: 1 / 7; }
 .ut-scrub-l .lv-side { margin: 10px 0 27px; }
 .ut-caps { list-style: none; margin: 0; padding: 0; border-top: 1px solid rgba(0, 0, 0, .1); display: grid; }
@@ -74,7 +74,7 @@ html:not(.js) .ut-caps-x p { opacity: 1; transform: none; margin-bottom: 10px; }
   .js .ut-fits[data-in] .cr-fits-list li:nth-child(2) { transition-delay: .18s; }
   .js .ut-fits[data-in] .cr-fits-list li:nth-child(3) { transition-delay: .36s; }
 }
-.ut-fits-art img, .ut-fits-art video { transform: none; object-position: 50% 88%; }
+.ut-fits-art img, .ut-fits-art video { object-position: 50% 88%; }
 
 /* ---- entrance 5, spiral-in: the band's headline, lede and asks spiral in from the edge to their places ---- */
 .ut-band h2 { margin: 0 auto; max-width: 18ch; font-size: clamp(2.6rem, 5vw, 4rem); font-weight: 497; letter-spacing: -.035em; line-height: 1.05; color: #f5f5f5; text-wrap: balance; }
@@ -102,3 +102,16 @@ html:not(.js) .ut-caps-x p { opacity: 1; transform: none; margin-bottom: 10px; }
   .ut-caps-x p { font-size: 14px; }
   .ut-scrub-meta { font-size: 13px; }
 }
+
+/* the films are framed on their subject: Uta's fan sits low and right in the picture, so the card leans into it */
+.ut-scrub-film img, .ut-scrub-film video, .ut-fits-art img, .ut-fits-art video { transform: scale(1.32); transform-origin: 84% 80%; }
+
+/* the band's object: four stems faint behind the words, each rising and falling on its own slow breath */
+.ut-band { position: relative; isolation: isolate; }
+.ut-band-stems { position: absolute; inset: 12% 22% 0; z-index: -1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 7vw; align-items: end; pointer-events: none; }
+.ut-band-stems i { display: block; width: 60%; justify-self: center; height: 100%; border-radius: 14px 14px 0 0; background: linear-gradient(180deg, rgba(255, 255, 255, .06), rgba(255, 255, 255, 0) 85%); transform-origin: 50% 100%; transform: scaleY(calc(.5 + var(--i) * .14)); }
+@media (prefers-reduced-motion: no-preference) {
+  .js .ut-band[data-in] .ut-band-stems i { animation: ut-breathe calc(5.2s + var(--i) * 1.3s) cubic-bezier(.45, 0, .55, 1) calc(var(--i) * -1.7s) infinite alternate; }
+}
+@keyframes ut-breathe { from { transform: scaleY(calc(.42 + var(--i) * .12)); } to { transform: scaleY(calc(.62 + var(--i) * .1)); } }
+@media (max-width: 900px) { .ut-band-stems { inset: 30% 8% 0; gap: 9vw; } }
