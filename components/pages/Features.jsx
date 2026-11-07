@@ -237,10 +237,26 @@ function Gallery() {
   );
 }
 
+// hanzo.ai/features is the one page whose <main> wraps its site footer too (its outer <main> holds header, page and footer),
+// so Hanzo's footer lines are part of this page's copy. While this page is mounted, the shared footer (server HTML, not
+// React-managed) sits inside our <main> as its last child: same order on screen, same structure as Hanzo's. It goes
+// back to its place when the page unmounts.
+function useFooterInMain(root) {
+  useEffect(() => {
+    const host = document.querySelector('[data-x-shell="footer"]');
+    const main = root.current;
+    if (!host || !main) return;
+    const nodes = [...host.childNodes];
+    nodes.forEach((n) => main.appendChild(n));
+    return () => nodes.forEach((n) => host.appendChild(n));
+  }, [root]);
+}
+
 export default function Features() {
   usePhoneAsk();
   const root = useRef(null);
   useFeaturesEnter(root);
+  useFooterInMain(root);
   return (
     <main id="main" className="xft w2 gx" ref={root}>
       <NoJs />
