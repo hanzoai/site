@@ -18,7 +18,7 @@
 .mc-arr { display: inline-block; transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
 .mc-d { margin-top: 8px; max-width: 150px; font-size: 13px; line-height: 18px; color: rgba(255, 255, 255, .8); }
 .mc-tags { position: absolute; left: 21px; right: 21px; bottom: 21px; display: flex; flex-wrap: wrap; gap: 8px; }
-.mc-pill { display: inline-block; padding: 4px 10px; border: 1px solid rgba(255, 255, 255, .2); border-radius: 999px; font: 606 11px/14px var(--mono); letter-spacing: .8px; text-transform: uppercase; color: rgba(255, 255, 255, .8); }
+.mc-pill { display: inline-block; padding: 4px 10px; border: 1px solid rgba(255, 255, 255, .2); border-radius: 999px; font: 400 10px/14px var(--mono); letter-spacing: .8px; text-transform: uppercase; color: rgba(255, 255, 255, .8); }
 .mc-flag { margin-bottom: 22px; }
 .mc-cell.big .mc-t { font-size: 44px; letter-spacing: -.88px; line-height: 48px; }
 .mc-cell.big .mc-d { margin-top: 18px; max-width: 160px; }
@@ -30,12 +30,12 @@
 /* the exact measured grid (SPEC.md: 385px and four 192px columns, 220px rows, 12px gaps) wherever it fits */
 @media (min-width: 1250px) { .mc-grid { grid-template-columns: 385px repeat(4, 192px); justify-content: start; } }
 @media (max-width: 1100px) {
-  .mc-grid { grid-template-columns: repeat(4, 1fr); grid-template-rows: none; grid-auto-rows: 220px; }
-  .mc-cell.big { grid-column: 1 / -1; grid-row: auto; height: 340px; }
+  /* Enso leads on its own row; that row is as tall as its card, so the cards under it never ride up over it */
+  .mc-grid { grid-template-columns: repeat(4, 1fr); grid-template-rows: 340px; grid-auto-rows: 220px; }
+  .mc-cell.big { grid-column: 1 / -1; grid-row: auto; height: auto; }
 }
 @media (max-width: 640px) {
-  .mc-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 220px; gap: 10px; }
-  .mc-cell.big { height: 360px; }
+  .mc-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: 360px; grid-auto-rows: 220px; gap: 10px; }
   .mc-top, .mc-tags { left: 16px; right: 16px; }
   .mc-top { top: 16px; }
   .mc-tags { bottom: 16px; }

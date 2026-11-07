@@ -10,7 +10,7 @@ import { EASE } from '../../ui';
 import { Img } from '../../kit';
 import { Studio, Glyph } from './Studio';
 import Creative, { Scene } from './Creative';
-import { box as frame, film } from '../../v2/Launch';
+import { box as frame, film, focus } from '../../v2/Launch';
 import { useLoop, rng } from './live';
 import usePhoneAsk from '../usePhoneAsk';
 import './Iro.css';
@@ -162,10 +162,19 @@ function Grain({ step, on, seed }) {
 const CAP_STEPS = [26, 34, 42, 50];
 
 // the film settles into a square canvas beside the headline
-const SQUARE = frame((W, H, wide) => {
-  const z = wide ? Math.min(H * 0.76, W * 0.4) : Math.min(W * 0.8, H * 0.42);
-  return wide ? { l: W * 0.7 - z / 2, t: (H - z) / 2, w: z, h: z, r: 16 } : { l: (W - z) / 2, t: H * 0.09, w: z, h: z, r: 16 };
-});
+// (on a phone the square sits just above the headline block (about 270px tall at the foot of the screen, 320px on a 320px-wide phone), so no
+// band of empty paper opens between them; the camera lands Iro's subject in the square wherever it sits)
+const sq = (W, H, wide) => {
+  if (wide) { const z = Math.min(H * 0.76, W * 0.4); return { l: W * 0.7 - z / 2, t: (H - z) / 2, w: z, h: z, r: 16 }; }
+  const head = W < 360 ? 320 : 270, z = Math.min(W * 0.84, H * 0.46, H - head - 88);
+  return { l: (W - z) / 2, t: Math.max(64, H - head - 24 - z), w: z, h: z, r: 16 };
+};
+const SQUARE = frame(sq);
+const aimAt = (W, H, wide) => {
+  if (wide) return null;
+  const q = sq(W, H, false);
+  return focus(0.62, 0.55, q.l + q.w / 2, q.t + q.h / 2, 1.14, [q.l, q.t, q.l + q.w, q.t + q.h])(W, H);
+};
 
 export default function Iro() {
   usePhoneAsk();
@@ -175,7 +184,7 @@ export default function Iro() {
       subject={[0.62, 0.55]}
       shape={SQUARE}
       headClass="ir-head"
-      aim={(W, H, wide) => (wide ? null : [-0.12 * W, -0.25 * H])}
+      aim={aimAt}
       first="demo"
       capArt={(i, on, base) => <div className="cr-art ir-grain" style={base}><Grain step={CAP_STEPS[i]} on={on} seed={11 + i} /><Glyph k="iro" i={i} /></div>}
       fitsArt={(seen) => <figure className="cr-fits-art ir-grain"><Grain step={STEPS} on={seen} seed={5} /></figure>}

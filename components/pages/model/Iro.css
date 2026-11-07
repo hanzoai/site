@@ -15,10 +15,32 @@
 .ir-bl span { display: inline-block; min-width: 2ch; text-align: right; font-variant-numeric: tabular-nums; }
 .ir-tag { white-space: nowrap; }
 .ir-frame { container-type: size; aspect-ratio: auto; width: 100%; height: max(420px, min(calc(100svh - 330px), 560px)); }
+.ir-bl .ir-cfg { display: inline; min-width: 0; }
+/* phones: a 4:5 window leaves room above and below the picture for both tags, and the CFG reading takes its own line
+   (never cut at the window's edge, never over the picture) */
 @media (max-width: 899px) {
-  .ir-frame { height: auto; aspect-ratio: 1; }
+  .ir-frame { height: auto; aspect-ratio: 4 / 5; }
+  .ir-pic { width: min(88cqw, calc((100cqh - 150px) * var(--r))); }
   .ir-tag { font-size: 11px; letter-spacing: .08em; }
-  .ir-cfg { display: block; }
+  .ir-bl .ir-cfg { display: block; text-align: left; }
+}
+.ir-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; padding: 14px 16px; border-top: 1px solid rgba(255, 255, 255, .08); }
+.ir-play { min-width: 76px; }
+.ir-range { flex: 1 1 160px; display: flex; align-items: center; min-height: 36px; }
+.ir-range input { -webkit-appearance: none; appearance: none; width: 100%; height: 44px; margin: 0; background: transparent; cursor: pointer; --f: 50%; }
+.ir-range input::-webkit-slider-runnable-track { height: 4px; border-radius: 999px; background: linear-gradient(90deg, #fafafa var(--f), rgba(255, 255, 255, .2) var(--f)); }
+.ir-range input::-moz-range-track { height: 4px; border-radius: 999px; background: rgba(255, 255, 255, .2); }
+.ir-range input::-moz-range-progress { height: 4px; border-radius: 999px; background: #fafafa; }
+.ir-range input::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; margin-top: -8px; border-radius: 50%; background: #fafafa; border: 0; transition: transform .15s cubic-bezier(.16, 1, .3, 1); }
+.ir-range input::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #fafafa; border: 0; }
+.ir-range input:active::-webkit-slider-thumb { transform: scale(1.15); }
+.ir-range input:focus-visible { outline: 2px solid #fafafa; outline-offset: 4px; border-radius: 6px; }
+.ir-asp { margin-left: auto; }
+@media (max-width: 900px) {
+  .ir-head { width: auto; }
+  .ir-tag { padding: 5px 7px; }
+  .ir-asp { margin-left: 0; }
+  .ir-range { flex-basis: 100%; order: 3; }
 }
 /* chapters and the fits tile: the flow frozen at its own step */
 .ir-grain canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; }
