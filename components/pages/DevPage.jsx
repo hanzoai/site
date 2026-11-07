@@ -171,7 +171,7 @@ const HIGHLIGHTS = ['Reads the repository, makes the change and runs the tests',
 
 function Hero() {
   return (
-    <section className="xdv-hero" aria-labelledby="xdv-h1" data-morph-target>
+    <section className="xdv-hero" aria-labelledby="xdv-h1" data-morph-target data-ask-name="Hanzo Dev">
       <div className="v2a-wrap v2a-grid xdv-hero-top">
         <div className="xdv-hero-h">
           <AppLines as="h1" id="xdv-h1" className="v2a-display xdv-h1" lines={['Describe the change.', 'Dev ships it.']} soft={[1]} />
@@ -591,7 +591,7 @@ function Paste() {
 
 export default function DevPage() {
   return (
-    <main className="xdv" data-ask-name="Hanzo Dev">
+    <main className="xdv">
       <Hero />
       <Race />
       <Places />
