@@ -18,7 +18,7 @@
 .xsd-dia button { position: relative; height: 32px; padding: 0 16px; border: 0; border-radius: 999px; background: none; color: #a1a1a6; font: 500 13.5px/1 var(--sans); cursor: pointer; transition: color .2s; }
 .xsd-dia button:hover { color: #fff; }
 .xsd-dia button[aria-selected='true'] { color: var(--ink); }
-.xsd-dia button span { position: relative; }
+.xsd-dia button span:not(.xsd-dia-bg) { position: relative; }
 .xsd-dia-bg { position: absolute; inset: 0; border-radius: 999px; background: #f5f5f7; }
 .xsd-langs { display: flex; gap: 2px; }
 .xsd-langs button { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 11px; border: 0; border-radius: 8px; background: none; color: #86868b; font: 500 13px/1 var(--mono); cursor: pointer; transition: color .2s, background .2s; }
@@ -34,7 +34,7 @@
 .xsd-l { position: relative; display: inline; }
 .xsd-l.chg { background: rgba(255, 255, 255, .08); box-shadow: -22px 0 0 rgba(255, 255, 255, .08), 22px 0 0 rgba(255, 255, 255, .08); border-radius: 2px; animation: xsd-mark 2.4s var(--ease) var(--d) both; }
 @keyframes xsd-mark { 0% { color: transparent; background: rgba(255, 255, 255, .22); } 25% { color: #fff; } 100% { background: rgba(255, 255, 255, 0); box-shadow: none; } }
-.xsd-s { color: #a8d8a0; }
+.xsd-s { color: #cbcbcb; }
 .xsd-c { color: #6e6e73; }
 .xsd-cap { margin: 0; padding: 14px 22px 18px; border-top: 1px solid rgba(255, 255, 255, .06); font-size: 14px; color: #a1a1a6; }
 
@@ -64,7 +64,7 @@
 .xsd-pick-l button { position: relative; height: 48px; padding: 0 16px; border: 0; border-radius: 14px; background: none; text-align: left; font: 500 16px/1 var(--sans); color: var(--soft); cursor: pointer; transition: color .2s, transform .25s var(--ease); }
 .xsd-pick-l button:hover { color: var(--ink); transform: translateX(3px); }
 .xsd-pick-l button[aria-selected='true'] { color: var(--ink); }
-.xsd-pick-l button span { position: relative; }
+.xsd-pick-l button span:not(.xsd-pick-bg) { position: relative; }
 .xsd-pick-bg { position: absolute; inset: 0; border-radius: 14px; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .1); }
 .xsd-pick-p { min-height: 280px; padding: clamp(22px, 3vw, 36px); border-radius: 28px; border: 1px solid var(--line); }
 .xsd-pick-p h3 { margin: 0; font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 560; letter-spacing: -.04em; }
@@ -149,3 +149,70 @@ a.xsd-tr:hover { background: rgba(255, 255, 255, .06); }
   .xsd-mod { height: 44px; font-size: 14px; }
   .xsd-ex, .xsd-dia button, .xsd-langs button, .xsd-url, .xsd-pre, .xsd-prompt-k, .xsd-reg, .xsd-tr, .xsd-th, .xsd-lang em, .xsd-lib em, .xsd-repo, .xsd-find-n, .xsd-mod { font-size: 14px; }
 }
+
+/* ---------- v2 overrides (James 7 Nov): the a2 grammar from components/v2/A2.css ---------- */
+.xsd-hero { padding: clamp(112px, 14vh, 156px) 0 clamp(96px, 10vw, 160px); }
+.xsd-top { align-items: end; row-gap: 28px; margin-bottom: clamp(48px, 5vw, 72px); }
+.xsd-top-l { grid-column: 1 / span 8; }
+.xsd-top-l .a2-kick { margin-bottom: 28px; }
+.xsd-h1 { max-width: none; }
+.xsd-top-r { grid-column: 9 / span 4; }
+.xsd-lede { margin: 0; font-size: clamp(17px, 1.4vw, 20px); }
+.xsd-hero-links { margin-top: 24px; }
+.xsd-stage { align-items: start; row-gap: 32px; }
+.xsd-stage-con { grid-column: 1 / span 8; }
+.xsd-stage-side { grid-column: 9 / span 4; position: sticky; top: 120px; }
+.xsd-con { border-radius: var(--r-hero); box-shadow: 0 70px 140px -60px color-mix(in srgb, var(--acc) 55%, #000); }
+.xsd-con-top { padding: 14px 16px; }
+.xsd-dia button { height: 38px; padding: 0 20px; font-size: 15px; }
+.xsd-dia-bg { background: var(--acc); }
+.xsd-dia button[aria-selected='true'] { color: #fff; }
+.xsd-langs button { height: 38px; padding: 0 13px; font-size: 14px; }
+.xsd-url { height: 54px; font-size: 14.5px; padding: 0 14px 0 24px; }
+.xsd-pre { padding: 28px 30px; min-height: 420px; font-size: clamp(14px, 1.08vw, 16px); line-height: 1.85; }
+.xsd-l.chg { background: color-mix(in srgb, var(--acc) 30%, transparent); box-shadow: -30px 0 0 color-mix(in srgb, var(--acc) 30%, transparent), 30px 0 0 color-mix(in srgb, var(--acc) 30%, transparent); }
+@keyframes xsd-mark { 0% { color: transparent; background: color-mix(in srgb, var(--acc) 60%, transparent); } 25% { color: #fff; } 100% { background: transparent; box-shadow: none; } }
+.xsd-cap { padding: 16px 30px 20px; font-size: 15px; }
+.xsd-ex { margin: 8px 0 18px; }
+.xsd-dias { gap: 24px; }
+.xsd-dias div { border-left-color: var(--acc); }
+.xsd-dias b { font-size: 17px; }
+.xsd-dias span { font-size: 15px; }
+.xsd-head { max-width: 900px; margin-bottom: clamp(48px, 5vw, 80px); }
+.xsd-head .a2-kick { margin-bottom: 24px; }
+.xsd-head .a2-lede { margin-top: 28px; max-width: 52ch; }
+.xsd-head.dark .a2-kick { color: var(--acc); }
+.xsd-half { border-radius: var(--r-hero); padding: clamp(32px, 4vw, 56px); min-height: 380px; }
+.xsd-half h2 { font-size: clamp(36px, 3.9vw, 56px); font-weight: 600; }
+.xsd-half p { font-size: 17px; }
+.xsd-half.dark { background: var(--acc); }
+.xsd-half.dark p { color: rgba(255, 255, 255, .85); }
+.xsd-pick-bg { background: var(--acc) !important; }
+.xsd-orgs { background: #000; }
+.xsd-row { display: contents; }
+.xsd-lib { border-radius: var(--r-hero); padding: 32px; }
+.xsd-lib.lead { background: var(--acc); }
+.xsd-lib.lead p:last-child { color: rgba(255, 255, 255, .85); }
+.xsd-lib.lead .xsd-cmd { background: rgba(0, 0, 0, .22); }
+.xsd-find { height: 76px; border-radius: var(--r-card); font-size: 24px; }
+.xsd-find input { font-size: 24px; }
+.xsd-find:focus-within { border-color: var(--acc); box-shadow: 0 0 0 4px color-mix(in srgb, var(--acc) 15%, transparent); }
+.xsd-modlist { gap: 4px 22px; margin-top: 32px; }
+.xsd-mod { height: auto; padding: 4px 0; border: 0; border-radius: 0; font-size: clamp(18px, 1.8vw, 26px); font-weight: 500; letter-spacing: -.02em; }
+.xsd-mod span { display: none; }
+.xsd-mod:hover { color: var(--acc); background: none; }
+@media (max-width: 900px) {
+  .xsd-hero { padding-top: 112px; }
+  .xsd-stage-side { position: static; }
+  .xsd-h1 { font-size: clamp(48px, 14.6vw, 56px) !important; }
+  .xsd-pre { min-height: 0; padding: 18px; font-size: 13.5px; }
+  .xsd-half { min-height: 0; }
+  .xsd-find { height: 64px; font-size: 18px; padding: 0 14px; }
+  .xsd-find input { font-size: 18px; }
+  .xsd-mod { font-size: 18px; }
+}
+.xsd-lib.lead .xsd-repo { color: rgba(255, 255, 255, .82); }
+
+/* 0 UI hues (James 7 Nov 14:20): the accent is ink in light rooms and #f5f5f7 in dark panels */
+.xsd-con { --acc: #f5f5f7; }
+.xsd-con .xsd-dia button[aria-selected='true'] { color: #000; }

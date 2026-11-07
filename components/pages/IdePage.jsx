@@ -1,5 +1,6 @@
 'use client';
-/* Hanzo IDE. V2: 8/10 Stage hero (the editor arrives huge and settles into place as you scroll, memories surfacing in its gutter), the workbench exploding off its Rust engine, three pinned chapters, one dark room, detail tucked into an accordion.
+/* Hanzo IDE.
+   V2: 8/10 Stage hero (the editor arrives huge and settles into place as you scroll, memories surfacing in its gutter), the workbench exploding off its Rust engine, three pinned chapters, one dark room, detail tucked into an accordion.
    Signature: an editor that remembers. The hero object is the workbench itself: it starts huge and settles as you
    scroll (Stage), while a cursor walks the code and memories surface in the gutter beside the lines they belong to,
    the impact radius of a change glows through the file and the agent panel runs Hanzo's example session (live).
@@ -113,7 +114,7 @@ function Stage() {
           <A2Lines as="h1" id="ide-h1" className="a2-display m ide-h1" lines={['An IDE that remembers', 'your codebase']} now />
           <div className="ide-copy-row">
             <p className="a2-lede">The editor you already know, on a Rust engine that is ours. The agent keeps a memory of your project across sessions, reads the call graph before it changes a line, and runs every tool in a sandbox.</p>
-            <div className="a2-acts"><span data-thumb="Open the IDE" data-href={IDE} style={{ display: 'contents' }}><Go to={IDE} solid>Open the IDE</Go></span><Go to={GH}>View on GitHub</Go></div>
+            <div className="a2-acts"><A to={IDE} className="x-btn solid" data-thumb="Open the IDE" data-cta="ide.hero">Open the IDE</A><Go to={GH}>View on GitHub</Go></div>
           </div>
         </motion.div>
         <motion.div className="ide-obj" style={{ scale, y }}>
@@ -345,12 +346,12 @@ function End() {
           <div className="ide-end-copy">
             <A2Lines id="ide-end-h" className="a2-display s" lines={['Open the IDE.', 'It already knows', 'the way around.']} />
             <p className="a2-lede">Your project, its call graph, and what the agent learned last week, in one window.</p>
-            <div className="a2-acts"><Go to={IDE} solid>Open the IDE</Go><Go to={GH}>GitHub</Go><Go to="https://platform.hanzo.ai">Hanzo Cloud</Go></div>
+            <div className="a2-acts"><A to={IDE} className="x-btn solid" data-cta="ide.close">Open the IDE</A><Go to={GH}>GitHub</Go><Go to="https://platform.hanzo.ai">Hanzo Cloud</Go></div>
           </div>
           <div className="ide-get">
             <span className="ide-get-i"><Mark size={22} /></span>
             <h2>Get IDE</h2>
-            <Go to="https://platform.hanzo.ai/deploy" solid>Deploy to Cloud</Go>
+            <Go to="https://platform.hanzo.ai/deploy">Deploy to Cloud</Go>
           </div>
         </div>
         <div className="ide-rel">
@@ -364,7 +365,7 @@ function End() {
 
 export default function IdePage() {
   return (
-    <main className="a2 ide" style={{ '--acc': '#5e5ce6' }} data-acc-btn="">
+    <main className="a2 ide">
       <Stage />
       <A2Paste name="IDE" text="Read https://hanzo.ai/skill.md and use Hanzo IDE in my project. Start with: hanzo code" />
       <Engine />

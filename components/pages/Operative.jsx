@@ -1,5 +1,6 @@
 'use client';
-/* Operative. V2: 8/10 a live desktop worked by four hands as the hero, the container exploding into its six layers as you scroll, one docker run that types itself, four providers with one variable, one dark room for the loop.
+/* Operative.
+   V2: 8/10 a live desktop worked by four hands as the hero, the container exploding into its six layers as you scroll, one docker run that types itself, four providers with one variable, one dark room for the loop.
    Signature: the container comes apart. Pinned on screen, the image is a stack of six slabs pressed into one box;
    as you scroll the box explodes upward layer by layer (scrubbed, transform only), and each layer lights with what
    it is (Xvfb · X11, the ports, the objective, bash · edit, the allowlist, API · Bedrock · Vertex) while its words
@@ -79,7 +80,7 @@ function Hero() {
         <div className="xov-top-r">
           <p className="a2-lede">A container with a Linux desktop inside it, and a model driving that desktop by screenshot, mouse and keyboard.</p>
           <div className="a2-acts">
-            <a href="#get-started" className="x-btn solid" data-thumb="Get Started">Get Started</a>
+            <a href="#get-started" className="x-btn solid" data-thumb="Get Started" data-cta="operative.hero">Get Started</a>
             <Go to="https://docs.hanzo.ai">View Docs</Go>
           </div>
         </div>
@@ -352,14 +353,14 @@ function Watch() {
       <div className="a2-wrap a2-grid xov-end">
         <div className="xov-read-b">
           <h2 className="a2-title">Read before you run it</h2>
-          <div className="a2-acts"><Go to="https://docs.hanzo.ai" solid>Read the docs</Go><Go to="https://github.com/hanzoai">View on GitHub</Go></div>
+          <div className="a2-acts"><Go to="https://docs.hanzo.ai">Read the docs</Go><Go to="https://github.com/hanzoai">View on GitHub</Go></div>
         </div>
         <div className="xov-get">
           <h2>Get Operative</h2>
           <p>Computer-use harness</p>
           <p className="xov-get-meta x-mono"><span><span>License:</span> Apache-2.0</span><A to="https://github.com/hanzoai">hanzoai</A></p>
           <p className="xov-get-cmd x-mono" aria-hidden="true">{PULL}</p>
-          <Go to="https://platform.hanzo.ai/deploy" solid>Deploy to Cloud</Go>
+          <A to="https://platform.hanzo.ai/deploy" className="x-btn solid" data-cta="operative.close">Deploy to Cloud</A>
         </div>
       </div>
     </section>
@@ -368,7 +369,7 @@ function Watch() {
 
 export default function Operative() {
   return (
-    <main className="a2 xov" style={{ '--acc': '#2f6bff' }} data-acc-btn="">
+    <main className="a2 xov">
       <Hero />
       <Inside />
       <Run />

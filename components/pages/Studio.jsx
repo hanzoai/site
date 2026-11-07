@@ -1,5 +1,6 @@
 'use client';
-/* Studio. V2: 8/10 the cutting room as the one dark room (a self-playing, scrubbable timeline), then a scrubbed camera move for the three pillars, the capabilities as a render graph, and the six creative models on a film strip whose frames open into their pages.
+/* Studio.
+   V2: 8/10 the cutting room as the one dark room (a self-playing, scrubbable timeline), then a scrubbed camera move for the three pillars, the capabilities as a render graph, and the six creative models on a film strip whose frames open into their pages.
    Signature: the camera moves with your scroll. After the cutting room, a 2.39:1 frame pins on a white stage; each
    stretch of scroll performs one of Hanzo's camera moves on a still (Dolly In, Crane Rise, 360° Orbit) while the
    pillar it belongs to comes in as a subtitle. The hero is the product itself: a monitor and a multi-track timeline
@@ -195,7 +196,7 @@ function Hero() {
           <div className="xst-top-r">
             <p className="a2-lede">Full production-quality AI film direction, camera motion control, character consistency lock, multi-shot storyboard sequencing, and node-graph VFX pipelines on cloud GPUs.</p>
             <div className="a2-acts">
-              <A to="https://studio.hanzo.ai" className="x-btn solid" data-thumb="Launch studio.hanzo.ai">Launch studio.hanzo.ai</A>
+              <A to="https://studio.hanzo.ai" className="x-btn solid" data-thumb="Launch studio.hanzo.ai" data-cta="studio.hero">Launch studio.hanzo.ai</A>
               <Go to="/studio">Open Studio</Go>
             </div>
           </div>
@@ -403,7 +404,7 @@ function Chair() {
         <div className="xst-chair-copy">
           <A2Lines id="xst-chair-h" className="a2-display m" lines={['Step into', 'the director’s chair']} />
           <p className="a2-lede">Launch Hanzo Studio at studio.hanzo.ai or open Hanzo Design at hanzo.ai/design.</p>
-          <div className="a2-acts"><Go to="/studio" solid>Open Studio</Go><Go to="/design">Open Hanzo Design</Go></div>
+          <div className="a2-acts"><A to="/studio" className="x-btn solid" data-cta="studio.close">Open Studio</A><Go to="/design">Open Hanzo Design</Go></div>
           <div className="xst-rel">
             <p className="a2-kick">Related capabilities</p>
             <ul>{[['Chat', '/cloud/chat', 'Conversational AI'], ['Bot', '/bot', 'Multi-agent platform'], ['Search', '/search', 'Retrieval & answers']].map(([t, to, d]) => <li key={t}><A to={to} className="xst-rel-a"><b>{t}</b><span>{d}</span><i aria-hidden="true">→</i></A></li>)}</ul>
@@ -414,7 +415,7 @@ function Chair() {
           <h2>Get Studio</h2>
           <p>Visual builder studio</p>
           <p className="xst-get-meta x-mono"><span><span>License:</span> GPL-3.0</span><A to="https://github.com/hanzoai">hanzoai</A></p>
-          <Go to="https://platform.hanzo.ai/deploy" solid>Deploy to Cloud</Go>
+          <Go to="https://platform.hanzo.ai/deploy">Deploy to Cloud</Go>
         </div>
       </div>
     </section>
@@ -423,7 +424,7 @@ function Chair() {
 
 export default function Studio() {
   return (
-    <main className="a2 xst" style={{ '--acc': '#ff9f0a' }}>
+    <main className="a2 xst">
       <Hero />
       <A2Paste name="Studio" text="Read https://hanzo.ai/skill.md and use Hanzo Studio in my project." />
       <What />

@@ -30,7 +30,7 @@ export function Sheet({ open, onClose, title, children, id }) {
       <div className="lx-sheet-panel" role="dialog" aria-modal="true" aria-label={title} inert={!open} data-lenis-prevent>
         <div className="lx-sheet-bar">
           <p className="lx-kick">{title}</p>
-          <button ref={close} type="button" className="lx-sheet-x" onClick={onClose}>Close</button>
+          <button ref={close} type="button" className="lx-sheet-x" onClick={onClose} aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></svg></button>
         </div>
         <div className="lx-sheet-body">{children}</div>
       </div>

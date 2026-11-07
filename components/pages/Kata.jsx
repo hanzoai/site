@@ -1,5 +1,6 @@
 'use client';
-/* Kata. V2: 8/10 the headline is the loop (Test. Repair. Verify. light in turn with a live session), a scrubbed dial through the four stations, and one dark room that a green wipe turns into a passing suite.
+/* Kata.
+   V2: 8/10 the headline is the loop (Test. Repair. Verify. light in turn with a live session), a scrubbed dial through the four stations, and one dark room that a green wipe turns into a passing suite.
    Signature: the page turns green. The hero headline is the loop itself: "Test." lights while the suite runs and one
    test goes red, "Repair." while Kai triages and Enso writes the edit, "Verify." when 13 passed · 0 failed lands; the
    terminal and the test board beside it run Hanzo's session on their own. The loop is a dial pinned on screen while
@@ -112,7 +113,7 @@ function Hero() {
           </h1>
           <p className="a2-lede">Kata keeps your tests green. It triages a failing CI run, finds the regression, writes the fix and runs the suite again before anything lands.</p>
           <div className="a2-acts">
-            <A to="https://platform.hanzo.ai/keys" className="x-btn solid" data-thumb="Get API key">Get API key</A>
+            <A to="https://platform.hanzo.ai/keys" className="x-btn solid" data-thumb="Get API key" data-cta="kata.hero">Get API key</A>
             <A to="https://github.com/hanzoai/kata" className="x-btn">Explore GitHub examples →</A>
             <A to="https://docs.hanzo.ai/docs/coding" className="xkt-doc">Read the docs →</A>
           </div>
@@ -312,7 +313,7 @@ function Questions() {
 
 export default function Kata() {
   return (
-    <main className="a2 xkt" style={{ '--acc': '#16a34a' }}>
+    <main className="a2 xkt">
       <Hero />
       <A2Paste name="Kata" text="Read https://hanzo.ai/skill.md and use Hanzo Kata in my project. Start with: hanzo kata run" />
       <TheLoop />

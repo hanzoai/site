@@ -33,7 +33,7 @@ Sources:
 4. **Every tap answers.** Hover and press change something other than opacity, with no layout jump. Press is translateY(1px) or a scale of 0.98, and the hover detail tells you something (a number, a preview).
 5. **One solid ask in Hanzo's words.** It sits in the header and in a sticky bar after the hero at every width. Never 3 or more equal buttons.
 6. **Many real visuals at once.** A block of 4 or more real Hanzo images or videos on screen together where the page has them (model media, product UI).
-7. **Colour from the brand, not from boxes.** Hanzo's logo is black and white, so the UI has 0 brand hues: greys, silvers, blacks and whites (his "brand deck"). Colour arrives only through Hanzo's own media and model imagery. This replaces VISION.md's "one accent per page".
+7. **Colour = Hanzo's live palette, nothing else.** (James, 7 Nov: "Hanzo's website is their brand deck… that's all the colours they use.") The values are in `docs/original/brand-deck.html`, read from Hanzo's own `@hanzo/design` tokens: monochrome, true black, white type, colour only as state, never as decoration. Use the deck's neutral ramp only, enforced by `scripts/taste.py`. Eyebrow labels in 11-12px Zen Mono capitals are Hanzo's own system, so they are allowed in ink or grey only. Earlier wording here: Hanzo's logo is black and white, so the UI has 0 brand hues: greys, silvers, blacks and whites (his "brand deck"). Colour arrives only through Hanzo's own media and model imagery. This replaces VISION.md's "one accent per page".
 8. **Variation.** Neighbouring pages differ in hero medium, layout and signature move.
 
 9. **Movement that is not just scroll.** (James, 7 Nov 14:20: "Not everything is a scroll animation.") Every page mixes kinds of motion:

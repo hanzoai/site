@@ -1,5 +1,6 @@
 'use client';
-/* Hanzo MCP. V2: 8/10 code-first launch: a live tool-call stream beside the headline, Hanzo's figures as heroes, the runtime as sheets that stack, six tool domains on a drag rail that open into their page, one dark room for the config.
+/* Hanzo MCP.
+   V2: 8/10 code-first launch: a live tool-call stream beside the headline, Hanzo's figures as heroes, the runtime as sheets that stack, six tool domains on a drag rail that open into their page, one dark room for the config.
    Signature: cards that open. The six tool domains sit on a rail you drag (or swipe); click one and the card itself
    grows into a full sheet (a shared-element morph, synchronized.studio) holding every tool name that domain carries.
    Around it: the hero's live tool-call stream (Hanzo's tools firing with latency bars; the only figures are Hanzo's,
@@ -77,7 +78,7 @@ function Hero() {
           <A2Lines as="h1" id="mcp-h1" className="a2-display s mcp-h1" lines={['The complete', 'MCP runtime for', 'coding, decisions,', 'browser, and cloud']} now />
           <p className="a2-body mcp-lede">Give any model a filesystem, shell, semantic AST code index, Kai sub-10ms decisions, Playwright &amp; Chrome DevTools browser control, issue tracking, persistent memory, and 1,538 typed Hanzo Cloud operations over stdio or streamable HTTP.</p>
           <div className="a2-acts">
-            <span data-thumb="Browse 260+ tools" data-href={ALL} style={{ display: 'contents' }}><Go to={ALL} solid>Browse 260+ tools</Go></span>
+            <A to={ALL} className="x-btn solid" data-thumb="Browse 260+ tools" data-cta="mcp.hero">Browse 260+ tools</A>
             <Go to={DOCS}>Read the docs</Go>
             <Go to={GH}>View on GitHub</Go>
           </div>
@@ -294,7 +295,7 @@ function Add() {
           <A2Lines id="mcp-add-h" className="a2-display s" lines={['Add Hanzo MCP', 'to your client']} />
           <p className="a2-lede">One block in .mcp.json, or connect over streamable HTTP at api.hanzo.ai/v1/mcp.</p>
           <div className="a2-acts">
-            <Go to={ALL} solid>Browse All Tools</Go>
+            <A to={ALL} className="x-btn solid" data-cta="mcp.close">Browse All Tools</A>
             <Go to={GH}>GitHub</Go>
             <Go to="https://platform.hanzo.ai">Hanzo Platform</Go>
           </div>
@@ -306,7 +307,7 @@ function Add() {
           <dl className="x-mono"><div><dt>License:</dt><dd>Apache-2.0</dd></div><div><dt>★</dt><dd>8 stars</dd></div></dl>
           <div className="mcp-repo-acts">
             <A to={GH} className="mcp-gh x-mono">hanzoai/mcp</A>
-            <Go to="https://platform.hanzo.ai/deploy" solid>Deploy to Cloud</Go>
+            <Go to="https://platform.hanzo.ai/deploy">Deploy to Cloud</Go>
             <Go to={DOCS}>Self-host</Go>
           </div>
         </div>
@@ -317,7 +318,7 @@ function Add() {
 
 export default function McpPage() {
   return (
-    <main className="a2 mcp" style={{ '--acc': '#f2600c' }} data-acc-btn="">
+    <main className="a2 mcp">
       <Hero />
       <Figures />
       <Parts />

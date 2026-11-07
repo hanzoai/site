@@ -1,14 +1,30 @@
 'use client';
 // Signature: one request in two dialects: flip OpenAI ⇄ Anthropic and only the lines that differ re-type, in Python, TypeScript or cURL.
 // Beyond: pick your language and its install line, registry, docs and org line up in one place, ready to copy; and a Go import path you can type to find.
-/* SDKs. The first screen is the gateway's own request, written three ways and spoken two ways: the console flips
+/* SDKs.
+   V2: 8/10 code as the hero: one big console where only the lines that differ between the OpenAI and Anthropic dialects re-set, Hanzo's six languages as a picker, the per-language orgs as the one dark room, and the Go modules as a type wall you filter by typing.
+   SDKs. The first screen is the gateway's own request, written three ways and spoken two ways: the console flips
    between the OpenAI and Anthropic dialects by itself (until you take over), and only the lines that change between
    them are re-set, so the difference reads at a glance (base URL, header, max_tokens). Every sample is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
-import { EASE, Rise, Copy } from '../ui';
-import { A, More, SecHead } from '../kit';
+import { EASE, Copy } from '../ui';
+import { A, More } from '../kit';
+import A2Lines from '../v2/A2Lines';
+import A2Paste from '../v2/A2Paste';
+import '../v2/A2.css';
 import './Sdks.css';
+
+/* A section head in the v2 grammar. */
+function Head({ kicker, title, lede, id, dark }) {
+  return (
+    <header className={'xsd-head' + (dark ? ' dark' : '')}>
+      <p className="a2-kick">{kicker}</p>
+      <A2Lines id={id} className="a2-display s" lines={[title]} />
+      {lede && <p className="a2-lede">{lede}</p>}
+    </header>
+  );
+}
 
 const LANGS = [['python', '🐍', 'Python'], ['typescript', '📘', 'TypeScript'], ['curl', '🔗', 'cURL']];
 const DIALECTS = {
@@ -173,24 +189,31 @@ function Console() {
 }
 
 function Hero() {
-  const line = (t, d) => <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: d }}>{t}</motion.span></span>;
   return (
     <section className="xsd-hero" aria-labelledby="xsd-h1">
-      <div className="x-wrap xsd-grid">
-        <div>
-          <motion.p className="x-kick" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: EASE }}>SDKs</motion.p>
-          <h1 id="xsd-h1" className="xsd-h1">{line('SDKs for', 0.05)}{line('every language', 0.16)}</h1>
-          <motion.p className="xsd-lede" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>A <b>full Cloud SDK</b> generated from the OpenAPI document the API itself serves, and a hand-written <b>AI + Agents</b> library.</motion.p>
-          <motion.div className="x-row-links tight xsd-hero-links" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.55 }}>
-            <span data-thumb="API reference" data-href="https://docs.hanzo.ai/docs/openapi/"><More to="https://docs.hanzo.ai/docs/openapi/">API reference</More></span>
-            <More to="https://github.com/hanzoai/sdk">hanzoai/sdk</More>
-          </motion.div>
-          <motion.p className="xsd-ex x-mono" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}>Code Examples</motion.p>
-          <div className="xsd-dias">
-            {Object.values(DIALECTS).map((v) => <div key={v.name}><b>{v.title}</b><span>{v.line}</span></div>)}
+      <div className="a2-wrap">
+        <div className="a2-grid xsd-top">
+          <div className="xsd-top-l">
+            <p className="a2-kick"><b>SDKs</b></p>
+            <A2Lines as="h1" id="xsd-h1" className="a2-display m xsd-h1" lines={['SDKs for', 'every language']} now />
+          </div>
+          <div className="xsd-top-r">
+            <p className="a2-lede xsd-lede">A <b>full Cloud SDK</b> generated from the OpenAPI document the API itself serves, and a hand-written <b>AI + Agents</b> library.</p>
+            <div className="x-row-links tight xsd-hero-links">
+              <span data-thumb="API reference" data-href="https://docs.hanzo.ai/docs/openapi/" data-cta="sdks.hero"><More to="https://docs.hanzo.ai/docs/openapi/">API reference</More></span>
+              <More to="https://github.com/hanzoai/sdk">hanzoai/sdk</More>
+            </div>
           </div>
         </div>
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.2 }}><Console /></motion.div>
+        <motion.div className="a2-grid xsd-stage" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.2 }}>
+          <div className="xsd-stage-con"><Console /></div>
+          <div className="xsd-stage-side">
+            <p className="xsd-ex x-mono">Code Examples</p>
+            <div className="xsd-dias">
+              {Object.values(DIALECTS).map((v) => <div key={v.name}><b>{v.title}</b><span>{v.line}</span></div>)}
+            </div>
+          </div>
+        </motion.div>
       </div>
       {/* every sample, in the page for search and find-in-page; the console shows one at a time */}
       <div className="x-sr">{Object.values(DIALECTS).map((v) => LANGS.map(([k]) => <pre key={v.name + k}>{v[k][0]} {v[k][1]}</pre>))}</div>
@@ -198,23 +221,10 @@ function Hero() {
   );
 }
 
-function Paste() {
-  return (
-    <section className="xsd-paste" aria-labelledby="xsd-paste-h">
-      <div className="x-wrap">
-        <div className="xsd-paste-in">
-          <div><p id="xsd-paste-h" className="xsd-paste-k">Paste and ship</p><p>Paste this into any agent. It reads the skill manifest and calls SDKs from there.</p></div>
-          <div className="xsd-prompt"><span className="x-mono xsd-prompt-k">Agent prompt</span><code>{PROMPT}</code><Copy text={PROMPT} /></div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function Two() {
   return (
-    <section className="x-sec xsd-two">
-      <div className="x-wrap xsd-two-in">
+    <section className="a2-sec tight xsd-two">
+      <div className="a2-wrap xsd-two-in">
         <div className="xsd-half">
           <span className="xsd-glyph" aria-hidden="true">{'{ }'}</span>
           <h2>Full Cloud SDK</h2>
@@ -233,9 +243,9 @@ function Two() {
 function Official() {
   const [k, setK] = useState(0);
   return (
-    <section className="x-sec xsd-off" aria-labelledby="xsd-off-h">
-      <div className="x-wrap">
-        <SecHead kicker="SDKs & Libraries" title="Official Cloud SDKs" lede="Use our official SDKs to integrate Cloud into your application" id="xsd-off-h" />
+    <section className="a2-sec xsd-off" aria-labelledby="xsd-off-h">
+      <div className="a2-wrap">
+        <Head kicker="SDKs & Libraries" title="Official Cloud SDKs" lede="Use our official SDKs to integrate Cloud into your application" id="xsd-off-h" />
         <div className="xsd-pick">
           <div className="xsd-pick-l" role="tablist" aria-label="Language" aria-orientation="vertical">
             {OFFICIAL.map(([n], i) => (
@@ -269,13 +279,13 @@ function Official() {
 
 function Orgs() {
   return (
-    <section className="x-sec xsd-orgs" data-room="dark" aria-labelledby="xsd-orgs-h">
-      <div className="x-wrap">
-        <SecHead dark kicker="Per-language orgs" title="A home for every ecosystem" lede="Each language has its own org holding the generated cloud SDK, an AI + agents library and the split-out packages. Every one of them ships the same six runnable examples — prove the key works, one completion, balance and usage, a store round-trip, create and run an agent, list the tools — so knowing one language's set is enough to navigate another's." id="xsd-orgs-h" />
+    <section className="a2-sec a2-dark xsd-orgs" data-room="dark" aria-labelledby="xsd-orgs-h">
+      <div className="a2-wrap">
+        <Head dark kicker="Per-language orgs" title="A home for every ecosystem" lede="Each language has its own org holding the generated cloud SDK, an AI + agents library and the split-out packages. Every one of them ships the same six runnable examples — prove the key works, one completion, balance and usage, a store round-trip, create and run an agent, list the tools — so knowing one language's set is enough to navigate another's." id="xsd-orgs-h" />
         <div className="xsd-table" role="table" aria-label="Per-language orgs">
           <div className="xsd-tr xsd-th" role="row">{['Language', 'Org', 'Install', 'sdk', 'docs', 'ai'].map((h) => <span key={h} role="columnheader">{h}</span>)}</div>
           {ORGS.map(([l, flag, org, cmd, sdk, docs, ai], i) => (
-            <Rise key={l} delay={i * 0.05} y={12}>
+            <div key={l} className="xsd-row" style={{ '--i': i }}>
               <a href={'https://github.com/' + org} target="_blank" rel="noopener noreferrer" className="xsd-tr" role="row">
                 <span role="cell" className="xsd-lang"><b>{l}</b>{flag && <em>Flagship</em>}<em className="ga">GA</em></span>
                 <span role="cell" className="x-mono">{org}</span>
@@ -284,7 +294,7 @@ function Orgs() {
                 <span role="cell" className="x-mono"><i>docs</i>{docs}</span>
                 <span role="cell" className="x-mono">{ai ? <><i>ai</i>{ai}</> : '—'}</span>
               </a>
-            </Rise>
+            </div>
           ))}
         </div>
       </div>
@@ -294,17 +304,17 @@ function Orgs() {
 
 function Flagship() {
   return (
-    <section className="x-sec xsd-ai" aria-labelledby="xsd-ai-h">
-      <div className="x-wrap">
-        <SecHead kicker="AI + Agents SDK" title="The flagship AI library" lede="Models, agents, tools, memory, and MCP — hand-crafted, not generated. Python leads; Rust and Node follow." id="xsd-ai-h" />
+    <section className="a2-sec xsd-ai" aria-labelledby="xsd-ai-h">
+      <div className="a2-wrap">
+        <Head kicker="AI + Agents SDK" title="The flagship AI library" lede="Models, agents, tools, memory, and MCP — hand-crafted, not generated. Python leads; Rust and Node follow." id="xsd-ai-h" />
         <div className="xsd-ai-grid">
           {AI.map(([l, repo, cmd, d], i) => (
-            <Rise key={l} delay={i * 0.08} className={'xsd-lib' + (i === 0 ? ' lead' : '')}>
+            <div key={l} className={'xsd-lib' + (i === 0 ? ' lead' : '')}>
               <div className="xsd-lib-top"><h3>{l}</h3><em>GA</em></div>
               <p className="x-mono xsd-repo">{repo}</p>
               <div className="xsd-cmd"><code>{cmd}</code><Copy text={cmd} /></div>
               <p>{d}</p>
-            </Rise>
+            </div>
           ))}
         </div>
       </div>
@@ -335,9 +345,9 @@ function Mods() {
   }, [seen, calm, q]);
   const shown = MODS.filter((m) => m.includes(q.trim().toLowerCase()));
   return (
-    <section className="x-sec xsd-mods" aria-labelledby="xsd-mods-h" ref={box}>
-      <div className="x-wrap">
-        <SecHead kicker="Go modules" title="Served at hanzo.ai" lede="Each module has a page at its import path, with its source and its reference." id="xsd-mods-h" />
+    <section className="a2-sec xsd-mods" aria-labelledby="xsd-mods-h" ref={box}>
+      <div className="a2-wrap">
+        <Head kicker="Go modules" title="Served at hanzo.ai" lede="Each module has a page at its import path, with its source and its reference." id="xsd-mods-h" />
         <label className="xsd-find">
           <span className="x-mono">hanzo.ai/</span>
           <span className="xsd-find-f">
@@ -360,9 +370,9 @@ function Mods() {
 
 export default function Sdks() {
   return (
-    <main className="xsd">
+    <main className="a2 xsd">
       <Hero />
-      <Paste />
+      <A2Paste name="SDKs" text={PROMPT} />
       <Two />
       <Official />
       <Orgs />

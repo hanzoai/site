@@ -15,7 +15,8 @@
    - travel={{ s: [from, to], y: [from, to] }} overrides the look's scale or travel for an object that needs it.
    - Put the page accent on <main style={{ '--ac': '#…' }}> (see components/v2/Launch.css). */
 import { useRef } from 'react';
-import { motion, useScroll, useTransform, useReducedMotion, useMotionTemplate } from 'motion/react';
+import { motion, useScroll, useTransform, useMotionTemplate } from 'motion/react';
+import useCalm from './useCalm';
 import { EASE, Magnetic } from '../ui';
 import { A } from '../kit';
 import { useWide } from './useWide';
@@ -32,7 +33,7 @@ const LOOKS = {
 
 export default function StageHero({ kick, title, sub, lede, acts = [], look = 'rise', travel, flip, dark, cue, thumb, children, className = '', id }) {
   const ref = useRef(null);
-  const calm = useReducedMotion();
+  const calm = useCalm();
   const wide = useWide();
   const on = wide && !calm;
   const L = { ...(LOOKS[look] || LOOKS.rise), ...travel };
@@ -59,7 +60,7 @@ export default function StageHero({ kick, title, sub, lede, acts = [], look = 'r
             {kick && <motion.p className="l2-kick l2-stage-kick" {...up(0)}><i aria-hidden="true" />{kick}</motion.p>}
             <h1 className="l2-display">
               {lines.map((t, i) => (
-                <span className="l2-ln" key={i}><motion.span initial={calm ? false : { y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.15, ease: EASE, delay: 0.08 + i * 0.12 }}>{t}</motion.span></span>
+                <span className="l2-ln" key={i}><motion.span initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.15, ease: EASE, delay: 0.08 + i * 0.12 }}>{t}</motion.span></span>
               ))}
             </h1>
             {sub && <motion.p className="l2-lede" {...up(0.32)}>{sub}</motion.p>}
@@ -72,7 +73,7 @@ export default function StageHero({ kick, title, sub, lede, acts = [], look = 'r
               </motion.div>
             )}
           </motion.div>
-          <motion.div className="l2-stage-obj" style={objStyle} initial={calm ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2, ease: EASE, delay: 0.2 }}>
+          <motion.div className="l2-stage-obj" style={objStyle} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2, ease: EASE, delay: 0.2 }}>
             {children}
           </motion.div>
         </div>

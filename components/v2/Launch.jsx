@@ -1,6 +1,6 @@
 'use client';
 /* Launch: the v2 model-launch shell for Hanzo's named models (/enso /kai /zen /iro /koma /oto /koe /uta /mori).
-   Owned by the Zen-names chat (wave 2, group 12). One file per piece; Chapters.jsx is its partner.
+   Owned by the Zen-names chat (wave 2, group 12). One file per piece; x-cray/Chapters.jsx is its partner.
 
    Usage (a page's body file):
      <Launch slug="enso" accent="#e5412d" ink="#b4301f" shape={ring} head={<>…kicker, <Lines/>, lede, actions…</>}
