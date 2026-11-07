@@ -2,7 +2,7 @@
 
 **Not filmed.** The page needs `lusion.dev` for its 3D assets, and that host is blocked (see `docs/refs/TO-FILM.md`), so in the cloud browser it stays on its loader. Every value below is **from code**: Lusion's own bundle (`/_astro/hoisted.CUO_IjfL.js`, 1.25 MB) and stylesheet (`/_astro/about.CNa9RfUh.css`), both read from lusion.co on 7 Nov 2026. Awards: Lusion v3 was Awwwards Site of the Year 2023 and Developer Site of the Year 2023.
 
-**Why it is in James's family:** it is the strongest card-to-page studio site. Project cards open into their page over one live 3D stage, so the next page grows out of what you clicked (James's synchronized.studio rule). Every hover answers, including text that decodes as the pointer arrives, and the page has its own scroll feel.
+**Why it is in James's family:** it is the strongest card-to-page studio site. Project cards open into their page through one live 3D stage that starts from what was on screen, never a blank cut (the nearest thing to James's synchronized.studio rule among award studios). Every hover answers, including text that decodes as the pointer arrives, and the page has its own scroll feel.
 
 **Honest verdict:** take the timing rules, not the look. The 3D stage needs a GPU and its own engine, so for Hanzo it is a pattern for one WebGL moment at most.
 
@@ -30,7 +30,7 @@
 | Header | fixed, `font-size: clamp(1rem, 1vw, 1.5rem)` |
 
 ## The 5 moves it gives Hanzo
-1. **The card is the door.** Clicking a card keeps its image on screen and grows the next page out of it, with an overlay that covers loading. Use Hanzo's own model and product media as the card image. *Suits: customers, case studies, models index to model page, careers roles.*
+1. **The card is the door.** Clicking a card starts the next page from a texture of what was on screen (the shader's "from" texture), with an overlay that covers loading, so there is never a blank cut. Use Hanzo's own model and product media as the card image. (How the blend looks is not visible without filming; the mechanism is in the code.) *Suits: customers, case studies, models index to model page, careers roles.*
 2. **Text that decodes on hover.** The card's label re-types itself at 40 letters per second, with 5 random characters leading. The hover tells you "this is live". *Suits: model cards, product cards, nav labels; once per page, not everywhere.*
 3. **Staggered label slide.** Hover drives the second line's letters up to 1.5 em with a stagger, and progress fills in about 400 ms. *Suits: any card grid, the footer links.*
 4. **A heavier scroll.** Wheel steps land 90% in about 190 ms and 99% in about 380 ms (exponential, coefficient 12). If Hanzo uses Lenis, match this feel. *Suits: long story pages: home, model launch, investors.*
