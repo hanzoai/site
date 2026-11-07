@@ -850,3 +850,5 @@ html.js .xbm-ent[data-ent='conveyor'][data-go] .xbm-tiles > li:nth-child(n+4) { 
 .xbm-dial-x b { min-height: 2.4em; }
 @media (max-width: 600px) { .xbm-dial-x b { min-height: 0; } .xbm-dial-x { grid-template-columns: minmax(0, 1fr); gap: 14px; } .xbm-dial-x b { font-size: 18px; white-space: nowrap; } }
 @media (max-width: 900px) { .xbm-rail-l a { padding-block: 15px; } } /* 44px rail tabs on phones */
+/* an open sheet always slides fully in, wide ones too (the phone rule above had the same weight and came later) */
+.xbm-sh[data-open='true'] .xbm-sh-panel, .xbm-sh.wide[data-open='true'] .xbm-sh-panel { transform: none; }

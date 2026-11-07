@@ -3,7 +3,7 @@
 Reviewed 2026-11-07, walked moving at 1470x801 and 375x812 (Playwright, wheel steps of 400px every 700ms, rest pairs on the first screen and mid-page, hover/press/tap on the hero ask, links, (+) sheets, frontier tabs, board toggles, race tabs, sub-nav rail, "/" search and the context dial).
 
 Verdict: 5/10
-Held (8 Nov, copy rule): the 8 Nov design pass is in (see git log), but James's copycheck run found 193 of 354 live lines missing, so not Ready until `copycheck.mjs /benchmarks` says missing 0.
+Ready: 8 Nov, copycheck missing 0 of 354 (hanzo.ai live), held up next to /api and /affiliate (James's new bar, no score). The (+) sheets now live inside <main> (still fixed to the viewport), so their method notes, Kai's datasets and the research list count as page copy again; wide sheets slide fully in on phones (a later phone rule had kept them below the screen); every b/small/strong label and every mixed line is a real text run; the race lanes carry Hanzo's own labels (⚡ Hanzo native, ⚙️ Local RAG, 🐌 Traditional agent: copy rule over the emoji taste note); the GPQA list-price date follows hanzo.ai (Nov 7). Earlier today: the context dial holds its height (phone CLS 0), 44px rail tabs. taste/unique OK; 0 console errors, no overflow at 1470 and 375.
 
 First complaint: "I pressed one of the plus buttons and the whole page slid off to the left with a stack of panels on top, and Escape didn't bring it back. On the phone it threw me to the top and opened the wrong panel. That's broken, not premium."
 
