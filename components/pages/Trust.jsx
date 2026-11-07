@@ -27,7 +27,7 @@
    Conflict noted on the card: MASTER §3.1 keeps centred heads for the closing section, but the hero is a centred
    statement at the coordinator's request after the critic found /trust sharing /leaderboard's frame (JAMES.md 8,
    neighbouring pages differ).
-   V2: 8/10 calm proof with something to look at on every screen: the self-opening evidence cabinet, papers that open into their pages, a statement that inks in as you read, a pinned stance stage (an accordion on phones), a search that shows itself working, one ask. */
+   V2: 8/10 calm proof with something to look at on every screen: the self-opening evidence cabinet (on phones each drawer's contents ride in under it), ruled papers that open into their pages, a statement that inks in as you read, a pinned stance stage whose index grows as each stance enters (an accordion on phones), a search that shows itself working, one ask. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform, useMotionTemplate, useMotionValueEvent } from 'motion/react';
 import { A, More } from '../kit';
@@ -111,6 +111,27 @@ function Locker() {
   const calm = useReducedMotion();
   const ref = useRef(null);
   const live = useInView(ref, { amount: 0.3 });
+  /* phones: the open drawer's contents ride directly under it. The tray keeps its place in the flow (so nothing
+     reflows); it is carried up under the open drawer and the drawers below it step down by its height (transform only). */
+  const narrow = useMedia('(max-width: 899px)', false);
+  const [geo, setGeo] = useState(null);
+  useEffect(() => {
+    if (!narrow) { setGeo(null); return; }
+    const el = ref.current;
+    const tray = el?.querySelector('.xtr-tray');
+    if (!tray) return;
+    const measure = () => {
+      const gap = parseFloat(getComputedStyle(tray).marginTop) || 0;
+      const ds = [...el.querySelectorAll('.xtr-drawer')];
+      setGeo({ under: ds.map((d) => d.offsetTop + d.offsetHeight + gap - tray.offsetTop), push: tray.offsetHeight + gap });
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el); ro.observe(tray);
+    return () => ro.disconnect();
+  }, [narrow]);
+  const move = calm ? { duration: 0 } : { duration: 0.3, ease: EMPH };
+  const inline = geo && at >= 0;
   useEffect(() => {
     if (calm) { setAt((v) => (v < 0 ? 0 : v)); return; }
     if (mine || !live || (under && at >= 0)) return;
@@ -138,7 +159,7 @@ function Locker() {
             <motion.button
               key={t} type="button" role="tab" id={'xtr-dr-' + i} aria-selected={at === i} aria-controls={'xtr-tray-' + i} tabIndex={at === i || (at < 0 && i === 0) ? 0 : -1}
               className={'xtr-drawer' + (at === i ? ' on' : '')} onClick={() => pick(i)}
-              initial={false} animate={{ x: at === i ? 28 : 0 }} transition={{ duration: 0.3, ease: EMPH }}
+              initial={false} animate={{ x: at === i ? (narrow ? 8 : 28) : 0, y: inline && i > at ? geo.push : 0 }} transition={move}
             >
               <span className="xtr-dr-n pf-mono">{pad(i)}</span>
               <span className="xtr-dr-t">{t}</span>
@@ -148,7 +169,7 @@ function Locker() {
           ))}
         </div>
       </div>
-      <div className="xtr-tray">
+      <motion.div className="xtr-tray" initial={false} animate={{ x: inline ? 8 : 0, y: inline ? geo.under[at] : 0 }} transition={move}>
         {/* every drawer's contents are in the page; the open one is shown */}
         {REVIEW.map(([t, d, to], i) => (
           <div key={t} id={'xtr-tray-' + i} role="tabpanel" aria-labelledby={'xtr-dr-' + i} className="xtr-tray-p" data-on={at === i || (at < 0 && i === 0)} inert={!(at === i || (at < 0 && i === 0))}>
@@ -158,7 +179,7 @@ function Locker() {
             {to ? <More to={to}>Read {t.replace(/^The /, 'the ')}</More> : <More to="/contact-sales">Ask for it</More>}
           </div>
         ))}
-      </div>
+      </motion.div>
     </div>
   );
 }
@@ -189,11 +210,12 @@ function Docs() {
           <p className="pf-body">The two documents a review opens first are published — read them now, no email. The other four we send on request: the questionnaire, the review session and the control detail come back the same week.</p>
         </div>
         <div className="xtr-papers">
-          {REVIEW.slice(0, 2).map(([t, d, to], i) => (
+          {/* path, title and arrow: the description is already in the cabinet's tray above, so the paper does not say it twice */}
+          {REVIEW.slice(0, 2).map(([t, , to], i) => (
             <A key={t} to={to} className={'xtr-paper p' + i}>
               <span className="xtr-paper-k pf-mono">{to}</span>
               <b data-morph>{t}</b>
-              <span className="xtr-paper-d">{d}</span>
+              <span className="xtr-paper-r" aria-hidden="true">{[92, 100, 84, 96, 61, 0, 100, 88, 72].map((w, j) => <i key={j} style={{ width: w + '%' }} />)}</span>
               <i className="xtr-paper-go" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></i>
             </A>
           ))}

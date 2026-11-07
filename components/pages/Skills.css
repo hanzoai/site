@@ -16,6 +16,12 @@
 .xsk-hero-grid { align-items: center; row-gap: 56px; }
 .xsk-hero-copy { grid-column: 1 / span 5; }
 .xsk-h1 { font-size: clamp(64px, 7.6vw, 112px); }
+.xsk-h1-set { transform-origin: 0 100%; } /* settles toward the lede as the page scrolls */
+/* the h1's cut-in runs on the server-rendered line from first paint (an animation outranks the inline start offset),
+   so the h1 never waits for hydration; with JS off Lines' rule shows it at rest */
+.xsk-h1 .a2-ln-in { animation: xsk-cut .7s var(--e-em) .15s both; }
+@keyframes xsk-cut { from { transform: translateY(105%); } to { transform: none; } }
+html:not(.js) .xsk-hero-obj { transform: none !important; }
 .xsk-hero-copy .a2-lede { margin: 28px 0 36px; color: var(--ink); }
 .xsk-hero-copy .a2-lede mark { background: linear-gradient(transparent 55%, var(--hl) 55%, var(--hl) 92%, transparent 92%); }
 .xsk .a2-acts .x-btn.solid { background: var(--ink); }
@@ -25,7 +31,7 @@
 @media (hover: hover) { .xsk-repo:hover { color: var(--ink); text-decoration-color: currentColor; } }
 .xsk-hero-obj { grid-column: 6 / span 7; }
 .xsk-wake { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 20px; align-items: stretch; }
-.xsk-file { padding: 28px; border-radius: var(--r-hero); background: var(--paper); border: 1px solid var(--line); transform: rotate(-1.2deg); }
+.xsk-file { --tx: 0deg; --ty: 0deg; padding: 28px; border-radius: var(--r-hero); background: var(--paper); border: 1px solid var(--line); transform: perspective(1200px) rotate(-1.2deg) rotateX(var(--ty)) rotateY(var(--tx)); transition: transform .3s var(--e-out); }
 .xsk-file-top { display: flex; justify-content: space-between; margin-bottom: 18px; font-size: 13px; color: var(--faint); }
 .xsk-file-top span:first-child { color: var(--ink); font-weight: 500; }
 .xsk-fm { margin: 0 0 18px; font-size: 14.5px; line-height: 1.9; color: var(--ink); white-space: pre-wrap; }
@@ -44,11 +50,12 @@
 .xsk-shelf li.on { color: #000; transform: translateX(8px); transition: transform .4s var(--e-em), color 0s .09s; }
 .xsk-shelf li.on::before { opacity: 1; }
 .xsk-shelf li.blank i { display: block; width: 46%; height: 7px; border-radius: 4px; background: #262626; }
-.xsk-tray { margin-top: auto; }
-.xsk-tray .x-mono { display: block; margin-bottom: 8px; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #a3a3a3; }
+/* the label sits under the tray, so the sheets drop in from above without crossing it */
+.xsk-tray { margin-top: auto; display: flex; flex-direction: column-reverse; }
+.xsk-tray .x-mono { display: block; margin-top: 8px; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #a3a3a3; }
 .xsk-tray-in { display: flex; gap: 6px; align-items: center; height: 40px; padding: 6px; border-radius: 12px; background: #171717; }
 .xsk-base { width: 18%; height: 100%; border-radius: 7px; background: #404040; }
-.xsk-sheet { width: 16%; height: 100%; border-radius: 7px; background: #fafafa; transform: translateY(-120px) rotate(-8deg); opacity: 0; transition: transform .5s var(--e-em), opacity .3s var(--e-out); }
+.xsk-sheet { width: 16%; height: 100%; border-radius: 7px; background: #fafafa; transform: translateY(-56px) rotate(-8deg); opacity: 0; transition: transform .5s var(--e-em), opacity .3s var(--e-out); }
 .xsk-sheet.in { transform: none; opacity: 1; }
 
 /* the trade: heading left, one long file against five small ones on the right, both in a context track */
@@ -68,7 +75,7 @@
 .xsk-track-k { margin: 0; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
 
 /* the six points: words on the left, one pinned panel on the right */
-.xsk-essay { padding-top: clamp(72px, 8vw, 116px); }
+.xsk-essay { padding: clamp(72px, 8vw, 116px) 0 clamp(44px, 5vw, 72px); }
 .xsk-essay-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: clamp(40px, 5vw, 72px); }
 .xsk-points { list-style: none; margin: 0; padding: 0; }
 .xsk-pt { min-height: 62svh; display: flex; flex-direction: column; justify-content: center; padding: 24px 0; }
@@ -88,30 +95,55 @@
   .xsk-pt.on { opacity: 1; }
 }
 .xsk-stage { min-width: 0; }
-.xsk-stage-in { position: sticky; top: max(88px, calc(50svh - 270px)); height: 540px; display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 16px; }
-.xsk-scenes { display: grid; border-radius: var(--r-hero); background: #f5f5f5; overflow: hidden; }
-.xsk-scene { grid-area: 1 / 1; display: grid; place-items: center; padding: 40px; opacity: 0; transform: translateY(24px); transition: opacity .3s var(--e-out), transform .5s var(--e-em); }
-.xsk-scene.past { transform: translateY(-24px); }
-.xsk-scene.on { opacity: 1; transform: none; transition-delay: .09s; }
-.xsk-ticks { display: flex; gap: 6px; }
-.xsk-ticks b { position: relative; flex: 1; height: 2px; border-radius: 2px; background: #e5e5e5; overflow: hidden; }
+.xsk-stage-in { position: sticky; top: max(88px, calc(50svh - 270px)); height: 540px; display: grid; }
+/* the progress ticks live inside the panel's bottom edge, so they leave with it when the stage unpins */
+.xsk-scenes { position: relative; display: grid; border-radius: var(--r-hero); background: #f5f5f5; overflow: hidden; }
+/* one scene at a time: the outgoing one leaves in 150 ms, the incoming one starts only after it is gone */
+.xsk-scene { grid-area: 1 / 1; display: grid; place-items: center; padding: 40px 40px 60px; opacity: 0; transform: translateY(24px); transition: opacity .15s var(--e-out), transform .15s var(--e-out); }
+.xsk-scene.past { transform: translateY(-16px); }
+.xsk-scene.on { opacity: 1; transform: none; transition: opacity .3s var(--e-out) .15s, transform .5s var(--e-em) .15s; }
+.xsk-ticks { position: absolute; left: 40px; right: 40px; bottom: 26px; display: flex; gap: 6px; }
+.xsk-ticks b { position: relative; flex: 1; height: 2px; border-radius: 2px; background: #d4d4d4; overflow: hidden; }
 .xsk-ticks b::after { content: ''; position: absolute; inset: 0; background: var(--ink); transform: scaleX(0); transform-origin: 0 50%; transition: transform .4s var(--e-em); }
 .xsk-ticks b.on::after { transform: none; }
 
 /* the scenes: each starts in its before state and plays to its after state when its panel is on */
 .xsk-sc { width: 100%; max-width: 460px; }
-.xsk-sc .xsk-file { background: #fff; }
-.xsk-blank { display: grid; gap: 10px; }
-.xsk-blank i { display: block; height: 8px; border-radius: 4px; background: #e5e5e5; transform-origin: 0 50%; transform: scaleX(calc(var(--on, 0))); transition: transform .5s var(--e-em) calc(var(--k) * 60ms + 150ms); }
-/* 02: the gateway lights after a beat, then its files drop into the tray */
-:is(.xsk-scene, .xsk-pt-vis):not(.on) .xsk-sc-shelf .xsk-shelf li.on { color: #a3a3a3; transform: none; transition: none; }
-:is(.xsk-scene, .xsk-pt-vis):not(.on) .xsk-sc-shelf .xsk-shelf li.on::before { opacity: 0; transition: none; }
-:is(.xsk-scene, .xsk-pt-vis):not(.on) .xsk-sc-shelf .xsk-sheet.in { transform: translateY(-120px) rotate(-8deg); opacity: 0; transition: none; }
-:is(.xsk-scene.on, .xsk-pt-vis.on) .xsk-sc-shelf .xsk-shelf li.on { transition: transform .4s var(--e-em) .4s, color 0s .5s; }
-:is(.xsk-scene.on, .xsk-pt-vis.on) .xsk-sc-shelf .xsk-shelf li.on::before { transition-delay: .4s; }
-:is(.xsk-scene.on, .xsk-pt-vis.on) .xsk-sc-shelf .xsk-sheet.in { transition-delay: .9s !important; }
-:is(.xsk-scene.on, .xsk-pt-vis.on) .xsk-sc-shelf .xsk-sheet.in + .xsk-sheet.in { transition-delay: .99s !important; }
-/* 03: the command wipes in, the output draws, the file lands */
+/* 01: the frontmatter close up. The file zooms in, its numbered lines wipe in one by one, then the grey
+   highlighter strikes the name and the description, the two things frontmatter carries. */
+.xsk-zoom { padding: 24px 28px 28px; border-radius: var(--r-card); background: #fff; border: 1px solid var(--line); transform-origin: 0 0; transform: scale(calc(.92 + var(--on, 0) * .08)); transition: transform .9s var(--e-io); }
+.xsk-zoom-top { margin: 0 0 16px; font-size: 13px; color: var(--faint); }
+.xsk-zoom-ln { list-style: none; margin: 0; padding: 0; counter-reset: ln; display: grid; gap: 6px; font-size: clamp(17px, 1.35vw, 20px); line-height: 1.45; color: var(--ink); }
+.xsk-zoom-ln li { position: relative; isolation: isolate; counter-increment: ln; padding-left: 40px; clip-path: inset(0 calc((1 - var(--on, 0)) * 100%) 0 0); transition: clip-path .5s var(--e-io) calc(var(--k) * 90ms + .3s); }
+.xsk-zoom-ln li::before { content: counter(ln); position: absolute; left: 0; top: .2em; width: 20px; text-align: right; font-size: 12px; color: var(--faint); }
+.xsk-zoom-ln .d { color: var(--faint); }
+.xsk-zoom-ln .k > span { color: #737373; }
+.xsk-zoom-ln .k::after { content: ''; position: absolute; inset: 0 0 0 34px; z-index: -1; border-radius: 6px; background: var(--hl); transform-origin: 0 50%; transform: scaleX(var(--on, 0)); transition: transform .9s var(--e-em) 1.1s; }
+.xsk-zoom-ln .b { display: flex; align-items: center; min-height: 1.2em; }
+.xsk-zoom-ln .b i { display: block; height: 8px; border-radius: 4px; background: #e5e5e5; }
+.xsk-zoom-ln .l { font-size: .72em; color: var(--soft); }
+/* 02: one gateway. The word arrives, the line runs down, discover-database fills ink, the rail runs out,
+   and two of the five files rise and turn ink while the rest stay where they are. */
+.xsk-sc-gate { display: grid; justify-items: center; max-width: 520px; }
+.xsk-gw-word { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 18px; border-radius: 12px; background: #fff; border: 1px solid var(--line); font-size: 16px; color: var(--ink); opacity: var(--on, 0); transform: translateY(calc((1 - var(--on, 0)) * -16px)); transition: opacity .3s var(--e-out) .15s, transform .5s var(--e-em) .15s; }
+.xsk-gw-word .xsk-caret-k { color: var(--faint); }
+.xsk-gw-v { display: block; width: 2px; height: 28px; background: var(--ink); transform-origin: 50% 0; transform: scaleY(var(--on, 0)); transition: transform .3s var(--e-io) .5s; }
+.xsk-gw-v.two { transition-delay: 1.1s; }
+.xsk-gw { position: relative; isolation: isolate; display: inline-flex; align-items: center; height: 44px; padding: 0 22px; border-radius: 999px; border: 1px solid var(--ink); font-size: 15px; color: var(--ink); transition: color 0s .8s; }
+.xsk-gw::before { content: ''; position: absolute; inset: -1px; z-index: -1; border-radius: inherit; background: var(--ink); opacity: var(--on, 0); transition: opacity .3s var(--e-out) .75s; }
+:is(.xsk-scene.on, .xsk-pt-vis.on) .xsk-gw { color: #fafafa; }
+.xsk-gw-rail { display: block; width: 82%; height: 2px; background: var(--ink); transform: scaleX(var(--on, 0)); transition: transform .4s var(--e-io) 1.35s; }
+/* the two pulled files are wider and carry their gateway's name in ink; the three left on the shelf stay drawn */
+.xsk-gw-files { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 2.4fr) minmax(0, 1fr); gap: 10px; width: 100%; margin-top: 22px; }
+.xsk-gw-files em { display: block; margin-bottom: 2px; font: 500 13px/1.25 var(--mono); font-style: normal; color: var(--ink); overflow-wrap: anywhere; transition: color 0s calc(var(--k) * 60ms + 1.75s); }
+:is(.xsk-scene.on, .xsk-pt-vis.on) .xsk-gw-files .pull em { color: #fafafa; }
+:is(.xsk-scene.on, .xsk-pt-vis.on) .xsk-gw-files .pull i { background: rgba(255, 255, 255, .3); }
+.xsk-gw-files span { position: relative; isolation: isolate; display: grid; gap: 6px; align-content: start; height: 84px; padding: 14px 10px; border-radius: 10px; background: #fff; border: 1px solid var(--line); opacity: .55; transition: transform .5s var(--e-em), opacity .3s var(--e-out); transition-delay: calc(var(--k) * 60ms + 1.6s); }
+.xsk-gw-files span::before { content: ''; position: absolute; inset: -1px; z-index: -1; border-radius: inherit; background: var(--ink); opacity: 0; transition: opacity .3s var(--e-out); transition-delay: inherit; }
+.xsk-gw-files i { display: block; height: 4px; border-radius: 2px; background: #e5e5e5; transition: background-color 0s calc(var(--k) * 60ms + 1.75s); }
+.xsk-gw-files i:last-child { width: 60%; }
+:is(.xsk-scene.on, .xsk-pt-vis.on) .xsk-gw-files .pull { opacity: 1; transform: translateY(-14px); }
+:is(.xsk-scene.on, .xsk-pt-vis.on) .xsk-gw-files .pull::before { opacity: 1; }/* 03: the command wipes in, the output draws, the file lands */
 .xsk-term { padding: 18px 22px 24px; border-radius: var(--r-card); background: #0a0a0a; color: #fafafa; }
 .xsk-term-top { display: flex; gap: 6px; margin-bottom: 18px; }
 .xsk-term-top i { width: 10px; height: 10px; border-radius: 50%; background: rgba(255, 255, 255, .2); }
@@ -128,13 +160,7 @@
 .xsk-sc-mono { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; height: 100%; padding: 10px 12px; border-radius: 10px; background: #d4d4d4; transform-origin: 0 50%; transform: scaleX(var(--on, 0)); transition: transform .9s var(--e-io) .15s; }
 .xsk-sc-five { display: flex; gap: 8px; height: 100%; }
 .xsk-sc-five b { width: 11%; display: grid; align-content: center; gap: 5px; padding: 0 8px; border-radius: 10px; background: var(--ink); transform-origin: 50% 100%; opacity: var(--on, 0); transform: scale(calc(.6 + var(--on, 0) * .4)); transition: opacity .3s var(--e-out), transform .4s var(--e-em); transition-delay: calc(var(--k) * 90ms + .9s); }
-/* 05: three files, read one after another */
-.xsk-sc-thread { display: grid; gap: 10px; }
-.xsk-sc-f { margin-left: calc(var(--k) * 15%); width: 66%; display: grid; gap: 9px; padding: 16px 18px; border-radius: var(--r-card); background: #fff; border: 1px solid var(--line); opacity: calc(.3 + var(--on, 0) * .7); transform: translateY(calc((1 - var(--on, 0)) * 12px)); transition: opacity .3s var(--e-out), transform .5s var(--e-em); transition-delay: calc(var(--k) * 300ms + .15s); }
-.xsk-sc-f .x-mono { font-size: 13px; color: var(--ink); font-weight: 500; }
-.xsk-sc-f i { display: block; height: 6px; border-radius: 3px; background: #e5e5e5; }
-.xsk-sc-f em { font-style: normal; font-size: 12px; color: var(--faint); }
-/* 06: a new file drops onto the shelf and joins it */
+/* 05: a new file drops onto the shelf and joins it */
 .xsk-sc-new { display: grid; justify-items: end; }
 .xsk-sc-new .xsk-agent { width: 100%; }
 .xsk-sc-drop { position: relative; z-index: 1; width: 132px; display: grid; gap: 7px; margin: 0 28px -22px 0; padding: 14px; border-radius: 14px; background: #fff; border: 1px solid var(--line); box-shadow: 0 24px 60px -16px rgba(0, 0, 0, .18); transform: translateY(calc((1 - var(--on, 0)) * -56px)) rotate(calc((1 - var(--on, 0)) * -6deg)); opacity: var(--on, 0); transition: transform .5s var(--e-em) .15s, opacity .3s var(--e-out) .15s; }
@@ -145,11 +171,21 @@
 .xsk-sc-row::before { opacity: var(--on, 0) !important; transition: opacity .3s var(--e-out) .8s !important; }
 .xsk-shelf li.xsk-sc-row i { background: #d4d4d4; }
 
-/* the dark room: a thread */
-.xsk-thread .a2-grid { align-items: center; row-gap: 56px; }
-.xsk-thread-copy { grid-column: 1 / span 5; }
-.xsk-steps { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 36px; }
-.xsk-steps button { position: relative; isolation: isolate; height: 48px; padding: 0 20px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .16); background: none; color: #a3a3a3; font: 500 16px/1 var(--sans); cursor: pointer; transition: transform .09s var(--e-out); }
+/* the dark room: a thread. It enters as a rounded card inside the gutters and opens to full width as it arrives
+   (--o scrubs 0 to 1); pills and files share one bottom-aligned block. */
+.xsk-thread { --hl: #404040; padding: clamp(64px, 6vw, 88px) 0; clip-path: inset(0 calc((1 - var(--o, 1)) * var(--gut)) round calc((1 - var(--o, 1)) * 24px)); }
+.xsk-thread .a2-grid { align-items: end; row-gap: 40px; }
+/* point 05's heading and words lead; the three steps sit in one row under them, a rail under the row fills as the
+   thread is read, and the row's foot shares the last file's baseline */
+.xsk-thread-copy { grid-column: 1 / span 5; display: grid; align-content: end; }
+.xsk-thread-h { max-width: none; }
+.xsk-thread .xsk-cap.a2-kick.show { margin: 12px 0 18px; color: #a3a3a3; }
+.xsk-thread-lede.a2-body { font-size: clamp(17px, 1.3vw, 19px); line-height: 1.55; color: #fafafa; }
+.xsk-thread-nav { display: grid; gap: 14px; margin-top: 32px; }
+.xsk-steps { display: flex; flex-wrap: nowrap; gap: 8px; }
+.xsk-rail { position: relative; display: block; width: 100%; height: 2px; border-radius: 2px; background: rgba(255, 255, 255, .14); overflow: hidden; }
+.xsk-rail::after { content: ''; position: absolute; inset: 0; background: #fafafa; transform-origin: 0 50%; transform: scaleX(var(--r, 1)); transition: transform .4s var(--e-io); }
+.xsk-steps button { flex: none; white-space: nowrap; position: relative; isolation: isolate; height: 48px; padding: 0 20px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .16); background: none; color: #a3a3a3; font: 500 16px/1 var(--sans); cursor: pointer; transition: transform .09s var(--e-out); }
 .xsk-steps button::before { content: ''; position: absolute; inset: -1px; z-index: -1; border-radius: inherit; background: #fafafa; opacity: 0; transition: opacity .15s var(--e-out); }
 .xsk-steps button[aria-pressed='true'] { color: #000; border-color: #fafafa; }
 .xsk-steps button[aria-pressed='true']::before { opacity: 1; }
@@ -160,15 +196,22 @@
   .xsk-steps button[aria-pressed='true']:hover { color: #000; border-color: #fafafa; }
 }
 .xsk-files { grid-column: 7 / span 6; display: grid; gap: 16px; }
-.xsk-f { position: relative; margin-left: calc(var(--i) * 16%); width: 62%; display: grid; gap: 10px; padding: 20px 22px; border-radius: 20px; background: #171717; border: 1px solid rgba(255, 255, 255, .08); transform: translateY(8px); transition: transform .5s var(--e-em); }
+.xsk-f { position: relative; margin-left: calc(var(--i) * 16%); width: 62%; display: grid; gap: 10px; padding: 20px 22px; border-radius: 20px; background: #171717; border: 1px solid rgba(255, 255, 255, .08); transform: translateY(8px); transition: transform .5s var(--e-em), opacity .3s var(--e-out); }
 .xsk-f::after { content: ''; position: absolute; inset: -1px; border-radius: inherit; border: 1px solid rgba(255, 255, 255, .4); opacity: 0; transition: opacity .3s var(--e-out); pointer-events: none; }
 .xsk-f > * { opacity: .25; transition: opacity .3s var(--e-out); }
 .xsk-f.on, .xsk-f.peek { transform: none; }
 .xsk-f.on > *, .xsk-f.peek > * { opacity: 1; }
 .xsk-f.on::after, .xsk-f.peek::after { opacity: 1; }
+/* peek always answers: the hovered step's file lifts 8px and grows a little, the other two step back */
+.xsk-f.peek { transform: translateY(-8px) scale(1.02); }
+.xsk-files.peeking .xsk-f:not(.peek) { opacity: .4; }
 .xsk-f .x-mono { font-size: 13px; color: #fafafa; }
+.xsk-f-ln { margin: 2px 0 4px; font-size: 16px; line-height: 1.4; color: #fafafa; }
 .xsk-f i { display: block; height: 8px; border-radius: 4px; background: #262626; }
-.xsk-f em { font-style: normal; font-size: 12.5px; color: #a3a3a3; }
+/* the link line is struck once its file is read (the grey highlighter, dark-room shade) */
+.xsk-f em { position: relative; isolation: isolate; justify-self: start; margin: 2px 0 0 -8px; padding: 3px 8px; border-radius: 6px; font-style: normal; font-size: 13px; color: #d4d4d4; }
+.xsk-f em::before { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: var(--hl); transform-origin: 0 50%; transform: scaleX(0); transition: transform .5s var(--e-em) .15s; }
+.xsk-f.on em::before { transform: none; }
 
 /* get: the heading leads, the card is the object under it */
 .xsk-get-in { display: grid; justify-items: center; gap: 44px; }
@@ -183,43 +226,84 @@
 @media (hover: hover) { .xsk-get-meta a:hover { text-decoration-color: currentColor; } }
 .xsk-get-shelf { grid-area: shelf; align-self: center; }
 .xsk-deploy { grid-area: ask; justify-self: start; align-self: end; height: 48px; padding: 0 24px; font-size: 16px; background: transparent; color: #fafafa; border-color: rgba(255, 255, 255, .3); }
+/* the install's done line: the real command types once, three output lines draw, the tick lands */
+.xsk-get-done { display: grid; gap: 14px; padding: 20px; border-radius: var(--r-card); background: #171717; }
+.xsk-gd-cmd { display: flex; align-items: flex-start; gap: 10px; min-height: 3.2em; margin: 0; font-size: 13px; line-height: 1.6; color: #fafafa; }
+.xsk-gd-cmd .d { flex: none; color: #a3a3a3; }
+.xsk-gd-type { min-width: 0; overflow-wrap: anywhere; }
+.xsk-gd-type .xsk-caret { display: inline-block; width: 2px; height: 14px; margin-left: 2px; vertical-align: -2px; opacity: 0; }
+.xsk-get-done.seen:not(.on) .xsk-gd-type .xsk-caret { opacity: 1; }
+.xsk-gd-out { display: grid; gap: 9px; }
+.xsk-gd-out i { display: block; height: 6px; border-radius: 3px; background: #262626; transform-origin: 0 50%; transform: scaleX(0); transition: transform .4s var(--e-em) calc(var(--k) * 90ms + .09s); }
+.xsk-gd-ok { margin: 0; font-size: 13.5px; opacity: 0; transform: translateY(8px); transition: opacity .3s var(--e-out) .4s, transform .4s var(--e-em) .4s; }
+.xsk-get-done.on :is(.xsk-gd-out i, .xsk-gd-ok) { transform: none; }
+.xsk-get-done.on .xsk-gd-ok { opacity: 1; }
+html:not(.js) .xsk-get-done :is(.xsk-gd-out i, .xsk-gd-ok) { transform: none; opacity: 1; }
+.xsk-gd-row { position: relative; isolation: isolate; display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .08); color: #fafafa; transition: transform .4s var(--e-em); }
+.xsk-gd-row::before { content: ''; position: absolute; inset: -1px; z-index: -1; border-radius: inherit; background: #fafafa; opacity: 0; transition: opacity .3s var(--e-out); }
 @media (hover: hover) {
   .xsk-get-card .xsk-deploy:hover { border-color: rgba(255, 255, 255, .6); background: transparent; }
-  .xsk-get-card:hover .xsk-shelf li:first-child { color: #000; transform: translateX(8px); transition: transform .4s var(--e-em), color 0s .09s; }
-  .xsk-get-card:hover .xsk-shelf li:first-child::before { opacity: 1; }
+  .xsk-get-card:hover .xsk-gd-row { color: #000; transform: translateX(8px); transition: transform .4s var(--e-em), color 0s .09s; }
+  .xsk-get-card:hover .xsk-gd-row::before { opacity: 1; }
 }
 .xsk-deploy:focus-visible { outline: 2px solid #fafafa; outline-offset: 3px; }
 
 @media (max-width: 900px) {
   .xsk-hero { padding: 96px 0 72px; }
   .xsk-hero-grid { row-gap: 32px; }
-  .xsk-h1 { font-size: 72px; }
+  .xsk-h1 { font-size: clamp(52px, 14vw, 64px); }
   .xsk-hero-copy .a2-lede { margin: 18px 0 24px; }
   .xsk-repo-cap { margin-top: 4px; }
+  /* phone hero: the live agent alone (point 01 shows the file), held inside 45svh */
+  .xsk-hero-obj { max-height: 45svh; }
   .xsk-wake { grid-template-columns: minmax(0, 1fr); }
-  .xsk-wake .xsk-agent { order: -1; }
-  .xsk-wake .xsk-prose { display: none; }
+  .xsk-hero .xsk-file { display: none; }
+  .xsk-hero .xsk-agent { gap: 10px; padding: 16px; }
+  .xsk-hero .xsk-say { min-height: 48px; }
+  .xsk-hero .xsk-shelf li.blank:nth-child(n + 4) { display: none; }
   .xsk-file { transform: none; padding: 22px; }
   .xsk-track { height: 56px; padding: 6px; }
   .xsk-mono { padding: 9px 10px; gap: 5px; }
   .xsk-five b { width: 13%; padding: 0 5px; }
   .xsk-essay-grid { display: block; }
   .xsk-stage { display: none; }
-  .xsk-points { display: grid; grid-template-columns: minmax(0, 1fr); gap: 72px; }
+  .xsk-essay { padding-bottom: 56px; }
+  .xsk-points { display: grid; grid-template-columns: minmax(0, 1fr); gap: 56px; }
   .xsk-pt { min-height: 0; padding: 0; }
-  .xsk-pt-vis { display: block; margin-top: 28px; padding: 28px 16px; border-radius: 20px; background: #f5f5f5; }
+  /* each point's own object, capped at 280px */
+  .xsk-pt-vis { display: grid; place-items: center; max-height: 280px; overflow: hidden; margin-top: 24px; padding: 20px 16px; border-radius: 20px; background: #f5f5f5; }
   .xsk-pt.p2 .xsk-pt-vis { display: none; }
   .xsk-pt-vis .xsk-sc { margin-inline: auto; }
-  .xsk-pt-vis .xsk-file { padding: 20px; }
-  .xsk-sc-f { width: 78%; margin-left: calc(var(--k) * 11%); }
+  .xsk-pt-vis .xsk-zoom { padding: 16px 18px 18px; }
+  .xsk-pt-vis .xsk-zoom-top { margin-bottom: 10px; }
+  .xsk-pt-vis .xsk-zoom-ln { font-size: 15px; gap: 4px; }
+  .xsk-pt-vis .xsk-zoom-ln li { padding-left: 30px; }
+  .xsk-pt-vis .xsk-zoom-ln .k::after { left: 24px; }
+  .xsk-pt-vis .xsk-zoom-ln :is(.b, .l) { display: none; }
+  .xsk-pt-vis .xsk-gw-v { height: 18px; }
+  .xsk-pt-vis .xsk-gw-files { margin-top: 20px; gap: 8px; }
+  .xsk-pt-vis .xsk-gw-files span { height: 60px; padding: 12px 8px; }
+  .xsk-pt-vis .xsk-lk-file { padding: 16px 18px; gap: 8px; }
+  .xsk-pt-vis .xsk-lk-v { height: 24px; }
+  .xsk-pt-vis .xsk-sc-new .xsk-agent { padding: 14px; }
+  .xsk-pt-vis .xsk-sc-new .xsk-shelf li { height: 32px; }
+  .xsk-pt-vis .xsk-sc-new .xsk-shelf li:nth-child(n + 4):not(.xsk-sc-row) { display: none; }
+  .xsk-pt-vis .xsk-sc-drop { width: 112px; padding: 12px; margin-bottom: -18px; }
+  .xsk-thread { padding: 56px 0; }
+  .xsk-thread .a2-grid { row-gap: 32px; }
+  .xsk-thread-copy { flex-direction: column; gap: 20px; }
+  .xsk-steps { order: 0; flex-direction: row; flex-wrap: wrap; justify-content: flex-start; }
+  .xsk-rail { order: 1; width: 100%; height: 2px; margin: 0; }
+  .xsk-rail::after { transform-origin: 0 50%; transform: scaleX(var(--r, 1)); }
   .xsk-f { width: 80%; margin-left: calc(var(--i) * 10%); padding: 18px; }
   .xsk-get-card { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'copy' 'shelf' 'ask'; padding: 28px 24px; gap: 24px; }
   .xsk-get-card h3 { font-size: 21px; }
-  .xsk-get-shelf li.blank { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .xsk *, .xsk *::before, .xsk *::after { animation: none !important; transition: none !important; }
-  .xsk .a2-ln-in { transform: none !important; }
+  .xsk .a2-ln-in, .xsk-h1-set { transform: none !important; }
+  .xsk-thread { clip-path: none; }
+  .xsk-get-done :is(.xsk-gd-cmd i, .xsk-gd-out i, .xsk-gd-ok) { transform: none; opacity: 1; }
   .xsk-pt-vis, .xsk-scene { --on: 1; } /* every scene shows its after state */
   .xsk-mono, .xsk-five b { transform: none !important; opacity: 1 !important; } /* the trade at its end */
   .xsk-hl { background-size: 100% 82%; }

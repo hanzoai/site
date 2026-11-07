@@ -37,7 +37,9 @@
 #xst-cinema { scroll-margin-top: 84px; }
 
 .xst-mon, .xst-insp { border-radius: var(--r-hero) !important; }
-.xst-desk { display: grid; grid-template-columns: minmax(0, 8.2fr) minmax(0, 3.8fr); gap: 14px; }
+.xst-desk { display: grid; grid-template-columns: minmax(0, 8.2fr) minmax(0, 3.8fr); grid-template-areas: 'mon insp' 'specs insp'; grid-template-rows: auto 1fr; column-gap: 14px; }
+.xst-mon { grid-area: mon; }
+.xst-insp { grid-area: insp; }
 .xst-mon { min-width: 0; border-radius: 20px; background: #0a0a0a; border: 1px solid var(--d-line); padding: 10px; }
 
 /* the viewer: anamorphic 2.39:1, the move runs on the still */
@@ -152,9 +154,9 @@
 .xst-note { margin: 0; padding-bottom: 16px; font-size: 14px; line-height: 1.5; color: var(--d-faint); }
 
 /* what + studio or design */
-.xst-what { padding: clamp(56px, 7vw, 116px) 0 clamp(44px, 5vw, 72px); }
-.xst-what .a2-grid { align-items: start; row-gap: 48px; }
-.xst-what-copy { padding-top: 36px; }
+/* tight to the paste strip above and the reel below: the copy and the card share one bottom line (8/5, bottom aligned) */
+.xst-what { padding: 56px 0 27px; }
+.xst-what .a2-grid { align-items: end; row-gap: 48px; }
 .xst-what-copy { grid-column: 1 / span 6; }
 .xst-what-copy .a2-headline { max-width: 18ch; margin-bottom: 28px; }
 .xst-what-copy a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; padding-block: 13px; }
@@ -167,28 +169,39 @@
 .xst-make button[aria-checked='true'] { color: #fff; border-color: var(--ink); }
 .xst-make button[aria-checked='true']::before { opacity: 1; }
 .xst-ans { display: grid; margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--line); }
-.xst-ans-c { grid-area: 1 / 1; display: grid; justify-items: start; gap: 10px; opacity: 0; transform: translateY(12px); transition: opacity .4s var(--x-io), transform .5s var(--x-em); }
-.xst-ans-c.on { opacity: 1; transform: none; }
+/* changeovers never blend two texts: the outgoing one leaves in 150 ms, the incoming one starts after it and its title
+   cuts in through a line mask (.xst-m), so the change reads as a cut */
+.xst-ans-c { grid-area: 1 / 1; display: grid; justify-items: start; gap: 10px; opacity: 0; transform: translateY(12px); transition: opacity .15s var(--x-out), transform .15s var(--x-out); }
+.xst-ans-c.on { opacity: 1; transform: none; transition: opacity .3s var(--x-out) .15s, transform .5s var(--x-em) .15s; }
+.xst-m { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; }
+.xst-m > span { display: block; transform: translateY(105%); transition: transform .15s var(--x-out); }
+.on > * > .xst-m > span { transform: none; transition: transform .5s var(--x-em) .15s; }
 .xst-ans-c b { font-size: 21px; font-weight: 497; letter-spacing: -.02em; }
 .xst-ans-c p { margin: 0 0 8px; font-size: 17px; line-height: 1.5; color: var(--soft); }
 
 /* the reel: a 2.39:1 frame pinned on white; scroll is the camera. Its exit overlaps the next heading by 40px. */
-.xst-reel { position: relative; height: 360svh; margin-bottom: -40px; }
-.xst-reel-stick { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; overflow: hidden; padding-top: 48px; }
-.xst-frame { position: relative; aspect-ratio: 2.39 / 1; max-height: 58svh; margin-inline: auto; border-radius: var(--r-hero); overflow: hidden; background: #000; box-shadow: var(--a2-shadow); }
-.xst-frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .5s var(--x-io); transform-origin: 50% 55%; }
+/* 240svh: three beats of about 47svh each after the frame has grown. The stage starts right under the Studio-or-Design
+   card (the section is pulled up over the card's padding) and its lower edge runs under the graph's heading. */
+.xst-reel { position: relative; height: 240svh; margin: -56px 0 -96px; }
+.xst-reel-stick { position: sticky; top: 0; height: 100svh; display: flex; align-items: flex-start; overflow: hidden; padding-top: 76px; pointer-events: none; }
+.xst-frame { position: relative; aspect-ratio: 2.39 / 1; max-height: 58svh; margin-inline: auto; border-radius: var(--r-hero); overflow: hidden; background: #000; box-shadow: var(--a2-shadow); transform-origin: 50% 0; }
+.xst-frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .5s var(--x-io); transform-origin: 50% 50%; }
 .xst-frame img.on { opacity: 1; }
+/* each still framed on its subject: the band of the portrait that holds it, and the dolly pushes in about the right edge */
+.xst-frame img:nth-of-type(1) { object-position: 50% 49%; transform-origin: 100% 50%; }
+.xst-frame img:nth-of-type(2) { object-position: 50% 36%; }
+.xst-frame img:nth-of-type(3) { object-position: 50% 44%; }
 .xst-frame::after { content: ''; position: absolute; inset: 0; background: linear-gradient(transparent 55%, rgba(0, 0, 0, .55)); pointer-events: none; }
 .xst-frame-rig { position: absolute; left: 24px; top: 20px; z-index: 2; padding: 6px 10px; border-radius: 8px; background: var(--acc); color: #fff; font-size: 13px; }
 .xst-frame-n { position: absolute; right: 24px; top: 22px; z-index: 2; font-size: 13px; color: #fff; }
 .xst-subs { list-style: none; display: grid; margin: 36px 0 0; padding: 0; }
-.xst-subs li { grid-area: 1 / 1; display: grid; grid-template-columns: 64px minmax(0, 5fr) minmax(0, 7fr); gap: 24px; align-items: baseline; opacity: 0; transform: translateY(16px); transition: opacity .4s var(--x-io), transform .5s var(--x-em); }
-.xst-subs li.on { opacity: 1; transform: none; }
+.xst-subs li { grid-area: 1 / 1; display: grid; grid-template-columns: 64px minmax(0, 5fr) minmax(0, 7fr); gap: 24px; align-items: baseline; opacity: 0; transform: translateY(16px); transition: opacity .15s var(--x-out), transform .15s var(--x-out); }
+.xst-subs li.on { opacity: 1; transform: none; transition: opacity .3s var(--x-out) .15s, transform .5s var(--x-em) .15s; }
 .xst-subs .x-mono { font-size: 13px; color: var(--acc); }
 .xst-subs p { margin: 0; font-size: 17px; line-height: 1.55; color: var(--soft); }
 
 /* capabilities: one node graph on a dotted canvas; the render pass's node opens its sentence in the pane */
-.xst-graph { padding-top: clamp(72px, 7vw, 116px); }
+.xst-graph { padding: 72px 0 44px; }
 .xst-gh { margin-bottom: 44px; }
 .xst-gw { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); gap: 32px; align-items: stretch; }
 .xst-canvas { --pad: 32px; position: relative; height: 460px; border-radius: var(--r-hero); background-color: #f5f5f5; background-image: radial-gradient(rgba(0, 0, 0, .1) 1px, transparent 1.4px); background-size: 20px 20px; background-position: 10px 10px; }
@@ -220,8 +233,8 @@
 .xst-pane-k i { position: relative; flex: 1; height: 2px; border-radius: 1px; background: rgba(0, 0, 0, .1); overflow: hidden; }
 .xst-pane-k b { position: absolute; inset: 0; background: #0a0a0a; transform-origin: 0 50%; transition: transform .4s var(--x-io); }
 .xst-pane-st { display: grid; }
-.xst-pane-c { grid-area: 1 / 1; display: grid; align-content: start; gap: 14px; opacity: 0; transform: translateY(16px); clip-path: inset(0 0 100% 0); transition: opacity .3s var(--x-out), transform .5s var(--x-em), clip-path .5s var(--x-em); }
-.xst-pane-c.on { opacity: 1; transform: none; clip-path: inset(0 0 0 0); }
+.xst-pane-c { grid-area: 1 / 1; display: grid; align-content: start; gap: 14px; opacity: 0; transform: translateY(16px); clip-path: inset(0 0 100% 0); transition: opacity .15s var(--x-out), transform .15s var(--x-out), clip-path .15s var(--x-out); }
+.xst-pane-c.on { opacity: 1; transform: none; clip-path: inset(0 0 0 0); transition: opacity .3s var(--x-out) .15s, transform .5s var(--x-em) .15s, clip-path .5s var(--x-em) .15s; }
 .xst-pane-c em { font-size: 12px; font-style: normal; color: var(--soft); }
 .xst-pane-c .a2-title { font-size: 21px; letter-spacing: -.02em; }
 .xst-pane-c p { margin: 0; font-size: 16px; line-height: 1.55; color: var(--soft); text-wrap: pretty; }
@@ -249,13 +262,18 @@
 .xst-strip-links a { min-height: 44px; }
 
 /* the director's chair */
-.xst-strip { padding-bottom: clamp(56px, 6vw, 96px); }
-.xst-chair { padding: clamp(56px, 6vw, 96px) 0 clamp(72px, 8vw, 116px); }
+.xst-strip { padding: 44px 0 clamp(56px, 6vw, 72px); }
+.xst-chair { padding: 44px 0 clamp(72px, 8vw, 116px); }
 .xst-chair .a2-grid { align-items: end; row-gap: 48px; }
 .xst-chair-copy { grid-column: 1 / span 7; }
 .xst-chair-copy .a2-lede { margin: 24px 0 32px; }
 .xst-chair .a2-acts { column-gap: 16px; }
+.xst-chair .x-arrow, .xst-get .x-arrow { min-height: 44px; }
+.xst-get .x-arrow { color: #fff; margin-top: 4px; }
 .xst-rel { margin-top: 64px; }
+.xst-up { margin-top: 12px; }
+.xst .xst-up svg { transform: rotate(-90deg); } /* from the close it goes back up, into the monitor */
+@media (hover: hover) { .xst .xst-up:hover svg { transform: rotate(-90deg) translateX(3px); } }
 .xst-rel ul { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
 .xst-rel-a { display: grid; grid-template-columns: 120px minmax(0, 1fr) auto; gap: 16px; align-items: center; min-height: 60px; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; }
 .xst-rel-a b { font-size: 17px; font-weight: 500; transition: transform .3s var(--x-em); }
@@ -275,7 +293,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .xst-rec, .xst-caret, .xst-kick i, .xst-mark i { animation: none; }
-  .xst-subs li, .xst-ans-c, .xst-node, .xst-pane-c, .xst-wires path, .xst-pane-k b, .xst-models button::before, .xst-make button::before { transition: none; }
+  .xst-subs li, .xst-m > span, .xst-ans-c, .xst-node, .xst-pane-c, .xst-wires path, .xst-pane-k b, .xst-models button::before, .xst-make button::before { transition: none; }
 }
 
 @media (pointer: coarse) { .xst-rigs button, .xst-models button { height: 44px; } }
@@ -287,13 +305,13 @@
 }
 
 @media (max-width: 899px) {
-  .xst-hero { padding-top: 72px; }
+  .xst-hero { padding-top: 48px; }
   .xst .a2-headline { font-size: 26px; }
-  .xst-what-copy { padding-top: 0; }
-  .xst-top { margin-bottom: 20px; row-gap: 16px; }
+  .xst-top { margin-bottom: 20px; row-gap: 14px; }
   .xst-top-r { padding-top: 0; }
-  .xst-top-r .a2-lede { margin-bottom: 16px; }
-  .xst-h1 { font-size: 40px !important; line-height: 1.04; letter-spacing: -.035em; }
+  .xst-top-r .a2-lede { margin-bottom: 16px; font-size: 16px; line-height: 1.45; }
+  /* 36px, not MASTER's 40: at 40 the h1 wraps to 5 lines at 375 and pushes the monitor below 560px */
+  .xst-h1 { font-size: 36px !important; line-height: 1.06; letter-spacing: -.035em; text-wrap: balance; }
   .xst-h1 .a2-ln, .xst-h1 .a2-ln-in { display: inline; overflow: visible; } /* flows into lines that fit a phone */
   .xst-hero .a2-acts { flex-wrap: nowrap; gap: 20px; }
   .xst-hero .a2-acts .x-btn { padding: 0 20px; }
@@ -325,12 +343,19 @@
   .xst-specs li .x-mono { font-size: 13px; }
   .xst-note { padding-bottom: 0; }
   .xst-which { padding: 24px; }
-  .xst-reel { height: auto; padding: 72px 0 32px; margin-bottom: 0; }
+  /* the reel on a phone: a small 2.39:1 frame stays stuck under the header and swaps its still and rig as each
+     pillar's title passes under it (IntersectionObserver, no pin) */
+  .xst-reel { height: auto; padding: 56px 0 32px; margin: 0; }
   .xst-reel-stick { position: static; height: auto; display: block; padding-top: 0; overflow: visible; }
-  .xst-frame { aspect-ratio: 16 / 10; border-radius: 22px; }
+  .xst-frame-pin { position: sticky; top: 60px; z-index: 2; padding: 10px 0 14px; background: #fff; }
+  .xst-frame { aspect-ratio: 2.39 / 1; border-radius: 16px; }
+  .xst-frame-rig { left: 12px; top: 10px; padding: 5px 8px; }
+  .xst-frame-n { right: 14px; top: 13px; }
   .xst-frame img:first-child { opacity: 1; }
-  .xst-subs { gap: 36px; }
+  .xst-subs { gap: 48px; margin-top: 20px; }
   .xst-subs li { grid-area: auto; grid-template-columns: minmax(0, 1fr); gap: 8px; opacity: 1; transform: none; }
+  .xst-subs li .xst-m > span { transform: none; }
+  .xst-subs p { font-size: 16px; }
   /* the graph on a phone: the nodes stack on one wire down the canvas; the pane follows */
   .xst-gh { margin-bottom: 28px; }
   .xst-gw { gap: 20px; }
