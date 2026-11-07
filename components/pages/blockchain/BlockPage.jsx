@@ -1,23 +1,31 @@
 'use client';
-/* One Web3 product (/blockchain/<product>, 16 pages, one template), read as a launch. The first screen is the
-   product's name at display size and its claim; under it the hero object, the black key card, starts close and settles
-   as you scroll, its supported chains streaming across its top as linked blocks, its figures huge.
-   Signature: the exploded deck. The product's capabilities arrive as one stacked deck of sheets in the middle of a
-   pinned scene; as you scroll, the sheets are dealt off the top one by one and separate into their places, until the
-   deck has become the full grid. A counter keeps how many are out. Phones read the grid as it is.
+/* One Web3 product (/blockchain/<product>, 16 pages, one template), read as a launch.
+   Persona: a developer or product team building on chains (Developer). Goal: see what this product does on which
+   chains, then get a key. CTA: Hanzo's "Try Hanzo" on the key card (data-thumb, data-cta="blockchain.key"; the site
+   ask bar carries it after the hero), "View Documentation" outlined. Metric: api_key_created (signup_start).
+   First screen: the product's name at display size, its claim and lede on the left; on the right the hero object,
+   the black key card (Hanzo's "Get Your API Key" with its figures), its supported chains streaming across its top and
+   this product's own contour (Sigil seeded with its slug) drifting behind it; it settles as you scroll. The product
+   line without a key card (the exchange) puts its products up as the hero object instead: a console that walks
+   through them by itself and holds when you point at it.
+   Signature: the exploded deck. The product's capabilities arrive as one stacked deck of sheets in a pinned scene; as
+   you scroll, the sheets are dealt off the top one by one into their places, until the deck is the full grid. A huge
+   counter keeps how many are out. Phones read the grid as it is.
    Beyond: "Your chain". Pick any chain Hanzo lists across its Web3 products and see at once whether this product
-   names it, and which of the other products do (each one a link), from every product page's own Supported Chains.
-   A product line without a key card (the exchange) puts its products up as the hero object instead: a console that
-   walks through them by itself.
-   V2: 8/10 Stage key card (or product console) settling under a display headline, capabilities as a scroll-dealt exploded deck, code as the developer hero, editorial Built For rows, sibling products as cards that open, one accent per member. */
+   names it (a tick or a dash) and which other products do (each a link), from every product page's own lists.
+   Motion: idle (the chain stream, the contour, the exchange console) · pointer (magnetic ask, the stream holds under
+   a pointer, sibling rail drags with inertia, cards lift) · state (the chain picker, console tabs) · scroll (the stage
+   settle and the dealt deck).
+   V2: 8/10 key card beside the headline on the first screen with the member's own contour, no eyebrows, ink only (code in grey steps), Hanzo-worded chain finder with icons, magnetic ask, siblings that drag and open. */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useMotionValueEvent, useReducedMotion } from 'motion/react';
-import { Copy } from '../../ui';
+import { Copy, Magnetic } from '../../ui';
+import Sigil from '../../Sigil';
 import { A } from '../../kit';
 import FamLines from '../../v2/FamLines';
 import FamStage from '../../v2/FamStage';
 import FamNext from '../../v2/FamNext';
-import { accentAt } from '../../v2/famAccent';
+import { ui } from '../../v2/famUi';
 import '../../v2/fam.css';
 import './blockchain.css';
 import './BlockPage.css';
@@ -122,7 +130,7 @@ function Rows({ b }) {
         <ol className="xb2-rl">
           {b.items.map((it, i) => (
             <li key={it.title} className="v2f-grid">
-              <span className="xb2-rl-n x-mono">{pad(i + 1)}</span>
+              <span className="xb2-rl-n" aria-hidden="true">{pad(i + 1)}</span>
               <h3>{it.title}</h3>
               <div className="xb2-rl-t">
                 {it.text && <p>{it.text}</p>}
@@ -161,15 +169,14 @@ function Tiles({ b }) {
   );
 }
 
-function YourChain({ here, all, self }) {
+function YourChain({ here, all, self, title }) {
   const chains = useMemo(() => [...new Set(all.flatMap((p) => p.chains))], [all]);
   const [pick, setPick] = useState(here[0] || chains[0]);
   const yes = here.includes(pick);
   const others = all.filter((p) => p.slug !== self && p.chains.includes(pick));
   return (
     <div className="xbc-your xb2-your">
-      <p className="xbc-your-k x-mono">Your chain</p>
-      <div className="xbc-your-pick" role="group" aria-label="Your chain" data-swipe-own data-lenis-prevent>
+      <div className="xbc-your-pick" role="group" aria-label={title} data-swipe-own data-lenis-prevent>
         {chains.map((c) => (
           <button key={c} type="button" aria-pressed={c === pick} onClick={() => setPick(c)} className={here.includes(c) ? 'in' : ''}>
             <span>{c}</span>
@@ -177,8 +184,11 @@ function YourChain({ here, all, self }) {
         ))}
       </div>
       <div className="xbc-your-a" aria-live="polite">
-        <p className={'xbc-verdict' + (yes ? ' yes' : '')}><i aria-hidden="true">{yes ? '✓' : '–'}</i>{yes ? `Named on this page` : `Not named on this page`}</p>
-        <p className="xbc-your-l">{others.length ? `${others.length} other product${others.length > 1 ? 's' : ''} name${others.length > 1 ? '' : 's'} ${pick}:` : `No other product page names ${pick}.`}</p>
+        <p className={'xbc-verdict xb2-verdict' + (yes ? ' yes' : '')}>
+          <i role="img" aria-label={ui(yes ? 'named_here' : 'not_named_here')}>{yes ? '✓' : '–'}</i>
+          <b>{pick}</b>
+        </p>
+        <p className="xb2-others" aria-label={ui('others_name') + ' ' + pick}><b className="v2f-num">{others.length}</b></p>
         <ul>{others.map((p) => <li key={p.slug}><A to={p.href}>{p.name}</A></li>)}</ul>
       </div>
     </div>
@@ -187,7 +197,7 @@ function YourChain({ here, all, self }) {
 
 /* a product line without a key card (the exchange): its products become the hero object, a console that walks
    through them by itself (pausing when touched); every product's words stay in the page, the others hidden */
-function Console({ b }) {
+function Console({ b, seed }) {
   const calm = useReducedMotion();
   const box = useRef(null);
   const [at, setAt] = useState(0);
@@ -205,6 +215,7 @@ function Console({ b }) {
   return (
     <div ref={box} className="xb2-con v2f-obj" onPointerEnter={(e) => e.pointerType === 'mouse' && setHeld(true)} onPointerLeave={() => setHeld(false)}>
       <div className="xb2-con-l">
+        {seed && <Sigil seed={seed} data={[n]} className="xb2-con-sig" />}
         {b.title && <h2 className="v2f-title xb2-con-h">{b.title}</h2>}
         {b.lede && <p className="xb2-con-lede">{b.lede}</p>}
         <div className="xb2-con-tabs" role="tablist" aria-label={b.title}>
@@ -244,48 +255,53 @@ export default function BlockPage({ doc, all }) {
   const deckAt = doc.blocks.findIndex((b) => b.kind === 'items' && b.items.length >= 6 && !b.items.some((it) => it.bullets.length));
   // the products after this one, in the family's order, as cards that open into their page
   const at = all.findIndex((p) => p.slug === doc.slug);
-  const next = (at < 0 ? all : [...all.slice(at + 1), ...all.slice(0, at)]).slice(0, 6).map((p) => ({ href: p.href, title: p.name, meta: p.chains.slice(0, 3).join(' · '), seed: p.href, data: [p.chains.length], acc: accentAt(p.i) }));
+  const next = (at < 0 ? all : [...all.slice(at + 1), ...all.slice(0, at)]).slice(0, 6).map((p) => ({ href: p.href, title: p.name, meta: p.chains.slice(0, 3).join(' · '), seed: p.href, data: [p.chains.length] }));
   return (
-    <main className="xbc xb2 v2f" style={{ '--acc': accentAt(doc.i) }}>
-      <section className="xb2-hero" aria-labelledby="xbc-h1">
+    <main className="xbc xb2 v2f">
+      <section className={'xb2-hero' + (key || conAt >= 0 ? ' side' : '')} aria-labelledby="xbc-h1">
         <div className="v2f-wrap v2f-grid xb2-hero-g">
           <div className="xb2-hero-t">
-            {h.back && <A to={h.back.href} className="x-arrow xb2-back"><span>{h.back.text}</span></A>}
-            {h.chip && <p className="v2f-kick acc xb2-chip"><i aria-hidden="true" />{h.chip}</p>}
-            <FamLines as="h1" id="xbc-h1" text={h.title} className="v2f-display xb2-h1" data-morph-target />
-          </div>
-          <div className="xb2-hero-r">
+            <FamLines as="h1" id="xbc-h1" text={h.title} className={'v2f-display xb2-h1' + (h.title.length > 11 ? ' mid' : '')} data-morph-target />
             {h.claim && <p className="xb2-claim">{h.claim}</p>}
             {h.lede && <p className="v2f-lede xb2-lede">{h.lede}</p>}
             {h.actions.length > 0 && (
-              <div className="xb2-acts">{h.actions.map((a, i) => <A key={a.label} to={a.href} className={'v2f-btn' + (i ? '' : ' acc')} {...(i ? {} : { 'data-thumb': '' })}>{a.label}</A>)}</div>
+              <div className="xb2-acts">{h.actions.map((a, i) => (i ? <A key={a.label} to={a.href} className="v2f-btn" data-cta="blockchain.hero-second">{a.label}</A>
+                : <Magnetic key={a.label} strength={0.25}><A to={a.href} className="v2f-btn solid" data-thumb={a.label} data-cta="blockchain.hero">{a.label}</A></Magnetic>))}</div>
+            )}
+            {(h.chip || h.back) && (
+              <p className="xb2-meta">
+                {h.chip && <span className="v2f-kick">{h.chip}</span>}
+                {h.back && <A to={h.back.href} className="x-arrow xb2-back"><span>{h.back.text}</span></A>}
+              </p>
             )}
           </div>
-        </div>
-        {key && (
-          <div className="v2f-wrap">
-            <FamStage className="xb2-stage" from={1.08}>
-              <aside className="xb2-key">
-                <Stream chains={chains} label={`Supported chains: ${chains.join(', ')}`} />
-                <div className="xb2-key-g">
-                  <div className="xb2-key-l">
-                    <h2>{key.title}</h2>
-                    {key.sub && <p className="xb2-key-sub">{key.sub}</p>}
-                    <div className="xb2-acts">{key.actions.map((t, i) => <A key={t} to={GO[t] || '/signup'} className={'v2f-btn' + (i ? ' ghost' : ' light')} {...(i || h.actions.length ? {} : { 'data-thumb': '' })}>{t}</A>)}</div>
-                    {key.note && <p className="xb2-note">{key.note}</p>}
+          {conAt >= 0 && (
+            <div className="xb2-hero-o">
+              <FamStage className="xb2-stage" from={1.05} span={480}><Console b={doc.blocks[conAt]} seed={doc.route} /></FamStage>
+            </div>
+          )}
+          {key && (
+            <div className="xb2-hero-o">
+              <FamStage className="xb2-stage" from={1.05} span={480}>
+                <aside className="xb2-key">
+                  <Sigil seed={doc.route} data={[chains.length, ...key.stats.map(([v]) => parseFloat(String(v).replace(/[^\d.]/g, ''))).filter((x) => x > 0)]} className="xb2-key-sig" />
+                  <Stream chains={chains} label={`${key.title}: ${chains.join(', ')}`} />
+                  <div className="xb2-key-g">
+                    <div className="xb2-key-l">
+                      <h2>{key.title}</h2>
+                      {key.sub && <p className="xb2-key-sub">{key.sub}</p>}
+                      <div className="xb2-acts">{key.actions.map((t, i) => (i ? <A key={t} to={GO[t] || '/signup'} className="v2f-btn ghost" data-cta="blockchain.key-second">{t}</A>
+                        : <Magnetic key={t} strength={0.25}><A to={GO[t] || '/signup'} className="v2f-btn light" data-cta="blockchain.key" {...(h.actions.length ? {} : { 'data-thumb': t })}>{t}</A></Magnetic>))}</div>
+                      {key.note && <p className="xb2-note">{key.note}</p>}
+                    </div>
+                    {key.stats.length > 0 && <dl className="xb2-stats">{key.stats.map(([v, l]) => <div key={l}><dd className="v2f-num">{v}</dd><dt>{l}</dt></div>)}</dl>}
                   </div>
-                  {key.stats.length > 0 && <dl className="xb2-stats">{key.stats.map(([v, l]) => <div key={l}><dd className="v2f-num">{v}</dd><dt>{l}</dt></div>)}</dl>}
-                </div>
-                {key.trusted && <div className="xb2-trust"><p>{key.trusted.label}</p><ul>{key.trusted.tags.map((t) => <li key={t}>{t}</li>)}</ul></div>}
-              </aside>
-            </FamStage>
-          </div>
-        )}
-        {conAt >= 0 && (
-          <div className="v2f-wrap">
-            <FamStage className="xb2-stage" from={1.08}><Console b={doc.blocks[conAt]} /></FamStage>
-          </div>
-        )}
+                  {key.trusted && <div className="xb2-trust"><p>{key.trusted.label}</p><ul>{key.trusted.tags.map((t) => <li key={t}>{t}</li>)}</ul></div>}
+                </aside>
+              </FamStage>
+            </div>
+          )}
+        </div>
         {feats.length > 0 && (
           <div className="v2f-wrap">
             <ul className="xb2-feat">{feats.map((f) => <li key={f.title}><b>{f.title}</b><span>{f.text}</span></li>)}</ul>
@@ -319,7 +335,7 @@ export default function BlockPage({ doc, all }) {
                 <FamLines as="h2" play="view" className="v2f-head" text={b.title} />
                 <ul className="xb2-chiplist">{b.chains.map((c) => <li key={c}>{c}</li>)}</ul>
               </div>
-              {all.length > 1 && <div className="xb2-chains-r"><YourChain here={b.chains} all={all} self={doc.slug} /></div>}
+              {all.length > 1 && <div className="xb2-chains-r"><YourChain here={b.chains} all={all} self={doc.slug} title={b.title} /></div>}
             </div>
           </section>
         );
@@ -330,12 +346,12 @@ export default function BlockPage({ doc, all }) {
                 <div className="v2f-wrap"><FamNext items={next} label={h.back ? h.back.text : 'Web3'} /></div>
               </section>
             )}
-            <section className="xb2-band" data-room="dark">
+            <section className="xb2-band" data-room="dark" data-ask-hide>
               <div className="v2f-wrap v2f-grid xb2-band-g">
                 {b.title ? <h2 className="v2f-display small xb2-band-h">{b.title}</h2> : <span className="xb2-band-h" />}
                 <div className="xb2-band-r">
                   {b.lede && <p className="v2f-lede">{b.lede}</p>}
-                  <div className="xb2-acts">{b.links.map((l, k) => <A key={l.href + k} to={l.href} className={'v2f-btn' + (k ? ' ghost' : ' light')}>{l.label}</A>)}{b.buttons.map((t) => <A key={t} to={GO[t] || '/signup'} className="v2f-btn ghost">{t}</A>)}</div>
+                  <div className="xb2-acts">{b.links.map((l, k) => <A key={l.href + k} to={l.href} className={'v2f-btn' + (k ? ' ghost' : ' light')} data-cta={k ? 'blockchain.band-second' : 'blockchain.band'}>{l.label}</A>)}{b.buttons.map((t) => <A key={t} to={GO[t] || '/signup'} className="v2f-btn ghost">{t}</A>)}</div>
                 </div>
               </div>
             </section>
@@ -348,7 +364,7 @@ export default function BlockPage({ doc, all }) {
               <div className="xb2-get-r">
                 {b.chips.map((c) => <span key={c} className="xbc-tag x-mono">{c}</span>)}
                 {b.github && <A to={b.github.href} className="xbc-tag x-mono">{b.github.text}</A>}
-                {b.deploy && <A to={b.deploy.href} className="v2f-btn acc">{b.deploy.text}</A>}
+                {b.deploy && <A to={b.deploy.href} className="v2f-btn" data-cta="blockchain.deploy">{b.deploy.text}</A>}
               </div>
             </div>
           </section>
