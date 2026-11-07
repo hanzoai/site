@@ -1,6 +1,6 @@
 'use client';
 /* Persona: teams that send contracts (ops, sales, HR) and developers who embed signing. Goal: start signing. CTA: "Try Hanzo" → /login. Metric: signup_start.
-   Sign. V2: 7/10 Stage desk (the contract arrives huge and signs itself), five pinned chapters scrubbing the same page, parts as cards that open into sheets, a full-width signing pad, one dark room, ink-indigo accent
+   Sign. V2: 8/10 the desk signs the contract by itself under the title (the PDF loads in at once), five pinned chapters on that same page, parts open into sheets, a signing pad with a keyboard path, one dark close; greys only
    Signature: a contract that signs itself. A PDF page sits on a desk in the hero and goes through Hanzo's five steps by
    itself: the fields drop in, the link goes out, the signature writes itself in ink, the recipients tick from sent to
    signed, and the certificate stamps the page. Then the five steps become chapters you scroll through on that page.
@@ -45,7 +45,7 @@ function Page({ at }) {
   return (
     <div className="sg-page">
       <div className="sg-page-h"><Img src="/models/kai.webp" alt="" w={38} h={38} /><span><b>Agreement.pdf</b><em className="x-mono">page 1 of 1</em></span></div>
-      <div className="sg-lines" aria-hidden="true">{Array.from({ length: 9 }).map((_, i) => <i key={i} style={{ width: [92, 86, 95, 70, 88, 94, 60, 82, 74][i] + '%' }} />)}</div>
+      <div className={'sg-lines' + (at === 0 ? ' up' : '')} key={at === 0 ? 'up' : 'set'} aria-hidden="true">{Array.from({ length: 9 }).map((_, i) => <i key={i} style={{ width: [92, 86, 95, 70, 88, 94, 60, 82, 74][i] + '%' }} />)}</div>
       <div className="sg-fields">
         {FIELDS.map(([t, k], i) => (
           <motion.div key={k} className={'sg-f ' + k} initial={false} animate={placed ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: -26, scale: 0.9 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], delay: placed ? i * 0.06 : 0 }}>
@@ -89,7 +89,7 @@ function Story() {
   const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
   const calm = useReducedMotion();
   const [ch, setCh] = useState(0);
-  const [auto] = useSteps(5, 2600, live && !paused && ch === 0);
+  const [auto] = useSteps(5, 1900, live && !paused && ch === 0);
   const hero = (
     <div className="sg-lead">
       <LineMask as="h1" id="sg-h1" now className="w2-display sg-h1" lines={['Hanzo Sign']} />
