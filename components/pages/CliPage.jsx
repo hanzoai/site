@@ -351,7 +351,7 @@ function Caps() {
       <div className="av-wrap av-grid cli-caps-top">
         <Lines as="h2" id="cli-caps-h" className="av-head cli-caps-h" lines={['What the binary carries']} />
         <div className="cli-caps-r">
-          <p className="cli-help-k x-mono">Capabilities <span aria-hidden="true">· $ hanzo --help</span></p>
+          <p className="cli-help-k x-mono">Capabilities <span aria-hidden="true">· $ hanzo --help<span className="cli-caret" /></span></p>
           <div className="cli-arrows">
             <button type="button" onClick={() => go(-1)} disabled={edge[0]} aria-label="Previous capability"><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
             <button type="button" onClick={() => go(1)} disabled={edge[1]} aria-label="Next capability"><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
