@@ -3,23 +3,20 @@
 // Goal: open Hanzo Chat. Metric: first_chat.
 // CTA: "Open Hanzo Chat" -> /login?next=%2Fchat (hero, header ask bar, closing Band).
 // Signature: the live chat runs itself once; each question visibly routes through Enso to the model that answers.
-// Beyond: who answers what, Enso and its eight models as a sheet you point at, each opening into its page.
-/* Hanzo Chat, v3 (JAMES.md, PLAN-COMPONENTS 5.7). Persona: consumer choosing a chat app. Goal: open Hanzo Chat.
-   CTA: "Open Hanzo Chat" (/login?next=%2Fchat), one solid ask in hero, sticky bar and close. Metric: first_chat.
+// Beyond: who answers what, Enso's card that opens into each model's page.
+/* Hanzo Chat, v4 (JAMES.md, MASTER 4.1). Persona: consumer choosing a chat app. Goal: open Hanzo Chat.
    One idea per screen:
-     1. Hero: "Ask anything. Enso picks the model." over the chat window at 100%, which runs Hanzo's own black holes and
-        auroras conversation by itself once, then rests (pause and replay in its title bar).
-     2. Six chapters in the one dark middle room: the copy pins while each tool's own UI wipes in and plays its scene.
-     3. Who answers what: Enso and the eight models it routes to, a spec sheet you point at; a model opens into its page.
-     4. Close (dark): the page ends where it starts, in a field to ask in.
-   Signature: the live chat. The question types, Enso scans the models, the one that answers lights, and the answer
-   streams. The public try-before-signup is parked (PLAN-COMPONENTS 7): typing hands off to Hanzo Chat instead of
-   sending anything, and "Open Hanzo Chat" shows its handoff state before it leaves.
-   Motion mix (JAMES.md 9): time (the conversation), arrival (headline cut-in, window rise), state (chapter pill, the
-   handoff ring, the rail lane), pointer (magnetic ask, rail and roster previews), scroll (the pinned chapters only).
-   Beyond: "Who answers what". Point at (or tap) any model and its own artwork, line and tag come forward; open it and
-   the picture lifts into that model's page (the synchronized.studio opener).
-   Greys only: colour arrives through Hanzo's own model artwork. Every word is Hanzo's. */
+     1. Hero: "Ask anything. Enso picks the model." over the chat window at 100%. The window paints with the first
+        question already in it; the run (route, answer, second question, answer) takes about 7 s, then rests with
+        replay in its title bar. The h1 cuts into its lines in CSS from the server's first paint.
+     2. Six chapters in the dark room: each panel plays a short scene on arrival and keeps a quiet idle after.
+        Chapter 01 is the routing moment (a question, Enso, the one model that answers), not the model list.
+     3. Proof: the card of whoever answers. Point at a name and the card swaps; open the card and it lifts into
+        that model's page. The model list is said once in full here (names), once live in the hero rail.
+     4. Close: the kit's Band.
+   Every "Open Hanzo Chat" press shows its hand-off state (aria-busy, ~320 ms) before it leaves.
+   Demo words: /chat's own recents and copy, and Hanzo's own black holes and aurora exchange and Dev session from
+   hanzo.ai's home (content/live/index.json). Greys only: colour arrives through Hanzo's model artwork. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../ui';
@@ -28,27 +25,60 @@ import { useOpener } from '../Opener';
 import { href } from '../../lib/route';
 import AppLines from '../v2/AppLines';
 import AppChapters from '../v2/AppChapters';
-import { useDemo, DemoCtl } from '../v2/AppDemo';
+import { useDemo } from '../v2/AppDemo';
 import { MODELS } from '../../lib/models';
 import './ChatPage.css';
 
 const OPEN = '/login?next=%2Fchat';
 const DOCS = 'https://docs.hanzo.ai/docs/chat';
 const RECENTS = ['Black holes and auroras', 'Email to the landlord', 'Investor update, shorter', 'Three days in Kyoto', 'Code that works, somehow', 'Support reply, API keys', 'Attention, simply', 'Sourdough starter', 'Three emails before lunch', 'Standup, for the absent', 'A fair refund', 'The fundraising deck', 'Interview notes', 'A toast for the team'];
+// Hanzo's own exchange (hanzo.ai home, content/live/index.json)
 const DEMO = [
-  ['How do black holes form?', 'A star much heavier than the Sun burns through its fuel, and its core collapses under its own gravity.\n\nWhen what is left is heavy enough, nothing can stop the collapse, and not even light escapes it.'],
-  ['And what makes the aurora?', 'Charged particles from the Sun reach the gas high above the poles.\n\nThe gas glows as they strike it: oxygen green and red, nitrogen blue and purple.'],
+  ['How do black holes form?', 'A massive star runs out of fuel and gravity collapses its core into a singularity.'],
+  ['What causes the aurora?', 'Solar particles hit gases high over the poles and make them glow.'],
 ];
+// Hanzo Dev's own session (hanzo.ai home, content/live/index.json)
+const DEV_CMD = 'dev "Require a bearer token on every API route"';
+const DEV_FILE = 'src/middleware/auth.ts';
+const DIFF = [
+  ['ctx', 'function guard(req) {'],
+  ['del', 'return next(req)'],
+  ['add', 'const token = bearer(req)'],
+  ['add', 'if (!token) return deny()'],
+  ['add', 'req.user = await verify(token)'],
+  ['add', 'return next(req)'],
+];
+const DEV_TEST = 'pnpm test src/middleware/auth.test.ts';
+const DEV_OK = '14 passed (42ms)';
+
 const DONE = DEMO.flatMap(([q, a]) => [{ role: 'user', text: q }, { role: 'ai', text: a, model: 'zen', state: 'done' }]);
+const FIRST = [{ role: 'user', text: DEMO[0][0] }, { role: 'ai', state: 'wait', model: 'enso' }]; // the server's frame: the question has arrived
 const ROUTED = MODELS.filter((m) => m.slug !== 'enso');
 const ENSO = MODELS[0];
+const ZEN = MODELS.find((m) => m.slug === 'zen');
 const pic = (slug) => `/models/${slug}.webp`;
 
-/* The one ask: the kit's Cta, which shows its hand-off state (aria-busy, a ring) as it leaves for Hanzo Chat. */
+/* The one ask: the kit's Cta. The page holds each press for ~320 ms in its busy state before it leaves (Hand-off). */
 const Open = ({ slot = 'hero' }) => (
   <Magnetic strength={0.18}><Cta to={OPEN} id={'chat.' + slot} thumb size="lg">Open Hanzo Chat</Cta></Magnetic>
 );
 const Docs = () => <Cta to={DOCS} kind="link" id="chat.docs">Read the docs</Cta>;
+
+/* Hand-off (MASTER 2: a cross-origin hand-off shows a pressed state, aria-busy, 200 to 400 ms). Any plain press on a
+   link to Hanzo Chat inside the page is held, shown busy, then followed. New-tab presses go straight through. */
+function useHandoff() {
+  return (e) => {
+    const a = e.target.closest && e.target.closest('a[href]');
+    if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (!a.getAttribute('href').includes('/login?next=%2Fchat')) return;
+    e.preventDefault();
+    if (a.hasAttribute('data-leaving')) return;
+    a.setAttribute('data-leaving', '');
+    a.setAttribute('aria-busy', 'true');
+    setTimeout(() => { window.location.href = a.href; }, 320);
+    setTimeout(() => { a.removeAttribute('data-leaving'); a.removeAttribute('aria-busy'); }, 2500); // back from the app
+  };
+}
 
 /* Speak an answer aloud with the browser's own voice. */
 function Listen({ text }) {
@@ -70,17 +100,18 @@ function Listen({ text }) {
   );
 }
 
+/* Messages arrive with a CSS rise, so the server's first frame paints at once. */
 function Msg({ m, live }) {
-  if (m.role === 'user') return <motion.li className="cht-q" initial={{ opacity: 0, y: 12, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.4, ease: EASE }}>{m.text}</motion.li>;
+  if (m.role === 'user') return <li className="cht-q">{m.text}</li>;
   const who = MODELS.find((x) => x.slug === m.model) || ENSO;
   return (
-    <motion.li className="cht-a" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: EASE }}>
-      <span className="cht-who"><Img src={pic(who.slug)} alt="" w={18} h={18} />{who.name}</span>
+    <li className="cht-a">
+      <span className="cht-who"><Img src={pic(who.slug)} alt="" w={18} h={18} priority />{who.name}</span>
       {m.state === 'wait' && <span className="cht-dots" role="img" aria-label={ENSO.name}><i /><i /><i /></span>}
       {m.state === 'stream' && <p className="cht-text"><span ref={live} /><span className="cht-caret" aria-hidden="true" /></p>}
       {m.state === 'done' && <p className="cht-text">{m.text}</p>}
       {m.state === 'done' && <span className="cht-tools"><Copy text={m.text} /><Listen text={m.text} /></span>}
-    </motion.li>
+    </li>
   );
 }
 
@@ -92,8 +123,8 @@ function Rail({ route, at }) {
   return (
     <aside className="cht-rail" aria-label={ENSO.desc}>
       <div className={'cht-hub' + (route.phase === 'scan' ? ' busy' : '')}>
-        <span className="cht-hub-o"><Img src={pic('enso')} alt="" w={46} h={46} /></span>
-        <span><b>{ENSO.name}</b><span>{ENSO.desc}</span></span>
+        <span className="cht-hub-o"><Img src={pic('enso')} alt="" w={46} h={46} priority /></span>
+        <span><b>{ENSO.name}</b><span className="x-mono">{ENSO.tags.join(' · ')}</span></span>
       </div>
       <ul className="cht-lanes" onPointerLeave={(e) => { if (e.pointerType === 'mouse') setPeek(null); }}>
         {ROUTED.map((m, i) => {
@@ -103,7 +134,7 @@ function Rail({ route, at }) {
             <li key={m.slug} className={(lit ? 'lit' : '') + (scan ? ' scan' : '') + (peek === m.slug ? ' peek' : '')}>
               {(scan || lit) && <motion.span layoutId="cht-lane" className="cht-lane-bg" transition={{ duration: 0.3, ease: EASE }} />}
               <button type="button" className="cht-lane-b" aria-pressed={peek === m.slug} aria-controls="cht-peek" onPointerEnter={(e) => { if (e.pointerType === 'mouse') setPeek(m.slug); }} onFocus={() => setPeek(m.slug)} onClick={() => setPeek(m.slug)}>
-                <Img src={pic(m.slug)} alt="" w={26} h={26} />
+                <Img src={pic(m.slug)} alt="" w={26} h={26} priority />
                 <b>{m.name}</b>
                 <span className="cht-tag">{m.tags[0]}</span>
                 <i className="cht-live" aria-hidden="true" />
@@ -117,11 +148,28 @@ function Rail({ route, at }) {
   );
 }
 
-/* The window: Hanzo's own conversation plays once, then rests. Focus the composer and it is yours; send, and the
-   press hands off to Hanzo Chat (nothing is sent from this page). */
+/* The demo's control, as AppDemo's DemoCtl draws it, but always in the server HTML (reduced motion hides it in CSS),
+   so a reduced-motion visit hydrates the same tree it was served. */
+const CTL = {
+  pause: <path d="M5.5 3.5v9M10.5 3.5v9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />,
+  play: <path d="M5 3.2v9.6L12.6 8 5 3.2Z" fill="currentColor" />,
+  replay: <path d="M13 8a5 5 0 1 1-1.6-3.7M13 2.5v3h-3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />,
+};
+function Ctl({ demo }) {
+  const done = demo.state === 'done' || demo.state === 'idle';
+  const k = done ? 'replay' : demo.state === 'pause' ? 'play' : 'pause';
+  return (
+    <button type="button" className="v2a-demo-ctl cht-ctl" onClick={demo.toggle} aria-label={done ? 'Replay' : 'Pause'} aria-pressed={done ? undefined : demo.state === 'pause'}>
+      <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true">{CTL[k]}</svg>
+    </button>
+  );
+}
+
+/* The window: Hanzo's own conversation plays once (about 7 s), then rests. Focus the composer and it is yours; send,
+   and the press hands off to Hanzo Chat (nothing is sent from this page). */
 function Window() {
-  const [msgs, setMsgs] = useState(DONE);
-  const [route, setRoute] = useState({ phase: 'pick', pick: 'zen' });
+  const [msgs, setMsgs] = useState(FIRST);
+  const [route, setRoute] = useState({ phase: 'scan', pick: null });
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
   const [sel, setSel] = useState(0);
@@ -133,28 +181,34 @@ function Window() {
   const log = useRef(null);
   const box = useRef(null);
 
+  const scan = async (sleep, n) => { setRoute({ phase: 'scan', pick: null }); for (let s = 0; s < n; s++) { setAt(s % ROUTED.length); await sleep(125); } };
+  const stream = async (sleep, a) => {
+    setRoute({ phase: 'pick', pick: 'zen' });
+    setMsgs((m) => [...m.slice(0, -1), { role: 'ai', state: 'stream', model: 'zen', text: a }]);
+    await sleep(40);
+    for (let i = 0; i <= a.length; i += 2) { if (live.current) live.current.textContent = a.slice(0, i); await sleep(22); }
+    setMsgs((m) => [...m.slice(0, -1), { role: 'ai', state: 'done', model: 'zen', text: a }]);
+  };
   const demo = useDemo(box, async (sleep) => {
     setMine(false); setSel(0);
-    setMsgs([]); setRoute({ phase: 'idle', pick: null });
-    await sleep(500);
-    for (const [q, a] of DEMO) {
-      const el = input.current;
-      for (let i = 1; i <= q.length; i++) { if (el) el.value = q.slice(0, i); await sleep(36 + (i % 4) * 9); }
-      await sleep(320);
-      if (el) el.value = '';
-      setMsgs((m) => [...m, { role: 'user', text: q }, { role: 'ai', state: 'wait', model: 'enso' }]);
-      setRoute({ phase: 'scan', pick: null });
-      for (let s = 0; s < 9; s++) { setAt(s % ROUTED.length); await sleep(135); } // the scan, on the demo's own clock
-      setRoute({ phase: 'pick', pick: 'zen' });
-      setMsgs((m) => [...m.slice(0, -1), { role: 'ai', state: 'stream', model: 'zen', text: a }]);
-      await sleep(40);
-      for (let i = 0; i <= a.length; i += 3) { if (live.current) live.current.textContent = a.slice(0, i); await sleep(16); }
-      setMsgs((m) => [...m.slice(0, -1), { role: 'ai', state: 'done', model: 'zen', text: a }]);
-      await sleep(1100);
-    }
-  }, { amount: 0.3 });
+    if (input.current) input.current.value = '';
+    setMsgs(FIRST);
+    await scan(sleep, 9); // the question is already in: Enso decides at once
+    await stream(sleep, DEMO[0][1]);
+    await sleep(900);
+    const [q, a] = DEMO[1];
+    const el = input.current;
+    for (let i = 1; i <= q.length; i++) { if (el) el.value = q.slice(0, i); await sleep(34 + (i % 4) * 8); }
+    await sleep(260);
+    if (el) el.value = '';
+    setMsgs((m) => [...m, { role: 'user', text: q }, { role: 'ai', state: 'wait', model: 'enso' }]);
+    await scan(sleep, 8);
+    await stream(sleep, a);
+  }, { amount: 0.2 });
 
-  useEffect(() => { const l = log.current; if (l) l.scrollTo({ top: l.scrollHeight, behavior: demo.calm ? 'auto' : 'smooth' }); }, [msgs, demo.calm]);
+  // reduced motion: no script runs, so show the whole final conversation from its start
+  useEffect(() => { if (demo.calm) { setMsgs(DONE); setRoute({ phase: 'pick', pick: 'zen' }); } }, [demo.calm]);
+  useEffect(() => { const l = log.current; if (l) l.scrollTo({ top: demo.calm ? 0 : l.scrollHeight, behavior: demo.calm ? 'auto' : 'smooth' }); }, [msgs, demo.calm]);
 
   const takeOver = () => {
     if (mine) return;
@@ -184,8 +238,8 @@ function Window() {
           <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><rect x="1.8" y="2.8" width="12.4" height="10.4" rx="2.2" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M6 3v10" stroke="currentColor" strokeWidth="1.4" /></svg>
         </button>
         <p className="cht-name">Hanzo Chat</p>
-        <span className="cht-model"><Img src={pic('enso')} alt="" w={22} h={22} />Enso</span>
-        <DemoCtl demo={demo} className="cht-ctl" />
+        <span className="cht-model"><Img src={pic('enso')} alt="" w={22} h={22} priority />Enso</span>
+        <Ctl demo={demo} />
       </div>
       <div className="cht-body">
         <nav className="cht-side" id="cht-side" aria-label="Recents">
@@ -228,28 +282,34 @@ function Window() {
   );
 }
 
-/* 1. Hero: the headline on the left cuts into its lines; on the right the whole window, at 100%, already talking. */
+/* 1. Hero: the headline cuts into its lines (CSS, from first paint); on the right the whole window, already talking. */
 function Hero() {
+  const lines = ['Ask anything.', 'Enso picks the model.'];
   return (
     <section className="cht-hero" aria-labelledby="cht-h1" data-morph-target data-ask-name="Hanzo Chat">
       <div className="v2a-wrap cht-hero-in">
         <div className="cht-copy">
-          <AppLines as="h1" id="cht-h1" className="v2a-display cht-h1" lines={['Ask anything.', 'Enso picks the model.']} />
-          <motion.p className="v2a-lede cht-lede" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE, delay: 0.3 }}>Hanzo Chat searches the web, runs code, reads your files and makes images, in one conversation.</motion.p>
-          <motion.div className="cht-acts" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE, delay: 0.4 }}>
+          <h1 className="v2a-lines v2a-display cht-h1" id="cht-h1">
+            {lines.map((l, i) => (
+              <span key={i} className="v2a-line"><span className="v2a-line-in cht-cut" style={{ '--i': i }}>{l}</span>{i < lines.length - 1 ? ' ' : ''}</span>
+            ))}
+          </h1>
+          <p className="v2a-lede cht-lede cht-up" style={{ '--d': '.3s' }}>Hanzo Chat searches the web, runs code, reads your files and makes images, in one conversation.</p>
+          <div className="cht-acts cht-up" style={{ '--d': '.4s' }}>
             <Open slot="hero" />
             <Docs />
-          </motion.div>
+          </div>
         </div>
-        <motion.div className="cht-win-wrap" initial={{ opacity: 0, x: 48 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.15 }}>
+        <div className="cht-win-wrap">
           <Window />
-        </motion.div>
+        </div>
       </div>
     </section>
   );
 }
 
-/* 2. The six tools, each with its own UI, in the dark room. Each art plays its short scene when its chapter comes in. */
+/* 2. The six tools, each with its own UI, in the dark room. Each art plays its short scene when its chapter comes in,
+   then keeps a quiet idle while you rest there. */
 const TOOLS = [
   ['The right model, every time', 'Enso sends each question to the model that answers it best. Pick one by name whenever you want to.', 'route'],
   ['Search and code', 'It searches the web for what is current and runs code when an answer needs working out.', 'search'],
@@ -267,30 +327,20 @@ const ICON = {
   dev: <path d="m5.5 4.5-3.5 3.5 3.5 3.5M10.5 4.5 14 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />,
 };
 const Ico = ({ k, s = 17 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true">{ICON[k]}</svg>;
-
-// The scenes are the app itself, in Hanzo's own words: its recents, its conversation, its "Listen", and the code of
-// Hanzo Dev's sample session (an illustration, as on /dev).
-const RETRY = [
-  ['ctx', 'export async function retry(fn, tries = 3) {'],
-  ['del', '  for (let i = 1; i < tries; i++) {'],
-  ['add', '  for (let i = 0; i < tries; i++) {'],
-  ['ctx', '    try { return await fn(); } catch (e) { last = e; }'],
-  ['ctx', '  }'],
-];
-const GLOW = DEMO[1][1].split('\n\n')[1].split(': ');
 const Line = ({ c, s, j }) => <span className={'cht-ln ' + c} style={{ '--j': j }}><i>{c === 'del' ? '-' : c === 'add' ? '+' : ' '}</i>{s}</span>;
+const Who = ({ m = ZEN }) => <p className="cht-mini-who"><Img src={pic(m.slug)} alt="" w={18} h={18} />{m.name}</p>;
 
 function Art({ k }) {
   if (k === 'route') {
+    // the routing moment: a question goes in, Enso turns, one model takes it
     return (
       <div className="cht-art cht-art-route">
-        <Img className="cht-art-bg" src={pic('enso')} alt="" w={1200} h={1500} />
-        <div className="cht-menu">
-          <div className="cht-menu-h"><Img src={pic('enso')} alt="" w={36} h={36} /><span><b>Enso</b><em>{ENSO.tags.join(' · ')}</em></span></div>
-          <ul>
-            <i className="cht-menu-hl" />
-            {ROUTED.map((m) => <li key={m.slug}><Img src={pic(m.slug)} alt="" w={26} h={26} /><b>{m.name}</b><em className="x-mono">{m.tags[0]}</em></li>)}
-          </ul>
+        <span className="cht-drift"><Img className="cht-art-bg" src={pic('enso')} alt="" w={1200} h={1500} /></span>
+        <div className="cht-route">
+          <p className="cht-mini-q">{DEMO[0][0]}</p>
+          <div className="cht-route-hub"><span className="cht-route-o"><Img src={pic('enso')} alt="" w={56} h={56} /></span><span><b>Enso</b><em className="x-mono">{ENSO.tags[0]}</em></span></div>
+          <span className="cht-route-wire" aria-hidden="true"><i /></span>
+          <div className="cht-route-pick"><Img src={pic('zen')} alt="" w={40} h={40} /><span><b>Zen</b><em className="x-mono">{ZEN.tags[0]}</em></span><i className="cht-live" /></div>
         </div>
       </div>
     );
@@ -300,12 +350,13 @@ function Art({ k }) {
       <div className="cht-art cht-art-chat">
         <div className="cht-mini">
           <p className="cht-mini-q">{RECENTS[4]}</p>
-          <p className="cht-mini-who"><Img src={pic('zen')} alt="" w={18} h={18} />Zen</p>
+          <Who />
           <div className="cht-mini-code x-mono">
-            <span className="cht-mini-run"><i>▶</i>retry.ts</span>
-            {RETRY.filter(([c]) => c !== 'del').map(([c, s], j) => <Line key={j} c={c === 'add' ? 'ctx' : c} s={s} j={j} />)}
+            <span className="cht-mini-run"><i>▶</i>{DEV_FILE}</span>
+            {DIFF.filter(([c]) => c !== 'del').map(([c, s], j) => <Line key={j} c="ctx" s={(j ? '  ' : '') + s} j={j} />)}
           </div>
-          <p className="cht-mini-ok"><span aria-hidden="true">✓</span>{RECENTS[4]}</p>
+          <p className="cht-mini-run2 x-mono"><span>$</span>{DEV_TEST}</p>
+          <p className="cht-mini-ok"><span aria-hidden="true">✓</span>{DEV_OK}</p>
         </div>
       </div>
     );
@@ -326,10 +377,10 @@ function Art({ k }) {
     return (
       <div className="cht-art cht-art-voice">
         <div className="cht-say">
-          <p className="cht-mini-who"><Img src={pic('zen')} alt="" w={18} h={18} />Zen</p>
-          <p className="cht-say-t">{DEMO[1][1].split('\n\n')[0]}</p>
+          <Who />
+          <p className="cht-say-t">{DEMO[1][1]}</p>
           <span className="cht-listen dark on"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M3 6v4h2.5L9 13V3L5.5 6H3Z" fill="currentColor" /></svg>Listen</span>
-          <div className="cht-wave">{Array.from({ length: 44 }).map((_, j) => <i key={j} style={{ '--h': (0.18 + Math.abs(Math.sin(j * 1.7)) * 0.82).toFixed(2), '--j': j }} />)}</div>
+          <div className="cht-wave">{Array.from({ length: 44 }).map((_, j) => <i key={j} style={{ '--h': (0.18 + Math.abs(Math.sin(j * 1.7)) * 0.82).toFixed(2), '--j': j }}><b /></i>)}</div>
         </div>
       </div>
     );
@@ -339,23 +390,35 @@ function Art({ k }) {
       <div className="cht-art cht-art-memory">
         <div className="cht-convo">
           <p className="cht-convo-t">{RECENTS[0]}</p>
-          <p className="cht-convo-a">{GLOW[0]}: <mark>{GLOW[1]}</mark></p>
+          <p className="cht-convo-a">{DEMO[1][0]} <mark>{DEMO[1][1]}</mark></p>
         </div>
-        <span className="cht-carry"><Ico k="memory" s={22} /></span>
+        <span className="cht-carry"><span className="cht-carry-in"><Ico k="memory" s={22} /></span></span>
         <div className="cht-convo two">
           <p className="cht-convo-t"><span aria-hidden="true">＋</span>New chat</p>
-          <p className="cht-convo-pin"><Ico k="memory" s={14} /><span>{GLOW[1]}</span></p>
+          <p className="cht-convo-pin"><Ico k="memory" s={14} /><span>{DEMO[1][1]}</span></p>
           <p className="cht-convo-ph">Ask anything</p>
         </div>
       </div>
     );
   }
+  // chat, then dev: the conversation, the switch flips, and Dev's session lands its diff
   return (
     <div className="cht-art cht-art-dev">
       <div className="cht-switch"><span>Chat</span><span>Dev</span><i /></div>
       <div className="cht-dev-pane">
-        <div className="chat"><p className="cht-mini-q">{RECENTS[4]}</p></div>
-        <div className="code x-mono">{RETRY.map(([c, s], j) => <Line key={j} c={c} s={s} j={j} />)}</div>
+        <div className="chat">
+          <p className="cht-mini-q">{RECENTS[4]}</p>
+          <Who />
+          <span className="cht-dots"><i /><i /><i /></span>
+        </div>
+        <div className="code x-mono">
+          <p className="cht-dev-l cmd" style={{ '--j': 0 }}><i>›</i>{DEV_CMD}</p>
+          <p className="cht-dev-l" style={{ '--j': 1 }}><b>Read</b>{DEV_FILE}</p>
+          <p className="cht-dev-l" style={{ '--j': 2 }}><b>Edit</b></p>
+          {DIFF.map(([c, s], j) => <Line key={j} c={c} s={(j ? '  ' : '') + s} j={j + 3} />)}
+          <p className="cht-dev-l" style={{ '--j': 9 }}><b>Run</b>{DEV_TEST}</p>
+          <p className="cht-dev-l ok" style={{ '--j': 10 }}><i>✓</i>{DEV_OK}<span className="cht-caret" /></p>
+        </div>
       </div>
     </div>
   );
@@ -389,38 +452,40 @@ function Tools() {
   );
 }
 
-/* 3. Beyond: who answers what. Enso and the eight models it routes to; the picture comes forward as you point, and a
-   model opens into its own page with its picture (the WebGL opener). */
-function Who() {
+/* 3. Proof, who answers: Enso and the eight models it routes to, as one card. Point at (or tap) a name and the card
+   swaps to that model; open the card and the picture lifts into the model's own page (the WebGL opener). */
+function Answers() {
   const [k, setK] = useState('enso');
   const opener = useOpener();
   const frame = useRef(null);
   const m = MODELS.find((x) => x.slug === k) || ENSO;
-  const go = (e, slug) => { setK(slug); if (opener && frame.current) opener.open(e, { el: frame.current, src: pic(slug), href: '/' + slug, key: slug }); };
+  const go = (e) => { if (opener && frame.current) opener.open(e, { el: frame.current, src: pic(m.slug), href: '/' + m.slug, key: m.slug }); };
   return (
     <section className="v2a-sec cht-who-sec" aria-labelledby="cht-who-h">
       <div className="v2a-wrap v2a-grid cht-who-grid">
         <div className="cht-who-l">
-          <div className="cht-pic" ref={frame}>
+          <A to={'/' + m.slug} className="cht-pic" ref={frame} data-card={m.slug} onClick={go}>
             {MODELS.map((x) => <Img key={x.slug} src={pic(x.slug)} alt="" w={1200} h={1500} className={x.slug === k ? 'on' : ''} />)}
-            <p className="cht-pic-cap" aria-hidden="true"><b>{m.name}</b><span className="x-mono">{m.tags.join(' · ')}</span></p>
-          </div>
+            <span className="cht-pic-cap"><b>{m.name}</b><span className="x-mono">{m.tags.join(' · ')}</span><i aria-hidden="true">→</i></span>
+          </A>
         </div>
         <div className="cht-who-r">
           <h2 className="v2a-head cht-who-h" id="cht-who-h">{ENSO.desc}</h2>
           <ul className="cht-roster" onPointerLeave={(e) => { if (e.pointerType === 'mouse') setK('enso'); }}>
             {MODELS.map((x) => (
               <li key={x.slug} className={x.slug === k ? 'on' : ''}>
-                <A to={'/' + x.slug} className="cht-row" data-card={x.slug} onPointerEnter={(e) => { if (e.pointerType === 'mouse') setK(x.slug); }} onFocus={() => setK(x.slug)} onClick={(e) => go(e, x.slug)}>
+                <button type="button" className="cht-row" aria-pressed={x.slug === k} aria-controls="cht-who-d" onPointerEnter={(e) => { if (e.pointerType === 'mouse') setK(x.slug); }} onFocus={() => setK(x.slug)} onClick={() => setK(x.slug)}>
                   <Img className="cht-row-pic" src={pic(x.slug)} alt="" w={44} h={44} />
                   <b className="cht-row-n">{x.name}</b>
-                  <span className="cht-row-d">{x.desc}</span>
                   <span className="cht-row-t x-mono">{x.tags[0]}</span>
-                  <i className="cht-row-go" aria-hidden="true">→</i>
-                </A>
+                </button>
               </li>
             ))}
           </ul>
+          <p className="cht-who-d" id="cht-who-d" aria-live="polite">
+            {k !== 'enso' && <span key={k}>{m.desc}</span>}
+            <A to={'/' + m.slug} className="cht-who-go" onClick={go}>{m.name} →</A>
+          </p>
         </div>
       </div>
     </section>
@@ -433,11 +498,12 @@ function Close() {
 }
 
 export default function ChatPage() {
+  const handoff = useHandoff();
   return (
-    <main className="cht">
+    <main className="cht" onClickCapture={handoff}>
       <Hero />
       <Tools />
-      <Who />
+      <Answers />
       <Close />
     </main>
   );
