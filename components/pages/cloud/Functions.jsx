@@ -1,6 +1,6 @@
 'use client';
 // Functions.
-// V2: 8/10 round 3 (critic 7/10): the use cases are one at a time on a pinned stage, each with its own live drawing from its own words, and each tile opens into its own full-screen sheet (grows out of the tile, Back/Esc/Close reverse it; points behind the open, in the HTML); phone chapters are a swipe rail (drawing first, one in one out); the phone composer keeps its card above compact choice rails; chapter titles rest at 26px and "Get Functions" at 52px; hovers say something (rail numbers show their chapter, related rows show their path, composer choices preview their effect on the card); hero stage content inset to the container while its fill bleeds; every visible word is Hanzo's (the composer's invented heading, kicker, "One version" and composed read-back lines are gone: it reads back Hanzo's own whole sentences; states are shapes, not invented words); the close ends without dead black.
+// V2: 8/10 round 4 (critic 6/10): the phone chapter rail sits on the 16px gutter and runs to the screen edge (no clipped words); the hero's reduced-motion end state waits for mount (no hydration diff) and the close is a page-local copy of the shared room that does the same; invented labels gone ("deployed", "replicas", "node 1/2/3", "v1"/"v2": states and versions are shapes); the composer room and the spec strip are gone and their choices live in the objects that show them (pick the trigger in the hero, the runtime in chapter 01, the GPU in 04, canary or Blue/green in 06); use-case drawings stack upright on phones with every part kept and stay inside the sheet's card; the hero object ends inside the container; trigger lines draw all the way into handler.js; the request word never cuts; dead bands tightened.
 // Persona: Developer who runs Kubernetes and wants functions on it.
 // Goal: try Hanzo Functions (sign in, then deploy).
 // CTA: "Try Hanzo" → /login (solid: data-cta functions.hero with data-thumb for the ask bar); "View Documentation" →
@@ -8,26 +8,26 @@
 //   https://platform.hanzo.ai/deploy (functions.close, the close's one solid).
 // Metric: api_key_created (proxy on this page: the functions.hero click).
 // Signature: a function's life, in the hero. handler.js is written line by line, then calls stream in from one of four
-//   triggers (an HTTP route, a cron schedule, a Kafka topic, a RabbitMQ queue), replicas fill slots across three
-//   Kubernetes nodes from the warm pool, and when the calls stop they empty back to "scaled to zero". State is shown as
-//   filled against hollow slots and a word, never a counting number (no figure here is Hanzo's).
+//   triggers (an HTTP route, a cron schedule, a Kafka topic, a RabbitMQ queue), slots fill across three Kubernetes nodes
+//   from the warm pool, and when the calls stop they empty back to "Scale to zero". State is shown as filled against
+//   hollow slots, never a counting number or an invented word (no figure here is Hanzo's).
 // Supporting: six pinned chapters ("A handler file, a trigger, and the cluster you already run") whose scenes rise in
-//   beside the words (the triggers' lines draw as you scroll, the canary slice grows into a flip); the runtime pill that
-//   glides in "Compose yours"; the use cases one at a time on a pinned stage, each tile opening into its own sheet.
-// Motion kinds: arrival (title cut-in, stage), time (the file writing itself, calls arriving), idle (replicas filling and
-//   emptying, each use case's drawing), state (composer pills and their hover previews, the read-back, a tile opening into
-//   its sheet), scroll (stage settle, chapters, the use-case stage: under half).
-// Beyond: "Compose yours": pick a runtime (or your own container), the triggers it answers to, a GPU and a way to move
-//   between versions, and the function you described is read back in Hanzo's own lines.
+//   beside the words (the triggers' lines draw in, the canary slice grows into a flip); the use cases one at a time on a
+//   pinned stage, each tile opening into its own sheet.
+// Motion kinds: arrival (title cut-in, stage), time (the file writing itself, calls arriving), idle (slots filling and
+//   emptying, each use case's drawing), state (the choices below, a tile opening into its sheet), scroll (stage settle,
+//   chapters, the use-case stage: under half).
+// Beyond: make the function yours in the objects themselves: pick the trigger that fires in the hero, a runtime (or
+//   your own container) in chapter 01, ask for the NVIDIA GPU in 04, and canary or Blue/green in 06.
 // Every word and link is Hanzo's; the scenes are drawn, not measured.
 import { createContext, Fragment, useContext, useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { Magnetic } from '../../ui';
 import { A, Cta } from '../../kit';
 import KeynoteChapters from '../../v2/KeynoteChapters';
-import KeynoteClose from '../../v2/KeynoteClose';
 import KeynoteLines from '../../v2/KeynoteLines';
 import FnUses from './functions/FnUses';
+import FnClose from './functions/FnClose';
 import './Functions.css';
 
 const EMPH = [0.16, 1, 0.3, 1];
@@ -370,7 +370,7 @@ export default function Functions() {
 
       <FnUses />
 
-      <KeynoteClose
+      <FnClose
         name="Functions"
         tag="Serverless functions"
         api="/v1/function"
@@ -378,7 +378,7 @@ export default function Functions() {
         prompt="Read https://hanzo.ai/skill.md and use Hanzo Functions in my project. Start with: hanzo functions list"
       >
         <Rel />
-      </KeynoteClose>
+      </FnClose>
     </main>
   );
 }

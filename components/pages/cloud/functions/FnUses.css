@@ -123,7 +123,7 @@
 .fn-uc-sheet::backdrop { background: transparent; }
 .fn-uc-sh { position: absolute; inset: 0; transform-origin: 0 0; background: #f5f5f5; overflow: auto; overscroll-behavior: contain; outline: none; }
 /* the drawings read larger where there is room: in the tile on desktop, and larger again in the sheet */
-@media (min-width: 900px) { .fn-uc-obj .fn-uo { zoom: 1.15; } .fn-uc-sh-obj .fn-uo { zoom: 1.4; } .fn-uc-sh-obj .fn-uo-api, .fn-uc-sh-obj .fn-uo-gpu { zoom: 1.12; } }
+@media (min-width: 900px) { .fn-uc-obj .fn-uo { zoom: 1.15; } .fn-uc-sh-obj .fn-uo { zoom: 1.4; } .fn-uc-sh-obj :is(.fn-uo-api, .fn-uo-stream) { zoom: 1.05; } .fn-uc-sh-obj .fn-uo-gpu { zoom: .95; } }
 /* a drawing never spills out of its card */
 .fn-uc-sh-obj, .fn-uc-obj { min-width: 0; overflow: hidden; }
 .fn-uc-sh-in { padding-top: 17px; padding-bottom: 72px; }

@@ -554,7 +554,7 @@ html:not(.js) .xe-card { margin-bottom: 17px; }
 /* the switcher's dot rides with the browser you pick */
 .xe-mine { flex: none; }
 /* the chapter pictures: flat tiles on one room tone, no outline (no stray hairline at the wipe's edge) */
-.xe-vis { box-shadow: none; background: #f5f5f5; }
+.xe-vis:not(.xe-text) { box-shadow: none; background: #f5f5f5; }
 .xe .av-sc-t .av-head { font-size: 21px; line-height: 1.2; letter-spacing: -.015em; }
 /* "Read a page as text": its three rows are there before the wipe arrives; the values type in once it is shown */
 .js .xe-text .xe-outs li { opacity: 1; transform: none; }
@@ -592,6 +592,8 @@ html:not(.js) .xe-card { margin-bottom: 17px; }
   .xe-stack.f-safari .xe-pclip { top: calc(7% + 264px); }
 }
 @media (max-width: 359px) {
+  .xe-deal { gap: 6px; }
+  .xe-deal-tabs button { padding: 0 11px; font-size: 14px; }
   .xe-stack { height: 680px; aspect-ratio: auto; }
   .xe-page img { height: 160px; }
   .xe-pclip, .xe-stack.f-safari .xe-pclip { top: calc(7% + 292px); }
