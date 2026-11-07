@@ -147,16 +147,21 @@ export function Bill({ self, others }) {
   );
   return (
     <div className="xmf-bill">
-      <div className="xmf-vols">
-        <Volume id="xmf-vi" label="Input a month" i={vi} set={setVi} />
-        <Volume id="xmf-vo" label="Output a month" i={vo} set={setVo} />
+      {/* the month's bill is the hero figure; the sliders set it, a sibling sits beside it */}
+      <div className="xmf-bill-l">
+        <p className="xmf-bill-big"><b className="x-mono">{dollars(a)}</b><span>{`${self.name}, a month`}</span></p>
+        <p className="xmf-say">{say || `${dollars(a)} a month at ${i.toLocaleString('en-US')}M in and ${o.toLocaleString('en-US')}M out.`}</p>
+        <div className="xmf-vols">
+          <Volume id="xmf-vi" label="Input a month" i={vi} set={setVi} />
+          <Volume id="xmf-vo" label="Output a month" i={vo} set={setVo} />
+        </div>
       </div>
+      <div className="xmf-bill-r">
       <div className="xmf-bhead" aria-hidden="true"><span>Model</span><span>Bill a month</span><span>Context</span></div>
       <div className="xmf-brows" aria-live="polite">
         {row(self, a, true)}
         {other && row(other, b, false)}
       </div>
-      <p className="xmf-say">{say || `${dollars(a)} a month at ${i.toLocaleString('en-US')}M in and ${o.toLocaleString('en-US')}M out.`}</p>
       {priced.length > 0 && (
         <div className="xmf-pick" role="group" aria-label="Compare with" data-swipe-own>
           {priced.map((p) => (
@@ -167,6 +172,7 @@ export function Bill({ self, others }) {
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 }

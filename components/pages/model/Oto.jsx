@@ -1,13 +1,15 @@
 'use client';
-/* Oto's first screen: the page's one dark room, a soundstage. The head and the pit camera sit on top; below, the props
-   board beside a spectrogram, the DAW bus and the engine.
+/* Oto: give every moment its sound. v2 launch page (Creative on Launch + Chapters, accent sky). The film settles
+   into a waveform; the soundstage is the page's one dark room.
    Signature: a live spectrogram. Each Foley prop fires on its own cue (00:01.12, 00:02.40, 00:03.85, 00:05.10) and
    paints its sound into the scrolling spectrum (a drum's broadband hit, gravel steps at 120 BPM, a vault latch's
    ringing partials, rain's high speckle) while the bus meters answer. Tap a prop to fire it; turn on Sound to hear
-   it, synthesised in the browser. (An illustration of Foley, not Oto's output.) */
+   it, synthesised in the browser. (An illustration of Foley, not Oto's output.)
+   Beyond: the studio map (Creative.jsx): every creative model serving your field, in its own words and colour. */
 import { useEffect, useRef, useState } from 'react';
-import { media } from '../../../lib/models';
-import { CHead, Studio } from './Studio';
+import { Studio } from './Studio';
+import Creative, { Scene } from './Creative';
+import { poly, film } from '../../v2/Launch';
 import { useLoop, fit, audio, burst, tone, hush } from './live';
 import './Oto.css';
 
@@ -162,21 +164,37 @@ function Board() {
   );
 }
 
+// the film closes into a waveform: a band whose edges follow a sound's envelope
+const WAVE = poly((W, H, wide) => {
+  const n = 30, x0 = wide ? W * 0.42 : W * 0.05, x1 = wide ? W * 0.96 : W * 0.95, cy = wide ? H * 0.5 : H * 0.25, A = wide ? H * 0.38 : H * 0.18;
+  const amp = (k) => { const u = k / (n - 1); const env = Math.pow(Math.sin(Math.PI * u), 0.55); return A * (0.12 + 0.88 * env * Math.abs(0.55 * Math.sin(u * 19.3) + 0.3 * Math.sin(u * 41.7 + 1.2) + 0.28 * Math.sin(u * 7.1 + 0.4))); };
+  const up = Array.from({ length: n }, (_, k) => [x0 + ((x1 - x0) * k) / (n - 1), cy - amp(k)]);
+  return [...up, ...up.map(([x], k) => [x, cy + amp(k)]).reverse()];
+});
+
 export default function Oto() {
   return (
-    <section className="ot-intro mb-sec" data-room="dark" aria-label="Oto">
-      <div className="x-wrap">
-        <div className="ot-top">
-          <CHead slug="oto" dark />
-          <figure className="ot-cam">
-            <video src={media('oto', 'webm')} poster={media('oto', 'webp')} autoPlay muted loop playsInline preload="metadata" aria-hidden="true" />
-            <figcaption className="mb-mono mb-live">LIVE SOUNDSTAGE PIT · CAM 01</figcaption>
-          </figure>
-        </div>
-        <Studio slug="oto" className="ot-studio" engine="Hanzo Oto-1 Neural Foley Engine" specs={[['Synchronous Foley', 'Impacts & Steps', 'Sample-Accurate'], ['Environmental Ambience', 'Spatial Reverb', 'B-format Ambisonics'], ['Master Output', 'Lossless FLAC', '96kHz / 24-bit']]}>
-          <Board />
-        </Studio>
-      </div>
-    </section>
+    <Creative
+      slug="oto"
+      accent="#0ba5d9"
+      ink="#06789f"
+      shape={WAVE}
+      headClass="ot-v2"
+      first="demo"
+      demo={
+        <Scene slug="oto" dark className="ot-scene" k="Live soundstage" title="Every prop on its cue.">
+          <div className="ot-top">
+            <p className="lv-p">Each Foley prop fires on its own cue and paints its sound into the scrolling spectrum while the bus meters answer. Tap a prop to fire it; turn on Sound to hear it.</p>
+            <figure className="ot-cam">
+              <video src={film('oto', 'webm')} poster={film('oto', 'webp')} autoPlay muted loop playsInline preload="metadata" aria-hidden="true" />
+              <figcaption className="mb-mono mb-live">LIVE SOUNDSTAGE PIT · CAM 01</figcaption>
+            </figure>
+          </div>
+          <Studio slug="oto" className="ot-studio" engine="Hanzo Oto-1 Neural Foley Engine" specs={[['Synchronous Foley', 'Impacts & Steps', 'Sample-Accurate'], ['Environmental Ambience', 'Spatial Reverb', 'B-format Ambisonics'], ['Master Output', 'Lossless FLAC', '96kHz / 24-bit']]}>
+            <Board />
+          </Studio>
+        </Scene>
+      }
+    />
   );
 }

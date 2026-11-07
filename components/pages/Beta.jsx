@@ -1,135 +1,196 @@
 'use client';
-/* Hanzo beta. Its idea is the pass that lets you in early.
-   Signature: three passes, A, B and C, held as a fanned deck; the deck deals itself, bringing each pass to the front
-   in turn, and a tap brings the one you want forward with its Apply stub.
-   Beyond: say what you are after (use it first, evaluate it first, build it with the team) and the deck hands you
-   the pass made for it, read from Hanzo's own description of each.
-   Every word is Hanzo's. */
+/* Hanzo beta. Its idea is the pass that lets you in before release.
+   V2: 8/10 rebuilt as three screens: a display hero over the five early-access products (Kai, Enso and Zen as their own films) that settle into one row as you scroll; three pass tiles that open into their own full sheet; a dark closing room for feedback and a call.
+   Signature: open: each pass is a tile that opens into a full sheet with a shared-element morph (synchronized.studio),
+   the pass letter, its words and its Apply stub carried across.
+   Beyond: say what you are after (use it first, evaluate it first, build it with the team) and the pass made for it
+   opens, read from Hanzo's own description of each.
+   Motion: open (signature) + the product tiles settling into one row as you scroll + line-masked hero type.
+   Accent: magenta. Every word is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
-import { EASE } from '../ui';
+import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { A } from '../kit';
+import LineReveal from '../v2/LineReveal';
+import '../v2/ProgramScale.css';
 import './Beta.css';
 
+const EASE = [0.16, 1, 0.3, 1];
 const PASSES = [
   ['A', 'Beta access', 'New releases before they ship.', '/beta/apply', 'Use it first'],
   ['B', 'Research access', 'Research models and checkpoints to evaluate before release.', '/beta/research', 'Evaluate it first'],
   ['C', 'Design partner', 'Build it with the team. Chosen from applications.', '/beta/design', 'Build it with the team'],
 ];
-const PRODUCTS = [['Dev', '/dev'], ['Studio', '/studio'], ['Kai', '/kai'], ['Enso', '/enso'], ['Zen', '/zen']];
-const FAN = [{ x: -34, r: -9 }, { x: 0, r: 0 }, { x: 34, r: 9 }];
+const PRODUCTS = [['Dev', '/dev'], ['Studio', '/studio'], ['Kai', '/kai', 'kai'], ['Enso', '/enso', 'enso'], ['Zen', '/zen', 'zen']];
 
-function Deck({ at, pick }) {
-  const [fan, setFan] = useState(1); // a phone holds the deck closer, so no pass leaves the screen
-  useEffect(() => { setFan(matchMedia('(max-width: 900px)').matches ? 0.4 : 1); }, []);
+/* A model's own film, playing only while it is on screen; reduced motion keeps its still. */
+function Film({ name }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount: 0.2 });
+  const calm = useReducedMotion();
+  useEffect(() => {
+    const v = ref.current;
+    if (!v) return;
+    if (seen && !calm) v.play().catch(() => {}); else v.pause();
+  }, [seen, calm]);
+  return <video ref={ref} className="xbt-film" src={`/models/${name}.webm`} poster={`/models/${name}.webp`} muted loop playsInline preload="metadata" data-morph />;
+}
+
+/* Dev and Studio have no film: a quiet drawing of their window instead. */
+function Sketch({ kind }) {
+  if (kind === 'Dev') return (
+    <span className="xbt-sk dev" data-morph>
+      {[62, 40, 74, 28, 55, 70, 34].map((w, i) => <i key={i} className={i === 3 ? 'add' : i === 4 ? 'del' : ''} style={{ width: w + '%' }} />)}
+    </span>
+  );
   return (
-    <div className="xbt-deck">
-      {PASSES.map(([k, t, d, to], i) => {
-        const on = i === at;
-        const off = (i - at + 3) % 3; // 0 front, 1 next, 2 last
-        return (
-          <motion.article
-            key={k}
-            className={'xbt-pass' + (on ? ' on' : '')}
-            initial={false}
-            animate={{ x: FAN[i].x * fan + '%', rotate: on ? 0 : FAN[i].r * fan, y: on ? -18 : off * 6, scale: on ? 1.04 : 0.94 }}
-            transition={{ type: 'spring', stiffness: 220, damping: 24 }}
-            style={{ zIndex: on ? 5 : 3 - off }}
-          >
-            <button type="button" className="xbt-pick" onClick={() => pick(i)} aria-pressed={on} aria-label={`${t}: ${d}`} />
-            <span className="xbt-k x-mono">Pass</span>
-            <b className="xbt-l">{k}</b>
-            <h2 className="xbt-t">{t}</h2>
-            <p className="xbt-d">{d}</p>
-            <i className="xbt-perf" aria-hidden="true" />
-            <A to={to} className="xbt-stub" tabIndex={on ? 0 : -1}><span>Apply</span><span aria-hidden="true">→</span></A>
-          </motion.article>
-        );
-      })}
+    <span className="xbt-sk studio" data-morph>
+      {[[8, 40], [30, 62], [4, 30], [44, 50]].map(([l, w], i) => <i key={i} style={{ marginLeft: l + '%', width: w + '%' }} />)}
+      <b />
+    </span>
+  );
+}
+
+const DROP = [0, 140, 60, 190, 90]; // where each tile starts below the row it settles into
+
+function Tile({ p, i, n, to, film }) {
+  const y = useTransform(p, [0, 1], [DROP[i], 0]);
+  return (
+    <motion.li style={{ y }}>
+      <motion.div initial={{ opacity: 0, y: 80 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.25 + i * 0.06 }}>
+        <A to={to} className={'xbt-tile' + (film ? ' film' : '')} aria-label={n}>
+          {film ? <Film name={film} /> : <Sketch kind={n} />}
+          <span className="xbt-tile-n">{n}</span>
+        </A>
+      </motion.div>
+    </motion.li>
+  );
+}
+
+function Hero() {
+  const strip = useRef(null);
+  const { scrollYProgress } = useScroll({ target: strip, offset: ['start end', 'center center'] });
+  const scale = useTransform(scrollYProgress, [0, 1], [1.08, 1]);
+  return (
+    <section className="xbt-hero" aria-labelledby="xbt-h1">
+      <div className="xp-wrap xp-grid xbt-top">
+        <div className="xbt-copy">
+          <p className="xp-kick">Hanzo beta</p>
+          <LineReveal as="h1" id="xbt-h1" className="xp-display" lines={['Get there first.']} />
+        </div>
+        <motion.p className="xp-lede xbt-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
+          Early access to {PRODUCTS.map(([n, to], i) => (
+            <span key={n}><A to={to} className="xbt-prod">{n}</A>{i < 3 ? ', ' : i === 3 ? ' and ' : '.'}</span>
+          ))}
+        </motion.p>
+      </div>
+      <div className="xp-wrap xbt-strip" ref={strip}>
+        <motion.ul className="xbt-tiles" style={{ scale }} aria-label="The products in early access" data-swipe-own>
+          {PRODUCTS.map(([n, to, film], i) => <Tile key={n} p={scrollYProgress} i={i} n={n} to={to} film={film} />)}
+        </motion.ul>
+      </div>
+    </section>
+  );
+}
+
+/* The pass, opened: it grows out of its tile into a sheet over the page. */
+function Sheet({ i, close }) {
+  const [k, t, d, to, w] = PASSES[i];
+  const shut = useRef(null);
+  useEffect(() => {
+    const esc = (e) => { if (e.key === 'Escape') close(); };
+    addEventListener('keydown', esc);
+    window.__lenis?.stop();
+    document.documentElement.style.overflow = 'hidden';
+    shut.current?.focus();
+    return () => { removeEventListener('keydown', esc); window.__lenis?.start(); document.documentElement.style.overflow = ''; };
+  }, [close]);
+  return (
+    <div className="xbt-sheet-wrap" role="dialog" aria-modal="true" aria-labelledby="xbt-sheet-t">
+      <motion.div className="xbt-veil" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }} onClick={close} />
+      <motion.div layoutId={'xbt-pass-' + k} className="xbt-sheet" transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+        <motion.span layoutId={'xbt-l-' + k} className="xbt-l" transition={{ type: 'spring', stiffness: 300, damping: 30 }}>{k}</motion.span>
+        <motion.div className="xbt-sheet-in" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0, transition: { delay: 0.2, duration: 0.6, ease: EASE } }} exit={{ opacity: 0, transition: { duration: 0.12 } }}>
+          <p className="xp-kick">Pass {k} · {w}</p>
+          <h3 id="xbt-sheet-t" className="xp-display md">{t}</h3>
+          <p className="xp-lede">{d}</p>
+          <A to={to} className="xp-cta" data-thumb={'Apply for ' + t}>Apply<i aria-hidden="true">→</i></A>
+        </motion.div>
+        <button ref={shut} type="button" className="xbt-close" onClick={close} aria-label="Close">×</button>
+      </motion.div>
     </div>
   );
 }
 
-/* Feedback is filed on your Hanzo account, so the sheet asks you to sign in first. */
-function Feedback() {
-  const [open, setOpen] = useState(false);
-  const btn = useRef(null);
-  useEffect(() => {
-    if (!open) return;
-    const esc = (e) => { if (e.key === 'Escape') { setOpen(false); btn.current?.focus(); } };
-    addEventListener('keydown', esc);
-    return () => removeEventListener('keydown', esc);
-  }, [open]);
+function Passes() {
+  const [open, setOpen] = useState(-1);
+  const [want, setWant] = useState(-1);
+  const opener = useRef(null);
+  const show = (i, el) => { opener.current = el; setOpen(i); };
+  const close = () => { setOpen(-1); setTimeout(() => opener.current?.focus(), 50); };
   return (
-    <>
-      <button ref={btn} type="button" className="xbt-quiet" onClick={() => setOpen((v) => !v)} aria-expanded={open} aria-controls="xbt-fb">Feedback</button>
-      <AnimatePresence>
-        {open && (
-          <motion.div id="xbt-fb" className="xbt-fb" role="dialog" aria-label="Feedback" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} transition={{ duration: 0.35, ease: EASE }}>
-            <p>Sign in so this is filed on your account.</p>
-            <A to="/login?next=%2Fbeta" className="x-btn solid">Log in</A>
-            <button type="button" className="xbt-x" onClick={() => { setOpen(false); btn.current?.focus(); }} aria-label="Close">×</button>
+    <section className="xp-sec xbt-passes" aria-labelledby="xbt-want-h">
+      <div className="xp-wrap">
+        <div className="xp-grid xbt-want">
+          <div className="xbt-want-head">
+            <p className="xp-kick">Three passes</p>
+            <LineReveal onView id="xbt-want-h" className="xp-head" lines={['What are you after?']} />
+          </div>
+          <div className="xbt-chips" role="radiogroup" aria-label="What are you after?">
+            {PASSES.map(([k, , , , w], i) => (
+              <button key={k} type="button" role="radio" aria-checked={want === i} onClick={(e) => { setWant(i); show(i, e.currentTarget); }}>
+                {w}<span aria-hidden="true">→</span>
+              </button>
+            ))}
+          </div>
+        </div>
+        <ul className="xbt-grid">
+          {PASSES.map(([k, t, d, to], i) => (
+            <li key={k} className={'xbt-cell c' + i}>
+              <motion.article layoutId={'xbt-pass-' + k} className={'xbt-pass' + (want === i ? ' want' : '')} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+                <button type="button" className="xbt-hit" onClick={(e) => show(i, e.currentTarget)} aria-haspopup="dialog" data-cursor="Open"><span className="x-sr">Open {t}</span></button>
+                <motion.span layoutId={'xbt-l-' + k} className="xbt-l" transition={{ type: 'spring', stiffness: 300, damping: 30 }}>{k}</motion.span>
+                <span className="xbt-pk x-mono">Pass</span>
+                <h2 className="xp-title xbt-t">{t}</h2>
+                <p className="xbt-d">{d}</p>
+                <A to={to} className="xbt-stub" {...(i === 0 ? { 'data-thumb': 'Apply' } : {})}><span>Apply</span><span aria-hidden="true">→</span></A>
+                <span className="xbt-plus" aria-hidden="true">+</span>
+              </motion.article>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <AnimatePresence>{open >= 0 && <Sheet key={open} i={open} close={close} />}</AnimatePresence>
+    </section>
+  );
+}
+
+/* Feedback is filed on your Hanzo account, so it asks you to sign in first. */
+function Foot() {
+  const [fb, setFb] = useState(false);
+  return (
+    <section className="xp-sec xp-dark xbt-foot" data-room="dark" aria-label="Feedback and a call">
+      <div className="xp-wrap xp-grid">
+        <div className="xbt-foot-a">
+          <button type="button" className="xbt-big" onClick={() => setFb((v) => !v)} aria-expanded={fb} aria-controls="xbt-fb">Feedback<span aria-hidden="true">{fb ? '−' : '+'}</span></button>
+          <motion.div id="xbt-fb" className="xbt-fb" initial={false} animate={fb ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 }} transition={{ duration: 0.45, ease: EASE }} inert={!fb}>
+            <div>
+              <p className="xp-body">Sign in so this is filed on your account.</p>
+              <A to="/login?next=%2Fbeta" className="xp-cta">Log in</A>
+            </div>
           </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+        </div>
+        <a className="xbt-big call" href="https://cal.com/hanzo" target="_blank" rel="noopener noreferrer">Book a call<span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
   );
 }
 
 export default function Beta() {
-  const [at, setAt] = useState(0);
-  const [mine, setMine] = useState(false);
-  const box = useRef(null);
-  const seen = useInView(box, { amount: 0.3 });
-  const calm = useReducedMotion();
-  useEffect(() => {
-    if (mine || calm || !seen) return;
-    const t = setTimeout(() => setAt((v) => (v + 1) % 3), 2800);
-    return () => clearTimeout(t);
-  }, [at, mine, calm, seen]);
-  const pick = (i) => { setMine(true); setAt(i); };
   return (
-    <main className="xbt">
-      <section className="xbt-hero" ref={box} aria-labelledby="xbt-h1">
-        <div className="x-wrap xbt-grid">
-          <div className="xbt-copy">
-            <motion.p className="x-kick" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE }}>Hanzo beta</motion.p>
-            <h1 id="xbt-h1" className="xbt-h1"><span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.05 }}>Get there first.</motion.span></span></h1>
-            <motion.p className="xbt-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.3 }}>
-              Early access to {PRODUCTS.map(([n, to], i) => (
-                <span key={n}><A to={to} className="xbt-prod">{n}</A>{i < 3 ? ', ' : i === 3 ? ' and ' : '.'}</span>
-              ))}
-            </motion.p>
-            <motion.div className="xbt-want" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.45 }}>
-              <p className="xbt-want-k">What are you after?</p>
-              <div className="xbt-chips" role="radiogroup" aria-label="What are you after?">
-                {PASSES.map(([k, , , , w], i) => (
-                  <button key={k} type="button" role="radio" aria-checked={mine && at === i} onClick={() => pick(i)}>
-                    {mine && at === i && <motion.span layoutId="xbt-chip" className="xbt-chip-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
-                    <span>{w}</span>
-                  </button>
-                ))}
-              </div>
-              <AnimatePresence mode="wait" initial={false}>
-                {mine && (
-                  <motion.p key={at} className="xbt-hand" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.3, ease: EASE }} aria-live="polite">
-                    Pass {PASSES[at][0]}, {PASSES[at][1]}: <A to={PASSES[at][3]} data-thumb={'Apply for ' + PASSES[at][1]}>Apply →</A>
-                  </motion.p>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          </div>
-          <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.2 }}>
-            <Deck at={at} pick={pick} />
-          </motion.div>
-        </div>
-      </section>
-      <section className="xbt-foot" data-room="dark">
-        <div className="x-wrap xbt-foot-in">
-          <Feedback />
-          <motion.a href="https://cal.com/hanzo" target="_blank" rel="noopener noreferrer" className="xbt-call" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>Book a call<span aria-hidden="true">↗</span></motion.a>
-        </div>
-      </section>
+    <main className="xp xbt">
+      <Hero />
+      <Passes />
+      <Foot />
     </main>
   );
 }

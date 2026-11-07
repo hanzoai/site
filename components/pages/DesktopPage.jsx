@@ -1,28 +1,36 @@
 'use client';
-/* Hanzo Desktop. Signature: the app assembling itself on your own desktop. The page reads your system and draws its
-   desktop (macOS menu bar and dock, Windows taskbar, Linux panel); the Hanzo window lifts out of the dock, its parts
-   arrive, and then it builds one thing: Hanzo's example of rate limiting the payments API, file written, tests passing.
-   Switch the system and it rebuilds there. The six things you can build are a dark room where one agent card changes
-   with each point as you read. Beyond: "Cut the network" - make an agent in the page (a job, a model on your machine
-   or on Hanzo Cloud), then switch the connection off and see which keeps running, and where its keys and data stay.
-   Every word is Hanzo's; the job is an example. */
+// Signature: The Hanzo Desktop window assembles itself centre stage in your own system's chrome (detected): title bar, sidebar, composer, then it builds one thing in front of you, the payments rate limiter, file written and tests passing
+// Beyond: Cut the network: make an agent in the page, pin its model on your machine or on Hanzo Cloud, pull the wire and watch which one keeps running and where its keys and data stay
+/* Hanzo Desktop, v2 (Archetype A, launch: the app window is the hero).
+   V2: 8/10 centred name over a huge app window that puts itself together in your OS's chrome and builds the rate limiter; three pinned chapters (picture left) with live app panes; one dark room where you cut the network on an agent; the six systems and the spec in a drawer
+   Motion: signature = the window assembling and building (a step loop that stops off screen; the ask is written into a
+   text node). Supporting: Stage settle, pinned chapters with wipes (components/v2/AppScenes), line-masked headline.
+   Accent: sky, from the app's send button. Every word is Hanzo's; the job in the window is Hanzo's example. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
-import { EASE, Rise, Copy, Mark, useTilt } from '../ui';
-import { A, Go, More, SecHead } from '../kit';
+import { motion, useInView, useReducedMotion } from 'motion/react';
+import { Copy, Mark, Magnetic } from '../ui';
+import { A, Go } from '../kit';
+import Lines from '../v2/x-edison/AppLines';
+import Stage from '../v2/AppStage';
+import Scenes from '../v2/AppScenes';
+import Sheet from '../v2/AppSheet';
+import '../v2/AppType.css';
 import './DesktopPage.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/apps/desktop';
+const GH = 'https://github.com/hanzoai';
 const OSES = [['mac', 'macOS', 'arm64 + intel'], ['win', 'Windows', 'x64 + arm64'], ['linux', 'Linux', 'deb + rpm + AppImage']];
+const SPRING = { type: 'spring', stiffness: 300, damping: 30 };
 
 function useOs() {
   const [os, setOs] = useState('mac');
+  const [mine, setMine] = useState(null);
   useEffect(() => {
     const p = ((navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '').toLowerCase();
-    if (/win/.test(p)) setOs('win');
-    else if (/linux|x11/.test(p) && !/android/i.test(navigator.userAgent)) setOs('linux');
+    const k = /win/.test(p) ? 'win' : /linux|x11/.test(p) && !/android/i.test(navigator.userAgent) ? 'linux' : 'mac';
+    setOs(k); setMine(k);
   }, []);
-  return [os, setOs];
+  return [os, setOs, mine];
 }
 
 const MSGS = [
@@ -31,116 +39,136 @@ const MSGS = [
   ['ai', 'Wrote gateway/limit.go and a test at 100 req/min per key. Tests pass.'],
 ];
 
-/* The desktop: chrome for the system, then the window, then the build. step 0..6 */
-function Screen({ os }) {
-  const ref = useRef(null);
-  const seen = useInView(ref, { amount: 0.35 });
+/* the file tree and the file being written, drawn as code-shaped strokes (no invented code) */
+const TREE = [['dir', 'gateway'], ['new', 'limit.go'], ['bar', 64], ['bar', 46], ['dir', 'payments'], ['bar', 70], ['bar', 52], ['bar', 60], ['bar', 38], ['bar', 56], ['bar', 44]];
+const CODE = [
+  [0, [['k', 16], ['t', 30]]], [0, []], [0, [['k', 12], ['t', 22], ['s', 18]]], [1, [['t', 28], ['k', 8], ['t', 20]]],
+  [1, [['k', 10], ['t', 34]]], [2, [['t', 24], ['s', 26]]], [2, [['k', 14], ['t', 18]]], [1, [['t', 12]]], [0, [['t', 6]]], [0, []],
+  [0, [['k', 16], ['t', 26], ['s', 12]]], [1, [['t', 30], ['k', 10], ['t', 16]]], [1, [['k', 12], ['s', 30]]], [0, [['t', 6]]], [0, []],
+  [0, [['k', 12], ['t', 34]]], [1, [['t', 20], ['s', 22]]], [1, [['k', 10], ['t', 26], ['t', 12]]], [2, [['t', 30]]], [1, [['t', 8]]], [0, [['t', 6]]],
+];
+
+/* ---------- the hero window: it puts itself together, then builds the limiter. s = 0..9 ---------- */
+function Window({ os }) {
+  const box = useRef(null);
+  const ask = useRef(null);
+  const seen = useInView(box, { amount: 0.3 });
   const calm = useReducedMotion();
-  const [step, setStep] = useState(6);
-  const typed = useRef(null);
+  const [s, setS] = useState(9);
   useEffect(() => {
-    if (!seen || calm) { setStep(6); return; }
-    let alive = true, t = 0;
+    if (!seen || calm) { setS(9); return; }
+    let alive = true, t = 0, first = true;
     const wait = (ms) => new Promise((r) => { t = setTimeout(r, ms); });
     (async () => {
       while (alive) {
-        setStep(0); await wait(500);
-        setStep(1); await wait(900); // window lifts out of the dock
-        setStep(2); await wait(500); // chrome and tabs
-        setStep(3);
-        const el = typed.current, q = MSGS[0][1];
-        for (let i = 1; i <= q.length && alive; i++) { if (el) el.textContent = q.slice(0, i); await wait(32); }
-        await wait(500); if (!alive) return;
-        setStep(4); await wait(1500);
-        setStep(5); await wait(1300);
-        setStep(6); await wait(6000);
+        if (ask.current) ask.current.textContent = '';
+        setS(0); await wait(first ? 120 : 520);
+        setS(1); await wait(420); // the title bar drops in
+        setS(2); await wait(360); // the sidebar
+        setS(3); await wait(440); // toolbar and composer
+        setS(4);
+        const q = MSGS[0][1];
+        for (let i = 1; i <= q.length && alive; i++) { if (ask.current) ask.current.textContent = q.slice(0, i); await wait(26); }
+        await wait(520); if (!alive) return;
+        setS(5); await wait(1900); // it reads the repo
+        setS(6); await wait(1700); // writes limit.go
+        setS(7); await wait(1800); // the test runs and passes
+        setS(8); await wait(700);
+        setS(9); await wait(5600);
+        first = false;
       }
     })();
     return () => { alive = false; clearTimeout(t); };
   }, [seen, calm, os]);
+  let cls = ' at' + s;
+  for (let i = 1; i <= s; i++) cls += ' s' + i;
   return (
-    <div className={'dsk-screen os-' + os} ref={ref}>
-      <div className="dsk-wall" aria-hidden="true" />
-      {os === 'mac' && <div className="dsk-menubar" aria-hidden="true"><i className="dot" /><b /><b /><b /><span className="r"><b /><b /></span></div>}
-      {os === 'linux' && <div className="dsk-panel" aria-hidden="true"><b /><span className="c" /><span className="r"><b /><b /></span></div>}
-      <AnimatePresence>
-        {step >= 1 && (
-          <motion.div key={'w' + os} className="dsk-win" initial={{ opacity: 0, scale: 0.12, y: 260 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.25 } }} transition={{ type: 'spring', stiffness: 120, damping: 18 }}>
-            <div className="dsk-title">
-              {os !== 'win' && <span className="dsk-lights" aria-hidden="true"><i /><i /><i /></span>}
-              <span className="dsk-name"><b>Desktop</b> — Hanzo</span>
-              {os === 'win' && <span className="dsk-ctl" aria-hidden="true"><i /><i /><i /></span>}
-            </div>
-            <motion.nav className="dsk-tabs" aria-label="Hanzo apps" initial={false} animate={{ opacity: step >= 2 ? 1 : 0 }} transition={{ duration: 0.4 }}>
-              <A to="/desktop" className="on">Desktop</A><A to="/cli">CLI</A><A to="/playground">Playground</A><A to="/cloud/api-keys">API Keys</A>
-            </motion.nav>
-            <div className="dsk-body">
-              <motion.ul className="dsk-files" aria-hidden="true" initial={false} animate={{ opacity: step >= 2 ? 1 : 0, x: step >= 2 ? 0 : -12 }} transition={{ duration: 0.5, ease: EASE }}>
-                <li className="dir">gateway</li>
-                <li className={'new' + (step >= 5 ? ' on' : '')}>limit.go</li>
-                <li className="dir">payments</li>
-                <li className="dim" /><li className="dim" /><li className="dim short" />
-              </motion.ul>
-              <ul className="dsk-msgs">
-                <li className={'dsk-you' + (step >= 3 ? ' on' : '')}><span ref={typed}>{MSGS[0][1]}</span></li>
-                <li className={'dsk-ai' + (step >= 4 ? ' on' : '')}><Mark size={13} /><span>{MSGS[1][1]}</span></li>
-                <li className={'dsk-ai' + (step >= 5 ? ' on' : '')}><Mark size={13} /><span>{MSGS[2][1]}</span><svg className="dsk-ok" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></li>
-                <li className={'dsk-open' + (step >= 6 ? ' on' : '')}><A to="https://hanzo.team/">Open in the console</A></li>
-              </ul>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-      {os === 'mac' && <div className="dsk-dock" aria-hidden="true"><i /><i /><i className={'me' + (step === 0 ? ' bounce' : '')}><Mark size={18} /></i><i /><i /></div>}
-      {os === 'win' && <div className="dsk-task" aria-hidden="true"><i /><i /><i className="me"><Mark size={16} /></i><i /><i /></div>}
-      {os === 'linux' && <div className="dsk-dock lin" aria-hidden="true"><i className="me"><Mark size={18} /></i><i /><i /><i /></div>}
+    <div className={'dk-win os-' + os + cls} ref={box}>
+      <div className="dk-bar">
+        {os === 'mac' && <span className="dk-lights" aria-hidden="true"><i /><i /><i /></span>}
+        {os === 'win' && <span className="dk-appi" aria-hidden="true"><Mark size={14} /></span>}
+        <span className="dk-name"><b>Desktop</b> — Hanzo</span>
+        <nav className="dk-tabs" aria-label="Hanzo apps">
+          <A to="/desktop" className="on">Desktop</A><A to="/cli">CLI</A><A to="/playground">Playground</A><A to="/cloud/api-keys">API Keys</A>
+        </nav>
+        {os === 'win' && <span className="dk-ctl" aria-hidden="true"><i /><i /><i /></span>}
+        {os === 'linux' && <span className="dk-close" aria-hidden="true"><i /></span>}
+      </div>
+      <div className="dk-main">
+        <aside className="dk-side" aria-hidden="true">
+          <span className="dk-search" />
+          <ul className="dk-tree">
+            {TREE.map(([k, v], i) => (
+              <li key={i} className={'t-' + k}>{k === 'bar' ? <i style={{ width: v + '%' }} /> : v}</li>
+            ))}
+            <span className="dk-scan" />
+          </ul>
+        </aside>
+        <div className="dk-chat">
+          <ul className="dk-msgs">
+            <li className="dk-you"><span>{MSGS[0][1]}</span></li>
+            <li className="dk-ai dk-ai1"><span className="dk-av"><Mark size={12} /></span><span className="dk-ai-t">{MSGS[1][1]}</span></li>
+            <li className="dk-ai dk-ai2"><span className="dk-av"><Mark size={12} /></span><span className="dk-ai-t">{MSGS[2][1]}</span></li>
+            <li className="dk-open"><A to="https://hanzo.team/">Open in the console</A></li>
+          </ul>
+          <div className="dk-compose" aria-hidden="true">
+            <span className="dk-ask"><span ref={ask} /><i className="dk-caret" /></span>
+            <span className="dk-send"><svg viewBox="0 0 16 16" width="16" height="16"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
+          </div>
+        </div>
+        <div className="dk-code" aria-hidden="true">
+          <div className="dk-code-tab"><span className="x-mono">gateway/<b>limit.go</b></span></div>
+          <ol className="dk-lines">
+            {CODE.map(([ind, segs], i) => (
+              <li key={i} style={{ '--i': i, paddingLeft: 18 * ind }}>{segs.map(([c, w], j) => <b key={j} className={'c-' + c} style={{ width: w + '%' }} />)}</li>
+            ))}
+          </ol>
+          <div className="dk-test">
+            <span className="x-mono">100 req/min per key</span>
+            <i className="dk-test-bar"><b /></i>
+            <span className="dk-pass"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>Tests pass</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
 
-function Hero({ os, setOs }) {
+function Hero({ os, setOs, mine }) {
   return (
-    <section className="dsk-hero" aria-labelledby="dsk-h1">
-      <div className="x-wrap dsk-hero-grid">
-        <div className="dsk-copy">
-          <motion.p className="x-kick" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE }}>Native Desktop Client</motion.p>
-          <h1 id="dsk-h1" className="dsk-h1"><span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE }}>Hanzo Desktop</motion.span></span></h1>
-          <motion.p className="dsk-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.25 }}>Build agents on your own machine</motion.p>
-          <motion.div className="dsk-acts" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
-            <span data-thumb="Download" data-href={DOCS} style={{ display: 'contents' }}><Go to={DOCS} solid>Download</Go></span>
-            <Go to="https://github.com/hanzoai">GitHub</Go>
-          </motion.div>
-          <motion.div className="dsk-os" role="tablist" aria-label="System" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.5 }}>
-            {OSES.map(([k, n]) => (
-              <button key={k} type="button" role="tab" aria-selected={os === k} onClick={() => setOs(k)}>
-                {os === k && <motion.span layoutId="dsk-os" className="dsk-os-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
-                <span>{n}</span>
+    <section className="dk-hero" aria-labelledby="dk-h1">
+      <div className="av-wrap dk-top">
+        <p className="av-kick"><b>Native Desktop Client</b></p>
+        <Lines as="h1" id="dk-h1" className="av-display dk-h1" lines={['Hanzo Desktop']} now delay={0.05} />
+        <p className="av-lede dk-lede">Build agents on your own machine</p>
+        <div className="av-acts dk-acts">
+          <Magnetic strength={0.25}><Go to={DOCS} solid>Download</Go></Magnetic>
+          <i hidden data-thumb="Download" data-href={DOCS} />
+          <Go to={GH}>GitHub</Go>
+        </div>
+      </div>
+      <div className="av-wrap">
+        <Stage className="dk-stage" id="dk-stage" data-morph-target="">
+          <Window os={os} />
+        </Stage>
+        <div className="dk-under">
+          <div className="dk-os" role="tablist" aria-label="System">
+            {OSES.map(([k, n, arch]) => (
+              <button key={k} type="button" role="tab" aria-selected={os === k} onClick={() => setOs(k)} data-cursor={arch}>
+                {os === k && <motion.span layoutId="dk-os" className="dk-os-bg" transition={SPRING} />}
+                <span className="dk-os-n">{n}</span>
+                {mine === k && <i className="dk-mine" aria-hidden="true" />}
               </button>
             ))}
-          </motion.div>
+          </div>
+          <p className="dk-note">Example project. Every name in it is one you would give your own. <A to="/home">Open in the console</A></p>
         </div>
-        <motion.div className="dsk-stage" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.2 }}>
-          <Screen os={os} />
-          <p className="dsk-note">Example project. Every name in it is one you would give your own. <A to="/home">Open in the console</A></p>
-        </motion.div>
       </div>
     </section>
   );
 }
 
-function Paste() {
-  const text = 'Read https://hanzo.ai/skill.md and use Hanzo Desktop in my project.';
-  return (
-    <section className="dsk-paste">
-      <div className="x-wrap dsk-paste-in">
-        <div><p className="dsk-paste-k">Paste and ship</p><p className="dsk-paste-d">Paste this into any agent. It reads the skill manifest and calls Desktop from there.</p></div>
-        <div className="dsk-prompt"><span className="x-mono dsk-prompt-k">Agent prompt</span><code>{text}</code><Copy text={text} /></div>
-      </div>
-    </section>
-  );
-}
-
-/* Six things you can build, in the dark: one agent card that changes with the point you are reading. */
+/* ---------- chapters: three app panes, each plays once when its chapter shows ---------- */
 const POINTS = [
   ['Nothing to scaffold', 'An agent is made in the window: give it a job, some tools, and a model. There is no project to create first and no file to check in before it exists.'],
   ['Local model or cloud model, per agent', 'Point one agent at a model running on your machine and another at one on Hanzo Cloud. It is a setting on the agent, not a decision about the whole install.'],
@@ -150,165 +178,212 @@ const POINTS = [
   ['MCP is how it reaches your tools', 'Agents speak the Model Context Protocol, so a tool you have already connected elsewhere works here without a second integration written for this app.'],
 ];
 
-function Card({ k }) {
-  const field = (label, on) => <span className={'dsk-f' + (on ? ' on' : '')}><em>{label}</em><b /></span>;
+const Head = ({ w = 46 }) => <div className="dk-pane-h"><span className="dk-ico"><Mark size={13} /></span><b className="dk-sk" style={{ width: w + '%' }} /></div>;
+const Check = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+
+function Scaffold({ on }) {
   return (
-    <div className={'dsk-card k' + k}>
-      {k === 0 && <div className="dsk-agent"><span className="dsk-agent-h"><Mark size={16} /><b /></span>{field('job', 1)}{field('tools', 1)}{field('model', 1)}</div>}
-      {k === 1 && (
-        <div className="dsk-pair">
-          <div className="dsk-agent sm"><span className="dsk-agent-h"><Mark size={14} /><b /></span><span className="dsk-pill local">Local</span></div>
-          <div className="dsk-agent sm"><span className="dsk-agent-h"><Mark size={14} /><b /></span><span className="dsk-pill cloud">Hanzo Cloud</span></div>
-        </div>
-      )}
-      {k === 2 && (
-        <div className="dsk-chain">
-          {[0, 1, 2].map((i) => <div key={i} className="dsk-agent xs"><span className="dsk-agent-h"><Mark size={13} /><b /></span></div>)}
-          <i className="dsk-baton" />
-        </div>
-      )}
-      {k === 3 && (
-        <div className="dsk-off">
-          <svg viewBox="0 0 48 48" width="64" height="64" aria-hidden="true"><path d="M8 20a24 24 0 0 1 32 0M14 27a15 15 0 0 1 20 0M20 34a6 6 0 0 1 8 0" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" /><path d="M10 10l28 28" stroke="#ff453a" strokeWidth="3" strokeLinecap="round" /></svg>
-          <div className="dsk-agent sm run"><span className="dsk-agent-h"><Mark size={14} /><b /></span><span className="dsk-spin" /></div>
-        </div>
-      )}
-      {k === 4 && (
-        <div className="dsk-lap">
-          <div className="dsk-lap-s"><svg viewBox="0 0 48 48" width="56" height="56" aria-hidden="true"><circle cx="17" cy="24" r="8" fill="none" stroke="currentColor" strokeWidth="3" /><path d="M25 24h16M35 24v6M41 24v5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" /></svg></div>
-          <div className="dsk-lap-b" />
-        </div>
-      )}
-      {k === 5 && (
-        <div className="dsk-mcp">
-          <div className="dsk-agent sm"><span className="dsk-agent-h"><Mark size={14} /><b /></span></div>
-          <span className="dsk-plug x-mono">MCP</span>
-          <div className="dsk-tools">{[0, 1, 2, 3].map((i) => <i key={i} style={{ animationDelay: i * 0.3 + 's' }} />)}</div>
-        </div>
-      )}
+    <div className={'dk-vis dk-new' + (on ? ' on' : '')} aria-hidden="true">
+      <div className="dk-pane">
+        <div className="dk-new-h"><Head w={40} /><span className="dk-run"><i />Running</span></div>
+        <div className="dk-fld f1"><em className="x-mono">job</em><span className="dk-val"><span className="dk-wipe">{MSGS[0][1]}</span></span></div>
+        <div className="dk-fld f2"><em className="x-mono">tools</em><span className="dk-val"><span className="dk-chip">MCP</span></span></div>
+        <div className="dk-fld f3"><em className="x-mono">model</em><span className="dk-val"><span className="dk-chip ac">Local</span></span></div>
+      </div>
     </div>
   );
 }
 
-function Point({ p, i, setAt }) {
-  const ref = useRef(null);
-  const lit = useInView(ref, { margin: '-45% 0px -45% 0px' });
-  useEffect(() => { if (lit) setAt(i); }, [lit, i, setAt]);
+function PerAgent({ on }) {
   return (
-    <li ref={ref} className={'dsk-pt' + (lit ? ' lit' : '')}>
-      <span className="dsk-pt-n x-mono">{String(i + 1).padStart(2, '0')}</span>
-      <h3>{p[0]}</h3>
-      <p>{p[1]}</p>
-      <div className="dsk-pt-card" aria-hidden="true"><Card k={i} /></div>
-    </li>
+    <div className={'dk-vis dk-per' + (on ? ' on' : '')} aria-hidden="true">
+      {[['Running on your machine', 52], ['On Hanzo Cloud', 36]].map(([where, w], i) => (
+        <div key={where} className={'dk-pane dk-agent a' + i}>
+          <Head w={w} />
+          <div className="dk-seg"><i className="dk-seg-th" /><span>Local</span><span>Hanzo Cloud</span></div>
+          <p className="dk-where"><i />{where}</p>
+        </div>
+      ))}
+    </div>
   );
 }
+
+function Together({ on }) {
+  return (
+    <div className={'dk-vis dk-tog' + (on ? ' on' : '')} aria-hidden="true">
+      <div className="dk-flow">
+        {[56, 40, 48].map((w, i) => (
+          <div key={i} className="dk-pane dk-node" style={{ '--i': i }}>
+            <Head w={w} />
+            <i className="dk-node-bar"><b /></i>
+            <span className="dk-node-ok"><Check /></span>
+          </div>
+        ))}
+      </div>
+      <div className="dk-ctx"><em className="x-mono">context</em><i style={{ '--i': 0 }} /><i style={{ '--i': 1 }} /><i style={{ '--i': 2 }} /></div>
+    </div>
+  );
+}
+
+const CHAPTERS = [Scaffold, PerAgent, Together].map((V, i) => ({
+  kick: ['Agents', 'Models', 'Workflows'][i],
+  title: POINTS[i][0],
+  body: <p className="av-body">{POINTS[i][1]}</p>,
+  visual: (on) => <V on={on} />,
+}));
 
 function Build() {
-  const [at, setAt] = useState(0);
   return (
-    <section className="x-sec dsk-dark" data-room="dark">
-      <div className="x-wrap">
-        <SecHead dark title="What you can build in it" lede="Free and open source. Download it, and the first agent is a few minutes of clicking." />
-        <div className="dsk-build">
-          <ol className="dsk-pts">{POINTS.map((p, i) => <Point key={p[0]} p={p} i={i} setAt={setAt} />)}</ol>
-          <div className="dsk-sticky" aria-hidden="true">
-            <div className="dsk-card-box">
-              <AnimatePresence mode="popLayout" initial={false}>
-                <motion.div key={at} className="dsk-card-in" initial={{ opacity: 0, y: 30, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -20, transition: { duration: 0.2 } }} transition={{ duration: 0.55, ease: EASE }}>
-                  <Card k={at} />
-                </motion.div>
-              </AnimatePresence>
-              <span className="dsk-card-n x-mono">{String(at + 1).padStart(2, '0')} / 06</span>
-            </div>
-          </div>
+    <>
+      <section className="dk-intro">
+        <div className="av-wrap av-grid">
+          <Lines as="h2" className="av-display s dk-intro-h" lines={['What you can', 'build in it']} />
+          <p className="av-lede dk-intro-l">Free and open source. Download it, and the first agent is a few minutes of clicking.</p>
         </div>
-      </div>
-    </section>
+      </section>
+      <Scenes label="What you can build in it" items={CHAPTERS} flip />
+    </>
   );
 }
 
-function Everywhere({ os, setOs }) {
-  return (
-    <section className="x-sec dsk-every">
-      <div className="x-wrap">
-        <SecHead title="Available everywhere you work" lede="Native installers for macOS (Apple Silicon + Intel), Windows, and Linux." />
-        <div className="dsk-oses">
-          {OSES.map(([k, n, arch], i) => (
-            <Rise key={k} delay={i * 0.07}>
-              <button type="button" className={'dsk-os-t os-' + k + (os === k ? ' on' : '')} onClick={() => { setOs(k); document.getElementById('dsk-h1')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }} aria-pressed={os === k}>
-                <span className="dsk-os-g" aria-hidden="true"><i /><i /><i /></span>
-                <span className="dsk-os-n">{n}</span>
-                <span className="dsk-os-a x-mono">{arch}</span>
-              </button>
-            </Rise>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function End() {
-  const { rx, ry, glow, on } = useTilt(4, 'rgba(0,0,0,.05)');
-  return (
-    <section className="x-sec dsk-end">
-      <div className="x-wrap dsk-end-in">
-        <div>
-          <SecHead title="Download it and build one" lede="Pick a model, describe the job, hand it the tools. If the model is a local one, the whole thing runs without an account." />
-          <div className="dsk-end-acts"><Go to={DOCS} solid>Download</Go><Go to="https://github.com/hanzoai">View on GitHub</Go></div>
-          <div className="dsk-rel">
-            <p className="x-kick">Related capabilities</p>
-            <div>{[['CLI', '/cli'], ['Playground', '/playground'], ['API Keys', '/cloud/api-keys']].map(([t, to]) => <A key={t} to={to} className="dsk-rel-a">{t}</A>)}</div>
-            <A to={DOCS} className="dsk-docs">Desktop docs →</A>
-          </div>
-        </div>
-        <div>
-          <motion.div className="dsk-repo" style={{ rotateX: rx, rotateY: ry }} {...on}>
-            <motion.span className="x-mglow" style={{ background: glow }} aria-hidden="true" />
-            <span className="dsk-repo-i"><Mark size={22} /></span>
-            <h2>Get Desktop</h2>
-            <p>Desktop client</p>
-            <dl className="x-mono"><div><dt>License:</dt><dd>Apache-2.0</dd></div></dl>
-            <div className="dsk-repo-acts">
-              <A to="https://github.com/hanzoai" className="dsk-gh x-mono">hanzoai</A>
-              <Go to="https://platform.hanzo.ai/deploy" solid>Deploy to Cloud</Go>
-              <Go to={DOCS}>Self-host</Go>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* Cut the network: one agent, its model local or on Hanzo Cloud; the status says what Hanzo says happens. */
+/* ---------- the dark room (Beyond): one agent, its model here or on Hanzo Cloud, and a wire you can cut ---------- */
 function Offline() {
-  const [job, setJob] = useState('Add rate limiting to the payments API.');
+  const [job, setJob] = useState(MSGS[0][1]);
   const [local, setLocal] = useState(true);
   const [net, setNet] = useState(true);
+  const [note, setNote] = useState(3);
   const runs = local || net;
+  const cut = () => { setNet(!net); setNote(3); };
+  const pick = (v) => { setLocal(v); setNote(v ? 4 : 3); };
   return (
-    <section className="x-sec dsk-off">
-      <div className="x-wrap dsk-off-grid">
-        <div>
-          <p className="x-kick">It works with the network off</p>
-          <h2>Cut the network</h2>
-          <label className="dsk-off-f"><span>Give it a job</span><input value={job} onChange={(e) => setJob(e.target.value)} maxLength={90} /></label>
-          <div className="dsk-off-row" role="radiogroup" aria-label="Model">
-            <button type="button" role="radio" aria-checked={local} onClick={() => setLocal(true)}>Local model</button>
-            <button type="button" role="radio" aria-checked={!local} onClick={() => setLocal(false)}>Hanzo Cloud</button>
+    <section className="av-sec av-dark dk-dark" data-room="dark" aria-labelledby="dk-off-h">
+      <div className="av-wrap">
+        <p className="av-kick dk-off-k">It works with the network off</p>
+        <Lines as="h2" id="dk-off-h" className="av-display s" lines={['Cut the network']} />
+        <div className="av-grid dk-off">
+          <div className="dk-off-l">
+            <label className="dk-job"><span className="av-kick">Give it a job</span><input value={job} onChange={(e) => setJob(e.target.value)} maxLength={90} /></label>
+            <div className="dk-radio" role="radiogroup" aria-label="Model">
+              <button type="button" role="radio" aria-checked={local} onClick={() => pick(true)}>Local model</button>
+              <button type="button" role="radio" aria-checked={!local} onClick={() => pick(false)}>Hanzo Cloud</button>
+            </div>
+            <button type="button" role="switch" aria-checked={net} className={'dk-net' + (net ? '' : ' off')} onClick={cut}><i />{net ? 'Network on' : 'Network off'}</button>
+            <ol className="dk-notes">
+              {POINTS.slice(3).map(([t, d], j) => {
+                const i = j + 3, open = note === i;
+                return (
+                  <li key={t} className={open ? 'open' : ''}>
+                    <button type="button" aria-expanded={open} onClick={() => setNote(open ? -1 : i)}>
+                      <span className="x-mono av-num">{String(i + 1).padStart(2, '0')}</span><span>{t}</span><i aria-hidden="true" />
+                    </button>
+                    <p>{d}</p>
+                  </li>
+                );
+              })}
+            </ol>
           </div>
-          <button type="button" role="switch" aria-checked={net} className={'dsk-off-net' + (net ? '' : ' off')} onClick={() => setNet(!net)}><i />{net ? 'Network on' : 'Network off'}</button>
+          <div className={'dk-card' + (runs ? '' : ' wait') + (net ? '' : ' cut')} aria-live="polite">
+            <div className="dk-map" aria-hidden="true">
+              <div className="dk-site"><span className="av-kick">Your machine</span><div className="dk-slot">{local && <motion.span layoutId="dk-agent" className="dk-token" transition={SPRING}><Mark size={16} /></motion.span>}</div></div>
+              <div className="dk-wire"><i /><i /><b>×</b></div>
+              <div className="dk-site"><span className="av-kick">Hanzo Cloud</span><div className="dk-slot">{!local && <motion.span layoutId="dk-agent" className="dk-token" transition={SPRING}><Mark size={16} /></motion.span>}</div></div>
+            </div>
+            <p className="dk-stat"><b />{runs ? 'Running' : 'Waiting for the connection'}</p>
+            <p className="dk-card-job">{job.trim() || 'An agent with no job yet.'}</p>
+            <dl className="dk-card-dl">
+              <div><dt className="x-mono">Model</dt><dd>{local ? 'Running on your machine' : 'On Hanzo Cloud'}</dd></div>
+              <div><dt className="x-mono">Keys and data</dt><dd>{local ? 'Keys and the data an agent touches stay local.' : 'It is a setting on the agent, not a decision about the whole install.'}</dd></div>
+            </dl>
+            <p className="dk-say">{local ? 'With a local model pinned, an agent keeps running when the connection goes. Nothing has to be uploaded for it to do its job.' : runs ? 'Point one agent at a model running on your machine and another at one on Hanzo Cloud.' : 'Pin a local model and it keeps running when the connection goes.'}</p>
+          </div>
         </div>
-        <div className={'dsk-off-card' + (runs ? '' : ' wait')} aria-live="polite">
-          <p className="dsk-off-k"><b className={runs ? 'ok' : ''} />{runs ? 'Running' : 'Waiting for the connection'}</p>
-          <p className="dsk-off-job">{job.trim() || 'An agent with no job yet.'}</p>
-          <dl>
-            <div><dt>Model</dt><dd>{local ? 'Running on your machine' : 'On Hanzo Cloud'}</dd></div>
-            <div><dt>Keys and data</dt><dd>{local ? 'Keys and the data an agent touches stay local.' : 'It is a setting on the agent, not a decision about the whole install.'}</dd></div>
-          </dl>
-          <p className="dsk-off-say">{local ? 'With a local model pinned, an agent keeps running when the connection goes. Nothing has to be uploaded for it to do its job.' : runs ? 'Point one agent at a model running on your machine and another at one on Hanzo Cloud.' : 'Pin a local model and it keeps running when the connection goes.'}</p>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- every system: three huge rows; pick one and the window above rebuilds in it. The spec opens in a drawer. ---------- */
+function Everywhere({ os, setOs, mine }) {
+  const show = (k) => {
+    setOs(k);
+    const el = document.getElementById('dk-stage'); if (!el) return;
+    const y = el.getBoundingClientRect().top + scrollY - 96;
+    window.__lenis ? window.__lenis.scrollTo(y, { duration: 1.2 }) : scrollTo({ top: y, behavior: 'smooth' });
+  };
+  return (
+    <section className="av-sec dk-every">
+      <div className="av-wrap av-grid">
+        <div className="dk-every-l">
+          <h2 className="av-head">Available everywhere you work</h2>
+          <p className="av-body">Native installers for macOS (Apple Silicon + Intel), Windows, and Linux.</p>
+          <Sheet label="See the spec" kick="Native Desktop Client" title="Hanzo Desktop">
+            <dl className="av-spec dk-spec">
+              <dt>Systems</dt><dd>{OSES.map(([k, n, a]) => <span key={k} className="dk-spec-os"><b>{n}</b> <span className="x-mono">{a}</span></span>)}</dd>
+              <dt>Installers</dt><dd>Native installers for macOS (Apple Silicon + Intel), Windows, and Linux.</dd>
+              <dt>Version</dt><dd><span className="x-mono">v1.1.52</span> · <A to="/download">Every build</A></dd>
+              <dt>Models</dt><dd>Point one agent at a model running on your machine and another at one on Hanzo Cloud.</dd>
+              <dt>Offline</dt><dd>With a local model pinned, an agent keeps running when the connection goes.</dd>
+              <dt>Account</dt><dd>If the model is a local one, the whole thing runs without an account.</dd>
+              <dt>Tools</dt><dd>Agents speak the Model Context Protocol, so a tool you have already connected elsewhere works here without a second integration written for this app.</dd>
+              <dt>License:</dt><dd>Apache-2.0</dd>
+              <dt>Source</dt><dd><A to={GH}>hanzoai</A></dd>
+              <dt>Docs</dt><dd><A to={DOCS}>Desktop docs →</A></dd>
+            </dl>
+          </Sheet>
+        </div>
+        <ul className="dk-oslist">
+          {OSES.map(([k, n, arch]) => (
+            <li key={k}>
+              <button type="button" className={os === k ? 'on' : ''} aria-pressed={os === k} onClick={() => show(k)} data-cursor="Show">
+                <span className="dk-ol-n">{n}{mine === k && <i className="dk-mine" aria-hidden="true" />}</span>
+                <span className="dk-ol-a x-mono">{arch}</span>
+                <span className="dk-ol-go" aria-hidden="true"><svg viewBox="0 0 16 16" width="20" height="20"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- the end: one action, the repo card, and the line to paste into an agent ---------- */
+function End() {
+  const text = 'Read https://hanzo.ai/skill.md and use Hanzo Desktop in my project.';
+  return (
+    <section className="av-sec dk-end">
+      <div className="av-wrap av-grid dk-end-g">
+        <div className="dk-end-l">
+          <Lines as="h2" className="av-display s" lines={['Download it', 'and build one']} />
+          <p className="av-lede">Pick a model, describe the job, hand it the tools. If the model is a local one, the whole thing runs without an account.</p>
+          <div className="av-acts"><Go to={DOCS} solid>Download</Go><Go to={GH}>View on GitHub</Go></div>
+          <div className="dk-rel">
+            <p className="av-kick">Related capabilities</p>
+            <div>{[['CLI', '/cli'], ['Playground', '/playground'], ['API Keys', '/cloud/api-keys']].map(([t, to]) => <A key={t} to={to} className="dk-rel-a">{t}</A>)}</div>
+            <A to={DOCS} className="dk-docs">Desktop docs →</A>
+          </div>
+        </div>
+        <div className="dk-get">
+          <span className="dk-get-i"><Mark size={26} /></span>
+          <h3 className="av-title">Get Desktop</h3>
+          <p className="dk-get-d">Desktop client</p>
+          <dl className="x-mono"><div><dt>License:</dt><dd>Apache-2.0</dd></div></dl>
+          <div className="dk-get-acts">
+            <A to={GH} className="dk-gh x-mono">hanzoai</A>
+            <Go to="https://platform.hanzo.ai/deploy" solid>Deploy to Cloud</Go>
+            <Go to={DOCS}>Self-host</Go>
+          </div>
+        </div>
+      </div>
+      <div className="av-wrap dk-paste">
+        <div className="dk-paste-l">
+          <p className="av-title">Paste and ship</p>
+          <p className="av-body">Paste this into any agent. It reads the skill manifest and calls Desktop from there.</p>
+        </div>
+        <div className="dk-prompt">
+          <span className="av-kick">Agent prompt</span>
+          <code>{text}</code>
+          <Copy text={text} />
         </div>
       </div>
     </section>
@@ -316,14 +391,13 @@ function Offline() {
 }
 
 export default function DesktopPage() {
-  const [os, setOs] = useOs();
+  const [os, setOs, mine] = useOs();
   return (
-    <main className="dsk">
-      <Hero os={os} setOs={setOs} />
-      <Paste />
+    <main className="av dk" style={{ '--ac': '#0a9cff' }}>
+      <Hero os={os} setOs={setOs} mine={mine} />
       <Build />
       <Offline />
-      <Everywhere os={os} setOs={setOs} />
+      <Everywhere os={os} setOs={setOs} mine={mine} />
       <End />
     </main>
   );

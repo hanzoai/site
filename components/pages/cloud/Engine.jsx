@@ -1,31 +1,54 @@
 'use client';
-/* Engine. Signature: one binary, three verbs, and the card kept busy. The hero is the engine's own terminal: run
-   streams tokens, serve shows continuous batching (requests of different lengths join and leave the batch while the
-   card's utilisation stays full), bench draws the measurement of the very thing being served. The six things it does
-   are a deck of cards that stack on each other as you scroll. Beyond: "Write the command" - choose the verb, name a
-   Hugging Face model and whether you want the built-in UI, and the one line to run is written for you to copy, with
-   Hanzo's sentence on what it does. Every word and link is Hanzo's. */
-import { useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { EASE, Rise, Copy } from '../../ui';
-import { Hero, Paste, Get, useLive, useSteps, useFrame } from './Frame';
+/* Engine.
+   V2: 8/10 Apple-style launch: the terminal starts huge and settles, six pinned chapters each with its own scene (a scrubbed quantization block is the moment), a spec sheet, one dark close.
+   Signature: the quantization scrub. Inside six pinned chapters ("One process, laptop to GPU cluster"), a block of
+   weights loses precision as you scroll, GGUF 8 bits down to 2, the shades visibly collapsing; around it each chapter
+   brings its own scene (three verbs, continuous batching lanes, five modalities into one process, the silicon, /ui).
+   Supporting: the Stage hero (the engine's terminal starts huge and settles as you scroll, serving by itself), the
+   tech-spec sheet, and the closing dark room that opens out to full width.
+   Beyond: "Write the command" - choose the verb, name a Hugging Face model and whether you want the built-in UI, and the
+   one line to run is written for you to copy, with Hanzo's sentence on what it does.
+   Accent: engine red, from the terminal's own prompt. Every word and link is Hanzo's. */
+import { useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import { EASE, Copy } from '../../ui';
+import { useLive, useSteps, useFrame } from './Frame';
+import KeynoteStage from '../../v2/KeynoteStage';
+import KeynoteChapters from '../../v2/KeynoteChapters';
+import KeynoteSpec, { Fig } from '../../v2/KeynoteSpec';
+import KeynoteClose from '../../v2/KeynoteClose';
+import KeynoteLines from '../../v2/KeynoteLines';
 import './Engine.css';
 
 const VERBS = ['run', 'serve', 'bench'];
 
+/* which of n steps a chapter is on: from the scroll through it on desktop (p), or by itself while seen on phones */
+function useStepOf(p, n, on) {
+  const [k, setK] = useState(0);
+  const calm = useReducedMotion();
+  useEffect(() => {
+    if (p) { const f = (v) => setK(Math.min(n - 1, Math.max(0, Math.floor(v * n)))); f(p.get()); return p.on('change', f); }
+    if (!on || calm) return;
+    const t = setInterval(() => setK((x) => (x + 1) % n), 1500);
+    return () => clearInterval(t);
+  }, [p, n, on, calm]);
+  return k;
+}
+
+/* run: a prompt, and tokens arriving */
 function Run() {
   return (
     <div className="en-run">
       <p className="en-p"><span>&gt;</span> <i className="en-cursor" /></p>
-      <div className="en-toks">{Array.from({ length: 64 }).map((_, i) => <i key={i} style={{ animationDelay: 0.25 + i * 0.045 + 's', width: 14 + ((i * 37) % 30) + 'px' }} />)}</div>
+      <div className="en-toks">{Array.from({ length: 72 }).map((_, i) => <i key={i} style={{ animationDelay: 0.2 + i * 0.04 + 's', width: 18 + ((i * 37) % 34) + 'px' }} />)}</div>
     </div>
   );
 }
 
-/* Continuous batching: eight slots; a request occupies a slot for its own length, and a new one takes it at once. */
-function Serve({ live }) {
+/* serve: continuous batching. Eight slots; a request holds a slot for its own length and a new one takes it at once. */
+function Lanes({ live, n = 8 }) {
   const ref = useRef(null);
-  const slots = useRef(Array.from({ length: 8 }, (_, i) => ({ left: 0.3 + i * 0.37, len: 1.4 + ((i * 7) % 5) * 0.5 })));
+  const slots = useRef(Array.from({ length: n }, (_, i) => ({ left: 0.3 + i * 0.37, len: 1.4 + ((i * 7) % 5) * 0.5 })));
   useFrame(live, (t, dt) => {
     const el = ref.current;
     if (!el) return;
@@ -36,49 +59,46 @@ function Serve({ live }) {
       if (bar) bar.style.transform = `scaleX(${Math.max(0, s.left / s.len)})`;
     });
   });
-  return (
-    <div className="en-serve">
-      <div className="en-slots" ref={ref}>{Array.from({ length: 8 }).map((_, i) => <div key={i} className="en-slot"><b /><span>req</span></div>)}</div>
-      <div className="en-util"><span>card</span><i><b /></i><em>busy</em></div>
-    </div>
-  );
+  return <div className="en-lanes" ref={ref}>{Array.from({ length: n }).map((_, i) => <div key={i} className="en-lane"><b /><span>req</span></div>)}</div>;
 }
 
 function Bench() {
-  const bars = [62, 74, 81, 88, 92, 95, 97];
   return (
     <div className="en-bench">
-      {bars.map((h, i) => <motion.i key={i} initial={{ scaleY: 0 }} animate={{ scaleY: h / 100 }} transition={{ duration: 0.8, ease: EASE, delay: 0.15 + i * 0.12 }} />)}
-      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }}>the thing you benchmarked is the thing you shipped</motion.p>
+      <div className="en-bars">{[62, 74, 81, 88, 92, 95, 97].map((h, i) => <motion.i key={i} initial={{ scaleY: 0 }} animate={{ scaleY: h / 100 }} transition={{ duration: 0.8, ease: EASE, delay: 0.1 + i * 0.1 }} />)}</div>
+      <p>the thing you benchmarked is the thing you shipped</p>
     </div>
   );
 }
 
+/* The hero object: the engine's own terminal, cycling its three verbs by itself until you pick one. */
 function Term() {
-  const [ref, live] = useLive(0.3);
-  const [at, choose] = useSteps(3, 4200, live);
+  const [ref, live] = useLive(0.25);
+  const [at, choose] = useSteps(3, 4600, live);
   return (
-    <div className="en-term" ref={ref}>
+    <div className="kn-obj ink en-term" ref={ref}>
       <div className="en-bar">
         <i /><i /><i />
+        <span className="en-bar-t">hanzoai/engine</span>
         <div className="en-verbs" role="tablist" aria-label="Verbs">
           {VERBS.map((v, i) => (
             <button key={v} type="button" role="tab" aria-selected={at === i} onClick={() => choose(i)}>
-              {at === i && <motion.span layoutId="en-verb" className="en-verb-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
               <span>{v}</span>
             </button>
           ))}
         </div>
       </div>
-      <p className="en-cmd"><span>$</span> hanzo engine {VERBS[at]} &lt;model&gt;</p>
-      <div className="en-out" aria-hidden="true">
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div key={at} className="en-pane" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6, transition: { duration: 0.18 } }} transition={{ duration: 0.35, ease: EASE }}>
-            {at === 0 ? <Run /> : at === 1 ? <Serve live={live} /> : <Bench />}
-          </motion.div>
-        </AnimatePresence>
+      <div className="en-term-b">
+        <p className="en-cmd"><span>$</span> hanzo engine {VERBS[at]} &lt;model&gt;</p>
+        <div className="en-out" aria-hidden="true">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div key={at} className="en-pane" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8, transition: { duration: 0.18 } }} transition={{ duration: 0.4, ease: EASE }}>
+              {at === 0 ? <Run /> : at === 1 ? <div className="en-serve"><Lanes live={live} /><div className="en-util"><span>card</span><i><b /></i><em>busy</em></div></div> : <Bench />}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+        <div className="en-hw" aria-hidden="true">{['CUDA', 'Metal', 'CPU'].map((h) => <span key={h}>{h}</span>)}</div>
       </div>
-      <div className="en-hw" aria-hidden="true">{['CUDA', 'Metal', 'CPU'].map((h) => <span key={h}>{h}</span>)}</div>
     </div>
   );
 }
@@ -92,27 +112,100 @@ const DECK = [
   ['Tools, and a UI to watch them', 'It can call MCP servers over a process, HTTP or a WebSocket. The built-in UI at /ui shows reasoning, code execution and plots inline, and edits branch a conversation with its own state. Pass --no-ui and it is a plain API server.'],
 ];
 
-/* Six cards that stick and stack: each new one slides over the last as you scroll. */
-function Deck() {
+/* 01: the three verbs, one lit at a time as you scroll through the chapter */
+function VerbsScene({ p, on }) {
+  const k = useStepOf(p, 3, on);
+  const say = ['Chat with a model', 'put it behind an HTTP API', 'or measure it'];
   return (
-    <section className="x-sec en-deck">
-      <div className="x-wrap en-deck-grid">
-        <div className="en-deck-h">
-          <Rise as="h2">One process, laptop to GPU cluster</Rise>
+    <div className="kn-obj en-sc en-sc-verbs">
+      {VERBS.map((v, i) => (
+        <div key={v} className={'en-vl' + (k === i ? ' on' : '')}>
+          <code><b>$</b> hanzo engine <em>{v}</em> &lt;model&gt;</code>
+          <span>{say[i]}</span>
         </div>
-        <ol className="en-stack">
-          {DECK.map(([t, d], i) => (
-            <li key={t} className="en-card" style={{ top: 120 + i * 18 + 'px', zIndex: i + 1 }}>
-              <p className="en-card-n">{String(i + 1).padStart(2, '0')} / 06</p>
-              <h3>{t}</h3>
-              <p className="en-card-d">{d}</p>
-            </li>
-          ))}
-        </ol>
-      </div>
-    </section>
+      ))}
+    </div>
   );
 }
+
+/* 02: batching lanes, and the KV cache on disk */
+function ServeScene({ on }) {
+  return (
+    <div className="kn-obj ink en-sc en-sc-serve">
+      <p className="en-sc-k">continuous batching</p>
+      <Lanes live={on} n={10} />
+      <div className="en-kv"><span className="en-kv-chip">paged attention</span><span className="en-kv-chip">disk-first KV cache</span></div>
+    </div>
+  );
+}
+
+/* 03: five modalities into one process; the lines draw as you scroll */
+const MODS = ['Vision', 'audio', 'speech', 'image', 'embeddings'];
+function ModScene({ p, on }) {
+  return (
+    <div className="kn-obj en-sc en-sc-mod">
+      <ul className="en-mods">{MODS.map((m) => <li key={m}>{m}</li>)}</ul>
+      <svg className="en-mod-lines" viewBox="0 0 300 500" preserveAspectRatio="none" aria-hidden="true">
+        {MODS.map((m, i) => (
+          <motion.path key={m} d={`M0 ${50 + i * 100} C 150 ${50 + i * 100}, 150 250, 300 250`} style={p ? { pathLength: p } : undefined} initial={p ? false : { pathLength: 0 }} animate={p ? undefined : { pathLength: on ? 1 : 0 }} transition={{ duration: 1.2, ease: EASE, delay: i * 0.08 }} />
+        ))}
+      </svg>
+      <div className="en-proc"><b>one process</b><span>same modality pipeline as generation</span></div>
+    </div>
+  );
+}
+
+/* 04, the signature: a block of weights re-quantized as you scroll, 8 bits down to 2 */
+const BITS = [8, 6, 5, 4, 3, 2];
+const W = Array.from({ length: 16 * 10 }, (_, i) => (Math.sin(i * 12.9898) * 43758.5453) % 1).map((x) => Math.abs(x));
+function QuantScene({ p, on }) {
+  const b = BITS[useStepOf(p, BITS.length, on)];
+  const steps = Math.min(2 ** b, 24);
+  return (
+    <div className="kn-obj en-sc en-sc-q">
+      <div className="en-q-top">
+        <p className="en-sc-k">GGUF from 2 to 8 bits</p>
+        <p className="en-q-b kn-fig"><b>{b}</b><span>bits</span></p>
+      </div>
+      <div className="en-q-grid" aria-hidden="true">
+        {W.map((w, i) => {
+          const q = Math.round(w * (steps - 1)) / (steps - 1);
+          return <i key={i} style={{ opacity: 0.12 + q * 0.88 }} />;
+        })}
+      </div>
+      <ul className="en-q-fmt">{['GPTQ', 'AWQ', 'HQQ', 'FP8', 'bitsandbytes'].map((f) => <li key={f}>{f}</li>)}</ul>
+    </div>
+  );
+}
+
+/* 05: the same command on three kinds of silicon */
+function SiliconScene({ p, on }) {
+  const k = useStepOf(p, 3, on);
+  const S = [['CUDA', 'FlashAttention · multi-GPU tensor parallelism'], ['Metal', 'Apple Silicon'], ['CPU', 'plain CPU']];
+  return (
+    <div className="kn-obj en-sc en-sc-si">
+      <div className="en-chips">{S.map(([t, d], i) => <div key={t} className={'en-chip' + (k === i ? ' on' : '')}><b>{t}</b><span>{d}</span></div>)}</div>
+      <div className="en-doc"><code><b>$</b> hanzo engine serve &lt;model&gt;</code><code className="dim"><b>$</b> doctor</code></div>
+    </div>
+  );
+}
+
+/* 06: the built-in UI at /ui */
+function UiScene() {
+  return (
+    <div className="kn-obj en-sc en-sc-ui">
+      <div className="en-ui-bar"><i /><i /><i /><span>/ui</span></div>
+      <div className="en-ui-b">
+        <p className="en-ui-r"><em>reasoning</em></p>
+        <pre className="en-ui-c"><code>{'>>> plot(x, y)'}</code></pre>
+        <svg className="en-ui-plot" viewBox="0 0 200 70" aria-hidden="true"><path d="M0 60 C 30 58, 50 20, 80 30 S 130 64, 160 18 S 190 10, 200 8" /></svg>
+        <div className="en-mcp">{['process', 'HTTP', 'WebSocket'].map((t) => <span key={t}>{t}</span>)}<code>--no-ui</code></div>
+      </div>
+    </div>
+  );
+}
+
+const SCENES = [VerbsScene, ServeScene, ModScene, QuantScene, SiliconScene, UiScene];
 
 const SAY = {
   run: 'Chat with a model.',
@@ -121,7 +214,7 @@ const SAY = {
   bench: 'Measure it — the thing you benchmarked is the thing you shipped.',
 };
 
-/* Write the command: the verb, the model, and whether you want the UI. */
+/* Beyond: write the command. The verb, the model, and whether you want the UI. */
 function Write() {
   const [verb, setVerb] = useState('serve');
   const [model, setModel] = useState('');
@@ -130,11 +223,11 @@ function Write() {
   const plain = verb === 'serve' && !ui;
   const cmd = `hanzo engine ${verb} ${m}${plain ? ' --no-ui' : ''}`;
   return (
-    <section className="x-sec en-write">
-      <div className="x-wrap en-write-grid">
-        <div>
-          <p className="x-kick">One binary, three verbs</p>
-          <h2>Write the command</h2>
+    <section className="kn-sec en-write">
+      <div className="kn-wrap kn-grid en-write-g">
+        <div className="en-write-l">
+          <p className="kn-kick ac">One binary, three verbs</p>
+          <KeynoteLines className="kn-headline" lines="Write the command" />
           <div className="en-write-verbs" role="radiogroup" aria-label="Verb">
             {VERBS.map((v) => <button key={v} type="button" role="radio" aria-checked={verb === v} onClick={() => setVerb(v)}>{v}</button>)}
           </div>
@@ -142,8 +235,8 @@ function Write() {
           {verb === 'serve' && <label className="en-write-ui"><input type="checkbox" checked={ui} onChange={() => setUi(!ui)} /> The built-in UI at /ui</label>}
         </div>
         <div className="en-write-out">
-          <div className="en-write-cmd"><code><b>$</b> {cmd}</code><Copy text={cmd} /></div>
-          <p aria-live="polite">{SAY[plain ? 'serve --no-ui' : verb]}</p>
+          <code className="en-write-cmd"><b>$</b> {cmd}</code>
+          <div className="en-write-foot"><p aria-live="polite">{SAY[plain ? 'serve --no-ui' : verb]}</p><Copy text={cmd} /></div>
         </div>
       </div>
     </section>
@@ -152,25 +245,49 @@ function Write() {
 
 export default function Engine() {
   return (
-    <main className="en">
-      <Hero
-        look="split"
+    <main className="kn en" style={{ '--ac': '#ff453a' }}>
+      <KeynoteStage
         kick="hanzoai/engine"
-        title="Hanzo Engine"
-        sub="The inference engine, in one binary"
+        title={['Hanzo Engine']}
+        lede="The inference engine, in one binary"
         acts={[['View on GitHub', 'https://github.com/hanzoai']]}
+        meta={<span>Apache-2.0 · CUDA · Metal · CPU</span>}
+        from={1.12}
       >
         <Term />
-      </Hero>
-      <Deck />
+      </KeynoteStage>
+
+      <KeynoteChapters
+        className="en-ch"
+        head={<KeynoteLines className="kn-display sm en-ch-h" lines={['One process,', 'laptop to GPU cluster']} />}
+        items={DECK.map(([t, d], i) => ({ kick: i === 3 ? 'The moment' : undefined, title: t, body: <p>{d}</p> }))}
+        visual={(i, on, p) => { const S = SCENES[i]; return <S on={on} p={p} />; }}
+        swap="wipe"
+        count
+      />
+
       <Write />
-      <section className="x-sec en-paste" data-room="dark">
-        <div className="x-wrap">
-          <Rise as="h2" className="en-start">Get started with Hanzo Engine</Rise>
-          <Paste dark name="Engine" prompt="Read https://hanzo.ai/skill.md and use Hanzo Engine in my project. Start with: hanzo engine serve <model>" />
-        </div>
-      </section>
-      <Get name="Engine" tag="AI inference engine" />
+
+      <KeynoteSpec
+        kick="Hanzo Engine"
+        title="Tech specs"
+        rows={[
+          ['Verbs', <><Fig n="3" u="run, serve, bench" /><p>Chat with a model, put it behind an HTTP API, or measure it.</p></>],
+          ['Serving', <p>Paged attention and continuous batching. A disk-first KV cache carries a session across a restart.</p>],
+          ['Modalities', <><Fig n="5" u="Vision, audio, speech, image and embeddings" /><p>The same modality pipeline as generation, in the same process.</p></>],
+          ['Quantization', <><Fig n="2–8" u="bits, GGUF" /><p>In-situ quantization of any Hugging Face model, plus GPTQ, AWQ, HQQ, FP8 and bitsandbytes.</p></>],
+          ['Silicon', <ul><li><b>CUDA</b> with FlashAttention and multi-GPU tensor parallelism</li><li><b>Metal</b> on Apple Silicon</li><li><b>CPU</b></li></ul>],
+          ['Tools and UI', <p>MCP servers over a process, HTTP or a WebSocket. The built-in UI at /ui; --no-ui for a plain API server.</p>],
+          ['License', <p><b>Apache-2.0</b></p>],
+        ]}
+      />
+
+      <KeynoteClose
+        name="Engine"
+        tag="AI inference engine"
+        lead="Get started with Hanzo Engine"
+        prompt="Read https://hanzo.ai/skill.md and use Hanzo Engine in my project. Start with: hanzo engine serve <model>"
+      />
     </main>
   );
 }

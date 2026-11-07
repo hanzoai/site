@@ -1,62 +1,46 @@
 'use client';
-/* A product as a live API console (/products/<name>, seven of them, one template). A contour field seeded from the
-   product's own counts sits behind its name, so the seven never share a picture.
-   Signature: the console. The request types itself, then the API answers: its operations stream in row by row and,
-   where Hanzo has measured the product, the numbers count up. Replay runs it again.
-   Beyond: peek the seven. Hanzo OS beside the name shows each product's operation count from its own API table, and
-   pointing at one reads its line, so you can choose the next product without opening six pages. */
-import { useLayoutEffect, useEffect, useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion } from 'motion/react';
-import { EASE, Rise, Count, Copy } from '../ui';
+/* A product of Hanzo OS (/products/<name>, seven of them, one template), as an apple.com launch page.
+   The product's name runs at display size beside its one line; under it the product itself, a live api.hanzo.ai
+   console, starts close and settles into place as you scroll (Stage). Then one idea per screen: its paragraph lights
+   word by word as you read it, its API is a spec sheet whose rows light as they pass the middle of the screen while the
+   heading and the operation count stay pinned, Hanzo's measurements stand as hero figures, and the seven layers of
+   Hanzo OS close the page as cards that open into their own page. One accent per product, from its place in the seven.
+   Signature: the console runs itself. The request types out of Hanzo's own "Try it", then the API answers: each of
+   the product's operations lands in turn and the count settles. It replays on its own while it is on screen.
+   Beyond: peek the seven. The Hanzo OS stack shows every layer's operation count from its own API table and its line,
+   so you can choose the next product without opening six pages; each opens into its page.
+   V2: 8/10 rebuilt as a launch page: display-size name, live console as the Stage hero object, scroll-lit statement,
+   pinned API spec sheet, measured figures as heroes, Hanzo OS layers as open cards; one accent per product. */
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useInView, useReducedMotion, useScroll, useMotionValueEvent } from 'motion/react';
+import { Copy } from '../ui';
 import { A, More } from '../kit';
 import Sigil from '../Sigil';
-import { Nodes } from './DocNodes';
+import FamLines from '../v2/FamLines';
+import FamStage from '../v2/FamStage';
+import { accentAt } from '../v2/famAccent';
+import '../v2/fam.css';
 import './ProductPage.css';
 
-const CPS = 120; // characters a second
+const CPS = 110; // characters a second
+const slugOf = (h) => h.replace(/\/$/, '').split('/').pop();
 
-function Measured({ links, run }) {
-  // the figures in Hanzo's sentences count up; the words around them stay put
-  const re = /(?<![A-Za-z@/\d.,])(\d[\d,]*(?:\.\d+)?)(%|k)?/g;
-  return (
-    <ul className="xpd-meas">
-      {links.map((l) => {
-        const [name, ...rest] = l.text.split(': ');
-        const text = rest.join(': ');
-        const parts = [];
-        let last = 0, m;
-        while ((m = re.exec(text))) {
-          if (m.index > last) parts.push(text.slice(last, m.index));
-          const raw = m[1];
-          parts.push(<Count key={m.index} to={parseFloat(raw.replace(/,/g, ''))} decimals={(raw.split('.')[1] || '').length} suffix={m[2] || ''} run={run} duration={1.8} />);
-          last = m.index + m[0].length;
-        }
-        parts.push(text.slice(last));
-        return (
-          <li key={l.href} data-row>
-            <A to={l.href}><b>{name}</b>{rest.length > 0 && <span>{': '}{parts}</span>}</A>
-          </li>
-        );
-      })}
-    </ul>
-  );
-}
-
+/* ---------- the signature: the console that runs itself ---------- */
 function Console({ p }) {
   const root = useRef(null);
-  const seen = useInView(root, { amount: 0.3, once: true });
+  const seen = useInView(root, { amount: 0.35 });
   const calm = useReducedMotion();
   const [run, setRun] = useState(0);
-  const [nums, setNums] = useState(false);
-  const code = p.tryIt.toks.map((t) => t[1]).join('');
-  const rows = p.api.table.c.find((k) => k.t === 'tbody').c;
-  const head = p.api.table.c.find((k) => k.t === 'thead').c[0].c;
+  const full = p.tryIt.toks.map((t) => t[1]);
+  const code = full.join('');
+  const ops = p.api.ops;
 
-  useLayoutEffect(() => { // from here the browser takes over: hold the answer back until the request is typed
+  // from here the browser takes over: the request is cleared and the answer held back until it is typed
+  useLayoutEffect(() => {
     if (calm || !root.current) return;
     const pre = root.current.querySelector('pre');
     pre.style.minHeight = pre.offsetHeight + 'px';
-    root.current.dataset.armed = '1';
+    root.current.dataset.armed = '';
     root.current.querySelectorAll('[data-t]').forEach((n) => { n.textContent = ''; });
   }, [calm]);
 
@@ -64,42 +48,41 @@ function Console({ p }) {
     if (calm || !seen) return;
     const el = root.current;
     const toks = [...el.querySelectorAll('[data-t]')];
-    const full = p.tryIt.toks.map((t) => t[1]);
-    el.dataset.armed = '1';
-    el.querySelectorAll('[data-row]').forEach((r) => r.removeAttribute('data-in'));
-    toks.forEach((n) => { n.textContent = ''; n.removeAttribute('data-cur'); });
-    setNums(false);
+    const rows = [...el.querySelectorAll('[data-row]')];
+    delete el.dataset.done;
+    rows.forEach((r) => r.removeAttribute('data-in'));
+    toks.forEach((n) => { n.textContent = ''; });
     const timers = [];
     let raf = 0;
-    const t0 = performance.now() + 500;
-    const total = code.length;
+    const t0 = performance.now() + 450;
     const tick = (now) => {
-      let n = Math.min(total, Math.max(0, Math.floor(((now - t0) / 1000) * CPS)));
+      let n = Math.max(0, Math.floor(((now - t0) / 1000) * CPS));
       let cur = -1;
       for (let i = 0; i < toks.length; i++) {
         const take = Math.max(0, Math.min(full[i].length, n));
         if (toks[i].textContent.length !== take) toks[i].textContent = full[i].slice(0, take);
+        if (take > 0) cur = i;
         n -= take;
-        if (take > 0 && take <= full[i].length && cur < i && (n > 0 || take === full[i].length) ) cur = i;
       }
       toks.forEach((t, i) => (i === cur ? t.setAttribute('data-cur', '') : t.removeAttribute('data-cur')));
-      if (now - t0 < (total / CPS) * 1000 + 40) { raf = requestAnimationFrame(tick); return; }
+      if (now - t0 < (code.length / CPS) * 1000 + 40) { raf = requestAnimationFrame(tick); return; }
       toks.forEach((t, i) => { t.textContent = full[i]; t.removeAttribute('data-cur'); });
-      el.dataset.phase = 'answer';
-      const rs = [...el.querySelectorAll('[data-row]')];
-      rs.forEach((r, i) => timers.push(setTimeout(() => r.setAttribute('data-in', ''), 260 + i * 150)));
-      timers.push(setTimeout(() => setNums(true), 260 + rs.length * 150));
+      rows.forEach((r, i) => timers.push(setTimeout(() => r.setAttribute('data-in', ''), 320 + i * 170)));
+      timers.push(setTimeout(() => { el.dataset.done = ''; }, 320 + rows.length * 170));
+      // it runs again by itself while it stays on screen
+      timers.push(setTimeout(() => setRun((k) => k + 1), 320 + rows.length * 170 + 6500));
     };
     raf = requestAnimationFrame(tick);
     return () => { cancelAnimationFrame(raf); timers.forEach(clearTimeout); };
-  }, [seen, run, calm, code, p.tryIt.toks]);
+  }, [seen, run, calm]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className="xpd-con" ref={root} data-room-card>
-      <span className="xpd-sweep" aria-hidden="true" />
+    <div className="xpd-con" ref={root} data-done={calm ? '' : undefined}>
       <div className="xpd-con-bar">
         <span className="xpd-live" aria-hidden="true" />
         <span className="x-mono">api.hanzo.ai</span>
+        <span className="xpd-con-sp" />
+        <Copy text={code} />
         <button type="button" className="xpd-replay" onClick={() => setRun((r) => r + 1)} aria-label="Replay the request">
           <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.6-3.7M13 2.5v3h-3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
           <span>Replay</span>
@@ -107,108 +90,178 @@ function Console({ p }) {
       </div>
       <div className="xpd-con-g">
         <div className="xpd-req">
-          <div className="xpd-pane-h">
-            <h2>{p.tryIt.title}</h2>
-            <Copy text={code} />
-          </div>
-          <pre tabIndex={0}><code>{p.tryIt.toks.map(([k, t], i) => <span key={i} data-t data-k={k}>{t}</span>)}</code></pre>
+          <h2 className="xpd-pane-h x-mono">{p.tryIt.title}</h2>
+          <pre tabIndex={0} data-swipe-own><code>{p.tryIt.toks.map(([k, t], i) => <span key={i} data-t data-k={k}>{t}</span>)}</code></pre>
         </div>
-        <div className="xpd-res">
-          <div className="xpd-pane-h"><h2>{p.api.title}</h2></div>
-          <p className="xpd-api-l">{p.api.lede}</p>
-          <div className="xpd-tw" tabIndex={0} role="region" aria-label={p.api.title + ' operations'}>
-            <table>
-              <thead><tr>{head.map((h, i) => <th key={i}><Nodes nodes={h.c} /></th>)}</tr></thead>
-              <tbody>
-                {rows.map((r, i) => (
-                  <tr key={i} data-row>
-                    {r.c.map((c, j) => <td key={j}><Nodes nodes={c.c} /></td>)}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="xpd-res" aria-hidden="true">
+          <p className="xpd-pane-h x-mono">{p.api.title}</p>
+          <ol className="xpd-ans">
+            {ops.map((r, i) => (
+              <li key={i} data-row><b className="xpd-m x-mono" data-m={r[0]}>{r[0]}</b><span className="x-mono">{r[1]}</span></li>
+            ))}
+          </ol>
+          <p className="xpd-ans-n"><b className="v2f-num">{ops.length}</b><span>operations</span></p>
         </div>
       </div>
-      {p.measured && (
-        <div className="xpd-m">
-          <h2>{p.measured.title}</h2>
-          <Measured key={run} links={p.measured.links} run={nums} />
-        </div>
-      )}
     </div>
   );
 }
 
-const opsOf = (p) => ((p.api && p.api.table.c.find((k) => k.t === 'tbody')) || { c: [] }).c.length;
+/* the paragraph, lit word by word as it is read (scroll-linked; reduced motion shows it lit) */
+function Statement({ text }) {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.82', 'end 0.42'] });
+  const words = text.split(/\s+/).filter(Boolean);
+  useMotionValueEvent(scrollYProgress, 'change', (v) => { ref.current && ref.current.style.setProperty('--p', (v * (words.length + 6)).toFixed(2)); });
+  return (
+    <p ref={ref} className="xpd-say-p" style={{ '--p': 0 }}>
+      {words.map((w, k) => <span key={k} style={{ '--k': k }}>{w}{k < words.length - 1 ? ' ' : ''}</span>)}
+    </p>
+  );
+}
+
+/* the API as a spec sheet: the heading and the count stay pinned, each row lights as it crosses the middle */
+function Spec({ api }) {
+  const list = useRef(null);
+  useEffect(() => {
+    const rows = [...list.current.querySelectorAll('tbody tr')];
+    const io = new IntersectionObserver((es) => es.forEach((e) => (e.isIntersecting ? e.target.setAttribute('data-lit', '') : e.target.removeAttribute('data-lit'))), { rootMargin: '-42% 0px -42% 0px' });
+    rows.forEach((r) => io.observe(r));
+    return () => io.disconnect();
+  }, []);
+  return (
+    <section className="xpd-spec v2f-sec" aria-labelledby="xpd-api">
+      <div className="v2f-wrap v2f-grid">
+        <div className="xpd-spec-l">
+          <h2 id="xpd-api" className="v2f-kick acc">{api.title}</h2>
+          <FamLines as="p" play="view" text={api.lede} className="v2f-head xpd-spec-h" />
+          <p className="xpd-spec-n" aria-hidden="true"><b className="v2f-num">{api.ops.length}</b><span>operations</span></p>
+        </div>
+        <div className="xpd-spec-r" ref={list}>
+          <table className="xpd-tab">
+            <thead><tr>{api.heads.map((h) => <th key={h} scope="col">{h}</th>)}</tr></thead>
+            <tbody>
+              {api.ops.map((r, i) => (
+                <tr key={i}>
+                  <td><b className="xpd-m x-mono" data-m={r[0]}>{r[0]}</b></td>
+                  <td><code className="xpd-path">{r[1]}</code></td>
+                  <td className="xpd-what">{r[2]}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* Hanzo's measurements as hero figures: "from A to B" stands as B, "A against B" as A; the sentence stays whole */
+const hero = (s) => {
+  const to = /from ([\d.,]+%?) to ([\d.,]+%?)/.exec(s);
+  if (to) return to[2];
+  const vs = /([\d.,]+%?) against/.exec(s);
+  return vs ? vs[1] : null;
+};
+function Measured({ m }) {
+  return (
+    <section className="xpd-meas v2f-sec" aria-labelledby="xpd-meas-h">
+      <div className="v2f-wrap">
+        <FamLines as="h2" play="view" id="xpd-meas-h" text={m.title} className="v2f-display small xpd-meas-h" />
+        <ul className="xpd-meas-g">
+          {m.links.map((l) => {
+            const [name, ...rest] = l.text.split(': ');
+            const fig = hero(rest.join(': '));
+            return (
+              <li key={l.href}>
+                <A to={l.href} className="xpd-meas-c">
+                  {fig ? <b className="v2f-num xpd-meas-f" aria-hidden="true">{fig}</b> : <i className="xpd-meas-f none" aria-hidden="true" />}
+                  <span className="xpd-meas-t"><b>{name}</b>{rest.length ? ': ' + rest.join(': ') : ''}</span>
+                </A>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </section>
+  );
+}
 
 export default function ProductPage({ p, peek = {} }) {
-  const slugOf = (h) => h.replace(/\/$/, '').split('/').pop();
-  const [look, setLook] = useState(p.slug);
-  const seen = peek[look] ? look : p.slug;
-  const nums = [opsOf(p), p.os.length, ...(p.measured ? p.measured.links.flatMap((l) => (l.text.match(/\d[\d,]*(?:\.\d+)?/g) || []).map((x) => +x.replace(/,/g, ''))) : [])];
-  const line = (t, d) => (
-    <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: d }}>{t}</motion.span></span>
-  );
+  const order = Object.keys(peek);
+  const acc = accentAt(Math.max(0, order.indexOf(p.slug)));
+  const nums = [p.api.ops.length, p.os.length, ...(p.measured ? p.measured.links.flatMap((l) => (l.text.match(/\d[\d,]*(?:\.\d+)?/g) || []).map((x) => +x.replace(/,/g, ''))) : [])];
+  const intro = (function flat(ns) { return ns.map((n) => (typeof n === 'string' ? n : flat(n.c || []))).join(''); })(p.intro).replace(/\s+/g, ' ').trim();
   return (
-    <main className="xpd">
+    <main className="v2f xpd" style={{ '--acc': acc }}>
       <section className="xpd-hero" aria-labelledby="xpd-h1">
         <Sigil seed={'/products/' + p.slug} data={nums} className="xpd-sigil" />
-        <div className="x-wrap xpd-hero-g">
-          <div>
-            <motion.p className="x-kick" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE }}>{p.kicker}</motion.p>
-            <h1 id="xpd-h1" className="xpd-h1">{line(p.title, 0.05)}</h1>
-            <motion.p className="xpd-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>{p.lede}</motion.p>
-            <motion.div className="xpd-acts" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.5 }}>
-              <A to={p.acts[0].href} className="x-btn solid" data-thumb="">{p.acts[0].text}</A>
-              <A to={p.acts[1].href} className="x-btn">{p.acts[1].text}</A>
-            </motion.div>
+        <div className="v2f-wrap xpd-hero-in">
+          <p className="v2f-kick xpd-kick"><span className="xpd-live" aria-hidden="true" />{p.kicker}</p>
+          <div className="v2f-grid xpd-hero-g">
+            <FamLines as="h1" id="xpd-h1" text={p.title} className="v2f-display xpd-h1" data-morph-target />
+            <div className="xpd-hero-r">
+              <p className="v2f-lede xpd-lede">{p.lede}</p>
+              <div className="xpd-acts">
+                <A to={p.acts[0].href} className="v2f-btn acc" data-thumb="">{p.acts[0].text}</A>
+                <A to={p.acts[1].href} className="v2f-btn">{p.acts[1].text}</A>
+              </div>
+            </div>
           </div>
-          <motion.nav className="xpd-os" aria-label={p.osTitle} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.25 }}>
-            <p className="xpd-os-h"><span className="xpd-live" aria-hidden="true" />{p.osTitle}</p>
-            <ol>
-              {p.os.map((o) => {
+        </div>
+        <FamStage className="v2f-wrap xpd-stage" from={1.1}><Console p={p} /></FamStage>
+      </section>
+
+      <section className="xpd-say v2f-sec" aria-label={p.title}>
+        <div className="v2f-wrap"><Statement text={intro} /></div>
+      </section>
+
+      <Spec api={p.api} />
+
+      {p.measured && <Measured m={p.measured} />}
+
+      <section className="xpd-os v2f-sec" aria-labelledby="xpd-os-h">
+        <div className="v2f-wrap">
+          <div className="xpd-os-top">
+            <h2 id="xpd-os-h" className="v2f-kick">{p.osTitle}</h2>
+          </div>
+          <nav aria-label={p.osTitle}>
+            <ol className="xpd-os-l">
+              {p.os.map((o, i) => {
                 const k = slugOf(o.href), q = peek[k];
                 return (
-                  <li key={o.href} onMouseEnter={() => setLook(k)} onFocus={() => setLook(k)}>
-                    <A to={o.href} aria-current={o.current ? 'page' : undefined}>
-                      <b>{o.name}</b>
-                      <span>{o.desc}</span>
-                      {q && <i className="xpd-ops x-mono">{q.ops}</i>}
+                  <li key={o.href} style={{ '--c': accentAt(Math.max(0, order.indexOf(k))) }}>
+                    <A to={o.href} className="xpd-os-c" aria-current={o.current ? 'page' : undefined} data-cursor={o.current ? '' : undefined}>
+                      <span className="xpd-os-i x-mono" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                      <b className="xpd-os-n" data-morph={o.current ? undefined : ''}>{o.name}</b>
+                      <span className="xpd-os-d">{o.desc}</span>
+                      {q && <span className="xpd-os-k"><b className="v2f-num">{q.ops}</b><span className="x-mono">operations</span></span>}
                     </A>
                   </li>
                 );
               })}
             </ol>
-            {peek[seen] && <p className="xpd-peek" aria-hidden="true"><b className="x-mono">{peek[seen].ops} operations</b>{peek[seen].lede}</p>}
-          </motion.nav>
+          </nav>
         </div>
       </section>
 
-      <section className="xpd-intro">
-        <div className="x-wrap"><Rise className="xpd-big"><Nodes nodes={p.intro} /></Rise></div>
-      </section>
-
-      <section className="xpd-room" data-room="dark">
-        <div className="x-wrap"><Console p={p} /></div>
-      </section>
-
-      <section className="xpd-links">
-        <div className="x-wrap xpd-links-g">
+      <section className="xpd-end v2f-sec tight">
+        <div className="v2f-wrap v2f-grid">
           {p.docs && (
-            <div>
-              <h2>{p.docs.title}</h2>
-              <ul className="xpd-docs">{p.docs.links.map((l) => <li key={l.href}><More to={l.href}>{l.text}</More></li>)}</ul>
+            <div className="xpd-docs">
+              <h2 className="v2f-title">{p.docs.title}</h2>
+              <ul>{p.docs.links.map((l) => <li key={l.href}><More to={l.href}>{l.text}</More></li>)}</ul>
             </div>
           )}
           {p.site && (
-            <div>
-              <h2>{p.site.title}</h2>
-              <ul className="xpd-strip">{p.site.links.map((l, i) => (
-                <Rise as="li" key={l.href} y={14} delay={i * 0.04}><A to={l.href}>{l.text}</A></Rise>
-              ))}</ul>
+            <div className="xpd-site">
+              <h2 className="v2f-title">{p.site.title}</h2>
+              <ul>{p.site.links.map((l) => <li key={l.href}><A to={l.href}>{l.text}</A></li>)}</ul>
             </div>
           )}
+          <div className="xpd-cta">
+            <A to={p.acts[0].href} className="v2f-btn solid">{p.acts[0].text}</A>
+          </div>
         </div>
       </section>
     </main>

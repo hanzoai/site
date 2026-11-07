@@ -1,16 +1,21 @@
 'use client';
 /* AI Buying Specialist. Its idea is the sales desk where the quote writes itself while you talk.
-   Signature: the conversation sits on the left; beside it a quote sheet of seats, one square per member, fills and
+   V2: 8/10 rebuilt as a desk and a rail: the greeting at display size with the conversation under it, the quote sheet as the dark hero object re-pricing seat by seat; the six promises as a rail you throw with inertia.
+   Signature: the conversation on the left; beside it a quote sheet of seats, one square per member, fills and
    re-prices by itself, and when you tell the specialist your team size the sheet takes that size and the price rolls.
    Beyond: the seat mixer. Set members and how many take Premium; yearly and monthly totals come from Hanzo's own seat
    prices ($20 / $25 Standard, $100 / $125 Premium), with what yearly billing saves.
-   The chat is real: POST https://api.hanzo.ai/v1/chat/public (model enso-free) with Hanzo's own specialist brief, the
-   transcript filed as Hanzo files it, and Hanzo's own written answers when the endpoint cannot be reached. */
+   Motion: live quote sheet (signature) + line-masked greeting + a drag rail with inertia for the promises.
+   Accent: blue. The chat is real: POST https://api.hanzo.ai/v1/chat/public (model enso-free) with Hanzo's own
+   specialist brief, the transcript filed as Hanzo files it, and Hanzo's own written answers when the endpoint cannot
+   be reached. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence, useInView, useReducedMotion, useMotionValue, animate } from 'motion/react';
 import { EASE } from '../ui';
 import { A } from '../kit';
+import LineReveal from '../v2/LineReveal';
 import { P, r2, usd, BRIEF, written } from './BuyingSpecialist.data';
+import '../v2/ProgramScale.css';
 import './BuyingSpecialist.css';
 
 const API = 'https://api.hanzo.ai/v1/chat/public';
@@ -89,6 +94,44 @@ function Sheet({ seats, prem, setSeats, setPrem, mine }) {
   );
 }
 
+/* The six promises as a rail you throw: it carries on with inertia and springs back at its ends. */
+function Promises() {
+  const view = useRef(null);
+  const track = useRef(null);
+  const x = useMotionValue(0);
+  const [drag, setDrag] = useState(false);
+  useEffect(() => { setDrag(matchMedia('(pointer: fine)').matches); }, []);
+  const step = (d) => {
+    const v = view.current, t = track.current;
+    if (!v || !t) return;
+    const min = Math.min(0, v.clientWidth - t.scrollWidth);
+    const w = t.firstElementChild ? t.firstElementChild.getBoundingClientRect().width + 24 : 400;
+    animate(x, Math.max(min, Math.min(0, x.get() - d * w)), { type: 'spring', stiffness: 300, damping: 30 });
+  };
+  return (
+    <section className="xp-sec xbs-why" aria-labelledby="xbs-why-h">
+      <div className="xp-wrap xp-grid xbs-why-head">
+        <h2 id="xbs-why-h" className="xp-head">We can do all of it right here.</h2>
+        <div className="xbs-why-nav">
+          <button type="button" onClick={() => step(-1)} aria-label="Previous">←</button>
+          <button type="button" onClick={() => step(1)} aria-label="Next">→</button>
+        </div>
+      </div>
+      <div className="xbs-rail" ref={view} data-drag={drag ? '' : undefined} data-swipe-own>
+        <motion.ul ref={track} className="xbs-track" style={drag ? { x } : undefined} drag={drag ? 'x' : false} dragConstraints={view} dragElastic={0.08} dragTransition={{ power: 0.35, timeConstant: 320 }}>
+          {PROMISES.map(([b, t], i) => (
+            <li key={b} className="xbs-card">
+              <span className="xbs-card-n x-mono">{String(i + 1).padStart(2, '0')}</span>
+              <strong className="xp-title">{b}</strong>
+              <span className="xp-body">{t}</span>
+            </li>
+          ))}
+        </motion.ul>
+      </div>
+    </section>
+  );
+}
+
 export default function BuyingSpecialist() {
   const [name, setName] = useState('there');
   const [msgs, setMsgs] = useState([]);
@@ -143,25 +186,19 @@ export default function BuyingSpecialist() {
   };
 
   return (
-    <main className="xbs">
+    <main className="xp xbs">
       <section className="xbs-desk" ref={desk} aria-labelledby="xbs-h1">
-        <div className="x-wrap xbs-grid">
+        <div className="xp-wrap xbs-grid">
           <div className="xbs-chat">
             <AnimatePresence initial={false}>
               {!started && (
                 <motion.div key="intro" className="xbs-intro" exit={{ opacity: 0, y: -16, transition: { duration: 0.25 } }}>
                   <motion.span className="xbs-orb" aria-hidden="true" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.9, ease: EASE }}><i /><i /><i /></motion.span>
-                  <h1 id="xbs-h1" className="xbs-h1"><span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.05 }}>{`Hi ${name}, let's find the right plan for your team.`}</motion.span></span></h1>
-                  <motion.p className="xbs-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.3 }}>I&apos;m an AI buying specialist, here to help you figure out which plan fits, what it&apos;ll cost, and how to get your team set up. We can do all of it right here.</motion.p>
-                  <ul className="xbs-promises">
-                    {PROMISES.map(([b, t], i) => (
-                      <motion.li key={b} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, ease: EASE, delay: 0.45 + i * 0.05 }}><strong>{b}</strong> {t}</motion.li>
-                    ))}
-                  </ul>
-                  <p className="xbs-legal">By continuing, you agree to our <A to="/privacy">Privacy Policy</A>.</p>
+                  <LineReveal as="h1" id="xbs-h1" className="xp-display sm xbs-h1" lines={[`Hi ${name}, let's find`, 'the right plan', 'for your team.']} />
+                  <motion.p className="xp-lede xbs-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>I&apos;m an AI buying specialist, here to help you figure out which plan fits, what it&apos;ll cost, and how to get your team set up. We can do all of it right here.</motion.p>
                   <div className="xbs-asks">
                     {ASK.map((t, i) => (
-                      <motion.button key={t} type="button" onClick={() => send(t)} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.8 + i * 0.06 }} whileTap={{ scale: 0.97 }}>{`${t} →`}</motion.button>
+                      <motion.button key={t} type="button" onClick={() => send(t)} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.6 + i * 0.05 }} whileTap={{ scale: 0.97 }}>{`${t} →`}</motion.button>
                     ))}
                   </div>
                 </motion.div>
@@ -199,12 +236,14 @@ export default function BuyingSpecialist() {
                 <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 13V3M4 7l4-4 4 4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </motion.button>
             </form>
+            <p className="xbs-legal">By continuing, you agree to our <A to="/privacy">Privacy Policy</A>.</p>
           </div>
           <motion.div className="xbs-side" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.3 }}>
             <Sheet seats={seats} prem={prem} setSeats={setSeats} setPrem={setPrem} mine={() => setOwn(true)} />
           </motion.div>
         </div>
       </section>
+      <Promises />
     </main>
   );
 }

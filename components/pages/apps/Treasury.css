@@ -1,13 +1,16 @@
-/* ---------- treasury (ts-) ---------- */
-.ts-hero { background: #050506; color: #f5f5f7; padding: clamp(36px, 5vw, 72px) 0 clamp(72px, 9vw, 128px); overflow: hidden; }
-.ts-top { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: clamp(24px, 5vw, 80px); align-items: end; }
-.ts-kick { margin: 0 0 16px; font: 500 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #86868b; }
-.ts-h1 { margin: 0; font-size: clamp(3.2rem, 7.6vw, 7.8rem); font-weight: 560; letter-spacing: -.055em; line-height: .9; color: #f5f5f7; }
-.ts-lede { margin: 0; max-width: 26ch; font-size: clamp(1.25rem, 1.8vw, 1.6rem); line-height: 1.3; letter-spacing: -.02em; color: #d1d1d6; text-wrap: balance; }
-.ts-acts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
-.ts-hero .x-btn { background: transparent; color: #f5f5f7; border-color: rgba(255, 255, 255, .22); }
-.ts-hero .x-btn.solid { background: #f5f5f7; color: #0a0a0a; border-color: #f5f5f7; }
-.ts-stage { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(16px, 2.4vw, 32px); margin-top: clamp(36px, 5vw, 64px); align-items: stretch; }
+/* ---------- treasury v2 (ts-): gold, the hero is the one dark room ---------- */
+.ts { --acc: #d4a72c; --acc-ink: #1a1200; }
+.ts-hero { padding: clamp(104px, 8.4vw, 128px) 0 clamp(120px, 12vw, 200px); overflow: hidden; }
+.ts-top { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); gap: 24px clamp(32px, 5vw, 96px); align-items: end; margin-bottom: clamp(36px, 3.6vw, 56px); }
+.ts-kick { margin-bottom: 20px; }
+.ts-h1 { font-size: clamp(56px, 9vw, 136px); white-space: nowrap; }
+.ts-top-r { display: flex; flex-direction: column; gap: 28px; padding-bottom: 10px; }
+.ts-lede { color: #d1d1d6; max-width: 22ch; }
+.ts-acts { display: flex; flex-wrap: wrap; gap: 12px; }
+.ts-stage { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 16px; align-items: stretch; }
+.ts-ed { border-radius: 28px; }
+.ts-flow { border-radius: 28px; min-height: 420px; }
+.ts-ed pre { font-size: clamp(13px, 1.05vw, 16px) !important; padding: 24px 26px 28px !important; }
 .ts-ed { border-radius: 22px; background: #0f0f11; border: 1px solid rgba(255, 255, 255, .08); overflow: hidden; }
 .ts-ed-bar { display: flex; align-items: center; gap: 7px; height: 42px; padding: 0 16px; border-bottom: 1px solid rgba(255, 255, 255, .08); }
 .ts-ed-bar i { width: 10px; height: 10px; border-radius: 50%; background: #2c2c30; }
@@ -16,94 +19,109 @@
 .ts-l { display: inline; color: #e9e9ec; opacity: .12; transition: opacity .35s var(--ease), color .35s; }
 .ts-l.in { opacity: 1; }
 .ts-l.c { color: #6e6e73; }
-.ts-l.d { color: #a8e6a1; }
+.ts-l.d { color: var(--acc); }
 .ts-flow { position: relative; min-height: 380px; border-radius: 22px; background: #0b0b0d; border: 1px solid rgba(255, 255, 255, .06); padding: 24px; overflow: hidden; }
 .ts-src { position: absolute; left: 24px; top: 50%; translate: 0 -50%; z-index: 2; display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; border-radius: 16px; background: #f5f5f7; color: #0a0a0a; }
 .ts-src span { font-size: 13px; color: #6e6e73; }
 .ts-src b { font-size: 22px; font-weight: 500; letter-spacing: -.03em; }
 .ts-flow svg { position: absolute; left: 140px; right: 200px; top: 10px; bottom: 10px; width: calc(100% - 340px); height: calc(100% - 20px); overflow: visible; }
-.ts-flow path { fill: none; stroke: #f5f5f7; stroke-linecap: butt; opacity: .9; }
-.ts-flow path:nth-child(2) { stroke: #a8e6a1; } .ts-flow path:nth-child(3) { stroke: #64d2ff; }
+.ts-flow path { fill: none; stroke: #f5f5f7; stroke-linecap: butt; opacity: .92; }
+.ts-flow path:nth-child(1) { stroke: var(--acc); } .ts-flow path:nth-child(2) { stroke: #f5f5f7; } .ts-flow path:nth-child(3) { stroke: #86868b; }
 .ts-dst { position: absolute; right: 24px; top: 10px; bottom: 10px; width: 180px; list-style: none; margin: 0; padding: 0; }
 .ts-dst li { position: absolute; right: 0; left: 0; translate: 0 -50%; display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; padding: 10px 12px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, .1); background: #111114; opacity: .35; transition: opacity .5s var(--ease), border-color .5s; }
 .ts-dst li.on { opacity: 1; border-color: rgba(255, 255, 255, .28); }
 .ts-dst span { grid-column: 1 / -1; font-size: 13px; color: #a1a1a6; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ts-dst b { font-size: 20px; font-weight: 500; letter-spacing: -.03em; }
 .ts-dst em { align-self: center; font-style: normal; font-size: 13px; color: #86868b; }
-.ts-ok { position: absolute; left: 24px; bottom: 18px; margin: 0; padding: 8px 12px; border-radius: 999px; background: #1a7f37; color: #fff; font-size: 13px; }
+.ts-ok { position: absolute; left: 24px; bottom: 18px; margin: 0; padding: 8px 12px; border-radius: 999px; background: var(--acc); color: #1a1200; font-size: 13px; }
 
-/* parts: the strip */
-.ts-h { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: clamp(20px, 5vw, 80px); align-items: end; margin-bottom: clamp(36px, 5vw, 64px); }
-.ts-h h2, .ts-hold-h, .ts-first h2 { margin: 0; font-size: clamp(2.3rem, 4.6vw, 4.2rem); font-weight: 560; letter-spacing: -.045em; line-height: 1; text-wrap: balance; }
-.ts-h p { margin: 0; font-size: clamp(1.05rem, 1.3vw, 1.2rem); line-height: 1.55; color: var(--soft); }
-.ts-strip { list-style: none; margin: 0; padding: 0; display: flex; gap: 10px; height: 380px; }
-.ts-strip li { position: relative; flex: 1 1 0; min-width: 0; border-radius: 24px; background: var(--card); overflow: hidden; display: flex; flex-direction: column; }
-.ts-strip li.on { flex: 4.2 1 0; background: var(--ink); color: #f5f5f7; }
-.ts-strip button { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; flex: 1; width: 100%; padding: 22px; border: 0; background: none; text-align: left; font: inherit; color: inherit; cursor: pointer; }
-.ts-n { font-size: 13px; color: var(--faint); }
-.ts-t { font-size: 20px; font-weight: 560; letter-spacing: -.025em; line-height: 1.1; writing-mode: vertical-rl; transform: rotate(180deg); }
-.ts-strip li.on .ts-t { writing-mode: horizontal-tb; transform: none; font-size: clamp(1.6rem, 2.6vw, 2.4rem); letter-spacing: -.035em; }
-.ts-strip p { position: absolute; left: 22px; right: 22px; bottom: 22px; margin: 0; max-width: 46ch; font-size: 16px; line-height: 1.6; color: #a1a1a6; pointer-events: none; }
-.ts-strip li:not(.on) p { visibility: hidden; }
 
-/* hold */
+/* the lede, as a statement */
+.ts-say { padding-bottom: 0; }
+.ts-say-p { margin: 0; max-width: 20ch; font-size: clamp(40px, 5.2vw, 76px); font-weight: 600; line-height: 1; letter-spacing: -.048em; text-wrap: balance; }
+
+/* chapters: the ledger, part by part */
+.ts-vis { display: grid; }
+.ts-vis-i { grid-area: 1 / 1; display: flex; align-items: center; }
+.ts-v { width: 100%; padding: clamp(24px, 3vw, 40px); border-radius: 28px; background: #fff; box-shadow: var(--shadow); border: 1px solid rgba(0, 0, 0, .06); }
+.ts-v-k { display: flex; justify-content: space-between; margin: 0 0 20px; font-size: 14px; color: var(--faint); }
+.ts-v-row { display: grid; grid-template-columns: 1fr 1.3fr auto; align-items: center; gap: 12px; padding: 16px 0; border-top: 1px solid var(--line); font-size: clamp(14px, 1.15vw, 17px); }
+.ts-v-row.h { color: var(--faint); font-size: 13px; padding: 10px 0; }
+.ts-v-row b { font-weight: 400; font-size: clamp(20px, 1.8vw, 26px); letter-spacing: -.03em; }
+.ts-v-row.two { grid-template-columns: 1.3fr 1fr auto; }
+.ts-v-row i { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--card); font-style: normal; font-size: 14px; color: var(--soft); }
+.ts-v-row.brk { color: var(--ink); }
+.ts-v-row.brk i { background: var(--acc); color: var(--acc-ink); }
+.ts-v-row.brk span:nth-child(2) { color: #9a6f00; }
+.ts-v-sum { display: flex; justify-content: space-between; align-items: baseline; margin-top: 4px; padding: 18px 20px; border-radius: 16px; background: var(--card); font-size: 14px; color: var(--soft); }
+.ts-v-sum b { font-weight: 500; font-size: clamp(16px, 1.4vw, 20px); color: var(--ink); }
+.ts-v-hold { display: grid; gap: 8px; margin-bottom: 16px; padding: 28px; border-radius: 20px; background: repeating-linear-gradient(135deg, #faf6ea 0 12px, #f3ecd6 12px 24px); }
+.ts-v-hold span { font-size: 14px; color: var(--soft); }
+.ts-v-hold b { font-size: clamp(48px, 5vw, 72px); font-weight: 400; letter-spacing: -.05em; line-height: 1; }
+.ts-v-hold em { font-style: normal; font-size: 15px; color: #9a6f00; }
+.ts-v-flow { list-style: none; margin: 0; padding: 0 0 0 18px; border-left: 2px solid var(--line); display: grid; gap: 4px; }
+.ts-v-flow li { position: relative; display: flex; align-items: center; gap: 14px; min-height: 64px; font-size: clamp(18px, 1.6vw, 24px); color: var(--faint); transition: color .3s; }
+.ts-v-flow li i { position: absolute; left: -26px; width: 14px; height: 14px; border-radius: 50%; background: #fff; border: 2px solid #d1d1d6; transition: background .3s, border-color .3s; }
+.ts-v-flow li.on { color: var(--ink); }
+.ts-v-flow li.on i { background: var(--acc); border-color: var(--acc); }
+.ts-v-flow em { margin-left: auto; padding: 6px 10px; border-radius: 8px; background: var(--card); font-style: normal; font-size: 13px; color: #9a6f00; }
+
+/* hold: the wallet you drive */
 .ts-hold { background: var(--card); }
-.ts-hold-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(28px, 5vw, 80px); align-items: center; }
-.ts-hold-l { margin: 18px 0 0; max-width: 48ch; font-size: 16.5px; line-height: 1.6; color: var(--soft); }
-.ts-hold-acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 26px; }
-.ts-hold-acts .x-btn { height: 44px; }
-.ts-hold-acts .x-btn[disabled] { opacity: .35; cursor: default; }
-.ts-wallet { padding: 18px; border-radius: 28px; background: #fff; border: 1px solid var(--line); box-shadow: 0 40px 80px -60px rgba(0, 0, 0, .4); }
-.ts-ws { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-.ts-w { display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: 18px; background: var(--card); overflow: hidden; min-width: 0; }
-.ts-w span { font: 500 13px/1.2 var(--mono); color: var(--soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.ts-w b { display: block; font-size: clamp(1.4rem, 2.4vw, 2.1rem); font-weight: 400; letter-spacing: -.04em; }
-.ts-w em { font-style: normal; font-size: 13px; color: var(--faint); line-height: 1.3; }
-.ts-w.held { background: repeating-linear-gradient(135deg, #f5f5f7 0 10px, #ececf0 10px 20px); }
-.ts-ev { margin-top: 12px; padding: 14px 16px; border-radius: 18px; background: #0b0b0c; color: #e9e9ec; min-height: 160px; }
-.ts-ev > p { margin: 0 0 8px; font-size: 13px; color: #86868b; }
+.ts-hold-head { display: flex; flex-direction: column; gap: 24px; margin-bottom: clamp(48px, 6vw, 80px); }
+.ts-hold-h { max-width: 18ch; }
+.ts-wallet { padding: clamp(20px, 2.4vw, 32px); }
+.ts-ws { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.ts-w { display: flex; flex-direction: column; gap: 10px; padding: clamp(20px, 2.4vw, 32px); border-radius: 20px; background: var(--card); overflow: hidden; min-width: 0; }
+.ts-w span { font: 500 14px/1.2 var(--mono); color: var(--soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ts-w b { display: block; font-size: clamp(40px, 4.6vw, 72px); line-height: 1; }
+.ts-w em { font-style: normal; font-size: 14px; color: var(--faint); line-height: 1.3; }
+.ts-w.held { background: repeating-linear-gradient(135deg, #faf6ea 0 12px, #f3ecd6 12px 24px); }
+.ts-wallet-b { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 12px; margin-top: 12px; }
+.ts-hold-acts { display: flex; flex-direction: column; gap: 8px; }
+.ts-b { display: flex; align-items: center; justify-content: space-between; min-height: 52px; padding: 0 20px; border: 1px solid rgba(0, 0, 0, .1); border-radius: 16px; background: #fff; color: var(--ink); font: 500 16px/1.2 var(--sans); text-align: left; cursor: pointer; transition: border-color .2s, background .2s; }
+.ts-b:hover:not([disabled]) { border-color: var(--ink); }
+.ts-b.solid { background: var(--ink); color: #fff; border-color: var(--ink); }
+.ts-b.ghost { color: var(--soft); }
+.ts-b[disabled] { opacity: .35; cursor: default; }
+.ts-ev { padding: 18px 20px; border-radius: 20px; background: #0b0b0c; color: #e9e9ec; min-height: 220px; }
+.ts-ev > p { margin: 0 0 10px; font-size: 13px; color: #86868b; }
 .ts-ev ol { list-style: none; margin: 0; padding: 0; }
-.ts-ev li { padding: 6px 0; font-size: 13.5px; border-top: 1px solid rgba(255, 255, 255, .06); }
-.ts-ev li::before { content: '→ '; color: #30d158; }
+.ts-ev li { padding: 10px 0; font-size: 15px; border-top: 1px solid rgba(255, 255, 255, .06); }
+.ts-ev li::before { content: '→ '; color: var(--acc); }
 .ts-ev li.none { color: #6e6e73; } .ts-ev li.none::before { content: ''; }
 
-/* first */
-.ts-first { border-top: 1px solid var(--line); }
-.ts-first-in { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 24px; }
-.ts-first-acts { display: flex; flex-wrap: wrap; gap: 10px; }
+/* first + get */
+.ts-first-h { max-width: 14ch; }
+.ts-first-row { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 24px clamp(32px, 5vw, 96px); align-items: end; margin-top: clamp(40px, 5vw, 72px); }
+.ts-first-acts { display: flex; flex-wrap: wrap; gap: 12px; }
+.ts-get { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px; padding: 28px; border-radius: 28px; background: var(--card); }
+.ts-get-tag { margin: 6px 0 0; font-size: 16px; color: var(--soft); }
+.ts-get-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.ts-get-meta .w2-cta { height: 48px; font-size: 15px; padding: 0 20px; }
+.ts-chip { display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 14px; border-radius: 999px; background: #fff; color: var(--ink); font: 500 14px/1 var(--mono); text-decoration: none; }
+.ts-chip span { color: var(--faint); }
 
 @media (max-width: 900px) {
-  .ts-top, .ts-stage, .ts-h, .ts-hold-grid { grid-template-columns: minmax(0, 1fr); }
-  .ts-h1 { font-size: clamp(3rem, 14vw, 4.4rem); }
+  .ts-hero { padding-top: 104px; }
+  .ts-top, .ts-stage, .ts-wallet-b, .ts-first-row { grid-template-columns: minmax(0, 1fr); }
+  .ts-h1 { font-size: clamp(44px, 13vw, 64px); white-space: normal; }
   .ts-flow { min-height: 340px; padding: 16px; }
   .ts-src { left: 12px; padding: 10px 12px; }
   .ts-src b { font-size: 17px; }
   .ts-flow svg { left: 108px; right: 128px; width: calc(100% - 236px); }
   .ts-dst { right: 12px; width: 118px; }
   .ts-dst b { font-size: 16px; }
-  .ts-strip { flex-direction: column; height: auto; }
-  .ts-strip li, .ts-strip li.on { flex: none; }
-  .ts-t { writing-mode: horizontal-tb !important; transform: none !important; font-size: 19px !important; }
-  .ts-strip button { flex-direction: row; align-items: baseline; padding: 18px; min-height: 56px; }
-  .ts-strip p { position: static; padding: 0 18px 18px; }
-  .ts-strip li:not(.on) p { display: none; }
+  .ts-pin .w2-pin-visual { max-height: 56svh; overflow: hidden; }
+  .ts-v { padding: 18px; }
+  .ts-v-row { grid-template-columns: 1fr auto; padding: 12px 0; }
+  .ts-v-row > span:first-child { display: none; }
+  .ts-v-row.two > span:first-child { display: block; }
+  .ts-v-row.two { grid-template-columns: 1fr auto auto; }
+  .ts-v-flow li { min-height: 52px; }
   .ts-ws { grid-template-columns: minmax(0, 1fr); }
-  .ts-w { flex-direction: row; align-items: baseline; flex-wrap: wrap; }
+  .ts-w { flex-direction: row; align-items: baseline; flex-wrap: wrap; padding: 18px; }
   .ts-w span { flex: 1 1 100%; }
-}
-
-/* elite bar: type floor, balanced headings, thumb-sized taps */
-.ts :is(h1, h2) { text-wrap: balance; }
-@media (max-width: 900px) {
-  .ts-kick,
-  .ts-ed-bar span,
-  .ts-src span,
-  .ts-dst span,
-  .ts-dst em,
-  .ts-ok,
-  .ts-n,
-  .ts-w span,
-  .ts-w em,
-  .ts-ev > p { font-size: 14px; }
-  .ts button, .ts [role=tab] { min-height: 44px; }
+  .ts-w b { font-size: 40px; }
+  .ts-ed-bar span, .ts-src span, .ts-dst span, .ts-dst em, .ts-ok, .ts-w em, .ts-ev > p, .ts-v-k, .ts-v-row.h { font-size: 14px; }
 }
