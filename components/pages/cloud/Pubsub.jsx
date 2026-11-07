@@ -1,23 +1,26 @@
 'use client';
-/* PubSub, v2 launch page (Cloud 3).
-   V2: 8/10 Poster launch in grey: the hero is the page's one dark room, a full-bleed bus (its own toolbar carries "NATS
-   JetStream", a pause and the replay point under your pointer) where one message fans out on drawn wires above a giant
-   title; the statement opens six pinned chapters over one server inspector whose rows take you to each chapter; the
-   light room holds the prompt and the 4222 spec; events.go is the object beside "Put it between your services".
+/* PubSub, Cloud 3 launch page (docs/MASTER.md, the only brief).
+   Persona: Developer. Goal: try Hanzo PubSub (read the source, then deploy it).
+   CTA: "GitHub" → https://github.com/hanzoai/pubsub (data-cta pubsub.hero, pubsub.close; data-thumb "GitHub", so the
+   site's sticky ask carries the same words). Metric: github_click (MASTER §1 names a GitHub click as a metric; the live
+   ask is "GitHub", so api_key_created would be fed by no button here).
    Signature: one message fanning out. A publish on events.user.signup is written into the EVENTS stream with its
-   sequence, then the wires draw out to every subscriber and to exactly one member of a queue group; deliveries wait for
-   an ack and an unacked one is redelivered.
+   sequence, then the wires draw down to every subscriber and to exactly one member of a queue group; deliveries wait
+   for an ack and an unacked one is redelivered.
    Beyond: ack policy switch. In chapter two the same fan-out re-runs under Hanzo's three ack choices (ack every
    message, ack a sequence to cover everything below it, no acks), so redelivery appears and vanishes before you pick.
-   Persona: Developer. Goal: try Hanzo PubSub (read the source, then deploy it).
-   CTA: "GitHub" → https://github.com/hanzoai/pubsub (data-cta pubsub.hero, pubsub.close; the site's sticky ask carries
-   the same words). Metric: api_key_created.
    Motion: idle = the fan-out on the bus and the inspector's panels (each with a pause); pointer = a sequence under the
-   cursor lights everything a replay from it would read, the inspector's rows, the magnetic ask at the close; state =
-   the start and ack switches (a pill that glides), rows that open their chapter; arrival = the cut-in title, the timed
-   wipe into the light room; scroll = the pinned chapters only.
+   cursor lights everything a replay from it would read (named in the bus's own toolbar), the inspector's rows, the
+   magnetic ask at the close; state = the start and ack switches (a pill that glides), rows that open their chapter;
+   arrival = the cut-in title, the wires drawing, the timed wipe into the quiet room; scroll = the pinned chapters and
+   "Get PubSub" growing to its moment. Tweens only (ease-emphasis 300 ms, ease-in-out 400 ms; the wires draw in 800 ms
+   as line art); no springs.
    States differ by fill, weight, dash and a shape, never by hue. Every word, figure and link is Hanzo's; sequence
-   numbers and values are drawn. */
+   numbers and values are drawn.
+   V2: 8/10 The page's one black room is the hero: name, line and one ask left (5), the bus right (8), where one
+   message drops into the stream and fans out down drawn wires; six pinned chapters over one outlined server
+   inspector; the prompt and the 4222 spec in the quiet room; events.go beside "Put it between your services"; deck
+   greys, tweens only. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { A } from '../../kit';
@@ -31,9 +34,9 @@ import LivePause, { usePause } from '../../v2/LivePause';
 import './Pubsub.css';
 
 const GH = 'https://github.com/hanzoai/pubsub';
-const EASE = [0.16, 1, 0.3, 1];
-const SPRING = { type: 'spring', stiffness: 300, damping: 30 };
-const SNAP = { type: 'spring', stiffness: 420, damping: 34 };
+const EASE = [0.16, 1, 0.3, 1]; // ease-emphasis: arrivals
+const ARRIVE = { duration: 0.3, ease: EASE };
+const QUICK = { duration: 0.15, ease: [0, 0, 0.2, 1] };
 
 // Hanzo's three ack choices, each with its own clause from "Acked, so nothing goes quiet"
 const ACKS = [
@@ -44,7 +47,7 @@ const ACKS = [
 
 /* the fan-out clock: 0 publish, 1 stored, 2 fanned out, 3 acks (one redelivered), 4 settled */
 function useFan(run, calm) {
-  const [t, setT] = useState(2);
+  const [t, setT] = useState(4); // the server frame is a settled fan-out; the next publish drops in within half a second
   const [seq, setSeq] = useState(41);
   useEffect(() => { if (calm) setT(4); }, [calm]);
   const first = useRef(true);
@@ -76,11 +79,12 @@ const subState = (t, ack, i, top) => {
   return ['ack', ack === 'below' ? 'ack ≤ ' + top : 'ack'];
 };
 
-function Wire({ on, ys = [50] }) {
+/* the bus's wires run top to bottom: one line from the publish into the stream, then a fan to every subscriber */
+function Wire({ on, xs = [50] }) {
   return (
-    <svg className="ps-wire" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-      {ys.map((y) => <path key={'b' + y} className="base" d={`M0 50 C 55 50, 45 ${y}, 100 ${y}`} />)}
-      {ys.map((y, i) => <path key={'f' + y} className={'flow' + (on ? ' on' : '')} style={{ transitionDelay: on ? i * 0.07 + 's' : '0s' }} pathLength="1" d={`M0 50 C 55 50, 45 ${y}, 100 ${y}`} />)}
+    <svg className={'ps-wire' + (xs.length > 1 ? ' fan' : '')} viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      {xs.map((x) => <path key={'b' + x} className="base" d={`M50 0 C 50 55, ${x} 45, ${x} 100`} />)}
+      {xs.map((x, i) => <path key={'f' + x} className={'flow' + (on ? ' on' : '')} style={{ transitionDelay: on ? i * 0.06 + 's' : '0s' }} pathLength="1" d={`M50 0 C 50 55, ${x} 45, ${x} 100`} />)}
     </svg>
   );
 }
@@ -101,7 +105,7 @@ function Bus() {
         <p className="ps-rp" aria-hidden="true">
           <AnimatePresence mode="wait" initial={false}>
             {rp !== null && (
-              <motion.span key={rp} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6, transition: { duration: 0.12 } }} transition={{ duration: 0.3, ease: EASE }}>
+              <motion.span key={rp} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6, transition: QUICK }} transition={ARRIVE}>
                 replay · from <b>#{rp}</b> → #{top}
               </motion.span>
             )}
@@ -112,7 +116,7 @@ function Bus() {
       <div className="ps-bus" role="img" aria-label="One message is published, written into the EVENTS stream with its sequence, copied to every subscriber, and handed to exactly one member of a queue group">
         <div className="ps-node ps-pub">
           <p className="ps-k">publish</p>
-          <motion.div key={seq} className="ps-msg" initial={seq === 41 ? false : { x: -40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.6, ease: EASE }}>
+          <motion.div key={seq} className="ps-msg" initial={seq === 41 ? false : { y: -16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.4, ease: EASE }}>
             <b>events.user.signup</b><span>{'{"id":"usr_123"}'}</span>
           </motion.div>
         </div>
@@ -126,7 +130,7 @@ function Bus() {
             ))}
           </div>
         </div>
-        <Wire on={t >= 2} ys={[16, 50, 84]} />
+        <Wire on={t >= 2} xs={[15, 46, 81]} />
         <div className="ps-node ps-subs">
           {['analytics', 'audit'].map((s, i) => {
             const [c, l] = subState(t, 'every', i, top);
@@ -150,7 +154,7 @@ function Pills({ label, items, on, set }) {
     <div className="ps-switch-b" role="group" aria-label={label}>
       {items.map(([k, l], i) => (
         <button key={k} type="button" aria-pressed={on === i} onClick={() => set(i)}>
-          {on === i && <motion.span layoutId={'ps-pill-' + label} className="ps-pill" transition={SNAP} />}
+          {on === i && <motion.span layoutId={'ps-pill-' + label} className="ps-pill" transition={ARRIVE} />}
           <span>{l}</span>
         </button>
       ))}
@@ -300,12 +304,12 @@ function Inspector({ step, intro, ack, from }) {
       <div className="ps-ins-h">
         <span className="ps-dot" aria-hidden="true" />
         <AnimatePresence mode="wait" initial={false}>
-          <motion.code key={cur} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.3, ease: EASE }}>{cur < 0 ? 'pubsub.hanzo.ai' : SUBJ[cur]}</motion.code>
+          <motion.code key={cur} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8, transition: QUICK }} transition={ARRIVE}>{cur < 0 ? 'pubsub.hanzo.ai' : SUBJ[cur]}</motion.code>
         </AnimatePresence>
         <span className="ps-port">:4222</span>
       </div>
       <AnimatePresence mode="wait" initial={false}>
-        <motion.div key={cur} className="ps-ins-b" initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16, transition: { duration: 0.18 } }} transition={SPRING}>
+        <motion.div key={cur} className="ps-ins-b" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16, transition: QUICK }} transition={{ duration: 0.4, ease: EASE }}>
           {cur < 0 ? <Overview n={n} go={go} /> : <Panel step={cur} n={n} ack={ack} from={from} t={t} seq={seq} />}
         </motion.div>
       </AnimatePresence>
@@ -349,21 +353,19 @@ export default function Pubsub() {
   const [from, setFrom] = useState(0);
   const steps = FACTS.map(([t, d], i) => ({ t, d, extra: i === 0 ? <StartSwitch from={from} setFrom={setFrom} /> : i === 1 ? <AckSwitch ack={ack} setAck={setAck} /> : null }));
   return (
-    <main className="lx ps">
+    <main className="lx ps" data-cursor="">
       <section className="ps-hero lx-dark" data-room="dark" data-morph-target data-ask-name="Hanzo PubSub">
         <div className="lx-wrap ps-hero-in">
           <div className="ps-hero-title">
             <LineMask as="h1" className="lx-display ps-h1" lines={['Hanzo PubSub']} />
-            <div className="ps-lead">
-              <p className="ps-tag">The bus everything else rides</p>
-              <A to={GH} className="lx-cta" data-thumb="GitHub" data-cta="pubsub.hero">GitHub<Arr /></A>
-            </div>
+            <p className="lx-lede ps-tag">The bus everything else rides</p>
+            <A to={GH} className="lx-cta" data-thumb="GitHub" data-cta="pubsub.hero" data-cursor="">GitHub<Arr /></A>
           </div>
           <Bus />
         </div>
       </section>
 
-      <PinnedChapters label="More than pub/sub" per={80}
+      <PinnedChapters label="More than pub/sub" per={80} objH={35}
         intro={{ title: ['More than', 'pub/sub'] }}
         steps={steps}
         visual={(at, intro) => <Inspector step={at} intro={intro} ack={ack} from={from} />} />
@@ -381,7 +383,7 @@ export default function Pubsub() {
       <section className="lx-sec ps-walk">
         <div className="lx-wrap ps-walk-in">
           <div className="ps-walk-l">
-            <h2 className="lx-display s">Put it between your services</h2>
+            <h2 className="lx-headline">Put it between your services</h2>
             <p className="lx-lede">Free tier includes 1M messages/month.</p>
             <A to={GH} className="lx-ghost">View on GitHub<Arr /></A>
           </div>
