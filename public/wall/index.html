@@ -20,8 +20,8 @@ button { font: inherit; color: inherit; }
   transform-origin: 50% 50%; transition: transform 1.15s cubic-bezier(.16,1,.3,1), opacity .9s cubic-bezier(.16,1,.3,1), filter 1.15s cubic-bezier(.16,1,.3,1), width .6s cubic-bezier(.16,1,.3,1), border-radius .6s; }
 .frame iframe { width: 100%; height: 100%; border: 0; display: block; background: #fff; }
 .frame.phone { width: 375px; height: 812px; border-radius: 44px; }
-.frame.wait { opacity: 0; filter: blur(14px); }
-.frame.out { opacity: 0; filter: blur(10px); pointer-events: none; }
+.frame.wait { opacity: 0; visibility: hidden; } /* the preloading page waits unpainted, so only one page costs frames */
+.frame.out { opacity: 0; pointer-events: none; }
 .frame .veil { position: absolute; inset: 0; display: grid; place-items: center; background: #fff; color: #71717a; font-size: 13px; letter-spacing: .02em; transition: opacity .5s; }
 .frame.ready .veil { opacity: 0; pointer-events: none; }
 
@@ -77,7 +77,7 @@ kbd { font: 11px ui-monospace, monospace; color: var(--faint); margin-left: 6px;
     <button id="b-prev" title="Previous page (←)">←</button>
     <button id="b-next" title="Next page (→)">→</button>
     <button id="b-phone" aria-pressed="false" title="Phone size (P)">Phone</button>
-    <button id="b-speed" title="Scroll speed">1×</button>
+    <button id="b-speed" title="Seconds per page">6 s a page</button>
     <button id="b-idx" title="Every page (/)">All pages<kbd>/</kbd></button>
   </div>
 </div>
@@ -92,7 +92,9 @@ kbd { font: 11px ui-monospace, monospace; color: var(--faint); margin-left: 6px;
 const $ = (s) => document.querySelector(s);
 // same origin as the pages: answer the cookie banner once (essential only) so it never covers a page in the tour
 try { if (!localStorage.getItem('hz-consent')) localStorage.setItem('hz-consent', JSON.stringify({ necessary: true, performance: false, marketing: false, sale: false, at: Date.now() })); } catch {}
-const SPEEDS = [1, 2, 4], PX = 170; // px of page per second at 1x
+// every page gets the same short visit, whatever its length: hold on the hero, one eased scroll to the bottom, a beat
+const SPEEDS = [1, 2, 0.5], HOLD = 1500, SCROLL = 4000, END = 500; // ms at 1x: about 6 s a page, 15 min for the site
+const ease = (p) => (1 - Math.cos(Math.PI * p)) / 2, unease = (r) => Math.acos(1 - 2 * Math.min(1, Math.max(0, r))) / Math.PI;
 let pages = [], at = 0, playing = true, phone = false, speed = 0, held = 0, cur = null, nxt = null, raf = 0, lastT = 0;
 const seen = new Set();
 
@@ -143,7 +145,7 @@ function show(i, dir = 1) {
   nxt = null;
   fit(cur, 'behind');
   requestAnimationFrame(() => requestAnimationFrame(() => { cur.classList.remove('wait'); fit(cur, 'stage'); }));
-  if (old) { old.classList.add('out'); fit(old, 'gone'); setTimeout(() => old.remove(), 1200); }
+  if (old) { old.classList.add('out'); fit(old, 'gone'); setTimeout(() => old.remove(), 900); }
   seen.add(at);
   $('#count').textContent = String(at + 1).padStart(3, '0') + ' / ' + pages.length + '  ·  ' + group(p).toUpperCase();
   $('#name').innerHTML = '<span></span>'; $('#name span').textContent = label(p) + (p.members ? '  ·  ' + p.members + ' pages share this design' : '');
@@ -153,20 +155,23 @@ function show(i, dir = 1) {
   $('#bar i').style.width = '0';
   lastT = 0;
   // preload the next page behind, after this one has settled, so the next fly-in is instant
-  setTimeout(() => { if (cur && cur.page === p && !nxt) { nxt = frame(pages[(at + 1) % pages.length]); fit(nxt, 'behind'); } }, 3500);
+  setTimeout(() => { if (cur && cur.page === p && !nxt) { nxt = frame(pages[(at + 1) % pages.length]); fit(nxt, 'behind'); } }, 600);
 }
 function tick(t) {
   raf = requestAnimationFrame(tick);
   if (!cur || !cur.classList.contains('ready')) { lastT = t; return; }
-  const dt = lastT ? Math.min(t - lastT, 100) : 0; lastT = t;
+  const dt = lastT ? Math.min(t - lastT, 1000) : 0; lastT = t; // wall-clock time, so a slow machine still keeps ~6 s a page
   const w = scrollerOf(cur); if (!w) return;
   const el = w.document.documentElement, max = Math.max(1, el.scrollHeight - w.innerHeight), y = w.scrollY;
   $('#bar i').style.width = Math.min(100, (y / max) * 100) + '%';
-  if (!playing || performance.now() - held < 4000) return;
-  if (y >= max - 2) { if (!cur.endAt) cur.endAt = t; if (t - cur.endAt > 1400) { cur.endAt = 0; show(at + 1); } return; }
-  if (cur.startAt === undefined) cur.startAt = t;
-  if (t - cur.startAt < 2200) return; // let the hero play before moving
-  const to = y + (PX * SPEEDS[speed] * dt) / 1000;
+  if (!playing) return;
+  if (performance.now() - held < 2500) { cur.p = unease(y / max); return; } // the viewer is driving; pick up from where they leave it
+  const k = SPEEDS[speed];
+  cur.wait = (cur.wait || 0) + dt * k;
+  if (cur.wait < HOLD) return; // let the hero play first
+  if ((cur.p || 0) >= 1) { if (cur.wait > HOLD + SCROLL + END) show(at + 1); else cur.wait = Math.max(cur.wait, HOLD + SCROLL); return; }
+  cur.p = Math.min(1, (cur.p || 0) + (dt * k) / SCROLL);
+  const to = ease(cur.p) * max;
   if (w.__lenis) w.__lenis.scrollTo(to, { immediate: true }); else w.scrollTo(0, to);
 }
 function setPlay(v) { playing = v; $('#b-play').setAttribute('aria-pressed', v); $('#b-play').textContent = v ? 'Playing' : 'Paused'; }
@@ -216,7 +221,7 @@ $('#b-play').onclick = () => setPlay(!playing);
 $('#b-prev').onclick = () => show(at - 1, -1);
 $('#b-next').onclick = () => show(at + 1);
 $('#b-phone').onclick = () => setPhone(!phone);
-$('#b-speed').onclick = () => { speed = (speed + 1) % SPEEDS.length; $('#b-speed').textContent = SPEEDS[speed] + '×'; };
+$('#b-speed').onclick = () => { speed = (speed + 1) % SPEEDS.length; $('#b-speed').textContent = Math.round((HOLD + SCROLL + END) / 1000 / SPEEDS[speed]) + ' s a page'; };
 $('#b-idx').onclick = () => openIdx(true);
 $('#idx-close').onclick = () => openIdx(false);
 $('#q').addEventListener('input', (e) => filter(e.target.value));
