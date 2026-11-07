@@ -183,7 +183,7 @@ function CliScene({ p, on }) {
   const k = useStepOf(p, CLI.length, on);
   return (
     <div className="dn-sc dn-sc-cli" data-k={k}>
-      <CodeBlock code={CLI_CODE} label="terminal" prompt />
+      <CodeBlock code={CLI_CODE} label="terminal" />
     </div>
   );
 }

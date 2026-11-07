@@ -390,3 +390,5 @@
 }
 /* phones: the answer keeps the height of its longest (two-line) form, so a shorter answer never pulls the page up */
 @media (max-width: 899px) { .dn-ans { min-height: 88px; align-content: flex-start; } }
+/* the CLI: each command is one plain line (copy rule, 8 Nov); its "$" is drawn, not part of the text */
+.dn-sc-cli .x-codeblock-l:not(.c)::before { content: '$ '; color: rgba(255, 255, 255, .55); }
