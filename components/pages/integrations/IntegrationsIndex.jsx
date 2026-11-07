@@ -17,6 +17,7 @@ import { Copy } from '../../ui';
 import { A, More } from '../../kit';
 import { Loose } from '../models/parts';
 import Logo from './logos';
+import { landAtTop } from './intParts';
 import '../../v2/ProofScale.css';
 import '../../v2/ProofRhythm.css';
 import './IntegrationsIndex.css';
@@ -253,7 +254,7 @@ function Catalogue({ groups, label, previews = {} }) {
     document.getElementById('xii-f-' + i)?.focus();
   };
   return (
-    <section className="pf-sec xii-cat" id="all" aria-labelledby="xii-cat-h">
+    <section className={'pf-sec xii-cat' + (hg ? ' hg' : '')} id="all" aria-labelledby="xii-cat-h">
       <div className="xii-hg" ref={hgRef} data-on={hg ? '' : undefined} style={hg ? { '--dist': dist + 'px' } : undefined}>
       <div className="xii-hg-pin">
       <div className="pf-wrap">
@@ -387,7 +388,7 @@ export default function IntegrationsIndex({ doc, previews }) {
   const cards = doc.groups.flatMap((g) => g.cards);
   const [held, setHeld] = useState(false);
   return (
-    <main className="xin xii pf-r">
+    <main className="xin xii pf-r" onClickCapture={landAtTop}>
       <section className="xii-hero" aria-labelledby="xin-h1">
         <div className="pf-wrap pf-grid xii-hero-g">
           <div className="xii-hero-a">

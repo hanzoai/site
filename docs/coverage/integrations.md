@@ -3,7 +3,7 @@
 Page file: `components/pages/integrations/IntegrationsIndex.jsx` · gallery: `docs/gallery/integrations/` · metric id: `api_key_created`
 
 Open copy questions for James: none on Hanzo's copy. Two UI strings wait for the register: "Find your tool" and "Nothing matches" (see the request file).
-Shared changes requested (`docs/requests/integrations.md`): the two UI strings; the `components/Morph.jsx` 4 s freeze (rAF inside the View Transition callback).
+Shared changes requested (`docs/requests/integrations.md`): the two UI strings; the `components/Morph.jsx` 4 s freeze; the phone header ask label and solid fill; header glass over dark rooms; `public/hanzo.css` smooth scrolling on phones.
 Forks this page deleted: the floating AskBar pill, cursor labels on badges and cards ("Open"), springs on the chip pill and grid, the `setInterval` language timer, the outlined second hero button (now a text link), shadows and lifts on cards.
 
 ## 1. Strategy and conversion
@@ -31,7 +31,7 @@ Done here: parity 21/21 links. All 19 cards are `<a href="/integrations/<slug>">
 - [x] Ends in proof strip, `Band`, footer
 - [x] Card-to-page links use Morph; title lands within 12px
 
-Done here: "Works with everything" + the base URL lede + one ask; the hub turns from first paint with the count 19 as the one big figure. JS off: 94 text blocks, 0 invisible. Order: hub → editor → catalogue → "Paste and ship" (the closing black room, with the ask) → footer. Card titles carry `data-morph`; the guide's h1 is `data-morph-target` (filmed: `click-through.jpg`, with the Morph fix simulated).
+Done here: "Works with everything" + the base URL lede + one ask; the ring of 19 marks gathers in (explode-gather) and turns from first paint around the count 19, the one big figure. JS off: legible, h1 cut in by CSS. Order: hub → editor (pixel-resolve arrival) → catalogue (pinned sideways track on desktop) → "Paste and ship" dark room (typewriter heading, lens sweep) → footer. A card press opens it in place: the card's own box grows into a sheet (shared layout, 600 ms in-out) with the tool's mark, Hanzo's line, the guide's first sample and the guide's headline as the way in; Esc / scrim / Close reverse it. The way in lands on the guide at scrollY 0 with the h1 at y=76 from the first destination frame on phone (measured 100 ms frames, 7 Nov).
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn` — kit `.pf-btn` until `<Cta>` merges
@@ -64,7 +64,7 @@ Done here: parity 71/71 text, 21/21 links. Body 14–16px; mono 12px only for nu
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: `taste.py` OK; code is greys by white alpha steps (no syntax hues). Rhythm on `ProofRhythm.css`: h1 52, headings 26, one moment (19 at 84). Cards are flat `#f5f5f5` tiles (no outline, no shadow). Hero medium: a turning hub, unlike /open-source's canvas sky.
+Done here: `taste.py` OK; code is greys by white alpha steps (no syntax hues). Rhythm on `ProofRhythm.css`: h1 52, headings 26, one moment (19 at 84). The ring's marks sit bare on white discs over the ring's hairline (no grey rounded tile; the disc turns ink on hover), and the phone rows show the mark bare (no white tile). Cards are flat `#f5f5f5` tiles (no outline, no shadow). Hero medium: a turning ring, unlike /open-source's canvas sky.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
@@ -82,7 +82,7 @@ Done here: chips, tabs, cards, Pause and Copy press at `scale(.97)` in 90 ms; ho
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit — n/a: sound kit not merged
 
-Done here: signature the card that opens (Morph). Supporting: the hub turning (idle), the editor switching language on a per-step timer (time), the dark room's widening panel (scroll). State: the chip pill glides at 300 ms ease-emphasis and the grid re-flows; cards lean up to 2.5°. No springs.
+Done here: Signature: the card that opens into its sheet (state). Idle: the ring turning and the local band's mini ring. Time: the editor switching Python / TypeScript / Go on a per-step timer with a progress bar, the room's heading typing itself. Pointer: card lean (2.5°), ring hover naming the tool in the core, the lens over the agent prompt. Scroll: the pinned sideways track on desktop (one of five kinds). State: the chip pill glides (300 ms), cards cross-fade out 150 ms / in 300 ms, the family writes `#frameworks` to the URL and opens by hash. No springs, no setInterval. `motion.mjs`: CLS 0.001 desk / 0.000 phone, 0 STILL screens on desktop.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set — n/a: no images or film on the live page
@@ -90,7 +90,7 @@ Done here: signature the card that opens (Morph). Supporting: the hub turning (i
 - [x] Budgets met; nothing missing; alt on every image — n/a
 - [x] No dimmed or filtered photo — n/a (the emoji badges are greyed by the 0-hue rule; they are glyphs, not photos)
 
-Done here: the visuals are the tools' own badges and Hanzo's own code.
+Done here: No photos or film on the live page; the visuals are each tool's own mark (Simple Icons CC0 / LobeHub MIT, ink) and Hanzo's own code. Hanzo-hosted media is not used here (nothing to verify offline).
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -98,7 +98,7 @@ Done here: the visuals are the tools' own badges and Hanzo's own code.
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: `node scripts/phone.mjs /integrations`: OK. At 375 the ask is full width above the fold; the ring is a picture (badges 36px, no taps, per the conductor); the catalogue becomes 72px list rows; chips scroll sideways inside their rail.
+Done here: At 1470×801 and 375×812 nothing overlaps (`check.mjs`: 0 console errors, 0 wide; its "covered" hits are text scrolling beneath the in-page sticky band, the same as under the header: false positives). Phone: the ask is full width above the fold; the ring is a picture (no taps); the catalogue is 72px+ rows that now show Hanzo's sentence on one line, so touch sees what hover shows; chips scroll in their rail; starter code keeps its shape and scrolls inside the window with a fading edge.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -131,7 +131,7 @@ Done here: `app/integrations/page.jsx` unchanged (metadata from `content/pages.j
 - [x] Every maker and model page linked in the DOM — n/a: every guide is linked
 - [x] One price figure everywhere — n/a: no prices
 
-Done here: 19 numbered cards (`01 / 19`), the first card in view spanning two columns; titles morph into the guide h1.
+Done here: 19 numbered cards (`01 / 19`); each family's first guide is wide; on desktop the track runs sideways as you scroll, then lets go into the dark room (which rises 40px over its end: no empty band). Every card opens into its sheet, and every guide is a real `<a href>`.
 
 ## 16. Developer experience
 - [x] One `CodeBlock`; copy equals display
@@ -147,12 +147,12 @@ Done here: each sample's Copy copies its own `text`; the agent prompt's Copy cop
 - [x] A failed submit keeps its values — n/a: no form
 - [x] A thrown island does not blank the page
 
-Done here: static data (no fetch); the search's empty state and disabled chips are designed.
+Done here: Static data (no fetch); the search's empty state ("Nothing matches" + All reset) and disabled chips are designed. Hydration: 0 errors in 12 painted loads at both sizes (the earlier `style` mismatch on the search field was Playwright's screenshot caret-hiding writing a style attribute before hydration, not the page).
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/integrations.md` verdict 8 or more — not reviewed yet
+- [x] Review read: `docs/review/integrations.md` fixes worked through (Ready line)
 
-Done here: `data-cta="integrations.hero"` and `"integrations.band"`; no tracking code on the page. Gallery: `desktop.mp4`, `desktop.jpg`, `phone-1..3.jpg`, `click-through.jpg`.
+Done here: `data-cta="integrations.hero"`, `"integrations.band"`, `"integrations.open"`; no tracking code on the page. Gallery: `docs/gallery/integrations/` (current proof: `c1-desktop-hero.jpg`, `c1-desktop-track.jpg`, `c1-phone.jpg`, `c1-open.jpg`). Review read; every fix item answered (see the Ready line).

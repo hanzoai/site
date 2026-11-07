@@ -28,6 +28,17 @@ export function splitSample(sample) {
   return { caption: code.lines.slice(0, k).map((l) => lineText(l).trim()), code: { ...code, lines, text: lines.map(lineText).join('\n').trim() } };
 }
 
+/* a press on a link to another page lands on that page's top at once. Hanzo's own stylesheet asks for smooth
+   scrolling, which on a phone (no Lenis) would show the new page at the old offset and then glide it up; for the length
+   of the page change only, the jump is instant. Used as onClickCapture on the page's <main>. */
+export function landAtTop(e) {
+  const a = e.target.closest && e.target.closest('a[href^="/"]');
+  if (!a || new URL(a.href).pathname === location.pathname) return;
+  const h = document.documentElement;
+  h.style.scrollBehavior = 'auto';
+  setTimeout(() => h.style.removeProperty('scroll-behavior'), 1500);
+}
+
 /* the code itself: numbered lines, tokens set apart by weight and grey, Hanzo's lines marked in the gutter */
 export function Lines({ code, only, typed, label }) {
   return (
@@ -36,9 +47,16 @@ export function Lines({ code, only, typed, label }) {
         {code.lines.map((l, j) => {
           const hz = HANZO.test(lineText(l));
           const h = hz ? code.lines.slice(0, j).filter((x) => HANZO.test(lineText(x))).length : 0; // its turn among Hanzo's lines
+          // the line's own indent sits in its own span, so a phone can draw it as a hanging indent instead (same text)
+          const lead = lineText(l).match(/^[ \t]*/)[0];
+          const ind = lead.length < lineText(l).length ? lead.replace(/\t/g, '    ').length : 0; // a blank line has none
+          let cut = ind ? lead.length : 0;
+          const toks = cut ? l.map(([k, x]) => { const take = Math.min(cut, x.match(/^[ \t]*/)[0].length); cut -= take; return [k, x.slice(take)]; }) : l;
+          const style = hz || ind ? { ...(hz ? { '--h': h } : {}), ...(ind ? { '--ind': ind } : {}) } : undefined;
           return (
-            <span key={j} className={'xig-ln' + (hz ? ' hz' : '')} style={hz ? { '--h': h } : undefined}>
-              {l.length ? l.map(([k, x], n) => <span key={n} className={'c-' + k} data-t={typed && hz ? '' : undefined}>{x}</span>) : ' '}{'\n'}
+            <span key={j} className={'xig-ln' + (hz ? ' hz' : '')} style={style}>
+              {ind > 0 && <span className="xig-ind">{lead}</span>}
+              {l.length ? toks.map(([k, x], n) => (x ? <span key={n} className={'c-' + k} data-t={typed && hz ? '' : undefined}>{x}</span> : null)) : ' '}{'\n'}
             </span>
           );
         })}
@@ -126,7 +144,7 @@ export function Editor({ sample, only, setOnly, aside, name, face }) {
       <div className="xig-ed-bar">
         <span className="xig-dots" aria-hidden="true"><i /><i /><i /></span>
         <span className="xig-tab">{sample.title}</span>
-        {sample.lang && sample.lang.toLowerCase() !== sample.title.toLowerCase() && <span className="x-mono xig-lang">{sample.lang}</span>}
+        {sample.lang && <span className={'x-mono xig-lang' + (sample.lang.toLowerCase() === sample.title.toLowerCase() ? ' same' : '')}>{sample.lang}</span>}
         <span className="xig-ctl-slot">{ctl}</span>
         {code && <Copy text={code.text} label={ui('int_copy')} className="xig-copy" />}
       </div>
@@ -157,7 +175,7 @@ export function CodeCard({ sample, only, Loose, name, tabs, at }) {
           ))}
         </span>
         <span className="xig-card-t">{sample.title}</span>
-        {sample.lang && sample.lang.toLowerCase() !== sample.title.toLowerCase() && <span className="x-mono xig-lang">{sample.lang}</span>}
+        {sample.lang && <span className={'x-mono xig-lang' + (sample.lang.toLowerCase() === sample.title.toLowerCase() ? ' same' : '')}>{sample.lang}</span>}
         {code && <Copy text={code.text} label={ui('int_copy')} className="xig-copy" />}
       </div>
       {caption.map((c) => <p key={c} className="xig-cap x-mono">{c}</p>)}
