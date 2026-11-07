@@ -90,7 +90,7 @@ html.js .xgr-static { display: none; }
 .xgr-sheet.s1 .xgr-fact-big:not(.num) { color: #a3a3a3; }
 .xgr-gets-g.xp-obj { border: 0; padding-left: 0; padding-right: 0; background: transparent; }
 .xgr-how { padding-top: clamp(56px, 6vw, 88px) !important; }
-.xgr-gets { padding-bottom: clamp(56px, 6vw, 88px) !important; }
+.xgr-gets { padding-top: clamp(72px, 8vw, 116px) !important; padding-bottom: clamp(56px, 6vw, 88px) !important; }
 .xgr-file dl > div:not(.on):not(:nth-child(-n + 3)) { display: none; }
 .xgr-way-m { margin: 0; font-size: 14px; color: var(--soft); }
 .xgr-sheet.s1 .xgr-way-m { color: #a3a3a3; }
@@ -122,8 +122,8 @@ html.js .xgr-static { display: none; }
 .xgr-tracks button:focus-visible { outline: 2px solid var(--xp-accent); outline-offset: 1px; }
 @media (hover: hover) { .xgr-tracks button:hover { color: var(--ink); } }
 .xgr-tracks button:active { transform: scale(.97); }
-.xgr-tracks span { position: relative; }
-.xgr-track-bg { position: absolute; inset: 0; border-radius: 12px; background: #fff; border: 1px solid var(--hz-300); }
+.xgr-tracks button > span:not(.xgr-track-bg) { position: relative; }
+.xgr-tracks .xgr-track-bg { position: absolute; inset: 0; border-radius: 12px; background: var(--hz-white); border: 1px solid #0a0a0a; }
 .xgr-f { display: grid; gap: 10px; }
 .xgr-f label { font: 497 15px/1.3 var(--sans); color: var(--ink); }
 .xgr-f .x-input2 { width: 100%; box-sizing: border-box; height: 56px; border-radius: 12px; }

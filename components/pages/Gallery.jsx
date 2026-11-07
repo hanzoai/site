@@ -81,7 +81,7 @@ function Body({ i, on }) {
 
 /* Stepping up to a frame: it opens large from the frame you clicked; arrows change what it shows (a crossfade), so
    closing flies back to the same frame. Escape closes, focus stays inside and comes back to the frame. */
-function Viewer({ at, from, ver, setAt, close }) {
+function Viewer({ at, stepped, origin, setAt, close }) {
   const x = useRef(null);
   const box = useRef(null);
   useEffect(() => {
@@ -102,7 +102,9 @@ function Viewer({ at, from, ver, setAt, close }) {
   return (
     <motion.div ref={box} className="xga-view" role="dialog" aria-modal="true" aria-label={t} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} onClick={(e) => e.target === e.currentTarget && close()} data-lenis-prevent>
       {/* it morphs only while it shows the frame it opened from; after stepping, closing is a clean fade (no double image) */}
-      <motion.div className="xga-view-in" layoutId={at === from ? 'xga-f' + from + '-' + ver : undefined} transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}>
+      {/* it grows out of the frame you clicked (its centre is the origin) and shrinks back the same way; a plain
+          transform, so nothing on the wall is ever projected or flown */}
+      <motion.div className="xga-view-in" style={{ transformOrigin: origin }} initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: stepped ? 0.96 : 0.6 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}>
         <AnimatePresence mode="wait" initial={false}>
           <motion.div key={at} className="xga-view-body" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
             <div className={'xga-view-art' + (at === 1 || at === 3 ? ' dk' : '')}><Render i={at} on /></div>
@@ -146,12 +148,18 @@ function Wall() {
     document.documentElement.style.overflow = 'hidden'; window.__lenis?.stop();
     return () => { document.documentElement.style.overflow = ''; window.__lenis?.start(); };
   }, [open >= 0]); // eslint-disable-line react-hooks/exhaustive-deps
-  const [ver, setVer] = useState(0); // a fresh shared-layout id after a stepped close, so no frame ever flies from a stale box
-  const close = () => {
-    const i = from;
-    if (open === from) { setOpen(-1); setTimeout(() => { setFrom(-1); document.getElementById('xga-f' + i)?.focus(); }, 650); return; }
-    setLit(i); setOpen(-1); setVer((v) => v + 1); setFrom(-1); // stepped away: a plain fade, the wall stays put
-    setTimeout(() => document.getElementById('xga-f' + i)?.focus(), 50);
+  // once you step to another template, nothing on the wall shares a layout id with the viewer until it has gone:
+  // the close is then a plain fade and no frame can fly from a stale box
+  const [stepped, setStepped] = useState(false);
+  const step = (f) => setOpen((v) => { const n = typeof f === 'function' ? f(v) : f; if (n !== from) setStepped(true); return n; });
+  const close = () => { if (stepped) setLit(open); setOpen(-1); };
+  const [origin, setOrigin] = useState('50% 50%');
+  const gone = () => { const i = from; setFrom(-1); setStepped(false); document.getElementById('xga-f' + i)?.focus(); };
+  const openFrom = (i, el) => {
+    const r = el.getBoundingClientRect(); // the viewer's box is centred in the screen: its origin is the frame's centre
+    const w = Math.min(1100, innerWidth - 48), h = Math.min(innerHeight - 48, 640);
+    setOrigin(`${Math.round(r.left + r.width / 2 - (innerWidth - w) / 2)}px ${Math.round(r.top + r.height / 2 - (innerHeight - h) / 2)}px`);
+    setLit(i); setFrom(i); setOpen(i);
   };
   return (
     <section className="xga-wall-sec" ref={box} aria-labelledby="xga-h1" data-morph-target>
@@ -188,9 +196,8 @@ function Wall() {
               key={t}
               id={'xga-f' + i}
               type="button"
-              layoutId={from === i ? undefined : 'xga-f' + i + '-' + ver}
               className={'xga-frame f' + i + (lit === i ? ' lit' : '')}
-              onClick={() => { setLit(i); setFrom(i); setOpen(i); }}
+              onClick={(e) => openFrom(i, e.currentTarget)}
               onPointerEnter={(e) => { if (e.pointerType === 'mouse') { setHold(true); setLit(i); } }}
               onPointerLeave={() => setHold(false)}
               onFocus={() => { setHold(true); setLit(i); }}
@@ -216,7 +223,7 @@ function Wall() {
         </div>
         </Settle>
       </div>
-      <AnimatePresence>{open >= 0 && <Viewer at={open} from={from} ver={ver} setAt={setOpen} close={close} />}</AnimatePresence>
+      <AnimatePresence onExitComplete={gone}>{open >= 0 && <Viewer at={open} stepped={stepped} origin={origin} setAt={step} close={close} />}</AnimatePresence>
     </section>
   );
 }

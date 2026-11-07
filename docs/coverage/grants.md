@@ -74,7 +74,7 @@ Done here: `taste.py` passes (deck greys only); nothing above a headline; object
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: `x-btn` buttons (now kit `Cta`), raw inputs (now kit `Field`), the pill label on the art, the track chip's box-plus-shadow, step hover lifts, oversized 12rem numbers and 36px list titles. listed below
 
-Done here: Kit `Cta` and `Field` states (hover, press .97, focus ring, busy, dashed invalid); the track radios glide, answer hover and press, arrow keys move between them; the pause control has hover, press and focus.
+Done here: Kit `Cta` and `Field` states (hover, press .97, focus ring, busy, dashed invalid); the track radios' chip glides (round 4: a selector bug had shrunk it to 2×20px; it now measures 201×50 at 1470), answer hover and press, arrow keys move between them; the pause control has hover, press and focus.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups

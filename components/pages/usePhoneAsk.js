@@ -18,7 +18,7 @@ const solid = (el) => {
   const [r, g, b, a = 1] = rgb(getComputedStyle(el).backgroundColor);
   if (a < 0.6 || r === undefined) return false;
   const sum = r + g + b;
-  return sum < 180 || (sum > 690 && !!el.closest('[data-room=dark]'));
+  return sum < 180 || (sum > 690 && el.closest('[data-room]')?.getAttribute('data-room') === 'dark'); // the nearest room decides
 };
 
 export default function usePhoneAsk() {
@@ -54,7 +54,8 @@ export default function usePhoneAsk() {
     };
     const onScroll = () => { clearTimeout(t); clearTimeout(t2); t = setTimeout(update, 80); t2 = setTimeout(update, 800); }; // again once the bar has settled
     addEventListener('scroll', onScroll, { passive: true });
-    const timers = [250, 1400, 2800].map((ms) => setTimeout(update, ms));
+    update(); // at once, so the header is never solid beside the hero's ask on arrival
+    const timers = [120, 400, 1400, 2800].map((ms) => setTimeout(update, ms));
     return () => {
       clearTimeout(t); clearTimeout(t2); timers.forEach(clearTimeout); removeEventListener('scroll', onScroll);
       delete H.dataset.pq;

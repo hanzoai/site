@@ -1,121 +1,110 @@
 # /gallery — James-eye review
 Verdict: 6/10
-First complaint: "I tapped a picture on my phone, then hit the little cross to close it and it threw me off to another website. The cross is sitting under the menu bar, and the menu's button is cut off the edge of the screen anyway."
+First complaint: "I clicked a template, flicked to the next one with the arrow, closed it, and the old one came flying back huge across the top of the page with the other one still see-through behind it. And at the bottom on my phone the little windows are sitting on top of each other with the words cut off."
 
-Walked 7 Nov 2026 (critic round 3), HEAD `58089a04`, at 1470×801 (fine pointer) and 375×812 (isMobile, hasTouch), plus 320, 375×667, reduced motion and JS off. api.hanzo.ai was blocked; no form or message was sent.
+Walked 7 Nov 2026 (critic round 4), HEAD `28a731ae`, at 1470×801 (fine pointer) and 375×812 (isMobile, hasTouch), plus 320×640, 375×667, reduced motion and JS off. api.hanzo.ai was blocked; no form or message was sent.
 
 ## What works
-- **The wall now holds the title.** "Gallery" (52px) and the lede and ask sit on the silver wall, and the hang starts at y=362. That separates it from /templates' head.
-- **It is alive with no input.**
-  - Arrival and idle bursts changed in 7 of 7 frames at both sizes.
-  - The light steps 1→2→3 every 2.8 s, and the plaque reads out the lit template.
-  - Hovering a frame holds the light: frame 03 stayed lit for 3.2 s.
-- **Frames read better as apps.**
-  - The unlit renders rest at .72, not .42.
-  - Each frame has window chrome (three dots).
-- **The Moves stage no longer shifts the page.**
-  - Desktop steps 0→1→2 by itself.
-  - Phone: the stage y held at 27 across 4 steps, with an idle CLS of 0.
-  - The whole-walk CLS is 0.0010 on desktop and 0.0009 on phone.
-- **The viewer has weight.** Its h3 is 44px, with an index to jump between templates. Esc returns focus to `xga-f2`. A plain open and close (frame 05) is clean.
-- **Hover and press answer.**
-  - Hero ask: #0a0a0a→#2c2c2e, magnetic, press scale .98.
-  - Move rows: 4% fill on hover.
-  - Viewer index rows: #f5f5f5 fill on hover.
-- **Desktop has one ask.** Only the hero is solid on the first screen. The header goes solid "Browse the Gallery" mid-page, then outline at the dark close. No floating bar.
-- **Phone first screen:** the header "Try Hanzo" is outlined and the hero ask is the only solid. The ask's bottom is at 365 on 375×667.
+- **The round-3 phone trap is fixed.**
+  - The viewer's × (307,36, 44×44) now hit-tests as the button.
+  - A tap closes the viewer and the URL stays `/gallery/`.
+  - ‹ › × sit at the top of the sheet, clear of the header.
+- **The phone header is fixed.** It keeps "Try Hanzo" (x 262–352), with nothing clipped. It is outlined while the hero ask shows and solid after.
+- **The tiles are flat.** Frames carry only a 1px inset line at black 6%. The lit frame gets a 1.5px ink inset line.
+- **Alive with no input.**
+  - 8 of 8 idle frames differed at both sizes.
+  - The plaque steps 01→02→03 about every 2.8 s, and the Zen film plays.
+- **Hover holds the light.** Pointing at frame 05 held "05 / 06 Searchable" on the plaque for 3.5 s.
+- **The hero ask answers.** It goes #0a0a0a→#2c2c2e on hover and scales to .98 on press, with no opacity change. The move rows take a 4% fill on hover.
+- **The viewer has weight.**
+  - The h3 is 44px, with an index to jump between templates.
+  - Tab stayed inside it for 14 of 14 presses.
+  - Esc returns focus to `#xga-f2`.
+  - A plain open (`g/d-open3.png`) is clean.
+- **Copy is exact.** The clipboard got "Read https://hanzo.ai/skill.md and use Hanzo Gallery in my project."
 - **Edge cases pass.**
-  - Reduced motion: 0 running animations, 0 of 4 frames change, and the prompt is fully typed (67 characters).
-  - JS off: 0 headings or frames below opacity 1.
-  - At 320 the html scrollWidth is 320.
+  - Reduced motion: 0 running animations, 1 distinct frame out of 4, and the video paused.
+  - JS off: h1 present, 0 headings, paragraphs or frames below opacity 1.
+  - At 320 the scrollWidth is 320.
   - 0 targets under 44px in `<main>` at 375.
+  - The ask's box is 312–365 on 375×667.
+- **CLS:** 0.0007 on desktop and 0.0012 on phone over a full walk.
 
 ## The 11 answers
-1. **Sells in 5 s, moves within 1 s?**
-   - Yes on motion: 7/7 frames changed on arrival at both sizes.
-   - Selling is fair. The h1 is just "Gallery", but the Zen film plaque and six app-shaped frames say "templates" quickly.
-2. **One in, one out?** Partly.
-   - Wall → Moves (one changing window) → typed prompt → dark close: four distinct rooms.
-   - Nothing is pinned or exits as the next arrives, though, so it still reads as stacked sections.
-3. **A real object in every section?** Yes: film plus frames, the browser window, the prompt box, and the wall in miniature.
-   - The viewer and Moves renders are still sparse: three words and a pill in a large empty grey pane (`d-open.png`: "Deploy to Cloud" + 3 ticks in a ~610×630 panel).
-4. **One ask, nothing floating, rhythm?**
-   - **Desktop:** yes.
-   - **Phone:** the header's swapped ask "Browse the Gallery" spans x 262–408 on a 375 screen. It is clipped off the right edge (36px off-screen) at every scroll position from y=600 to the end.
-   - **Scale:** h1 52, h2 26, viewer h3 44 as the moment. Good rhythm.
+1. **Sells in 5 s, moves within 1 s?** Yes.
+   - The h1 "Gallery" is 52px at y 236 on desktop, with the ask at 265.
+   - The Zen plaque and six app-shaped frames are on the first screen.
+   - The frames change from the first burst on.
+2. **One in, one out?** Partly. The wall, the Moves stage, the prompt and the dark close are four distinct rooms. Nothing is pinned or exits as the next arrives, so it still scrolls as stacked sections. The prompt room is mostly empty white at 1470: one typed line in a ~830×340 box.
+3. **A real object in every section?** Yes: the film plus frames, the browser window (repo, deploy, PR), the prompt box and the wall in miniature.
+4. **One ask, nothing floating, rhythm?** Yes.
+   - Desktop has one solid per screen: the hero, then the header's "Browse the Gallery" mid-page, outlined again at the dark close. There is no floating bar.
+   - Scale steps h1 52, h2 26, viewer h3 44.
+   - One blip: on the first arrival frame (300 ms) the header's "Try Hanzo" is still solid beside the hero ask, until `usePhoneAsk` runs (`f/d-arr0.png`).
 5. **Every hover and press answers, no jumps?** No.
-   - **Desktop, close after stepping** (open 03, → to 04, Esc):
-     - At 110 ms, a see-through double exposure: the "Open Source" viewer text over the hero lede and ask (`d-close-0.png`).
-     - At 220 ms, frame 03 ("Deploy in One Click") flies back oversized and stretched, with distorted type, over the plaque and hero (`d-close-1.png`).
-     - The plaque reads 04 during the flight, then 03.
-   - **Phone:** the viewer's × is unreachable. `elementFromPoint` at × (y 36–80) returns `HEADER` (header z 300, viewer z 90). Tapping it hit the header's "Browse the Gallery" and navigated away (the URL left the page).
-6. **Overlap, font swap, layout shift?**
-   - No font swap and no layout shift.
-   - **Overlap:**
-     - The phone viewer's controls sit under the sticky header.
-     - Phone close, the miniature wall: tiles m0/m3 and m2/m5 overlap by 4px, and their renders are clipped ("ship a branded", the chips cut at the top, the m4 chrome dots over "Filter by").
-     - The phone header ask runs off-screen.
+   - **Desktop: open 03, → to 04, Esc.**
+     - At 80 ms, "Open Source" fades at full viewer size while frame 03 flies back oversized (about 930×500, stretched type) over the hero lede, the ask and the plaque (`g/d-close0.png`).
+     - Frame f2 measures 470×164 against its 460×156 slot at that moment.
+     - It then lands on 03 lit, not 04.
+   - **Phone:** the same flow closes almost cleanly. A faint ghost of frame 01's text shows (`g/m-close0.png`).
+6. **Overlap, font swap, layout shift?** No font swap, and CLS is fine. Overlaps remain:
+   - **Phone dark close, the miniature wall:** tiles [0,3] and [2,5] still overlap by 108×4px (`g/m-mini.png`). The renders are clipped: the m0 chips are cut at the top, "ship a branded" is cut mid-line, and the m4 chrome dots sit over "Filter by".
+   - **Desktop:** the stepped-close flight above.
 7. **Reference?**
-   - osply/hamol in the salon hang and the hover-held light: present.
-   - synchronized.studio in the frame-to-viewer morph: good on a plain open, broken after stepping.
+   - osply/hamol: the salon hang and the hover-held light are present.
+   - synchronized.studio: the morph works on a plain open and close, but is broken after stepping.
    - apple: no pinned or scrubbed scene.
-8. **Different from neighbours?** Yes now. The title hangs on the wall, unlike /templates' Business 2 head.
+8. **Different from neighbours?** Yes: a wall-hung title, a film plaque and a walking light. It is unlike /templates.
 9. **18 parts?** Mostly, but:
-   - the dialog is not native;
-   - frames, the Moves window and the prompt box are raised with shadows (part 7 says tiles are flat);
-   - the card has false claims (below).
+   - the viewer is a `role=dialog` div, not native `<dialog>` (honestly unticked on the card);
+   - there is no kit `Band` or `PageHero` (also unticked);
+   - parts 11, 15 and 17 make false claims (below).
 10. **Banned tells?**
-    - **Yes:** overlap (the phone viewer under the header; the mini tiles; the oversized frame flying across the hero after stepping).
-    - **No:** hue, eyebrow above a headline, fading buttons, cursor label, three equal boxes, or default controls.
-11. **Copy untouched?** Yes. The renders are aria-hidden fragments of Hanzo's sentences. The open copy question is correctly left for James.
+    - **Yes:** overlap (the phone mini wall; the desktop frame flying over the hero after stepping). The dev "1 Issue" red badge (a hydration mismatch) shows on cold loads.
+    - **No:** hue, eyebrow over a headline, fading buttons, cursor label, three equal boxes, or default controls.
+11. **Copy untouched?** Yes. The renders are aria-hidden fragments of Hanzo's sentences. The open copy question is left for James.
 
 ## Card check (docs/coverage/gallery.md)
 - **True:**
-  - header comment;
-  - LineMask h1 with nothing above it;
-  - JS off legible;
-  - Moves never change height (phone idle CLS 0);
-  - CLS figures (measured 0.0010 and 0.0009);
-  - h3 44px;
-  - whoosh on frames (`data-sound="whoosh"`);
-  - reduced motion is final;
-  - Esc returns focus;
+  - header comment with metric;
+  - one h1, nothing above it;
+  - one solid per screen;
+  - `data-cta` gallery.hero, gallery.viewer, gallery.close;
+  - copy equals display;
+  - flat tiles;
+  - focus trap, and Esc returns focus to the frame;
+  - phone viewer above the header, and × closes it;
   - 0 targets under 44px;
-  - scrollWidth 320 at 320;
+  - scrollWidth 320;
   - ask above the fold at 375×667;
   - one video;
-  - the pause stops the film, light and stage;
-  - one solid on the phone's first screen.
+  - pause stops the film and light;
+  - reduced motion is final;
+  - JS off is legible;
+  - CLS small (measured 0.0007 and 0.0012);
+  - parity claims not contradicted.
 - **False:**
-  - **Part 15** says that after stepping it "closes by a plain fade … so nothing doubles or flies across the wall". Measured: a double exposure, then frame 03 flies oversized over the hero (`d-close-0/1.png`).
-  - **Part 11** says "375×812 … pass with no overlap". Wrong on two counts:
-    - the mini tiles overlap 4px ([0,3], [2,5]);
-    - the viewer's ‹ › × sit under the sticky header.
-  - **Part 8** says "Esc and the × close". On phone the × cannot be tapped; the tap lands on the header ask and leaves the page.
-- **Partly false:** part 17 says "0 console errors". 2 of 5 loads showed a hydration-mismatch console error and the red "1 Issue" badge (the 3 later loads were clean).
-- A false claim caps the verdict at 7. The phone viewer trap takes it to 6.
+  - **Part 15** says that after stepping "it closes by a plain fade … no frame flies from a stale box (round 3 … the wall is still)". Measured at 80 ms after Esc, frame 03 flies oversized across the hero, over a see-through "Open Source" viewer (`g/d-close0.png`).
+  - **Part 11 and the commit message** say "375×812 … no overlap" and "phone mini wall gap". The mini tiles [0,3] and [2,5] still overlap 4px, with clipped renders.
+- **Partly false:** part 17 says "0 console errors … not reproduced here". The hydration-mismatch console error and the red "1 Issue" badge appeared on the first load at both sizes in my walk (2 of 7 loads; the later 5 were clean). Its source is unproven, but it is visible on this page.
+- A false claim caps the verdict at 7. The repeated stepped-close flight and the phone overlap, both banned tells, take it to 6.
 
 ## Fixes (in order)
-1. **Phone viewer above the header.**
-   - Under 899px, put the viewer over the header: `.xga-view { z-index: 310 }`, above the header's 300 (or portal it to `body`).
-   - Or keep the z-index and move the controls clear of the header: `.xga-view { padding-top: calc(60px + 12px) }` and `.xga-view-nav { top: 72px }`.
-   - Verify that `elementFromPoint` at the centre of × returns the button, and that a tap closes the viewer and keeps the URL.
-2. **Close after stepping must not fly.**
-   - In `Wall`, keep the frame's `layoutId` off until the viewer has fully exited. In `close()`, set `setFrom(-1)` inside `AnimatePresence`'s `onExitComplete`, not after a 650 ms `setTimeout`. Or never restore `layoutId` on that frame when `open !== from` at close time.
-   - Also call `setLit(from)` rather than `setLit(open)` when the morph is used.
-   - Target: no frame larger than its slot crosses the hero or plaque in any close frame.
-3. **Phone header ask fits.** "Browse the Gallery" at x 262–408 is clipped.
-   - Request that the shared header shrink the ask under 400px (small size, 40px, 13–14px text), or hide the language control while the swapped ask shows.
-   - Meanwhile, `usePhoneAsk` should not swap to a label wider than the space left (fall back to the outlined "Try Hanzo").
-4. **Mini wall on phone.** Under 899px:
-   - give `.xga-mini` `row-gap: 12px`;
-   - remove the residual stagger (m1/m4 sit 14px higher, so tiles 0/3 and 2/5 overlap 4px);
-   - or drop to 2 columns with a 140px tile height, so renders aren't clipped mid-phrase.
-5. **Fill the empty render panes.**
-   - In `.xga-view-art` and `.xga-moves-st`, centre the render and scale it to the panel: `.xga-view-art .xga-r { zoom: 2.2 }` on desktop, or lay it out at the panel width.
-   - Add the frame's caption sentence beneath it in the panel, so three words don't float in a 610×630 void.
-6. **Flatten the tiles** (part 7):
-   - remove `box-shadow` from `.xga-frame`, `.xga-moves-obj` and `.xga-term`;
-   - keep it only on the floating `.xga-view-in`.
-7. **Hydration mismatch.** Find the SSR/client attribute difference that intermittently raises the badge. Likely candidates are `layoutId` and the `initial` y on `.xga-frame`, or `usePhoneAsk` touching the header before hydration.
-8. **Card.** Correct parts 8, 11, 15 and 17 to what is measured above.
+1. **Stepped close must not fly** (`Gallery.jsx`, Wall/Viewer).
+   - When `open !== from` at close time, drop the `layoutId` from both the viewer card and every `.xga-frame` before the exit starts. Set a `noMorph` state synchronously in `close()`, then render `layoutId={noMorph ? undefined : ...}`.
+   - Restore it only in `AnimatePresence onExitComplete`.
+   - Close with `opacity 1→0` on `.xga-view-in` (250 ms, ease-out) and no scale.
+   - Land the light on the template you closed from: `setLit(open)`, i.e. 04, not the original 03.
+   - Verify: in frames at 40/80/160/240 ms after Esc, every `.xga-frame` matches its slot ±2px, and nothing crosses y < 360.
+2. **Phone mini wall** (`Gallery.css`, `@media (max-width: 899px)`).
+   - `.xga-mini { grid-template-columns: repeat(2, 1fr); row-gap: 12px; }`
+   - Remove the stagger transform on the middle column (`.xga-mini > :nth-child(3n+2) { transform: none }`).
+   - Give each tile a fixed height with `overflow: hidden` and the render top-aligned under the chrome dots (`padding-top: 28px`), so no chip or line is cut mid-phrase and the dots never sit on "Filter by".
+   - Verify: 0 overlapping tile pairs.
+3. **Hydration mismatch.**
+   - Reproduce on a cold dev load (new context, first hit after a file save), read the full warning's diff, and remove the server/client difference.
+   - Likely candidates are the `initial` y/opacity on `.xga-frame`, a `layoutId`-dependent attribute, or `usePhoneAsk` writing `html[data-pq]` before hydration (move it to `useEffect` only, which it already should be, and check that it doesn't touch the header's class).
+   - If it is the shared footer, file it in `docs/requests/gallery.md` and say so on the card.
+4. **First-frame double solid.** Set `html[data-pq]` (outline the header ask) from server HTML or a CSS default for this route, so "Try Hanzo" is never solid beside the hero ask at 0–300 ms.
+5. **Prompt room** at 1470: shorten the `.xga-term` box to its content (min-height around 200px), or give it the paste-and-ship moment at a bigger scale, so it is not an 830×340 near-empty white box in a section of white.
+6. **Card:** correct parts 11, 15 and 17 to what is measured above, and re-film the stepped close before claiming it.
