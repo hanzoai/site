@@ -400,3 +400,5 @@
   .gw .sp-rel-a { position: relative; padding-right: 32px; }
   .gw .sp-rel-a > svg { position: absolute; right: 2px; top: 50%; margin-top: -7px; }
 }
+
+.gw-proj-cap { margin: 12px 0 0; font-size: 13px; line-height: 1.5; color: #525252; }

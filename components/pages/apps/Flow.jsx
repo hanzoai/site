@@ -256,7 +256,7 @@ function Playground() {
       <div className="bz-wrap">
         <div className="fl-pg">
           <div className="fl-pg-bar">
-            <span className="x-mono"><i className={play && live ? 'on' : ''} aria-hidden="true" />flow.hanzo.ai<em>playground</em></span>
+            <span className="x-mono"><i className={play && live ? 'on' : ''} aria-hidden="true" /><span>flow.hanzo.ai</span><em>playground</em></span>
             <span className="fl-pg-state x-mono" aria-live="polite">{two(i + 1)} / 06</span>
           </div>
           <div className="fl-pg-stage">

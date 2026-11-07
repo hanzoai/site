@@ -329,6 +329,7 @@ export default function Gateway() {
           </div>
           <div className="gw-proj-c">
             <Console light name="Gateway" api="/v1/gateway" side={[['Gateway', '/gateway'], ['DNS', '/dns'], ['Service Mesh', '/cloud/service-mesh'], ['Nodes', '/cloud/nodes']]} />
+            <p className="gw-proj-cap">The service the session above is changing.</p>
           </div>
         </div>
       </section>
@@ -345,8 +346,7 @@ export default function Gateway() {
               {RELATED.map(([t, to, d]) => (
                 <li key={t}>
                   <A to={to} className="sp-rel-a">
-                    {/* Hanzo's own "→" in "Gateway docs →" sits in the same right-hand slot as the other rows' arrows */}
-                    {t.endsWith('→') ? <b>{t.slice(0, -2)}<span className="gw-rel-arw"> →</span></b> : <b>{t}</b>}
+                    <b><span>{t}</span></b>
                     {d && <span>{d}</span>}{!t.endsWith('→') && ARROW}
                   </A>
                 </li>

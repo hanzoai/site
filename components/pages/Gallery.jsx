@@ -210,7 +210,7 @@ function Wall() {
               data-sound="whoosh"
             >
               <span className={'xga-art' + (i === 1 || i === 3 ? ' dk' : '')} aria-hidden="true"><Render i={i} on={lit === i} /></span>
-              <span className="xga-cap"><span className="x-mono">{pad(i + 1)}</span><b>{t}</b><span className="xga-d">{d}</span></span>
+              <span className="xga-cap"><span className="x-mono">{pad(i + 1)}</span><b><span>{t}</span></b><span className="xga-d">{d}</span></span>
             </motion.button>
           ))}
           <aside className="xga-label" aria-label="Get Gallery">

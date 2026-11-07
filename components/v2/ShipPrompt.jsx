@@ -20,7 +20,7 @@ export default function ShipPrompt({ name, prompt, api, related, relatedTitle = 
           {children}
         </div>
         <div className="sp-card">
-          {api && <p className="sp-api"><i>api</i>{api}</p>}
+          {api && <p className="sp-api"><i><span>api</span></i><span>{api}</span></p>}
           <CodeBlock code={prompt} label="Agent prompt" className="sp-code" />
         </div>
         {related && (
