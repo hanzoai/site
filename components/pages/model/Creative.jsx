@@ -15,6 +15,7 @@ import { useOpener } from '../../Opener';
 import Launch, { Lines, film } from '../../v2/Launch';
 import Chapters from '../../v2/x-cray/Chapters';
 import ModelCards from './ModelCards';
+import ModelFilm from '../../v2/ModelFilm';
 import { C, ORDER, FIELDS } from './creative';
 import { Glyph } from './Studio';
 import { arrows } from './live';
@@ -38,11 +39,12 @@ function Head({ slug }) {
 
 // a capability chapter's picture: the model's own film, framed closer each time, wearing its live glyph
 const CAM = [[1.08, '0%', '0%'], [1.45, '-12%', '6%'], [1.8, '-16%', '-6%'], [1.3, '-6%', '10%']]; // pans lean left: the films' subjects sit centre-right
-function CapArt({ slug, i, title }) {
+function CapArt({ slug, i, title, on }) {
   const [z, x, y] = CAM[i];
   return (
     <div className="cr-art" style={{ '--z': z, '--x': x, '--y': y }}>
       <Img src={film(slug, 'webp')} w={1200} h={1500} />
+      <ModelFilm slug={slug} play={on} />
       <div className="cr-art-chip" aria-hidden="true">
         <Glyph k={slug} i={i} />
         <span><em>{C[slug].code} · {String(i + 1).padStart(2, '0')}</em><b>{title}</b></span>
@@ -65,7 +67,7 @@ function Caps({ slug, flip }) {
         id={'cr-ch-' + slug}
         label={`What ${d.name} does`}
         flip={flip}
-        items={d.caps.map(([t, x], i) => ({ k: d.kind, rail: t, title: t, body: <p>{x}</p>, art: <CapArt slug={slug} i={i} title={t} /> }))}
+        items={d.caps.map(([t, x], i) => ({ k: d.kind, rail: t, title: t, body: <p>{x}</p>, art: (on) => <CapArt slug={slug} i={i} title={t} on={on} /> }))}
       />
     </>
   );
@@ -207,7 +209,7 @@ export default function Creative({ slug, shape, aim, over, headClass, demo, firs
   const d = C[slug];
   const caps = <Caps slug={slug} flip={flip} />;
   return (
-    <Launch slug={slug} shape={shape} aim={aim} over={over} headClass={'cr-head ' + (headClass || '')} head={<Head slug={slug} />}>
+    <Launch slug={slug} ask={{ label: 'Request access', to: '/research-access?models=' + slug, id: slug + '-hero-access' }} shape={shape} aim={aim} over={over} headClass={'cr-head ' + (headClass || '')} head={<Head slug={slug} />}>
       {first === 'demo' ? <>{demo}{caps}</> : <>{caps}{demo}</>}
       <Fits slug={slug} flip={flip} />
       <Map slug={slug} />
