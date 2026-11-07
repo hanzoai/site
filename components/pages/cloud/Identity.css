@@ -198,18 +198,18 @@
 @keyframes id-in-x { from { opacity: 0; transform: translateX(-16px); } }
 @keyframes id-pop { from { opacity: 0; transform: scale(.8); } }
 /* where the data sits: an organization boundary drawn around one binary and its SQLite; the region pin drops in */
-.id-art-region { flex-direction: row; flex-wrap: wrap; align-items: center; align-content: center; }
+.id-art-region { display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr); align-items: center; align-content: center; }
 .id-art-pin { position: absolute; top: 24px; right: 28px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; background: #0a0a0a; color: #fafafa; animation: id-drop .6s var(--e-em) .2s both; }
 .id-art-pin::before { content: ''; width: 8px; height: 8px; border-radius: 99px; background: #fafafa; }
 @keyframes id-drop { from { opacity: 0; transform: translateY(-18px); } }
-.id-art-org { position: relative; flex: 1 1 58%; display: grid; gap: 12px; padding: 18px; border-radius: 16px; background: #fff; box-shadow: inset 0 0 0 1.5px #0a0a0a; animation: id-pop .5s var(--e-em) both; }
-.id-art-org.ghost { flex: 0 1 26%; min-height: 150px; background: transparent; box-shadow: inset 0 0 0 1.5px rgba(0, 0, 0, .14); animation-delay: .15s; }
+.id-art-org { position: relative; display: grid; gap: 12px; padding: 18px; border-radius: 16px; background: #fff; box-shadow: inset 0 0 0 1.5px #0a0a0a; animation: id-pop .5s var(--e-em) both; }
+.id-art-org.ghost { align-self: stretch; min-height: 150px; background: transparent; box-shadow: inset 0 0 0 1.5px rgba(0, 0, 0, .14); animation-delay: .15s; }
 .id-art-bin { display: grid; gap: 10px; padding: 14px; border-radius: 12px; background: #f5f5f5; }
 .id-art-bin b { font: 600 15px/1.2 var(--sans); color: #0a0a0a; }
 .id-art-db { display: inline-flex; align-items: center; gap: 10px; animation: id-in-x .5s var(--e-em) .45s both; }
 .id-art-db i { width: 22px; height: 26px; border-radius: 11px / 5px; background: #0a0a0a; }
 .id-art-tok { justify-self: start; padding: 6px 10px; border-radius: 8px; background: #0a0a0a; color: #fafafa; animation: id-in-x .5s var(--e-em) .7s both; }
-.id-art-region .id-art-foot { flex-basis: 100%; }
+.id-art-region .id-art-foot { grid-column: 1 / -1; justify-self: start; }
 /* bring the identity you already have: your issuer stays the record; a discovery URL line runs to Identity, the entry point */
 .id-art-issuer { flex-direction: row; align-items: center; flex-wrap: wrap; }
 .id-art-node { display: grid; gap: 10px; min-width: 150px; padding: 18px; border-radius: 16px; background: #fff; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .12); animation: id-pop .5s var(--e-em) both; }

@@ -371,7 +371,7 @@ button.fl-node:active { scale: .97; }
 .fl-getsec { padding-top: clamp(40px, 4vw, 64px); padding-bottom: 0; }
 /* the chapters' heading sits on its stage: the run starts right under it instead of a screen-centred board far below */
 @media (min-width: 901px) {
-  .flc-stage { justify-content: flex-start; }
+  .flc-stage { justify-content: flex-start; height: auto; }
   .flc-run { margin-top: -48px; }
   /* the last chapter still reaches the middle of the screen; no empty screen after it */
   .flc-list { padding-bottom: 6svh; }
@@ -386,7 +386,7 @@ button.fl-node:active { scale: .97; }
   .fl-hero .fl-g { --nw: 176px; }
 }
 @media (max-width: 900px) {
-  .fl-hero { height: 830px; }
+  .fl-hero { height: 920px; }
   .fl-hero-in { align-items: flex-start; padding: 36px 0 0; }
   .fl-hero-in > .bz-wrap::before { display: none; }
   .fl-copy { max-width: none; }
