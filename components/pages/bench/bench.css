@@ -45,6 +45,8 @@
 .xbr-ro-l { font-size: 17px; line-height: 1.35; color: var(--ink); font-weight: 500; overflow-wrap: anywhere; min-height: 2.7em; }
 .xbr-ro-vw { position: relative; display: block; overflow: hidden; padding: .06em 0; }
 .xbr-ro-v { display: block; font-size: clamp(56px, 6.4vw, 104px); color: var(--acc); white-space: nowrap; }
+.xbr-ro-v.mid { font-size: clamp(48px, 4.6vw, 76px); }
+.xbr-ro-v.long { font-size: clamp(36px, 3.2vw, 52px); white-space: normal; overflow-wrap: anywhere; }
 .xbr-ro-s { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
 .xbr-ro-n { font-size: 13px; color: var(--faint); }
 .xbr-ro-t { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; border-radius: 3px; background: color-mix(in srgb, var(--acc) 22%, transparent); overflow: hidden; }
@@ -53,6 +55,8 @@
 .xbr-ro.big { justify-content: center; height: 100%; padding: clamp(28px, 4vw, 56px); gap: 16px; }
 .xbr-ro.big .xbr-ro-l { font-size: clamp(21px, 1.8vw, 26px); font-weight: 600; letter-spacing: -.02em; max-width: 22ch; }
 .xbr-ro.big .xbr-ro-v { font-size: clamp(80px, 11vw, 168px); }
+.xbr-ro.big .xbr-ro-v.mid { font-size: clamp(64px, 7vw, 112px); }
+.xbr-ro.big .xbr-ro-v.long { font-size: clamp(44px, 4.4vw, 72px); }
 .xbr-ro.big .xbr-ro-t { left: clamp(28px, 4vw, 56px); right: clamp(28px, 4vw, 56px); bottom: clamp(28px, 4vw, 48px); }
 
 /* bars: in table view a row of figures; in chart view the figure drops onto the end of its bar */
@@ -152,7 +156,9 @@
 .xbr-ch-t { display: flex; flex-direction: column; gap: 24px; align-items: flex-start; }
 .xbr-ch-h { max-width: 14ch; }
 .xbr-ch-b .xbr-p { font-size: inherit; color: inherit; max-width: 52ch; }
-.xbr-ch-v { height: 100%; overflow: hidden; }
+.xbr-ch .v2f-ch-v { display: flex; align-items: center; }
+.xbr-ch-v { width: 100%; height: 100%; overflow: hidden; }
+.xbr-ch-v.v2f-obj { height: auto; max-height: 100%; }
 .xbr-ch-v.v2f-obj { display: flex; padding: 12px; box-shadow: var(--shadow); }
 .xbr-ch-v.v2f-obj .xbr-tw { flex: 1; box-shadow: none; max-height: 100%; overflow: auto; border-radius: 18px; }
 .xbr-ch-fig { border-radius: var(--r-hero); }
@@ -281,6 +287,8 @@
   .xbr-ch-v.v2f-obj .xbr-tw { max-height: 70svh; }
   .xbr-ch-fig { min-height: 340px; }
   .xbr-ro.big .xbr-ro-v { font-size: clamp(72px, 22vw, 104px); }
+  .xbr-ro-v.mid, .xbr-ro.big .xbr-ro-v.mid { font-size: 48px; }
+  .xbr-ro-v.long, .xbr-ro.big .xbr-ro-v.long { font-size: 34px; }
   .xbr-one-l, .xbr-one-r { grid-column: 1 / -1; position: static; }
   .xbr-spec-h, .xbr-spec-b { grid-column: 1 / -1; }
   .xbr-spec-h { font-size: 24px; }

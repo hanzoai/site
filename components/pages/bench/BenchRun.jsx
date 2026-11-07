@@ -84,7 +84,7 @@ function Readout({ c, walk, big }) {
       <span className="xbr-ro-l">{r[0]}</span>
       <span className="xbr-ro-vw">
         <AnimatePresence mode="popLayout" initial={false}>
-          <motion.b key={at + '|' + r[1]} className="xbr-ro-v v2f-num" initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '-100%', transition: { duration: 0.28, ease: EASE } }} transition={{ duration: 0.6, ease: EASE }}>{r[1]}</motion.b>
+          <motion.b key={at + '|' + r[1]} className={'xbr-ro-v v2f-num' + (r[1].length > 10 ? ' long' : r[1].length > 7 ? ' mid' : '')} initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '-100%', transition: { duration: 0.28, ease: EASE } }} transition={{ duration: 0.6, ease: EASE }}>{r[1]}</motion.b>
         </AnimatePresence>
       </span>
       <span className="xbr-ro-s x-mono">{r[2]}</span>
