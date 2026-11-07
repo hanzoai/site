@@ -317,6 +317,70 @@ function Inspector({ step, intro, ack, from }) {
   );
 }
 
+/* ---------- the chapters' object: the hero's bus itself, pinned; each chapter changes what it does ----------
+   The same toolbar, publish card, stream cells, wires and three subscriber cards as the hero. Per chapter:
+   0 streams keep a window (old sequences age out) and a consumer starts where you choose; 1 the ack policy plays on
+   the subscribers (redelivery is a dashed card); 2 the stream becomes a bucket keeping each key's last value;
+   3 a request goes to exactly one instance; 4 a payload splits into chunks along the wire and is put back together;
+   5 an account wall drops between subscribers. The words are Hanzo's; values and sequence numbers are drawn. */
+const START_AT = [0, 2, 3, 5]; // which stream cell each start choice reads from (the beginning, a sequence, a time, newest)
+function ChapterBus({ step, intro, ack, from }) {
+  const [ref, live, calm] = useLive(0.3);
+  const [paused, pause] = usePause();
+  const run = live && !paused;
+  const n = useBeat(run);
+  const [t, seq] = useFan(run && step === 1 && !intro, calm);
+  const s = intro ? -1 : step;
+  const top = seq + (t >= 1 ? 1 : 0);
+  const nums = Array.from({ length: 6 }, (_, i) => (s === 1 ? top - 5 + i : 38 + i));
+  const k = n % 3;
+  const chunks = Math.min(6, n % 9);
+  const msg = s === 2 ? ['orders', String(1040 + n)] : s === 3 ? ['svc.quote', 'request'] : s === 4 ? ['assets/report.pdf', 'payload'] : ['events.user.signup', '{"id":"usr_123"}'];
+  const mid = s === 0 ? 'stream EVENTS · keep by ' + ['age', 'count', 'bytes'][k] : s === 2 ? 'bucket · offsets · last value' : s === 3 ? 'svc.quote · queue group' : s === 4 ? 'object store · chunked into a stream' : s === 5 ? 'accounts' : 'stream EVENTS · events.>';
+  const cell = (i) => {
+    if (s === 0) return (i < 1 + k % 2 ? 'old' : '') + (i >= START_AT[from] ? ' rd' : '') + (i === START_AT[from] ? ' from' : '');
+    if (s === 1) return i === 5 && t >= 1 ? 'new' : '';
+    if (s === 2) return i === 5 ? 'new' : 'old';
+    if (s === 4) return i < chunks ? 'rd' : '';
+    return '';
+  };
+  const subs = s === 1
+    ? ['analytics', 'audit', 'my-service'].map((x, i) => { const [c, l] = subState(t, ack, i, top); return [x, l, c]; })
+    : s === 0 ? [['my-service', 'from ' + STARTS[from][0], 'got'], ['analytics', n % 2 ? 'original pace' : 'as fast as it can', 'got'], ['audit', '—', '']]
+      : s === 2 ? ['orders', 'payments', 'signups'].map((x, i) => [x, i === k ? 'watch · ' + (1040 + n) : 'last value', i === k ? 'got ack' : ''])
+        : s === 3 ? [0, 1, 2].map((i) => ['instance ' + (i + 1), i === k ? 'one answer' : '—', i === k ? 'got ack' : ''])
+          : s === 4 ? [['assets', chunks >= 6 ? 'put back together' : 'chunk ' + chunks + ' / 6', chunks >= 6 ? 'got ack' : ''], ['watch', chunks >= 6 ? 'changed' : '—', chunks >= 6 ? 'got' : ''], ['my-service', '—', '']]
+            : s === 5 ? [['account a', 'events.>', 'got'], ['account a', 'orders.>', 'got'], ['account b', 'events.>', 'wall']]
+              : [['analytics', 'delivered', 'got'], ['audit', 'delivered', 'got'], ['queue group', 'one of three', 'got']];
+  const flow = s === 1 ? t >= 2 : s === 4 ? chunks >= 6 : true;
+  return (
+    <div className="ps-busw ps-cbus" ref={ref} data-step={s} data-paused={paused || undefined}>
+      <div className="ps-bar">
+        <p className="ps-bar-k"><i aria-hidden="true" />NATS JetStream</p>
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.code key={s} className="ps-cbus-k" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6, transition: QUICK }} transition={ARRIVE}>{s < 0 ? 'pubsub.hanzo.ai:4222' : SUBJ[s]}</motion.code>
+        </AnimatePresence>
+        <LivePause dark paused={paused} onToggle={pause} className="ps-pause" />
+      </div>
+      <div className="ps-bus" aria-hidden="true">
+        <div className="ps-node ps-pub">
+          <p className="ps-k">{s === 3 ? 'request' : 'publish'}</p>
+          <div className="ps-msg"><b>{msg[0]}</b><span>{msg[1]}</span></div>
+        </div>
+        <Wire on={s !== 1 || t >= 1} />
+        <div className="ps-node ps-str">
+          <p className="ps-k">{mid}</p>
+          <div className="ps-seqs">{nums.map((x, i) => <span key={i} className={cell(i)}>{s === 4 ? (i < chunks ? '▪' : '') : s === 2 && i < 5 ? '' : x}</span>)}</div>
+        </div>
+        <Wire on={flow} xs={s === 5 ? [15, 46] : s === 3 ? [[15, 46, 81][k]] : [15, 46, 81]} />
+        <div className={'ps-node ps-subs' + (s === 5 ? ' walled' : '')}>
+          {subs.map(([b, l, c], i) => <div key={i} className={'ps-sub ' + (c || '')}><b>{b}</b><span>{l}</span></div>)}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const FACTS = [
   ['Streams write it down', 'A stream captures the subjects you name and keeps them by age, by count or by bytes. A consumer starts at the beginning, at the newest message, at a sequence number or at a wall-clock time, and reads at the original pace or as fast as it can take them.'],
   ['Acked, so nothing goes quiet', 'A message is redelivered until a consumer acknowledges it. Publishers that stamp a message id get duplicates collapsed inside a window — two minutes unless you say otherwise. Ack every message, ack a sequence to cover everything below it, or ask for no acks at all when fire-and-forget is what you meant.'],
@@ -368,7 +432,7 @@ export default function Pubsub() {
       <PinnedChapters label="More than pub/sub" per={80} objH={35}
         intro={{ title: ['More than', 'pub/sub'] }}
         steps={steps}
-        visual={(at, intro) => <Inspector step={at} intro={intro} ack={ack} from={from} />} />
+        visual={(at, intro) => <ChapterBus step={at} intro={intro} ack={ack} from={from} />} />
 
       <ClipWipe className="ps-room">
         <div className="lx-wrap">

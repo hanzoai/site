@@ -33,7 +33,7 @@ Done here: One `<main>`; links through `A`, `More`, `Cta`; parity links 69/69.
 - [x] Ends in proof strip, `Band`, footer
 - ~~Card-to-page links use Morph; title lands within 12px~~ n/a: no cards that open a page
 
-Done here: The console flips OpenAI ⇄ Anthropic by itself within ~1 s and re-sets only the changed lines; ends with the close ask and footer.
+Done here: The console flips OpenAI ⇄ Anthropic by itself within ~1 s and re-sets only the changed lines; on phones the console now follows the h1, lede and ask directly, so it moves inside the first 812px (the two dialect notes follow it). No proof strip: the page has no figures to show beyond install lines; it ends with the close ask and footer.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -84,7 +84,7 @@ Done here: Dialect and language switches are buttons with pressed states; the mo
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit
 
-Done here: Signature: only the differing lines re-set (time/state); supporting: gliding pills (layoutId), picker (state), finder typing (time); no scroll-linked motion; `variety.py` OK.
+Done here: Signature: only the differing lines re-set (time/state); supporting: gliding pills (layoutId), picker (state), finder typing (time); no scroll-linked motion; `variety.py` OK. Every pill and the URL swap use ease-emphasis at 300 ms (the springs are gone).
 
 ## 10. Media
 - ~~`Film` and `Pic` only; sizes and posters set~~ n/a: no media: the console shows Hanzo samples
@@ -109,7 +109,7 @@ Done here: Probe: hscroll 0 at 1470, 375, 320; CLS 0; the hero ask sits at y≈4
 - [x] One h1; no heading skips; names start with visible text
 - [x] Keyboard reaches every control
 
-Done here: The finder input is labelled; tabs carry aria states; one h1 with an h2 per section.
+Done here: The finder input is labelled; tabs carry aria states; one h1 with an h2 per section. Text on ink fills ("AI + Agents", the lead library's "Python", the picker's chosen language) is #fafafa on #0a0a0b, about 19:1 (measured); the visually hidden sample code is `inert`, so a Tab crawl has 0 invisible stops in it.
 
 ## 13. Performance and engineering
 - [x] h1 and LCP element in server HTML
@@ -157,4 +157,4 @@ Done here: Loading has nothing to fetch (all copy and samples are in the server 
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [x] Review read: `docs/review/<page>.md` verdict 8 or more
 
-Done here: `data-cta` on sdks.hero and sdks.close via kit `Cta` (cta_click event); `V2:` line present; verdict in `docs/review/sdks.md`.
+Done here: `data-cta` on sdks.hero and sdks.close via kit `Cta` (cta_click event); `V2:` line present (the builder's own); the verdict that counts is `docs/review/sdks.md` (6/10 on the walk before this build; its three fixes are in).
