@@ -501,3 +501,25 @@
   .hv .x-plan-note, .hv .x-plan-l p, .hv .x-price-u, .hv .x-seats span, .hv .x-seats small, .hv .x-save, .hv .hv-logo span, .hv .hv-way-n,
   .hv .x-seats b, .hv .hv-terms, .hv .x-plot-read span, .hv .x-seg button { font-size: 14px; }
 }
+
+/* ---------- every tap answers (JAMES.md 4): hover tells you something, press moves 1px or scales to .98 ---------- */
+.hv-repo.x-repo > div { transition: border-color .22s, box-shadow .22s, transform .3s var(--v2-ease); }
+.hv-repo.x-repo:active > div { transform: scale(.985); }
+@media (hover: hover) { .hv-repo.x-repo:hover > div { border-color: rgba(0, 0, 0, .3); box-shadow: 0 18px 40px -24px rgba(0, 0, 0, .35); transform: translateY(-3px); } }
+.hv .x-round { transition: border-color .22s, transform .12s var(--v2-ease); }
+.hv .x-round:active { transform: scale(.94); }
+@media (hover: hover) { .hv .x-round:hover { border-color: rgba(0, 0, 0, .4); } }
+.hv .x-seg button { transition: color .22s, transform .12s var(--v2-ease); }
+.hv .x-seg button:active { transform: scale(.97); }
+@media (hover: hover) { .hv .x-seg button:hover { color: var(--ink); } }
+.hv-stat { transition: transform .12s var(--v2-ease); }
+.hv-stat:active { transform: translateY(1px); }
+
+/* the closing band: the header's "Try Hanzo" is solid again here, so the band's own copy of that ask stays an outline
+   (exactly one solid on screen); it fills on hover and presses to .98 */
+.hv .x-band { background: #000; }
+.hv .x-band .x-btn.solid { background: transparent; color: #f5f5f7; border: 1px solid rgba(255, 255, 255, .55); transition: background-color .22s, color .22s, border-color .22s, transform .12s var(--v2-ease); }
+.hv .x-band .x-btn.solid:active { transform: scale(.98); }
+@media (hover: hover) { .hv .x-band .x-btn.solid:hover { background: #f5f5f7; color: #000; border-color: #f5f5f7; } }
+/* the band's heading rises without the kit's blur (PLAN-COMPONENTS 2.8: no filter in animated paths) */
+.hv .x-band .x-word { filter: none !important; }
