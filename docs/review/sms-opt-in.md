@@ -1,40 +1,42 @@
-# /sms-opt-in — James-eye review
+# /sms-opt-in/: James-eye review
+Verdict: 7/10
+First complaint: "The button in the top corner can't make up its mind: it says Try Hanzo, then Yes, sign me up!, then Try Hanzo again while the page loads. And those big STOP and HELP buttons do nothing when I press them."
 
-Reviewed: main at `648b798` (page files at `57dfa0a`; shared ask fix `d2b5ab8c` in), re-walked 7 Nov 15:14 UTC, under MASTER.md. Earlier: 6/10 at `85bb6b6`, 5/10 at `4b53974`, 4/10 at `25b197c` (before the shared ask fix). Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped). The form was never submitted.
-
-Verdict: 5/10 (a blank bubble; everything big at once; no card)
-
-First complaint: "Scroll down and the third message is just an empty white box. And the other two are giant, with nothing small next to them."
-
-**Cap: part card (MASTER section 6).** There is no `docs/coverage/sms-opt-in.md`. Capped at 7 until the card is copied from `docs/coverage/_TEMPLATE.md` with 18 `Done here:` lines true on the page.
-
-**Floats over content (MASTER 3.2 rule 6):** passes since the shared fix (`d2b5ab8c`): no pill on desktop, and my phone walk saw no bar over content.
-
-**Scale (MASTER 3.1, fail):** the dark room stacks three 72px bubbles ("Two-factor authentication codes", "Account and security alerts", "Transactional notifications") with nothing medium or small beside them except the STOP / HELP line: everything big at once.
-
-## What changed since the last review
-The shared fix took the floating pill away. On the page itself, only the motion: springs became short eases (`57dfa0a`). The hero phone now rests after it lands (under 1% change when idle). The layout and words are the same.
-
+Walked 7 Nov 2026 on the dev server at 1470x801 and 375x812, moving (walk helper plus own probes; submit intercepted with a 503, never sent).
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Yes: "Get Hanzo text messages", Hanzo's line, the number field and the phone land within the first second, then rest.
-2. **One in, one out?** Yes for a short page: hero, then the dark room, then STOP / HELP.
-3. **A real object in every section?** Yes: phone, message bubbles, STOP / HELP keys.
-4. **One ask, sticky after the hero?** The sticky header carries a solid "Try Hanzo"; the page's own "Yes, sign me up!" is not sticky on either size.
-5. **Every hover and press answers?** Four of five disclosure chips answer; **"Cost" does nothing on hover** (it does on press).
-6. **Overlap, font swap, layout shift?** **The third bubble's words are invisible**: "Transactional notifications" is `#f5f5f7` text on a `#f5f5f7` bubble, so James sees an empty white box. Layout shift 0.0002 and 0.
-7. **Which reference, and is its motion there?** osply / grubogrubo type-led scenes. Present.
-8. **Different from its neighbours?** Yes.
-9. **All 18 parts covered?** No card (cap above).
-10. **Banned tells?** Eyebrow directly above the h1 ("SMS NOTIFICATIONS", 12px); everything big at once.
-11. **Copy untouched?** Words unchanged since the parity-clean first review, but one of Hanzo's three message kinds cannot be read.
-
-## Missing from the 18 parts (MASTER, measured)
-- **Part 12 accessibility (contrast):** one bubble at 1:1 contrast.
-- **Part 7:** label above the h1.
-- **Part 17:** success only on a 2xx (TCPA record) not verified; the walk never submits.
-
-## Fixes
-1. Give the third bubble dark ink (or a dark fill like the other two) so "Transactional notifications" reads.
-2. Dark room: one bubble big at a time, the others medium, so the scale has rhythm.
-3. Move "SMS notifications" below the h1 as a caption; give the "Cost" chip the same hover as the others.
-4. Write the 18-part card (lifts the cap).
+1. First screen sells, and it moves.
+   - The h1 (52px) cuts in by line mask (mid-cut at 150 ms). The phone's three texts arrive one by one (1 bubble at 800 ms, 2 at 1.2 s, 3 by 2 s). The chips then tour What, How often, Cost, How to stop, Purchases once, about 1 s each, lighting the matching consent clause. The clock ticks 4:30 to 4:31.
+   - Against: inside the phone, about 380px of blank screen sits under the third bubble at 1470x801, and the fold cuts the phone off. The submit (748 to 796px) just fits above the fold and is disabled grey, so the first screen has no solid ask.
+2. One in, one out: mostly. The form gives way to the black room, where one bubble at a time grows to 44px while the others rest at about 26px (scroll-linked). After that comes the footer: the page is 3048px with 2 scenes, so there are no dead stretches.
+3. Real object: yes, in both rooms. Your typed number lands on the phone's TO line live ("TO 4155550123"). The black room re-stages the same three bubbles over STOP and HELP keys.
+4. Ask and scale.
+   - Header ask: 4 of 4 cold loads read "Try Hanzo", then "Yes, sign me up!" (from about 250 to 1250 ms), then "Try Hanzo", on desktop. It changes again to a solid "Yes, sign me up!" once you scroll past the form. On phone it stays "Try Hanzo" all the way down.
+   - At 375x812 the submit's top is at 867px, below the fold (MASTER part 11 wants the primary above it at 375x667).
+   - Nothing floats over content. Scale has rhythm: 52 / 21 / 16 / 12px on screen 1, and one 44px bubble at a time in the black room.
+5. Hover and press.
+   - Chips: hover inverts them to ink (#0a0a0a, white text), press scales to 0.974, with no layout jump.
+   - The submit only darkens on hover (to #2c2c2e, which is not a deck value) and adds no transform.
+   - STOP and HELP (220x64 white keys in the black room, plus the phone's keys) are plain `<span>`s with cursor auto. They look like buttons, but hover and tap do nothing.
+6. Overlaps and shift.
+   - No overlap at either size, and no horizontal overflow.
+   - Console: 0 errors on 4 of 4 cold loads. A "1 Issue" badge appeared once in a run that intercepted every POST, but it did not come back on 8 later cold loads, so it is not counted.
+   - The header-ask label swap above is a visible shift in the header.
+7. Reference: Apple product page (the object is the product, one idea per screen), plus a calm Utility form. The pinned/scrubbed black room is a real, if small, Apple move.
+8. Distinct: yes. No other page uses an SMS phone that mirrors your input. Its signature is its own.
+9. 18 parts: the form states mostly hold.
+   - Disabled until consent.
+   - On a 503 the entries stay (number and tick kept) and the reason shows.
+   - Labels use `for`, and the chips are 44px tall.
+   - Gaps:
+     - The failure line is the raw "Request failed (503)", with no next step.
+     - The input's focus ring turns dashed after submit.
+     - The checkbox box is 26x26, but its 612x132 label carries the tap.
+10. Banned tells: none found. The "SMS NOTIFICATIONS" eyebrow sits under the h1, not above it. No hue: every value is grey, except the #2c2c2e hover.
+11. Copy: `parity.py /sms-opt-in/` gives OK (text 11/11, links 2/2).
+## Fixes (in order)
+1. Stop the header ask flicker on load. Hold "Try Hanzo" until the form's submit has actually been measured out of view; do not swap during arrival. On phone, make the swap behave the same as on desktop.
+2. Make STOP and HELP answer or stop looking like buttons. Either press them (translateY 1px plus a tick sound) to light the "How to stop" clause and send a reply bubble into the phone, or restyle them as keycaps that clearly are not controls.
+3. Fill or shorten the phone's empty lower half on desktop, for example by ending the conversation with the STOP/HELP keys nearer the third bubble, so the object reads complete above the fold.
+4. At 375x812, bring the submit above the fold. Tighten the lede-to-form gap (about 72px) and the consent block, or let the chips wrap into one row of scrollable pills.
+5. Use deck values on the submit hover (#171717 or #262626) and add the 0.98 press, so the primary ask answers like the chips do.
+6. Rewrite the visible failure state to read as a sentence in the form's own voice. Copy is frozen, so if no Hanzo wording exists, keep the reason and add only a retry affordance. Keep the solid focus ring after submit.

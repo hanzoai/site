@@ -8,7 +8,7 @@
    0 UI hues. The form is hanzo.ai's own: one number, one box, one button, enabled once the box is ticked and the
    number has ten digits. It sends exactly what hanzo.ai sends: POST https://api.hanzo.ai/v1/notify/consent
    {phone, consent, channel, source, consentText}. */
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent, useReducedMotion } from 'motion/react';
 import { EASE, Mark } from '../ui';
 import { A, Cta, Field, Tick } from '../kit';
@@ -28,11 +28,20 @@ const PARTS = [
 const CONSENT = PARTS.map((p) => p[1]).join('');
 const KINDS = ['Two-factor authentication codes', 'Account and security alerts', 'Transactional notifications'];
 
+/* The phone's clock is the visitor's own time, its colon ticking each second (it is a real phone, not a picture). */
+function Clock() {
+  const [t, setT] = useState(null);
+  useEffect(() => { const f = () => setT(new Date()); f(); const id = setInterval(f, 1000); return () => clearInterval(id); }, []);
+  if (!t) return <span>9:41</span>;
+  const h = t.getHours() % 12 || 12, m = String(t.getMinutes()).padStart(2, '0');
+  return <span>{h}<em className={'xsm-colon' + (t.getSeconds() % 2 ? ' off' : '')}>:</em>{m}</span>;
+}
+
 function Handset({ phone, lit, done }) {
   return (
     <div className="xsm-phone" aria-hidden="true">
       <div className="xsm-screen">
-        <div className="xsm-bar x-mono"><span>9:41</span><i /></div>
+        <div className="xsm-bar x-mono"><Clock /><i /></div>
         <div className={'xsm-to' + (lit === 'Cost' ? ' lit' : '')}><span className="x-mono">To</span><b>{phone.trim() || '+1 (555) 000-0000'}</b></div>
         <div className={'xsm-from' + (lit === 'What' || lit === 'Purchases' ? ' lit' : '')}><span className="xsm-av"><Mark size={12} /></span>Hanzo AI</div>
         <ul className={'xsm-msgs' + (done ? ' done' : '') + (lit === 'What' || lit === 'How often' ? ' lit' : '')}>
@@ -56,7 +65,7 @@ function Kinds() {
   return (
     <section className="xp-sec xp-dark xsm-kinds" data-room="dark" aria-labelledby="xsm-kinds-h">
       <div className="xp-wrap">
-        <p className="xp-kick" id="xsm-kinds-h">Hanzo AI</p>
+        <p className="xsm-sender" id="xsm-kinds-h"><span className="xsm-av"><Mark size={14} /></span>Hanzo AI</p>
         <ul className="xsm-bubbles" ref={ref}>
           {KINDS.map((k, i) => (
             <motion.li key={k} className={'b' + i + (at === i ? ' on' : '')} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.6 }} transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1], delay: i * 0.06 }}>{k}</motion.li>
@@ -77,19 +86,33 @@ export default function SmsOptIn() {
   const [state, setState] = useState('idle'); // idle | submitting | done; a refused send returns to idle with the number kept
   const [failed, setFailed] = useState(false);
   const [lit, setLit] = useState(null);
+  // once, after the texts land, the consent reads itself in parts (each part lights its words and the phone), then rests;
+  // any touch of the form stops it
+  const [tour, setTour] = useState(true);
+  const calm = useReducedMotion();
+  useEffect(() => {
+    if (!tour || calm) return;
+    const keys = PARTS.filter((p) => p[0]).map((p) => p[0]);
+    const ids = keys.map((k, i) => setTimeout(() => setLit(k), 900 + i * 1300));
+    ids.push(setTimeout(() => { setLit(null); setTour(false); }, 900 + keys.length * 1300));
+    return () => ids.forEach(clearTimeout);
+  }, [tour, calm]);
+  const stopTour = () => { if (tour) { setTour(false); setLit(null); } };
   const ready = agree && phone.replace(/[^0-9]/g, '').length >= 10;
   const submit = async (e) => {
     e.preventDefault();
     if (!ready) return;
     setState('submitting'); setFailed(false);
-    let ok = false;
+    let ok = false, why = 'Request failed';
     try {
       const r = await fetch('https://api.hanzo.ai/v1/notify/consent', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone, consent: true, channel: 'sms', source: 'hanzo.ai/sms-opt-in', consentText: CONSENT }) });
       ok = r.ok;
+      if (!ok) why = `Request failed (${r.status})`;
     } catch { /* not sent */ }
-    // the consent is a record: only a 2xx shows "You're opted in"; otherwise the number stays and the field is marked
+    // the consent is a record: only a 2xx shows "You're opted in"; otherwise the number stays, the field is marked and
+    // the reason shows in words beside the submit (the same wording as Hanzo's own application forms)
     if (ok) setState('done');
-    else { setState('idle'); setFailed(true); setTimeout(() => document.querySelector('.xsm-form [name="phone"]')?.focus(), 0); }
+    else { setState('idle'); setFailed(why); setTimeout(() => document.querySelector('.xsm-form [name="phone"]')?.focus(), 0); }
   };
   return (
     <main className="xp xsm">
@@ -113,7 +136,7 @@ export default function SmsOptIn() {
                   <p>Thanks — you&apos;ll now receive SMS from Hanzo at {phone}. You can reply <strong>STOP</strong> at any time to opt out, or <strong>HELP</strong> for help.</p>
                 </motion.div>
               ) : (
-                <motion.form key="form" onSubmit={submit} id="sms" className="xsm-form" exit={{ opacity: 0, y: -10, transition: { duration: 0.15 } }} data-thumb="Yes, sign me up!" data-href="#sms">
+                <motion.form key="form" onPointerDown={stopTour} onFocus={stopTour} onSubmit={submit} id="sms" className="xsm-form" exit={{ opacity: 0, y: -10, transition: { duration: 0.15 } }} data-thumb="Yes, sign me up!" data-href="#sms">
                   <Field className="xsm-f" label="Mobile phone number" name="phone" type="tel" autoComplete="tel" aria-required="true" aria-invalid={failed ? 'true' : undefined} placeholder="+1 (555) 000-0000" value={phone} onChange={(e) => { setPhone(e.target.value); setFailed(false); }} />
                   <div className="xsm-parts" role="group" aria-label="Read the consent in parts">
                     {PARTS.filter((p) => p[0]).map(([k]) => (
@@ -126,6 +149,7 @@ export default function SmsOptIn() {
                     <span className="xsm-consent">{PARTS.map(([k, t]) => <span key={t} className={k && lit === k ? 'lit' : ''}>{t}</span>)}</span>
                   </label>
                   <Cta type="submit" id="sms-opt-in.submit" busy={state === 'submitting'} disabled={!ready} className="xp-cta xsm-go">Yes, sign me up!</Cta>
+                  {failed && <p className="xsm-err" role="alert">{failed}</p>}
                   <p className="xsm-fine">By submitting, you agree to our <A to="/legal/terms" className="xsm-link">Terms of Service</A> and <A to="/legal/privacy" className="xsm-link">Privacy Policy</A>. We never sell or share your mobile number with third parties for marketing.</p>
                 </motion.form>
               )}

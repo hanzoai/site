@@ -70,11 +70,12 @@ export function useReel(n, box, ms = 5200) {
 }
 
 /* each job's own framing of the film (where it looks, how close) and its own moment of it */
-const FRAMES = [['50% 50%', 1.06], ['14% 22%', 1.7], ['86% 70%', 1.5], ['30% 88%', 1.9], ['78% 16%', 1.6], ['50% 62%', 2.1]];
+// [where it looks, how close, mirrored, turned]: five framings that read as five different shots of one film
+const FRAMES = [['50% 50%', 1.06, 1, 0], ['40% 35%', 1.9, -1, 0], ['62% 62%', 1.4, 1, 0], ['45% 70%', 2.5, -1, 0], ['58% 40%', 1.6, 1, 0], ['50% 55%', 2.1, -1, 0]];
 function Shot({ slug, k, n, on }) {
-  const [p, s] = FRAMES[k % FRAMES.length];
+  const [p, s, f, r] = FRAMES[k % FRAMES.length];
   return (
-    <div className="xs2-shot" aria-hidden="true" style={{ '--p': p, '--s': s }}>
+    <div className="xs2-shot" aria-hidden="true" style={{ '--p': p, '--s': s, '--f': f, '--r': r + 'deg' }}>
       {slug && <Film slug={slug} play={on} at={n > 1 ? k / n : 0} />}
       <span className="xs2-shot-scrim" />
       <b className="xs2-shot-n">{pad(k + 1)}</b>
@@ -84,28 +85,29 @@ function Shot({ slug, k, n, on }) {
 
 /* the hero: the film full-bleed under the title row, playing the jobs as stories */
 function Stories({ reel, n }) {
+  // the hero is the film alone (the jobs are told once, in the strip below): its label, how many jobs follow, and the
+  // products it runs on as a quiet line; a pause control first in the box stops the loop
   const box = useRef(null);
-  const r = useReel(n, box, 5200);
-  const step = reel.steps[r.at] || reel.steps[0];
+  const [paused, setPaused] = useState(false);
+  const toggle = () => {
+    const next = !paused;
+    setPaused(next);
+    box.current?.querySelectorAll('video').forEach((v) => (next ? v.pause() : v.play?.().catch(() => {})));
+  };
   return (
-    <div ref={box} className="xs2-film" {...r.hold}>
+    <div ref={box} className="xs2-film">
+      <button type="button" className="xs2-film-pause" aria-pressed={paused} aria-label={paused ? 'Play' : 'Pause'} onClick={toggle}>
+        {paused
+          ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.2v9.6L12.6 8z" fill="currentColor" /></svg>
+          : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>}
+      </button>
       <Film slug={reel.slug} priority />
       <span className="xs2-film-scrim" aria-hidden="true" />
       <div className="v2f-wrap xs2-film-in" aria-hidden="true">
         <div className="xs2-film-top">
-          <div className="xs2-story">{reel.steps.map((s, i) => <i key={s.title} className={i < r.at ? 'done' : i === r.at ? (r.run ? 'cur run' : 'cur') : ''} />)}</div>
-          <span className="xs2-film-l x-mono"><span>{reel.label}</span><span>{pad(r.at + 1)} / {pad(n)}</span></span>
+          <span className="xs2-film-l x-mono"><span>{reel.label}</span><span>{pad(1)} / {pad(n)}</span></span>
         </div>
-        {step && (
-          <div className="xs2-film-job">
-            <span className="xs2-film-tw">
-              <AnimatePresence mode="popLayout" initial={false}>
-                <motion.span key={step.title} className="xs2-film-t" initial={{ y: '105%' }} animate={{ y: 0 }} exit={{ y: '-105%', transition: { duration: 0.15 } }} transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}>{step.title}</motion.span>
-              </AnimatePresence>
-            </span>
-            {reel.names.length > 0 && <span className="xs2-names">{reel.names.map((m) => <span key={m}>{m}</span>)}</span>}
-          </div>
-        )}
+        {reel.names.length > 0 && <div className="xs2-film-job"><span className="xs2-names plain">{reel.names.join(' · ')}</span></div>}
       </div>
     </div>
   );

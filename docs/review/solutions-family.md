@@ -1,88 +1,40 @@
-# /solutions/* (template) — James-eye review
+# /solutions/* (template): James-eye review
+Verdict: 7/10
+First complaint: "It tells me the same five things twice. The hero flicks through them, then I scroll through the same five cards with the same picture five times. And the teams twice, back to back. That's a template showing, not one thing in, one out."
 
-Verdict: 6/10
-First complaint: "It's the same picture five times with a big number on it. And when I press the plus, the panel's title is hiding under the menu."
-
-Walked 7 Nov, 14:30 to 15:05. Template `components/pages/solutions/Solution.jsx` and `Solution.css`, judged on `a4af13e` (v4) with the Families kit at `fe077aa`. v3 (`9cffbc7`) was walked first.
-
-Members: /solutions/finance and /solutions/reserved, both filmed moving:
-- 1470×801 with the wheel, and 375×812 with finger drags;
-- idle frames on a cold and a warm load;
-- every kind of control hovered and pressed;
-- a sheet opened and closed, the overlap finder used, a sibling card clicked;
-- a sideways swipe on the phone, reduced motion, and JS off.
-
-Stills: `img/solutions-family-jobs.jpg`, `img/solutions-family-sheet.jpg`, `img/families-first-screens.jpg`.
-
-## What works
-- **Hanzo's own model film is the hero object**: the kai lattice on finance, the enso ring on reserved. It sits beside the headline and plays the jobs like stories:
-  - a bar fills over 5.2 s;
-  - the job's title rises over the film;
-  - hovering holds the story.
-
-  On a warm load the film is playing by 0.4 s.
-- **The jobs are a pinned scene.** Words on the left, the film on the right, a giant white numeral 01–05, and the story bar advancing one segment per job. That is Apple.
-- **v4 ends the page sooner.** "What it runs on" and "Security and compliance" open as sheets from the last job, keeping every word (with JS off they show in place). The page now runs jobs, then more teams, then the closing room. Escape closes a sheet and focus returns to its trigger.
-- **The overlap finder is a real "beyond".** Pick another team: the pill glides, the shared products land in a black box, and each side's own products are listed.
-- **The closing room is dark, with the film behind it.** One solid "Try Hanzo" and an outlined "Contact sales".
-- **Clean on the checks:**
-  - 0 UI hues; the only colour comes from the film, which is monochrome anyway.
-  - No eyebrows.
-  - Parity: finance 50/50 and 19/19; reserved 50/50 and 11/11.
-  - Reduced motion: 0 running animations, films paused on their poster. JS off: everything legible.
-  - Phone swipe: finance to financial-services, reserved to retail.
-  - No sideways scroll at 375. CLS 0.002 or less.
+Walked 2026-11-07 16:28 UTC on the dev server at 1470x801 and 375x812, moving. Members: /solutions/finance (full walk, hovers, presses, sheets, matrix) and /solutions/reserved (both sizes). Parity: finance 50/50 text, 19/19 links; reserved 50/50, 11/11.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Yes. But the h1 is now 44px (kit change), next to a 650px film, so the film is read first and the headline reads like a caption. On a cold dev load nothing moved for 1.5 s while the page hydrated; warm, it plays by 0.4 s.
-2. **One in, one out, or a document?** One in, one out through the five jobs. Then the "More teams" rail and the overlap finder, then the close.
-
-   On reserved, "More solutions" is a heading with nothing under it, followed by a blank band before the close.
-3. **A real visual object in every section?** Yes, except reserved's empty "More solutions". But it is the same picture seven times: the hero, the five jobs and the close.
-   - Since v4, the playing clip sits on top of each job's reframed still without that framing, so all five job shots show the identical frame (`img/solutions-family-jobs.jpg`).
-   - JAMES.md 6, a block of four or more real Hanzo visuals at once, never happens.
-4. **One ask, sticky after the hero?** "Try Hanzo" is magnetic in the hero, and the ask bar carries it after the hero at both widths. Two problems:
-   - At the close, the header ask turns solid while the band's "Try Hanzo" is also solid: two at once (desktop around y=6100, phone around y=4977).
-   - The sibling rail shows four or five solid black arrow discs.
-5. **Does every hover and press answer, with no jumps?** No.
-   - The closing room's "Try Hanzo" and "Contact sales" change nothing on hover.
-   - Nor do the overlap pills or the overlap's side link ("Data").
-   - The "+" triggers cut their previews off mid-word ("…on one acc…", "Creden…").
-6. **Overlaps, font swap, layout shift?** Yes.
-   - The sheet opens under the site header. Its title "What it runs on" and its close button sit at y=12–93, under the 60px header.
-   - The header stays bright above the scrim, still showing its solid "Try Hanzo" (`img/solutions-family-sheet.jpg`).
-   - A story change shifts the job block slightly (CLS 0.001–0.006 on reserved).
-7. **Which reference does it feel like, and is its motion there?** The Apple pinned chapters are there, and the stories bar is a good idle mover.
-
-   synchronized.studio is claimed for the sibling cards, but it is not there. After a click, the current page jumps to its own top, and only then cuts to the next page (dev server). No title flies into the next h1.
-8. **Different from its neighbours?** The medium is (film). The composition is the same as /oss/* and /products/*:
-   - title on the left, a black rounded card on the right;
-   - chapters with words on the left and a card on the right;
-   - a sibling rail with black discs;
-   - a dark close (`img/families-first-screens.jpg`).
-9. **Every one of the 18 areas covered?** See below.
-10. **Any banned tells?** None as such. The text cut off in the "+" triggers gives the "lazy" look he rejects.
-11. **Copy untouched?** Yes; parity is clean.
-
-## Missing from the 18 areas
-- **2.3 Narrative:** the five job shots are identical. Reserved's "More solutions" is empty.
-- **2.4 Conversion:** two solids at the close, and filled arrow discs on the sibling cards.
-- **2.8 Components:** the sheet opens under the header (FamDrawer is the shared kit, so the fix belongs there). The trigger text is cut off. The closing asks and the overlap controls have no hover.
-- **2.10 Media:** one film is used seven times, with no block of several Hanzo visuals. The sibling cards could carry their own members' films instead of contours.
-- **2.12 Accessibility:** the sheet's close button is hidden under the header. The overlap's "Data" link is 33px wide on the phone.
-- **2.15 Catalogue:** the overlap finder can show a black box holding only a giant "0" ("0 FINANCE ∩ ENGINEERING").
-- **2.6 Type (kit):** the h1 is 44px and the section headings 26px, against JAMES.md 1 and the master brief's 36–64px.
-- **JAMES.md 10 Sound:** none on the sheets, pills or ask. The shared kit is not built yet.
+1. **First screen, 1 s.**
+   - Yes. h1 cuts in word by word (frames 0 and 700 ms differ, both members, both sizes); the hero film plays (finance diamond lattice, reserved light ring); h1, lede, Try Hanzo and Contact sales all above the fold at both sizes (phone h1 76-159px, art from 395px).
+   - The black film strip under the head (1470x441) auto-cycles 01/05 to 05/05 (about 5 s a slide) with **no pause control** in the DOM (finance; same on reserved).
+2. **One in, one out?**
+   - Mostly. The pinned horizontal rail scrubs 5 cards across ~2,700px of scroll on desktop (6 of 11 stops on finance, 6 of 10 on reserved), one card in focus, the last one fading.
+   - But the rail repeats the hero: the same 5 headings the hero strip just cycled ("Reconcile against a ledger that balances" is hero caption 01 and rail card 01) over the **same film cropped 5 times** (finance all lattice, reserved all ring). Content shown twice, art shown six times.
+   - Finance: "More teams" (6 cards) is followed directly by the matrix whose tabs are the same 6 team names.
+3. **Real visual per section?**
+   - Hero film, rail films, 6 distinct team art cards (finance) and a capacity table (reserved, 3 rows, tabular, right-aligned): yes.
+   - Finance matrix: the "object" is a black box with a numeral and pills over faint circle lines on a canvas (1152x454); reads as a pill dump, not an object.
+   - About 200px of empty white above "More teams" on desktop (finance d-06).
+4. **One ask, scale.**
+   - Try Hanzo solid in the header and hero; band repeats it (3 placements, within rule). data-cta on all four asks. Nothing floats over content.
+   - Scale: h1 is **72px** at rest on desktop (rule: 52px resting); rail numerals 64px; H2s 26px, H3 13-21px. Rhythm is otherwise fine: one big thing per screen.
+5. **Hover and press.**
+   - Primary: background #0a0a0a to #262626 on hover, scale 0.974 on press. Team card: art scales 1.05 and title underlines. Matrix tabs: gliding grey pill, count updates (Finance x Data 1, x Sales 2). Sheets ("What it runs on", "Security and compliance") rise from the right on desktop and from the bottom on phone, numbered rows with arrows. All answer, no jumps.
+   - Hero product pills (6, finance) look like buttons but are not links and do nothing.
+6. **Overlap, font swap, shift.**
+   - No overlap or horizontal overflow at either size; h1 box identical across the first 900 ms; Zen confirmed as the rendered face.
+   - **Red "1 Issue" dev badge on a first visit** (no hz-arrived in storage): React hydration attribute mismatch, both members, both sizes. Return visits are clean. Fails DONE #3.
+7. **Reference.** apple.com product page (pinned scrubbed scene, one idea per screen) is there in the rail. synchronized.studio card-to-page from the team cards was not tested in this walk (hover only).
+8. **Different from neighbours?** Within the family, members differ only by film and one section (finance matrix vs reserved capacity table). Against /solutions index it has its own rail; acceptable for a family template.
+9. **18 parts.** Breadcrumb not visible; eyebrow "SOLUTIONS · TEAMS" sits below the asks as a caption (correct). Disclosure via sheet, kit-like tabs, Band and footer present. No pause control on the auto hero (part 12).
+10. **Banned tells.** None seen: no hue, no eyebrow above h1/h2, no gradient text, no fading buttons. Rail images are the same film repeated (repetition, not a banned tell).
+11. **Copy.** Parity OK on both members.
 
 ## Fixes (in order)
-1. **Five jobs, five pictures.** Apply each job's framing (object position and scale) to the playing video as well as to the still, so the five shots differ again. Better still, give each job its own Hanzo shot.
-2. **Fix the sheet.** Open it below the header (top at the header's height), or above the header with the header dimmed under the scrim. The title and close button must always be visible.
-3. **One solid at the close, and every tap answers.**
-   - Keep the header outlined while the band's ask is on screen (treat `.xs2-band` like `.x-band`).
-   - Give the band's two buttons, the overlap pills and the side link a hover that changes the fill or underline, not the opacity.
-   - Swap the filled arrow discs on the sibling cards for an outlined arrow.
-4. **No empty section.** Where a member has no sibling cards (reserved), drop the "More solutions" heading and put "All solutions" in the close, or show the rail built from Hanzo's existing links.
-5. **The "+" triggers.** Show the section's title only, in Hanzo's words, or let the preview wrap to two lines. Never cut it mid-word.
-6. **Overlap and type.**
-   - When the intersection is 0, show the two columns only, with no black box holding a giant 0.
-   - Give the headline its size back (72px or more on desktop, per JAMES.md 1), so the sentence is read before the film.
+1. Kill the hydration mismatch so the first visit has no red badge (finance and reserved, both sizes).
+2. Stop saying it twice: make the hero strip one still-running film with a single caption (or no caption) and let the rail be where the five items arrive; give each rail card its own crop or frame of motion so 01-05 do not look identical.
+3. Add a 44px pause control first in the hero strip (it runs past 5 s), frozen under reduced motion.
+4. Finance: separate "More teams" from the team matrix (or fold the matrix into the cards) so six team names are not stacked twice; give the matrix a real object (e.g. the two product sets drawing into their overlap) rather than pills on faint circles.
+5. Bring the resting h1 to 52px (let it grow only as the moment), and close the ~200px dead white above "More teams".
+6. Make the hero product pills links to their product pages, or set them as plain captions so they stop looking pressable.

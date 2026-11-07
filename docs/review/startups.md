@@ -1,41 +1,47 @@
-# /startups — James-eye review
+# /startups/: James-eye review
+Verdict: 7/10
+First complaint: "The big $150,000 is spilling out of its own box, and once it lands the top just sits there. On my phone a black card sits over the form the whole way down."
 
-Reviewed: main at `648b798` (page files at `57dfa0a`; shared ask fix `d2b5ab8c` in), re-walked 7 Nov 15:15 UTC, under MASTER.md. Earlier: 5/10 at `6744777`, `4b53974` and `25b197c`. Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
+Walked 2026-11-07 16:32 UTC on the dev server at 1470x801 and 375x812 (isMobile, hasTouch), moving: scroll walk per 0.85 viewport, load frames at 150/450/850/1300/2200/4000 ms, hovers and presses on the asks, chips and rows, form filled and an empty submit tried (all non-GET requests aborted; the form never posted). Fresh eyes; the earlier review and the coverage card were read only after scoring.
 
-Verdict: 5/10 (no card; native selects; three big tiles at once)
-
-First complaint: "The dropdowns in the form are plain browser ones, there's still a label on top of the headline, and once the counter stops nothing moves."
-
-**Cap: part card (MASTER section 6).** There is no `docs/coverage/startups.md`. Capped at 7 until the card is copied from `docs/coverage/_TEMPLATE.md` with 18 `Done here:` lines true on the page. 
-
-**Floats over content (MASTER 3.2 rule 6):** passes since the shared fix (`d2b5ab8c`): no pill over the form any more.
-
-**Scale (MASTER 3.1):** the hero is fine (one $150,000 flap counter beside the h1). The program screen puts three big titles side by side (44px "Start in minutes", 44px "Bring your own compute", 64px "Up to $150,000 in credits"), which is three boxes and three big things at once.
-
-## What changed since the last review
-The shared fix took the floating pill away. On the page itself, only the motion: springs became short eases (`57dfa0a`). The first screen is still at rest (0% change) after the flip.
+Big improvement on the 5/10: the native selects are gone (chips now), the eyebrow sits under the h1, the three tiles became one scrubbed list, and the form has a live object.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** It sells; the flap counter flips to "$150,000" once, then **the first screen is still** (0% change) on both sizes.
-2. **One in, one out?** No: three tiles, a Techstars paragraph, the form, "Not venture-backed?".
-3. **A real object in every section?** Only the flap counter.
-4. **One ask, sticky after the hero?** The sticky header carries a solid "Try Hanzo"; the page's "Apply for credits" is not sticky.
-5. **Every hover and press answers?** "Apply for credits" answers on hover; "Start building free" does not; no press caught.
-6. **Overlap, font swap, layout shift?** Layout shift 0.0013 and 0.0017.
-7. **Which reference, and is its motion there?** apple.com figure as hero. Present, once.
-8. **Different from its neighbours?** The flap counter is its own.
-9. **All 18 parts covered?** No card (cap above).
-10. **Banned tells?** Yes: **two browser-default `<select>` menus** ("Company stage", "How did you hear about us?"); an eyebrow above the h1 ("• TECHSTARS ’17 — BUILT FOR FOUNDERS"); three equal boxes in a row with an explaining sentence each.
-11. **Copy untouched?** Yes (parity clean).
+1. **Sells in 5 s, moves in 1 s?**
+   - Sells: h1, lede, "Apply for credits" and the $150,000 reel all in the first screen at both sizes.
+   - The h1 cuts in at 150 ms; the lede, buttons and reel only arrive at about 1.3 s (850 ms frame: h1 and caption only).
+   - After the reel lands (about 2 s) the first screen is still: two frames 2 s apart at 4 s are identical.
+2. **One in, one out?**
+   - Yes for the program list: the row at the reading line grows to 44px and goes ink while the other two sit grey at about 26px. Good.
+   - Then a dead stretch: about 300px of empty white between the Techstars paragraph and "Apply to the program" (desktop stop 2).
+3. **A real object in every section?**
+   - Hero: the flap reel. Program: the numbered list with its own small reel. Form: the black application card that fills as you type (name, "2 / 5", stage, the matched tier "Up to $150,000 in credits", use-case pills light). That card is the page's moment.
+   - "Not venture-backed?" black band: words and two buttons only, about 250px of empty black under the headline.
+4. **One ask, sticky; scale rhythm?**
+   - Desktop: the header swaps "Try Hanzo" for a solid "Apply for credits" once the hero ask leaves. Good.
+   - Phone: the header stays "Try Hanzo" all the way down; the page's own ask is never sticky.
+   - Phone: the application card is sticky at y 64-212 (148px, 18% of the screen) over the form for its whole length. It covers the fields as they scroll under it.
+   - Scale: hero h1 52px plus a 74px reel side by side (two big things, reel above the 64px rest size); the rest rhythms well (44px active row, 26px rest rows).
+5. **Hover and press?**
+   - "Apply for credits": hover #0a0a0a to #262626, press scale 0.97. "Start building free": hover fill #f5f5f5, press 0.97. Chips: hover #f2f2f2 to #ececef only (barely visible), selected gets an ink border. Rows answer on hover (become the active row).
+   - Hovering the hero card re-spins the reel and flashes random figures ("$963,741"); the program reel does the same ("$150,085"). A number bigger than the offer on screen, even for 300 ms, reads as an unverifiable claim.
+6. **Overlap, font swap, layout shift?**
+   - Overlap at 1470x801: the last "0" tile of the hero reel pokes about 8px past the card's right border, with 0 right padding against 47px left.
+   - Console error on load (desktop, fresh context): React hydration mismatch on the Company name input (`style={{}}`), and the red "1 Issue" dev badge shows. Not reproduced on the phone run.
+   - CLS 0.003. No font swap seen; the h1 box holds. No horizontal scroll at 375.
+   - Desktop form: "Your role" input sits about 34px lower than its row partner because "Company stage" chips wrap to two lines.
+   - The header's frosted glass smears the sticky card's shadow into a grey patch top right (desktop stop 5).
+7. **Reference?** apple.com: one figure as hero, and the scrubbed list is a small pinned-scene feel. synchronized/osply: none. The live card is its own idea.
+8. **Different from neighbours?** Yes: the flap reel and the filling application card are not used elsewhere that I walked.
+9. **18 parts?** The card exists (19 "Done here" lines). Gaps seen on the walk: no proof strip before the closing band (part 3); phone sticky ask (part 4); empty submit shows "Your name is required." above the button but focus stays on the button and the page does not move to the field (part 17).
+10. **Banned tells?** None hard: no hue, no eyebrow above a headline ("The program" sits over the list, not over a headline), no native controls, no Inter. Borderline: a panel covering the form on phone.
+11. **Copy untouched?** Yes: `parity.py /startups` OK, text 82/82, links 3/3.
 
-## Missing from the 18 parts (MASTER, measured)
-- **Part 8:** inputs must use `<Field>`; the two selects are native.
-- **Part 7:** label above the h1.
-- **Part 3:** no narrative after the hero; dead first screen after the flip.
-
-## Fixes
-1. Write the 18-part card (lifts the cap).
-2. Replace both native selects with a kit control (same field names and values).
-3. Move "Techstars ’17 — Built for founders" below the h1 as a caption.
-4. Turn the three tiles into one object that changes (the flap counter stepping through the three), one big at a time.
-5. Give the first screen one quiet move after the flip; on the phone put the counter above the buttons.
+## Fixes (in order)
+1. Fit the hero reel inside its card at 1470 (equal side padding, or step the reel to 64px rest size); and stop the re-spin showing random large figures: roll only through digits that end on 150,000, or drop the hover re-spin.
+2. Phone: make the application card a slim one-line strip (name and "2 / 5") or put it after the submit; nothing should sit over the fields. Swap the phone header ask to "Apply for credits" past the hero, as on desktop.
+3. Fix the hydration mismatch on the Company name input (no `style` difference between server and client), so the console is clean.
+4. Give the hero one quiet idle move after the reel lands, tied to the program (for example the card stepping slowly through the three program lines under the figure).
+5. Close the 300px dead gap before "Apply to the program"; give the black band an object (the application card in its submitted state, or the free-plan line as a figure).
+6. On a failed submit, focus and scroll to the first invalid field and mark it; make chip hover visible (#ededed or a border change).
+7. Bring the lede and buttons in with the h1 (under 600 ms), not at 1.3 s.
