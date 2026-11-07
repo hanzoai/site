@@ -280,3 +280,5 @@ html:not(.js) .vs2-ns { display: grid; gap: 12px; margin-top: 32px; }
   .vs2-tiles { padding-top: clamp(64px, 7vw, 112px); }
 }
 .vs2-range { margin: 14px 0 0; font-size: 13px; color: #a3a3a3; }
+/* Hanzo's Kai art (live: the black card behind the six tiles), kept under the range (COPY-RULE.md rule 5) */
+.vs2-art { margin: 24px 0 8px; }

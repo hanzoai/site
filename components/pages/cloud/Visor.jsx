@@ -28,6 +28,7 @@ import { Sheet, Cta } from '../../kit';
 import StageHero from '../../v2/StageHero';
 import Finale from '../../v2/Finale';
 import './Visor.css';
+import ArtCard from './ArtCard';
 
 const GH = 'https://github.com/hanzoai';
 const PROVIDERS = ['DigitalOcean', 'AWS', 'GCP'];
@@ -150,6 +151,7 @@ function Tiles() {
       <div className="l2-wrap">
         <h2 className="l2-head vs2-tiles-h"><Shuffle text="What you get for the price of one integration" /></h2>
         <p className="vs2-range l2-mono">01 / 06 — 06 / 06</p>
+        <ArtCard slug="kai" className="vs2-art" />
         <ol className="vs2-grid">
           {FACTS.map(([t, d], i) => <Row key={t} t={t} d={d} i={i} onOpen={setOpen} />)}
         </ol>
