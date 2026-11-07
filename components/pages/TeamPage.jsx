@@ -1,17 +1,24 @@
 'use client';
-/* /team. V2: 8/10 Launch page: the live shared canvas is the hero object, big, and it tilts up and settles as you scroll;
-   three pinned chapters (channels, agents as teammates, every organization), a bento of rooms, the ten workflows in
-   the one dark room, the code channel as a wide product window, leaders, a spec sheet and one closing action. Accent: amber.
+/* /team. V2: 8/10 Launch page in ink and greys: the live shared canvas is the hero object (plays its story once on
+   arrival, then rests, with a replay control), three pinned chapters, handoff cards, a bento of rooms, the ten
+   workflows in the one dark room, the code channel as a wide product window, leaders, a spec sheet, a Sigil close.
+   Persona: a team lead choosing where people and agents work together (PLAN 1.1, founder / buyer).
+   Goal: start a team. CTA: "Create your team" (hanzo.team/start), metric signup_start; one solid per screen,
+   the same ask in the site's shared ask bar after the hero (Ask.jsx, from data-thumb) at every width.
    Signature: the shared canvas, where named human and agent cursors work one card from report to Done (Zoe reports,
-   Dev takes it and fixes it, Qa verifies and moves it to Done), the page's only idle motion.
-   Supporting (3): the canvas tilting up and settling on scroll (Stage); pinned chapters (PinScenes); masked kinetic lines.
-   Beyond: "Go to your team's channel". Hanzo's line of ten teams (Engineering · Security · … · Growth) is a row of
-   buttons: press yours and the workflow room switches straight to its channel and crew.
-   Every word is Hanzo's. The channels Hanzo's page gives no detail for show only what it names. */
+   Dev takes it and fixes it, Qa verifies and moves it to Done).
+   Supporting (3): the canvas tilting up and settling on scroll; pinned chapters (PinScenes); masked kinetic lines.
+   Beyond: Hanzo's line of ten teams (Engineering · Security · … · Growth) is a row of buttons: press yours and the
+   workflow room switches straight to its channel and crew.
+   Deletes: the amber accent and every eyebrow (moved into objects or section names); the endless canvas loop; the
+   invented labels "Go to your team's channel", "Source", "Deploy"; the visible social-network words (now icons).
+   Every word is Hanzo's. */
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { Copy } from '../ui';
+import { Copy, Btn as UiBtn } from '../ui';
 import { A } from '../kit';
+import Sigil from '../Sigil';
+import { href as hrefOf } from '../../lib/route';
 import MaskLines from './company/MaskLines';
 import PinScenes from './company/PinScenes';
 import '../v2/vc-type.css';
@@ -20,7 +27,9 @@ import './TeamPage.css';
 const EASE = [0.16, 1, 0.3, 1];
 const Arrow = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const Lk = ({ to, children, className = '' }) => <A to={to} className={'x-arrow ' + className}><span>{children}</span><Arrow /></A>;
-const Btn = ({ to, children, solid, className = '', ...r }) => <A to={to} className={'x-btn' + (solid ? ' solid' : '') + ' ' + className} {...r}>{children}</A>;
+// the kit's Btn (press .98, hover lift); in-site paths go through lib/route like every other link
+const Btn = ({ to, children, ...r }) => <UiBtn href={hrefOf(to)} {...r}>{children}</UiBtn>;
+const ASK = ['Create your team', 'https://hanzo.team/start'];
 // Hanzo's memoji, drawn as a background over a tinted disc with the initial: if it can't load, the disc stands in cleanly
 const Face = ({ n, size = 28 }) => (
   <span className="xtm-face" style={{ width: size, height: size, '--img': `url(https://hanzo.ai/memoji/${n}.svg)` }} data-i={n[0].toUpperCase()} aria-hidden="true" />
@@ -69,9 +78,13 @@ function Canvas() {
   const [said, setSaid] = useState(3);
   const [steps, setSteps] = useState(3);
   const zoe = useCursor(40, 30), dev = useCursor(220, 250), qa = useCursor(300, 290);
+  const [run, setRun] = useState(0); // the story plays once when first seen, then rests on Done; Replay plays it again
+  const [busy, setBusy] = useState(false);
+  const played = useRef(false);
 
   useEffect(() => {
-    if (!seen && !calm) return;
+    if (!calm && (!seen || (played.current && run === 0))) return;
+    played.current = true;
     const live = { on: true };
     const sleep = (ms) => sleepFor(calm ? 0 : ms, live);
     const near = (fx = 0.72, fy = 0.62) => {
@@ -82,7 +95,8 @@ function Canvas() {
     const home = (c, fx, fy) => c.go(board.current.offsetWidth * fx, board.current.offsetHeight * fy, calm);
     (async () => {
       try {
-        do {
+        setBusy(!calm);
+        {
           setStage(0); setSaid(0); setSteps(0);
           await sleep(500);
           zoe.go(...near(), calm); await sleep(1300);
@@ -97,13 +111,12 @@ function Canvas() {
           qa.go(...near(0.4, 0.82), calm); setSaid(3);
           home(dev, 0.3, 0.86); await sleep(1200);
           home(qa, 0.86, 0.9);
-          if (calm) return;
-          await sleep(4200);
-        } while (live.on);
+        }
+        setBusy(false);
       } catch (e) { if (e !== 'stop') throw e; }
     })();
     return () => { live.on = false; };
-  }, [seen, calm]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [seen, calm, run]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const card = (key, title, who) => <div className="xtm-card" key={key}><span>{title}</span><Face n={who} size={22} /></div>;
   const task = (
@@ -125,6 +138,10 @@ function Canvas() {
         <header className="xtm-win-h">
           <span className="xtm-org"><b>Hanzo</b><span className="x-mono">hanzo.ai</span></span>
           <ul>{['bugfix', 'security', 'launch', 'ops'].map((c, i) => <li key={c} className={i === 0 ? 'on' : ''}><span className="x-mono">#</span>{c}</li>)}</ul>
+          <span className="xtm-win-t x-mono">Hanzo Team · the workspace for humans and AI</span>
+          <button type="button" className="xtm-replay" aria-label="Replay" disabled={busy} onClick={() => setRun((r) => r + 1)}>
+            <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M4.5 10a5.5 5.5 0 1 0 1.7-4M4.5 3.5V6.5h3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </button>
         </header>
         <div className="xtm-body">
           <div className="xtm-board" ref={board}>
@@ -169,14 +186,13 @@ function Hero() {
     <section className="xtm-hero" ref={ref} aria-labelledby="xtm-h1">
       <div className="vc-grid xtm-hero-g">
         <div className="xtm-hero-t">
-          <motion.p className="vc-kick" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, ease: EASE }}>Hanzo Team · the workspace for humans and AI</motion.p>
           <MaskLines as="h1" id="xtm-h1" now delay={0.05} lines={['The playground', 'for humans + AI']} className="vc-display xtm-h1" />
         </div>
         <motion.div className="xtm-hero-r" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, ease: EASE, delay: 0.6 }}>
           <p className="vc-lede">Your people and your AI agents plan, build, and ship together — in one connected workspace.</p>
           <div className="xtm-acts">
-            <Btn to="https://hanzo.team" solid className="xtm-big" data-thumb="Open Hanzo Team">Open Hanzo Team</Btn>
-            <Btn to="https://hanzo.team/start" className="xtm-big">Create your team</Btn>
+            <Btn to={ASK[1]} solid className="xtm-big" data-thumb={ASK[0]} data-cta="team.hero">{ASK[0]}</Btn>
+            <Btn to="https://hanzo.team" className="xtm-big" data-cta="team.hero-open">Open Hanzo Team</Btn>
           </div>
           <Lk to="https://docs.hanzo.ai/docs/usage/teams">Teams in the docs</Lk>
         </motion.div>
@@ -224,9 +240,8 @@ const VIS = [<SceneChannels key="c" />, <SceneMates key="m" />, <SceneOrgs key="
 function What() {
   return (
     <>
-      <section className="xtm-what-h" aria-labelledby="xtm-what">
+      <section className="xtm-what-h" aria-label="What it is">
         <div className="vc-grid">
-          <p className="vc-kick acc">What it is</p>
           <MaskLines id="xtm-what" lines={['One workspace.', 'Everything connected.']} className="vc-display m" />
           <p className="vc-lede">Stop jumping between tools just to get work done.</p>
         </div>
@@ -234,10 +249,10 @@ function What() {
       <PinScenes
         label="What it is"
         scenes={WHAT.map(([n, t, d], i) => ({
-          key: n, kicker: n,
+          key: n,
           title: <h3 className="vc-headline">{t}</h3>,
           body: <p className="vc-body">{d}</p>,
-          visual: VIS[i],
+          visual: <>{VIS[i]}<span className="xtm-v-n vc-num" aria-hidden="true">{n}</span></>,
         }))}
       />
     </>
@@ -255,10 +270,9 @@ const TOGETHER = [
 ];
 function Together() {
   return (
-    <section className="vc-sec xtm-tog" aria-labelledby="xtm-tog">
+    <section className="vc-sec xtm-tog" aria-label="Together">
       <div className="vc-grid">
         <header className="xtm-tog-h">
-          <p className="vc-kick acc">Together</p>
           <h2 id="xtm-tog" className="vc-headline">Humans and agents, on the same work</h2>
           <Lk to="https://hanzo.team/agents">Meet the AI teammates</Lk>
         </header>
@@ -292,10 +306,9 @@ const Pic = ({ g }) => {
 };
 function Rooms() {
   return (
-    <section className="vc-sec xtm-rooms" aria-labelledby="xtm-rooms">
+    <section className="vc-sec xtm-rooms" aria-label="The rooms">
       <div className="vc-grid">
         <header className="xtm-rooms-h">
-          <p className="vc-kick acc">The rooms</p>
           <h2 id="xtm-rooms" className="vc-display s">Everything the team works in</h2>
         </header>
         {ROOMS.map(([t, d, g]) => (
@@ -315,7 +328,7 @@ const FLOWS = [
   ['bugfix', 'Engineering', ['dev', 'sci']], ['security', 'Security', ['cyber']], ['launch', 'Launch', ['mark']], ['support', 'Support', ['su']],
   ['ops', 'Ops', ['opera']], ['research', 'Research', ['sci']], ['deals', 'Sales', ['sal']], ['finance', 'Finance', ['fin']], ['legal', 'Legal', ['law']], ['growth', 'Growth', ['mark']],
 ];
-const MATE_OF = { security: 'Cyber · Security, audits', launch: 'Mark · Launch, growth', support: 'Su · Triage, replies', ops: 'Opera · Deploys, infra', growth: 'Mark · Launch, growth' };
+const MATE_OF = { security: ['cyber', 'Cyber', 'Security, audits'], launch: ['mark', 'Mark', 'Launch, growth'], support: ['su', 'Su', 'Triage, replies'], ops: ['opera', 'Opera', 'Deploys, infra'], growth: ['mark', 'Mark', 'Launch, growth'] };
 const STEPS4 = ['Reproduce Safari sheet lock in headless WebKit', 'Trace state lock to components/checkout/PaySheet.tsx:84', 'Patch finally handler & push branch fix/apple-pay-lock', 'Run 42 Playwright e2e checkout specs across iOS & desktop'];
 const Check = () => <svg className="xtm-ok" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M6 10.4l2.6 2.6L14.2 7" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
@@ -323,7 +336,7 @@ function Bugfix() {
   return (
     <div className="xtm-case">
       <div className="xtm-case-h">
-        <p className="x-mono xtm-crew"><span>ACTIVE CREW</span> bugfix · Engineering &amp; QA</p>
+        <p className="x-mono xtm-crew"><span>ACTIVE CREW</span> <span>bugfix</span> <span>Engineering &amp; QA</span></p>
         <p className="x-mono xtm-uc"><span>USE CASE</span> <b>01</b></p>
       </div>
       <h3 className="vc-title">E2E Bug Reproduction, Patch &amp; Verification</h3>
@@ -353,17 +366,16 @@ function Flows() {
     <section className="vc-sec xtm-flows" data-room="dark" aria-labelledby="xtm-fl">
       <div className="vc-grid">
         <header className="xtm-flows-h">
-          <p className="vc-kick acc">10 KILLER WORKFLOWS</p>
           <h2 id="xtm-fl" className="vc-headline">Ten everyday workflows your team hands off in a single mention.</h2>
           <p className="vc-body">A human opens a channel or posts a quick explanation, mentions the right teammate, and gets finished work back — verified end-to-end by a second specialist before you merge or send.</p>
         </header>
-        <div className="xtm-go">
-          <p className="vc-kick">Go to your team&apos;s channel</p>
+        <div className="xtm-go" role="group" aria-label="Go to your team's channel">
           <p className="xtm-cats">{FLOWS.map(([c, cat], i) => <Fragment key={c}>{i > 0 && <span aria-hidden="true"> · </span>}<button type="button" aria-pressed={i === at} aria-controls={'xtm-p-' + i} onClick={() => setAt(i)}>{cat}</button></Fragment>)}</p>
         </div>
         <div className="xtm-room">
           <div className="xtm-chans">
             <p className="xtm-org2 x-mono"><b>Hanzo</b> <span>10 channels</span></p>
+            <p className="xtm-org3 x-mono">10 KILLER WORKFLOWS</p>
             <div role="tablist" aria-label="Workflows" aria-orientation="vertical" onKeyDown={arrowKeys(n, setAt)}>
               {FLOWS.map(([c, , faces], i) => (
                 <button key={c} type="button" role="tab" id={'xtm-t-' + i} aria-selected={i === at} aria-controls={'xtm-p-' + i} tabIndex={i === at ? 0 : -1} onClick={() => setAt(i)}>
@@ -382,7 +394,7 @@ function Flows() {
                   <div className="xtm-case lite">
                     <p className="x-mono xtm-crew"><span>CHANNEL</span> #{c}</p>
                     <h3 className="vc-display s">{cat}</h3>
-                    {MATE_OF[c] && <p className="xtm-case-d">{MATE_OF[c]}</p>}
+                    {MATE_OF[c] && <p className="xtm-case-d xtm-mate"><Face n={MATE_OF[c][0]} size={40} /><b>{MATE_OF[c][1]}</b><span>{MATE_OF[c][2]}</span></p>}
                   </div>
                 )}
               </motion.div>
@@ -405,10 +417,9 @@ function Channel() {
   const [s, setS] = useState(6);
   const show = (k) => (s >= k ? ' on' : '');
   return (
-    <section className="vc-sec xtm-code" aria-labelledby="xtm-code">
+    <section className="vc-sec xtm-code" aria-label="CODE CHANNELS &amp; ARTIFACTS">
       <div className="vc-grid">
         <header className="xtm-code-h">
-          <p className="vc-kick acc">CODE CHANNELS &amp; ARTIFACTS</p>
           <h2 id="xtm-code" className="vc-headline">Code channels where engineers, designers, and agents ship together.</h2>
         </header>
         <p className="vc-body xtm-code-l">Every code channel pairs the conversation with a live Artifacts pane — Canvas root-cause writeups, unified branch diffs, and interactive previews that update as your agents and teammates iterate.</p>
@@ -494,16 +505,21 @@ function Channel() {
 }
 
 /* ---------- 7. leadership ---------- */
+// the networks are marks with an accessible name, as on hanzo.ai (no visible word is added)
+const ICON = {
+  X: <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 4l16 16M20 4L4 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>,
+  GitHub: <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-3.2 19.5c.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.3-3.4-1.3-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.4 1.1 2.9.8.1-.7.4-1.1.6-1.3-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.8 1a9.6 9.6 0 0 1 5 0c2-1.3 2.8-1 2.8-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.4 4.7-4.6 5 .4.3.7.9.7 1.9V21c0 .3.2.6.7.5A10 10 0 0 0 12 2z" /></svg>,
+  LinkedIn: <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.5h4V21H3zM9.5 9.5h3.8v1.6h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.6 4.8 6V21h-4v-5.2c0-1.2 0-2.9-1.8-2.9s-2 1.4-2 2.8V21h-4z" /></svg>,
+};
 const PEOPLE = [
   ['Antje Worring', 'Chief Executive Officer & Co-Founder', 'Leads Hanzo’s corporate strategy, enterprise partnerships, and sovereign AI deployment. Builds the business around the platform.', '/authors/antje-worring-portrait.jpg', 'antjeworr.ing', 'https://antjeworr.ing', [['X', 'https://x.com/antjeworring'], ['GitHub', 'https://github.com/zooqueen'], ['LinkedIn', 'https://www.linkedin.com/in/antje-worring/']], 'AW'],
   ['Zach Kelling', 'Chief Technology Officer & Founder', 'Architect of Hanzo’s sovereign AI cloud, high-performance C/CUDA/Metal engine runtimes, and distributed agentic frameworks. Long-time open-source author.', '/authors/zach-kelling-portrait.jpg', 'zeekay.io', 'https://zeekay.io', [['X', 'https://x.com/zeekay'], ['GitHub', 'https://github.com/zeekay'], ['LinkedIn', 'https://www.linkedin.com/in/zeekay/']], 'ZK'],
 ];
 function Leaders() {
   return (
-    <section className="vc-sec xtm-lead" aria-labelledby="xtm-lead">
+    <section className="vc-sec xtm-lead" aria-label="Leadership">
       <div className="vc-grid">
         <header className="xtm-lead-h">
-          <p className="vc-kick acc">Leadership</p>
           <MaskLines id="xtm-lead" lines={['Led by builders.', 'Driven by research.']} className="vc-display s" />
         </header>
         <p className="vc-body xtm-lead-l">Hanzo is operated by a high-density team of systems architects, AI researchers, and compiler engineers. Instead of layers of bureaucracy, we stay close to the code — shipping open-source software and frontier models.</p>
@@ -514,7 +530,7 @@ function Leaders() {
               <h3 className="vc-title">{n}</h3>
               <p className="xtm-role x-mono">{role}</p>
               <p className="vc-body">{bio}</p>
-              <div className="xtm-soc"><Lk to={to}>{site}</Lk>{soc.map(([l, u]) => <a key={l} href={u} target="_blank" rel="noopener noreferrer" aria-label={`${n} on ${l}`}>{l}</a>)}</div>
+              <div className="xtm-soc"><Lk to={to}>{site}</Lk>{soc.map(([l, u]) => <a key={l} href={u} target="_blank" rel="noopener noreferrer" aria-label={`${n} on ${l}`}>{ICON[l]}</a>)}</div>
             </div>
           </article>
         ))}
@@ -534,9 +550,10 @@ function Get() {
           <p className="vc-lede">Team workspace — channels, direct messages, agents as teammates</p>
         </div>
         <dl className="xtm-spec">
-          <div><dt className="vc-kick">License</dt><dd><span className="x-mono">License: <b>MIT</b></span></dd></div>
-          <div><dt className="vc-kick">Source</dt><dd><Btn to="https://github.com/hanzoai">hanzoai</Btn></dd></div>
-          <div><dt className="vc-kick">Deploy</dt><dd><Btn to="https://platform.hanzo.ai/deploy" solid>Deploy to Cloud</Btn></dd></div>
+          <div className="xtm-spec-r">
+            <dt className="x-mono">License: <b>MIT</b></dt>
+            <dd><Btn to="https://github.com/hanzoai" data-cta="team.source">hanzoai</Btn><Btn to="https://platform.hanzo.ai/deploy" data-cta="team.deploy">Deploy to Cloud</Btn></dd>
+          </div>
           <div className="xtm-paste">
             <dt><span className="vc-kick">Paste and ship</span><span className="xtm-paste-l">Paste this into any agent. It reads the skill manifest and calls Team from there.</span></dt>
             <dd>
@@ -557,9 +574,10 @@ function Close() {
     <section className="xtm-close" aria-labelledby="xtm-close">
       <div className="vc-grid">
         <MaskLines id="xtm-close" lines={['One workspace', 'for how your team', 'actually works.']} className="vc-display m" />
+        <div className="xtm-close-art vc-obj" aria-hidden="true"><Sigil seed="/team" data={[10, 42, 418, 7]} /></div>
         <div className="xtm-close-r">
           <p className="vc-lede">Bring your projects, tasks, conversations, docs, meetings, and knowledge together.</p>
-          <Btn to="https://hanzo.team/start" solid className="xtm-big">Create your team</Btn>
+          <Btn to={ASK[1]} solid className="xtm-big" data-thumb={ASK[0]} data-cta="team.close">{ASK[0]}</Btn>
           <p className="xtm-note">Hanzo Team · <a href="https://hanzo.team" target="_blank" rel="noopener noreferrer">Open Hanzo Team</a></p>
         </div>
       </div>
@@ -569,7 +587,7 @@ function Close() {
 
 export default function TeamPage() {
   return (
-    <main className="vc xtm" style={{ '--acc': '#f5a524' }}>
+    <main className="vc xtm" style={{ '--acc': '#1d1d1f' }} data-ask-name="Hanzo Team">
       <Hero />
       <What />
       <Together />
