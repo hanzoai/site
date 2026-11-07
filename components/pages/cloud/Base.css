@@ -5,6 +5,21 @@
 .bs-chip.ink { background: var(--t-ink, #0a0a0a); color: var(--t-inv, #fff); }
 .bs-chip.file { background: #ededed; color: #0a0a0a; }
 
+/* the hero's one ask. KeynoteStage draws "Try Hanzo" quiet (the header's words); here it is the page's one solid on the
+   first screen from 701px, where the header outlines while it is in view (Ask.jsx), so one solid per screen. Phones keep
+   the header's solid "Try Hanzo" (Ask.jsx does not quiet it there), so the hero's stays outlined on phones. */
+@media (min-width: 701px) {
+  .bs .kns-acts .x-btn[data-cta='base.hero'] { background-color: var(--btn-solid-bg); border-color: var(--btn-solid-bg); color: var(--btn-solid-ink); }
+  .bs .kns-acts .x-btn[data-cta='base.hero']:active { transform: scale(.98); }
+}
+@media (min-width: 701px) and (hover: hover) { .bs .kns-acts .x-btn[data-cta='base.hero']:hover { background-color: var(--btn-solid-hover); border-color: var(--btn-solid-hover); } }
+/* the stage sits higher: the h1 baseline near 38% of the screen, the admin starting just under the header */
+@media (min-width: 900px) {
+  .bs .kns.side { padding-top: clamp(32px, calc(14svh - 24px), 112px); }
+  .bs .kns.side .kns-g { grid-template-rows: auto 1fr; }
+  .bs .kns.side .kns-t { align-self: start; padding-top: clamp(24px, 6svh, 64px); }
+}
+
 /* the hero object: the Base admin (an outlined window: paper inside, hairlines between its parts) */
 .bs-adm { display: flex; flex-direction: column; min-height: min(680px, 74svh); }
 .bs-adm-bar { display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 0 22px; border-bottom: 1px solid var(--hair); }
@@ -129,19 +144,29 @@
 @keyframes bs-arrive { from { transform: translate3d(0, -34px, 0); } to { transform: none; } }
 .bs-up { margin: 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font: 400 14px/1 var(--mono); color: var(--t-soft); }
 
-/* the build-up (JS only: with JS off every tile stands built, every sentence stacked) */
-.js .bs-tile:not(.on) { background: transparent; border-color: #a3a3a3; border-style: dashed; }
-.js .bs-tile:not(.on) > * { visibility: hidden; }
+/* the build-up (JS only: with JS off every tile stands built, every sentence stacked). A tile not yet built is a
+   hairline sketch of itself: its parts are already drawn, faint, so the scene never opens on empty boxes. */
+.bs-tile > *, .bs-t-schema li > * { transition: opacity .4s var(--e-move); }
+.js .bs-tile:not(.on) { background: rgba(255, 255, 255, .45); border-color: rgba(0, 0, 0, .1); }
+.js .bs-tile:not(.on) > * { opacity: .22; }
 .js .bs-t-schema li:not(.in) { background: transparent; border-color: var(--t-line); }
-.js .bs-t-schema li:not(.in) > * { visibility: hidden; }
+.js .bs-t-schema li:not(.in) > * { opacity: .32; }
 .js .bs-exists { transform: scale(.8); opacity: 0; transition: opacity .3s var(--e-in), transform .4s var(--e-in); }
 .js .bs-exists.on { transform: none; opacity: 1; }
 .js .bs-t-prom:not(.on) li i { background: transparent; }
 
 @media (min-width: 900px) {
   .js .bs-dec-run { height: 480svh; }
-  .js .bs-dec-pin { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; overflow: hidden; }
-  .js .bs-dec-l { padding-top: 44px; }
+  /* pinned under the 60px glass header, so no tile's top edge hides behind it */
+  .js .bs-dec-pin { position: sticky; top: 60px; height: calc(100svh - 60px); display: flex; align-items: center; overflow: hidden; }
+  /* compact enough that all five tiles stand inside the pinned screen with air above and below */
+  .js .bs-dec-v { gap: 10px; }
+  .js .bs-tile { gap: 11px; padding: clamp(16px, 1.4vw, 21px); }
+  .js .bs-t-schema ul { gap: 7px; }
+  .js .bs-t-schema li { min-height: 44px; }
+  .js .bs-t-prom ul { gap: 8px; }
+  .js .bs-stream { height: 110px; gap: 4px; }
+  .js .bs-stream div { height: 24px; }
   .js .bs-say { grid-area: 1 / 1; opacity: 0; transform: translate3d(0, 24px, 0); visibility: hidden; transition: opacity .3s var(--e-move), transform .4s var(--e-move), visibility 0s linear .4s; }
   .js .bs-say[data-on] { opacity: 1; transform: none; visibility: visible; transition: opacity .5s var(--e-in) .1s, transform .5s var(--e-in) .06s, visibility 0s; }
 }
@@ -149,8 +174,37 @@ html:not(.js) .bs-dec { padding: clamp(72px, 11vw, 188px) 0; }
 html:not(.js) .bs-say { margin-bottom: 27px; }
 html:not(.js) .bs-steps { display: none; }
 
-/* capabilities: cards that open */
+/* capabilities: cards that open, set as an uneven six-column composition (wide + narrow, narrow + wide, two halves),
+   never three equal boxes in a row */
+.bs .bs-caps { padding-bottom: clamp(72px, 8vw, 116px); }
 .bs-caps-h { display: flex; flex-direction: column; gap: 10px; margin-bottom: clamp(44px, 5vw, 72px); }
+@media (min-width: 901px) {
+  .bs-open .kno-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .bs-open .kno-grid > li { grid-column: span 3; }
+  .bs-open .kno-grid > li:nth-child(1), .bs-open .kno-grid > li:nth-child(4) { grid-column: span 4; }
+  .bs-open .kno-grid > li:nth-child(2), .bs-open .kno-grid > li:nth-child(3) { grid-column: span 2; }
+  .bs-open .kno-art { aspect-ratio: auto; height: 272px; }
+  .bs-open .kno-grid > li:nth-child(n+5) .kno-art { height: 232px; }
+}
+/* hover says something: the plus turns, the card lifts a hair, and each drawing acts out its own idea */
+.bs-open .kno-card { transition: border-color .15s var(--e-out), scale .15s var(--e-out), transform .4s var(--e-move); }
+.bs-art *, .bs-art *::after { transition: transform .5s var(--e-move), background-color .3s var(--e-move), border-color .3s var(--e-move), height .4s var(--e-move), gap .4s var(--e-move); }
+.a-stream .bs-art-line i:nth-child(4) { transition-delay: .05s; }
+.a-stream .bs-art-line i:nth-child(5) { transition-delay: .15s; }
+@media (hover: hover) {
+  .bs-open .kno-card:hover { transform: translate3d(0, -4px, 0); border-color: rgba(0, 0, 0, .3); }
+  .bs-open .kno-card:hover .kno-plus { transform: rotate(90deg); }
+  .bs-open .kno-card:hover .a-schema .bs-art-arr { height: 40px; }
+  .bs-open .kno-card:hover .a-schema code { background: var(--ink); color: #fff; }
+  .bs-open .kno-card:hover .a-stream .bs-art-line i { background: var(--ink); border-color: var(--ink); }
+  .bs-open .kno-card:hover .a-rules li.out { transform: translate3d(14px, 0, 0); }
+  .bs-open .kno-card:hover .a-rules .bs-chip { transform: scale(1.08); }
+  .bs-open .kno-card:hover .bs-art-file { transform: translate3d(8px, -4px, 0) rotate(-4deg); }
+  .bs-open .kno-card:hover .bs-art-dbs { gap: 24px; }
+  .bs-open .kno-card:hover .bs-art-wal i { transform: scaleX(1.5); }
+  .bs-open .kno-card:hover .bs-art-box span:first-of-type { background: var(--ink); color: #fff; }
+  .bs-open .kno-card:hover .a-fn s { transform: translate3d(0, 3px, 0); }
+}
 .bs-art { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 24px; }
 .bs-art code { font: 400 14px/1 var(--mono); color: var(--ink); padding: 8px 12px; border-radius: 8px; background: #fff; }
 .bs-art-arr { width: 1px; height: 26px; background: #737373; position: relative; }
@@ -192,7 +246,8 @@ html:not(.js) .bs-steps { display: none; }
 .a-fn p { margin: 0; display: flex; gap: 6px; }
 .a-fn s { padding: 6px 9px; border-radius: 999px; background: #fff; font: 400 13px/1 var(--mono); color: #525252; }
 
-/* run the binary */
+/* run the binary: a tighter step from the cards above and to the dark room below */
+.bs .bs-run { padding-top: clamp(44px, 4vw, 72px); padding-bottom: clamp(72px, 7vw, 116px); }
 .bs-run-g { align-items: start; row-gap: 44px; }
 .bs-run-l { grid-column: 1 / span 5; display: flex; flex-direction: column; gap: 27px; }
 .bs-places { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink); }
@@ -243,10 +298,24 @@ html:not(.js) .bs-steps { display: none; }
   .bs-one-copies p { font-size: 14px; flex-wrap: wrap; gap: 10px; }
 
   .bs-dec { padding: 72px 0; }
-  .bs-dec-l, .bs-dec-v { grid-column: 1 / -1; }
-  .bs-say { margin-bottom: 27px; }
+  /* one thing in, one out: each paragraph is followed by its own tile (the four promises -> collection + promises,
+     Data -> the records path, Auth -> IAM, Files -> the stream), not three paragraphs and then the tiles */
+  .bs-dec-g { row-gap: 17px; }
+  .bs-dec-l, .bs-says, .bs-dec-v { display: contents; }
+  .bs-dec-hd, .bs-name, .bs-say { grid-column: 1 / -1; }
+  .bs-dec-hd { order: 1; }
+  .bs-name { order: 2; margin-bottom: 10px; justify-self: start; }
+  .bs-say:nth-child(1) { order: 3; }
+  .bs-t-schema { order: 4; }
+  .bs-t-prom { order: 5; }
+  .bs-say:nth-child(2) { order: 6; margin-top: 27px; }
+  .bs-t-api { order: 7; }
+  .bs-say:nth-child(3) { order: 8; margin-top: 27px; }
+  .bs-t-iam { order: 9; }
+  .bs-say:nth-child(4) { order: 10; margin-top: 27px; }
+  .bs-t-live { order: 11; }
   .bs-steps { display: none; }
-  .bs-dec-v { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'schema' 'prom' 'api' 'iam' 'live'; }
+  .bs-tile { grid-area: auto / 1 / auto / -1; }
   .bs-tile { padding: 17px; }
   .bs-path { font-size: 14px; }
   .bs-verbs span, .bs-stores span, .bs-nos s, .bs-stream div code, .bs-up, .bs-chip { font-size: 14px; }
