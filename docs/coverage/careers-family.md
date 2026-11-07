@@ -67,7 +67,7 @@ Done here: parity compiler-engineer 47/47, academic-research-intern 46/46, open 
 - [x] Inline strokes only (arrows, link, tick); no icon in a rounded box
 - [x] Differs from neighbours: a white editorial sheet (products lead with a dark console, legal with a cover)
 
-Done here: ink, greys and white; the only colour on the page is Hanzo's own model renders on the internship. One dark room (the application), not next to another.
+Done here: ink, greys and white; the only colour on the page is Hanzo's own model renders on the internship. One dark room (the application), not next to another. Its heading had lost its light ink when it moved to `v2f-head` (dark on #0a0a0a, near invisible); it now reads #fafafa (8 Nov).
 
 ## 8. UI component library
 - [x] Hover (inside `@media (hover:hover)`), press (scale .97, 90 ms) and focus-visible on asks, share, contents, ticks and step arrows
