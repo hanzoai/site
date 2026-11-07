@@ -86,6 +86,7 @@ const clamp = (v) => Math.min(1, Math.max(0, v));
 function GridCard({ m, i, play, lit, open, setLit }) {
   const tilt = useSpecTilt();
   const big = i === 0;
+  const price = rateLine(ALL[m.slug]);
   return (
     <li className={'xmo-cell' + (big ? ' big' : '') + (lit ? ' lit' : '')}>
       <a
@@ -94,7 +95,7 @@ function GridCard({ m, i, play, lit, open, setLit }) {
         className={'xmo-card' + (big ? ' big' : '')}
         data-card={m.slug}
         data-cursor=""
-        aria-label={`${m.name}: ${m.desc}`}
+        aria-label={`${m.name}: ${m.desc}${price ? ` ${price} per million tokens.` : ''}`}
         onClick={(e) => open(e, e.currentTarget, m.slug)}
         onPointerEnter={(e) => { if (e.pointerType === 'mouse' && !big) setLit(i); }}
         onPointerMove={tilt.onPointerMove}
@@ -108,7 +109,7 @@ function GridCard({ m, i, play, lit, open, setLit }) {
           <span className="xmo-card-t">{m.name}{' '}<span className="xmo-arr">→</span></span>
           <span className="xmo-card-d">{m.desc}</span>
         </span>
-        <span className="xmo-card-tags" aria-hidden="true">{m.tags.map((t) => <span key={t} className="xmo-pill">{t}</span>)}</span>
+        <span className="xmo-card-tags" aria-hidden="true">{m.tags.map((t) => <span key={t} className="xmo-pill">{t}</span>)}{price && <span className="xmo-pill price">{price}</span>}</span>
       </a>
     </li>
   );
@@ -289,6 +290,12 @@ function Figures() {
 /* ---------- prices (used by the catalogue's cards and the price list) ---------- */
 const dollars = (v) => (v == null ? '—' : '$' + (v > 0 && v < 1 ? v.toFixed(3) : v.toFixed(2)));
 const cost = (r, i) => (r[2] === 0 && r[3] === 0 ? 'Free' : dollars(r[i]));
+// a model's own rate as one line; null when Hanzo prints none for it (never a guessed price)
+const rateLine = (r) => (!r || r[2] == null ? null : r[2] === 0 && r[3] === 0 ? 'Free' : `${cost(r, 2)} in · ${cost(r, 3)} out`);
+/* Each catalogue model's "Use it now": Hanzo Chat, where Hanzo's own model pages send "Try in Chat". A sibling of the
+   card (never inside its link), set on the card's foot by CSS. */
+const CHAT = 'https://hanzo.ai/chat';
+const Use = ({ id, name }) => <Cta to={CHAT} kind="quiet" size="sm" id={'models.use.' + id} className="xmo-use" aria-label={`Use ${name} now in Hanzo Chat`}>Use it now</Cta>;
 const ctxOf = (n) => (n == null ? '—' : n >= 950000 ? Math.round(n / 1e6) + 'M' : Math.round(n / 1000) + 'K');
 
 /* api.hanzo.ai's live rates, asked once when the catalogue comes near; the printed rates stay when it is out of reach */
@@ -355,7 +362,7 @@ COUNT.all = Object.values(COUNT).reduce((a, b) => a + b, 0);
 /* ids and endpoints break only after a "/" (never mid-word) */
 const slashes = (t) => String(t).split('/').flatMap((x, i) => (i ? [<wbr key={i} />, '/' + x] : [x]));
 function MCard({ to, name, id, ctx, d, tags, rate }) {
-  const r = !rate || rate[2] == null ? null : rate[2] === 0 && rate[3] === 0 ? 'Free' : `${cost(rate, 2)} in · ${cost(rate, 3)} out`;
+  const r = rateLine(rate);
   return <SpecCard hush to={to} title={name} desc={d} meta={<><span>{slashes(id)}</span>{r && <><br /><b>{r}</b></>}</>} tags={[...(ctx ? [ctx] : []), ...tags]} />;
 }
 
@@ -429,7 +436,7 @@ function Catalogue({ at, makers }) {
   const open = useOpen();
   const paused = usePaused();
   const show = (f) => fam === 'all' || fam === f;
-  const card = (id, name, ctx, d, tags, to, f) => <li key={id}><Thumb fam={f} seed={id} /><MCard to={to} name={name} id={id} ctx={ctx} d={d} tags={tags} rate={ALL[id] && at(ALL[id])} /></li>;
+  const card = (id, name, ctx, d, tags, to, f) => <li key={id}><Thumb fam={f} seed={id} /><MCard to={to} name={name} id={id} ctx={ctx} d={d} tags={tags} rate={ALL[id] && at(ALL[id])} /><Use id={id} name={name} /></li>;
   const groups = [
     ['enso', <Head slug="enso" title="Enso models" link={<Lk to="/enso" onClick={(e) => open(e, e.currentTarget.closest('.xmo-gh').querySelector('.xmo-gh-film'), 'enso')}>Enso: the router, its presets and its runs</Lk>} />,
       <ul className="xmo-cards">{ENSO.map(([id, name, ctx, d, tags]) => card(id, name, ctx, d, tags, '/models/hanzo/' + id, 'enso'))}</ul>],
@@ -444,9 +451,9 @@ function Catalogue({ at, makers }) {
       </ul>
     )],
     ['kai', <Head slug="kai" title="Kai decision models" link={<Lk to="/kai" onClick={(e) => open(e, e.currentTarget.closest('.xmo-gh').querySelector('.xmo-gh-film'), 'kai')}>Kai: decisions and their benchmarks</Lk>} />,
-      <ul className="xmo-cards">{KAI.map((k) => <li key={k.name}><Thumb fam="kai" /><MCard to={k.to} name={k.name} id={k.id} ctx={k.ctx} d={k.d} tags={k.tags} rate={ALL[k.id] && at(ALL[k.id])} /></li>)}</ul>],
+      <ul className="xmo-cards">{KAI.map((k) => <li key={k.name}><Thumb fam="kai" /><MCard to={k.to} name={k.name} id={k.id} ctx={k.ctx} d={k.d} tags={k.tags} rate={ALL[k.id] && at(ALL[k.id])} />{ALL[k.id] && <Use id={k.id} name={k.name} />}</li>)}</ul>],
     ['creative', <Head title="Creative models" link={<Lk to="/design">Make something in Design</Lk>}><p>Video, images, 3D, sound effects, voice and music, each its own model, in research preview.</p></Head>,
-      <ul className="xmo-cards tiles">{CREATIVE.map((m) => <li key={m[0]}><Tile m={m} /></li>)}</ul>],
+      <ul className="xmo-cards tiles">{CREATIVE.map((m) => <li key={m[0]}><Tile m={m} /><Use id={m[0]} name={m[1]} /></li>)}</ul>],
     ['labs', <Head title="Flagships from other labs" art={<Sigil seed="/models#labs" data={[LABS.length, 2e6, 164e3]} className="xmo-gh-sigil" still={paused} />} link={<Lk to="#priced">Every model, priced</Lk>} />,
       <ul className="xmo-cards">{LABS.map(([id, name, ctx, d]) => card(id, name, ctx, d, ['text'], '/models/' + id, null))}</ul>],
   ];
