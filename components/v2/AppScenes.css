@@ -4,6 +4,7 @@
 .av-sc-grid { display: flex; flex-direction: column; }
 .av-sc-t { display: flex; flex-direction: column; gap: 16px; }
 .av-sc-t .av-head { max-width: 13ch; }
+.av-sc-k { margin: 0; font: 500 13px/1.4 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
 .av-sc-v { position: relative; margin: 32px 0 96px; }
 .av-sc-v:last-of-type { margin-bottom: 0; }
 .av-sc-rail { display: none; }

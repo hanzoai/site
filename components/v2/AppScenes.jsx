@@ -11,7 +11,7 @@
    Phones (≤ 900 px) get no pin: the chapters stack, text then picture, and each one is live while it is on screen.
    Reduced motion: no wipes, the active chapter simply shows. Every chapter's words are always in the HTML, and without
    JS the chapters simply stack (the pin is scoped to html.js). No label sits over a chapter's headline: the rail numbers
-   them. (`kick` is still accepted and used only to name a rail button.) */
+   them. A chapter's `kick` (Hanzo's own label) is printed small under its text instead. */
 import { useEffect, useRef, useState } from 'react';
 import { useScroll, useMotionValueEvent, useInView } from 'motion/react';
 import './AppScenes.css';
@@ -57,6 +57,7 @@ export default function Scenes({ items, label, flip = false, tone, className = '
               <div key={'t' + i} className={'av-sc-t' + st} aria-current={i === at ? 'step' : undefined} onFocus={() => { if (!phone && i !== at) jump(i); }}>
                 <h3 className="av-head">{it.title}</h3>
                 {it.body}
+                {it.kick ? <p className="av-sc-k">{it.kick}</p> : null}
               </div>,
               <div key={'v' + i} className={'av-sc-v' + st}>
                 {phone
