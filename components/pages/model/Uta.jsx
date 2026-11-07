@@ -172,7 +172,7 @@ export default function Uta() {
       accent="#e0a106"
       ink="#8f6500"
       shape={STEMS}
-      aim={(W, H, wide) => (wide ? focus(0.8, 0.55, W * 0.72, H * 0.55, 1.2) : focus(0.8, 0.55, W / 2, H * 0.3, 1.6))(W, H)}
+      aim={(W, H, wide) => (wide ? focus(0.8, 0.55, W * 0.72, H * 0.55, 1.2, [W * 0.5, H * 0.1, W * 0.94, H * 0.9]) : focus(0.8, 0.55, W / 2, H * 0.3, 1.5, [W * 0.06, H * 0.06, W * 0.94, H * 0.47]))(W, H)}
       headClass="ut-v2"
       first="demo"
       demo={
