@@ -23,12 +23,13 @@ export function Roll({ text, className = '' }) {
   let k = 0;
   return (
     <b className={'xce-roll ' + className}>
-      <span className="x-sr">{text}</span>
       <span aria-hidden="true" className="xce-roll-v">
         {[...text].map((c, i) => (/\d/.test(c)
           ? <span key={i} className="xce-roll-d" style={{ '--d': c, '--k': k++ }}><span>{'0123456789'.split('').map((n) => <i key={n}>{n}</i>)}</span></span>
           : <span key={i} className="xce-roll-c">{c}</span>))}
       </span>
+      {/* the readable figure last, so it reads straight into its label ("2,137+ open repositories") */}
+      <span className="x-sr">{text}</span>
     </b>
   );
 }

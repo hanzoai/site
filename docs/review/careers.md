@@ -1,6 +1,7 @@
 # /careers — James-eye review
 
 Verdict: 7/10
+Ready: 8 Nov, held up next to /api and /affiliate (James's new bar, no score). The earlier fixes (JS-off list, reduced-motion match, whole-sheet open, one skill row, perk crossfade, phone numerals) held on re-walk; this pass made the close's sticky-stack actually hold (`.vc-sec` was overriding sticky, leaving a blank screen before the dark close, 443px at 1470 and 1218px at 375) and let the 2,137+ figure read into its label. taste/unique/parity OK (text 76/76, links 13/13); 0 console errors (also under reduced motion and JS off), no overflow at 1470 and 375. Shared, not this page: the header's solid "Try Hanzo" beside the hero ask; motion.mjs reports the stacked sheets' covered buttons as dead hovers (probe artefact: the top sheet's controls answer).
 First complaint: "Why are there twenty-one buttons above seven jobs? Every team button just shows me one job. And when I click a role, the card turns into a grey box, the screen goes grey, and the page just pops in."
 
 Walked 7 Nov. I started on `927bd19` (pinned perks, Ask bar on). Then `38cf09d` and `49e828e` landed at 14:45, mid-walk ("to MASTER.md": deck type, kit `Cta`, no Ask bar, still perks). So everything below was re-run on `49e828e`: `components/pages/Careers.jsx`, `CareersBoard.css`, `company/deck.css` and `doorway.js`.
