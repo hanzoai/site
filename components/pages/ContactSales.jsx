@@ -117,6 +117,16 @@ function Form({ v, setV, at, setAt, adds, toggle }) {
     return () => { io.disconnect(); timers.current.forEach(clearTimeout); timers.current = []; el.removeEventListener('pointerdown', stop); el.removeEventListener('focusin', stop); el.removeEventListener('keydown', stop); };
   }, [calm, hyd]); // eslint-disable-line react-hooks/exhaustive-deps
   const shown = demo ? demo.at : at; // the step on screen (the demo only moves pictures; focus and inert follow `at`)
+  // the card is sized to its one question: the stage takes the height of the step on screen and eases to the next one
+  const stepEls = useRef([]);
+  const [sh, setSh] = useState(null);
+  useEffect(() => {
+    const el = stepEls.current[shown];
+    if (!el) return;
+    const ro = new ResizeObserver(() => setSh(el.offsetHeight));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [shown, state]);
   useEffect(() => {
     if (first.current) { first.current = false; return; }
     const el = refs.current[STEPS[at].name];
@@ -219,9 +229,9 @@ function Form({ v, setV, at, setAt, adds, toggle }) {
           <div className="xcs-top" aria-hidden="true">
             <i className="xcs-progress"><motion.b initial={false} animate={{ scaleX: (shown + 1) / STEPS.length }} transition={T} /></i>
           </div>
-          <div className="xcs-stage">
+          <motion.div className="xcs-stage" initial={false} animate={sh ? { height: sh } : undefined} transition={T}>
             {STEPS.map((s, i) => (
-              <motion.div key={s.name} className={'xcs-step' + (i === shown ? ' on' : '') + (bad === i ? ' bad' : '')} initial={false}
+              <motion.div key={s.name} ref={(el) => { stepEls.current[i] = el; }} className={'xcs-step' + (i === shown ? ' on' : '') + (bad === i ? ' bad' : '')} initial={false}
                 animate={i === shown ? { opacity: 1, y: 0 } : { opacity: 0, y: i < shown ? -16 : 16 }}
                 transition={{ duration: i === shown ? 0.3 : 0.15, ease: EASE, delay: i === shown ? 0.06 : 0 }}
                 {...(hyd && i !== at ? { 'aria-hidden': true, inert: true } : {})}>
@@ -234,7 +244,7 @@ function Form({ v, setV, at, setAt, adds, toggle }) {
                 {i === 0 && demo && <span className="xcs-ghost" aria-hidden="true">{demo.text}</span>}
               </motion.div>
             ))}
-          </div>
+          </motion.div>
           <div className="xcs-trap" aria-hidden="true">
             <label htmlFor="xcs-website">Leave this empty</label>
             <input id="xcs-website" name="website" tabIndex={-1} autoComplete="off" value={v.website} onChange={(e) => setV({ ...v, website: e.target.value })} />
