@@ -34,6 +34,16 @@
 }
 @media (prefers-reduced-motion: reduce) { .xst-ladder .xp-head { transform: none; color: var(--ink); } .xst-ladder .xp-body { color: var(--soft); } }
 .xst-cap { margin: 16px 0 0; }
+.xst-not-o { grid-column: 1 / span 5; grid-row: 2; max-width: 420px; }
+.xst-not-o .xst-match { background: #171717; box-shadow: none; }
+@media (max-width: 899px) { .xst-not-o { grid-column: auto; grid-row: auto; } .xst-not-o .xst-track p, .xst-not-o .xst-lit, .xst-not-o .xst-byo { display: revert; } }
+/* the board always fits inside its card */
+.xst-fig { min-width: 0; overflow: hidden; }
+.xst-fig .xst-flap { font-size: clamp(2.5rem, 4vw, 4rem); white-space: nowrap; }
+/* no dead band before the application */
+.xst.xp .xst-apply { padding-top: clamp(48px, 6vw, 96px); }
+/* phones: the match card sits after the form as its summary, never pinned over the fields */
+@media (max-width: 899px) { .xst-match-col { position: static; order: 1; top: auto; } }
 /* the asks: one solid ink, one outline; inverted in the dark room; press .97, hover changes the fill */
 .xst .xp-cta { background: var(--ink); color: #fafafa; border: 0; transition: background .15s cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
 .xst .xp-ghost { background: transparent; color: var(--ink); border: 1px solid rgba(0, 0, 0, .16); transition: border-color .15s cubic-bezier(0, 0, .2, 1), background .15s, transform 90ms; }

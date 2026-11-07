@@ -54,7 +54,7 @@ function Board() {
   const [n, setN] = useState(0);
   useEffect(() => {
     if (!seen || calm) return;
-    const t = setTimeout(() => setN((v) => v + 1), 6500);
+    const t = setTimeout(() => setN((v) => v + 1), 4200);
     return () => clearTimeout(t);
   }, [seen, calm, n]);
   return <span ref={ref} className="xst-board"><Flap key={n} value="$150,000" className="xst-flap" /></span>;
@@ -316,6 +316,8 @@ export default function Startups() {
             <p className="xp-lede">You do not need to qualify to build. Start free and pay only for what you use, or create an Enterprise plan for your team.</p>
             <div className="xst-acts"><A to="https://platform.hanzo.ai" className="xp-cta">Start free</A><A to="/enterprise/start" className="xp-ghost">Create Enterprise plan</A></div>
           </div>
+          {/* the room's object: the same match card, on the track everyone starts on */}
+          <div className="xst-not-o" aria-hidden="true" inert><Match c={EMPTY} /></div>
         </div>
       </section>
     </main>
