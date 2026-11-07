@@ -15,7 +15,7 @@ Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line
 - [x] No dead or self-looping button; n/a: no prices on the page
 - [x] Open copy questions for James listed, none decided
 
-Done here: Story page, one audience (builders and researchers judging how Hanzo thinks), metric `philosophy.close`. One solid ask per screen; "Build with Hanzo", "Read the research" and "View the source" are text links.
+Done here: Story page, one audience (builders and researchers judging how Hanzo thinks), metric `philosophy.close`. Copy question for James: the Lenses copy says "four modern minds" but Hanzo's data has one lens (Zen, 6 patterns), so the Lenses view shows "All lensed patterns" plus one chip; copy and data left as Hanzo has them. One solid ask per screen; "Build with Hanzo", "Read the research" and "View the source" are text links.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -26,14 +26,14 @@ Done here: Story page, one audience (builders and researchers judging how Hanzo 
 Done here: `<main id="main">` takes the layout's "Skip to content"; links use the kit `A` and `More`; parity shows 10/10 links.
 
 ## 3. First impression and page narrative
-- [x] Sells in 5 s; something moves within 1 s without input (the hexagram's first change at 900 ms)
+- [x] Sells in 5 s; something moves within 1 s without input (the hexagram draws itself and the h1 cuts in on CSS from first paint; the walk's first change follows 900 ms after mount)
 - [x] Hero: the hexagram is the one big thing; h1 52px by line mask; nothing above the h1 ("Philosophy" is a caption under it)
 - [x] JS off: legible; no `opacity:0` on the LCP element
 - [x] One idea per screen; sizes alternate (one moment per screen: hexagram, premise sentence, law hexagram, belief statement)
 - [x] Ends in the dark room's closing link ("Explore Hanzo"), then the footer
 - [x] n/a: no cards to other pages beyond the stack rows (they morph through the site layer)
 
-Done here: First screen at 1470×801: centred hexagram (≈420px) walking the sixty-four, 52px headline, caption, lede and ask at its foot; JS off measured 0 of 910 text blocks hidden.
+Done here: First screen at 1470×801: centred hexagram (≈420px) walking the sixty-four, 52px headline, caption, lede and ask at its foot. Slice D: the h1 cut-in and the hexagram's bottom-to-top draw are CSS keyframes, so they run from first paint and never wait for hydration (measured on the dev server: h1 already moving on the first frame at 0.78 s, settled by 1.6 s). JS off: every word visible; only the Sequence tab panel stays hidden, and its words are in the laid-out sheet details.
 
 ## 4. Conversion system
 - [x] Kit ask (`.pf-btn.solid`) only; no raw `.x-btn`
@@ -100,7 +100,7 @@ Done here: Every object is drawn in HTML and CSS (the hexagram is 6 rows of two 
 - [x] Every target 44px or more; tiles and rows answer taps
 - [x] Primary ask above the fold at 375 (moved above the lede)
 
-Done here: Phone hero: a 150px hexagram whose lines sit in 44px tap pads, h1 at 40px, the ask before the lede; the laws timeline sets a 104px hexagram beside its caption, the law below, and the strip at full width with 44px number stops (drag with a finger). Nothing overlaps at 375 (the old closed-sheet overlap is gone; scrollWidth 375). The patterns open on the Matrix view (one 8×8 object) instead of eight rows of tiles; tile titles wrap instead of colliding at 1470.
+Done here: Phone hero: a 150px hexagram whose lines sit in 44px tap pads, h1 at 40px, the ask before the lede; the laws timeline sets a 104px hexagram beside its caption, the law below, and the strip at full width with 44px number stops (drag with a finger). Nothing overlaps at 375 (the old closed-sheet overlap is gone; scrollWidth 375). The patterns open on the Matrix view (one 8×8 object) instead of eight rows of tiles; tile titles never break inside a word: measured with a Range per word at 1470, 1200, 900, 375 and 320 (six a row from 900, four below 1200, three on phones with 8px tile padding, two below 370px).
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Text #0a0a0a / #525252 / #737373 on white, #525252 on #f5f5f5
@@ -149,7 +149,7 @@ Done here: n/a: no code, terminal or config on /philosophy.
 - [x] n/a: no form
 - [x] JS off: a `<noscript>` rule lays out all views and all 64 patterns; reduced motion shows final states
 
-Done here: JS off measured 0 hidden blocks at 1470; the sheet wraps 64 → 01; nothing on the page fetches.
+Done here: JS off: all words visible at 1470 (the Sequence view's panel is hidden, but each of its 64 entries is laid out in full in the sheet details); the sheet wraps 64 → 01; nothing on the page fetches.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on both primaries (`philosophy.hero`, `philosophy.close`); n/a: `lib/track.js` wiring is shared

@@ -1,4 +1,5 @@
 # /philosophy — James-eye review
+Ready: 2026-11-07, slice D — arrival on CSS from first paint (h1 cut-in + hexagram draw, no hydration wait), Sequence tile names whole at 1470/1200/900/375/320, card parts 1/3/11/17 corrected; dead screens, tile breaks and the last-third big trigram were fixed in 9f011438/f687922c.
 
 Verdict: 7/10
 First complaint: "It's much better, the panel's gone and nothing jumps. But I scroll and there are whole screens of nothing. 'Five operating laws' sits on its own on a blank screen, then the questions have half the screen empty. And in the list of 64 the names are snapped in half: 'The Receptiv / e', 'Beginnin / g'. That looks broken."

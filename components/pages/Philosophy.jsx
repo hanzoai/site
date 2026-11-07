@@ -18,7 +18,8 @@
    premise and the stanza only, the view pill gliding (300 ms, ease-emphasis). Idle: the hero walk (with its pause control), the premise line, the laws' last line and one lap of the method ring, each ending at rest. Pointer: lines
    part their strokes under the pointer (James's "strokes parting"), rows and tiles fill. State: the sheet rises.
    The one dark room enters as a rounded card and opens to full width (MASTER §3.1 rooms). Deck timings only: 150 ms hover, 300 ms state, 400 ms fills, 800 ms line art; no springs, no overshoot.
-   Ink only: hierarchy is alpha steps of black and white. Every word is Hanzo's. */
+   Ink only: hierarchy is alpha steps of black and white. Every word is Hanzo's.
+   V2: 8/10 slice D: the h1 cut-in and the hexagram's draw run on CSS from first paint (arrival no longer waits for hydration); Sequence names stay whole down to 320px. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { A, More } from '../kit';
@@ -100,7 +101,8 @@ function Hero() {
             <span>{sub} · {h[2]} over {h[3]}</span>
           </div>
         </div>
-        <MaskLines as="h1" id="xph-h1" className="pf-display xph-h1" lines={['The Zen', 'of Hanzo']} amount={0.1} />
+        {/* the h1 cuts in on CSS from first paint, so arrival never waits for hydration (same mask and easing as MaskLines) */}
+        <h1 id="xph-h1" className="pf-display xph-h1"><span className="pf-mask-l"><span className="pf-mask-in xph-cut">The Zen</span> </span><span className="pf-mask-l"><span className="pf-mask-in xph-cut" style={{ '--d': '60ms' }}>of Hanzo</span></span></h1>
         <div className="pf-grid xph-hero-foot">
           <div className="xph-hero-a">
             <p className="pf-mono xph-cap">Philosophy</p>
