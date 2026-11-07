@@ -6,8 +6,8 @@
      <Odometer value={`$${total}`} className="big" />
    - The real value is plain text in the HTML (screen readers, search, the parity check); the rolling columns are
      aria-hidden and draw their 0-9 strip with CSS, so no extra digits end up in the page's text.
-   - Each digit is a column that slides to its digit (CSS transform, 900 ms, EASE), the ones place first and each place
-     to its left 60 ms later. A column that appears (95 -> 195) rolls up from 0 as it arrives, and so does every column
+   - Each digit is a column that slides to its digit (CSS transform, 300 ms, EASE, PLAN-COMPONENTS 5.2), the ones place
+     first and each place to its left 20 ms later. A column that appears (95 -> 195) rolls up from 0 as it arrives, and so does every column
      when the figure is first shown (page load, a tab opening), so a price always arrives rolling.
    - No JS loop: the browser runs it. Reduced motion: the figure just changes.
    - Size it with font-size on the element; use tabular figures (it sets font-feature-settings: 'tnum').
