@@ -1,5 +1,5 @@
 /* Ingress v2. Greys from Hanzo's deck only. One dark room: Chain your own pipeline. */
-.ig { --acc: #0a0a0a; --glow: #525252; }
+.ig { --acc: var(--ink); --glow: #525252; }
 .ig .v2-dark, .ig [data-room='dark'] { --acc: #f5f5f5; --glow: #e5e5e5; }
 
 /* hero: the name, the two ports, the globe */
@@ -13,22 +13,22 @@
 
 /* the signature's stage: a quiet room holding the globe, its legend and the live note in the page's words */
 .ig-stage { margin-top: clamp(24px, 2.4vw, 36px); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; padding: clamp(24px, 2.8vw, 40px); border-radius: 28px; background: #f5f5f5; box-sizing: border-box; }
-.ig-stage-l { grid-column: 1 / span 4; display: flex; flex-direction: column; justify-content: flex-end; gap: 17px; }
+.ig-stage-l { grid-column: 1 / span 4; display: flex; flex-direction: column; justify-content: flex-start; gap: 17px; padding-top: 8px; }
 .ig-legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
 .ig-legend li { display: flex; align-items: center; gap: 12px; font: 500 14px/1.2 var(--mono); color: var(--ink); }
 .ig-legend i { flex: none; display: grid; place-items: center; width: 22px; height: 22px; }
 .ig-legend i::before { content: ''; display: block; }
-.ig-legend .dot::before { width: 6px; height: 6px; border-radius: 50%; background: #0a0a0a; }
-.ig-legend .edge::before { width: 8px; height: 8px; border-radius: 50%; background: #0a0a0a; box-shadow: 0 0 0 5px #f5f5f5, 0 0 0 6.5px #737373; }
-.ig-legend .back::before { width: 11px; height: 11px; background: #0a0a0a; }
+.ig-legend .dot::before { width: 6px; height: 6px; border-radius: 50%; background: var(--ink); }
+.ig-legend .edge::before { width: 8px; height: 8px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 5px #f5f5f5, 0 0 0 6.5px #737373; }
+.ig-legend .back::before { width: 11px; height: 11px; background: var(--ink); }
 .ig-stage-note { margin: 0; padding-top: 17px; border-top: 1px solid var(--line); font: 500 14px/1.3 var(--mono); color: #525252; min-height: 2.6em; }
-.ig-stage-note.down { color: #0a0a0a; }
+.ig-stage-note.down { color: var(--ink); }
 
 .ig-globe { grid-column: 5 / -1; justify-self: center; position: relative; width: min(100%, 600px); aspect-ratio: 1; }
 .ig-globe-disc { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle closest-side, #fff 0 92%, transparent 92.4%); cursor: grab; touch-action: pan-y; -webkit-user-select: none; user-select: none; }
 .ig-globe[data-drag] .ig-globe-disc { cursor: grabbing; }
 .ig-globe-disc:focus { outline: none; }
-.ig-globe-disc:focus-visible { outline: 2px solid #0a0a0a; outline-offset: -2%; box-shadow: 0 0 0 4px #fff inset; }
+.ig-globe-disc:focus-visible { outline: 2px solid var(--ink); outline-offset: -2%; box-shadow: 0 0 0 4px #fff inset; }
 .ig-globe-disc canvas { display: block; width: 100%; height: 100%; }
 .ig-globe-pause { top: 0; right: 0; }
 
@@ -39,7 +39,7 @@
 .ig-car { --gut: max(24px, calc((100% - 1440px) / 2)); }
 .ig-car-track { list-style: none; margin: 0; padding: 0 var(--gut) 4px; display: grid; grid-auto-flow: column; grid-auto-columns: min(80%, 1080px); gap: 12px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gut); scrollbar-width: none; }
 .ig-car-track::-webkit-scrollbar { display: none; }
-.ig-car-track:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 4px; border-radius: 24px; }
+.ig-car-track:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; border-radius: 24px; }
 .ig-car-card { scroll-snap-align: start; display: flex; transition: transform .9s cubic-bezier(.16, 1, .3, 1); transition-delay: calc(var(--i) * 60ms); }
 .js .ig-car:not([data-in]) .ig-car-card { transform: translateX(calc(42vw + var(--i) * 72px)); }
 .ig-fact { flex: 1; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(24px, 3vw, 44px); align-items: center; min-height: 460px; padding: clamp(24px, 3vw, 44px); border-radius: 24px; background: #f5f5f5; box-sizing: border-box; }
@@ -49,15 +49,15 @@
 .ig-fact-l .v2-body { color: #525252; }
 .ig-fact-r { align-self: stretch; min-height: 380px; display: flex; align-items: center; justify-content: center; border-radius: 20px; background: #fff; padding: clamp(24px, 2.6vw, 40px); box-sizing: border-box; }
 .ig-car-nav { width: min(100% - 48px, 1440px); margin: 17px auto 0; display: flex; justify-content: flex-end; gap: 8px; }
-.ig-car-nav button { width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .12); background: #fff; color: #0a0a0a; font: 500 16px/1 var(--sans); cursor: pointer; transition: background-color .15s cubic-bezier(0, 0, .2, 1), color .15s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); }
+.ig-car-nav button { width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .12); background: #fff; color: var(--ink); font: 500 16px/1 var(--sans); cursor: pointer; transition: background-color .15s cubic-bezier(0, 0, .2, 1), color .15s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); }
 .ig-car-nav button:active:not(:disabled) { transform: scale(.97); transition-duration: 90ms; }
 .ig-car-nav button:disabled { color: #a3a3a3; cursor: default; }
-.ig-car-nav button:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 2px; box-shadow: 0 0 0 4px #fff; }
-@media (hover: hover) { .ig-car-nav button:not(:disabled):hover { background: #0a0a0a; color: #fff; } }
+.ig-car-nav button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; box-shadow: 0 0 0 4px #fff; }
+@media (hover: hover) { .ig-car-nav button:not(:disabled):hover { background: var(--ink); color: #fff; } }
 
 /* entrance 2, stretch-scroll: the board arrives stretched from its top edge and relaxes (the jsx eases it back and
    stretches it a little with scroll speed while it is on screen) */
-.ig-board-s { padding: clamp(44px, 6vw, 96px) 0 clamp(72px, 8vw, 116px); }
+.ig-board-s { padding: clamp(44px, 6vw, 96px) 0 clamp(16px, 2vw, 32px); }
 .ig-stretch-in { will-change: transform; }
 .js .ig-stretch:not([data-in]) .ig-stretch-in { transform: translateY(48px) scaleY(1.16); transform-origin: 50% 0%; }
 
@@ -108,8 +108,10 @@
 .ig-wire i { position: absolute; top: 0; left: 0; width: 20%; height: 100%; background: var(--glow); }
 .ig-svc b { font-weight: 600; min-width: 56px; }
 .ig-pods { display: flex; gap: 6px; margin-left: auto; }
+.ig-svc .ig-pods + .ig-disk { margin-left: auto; }
+.ig-svc .ig-pods:has(+ .ig-disk) { margin-left: 0; }
 .ig-pods i { width: 14px; height: 14px; border-radius: 4px; background: #a3a3a3; transition: background .4s, opacity .4s; }
-.ig-pods i.down { background: transparent; box-shadow: inset 0 0 0 2px #0a0a0a; opacity: 1; }
+.ig-pods i.down { background: transparent; box-shadow: inset 0 0 0 2px var(--ink); opacity: 1; }
 .ig-disk { margin-left: auto; color: var(--acc); font-size: 13px; }
 .ig-note { margin: 6px 0 0; font: 500 13px/1.3 var(--mono); color: #525252; }
 .ig-note.down { color: #262626; }
@@ -246,10 +248,21 @@
   .ig-col.mid .ig-chain { min-height: 33px; }
   .ig-chain span { padding: 10px 12px; border-radius: 10px; font-size: 13px; }
   .ig-wire { margin-top: 6px; }
-  .ig-scene { padding: 72px 0; }
-  .ig-scene-g { padding-top: 0; }
-  .ig-edge { margin-bottom: 32px; }
-  .ig-scene-r { margin-top: 32px; min-height: 0; padding: 24px; }
+  /* phones: the globe on top of its stage, the legend and the live note under it */
+  .ig-stage { grid-template-columns: minmax(0, 1fr); row-gap: 20px; padding: 16px 16px 20px; border-radius: 24px; }
+  .ig-globe { grid-column: 1 / -1; grid-row: 1; width: 100%; }
+  .ig-stage-l { grid-column: 1 / -1; grid-row: 2; }
+  /* phones: each fact is one card (its words, then its drawing), the next card peeking 40px */
+  .ig-facts-h { margin-bottom: 28px; }
+  .ig-car { --gut: 16px; }
+  .ig-car-track { grid-auto-columns: calc(100% - 72px); }
+  .ig-fact { grid-template-columns: minmax(0, 1fr); align-items: start; min-height: 0; gap: 20px; padding: 20px; }
+  .ig-fact-l .v2-kick { margin: 8px 0 14px; }
+  .ig-fact-r { min-height: 240px; padding: 16px; }
+  .ig-d { min-width: 0; max-width: 100%; }
+  .ig-d-src p { padding: 12px 14px; font-size: 14px; overflow-wrap: anywhere; }
+  .ig-d-src p.main { padding: 16px; font-size: 15px; }
+  .ig-car-nav { width: calc(100% - 32px); }
   .ig-d-live .pods i { width: 48px; height: 48px; }
   .ig-pipe { padding: 120px 0; }
   .ig-pipe-run { margin-top: 32px; padding: 16px; }
@@ -271,6 +284,8 @@
 
 /* the agent prompt (shared ShipPrompt): it wraps, so the whole command you copy is in view at every width */
 .ig .sp-code pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+/* phones: the lit row keeps its place (ring only), so the Let's Encrypt tag never crowds the row's edge */
+@media (max-width: 900px) { .ig-host.hit, .ig-svc.hit { transform: none; } .ig-cert { margin-right: 4px; } }
 
 /* the live object's pause control */
 .ig-pause { top: 14px; right: 14px; }

@@ -84,9 +84,10 @@ function Board() {
       </div>
       <div className="ig-col">
         <p className="ig-k">backend</p>
-        <div className={'ig-svc' + (req === 0 ? ' hit' : '')}><span className="ig-pods"><i /><i className={down ? 'down' : ''} /><i /></span></div>
+        {/* the pod backends carry Hanzo's own words for what keeps them in rotation, as the static one carries "from disk" */}
+        <div className={'ig-svc' + (req === 0 ? ' hit' : '')}><span className="ig-pods"><i /><i className={down ? 'down' : ''} /><i /></span><span className="ig-disk">health checks</span></div>
         <div className={'ig-svc' + (req === 1 ? ' hit' : '')}><b>static</b><span className="ig-disk">from disk</span></div>
-        <div className={'ig-svc' + (req === 2 ? ' hit' : '')}><span className="ig-pods"><i /><i /></span></div>
+        <div className={'ig-svc' + (req === 2 ? ' hit' : '')}><span className="ig-pods"><i /><i /></span><span className="ig-disk">health checks</span></div>
         <p className={'ig-note' + (down ? ' down' : '')}>{down ? 'out of rotation' : phase === 3 ? 'put back when it recovers' : 'no reload, no dropped connection'}</p>
       </div>
     </div>
