@@ -29,12 +29,12 @@
 
 .xlb-pod { padding: 17px 27px 27px; }
 .xlb-pod-top { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--k-hair); font-size: 17px; }
-.xlb-pod-top b { flex: 1; font-weight: 497; letter-spacing: -.01em; }
+.xlb-pod-top .xlb-pod-t { flex: 1; font-weight: 497; letter-spacing: -.01em; }
 .xlb-pause { flex: none; display: grid; place-items: center; width: 44px; height: 44px; margin: -6px 4px -6px -10px; border: 0; border-radius: 50%; background: none; color: var(--k-body); cursor: pointer; transition: background-color var(--k-fast) var(--k-out), transform var(--k-press) var(--k-out); }
 @media (hover: hover) { .xlb-pause:hover { background: var(--k-muted); color: var(--k-ink); } }
 .xlb-pause:active { transform: scale(.97); }
 .xlb-pause:focus-visible { outline: 2px solid var(--k-ink); outline-offset: 2px; }
-.xlb-pod-top span { font-size: 13px; color: var(--k-body); letter-spacing: .02em; }
+.xlb-pod-top .pf-mono { font-size: 13px; color: var(--k-body); letter-spacing: .02em; }
 .xlb-pod-body { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 27px; align-items: end; padding-top: 17px; }
 .xlb-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; align-items: end; }
 .xlb-step { display: flex; flex-direction: column; justify-content: flex-end; gap: 10px; min-height: 100%; padding: 0; border: 0; background: none; color: var(--k-ink); font: inherit; text-align: left; cursor: pointer; }
@@ -132,7 +132,7 @@
 .xlb-org { display: grid; grid-template-columns: 56px minmax(0, 4fr) minmax(0, 5fr) 170px; gap: 24px; align-items: center; padding: 17px 0; border-bottom: 1px solid var(--k-w8); }
 .xlb-org-r { font-size: 14px; color: var(--k-w55); }
 .xlb-org-m { display: grid; gap: 3px; min-width: 0; }
-.xlb-org-m b { font-size: 17px; font-weight: 606; color: var(--k-fg-dark); overflow-wrap: anywhere; }
+.xlb-org-m .xlb-org-n { font-size: 17px; font-weight: 606; color: var(--k-fg-dark); overflow-wrap: anywhere; }
 .xlb-org-m span { font-size: 14px; color: var(--k-on-black); }
 .xlb-org-m .xlb-req { color: var(--k-w55); font-size: 13px; }
 /* flat bars: the lead in the room's ink, the rest in the deck's text-on-black grey; a lit row turns its bar up a step */
@@ -206,7 +206,7 @@
 .xlb-calc-org b { font-weight: 606; color: var(--k-ink); overflow-wrap: anywhere; }
 .xlb-calc-org span { color: var(--k-body); }
 .xlb-tok-in { flex-wrap: wrap; padding: 16px 0; }
-.xlb-tok-in span b { margin-left: 8px; font-weight: 606; }
+.xlb-tok-in span .xlb-tok-v { margin-left: 8px; font-weight: 606; }
 .xlb-tok-in input { flex: 1 1 100%; -webkit-appearance: none; appearance: none; height: 44px; margin: 0; background: transparent; cursor: pointer; }
 .xlb-tok-in input::-webkit-slider-runnable-track { height: 6px; border-radius: 6px; background: linear-gradient(90deg, var(--k-ink) var(--f, 0%), var(--k-track) var(--f, 0%)); }
 .xlb-tok-in input::-moz-range-track { height: 6px; border-radius: 6px; background: linear-gradient(90deg, var(--k-ink) var(--f, 0%), var(--k-track) var(--f, 0%)); }
@@ -242,10 +242,10 @@
   /* phones: a cropped podium, the three blocks and the lit hunter's total side by side in one band */
   .xlb-pod { padding: 4px 12px 12px; }
   .xlb-pod-top { flex-wrap: wrap; gap: 0 8px; padding-bottom: 8px; font-size: 14px; }
-  .xlb-pod-top b { font-size: 14px; }
+  .xlb-pod-top .xlb-pod-t { font-size: 14px; }
   /* phones crop the podium to its moment: the figures and the step names stay in the HTML (and in each step's
      accessible name) but are read, not shown; the tape names the lit hunter, and the token room repeats 217 and 140.1M */
-  .xlb-pod-top span, .xlb-step-t { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .xlb-pod-top .pf-mono, .xlb-step-t { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .xlb-step { position: relative; }
   .xlb-pause { margin: 0 0 -6px -8px; }
   .xlb-pod-body { grid-template-columns: minmax(0, 1fr); gap: 10px; padding-top: 10px; }

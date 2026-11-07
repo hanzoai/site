@@ -152,7 +152,7 @@ function Podium() {
         <button type="button" className="xlb-pause" aria-pressed={mine} aria-label="Pause" onClick={() => setMine((v) => !v)}>
           <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">{mine ? <path d="M5 3.5v9l7-4.5z" fill="currentColor" /> : <path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />}</svg>
         </button>
-        <b>Top bug hunters &amp; builders</b>
+        <span className="xlb-pod-t">Top bug hunters &amp; builders</span>
         <span className="pf-mono">217 orgs · 140.1M tokens</span>
       </div>
       <div className="xlb-pod-body">
@@ -232,7 +232,7 @@ function Contributors() {
             <li key={h[1]} className={'xlb-row' + (lit === HUNTERS.indexOf(h) ? ' lit' : '')}>
               <span className="xlb-rank pf-mono">{h[0]}</span>
               <span className="xlb-row-m">
-                <b className="pf-title">{h[1]}</b>
+                <span className="pf-title">{h[1]}</span>
                 <span className="xlb-role">{h[7]}{h[9] && <em>{h[9]}</em>}</span>
                 <span className="xlb-detail">{h[8]}</span>
               </span>
@@ -331,9 +331,10 @@ function Tokens() {
           {ORGS.map(([who, badge, req, t], i) => (
             <li key={who} className={'xlb-org' + (i === 0 ? ' lead' : '') + (lit === i ? ' lit' : '')} style={{ '--i': i }}>
               <span className="xlb-org-r pf-mono">#{i + 1}</span>
-              <span className="xlb-org-m"><b>{who}</b><span>{badge}</span><span className="xlb-req">{req}</span></span>
+              <span className="xlb-org-m"><span className="xlb-org-n">{who}</span><span>{badge}</span><span className="xlb-req">{req}</span></span>
               <span className="xlb-bar" aria-hidden="true"><i ref={(el) => { bars.current[i] = el; }} style={{ '--w': width(t, scale) }} /></span>
-              <span className="xlb-org-t pf-mono"><span ref={(el) => { nums.current[i] = el; }}>{n(t)}</span> tokens</span>
+              {/* the race counts up in the visual figure; the resting line is read as one */}
+              <span className="xlb-org-t pf-mono"><span aria-hidden="true"><span ref={(el) => { nums.current[i] = el; }}>{n(t)}</span> tokens</span><span className="x-sr">{n(t) + ' tokens'}</span></span>
             </li>
           ))}
         </ol>
@@ -457,7 +458,7 @@ function Calc() {
             {/* the fill rides a CSS variable on the label (the same on server and client); the input itself carries no
                 style, and suppressHydrationWarning keeps a style attribute added before hydration from raising an issue */}
             <label className="xlb-calc-row xlb-tok-in xlb-orb" style={{ '--f': (k / top) * 100 + '%', '--o': 1 }}>
-              <span><b className="pf-mono">{n(tokens)} tokens</b></span>
+              <span><span className="pf-mono xlb-tok-v">{n(tokens) + ' tokens'}</span></span>
               <input type="range" min="0" max={top} step="1" value={k} onChange={(e) => setK(+e.target.value)} aria-label={EARN[3][0]} aria-valuetext={n(tokens) + ' tokens'} suppressHydrationWarning />
             </label>
             {/* every org's lines share one grid cell, so the panel keeps the tallest one's height and never shifts */}
