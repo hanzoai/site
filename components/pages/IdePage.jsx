@@ -112,12 +112,11 @@ function Editor() {
           <A to="https://hanzo.team/" className={'ide-open' + (t >= LAST + 5 ? ' on' : '')}>Open in the console</A>
         </aside>
       </div>
-      {/* an editor's own idiom: Hanzo's apps sit in the status bar, not in a tab row like the /cli and /desktop windows */}
-      <nav className="ide-tabs ide-status" aria-label="Hanzo apps">
-        <span className="ide-status-dot" aria-hidden="true" />
-        <A to={IDE} className="on">IDE</A><A to="/cli">CLI</A><A to="/playground">Playground</A><A to="/desktop">Desktop</A><A to="/cloud/api-keys">API Keys</A>
-        <span className="ide-status-r x-mono" aria-hidden="true">Rust · Open VSX</span>
-      </nav>
+      {/* an editor's own status bar; the app links shared with /cli and /desktop moved to the close (End) */}
+      <div className="ide-status" aria-hidden="true">
+        <span className="ide-status-dot" />
+        <span className="ide-status-r x-mono">Rust · Open VSX</span>
+      </div>
     </div>
   );
 }
@@ -406,6 +405,9 @@ function End() {
             <p className="a2-kick show">Related capabilities</p>
             {/* big cards: Morph flies the one you click into the next page's hero (synchronized.studio) */}
             <div>{[['CLI', '/cli', '$ hanzo'], ['Playground', '/playground', '> _'], ['Desktop', '/desktop', '⌘']].map(([t, to, g]) => <A key={t} to={to} className="ide-rel-a"><span className="ide-rel-g x-mono" aria-hidden="true">{g}</span><b data-morph="">{t}</b><span className="ide-rel-i" aria-hidden="true">→</span></A>)}</div>
+            <nav className="ide-apps" aria-label="Hanzo apps">
+              <A to={IDE} aria-current="page">IDE</A><A to="/cli">CLI</A><A to="/playground">Playground</A><A to="/desktop">Desktop</A><A to="/cloud/api-keys">API Keys</A>
+            </nav>
           </div>
         </div>
       </div>

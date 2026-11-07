@@ -329,3 +329,21 @@
 
 /* 13px floor in the product render */
 .ide-n, .ide-crumbs, .ide-status a, .ide-title, .ide-mem, .ide-mem-k, .ide-crumb, .ide-agent-h, .ide-plane-k, .ide-pic-chip span, .ide-pic-code li > span:first-child, .ide-box .x-mono, .ide-trail li.x-mono, .ide-ring span, .ide-node span, .ide-script-bar .x-mono { font-size: 13px; }
+
+/* critic round 3 (7 Nov): the app links live in the close, as 44px quiet rows that fill on hover */
+.ide-status-l { font-size: 11.5px; color: #737373; }
+.ide-apps { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 20px; }
+.ide-apps a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border-radius: 999px; font: 500 13px/1 var(--mono); color: #525252; text-decoration: none; transition: background-color .15s cubic-bezier(0, 0, .2, 1), color .15s cubic-bezier(0, 0, .2, 1); }
+.ide-apps a[aria-current] { color: #0a0a0a; }
+@media (hover: hover) { .ide-apps a:hover { background: #f2f2f2; color: #0a0a0a; } }
+.ide-apps a:active { transform: scale(.97); }
+/* phone and desktop: the text links reach 44px */
+.ide-copy .x-arrow, .ide-get-acts .x-arrow { min-height: 44px; }
+/* dark-room rows answer the pointer: a white 6% fill behind the row, the plus turns ink-bright */
+.ide-acc button { position: relative; isolation: isolate; }
+.ide-acc button::before { content: ''; position: absolute; inset: 0 -14px; z-index: -1; border-radius: 12px; background: rgba(255, 255, 255, .06); opacity: 0; transition: opacity .15s cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) { .ide-acc button:hover::before { opacity: 1; } .ide-acc button:hover i { transform: translateX(-4px); } }
+.ide-acc button i { transition: transform .15s cubic-bezier(0, 0, .2, 1); }
+.ide-acc button:active { transform: scale(.99); }
+@media (hover: hover) { .ide-dark .a2-pause:hover { background: #262626; border-color: rgba(255, 255, 255, .3); } .a2-pause:hover { border-color: rgba(0, 0, 0, .3); } }
+@media (max-width: 899px) { .ide-acc button::before { inset: 0 -8px; } }

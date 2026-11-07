@@ -75,7 +75,7 @@ Done here: taste.py passes; brows check: 0 labels above a headline; radii 24/16,
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: the hand-written hero buttons (now kit Cta), the custom closing section (now kit Band), the tab row shared with /cli and /desktop, the grey code bars, every eyebrow, the indigo, orange, blue and green, springs. listed below
 
-Done here: Buttons press to .97/.98, focus ring from the system; hover rules only inside (hover: hover); the memory input is 17px.
+Done here: Buttons press to .97/.98, focus ring from the system; the dark-room rows take a 6% white fill and the plus slides 4px on hover, Pause outlines on hover; hover rules only inside (hover: hover); the memory input is 17px.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -100,7 +100,7 @@ Done here: No media on this page: the editor and the planes are drawn in the DOM
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: 1470x801 and 375x812 checked (no overlap); 320 scrollWidth 320; ask bottom at 520px on 375x667; 44px targets on phones (status bar links, memory buttons).
+Done here: 1470x801 and 375x812 checked (no overlap); 320 scrollWidth 320; ask bottom at 520px on 375x667; a phone target crawl of <main> (7 Nov, round 3) finds 0 controls under 44px: View on GitHub, GitHub and Hanzo Cloud now have a 44px box, the app links in the close are 44px rows.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
