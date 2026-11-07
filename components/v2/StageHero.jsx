@@ -9,7 +9,7 @@
    - The object starts large and settles into place as the hero scrolls away, using scale, position and clip only:
      rise  = centred copy, the object big and low, then up into place;
      split = the title on 8 columns, the line and actions on 4 beside it (editorial), the object rising under both;
-     side  = copy on 5 columns, the object on 7, arriving from the right edge;
+     side  = copy on 5 columns, the object on 7, arriving from the right edge (flip: object left, copy right);
      frame = the object full-bleed behind the copy, then clipped into a 28px card.
    - Desktop pins for ~75svh so the settle reads. Phones and reduced motion get the settled state with no pin.
    - Put the page accent on <main style={{ '--ac': '#…' }}> (see components/v2/Launch.css). */
@@ -29,7 +29,7 @@ const LOOKS = {
   frame: { s: [1.08, 1], y: ['0svh', '0svh'], x: ['0%', '0%'], clip: [0, 1] },
 };
 
-export default function StageHero({ kick, title, sub, lede, acts = [], look = 'rise', dark, cue, thumb, children, className = '', id }) {
+export default function StageHero({ kick, title, sub, lede, acts = [], look = 'rise', flip, dark, cue, thumb, children, className = '', id }) {
   const ref = useRef(null);
   const calm = useReducedMotion();
   const wide = useWide();
@@ -38,7 +38,7 @@ export default function StageHero({ kick, title, sub, lede, acts = [], look = 'r
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   const s = useTransform(p, [0, 0.85], L.s);
   const y = useTransform(p, [0, 0.85], L.y);
-  const x = useTransform(p, [0, 0.85], L.x);
+  const x = useTransform(p, [0, 0.85], flip ? L.x.map((v) => (v === '0%' ? v : '-' + v)) : L.x);
   const k = useTransform(p, [0, 0.85], L.clip);
   const inset = useTransform(k, (v) => `inset(${v * 7}% ${v * 6}% ${v * 7}% ${v * 6}% round ${v * 28}px)`);
   const clip = useMotionTemplate`${inset}`;
@@ -51,7 +51,7 @@ export default function StageHero({ kick, title, sub, lede, acts = [], look = 'r
   const lines = Array.isArray(title) ? title : [title];
   const objStyle = on ? (look === 'frame' ? { clipPath: clip, scale: s } : { scale: s, y, x }) : undefined;
   return (
-    <section ref={ref} id={id} className={`l2-stage ${look} ${dark ? 'l2-dark' : ''} ${className}`} data-room={dark ? 'dark' : undefined}>
+    <section ref={ref} id={id} className={`l2-stage ${look} ${flip ? 'flip' : ''} ${dark ? 'l2-dark' : ''} ${className}`} data-room={dark ? 'dark' : undefined}>
       <div className="l2-stage-pin">
         <div className={look === 'side' ? 'l2-wrap l2-stage-in' : 'l2-stage-in'} style={look === 'side' ? undefined : { display: 'contents' }}>
           <motion.div className={look === 'side' ? 'l2-stage-copy' : 'l2-wrap l2-stage-copy'} style={on ? { y: copyY, opacity: copyO, pointerEvents: copyPE } : undefined}>

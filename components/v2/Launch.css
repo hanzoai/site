@@ -61,6 +61,8 @@
 .l2-stage.side .l2-stage-copy { grid-column: 1 / span 5; padding-top: 64px; }
 .l2-stage.side .l2-stage-obj { grid-column: 6 / span 7; padding: 64px 0 0; align-items: center; transform-origin: 0 50%; }
 .l2-stage.side .l2-stage-obj > * { width: 100%; }
+.l2-stage.side.flip .l2-stage-copy { grid-column: 8 / span 5; grid-row: 1; }
+.l2-stage.side.flip .l2-stage-obj { grid-column: 1 / span 7; grid-row: 1; transform-origin: 100% 50%; }
 .l2-stage.frame .l2-stage-pin { justify-content: flex-end; }
 .l2-stage.frame .l2-stage-obj { position: absolute; inset: 0; padding: 0; z-index: 0; }
 .l2-stage.frame .l2-stage-obj > * { width: 100%; height: 100%; }
