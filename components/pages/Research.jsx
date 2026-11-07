@@ -171,12 +171,14 @@ function Hero({ open, openLid }) {
           </div>
         </div>
         <div className="xrs-deal">
+          {/* Hanzo's own picture for its papers card (the Oto film still), kept beside the caption */}
+          <img className="xrs-oto" src="/models/oto.webp" alt="" width="1200" height="1500" decoding="async" />
           <div className="xrs-caps" aria-live={mine ? 'polite' : 'off'}>
             {FEATURED.map((x, i) => (
               <p key={x.t} className="xrs-cap" hidden={i !== top}>
                 <span className="pf-mono">{pad(i + 1)} / {pad(n)}</span>
-                <b>{x.t}</b>
-                <small>{x.date}. {x.sub}</small>
+                <span className="xrs-cap-t">{x.t}</span>
+                <span className="xrs-cap-d">{x.date}. {x.sub}</span>
               </p>
             ))}
           </div>
@@ -290,7 +292,7 @@ function Library({ mon, setMon, open, openKey }) {
                             <span className="xrs-thumb">
                               {openKey !== id && <motion.span layoutId={id} className="xrs-thumb-s" style={{ borderRadius: 4 }} transition={OPEN}><Mini x={it} /></motion.span>}
                             </span>
-                            <span className="xrs-row-t"><b>{it.t}</b><span>{it.sub}</span></span>
+                            <span className="xrs-row-t"><span className="xrs-row-tt">{it.t}</span><span>{it.sub}</span></span>
                           </button>
                           <A to={it.to} className="xrs-row-go" aria-label={`${it.t} on ${it.kind === 'Papers' ? 'papers.hanzo.ai' : 'hips.hanzo.ai'}`}>
                             <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -369,10 +371,15 @@ function Open() {
       <div className="pf-sec">
         <div className="pf-wrap pf-grid xrs-open-g" data-enter="focus">
           <h2 className="pf-head xrs-open-h">Open source</h2>
+          {/* Hanzo's sentence stays real text (its link and its closing clause as Hanzo writes them); the word-by-word
+              light is drawn by an aria-hidden copy in the same grid cell, so both wrap identically */}
           <p className="xrs-open-t" ref={ref}>
-            {a.map((w, i) => W(i, w + ' '))}
-            {W(a.length, <>{link}{', '}</>)}
-            {b.map((w, i) => W(a.length + 1 + i, w + (i < b.length - 1 ? ' ' : '')))}
+            <span className="xrs-open-v" aria-hidden="true">
+              {a.map((w, i) => W(i, w + ' '))}
+              {W(a.length, <><span className="xrs-open-lk">github.com/hanzoai</span>{', '}</>)}
+              {b.map((w, i) => W(a.length + 1 + i, w + (i < b.length - 1 ? ' ' : '')))}
+            </span>
+            <span className="xrs-open-r">{OPEN_A} {link}<span>{OPEN_B}</span></span>
           </p>
           <div className="xrs-open-a"><A to="https://github.com/hanzoai" className="pf-btn solid" data-cta="research.close">github.com/hanzoai</A></div>
         </div>
