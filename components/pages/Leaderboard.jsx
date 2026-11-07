@@ -182,7 +182,7 @@ function Hero() {
           </div>
         </div>
         {/* JS off: everything that arrives by motion stands at its final state */}
-        <noscript dangerouslySetInnerHTML={{ __html: '<style>.xlb-hero-obj,.xlb-block{opacity:1!important;transform:none!important}.xlb-bar i{transform:scaleX(var(--w))!important}</style>' }} />
+        <noscript dangerouslySetInnerHTML={{ __html: '<style>.xlb-hero-obj,.xlb-block{opacity:1!important;transform:none!important}.xlb-bar i{transform:scaleX(var(--w))!important}.xlb-rcpt-ls li{opacity:1!important;transform:none!important}</style>' }} />
         <motion.div className="xlb-hero-obj" initial={{ opacity: 0, y: 48 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.25 }}>
           <Podium />
         </motion.div>
