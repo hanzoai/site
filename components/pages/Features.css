@@ -97,10 +97,55 @@
 .xft-bc b { font: 497 17px/1.2 var(--sans); }
 @media (hover: hover) { .xft-bc:hover { transform: translateY(-4px); } }
 
+/* round 3: the film answers the open row (it moves to a new crop), each room has its own layout, tighter first screen */
+.xft-hero { padding: 44px 0 44px; }
+.xft-prod.p0 { padding-top: 72px; }
+.xft-find { max-width: 360px; }
+.xft-film .v2-mfilm { transform: scale(calc(1.02 + var(--r, 0) * .05)); transform-origin: calc(25% + var(--r, 0) * 18%) 45%; transition: transform .5s var(--eio), transform-origin .5s var(--eio); }
+@media (hover: hover) { .xft-film:hover .v2-mfilm { transform: scale(calc(1.06 + var(--r, 0) * .05)); } }
+.xft-film-t { font: 497 21px/1.2 var(--sans); letter-spacing: -.015em; }
+.xft-film-cap { align-items: baseline; }
+.xft-film-cap .x-mono { flex: none; }
+@media (hover: hover) { .xft-rows button:hover { background: #f5f5f5; } .xft-prod.p1 .xft-rows button:hover { background: rgba(255, 255, 255, .08); } }
+/* Hanzo Dev: a full-bleed black room, the film as its ground, the rows in white */
+.xft-prod.p1 { position: relative; background: #000; color: #fafafa; overflow: hidden; isolation: isolate; padding: clamp(116px, 12vw, 188px) 0; }
+.xft-prod.p1 .xft-prod-in { grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); }
+.xft-prod.p1 .xft-prod-w { order: 0; position: relative; z-index: 1; }
+.xft-prod.p1 .xft-film-w { position: absolute; inset: 0; z-index: -1; }
+.xft-prod.p1 .xft-film { position: absolute; inset: 0; aspect-ratio: auto; border-radius: 0; }
+.xft-prod.p1 .xft-film::after { inset: 0; background: linear-gradient(90deg, rgba(0, 0, 0, .78) 0%, rgba(0, 0, 0, .4) 45%, rgba(0, 0, 0, 0) 75%); }
+.xft-prod.p1 .xft-film-cap, .xft-prod.p1 .xft-film-bar { left: auto; right: clamp(16px, 4vw, 32px); width: min(420px, 40%); }
+.xft-prod.p1 .xft-prod-h, .xft-prod.p1 .xft-rows li.on button { color: #fafafa; }
+.xft-prod.p1 .xft-prod-tag, .xft-prod.p1 .xft-rows button { color: rgba(255, 255, 255, .55); }
+.xft-prod.p1 .xft-row-d > p { color: rgba(255, 255, 255, .78); }
+.xft-prod.p1 .xft-rows, .xft-prod.p1 .xft-rows li { border-color: rgba(255, 255, 255, .14); }
+.xft-prod.p1 .xft-rows button:focus-visible { outline-color: #fafafa; }
+/* Hanzo Design & Cloud: a wide film above, its two rows side by side */
+.xft-prod.p2 .xft-prod-in { grid-template-columns: minmax(0, 1fr); }
+.xft-prod.p2 .xft-film-w { order: -1; }
+.xft-prod.p2 .xft-film { aspect-ratio: 21 / 9; }
+.xft-prod.p2 .xft-rows { display: grid; grid-template-columns: 1fr 1fr; gap: 0 32px; border-bottom: 0; }
+.xft-prod.p2 .xft-rows li { border-bottom: 1px solid rgba(0, 0, 0, .1); }
+.xft-prod.p2 .xft-row-d { grid-template-rows: 1fr; }
+.xft-prod.p2 .xft-row-d > p { padding-bottom: 16px; }
+.xft-prod.p2 .xft-rows li:not(.on) .xft-row-d > p { color: #737373; }
+.xft-prod.p2 .xft-prod-w { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: 0 clamp(32px, 5vw, 96px); align-items: start; }
+.xft-prod.p2 .xft-prod-h { grid-column: 1; }
+.xft-prod.p2 .xft-rows { grid-column: 2; grid-row: 1 / span 2; margin-top: 0; }
+
 @media (prefers-reduced-motion: reduce) { .xft-row-d, .xft-key, .xft-film .v2-mfilm, .xft-bc { transition: none; } }
 @media (max-width: 899px) {
-  .xft-hero { padding-top: 40px; }
-  .xft-h1 { font-size: 38px !important; }
+  .xft-hero { padding-top: 32px; }
+  .xft-h1 { font-size: 32px !important; max-width: none; }
+  .xft-find { max-width: none; }
+  .xft-prod.p1 { padding: 0 0 72px; }
+  .xft-prod.p1 .xft-film-w { position: relative; inset: auto; z-index: 0; order: -1; }
+  .xft-prod.p1 .xft-film { position: relative; aspect-ratio: 4 / 3; }
+  .xft-prod.p1 .xft-film::after { background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, .7)); }
+  .xft-prod.p1 .xft-film-cap, .xft-prod.p1 .xft-film-bar { left: 21px; right: 21px; width: auto; }
+  .xft-prod.p2 .xft-prod-w { grid-template-columns: minmax(0, 1fr); }
+  .xft-prod.p2 .xft-rows { grid-column: 1; grid-row: auto; grid-template-columns: 1fr; margin-top: 20px; }
+  .xft-prod.p2 .xft-film { aspect-ratio: 4 / 3; }
   .xft-inst { border-radius: 24px; padding: 10px; }
   .xft-screen { position: sticky; top: 64px; z-index: 2; }
   .xft-screen-top { font-size: 12px; }
