@@ -32,6 +32,14 @@ function Para({ on }) {
   return <p className="z7-para">{out}</p>;
 }
 
+/* reduced motion only after mount: the server cannot know it, so the first client render must match the server HTML */
+function useCalm() {
+  const rm = useReducedMotion();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  return mounted && !!rm;
+}
+
 function usePhone() {
   const [phone, setPhone] = useState(false);
   useEffect(() => { const mq = matchMedia('(max-width: 899px)'); const f = () => setPhone(mq.matches); f(); mq.addEventListener('change', f); return () => mq.removeEventListener('change', f); }, []);
@@ -84,7 +92,7 @@ function Stage({ still, setStill }) {
    as it passes and underlines its phrase above; Zen 7 fills when the marker arrives. Phone: the same, down a vertical line. */
 function Lineage() {
   const box = useRef(null);
-  const calm = useReducedMotion();
+  const calm = useCalm();
   const phone = usePhone();
   const { scrollYProgress: p } = useScroll({ target: box, offset: phone ? ['start 0.75', 'end 0.6'] : ['start start', 'end end'] });
   const m = useTransform(p, phone ? [0, 1] : [0.12, 0.82], [0, 1], { clamp: true });
@@ -134,7 +142,7 @@ function Lineage() {
    width as it is reached (ZenSeven.css turns --open into the clip) */
 function Access({ still }) {
   const room = useRef(null);
-  const calm = useReducedMotion();
+  const calm = useCalm();
   const { scrollYProgress: rp } = useScroll({ target: room, offset: ['start end', 'start 0.3'] });
   const [d, setD] = useState([0, 0]);
   /* the room's own 7, drawn once as line art (1.2 s) and drifting up to 28px toward a fine pointer */
@@ -147,7 +155,7 @@ function Access({ still }) {
     <motion.section className="z7-access" data-room="dark" data-ask-hide aria-labelledby="z7-r" ref={room} style={{ '--open': rp }} onPointerMove={drift} onPointerLeave={() => setD([0, 0])}>
       <Sigil seed="zen-7/access" data={[2, 0, 7]} className="z7-sig2" still={still} />
       <svg className="z7-seven" viewBox="0 0 600 700" aria-hidden="true" style={{ transform: `translate(${d[0]}px, ${d[1]}px)` }}>
-        <motion.path d="M120 110H480L250 620" initial={{ pathLength: calm ? 1 : 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true, amount: 0.4 }} transition={calm ? { duration: 0 } : { duration: 1.2, ease: EASE }} />
+        <motion.path d="M120 110H480L250 620" initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true, amount: 0.4 }} transition={calm ? { duration: 0 } : { duration: 1.2, ease: EASE }} />
       </svg>
       <div className="z7-w z7-access-g">
         <h2 id="z7-r" className="z7-big">Research access</h2>
