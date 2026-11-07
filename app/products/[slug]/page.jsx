@@ -19,5 +19,5 @@ export default async function Page({ params }) {
   if (!SLUGS.includes(slug)) notFound();
   // each of the seven: its line and its operation count, read from its own captured page
   const peek = Object.fromEntries(SLUGS.map((s) => { const q = product(s); return [s, { lede: q.lede, ops: opsOf(q) }]; }));
-  return <><JsonLd route={'/products/' + slug} /><ProductPage p={product(slug)} peek={peek} /></>;
+  return <><JsonLd route={'/products/' + slug} /><ProductPage key={slug} p={product(slug)} peek={peek} /></>;
 }

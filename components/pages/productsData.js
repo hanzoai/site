@@ -4,7 +4,9 @@ import { load, find, findAll, textOf, slot, tag, isN } from './htmltree';
 export const SLUGS = ['company', 'agents', 'models', 'memory', 'identity', 'machines', 'record'];
 const T = (n) => textOf(n).replace(/\s+/g, ' ').trim();
 
+const CACHE = {}; // each product is read once per server process (the page also peeks at all seven)
 export function product(slug) {
+  if (CACHE[slug]) return CACHE[slug];
   const root = load('products/' + slug);
   const secs = findAll(root, tag('section'));
   const hero = secs[0];
@@ -33,5 +35,5 @@ export function product(slug) {
     else if (h === 'Docs') out.docs = { title: h, links: links(s) };
     else if (h === 'On this site') out.site = { title: h, links: links(s) };
   }
-  return out;
+  return (CACHE[slug] = out);
 }

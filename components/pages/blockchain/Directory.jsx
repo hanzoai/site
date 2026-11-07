@@ -13,18 +13,20 @@
    Beyond: the product filter in the legend (hanzo.ai only filters by kind).
    Motion: idle (the contour drifts) · state (kind pill glides, the grid re-flows, cards open into their sheet) ·
    pointer (cards lift, press .98). No scroll-linked motion.
-   V2: 8/10 no eyebrow, ink only (marks filled or outlined), the live count as the hero figure, sticky filters, cards that open, list rows on phones. */
+   V2: 8/10 no eyebrow, ink only, the live count as the one figure (it starts large and settles as you scroll), sticky filters with a legend that lights its mark in every card, cards that open into a sheet above the header, list rows reaching the phone's first screen, the Web3 products as a closing rail. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, LayoutGroup, useReducedMotion } from 'motion/react';
 import Sigil from '../../Sigil';
 import FamLines from '../../v2/FamLines';
+import FamGrow from '../../v2/FamGrow';
+import FamNext from '../../v2/FamNext';
 import { ui } from '../../v2/famUi';
 import '../../v2/fam.css';
 import './blockchain.css';
 import './BlockPage.css';
 
 const KIND = { All: () => true, L1s: (k) => k === 'L1', L2s: (k) => k === 'L2', Rollups: (k) => /ROLLUP/i.test(k), 'Lux Ecosystem': (k) => /Lux/i.test(k), Cosmos: (k) => /COSMOS/i.test(k), Other: (k) => /OTHER/i.test(k) };
-const SPRING = { type: 'spring', stiffness: 300, damping: 30 };
+const SPRING = { duration: 0.3, ease: [0.16, 1, 0.3, 1] }; // MASTER 3.1: ease-emphasis 300 ms, no springs
 
 function Sheet({ c, onClose }) {
   const x = useRef(null);
@@ -61,10 +63,11 @@ function Sheet({ c, onClose }) {
   );
 }
 
-export default function Directory({ doc }) {
+export default function Directory({ doc, all = [] }) {
   const [q, setQ] = useState('');
   const [kind, setKind] = useState(doc.filters[0] || 'All');
   const [prod, setProd] = useState(null);
+  const [peek, setPeek] = useState(null); // a legend name under the pointer lights its mark in every card
   const [open, setOpen] = useState(null);
   const calm = useReducedMotion();
   const t = q.trim().toLowerCase();
@@ -81,7 +84,7 @@ export default function Directory({ doc }) {
             <p className="v2f-lede">{doc.lede}</p>
             <p className="xb2-meta"><span className="v2f-kick">{doc.label}</span></p>
           </div>
-          <p className="xb2-dir-n" aria-live="polite"><b className="v2f-num">{n}</b><span className="x-mono">/ {doc.cards.length}</span></p>
+          <p className="xb2-dir-n" aria-live="polite"><FamGrow to={1.75} origin="100% 100%"><b className="v2f-num">{n}</b></FamGrow><span className="x-mono">/ {doc.cards.length}</span></p>
         </div>
       </section>
 
@@ -105,7 +108,7 @@ export default function Directory({ doc }) {
           </div>
           <div className="xb2-legend" role="group" aria-label={doc.legendLabel} data-swipe-own>
             <span>{doc.legendLabel}</span>
-            {doc.legend.map((p) => <button key={p} type="button" aria-pressed={prod === p} onClick={() => setProd(prod === p ? null : p)}><i aria-hidden="true" />{p}</button>)}
+            {doc.legend.map((p) => <button key={p} type="button" aria-pressed={prod === p} onClick={() => setProd(prod === p ? null : p)} onPointerEnter={(e) => e.pointerType === 'mouse' && setPeek(p)} onPointerLeave={() => setPeek(null)}><i aria-hidden="true" />{p}</button>)}
           </div>
         </div>
       </div>
@@ -120,7 +123,7 @@ export default function Directory({ doc }) {
                     <h3>{c.name}</h3>
                     <p className="x-mono">{c.id && <span>{c.id}</span>}<span className="xb2-kind">{c.kind}</span></p>
                     <ul className="xb2-marks" aria-label={c.name + ' · ' + doc.legendLabel}>
-                      {c.marks.map((m) => <li key={m.p} className={(m.on ? 'on' : '') + (prod === m.p ? ' hot' : '')}><span className="xbc-sr">{m.p}{m.on ? '' : ' (not marked)'}</span></li>)}
+                      {c.marks.map((m) => <li key={m.p} className={(m.on ? 'on' : '') + (prod === m.p || peek === m.p ? ' hot' : '')}><span className="xbc-sr">{m.p}{m.on ? '' : ' (not marked)'}</span></li>)}
                     </ul>
                     <button type="button" className="xb2-dcard-hit" onClick={() => setOpen(c.name)} aria-label={c.name} aria-haspopup="dialog" data-cursor="Open" />
                   </motion.div>
@@ -131,6 +134,11 @@ export default function Directory({ doc }) {
           {n === 0 && <p className="xb2-none" role="status" aria-label={ui('no_match')}><b className="v2f-num" aria-hidden="true">0</b></p>}
         </div>
       </section>
+      {all.length > 0 && (
+        <section className="v2f-sec tight xb2-next xb2-dir-close" aria-label={doc.legendLabel}>
+          <div className="v2f-wrap"><FamNext items={all.slice(0, 6).map((p) => ({ href: p.href, title: p.name, meta: p.chains.slice(0, 3).join(' · '), seed: p.href, data: [p.chains.length] }))} label={doc.legendLabel} /></div>
+        </section>
+      )}
       <AnimatePresence>{card && <Sheet key={card.name} c={card} onClose={() => setOpen(null)} />}</AnimatePresence>
     </main>
   );

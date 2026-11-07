@@ -60,8 +60,8 @@ export default function PinnedChapters({ steps, visual, label = 'Chapters', flip
               {Intro}
               {steps.map((s, i) => (
                 <article key={i} className="lx-pin-step" data-at={where(i)}>
-                  <p className="lx-kick lx-pin-k">{s.k || `${pad(i + 1)} / ${pad(n)}`}</p>
                   {s.t && <h3 className="lx-pin-t">{s.t}</h3>}
+                  <p className="lx-kick lx-pin-k">{s.k || `${pad(i + 1)} / ${pad(n)}`}</p>
                   <p className="lx-pin-d">{s.d}</p>
                   {s.extra}
                 </article>

@@ -15,8 +15,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useInView } from 'motion/react';
 import useCalm from '../../v2/useCalm';
 import { EASE } from '../../ui';
-import { useEvery } from './Frame';
-import { useDemo, PauseBtn } from '../../v2/x-hamilton/Demo';
+import { useDemo, PauseBtn, useTick } from '../../v2/x-hamilton/Demo';
 import StageHero from '../../v2/StageHero';
 import Finale from '../../v2/Finale';
 import { useWide } from '../../v2/useWide';
@@ -35,7 +34,7 @@ function Issue() {
   const [n, setN] = useState(4211);
   const [bars, setBars] = useState(() => Array.from({ length: 28 }, (_, i) => 0.18 + rnd(i + 3) * 0.5 + (i > 20 ? (i - 20) * 0.04 : 0)));
   const [t, setT] = useState(0);
-  useEvery(140, live, () => { setN((v) => v + 1 + Math.floor(rnd(v) * 9)); setT((x) => x + 1); if (rnd(t) > 0.82) setBars((b) => [...b.slice(1), 0.3 + rnd(t + 9) * 0.65]); });
+  useTick(140, live, () => { setN((v) => v + 1 + Math.floor(rnd(v) * 9)); setT((x) => x + 1); if (rnd(t) > 0.82) setBars((b) => [...b.slice(1), 0.3 + rnd(t + 9) * 0.65]); });
   const resolved = calm || Math.floor(t / 22) % 2 === 1;
   return (
     <div className="l2-obj sn2-issue" ref={ref} aria-hidden="true">
@@ -256,7 +255,7 @@ function Resolved() {
 
 export default function Sentinel() {
   return (
-    <main className="l2-page sn2">
+    <main id="main" className="l2-page sn2">
       <StageHero look="side" kick="sentry.hanzo.ai" title="Hanzo Sentinel" sub="Error tracking and performance monitoring" acts={[['Read the docs', DOCS], ['View on GitHub', GH]]}>
         <Issue />
       </StageHero>

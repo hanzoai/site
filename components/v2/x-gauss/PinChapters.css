@@ -35,7 +35,7 @@
   .w2-pin-rail { order: -2; display: block; margin: 0 0 8px; }
   .w2-pin-rail li:not(.w2-pin-title) { display: none; }
   .w2-pin-title { margin: 0; }
-  .w2-pin-title span { width: auto; writing-mode: horizontal-tb; transform: none; font-size: 14px; color: var(--soft); }
+  .w2-pin-title span { width: auto; writing-mode: horizontal-tb; transform: none; font-size: 14px; color: var(--soft); white-space: normal; }
   .w2-pin-texts { order: 1; display: contents; }
   .w2-pin-t.lead { order: -3; min-height: 0; padding: 0 0 24px; border-top: 0; }
   .w2-pin-texts { display: contents; }

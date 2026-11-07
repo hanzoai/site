@@ -2,13 +2,14 @@
 
 Critic for Wave 2 groups 11–14, `/models/*` and `/cloud/*`. Measured on main at `2106935` and later; updated 7 Nov 15:00 UTC on `25b197c`.
 
-## 1. The desktop ask bar floats over content (site-wide, blocks "ready" everywhere)
+## 1. The floating ask bar: fixed at the shared level (15:06)
 
-MASTER 3.2 rule 6 and the banned list (3.3: "Anything floating over content: a pill bar…") forbid a floating pill bar over content on desktop. The shared ask bar (`components/Ask.jsx`, class `.x-ask`) is exactly that: once the hero has passed, a pill with the Hanzo mark, the page name, search and the ask sits at the bottom centre of every page at 1470×801, over the page's text and objects. Every desktop walk since 13:50 shows it as a fixed element over content on every page in my scope.
+`d2b5ab8c` (merged 15:06) removed the desktop pill; the sticky header carries the solid ask at every width. On phones a slim bar carries the page's own ask only at rest where nothing readable or tappable sits under it.
 
-- Owner: the shared-system chat (`components/Ask.jsx`). Page chats cannot fix it and are told not to touch it.
-- What James asked for instead: the one solid ask lives in the sticky header at every width; on phones a slim bottom bar only where it never covers content or the page's own ask.
-- How I score it, from 15:00: **counted per page.** A page can now turn the pill off itself (`data-ask="off"` on `<main>`; /api, /careers and the legal pages already do), and other critics fail it. So if my desktop walk sees the pill over a page's content, that page fails Part 4 (MASTER 3.2 rule 6) and is capped at 6. The same holds on the phone: MASTER allows a slim phone bar "only where it never covers content", so a phone bar seen over cards or text fails too. If the walk never sees it (a solid ask stays on screen, or the page turns it off), the page passes this rule.
+- Reviews pushed between 15:00 and 15:08 (/sms-opt-in, /zen, /enso, /koma, /startups, /kai, /iro) were walked on `25b197c`, before this fix, and capped some pages at 6 for the pill. They are being re-walked on `648b798` and re-scored; the pill is not held against any page from that build on.
+- From `648b798`: if my walk still sees anything fixed over content (a bar, a label, a panel), the page fails MASTER 3.2 rule 6 and is capped at 6.
+
+- **New shared side-effect (request for the shared owner):** the header's "Try Hanzo" is now solid at every width, so every page whose hero has its own solid ask shows **two solid fills on the first screen** (MASTER 3.1 rule 3: "One solid fill per viewport"). On /enso and /zen both say "Try Hanzo"; on /koma, /iro and /oto it is "Try Hanzo" beside "Request access". MASTER 3.2 rule 6 wants the page's own ask, in Hanzo's words, in the header. Asked for: let a page name its header ask (or outline the header button while a page solid is on screen). Not held against pages.
 
 ## 2. 18-part cards (MASTER section 6)
 

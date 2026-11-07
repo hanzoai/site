@@ -22,36 +22,23 @@ const EASE = [0.16, 1, 0.3, 1];
 const MAIL = 'mailto:hello@hanzo.ai?subject=Affiliate%20application';
 const LINK = 'https://hanzo.ai/?aff=<code>';
 const RULES = ['first touch', 'one affiliate per org', 'never your own'];
-const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
 /* The hero object, in its own section: the affiliate link itself at display size. It writes itself once when it is
    reached, then rests with its code marked; it leans toward the pointer. */
 function Link() {
   const box = useRef(null);
-  const out = useRef(null);
   const seen = useInView(box, { once: true, amount: 0.4 });
-  const calm = useReducedMotion();
-  const [done, setDone] = useState(false);
   const tilt = useTilt(2.5, 'rgba(255,255,255,0)');
-  useEffect(() => {
-    if (calm) { if (out.current) out.current.textContent = LINK.slice(0, 22); setDone(true); return; }
-    if (!seen) return;
-    let live = true;
-    (async () => {
-      const head = LINK.slice(0, 22);
-      for (let i = 0; i <= head.length && live; i++) { if (out.current) out.current.textContent = head.slice(0, i); await wait(i < 8 ? 40 : 62); }
-      if (live) setDone(true);
-    })();
-    return () => { live = false; };
-  }, [seen, calm]);
+  // the link writes itself once (CSS, from an empty first frame, so nothing is wiped and retyped); it waits until it is seen
   return (
     <section className="xaf-link" aria-label={LINK}>
+      <noscript><style>{'.xaf-lnk-t,.xaf-lnk-code{animation:none!important}.xaf-caret{display:none}'}</style></noscript>
       <div className="xp-wrap" ref={box}>
-        <motion.div className="xaf-link-in" style={{ rotateX: tilt.rx, rotateY: tilt.ry, transformPerspective: 1600 }} {...tilt.on} aria-hidden="true">
-          <span className="xaf-lnk"><span ref={out}>{LINK.slice(0, 22)}</span><b className={'xaf-caret' + (done ? ' rest' : '')} /></span>
-          <motion.span className="xaf-lnk-code" initial={{ clipPath: 'inset(0 100% 0 0)' }} animate={done ? { clipPath: 'inset(0 0% 0 0)' } : { clipPath: 'inset(0 100% 0 0)' }} transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1] }}>&lt;code&gt;</motion.span>
+        <motion.div className={'xaf-link-in' + (seen ? ' on' : '')} style={{ rotateX: tilt.rx, rotateY: tilt.ry, transformPerspective: 1600 }} {...tilt.on} aria-hidden="true">
+          <span className="xaf-lnk"><span className="xaf-lnk-t">{LINK.slice(0, 22)}</span><b className="xaf-caret" /></span>
+          <span className="xaf-lnk-code">&lt;code&gt;</span>
         </motion.div>
-        <p className="xaf-link-k"><span>Affiliates</span><span className="x-mono">?aff=&lt;code&gt;</span></p>
+        <p className="xaf-link-k"><span>Affiliates</span></p>
       </div>
     </section>
   );
@@ -118,7 +105,7 @@ function Stage({ at, still }) {
 
 function How() {
   const chapters = [
-    { title: <>Apply with <code className="xaf-code-in">POST /v1/affiliate/apply</code><Copy text="POST /v1/affiliate/apply" />, or write to <a href={MAIL}>hello@hanzo.ai</a>.</> },
+    { title: <>Apply with <span className="xaf-keep"><code className="xaf-code-in">POST /v1/affiliate/apply</code><Copy text="POST /v1/affiliate/apply" />,</span> or write to <a href={MAIL}>hello@hanzo.ai</a>.</> },
     { title: 'We review the application and reply.' },
     { title: <>Once approved you have a code and a link, <code className="xaf-code-in">{LINK}</code>.</> },
     { title: 'An org that signs up through the link is attributed to you: first touch, one affiliate per org, never your own.' },

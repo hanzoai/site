@@ -3,7 +3,7 @@
 Page file: `components/pages/DesktopPage.jsx` (+ `DesktopPage.css`, shared `components/v2/AppType.css`, `AppScenes`, `AppSheet`, `x-edison/AppLines`) · gallery: `docs/gallery/desktop/` · metric id: `desktop_download`
 
 Open copy questions for James: none decided. "Download" goes to Hanzo's own docs page (docs.hanzo.ai/docs/apps/desktop), as on live; the builds themselves are on /download, linked from the spec drawer ("Every build").
-Shared changes requested: see `docs/requests/apps1.md` (header ask label per page, a desktop-off mode for the ask bar, a `Band` with `id`). Until then `<main data-ask="off">` and the page closes on its own band with `<Cta id>`.
+Shared changes requested: `docs/requests/apps1.md` (a `Band` with an `id` prop). The ask is settled by the shared system: the header's solid "Try Hanzo" carries it at every width, with no desktop bar, and the page's own `data-thumb` ask rides the slim phone bar. The page closes on its own band with `<Cta id>`.
 Forks this page deleted: the kicker over the h1 ("Native Desktop Client", now a caption under the window) and over "Cut the network"; the Stage wrapper; skeleton bars in the window (file tree, code strokes) and in the chapter panes; the second solid in the hero ("GitHub" is now a text link); the solid "Deploy to Cloud" (now quiet, above the band); raw `Go`/`.x-btn` asks (now `<Cta>`); spring transitions; cursor labels; shadows on objects.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -37,7 +37,7 @@ Done here: At 1470×801 the h1 (52px), lede, the one ask and the whole 1080×540
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
-- [x] Sticky ask in header and bar after the hero, same label (the bar is off by request, see apps1.md; the header carries "Try Hanzo")
+- [x] Sticky ask in header and bar after the hero (shared system: the header's solid "Try Hanzo" at every width, no desktop bar; on phones the slim quiet bar carries this page's `data-thumb` ask once the hero button leaves)
 - [x] Copy button copies exactly the displayed text; failure never says Copied (kit `Copy`)
 - [x] `data-cta` and `data-thumb` on every primary
 
@@ -82,7 +82,7 @@ Done here: System tabs, the pause control, model radios, the network switch, not
 - [x] At least 3 kinds of movement; scroll-linked is half or less
 - [x] Something moves without input; every control answers
 - [x] Reduced motion shows the final state; no `setInterval`
-- [x] Sound only on the listed moments, through the one kit (n/a: the shared sound kit is not merged; the page plays none)
+- [x] Sound only on the listed moments, through the one kit (`lib/sound.js`: `play('done')` once when the window's first build passes; `data-sound="tick"` on the model radios and the notes; tabs, the switch, the pause and the system rows tick through the kit's own wiring)
 
 Done here: Signature: the window assembles and builds (time: the ask is written into a text node, the run log ticks). Supporting: pinned chapters (scroll), line-mask headlines (arrival), magnetic ask (pointer), gliding pills and the agent token (state). The black room opens from a rounded card with a CSS view timeline. variety.py OK, 0 Rise. Reduced motion: the window shows its finished frame.
 

@@ -1,25 +1,49 @@
 'use client';
 /* Dashboards.
-   V2: 8/10 Apple-style launch: a saved query and the widget it draws are the hero, the board then builds itself panel by panel as you scroll, the monitor's alert line is yours to drag, and the close is the dark room with Hanzo's agent prompt.
-   Signature: the board builds itself. "What a dashboard is made of" pins, and as you scroll each of the six parts
-   flies into its slot on a blank 12-column board (widget, monitor, one store, saved view, score config, permission),
-   so by the last part the dashboard is whole; the words beside it change with each panel that lands.
-   Supporting: the Stage hero (the saved query writes itself line by line and its widget draws, cycling through four
-   definitions), yellow highlighter marks drawn under the four figures, and the closing dark room opening out.
+   V2: 8/10 Launch page on the deck: a 52px title over a saved query and the widget it draws (the one big thing: the query types itself and its chart draws by CSS from first paint, cycling through four definitions, pausable); the board then builds itself panel by panel as you scroll; the monitor's alert line is yours to drag; four words marked as the proof strip; the example console; the graphite close with Hanzo's agent prompt.
+   Persona: Developer running an AI application who already sends traces (a Hanzo O11y user).
+   Goal: get Hanzo Dashboards (read the source on GitHub, then deploy it).
+   CTA: "GitHub" → https://github.com/hanzoai/dashboards (data-cta dashboards.hero, data-thumb for the ask bar); "View on
+   GitHub" (dashboards.start) after the console; "Deploy to Cloud" → platform.hanzo.ai/deploy (dashboards.close).
+   Metric: api_key_created (proxy on this page: the dashboards.hero click).
+   Signature: the board builds itself. "What a dashboard is made of" pins, and as you scroll each of the six parts flies
+   into its slot on a blank 12-column board (widget, monitor, one store, saved view, score config, permission), so by
+   the last part the dashboard is whole; the words beside it change with each panel that lands.
+   Supporting: the Stage hero (the saved query types itself line by line and its widget draws, cycling through four
+   definitions while seen; a tab stops it), a marker drawn under the four words, and the closing graphite room.
+   Motion kinds: idle (the cycling query), time (typing), pointer (drag the alert line), state (tabs, widget/monitor),
+   arrival (title cut-in, marks), scroll (the board build, the Stage settle, the room opening).
    Beyond: "Watch it instead". One saved query switched between widget and monitor: only its first word changes, and
    the alert line you drag sits on the same chart, so the alert and the chart cannot disagree (Hanzo's own claim).
-   Accent: dashboard yellow, for fills and marks only (text stays ink). Every word and link is Hanzo's; chart values are
-   drawn, not measured. */
+   Every word and link is Hanzo's; chart values are drawn, not measured, and print no numbers. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { EASE } from '../../ui';
-import { A } from '../../kit';
-import { Console, useLive, useSteps } from './Frame';
-import KeynoteStage from '../../v2/KeynoteStage';
+import { A, Cta } from '../../kit';
+import KeynoteStage, { useStagePause } from '../../v2/KeynoteStage';
 import KeynoteClose from '../../v2/KeynoteClose';
 import KeynoteLines from '../../v2/KeynoteLines';
-import { useWide } from '../../v2/KeynoteChapters';
+import ExampleConsole from './ExampleConsole';
+import { scrollToY } from '../../../lib/scroll';
 import './Dashboards.css';
+
+/* [ref, live]: live while the element is on screen and motion is allowed */
+function useSeen(amount = 0.25) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount });
+  const calm = useReducedMotion();
+  return [ref, seen && !calm];
+}
+/* steps through n every ms while run; choosing one by hand stops the cycle (timeouts, no setInterval) */
+function useCycle(n, ms, run) {
+  const [at, setAt] = useState(0);
+  const [mine, setMine] = useState(false);
+  useEffect(() => {
+    if (!run || mine) return;
+    const t = setTimeout(() => setAt((v) => (v + 1) % n), ms);
+    return () => clearTimeout(t);
+  }, [at, run, mine, n, ms]);
+  return [at, (i) => { setAt(i); setMine(true); }];
+}
 
 /* ---------- drawing in real pixels (even strokes, exact line lengths) ---------- */
 function useBox(w0 = 600, h0 = 300) {
@@ -51,28 +75,27 @@ const ERR = [[0, 80], [14, 75], [28, 77.5], [42, 65], [56, 70], [70, 35], [80, 2
 const BARS = [70, 45, 88, 30, 56, 64, 38];
 const SCORE = [0.2, 0.35, 0.6, 1, 0.7];
 
-/* a widget's picture. kind: line | bars | alert | score. th: the alert line (% from the top) for a monitor */
+/* a widget's picture. kind: line | bars | alert | score. th: the alert line (% from the top) for a monitor.
+   draw: the line draws itself (CSS, so it runs at first paint without the script) */
 function Chart({ kind, th = 42, draw = true, className = '' }) {
-  const calm = useReducedMotion();
   const [box, wh] = useBox();
   if (kind === 'bars' || kind === 'score') {
     const V = kind === 'bars' ? BARS.map((v) => v / 100) : SCORE;
     return (
-      <div className={'db-ch db-ch-bars ' + kind + ' ' + className}>
+      <div className={'db-ch db-ch-bars ' + kind + (draw ? ' draw ' : ' ') + className}>
         {V.map((v, i) => <span key={i} style={{ '--db-h': v, '--db-i': i }}><i />{kind === 'score' && <em>{i + 1}</em>}</span>)}
       </div>
     );
   }
   const P = px(kind === 'line' ? LAT : ERR, wh);
   const line = curve(P);
-  const grow = calm || !draw ? false : { pathLength: 0 };
   return (
-    <div className={'db-ch db-ch-line ' + kind + ' ' + className} ref={box}>
+    <div className={'db-ch db-ch-line ' + kind + (draw ? ' draw ' : ' ') + className} ref={box}>
       <svg viewBox={`0 0 ${wh[0]} ${wh[1]}`} aria-hidden="true">
         {[0.25, 0.5, 0.75].map((g) => <line key={g} className="g" x1="0" x2={wh[0]} y1={g * wh[1]} y2={g * wh[1]} />)}
         {kind === 'line' && <path className="area" d={line + ` L${wh[0]} ${wh[1]} L0 ${wh[1]} Z`} />}
         {kind === 'alert' && <rect className="zone" x="0" y="0" width={wh[0]} height={(th / 100) * wh[1]} />}
-        <motion.path className="ln" d={line} initial={grow} animate={{ pathLength: 1 }} transition={{ duration: 1.2, ease: EASE }} />
+        <path className="ln" d={line} pathLength="1" />
         {kind === 'alert' && <line className="th" x1="0" x2={wh[0]} y1={(th / 100) * wh[1]} y2={(th / 100) * wh[1]} />}
       </svg>
       {kind === 'alert' && ERR.map(([x, y]) => <i key={x} className={'pt' + (y < th ? ' hot' : '')} style={{ left: x + '%', top: y + '%' }} />)}
@@ -85,26 +108,37 @@ function Chart({ kind, th = 42, draw = true, className = '' }) {
 const DEFS = [['widget', 'latency', 'model', 'line'], ['widget', 'traces', 'route', 'bars'], ['monitor', 'error rate', 'service', 'alert'], ['score config', 'rating', 'evaluator', 'score']];
 
 function Saved() {
-  const [ref, live] = useLive(0.3);
-  const [at, choose] = useSteps(DEFS.length, 3800, live);
+  const [ref, live] = useSeen(0.3);
+  const paused = useStagePause();
+  const [at, choose] = useCycle(DEFS.length, 3800, live && !paused);
+  const tabs = useRef([]);
   const [kind, sel, grp, pic] = DEFS[at];
+  const key = (e, i) => {
+    const n = DEFS.length;
+    const j = e.key === 'ArrowRight' ? (i + 1) % n : e.key === 'ArrowLeft' ? (i - 1 + n) % n : e.key === 'Home' ? 0 : e.key === 'End' ? n - 1 : -1;
+    if (j < 0) return;
+    e.preventDefault();
+    choose(j);
+    tabs.current[j]?.focus();
+  };
   return (
     <div className="kn-obj db-hero" ref={ref}>
       <div className="db-hero-bar">
         <i /><i /><i />
         <span className="db-hero-t">Dashboards</span>
         <div className="db-tabs" role="tablist" aria-label="Saved queries">
-          {DEFS.map((d, i) => <button key={i} type="button" role="tab" aria-selected={at === i} onClick={() => choose(i)}>{d[1]}</button>)}
+          {DEFS.map((d, i) => (
+            <button key={i} ref={(el) => { tabs.current[i] = el; }} type="button" role="tab" id={'db-tab-' + i} aria-controls="db-def" aria-selected={at === i} tabIndex={at === i ? 0 : -1} onClick={() => choose(i)} onKeyDown={(e) => key(e, i)}>{d[1]}</button>
+          ))}
         </div>
       </div>
-      <div className="db-hero-b">
+      <div className="db-hero-b" role="tabpanel" id="db-def" aria-labelledby={'db-tab-' + at}>
         <div className="db-q">
-          <p className="db-k">saved query</p>
           <pre key={at} aria-hidden="true">
-            <span style={{ '--db-i': 0 }}><em>{kind}</em>{'\n'}</span>
-            <span style={{ '--db-i': 1 }}>select   <b>{sel}</b>{'\n'}</span>
-            <span style={{ '--db-i': 2 }}>group by <b>{grp}</b>{'\n'}</span>
-            <span style={{ '--db-i': 3 }}>from     <b>traces</b></span>
+            <span className="db-l" style={{ '--db-i': 0 }}><em>{kind}</em></span>
+            <span className="db-l" style={{ '--db-i': 1 }}>select   <b>{sel}</b></span>
+            <span className="db-l" style={{ '--db-i': 2 }}>group by <b>{grp}</b></span>
+            <span className="db-l" style={{ '--db-i': 3 }}>from     <b>traces</b></span>
           </pre>
           <p className="db-q-say">A dashboard is a saved query</p>
         </div>
@@ -152,7 +186,7 @@ const PANELS = [
       </div>
     </>
   ),
-  () => <><PanelHead t="rating by evaluator" k="score config" /><Chart kind="score" /></>,
+  () => <><PanelHead t="rating by evaluator" k="score config" /><Chart kind="score" draw={false} /></>,
   () => (
     <>
       <PanelHead t="organization" k="token" />
@@ -178,9 +212,10 @@ function Fly({ p, k, on, calm, children }) {
   );
 }
 
+/* Wide screens pin the board (CSS, once the script runs); phones get each part then its panel. Both are in the HTML
+   and the breakpoint picks one, so nothing swaps after hydration; with JS off the wide layout simply stacks. */
 function Build() {
   const run = useRef(null);
-  const wide = useWide();
   const calm = useReducedMotion();
   const { scrollYProgress: p } = useScroll({ target: run, offset: ['start start', 'end end'] });
   const [at, setAt] = useState(0);
@@ -190,44 +225,40 @@ function Build() {
     const el = run.current;
     if (!el) return;
     const top = el.getBoundingClientRect().top + window.scrollY;
-    const y = top + ((el.offsetHeight - window.innerHeight) * (i + 0.6)) / 6;
-    window.__lenis ? window.__lenis.scrollTo(y, { duration: 1.1 }) : window.scrollTo({ top: y, behavior: 'smooth' });
+    scrollToY(top + ((el.offsetHeight - window.innerHeight) * (i + 0.6)) / 6, { duration: 1.1 });
   };
   return (
     <section className="db-build">
       <div className="kn-wrap kn-grid db-build-h">
-        <KeynoteLines className="kn-display sm db-build-t" lines={['What a dashboard', 'is made of']} />
+        <KeynoteLines className="kn-headline db-build-t" lines={['What a dashboard', 'is made of']} />
         <p className="kn-lede db-build-l">Widgets, monitors, saved views and score configs — all of them queries over one store.</p>
       </div>
-      {wide ? (
-        <div ref={run} className="db-run">
-          <div className="db-pin">
-            <div className="kn-wrap kn-grid db-pin-g">
-              <div className="db-say">
-                {PARTS.map(([t, d], i) => (
-                  <article key={t} className="db-say-a" data-on={at === i ? '' : undefined} data-pos={at > i ? 'past' : at < i ? 'next' : 'now'}>
-                    <p className="db-n kn-fig">{pad(i + 1)} / 06</p>
-                    <h3 className="kn-headline">{t}</h3>
-                    <p className="db-d">{d}</p>
-                  </article>
-                ))}
-                <nav className="db-rail" aria-label="Parts">
-                  <span className="db-track" aria-hidden="true"><motion.i style={{ scaleX: fill }} /></span>
-                  {PARTS.map(([t], i) => <button key={t} type="button" aria-current={at === i ? 'step' : undefined} aria-label={`Part ${i + 1}: ${t}`} onClick={() => go(i)}><span className="kn-fig">{pad(i + 1)}</span></button>)}
-                </nav>
-              </div>
-              <div className="db-board" aria-hidden="true">
-                {SLOTS.map((s, i) => <span key={i} className="db-slot" style={{ gridArea: s }} />)}
-                {PANELS.map((P, i) => <Fly key={i} p={p} k={i} on={at === i} calm={calm}><P /></Fly>)}
-              </div>
+      <div ref={run} className="db-run db-wide">
+        <div className="db-pin">
+          <div className="kn-wrap kn-grid db-pin-g">
+            <div className="db-say">
+              {PARTS.map(([t, d], i) => (
+                <article key={t} className="db-say-a" data-on={at === i ? '' : undefined} data-pos={at > i ? 'past' : at < i ? 'next' : 'now'}>
+                  <h3 className="kn-headline">{t}</h3>
+                  <p className="db-d">{d}</p>
+                  <p className="db-n kn-fig">{pad(i + 1)} / 06</p>
+                </article>
+              ))}
+              <nav className="db-rail" aria-label="Parts">
+                <span className="db-track" aria-hidden="true"><motion.i style={{ scaleX: fill }} /></span>
+                {PARTS.map(([t], i) => <button key={t} type="button" aria-current={at === i ? 'step' : undefined} aria-label={`Part ${i + 1}: ${t}`} onClick={() => go(i)}><span className="kn-fig">{pad(i + 1)}</span></button>)}
+              </nav>
+            </div>
+            <div className="db-board" aria-hidden="true">
+              {SLOTS.map((s, i) => <span key={i} className="db-slot" style={{ gridArea: s }} />)}
+              {PANELS.map((P, i) => <Fly key={i} p={p} k={i} on={at === i} calm={calm}><P /></Fly>)}
             </div>
           </div>
         </div>
-      ) : (
-        <ol className="kn-wrap db-list">
-          {PARTS.map(([t, d], i) => <PhonePart key={t} i={i} t={t} d={d} />)}
-        </ol>
-      )}
+      </div>
+      <ol className="kn-wrap db-list db-narrow">
+        {PARTS.map(([t, d], i) => <PhonePart key={t} i={i} t={t} d={d} />)}
+      </ol>
     </section>
   );
 }
@@ -239,33 +270,44 @@ function PhonePart({ i, t, d }) {
   const P = PANELS[i];
   return (
     <li ref={ref} className="db-li" data-in={seen ? '' : undefined}>
-      <p className="db-n kn-fig">{pad(i + 1)} / 06</p>
       <h3 className="kn-title">{t}</h3>
       <p className="db-d">{d}</p>
+      <p className="db-n kn-fig">{pad(i + 1)} / 06</p>
       <div className="db-panel db-li-p" aria-hidden="true"><P /></div>
     </li>
   );
 }
 
 /* ---------- Beyond: watch it instead ---------- */
+const KINDS = ['widget', 'monitor'];
 function Watch() {
   const [mon, setMon] = useState(true);
   const [th, setTh] = useState(42);
   const plot = useRef(null);
   const held = useRef(false);
+  const radios = useRef([]);
   const to = (e) => {
     const r = plot.current.getBoundingClientRect();
     setTh(Math.round(Math.min(88, Math.max(12, ((e.clientY - r.top) / r.height) * 100))));
+  };
+  const key = (e, i) => {
+    if (!['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(e.key)) return;
+    e.preventDefault();
+    const j = 1 - i;
+    setMon(KINDS[j] === 'monitor');
+    radios.current[j]?.focus();
   };
   return (
     <section className="kn-sec db-watch">
       <div className="kn-wrap kn-grid db-watch-g">
         <div className="db-watch-t">
-          <p className="kn-kick">Monitors</p>
-          <KeynoteLines className="kn-headline" lines={['The alert and the chart', 'cannot disagree']} />
+          <KeynoteLines className="kn-headline" lines="Monitors" />
           <p className="kn-body">A saved query you want watched rather than looked at. Same definition as the widget beside it, kept in one place so the alert and the chart cannot disagree.</p>
           <div className="db-kind" role="radiogroup" aria-label="Saved query kind">
-            {['widget', 'monitor'].map((k) => <button key={k} type="button" role="radio" aria-checked={mon === (k === 'monitor')} onClick={() => setMon(k === 'monitor')}>{k}</button>)}
+            {KINDS.map((k, i) => {
+              const on = mon === (k === 'monitor');
+              return <button key={k} ref={(el) => { radios.current[i] = el; }} type="button" role="radio" aria-checked={on} tabIndex={on ? 0 : -1} onClick={() => setMon(k === 'monitor')} onKeyDown={(e) => key(e, i)}>{k}</button>;
+            })}
           </div>
         </div>
         <div className="kn-obj db-watch-o">
@@ -297,7 +339,7 @@ function Watch() {
   );
 }
 
-/* ---------- the four figures, marked ---------- */
+/* ---------- the four words, marked ---------- */
 function Figures() {
   const ref = useRef(null);
   const seen = useInView(ref, { once: true, amount: 0.4 });
@@ -317,14 +359,14 @@ const Arrow = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden=
 
 export default function Dashboards() {
   return (
-    <main className="kn db" style={{ '--ac': '#d4d4d4', '--ac-ink': '#0a0a0a' }}>
+    <main className="kn db">
       <KeynoteStage
         look="split"
-        size="md"
         kick="Traces · observations · scores"
         title={['Hanzo Dashboards']}
         lede="A dashboard is a saved query"
         acts={[['GitHub', 'https://github.com/hanzoai/dashboards']]}
+        cta="dashboards.hero"
         from={1.05}
       >
         <Saved />
@@ -339,12 +381,12 @@ export default function Dashboards() {
       <section className="kn-sec db-start">
         <div className="kn-wrap kn-grid db-start-g">
           <div className="db-start-t">
-            <KeynoteLines className="kn-display sm" lines={['Start from', 'a trace']} />
+            <KeynoteLines className="kn-headline" lines={['Start from', 'a trace']} />
             <p className="kn-lede">Send traces from your application, then build the view that answers the question you keep asking about them.</p>
-            <div className="kn-acts"><A to="https://github.com/hanzoai/dashboards" className="kn-btn solid">View on GitHub</A></div>
+            <div className="kn-acts"><Cta to="https://github.com/hanzoai/dashboards" id="dashboards.start">View on GitHub</Cta></div>
           </div>
           <div className="db-start-o">
-            <Console light name="Dashboards" api="/v1/o11y/dashboards" side={SIDE} />
+            <ExampleConsole name="Dashboards" api="/v1/o11y/dashboards" side={SIDE} />
             <p className="db-note">Example project. Every name in it is one you would give your own.</p>
           </div>
         </div>
@@ -357,6 +399,7 @@ export default function Dashboards() {
         repo={['hanzoai/dashboards', 'https://github.com/hanzoai/dashboards']}
         stars="4 stars"
         api="/v1/o11y/dashboards"
+        cta="dashboards.close"
         prompt="Read https://hanzo.ai/skill.md and use Hanzo Dashboards in my project. Start with: hanzo o11y dashboards list"
       >
         <div className="db-rel">

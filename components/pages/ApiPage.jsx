@@ -14,6 +14,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../ui';
 import { A, Cta, Img, Film } from '../kit';
+import { play } from '../../lib/sound';
 import Lines from '../v2/x-edison/AppLines';
 import Scenes from '../v2/AppScenes';
 import '../v2/AppType.css';
@@ -81,7 +82,7 @@ function Console() {
   const [walked, setWalked] = useState(false);
   useEffect(() => {
     if (mine || !live || walked) return;
-    const t = setTimeout(() => { if (at === HERO.length - 1) { setWalked(true); setAt(0); } else setAt(at + 1); }, 4600);
+    const t = setTimeout(() => { if (at === HERO.length - 1) { setWalked(true); setAt(0); play('done'); } else setAt(at + 1); }, 4600);
     return () => clearTimeout(t);
   }, [at, mine, live, walked]);
   const pick = (i) => { setAt(i); setMine(true); };
@@ -89,7 +90,7 @@ function Console() {
   return (
     <div className={'api-con av-obj' + (held ? ' held' : '')} ref={box}>
       <div className="api-con-bar">
-        <button type="button" className="api-pause" aria-pressed={held} aria-label={held ? 'Play' : 'Pause'} onClick={() => setHeld((h) => !h)}>
+        <button type="button" className="api-pause" data-sound="tick" aria-pressed={held} aria-label={held ? 'Play' : 'Pause'} onClick={() => setHeld((h) => !h)}>
           {held
             ? <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M5 3.5v9l7-4.5z" fill="currentColor" /></svg>
             : <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>}
@@ -127,7 +128,7 @@ function Console() {
       <ol className="api-chips" role="tablist" aria-label="Endpoints">
         {HERO.map(([mm, pp], i) => (
           <li key={pp}>
-            <button type="button" role="tab" aria-selected={at === i} onClick={() => pick(i)}>
+            <button type="button" role="tab" aria-selected={at === i} data-sound="tick" onClick={() => pick(i)}>
               {at === i && <motion.span layoutId="api-chip" className="api-chip-bg" transition={{ duration: 0.3, ease: EASE }} />}
               <span className="x-mono">{mm + ' ' + pp}</span>
               {at === i && !mine && live && !walked && <i key={'t' + at} className="api-chip-t" aria-hidden="true" />}
@@ -284,7 +285,7 @@ function Call() {
       <p className="api-call-k" id="api-call-k">Endpoint</p>
       <div className="api-call-list" role="listbox" aria-labelledby="api-call-k" data-lenis-prevent>
         {ALL.map(([mm, pp], i) => (
-          <button key={pp} type="button" role="option" aria-selected={k === i} onClick={() => setK(i)}>
+          <button key={pp} type="button" role="option" aria-selected={k === i} data-sound="tick" onClick={() => setK(i)}>
             <span className="x-mono api-call-lm">{mm.split(' ')[0]}</span><span className="x-mono">{pp.split(' · ')[0]}</span>
           </button>
         ))}
@@ -339,7 +340,7 @@ function Table() {
           <div className="api-tools">
             <div className="api-seg" role="tablist" aria-label="Method">
               {FILTERS.map((x, i) => (
-                <button key={x} type="button" role="tab" aria-selected={f === i} onClick={() => setF(i)}>
+                <button key={x} type="button" role="tab" aria-selected={f === i} data-sound="tick" onClick={() => setF(i)}>
                   {f === i && <motion.span layoutId="api-seg" className="api-seg-bg" transition={{ duration: 0.3, ease: EASE }} />}
                   <span>{x}</span>
                 </button>
@@ -358,7 +359,7 @@ function Table() {
             const isOpen = open === k;
             return (
               <li key={p} className={isOpen ? 'open' : ''}>
-                <button type="button" className="api-row" aria-expanded={isOpen} onClick={() => setOpen(isOpen ? -1 : k)}>
+                <button type="button" className="api-row" aria-expanded={isOpen} data-sound="tick" onClick={() => setOpen(isOpen ? -1 : k)}>
                   <span className={'api-row-m x-mono m-' + m.split(' ')[0].toLowerCase()}>{m}</span>
                   <span className="api-row-p x-mono">{p}</span>
                   <span className="api-row-x" aria-hidden="true" />
@@ -406,7 +407,7 @@ function Next() {
 
 export default function ApiPage() {
   return (
-    <main className="av api" data-ask="off">
+    <main className="av api">
       <Hero />
       <Paste />
       <Fits />

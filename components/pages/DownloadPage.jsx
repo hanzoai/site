@@ -268,7 +268,7 @@ function Pick({ label, list, at, set, id }) {
       <legend className="av-kick">{label}</legend>
       <div role="radiogroup" aria-label={label}>
         {list.map((t, i) => (
-          <button key={t} type="button" role="radio" aria-checked={at === i} onClick={() => set(i)}>
+          <button key={t} type="button" role="radio" aria-checked={at === i} data-sound="tick" onClick={() => set(i)}>
             {at === i && <motion.span layoutId={id} className="dl-q-bg" transition={GLIDE} />}
             <span>{t}</span>
           </button>
@@ -340,7 +340,7 @@ function End({ os }) {
 export default function DownloadPage() {
   const { os, br } = useSystem();
   return (
-    <main className="av dl" data-ask="off" data-cursor="" style={{ '--ac': '#a3a3a3' }}>
+    <main className="av dl" style={{ '--ac': '#a3a3a3' }}>
       <Hero os={os} />
       <Builds os={os} br={br} />
       <Kit os={os} br={br} />

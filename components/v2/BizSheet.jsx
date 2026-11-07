@@ -41,8 +41,8 @@ export default function BizSheet({ label, title, kick, children, className = '',
       <div ref={panel} id={id} className="bz-sheet" role="dialog" aria-modal={open ? 'true' : undefined} aria-label={title} tabIndex={-1} inert={!open} data-lenis-prevent="">
         <div className="bz-sheet-top">
           <div>
-            {kick && <p className="bz-kick">{kick}</p>}
             <h2>{title}</h2>
+            {kick && <p className="bz-kick">{kick}</p>}
           </div>
           <button type="button" className="bz-sheet-x" aria-label="Close" onClick={() => setOpen(false)}><Close /></button>
         </div>

@@ -49,12 +49,14 @@ function Streamed({ run, big }) {
     let i = 0;
     setDone(false);
     if (out.current) out.current.textContent = '';
-    const t = setInterval(() => {
+    let t = 0;
+    const step = () => {
       i++;
       if (out.current) out.current.textContent = words.slice(0, i).join(' ');
-      if (i >= words.length) { clearInterval(t); setDone(true); }
-    }, 90);
-    return () => clearInterval(t);
+      if (i >= words.length) setDone(true); else t = setTimeout(step, 90);
+    };
+    t = setTimeout(step, 90);
+    return () => clearTimeout(t);
   }, [run]);
   return (
     <div className={'se2-rag' + (big ? ' big' : '')}>
@@ -78,12 +80,14 @@ function Ask() {
     let i = 0;
     setTyped(false);
     if (box.current) box.current.textContent = '';
-    const t = setInterval(() => {
+    let t = 0;
+    const step = () => {
       i++;
       if (box.current) box.current.textContent = Q.slice(0, i);
-      if (i >= Q.length) { clearInterval(t); setTyped(true); }
-    }, 105);
-    return () => clearInterval(t);
+      if (i >= Q.length) setTyped(true); else t = setTimeout(step, 105);
+    };
+    t = setTimeout(step, 105);
+    return () => clearTimeout(t);
   }, [at, live, calm]);
   const rows = at === 0 ? TEXT : at === 1 ? VEC : RRF;
   return (
@@ -325,7 +329,7 @@ function EndBar() {
 
 export default function Search() {
   return (
-    <main className="l2-page se2">
+    <main id="main" className="l2-page se2">
       <StageHero look="rise" kick="Hybrid Search + RAG" title="Hanzo Search" sub="Keyword and meaning in the same query" acts={[['Read the docs', DOCS], ['GitHub', GH]]}>
         <Ask />
       </StageHero>
