@@ -18,8 +18,9 @@
    Persona: a platform engineer choosing what sits on ports 80 and 443 of a Kubernetes cluster.
    Goal: see routes, certificates and middleware handled from what they already wrote, without restarts.
    CTA: View on GitHub (hero, the sticky ask bar and the close; one solid button per screen). */
-import { useState } from 'react';
-import { motion, AnimatePresence, Reorder } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence, Reorder, useInView, useScroll, useTransform } from 'motion/react';
+import { play } from '../../../lib/sound';
 import { A, Cta } from '../../kit';
 import { useLive } from './Frame';
 import { Lines, Lift, useTick } from '../../v2/LiftStage';
@@ -95,74 +96,179 @@ const FACTS = [
 
 const MW = ['rate limiting', 'retry', 'circuit breaking', 'compression', 'header rewriting', 'IP allowlists', 'redirects', 'prefix stripping'];
 
-/* each scene's drawing, from its own words */
-function Draw({ k }) {
+/* a media query, read after hydration so the server HTML and the first client render agree */
+function useMedia(q) {
+  const [n, setN] = useState(false);
+  useEffect(() => {
+    const m = matchMedia(q);
+    const f = () => setN(m.matches);
+    f();
+    m.addEventListener('change', f);
+    return () => m.removeEventListener('change', f);
+  }, [q]);
+  return n;
+}
+// phones (under 900px, where WipeScenes stacks its scenes instead of pinning them); reduced motion
+const useNarrow = () => useMedia('(max-width: 900px)');
+const useCalm = () => useMedia('(prefers-reduced-motion: reduce)');
+
+/* The pinned wipe, read from the page: [ref, reach] where reach is the last scene fully wiped in (each drawing plays
+   once when its scene arrives), and, when the scroll stops mid-wipe, the stage settles to the nearest whole scene so
+   two scenes never rest half-drawn over each other. Desktop only; phones stack the scenes. */
+const REST = 0.62; // WipeScenes finishes each wipe at 62% of its scene's span
+function useWipe(n, off) {
+  const ref = useRef(null);
+  const [reach, setReach] = useState(-1);
+  useEffect(() => {
+    const el = ref.current;
+    if (off || !el) return;
+    const span = 1 / (n - 1);
+    let raf = 0, idle = 0, down = false;
+    const geo = () => { const r = el.getBoundingClientRect(); const L = el.offsetHeight - innerHeight; return { r, L, v: -r.top / L }; };
+    const look = () => {
+      raf = 0;
+      const { r, v } = geo();
+      let j = r.top < innerHeight * 0.15 ? 0 : -1;
+      if (v > 0) j = Math.min(n - 1, Math.floor(v / span + (1 - REST) + 1e-3));
+      if (j >= 0) setReach((x) => Math.max(x, j));
+    };
+    const settle = () => {
+      if (down) return;
+      const { r, L, v } = geo();
+      if (v <= 0 || v >= 1 || L <= 0) return;
+      const j = Math.floor(v / span), t = v / span - j;
+      if (t >= REST) return; // resting on a whole scene
+      const top = scrollY + r.top;
+      const y = t < REST / 2 ? Math.floor(top + j * span * L) - 1 : Math.ceil(top + (j + REST) * span * L) + 1;
+      if (Math.abs(y - scrollY) < 4) return;
+      if (window.__lenis) window.__lenis.scrollTo(y, { duration: 0.6, easing: (x) => 1 - Math.pow(1 - x, 3) });
+      else scrollTo({ top: y, behavior: 'smooth' });
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(look); clearTimeout(idle); idle = setTimeout(settle, 180); };
+    const press = () => { down = true; }, lift = () => { down = false; onScroll(); };
+    addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('pointerdown', press, { passive: true });
+    addEventListener('pointerup', lift, { passive: true });
+    look();
+    return () => { removeEventListener('scroll', onScroll); removeEventListener('pointerdown', press); removeEventListener('pointerup', lift); cancelAnimationFrame(raf); clearTimeout(idle); };
+  }, [n, off]);
+  return [ref, reach];
+}
+
+/* each scene's drawing, from its own words; it plays once when its scene is fully in (`on`), then rests.
+   With JS off or reduced motion it is simply its final frame. */
+function Draw({ k, on }) {
+  const c = (name) => name + (on ? ' play' : '');
   if (k === 'sources') return (
-    <div className="ig-d-src">
+    <div className={c('ig-d ig-d-src')}>
       <p className="main">networking.k8s.io/v1 Ingress</p>
-      {['IngressRoute', 'Gateway API', 'TOML or YAML from disk'].map((t) => <p key={t}>{t}</p>)}
-      <p className="cls">default IngressClass</p>
+      {['IngressRoute', 'Gateway API', 'TOML or YAML from disk'].map((t, i) => <p key={t} className="src" style={{ '--d': i }}>{t}</p>)}
+      <p className="cls"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path pathLength="1" d="M3 8.5 6.5 12 13 4.5" /></svg>default IngressClass</p>
     </div>
   );
   if (k === 'cert') return (
-    <div className="ig-d-cert">
-      <svg viewBox="0 0 48 48" width="64" height="64" aria-hidden="true"><rect x="10" y="21" width="28" height="21" rx="5" fill="currentColor" /><path d="M16 21v-5a8 8 0 0 1 16 0v5" fill="none" stroke="currentColor" strokeWidth="3.5" /></svg>
+    <div className={c('ig-d ig-d-cert')}>
+      <svg viewBox="0 0 48 48" width="64" height="64" aria-hidden="true"><path className="sh" pathLength="1" d="M16 21v-5a8 8 0 0 1 16 0v5" fill="none" stroke="currentColor" strokeWidth="3.5" /><rect x="10" y="21" width="28" height="21" rx="5" fill="currentColor" /></svg>
       <p className="t">Let's Encrypt</p>
-      <p>provisioning and renewal</p>
+      <p className="r">provisioning and renewal</p>
       <p className="w">wildcards included</p>
     </div>
   );
-  if (k === 'mw') return <div className="ig-d-mw">{MW.map((m, i) => <span key={m} style={{ '--d': i }}>{m}</span>)}</div>;
+  if (k === 'mw') return <div className={c('ig-d ig-d-mw')}>{MW.map((m, i) => <span key={m} style={{ '--d': i, '--k': i / 3 }}>{m}</span>)}</div>;
   if (k === 'live') return (
-    <div className="ig-d-live">
+    <div className={c('ig-d ig-d-live')}>
       <p className="t">no reload, no dropped connection</p>
-      <div className="pods">{[0, 1, 2, 3].map((i) => <i key={i} className={i === 2 ? 'out' : ''} />)}</div>
-      <p>out of rotation · put back when it recovers</p>
+      <div className="pods">{[0, 1, 2, 3].map((i) => <i key={i} className={i === 2 ? 'out' : ''} style={{ '--d': i }} />)}</div>
+      <p className="cap">out of rotation · put back when it recovers</p>
     </div>
   );
-  if (k === 'files') return <ul className="ig-d-files">{['pricing.html', 'docs/index.html', 'hashed asset chunks', 'a 404 page'].map((f) => <li key={f}>{f}</li>)}</ul>;
-  return <div className="ig-d-ports"><b>80</b><b>443</b><p>every Linux capability dropped except the one that lets it</p></div>;
+  if (k === 'files') return <ul className={c('ig-d ig-d-files')}>{['pricing.html', 'docs/index.html', 'hashed asset chunks', 'a 404 page'].map((f, i) => <li key={f}><span className="ty" style={{ '--c': f.length, '--d': i }}>{f}</span></li>)}</ul>;
+  return <div className={c('ig-d ig-d-ports')}><b>80</b><b>443</b><p>every Linux capability dropped except the one that lets it</p></div>;
 }
 
-/* Beyond: chain your own pipeline. Pick middleware, drag to reorder; the request walks the chain again on every change. */
+/* phones: a drawing plays when half of it is on screen */
+function SceneDraw({ k, i, reach, narrow, calm }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount: 0.5, once: true });
+  return <div ref={ref} className="ig-scene-r" aria-hidden="true"><Draw k={k} on={calm || (narrow ? seen : reach >= i)} /></div>;
+}
+
+/* Beyond: chain your own pipeline. Pick middleware, drag to reorder; a request walks the chain again on every change,
+   lighting each step as it passes. The black room enters as a rounded card inside the gutters and opens to full width. */
 function Pipeline() {
   const [chain, setChain] = useState(['IP allowlists', 'rate limiting', 'retry']);
   const toggle = (m) => setChain((c) => (c.includes(m) ? c.filter((x) => x !== m) : [...c, m]));
   const move = (i, d) => setChain((c) => { const n = [...c]; [n[i], n[i + d]] = [n[i + d], n[i]]; return n; });
+  const room = useRef(null);
+  const run = useRef(null);
+  const calm = useCalm();
+  const narrow = useNarrow();
+  const flat = useRef(false);
+  flat.current = calm || narrow;
+  const seen = useInView(run, { amount: 0.5, once: true });
+  const { scrollYProgress: p } = useScroll({ target: room, offset: ['start end', 'start 0.25'] });
+  const clip = useTransform(p, (v) => {
+    if (flat.current) return 'inset(0px 0px round 0px)';
+    const q = 1 - Math.min(1, Math.max(0, v));
+    return `inset(0px ${Math.round(q * 32)}px round ${Math.round(q * 28)}px)`;
+  });
+  // the walk: -2 resting, -1 at "request", 0..n-1 on a step, n at "backend"
+  const [at, setAt] = useState(-2);
+  const [y, setY] = useState(0);
+  const sig = chain.join('|');
+  useEffect(() => {
+    if (!seen || calm) return;
+    let i = -1, t;
+    setAt(-1);
+    const step = () => { i += 1; setAt(i); t = setTimeout(i < chain.length ? step : () => setAt(-2), i < chain.length ? 300 : 700); };
+    t = setTimeout(step, 300);
+    return () => clearTimeout(t);
+  }, [sig, seen, calm]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    const box = run.current;
+    if (!box || at < -1) return;
+    const ends = box.querySelectorAll('.ig-pipe-end');
+    const el = at === -1 ? ends[0] : at >= chain.length ? ends[1] : box.querySelectorAll('.ig-pipe-chain > li')[at];
+    if (!el) return;
+    const a = box.getBoundingClientRect(), b = el.getBoundingClientRect();
+    setY(Math.round(b.top - a.top + b.height / 2 - 4));
+  }, [at, sig]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
-    <section className="ig-pipe v2-dark" data-room="dark">
+    <motion.section ref={room} className="ig-pipe v2-dark" data-room="dark" style={{ clipPath: clip }}>
       <div className="v2-wrap v2-grid">
         <div className="ig-pipe-l">
           <h2 className="v2-display s">Chain your own pipeline</h2>
-          <p className="v2-kick acc ig-pipe-cap">Middleware you compose by annotation</p>
           <p className="v2-lede">Name one in an annotation, or chain several into a named pipeline and name that.</p>
           <div className="ig-pipe-pick" role="group" aria-label="Middleware">
-            {MW.map((m) => <button key={m} type="button" aria-pressed={chain.includes(m)} onClick={() => toggle(m)}>{m}</button>)}
+            {MW.map((m) => <button key={m} type="button" data-sound="tick" aria-pressed={chain.includes(m)} onClick={() => toggle(m)}>{m}</button>)}
           </div>
         </div>
-        <div className="ig-pipe-run">
-          <p className="ig-pipe-end">request</p>
+        <div className="ig-pipe-run" ref={run}>
+          <p className={'ig-pipe-end' + (at === -1 ? ' lit' : '')}>request</p>
           <Reorder.Group as="ol" axis="y" values={chain} onReorder={setChain} className="ig-pipe-chain" data-swipe-own="">
             {chain.map((m, i) => (
-              <Reorder.Item as="li" key={m} value={m} data-cursor="Drag" whileDrag={{ scale: 1.03, boxShadow: '0 18px 40px -18px rgba(0,0,0,.6)' }} transition={{ duration: 0.3, ease: EASE }}>
+              <Reorder.Item as="li" key={m} value={m} className={at === i ? 'lit' : ''} data-cursor="Drag" onDragEnd={() => play('tick')} whileDrag={{ scale: 1.03, boxShadow: '0 18px 40px -18px rgba(0,0,0,.6)' }} transition={{ duration: 0.3, ease: EASE }}>
                 <span className="ig-pipe-n">{String(i + 1).padStart(2, '0')}</span>{m}
                 <span className="ig-pipe-mv">
-                  <button type="button" aria-label={'Move ' + m + ' up'} disabled={i === 0} onClick={() => move(i, -1)}>↑</button>
-                  <button type="button" aria-label={'Move ' + m + ' down'} disabled={i === chain.length - 1} onClick={() => move(i, 1)}>↓</button>
+                  <button type="button" data-sound="tick" aria-label={'Move ' + m + ' up'} disabled={i === 0} onClick={() => move(i, -1)}>↑</button>
+                  <button type="button" data-sound="tick" aria-label={'Move ' + m + ' down'} disabled={i === chain.length - 1} onClick={() => move(i, 1)}>↓</button>
                 </span>
               </Reorder.Item>
             ))}
           </Reorder.Group>
           {chain.length === 0 && <p className="ig-pipe-none">No middleware: straight to the backend.</p>}
-          <p className="ig-pipe-end">backend</p>
-          <span key={chain.join('|')} className="ig-pipe-walk" aria-hidden="true" />
+          <p className={'ig-pipe-end' + (at >= chain.length ? ' lit' : '')}>backend</p>
+          <span className={'ig-pipe-walk' + (at >= -1 ? ' on' : '')} style={{ transform: `translateY(${y}px)` }} aria-hidden="true" />
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }
 
 export default function Ingress() {
+  const narrow = useNarrow();
+  const calm = useCalm();
+  const [wipe, reach] = useWipe(FACTS.length, narrow || calm);
   return (
     <main className="v2 ig">
       <section className="ig-hero">
@@ -181,27 +287,26 @@ export default function Ingress() {
         </Lift>
       </section>
 
-      <section className="ig-intro">
-        <div className="v2-wrap"><h2 className="v2-display m">What happens at the edge</h2></div>
-      </section>
-
-      <WipeScenes
-        className="ig-ws"
-        label="What happens at the edge"
-        items={FACTS}
-        scene={([t, d, k], i) => (
-          <div className={'ig-scene s' + (i % 3)}>
-            <div className="v2-wrap v2-grid ig-scene-g">
-              <div className="ig-scene-l">
-                <p className="v2-kick acc">{String(i + 1).padStart(2, '0')} / 06</p>
-                <h3 className="v2-headline">{t}</h3>
-                <p className="v2-body">{d}</p>
+      <div ref={wipe}>
+        <WipeScenes
+          className="ig-ws"
+          label="What happens at the edge"
+          items={FACTS}
+          scene={([t, d, k], i) => (
+            <div className={'ig-scene s' + (i % 3)}>
+              <div className="v2-wrap v2-grid ig-scene-g">
+                <div className="ig-scene-l">
+                  {i === 0 && <h2 className="v2-display m ig-edge">What happens at the edge</h2>}
+                  <p className="v2-kick acc">{String(i + 1).padStart(2, '0')} / 06</p>
+                  <h3 className="v2-headline">{t}</h3>
+                  <p className="v2-body">{d}</p>
+                </div>
+                <SceneDraw k={k} i={i} reach={reach} narrow={narrow} calm={calm} />
               </div>
-              <div className="ig-scene-r" aria-hidden="true"><Draw k={k} /></div>
             </div>
-          </div>
-        )}
-      />
+          )}
+        />
+      </div>
 
       <ShipPrompt name="Ingress" prompt="Read https://hanzo.ai/skill.md and use Hanzo Ingress in my project. Start with: hanzo ingress routes list" flip />
 

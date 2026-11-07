@@ -18,7 +18,7 @@
 // Metric: api_key_created
 // Signature: the session runs itself once: the guide's curl request typing into a terminal and its response shape streaming back
 // Beyond: the request checker, driven by the limit you pick or by your own rulers, priced against Jev
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { Copy } from '../../ui';
 import { A, Cta, Tabs, TabPanel, CodeBlock } from '../../kit';
@@ -206,8 +206,13 @@ function Types() {
 /* the hero already typed the curl request, so the code opens on Python (curl stays one tab away) */
 function CallIt() {
   const [k, setK] = useState(1);
+  const box = useRef(null);
+  // the kit CodeBlock marks itself a dark room; here it sits on a white tile, so it is marked light before the header
+  // starts watching for dark rooms (layout effects run first), else the header turns dark over light code
+  // (docs/requests/kai-guide.md asks for a room prop on CodeBlock)
+  useLayoutEffect(() => { box.current?.querySelectorAll('.x-codeblock[data-room]').forEach((el) => el.setAttribute('data-room', 'light')); }, []);
   return (
-    <div className="kg-code">
+    <div className="kg-code" ref={box}>
       <Tabs id="kg-lang" label="Language" tabs={CODES.map(([l]) => l)} value={k} onChange={setK} />
       {CODES.map(([l, c], i) => (
         <TabPanel key={l} id="kg-lang" i={i} value={k} className="kg-code-p">

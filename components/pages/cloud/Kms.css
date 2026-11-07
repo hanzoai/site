@@ -172,14 +172,16 @@ html:not(.js) .km .v2-in { animation: none; opacity: 1; transform: none; }
   .km-val { font-size: 18px; }
   .km-chain span { font-size: 12px; padding: 8px 10px; }
   .km-stale { right: 8px; bottom: -14px; }
-  .km-pause { top: 20px; left: auto; right: 20px; }
+  .km-pause { top: 24px; left: auto; right: 20px; }
+  .km-host { display: flex; align-items: center; min-height: 44px; margin: -10px 0 -6px; padding-right: 52px; }
   .km-seal { padding-top: 56px; }
   .km-holds-l { height: auto; }
   .km-pin { position: static; }
   .km-panel, .km-num { display: none; }
   .km-rule { min-height: 0; padding: 32px 0; }
   .km-rule::before { display: none; }
-  .km-rule-pic { display: block; margin-top: 24px; padding: 16px; border-radius: 20px; background: var(--km-paper); box-shadow: var(--km-hair); }
+  .km-rule-pic { position: relative; display: block; margin-top: 24px; padding: 16px 16px 28px; border-radius: 20px; background: var(--km-paper); box-shadow: var(--km-hair); }
+  .km-rule.on .km-rule-pic::after { content: ''; position: absolute; left: 16px; right: 16px; bottom: 14px; height: 1px; background: var(--km-ink); transform-origin: left; transform: scaleX(0); animation: km-run 4.8s linear infinite; }
   .km-sc-l { white-space: normal; }
   .km-disk { padding: 120px 0; }
   .km-figs { grid-template-columns: minmax(0, 1fr); }

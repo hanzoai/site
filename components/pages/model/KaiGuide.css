@@ -5,7 +5,7 @@
   --ink: #0a0a0a; --mute: #525252; --quiet: #737373; --line: rgba(0, 0, 0, .1); --track: #d4d4d4;
   --graphite: #171717; --on-black: #fafafa; --on-black-2: rgba(255, 255, 255, .78); --on-black-3: rgba(255, 255, 255, .55);
   --e: cubic-bezier(.16, 1, .3, 1); --eo: cubic-bezier(0, 0, .2, 1); --eio: cubic-bezier(.4, 0, .2, 1);
-  --pad: clamp(72px, 11vw, 188px); --gut: clamp(16px, 4vw, 32px);
+  --pad: clamp(72px, 8vw, 116px); --gut: clamp(16px, 4vw, 32px); /* section padding held to 116 so no band of empty white */
   background: #fff; color: var(--ink);
 }
 .kg-wrap { width: min(100% - 2 * var(--gut), 1152px); margin-inline: auto; }
@@ -180,7 +180,8 @@
 .kg-cost b { min-width: 8ch; text-align: right; font: 500 21px var(--mono); color: var(--ink); grid-row: span 2; align-self: center; font-variant-numeric: tabular-nums; transform-origin: 100% 50%; transition: transform .3s var(--e); }
 .kg-cost[data-on] b { transform: scale(1.24); }
 
-/* 5. the one black room: a rounded tile inside the gutters, the recipes as a typeset list */
+/* 5. the one black room: a rounded tile inside the gutters, the recipes as a stage */
+.kg-recipes, .kg-jev { padding-top: 0; }
 .kg-room { padding: clamp(44px, 6vw, 72px) clamp(21px, 5vw, 72px); border-radius: 24px; background: #000; color: var(--on-black); }
 .kg-room .kg-kick { color: #a3a3a3; }
 .kg-room .kg-h2 { color: var(--on-black); }
@@ -228,6 +229,10 @@ html:not(.js) .kg-rx-it p { clip-path: none; font-size: 16px; }
 html:not(.js) .kg-rx-top { display: none; }
 .kg-room .kg-acts { margin-top: 44px; }
 .kg-room .x-arrow { color: var(--on-black); }
+/* the recipes ask is the quiet kind here: outlined on black, so the header's ask stays the one solid fill */
+.kg-room .x-btn:not(.solid) { background: transparent; border-color: rgba(255, 255, 255, .3); color: var(--on-black); }
+@media (hover: hover) { .kg-room .x-btn:not(.solid):hover { background: rgba(255, 255, 255, .1); border-color: rgba(255, 255, 255, .55); box-shadow: none; } }
+.kg-room .x-btn:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 .kg-gh { display: inline-flex; align-items: center; min-height: 44px; font-size: 16px; color: var(--on-black); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
 
 /* 6. from Jev: one diff, the changed lines land in turn; the benchmark as the proof figures; the ask again */

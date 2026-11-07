@@ -15,7 +15,7 @@
    (pointer) + Table 1 in a sheet (state). Every word and link is Hanzo's.
 V2: 8/10 deck scale (h1 52, headings 26, numerals 64), Figure 1 beside the title at both sizes, six numbered sections with drawn figures under a running head, the drag plate; deck greys, outlined frames, tweens not springs, kit Cta/Img/DataTable/BizPaste, nothing floating
 */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, useMotionValue, useTransform, animate } from 'motion/react';
 import { A, More, Cta, Img, DataTable } from '../../kit';
 import { useLive } from '../cloud/Frame';
@@ -133,7 +133,7 @@ function Figure1() {
       <figcaption>
         <ol className="jn-ticks" aria-hidden="true">{PHASE.map((p, i) => <li key={p} className={i === ph ? 'on' : i < ph ? 'past' : ''} />)}</ol>
         <div className="jn-cap">
-          <p><b>Figure 1.</b> Saccade JEPA, step by step: <span className="jn-phase x-mono">{PHASE[ph]}</span></p>
+          <p><span><b>Figure 1.</b> Saccade JEPA, step by step:</span> <span className="jn-phase x-mono">{PHASE[ph]}</span></p>
           {!calm && <button type="button" className="jn-pause" onClick={() => setHeld(!held)} aria-pressed={held} aria-label={held ? 'Play Figure 1' : 'Pause Figure 1'}><PauseI held={held} /></button>}
         </div>
       </figcaption>
@@ -144,21 +144,23 @@ function Figure1() {
 function Hero() {
   return (
     <section className="jn-hero" aria-labelledby="jn-h1">
-      <div className="bz-wrap bz-grid jn-hero-grid">
-        <div className="jn-hero-copy">
-          <BizLines as="h1" id="jn-h1" className="bz-display" lines={['Research on', 'learning', 'without labels']} now delay={0.05} />
-          <p className="jn-byline"><span className="x-mono jn-name">Jin</span><span className="x-mono">hanzoai/jin</span></p>
-          <div className="jn-acts">
-            <Cta to={DOCS} id="jin.hero" thumb>Read the docs</Cta>
-            <More to={GH}>View on GitHub</More>
+      <div className="bz-wrap jn-hero-in">
+        <div className="bz-grid jn-hero-top">
+          <div className="jn-hero-copy">
+            <BizLines as="h1" id="jn-h1" className="bz-display" lines={['Research on learning', 'without labels']} now delay={0.05} />
+            <p className="jn-byline"><span className="x-mono jn-name">Jin</span><span className="x-mono">hanzoai/jin</span></p>
+            <div className="jn-acts">
+              <Cta to={DOCS} id="jin.hero" thumb>Read the docs</Cta>
+              <More to={GH}>View on GitHub</More>
+            </div>
+          </div>
+          <div className="jn-abs">
+            <p className="jn-abs-k x-mono">Abstract</p>
+            <p className="bz-body">Eyes jitter constantly and the brain predicts what the jitter will do to the scene, so the model shifts an image, predicts how its embedding moves, and shifts back to check it lands where it started.</p>
           </div>
         </div>
         <div className="jn-hero-fig">
           <Figure1 />
-        </div>
-        <div className="jn-abs">
-          <p className="jn-abs-k x-mono">Abstract</p>
-          <p className="bz-body">Eyes jitter constantly and the brain predicts what the jitter will do to the scene, so the model shifts an image, predicts how its embedding moves, and shifts back to check it lands where it started.</p>
         </div>
       </div>
     </section>
@@ -207,16 +209,22 @@ const FIGS = [
     <circle cx="410" cy="226" r="7" className="fk" /><circle cx="410" cy="226" r="16" className="sa" />
     <path className="sa dash" markerEnd="url(#jn-a3)" d="M402 246 C 340 300, 140 300, 78 246" />
     <L x="240" y="306" c="d" a />
+    {/* drawn in once: a point travels the round trip and lands where it started */}
+    <circle r="6" className="jn-trip"><animateMotion dur="1.2s" begin="indefinite" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".4 0 .2 1" path="M402 246 C 340 300, 140 300, 78 246" /></circle>
   </svg>,
+  /* the three losses on one shared axis, weighted: the prediction's Huber leads, the round trip and VICReg follow */
   <svg key="f4" viewBox="0 0 720 270" className="jn-svg wide" aria-hidden="true">
-    <path className="sg" d="M40 200 H 200 M120 36 V 206" />
-    <path className="sa thick" d={Array.from({ length: 61 }, (_, i) => { const x = -60 + i * 2, h = Math.abs(x) <= 20 ? (x * x) / 40 : Math.abs(x) - 10; return `${i ? 'L' : 'M'}${120 + x} ${200 - h * 2.8}`; }).join(' ')} />
-    <L x="120" y="250" c="a" />
-    <path className="sk thick" d="M362 72 C 420 56, 446 118, 426 158 C 406 200, 330 200, 314 150 C 302 108, 326 78, 350 72" />
-    <circle cx="362" cy="72" r="7" className="fk" /><circle cx="350" cy="72" r="7" className="sa" />
-    <L x="370" y="250" c="b" a />
-    {Array.from({ length: 36 }).map((_, i) => { const r = Math.floor(i / 6), c = i % 6, d = r === c; return <rect key={i} x={566 + c * 20} y={64 + r * 20} width="18" height="18" rx="2" className={d ? 'fk' : (r + c) % 4 === 1 ? 'fl' : 'fz'} />; })}
-    <L x="625" y="250" c="c" />
+    <path className="sg" d="M30 210 H 310 M170 40 V 214" />
+    <path className="sa thick" d={Array.from({ length: 61 }, (_, i) => { const x = -60 + i * 2, h = Math.abs(x) <= 20 ? (x * x) / 40 : Math.abs(x) - 10; return `${i ? 'L' : 'M'}${r2(170 + x * 2.3)} ${r2(210 - h * 2.8)}`; }).join(' ')} />
+    <path className="sk" d="M20 232 H 700" />
+    <path className="sk" d="M170 226 V 238 M460 226 V 238 M631 226 V 238" />
+    <L x="170" y="256" c="a" />
+    <path className="sk thick" d="M454 96 C 497.5 84, 517 130.5, 502 160.5 C 487 192, 430 192, 418 154.5 C 409 123, 427 100.5, 445 96" />
+    <circle cx="454" cy="96" r="6" className="fk" /><circle cx="445" cy="96" r="6" className="sa" />
+    <circle r="4.5" className="jn-trip"><animateMotion dur="1.4s" begin="indefinite" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".4 0 .2 1" path="M454 96 C 497.5 84, 517 130.5, 502 160.5 C 487 192, 430 192, 418 154.5 C 409 123, 427 100.5, 445 96" /></circle>
+    <L x="460" y="256" c="b" a />
+    {Array.from({ length: 36 }).map((_, i) => { const r = Math.floor(i / 6), c = i % 6, d = r === c; return <rect key={i} x={590 + c * 14} y={112 + r * 14} width="12" height="12" rx="2" className={d ? 'fk' : (r + c) % 4 === 1 ? 'fl' : 'fz'} />; })}
+    <L x="631" y="256" c="c" />
   </svg>,
   <svg key="f5" viewBox="0 0 480 320" className="jn-svg" aria-hidden="true">
     <Ar id="jn-a5" />
@@ -230,7 +238,12 @@ const FIGS = [
     <L x="72" y="268" c="a" /><L x="188" y="268" c="b" /><L x="292" y="268" c="c" a /><L x="408" y="268" c="d" />
   </svg>,
   <svg key="f6" viewBox="0 0 480 320" className="jn-svg" aria-hidden="true">
-    {[[120, 120, 0, 'fk'], [250, 90, 3, 'fg'], [170, 230, 5, 'fl'], [300, 210, 7, 'fo']].map(([cx, cy, s, c]) => seeded(16, cx, cy, 48, s).map(([x, y], i) => <circle key={c + i} cx={x} cy={y} r="5" className={c} />))}
+    {/* the clusters start bunched at the middle and separate by class when drawn in */}
+    {[[120, 120, 0, 'fk'], [250, 90, 3, 'fg'], [170, 230, 5, 'fl'], [300, 210, 7, 'fo']].map(([cx, cy, s, c]) => (
+      <g key={c} className="jn-clu" style={{ '--x': (210 - cx) * 0.8 + 'px', '--y': (165 - cy) * 0.8 + 'px' }}>
+        {seeded(16, cx, cy, 48, s).map(([x, y], i) => <circle key={c + i} cx={x} cy={y} r="5" className={c} />)}
+      </g>
+    ))}
     <L x="200" y="300" c="a" />
     {Array.from({ length: 25 }).map((_, i) => { const r = Math.floor(i / 5), c = i % 5, d = Math.hypot(r - 1.6, c - 2.6); return <rect key={i} x={366 + c * 20} y={40 + r * 20} width="19" height="19" className="fa" opacity={Math.max(0.08, 1 - d / 2.6).toFixed(2)} />; })}
     <rect x="366" y="40" width="99" height="99" className="sk" fill="none" />
@@ -258,6 +271,52 @@ const SECS = [
   ['The papers', ['The papers'], 'Grant proposals on hierarchical JEPA for edge AI, where the interesting constraint is learning useful representations on hardware that cannot phone home.', ['hierarchical JEPA', 'edge AI', 'hardware that cannot phone home']],
 ];
 
+/* Each section figure is an authored scene that draws itself in once, the first time it is 60% on screen: strokes draw
+   (pathLength, 1.1 s ease-in-out, 50 ms apart), marks and mask cells fill after them, dashed guides and letters land
+   last, and a point travels the round trip where the figure has one. The server HTML is the finished drawing; only a
+   figure still below the screen once the page runs is set back to blank, so JS off, reduced motion and a deep link
+   all show the final state. */
+const useIso = typeof window === 'undefined' ? () => {} : useLayoutEffect;
+function useDraw() {
+  const ref = useRef(null);
+  const [st, setSt] = useState('');
+  useIso(() => {
+    const el = ref.current;
+    if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches || el.getBoundingClientRect().top < innerHeight) return;
+    let s = 0, f = 0;
+    el.querySelectorAll('svg .sk, svg .sa, svg .sg').forEach((n) => {
+      if (n.closest('marker') || n.classList.contains('dash') || n.hasAttribute('stroke-dasharray')) return;
+      n.setAttribute('pathLength', '1');
+      n.style.setProperty('--k', s++);
+    });
+    el.querySelectorAll('svg .fk, svg .fa, svg .fg, svg .fl, svg .fz, svg .fo').forEach((n) => n.style.setProperty('--f', f++));
+    setSt(' armed');
+    let t = 0;
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      io.disconnect();
+      setSt(' armed drawn');
+      t = setTimeout(() => el.querySelectorAll('animateMotion').forEach((a) => a.beginElement && a.beginElement()), 900);
+    }, { threshold: 0.6 });
+    io.observe(el);
+    return () => { io.disconnect(); clearTimeout(t); };
+  }, []);
+  return [ref, st];
+}
+
+function Fig({ i, keys }) {
+  const [ref, st] = useDraw();
+  return (
+    <figure className={'jn-mfig' + st} ref={ref}>
+      {FIGS[i]}
+      <figcaption>
+        <span className="x-mono">Figure {i + 2}</span>
+        <ul>{keys.map((k, j) => <li key={k}><b className="x-mono">{'abcd'[j]}</b>{k}</li>)}</ul>
+      </figcaption>
+    </figure>
+  );
+}
+
 /* The repository, as the paper's six numbered sections under a running head. */
 function Paper() {
   const ref = useRef(null);
@@ -283,16 +342,10 @@ function Paper() {
           <div className="bz-wrap bz-grid jn-sec-in">
             <p className="jn-num" aria-hidden="true">{i + 1}</p>
             <div className="jn-txt">
-              <BizLines id={'jn-s' + i} className="bz-headline jn-h" lines={lines} />
+              <BizLines id={'jn-s' + i} className={'bz-headline jn-h' + (i === 1 ? ' big' : '')} lines={lines} />
               <p className="bz-body">{d}</p>
             </div>
-            <figure className="jn-mfig">
-              {FIGS[i]}
-              <figcaption>
-                <span className="x-mono">Figure {i + 2}</span>
-                <ul>{key.map((k, j) => <li key={k}><b className="x-mono">{'abcd'[j]}</b>{k}</li>)}</ul>
-              </figcaption>
-            </figure>
+            <Fig i={i} keys={key} />
           </div>
         </section>
       ))}
@@ -394,6 +447,7 @@ function End() {
   return (
     <section className="bz-sec jn-end" aria-labelledby="jn-end-h">
       <div className="bz-wrap">
+        <p className="jn-proof x-mono"><span>hanzoai/jin</span><span>License: Apache-2.0</span></p>
         <div className="jn-end-top">
           <BizLines id="jn-end-h" className="bz-display md" lines={['Read the code']} />
           <Cta to={DOCS} id="jin.close" size="lg" thumb>Read the docs</Cta>

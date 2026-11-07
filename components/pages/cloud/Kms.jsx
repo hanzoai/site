@@ -38,29 +38,26 @@ const noise = (n, s) => Array.from({ length: n }, (_, i) => HEX[(s * 31 + i * 17
 const ROW = 60; // one version row (52px) plus its 8px gap
 
 /* The version stack: three rows that slide by transform inside a fixed box, so the vault never changes height. */
-function Versions({ v, dir }) {
-  const rows = [v, v - 1, v - 2];
+function Versions({ v, top }) {
+  // every version that can show stays mounted; each slides to its slot (above the box, 0, 1, 2, below the box)
+  const rows = [top, top - 1, top - 2, top - 3];
   return (
     <div className="km-vers-in">
-      <AnimatePresence initial={false} custom={dir}>
-        {rows.map((n, i) => (
+      {rows.map((n) => {
+        const i = v - n;
+        const shown = i >= 0 && i <= 2;
+        return (
           <motion.div
             key={n}
             className={'km-ver' + (i === 0 ? ' cur' : '')}
-            custom={dir}
-            variants={{
-              in: (d) => ({ y: d > 0 ? -ROW : ROW * 3, opacity: 0 }),
-              out: (d) => ({ y: d > 0 ? ROW * 3 : -ROW, opacity: 0 }),
-            }}
-            initial="in"
-            animate={{ y: i * ROW, opacity: 1 - i * 0.3 }}
-            exit="out"
+            initial={false}
+            animate={{ y: i * ROW, opacity: shown ? 1 - i * 0.3 : 0 }}
             transition={{ duration: 0.4, ease: EASE }}
           >
             <b>v{n}</b><span>{noise(10, n)}</span>{i === 0 && <em>current</em>}
           </motion.div>
-        ))}
-      </AnimatePresence>
+        );
+      })}
     </div>
   );
 }
@@ -107,7 +104,7 @@ function Vault() {
       </div>
       <div className="km-side">
         <div className="km-vers">
-          <Versions v={v} dir={t === 0 ? -1 : 1} />
+          <Versions v={v} top={ver + 1} />
           <AnimatePresence>
             {t === 5 && (
               <motion.div className="km-stale" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.45, ease: EASE }}>
