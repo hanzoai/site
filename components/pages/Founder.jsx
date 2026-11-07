@@ -42,12 +42,12 @@ function PullRequest() {
     if (!seen || done.current) return;
     done.current = true;
     let live = true;
-    (async () => { await wait(1400); if (!live) return; setS(1); await wait(150); if (!live) return; setS(2); })();
+    (async () => { await wait(900); if (!live) return; setS(1); await wait(150); if (!live) return; setS(2); })();
     return () => { live = false; done.current = false; };
   }, [seen, calm]);
   const merged = s === 2;
   return (
-    <div className="xfo-pr xp-obj" ref={box} aria-hidden="true">
+    <div className={'xfo-pr xp-obj' + (seen || calm ? ' go' : '')} ref={box} aria-hidden="true">
       <div className="xfo-pr-top">{PR_ICON}<span className="xfo-pr-k">Founder Program</span><span className="x-mono">https://github.com/hanzoai/ui/pull/1</span></div>
       <div className="xfo-diff">
         {[['', 72], ['del', 54], ['add', 80], ['add', 46], ['', 62], ['add', 70], ['', 38]].map(([k, w], i) => (
@@ -80,7 +80,7 @@ function Hero() {
             </div>
           </motion.div>
         </div>
-        <motion.div className="xfo-hero-obj" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.2 }}>
+        <motion.div className="xfo-hero-obj" initial={{ y: 40 }} animate={{ y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.2 }}>
           <PullRequest />
         </motion.div>
       </div>
@@ -171,8 +171,8 @@ function Mine() {
         </div>
         <div className="xfo-mine">
           <div className="xfo-mine-c">
-            <div><span>Merged pull request</span><span className="xfo-st"><button type="button" onClick={() => step(setPrs, prs, -1, 99)} disabled={!prs} aria-label="Fewer merged pull requests">−</button><output className="x-mono" aria-live="polite">{prs}</output><button type="button" onClick={() => step(setPrs, prs, 1, 99)} aria-label="More merged pull requests">+</button></span></div>
-            <div><span>lines merged</span><span className="xfo-st"><button type="button" onClick={() => step(setLines, lines, -250, 100000)} disabled={!lines} aria-label="Fewer lines merged">−</button><output className="x-mono" aria-live="polite">{lines.toLocaleString('en-US')}</output><button type="button" onClick={() => step(setLines, lines, 250, 100000)} aria-label="More lines merged">+</button></span></div>
+            <div><span>Merged pull request</span><span className="xfo-st"><button type="button" onClick={() => step(setPrs, prs, -1, 99)} disabled={!prs} aria-label="Fewer merged pull requests">−</button><output className="x-mono" aria-live="polite"><AnimatePresence mode="popLayout" initial={false}><motion.span key={prs} className="xfo-roll" initial={{ y: '70%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-70%', opacity: 0 }} transition={{ duration: 0.2, ease: EASE }}>{prs}</motion.span></AnimatePresence></output><button type="button" onClick={() => step(setPrs, prs, 1, 99)} aria-label="More merged pull requests">+</button></span></div>
+            <div><span>lines merged</span><span className="xfo-st"><button type="button" onClick={() => step(setLines, lines, -250, 100000)} disabled={!lines} aria-label="Fewer lines merged">−</button><output className="x-mono" aria-live="polite"><AnimatePresence mode="popLayout" initial={false}><motion.span key={lines} className="xfo-roll" initial={{ y: '70%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-70%', opacity: 0 }} transition={{ duration: 0.2, ease: EASE }}>{lines.toLocaleString('en-US')}</motion.span></AnimatePresence></output><button type="button" onClick={() => step(setLines, lines, 250, 100000)} aria-label="More lines merged">+</button></span></div>
           </div>
         </div>
       </div>
@@ -219,6 +219,7 @@ function Claim() {
   const [f, setF] = useState({ email: '', name: '', github: '', pull: '' });
   const [st, setSt] = useState('idle'); // idle | sending | sent | refused
   const [tried, setTried] = useState(false);
+  const [msgs, setMsgs] = useState({});
   const form = useRef(null);
   const out = useRef(null);
   const c = claim(f);
@@ -229,6 +230,10 @@ function Claim() {
     if (st === 'sending') return;
     if (!c.ok) {
       setTried(true);
+      // say why on submit, in the browser's own words for that field (no invented copy)
+      const m = {};
+      ['email', 'github', 'pull'].forEach((k) => { if (c.bad[k]) m[k] = form.current?.querySelector(`[name="${k}"]`)?.validationMessage || ''; });
+      setMsgs(m);
       const first = ['email', 'github', 'pull'].find((k) => c.bad[k]);
       form.current?.querySelector(`[name="${first}"]`)?.focus();
       return;
@@ -241,6 +246,7 @@ function Claim() {
     } catch { setSt('refused'); }
   };
   const bad = (k) => (tried && c.bad[k] ? 'true' : undefined);
+  const why = (k) => (tried && c.bad[k] ? msgs[k] || undefined : undefined);
   return (
     <section className="xp-sec xfo-claim" id="claim" aria-labelledby="xfo-claim-h">
       <div className="xp-wrap xp-grid">
@@ -258,10 +264,10 @@ function Claim() {
               </motion.div>
             ) : (
               <motion.form key="form" ref={form} className="xfo-form" noValidate onSubmit={send} exit={{ opacity: 0, y: -10, transition: { duration: 0.15 } }}>
-                <Field className="wide" label="Email of your Hanzo account" name="email" type="email" required autoComplete="email" aria-required="true" aria-invalid={bad('email')} value={f.email} onChange={on('email')} />
+                <Field className="wide" label="Email of your Hanzo account" name="email" type="email" required autoComplete="email" aria-required="true" aria-invalid={bad('email')} error={why('email')} value={f.email} onChange={on('email')} />
                 <Field label="Name" name="name" autoComplete="name" value={f.name} onChange={on('name')} />
-                <Field label="GitHub username" name="github" autoComplete="username" required pattern="[A-Za-z0-9\-]{1,39}" aria-required="true" aria-invalid={bad('github')} placeholder="octocat" value={f.github} onChange={on('github')} />
-                <Field className="wide" label="Merged pull request" name="pull" type="url" required pattern="https://github\.com/.+/pull/[0-9]+.*" aria-required="true" aria-invalid={bad('pull')} placeholder="https://github.com/hanzoai/ui/pull/1" value={f.pull} onChange={on('pull')} />
+                <Field label="GitHub username" name="github" autoComplete="username" required pattern="[A-Za-z0-9\-]{1,39}" aria-required="true" aria-invalid={bad('github')} error={why('github')} placeholder="octocat" value={f.github} onChange={on('github')} />
+                <Field className="wide" label="Merged pull request" name="pull" type="url" required pattern="https://github\.com/.+/pull/[0-9]+.*" aria-required="true" aria-invalid={bad('pull')} error={why('pull')} placeholder="https://github.com/hanzoai/ui/pull/1" value={f.pull} onChange={on('pull')} />
                 {st === 'refused' && <p className="xfo-refused" ref={out} tabIndex={-1} role="alert">Write to <a href={c.mail}>{SUPPORT}</a> with the address of the pull request.</p>}
                 <div className="xfo-send-row">
                   <Cta type="submit" id="founder.claim" busy={st === 'sending'} className="xp-cta xfo-send">Send the claim</Cta>

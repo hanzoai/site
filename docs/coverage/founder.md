@@ -22,7 +22,7 @@ Done here: Header comment in `app/founder/page.jsx` names Persona, Goal, CTA, Me
 - ~~Breadcrumb at depth 2 or more~~ n/a: depth 1 page.
 - [x] Link parity: 0 removed, 0 unexpected
 
-Done here: One `<main>` from the layout; links via `A`/`Cta`; parity links 1/2 (the second is Cloudflare's email-protection artifact; the mailto to support@hanzo.ai is on the page).
+Done here: The page's own `<main>` (no id; the layout's `#main` marker before it takes the skip link); links via `A`/`Cta`; parity links 1/2 (the second is Cloudflare's email-protection artifact; the mailto to support@hanzo.ai is on the page).
 
 ## 3. First impression and page narrative
 - [x] Sells in 5 s; something moves within 1 s without input
@@ -32,11 +32,11 @@ Done here: One `<main>` from the layout; links via `A`/`Cta`; parity links 1/2 (
 - [ ] Ends in proof strip, `Band`, footer
 - ~~Card-to-page links use Morph; title lands within 12px~~ n/a: no cards that open pages.
 
-Done here: Nothing above the h1. "Merge a pull request. / Get Pro." (52px) cuts in by line mask; the hero pull request merges once within 2 s and stays merged. `PageHero` is not in the kit (left open). The page ends on the claim then the footer, so the ask is the last thing; a kit `Band` would repeat it (left open). JS off: `NoJs` plus a page rule lay the scene flat.
+Done here: Nothing above the h1. "Merge a pull request. / Get Pro." (52px) cuts in by line mask; the hero pull request is on screen from the first paint, its diff draws in line by line once it lands, and it merges once about 1.1 s after it is seen (round 3: wait cut from 1.4 s to 0.9 s) and stays merged. `PageHero` is not in the kit (left open). The page ends on the claim then the footer, so the ask is the last thing; a kit `Band` would repeat it (left open). JS off: `NoJs` plus a page rule lay the scene flat.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
-- [ ] Sticky ask in header and bar after the hero, same label (desktop yes: the header swaps to "Claim a merged pull request"; phone keeps the shared header's "Try Hanzo", requested in `docs/requests/founder.md`)
+- [x] Sticky ask in the header after the hero, same label (desktop: the shared Ask; phones: the page-local `usePhoneAsk` outlines the header while the page's ask shows and swaps it to "Claim a merged pull request" after the hero; shared request in `docs/requests/founder.md`)
 - ~~Copy button copies exactly the displayed text; failure never says Copied~~ n/a: no copy control.
 - [x] `data-cta` and `data-thumb` on every primary
 
@@ -59,7 +59,7 @@ Done here: No figures but Hanzo's thresholds; no logos or seals; "Privacy Policy
 Done here: Parity 37/37 text. Type from MASTER: h1 52px, section heads 26px, the count 64→112px only while it is the moment (84px phone), the level you reach 44px, org names 44px, level titles 26px, body 16–17px; Faq is the kit's.
 
 ## 7. Visual design system
-- [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
+- [x] `python3 scripts/taste.py <files>` passes; white and ink are tokens (`--hz-white`, `--ink`); 7 deck greys stay literal because the shared tokens hold Apple greys, not the deck's (#fafafa, #a3a3a3, #525252; noted in `docs/requests/founder.md`)
 - [x] No label, tag, badge or pill above a headline
 - [x] Radii, shadows and sizes from tokens; never box plus shadow
 - [x] One icon set; no icon in a rounded box
@@ -81,7 +81,7 @@ Done here: Kit `Cta` and `Field` states (hover, press .97, focus ring, busy, das
 - [x] At least 3 kinds of movement; scroll-linked is half or less
 - [x] Something moves without input; every control answers
 - [x] Reduced motion shows the final state; no `setInterval`
-- ~~Sound only on the listed moments, through the one kit~~ n/a: the shared sound kit is not on main yet; nothing page-local plays sound.
+- [x] Sound only on the listed moments, through the one kit: the shared `Sound.jsx` sounds the `data-cta` asks and the FAQ; the page adds no sound of its own.
 
 Done here: Signature: the scroll merges 0–3 pull requests, pours each level and grows the count. Time: the hero pull request merges once. State: the + and − change the level shown at full size. Arrival: line-mask h1. Ease-emphasis, no springs; reduced motion shows final states; the phone counts 0, 1, 3 once in view.
 
@@ -154,6 +154,6 @@ Done here: Reading, empty and unreachable states for the open bounties in Hanzo'
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/founder.md` verdict 8 or more
+- [ ] Review read: `docs/review/founder.md` verdict 8 or more (read: 7/10; round 3 answers it, awaiting the next walk)
 
 Done here: `data-cta` ids `founder.hero`, `founder.claim`, `founder.bounties` (kit Cta fires `cta_click`); the lead carries only what the visitor typed, on submit; V2 line in the route header; critic review (6/10 at `9afe46a`): reserved list height, merge once, ask kept in the dark room, counter tile, Hanzo-only claim states, Field and normalised address, phone moment, ending on the claim, hovers, kit and no-JS all fixed.
