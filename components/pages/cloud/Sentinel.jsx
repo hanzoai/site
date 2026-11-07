@@ -58,7 +58,7 @@ function Issue() {
         <div className="sn2-frame">
           <p className="sn2-k l2-mono">Top frame</p>
           <div className="sn2-code">
-            <AnimatePresence mode="wait" initial={false}>
+            <AnimatePresence initial={false}>
               {resolved
                 ? <motion.code key="r" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.35, ease: EASE }}><b>checkout/cart.ts:42</b> · applyDiscount()</motion.code>
                 : <motion.code key="m" className="min" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.3 }}>main.3f9a.js:1:88213 · t.a()</motion.code>}
@@ -85,6 +85,7 @@ function Collapse() {
   const scene = useRef(null);
   const cv = useRef(null);
   const card = useRef(null);
+  const copy = useRef(null);
   const num = useRef(null);
   const [ref, live, , paused, toggle] = useDemo(0.15);
   const calm = useCalm();
@@ -100,7 +101,7 @@ function Collapse() {
     let raf = 0, t0 = performance.now(), last = -1;
     const draw = (now) => {
       const w = c.clientWidth, h = c.clientHeight, dpr = Math.min(2, devicePixelRatio || 1);
-      if (c.width !== Math.round(w * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
+      if (c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
       g.setTransform(dpr, 0, 0, dpr, 0, 0);
       g.clearRect(0, 0, w, h);
       const t = (now - t0) / 1000;
@@ -108,6 +109,9 @@ function Collapse() {
       const p = calm ? 1 : pin ? Math.min(1, scrollYProgress.get() * 1.25) : Math.min(1, ((t % 8) / 4.5));
       const cr = card.current.getBoundingClientRect(), r = c.getBoundingClientRect();
       const cx = cr.left - r.left, cy = cr.top - r.top;
+      // the rain never falls through the words: particles still in the air skip the copy's box
+      const tr = copy.current.getBoundingClientRect();
+      const ax = tr.left - r.left - 24, ay = tr.top - r.top - 24, bx = tr.right - r.left + 24, by = tr.bottom - r.top + 24;
       g.fillStyle = '#d4d4d4';
       for (let n = 0; n < P.length; n++) {
         const q = P[n];
@@ -117,6 +121,7 @@ function Collapse() {
         const rx = q.x * w, ry = ((q.y + t * q.v) % 1) * h * 1.1 - h * 0.05;
         const tx = cx + 18 + q.jx * (cr.width - 36), ty = cy + 18 + q.jy * (cr.height - 36);
         const x = rx + (tx - rx) * k, y = ry + (ty - ry) * k;
+        if (k < 0.5 && x > ax && x < bx && y > ay && y < by) continue;
         g.globalAlpha = (0.25 + q.v * 4) * (1 - k * 0.85);
         g.fillRect(x, y, 2.5, k > 0.02 ? 2.5 : 9);
       }
@@ -136,7 +141,7 @@ function Collapse() {
         <PauseBtn paused={paused} onClick={toggle} className="dk sn2-col-pause" />
         <canvas ref={cv} className="sn2-cv" aria-hidden="true" />
         <div className="l2-wrap sn2-col-in">
-          <div className="sn2-col-copy">
+          <div className="sn2-col-copy" ref={copy}>
             <h2 className="l2-head">Enough context to fix it without asking</h2>
             <h3 className="l2-title">One issue, not ten thousand events</h3>
             <p className="l2-ch-n">01 / 06</p>
@@ -256,7 +261,7 @@ function Resolved() {
 
 export default function Sentinel() {
   return (
-    <main id="main" className="l2-page sn2" data-ask="off">
+    <main id="main" className="l2-page sn2">
       <StageHero look="side" kick="sentry.hanzo.ai" title="Hanzo Sentinel" sub="Error tracking and performance monitoring" acts={[['Read the docs', DOCS], ['View on GitHub', GH]]}>
         <Issue />
       </StageHero>
