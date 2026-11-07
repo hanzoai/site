@@ -68,13 +68,13 @@
 .v2f-btn.acc { background: var(--acc); color: var(--acc-ink); border-color: var(--acc); }
 
 /* spec drawer (FamDrawer) */
-.v2f-spec-btn { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; max-width: 100%; padding: 6px 18px 6px 6px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); background: #fff; color: var(--ink); font: 500 15px/1.35 var(--sans); text-align: left; cursor: pointer; touch-action: manipulation; transition: border-color var(--ui) var(--out), transform var(--press) var(--out); }
-.v2f-spec-btn > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--soft); }
+.v2f-spec-btn { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; max-width: 100%; padding: 6px 18px 6px 6px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); background: #fff; color: var(--ink); font: 400 15px/1.4 var(--sans); text-align: left; border-radius: 24px; cursor: pointer; touch-action: manipulation; transition: border-color var(--ui) var(--out), transform var(--press) var(--out); }
+.v2f-spec-btn > span { min-width: 0; color: var(--soft); }
 @media (hover: hover) { .v2f-spec-btn:hover { border-color: rgba(0, 0, 0, .4); } .v2f-spec-btn:hover > span { color: var(--ink); } }
 .v2f-spec-btn:active { transform: scale(.97); }
 .v2f-spec-btn i { flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--ink); color: #fff; font: 400 20px/1 var(--sans); font-style: normal; transition: transform var(--reveal) var(--out); }
 @media (hover: hover) { .v2f-spec-btn:hover i { transform: rotate(90deg); } }
-.v2f-sheet { position: fixed; inset: 0; z-index: 90; visibility: hidden; pointer-events: none; transition: visibility 0s .5s; }
+.v2f-sheet { position: fixed; inset: 0; z-index: 960; visibility: hidden; pointer-events: none; transition: visibility 0s .5s; }
 .v2f-sheet[data-open] { visibility: visible; pointer-events: auto; transition: none; }
 .v2f-sheet-scrim { position: absolute; inset: 0; border: 0; padding: 0; background: rgba(0, 0, 0, .32); opacity: 0; transition: opacity .4s var(--out); cursor: pointer; }
 .v2f-sheet[data-open] .v2f-sheet-scrim { opacity: 1; }
@@ -128,7 +128,7 @@ html:not(.js) .v2f-ch-nav { display: none; }
 .v2f-next-c .v2f-next-s canvas { width: 100%; height: 100%; display: block; }
 .v2f-next-t { margin: 0; font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.15; max-width: 16ch; text-wrap: balance; }
 .v2f-next-m { display: flex; align-items: center; justify-content: space-between; gap: 16px; font-size: 15px; color: var(--soft); }
-.v2f-next-go { flex: none; width: 48px; height: 48px; border-radius: 50%; background: var(--ink); color: #fff; display: grid; place-items: center; transition: transform var(--reveal) var(--out); }
+.v2f-next-go { flex: none; width: 48px; height: 48px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .2); background: none; color: var(--ink); display: grid; place-items: center; transition: transform var(--reveal) var(--out); }
 @media (hover: hover) { .v2f-next-c:hover .v2f-next-go { transform: rotate(-45deg); } }
 
 @media (max-width: 900px) {
