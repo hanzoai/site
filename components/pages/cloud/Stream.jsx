@@ -104,6 +104,11 @@ function Ruler() {
               <h3 className="l2-head">{t}</h3>
               <p className="st2-ofs l2-mono"><span>offset {String(i + 1).padStart(4, '0')}</span><span>{String(i + 1).padStart(2, '0')} / 06</span></p>
               <p className="l2-body">{d}</p>
+              {/* the record's own picture: a run of example records; the one this fact is about is filled, the last
+                  card's refused batch is dashed. Hovering it consumes one record (the strip steps left). */}
+              <div className={'st2-recs r' + i} aria-hidden="true">
+                <div>{Array.from({ length: 9 }).map((_, j) => <i key={j} className={j === i + 1 ? (i === 5 ? 'bad' : 'on') : ''}><b className="l2-mono">{1290 + i * 9 + j}</b></i>)}</div>
+              </div>
             </article>
           ))}
           <ul className="st2-figs">{FIGS.map(([a, b]) => <li key={a}><b>{a}</b><span>{b}</span></li>)}</ul>
