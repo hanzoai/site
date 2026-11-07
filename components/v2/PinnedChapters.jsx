@@ -13,7 +13,7 @@
        per={80}                                    // svh of scroll per chapter
        objH={34}                                   // phones: the object's window height in svh (default 40)
      />
-   Desktop: 5/7 split. Phone: the object on top, the words below, still one at a time. The rail of ticks scrolls to a
+   Desktop: 5/8 split. Phone (the rail there is a progress line, out of the tab order): the object on top, the words below, still one at a time. The rail of ticks scrolls to a
    chapter (keyboard too). JS off: the scene unpins and every chapter reads in order. Reduced motion: swaps, no
    movement. Owned by Cloud 3. */
 import { useEffect, useRef, useState } from 'react';
@@ -30,7 +30,8 @@ export default function PinnedChapters({ steps, visual, label = 'Chapters', flip
   const total = n + lead;
   const [at, setAt] = useState(intro ? -1 : 0);
   const [live, setLive] = useState(false);
-  useEffect(() => setLive(true), []);
+  const [wide, setWide] = useState(true); // on phones the rail is a progress line (no tiny targets); scroll moves you
+  useEffect(() => { setLive(true); const m = matchMedia('(min-width: 900px)'); const f = () => setWide(m.matches); f(); m.addEventListener('change', f); return () => m.removeEventListener('change', f); }, []);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   useMotionValueEvent(scrollYProgress, 'change', (p) => {
     const i = Math.min(total - 1, Math.max(0, Math.floor(p * total * 0.999))) - lead;
@@ -69,7 +70,7 @@ export default function PinnedChapters({ steps, visual, label = 'Chapters', flip
             </div>
             <nav className="lx-pin-rail" aria-label={label}>
               {steps.map((s, i) => (
-                <button key={i} type="button" aria-current={i === at ? 'step' : undefined} aria-label={`${pad(i + 1)}${s.t ? ': ' + s.t : ''}`} onClick={() => jump(i)}>
+                <button key={i} type="button" tabIndex={wide ? 0 : -1} aria-current={i === at ? 'step' : undefined} aria-label={`${pad(i + 1)}${s.t ? ': ' + s.t : ''}`} onClick={() => jump(i)}>
                   <i data-at={where(i)} />
                 </button>
               ))}
