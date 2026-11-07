@@ -4,19 +4,20 @@
    Metric: app_handoff
    Goal: see a flow run node by node, find out how it is published and run, then open Flow
    CTA: Open Flow -> https://flow.hanzo.ai (hero, the site's sticky ask bar at every width, close; data-thumb, data-cta flow.hero / flow.close)
-   Signature: the canvas, running. Hanzo's own components (a document loader, a text splitter, a vector store, a
-   retriever, a model, an output parser) are wired on a full-bleed dotted canvas with "Hanzo Flow" sitting among them;
-   a run leaves each node as a pulse that travels its edge to the next, the node runs, and what it returned appears on it.
-   The inspector on the canvas follows the run and carries its Pause.
-   Beyond: "Step through it" yourself. In the playground (the one dark room), play, pause, or take the flow one node at
-   a time (next, previous, or pick a step); the inspector is the object there, large: the node, what it received, the
-   hand-off travelling its wire, and what it returned streaming in, the way Hanzo says you find the node that gave the
-   strange answer. The REST card opens into the same flow published three ways (REST, JSON, MCP) as tabs.
-   One graph, three readings: the hero's running cards (tap one to hold the run there), the pinned build-up drawn as a
-   compact diagram, and the playground as the inspector alone, so the six nodes are never reprinted the same way.
+   Signature: the canvas, running. Hanzo's own component kinds (its library list: document loaders, text splitters,
+   vector stores, retrievers, Models, output parsers) are wired on a full-bleed dotted canvas beside "Hanzo Flow"; a run
+   leaves each node as a pulse that travels its edge to the next, the node runs, and what it returned shows on it.
+   This is the only place the pipeline is drawn. Hover a node and it lifts and shows the other side of what it does.
+   Beyond: the playground, in the one dark room and nowhere else: play, pause, or take the flow one node at a time
+   (previous, next, or pick a step); what each node received and returned is the object, large, streaming in.
+   Chapters: each of Hanzo's six features gets its own object on the pinned board, built from its own sentence
+   (components/pages/apps/flow/FlowPanels.jsx): the library's palette, a node opened to its Python class, steps ticked
+   until the node that caused it, several agents with retrieval underneath, a flow published three ways, a flow
+   exported with the wiring and not the secrets. The fact cards open into their own object (every kind a Python class,
+   the three ways as tabs, the terminal).
    Not only scroll: the run is idle motion; the playground answers the hand; the facts open (state); chapters are scroll.
    Motion: the running canvas (signature) + line-masked headings + sticky chapters + nodes that open into their page.
-V2: 8/10 round 3: the pipeline no longer repeats four times (hero cards run and answer a tap; the pinned build-up is a compact diagram; the playground is its inspector, large, with the returned value streaming in; no chip chain in the close); phones get one pinned scene where the mini-graph builds and one chapter swaps in at a time, nothing behind it; no gap before the stage; one Deploy, one GitHub row, one hanzoai chip; "Run it locally first" settles to 26px so the close is the one big line; hero nodes keep the 16px gutter at 320
+V2: 8/10 round 4: the pipeline is drawn once (the hero); the six chapters each get their own object from their own copy; the playground appears only in the dark room, with no second "Step through it" heading; no invented demo data (node names, received and returned are Hanzo's own words); hero hover lifts a node and shows what it returns; the run's pause and counter sit on the canvas; heights reserved so nothing bobs; phone cards wrap at spaces only and their port heads never fuse; gaps closed
    Every word and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';

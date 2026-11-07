@@ -47,11 +47,16 @@ function Inline({ inl }) {
 }
 
 /* the walk: which platform, how far the hand has pressed, the switch, and whether it plays by itself */
-function useWalk(setting, live, mode, row) {
+function useWalk(setting, live, mode, row, onStep) {
   const calm = useReducedMotion();
+  const n0 = setting.flows[0].steps.reduce((m, s) => m + s.targets.length, 0);
   const [plat, setPlat] = useState(0);
-  const [level, setLevel] = useState(0);
-  const [on, setOn] = useState(true);
+  // the first paint (server and client alike) is the walk's finished state: the switch off and saved. With motion
+  // allowed, the walk starts from the top once the page is live; with reduced motion it simply stays there.
+  const [level, setLevel] = useState(n0);
+  const [aimAt, setAimAt] = useState(n0 - 1); // the target the hand is on: its step is the one lit
+  const [on, setOn] = useState(false);
+  const stepping = useRef(false); // a step was pressed in the text: the walk must not restart over it
   const [auto, setAuto] = useState(true);
   const [hold, setHold] = useState(false);
   const [press, setPress] = useState(0);
@@ -74,6 +79,7 @@ function useWalk(setting, live, mode, row) {
     x.set(b.left - a.left + b.width * 0.7); y.set(b.top - a.top + b.height * 0.72); setPlaced(true);
   };
   const aim = (k) => {
+    setAimAt(k);
     const s = stage.current, el = s && s.querySelector(`[data-t="${k}"]`);
     if (!el) return;
     const a = s.getBoundingClientRect(), b = el.getBoundingClientRect();
@@ -91,14 +97,15 @@ function useWalk(setting, live, mode, row) {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { const t = setTimeout(rest, 40); return () => clearTimeout(t); }, [plat]); // eslint-disable-line react-hooks/exhaustive-deps
   // reduced motion: the finished state, the switch already off
-  useEffect(() => { if (calm) { setAuto(false); setLevel(n); setOn(false); } }, [calm]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (calm) { setAuto(false); setLevel(n); setAimAt(n - 1); setOn(false); } }, [calm]); // eslint-disable-line react-hooks/exhaustive-deps
   // each part of the document sets the switch, and both switches (in the picture and under it) agree:
   // 01 shows the setting itself (it turns on once), 03 shows it off, 04 turns it off once while its rows stay put,
   // and coming back to the walk starts it again from the top, switched on
   useEffect(() => {
     if (mode === 'walk') {
-      if (calm) { setLevel(n); setOn(false); return undefined; } // reduced motion: the walk's finished state
-      setLevel(0); setOn(true); setTimeout(rest, 30); return undefined;
+      if (calm) { setLevel(n); setAimAt(n - 1); setOn(false); return undefined; } // reduced motion: the walk's finished state
+      if (stepping.current) { stepping.current = false; return undefined; } // a pressed step already set the walk
+      setLevel(0); setAimAt(0); setOn(true); setTimeout(rest, 30); return undefined;
     }
     if (calm || mode === 'after') { setOn(mode === 'what'); return undefined; }
     setOn(mode !== 'what');
@@ -108,7 +115,7 @@ function useWalk(setting, live, mode, row) {
   // the hand plays by itself while the panel is on screen, nobody is pointing at it and nobody has taken over
   useEffect(() => {
     if (!auto || !live || hold || calm || mode !== 'walk') return;
-    if (level >= n) { const t = setTimeout(() => { setLevel(0); setOn(true); rest(); }, 3400); return () => clearTimeout(t); } // each walk starts on and ends off
+    if (level >= n) { const t = setTimeout(() => { setLevel(0); setAimAt(0); setOn(true); rest(); }, 3400); return () => clearTimeout(t); } // each walk starts on and ends off
     const t1 = setTimeout(() => aim(level), level ? 650 : 550);
     const t2 = setTimeout(() => hit(level), level ? 1450 : 1350);
     return () => { clearTimeout(t1); clearTimeout(t2); };
@@ -123,16 +130,24 @@ function useWalk(setting, live, mode, row) {
     const t2 = setTimeout(() => { hit(want); setWant(null); }, calm ? 0 : 760);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [want, level, plat]); // eslint-disable-line react-hooks/exhaustive-deps
-  const active = targets[Math.min(level, n - 1)].step;
+  // the lit step is the one the hand is on (or has just pressed), so pressing step 01 lights 01
+  const active = targets[Math.max(0, Math.min(aimAt, n - 1))].step;
   return {
     plat, level, on, auto, press, saved, stage, x, y, flow, targets, active, n, mode, lit: shown, touch, placed,
     hold: setHold,
     light: (k) => { if (k === null) { setLitHold(false); return; } setLit(k); setLitHold(true); },
     paused: !auto,
     pause: () => setAuto((v) => !v), // the walk's own pause control (it loops), first in the panel
-    platform: (p) => { if (p === plat) return; setPlat(p); setLevel(0); setWant(null); setTimeout(rest, 30); },
-    step: (p, i) => { setAuto(false); setPlat(p); const k = setting.flows[p].steps.slice(0, i).reduce((m, s) => m + s.targets.length, 0); setLevel(k); setWant(k); },
-    flip: () => { setAuto(false); setOn((o) => !o); setSaved((v) => v + 1); setLevel(n); setWant(null); },
+    platform: (p) => { if (p === plat) return; setPlat(p); setLevel(0); setAimAt(0); setWant(null); setTimeout(rest, 30); },
+    // a pressed step: autoplay stops, the panel switches to the walk (whatever section is in view) and shows that step
+    step: (p, i) => {
+      setAuto(false); setPlat(p);
+      const k = setting.flows[p].steps.slice(0, i).reduce((m, s) => m + s.targets.length, 0);
+      if (mode !== 'walk') stepping.current = true;
+      if (onStep) onStep();
+      setAimAt(k); setOn(true); setLevel(k); setWant(k);
+    },
+    flip: () => { setAuto(false); setOn((o) => !o); setSaved((v) => v + 1); setLevel(n); setAimAt(n - 1); setWant(null); },
   };
 }
 
@@ -157,7 +172,7 @@ function Screen({ w, setting }) {
           <p className="xhp-pane-h">{label(2)}</p>
           <div className="xhp-row" data-on={w.mode === 'what' || undefined}>
             <span className="xhp-row-t">{setting.name}</span>
-            <button type="button" tabIndex={-1} className="xhp-sw" data-t="3" data-on={w.on || undefined} onClick={w.flip}><i /></button>
+            <span className="xhp-sw" data-t="3" data-on={w.on || undefined} onClick={w.flip}><i /></span>
           </div>
           {[0, 1, 2, 3].map((k) => <span key={k} className="xhp-skel" data-on={(w.mode === 'still' && w.lit === k) || undefined}><i /><i /></span>)}
         </div>
@@ -196,7 +211,9 @@ function Panel({ setting, w, doc, cur }) {
   // one counter, always the document's sections: the walk is the steps section, its steps are the dots
   const stepsIdx = doc.sections.findIndex((s) => s.blocks.some((b) => b.k === 'h3' && setting.flows.some((f) => f.label === b.text)));
   const at = walk ? Math.max(stepsIdx, 0) : Math.max(si, 0);
-  const count = String(at + 1).padStart(2, '0') + ' / ' + String(doc.sections.length).padStart(2, '0');
+  // one counter at a time: during the walk its own steps (with the dashes), otherwise the document's sections
+  const pad = (v) => String(v).padStart(2, '0');
+  const count = walk ? pad(w.active + 1) + ' / ' + pad(total) : pad(at + 1) + ' / ' + pad(doc.sections.length);
   return (
     <div className="xhp-panel" ref={box} role="group" aria-label={setting.name}>
       <div className="xhp-panel-bar">
@@ -208,7 +225,7 @@ function Panel({ setting, w, doc, cur }) {
         <div className="xhp-seg" role="radiogroup" aria-label={setting.flows.map((f) => f.label).join(' / ')}>
           {setting.flows.map((f, i) => (
             <button key={f.label} type="button" role="radio" aria-checked={w.plat === i} onClick={() => w.platform(i)}>
-              {f.label.replace(/^On (the )?/i, '').replace(/^./, (c) => c.toUpperCase())}
+              {f.label}
             </button>
           ))}
         </div>
@@ -265,21 +282,30 @@ function Mini({ kind, setting, w }) {
   );
 }
 
-/* 05 on a phone: the documents the last section points to, drawn as three pages that lay themselves down once */
-function Pages() {
+/* 05 on a phone: the documents the last section points to, as named rows (the link's own words and the section it
+   names, both Hanzo's), each one laying down its hairline in turn as the section arrives. The links stay in the text;
+   these rows repeat them for the eye only. */
+function Docs({ s }) {
+  const rows = [];
+  s.blocks.forEach((b) => (b.inl || []).forEach((k, j, all) => {
+    if (typeof k === 'string' || !k.a || /^#/.test(k.a)) return;
+    const after = typeof all[j + 1] === 'string' ? all[j + 1].match(/^\s*(\([^)]*\))/) : null;
+    rows.push({ t: k.t, to: k.cf ? k.a : k.a, sec: after ? after[1] : null, mail: /^mailto:/.test(k.a) || !!k.cf });
+  }));
+  if (!rows.length) return null;
   return (
-    <svg className="xhp-pages" viewBox="0 0 240 96" aria-hidden="true">
-      {[0, 1, 2].map((k) => (
-        <g key={k} transform={`translate(${16 + k * 76} 10)`}>
-          <g className="xhp-page" style={{ '--i': k }}>
-            <rect width="56" height="76" rx="8" fill="#fff" stroke="#0a0a0a" strokeWidth="1.25" pathLength="1" />
-            {[18, 30, 42, 54].map((y, j) => <path key={y} d={`M12 ${y}H${j === 3 ? 30 : 44}`} stroke="#a3a3a3" strokeWidth="1.25" strokeLinecap="round" pathLength="1" />)}
-          </g>
-        </g>
+    <ul className="xhp-docs" aria-hidden="true">
+      {rows.map((r, i) => (
+        <li key={r.t} className="xhp-page" style={{ '--i': i }}>
+          {r.mail
+            ? <a href={r.to} tabIndex={-1}><span>{r.t}</span>{r.sec && <span className="x-mono">{r.sec}</span>}<Arrow /></a>
+            : <A to={r.to} tabIndex={-1}><span>{r.t}</span>{r.sec && <span className="x-mono">{r.sec}</span>}<Arrow /></A>}
+        </li>
       ))}
-    </svg>
+    </ul>
   );
 }
+const Arrow = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 function Section({ s, i, setting, w, still, after, what, end }) {
   const flows = setting ? setting.flows : [];
@@ -321,7 +347,7 @@ function Section({ s, i, setting, w, still, after, what, end }) {
     <section id={s.id} className={end ? 'xhp-sec xhp-end' : 'xhp-sec'} aria-labelledby={s.id + '-h'} tabIndex={-1}>
       <h2 id={s.id + '-h'} className="xhp-h2"><span className="xhp-sec-n x-mono" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>{s.title}</h2>
       {w && (after || still || what) && <Mini kind={after ? 'after' : still ? 'still' : 'what'} setting={setting} w={w} />}
-      {end && <Pages />}
+      {end && <Docs s={s} />}
       {out.map((x) => (x === 'cards' ? <div key="cards" className="xhp-flows">{cards}</div> : x))}
       {end && (
         <A to="/support" className="xhp-next">
@@ -418,8 +444,12 @@ function Layout({ doc, w, aside, cur, stillId, offId, whatId }) {
 function Walked({ doc }) {
   const aside = useRef(null);
   const live = useInView(aside, { amount: 0.35 });
-  const { cur, mode, row, stillId, offId, whatId } = useModes(doc);
-  const w = useWalk(doc.setting, live, mode, row);
+  const { cur, mode: read, row, stillId, offId, whatId } = useModes(doc);
+  // a step pressed in the text puts the panel on the walk until the reader moves on to another section
+  const [force, setForce] = useState(false);
+  useEffect(() => { setForce(false); }, [cur]);
+  const mode = force ? 'walk' : read;
+  const w = useWalk(doc.setting, live, mode, row, () => setForce(true));
   return <Layout doc={doc} w={w} aside={aside} cur={cur} stillId={stillId} offId={offId} whatId={whatId} />;
 }
 

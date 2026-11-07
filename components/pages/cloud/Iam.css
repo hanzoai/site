@@ -32,11 +32,13 @@
 .ia-si-chip { margin: 0; display: inline-flex; align-items: center; height: 36px; padding: 0 14px; border-radius: 999px; background: #f5f5f5; font: 500 13px/1 var(--mono); color: #0a0a0a; opacity: 0; transform: translateY(6px); transition: opacity 300ms var(--ia-em), transform 300ms var(--ia-em); }
 .ia-si-chip.on { opacity: 1; transform: none; }
 .ia-si-tok { position: relative; display: flex; align-items: center; gap: 6px; height: 40px; }
-.ia-si-tok i { flex: 1; height: 8px; border-radius: 4px; background: #ededed; transform: scaleX(0); transform-origin: 0 50%; transition: transform 500ms var(--ia-io); }
-.ia-si-tok i:nth-of-type(2) { transition-delay: 160ms; }
-.ia-si-tok i.sig { flex: 1.4; background: #0a0a0a; transition-delay: 320ms; }
+.ia-si-tok i { position: relative; flex: 1; height: 8px; border-radius: 4px; background: #f5f5f5; overflow: hidden; }
+.ia-si-tok i::after { content: ''; position: absolute; inset: 0; background: #d4d4d4; transform: scaleX(0); transform-origin: 0 50%; transition: transform 500ms var(--ia-io); }
+.ia-si-tok i:nth-of-type(2)::after { transition-delay: 160ms; }
+.ia-si-tok i.sig { flex: 1.4; }
+.ia-si-tok i.sig::after { background: #0a0a0a; transition-delay: 320ms; }
 .ia-si-tok b { font: 500 15px/1 var(--mono); color: #a3a3a3; }
-.ia-si-tok.on i { transform: none; }
+.ia-si-tok.on i::after { transform: none; }
 .ia-si-alg { position: absolute; right: 0; top: -14px; font: 500 12px/1 var(--mono); letter-spacing: .08em; color: #0a0a0a; opacity: 0; transition: opacity 300ms var(--ia-out) 500ms; }
 .ia-si-tok.on .ia-si-alg { opacity: 1; }
 .ia-si-key { margin: 0; display: flex; align-items: center; justify-content: space-between; height: 44px; padding: 0 14px; border-radius: 12px; background: #f5f5f5; font: 500 13px/1 var(--mono); color: #a3a3a3; transition: background-color 300ms var(--ia-out), color 300ms var(--ia-out); }
@@ -96,6 +98,7 @@
 }
 
 /* paste and ship: related capabilities as one list of rows; each row fills, its arrow moves and its page's path shows */
+.ia .sp.v2-sec { padding-top: clamp(44px, 5vw, 72px); }
 .ia .sp-rel ul { grid-template-columns: minmax(0, 1fr); }
 .ia .sp-rel-a { position: relative; flex-wrap: nowrap; align-items: center; gap: 24px; padding: 18px 12px; border-radius: 12px; transition: background-color 150ms var(--ia-out); }
 .ia .sp-rel-a b { flex: none; min-width: 6ch; }
@@ -175,8 +178,13 @@ button.ia-tok:disabled { cursor: default; }
   .ia-si { padding: 22px 18px 18px; gap: 12px; border-radius: 20px; }
   .ia-si-mark { font-size: 21px; }
   .ia-si-way { min-height: 44px; font-size: 14px; padding: 0 12px; }
-  .ia-path { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-  .ia-lab { font-size: 11px; max-width: 9ch; }
+  /* phones: the dots carry the line; only the station being reached names itself, on one line */
+  .ia-path { grid-template-columns: repeat(5, minmax(0, 1fr)); padding-bottom: 22px; }
+  .ia-st { gap: 0; }
+  .ia-lab { position: absolute; top: 20px; left: 50%; max-width: none; white-space: nowrap; font-size: 12px; transform: translateX(-50%); opacity: 0; transition: opacity 300ms var(--ia-out); }
+  .ia-st:first-child .ia-lab { left: 0; transform: none; }
+  .ia-st:last-child .ia-lab { left: auto; right: 0; transform: none; }
+  .ia-st.now .ia-lab { opacity: 1; }
   .ia-pause { top: 14px; right: 14px; }
   /* the facts: a snap rail with the next card peeking; the counter follows the swipe */
   .ia-fr { height: auto; padding: 72px 0 24px; }

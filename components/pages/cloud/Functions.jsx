@@ -58,13 +58,23 @@ const SLOTS = 18;
 const Paused = createContext(false); // true while the visitor has paused the hero's demo
 const useStagePause = () => useContext(Paused);
 
+/* true only after mount: the server and the first client render must match, so the reduced-motion end state waits */
+function useMounted() {
+  const [m, setM] = useState(false);
+  useEffect(() => setM(true), []);
+  return m;
+}
+
 function Life() {
   const ref = useRef(null);
   const seen = useInView(ref, { amount: 0.25 });
-  const calm = useReducedMotion();
+  const mounted = useMounted();
+  const calm = useReducedMotion() && mounted;
   const paused = useStagePause();
   const [ready, setReady] = useState(false);
   const [t, setT] = useState(0);
+  // the visitor can choose the trigger that fires (the composer's trigger choice, folded into the hero)
+  const [pick, setPick] = useState(null);
   useEffect(() => { const id = setTimeout(() => setReady(true), WRITTEN); return () => clearTimeout(id); }, []);
   // one tick at a time, only while seen and not paused (a single timeout, never an interval)
   useEffect(() => {
@@ -76,25 +86,28 @@ function Life() {
   const c = t % CYCLE;
   const burst = going && !calm && c < 13;
   const pods = !going ? 0 : calm ? 12 : c < 13 ? Math.min(SLOTS - 6, c) : Math.max(0, 12 - (c - 13) * 2);
-  const trig = going ? Math.floor(t / CYCLE) % 4 : -1;
+  const trig = pick != null ? pick : going ? Math.floor(t / CYCLE) % 4 : -1;
   return (
     <div className="kn-obj fn-life" ref={ref} data-burst={burst ? '' : undefined}>
-      <div className="fn-trigs" aria-hidden="true">
-        <p className="fn-col-k">Triggers</p>
-        <ul>{TRIGGERS.map((t2, i) => <li key={t2} className={trig === i ? 'on' : ''}><i />{t2}</li>)}</ul>
-        <span className="fn-calls"><i /><i /><i /><i /><i /></span>
+      <div className="fn-trigs">
+        <p className="fn-col-k" aria-hidden="true">Triggers</p>
+        <div className="fn-trig-b" role="group" aria-label="Triggers">
+          {TRIGGERS.map((t2, i) => (
+            <button key={t2} type="button" data-sound="tick" aria-pressed={pick === i} className={trig === i ? 'on' : ''} onClick={() => setPick((v) => (v === i ? null : i))}><i aria-hidden="true" />{t2}</button>
+          ))}
+        </div>
+        <span className="fn-calls" aria-hidden="true"><i /><i /><i /><i /><i /></span>
       </div>
       <div className="fn-code">
-        <div className="fn-file"><span className="fn-dots" aria-hidden="true"><i /><i /><i /></span><b>handler.js</b><em className={going ? 'on' : ''}><i aria-hidden="true" />{going && 'deployed'}</em></div>
+        <div className="fn-file"><span className="fn-dots" aria-hidden="true"><i /><i /><i /></span><b>handler.js</b><em className={going ? 'on' : ''} aria-hidden="true"><i /></em></div>
         <pre><code>{LINES.map((l, i) => <Fragment key={i}><span className="fn-ln" style={{ '--i': i }}>{hlJs(l)}</span>{'\n'}</Fragment>)}</code></pre>
       </div>
       <div className="fn-k8s" aria-hidden="true">
         <p className="fn-col-k">Kubernetes</p>
-        <p className="fn-count" data-zero={pods ? undefined : ''}><i /><span>{pods ? 'replicas' : 'Scale to zero'}</span></p>
+        <p className="fn-count" data-zero={pods ? undefined : ''}><i /><span>Scale to zero</span></p>
         <div className="fn-nodes">
           {[0, 1, 2].map((nd) => (
             <div key={nd} className="fn-node">
-              <span>node {nd + 1}</span>
               <div className="fn-slots">{Array.from({ length: SLOTS / 3 }).map((_, j) => <i key={j} className={j * 3 + nd < pods ? 'on' : ''} />)}</div>
             </div>
           ))}
@@ -132,11 +145,32 @@ function useStepOf(p, n, on) {
 
 const RUNTIMES = ['Python', 'Go', 'Node.js', 'Rust', 'a container you built yourself'];
 
+/* arrow keys move a radio group's choice (one tab stop, roving) */
+function arrows(e, i, n, choose, refs) {
+  const k = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+  if (!k) return;
+  e.preventDefault();
+  const j = (i + k + n) % n;
+  choose(j);
+  refs.current[j]?.focus();
+}
+
+/* chapter 01: the runtimes step with the scroll; pick one and it stays chosen (the composer's runtime choice, folded in) */
 function RuntimeScene({ p, on }) {
-  const k = useStepOf(p, 5, on);
+  const k0 = useStepOf(p, 5, on);
+  const [pick, setPick] = useState(null);
+  const refs = useRef([]);
+  const k = pick ?? k0;
   return (
     <div className="kn-obj fn-sc fn-sc-rt">
-      <div className="fn-rts">{RUNTIMES.map((r, i) => <div key={r} className={'fn-rt' + (i === 4 ? ' box' : '') + (k === i ? ' on' : '')}><b>{r}</b>{i < 4 && <span>handler file</span>}</div>)}</div>
+      <div className="fn-rts" role="radiogroup" aria-label="Name a runtime">
+        {RUNTIMES.map((r, i) => (
+          <button key={r} ref={(el) => { refs.current[i] = el; }} type="button" role="radio" data-sound="tick" aria-checked={k === i} tabIndex={k === i ? 0 : -1}
+            className={'fn-rt' + (i === 4 ? ' box' : '') + (k === i ? ' on' : '')} onClick={() => setPick(i)} onKeyDown={(e) => arrows(e, i, RUNTIMES.length, setPick, refs)}>
+            <b>{r}</b>{i < 4 && <span>handler file</span>}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
@@ -172,15 +206,19 @@ function ClusterScene({ p, on }) {
   );
 }
 
+/* chapter 04: the request lands on the node that has the GPU; press the request to ask for it yourself (the composer's
+   GPU choice, folded in). Nodes are shapes, not names; only the GPU node carries Hanzo's words. */
 function GpuScene({ p, on }) {
-  const k = useStepOf(p, 3, on);
+  const k0 = useStepOf(p, 3, on);
+  const [pick, setPick] = useState(null); // null: follow the scroll; true or false: the visitor's choice
+  const k = pick === true ? 2 : pick === false ? 0 : k0;
   return (
     <div className="kn-obj fn-sc fn-sc-gpu" data-k={k}>
-      <div className="fn-want"><span className="fn-pod" /><span>NVIDIA GPU</span></div>
-      <div className="fn-gnodes">
-        {['node', 'node', 'NVIDIA GPU'].map((t, i) => (
+      <button type="button" className="fn-want" data-sound="tick" aria-pressed={k === 2} onClick={() => setPick(k !== 2)}><span className="fn-pod" aria-hidden="true" /><span>NVIDIA GPU</span></button>
+      <div className="fn-gnodes" aria-hidden="true">
+        {[0, 1, 2].map((i) => (
           <div key={i} className={'fn-gnode' + (i === 2 ? ' gpu' : '')}>
-            <span>{t}</span>
+            {i === 2 ? <span>NVIDIA GPU</span> : <span className="fn-gnode-s"><i /><i /></span>}
             <div>{i === 2 && <span className="fn-pod in" />}</div>
           </div>
         ))}
@@ -189,15 +227,14 @@ function GpuScene({ p, on }) {
   );
 }
 
-function TriggerScene({ p, on }) {
-  const zero = useMotionValue(0);
-  const draw = useTransform(p || zero, (v) => Math.min(1, v * 1.6));
+/* chapter 05: four triggers, one handler; the lines draw in full (900 ms) each time the chapter arrives */
+function TriggerScene({ on }) {
   return (
     <div className="kn-obj fn-sc fn-sc-tr">
       <ul className="fn-tr-l">{TRIGGERS.map((t) => <li key={t}>{t}</li>)}</ul>
       <svg className="fn-tr-lines" viewBox="0 0 400 200" preserveAspectRatio="none" aria-hidden="true">
         {TRIGGERS.map((t, i) => (
-          <motion.path key={t} d={`M${50 + i * 100} 0 C ${50 + i * 100} 110, 200 90, 200 200`} style={p ? { pathLength: draw } : undefined} initial={p ? false : { pathLength: 0 }} animate={p ? undefined : { pathLength: on ? 1 : 0 }} transition={{ duration: 0.9, ease: EMPH, delay: i * 0.06 }} />
+          <motion.path key={t} d={`M${50 + i * 100} 0 C ${50 + i * 100} 110, 200 90, 200 200`} initial={{ pathLength: 0 }} animate={{ pathLength: on ? 1 : 0 }} transition={{ duration: 0.9, ease: EMPH, delay: i * 0.06 }} />
         ))}
       </svg>
       <div className="fn-tr-h"><b>handler.js</b><span>the same handler</span></div>
@@ -205,16 +242,28 @@ function TriggerScene({ p, on }) {
   );
 }
 
+/* chapter 06: canary slices traffic to the next version, Blue/green flips it; choose either (the composer's version
+   choice, folded in). The versions are shapes, not invented names. */
+const MOVES = ['canary', 'Blue/green'];
 function VersionScene({ p, on }) {
-  const k = useStepOf(p, 4, on);
+  const k0 = useStepOf(p, 4, on);
+  const [pick, setPick] = useState(null);
+  const refs = useRef([]);
+  const mode = pick ?? (k0 >= 2 ? 1 : 0);
+  const k = pick == null ? k0 : pick === 1 ? 2 : 1;
   return (
     <div className="kn-obj fn-sc fn-sc-ver" data-k={k}>
-      <div className="fn-modes"><span className={k < 2 ? 'on' : ''}>canary</span><span className={k >= 2 ? 'on' : ''}>Blue/green</span></div>
-      <div className="fn-vers">
-        <div className="fn-ver a"><b>v1</b><i /></div>
-        <div className="fn-ver b"><b>v2</b><i /></div>
+      <div className="fn-modes" role="radiogroup" aria-label="Versions you can move between">
+        {MOVES.map((m, i) => (
+          <button key={m} ref={(el) => { refs.current[i] = el; }} type="button" role="radio" data-sound="tick" aria-checked={mode === i} tabIndex={mode === i ? 0 : -1}
+            className={mode === i ? 'on' : ''} onClick={() => setPick(i)} onKeyDown={(e) => arrows(e, i, MOVES.length, setPick, refs)}>{m}</button>
+        ))}
       </div>
-      <div className="fn-traffic"><i className="a" /><i className="b" /></div>
+      <div className="fn-vers" aria-hidden="true">
+        <div className="fn-ver a"><i /><i /><i /></div>
+        <div className="fn-ver b"><i /><i /><i /></div>
+      </div>
+      <div className="fn-traffic" aria-hidden="true"><i className="a" /><i className="b" /></div>
       <p className="fn-sc-k">a traffic decision rather than another build</p>
     </div>
   );
@@ -222,81 +271,8 @@ function VersionScene({ p, on }) {
 
 const SCENES = [RuntimeScene, WarmScene, ClusterScene, GpuScene, TriggerScene, VersionScene];
 
-/* ---------- Beyond: compose a function from the page's own choices (no heading of its own: Hanzo's page has none) ---------- */
-const MOVES = ['Blue/green', 'canary'];
-/* the read-back is Hanzo's own sentences, whole, one per choice */
-const SAY = {
-  rt: 'Name a runtime and point at a handler file.',
-  box: 'When the language you want is not one of them, bring a container you built yourself and deploy that instead.',
-  tr: 'The trigger is its own object, so the same handler can answer to several without knowing about any of them.',
-  gpu: 'A function can request an NVIDIA GPU and be scheduled onto a node that has one.',
-  mv: 'Blue/green and canary between versions of a function, so backing out a bad deploy is a traffic decision rather than another build.',
-  zero: 'Scale to zero is still the default when nothing is calling.',
-};
-
-/* a radio row: one ink pill glides to the choice (300 ms, ease-emphasis); arrows move it */
-function Radios({ id, label, items, value, onChange, onPeek = () => {} }) {
-  const refs = useRef([]);
-  const key = (e, i) => {
-    const k = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
-    if (!k) return;
-    e.preventDefault();
-    const j = (i + k + items.length) % items.length;
-    onChange(j); refs.current[j]?.focus();
-  };
-  return (
-    <div className="fn-row" role="radiogroup" aria-label={label}>
-      {items.map((r, i) => (
-        <button key={r} ref={(el) => { refs.current[i] = el; }} type="button" role="radio" aria-checked={value === i} tabIndex={value === i ? 0 : -1} onClick={() => onChange(i)} onKeyDown={(e) => key(e, i)}
-          onPointerEnter={(e) => e.pointerType === 'mouse' && onPeek(i)} onPointerLeave={() => onPeek(null)}>
-          {value === i && <motion.span layoutId={id} className="fn-pill" transition={{ duration: 0.3, ease: EMPH }} />}
-          <span>{r}</span>
-        </button>
-      ))}
-    </div>
-  );
-}
-
-const Tick = () => <svg className="fn-tick" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-
-function Compose() {
-  const [rtC, setRt] = useState(2);
-  const [trC, setTr] = useState([true, false, false, false]);
-  const [gpuC, setGpu] = useState(false);
-  const [mvC, setMv] = useState(-1); // -1: no move between versions chosen (shown by shape: no pill is filled)
-  // hovering a choice (fine pointers) previews its effect on the card before you commit; the card marks it as a preview
-  const [peek, setPeek] = useState(null);
-  const at = (k) => (peek && peek.k === k ? peek : null);
-  const rt = at('rt') ? peek.i : rtC;
-  const tr = at('tr') ? trC.map((x, j) => (j === peek.i ? !x : x)) : trC;
-  const gpu = at('gpu') ? !gpuC : gpuC;
-  const mv = at('mv') ? (mvC === peek.i ? -1 : peek.i) : mvC;
-  const hover = (k, i) => ({ onPointerEnter: (e) => e.pointerType === 'mouse' && setPeek({ k, i }), onPointerLeave: () => setPeek(null) });
-  const n = tr.filter(Boolean).length;
-  const lines = [rt === 4 ? SAY.box : SAY.rt, n > 0 && SAY.tr, gpu && SAY.gpu, mv >= 0 && SAY.mv, SAY.zero].filter(Boolean);
-  return (
-    <section className="kn-sec fn-mix" aria-labelledby="fn-ch-h">
-      <div className="kn-wrap kn-grid fn-mix-g">
-        <div className="fn-mix-in">
-          <fieldset><legend>Runtime</legend><Radios id="fn-rt" label="Runtime" items={RUNTIMES} value={rtC} onChange={(i) => { setRt(i); setPeek(null); }} onPeek={(i) => setPeek(i == null ? null : { k: 'rt', i })} /></fieldset>
-          <fieldset><legend>Triggers</legend><div className="fn-row">{TRIGGERS.map((t, i) => <button key={t} type="button" aria-pressed={trC[i]} onClick={() => { setTr((v) => v.map((x, j) => (j === i ? !x : x))); setPeek(null); }} {...hover('tr', i)}><Tick /><span>{t}</span></button>)}</div></fieldset>
-          <fieldset><legend>GPU</legend><div className="fn-row"><button type="button" aria-pressed={gpuC} onClick={() => { setGpu(!gpuC); setPeek(null); }} {...hover('gpu', 0)}><Tick /><span>NVIDIA GPU</span></button></div></fieldset>
-          <fieldset><legend>Versions</legend><div className="fn-row">{MOVES.map((t, i) => <button key={t} type="button" aria-pressed={mvC === i} onClick={() => { setMv((v) => (v === i ? -1 : i)); setPeek(null); }} {...hover('mv', i)}><Tick /><span>{t}</span></button>)}</div></fieldset>
-        </div>
-        <div className="fn-card" data-peek={peek ? '' : undefined}>
-          <div className="fn-card-h">
-            <b>handler.js</b>
-            <span>{RUNTIMES[rt]}</span>
-            {gpu && <span className="gpu">NVIDIA GPU</span>}
-            {mv >= 0 && <span className="gpu">{MOVES[mv]}</span>}
-          </div>
-          <div className="fn-card-t">{TRIGGERS.map((t, i) => <span key={t} className={tr[i] ? 'on' : ''}>{t}</span>)}</div>
-          <ol className="fn-card-l" aria-live={peek ? 'off' : 'polite'}>{lines.map((l) => <li key={l}><span className="fn-m"><span>{l}</span></span></li>)}</ol>
-        </div>
-      </div>
-    </section>
-  );
-}
+/* ---------- Beyond: the composer's four choices now live in the objects that show them (a trigger in the hero, a
+   runtime in chapter 01, the GPU in 04, canary or Blue/green in 06), so the page never lists them a third time ---------- */
 
 /* ---------- common use cases: one at a time on a pinned stage, each opening into its own sheet (functions/FnUses) ---------- */
 
@@ -373,9 +349,6 @@ function Joined() {
   );
 }
 
-/* a quiet, stationary row of what the page has said, just before the close */
-const FACTS = ['Python, Go, Node.js, Rust', 'Helm', 'NVIDIA GPU', 'Blue/green', '/v1/function'];
-
 export default function Functions() {
   // the chapter rail's numbers preview their chapter: each gets its own title (Hanzo's words) as a tip, after mount
   useEffect(() => {
@@ -395,10 +368,7 @@ export default function Functions() {
         count
       />
 
-      <Compose />
-      <FnUses>
-        <div className="kn-wrap"><ul className="fn-facts" aria-label="Hanzo Functions">{FACTS.map((f) => <li key={f}>{f}</li>)}</ul></div>
-      </FnUses>
+      <FnUses />
 
       <KeynoteClose
         name="Functions"
