@@ -207,7 +207,7 @@
 @keyframes am2-car { 0% { opacity: 0; transform: translateX(55vw); } 70% { opacity: 1; transform: translateX(-12px); } 100% { opacity: 1; transform: none; } }
 .e-squash { transform-origin: 50% 100%; }
 .e-squash[data-ent='wait'] { opacity: 0; transform: translateY(-56px); }
-.e-squash[data-ent='go'] { animation: am2-squash .7s var(--ease) both; }
+.e-squash[data-ent='go'] { animation: am2-squash .7s var(--ease) backwards; } /* no forwards fill: a filled transform would make the side the containing block of the full-width 3 / 3 run */
 @keyframes am2-squash { 0% { opacity: 0; transform: translateY(-56px) scale(1, 1.08); } 50% { opacity: 1; transform: translateY(0) scale(1.05, .92); } 72% { transform: scale(.98, 1.03); } 100% { opacity: 1; transform: none; } }
 .e-grow[data-ent='wait'] { clip-path: circle(0 at var(--gx, 50%) var(--gy, 50%)); }
 .e-grow[data-ent='go'] { animation: am2-grow .85s var(--ease) both; }
