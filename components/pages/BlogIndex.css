@@ -1,11 +1,10 @@
-/* ---------- Blog, v2 (editorial: a front page and its contents). Accent: press red. ---------- */
-.xbl { --acc: #e0321f; overflow-x: clip; background: #fff; }
+/* ---------- Blog, v3 (editorial: a front page and its contents). Ink, greys and silvers only (JAMES.md 7). ---------- */
+.xbl { --acc: #0a0a0b; overflow-x: clip; background: #fff; }
 
 /* 1. masthead and cover (Signature) */
-.xbl-hero { padding: clamp(28px, 4vh, 56px) 0 clamp(56px, 7vw, 96px); }
+.xbl-hero { padding: clamp(36px, 5.5vh, 72px) 0 clamp(56px, 7vw, 96px); }
 .xbl-mast { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--v2-gut); align-items: end; }
 .xbl-mast-l { grid-column: 1 / 9; }
-.xbl-mast-l .v2s-kick { margin-bottom: 16px; color: var(--acc); }
 .xbl-h1 { white-space: nowrap; }
 .xbl-mast-r { grid-column: 9 / 13; display: grid; gap: 20px; padding-bottom: 10px; }
 .xbl-mast-r .v2s-lede { font-size: clamp(17px, 1.3vw, 19px); color: var(--ink); opacity: .75; }
@@ -20,9 +19,11 @@
 .xbl-story-a:hover .xbl-story-t { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: .12em; }
 .xbl-story-d { font-size: clamp(17px, 1.32vw, 19px); max-width: 54ch; }
 .xbl-plate { grid-column: 8 / 13; position: relative; display: block; min-height: clamp(320px, 30vw, 440px); border-radius: 28px; overflow: hidden; background: #0a0a0a; }
-.xbl-plate-art { position: absolute; inset: 0; width: 100%; height: 100%; color: #ff5a3d; }
+.xbl-plate-art { position: absolute; inset: 0; width: 100%; height: 100%; color: #d4d5d9; }
+.xbl-plate-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 42%; }
+.xbl-tag { color: var(--ink); }
 .xbl-plate-k { position: absolute; left: 24px; bottom: 20px; font: 500 13px/1 var(--mono); letter-spacing: .1em; color: rgba(255, 255, 255, .72); }
-.xbl-curtain { position: absolute; inset: 0; z-index: 1; background: var(--acc); }
+.xbl-curtain { position: absolute; inset: 0; z-index: 1; background: var(--silver-sheen, linear-gradient(135deg, #f4f4f6 0%, #c9cacf 38%, #eeeef0 55%, #a7a8ae 100%)); }
 .xbl-index { grid-column: 1 / -1; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); column-gap: var(--v2-gut); }
 .xbl-index button { position: relative; display: grid; gap: 8px; width: 100%; min-height: 72px; padding: 16px 0 4px; border: 0; border-top: 1px solid var(--hair); background: none; text-align: left; font: inherit; color: var(--faint); cursor: pointer; transition: color .3s var(--ease); }
 .xbl-index button span { font: 500 13px/1 var(--mono); letter-spacing: .06em; }
@@ -50,8 +51,9 @@
 
 /* 3. contents and the publishing strip (Beyond) */
 .xbl-c-head { align-items: end; }
-.xbl-c-head .v2s-kick { margin-bottom: 16px; }
 .xbl-c-h { font-size: clamp(56px, 6.7vw, 96px); }
+.xbl-c-head > .xbl-c-h { grid-column: 3 / 8; }
+.xbl-c-strip { grid-column: 8 / 13; grid-row: 1; align-self: end; }
 .xbl-strip { display: flex; align-items: flex-end; gap: 6px; height: 196px; }
 .xbl-bar { flex: 1; display: grid; grid-template-rows: auto 1fr auto; justify-items: center; gap: 8px; height: 100%; min-width: 0; padding: 0; border: 0; background: none; font: inherit; color: var(--ink); cursor: pointer; }
 .xbl-bar.none { cursor: default; }
@@ -71,7 +73,7 @@
 .xbl-month { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--v2-gut); border-bottom: 1px solid var(--hair); }
 .xbl-month-h { grid-column: 1 / 4; position: sticky; top: 84px; align-self: start; display: grid; gap: 8px; padding: 28px 0; }
 .xbl-month-h b { font-size: clamp(32px, 3.4vw, 48px); font-weight: 600; line-height: 1; letter-spacing: -.045em; }
-.xbl-month-h span { font: 500 13px/1 var(--mono); letter-spacing: .08em; color: var(--acc); }
+.xbl-month-h span { font: 500 13px/1 var(--mono); letter-spacing: .08em; color: var(--soft); }
 .xbl-month ol { grid-column: 4 / 13; list-style: none; margin: 0; padding: 0; }
 .xbl-month li + li { border-top: 1px solid var(--hair); }
 .xbl-row { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 24px; padding: 28px 0; color: var(--ink); text-decoration: none; }
@@ -85,18 +87,10 @@
 .xbl-row:hover .xbl-row-line b { transform: translateX(8px); }
 .xbl-row:hover .xbl-row-k { color: var(--acc); }
 
-/* 4. the close: the one dark room */
-.xbl-close { background: #0a0a0a; color: #f5f5f7; --ink: #f5f5f7; --soft: #a1a1a6; --hair: rgba(255, 255, 255, .14); }
-.xbl-close .v2s-grid { align-items: end; }
-.xbl-close-r { display: grid; gap: 24px; padding-bottom: 12px; }
-.xbl-close .v2s-btn.solid { background: #f5f5f7; color: #0a0a0a; border-color: #f5f5f7; }
-.xbl-close .v2s-btn.solid:hover { background: #fff; border-color: #fff; }
-.xbl-close-n { margin: 0; }
-.xbl-close-n a { display: inline-flex; align-items: center; min-height: 44px; font-size: 16px; color: #f5f5f7; text-underline-offset: 5px; }
-
 /* ---------- phones ---------- */
 @media (max-width: 900px) {
   .xbl-mast { grid-template-columns: minmax(0, 1fr); row-gap: 24px; }
+  .xbl-c-strip { grid-row: 3; margin-top: 28px; }
   .xbl-mast-l, .xbl-mast-r { grid-column: 1; }
   .xbl-h1 { white-space: normal; }
   .xbl-mast-r .v2s-btn { min-height: 48px; }

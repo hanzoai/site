@@ -48,7 +48,8 @@
 
 /* a section head: the label beside the headline, never above it */
 .v2s-head { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--v2-gut); align-items: start; }
-.v2s-label { grid-column: 1 / 3; grid-row: 1; margin: 0; padding-top: .55em; font: 500 13px/1.3 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--soft); }
+.v2s-label { margin: 0; font: 500 13px/1.3 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--soft); }
+.v2s-head > .v2s-label { grid-column: 1 / 3; grid-row: 1; padding-top: .55em; }
 .v2s-head > .v2s-headline, .v2s-head > .v2s-display { grid-column: 3 / 11; grid-row: 1; }
 .v2s-head > .v2s-lede { grid-column: 3 / 9; grid-row: 2; margin-top: clamp(20px, 2.4vw, 32px); }
 .v2s-head.side > .v2s-headline, .v2s-head.side > .v2s-display { grid-column: 3 / 9; }
