@@ -82,7 +82,7 @@ Done here: Copy fills ink; steps lift 2px and ink; the "Affiliates" link brighte
 - [x] Reduced motion: final states (card on Qualified, journey on Qualified, all four drawings, affiliate track full); no `setInterval`
 - [x] Sound: `data-sound="tick"` on steps and Copy
 
-Done here: `motion.mjs /referral` desktop 0 still (its Copy/Affiliates "dead hover" lines come from headless Chrome not matching `(hover: hover)`; Playwright with a fine pointer measures Copy going from white to `rgb(10,10,10)`), phone 0 still and 0 dead controls.
+Done here: slice D (7 Nov) re-verified the motion-map rebuild: the h1 slot-roll, the How-it-works word-shuffle (now each word rises into its own place in shuffled order, so no word ever crosses another), the dark room's cursor-lens, the counts dealt from one deck, and the close (the card holds at the top of a short pinned stage while the sign-in panel rises with the scroll and parks right under it, never over it, then both leave together). Earlier: `motion.mjs /referral` desktop 0 still (its Copy/Affiliates "dead hover" lines come from headless Chrome not matching `(hover: hover)`; Playwright with a fine pointer measures Copy going from white to `rgb(10,10,10)`), phone 0 still and 0 dead controls.
 
 ## 10. Media
 - [x] n/a `Film`/`Pic`: no Hanzo photo or film on this page
@@ -98,7 +98,7 @@ Done here: every object is DOM or inline SVG.
 - [x] Targets 44px or more
 - [x] Primary ask above the fold at 375×667 (y ≈ 315)
 
-Done here: on phones the journey stacks (no pin) and plays once, each step's drawing plays as it is reached, the dark room opens from an 8px inset inside its 24px text margin, and the close card sits under the ask.
+Done here: slice D (7 Nov): `check.mjs /referral` passes at 1470×801 and 375×812 (0 errors, no overlay, scrollWidth 1470/375); no in-page target under 44px at 375 (the close's Sign in link now 44px); on phones How it works is the question card then the summary, whose four steps are listed from the start in grey and ink with a drawn check as each is done (no tall empty box); the close stage parks the panel under the card at 375 too.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Text at 4.5:1 or better (unlit rail words #737373)
@@ -107,7 +107,7 @@ Done here: on phones the journey stacks (no pin) and plays once, each step's dra
 - [x] One h1; h2s for How it works, the dark room and the close
 - [x] Keyboard reaches every step button and both asks
 
-Done here: Copy is `aria-describedby` the sign-in line; the tracks are `aria-hidden` beside the sentences they draw.
+Done here: the summary's pending steps are readable (#737373, no longer aria-hidden) and turn ink when done; Copy is `aria-describedby` the sign-in line; the tracks are `aria-hidden` beside the sentences they draw.
 
 ## 13. Performance and engineering
 - [x] h1 and lede in server HTML
