@@ -1,10 +1,14 @@
 'use client';
-/* Mori's first screen: the page's one dark room, a full-bleed 3D viewport with the head laid over it.
+/* Mori: build worlds, not just images. v2 launch page (Creative on Launch + Chapters, accent forest). The film
+   settles into a cube seen from above (a hexagon whose three near edges draw in); the viewport is the one dark room.
    Signature: a point cloud that turns. Points scattered through space settle onto a surface (SDF to mesh), then the
    shape keeps turning 360°; drag it to orbit (it carries your throw), and switch the view between wireframe, shaded
-   and normals. (A drawn illustration of a mesh, not Mori's output.) */
+   and normals. (A drawn illustration of a mesh, not Mori's output.)
+   Beyond: the studio map (Creative.jsx): every creative model serving your field, in its own words and colour. */
 import { useMemo, useRef, useState } from 'react';
-import { CHead, Specs } from './Studio';
+import { Specs } from './Studio';
+import Creative from './Creative';
+import { poly, dense, focus } from '../../v2/Launch';
 import { useLoop, fit, rng, arrows } from './live';
 import './Mori.css';
 
@@ -131,17 +135,51 @@ function Viewport() {
   );
 }
 
+// the film closes into a cube seen from above: a hexagon, its three near edges drawn in once it settles
+const hexAt = (W, H, wide) => {
+  const c = wide ? [W * 0.71, H * 0.5] : [W / 2, H * 0.25], R = wide ? Math.min(H * 0.44, W * 0.25) : Math.min(W * 0.42, H * 0.2);
+  return { c, V: [-90, -30, 30, 90, 150, 210].map((a) => [c[0] + R * Math.cos((a * Math.PI) / 180), c[1] + R * Math.sin((a * Math.PI) / 180)]) };
+};
+const HEX = poly((W, H, wide) => dense(hexAt(W, H, wide).V, 5));
+const EDGES = (W, H, wide) => {
+  const { c, V } = hexAt(W, H, wide);
+  return (
+    <svg className="mr-edges" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none">
+      {[V[3], V[5], V[1]].map(([x, y], i) => <line key={i} x1={c[0]} y1={c[1]} x2={x} y2={y} />)}
+    </svg>
+  );
+};
+
 export default function Mori() {
   return (
-    <section className="mr-intro" data-room="dark" aria-label="Mori">
-      <div className="mr-stage">
-        <Viewport />
-        <div className="mr-headwrap x-wrap"><CHead slug="mori" dark className="mr-head" /></div>
-      </div>
-      <div className="mr-below x-wrap">
-        <div className="mr-specs"><Specs rows={[['Topology Quality', 'Quad-Dominant', 'Animation Ready'], ['UV Unwrapping', 'Automatic Atlas', 'On'], ['Geometry Engine', 'Hanzo Mori-1 Engine', 'SDF to mesh']]} /></div>
-        <p className="mb-cap">An example of the canvas in Hanzo Design. Generation runs on Hanzo Cloud.</p>
-      </div>
-    </section>
+    <Creative
+      slug="mori"
+      accent="#1f9d55"
+      ink="#137a3f"
+      shape={HEX}
+      aim={(W, H, wide) => (wide ? null : focus(0.6, 0.6, W / 2, H * 0.25, 1.3)(W, H))}
+      over={EDGES}
+      headClass="mr-v2"
+      first="chapters"
+      flip
+      demo={
+        <section className="lv-room mr-room" aria-labelledby="mr-sc">
+          <div className="mr-stage">
+            <Viewport />
+            <div className="mr-headwrap x-wrap">
+              <div className="mr-sh">
+                <p className="lv-kick"><span className="mb-live">Live viewport</span></p>
+                <h2 id="mr-sc" className="lv-h">Turn the shape.</h2>
+                <p className="lv-p">Points settle onto a surface, SDF to mesh, then the shape keeps turning. Drag it to orbit, and switch between wireframe, shaded and normals.</p>
+              </div>
+            </div>
+          </div>
+          <div className="mr-below x-wrap">
+            <div className="mr-specs"><Specs rows={[['Topology Quality', 'Quad-Dominant', 'Animation Ready'], ['UV Unwrapping', 'Automatic Atlas', 'On'], ['Geometry Engine', 'Hanzo Mori-1 Engine', 'SDF to mesh']]} /></div>
+            <p className="mb-cap">An example of the canvas in Hanzo Design. Generation runs on Hanzo Cloud.</p>
+          </div>
+        </section>
+      }
+    />
   );
 }

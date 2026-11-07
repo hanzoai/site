@@ -30,7 +30,7 @@ export default function Lost() {
   const hits = useMemo(() => rank(q || path.replace(/[/-]+/g, ' '), path), [q, path]);
   const rise = (d) => ({ initial: { opacity: 0, y: 24 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
   return (
-    <main className="xlo" data-room="dark">
+    <main className="xlo" data-room="dark" data-ask="off">
       <div className="xlo-map" aria-hidden="true">
         {path && <Sigil seed={path} data={[path.length, words(path).length]} className="xlo-sigil" />}
         <motion.span className="xlo-pin" initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 16, delay: 0.5 }}><i /></motion.span>

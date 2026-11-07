@@ -46,7 +46,7 @@ export default function Life({ beside }) {
 
   return (
     <figure className="xbg-life" ref={box}>
-      <div className="xbg-board" role="group" aria-label="Game of Life board" style={{ '--w': W }} data-swipe-own data-cursor="Draw">
+      <div className="xbg-board" role="group" aria-label="Game of Life board" style={{ gridTemplateColumns: `repeat(${W}, minmax(0, 1fr))` }} data-swipe-own data-cursor="Draw">
         {Array.from({ length: W * H }, (_, i) => {
           const on = grid.current[i] ? '1' : '';
           return (

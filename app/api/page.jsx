@@ -1,3 +1,5 @@
+// Signature: The request is the hero: a big API console types each endpoint's path after https://api.hanzo.ai and streams back what it returns, the model that serves it playing beside, then settles into the page as you scroll
+// Beyond: Same host, same key: pick any endpoint and only the path wipes in; the host and the bearer header never change, and it copies as curl
 import ApiPage from '../../components/pages/ApiPage';
 import JsonLd from '../../components/JsonLd';
 

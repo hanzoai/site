@@ -43,3 +43,12 @@ export function story(slug) {
   });
   return doc;
 }
+
+/* the next story, for the card that opens into it at the end of the page (its own name, picture and first figure) */
+export function sibling(slug) {
+  const all = SLUGS();
+  const s = all[(all.indexOf(slug) + 1) % all.length];
+  if (!s || s === slug) return null;
+  const d = story(s);
+  return { slug: s, href: d.route, name: d.name, year: d.year, kind: d.kind, cover: d.cover, figure: d.figures[0] || null };
+}

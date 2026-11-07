@@ -1,18 +1,22 @@
 'use client';
-/* Grants & Research. Its idea is the weekly review an application goes round.
-   Signature: the four steps of a grant sit round a dial and a hand sweeps them, the step it points at opening in the
-   centre, as the review Hanzo runs every week comes round; tap a step and the hand goes to it.
+/* Grants & Research. Its idea is the stack of ways in: contribute, research, intern.
+   V2: 8/10 rebuilt: a display hero beside the page's own living contour field; the four steps as one timeline that draws across; what recipients receive as an editorial list; the three ways in as sheets that stack over each other in the dark room; the application with its filing card.
+   Signature: stacked sheets: in the dark room the three ways to build and research arrive as full sheets, each one
+   pinning while the next slides over it and the one beneath settles back.
    Beyond: your application, as Hanzo files it. Beside the form a filing card writes itself as you type: the track,
    the role and the department it is filed under, and exactly the fields that will be sent.
-   The form sends what hanzo.ai sends. Every word is Hanzo's. */
-import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
-import { EASE, Rise } from '../ui';
-import { A, Go, More, SecHead } from '../kit';
+   Motion: stacked sheets (signature) + line-masked hero type + the timeline drawing across + the track chip spring.
+   Accent: academic gold. The form sends what hanzo.ai sends. Every word is Hanzo's. */
+import { useRef, useState } from 'react';
+import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
+import { A } from '../kit';
 import Sigil from '../Sigil';
+import LineReveal from '../v2/LineReveal';
 import { TRACKS, apply } from './Grants.apply';
+import '../v2/ProgramScale.css';
 import './Grants.css';
 
+const EASE = [0.16, 1, 0.3, 1];
 const STEPS = [
   ['Apply or Contribute', 'Share your open-source PRs, repository, or academic research topic'],
   ['Fast-Track Review', 'Our engineering and research leads review applications weekly'],
@@ -21,63 +25,47 @@ const STEPS = [
 ];
 const pad = (n) => String(n).padStart(2, '0');
 
-function Dial() {
-  const [at, setAt] = useState(0);
-  const [turns, setTurns] = useState(0); // the hand only ever goes forward
-  const [mine, setMine] = useState(false);
-  const box = useRef(null);
-  const seen = useInView(box, { amount: 0.4 });
-  const calm = useReducedMotion();
-  const go = (i) => { setTurns((t) => t + ((i - at + 4) % 4 || 0)); setAt(i); };
-  useEffect(() => {
-    if (mine || calm || !seen) return;
-    const t = setTimeout(() => go((at + 1) % 4), 3000);
-    return () => clearTimeout(t);
-  }, [at, mine, calm, seen]); // eslint-disable-line react-hooks/exhaustive-deps
+function Hero() {
   return (
-    <div className="xgr-dial" ref={box}>
-      <p className="xgr-dial-k"><span>How grants work</span><span className="x-mono" aria-live="polite">{pad(at + 1)} / 04</span></p>
-      <div className="xgr-face">
-        <svg viewBox="0 0 200 200" className="xgr-ring" aria-hidden="true">
-          <circle cx="100" cy="100" r="92" fill="none" stroke="currentColor" strokeOpacity=".12" strokeWidth="1" />
-          {Array.from({ length: 52 }, (_, i) => { const a = (i / 52) * Math.PI * 2, r = i % 13 ? 89 : 80, f = (v) => v.toFixed(2); return <line key={i} x1={f(100 + Math.sin(a) * 86)} y1={f(100 - Math.cos(a) * 86)} x2={f(100 + Math.sin(a) * r)} y2={f(100 - Math.cos(a) * r)} stroke="currentColor" strokeOpacity={i % 13 ? 0.18 : 0.6} strokeWidth="1" />; })}
-        </svg>
-        <motion.i className="xgr-hand" aria-hidden="true" animate={{ rotate: turns * 90 }} transition={calm ? { duration: 0 } : { type: 'spring', stiffness: 60, damping: 14 }} />
-        {STEPS.map(([t], i) => (
-          <button key={t} type="button" className={'xgr-node n' + i + (at === i ? ' on' : '')} onClick={() => { setMine(true); go(i); }} aria-pressed={at === i} aria-label={`${pad(i + 1)}: ${t}`}>
-            <span className="x-mono">{pad(i + 1)}</span>
-          </button>
-        ))}
-        <div className="xgr-center">
-          {STEPS.map(([t, d], i) => (
-            <motion.div key={t} className="xgr-step" initial={false} animate={i === at ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.94 }} transition={{ duration: 0.45, ease: EASE }} aria-hidden={i !== at}>
-              <h3>{t}</h3>
-              <p>{d}</p>
-            </motion.div>
-          ))}
+    <section className="xgr-hero" aria-labelledby="xgr-h1">
+      <div className="xp-wrap xp-grid">
+        <div className="xgr-copy">
+          <p className="xp-kick">Grants &amp; Research</p>
+          <LineReveal as="h1" id="xgr-h1" className="xp-display md" lines={['Open Source & Research', 'Credit Grants']} />
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.4 }}>
+            <p className="xp-lede xgr-lede">Free API credits, GPU compute, and Hanzo Team access for open-source contributors, academic PhD researchers, and research interns.</p>
+            <div className="xgr-acts">
+              <a href="#apply" className="xp-cta" data-thumb="Apply for a Grant">Apply for a Grant<i aria-hidden="true">↓</i></a>
+              <A to="/careers#internships" className="xgr-link">Academic Internships</A>
+            </div>
+          </motion.div>
         </div>
+        <motion.div className="xgr-art" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.4, ease: EASE, delay: 0.2 }}>
+          <Sigil seed="grants" data={[2137, 122, 4]} className="xgr-sigil" />
+          <span className="xgr-art-k x-mono" aria-hidden="true">2,137+ repositories · 122 organizations</span>
+        </motion.div>
       </div>
-    </div>
+    </section>
   );
 }
 
-function Hero() {
-  const line = (t, d) => <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: d }}>{t}</motion.span></span>;
+/* The four steps as one line that draws across once it is reached. */
+function How() {
   return (
-    <section className="xgr-hero" aria-labelledby="xgr-h1">
-      <div className="x-wrap xgr-grid">
-        <div>
-          <motion.p className="x-kick" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE }}>Grants &amp; Research</motion.p>
-          <h1 id="xgr-h1" className="xgr-h1">{line('Open Source & Research', 0.05)}{line('Credit Grants', 0.17)}</h1>
-          <motion.p className="xgr-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>Free API credits, GPU compute, and Hanzo Team access for open-source contributors, academic PhD researchers, and research interns.</motion.p>
-          <motion.div className="xgr-acts" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.5 }}>
-            <motion.a href="#apply" className="x-btn solid" data-thumb="Apply for a Grant" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>Apply for a Grant</motion.a>
-            <Go to="/careers#internships">Academic Internships</Go>
-          </motion.div>
-        </div>
-        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.2, ease: EASE, delay: 0.15 }}>
-          <Dial />
-        </motion.div>
+    <section className="xp-sec tight xgr-how" aria-labelledby="xgr-how-h">
+      <div className="xp-wrap">
+        <h2 id="xgr-how-h" className="xp-kick">How grants work</h2>
+        <div className="xgr-line" aria-hidden="true"><motion.i initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true, amount: 1 }} transition={{ duration: 1.6, ease: EASE }} /></div>
+        <ol className="xgr-steps">
+          {STEPS.map(([t, d], i) => (
+            <li key={t}>
+              <span className="xgr-dot" aria-hidden="true" />
+              <span className="xgr-n x-mono">{pad(i + 1)} / 04</span>
+              <h3 className="xp-title">{t}</h3>
+              <p className="xp-body">{d}</p>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   );
@@ -92,19 +80,19 @@ const GETS = [
 
 function Gets() {
   return (
-    <section className="x-sec xgr-gets">
-      <div className="x-wrap xgr-gets-in">
+    <section className="xp-sec xgr-gets" aria-labelledby="xgr-gets-h">
+      <div className="xp-wrap xp-grid">
         <div className="xgr-gets-l">
-          <SecHead title="What Grant Recipients & Interns Receive" lede="Compute, models, and workspaces to ship open research and open-source software." />
-          <Sigil seed="grants" data={[2137, 122, 4]} className="xgr-sigil" />
+          <h2 id="xgr-gets-h" className="xp-head">What Grant Recipients &amp; Interns Receive</h2>
+          <p className="xp-lede">Compute, models, and workspaces to ship open research and open-source software.</p>
         </div>
         <ul className="xgr-gets-g">
           {GETS.map(([t, d], i) => (
-            <Rise as="li" key={t} delay={(i % 2) * 0.08} y={22}>
+            <li key={t}>
               <span className="xgr-gets-n x-mono">{pad(i + 1)}</span>
-              <h3>{t}</h3>
-              <p>{d}</p>
-            </Rise>
+              <h3 className="xp-title">{t}</h3>
+              <p className="xp-body">{d}</p>
+            </li>
           ))}
         </ul>
       </div>
@@ -118,25 +106,44 @@ const WAYS = [
   ['internship', 'Academic & PhD Research Internships', 'Remote / SF · Year-round cohorts', 'Looking to intern with our research and systems teams during your PhD or graduate studies? Work directly on Zen, Kai, Enso, Hanzo Engine, and Hanzo Dev — with free compute credits, Hanzo Team access, and co-authored publications.', 'Apply for Internship', ['View Internship Role', '/careers/academic-research-intern']],
 ];
 
+/* One sheet of the stack: it pins, and settles back as the next one slides over it. */
+function Sheet({ way, i, n, pick }) {
+  const ref = useRef(null);
+  const [k, t, meta, d, cta, [more, to]] = way;
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
+  const last = i === n - 1;
+  const scale = useTransform(scrollYProgress, [0, 1], [1, last ? 1 : 0.92]);
+  const dim = useTransform(scrollYProgress, [0, 1], [0, last ? 0 : 0.55]);
+  return (
+    <li ref={ref} className="xgr-sheet-li" style={{ '--i': i }}>
+      <motion.article className={'xgr-sheet s' + i} style={{ scale }}>
+        <span className="xgr-sheet-n xp-fig" aria-hidden="true">{pad(i + 1)}</span>
+        <div className="xgr-sheet-b">
+          <p className="xgr-way-m x-mono">{meta}</p>
+          <h3 className="xp-display sm xgr-way-t">{t}</h3>
+          <p className="xp-lede xgr-way-d">{d}</p>
+          <div className="xgr-way-a">
+            <a href="#apply" className="xp-cta" onClick={() => pick(k)}>{cta}<i aria-hidden="true">↓</i></a>
+            <A to={to} className="xgr-link">{more}</A>
+          </div>
+        </div>
+        <motion.i className="xgr-sheet-dim" style={{ opacity: dim }} aria-hidden="true" />
+      </motion.article>
+    </li>
+  );
+}
+
 function Ways({ pick }) {
   return (
-    <section className="x-sec xgr-ways" data-room="dark">
-      <div className="x-wrap">
-        <SecHead dark title="Three Ways to Build & Research with Us" lede="Whether you are contributing PRs to our open-source repos, running PhD experiments, or applying for a research internship." />
-        <div className="xgr-ways-g">
-          {WAYS.map(([k, t, meta, d, cta, [more, to]], i) => (
-            <Rise key={k} className="xgr-way" delay={i * 0.1}>
-              <span className="xgr-way-n x-mono">{pad(i + 1)}</span>
-              <h3>{t}</h3>
-              <p className="xgr-way-m x-mono">{meta}</p>
-              <p className="xgr-way-d">{d}</p>
-              <div className="xgr-way-a">
-                <a href="#apply" className="x-btn solid" onClick={() => pick(k)}>{cta}</a>
-                <More to={to}>{more}</More>
-              </div>
-            </Rise>
-          ))}
+    <section className="xp-sec xp-dark xgr-ways" data-room="dark" aria-labelledby="xgr-ways-h">
+      <div className="xp-wrap">
+        <div className="xp-grid xgr-ways-head">
+          <h2 id="xgr-ways-h" className="xp-head">Three Ways to Build &amp; Research with Us</h2>
+          <p className="xp-lede">Whether you are contributing PRs to our open-source repos, running PhD experiments, or applying for a research internship.</p>
         </div>
+        <ol className="xgr-stack">
+          {WAYS.map((w, i) => <Sheet key={w[0]} way={w} i={i} n={WAYS.length} pick={pick} />)}
+        </ol>
       </div>
     </section>
   );
@@ -179,11 +186,11 @@ function Apply({ track, setTrack }) {
   };
   const shown = [['Track', role], ['Department', 'Open Source & Research Grants'], ['Name', f.name], ['Email', f.email], ['Affiliation', f.affiliation || 'Open Source / Academic'], ['Links', [f.github, f.scholar].filter((x) => x.trim()).join('  ·  ')], ['Summary', f.summary]];
   return (
-    <section className="x-sec xgr-apply" id="apply" aria-labelledby="xgr-apply-h">
-      <div className="x-wrap xgr-apply-in">
+    <section className="xp-sec xgr-apply" id="apply" aria-labelledby="xgr-apply-h">
+      <div className="xp-wrap xgr-apply-in">
         <div className="xgr-apply-l">
-          <h2 id="xgr-apply-h" className="xgr-apply-h">Apply for Credits or a Research Internship</h2>
-          <p className="xgr-apply-p">Tell us about your open-source contributions, academic research, or internship goals. We review submissions every week.</p>
+          <h2 id="xgr-apply-h" className="xp-head xgr-apply-h">Apply for Credits or a Research Internship</h2>
+          <p className="xp-lede xgr-apply-p">Tell us about your open-source contributions, academic research, or internship goals. We review submissions every week.</p>
           <div className="xgr-file" aria-label="What is sent">
             <p className="xgr-file-k x-mono">Filed as</p>
             <dl>
@@ -200,7 +207,7 @@ function Apply({ track, setTrack }) {
               <span className="xgr-ok-i" aria-hidden="true">✓</span>
               <h3>Application Received</h3>
               <p>Thank you for applying! Our research and open-source team will review your submission and follow up at <b>{f.email}</b> with your credit grant and Hanzo Team access details.</p>
-              <button type="button" className="x-btn solid" onClick={() => { setDone(false); setF(EMPTY); }}>Submit Another Application</button>
+              <button type="button" className="xp-cta" onClick={() => { setDone(false); setF(EMPTY); }}>Submit Another Application</button>
             </motion.div>
           ) : (
             <motion.form key="form" className="xgr-form" onSubmit={send} noValidate exit={{ opacity: 0, y: -10 }}>
@@ -209,7 +216,7 @@ function Apply({ track, setTrack }) {
                 <div className="xgr-tracks" role="radiogroup" aria-labelledby="xgr-track-l" onKeyDown={keys}>
                   {TRACKS.map(([k, label], i) => (
                     <button key={k} id={'xgr-t-' + i} type="button" role="radio" aria-checked={track === k} tabIndex={track === k ? 0 : -1} onClick={() => setTrack(k)}>
-                      {track === k && <motion.span layoutId="xgr-track" className="xgr-track-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+                      {track === k && <motion.span layoutId="xgr-track" className="xgr-track-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
                       <span>{label}</span>
                     </button>
                   ))}
@@ -220,7 +227,7 @@ function Apply({ track, setTrack }) {
               ))}
               <label className="xgr-f summary"><span className="xgr-lab">Research Proposal, OSS Contributions, or Internship Goals</span><textarea rows={4} required placeholder="Describe the open-source repositories you contribute to, your PhD / academic research topic, and how you plan to use Hanzo API credits, GPU compute, and Hanzo Team." value={f.summary} onChange={on('summary')} /></label>
               {err && <p className="xgr-err" role="alert">{err.includes('grants@hanzo.ai') ? <>Your application did not reach us. Please try again, or email <a href="mailto:grants@hanzo.ai">grants@hanzo.ai</a>.</> : err}</p>}
-              <motion.button type="submit" className="x-btn solid xgr-send" disabled={busy} whileTap={{ scale: 0.97 }}>{busy ? 'Sending…' : 'Submit Grant Application'}</motion.button>
+              <button type="submit" className="xp-cta xgr-send" disabled={busy}>{busy ? 'Sending…' : 'Submit Grant Application'}</button>
             </motion.form>
           )}
         </AnimatePresence>
@@ -232,8 +239,9 @@ function Apply({ track, setTrack }) {
 export default function Grants() {
   const [track, setTrack] = useState('oss');
   return (
-    <main className="xgr">
+    <main className="xp xgr">
       <Hero />
+      <How />
       <Gets />
       <Ways pick={setTrack} />
       <Apply track={track} setTrack={setTrack} />

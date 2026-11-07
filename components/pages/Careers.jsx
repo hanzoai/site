@@ -1,18 +1,22 @@
 'use client';
-/* /careers. Signature: the open roles are a board you filter by team: cards leave and the rest glide into the gap
-   (Motion layout), and any card opens, ink first, into its brief. How we hire turns itself through its four steps in
-   the hero, the page's one idle motion.
+/* /careers. V2: 8/10 Chaptered story: 4-line kinetic hero beside a live hiring card, perks as a still editorial
+   list, roles as full sheets that stack as you scroll and open into their page, one dark closing room. Accent: ember.
+   Signature: the open roles are a deck of sheets. Scroll and each role rises over the last one while the stack behind
+   it settles back; click a sheet and it opens into its page (Morph, synchronized.studio).
+   Supporting (3): masked kinetic headline, once; the How-we-hire card turning itself; the filter chips.
    Beyond: "Match what you know". Tap the skills you have, taken word for word from the role descriptions (LLVM,
    RLHF, zero-knowledge, data visualization…): the roles that ask for them stay lit with the words marked, the rest
-   step back. Built only from Hanzo's own role text. */
+   step back. Built only from Hanzo's own role text.
+   The role pages (/careers/<slug>) keep Careers.css; this index has its own CareersBoard.css. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion } from 'motion/react';
-import { useRouter } from 'next/navigation';
-import { EASE, Rise, Words, Count } from '../ui';
-import { A, Go } from '../kit';
-import { href as hrefOf } from '../../lib/route';
-import { openDoor, useArrival } from './doorway';
-import './Careers.css';
+import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { A } from '../kit';
+import MaskLines from './careers/MaskLines'; // careers' own variant; main's v2/MaskLines differs
+import { useArrival } from './doorway';
+import '../v2/vc-type.css';
+import './CareersBoard.css';
+
+const EASE = [0.16, 1, 0.3, 1];
 
 function Hire({ how }) {
   const [at, setAt] = useState(0);
@@ -20,31 +24,34 @@ function Hire({ how }) {
   const box = useRef(null);
   const seen = useInView(box, { amount: 0.5 });
   const calm = useReducedMotion();
+  const n = how.steps.length;
   useEffect(() => {
     if (mine || calm || !seen) return;
-    const t = setTimeout(() => setAt((v) => (v + 1) % how.steps.length), 3200);
+    const t = setTimeout(() => setAt((v) => (v + 1) % n), 3400);
     return () => clearTimeout(t);
-  }, [at, mine, calm, seen, how.steps.length]);
-  const n = how.steps.length;
+  }, [at, mine, calm, seen, n]);
   return (
-    <div className="xcr-hire" ref={box}>
-      <div className="xcr-hire-h">
-        <span>{how.title}</span>
-        <span className="x-mono" aria-hidden="true">{String(at + 1).padStart(2, '0')} / {String(n).padStart(2, '0')}</span>
+    <div className="xcb-hire vc-obj" ref={box}>
+      <div className="xcb-hire-h">
+        <span className="vc-kick">{how.title}</span>
+        <span className="vc-kick vc-num" aria-hidden="true">{String(at + 1).padStart(2, '0')} / {String(n).padStart(2, '0')}</span>
       </div>
-      <div className="xcr-hire-stage">
+      <div className="xcb-hire-stage">
         {how.steps.map(([t, d], i) => (
-          <motion.div key={t} className="xcr-hire-s" initial={false} animate={i === at ? { opacity: 1, y: 0, filter: 'blur(0px)' } : { opacity: 0, y: i < at ? -14 : 14, filter: 'blur(6px)' }} transition={{ duration: 0.55, ease: EASE }} aria-hidden={i !== at}>
+          <motion.div key={t} className="xcb-hire-s" initial={false} aria-hidden={i !== at}
+            animate={i === at ? { opacity: 1, y: 0 } : { opacity: 0, y: i < at ? -26 : 26 }}
+            transition={{ duration: i === at ? 0.7 : 0.35, ease: EASE, delay: i === at ? 0.1 : 0 }}>
+            <span className="xcb-hire-i vc-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
             <b>{t}</b>
             <p>{d}</p>
           </motion.div>
         ))}
       </div>
-      <ol className="xcr-hire-n">
+      <ol className="xcb-hire-n">
         {how.steps.map(([t], i) => (
           <li key={t}>
             <button type="button" aria-expanded={i === at} onClick={() => { setMine(true); setAt(i); }}>
-              <i><motion.u initial={false} animate={{ scaleX: i < at ? 1 : 0 }} transition={{ duration: 0.5, ease: EASE }} />{i === at && !mine && !calm && <u className="xcr-fill" key={at} />}</i>
+              <i>{i < at && <u className="done" />}{i === at && <u key={at + (mine ? 'm' : '')} className={mine || calm ? 'done' : 'run'} />}</i>
               <span>{t}</span>
             </button>
           </li>
@@ -57,19 +64,15 @@ function Hire({ how }) {
 function CopyDirect({ id, title }) {
   const [ok, setOk] = useState(false);
   return (
-    <button
-      type="button"
-      className="xcr-cp"
-      title="Copy direct link to this position"
-      aria-label={ok ? 'Link copied' : 'Copy direct link to ' + title}
+    <button type="button" className="xcb-cp" title="Copy direct link to this position" aria-label={ok ? 'Link copied' : 'Copy direct link to ' + title}
       onClick={async () => {
         try { await navigator.clipboard.writeText(location.origin + '/careers#' + id); } catch { /* blocked */ }
         setOk(true); setTimeout(() => setOk(false), 1500);
-      }}
-    >
+      }}>
       {ok
-        ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
-        : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M6.8 9.2a2.6 2.6 0 0 0 3.7 0l2-2a2.6 2.6 0 0 0-3.7-3.7l-.6.6M9.2 6.8a2.6 2.6 0 0 0-3.7 0l-2 2a2.6 2.6 0 0 0 3.7 3.7l.6-.6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>}
+        ? <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        : <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M6.8 9.2a2.6 2.6 0 0 0 3.7 0l2-2a2.6 2.6 0 0 0-3.7-3.7l-.6.6M9.2 6.8a2.6 2.6 0 0 0-3.7 0l-2 2a2.6 2.6 0 0 0 3.7 3.7l.6-.6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>}
+      <span>{ok ? 'Copied' : 'Link'}</span>
     </button>
   );
 }
@@ -85,142 +88,174 @@ function Marked({ text, know }) {
   return text.split(re).map((p, i) => (i % 2 ? <mark key={i}>{p}</mark> : p));
 }
 
-function RoleCard({ r, show, know }) {
-  const router = useRouter();
-  const [gone, setGone] = useState(false);
-  useEffect(() => { if (show) setGone(false); }, [show]);
+/* One role, one sheet. It sticks a little lower than the one before, and settles back as later sheets cover it. */
+function Sheet({ r, i, n, know, progress }) {
   const [where, kind, team] = r.chips;
-  const h = hrefOf(r.href);
   const miss = know.length > 0 && !know.some((k) => asks(r, k));
+  const scale = useTransform(progress, [i / n, 1], [1, 1 - (n - 1 - i) * 0.028]);
   return (
-    <motion.li
-      layout="position"
-      id={r.id}
-      className={'xcr-card' + (miss ? ' miss' : '')}
-      hidden={gone}
-      initial={false}
-      animate={show ? { opacity: miss ? 0.32 : 1, scale: 1 } : { opacity: 0, scale: 0.94 }}
-      transition={{ layout: { type: 'spring', stiffness: 260, damping: 30 }, duration: 0.3, ease: EASE }}
-      onAnimationComplete={() => { if (!show) setGone(true); }}
-      onClick={(e) => { if (!e.target.closest('a,button')) openDoor(e, h, router); }}
-      data-no-morph
-    >
-      <div className="xcr-card-top">
-        <span className="xcr-team">{team}</span>
-        <CopyDirect id={r.id} title={r.title} />
-      </div>
-      <h3><A to={r.href} onClick={(e) => openDoor(e, h, router)}>{r.title}</A></h3>
-      <ul className="xcr-tags"><li>{where}</li><li>{kind}</li></ul>
-      <p><Marked text={r.desc} know={know} /></p>
-      <div className="xcr-card-act">
-        <A to={r.acts[0].href} className="xcr-btn solid sm" onClick={(e) => openDoor(e, h, router)}>{r.acts[0].text}</A>
-        <A to={r.acts[1].href} className="x-arrow" onClick={(e) => openDoor(e, h, router)}>
-          <span>{r.acts[1].text}</span>
-          <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+    <li id={r.id} className={'xcb-sheet' + (miss ? ' miss' : '')} style={{ '--i': i }}>
+      <motion.div className="xcb-sheet-in" style={{ scale }}>
+        <A to={r.href} className="xcb-sheet-a" data-morph>
+          <span className="xcb-sheet-top">
+            <span className="vc-kick acc">{team}</span>
+            <span className="xcb-sheet-no vc-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+          </span>
+          <span className="xcb-sheet-t">{r.title}</span>
+          <span className="xcb-sheet-tags"><span>{where}</span><span>{kind}</span></span>
+          <span className="xcb-sheet-d"><Marked text={r.desc} know={know} /></span>
         </A>
-      </div>
-    </motion.li>
+        <div className="xcb-sheet-act">
+          <A to={r.acts[0].href} className="x-btn solid">{r.acts[0].text}</A>
+          <A to={r.acts[1].href} className="x-arrow">
+            <span>{r.acts[1].text}</span>
+            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </A>
+          <CopyDirect id={r.id} title={r.title} />
+        </div>
+      </motion.div>
+    </li>
   );
 }
 
-function Perk({ t }) {
-  const m = /^([\d,]+)\+\s+(.*)$/.exec(t);
-  if (!m) return t;
-  return <><Count to={+m[1].replace(/,/g, '')} suffix="+" /> {m[2]}</>;
+function Deck({ roles, know, dont, dontA }) {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
+  const n = roles.length + 1;
+  return (
+    <ul className="xcb-deck" ref={ref}>
+      {roles.map((r, i) => <Sheet key={r.id} r={r} i={i} n={n} know={know} progress={scrollYProgress} />)}
+      <li className="xcb-sheet last" style={{ '--i': roles.length }}>
+        <div className="xcb-sheet-in">
+          <span className="xcb-sheet-top"><span className="vc-kick">{dontA.text}</span></span>
+          <p className="xcb-sheet-t">{dont}</p>
+          <div className="xcb-sheet-act"><A to={dontA.href} className="x-btn solid" data-morph>{dontA.text}</A></div>
+        </div>
+      </li>
+    </ul>
+  );
 }
+
+const fig = (t) => /^([\d,]+\+)\s+(.*)$/.exec(t);
 
 export default function Careers({ d }) {
   useArrival();
-  const teams = [...new Set(d.pos.leaves.map((l) => l.chips[2]))];
+  const roles = d.pos.leaves;
+  const teams = [...new Set(roles.map((l) => l.chips[2]))];
   const [team, setTeam] = useState(null);
-  const shown = d.pos.leaves.filter((l) => !team || l.chips[2] === team).length;
   const [know, setKnow] = useState([]);
-  const skills = SKILLS.filter((k) => d.pos.leaves.some((r) => asks(r, k)));
-  const hits = d.pos.leaves.filter((r) => (!team || r.chips[2] === team) && know.some((k) => asks(r, k))).length;
-  const line = (t, dl) => (
-    <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: dl }}>{t}</motion.span></span>
-  );
+  const shown = roles.filter((l) => !team || l.chips[2] === team);
+  const skills = SKILLS.filter((k) => roles.some((r) => asks(r, k)));
+  const hits = shown.filter((r) => know.some((k) => asks(r, k))).length;
+  const words = d.lines.join(' ').split(' ');
+  // four short lines that break where the sentence breaks: Compilers, / cryptography, / and the cloud / they run on.
+  const lines = [words[0], words[1], words.slice(2, 5).join(' '), words.slice(5).join(' ')];
+  const [intA, intB] = d.intern.leaves;
   return (
-    <main className="xcr xcr-ix">
-      <section className="xcr-hero" aria-labelledby="xcr-h1">
-        <div className="x-wrap xcr-hero-g">
-          <div>
-            <motion.p className="x-kick" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE }}>{d.kicker}</motion.p>
-            <h1 id="xcr-h1" className="xcr-h1 big">{d.lines.map((l, i) => <span key={i}>{line(l, 0.05 + i * 0.13)}</span>)}</h1>
-            <motion.p className="xcr-lede dk" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.4 }}>{d.lede}</motion.p>
-            <motion.div className="xcr-acts" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.55 }}>
-              <a className="x-btn solid" href={d.hacts[0].href} data-thumb>{d.hacts[0].text}</a>
-              <Go to={d.hacts[1].href}>{d.hacts[1].text}</Go>
+    <main className="vc xcb" style={{ '--acc': '#ff5b1f' }}>
+      <section className="xcb-hero vc-scene" aria-labelledby="xcb-h1">
+        <div className="vc-grid xcb-hero-g">
+          <div className="xcb-hero-c">
+            <motion.p className="vc-kick" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, ease: EASE }}>{d.kicker}</motion.p>
+            <MaskLines as="h1" id="xcb-h1" now delay={0.05} lines={lines} className="vc-display xcb-h1" />
+            <motion.div className="xcb-hero-f" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, ease: EASE, delay: 0.7 }}>
+              <p className="vc-lede">{d.lede}</p>
+              <div className="xcb-acts">
+                <a className="x-btn solid xcb-big" href={d.hacts[0].href} data-thumb={d.hacts[0].text}>{d.hacts[0].text}</a>
+                <A to={d.hacts[1].href} className="x-arrow"><span>{d.hacts[1].text}</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A>
+              </div>
             </motion.div>
           </div>
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.2, ease: EASE, delay: 0.2 }}><Hire how={d.how} /></motion.div>
+          <motion.div className="xcb-hero-o" initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.3, ease: EASE, delay: 0.25 }}>
+            <Hire how={d.how} />
+          </motion.div>
         </div>
       </section>
 
-      <section className="x-sec xcr-perks">
-        <div className="x-wrap">
-          <header className="x-head"><Words text={d.perks.title} /><p>{d.perks.lede}</p></header>
-          <ul className="xcr-perk-g">
+      <section className="vc-sec xcb-perks" aria-labelledby="xcb-perks-h">
+        <div className="vc-grid">
+          <header className="xcb-perks-h">
+            <p className="vc-kick acc">{d.perks.title}</p>
+            <MaskLines id="xcb-perks-h" lines={[d.perks.lede]} className="vc-headline" />
+          </header>
+          <ol className="xcb-perk-l">
             {d.perks.items.map(([t, p], i) => (
-              <Rise as="li" key={t} delay={i * 0.07} y={24}><span className="x-mono">{String(i + 1).padStart(2, '0')}</span><h3>{t}</h3><p>{p}</p></Rise>
+              <li key={t}>
+                <span className="xcb-perk-n vc-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                <h3 className="vc-title">{t}</h3>
+                <p className="vc-body">{p}</p>
+              </li>
             ))}
-          </ul>
+          </ol>
         </div>
       </section>
 
-      <section className="x-sec xcr-pos" id="open-positions">
-        <div className="x-wrap">
-          <header className="x-head"><Words text={d.pos.title} /><p>{d.pos.lede}</p></header>
-          <div className="xcr-filter" role="group" aria-label="Filter by team">
-            {[null, ...teams].map((t) => (
-              <button key={t || 'all'} type="button" aria-pressed={team === t} onClick={() => setTeam(t)}>
-                {team === t && <motion.span layoutId="xcr-pill" className="xcr-pill" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
-                <span>{t || 'All'}</span>
-              </button>
-            ))}
-            <span className="xcr-count x-mono" role="status">{shown} / {d.pos.leaves.length}{know.length > 0 && ` · ${hits} ask for it`}</span>
+      <section className="xcb-pos" id="open-positions" aria-labelledby="xcb-pos-h">
+        <div className="vc-grid xcb-pos-g">
+          <div className="xcb-pos-h">
+            <h2 id="xcb-pos-h" className="vc-display s">{d.pos.title}</h2>
+            <p className="vc-lede">{d.pos.lede}</p>
           </div>
-          <div className="xcr-know" role="group" aria-label="Match what you know">
-            <span className="xcr-know-k">Match what you know</span>
-            {skills.map((k) => {
-              const on = know.includes(k);
-              return <button key={k} type="button" aria-pressed={on} onClick={() => setKnow((v) => (on ? v.filter((x) => x !== k) : [...v, k]))}>{k}</button>;
-            })}
-            {know.length > 0 && <button type="button" className="xcr-know-x" onClick={() => setKnow([])}>Clear</button>}
+          <div className="xcb-tools">
+            <div className="xcb-filter" role="group" aria-label="Filter by team">
+              {[null, ...teams].map((t) => (
+                <button key={t || 'all'} type="button" aria-pressed={team === t} onClick={() => setTeam(t)}>{t || 'All'}</button>
+              ))}
+            </div>
+            <div className="xcb-know" role="group" aria-label="Match what you know">
+              <span className="vc-kick">Match what you know</span>
+              <div>
+                {skills.map((k) => {
+                  const on = know.includes(k);
+                  return <button key={k} type="button" aria-pressed={on} onClick={() => setKnow((v) => (on ? v.filter((x) => x !== k) : [...v, k]))}>{k}</button>;
+                })}
+                {know.length > 0 && <button type="button" className="xcb-know-x" onClick={() => setKnow([])}>Clear</button>}
+              </div>
+            </div>
+            <p className="xcb-count vc-kick vc-num" role="status">{shown.length} / {roles.length}{know.length > 0 && ` · ${hits} ask for it`}</p>
           </div>
-          <ul className="xcr-board">
-            {d.pos.leaves.map((r) => <RoleCard key={r.id} r={r} know={know} show={!team || r.chips[2] === team} />)}
-          </ul>
-          <div className="xcr-dont"><p>{d.pos.dont}</p><Go to={d.pos.dontA.href}>{d.pos.dontA.text}</Go></div>
+        </div>
+        <div className="vc-wrap">
+          <Deck key={team || 'all'} roles={shown} know={know} dont={d.pos.dont} dontA={d.pos.dontA} />
         </div>
       </section>
 
-      <section className="x-sec xcr-int" id="internships">
-        <div className="x-wrap">
-          <header className="x-head"><Words text={d.intern.title} /><p>{d.intern.lede}</p></header>
-          <div className="xcr-int-g">
-            {d.intern.leaves.map((l, i) => (
-              <Rise key={l.title} delay={i * 0.1} className="xcr-panel">
-                <h3>{l.title}</h3>
-                <ul className="xcr-perks-l">{l.perks.map((p) => <li key={p}><Perk t={p} /></li>)}</ul>
-                <p>{l.desc}</p>
-                <div className="xcr-card-act">
-                  <Go to={l.acts[0].href} solid>{l.acts[0].text}</Go>
-                  <Go to={l.acts[1].href}>{l.acts[1].text}</Go>
-                </div>
-              </Rise>
-            ))}
-          </div>
+      <section className="vc-sec xcb-int" id="internships" aria-labelledby="xcb-int-h">
+        <div className="vc-grid">
+          <header className="xcb-int-h">
+            <MaskLines id="xcb-int-h" lines={[d.intern.title]} className="vc-headline" />
+            <p className="vc-body">{d.intern.lede}</p>
+          </header>
+          {[intA, intB].map((l, k) => (
+            <article key={l.title} className={'xcb-panel ' + (k ? 'b' : 'a')}>
+              <ul className="xcb-panel-p">
+                {l.perks.map((p) => {
+                  const m = fig(p);
+                  return m
+                    ? <li key={p} className="xcb-fig"><b className="vc-num">{m[1]}</b><span>{m[2]}</span></li>
+                    : <li key={p}>{p}</li>;
+                })}
+              </ul>
+              <h3 className="vc-title">{l.title}</h3>
+              <p className="vc-body">{l.desc}</p>
+              <div className="xcb-panel-a">
+                <A to={l.acts[0].href} className="x-btn solid">{l.acts[0].text}</A>
+                <A to={l.acts[1].href} className="x-btn">{l.acts[1].text}</A>
+              </div>
+            </article>
+          ))}
         </div>
       </section>
 
-      <section className="xcr-close" data-room="dark">
-        <div className="x-wrap">
-          <Words text={d.close.title} />
-          <p>{d.close.lede}</p>
-          <div className="xcr-close-a">
-            <a className="x-btn solid" href={d.close.acts[0].href}>{d.close.acts[0].text}</a>
-            <a className="xcr-mail" href={d.close.acts[1].href}>{d.close.acts[1].text}</a>
+      <section className="xcb-close" data-room="dark" aria-labelledby="xcb-close-h">
+        <div className="vc-grid">
+          <MaskLines id="xcb-close-h" lines={[d.close.title]} className="vc-display m" />
+          <div className="xcb-close-r">
+            <p className="vc-lede">{d.close.lede}</p>
+            <div className="xcb-acts">
+              <a className="x-btn solid xcb-big" href={d.close.acts[0].href}>{d.close.acts[0].text}</a>
+              <a className="xcb-mail" href={d.close.acts[1].href}>{d.close.acts[1].text}</a>
+            </div>
           </div>
         </div>
       </section>

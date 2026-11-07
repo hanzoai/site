@@ -39,7 +39,9 @@ function reel(fold) {
   };
 }
 
-export function solutionDoc(slug) {
+const BASE = {};
+function baseDoc(slug) {
+  if (BASE[slug]) return BASE[slug];
   const rel = 'solutions/' + slug;
   const root = load(rel);
   const lt = live(rel);
@@ -77,11 +79,23 @@ export function solutionDoc(slug) {
       doc.band = { title: h2, lede: p[0] || '', actions: links.map(link) };
     } else doc.extra.push({ title: h2, nodes: sec.c });
   }
-  return doc;
+  return (BASE[slug] = doc);
 }
 
+/* one solution, with its place in the family (its accent) and what each sibling it links to opens into */
+export function solutionDoc(slug) {
+  const doc = baseDoc(slug);
+  const all = SLUGS();
+  const sibs = (doc.more ? doc.more.links : []).map((l) => l.href.split('/').pop()).filter((s) => l2(s) && all.includes(s)).map((s) => {
+    const d = baseDoc(s);
+    return { slug: s, href: d.route, title: d.title, label: d.label, i: all.indexOf(s), first: d.reel && d.reel.steps[0] ? d.reel.steps[0].title : '', n: [d.reel ? d.reel.steps.length : 0, d.runs ? d.runs.items.length : 0] };
+  });
+  return { ...doc, i: all.indexOf(slug), sibs };
+}
+const l2 = (s) => !!s && s !== 'solutions';
+
 /* what the index and the comparer need of every solution */
-export const allSolutions = () => Object.fromEntries(SLUGS().map((s) => { const d = solutionDoc(s); return [s, { slug: s, href: d.route, title: d.title, label: d.label, film: d.reel && d.reel.slug, steps: d.reel ? d.reel.steps.map((x) => x.title) : [], names: d.reel ? d.reel.names : [], products: d.runs ? d.runs.items.map((x) => x.name) : [] }]; }));
+export const allSolutions = () => Object.fromEntries(SLUGS().map((s) => { const d = baseDoc(s); return [s, { slug: s, href: d.route, title: d.title, label: d.label, film: d.reel && d.reel.slug, steps: d.reel ? d.reel.steps.map((x) => x.title) : [], names: d.reel ? d.reel.names : [], products: d.runs ? d.runs.items.map((x) => x.name) : [] }]; }));
 
 export function indexDoc() {
   const root = load('solutions');

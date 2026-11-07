@@ -1,7 +1,8 @@
 'use client';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useInView } from 'motion/react';
-import { EASE, Head, Arrow, Rise } from './ui';
+import { EASE, Arrow } from './ui';
+import Lines from './v2/Lines';
 
 // placed exactly where Hanzo's own chart places them (log cost across, accuracy up).
 // [name as Hanzo writes it, label on the chart, GPQA Diamond %, $ per 1,000 questions as Hanzo prints it, kind, reported by, date, source]
@@ -58,10 +59,19 @@ export default function Pareto() {
   const c = cost(cap);
 
   return (
-    <section className="x-sec x-pareto" id="pareto" aria-labelledby="pareto-h">
-      <div className="x-wrap">
-        <Head title="A New Pareto Frontier of Intelligence" lede="GPQA Diamond challenges AI with 198 graduate-level science questions. See how Enso balances accuracy and cost across 1,000 answers." />
-        <Rise className="x-plot" ref={box} onPointerDown={(e) => { if (!e.target.closest('.pt, .x-tip')) setHot(null); }}>
+    <section className="hv-pareto v2-sec" id="pareto" aria-labelledby="pareto-h">
+      <div className="v2-wrap">
+        <header className="hv-head v2-grid">
+          <Lines as="h2" id="pareto-h" className="v2-display-s hv-head-t" lines={['A New Pareto Frontier', 'of Intelligence']} />
+          <div className="hv-head-r">
+            <p className="v2-lede">GPQA Diamond challenges AI with 198 graduate-level science questions. See how Enso balances accuracy and cost across 1,000 answers.</p>
+            <div className="hv-links">
+              <Arrow href="/enso">How Enso routes</Arrow>
+              <Arrow href="https://docs.hanzo.ai/docs/guides/cookbook/route">Route your own requests with Enso</Arrow>
+            </div>
+          </div>
+        </header>
+        <div className="x-plot hv-plot" ref={box} onPointerDown={(e) => { if (!e.target.closest('.pt, .x-tip')) setHot(null); }}>
           <div className="x-plot-read" aria-live="polite">
             <span className="x-mono">Budget · ${c < 10 ? c.toFixed(2) : Math.round(c)} per 1,000 questions</span>
             <b>{pick ? `${pick.full} · ${pick.a.toFixed(1)}%` : '—'}</b>
@@ -135,10 +145,6 @@ export default function Pareto() {
             Dashed discs are scores reported by a lab or an independent evaluation:
             {pts.filter((p) => p.src).map((p) => <a key={p.n} href={p.src} target="_blank" rel="noopener noreferrer">{p.full} ↗</a>)}
           </p>
-        </Rise>
-        <div className="x-row-links">
-          <Arrow href="/enso">How Enso routes</Arrow>
-          <Arrow href="https://docs.hanzo.ai/docs/guides/cookbook/route">Route your own requests with Enso</Arrow>
         </div>
       </div>
     </section>

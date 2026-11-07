@@ -1,5 +1,6 @@
-// Signature: Full-bleed draggable case gallery that drifts by itself; each case opens into its story; every launch on a timeline
-// Beyond: A year scrubber over 2015 to 2020 that counts each year's launches from Hanzo's own list; drag or tap to jump there
+// V2: 8/10 Story + catalogue: kinetic headline over one huge case plate that swaps Damon and KANOA by itself and opens into the case study, every launch as an editorial index, a calm logo belt, one dark room
+// Signature: the case plate: one case fills a huge plate with its figure as the hero numeral, wipes to the next by itself, widens to the full grid as it reaches you, and opens into its story when clicked
+// Beyond: a year index over Hanzo's own launch list: each year shows how many launches it holds, and a tap narrows the index to that year
 import Customers from '../../components/pages/Customers';
 import JsonLd from '../../components/JsonLd';
 

@@ -1,6 +1,6 @@
+import Post from '../../../components/pages/post/Post';
 import { notFound } from 'next/navigation';
 import JsonLd from '../../../components/JsonLd';
-import Post from '../../../components/pages/post/Post';
 import { SLUGS, post, meta } from '../../../components/pages/post/postData';
 
 export const dynamicParams = false;

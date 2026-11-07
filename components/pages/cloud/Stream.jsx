@@ -1,46 +1,54 @@
 'use client';
-/* Stream. Signature: the event tape. Records run past on a tape, each with the Kafka offset stamped into its batch
-   header; a consumer group's committed offset rides the tape as a marker, the consumer dies and comes back exactly where
-   it left off, and a batch whose chain does not line up bounces off with INVALID_RECORD instead of being written. The
-   Kafka clients plug into the same port with only the bootstrap server changed. Every word, figure and link is Hanzo's. */
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { EASE, Rise } from '../../ui';
-import { A } from '../../kit';
-import { Hero, Paste, Get, Code, useLive, useEvery } from './Frame';
+/* Stream (v2, Cloud 4 chat). Archetype A, Launch: a full-bleed dark tape (Stage, frame) → the facts on a sideways tape you
+   scroll → the one line that changes → close. Accent: offset teal.
+   V2: 8/10 a full-bleed event tape clipped into a card as you scroll, then the six facts ride a sideways tape your scroll consumes, offset by offset
+   Signature: your scroll is the consumer. The section pins and the page scrolls a tape of records sideways; each fact is a
+   record stamped with its offset, and the committed-offset marker at the left edge reads the offset you have reached.
+   Phones get the same tape as a swipe rail.
+   Beyond: "Does my client's call work?" Type a Kafka API your client makes and it answers from the twelve Hanzo lists,
+   at the versions modern clients negotiate, or says it is not among them.
+   Motion: horizontal scroll scrub (signature) + the hero's running partitions + the clip-to-card settle + magnetic primary.
+   Every word, figure and link is Hanzo's; offsets and records are examples. */
+import { useRef, useState } from 'react';
+import { motion, useScroll, useTransform, useMotionValueEvent, useReducedMotion } from 'motion/react';
+import { Code, useLive, useEvery } from './Frame';
+import StageHero from '../../v2/StageHero';
+import Finale from '../../v2/Finale';
+import { useWide } from '../../v2/useWide';
 import './Stream.css';
 
+const GHS = 'https://github.com/hanzoai/stream';
 const CLIENTS = ['kafka-python', 'sarama', 'confluent-kafka', 'franz-go'];
 
+/* Stage object: four partitions of records running under the clients. The consumer group's committed offset rides lane
+   two; it goes down, keeps its offset, comes back where it left off; a batch whose chain does not line up bounces. */
 function Tape() {
-  const [ref, live] = useLive(0.3);
-  const [off, setOff] = useState(1200); // newest offset on the tape
+  const [ref, live] = useLive(0.2);
   const [tick, setTick] = useState(0);
-  useEvery(800, live, () => { setTick((t) => t + 1); setOff((o) => o + 1); });
-  const phase = Math.floor(tick / 6) % 3; // 0 consuming, 1 consumer down, 2 back at its offset
-  const committed = phase === 1 ? off - 6 : off - 3;
-  const bad = tick % 9 === 4;
+  useEvery(900, live, () => setTick((t) => t + 1));
+  const phase = Math.floor(tick / 5) % 3; // 0 consuming, 1 consumer down, 2 back where it left off
+  const bad = tick % 7 === 3;
   return (
-    <div className="st-tape-wrap" ref={ref} aria-hidden="true">
-      <div className="st-clients">{CLIENTS.map((c) => <span key={c}>{c}</span>)}<b>stream.hanzo.ai:9092</b></div>
-      <div className="st-tape">
-        <AnimatePresence initial={false}>
-          {Array.from({ length: 12 }).map((_, i) => {
-            const n = off - 11 + i;
-            return (
-              <motion.div key={n} layout className={'st-rec' + (n === committed ? ' mark' : '') + (n > committed ? ' ahead' : '')} initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} transition={{ type: 'spring', stiffness: 260, damping: 30 }}>
-                <span className="st-off">{n}</span>
-                <i />
-                {n === committed && <em className={phase === 1 ? 'down' : ''}>my-service</em>}
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
-        <AnimatePresence>{bad && <motion.div className="st-bad" initial={{ x: 60, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: 80, opacity: 0, transition: { duration: 0.4 } }}>INVALID_RECORD</motion.div>}</AnimatePresence>
+    <div className="st2-tape" ref={ref} aria-hidden="true">
+      <div className="st2-clients">
+        {CLIENTS.map((c) => <span key={c} className="l2-mono">{c}</span>)}
+        <b className="l2-mono">stream.hanzo.ai:9092</b>
       </div>
-      <div className="st-under">
-        <span>one topic partition = one durable PubSub stream</span>
-        <span className={'st-state' + (phase === 1 ? ' down' : '')}>{phase === 1 ? 'consumer down · offset kept' : phase === 2 ? 'back where it left off' : 'committed offset'}</span>
+      <div className="st2-lanes">
+        {[0, 1, 2, 3].map((l) => (
+          <div key={l} className={'st2-lane ln' + l + (live ? '' : ' still')}>
+            <span className="st2-p l2-mono">partition {l}</span>
+            <div className="st2-strip">
+              {[0, 1].map((c) => (
+                <div key={c} className="st2-run">
+                  {Array.from({ length: 16 }).map((_, i) => <i key={i}><b className="l2-mono">{1180 + l * 37 + i}</b></i>)}
+                </div>
+              ))}
+            </div>
+            {l === 1 && <span className={'st2-mark l2-mono' + (phase === 1 ? ' down' : '')}>my-service · {phase === 1 ? 'consumer down · offset kept' : phase === 2 ? 'back where it left off' : 'committed offset'}</span>}
+            {l === 2 && bad && <span className="st2-bad l2-mono">INVALID_RECORD</span>}
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -54,6 +62,74 @@ const FACTS = [
   ['Offsets are stamped, not inferred', "Every Kafka offset is written into the record batch header when the batch is produced, and read straight back from there. Deriving them from the store's own sequence numbers works right up until the sequence has gaps in it — and then one record can make every fetch after it unreadable."],
   ['Bad batches are refused on arrival', 'A produce whose batch chain does not line up is refused with INVALID_RECORD instead of being written and discovered later by a consumer that cannot get past it. The scan that recovers a partition\'s bounds is capped, so a damaged topic degrades rather than stalls.'],
 ];
+const FIGS = [['Kafka', 'Wire protocol'], ['PubSub', 'Holds the log'], ['Stateless', 'No broker disk'], ['Durable', 'At-least-once']];
+
+/* Signature: the facts ride a tape that the page's scroll moves sideways; the marker reads the offset reached. */
+function Ruler() {
+  const sec = useRef(null);
+  const track = useRef(null);
+  const calm = useReducedMotion();
+  const wide = useWide();
+  const pin = wide && !calm;
+  const [span, setSpan] = useState(3000);
+  const [at, setAt] = useState(0);
+  const { scrollYProgress: p } = useScroll({ target: sec, offset: ['start start', 'end end'] });
+  const x = useTransform(p, (v) => -Math.min(1, Math.max(0, (v - 0.04) / 0.92)) * span);
+  useMotionValueEvent(p, 'change', (v) => {
+    const el = track.current;
+    if (el && el.scrollWidth - innerWidth !== span) setSpan(Math.max(0, el.scrollWidth - innerWidth + 48));
+    setAt(Math.min(6, Math.max(0, Math.floor(((v - 0.04) / 0.92) * 7.4))));
+  });
+  return (
+    <section ref={sec} className={'st2-rul' + (pin ? ' pin' : '')} style={pin ? { height: '480svh' } : undefined}>
+      <div className="st2-rul-stick">
+        <motion.div ref={track} className="st2-track" style={pin ? { x } : undefined} data-swipe-own>
+          <div className="st2-rul-h">
+            <h2 className="l2-display m">Your clients, our store</h2>
+            <p className="l2-mono st2-range">01 / 06 — 06 / 06</p>
+          </div>
+          {FACTS.map(([t, d], i) => (
+            <article key={t} className={'st2-rec' + (pin && at > i ? ' read' : '')}>
+              <p className="st2-ofs l2-mono"><span>offset {String(i + 1).padStart(4, '0')}</span><span>{String(i + 1).padStart(2, '0')} / 06</span></p>
+              <p className="st2-big l2-fig" aria-hidden="true">{String(i + 1).padStart(4, '0')}</p>
+              <h3 className="l2-head">{t}</h3>
+              <p className="l2-body">{d}</p>
+            </article>
+          ))}
+          <ul className="st2-figs">{FIGS.map(([a, b]) => <li key={a}><b>{a}</b><span>{b}</span></li>)}</ul>
+        </motion.div>
+        {pin && (
+          <div className="st2-commit" aria-hidden="true">
+            <i />
+            <p className="l2-mono">committed offset <b>{String(Math.min(at, 6)).padStart(4, '0')}</b></p>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+const APIS = ['Produce', 'Fetch', 'ListOffsets', 'Metadata', 'OffsetCommit', 'OffsetFetch', 'FindCoordinator', 'JoinGroup', 'SyncGroup', 'Heartbeat', 'CreateTopics', 'ApiVersions'];
+
+/* Beyond: answer "does my client's call work?" from the twelve APIs Hanzo lists. */
+function Check() {
+  const [q, setQ] = useState('');
+  const s = q.trim().toLowerCase().replace(/\s+/g, '');
+  const hits = s ? APIS.filter((a) => a.toLowerCase().includes(s)) : [];
+  const exact = APIS.find((a) => a.toLowerCase() === s);
+  return (
+    <div className="st2-check">
+      <label>
+        <span className="l2-kick ac">Does my client's call work?</span>
+        <input type="text" value={q} onChange={(e) => setQ(e.target.value)} placeholder="JoinGroup" spellCheck="false" autoComplete="off" />
+      </label>
+      <p className="st2-ans" aria-live="polite">
+        {!s ? 'Type a Kafka API.' : exact ? <><b>{exact}</b> is one of the twelve, at the versions modern clients negotiate.</> : hits.length ? <>Did you mean {hits.map((h, i) => <button key={h} type="button" onClick={() => setQ(h)}>{h}{i < hits.length - 1 ? '' : ''}</button>)}?</> : <><b>{q.trim()}</b> is not among the twelve APIs Hanzo lists.</>}
+      </p>
+      <ul className="st2-apis">{APIS.map((a) => <li key={a} className={hits.includes(a) ? 'on' : ''}>{a}</li>)}</ul>
+    </div>
+  );
+}
 
 const CODE = `import json
 from kafka import KafkaProducer, KafkaConsumer
@@ -77,42 +153,38 @@ consumer = KafkaConsumer(
 for message in consumer:
     process(message.value)`;
 
+function OneLine() {
+  return (
+    <section className="l2-sec st2-code">
+      <div className="l2-wrap l2-grid">
+        <div className="st2-code-l">
+          <h2 className="l2-head">One line changes: the bootstrap server</h2>
+          <Check />
+        </div>
+        <div className="st2-code-r"><Code light title="Stream" mark="stream.hanzo.ai:9092" tabs={[{ k: 'producer.py', code: CODE, lang: 'python' }]} /></div>
+      </div>
+    </section>
+  );
+}
+
 export default function Stream() {
   return (
-    <main className="st">
-      <Hero look="stack" kick="Kafka Wire Protocol" title="Hanzo Stream" sub="A Kafka port in front of Hanzo PubSub" acts={[['GitHub', 'https://github.com/hanzoai/stream']]}>
+    <main className="l2-page st2" style={{ '--ac': '#12b5a6' }}>
+      <StageHero look="frame" dark kick="Kafka Wire Protocol" title="Hanzo Stream" sub="A Kafka port in front of Hanzo PubSub" acts={[['GitHub', GHS]]}>
         <Tape />
-      </Hero>
-      <section className="x-sec st-facts" data-room="dark">
-        <div className="x-wrap">
-          <div className="st-facts-h"><Rise as="h2">Your clients, our store</Rise><span className="x-mono">01 / 06 — 06 / 06</span></div>
-          <ol className="st-ruler">
-            {FACTS.map(([t, d], i) => (
-              <Rise as="li" key={t} y={18}>
-                <span className="st-ofs">offset {String(i + 1).padStart(4, '0')}</span>
-                <div><h3>{t}</h3><p>{d}</p></div>
-              </Rise>
-            ))}
-          </ol>
-          <ul className="st-figs">{[['Kafka', 'Wire protocol'], ['PubSub', 'Holds the log'], ['Stateless', 'No broker disk'], ['Durable', 'At-least-once']].map(([a, b], i) => <Rise as="li" key={a} delay={i * 0.06}><b>{a}</b><span>{b}</span></Rise>)}</ul>
-        </div>
-      </section>
-      <section className="x-sec st-code">
-        <div className="x-wrap st-code-grid">
-          <div>
-            <Rise as="h2">One line changes: the bootstrap server</Rise>
-            <Paste name="Stream" prompt="Read https://hanzo.ai/skill.md and use Hanzo Stream in my project." className="st-paste" />
-          </div>
-          <Code light title="Stream" mark="stream.hanzo.ai:9092" tabs={[{ k: 'producer.py', code: CODE, lang: 'python' }]} />
-        </div>
-      </section>
-      <section className="st-walk">
-        <div className="x-wrap st-walk-in">
-          <div><Rise as="h2">Point the bootstrap server at it</Rise><Rise as="p" delay={0.08}>The clients stay as they are. The cluster underneath them goes away.</Rise></div>
-          <A to="https://github.com/hanzoai/stream" className="x-btn">View on GitHub</A>
-        </div>
-      </section>
-      <Get name="Stream" tag="Event stream" repo={['hanzoai/stream', 'https://github.com/hanzoai/stream']} stars="4 stars" />
+      </StageHero>
+      <Ruler />
+      <OneLine />
+      <Finale
+        name="Stream"
+        head="Point the bootstrap server at it"
+        lede="The clients stay as they are. The cluster underneath them goes away."
+        acts={[['View on GitHub', GHS]]}
+        prompt="Read https://hanzo.ai/skill.md and use Hanzo Stream in my project."
+        tag="Event stream"
+        repo={['hanzoai/stream', GHS]}
+        stars="4 stars"
+      />
     </main>
   );
 }
