@@ -98,7 +98,8 @@ function Window() {
   const tilt = useTilt(1.6); // fine pointers only: the window leans at most 1.6 degrees toward the cursor
   return (
     <div className="xch-scene" ref={box}>
-      <motion.div className="xch-win av-obj" style={calm ? undefined : { rotateX: tilt.rx, rotateY: tilt.ry, transformPerspective: 1800 }} {...tilt.on}>
+      {/* the style is the same on server and client (reduced motion only drops the pointer handlers), so hydration matches */}
+      <motion.div className="xch-win av-obj" style={{ rotateX: tilt.rx, rotateY: tilt.ry, transformPerspective: 1800 }} {...(calm ? {} : tilt.on)}>
         <div className="xch-tabs" aria-hidden="true">
           <span className="xch-lights"><i /><i /><i /></span>
           <span className="xch-tab on"><i />Acme Pro Enterprise Checkout</span>

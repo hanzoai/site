@@ -3,6 +3,7 @@
 Reviewed 2026-11-07 (round 4, independent critic), walked moving at 1470x801 and 375x812.
 
 Verdict: 7.5/10
+Ready: 8 Nov, held up next to /api and /affiliate (James's new bar, no score). The round-4 fixes held (phone CLS 0.000, window fits, one closing block, working policy pill); this pass keeps the rested window alive (CDP dot breathes, panel field and Paste prompt wait at a caret: 0 still screens at either width), cut the white bands around the surfaces sheet, fixed a reduced-motion hydration error on the hero window, and stopped capability rows jumping 24px. taste/unique/parity OK (text 88/88, links 9/9); 0 console errors (also reduced motion), no overflow at 1470 and 375. Shared, not this page: headless Chrome here reports no (hover: hover), so motion.mjs flags every hover-media rule as dead (checked by hand: pills, asks and links answer).
 
 First complaint: "On my phone the side panel jumps about while it runs, and the ask box bounces up and down. Then there's a whole screen that's just one sentence on white, and in the black room I type an address and can't see the answer without scrolling."
 
