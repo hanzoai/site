@@ -1,6 +1,7 @@
 # /chat — James-eye review
 Reviewed: 2026-11-07 17:16 UTC, single page (Launch, MASTER 4.1 "/chat"), at 1470x801 and 375x812. Walked with motion.mjs (18 desktop + 11 phone film sheets), own Playwright walks (idle first screen at 0.3/1/4/12 s, 700px wheel walk, hover/press probes, pin-exit wheel probe, phone walk at 600px steps, JS off, reduced motion, tab crawl), parity, and a look at `/` and `/dev` first screens for neighbour difference.
 Verdict: 7.5/10
+Ready: 8 Nov, held up next to /api and /affiliate (James's new bar, no score). The dark room's six scenes now land their payoff inside about 1.5 s (Search and code reaches 14 passed, Dev lands its diff) so no panel arrives as an empty slab, the phone Memory scene stacks so the carried answer reads normally, the header ask goes quiet while the Band's solid ask shows, the Enso card lost its smudge shadow, and the phone heading stops shrinking at section size. taste/unique/parity OK (text 37/37, links 2/2); 0 console errors, no overflow at 1470 and 375. Left alone: rail-as-APG-tabs and the stage crossfade/pin padding live in the shared components/v2/AppChapters.jsx; hero model-row click (fix 8) not wired.
 First complaint: "The top is lovely, the chat actually talks. Then I scroll into the black bit and half the time I'm looking at a big empty grey box with one bubble in it; by the time the code runs, it's already gone to the next one. And on my phone the memory card is one word per line. Fill the boxes and fix the phone, then it's there."
 
 ## The 11 answers

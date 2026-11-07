@@ -429,7 +429,10 @@ function Art({ k }) {
 function ToolsHead() {
   const ref = useRef(null);
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start 0.7', 'start 0.05'] });
-  const scale = useTransform(p, (v) => 1 - 0.62 * Math.min(1, Math.max(0, v)));
+  // phones stop the shrink at the section size (26px of a ~40px heading) instead of going on to 16px
+  const k = useRef(0.62);
+  useEffect(() => { if (matchMedia('(max-width: 600px)').matches) k.current = 0.35; }, []);
+  const scale = useTransform(p, (v) => 1 - k.current * Math.min(1, Math.max(0, v)));
   return (
     <div className="v2a-wrap cht-ch-head" ref={ref}>
       <motion.div className="cht-ch-hw" style={{ scale }}>
@@ -497,8 +500,26 @@ function Close() {
   return <Band title="Ask anything" action="Open Hanzo Chat" to={OPEN} note={<Docs />} />;
 }
 
+/* one solid fill per viewport: while the Band's own solid "Open Hanzo Chat" is on screen the header's ask goes quiet
+   (html[data-ask=quiet], the shell's own switch), said again after the shell's scroll pass */
+function useQuietAtBand() {
+  useEffect(() => {
+    const H = document.documentElement;
+    const band = document.querySelector('main.cht .x-band');
+    if (!band) return;
+    let on = false, mine = false, t = 0;
+    const apply = () => { if (on) { H.dataset.ask = 'quiet'; mine = true; } else if (mine) { delete H.dataset.ask; mine = false; } };
+    const io = new IntersectionObserver(([e]) => { on = e.isIntersecting; apply(); }, { threshold: 0.35 });
+    io.observe(band);
+    const onScroll = () => { clearTimeout(t); if (on) t = setTimeout(apply, 160); };
+    addEventListener('scroll', onScroll, { passive: true });
+    return () => { io.disconnect(); clearTimeout(t); removeEventListener('scroll', onScroll); if (mine) delete H.dataset.ask; };
+  }, []);
+}
+
 export default function ChatPage() {
   const handoff = useHandoff();
+  useQuietAtBand();
   return (
     <main className="cht" onClickCapture={handoff}>
       <Hero />

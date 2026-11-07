@@ -42,7 +42,7 @@ Done here:
 - [x] Copy button copies exactly the displayed text; failure never says Copied (the kit `Copy`)
 - [x] `data-cta` and `data-thumb` on every primary. The kit `Band`'s button cannot take `data-cta` yet; requested.
 
-Done here:
+Done here: (8 Nov) While the Band's solid ask is on screen the header ask goes quiet (html[data-ask=quiet]), so one solid fill per viewport.
 - The hero ask is `Cta id="chat.hero" thumb`, and the empty-state ask is `Cta kind="quiet" id="chat.recent"`.
 - The cross-origin hand-off shows the kit's `aria-busy` ring.
 - Sending from the composer is a hand-off too: the send key turns into a ring, then leaves for Hanzo Chat. Nothing is sent to `api.hanzo.ai` (MASTER 3.3).
@@ -79,7 +79,7 @@ Done here:
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here:
+Done here: (8 Nov) The Enso card lost its long drop shadow (it is not floating).
 - Rooms: paper hero, black room, paper sheet, black `Band`.
 - Hero: headline left, the window right. /dev is a stacked terminal and /agents is a black film room, so the three heroes differ.
 - `taste.py` passes on `ChatPage.css`, `ChatPage.jsx`, `AppChapters.css` and `AppLines.css`.
@@ -106,7 +106,7 @@ The composer and search inputs are 16px. Deleted forks: `.cht-open`, `.cht-link`
 - [x] Reduced motion shows the final state; no `setInterval`
 - n/a: sound. The shared sound kit does not exist on main yet.
 
-Done here:
+Done here: (8 Nov) Each chapter's scene lands its payoff within about 1.5 s (same keyframes, shorter delays): Search and code reaches "14 passed", Dev lands its diff, before the next chapter takes over.
 - Signature (time): Hanzo's conversation writes itself once, Enso scans the lanes and Zen lights. It runs on `AppDemo`'s clock: it starts in view, pauses off screen, rests at its end, and has Pause or Replay.
 - Supporting moves:
   - arrival: the h1 line mask and the window's entry
@@ -129,7 +129,7 @@ Done here: Hanzo's nine model images (`/models/*.webp`) appear together in the r
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: On phone the first screen has the h1 in 3 lines at 40px, the lede, "Open Hanzo Chat", and the top of the live window with its first message. Chapters stack as copy then art, each playing when seen. The recents become a swipe row, and the pause control sits at the window's right edge.
+Done here: On phone the first screen has the h1 in 3 lines at 40px, the lede, "Open Hanzo Chat", and the top of the live window with its first message. Chapters stack as copy then art, each playing when seen. The recents become a swipe row, and the pause control sits at the window's right edge. (8 Nov) Memory stacks its two cards on phones so the carried answer reads at a normal measure; the dark room's heading stops shrinking at section size on phones; "Enso →" is 44px tall.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better. Text on white uses `#0a0a0a`, `#525252` or `#737373`; on `#f5f5f5` it uses `#525252`; on black it uses `#fafafa`, white 78% or `#a3a3a3`.
@@ -186,4 +186,4 @@ Done here: JS off and reduced motion show Hanzo's finished two-question conversa
 - [x] `V2: <score>/10 <one line>` in the page file's top comment (added once the critic scores)
 - [x] Review read: `docs/review/chat.md` verdict 8 or more. The critic pass in this session gave 7 before these fixes, so this is pending re-review.
 
-Done here: `data-cta` is `chat.hero` and `chat.recent`. Proof is in `docs/gallery/chat/`: a 15 s desktop film at 1470×801, the first screen, and three 375×812 phone shots.
+Done here: `data-cta` is `chat.hero` and `chat.recent`. Proof is in `docs/gallery/chat/`: a 15 s desktop film at 1470×801, the first screen, and three 375×812 phone shots. (8 Nov) Ready by the new bar: docs/gallery/chat/ desktop-hero, phone-1..3.

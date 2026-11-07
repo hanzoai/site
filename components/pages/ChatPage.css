@@ -403,3 +403,42 @@
   .cht-row-t { font-size: 11px; letter-spacing: .04em; }
   .cht-who-d { font-size: 16px; }
 }
+
+/* 8 Nov (Ready pass): each chapter's scene lands its payoff inside ~1.5 s, so a panel is never an empty slab while
+   you pass through it and "14 passed" arrives before the next chapter takes over. Same keyframes, shorter delays. */
+.cht-ch .cht-mini-q { animation-delay: .05s; }
+.cht-ch .cht-mini-code { animation-delay: .2s; }
+.cht-ch .cht-art-chat .cht-ln { animation-duration: .3s; animation-delay: calc(.3s + var(--j) * .1s); }
+.cht-ch .cht-mini-run2 { animation-delay: .85s; }
+.cht-ch .cht-mini-ok { animation-delay: 1.1s; }
+.cht-ch .cht-mini-ok span { animation-delay: 2s; }
+.cht-ch .cht-route-hub { animation-delay: .25s; }
+.cht-ch .cht-route-o::after { animation-delay: .4s; }
+.cht-ch .cht-route-wire i { animation-delay: 1s; }
+.cht-ch .cht-route-pick { animation-delay: 1.15s; }
+.cht-ch .cht-route-pick .cht-live { animation-delay: 1.9s; }
+.cht-ch .cht-chip { animation-delay: calc(.05s + var(--j) * .12s), calc(1.2s + var(--j) * .7s); }
+.cht-ch .cht-carry { animation-delay: .1s; }
+.cht-ch .cht-convo-pin { animation-delay: .55s; }
+.cht-ch .cht-carry-in { animation-delay: 1.4s; }
+.cht-ch .cht-switch span:first-child, .cht-ch .cht-switch span:nth-child(2) { animation-delay: .65s; }
+.cht-ch .cht-switch i { animation-delay: .55s; }
+.cht-ch .cht-dev-pane .chat { animation-delay: .55s; }
+.cht-ch .cht-dev-pane .code { animation-delay: .6s; }
+.cht-ch .cht-dev-pane .code .cht-ln, .cht-ch .cht-dev-l { animation-delay: calc(.8s + var(--j) * .08s); }
+.cht-ch .cht-dev-l .cht-caret { animation-delay: 2s; }
+
+/* the Enso card is not floating: no long shadow (it left a grey smudge under the header); it still lifts on hover */
+.cht-pic, .cht-pic:hover { box-shadow: none !important; }
+
+/* phones: the memory scene stacks, so the carried answer reads at a normal measure (was one word per line) */
+@media (max-width: 600px) {
+  .cht-art-memory { flex-direction: column; gap: 8px; padding: 12px; }
+  .cht-art-memory .cht-convo { flex: none; width: 100%; min-height: 0; padding: 12px 14px; gap: 8px; border-radius: 18px; }
+  .cht-art-memory .cht-convo-t { padding-bottom: 8px; font-size: 13px; }
+  .cht-art-memory .cht-convo-a, .cht-art-memory .cht-convo-pin { font-size: 13.5px; line-height: 1.45; }
+  .cht-art-memory .cht-convo-pin { padding: 8px 10px; }
+  .cht-art-memory .cht-convo-ph { display: none; }
+  .cht-art-memory .cht-carry { width: 40px; height: 40px; rotate: 90deg; }
+}
+@media (max-width: 900px) { .cht-who-go { display: inline-flex; align-items: center; min-height: 44px; } }
