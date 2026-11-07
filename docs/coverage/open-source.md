@@ -155,4 +155,4 @@ Done here: the data is Hanzo's build snapshot (no live fetch), so the page is co
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/open-source.md` verdict 8 or more — read: 5/10; every Fix (1–7) addressed in round 2, awaiting a fresh review
 
-Done here: `data-cta="open-source.hero"` and `"open-source.band"`; no tracking code on the page. `V2:` line in the top comment describes round 2. Gallery: `desktop.mp4`, `desktop.jpg`, `phone-1..3.jpg`, `click-through.jpg`, and round 2 proof `round2-desktop.jpg`, `round2-totals-desktop.jpg`, `round2-phone.jpg`.
+Done here: `data-cta="open-source.hero"` and `"open-source.band"`; no tracking code on the page. `V2:` line in the top comment describes round 2. Gallery: `desktop.mp4`, `desktop.jpg`, `phone-1..3.jpg`, `click-through.jpg`, and round 2 proof `round2-desktop.jpg`, `round2-totals-desktop.jpg`, `round2-phone.jpg`, `round2-phone-built.jpg`.

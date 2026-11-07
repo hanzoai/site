@@ -2,9 +2,9 @@
 
 Page file: `components/pages/Leaderboard.jsx` · gallery: `docs/gallery/leaderboard/` · metric id: `cta_click` on `leaderboard.hero`
 
-Open copy questions for James: the calculator's functional strings (listed in `docs/requests/leaderboard.md` item 6) wait for `content/ui-strings.json`.
-Shared changes requested (`docs/requests/leaderboard.md`): kit `Band` (line-mask reveal, `cta` prop, 52px h2, no focusable magnetic wrapper); shared greys on the Apple ramp moved to the deck; new UI strings. (The Morph freeze on in-site clicks was filed in `docs/review/SYSTEM.md`.)
-Forks this page deleted: the v1 hero `Go` pair (second outlined button became a `More` text link); its own sticky pill (AskBar now defers to the shared ask bar); the gold accent; the 128px totals; round 2: the kit `Band` (replaced by a page-local close until the kit fix lands), the black calculator result panel, the receipt's invented line labels, the infinite print-head loop.
+Open copy questions for James: none (every visible string is Hanzo's or the register's).
+Shared changes requested (`docs/requests/leaderboard.md`): kit `Band` (line-mask reveal, `cta` prop, 52px h2, no focusable magnetic wrapper); shared greys on the Apple ramp moved to the deck; PinScenes meter numerals. (The Morph freeze on in-site clicks was filed in `docs/review/SYSTEM.md`.)
+Forks this page deleted: the v1 hero `Go` pair (second outlined button became a `More` text link); its own sticky pill (AskBar now defers to the shared ask bar); the gold accent; the 128px totals; round 2: the kit `Band` (replaced by a page-local close until the kit fix lands), the black calculator result panel, the receipt's invented line labels and summed totals, the points calculator (its steppers, +100…+500 chips, credits line and sum line showed figures Hanzo never prints; it became a scrubber over the board's own volumes), the visible "Linear"/"Log" words (icon tabs now), the infinite print-head loop.
 
 ## 1. Strategy and conversion
 - [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
@@ -28,7 +28,7 @@ Done here: The order is who leads, how ranks are counted, the token board, how t
 - [x] Nothing above the h1 ("Leaderboard" is a caption under it); `PageHero` n/a until the shared part merges
 - [x] JS off: legible (0 hidden blocks measured with JS disabled); no `opacity:0` on the h1
 - [x] One idea per 100svh; heights alternate (hero, list, dark board, pinned chapters, calculator, band)
-- [x] Ends in proof (the calculator worked from the board's own rules), a band, footer
+- [x] Ends in proof (a scrubber over the board's own ten volumes), a band, footer
 - n/a Card-to-page Morph: the page has no cards that open into pages
 
 Done here: The h1 rests at 52px. At 1470x801 the whole podium and the tape's 84px total sit above the fold (pod 310 to 676, total 553 to 629); on phone the tape sits first and level, so the total (486 to 533) and the lit block (580 to 656) are inside 660px. The "Leaderboard" caption clears the h1 box by 12px. The close is page-local: "Climb the ranks. Earn AI credits." cut in by line mask at 52px in a wiped black room, with "Open bounties".
@@ -47,7 +47,7 @@ Done here: The solid fill sits in one place at a time: first the hero ask, then 
 - n/a Marquees: none
 - n/a Submit: no form
 
-Done here: Every name, total and token count is Hanzo's own (parity 94/94). The receipt prints Hanzo's four card titles and tags (+50, +100, +20, +1: 50, 150, 170, 171) and the calculator adds Hanzo's rules. Credits follow the card tags in `content/pages/leaderboard.html`: bug "+$20 AI credits" (up to $20), merged pull request "+$20 AI credits" (on Hanzo's card; the live text list de-duplicates the string, which is why the critic missed it), referral "+$5 AI credits".
+Done here: No figure is worked out on the page. A rendered-text audit at 1470 and 375 finds every visible string in `content/live/leaderboard.json`, `content/pages/leaderboard.html` or `content/ui-strings.json`. The tape prints each hunter's own lines ("+450 bounty pts", "106,039,884 tokens (#1 global)") up to Hanzo's total; the receipt prints Hanzo's four card titles and rolls each card's own points (+50, +100, +20, +1); the scrubber shows the board's own ranks, orgs and volumes. The merged pull request card keeps "+$20 AI credits": it is on Hanzo's card in `content/pages/leaderboard.html` (the live text list de-duplicates the string).
 
 ## 6. Content presentation (copy untouched)
 - [x] No text under 13px (14px on phone) except mono capitals
@@ -72,11 +72,11 @@ Done here: Apple greys replaced by the deck: quiet `#f5f5f5`, tiles `#ededed`, t
 - [x] The sheet traps focus, Esc closes it, and focus returns (`components/v2/DetailSheet.jsx`)
 - n/a Inputs: only the styled range slider and steppers
 
-Done here: The podium steps, pause, Linear/Log tabs, steppers (hover fills ink, press .97, no scale on hover), per-PR radio chips (hover fills `#ededed`), slider (ink fill track, ring on hover) and sheet each answer hover, press and focus. The lists' auto-reader steps aside while the mouse is over them, so only one row is ever filled.
+Done here: The podium steps, pause, icon Linear/Log tabs (hover fill, press .97), the scrubber's icon stepper (hover fills ink, press .97, no scale on hover), slider (ink fill track, ring on hover) and sheet each answer hover, press and focus. The lists' auto-reader steps aside while the mouse is over them, so only one row is ever filled.
 
 ## 9. Motion and interaction
 - [x] One signature (the self-adding sum) plus 3 supporting (line-mask cut-in, dark-room wipe, bars drawing); 0 fade-ups
-- [x] 4 kinds: idle (podium cycle, lists reading themselves, the calculator climbing the board once), pointer (row fill, step lift), state (pill glide, sheet, totals roll, board disclosure), scroll (pinned receipt, wipes)
+- [x] 4 kinds: idle (podium cycle, lists reading themselves, the scrubber climbing the board once), pointer (row fill, step lift), state (pill glide, sheet, totals roll, board disclosure), scroll (pinned receipt, wipes)
 - [x] Moves without input; every control answers
 - [x] Reduced motion shows final states; no `setInterval` (the cycle is a `setTimeout` chain that stops off screen)
 - n/a Sound: the shared sound kit is not merged yet
@@ -132,7 +132,7 @@ Done here: Not applicable: /leaderboard lists people and organizations, not mode
 Done here: Not applicable: the page shows no code, config or terminal.
 
 ## 17. States and resilience
-- [x] Figures are Hanzo's published board (static), so there is no loading or empty state; the calculator has edge states (steppers disable at 0/99; "#11+" when your tokens fall under the tenth org)
+- [x] Figures are Hanzo's published board (static), so there is no loading or empty state; the scrubber's stepper disables at #10 and #1
 - [x] No live data fetched, so a blocked API cannot blank the page
 - n/a Forms: none
 - [x] The shared error boundary covers a throw
