@@ -4,7 +4,7 @@ Page file: `components/pages/model/Enso.jsx` and `components/v2/Launch.jsx` · g
 
 Open copy questions for James: none decided here. The page shows Hanzo's words only; labels that sat above headlines now sit below or beside them as captions.
 Shared changes requested (`docs/requests/zen-names.md`): the desktop ask bar floats over content (Ask.jsx); the sound kit; `lib/cta.js`, `lib/track.js` and `tokens.css` are not on main yet.
-Forks this page deleted: the hand-rolled spec `<table>` and GPQA `<table>` (now `DataTable`), raw `.x-btn` asks (now `Cta`), raw `<img>`/`<video>` (now `Img`, `ModelFilm`), the old next-model card.
+Forks this page deleted: the hand-rolled spec `<table>` (then a second `DataTable`, now gone: each switchboard lane carries its tier's prices) and GPQA `<table>` (now `DataTable` in a drawer), raw `.x-btn` asks (now `Cta`), raw `<img>`/`<video>` (now `Img`, `ModelFilm`), the old next-model card.
 
 ## 1. Strategy and conversion
 - [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
@@ -31,7 +31,7 @@ Done here: the skip link in `app/layout.jsx` reaches `#main`. Every link goes th
 - [x] Ends in proof strip, `Band`, footer
 - [x] Card-to-page links use Morph; title lands within 12px (the model cards use the WebGL opener, which lands the picture as this page's hero)
 
-Done here: Enso's own film plays full-bleed under the h1 cut-in within the first second. It then settles into an ensō ring, and Hanzo's headline rises beside it. Then come the three tiers (Enso Flash, Enso Pro, Enso Ultra) pin as chapters over Enso's own film, then the live switchboard (requests route themselves to their tier; send one by hand), Hanzo's model-card grid and the `Band`. Entrance states are scoped to `html.js`.
+Done here: Enso's own film plays full-bleed under the h1 cut-in within the first second. It then settles into an ensō ring, and Hanzo's headline rises beside it. Then come the three tiers (Enso Flash, Enso Pro, Enso Ultra) pin as chapters over Enso's own film, then the dark room ("One endpoint for every frontier model." over the live switchboard: requests route themselves to their tier, each lane carries that tier's prices; send one by hand), then the GPQA figure with Enso Ultra's 98.0% leading, the Pareto plot with its Compare tour, all 17 results folded into one drawer, Hanzo's model-card grid and the `Band`. No two tables sit back to back; the white band between the drawer and the cards is about 150px (was about 300px between two tables). Entrance states are scoped to `html.js`.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -47,7 +47,7 @@ Done here: the header carries the one solid "Try Hanzo"; the page's own asks are
 - [ ] n/a: marquees pause, freeze under reduced motion, hide duplicates (no marquee)
 - [ ] n/a: Privacy link and owner line beside every submit (no form on this page)
 
-Done here: GPQA Diamond figures with one lead: Enso Ultra 98.0% alone across 8 of 13 columns (132px at 1470, 72px at 375, counting up once via kit `Stat`), Enso 96.5% and Enso Flash 95.5% stacked beside it at 32px (26px side by side on the phone), measured by computed font-size; then the Pareto chart, the sortable table (17 models, source links) and the three tiers side by side. Numbers: Hanzo's GPQA Diamond figures and tier prices ($0.33/$1.65, $4.40/$22, $5.50/$27.50 per 1M tokens), each from content/live/enso.json.
+Done here: GPQA Diamond figures with one lead: Enso Ultra 98.0% alone across 8 of 13 columns (132px at 1470, 72px at 375, counting up once via kit `Stat`), Enso 96.5% and Enso Flash 95.5% stacked beside it at 32px (26px side by side on the phone), measured by computed font-size; then the Pareto chart, and under it one "GPQA Diamond" drawer holding the sortable table (17 rows, source links). Closed, the drawer is `hidden="until-found"` with all 17 rows in the HTML (measured 0px tall, 17 `tr`); a click or `#eo-results` opens it (measured: both set `aria-expanded` true and remove `hidden`); find-in-page opens it through a `beforematch` listener (not measured headless); with JS off the server sends it open (17 rows, 1094px). The tier prices no longer repeat as a table: each switchboard lane carries its own ("$0.33 in · per 1M tokens $1.65 out 1M context"). Numbers: Hanzo's GPQA Diamond figures and tier prices ($0.33/$1.65, $4.40/$22, $5.50/$27.50 per 1M tokens), each from content/live/enso.json.
 
 ## 6. Content presentation (copy untouched)
 - [x] No text under 13px (14px phone) except mono capitals
@@ -55,7 +55,7 @@ Done here: GPQA Diamond figures with one lead: Enso Ultra 98.0% alone across 8 o
 - [x] Tables, FAQ, tabs and code use the kit parts
 - [x] `python3 scripts/parity.py /enso`: 0 missing
 
-Done here: parity text 72/72, links 11/11. Section headings rest at 26px, the settled headline at 44px, body 16px, ledes 20px. Mono captions are 12-13px; Hanzo's model-card pills are 11px mono capitals (SPEC 10px, raised one step at the critics' ask). Tables: kit `DataTable` for the GPQA results and the tiers side by side (caption, scope, sticky header). Headings use `text-wrap: balance`.
+Done here: parity text 72/72, links 11/11. Section headings rest at 26px, the settled headline at 44px, body 16px, ledes 20px. Mono captions are 12-13px; Hanzo's model-card pills are 11px mono capitals (SPEC 10px, raised one step at the critics' ask). Tables: one kit `DataTable` for the GPQA results (caption, scope, sticky header), inside a disclosure drawer under the chart. Headings use `text-wrap: balance`.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens (deck values only; `tokens.css` not on main)
@@ -73,7 +73,7 @@ Done here: `taste.py` passes on the page and shell files. Deck greys only (#0a0a
 - [x] Inputs 16px or larger; no bare `:hover` (no inputs; hovers sit in `@media (hover: hover)`)
 - [x] Forks this page deleted: listed above
 
-Done here: kit `Cta` gives hover, press (scale), focus and the leaving state. Chapter rail rows (01 Enso Flash, 02 Enso Pro, 03 Enso Ultra) step in 6px and darken on hover (measured transform matrix(1,0,0,1,6,0)) and press to scale .97; the chapter links underline on hover; links of chapters not being read go `visibility: hidden` after their fade, so no invisible link sits under the live one. The × close takes the kit hover page-locally (background .14 to .3 white, rim .22 to .55, measured) beside its quarter turn. Page hovers apply under `(hover: hover), not all and (pointer: coarse)`, so every mouse or trackpad gets them and fingers do not. Model cards tilt on fine pointers and press to .98. Focus uses the shared ring.
+Done here: kit `Cta` gives hover, press (scale), focus and the leaving state. Chapter rail rows (01 Enso Flash, 02 Enso Pro, 03 Enso Ultra) step in 6px and darken on hover (measured transform matrix(1,0,0,1,6,0)) and press to scale .97; the chapter links underline on hover; links of chapters not being read go `visibility: hidden` after their fade, so no invisible link sits under the live one. The × close takes the kit hover page-locally (background .14 to .3 white, rim .22 to .55, measured) beside its quarter turn. Page hovers apply under `(hover: hover), not all and (pointer: coarse)`, so every mouse or trackpad gets them and fingers do not. Model cards tilt on fine pointers and press to .98: the tilt owns the inline `transform`, so /enso adds the press as the `scale` property (measured during mousedown: computed `scale` 0.98, bounding width ratio 0.980). The "GPQA Diamond" drawer button turns its plus on hover and nudges 1px on press. Focus uses the shared ring.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -98,7 +98,7 @@ Done here: Hanzo's own films are unfiltered; the only dimming is a gradient unde
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: at 375 nothing pins. The stage settles by itself 1.1s after arrival, and the camera pans the subject into the shape. Chapters become picture-then-words, and the grids stack to 2 columns. scrollWidth equals innerWidth at 375. The first-screen ask sits under the name inside the first screen.
+Done here: targets measured at 375×812 (Playwright, isMobile): the four GPQA source marks (↗, 9×18px boxes) and "Source" each carry a centred 44×44px `::after`; "All Enso models" (132×21px box) and the hero "Docs on GitHub" carry a 44px-tall `::after`. For each, points 20px above, below, left and right of centre resolve to the link itself (elementFromPoint, 4/4 and 5/5 with the centre). The drawer button is full width and 44px tall at 375, the chapter links and request chips 44px. A sweep of every visible link and button in `main` at 375 (box height or absolute `::after` height) found none under 44px. At 375 nothing pins. The stage settles by itself 1.1s after arrival (a 2s hold is requested in `docs/requests/enso.md`: the delay is in shared `Launch.jsx`), and the camera pans the subject into the shape. Chapters become picture-then-words, and the grids stack to 2 columns. scrollWidth equals innerWidth at 375. The first-screen ask sits under the name inside the first screen.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
