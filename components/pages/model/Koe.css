@@ -16,10 +16,35 @@
 .ko-presets { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 14px 22px 20px; }
 .ko-presets .mb-mono { margin: 0; }
 .ko-v2 { left: auto; right: max(24px, calc((100% - var(--wrap)) / 2)); width: min(50%, 620px); }
+/* the close: white on the film, ink once the film has settled onto the white page (it sat white on white before);
+   hover inverts it, press is Launch's scale */
+.lv:has(.ko-v2) .lv-close { transition: background-color .2s cubic-bezier(0, 0, .2, 1), border-color .2s cubic-bezier(0, 0, .2, 1), color .2s cubic-bezier(0, 0, .2, 1); }
+.ko-v2[data-on] ~ .lv-close { color: #0a0a0a; background: rgba(255, 255, 255, .8); border-color: rgba(0, 0, 0, .14); }
+@media (hover: hover) {
+  .lv:has(.ko-v2) .lv-close:hover { background: #fafafa; border-color: #fafafa; color: #0a0a0a; }
+  .ko-v2[data-on] ~ .lv-close:hover { background: #0a0a0a; border-color: #0a0a0a; color: #fafafa; }
+}
+.lv:has(.ko-v2) .lv-close:active { background: #e5e5e5; }
+.ko-v2[data-on] ~ .lv-close:active { background: #262626; color: #fafafa; }
+
+/* phones: the capsule keeps speaking after it settles (Meter in Koe.jsx) and the film breathes inside it */
+.ko-pill { position: absolute; overflow: hidden; pointer-events: none; }
+.ko-sweep { position: absolute; top: 0; bottom: 0; left: 0; width: 2px; background: rgba(255, 255, 255, .85); box-shadow: 0 0 0 1px rgba(0, 0, 0, .2); animation: ko-sweep 6s linear infinite; }
+@keyframes ko-sweep { from { transform: translateX(0); } to { transform: translateX(var(--pw)); } }
+.ko-meter { position: absolute; left: 50%; bottom: 16%; display: flex; align-items: center; gap: 4px; height: 34px; transform: translateX(-50%); }
+.ko-meter i { display: block; width: 3px; height: 100%; border-radius: 2px; background: #fafafa; transform: scaleY(.12); animation: ko-level 1s cubic-bezier(.4, 0, .2, 1) infinite alternate; }
+@keyframes ko-level { from { transform: scaleY(.1); opacity: .55; } to { transform: scaleY(var(--a)); opacity: 1; } }
+[data-mpaused] .ko-pill i, [data-mpaused] .lv:has(.ko-v2) .lv-film-in > * { animation-play-state: paused !important; }
+@media (prefers-reduced-motion: reduce) { .ko-pill { display: none; } }
+
 @media (max-width: 900px) {
-  .ko-v2 { left: 20px; right: 20px; width: auto; }
+  .ko-v2 { left: 20px; right: 20px; width: auto; top: calc(47% + 28px); bottom: auto; }
+  .lv[data-narrow]:has(.ko-v2) .lv-film-in > :is(img, video) { animation: ko-breathe 7s ease-in-out infinite alternate; }
   .ko-wave { height: 160px; margin: 0 12px; }
   .ko-top { padding: 12px 14px; }
   .ko-script { padding: 20px 14px 6px; }
   .ko-presets { padding: 12px 14px 16px; }
 }
+@media (max-width: 900px) and (max-height: 700px) { .ko-v2 { top: calc(41% + 24px); } }
+@keyframes ko-breathe { from { transform: scale(1); } to { transform: scale(1.1) translateY(-2%); } }
+@media (prefers-reduced-motion: reduce) { .lv:has(.ko-v2) .lv-film-in > * { animation: none !important; } }

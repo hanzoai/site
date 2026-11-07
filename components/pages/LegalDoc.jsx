@@ -14,17 +14,18 @@
    progress, and the percentage read counts beside it.
    Beyond: find in this document. Type a word and the contents show how often each section says it, the matches light
    up in the text, and sections without it dim, so you can go straight to the clause you came for.
-   Motion, not only scroll: idle (the cover turns through its clauses, its contour drifts), pointer (index rows preview
+   Motion, not only scroll: idle (the cover masks through its clauses, its contour drifts), pointer (index rows preview
    their clause, sibling rail drags with inertia), state (marker springs, find lights and dims), time (the cover's
    timing bar), scroll (rail line and percentage). 0 UI hues: ink, greys, white.
    Ledger: deletes the "Legal" kicker over the title, the invented "sections" and "min read" figures, the accent colour,
    and the find feature's invented sentences (numbers now, names from content/ui-strings.json).
-   V2: 8/10 display title beside its lede and dates, a cover that reads its own clauses (hover previews any), 0-hue ink reading room with number plates, register-named find, sibling documents that open */
+   V2: 8/10 the cover plate turns inside one stable node (masks out, masks in; a finger pauses it), its numeral 44px so the title leads, whole first sentences only, no invented numbers; the rail keeps the reader's row a third down; Hanzo's tables fit the reading column and stack as cards on phones; one index on phones with a chevroned Contents; ink 44px clear and copy controls; print sheet; reduced motion settled at first paint */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useMotionValueEvent, useScroll, useReducedMotion } from 'motion/react';
 import Sigil from '../Sigil';
 import { A, DataTable } from '../kit';
-import { Nodes, Node, CopyLink, split } from './DocNodes';
+import { Nodes, Node, split } from './DocNodes';
+import { play } from '../../lib/sound';
 import { useArrival } from './doorway';
 import FamLines from '../v2/FamLines';
 import FamStage from '../v2/FamStage';
@@ -46,6 +47,28 @@ export function Paper({ children }) {
       </div>
       <span className="xlg-sheet xlg-sheet-b" />
     </div>
+  );
+}
+
+/* the section's copy link (a legal-local copy of DocNodes' CopyLink): 44px on every pointer, it scales in with the
+   heading's hover (not an opacity-only fade), and its confirmation is a check in an ink disc to its LEFT, so it never
+   leaves the screen on a phone. Names from content/ui-strings.json; no unregistered sentence. */
+function LCopy({ id }) {
+  const [ok, setOk] = useState(false);
+  const t = useRef(0);
+  return (
+    <button type="button" className="xlg2-cl" aria-label={ui('int_copy')} data-ok={ok || undefined}
+      onClick={async () => {
+        const url = location.origin + location.pathname + '#' + id;
+        try { await navigator.clipboard.writeText(url); } catch { /* blocked: the mark still confirms the press */ }
+        history.replaceState(null, '', '#' + id);
+        setOk(true); play('chime');
+        clearTimeout(t.current);
+        t.current = setTimeout(() => setOk(false), 1600);
+      }}>
+      <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M6.8 9.2a2.6 2.6 0 0 0 3.7 0l2-2a2.6 2.6 0 0 0-3.7-3.7l-.6.6M9.2 6.8a2.6 2.6 0 0 0-3.7 0l-2 2a2.6 2.6 0 0 0 3.7 3.7l.6-.6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+      <span className="xlg2-cl-ok" aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
+    </button>
   );
 }
 
@@ -77,9 +100,10 @@ function Rail({ toc, active, art }) {
   // the rail follows the reader: the active row is kept inside the rail's own view
   useEffect(() => {
     const box = rail.current, a = box && box.querySelector('a[aria-current]');
-    if (!a || box.scrollHeight <= box.clientHeight) return;
+    if (!a || box.scrollHeight <= box.clientHeight || matchMedia('(max-width: 900px)').matches) return;
     const r = a.getBoundingClientRect(), b = box.getBoundingClientRect();
-    if (r.top < b.top + 64 || r.bottom > b.bottom - 64) box.scrollTo({ top: box.scrollTop + (r.top - b.top) - b.height / 2 + r.height / 2, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    // the active row rides about a third of the way down the rail
+    box.scrollTo({ top: box.scrollTop + (r.top - b.top) - b.height / 3 + r.height / 2, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   }, [active]);
   const { scrollYProgress } = useScroll({ target: art, offset: ['start 35%', 'end 65%'] });
   const pct = useRef(null);
@@ -87,6 +111,8 @@ function Rail({ toc, active, art }) {
   const det = useRef(null);
   const [q, setQ] = useState('');
   const [hits, setHits] = useState(null);
+  const inp = useRef(null);
+  const clear = () => { setQ(''); setHits(find(art, '')); if (inp.current) inp.current.focus(); };
   useEffect(() => { if (matchMedia('(max-width: 900px)').matches && det.current) det.current.open = false; }, []);
   useEffect(() => () => { if (typeof CSS !== 'undefined' && CSS.highlights) CSS.highlights.delete('xlg-find'); }, []);
   const total = hits ? Object.values(hits).reduce((a, b) => a + b, 0) : 0;
@@ -95,17 +121,28 @@ function Rail({ toc, active, art }) {
     <aside ref={rail} className="xlg-rail xlg2-rail">
       <details open ref={det} className="xlg-det">
         <summary onClick={(e) => { if (matchMedia('(min-width: 901px)').matches) e.preventDefault(); }}>
-          <h2>{ui('contents')}</h2>
+          <h2 className="xlg2-sum-h">
+            <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M3 5h2M3 10h2M3 15h2M8 5h9M8 10h9M8 15h6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
+            <span className="x-sr">{ui('contents')}</span>
+          </h2>
           <span className="xlg-pct x-mono" ref={pct} aria-hidden="true">0%</span>
+          <svg className="xlg2-chev" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </summary>
         {/* inline: the CSS build cannot parse ::highlight() yet */}
         <style>{'::highlight(xlg-find){background:rgba(0,0,0,.14)}'}</style>
         <div className="xlg-find">
+          <div className="xlg2-find-row">
           <label className="xlg2-find-f">
             <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M12.5 12.5 17 17" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
-            <input type="search" value={q} onChange={(e) => { setQ(e.target.value); setHits(find(art, e.target.value)); }} aria-label={ui('find')} />
+            <input ref={inp} type="search" value={q} onChange={(e) => { setQ(e.target.value); setHits(find(art, e.target.value)); }} onKeyDown={(e) => { if (e.key === 'Escape' && q) { e.preventDefault(); clear(); } }} aria-label={ui('find')} />
           </label>
-          <p className="x-mono xlg2-find-r" aria-live="polite">{hits ? (total ? <><b>{total}</b><span aria-hidden="true"> · {where}/{toc.length}</span><span className="x-sr"> · {where} {ui('of')} {toc.length}</span></> : ui('not_found')) : ''}</p>
+          {q && (
+            <button type="button" className="xlg2-clear" aria-label={ui('c4_reset')} onClick={clear}>
+              <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></svg>
+            </button>
+          )}
+          </div>
+          <p className="x-mono xlg2-find-r" aria-live="polite">{hits ? (total ? <><b>{total}</b><span aria-hidden="true"> · {where}/{toc.length}</span><span className="x-sr"> · {where} {ui('of')} {toc.length}</span></> : <><b aria-hidden="true">0</b><span className="x-sr">{ui('not_found')}</span></>) : ''}</p>
         </div>
         <div className={'xlg-track' + (hits ? ' finding' : '')}>
           <span className="xlg-line" aria-hidden="true"><motion.i style={{ scaleY: scrollYProgress }} /></span>
@@ -145,7 +182,11 @@ function Table({ n, caption }) {
   return <DataTable caption={caption || heads.join(' · ')} cols={cols} rows={rows} className="xlg2-dt" />;
 }
 /* a section's nodes, with its tables through DataTable */
-const Prose = ({ nodes, caption }) => nodes.map((n, i) => (isEl(n) && n.t === 'table' ? <Table key={i} n={n} caption={caption} /> : <Node key={i} n={n} />));
+const Prose = ({ nodes, caption }) => nodes.map((n, i) => {
+  if (isEl(n) && n.t === 'table') return <Table key={i} n={n} caption={caption} />;
+  if (isEl(n) && n.t === 'h3') { const id = n.a && n.a.id; return <h3 key={i} id={id} className="xlg-hd"><Nodes nodes={n.c} />{id && <LCopy id={id} />}</h3>; }
+  return <Node key={i} n={n} />;
+});
 
 function Section({ s, i, on }) {
   const [num, text] = s.title ? split(s.title) : [null, null];
@@ -155,7 +196,7 @@ function Section({ s, i, on }) {
         <h2 id={s.id} className="xlg-hd xlg2-h2">
           {num && <span className="xlg2-n v2f-num">{num}</span>}
           <span className="xlg2-t">{text}</span>
-          <CopyLink id={s.id} />
+          <LCopy id={s.id} />
         </h2>
       )}
       <div className="xlg-prose xlg2-prose"><Prose nodes={s.nodes} caption={s.title} /></div>
@@ -163,13 +204,17 @@ function Section({ s, i, on }) {
   );
 }
 
-/* a clause's first sentence, Hanzo's own words, for the cover's preview */
-const plain = (nodes) => nodes.map((n) => (typeof n === 'string' ? n : n.t === 'h3' || n.t === 'table' ? ' ' : plain(n.c || []) + ' ')).join('');
+/* a clause's first sentence, Hanzo's own words, for the cover's preview: the first whole sentence of its first paragraph,
+   ending on its full stop (not after "Inc."), short enough to show whole. Never cut at ":" or ";", never an added "…":
+   when no such sentence exists the plate shows the clause's own title instead (''). */
+const plain = (nodes) => nodes.map((n) => (typeof n === 'string' ? n : n.t === 'table' ? ' ' : plain(n.c || []))).join('');
 const firstSentence = (nodes) => {
-  const t = plain(nodes).replace(/\s+/g, ' ').trim();
-  // a whole sentence, ending on its full stop (not after "Inc."), never cut mid-way; a list that opens on a colon reads to its first item's end
-  const m = /^(.{40,320}?[a-z0-9)"”’][.!?])(\s|$)/.exec(t);
-  return m ? m[1] : t.length <= 320 ? t : t.slice(0, t.lastIndexOf(' ', 320)) + ' …';
+  const p = nodes.find((n) => isEl(n) && n.t === 'p');
+  if (!p) return '';
+  const t = plain(p.c).replace(/\s+/g, ' ').trim();
+  const m = /^(.{24,}?[a-z0-9)"”’](?<!\bInc|\bLtd|\bCo|\be\.g|\bi\.e|\bvs)[.!?])(\s|$)/.exec(t);
+  const out = m ? m[1] : /[.!?]$/.test(t) ? t : '';
+  return out.length <= 200 ? out : '';
 };
 
 /* the cover: the document as an object. Its contour, and a plate that turns through its clauses by itself (number
@@ -189,25 +234,42 @@ function Cover({ doc }) {
     const t = setInterval(() => { if (seen && !document.hidden) setAt((k) => (k + 1) % secs.length); }, 3400);
     return () => { clearInterval(t); io.disconnect(); };
   }, [calm, held, secs.length]);
-  const cur = secs[at] || secs[0];
-  const pick = (k) => { setAt(k); setHeld(true); };
-  // the same element stays; the new clause rises into it (a remount would kill a swipe that started on the card)
+  // the plate turns inside one stable node: the old clause masks up and out, then the next masks in from below
+  // (no remount, so a swipe that starts on the card survives the turn)
+  const [shown, setShown] = useState(0);
   const read = useRef(null);
-  const first = useRef(true);
   useEffect(() => {
-    if (first.current) { first.current = false; return; }
-    if (calm || !read.current || !read.current.animate) return;
-    read.current.animate([{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 520, easing: 'cubic-bezier(.16,1,.3,1)' });
-  }, [at, calm]);
+    if (at === shown) return;
+    const el = read.current;
+    if (calm || !el || !el.animate) { setShown(at); return; }
+    let live = true;
+    const o = el.animate([{ clipPath: 'inset(0 0 0 0)', transform: 'none' }, { clipPath: 'inset(0 0 100% 0)', transform: 'translateY(-10px)' }], { duration: 220, easing: 'cubic-bezier(.4,0,1,1)', fill: 'forwards' });
+    o.onfinish = () => {
+      if (!live) return;
+      setShown(at);
+      requestAnimationFrame(() => {
+        if (!live) return;
+        el.animate([{ clipPath: 'inset(100% 0 0 0)', transform: 'translateY(12px)' }, { clipPath: 'inset(0 0 0 0)', transform: 'none' }], { duration: 460, easing: 'cubic-bezier(.16,1,.3,1)' });
+        o.cancel();
+      });
+    };
+    return () => { live = false; };
+  }, [at, shown, calm]);
+  const cur = secs[shown] || secs[0];
+  const pick = (k) => { setAt(k); setHeld(true); };
+  // a finger on the cover pauses the turning (and it picks up again a while after)
+  const rest = useRef(0);
+  const touch = () => { setHeld(true); clearTimeout(rest.current); rest.current = setTimeout(() => setHeld(false), 8000); };
+  useEffect(() => () => clearTimeout(rest.current), []);
   return (
-    <div ref={box} className="xlg2-cover v2f-obj" onPointerLeave={() => setHeld(false)}>
+    <div ref={box} className="xlg2-cover v2f-obj" onPointerLeave={(e) => e.pointerType === 'mouse' && setHeld(false)} onTouchStart={touch}>
       <div className="xlg2-cover-l" aria-hidden="true">
         <Sigil seed={'/legal/' + doc.slug} data={[doc.toc.length, doc.sections.length, doc.others.length]} className="xlg2-sigil" />
         {cur && (
           <div className="xlg2-read" ref={read}>
             {cur.num ? <span className="xlg2-read-n v2f-num">{cur.num}</span> : <span className="xlg2-read-h">{cur.text}</span>}
-            <p className="xlg2-read-t">{cur.first}</p>
-            {!calm && !held && secs.length > 1 && <i className="xlg2-read-bar" />}
+            <p className="xlg2-read-t">{cur.num ? cur.first || cur.text : cur.first}</p>
+            {!calm && !held && secs.length > 1 && <i key={at} className="xlg2-read-bar" />}
           </div>
         )}
       </div>
@@ -217,7 +279,7 @@ function Cover({ doc }) {
             const [num, text] = split(t.label);
             return (
               <li key={t.id}>
-                <a href={'#' + t.id} className={t.k === at ? 'on' : undefined} onPointerEnter={(e) => e.pointerType === 'mouse' && pick(t.k)} onFocus={() => pick(t.k)}>
+                <a href={'#' + t.id} className={t.k === at ? 'on' : undefined} data-cta={'legal.clause.' + doc.slug} onPointerEnter={(e) => e.pointerType === 'mouse' && pick(t.k)} onFocus={() => pick(t.k)}>
                   <span className="xlg2-ix-n x-mono" aria-hidden="true">{num || '·'}</span>
                   <span className="xlg2-ix-t">{num ? <><span className="x-sr">{num} </span>{text}</> : t.label}</span>
                 </a>
@@ -247,13 +309,13 @@ export default function LegalDoc({ doc, peek = {} }) {
       const w = t.closest('.x-table-wrap'); if (w) { w.setAttribute('data-cards', ''); w.setAttribute('data-cursor', ''); }
     });
     // the page's metric: a click on one of the document's own contact addresses
-    art.current.querySelectorAll('a[href^="mailto:"]').forEach((a) => a.setAttribute('data-cta', 'legal.contact'));
+    art.current.querySelectorAll('a[href^="mailto:"]').forEach((a) => a.setAttribute('data-cta', 'legal.contact.' + doc.slug));
     return () => io.disconnect();
   }, [doc.slug]);
   const size = doc.title.length <= 14 ? '' : doc.title.length <= 26 ? ' mid' : ' small';
   let n = 0;
   return (
-    <main className="v2f xlg xlg-doc xlg2" data-ask="off">
+    <main id="main" className="v2f xlg xlg-doc xlg2" data-ask="off">
       <section className="xlg2-stage" aria-labelledby="xlg-h1">
         <div className="v2f-wrap v2f-grid xlg2-top">
           <div className="xlg2-head">

@@ -15,7 +15,7 @@
    opening from a rounded card, is the config. Every word is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
-import { A, Cta, Band, CodeBlock } from '../kit';
+import { A, Cta, CodeBlock } from '../kit';
 import A2Lines from '../v2/A2Lines';
 import A2Paste from '../v2/A2Paste';
 import A2Pause from '../v2/A2Pause';
@@ -164,9 +164,11 @@ function Parts() {
           {PARTS.map(([t, d], i) => (
             <li key={t} className="mcp-sheet" style={{ '--i': i }}>
               <div className="mcp-sheet-copy">
-                <h2 className="a2-headline">{t}</h2>
+                <div className="mcp-sheet-head">
+                  <h2 className="a2-headline">{t}</h2>
+                  <span className="mcp-sheet-n x-mono">{String(i + 1).padStart(2, '0')} / 03</span>
+                </div>
                 <p className="a2-body">{d}</p>
-                <span className="mcp-sheet-n x-mono">{String(i + 1).padStart(2, '0')} / 03</span>
               </div>
               <div className="mcp-sheet-art" aria-hidden="true"><PartArt i={i} /></div>
             </li>
@@ -321,28 +323,57 @@ function Config() {
   );
 }
 
-/* Get it: the repository card and the other ways in, quiet; the Band below carries the one ask. */
-function Add() {
+/* The close: one solid ask on a light stage beside the repository card, where a terminal types the one command.
+   The header's ask goes quiet while "Browse All Tools" is on screen (it is marked as the hero ask's twin), so one
+   solid shows at a time. "Deploy to Cloud" is outlined. */
+const RUN = 'npx -y hanzo mcp';
+function Typed() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount: 0.4 });
+  const calm = useReducedMotion();
+  const [k, setK] = useState(calm ? RUN.length : 0);
+  useEffect(() => {
+    if (calm) { setK(RUN.length); return; }
+    if (!seen) return;
+    const t = setTimeout(() => setK((v) => (v >= RUN.length + 24 ? 0 : v + 1)), k === 0 ? 600 : 70);
+    return () => clearTimeout(t);
+  }, [k, seen, calm]);
+  const n = Math.min(k, RUN.length);
   return (
-    <section className="a2-sec mcp-add" aria-labelledby="mcp-get-h">
-      <div className="a2-wrap a2-grid">
-        <div className="mcp-add-copy">
-          <p className="mcp-add-more"><span className="a2-kick">MCP</span><A to={DOCS} className="mcp-docs">MCP docs →</A></p>
+    <p className="mcp-typed x-mono" ref={ref} aria-hidden="true">
+      <span className="mcp-typed-p">$</span>{RUN.slice(0, n)}<i className={'mcp-caret' + (n === RUN.length ? ' on' : '')} />
+      <span className={'mcp-typed-ok' + (n === RUN.length && k > RUN.length + 4 ? ' on' : '')}><span className="mcp-live" />hanzo mcp<span>stdio</span></span>
+    </p>
+  );
+}
+
+function Close() {
+  return (
+    <section className="a2-sec mcp-close" aria-labelledby="mcp-close-h" data-ask-hide="">
+      <div className="a2-wrap a2-grid mcp-close-grid">
+        <div className="mcp-close-copy">
+          <A2Lines id="mcp-close-h" className="a2-display mcp-close-h" lines={['Add Hanzo MCP', 'to your client']} />
+          <p className="a2-lede mcp-close-l">One block in .mcp.json, or connect over streamable HTTP at api.hanzo.ai/v1/mcp.</p>
+          <div className="mcp-close-acts">
+            <Cta to={ALL} id="mcp.close" size="lg" data-thumb="Browse 260+ tools">Browse All Tools</Cta>
+          </div>
+          <p className="mcp-add-more"><span className="a2-kick">MCP</span><A to={DOCS} className="mcp-docs">MCP docs <span aria-hidden="true">→</span></A></p>
           <div className="mcp-add-links">
-            <Cta to={GH} kind="link">GitHub</Cta>
-            <Cta to="https://platform.hanzo.ai" kind="link">Hanzo Platform</Cta>
+            <Cta to={GH} kind="link" id="mcp.close-github">GitHub</Cta>
+            <Cta to="https://platform.hanzo.ai" kind="link" id="mcp.close-platform">Hanzo Platform</Cta>
           </div>
         </div>
-        <div className="mcp-repo">
+        <motion.div className="mcp-repo" initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: T.slower, ease: EMPH }}>
           <h2 id="mcp-get-h" className="a2-headline">Get MCP</h2>
           <p>Model Context Protocol — 260+ tools</p>
           <dl className="x-mono"><div><dt>License:</dt><dd>Apache-2.0</dd></div><div><dt>★</dt><dd>8 stars</dd></div></dl>
+          <Typed />
+          <A to={GH} className="mcp-gh x-mono">hanzoai/mcp</A>
           <div className="mcp-repo-acts">
-            <A to={GH} className="mcp-gh x-mono">hanzoai/mcp</A>
-            <Cta to="https://platform.hanzo.ai/deploy" kind="quiet">Deploy to Cloud</Cta>
-            <Cta to={DOCS} kind="link">Self-host</Cta>
+            <Cta to="https://platform.hanzo.ai/deploy" kind="quiet" id="mcp.close-deploy">Deploy to Cloud</Cta>
+            <Cta to={DOCS} kind="link" id="mcp.close-selfhost">Self-host</Cta>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -357,8 +388,7 @@ export default function McpPage() {
       <A2Paste name="MCP" text="Read https://hanzo.ai/skill.md and use Hanzo MCP in my project. Start with: hanzo mcp create" />
       <Domains />
       <Config />
-      <Add />
-      <Band title="Add Hanzo MCP to your client" lede="One block in .mcp.json, or connect over streamable HTTP at api.hanzo.ai/v1/mcp." action="Browse All Tools" to={ALL} />
+      <Close />
     </main>
   );
 }

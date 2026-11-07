@@ -1,16 +1,18 @@
 'use client';
-/* Persona: buyers, security and legal reviewers, and users checking their terms. Goal: reach the right document in one step. CTA: none (legal pages carry no ask; PLAN-COMPONENTS 2.4), so the ask bar is off. Metric: document open.
-   /legal, the Trust Center. V2: 7/10 a pile of paper that deals itself (the top sheet leaves on top, then tucks under), a ruled index filtered by chips, the four data-use states as a ladder, calm contact rows; greys only
-   Signature: the documents as a stack of paper that deals itself. The top sheet slides to the back every few seconds
-   and the next document comes up, each with its own address on hanzo.ai/legal.
+/* Persona: buyers, security and legal reviewers, and users checking their terms. Goal: reach the right document in one step. CTA: none (legal pages carry no ask; PLAN-COMPONENTS 2.4), so the ask bar is off. Metric: document open (data-cta legal.doc.<slug>).
+   /legal, the Trust Center. V2: 8/10 the deal is a real deal (the top sheet leaves on top, x -110% and -8deg, then tucks under; the next comes up 200ms later), the pile stays inside its sheets with the pause on the pile's corner, index rows arrive once, an opaque chip bar that draws its hairline only when stuck, group h2s, print and no-JS sheets; greys only
+   Signature: the documents as a stack of paper that deals itself. Every few seconds the top sheet travels out on top, then
+   slides in under the pile, and the next document comes forward, each with its own address on hanzo.ai/legal.
    Beyond: "Find the one you need". Filter the twelve documents by kind (Agreements, Policies, Notices and registers)
-   and the cards re-flow; every card opens into its document.
-   Motion budget: signature = the dealing stack; supporting = Settle, layout re-flow (filter), open-into-page
-   (Morph navigation). No springs. Utility archetype: calm, precise, one delight. Colour: none (0 UI hues). The stack has a pause
-   button. Every word and link is Hanzo's. */
-import { useEffect, useState } from 'react';
+   in a ruled index; each row previews its address on hover and opens into its document.
+   Motion budget: signature = the dealing stack; supporting = LineMask cut-ins, Settle, rows rising once, the ladder growing,
+   open-into-page (Morph navigation). No springs. Utility archetype: calm, precise, one delight. Colour: none (0 UI hues).
+   The stack has a pause button. Every word and link is Hanzo's.
+   Ledger: deletes the 3-up grey boxes, the second black pill, the sepia accent and the stamp on every sheet. */
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { EASE } from '../ui';
+import { play } from '../../lib/sound';
 import { A } from '../kit';
 import { Nodes } from './DocNodes';
 import { useArrival } from './doorway';
@@ -82,6 +84,14 @@ function Card({ it, group }) {
 
 function Catalogue({ groups }) {
   const [on, setOn] = useState('all');
+  const [stuck, setStuck] = useState(false);
+  const pin = useRef(null);
+  // the chip bar draws its hairline only once it is stuck under the header
+  useEffect(() => {
+    const el = pin.current; if (!el) return;
+    const io = new IntersectionObserver(([e]) => setStuck(!e.isIntersecting && e.boundingClientRect.top < 80), { rootMargin: '-61px 0px 0px 0px' });
+    io.observe(el); return () => io.disconnect();
+  }, []);
   const all = groups.flatMap((g) => g.items.map((it) => ({ ...it, g })));
   // #agreements, #policies … pick their chip
   useEffect(() => {
@@ -92,10 +102,11 @@ function Catalogue({ groups }) {
   return (
     <section className="w2-sec lgi-cat">
       <div className="w2-wrap">
-        <div className="lgi-chips">
-          <button type="button" aria-pressed={on === 'all'} onClick={() => setOn('all')}>All <span className="x-mono">{all.length}</span></button>
+        <span ref={pin} className="lgi-pin" aria-hidden="true" />
+        <div className="lgi-chips" data-stuck={stuck || undefined}>
+          <button type="button" aria-pressed={on === 'all'} onClick={() => { setOn('all'); play('tick'); }}>All <span className="x-mono">{all.length}</span></button>
           {groups.map((g) => (
-            <button key={g.id} type="button" aria-pressed={on === g.id} onClick={() => setOn(g.id)}>
+            <button key={g.id} type="button" aria-pressed={on === g.id} onClick={() => { setOn(g.id); play('tick'); }}>
               <span className="lgi-chip-t">{g.title}</span><span className="x-mono">{g.items.length}</span><span id={g.id} className="lgi-anchor" />
             </button>
           ))}

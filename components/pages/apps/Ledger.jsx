@@ -15,8 +15,8 @@
    switch in the dark room (state, a gliding pill); headlines cut into their line. The request lives in a sheet.
 V2: 8/10 deck scale (h1 52, headings 26, one figure big per screen), the live book beside the title at both sizes, chapters stacked on phones, the receipt close; greys only, no springs, nothing floating
 */
-import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence, useScroll, useTransform, useInView, useReducedMotion, animate } from 'motion/react';
 import { EASE } from '../../ui';
 import { A, More, Cta } from '../../kit';
 import { Code, useLive } from '../cloud/Frame';
@@ -57,7 +57,7 @@ function Book() {
   const [ref, seen, calm] = useLive(0.2);
   const [held, setHeld] = useState(false);
   const [pt, setPt] = useState(null); // what the pointer is on: { tx } or { acct }
-  const live = seen && !held;
+  const live = seen && !held && !pt; // reading a row holds the page still under the pointer
   const [at, setAt] = useState(0);
   const [f, setF] = useState(2);
   useEffect(() => { if (calm) { setAt(0); setF(2); } }, [calm]);
@@ -74,6 +74,12 @@ function Book() {
   const ptTx = pt?.tx && fr.j.find((t) => t.id === pt.tx);
   const hot = new Set(ptTx ? touched(ptTx) : pt?.acct != null ? [pt.acct] : lastTx && !fr.bad ? touched(lastTx) : []);
   const lit = (t) => (pt?.tx === t.id) || (pt?.acct != null && touched(t).includes(pt.acct));
+  useEffect(() => { if (pt?.tx && !ptTx) setPt(null); }, [pt, ptTx]);
+  // the hover detail: what the row (or account) you are on did, in the book's own terms
+  const ptAcctTx = pt?.acct != null ? fr.j.filter((t) => touched(t).includes(pt.acct)) : [];
+  const read = ptTx ? 'tx ' + ptTx.id + ' · ' + [...new Set(touched(ptTx))].map((i) => '@' + ACC[i]).join(' · ') + ' · Σ 0'
+    : pt?.acct != null ? '@' + ACC[pt.acct] + ' · ' + fmt(fr.b[pt.acct]) + (ptAcctTx.length ? ' · ' + ptAcctTx.map((t) => 'tx ' + t.id).join(', ') : '') : null;
+  const note = read || fr.n;
   return (
     <div className="ld-book bz-obj" ref={ref}>
       <div className="ld-bar">
@@ -124,7 +130,7 @@ function Book() {
             </AnimatePresence>
           </ol>
           <AnimatePresence mode="wait" initial={false}>
-            <motion.p key={at + '-' + f} className={'ld-note x-mono' + (fr.bad ? ' bad' : '')} initial={{ opacity: 0, y: 8 }} animate={{ opacity: fr.n ? 1 : 0, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.15 } }} transition={{ duration: 0.4, ease: EASE }}>{fr.n || ' '}</motion.p>
+            <motion.p key={read ? 'pt-' + read : at + '-' + f} className={'ld-note x-mono' + (fr.bad && !read ? ' bad' : '') + (read ? ' read' : '')} initial={{ opacity: 0, y: 8 }} animate={{ opacity: note ? 1 : 0, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.15 } }} transition={{ duration: 0.3, ease: EASE }}>{note || ' '}</motion.p>
           </AnimatePresence>
         </div>
       </div>
@@ -251,7 +257,7 @@ function Caps() {
         <div className="ld-caps-tabs" role="tablist" aria-label="Capabilities" onKeyDown={key}>
           {CAPS.map(([g], k) => (
             <button key={g} type="button" role="tab" id={'ld-cap-t' + k} aria-selected={i === k} aria-controls={'ld-cap-p' + k} tabIndex={i === k ? 0 : -1} onClick={() => setI(k)} className="x-mono">
-              {i === k && <motion.span layoutId="ld-cap-pill" className="ld-caps-pill" transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }} />}
+              {i === k && <motion.span layoutId="ld-cap-pill" className="ld-caps-pill" transition={{ duration: 0.3, ease: EASE }} />}
               <span>{g}</span>
             </button>
           ))}
@@ -335,11 +341,13 @@ function Numscript() {
     <section className="bz-sec ld-nsec" aria-labelledby="ld-ns-h">
       <div className="bz-wrap bz-grid">
         <div className="ld-nsec-copy">
-          <BizLines id="ld-ns-h" className="bz-display sm" lines={['One transaction,', 'however many', 'parties']} />
-          <p className="bz-kick">Numscript</p>
-          <BizSheet label="See the request" kick="bash" title="One transaction, however many parties">
-            <Code tabs={[{ k: 'bash', code: CODE }]} light mark="Idempotency-Key: order_42_payout" />
-          </BizSheet>
+          <BizLines id="ld-ns-h" className="bz-headline ld-ns-h" lines={['One transaction, however many parties']} />
+          <p className="bz-kick ld-cap-under">Numscript</p>
+          <div data-cursor="" className="ld-sheet">
+            <BizSheet label="See the request" title="One transaction, however many parties">
+              <Code tabs={[{ k: 'bash', code: CODE }]} light mark="Idempotency-Key: order_42_payout" />
+            </BizSheet>
+          </div>
         </div>
         <div className="ld-nsec-obj"><Splitter /></div>
       </div>

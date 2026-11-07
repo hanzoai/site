@@ -8,8 +8,8 @@
    line-mask headline from the first paint; rows open into their pages through the site's morph.
    0 UI hues. Every line and link is Hanzo's own. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
-import { A, Cta, More, Faq, Img } from '../kit';
+import { motion, useInView, useReducedMotion } from 'motion/react';
+import { A, Cta, More, Faq, Img, Film } from '../kit';
 import LineReveal, { NoJs } from '../v2/LineReveal';
 import '../v2/ProgramScale.css';
 import './Learn.css';
@@ -112,7 +112,7 @@ function Hero() {
             <p className="xp-lede">Start with a working request, then go as deep as you need.</p>
             <div className="xlr-acts">
               <Cta to={DOCS + 'quickstart'} id="learn.hero" thumb className="xp-cta">Get started</Cta>
-              <A to="https://hanzo.university" className="xlr-link">Hanzo University</A>
+              <Cta to="https://hanzo.university" kind="link" id="learn.university" className="xlr-link">Hanzo University</Cta>
             </div>
           </motion.div>
         </div>
@@ -124,7 +124,74 @@ function Hero() {
   );
 }
 
-/* What to try and where to go further, as one index: each row a page, its title carried across by the site's morph. */
+/* What to try: one rail of six numbered cards. Proximity snap with a 16% peek; a mouse can throw it (drag with inertia),
+   touch scrolls it natively, the arrows and the counter step it. Each card's title is carried across by the site's morph. */
+function Rail() {
+  const ref = useRef(null);
+  const [at, setAt] = useState(0);
+  const [prog, setProg] = useState(0);
+  const calm = useReducedMotion();
+  const drag = useRef(null);
+  const step = () => { const el = ref.current; const c = el?.children[0]; return c ? c.getBoundingClientRect().width + parseFloat(getComputedStyle(el).columnGap || 0) : 0; };
+  const onScroll = () => {
+    const el = ref.current; if (!el) return;
+    const max = el.scrollWidth - el.clientWidth;
+    setProg(max > 0 ? el.scrollLeft / max : 0);
+    const s = step(); if (s) setAt(Math.min(TRY.length - 1, Math.round(el.scrollLeft / s)));
+  };
+  const go = (d) => { const el = ref.current; if (el) el.scrollBy({ left: d * step(), behavior: calm ? 'auto' : 'smooth' }); };
+  const down = (e) => {
+    if (e.pointerType !== 'mouse' || e.button !== 0) return;
+    drag.current = { x: e.clientX, left: ref.current.scrollLeft, last: e.clientX, t: performance.now(), v: 0, moved: false };
+  };
+  const move = (e) => {
+    const d = drag.current; if (!d) return;
+    const el = ref.current; const dx = e.clientX - d.x;
+    if (!d.moved && Math.abs(dx) > 6) { d.moved = true; el.classList.add('held'); el.setPointerCapture?.(e.pointerId); }
+    if (!d.moved) return;
+    const now = performance.now();
+    d.v = (d.last - e.clientX) / Math.max(1, now - d.t); d.last = e.clientX; d.t = now;
+    el.scrollLeft = d.left - dx;
+  };
+  const up = () => {
+    const d = drag.current; drag.current = null;
+    const el = ref.current; if (!d || !d.moved || !el) return;
+    let v = d.v * 16; // px per frame
+    el.dataset.thrown = '1';
+    const glide = () => {
+      if (calm || Math.abs(v) < 0.5) { el.classList.remove('held'); setTimeout(() => { delete el.dataset.thrown; }, 60); return; }
+      el.scrollLeft += v; v *= 0.92; requestAnimationFrame(glide);
+    };
+    requestAnimationFrame(glide);
+  };
+  const click = (e) => { if (ref.current?.dataset.thrown) { e.preventDefault(); e.stopPropagation(); } };
+  return (
+    <div className="xlr-rail-scene">
+      <div className="xlr-rail-top">
+        <h2 id="xlr-try-h" className="xp-head">Pick what to try</h2>
+        <div className="xlr-rail-ctl">
+          <span className="xp-count" aria-hidden="true">{String(at + 1).padStart(2, '0')} / {String(TRY.length).padStart(2, '0')}</span>
+          <button type="button" className="xlr-step" aria-label="Previous" disabled={prog < 0.01} onClick={() => go(-1)}><i aria-hidden="true">←</i></button>
+          <button type="button" className="xlr-step" aria-label="Next" disabled={prog > 0.99} onClick={() => go(1)}><i aria-hidden="true">→</i></button>
+        </div>
+      </div>
+      <ul className="xlr-try" ref={ref} onScroll={onScroll} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} onClickCapture={click} aria-labelledby="xlr-try-h">
+        {TRY.map(([t, d, h], i) => (
+          <li key={t + h}>
+            <A to={h} className="xlr-card" draggable={false}>
+              <span className="xlr-card-n xp-fig" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <b className="xlr-card-t" data-morph>{t}</b>
+              <span className="xlr-card-d">{d}</span>
+              <i aria-hidden="true">→</i>
+            </A>
+          </li>
+        ))}
+      </ul>
+      <i className="xlr-rail-bar" aria-hidden="true"><b style={{ transform: `scaleX(${Math.max(0.08, prog)})` }} /></i>
+    </div>
+  );
+}
+
 function Rows({ items }) {
   return (
     <ul className="xlr-rows">
@@ -141,48 +208,56 @@ function Rows({ items }) {
   );
 }
 
+/* The index: the rail, then where to go further beside Hanzo University's own film (Zen). */
 function Index() {
   return (
     <section className="xp-sec xlr-index" aria-label="Pick what to try, Go further">
-      <div className="xp-wrap xp-grid">
-        <div className="xlr-col try">
-          <h2 id="xlr-try-h" className="xp-head">Pick what to try</h2>
-          <Rows items={TRY} />
-        </div>
-        <div className="xlr-col further">
-          <h2 id="xlr-further-h" className="xp-head">Go further</h2>
-          <Rows items={FURTHER} />
+      <div className="xp-wrap">
+        <Rail />
+        <div className="xp-grid xlr-further">
           <A to="https://hanzo.university" className="xlr-uni-a">
-            <Img src="/models/zen.webp" w={320} h={320} alt="" />
-            <span><b id="xlr-uni-h">Hanzo University</b><span>Courses and certifications live on Hanzo University.</span></span>
+            <span className="xlr-uni-m"><Film src="/models/zen.webm" poster="/models/zen.webp" w={1200} h={1500} /></span>
+            <span className="xlr-uni-c"><b id="xlr-uni-h">Hanzo University</b><span>Courses and certifications live on Hanzo University.</span></span>
             <i aria-hidden="true">↗</i>
           </A>
+          <div className="xlr-col further">
+            <h2 id="xlr-further-h" className="xp-head">Go further</h2>
+            <Rows items={FURTHER} />
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-/* The dark room: the blog and the thinking, side by side. */
+/* The dark room, one row: the newest post leads at the room's big size, the next two follow (Kai's still on Kai's own
+   post); the thinking runs along the foot of the same room. */
 function Read() {
+  const [lead, ...rest] = BLOG;
   return (
-    <section className="xp-sec xp-dark xlr-think" data-room="dark" aria-labelledby="xlr-think-h">
-      <div className="xp-wrap xp-grid">
-        <div className="xlr-blog">
-          <h2 id="xlr-blog-h" className="xp-head">From the blog</h2>
-          <ol className="xlr-posts">
-            {BLOG.map(([t, date, d, h]) => (
-              <li key={h}>
-                <A to={h} className="xlr-post">
-                  <time className="x-mono" dateTime={date}>{date}</time>
-                  <b>{t}</b>
-                  <span>{d}</span>
-                </A>
-              </li>
-            ))}
-          </ol>
-        </div>
-        <div className="xlr-thk">
+    <section className="xp-sec xp-dark xlr-think" data-room="dark" aria-labelledby="xlr-blog-h">
+      <div className="xp-wrap">
+        <h2 id="xlr-blog-h" className="xp-head">From the blog</h2>
+        <ol className="xp-grid xlr-posts">
+          <li className="lead">
+            <A to={lead[3]} className="xlr-post">
+              <time className="x-mono" dateTime={lead[1]}>{lead[1]}</time>
+              <b>{lead[0]}</b>
+              <span>{lead[2]}</span>
+            </A>
+          </li>
+          {rest.map(([t, date, d, h]) => (
+            <li key={h}>
+              <A to={h} className="xlr-post">
+                {/introducing-kai/.test(h) && <span className="xlr-post-m"><Img src="/models/kai.webp" w={1200} h={1500} alt="" /></span>}
+                <time className="x-mono" dateTime={date}>{date}</time>
+                <b>{t}</b>
+                <span>{d}</span>
+              </A>
+            </li>
+          ))}
+        </ol>
+        <div className="xp-grid xlr-thk">
           <h2 id="xlr-think-h" className="xp-head">Read the thinking</h2>
           <div className="xlr-think-grid">
             {THINK.map(([t, d, h]) => (
@@ -195,9 +270,22 @@ function Read() {
   );
 }
 
+/* One solid per screen: while the hero's "Get started" is on screen the header's ask is outlined (Learn.css). */
+function useHeroAsk(ref) {
+  useEffect(() => {
+    const main = ref.current; const ask = main?.querySelector('[data-cta="learn.hero"]');
+    if (!ask) return;
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) main.setAttribute('data-ask-on', ''); else main.removeAttribute('data-ask-on'); });
+    io.observe(ask);
+    return () => io.disconnect();
+  }, [ref]);
+}
+
 export default function Learn() {
+  const ref = useRef(null);
+  useHeroAsk(ref);
   return (
-    <main className="xp xlr">
+    <main className="xp xlr" data-ask-on="" ref={ref}>
       <NoJs />
       <Hero />
       <Index />
@@ -205,7 +293,7 @@ export default function Learn() {
       <section className="xp-sec tight xlr-qa" aria-labelledby="xlr-qa-h">
         <div className="xp-wrap xp-grid">
           <div className="xlr-sticky"><h2 id="xlr-qa-h" className="xp-head">Questions</h2></div>
-          <div className="xlr-qa-l"><Faq items={QA} /></div>
+          <div className="xlr-qa-l"><Faq items={QA} multi first={-1} /></div>
         </div>
       </section>
     </main>
