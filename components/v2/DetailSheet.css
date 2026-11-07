@@ -8,7 +8,7 @@
 .pf-sheet[data-open='true'] .pf-sheet-panel { transform: none; }
 .pf-sheet[data-open='false'] .pf-sheet-panel { transition-duration: .42s; }
 .pf-sheet-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; padding: 32px 32px 20px; border-bottom: 1px solid var(--line); }
-.pf-sheet-top .pf-kick { margin-bottom: 12px; }
+.pf-sheet-top .pf-sheet-cap { margin: 10px 0 0; }
 .pf-sheet-x { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 0; background: #f0f0f2; color: var(--ink); cursor: pointer; transition: background-color .25s, transform .3s var(--ease); }
 .pf-sheet-x:hover { background: #e4e4e8; }
 .pf-sheet-x:active { transform: scale(.94); }
