@@ -18,7 +18,7 @@
    Every word is Hanzo's.
    V2: 8/10 full-width Display headline over the table as a wide object that reads itself (gliding reading line, verdicts only, Enso raised by weight), sentences in a sheet, list rows on phones, giant Yes tally, card that opens, wiped dark room closing on the one ask; greys only, legible with JS off. */
 import { useEffect, useRef, useState } from 'react';
-import { animate, motion, useInView, useReducedMotion } from 'motion/react';
+import { AnimatePresence, motion, useInView, useReducedMotion } from 'motion/react';
 import { A } from '../kit';
 import MaskLines from '../v2/MaskLines';
 import DetailSheet from '../v2/DetailSheet';
@@ -198,20 +198,15 @@ function Hero() {
   );
 }
 
-/* a figure that counts up once when it is reached (1.2s), then follows the count; the HTML carries the real figure */
-function Fig({ v, go }) {
-  const ref = useRef(null);
-  const from = useRef(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || !go) return;
-    const start = from.current ?? 0;
-    from.current = v;
-    if (start === v) { el.textContent = String(v); return; }
-    const c = animate(start, v, { duration: start === 0 ? 1.2 : 0.5, ease: [0.22, 1, 0.36, 1], onUpdate: (x) => { el.textContent = String(Math.round(x)); } });
-    return () => c.stop();
-  }, [v, go]);
-  return <span ref={ref}>{v}</span>;
+/* a figure that changes in place: the old count leaves upward and the new one arrives, so only real counts are shown */
+function Fig({ v }) {
+  return (
+    <span className="xcp-fig">
+      <AnimatePresence mode="popLayout" initial={false}>
+        <motion.span key={v} initial={{ y: '70%', opacity: 0 }} animate={{ y: '0%', opacity: 1 }} exit={{ y: '-70%', opacity: 0, transition: { duration: 0.2 } }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>{v}</motion.span>
+      </AnimatePresence>
+    </span>
+  );
 }
 
 /* ---------- Beyond: count the Yes ---------- */
@@ -242,7 +237,7 @@ function Tally() {
             return (
               <li key={c} className={j === 0 ? 'me' : ''}>
                 <span className="xcp-tally-n">{c}{j === 0 && <small>Hanzo</small>}</span>
-                <span className="pf-num">{keep.length ? <Fig v={yes} go={go} /> : '—'}<em>{keep.length ? ` / ${keep.length}` : ''}</em></span>
+                <span className="pf-num">{keep.length ? <Fig v={yes} /> : '—'}<em>{keep.length ? ` / ${keep.length}` : ''}</em></span>
                 <i aria-hidden="true"><b style={{ '--w': keep.length ? yes / keep.length : 0, transform: `scaleX(${go && keep.length ? yes / keep.length : 0})` }} /></i>
               </li>
             );
