@@ -155,7 +155,8 @@ function Intro({ doc }) {
 /* The pieces: a pinned scene. The index scrolls on the right; the stage on the left holds one piece at a time (the
    row at the middle of the screen, or the one under the pointer or focus): its number, name, line and the chains
    its page names, with the reel's last chain marked. Each name morphs into its page's hero when you open it. */
-const FIRST = 8;
+const FIRST = 8; // desktop shows the first 8; phones fold to the first 5 (CSS), and the button opens the rest either way
+const FIRST_PH = 5;
 function Pieces({ b, all, chain, onSeen }) {
   const find = (h) => all.find((p) => bare(p.href) === bare(h));
   const [more, setMore] = useState(false);
@@ -215,8 +216,8 @@ function Pieces({ b, all, chain, onSeen }) {
             );
           })}
         </ol>
-        {b.cards.length > FIRST && (
-          <button type="button" className="bci-all" aria-expanded={more} onClick={() => setMore(!more)}>
+        {b.cards.length > FIRST_PH && (
+          <button type="button" className={'bci-all' + (b.cards.length > FIRST ? '' : ' ph')} aria-expanded={more} onClick={() => setMore(!more)}>
             <span>{more ? 'Show fewer' : `Show all ${b.cards.length} pieces`}</span><i aria-hidden="true" />
           </button>
         )}
