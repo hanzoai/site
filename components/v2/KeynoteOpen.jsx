@@ -8,10 +8,11 @@
    - art: the card's picture (live UI, a figure). body: the detail shown once open (also in the HTML, hidden, from the start).
    - href/cta: an optional link inside the opened card. cols: 2, 3 or 4 on desktop; phones show one column.
    - kick: a small label, set under the title (never above it).
-   Reduced motion: the sheet appears without the morph. */
+   Esc and the backdrop close it and hand focus back to the card; Tab stays inside while it is open. Each card's detail is
+   in the HTML as hidden="until-found" (Find in page opens it). Reduced motion: the sheet appears without the morph. */
 import { useEffect, useId, useRef, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
-import { A } from '../kit';
+import { A, Cta } from '../kit';
 import './Keynote.css';
 import './KeynoteOpen.css';
 
@@ -22,15 +23,26 @@ export default function KeynoteOpen({ items, cols = 3, className = '' }) {
   const [open, setOpen] = useState(null);
   const calm = useReducedMotion();
   const last = useRef(null);
+  const sheet = useRef(null);
   const cur = items.find((x) => x.id === open);
+  const shut = () => { setOpen(null); setTimeout(() => last.current?.focus({ preventScroll: true }), 50); };
   useEffect(() => {
     if (!open) return;
-    const k = (e) => e.key === 'Escape' && setOpen(null);
+    // Esc closes and hands focus back to the card; Tab stays inside the open card
+    const k = (e) => {
+      if (e.key === 'Escape') { e.preventDefault(); shut(); return; }
+      if (e.key !== 'Tab' || !sheet.current) return;
+      const f = [...sheet.current.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')];
+      if (!f.length) return;
+      const first = f[0], end = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); end.focus(); }
+      else if (!e.shiftKey && document.activeElement === end) { e.preventDefault(); first.focus(); }
+      else if (!sheet.current.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
+    };
     window.addEventListener('keydown', k);
     window.__lenis?.stop();
     return () => { window.removeEventListener('keydown', k); window.__lenis?.start(); };
-  }, [open]);
-  const shut = () => { setOpen(null); setTimeout(() => last.current?.focus({ preventScroll: true }), 50); };
+  }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
   const t = calm ? { duration: 0 } : T;
   return (
     <div className={'kno ' + className} style={{ '--cols': cols }}>
@@ -52,7 +64,7 @@ export default function KeynoteOpen({ items, cols = 3, className = '' }) {
               <span className="kno-plus" aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M8 3v10M3 8h10" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></svg></span>
             </motion.button>
             {/* the opened detail, in the page from the start */}
-            {it.body && <div className="kno-detail" hidden>{it.body}{it.href && <A to={it.href}>{it.cta || 'Learn more'}</A>}</div>}
+            {it.body && <div className="kno-detail" hidden="until-found">{it.body}{it.href && <A to={it.href}>{it.cta || 'Learn more'}</A>}</div>}
           </li>
         ))}
       </ul>
@@ -60,16 +72,16 @@ export default function KeynoteOpen({ items, cols = 3, className = '' }) {
         {cur && (
           <div className="kno-layer" key="layer">
             <motion.div className="kno-back" onClick={shut} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} />
-            <motion.div className="kno-full" role="dialog" aria-modal="true" aria-label={typeof cur.title === 'string' ? cur.title : undefined} layoutId={uid + cur.id} transition={t} style={{ borderRadius: 24 }} data-lenis-prevent="">
+            <motion.div ref={sheet} className="kno-full" role="dialog" aria-modal="true" aria-label={typeof cur.title === 'string' ? cur.title : undefined} layoutId={uid + cur.id} transition={t} style={{ borderRadius: 24 }} data-lenis-prevent="">
               {cur.art && <motion.div className="kno-art big" layoutId={uid + cur.id + 'a'} transition={t} aria-hidden="true">{cur.art}</motion.div>}
               <motion.div className="kno-full-b" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0, transition: { delay: calm ? 0 : 0.3, duration: 0.4, ease: [0.16, 1, 0.3, 1] } }} exit={{ opacity: 0, transition: { duration: 0.12 } }}>
                 <h3 className="kn-headline">{cur.title}</h3>
                 {cur.sub && <p className="kn-lede">{cur.sub}</p>}
                 {cur.kick && <p className="kn-kick">{cur.kick}</p>}
                 <div className="kno-body">{cur.body}</div>
-                {cur.href && <A to={cur.href} className="kn-btn solid kno-cta">{cur.cta || 'Learn more'}</A>}
+                {cur.href && <Cta to={cur.href} id={'open.' + cur.id} className="kno-cta">{cur.cta || 'Learn more'}</Cta>}
               </motion.div>
-              <button type="button" className="kno-x" onClick={shut} aria-label="Close" autoFocus>
+              <button type="button" className="kno-x" onClick={shut} aria-label="Close" data-sound="tick" autoFocus>
                 <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
               </button>
             </motion.div>
