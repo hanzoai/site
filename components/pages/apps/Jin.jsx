@@ -394,7 +394,13 @@ function End() {
     if (!el || !main) return;
     const io = new IntersectionObserver(([e]) => main.toggleAttribute('data-end', e.isIntersecting), { threshold: 0.15 });
     io.observe(el);
-    return () => { io.disconnect(); main.removeAttribute('data-end'); };
+    // the sheet's dialog says aria-modal only while it is open: shut, the site's ask bar would read it as an open overlay
+    const w = el.querySelector('.jn-sheet'), panel = w?.querySelector('.bz-sheet');
+    const sync = () => (w?.dataset.open === 'true' ? panel?.setAttribute('aria-modal', 'true') : panel?.removeAttribute('aria-modal'));
+    sync();
+    const mo = new MutationObserver(sync);
+    if (w) mo.observe(w, { attributes: true, attributeFilter: ['data-open'] });
+    return () => { io.disconnect(); mo.disconnect(); main.removeAttribute('data-end'); };
   }, []);
   return (
     <section className="bz-sec jn-end" aria-labelledby="jn-end-h" ref={ref}>
