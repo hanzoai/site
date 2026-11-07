@@ -11,6 +11,14 @@
 .ir-tag { position: absolute; margin: 0; z-index: 2; padding: 6px 9px; border-radius: 6px; background: rgba(10, 10, 10, .72); color: #d4d4d4; }
 .ir-tl { top: 14px; left: 14px; }
 .ir-bl { bottom: 14px; left: 14px; }
+/* round 2: the step count never re-wraps the line, the window fits the screen, the tags sit off the picture on phones */
+.ir-bl span { display: inline-block; min-width: 2ch; text-align: right; font-variant-numeric: tabular-nums; }
+.ir-tag { white-space: nowrap; }
+.ir-frame { max-height: calc(100svh - 330px); min-height: 420px; }
+@media (max-width: 899px) {
+  .ir-frame { max-height: none; min-height: 0; padding-block: 44px; box-sizing: content-box; }
+  .ir-tag { white-space: normal; max-width: calc(100% - 28px); }
+}
 .ir-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; padding: 14px 16px; border-top: 1px solid rgba(255, 255, 255, .08); }
 .ir-play { min-width: 76px; }
 .ir-range { flex: 1 1 160px; display: flex; align-items: center; min-height: 36px; }

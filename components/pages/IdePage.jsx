@@ -22,12 +22,10 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useMotionValue, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { Copy, Mark } from '../ui';
 import { A, Cta, Band } from '../kit';
-import A2Lines from '../v2/A2Lines';
 import A2Paste from '../v2/A2Paste';
 import A2Chapters from '../v2/A2Chapters';
 import useNarrow from '../v2/A2Narrow';
 import A2Pause from '../v2/A2Pause';
-import A2Room from '../v2/A2Room';
 import A2Grow from '../v2/A2Grow';
 import { MOVE } from '../v2/A2Motion';
 import '../v2/A2.css';
@@ -48,6 +46,28 @@ const IMPACT = [4, 5, 6, 7];
 const LAST = SCRIPT_LINES.length - 1;
 const SESSION = [['$', 'hanzo'], ['>', 'deploy the gateway to staging'], ['·', 'reading the project'], ['✓', 'gateway is on staging']];
 const ramp = (v, a, b) => Math.min(1, Math.max(0, (v - a) / (b - a)));
+/* Lines: the page's own line-mask cut-in (700 ms, 60 ms apart, ease-emphasis), done in CSS so the server paint and the
+   client agree under every preference (the shared A2Lines branches on reduced motion while rendering). `now` cuts in
+   on first paint; otherwise when the heading reaches the screen. Reduced motion and JS off show the final lines. */
+/* Room: the dark room that enters as a rounded card inside the gutters and opens to full width as it is reached (as
+   the shared A2Room), with no preference branch while rendering: phones and reduced motion open it in CSS. */
+function Room({ className = '', children, ...rest }) {
+  const ref = useRef(null);
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start end', 'start 0.25'] });
+  const clip = useTransform(p, (v) => { const k = 1 - Math.min(1, Math.max(0, v)); return `inset(0px ${Math.round(k * 32)}px round ${Math.round(k * 24)}px)`; });
+  return <motion.section ref={ref} className={'a2-dark ide-room ' + className} data-room="dark" style={{ clipPath: clip }} {...rest}>{children}</motion.section>;
+}
+
+function Lines({ lines, as = 'h2', className = '', now, id }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.3 });
+  const Tag = as;
+  return (
+    <Tag className={className + ' ide-lines' + (now || seen ? ' go' : '')} id={id} ref={ref}>
+      {lines.map((l, i) => <span className="ide-ln" key={i} style={{ '--i': i }}><span>{l}</span>{i < lines.length - 1 ? ' ' : null}</span>)}
+    </Tag>
+  );
+}
 /* one line of shell, lightly coloured in greys: comments faint, the command word bright, URLs quieter */
 const Shell = ({ l }) => {
   if (!l) return ' ';
@@ -128,20 +148,20 @@ function Stage() {
   const ref = useRef(null);
   const copy = useRef(null);
   const obj = useRef(null);
-  const sy = useMotionValue(0); // how far below its place the editor starts (measured: just under the buttons)
+  const sy = useMotionValue(0); // how far the editor rises as you scroll: it rests under the buttons in normal flow (no jump on hydration)
   const ss = useMotionValue(1); // how much larger it starts (never wider than the screen)
   const narrow = useNarrow();
   const calm = useReducedMotion();
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
-  const still = calm || narrow;
+  const [ready, setReady] = useState(false); // the server and the first client paint agree; preferences apply after mount
+  useEffect(() => setReady(true), []);
+  const still = ready && (calm || narrow);
   useEffect(() => {
     const m = () => {
       const c = copy.current, o = obj.current;
       if (!c || !o) return;
-      const cb = c.getBoundingClientRect().bottom - ref.current.getBoundingClientRect().top; // the buttons' bottom, in the stage
-      const top = o.offsetTop; // where the editor sits when settled
-      sy.set(Math.max(0, cb + 40 - top));
-      ss.set(Math.min(1.08, (innerWidth - 48) / o.offsetWidth));
+      sy.set(Math.max(0, o.offsetTop - 96)); // it rises from under the buttons to just below the header
+      ss.set(Math.min(1.04, (innerWidth - 48) / o.offsetWidth));
     };
     m();
     addEventListener('resize', m);
@@ -149,7 +169,7 @@ function Stage() {
   }, [sy, ss]);
   const k = (v) => (still ? 1 : ramp(v, 0, 0.55));
   const scale = useTransform([p, ss], ([v, s0]) => (still ? 1 : s0 + (1 - s0) * k(v)));
-  const y = useTransform([p, sy], ([v, y0]) => (still ? 0 : y0 * (1 - k(v))));
+  const y = useTransform([p, sy], ([v, up]) => (still ? 0 : -up * k(v)));
   const fade = useTransform(p, (v) => (still ? 1 : 1 - ramp(v, 0.04, 0.3))); // functions: an accelerated scroll fade does not clamp
   const lift = useTransform(p, (v) => (still ? 0 : -160 * ramp(v, 0, 0.3)));
   const cap = useTransform(p, (v) => (still ? 1 : ramp(v, 0.5, 0.62)));
@@ -158,7 +178,7 @@ function Stage() {
       <div className="ide-stick">
         <motion.div className="a2-wrap ide-copy" style={{ opacity: fade, y: lift }} ref={copy}>
           <p className="a2-kick"><b>Hanzo IDE</b> · Developers</p>
-          <A2Lines as="h1" id="ide-h1" className="a2-display ide-h1" lines={['An IDE that remembers', 'your codebase']} now />
+          <Lines as="h1" id="ide-h1" className="a2-display ide-h1" lines={['An IDE that remembers', 'your codebase']} now />
           <div className="ide-copy-row">
             <p className="a2-lede">The editor you already know, on a Rust engine that is ours. The agent keeps a memory of your project across sessions, reads the call graph before it changes a line, and runs every tool in a sandbox.</p>
             <div className="a2-acts"><Cta to={IDE} id="ide.hero" thumb>Open the IDE</Cta><Cta to={GH} kind="link">View on GitHub</Cta></div>
@@ -179,10 +199,10 @@ function Stage() {
 /* Two planes: the workbench you know, lifting off the Rust engine as you scroll (an exploded view). */
 function Planes() {
   const ref = useRef(null);
-  const calm = useReducedMotion();
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start end', 'center center'] });
-  const lift = useTransform(p, [0.2, 1], calm ? [-120, -120] : [0, -120]);
-  const tilt = useTransform(p, [0.2, 1], calm ? [14, 14] : [0, 14]);
+  // no reduced-motion branch in render (it would differ from the server); CSS shows the final state under reduced motion
+  const lift = useTransform(p, [0.2, 1], [0, -120]);
+  const tilt = useTransform(p, [0.2, 1], [0, 14]);
   return (
     <div className="ide-planes" ref={ref} aria-hidden="true">
       <motion.div className="ide-plane top" style={{ y: lift, rotateX: tilt }}>
@@ -203,7 +223,7 @@ function Engine() {
       <div className="a2-wrap a2-grid">
         <div className="ide-engine-copy">
           <p className="a2-kick">What is Hanzo IDE</p>
-          <A2Grow to={1.55}><A2Lines id="ide-engine-h" className="a2-display s" lines={['The workbench you know,', 'on an engine', 'that is ours']} /></A2Grow>
+          <A2Grow to={1.55}><Lines id="ide-engine-h" className="a2-display s" lines={['The workbench you know,', 'on an engine', 'that is ours']} /></A2Grow>
           <p className="a2-body">The editor surface, the extension model and the keybindings are the ones you use today. Everything under them is Rust: the agent loop, the memory, the indexing, the sandbox.</p>
         </div>
         <div className="ide-engine-vis"><Planes /></div>
@@ -229,7 +249,7 @@ function Picture({ i }) {
         {SCRIPT_LINES.map((l, k) => <li key={k}><span>{k + 1}</span><span className="ide-pic-src"><Shell l={l} /></span></li>)}
       </ol>
       {MEMS.map(([line, kind, what], k) => (
-        <p key={kind} className={'ide-pic-chip k-' + kind} style={{ top: 28 + line * 34 + 'px', animationDelay: 0.12 + k * 0.14 + 's' }}><span className="x-mono">{kind}</span>{what}</p>
+        <p key={kind} className={'ide-pic-chip k-' + kind} style={{ top: 28 + line * 34 + 'px', animationDelay: 0.12 + k * 0.14 + 's' }}><span className="x-mono">{kind}</span><span className="ide-pic-w">{what}</span></p>
       ))}
     </div>
   );
@@ -336,12 +356,12 @@ function Caps() {
   const [open, setOpen] = useState(0);
   const [paused, setPaused] = useState(false);
   return (
-    <A2Room className="a2-sec ide-dark" aria-labelledby="ide-caps-h">
+    <Room className="a2-sec ide-dark" aria-labelledby="ide-caps-h">
       <div className="a2-wrap a2-grid">
         <div className="ide-caps-vis"><div className={'ide-tiers-box' + (paused ? ' a2-paused' : '')}><A2Pause paused={paused} onChange={setPaused} label="Pause" className="ide-tiers-pause" /><Tiers /></div></div>
         <div className="ide-caps-copy">
           <p className="a2-kick">Capabilities</p>
-          <A2Lines id="ide-caps-h" className="a2-headline" lines={['What the window carries']} />
+          <Lines id="ide-caps-h" className="a2-headline" lines={['What the window carries']} />
           <ul className="ide-acc">
             {CAPS.map(([t, d], i) => (
               <li key={t} className={open === i ? 'on' : ''}>
@@ -352,7 +372,7 @@ function Caps() {
           </ul>
         </div>
       </div>
-    </A2Room>
+    </Room>
   );
 }
 
@@ -377,7 +397,7 @@ function Start() {
       <div className="a2-wrap a2-grid">
         <div className="ide-start-copy">
           <p className="a2-kick">Get started</p>
-          <A2Lines id="ide-start-h" className="a2-headline" lines={['Open it in the browser,', 'or build it on your machine']} />
+          <Lines id="ide-start-h" className="a2-headline" lines={['Open it in the browser,', 'or build it on your machine']} />
         </div>
         <div className="ide-script" ref={ref}>
           <div className="ide-script-bar"><span className="x-mono">bash</span><Copy text={SCRIPT} /></div>

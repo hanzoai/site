@@ -51,8 +51,8 @@ function Canvas() {
   };
   const reseed = (restart = true) => {
     const s = S.current, n = s.levels ? s.levels[0].length : 0, r = rng(++s.seed);
-    s.noise = new Float32Array(n);
-    for (let i = 0; i < n; i++) s.noise[i] = (r() + r() + r() - 1.5) * 1.15; // roughly normal
+    s.noise = new Float32Array(Math.ceil(n / 4)); // one value per pixel: grey noise, so colour only comes from Hanzo's picture
+    for (let i = 0; i < s.noise.length; i++) s.noise[i] = (r() + r() + r() - 1.5) * 1.15; // roughly normal
     if (restart) { s.t = 0; s.hold = 0; s.drawn = -1; setDone(false); }
   };
   const draw = (step) => {
@@ -64,7 +64,7 @@ function Canvas() {
     for (let i = 0; i < o.length; i += 4) {
       for (let ch = 0; ch < 3; ch++) {
         const im = A[i + ch] + (B[i + ch] - A[i + ch]) * fr;
-        o[i + ch] = t * im + (1 - t) * (128 + N[i + ch] * 110);
+        o[i + ch] = t * im + (1 - t) * (128 + N[i >> 2] * 110);
       }
       o[i + 3] = 255;
     }

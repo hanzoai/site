@@ -32,7 +32,7 @@ Done here: One `<main>` (the layout's `#main` marker takes the skip link); links
 - [ ] Ends in proof strip, `Band`, footer
 - ~~Card-to-page links use Morph; title lands within 12px~~ n/a: no cards that open pages.
 
-Done here: Nothing above the h1. "Open Source & Research Credit Grants" (52px) cuts in by line mask; the contour field moves within 1 s and has a pause control. `PageHero` is not in the kit (left open). The page ends on the application then the footer (left open: no `Band`, the ask is the form). JS off: `NoJs` shows final states and the sheets' dim layers are hidden.
+Done here: Nothing above the h1. "Open Source & Research Credit Grants" (52px) cuts in by line mask; the contour field moves within 1 s and has a pause control. `PageHero` is not in the kit (left open). The page ends on the application, then a quiet proof strip in its own words ("2,137+ repositories · 122 organizations", Explore Repositories), then the footer; no `Band`, because the ask is the form. Round 5: the lede, ask and art rise by CSS from the server HTML (never opacity 0, never waiting for JS). JS off: `NoJs` shows final states and the sheets' dim layers are hidden.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -74,7 +74,7 @@ Done here: `taste.py` passes (deck greys only); nothing above a headline; object
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: `x-btn` buttons (now kit `Cta`), raw inputs (now kit `Field`), the pill label on the art, the track chip's box-plus-shadow, step hover lifts, oversized 12rem numbers and 36px list titles. listed below
 
-Done here: Kit `Cta` and `Field` states (hover, press .97, focus ring, busy, dashed invalid); the track radios glide, answer hover and press, arrow keys move between them; the pause control has hover, press and focus.
+Done here: Kit `Cta` and `Field` states (hover, press .97, focus ring, busy, dashed invalid); the track radios' chip glides (round 4: a selector bug had shrunk it to 2×20px; it now measures 201×50 at 1470), answer hover and press, arrow keys move between them; the pause control has hover, press and focus.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -83,7 +83,7 @@ Done here: Kit `Cta` and `Field` states (hover, press .97, focus ring, busy, das
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit: the shared `lib/sound.js` (header mute toggle) sounds the `data-cta` asks; the track radios carry `data-sound="tick"`; the page plays nothing of its own.
 
-Done here: Signature: the stacked sheets, each shrinking to .92 and dimming as the next slides over it (driven by the list's own progress). Time: the contour field (pausable). Arrival: line-mask h1; the timeline draws across; ticks draw on the ledger row by row. State: the track chip glides; the filing card fills as you type. Ease-emphasis, no springs. Reduced motion (round 3): the sheets render at scale 1 with no dim layer, the steps show all lit, the count shows its true value, the field is still. The timeline is now scrubbed by scroll and lights each step as the line reaches it; hover redraws a ledger tick.
+Done here: Signature: the stacked sheets, each shrinking to .92 and dimming as the next slides over it (driven by the list's own progress). Time: the contour field (pausable). Arrival: line-mask h1; the timeline draws across; ticks draw on the ledger row by row. State: the track chip glides; the filing card fills as you type. Ease-emphasis, no springs. Reduced motion (round 6): nothing branches on the preference while rendering any more (that had broken hydration); CSS shows the final state instead: the sheets at scale 1 with no dim layer, the line drawn, every step and ledger row lit with its tick, the field still. Measured: 0 console errors at 1470 and 375 with reduced motion on and off. The timeline is now scrubbed by scroll and lights each step as the line reaches it; hover redraws a ledger tick.
 
 ## 10. Media
 - ~~`Film` and `Pic` only; sizes and posters set~~ n/a: no images or video; the hero art is the page's own Sigil field.
@@ -99,7 +99,7 @@ Done here: No raster media; the hero art is the page's own canvas field.
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: 375×812: hero ask full width above the fold; steps stack on a line; sheets lie flat with full-width wrapping asks (no overflow at 320); the filing card shows only once a field has a value and only the filled rows; fields 56px; targets 44px+.
+Done here: round 5: the grants@hanzo.ai link in the error line now has a 44px box (it was 19px). 375×812: hero ask full width above the fold; steps stack on a line; sheets lie flat with full-width wrapping asks (no overflow at 320); the filing card shows only once a field has a value and only the filled rows; fields 56px; targets 44px+.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -108,7 +108,7 @@ Done here: 375×812: hero ask full width above the fold; steps stack on a line; 
 - [x] One h1; no heading skips; names start with visible text
 - [x] Keyboard reaches every control
 
-Done here: Greys at 4.5:1+ on white and dark; one h1, h2s in order, h3s under them; radiogroup with roving focus; a hidden sheet's link lifts its sheet on focus (`:focus-within`); wrong fields are `aria-invalid`, the first takes focus; the result takes focus.
+Done here: Greys at 4.5:1+ on white and dark (round 6: unlit ledger titles are #525252 on #f5f5f5, 7:1; with JS off every row shows lit); one h1, h2s in order, h3s under them; radiogroup with roving focus; a hidden sheet's link lifts its sheet on focus (`:focus-within`); wrong fields are `aria-invalid`, the first takes focus; the result takes focus.
 
 ## 13. Performance and engineering
 - [x] h1 and LCP element in server HTML
