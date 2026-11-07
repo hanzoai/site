@@ -77,7 +77,7 @@ function Hero() {
           <motion.div initial={{ y: 16 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.4 }}>
             <p className="xp-lede xst-lede">Everyone starts free. Venture-backed teams get up to $150,000 in credits.</p>
             <div className="xst-acts">
-              <a href="#apply" className="xp-cta" data-thumb="Apply for credits" data-cta="startups.hero">Apply for credits<i aria-hidden="true">↓</i></a>
+              <a href="#apply" className="xp-cta" data-thumb="Apply for credits" data-cta="startups.hero" onClick={() => setTimeout(() => document.getElementById('company')?.focus({ preventScroll: true }), 700)}>Apply for credits<i aria-hidden="true">↓</i></a>
               <A to="https://platform.hanzo.ai" className="xp-ghost">Start building free</A>
             </div>
           </motion.div>
@@ -97,23 +97,24 @@ function Hero() {
    pointing at or focusing a rung takes it there. The credits rung carries the same split-flap figure as the hero. */
 function Ladder() {
   const ref = useRef(null);
-  const seen = useInView(ref, { amount: 0.45 });
   const calm = useReducedMotion();
   const [at, setAt] = useState(0);
-  const [mine, setMine] = useState(false);
+  // the rung crossing the middle of the screen is the big one (scroll climbs the ladder); pointing or focusing a rung
+  // takes it there too
   useEffect(() => {
-    if (!seen || calm || mine || at >= PROGRAM.length - 1) return;
-    const t = setTimeout(() => setAt((v) => v + 1), 2400);
-    return () => clearTimeout(t);
-  }, [seen, calm, mine, at]);
-  const pick = (i) => { setMine(true); setAt(i); };
+    if (calm || !ref.current) return;
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(+e.target.dataset.k); }), { rootMargin: '-45% 0px -45% 0px' });
+    ref.current.querySelectorAll('li').forEach((li) => io.observe(li));
+    return () => io.disconnect();
+  }, [calm]);
+  const pick = (i) => setAt(i);
   return (
     <section className="xp-sec tight xst-prog" aria-labelledby="xst-prog-h">
       <div className="xp-wrap">
         <h2 id="xst-prog-h" className="xp-kick">The program</h2>
         <ol className="xst-ladder" ref={ref}>
           {PROGRAM.map(([t, d], i) => (
-            <li key={t} className={'r' + i + (at === i ? ' on' : '') + (i < at ? ' past' : '')} tabIndex={0} onPointerEnter={() => pick(i)} onFocus={() => pick(i)} onClick={() => pick(i)}>
+            <li key={t} data-k={i} className={'r' + i + (at === i ? ' on' : '') + (i < at ? ' past' : '')} tabIndex={0} onPointerEnter={() => pick(i)} onFocus={() => pick(i)} onClick={() => pick(i)}>
               <span className="xst-rung x-mono">{String(i + 1).padStart(2, '0')} / 03</span>
               <h3 className="xp-head">{t}</h3>
               <p className="xp-body">{d}</p>
@@ -219,7 +220,7 @@ function Apply() {
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState(false);
   const [err, setErr] = useState(null);
-  const on = (e) => setC({ ...c, [e.target.name]: e.target.value });
+  const on = (e) => { setErr(null); setC({ ...c, [e.target.name]: e.target.value }); };
   // the form in three steps; Next checks only the step you are on and takes you to the first field it needs
   const [step, setStep] = useState(0);
   const formTop = () => document.getElementById('apply')?.querySelector('.xst-steps')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
@@ -292,7 +293,7 @@ function Apply() {
                 </div>
                 <div className="xst-row">
                   <Field id="role" label="Your role"><input id="role" name="role" type="text" value={c.role} onChange={on} placeholder="Co-founder & CEO" autoComplete="organization-title" /></Field>
-                  <Choice id="stage" label="Company stage" req hint="Select stage" opts={STAGES} value={c.stage} set={(v) => setC((p) => ({ ...p, stage: v }))} />
+                  <Choice id="stage" label="Company stage" req hint="Select stage" opts={STAGES} value={c.stage} set={(v) => { setErr(null); setC((p) => ({ ...p, stage: v })); }} />
                 </div>
                 </div>
                 <div className={'xst-step' + (step === 1 ? ' on' : '')}>

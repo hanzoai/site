@@ -39,7 +39,7 @@
 @media (max-width: 899px) { .xst-not-o { grid-column: auto; grid-row: auto; } .xst-not-o .xst-track p, .xst-not-o .xst-lit, .xst-not-o .xst-byo { display: revert; } }
 /* phones: the live card docks as one slim strip above the form while you fill it in (56px, never over a label) */
 @media (max-width: 899px) {
-  .xst-apply-grid > .xst-match-col { order: -1; position: sticky; top: 60px; z-index: 5; }
+  .xst-apply-grid > .xst-match-col { order: -1; position: static; top: auto; z-index: auto; }
   .xst-match { display: flex; align-items: center; justify-content: space-between; gap: 10px; height: 56px; padding: 8px 12px; box-sizing: border-box; }
   .xst-match-top svg { width: 28px; height: 28px; }
   .xst-match .xst-track { display: none; }
@@ -70,6 +70,8 @@ html.js .xst-submit.later { display: none; }
 .xst-hero { padding-bottom: clamp(48px, 6vw, 96px); }
 .xst-ts { margin-top: clamp(40px, 4vw, 64px); }
 .xst.xp .xst-prog { padding-bottom: clamp(24px, 3vw, 48px); }
+.xst-rung-fig .xst-flap { color: #a3a3a3; transition: color .4s cubic-bezier(0, 0, .2, 1); }
+.xst-ladder li.on .xst-rung-fig .xst-flap { color: var(--ink); }
 /* the board always fits inside its card */
 .xst-fig { min-width: 0; overflow: hidden; }
 .xst-fig .xst-flap { font-size: clamp(2.5rem, 4vw, 4rem); white-space: nowrap; }
