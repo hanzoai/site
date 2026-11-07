@@ -371,7 +371,7 @@ function useMagnet() {
 export default function World() {
   useMagnet();
   return (
-    <main id="main" className="l2-page wd2" data-ask="off">
+    <main id="main" className="l2-page wd2">
       <StageHero look="side" dark kick="world.hanzo.ai" title="Hanzo World" sub="World Monitor — global AI-system observability" acts={[['Open World Monitor', 'https://world.hanzo.ai'], ['Documentation', 'https://docs.hanzo.ai/docs/cli/world']]}>
         <Hero />
       </StageHero>
