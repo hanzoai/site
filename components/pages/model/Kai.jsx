@@ -290,7 +290,7 @@ export default function Kai() {
           <ul className="ka-cards">
             {CARDS.map(([n, l, code, to, data]) => (
               <li key={code}>
-                <A to={to} className="ka-card">
+                <A to={to} className="ka-card" data-cursor="">
                   <Sigil seed={'kai/' + code} data={data} className="ka-sig" />
                   <span className="ka-card-l">{l}</span>
                   <span className="ka-card-n" data-morph>{n}</span>

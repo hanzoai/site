@@ -1,6 +1,6 @@
 /* Hanzo's black model cards (mc-), measured from live hanzo.ai: docs/refs/hanzo-model-cards/SPEC.md */
 .mc { background: #fff; }
-.mc-wrap { width: min(100% - 48px, 1131px); margin-inline: auto; }
+.mc-wrap { width: min(100% - 48px, 1201px); margin-inline: auto; }
 .mc-h { margin: 0; font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.2; color: var(--ink); text-wrap: balance; }
 .mc-sub { margin: 14px 0 0; font-size: 16px; line-height: 1.5; color: #525252; }
 .mc-grid { list-style: none; margin: 40px 0 0; padding: 0; display: grid; grid-template-columns: 2fr repeat(4, 1fr); grid-template-rows: 220px 220px; gap: 12px; }
@@ -19,16 +19,16 @@
 .mc-d { margin-top: 8px; max-width: 150px; font-size: 13px; line-height: 18px; color: rgba(255, 255, 255, .8); }
 .mc-tags { position: absolute; left: 21px; right: 21px; bottom: 21px; display: flex; flex-wrap: wrap; gap: 8px; }
 .mc-pill { display: inline-block; padding: 4px 10px; border: 1px solid rgba(255, 255, 255, .2); border-radius: 999px; font: 400 10px/14px var(--mono); letter-spacing: .8px; text-transform: uppercase; color: rgba(255, 255, 255, .8); }
-.mc-cell.big .mc-top { left: 28px; top: 28px; }
-.mc-cell.big .mc-tags { left: 28px; bottom: 28px; }
 .mc-flag { margin-bottom: 22px; }
 .mc-cell.big .mc-t { font-size: 44px; letter-spacing: -.88px; line-height: 48px; }
-.mc-cell.big .mc-d { margin-top: 18px; max-width: 160px; font-size: 15px; line-height: 21px; }
+.mc-cell.big .mc-d { margin-top: 18px; max-width: 160px; }
 .mc-card[aria-current='page']::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .9); pointer-events: none; }
 @media (hover: hover) { .mc-card:hover .mc-arr { transform: translateX(4px); } }
 .mc-links { display: flex; justify-content: space-between; gap: 16px; margin: 28px 0 0; }
 .mc-links .x-arrow { font-size: 14px; min-height: 44px; }
 
+/* the exact measured grid (SPEC.md: 385px and four 192px columns, 220px rows, 12px gaps) wherever it fits */
+@media (min-width: 1250px) { .mc-grid { grid-template-columns: 385px repeat(4, 192px); justify-content: start; } }
 @media (max-width: 1100px) {
   .mc-grid { grid-template-columns: repeat(4, 1fr); grid-template-rows: none; grid-auto-rows: 220px; }
   .mc-cell.big { grid-column: 1 / -1; grid-row: auto; height: 340px; }
