@@ -35,7 +35,8 @@ const STATIONS = ['hanzo.id', 'Authorization code', ['PKCE', 'S256'], 'RS256', '
 const ALL = STATIONS.length;
 /* the ways in, named as Hanzo names them ("from Google, from GitHub or from any OIDC issuer"; "or a passkey") */
 const WAYS = ['Google', 'GitHub', 'OIDC', 'passkey'];
-/* s: stations lit. The server paints the finished sign-in (s = 5); then it starts over and runs. */
+/* s: stations lit. The server and the first client paint show the demo's first frame (s = 0); it runs from there.
+   Reduced motion and JS off show the finished sign-in through CSS alone, so nothing flips after hydration. */
 const BEAT = [1100, 900, 760, 760, 900, 1900];
 
 const Glyph = ({ k }) => (
@@ -54,7 +55,7 @@ function SignInCard({ s, pick }) {
       <p className="ia-si-mark">hanzo.id</p>
       <ul className="ia-si-ways">
         {WAYS.map((w, i) => (
-          <li key={w} className={'ia-si-way' + (i === pick && s >= 1 ? ' pick' : '')}><Glyph k={i} /><span>{w}</span></li>
+          <li key={w} className={'ia-si-way' + (i === pick ? ' pick' : '')}><Glyph k={i} /><span>{w}</span></li>
         ))}
       </ul>
       <div className="ia-si-flow">
@@ -77,23 +78,19 @@ function SignIn() {
   const [ref, seen, calm] = useLive(0.3);
   const [paused, togglePause] = usePause();
   const live = seen && !paused && !calm;
-  const [s, setS] = useState(ALL);
+  const [s, setS] = useState(0);
   const [pick, setPick] = useState(1);
-  const [first, setFirst] = useState(true);
   const card = useRef(null);
   useEffect(() => {
     if (!live) return;
-    const ms = first ? 800 : BEAT[s];
     const id = setTimeout(() => {
-      setFirst(false);
       setS((v) => {
         if (v >= ALL) { setPick((p) => (p + 1) % WAYS.length); return 0; }
         return v + 1;
       });
-    }, ms);
+    }, s === 0 ? 600 : BEAT[s]);
     return () => clearTimeout(id);
-  }, [s, live, first]);
-  useEffect(() => { if (calm) setS(ALL); }, [calm]);
+  }, [s, live]);
   // a fine pointer tilts the card up to 2.5°; touch and reduced motion leave it flat
   const tilt = (e) => {
     const el = card.current;
@@ -163,11 +160,19 @@ const OBJ = [
   ['M4 28h44', 'M48 28l10-10 10 10-10 10z', 'M68 28h24', 'M96 10v36M96 10h20M96 46h20'],
 ];
 
-/* a fact card: lit while it is the rail's active card; its object draws in. Card 03 is a link into the refresh room. */
+/* a fact card: lit while it is the rail's active card; its object draws in. Card 03 opens into the refresh room: it
+   glides there and the room's family plays as it arrives. Its title stays for screen readers only, so "Refresh tokens"
+   is seen once, as the room's heading. */
 function Fact({ f: [t, d, big, to], i, on }) {
   const Tag = to ? 'a' : 'article';
+  const go = to ? (e) => {
+    const room = document.querySelector(to);
+    if (!room) return;
+    e.preventDefault();
+    room.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  } : undefined;
   return (
-    <Tag className={'ia-card' + (to ? ' ia-card-go' : '')} data-on={on || undefined} href={to}>
+    <Tag className={'ia-card' + (to ? ' ia-card-go' : '')} data-on={on || undefined} href={to} onClick={go}>
       <div className="ia-card-top">
         <p className="ia-card-n">{pad(i + 1)} / 08</p>
         <svg className="ia-obj" viewBox="0 0 120 56" width="120" height="56" aria-hidden="true">
@@ -176,7 +181,7 @@ function Fact({ f: [t, d, big, to], i, on }) {
       </div>
       <p className="ia-card-big" aria-hidden="true"><span>{big}</span></p>
       <div>
-        <h3 className="v2-title">{t}</h3>
+        <h3 className={'v2-title' + (to ? ' ia-sr' : '')}>{t}</h3>
         {d && <p className="ia-card-d">{d}</p>}
         {to && (
           <svg className="ia-card-arr" viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path d="M8 3v9M4.5 8.5 8 12l3.5-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -197,10 +202,13 @@ function FactRail() {
   const [active, setActive] = useState(0);
   const calm = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: sec, offset: ['start start', 'end end'] });
-  const x = useTransform(scrollYProgress, (p) => (calm ? 0 : -dist * Math.min(1, Math.max(0, p))));
+  // the rail holds still for the first and last tenth of the pin, so card 01 sits whole inside the gutter before the
+  // sideways move starts and card 08 sits whole at the end; the counter reads the card that is whole on screen
+  const hold = (p) => Math.min(1, Math.max(0, (p - 0.1) / 0.8));
+  const x = useTransform(scrollYProgress, (p) => (calm ? 0 : -dist * hold(p)));
   useMotionValueEvent(scrollYProgress, 'change', (p) => {
     if (innerWidth <= 900) return;
-    setActive(Math.round(Math.min(1, Math.max(0, p)) * (N - 1)));
+    setActive(Math.round(hold(p) * (N - 1)));
   });
   useEffect(() => {
     const m = () => { const r = rail.current; if (r) setDist(innerWidth > 900 ? Math.max(0, r.scrollWidth - innerWidth) : 0); };
@@ -297,7 +305,26 @@ function Family() {
   );
 }
 
-/* the close: IAM's own, with the signed-in hanzo.id card at rest beside it (not the shared contour field) */
+/* the close's own object: the token at rest, drawn large and without words: its three parts, the signature in ink, and a
+   line from the signature to its key, ticked (the page's own drawing of "signed RS256 … published in the same JWKS") */
+function TokenAtRest() {
+  return (
+    <svg className="ia-ct" viewBox="0 0 360 220" aria-hidden="true">
+      <rect x="0" y="40" width="96" height="20" rx="10" className="p" />
+      <circle cx="108" cy="50" r="3" className="d" />
+      <rect x="120" y="40" width="96" height="20" rx="10" className="p" />
+      <circle cx="228" cy="50" r="3" className="d" />
+      <rect x="240" y="40" width="120" height="20" rx="10" className="s" />
+      <path d="M300 60v62a14 14 0 0 1-14 14H140" className="l" />
+      <circle cx="116" cy="136" r="24" className="k" />
+      <path d="M140 136h0" className="l" />
+      <path d="M104 137l8 8 16-17" className="t" />
+      <path d="M0 196h360" className="h" />
+    </svg>
+  );
+}
+
+/* the close: IAM's own, with the token at rest as its object (not the hero's card, not the shared contour field) */
 const Gh = () => <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" /></svg>;
 function Close() {
   return (
@@ -315,7 +342,30 @@ function Close() {
             <p className="gi-more"><Cta to="https://platform.hanzo.ai/deploy" kind="link" id="iam.deploy">Deploy to Cloud</Cta></p>
           </div>
         </div>
-        <div className="ia-close-art" aria-hidden="true"><SignInCard s={ALL} pick={3} /></div>
+        <div className="ia-close-art" aria-hidden="true"><TokenAtRest /></div>
+      </div>
+    </section>
+  );
+}
+
+/* related capabilities: the last quiet row, under the close. Each row runs the full width with its arrow on one line at
+   the right edge; on hover the row fills and the page's path shows beside the arrow. */
+const REL = [['Authz', '/authz', 'Fine-grained access'], ['KMS', '/kms', 'Managed keys'], ['Secrets', '/cloud/secrets', 'Store once, sync everywhere']];
+const Arrow = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+function Related() {
+  return (
+    <section className="ia-rel">
+      <div className="v2-wrap">
+        <nav className="sp-rel" aria-label="Related capabilities">
+          <p className="v2-kick">Related capabilities</p>
+          <ul>
+            {REL.map(([t, to, d]) => (
+              <li key={t}>
+                <A to={to} className="sp-rel-a"><b>{t}</b><span>{d}</span><i className="ia-rel-to" data-to={to} aria-hidden="true" /><Arrow /></A>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
     </section>
   );
@@ -332,7 +382,7 @@ export default function Iam() {
           <div className="ia-hero-t">
             <Lines as="h1" className="v2-display ia-h1" lines={['Hanzo IAM']} delay={0} data-morph-target="" />
             <p className="v2-lede ia-sub v2-in" style={{ animationDelay: '.12s' }}>The sign-in behind every Hanzo service.</p>
-            <div className="v2-acts v2-in ia-acts" style={{ animationDelay: '.18s' }}>
+            <div className="v2-acts ia-acts">
               <Cta to="https://docs.hanzo.ai/docs/openapi/iam" id="iam.hero" thumb>API reference</Cta>
               <Cta to="https://hanzo.id/.well-known/openid-configuration" kind="quiet" id="iam.discovery-document">Discovery document</Cta>
               <Cta to="https://github.com/hanzoai/iam" kind="link" id="iam.source">Source</Cta>
@@ -344,17 +394,18 @@ export default function Iam() {
 
       <FactRail />
 
+      <Family />
+
       <ShipPrompt
         name="IAM"
         api="/v1/iam"
         prompt="Read https://hanzo.ai/skill.md and use Hanzo IAM in my project. Start with: hanzo iam whoami"
-        related={[['Authz', '/authz', 'Fine-grained access'], ['KMS', '/kms', 'Managed keys'], ['Secrets', '/cloud/secrets', 'Store once, sync everywhere']]}
         flip
       />
 
-      <Family />
-
       <Close />
+
+      <Related />
     </main>
   );
 }

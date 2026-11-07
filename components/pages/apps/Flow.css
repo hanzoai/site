@@ -18,6 +18,7 @@
 /* the run's own pause, on the canvas: an icon and the run's counter in their own slots, nothing crowding them */
 .fl-hold { position: absolute; z-index: 3; left: 52%; top: calc(62% + 70px); translate: -50% 0; display: inline-flex; align-items: center; gap: 12px; height: 44px; padding: 0 18px 0 14px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); background: #ffffff; color: var(--ink); font: inherit; cursor: pointer; transition: border-color .15s cubic-bezier(0, 0, .2, 1), transform .09s; }
 .fl-hold svg { flex: none; }
+.fl-hold { width: max-content; white-space: nowrap; }
 .fl-hold-n { font-size: 13px; color: var(--soft); font-variant-numeric: tabular-nums; min-width: 6ch; text-align: right; }
 @media (hover: hover) { .fl-hold:hover { border-color: var(--ink); } }
 .fl-hold:active { transform: scale(.97); }
@@ -415,13 +416,13 @@ button.fl-node:active { scale: .97; }
   .fl-hero .fl-g { --nw: 176px; }
 }
 @media (max-width: 900px) {
-  .fl-hero { height: 920px; }
+  .fl-hero { height: 860px; }
   .fl-hero-in { align-items: flex-start; padding: 36px 0 0; }
   .fl-hero-in > .bz-wrap::before { display: none; }
   .fl-copy { max-width: none; }
   .fl-copy { gap: 18px; }
   .fl-intro { gap: 20px; }
-  .fl-hold { left: 75%; top: calc(71% + 74px); }
+  .fl-hold { left: 75%; top: calc(71% + 66px); }
   /* the chapter boards on a phone: one compact object under the header, the chapter's words swapping beneath it */
   .flp-board.compact { height: 236px; }
   .compact .flp { padding: 16px; }

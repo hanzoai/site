@@ -176,6 +176,7 @@ function Chapters() {
   return (
     <motion.section ref={room} className="hs-ch hc" data-room="dark" aria-label="What it is" style={{ clipPath }}>
       <div className="v2-wrap hc-in" ref={track}>
+        <div className="hc-frame">
         <div className="hc-copy">
           {FACTS.map(([t, d], i) => (
             <article key={t} ref={(el) => (arts.current[i] = el)} data-i={i} className="hc-art" data-on={i === at ? '' : undefined}>
@@ -199,6 +200,7 @@ function Chapters() {
           <div className="hc-vis-in">
             <Exploded at={at} vendor={vendor} />
           </div>
+        </div>
         </div>
       </div>
     </motion.section>

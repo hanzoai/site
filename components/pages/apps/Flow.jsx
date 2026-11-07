@@ -11,13 +11,13 @@
    Beyond: the playground, in the one dark room and nowhere else: play, pause, or take the flow one node at a time
    (previous, next, or pick a step); what each node received and returned is the object, large, streaming in.
    Chapters: each of Hanzo's six features gets its own object on the pinned board, built from its own sentence
-   (components/pages/apps/flow/FlowPanels.jsx): the library's palette, a node opened to its Python class, steps ticked
-   until the node that caused it, several agents with retrieval underneath, a flow published three ways, a flow
+   (components/pages/apps/flow/FlowPanels.jsx): the library's palette, a node opened to its Python class, the node that
+   caused it opened with a strange answer, several agents with retrieval underneath, a flow published three ways, a flow
    exported with the wiring and not the secrets. The fact cards open into their own object (every kind a Python class,
    the three ways as tabs, the terminal).
    Not only scroll: the run is idle motion; the playground answers the hand; the facts open (state); chapters are scroll.
    Motion: the running canvas (signature) + line-masked headings + sticky chapters + nodes that open into their page.
-V2: 8/10 round 4: the pipeline is drawn once (the hero); the six chapters each get their own object from their own copy; the playground appears only in the dark room, with no second "Step through it" heading; no invented demo data (node names, received and returned are Hanzo's own words); hero hover lifts a node and shows what it returns; the run's pause and counter sit on the canvas; heights reserved so nothing bobs; phone cards wrap at spaces only and their port heads never fuse; gaps closed
+V2: 8/10 round 5: the six-step chain is told twice only (the hero graph and the playground); chapter 03 opens one node, the node that caused it, with a strange answer drawn broken, no six-step list; the pinned stage fills and centres in the screen on desktop and phone (no dead band under it); the hero graph fills its screen with its pause and counter under node 06 inside the graph, and reduced motion shows the run finished (06 / 06, no pause); the playground's returned value is 32px, centred, with a running bar instead of an empty slot; received and returned never share the slot for a frame; Previous/Next fill and Documentation draws its underline on hover; done steps read white on graphite; the Keys chips fit at 375; the Python sheet says "Python class" once and no opened card repeats its chapter; the closing line rests at 26–32px; deck greys on this page
    Every word and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
