@@ -45,9 +45,10 @@ const NODES = [
 ];
 // where each node sits on a canvas (% of its width and height): desktop, then phone
 const LAY = {
-  hero: [[[52, 17], [70, 11], [88, 20], [87, 46], [69, 40], [52, 49]], [[23, 39], [77, 39], [77, 53], [23, 53], [23, 67], [77, 67]]],
+  hero: [[[52, 17], [70, 11], [88, 20], [87, 46], [69, 40], [52, 49]], [[25, 39], [75, 39], [75, 53], [25, 53], [25, 67], [75, 67]]],
   snake: [[[17, 18], [50, 18], [83, 18], [83, 64], [50, 64], [17, 64]], [[22, 16], [78, 16], [78, 50], [22, 50], [22, 84], [78, 84]]],
-  row: [[[9, 36], [25.4, 66], [41.8, 36], [58.2, 66], [74.6, 36], [91, 66]], [[22, 16], [78, 16], [78, 50], [22, 50], [22, 84], [78, 84]]],
+  // the phone's pinned mini-graph: two rows of three, compact nodes
+  mini: [[[17, 27], [50, 27], [83, 27], [83, 73], [50, 73], [17, 73]], [[17, 27], [50, 27], [83, 27], [83, 73], [50, 73], [17, 73]]],
 };
 const two = (n) => String(n).padStart(2, '0');
 const r1 = (v) => Math.round(v * 10) / 10;
@@ -174,11 +175,13 @@ const Ico = ({ k }) => (
 function Hero() {
   const [ref, live, calm] = useLive(0.2);
   const [hold, setHold] = useState(false);
-  const [s] = useRun(live, calm, !hold);
+  const [s, setS] = useRun(live, calm, !hold);
+  // tap or click a node: the run holds there and the inspector shows what that node received and returned
+  const pick = (k) => { setHold(true); setS(2 * k + 1); };
   const pause = <button type="button" className="fl-hold" onClick={() => setHold(!hold)} aria-label={hold ? 'Play the run' : 'Pause the run'}><Ico k={hold ? 'play' : 'pause'} /></button>;
   return (
     <section ref={ref} className="fl-hero" aria-labelledby="fl-h1">
-      <Graph lay="hero" s={s} />
+      <Graph lay="hero" s={s} lit={hold ? nodeOf(s) : -1} pick={pick} />
       <Inspect s={s} i={nodeOf(s)} cls="fl-hero-insp" ctl={pause} />
       <div className="fl-hero-in">
         <div className="bz-wrap">
@@ -215,13 +218,13 @@ function Chapters() {
       items={PROPS.map(([t, d]) => ({ t, d }))}
       stage={(at) => (
         <div className="fl-ch-stage">
-          <Graph lay="snake" s={2 * at + 1} lit={at} upto={at} pulse={false} cls="fl-board" />
+          <Graph lay="snake" s={2 * at + 1} lit={at} upto={at} pulse={false} cls="fl-board fl-compact" />
           <Inspect s={2 * at + 1} i={at} cls="fl-ch-insp" />
         </div>
       )}
       mini={(at) => (
         <div className="fl-mini-g">
-          <ol>{NODES.map((n, k) => <li key={n.t} className={k === at ? 'on' : k < at ? 'done' : ''}><span className="x-mono">{two(k + 1)}</span></li>)}</ol>
+          <Graph lay="mini" s={2 * at + 1} lit={at} upto={at} pulse={false} cls="fl-minibd fl-compact" />
           <p><b>{NODES[at].t}</b><span className="x-mono"><em>received</em> {NODES[at].r} <i>→</i> <em>returned</em> {NODES[at].o}</span></p>
         </div>
       )}
@@ -233,7 +236,22 @@ function Chapters() {
   );
 }
 
-/* Beyond, in the one dark room: the playground. Play, pause, next, previous, or tap a node; the inspector follows. */
+/* What a node returned, arriving the way a run streams it: letter by letter, once; reduced motion shows it whole. */
+function Typed({ text, calm }) {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    if (calm) { setN(text.length); return; }
+    setN(0);
+    let k = 0, t;
+    const step = () => { k += 1; setN(k); if (k < text.length) t = setTimeout(step, 28); };
+    t = setTimeout(step, 60);
+    return () => clearTimeout(t);
+  }, [text, calm]);
+  return <><span>{text.slice(0, n)}</span><span className="fl-ghost" aria-hidden="true">{text.slice(n)}</span></>;
+}
+
+/* Beyond, in the one dark room: the playground, led by its inspector. Play, pause, next, previous, or pick a node;
+   what it received and what it returned are the object here, not another copy of the canvas. */
 function Playground() {
   const [ref, live, calm] = useLive(0.3);
   const [play, setPlay] = useState(true);
@@ -256,7 +274,14 @@ function Playground() {
             <span className="x-mono"><i className={play && live ? 'on' : ''} aria-hidden="true" />flow.hanzo.ai<em>/ playground</em></span>
             <span className="fl-pg-state x-mono" aria-live="polite">{state}</span>
           </div>
-          <Graph lay="row" s={s} lit={i} pick={node} cls="fl-pg-g" />
+          <div className="fl-pg-stage">
+            <p className="fl-pg-node"><span className="x-mono">{two(i + 1)} / 06</span><b>{NODES[i].t}</b></p>
+            <div className="fl-pg-io">
+              <p><span className="x-mono">received</span><b>{NODES[i].r}</b></p>
+              <i className={'fl-pg-flow' + (s % 2 && s < END ? ' go' : '') + (done ? ' done' : '')} aria-hidden="true"><em key={s} /></i>
+              <p><span className="x-mono">returned</span><b className={done ? 'out' : 'wait'}>{done ? <Typed key={i} text={NODES[i].o} calm={calm} /> : '…'}</b></p>
+            </div>
+          </div>
           <div className="fl-pg-bot">
             <div className="fl-pg-ctl" role="group" aria-label="Step through the flow">
               <button type="button" onClick={prev} disabled={s <= 0} aria-label="Previous node"><Ico k="prev" /></button>
@@ -268,11 +293,6 @@ function Playground() {
                 <li key={n.t}><button type="button" className={(k === i ? 'on' : '') + (s > 2 * k ? ' done' : '')} onClick={() => node(k)} aria-current={k === i ? 'step' : undefined}><span className="x-mono">{two(k + 1)}</span><b>{n.t}</b></button></li>
               ))}
             </ol>
-            <div className="fl-pg-io">
-              <p><b>{NODES[i].r}</b><span className="x-mono">received</span></p>
-              <i aria-hidden="true">→</i>
-              <p><b className={done ? '' : 'wait'}>{done ? NODES[i].o : '…'}</b><span className="x-mono">returned</span></p>
-            </div>
           </div>
         </div>
       </div>
@@ -325,7 +345,7 @@ const FACTS = [
   { id: 'py', f: 'Python', t: 'Every component', d: 'A component is a Python class. Edit it in the browser and the change is live on the next run — no rebuild, no plugin format, no waiting for someone to add the parameter you need.', x: <PyNode /> },
   { id: 'rest', f: 'REST', t: 'Or JSON, or MCP', d: 'As a REST endpoint, as JSON your Python app loads directly, or as an MCP server — after which the flow is a tool your coding agent can call.', x: <Ways /> },
   { id: 'port', f: ':7860', t: 'On your machine', d: 'uv pip install hanzoflow, then uv run hanzoflow run. It opens on 127.0.0.1:7860. Docker works too.', x: <Term /> },
-  { id: 'mit', f: 'MIT', t: 'Self-hosted', x: <><div className="fl-chips"><span className="fl-chip"><span>License:</span> Apache-2.0</span><A to={GH} className="fl-chip"><Gh />hanzoai</A></div><div className="fl-get-links"><More to={GH}>View on GitHub</More><More to={DEPLOY}>Deploy to Cloud</More></div></> },
+  { id: 'mit', f: 'MIT', t: 'Self-hosted' },
 ];
 
 /* The edges between the fact nodes, measured from where the cards actually sit (desktop; phones use a rule). */
@@ -394,7 +414,7 @@ function GetFlow() {
           <h2 id="fl-get-h" className="bz-headline">Get Flow</h2>
           <p className="bz-lede">Visual workflow builder</p>
           <div className="fl-chips"><span className="fl-chip"><span>License:</span> Apache-2.0</span><A to={GH} className="fl-chip"><Gh />hanzoai</A></div>
-          <div className="fl-get-links"><More to={DEPLOY}>Deploy to Cloud</More><More to={DOCS}>Documentation</More></div>
+          <div className="fl-get-links"><More to={DEPLOY}>Deploy to Cloud</More></div>
         </div>
         <BizPaste name="Flow" prompt="Read https://hanzo.ai/skill.md and use Hanzo Flow in my project. Start with: hanzo flow workflows list" className="fl-paste" />
       </div>
@@ -408,7 +428,7 @@ function End() {
     <section className="bz-sec fl-end" aria-labelledby="fl-end-h">
       <div className="bz-wrap bz-grid fl-end-top">
         <div className="fl-end-copy">
-          <BizLines id="fl-end-h" className="bz-display md" lines={['Run it', 'locally first']} />
+          <BizLines id="fl-end-h" className="bz-headline" lines={['Run it locally first']} />
           <p className="bz-body">uv pip install hanzoflow, then uv run hanzoflow run. It opens on 127.0.0.1:7860. Docker works too.</p>
         </div>
         <Term copy />
@@ -420,13 +440,10 @@ function End() {
   );
 }
 
-/* The closing band: the page's own line, the one ask, nothing after it but the footer. A run crosses it once. */
+/* The closing band: the page's own line (the one big type on the last screens), the one ask, then the footer. */
 function Close() {
-  const [ref, live, calm] = useLive(0.5);
-  const [s] = useRun(live, calm);
   return (
-    <section ref={ref} className="fl-band" aria-labelledby="fl-band-h">
-      <ol className="fl-band-run" aria-hidden="true">{NODES.map((n, k) => <li key={n.t} className={s > 2 * k ? 'done' : s === 2 * k ? 'run' : ''}><span className="x-mono">{two(k + 1)}</span></li>)}</ol>
+    <section className="fl-band" aria-labelledby="fl-band-h">
       <div className="bz-wrap fl-band-in">
         <h2 id="fl-band-h" className="bz-display md">Build an AI workflow on a canvas, ship it as an API</h2>
         <div className="bz-acts"><BizAsk to={APP} cta="flow.close">Open Flow</BizAsk><More to={DOCS}>Documentation</More></div>

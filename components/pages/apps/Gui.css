@@ -77,8 +77,9 @@
 @media (min-width: 901px) {
   /* the heading rides the pinned stage, top left, for the whole pin: a full-height sticky layer (taking no space) whose
      bottom meets the section's bottom exactly when the stage's does, so the two release together and never cross */
-  .gu-ch { padding-bottom: 0; }
-  .gu-ch-head { position: sticky; top: 0; z-index: 2; height: 100svh; margin: 0 auto -100svh; padding-top: 92px; pointer-events: none; }
+  .gu-ch { display: grid; padding-bottom: 0; }
+  .gu-ch > * { grid-area: 1 / 1; }
+  .gu-ch-head { position: sticky; top: 0; z-index: 2; align-self: start; height: 100svh; margin: 0 auto; padding-top: 92px; pointer-events: none; }
   .gu-ch-head h2 { pointer-events: auto; }
   .gu-ch .bz-ch-stage { padding-top: 150px; }
   /* the lit chapter is the moment: its title grows to 32px while it is read, then settles back to 26px */
@@ -165,7 +166,7 @@
 .gu-pp-s { margin: 0; font-size: 16px; color: var(--soft); }
 
 /* get */
-.gu-ship { padding-bottom: clamp(44px, 5vw, 72px); }
+.gu-ship { padding-top: clamp(72px, 8vw, 116px); padding-bottom: clamp(44px, 5vw, 72px); }
 .gu-get { padding-top: clamp(44px, 5vw, 72px); padding-bottom: 0; }
 .gu-get .bz-grid { align-items: start; }
 .gu-get-main { grid-column: 1 / span 5; display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }

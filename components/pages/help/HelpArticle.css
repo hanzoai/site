@@ -211,6 +211,7 @@
   .xhp-crumb { order: 0; } .xhp-h1 { order: 1; } .xhp-lede { order: 2; } .xhp-aside { order: 3; } .xhp-kick { order: 4; } .xhp-toc { order: 5; } .xhp-doc { order: 6; }
   .xhp-crumb ol { font-size: 13px; }
   .xhp-crumb li[aria-current] span { padding: 0 0 6px; }
+  .xhp-crumb li:not(:first-child) { min-height: 32px; } /* only the link needs the 44px target */
   .xhp-aside { position: relative; top: auto; margin-top: 17px; max-height: none; overflow: visible; }
   .xhp-kick { margin-top: 27px; }
   /* the two platforms' steps: their headings become tabs, one list at a time */
@@ -239,13 +240,16 @@
   .xhp-seg { display: flex; flex: 1; min-width: 0; }
   /* both tabs fit the card at any width: they share it and wrap their words rather than run off it */
   .xhp-seg button { flex: 1 1 0; min-width: 0; min-height: 44px; padding: 4px 10px; white-space: normal; line-height: 1.2; text-wrap: balance; }
-  .xhp-stage { height: 232px; }
+  .xhp-stage { height: 216px; }
   .xhp-set { grid-template-columns: 40% 1fr; }
   .xhp-sec { padding-top: 56px; }
   .xhp-doc { padding-bottom: 72px; }
   .xhp-h2 { padding-left: 36px; }
   .xhp-ul.leads li { grid-template-columns: minmax(0, 1fr); gap: 4px; }
   .xhp-ul li::before { top: 28px; }
+}
+@media (max-width: 359px) {
+  .xhp-cap-t { min-height: 4.35em; } /* the narrowest phones: a step can take three lines */
 }
 @media (prefers-reduced-motion: reduce) {
   .xhp-hand { display: none; }

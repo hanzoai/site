@@ -236,7 +236,9 @@ function Hero({ mineWin }) {
 /* ---------- the black room: a request travels from the fabric to a tab ---------- */
 const HOPS = ['A tab', 'Extension', 'Native messaging host', 'Unix socket', 'Local Hanzo daemon', 'The fabric'];
 
-const HOP_SAY = [POINTS[4][1], POINTS[2][1], POINTS[1][1], POINTS[1][1], POINTS[2][1], 'The extension registers as a provider on the local fabric. Whatever can reach the fabric can then reach a tab.'];
+// one sentence per stop, each its own (Hanzo's words, split where one sentence covers two stops)
+const [NMH, PORT] = POINTS[1][1].split(/(?<=socket\.) /);
+const HOP_SAY = [POINTS[4][1], POINTS[0][1], NMH, PORT, POINTS[2][1], 'The extension registers as a provider on the local fabric. Whatever can reach the fabric can then reach a tab.'];
 function How() {
   const [hot, setHot] = useState(3);
   return (
@@ -248,7 +250,7 @@ function How() {
         </div>
         <ol className="xe-path" aria-label="From a tab to the fabric">
           {HOPS.map((h, i) => (
-            <li key={h} style={{ '--i': i }} className={(i === 0 ? 'end tab' : i === HOPS.length - 1 ? 'end fab' : '') + (i === hot ? ' hot' : '')}>
+            <li key={h} style={{ '--i': i }} className={(i === 0 ? 'end tab' : i === HOPS.length - 1 ? 'end fab' : '') + (i === hot ? ' hot' : i < hot ? ' past' : ' ahead')}>
               <button type="button" aria-pressed={i === hot} onPointerEnter={(e) => e.pointerType === 'mouse' && setHot(i)} onFocus={() => setHot(i)} onClick={() => { setHot(i); play('tick'); }}>
                 <span className="x-mono av-num">{String(i + 1).padStart(2, '0')}</span>
                 <b>{h}</b>
@@ -478,11 +480,6 @@ function Get() {
         <div className="xe-start">
           <h2 className="av-head">Get started with Extension</h2>
           <Cta to={DOCS} id="extension-docs" kind="link">Read the docs</Cta>
-          <ul className="xe-files" aria-label="v1.9.31">
-            {['chrome', 'firefox', 'safari'].map((b) => (
-              <li key={b}><A to={REL} className="xe-file"><span className="xe-zip-i" aria-hidden="true" /><span className="x-mono">{`hanzo-ai-${b}-v1.9.31.zip`}</span><em className="x-mono">{SIZE[b]}</em></A></li>
-            ))}
-          </ul>
         </div>
         <div className="xe-card2">
           <span className="xe-card2-i"><Mark size={24} /></span>
