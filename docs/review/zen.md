@@ -1,6 +1,7 @@
 # /zen: James-eye review (sixth walk)
 
 Ready: 7 Nov 22:45, held up next to /api and /affiliate. Walked the rebuilt page (particle swarm, trace, parts, family): one solid "Try Hanzo" per screen at both widths (desktop hero ask white on the film with the header quiet, ink beside the settled headline, header solid from the swarm on; phone header solid, page asks outlined), the sphere film is no longer the object four screens running, the trace tabs read as words (the chip's flex gap no longer opens between the cascading letters), the chosen tab answers hover, and the phone film Pause rides inside the arch instead of floating on white. Coverage parts 1, 4, 8, 9 and 11 rewritten to the page as it is. taste/unique/parity OK (23/23, 6/6); 0 console errors, no overlap at 1470 and 375; no still screen above the footer.
+Copy: 8 Nov, copycheck missing 0 of 13 (captured page), Hanzo's images kept.
 
 I reviewed the working tree at `4df4f37b` ("zen keyboard reaches the settled headline, header carries the one solid, trace done sound, tighter room"). Page files: `app/zen/page.jsx`, `components/pages/model/Zen.jsx` and `Zen.css`, and the shared `components/v2/Launch.jsx` (unchanged since the last walk). I walked it on 7 Nov 2026 against the dev server on :4180, which I did not restart. Only the /zen index page was walked.
 

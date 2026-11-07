@@ -1,6 +1,7 @@
 # /solutions/* (template): James-eye review
 
 Ready: 7 Nov 22:35, held up next to /api and /affiliate. Sheets rise over the header; a team card's name lands on the h1 (52px, same breaks) and the open lands on the clicked film; no film twice per page (Sigil where none is left); overlap shows 0; stronger hovers; phone strip peeks. taste/unique/parity OK (agents 45/45, finance 50/50); 0 console errors, no overlap at 1470 and 375.
+Copy: 8 Nov, copycheck missing 0 of 37 on /solutions/agents and 0 of 36 on /solutions/finance (captured pages), Hanzo's images kept.
 Verdict: 7/10
 First complaint: "I click 'What it runs on' and the panel slides in under the menu bar, so its title is cut in half and I can barely see the close button. And the films in the chapters are the same ones I see again in the team cards right below them."
 
