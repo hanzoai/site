@@ -1,12 +1,15 @@
 'use client';
-/* Treasury, v2. V2: 8/10 the dark-room Stage (split.num writes itself and the money pours out as the object settles), five pinned chapters each drawing its part of the ledger, a wallet with a hold you drive, gold accent
+/* Persona: developers building marketplaces, wallets and payouts inside their product. Goal: post a first transaction. CTA: "Read the docs" → docs.hanzo.ai/docs/cli/treasury. Metric: api_key_created (docs handoff).
+   Treasury, v2. V2: 8/10 the dark-room Stage (split.num writes itself and the money pours out as the object settles), five pinned chapters each drawing its part of the ledger, a wallet with a hold you drive, gold accent
    Signature: the split that writes itself, in a dark room. Hanzo's split.num is written line by line and, as each
    destination is named, its stream of money pours out of @users:001 into its account: 90%, 5%, and the remaining,
    which Numscript works out. When the three meet the amount, the split is marked balanced, then it runs again.
    Beyond: "Hold it, then pay". A wallet with a hold you drive: take $100 at checkout, hold it, then pay the seller on
    delivery or release it, and watch each change of state arrive as an event. Hanzo's wallets-with-holds, made playable.
    Motion budget: signature = the split (line draw); supporting = Stage (Settle), Chapters (PinChapters), magnetic
-   primary. Accent: gold. One dark room: the hero. Every word and link is Hanzo's; the only figures are the split's own. */
+   primary. Colour: none (0 UI hues): the 90% stream is white, the 5% silver, the remainder grey. Pause buttons on the
+   split, the flow chapter and the wallet. One dark room: the hero. Every word and link is Hanzo's; the only figures are
+   the split's own. */
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { EASE, Magnetic } from '../../ui';
@@ -15,6 +18,8 @@ import { useLive, useEvery } from '../cloud/Frame';
 import LineMask from '../../v2/x-gauss/LineMask';
 import Settle from '../../v2/Settle';
 import PinChapters from '../../v2/x-gauss/PinChapters';
+import NoJs from '../../v2/x-gauss/NoJs';
+import { usePause } from '../../v2/x-gauss/Pause';
 import '../../v2/Scale.css';
 import './Treasury.css';
 
@@ -67,9 +72,10 @@ function Streams({ shown, done }) {
 
 function Hero() {
   const [ref, live, calm] = useLive(0.25);
+  const [paused, pauseBtn] = usePause();
   const [k, setK] = useState(N); // lines written; the page's HTML carries all of them
   useEffect(() => { if (!calm) setK(0); }, [calm]);
-  useEvery(380, live, () => setK((v) => (v >= N + 9 ? 0 : v + 1)));
+  useEvery(380, live && !paused, () => setK((v) => (v >= N + 9 ? 0 : v + 1)));
   const has = (tag) => CODE.findIndex((l) => l[0] === tag) < k;
   const shown = [has('d0'), has('d1'), has('d2')];
   return (
@@ -77,22 +83,22 @@ function Hero() {
       <div className="w2-wrap">
         <div className="ts-top">
           <div>
-            <motion.p className="w2-kicker acc ts-kick" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>Treasury Operations</motion.p>
             <LineMask as="h1" id="ts-h1" now className="w2-display ts-h1" lines={['Hanzo Treasury']} />
           </div>
-          <motion.div className="ts-top-r" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
+          <motion.div className="ts-top-r" initial={{ y: 14 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
             <p className="w2-lede ts-lede">A double-entry ledger for money moving inside your product</p>
             <div className="ts-acts">
-              <Magnetic strength={0.25}><A to={DOCS} className="w2-cta acc" data-thumb="Read the docs">Read the docs <i aria-hidden="true">→</i></A></Magnetic>
+              <Magnetic strength={0.25}><A to={DOCS} className="w2-cta" data-thumb="Read the docs" data-cta="treasury.hero">Read the docs <i aria-hidden="true">→</i></A></Magnetic>
               <A to={GH} className="w2-ghost">GitHub</A>
             </div>
           </motion.div>
         </div>
         <div ref={ref}>
-          <Settle from={1.08} lift={70}>
+          <Settle from={1.04} lift={30}>
             <div className="ts-stage">
+              {pauseBtn}
               <div className="ts-ed">
-                <div className="ts-ed-bar"><i /><i /><i /><span className="x-mono">split.num</span></div>
+                <div className="ts-ed-bar"><i /><i /><i /><span className="x-mono">split.num</span><b className="ts-name x-mono">Treasury Operations</b></div>
                 <pre className="x-mono"><code>
                   {CODE.map(([t, l], i) => (
                     <span key={i} className={'ts-l ' + (t === 'c' ? 'c' : '') + (i < k ? ' in' : '') + (t.startsWith('d') && i < k ? ' d' : '')}>{l || ' '}{'\n'}</span>
@@ -171,15 +177,18 @@ function Flow({ on }) {
 
 function Parts() {
   const [ref, live] = useLive(0.05);
+  const [paused, pauseBtn] = usePause({ right: 0, top: -60 });
   return (
     <div ref={ref}>
       <PinChapters id="ts-parts" label="What it is made of" className="ts-pin"
-        chapters={PARTS.map(([t, d], i) => ({ k: i === 0 ? 'What it is made of' : `Part ${String(i + 1).padStart(2, '0')}`, t, b: <p>{d}</p> }))}
+        title="What it is made of"
+        chapters={PARTS.map(([t, d]) => ({ t, b: <p>{d}</p> }))}
         visual={(at) => (
           <div className="ts-vis">
+            {pauseBtn}
             {[Postings, Recon, Balances, Wallet, Flow].map((V, i) => (
               <motion.div key={i} className="ts-vis-i" initial={false} animate={{ opacity: at === i ? 1 : 0, y: at === i ? 0 : at > i ? -24 : 24 }} transition={{ duration: 0.55, ease: EASE }} aria-hidden={at !== i}>
-                <V on={live && at === i} />
+                <V on={live && !paused && at === i} />
               </motion.div>
             ))}
           </div>
@@ -209,10 +218,11 @@ const AUTO = ['idle', 'held', 'paid', 'idle', 'held', 'back'];
 
 function Hold() {
   const [ref, live] = useLive(0.35);
+  const [paused, pauseBtn] = usePause();
   const [s, setS] = useState('held');
   const [mine, setMine] = useState(false);
   const [i, setI] = useState(1);
-  useEvery(2600, live && !mine, () => { const n = (i + 1) % AUTO.length; setI(n); setS(AUTO[n]); });
+  useEvery(2600, live && !mine && !paused, () => { const n = (i + 1) % AUTO.length; setI(n); setS(AUTO[n]); });
   const go = (x) => { setMine(true); setS(x); };
   const v = ST[s];
   const cell = (k, label, sub) => (
@@ -228,11 +238,12 @@ function Hold() {
     <section className="w2-sec ts-hold" ref={ref}>
       <div className="w2-wrap">
         <div className="ts-hold-head">
-          <p className="w2-kicker acc">Wallets with holds</p>
           <h2 className="w2-display s ts-hold-h">Take money at checkout and pay a seller on delivery</h2>
+          <p className="ts-hold-k x-mono">Wallets with holds</p>
           <p className="w2-lede">Multi-currency virtual wallets that can hold an amount and release it later, without the balance lying in between. Every change of financial state is delivered as an event you can subscribe to.</p>
         </div>
         <div className="ts-wallet w2-object">
+          {pauseBtn}
           <div className="ts-ws">
             {cell('buyer', '@users:001', 'available')}
             {cell('held', 'held', 'not spendable, not paid')}
@@ -267,13 +278,13 @@ function First() {
       <div className="w2-wrap">
         <h2 className="w2-display m ts-first-h">Post your first transaction</h2>
         <div className="ts-first-row">
-          <div className="ts-first-acts"><A to={DOCS} className="w2-cta acc">Read the docs <i aria-hidden="true">→</i></A><A to={GH} className="w2-ghost">View on GitHub</A></div>
+          <div className="ts-first-acts"><A to={DOCS} className="w2-cta" data-cta="treasury.close">Read the docs <i aria-hidden="true">→</i></A><A to={GH} className="w2-ghost">View on GitHub</A></div>
           <div className="ts-get">
             <div><h2 className="w2-title">Get Treasury</h2><p className="ts-get-tag">Treasury management</p></div>
             <div className="ts-get-meta">
               <span className="ts-chip"><span>License:</span> Apache-2.0</span>
               <A to="https://github.com/hanzoai" className="ts-chip">hanzoai</A>
-              <A to="https://platform.hanzo.ai/deploy" className="w2-cta">Deploy to Cloud</A>
+              <A to="https://platform.hanzo.ai/deploy" className="w2-ghost">Deploy to Cloud</A>
             </div>
           </div>
         </div>
@@ -285,6 +296,7 @@ function First() {
 export default function Treasury() {
   return (
     <main className="ts w2">
+      <NoJs />
       <Hero />
       <Lede />
       <Parts />

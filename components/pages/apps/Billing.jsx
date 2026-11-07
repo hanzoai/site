@@ -15,7 +15,7 @@ import { EASE } from '../../ui';
 import { A, More } from '../../kit';
 import { Code, Console, useLive, useEvery } from '../cloud/Frame';
 import StageHero from '../../v2/StageHero';
-import PinScenes from '../../v2/PinScenes';
+import PinScenes from '../../v2/x-hamilton/PinScenes';
 import Finale, { Prompt } from '../../v2/Finale';
 import Drawer from '../../v2/Drawer';
 import './Billing.css';
@@ -250,7 +250,7 @@ function Start() {
 
 export default function Billing() {
   return (
-    <main className="l2-page bl2" style={{ '--ac': '#0f9d58' }}>
+    <main className="l2-page bl2" style={{ '--ac': '#737373' }}>
       <StageHero look="split" kick="Billing & Metering" title="Hanzo Billing" sub="Subscriptions, usage, invoices. Charge a fixed price, charge for what someone used, or charge for both on the same invoice. Plans, prices, meters, coupons and credits are separate objects, so a pricing change is a new price rather than a migration — and your servers never hold a card number to do any of it." acts={[['Read the docs', DOCS], ['GitHub', GH]]}>
         <Machine />
       </StageHero>

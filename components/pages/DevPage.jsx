@@ -1,22 +1,25 @@
 'use client';
-/* Hanzo Dev, v2 (VISION.md archetype A, Launch, terminal-first). One idea per screen:
-     1. "Describe the change. Dev ships it." The hero is Dev itself at work: a two-pane terminal where the task is
-        typed, Dev reads the repository, the diff lands in the file beside it and the tests turn green.
-     2. The race, in the page's one dark room. The room opens out to the full width as you reach it, and the 3.02×
-        result replays at the speed each side ran.
+/* Hanzo Dev, v3 (JAMES.md, PLAN-COMPONENTS 2.16, BRIEF-v3 5.1 "Dev: terminal with a diff landing").
+   Persona: a developer deciding on a coding agent. Goal: open Dev (or install it). CTA: "Open Dev" (/login?next=%2Fdev),
+   one solid ask in hero, the site's sticky ask bar and the dark close. Metric: signup_start (install_copy on Install).
+   One idea per screen:
+     1. "Describe the change. Dev ships it." Dev at work in a two-pane terminal: the task is written, Dev reads the
+        repository, the diff lands in src/retry.ts beside it and the tests pass. It plays once, then rests.
+     2. The race, in the one dark middle room: its edges open out as you reach it, then each side replays its median
+        task at the speed it ran, once (pause and replay).
      3. Wherever the work is: terminal, web, cloud and Slack on a rail you throw sideways.
      4. How it works, as sheets that stack: models, the Kai controller, proof, the sandbox fence, Gen.
-     5. The spec: install three ways, sign in, and your first session. 6. Source, questions, reading. 7. Paste and ship.
-   Signature: the live session. The task types, the diff lands line by line in src/retry.ts and the tests go green,
-   then the split-screen race replays the median task on each side, at the speed it ran.
-   Supporting: headlines rise out of masks; the dark room's edges open with the scroll (clip-path); the places rail
-   is dragged with inertia. The stacked sheets are layout only (CSS sticky), not motion.
-   Beyond: "Your first session". Say what you are on, how you sign in, which model and whether Dev asks first, and the
-   page writes your whole first session in Hanzo's own commands, to copy in one go.
-   Accent: the terminal's green, from the tests going green. Every word, figure and link is Hanzo's; only the code in
-   the sample session is an illustration. */
+     5. Install, three ways, then sign in. 6. Source, questions, reading. 7. The dark close: paste and ship, Open Dev.
+   Signature: the live session with the diff landing in the file, then the split-screen race.
+   Motion mix (JAMES.md 9): time (session, race), arrival (headline cut-in, terminal rise), pointer (the thrown rail,
+   ladder and row previews), state (the selection pill on model and flag rows, the fence), scroll (the race room's
+   edges only). Each sheet's small scene plays once when the sheet comes in; nothing loops.
+   Greys only; a status reads by its shape (+ and -, ticks), never by a hue. Every word, figure and link is Hanzo's;
+   only the code in the sample session is an illustration. Removed in v3: the invented "Your first session" builder
+   (an install picker, deferred by PLAN-COMPONENTS 2.16, with words that were not Hanzo's). */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { useDemo, DemoCtl } from '../v2/AppDemo';
 import { Copy } from '../ui';
 import { A, Faq } from '../kit';
 import AppLines from '../v2/AppLines';
@@ -55,7 +58,6 @@ const DIFF = [
   ['ctx', '    }'],
 ];
 const TESTS = ['retries three times', 'stops at the first success', 'throws the last error'];
-const STOP = Symbol('stop');
 const FILE = [DIFF[1][1].slice(2), DIFF[2][1].slice(2), DIFF[4][1].slice(2), DIFF[5][1].slice(2)];
 const FIXED = DIFF[3][1].slice(2);
 
@@ -85,87 +87,80 @@ function File({ stage, tests }) {
 function Session() {
   const box = useRef(null);
   const body = useRef(null);
-  const seen = useInView(box, { amount: 0.25 });
-  const calm = useReducedMotion();
-  const [n, setN] = useState(0);
   const [info, setInfo] = useState(false);
+  const [live, setLive] = useState(false); // false: the server's final frame (the poster) shows
   const [stage, setStage] = useState(4);
   const [tests, setTests] = useState(3);
 
-  /* The session writes straight into the terminal's nodes (no React state per character) and stops off screen;
-     the file pane only changes at each step. */
-  useEffect(() => {
+  /* The session writes straight into the terminal's nodes (no React state per character); the file pane only changes
+     at each step. It plays once when the terminal is in view, pauses off screen, and rests on its final frame. */
+  const demo = useDemo(box, async (sleep) => {
+    setLive(true); setStage(0); setTests(0);
+    await sleep(30);
     const el = body.current;
-    if (!el || (!seen && !calm)) return;
-    let live = true;
-    const k = calm ? 0 : 1;
-    const sleep = (ms) => new Promise((ok, no) => setTimeout(() => (live ? ok() : no(STOP)), ms * k));
-    const add = (cls, text = '') => { const d = document.createElement('div'); d.className = 'xt ' + cls; d.textContent = text; el.appendChild(d); return d; };
-    const put = async (node, text, ms) => {
-      if (!k) { node.textContent = text; return; }
-      for (let i = 1; i <= text.length; i++) { node.textContent = text.slice(0, i); await sleep(ms); }
-    };
+    if (!el) return;
+    el.textContent = '';
+    const add = (cls, text = '') => { const d = document.createElement('div'); d.className = 'xt ' + cls; d.textContent = text; el.appendChild(d); el.scrollTop = el.scrollHeight; return d; };
+    const put = async (node, text, ms) => { for (let i = 1; i <= text.length; i++) { node.textContent = text.slice(0, i); await sleep(ms + (i % 5) * 6); } };
     const cmd = async (text) => {
-      const d = add('p'); const pre = document.createElement('b'); pre.textContent = '$ '; const t = document.createElement('span');
-      d.append(pre, t); const caret = document.createElement('i'); d.append(caret);
-      await put(t, text, 28); caret.remove();
+      const d = add('p'); const pre = document.createElement('b'); pre.textContent = '$ '; const s = document.createElement('span');
+      d.append(pre, s); const caret = document.createElement('i'); d.append(caret);
+      await put(s, text, 22); caret.remove();
     };
     const step = async (label, done, work) => {
       const d = add('step', label); d.classList.add('run');
       await work(); await sleep(220);
       d.classList.remove('run'); d.classList.add('ok'); d.textContent = '✓ ' + done;
     };
-    const play = async () => {
-      el.textContent = ''; setStage(0); setTests(0);
-      await cmd(INSTALL); await sleep(500);
-      await cmd('dev'); await sleep(300);
-      add('dim', 'v0.7.7 · Run /help for commands'); await sleep(400);
-      const q = add('ask'); const t = document.createElement('span'); q.append('┃ ', t); const caret = document.createElement('i'); q.append(caret);
-      await put(t, TASK, 24); caret.remove(); await sleep(380);
-      setStage(1);
-      await step('◐ Reading the repository', 'Read the repository', () => sleep(1100));
-      await step('◐ Making the change', 'Made the change', async () => {
-        for (const [c, s] of DIFF) { add('d ' + c, s); if (c === 'add') setStage(2); await sleep(170); }
-        await sleep(400);
-      });
-      setStage(3);
-      await step('◐ Running the tests', 'Ran the tests', async () => {
-        for (const [i, s] of TESTS.entries()) {
-          const r = add('test', '○ ' + s); await sleep(560);
-          r.classList.add('ok'); r.textContent = '✓ ' + s; setTests(i + 1);
-        }
-      });
-      add('done', '3 passed'); setStage(4); await sleep(420);
-      add('final', 'Diff ready. Waiting for your review.');
-    };
-    (async () => {
-      try {
-        do { await play(); if (calm) return; await sleep(6000); } while (live);
-      } catch (e) { if (e !== STOP) throw e; }
-    })();
-    return () => { live = false; };
-  }, [seen, calm, n]);
+    await cmd(INSTALL); await sleep(420);
+    await cmd('dev'); await sleep(260);
+    add('dim', 'v0.7.7 · Run /help for commands'); await sleep(340);
+    const q = add('ask'); const s = document.createElement('span'); q.append('┃ ', s); const caret = document.createElement('i'); q.append(caret);
+    await put(s, TASK, 18); caret.remove(); await sleep(340);
+    setStage(1);
+    await step('◐ Reading the repository', 'Read the repository', () => sleep(1000));
+    await step('◐ Making the change', 'Made the change', async () => {
+      for (const [c, line] of DIFF) { add('d ' + c, line); if (c === 'add') setStage(2); await sleep(160); }
+      await sleep(360);
+    });
+    setStage(3);
+    await step('◐ Running the tests', 'Ran the tests', async () => {
+      for (const [i, line] of TESTS.entries()) {
+        const r = add('test', '○ ' + line); await sleep(480);
+        r.classList.add('ok'); r.textContent = '✓ ' + line; setTests(i + 1);
+      }
+    });
+    add('done', '3 passed'); setStage(4); await sleep(380);
+    add('final', 'Diff ready. Waiting for your review.');
+  }, { amount: 0.3 });
 
   return (
     <div className="xdv-term" ref={box}>
       <div className="xdv-term-bar">
         <i aria-hidden="true" /><i aria-hidden="true" /><i aria-hidden="true" />
-        <b className="x-mono">dev</b>
+        <b className="x-mono">Hanzo Dev · Coding agent</b>
         <button type="button" className="xdv-info" aria-expanded={info} aria-controls="xdv-demo" onClick={() => setInfo(!info)}>(i)</button>
-        <button type="button" className="xdv-replay" onClick={() => setN(n + 1)} aria-label="Replay the session">
-          <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.6-3.7M13 2.5v3h-3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
-        </button>
+        <DemoCtl demo={demo} className="dark xdv-ctl" />
       </div>
       <p id="xdv-demo" className={'xdv-demo' + (info ? ' on' : '')} aria-hidden={!info}>This interactive demo runs Hanzo Dev in your browser with an in-memory workspace (@acme/api).</p>
       <div className="xdv-panes">
-        <div className="xdv-term-body" ref={body} aria-hidden="true" />
+        <div className="xdv-term-col">
+          {/* the poster: the session's final frame, in the server HTML (JS off, reduced motion, before it plays) */}
+          {!live && (
+            <div className="xdv-term-body xdv-poster">
+              <div className="xt p"><b>$ </b>{INSTALL}</div><div className="xt p"><b>$ </b>dev</div>
+              <div className="xt dim">v0.7.7 · Run /help for commands</div>
+              <div className="xt ask">┃ {TASK}</div>
+              <div className="xt step ok">✓ Read the repository</div><div className="xt step ok">✓ Made the change</div>
+              {DIFF.map(([c, line], i) => <div key={i} className={'xt d ' + c}>{line}</div>)}
+              <div className="xt step ok">✓ Ran the tests</div>
+              {TESTS.map((line) => <div key={line} className="xt test ok">✓ {line}</div>)}
+              <div className="xt done">3 passed</div><div className="xt final">Diff ready. Waiting for your review.</div>
+            </div>
+          )}
+          <div className={'xdv-term-body' + (live ? '' : ' xdv-off')} ref={body} aria-hidden="true" />
+        </div>
         <File stage={stage} tests={tests} />
-      </div>
-      {/* the whole session as text, for readers and search engines */}
-      <div className="x-sr">
-        <p>$ {INSTALL}</p><p>$ dev</p><p>v0.7.7 · Run /help for commands</p><p>{TASK}</p>
-        <p>Read the repository</p><p>Made the change</p>{DIFF.map(([, s], i) => <p key={i}>{s}</p>)}
-        <p>Ran the tests</p>{TESTS.map((s) => <p key={s}>{s}</p>)}<p>3 passed</p><p>Diff ready. Waiting for your review.</p>
       </div>
       <div className="xdv-term-foot x-mono"><span>auto</span><span>·</span><span>enso-auto</span><em>@acme/api (main)</em></div>
     </div>
@@ -176,17 +171,16 @@ const HIGHLIGHTS = ['Reads the repository, makes the change and runs the tests',
 
 function Hero() {
   return (
-    <section className="xdv-hero" aria-labelledby="xdv-h1" data-morph-target>
+    <section className="xdv-hero" aria-labelledby="xdv-h1" data-morph-target data-ask-name="Hanzo Dev">
       <div className="v2a-wrap v2a-grid xdv-hero-top">
         <div className="xdv-hero-h">
-          <p className="v2a-kick">Hanzo Dev · Coding agent</p>
           <AppLines as="h1" id="xdv-h1" className="v2a-display xdv-h1" lines={['Describe the change.', 'Dev ships it.']} soft={[1]} />
         </div>
         <motion.div className="xdv-hero-side" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}>
           <p className="xdv-lede">Hanzo Dev is a coding agent. It reads your repository, makes the change, runs the tests and shows you the diff — in your terminal, on the web, in the cloud and in Slack.</p>
           <div className="xdv-acts">
-            <Btn to="/login?next=%2Fdev" solid data-thumb="Open Dev">Open Dev</Btn>
-            <Btn to="https://docs.hanzo.ai/docs/dev">Read the docs</Btn>
+            <Btn to="/login?next=%2Fdev" solid data-thumb="Open Dev" data-cta="dev.hero">Open Dev</Btn>
+            <Lk to="https://docs.hanzo.ai/docs/dev">Read the docs</Lk>
             <Lk to="https://github.com/hanzoai/dev">Explore GitHub examples</Lk>
           </div>
         </motion.div>
@@ -243,31 +237,21 @@ function Side({ t, side }) {
 function Race() {
   const ref = useRef(null);
   const board = useRef(null);
-  const seen = useInView(board, { amount: 0.35 });
   const calm = useReducedMotion();
-  const t = useMotionValue(0);
-  const [run, setRun] = useState(0);
+  const t = useMotionValue(MAX); // the server shows the finished race
   // the room's edges open out to the full width as it arrives (a function of the scroll, never a native timeline)
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start end', 'start 0.15'] });
   const clip = useTransform(p, (v) => {
     const k = 1 - Math.min(1, Math.max(0, v));
     return `inset(0 ${(k * 4.5).toFixed(2)}vw round ${(k * 48).toFixed(1)}px)`;
   });
-  useEffect(() => {
-    if (!seen) return;
-    if (calm) { t.set(MAX); return; }
-    let on = true, c;
-    (async () => {
-      while (on) {
-        t.set(0);
-        c = animate(t, MAX, { duration: MAX, ease: 'linear' });
-        await c;
-        if (!on) break;
-        await new Promise((r) => setTimeout(r, 3800));
-      }
-    })();
-    return () => { on = false; c && c.stop(); };
-  }, [seen, calm, run, t]);
+  // the race runs once at the speed it ran when the board is in view, pauses off screen, and rests on its result
+  const demo = useDemo(board, async (sleep) => {
+    let v = 0;
+    t.set(0);
+    await sleep(400);
+    while (v < MAX) { await sleep(32); v = Math.min(MAX, v + 0.032); t.set(v); }
+  }, { amount: 0.4 });
   return (
     <motion.section className="xdv-race" data-room="dark" ref={ref} aria-labelledby="xdv-race" style={calm ? undefined : { clipPath: clip }}>
       <div className="v2a-wrap">
@@ -279,15 +263,13 @@ function Race() {
           {SIDES.map((s) => <Side key={s.who} t={t} side={s} />)}
         </div>
         <div className="xdv-race-act">
-          <motion.button type="button" className="x-btn xdv-replay-btn" onClick={() => setRun((r) => r + 1)} whileTap={{ scale: 0.96 }}>
+          <DemoCtl demo={demo} className="dark" />
+          <motion.button type="button" className="x-btn xdv-replay-btn" onClick={demo.replay} whileTap={{ scale: 0.97 }}>
             <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.6-3.7M13 2.5v3h-3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
             Replay race
           </motion.button>
         </div>
-        <table className="x-sr">
-          <thead><tr><th>Agent</th><th>Median time a task</th><th>Model calls a task</th></tr></thead>
-          <tbody>{SIDES.map((s) => <tr key={s.who}><td>{s.who}</td><td>{s.s.toFixed(2)} s</td><td>{s.calls}</td></tr>)}</tbody>
-        </table>
+        <ul className="x-sr">{SIDES.map((s) => <li key={s.who}>{s.who}: {s.s.toFixed(2)} s median time a task, {s.calls} model calls a task</li>)}</ul>
         <div className="v2a-grid xdv-verdict-row">
           <p className="xdv-verdict">3.02× faster over the 42 tasks both solved, 95% interval 2.06–4.36×.</p>
           <div className="xdv-ways">
@@ -312,6 +294,15 @@ function Race() {
   );
 }
 
+/* A part whose small CSS scene plays once, the first time any of it reaches the screen ([data-play]); before that
+   and under reduced motion it shows its resting (final) frame. */
+function Play({ as = 'div', className = '', children, ...r }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0 });
+  const Tag = as;
+  return <Tag ref={ref} className={className} data-play={seen ? '' : undefined} {...r}>{children}</Tag>;
+}
+
 /* ---------- 3. one agent, four places: a rail you throw ---------- */
 const PLACES = [
   ['Terminal', 'dev', 'In any repository. It reads the code, makes the change and runs commands in a sandbox. Bare hanzo opens the same session.', 'term'],
@@ -323,7 +314,7 @@ function Scene({ g }) {
   if (g === 'term') return <div className="xdv-sc term"><p className="x-mono"><b>$</b> dev<i /></p><span /><span /><span /></div>;
   if (g === 'web') return <div className="xdv-sc web"><p className="x-mono"><i /><i /><i /><em>hanzo.ai/dev</em></p><div><span /><span /><span /><b /></div></div>;
   if (g === 'cloud') return <div className="xdv-sc cloud"><p className="x-mono"><b>$</b> dev cloud exec</p><div className="orb"><i /><i /><i /></div><p className="x-mono dim">dev cloud diff · dev cloud apply</p></div>;
-  return <div className="xdv-sc slack"><p className="x-mono"># dev</p><span className="m"><i /><b /><b /></span><span className="m dev"><i /><b /><b /></span><span className="m"><i /><b /></span></div>;
+  return <div className="xdv-sc slack"><p aria-hidden="true"><i /><b /></p><span className="m"><i /><b /><b /></span><span className="m dev"><i /><b /><b /></span><span className="m"><i /><b /></span></div>;
 }
 function Places() {
   const view = useRef(null);
@@ -352,8 +343,8 @@ function Places() {
     <section className="v2a-sec xdv-places" aria-labelledby="xdv-pl-h">
       <div className="v2a-wrap v2a-grid xdv-pl-head">
         <div className="xdv-pl-hl">
-          <p className="v2a-kick">One agent</p>
           <AppLines as="h2" view id="xdv-pl-h" className="v2a-display sm" lines={['Wherever the work is.']} />
+          <p className="v2a-folio">One agent</p>
         </div>
         <div className="xdv-pl-hr">
           <p className="v2a-body">The same agent, the same models and the same account in every place it runs.</p>
@@ -366,14 +357,14 @@ function Places() {
       <div className="xdv-pl-view" ref={view} data-drag={drag ? '' : undefined}>
         <motion.ul className="xdv-pl" ref={track} style={{ x }} drag={drag ? 'x' : false} dragConstraints={{ left: -lim, right: 0 }} dragElastic={0.08} dragTransition={{ power: 0.35, timeConstant: 320 }}>
           {PLACES.map(([t, tag, d, g]) => (
-            <li key={t} className="xdv-pl-card">
+            <Play as="li" key={t} className="xdv-pl-card">
               <div className={'xdv-pl-art ' + g} aria-hidden="true"><Scene g={g} /></div>
               <div className="xdv-pl-txt">
                 <h3>{t}</h3>
                 {tag && <code className="xdv-tag">{tag}</code>}
                 <p>{d}</p>
               </div>
-            </li>
+            </Play>
           ))}
         </motion.ul>
       </div>
@@ -404,7 +395,7 @@ function Rows({ list, at, set, label, id }) {
       <div className="xdv-rows" role="group" aria-label={label}>
         {list.map(([c, note], i) => (
           <button key={c} type="button" aria-pressed={at === i} onClick={() => set(i)}>
-            {at === i && <span className="xdv-row-bg" />}
+            {at === i && <motion.span layoutId={'xdv-row-' + label} className="xdv-row-bg" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />}
             <code><span className="p">{c}</span>{'  '}<span className="c">{note}</span></code>
           </button>
         ))}
@@ -416,17 +407,17 @@ function Rows({ list, at, set, label, id }) {
 
 function Sheet({ n, kick, title, lede, links, children, tone = '' }) {
   return (
-    <article className={'xdv-sheet ' + tone} style={{ '--k': n }}>
+    <Play as="article" className={'xdv-sheet ' + tone} style={{ '--k': n }}>
       <div className="xdv-sheet-in v2a-grid">
         <div className="xdv-sheet-l">
-          <p className="v2a-kick"><span className="x-mono xdv-sheet-n">{String(n + 1).padStart(2, '0')}</span>{kick}</p>
           <h3 className="v2a-head">{title}</h3>
           {lede && <p className="v2a-body xdv-sheet-lede">{lede}</p>}
           {links && <div className="x-row-links tight">{links}</div>}
+          <p className="v2a-folio xdv-sheet-f"><span className="x-mono">{String(n + 1).padStart(2, '0')}</span>{kick}</p>
         </div>
         <div className="xdv-sheet-r">{children}</div>
       </div>
-    </article>
+    </Play>
   );
 }
 
@@ -489,38 +480,21 @@ function How() {
   );
 }
 
-/* ---------- 5. the spec: install, sign in, your first session ---------- */
+/* ---------- 5. the spec: install three ways, then sign in ---------- */
 const WAYS = [
   ['hanzo.sh', 'curl -fsSL https://hanzo.sh | sh', 'Linux and macOS. One native binary, its checksum verified.'],
   ['npm', 'npm i -g hanzo', 'Every platform, Windows included. Run it as hanzo dev; the agent downloads on first run.'],
   ['Homebrew', 'brew install hanzoai/tap/hanzo-dev', 'macOS and Linux.'],
 ];
-// every line below is one of Hanzo's own commands on this page; the choices only pick between them
-const FIRST = {
-  sys: [['Linux or macOS', 0], ['Windows', 1], ['Homebrew', 2]],
-  login: [['Hanzo account', 'dev login --hanzo'], ['Pick an account', 'dev login'], ['API key', 'dev login --with-api-key']],
-  model: [['enso-auto', ''], ['enso-ultra', ' --model enso-ultra']],
-};
 
 function Setup() {
-  const [sys, setSys] = useState(0);
-  const [login, setLogin] = useState(0);
-  const [model, setModel] = useState(0);
-  const [ask, setAsk] = useState(false);
-  const lines = [WAYS[FIRST.sys[sys][1]][1], FIRST.login[login][1], 'dev' + FIRST.model[model][1] + (ask ? ' --ask' : '')];
-  const row = (label, list, at, set) => (
-    <fieldset className="xdv-first-q">
-      <legend>{label}</legend>
-      <div role="radiogroup" aria-label={label}>{list.map(([t], i) => <button key={t} type="button" role="radio" aria-checked={at === i} onClick={() => set(i)}>{t}</button>)}</div>
-    </fieldset>
-  );
   return (
     <section className="v2a-sec xdv-setup" id="install" aria-labelledby="xdv-in-h">
       <div className="v2a-wrap">
         <div className="v2a-grid xdv-in-head">
           <div className="xdv-in-hl">
-            <p className="v2a-kick">Install</p>
             <AppLines as="h2" view id="xdv-in-h" className="v2a-display sm" lines={['One line, three ways.']} />
+            <p className="v2a-folio">Install</p>
           </div>
           <p className="v2a-body xdv-in-hr">Linux, macOS and Windows. Dev updates itself the way it was installed.</p>
         </div>
@@ -540,22 +514,6 @@ function Setup() {
         <div className="x-row-links">
           <Lk to="https://github.com/hanzoai/dev/releases/tag/v0.7.7">Latest release v0.7.7</Lk>
           <Lk to="https://docs.hanzo.ai/docs/dev">Getting started</Lk>
-        </div>
-
-        <div className="xdv-first">
-          <div className="xdv-first-l">
-            <p className="v2a-kick">Your first session</p>
-            <h3 className="v2a-head">Three lines, yours.</h3>
-            <p className="v2a-body">Install, sign in, start. Dev updates itself the way it was installed.</p>
-            {row('You are on', FIRST.sys, sys, setSys)}
-            {row('Sign in with', FIRST.login, login, setLogin)}
-            {row('Model', FIRST.model, model, setModel)}
-            <label className="xdv-first-ask"><input type="checkbox" checked={ask} onChange={() => setAsk(!ask)} /> Ask before each action</label>
-          </div>
-          <div className="xdv-first-out">
-            <ol>{lines.map((l, i) => <li key={i}><span className="x-mono">{i + 1}</span><code><b>$</b> {l}</code></li>)}</ol>
-            <Copy text={lines.join('\n')} label="Copy all three" />
-          </div>
         </div>
       </div>
     </section>
@@ -579,19 +537,19 @@ function Source() {
   return (
     <section className="v2a-sec xdv-oss" aria-labelledby="xdv-oss-h">
       <div className="v2a-wrap">
-        <p className="v2a-kick">Open source</p>
         <AppLines as="h2" view id="xdv-oss-h" className="v2a-display md" lines={['Read every line.']} />
+        <p className="v2a-folio">Open source</p>
         <p className="xdv-oss-p">Dev is Apache-2.0 on GitHub. Build it, change it, send a pull request — <a href="https://github.com/hanzoai/dev" target="_blank" rel="noopener noreferrer">hanzoai/dev</a>.</p>
         <div className="x-row-links"><Lk to="https://github.com/hanzoai/dev">The source</Lk><Lk to="https://github.com/hanzoai/dev/releases">Releases</Lk></div>
 
         <div className="v2a-grid xdv-qa">
-          <div className="xdv-qa-l"><p className="v2a-kick">Questions</p><h2 className="v2a-head">Questions &amp; Answers</h2></div>
+          <div className="xdv-qa-l"><h2 className="v2a-head">Questions &amp; Answers</h2><p className="v2a-folio">Questions</p></div>
           <div className="xdv-qa-r"><Faq items={QA} /></div>
         </div>
 
         <div className="xdv-read">
           <div className="v2a-grid xdv-read-h">
-            <div><p className="v2a-kick">Read</p><h2 className="v2a-head">The agent, its controller, its source.</h2></div>
+            <div><h2 className="v2a-head">The agent, its controller, its source.</h2><p className="v2a-folio">Read</p></div>
             <p className="v2a-body">Where to start, what Dev thinks with, and the code.</p>
           </div>
           <div className="xdv-cols">
@@ -617,15 +575,15 @@ function Source() {
 const PASTE = 'Read https://hanzo.ai/skill.md and use Hanzo Dev in my project. Start with: dev';
 function Paste() {
   return (
-    <section className="v2a-sec xdv-paste">
+    <section className="xdv-paste" data-room="dark" aria-labelledby="xdv-paste-h">
       <div className="v2a-wrap xdv-paste-in">
-        <p className="v2a-kick">Paste and ship</p>
-        <p className="xdv-paste-l">Paste this into any agent. It reads the skill manifest and calls Dev from there.</p>
+        <h2 className="xdv-paste-l" id="xdv-paste-h">Paste this into any agent. It reads the skill manifest and calls Dev from there.</h2>
+        <p className="v2a-folio">Paste and ship</p>
         <div className="xdv-prompt">
           <div className="xdv-prompt-top"><span className="x-mono">Agent prompt</span><Copy text={PASTE} /></div>
           <p className="x-mono">{PASTE}</p>
         </div>
-        <div className="xdv-paste-go"><Btn to="/login?next=%2Fdev" solid>Open Dev</Btn></div>
+        <div className="xdv-paste-go"><Btn to="/login?next=%2Fdev" solid data-thumb="Open Dev" data-cta="dev.close">Open Dev</Btn></div>
       </div>
     </section>
   );

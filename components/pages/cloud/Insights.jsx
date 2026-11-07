@@ -97,7 +97,7 @@ function Pane({ k }) {
   );
   if (k === 'replay') return (
     <div className="in-p-rp">
-      <svg viewBox="0 0 320 180" aria-hidden="true"><rect x="8" y="8" width="304" height="164" rx="14" fill="#fff" stroke="rgba(0,0,0,.08)" /><rect x="28" y="30" width="140" height="12" rx="6" fill="#ececf0" /><rect x="28" y="54" width="220" height="10" rx="5" fill="#f2f2f5" /><rect x="28" y="120" width="96" height="30" rx="10" fill="#ececf0" /><path d="M60 150 C 110 60, 180 160, 230 80 S 270 60, 286 120" fill="none" stroke="currentColor" strokeWidth="2.5" strokeDasharray="5 6" strokeLinecap="round" /><circle cx="286" cy="120" r="7" fill="currentColor" /></svg>
+      <svg viewBox="0 0 320 180" aria-hidden="true"><rect x="8" y="8" width="304" height="164" rx="14" fill="#fff" stroke="rgba(0,0,0,.08)" /><rect x="28" y="30" width="140" height="12" rx="6" fill="#ededed" /><rect x="28" y="54" width="220" height="10" rx="5" fill="#f2f2f5" /><rect x="28" y="120" width="96" height="30" rx="10" fill="#ededed" /><path d="M60 150 C 110 60, 180 160, 230 80 S 270 60, 286 120" fill="none" stroke="currentColor" strokeWidth="2.5" strokeDasharray="5 6" strokeLinecap="round" /><circle cx="286" cy="120" r="7" fill="currentColor" /></svg>
       <p>why someone gave up</p>
     </div>
   );

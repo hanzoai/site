@@ -1,22 +1,32 @@
 'use client';
-/* Enterprise, v2 (VISION archetype B, System: a map you travel; the calm trust of chatgpt.com/business/enterprise).
+/* Enterprise, v2 (VISION archetype B, System: a map you travel; the calm trust of chatgpt.com/business/enterprise;
+   PLAN-COMPONENTS 5.3).
+   V2: 8/10 where it runs as a scrolled zoom over Hanzo's live audit log; trust strip in the first screen; GPU detail in a drawer; one dark room, the Band; greys only
+   Persona: an IT, security or platform lead choosing where Hanzo runs. Goal: see it runs where you need it, and that
+   you can verify it. CTA: "Get Enterprise plan" (data-cta enterprise.hero, the page's ask) and one "Talk to sales" in
+   the closing Band; metric: cta_click on enterprise.hero and the Band.
+   Thesis: it runs where you need it, and you can verify it.
    Signature: the boundary zoom. The first screen is Hanzo's own workspace, open on its audit log and already writing
    (who acted, from where, what they called, the status it returned). As you scroll it settles inside four walls -
    Hanzo Cloud, your cloud, your servers, air-gapped - and the camera travels in one wall per chapter while the words for
-   each place come in as the last go out (the apple.com sticky chapter). Phones and reduced motion get the same story by
-   tap, without the pin.
-   Supporting (three, no more): a clip-path scene change into the one dark room (your own GPUs), results on a split-flap
-   board, and the clouds Hanzo deploys on as a wall in motion. Everything else sits still and reads.
-   Beyond: "Which wall is yours" - say what your data needs and the tightest wall that holds all of it is drawn, with
-   its line and the way to start. Every word and figure is Hanzo's. */
+   each place come in as the last go out (the apple.com sticky chapter). Phones, reduced motion and JS off get the same
+   story by tap or as a list, without the pin.
+   Supporting: results rising out of their own masks (never a number that is not Hanzo's), the GPU detail opening as a sheet out of its card, and the clouds Hanzo
+   deploys on as a slow wall in motion. Everything else sits still and reads.
+   Beyond: the prefill instrument. Pick a prompt size and read the prefill time and rate Hanzo measured for Zen 6 on one
+   DGX Spark, against every other size on one bar chart.
+   Removed (ledger): the repeated deployment block ("Which wall is yours"), the second sales button in it, the long dark
+   GPU room (now a drawer), the kicker above the h1, and the second dark room (the Band is the one). Every word and
+   figure is Hanzo's. */
 // Signature: the boundary zoom: Hanzo's live audit log settles inside four walls and the camera travels in, one wall per scrolled chapter
-// Beyond: which wall is yours: say what your data needs and the tightest wall that holds it is drawn, with the way to start
+// Beyond: the prefill instrument: pick a prompt size and read Hanzo's measured prefill time and rate for Zen 6 on one DGX Spark
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useMotionTemplate, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { useCallback } from 'react';
+import { motion, AnimatePresence, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { EASE } from '../ui';
-import { A, Go, More, Flap } from '../kit';
-import Answers from '../v2/Answers';
+import { A, More, Cta, Faq, Film, Img, DataTable, Band } from '../kit';
 import LogoWall from '../v2/LogoWall';
+import Drawer from '../v2/x-cannon/Drawer';
 import './Enterprise.css';
 
 const Check = ({ size = 18 }) => <svg className="xe-ck" viewBox="0 0 24 24" width={size} height={size} aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="none" strokeWidth="1.5" /><path d="M7.5 12.5l3 3 6-6.5" fill="none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
@@ -85,15 +95,16 @@ function Workspace({ at }) {
   const [n, setN] = useState(7);
   useEffect(() => {
     if (!seen || calm) return;
-    const t = setInterval(() => setN((v) => v + 1), 2300);
-    return () => clearInterval(t);
+    let t = 0;
+    const first = setTimeout(() => { setN((v) => v + 1); t = setInterval(() => setN((v) => v + 1), 2300); }, 900);
+    return () => { clearTimeout(first); clearInterval(t); };
   }, [seen, calm]);
   const rows = Array.from({ length: 8 }, (_, k) => ({ id: n - k, r: LOG[mod(n - k, LOG.length)] }));
   return (
     <div className="xe-win" ref={ref} aria-hidden="true">
       <div className="xe-win-bar">
         <i /><i /><i />
-        <span className="xe-win-t">Hanzo · Your company</span>
+        <span className="xe-win-t">Hanzo Enterprise · Your company</span>
         <span className={'xe-where' + (at === 3 ? ' sealed' : '')}><b />{PLACES[at][0]}<em>{PLACES[at][1]}</em></span>
       </div>
       <div className="xe-win-body">
@@ -132,7 +143,7 @@ function Step({ p, i, on, label, go }) {
   );
 }
 
-// four nested walls, the chosen one drawn solid (the phone and Fit use this small one)
+// four nested walls, the chosen one drawn solid (phones and the tiles use this small one)
 const Glyph = ({ at, className = '' }) => (
   <span className={'xe-glyph ' + className} aria-hidden="true">
     {PLACES.map((_, k) => <i key={k} className={k === at ? 'on' : k < at ? 'out' : ''} style={{ inset: k * 12 + '%' }} />)}
@@ -210,20 +221,23 @@ function Boundary() {
     <section className="xe-stage" ref={ref} aria-labelledby="xe-h1">
       <div className="xe-pin">
         <motion.div className="xe-intro xe-w" ref={intro} style={{ opacity: introO, y: introY }}>
-          <p className="xe-k">Hanzo Enterprise</p>
           <h1 id="xe-h1" className="xe-d">{line('Give every team AI.', 0.05)}{line('Run it where you choose.', 0.16)}</h1>
           <div className="xe-intro-row">
             <motion.p className="xe-lede" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.45 }}>
               Models, agents and one shared workspace for everyone in your company, in your cloud, on your servers or fully offline.
             </motion.p>
             <motion.div className="xe-acts" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.55 }}>
-              <span data-thumb="Get Enterprise plan" data-href="/enterprise/start" style={{ display: 'contents' }}><Go to="/enterprise/start" solid>Get Enterprise plan</Go></span>
-              <Go to="https://platform.hanzo.ai">Build on Hanzo Platform</Go>
+              <Cta to="/enterprise/start" size="lg" id="enterprise.hero" thumb>Get Enterprise plan</Cta>
+              <Cta to="https://platform.hanzo.ai" kind="quiet" size="lg" id="enterprise.platform">Build on Hanzo Platform</Cta>
             </motion.div>
           </div>
-          <ul className="xe-pills">
-            {['Unlimited members', '24/7 engineering support', 'Runs fully offline'].map((t) => <li key={t}><Check size={15} />{t}</li>)}
-          </ul>
+          {/* the trust strip, in the first screen (brief 5.3): Hanzo's three promises and where to verify them */}
+          <div className="xe-trust">
+            <ul className="xe-pills">
+              {['Unlimited members', '24/7 engineering support', 'Runs fully offline'].map((t) => <li key={t}><Check size={15} />{t}</li>)}
+            </ul>
+            <div className="xe-trust-l"><More to="/security">How Hanzo is secured</More><More to="/trust">Trust center</More></div>
+          </div>
         </motion.div>
 
         <motion.div className={'xe-cam' + (ready ? ' ready' : '')} style={{ x, y, scale }}>
@@ -240,9 +254,9 @@ function Boundary() {
         </motion.div>
 
         <motion.div className="xe-ch" style={{ opacity: chO, y: chY }}>
-          <p className="xe-k">Deployment</p>
           <h2 className="xe-h">Run it where your data lives.</h2>
           <p className="xe-b xe-soft">One platform, four places to run it. Choose one, or start in our cloud and move when you are ready.</p>
+          <p className="xe-k xe-tag">Deployment</p>
           <div className="xe-steps" role="group" aria-label="Where it runs">
             {PLACES.map((pl, i) => <Step key={pl[0]} p={p} i={i} on={at === i} label={pl[0]} go={go} />)}
           </div>
@@ -251,53 +265,13 @@ function Boundary() {
             <Glyph at={at} className="xe-caps-g" />
             {PLACES.map((pl, i) => (
               <div key={pl[0]} className={'xe-cap' + (i === at ? ' on' : i < at ? ' gone' : '')} aria-hidden={i !== at}>
-                <p className="xe-cap-n"><span>Where it runs</span><span className="x-mono">{String(i + 1).padStart(2, '0')} / 04</span></p>
                 <h3>{pl[0]}</h3>
                 <p><b>{pl[1]}.</b> {pl[2]}</p>
+                <p className="xe-cap-n"><span>Where it runs</span><span className="x-mono">{String(i + 1).padStart(2, '0')} / 04</span></p>
               </div>
             ))}
           </div>
         </motion.div>
-      </div>
-    </section>
-  );
-}
-
-/* ---------- which wall is yours (Beyond) ---------- */
-const NEEDS = [['In your own cloud account, on your network', 1], ['On hardware in your data center', 2], ['Fully offline, sealed inside your network', 3]];
-
-function Fit() {
-  const [on, setOn] = useState([]);
-  const at = Math.max(0, ...on.map((i) => NEEDS[i][1]));
-  const [name, kind, line] = PLACES[at];
-  return (
-    <section className="xe-sec xe-fit" aria-labelledby="xe-fit-h">
-      <div className="xe-w xe-g">
-        <div className="xe-fit-q">
-          <p className="xe-k">Which wall is yours</p>
-          <h2 id="xe-fit-h" className="xe-h">Say what your data needs.</h2>
-          <p className="xe-b xe-soft">Choose none and you start today, in our cloud.</p>
-          <div className="xe-needs" role="group" aria-label="What your data needs">
-            {NEEDS.map(([t], i) => (
-              <button key={t} type="button" aria-pressed={on.includes(i)} onClick={() => setOn((v) => (v.includes(i) ? v.filter((x) => x !== i) : [...v, i]))}>
-                <i aria-hidden="true" /><span>{t}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="xe-fit-a" aria-live="polite">
-          <Glyph at={at} className="xe-fit-g" />
-          <div className="xe-fit-t">
-            <AnimatePresence mode="popLayout" initial={false}>
-              <motion.div key={name} initial={{ y: 28, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -28, opacity: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
-                <p className="xe-k">{kind}</p>
-                <h3>{name}</h3>
-                <p className="xe-b xe-soft">{line}</p>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-          <A to={at ? '/contact-sales' : '/enterprise/start'} className="x-btn solid xe-fit-go">{at ? 'Talk to sales' : 'Get Enterprise plan'}</A>
-        </div>
       </div>
     </section>
   );
@@ -309,9 +283,9 @@ function Includes() {
     <section className="xe-sec xe-inc" aria-labelledby="xe-inc-h">
       <div className="xe-w">
         <header className="xe-head">
-          <p className="xe-k">What you get</p>
           <h2 id="xe-inc-h" className="xe-h">What Enterprise includes.</h2>
           <p className="xe-l xe-soft">Your own infrastructure, dedicated compute, and engineering support around the clock.</p>
+          <p className="xe-k xe-tag">What you get</p>
         </header>
         <div className="xe-tiles">
           <article className="xe-tile t-infra">
@@ -322,7 +296,7 @@ function Includes() {
             <p>Run Hanzo in your cloud, on your own servers, or fully offline.</p>
           </article>
           <article className="xe-tile t-models">
-            <video className="xe-tile-m" src="/models/zen.webm" poster="/models/zen.webp" autoPlay muted loop playsInline aria-hidden="true" />
+            <Film className="xe-tile-m" src="/models/zen.webm" poster="/models/zen.webp" w={1200} h={1500} />
             <h3>Your own models</h3>
             <p>Train and host your own models, on your own data.</p>
           </article>
@@ -387,7 +361,7 @@ function Prefill() {
           <div><span className="xe-pf-l">Prefill rate</span><Roll k={'r' + k}>{r.toLocaleString('en-US')}</Roll><span className="xe-pf-u">tokens a second</span></div>
         </div>
       </div>
-      <div className="xe-pf-chart" role="radiogroup" aria-label="Prompt size">
+      <div className="xe-pf-chart" role="radiogroup" aria-label="Prompt">
         {PREFILL.map(([s, , rate], i) => (
           <button key={s} type="button" role="radio" aria-checked={k === i} onClick={() => setK(i)} onPointerEnter={(e) => e.pointerType === 'mouse' && setK(i)} data-cursor="">
             <span className="xe-pf-s">{s}</span>
@@ -396,10 +370,6 @@ function Prefill() {
           </button>
         ))}
       </div>
-      <table className="x-sr">
-        <thead><tr><th>Prompt</th><th>Prefill time</th><th>Prefill rate</th></tr></thead>
-        <tbody>{PREFILL.map(([s, tt, rr]) => <tr key={s}><td>{s}</td><td>{tt} s</td><td>{rr.toLocaleString('en-US')} tokens a second</td></tr>)}</tbody>
-      </table>
     </div>
   );
 }
@@ -417,20 +387,18 @@ function Rack({ name, total, specs, guide, to }) {
   );
 }
 
+/* Your own GPUs: the measurement in the open, the rack detail in a drawer that grows out of its card */
 function Gpus() {
-  const ref = useRef(null);
-  const { scrollYProgress: q } = useScroll({ target: ref, offset: ['start end', 'start 0.1'] });
-  const side = useTransform(q, [0, 1], [5, 0]);
-  const round = useTransform(q, [0, 1], [44, 0]);
-  const wipe = useMotionTemplate`inset(0% ${side}% 0% ${side}% round ${round}px)`;
+  const [src, setSrc] = useState(null);
+  const open = useCallback((e) => setSrc(e.currentTarget), []);
+  const close = useCallback(() => setSrc(null), []);
   return (
-    <section className="xe-gpu" ref={ref} data-room="dark" aria-labelledby="xe-gpu-h">
-      <motion.div className="xe-gpu-bg" style={{ clipPath: wipe }} aria-hidden="true" />
-      <div className="xe-w xe-gpu-in">
+    <section className="xe-sec xe-gpu" aria-labelledby="xe-gpu-h">
+      <div className="xe-w">
         <header className="xe-head">
-          <p className="xe-k">Your own GPUs</p>
           <h2 id="xe-gpu-h" className="xe-h">Run the models on machines you own.</h2>
           <p className="xe-l xe-soft">Zen 6 runs on one DGX Spark. Zen 6 Max wants a rack of Blackwell servers. What we measured, and what a rack is made of.</p>
+          <p className="xe-k xe-tag">Your own GPUs</p>
         </header>
         <Prefill />
         <p className="xe-note">A cold prompt of about that many tokens on a quiet box, measured Sep 20, 2026: NVIDIA DGX Spark (GB10), 121 GiB unified memory, shared with the benchmark&apos;s other jobs; zen6, NVFP4 with FP8 attention, weights 21.6 GiB (serve-spark-zen6.sh).</p>
@@ -439,37 +407,61 @@ function Gpus() {
           <More to="/benchmarks/zen-6">Zen 6 on three machines</More>
           <More to="/zen/zen6-max">Zen 6 Max</More>
         </div>
-
-        <p className="xe-say">We recommend at least four 8-GPU NVIDIA Blackwell servers, B300 or B200, for Zen 6 Max on your own premises. Routing cuts the average inference work a request needs. It does not cut the memory needed to keep every specialist ready.</p>
-        <div className="xe-racks">
-          <Rack name="DGX B300" total={9216} specs={[['GPUs', '8 x B300'], ['GPU memory', '8 x 288 GB, 2,304 GB'], ['Cluster network', '8 x 800 Gb/s InfiniBand or Ethernet'], ['Data cache', '8 x 3.84 TB']]} guide="NVIDIA DGX B300 user guide: 8 x 288 GB GPU memory" to="https://docs.nvidia.com/dgx/dgxb300-user-guide/introduction-to-dgxb300.html" />
-          <Rack name="DGX B200" total={5760} specs={[['GPUs', '8 x B200'], ['GPU memory', '1,440 GB'], ['Cluster network', '8 x ConnectX-7, up to 400 Gb/s'], ['Data cache', '8 x 3.84 TB']]} guide="NVIDIA DGX B200 user guide: 1,440 GB total GPU memory" to="https://docs.nvidia.com/dgx/dgxb200-user-guide/introduction-to-dgxb200.html" />
-        </div>
-        <p className="xe-note">Four B300 servers hold 9,216 GB of GPU memory; four B200 servers hold 5,760 GB.</p>
-
-        <div className="xe-plan">
-          <div>
-            <h3>Planning range</h3>
-            <ol className="xe-steps2">
-              {[['Qualification', 'Four 8-GPU servers is where a qualification starts.'], ['Isolated production pools', 'One pool for each specialist, so a busy class of work never takes memory from another.'], ['Redundant pools', 'Two independent replicas of those pools across failure domains.']].map(([tt, d], i) => (
-                <li key={tt}><span className="x-mono">{String(i + 1).padStart(2, '0')}</span><b>{tt}</b><span>{d}</span></li>
-              ))}
-            </ol>
-          </div>
-          <div>
-            <h3>Around the servers</h3>
-            <ul className="xe-around">
-              {['NVLink and NVSwitch inside each server.', '400 or 800 Gb/s RDMA wherever a specialist spans servers.', 'About 31 TB of NVMe in each server (8 x 3.84 TB).', 'Separate sandbox workers for coding agents.', 'A high-availability control cluster.'].map((s) => <li key={s}>{s}</li>)}
-            </ul>
-          </div>
-        </div>
-        <p className="xe-note">Final capacity and performance commitments come from qualifying your workload: context length, concurrency, routing mix, latency, and failover.</p>
+        <button type="button" className="xe-rackcard" onClick={open} aria-haspopup="dialog" data-cursor="Open">
+          <span className="xe-rackcard-t">
+            <span className="xe-rackcard-say">We recommend at least four 8-GPU NVIDIA Blackwell servers, B300 or B200, for Zen 6 Max on your own premises.</span>
+            <span className="xe-k xe-tag">Zen 6 Max</span>
+          </span>
+          <span className="xe-rackcard-figs">
+            <span><b>9,216 GB</b><small>DGX B300</small></span>
+            <span><b>5,760 GB</b><small>DGX B200</small></span>
+          </span>
+          <span className="xe-rackcard-go" aria-hidden="true">+</span>
+        </button>
       </div>
+      <Drawer open={!!src} from={src} onClose={close} title="Run the models on machines you own." label="Your own GPUs">
+        <div className="xe-drawer">
+          <p className="xe-say">We recommend at least four 8-GPU NVIDIA Blackwell servers, B300 or B200, for Zen 6 Max on your own premises. Routing cuts the average inference work a request needs. It does not cut the memory needed to keep every specialist ready.</p>
+          <div className="xe-racks">
+            <Rack name="DGX B300" total={9216} specs={[['GPUs', '8 x B300'], ['GPU memory', '8 x 288 GB, 2,304 GB'], ['Cluster network', '8 x 800 Gb/s InfiniBand or Ethernet'], ['Data cache', '8 x 3.84 TB']]} guide="NVIDIA DGX B300 user guide: 8 x 288 GB GPU memory" to="https://docs.nvidia.com/dgx/dgxb300-user-guide/introduction-to-dgxb300.html" />
+            <Rack name="DGX B200" total={5760} specs={[['GPUs', '8 x B200'], ['GPU memory', '1,440 GB'], ['Cluster network', '8 x ConnectX-7, up to 400 Gb/s'], ['Data cache', '8 x 3.84 TB']]} guide="NVIDIA DGX B200 user guide: 1,440 GB total GPU memory" to="https://docs.nvidia.com/dgx/dgxb200-user-guide/introduction-to-dgxb200.html" />
+          </div>
+          <p className="xe-note">Four B300 servers hold 9,216 GB of GPU memory; four B200 servers hold 5,760 GB.</p>
+          <div className="xe-plan">
+            <div>
+              <h3>Planning range</h3>
+              <ol className="xe-steps2">
+                {[['Qualification', 'Four 8-GPU servers is where a qualification starts.'], ['Isolated production pools', 'One pool for each specialist, so a busy class of work never takes memory from another.'], ['Redundant pools', 'Two independent replicas of those pools across failure domains.']].map(([tt, d], i) => (
+                  <li key={tt}><span className="x-mono">{String(i + 1).padStart(2, '0')}</span><b>{tt}</b><span>{d}</span></li>
+                ))}
+              </ol>
+            </div>
+            <div>
+              <h3>Around the servers</h3>
+              <ul className="xe-around">
+                {['NVLink and NVSwitch inside each server.', '400 or 800 Gb/s RDMA wherever a specialist spans servers.', 'About 31 TB of NVMe in each server (8 x 3.84 TB).', 'Separate sandbox workers for coding agents.', 'A high-availability control cluster.'].map((x) => <li key={x}>{x}</li>)}
+              </ul>
+            </div>
+          </div>
+          <p className="xe-note">Final capacity and performance commitments come from qualifying your workload: context length, concurrency, routing mix, latency, and failover.</p>
+          <DataTable caption="Zen 6 on one DGX Spark, as Hanzo measured it" cols={[{ key: 'p', label: 'Prompt' }, { key: 't', label: 'Prefill time', num: true }, { key: 'r', label: 'Prefill rate', num: true }]} rows={PREFILL.map(([pp, tt, rr]) => ({ p: pp, t: tt + ' s', r: rr.toLocaleString('en-US') + ' tokens a second' }))} className="xe-pf-table" />
+        </div>
+      </Drawer>
     </section>
   );
 }
 
 /* ---------- proof, on a split-flap board ---------- */
+// a figure that rises out of its own mask once, showing only Hanzo's own value at every frame
+function Fig({ value, className = '' }) {
+  return (
+    // the frame is watched (the moving figure starts clipped, so it can never be "seen" itself)
+    <motion.span className={'xe-fig ' + className} initial="h" whileInView="s" viewport={{ once: true, amount: 0.6 }}>
+      <motion.span variants={{ h: { y: '105%' }, s: { y: '0%', transition: { duration: 0.9, ease: EASE } } }}>{value}</motion.span>
+    </motion.span>
+  );
+}
+
 const PROOF = [
   ['$8.4M', 'in bikes sold in 30 days', 'Damon Motorcycles', 'CES launch and preorders', '/customers/damon-motorcycles', '/logos/customers/damon-motorcycles.svg'],
   ['$7M+', 'raised in preorders', 'KANOA', 'Crowdfunding and preorders', '/customers/kanoa', '/logos/customers/kanoa.png'],
@@ -484,7 +476,7 @@ function Mark({ src }) {
   const ref = useRef(null);
   const [bad, setBad] = useState(false);
   useEffect(() => { const i = ref.current; if (i && i.complete && !i.naturalWidth) setBad(true); }, []);
-  return bad ? null : <img ref={ref} src={src} alt="" onError={() => setBad(true)} />;
+  return bad ? null : <Img ref={ref} src={src} alt="" w={96} h={20} onError={() => setBad(true)} />;
 }
 
 function Proof() {
@@ -492,12 +484,12 @@ function Proof() {
     <section className="xe-sec xe-proof" aria-labelledby="xe-proof-h">
       <div className="xe-w xe-g">
         <header className="xe-head xe-proof-head">
-          <p className="xe-k">Proof</p>
           <h2 id="xe-proof-h" className="xe-h">Results on the record.</h2>
           <p className="xe-b xe-soft">Our models&apos; scores come from research runs anyone can open. Customer results come from the case studies of launches Hanzo ran.</p>
+          <p className="xe-k xe-tag">Proof</p>
         </header>
         <A to="/benchmarks#decision-suite" className="xe-hero-fig">
-          <Flap value="16 of 16" />
+          <Fig value="16 of 16" className="big" />
           <span className="xe-what">Decision Suite tasks won · Kai vs Jev</span>
           <span className="xe-soft">Every task of the suite, its row linking its runs and how to re-run it.</span>
           <span className="xe-go">See the runs →</span>
@@ -508,7 +500,7 @@ function Proof() {
           {PROOF.map(([fig, what, who, how, to, logo]) => (
             <li key={who}>
               <A to={to} className="xe-res">
-                <Flap value={fig} />
+                <Fig value={fig} />
                 <span className="xe-what">{what}</span>
                 <span className="xe-who"><Mark src={logo} /><b>{who}</b><span className="xe-dot">·</span><span>{how}</span></span>
               </A>
@@ -534,9 +526,9 @@ function Security() {
     <section className="xe-sec xe-secu" aria-labelledby="xe-sec-h">
       <div className="xe-w xe-g">
         <header className="xe-head xe-stick">
-          <p className="xe-k">Security</p>
           <h2 id="xe-sec-h" className="xe-h">Ready for your security review.</h2>
           <p className="xe-b xe-soft">A security review is part of every Enterprise contract. We answer your questionnaire against the code, and the engineers who wrote it walk your reviewers through it.</p>
+          <p className="xe-k xe-tag">Security</p>
           <div className="xe-links"><More to="/security">How Hanzo is secured</More><More to="/trust">Trust center</More></div>
         </header>
         <ul className="xe-proofs">
@@ -561,9 +553,9 @@ function Partners() {
     <section className="xe-sec xe-part" aria-labelledby="xe-part-h">
       <div className="xe-w">
         <header className="xe-head">
-          <p className="xe-k">Partners</p>
           <h2 id="xe-part-h" className="xe-h">Work with Hanzo.</h2>
           <p className="xe-l xe-soft">Refer customers, resell Hanzo under your own brand, or have Hanzo’s agency build it with you.</p>
+          <p className="xe-k xe-tag">Partners</p>
         </header>
         <div className="xe-offers">
           <A to="/contact-sales" className="xe-offer big">
@@ -608,24 +600,7 @@ function Questions() {
     <section className="xe-sec xe-qa" aria-labelledby="xe-qa-h">
       <div className="xe-w xe-g">
         <header className="xe-head xe-stick"><h2 id="xe-qa-h" className="xe-h">Questions</h2></header>
-        <Answers items={QA} className="xe-qa-list" />
-      </div>
-    </section>
-  );
-}
-
-function Close() {
-  return (
-    <section className="xe-close" aria-labelledby="xe-close-h">
-      <div className="xe-w">
-        <h2 id="xe-close-h" className="xe-d">Tell us what you want to build.</h2>
-        <div className="xe-close-row">
-          <p className="xe-l xe-soft">Share a few details about your company. We come back with a plan: where Hanzo runs, what it costs and how you start.</p>
-          <div className="xe-close-act">
-            <Go to="/contact-sales" solid>Talk to sales</Go>
-            <p className="xe-mail">Or email <a href="mailto:enterprise@hanzo.ai">enterprise@hanzo.ai</a></p>
-          </div>
-        </div>
+        <div className="xe-qa-list"><Faq items={QA} first={0} /></div>
       </div>
     </section>
   );
@@ -635,14 +610,19 @@ export default function Enterprise() {
   return (
     <main className="xe">
       <Boundary />
-      <Fit />
-      <Includes />
-      <Gpus />
-      <Proof />
       <Security />
+      <Includes />
+      <Proof />
+      <Gpus />
       <Partners />
       <Questions />
-      <Close />
+      <Band
+        title="Tell us what you want to build."
+        lede="Share a few details about your company. We come back with a plan: where Hanzo runs, what it costs and how you start."
+        action="Talk to sales"
+        to="/contact-sales"
+        note={<p className="x-band-note">Or email <a href="mailto:enterprise@hanzo.ai">enterprise@hanzo.ai</a></p>}
+      />
     </main>
   );
 }

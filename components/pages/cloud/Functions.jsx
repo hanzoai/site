@@ -272,7 +272,7 @@ function Uses() {
 
 export default function Functions() {
   return (
-    <main className="kn fn" style={{ '--ac': '#5e5ce6' }}>
+    <main className="kn fn" style={{ '--ac': '#737373' }}>
       <KeynoteStage
         kick="Serverless Computing"
         title={['Hanzo Functions']}

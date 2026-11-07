@@ -1,27 +1,26 @@
 /* Kai (ka-): the decision tree, the question-type chapters, the model cards, the spec */
 .ka-head { width: min(42%, 540px); }
 .ka-art { position: absolute; inset: 0; background: #000; overflow: hidden; }
-.ka-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.25); }
+.ka-art img, .ka-art video { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; transform: scale(1.25); }
 .ka-qcard { position: absolute; left: 50%; top: 50%; width: min(440px, calc(100% - 48px)); transform: translate(-50%, -50%); padding: 24px; border-radius: 16px; background: rgba(10, 10, 12, .94); border: 1px solid rgba(255, 255, 255, .12); color: #f5f5f7; box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .8); }
 .ka-qcard p { margin: 0; }
 .ka-qcard-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .ka-qcard-top code { font: 500 13px var(--mono); color: #a1a1a6; }
-.ka-qcard-top em { font: 500 12px/1 var(--mono); font-style: normal; letter-spacing: .08em; text-transform: uppercase; padding: 6px 9px; border-radius: 999px; background: var(--ac); color: #fff; }
+.ka-qcard-top em { font: 500 13px/1 var(--mono); font-style: normal; letter-spacing: .08em; text-transform: uppercase; padding: 6px 9px; border-radius: 999px; background: #f5f5f7; color: #0a0a0b; }
 .ka-qcard-n { margin-top: 22px !important; font: 600 22px var(--mono); letter-spacing: -.01em; }
 .ka-qcard-i { margin: 6px 0 20px !important; font-size: 15px; color: #a1a1a6; }
-.ka-qcard .ka-bar i, .ka-qcard .ka-mark { background: var(--ac); }
-.ka-qcard .ka-mark { box-shadow: 0 0 0 6px color-mix(in srgb, var(--ac) 30%, transparent); }
+.ka-qcard .ka-bar i, .ka-qcard .ka-mark { background: #f5f5f7; }
+.ka-qcard .ka-mark { box-shadow: 0 0 0 6px rgba(255, 255, 255, .16); }
 .ka-qcard .ka-opt-k, .ka-qcard .ka-levels li, .ka-qcard .ka-noul { font-size: 14px; }
 .ka-get { color: var(--ink); }
-.ka-live .lv-kick { color: #f5f5f7; }
 .ka-cards { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 7fr 5fr; gap: 24px; }
-.ka-cards li:nth-child(2) .ka-card { background: var(--ac); }
-.ka-cards li:nth-child(2) .ka-sig { color: rgba(255, 255, 255, .45); }
-.ka-spec-in { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; }
-.ka-spec-in > :first-child { grid-column: 1 / 5; }
-.ka-spec-in > .lv-spec { grid-column: 5 / 13; }
-.ka-spec .lv-spec tbody th { width: 24%; }
-.ka-end { padding-top: 0; }
+.ka-cards li:nth-child(2) .ka-card { background: #f5f5f7; color: var(--ink); }
+.ka-cards li:nth-child(2) .ka-card-l { color: #6e6e73; }
+.ka-cards li:nth-child(2) .ka-card code { background: rgba(0, 0, 0, .06); color: #424245; }
+.ka-cards li:nth-child(2) .ka-sig { color: rgba(0, 0, 0, .3); }
+.ka-cards li:nth-child(2) .ka-card-go { color: var(--ink); }
+@media (hover: hover) { .ka-cards li:nth-child(2) .ka-card:hover .ka-sig { color: rgba(0, 0, 0, .6); } }
+.ka-card:active { transform: scale(.98); }
 
 .ka-tree { padding: 22px 24px 20px; }
 .ka-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
@@ -45,7 +44,7 @@
 .ka-opt-k { font: 500 13px var(--mono); color: #c7c7cc; overflow-wrap: anywhere; transition: color .3s; }
 .ka-opt-d { font-size: 13px; color: #6e6e73; }
 .ka-opts li[data-win] .ka-opt-k { color: #fff; }
-.ka-opts li[data-win] .ka-opt-k::after { content: ' ✓'; color: #30d158; }
+.ka-opts li[data-win] .ka-opt-k::after { content: ' ✓'; color: #f5f5f7; }
 .ka-bar { position: relative; height: 4px; border-radius: 4px; background: #222225; overflow: hidden; }
 .ka-bar i { position: absolute; inset: 0; background: #f5f5f7; transform-origin: 0 50%; transform: scaleX(0); }
 .ka-track { position: relative; height: 4px; border-radius: 4px; background: #2a2a2d; margin: 10px 7px; }
@@ -55,7 +54,7 @@
 .ka-levels { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; }
 .ka-levels li { font: 500 13px var(--mono); color: #6e6e73; transition: color .3s; }
 .ka-levels li[data-win] { color: #fff; }
-.ka-levels li[data-win]::after { content: ' ✓'; color: #30d158; }
+.ka-levels li[data-win]::after { content: ' ✓'; color: #f5f5f7; }
 .ka-noul { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px; font: 500 13px var(--mono); color: #8e8e93; }
 .ka-noul .ka-track { margin: 0 7px; }
 .ka-noul em { grid-column: 1 / -1; font-style: normal; color: #6e6e73; }
@@ -70,13 +69,13 @@
 
 .ka-card { position: relative; display: flex; flex-direction: column; justify-content: flex-end; gap: 10px; min-height: 440px; padding: 36px; border-radius: 28px; background: #0a0a0a; color: #f5f5f7; text-decoration: none; overflow: hidden; isolation: isolate; }
 .ka-sig { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; color: rgba(255, 255, 255, .5); transition: color .5s var(--ease); }
-.ka-card:hover .ka-sig { color: rgba(255, 255, 255, .85); }
+@media (hover: hover) { .ka-card:hover .ka-sig { color: rgba(255, 255, 255, .85); } }
 .ka-card-l { font: 500 13px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #a1a1a6; }
 .ka-card-n { font-size: clamp(3rem, 6vw, 5.5rem); font-weight: 560; letter-spacing: -.05em; line-height: .95; }
 .ka-card code { align-self: flex-start; font: 500 13px var(--mono); padding: 5px 9px; border-radius: 7px; background: rgba(255, 255, 255, .1); color: #e5e5ea; }
 .ka-card-go { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 15px; color: #f5f5f7; }
 .ka-card-go svg { transition: transform .35s var(--ease); }
-.ka-card:hover .ka-card-go svg { transform: translateX(5px); }
+@media (hover: hover) { .ka-card:hover .ka-card-go svg { transform: translateX(5px); } }
 
 @media (max-width: 900px) {
   .ka-head { width: auto; }
@@ -84,7 +83,6 @@
   .ka-qcard { padding: 18px; }
   .ka-qcard-n { margin-top: 14px !important; font-size: 18px; }
   .ka-qcard-i { margin-bottom: 14px !important; }
-  .ka-spec-in > :first-child, .ka-spec-in > .lv-spec { grid-column: 1 / -1; }
   .ka-tree { padding: 18px 14px; }
   .ka-wires { display: none; }
   .ka-qs { grid-template-columns: 1fr; margin-top: 12px; padding-left: 14px; border-left: 1px solid rgba(255, 255, 255, .3); min-height: 0; }

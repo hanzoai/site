@@ -1,7 +1,8 @@
 'use client';
 // Signature: a deck of live browser windows that riffles itself; pull one forward (drag, arrows or a dot) and its address bar types its .hanzo.app name.
 // Beyond: the commands for the template in front, with its slug and its source repository filled in, ready to copy.
-/* Templates, v2. V2: 8/10 Stage deck (the riffling deck of live windows arrives huge and settles), a shelf of all twelve whose tiles open into sheets, the setup room in the dark, orange accent
+/* Persona: builders who want a finished product to start from. Goal: open a template in Hanzo. CTA: "Edit in Hanzo" → /chat?template=<slug>. Metric: first_chat.
+   Templates, v2. V2: 8/10 Stage deck (the riffling deck of live windows arrives huge and settles), a shelf of all twelve whose tiles open into sheets, the setup room in the dark, orange accent
    Motion budget: signature = the riffling deck (drag); supporting = Stage (Settle), Open (shelf sheets), layout chips.
    Templates. Hanzo's twelve products with previews, as a deck of browser windows: the one in front is the one you
    open, the next three wait behind it, the ones you passed fly off to the left. The chips re-deal the deck by kind.
@@ -9,11 +10,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../ui';
-import { A } from '../kit';
+import { A, Img } from '../kit';
 import SetupMenu from '../SetupMenu';
 import LineMask from '../v2/x-gauss/LineMask';
 import Settle from '../v2/Settle';
 import { OpenCards } from '../v2/OpenSheet';
+import NoJs from '../v2/x-gauss/NoJs';
+import { usePause } from '../v2/x-gauss/Pause';
 import '../v2/Scale.css';
 import './Templates.css';
 
@@ -93,11 +96,11 @@ function Card({ t, d, onPrev, onNext, calm }) {
         <span className="xtp-kind x-mono">{kind}</span>
       </div>
       <A to={'/chat?template=' + encodeURIComponent(slug)} className="xtp-shot" tabIndex={front ? 0 : -1} draggable={false}>
-        <img src={`https://hanzo.ai/templates/${slug}.webp`} alt={`${title} template preview`} width="1280" height="800" loading={d >= 0 && d < 3 ? 'eager' : 'lazy'} decoding="async" draggable={false} />
+        <Img src={`https://hanzo.ai/templates/${slug}.webp`} alt={`${title} template preview`} w={1280} h={800} draggable={false} />
       </A>
       <div className="xtp-foot">
         <div><h3>{title}</h3><p>{what}</p></div>
-        <A to={'/chat?template=' + encodeURIComponent(slug)} className="x-btn solid xtp-edit" tabIndex={front ? 0 : -1}>Edit in Hanzo <span aria-hidden="true">→</span></A>
+        <A to={'/chat?template=' + encodeURIComponent(slug)} className="xtp-edit" tabIndex={front ? 0 : -1}>Edit in Hanzo <span aria-hidden="true">→</span></A>
       </div>
     </motion.article>
   );
@@ -105,17 +108,19 @@ function Card({ t, d, onPrev, onNext, calm }) {
 
 function Deck({ kind, setKind, at, setAt, list }) {
   const [mine, setMine] = useState(false);
+  const [paused, pauseBtn] = usePause({ right: 0, top: 0 });
   const calm = useReducedMotion();
   const ref = useRef(null);
   const seen = useInView(ref, { amount: 0.35 });
   const go = (k) => { setMine(true); setAt((k + list.length) % list.length); };
   useEffect(() => {
-    if (mine || calm || !seen || list.length < 2) return;
+    if (mine || calm || !seen || paused || list.length < 2) return;
     const t = setTimeout(() => setAt((v) => (v + 1) % list.length), 3600);
     return () => clearTimeout(t);
-  }, [at, mine, calm, seen, list.length, setAt]);
+  }, [at, mine, calm, seen, paused, list.length, setAt]);
   return (
-    <div className="xtp-deckwrap" ref={ref}>
+    <div className={'xtp-deckwrap' + (paused ? ' paused' : '')} ref={ref}>
+      {pauseBtn}
       <div className="xtp-kinds" role="tablist" aria-label="Kind of template">
         {KINDS.map((k) => (
           <button key={k} type="button" role="tab" aria-selected={kind === k} onClick={() => { setKind(k); setAt(0); setMine(true); }}>
@@ -157,8 +162,8 @@ function Commands({ t }) {
     <section className="w2-sec xtp-cmd w2-dark" data-room="dark" aria-labelledby="xtp-cmd-h">
       <div className="w2-wrap xtp-cmd-in">
         <div>
-          <p className="w2-kicker acc">Setup</p>
           <h2 id="xtp-cmd-h" className="w2-display s xtp-cmd-h">Open one. Edit it in Hanzo.</h2>
+          <p className="xtp-cmd-k x-mono">Setup</p>
           <div className="xtp-setup2"><SetupMenu inline up /></div>
           <Strip />
         </div>
@@ -194,11 +199,11 @@ function Shelf() {
         <p className="xtp-shelf-k w2-kicker">All <span className="x-mono">{pad(ALL.length)}</span></p>
         <OpenCards cols={3} className="xtp-tiles" items={ALL.map(([slug, title, kind, what]) => ({
           id: 'xtp-' + slug, k: kind, t: title, d: what,
-          art: <span className="xtp-tile-img"><img src={`https://hanzo.ai/templates/${slug}.webp`} alt="" width="1280" height="800" loading="lazy" decoding="async" /><span className="x-mono">{slug}.hanzo.app</span></span>,
+          art: <span className="xtp-tile-img"><Img src={`https://hanzo.ai/templates/${slug}.webp`} alt="" w={1280} h={800} /><span className="x-mono">{slug}.hanzo.app</span></span>,
           body: (<>
             <p>{what}</p>
             <p className="xtp-sheet-cmd x-mono">git clone https://github.com/hanzo-apps/template-{slug}</p>
-            <p><A to={'/chat?template=' + encodeURIComponent(slug)} className="w2-cta acc">Edit in Hanzo <i aria-hidden="true">→</i></A></p>
+            <p><A to={'/chat?template=' + encodeURIComponent(slug)} className="w2-cta">Edit in Hanzo <i aria-hidden="true">→</i></A></p>
           </>),
         }))} />
       </div>
@@ -213,14 +218,15 @@ export default function Templates() {
   const front = list[Math.min(at, list.length - 1)];
   return (
     <main className="xtp w2">
+      <NoJs />
       <section className="xtp-hero" aria-labelledby="xtp-h1" data-morph-target>
         <div className="w2-wrap">
           <div className="xtp-top">
             <div>
-              <motion.p className="w2-kicker acc xtp-kick" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>Templates</motion.p>
               <LineMask as="h1" id="xtp-h1" now className="w2-display xtp-h1" lines={['Start from', 'a product.']} />
+              <p className="xtp-kick x-mono">Templates</p>
             </div>
-            <motion.div className="xtp-top-r" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
+            <motion.div className="xtp-top-r" initial={{ y: 14 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
               <p className="w2-lede xtp-lede">Open one. Edit it in Hanzo.</p>
               <div className="xtp-front" aria-live="polite">
                 <AnimatePresence mode="wait" initial={false}>
@@ -228,7 +234,7 @@ export default function Templates() {
                     <span className="x-mono">{front[2]}</span><b>{front[1]}</b>
                   </motion.p>
                 </AnimatePresence>
-                <Magnetic strength={0.25}><A to={'/chat?template=' + encodeURIComponent(front[0])} className="w2-cta acc" data-thumb="Edit in Hanzo">Edit in Hanzo <i aria-hidden="true">→</i></A></Magnetic>
+                <Magnetic strength={0.25}><A to={'/chat?template=' + encodeURIComponent(front[0])} className="w2-cta" data-thumb="Edit in Hanzo" data-cta="templates.hero">Edit in Hanzo <i aria-hidden="true">→</i></A></Magnetic>
               </div>
             </motion.div>
           </div>

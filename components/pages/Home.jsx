@@ -1,18 +1,23 @@
 'use client';
-/* Home, v2 (the bar-setter, docs/VISION.md). Chaptered: one idea per screen, the product as the hero, every card opens.
-   Signature: Stage and Open. The live desktop app sits huge under "Pick all three." and settles into its place as you
-   scroll while the phone and the terminal arrive (Hero.jsx); every model tile lifts off and opens into its own page,
-   and every product name opens into its page (Models.jsx, Platform.jsx).
-   Supporting (three): Chapters, the platform pinned and told one product at a time, each screen wiping up over the
-   last; Live product, the hero demo typing by itself (the only thing that moves while the page is idle); Kinetic type,
-   every headline rising out of a line mask once. Hand-driven parts answer on springs (budget line, slider, rails).
-   Rhythm: stage → logo wall → media tiles → pinned chapters → agent wall + console → the one dark room → figures on
-   white → wide chart → figures + calendar + rail → calm pricing → logo wall.
-   Accent: Hanzo's own product blue (the chat UI's data-blue-9), used only for progress, Hanzo's own bars and selection.
-   Beyond: the spine. A quiet chapter index at the right edge, written from the page's own headings, that marks where
-   you are and jumps to speed, cost, the frontier, open source or pricing in one click. */
-import { useEffect, useState } from 'react';
-import { Marquee } from '../Chrome';
+// Persona: developer evaluating Hanzo (first visit); enterprise buyers and founders pass through to /enterprise and /pricing
+// Goal: understand "one key reaches every model, for less" in 5 s, then start (PLAN-COMPONENTS 1, brief 5.1)
+// CTA: "Try Hanzo" → https://hanzo.ai/signup (header, the site ask bar after the hero, pricing, closing band); every
+//      hero button is quiet so exactly one solid ask is on screen
+// Metric: api_key_created (leading: signup_start via data-cta="home.*", install_copy)
+// Signature: Stage and Open. The live desktop app sits huge under "Pick all three." and settles as you scroll while
+//   the phone slides out from behind it (Hero.jsx); every model tile lifts off and opens into its page (Models.jsx),
+//   and every product name opens into its page (Platform.jsx).
+// Beyond: the spine, a quiet chapter index at the right edge written from the page's own headings.
+/* Home, v2 (the bar-setter, docs/VISION.md, JAMES.md, PLAN-COMPONENTS 5.1). Chaptered: one idea per screen, the
+   product as the hero, every card opens. Motion by kind: time (the hero demo types, sends and answers; the install
+   line types; the roster steps), pointer (the app leans, the agent wall swells, tiles play their film and show their
+   tags), state (console tabs and pricing tabs glide, prices roll, the race replays), arrival (headlines cut into
+   their lines), scroll (the stage settles, the product chapters wipe, the argument room opens like a door).
+   Rhythm: stage → model tiles → pinned chapters → agent wall + console → the one dark room (speed, cost, frontier as
+   one argument) → figures + calendar + rail → logo wall → calm pricing → backers → closing band.
+   Colour: none in the UI (JAMES.md 7); only Hanzo's own media brings colour. */
+import { useEffect, useRef, useState } from 'react';
+import { A, Band, Img } from '../kit';
 import Hero from '../Hero';
 import Models from '../Models';
 import Platform from '../Platform';
@@ -41,7 +46,7 @@ function Spine() {
     return () => { io.disconnect(); top.disconnect(); };
   }, []);
   if (!list.length) return null;
-  const dark = at === 'faster';
+  const dark = ['faster', 'cheaper', 'pareto'].includes(at);
   return (
     <nav className={'hv-spine' + (at ? ' on' : '') + (dark ? ' dark' : '')} aria-label="On this page">
       <ol>{list.map(([id, t], i) => <li key={id}><a href={'#' + id} aria-current={at === id ? 'true' : undefined}><span><b>{String(i + 1).padStart(2, '0')}</b>{t}</span></a></li>)}</ol>
@@ -49,11 +54,39 @@ function Spine() {
   );
 }
 
+/* The proof walls (PLAN-COMPONENTS 2.5): still, ordered rows of Hanzo's own logo files, grey until you point at one,
+   which then shows its own colour and its name. If a logo file cannot load, its name stands in for it. */
+function Wall({ items, label, cta }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    ref.current?.querySelectorAll('img').forEach((im) => {
+      const fail = () => im.closest('a')?.setAttribute('data-fail', '');
+      if (im.complete && !im.naturalWidth) fail(); else im.addEventListener('error', fail, { once: true });
+    });
+  }, []);
+  return (
+    <section className="hv-proof" aria-label={label} ref={ref}>
+      <div className="v2-wrap hv-proof-in">
+        <p className="hv-proof-t">{label}</p>
+        <ul style={{ '--n': items.length > 7 ? 6 : items.length }}>
+          {items.map((l) => (
+            <li key={l.name}>
+              <A to={l.href} className="hv-logo" data-cta={`home.${cta}.${l.name.toLowerCase().replace(/\W+/g, '-')}`}>
+                <Img src={l.src} alt={l.name} w={160} h={40} />
+                <span>{l.name}</span>
+              </A>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
 export default function Home() {
   return (
     <main className="hv">
       <Hero />
-      <Marquee items={C.backed} label="Backed by" />
       <Models />
       <Platform />
       <Agents />
@@ -61,8 +94,10 @@ export default function Home() {
       <Cheaper />
       <Pareto />
       <Open />
+      <Wall items={C.trusted} label="Trusted by" cta="trusted" />
       <Pricing />
-      <Marquee items={C.trusted} label="Trusted by" reverse />
+      <Wall items={C.backed} label="Backed by" cta="backed" />
+      <Band title="Pick all three." lede="Every model behind one key." action="Try Hanzo" to="https://hanzo.ai/signup" />
       <Spine />
     </main>
   );

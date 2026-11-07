@@ -97,7 +97,7 @@ function Match({ c }) {
   return (
     <aside className="xst-match" aria-label="Your match" aria-live="polite">
       <div className="xst-match-top">
-        <svg viewBox="0 0 36 36" width="40" height="40" aria-hidden="true"><circle cx="18" cy="18" r="15" fill="none" stroke="rgba(255,255,255,.14)" strokeWidth="3" /><motion.circle cx="18" cy="18" r="15" fill="none" stroke="#0a9fd8" strokeWidth="3" strokeLinecap="round" transform="rotate(-90 18 18)" initial={false} animate={{ pathLength: done / 5 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} /></svg>
+        <svg viewBox="0 0 36 36" width="40" height="40" aria-hidden="true"><circle cx="18" cy="18" r="15" fill="none" stroke="rgba(255,255,255,.14)" strokeWidth="3" /><motion.circle cx="18" cy="18" r="15" fill="none" stroke="#737373" strokeWidth="3" strokeLinecap="round" transform="rotate(-90 18 18)" initial={false} animate={{ pathLength: done / 5 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} /></svg>
         <div><b className="xst-co">{c.company.trim() || 'Company name'}</b><span className="x-mono">{done} / 5 · {stage || 'Select stage'}</span></div>
       </div>
       <div className={'xst-track' + (credits ? ' credits' : '')}>

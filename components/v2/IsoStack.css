@@ -1,7 +1,12 @@
 /* IsoStack (v2): plates in isometric view. Orthographic: no perspective, one rotated layer, plates move on Z. */
-.iso { --iso-acc: #8b5cf6; --iso-w: 400px; --iso-h: 270px; position: relative; display: grid; place-items: center; pointer-events: none; }
+.iso { --iso-acc: #0a0a0b; --iso-w: 400px; --iso-h: 270px; position: relative; display: grid; place-items: center; pointer-events: none; }
 .iso-cam { position: relative; width: 0; height: 0; transform-style: preserve-3d; }
-.iso-rot { position: absolute; left: 0; top: 0; transform: rotateX(56deg) rotateZ(-38deg); transform-style: preserve-3d; }
+.iso-rot {
+  position: absolute; left: 0; top: 0; transform-style: preserve-3d;
+  /* --iso-tx / --iso-tz turn the whole stack (a page sets them from the pointer); the transition is the follow */
+  transform: rotateX(calc(56deg + var(--iso-tx, 0deg))) rotateZ(calc(-38deg + var(--iso-tz, 0deg)));
+  transition: transform .9s cubic-bezier(.16, 1, .3, 1);
+}
 .iso-plate {
   position: absolute; left: calc(var(--iso-w) / -2); top: calc(var(--iso-h) / -2); width: var(--iso-w); height: var(--iso-h);
   border-radius: 22px; pointer-events: auto; cursor: pointer;
@@ -44,4 +49,4 @@
 .iso-plate.lit .iso-n, .iso-plate.match .iso-n { color: var(--iso-acc); }
 .iso.dark .iso-plate.lit .iso-n, .iso.dark .iso-plate.match .iso-n { color: color-mix(in srgb, var(--iso-acc) 50%, #fff); }
 .iso-plate.hot { opacity: 1; box-shadow: 0 0 0 1.5px currentColor inset; }
-@media (prefers-reduced-motion: reduce) { .iso-plate, .iso-name { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .iso-plate, .iso-name, .iso-rot { transition: none; } .iso-rot { transform: rotateX(56deg) rotateZ(-38deg); } }

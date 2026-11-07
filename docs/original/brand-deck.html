@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Hanzo brand deck — what the redesign works from</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preload" as="font" type="font/woff2" crossorigin href="https://cdn.jsdelivr.net/gh/hanzoai/design@12408ef414ada9f08f8ac41f32fa54693ceab3b5/assets/fonts/Zen-Variable.woff2">
+<link rel="stylesheet" href="assets/hanzo.css">
+<link rel="stylesheet" href="assets/immersive.css">
+<noscript><style>.dock.off{opacity:1; visibility:visible; translate:-50% 0} @media (max-width:820px){.dock.off{translate:0 0}}</style></noscript>
+<style>
+/* brand deck only */
+.bd-cover{min-height:calc(100svh - 96px); display:grid; align-content:end; padding-block:var(--golden-8) var(--golden-7)}
+.bd-cover .display{font-size:clamp(2.5rem,6.1vw,5.25rem); max-width:15ch}
+.bd-src{font:500 11px/1.7 var(--mono); letter-spacing:.1em; text-transform:uppercase; color:var(--ink-2); margin-top:var(--golden-6)}
+.bd-row{display:grid; grid-template-columns:minmax(0,2fr) minmax(0,11fr); gap:12px 24px; padding:22px 0; border-top:1px solid var(--line); align-items:start}
+.bd-row>h3{font:500 12px/1.5 var(--mono); letter-spacing:.16em; text-transform:uppercase; color:var(--ink-2); padding-top:6px}
+.bd-sw{display:grid; grid-template-columns:repeat(auto-fill,minmax(128px,1fr)); gap:12px}
+.bd-sw button{display:grid; gap:10px; text-align:left; font:400 11.5px/1.45 var(--mono); color:var(--ink-2); border-radius:var(--radius-lg)}
+.bd-sw i{display:block; aspect-ratio:1.618; border-radius:var(--radius-lg); background:var(--c); box-shadow:inset 0 0 0 1px var(--line); transition:box-shadow var(--duration-fast) var(--ease-out)}
+.bd-sw button:hover i{box-shadow:inset 0 0 0 1px var(--ink)} .bd-sw b{display:block; color:var(--ink); font-weight:500}
+@media (max-width:820px){.bd-row{grid-template-columns:minmax(0,1fr)}}
+.bd-ladder{display:grid; grid-template-columns:repeat(19,minmax(0,1fr)); gap:4px; margin-bottom:10px}
+.bd-ladder i{height:clamp(96px,16vw,200px); border-radius:6px; background:rgb(255 255 255 / var(--a))}
+.bd-ladder span{font:400 11px/1 var(--mono); color:var(--ink-2); text-align:center; padding-top:10px} .bd-ladder span.k{color:var(--ink)}
+@media (max-width:820px){.bd-ladder{grid-template-columns:repeat(10,minmax(0,1fr))} .bd-ladder i{height:72px}}
+.bd-rank{display:grid; grid-template-columns:minmax(0,5fr) minmax(0,8fr); gap:0 clamp(24px,5vw,80px)}
+.bd-rank li{display:flex; justify-content:space-between; align-items:baseline; gap:16px; padding:18px 0; border-top:1px solid var(--line); font-size:clamp(1.125rem,2vw,1.625rem); letter-spacing:-.02em}
+.bd-rank li span{font:400 11.5px/1.5 var(--mono); letter-spacing:0; color:var(--ink-2); text-align:right; flex:none}
+@media (max-width:820px){.bd-rank{grid-template-columns:minmax(0,1fr)} .bd-rank li{flex-wrap:wrap; gap:2px 16px} .bd-rank li span{text-align:left}}
+.bd-rooms{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px} .bd-room{border-radius:var(--radius-2xl); padding:clamp(22px,3vw,36px); border:1px solid var(--line)}
+.bd-room h3{font-weight:500; font-size:clamp(1.5rem,2.8vw,2.125rem); letter-spacing:-.025em; margin-bottom:22px}
+.bd-room dl div{display:flex; justify-content:space-between; gap:16px; padding:11px 0; border-top:1px solid var(--line); font:400 12.5px/1.5 var(--mono)} .bd-room dt{color:var(--ink-2)}
+.bd-room dd{display:flex; align-items:center; gap:10px} .bd-room dd i{width:14px; height:14px; border-radius:4px; background:var(--c); box-shadow:inset 0 0 0 1px var(--line)}
+@media (max-width:820px){.bd-rooms{grid-template-columns:minmax(0,1fr)}}
+.bd-aa{font-size:clamp(7rem,22vw,18rem); line-height:.8; letter-spacing:-.05em; font-weight:500}
+.bd-five{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:12px} .bd-five div{min-height:168px; border-radius:20px; padding:18px; display:flex; flex-direction:column; justify-content:flex-end; gap:6px; border:1px solid var(--line)}
+.bd-five b{font-weight:500; font-size:17px} .bd-five span{font:400 11.5px/1.5 var(--mono); color:var(--ink-2)} .bd-five .r1{background:#fff} .bd-five .r2{background:#f5f5f5} .bd-five .r3{background:linear-gradient(180deg,#e9e9e9,#f6f6f6)} .bd-five .r4{background:#171717; --ink:#fafafa; --ink-2:rgba(255,255,255,.7); color:#fafafa; border-color:transparent} .bd-five .r5{background:#000; --ink:#fafafa; --ink-2:rgba(255,255,255,.7); color:#fafafa; border-color:transparent}
+.bd-inst{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 clamp(20px,3vw,40px); margin-top:var(--golden-7)} .bd-inst li{padding:16px 0; border-top:1px solid var(--line); font-size:15.5px; color:var(--ink-2); line-height:1.5} .bd-inst b{display:block; color:var(--ink); font-weight:500; margin-bottom:4px}
+@media (max-width:820px){.bd-five{grid-template-columns:repeat(2,minmax(0,1fr))} .bd-inst{grid-template-columns:minmax(0,1fr)}}
+.bd-presets{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:0 clamp(20px,3vw,48px); margin-top:var(--golden-6)}
+.bd-presets div{border-top:1px solid var(--ink); padding-top:18px} .bd-presets p:first-child{font-size:clamp(2.5rem,6vw,5.25rem); line-height:1; letter-spacing:-.03em; margin-bottom:14px}
+.bd-presets p:last-child{font:400 11.5px/1.6 var(--mono); color:var(--ink-2)}
+.bd-scale li{display:grid; grid-template-columns:88px 1fr auto; align-items:baseline; gap:16px; padding:10px 0; border-top:1px solid var(--line); overflow:hidden; white-space:nowrap}
+.bd-scale .k,.bd-scale .u{font:400 11.5px/1 var(--mono); color:var(--ink-2)} .bd-scale .w{font-weight:500; letter-spacing:-.03em; line-height:1.05}
+@media (max-width:820px){.bd-presets{grid-template-columns:minmax(0,1fr); gap:28px} .bd-scale li{grid-template-columns:52px 1fr} .bd-scale .u{display:none} .bd-scale .w{-webkit-mask-image:linear-gradient(90deg,#000 80%,transparent); mask-image:linear-gradient(90deg,#000 80%,transparent)}}
+.bd-gold{display:flex; align-items:flex-end; gap:clamp(8px,1.6vw,22px); height:210px; border-bottom:1px solid var(--line)}
+.bd-gold i{flex:none; width:clamp(18px,4vw,56px); height:var(--h); background:var(--ink); border-radius:4px 4px 0 0}
+.bd-goldk{display:flex; gap:clamp(8px,1.6vw,22px); font:400 11px/1.4 var(--mono); color:var(--ink-2); padding-top:10px} .bd-goldk span{flex:none; width:clamp(18px,4vw,56px); text-align:center}
+.bd-split{display:grid; grid-template-columns:38.2fr 61.8fr; gap:12px; margin-top:var(--golden-6)} .bd-split div{border-radius:var(--radius-2xl); background:var(--card); padding:22px; min-height:150px; font:400 11.5px/1.6 var(--mono); color:var(--ink-2); display:flex; align-items:flex-end}
+.bd-cols{display:grid; grid-template-columns:repeat(13,1fr); gap:6px; margin-top:12px} .bd-cols i{height:44px; border-radius:6px; background:var(--card)} .bd-cols i:nth-child(n+9){background:var(--track)}
+.bd-radii{display:flex; flex-wrap:wrap; gap:12px} .bd-radii div{width:118px; height:118px; background:var(--card); display:grid; place-items:end start; padding:12px; font:400 11px/1.4 var(--mono); color:var(--ink-2)}
+.bd-paper{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-top:var(--golden-6)}
+.bd-paper div{min-height:170px; border-radius:var(--radius-xl); padding:16px; font:400 11.5px/1.6 var(--mono); color:var(--ink-2); display:flex; align-items:flex-end; background:var(--paper)} .bd-paper b{display:block; color:var(--ink); font-weight:500}
+.bd-paper .s0{background:var(--room)} .bd-paper .s1{box-shadow:0 1px 2px 0 rgb(0 0 0 / .06), inset 0 0 0 1px var(--line)} .bd-paper .s2{box-shadow:0 10px 15px -3px rgb(0 0 0 / .09),0 4px 6px -4px rgb(0 0 0 / .07)}
+.bd-paper .fl{box-shadow:var(--shadow-floating)} @media (max-width:820px){.bd-paper{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.bd-ease{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px} .bd-ease figure{border:1px solid var(--line); border-radius:var(--radius-2xl); padding:22px}
+.bd-ease svg{display:block; width:100%; aspect-ratio:1.618; overflow:visible} .bd-ease figcaption{font:400 11.5px/1.6 var(--mono); color:var(--ink-2); margin-top:14px} .bd-ease b{display:block; color:var(--ink); font-weight:500}
+.bd-time{display:grid; gap:10px; margin-top:var(--golden-6)} .bd-time div{display:grid; grid-template-columns:150px 1fr 70px; gap:16px; align-items:center; font:400 11.5px/1 var(--mono); color:var(--ink-2)}
+.bd-time i{display:block; height:6px; border-radius:6px; background:var(--ink); width:calc(var(--ms) / 500 * 100%); transform-origin:0 50%}
+@media (max-width:820px){.bd-ease{grid-template-columns:minmax(0,1fr)} .bd-time div{grid-template-columns:104px 1fr 54px}}
+.bd-marks{display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:12px} .bd-marks figure{display:grid; gap:10px}
+.bd-marks canvas{width:100%; aspect-ratio:1; border-radius:20px; background:#000} .bd-marks figcaption{font:400 11px/1.4 var(--mono); color:var(--ink-2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+@media (max-width:820px){.bd-marks{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.bd-art{position:relative; border-radius:20px; background:#000; overflow:hidden; aspect-ratio:2.2; margin-bottom:12px} .bd-art canvas{position:absolute; inset:0; width:100%; height:100%}
+.bd-art .acts{position:absolute; left:20px; bottom:20px; gap:8px} .bd-art button{min-height:40px; padding:0 14px; border-radius:999px; border:1px solid rgb(255 255 255 / .28); color:#d4d4d4; font:500 11px/1 var(--mono); letter-spacing:.14em; text-transform:uppercase; transition:background-color var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out)}
+.bd-art button[aria-pressed=true]{background:#fafafa; color:#000}
+.bd-pages li{display:grid; grid-template-columns:minmax(0,3fr) minmax(0,5fr) minmax(0,5fr); gap:8px clamp(16px,3vw,40px); padding:20px 0; border-top:1px solid var(--line); align-items:baseline}
+.bd-pages a{font-weight:500; font-size:clamp(1.125rem,1.9vw,1.5rem); letter-spacing:-.02em; padding-block:10px} .bd-pages p{color:var(--ink-2); font-size:15px; line-height:1.5} .bd-pages p b{color:var(--ink); font-weight:500}
+@media (max-width:820px){.bd-pages li{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<!-- preview strip: for reviewing this prototype only, not part of the design -->
+<div class="preview"><nav class="wrap" aria-label="Preview pages"><b>Redesign preview</b><a href="brand.html" aria-current="page">Brand deck</a><a href="index.html">Home</a><a href="models.html">Models</a><a href="model.html">Model page</a><a href="gateway.html">Product page</a><a href="enterprise.html">Enterprise</a><a href="cloud-local.html">Cloud service</a><a href="oss-crowdstart.html">Open source</a><a href="benchmark-fleet.html">Benchmark</a><a href="integration.html">Integration guide</a><a href="pricing.html">Pricing</a><a href="customers.html">Customers</a><a href="about.html">Company</a><a href="contact-sales.html">Contact sales</a><a href="404.html">Not found</a></nav></div>
+<!-- stand-in for the live header, which stays as it is -->
+<header class="top">
+  <a class="logo" href="index.html">Hanzo AI</a>
+  <nav aria-label="Site"><a href="models.html">Research</a><a href="gateway.html">Products</a><a href="enterprise.html">Solutions</a><a href="integration.html">Developers</a><a href="benchmark-fleet.html">Learn</a><a href="pricing.html">Pricing</a></nav>
+  <a class="btn solid sm" href="https://hanzo.ai/chat">Open Hanzo</a>
+</header>
+<main id="main">
+<section class="dark hero" id="top">
+  <div class="wrap bd-cover">
+    <p class="eyebrow">Brand deck</p>
+    <h1 class="display" style="margin-top:22px">Monochrome. True black. White type. <span class="mute">Colour only as state, never as decoration.</span></h1>
+    <p class="bd-src">Hanzo's own words, from @hanzo/design<br>Every value in this deck is read from Hanzo's published design tokens · commit 12408ef · 6 Nov 2026</p>
+  </div>
+</section>
+
+<section class="sec" id="palette" data-nav>
+  <div class="wrap">
+    <div class="head"><p class="eyebrow rv">Palette</p><h2 class="display rv">Whites, silvers, greys, <span class="mute">blacks.</span></h2><p class="lead rv d1">One neutral ramp, eleven steps, plus pure black and pure white. Press a swatch to copy its value.</p></div>
+    <div class="bd-row rv"><h3>Whites</h3><div class="bd-sw">
+      <button type="button" data-hex="#ffffff" style="--c:#ffffff"><i></i><span><b>#ffffff</b>pure-white · the page</span></button>
+      <button type="button" data-hex="#fdfdfd" style="--c:#fdfdfd"><i></i><span><b>#fdfdfd</b>surface-card-emphasis</span></button>
+      <button type="button" data-hex="#fbfbfb" style="--c:#fbfbfb"><i></i><span><b>#fbfbfb</b>popover</span></button>
+      <button type="button" data-hex="#fafafa" style="--c:#fafafa"><i></i><span><b>#fafafa</b>neutral-50</span></button>
+      <button type="button" data-hex="#f7f7f7" style="--c:#f7f7f7"><i></i><span><b>#f7f7f7</b>background (light)</span></button>
+      <button type="button" data-hex="#f5f5f5" style="--c:#f5f5f5"><i></i><span><b>#f5f5f5</b>neutral-100 · the grey room</span></button>
+      <button type="button" data-hex="#f2f2f2" style="--c:#f2f2f2"><i></i><span><b>#f2f2f2</b>surface-card</span></button>
+      <button type="button" data-hex="#ededed" style="--c:#ededed"><i></i><span><b>#ededed</b>muted · tiles</span></button></div></div>
+    <div class="bd-row rv"><h3>Silvers</h3><div class="bd-sw">
+      <button type="button" data-hex="#e5e5e5" style="--c:#e5e5e5"><i></i><span><b>#e5e5e5</b>neutral-200</span></button>
+      <button type="button" data-hex="#e4e4e7" style="--c:#e4e4e7"><i></i><span><b>#e4e4e7</b>brand · the one accent</span></button>
+      <button type="button" data-hex="#e4e4e4" style="--c:#e4e4e4"><i></i><span><b>#e4e4e4</b>secondary</span></button>
+      <button type="button" data-hex="#d4d4d4" style="--c:#d4d4d4"><i></i><span><b>#d4d4d4</b>neutral-300 · bar tracks</span></button>
+      <button type="button" data-hex="#a3a3a3" style="--c:#a3a3a3"><i></i><span><b>#a3a3a3</b>neutral-400 · text on black</span></button></div></div>
+    <div class="bd-row rv"><h3>Greys</h3><div class="bd-sw">
+      <button type="button" data-hex="#737373" style="--c:#737373"><i></i><span><b>#737373</b>neutral-500 · quiet text</span></button>
+      <button type="button" data-hex="#525252" style="--c:#525252"><i></i><span><b>#525252</b>neutral-600 · body grey</span></button>
+      <button type="button" data-hex="#404040" style="--c:#404040"><i></i><span><b>#404040</b>neutral-700</span></button></div></div>
+    <div class="bd-row rv"><h3>Blacks</h3><div class="bd-sw">
+      <button type="button" data-hex="#262626" style="--c:#262626"><i></i><span><b>#262626</b>neutral-800</span></button>
+      <button type="button" data-hex="#171717" style="--c:#171717"><i></i><span><b>#171717</b>neutral-900 · raised</span></button>
+      <button type="button" data-hex="#0f0f0f" style="--c:#0f0f0f"><i></i><span><b>#0f0f0f</b>card (dark)</span></button>
+      <button type="button" data-hex="#0a0a0a" style="--c:#0a0a0a"><i></i><span><b>#0a0a0a</b>neutral-950 · ink</span></button>
+      <button type="button" data-hex="#000000" style="--c:#000000"><i></i><span><b>#000000</b>pure-black · art, rooms</span></button></div></div>
+  </div>
+</section>
+
+<section class="sec dark" id="rank" data-nav>
+  <div class="wrap">
+    <div class="head"><p class="eyebrow rv">Rank</p><h2 class="display rv">Rank reads <span class="mute">as opacity.</span></h2><p class="lead rv d1">The palette is a ladder, not a wheel. White on black, in fixed steps. Higher is more important. No in-between step is ever invented.</p></div>
+    <div class="bd-ladder rv" aria-hidden="true">
+      <i style="--a:.03"></i><i style="--a:.05"></i><i style="--a:.06"></i><i style="--a:.08"></i><i style="--a:.10"></i><i style="--a:.14"></i><i style="--a:.15"></i><i style="--a:.16"></i><i style="--a:.18"></i><i style="--a:.20"></i><i style="--a:.22"></i><i style="--a:.30"></i><i style="--a:.40"></i><i style="--a:.45"></i><i style="--a:.55"></i><i style="--a:.60"></i><i style="--a:.78"></i><i style="--a:.80"></i><i style="--a:.92"></i>
+      <span>03</span><span class="k">05</span><span>06</span><span>08</span><span class="k">10</span><span>14</span><span class="k">15</span><span>16</span><span>18</span><span class="k">20</span><span>22</span><span class="k">30</span><span class="k">40</span><span>45</span><span>55</span><span class="k">60</span><span>78</span><span class="k">80</span><span>92</span>
+    </div>
+    <p class="note">The nineteen steps in tokens/colors.css. The eight in white are the working ladder named in Hanzo's system prompt.</p>
+    <div class="bd-rank" style="margin-top:var(--golden-7)">
+      <p class="lead rv">Text has five ranks. Each line shows its measured contrast on true black.</p>
+      <ul class="rv d1" id="ranks">
+        <li style="color:#fafafa">Primary<span>text-primary · #fafafa</span></li>
+        <li style="color:rgb(255 255 255 / .78)">Secondary<span>text-secondary · white 78%</span></li>
+        <li style="color:rgb(255 255 255 / .55)">Tertiary<span>text-tertiary · white 55%</span></li>
+        <li style="color:#a3a3a3">Helper<span>text-helper · #a3a3a3</span></li>
+        <li style="color:rgb(255 255 255 / .30)" data-lowcontrast>Disabled<span>text-disabled · white 30%</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="rooms" data-nav>
+  <div class="wrap">
+    <div class="head"><p class="eyebrow rv">Rooms</p><h2 class="display rv">Two rooms, <span class="mute">one set of roles.</span></h2><p class="lead rv d1">A page is a walk through rooms. The same role names hold a different value in each, so a component never needs to know which room it is in.</p></div>
+    <div class="bd-rooms">
+      <div class="bd-room rv"><h3>The light room</h3><dl>
+        <div><dt>background</dt><dd><i style="--c:#fff"></i>#ffffff</dd></div><div><dt>foreground</dt><dd><i style="--c:#0a0a0a"></i>#0a0a0a</dd></div>
+        <div><dt>muted</dt><dd><i style="--c:#ededed"></i>#ededed</dd></div><div><dt>muted-foreground</dt><dd><i style="--c:#525252"></i>#525252</dd></div>
+        <div><dt>surface-card-quiet</dt><dd><i style="--c:#f5f5f5"></i>#f5f5f5</dd></div><div><dt>border</dt><dd><i style="--c:rgb(0 0 0 / .1)"></i>black 10%</dd></div>
+        <div><dt>border-strong</dt><dd><i style="--c:rgb(0 0 0 / .16)"></i>black 16%</dd></div><div><dt>shadow-floating</dt><dd>0 24px 60px -16px black 18%</dd></div></dl></div>
+      <div class="bd-room dark rv d1"><h3>The black room</h3><dl>
+        <div><dt>background</dt><dd><i style="--c:#000"></i>#000000</dd></div><div><dt>foreground</dt><dd><i style="--c:#fafafa"></i>#fafafa</dd></div>
+        <div><dt>muted</dt><dd><i style="--c:#171717"></i>#171717</dd></div><div><dt>muted-foreground</dt><dd><i style="--c:#a3a3a3"></i>#a3a3a3</dd></div>
+        <div><dt>surface-card</dt><dd><i style="--c:rgb(38 38 38 / .5)"></i>#262626 at 50%</dd></div><div><dt>border</dt><dd><i style="--c:rgb(255 255 255 / .1)"></i>white 10%</dd></div>
+        <div><dt>border-strong</dt><dd><i style="--c:rgb(255 255 255 / .16)"></i>white 16%</dd></div><div><dt>shadow-floating</dt><dd>0 24px 60px -16px black 75%</dd></div></dl></div>
+    </div>
+    <p class="note">Hanzo's tokens set the dark page at #0a0a0a and the light page at #f7f7f7. The live marketing site sits on pure white with pure black art cards, so the redesign keeps those two.</p>
+  </div>
+</section>
+
+<section class="sec room-silver" id="type" data-nav data-light>
+  <div class="wrap">
+    <div class="head"><p class="eyebrow rv">Type</p><h2 class="display rv">One family. <span class="mute">Zen.</span></h2><p class="lead rv d1">Zen for everything, Zen Mono for labels, code and figures in tables. Never a third face. Hierarchy comes from size, weight and space.</p></div>
+    <p class="bd-aa rv" aria-hidden="true">Aa</p>
+    <div class="bd-presets">
+      <div class="rv"><p style="font-weight:220; letter-spacing:-.03em">Air</p><p>.zen-air · weight 220 · tracking −0.03em<br>thin display. The redesign uses it for the largest figures.</p></div>
+      <div class="rv d1"><p style="font-weight:497">Book</p><p>.zen-book · weight 497<br>text, and every heading on the live site.</p></div>
+      <div class="rv d2"><p style="font-weight:606">Medium</p><p>.zen-medium · weight 606<br>emphasis inside the interface.</p></div>
+    </div>
+    <ul class="bd-scale rv" data-bleed style="margin-top:var(--golden-7)">
+      <li><span class="k">9xl · 112</span><span class="w" style="font-size:clamp(3rem,7.6vw,7rem)">Hero figure</span><span class="u">the one number a page is about</span></li>
+      <li><span class="k">8xl · 84</span><span class="w" style="font-size:clamp(2.5rem,5.7vw,5.25rem)">Closing line</span><span class="u">the last thing a page says</span></li>
+      <li><span class="k">7xl · 64</span><span class="w" style="font-size:clamp(2.25rem,4.4vw,4rem)">Section heading</span><span class="u">was 26px (3xl) on the live site</span></li>
+      <li><span class="k">6xl · 52</span><span class="w" style="font-size:clamp(2rem,3.6vw,3.25rem)">Hero heading</span><span class="u">unchanged</span></li>
+      <li><span class="k">4xl · 32</span><span class="w" style="font-size:2rem">Statement paragraph</span><span class="u">one per page, at most two</span></li>
+      <li><span class="k">3xl · 26</span><span class="w" style="font-size:1.625rem">Sub-heading</span><span class="u">inside tiles and rows</span></li>
+      <li><span class="k">2xl · 21</span><span class="w" style="font-size:1.3125rem; font-weight:400; letter-spacing:0">Lead, beside every heading</span><span class="u">was 14px</span></li>
+      <li><span class="k">xl · 17</span><span class="w" style="font-size:1.0625rem; font-weight:400; letter-spacing:0">Body. Plain sentences, read at a glance.</span><span class="u">was 14px (base)</span></li>
+      <li><span class="k">xs · 12</span><span class="w mono" style="font-size:.75rem; letter-spacing:.2em; text-transform:uppercase">Eyebrow, in Zen Mono</span><span class="u">the only capitals</span></li>
+    </ul>
+    <p class="note">Every size is a step that already exists in Hanzo's scale. The redesign moves each role up the same ladder; it adds no new size.</p>
+  </div>
+</section>
+
+<section class="sec" id="space" data-nav>
+  <div class="wrap">
+    <div class="head"><p class="eyebrow rv">Space</p><h2 class="display rv">Space is <span class="mute">golden.</span></h2><p class="lead rv d1">Hanzo already ships a golden ramp and a golden split. The live pages barely use them. The redesign builds its rhythm and its grid on both.</p></div>
+    <div class="bd-gold rv" aria-hidden="true"><i style="--h:4px"></i><i style="--h:6.5px"></i><i style="--h:10.5px"></i><i style="--h:17px"></i><i style="--h:27.4px"></i><i style="--h:44.4px"></i><i style="--h:71.8px"></i><i style="--h:116.2px"></i><i style="--h:188px"></i></div>
+    <div class="bd-goldk" aria-hidden="true"><span>1<br>4</span><span>2<br>6.5</span><span>3<br>10.5</span><span>4<br>17</span><span>5<br>27</span><span>6<br>44</span><span>7<br>72</span><span>8<br>116</span><span>9<br>188</span></div>
+    <p class="note">golden-1 to golden-9, in pixels. Each step is the last one times 1.618. Sections breathe on steps 7 to 9; the live site's sections sit at 64 to 96px.</p>
+    <div class="bd-split rv"><div>38.2%</div><div>61.8% · golden-split</div></div>
+    <div class="bd-cols rv" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <p class="note">A 13-column grid divides 8 and 5, which is the golden split to within half a percent. Every two-part layout in the redesign uses it: heading and lead, wide tile and narrow tile, art and words.</p>
+  </div>
+</section>
+
+<section class="sec room" id="paper" data-nav>
+  <div class="wrap">
+    <div class="head"><p class="eyebrow rv">Shape and paper</p><h2 class="display rv">Raise it or outline it. <span class="mute">Never both.</span></h2><p class="lead rv d1">Surfaces are sheets of paper under one light from above. Most sit flat. Only what floats casts a shadow.</p></div>
+    <div class="bd-radii rv">
+      <div style="border-radius:6px">radius-sm<br>6</div><div style="border-radius:8px">radius-md<br>8</div><div style="border-radius:12px">radius-lg<br>12</div><div style="border-radius:16px">radius-xl<br>16</div><div style="border-radius:24px">radius-2xl<br>24 · tiles</div><div style="border-radius:28px">radius-composer<br>28</div><div style="border-radius:999px">radius-full<br>buttons</div>
+    </div>
+    <div class="bd-paper">
+      <div class="s0 rv"><span><b>sheet-0</b>the ground. No lift, no box.</span></div>
+      <div class="s1 rv d1"><span><b>sheet-1</b>an active tool. A hairline of shadow.</span></div>
+      <div class="s2 rv d1"><span><b>sheet-2</b>what opened.</span></div>
+      <div class="fl rv d2"><span><b>shadow-floating</b>menus, dialogs, the dock.</span></div>
+    </div>
+    <p class="note">In the redesign: tiles are flat fills with no outline and no shadow. Rows are divided by hairlines. The dock, menus and dialogs are the only things that float.</p>
+  </div>
+</section>
+
+<section class="sec" id="motion" data-nav>
+  <div class="wrap">
+    <div class="head"><p class="eyebrow rv">Motion</p><h2 class="display rv">Restrained, <span class="mute">never still.</span></h2><p class="lead rv d1">Hanzo's rule: an entry is a fade and a small rise, hover is colour only, nothing bounces. The redesign keeps every one of those and adds arrivals that suit each object.</p></div>
+    <div class="bd-ease">
+      <figure class="rv"><svg viewBox="0 0 100 62" fill="none" aria-hidden="true"><path d="M0 62H100M0 62V0" stroke="currentColor" stroke-opacity=".12"/><path class="draw" pathLength="1" d="M0 62C0 62 20 0 100 0" stroke="currentColor" stroke-width="1.4"/></svg><figcaption><b>ease-out</b>cubic-bezier(0, 0, .2, 1)<br>hover, colour, small changes</figcaption></figure>
+      <figure class="rv d1"><svg viewBox="0 0 100 62" fill="none" aria-hidden="true"><path d="M0 62H100M0 62V0" stroke="currentColor" stroke-opacity=".12"/><path class="draw" pathLength="1" d="M0 62C40 62 20 0 100 0" stroke="currentColor" stroke-width="1.4"/></svg><figcaption><b>ease-in-out</b>cubic-bezier(.4, 0, .2, 1)<br>things that move and stay on screen</figcaption></figure>
+      <figure class="rv d2"><svg viewBox="0 0 100 62" fill="none" aria-hidden="true"><path d="M0 62H100M0 62V0" stroke="currentColor" stroke-opacity=".12"/><path class="draw" pathLength="1" d="M0 62C16 0 30 0 100 0" stroke="currentColor" stroke-width="1.4"/></svg><figcaption><b>ease-emphasis</b>cubic-bezier(.16, 1, .3, 1)<br>arrivals: fast in, long soft landing</figcaption></figure>
+    </div>
+    <div class="bd-time rv" aria-hidden="true">
+      <div><span>duration-press</span><i style="--ms:90"></i><span>90 ms</span></div><div><span>duration-fast</span><i style="--ms:150"></i><span>150 ms</span></div>
+      <div><span>duration-base</span><i style="--ms:300"></i><span>300 ms</span></div><div><span>duration-slow</span><i style="--ms:400"></i><span>400 ms</span></div><div><span>duration-slower</span><i style="--ms:500"></i><span>500 ms</span></div>
+    </div>
+    <p class="note">Also in the tokens: stagger 60 ms, entry-rise 16 px (24 px large), an ambient glow that breathes over 9 s. The redesign runs all of it through Motion (motion.dev) using these exact curves and times. It uses no springs and no transform on hover, as Hanzo's rules ask.</p>
+  </div>
+</section>
+
+<section class="sec" id="rooms5" data-nav>
+  <div class="wrap">
+    <div class="head"><p class="eyebrow rv">Materials</p><h2 class="display rv">Five rooms, <span class="mute">not three.</span></h2><p class="lead rv d1">Silver and graphite sit between paper and black, so a page can change material eight times without repeating one. Black rooms open from a card and carry a live halftone field.</p></div>
+    <div class="bd-five rv" data-stagger>
+      <div class="r1"><b>Paper</b><span>#ffffff · reading, forms, rows</span></div>
+      <div class="r2"><b>Quiet</b><span>#f5f5f5 · questions, tables</span></div>
+      <div class="r3"><b>Silver</b><span>gradient #e9e9e9 to #f6f6f6 · a sheen follows the pointer</span></div>
+      <div class="r4"><b>Graphite</b><span>#171717 · ledgers, code, help</span></div>
+      <div class="r5"><b>Black</b><span>#000 · art, races, the field</span></div>
+    </div>
+    <ul class="bd-inst rv">
+      <li><b>Field</b>The room's own halftone on the GPU: it breathes, parts around the pointer and ripples where it is pressed.</li>
+      <li><b>Bloom</b>A dark room enters as a rounded card inside the gutters and opens to the full width as it is reached.</li>
+      <li><b>Depth</b>Art sits a layer behind the words and drifts a little slower than the page.</li>
+      <li><b>Words</b>Section headings arrive one word after another, from under a line.</li>
+      <li><b>Scene</b>A stage sticks while its steps pass; on Models one mark becomes the next family.</li>
+      <li><b>Ticker</b>One line of the page's own words, very large and very thin, moving.</li>
+      <li><b>Answer</b>Buttons lean toward the pointer, cards tilt a few degrees, strokes part and brighten under it.</li>
+      <li><b>Between pages</b>The page crossfades and settles; the header and dock stay put. The scroll keeps a little weight.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="sec dark room-black" id="art" data-nav data-bloom data-field>
+  <div class="wrap">
+    <div class="head"><p class="eyebrow rv">Art</p><h2 class="display rv">Drawn in white line, <span class="mute">on true black.</span></h2><p class="lead rv d1">The model cards on the home page set the style: fine white strokes of uneven weight on black. Hanzo's imagery rule is cool-toned, low-key, no warm gradients, no illustration style.</p></div>
+    <div class="bd-art rv"><canvas id="morph" aria-hidden="true"></canvas>
+      <div class="acts" id="shapes"><button type="button" aria-pressed="true">Waveform</button><button type="button" aria-pressed="false">Boundary</button><button type="button" aria-pressed="false">Servers</button><button type="button" aria-pressed="false">Sealed ring</button></div></div>
+    <p class="note">One set of 320 strokes that redraws itself as four shapes. A new product gets a new shape as data, with no new code and no image file.</p>
+    <div class="bd-marks rv" style="margin-top:var(--golden-7)">
+      <figure><canvas data-mark="hanzo/enso" aria-hidden="true"></canvas><figcaption>hanzo/enso</figcaption></figure><figure><canvas data-mark="hanzo/kai" aria-hidden="true"></canvas><figcaption>hanzo/kai</figcaption></figure>
+      <figure><canvas data-mark="zen/zen-6" aria-hidden="true"></canvas><figcaption>zen/zen-6</figcaption></figure><figure><canvas data-mark="cohere/command-r-plus-08-2024" aria-hidden="true"></canvas><figcaption>cohere/command-r-plus-08-2024</figcaption></figure>
+      <figure><canvas data-mark="cohere/command-a" aria-hidden="true"></canvas><figcaption>cohere/command-a</figcaption></figure><figure><canvas data-mark="deepgram/nova-3" aria-hidden="true"></canvas><figcaption>deepgram/nova-3</figcaption></figure>
+      <figure><canvas data-mark="qwen/qwen3-vl-30b-a3b-instruct" aria-hidden="true"></canvas><figcaption>qwen/qwen3-vl-30b-a3b-instruct</figcaption></figure><figure><canvas data-mark="anthropic/claude" aria-hidden="true"></canvas><figcaption>anthropic/claude</figcaption></figure>
+      <figure><canvas data-mark="openai/gpt" aria-hidden="true"></canvas><figcaption>openai/gpt</figcaption></figure><figure><canvas data-mark="google/gemini" aria-hidden="true"></canvas><figcaption>google/gemini</figcaption></figure>
+      <figure><canvas data-mark="mistral/large" aria-hidden="true"></canvas><figcaption>mistral/large</figcaption></figure><figure><canvas data-mark="meta/llama" aria-hidden="true"></canvas><figcaption>meta/llama</figcaption></figure>
+    </div>
+    <p class="note">Model marks. The model's ID is the seed: the lab picks the family of shape, the model picks its proportions. The same ID always draws the same mark, so all 543 model pages gain their own image at no cost. The IDs above are examples.</p>
+  </div>
+</section>
+
+<section class="sec" id="pages" data-nav>
+  <div class="wrap">
+    <div class="head"><p class="eyebrow rv">Pages</p><h2 class="display rv">One system. <span class="mute">No two pages alike.</span></h2><p class="lead rv d1">Every page shares the tokens above. Each one then gets its own idea, its own object and its own moment, so the site never reads as one template repeated.</p></div>
+    <ul class="bd-pages">
+      <li class="rv"><a href="index.html">Home</a><p><b>The race.</b> Two bars run for as long as each product really took.</p><p>Product cards hold a live fragment of each product instead of an icon.</p></li>
+      <li class="rv"><a href="models.html">Models</a><p><b>The wall of marks.</b> Every model is a row with its own mark.</p><p>Point at a row and its mark is drawn large beside the table.</p></li>
+      <li class="rv"><a href="model.html">Model page</a><p><b>The plotter.</b> The model's mark is drawn stroke by stroke.</p><p>Its figures settle beside it; the code arrives line by line.</p></li>
+      <li class="rv"><a href="gateway.html">Product page</a><p><b>The route.</b> One request line splits to the models behind it.</p><p>Feature rows alternate sides, each with one real object.</p></li>
+      <li class="rv"><a href="enterprise.html">Enterprise</a><p><b>The seal.</b> A waveform closes into a sealed ring as you scroll.</p><p>Four places to run, one pinned scene, deep detail one click down.</p></li>
+      <li class="rv"><a href="cloud-local.html">Cloud service</a><p><b>The boot.</b> A terminal starts a cluster in the time it really takes.</p><p>A timeline under it marks 0.30 s and 7 s as they pass.</p></li>
+      <li class="rv"><a href="oss-crowdstart.html">Open source</a><p><b>The ledger.</b> Counts and repositories set like a quiet ledger.</p><p>Small numbers stay small. Search filters the rows as you type.</p></li>
+      <li class="rv"><a href="benchmark-fleet.html">Benchmark</a><p><b>The paper.</b> A reading column with notes in the margin.</p><p>Bars drawn to true scale; what is not measured gets equal weight.</p></li>
+      <li class="rv"><a href="integration.html">Integration guide</a><p><b>The rail.</b> A line down the side fills as each step is passed.</p><p>Numbered steps, code with tabs, a contents list that follows you.</p></li>
+      <li class="rv"><a href="pricing.html">Pricing</a><p><b>The columns.</b> Three plans as columns of one sheet, not three cards.</p><p>Point at a plan and its column lifts out of the others.</p></li>
+      <li class="rv"><a href="customers.html">Customers</a><p><b>The figures.</b> Results as very large thin numerals.</p><p>One story in a black room; the rest as a hairline grid.</p></li>
+      <li class="rv"><a href="about.html">Company</a><p><b>The letter.</b> A calm reading page, set like a letter.</p><p>Wide margins, one statement, a hairline timeline.</p></li>
+      <li class="rv"><a href="contact-sales.html">Contact sales</a><p><b>The exchange.</b> What you send on the right, what comes back on the left.</p><p>Fields answer as you type; the form is replaced by what happens next.</p></li>
+      <li class="rv"><a href="404.html">Not found</a><p><b>The field.</b> The halftone dots swell under the pointer.</p><p>A quiet numeral, a search field, four useful links.</p></li>
+    </ul>
+  </div>
+</section>
+
+<section class="cta" id="start" data-field="ink">
+  <div class="wrap">
+    <h2 class="display xl rv">One brand, <span class="mute">fourteen pages.</span></h2>
+    <p class="lead rv d1">Walk the site in order. Each page ends with a link to the next.</p>
+    <div class="acts rv d1"><a class="btn solid" href="index.html">Start at Home <span aria-hidden="true">→</span></a></div>
+  </div>
+</section>
+</main>
+<section class="next"><a class="wrap" href="index.html"><span class="eyebrow">Next page</span><span>Home</span></a></section>
+<!-- stand-in for the live footer, which stays as it is -->
+<footer class="foot"><ul><li><a href="brand.html">Brand deck</a></li><li><a href="index.html">Home</a></li><li><a href="models.html">Models</a></li><li><a href="model.html">Model page</a></li><li><a href="gateway.html">Product page</a></li><li><a href="enterprise.html">Enterprise</a></li><li><a href="cloud-local.html">Cloud service</a></li><li><a href="oss-crowdstart.html">Open source</a></li><li><a href="benchmark-fleet.html">Benchmark</a></li><li><a href="integration.html">Integration guide</a></li><li><a href="pricing.html">Pricing</a></li><li><a href="customers.html">Customers</a></li><li><a href="about.html">Company</a></li><li><a href="contact-sales.html">Contact sales</a></li><li><a href="404.html">Not found</a></li></ul>© 2026 Hanzo AI, Inc. The live footer stays as it is.</footer>
+<nav class="dock off" aria-label="On this page">
+  <ul><li><a href="#palette">Palette</a></li><li><a href="#rank">Rank</a></li><li><a href="#rooms">Rooms</a></li><li><a href="#type">Type</a></li><li><a href="#space">Space</a></li><li><a href="#paper">Paper</a></li><li><a href="#motion">Motion</a></li><li><a href="#rooms5">Materials</a></li><li><a href="#art">Art</a></li><li><a href="#pages">Pages</a></li></ul>
+  <a class="btn solid sm" href="index.html">Open the site</a>
+</nav>
+<script src="assets/motion.js"></script>
+<script>
+document.addEventListener('hz', () => { const { $, $$, live, M } = HZ;
+  // swatches copy their value
+  $$('.bd-sw button').forEach(b => b.addEventListener('click', async () => { const k = b.querySelector('b'), was = b.dataset.hex; try { await navigator.clipboard.writeText(was); k.textContent = 'Copied'; } catch { k.textContent = 'Press ⌘C'; } setTimeout(() => { k.textContent = was; }, 1400); }));
+  // measured contrast of each text rank on true black
+  const lum = c => { const v = c.map(x => { x /= 255; return x <= .03928 ? x / 12.92 : ((x + .055) / 1.055) ** 2.4; }); return .2126 * v[0] + .7152 * v[1] + .0722 * v[2]; };
+  $$('#ranks li').forEach(li => { const m = getComputedStyle(li).color.match(/[\d.]+/g).map(Number), a = m[3] === undefined ? 1 : m[3], L = lum(m.slice(0, 3).map(x => x * a)); li.querySelector('span').textContent += ' · ' + ((L + .05) / .05).toFixed(1) + ' : 1'; });
+  // the four shapes
+  const btns = $$('#shapes button'); let to = 0, from = 0, t0 = 0;
+  const it = HZ.items.find(i => i.c.id === 'morph'); if (it) { let cur = 0; it.p = () => cur;
+    const go = k => { btns.forEach((b, i) => b.setAttribute('aria-pressed', i === k)); if (!live) { cur = k; HZ.paint(it, 0); return; }
+      M.animate(cur, k, { duration: .9, ease: HZ.out, onUpdate: v => { cur = v; } }); };
+    btns.forEach((b, i) => b.addEventListener('click', () => go(i))); }
+  // the specimen runs through the family's weights, Air to Medium, as it crosses the screen
+  const aa = $('.bd-aa'); if (live && aa) M.scroll(p => { aa.style.fontWeight = Math.round(220 + 386 * p); }, { target: aa, offset: ['start 0.95', 'end 0.25'] });
+  if (live) $$('.bd-time i').forEach(i => M.inView(i, () => { M.animate(i, { scaleX: [0, 1] }, { duration: +i.style.getPropertyValue('--ms') / 1000, ease: 'linear' }); }, { amount: 1 }));
+});
+</script>
+<script src="assets/hanzo.js"></script>
+<script src="assets/lenis.js"></script>
+<script src="assets/immersive.js"></script>
+</body>
+</html>

@@ -9,7 +9,8 @@
    Motion: shared-element open (signature) + the hero's launch sequence + layout re-flow of the inventory + magnetic
    primary. Every word and link is Hanzo's; providers, regions and machine names are examples. */
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence, LayoutGroup, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence, LayoutGroup } from 'motion/react';
+import useCalm from '../../v2/useCalm';
 import { EASE } from '../../ui';
 import { useLive } from './Frame';
 import StageHero from '../../v2/StageHero';
@@ -22,8 +23,10 @@ const PROVIDERS = ['DigitalOcean', 'AWS', 'GCP'];
 /* Stage object: one request; every provider's catalogue answers; a dry run quotes; the launch names machines in order
    into one inventory; a console opens in a tab; the audit row is written. Loops by itself. */
 function Fleet() {
-  const [ref, live, calm] = useLive(0.3);
-  const [t, setT] = useState(calm ? 6 : 0);
+  const [ref, live] = useLive(0.3);
+  const calm = useCalm();
+  const [t, setT] = useState(0);
+  useEffect(() => { if (calm) setT(6); }, [calm]);
   useEffect(() => {
     if (calm || !live) return;
     const id = setTimeout(() => setT((v) => (v >= 7 ? 0 : v + 1)), [1100, 1400, 1500, 650, 650, 1000, 2800, 500][t]);
@@ -82,7 +85,7 @@ function Pic({ i }) {
 /* Signature: tiles that open into their page and fold back. */
 function Tiles() {
   const [open, setOpen] = useState(-1);
-  const calm = useReducedMotion();
+  const calm = useCalm();
   useEffect(() => {
     if (open < 0) return;
     const k = (e) => { if (e.key === 'Escape') setOpen(-1); };
@@ -188,13 +191,13 @@ function Name() {
 
 export default function Visor() {
   return (
-    <main className="l2-page vs2" style={{ '--ac': '#d4379c' }}>
+    <main className="l2-page vs2" style={{ '--ac': '#525252' }}>
       <StageHero look="side" flip kick="hanzoai/visor" title="Hanzo Visor" sub="Machines from several clouds, through one API" acts={[['View on GitHub', GH]]}>
         <Fleet />
       </StageHero>
       <Tiles />
       <Name />
-      <Finale name="Visor" head="Get started with Hanzo Visor" prompt="Read https://hanzo.ai/skill.md and use Hanzo Visor in my project. Start with: hanzo visor machines list" tag="Machines, volumes, and clusters" />
+      <Finale name="Visor" head="Get started with Hanzo Visor" ask={['View on GitHub', GH]} prompt="Read https://hanzo.ai/skill.md and use Hanzo Visor in my project. Start with: hanzo visor machines list" tag="Machines, volumes, and clusters" />
     </main>
   );
 }

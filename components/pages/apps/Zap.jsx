@@ -1,5 +1,6 @@
 'use client';
-/* ZAP, v2. V2: 8/10 the wire is the Stage (pointer versus parser arrives huge in the dark room and settles), four hero figures, eight packets that open into sheets, a typed terminal, the sidecar counter as a full-width object, electric-cyan accent
+/* Persona: developers running many agents against shared MCP tool servers. Goal: start zapd from the quick start. CTA: "Read the docs" → zap-proto.dev/docs/quick-start. Metric: install_copy.
+   ZAP, v2. V2: 8/10 the wire is the Stage (pointer versus parser arrives huge in the dark room and settles), four hero figures, eight packets that open into sheets, a typed terminal, the sidecar counter as a full-width object, electric-cyan accent
    The wire is the object.
    Signature: pointer versus parser. The message lies in the buffer as it arrived (a sixteen-byte header, then a struct, a
    list, text and bytes on eight-byte boundaries); a reader asks for a field and the pointer jumps straight to its offset,
@@ -8,15 +9,18 @@
    for the three servers of the example: one beside every agent, or one zapd in front of them. Structure only, no timings,
    because Hanzo publishes none.
    Motion budget: signature = the pointer and the walking parser; supporting = Stage (Settle), Open (packets as sheets),
-   typing (the terminal). Accent: electric cyan. One dark room: the hero. Every word and link is Hanzo's. */
+   typing (the terminal). Colour: none (0 UI hues): the pointer and the walked text are white and silver in the dark
+   room. Pause buttons on the wire, the terminal and the fleet. One dark room: the hero. Every word and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../../ui';
-import { A } from '../../kit';
+import { A, Img } from '../../kit';
 import { useLive, useEvery, useSteps } from '../cloud/Frame';
 import LineMask from '../../v2/x-gauss/LineMask';
 import Settle from '../../v2/Settle';
 import { OpenCards } from '../../v2/OpenSheet';
+import NoJs from '../../v2/x-gauss/NoJs';
+import { usePause } from '../../v2/x-gauss/Pause';
 import '../../v2/Scale.css';
 import './Zap.css';
 
@@ -76,7 +80,9 @@ function Wire({ pick, auto, live }) {
 }
 
 function Hero() {
-  const [ref, live] = useLive(0.25);
+  const [ref, live0] = useLive(0.25);
+  const [paused, pauseBtn] = usePause({ right: 16, bottom: 16 });
+  const live = live0 && !paused;
   const [pick, setPick] = useState(2);
   const [mine, setMine] = useState(false);
   const [at, choose] = useSteps(4, 3600, live);
@@ -86,26 +92,29 @@ function Hero() {
       <div className="w2-wrap">
         <div className="zp-top">
           <div>
-            <motion.p className="zp-kick x-mono" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}><img src="/models/enso.webp" alt="" />Zero-Copy Agent Protocol</motion.p>
             <LineMask as="h1" id="zp-h1" now className="w2-display zp-h1" lines={['ZAP']} />
+            <p className="zp-kick x-mono"><Img src="/models/enso.webp" alt="" w={26} h={26} />Zero-Copy Agent Protocol</p>
           </div>
-          <motion.div className="zp-top-r" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
+          <motion.div className="zp-top-r" initial={{ y: 14 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
             <p className="zp-lede">The wire format is the data structure</p>
             <div className="zp-acts">
-              <Magnetic strength={0.25}><A to="https://zap-proto.dev/docs/quick-start" className="w2-cta" data-thumb="Read the docs">Read the docs <i aria-hidden="true">→</i></A></Magnetic>
+              <Magnetic strength={0.25}><A to="https://zap-proto.dev/docs/quick-start" className="w2-cta" data-thumb="Read the docs" data-cta="zap.hero">Read the docs <i aria-hidden="true">→</i></A></Magnetic>
               <A to="https://github.com/zap-proto/papers" className="w2-ghost">Read the Papers</A>
               <A to="https://github.com/zap-proto/spec" className="w2-ghost">GitHub</A>
             </div>
           </motion.div>
         </div>
         <div ref={ref}>
-          <Settle from={1.06} lift={70}>
+          <Settle from={1.04} lift={30}>
+            <div className="zp-wire-box">
+            {pauseBtn}
             <Wire pick={pick} live={live} auto={(
               <div className="zp-pick" role="radiogroup" aria-label="Read a field">
                 <span className="x-mono">Read a field</span>
                 {FIELDS.map(([t], i) => <button key={t} type="button" role="radio" aria-checked={pick === i} onClick={() => { setMine(true); setPick(i); }} className="x-mono">{t}</button>)}
               </div>
             )} />
+            </div>
           </Settle>
         </div>
         <ol className="zp-points">
@@ -185,7 +194,9 @@ const ASCII = `┌────────────────────�
 └─────────────────────────────────────────────────────────────────┘`;
 
 function Running() {
-  const [ref, live] = useLive(0.3);
+  const [ref, live0] = useLive(0.3);
+  const [paused, pauseBtn] = usePause({ right: 12, bottom: 12 });
+  const live = live0 && !paused;
   const lines = TERM.split('\n');
   const [k, setK] = useState(lines.length);
   useEffect(() => { if (live) setK(0); }, [live]);
@@ -199,6 +210,7 @@ function Running() {
           <p className="w2-body zp-zapd"><code>zapd</code> presents the tools and resources of every backend as one schema, whether the backend speaks MCP or ZAP.</p>
         </div>
         <div className="zp-term">
+          {pauseBtn}
           <div className="zp-term-bar"><i /><i /><i /><span className="x-mono">Terminal</span><Copy text={lines.filter((l) => l.startsWith('$')).map((l) => l.slice(2)).join('\n')} /></div>
           <pre className="x-mono">{lines.map((l, i) => <span key={i} className={(l.startsWith('#') ? 'c' : '') + (i < k ? ' in' : '')}>{l}{'\n'}</span>)}</pre>
         </div>
@@ -213,14 +225,16 @@ const SERVERS = ['github', 'slack', 'db'];
 /* Sidecars or one daemon: the processes each topology starts, for as many agents as you say. */
 function Fleet() {
   const [ref, live] = useLive(0.3);
+  const [paused, pauseBtn] = usePause({ right: 16, top: 16 });
   const [n, setN] = useState(4);
   const [mine, setMine] = useState(false);
   // until you take the slider, the swarm grows by itself
-  useEvery(1100, live && !mine, () => setN((v) => (v >= 16 ? 1 : v + 1)));
+  useEvery(1100, live && !mine && !paused, () => setN((v) => (v >= 16 ? 1 : v + 1)));
   const side = n * SERVERS.length;
   const box = (k, cls) => Array.from({ length: k }).map((_, i) => <i key={i} className={cls} style={{ '--s': i % 3 }} />);
   return (
     <div className="zp-fleet w2-object" ref={ref}>
+      {pauseBtn}
       <label className="zp-fleet-k">
         <span>Agents you run</span>
         <b className="w2-fig">{n}</b>
@@ -270,11 +284,11 @@ function Point() {
       <div className="w2-wrap">
         <div className="zp-point-grid">
           <div className="zp-point-copy">
-            <p className="zp-chip x-mono"><span>Go</span> · <span>Rust</span> · <span>TypeScript</span></p>
             <h2 className="w2-display s">Point one agent at it</h2>
+            <p className="zp-chip x-mono"><span>Go</span> · <span>Rust</span> · <span>TypeScript</span></p>
             <p className="w2-lede">Start the daemon, add the MCP servers you already run, change one address in your agent.</p>
             <p className="w2-lede zp-strong">Nothing else about your setup has to move.</p>
-            <div className="zp-acts"><A to="https://zap-proto.dev/docs" className="w2-cta acc">Read the docs</A><A to="https://github.com/zap-proto/spec" className="w2-ghost">View on GitHub</A></div>
+            <div className="zp-acts"><A to="https://zap-proto.dev/docs" className="w2-cta" data-cta="zap.close">Read the docs</A><A to="https://github.com/zap-proto/spec" className="w2-ghost">View on GitHub</A></div>
           </div>
           <div className="zp-note">
             <p>What ZAP saves depends on your workload, your payload size and your topology. The claim here is about mechanism, not about a number: a reader that walks the buffer in place does no parsing and no allocation, and shared backends run one process where per-agent sidecars run many. Measure it on your own traffic — we have not published a benchmark and will not quote one we cannot show you.</p>
@@ -293,7 +307,7 @@ function Point() {
           <div className="zp-get-meta">
             <span className="zp-chip2"><span>License:</span> Apache-2.0</span>
             <A to="https://github.com/hanzoai" className="zp-chip2">hanzoai</A>
-            <A to="https://platform.hanzo.ai/deploy" className="w2-cta">Deploy to Cloud</A>
+            <A to="https://platform.hanzo.ai/deploy" className="w2-ghost">Deploy to Cloud</A>
             <A to="https://docs.hanzo.ai/docs/zap" className="w2-ghost">Self-host</A>
           </div>
         </div>
@@ -305,6 +319,7 @@ function Point() {
 export default function Zap() {
   return (
     <main className="zp w2">
+      <NoJs />
       <Hero />
       <Why />
       <Running />

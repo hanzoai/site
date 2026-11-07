@@ -1,5 +1,5 @@
 /* ---------- newsletter (v2) ---------- */
-.xnl { --xp-accent: #e0352b; }
+.xnl { --xp-accent: #525252; }
 .xnl-hero { position: relative; padding: clamp(40px, 6vw, 96px) 0 clamp(96px, 12vw, 180px); overflow: hidden; }
 .xnl-hero .xp-grid { align-items: center; row-gap: 48px; }
 .xnl-copy { grid-column: 1 / span 7; }
@@ -7,13 +7,13 @@
 .xnl-lede { margin-top: 32px; }
 .xnl-formwrap { margin-top: 40px; max-width: 600px; }
 .xnl-form { display: flex; gap: 8px; padding: 8px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); background: #fff; box-shadow: 0 30px 60px -40px rgba(0, 0, 0, .35); transition: border-color .25s, box-shadow .25s; }
-.xnl-form:focus-within { border-color: var(--xp-accent); box-shadow: 0 0 0 5px rgba(224, 53, 43, .12), 0 30px 60px -40px rgba(0, 0, 0, .35); }
+.xnl-form:focus-within { border-color: var(--xp-accent); box-shadow: 0 0 0 5px rgba(82, 82, 82, .12), 0 30px 60px -40px rgba(0, 0, 0, .35); }
 .xnl-form input { flex: 1; min-width: 0; height: 60px; padding: 0 22px; border: 0; border-radius: 999px; background: transparent; font: 400 19px/1 var(--sans); color: var(--ink); outline: none; }
 .xnl-form input::placeholder { color: var(--faint); }
 .xnl-form .xp-cta { height: 60px; }
 .xnl-form .xp-cta:disabled { opacity: .55; cursor: progress; }
-.xnl-form input[aria-invalid='true'] { color: #b42318; }
-.xnl-err { margin: 12px 0 0 22px; font-size: 15px; color: #b42318; }
+.xnl-form input[aria-invalid='true'] { color: #404040; }
+.xnl-err { margin: 12px 0 0 22px; font-size: 15px; color: #404040; }
 .xnl-terms { margin: 16px 0 0 22px; max-width: 54ch; font-size: 14px; line-height: 1.55; color: var(--faint); }
 .xnl-link { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--xp-accent); }
 .xnl-sent { display: flex; gap: 14px; align-items: flex-start; margin: 40px 0 0; max-width: 48ch; padding: 22px 24px; border-radius: 20px; background: var(--card); font-size: 18px; line-height: 1.5; }
@@ -43,8 +43,8 @@
 .xnl-to { position: absolute; left: 28px; bottom: 54px; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
 .xnl-addr { position: absolute; left: 28px; right: 28px; bottom: 26px; font-size: 18px; font-weight: 560; letter-spacing: -.02em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-.xnl-mast { background: #0a0a0a; color: rgba(224, 53, 43, .9); }
-.xnl-stamp { border-color: rgba(224, 53, 43, .5); color: var(--xp-accent); }
+.xnl-mast { background: #0a0a0a; color: rgba(82, 82, 82, .9); }
+.xnl-stamp { border-color: rgba(82, 82, 82, .5); color: var(--xp-accent); }
 
 /* what each issue carries: three statements whose weight swells as they cross the middle */
 .xnl-inside { overflow: hidden; }

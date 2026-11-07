@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Motion variety check (DESIGN.md "Motion: varied and restrained", James 7 Nov).
+"""Motion variety check (MASTER.md part 9, "Motion and interaction", James 7 Nov).
 
 Counts the motion techniques each page file uses, prints how often each is used
 site-wide, and fails a page that overdoes it:

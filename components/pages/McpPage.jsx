@@ -1,5 +1,8 @@
 'use client';
-/* Hanzo MCP. V2: 8/10 code-first launch: a live tool-call stream beside the headline, Hanzo's figures as heroes, the runtime as sheets that stack, six tool domains on a drag rail that open into their page, one dark room for the config.
+/* Hanzo MCP.
+   V2: 8/10 code-first launch: a live tool-call stream beside the headline, Hanzo's figures as heroes, the runtime as sheets that stack, six tool domains on a drag rail that open into their page, one dark room for the config.
+   Persona: a developer wiring tools into an agent client. Goal: add Hanzo MCP to their client. CTA: Browse 260+ tools (mcp.hero).
+   Metric: cta_click on mcp.hero and mcp.close (data-cta; the event layer is the conductor's).
    Signature: cards that open. The six tool domains sit on a rail you drag (or swipe); click one and the card itself
    grows into a full sheet (a shared-element morph, synchronized.studio) holding every tool name that domain carries.
    Around it: the hero's live tool-call stream (Hanzo's tools firing with latency bars; the only figures are Hanzo's,
@@ -77,7 +80,7 @@ function Hero() {
           <A2Lines as="h1" id="mcp-h1" className="a2-display s mcp-h1" lines={['The complete', 'MCP runtime for', 'coding, decisions,', 'browser, and cloud']} now />
           <p className="a2-body mcp-lede">Give any model a filesystem, shell, semantic AST code index, Kai sub-10ms decisions, Playwright &amp; Chrome DevTools browser control, issue tracking, persistent memory, and 1,538 typed Hanzo Cloud operations over stdio or streamable HTTP.</p>
           <div className="a2-acts">
-            <span data-thumb="Browse 260+ tools" data-href={ALL} style={{ display: 'contents' }}><Go to={ALL} solid>Browse 260+ tools</Go></span>
+            <A to={ALL} className="x-btn solid" data-thumb="Browse 260+ tools" data-cta="mcp.hero">Browse 260+ tools</A>
             <Go to={DOCS}>Read the docs</Go>
             <Go to={GH}>View on GitHub</Go>
           </div>
@@ -141,8 +144,7 @@ function Parts() {
           {PARTS.map(([t, d], i) => (
             <li key={t} className="mcp-sheet" style={{ '--i': i }}>
               <div className="mcp-sheet-copy">
-                <span className="a2-kick">{String(i + 1).padStart(2, '0')} / 03</span>
-                <h2 className="a2-headline">{t}</h2>
+                <h2 className="a2-headline">{t}<span className="mcp-sheet-n x-mono">{String(i + 1).padStart(2, '0')} / 03</span></h2>
                 <p className="a2-body">{d}</p>
               </div>
               <div className="mcp-sheet-art" aria-hidden="true"><PartArt i={i} /></div>
@@ -267,6 +269,10 @@ const hl = (l) => {
   return out;
 };
 
+/* the config split in two: a .mcp.json that copies as valid JSON, and the shell lines that copy as shell */
+const JSON_BLOCK = CONFIG.split('\n').slice(1, 9).join('\n');
+const SHELL = ['npm i -g hanzo', 'hanzo mcp              # stdio; the binary downloads on first run', 'hanzo mcp -t sse       # or over HTTP'];
+
 function Config() {
   return (
     <section className="a2-sec a2-dark mcp-cfg" data-room="dark" aria-labelledby="mcp-cfg-h">
@@ -277,9 +283,19 @@ function Config() {
           <p className="a2-body">Use the --package= form for local stdio, or point any MCP client directly at https://api.hanzo.ai/v1/mcp over streamable HTTP.</p>
           <A to={ALL} className="mcp-ref">All MCP Tools Reference <span aria-hidden="true">→</span></A>
         </div>
-        <div className="mcp-code">
-          <div className="mcp-code-bar"><span className="x-mono">json</span><Copy text={CONFIG} /></div>
-          <pre><code>{CONFIG.split('\n').map((l, i) => <span key={i} className="mcp-ln">{l ? hl(l) : ' '}{'\n'}</span>)}</code></pre>
+        <div className="mcp-codes">
+          <div className="mcp-code">
+            <div className="mcp-code-bar"><span className="x-mono">.mcp.json</span><Copy text={JSON_BLOCK} /></div>
+            <p className="mcp-code-c x-mono">// .mcp.json — add Hanzo MCP to any MCP client</p>
+            <pre><code>{JSON_BLOCK.split('\n').map((l, i) => <span key={i} className="mcp-ln">{hl(l)}{'\n'}</span>)}</code></pre>
+          </div>
+          <div className="mcp-code">
+            <div className="mcp-code-bar"><span className="x-mono">bash</span><Copy text={SHELL.map((l) => l.split('#')[0].trim()).join('\n')} /></div>
+            <p className="mcp-code-c x-mono">// Or install the whole native stack once and run it yourself:</p>
+            <pre><code>{SHELL.map((l, i) => <span key={i} className="mcp-ln">{l.includes('#') ? <>{l.slice(0, l.indexOf('#'))}<span className="c">{l.slice(l.indexOf('#'))}</span></> : l}{'\n'}</span>)}</code></pre>
+          </div>
+          {/* the block exactly as Hanzo writes it, for search and screen readers */}
+          <pre className="x-sr">{CONFIG}</pre>
         </div>
       </div>
     </section>
@@ -294,7 +310,7 @@ function Add() {
           <A2Lines id="mcp-add-h" className="a2-display s" lines={['Add Hanzo MCP', 'to your client']} />
           <p className="a2-lede">One block in .mcp.json, or connect over streamable HTTP at api.hanzo.ai/v1/mcp.</p>
           <div className="a2-acts">
-            <Go to={ALL} solid>Browse All Tools</Go>
+            <A to={ALL} className="x-btn solid" data-cta="mcp.close">Browse All Tools</A>
             <Go to={GH}>GitHub</Go>
             <Go to="https://platform.hanzo.ai">Hanzo Platform</Go>
           </div>
@@ -306,7 +322,7 @@ function Add() {
           <dl className="x-mono"><div><dt>License:</dt><dd>Apache-2.0</dd></div><div><dt>★</dt><dd>8 stars</dd></div></dl>
           <div className="mcp-repo-acts">
             <A to={GH} className="mcp-gh x-mono">hanzoai/mcp</A>
-            <Go to="https://platform.hanzo.ai/deploy" solid>Deploy to Cloud</Go>
+            <Go to="https://platform.hanzo.ai/deploy">Deploy to Cloud</Go>
             <Go to={DOCS}>Self-host</Go>
           </div>
         </div>
@@ -317,7 +333,7 @@ function Add() {
 
 export default function McpPage() {
   return (
-    <main className="a2 mcp" style={{ '--acc': '#f2600c' }} data-acc-btn="">
+    <main className="a2 mcp">
       <Hero />
       <Figures />
       <Parts />

@@ -1,4 +1,5 @@
 'use client';
+// Persona: Developer comparing one lab's models. Goal: find the right model from this maker and open it. CTA: the hero's first action in Hanzo's words ("Get API Access"). Metric: api_key_created.
 /* A model maker's shelf in Hanzo's catalogue (73 makers, one template). The first screen leads with the maker's own
    count and a contour field seeded from its name and its models' numbers, beside the guest-key terminal.
    Signature: the sibling field at full size: every model the maker has on Hanzo, placed by context window and output
@@ -7,9 +8,12 @@
    longest-context model is one press away. */
 import { useMemo, useState } from 'react';
 import { motion, LayoutGroup } from 'motion/react';
-import { EASE, Copy, Count } from '../../ui';
+import { EASE, Copy } from '../../ui';
+import MaskFig from '../../v2/MaskFig';
 import { A } from '../../kit';
 import Sigil from '../../Sigil';
+import { FilmPause, usePaused } from '../../v2/ModelFilm';
+import SpecCard from '../../v2/SpecCard';
 import { Field, useCatalog, rateFrom, money } from './parts';
 import './models.css';
 
@@ -33,30 +37,34 @@ export default function ProviderShelf({ doc }) {
   const tokens = cards.map((c) => c.tokens).filter(Boolean);
   const outs = cards.map((c) => c.rate && c.rate.out).filter((v) => v != null);
   const plotted = cards.filter((c) => c.tokens && c.rate).length;
+  const paused = usePaused();
   const anim = cards.length <= 60; // re-flow by layout only where it stays smooth
   return (
     <main className="xmf xmf-prov">
       <section className="xmf-launch xmf-maker" aria-labelledby="xmf-h1">
         <div className="xmf-art" aria-hidden="true">
-          <Sigil seed={doc.route} data={[n, Math.max(0, ...tokens), outs.length ? Math.min(...outs) : 0, outs.length ? Math.max(...outs) : 0]} className="xmf-sigil" />
+          <Sigil seed={doc.route} data={[n, Math.max(0, ...tokens), outs.length ? Math.min(...outs) : 0, outs.length ? Math.max(...outs) : 0]} className="xmf-sigil" still={paused} />
         </div>
         <div className="x-wrap xmf-launch-in">
           <div className="xmf-maker-g">
             <div className="xmf-launch-t">
-              <motion.nav className="xmf-crumbs" aria-label="Breadcrumb" {...up(0)}>
-                <span><A to="/models">Models</A></span><span><span className="x-mono" aria-current="page">{doc.name}</span></span>
-              </motion.nav>
               <h1 id="xmf-h1" className={'xmf-name ' + (doc.h1.length <= 24 ? 'm' : 'l')} data-morph-target>
                 <span className="x-line"><motion.span className="x-line-in" initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.08 }}>{doc.h1}</motion.span></span>
               </h1>
               {doc.lede && <motion.p className="xmf-lede" {...up(0.3)}>{doc.lede}</motion.p>}
               <motion.div className="xmf-acts" {...up(0.42)}>
-                {doc.actions.map((a, i) => <A key={a.label} to={a.href} className={'x-btn xmf-btn' + (i ? '' : ' solid')} {...(i ? {} : { 'data-thumb': '' })}>{a.label}</A>)}
+                {doc.actions.map((a, i) => <A key={a.label} to={a.href} className={'x-btn xmf-btn' + (i ? '' : ' solid')} {...(i ? {} : { 'data-thumb': '', 'data-cta': 'maker.hero' })}>{a.label}</A>)}
               </motion.div>
             </div>
             {/* the maker's count is the hero figure */}
+            <div className="xmf-maker-top">
+              <nav className="xmf-crumbs" aria-label="Breadcrumb">
+                <span><A to="/models">Models</A></span><span><span className="x-mono" aria-current="page">{doc.name}</span></span>
+              </nav>
+              <FilmPause />
+            </div>
             <motion.p className="xmf-maker-n" {...up(0.2)}>
-              <b>{Number.isFinite(n) ? <Count to={n} /> : null}</b>
+              <b>{Number.isFinite(n) ? <MaskFig>{n}</MaskFig> : null}</b>
               <span className="x-mono">{Number.isFinite(n) ? word : doc.count}</span>
             </motion.p>
           </div>
@@ -81,8 +89,7 @@ export default function ProviderShelf({ doc }) {
         <section className="xmf-sec xmf-among" aria-labelledby="xmf-among-h">
           <div className="x-wrap">
             <header className="xmf-sh">
-              <p className="xmf-kick">{doc.name}</p>
-              <h2 id="xmf-among-h">Context window and output rate</h2>
+              <h2 id="xmf-among-h">{doc.name}</h2>
             </header>
             <Field points={cards} here={null} label={`${doc.name} models by context window and output rate`} />
           </div>
@@ -115,14 +122,7 @@ export default function ProviderShelf({ doc }) {
             <ul className="xmf-grid">
               {[...shown, ...cards.filter((c) => hidden.has(c.href))].map((c) => (
                 <motion.li key={c.href} layout={anim ? 'position' : false} transition={{ type: 'spring', stiffness: 260, damping: 30 }} hidden={hidden.has(c.href)}>
-                  <A to={c.href} className="xmf-card">
-                    <span className="xmf-card-t"><b data-morph>{c.name}</b>{c.ctx && <i className="x-mono">{c.ctx}</i>}</span>
-                    <span className="xmf-card-d">{c.desc}</span>
-                    <span className="xmf-card-f">
-                      {c.tags.map((t) => <em key={t} className="x-mono">{t}</em>)}
-                      <span className="x-mono">{c.rate ? `${money(c.rate.in)} → ${money(c.rate.out)}` : ''}</span>
-                    </span>
-                  </A>
+                  <SpecCard to={c.href} title={c.name} desc={c.desc} tags={[...(c.ctx ? [c.ctx] : []), ...c.tags]} meta={c.rate ? <b>{`${money(c.rate.in)} → ${money(c.rate.out)}`}</b> : null} />
                 </motion.li>
               ))}
             </ul>
@@ -132,13 +132,13 @@ export default function ProviderShelf({ doc }) {
 
       {doc.band && (
         <section className="xmf-end">
-          <Sigil seed={doc.route + '#end'} data={[n, cards.length]} className="xmf-end-sigil" />
+          <Sigil seed={doc.route + '#end'} data={[n, cards.length]} className="xmf-end-sigil" still={paused} />
           <div className="x-wrap">
             <div className="xmf-band">
               <h2>{doc.band.title}</h2>
               {doc.band.lede && <p>{doc.band.lede}</p>}
               <div className="xmf-acts">
-                {doc.band.actions.map((a, i) => <A key={a.label} to={a.href} className={'x-btn' + (i ? '' : ' solid')}>{a.label}</A>)}
+                {doc.band.actions.map((a, i) => <A key={a.label} to={a.href} className={'x-btn xmf-btn' + (i ? '' : ' solid')} {...(i ? {} : { 'data-cta': 'maker.band' })}>{a.label}</A>)}
               </div>
             </div>
           </div>

@@ -1,5 +1,5 @@
 'use client';
-/* Home, cost (v2). Two hero figures on white, split by one hairline: Enso, up to 14.2× less, and Kai, up to 530× less.
+/* Home, cost (v2), the second chapter of the dark argument room. Two hero figures split by one hairline: Enso, up to 14.2× less, and Kai, up to 530× less.
    One control lets you say how many questions you ask; the rates are Hanzo's, only the count changes. */
 import { useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
@@ -42,9 +42,9 @@ function Enso() {
   const q = nice(1000 * 10 ** exp);
   return (
     <div className="hv-cost">
-      <p className="v2-kicker">Enso vs frontier LLMs · GPQA Diamond</p>
       <p className="hv-cost-big"><span className="hv-upto">up to</span> <span className="v2-figure">14.2×</span> <span className="hv-less">less</span></p>
       <p className="v2-title">per 1,000 questions, at higher accuracy</p>
+      <p className="v2-kicker hv-run-k">Enso vs frontier LLMs · GPQA Diamond</p>
       <p className="hv-run-note">Enso Flash answers 90.6% of new GPQA Diamond questions at $3.26 per 1,000 — higher accuracy than Claude Fable 5.1 (87.9% at $46.25). Enso reaches 93.7% at $10.03, ahead of the best single model (93.1%).</p>
       <label className="hv-vol">
         <span className="x-mono">Per {q.toLocaleString('en-US')} GPQA Diamond questions · less is cheaper</span>
@@ -67,9 +67,9 @@ function Kai() {
   const max = 11.13 + 55.65;
   return (
     <div className="hv-cost">
-      <p className="v2-kicker">Kai vs frontier LLMs</p>
       <p className="hv-cost-big"><span className="hv-upto">up to</span> <span className="v2-figure">530×</span> <span className="hv-less">less</span></p>
       <p className="v2-title">than frontier LLMs, per input token</p>
+      <p className="v2-kicker hv-run-k">Kai vs frontier LLMs</p>
       <p className="hv-run-note">Kai bills input only; an LLM also bills every token it writes.</p>
       <p className="hv-vol"><span className="x-mono">Per million tokens, input and output · less is cheaper</span></p>
       <motion.div className="hv-lanes" initial="h" whileInView="s" viewport={{ once: true, amount: 0.5 }}>
@@ -90,7 +90,7 @@ function Kai() {
 
 export default function Cheaper() {
   return (
-    <section className="hv-cheap v2-sec" id="cheaper" aria-labelledby="cheaper-h">
+    <section className="hv-cheap hv-room v2-sec" data-room="dark" id="cheaper" aria-labelledby="cheaper-h">
       <div className="v2-wrap">
         <header className="hv-head v2-grid">
           <Lines as="h2" id="cheaper-h" className="v2-display-s hv-head-t" lines={['The same intelligence.', 'A smaller bill.']} />

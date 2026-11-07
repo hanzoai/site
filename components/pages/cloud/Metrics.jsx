@@ -1,76 +1,108 @@
 'use client';
 /* Metrics, v2 launch page (Cloud 3).
-   V2: 8/10 Chaptered launch: a live query console settles from full-bleed, a spike opens its own traces, six points become one pinned table that changes per chapter, one dark room.
-   Signature: the spike that opens. A live chart streams three series split by the label you pick; when a spike rises the
-   cursor lands on it and the traces for that window open beneath, because they were never in a different system.
+   V2: 8/10 The live chart is the first screen: it runs full-bleed behind the title, a crosshair follows the pointer, the spike opens its traces; six points as one pinned table opened by the section's own statement; one dark room; Logs as a card that opens; grey only.
+   Signature: the spike that opens. Three series stream full-bleed under the title, split by the label you pick; every
+   seven seconds a spike rises, the cursor lands on it and the traces for that window open beside it, because they were
+   never in a different system. Click the chart to hold a moment and keep its traces open.
    Beyond: Label check. Tick per-model, per-route, per-tenant in chapter three: the table grows a column for each while
    a time-series database would multiply series, Hanzo's own cardinality point made concrete before you pick a store.
-   Motion: signature = the live chart; supporting = Stage settle and pinned chapters (scroll), the clip wipe into the
-   dark room, the line-masked title. Every word and link is Hanzo's; chart and table values are drawn, not measured. */
-import { useRef, useState } from 'react';
-import { useFrame, useLive, useEvery, Paste, Console } from './Frame';
-import SettleStage from '../../v2/SettleStage';
+   Persona: Developer. Goal: try Hanzo Metrics (read the source, then deploy).
+   CTA: "View on GitHub" → https://github.com/hanzoai/metrics (data-cta metrics.hero, metrics.close; the site's thumb
+   bar and sticky ask bar carry the same from data-thumb). Metric: api_key_created.
+   Motion: idle = the streaming chart and the building console; pointer = the crosshair that reads the line under it,
+   the magnetic ask; state = split tabs, the label check, PromQL ↔ builder, the held spike; arrival = the cut-in title,
+   the timed wipe into the dark room; scroll = the pinned table only.
+   Every word and link is Hanzo's; chart and table values are drawn, not measured. */
+import { useEffect, useRef, useState } from 'react';
+import { useFrame, useLive, Paste } from './Frame';
 import PinnedChapters from '../../v2/PinnedChapters';
 import ClipWipe from '../../v2/ClipWipe';
-import LaunchClose from '../../v2/LaunchClose';
+import LaunchClose, { Arr } from '../../v2/LaunchClose';
 import LineMask from '../../v2/LineMask';
+import LaunchConsole from '../../v2/LaunchConsole';
+import LivePause, { usePause } from '../../v2/LivePause';
+import RelatedCards from '../../v2/RelatedCards';
 import { A } from '../../kit';
 import './Metrics.css';
 
-/* ---------- the hero object: a live query console ---------- */
+const GH = 'https://github.com/hanzoai/metrics';
+
+/* ---------- the hero object: the live chart, full-bleed ---------- */
 const SPLIT = { 'per-model': ['zen', 'kai', 'enso'], 'per-route': ['/v1/chat', '/v1/embed', '/v1/search'], 'per-tenant': ['org a', 'org b', 'org c'] };
-const N = 72, CUR = N - 12, STEP = 0.11;
-const wave = (t, k) => 0.36 + 0.12 * Math.sin(t * 0.9 + k * 2.1) + 0.05 * Math.sin(t * 2.3 + k) - k * 0.07 + (k === 0 ? Math.max(0, Math.sin(t * 0.45)) ** 24 * 0.5 : 0);
-const pts = (t, k) => Array.from({ length: N }, (_, i) => [(i * 100) / (N - 1), 100 - wave(t + i * STEP, k) * 100]);
+const N = 96, CUR = Math.round(N * 0.62), STEP = 0.075, SPEED = 0.42;
+const wave = (t, k) => 0.36 + 0.11 * Math.sin(t * 0.8 + k * 2.1) + 0.05 * Math.sin(t * 2.1 + k) - k * 0.08 + (k === 0 ? Math.max(0, Math.sin(t * 1.6)) ** 14 * 0.52 : 0);
+const Y = (w) => 96 - w * 58; // field y in %: the spike peaks near 38%, well under the title
+const pts = (t, k) => Array.from({ length: N }, (_, i) => [(i * 100) / (N - 1), Y(wave(t + i * STEP, k))]);
 const line = (p) => p.map(([x, y], i) => (i ? 'L' : 'M') + x.toFixed(2) + ' ' + y.toFixed(2)).join('');
 const area = (p) => line(p) + 'L100 100L0 100Z';
 const SPANS = [['gateway', 0, 92], ['chat.completion', 6, 78], ['datastore.query', 14, 18], ['model.generate', 34, 48]];
-const T0 = 4.1, CX = (CUR * 100) / (N - 1);
+const T0 = (Math.PI / 2 + 2 * Math.PI) / 1.6 - CUR * STEP; // the first frame has the spike under the cursor, so the server HTML shows it
+const CX = (CUR * 100) / (N - 1);
 
-function Scope() {
-  const [ref, live, calm] = useLive(0.25);
+function Field({ lead }) {
+  const [ref, live, calm] = useLive(0.15);
+  const [paused, pause] = usePause();
   const [split, setSplit] = useState('per-model');
-  const [spike, setSpike] = useState(false);
+  const [spike, setSpike] = useState(true);
   const [held, setHeld] = useState(false);
-  const el = useRef({ p: [], a: null });
-  useFrame(live && !held, (t) => {
+  const el = useRef({ p: [], a: null, x: null, dot: null, t: T0 });
+  useFrame(live && !held && !paused, (_, dt) => {
     const r = el.current;
+    r.t += dt * SPEED;
     for (let k = 0; k < 3; k++) {
-      const p = pts(t, k);
+      const p = pts(r.t, k);
       r.p[k]?.setAttribute('d', line(p));
       if (k === 0) r.a?.setAttribute('d', area(p));
     }
-    const s = wave(t + CUR * STEP, 0) > 0.62;
+    const s = wave(r.t + CUR * STEP, 0) > 0.6;
     setSpike((v) => (v === s ? v : s));
   });
+  // the crosshair reads the line under a fine pointer: transforms only, no React state per move
+  const move = (e) => {
+    if (e.pointerType !== 'mouse' || calm) return;
+    const r = el.current, box = e.currentTarget.getBoundingClientRect();
+    const fx = Math.min(1, Math.max(0, (e.clientX - box.left) / box.width));
+    const y = Y(wave(r.t + fx * (N - 1) * STEP, 0)) / 100 * box.height;
+    r.x?.style.setProperty('transform', `translate3d(${e.clientX - box.left}px,0,0)`);
+    r.dot?.style.setProperty('transform', `translate3d(0,${y}px,0)`);
+    r.x?.setAttribute('data-on', '');
+  };
+  const out = () => el.current.x?.removeAttribute('data-on');
   const open = calm || held || spike;
   const series = SPLIT[split];
   const p0 = pts(T0, 0);
   return (
-    <div className="mt-scope" ref={ref}>
-      <div className="mt-bar">
-        <span className="mt-dots" aria-hidden="true"><i /><i /><i /></span>
-        <span className="mt-host">metrics.hanzo.ai</span>
-        <div className="mt-split" role="group" aria-label="Split by label">
-          {Object.keys(SPLIT).map((l) => <button key={l} type="button" aria-pressed={split === l} onClick={() => setSplit(l)}>{l}</button>)}
+    <div className="mt-live" ref={ref}>
+      <div className="lx-wrap mt-tools">
+        {lead}
+        <div className="mt-tool">
+          <span className="mt-host">metrics.hanzo.ai</span>
+          <code className="mt-q">rate(http_requests_total[5m])</code>
+          <div className="mt-split" role="group" aria-label="Split by label">
+            {Object.keys(SPLIT).map((l) => <button key={l} type="button" aria-pressed={split === l} onClick={() => setSplit(l)}>{l}</button>)}
+          </div>
+          <ul className="mt-legend" aria-label="Series">{series.map((s, k) => <li key={s} className={'s' + k}><i />{s}</li>)}</ul>
+          <LivePause paused={paused} onToggle={pause} className="mt-pause" />
         </div>
       </div>
-      <div className="mt-q"><code>rate(http_requests_total[5m])</code><ul className="mt-legend">{series.map((s, k) => <li key={s} className={'s' + k}><i />{s}</li>)}</ul></div>
-      <button type="button" className="mt-plot" aria-label={held ? 'Let the chart run again' : 'Hold the spike and open its traces'} aria-pressed={held} onClick={() => setHeld((h) => !h)} data-cursor={held ? 'Run' : 'Open'}>
+      <button type="button" className="mt-field" aria-label={held ? 'Let the chart run again' : 'Hold this moment and open its traces'} aria-pressed={held} onClick={() => setHeld((h) => !h)} onPointerMove={move} onPointerLeave={out} data-cursor={held ? 'Run' : 'Hold'}>
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-          <defs><linearGradient id="mt-g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="var(--acc)" stopOpacity=".2" /><stop offset="1" stopColor="var(--acc)" stopOpacity="0" /></linearGradient></defs>
-          {[25, 50, 75].map((y) => <line key={y} x1="0" x2="100" y1={y} y2={y} className="grid" />)}
+          <defs><linearGradient id="mt-g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#1d1d1f" stopOpacity=".1" /><stop offset="1" stopColor="#1d1d1f" stopOpacity="0" /></linearGradient></defs>
+          {[40, 60, 80].map((y) => <line key={y} x1="0" x2="100" y1={y} y2={y} className="grid" />)}
           <path ref={(e) => (el.current.a = e)} className="fill" d={area(p0)} />
           {[2, 1, 0].map((k) => <path key={k} ref={(e) => (el.current.p[k] = e)} className={'s' + k} d={line(pts(T0, k))} />)}
-          <line x1={CX} x2={CX} y1="0" y2="100" className={'cur' + (open ? ' on' : '')} />
+          <line x1={CX} x2={CX} y1="18" y2="100" className={'cur' + (open ? ' on' : '')} />
         </svg>
-        <span className={'mt-flag' + (open ? ' on' : '')} style={{ left: CX + '%' }}>spike · {series[0]}</span>
+        <span className={'mt-flag' + (open ? ' on' : '')} style={{ left: CX + '%' }} aria-hidden="true">
+          <svg viewBox="0 0 16 16" width="14" height="14"><path d="M3 2l9 6-4 1-2 4z" fill="currentColor" /></svg>spike · {series[0]}
+        </span>
+        <span className="mt-x" ref={(e) => (el.current.x = e)} aria-hidden="true"><i ref={(e) => (el.current.dot = e)} /><b>{series.join(' · ')}</b></span>
       </button>
       <div className={'mt-traces' + (open ? ' on' : '')}>
         <p className="mt-tk" aria-live="polite">{open ? <>traces for that window · <b>{series[0]}</b></> : 'a spike is the start of a question'}</p>
-        <ol className="mt-fall" aria-hidden={!open}>
+        <ol className="mt-fall">
           {SPANS.map(([n, x, w], i) => (
-            <li key={n} style={{ '--i': i }}><span className="mt-sn">{n}</span><span className="mt-sb"><b style={{ left: x + '%', width: w + '%' }} /></span></li>
+            <li key={n} style={{ '--i': i }}><span className="mt-sn">{n}</span><span className="mt-sb" aria-hidden="true"><b style={{ left: x + '%', width: w + '%' }} /></span></li>
           ))}
         </ol>
       </div>
@@ -94,7 +126,11 @@ const COL = { 'per-model': 'model', 'per-route': 'route', 'per-tenant': 'tenant'
 function Table({ step, on, lab }) {
   const [ref, live] = useLive(0.3);
   const [alt, setAlt] = useState(false);
-  useEvery(2200, live && step === 1, () => setAlt((a) => !a));
+  useEffect(() => {
+    if (!live || step !== 1) return;
+    const t = setTimeout(() => setAlt((a) => !a), 2200);
+    return () => clearTimeout(t);
+  }, [live, step, alt]);
   const picked = TAGS.filter((_, i) => on[i]).map((t) => COL[t]);
   const by = picked.length ? `sum by (${picked.join(', ')}) ` : '';
   const mode = step === 1 ? (alt ? 'builder' : 'PromQL') : step === 4 ? 'kept as a rule' : step === 5 ? 'org from your token' : 'one query';
@@ -170,28 +206,20 @@ export default function Metrics() {
   const steps = POINTS.map(([t, d], i) => ({ t, d, extra: i === 2 ? <LabelCheck on={on} setOn={setOn} where="in-copy" /> : null }));
   return (
     <main className="lx mt">
-      <section className="mt-hero" data-morph-target>
-        <div className="lx-wrap mt-hero-grid">
-          <div className="mt-hero-l">
-            <p className="lx-kick"><b>●</b> metrics.hanzo.ai</p>
-            <LineMask as="h1" className="lx-display mt-h1" lines={['Hanzo', 'Metrics']} />
-          </div>
-          <div className="mt-hero-r">
+      <section className="mt-hero" data-morph-target data-ask-name="Hanzo Metrics">
+        <div className="lx-wrap"><LineMask as="h1" className="lx-display mt-h1" lines={['Hanzo Metrics']} /></div>
+        <Field lead={(
+          <div className="mt-lead">
             <p className="lx-lede mt-sub">The metrics half of Hanzo O11y</p>
-            <A to="https://github.com/hanzoai/metrics" className="lx-cta" data-thumb="View on GitHub">View on GitHub</A>
+            <A to={GH} className="lx-cta" data-thumb="View on GitHub" data-cta="metrics.hero">View on GitHub<Arr /></A>
           </div>
-        </div>
-        <div className="lx-wrap"><SettleStage from={1.06} className="mt-stage"><Scope /></SettleStage></div>
+        )} />
       </section>
 
-      <section className="lx-sec mt-what">
-        <div className="lx-wrap mt-what-grid">
-          <LineMask as="h2" className="lx-display m" lines={['What a metric', 'is here']} inView />
-          <p className="lx-lede mt-what-l">A row in a column store rather than a series in a store of its own.</p>
-        </div>
-      </section>
-
-      <PinnedChapters label="What a metric is here" steps={steps} per={78} visual={(at) => <Table step={at} on={on} lab={<LabelCheck on={on} setOn={setOn} where="in-table" />} />} />
+      <PinnedChapters label="What a metric is here" per={78}
+        intro={{ title: ['What a metric', 'is here'], lede: 'A row in a column store rather than a series in a store of its own.' }}
+        steps={steps}
+        visual={(at) => <Table step={at} on={on} lab={<LabelCheck on={on} setOn={setOn} where="in-table" />} />} />
 
       <ClipWipe dark className="mt-send">
         <div className="lx-wrap mt-send-grid">
@@ -200,24 +228,15 @@ export default function Metrics() {
             <Paste dark name="Metrics" api="/v1/event/insights" prompt="Read https://hanzo.ai/skill.md and use Hanzo Metrics in my project. Start with: hanzo metrics query" className="lx-paste" />
           </div>
           <div className="mt-send-r">
-            <Console name="Metrics" api="/v1/event/insights" cap="The service the session above is changing." side={SIDE} />
+            <LaunchConsole name="Metrics" api="/v1/event/insights" cap="The service the session above is changing." side={SIDE} />
             <p className="mt-note">Example project. Every name in it is one you would give your own.</p>
           </div>
         </div>
       </ClipWipe>
 
-      <section className="mt-rel">
-        <div className="lx-wrap">
-          <p className="lx-kick">Related capabilities</p>
-          <A to="/cloud/logs" className="mt-rel-card">
-            <span className="mt-rel-t" data-morph>Logs</span>
-            <span className="mt-rel-d">Search every line</span>
-            <svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-          </A>
-        </div>
-      </section>
+      <RelatedCards items={[['Logs', '/cloud/logs', 'Search every line']]} />
 
-      <LaunchClose name="Metrics" tag="Time-series metrics" seed="metrics" data={[4, 6]} repo={['hanzoai/metrics', 'https://github.com/hanzoai/metrics']} stars="4 stars" />
+      <LaunchClose name="Metrics" tag="Time-series metrics" seed="metrics" data={[4, 6]} ask={['View on GitHub', GH]} cta="metrics.close" repo={['hanzoai/metrics', GH]} stars="4 stars" />
     </main>
   );
 }

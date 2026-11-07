@@ -1,5 +1,5 @@
 /* Realtime v2. Accent: magenta, the colour of a record that just changed. */
-.rt { --acc: #d6008f; --acc-soft: #fdebf6; }
+.rt { --acc: #404040; --acc-soft: #fdebf6; }
 
 /* hero: a two-line title over the screens (8) and the actions (4) */
 .rt-hero { padding: clamp(40px, 5vw, 80px) 0 clamp(80px, 9vw, 140px); }
@@ -12,8 +12,8 @@
 .rt-stage { padding: 24px; background: #fff; }
 .rt-conn { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; font: 500 13px/1 var(--mono); color: var(--soft); }
 .rt-conn b { display: inline-flex; align-items: center; gap: 9px; color: var(--ink); font-weight: 500; }
-.rt-conn b::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--acc); box-shadow: 0 0 0 4px rgba(214, 0, 143, .16); animation: rt-live 1.8s ease-in-out infinite; }
-@keyframes rt-live { 50% { box-shadow: 0 0 0 9px rgba(214, 0, 143, 0); } }
+.rt-conn b::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--acc); box-shadow: 0 0 0 4px rgba(64, 64, 64, .16); animation: rt-live 1.8s ease-in-out infinite; }
+@keyframes rt-live { 50% { box-shadow: 0 0 0 9px rgba(64, 64, 64, 0); } }
 .rt-acts { margin-left: auto; display: inline-flex; gap: 6px; }
 .rt-acts i { font-style: normal; height: 30px; display: inline-flex; align-items: center; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line); color: var(--faint); transition: background-color .3s, color .3s, border-color .3s; }
 .rt-acts i.on { background: var(--ink); border-color: var(--ink); color: #fff; }
@@ -164,7 +164,7 @@
 .rt-hand-r .lx-kick { margin-bottom: 18px; }
 .rt-wire { border: 1px solid rgba(255, 255, 255, .1); border-radius: 24px; }
 .rt-wire pre { font-size: 14.5px; }
-.rt-wire .cf-mark { background: linear-gradient(rgba(214, 0, 143, .45), rgba(214, 0, 143, .45)) no-repeat 0 0 / 100% 100%; }
+.rt-wire .cf-mark { background: linear-gradient(rgba(64, 64, 64, .45), rgba(64, 64, 64, .45)) no-repeat 0 0 / 100% 100%; }
 
 /* growth */
 .rt-grow-h { display: grid; grid-template-columns: 7fr 5fr; gap: 24px; align-items: end; margin-bottom: clamp(64px, 7vw, 112px); }

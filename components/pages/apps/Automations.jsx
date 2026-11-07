@@ -9,7 +9,7 @@
    says, that anything with an HTTP API can be a step today, with the request link beside it.
    Motion: drag with springs (signature) + chip pill and card re-flow + magnetic primary. Every word and link is Hanzo's. */
 import { useMemo, useRef, useState } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { EASE, Magnetic } from '../../ui';
 import { A } from '../../kit';
 import { useLive, useEvery } from '../cloud/Frame';
@@ -158,21 +158,20 @@ function Canvas() {
 }
 
 function Hero() {
-  const calm = useReducedMotion();
   return (
     <section className="am2-hero" aria-labelledby="am2-h1">
       <div className="l2-wrap">
         <div className="am2-top">
           <motion.p className="l2-kick ac am2-kick" {...up(0)}>Hanzo Auto · Connectors</motion.p>
           <h1 id="am2-h1" className="l2-display">
-            {['The apps', 'a workflow', 'can reach'].map((t, i) => <span key={t} className="l2-ln"><motion.span initial={calm ? false : { y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.15, ease: EASE, delay: 0.06 + i * 0.1 }}>{t}{' '}</motion.span></span>)}
+            {['The apps', 'a workflow', 'can reach'].map((t, i) => <span key={t} className="l2-ln"><motion.span initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.15, ease: EASE, delay: 0.06 + i * 0.1 }}>{t}{' '}</motion.span></span>)}
           </h1>
           <div className="am2-side">
             <motion.p className="l2-lede" {...up(0.4)}>Every one of these is a step you can drop onto a Hanzo Auto canvas: read from it, write to it, or let a change in it start a run.</motion.p>
             <motion.div className="l2-acts" {...up(0.5)}><Magnetic strength={0.25}><a href="#all" className="x-btn solid" data-thumb="All Integrations">All Integrations</a></Magnetic></motion.div>
           </div>
         </div>
-        <motion.div initial={calm ? false : { opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.22 }}><Canvas /></motion.div>
+        <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.22 }}><Canvas /></motion.div>
       </div>
     </section>
   );
@@ -255,7 +254,7 @@ function NotHere() {
 
 export default function Automations() {
   return (
-    <main className="l2-page am2" style={{ '--ac': '#ff3b5c' }}>
+    <main className="l2-page am2" style={{ '--ac': '#737373' }}>
       <Hero />
       <Catalog />
       <NotHere />

@@ -44,7 +44,8 @@
 /* line-masked headings (components/v2/Lines.jsx) */
 .v2-lines { display: block; }
 .v2-line { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; }
-.v2-line > span { display: block; will-change: auto; }
+.v2-line > span { display: block; }
+@media (scripting: none) { .v2-line > span { transform: none !important; } } /* JS off: the lines stand, legible */
 
 @media (max-width: 900px) {
   :root { --v2-gut: 16px; }

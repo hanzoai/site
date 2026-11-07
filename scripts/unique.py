@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Unique check for rebuilt hanzo.ai pages (DESIGN.md rule 10 + NEXT-LEVEL.md).
+"""Unique check for rebuilt hanzo.ai pages (MASTER.md parts 3 and 9).
 
 Fingerprints every rebuilt page from three things:
   (a) its section sequence   (b) its signature line   (c) its first-screen layout
@@ -102,7 +102,7 @@ def main():
         print(f"\nunique: {len(failures)} uniqueness violation(s). Fix each page's Signature/Beyond/first-screen so no two pages are alike.")
         return 1
     print(f"unique: OK - {len(pages)} rebuilt page(s), all signatures/sequences unique.")
-    # Motion variety (DESIGN.md "Motion: varied and restrained"): gates every page file touched since 7 Nov 06:00,
+    # Motion variety (MASTER.md part 9, "Motion and interaction"): gates every page file touched since 7 Nov 06:00,
     # so pages being built or polished must comply without older untouched pages blocking anyone.
     import subprocess
     touched = [str(p) for p in (COMPONENTS / "pages").rglob("*.jsx")
@@ -111,7 +111,15 @@ def main():
         r = subprocess.run([sys.executable, str(HZ / "scripts" / "variety.py"), *touched], capture_output=True, text=True)
         if r.returncode:
             print("\n".join(l for l in r.stdout.splitlines() if l.startswith("FAIL")))
-            print("unique: motion overdone on the page(s) above - see docs/DESIGN.md 'Motion: varied and restrained'.")
+            print("unique: motion overdone on the page(s) above - see docs/MASTER.md part 9 (Motion and interaction).")
+            return 1
+    # James's two most repeated complaints (UI hues, a label above the headline), on every page file touched since 7 Nov 06:00
+    styled = [str(p) for p in (COMPONENTS / "pages").rglob("*") if p.suffix in (".jsx", ".css") and p.stat().st_mtime > 1794031200]
+    if styled:
+        r = subprocess.run([sys.executable, str(HZ / "scripts" / "taste.py"), *styled], capture_output=True, text=True)
+        if r.returncode:
+            print("\n".join(l for l in r.stdout.splitlines() if l.startswith("TASTE FAIL")))
+            print("unique: James's taste rules broken above - see docs/JAMES.md (only Hanzo's live palette; run python3 scripts/taste.py --fix <files>).")
             return 1
     return 0
 

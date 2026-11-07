@@ -245,7 +245,7 @@ function Write() {
 
 export default function Engine() {
   return (
-    <main className="kn en" style={{ '--ac': '#ff453a' }}>
+    <main className="kn en" style={{ '--ac': '#737373' }}>
       <KeynoteStage
         kick="hanzoai/engine"
         title={['Hanzo Engine']}

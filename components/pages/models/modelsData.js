@@ -169,6 +169,8 @@ export function modelDoc(slug, model) {
   doc.rate = rate(doc.price);
   doc.modalities = (fact('Modalities') || fact('Modality') || {}).value || null;
   doc.siblings = providerCards(slug).filter((c) => c.href !== doc.route);
+  // the context as Hanzo's own shelf card prints it ("33K"), for the hero figure when the spec value is a sentence
+  doc.cardCtx = (providerCards(slug).find((c) => c.href === doc.route) || {}).ctx || null;
   doc.provider = { slug, name: (crumbs[1] && crumbs[1].label) || slug, route: '/models/' + slug };
   return doc;
 }
@@ -202,4 +204,25 @@ export function providerDoc(slug) {
     cards,
     band: close && close !== fold ? { title: closeH, lede: clean(textOf(find(close, tag('p')))), actions: findAll(close, (n) => n.t === 'a' && n.a && n.a.href).map(link) } : null,
   };
+}
+
+/* Reachability (PLAN-COMPONENTS 2.15): every maker page and every model page, named as Hanzo names them (the maker's
+   shelf card name, else the page's own title before " — "), for the collapsed "Every model" list on /models. */
+let INDEX;
+export function makerIndex() {
+  if (INDEX) return INDEX;
+  const models = MODEL_PARAMS();
+  INDEX = PROVIDERS().map((slug) => {
+    // hanzo.ai serves the catalogue itself at /models/stealth and labels that maker "stealth" in its crumbs
+    let name = slug === 'stealth' ? slug : ((metaOf('/models/' + slug) || {}).title || slug).split(' — ')[0].replace(/ Models via Hanzo AI$/, '');
+    if (slug !== 'stealth') try { name = providerDoc(slug).name || name; } catch { /* a maker page drawn differently (Enso's report) keeps its title */ }
+    const cards = new Map(providerCards(slug).map((c) => [c.href, c.name]));
+    const list = models.filter((m) => m.slug === slug).map(({ model }) => {
+      const href = '/models/' + slug + '/' + model;
+      const t = (metaOf(href) || {}).title || model;
+      return { href, name: cards.get(href) || t.split(' — ')[0] };
+    });
+    return { slug, name, href: '/models/' + slug, models: list };
+  });
+  return INDEX;
 }

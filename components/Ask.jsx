@@ -22,10 +22,26 @@ import { onDomChange } from '../lib/domwatch';
 
 const HEADER_ASK = { label: 'Try Hanzo', href: 'https://hanzo.ai/signup' }; // Hanzo's own header words
 const OVERLAY = '.x-cookie:not([hidden]), .x-sheet, .x-pal, .x-pop, .x-nav-panel, .x-sheet2-wrap, [aria-modal="true"], [data-dock], .xcr-dock';
+// an overlay counts only while it is actually showing (closed drawers often keep aria-modal in the DOM)
+const shown = (el) => el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden' && +getComputedStyle(el).opacity > 0.05 && !el.closest('[hidden], [inert], [aria-hidden="true"]');
+const overlayOpen = () => [...document.querySelectorAll(OVERLAY)].some(shown);
+// a page button counts as "a solid ask on screen" only if you can see it as one: filled, opaque, not mid-entrance
+const seenNow = (el) => {
+  if (!el || !el.isConnected || !shown(el)) return false;
+  for (let x = el; x && x !== document.body; x = x.parentElement) if (+getComputedStyle(x).opacity < 0.6) return false;
+  return true;
+};
+const filled = (box) => {
+  if (box.matches('.x-band')) return shown(box);
+  const el = box.matches('a, button') ? box : box.querySelector('a, button'); // the control, not a card around it
+  if (!seenNow(el)) return false;
+  const m = getComputedStyle(el).backgroundColor.match(/[\d.]+/g);
+  return !!m && !(m[3] !== undefined && +m[3] < 0.5);
+};
 const nameOf = (t) => (t || '').split(/\s+[—|–-]\s+/)[0].trim();
 // a wrapper with display: contents has no box for IntersectionObserver; watch the link or button inside it instead
 const boxOf = (el) => (el.getClientRects().length ? el : el.querySelector('a, button') || el.firstElementChild || el);
-const SOLID = 'main .x-btn.solid, main [data-thumb], .x-band';
+const SOLID = 'main .x-btn.solid, main a.solid, main button.solid, main [data-thumb], .x-band';
 
 export default function Ask() {
   const path = usePathname();
@@ -52,16 +68,29 @@ export default function Ask() {
       setAsk({ label, href, name, note });
 
       // the hero: the first block of the page that is more than a strip
-      const hero = [...main.children].find((c) => c.getBoundingClientRect().height > 200) || main;
+      // the trigger: the hero's own ask button when the page marks one in its first screen (the bar arrives as soon as
+      // it scrolls away, even if the hero is a tall pinned scene), otherwise the first block that is more than a strip
+      const ownBox = own && boxOf(own);
+      const hero = ownBox && ownBox.getBoundingClientRect().top < innerHeight * 1.2 && ownBox.getBoundingClientRect().height > 0
+        ? ownBox
+        : [...main.children].find((c) => c.getBoundingClientRect().height > 200) || main;
       const phone = matchMedia('(max-width: 900px)');
       let past = false, typing = false;
       const blocking = new Set();
       let solids = new Set();
+      const twins = new WeakSet();
       const update = () => {
         if (off) return;
-        const show = past && !blocking.size && !solids.size && !typing && !document.querySelector(OVERLAY);
+        const seen = [...solids].some(filled);
+        const twin = [...solids].some((el) => twins.has(el) && seenNow(el)); // the page's own ask, solid or not
+        // a hero ask that stays pinned on screen but has faded out also counts as gone, once you are past the first screen
+        if (!past && hero === ownBox && scrollY > innerHeight * 0.8 && !filled(ownBox)) past = true;
+        if (past && hero === ownBox && scrollY < innerHeight * 0.5 && filled(ownBox)) past = false;
+        // the footer, the closing band and [data-ask-hide] always make room; a page's own ask only once you can see it
+        const blocked = [...blocking].some((el) => (el.closest('[data-thumb]') || el.matches('[data-thumb]') ? filled(el) : true));
+        const show = past && !blocked && !seen && !twin && !typing && !overlayOpen();
         setOn(show);
-        setQuiet(solids.size > 0);
+        setQuiet(seen);
       };
       const io = new IntersectionObserver((es) => {
         es.forEach((e) => {
@@ -74,9 +103,26 @@ export default function Ask() {
       document.querySelectorAll('footer, .x-band, [data-ask-hide], main [data-thumb]').forEach((el) => io.observe(boxOf(el)));
       // every solid button in the page: while one is on screen, the header's ask is an outline (one solid at a time)
       solids = new Set();
-      const sio = new IntersectionObserver((es) => { es.forEach((e) => (e.isIntersecting ? solids.add(e.target) : solids.delete(e.target))); update(); }, { rootMargin: '-60px 0px 0px 0px' });
-      const watchSolids = () => document.querySelectorAll(SOLID).forEach((el) => sio.observe(boxOf(el)));
+      // entrances fade buttons in after they enter the screen: look again once they have settled
+      let again = 0;
+      const sio = new IntersectionObserver((es) => {
+        es.forEach((e) => (e.isIntersecting ? solids.add(e.target) : solids.delete(e.target)));
+        update(); clearTimeout(again); again = setTimeout(update, 1300);
+      }, { rootMargin: '-60px 0px 0px 0px' });
+      // sticky buttons never re-enter the screen, and fades finish later: look again whenever scrolling settles
+      let settle = 0;
+      const onScroll = () => { clearTimeout(settle); settle = setTimeout(update, 180); };
+      addEventListener('scroll', onScroll, { passive: true });
+      // the page's own ask is also any link or button with the bar's words (a close's "Launch a bot", a card's CTA):
+      // while one is on screen the bar steps aside, so it never lands on top of it (phones especially)
+      const same = (el) => el.textContent.replace(/[→↗\s]+/g, ' ').trim().toLowerCase() === label.replace(/[→↗\s]+/g, ' ').trim().toLowerCase();
+      const watchSolids = () => {
+        document.querySelectorAll(SOLID).forEach((el) => sio.observe(boxOf(el)));
+        main.querySelectorAll('a, button').forEach((el) => { if (same(el)) { twins.add(el); sio.observe(el); } });
+      };
       watchSolids();
+      // heroes fade their buttons in over the first seconds: look again a few times while the page settles
+      const settleTimers = [400, 1300, 2600, 4200].map((ms) => setTimeout(update, ms));
 
       // the room under the bar: a dark one turns the bar dark
       const rooms = new Set();
@@ -98,7 +144,7 @@ export default function Ask() {
       // menus, sheets, search and the cookie note come and go without telling anyone; late sections bring new asks
       const watchMore = () => { document.querySelectorAll('.x-band, [data-ask-hide], main [data-thumb]').forEach((el) => io.observe(boxOf(el))); watchSolids(); update(); };
       const offDom = onDomChange(watchMore);
-      cleanups.push(() => { io.disconnect(); sio.disconnect(); roomIo?.disconnect(); offDom(); removeEventListener('resize', watchRooms); removeEventListener('focusin', fin); removeEventListener('focusout', fout); });
+      cleanups.push(() => { settleTimers.forEach(clearTimeout); clearTimeout(again); clearTimeout(settle); removeEventListener('scroll', onScroll); io.disconnect(); sio.disconnect(); roomIo?.disconnect(); offDom(); removeEventListener('resize', watchRooms); removeEventListener('focusin', fin); removeEventListener('focusout', fout); });
     };
     const r = requestAnimationFrame(() => setTimeout(start, 120));
     return () => { off = true; cancelAnimationFrame(r); cleanups.forEach((f) => f()); };
