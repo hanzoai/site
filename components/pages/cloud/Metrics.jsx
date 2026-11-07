@@ -30,11 +30,15 @@ import './Metrics.css';
 const GH = 'https://github.com/hanzoai/metrics';
 const PROMPT = 'Read https://hanzo.ai/skill.md and use Hanzo Metrics in my project. Start with: hanzo metrics query';
 
-/* [ref, live, calm]: live while the element is on screen and motion is allowed */
+/* [ref, live, calm]: live while the element is on screen and motion is allowed. calm is read after mount, so the
+   server's frame and the first client frame match (no hydration mismatch under reduced motion). */
 function useLive(amount = 0.2) {
   const ref = useRef(null);
   const seen = useInView(ref, { amount });
-  const calm = useReducedMotion();
+  const rm = useReducedMotion();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const calm = mounted && !!rm;
   return [ref, seen && !calm, calm];
 }
 /* a requestAnimationFrame loop that only reads (the line itself moves by CSS), while run is true */
@@ -74,7 +78,7 @@ function Plot({ g, n = 3, start, calm, id, hl = null }) {
     <svg className="mt-plot" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
       <defs><linearGradient id={id} x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="currentColor" stopOpacity=".1" /><stop offset="1" stopColor="currentColor" stopOpacity="0" /></linearGradient></defs>
       {[40, 60, 80].map((y) => <line key={y} x1="0" x2="100" y1={y} y2={y} className="grid" />)}
-      <g ref={g} className="mt-slide" style={{ animationDuration: `${PER.toFixed(3)}s`, animationDelay: `${(-(start / W) * PER).toFixed(3)}s`, ...(calm ? { animation: 'none', transform: `translateX(${(-(TS / W) * 100).toFixed(3)}px)` } : null) }}>
+      <g ref={g} className="mt-slide" style={calm ? { animation: 'none', transform: `translateX(${(-(TS / W) * 100).toFixed(3)}px)` } : { animationDuration: `${PER.toFixed(3)}s`, animationDelay: `${(-(start / W) * PER).toFixed(3)}s` }}>
         <path className="fill" d={AREA} fill={`url(#${id})`} />
         {Array.from({ length: n }, (_, k) => n - 1 - k).map((k) => <path key={k} className={'s' + k + (hl === k ? ' hl' : '')} d={PATHS[k]} />)}
       </g>

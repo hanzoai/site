@@ -585,7 +585,7 @@
 /* Hanzo's other "More from" cards: one line each, the description on hover or focus */
 .xmf-also { margin: 44px 0 0; padding: 0; list-style: none; border-top: 1px solid var(--ink); }
 .xmf-also li { border-bottom: 1px solid var(--line); }
-.xmf-also-a { position: relative; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr) auto; align-items: center; gap: 0 24px; min-height: 72px; padding: 12px 16px; border-radius: 12px; color: var(--ink); text-decoration: none; transition: background-color .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(0, 0, .2, 1); }
+.xmf-also-a { position: relative; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr) 64px; align-items: center; gap: 0 24px; min-height: 72px; padding: 12px 16px; border-radius: 12px; color: var(--ink); text-decoration: none; transition: background-color .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(0, 0, .2, 1); }
 .xmf-also-a b { font-size: 17px; font-weight: 500; letter-spacing: -.01em; }
 .xmf-also-a b i { display: inline-block; margin-left: 8px; font-style: normal; transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
 .xmf-also-c { grid-column: 3; grid-row: 1; font-size: 13px; color: var(--soft); }
@@ -605,7 +605,7 @@
 .xmf-maker-n b { font-size: 64px; }
 .xmf-prov .xmf-grid { display: block; border-top: 1px solid var(--ink); }
 .xmf-prov .xmf-grid > li { border-bottom: 1px solid var(--line); }
-.xmf-prov .sc-card.xmf-row { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr) auto; align-items: center; gap: 0 24px; min-height: 72px; height: auto; padding: 12px 16px; border-radius: 12px; background: transparent; color: var(--ink); transform: none !important; transition: background-color .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(0, 0, .2, 1); }
+.xmf-prov .sc-card.xmf-row { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr) 132px; align-items: center; gap: 0 24px; min-height: 72px; height: auto; padding: 12px 16px; border-radius: 12px; background: transparent; color: var(--ink); transform: none !important; transition: background-color .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(0, 0, .2, 1); }
 .xmf-row .sc-top { display: contents; }
 .xmf-row .sc-t { grid-column: 1; grid-row: 1; font-size: 17px; line-height: 24px; letter-spacing: -.01em; color: var(--ink); transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
 .xmf-row .sc-meta { grid-column: 2; grid-row: 1; margin: 0; font-size: 13px; color: var(--soft); transition: opacity .3s cubic-bezier(.16, 1, .3, 1); }
