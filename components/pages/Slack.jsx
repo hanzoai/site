@@ -470,13 +470,22 @@ function What() {
 function Platform() {
   const [i, setI] = useState(0);
   const tabs = useRef(null);
+  const box = useRef(null);
+  const seen = useInView(box, { amount: 0.5 });
+  const calm = useReducedMotion();
+  const [mine, setMine] = useState(false); // once the visitor picks, the map stops walking on its own
+  useEffect(() => {
+    if (!seen || calm || mine) return;
+    const t = setInterval(() => setI((v) => (v + 1) % PLATFORM.items.length), 3200);
+    return () => clearInterval(t);
+  }, [seen, calm, mine]);
   const key = (e) => {
     const n = PLATFORM.items.length;
     const k = { ArrowRight: i + 1, ArrowDown: i + 1, ArrowLeft: i - 1, ArrowUp: i - 1, Home: 0, End: n - 1 }[e.key];
     if (k === undefined) return;
     e.preventDefault();
     const j = (k + n) % n;
-    setI(j);
+    setI(j); setMine(true);
     tabs.current?.children[j]?.focus();
   };
   return (
@@ -486,12 +495,12 @@ function Platform() {
           <p className="a2-kick">{PLATFORM.kick}</p>
           <h2 id="xsq-plat-h" className="a2-headline">{PLATFORM.title}</h2>
         </div>
-        <div className={`${P}-plat-map`}>
+        <div className={`${P}-plat-map`} ref={box}>
           <i className={`${P}-plat-rail`} aria-hidden="true"><b /></i>
           <div className={`${P}-plat-stops`} role="tablist" aria-label={PLATFORM.kick} onKeyDown={key} ref={tabs}>
             {PLATFORM.items.map(([t], k) => (
               <button key={t} type="button" role="tab" id={`${P}-pt-${k}`} aria-selected={i === k} aria-controls={`${P}-pp-${k}`} tabIndex={i === k ? 0 : -1}
-                className={`${P}-plat-stop` + (i === k ? ' on' : '')} onPointerEnter={(e) => { if (e.pointerType === 'mouse') setI(k); }} onClick={() => setI(k)}>
+                className={`${P}-plat-stop` + (i === k ? ' on' : '')} onPointerEnter={(e) => { if (e.pointerType === 'mouse') { setI(k); setMine(true); } }} onClick={() => { setI(k); setMine(true); }}>
                 <i className={`${P}-plat-drop`} aria-hidden="true" />
                 <span className={`${P}-plat-name`}>{t}</span>
               </button>
