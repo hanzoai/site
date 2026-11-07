@@ -1,39 +1,66 @@
 # /bot — James-eye review
 
-Verdict: 7/10
-First complaint: "I tapped 'Is it open source?' and nothing happened. The bot just sits there typing forever. Either answer me or don't make it look like a button."
+Verdict: 8/10
+First complaint: "As you scroll on the desktop there's half a screen of nothing between sections, so it goes dead for a moment. And on the phone it just keeps going, it's long."
 
-Walked 2026-11-07 16:49, HEAD ba89aa24, at 1470x801 and 375x812 (isMobile, hasTouch). First screen sampled at 0.2/1/3/6/7 s plus a reload. Wheel walk in 150 px notches with ~1 s dwell on desktop (27 screens) and 400 px steps on phone. Clicked or tapped the hero channel tabs, pause, "See all ten workflows" (sheet, Esc), workflow tiles, tools tabs, terminal Copy, the bots slider, "Why Hanzo Bot is built and priced this way", the FAQ bubbles and the header and hero asks. Also checked reduced motion, JS off, taste.py and parity.py.
+Walked 2026-11-07 ~17:00 UTC, HEAD ef3bd40e, at 1470x801 and 375x812 (touch). I took first-screen captures at 0.2, 1, 3, 6 and 7.5 s with no input, and did a return-visit reload. I scrolled the whole page in 200px wheel steps (phone in 600px steps to the footer). I hovered and clicked or tapped all 62 controls in `main`, including all 10 hero channel tabs, the workflow wall and its sheet, the pinned-scene steps 01-05 and the Routines switches, 20 tool-category tabs, both copy buttons (the clipboard was read back), all three question bubbles, the FAQ sheet, the "Why Hanzo Bot" sheet and the bots slider. I also checked reduced motion and JS off. taste.py OK (3 files), parity 306/306 text, 21/21 links.
 
 ## What works
-- The hero object is the idea: a live channel where a human @-mentions a bot and a packet runs down the org-chart lines to the chosen face. A second specialist then picks it up and two reply cards stream in. It moves by 1 s, cycles use cases on its own (#security, then #launch, then #support, every ~7.5 s), has a real Pause (aria-pressed flips) and ten tabs that jump straight to a case (#ops re-routed to Opera with the packet on the line).
-- The h1 cuts into its lines (line mask, in by ~1 s) and stays in its box. CLS is 0.0004.
-- The pinned "What a bot is" stage swaps one panel at a time (sandbox, then one bot per job, hand-off, routines, memory) with a numbered 01–05 rail. Clicking a chapter scrolls to it. This is the page's best one-in, one-out stretch.
-- Scale has rhythm: the 52 px h1, a 200 figure, a big grey/ink channel word list ("Desktop, iPhone, WhatsApp…"), a 64 px "1"/"5" bot-count figure, then quiet 13–14 px rows.
-- State motion is real. The slider moves the plan highlight (5 bots → Max, $95 / month) and fills the face grid. The workflows and "Why…" sheets rise from the right and close on Esc. The tools tabs set aria-selected. The terminal types, and Copy put both commands on the clipboard.
-- Faces from hanzo.ai fail in the sandbox (all 272 memoji). The fallback is a consistent hand-drawn smiley tile that reads as intended, not broken.
-- Monochrome throughout. taste.py: OK. parity.py: 306/306 text, 21/21 links.
-- Reduced motion: final states, no running animations after 3.5 s. JS off: h1, hero demo frame and sections are all legible.
-- No console errors or page errors from this page's files.
+- **The hero object sells the product.** It is a self-running Slack-style demo: a person @mentions a bot, a routing line draws from the message to the crew, two bots answer with real artefacts (PR, "42/42 E2E GREEN"), then it moves to the next channel. The image changes within 1 s and is still cycling at 12 s on the phone (#bugfix → #security → #launch). It has a pause button, and the channel tabs jump to a case.
+- **The h1 cuts in.** At 0.2 s the demo is up and the h1 is still arriving; by 1 s it is in place.
+- **The desktop has a real pinned stage.** A 5-step scene ("A teammate with its own computer" → "One bot per job" → … → "It remembers what it learns") keeps one panel on the left that changes with each step, and has an 01-05 step rail. The Routines switches toggle (aria-checked true→false) when their step is on screen.
+- **Every tap answers.**
+  - Question bubbles fill to ink, the bot shows "…" and then answers in a chat bubble ("Yes, MIT licensed…").
+  - Copy buttons change to "Copied". The clipboard matched exactly: `npm install -g @hanzo/bot\nhanzo-bot onboard --install-daemon` and the agent prompt. Press scales them to about 0.95.
+  - The slider moves the plan highlight: 5 bots → Max, $95, and that row expands.
+  - Sheets open from the right with a scrim and close again.
+- **The sticky ask works.** The header "Try Hanzo" is quiet while the hero ask is in view and becomes solid once it leaves, so there is one solid fill at a time.
+- **The blocked-image fallback looks intended.** All 12 memoji and the connector logos fail, because hanzo.ai is blocked here. The memoji fall back to a consistent drawn smiley tile, used everywhere: crew, wall, slider, band. The connectors fall back to grey monogram tiles (C, G, M…) in the same family. Nothing reads as broken.
+- **Rooms and rhythm.** The rooms are paper, quiet, a graphite terminal, and one black closing Band that enters as an inset rounded card. Scale has rhythm: the 52px h1, 26px section heads, one big moment per screen ("200", the channel words, "Meet your first bot"), with small mono captions sitting below the headings.
+- **Clean console and layout.**
+  - The only console errors are hanzo.ai requests blocked by the sandbox. There were no page errors or hydration warnings in any run.
+  - No horizontal scroll at either size (scrollWidth 1470 / 375). The only overflow is the tool-category tab rail, which is a scroller.
+  - Reduced motion shows the final hero frame (routing line drawn, both replies in) and 0 running animations. JS off shows a full, legible static hero.
 
 ## The 11 answers
-1. Yes, mostly. "Teammates you can hand real work to" plus a channel that hands work to a bot sells in 5 s, and the crew and packet move within 1 s. At 0.2 s the left column is blank (h1 not yet in) while the lede sits mid-column. On phone, only the top of the demo is above the fold.
-2. Hero, workflows and the pinned scene are one-in, one-out. From tools onward (200 tools, channel list, install, pricing, questions) it turns back into a document. Pricing especially is a long two-column stretch.
-3. Yes: demo, workflow tile grid, sandbox/inbox/chat/routines/memory panels, tool list with a 200 figure, word list, terminal, slider with face grid, Get Bot card, closing face row. The 01–04 strip under the workflows and the 4-up "Dedicated Cloud Sandbox…" row are text only.
-4. One solid ask. The header "Try Hanzo" goes outline while the hero's solid "Try Hanzo" is on screen, then solid again. The cookie card floats over the bottom of every screen (shared, see below). Scale rhythm is good.
-5. The hero ask darkens on hover and scales to 0.98 on press. Tiles darken border and type. Tabs, sheet, slider and toggles all answer. The FAQ question pills look like dark buttons but are inert spans, and nothing answers a click. I saw no "Copied" label 200 ms after Copy, although the clipboard got the text, so this needs a check.
-6. No overlap, no horizontal scroll at either size, no font swap. Big dead gaps: about 150 px of empty space between the Ultra row and its footnote in pricing, and long empty bands between sections (e.g. under the 01–04 strip). In the hero, both reply cards sit as large empty grey boxes with three dots for ~2 s per cycle, and on phone they fill the screen.
-7. Apple-style pinned scene (present, scrubbed by scroll) plus the synchronized.studio sheet open. chatgpt-enterprise calm in the lower half. The references' motion is there in the top half and fades after the install section.
-8. Yes. The org-chart packet hand-off is its own signature (it matches PAGES.md "bots handing work to each other"). No neighbour uses it.
-9. Largely covered: hero, show-it, chapters, proof (tools, stars), objections (questions), Band, sheets, copy, slider and pause. The weak parts are the FAQ's non-interactive preview and the pricing composition.
-10. No banned hue, gradient text, eyebrow over an h1/h2 or 3-equal row. Near-tell: 4-up tiles with an explaining sentence under each (the pricing features row) reads as clutter.
-11. Untouched (parity 0 missing).
+1. **Yes, it sells in 5 seconds.** The h1 plus the running mention demo explain the product, and something moves within 1 s on both sizes.
+2. **Mostly.** On desktop the pinned scene and the chat Q&A are true one-in, one-out. The weak points:
+   - Between sections there are bands of ~300px of blank (section padding top plus bottom). Several scroll stops show half an empty screen: before the pinned scene, after "It remembers…", before the install room, before Questions.
+   - The phone page is 17,900px, about 22 screens, because the pinned scene stacks into 5 full text-plus-object blocks. It reads longer than it needs to.
+3. **Yes, every section has a real object.**
+   - Hero: the demo.
+   - Wall of 10 workflow tiles with paired faces.
+   - Pinned scene: sandbox, bot list, profile card, routine switches, MEMORY.md.
+   - Tool list with tabs and the "200" count.
+   - The channel-word wall (type-only, but it is the moment).
+   - Terminal, and agent prompt.
+   - Slider with the plan list, and the sandbox strip.
+   - Repo card, and the chat Q&A.
+   - Black Band with the face row.
+4. **Yes on the ask.** "Try Hanzo" is in the header and nothing of the page's own floats over content. Scale has rhythm (see above). The shared cookie card does sit on top of the open sheets (see Shared).
+5. **Yes.** Every control I hit changed state, and hover gives detail (inset ring on bubbles, + rotates on the wall button, arrow nudge on related rows). The one exception: the slider's 10 faces barely change between 1 and 5 bots.
+6. **None observed.** No overlap, font swap or layout shift at either size. The h1 box does not move.
+7. **Feels like** motion.dev patterns plus an apple.com pinned stage. Both are actually present: the pinned panel swap and the self-running demo.
+8. **Yes, distinct from its neighbours.** No other page I know uses the routing-line mention demo as its hero, and the smiley crew is this page's own signature.
+9. **Visibly covered:**
+   - Strategy: one ask, `data-cta` on every primary.
+   - Narrative ending: proof, Band, footer.
+   - Conversion: copy equals display.
+   - Disclosure: sheets and the FAQ accordion.
+   - States: image fallback.
+   - Reduced motion and JS off.
+   - Touch targets: the bubbles have a 44px min height.
 
-Shared (not counted): the cookie consent card floats over content on every screen at both sizes, and on phone it covers about a third of the screen. The header "Try Hanzo" hover only drops opacity to 0.88 (a fade-on-hover tell, in Shell). A hot-reload overlay for `components/pages/BlogIndex.jsx` appeared once mid-walk on phone (another page's edit).
+   Not verified from the browser: analytics events, sound on copy and tabs (no audio check), performance budgets.
+10. **No banned tells.** No hue (taste.py OK), no eyebrow above an h1/h2, no 3 equal boxes, and buttons don't fade on hover. "USE CASE 01" and the "WHAT A BOT IS" captions are small mono labels inside objects or below headings, which is allowed.
+11. **Yes, the copy is untouched.** Parity is 306/306 text and 21/21 links.
+
+Shared (not counted): the cookie consent card (shared chrome) stacks above the page's open side sheets. In the FAQ and "See all ten workflows" sheets it covers the bottom rows until dismissed. Its z-index should sit below the sheet layer (sheet 90).
 
 ## Fixes (in order)
-1. Questions block (`.bt-qs` in Bot.jsx ~l.740–750): make each question bubble a real button that opens that answer (or opens the "Read all ten answers" sheet at that question), and let the bot's typing dots resolve into the first line of the answer. Otherwise drop the button styling so the bubbles stop promising a tap.
-2. Pricing (`.bt-price`): close the dead gap under the Ultra row (move the "Every plan can run Hanzo Bot…" footnote up under the list). Make the section one screen with one moment (the slider driving the highlighted plan). Give the 4-up included-features row an object (e.g. the face count per tile growing as the slider moves) rather than four explaining sentences.
-3. Hero reply cards: size them to their content, or show a skeleton line while typing, so the hero never shows two big empty grey boxes. On phone, let the second card stay collapsed until it has text.
-4. Lower half: carry the one-in, one-out treatment past the install section (tools → channels → install → pricing → questions) and trim the empty bands between sections, so it stops reading as a document after the pinned scene.
-5. Confirm the terminal Copy visibly flips to "Copied" (it copied, but no label change was seen at 200 ms).
+1. **Close the dead bands on desktop.** Where two `av-sec` sections meet, overlap the next object by the brief's 40px, or tighten the padding on the transitions around the pinned scene (`.bt-sc`), `.bt-inst-sec` and `.bt-more2`. The aim is that no scroll stop shows more than ~25% empty paper.
+2. **Shorten the phone composition.**
+   - Under 900px, the 5 pinned-scene steps each repeat a heading, a 3-item list and a full object. Show one object per step with the list collapsed into the object's caption, or turn the 5 steps into a swipe rail of 5 panels. Target under ~14 screens.
+   - The 10-row tool list could also start at 5 rows.
+3. **Make the slider faces count.** When the value moves from 1 to 5, the first N faces should visibly fill to ink (the others stay hollow) with a 60ms stagger, so the hover/drag detail tells you the number at a glance.
+4. **(Polish) Remove the first-paint flash of the header ask.** At 0.2 s the header "Try Hanzo" is solid, then it flips to quiet once the hero ask is detected. Server-render it quiet on /bot so the page never shows two solid fills.
