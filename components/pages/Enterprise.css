@@ -294,7 +294,7 @@
 .xe-led .xe-what { font-size: 15px; font-weight: 500; }
 .xe-led-go { justify-self: end; color: var(--faint); transition: transform .15s var(--eo), color .15s var(--eo); }
 .xe-who { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font-size: 13px; color: var(--soft); }
-.xe-who img { height: 18px; max-width: 88px; object-fit: contain; filter: grayscale(1); margin-right: 4px; }
+.xe-who img { height: 18px; width: auto; max-width: 88px; object-fit: contain; object-position: left center; background: none; filter: brightness(0); margin-right: 4px; }
 .xe-who b { color: var(--ink); font-weight: 606; }
 .xe-dot { color: var(--faint); }
 
@@ -352,7 +352,8 @@
 .xe-clouds-k { margin-bottom: 18px; font-size: 14px; line-height: 1.5; color: var(--soft); }
 .xe-cloudrow { list-style: none; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 40px; border-top: 1px solid var(--line); padding-top: 24px; }
 .xe-cloudrow li { display: grid; place-items: center start; min-height: 32px; }
-.xe-cloudrow img { max-height: 30px; width: auto; max-width: 132px; filter: grayscale(1); }
+.xe-cloudrow img { height: 26px; width: auto; max-width: 132px; object-fit: contain; background: none; filter: brightness(0); opacity: .78; transition: opacity .15s var(--eo); }
+@media (hover: hover) { .xe-cloudrow li:hover img { opacity: 1; } }
 .xe-cloudname { font-size: var(--s-t); font-weight: 497; letter-spacing: -.015em; text-transform: capitalize; color: var(--soft); }
 
 /* ---------- questions ---------- */

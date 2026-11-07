@@ -200,7 +200,7 @@ function Places({ at, open }) {
                   <div className="xe-row-d" id={'xe-pl-' + i} hidden={!on}>
                     <Glyph at={i} />
                     <div className="xe-cap">
-                      <p><b>{pl[1]}.</b> {pl[2]}</p>
+                      <p><b><span>{pl[1]}.</span></b> <span>{pl[2]}</span></p>
                       <p className="xe-cap-n"><span>Where it runs</span><span className="x-mono">{String(i + 1).padStart(2, '0')} / 04</span></p>
                     </div>
                   </div>
@@ -439,7 +439,7 @@ function Gpus() {
               <h3>Planning range</h3>
               <ol className="xe-steps2">
                 {[['Qualification', 'Four 8-GPU servers is where a qualification starts.'], ['Isolated production pools', 'One pool for each specialist, so a busy class of work never takes memory from another.'], ['Redundant pools', 'Two independent replicas of those pools across failure domains.']].map(([tt, d], i) => (
-                  <li key={tt}><span className="x-mono">{String(i + 1).padStart(2, '0')}</span><b>{tt}</b><span>{d}</span></li>
+                  <li key={tt}><span className="x-mono">{String(i + 1).padStart(2, '0')}</span><b><span>{tt}.</span></b><span>{d}</span></li>
                 ))}
               </ol>
             </div>
@@ -475,7 +475,7 @@ const PROOF = [
 
 // The logo files are not in public/ yet (requested in docs/requests/enterprise.md), so nothing hot-links or 404s:
 // a cloud is its name set in type, and a customer row carries its name. Once the files are vendored, set LOGOS true.
-const LOGOS = false;
+const LOGOS = true;
 function CloudMark({ name, src }) {
   return LOGOS ? <Img src={src} alt={name} w={132} h={32} /> : <span className="xe-cloudname">{name}</span>;
 }
@@ -520,7 +520,7 @@ function Proof() {
               <A to={to} className="xe-led">
                 <Fig value={fig} />
                 <span className="xe-what">{what}</span>
-                <span className="xe-who"><Mark src={logo} /><b>{who}</b><span className="xe-dot">·</span><span>{how}</span></span>
+                <span className="xe-who"><Mark src={logo} /><b><span>{who}</span></b><span className="xe-dot">·</span><span>{how}</span></span>
                 <span className="xe-led-go" aria-hidden="true">→</span>
               </A>
             </li>
