@@ -20,11 +20,13 @@ import { A } from '../kit';
 import Sigil from '../Sigil';
 import MaskLines from './careers/MaskLines'; // careers' own variant; main's v2/MaskLines differs
 import PinScenes from './company/PinScenes';
+import useArrived from './company/useArrived';
 import { useArrival } from './doorway';
 import '../v2/vc-type.css';
 import './CareersBoard.css';
 
 const EASE = [0.16, 1, 0.3, 1];
+const NOJS = { __html: '<style>.xcb-hero-f,.xcb-hero-o{opacity:1!important;transform:none!important}</style>' }; // JS off: the hero is legible
 const ARROW = <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 /* How we hire: the four steps slide through a mask by themselves (never two titles at once); tap a step to hold it. */
@@ -169,13 +171,15 @@ export default function Careers({ d }) {
   const lines = [words[0], words[1], words.slice(2, 5).join(' '), words.slice(5).join(' ')];
   const [intA, intB] = d.intern.leaves;
   const ask = d.hacts[0];
+  const arrived = useArrived();
   return (
     <main className="vc xcb" style={{ '--acc': '#1d1d1f' }}>
+      <noscript dangerouslySetInnerHTML={NOJS} />
       <section className="xcb-hero vc-scene" aria-label={d.kicker} data-ask-name={d.kicker}>
         <div className="vc-grid xcb-hero-g">
           <div className="xcb-hero-c">
             <MaskLines as="h1" id="xcb-h1" now delay={0.05} lines={lines} className="vc-display xcb-h1" />
-            <motion.div className="xcb-hero-f" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE, delay: 0.55 }}>
+            <motion.div className="xcb-hero-f" initial={{ opacity: 0, y: 12 }} animate={arrived ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 0.8, ease: EASE, delay: 0.55 }}>
               <p className="vc-lede">{d.lede}</p>
               <div className="xcb-acts">
                 <a className="x-btn solid xcb-big" href={ask.href} data-thumb={ask.text} data-cta="careers.hero">{ask.text}</a>
@@ -183,7 +187,7 @@ export default function Careers({ d }) {
               </div>
             </motion.div>
           </div>
-          <motion.div className="xcb-hero-o" initial={{ opacity: 0, y: 48 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.2 }}>
+          <motion.div className="xcb-hero-o" initial={{ opacity: 0, y: 48 }} animate={arrived ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 1.1, ease: EASE, delay: 0.2 }}>
             <Hire how={d.how} />
           </motion.div>
         </div>
