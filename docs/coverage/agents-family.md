@@ -73,7 +73,7 @@ Done here: one black room (crew Bots room) or one graphite room (SDK code), each
 - [x] The search field is the kit's 16px `Field`
 - [x] Forks deleted: listed above
 
-Done here: a script hovered all 25 crew and 27 SDK controls at 1440×900; every one changes on hover.
+Done here: a script hovered all 25 crew and 27 SDK controls at 1440×900: every one changes position, ring or shadow except the fill-only ones (pip/cargo, Copy, the Dark/Light toggle), whose hover is a background fill.
 
 ## 9. Motion and interaction
 - [x] Signature (who has the turn) + 3: pinned stage scrub, ink that slides (layoutId, tweened), room clip opening; `variety.py` OK (4)
@@ -96,7 +96,7 @@ Done here: images 404 in the cloud sandbox (hanzo.ai blocked), so the films show
 - [x] 375×812 and 1470×801 pass with no overlap (walked)
 - [x] No horizontal scroll at 375 (320 not measured)
 - [x] Targets 44px or more (seats 54px, nav 44px, Copy 44px)
-- [ ] Primary ask above the fold at 375×667: crew yes (y≈330), SDK yes (y≈340)
+- [x] Primary ask above the fold at 375×667: crew yes (top at y≈406), SDK yes (y≈422)
 
 Done here: under 900px the stage stacks (h1, object, chapter two), the console nav scrolls sideways, the room shot crops at true size (4:5).
 
