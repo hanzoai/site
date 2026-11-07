@@ -1,5 +1,9 @@
-/* Iro (ir-): head left, the resolving canvas right */
-.ir-split { display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); gap: 56px; align-items: center; }
+/* Iro (ir-): the headline left of the square, then the resolving canvas with its words on the right */
+.ir-head { width: min(44%, 560px); }
+.ir-scene .x-wrap { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; align-items: start; }
+.ir-scene .lv-sh { grid-column: 9 / 13; grid-row: 1; display: block; position: sticky; top: 120px; margin: 0; }
+.ir-scene .lv-sh .lv-p { margin-top: 24px; }
+.ir-scene .cr-studio { grid-column: 1 / 9; grid-row: 1; }
 .ir-stage { padding: 0; }
 .ir-frame { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: radial-gradient(ellipse at 50% 45%, #18181b, #0a0a0a 70%); }
 .ir-frame::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(255, 255, 255, .04) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .04) 1px, transparent 1px); background-size: 32px 32px; }
@@ -13,10 +17,12 @@
 .ir-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; padding: 14px 16px; border-top: 1px solid rgba(255, 255, 255, .08); }
 .ir-play { min-width: 76px; }
 .ir-range { flex: 1 1 160px; display: flex; align-items: center; min-height: 36px; }
-.ir-range input { width: 100%; height: 36px; margin: 0; background: transparent; accent-color: #f5f5f7; cursor: pointer; }
+.ir-range input { width: 100%; height: 36px; margin: 0; background: transparent; accent-color: var(--ac); cursor: pointer; }
 .ir-asp { margin-left: auto; }
 @media (max-width: 900px) {
-  .ir-split { grid-template-columns: 1fr; gap: 40px; }
+  .ir-head { width: auto; }
+  .ir-scene .x-wrap { display: block; }
+  .ir-scene .lv-sh { position: static; margin-bottom: 40px; }
   .ir-tag { padding: 5px 7px; }
   .ir-asp { margin-left: 0; }
   .ir-range { flex-basis: 100%; order: 3; }

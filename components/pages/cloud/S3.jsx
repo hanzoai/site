@@ -1,37 +1,48 @@
 'use client';
-/* Object Storage. Signature: an object, kept. An object drops in, breaks into ten data shards and four parity shards
-   that fly to fourteen volume servers; four volumes then go dark, any four, and the object still reads. Below, the four
-   facts behind it play as a slideshow (01 / 04) whose picture is the part being described: the four roles of the one
-   binary, the key minted by KMS, the shards, the one protocol. Every word and link is Hanzo's.
-   Beyond: lose four yourself. Tap any volumes to take them dark, up to the four Hanzo says can be lost; the object keeps
-   reading whichever four you choose, and Replay hands the loop back. */
+/* Object Storage, v2 launch page (Cloud 3).
+   V2: 8/10 The object comes first: a full-width stage where an object breaks into fourteen shards that fly to fourteen volume servers and survives four going dark, huge type beneath it; four facts as one pinned diagram of the binary's four roles; big spec figures; one dark room.
+   Signature: an object, kept. An object breaks into ten data shards and four parity shards that fly to fourteen volume
+   servers; any four go dark and the object still reads. It loops by itself while seen.
+   Beyond: lose four yourself. Tap any volume servers dark, up to the four Hanzo says can be lost, and watch the object
+   keep reading whichever four you choose; Replay hands the loop back.
+   Motion: signature = the shards flying to their volumes (shared-element layout); supporting = the pinned diagram
+   (scroll), the clip wipe into the dark room, the line-masked title. Every word and link is Hanzo's. */
 import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence, LayoutGroup } from 'motion/react';
-import { EASE } from '../../ui';
-import { Hero, Paste, Get, useLive, useSteps } from './Frame';
+import { A } from '../../kit';
+import { Paste, useLive } from './Frame';
+import PinnedChapters from '../../v2/PinnedChapters';
+import ClipWipe from '../../v2/ClipWipe';
+import SpecDrawer from '../../v2/SpecDrawer';
+import LaunchClose from '../../v2/LaunchClose';
+import LineMask from '../../v2/LineMask';
 import './S3.css';
 
+/* ---------- the hero stage: an object, kept ---------- */
 const N = 14; // ten data shards, four parity
 const hash = (i) => { const x = Math.sin(i * 12.9898) * 43758.5453; return x - Math.floor(x); };
+const name = (i) => (i < 10 ? 'd' + (i + 1) : 'p' + (i - 9));
+// volume centres on the stage (percent), for the fan: two rows of seven to the right of the object
+const VX = (i) => 36 + ((i % 7) + 0.5) * (62 / 7);
+const VY = (i) => (i < 7 ? 26.5 : 65.5);
 
 function Shard({ i }) {
-  return <motion.i layoutId={'s3-' + i} className={'s3-shard' + (i >= 10 ? ' p' : '')} transition={{ type: 'spring', stiffness: 160, damping: 22, delay: (i % 7) * 0.03 }} />;
+  return <motion.i layoutId={'s3-' + i} className={'s3-shard' + (i >= 10 ? ' p' : '')} transition={{ type: 'spring', stiffness: 170, damping: 24, delay: (i % 7) * 0.035 }} />;
 }
 
 function Kept() {
   const [ref, live, calm] = useLive(0.3);
   const [phase, setPhase] = useState(0); // 0 object, 1 sharded, 2 four lost, 3 still reads
   const [cycle, setCycle] = useState(0);
-  const [pick, setPick] = useState(null); // the volumes you took dark by hand; null = the loop chooses
+  const [pick, setPick] = useState(null); // volumes taken dark by hand; null = the loop chooses
   useEffect(() => {
     if (calm) { setPhase(3); return; }
     if (!live || pick) return;
     const t = setTimeout(() => {
       if (phase === 3) { setPhase(0); setCycle((c) => c + 1); } else setPhase(phase + 1);
-    }, [1300, 1700, 1500, 2400][phase]);
+    }, [1500, 1800, 1300, 2600][phase]);
     return () => clearTimeout(t);
   }, [phase, live, calm, pick]);
-  // any four volumes: the four lowest of a per-cycle hash (no loop that could fail to finish)
   const auto = useMemo(() => new Set(Array.from({ length: N }, (_, i) => i).sort((a, b) => hash(a + cycle * N) - hash(b + cycle * N)).slice(0, 4)), [cycle]);
   const lost = pick || auto;
   const toggle = (i) => {
@@ -40,30 +51,31 @@ function Kept() {
     setPick(next);
     setPhase(next.size ? 3 : 1);
   };
+  const reads = phase === 3;
   return (
-    <div className="s3-kept" ref={ref}>
+    <div className="s3-kept" ref={ref} data-phase={phase}>
       <LayoutGroup>
-        <div className="s3-obj" aria-hidden="true">
+        <svg className="s3-fan" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          {Array.from({ length: N }).map((_, i) => {
+            const x = VX(i), y = VY(i), m = (19 + x) / 2;
+            return <path key={i} d={`M18 46 C ${m} 46, ${m} ${y}, ${x} ${y}`} className={phase >= 1 && !(phase >= 2 && lost.has(i)) ? 'on' : phase >= 2 && lost.has(i) ? 'cut' : ''} />;
+          })}
+        </svg>
+        <div className={'s3-obj' + (reads ? ' reads' : '')}>
           <p className="s3-k">object</p>
           <div className="s3-file">
             {phase === 0 && Array.from({ length: N }).map((_, i) => <Shard key={i} i={i} />)}
           </div>
-          <AnimatePresence>
-            {phase === 3 && <motion.p className="s3-read" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>✓ still reads</motion.p>}
-          </AnimatePresence>
+          <p className="s3-read" aria-live="polite">{reads ? '✓ still reads' : phase === 0 ? 'erasure-coded' : phase === 1 ? 'ten data · four parity' : 'four go dark'}</p>
         </div>
-        <svg className="s3-fan" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-          {Array.from({ length: N }).map((_, i) => <path key={i} d={`M0 50 C 50 50, 50 ${(i % 7) * 15 + (i < 7 ? 4 : 16)}, 100 ${(i % 7) * 15 + (i < 7 ? 4 : 16)}`} className={phase >= 1 && !(phase >= 2 && lost.has(i)) ? 'on' : ''} />)}
-        </svg>
         <div className="s3-vols" role="group" aria-label="Volume servers: take up to four dark">
           {Array.from({ length: N }).map((_, i) => {
             const gone = phase >= 2 && lost.has(i);
-            const name = i < 10 ? 'd' + (i + 1) : 'p' + (i - 9);
             return (
-              <button type="button" key={i} className={'s3-vol' + (gone ? ' gone' : '') + (i >= 10 ? ' par' : '')} aria-pressed={!!pick && pick.has(i)} aria-label={'Volume ' + name} disabled={!!pick && pick.size >= 4 && !pick.has(i)} onClick={() => toggle(i)}>
-                <span aria-hidden="true">{name}</span>
-                {phase >= 1 && !gone && <Shard i={i} />}
-                {gone && <motion.b aria-hidden="true" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 400, damping: 20 }}>×</motion.b>}
+              <button type="button" key={i} className={'s3-vol' + (gone ? ' gone' : '') + (i >= 10 ? ' par' : '')} aria-pressed={!!pick && pick.has(i)} aria-label={'Volume server ' + name(i)} disabled={!!pick && pick.size >= 4 && !pick.has(i)} onClick={() => toggle(i)} data-cursor={gone ? 'Restore' : 'Lose'}>
+                <span className="s3-vn" aria-hidden="true">{name(i)}</span>
+                <span className="s3-slot" aria-hidden="true">{phase >= 1 && !gone && <Shard i={i} />}</span>
+                {gone && <motion.b aria-hidden="true" initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 380, damping: 22 }}>✕</motion.b>}
               </button>
             );
           })}
@@ -78,77 +90,91 @@ function Kept() {
   );
 }
 
-const SLIDES = [
+/* ---------- the chapters' object: one binary, four roles ---------- */
+const FACTS = [
   ['One binary, four roles', 'One binary in four roles: a master that tracks where everything is, volume servers that hold the bytes, a filer for the namespace and the HTTP gateway your code talks to.'],
   ['Keys from KMS', 'Server-side encryption whose keys are minted by Hanzo KMS rather than read out of a config file.'],
   ['Ten data shards, four parity', 'Objects are erasure-coded across ten data shards and four parity shards, so four can be lost and the object still reads.'],
   ['One protocol', 'Every call between the pieces speaks one binary protocol, with no gRPC anywhere: one transport to secure and one to debug.'],
 ];
+const ROLES = [['master', 'tracks where everything is'], ['volume servers', 'hold the bytes'], ['filer', 'the namespace'], ['HTTP gateway', 'your code talks to']];
+const DEAD = new Set([2, 6, 11, 13]);
 
-function Pic({ i }) {
-  if (i === 0) return <div className="s3-roles">{['master', 'volume servers', 'filer', 'HTTP gateway'].map((r, k) => <motion.span key={r} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 + k * 0.1, duration: 0.5, ease: EASE }}>{r}</motion.span>)}<b>one binary</b></div>;
-  if (i === 1) return <div className="s3-key"><motion.span className="s3-key-k" initial={{ x: -60, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.8, ease: EASE }}>Hanzo KMS</motion.span><motion.i initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 0.5, duration: 0.6, ease: EASE }} /><motion.span className="s3-key-o" initial={{ opacity: 0.3 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}>server-side encryption</motion.span></div>;
-  if (i === 2) return <div className="s3-grid14">{Array.from({ length: 14 }).map((_, k) => <motion.i key={k} className={k >= 10 ? 'p' : ''} initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: k * 0.04, type: 'spring', stiffness: 380, damping: 22 }} />)}</div>;
-  return <div className="s3-proto">{[0, 1, 2].map((k) => <span key={k}><b /><i style={{ animationDelay: k * 0.4 + 's' }} /><b /></span>)}<em>one binary protocol</em></div>;
-}
-
-function Slides() {
-  const [ref, live] = useLive(0.4);
-  const [at, choose, mine] = useSteps(4, 5600, live);
+function Roles({ step }) {
+  const lit = (i) => step === 0 || step === 3 || ((step === 1 || step === 2) && i === 1);
   return (
-    <section className="x-sec s3-slides" data-room="dark" ref={ref}>
-      <div className="x-wrap">
-        <div className="s3-sl-top">
-          <h2>An object, kept</h2>
-          <div className="s3-nav">
-            <span className="x-mono">{String(at + 1).padStart(2, '0')} / 04</span>
-            <button type="button" aria-label="Previous" onClick={() => choose((at + 3) % 4)}>←</button>
-            <button type="button" aria-label="Next" onClick={() => choose((at + 1) % 4)}>→</button>
+    <div className="s3-roles" data-step={step}>
+      <div className="s3-dia">
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          {[[25, 27], [75, 27], [25, 73], [75, 73]].map(([x, y], i) => <line key={i} x1="50" y1="50" x2={x} y2={y} />)}
+          {step === 3 && [[25, 27, 75, 27], [25, 73, 75, 73], [25, 27, 25, 73], [75, 27, 75, 73]].map(([a, b, c, d], i) => <line key={'p' + i} x1={a} y1={b} x2={c} y2={d} className="proto" />)}
+        </svg>
+        {ROLES.map(([r, d], i) => (
+          <div key={r} className={'s3-role' + (lit(i) ? ' on' : '')} style={{ '--i': i }}>
+            <b>{r}</b><span>{d}</span>
+            {i === 1 && <svg className={'s3-lock' + (step === 1 ? ' on' : '')} viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><rect x="3" y="7" width="10" height="7.5" rx="2" fill="currentColor" /><path d="M5.2 7V5.2a2.8 2.8 0 0 1 5.6 0V7" fill="none" stroke="currentColor" strokeWidth="1.6" /></svg>}
           </div>
-        </div>
-        <div className="s3-sl">
-          <div className="s3-pic" aria-hidden="true">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div key={at} className="s3-pic-in" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.2 } }}><Pic i={at} /></motion.div>
-            </AnimatePresence>
-          </div>
-          <ol className="s3-list">
-            {SLIDES.map(([t, d], i) => (
-              <li key={t} className={at === i ? 'on' : ''}>
-                <button type="button" onClick={() => choose(i)} aria-pressed={at === i}>
-                  <span className="s3-n">{String(i + 1).padStart(2, '0')} / 04</span>
-                  <span className="s3-t">{t}</span>
-                  {at === i && !mine && <motion.i key={'t' + at} className="s3-bar" initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 5.6, ease: 'linear' }} />}
-                </button>
-              </li>
-            ))}
-          </ol>
-          <div className="s3-desc" aria-live="polite">
-            {SLIDES.map(([t, d], i) => <p key={t} className={at === i ? 'on' : ''} aria-hidden={at !== i}>{d}</p>)}
-          </div>
-        </div>
+        ))}
+        <span className="s3-bin">one binary</span>
       </div>
-    </section>
+      <div className="s3-strip" key={step}>
+        {step === 0 && <p><b>one binary</b> · four roles</p>}
+        {step === 1 && <p><span className="s3-kms">Hanzo KMS</span><i className="s3-arrow" /><b>server-side encryption</b><s>config file</s></p>}
+        {step === 2 && (
+          <div className="s3-cells">
+            {Array.from({ length: N }).map((_, i) => <i key={i} className={(i >= 10 ? 'p' : '') + (DEAD.has(i) ? ' x' : '')} />)}
+            <b>✓ still reads</b>
+          </div>
+        )}
+        {step === 3 && <p><b>one binary protocol</b><s>gRPC</s></p>}
+      </div>
+    </div>
   );
 }
 
 export default function S3() {
   return (
-    <main className="s3">
-      <Hero
-        look="stack"
-        kick="Storage"
-        title="Hanzo Object Storage"
-        lede="Buckets and objects, presigned links, multipart uploads, versioning and object lock."
-        acts={[['API reference', 'https://docs.hanzo.ai/docs/openapi/s3'], ['Source', 'https://github.com/hanzoai/s3']]}
-      >
-        <Kept />
-      </Hero>
-      <Slides />
-      <section className="x-sec s3-paste">
-        <div className="x-wrap"><Paste name="Object Storage" api="/v1/s3/buckets" prompt="Read https://hanzo.ai/skill.md and use Hanzo Object Storage in my project. Start with: hanzo s3 buckets list" /></div>
+    <main className="lx s3">
+      <section className="s3-hero" data-morph-target>
+        <div className="lx-wrap">
+          <Kept />
+          <div className="s3-hero-grid">
+            <div>
+              <p className="lx-kick"><b>●</b> Storage</p>
+              <LineMask as="h1" className="lx-display s3-h1" lines={['Hanzo Object', 'Storage']} />
+            </div>
+            <div className="s3-hero-r">
+              <p className="lx-lede s3-sub">Buckets and objects, presigned links, multipart uploads, versioning and object lock.</p>
+              <div className="s3-acts">
+                <A to="https://docs.hanzo.ai/docs/openapi/s3" className="lx-cta" data-thumb="API reference">API reference</A>
+                <A to="https://github.com/hanzoai/s3" className="lx-ghost">Source</A>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
-      <Get name="Object Storage" tag="Distributed object storage" repo={['hanzoai/s3', 'https://github.com/hanzoai/s3']} stars="4 stars" />
+
+      <section className="lx-sec s3-kept-h">
+        <div className="lx-wrap">
+          <LineMask as="h2" className="lx-display m" lines={['An object,', 'kept']} inView />
+        </div>
+      </section>
+
+      <PinnedChapters label="An object, kept" steps={FACTS.map(([t, d]) => ({ t, d }))} per={82} visual={(at) => <Roles step={at} />} />
+
+      <section className="lx-sec s3-spec">
+        <div className="lx-wrap">
+          <SpecDrawer rows={[{ v: '10', l: 'data shards' }, { v: '4', l: 'parity shards' }, { v: '4', l: 'can be lost, and it still reads' }, { v: '1', l: 'binary, four roles' }]} />
+        </div>
+      </section>
+
+      <ClipWipe dark className="s3-paste">
+        <div className="lx-wrap">
+          <Paste dark name="Object Storage" api="/v1/s3/buckets" prompt="Read https://hanzo.ai/skill.md and use Hanzo Object Storage in my project. Start with: hanzo s3 buckets list" />
+        </div>
+      </ClipWipe>
+
+      <LaunchClose name="Object Storage" tag="Distributed object storage" seed="s3" data={[10, 4, 4]} repo={['hanzoai/s3', 'https://github.com/hanzoai/s3']} stars="4 stars" />
     </main>
   );
 }

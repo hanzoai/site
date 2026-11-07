@@ -1,18 +1,25 @@
 'use client';
-/* Hanzo MCP. Signature: the tool-call stream. Under the headline a full-bleed dark band runs a live waterfall of
-   Hanzo's own tools firing one after another (fs, code_search, kai_command_guard, browser, git, tracker, hanzo cloud),
-   each with its latency bar; the only figures shown are Hanzo's (2ms for code_search, 6.4ms for the Kai tools).
-   The three-part runtime is a stepper that runs itself; the six tool domains spill their tool names as chips;
-   the config block lights its lines. Every word is Hanzo's. */
+/* Hanzo MCP. V2: 8/10 code-first launch: a live tool-call stream beside the headline, Hanzo's figures as heroes, the runtime as sheets that stack, six tool domains on a drag rail that open into their page, one dark room for the config.
+   Signature: cards that open. The six tool domains sit on a rail you drag (or swipe); click one and the card itself
+   grows into a full sheet (a shared-element morph, synchronized.studio) holding every tool name that domain carries.
+   Around it: the hero's live tool-call stream (Hanzo's tools firing with latency bars; the only figures are Hanzo's,
+   2ms for code_search and 6.4ms for the Kai tools), the summary line as three huge figures that count up, and the
+   runtime's three parts as sheets that stack as you scroll. The one dark room is the config block.
+   Beyond: each opened domain lists the tool names Hanzo gives for it, so you can see what an agent gets before you
+   install. Accent: orange, from the tool stream. Every word is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
-import { EASE, Rise, Copy, useTilt } from '../ui';
-import { A, Go, More, SecHead } from '../kit';
+import { Copy, Count } from '../ui';
+import { A, Go } from '../kit';
+import A2Lines from '../v2/A2Lines';
+import A2Paste from '../v2/A2Paste';
+import '../v2/A2.css';
 import './McpPage.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/mcp';
 const ALL = 'https://docs.hanzo.ai/docs/mcp-tools/all-tools';
 const GH = 'https://github.com/hanzoai/mcp';
+const EASE = [0.16, 1, 0.3, 1];
 
 /* Hanzo's tool names, in the order an agent might reach for them. */
 const CALLS = [
@@ -22,37 +29,33 @@ const CALLS = [
   ['browser', 'console'], ['hanzo', 'hanzo · Sandbox'], ['fetch', 'fetch'], ['code', 'code_ask'], ['exec', 'logs'], ['hanzo', 'hanzo · KMS'],
   ['plan', 'plan'], ['fs', 'search_text'], ['tracker', 'tracker_issues'],
 ];
-const W = (i, c) => (c[2] ? (c[2] === '2ms' ? 3 : 7) : 12 + ((i * 37) % 44)); // bar width, % of the lane
-const X = (i) => (i * 23) % 38; // bar start, % of the lane
+const W = (i, c) => (c[2] ? (c[2] === '2ms' ? 3 : 7) : 12 + ((i * 37) % 44)); // bar width, % of the lane (drawn, not measured)
+const X = (i) => (i * 23) % 38;
 
 function Stream() {
   const ref = useRef(null);
   const seen = useInView(ref, { amount: 0.2 });
   const calm = useReducedMotion();
-  const [n, setN] = useState(8);
+  const [n, setN] = useState(9);
   useEffect(() => {
     if (!seen || calm) return;
-    const t = setInterval(() => setN((v) => v + 1), 820);
+    const t = setInterval(() => setN((v) => v + 1), 900);
     return () => clearInterval(t);
   }, [seen, calm]);
-  const rows = Array.from({ length: 8 }, (_, k) => n - 8 + k);
+  const rows = Array.from({ length: 9 }, (_, k) => n - 9 + k);
   return (
-    <div className="mcp-stream" ref={ref}>
-      <div className="mcp-stream-h x-mono">
-        <span>tool</span><span>domain</span><span className="mcp-lane-h">latency</span>
-      </div>
+    <div className="mcp-stream" ref={ref} aria-hidden="true">
+      <div className="mcp-stream-top"><span className="mcp-live" />hanzo mcp<span className="mcp-stream-t">stdio</span></div>
       <ul className="mcp-rows">
         <AnimatePresence initial={false}>
           {rows.slice().reverse().map((id) => {
             const c = CALLS[id % CALLS.length];
             return (
-              <motion.li key={id} layout initial={{ opacity: 0, y: -18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.2 } }} transition={{ duration: 0.45, ease: EASE }} className={'mcp-row d-' + c[0]}>
-                <span className="mcp-id x-mono">#{String(id + 1).padStart(4, '0')}</span>
+              <motion.li key={id} layout="position" initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.15 } }} transition={{ duration: 0.45, ease: EASE }} className={'mcp-row d-' + c[0]}>
                 <span className="mcp-tool x-mono"><i />{c[1]}</span>
-                <span className="mcp-dom x-mono">{c[0]}</span>
                 <span className="mcp-lane">
-                  <motion.b style={{ left: X(id) + '%', width: W(id, c) + '%' }} initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.5, ease: EASE, delay: 0.1 }} />
-                  {c[2] && <em className="x-mono" style={{ left: X(id) + W(id, c) + 1 + '%' }}>{c[2]}</em>}
+                  <b style={{ left: X(id) + '%', width: W(id, c) + '%' }} />
+                  {c[2] && <em className="x-mono" style={{ left: X(id) + W(id, c) + 2 + '%' }}>{c[2]}</em>}
                 </span>
               </motion.li>
             );
@@ -63,123 +66,95 @@ function Stream() {
   );
 }
 
+const CLIENTS = ['Claude Desktop', 'Claude Code', 'Cursor', 'Hanzo Dev', 'Any MCP client'];
+
 function Hero() {
   return (
     <section className="mcp-hero" aria-labelledby="mcp-h1">
-      <div className="x-wrap">
-        <motion.p className="x-kick" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE }}>Hanzo MCP · 260+ tools · 117 cloud services</motion.p>
-        <motion.h1 id="mcp-h1" className="mcp-h1" initial={{ opacity: 0, y: 24, filter: 'blur(10px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ duration: 1.1, ease: EASE }}>The complete MCP runtime for coding, decisions, browser, and cloud</motion.h1>
-        <div className="mcp-sub">
-          <motion.p className="mcp-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.3 }}>Give any model a filesystem, shell, semantic AST code index, Kai sub-10ms decisions, Playwright &amp; Chrome DevTools browser control, issue tracking, persistent memory, and 1,538 typed Hanzo Cloud operations over stdio or streamable HTTP.</motion.p>
-          <motion.div className="mcp-acts" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.4 }}>
-            <Go to={ALL} solid>Browse 260+ tools</Go>
+      <div className="a2-wrap a2-grid mcp-hero-grid">
+        <div className="mcp-hero-copy">
+          <p className="a2-kick"><b>Hanzo MCP</b> · 260+ tools · 117 cloud services</p>
+          <A2Lines as="h1" id="mcp-h1" className="a2-display s mcp-h1" lines={['The complete', 'MCP runtime for', 'coding, decisions,', 'browser, and cloud']} now />
+          <p className="a2-body mcp-lede">Give any model a filesystem, shell, semantic AST code index, Kai sub-10ms decisions, Playwright &amp; Chrome DevTools browser control, issue tracking, persistent memory, and 1,538 typed Hanzo Cloud operations over stdio or streamable HTTP.</p>
+          <div className="a2-acts">
+            <span data-thumb="Browse 260+ tools" data-href={ALL} style={{ display: 'contents' }}><Go to={ALL} solid>Browse 260+ tools</Go></span>
             <Go to={DOCS}>Read the docs</Go>
             <Go to={GH}>View on GitHub</Go>
-          </motion.div>
-        </div>
-      </div>
-      <motion.div className="mcp-band" data-room="dark" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.3 }}>
-        <div className="x-wrap">
-          <Stream />
-          <div className="mcp-band-f">
-            <p className="mcp-oss">Open source, MIT. Identical tool names and schemas in TypeScript, Python, and Rust — plus remote streamable HTTP at api.hanzo.ai/v1/mcp.</p>
-            <div className="mcp-via">
-              <span className="x-mono">Available through</span>
-              <ul>{['Claude Desktop', 'Claude Code', 'Cursor', 'Hanzo Dev', 'Any MCP client'].map((c) => <li key={c}>{c}</li>)}</ul>
-            </div>
           </div>
         </div>
-      </motion.div>
+        <motion.div className="mcp-hero-obj" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.25 }}>
+          <Stream />
+        </motion.div>
+      </div>
+      <div className="a2-wrap mcp-via">
+        <p className="mcp-oss">Open source, MIT. Identical tool names and schemas in TypeScript, Python, and Rust — plus remote streamable HTTP at api.hanzo.ai/v1/mcp.</p>
+        <div className="mcp-via-l">
+          <span className="a2-kick">Available through</span>
+          <ul>{CLIENTS.map((c) => <li key={c}>{c}</li>)}</ul>
+        </div>
+      </div>
     </section>
   );
 }
 
-/* The runtime in three parts, running itself. */
+/* The summary line, as three figures. */
+function Figures() {
+  return (
+    <section className="a2-sec mcp-figs" aria-label="38 unified action tools + 1,538 Cloud operations + 260+ specialized servers">
+      <div className="a2-wrap">
+        <p className="mcp-sum">
+          <span className="mcp-f"><Count to={38} className="a2-fig" /> <span>unified action tools</span></span>
+          <span className="mcp-plus" aria-hidden="true">+</span>
+          <span className="mcp-f"><Count to={1538} className="a2-fig" delay={0.1} /> <span>Cloud operations</span></span>
+          <span className="mcp-plus" aria-hidden="true">+</span>
+          <span className="mcp-f"><Count to={260} suffix="+" className="a2-fig" delay={0.2} /> <span>specialized servers</span></span>
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/* The runtime in three parts: sheets that stack as you scroll. */
 const PARTS = [
   ['Full-stack agent capabilities, ready out of the box', 'Core runtime (fs, exec, code, git, fetch, workspace, ui), semantic code intelligence (code_search, code_context, code_ask, code_index), Kai decision & safety guardrails (kai_decide, kai_command_guard, kai_injection_screen), browser CDP, issue tracker, and persistent memory.'],
   ['117 Hanzo Cloud services, 1,538 typed operations', 'Through the unified hanzo router and /docs/mcp-tools catalog, agents provision sandboxes, deploy containers across 34 regions, query vector indexes, rotate KMS secrets, verify IAM policies, and inspect billing usage under one bearer key.'],
   ['Scoped permissions & Kai safety screening', 'Every shell command and external input can pass through kai_command_guard and kai_injection_screen in single-digit milliseconds. Enable or drop tool groups per environment with --enable-tools and --disable-tools.'],
 ];
+const CORE = ['fs', 'exec', 'code', 'git', 'fetch', 'workspace', 'ui', 'code_search', 'code_context', 'code_ask', 'code_index', 'kai_decide', 'kai_command_guard', 'kai_injection_screen', 'browser', 'cdp', 'tracker', 'memory'];
 
 function PartArt({ i }) {
-  if (i === 0) {
-    return (
-      <div className="mcp-art mcp-art-0" aria-hidden="true">
-        {['fs', 'exec', 'code', 'git', 'fetch', 'workspace', 'ui', 'code_search', 'code_context', 'code_ask', 'code_index', 'kai_decide', 'kai_command_guard', 'kai_injection_screen', 'browser', 'cdp', 'tracker', 'memory'].map((t, k) => (
-          <motion.span key={t} className="x-mono" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.4, ease: EASE, delay: 0.05 + k * 0.03 }}>{t}</motion.span>
-        ))}
-      </div>
-    );
-  }
-  if (i === 1) {
-    return (
-      <div className="mcp-art mcp-art-1" aria-hidden="true">
-        {Array.from({ length: 117 }).map((_, k) => <i key={k} style={{ animationDelay: ((k * 53) % 117) * 0.03 + 's' }} />)}
-      </div>
-    );
-  }
+  if (i === 0) return <div className="mcp-art a0">{CORE.map((t, k) => <span key={t} className="x-mono" style={{ '--d': k * 0.35 + 's' }}>{t}</span>)}</div>;
+  if (i === 1) return <div className="mcp-art a1">{Array.from({ length: 117 }).map((_, k) => <i key={k} style={{ animationDelay: ((k * 53) % 117) * 0.04 + 's' }} />)}</div>;
   return (
-    <div className="mcp-art mcp-art-2" aria-hidden="true">
-      <div className="mcp-guard x-mono"><span>kai_command_guard</span><span>kai_injection_screen</span></div>
-      <div className="mcp-cmds">{[0, 1, 2, 3].map((k) => <span key={k} className={k === 2 ? 'stop' : ''} style={{ animationDelay: k * 0.8 + 's' }}><b /></span>)}</div>
+    <div className="mcp-art a2">
+      <div className="mcp-gate x-mono"><span>kai_command_guard</span><span>kai_injection_screen</span></div>
+      <div className="mcp-cmds">{[0, 1, 2, 3].map((k) => <span key={k} className={k === 2 ? 'stop' : ''} style={{ animationDelay: k * 0.9 + 's' }}><b /></span>)}</div>
     </div>
   );
 }
 
 function Parts() {
-  const [at, setAt] = useState(0);
-  const [mine, setMine] = useState(false);
-  const ref = useRef(null);
-  const seen = useInView(ref, { amount: 0.4 });
-  const calm = useReducedMotion();
-  useEffect(() => {
-    if (mine || !seen || calm) return;
-    const t = setTimeout(() => setAt((v) => (v + 1) % 3), 5200);
-    return () => clearTimeout(t);
-  }, [at, mine, seen, calm]);
   return (
-    <section className="x-sec mcp-parts" ref={ref}>
-      <div className="x-wrap">
-        <Rise as="p" className="mcp-sum">38 unified action tools + 1,538 Cloud operations + 260+ specialized servers</Rise>
-        <div className="mcp-parts-in">
-          <div className="mcp-steps" role="tablist" aria-label="The runtime">
-            {PARTS.map(([t, d], i) => (
-              <button key={t} type="button" role="tab" aria-selected={at === i} className={at === i ? 'on' : ''} onClick={() => { setAt(i); setMine(true); }}>
-                <span className="mcp-step-n x-mono">{String(i + 1).padStart(2, '0')} / 03</span>
-                <span className="mcp-step-t">{t}</span>
-                <motion.span className="mcp-step-d" initial={false} animate={at === i ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 }} transition={{ duration: 0.45, ease: EASE }}>
-                  <span>{d}</span>
-                </motion.span>
-                {at === i && !mine && seen && <i key={'t' + at} className="mcp-step-time" aria-hidden="true" />}
-              </button>
-            ))}
-          </div>
-          <div className="mcp-art-box">
-            <AnimatePresence mode="popLayout" initial={false}>
-              <motion.div key={at} className="mcp-art-in" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.2 } }} transition={{ duration: 0.5, ease: EASE }}>
-                <PartArt i={at} />
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </div>
+    <section className="a2-sec mcp-parts" aria-label="The runtime">
+      <div className="a2-wrap">
+        <ol className="mcp-stack">
+          {PARTS.map(([t, d], i) => (
+            <li key={t} className="mcp-sheet" style={{ '--i': i }}>
+              <div className="mcp-sheet-copy">
+                <span className="a2-kick">{String(i + 1).padStart(2, '0')} / 03</span>
+                <h2 className="a2-headline">{t}</h2>
+                <p className="a2-body">{d}</p>
+              </div>
+              <div className="mcp-sheet-art" aria-hidden="true"><PartArt i={i} /></div>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   );
 }
 
-function Paste() {
-  const text = 'Read https://hanzo.ai/skill.md and use Hanzo MCP in my project. Start with: hanzo mcp create';
-  return (
-    <section className="mcp-paste">
-      <div className="x-wrap mcp-paste-in">
-        <Rise y={14}><p className="mcp-paste-k">Paste and ship</p><p className="mcp-paste-d">Paste this into any agent. It reads the skill manifest and calls MCP from there.</p></Rise>
-        <Rise className="mcp-prompt" y={14} delay={0.06}><span className="x-mono mcp-prompt-k">Agent prompt</span><code>{text}</code><Copy text={text} /></Rise>
-      </div>
-    </section>
-  );
-}
-
-/* Six domains; each spills its own tool names. */
+/* Six domains on a rail; each card opens into its own sheet. */
 const DOMAINS = [
   ['fs & exec', 'read, write, stat, list, mkdir, rm, mv, apply_patch, search_text — plus exec with run, background, ps, kill, and logs so long-running dev servers and test suites stream cleanly.', ['read', 'write', 'stat', 'list', 'mkdir', 'rm', 'mv', 'apply_patch', 'search_text', 'run', 'background', 'ps', 'kill', 'logs']],
   ['code_search, code_context, code_ask, code_index', 'AST-aware symbol resolution, call graphs, cross-repository indexing, and structural transforms. Find every caller of a symbol in 2ms without grep noise.', ['code_search', 'code_context', 'code_ask', 'code_index']],
@@ -189,32 +164,82 @@ const DOMAINS = [
   ['hanzo (117 Cloud services · 1,538 ops)', 'Direct typed access to Deploy, Sandbox, IAM, KMS, KV, S3, Vector, Search, Crawl, Workflow, Commerce, and Billing — inspectable at docs.hanzo.ai/docs/mcp-tools.', ['Deploy', 'Sandbox', 'IAM', 'KMS', 'KV', 'S3', 'Vector', 'Search', 'Crawl', 'Workflow', 'Commerce', 'Billing']],
 ];
 
-function Domain({ d, i }) {
-  const ref = useRef(null);
-  const seen = useInView(ref, { once: true, amount: 0.5 });
-  return (
-    <li ref={ref} className={'mcp-dom-i d' + i}>
-      <div className="mcp-dom-l">
-        <span className="mcp-dom-n x-mono">{String(i + 1).padStart(2, '0')}</span>
-        <h3 className="x-mono">{d[0]}</h3>
-        <p>{d[1]}</p>
-      </div>
-      <div className="mcp-chips" aria-hidden="true">
-        {d[2].map((t, k) => (
-          <motion.span key={t} className="x-mono" initial={{ opacity: 0, y: 14, scale: 0.9 }} animate={seen ? { opacity: 1, y: 0, scale: 1 } : {}} transition={{ type: 'spring', stiffness: 300, damping: 22, delay: 0.1 + k * 0.04 }} whileHover={{ y: -3 }}>{t}</motion.span>
-        ))}
-      </div>
-    </li>
-  );
+/* A rail the mouse can drag and fling; touch and trackpads scroll it natively. */
+function useDragRail(ref) {
+  const moved = useRef(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    let x0 = 0, s0 = 0, v = 0, lx = 0, lt = 0, down = false;
+    const dn = (e) => { if (e.pointerType !== 'mouse' || e.button) return; down = true; moved.current = false; x0 = lx = e.clientX; s0 = el.scrollLeft; lt = performance.now(); v = 0; el.classList.add('grab'); };
+    const mv = (e) => { if (!down) return; const dx = e.clientX - x0; if (Math.abs(dx) > 6) moved.current = true; el.scrollLeft = s0 - dx; const t = performance.now(); v = (e.clientX - lx) / Math.max(1, t - lt); lx = e.clientX; lt = t; };
+    const up = () => { if (!down) return; down = false; el.classList.remove('grab'); if (Math.abs(v) > 0.2) el.scrollBy({ left: -v * 320, behavior: 'smooth' }); };
+    el.addEventListener('pointerdown', dn);
+    addEventListener('pointermove', mv);
+    addEventListener('pointerup', up);
+    return () => { el.removeEventListener('pointerdown', dn); removeEventListener('pointermove', mv); removeEventListener('pointerup', up); };
+  }, [ref]);
+  return moved;
 }
 
 function Domains() {
+  const [open, setOpen] = useState(-1);
+  const rail = useRef(null);
+  const moved = useDragRail(rail);
+  const close = useRef(null);
+  const last = useRef(null);
+  useEffect(() => {
+    if (open < 0) return;
+    const l = window.__lenis;
+    l?.stop?.();
+    const t = setTimeout(() => close.current?.focus({ preventScroll: true }), 80);
+    const key = (e) => { if (e.key === 'Escape') setOpen(-1); };
+    addEventListener('keydown', key);
+    return () => { clearTimeout(t); removeEventListener('keydown', key); l?.start?.(); last.current?.focus({ preventScroll: true }); };
+  }, [open]);
+  const d = DOMAINS[open];
   return (
-    <section className="x-sec mcp-doms">
-      <div className="x-wrap">
-        <SecHead kicker="Tool domains" title="Every surface an autonomous team needs" lede="From local AST refactoring and headless browser verification to multi-region cloud deployments." />
-        <ul className="mcp-dom-list">{DOMAINS.map((d, i) => <Domain key={d[0]} d={d} i={i} />)}</ul>
+    <section className="a2-sec mcp-doms" aria-labelledby="mcp-doms-h">
+      <div className="a2-wrap a2-grid mcp-doms-head">
+        <div className="mcp-doms-t">
+          <p className="a2-kick">Tool domains</p>
+          <A2Lines id="mcp-doms-h" className="a2-display s" lines={['Every surface', 'an autonomous', 'team needs']} />
+        </div>
+        <p className="a2-lede mcp-doms-l">From local AST refactoring and headless browser verification to multi-region cloud deployments.</p>
       </div>
+      <motion.ul className="mcp-rail" ref={rail} data-cursor="Drag" layoutScroll>
+        {DOMAINS.map(([t, desc, tools], i) => (
+          <li key={t}>
+            <motion.button type="button" layoutId={'mcp-dom-' + i} className={'mcp-card d' + i} aria-haspopup="dialog" aria-expanded={open === i}
+              onClick={(e) => { if (moved.current) { e.preventDefault(); return; } last.current = e.currentTarget; setOpen(i); }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} style={{ visibility: open === i ? 'hidden' : 'visible' }}>
+              <span className="mcp-card-n x-mono">{String(i + 1).padStart(2, '0')}</span>
+              <h3 className="x-mono">{t}</h3>
+              <p>{desc}</p>
+              <span className="mcp-card-tools" aria-hidden="true">{tools.slice(0, 4).map((x) => <i key={x} className="x-mono">{x}</i>)}{tools.length > 4 && <i className="x-mono more">+{tools.length - 4}</i>}</span>
+              <span className="mcp-card-open" aria-hidden="true">+</span>
+            </motion.button>
+          </li>
+        ))}
+      </motion.ul>
+      <AnimatePresence>
+        {d && (
+          <motion.div className="mcp-open" key="open" layoutRoot>
+            <motion.button type="button" className="mcp-open-scrim" aria-label="Close" tabIndex={-1} onClick={() => setOpen(-1)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} />
+            <motion.div layoutId={'mcp-dom-' + open} className={'mcp-open-card d' + open} role="dialog" aria-modal="true" aria-label={d[0]} transition={{ type: 'spring', stiffness: 300, damping: 30 }} data-lenis-prevent="">
+              <motion.div className="mcp-open-in" initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { delay: 0.15, duration: 0.3 } }} exit={{ opacity: 0, transition: { duration: 0.1 } }}>
+                <div className="mcp-open-top">
+                  <span className="mcp-card-n x-mono">{String(open + 1).padStart(2, '0')} / 06</span>
+                  <button ref={close} type="button" className="mcp-open-x" aria-label="Close" onClick={() => setOpen(-1)}>×</button>
+                </div>
+                <h3 className="mcp-open-h x-mono">{d[0]}</h3>
+                <p className="a2-lede">{d[1]}</p>
+                <ul className="mcp-open-tools">{d[2].map((x, k) => <li key={x} className="x-mono" style={{ animationDelay: 0.2 + k * 0.035 + 's' }}>{x}</li>)}</ul>
+                <A to={ALL} className="mcp-open-more">All MCP Tools Reference →</A>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
@@ -243,54 +268,47 @@ const hl = (l) => {
 };
 
 function Config() {
-  const ref = useRef(null);
-  const seen = useInView(ref, { once: true, amount: 0.4 });
   return (
-    <section className="x-sec mcp-cfg">
-      <div className="x-wrap mcp-cfg-in">
-        <div>
-          <SecHead kicker="Get started" title="One config block" lede="Use the --package= form for local stdio, or point any MCP client directly at https://api.hanzo.ai/v1/mcp over streamable HTTP." />
-          <More to={ALL}>All MCP Tools Reference</More>
+    <section className="a2-sec a2-dark mcp-cfg" data-room="dark" aria-labelledby="mcp-cfg-h">
+      <div className="a2-wrap a2-grid">
+        <div className="mcp-cfg-copy">
+          <p className="a2-kick">Get started</p>
+          <A2Lines id="mcp-cfg-h" className="a2-display s" lines={['One config', 'block']} />
+          <p className="a2-body">Use the --package= form for local stdio, or point any MCP client directly at https://api.hanzo.ai/v1/mcp over streamable HTTP.</p>
+          <A to={ALL} className="mcp-ref">All MCP Tools Reference <span aria-hidden="true">→</span></A>
         </div>
-        <Rise className="mcp-code" ref={ref}>
+        <div className="mcp-code">
           <div className="mcp-code-bar"><span className="x-mono">json</span><Copy text={CONFIG} /></div>
-          <pre><code>{CONFIG.split('\n').map((l, i) => (
-            <motion.span key={i} className="mcp-ln" initial={{ opacity: 0, x: -8 }} animate={seen ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.4, ease: EASE, delay: i * 0.05 }}>{l ? hl(l) : ' '}{'\n'}</motion.span>
-          ))}</code></pre>
-        </Rise>
+          <pre><code>{CONFIG.split('\n').map((l, i) => <span key={i} className="mcp-ln">{l ? hl(l) : ' '}{'\n'}</span>)}</code></pre>
+        </div>
       </div>
     </section>
   );
 }
 
 function Add() {
-  const { rx, ry, glow, on } = useTilt(4, 'rgba(0,0,0,.05)');
   return (
-    <section className="x-sec mcp-add">
-      <div className="x-wrap">
-        <div className="mcp-add-in">
-          <div>
-            <SecHead title="Add Hanzo MCP to your client" lede="One block in .mcp.json, or connect over streamable HTTP at api.hanzo.ai/v1/mcp." />
-            <Rise className="mcp-add-acts">
-              <Go to={ALL} solid>Browse All Tools</Go>
-              <Go to={GH}>GitHub</Go>
-              <Go to="https://platform.hanzo.ai">Hanzo Platform</Go>
-            </Rise>
-            <Rise className="mcp-add-more"><span className="x-kick">MCP</span><A to={DOCS} className="mcp-docs">MCP docs →</A></Rise>
+    <section className="a2-sec mcp-add" aria-labelledby="mcp-add-h">
+      <div className="a2-wrap a2-grid">
+        <div className="mcp-add-copy">
+          <A2Lines id="mcp-add-h" className="a2-display s" lines={['Add Hanzo MCP', 'to your client']} />
+          <p className="a2-lede">One block in .mcp.json, or connect over streamable HTTP at api.hanzo.ai/v1/mcp.</p>
+          <div className="a2-acts">
+            <Go to={ALL} solid>Browse All Tools</Go>
+            <Go to={GH}>GitHub</Go>
+            <Go to="https://platform.hanzo.ai">Hanzo Platform</Go>
           </div>
-          <Rise delay={0.1}>
-            <motion.div className="mcp-repo" style={{ rotateX: rx, rotateY: ry }} {...on}>
-              <motion.span className="x-mglow" style={{ background: glow }} aria-hidden="true" />
-              <h2>Get MCP</h2>
-              <p>Model Context Protocol — 260+ tools</p>
-              <dl className="x-mono"><div><dt>License:</dt><dd>Apache-2.0</dd></div><div><dt>★</dt><dd>8 stars</dd></div></dl>
-              <div className="mcp-repo-acts">
-                <A to={GH} className="mcp-gh x-mono">hanzoai/mcp</A>
-                <Go to="https://platform.hanzo.ai/deploy" solid>Deploy to Cloud</Go>
-                <Go to={DOCS}>Self-host</Go>
-              </div>
-            </motion.div>
-          </Rise>
+          <p className="mcp-add-more"><span className="a2-kick">MCP</span><A to={DOCS} className="mcp-docs">MCP docs →</A></p>
+        </div>
+        <div className="mcp-repo">
+          <h2>Get MCP</h2>
+          <p>Model Context Protocol — 260+ tools</p>
+          <dl className="x-mono"><div><dt>License:</dt><dd>Apache-2.0</dd></div><div><dt>★</dt><dd>8 stars</dd></div></dl>
+          <div className="mcp-repo-acts">
+            <A to={GH} className="mcp-gh x-mono">hanzoai/mcp</A>
+            <Go to="https://platform.hanzo.ai/deploy" solid>Deploy to Cloud</Go>
+            <Go to={DOCS}>Self-host</Go>
+          </div>
         </div>
       </div>
     </section>
@@ -299,10 +317,11 @@ function Add() {
 
 export default function McpPage() {
   return (
-    <main className="mcp">
+    <main className="a2 mcp" style={{ '--acc': '#f2600c' }} data-acc-btn="">
       <Hero />
+      <Figures />
       <Parts />
-      <Paste />
+      <A2Paste name="MCP" text="Read https://hanzo.ai/skill.md and use Hanzo MCP in my project. Start with: hanzo mcp create" />
       <Domains />
       <Config />
       <Add />

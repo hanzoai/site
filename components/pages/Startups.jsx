@@ -1,17 +1,21 @@
 'use client';
 // Signature: the application answers back: a match card assembles beside the form as you fill it (your company, stage, what you will use, your compute).
 // Beyond: the track read-out: tick a tier-1 investor and the card moves you from starting free to the credits program, by the program's own rule.
-/* The Hanzo Startup Program. The three parts of the program take turns at the top; the application is hanzo.ai's own
-   form, field for field, and it sends exactly what hanzo.ai sends: POST https://api.hanzo.ai/v1/form/public/
-   hanzo.startups-apply/responses with the same answers, token and hidden source. Beside it, the match card reads
-   what you have written so far. */
+/* The Hanzo Startup Program.
+   V2: 8/10 rebuilt: the program's name at display size beside $150,000 on a split-flap board as the hero figure; the three parts as a ladder of tiles that rises to the credits; the Techstars note as a pull quote; the application with its live match card; the closing for teams that are not venture-backed as the dark room.
+   Motion: the match card assembling (signature) + the split-flap hero figure + line-masked type + the match ring
+   drawing as required fields fill.
+   Accent: sky. The application is hanzo.ai's own form, field for field, and it sends exactly what hanzo.ai sends:
+   POST https://api.hanzo.ai/v1/form/public/hanzo.startups-apply/responses with the same answers, token and hidden
+   source. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
-import { EASE, Rise } from '../ui';
-import { A, Go, Tick } from '../kit';
-import Sigil from '../Sigil';
+import { motion, AnimatePresence } from 'motion/react';
+import { A, Flap, Tick } from '../kit';
+import LineReveal from '../v2/LineReveal';
+import '../v2/ProgramScale.css';
 import './Startups.css';
 
+const EASE = [0.16, 1, 0.3, 1];
 const PROGRAM = [
   ['Start in minutes', 'Creating an account is free. Add funds when you are ready and pay only for what you use — no subscription, no minimums.'],
   ['Bring your own compute', 'Connect your own GPUs and machines. Run cheap on hardware you already have — we meter the platform, not your iron.'],
@@ -38,35 +42,49 @@ function body(c, w) {
   };
 }
 
-function Program() {
-  const [at, setAt] = useState(0);
-  const [mine, setMine] = useState(false);
-  const calm = useReducedMotion();
-  const ref = useRef(null);
-  const seen = useInView(ref, { amount: 0.4 });
-  useEffect(() => {
-    if (mine || calm || !seen) return;
-    const t = setTimeout(() => setAt((v) => (v + 1) % 3), 3400);
-    return () => clearTimeout(t);
-  }, [at, mine, calm, seen]);
+function Hero() {
   return (
-    <div className="xst-prog" ref={ref}>
-      <Sigil seed="startups" data={[150000, 3]} className="xst-sigil" />
-      <div className="xst-prog-top"><span>The program</span><span className="x-mono">{String(at + 1).padStart(2, '0')} / 03</span></div>
-      <ol className="xst-ladder">
-        {PROGRAM.map(([t, d], i) => (
-          <li key={t}>
-            <button type="button" aria-expanded={at === i} className={at === i ? 'on' : ''} onClick={() => { setAt(i); setMine(true); }}>
-              <span className="xst-rung x-mono">{String(i + 1).padStart(2, '0')}</span>
-              <b>{t}</b>
-            </button>
-            <motion.div className="xst-rung-d" initial={false} animate={at === i ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 }} transition={{ duration: 0.5, ease: EASE }} aria-hidden={at !== i}>
-              <p>{d}</p>
-            </motion.div>
-          </li>
-        ))}
-      </ol>
-    </div>
+    <section className="xst-hero" aria-labelledby="xst-h1">
+      <div className="xp-wrap xp-grid">
+        <div className="xst-words">
+          <p className="xp-kick">Techstars ’17 — built for founders</p>
+          <LineReveal as="h1" id="xst-h1" className="xp-display md" lines={['The Hanzo', 'Startup Program']} />
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.4 }}>
+            <p className="xp-lede xst-lede">Everyone starts free. Venture-backed teams get up to $150,000 in credits.</p>
+            <div className="xst-acts">
+              <a href="#apply" className="xp-cta" data-thumb="Apply for credits">Apply for credits<i aria-hidden="true">↓</i></a>
+              <A to="https://platform.hanzo.ai" className="xp-ghost">Start building free</A>
+            </div>
+          </motion.div>
+        </div>
+        <motion.div className="xst-fig" initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.3 }}>
+          <span className="xst-fig-k x-mono" aria-hidden="true">Up to</span>
+          <Flap value="$150,000" className="xst-flap" />
+          <span className="xst-fig-u x-mono" aria-hidden="true">in credits</span>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* The program as a ladder: three tiles that rise to the credits. */
+function Ladder() {
+  return (
+    <section className="xp-sec tight xst-prog" aria-labelledby="xst-prog-h">
+      <div className="xp-wrap">
+        <h2 id="xst-prog-h" className="xp-kick">The program</h2>
+        <ol className="xst-ladder">
+          {PROGRAM.map(([t, d], i) => (
+            <motion.li key={t} className={'r' + i} initial={{ y: 80 + i * 40, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} viewport={{ once: true, amount: 0.3 }} transition={{ type: 'spring', stiffness: 300, damping: 30, delay: i * 0.1 }}>
+              <span className="xst-rung x-mono">{String(i + 1).padStart(2, '0')} / 03</span>
+              <h3 className="xp-head">{t}</h3>
+              <p className="xp-body">{d}</p>
+            </motion.li>
+          ))}
+        </ol>
+        <p className="xst-ts xp-lede"><b>Techstars founders:</b> Hanzo is a Techstars company. We offer perks tailored to each portfolio brand — mention your batch when you apply and we will match it.</p>
+      </div>
+    </section>
   );
 }
 
@@ -79,7 +97,7 @@ function Match({ c }) {
   return (
     <aside className="xst-match" aria-label="Your match" aria-live="polite">
       <div className="xst-match-top">
-        <svg viewBox="0 0 36 36" width="40" height="40" aria-hidden="true"><circle cx="18" cy="18" r="15" fill="none" stroke="rgba(255,255,255,.14)" strokeWidth="3" /><motion.circle cx="18" cy="18" r="15" fill="none" stroke="#f5f5f7" strokeWidth="3" strokeLinecap="round" transform="rotate(-90 18 18)" initial={false} animate={{ pathLength: done / 5 }} transition={{ type: 'spring', stiffness: 120, damping: 20 }} /></svg>
+        <svg viewBox="0 0 36 36" width="40" height="40" aria-hidden="true"><circle cx="18" cy="18" r="15" fill="none" stroke="rgba(255,255,255,.14)" strokeWidth="3" /><motion.circle cx="18" cy="18" r="15" fill="none" stroke="#0a9fd8" strokeWidth="3" strokeLinecap="round" transform="rotate(-90 18 18)" initial={false} animate={{ pathLength: done / 5 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} /></svg>
         <div><b className="xst-co">{c.company.trim() || 'Company name'}</b><span className="x-mono">{done} / 5 · {stage || 'Select stage'}</span></div>
       </div>
       <div className={'xst-track' + (credits ? ' credits' : '')}>
@@ -137,11 +155,11 @@ function Apply() {
     } catch (x) { setErr(x instanceof Error ? x.message : 'Something went wrong. Please try again.'); } finally { setBusy(false); }
   };
   return (
-    <section className="x-sec xst-apply" id="apply" aria-labelledby="xst-apply-h">
-      <div className="x-wrap">
-        <header className="xst-apply-h">
-          <h2 id="xst-apply-h">Apply to the program</h2>
-          <p>We review applications weekly. The more you share, the faster we can match you to the right tier.</p>
+    <section className="xp-sec xst-apply" id="apply" aria-labelledby="xst-apply-h">
+      <div className="xp-wrap">
+        <header className="xp-grid xst-apply-h">
+          <h2 id="xst-apply-h" className="xp-display sm">Apply to the program</h2>
+          <p className="xp-lede">We review applications weekly. The more you share, the faster we can match you to the right tier.</p>
         </header>
         <div className="xst-apply-grid">
           <AnimatePresence mode="wait" initial={false}>
@@ -151,7 +169,7 @@ function Apply() {
                 <h3>Application received</h3>
                 <p>Thanks — we review applications weekly and will be in touch by email.</p>
                 <p className="xst-sent-s">Want to start building today? Create an account and pay only for what you use — no subscription required.</p>
-                <div className="xst-acts"><Go to="https://platform.hanzo.ai" solid>Start free →</Go><Go to="/">Back to Home</Go></div>
+                <div className="xst-acts"><A to="https://platform.hanzo.ai" className="xp-cta">Start free →</A><A to="/" className="xp-ghost">Back to Home</A></div>
               </motion.div>
             ) : (
               <motion.form key="form" className="xst-form" onSubmit={submit} noValidate exit={{ opacity: 0, y: -10 }}>
@@ -222,7 +240,7 @@ function Apply() {
                 </div>
                 <div className="xst-trap" aria-hidden="true"><label htmlFor="hp">Do not fill this in</label><input id="hp" name="hp" type="text" tabIndex={-1} autoComplete="off" value={c.hp} onChange={on} /></div>
                 <AnimatePresence>{err && <motion.p className="xst-err" role="alert" initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>{err}</motion.p>}</AnimatePresence>
-                <motion.button type="submit" className="x-btn solid xst-submit" disabled={busy} whileTap={{ scale: 0.98 }}>{busy ? 'Submitting...' : 'Submit application'}</motion.button>
+                <button type="submit" className="xp-cta xst-submit" disabled={busy}>{busy ? 'Submitting...' : 'Submit application'}</button>
                 <p className="xst-fine">By submitting, you agree to Hanzo’s <A to="/legal/privacy" className="xst-link">Privacy Policy</A>. We use your information only to review this application.</p>
               </motion.form>
             )}
@@ -235,33 +253,19 @@ function Apply() {
 }
 
 export default function Startups() {
-  const line = (t, d) => <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: d }}>{t}</motion.span></span>;
   return (
-    <main className="xst">
-      <section className="xst-hero" aria-labelledby="xst-h1">
-        <div className="x-wrap xst-grid">
-          <div>
-            <motion.p className="x-kick" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: EASE }}>Techstars ’17 — built for founders</motion.p>
-            <h1 id="xst-h1" className="xst-h1">{line('The Hanzo', 0.05)}{line('Startup Program', 0.16)}</h1>
-            <motion.p className="xst-lede" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>Everyone starts free. Venture-backed teams get up to $150,000 in credits.</motion.p>
-            <motion.div className="xst-acts" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.5 }}>
-              <a href="#apply" className="x-btn solid" data-thumb="Apply for credits">Apply for credits →</a>
-              <Go to="https://platform.hanzo.ai">Start building free</Go>
-            </motion.div>
-          </div>
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.2 }}><Program /></motion.div>
-        </div>
-        <div className="x-wrap">
-          <Rise as="p" className="xst-ts"><b>Techstars founders:</b> Hanzo is a Techstars company. We offer perks tailored to each portfolio brand — mention your batch when you apply and we will match it.</Rise>
-        </div>
-      </section>
+    <main className="xp xst">
+      <Hero />
+      <Ladder />
       <Apply />
-      <section className="x-sec xst-not" data-room="dark" aria-labelledby="xst-not-h">
-        <Rise className="x-wrap xst-not-in">
-          <h2 id="xst-not-h">Not venture-backed?</h2>
-          <p>You do not need to qualify to build. Start free and pay only for what you use, or create an Enterprise plan for your team.</p>
-          <div className="xst-acts"><Go to="https://platform.hanzo.ai" solid>Start free</Go><Go to="/enterprise/start">Create Enterprise plan</Go></div>
-        </Rise>
+      <section className="xp-sec xp-dark xst-not" data-room="dark" aria-labelledby="xst-not-h">
+        <div className="xp-wrap xp-grid">
+          <LineReveal onView id="xst-not-h" className="xp-display md xst-not-h" lines={['Not venture-backed?']} />
+          <div className="xst-not-r">
+            <p className="xp-lede">You do not need to qualify to build. Start free and pay only for what you use, or create an Enterprise plan for your team.</p>
+            <div className="xst-acts"><A to="https://platform.hanzo.ai" className="xp-cta">Start free</A><A to="/enterprise/start" className="xp-ghost">Create Enterprise plan</A></div>
+          </div>
+        </div>
       </section>
     </main>
   );

@@ -26,8 +26,8 @@
 .pf-hair { border: 0; border-top: 1px solid var(--line); margin: 0; }
 
 .pf-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 0 24px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); background: #fff; color: var(--ink); font: 500 16px/1 var(--sans); text-decoration: none; cursor: pointer; transition: transform .3s var(--ease), background-color .3s, border-color .3s; }
-.pf-btn:hover { border-color: rgba(0, 0, 0, .3); }
-.pf-btn:active { transform: scale(.97); }
+.pf-btn:hover { border-color: rgba(0, 0, 0, .3); transform: translate3d(0, -1px, 0); }
+.pf-btn:active { transform: scale(.98); transition-duration: .1s; }
 .pf-btn.solid { background: var(--ink); color: #fff; border-color: var(--ink); }
 .pf-btn.solid:hover { background: #2a2a2c; }
 .pf-btn:focus-visible, .pf-plus:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }

@@ -1,16 +1,26 @@
 'use client';
-/* Security. Its idea: security you can read, layer by layer. The hero runs the six controls as a check that passes
-   itself, one line at a time. Signature moment: the controls as a readable document — a contents rail that follows
-   you, and beside it a stack of six layers, from the edge down to the organization's own file, that peel back one by
-   one as you read each control. Then what runs underneath (the rack hums), what comes with Enterprise (ticked off),
-   and where to send what you find. Every word is Hanzo's.
-   Signature: the controls as a readable document whose six layers peel back, edge to the organization's own file.
-   Beyond: "Reviewer's worksheet". Tick each control as you check it; the rail keeps your count in this browser, and
-   when all six are ticked the page hands you the next step, Hanzo's own security review. */
+/* Security. Its idea: a map you travel. The whole of it first — six layers, from the edge down to the organization's
+   own file, stacked as one exploded object while a request passes through them and each layer checks itself. Then the
+   camera goes into one layer at a time: it lifts out of the stack, turns to face you and shows its mechanism, while
+   its control's words sit beside it — by itself every few seconds, or at your hand. Then what runs underneath, the
+   option of none of it, and in the one dark room the sign-off, the address for what you find, and the hard question.
+   Every word is Hanzo's. Structure follows BRIEF-v3 §5.2 (System): hero with the ask > the layers > the checklist
+   with its detail > proof > closing ask. No accent hue: hierarchy from ink alone; colour only from Hanzo's own media.
+   Signature: zoom into the layer — the six-layer stack stays on screen as the map while each layer in turn lifts out, turns face-on and shows its mechanism, advancing by itself or at your hand.
+   Beyond: "Reviewer's worksheet". Tick each control as you check it; the count stays in this browser, and when all
+   six are ticked the page hands you the next step, Hanzo's own security review.
+   Motion: signature (layer zoom: idle auto-advance, springs, a gliding tab pill) + MaskLines headline cut-in (arrival)
+   + the hero request pulse (idle) + the SceneWipe dark room (the one scroll-linked effect).
+   V2: 8/10 System rebuild in ink only: unboxed hero layer map with a live request pulse, a self-advancing layer zoom with the worksheet beside it, calm proof, one wiped-in dark room with the sign-off sheet, one ask sticky after the hero. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion, useScroll } from 'motion/react';
-import { EASE, Rise, Copy } from '../ui';
-import { A, Go, More, SecHead, Tick, Band } from '../kit';
+import { motion, useInView, useReducedMotion } from 'motion/react';
+import { Copy } from '../ui';
+import { A, More } from '../kit';
+import MaskLines from '../v2/MaskLines';
+import SceneWipe from '../v2/SceneWipe';
+import DetailSheet from '../v2/DetailSheet';
+import AskBar from '../v2/AskBar';
+import '../v2/ProofScale.css';
 import './Security.css';
 
 const CONTROLS = [
@@ -21,150 +31,179 @@ const CONTROLS = [
   ['The Edge Throws Identity Away', 'Anything that arrives claiming to be an org, a user or an email is deleted at the gateway before a single handler reads it. Identity is written back only from a verified token. Inside the cluster, services reach each other over a binary protocol rather than the public internet.'],
   ['Where It Sits', 'An organization is a tenancy boundary, and on Hanzo Base it is a physical one — a different organization is a different database file, so no query can reach across two. Dedicated and self-hosted deployments pin that file to a region you choose.'],
 ];
+/* the mechanism each layer shows when it faces you: Hanzo's own terms, lifted from the control's words */
+const MECH = [
+  { kind: 'chips', items: ['HKDF-SHA256', 'TLS 1.3', 'ML-KEM-768', 'Hanzo Base'] },
+  { kind: 'chips', items: ['Authenticator app', 'SMS', 'Email', 'Recovery codes'] },
+  { kind: 'rules', items: [['HMAC signature', 'refused'], ['no algorithm', 'refused'], ['refresh token', 'single-use']] },
+  { kind: 'path', items: ['organization', 'workspace', 'project'] },
+  { kind: 'strike', items: ['org', 'user', 'email'], foot: 'verified token' },
+  { kind: 'chips', items: ['Dedicated', 'Self-hosted', 'a region you choose'] },
+];
 const pad = (i) => String(i + 1).padStart(2, '0');
+const KEY = 'hz-security-checked';
+const DWELL = 6500; // ms each layer faces you when nobody is choosing
+const Check = ({ s = 16 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
-/* ---------- hero: the six controls, checked one by one ---------- */
-function Check() {
-  const [n, setN] = useState(0);
-  const calm = useReducedMotion();
+/* ---------- hero: the whole map, a request passing through every layer ---------- */
+function Map({ pick }) {
   const ref = useRef(null);
-  const live = useInView(ref, { amount: 0.4 });
+  const live = useInView(ref, { amount: 0.3 });
+  const calm = useReducedMotion();
+  const [n, setN] = useState(0); // 0 = waiting at the edge, 1..6 = layers passed, 7 = hold
   useEffect(() => {
     if (calm || !live) return;
-    const t = setTimeout(() => setN((v) => (v + 1) % 8), n === 7 ? 2600 : 900);
+    const t = setTimeout(() => setN((v) => (v + 1) % 8), n === 7 ? 2600 : n === 0 ? 500 : 820);
     return () => clearTimeout(t);
   }, [n, calm, live]);
   useEffect(() => { if (calm) setN(6); }, [calm]); // final state after hydration, never a different first render
   const done = Math.min(n, 6);
   return (
-    <div className="xsc-check" ref={ref}>
-      <div className="xsc-check-h">
-        <span className="xsc-dot" aria-hidden="true" />
+    <div className="xsc-map" ref={ref}>
+      <p className="xsc-map-h">
         <span>The controls, named</span>
-        <span className="x-mono">{pad(Math.max(0, done - 1))} / 06</span>
-      </div>
-      <ol>
+        <span className="pf-mono" aria-hidden="true">{pad(Math.max(0, done - 1))} / 06</span>
+      </p>
+      <ol className="xsc-map-st">
         {CONTROLS.map(([t], i) => (
-          <li key={t} className={i < done ? 'ok' : i === done ? 'now' : ''}>
-            <a href={'#c' + (i + 1)}>
-              <span className="x-mono">{pad(i)}</span>
-              <span>{t}</span>
-              <i aria-hidden="true">
-                <AnimatePresence initial={false}>
-                  {i < done && (
-                    <motion.svg key="t" viewBox="0 0 16 16" width="16" height="16" initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, transition: { duration: 0.15 } }}>
-                      <motion.path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.35, ease: EASE }} />
-                    </motion.svg>
-                  )}
-                </AnimatePresence>
-              </i>
-            </a>
+          <li key={t} style={{ '--i': i }} className={(i < done ? 'ok' : '') + (i === done - 1 ? ' now' : '') + (i === 5 ? ' core' : '')}>
+            <span className="xsc-mp" aria-hidden="true">{i === 5 && <img src="/models/koma.webp" alt="" width="172" height="120" />}</span>
+            <button type="button" className="xsc-ml" onClick={() => pick(i)}>
+              <span className="pf-mono">{pad(i)}</span>
+              <span className="xsc-ml-t">{t}</span>
+              <Check />
+            </button>
           </li>
         ))}
       </ol>
-      <i className="xsc-check-bar" aria-hidden="true"><motion.b animate={{ scaleX: done / 6 }} transition={{ type: 'spring', stiffness: 160, damping: 24 }} /></i>
     </div>
   );
 }
 
-function Hero() {
-  const line = (t, d) => <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: d }}>{t}</motion.span></span>;
+function Hero({ pick }) {
   return (
     <section className="xsc-hero" aria-labelledby="xsc-h1">
-      <div className="x-wrap xsc-hero-g">
-        <div>
-          <motion.p className="x-kick" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE }}>Security Architecture</motion.p>
-          <h1 id="xsc-h1" className="xsc-h1">{line('What protects your data,', 0.05)}{line('and how.', 0.16)}</h1>
-          <motion.p className="xsc-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>Clear security mechanisms: which key encrypts your data, where tenancy boundaries are enforced, and how every request is verified.</motion.p>
-          <motion.div className="xsc-acts" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.5 }}>
-            <Go to="/contact" solid>Talk to Security Team</Go>
-            <Go to="https://docs.hanzo.ai/docs/cli/security">Security Documentation</Go>
-          </motion.div>
-          <motion.p className="xsc-audit" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.9, delay: 0.7 }}>
-            <Tick size={18} delay={0.8} /> Continual internal audits, with the report on request. <More to="/trust">The controls, and how to check them</More>
-          </motion.p>
+      <div className="pf-wrap xsc-hero-g">
+        <div className="xsc-hero-c">
+          <MaskLines as="h1" id="xsc-h1" className="pf-display m" lines={['What protects', 'your data,', 'and how.']} />
+          <p className="pf-kick xsc-cap">Security Architecture</p>
+          <p className="pf-lede">Clear security mechanisms: which key encrypts your data, where tenancy boundaries are enforced, and how every request is verified.</p>
+          <div className="xsc-acts">
+            <A to="/contact" className="pf-btn solid" data-thumb="Talk to Security Team">Talk to Security Team</A>
+            <More to="https://docs.hanzo.ai/docs/cli/security">Security Documentation</More>
+          </div>
+          <p className="xsc-audit">
+            <i className="xsc-audit-dot" aria-hidden="true" />
+            <span className="xsc-audit-t">Continual internal audits, with the report on request.</span>
+            <More to="/trust">The controls, and how to check them</More>
+          </p>
         </div>
-        <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.25 }}>
-          <Check />
-        </motion.div>
+        <div className="xsc-hero-v">
+          <Map pick={pick} />
+        </div>
       </div>
     </section>
   );
 }
 
-/* ---------- the controls: a document whose layers peel back as you read ---------- */
-/* Six plates, one per control in reading order; the ones you have read lift away, the one you are reading is lit,
-   and the last is the organization's own file. */
-function Layers({ at }) {
+/* ---------- signature: the camera goes into one layer at a time ---------- */
+function Mech({ m }) {
+  if (m.kind === 'chips') return <ul className="xsc-chips">{m.items.map((c) => <li key={c}>{c}</li>)}</ul>;
+  if (m.kind === 'rules') return <ul className="xsc-rules">{m.items.map(([a, b]) => <li key={a}><span>{a}</span><b>{b}</b></li>)}</ul>;
+  if (m.kind === 'path') return <ol className="xsc-path">{m.items.map((c) => <li key={c}>{c}</li>)}</ol>;
+  return <div className="xsc-strike"><ul>{m.items.map((c) => <li key={c}><s>{c}</s></li>)}</ul><p><span aria-hidden="true">→</span> {m.foot}</p></div>;
+}
+
+function Zoom({ at }) {
   return (
-    <div className="xsc-layers" aria-hidden="true">
-      <div className="xsc-iso">
-        {CONTROLS.map(([t], i) => {
-          const gone = i < at, lit = i === at, k = i - at;
-          return (
-            <motion.div key={t} className={'xsc-plate' + (lit ? ' lit' : '') + (i === 5 ? ' core' : '')} style={{ zIndex: 10 - i }}
-              initial={false}
-              animate={{ y: gone ? -150 : k * 34, x: gone ? 70 : 0, opacity: gone ? 0 : 1 - k * 0.1, scale: gone ? 0.94 : 1 }}
-              transition={{ type: 'spring', stiffness: 130, damping: 20 }}>
-              {i === 5 && <img src="/models/koma.webp" alt="" />}
-              <span className="x-mono">{pad(i)}</span><span>{t}</span>
-            </motion.div>
-          );
-        })}
-      </div>
+    <div className="xsc-zoom" aria-hidden="true">
+      {CONTROLS.map(([t], i) => {
+        const on = i === at;
+        return (
+          <motion.div
+            key={t}
+            className={'xsc-zp' + (on ? ' on' : '') + (i < at ? ' past' : '') + (i === 5 ? ' core' : '')}
+            initial={false}
+            animate={on
+              ? { x: 80, y: 0, scale: 1, rotateX: 0, rotateZ: 0 }
+              : { x: -280, y: -150 + i * 60, scale: 0.4, rotateX: 58, rotateZ: -42 }}
+            transition={{ type: 'spring', stiffness: 120, damping: 20, mass: 0.9 }}
+            style={{ zIndex: on ? 20 : 10 - i, transformPerspective: 1600 }}
+          >
+            {i === 5 && <img src="/models/koma.webp" alt="" width="480" height="330" />}
+            <div className="xsc-zp-in">
+              <span className="xsc-zp-n">{pad(i)}</span>
+              <b className="xsc-zp-t">{t}</b>
+              <Mech m={MECH[i]} />
+            </div>
+          </motion.div>
+        );
+      })}
     </div>
   );
 }
 
-const KEY = 'hz-security-checked';
-
-function Controls() {
-  const [at, setAt] = useState(0);
+function Layers({ at, setAt, held, hold }) {
+  const ref = useRef(null);
+  const live = useInView(ref, { amount: 0.45 });
+  const calm = useReducedMotion();
   const [ok, setOk] = useState([]); // the reviewer's ticks, kept in this browser only
-  const box = useRef(null);
   useEffect(() => { try { const v = JSON.parse(localStorage.getItem(KEY) || '[]'); if (Array.isArray(v)) setOk(v.filter((i) => i >= 0 && i < 6)); } catch {} }, []);
   const tick = (i) => setOk((o) => {
     const v = o.includes(i) ? o.filter((k) => k !== i) : [...o, i];
     try { localStorage.setItem(KEY, JSON.stringify(v)); } catch {}
     return v;
   });
+  // by itself: the next layer every DWELL ms while the stage is on screen and nobody is choosing
+  const auto = live && !held && !calm;
   useEffect(() => {
-    const els = [...box.current.querySelectorAll('[data-c]')];
-    const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && setAt(+e.target.dataset.c)), { rootMargin: '-45% 0px -50% 0px' });
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
-  }, []);
-  const { scrollYProgress } = useScroll({ target: box, offset: ['start center', 'end center'] });
+    if (!auto) return;
+    const t = setTimeout(() => setAt((v) => (v + 1) % 6), DWELL);
+    return () => clearTimeout(t);
+  }, [auto, at, setAt]);
+  const keys = (e) => {
+    const k = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
+    if (!k) return;
+    e.preventDefault();
+    const n = (at + k + 6) % 6;
+    hold(); setAt(n);
+    document.getElementById('xsc-tab-' + n)?.focus();
+  };
   return (
-    <section className="x-sec xsc-doc" id="controls" aria-labelledby="xsc-ctl">
-      <div className="x-wrap">
-        <div className="xsc-doc-g" ref={box}>
-          <aside className="xsc-rail">
-            <p className="x-kick" id="xsc-ctl">The controls, named</p>
-            <nav aria-label="The controls">
-              <ol>
-                {CONTROLS.map(([t], i) => (
-                  <li key={t} className={ok.includes(i) ? 'ok' : ''}><a href={'#c' + (i + 1)} aria-current={at === i ? 'true' : undefined}><span className="x-mono">{pad(i)}</span>{t}</a></li>
-                ))}
-              </ol>
-              <i className="xsc-rail-p" aria-hidden="true"><motion.b style={{ scaleY: scrollYProgress }} /></i>
-            </nav>
-            <Layers at={at} />
-            <p className="xsc-count x-mono" aria-hidden="true">{pad(at)} / 06</p>
-            <p className="xsc-sheet x-mono" aria-live="polite">{ok.length} / 6 checked</p>
-            {ok.length === 6 && <More to="/contact-sales">Schedule Security Review</More>}
-          </aside>
-          <div className="xsc-arts">
+    <section className="pf-sec tight xsc-layers" id="controls" ref={ref} aria-labelledby="xsc-layers-h">
+      <div className="pf-wrap xsc-layers-g">
+        <div className="xsc-layers-l">
+          <MaskLines id="xsc-layers-h" className="pf-head" lines={['The controls,', 'named']} />
+          <div className="xsc-tabs" role="tablist" aria-label="The controls" aria-orientation="vertical" onKeyDown={keys}>
+            {CONTROLS.map(([t], i) => (
+              <button
+                key={t} id={'xsc-tab-' + i} type="button" role="tab" aria-selected={at === i} aria-controls={'xsc-p-' + i} tabIndex={at === i ? 0 : -1}
+                className={ok.includes(i) ? 'ok' : ''}
+                onClick={() => { hold(); setAt(i); }}
+              >
+                {at === i && <motion.span layoutId="xsc-pill" className="xsc-pill" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />}
+                <span className="pf-mono">{pad(i)}</span>
+                <span className="xsc-tab-t">{t}</span>
+                <span className="xsc-tab-ok"><Check s={14} /></span>
+                {at === i && auto && <i className="xsc-dwell" key={'d' + at} style={{ animationDuration: DWELL + 'ms' }} aria-hidden="true" />}
+              </button>
+            ))}
+          </div>
+          <p className="xsc-ws-n pf-mono" aria-live="polite">{ok.length} / 6 checked</p>
+          {ok.length === 6 && <More to="/contact-sales">Schedule Security Review</More>}
+        </div>
+        <div className="xsc-layers-r">
+          <Zoom at={at} />
+          <div className="xsc-panels">
             {CONTROLS.map(([t, d], i) => (
-              <article key={t} id={'c' + (i + 1)} data-c={i} className={at === i ? 'on' : ''}>
-                <p className="xsc-art-n x-mono">{pad(i)} / 06</p>
-                <h2>{t}</h2>
-                <p className="xsc-art-p">{d}</p>
+              <div key={t} id={'xsc-p-' + i} role="tabpanel" aria-labelledby={'xsc-tab-' + i} className="xsc-panel" data-on={at === i} inert={at !== i}>
+                <p className="pf-kick xsc-panel-n">{pad(i)} / 06</p>
+                <p className="pf-body">{d}</p>
                 <button type="button" className={'xsc-tick' + (ok.includes(i) ? ' on' : '')} aria-pressed={ok.includes(i)} onClick={() => tick(i)}>
-                  <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  <Check s={14} />
                   {ok.includes(i) ? 'Checked' : 'Mark as checked'}
                 </button>
-              </article>
+              </div>
             ))}
           </div>
         </div>
@@ -173,99 +212,120 @@ function Controls() {
   );
 }
 
-/* ---------- infrastructure: the rack ---------- */
+/* ---------- proof: what runs underneath ---------- */
 const RACK = ['Hardware-virtualised machines, one tenant to a boundary', 'Errors, traces and release health watched around the clock', 'Replicated, with failover that does not need a person', 'Every image pinned to a version, every deploy reconciled'];
 const OPTIONS = [['Run it where you like', 'Our cloud, your cluster, your rack'], ['Scales to nothing', 'Idle should cost what idle is worth'], ['Your region', 'Pin the data and keep it there']];
 
 function Infra() {
   return (
-    <section className="x-sec xsc-infra">
-      <div className="x-wrap">
-        <div className="xsc-infra-g">
-          <div>
-            <SecHead kicker="Infrastructure" title="What runs underneath" lede="Workloads sit in hardware-virtualised machines on managed Kubernetes, in data centres with physical access control and redundant power. Secrets never reach a manifest — they are fetched from Hanzo KMS at boot, and outside development a service refuses to start without a verified issuer, audience and key set rather than falling back to running open." />
-          </div>
-          <ul className="xsc-rack">
-            {RACK.map((t, i) => (
-              <Rise as="li" key={t} delay={i * 0.08} y={16}>
-                <span className="xsc-leds" aria-hidden="true"><i style={{ animationDelay: i * 0.37 + 's' }} /><i style={{ animationDelay: i * 0.61 + 0.2 + 's' }} /><i /></span>
-                <span className="xsc-u x-mono" aria-hidden="true">U{i + 1}</span>
-                <span>{t}</span>
-              </Rise>
-            ))}
-          </ul>
+    <section className="pf-sec xsc-infra" aria-labelledby="xsc-infra-h">
+      <div className="pf-wrap xsc-infra-g">
+        <div>
+          <MaskLines id="xsc-infra-h" className="pf-head" lines={['What runs', 'underneath']} />
+          <p className="pf-kick xsc-cap">Infrastructure</p>
+          <p className="pf-body">Workloads sit in hardware-virtualised machines on managed Kubernetes, in data centres with physical access control and redundant power. Secrets never reach a manifest — they are fetched from Hanzo KMS at boot, and outside development a service refuses to start without a verified issuer, audience and key set rather than falling back to running open.</p>
         </div>
-        <div className="xsc-none">
-          <div>
-            <h3>Or none of our infrastructure at all</h3>
-            <p>Every piece named on this page is a binary you can run yourself. The strongest answer to a question about our infrastructure is that you do not have to use it.</p>
-          </div>
-          <ul>
-            {OPTIONS.map(([t, d], i) => <Rise as="li" key={t} delay={i * 0.08}><span className="x-mono">{pad(i)}</span><b>{t}</b><span>{d}</span></Rise>)}
-          </ul>
-        </div>
+        <ol className="xsc-rack">
+          {RACK.map((t, i) => (
+            <li key={t}>
+              <span className="xsc-u pf-mono" aria-hidden="true">U{i + 1}</span>
+              <span className="xsc-rack-t">{t}</span>
+              <span className="xsc-bay" aria-hidden="true"><i /><i /><i /></span>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   );
 }
 
-/* ---------- enterprise: the sign-off ---------- */
+function None() {
+  return (
+    <section className="pf-sec xsc-none" aria-labelledby="xsc-none-h">
+      <div className="pf-wrap xsc-none-g">
+        <h2 id="xsc-none-h" className="pf-display s">Or none of our infrastructure at all</h2>
+        <p className="pf-lede">Every piece named on this page is a binary you can run yourself. The strongest answer to a question about our infrastructure is that you do not have to use it.</p>
+        <ol className="xsc-opts">
+          {OPTIONS.map(([t, d], i) => (
+            <li key={t}><span className="xsc-opt-n" aria-hidden="true">{pad(i)}</span><b className="pf-title">{t}</b><span>{d}</span></li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- the one dark room: the sign-off, the address, the hard question ---------- */
 const COMES = ['Single sign-on through Hanzo IAM', 'Federation to your own OpenID Connect issuer', 'SCIM 2.0 provisioning from your directory', 'A named engineer who knows your deployment', 'Priority incident response', 'Retention set by you, not by us', 'Audit records exported where you want them', 'Security questionnaire support'];
 
-function Enterprise() {
+function Dark() {
   return (
-    <section className="x-sec xsc-ent">
-      <div className="x-wrap xsc-ent-g">
-        <div>
-          <SecHead kicker="Enterprise" title="If you are the one who has to sign off" />
-          <p className="xsc-big">Bring the control you are required to demonstrate and we will show you the code that implements it, or tell you plainly that it does not exist yet. A control we cannot point at is one you should not put your name to.</p>
-          <p className="xsc-p">Where a requirement is not met, the honest options are usually self-hosting, a dedicated deployment, or waiting. Our engineers will say which one applies rather than selling you the gap.</p>
-        </div>
-        <div className="xsc-comes">
-          <h3>What comes with Enterprise</h3>
-          <p>An engineer who has read your deployment, retention you set rather than inherit, and somebody to answer the questionnaire your procurement team is about to send.</p>
-          <ul>{COMES.map((t, i) => <li key={t}><Tick size={20} delay={i * 0.06} /><span>{t}</span></li>)}</ul>
-          <Go to="/contact-sales" solid>Contact Sales</Go>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Found() {
-  return (
-    <section className="xsc-found">
-      <div className="x-wrap">
-        <div className="xsc-found-c">
+    <SceneWipe className="xsc-dark" label="Enterprise">
+      <div className="pf-sec">
+        <div className="pf-wrap xsc-ent-g">
           <div>
-            <h3>Found something</h3>
-            <p>Email us rather than opening a public issue, and include a reproduction if you have one. A real report from a stranger is worth more than an internal review, and we answer quickly.</p>
+            <MaskLines className="pf-display s" lines={['If you are the one', 'who has to sign off']} />
+            <p className="pf-kick xsc-cap">Enterprise</p>
+          </div>
+          <div>
+            <p className="xsc-big">Bring the control you are required to demonstrate and we will show you the code that implements it, or tell you plainly that it does not exist yet. A control we cannot point at is one you should not put your name to.</p>
+            <p className="pf-body">Where a requirement is not met, the honest options are usually self-hosting, a dedicated deployment, or waiting. Our engineers will say which one applies rather than selling you the gap.</p>
+            <div className="xsc-comes">
+              <DetailSheet label="What comes with Enterprise" title="What comes with Enterprise">
+                <p>An engineer who has read your deployment, retention you set rather than inherit, and somebody to answer the questionnaire your procurement team is about to send.</p>
+                <ul className="xsc-comes-l">
+                  {COMES.map((t) => <li key={t}><Check /><span>{t}</span></li>)}
+                </ul>
+                <More to="/contact-sales">Contact Sales</More>
+              </DetailSheet>
+            </div>
+          </div>
+        </div>
+
+        <div className="pf-wrap xsc-found">
+          <div>
+            <h2 className="pf-head">Found something</h2>
+            <p className="pf-body">Email us rather than opening a public issue, and include a reproduction if you have one. A real report from a stranger is worth more than an internal review, and we answer quickly.</p>
           </div>
           <div className="xsc-mail">
             <a href="mailto:security@hanzo.ai">security@hanzo.ai</a>
             <Copy text="security@hanzo.ai" label="Copy address" />
           </div>
         </div>
+
+        <div className="pf-wrap xsc-ask">
+          <MaskLines className="pf-display m" lines={['Ask us the', 'hard question']} />
+          <div className="xsc-ask-r">
+            <p className="pf-lede">Bring the requirement you cannot get past, and we will show you the code or tell you it is not built. Both answers are more useful than a brochure.</p>
+            <A to="/contact-sales" className="pf-btn solid xsc-light">Schedule Security Review</A>
+            <p className="xsc-note"><A to="/login">Try Hanzo</A> · <A to="https://docs.hanzo.ai/docs/cli/security">Read the security documentation</A></p>
+          </div>
+        </div>
       </div>
-    </section>
+    </SceneWipe>
   );
 }
 
 export default function Security() {
+  const [at, setAt] = useState(0);
+  const [held, setHeld] = useState(false);
+  const hold = () => setHeld(true);
+  // a layer named in the hero map: bring its stage up with that layer facing you
+  const pick = (i) => {
+    hold(); setAt(i);
+    const el = document.getElementById('controls');
+    if (!el) return;
+    const y = el.getBoundingClientRect().top + scrollY - 40;
+    window.__lenis ? window.__lenis.scrollTo(y, { duration: 1.2 }) : scrollTo({ top: y, behavior: 'smooth' });
+  };
   return (
     <main className="xsc">
-      <Hero />
-      <Controls />
+      <Hero pick={pick} />
+      <Layers at={at} setAt={setAt} held={held} hold={hold} />
       <Infra />
-      <Enterprise />
-      <Found />
-      <Band
-        title="Ask us the hard question"
-        lede="Bring the requirement you cannot get past, and we will show you the code or tell you it is not built. Both answers are more useful than a brochure."
-        action="Schedule Security Review"
-        to="/contact-sales"
-        note={<p className="x-band-note"><A to="/login">Try Hanzo</A> · <A to="https://docs.hanzo.ai/docs/cli/security">Read the security documentation</A></p>}
-      />
+      <None />
+      <Dark />
+      <AskBar title="Security" label="Talk to Security Team" to="/contact" />
     </main>
   );
 }

@@ -44,8 +44,8 @@ export default function DetailSheet({ label, kicker, title, children, ghost = fa
       <div className="pf-sheet-panel" role="dialog" aria-modal="true" aria-labelledby={id} inert={!open} data-lenis-prevent>
         <div className="pf-sheet-top">
           <div>
-            {kicker && <p className="pf-kick">{kicker}</p>}
             <h2 className="pf-title" id={id}>{title}</h2>
+            {kicker && <p className="pf-kick pf-sheet-cap">{kicker}</p>}
           </div>
           <button ref={close} type="button" className="pf-sheet-x" onClick={shut} aria-label="Close">
             <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>

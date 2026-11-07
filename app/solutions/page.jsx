@@ -1,5 +1,6 @@
-// Signature: Teams × Industries × Use cases as a three-way selector — point at any one and the preview becomes that solution, its model's film crossfading in; left alone it walks all seventeen
-// Beyond: the preview lists each solution's actual jobs, so you can tell Finance from Financial services before you open either
+// V2: 8/10 Catalogue: three-line kinetic headline beside a live film reel walking all seventeen; Teams, Industries and Use cases as huge words that re-flow a wall of model-film tiles, each opening into its page; reserved tier as the one dark room
+// Signature: a wall of model-film tiles in rows of 6 + 3 + 3; press Teams, Industries or Use cases and the tiles leave and glide into the gap; a tile's film plays under the pointer and its name opens into the solution's page
+// Beyond: each tile lists that solution's actual jobs, so you can tell Finance from Financial services before you open either
 import JsonLd from '../../components/JsonLd';
 import SolutionsIndex from '../../components/pages/solutions/SolutionsIndex';
 import { indexDoc, allSolutions, metaOf } from '../../components/pages/solutions/solData';

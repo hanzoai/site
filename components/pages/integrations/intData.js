@@ -45,8 +45,11 @@ export function guideDoc(slug) {
   const band = sections.find((s) => /^Ready to/.test(s.title));
   const more = sections.find((s) => /^More integrations/.test(s.title));
   const samples = sections.filter((s) => s !== band && s !== more);
+  // each sibling as a card: its badge and Hanzo's own line for it, read from the integrations index
+  const cards = Object.fromEntries(indexDoc().groups.flatMap((g) => g.cards).map((c) => [c.slug, c]));
+  if (more) more.links = more.links.map((l) => { const c = cards[l.href.split('/').pop()]; return c ? { ...l, emoji: c.emoji, desc: c.desc, tag: c.tag } : l; });
   return {
-    slug, route: '/' + rel,
+    slug, route: '/' + rel, i: SLUGS().indexOf(slug),
     crumbs: nav ? [...findAll(nav, tag('a')).map(link), { label: clean(textOf(nav.c.filter(isN).slice(-1)[0])) }] : [],
     emoji: spans[ci] || '', category: spans[ci + 1] || '',
     title: clean(textOf(h1)), lede: clean(textOf(find(root, slot('lede')))),
