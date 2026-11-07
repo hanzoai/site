@@ -605,3 +605,65 @@ html:not(.js) .xe-card { margin-bottom: 17px; }
   .xe-stack.f-safari .xe-pclip { top: calc(7% + 264px); }
 }
 @media (prefers-reduced-motion: reduce) { .xe-text .xe-type { clip-path: none !important; } }
+
+/* ---------- round 7 (critic round 5) ---------- */
+/* the hero ring: its box comes from the picture (set in JS), the CSS only draws it */
+.xe-probe { border-radius: 16px; }
+/* the hero's 01–05 steps: each at least 44px wide */
+.xe-panel { padding-inline: 16px; }
+.xe-steps { grid-template-columns: repeat(5, minmax(44px, 1fr)); gap: 4px; }
+/* how it works: a fill that ends at the lit stop's dot (its end measured into --fx / --fy), under the running light */
+.xe-fill { position: absolute; inset: 0; background: rgba(255, 255, 255, .55); transform: translateX(calc(-100% + var(--fx, 0px))); transition: transform .4s var(--xe-in); }
+@media (max-width: 599px) { .xe-fill { transform: translateY(calc(-100% + var(--fy, 0px))); } }
+@media (prefers-reduced-motion: reduce) { .xe-run { display: none; } }
+/* pointing at a stop answers on the stop too: its dot grows and its name underlines */
+.xe-path li > button b { text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 6px; text-decoration-thickness: 1px; transition: color .15s var(--xe-out), text-decoration-color .15s var(--xe-out); }
+@media (hover: hover) {
+  .xe-path li > button:hover b { text-decoration-color: currentColor; }
+  .xe-path li:has(> button:hover)::before { transform: scale(1.4); }
+}
+/* text links: a visible hover that is not opacity: the underline shows and thickens, the arrow moves 3px (150 ms) */
+.xe .x-arrow span { background: none; text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 4px; text-decoration-thickness: 1px; transition: text-decoration-color .15s var(--xe-out), text-decoration-thickness .15s var(--xe-out); }
+.xe-links .x-arrow span::after { display: none; }
+.xe .x-arrow svg { transition: transform .15s var(--xe-out); }
+.xe .xe-rows .x-arrow span { text-decoration-color: currentColor; }
+@media (hover: hover) {
+  .xe .x-arrow:hover span { text-decoration: underline; text-decoration-color: currentColor; text-decoration-thickness: 2px; }
+  .xe .x-arrow:hover svg { transform: translateX(3px); }
+}
+.xe .x-arrow:focus-visible span { text-decoration-color: currentColor; text-decoration-thickness: 2px; }
+/* the closing band carries "Get started" as one quiet caption row under its ask */
+.xe-band-meta { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 27px; padding-top: 17px; border-top: 1px solid rgba(0, 0, 0, .1); width: min(100%, 860px); font-size: 12px; color: #525252; }
+.xe-bm { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0 10px; margin: 0; }
+.xe-bm > * + *::before { content: '·'; margin-right: 10px; color: #a3a3a3; }
+.xe-bm-h { color: #0a0a0a; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
+.xe-bm .x-arrow { min-height: 44px; font: inherit; font-size: 12px; }
+.xe-bm-a { display: inline-flex; align-items: center; min-height: 44px; color: #0a0a0a; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; transition: text-decoration-thickness .15s var(--xe-out); }
+@media (hover: hover) { .xe-bm-a:hover { text-decoration-thickness: 2px; } }
+/* the file names wrap whole on a phone: the name breaks at its hyphens and dots, the size gets its own line */
+@media (max-width: 599px) {
+  .xe-zips li { flex-wrap: wrap; align-items: flex-start; padding: 12px 0; row-gap: 2px; }
+  .xe-zips li > span.xe-zip-n { white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; line-height: 1.4; }
+  .xe-zips em { flex-basis: 100%; padding-left: 30px; }
+  .xe-bm { flex-direction: column; gap: 0; }
+  .xe-bm > * + *::before { display: none; }
+}
+/* the phone hero: one flat window right under its browser switch. The windows behind fade out instead of fanning past the
+   screen's edges, and picking a browser swaps the front window flat in 300 ms (CSS outranks the fan's inline transforms) */
+@media (max-width: 899px) {
+  .xe-deal { width: 100%; margin: 0 0 10px; gap: 8px; }
+  .xe-deal-tabs { flex: 1; min-width: 0; }
+  .xe-deal-tabs button { flex: 1; justify-content: center; padding: 0 10px; }
+  .xe-stack { height: 600px; }
+  .xe-win { left: 0 !important; top: 0 !important; width: 100% !important; height: 100% !important; transform: none !important; opacity: 0 !important; transition: opacity .3s var(--xe-move); }
+  .xe-win.front { opacity: 1 !important; }
+  .xe-pclip, .xe-stack.f-safari .xe-pclip { left: 0; right: 0; bottom: 0; top: 292px; }
+  .xe-stack.f-safari .xe-pclip { top: 264px; }
+}
+@media (max-width: 359px) {
+  .xe-stack { height: 640px; }
+  .xe-pclip, .xe-stack.f-safari .xe-pclip { top: 292px; }
+  .xe-stack.f-safari .xe-pclip { top: 264px; }
+  .xe-deal-tabs button { padding: 0 6px; }
+}
+@media (prefers-reduced-motion: reduce) { .xe-win { transition: none !important; } }
