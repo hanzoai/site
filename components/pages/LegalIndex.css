@@ -1,5 +1,7 @@
 /* ---------- /legal index v2 (lgi-): sepia, calm; no dark room ---------- */
-.lgi { --acc: #a0703c; --acc-ink: #fff; }
+.lgi { --acc: #0a0a0b; --acc-ink: #fff; }
+.lgi-kick { margin: -8px 0 0; font-size: 14px; letter-spacing: .12em; text-transform: uppercase; color: var(--soft); }
+.lgi-stack > .w2-pause { z-index: 20; }
 .lgi-anchor { position: relative; top: -120px; }
 
 /* hero */
@@ -25,9 +27,9 @@
 .lgi-big p { margin: 0; font-size: clamp(26px, 2.6vw, 38px); font-weight: 500; line-height: 1.22; letter-spacing: -.03em; color: var(--ink); text-wrap: pretty; }
 .lgi-big code, .lgi-prose code { padding: 2px 8px; border-radius: 8px; background: var(--card); font: 400 .82em var(--mono); color: var(--acc); }
 .lgi-big a, .lgi-prose a { color: var(--ink); text-underline-offset: 4px; }
-.lgi-status { position: relative; display: flex; gap: 14px; padding: 28px; border-radius: 28px; background: #faf6f0; }
-.lgi-status-dot { flex: none; width: 10px; height: 10px; margin-top: 8px; border-radius: 50%; background: var(--acc); box-shadow: 0 0 0 0 rgba(160, 112, 60, .45); animation: lgi-ping 2.4s ease-out infinite; }
-@keyframes lgi-ping { to { box-shadow: 0 0 0 12px rgba(160, 112, 60, 0); } }
+.lgi-status { position: relative; display: flex; gap: 14px; padding: 28px; border-radius: 28px; background: var(--card); }
+.lgi-status-dot { flex: none; width: 10px; height: 10px; margin-top: 8px; border-radius: 50%; background: var(--acc); box-shadow: 0 0 0 0 rgba(10, 10, 11, .35); animation: lgi-ping 2.4s ease-out 2; }
+@keyframes lgi-ping { to { box-shadow: 0 0 0 12px rgba(10, 10, 11, 0); } }
 .lgi-prose p { margin: 0 0 14px; font-size: clamp(16px, 1.2vw, 18px); line-height: 1.62; color: var(--soft); }
 .lgi-prose p:last-child { margin-bottom: 0; }
 .lgi-prose strong { color: var(--ink); font-weight: 600; }
@@ -44,7 +46,7 @@
 .lgi-cards > li { display: flex; }
 .lgi-card { position: relative; display: flex; flex-direction: column; gap: 14px; width: 100%; min-height: 300px; padding: 28px 28px 32px; border-radius: 16px; background: var(--card); color: var(--ink); text-decoration: none; transition: background .3s var(--ease), transform .45s var(--ease); }
 .lgi-card:hover { background: #ececf0; transform: translateY(-4px); }
-.lgi-card-k { font-size: 13px; color: var(--acc); }
+.lgi-card-k { font-size: 13px; color: var(--soft); }
 .lgi-card-t { margin-top: auto; font-size: clamp(24px, 2vw, 30px); font-weight: 600; line-height: 1.08; letter-spacing: -.035em; text-wrap: balance; }
 .lgi-card-d { font-size: 16px; line-height: 1.5; color: var(--soft); }
 .lgi-card-d code { padding: 1px 6px; border-radius: 6px; background: #fff; font: 400 .9em var(--mono); color: var(--ink); }
@@ -53,13 +55,13 @@
 .lgi-card:hover .lgi-card-go { background: var(--acc); color: #fff; transform: translateX(3px); }
 
 /* how these fit together */
-.lgi-how { background: #faf6f0; }
+.lgi-how { background: var(--card); }
 .lgi-how-g { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: 24px clamp(32px, 5vw, 96px); align-items: end; }
 .lgi-how-p { margin-top: 32px; }
 .lgi-ladder { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; align-items: end; height: clamp(320px, 30vw, 440px); }
 .lgi-ladder li { display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; height: calc(40% + var(--k) * 20%); padding: 18px; border-radius: 20px; background: #fff; }
 .lgi-ladder li:first-child { background: var(--acc); color: #fff; }
-.lgi-ladder li:first-child .lgi-step-n, .lgi-ladder li:first-child em { color: #f3e3cf; }
+.lgi-ladder li:first-child .lgi-step-n, .lgi-ladder li:first-child em { color: #c7c7cc; }
 .lgi-step-n { font-size: 13px; color: var(--acc); margin-bottom: auto; }
 .lgi-ladder b { font-size: clamp(15px, 1.3vw, 20px); font-weight: 600; letter-spacing: -.02em; line-height: 1.1; hyphens: auto; overflow-wrap: break-word; }
 .lgi-ladder em { font-style: normal; font-size: 14px; color: var(--soft); }

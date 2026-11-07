@@ -1,11 +1,13 @@
 'use client';
-/* /legal, the Trust Center, v2. V2: 8/10 Stage stack (the documents arrive as a pile of paper that deals itself), the catalogue as filter chips with cards that re-flow and open into their document, the four data-use states as a ladder, calm contact rows, sepia accent
+/* Persona: buyers, security and legal reviewers, and users checking their terms. Goal: reach the right document in one step. CTA: none (legal pages carry no ask; PLAN-COMPONENTS 2.4), so the ask bar is off. Metric: document open.
+   /legal, the Trust Center, v2. V2: 8/10 Stage stack (the documents arrive as a pile of paper that deals itself), the catalogue as filter chips with cards that re-flow and open into their document, the four data-use states as a ladder, calm contact rows, sepia accent
    Signature: the documents as a stack of paper that deals itself. The top sheet slides to the back every few seconds
    and the next document comes up, each with its own address on hanzo.ai/legal.
    Beyond: "Find the one you need". Filter the twelve documents by kind (Agreements, Policies, Notices and registers)
    and the cards re-flow; every card opens into its document.
    Motion budget: signature = the dealing stack; supporting = Stage (Settle), layout re-flow (filter), open-into-page
-   (Morph navigation). Utility archetype: calm, precise, one delight. Every word and link is Hanzo's. */
+   (Morph navigation). Utility archetype: calm, precise, one delight. Colour: none (0 UI hues). The stack has a pause
+   button. Every word and link is Hanzo's. */
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { EASE } from '../ui';
@@ -15,6 +17,8 @@ import { useArrival } from './doorway';
 import { useLive, useEvery } from './cloud/Frame';
 import LineMask from '../v2/x-gauss/LineMask';
 import Settle from '../v2/Settle';
+import NoJs from '../v2/x-gauss/NoJs';
+import { usePause } from '../v2/x-gauss/Pause';
 import '../v2/Scale.css';
 import './LegalIndex.css';
 
@@ -23,16 +27,18 @@ const LADDER = [['service-only', 'by default'], ['private improvement'], ['resea
 /* The hero object: the documents as a stack of paper; the top sheet goes to the back on its own. */
 function Stack({ docs }) {
   const [ref, live] = useLive(0.3);
+  const [paused, pauseBtn] = usePause({ right: 8, top: 8 });
   const [top, setTop] = useState(0);
-  useEvery(2400, live, () => setTop((t) => (t + 1) % docs.length));
+  useEvery(2400, live && !paused, () => setTop((t) => (t + 1) % docs.length));
   const order = docs.map((_, i) => (i - top + docs.length) % docs.length);
   return (
-    <div className="lgi-stack" ref={ref} aria-hidden="true">
+    <div className="lgi-stack" ref={ref}>
+      {pauseBtn}
       {docs.map((it, i) => {
         const k = order[i];
         if (k > 4) return null;
         return (
-          <motion.div key={it.href} className="lgi-sheet" initial={false}
+          <motion.div key={it.href} className="lgi-sheet" aria-hidden="true" initial={false}
             animate={{ x: k * 26, y: k * -22, rotate: k * 2.2 - 2, scale: 1 - k * 0.04, opacity: k === 4 ? 0 : 1, zIndex: 10 - k }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
             <span className="lgi-sheet-u x-mono">hanzo.ai{it.href}</span>
@@ -111,12 +117,13 @@ export default function LegalIndex({ d }) {
   const other = d.rest.filter((g) => g !== how && g !== contact);
   const mail = contact && contact.nodes.find((n) => n.t === 'ul');
   return (
-    <main className="lgi w2">
+    <main className="lgi w2" data-ask="off">
+      <NoJs />
       <section className="lgi-hero" aria-labelledby="lgi-h1" data-morph-target>
         <div className="w2-wrap lgi-hero-g">
           <div className="lgi-hero-copy">
-            <motion.p className="w2-kicker acc" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>{d.kicker}</motion.p>
             <LineMask as="h1" id="lgi-h1" now className="w2-display lgi-h1" lines={d.title.split(' & ').map((t, i, a) => (i < a.length - 1 ? t + ' &' : t))} />
+            <p className="lgi-kick x-mono">{d.kicker}</p>
             <motion.p className="w2-lede lgi-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>{d.lede}</motion.p>
           </div>
           <Settle from={1.08} lift={50}><Stack docs={docs} /></Settle>
