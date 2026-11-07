@@ -259,6 +259,7 @@ export default function Kai() {
       accent="#2d5bff"
       ink="#2448d8"
       shape={DIAMOND}
+      aim={(W, H, wide) => (wide ? null : [-0.16 * W, -0.2 * H])}
       headClass="ka-head"
       head={
         <>

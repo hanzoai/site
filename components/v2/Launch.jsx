@@ -9,6 +9,8 @@
      the poster decodes), and as you scroll it settles into the page's own shape (clip-path only, the camera feel is
      scale + clip) while the page's headline reveals beside it, line by line, once.
    - shape(t, W, H, wide) returns a CSS clip-path for t in 0..1 (0 = full-bleed). Helpers below: ring, box, poly.
+   - aim(W, H, wide) (optional) returns [dx, dy]: how far the camera pans the film by the time it settles, so the
+     subject sits inside the shape (the film is zoomed 1.14 by then, which gives it a little margin).
    - The page's accent is set as --ac (fills) and --ac-ink (text on white) on the root; the film itself is a duotone in
      that accent (public/models/v2, made by scripts/tint.py), so colour arrives through the picture, not tinted boxes.
    - Close runs the film back into the card it opened from; the page ends on the next model's card, which opens the
@@ -72,7 +74,7 @@ export function Lines({ as: T = 'h2', id, className = '', lines, reveal }) {
   );
 }
 
-export default function Launch({ slug, accent, ink, shape, head, headClass = '', label, children }) {
+export default function Launch({ slug, accent, ink, shape, aim, head, headClass = '', label, children }) {
   const m = bySlug[slug];
   const opener = useOpener();
   const root = useRef(null), stage = useRef(null), pin = useRef(null);
@@ -87,6 +89,10 @@ export default function Launch({ slug, accent, ink, shape, head, headClass = '',
   const t = useTransform(p, (v) => (calm ? 1 : clamp01(v / 0.8)));
   const clip = useTransform(t, (v) => (!size || v <= 0.002 ? 'none' : shape(settle(v), size.W, size.H, size.wide)));
   const zoom = useTransform(t, [0, 1], [1, calm ? 1 : 1.14]);
+  // aim: the camera pans the film so its subject sits inside the settled shape ([dx, dy] px at t = 1, per layout)
+  const pan = (k) => (v) => { if (!size || !aim) return 0; const a = aim(size.W, size.H, size.wide); return (a ? a[k] : 0) * settle(v); };
+  const panX = useTransform(t, pan(0));
+  const panY = useTransform(t, pan(1));
   const nameO = useTransform(t, [0, 0.28], [1, 0]);
   const nameY = useTransform(t, [0, 0.28], [0, -72]);
   const cueO = useTransform(t, [0, 0.08], [1, 0]);
@@ -108,7 +114,7 @@ export default function Launch({ slug, accent, ink, shape, head, headClass = '',
       <section className="lv-stage" ref={stage} data-hero={slug} data-ready={ready ? '' : undefined} aria-label={label || m.name}>
         <div className="lv-pin" ref={pin}>
           <motion.div className="lv-film" style={{ clipPath: clip }}>
-            <motion.div className="lv-film-in" style={{ scale: zoom }}>
+            <motion.div className="lv-film-in" style={{ scale: zoom, x: panX, y: panY }}>
               <img src={film(slug, 'webp')} alt="" />
               <video src={film(slug, 'webm')} autoPlay muted loop playsInline aria-hidden="true" />
             </motion.div>

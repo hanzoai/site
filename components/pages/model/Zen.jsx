@@ -1,16 +1,19 @@
 'use client';
-/* Zen: open models, yours to run.
+/* Zen: open models, yours to run. v2 launch page (Launch + Chapters, accent jade).
+   V2: 8/10 film settles into an arch, a window onto Zen's sphere; the facts as hero figures; open weights, Zen 6 Flash and Zen 6 pin as chapters; the reasoning trace is the one dark room; a side-by-side spec sheet and the family as tiles
    Signature: the reasoning trace. Zen thinks out loud, step by step, about which Zen to run: every step reads one
    fact off the two model cards beside it (that row lights up), and the answer lands on its card. It runs three needs
    in turn; pick one by hand, or step through it yourself.
-   Beyond: the trace is a chooser built only from Zen's own facts (local use, video, price), and the family strip
-   below leads to every Zen model, Zen 7 and Zen 6 Max with each one's living sigil. */
+   Beyond: the trace is a chooser built only from Zen's own facts (local use, video, price), and the family tiles
+   below lead to every Zen model, Zen 7 and Zen 6 Max with each one's living sigil. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE } from '../../ui';
 import { A, More } from '../../kit';
 import Sigil from '../../Sigil';
 import { arrows } from './live';
+import Launch, { Lines, lerp, film } from '../../v2/Launch';
+import Chapters from '../../v2/Chapters';
 import './Zen.css';
 
 const CARDS = [
@@ -115,26 +118,131 @@ const FAMILY = [
   ['/zen/zen6-max', 'Zen 6 Max', 'Built for the hardest work: deep reasoning, long context, and code.', [3.7, 9216, 5760]],
 ];
 
+// the film closes into an arch: a window onto Zen's sphere
+const ARCH = (t, W, H, wide) => {
+  const w = wide ? Math.min(W * 0.32, H * 0.64) : Math.min(W * 0.62, H * 0.36);
+  const h = wide ? H * 0.82 : H * 0.44;
+  const l = wide ? W * 0.6 : (W - w) / 2, top = wide ? (H - h) / 2 : H * 0.05;
+  const a = lerp(0, w / 2, t).toFixed(1), b = lerp(0, 16, t).toFixed(1);
+  return `inset(${lerp(0, top, t).toFixed(1)}px ${lerp(0, W - l - w, t).toFixed(1)}px ${lerp(0, H - top - h, t).toFixed(1)}px ${lerp(0, l, t).toFixed(1)}px round ${a}px ${a}px ${b}px ${b}px)`;
+};
+
+// a chapter's picture: Zen's film with a model card on it
+function CardArt({ ci, open, z }) {
+  const c = CARDS[ci];
+  return (
+    <div className="ze-art" style={{ '--z': z }}>
+      <img src={film('zen', 'webp')} alt="" loading="lazy" />
+      {open ? (
+        <div className="ze-open" aria-hidden="true">
+          {CARDS.map((k) => <p key={k.code}><code>{k.code}</code><span>{k.size}</span><em>Open weights</em></p>)}
+        </div>
+      ) : (
+        <div className="ze-mcard" aria-hidden="true">
+          <p className="ze-mcard-h"><b>{c.name}</b><code>{c.code}</code></p>
+          <p className="ze-mcard-big mb-tnum">{c.size}</p>
+          <p className="ze-mcard-m">{c.mods}</p>
+          <p className="ze-mcard-p mb-tnum"><b>$2.28</b> in <b>$7.26</b> out</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const cardBody = (c) => (
+  <>
+    <p>{c.desc}</p>
+    <p className="ze-ch-price mb-tnum"><b>$2.28</b> <span>in · per 1M tokens</span> <b>$7.26</b> <span>out</span></p>
+    <p className="ze-ch-specs"><span>{c.size}</span><span>{c.mods}</span><span>Open weights</span></p>
+    <p className="ze-ch-acts">
+      <A to="/login" className="ze-l">Try Hanzo</A>
+      <A to={c.wb} className="ze-l">Open in Workbench</A>
+      <A to="https://github.com/zenlm" className="ze-l">Docs on GitHub</A>
+    </p>
+  </>
+);
+const CHAPTERS = [
+  { k: 'Open weights', title: 'Download it, or call it.', art: <CardArt open z={1.1} />, body: <><p>Open weights: download the weights, or call them on Hanzo Cloud.</p><p><More to="https://github.com/zenlm">Docs on GitHub</More></p></> },
+  { k: CARDS[0].name, title: 'Built for local use.', art: <CardArt ci={0} z={1.35} />, body: cardBody(CARDS[0]) },
+  { k: CARDS[1].name, title: 'The flagship, open.', art: <CardArt ci={1} z={1.7} />, body: cardBody(CARDS[1]) },
+];
+
 export default function Zen() {
   return (
-    <>
-      <section className="ze-intro mb-sec" aria-labelledby="ze-h">
+    <Launch
+      slug="zen"
+      accent="#0e9f8e"
+      ink="#0a7a6d"
+      shape={ARCH}
+      aim={(W, H, wide) => (wide ? null : [-0.24 * W, -0.21 * H])}
+      headClass="ze-head"
+      head={
+        <>
+          <p className="lv-kick">Hanzo / Zen</p>
+          <Lines id="ze-h" lines={['Open models.', 'Yours to run.']} />
+          <p className="lv-lede">The open-weight family behind Hanzo. Download the weights, or call them on Hanzo Cloud.</p>
+          <div className="lv-acts">
+            <A to="/login" className="x-btn solid" data-thumb="Try Hanzo">Try Hanzo</A>
+            <A to="https://platform.hanzo.ai" className="x-btn">API Platform</A>
+            <More to="https://github.com/zenlm">Docs on GitHub</More>
+          </div>
+        </>
+      }
+    >
+      <section className="lv-sec ze-figs-sec" aria-label="Zen in figures">
         <div className="x-wrap">
-          <div className="ze-top">
-            <p className="mb-kick">Hanzo / Zen</p>
-            <h2 id="ze-h" className="mb-h">Open models. Yours to run.</h2>
-            <p className="mb-lede">The open-weight family behind Hanzo. Download the weights, or call them on Hanzo Cloud.</p>
-            <div className="mb-acts">
-              <A to="/login" className="x-btn solid" data-thumb="Try Hanzo">Try Hanzo</A>
-              <A to="https://platform.hanzo.ai" className="x-btn">API Platform</A>
-              <More to="https://github.com/zenlm">Docs on GitHub</More>
+          <div className="lv-figs ze-figs">
+            <div className="lv-fig ac"><b>5.95<small>GB</small></b><span>Zen 6 Flash weights, packed ternary</span></div>
+            <div className="lv-fig"><b>27.3<small>B</small></b><span>Zen 6, dense</span></div>
+            <div className="lv-fig"><b>$2.28</b><span>per 1M input tokens, either model</span></div>
+          </div>
+        </div>
+      </section>
+      <Chapters id="ze-ch" label="The Zen 6 family" items={CHAPTERS} />
+      <section className="lv-room lv-sec ze-live" aria-labelledby="ze-live-h">
+        <div className="x-wrap">
+          <div className="lv-sh">
+            <div>
+              <p className="lv-kick"><span className="mb-live">Live</span></p>
+              <h2 id="ze-live-h" className="lv-h">Which Zen should you run?</h2>
             </div>
+            <p className="lv-p">Zen reasons out loud, one fact at a time, reading each step off the two model cards until the answer lands. Pick what you need.</p>
           </div>
           <Console />
         </div>
       </section>
-      <section className="ze-family mb-sec" aria-label="The Zen family">
+      <section className="lv-sec ze-spec" aria-labelledby="ze-spec-h">
         <div className="x-wrap">
+          <div className="lv-sh">
+            <div>
+              <p className="lv-kick">Spec sheet</p>
+              <h2 id="ze-spec-h" className="lv-h">Zen 6 and Zen 6 Flash, side by side.</h2>
+            </div>
+          </div>
+          <div className="ze-spec-scroll">
+            <table className="lv-spec">
+              <thead><tr><th scope="col"><span className="x-sr">Fact</span></th>{CARDS.map((c) => <th key={c.code} scope="col">{c.name}</th>)}</tr></thead>
+              <tbody>
+                <tr><th scope="row">Model</th>{CARDS.map((c) => <td key={c.code}><code>{c.code}</code></td>)}</tr>
+                <tr><th scope="row">Weights</th>{CARDS.map((c) => <td key={c.code}>{c.size}</td>)}</tr>
+                <tr><th scope="row">Reads</th>{CARDS.map((c) => <td key={c.code}>{c.mods}</td>)}</tr>
+                <tr><th scope="row">Input</th>{CARDS.map((c) => <td key={c.code}><b>$2.28</b> per 1M tokens</td>)}</tr>
+                <tr><th scope="row">Output</th>{CARDS.map((c) => <td key={c.code}><b>$7.26</b> per 1M tokens</td>)}</tr>
+                <tr><th scope="row">Licence</th>{CARDS.map((c) => <td key={c.code}>Open weights</td>)}</tr>
+                <tr><th scope="row">Workbench</th>{CARDS.map((c) => <td key={c.code}><A to={c.wb}>Open in Workbench</A></td>)}</tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+      <section className="lv-sec ze-family" aria-labelledby="ze-fam-h">
+        <div className="x-wrap">
+          <div className="lv-sh">
+            <div>
+              <p className="lv-kick">The Zen family</p>
+              <h2 id="ze-fam-h" className="lv-h">Every Zen, one tap away.</h2>
+            </div>
+          </div>
           <ul className="ze-fam">
             {FAMILY.map(([to, name, line, data], i) => (
               <li key={to} className={i === 0 ? 'big' : ''}>
@@ -149,6 +257,6 @@ export default function Zen() {
           </ul>
         </div>
       </section>
-    </>
+    </Launch>
   );
 }
