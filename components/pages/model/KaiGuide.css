@@ -174,22 +174,24 @@ html:not(.js) .kg-more { display: none; }
 .kg-limits-g { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); gap: 24px; align-items: start; }
 .kg-limits-t { grid-column: 1 / span 7; }
 .kg-limits-c { grid-column: 9 / -1; position: sticky; top: calc(var(--x-top, 60px) + 44px); }
-.kg-dl { margin: 44px 0 0; border-top: 1px solid var(--line); }
-.kg-dl > div { position: relative; isolation: isolate; padding: 0 0 0 21px; border-bottom: 1px solid var(--line); }
-/* the open row's ink rule, and a Quiet wipe behind a folded row under the pointer */
-.kg-dl > div::before { content: ''; position: absolute; left: 0; top: 17px; bottom: 21px; width: 2px; border-radius: 1px; background: var(--ink); transform: scaleY(0); transform-origin: 50% 0; transition: transform .3s var(--e); }
-.kg-dl > div[data-on]::before { transform: scaleY(1); }
-.kg-dl > div::after { content: ''; position: absolute; inset: 0; z-index: -1; background: var(--quiet-room); clip-path: inset(0 100% 0 0); transition: clip-path .5s var(--e); pointer-events: none; }
-@media (hover: hover) and (pointer: fine) { .kg-dl > div:not([data-on]):hover::after { clip-path: inset(0 0 0 0); } }
-.kg-dl dt button { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 56px; margin: 0; padding: 0; border: 0; background: none; text-align: left; font: 500 12px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--quiet); cursor: pointer; transition: color .15s var(--eo), transform .09s var(--eo); }
+/* one row of five labels over a hairline, the open one in ink with an ink rule under it; beneath, one sentence slot
+   (every sentence sits in the same grid cell, the folded ones hidden="until-found") */
+.kg-dl { display: grid; grid-template-columns: repeat(5, auto) minmax(0, 1fr); align-content: start; margin: 44px 0 0; }
+.kg-dl > div { display: contents; }
+.kg-dl dt { grid-row: 1; position: relative; border-bottom: 1px solid var(--line); }
+.kg-dl::after { content: ''; grid-row: 1; grid-column: 6; border-bottom: 1px solid var(--line); }
+.kg-dl dt::after { content: ''; position: absolute; left: 0; right: 17px; bottom: -1px; height: 2px; background: var(--ink); transform: scaleX(0); transform-origin: 0 50%; transition: transform .3s var(--e); }
+.kg-dl > div[data-on] dt::after { transform: none; }
+.kg-dl dt button { display: flex; align-items: center; min-height: 56px; margin: 0; padding: 0 17px 0 0; border: 0; background: none; text-align: left; font: 500 12px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--quiet); cursor: pointer; transition: color .15s var(--eo), transform .09s var(--eo); }
+.kg-dl > div + div dt button { padding-left: 10px; }
+.kg-dl > div + div dt::after { left: 10px; }
 .kg-dl dt button:active { transform: translateY(1px); }
 .kg-dl dt button:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
-/* the arrow points on while folded, and turns down once its row is open */
-.kg-dl dt button svg { opacity: .5; transform: translateX(-2px); transition: opacity .15s var(--eo), transform .3s var(--e); }
+.kg-dl dt button svg { display: none; }
 .kg-dl > div[data-on] dt button { color: var(--ink); }
-.kg-dl > div[data-on] dt button svg { opacity: 1; transform: rotate(90deg); }
-@media (hover: hover) { .kg-dl dt button:hover { color: var(--ink); } .kg-dl > div:not([data-on]) dt button:hover svg { opacity: 1; transform: translateX(4px); } }
-.kg-dl dd { margin: 0; padding: 0 0 21px; max-width: 64ch; font-size: 16px; line-height: 1.6; }
+/* a folded label under the pointer: it darkens and its rule shows at a third */
+@media (hover: hover) { .kg-dl dt button:hover { color: var(--ink); } .kg-dl > div:not([data-on]) dt:hover::after { transform: scaleX(.33); } }
+.kg-dl dd { grid-row: 2; grid-column: 1 / -1; margin: 0; padding: 27px 0 0; max-width: 64ch; font-size: 17px; line-height: 1.6; }
 .kg-dl dd:not([hidden]) { animation: kg-open .5s var(--e) both; }
 @keyframes kg-open { from { opacity: 0; transform: translateY(-6px); } }
 .kg-dl dd code { font-size: .9em; }
@@ -368,6 +370,11 @@ html:not(.js) .kg-rx-top { display: none; }
   .kg-code .x-codeblock, .kg-cap { border-radius: 20px; }
   .kg-code .x-codeblock pre { padding: 17px 27px 17px 17px; }
   .kg-dl { margin-top: 27px; }
+  .kg-dl dt button { padding-right: 10px; }
+  .kg-dl > div + div dt button { padding-left: 6px; }
+  .kg-dl > div + div dt::after { left: 6px; }
+  .kg-dl dt::after { right: 10px; }
+  .kg-dl dd { padding-top: 21px; font-size: 16px; }
   .kg-check, .kg-jev-d { border-radius: 20px; }
   .kg-ck-body { padding: 17px 17px 21px; }
   /* the two model ids side by side at equal width */
@@ -398,7 +405,7 @@ html:not(.js) .kg-rx-top { display: none; }
 @media (prefers-reduced-motion: reduce) {
   .kg-sess-req code::after { animation: none !important; }
   .js .kg-rows li .kg-glyph i { animation: none !important; }
-  .kg-dl-l, .kg-bf-bar i, .kg-dl > div::before, .kg-dl > div::after, .kg-rec li::before, .kg-rows li::before, .kg-run, .kg-cost::before, .kg-cost b,
+  .kg-dl-l, .kg-bf-bar i, .kg-dl dt::after, .kg-rec li::before, .kg-rows li::before, .kg-run, .kg-cost::before, .kg-cost b,
   .kg-rx-m code, .kg-rx-it, .kg-rx-it p, .kg-end-h .x-line-in, .kg-rl, .kg-rl::before, .kg-sess-req, .kg-shape-w i { transition: none !important; }
   .kg-rx-bar i, .kg-dl dd { animation: none !important; }
 }

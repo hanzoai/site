@@ -376,10 +376,10 @@ const LIMITS = [
   ['Price', <>$0.021 per million input tokens; output is free. Jev costs $0.042.</>],
 ];
 
-/* the limits one at a time: only the open row shows its sentence; the other four fold to their mono label, their text
-   kept in the HTML (hidden="until-found", so find-in-page and #limit-<name> open it). On desktop the open row follows
-   the checker as it walks Hanzo's cases; a click on a row opens it and loads its case, so the two move together. The
-   list keeps the height of its tallest open state, so nothing below it moves while rows open and fold. */
+/* the limits one at a time: the five mono labels sit in one row and only the open one's sentence shows beneath them;
+   the other four sentences stay in the HTML (hidden="until-found", so find-in-page and #limit-<name> open them). The
+   open limit follows the checker as it walks Hanzo's cases, and a click on a label opens it and loads its case, so the
+   two move together. The sentence slot keeps the height of the tallest sentence, so nothing moves as they change. */
 const slug = (k) => 'limit-' + k.toLowerCase();
 function Limits() {
   const box = useRef(null), list = useRef(null);
@@ -396,8 +396,8 @@ function Limits() {
     return () => clearTimeout(t);
   }, [seen, mine, calm, n]);
   const lit = row !== null ? row : mine ? null : SCENE_ROW[s];
-  // desktop: the open row follows the checker's walk (on a phone the checker sits below, so only a tap opens a row)
-  useEffect(() => { if (lit !== null && matchMedia('(min-width: 900px)').matches) setOpen(lit); }, [lit]);
+  // the open limit follows the checker's walk; the sentence slot keeps one height, so nothing moves when it changes
+  useEffect(() => { if (lit !== null) setOpen(lit); }, [lit]);
   const pick = (i) => { setOpen(i); setRow(i); setMine([...SCENES[ROW_SCENE[i]]]); };
   useEffect(() => {
     const dl = list.current;
@@ -406,10 +406,9 @@ function Limits() {
     const found = dds.map((d, i) => { const f = () => pick(i); d.addEventListener('beforematch', f); return f; });
     const hash = () => { const i = LIMITS.findIndex(([k]) => '#' + slug(k) === location.hash); if (i >= 0) pick(i); };
     hash(); addEventListener('hashchange', hash);
-    // reserve the tallest open state (desktop, where the list sits beside the sticky checker)
+    // reserve the tallest open state, so a sentence opening or folding never moves the page
     const fit = () => {
       dl.style.minHeight = '';
-      if (!matchMedia('(min-width: 900px)').matches) return;
       const was = dds.map((d) => d.getAttribute('hidden'));
       let max = 0;
       dds.forEach((_, i) => { dds.forEach((d, j) => (j === i ? d.removeAttribute('hidden') : d.setAttribute('hidden', 'until-found'))); max = Math.max(max, dl.offsetHeight); });
@@ -561,7 +560,7 @@ export default function KaiGuide() {
   return (
     <main className="kg">
       <section className="kg-hero" aria-labelledby="kg-h">
-        <noscript><style>{'.kg-h1 .x-line-in,.kg-verdict b{transform:none!important;opacity:1!important}.kg-sess-btn,.kg-rx-btn{display:none!important}.kg-code [role=tabpanel]{display:block!important}.kg-code [role=tablist]{display:none!important}.kg-more{display:none!important}.kg-dl dd[hidden]{display:block!important;content-visibility:visible!important}'}</style></noscript>
+        <noscript><style>{'.kg-h1 .x-line-in,.kg-verdict b{transform:none!important;opacity:1!important}.kg-sess-btn,.kg-rx-btn{display:none!important}.kg-code [role=tabpanel]{display:block!important}.kg-code [role=tablist]{display:none!important}.kg-more{display:none!important}.kg-dl dd{grid-row:auto!important}.kg-dl dd[hidden]{display:block!important;content-visibility:visible!important}'}</style></noscript>
         <div className="kg-wrap kg-hero-g">
           <div className="kg-hero-t">
             <h1 id="kg-h" className="kg-h1">
