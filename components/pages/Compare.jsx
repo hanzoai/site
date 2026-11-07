@@ -59,11 +59,15 @@ const Arrow = ({ s = 18 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria
 /* ---------- the signature: the verdict board ---------- */
 function Board() {
   const [at, setAt] = useState(0);
-  const [held, setHeld] = useState(false);
+  const [held, setHeld] = useState(false); // a hand at work on the board pauses it; a resting pointer lets it go on
+  const [pinned, setPinned] = useState(false); // a row pressed: held until the pointer leaves the board
+  const rest = useRef(0);
   const calm = useReducedMotion();
   const ref = useRef(null);
   const live = useInView(ref, { amount: 0.4 });
-  const run = !held && !calm && live;
+  const run = !held && !pinned && !calm && live;
+  useEffect(() => () => clearTimeout(rest.current), []);
+  const moved = (e) => { if (e.pointerType !== 'mouse') return; setHeld(true); clearTimeout(rest.current); rest.current = setTimeout(() => setHeld(false), 2500); };
   useEffect(() => {
     if (!run) return;
     const t = setTimeout(() => setAt((v) => (v + 1) % ROWS.length), STEP);
@@ -80,7 +84,7 @@ function Board() {
   const r = TABLE[at];
   return (
     <motion.div className="xcp-board pf-obj" ref={ref} initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.3 }}
-      onPointerEnter={(e) => e.pointerType === 'mouse' && setHeld(true)} onPointerLeave={() => setHeld(false)}>
+      onPointerMove={moved} onPointerLeave={() => { clearTimeout(rest.current); setHeld(false); setPinned(false); }}>
       <div className="xcp-b-head">
         <img src="/models/enso.webp" alt="" width="56" height="56" className="xcp-b-img" />
         <A to={ASK.to} className="xcp-b-q">Which API should you route your model calls through? <span aria-hidden="true">→</span></A>
@@ -90,7 +94,7 @@ function Board() {
         <div className="xcp-pills" role="tablist" aria-label="Rows" onKeyDown={keys}>
           {TABLE.map((row, i) => (
             <button key={row.k} id={'xcp-pill-' + i} type="button" role="tab" aria-selected={at === i} aria-controls="xcp-b-panel" tabIndex={at === i ? 0 : -1} aria-label={row.k}
-              onClick={() => { setAt(i); setHeld(true); }}>
+              onClick={() => { setAt(i); setPinned(true); }}>
               {at === i && <motion.span layoutId="xcp-pill" className="xcp-pill-bg" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />}
               <span className="pf-mono">{pad(i)}</span>
             </button>

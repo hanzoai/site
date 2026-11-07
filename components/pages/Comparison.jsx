@@ -242,7 +242,7 @@ export default function Comparison() {
     <main className="xcm">
       <Bill />
       <Holding />
-      <AskBar title="Buy it, or run it" label={ASK.label} to={ASK.to} />
+      <AskBar title="Buy it, or run it" label={ASK.label} to={ASK.to} hero=".xcm-hero" />
     </main>
   );
 }
