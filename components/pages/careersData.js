@@ -3,6 +3,7 @@ import { load, find, findAll, textOf, slot, tag, metaOf, isN } from './htmltree'
 
 export const SLUGS = ['ai-ml-research-engineer', 'compiler-engineer', 'mcp-protocol-engineer', 'cryptography-engineer-zkp', 'senior-backend-engineer', 'product-designer', 'academic-research-intern', 'open'];
 const T = (n) => textOf(n).replace(/\s+/g, ' ').trim();
+const MODELS = ['enso', 'iro', 'kai', 'koe', 'koma', 'mori', 'oto', 'uta', 'zen'];
 const strs = (n) => (isN(n) ? n.c.filter((k) => typeof k === 'string').join('').replace(/\s+/g, ' ').trim() : n);
 
 export function role(slug) {
@@ -49,8 +50,11 @@ export function role(slug) {
     else if (find(ch, tag('a'))) { const a = find(ch, tag('a')); note = { text: strs(ch), href: a.a.href, mail: T(a) }; }
   }
   const apply = find(root, (n) => n.a && n.a.id === 'apply');
+  // Hanzo's own models this role's words name (their renders live in /public/models), in the order the text names them
+  const words = [T(find(root, tag('h1'))), T(find(root, slot('lede'))), ...blocks.flatMap((b) => [b.title, ...b.paras, ...b.items, ...b.cards.flat()])].join(' ');
+  const models = MODELS.map((m) => { const r = new RegExp('\\b(' + m + ')\\b', 'i').exec(words); return r ? [m, r[1], r.index] : null; }).filter(Boolean).sort((x, y) => x[2] - y[2]).map(([m, name]) => [m, name]);
   return {
-    slug, at: SLUGS.indexOf(slug),
+    slug, at: SLUGS.indexOf(slug), models,
     back: T(back), share: T(share), chips,
     title: T(find(root, tag('h1'))), lede: T(find(root, slot('lede'))),
     apply: T(acts[0]), email: { text: T(acts[1]), href: acts[1].a.href },
