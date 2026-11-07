@@ -1,4 +1,6 @@
 # /gui — James-eye review
+
+Ready: 8 Nov, held up next to /api and /agents (no score). Phone chapters now lead with their object (title and counter, then the object, then the words) instead of a squeezed two-column row, the compare's devices are sized to the window so they never reach the platform names, and chapters 01 and 03 move on their own (each platform lit in turn, the flat rule re-emitted); the review's fixes 1-9 hold (sheet at rest, picker field shows the value, small opened sidebar, platform-only opened copy, Get GUI on one line, chip and card hover). taste/unique/parity OK (text 70/70, links 2/2); 0 console errors from this page (only the shared footer hydration warning, which /agents shows too), no overflow/overlap at 1470x801 and 375x812.
 7 Nov, round 5, walked at 1470x801, 375x812 and 320x640 (isMobile, hasTouch) with Playwright Chromium: frames at 0, 1 and 3 s with no input, wheel or touch scroll one screen at a time with 1.5 s dwell, hover and press on desktop, tap on phone, platform card opened and closed with Esc and with Back, overflow and art-to-text overlap measured, plus a prefers-reduced-motion load at desktop and phone. Every screenshot taken with `caret: 'initial'`.
 
 Verdict: 6/10

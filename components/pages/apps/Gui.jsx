@@ -277,12 +277,15 @@ function Compare() {
 
 /* Each chapter's own object: what the one component turns into for that idea. */
 function ChapterObj({ i, live }) {
-  const wave = useCycle(live, 1500, WAVE);
+  const wave = useCycle(live && i === 4, 1500, WAVE);
+  // 01 lights each platform in turn as the one source reaches it; 03 the compiler re-emits the rule as the props change
+  const lit = useCycle(live && i === 0, 1200, PLAT);
+  const flat = useCycle(live && i === 2, 2200, PRESETS);
   if (i === 0) return (
-    <ul className="gu-ch-targets">{PLAT.map(([t, s, k]) => <li key={k}><b>{t}</b><span className="x-mono">{s}</span></li>)}</ul>
+    <ul className="gu-ch-targets">{PLAT.map(([t, s, k]) => <li key={k} className={lit[2] === k ? 'on' : ''}><b>{t}</b><span className="x-mono">{s}</span></li>)}</ul>
   );
   if (i === 1) return <div className="gu-ch-pair"><Welcome v={PRESETS[0]} /><Welcome v={PRESETS[2]} /></div>;
-  if (i === 2) return <div className="gu-ch-flat"><Flat v={PRESETS[1]} /></div>;
+  if (i === 2) return <div className="gu-ch-flat"><Flat key={flat.p + flat.bg + flat.rounded} v={flat} /></div>;
   if (i === 3) return (
     <div className="gu-ch-parts"><Welcome v={PRESETS[0]} parts />
       <ul className="gu-ch-prims x-mono">{PRIMS.map((p) => <li key={p} className={PRIMS_USED.includes(p) ? 'on' : ''}>{p}</li>)}</ul></div>
