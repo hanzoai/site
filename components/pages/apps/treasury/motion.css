@@ -48,6 +48,9 @@
 .ts-card h2 { margin: 0; }
 .ts-card .ts-sc-b { margin: 0; font-size: 16px; line-height: 1.6; color: #525252; }
 .ts-card .ts-v { box-shadow: none; }
+/* account names are addresses: they never break mid-name; the account column takes its own width */
+.ts-card .ts-v-row.two, .ts-card .ts-v-row.bal { grid-template-columns: max-content minmax(0, 1fr) auto; gap: 16px; }
+.ts-card .ts-v-row.two > span, .ts-card .ts-v-row.bal > span { white-space: nowrap; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 
 /* ---------- the five entrances, in order ---------- */
 
@@ -93,7 +96,12 @@
   .ts-card .ts-v { padding: 14px; }
   .ts-card .ts-v-row { font-size: 14px; gap: 8px; }
   .ts-card .ts-v-row b { font-size: 17px; }
+  .ts-card .ts-v-row.two { grid-template-columns: minmax(0, 1fr) auto auto; }
+  .ts-card .ts-v-row.bal { grid-template-columns: minmax(0, 1fr) 8ch; }
   .ts-card .ts-v-row.post > span:nth-child(2) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ts-card .ts-v-row.post > span:nth-child(2) { gap: 6px; }
+  .ts-card .ts-arr { width: 12px; }
+  .ts-card .ts-v-row.post { grid-template-columns: minmax(0, 1fr) 7ch; }
   .ts-v-sum { flex-wrap: wrap; gap: 4px 12px; }
   .ts-v-sum b { white-space: nowrap; }
 }

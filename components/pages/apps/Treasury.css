@@ -137,7 +137,7 @@
 a.ts-chip:active { transform: scale(.97); }
 
 @media (hover: hover) {
-  .ts-pause .w2-pause:hover { background: #262626; }
+  .ts-pause .w2-pause:hover { background: #fafafa; color: #0a0a0a; }
   .ts-b:hover:not([disabled]) { background: #0a0a0a; color: #fff; }
   a.ts-chip:hover { background: #0a0a0a; color: #fff; }
 }
