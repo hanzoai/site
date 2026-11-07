@@ -4,12 +4,14 @@
    the previous one (clip-path). A rail of numbered ticks shows where you are and jumps to a chapter.
    Usage:
      <Scenes label="How it works" items={[
-       { kick: 'Tools', title: 'One key', body: <p className="av-body">…</p>, visual: (on) => <MyUI live={on} /> },
+       { title: 'One key', body: <p className="av-body">…</p>, visual: (on) => <MyUI live={on} /> },
        …]} flip={false} tone={['#fff', '#f5f5f7', …]} />
    - visual: a node, or (on) => node so its live demo runs only while its chapter is showing;
    - flip: picture on the left; tone: an optional background per chapter (the scene change).
    Phones (≤ 900 px) get no pin: the chapters stack, text then picture, and each one is live while it is on screen.
-   Reduced motion: no wipes, the active chapter simply shows. Every chapter's words are always in the HTML. */
+   Reduced motion: no wipes, the active chapter simply shows. Every chapter's words are always in the HTML, and without
+   JS the chapters simply stack (the pin is scoped to html.js). No label sits over a chapter's headline: the rail numbers
+   them. (`kick` is still accepted and used only to name a rail button.) */
 import { useEffect, useRef, useState } from 'react';
 import { useScroll, useMotionValueEvent, useInView } from 'motion/react';
 import './AppScenes.css';
@@ -53,7 +55,6 @@ export default function Scenes({ items, label, flip = false, tone, className = '
             const st = i === at ? ' on' : i < at ? ' past' : '';
             return [
               <div key={'t' + i} className={'av-sc-t' + st} aria-current={i === at ? 'step' : undefined} onFocus={() => { if (!phone && i !== at) jump(i); }}>
-                <p className="av-kick"><span className="av-num">{String(i + 1).padStart(2, '0')}</span>{it.kick ? <> · {it.kick}</> : null}</p>
                 <h3 className="av-head">{it.title}</h3>
                 {it.body}
               </div>,
