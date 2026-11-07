@@ -1,8 +1,8 @@
 'use client';
 /* AskBar (components/v2, owned by the Wave 2 "Proof" chat). JAMES.md 5: "One solid ask in Hanzo's words. It sits in
    the header and in a sticky bar after the hero at every width." On desktops (>900px) a quiet pill rises at the foot
-   of the screen once the hero has gone by, carrying the page's name and its one ask, and steps aside for the footer
-   and for open sheets. On phones the site's thumb bar already does this job: put data-thumb on the hero's ask (see
+   of the screen once the hero has gone by, carrying the page's name and its one ask, and steps aside for the footer,
+   open sheets and the cookie card (PLAN-COMPONENTS 0.9: two fixed layers at most). On phones the site's thumb bar already does this job: put data-thumb on the hero's ask (see
    components/Phone.jsx) and AskBar stays out of the way.
    Usage (last child of the page's <main>):
      <AskBar title="Leaderboard" label="Open bounties" to="/bounty" />
@@ -20,7 +20,8 @@ export default function AskBar({ title, label, to, hero }) {
     const h = hero ? document.querySelector(hero) : main.querySelector('section');
     const foot = document.querySelector('footer');
     let past = false, atFoot = false;
-    const set = () => setOn(past && !atFoot && !document.querySelector('.pf-sheet[data-open="true"]'));
+    // PLAN-COMPONENTS 0.9: at most two fixed layers, so it waits while the cookie card or a sheet is up
+    const set = () => setOn(past && !atFoot && !document.querySelector('.pf-sheet[data-open="true"], .x-cookie, .x-pal, .x-pop'));
     const io = new IntersectionObserver((es) => {
       es.forEach((e) => {
         if (e.target === h) past = !e.isIntersecting && e.boundingClientRect.top < 0;
@@ -31,7 +32,7 @@ export default function AskBar({ title, label, to, hero }) {
     if (h) io.observe(h);
     if (foot) io.observe(foot);
     const mo = new MutationObserver(set);
-    mo.observe(document.body, { subtree: true, attributes: true, attributeFilter: ['data-open'] });
+    mo.observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ['data-open'] });
     return () => { io.disconnect(); mo.disconnect(); };
   }, [hero]);
   return (

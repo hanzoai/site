@@ -137,7 +137,8 @@
 .xlb-calc-row:last-child { border-bottom: 0; }
 .xlb-stepper { display: inline-flex; align-items: center; gap: 4px; padding: 4px; border-radius: 99px; background: #f0f0f2; }
 .xlb-stepper button { width: 44px; height: 44px; border: 0; border-radius: 50%; background: #fff; color: var(--ink); font: 500 20px/1 var(--sans); cursor: pointer; box-shadow: 0 1px 2px rgba(0, 0, 0, .08); transition: transform .2s var(--ease); }
-.xlb-stepper button:active { transform: scale(.92); }
+.xlb-stepper button:hover:not(:disabled) { transform: scale(1.08); }
+.xlb-stepper button:active:not(:disabled) { transform: scale(.94); }
 .xlb-stepper button:disabled { opacity: .35; cursor: default; }
 .xlb-stepper output { min-width: 40px; text-align: center; font-size: 17px; }
 .xlb-per { display: inline-flex; flex-wrap: wrap; gap: 6px; }
