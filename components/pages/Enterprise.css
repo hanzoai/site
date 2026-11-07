@@ -303,6 +303,8 @@ html:not(.js) .xe-cap { position: relative; margin-top: 28px; }
 @media (max-width: 900px) {
   .xe { --d: clamp(46px, 13vw, 56px); --h: clamp(34px, 9.6vw, 40px); --t: 22px; --l: 19px; --b: 17px; }
   .xe-w { width: calc(100% - 40px); }
+  .xe-pin { padding-top: 84px; }
+  .xe-cam { margin-top: 32px; }
   .xe-g { display: block; }
   .xe-sec { padding-block: 60px; }
   .xe-intro-row { flex-direction: column; align-items: flex-start; }
