@@ -35,12 +35,15 @@
 .nd-lux ul { min-height: 174px; }
 .nd-hw li { height: 38px; display: flex; align-items: center; padding: 0 12px; border-radius: 8px; font: 500 14px/1 var(--sans); color: #525252; background: #fff; transition: background-color .3s var(--e-out), color .3s var(--e-out); }
 .nd-hw li.on { background: #0a0a0a; color: #fff; }
-.nd-net svg { width: 100%; height: 92px; display: block; }
-.nd-net line { stroke: #0a0a0a; stroke-width: 1.5; opacity: 0; transition: opacity .4s var(--e-out); }
-.nd-net svg.on line { opacity: .4; }
-.nd-net circle { fill: #fff; stroke: #d4d4d4; stroke-width: 1.5; transition: stroke .3s var(--e-out); }
-.nd-net svg.on circle { stroke: #0a0a0a; }
-.nd-net circle.me { fill: #0a0a0a; stroke: none; }
+.nd-net { display: flex; flex-direction: column; }
+.nd-peers { list-style: none; margin: 4px 0 16px; padding: 0; display: grid; gap: 18px; }
+.nd-net .nd-k2 { margin-top: auto; }
+.nd-peers li { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; font: 500 13px/1 var(--mono); color: #525252; }
+.nd-peers li span:first-child { color: #0a0a0a; }
+.nd-peers i { position: relative; height: 2px; background: #d4d4d4; }
+.nd-peers b { position: absolute; inset: 0; background: #0a0a0a; transform: scaleX(0); transform-origin: 0 50%; transition: transform .5s var(--e-io); transition-delay: calc(var(--i) * 120ms); }
+.nd-peers.on b { transform: scaleX(1); }
+.nd-peers.on li span:last-child { color: #0a0a0a; }
 /* the five levels: each takes a job when you point at it */
 .nd-lv ol { list-style: none; margin: -6px -8px 0; padding: 0; display: grid; gap: 0; }
 .nd-lv button { width: 100%; display: grid; grid-template-columns: 52px 1fr; align-items: center; gap: 10px; min-height: 44px; padding: 0 8px; border: 0; border-radius: 8px; background: none; text-align: left; font: 500 14px/1.15 var(--sans); color: #525252; cursor: pointer; touch-action: manipulation; transition: color .15s var(--e-out), background-color .15s var(--e-out), transform .15s var(--e-out); }
@@ -128,6 +131,10 @@ html.js .nd-t-roots li { animation: nd-line .4s var(--lx-ease) both; animation-d
 .nd-drive button[aria-pressed='true'] { background: #0a0a0a; color: #fff; }
 .nd-drive button:active { transform: scale(.97); transition-duration: .09s; }
 
+/* every text link presses (the kit's lx-text has no :active) */
+.nd .lx-text { transition: text-decoration-color .15s var(--e-out), transform .15s var(--e-out); }
+.nd .lx-text:active { transform: translateY(1px); transition-duration: .09s; }
+
 /* the quiet room: put a machine on the fabric (5 words | 8 prompt) */
 .nd-put { padding: clamp(72px, 11vw, 188px) 0; }
 .nd-put-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); column-gap: clamp(32px, 5vw, 72px); align-items: end; }
@@ -210,7 +217,7 @@ html.js .nd-t-roots li { animation: nd-line .4s var(--lx-ease) both; animation-d
 @media (prefers-reduced-motion: reduce) {
   html.js .nd-term-body > *, .nd-t-lv b, html.js .nd-t-roots li, .nd-lux li.new, .nd-t-tier .tr i b { animation: none; }
   .nd-caret.on { animation: none; opacity: 1; }
-  .nd-lean { transition: none; }
+  .nd-lean, .nd-peers b { transition: none; }
 }
 @media (max-width: 360px) {
   .nd-mac, .nd-mac-grid { padding: 4px; }

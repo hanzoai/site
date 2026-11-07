@@ -66,7 +66,7 @@ Done here: Parity 37/37 text, 4/4 links. Sizes: h1 52, caption 21, the figures 6
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: `taste.py` OK; values #0a0a0a, #525252, #737373, #a3a3a3, #d4d4d4, #e4e4e7, #ededed, #f2f2f2, #f5f5f5, #171717, #262626, #404040. The machine is a hairline stage with flat #f5f5f5 cells (16px inside the 24px stage); the terminal is flat graphite with no shadow. Neighbour /network opens on a graph right of the copy and has a black room; /node opens on a product card left of the copy, one graphite terminal and a quiet room, and no black room.
+Done here: `taste.py` OK; values #0a0a0a, #525252, #737373, #a3a3a3, #d4d4d4, #e4e4e7, #ededed, #f2f2f2, #f5f5f5, #171717, #262626, #404040. The machine is a hairline stage with flat #f5f5f5 cells (16px inside the 24px stage); the terminal is flat graphite with no shadow. Neighbour /network is the map page (a peer graph in its hero and as its chapters' object) with a black room; /node opens on a product card left of the copy, shows its own side of the fabric as three transports drawn in ("hanzod ── peer 03"), not a map, and keeps the graphite terminal and a quiet room, with no black room.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading (n/a for disabled and loading: nothing is ever unavailable or fetched)
@@ -75,7 +75,7 @@ Done here: `taste.py` OK; values #0a0a0a, #525252, #737373, #a3a3a3, #d4d4d4, #e
 - [x] Inputs 16px or larger; no bare `:hover` (n/a for inputs: none; every hover is in `@media (hover:hover)`)
 - [x] Forks this page deleted: listed at the top
 
-Done here: The five level buttons (44px rows on desktop, 64px bars on phone), the drive bar (up / join / stop, `aria-pressed`), the pause and "See the levels" all fill or ink on hover and press at .97 for 90 ms. The levels sheet mounts only while open, so the sticky ask never mistakes it for an overlay.
+Done here: The five level buttons (44px rows on desktop, 64px bars on phone), the drive bar (up / join / stop, `aria-pressed`), the pause and "See the levels" all fill or ink on hover and press at .97 for 90 ms; text links press 1px. The levels sheet mounts only while open, so the sticky ask never mistakes it for an overlay.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -84,7 +84,7 @@ Done here: The five level buttons (44px rows on desktop, 64px bars on phone), th
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit (n/a: the shared sound kit has not landed)
 
-Done here: Signature: the machine's own loop (idle, the one continuous mover, pausable). Supporting: the tilt toward a fine pointer (2.5° at most, 300 ms ease-in-out), the terminal's lines staged in 60 ms apart (time), the stage settling from 1.06 (scroll). Also pointer (a level you point at takes a job), state (drive bar, levels sheet), arrival (title cut-in, the quiet room's wipe). `variety.py` OK with no technique counted (no springs, no layoutId); no `setInterval`. Scale rhythm: the stage starts big and settles, the figures are the next screen's one big thing, "Get Node" grows to 64.
+Done here: Signature: the machine's own run (idle, the one mover on its screen): up, starting, joined, then four jobs lit and settled in about nine seconds (MASTER §4.1); it rests serving with three roots settled, and the toolbar's play replays it. Supporting: the tilt toward a fine pointer (2.5° at most, 300 ms ease-in-out), the terminal's lines staged in 60 ms apart (time), the stage settling from 1.06 (scroll). Also pointer (a level you point at takes a job), state (drive bar, levels sheet), arrival (title cut-in, the quiet room's wipe). `variety.py` OK with no technique counted (no springs, no layoutId); no `setInterval`. Scale rhythm: the stage starts big and settles, the figures are the next screen's one big thing, "Get Node" grows to 64.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set (n/a: Hanzo has no Node photo or film)

@@ -1,29 +1,160 @@
-# /realtime coverage (PLAN-COMPONENTS areas 2.1–2.18)
+# /realtime coverage (MASTER.md part 2, the 18 parts)
 
-Page file: `components/pages/cloud/Realtime.jsx` · route: `app/realtime/page.jsx` · gallery: `docs/gallery/realtime/`
+Page file: `components/pages/cloud/Realtime.jsx` (+ `Realtime.css`) · route: `app/realtime/page.jsx` · gallery: `docs/gallery/realtime/` · metric id: `api_key_created`
 
-1. **Strategy and conversion.** Persona: Developer. Goal: get an API key and open a first stream. One ask, Hanzo's "Start Building" (https://platform.hanzo.ai/api-keys): solid in the hero (`data-cta="realtime.hero"`), carried by the site's sticky ask after the hero, and the one solid at the close (`data-cta="realtime.close"`). "View Documentation" is a ghost (a text link on phones); "Start Building" and "Documentation" in the open-a-stream section and "Deploy to Cloud" at the close are text links. Metric: `api_key_created`.
-2. **Information architecture and navigation.** Hanzo's header and footer are unchanged. Order: three clients on one stream (hero), the long sentence beside the subscribe call, the statement and eight promises on one stream map, use cases, the handshake (dark room), growth, the first collection, the close.
-3. **First impression and page narrative.** At 1470×801 the first screen holds the cut-in two-line title, the three live client screens whole, and the ask with "Live record updates" beside them. A record arrives, changes and leaves on all three screens within about a second, with no input. No label above the headline.
-4. **Conversion system.** `data-thumb="Start Building"` on the hero ask drives the site's ask bar at every width; `data-ask-name="Hanzo Realtime"` on the hero names the page in it. The header's "Try Hanzo" is held as an outline here, so one solid shows per screen.
-5. **Trust and proof.** Every figure is Hanzo's (thirty seconds, a limit of two, three calls). Record letters, org names, ids and the subscriber dots are drawn by the page.
-6. **Content presentation (copy untouched).** Parity 138/138 text and 4/4 links. The statement "What the stream gives you" and its lede open the pinned scene beside the stream map; the eight promises come one at a time; "Popular Use Cases" is the rail's own toolbar label, "Open a stream" the label of the card that opens; growth's three figures sit in a list beside one map instead of three boxes in a row.
-7. **Visual design system.** LaunchType scale. 0 UI hues: the magenta accent, its tints and the magenta code highlight are gone. States read by fill (the running action, the written record, a pressed figure), weight (heard, told), dash (a client whose rule cannot read b, a spent grant, a held-back event) and a shape (✓, ×, ●). One dark room (the handshake).
-8. **UI component library.** Kit: `LineMask`, `SettleStage`, `PinnedChapters` (with `intro`), `ClipWipe`, `SpecDrawer` (rows), `RelatedCards`, `LaunchClose` (`ask`, `cta`), `LivePause` (four, `inline` in toolbars); Frame's `Code`. Rule switches, rail arrows, the three calls and the growth figures are real buttons: hover changes ink, edge or fill inside `(hover:hover)`, press is .98 or 1px. No `title=` tooltips, no browser-default controls.
-9. **Motion and interaction.**
-   - Idle: the three screens (create, update, delete), the stream map, the handshake's three calls and the tenant map step by themselves; each has a pause. Timeouts only, stopped off screen.
-   - Pointer: the use-case rail you throw (drag with inertia, arrows too); a growth figure under the cursor changes the tenant map (a write lighting one org's subscribers, one open response released, a fourth tenant arriving with its own broker); the card lifts and its Sigil grows; the close's ask leans to the pointer.
-   - State: each client's rule switch replays who hears about record b; pressing a call marks its line in the wire.
-   - Arrival: the line-masked title, the timed wipe into the dark room.
-   - Scroll (under half): the stage settle and the pinned chapters.
-10. **Media.** No Hanzo images or film on this page. Objects are product UI: the client screens, the subscribe call, the stream map, six use-case vignettes, realtime.js, the tenant map, the card's Sigil and the close's Sigil.
-11. **Mobile and responsive.** At 390×664 the hero shows the title, the ask and the top of the live screens; the stream map fits a 30svh window and each panel drops a row, so every chapter's words clear the thumb bar (pinchk 9/9 ok); the tenant map moves above its figures and stops being sticky. Text 14px or more, targets 44px or more, no sideways scroll at 320.
-12. **Accessibility.** One h1. Rule switches are buttons with `aria-pressed` and a full label; the three calls and growth figures use `aria-pressed`; drawn objects are `aria-hidden` where they only repeat the words. Muted text #6e6e73 on white, #a1a1a6 or lighter in the dark room. Reduced motion: screens show the update state, the live dot and pipe pulses stop, chapters swap without movement.
-13. **Performance and engineering.** No setInterval in the page (`useBeat` and `useSteps` are timeout chains that stop off screen or paused); transform, opacity and clip-path only; no video, no canvas, no blur. One continuous mover per screen.
-14. **SEO and machine files.** Metadata and JSON-LD unchanged (`app/realtime/page.jsx`). JS off: every chapter, use case, call and growth note is visible (checked: 0 hidden text runs).
-15. **Catalogue and product pages.** Product page: license (Apache-2.0) and source (hanzoai) as quiet facts at the close.
-16. **Developer experience.** The subscribe call and realtime.js have copy buttons; the handshake marks the line each call lives on.
-17. **States and resilience.** The demo carries the product's own states: connected, a dropped network reconnecting, heard and not heard, told and not told, a grant counting down and spent, a deployment at its limit with a tenant waiting. Figures are static, so there is no loading or error state.
-18. **Measurement and handover.** `data-cta` ids `realtime.hero` and `realtime.close`; the site's ask bar fires `cta_click` (where: ask-bar). Filmed with `film.cjs`: `d.mp4`, `d.jpg`, `p.jpg`.
+Open copy questions for James: none decided. Listed: the header says "Try Hanzo" while this page's ask is "Start Building"; the handshake room says "Three calls, then it is live" and the strip before the close says "Two calls and the page keeps itself current" (both kept word for word); the demo's drawn product words ("rule reads b", "heard", "told · delete b", …) are not in `content/ui-strings.json` yet.
+Shared changes requested (`docs/requests/realtime.md`): Frame's Code on the deck; light-code comment contrast in the kit; the sticky ask label and the floating desktop pill; a press on `lx-text`; `Copy` press .97; the UI-strings register; `lib/cta.js`, `lib/track.js` and the sound kit; the PinnedChapters rail with eight chapters on phones.
+Forks this page deleted: the three equal client boxes (now a desktop, a tablet and a phone of three widths), the mono-caps "Live record updates" label (now the lede), the "View Documentation" outline button (now a text secondary), the always-open handshake paragraph and three always-open call notes, the three always-open growth notes, the 32px statement, the 50px growth figures, the 52px "What happens as it grows" and "Two calls…", the live-dot pulse (a second continuous mover), the elastic rail overscroll, the arrow nudges on hover, the header "Try Hanzo" override in page CSS, every spring, every raised shadow and every Apple-grey literal.
 
-Ledger: deleted the "● Live record updates" eyebrow over the h1 (now beside the ask), the "Popular Use Cases" and "● Open a stream" kickers over their headlines (now the rail's toolbar and the card's label), the statement-only "What the stream gives you" section (now the chapters' intro), the three equal growth boxes in a row (now a list beside one map), the black "Subscribe to your first collection" tile with its white pill (now a card that opens), the invented hint "tap a client's rule ↙", the solid "Start Building" in the open-a-stream section, the close's solid "Deploy to Cloud", every hue (magenta #d6008f and its tints, the magenta pulse, glow and code highlight), the bare `:hover` on the rule switch and the card, and the setInterval timer (`useEvery`).
+The overload (round 2's 7.5, "the handshake paragraph, three growth notes, another two-calls block before the close") is fixed by presentation, with every word still in the HTML: the handshake shows one call's words at a time in one slot beside the wire, and "The handshake, in full" is a native disclosure (find-in-page opens it; works with JS off); growth opens one note at a time beside the tenant map, its figure growing from 21 to 32px while it is the moment; "Two calls…" is a calm strip at section-heading size, so "Get Realtime" is the one big thing at the end. With JS off every call note and growth note reads in order under its title.
+
+## 1. Strategy and conversion
+- [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
+- [x] One solid fill per viewport; label and href from `lib/cta.js` (n/a for the file: it does not exist yet; the label is Hanzo's live hero label)
+- [x] One h1; the page is clear in 5 seconds
+- [x] No dead or self-looping button; prices from `lib/plans.js` (n/a: no prices)
+- [x] Open copy questions for James listed, none decided
+
+Done here: `Realtime.jsx` and `app/realtime/page.jsx` open with Persona (Developer), Goal (an API key and a first stream), CTA ("Start Building" → platform.hanzo.ai/api-keys, `realtime.hero` / `realtime.close`), Metric (`api_key_created`), Signature, Beyond and `V2:`. `fs-audit.cjs` counts one solid ("Start Building") at 1470×801 and 375×812.
+
+## 2. Information architecture and navigation
+- [x] One `<main id="main">`; skip link reaches it (the layout's skip link targets `#main`)
+- [x] Every link through `A`, `Go`, `More` or `href()`; every card a real link
+- [x] Breadcrumb at depth 2 or more (n/a: depth 1)
+- [x] Link parity: 0 removed, 0 unexpected
+
+Done here: Every link is the kit `A`; the card "Subscribe to your first collection" is one real `<a>` (`RelatedCards`). `parity.py /realtime`: 4/4 links.
+
+## 3. First impression and page narrative
+- [x] Sells in 5 s; something moves within 1 s without input
+- [x] `PageHero` (n/a for the component: not merged; the hero is `LineMask` h1 + lede + one ask + the three clients); nothing above the h1
+- [x] JS off: legible; no `opacity:0` on the LCP element
+- [x] One idea per 100svh; no 3 same-height sections in a row
+- [x] Ends in proof strip, `Band`, footer (the spec rows are the quiet proof, then `LaunchClose`: "Get Realtime" grows 26 → 64px)
+- [x] Card-to-page links use Morph; title lands within 12px (n/a: the one card leaves the site for GitHub)
+
+Done here: First screen at 1470×801: the two-line h1 (52px), the three clients settling (y ≈ 290–690) and "Live record updates" + "Start Building" + "View Documentation" beside them. The first record change lands within 0.6 s (`fs-audit.cjs`: 7,730 changed px in 0.9 s, 5,606 on phone), nothing above the h1. `c3nojs.cjs`: 0 hidden text runs with JS off. Order: hero, statement + subscribe, pinned chapters, the rail, the black room, growth + spec, the strip, the close.
+
+## 4. Conversion system
+- [x] `<Cta>` only; no raw `.x-btn` (the kit's `lx-cta` stands in at 48px until `Cta` lands)
+- [x] Sticky ask in header and bar after the hero, same label (the site's `Ask.jsx` bar carries "Start Building" from `data-thumb`; the header's own label is a shared request)
+- [x] Copy button copies exactly the displayed text; failure never says Copied (kit `Copy` in Frame's Code)
+- [x] `data-cta` and `data-thumb` on every primary
+
+Done here: Hero ask `data-cta="realtime.hero" data-thumb="Start Building"`, close ask `realtime.close`; `data-ask-name="Hanzo Realtime"` on the hero section. "Start Building" and "Documentation" in the strip are text links, so the solid appears only in the hero, the bar and the close.
+
+## 5. Trust and proof
+- [x] No logo without documented permission; no seal; no invented number
+- [x] Every figure traces to Hanzo's copy; qualifier beside the number
+- [x] Marquees pause, freeze under reduced motion, hide duplicates (n/a: no marquee)
+- [x] Privacy link and owner line beside every submit (n/a: no form)
+
+Done here: Figures are Hanzo's (thirty seconds, a limit of two, the three calls). The grant's countdown in chapter seven shows Hanzo's thirty seconds being spent; record letters, ids and org names are drawn, said so in the header comment.
+
+## 6. Content presentation (copy untouched)
+- [x] No text under 13px (14px phone) except mono capitals
+- [x] Measures held; no orphan word in a heading
+- [x] Tables, FAQ, tabs and code use the kit parts (code: Frame's `Code`; the disclosure is a native `<details>`)
+- [x] `python3 scripts/parity.py /realtime`: 0 missing
+
+Done here: `parity.py /realtime`: 138/138 text, 4/4 links. `c3pal.cjs`: 0 runs under 13px on desktop and 0 under 14px on phone. Scale: h1 52, intro 44, chapter titles 32, headings 26, the growth figure 21 → 32, spec words 32 Air, lede 20–21, body 16, h3 17, code 13.5/1.65. `c3slot.cjs`: every one-at-a-time slot holds its longest note at 1920, 1470, 1024, 900, 768, 375 and 320 wide.
+
+## 7. Visual design system
+- [x] `python3 scripts/taste.py` passes; no literal hex outside tokens (deck values only)
+- [x] No label, tag, badge or pill above a headline
+- [x] Radii, shadows and sizes from tokens; never box plus shadow
+- [x] One icon set; no icon in a rounded box
+- [x] Differs from neighbours in hero medium and room order
+
+Done here: `taste.py` OK; `c3pal.cjs`: 0 computed colours off the deck at both widths. The stream map and tenant map are outlined (1px, radius 24), the wire a flat #171717 tile, the subscribe call white with one hairline, use cases flat #f5f5f5 at 24 with 8px inner art (concentric), nothing shadowed. Two-part sections sit on the 8/5 split, bottom-aligned. Chapter numbers sit under their titles (kit). Hero medium: three devices of three sizes receiving one record, unlike any neighbour.
+
+## 8. UI component library
+- [x] Every control has hover, press, focus-visible, disabled, loading (n/a for disabled/loading: nothing waits on a network)
+- [x] Focus ring visible on every stop of a Tab crawl (kit: 2px ink plus a white halo, inverted in the black room)
+- [x] Dialogs are native, trap focus and return it (n/a: no dialog; the disclosure is native `<details>`)
+- [x] Inputs 16px or larger; no bare `:hover` (n/a for inputs: none)
+- [x] Forks this page deleted: listed at the top
+
+Done here: Rule switches (`aria-pressed`), the three calls and growth figures (`aria-expanded` + `aria-controls`), the disclosure, rail arrows and pauses are real controls; hover changes ink, edge or fill inside `@media (hover:hover)`; press is .97 for 90 ms (text links too). `c3rt2.cjs`: a rule switch flips, a call opens its words and marks "subscriptions" in the wire, the disclosure opens, a hovered figure opens its note and adds the fourth tenant, the rail moves 822px, 0 console errors.
+
+## 9. Motion and interaction
+- [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
+- [x] At least 3 kinds of movement; scroll-linked is half or less
+- [x] Something moves without input; every control answers
+- [x] Reduced motion shows the final state; no `setInterval`
+- [x] Sound only on the listed moments, through the one kit (n/a: the shared sound kit has not landed)
+
+Done here: Signature: the same record landing on three screens (idle). Supporting: layout glides (`layoutId`/`layout`), the drag rail with inertia and hard stops, the settle; `variety.py` OK. Kinds: idle (screens, map, handshake, tenant map, each with a pause), pointer (rail drag, figure hover, card art drift, magnetic close ask), state (rule switches, calls, disclosure), arrival (h1 cut-in, timed black-room wipe), scroll (settle, pinned chapters, "Get Realtime" growing). Something grows while it is the moment: the active growth figure (21 → 32px) and the close. Tweens only; 0 springs, 0 `setInterval`, one continuous mover per screen.
+
+## 10. Media
+- [x] `Film` and `Pic` only; sizes and posters set (n/a: no Hanzo photo or film for Realtime)
+- [x] At most 2 videos playing; pause button on loops over 5 s (four 44px `LivePause` controls: screens, map, wire, tenant map)
+- [x] Budgets met; nothing missing; alt on every image (n/a: no images)
+- [x] No dimmed or filtered photo; 4+ real visuals together where the page has them (n/a: Hanzo has no Realtime media)
+
+Done here: Objects are product UI (three clients, the subscribe call, the stream map, six use-case vignettes, realtime.js, the tenant map) and Sigils drawn from the page's own figures [30, 3, 2].
+
+## 11. Mobile and responsive
+- [x] 375×812 and 1470×801 pass with no overlap
+- [x] No horizontal scroll at 320
+- [x] Every target 44px or more; every hover has a tap path
+- [x] Primary ask above the fold at 375×667
+
+Done here: `c3w320.cjs`: scrollWidth 320 at 320 wide; the ask's bottom at 355px at 375×667; 0 targets under 44px at 375 (the eight-tick rail uses the gutters; at 320 its ticks are 39px wide, listed in the request). The stream map sits in a fixed 38svh window so chapter words never move; `pinchk.cjs` 9/9 ok. Hover previews have tap paths (the figures and calls are buttons).
+
+## 12. Accessibility (WCAG 2.2 AA)
+- [x] Contrast measured, text at 4.5:1 or better
+- [x] Pause control on every moving item
+- [x] Forms labelled; first error focused (n/a: no form)
+- [x] One h1; no heading skips; names start with visible text
+- [x] Keyboard reaches every control
+
+Done here: `c3pal.cjs` measures every text run on its real background: 0 under 4.5:1 at both widths (#737373 resting figures and code comments on white 4.74:1, white 78% notes and #a3a3a3 call titles on #000). Headings: h1; h2 (intro), h3 ×8; h2 (uses), h3 ×6; h2 (room), h3 (disclosure); h2 (growth), h3 ×3; h2 ×2 (strip); h2 (close). Rule switches carry full names ("Client 3's rule can read record b").
+
+## 13. Performance and engineering
+- [x] h1 and LCP element in server HTML
+- [x] JS and CSS inside budget; every image and video sized (n/a for media)
+- [x] No poller; no third-party request before consent
+- [x] Nothing heavy run on James's laptop
+
+Done here: Every screen's first frame is in the server HTML; timers are timeout chains (`useBeat`, `useSteps`) that stop off screen and when paused; motion is transform, opacity and clip-path only. Filming and audits ran in the cloud container.
+
+## 14. SEO and machine files
+- [x] Title and description match live (or are listed for James)
+- [x] Canonical equals og:url equals the live URL (owned by the shared layout)
+- [x] `<JsonLd route>` parses; no broken URL
+- [x] Every card is a real link
+
+Done here: `app/realtime/page.jsx` takes `metadata` from `content/pages.json` unedited and renders `<JsonLd route="/realtime" />`; the card is a real `<a href="https://github.com/hanzoai">`.
+
+## 15. Catalogue and product pages
+- [x] Model card matches `SPEC.md` (n/a: not a catalogue or model page)
+- [x] Every card opens by Morph (n/a: the one card is external)
+- [x] Every maker and model page linked in the DOM (n/a)
+- [x] One price figure everywhere (n/a: no prices)
+
+Done here: Cloud product anatomy: identity (h1, line), the product at work (three clients), openable features (eight chapters, the calls, the notes), three spec facts, the close.
+
+## 16. Developer experience
+- [x] One `CodeBlock`; copy equals display (Frame's `Code` copies exactly what it shows)
+- [x] Config blocks parse on their own (n/a: no JSON config)
+- [x] Terminal pauses and ends on a static frame (n/a: no terminal; the wire's step marker pauses)
+- [x] No hand-typed version number
+
+Done here: The subscribe call and realtime.js are 13.5px/1.65; pressing a call marks its line in the wire (`/v1/realtime/token`, `subscriptions`, `render(record)`). No version numbers.
+
+## 17. States and resilience
+- [x] Loading, empty, error and offline states designed (n/a: nothing is fetched; the page is whole at first paint)
+- [x] Blocked live data leaves a complete page, no console errors
+- [x] A failed submit keeps its values and shows no success (n/a: no form)
+- [x] A thrown island does not blank the page (Sigil, Cursor and Phone boundaries belong to the shared layer)
+
+Done here: The product's states are designed in the demo: connected, a dropped network reconnecting, heard and not heard, told and not told, a grant counting down and spent, a deployment at its limit with a tenant waiting. `look2.cjs` and `c3rt2.cjs` log 0 errors.
+
+## 18. Measurement and handover
+- [x] `data-cta` on every primary; events only through `lib/track.js` (n/a for the file: it does not exist yet; ids are in place)
+- [x] Nothing identifier-bearing before consent; no field value in a payload
+- [x] `V2: <score>/10 <one line>` in the page file's top comment
+- [x] Review read: `docs/review/realtime.md` verdict 8 or more (no review file exists yet; round 2's self-score of 7.5 for overload is answered above)
+
+Done here: `realtime.hero` and `realtime.close` are set; `V2: 8/10` heads `Realtime.jsx` and the route. Gallery: `docs/gallery/realtime/d.mp4`, `d.jpg`, `p.jpg`. Checks at push: 200, parity 0 missing, taste OK, variety OK, unique OK, fs-audit clear, pinchk 9/9.
