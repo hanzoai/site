@@ -1,4 +1,4 @@
-// Proves the seven site-wide layers of docs/NEXT-LEVEL.md in a real browser: desktop 1470 (fine pointer), phone 375
+// Proves the seven site-wide layers of docs/MASTER.md in a real browser: desktop 1470 (fine pointer), phone 375
 // (touch) and reduced motion, on / /models /enterprise (or the paths given), plus the 404 room, a family page and the
 // share cards. Hanzo's chat endpoint is intercepted and mocked (stream, JSON and failure); nothing reaches Hanzo's API.
 // Every page load is also checked for hydration warnings and console errors.

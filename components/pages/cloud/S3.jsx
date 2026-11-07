@@ -1,22 +1,33 @@
 'use client';
-/* Object Storage, v2 launch page (Cloud 3).
-   V2: 8/10 The object comes first: a full-width stage where an object breaks into fourteen shards that fly to fourteen volume servers and survives four going dark, huge type beneath it; four facts as one pinned diagram of the binary's four roles; big spec figures; one dark room.
+/* Object Storage, v2 launch page (Cloud 3), round 2 to JAMES.md.
+   V2: 8/10 The object comes first: a full-width stage where an object breaks into fourteen shards that fly to fourteen volume servers, survives four going dark and reads back from the rest, huge type beneath it; four facts open on the section's own title and play on one pinned diagram of the binary's four roles; one dark room where the figures cut in beside the agent prompt; ink and greys only.
    Signature: an object, kept. An object breaks into ten data shards and four parity shards that fly to fourteen volume
-   servers; any four go dark and the object still reads. It loops by itself while seen.
+   servers; any four go dark and the object still reads, back from the ten that are left. It loops by itself while seen
+   (pause in the stage's own legend).
    Beyond: lose four yourself. Tap any volume servers dark, up to the four Hanzo says can be lost, and watch the object
-   keep reading whichever four you choose; Replay hands the loop back.
-   Motion: signature = the shards flying to their volumes (shared-element layout); supporting = the pinned diagram
-   (scroll), the clip wipe into the dark room, the line-masked title. Every word and link is Hanzo's. */
+   keep reading whichever four you choose; point at a volume first and it shows which shard it holds; Replay hands the
+   loop back.
+   Persona: Developer storing objects (buckets from code). Goal: call the S3 API.
+   CTA: "API reference" → https://docs.hanzo.ai/docs/openapi/s3 (data-cta s3.hero, s3.close; the site's sticky ask carries
+   the same label from data-thumb). Metric: api_key_created.
+   Motion: idle = the shards flying out, four volumes going dark, the object reading back (pausable); pointer = a volume
+   you point at lifts its shard and names it, the magnetic close; state = tapping volumes dark (spring ✕), Replay;
+   arrival = the cut-in title, the timed wipe into the dark room and the figures cutting in there (never counted); scroll = the pinned
+   diagram only. Every word and link is Hanzo's. */
 import { useEffect, useMemo, useState } from 'react';
-import { motion, AnimatePresence, LayoutGroup } from 'motion/react';
+import { motion, LayoutGroup } from 'motion/react';
 import { A } from '../../kit';
 import { Paste, useLive } from './Frame';
 import PinnedChapters from '../../v2/PinnedChapters';
 import ClipWipe from '../../v2/ClipWipe';
 import SpecDrawer from '../../v2/SpecDrawer';
-import LaunchClose from '../../v2/LaunchClose';
+import LaunchClose, { Arr } from '../../v2/LaunchClose';
 import LineMask from '../../v2/LineMask';
+import LivePause, { usePause } from '../../v2/LivePause';
 import './S3.css';
+
+const API = 'https://docs.hanzo.ai/docs/openapi/s3';
+const GH = 'https://github.com/hanzoai/s3';
 
 /* ---------- the hero stage: an object, kept ---------- */
 const N = 14; // ten data shards, four parity
@@ -24,7 +35,7 @@ const hash = (i) => { const x = Math.sin(i * 12.9898) * 43758.5453; return x - M
 const name = (i) => (i < 10 ? 'd' + (i + 1) : 'p' + (i - 9));
 // volume centres on the stage (percent), for the fan: two rows of seven to the right of the object
 const VX = (i) => 36 + ((i % 7) + 0.5) * (62 / 7);
-const VY = (i) => (i < 7 ? 26.5 : 65.5);
+const VY = (i) => (i < 7 ? 25 : 60);
 
 function Shard({ i }) {
   return <motion.i layoutId={'s3-' + i} className={'s3-shard' + (i >= 10 ? ' p' : '')} transition={{ type: 'spring', stiffness: 170, damping: 24, delay: (i % 7) * 0.035 }} />;
@@ -32,17 +43,19 @@ function Shard({ i }) {
 
 function Kept() {
   const [ref, live, calm] = useLive(0.3);
+  const [paused, pause] = usePause();
   const [phase, setPhase] = useState(0); // 0 object, 1 sharded, 2 four lost, 3 still reads
   const [cycle, setCycle] = useState(0);
   const [pick, setPick] = useState(null); // volumes taken dark by hand; null = the loop chooses
+  const [hov, setHov] = useState(null); // the volume a fine pointer is on
   useEffect(() => {
     if (calm) { setPhase(3); return; }
-    if (!live || pick) return;
+    if (!live || pick || paused || hov !== null) return;
     const t = setTimeout(() => {
       if (phase === 3) { setPhase(0); setCycle((c) => c + 1); } else setPhase(phase + 1);
     }, [1500, 1800, 1300, 2600][phase]);
     return () => clearTimeout(t);
-  }, [phase, live, calm, pick]);
+  }, [phase, live, calm, pick, paused, hov]);
   const auto = useMemo(() => new Set(Array.from({ length: N }, (_, i) => i).sort((a, b) => hash(a + cycle * N) - hash(b + cycle * N)).slice(0, 4)), [cycle]);
   const lost = pick || auto;
   const toggle = (i) => {
@@ -52,19 +65,23 @@ function Kept() {
     setPhase(next.size ? 3 : 1);
   };
   const reads = phase === 3;
+  const live1 = (i) => phase >= 1 && !(phase >= 2 && lost.has(i));
   return (
     <div className="s3-kept" ref={ref} data-phase={phase}>
+      <p className="lx-kick s3-name">Storage</p>
       <LayoutGroup>
         <svg className="s3-fan" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
           {Array.from({ length: N }).map((_, i) => {
             const x = VX(i), y = VY(i), m = (19 + x) / 2;
-            return <path key={i} d={`M18 46 C ${m} 46, ${m} ${y}, ${x} ${y}`} className={phase >= 1 && !(phase >= 2 && lost.has(i)) ? 'on' : phase >= 2 && lost.has(i) ? 'cut' : ''} />;
+            return <path key={i} d={`M18 46 C ${m} 46, ${m} ${y}, ${x} ${y}`} className={(live1(i) ? 'on' : phase >= 2 && lost.has(i) ? 'cut' : '') + (hov === i ? ' hov' : '')} />;
           })}
         </svg>
         <div className={'s3-obj' + (reads ? ' reads' : '')}>
           <p className="s3-k">object</p>
           <div className="s3-file">
-            {phase === 0 && Array.from({ length: N }).map((_, i) => <Shard key={i} i={i} />)}
+            {phase === 0
+              ? Array.from({ length: N }).map((_, i) => <Shard key={i} i={i} />)
+              : Array.from({ length: N }).map((_, i) => <i key={'g' + i} className={'s3-ghost' + (i >= 10 ? ' p' : '') + (reads && !lost.has(i) ? ' back' : '')} style={{ '--i': i }} />)}
           </div>
           <p className="s3-read" aria-live="polite">{reads ? '✓ still reads' : phase === 0 ? 'erasure-coded' : phase === 1 ? 'ten data · four parity' : 'four go dark'}</p>
         </div>
@@ -72,10 +89,11 @@ function Kept() {
           {Array.from({ length: N }).map((_, i) => {
             const gone = phase >= 2 && lost.has(i);
             return (
-              <button type="button" key={i} className={'s3-vol' + (gone ? ' gone' : '') + (i >= 10 ? ' par' : '')} aria-pressed={!!pick && pick.has(i)} aria-label={'Volume server ' + name(i)} disabled={!!pick && pick.size >= 4 && !pick.has(i)} onClick={() => toggle(i)} data-cursor={gone ? 'Restore' : 'Lose'}>
+              <button type="button" key={i} className={'s3-vol' + (gone ? ' gone' : '') + (i >= 10 ? ' par' : '') + (hov === i ? ' hov' : '')} aria-pressed={!!pick && pick.has(i)} aria-label={'Volume server ' + name(i)} disabled={!!pick && pick.size >= 4 && !pick.has(i)} onClick={() => toggle(i)}
+                onPointerEnter={(e) => e.pointerType === 'mouse' && setHov(i)} onPointerLeave={() => setHov(null)} data-cursor={gone ? 'Restore' : 'Lose'}>
                 <span className="s3-vn" aria-hidden="true">{name(i)}</span>
                 <span className="s3-slot" aria-hidden="true">{phase >= 1 && !gone && <Shard i={i} />}</span>
-                {gone && <motion.b aria-hidden="true" initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 380, damping: 22 }}>✕</motion.b>}
+                {gone && <motion.b aria-hidden="true" initial={{ scale: 0.4 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 380, damping: 22 }}>✕</motion.b>}
               </button>
             );
           })}
@@ -83,8 +101,9 @@ function Kept() {
       </LayoutGroup>
       <div className="s3-legend">
         <span><i />ten data shards</span><span><i className="p" />four parity</span><span><i className="x" />four can be lost</span>
-        <span className="s3-mine" aria-live="polite">{pick ? pick.size + ' / 4 dark · still reads' : 'tap any four'}</span>
+        <span className="s3-mine" aria-live="polite">{hov !== null ? `${name(hov)} · ${hov < 10 ? 'data' : 'parity'}${phase >= 2 && lost.has(hov) ? ' · dark' : ''}` : pick ? pick.size + ' / 4 dark · still reads' : 'tap any four'}</span>
         {pick && <button type="button" className="s3-again" onClick={() => { setPick(null); setPhase(0); setCycle((c) => c + 1); }}>Replay</button>}
+        <LivePause paused={paused} onToggle={pause} className="s3-pause" />
       </div>
     </div>
   );
@@ -132,49 +151,40 @@ function Roles({ step }) {
   );
 }
 
+const FIG = [[10, 'data shards'], [4, 'parity shards'], [4, 'can be lost, and it still reads'], [1, 'binary, four roles']];
+
 export default function S3() {
   return (
     <main className="lx s3">
-      <section className="s3-hero" data-morph-target>
+      <section className="s3-hero" data-morph-target data-ask-name="Hanzo Object Storage">
         <div className="lx-wrap">
           <Kept />
           <div className="s3-hero-grid">
-            <div>
-              <p className="lx-kick"><b>●</b> Storage</p>
-              <LineMask as="h1" className="lx-display s3-h1" lines={['Hanzo Object', 'Storage']} />
-            </div>
+            <LineMask as="h1" className="lx-display s3-h1" lines={['Hanzo Object', 'Storage']} />
             <div className="s3-hero-r">
               <p className="lx-lede s3-sub">Buckets and objects, presigned links, multipart uploads, versioning and object lock.</p>
               <div className="s3-acts">
-                <A to="https://docs.hanzo.ai/docs/openapi/s3" className="lx-cta" data-thumb="API reference">API reference</A>
-                <A to="https://github.com/hanzoai/s3" className="lx-ghost">Source</A>
+                <A to={API} className="lx-cta" data-thumb="API reference" data-cta="s3.hero">API reference<Arr /></A>
+                <A to={GH} className="lx-text">Source</A>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="lx-sec s3-kept-h">
-        <div className="lx-wrap">
-          <LineMask as="h2" className="lx-display m" lines={['An object,', 'kept']} inView />
-        </div>
-      </section>
+      <PinnedChapters label="An object, kept" per={82}
+        intro={{ title: ['An object,', 'kept'] }}
+        steps={FACTS.map(([t, d]) => ({ t, d }))}
+        visual={(at) => <Roles step={at} />} />
 
-      <PinnedChapters label="An object, kept" steps={FACTS.map(([t, d]) => ({ t, d }))} per={82} visual={(at) => <Roles step={at} />} />
-
-      <section className="lx-sec s3-spec">
+      <ClipWipe dark className="s3-room">
         <div className="lx-wrap">
-          <SpecDrawer rows={[{ v: '10', l: 'data shards' }, { v: '4', l: 'parity shards' }, { v: '4', l: 'can be lost, and it still reads' }, { v: '1', l: 'binary, four roles' }]} />
-        </div>
-      </section>
-
-      <ClipWipe dark className="s3-paste">
-        <div className="lx-wrap">
-          <Paste dark name="Object Storage" api="/v1/s3/buckets" prompt="Read https://hanzo.ai/skill.md and use Hanzo Object Storage in my project. Start with: hanzo s3 buckets list" />
+          <SpecDrawer className="s3-spec" rows={FIG.map(([v, l], i) => ({ v: <LineMask as="span" lines={[String(v)]} delay={i * 0.08} inView />, l }))} />
+          <Paste dark name="Object Storage" api="/v1/s3/buckets" prompt="Read https://hanzo.ai/skill.md and use Hanzo Object Storage in my project. Start with: hanzo s3 buckets list" className="s3-paste" />
         </div>
       </ClipWipe>
 
-      <LaunchClose name="Object Storage" tag="Distributed object storage" seed="s3" data={[10, 4, 4]} repo={['hanzoai/s3', 'https://github.com/hanzoai/s3']} stars="4 stars" />
+      <LaunchClose name="Object Storage" tag="Distributed object storage" seed="s3" data={[10, 4, 4]} ask={['API reference', API]} cta="s3.close" repo={['hanzoai/s3', GH]} stars="4 stars" />
     </main>
   );
 }

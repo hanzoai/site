@@ -16,7 +16,10 @@ Page file: `components/pages/cloud/Playground.jsx` (+ `Playground.css`) · route
    - State: the kind pill glides (spring {420,34}), pause/play, curl/python.
    - Arrival: the cut-in title, the timed wipe into the dark room.
    - Scroll (under half): the Stage settle and the scrubbed sentence.
-10. **Media.** Hanzo's own model media only, through `Img` (Iro has `priority`, width/height reserved) and `Film` (Koma plays only on screen, never under reduced motion or Data Saver, and pauses with the pause button).
+10. **Media.** Hanzo's own model media only, through `Img` (Iro has `priority`, width/height reserved) and `Film`. In the window, Koma plays only on screen, never under reduced motion or Data Saver, and stops with the pause button.
+   - The dark room holds the wall: all nine model renders together (Zen, Enso, Kai, Iro, Koma, Koe, Mori, Oto, Uta), in full colour with no filters.
+   - One film plays at a time: the hovered or focused tile, otherwise the next in turn every 3.6 s. It has its own 44px pause button.
+   - Each tile is a link that opens its model page (`data-morph` on the picture). This answers JAMES 6, "many real visuals at once".
 11. **Mobile and responsive.** 390×664: hero buttons on one row, the window on the first screen, kinds scroll sideways inside the window at 44px, the run meter as a 2×2 grid, the request's Python pane masked to its first lines while pinned. Pinned text clears the thumb bar (pinchk 4/4 ok). No text under 14px, all targets ≥44px (the phrases get a 44px hit area without moving the text), no sideways scroll at 320.
 12. **Accessibility.** Pause for the live demo (WCAG 2.2.2); `role=tab`/`aria-selected` on kinds, `aria-pressed` on phrases and curl/python; the canvas is `aria-hidden` (the run's name is in the meter's heading). Unlit phrases are #6e6e73 on #f5f5f7 (4.6:1), not the old #c7c7cc (1.5:1). Reduced motion: tiles, timers, wave and marks at rest.
 13. **Performance and engineering.** No setInterval in the page (Frame's `useSteps` timeouts, stopped off screen, while paused and while hovered). Iro's tiles clear with CSS, not 60 motion nodes. Transform, opacity and clip only.
@@ -26,4 +29,4 @@ Page file: `components/pages/cloud/Playground.jsx` (+ `Playground.css`) · route
 17. **States and resilience.** The window has running, paused, hovered and held states; Koma shows its poster until it can play. Figures are static, so there is no loading or failure state.
 18. **Measurement and handover.** `data-cta` ids `playground.hero` and `playground.close`; the ask bar fires `cta_click`. Filmed with `film.cjs`; shots at 1470×801 and 390×664.
 
-Ledger: deleted the coral accent (14 uses, incl. the code highlight and the timer), the kicker above the h1 and the "curl · python" kicker, raw `<img>`/`<video>` (now `Img`/`Film`), 60 motion tiles (now CSS), the hand-built related tiles and their CSS, 2 bare `:hover` rules, the decorative fake tabs (now buttons).
+Ledger: deleted the dark room's lone text box (now the Paste beside the model wall), the coral accent (14 uses, incl. the code highlight and the timer), the kicker above the h1 and the "curl · python" kicker, raw `<img>`/`<video>` (now `Img`/`Film`), 60 motion tiles (now CSS), the hand-built related tiles and their CSS, 2 bare `:hover` rules, the decorative fake tabs (now buttons).

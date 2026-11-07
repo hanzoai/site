@@ -43,8 +43,8 @@
 .mcp-parts { padding-top: 0; }
 .mcp-stack { list-style: none; margin: 0; padding: 0; display: grid; gap: 48px; }
 .mcp-sheet { position: sticky; top: calc(96px + var(--i) * 28px); display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: 48px; align-items: center; min-height: min(620px, 72vh); padding: clamp(32px, 4vw, 64px); border-radius: var(--r-hero); background: #fff; border: 1px solid var(--line); box-shadow: 0 -30px 80px -40px rgba(0, 0, 0, .25); }
-.mcp-sheet:nth-child(2) { background: #fbfaf8; }
-.mcp-sheet:nth-child(3) { background: #f7f6f4; }
+.mcp-sheet:nth-child(2) { background: #fafafa; }
+.mcp-sheet:nth-child(3) { background: #f5f5f5; }
 .mcp-sheet-copy .a2-kick { display: block; margin-bottom: 24px; color: var(--acc); }
 .mcp-sheet-copy .a2-headline { margin-bottom: 24px; }
 .mcp-sheet-art { height: 100%; min-height: 360px; display: grid; place-items: center; border-radius: 20px; background: var(--card); overflow: hidden; }

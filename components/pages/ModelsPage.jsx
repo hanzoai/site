@@ -16,11 +16,13 @@
    No UI hue: greys, black and white; colour arrives only through the films. Every word, id, rate and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
-import { EASE, Count, Copy } from '../ui';
+import { EASE, Copy } from '../ui';
 import { A } from '../kit';
 import { useOpener } from '../Opener';
 import Sigil from '../Sigil';
 import ModelFilm, { FilmPause, usePaused } from '../v2/ModelFilm';
+import SpecCard, { useSpecTilt } from '../v2/SpecCard';
+import MaskFig from '../v2/MaskFig';
 import { media, bySlug } from '../../lib/models';
 import { ROWS, OTHERS } from './models/rates';
 import './ModelsPage.css';
@@ -80,6 +82,37 @@ const eio = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const clamp = (v) => Math.min(1, Math.max(0, v));
 const scaleAt = (v) => Math.pow(K, 1 - eio(clamp(v / 0.72)));
 
+/* One tile of the wall: Hanzo's model card (docs/refs/hanzo-model-cards/SPEC.md) at the wall's scale: title and arrow
+   top left, the description, the tag pills at the foot, Enso with its "Flagship model" pill; the film never dimmed; the
+   measured pointer tilt; a click lifts it into the model's page (WebGL opener). */
+function WallCard({ m, i, play, open, setLit, setHeld }) {
+  const tilt = useSpecTilt();
+  return (
+    <a
+      ref={tilt.ref}
+      href={'/' + m.slug}
+      className={'xmo-card' + (i === 4 ? ' flag' : '')}
+      data-card={m.slug}
+      data-cursor="Open"
+      aria-label={`${m.name}: ${m.desc}`}
+      onClick={(e) => open(e, e.currentTarget, m.slug)}
+      onPointerEnter={(e) => { if (e.pointerType === 'mouse') { setLit(i); setHeld(true); } }}
+      onPointerMove={tilt.onPointerMove}
+      onPointerLeave={() => { tilt.onPointerLeave(); setHeld(false); }}
+      onFocus={() => { setLit(i); setHeld(true); }}
+      onBlur={() => setHeld(false)}
+    >
+      <Film slug={m.slug} play={play} />
+      <span className="xmo-card-top" aria-hidden="true">
+        {i === 4 && m.kicker && <span className="xmo-pill flag">{m.kicker}</span>}
+        <span className="xmo-card-t">{m.name}{' '}<span className="xmo-arr">→</span></span>
+        <span className="xmo-card-d">{m.desc}</span>
+      </span>
+      <span className="xmo-card-tags" aria-hidden="true">{m.tags.map((t) => <span key={t} className="xmo-pill">{t}</span>)}</span>
+    </a>
+  );
+}
+
 function Stage() {
   const ref = useRef(null);
   const open = useOpen();
@@ -124,25 +157,7 @@ function Stage() {
                 const ring = i === 4 ? null : i % 2 ? near : far;
                 return (
                   <motion.li key={slug} className={'xmo-tile' + (i === 4 ? ' c' : '') + (at === i ? ' lit' : '')} style={ring ? { opacity: ring } : undefined}>
-                    <a
-                      href={'/' + slug}
-                      data-card={slug}
-                      data-cursor="Open"
-                      aria-label={`${m.name}: ${m.desc}`}
-                      onClick={(e) => open(e, e.currentTarget, slug)}
-                      onPointerEnter={(e) => { if (e.pointerType === 'mouse') { setLit(i); setHeld(true); } }}
-                      onPointerLeave={() => setHeld(false)}
-                      onFocus={() => { setLit(i); setHeld(true); }}
-                      onBlur={() => setHeld(false)}
-                    >
-                      <Film slug={slug} play={!wide || at === i} />
-                      <span className="xmo-tile-shade" aria-hidden="true" />
-                      <span className="xmo-tile-t" aria-hidden="true">
-                        <b>{m.name}</b>
-                        <span>{m.desc}</span>
-                        {m.kicker && <em>{m.kicker}</em>}
-                      </span>
-                    </a>
+                    <WallCard m={m} i={i} play={!wide || at === i} open={open} setLit={setLit} setHeld={setHeld} />
                   </motion.li>
                 );
               })}
@@ -191,7 +206,7 @@ function Families() {
                   <p className="xmo-verb">{f.verb}</p>
                   <h3>{f.name}</h3>
                   <p className="xmo-fam-d">{f.d}</p>
-                  {f.stat && <p className="xmo-fam-stat"><b className="x-mono"><Count to={f.stat} /></b><span>Suites won · Kai vs Jev</span></p>}
+                  {f.stat && <p className="xmo-fam-stat"><b className="x-mono"><MaskFig>{f.stat}</MaskFig></b><span>Suites won · Kai vs Jev</span></p>}
                   {f.foot && <p className="xmo-fam-foot">{f.foot}</p>}
                   <Lk to={f.to} onClick={(e) => open(e, e.currentTarget.closest('.xmo-fam-c').querySelector('.xmo-fam-film'), f.slug)}>{`Explore ${f.name}`}</Lk>
                 </div>
@@ -262,12 +277,12 @@ function Figures() {
           <Lk to="/kai#benchmarks">Kai: decisions and their benchmarks</Lk>
         </header>
         <div className="xmo-fig-big">
-          <p className="xmo-num x-mono"><Count to={11} /></p>
+          <p className="xmo-num x-mono"><MaskFig>11</MaskFig></p>
           <p className="xmo-num-k">Suites won · Kai vs Jev</p>
         </div>
         {DUELS.map((d, i) => (
           <figure key={d.say} className="xmo-duel">
-            <p className="xmo-duel-n x-mono"><Count to={d.kai} decimals={1} suffix="%" delay={0.15 + i * 0.1} /></p>
+            <p className="xmo-duel-n x-mono"><MaskFig delay={0.12 + i * 0.1}>{`${d.kai.toFixed(1)}%`}</MaskFig></p>
             <figcaption>{d.say}</figcaption>
             <div className="xmo-bars" aria-hidden="true">
               <span className="kai"><b>Kai</b><i style={{ '--v': d.kai / 100 }} /><em className="x-mono">{d.kai.toFixed(1)}%</em></span>
@@ -345,44 +360,22 @@ const CHIPS = [['all', 'All'], ['enso', 'Enso'], ['zen', 'Zen'], ['kai', 'Kai'],
 const COUNT = { enso: ENSO.length, zen: ZEN.length + 1, kai: KAI.length, creative: CREATIVE.length, labs: LABS.length };
 COUNT.all = Object.values(COUNT).reduce((a, b) => a + b, 0);
 
-/* A model card: its name is the link (and what flies into the model's page, one tab stop per card); the context
-   window is its figure and Hanzo's rate sits under it. */
+/* A catalogue card: Hanzo's model card (SpecCard). Its name flies into the model page's h1 (morph); the id and Hanzo's
+   rate are its mono line, the context window and modalities its pills. */
 function MCard({ to, name, id, ctx, d, tags, rate }) {
   const r = !rate || rate[2] == null ? null : rate[2] === 0 && rate[3] === 0 ? 'Free' : `${cost(rate, 2)} in · ${cost(rate, 3)} out`;
-  return (
-    <article className="xmo-mc">
-      <div className="xmo-mc-top">
-        <h3><A to={to} className="xmo-mc-a" data-morph>{name}</A></h3>
-        {ctx && <b className="xmo-mc-ctx x-mono">{ctx}</b>}
-      </div>
-      <p className="xmo-mc-id x-mono">{id}</p>
-      {d && <p className="xmo-mc-d">{d}</p>}
-      <div className="xmo-mc-f">
-        <span className="xmo-mc-tags">{tags.map((t) => <span key={t}>{t}</span>)}</span>
-        {r && <span className="xmo-mc-rate x-mono">{r}</span>}
-        <i className="xmo-mc-go" aria-hidden="true">→</i>
-      </div>
-    </article>
-  );
+  return <SpecCard to={to} title={name} desc={d} meta={<><span>{id}</span>{r && <><br /><b>{r}</b></>}</>} tags={[...(ctx ? [ctx] : []), ...tags]} />;
 }
 
-/* A creative model's tile: its film waits as a still and plays while the pointer (or focus) is on it. */
+/* A creative model's card: its film waits as a still and plays while the pointer (or focus) is on it; it opens into
+   the model's page with the WebGL opener. */
 function Tile({ m }) {
   const open = useOpen();
   const [on, setOn] = useState(false);
   const [slug, name, id, d, kind, ep] = m;
   return (
-    <a href={'/' + slug} className="xmo-ct" data-card={slug} data-cursor="Open" onClick={(e) => open(e, e.currentTarget, slug)}
-      onPointerEnter={() => setOn(true)} onPointerLeave={() => setOn(false)} onFocus={() => setOn(true)} onBlur={() => setOn(false)}>
-      <Film slug={slug} play={on} />
-      <span className="xmo-ct-shade" aria-hidden="true" />
-      <span className="xmo-ct-t">
-        <span className="xmo-ct-top"><b>{name}</b><i className="x-mono">{id}</i></span>
-        <em>Research preview</em>
-        <span className="xmo-ct-d">{d}</span>
-        <span className="xmo-ct-f"><span>{kind}</span><code>{ep}</code></span>
-      </span>
-    </a>
+    <SpecCard to={'/' + slug} slug={slug} play={on} onHot={setOn} card={slug} onOpen={(e, el) => open(e, el, slug)}
+      title={name} desc={d} meta={<><span>{id}</span><br /><span>{ep}</span></>} tags={['Research preview', kind]} />
   );
 }
 
@@ -442,14 +435,7 @@ function Catalogue({ at, makers }) {
     ), (
       <ul className="xmo-cards">
         {ZEN.map(([id, name, ctx, d, tags]) => card(id, name, ctx, d, tags, '/models/hanzo/' + id))}
-        <li>
-          <article className="xmo-mc soon">
-            <div className="xmo-mc-top"><h3>Zen 7</h3></div>
-            <p className="xmo-mc-id x-mono">zen7</p>
-            <p className="xmo-mc-d">The next open-weight generation after Zen 6, in research preview.</p>
-            <div className="xmo-mc-f"><span className="xmo-mc-tags"><span>Research preview</span></span><A to="/zen/7" className="x-btn sm xmo-soon-btn">Request access</A></div>
-          </article>
-        </li>
+        <li><SpecCard to="/zen/7" title="Zen 7" meta={<><span>zen7</span><br /><b>Request access</b></>} desc="The next open-weight generation after Zen 6, in research preview." tags={['Research preview']} /></li>
       </ul>
     )],
     ['kai', <Head slug="kai" title="Kai decision models" link={<Lk to="/kai" onClick={(e) => open(e, e.currentTarget.closest('.xmo-gh').querySelector('.xmo-gh-film'), 'kai')}>Kai: decisions and their benchmarks</Lk>} />,

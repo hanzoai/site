@@ -190,8 +190,8 @@ const SIDE = [['O11y', '/o11y'], ['Logs', '/cloud/logs'], ['Metrics', '/metrics'
 
 export default function O11y() {
   return (
-    <main className="lx ob" data-ask-name="Hanzo O11y">
-      <section className="lx-dark ob-hero" data-room="dark" data-morph-target>
+    <main className="lx ob">
+      <section className="lx-dark ob-hero" data-room="dark" data-morph-target data-ask-name="Hanzo O11y">
         <div className="lx-wrap ob-hero-in">
           <LineMask as="h1" className="lx-display ob-h1" lines={['Hanzo O11y']} />
           <p className="lx-lede ob-sub">Traces, metrics and logs, in one place</p>
