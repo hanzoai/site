@@ -16,7 +16,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
 import { A, More } from '../kit';
-import A2Lines from '../v2/A2Lines';
+import A2Lines from './skills/Lines';
 import A2Paste from '../v2/A2Paste';
 import A2Faq from '../v2/A2Faq';
 import A2Sheet from '../v2/A2Sheet';

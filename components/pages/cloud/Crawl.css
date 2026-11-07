@@ -449,3 +449,33 @@
   .cr-step { grid-template-columns: minmax(0, 1fr); gap: 17px; }
   .cr-sa { width: min(100%, 280px); }
 }
+
+/* round 3 (critic, 7 Nov) */
+/* less dead white between sections */
+.cr .kn-sec { padding-top: clamp(56px, 7vw, 116px); padding-bottom: clamp(56px, 7vw, 116px); }
+/* Returns: four medium words, not four big ones */
+.cr .cr-figs .kn-fig { font-size: 32px; }
+.cr-figs { gap: 17px 44px; }
+/* Reads: plain chips, not button shapes */
+.cr-kinds li { border: 0 !important; background: #f5f5f5; border-radius: 8px !important; }
+/* the pinned stage leans toward a fine pointer */
+.cr-map { --rx: 0deg; --ry: 0deg; transform: perspective(1800px) rotateX(var(--rx)) rotateY(var(--ry)); transition: transform .4s cubic-bezier(0, 0, .2, 1); }
+@media (prefers-reduced-motion: reduce) { .cr-map { transform: none; } }
+/* hovers that answer: text links step their arrow, the slider thumb takes a ring */
+@media (hover: hover) {
+  .cr .x-arrow svg { transition: transform .15s cubic-bezier(0, 0, .2, 1); }
+  .cr .x-arrow:hover svg { transform: translateX(4px); }
+  .cr .x-arrow:hover span { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  .cr-fit-th:hover { box-shadow: 0 0 0 6px rgba(10, 10, 10, .1); }
+}
+/* 44px copy */
+.cr .x-copy { min-height: 44px; }
+/* the active chapter under the stage, phones only */
+.cr-now { display: none; }
+@media (max-width: 899px) {
+  .cr-now { order: 4; grid-column: 1 / -1; display: flex; flex-direction: column; gap: 8px; margin-top: 17px; min-height: 9.5em; }
+  .cr-now p { margin: 0; }
+  .cr-now-t { display: flex; align-items: baseline; gap: 10px; font-size: 19px; font-weight: 497; color: #0a0a0a; }
+  .cr-now-t .kn-fig { font-size: 14px; color: #737373; }
+  .cr .cr-figs .kn-fig { font-size: 26px; }
+}

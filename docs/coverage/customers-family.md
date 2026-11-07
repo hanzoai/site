@@ -61,6 +61,8 @@ Done here: there are no logos or seals. Each figure is a button that travels to 
 
 Done here: deck sizes only: h1 84 settling to 52 (phone 44), h2 26, scene h3 32 (phone 26; the picture-less last chapter 52 / phone 44), lede 21 (phone 17), body 16, figure labels 14, captions 13, mono capitals 12. Measures: lede 44ch, body 62ch, and headings use `text-wrap: balance`. Parity: Damon 37/37 text and 2/2 links; KANOA 26/26 and 2/2.
 
+Film (`tools/film.mjs motion`, Damon): layout shift went from 0.304 to 0.001. The fallback contour used to widen from 64vw to 100% when the picture failed, and that rule is gone. Phone: 0.000. KANOA (run 3): desktop layout shift 0.001 with 1 still screen, the lede-and-figures screen, which is quiet once its figures have risen; phone 0.000 with 0 still screens. The 5 "DEAD hover" lines are a tool artifact: its headless Chromium reports `(hover: hover)` false (checked with puppeteer), and MASTER part 8 keeps every hover inside that query. In Playwright the hovers answer.
+
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
 - [x] No label, tag, badge or pill above a headline
@@ -94,7 +96,7 @@ Done here: the signature is the scenes wiping up (scroll-scrubbed clip-path). Su
 - [x] Budgets met; nothing missing; alt on every image
 - [x] No dimmed or filtered photo; 4+ real visuals together where the page has them
 
-Done here: measured in the DOM, 14/14 images on Damon and 7/7 on KANOA carry width and height attributes. Every picture is kit `Img` with width and height (hero 1920×1080 with `priority`, scenes and tiles 1200×1500, report 1600×1000, next 1600×900) inside a box reserved in CSS. Alt comes from Hanzo's own captions. The only dimming is a left gradient under the stage text. Damon's wall shows 6 frames. Gap: the pictures are not in the repository and hanzo.ai is blocked in this sandbox, so here every frame shows its silver caption plate. The dev server falls back to hanzo.ai for missing files, so they should load on an online localhost.
+Done here: when a chapter, report or first-three wall picture cannot load, its plate carries a slow Sigil contour seeded by that picture's own path (MASTER part 10, media failure falls back to an aspect-ratio box with Sigil). Only the chapter on stage drifts; the others hold one still frame. The contour is still under reduced motion. That is at most 10 canvases on Damon. Film run 2 (Damon desktop): 0 still screens, against 10 before. Measured in the DOM, 14/14 images on Damon and 7/7 on KANOA carry width and height attributes. Every picture is kit `Img` with width and height (hero 1920×1080 with `priority`, scenes and tiles 1200×1500, report 1600×1000, next 1600×900) inside a box reserved in CSS. Alt comes from Hanzo's own captions. The only dimming is a left gradient under the stage text. Damon's wall shows 6 frames. Gap: the pictures are not in the repository and hanzo.ai is blocked in this sandbox, so here every frame shows its silver caption plate. The dev server falls back to hanzo.ai for missing files, so they should load on an online localhost.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap

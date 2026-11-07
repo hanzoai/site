@@ -147,9 +147,15 @@
 .xbo-tl li.merged.on .xbo-tl-m::after { background: #fff; inset: 15px; }
 .xbo-tl-k { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); padding-top: 4px; }
 .xbo-tl .xp-title { font-weight: 500; }
-.xbo-propose { grid-column: 1 / span 6; margin-top: clamp(40px, 5vw, 80px); display: grid; gap: 18px; justify-items: start; padding: clamp(28px, 3.2vw, 48px); border-radius: 24px; background: var(--card); }
-.xbo-sec { grid-column: 7 / span 6; margin-top: clamp(40px, 5vw, 80px); align-self: end; }
-.xbo-sec a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--xp-accent); }
+/* propose a bounty: one card across the grid, the words left, the link and the security line in its right foot */
+.xbo-propose { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 32px clamp(32px, 5vw, 96px); align-items: end; padding: clamp(28px, 3.2vw, 48px); border-radius: 24px; background: var(--card); }
+.xbo-propose-l { display: grid; gap: 18px; }
+.xbo-propose-l .xp-body { max-width: 52ch; }
+.xbo-propose-r { display: grid; gap: 16px; justify-items: start; padding-top: 20px; border-top: 1px solid var(--line); }
+.xbo-sec { margin: 0; }
+.xbo-sec a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; text-decoration-color: var(--hz-400); transition: text-decoration-color .2s, text-underline-offset .2s; }
+@media (hover: hover) { .xbo-sec a:hover { text-decoration-color: var(--ink); text-underline-offset: 5px; } }
+.xbo-sec a:active { position: relative; top: 1px; }
 
 @media (prefers-reduced-motion: reduce) { .xbo-live, .xbo-shimmer, .xbo-win[data-state='reading'] .xbo-ghosts i { animation: none; } }
 @media (max-width: 900px) {
@@ -179,7 +185,7 @@
   .xbo-org-t { grid-column: 2; text-align: left; font-size: 14px; }
   .xbo-scale { display: none; }
   .xbo-take-l { position: static; }
-  .xbo-propose, .xbo-sec { margin-top: 24px; }
+  .xbo-propose { grid-template-columns: 1fr; gap: 24px; }
 }
 
 .xbo-vol-u { display: flex; gap: 14px; }
@@ -205,7 +211,7 @@
    then a quiet reader walks the rows. Final states first; .js scopes every waiting state (JS off shows the full list). */
 .xbo-issues li { display: grid; grid-template-rows: 1fr; transition: grid-template-rows .8s var(--xp-ease), opacity .6s var(--xp-ease); }
 .xbo-iss-in { min-height: 0; overflow: hidden; }
-.js .xbo-issues li { animation: xbo-deal .6s var(--xp-ease) backwards; animation-delay: calc(var(--i, 0) * 60ms + .35s); }
+.js .xbo-issues li { animation: xbo-deal .6s var(--xp-ease) backwards; animation-delay: calc(var(--i, 0) * 45ms + .15s); }
 @keyframes xbo-deal { from { opacity: 0; transform: translateX(24px); } }
 .js .xbo-issues li.pend { grid-template-rows: 0fr; opacity: 0; }
 .xbo-issues li.fresh a { animation: xbo-fresh 2.4s var(--xp-ease) .2s backwards; }
@@ -267,8 +273,7 @@ html:not(.js) .xbo-roll i:first-child { visibility: hidden; }
 .xbo-pr[data-step='2'] .xbo-gl .g2 circle { fill: #f5f5f7; }
 .xbo-pr[data-step='2'] .xbo-pr-t span { color: var(--hz-400); }
 .xbo-pr[data-step='2'] .xbo-pr-bar i { background: #f5f5f7; }
-.xbo-tl li.now .xp-title { transform: translateX(6px); }
-.xbo-tl li .xp-title { transition: color .3s var(--xp-ease), transform .5s var(--xp-ease); }
+.xbo-tl li .xp-title { transition: color .3s var(--xp-ease); }
 .xbo-take-foot { row-gap: 24px; align-items: start; }
 @media (min-width: 901px) {
   .xbo-pin { height: 210vh; }
@@ -292,3 +297,46 @@ html:not(.js) .xbo-roll i:first-child { visibility: hidden; }
 .xbo-asking span { min-height: 0; overflow: hidden; }
 .xbo-asking[data-on='y'] { grid-template-rows: 1fr; opacity: 1; padding-bottom: 12px; animation: xbo-sh 1.4s var(--xp-ease) infinite alternate; }
 html:not(.js) .xbo-asking { display: none; }
+
+/* the hero's sub, ask and window rise by CSS from first paint, with the headline (no wait for hydration) */
+.xbo-in { animation: xbo-rise .7s var(--xp-ease) both; animation-delay: var(--d, 0s); }
+@keyframes xbo-rise { from { opacity: 0; transform: translateY(var(--y, 16px)); } }
+/* the list's last row fades under the window's foot instead of being cut */
+.xbo-issues { -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 56px), transparent); mask-image: linear-gradient(to bottom, #000 calc(100% - 56px), transparent); }
+
+/* the token race as one pinned scene on desktop: the dark room holds while the ten bars race and @hanzo's figure counts */
+@media (min-width: 901px) and (min-height: 700px) {
+  .xbo-vol { padding: 0 !important; }
+  .xbo-vpin { height: 240vh; }
+  .xbo-vstage { position: sticky; top: var(--x-top, 60px); height: calc(100vh - var(--x-top, 60px)); display: flex; flex-direction: column; justify-content: center; }
+  .xbo-vol .xbo-vol-head { row-gap: 16px; }
+  .xbo-vol .xbo-vol-fig { font-size: 72px; }
+  .xbo-vol .xbo-vol-u { margin-top: 8px; }
+  .xbo-vol .xbo-vol-hr { gap: 12px; }
+  .xbo-vol .xbo-orgs { margin-top: clamp(20px, 4vh, 44px); }
+  .xbo-vol .xbo-orgs li { padding: 8px 0; gap: 16px; grid-template-columns: 52px minmax(0, 5fr) minmax(0, 5fr) 170px; }
+  .xbo-vol .xbo-scale { grid-template-columns: 52px minmax(0, 5fr) minmax(0, 5fr) 170px; gap: 16px; }
+  .xbo-vol .xbo-org-w { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; }
+  .xbo-vol .xbo-org-w b { font-size: 16px; }
+  .xbo-vol .xbo-badge { font-size: 13px; }
+  .xbo-vol .xbo-badge::after { content: '·'; margin-left: 10px; color: var(--hz-600); }
+  .xbo-vol .xbo-org-t { font-size: 14px; }
+  .xbo-vol .xbo-scale { margin-top: 8px; }
+}
+/* phones: each lane is name, then badge · requests, then the bar and its figure on one line */
+@media (max-width: 900px) {
+  .xbo-orgs li { grid-template-columns: 28px minmax(0, 1fr) auto; padding: 14px 0; gap: 6px 10px; }
+  .xbo-org-w { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; grid-column: 2 / -1; }
+  .xbo-org-w b { flex-basis: 100%; font-size: 16px; }
+  .xbo-badge { font-size: 13px; }
+  .xbo-badge::after { content: '·'; margin-left: 8px; color: var(--hz-600); }
+  .xbo-org-bar { grid-column: 2; height: 8px; }
+  .xbo-org-t { grid-column: 3; text-align: right; font-size: 13px; }
+  .xbo-total-n b { white-space: nowrap; font-size: 28px; }
+}
+
+/* the closing band: the headline once more and the one ask */
+.xbo-band { padding: clamp(96px, 12vw, 168px) 0; }
+.xbo-band .xbo-band-h { margin: 0 auto; max-width: none; font: 560 52px/1.05 var(--sans); letter-spacing: -.035em; color: #f5f5f7; }
+.xbo-band .x-band-act { margin-top: 40px; }
+@media (max-width: 900px) { .xbo-band .xbo-band-h { font-size: 40px; } .xbo-band .xp-cta { width: auto; } }

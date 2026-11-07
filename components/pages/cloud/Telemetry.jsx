@@ -116,7 +116,9 @@ function Config({ at, compact }) {
   const [held] = useContext(Hold);
   const box = useRef(null);
   const seen = useInView(box, { amount: 0.3 });
-  const flow = go && seen && !held; // after the arrival, a span keeps running the strip to the lit stage (idle), until Pause
+  // after the arrival, a span keeps running the strip to the lit stage (idle), until Pause. Pinned (desktop) the picture
+  // is on screen whenever its chapter is, so the flow follows the chapter index; stacked (phone) it waits to be seen.
+  const flow = go && !held && (compact ? seen : true);
   const strip = useRef(null);
   const [to, setTo] = useState(`${((dest + 0.5) / STAGES.length) * 100}%`);
   useEffect(() => { // park the span under the lit stage itself (the pills wrap and differ in width)
@@ -142,6 +144,11 @@ function Config({ at, compact }) {
               ? <motion.span className="tl2-w" variants={{ a: { clipPath: 'inset(0 100% 0 0)' }, b: { clipPath: 'inset(0 0% 0 0)' } }} transition={{ duration: 0.5, delay: 0.5 + 0.08 * n++, ease: [0.16, 1, 0.3, 1] }}>{body}</motion.span>
               : body}{'\n'}</span>;
           })}
+          {/* builder.yaml is 9 lines: under it, the config.yaml the built binary runs, dimmed, so the window stays full */}
+          {at === 4 && !compact && <>
+            <span className="tl2-ln tl2-ghost-h" aria-hidden="true"><em>{'  '}</em>config.yaml{'\n'}</span>
+            {CFG.slice(0, 10).map(([l], i) => <span key={'g' + i} className="tl2-ln tl2-ghost" aria-hidden="true"><em>{String(i + 1).padStart(2, ' ')}</em>{l}{'\n'}</span>)}
+          </>}
         </code></pre>
       </div>
     </motion.div>
@@ -205,7 +212,7 @@ export default function Telemetry() {
   const hold = useMemo(() => [held, () => setHeld((h) => !h)], [held]);
   return (
     <Hold.Provider value={hold}>
-    <main id="main" className="l2-page tl2" data-ask="off">
+    <main id="main" className="l2-page tl2">
       <StageHero look="split" kick="telemetry.hanzo.ai" title="Hanzo Telemetry" sub="The collector that sits between your app and wherever the data goes" acts={[['View on GitHub', GH]]}>
         <Pipe />
       </StageHero>

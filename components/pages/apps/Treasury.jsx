@@ -11,13 +11,12 @@
    primary. No springs. Colour: none (0 UI hues): the 90% stream is white, the 5% silver, the remainder grey. Pause in the
    editor bar and under the chapter visual. One dark room: the hero. Scale rhythm via Rhythm.css. Every word and link is Hanzo's; the only figures are
    the split's own. */
-import { useState } from 'react';
-import { motion } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
+import { motion, animate, useInView, useScroll, useTransform } from 'motion/react';
 import { EASE, Magnetic } from '../../ui';
 import { A } from '../../kit';
 import { useLive, useEvery } from '../cloud/Frame';
 import LineMask from '../../v2/x-gauss/LineMask';
-import Settle from '../../v2/Settle';
 import PinChapters from '../../v2/x-gauss/PinChapters';
 import NoJs from '../../v2/x-gauss/NoJs';
 import { usePause } from '../../v2/x-gauss/Pause';
@@ -44,6 +43,27 @@ const CODE = [
 const DEST = [['@merchants:042', '90%', 9000], ['@fees:processing', '5%', 500], ['@platform:revenue', 'remaining', 500]];
 const N = CODE.length;
 const fmt = (v) => v.toLocaleString('en-US');
+
+/* The Stage, page-local: the same settle as v2/Settle (the hero arrives a touch large and low, then settles as the first
+   screen scrolls away), except reduced motion is read after mount, so the server and the first client render match in
+   every motion mode. (v2/Settle reads it during render; requested in docs/requests/treasury.md.) */
+function Stage({ children, from = 1.015, lift = 12 }) {
+  const ref = useRef(null);
+  const [m, setM] = useState({ h: 800, phone: false, calm: false });
+  useEffect(() => {
+    const q = matchMedia('(prefers-reduced-motion: reduce)');
+    const on = () => setM({ h: innerHeight, phone: innerWidth < 900, calm: q.matches });
+    on();
+    addEventListener('resize', on);
+    q.addEventListener('change', on);
+    return () => { removeEventListener('resize', on); q.removeEventListener('change', on); };
+  }, []);
+  const { scrollY } = useScroll();
+  const f = m.calm ? 1 : m.phone ? 1 + (from - 1) / 2 : from;
+  const scale = useTransform(scrollY, [0, m.h * 0.7], [f, 1], { clamp: true });
+  const y = useTransform(scrollY, [0, m.h * 0.7], [m.calm ? 0 : lift, 0], { clamp: true });
+  return <motion.div ref={ref} className="w2-settle" style={{ scale, y, transformOrigin: '50% 0%' }}>{children}</motion.div>;
+}
 
 /* Three streams out of one source, widths in proportion to the split (with a floor so 5% still reads). */
 function Streams({ shown, done, still }) {
@@ -98,7 +118,7 @@ function Hero() {
           </motion.div>
         </div>
         <div ref={ref}>
-          <Settle from={1.015} lift={12}>
+          <Stage from={1.015} lift={12}>
             <div className="ts-stage">
               <div className="ts-ed">
                 <div className="ts-ed-bar"><i /><i /><i /><span className="x-mono">split.num</span><b className="ts-name x-mono">Treasury Operations</b><span className="ts-pause">{pauseBtn}</span></div>
@@ -110,7 +130,7 @@ function Hero() {
               </div>
               <Streams shown={shown} done={k >= N} still={paused || !live} />
             </div>
-          </Settle>
+          </Stage>
         </div>
       </div>
     </section>
@@ -138,7 +158,7 @@ function Postings({ on }) {
     <div className="ts-v" aria-hidden="true">
       <p className="ts-v-k x-mono"><span>transaction</span><span>USD/2</span></p>
       <div className="ts-v-row h x-mono"><span>source</span><span>destination</span><span>amount</span></div>
-      {DEST.map(([a, , v], i) => <div key={a} className={'ts-v-row x-mono' + (r === i ? ' hot' : '')}><span>@users:001</span><span>{a}</span><b>{fmt(v)}</b></div>)}
+      {DEST.map(([a, , v], i) => <div key={a} className={'ts-v-row post x-mono' + (r === i ? ' hot' : '')}><span>@users:001</span><span><i className="ts-arr" />{a}</span><b>{fmt(v)}</b></div>)}
       <div className="ts-v-sum x-mono"><span>balanced</span><b>10,000 = 10,000</b></div>
     </div>
   );
@@ -160,7 +180,7 @@ function Balances({ on }) {
   return (
     <div className="ts-v" aria-hidden="true">
       <p className="ts-v-k x-mono"><span>accounts</span><span>per currency</span></p>
-      {DEST.map(([a, , v], i) => <div key={a} className={'ts-v-row x-mono' + (r === i ? ' hot' : '')}><span>{a}</span><span>USD/2</span><b>{fmt(v)}</b></div>)}
+      {DEST.map(([a, , v], i) => <div key={a} className={'ts-v-row bal x-mono' + (r === i ? ' hot' : '')}><span>{a}</span><span>USD/2</span><b>{fmt(v)}</b></div>)}
       <div className="ts-v-sum x-mono"><span>settles against</span><b>per deployment</b></div>
     </div>
   );
@@ -214,10 +234,50 @@ function Flow({ on }) {
   );
 }
 
+const VIS = [Postings, Recon, Balances, Wallet, Flow];
+const SAY = ['A ledger, a language for writing', 'transactions, and the machinery', 'around them.'];
+
+/* Phones, and the server (so JS off reads it too): each chapter is its words, then its own card, in flow. Nothing is
+   pinned over text. The wallet (04) takes a full screen of its own and stays playable. */
+function Chapter({ i, t, d, paused }) {
+  const [ref, live] = useLive(0.35);
+  const V = VIS[i];
+  return (
+    <article ref={ref} className={'ts-sc' + (i === 3 ? ' ts-sc-w' : '')}>
+      <h2 className="w2-headline">{t}</h2>
+      <p className="ts-sc-b">{d}</p>
+      <V on={live && !paused} />
+    </article>
+  );
+}
+
 function Parts() {
   const [ref, live] = useLive(0.05);
-  const [paused, pauseBtn] = usePause({ right: 0, bottom: 0, top: 'auto' });
-  const lead = { rail: false, node: <LineMask as="p" className="gx-say ts-say-p" lines={['A ledger, a language for writing', 'transactions, and the machinery', 'around them.']} /> };
+  // wide screens pin the chapters beside one changing card; that pin mounts after hydration, so the server and the
+  // first client render are the same stacked markup in every motion mode (no reduced-motion hydration mismatch)
+  const [wide, setWide] = useState(false);
+  useEffect(() => {
+    const m = matchMedia('(min-width: 900px)');
+    const on = () => setWide(m.matches);
+    on();
+    m.addEventListener('change', on);
+    return () => m.removeEventListener('change', on);
+  }, []);
+  const [paused, pauseBtn] = usePause(wide ? { right: 0, bottom: 0, top: 'auto' } : { position: 'relative', right: 'auto', top: 'auto' });
+  const lead = { rail: false, node: <LineMask as="p" className="gx-say ts-say-p" lines={SAY} /> };
+  if (!wide) return (
+    <section className="ts-stack" aria-label="What it is made of" ref={ref}>
+      <div className="w2-wrap">
+        <div className="ts-stack-top">
+          <LineMask as="p" className="gx-say ts-say-p" lines={SAY} />
+          <span className="ts-stack-pause">{pauseBtn}</span>
+        </div>
+        <div className={paused ? 'ts-stack-l paused' : 'ts-stack-l'}>
+          {PARTS.map(([t, d], i) => <Chapter key={t} i={i} t={t} d={d} paused={paused} />)}
+        </div>
+      </div>
+    </section>
+  );
   return (
     <div ref={ref}>
       <PinChapters id="ts-parts" label="What it is made of" className="ts-pin"
@@ -228,7 +288,7 @@ function Parts() {
           return (
             <div className={'ts-vis' + (paused ? ' paused' : '')}>
               {pauseBtn}
-              {[Postings, Recon, Balances, Wallet, Flow].map((V, i) => (
+              {VIS.map((V, i) => (
                 <motion.div key={i} className="ts-vis-i" initial={false} animate={{ opacity: v === i ? 1 : 0, y: v === i ? 0 : v > i ? -24 : 24 }} transition={{ duration: 0.5, ease: EASE }} aria-hidden={v !== i} inert={v !== i}>
                   <V on={live && !paused && v === i} />
                 </motion.div>
@@ -242,12 +302,27 @@ function Parts() {
 
 /* The close carries the hero's split, small and finished: one bar drawn in its three parts as it arrives. Hover or focus
    a row and its part of the bar lights up. Only the split's own figures. */
+/* The figure moment: the split's 10,000 at figure size, counted once as the close arrives. The true value is in the
+   server HTML; reduced motion shows it without counting. */
+function Total() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.8 });
+  const [v, setV] = useState(10000);
+  useEffect(() => {
+    if (!seen || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const c = animate(0, 10000, { duration: 1.1, ease: EASE, onUpdate: (x) => setV(Math.round(x / 100) * 100) });
+    return () => c.stop();
+  }, [seen]);
+  return <p ref={ref} className="ts-total x-mono" aria-label="10,000">{fmt(v)}</p>;
+}
+
 function Split() {
   const [hot, setHot] = useState(-1);
   const x = [0, 360, 380];
   const w = [360, 20, 20];
   return (
     <figure className="ts-split" aria-label="split.num">
+      <Total />
       <svg viewBox="0 0 400 12" preserveAspectRatio="none" aria-hidden="true">
         {DEST.map((_, i) => (
           <motion.path key={i} d={`M${x[i] + (i ? 1 : 0)} 6 H${x[i] + w[i] - 1}`} strokeWidth="12" className={hot === -1 || hot === i ? 'on' : ''}

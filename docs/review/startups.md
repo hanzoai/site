@@ -1,47 +1,46 @@
 # /startups/: James-eye review
 Verdict: 7/10
-First complaint: "The big $150,000 is spilling out of its own box, and once it lands the top just sits there. On my phone a black card sits over the form the whole way down."
+First complaint: "Why does the big number say $741,529 in credits? It's up to $150,000. It keeps spinning to amounts we don't offer, and on my phone a black card sits over the form the whole way down."
 
-Walked 2026-11-07 16:32 UTC on the dev server at 1470x801 and 375x812 (isMobile, hasTouch), moving: scroll walk per 0.85 viewport, load frames at 150/450/850/1300/2200/4000 ms, hovers and presses on the asks, chips and rows, form filled and an empty submit tried (all non-GET requests aborted; the form never posted). Fresh eyes; the earlier review and the coverage card were read only after scoring.
-
-Big improvement on the 5/10: the native selects are gone (chips now), the eyebrow sits under the h1, the three tiles became one scrubbed list, and the form has a live object.
+Walked 2026-11-07 16:43 UTC on the dev server at 1470x801 and 375x812 (isMobile, hasTouch), moving: scroll walk per 0.85 viewport, first-screen frames at 0.3 s, 1.0 s and 5 s, the board sampled every 500 ms for 12 s on 4 cold loads, hover and press on the asks, chips and band buttons, the form filled and an empty submit tried (every non-GET request aborted; nothing posted). Fresh eyes; the old review, coverage card and source were read only after scoring.
 
 ## The 11 answers
-1. **Sells in 5 s, moves in 1 s?**
-   - Sells: h1, lede, "Apply for credits" and the $150,000 reel all in the first screen at both sizes.
-   - The h1 cuts in at 150 ms; the lede, buttons and reel only arrive at about 1.3 s (850 ms frame: h1 and caption only).
-   - After the reel lands (about 2 s) the first screen is still: two frames 2 s apart at 4 s are identical.
-2. **One in, one out?**
-   - Yes for the program list: the row at the reading line grows to 44px and goes ink while the other two sit grey at about 26px. Good.
-   - Then a dead stretch: about 300px of empty white between the Techstars paragraph and "Apply to the program" (desktop stop 2).
-3. **A real object in every section?**
-   - Hero: the flap reel. Program: the numbered list with its own small reel. Form: the black application card that fills as you type (name, "2 / 5", stage, the matched tier "Up to $150,000 in credits", use-case pills light). That card is the page's moment.
-   - "Not venture-backed?" black band: words and two buttons only, about 250px of empty black under the headline.
-4. **One ask, sticky; scale rhythm?**
-   - Desktop: the header swaps "Try Hanzo" for a solid "Apply for credits" once the hero ask leaves. Good.
-   - Phone: the header stays "Try Hanzo" all the way down; the page's own ask is never sticky.
-   - Phone: the application card is sticky at y 64-212 (148px, 18% of the screen) over the form for its whole length. It covers the fields as they scroll under it.
-   - Scale: hero h1 52px plus a 74px reel side by side (two big things, reel above the 64px rest size); the rest rhythms well (44px active row, 26px rest rows).
-5. **Hover and press?**
-   - "Apply for credits": hover #0a0a0a to #262626, press scale 0.97. "Start building free": hover fill #f5f5f5, press 0.97. Chips: hover #f2f2f2 to #ececef only (barely visible), selected gets an ink border. Rows answer on hover (become the active row).
-   - Hovering the hero card re-spins the reel and flashes random figures ("$963,741"); the program reel does the same ("$150,085"). A number bigger than the offer on screen, even for 300 ms, reads as an unverifiable claim.
-6. **Overlap, font swap, layout shift?**
-   - Overlap at 1470x801: the last "0" tile of the hero reel pokes about 8px past the card's right border, with 0 right padding against 47px left.
-   - Console error on load (desktop, fresh context): React hydration mismatch on the Company name input (`style={{}}`), and the red "1 Issue" dev badge shows. Not reproduced on the phone run.
-   - CLS 0.003. No font swap seen; the h1 box holds. No horizontal scroll at 375.
-   - Desktop form: "Your role" input sits about 34px lower than its row partner because "Company stage" chips wrap to two lines.
-   - The header's frosted glass smears the sticky card's shadow into a grey patch top right (desktop stop 5).
-7. **Reference?** apple.com: one figure as hero, and the scrubbed list is a small pinned-scene feel. synchronized/osply: none. The live card is its own idea.
-8. **Different from neighbours?** Yes: the flap reel and the filling application card are not used elsewhere that I walked.
-9. **18 parts?** The card exists (19 "Done here" lines). Gaps seen on the walk: no proof strip before the closing band (part 3); phone sticky ask (part 4); empty submit shows "Your name is required." above the button but focus stays on the button and the page does not move to the field (part 17).
-10. **Banned tells?** None hard: no hue, no eyebrow above a headline ("The program" sits over the list, not over a headline), no native controls, no Inter. Borderline: a panel covering the form on phone.
-11. **Copy untouched?** Yes: `parity.py /startups` OK, text 82/82, links 3/3.
+1. **Sells in 5 s, moves in 1 s: yes, but the figure misleads.**
+   - h1 "The Hanzo Startup Program" 52px at y163, lede, one solid ask at y442, and a split-flap "$150,000" board right. The h1 cut-in plus the flap move within 1 s.
+   - The board flips again every ~4.2 s and passes through random amounts it shows for a moment. Sampled over 12 s on 4 cold loads: $418,296, $741,529, $852,630, $529,307, $296,074, $074,852. "Up to $741,529 in credits" is on screen. The aria-label stays $150,000, but James reads the screen. This is an unverifiable figure, and a figure that never settles.
+   - Below the asks, 1470x801 shows ~300px of empty white before "THE PROGRAM" peeks.
+2. **One in, one out: partly.**
+   - The program "ladder" works: 3 rows at 44px, one in ink and the rest grey. It climbs on a 2.4 s timer and on pointer, and the $150,000 rung flaps.
+   - Then come a lone Techstars paragraph with ~330px of blank before "Apply to the program", and a form ~2,700px tall on desktop (about 6,000px of the 8,968px page on phone). In that stretch only the match card changes, and only when you type. It reads as a document there.
+3. **Real object per section: mostly.**
+   - Hero: flap board. Program: ladder plus flap. Apply: the live match card. Close: the match card again.
+   - The Techstars block has no object. The page has no Hanzo media, so the 4+ visuals rule does not apply.
+4. **One ask, nothing floating, scale rhythm: mixed.**
+   - The header ask swaps to "Apply for credits" (solid) once the hero ask leaves view: good.
+   - Desktop: the sticky match card stays in its own column, which is fine.
+   - Phone: the sticky card sits at y64-212 (148px, 18% of the screen) over the form the whole way down. It hides field labels as they pass, for example "Backed by any of these?".
+   - Phone close: the bottom "Apply for credits" bar sits over the band's second match card.
+   - Scale: 52 / 44 / 17 / 13 type, and one big thing per screen except the close (52px h2 plus a card). OK.
+   - Shared issue only: the phone header "Try Hanzo" is always solid (request filed).
+5. **Hover and press: yes.**
+   - Primary hover goes #0a0a0a to #262626, and press scales 0.97 (width 190 to 184, no layout jump). The secondary fills #f5f5f5. Chips change fill and scale 0.98 on press. The band "Start free" goes #fafafa to #e4e4e7.
+   - Hover tells you nothing beyond colour, apart from the ladder rungs.
+6. **Overlap, font swap, shift:**
+   - No horizontal scroll at 375 (scrollWidth 375).
+   - Phone: the sticky card over the form labels, and the bottom bar over the band card (see 4).
+   - Desktop: the header glass shows a grey smear where the card shadow passes under it (x≈860-1070).
+   - Empty submit: one grey box above Submit says "Your name is required." Focus stays on the button and no field gets aria-invalid, so it is not inline.
+7. **Reference:** calm chatgpt.com/business/enterprise with an Apple-style single figure. The live match card is the synchronized "answers back" idea and the page's real moment. Pointer and idle motion are present, but there is no tilt or preview.
+8. **Different from neighbours:** yes. The split-flap plus the assembling match card are its own (PAGES.md: own layout). /grants and /founder were not checked side by side.
+9. **18 parts:** the coverage card has 18 headings. A focus on the first invalid field is missing (part 12), and so is an inline error per field (part 17).
+10. **Banned tells:** none seen. No hue, no gradient text, no pill above h1; "TECHSTARS '17" is a caption below the h1. "THE PROGRAM" 12px Mono sits over a rule above the ladder, which is borderline but not on the h3s.
+11. **Copy:** `parity.py /startups`: text 82/82, links 3/3.
+
+Console: 0 errors or warnings on 4 of 4 fresh cold loads. A "1 Issue" dev badge appeared once in a 5th run and did not reproduce (0 of 4), so it is not counted.
 
 ## Fixes (in order)
-1. Fit the hero reel inside its card at 1470 (equal side padding, or step the reel to 64px rest size); and stop the re-spin showing random large figures: roll only through digits that end on 150,000, or drop the hover re-spin.
-2. Phone: make the application card a slim one-line strip (name and "2 / 5") or put it after the submit; nothing should sit over the fields. Swap the phone header ask to "Apply for credits" past the hero, as on desktop.
-3. Fix the hydration mismatch on the Company name input (no `style` difference between server and client), so the console is clean.
-4. Give the hero one quiet idle move after the reel lands, tied to the program (for example the card stepping slowly through the three program lines under the figure).
-5. Close the 300px dead gap before "Apply to the program"; give the black band an object (the application card in its submitted state, or the free-plan line as a figure).
-6. On a failed submit, focus and scroll to the first invalid field and mark it; make chip hover visible (#ededed or a border change).
-7. Bring the lede and buttons in with the h1 (under 600 ms), not at 1.3 s.
+1. Make the flap honest. Let it settle once on $150,000, or re-flip only through digits that land on $150,000 without showing a bigger amount. No interim figure over the cap, ever, and stop the 4.2 s loop (part 9: "a figure settles or counts once").
+2. Phone: unstick the match card under 900px. Dock it as a slim one-line strip (name, n/5, tier) of 56px or less, or show it only above Submit. Never 148px over the labels.
+3. Fill the dead stretches. Pull the Techstars line up into the ladder's tail or beside the Apply heading, and cut the ~300px under the hero asks so the program peeks 56px. Give the long form one thing that changes per screen as you scroll (the match card's rung lighting with the section you are in).
+4. Validation: give each field its own inline error, aria-invalid, and focus on the first invalid field.
+5. Close: one match card is enough. The band's duplicate under "Not venture-backed?" leaves the right half empty and collides with the phone ask bar.

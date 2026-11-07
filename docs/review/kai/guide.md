@@ -1,66 +1,67 @@
 # /kai/guide — James-eye review
 
 Verdict: 7/10
-First complaint: "It's a black box, then another black box, then another. Five dark slabs and the same curl twice in a row. That's one tone and a repeat, and in between it's white space where nothing happens."
+First complaint: "The hero is lovely, then it turns back into a docs page: a code box, another code box, five paragraphs stacked beside a control panel, then another code box. That's an overload of information, and the terminal I just watched ends on dots, not an answer."
 
-Walked 7 Nov 2026 on the dev server at 1470x801 and 375x812. I scrolled the whole page at both sizes, with every scroll stop captured twice 1.2 s apart (11 desktop stops, 16 phone stops), plus first frames at 0, 1000 and 3000 ms and the video. I hovered 14 controls and clicked 13. I also ran my own probes: the h1 transform sampled every 100 ms, 2 s frame hashes per section, row and chip hovers, a press on the primary, the code tabs and the five limit buttons, reduced motion, JS off, a 70-stop Tab crawl, the phone header ask after the hero, `parity.py` and `taste.py`.
+Walked 7 Nov 2026 on the dev server at 1470x801 and 375x812 (full scroll with a/b idle frames at every stop, 14 hovers, 14 clicks, primary hover and press measured, frame-by-frame h1 arrival, a 40-stop Tab crawl, language tabs by click and arrow key, reduced motion, JS off, 375x667 fold check, 320px overflow, hero left alone for 14 s, neighbour /kai compared, `taste.py` and `parity.py` run).
 
-Frames: [the curl again, as the second dark slab](guide/d-curl-again.jpg) · [about 300 px of dead white before the black room](guide/d-gap-before-recipes.jpg) · [phone first screen: two solid fills and the red "1 Issue" badge](guide/p-first-screen.jpg)
+Frames: `guide/r2-desk-hero-rest.jpg` (the hero demo at rest), `guide/r2-desk-limits.jpg` (the Limits screen), `guide/r2-phone-hero.jpg` (the phone hero).
 
 ## What works
-- **The hero is alive inside 1 s, with no input.** The h1 cuts in by line mask. The transform starts at about 550 ms after commit and reaches 0 at about 1.2 s, with the lines 60 ms apart and the right easing. The terminal starts typing the guide's own curl at about 1 s, streams the response shape back, then rests. A pause/replay control sits in its bar, and the box never resizes. CLS is 0.0026 on desktop and 0.0069 on phone.
-- **The request checker (the "Beyond") is the best thing on the page.** It is a real, useful object. Picking Model, Questions, State, Time or Price loads that case: the ruler moves to 2,000 or 3,982 tokens and the verdict changes from 200 to 422. Its verdict box holds the tallest answer, so nothing below it jumps. The rulers glide at 300 ms on ease-emphasis, and the chips hover-fill.
-- **Scale has rhythm.** The h1 is 52px/497 (44px on phone), section heads are 26px, the benchmark figures are about 64px, and captions are 12px Zen Mono. In the benchmark the Kai-1.4 figure is in ink and Jev is in grey on a zero-based bar, as the rules ask.
-- **The Jev diff is a good object.** The minus/plus lines arm in sequence and the changed tokens are highlighted. It explains "change the URL, the key and the model" without a sentence.
-- **Reduced motion and JS off both work.** Reduced motion shows the final terminal at once, with `getAnimations()` empty after 3 s. With JS off the whole request is printed and the h1 is legible.
-- **Rules that pass.** There is no horizontal overflow at either size, `parity.py` gives text 184/184 and links 7/7, and `taste.py` passes. Press is scale 0.97. The Tab crawl has 70 stops, none invisible.
+- The hero object is the product in use. The guide's own curl request types into a dark terminal and starts within 1 s (typing at the 1000 ms frame on both sizes). The status reads `typing`, then `200 · streaming`, then `200 · output_tokens 0`, and the demo rests with a Replay control. Pause is 44px and first in the bar.
+- The h1 cuts in by line mask: translateY from 56.8px to 0, two lines staggered, ease-out, done about 650 ms after it starts. It sits at 52px/497 with top 183 on desktop and 44px on phone. The box never moves: CLS is 0.0028 on desktop and 0.0086 on phone.
+- The page mixes the kinds of motion properly:
+  - Time: the typing terminal.
+  - Idle: the choice, score and noul glyphs loop in turn; the request checker runs its own cases (it showed `422 state_too_long` with the hatched verdict on phone); the recipes stage advances `01 / 06` with a progress line and a pause button.
+  - State: the gliding language pill and the `kai` / `kai-1.4` chips.
+  - Pointer: the Limits rows get a clip-path hover fill.
+  - Arrival: the h1 cut-in.
+  - Scroll is well under half of it.
+- The Jev diff is the best object on the page. Struck-through old values sit in grey marks and new values in ink chips, and it explains the switch with no prose.
+- The palette holds: monochrome, two dark surfaces only (the hero terminal and the recipes room), never back to back. `taste.py`: OK. `parity.py`: text 184/184, links 7/7.
+- The primary is right: `data-cta="kai-guide.hero"` and `data-thumb`, 44px tall, pressing scales it to 0.98, and the only solid fill in the first viewport on desktop. The header ask swaps to "Get an API key" once you pass the hero.
+- Reduced motion leaves 0 running animations after 3 s. With JS off, the h1, lede and the full request are all legible.
 
 ## The 11 answers
-1. **Does it sell in 5 s, and does something move within 1 s?** Mostly yes. The h1, lede, ask and a terminal typing a real request are on the first screen by 1.2 s. Against it: about 160px of empty headroom sits above the content. The h1 baseline lands at about 47% of the viewport (the brief says about 38%). The at-rest terminal is a dark slab that swallows the right two-thirds of the screen.
-2. **One thing in, one thing out, or a document?** It is half a document. 5 of 11 desktop stops and 9 of 16 phone stops are still at idle. Frame hashes over 2 s are 1 distinct for `.kg-types`, `.kg-recipes` and `.kg-jev`, and 3 for `.kg-limits`. The question-type glyphs play once and stop. Between sections there are about 250 to 300px bands of pure white with nothing in them (desktop stops 01, 05 and 07). The recipes room is a static list.
-3. **Does every section hold a real visual object?** Most do: the terminal, the glyph spec sheet, the code tabs, the checker, the diff and the bench bars. The exception is the black recipes room, which is six `recipes::x` names, each with an explaining sentence. That is a text list in a black box, not an object.
-4. **One ask in the header, nothing floating, scale rhythm?**
-   - **Desktop:** yes. The header ask swaps from "Try Hanzo" to "Get an API key" once the hero ask leaves view. Nothing floats over content apart from the shared cookie card.
-   - **Phone:** the header says "Try Hanzo" (solid) right next to the hero's solid "Get an API key". That is two solid fills on the first screen, and the header never switches to the page's ask, even at y=2500 (shared chrome, noted only).
-   - **Black room:** the white "Read the Recipes Guide" pill is a second solid fill in the same viewport as the header's solid ask.
-   - **Scale:** the rhythm is good (see What works).
-5. **Does every hover and press answer, with no jumps?** On desktop, 11 of 14 hovers changed style:
-   - The recipe rows fill by clip-path.
-   - The limit buttons ink up.
-   - The rulers' thumbs scale on hover.
-   - The primary darkens and presses to 0.97.
-
-   The question-type rows (`.kg-rows li`) have no hover at all. "Read the reference" changes only its underline. "Time" and "Price" load the same checker case (800 tokens, 200), so pressing Price shows no new answer. The recorder's "dead" clicks (TypeScript, Price, kai-1.4) were already-selected states: I re-clicked them and all respond. On phone, hover is n/a; the taps work.
-6. **Overlaps, a font swap or layout shift?** There is no overlap or font swap at either size, and CLS is under 0.01. However, phone shows the red Next "1 Issue" badge, from a hydration mismatch. Its diff names the two `<input type="range">` in the Checker (`aria-label="State tokens"` and `"Questions"`, at KaiGuide.jsx:225 and :234) as well as the shared FooterHTML. The footer part is excused; the Checker part counts.
-7. **Which reference, and is its motion there?** It feels like a developer docs page, close to motion.dev's examples, through the typewriter and the scrubbed rulers. Nothing from apple.com (no pinned scene where one panel changes) and nothing from osply or hamol (no editorial asymmetry; it is the same 5/8 split in every section). The diff's sequential arm is the closest thing to an authored moment after the hero.
-8. **Different from its neighbours?** Yes. /kai's signature is a decision tree resolving. This page has a typewriter terminal hero and a checker, which no other page uses.
-9. **Are all 18 parts covered?** Not fully. Present:
-   - the header comment, with Persona, Goal, CTA, Metric, Signature and Beyond;
-   - one h1 in server HTML, and a breadcrumb;
-   - kit `Cta`, `Tabs` and `CodeBlock`;
-   - `data-cta` on every primary and `data-thumb` on the hero;
-   - a terminal pause control;
-   - JS-off and reduced-motion states.
-
-   Missing or weak:
-   - **No closing `Band`.** The page ends on a bare CTA pair under a hairline, with no statement in the page's words.
-   - **No proof strip before the Band.** The benchmark sits inside the Jev section.
-   - **The h1 holds a `<noscript><style>`.** Its textContent therefore includes CSS (seen by the recorder), which hurts accessible-name and SEO tooling. Move the noscript out of the h1.
-10. **Any banned tells?** No hue, gradient text or pill above a headline (the "HANZO DECISION MODEL · 0 OUTPUT TOKENS" eyebrow sits below the h1, as allowed). There are two near-tells:
-    - **Dark rooms:** four black or graphite surfaces sit in `<main>` (hero terminal 557px, code block 680px, black room 877px, diff 293px). With the checker card there are five, against a cap of "at most 2 black or graphite rooms per page, never back to back". The terminal, code block and checker run back to back in sections 1 to 3.
-    - **Explaining sentences:** an explaining sentence under every recipe row.
-11. **Is the copy untouched?** Yes, parity shows 0 missing (text 184/184, links 7/7). One note: the hero terminal types the same curl request that "One request, three questions" prints again two sections later. The words are Hanzo's, but showing the same block twice is a design repeat.
+1. **Sells in 5 s, moves in 1 s?** On desktop, yes. The h1, lede, primary and a typing terminal are all in the first viewport, and typing has begun at 1000 ms. On phone it is weaker. The terminal window is a short strip (about 195px) under a 2-line h1, and its JSON soft-wraps mid-string (`"Route` / `ticket to appropriate team"`, `"executive_escalati…`), so the hero object reads as broken text. The `HANZO DECISION MODEL · 0 OUTPUT TOKENS` line sits 10px under the h1 (h1 bottom 237, caption top 247 at 375x667). On a cold load the h1 is masked until about 1.0 s, so the 0 ms frame shows the caption and lede with no headline.
+2. **One in, one out, or a document?** It is half of each. The first two screens work: the hero, then three glyph rows. After that, the Call section is a 610px-tall Python block. The Limits screen then puts five labelled paragraphs (Model, Questions, State, Time, Price; State alone is about 60 words) beside a checker with two rulers, a verdict, a figure and a price. That is the overload James named. The closing is clean: an 84.4% vs 76.6% proof strip, then a Quiet band with a centred statement and the ask.
+3. **A real object in every section?** Yes. The terminal, the type glyphs, the code tabs, the checker, the recipes stage, the diff, the benchmark bars and the band. But four of the eight are code or code-like panels in the same grey and white, so the objects repeat. The recipes stage is mono text at a large size, not a picture. There is no Kai media anywhere, and /kai has a film it could borrow from.
+4. **One ask in the sticky header, nothing floating; scale rhythm?** On desktop, yes. The header goes outlined while the hero ask is solid, then solid "Get an API key". Nothing of the page's own floats. On phone the shared header keeps a solid "Try Hanzo" beside the hero's solid "Get an API key", so there are two solid fills with different labels at 375x667 (shared chrome, noted below). Scale mostly has rhythm: h1 52, h2 26, benchmark figures large, captions 12 mono. But the type names `choice` / `score` / `noul` are h3s at 32px, bigger than every h2 (26px), so the hierarchy is inverted in that section.
+5. **Every hover and press answers, no jumps?**
+   - Mostly yes, with no jumps. Rows fill, chips fill, tabs answer, Copy confirms and Replay restarts the demo.
+   - The primary hover moves the fill from `#0a0a0a` to `rgb(44,44,46)`. That is a fill change, not a fade, but it is off the deck ramp (kit `Cta`). Press is scale 0.98.
+   - "Read the reference" underlines on hover.
+   - The walker flagged "TypeScript" and "kai-1.4" as dead clicks. Both work when probed: `aria-selected` flips, and the chip toggles in the frames.
+   - Under 44px: the hero Copy is 75x30 and "The runs →" is 80x21.
+6. **Overlaps, font swap, layout shift?** No overlap at either size, and overflowX is 0 at 375 and at 320. CLS: 0.0028 desktop, 0.0086 phone. No visible font swap. The desktop Python block clips long lines inside its own scroller (scrollWidth 799 vs 700), so the `state` and `criteria` lines run off the card's right edge with no hint.
+7. **Which reference, and is its motion there?** motion.dev patterns and the Developer type's "typewriter terminal". The typing, streaming status and rest are really there. Apple's "one idea per screen" is not there in the middle third.
+8. **Different from its neighbours?** Yes. /kai is a black full-bleed film hero (the light diamond) with a 120px name. The guide is a light split hero with a typing terminal. Different medium, layout and signature.
+9. **18 parts?**
+   - Covered: header comment with Persona, Goal, CTA, Signature and Beyond; one h1; `<main>` content; a breadcrumb under the hero (Models / Kai Guide); `data-cta` on the primary; APG-style tabs with arrow keys; a code block focusable as a scroll region; pause controls on the terminal and recipes; reduced motion; JS off; no 320 overflow.
+   - Gaps:
+     - The tabs don't sync to the hash (`location.hash` stays empty after choosing TypeScript), and the choice isn't remembered.
+     - Two targets are under 44px.
+     - The page CSS uses literal hex values throughout (`#f5f5f5`, `#e4e4e7`, `#a3a3a3`…) and redefines its own token names in `.kg` instead of using `tokens.css` (part 7). The values are on the palette.
+     - Under reduced motion the hero shows the top of the request, not the settled response.
+10. **Banned tells?** None found. No hue, no gradient text, no kicker above a headline (the mono captions sit below their h1 and h2), no cursor glow, no fade-on-hover.
+11. **Copy untouched?** Yes: parity 184/184 text and 7/7 links. The response's `…` values are the guide's own response shape, not invented numbers.
 
 ## Fixes (in order)
-1. **Break the black run.** Make the code tabs section (`.kg-call`, KaiGuide.jsx/CSS) a Paper or Quiet room. Put the `CodeBlock` on `#f5f5f5` with ink text, or show only the *response* half there, since the hero already typed the request. Then the page has two dark moments, the hero terminal and the recipes room, and they are not back to back. Restyle the checker (`.kg-check`) and the diff (`.kg-jev-d`) as light surfaces (Quiet `#f5f5f5`, ink type, hairlines), so the black room is the only full-dark room after the hero.
-2. **Stop showing the curl twice.** In `.kg-call`, open on the Python or TypeScript tab, or collapse the curl tab to its first 4 lines with "same request as above". The hero owns the curl. Copy stays the same; only the presentation changes.
-3. **Give the recipes room an object and some life.** Turn the six `.kg-rec li` into a rail or a pinned stage where one recipe is in focus. Show its name large and its line beneath, and switch the focused recipe on scroll or hover. The other names sit small and grey. Then the room is not six explaining sentences in a column, and the second solid (the white "Read the Recipes Guide" pill) can drop to the quiet `Cta` variant.
-4. **Fix the Checker's hydration mismatch** (the phone "1 Issue" badge). The SSR `<input type="range">` at KaiGuide.jsx:225 and :234 hydrates with a differing `style` attribute. Make both inputs render identically on server and client: set no style from any client-only path, and check that nothing in KaiGuide.css or a script writes inline style before hydration. Then confirm the badge is gone at 375x812.
-5. **Add idle life to the still screens.**
-   - Let the three question-type glyphs (`.kg-glyph`) loop slowly while in view (choice bars re-weighting, score dot stepping, noul thumb tipping) and pause when out of view and under reduced motion.
-   - Give `.kg-rows li` a row hover fill like the recipe rows have.
-   - That makes the types section, now 1 distinct frame in 2 s, alive.
-6. **Close properly.** Replace the bare CTA pair under a hairline (`kai-guide.close`) with a `Band`: one line in the page's own words, then the solid "Get an API key" and the reference link. Lift the 84.4% / 76.6% figures into the proof strip just before it.
-7. **Tighten the hero.** Cut the empty band above the hero so the h1 baseline sits near 38% of 100svh rather than about 47%, and let the next section peek 56px. Move the `<noscript><style>` out of the `<h1>` (KaiGuide.jsx near line 362) into the section.
-8. **Make "Price" answer.** It loads the same 800-token case as "Time". Give it its own checker case, or highlight the cost line (`.kg-cost`) when Price is the active limit, so the press shows something new.
-9. **Shared chrome (request, do not edit).** On phone the header keeps a solid "Try Hanzo" beside the hero's solid "Get an API key", and it never swaps to the page's ask after the hero. Write `docs/requests/kai-guide.md` asking the sticky-ask owner to apply the desktop swap at 375 too.
+1. **Turn Limits into one thing at a time** (`components/pages/model/KaiGuide.jsx`, the `kg-rows` list around line 290, and the checker beside it). Only the active row shows its paragraph. The others collapse to their mono label and one line, with the text kept in the HTML (`hidden="until-found"`, opens by hash). Clicking a row already loads the checker case, so the open row and the checker move together. This is the screen James will call "overload".
+2. **Make the hero rest on the answer** (the session terminal, `KaiGuide.jsx` lines 100–115 and its runner). Still no invented values. When it settles, scroll the response to the middle and light the `answers` block and `"output_tokens": 0` line by line in ink, with the request dimmed to white 55%. That way the climax is "probabilities come back, no text". Under reduced motion, render that same settled response view, not the top of the request.
+3. **Rebuild the phone hero** (`KaiGuide.css`, `@media (max-width: 899px)`):
+   - Make the terminal taller, up to 45svh.
+   - Use `white-space: pre` with horizontal scroll (or 12px mono) so the JSON keeps its indentation instead of soft-wrapping mid-string.
+   - Add 10.5–17px between the h1 and the `HANZO DECISION MODEL` caption.
+4. **Break the code-panel run.** The Call section's Python block is 610px tall and clips at the right. Cap it at about 12 lines with an "expand" disclosure, and let long lines wrap or show a scroll fade. Give the Call section's left column something other than a paragraph, such as the three-question response shape as a small diagram from the existing words. Consider bringing Kai's own film or still from /kai into the recipes room or the band, so the page has one real Hanzo visual.
+5. **Fix the inverted scale.** Set the `choice` / `score` / `noul` h3s to 21px (deck H3 band) or lower, so the section h2 at 26px leads.
+6. **Tabs:** sync the language choice to the hash (`#python`, `#typescript`, `#curl`) and remember it in `localStorage` inside try/catch (parts 6 and 16).
+7. **Targets:** give the hero Copy a 44px hit area (it is 30px tall) and "The runs →" a 44px line box.
+8. **Tokens:** replace the literal hex values in `KaiGuide.css` with `tokens.css` variables, and drop the local re-declarations at the top of `.kg`.
+9. **Phone checker:** set the `model: "kai"` / `model: "kai-1.4"` chips side by side at equal width. They currently stack at different widths.
+
+Shared chrome, not scored against the page:
+- On phone the header keeps a solid "Try Hanzo" in view with the hero's solid "Get an API key", so there are two solid fills and two labels. Desktop swaps correctly.
+- The kit `Cta` hover goes to `rgb(44,44,46)`, which is off the deck ramp.
+- The phone cookie card is 203px and covers the lower quarter of every screen until dismissed.
+- The red "1 Issue" dev badge is the FooterHTML hydration mismatch, which is the only console error.

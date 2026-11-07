@@ -77,7 +77,7 @@ Done here: the sticky chip bar is opaque white (#fff, no blur) and draws its hai
 
 ## 9. Motion and interaction
 - [x] Signature (the dealing pile), supporting: line-mask cut-ins, the stage settle (`Rise`), rows rising once, the ladder; 0 fade-ups
-- [x] Idle (pile), state (chips, with a tick), arrival (h1, rows rise 16px once in 400ms with 60ms stagger, ladder grows from 25% in view), scroll (settle)
+- [x] Idle (pile; on the index screens a reading lamp lights one row at a time, 1.8s each, once through, the way the pile deals), state (chips, with a tick), arrival (h1, rows rise 16px once in 400ms with 60ms stagger, ladder grows from 25% in view), scroll (settle)
 - [x] Moves without input; every control answers
 - [x] Reduced motion: the pile cuts (no travel), rows, ladder and stage sit in their final place from first paint; no springs; no hydration error
 - [x] Sound: a tick on a chip, through `lib/sound`
@@ -101,8 +101,8 @@ Done here: n/a.
 Done here: at 375 the stamp (54–247 × 728–810) sits inside the top sheet (16–278 × 528–833) and the pause sits under the pile (864–909), touching no sheet; at 1470 the pause sits on the pile's top-right corner (y 169–214), clear of every sheet; scroll width 320 at 320.
 
 ## 12. Accessibility (WCAG 2.2 AA)
-- [x] Contrast measured: ink #0a0a0a on white, soft text #525252 (7.8:1)
-- [x] A 44px pause beside the pile (stops the deal)
+- [x] Contrast measured: ink #0a0a0a on white, soft text rgb(72,72,74) (about 9:1)
+- [x] One pause state, shown as a 44px button beside the pile and at the end of the chip bar: it stops the deal and the reading lamp together; keyboard focus on a row puts the lamp out
 - [x] n/a forms
 - [x] One h1; hidden h2 per group, then h2 sections
 - [x] Keyboard reaches every row and chip

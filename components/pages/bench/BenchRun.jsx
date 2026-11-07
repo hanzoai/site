@@ -116,11 +116,15 @@ const isLog = (vals) => { const v = vals.filter((x) => x != null && x > 0); retu
 
 /* the card's figure: Hanzo's own row, huge; a row the reader points at or picks takes its place. It rolls only when
    the reader changes the row or the column, never by itself. */
-function Readout({ c, walk, col = 0 }) {
+/* the row being read: the one the reader points at, else the one they picked, else Hanzo's own */
+function useLook(c, walk) {
   const pin = usePin(walk);
   const [hover, setHover] = useState(-1);
   useEffect(() => { const f = (e) => setHover(e.detail); addEventListener('xbr-hover', f); return () => removeEventListener('xbr-hover', f); }, []);
-  const k = hover >= 0 ? hover : pin >= 0 ? pin : anchorOf(c);
+  return hover >= 0 ? hover : pin >= 0 ? pin : anchorOf(c);
+}
+function Readout({ c, walk, col = 0 }) {
+  const k = useLook(c, walk);
   const r = readout(c, k, col);
   if (!r) return null;
   return (
@@ -231,8 +235,10 @@ function Turn({ c, walk, slug }) {
   } else if (c.kind === 'bars') {
     const vals = c.rows.map((r) => r.cells[col].v);
     const w = scaler(vals);
+    // the value column is as wide as its longest figure, so every bar runs on the same track and no figure wraps
+    const vw = Math.max(...c.rows.map((r) => String(r.cells[col].s || '').length), 3) + 1;
     body = (
-      <div className={'xbr-bars' + (chart ? ' chart' : '')}>
+      <div className={'xbr-bars' + (chart ? ' chart' : '')} style={{ '--xbr-vw': vw + 'ch' }}>
         {c.cols.length > 1 && (
           <div className="xbr-cols" role="group" aria-label={c.head0}>
             {c.cols.map((k, j) => <button key={k.name} type="button" aria-pressed={col === j} onClick={() => { setCol(j); walk.stop(); play('tick'); turned.current = true; setChart(true); }}>{k.name}</button>)}
@@ -273,10 +279,72 @@ function Turn({ c, walk, slug }) {
   );
 }
 
+/* ---------- a chapter whose table is the card's own: its figures are said once (on the card); the chapter shows what
+   they are made of instead, and the table itself waits in the chapter's sheet ---------- */
+const OF = /^(\d[\d,]*) of (\d[\d,]*)$/;
+const num = (s) => parseInt(String(s).replace(/,/g, ''), 10);
+/* the column whose every cell reads "x of y" (gpqa: "184 of 198"): the questions themselves */
+const partsCol = (c) => (c && c.kind === 'bars' ? c.cols.findIndex((_, j) => c.rows.every((r) => OF.test(String(r.cells[j].s || '').trim()) && num(String(r.cells[j].s).split(' of ')[1]) <= 400)) : -1);
+function Parts({ c, walk, j }) {
+  const box = useRef(null);
+  const seen = useInView(box, { amount: 0.35, once: true });
+  const k = useLook(c, walk) % c.rows.length;
+  const r = c.rows[k];
+  const [x, y] = String(r.cells[j].s).trim().split(' of ').map(num);
+  const cols = Math.ceil(Math.sqrt(y * 1.5));
+  return (
+    <div ref={box} className="xbr-ch-v xbr-parts" data-on={seen ? '' : undefined} aria-hidden="true">
+      <div className="xbr-parts-g" style={{ '--c': cols }}>
+        {Array.from({ length: y }, (_, i) => <i key={i} className={i < x ? 'on' : ''} style={{ '--i': i }} />)}
+      </div>
+      <div className="xbr-parts-f">
+        <span className="xbr-parts-l">{r.label}</span>
+        <b className="x-mono">{r.cells[j].s}</b>
+        <span className="xbr-ro-s x-mono">{c.cols[j].name}</span>
+      </div>
+    </div>
+  );
+}
+/* every other card table: its rows as squares whose area is the figure, nested from one corner (Hanzo's row in ink) */
+function Scale({ c, walk }) {
+  const box = useRef(null);
+  const seen = useInView(box, { amount: 0.35, once: true });
+  const k = useLook(c, walk);
+  let sq = [], keys = null;
+  if (c.kind === 'versus') {
+    const r = c.rows[k % c.rows.length];
+    const hi = Math.max(r.a.v, r.b.v) || 1;
+    sq = [{ s: Math.sqrt(r.b.v / hi), t: 'b' }, { s: Math.sqrt(r.a.v / hi), t: 'a' }];
+    keys = [[c.heads[0], 'a'], [c.heads[1], 'b']];
+  } else if (c.kind === 'bars') {
+    const vals = c.rows.map((r) => r.cells[0].v);
+    const w = scaler(vals);
+    const own = anchorOf(c);
+    sq = c.rows.map((r, i) => ({ s: Math.sqrt(Math.max(0, w(r.cells[0].v))), t: i === k % c.rows.length ? 'a' : i === own ? 'o' : 'n' })).sort((p, q) => q.s - p.s);
+  } else return null;
+  const r = readout(c, k);
+  return (
+    <div ref={box} className="xbr-ch-v xbr-scale" data-on={seen ? '' : undefined} aria-hidden="true">
+      <div className="xbr-scale-b">
+        {sq.map((q, i) => <i key={i} className={'xbr-sq ' + q.t} style={{ '--s': Math.max(0.012, q.s), '--i': i }} />)}
+      </div>
+      <div className="xbr-parts-f">
+        <span className="xbr-parts-l">{r[0]}</span>
+        {keys ? <span className="xbr-scale-k x-mono">{keys.map(([h, t]) => <span key={t}><i className={'xbr-key ' + t} />{h}</span>)}</span> : <span className="xbr-ro-s x-mono">{r[2]}</span>}
+      </div>
+    </div>
+  );
+}
+
 /* a captured table, drawn in the new design; every cell stays, wide ones scroll inside their own frame */
 /* a captured table, as the kit's one DataTable: every cell as Hanzo wrote it (links included), the first column the row
    header, figures in tabular numerals; the caption is the section it belongs to (Hanzo's own heading) */
 const isEl = (k) => k && typeof k === 'object';
+function headsOf(n) {
+  const thead = n.c.find((k) => isEl(k) && k.t === 'thead');
+  const tr = thead && thead.c.find((r) => isEl(r) && r.t === 'tr');
+  return tr ? tr.c.filter(isEl).map((th) => clean(textOf(th))) : [];
+}
 function Table({ n, caption }) {
   const rowsOf = (sec) => (sec ? sec.c.filter((r) => isEl(r) && r.t === 'tr') : []);
   const thead = n.c.find((k) => isEl(k) && k.t === 'thead');
@@ -522,8 +590,13 @@ export default function BenchRun({ doc, near = [], peek = {} }) {
   const TONES = ['ink', 'card', 'line'];
   const ask = askOf(doc.tail);
 
+  const pj = partsCol(c);
   const chapter = (s, k) => {
     const { lead: l, table, rest } = splitSection(s);
+    // the card already reads this section's table: say its figures once there; the table itself goes in the sheet
+    const dup = !!(table && c && c.kind !== 'one' && c.kind !== 'trend' && c.title === s.title);
+    const sheet = dup ? s.blocks.filter((b) => b !== l) : rest;
+    const heads = dup ? headsOf(table.n).join(' · ') : '';
     return {
       key: s.title,
       name: s.title,
@@ -531,15 +604,16 @@ export default function BenchRun({ doc, near = [], peek = {} }) {
         <div className="xbr-ch-t" id={s.id || undefined}>
           <h2 className="v2f-head xbr-ch-h">{s.title}</h2>
           {l && <div className="v2f-body xbr-ch-b"><Block b={l} /></div>}
-          {!!rest.length && <FamDrawer preview={firstWords(rest)} title={s.title}><div className="xbr-sheet-b"><Blocks blocks={rest} /></div></FamDrawer>}
+          {!!sheet.length && <FamDrawer preview={firstWords(rest) || heads} title={s.title}><div className="xbr-sheet-b"><Blocks blocks={sheet} /></div></FamDrawer>}
         </div>
       ),
-      visual: table ? (
-        <div className="xbr-ch-v v2f-obj"><Table n={table.n} caption={s.title} /></div>
-      ) : (
-        // no table in this section: its own contour field (seeded from the section), so each figure is said once, on the card
-        <div className={'xbr-ch-v xbr-ch-fig ' + TONES[k % TONES.length]}><Sigil seed={'bench/' + doc.slug + '/' + s.title} data={seedData} className="xbr-ch-sig" /><p className="xbr-ch-q" aria-hidden="true">{s.title}</p></div>
-      ),
+      visual: dup ? (pj >= 0 ? <Parts c={c} walk={walk} j={pj} /> : <Scale c={c} walk={walk} />)
+        : table ? (
+          <div className="xbr-ch-v v2f-obj"><Table n={table.n} caption={s.title} /></div>
+        ) : (
+          // no table in this section: its own contour field (seeded from the section), so each figure is said once, on the card
+          <div className={'xbr-ch-v xbr-ch-fig ' + TONES[k % TONES.length]}><Sigil seed={'bench/' + doc.slug + '/' + s.title} data={seedData} className="xbr-ch-sig" /></div>
+        ),
     };
   };
 

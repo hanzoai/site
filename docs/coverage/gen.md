@@ -13,7 +13,7 @@ Forks this page deleted: the native `<select>` agent picker (now Previous/Next b
 - [x] No dead or self-looping button; prices from `lib/plans.js` (n/a: no prices)
 - [x] Open copy questions for James listed, none decided
 
-Done here: one solid "Get API key" (`platform.hanzo.ai/keys`) in the hero and the same one in the closing room; check.mjs counts 1 solid on the first screen at both sizes. `lib/cta.js` has not landed, so the label is Hanzo's live one.
+Done here: one solid "Get API key" (`platform.hanzo.ai/keys`) in the hero and the same one in the closing room; On phones the page-local `usePhoneAsk` (round 3) outlines the header's "Try Hanzo" while any solid ask of the page is on screen, so the first screen shows one solid at both sizes. `lib/cta.js` has not landed, so the label is Hanzo's live one.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -39,7 +39,7 @@ Done here: the h1 is plain server HTML (no mask holding it back on a slow machin
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: `<Cta id="gen.hero" thumb>` and `<Cta id="gen.band">`; secondaries carry `gen.*` ids. The header carries the solid "Try Hanzo"; there is no floating bar on desktop, and on phones the slim shared bar carries this page's own `data-thumb` ask.md item 1 is open. Every Copy copies the shown command; `$` is `user-select: none` and not copied.
+Done here: `<Cta id="gen.hero" thumb>` and `<Cta id="gen.band">`; secondaries carry `gen.*` ids. Desktop: the shared Ask swaps the header to a solid "Get API key" after the hero (outlined while the hero's ask shows). Phones: `usePhoneAsk` swaps the header to "Get API key" after the hero (it fits) and outlines it while a solid page ask or the shared slim bar is on screen; the shared bar rises only where it covers nothing, so it often stays down. Every Copy copies the shown command; `$` is `user-select: none` and not copied.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number

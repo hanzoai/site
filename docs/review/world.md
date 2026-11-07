@@ -1,36 +1,59 @@
 # /world — James-eye review
 
-Verdict: 6/10
-First complaint: "The globe's nice, but the second I scroll it turns into a grid of six boxes just sitting there. Nothing comes in, nothing goes out, three the same size in a row, a sentence under every one. It's a dead page after the top."
+Verdict: 7/10
+First complaint: "Better, it finally comes in and goes out. But each monitor is a big empty grey box with a little chart in the middle that plays once and then just sits there. The globe's alive, the room isn't. And on my phone it's still six grey cards with a sentence under each."
 
-Walked live on http://localhost:4180/world/ with Playwright Chromium at 1470x801 (wheel notches of 100px with a 120-140ms dwell, video recorded) and at 375x812 (isMobile, hasTouch, 100px notches). Also: idle sampling every 200ms for 6s with no input, hover and press probes on every control (computed-style diffs), keyboard scrub of the replay, Copy with a clipboard read-back, reduced-motion at both sizes (getAnimations, canvas frozen check), and a scrollWidth, truncation and tap-target sweep at 375. Working files are in /tmp/claude-0/-home-user-hanzo-site/715b2a45-dd44-5306-98d1-bc0b4d91bc34/scratchpad/critic/world/.
+I walked it live on http://localhost:4180/world/ with Playwright Chromium, re-reviewing after the 16:34 rework of `World.jsx` and `World.css`.
+- **Desktop, 1470x801:** a wheel walk in 100px notches at 140ms dwell (video and frame bursts), then a second walk at 400ms dwell through the pinned room. I also settled 1.8s on each of the six monitors.
+- **Phone, 375x812** (isMobile, hasTouch): a 100px-notch walk with video and frame bursts.
+- **Idle:** 6 frames over 1.2s from first paint, with no input.
+- **Hover and press:** computed-style diffs on the hero ask, Documentation, pause, rail stops, monitors, topology nodes, the replay scrub and Copy. I also clicked a rail stop and checked that it jumps.
+- **Reduced motion:** checked at both sizes (`getAnimations`, a still-frame check).
+- **Overflow:** a scrollWidth and clipping sweep at 375.
+- **Console:** 9 fresh loads in total.
+
+Working files are in /tmp/claude-0/-home-user-hanzo-site/715b2a45-dd44-5306-98d1-bc0b4d91bc34/scratchpad/critic2/world/.
 
 ## What works
-- **The hero is alive and on-brand.** The h1 cuts in by line mask. A dotted canvas globe turns on its own. White request arcs draw from points to ringed GPU hubs. The latency-by-model panel ticks every 1.2s, and a "drift" alert fades in on a cycle. With a warm server, something is moving at about 1s with no input. It is fully monochrome (`taste.py` OK) and the copy is untouched (`parity.py`: 31/31 text, 4/4 links).
-- **Nothing is above the h1.** "world.hanzo.ai" sits below the headline as a Zen Mono caption, which is correct.
-- **The hero's scale has rhythm:** a 52px h1, a 21px lede, a large globe and a medium dark panel overlapping it.
-- **Reduced motion settles properly.** `getAnimations()` is 0 and the canvas holds a still frame at both sizes. The pause button (48px) works.
-- **The topology tile answers.** Hovering or tapping zen or kai flips that node to an ink fill and relights its 4-edge path to the GPU. That is a real state change.
-- **The Replay scrub works.** Keyboard arrows step it, the "n / 6" line changes, and the step crossfades in with a small slide.
-- **Copy works.** The clipboard holds exactly the displayed prompt and the button shows "Copied". Press states on the CTA, pause and Copy scale to about 0.97 with no layout jump.
-- **No horizontal scroll at 375** (scrollWidth 375). No touch target is under 44px, and the primary sits at y=340 on the phone.
+- **The first screen sells and moves.** The h1 is 52px with nothing above it, and "world.hanzo.ai" sits below it as a mono caption. The lede, the ask and the dotted globe are all alive. Arcs draw to ringed GPU hubs, and the latency panel ticks. 5 of 5 frames in the first 1.2s differed with no input. It is monochrome.
+- **The control room is now a real stage.** It pins on desktop, and scroll swaps which monitor is on air: one large monitor, while the others leave upward and arrive from below with a clip. The left side holds a 64px figure that rolls 01 to 06, and a numbered rail whose hairline fills with progress. This is the "one in, one out" James asked for, and it reads as Apple-like.
+- **Each monitor's drawing plays once as it arrives:**
+  - the topology draws in, then its nodes appear;
+  - the latency bars grow, then the spike blips;
+  - the drift line draws, then its alert dot pops and blinks;
+  - the v2 eval bar fills, then "pinned" appears;
+  - the multi-cloud chips gather into "One unified view";
+  - the replay track staggers in.
+- **Every control answers:**
+  - The hero ask changes fill to #e4e4e7, leans magnetically (translate 3.6px/1.25px measured) and scales to 0.985 on press.
+  - Rail stops slide their title 6px on hover and scale to 0.98 on press. Clicking stop 05 smooth-scrolls the stage to monitor 05.
+  - Hovering a monitor draws the hairline across its header.
+  - The topology's kai and zen nodes flip to ink and relight their path.
+  - The replay range steps by arrow key and by click, and the "n / 6" readout crossfades.
+  - Pause freezes the globe (verified with a pixel-identical frame) and sets aria-pressed.
+- **The replay labels no longer truncate.** "model output" wraps to two lines in the tile.
+- **Reduced motion is right.** The room un-pins into the stacked grid with all six monitors on and whole, there are 0 running animations, and the frame is still, at both sizes.
+- **There is no horizontal scroll at 375** (scrollWidth 375). The globe's 8px bleed is clipped on purpose.
+- **The phone first screen holds** the h1 (40px), the lede, the primary at y=280, and the globe from y=308.
+- **The console was clean** on 7 of 9 fresh loads. Copy put exactly the displayed prompt on the clipboard.
 
 ## What fails (ranked, each with a concrete fix the owner can make in the page's own files)
-1. **The control room is a static document.** `Room()` in `components/pages/cloud/World.jsx` renders all six `.wd2-mon` tiles at once with no entrance, no pin and no scrub. On a wheel walk every tile stayed at opacity 1 with transform none from y=1528 until it left the screen. After the hero, nothing comes in and nothing goes out. Fix: make the room a pinned stage on desktop (≥900px). Sticky-pin `.wd2-room` for about 6 × 60svh, show one large monitor at a time (the 7-column size), and let scroll progress swap which capability is "on air". The other five sit as small numbered thumbnails (the `01 / 06` labels) on a rail beside it, so it reads as one big, five small. Below 900px keep the stack, but give each tile one line-mask cut-in on its h3 (counts as your Rise budget).
-2. **Three equal boxes in a row, and a sentence under every tile.** `.wd2-mon.c2, .c3, .c4 { grid-column: span 4 }` is the banned three-equal-boxes row, and every tile ends in a two-line body sentence. That reads as a template bento. Fix: this disappears if #1 is done. If not, break the row into 5 + 7 and 12 (for example, Drift wide with the chart running full width, then Eval and Multi-Cloud as 5/7). Move each `.l2-body` into the active, enlarged monitor only, and keep only the h3 on the small ones.
-3. **The tile visuals are dead drawings.** The Drift chart, the Latency + Cost bars, the Eval v1/v2 bars and the Multi-Cloud chips never move, and `.wd2-mon` has no hover state at all (the probe found zero computed changes on hover and on press). Fix: give each mini-visual one idle or time beat when it becomes the active monitor:
-   - Drift: stroke-dash draws the `.ln` path over 900ms, then the `.al` dot appears.
-   - Latency + Cost: the bars grow from `scaleX(0)` with a 60ms stagger, then the "cost spike" dot blinks once.
-   - Eval: the v2 bar fills and "pinned" fades in.
-   - Multi-Cloud: the chips gather into "One unified view".
+1. **The monitors are empty stages with small, dead-after-arrival drawings.** The on-air monitor is about 690x660, but the Latency bars, the Eval bars and the Multi-Cloud chips are only 90 to 130px tall, floating in the middle of grey. After their arrival beat (about 1.5s), nothing on the stage moves until you scroll again. So scale has no rhythm inside the room (a big box, a small object), and the room fails "idle and ambient". Fix in `World.jsx` and `World.css`:
+   - Size each drawing to the stage: `.pinned .wd2-lc i { height: 14px }` with 24px row gaps, `.pinned .wd2-ev i { height: 64px }`, `.pinned .wd2-mc li { font-size: 21px; padding: 16px 22px }`, and let `.pinned .wd2-pic` centre a drawing that fills about 70% of the height.
+   - Give the on-air monitor one idle beat, gated on `on` and paused when hidden, using the existing `useTick`:
+     - Latency: re-randomise the bar widths every 1.2s, like the hero panel.
+     - Drift: the alert dot pulses slowly.
+     - Eval: the v2 score bar nudges.
+     - Replay: auto-advances one step every 1.5s until the visitor touches the range.
+2. **The phone room is still a document:** six stacked grey cards, each with an h3 and a two-line sentence. The cut-ins play, but it scrolls like a list. Fix: under 900px, turn `.wd2-grid` into a horizontal snap rail (`scroll-snap-type: x proximity`, cards at 84vw for a 16% peek) with the rolling `01 / 06` figure above it. Alternatively, keep the stack but show `.l2-body` only on the card in view (fade the others to just the h3), so one card speaks at a time.
+3. **Dead air in the pinned left column.** About 200px of blank space sits between "See Every Model, Everywhere" and the 64px figure, because `.pinned .wd2-side` uses `justify-content: space-between` and the count has `margin: auto 0 32px`. The heading floats alone at the top of an empty half-screen. Fix: drop `margin-top: auto` on `.wd2-count` and set the figure 44px under the h2. Then sit the rail directly below it, and let the column bottom-align as a block (`justify-content: flex-end`), so the heading, figure and rail read as one unit beside the monitor.
+4. **The hero hand-off is invisible.** The globe stays `transform: none` until y=600 and only reaches scale 0.977 at the hero's end. Nobody sees the "goes out". Also, the panel's bottom edge sits at 809px, cut by the 801 fold. Fix: start `box.current.a` earlier (`end - innerHeight * 1.4`), so the scale-down and rise run across the last 60% of the hero. Set `.wd2-world { height: min(600px, 72svh) }` so the panel clears the fold.
+5. **The drift alert dot reads as a smudge.** At rest, the `.al` circle is #a3a3a3 sitting on top of the 2px ink line on #f5f5f5. It looks like a grey blot, not an alert. Fix: make it a hollow ink ring (`fill: #f5f5f5; stroke: var(--ink); stroke-width: 2`) at the line's end point, pulsing with the blip.
+6. **Brief two-monitor overlap on quick flicks.** On fast wheel bursts, a frame or two shows the outgoing and incoming captions half-faded on top of each other (for example, "Hanzo Cloud" over the v1 bar). This happened in 3 of 34 frames at 400ms dwell. Fix: drop the `.1s` `transition-delay` on `.pinned .wd2-mon.on`, give the outgoing monitor `opacity .15s`, and hide `.wd2-cap` on the non-active monitor immediately (`.pinned .wd2-mon:not(.on) .wd2-cap { visibility: hidden }`).
+7. **An intermittent hydration warning.** 2 of 9 loads logged "A tree hydrated but some attributes… didn't match" and showed the red "1 Issue" badge. Both coincided with another page's compile error (Skills.jsx), and it did not reproduce on 7 clean loads. Re-check after the tree is green. If it persists, the `Replay` range is already mount-gated, so look at the inline `style` that `useMagnet` writes on the hero ask.
 
-   Add an `@media (hover:hover)` hover that does something other than opacity, such as a 2.5° tilt or a hairline that draws across the header.
-4. **Red "1 Issue" dev badge and a hydration error.** In the recorded walks (desktop and phone) React logged a hydration mismatch on the Replay range input (server `style={{--p:"40%"}}` against client `caret-color:transparent`) and on the footer HTML. The red badge sits bottom-left on every frame. Fix: in `Replay()`, render the `<input type="range">` only after mount (a `mounted` state, with a static track in SSR) or add `suppressHydrationWarning` to that input. File `docs/requests/world.md` for the footer mismatch, which is shared chrome.
-5. **Ellipsis truncation in the Replay track, even at 1470.** "model outp…" shows twice on desktop. At 375 "tool c…" and "model …" are clipped, and "Forensic Replay" itself measures as overflowing. James reads "…" as unfinished. Fix: in `World.css`, drop `white-space:nowrap; text-overflow:ellipsis` on `.wd2-rp-track span` and let labels wrap to two lines with fixed min-height. Alternatively, show only the current step's label in full and render the others as short ticks or dots, at both sizes.
-6. **Dead air between scenes.** On desktop the "See Every Model, Everywhere" h2 sits alone on the left with an empty right half and about 96px of white before the grid. About 160px of empty white sits between the Replay tile and the black finale. Fix: set the h2 in the 8/5 split with the first monitor beginning beside it, or start the pinned stage right under the heading. Trim `.wd2-grid` margin-top to the 44 step and pull the finale up so the old and new objects overlap by about 40px (MASTER part 3).
-7. **The hero object barely makes the first screen on phone.** At 375x812 the globe starts at y=480 and the latency panel at y=803, so only a sliver of the planet shows before the shared consent card. The pause button also sits on top of the globe's rim. Fix: under 900px, shrink `.wd2-globe` to about 70% width and position it right, behind the lede (absolute, low z, partly off-canvas). Start `.wd2-panel` at -40px under the globe. Move `.l2-pause` to the panel's header row so it never sits on the art.
-8. **The hero does not hand off.** The globe and panel just scroll away while the room below is static, so there is no "one goes out". Fix: tie a gentle scroll exit to the hero. As `.wd2-world` leaves, the globe scales from 1 to 0.9, rises 24px and slows its spin, and the panel slides down to dock as the room's first monitor. The page's own latency panel then becomes the "Latency + Cost" object in the room: one object travelling between scenes.
-9. **Minor points:**
-   - The hero CTA's hover only shifts the background from #f5f5f7 to #fff, which is invisible on black. Give it the magnetic ask (to 22px, fine pointers only) or a hairline arrow move like the Documentation link has.
-   - The "06 / 06" numbering sits directly above the "Forensic Replay" h3 because `.c5 header` and `.l2-title` share column 1. Put the counter under the title or in the dark panel corner.
-   - Two dark wells (topology, replay) inside light tiles bend "dark only inside dark rooms". Accept the topology well if the room becomes a stage. Otherwise set the replay on `#171717` only when it is the active monitor.
+**Shared, not counted:**
+- On a first visit at 1470x801, the cookie bar covers the on-air monitor's caption.
+- The StageHero "Documentation" link shows no measurable computed change on hover.
+- The Finale Copy button still read "Copy" 400ms after a successful copy, which may be a timing issue in the probe.
+- The shared header gains a top progress line while scrolling.

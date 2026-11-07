@@ -1,7 +1,7 @@
 /* ---------- gui v2 (gu-), on the Business grammar in components/v2/Biz.css; greys and ink only (JAMES.md 7) ---------- */
 
 /* the hero: a centred two-line title, the code bar, four frames in one row */
-.gu-hero { padding: clamp(24px, 2vw, 36px) 0 clamp(44px, 5vw, 72px); overflow: clip; }
+.gu-hero { padding: clamp(24px, 2vw, 36px) 0 0; overflow: clip; }
 .gu-top { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
 .gu-h1 { max-width: none; }
 .gu-h1 > span { display: block; }
@@ -23,11 +23,12 @@
 .gu-hold { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .18); background: #171717; color: #f5f5f5; cursor: pointer; transition: border-color .15s, transform .09s; }
 @media (hover: hover) { .gu-hold:hover { border-color: rgba(255, 255, 255, .55); } }
 .gu-hold:active { transform: scale(.97); }
+.gu-hold.off { opacity: .3; cursor: default; }
 .gu-hold:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 3px; }
 
 /* the four */
 .gu-four { display: grid; gap: 24px; align-items: center; }
-.gu-hero-four { grid-template-columns: .42fr .42fr 1fr 1fr; max-width: min(1180px, calc((100svh - 520px) * 3.55)); margin: 0 auto; align-items: end; } /* one baseline for the four captions */
+.gu-hero-four { grid-template-columns: .42fr .42fr 1fr 1fr; max-width: min(1152px, calc((100svh - 400px) * 2.5)); margin: 0 auto; align-items: end; } /* one baseline for the four captions */
 .gu-fig { margin: 0; min-width: 0; }
 .gu-fig figcaption { display: flex; flex-direction: column; gap: 3px; margin-top: 18px; text-align: center; }
 .gu-fig figcaption b { font-size: 17px; font-weight: 606; letter-spacing: -.01em; }
@@ -71,36 +72,59 @@
 .gu-tag { position: absolute; z-index: 3; left: 50%; bottom: 7%; translate: -50% 0; padding: 6px 10px; border-radius: 8px; background: #0a0a0a; color: #ffffff; font-size: 13px; white-space: nowrap; animation: gu-in .4s var(--ease) both; }
 .gu-web .gu-tag, .gu-desk .gu-tag { bottom: 6%; }
 
-/* chapters: the four pinned, phones beside two stacked windows */
-.gu-ch { padding-top: clamp(44px, 5vw, 72px); }
-.gu-ch-head { position: relative; z-index: 1; margin-bottom: 27px; }
-@media (min-width: 901px) {
-  /* the heading rides the pinned stage, top left, for the whole pin: a full-height sticky layer (taking no space) whose
-     bottom meets the section's bottom exactly when the stage's does, so the two release together and never cross */
-  .gu-ch { display: grid; padding-bottom: 0; }
-  .gu-ch > * { grid-area: 1 / 1; }
-  .gu-ch-head { position: sticky; top: 0; z-index: 2; align-self: start; height: 100svh; margin: 0 auto; padding-top: 92px; pointer-events: none; }
-  .gu-ch-head h2 { pointer-events: auto; }
-  .gu-ch .bz-ch-stage { padding-top: 150px; }
-  /* the lit chapter is the moment: its title grows to 32px while it is read, then settles back to 26px */
-  .gu-ch .bz-ch-i .bz-headline { transform-origin: 0 100%; transition: transform .5s cubic-bezier(.16, 1, .3, 1); }
-  .gu-ch.live:not(.stacked) .bz-ch-i.on .bz-headline { transform: scale(1.23); }
-}
-.gu-ch-grow { transform-origin: 50% 50%; }
-.gu-ch-head .bz-display { max-width: 12ch; }
-.gu-ch .bz-ch-i > .bz-kick { order: 1; }
-.gu-ch .bz-ch-i > .bz-body { order: 2; }
-.gu-ch-four, .gu-api-four { grid-template-columns: 1fr 1fr 1.65fr; grid-template-areas: 'ios android web' 'ios android desk'; gap: 20px; }
-.gu-fig-ios { grid-area: ios; } .gu-fig-android { grid-area: android; } .gu-fig-web { grid-area: web; } .gu-fig-desk { grid-area: desk; }
-.gu-hero-four .gu-fig { grid-area: auto; }
-.gu-ch-four .gu-w { --k: .8; }
-.gu-ch-four .gu-t { font-size: 16px; }
-.gu-ch-four .gu-b { height: 30px; padding: 0 12px; }
-.gu-ch-cap { display: flex; justify-content: center; gap: 14px; margin: 22px 0 0; font-size: 14px; color: var(--soft); text-align: center; }
-.gu-ch-cap b { flex: none; font-weight: 497; color: var(--ink); white-space: nowrap; }
-.gu-ch-cap { flex-wrap: wrap; row-gap: 4px; }
-/* six ideas: five chapters here, the sixth is the dark room (06 / 06); the shared bar's own total would say 05, so only the caption counts */
-.gu-ch .bz-ch-meta > span:last-child { visibility: hidden; }
+/* the run: the hero's four frames are the pinned stage; the chapters swap underneath them, one at a time.
+   html.js only, so with JS off nothing pins and every chapter reads in order. */
+.gu-run { position: relative; }
+html.js .gu-run { height: calc(100svh + 5 * 64svh); }
+html.js .gu-run-pin { position: sticky; top: var(--gu-top, 60px); height: calc(100svh - var(--gu-top, 60px)); display: flex; flex-direction: column; overflow: clip; }
+.gu-run .gu-stage { position: relative; margin-top: 10px; }
+.gu-four { position: relative; }
+.gu-fig { position: relative; }
+.gu-fig figcaption { transition: opacity .3s cubic-bezier(0, 0, .2, 1); }
+.gu-four:not([data-step='-1']) figcaption { opacity: 0; }
+html:not(.js) .gu-four figcaption { opacity: 1; }
+
+/* the words: the run's heading left, the lit chapter right (8/5), every chapter in one cell so nothing moves */
+.gu-run-copy { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); column-gap: 24px; align-items: start; margin-top: 18px; }
+html.js .gu-run-copy { margin-block: auto; } /* pinned: the words sit in the middle of the space under the four */
+.gu-run-h { grid-column: 1 / span 4; margin: 0; }
+.gu-run-list { grid-column: 6 / span 8; display: grid; list-style: none; margin: 0; padding: 0; }
+.gu-run-i { grid-area: 1 / 1; display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 5fr); gap: 6px 24px; align-items: start; }
+.gu-run-t { grid-row: 1 / span 2; margin: 0; font-size: 21px; font-weight: 606; letter-spacing: -.02em; line-height: 1.2; text-wrap: balance; }
+.gu-run-i .bz-body { margin: 0; }
+.gu-run-n { grid-column: 2; margin: 0; font-size: 13px; color: var(--soft); }
+html.js .gu-run-i { opacity: 0; transform: translateY(12px); transition: opacity .3s cubic-bezier(0, 0, .2, 1), transform .4s cubic-bezier(.16, 1, .3, 1); pointer-events: none; }
+html.js .gu-run[data-step='-1'] .gu-run-i { transform: translateY(24px); }
+html.js .gu-run:not([data-step='-1']) .gu-run-i.on { opacity: 1; transform: none; transition-delay: .12s; pointer-events: auto; }
+html:not(.js) .gu-run-i { grid-area: auto; margin-bottom: 32px; }
+
+/* 01 one codebase: one source above, a hairline down to each platform, each tagged with what it renders to */
+.gu-four::before { content: ''; position: absolute; left: 10%; right: 10%; top: -10px; height: 1px; background: #0a0a0a; transform: scaleX(0); transition: transform .5s cubic-bezier(.16, 1, .3, 1); }
+/* each wire runs from the frame's top edge up to the hairline (the four's top clips it, whatever the frame's height) */
+.gu-run .gu-four { clip-path: inset(-10px -40px -60px -40px); }
+.gu-run .gu-dev { position: relative; }
+.gu-run .gu-dev::before { content: ''; position: absolute; left: 50%; bottom: 100%; width: 1px; height: 600px; background: #0a0a0a; transform: scaleY(0); transform-origin: 50% 100%; transition: transform .4s cubic-bezier(.16, 1, .3, 1) .2s; pointer-events: none; }
+.gu-four[data-step='0']::before { transform: scaleX(1); }
+.gu-four[data-step='0'] .gu-dev::before { transform: scaleY(1); }
+/* 03 compile-time CSS: the screen collapses to the flat rule */
+.gu-scr.flat { background: #171717; place-items: center start; }
+.gu-flat { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; padding: 0 6cqw; color: #a3a3a3; font-size: clamp(11px, 5.4cqw, 15px); line-height: 1.5; animation: gu-in .3s cubic-bezier(0, 0, .2, 1) both; }
+.gu-flat span:not(.gu-flat-t) { color: #fafafa; }
+.gu-ios .gu-flat, .gu-android .gu-flat { flex-direction: column; font-size: 8.4cqw; }
+/* 04 primitives: the card comes apart, and the kit's primitives line up under the four (its three lit) */
+.gu-four[data-step='3'] .gu-w { gap: 18px; }
+.gu-prims { position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; opacity: 0; transform: translateY(8px); transition: opacity .3s cubic-bezier(0, 0, .2, 1), transform .4s cubic-bezier(.16, 1, .3, 1); pointer-events: none; }
+.gu-prims li { padding: 6px 10px; border-radius: 8px; border: 1px solid var(--line); font-size: 13px; color: var(--soft); }
+.gu-prims li.on { background: #0a0a0a; border-color: #0a0a0a; color: #ffffff; }
+.gu-run[data-step='3'] .gu-prims { opacity: 1; transform: none; }
+/* 05 animated by default: each new state rolls across the four, and every button presses itself */
+@keyframes gu-press { 0%, 72%, 100% { scale: 1; } 82% { scale: .93; } }
+.gu-four[data-step='4'] .gu-b { animation: gu-press 1.5s cubic-bezier(.4, 0, .2, 1) infinite; }
+.gu-four[data-step='4'] .gu-fig:nth-child(2) .gu-b { animation-delay: .09s; }
+.gu-four[data-step='4'] .gu-fig:nth-child(3) .gu-b { animation-delay: .18s; }
+.gu-four[data-step='4'] .gu-fig:nth-child(4) .gu-b { animation-delay: .27s; }
+/* the one ask leans toward the pointer */
+.gu-pull { display: inline-flex; transition: translate .3s cubic-bezier(.16, 1, .3, 1); }
 
 /* beyond: the shorthands are the API (the one dark room) */
 .gu-api { background: #171717; color: #fafafa; padding-bottom: clamp(72px, 7vw, 104px); }
@@ -113,8 +137,8 @@
 .gu-ed-n { font-size: 14px; color: #737373; }
 .gu-prop { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 10px 12px; align-items: center; padding: 14px 0 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, .08); }
 .gu-prop label { font-size: 16px; color: #f5f5f5; }
-.gu-opts { display: flex; flex-wrap: wrap; gap: 6px; }
-.gu-opts button { height: 40px; padding: 0 12px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, .14); background: #171717; color: #a3a3a3; font-size: 14px; cursor: pointer; transition: background .15s, color .15s, border-color .15s, transform .09s; }
+.gu-opts { display: flex; flex-wrap: nowrap; gap: 6px; }
+.gu-opts button { flex: none; height: 40px; padding: 0 10px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, .14); background: #171717; color: #a3a3a3; font-size: 14px; cursor: pointer; transition: background .15s, color .15s, border-color .15s, transform .09s; }
 @media (hover: hover) { .gu-opts button:hover { border-color: rgba(255, 255, 255, .4); color: #f5f5f5; } }
 .gu-opts button:active { transform: scale(.97); }
 .gu-opts button[aria-checked='true'] { background: #f5f5f5; color: #0a0a0a; border-color: #f5f5f5; }
@@ -125,6 +149,7 @@
 .gu-tc { display: flex; align-items: center; gap: 10px; margin: 18px 0 0; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, .16); color: #d4d4d4; font-size: 14px; line-height: 1.4; }
 .gu-tc i { font-style: normal; display: grid; place-items: center; flex: none; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid currentColor; font-size: 14px; }
 .gu-tc.bad { background: #f5f5f5; border-color: #f5f5f5; color: #0a0a0a; }
+.gu-tc s { text-decoration-thickness: 1.5px; }
 .gu-api-one { grid-column: 7 / span 6; margin: 0; }
 .gu-api-one .gu-web { border-color: rgba(255, 255, 255, .16); }
 .gu-api-one .gu-scr { aspect-ratio: 16 / 11; }
@@ -133,17 +158,18 @@
 .gu-api-one .gu-w { gap: 16px; --k: 1.5; }
 
 /* ship: the code, then the platforms as cards that open */
-.gu-ship-top { align-items: center; margin-bottom: clamp(64px, 7vw, 104px); }
-.gu-ship-copy { grid-column: 1 / span 5; display: flex; flex-direction: column; gap: 22px; }
-.gu-ship-code { grid-column: 7 / span 6; }
+.gu-ship-top { align-items: end; margin-bottom: clamp(56px, 6vw, 88px); }
+.gu-ship-copy { grid-column: 1 / span 4; display: flex; flex-direction: column; gap: 22px; padding-bottom: 6px; }
+.gu-ship-code { grid-column: 6 / span 8; }
 .gu-ship-code .cf-code { margin: 0; }
 .gu-plats { grid-template-columns: .72fr .72fr 1fr 1fr; list-style: none; margin: 0; padding: 0; align-items: stretch; }
 .gu-plats > li { display: flex; }
-.gu-plat { justify-content: space-between; gap: 24px; min-height: 380px; padding: 28px 28px 30px; }
-.gu-plat-dev { display: grid; place-items: center; width: 100%; flex: 1; pointer-events: none; }
-@media (hover: hover) { .gu-plat:hover { background: var(--bz-tile); } }
+/* every card's device sits in the same 236px box, so the four names share one baseline and no card has an empty foot */
+.gu-plat { justify-content: flex-start; gap: 22px; padding: 26px 26px 28px; transition: translate .3s cubic-bezier(.16, 1, .3, 1), background-color .15s cubic-bezier(0, 0, .2, 1); }
+.gu-plat-dev { display: grid; place-items: center; width: 100%; height: 236px; flex: none; pointer-events: none; }
+@media (hover: hover) and (pointer: fine) { .gu-plat:hover { background: #e4e4e7; translate: 0 -6px; } }
 .gu-plat:active { scale: .97; }
-.gu-plat-ios .gu-plat-dev .gu-dev, .gu-plat-android .gu-plat-dev .gu-dev { width: min(120px, 70%); }
+.gu-plat-ios .gu-plat-dev .gu-dev, .gu-plat-android .gu-plat-dev .gu-dev { width: 108px; }
 .gu-plat-web .gu-plat-dev .gu-dev, .gu-plat-desk .gu-plat-dev .gu-dev { width: 100%; }
 .gu-plat-dev .gu-w { --k: .6; gap: 6px; }
 .gu-plat-dev .gu-t { font-size: 14px; }
@@ -168,7 +194,8 @@
 /* get */
 .gu-ship { padding-top: clamp(72px, 8vw, 116px); padding-bottom: clamp(44px, 5vw, 72px); }
 .gu-get { padding-top: clamp(44px, 5vw, 72px); padding-bottom: 0; }
-.gu-get .bz-grid { align-items: start; }
+.gu-get .bz-grid { align-items: end; }
+.gu-stars { font-size: 12px !important; color: var(--faint) !important; }
 .gu-get-main { grid-column: 1 / span 5; display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
 .gu-chips { display: flex; flex-wrap: wrap; gap: 10px; }
 .gu-chip { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); font: 497 14px/1 var(--mono); color: var(--ink); text-decoration: none; transition: border-color .15s, transform .09s; }
@@ -191,7 +218,7 @@ a.gu-chip:active { transform: scale(.97); }
 .gu-row:active { transform: translateY(1px); }
 
 @media (max-width: 900px) {
-  .gu-hero { padding: 28px 0 96px; }
+  .gu-hero { padding: 28px 0 0; }
   .gu-top { gap: 12px; }
   .gu-stage { margin-top: 28px; }
   .gu-code { margin-bottom: 18px; padding: 5px 5px 5px 16px; border-radius: 24px; }
@@ -210,15 +237,21 @@ a.gu-chip:active { transform: scale(.97); }
   .gu-tag, .gu-w.parts::after, .gu-w.parts [data-part]::after { font-size: 14px; }
   .gu-w.parts [data-part]::after { display: none; }
 
-  .gu-ch-head { margin-bottom: 24px; }
-  .gu-ch .bz-ch-i > .bz-kick { font-size: 14px; }
-  .gu-ch-four { grid-template-columns: .72fr 1fr; grid-template-areas: 'ios web'; gap: 12px; }
-  .gu-ch-four .gu-fig-android, .gu-ch-four .gu-fig-desk { display: none; }
-  .gu-ch-four .gu-w { --k: .5; gap: 6px; }
-  .gu-ch-four .gu-t { font-size: 14px; }
-  .gu-ch-four .gu-b { height: 28px; padding: 0 9px; }
-  .gu-ch-four .gu-ios { aspect-ratio: 9 / 17; }
-  .gu-ch-cap { margin-top: 12px; }
+  /* phones: the same stage stays pinned (an iPhone and a browser), only the words below it swap */
+  html.js .gu-run { height: calc(100svh + 5 * 72svh); }
+  .gu-run .gu-hero-four { grid-template-columns: .62fr 1fr; gap: 14px; align-items: center; }
+  .gu-run .gu-fig-android, .gu-run .gu-fig-desk { display: none; }
+  .gu-four::before { left: 18%; right: 18%; }
+  .gu-run-copy { grid-template-columns: minmax(0, 1fr); row-gap: 10px; margin-top: 14px; }
+  .gu-run-h { grid-column: 1; font-size: 17px; color: var(--soft); }
+  .gu-run-list { grid-column: 1; }
+  .gu-run-i { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .gu-run-t { grid-row: auto; font-size: 21px; }
+  .gu-run-i .bz-body { font-size: 15px; }
+  .gu-run-n { grid-column: 1; }
+  .gu-prims { gap: 4px; bottom: -60px; }
+  .gu-prims li { padding: 4px 7px; font-size: 12px; }
+  .gu-plat-dev { height: 220px; }
 
   .gu-api-top { display: flex; flex-direction: column; align-items: stretch; gap: 20px; margin-bottom: 40px; }
   .gu-ed { grid-column: 1 / -1; padding: 18px; border-radius: 24px; }
@@ -241,7 +274,7 @@ a.gu-chip:active { transform: scale(.97); }
   .gu-plat-t span { font-size: 14px; }
   .gu-plat-dev .gu-b { font-size: 14px; }
   .gu .bz-open-layer { padding: 0; }
-  .gu .bz-open-panel { height: auto; max-height: 94svh; }
+  .gu .bz-open-panel { height: auto; max-height: calc(100svh - var(--gu-top, 60px) - 8px); }
   .gu .bz-open-scroll { padding: 64px 20px 32px; }
   .gu-pp { grid-template-columns: minmax(0, 1fr); gap: 24px; }
   .gu-pp-dev { min-height: 0; padding: 20px; }
@@ -307,20 +340,21 @@ a.gu-chip:active { transform: scale(.97); }
 .gu-plat-dev .gu-s-form .gu-t, .gu-plat-dev .gu-s-split .gu-t { font-size: 13px; }
 .gu-plat-dev .gu-li { font-size: 13px; }
 
-/* cards: the device tilts with the pointer, and the tokens it renders slide up under the name */
+/* cards: the device tilts with the pointer while the card lifts */
 .gu-plat-dev { transition: transform .4s cubic-bezier(.16, 1, .3, 1); will-change: transform; }
-.gu-plat-tok { margin-top: 6px; font-size: 12px !important; color: var(--soft); }
-@media (hover: hover) and (pointer: fine) {
-  .gu-plat-tok { opacity: 0; transform: translateY(8px); transition: opacity .3s cubic-bezier(.16, 1, .3, 1), transform .3s cubic-bezier(.16, 1, .3, 1); }
-  .gu-plat:hover .gu-plat-tok, .gu-plat:focus-visible .gu-plat-tok { opacity: 1; transform: none; }
-}
 
-/* the terminal's Copy: a 44px control that answers */
+/* the terminal's Copy: a 44px control that inverts on hover; once copied it shows a tick and "Copied" */
 .gu .cf-code .x-copy { height: 44px; padding: 0 16px; transition: background-color .15s cubic-bezier(0, 0, .2, 1), color .15s cubic-bezier(0, 0, .2, 1), scale .09s; }
-@media (hover: hover) { .gu .cf-code .x-copy:hover { background: #f5f5f5; color: #0a0a0a; border-color: rgba(0, 0, 0, .2); } }
+@media (hover: hover) { .gu .cf-code .x-copy:hover { background: #0a0a0a; color: #ffffff; border-color: #0a0a0a; } }
 .gu .cf-code .x-copy:active { scale: .97; }
+/* the code keeps its lines: it scrolls sideways instead of wrapping mid-tag */
+.gu .cf-code pre { white-space: pre; overflow-x: auto; }
+.gu .cf-code pre code { white-space: pre; }
+/* Deploy to Cloud: the arrow slides out as the underline drops */
+@media (hover: hover) { .gu .gu-end-acts .gu-row:hover svg { transform: translateX(6px); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .gu-sheet, .gu-field i { animation: none; }
-  .gu-plat-dev { transition: none; }
+  .gu-sheet, .gu-field i, .gu-flat, .gu-four[data-step='4'] .gu-b { animation: none !important; }
+  .gu-plat-dev, .gu-plat, .gu-pull, .gu-run-i, .gu-prims, .gu-four::before, .gu-run .gu-dev::before, .gu-fig figcaption { transition: none !important; }
+  .gu-pull { translate: none !important; }
 }

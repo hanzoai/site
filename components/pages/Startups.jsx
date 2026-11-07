@@ -57,7 +57,9 @@ function Board() {
     const t = setTimeout(() => setN((v) => v + 1), 4200);
     return () => clearTimeout(t);
   }, [seen, calm, n]);
-  return <span ref={ref} className="xst-board"><Flap key={n} value="$150,000" className="xst-flap" /></span>;
+  // after the first spin the board only re-clicks its own tiles (each flap drops and lands on the same character), so it
+  // never shows a figure other than $150,000
+  return <span ref={ref} className={'xst-board' + (n ? ' tick t' + (n % 2) : '')}><Flap value="$150,000" className="xst-flap" /></span>;
 }
 
 function Hero() {
@@ -123,11 +125,23 @@ function Ladder() {
 function Match({ c }) {
   const req = [c.company.trim(), c.contactName.trim(), okEmail(c.email), c.stage, c.building.trim()];
   const done = req.filter(Boolean).length;
-  const credits = c.tier1Investors.length > 0;
+  // until you touch the form, the card shows the program's rule by itself: the free track, then what tier-1 backing
+  // turns it into, every 3.6 s while the card is on screen (it stops for good at your first answer)
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount: 0.5 });
+  const calm = useReducedMotion();
+  const blank = c.company === '' && c.contactName === '' && c.email === '' && !c.stage && c.tier1Investors.length === 0 && c.useCases.length === 0 && !c.byoCompute;
+  const [flip, setFlip] = useState(false);
+  useEffect(() => {
+    if (!blank || !seen || calm) { setFlip(false); return; }
+    const t = setTimeout(() => setFlip((v) => !v), 3600);
+    return () => clearTimeout(t);
+  }, [blank, seen, calm, flip]);
+  const credits = c.tier1Investors.length > 0 || (blank && flip);
   const stage = STAGES.find((s) => s[0] === c.stage)?.[1];
   const tech = c.techstarsBatch.trim() || c.tier1Investors.includes('Techstars');
   return (
-    <aside className="xst-match" aria-label="Your match" aria-live="polite">
+    <aside className="xst-match" aria-label="Your match" aria-live={blank ? 'off' : 'polite'} ref={ref}>
       <div className="xst-match-top">
         <svg viewBox="0 0 36 36" width="40" height="40" aria-hidden="true"><circle cx="18" cy="18" r="15" fill="none" stroke="rgba(255,255,255,.14)" strokeWidth="3" /><motion.circle cx="18" cy="18" r="15" fill="none" stroke="#737373" strokeWidth="3" strokeLinecap="round" transform="rotate(-90 18 18)" initial={false} animate={{ pathLength: done / 5 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} /></svg>
         <div><b className="xst-co">{c.company.trim() || 'Company name'}</b><span className="x-mono">{done} / 5 · {stage || 'Select stage'}</span></div>
@@ -137,7 +151,7 @@ function Match({ c }) {
           <motion.div key={credits ? 'c' : 'f'} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35, ease: EASE }}>
             <span className="x-mono">{credits ? 'Backed by any of these?' : 'Everyone starts free.'}</span>
             <b>{credits ? 'Up to $150,000 in credits' : 'Start in minutes'}</b>
-            <p>{credits ? c.tier1Investors.join(' · ') : 'Creating an account is free.'}</p>
+            <p>{credits ? (c.tier1Investors.length ? c.tier1Investors.join(' · ') : 'Application required, and tier-1 VC backing is required for the credits program.') : 'Creating an account is free.'}</p>
           </motion.div>
         </AnimatePresence>
       </div>
@@ -199,7 +213,12 @@ function Apply() {
   const submit = async (e) => {
     e.preventDefault();
     const m = !c.company.trim() ? 'Company name is required.' : !c.contactName.trim() ? 'Your name is required.' : !okEmail(c.email) ? 'A valid email is required.' : !c.stage ? 'Please select your company stage.' : !c.building.trim() ? 'Tell us what you are building.' : null;
-    if (m) return setErr(m);
+    if (m) {
+      // the first invalid field takes focus, so the message and the place to fix it are together
+      const id = !c.company.trim() ? 'company' : !c.contactName.trim() ? 'contactName' : !okEmail(c.email) ? 'email' : !c.stage ? 'stage' : 'building';
+      setTimeout(() => (document.querySelector(`#${id} [role=radio]`) || document.getElementById(id))?.focus(), 0);
+      return setErr(m);
+    }
     setBusy(true); setErr(null);
     try {
       if (!c.hp) { // a filled trap is a bot: it is thanked and nothing is sent
@@ -316,8 +335,6 @@ export default function Startups() {
             <p className="xp-lede">You do not need to qualify to build. Start free and pay only for what you use, or create an Enterprise plan for your team.</p>
             <div className="xst-acts"><A to="https://platform.hanzo.ai" className="xp-cta">Start free</A><A to="/enterprise/start" className="xp-ghost">Create Enterprise plan</A></div>
           </div>
-          {/* the room's object: the same match card, on the track everyone starts on */}
-          <div className="xst-not-o" aria-hidden="true" inert><Match c={EMPTY} /></div>
         </div>
       </section>
     </main>

@@ -33,9 +33,9 @@ export function openTile(e, href, router, tone = '#000') {
     Object.assign(t.style, { position: 'absolute', left: nr.left + 'px', top: nr.top + 'px', margin: '0', font: cs.font, letterSpacing: cs.letterSpacing, color: '#fafafa', whiteSpace: 'nowrap', transformOrigin: '0 0' });
     d.appendChild(t);
     // the name travels to where the page's h1 will sit (top left, below the header)
-    // the name lands at the size of the destination's headline (72px on the solution pages, 40 on phones)
-    const k = Math.max(1, (innerWidth < 900 ? 40 : 72) / parseFloat(cs.fontSize));
-    t.animate([{ transform: 'none' }, { transform: `translate(${Math.max(16, (innerWidth - 1152) / 2) - nr.left}px, ${150 - nr.top}px) scale(${k})` }], { duration: 500, easing: CURVE, fill: 'forwards' });
+    // the name lands at the size and place of the destination's headline (52px at the h1's top left; 40 on phones)
+    const k = Math.max(1, (innerWidth < 900 ? 40 : 52) / parseFloat(cs.fontSize));
+    t.animate([{ transform: 'none' }, { transform: `translate(${Math.max(16, (innerWidth - 1152) / 2) - nr.left}px, ${(innerWidth < 900 ? 76 : 219) - nr.top}px) scale(${k})` }], { duration: 500, easing: CURVE, fill: 'forwards' });
   }
   document.body.appendChild(d);
   const was = location.pathname;

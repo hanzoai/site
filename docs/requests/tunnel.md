@@ -1,8 +1,7 @@
 # /tunnel: shared change requested (Cloud owner, 7 Nov)
 
-- **Phone header ask (components/Ask.jsx / header):** at ≤700px the header's solid "Try Hanzo" shows on every screen,
-  so the first phone screen has two solid fills ("Try Hanzo" and the hero's "View Source"). Request: on phones, the
-  header button goes quiet (outline) while the page's own `data-thumb` ask is on screen, as desktop already does.
-  The page itself keeps one solid of its own per screen (the close's "View on GitHub" is an outline on this page).
+- **Phone header ask: resolved page-side (7 Nov, round 2).** The two solids came from the page's own `data-ask="off"`,
+  which switched the shared ask off. With it removed, the header is quiet while "View Source" is on screen and carries
+  "View Source" after it, at both widths. Nothing needed from the shared owner.
 - **Finale close id:** `components/v2/Finale.jsx` writes `data-cta="close"`; a `name` prefix (`tunnel.close`) would
   match MASTER part 4's `<page>.<slot>` form.

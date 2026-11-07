@@ -23,7 +23,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, useInView } from 'motion/react';
 import { A } from '../../kit';
 import { useCalm } from '../../ui';
-import KeynoteStage, { useStagePause } from '../../v2/KeynoteStage';
+import KeynoteStage, { useStagePause } from './SafeStage';
 import KeynoteOpen from '../../v2/KeynoteOpen';
 import KeynoteRoom from '../../v2/KeynoteRoom';
 import KeynoteClose from '../../v2/KeynoteClose';

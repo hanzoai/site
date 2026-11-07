@@ -37,13 +37,26 @@
 .xst-not-o { grid-column: 1 / span 5; grid-row: 2; max-width: 420px; }
 .xst-not-o .xst-match { background: #171717; box-shadow: none; }
 @media (max-width: 899px) { .xst-not-o { grid-column: auto; grid-row: auto; } .xst-not-o .xst-track p, .xst-not-o .xst-lit, .xst-not-o .xst-byo { display: revert; } }
+/* no dead bands: under the hero asks, and after the Techstars note */
+.xst-hero { padding-bottom: clamp(48px, 6vw, 96px); }
+.xst-ts { margin-top: clamp(40px, 4vw, 64px); }
+.xst.xp .xst-prog { padding-bottom: clamp(24px, 3vw, 48px); }
 /* the board always fits inside its card */
 .xst-fig { min-width: 0; overflow: hidden; }
 .xst-fig .xst-flap { font-size: clamp(2.5rem, 4vw, 4rem); white-space: nowrap; }
 /* no dead band before the application */
 .xst.xp .xst-apply { padding-top: clamp(48px, 6vw, 96px); }
-/* phones: the match card sits after the form as its summary, never pinned over the fields */
-@media (max-width: 899px) { .xst-match-col { position: static; order: 1; top: auto; } }
+/* the board's honest re-click: each tile folds and lands back on its own character, left to right */
+@keyframes xst-click0 { 0% { transform: none; } 40% { transform: perspective(200px) rotateX(-80deg); } 100% { transform: none; } }
+@keyframes xst-click1 { 0% { transform: none; } 40% { transform: perspective(200px) rotateX(-80deg); } 100% { transform: none; } }
+.xst-board .x-flap span { display: inline-block; transform-origin: 50% 50%; }
+.xst-board.tick.t0 .x-flap span { animation: xst-click0 .5s cubic-bezier(.4, 0, .2, 1) both; }
+.xst-board.tick.t1 .x-flap span { animation: xst-click1 .5s cubic-bezier(.4, 0, .2, 1) both; }
+.xst-board.tick .x-flap span:nth-child(2) { animation-delay: 60ms; } .xst-board.tick .x-flap span:nth-child(3) { animation-delay: 120ms; }
+.xst-board.tick .x-flap span:nth-child(4) { animation-delay: 180ms; } .xst-board.tick .x-flap span:nth-child(5) { animation-delay: 240ms; }
+.xst-board.tick .x-flap span:nth-child(6) { animation-delay: 300ms; } .xst-board.tick .x-flap span:nth-child(7) { animation-delay: 360ms; }
+.xst-board.tick .x-flap span:nth-child(8) { animation-delay: 420ms; }
+@media (prefers-reduced-motion: reduce) { .xst-board.tick .x-flap span { animation: none; } }
 /* the asks: one solid ink, one outline; inverted in the dark room; press .97, hover changes the fill */
 .xst .xp-cta { background: var(--ink); color: #fafafa; border: 0; transition: background .15s cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
 .xst .xp-ghost { background: transparent; color: var(--ink); border: 1px solid rgba(0, 0, 0, .16); transition: border-color .15s cubic-bezier(0, 0, .2, 1), background .15s, transform 90ms; }
@@ -148,7 +161,7 @@
   .xst-ladder { grid-template-columns: 1fr; gap: 12px; }
   .xst-ladder li, .xst-ladder li.r0, .xst-ladder li.r1, .xst-ladder li.r2 { min-height: 0; border-radius: 22px; transform: none !important; }
   .xst-apply-grid, .xst-row, .xst-uses { grid-template-columns: 1fr; }
-  .xst-match-col { order: -1; top: 64px; z-index: 5; }
+  .xst-match-col { order: 1; position: static; top: auto; z-index: auto; }
   .xst-match { gap: 10px; padding: 12px 14px; border-radius: 18px; box-shadow: 0 20px 40px -20px rgba(0, 0, 0, .5); }
   .xst-match-top svg { width: 32px; height: 32px; }
   .xst-track { min-height: 0; padding: 10px 12px; }

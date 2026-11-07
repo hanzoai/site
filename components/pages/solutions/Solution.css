@@ -60,6 +60,20 @@
 @media (hover: hover) { .xs2-film-pause:hover { background: rgba(255, 255, 255, .18); } }
 .xs2-film-pause:active { transform: scale(.97); }
 .xs2-film-top { padding-right: 60px; }
+/* every quiet control answers the pointer: the second ask and the two sheet rows */
+.xs2 .xs2-ask2, .xs2 .v2f-spec-btn { transition: background-color .15s cubic-bezier(0, 0, .2, 1), border-color .15s cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) { .xs2 .xs2-ask2:hover span { text-decoration: underline; text-underline-offset: 4px; } .xs2 .xs2-ask2:hover svg { transform: translateX(4px); } .xs2 .v2f-spec-btn:hover { background: #f5f5f5; border-color: rgba(0, 0, 0, .3); } }
+.xs2 .xs2-ask2 svg { transition: transform .3s cubic-bezier(.16, 1, .3, 1); }
+.xs2 .v2f-spec-btn:active { transform: scale(.97); }
+.xs2-strip-c { display: inline-flex; gap: 12px; }
+/* the overlap finder's drifting rings sit behind the tabs, never across them */
+.xs2-ovl-sig { opacity: .07; }
+.xs2-ovl .xsl-ovl-pick { position: relative; z-index: 1; background: #fff; border-radius: 999px; }
+@media (max-width: 899px) {
+  /* phones: the rail keeps a 16px gutter (scroll padding), the product line reads left and balanced */
+  .xs2-strip-v { scroll-padding-inline: 16px; }
+  .xs2-names.plain { text-align: left; text-wrap: balance; display: block !important; font-size: 13px; }
+}
 /* deck rhythm: the headline rests at 52 */
 .xs2 .xs2-h1 { font-size: clamp(40px, 5vw, 52px) !important; }
 .xs2-more { padding-top: clamp(56px, 6vw, 96px); }

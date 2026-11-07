@@ -211,7 +211,7 @@ function Hero() {
         <div className="xos-hero-b xos-in" style={{ '--i': 4 }}>
           <dl className="xos-hstats">
             {HERO_STATS.map(([v, k], i) => (
-              <div key={k} className={i ? '' : 'xos-hs-m'}><dd className={i ? '' : 'pf-moment xl'}>{v}</dd><dt>{k}</dt></div>
+              <div key={k} className={i ? '' : 'xos-hs-m'}><dd className={i ? '' : 'pf-figure'}>{v}</dd><dt>{k}</dt></div>
             ))}
           </dl>
           <p className="xos-hint" aria-hidden="true">Drag to pan · point at a cluster · click to open it</p>
@@ -458,8 +458,11 @@ const BUILT = [
   ['📊', 'OpenTelemetry', 'https://github.com/open-telemetry/opentelemetry-specification', 'CNCF', 'https://opentelemetry.io', 'Observability across every service', 'Apache-2.0'],
 ];
 
+/* the object: Hanzo's own twelve glyphs as one monochrome mark row; pointing at a credit lights its mark */
 function Built() {
   const arrive = useArrive();
+  const marks = useArrive();
+  const [hot, setHot] = useState(-1);
   return (
     <section className="pf-sec xos-built" aria-labelledby="xos-built-h">
       <div className="pf-wrap">
@@ -467,10 +470,13 @@ function Built() {
           <MaskLines as="h2" id="xos-built-h" className="pf-head" lines={['What Hanzo is built on']} />
           <p className="pf-body">The projects our platform actually runs on, each with its licence and the people who maintain it.</p>
         </div>
-        <ul className="xos-tiles" {...arrive}>
+        <ul className={'xos-marks' + (hot >= 0 ? ' has-hot' : '')} aria-hidden="true" {...marks}>
+          {BUILT.map(([ic, name], i) => <li key={name} style={{ '--k': i }} className={hot === i ? 'on' : ''}><span>{ic}</span></li>)}
+        </ul>
+        <ul className="xos-tiles" {...arrive} onPointerLeave={() => setHot(-1)} onBlur={() => setHot(-1)}>
           {BUILT.map(([ic, name, repo, who, site, what, lic], i) => (
-            <li key={name} className="xos-tile" style={{ '--k': i % 4 + Math.floor(i / 4) }} onPointerMove={lean} onPointerLeave={rest}>
-              <span className="xos-tile-ic" aria-hidden="true">{ic}</span>
+            <li key={name} className="xos-tile" style={{ '--k': i % 4 + Math.floor(i / 4) }} onPointerMove={lean} onPointerLeave={rest} onPointerEnter={() => setHot(i)} onFocus={() => setHot(i)}>
+              <span className="xos-tile-i pf-mono" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
               <span className="xos-tile-lic pf-mono">{lic}</span>
               <A to={repo} className="xos-tile-n">{name}</A>
               <span className="xos-tile-d">{what}</span>
@@ -548,7 +554,7 @@ function Contribute() {
           <p className="xos-cap">Join the Community</p>
           <p className="pf-lede">We welcome contributions of all kinds: code, documentation, bug reports and feature requests.</p>
           <div className="xos-con-acts">
-            <A to="https://github.com/hanzoai" className="pf-btn solid" data-cta="open-source.band">Start Contributing</A>
+            <A to="https://github.com/hanzoai" className="pf-btn solid" data-cta="open-source.band" data-thumb="Start Contributing">Start Contributing</A>
           </div>
           <p className="xos-con-note"><More to="https://discord.gg/XthHQQj">Join Discord</More><More to="/founder">Founder Program</More></p>
         </div>

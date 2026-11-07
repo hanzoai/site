@@ -2,7 +2,7 @@
 // Signature: The request is the hero: a big API console types each endpoint's path after https://api.hanzo.ai and streams back what it returns, the model that serves it playing beside, then settles into the page as you scroll
 // Beyond: Same host, same key: pick any endpoint and only the path wipes in; the host and the bearer header never change, which is the page's own claim (no second base URL) made visible, and it copies as curl
 /* Hanzo API, v2 (Archetype F, developer: the request is the hero).
-   V2: 8/10 round 4: no reduced-motion hydration mismatch (page-local h2 mask, CSS-dropped clip); one solid on phone (quiet header while our ask shows); Core endpoints six then Show all; stage arrives with its heading; chip hover previews the model; JS-off film without controls
+   V2: 8/10 round 5: GET/POST/search no longer empty the list; the route list lives only in the hero, the dark picker and the table (scenes show key→bill, one operation ticking to its client id, the gateway fanning to models); header quiet from first paint while our ask shows; answer never blanks; curl wraps; ref links draw an underline
    Persona: a developer who has used the OpenAI API and wants every Hanzo capability behind one key.
    Metric: api_key_created (data-cta api-hero-key, api-close-key).
    Goal: see that one base URL and one key reach every endpoint, then get a key.
@@ -70,16 +70,18 @@ function Console() {
       setDone(true);
       t = setTimeout(stream, 200);
     };
+    // the card never blanks: the previous answer stays (dimmed) while the new path types, then the new one streams over it
     const stream = () => {
       if (!alive) return;
-      if (w <= words.length) { desc.current.textContent = words.slice(0, w++).join(' '); t = setTimeout(stream, 34); }
+      if (w === 0) desc.current.classList.remove('stale');
+      if (w <= words.length) { desc.current.textContent = words.slice(0, w++).join(' ') || ' '; t = setTimeout(stream, 34); }
     };
     // the first walk holds the server-painted request until the h1 has landed, then types
-    const hold = first.current, clear = () => { path.current.textContent = ''; desc.current.textContent = ''; };
+    const hold = first.current, clear = () => { path.current.textContent = ''; desc.current.classList.add('stale'); };
     first.current = false;
     if (!hold) clear();
     t = setTimeout(() => { if (!alive) return; if (hold) clear(); typeP(); }, hold ? 1000 : 240);
-    return () => { alive = false; clearTimeout(t); };
+    return () => { alive = false; clearTimeout(t); if (desc.current) desc.current.classList.remove('stale'); };
   }, [at, live]);
   // the walk runs once through all eight, then rests on the first (MASTER: demos end at rest)
   const [walked, setWalked] = useState(false);
@@ -193,19 +195,16 @@ function Paste() {
 }
 
 /* ---------- How it fits together: four pinned chapters, each with its own live UI ---------- */
-const PATHS = ALL.map(([, p]) => p.split(' · ')[0]);
-
+/* scene 1: not another route list. One key at the top, calls falling from it into one bill that fills. */
 function KeyBill({ on }) {
   return (
     <div className={'api-vis api-bill' + (on ? ' on' : '')} aria-hidden="true">
-      <ul>
-        {PATHS.slice(0, 7).map((p, i) => (
-          <li key={p} style={{ '--i': i }}><span className="x-mono api-bill-p">{p}</span><span className="x-mono api-bill-k">Bearer &lt;your key&gt;</span></li>
-        ))}
-      </ul>
+      <div className="api-bill-key"><span className="x-mono">{KEY}</span></div>
+      <div className="api-bill-flow">{[0, 1, 2, 3, 4].map((i) => <i key={i} style={{ '--i': i }} />)}</div>
       <div className="api-bill-sum">
         <span className="x-mono">/v1/billing/balance · /v1/billing/usage</span>
         <p>What is left, and what was spent.</p>
+        <b className="api-bill-m"><i /></b>
       </div>
     </div>
   );
@@ -233,24 +232,29 @@ function Identity({ on }) {
   );
 }
 
+/* scene 3: one row ticking through. The OpenAPI operation on the left, the client method named by its operation id
+   on the right (the ids are the docs' own slugs); it walks six operations once and rests on the last. */
+const OPS = HERO.slice(0, 6).map(([m, p, , doc]) => [m + ' ' + p.split(' · ')[0], doc.split('/').pop()]);
 function Generated({ on }) {
   return (
     <div className={'api-vis api-gen' + (on ? ' on' : '')} aria-hidden="true">
       <div className="api-gen-h"><span className="av-kick">OpenAPI</span><span className="av-kick">Client</span></div>
-      <ul>
-        {PATHS.slice(0, 9).map((p, i) => (
-          <li key={p} style={{ '--i': i }}>
-            <span className="x-mono">{p}</span>
+      <ul style={{ '--n': OPS.length }}>
+        {OPS.map(([op, id], i) => (
+          <li key={id} style={{ '--i': i }} className={i === OPS.length - 1 ? 'last' : ''}>
+            <span className="x-mono">{op}</span>
             <svg viewBox="0 0 16 16" width="16" height="16"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            <span className="x-mono">{p}</span>
+            <span className="x-mono">{id}</span>
           </li>
         ))}
       </ul>
+      <div className="api-gen-dots">{OPS.map(([, id], i) => <i key={id} style={{ '--i': i }} />)}</div>
     </div>
   );
 }
 
-const SERVICES = ['/v1/chat/completions', '/v1/images/generations', '/v1/videos/generations', '/v1/agents', '/v1/sandbox', '/v1/tools'];
+/* scene 4: the gateway fans out to the models behind it (short names, never truncated) */
+const SERVICES = ['enso', 'zen', 'kai', 'koma', 'iro', 'mori'];
 function Gateway({ on }) {
   return (
     <div className={'api-vis api-gw' + (on ? ' on' : '')} aria-hidden="true">
@@ -362,12 +366,16 @@ function Table() {
   const [all, setAll] = useState(false);
   const full = all || f !== 0 || !!q;
   const list = useRef(null);
+  // every row is set on every change (filter, search, Show all): a keyed row that moves into the first six loses `hidden`
   useEffect(() => {
-    const els = [...list.current.querySelectorAll('li[data-more]')];
+    const els = [...list.current.querySelectorAll(':scope > li')];
     const show = () => setAll(true);
-    els.forEach((el) => { if (full) el.removeAttribute('hidden'); else el.setAttribute('hidden', 'until-found'); el.addEventListener('beforematch', show); });
+    els.forEach((el) => {
+      if (!full && el.hasAttribute('data-more')) el.setAttribute('hidden', 'until-found'); else el.removeAttribute('hidden');
+      el.addEventListener('beforematch', show);
+    });
     return () => els.forEach((el) => el.removeEventListener('beforematch', show));
-  }, [full, rows.length]);
+  }, [full, f, q, rows.length]);
   return (
     <section className="av-sec api-core">
       <div className="av-wrap av-grid">
@@ -466,14 +474,21 @@ function useOneSolidOnPhone() {
     const vis = new Set();
     let mine = false;
     const apply = () => {
-      if (mq.matches && vis.size) { H.dataset.ask = 'quiet'; mine = true; }
-      else if (mine) { delete H.dataset.ask; mine = false; }
+      if (mq.matches && vis.size) { if (H.dataset.ask !== 'quiet') H.dataset.ask = 'quiet'; mine = true; }
+      else if (mine && mq.matches) { delete H.dataset.ask; mine = false; }
     };
-    const io = new IntersectionObserver((es) => { es.forEach((e) => (e.isIntersecting ? vis.add(e.target) : vis.delete(e.target))); apply(); });
+    // from first paint, ApiPage.css quiets the header on its own (html:not([data-api-ask])); once the flag is driven
+    // (phones: our first observation; desktop: after the shell's own first pass) it hands over
+    let handed = false;
+    const hand = () => { if (!handed) { handed = true; H.dataset.apiAsk = ''; } };
+    const io = new IntersectionObserver((es) => { es.forEach((e) => (e.isIntersecting ? vis.add(e.target) : vis.delete(e.target))); apply(); if (mq.matches) hand(); });
     els.forEach((el) => io.observe(el));
-    const timers = [300, 1400].map((ms) => setTimeout(apply, ms)); // after the shell's own first pass
+    // the shared header code clears the flag when it (re)starts: put it back while our ask is still on screen (the /affiliate move)
+    const mo = new MutationObserver(() => { if (mq.matches && vis.size && H.dataset.ask !== 'quiet') apply(); });
+    mo.observe(H, { attributes: true, attributeFilter: ['data-ask'] });
+    const timers = [[300, apply], [600, hand], [1400, apply]].map(([ms, fn]) => setTimeout(fn, ms));
     mq.addEventListener('change', apply);
-    return () => { io.disconnect(); timers.forEach(clearTimeout); mq.removeEventListener('change', apply); if (mine) delete H.dataset.ask; };
+    return () => { io.disconnect(); mo.disconnect(); timers.forEach(clearTimeout); mq.removeEventListener('change', apply); delete H.dataset.apiAsk; if (mine) delete H.dataset.ask; };
   }, []);
 }
 

@@ -105,16 +105,17 @@ Done here: the copy buttons are 48px icons with an aria-label, and they sit besi
 
 ## 9. Motion and interaction
 - [x] One signature, 3 supporting, 1 fade-up (the lede and asks, in CSS)
-- [x] At least 3 kinds: arrival, scroll (the stage fan-out and the belief line), pointer (row focus steps the others back; plates, partners and channels answer hover), state (the news column swaps its story with a 300 ms rise and a progress hairline, copy and download ticks, the email mask)
+- [x] At least 3 kinds, scroll under half: arrival (line masks), scroll (the stage fan-out, the belief line), time (the email types itself, the partner hairlines draw one by one, the channel index walks 01 to 09 once, the team plates open, the phone news card walks the six stories once; each runs once in view, then rests), idle (the plate sheen), pointer (row focus steps the others back; plates, partners and channels answer hover), state (the news column swaps its story with a 300 ms rise and a progress hairline, copy and download ticks, the email mask)
 - [x] Something moves without input; every control answers
-- [x] Reduced motion shows the final state (plain words, settled facts and email, the stage flat); no `setInterval`
+- [x] Reduced motion shows the final state (plain words, settled facts, the full email with its copy button, drawn hairlines, open plates, the stage flat). The one `setInterval` (`useBeat`) runs only in view, never under reduced motion, and clears itself at its last step.
 - [ ] n/a: sound (kit not merged)
 
 Done here:
-- Signature: the belief line. 60 words go from opacity .16 to 1 with the scroll.
+- Signature: the kit deals out. The three press-kit plates sit as one stack beside the h1 and fan out into the kit spread as the pinned stage scrolls (230svh, ease-in-out); a sheen crosses the dark plate three times, then rests. No other page makes this move (the word fill is shared with Philosophy and Research, so it is demoted).
 - Supporting:
-  - the h1 line mask;
-  - the stack fanning out (pinned, 230svh, ease-in-out with the scroll);
+  - line masks (the h1, every section head, the team names);
+  - the belief line, demoted: 60 words go from opacity .16 to 1 with the scroll, then the facts settle;
+  - one time beat per section below the news (the email typed with a caret, copy appearing after the last letter; partner hairlines drawn 160 ms apart; the channel index walking 01 to 09 once until pointed at; the team plates opening by clip; the guidelines mark drawing in);
   - the news index: a still dark column beside it holds the story in focus (`01 / 06` at 64px Air, a progress hairline, the summary and date rising in at 300 ms). Focus follows the pointer, the keyboard, or, untouched, the row crossing the middle of the screen. Nothing follows the cursor.
 - No springs.
 
@@ -199,6 +200,8 @@ Done here: Playwright ran with hanzo.ai blocked, and the console was clean.
   - the JS-off card and boilerplate;
   - 44px email;
   - the shared bar requested.
+
+  Third review (7/10) fixes: section heads rest at 26-32px and the h1 at 44-64px, with one big thing per screen (kit, facts at 64, the news figure, the email, the team plates); the lower half has a beat per section (above); phone news shows titles and dates with one dark card under the list walking the stories, its height held by invisible copies so nothing shifts (CLS 0.005); "10-54%" kept whole by CSS; the copy button waits for the typed email; the signature is the kit dealing out.
 
   Second review (6/10) fixes: grids became lists (channels one numbered index, partners hairline rows with downloads beside), the news card is pinned in a still column instead of riding with the pointer, the team shows names and roles under Sigil plates, and plates, copy icons, email and every download answer hover and press. The re-review is pending.
 

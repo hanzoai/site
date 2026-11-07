@@ -196,6 +196,14 @@
   .xga-view-copy { padding-bottom: 32px; }
 }
 
+/* round 3: the viewer sits above the header, its picture fills its pane, tiles are flat (only what floats has a shadow) */
+.xga-view { z-index: 310; }
+.xga-view-art .xga-r { zoom: 2.2; }
+.xga-frame, .xga-frame.lit, .xga-moves-obj, .xga-term { box-shadow: none; }
+.xga-frame { box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .06); }
+.xga-frame.lit { box-shadow: inset 0 0 0 1.5px #0a0a0a; }
+@media (max-width: 899px) { .xga-view-art .xga-r { zoom: 1.4; } .xga-mini { row-gap: 12px; } }
+
 /* the close: the dark room, with the wall in miniature */
 .xga-band-in { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 5fr); gap: 32px clamp(32px, 5vw, 96px); align-items: end; }
 .xga-band-in h2 { max-width: 10ch; }

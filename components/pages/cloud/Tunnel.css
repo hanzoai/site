@@ -203,5 +203,35 @@
 @media (hover: hover) { .tn2 .l2-pause.dk:hover { background: #f5f5f5; color: #0a0a0a; } .tn2 .l2-pause:hover svg { transform: scale(1.15); } }
 .tn2 .l2-pause:active { transform: scale(.97); }
 
+/* round 2 (7 Nov): carets blink four times and rest; the paused scene stops the retry dot */
+.tn2-caret { animation-iteration-count: 4; }
+.tn2-scene-pin.still .tn2-phone.down .tn2-bar i { animation-play-state: paused; }
+/* the builder holds its height while it types and while its note swaps (two lines reserved at 375) */
+.tn2-name-url { min-height: 2.4em; }
+.tn2-name-note { min-height: 3em; }
+/* one command: the output lines and the waiting caret keep their boxes from the first frame */
+.tn2-one-code pre { min-height: 5.2em; }
+.tn2-one-code .cf-ln { min-height: 1.65em; }
+/* the close card: the command stays on one line; "terminal closed" follows it */
+.tn2-end-k { justify-content: flex-start; flex-wrap: wrap; column-gap: 16px; }
+.tn2-end-k > span:first-child { white-space: nowrap; }
+.tn2-end-c { white-space: nowrap; }
+/* facts: the sticky head carries the fact being read */
+.tn2-facts-l { grid-column: 1 / span 6; align-self: start; position: sticky; top: 120px; }
+.tn2-facts-l .tn2-facts-h { position: static; }
+.tn2-facts-at { display: block; overflow: hidden; margin: 32px 0 0; font: 220 64px/1 var(--sans); letter-spacing: -.04em; font-variant-numeric: tabular-nums; color: var(--ink); }
+.tn2-facts-at > span { display: inline-block; animation: tn2-at .5s var(--ease-emphasis, cubic-bezier(.16, 1, .3, 1)) both; }
+.tn2-facts-at small { font-size: 26px; color: #737373; letter-spacing: 0; }
+@keyframes tn2-at { from { transform: translateY(105%); } to { transform: none; } }
+@media (max-width: 900px) {
+  .tn2-tw { font-size: 14px; }
+  .tn2-name-url { font-size: 21px; }
+  .tn2-name-d { display: block; } /* the domain keeps its own line, so typing the name never moves it */
+  .tn2-facts-l { grid-column: auto; position: relative; top: auto; }
+  .tn2-facts-at { display: none; }
+  .tn2-end-x { flex-basis: 100%; }
+}
+@media (prefers-reduced-motion: reduce) { .tn2-facts-at > span { animation: none; } }
+
 /* a white breath between the hero's terminal band and the dark room, so the top is not one long black block */
 .tn2-scene { margin-top: clamp(44px, 7vw, 116px); }

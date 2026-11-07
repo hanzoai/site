@@ -144,6 +144,8 @@
 .xlg2 .xlg2-dt th, .xlg2 .xlg2-dt td { white-space: normal; min-width: 104px; vertical-align: top; }
 .xlg2 .xlg2-dt caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .xlg2 .xlg2-dt code { font-size: max(13px, .86em); }
+/* a short placeholder like "[confirm]" never breaks before its bracket */
+@media (min-width: 901px) { .xlg2 .xlg2-dt td code { overflow-wrap: normal; word-break: normal; } .xlg2 .xlg2-dt th, .xlg2 .xlg2-dt td { min-width: 0; padding-inline: 12px; } }
 @media (max-width: 900px) {
   .xlg2 .xlg2-dt[data-cards] { overflow: visible; border: 0; }
   .xlg2 .xlg2-dt[data-cards] table, .xlg2 .xlg2-dt[data-cards] tbody, .xlg2 .xlg2-dt[data-cards] tr, .xlg2 .xlg2-dt[data-cards] th, .xlg2 .xlg2-dt[data-cards] td { display: block; width: 100%; position: static; }
@@ -164,7 +166,9 @@
 @media (max-width: 900px) {
   .xlg2 .xlg-det summary { min-height: 48px; padding: 0 4px; cursor: pointer; gap: 12px; justify-content: flex-start; border-radius: 12px; }
   .xlg2 .xlg-det summary .xlg-pct { margin-left: auto; font-size: 14px; }
-  .xlg2-chev { display: block; }
+  .xlg2-chev { display: block; margin-left: auto; }
+  .xlg2 .xlg-det summary .xlg-pct { display: inline; }
+  .xlg2 .xlg-det summary .xlg-pct + .xlg2-chev { margin-left: 0; }
   .xlg2 .xlg-det[open] .xlg2-chev { transform: rotate(180deg); }
   .xlg2 .xlg-det summary:active { transform: translateY(1px); }
   .xlg2 .xlg-det:not([open]) summary { padding-bottom: 0; }

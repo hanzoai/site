@@ -199,10 +199,21 @@ function Suite({ step, intro }) {
             <div><b>TimeoutError</b><em>db · SELECT cart</em></div>
             <span className="lx-fig">1,000</span>
           </div>
+          {/* the trace it links to: the hero's own waterfall, small, with the span that raised it lit */}
+          <ul className="ob-ex-tr">
+            {SPANS.map(([s, o, x, w], i) => (
+              <li key={o} className={i === SLOW ? 'hot' : ''} style={{ '--i': i }}><span>{s}</span><i><b style={{ left: x + '%', width: w + '%' }} /></i></li>
+            ))}
+          </ul>
           <p className="ob-same">links to the trace that raised it</p>
         </div>
         <div className="ob-pane" data-on={on(4)}>
-          <div className="ob-rule"><span className="ob-k">alert rule · saved query</span><code>{Q}</code></div>
+          <div className="ob-rule"><span className="ob-k">alert rule · saved query</span><code>{QW}</code></div>
+          {/* the saved query's own line, crossing its threshold where the rule fires */}
+          <svg viewBox="0 0 100 40" preserveAspectRatio="none" className="ob-chart ob-al">
+            <path className="t" d="M0 14 L100 14" />
+            <path d="M0 30 C10 26 16 28 24 22 S38 12 48 18 62 30 72 20 88 8 100 12" />
+          </svg>
           <ul className="ob-routes">{ROUTES.map((r, i) => <li key={r} style={{ '--i': i }}>{r}</li>)}</ul>
         </div>
         <div className="ob-pane ob-wire" data-on={on(5)}>
@@ -213,7 +224,10 @@ function Suite({ step, intro }) {
             </svg>
           </span>
           <div className="ob-dst"><span className="ob-k">OTLP</span><b>o11y.hanzo.ai</b><em>gRPC · HTTP</em></div>
-          <p className="ob-same ob-wire-k">one endpoint variable</p>
+          <div className="ob-wire-k">
+            <code className="ob-env"><span>OTEL_EXPORTER_OTLP_ENDPOINT=</span>https://o11y.hanzo.ai</code>
+            <p className="ob-same">one endpoint variable</p>
+          </div>
         </div>
       </div>
     </div>

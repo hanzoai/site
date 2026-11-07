@@ -22,6 +22,7 @@ import { useDemo, DemoCtl } from '../v2/AppDemo';
 import { EASE } from '../ui';
 import { A, Faq, Cta, Band, CodeBlock, Tabs, TabPanel } from '../kit';
 import AppLines from '../v2/AppLines';
+import useCalm from '../v2/useCalm';
 import './DevPage.css';
 
 const OPEN = '/login?next=%2Fdev';
@@ -29,6 +30,13 @@ const DOCS = 'https://docs.hanzo.ai/docs/dev';
 // Hanzo's own links end in a text arrow (→), so the kit Cta link carries it as text and drops its drawn one
 const Lk = ({ to, children, id }) => <Cta to={to} kind="link" id={id} className="xdv-lk">{children} <i className="xdv-ar">→</i></Cta>;
 const useIso = typeof window === 'undefined' ? useEffect : useLayoutEffect;
+/* the kit's demo control reads reduced motion while rendering; render it only once mounted, so the server HTML and the
+   first client render agree (a control is no use before scripts anyway) */
+function Ctl(props) {
+  const [on, setOn] = useState(false);
+  useEffect(() => setOn(true), []);
+  return on ? <DemoCtl {...props} /> : null;
+}
 const EZ = { duration: 0.3, ease: EASE }; // state changes: 300 ms, ease-emphasis, no springs (MASTER 3.1)
 
 /* ---------- 1. hero: Dev at work ---------- */
@@ -49,9 +57,9 @@ const HIGHLIGHTS = ['Reads the repository, makes the change and runs the tests',
 const ASK = 'Describe the change.'; // what you give Dev, in Hanzo's own words
 
 /* the file beside the session: Dev reads it, and the edit lands on line 2 */
-function File({ stage }) {
+function File({ stage, pre }) {
   return (
-    <div className={'xdv-file s' + stage} aria-hidden="true">
+    <div className={'xdv-file s' + stage + (pre ? ' pre' : '')} aria-hidden="true">
       <div className="xdv-file-tab x-mono"><i />src/retry.ts<em className="xdv-file-ct"><b>+1</b> <s>−1</s> <u>M</u></em></div>
       {/* the change lands as a hunk: the old line is struck through as it leaves, the new one wipes in under it */}
       <ol className="xdv-src x-mono">
@@ -110,7 +118,7 @@ function Session() {
         <i aria-hidden="true" /><i aria-hidden="true" /><i aria-hidden="true" />
         <b className="x-mono">Hanzo Dev · Coding agent</b>
         <button type="button" className="xdv-info" aria-expanded={info} aria-controls="xdv-demo" onClick={() => setInfo(!info)}>(i)</button>
-        <DemoCtl demo={demo} className="dark xdv-ctl" />
+        <Ctl demo={demo} className="dark xdv-ctl" />
       </div>
       <p id="xdv-demo" className={'xdv-demo' + (info ? ' on' : '')} aria-hidden={!info}>This interactive demo runs Hanzo Dev in your browser with an in-memory workspace (@acme/api).</p>
       <div className="xdv-panes">
@@ -127,7 +135,9 @@ function Session() {
           )}
           <div className={'xdv-term-body' + (live ? '' : ' xdv-off')} ref={body} aria-hidden="true" />
         </div>
-        <File stage={stage} />
+        {/* until the session plays, the file shows its before state (with scripts on and motion allowed); the server's
+            HTML keeps the landed change for JS off and reduced motion */}
+        <File stage={stage} pre={!live} />
       </div>
       <ul className="x-sr">{DIFF.map(([, s], i) => <li key={i}>{s}</li>)}</ul>
       <div className="xdv-term-foot x-mono"><span>auto</span><span>·</span><span>enso-auto</span><span className="xdv-foot-h">{HIGHLIGHTS[3]}</span><em>@acme/api (main)</em></div>
@@ -142,18 +152,19 @@ function Hero() {
         <div className="xdv-hero-h">
           <AppLines as="h1" id="xdv-h1" className="v2a-display xdv-h1" lines={['Describe the change.', 'Dev ships it.']} />
         </div>
-        <motion.div className="xdv-hero-side" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.3 }}>
+        {/* the lede and the asks arrive with the h1 by CSS (no wait for scripts): in by 600 ms */}
+        <div className="xdv-hero-side xdv-arrive" style={{ '--d': '180ms' }}>
           <p className="xdv-lede">Hanzo Dev is a coding agent. It reads your repository, makes the change, runs the tests and shows you the diff — in your terminal, on the web, in the cloud and in Slack.</p>
           <div className="xdv-acts">
             <Cta to={OPEN} id="dev.hero" thumb size="lg">Open Dev</Cta>
             <Lk to={DOCS} id="dev.docs">Read the docs</Lk>
             <Lk to="https://github.com/hanzoai/dev" id="dev.github">Explore GitHub examples</Lk>
           </div>
-        </motion.div>
+        </div>
       </div>
-      <motion.div className="v2a-wrap xdv-term-wrap" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE, delay: 0.15 }}>
+      <div className="v2a-wrap xdv-term-wrap xdv-arrive" style={{ '--d': '360ms' }}>
         <Session />
-      </motion.div>
+      </div>
     </section>
   );
 }
@@ -201,7 +212,7 @@ function Side({ t, side }) {
 function Race() {
   const ref = useRef(null);
   const board = useRef(null);
-  const calm = useReducedMotion();
+  const calm = useCalm(); // read after mount, so the server HTML and the first render agree
   const t = useMotionValue(MAX); // the server shows the finished race (JS off); the browser sets it ready at once
   useEffect(() => { if (!calm) t.set(0); }, [calm, t]);
   // the room's edges open out as it arrives, and the figure grows from its resting 64px to the moment
@@ -214,7 +225,7 @@ function Race() {
     t.set(0);
     await sleep(500);
     while (v < MAX) { await sleep(32); v = Math.min(MAX, v + 0.032); t.set(v); }
-  }, { amount: 0.75 });
+  }, { amount: 0.3 }); // a third of the board on screen (on a phone the two clocks stack, so the whole board never fits)
   return (
     <motion.section className="xdv-race" data-room="dark" ref={ref} aria-labelledby="xdv-race" style={calm ? undefined : { clipPath: clip }}>
       <div className="xdv-race-pin">
@@ -227,7 +238,7 @@ function Race() {
             {SIDES.map((s) => <Side key={s.who} t={t} side={s} />)}
           </div>
           <div className="xdv-race-act">
-            <DemoCtl demo={demo} className="dark" />
+            <Ctl demo={demo} className="dark" />
             <Cta kind="quiet" onClick={demo.replay} id="dev.race" className="xdv-replay-btn">Replay race</Cta>
           </div>
         </div>
@@ -528,7 +539,7 @@ function Source() {
           <span className="xdv-repo-n"><i />hanzoai/dev</span>
           <span className="xdv-repo-t">Apache-2.0</span>
           <span className="xdv-repo-t">v0.7.7</span>
-          <span className="xdv-repo-tree">{FILE.map((l, i) => <b key={i} style={{ '--w': Math.max(8, l.trim().length) + 'ch', '--i': i }} />)}</span>
+          <span className="xdv-repo-tree">{FILE.map((l, i) => <b key={i} style={{ '--i': i }}>{l || ' '}</b>)}</span>
         </Play>
       </div>
       <div className="v2a-wrap v2a-grid xdv-qa">

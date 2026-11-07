@@ -1,79 +1,71 @@
 # /computer — James-eye review
 
-Verdict: 6.5/10
-First complaint: "There's a red error badge sitting in the corner, and the hero is grey boxes. That's a wireframe of a computer, not a computer. It doesn't feel premium."
+Verdict: 7/10
+First complaint: "Why is there a red '1 Issue' error sitting in the corner? And once I'm past the demo it goes quiet: a checklist, a grey box and a line saying 3 stars."
 
-Walked 7 Nov 2026 on the dev server at 1470×801 and 375×812, moving. Method: Playwright with recorded video. Wheel-scrolled in 130px notches with 1.2s dwells. Clicked every hero tab, the pause button, the 01/02/03 steppers, all three checklist ticks and Copy. Hovered and pressed the asks. Did a 26-stop Tab crawl. Checked reduced motion, JS off, CDP platform fonts, and the phone top to bottom with taps. Ran parity.
+Walked 7 Nov 2026 on the dev server at 1470×801 and 375×812, moving. Method: Playwright with video, wheel notches of 130px and about 1.2s dwell per screen; idle frames over the first 2s; hovered and pressed all 20 controls in `main`; clicked every tab, chapter number and checklist row; a 14-stop Tab crawl and Esc; reduced motion; JS off; phone screens top to bottom with taps; 6 extra cold loads to pin down the console error. Proof: `docs/review/computer/desktop-sheet.jpg` and `phone-sheet.jpg`. (`desktop-walk.jpg` and `phone-walk.jpg` in that folder come from the earlier review, not this one.)
 
 ## What works
-- **The hero moves untouched within about 300ms.** A scan line sweeps the stage, a scripted cursor travels to the CSV field, and the grid fades. The counter auto-advances 01→02 at about 3s. The pause button flips its label to Play, sets `aria-pressed=true` and freezes the counter.
-- **The pinned "It reads pixels / OCR / Mouse and keyboard" stage behaves like a real Apple-style pinned scene.** The left text swaps and one panel changes on the right, and the room goes from white to `#f5f5f5` for step 02. The 01/02/03 steppers scroll to each step.
-- **The checklist "It has whatever you have" is a good small Beyond.** It uses `role=checkbox` with ticks that fill ink. The 0/3 figure counts up to 3/3, and the hairline bar fills. Hover darkens the box outline.
-- **The sticky ask changes from "Try Hanzo" to "Try Hanzo Computer" once the hero leaves view (desktop).** Hero CTA press is `scale(0.98)` and hover lightens `#f5f5f7` to `#fff`, with no opacity fade.
-- **Copy copies exactly what is displayed:** `Read https://hanzo.ai/skill.md and use Hanzo Computer in my project. Start with: hanzo desktop`.
-- **Copy parity: 33/33 text, 4/4 links.** CLS during the walk was 0.0007. The h1, lede and h3 all render in Zen (CDP platform fonts), and I saw no font swap.
-- **Reduced motion works.** The hero counter holds at 01 and `getAnimations()` is 0 after 3.8s. With JS off, the hero stage is visible (opacity 1 via the fallback).
-- **Monochrome throughout,** and no label sits above any h1 or h2. "BEFORE YOU RUN IT" is correctly set below its h2.
-- **The closing black Band "For the software with no API"** enters as a rounded card inside the gutters, with one solid ask and a text secondary.
+- **The hero object is alive and on-message.** A dark stage (`.cp-stage`) runs a scripted demo by itself: a cursor works down the "vendor portal that exports one CSV at a time", ticking rows, while "the desktop tool from 2009" sits beside it, a scan line sweeps across, and the `01 / 06` caption advances about every 4s. It moves within about 400ms of load. A pause button sits first in the stage (49×49, `aria-pressed`).
+- **Scale has rhythm in the hero.** The stage enters at 1273px wide, wider than the 1152px container, then settles to 1151px inside the gutters as you scroll. h1 52px, section h2s 26px, the meter figure 64px Air, the closing band h2 44px.
+- **A real pinned stage** (`.av-sc-pin`, sticky, 801px tall, 2211px of scroll): one panel changes per chapter. Chapter 01 shows four thumbnails (native app, canvas, remote desktop, web page) with a scan line. Chapter 02 shows OCR and Set-of-Mark boxes. Chapter 03 shows macOS permission switches that flip on and a voice waveform that keeps moving. The `01 02 03` numbers are real buttons (44×44) that jump to their chapter.
+- **The checklist is a good "Beyond".** Ticking a row fills a black 48px box with a check and moves the `0 / 3` meter figure and its bar. It works the same on phone. It turns the warning copy into something you do.
+- **Copy action is correct.** "Copy the agent prompt" presses at scale 0.97, shows "✓ Copied", and the prompt is plain mono text.
+- **One ask and one solid fill.** At the top the header ask is outlined ("Try Hanzo"). Once the hero ask leaves view, the header swaps to a filled "Try Hanzo Computer". Only one fill is ever in view on desktop.
+- **Colour, type and copy are clean.** I found 0 hued pixels in computed colours. Faces are Zen and Zen Mono only. Parity: `text 33/33, links 4/4`. Nothing sits above any h1 or h2, and "BEFORE YOU RUN IT" is set below its h2 as a caption.
+- **Resilient.** With JS off the h1 and stage are fully legible. Under reduced motion `getAnimations()` is empty at 3.5s and the final states show (switch on, waveform flat). CLS over the full scroll was 0.0007. The h1 box never moves (92px top, 662×61 from the first frame). No horizontal scroll on phone (scrollWidth 375).
 
 ## The 11 answers
-1. **5 seconds / 1 second: mostly yes.**
-   - The h1 "Hanzo Computer" is 52px at y 92–153, the lede is at y 182, and the asks are top right at y 122. The stage starts at y 262.
-   - Motion arrives within 300ms (scan line, cursor). In frame 0 the lede is painted before the h1 has cut in, so the h1 arrives second, after its own subtitle.
-   - The sell is weakened by the object itself. The stage is two grey-bar wireframe windows ("The vendor portal…", "The desktop tool from 2009.") full of placeholder bars and empty grey tiles. It reads as a skeleton loader, not as a product doing something.
-   - The tab strip and caption ("If a person can click it, so can this", 01/06) sit at y 985–1100, below the fold at 801.
-2. **One in, one out: half.**
-   - The hero demo and the pinned three-step stage work as scenes.
-   - After the pinned scene ends there is about 250px of empty white, with the 01/02/03 stepper stranded alone at the top (desktop, scrollY ≈ 3000).
-   - There is another 250px of dead white below the checklist before "Paste and ship".
-   - The "Paste and ship" / "Get Computer" pair is a static document block with no motion.
-3. **Real visual object per section: partially.**
-   - Hero: an illustrated stage, but placeholder-grey.
-   - Pixels: abstract circles, squares and bars.
-   - OCR: wireframe bars.
-   - Mouse and keyboard: toggles and a waveform pill (the best of them).
-   - Checklist: the counter.
-   - Paste and ship: a code card.
-   - None of it is real Hanzo media or product UI. The only image on the page is `models/mori.webp`, used as a faint mesh texture behind the stage. There is no block of 4 or more real visuals.
-4. **One ask / scale rhythm: mostly yes on desktop, mixed on phone.**
-   - Desktop: the header carries "Try Hanzo Computer" after the hero. The hero has one solid fill (189×44) plus a text "Documentation →".
-   - Scale is reasonable: h1 52, h3 32, h2 26, Band h2 44, figure 0/3 about 64.
-   - Phone: the header stays a solid black "Try Hanzo" while a bottom bar "Try Hanzo Computer →" rises. That puts two asks with different labels on screen at once (p_06). The bar also sits over the bottom of the canvas panel (p_03).
-   - The cookie card (shared chrome) covers the Band headline at 1470×801 until it is dismissed.
-5. **Hover and press: mostly, with one jump.**
-   - Hero tabs change grey `#a3a3a3` → `#fafafa`, and the active tab gets an underline.
-   - **Copy button jumps.** "Copy the agent prompt" is 205px wide; on click it becomes "Copied" at 120px, then 100px. The prompt beside it rewraps from 3 lines to 4. That is a layout jump on press, and loading/success must keep its width.
-   - The checklist rows have no row hover (only the box outline darkens). The 01/02/03 steppers give minimal feedback.
-6. **Overlap, font swap, layout shift.**
-   - **Console error: a React hydration mismatch, shown as the red "1 Issue" badge.** It appeared on the first desktop load and on every reduced-motion load (3 of 3 reduced-motion runs).
-   - The diff is on `.cp-stage` (the hero stage): the server sends `opacity:"0"`, `transform-origin:"50% 0%"`, `transform:"none"`, `clip-path: inset(0% 3% round 24px)`, and the client renders `opacity: 1`.
-   - No font swap and no horizontal scroll (phone `scrollWidth` 375). CLS is 0.0007.
-   - The phone bottom ask bar covers the panel edge.
-   - Misalignment in "Get Computer": "Apache-2.0" sits about 12px higher than "hanzoai/computer" (desktop y 224 vs 236, and the same on phone).
-7. **Reference: apple.com product page,** for the pinned stage with one panel changing and the sticky ask, and that motion is there. The synchronized.studio Morph is not felt: `data-morph-target` is on the stage, but there is no card-opens-into-page moment from this page.
-8. **Different from neighbours: probably.** The self-running desktop demo with a cursor, plus a pixels/OCR pinned stage, is its own idea. The grey-wireframe illustration language risks looking like every other "illustrated product" page. I did not walk the neighbouring pages.
-9. **18 parts.**
-   - Present: one h1 with an sr span and a line-mask cut-in; `data-cta` on all asks; Band then footer; pause control first in the demo; checklist as a Beyond; copy equals display; reduced-motion final state; 44px tap targets on phone (none under 44 found); Zen and Zen Mono only.
-   - Gaps: the console error (part 3/17), copy button width (part 8), dead white gaps (part 3 rhythm), no real media (part 10).
-   - Orphan at 375: "Text on a web page can redirect / it". Body measures look fine.
-10. **Banned tells.**
-    - Hard failures: the console error/red badge and the copy-button layout jump.
-    - Borderline: the hero is a framed or boxed illustration in a rounded dark card, which is close to the "framed static hero" tell, although it does move.
-    - Not present: no hue, no gradient text, no Inter, no pill above a headline.
-11. **Copy untouched: yes.** Parity is OK (text 33/33, links 4/4). The six hero tab labels repeat the section h3s; that is presentation, not new copy.
+1. **Sells in 5 s, moves in 1 s?** Yes. "Hanzo Computer" (52px) with its lede is on the left, and "Try Hanzo Computer" plus "Documentation →" are on the right at y=122. The running stage starts at y=255 and is visible in the first screen at both sizes. Motion starts with no input within about 0.4s: the stage arrives, the cursor moves and the rows tick.
+2. **One in, one out, or a document?** The top 60% is: hero, then the pinned stage where one panel swaps per chapter. After the pin releases at about y=3376 it turns into three static light blocks in a row: the checklist (534px), "Paste and ship" with "Get Computer" (467px), then the band. Nothing comes in or goes out there; they just scroll past. It is not a document, but the second half goes flat.
+3. **A real visual in every section?** Hero: yes (live stage). Pinned scene: yes (three drawn panels). Checklist: the 64px meter and the check boxes are the object, which is weak but interactive. "Paste and ship" with "Get Computer": the prompt card is the object. The right column is bare text (License / Source / "hanzoai/computer 3 stars" / "Deploy to Cloud →") with no object. Band: text only (shared `x-band`).
+4. **One ask, nothing floating, scale rhythm?** One ask, in the header, in Hanzo's words. Nothing floats over content on desktop. Rhythm is good: one big thing per screen (stage, then panel, then the 64px meter), the rest at 26 / 16 / 12px.
+5. **Every hover and press answers, no jumps?**
+   - Tabs: colour change on hover, scale 0.97 on press, the active tab underlined.
+   - Chapter numbers: ink on hover, press scale about 0.985.
+   - Checklist rows: background fills to `#fafafa` on hover.
+   - Copy: inset fill on hover, scale 0.97 on press.
+   - Text links: underline on hover, arrow nudged 4px.
+   - "Try Hanzo Computer": background goes to `#fff`.
+
+   No layout jump. The one gap is the hero ask: its hover only changes `#f5f5f7` to `#fff`, which you can barely see on black.
+6. **Overlap, font swap, layout shift?** No overlap at either size. No font swap: h1 metrics are stable from the first rAF. CLS 0.0007. One focus problem: Tab stop 7 (checklist row 01) reported its box at y=1365 in a 801px viewport, 200ms after the keypress. The smooth scroll lags focus, so the focused row is briefly off screen. By stop 8 it is in view.
+7. **Which reference, and is its motion there?** apple.com product page: one idea per screen in a pinned, scrubbed stage with a persistent ask. The pin and panel swap are really there. A touch of motion.dev in the switch flip and waveform. synchronized.studio is not present: no card opens into anything.
+8. **Different from neighbours?** Partly.
+   - `/operative` (same idea: a model driving a desktop) also uses a windowed desktop mock with a cursor as its hero, though on a light room and with a different layout.
+   - `/agents` uses the same stage chrome: an `0N / 0N` counter plus a pause button on a dark card.
+
+   The dark grid stage with two "legacy app" windows and the pinned three-panel scene are /computer's own. The family resemblance is visible.
+9. **All 18 parts?** Mostly covered: one h1, `data-cta` on the hero, band and deploy asks, JS-off legible, reduced motion final state, 44px targets, pause control on the looping demo, copy equals display, tabs with roving tabindex. Gaps:
+   - A page-owned console error (part 3 / DONE item 3).
+   - No proof strip before the band (part 3, "end on one proof strip"). "3 stars" is the only proof and it argues against.
+   - Hero hover too faint (part 8).
+10. **Banned tells?** None found: no hue, no gradient text, no pill above a headline, no Inter, no cursor glow, no three equal boxes. The six-tab rail under the stage lists the same six topics that the pinned chapters and checklist then repeat. That reads as the same story told twice, not as clutter.
+11. **Copy untouched?** Yes. Parity is OK (33/33 text, 4/4 links).
+
+**Console error (page-owned, decides the score).** A React hydration mismatch on the hero `Stage` (`motion.div.cp-stage[data-morph-target]`):
+- The server renders `style="opacity:0; transform-origin:50% 0%; transform:none"` and the client renders `opacity:1`.
+- It reproduced in 2 of 2 reduced-motion loads and in 1 of 5 normal loads.
+- Each time it raises the red "1 Issue" badge in the bottom-left corner of the screen (seen in my desktop walk and reduced-motion frames).
+- The fix: render the same initial style on the server and the client. Decide reduced motion after mount, or use `initial={false}` together with a CSS-only entry.
 
 ## Fix list (to reach 8+), most important first
-1. **Kill the hydration mismatch on `.cp-stage`.** The server and the first client render must produce the same `style` under every `prefers-reduced-motion` value. Let the initial motion props come from CSS (`html.js .cp-stage{opacity:0}`), or render the stage's `initial` only after mount, not from a `useReducedMotion()` branch at render time. Zero console errors and no red badge, in both motion modes.
-2. **Fix the Copy button width.** "Copy the agent prompt" must keep its 205px (min-width or overlay the "Copied" label) so the prompt never rewraps 3→4 lines.
-3. **Make the hero stage feel like a real computer, not a skeleton.**
-   - Replace the grey placeholder bars and empty grey tiles in "The vendor portal…" / "The desktop tool from 2009." with real-looking content drawn from the page's own words: CSV rows that actually fill as the cursor clicks, and the 2009 tool's tiles getting Set-of-Mark numbers.
-   - At minimum, put the readable state change in the first viewport.
-   - Lift the caption, counter and tabs so "If a person can click it, so can this" sits above the 801 fold.
-4. **Remove the dead white gaps.** Cut the about-250px empty band after the pinned scene, where the 01/02/03 stepper is left stranded with no panel. Either unpin the stepper with its stage, or close the section's bottom padding. Do the same for the empty band under the checklist.
-5. **Give "Paste and ship / Get Computer" one live thing.** For example, the prompt types itself in once at 60% visible, or "hanzoai/computer · 3 stars" counts in. Align "Apache-2.0" with "hanzoai/computer" on one baseline.
-6. **Phone: one ask at a time.** When the bottom bar "Try Hanzo Computer →" is up, the header should not also show a solid black "Try Hanzo" with a different label. Keep the bar off panels: add bottom padding equal to the bar height on the pinned panels.
-7. **Make the h1 arrive first.** The lede "An agent that uses the computer in front of it" paints before the h1 cut-in. Stagger the lede after the h1 lines (60ms), or don't hold the h1.
-8. **Smaller items.**
-   - Fix the orphan "it" on "Text on a web page can redirect it" at 375 (`text-wrap: balance` on the h3s).
-   - Give the 01/02/03 steppers and checklist rows a hover that tells something (a row hover fill).
-   - Keep the hero tab strip's peek on phone, but make sure the active tab scrolls into view (it does on tap; check on auto-advance).
+1. **Fix the hydration mismatch on the hero `Stage`** (`.cp-stage`, `data-morph-target`). The server's `opacity:0` style must equal the client's first render under both motion preferences. 0 console errors across 5 cold loads, reduced motion included.
+2. **Give the second half its own motion.** The checklist plus "Paste and ship" run is static until touched. Ideas:
+   - The `0 / 3` meter and its bar settle in once on arrival.
+   - The checklist rows enter one by one as a list, not as three blocks.
+   - "Paste and ship" types its prompt into the card once (time-based, then rests, with a final state under reduced motion) before Copy is offered.
+
+   One time-based mover here would break the "goes quiet" feeling.
+3. **"Get Computer" needs an object, and lose the anti-proof.** The right column of `.cp-ship` is four bare lines, and "3 stars" next to `hanzoai/computer` reads as weakness. If the star count stays, set it small and grey beneath the repo name rather than as the only figure. Better: give the column a small drawn object (a repo or terminal card from the existing "hanzoai/computer · Apache-2.0" facts).
+4. **Hero ask hover:** `#f5f5f7` to `#fff` is invisible on black. Add a real hover answer, such as a magnetic shift up to 22px (deck-allowed, fine pointer only) or an arrow that slides in, plus press at scale 0.97 (currently the link has no pressed transform).
+5. **Tab focus versus smooth scroll:** stop the smooth-scroll handler from fighting native focus scrolling, so a focused checklist row is in view on the same frame (`scroll-padding-top` is header + 16px).
+6. **Trim the double telling.** The six-label tab rail under the hero stage repeats the six chapter or checklist headings that follow. Keep the rail as the stage index, but let the pinned chapters carry the detail. Or shorten the rail on desktop to the `01 / 06` counter plus dots, as the phone already nearly does.
+7. **The stray glyph behind "The desktop tool from 2009" window** (a `</>`-like mark peeking above its title bar at about x 900–960, y 515 at 1470×801) looks like an accident. Either show it fully or hide it.
+
+## Shared chrome
+- **Phone, first screen:** the header "Try Hanzo" is a white solid fill while the hero "Try Hanzo Computer" is also a white solid fill. That is two solid fills in one viewport. Desktop correctly keeps the header outlined until the hero ask leaves.
+- **Phone mobile ask bar** ("Try Hanzo Computer", outlined, at the bottom of the screen) appears together with the header's filled "Try Hanzo": two asks with different labels.
+- **The cookie card on phone** covers the hero stage's tab rail and part of the stage (bottom 210px) until dismissed. "Reject all" has equal weight.
+- **Band** (`.x-band`): 692px of black with the content centred and about 180px empty above and below. It feels padded rather than like a closing moment.
+- The dev overlay "1 Issue" badge comes from the page's own hydration error above, not from shared chrome.

@@ -133,6 +133,8 @@ html.x-arriving .xso-in, html.x-arriving .xso-in2 { animation-play-state: paused
 .xso-pane-t { text-wrap: pretty; }
 
 /* deck rhythm: the h1 rests at 52, the filter words at 32 (one big thing per screen: the reel, then the wall) */
+.xso-tile-a { clip-path: inset(0 round 24px); }
+@media (max-width: 899px) { .xso-tile-a { clip-path: none; } .xso-tile-m { clip-path: inset(0 round 12px); } }
 .xso .xso-h1 { font-size: clamp(40px, 5vw, 52px); line-height: 1.04; }
 .xso-groups { gap: 4px 28px; }
 .xso-res .vc-display { font-size: clamp(40px, 5vw, 52px); }

@@ -9,7 +9,7 @@ Forks this page deleted: `x-btn` buttons (now kit `Cta`), raw inputs (now kit `F
 
 ## 1. Strategy and conversion
 - [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
-- [ ] One solid fill per viewport (desktop yes; on phones the shared header keeps a solid "Try Hanzo" beside the hero ask, requested in `docs/requests/founder.md` for all program pages)
+- [x] One solid fill per viewport: the page-local `usePhoneAsk` outlines the header's button at every width while any solid ask of the page (the hero ask or "Submit Grant Application") is on screen; on phones the header keeps "Try Hanzo" because "Apply for a Grant" does not fit it (no clipped label)
 - [x] One h1; the page is clear in 5 seconds
 - [x] No dead or self-looping button; prices from `lib/plans.js`
 - [x] Open copy questions for James listed, none decided
@@ -22,7 +22,7 @@ Done here: Header comment in `app/grants/page.jsx` names Persona, Goal, CTA, Met
 - ~~Breadcrumb at depth 2 or more~~ n/a: depth 1 page.
 - [x] Link parity: 0 removed, 0 unexpected
 
-Done here: One `<main>` from the layout; links via `A`/`Cta`; parity links 5/5.
+Done here: One `<main>` (the layout's `#main` marker takes the skip link); links via `A`/`Cta`, except the two `mailto:` links written as plain `<a>`; the in-page asks now use full paths (`/grants#apply`), so kit `A` keeps them in the same tab (round 4, click-tested: 0 new tabs); parity links 5/5.
 
 ## 3. First impression and page narrative
 - [x] Sells in 5 s; something moves within 1 s without input
@@ -36,7 +36,7 @@ Done here: Nothing above the h1. "Open Source & Research Credit Grants" (52px) c
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
-- [ ] Sticky ask in header and bar after the hero, same label (desktop: the header carries "Apply for a Grant" after the hero; phone: shared Ask, see request)
+- [ ] Sticky ask in header and bar after the hero, same label (desktop: the header carries "Apply for a Grant" after the hero; phone: the label is too long for the shared header, so it stays "Try Hanzo"; request for a phone-size header ask in `docs/requests/founder.md`)
 - ~~Copy button copies exactly the displayed text; failure never says Copied~~ n/a: no copy control.
 - [x] `data-cta` and `data-thumb` on every primary
 
@@ -48,7 +48,7 @@ Done here: Kit `Cta` only (no raw `.x-btn` in the page file); `data-cta` and `da
 - ~~Marquees pause, freeze under reduced motion, hide duplicates~~ n/a: no marquee.
 - [x] Privacy link and owner line beside every submit
 
-Done here: Figures are Hanzo's (2,137+ repositories · 122 organizations) with their words beside them; no logos or seals; "Privacy Policy" (hanzo.ai/privacy) sits beside "Submit Grant Application", with Hanzo's review sentence and "Or email us directly at careers@hanzo.ai" as the owner line. The 2,137+ figure counts up once from its true value in the HTML.
+Done here: Figures are Hanzo's (2,137+ repositories · 122 organizations) with their words beside them; no logos or seals; "Privacy Policy" (hanzo.ai/privacy) sits beside "Submit Grant Application", with Hanzo's review sentence and "Or email us directly at careers@hanzo.ai" as the owner line. The 2,137+ figure is set static at 64px (the count-up was removed to stay inside the motion budget).
 
 ## 6. Content presentation (copy untouched)
 - [x] No text under 13px (14px phone) except mono capitals
@@ -61,7 +61,7 @@ Done here: Parity 57/57 text. Type from MASTER: h1 52px, section heads 26px, ste
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes (white and black now `--hz-white`/`--hz-black`; the remaining literals are deck greys with no token: #f5f5f5, #171717, #a3a3a3, #525252, #737373)
 - [x] No label, tag, badge or pill above a headline
-- [x] Radii, shadows and sizes from tokens; never box plus shadow
+- [ ] Radii, shadows and sizes from tokens (no box plus shadow; radii 24/20/12/999 are deck values written as literals, as no radius token is merged)
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
@@ -81,7 +81,7 @@ Done here: Kit `Cta` and `Field` states (hover, press .97, focus ring, busy, das
 - [x] At least 3 kinds of movement; scroll-linked is half or less
 - [x] Something moves without input; every control answers
 - [x] Reduced motion shows the final state; no `setInterval`
-- ~~Sound only on the listed moments, through the one kit~~ n/a: the shared sound kit is not on main yet; the track radios carry `data-sound="tick"` for it.
+- [x] Sound only on the listed moments, through the one kit: the shared `lib/sound.js` (header mute toggle) sounds the `data-cta` asks; the track radios carry `data-sound="tick"`; the page plays nothing of its own.
 
 Done here: Signature: the stacked sheets, each shrinking to .92 and dimming as the next slides over it (driven by the list's own progress). Time: the contour field (pausable). Arrival: line-mask h1; the timeline draws across; ticks draw on the ledger row by row. State: the track chip glides; the filing card fills as you type. Ease-emphasis, no springs. Reduced motion (round 3): the sheets render at scale 1 with no dim layer, the steps show all lit, the count shows its true value, the field is still. The timeline is now scrubbed by scroll and lights each step as the line reaches it; hover redraws a ledger tick.
 

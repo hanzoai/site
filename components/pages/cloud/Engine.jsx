@@ -18,7 +18,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { EASE, Copy, useCalm } from '../../ui';
 import { Field } from '../../kit';
 import { useLive, useSteps, useFrame } from './Frame';
-import KeynoteStage, { useStagePause } from '../../v2/KeynoteStage';
+import KeynoteStage, { useStagePause } from './SafeStage';
 import KeynoteChapters from '../../v2/KeynoteChapters';
 import KeynoteClose from '../../v2/KeynoteClose';
 import KeynoteLines from '../../v2/KeynoteLines';
