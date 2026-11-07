@@ -4,7 +4,7 @@
    Persona: an engineer whose frontend and services throw errors they can't reproduce. Goal: read the migration docs.
    CTA: "Read the docs" (hero, header ask, close; data-cta primary / close).
    Metric: cta_click:sentinel.primary
-   V2: 8/10 the issue view as the hero, ten thousand events collapsing into one issue as you scroll, the facts as stacking sheets
+   V2: 8/10 the issue view as the hero; ten thousand events rain into one issue (the rain never crosses the words); facts as stacking sheets that alternate and play once, the alert router builds a rule by itself; the close shows the fix landing at a release
    Signature: ten thousand events become one issue. In a pinned dark room, exceptions rain down a canvas; as you scroll
    they are pulled into a single issue card and its count climbs with them (scrubbed; on phones it plays when seen).
    Beyond: "Route an alert". Choose what happened (new issue, regression, spike), where it goes and which tracker opens
@@ -33,7 +33,7 @@ function Issue() {
   const [ref, live, , paused, toggle] = useDemo(0.05);
   const calm = useCalm();
   const [n, setN] = useState(4211);
-  const [bars, setBars] = useState(() => Array.from({ length: 28 }, (_, i) => 0.18 + rnd(i + 3) * 0.5 + (i > 20 ? (i - 20) * 0.04 : 0)));
+  const [bars, setBars] = useState(() => Array.from({ length: 28 }, (_, i) => +(0.18 + rnd(i + 3) * 0.5 + (i > 20 ? (i - 20) * 0.04 : 0)).toFixed(3)));
   const [t, setT] = useState(0);
   useTick(140, live, () => { setN((v) => v + 1 + Math.floor(rnd(v) * 9)); setT((x) => x + 1); if (rnd(t) > 0.82) setBars((b) => [...b.slice(1), 0.3 + rnd(t + 9) * 0.65]); });
   const resolved = calm || Math.floor(t / 22) % 2 === 1;
@@ -260,13 +260,20 @@ function Sheets() {
   );
 }
 
-/* The close's object: the issue as it ends up, one issue for ten thousand events, its frame resolved. */
+/* The close's object: the payoff, not the card again. The issue's events over time: they climb, the fix ships at the
+   release marker, and the bars fall to nothing after it (drawn once when reached). Example data, like the hero's. */
+// rounded, so the server's and the browser's Math.sin agree to the last digit (no hydration mismatch)
+const AFTER = Array.from({ length: 28 }, (_, i) => (i < 19 ? +(0.25 + rnd(i + 40) * 0.55 + i * 0.015).toFixed(3) : i === 19 ? 0.12 : 0.02));
 function Resolved() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.5 });
   return (
-    <div className="sn2-end" aria-hidden="true">
+    <div className={'sn2-end' + (seen ? ' in' : '')} ref={ref} aria-hidden="true">
       <div className="sn2-head"><span className="sn2-tag l2-mono">TypeError</span><span className="sn2-unres l2-mono">1 issue</span></div>
-      <p className="sn2-msg">Cannot read properties of undefined</p>
-      <p className="sn2-end-n"><b className="l2-fig">10,000</b><span>events</span></p>
+      <div className="sn2-end-h">
+        {AFTER.map((h, i) => <i key={i} style={{ '--h': h, '--k': i }} />)}
+        <span className="sn2-end-mark l2-mono">release 6</span>
+      </div>
       <div className="sn2-code"><code><b>checkout/cart.ts:42</b> · applyDiscount()</code><span className="sn2-map l2-mono on">source map</span></div>
     </div>
   );

@@ -1,42 +1,40 @@
 # /sentinel/: James-eye review
-Verdict: 7/10
-First complaint: "Top right says Try Hanzo, the big black button says Read the docs, and on the phone they're both shouting at once. Which one do you want me to press? And those stacked cards are heavy grey slabs with half of each one empty."
+Verdict: 8/10
+First complaint: "That's alive now, the rain falling into one error is the moment. But on the phone the error title's two lines are sitting on top of each other, and the same error card shows up three times. By the end it's a repeat, not a payoff."
 
-Walked 2026-11-07 (run 2) on the dev server at 1470x801 and 375x812, moving.
+Walked 2026-11-07 16:36 UTC (run 3) on the dev server at 1470x801 and 375x812, moving.
 ## The 11 answers
 1. Sells in 5 s and moves inside 1 s.
-   - h1 "Hanzo Sentinel" 52px beside a live issue card: the events count ticks (4,350 to 4,457 within one scroll stop), the frame resolves from `main.3f9a.js:1:88213 · t.a()` to `checkout/cart.ts:42`, and breadcrumbs step. Frames 300 ms and 1000 ms after load differ.
-   - The h1 still sits low (top 358px, about 50% of 801, not 38%), and on desktop the card is cut at "exception" at the fold.
-   - Phone: h1 40px at 168px; the ask and the top of the card are inside the first screen.
-2. One in, one out: yes for the first half, then a document.
-   - Signature: the black room's rain of events collapses into one issue card (1,026 to 8,016 to 10,000). It reads, and it is still moving 3 s after you stop.
-   - Chapters 02 to 06 are five sticky sheets, all the same shape (heading left, object right, 560-600px tall). Still stops: desktop 5 of 14 (7, 8, 10, 12, 13), phone 6 of 15.
-3. Real objects: yes in every section: trace waterfall, release bars with a cron strip, account rows, an alert router, a fork diagram, and the closing issue card with the agent prompt.
-4. The ask is split. Scale has rhythm.
-   - Desktop header at the top: "Try Hanzo" (quiet). The hero, closing band and later header say "Read the docs". The label in the header changes as you scroll.
-   - Phone: the header "Try Hanzo" is a solid #0a0a0a fill, and so is the hero "Read the docs": 2 solid fills with 2 labels on the first screen. Then a bottom bar adds a third: "Read the docs".
-   - Rain no longer crosses the left column copy on desktop (fixed since run 1).
-   - Scale: 52px h1, 64px figures, 26px heads, 13-16px body. One big thing per screen.
-5. Hover and press answer.
-   - "Read the docs": #0a0a0a to #2c2c2e on hover, scale(.98) on press. "View on GitHub": the arrow moves 4px.
-   - Alert pills now answer (hover fill #f2f2f2 plus ink border), and a click re-routes the sentence below.
-   - Account rows (04): hover changes nothing (UL bg and transform unchanged).
-   - Copy did not falsely say "Copied" when the clipboard was blocked. Phone: 0 targets under 44px.
+   - At 300 ms the h1 is already cutting in by line mask. Then the live issue card arrives: the events count ticks (4,350 to 4,457 across one scroll stop), the bar histogram grows, the top frame resolves from `main.3f9a.js:1:88213 · t.a()` to `checkout/cart.ts:42`, and the breadcrumbs step through.
+   - The h1 still sits low: top 358px, bottom 418px (52% of 801, the target is 38%). The hero is 1,262px tall, so the card is cut at "exception" and nothing of the next section peeks.
+   - Phone: h1 40px, lede and ask, then the card top, all inside 812px.
+2. One in, one out: yes, all the way down now.
+   - The signature works. In the black room the rain of events falls into one card and the count goes 1,026 → 8,016 → 10,000, ending on "1 issue".
+   - Chapters 02 to 06 stack as sheets, and each one brings in a new object. Desktop walk: 12 of 13 stops moving (only the footer is still). Phone: 10 of 15 stops moving, and 4 of the 5 still ones are footer.
+3. Real object in every section: trace waterfall, release bars with a cron dot strip, account rows, an alert router you can play with, the Sentry→Sentinel fork line, the closing issue card and the agent prompt.
+4. Ask and scale.
+   - Desktop: the header starts with a quiet "Try Hanzo" and switches to "Read the docs" once the hero ask leaves view. Nothing floats over content on desktop.
+   - Phone: the header "Try Hanzo" is solid next to the hero's solid "Read the docs". This is shared chrome, already requested in docs/requests/sentinel.md, so I have not scored it against this page.
+   - Scale on desktop is mostly right: 52px h1, 26px chapter heads, 13-16px body. On the first screen, though, two 64px figures and a 32px card title sit next to the 52px h1, so the numbers outshout the name. On phone, the 40px h1 sits under a 3-line 32px card title and 64px figures.
+5. Hover and press.
+   - "Read the docs": #0a0a0a goes to #2c2c2e on hover, and press scales it to 0.98. "View on GitHub": the arrow moves 4px. Alert pills: #fff goes to #f2f2f2 on hover; a click sets #262626 and rewrites the sentence ("A spike goes to Slack and opens the ticket in Jira.").
+   - Account rows (04): hover changes nothing. Background, transform and border are identical before and after.
+   - Copy puts exactly the displayed prompt on the clipboard. No "Copied" state was visible at 150 or 300 ms.
 6. Overlaps, shifts, errors.
-   - CLS 0.0008. No horizontal scroll at 375.
-   - Hydration mismatch on cold load in 1 of 5 loads, with the red "1 Issue" dev badge on screen (acc1.png). 4 loads were clean. This fails DONE item 3 while it can still happen.
-   - Sheets: each one is 560px tall, but its content ends about 180px above the bottom (d-06 "Did this release make it worse"), under a 0 -30px 80px shadow. The peeled edges behind are grey slabs, not thin slivers.
-   - Phone trace labels wrap ("service / a", p-03), and the issue card title sets "properties / of undefined" with the lines touching (p-02).
-7. Reference: apple.com product page (a pinned scene, the product as hero) plus a self-running demo. The rain-to-issue scrub is authored and is the moment.
-8. Different from its neighbours: own hero medium (a live error console) and own signature. Yes.
-9. 18 parts: not audited from source. Visible gaps: part 4 (the sticky ask label), part 7 (literal `rgba`, `#fff` and shadow values in `Sentinel.css` lines 49 and 61; `.sn2-card` is both outlined and shadowed).
-10. Banned tells: no hue, no gradient text, nothing above the h1 (SENTRY.HANZO.AI sits below as a caption). The closing card's soft white under-glow (`0 60px 160px` white) is close to a glow.
-11. Copy: same words as run 1; no rewrite seen.
+   - Console: 0 errors on 4 of 4 cold loads, and no red badge (the run-2 hydration mismatch is gone). No horizontal scroll at 375. Phone: 0 targets under 44px.
+   - Phone: the rain-room card title is set 26px on a 21.6px line height (0.83), so "properties / of undefined" collide (p-02).
+   - Phone: the trace labels still wrap ("service / a", p-03).
+   - Desktop, chapter 02: the sheet's bottom edge dissolves just under the profile row (about y=355 at scroll 3500), with no bottom corners. About 130px of empty white follows before sheet 03. It looks unfinished.
+7. Reference: an apple.com product page (a pinned scrub, the product as hero) plus a self-running console. The rain-to-issue scrub is authored and is actually there.
+8. Different from its neighbours: /search is a pinned chat panel and /stream is an offset rail, while Sentinel is a live error console with a rain scrub and stacked sheets. Yes.
+9. 18 parts: not audited from source. Visible: one h1, a pause control on both movers (47px), copy matches the display, nothing above the h1. The closing has two endings back to back ("Get started with Hanzo Sentinel" then "Get Sentinel").
+10. Banned tells: none seen. No hue, no gradient text. SENTRY.HANZO.AI is a caption below the h1, not above it.
+11. Copy: `parity.py /sentinel` gives OK, text 29/29, links 3/3.
 
-## Fixes (in order)
-1. One ask. Put "Read the docs" in the header from the first frame at both widths (quiet while the hero ask is on screen, solid after it leaves), and on phone never show the header fill and the hero fill together. Drop the bottom bar if the header already carries it.
-2. Lighten the stack. Size each sheet to its content (no 180px empty floor), cut the shadow to the deck's floating shadow or none, and let the stacked edges be 8-12px hairline slivers.
-3. Break the sameness of chapters 02 to 06. Give at least two a different layout or a self-run (release bars drop on entry and settle; account rows light in order; the router plays one route by itself), so desktop stops 7 to 13 are not still.
-4. Kill the intermittent hydration mismatch (find what renders differently on server and client on a cold load) so the red badge never shows.
-5. Move literal colours and shadows in `Sentinel.css` to tokens; pick outline or shadow for `.sn2-card`, not both.
-6. Phone polish: keep "service a" on one line (shorter label column or 12px mono), and give the card title line height 1.15+. Lift the desktop h1 toward 38% so the hero card ends above the fold.
+## Fixes (in order, polish)
+1. Phone rain-room card title: line height of 1.1 or more (26px on 28.6px, as the closing card already does).
+2. Give the closing band its own object, or the resolved state of the issue (for example "resolved", the fixed frame), rather than a third copy of the same TypeError card. Then the end pays off the rain instead of repeating it.
+3. Close chapter 02's sheet properly: a real bottom edge and corners, sized to its content, and no 130px dead gap before 03.
+4. Account rows: make hover tell you something (row fill to #f5f5f5 plus the environment pill going ink), with no layout jump.
+5. Hero scale: settle the card figures below the h1 at rest (44px, counting up to 64 only while live), lift the h1 toward 38%, and let the next section peek 56px.
+6. Phone trace labels on one line ("service a" at 12px mono or a narrower label column). Show a visible "Copied" state on the prompt copy.

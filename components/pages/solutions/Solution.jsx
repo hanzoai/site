@@ -105,7 +105,7 @@ function Stories({ reel, n }) {
       <span className="xs2-film-scrim" aria-hidden="true" />
       <div className="v2f-wrap xs2-film-in" aria-hidden="true">
         <div className="xs2-film-top">
-          <span className="xs2-film-l x-mono"><span>{reel.label}</span><span>{pad(n)}</span></span>
+          <span className="xs2-film-l x-mono"><span>{reel.label}</span><span>{pad(1)} / {pad(n)}</span></span>
         </div>
         {reel.names.length > 0 && <div className="xs2-film-job"><span className="xs2-names plain">{reel.names.join(' · ')}</span></div>}
       </div>
