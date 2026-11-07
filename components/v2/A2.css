@@ -7,29 +7,38 @@
    7 Nov 14:20 (docs/JAMES.md wins on taste): 0 UI hues, so --acc is ink in light rooms and #f5f5f7 in dark ones (a page
    no longer sets its own), and .a2-kick is never shown above a headline: its words stay in the page for screen readers
    and search (visually hidden). Give a label that is not an eyebrow the class .a2-kick.show. */
-.a2 { --acc: #0a0a0b; --acc-soft: color-mix(in srgb, var(--acc) 12%, #fff); --r-hero: 28px; --r-card: 16px; --a2-ease: cubic-bezier(.16, 1, .3, 1); --a2-shadow: 0 50px 100px -40px rgba(0, 0, 0, .28), 0 18px 36px -24px rgba(0, 0, 0, .18); }
-.a2-wrap { width: min(100% - 48px, 1440px); margin-inline: auto; }
+.a2 { --acc: #0a0a0b; --acc-soft: #f2f2f2; --soft: #525252; --faint: #737373; --card: #f2f2f2; --line: rgba(0, 0, 0, .1); --r-hero: 24px; --r-card: 16px; --a2-ease: cubic-bezier(.16, 1, .3, 1); --a2-shadow: none; --a2-float: 0 24px 60px -16px rgba(0, 0, 0, .18); --gut: clamp(16px, 4vw, 32px); }
+/* MASTER.md 3.1 (7 Nov): deck sizes with rhythm. h1 52, section headings 26, H3 17, lede 21, body 16, figures 64;
+   one big thing per screen, which grows past its resting size only while it is the moment (A2Grow). */
+.a2-wrap { width: min(100% - 2 * var(--gut), 1152px); margin-inline: auto; }
 .a2-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; }
-.a2-sec { position: relative; padding: clamp(120px, 15vw, 240px) 0; }
-.a2-sec.tight { padding: clamp(80px, 9vw, 140px) 0; }
+.a2-sec { position: relative; padding: clamp(72px, 11vw, 188px) 0; }
+.a2-sec.tight { padding: clamp(56px, 7vw, 116px) 0; }
 .a2-hair { border-top: 1px solid var(--line); }
 
 /* type */
-.a2-display { margin: 0; font-size: clamp(56px, 8.9vw, 128px); font-weight: 600; line-height: .92; letter-spacing: -.05em; color: var(--ink); text-wrap: balance; }
-.a2-display.m { font-size: clamp(48px, 6.67vw, 96px); }
-.a2-display.s { font-size: clamp(44px, 5.56vw, 80px); }
-.a2-headline { margin: 0; max-width: 16ch; font-size: clamp(36px, 3.9vw, 56px); font-weight: 600; line-height: 1.02; letter-spacing: -.042em; color: var(--ink); text-wrap: balance; }
-.a2-title { margin: 0; font-size: clamp(22px, 1.95vw, 28px); font-weight: 580; line-height: 1.15; letter-spacing: -.024em; color: var(--ink); text-wrap: balance; }
-.a2-lede { margin: 0; max-width: 36ch; font-size: clamp(19px, 1.67vw, 24px); line-height: 1.42; letter-spacing: -.012em; color: var(--soft); text-wrap: pretty; }
-.a2-body { margin: 0; max-width: 64ch; font-size: clamp(17px, 1.32vw, 19px); line-height: 1.58; color: var(--soft); text-wrap: pretty; }
+.a2-display { margin: 0; font-size: clamp(40px, 3.6vw, 52px); font-weight: 497; line-height: 1.04; letter-spacing: -.035em; color: var(--ink); text-wrap: balance; }
+.a2-display.m, .a2-display.s { font-size: clamp(26px, 2.25vw, 32px); line-height: 1.1; letter-spacing: -.03em; }
+.a2-headline { margin: 0; max-width: 22ch; font-size: 26px; font-weight: 497; line-height: 1.15; letter-spacing: -.025em; color: var(--ink); text-wrap: balance; }
+.a2-title { margin: 0; font-size: 17px; font-weight: 497; line-height: 1.3; letter-spacing: -.01em; color: var(--ink); text-wrap: balance; }
+.a2-lede { margin: 0; max-width: 44ch; font-size: clamp(17px, 1.46vw, 21px); line-height: 1.45; letter-spacing: -.01em; color: var(--soft); text-wrap: pretty; }
+.a2-body { margin: 0; max-width: 66ch; font-size: 16px; line-height: 1.6; color: var(--soft); text-wrap: pretty; }
 .a2-kick:not(.show) { position: absolute !important; width: 1px; height: 1px; margin: 0 !important; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
-.a2-kick.show { margin: 0; font: 500 13px/1.2 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
-.a2 [data-room='dark'], .a2 .a2-dark, .a2 .a2-darkpanel { --acc: #f5f5f7; --acc-soft: #1c1c1f; }
+.a2-kick.show { margin: 0; font: 500 11.5px/1.3 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
+.a2 [data-room='dark'], .a2 .a2-dark, .a2 .a2-darkpanel { --acc: #fafafa; --acc-soft: #171717; }
 .a2-kick b { font-weight: 500; }
-.a2-fig { font-family: var(--sans); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -.055em; line-height: .9; }
-.a2-dark .a2-display, .a2-dark .a2-headline, .a2-dark .a2-title { color: #f5f5f7; }
-.a2-dark .a2-lede, .a2-dark .a2-body { color: #a1a1a6; }
-.a2-dark { background: #000; color: #f5f5f7; }
+.a2-fig { font-family: var(--sans); font-size: 64px; font-weight: 220; font-variant-numeric: tabular-nums; letter-spacing: -.04em; line-height: .95; }
+.a2-dark .a2-display, .a2-dark .a2-headline, .a2-dark .a2-title { color: #fafafa; }
+.a2-dark .a2-lede, .a2-dark .a2-body { color: rgba(255, 255, 255, .78); }
+.a2-dark { background: #000; color: #fafafa; }
+.a2-grow { will-change: auto; }
+
+/* the pause control a moving thing carries (A2Pause) */
+.a2-pause { display: inline-grid; place-items: center; width: 44px; height: 44px; flex: none; padding: 0; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; transition: transform .09s var(--a2-ease); }
+.a2-pause:active { transform: scale(.97); }
+.a2-pause[aria-pressed='true'] { background: var(--ink); color: #fff; border-color: var(--ink); }
+.a2-dark .a2-pause, .a2-darkpanel .a2-pause, [data-room='dark'] .a2-pause { background: #171717; color: #fafafa; border-color: rgba(255, 255, 255, .14); }
+.a2-paused, .a2-paused * { animation-play-state: paused !important; }
 
 /* line-masked kinetic type (A2Lines) */
 .a2-ln { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; }
@@ -41,7 +50,7 @@
 
 /* the paste strip, one line with a copy button */
 .a2-paste { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 24px; align-items: center; padding: 40px 0; border-block: 1px solid var(--line); }
-.a2-paste-k { margin: 0; font-size: 22px; font-weight: 580; letter-spacing: -.02em; }
+.a2-paste-k { margin: 0; font-size: 17px; font-weight: 497; letter-spacing: -.01em; }
 .a2-paste-d { margin: 6px 0 0; font-size: 15px; line-height: 1.5; color: var(--soft); }
 .a2-paste-box { display: flex; align-items: center; gap: 16px; padding: 18px 20px; border-radius: var(--r-card); background: var(--card); }
 .a2-paste-box code { flex: 1; min-width: 0; font: 500 14.5px/1.5 var(--mono); overflow-wrap: anywhere; }
@@ -51,7 +60,7 @@
 /* chapters (A2Chapters): the text pins while the picture changes */
 .a2-ch { position: relative; height: calc(var(--n) * 100svh); }
 .a2-ch-stick { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; overflow: hidden; }
-.a2-ch-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 24px 64px; align-items: center; padding-top: 48px; }
+.a2-ch-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: 24px 72px; align-items: center; padding-top: 48px; }
 .a2-ch.flip .a2-ch-grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
 .a2-ch.flip .a2-ch-vis { order: -1; }
 .a2-ch-copy { position: relative; }
@@ -64,7 +73,7 @@
 .a2-ch-item { grid-area: 1 / 1; transition: opacity .45s var(--a2-ease), transform .7s var(--a2-ease); }
 .a2-ch-item:not(.on) { opacity: 0; transform: translateY(var(--dy, 28px)); pointer-events: none; transition-duration: .25s, .45s; }
 .a2-ch-item .a2-kick { margin-bottom: 20px; }
-.a2-ch-item .a2-headline { margin-bottom: 24px; }
+.a2-ch-item .a2-headline { margin-bottom: 17px; }
 .a2-ch-vis { position: relative; min-width: 0; }
 .a2-ch-pv { display: none; }
 .a2-dark.a2-ch .a2-ch-nav button[aria-current='step'] { color: #f5f5f7; }
@@ -73,7 +82,7 @@
 /* the spec sheet (A2Sheet) */
 .a2-sheet-btn { display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 22px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--ink); font: 500 16px/1 var(--sans); cursor: pointer; }
 .a2-sheet-btn i { font-style: normal; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--ink); color: #fff; font-size: 15px; line-height: 1; transition: transform .35s var(--a2-ease); }
-.a2-sheet-btn:hover i { transform: rotate(90deg); }
+@media (hover: hover) { .a2-sheet-btn:hover i { transform: rotate(90deg); } }
 .a2-sheet { position: fixed; inset: 0; z-index: 900; visibility: hidden; transition: visibility 0s .5s; }
 .a2-sheet[data-open='true'] { visibility: visible; transition-delay: 0s; }
 .a2-sheet-scrim { position: absolute; inset: 0; background: rgba(0, 0, 0, .32); opacity: 0; transition: opacity .4s var(--a2-ease); border: 0; padding: 0; width: 100%; cursor: pointer; }
@@ -81,7 +90,7 @@
 .a2-sheet-panel { position: absolute; top: 12px; right: 12px; bottom: 12px; width: min(620px, calc(100% - 24px)); display: flex; flex-direction: column; border-radius: var(--r-hero); background: #fff; color: var(--ink); box-shadow: 0 40px 120px -20px rgba(0, 0, 0, .45); transform: translateX(calc(100% + 24px)); transition: transform .55s var(--a2-ease); overflow: hidden; }
 .a2-sheet[data-open='true'] .a2-sheet-panel { transform: none; }
 .a2-sheet-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 24px 28px 16px; border-bottom: 1px solid var(--line); }
-.a2-sheet-top .a2-title { font-size: 24px; }
+.a2-sheet-top .a2-title { font-size: 21px; }
 .a2-sheet-x { width: 44px; height: 44px; flex: none; border-radius: 50%; border: 1px solid var(--line); background: #fff; font: 400 22px/1 var(--sans); color: var(--ink); cursor: pointer; display: grid; place-items: center; }
 .a2-sheet-body { flex: 1; overflow-y: auto; padding: 8px 28px 40px; overscroll-behavior: contain; }
 
@@ -89,13 +98,13 @@
 .a2-faq { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--line); }
 .a2-faq li { border-top: 1px solid var(--line); }
 .a2-faq h3 { margin: 0; }
-.a2-faq button { display: flex; align-items: center; justify-content: space-between; gap: 24px; width: 100%; min-height: 76px; padding: 18px 0; border: 0; background: none; color: var(--ink); font: 560 clamp(19px, 1.6vw, 23px)/1.25 var(--sans); letter-spacing: -.02em; text-align: left; cursor: pointer; }
+.a2-faq button { display: flex; align-items: center; justify-content: space-between; gap: 24px; width: 100%; min-height: 64px; padding: 16px 0; border: 0; background: none; color: var(--ink); font: 497 17px/1.35 var(--sans); letter-spacing: -.01em; text-align: left; cursor: pointer; }
 .a2-faq button i { position: relative; width: 16px; height: 16px; flex: none; }
 .a2-faq button i::before, .a2-faq button i::after { content: ''; position: absolute; left: 0; right: 0; top: 7px; height: 2px; border-radius: 2px; background: currentColor; transition: transform .4s var(--a2-ease); }
 .a2-faq button i::after { transform: rotate(90deg); }
 .a2-faq li.on button i::after { transform: rotate(0deg); }
 .a2-faq-a { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .5s var(--a2-ease); }
-.a2-faq-a > div { min-height: 0; overflow: hidden; max-width: 62ch; font-size: 17px; line-height: 1.6; color: var(--soft); }
+.a2-faq-a > div { min-height: 0; overflow: hidden; max-width: 66ch; font-size: 16px; line-height: 1.6; color: var(--soft); }
 .a2-faq li.on .a2-faq-a { grid-template-rows: 1fr; }
 .a2-faq li.on .a2-faq-a > div { padding-bottom: 28px; }
 .a2-faq.dark, .a2-faq.dark li { border-color: rgba(255, 255, 255, .12); }
@@ -103,25 +112,25 @@
 .a2-faq.dark .a2-faq-a > div { color: #a1a1a6; }
 
 @media (max-width: 900px) {
-  .a2-wrap { width: min(100% - 40px, 1440px); }
   .a2-grid { grid-template-columns: minmax(0, 1fr); }
   .a2-grid > * { grid-column: 1 / -1 !important; }
-  .a2-display { font-size: clamp(48px, 14.6vw, 56px); }
-  .a2-display.m, .a2-display.s { font-size: clamp(42px, 12.8vw, 48px); }
-  .a2-headline { font-size: clamp(32px, 9.6vw, 36px); }
-  .a2-body { font-size: 17px; }
-  .a2-lede { font-size: 19px; }
-  .a2-sec { padding: 120px 0; }
-  .a2-sec.tight { padding: 80px 0; }
+  .a2-display { font-size: 40px; }
+  .a2-display.m, .a2-display.s { font-size: 26px; }
+  .a2-headline { font-size: 22px; }
+  .a2-body { font-size: 15px; }
+  .a2-lede { font-size: 17px; }
+  .a2-fig { font-size: 52px; }
+  .a2-sec { padding: 72px 0; }
+  .a2-sec.tight { padding: 56px 0; }
   .a2-paste { grid-template-columns: minmax(0, 1fr); padding: 32px 0; }
   .a2-paste-box { flex-direction: column; align-items: flex-start; }
   .a2-paste-box .x-copy { height: 44px; }
   /* phones: chapters become a plain vertical story, each with its own picture */
-  .a2-ch { height: auto; padding: 120px 0 40px; }
+  .a2-ch { height: auto; padding: 72px 0 24px; }
   .a2-ch-stick { position: static; height: auto; display: block; overflow: visible; }
   .a2-ch-grid, .a2-ch.flip .a2-ch-grid { grid-template-columns: minmax(0, 1fr); padding-top: 0; }
   .a2-ch-nav, .a2-ch > .a2-ch-stick .a2-ch-vis { display: none; }
-  .a2-ch-items { gap: 88px; }
+  .a2-ch-items { gap: 56px; }
   .a2-ch-item, .a2-ch-item:not(.on) { grid-area: auto; opacity: 1; transform: none; pointer-events: auto; }
   .a2-ch-pv { display: block; margin-bottom: 32px; }
   .a2-sheet-panel { top: auto; left: 0; right: 0; bottom: 0; width: 100%; height: 88svh; border-radius: var(--r-hero) var(--r-hero) 0 0; transform: translateY(100%); }
