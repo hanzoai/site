@@ -66,9 +66,6 @@ function Editor() {
         <span className="ide-dots" aria-hidden="true"><i /><i /><i /></span>
         <span className="ide-title"><b>IDE</b> — Hanzo</span>
       </div>
-      <nav className="ide-tabs" aria-label="Hanzo apps">
-        <A to={IDE} className="on">IDE</A><A to="/cli">CLI</A><A to="/playground">Playground</A><A to="/desktop">Desktop</A><A to="/cloud/api-keys">API Keys</A>
-      </nav>
       <div className="ide-body">
         <div className="ide-act" aria-hidden="true"><i className="on" /><i /><i /><i /></div>
         <div className="ide-tree" aria-hidden="true">
@@ -102,6 +99,12 @@ function Editor() {
           <A to="https://hanzo.team/" className={'ide-open' + (t >= LAST + 5 ? ' on' : '')}>Open in the console</A>
         </aside>
       </div>
+      {/* an editor's own idiom: Hanzo's apps sit in the status bar, not in a tab row like the /cli and /desktop windows */}
+      <nav className="ide-tabs ide-status" aria-label="Hanzo apps">
+        <span className="ide-status-dot" aria-hidden="true" />
+        <A to={IDE} className="on">IDE</A><A to="/cli">CLI</A><A to="/playground">Playground</A><A to="/desktop">Desktop</A><A to="/cloud/api-keys">API Keys</A>
+        <span className="ide-status-r x-mono" aria-hidden="true">Rust · Open VSX</span>
+      </nav>
     </div>
   );
 }
