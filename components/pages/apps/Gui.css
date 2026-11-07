@@ -249,7 +249,7 @@ a.gu-chip:active { transform: scale(.97); }
   .gu-run-t { grid-row: auto; font-size: 21px; }
   .gu-run-i .bz-body { font-size: 15px; }
   .gu-run-n { grid-column: 1; }
-  .gu-prims { gap: 4px; bottom: -70px; }
+  .gu-prims { gap: 4px; bottom: -60px; }
   .gu-prims li { padding: 4px 7px; font-size: 12px; }
   .gu-plat-dev { height: 220px; }
 
