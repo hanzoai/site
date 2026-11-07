@@ -15,7 +15,8 @@
 .knc-body p { margin: 0; font-size: 16px; line-height: 1.6; color: var(--body); max-width: 44ch; text-wrap: pretty; }
 /* the chapter's number and label sit under its words, never above the headline */
 .knc-foot { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; margin: 0; }
-.knc-count { margin: 0; font: 606 12px/1.3 var(--mono); color: var(--quiet); letter-spacing: .14em; }
+.knc-count { margin: 0; font: 606 13px/1.3 var(--mono); color: var(--quiet); letter-spacing: .1em; }
+@media (max-width: 899px) { .knc-count { font-size: 14px; } }
 .knc-v { position: relative; height: min(70svh, 700px); }
 .knc-v > * { width: 100%; height: 100%; }
 

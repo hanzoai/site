@@ -13,6 +13,7 @@
      layoutId/layout animations inside the object (the scroll scale breaks layout projection); use CSS state.
    - cta: pass '<page>.hero' (the data-cta id of the ask). acts: [label, to]; the first is the page's one ask (the kit's solid <Cta>, magnetic, data-thumb for the sticky ask
      bar, data-cta = cta); the rest are text-link <Cta>s (the header's "Try Hanzo" is always solid, so one own solid).
+     When the ask is the header's own "Try Hanzo" it is drawn quiet, so two identical solid buttons never share a view.
    - kick: Hanzo's small label. It is never set above the h1 (a banned tell); it sits under the actions with meta.
    - pause: true gives the demo its pause control (WCAG 2.2.2), in the flow beside the meta line (first in the DOM,
      never over the product). Read it with useStagePause() and run JS loops only while !paused; CSS loops inside the
@@ -53,7 +54,7 @@ export default function KeynoteStage({ kick, title, lede, acts = [], meta, look 
           {acts.length > 0 && (
             <div className="kn-acts kns-acts kns-in" style={{ '--d': '.42s' }}>
               {acts.map(([t, to], i) => i === 0
-                ? <Magnetic key={t} strength={0.22}><Cta to={to} id={cta} thumb size="md">{t}</Cta></Magnetic>
+                ? <Magnetic key={t} strength={0.22}><Cta to={to} id={cta} thumb size="md" kind={t === 'Try Hanzo' ? 'quiet' : 'solid'}>{t}</Cta></Magnetic>
                 : <Cta key={t} to={to} kind="link" id={cta + '-' + (i + 1)}>{t}</Cta>)}
             </div>
           )}

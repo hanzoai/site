@@ -606,7 +606,7 @@ export default function Analytics() {
               {[['One tag', 'Paste it into the head of your site. Pageviews start arriving before you have decided what to name anything.'], ['Your data stays yours', 'The events live in your own Postgres, MySQL or MariaDB. Nothing is sampled, and nothing is held back from an export.'], ['Open source, MIT', 'Run it on a small server for as long as you like. The hosted version is the same code with the operations taken care of.']].map(([t, d], i) => <li key={t}><span className="kn-fig">{String(i + 1).padStart(2, '0')}</span><div><b>{t}</b><p>{d}</p></div></li>)}
             </ol>
             <div className="kn-acts">
-              <Cta to="/login" id="analytics.script">Try Hanzo</Cta>
+              <Cta to="/login" kind="quiet" id="analytics.script">Try Hanzo</Cta>
               <Cta to="/contact-sales" kind="link" id="analytics.script-2">Request Demo</Cta>
               <KeynoteSheet label="A script, then an API" title="A script, then an API"><ApiSheet /></KeynoteSheet>
             </div>
