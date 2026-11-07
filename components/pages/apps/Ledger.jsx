@@ -65,14 +65,18 @@ function Book() {
   const kind = useRef('mouse');
   const live = seen && !held && !pt; // reading a row holds the page still under the pointer
   const [at, setAt] = useState(0);
-  const [f, setF] = useState(2);
+  const [f, setF] = useState(1);
   useEffect(() => { if (calm) { setAt(0); setF(2); } }, [calm]);
+  // the first step comes quickly (a balance rolls inside the first second), then the film keeps its own pace
+  const first = useRef(true);
+  const wait = first.current ? 450 : f >= FILM[at].length - 1 ? 2600 : 1500;
   useEffect(() => {
     if (!live) return;
     const last = f >= FILM[at].length - 1;
-    const t = setTimeout(() => { if (!last) setF(f + 1); else { setAt((at + 1) % 3); setF(0); } }, last ? 2600 : 1500);
+    const ms = wait;
+    const t = setTimeout(() => { first.current = false; if (!last) setF(f + 1); else { setAt((at + 1) % 3); setF(0); } }, ms);
     return () => clearTimeout(t);
-  }, [f, at, live]);
+  }, [f, at, live, wait]);
   const fr = FILM[at][Math.min(f, FILM[at].length - 1)];
   const lastTx = fr.j[fr.j.length - 1];
   const touched = (t) => t.p.flatMap(([s, d]) => [s, d]);
@@ -104,6 +108,8 @@ function Book() {
         <AnimatePresence mode="wait" initial={false}>
           <motion.span key={at} className="ld-bar-s" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.3, ease: EASE }}>{STEPS[at][0]}</motion.span>
         </AnimatePresence>
+        {/* the time to the next posting: a hairline under the bar fills (CSS, from first paint) and restarts each step */}
+        {!calm && <i key={at + '-' + f} className={'ld-tick' + (held || pt ? ' held' : '')} style={{ '--ms': wait + 'ms' }} aria-hidden="true" />}
         <span className="ld-bar-r">
           <span className="ld-bar-n x-mono">{two(at + 1)} / 03</span>
           {!calm && (

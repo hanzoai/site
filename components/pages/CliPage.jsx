@@ -146,7 +146,7 @@ function Paste() {
     <section className="cli-paste">
       <div className="av-wrap av-grid">
         <div className="cli-prompt">
-          <code>{text}</code>
+          <code>{text}<span className="cli-caret cli-prompt-caret" aria-hidden="true" /></code>
           <Copy text={text} />
           <span className="cli-prompt-k x-mono">Agent prompt</span>
         </div>
@@ -208,6 +208,7 @@ function Tree() {
   // it only moves the selection and scrolls the tree's own pane to it. A press still opens and closes folders by hand.
   const [open, setOpen] = useState(() => new Set(TREE.map((_, r) => r)));
   const pane = useRef(null);
+  const [over, setOver] = useState(false);
   const [sel, setSel] = useState([0, 0]);
   const [mine, setMine] = useState(false);
   const [k, setK] = useState(0);
@@ -220,7 +221,7 @@ function Tree() {
   const calm = up && rm; // the server and the first client render agree; reduced motion applies after mount
   const touring = !mine && !calm && k < TOUR.length - 1;
   useEffect(() => {
-    if (!touring || !seen || paused) return; // it walks the tree once, then rests; a press anywhere hands it to you
+    if (!touring || !seen || paused || over) return; // it walks the tree once, then rests; a press anywhere hands it to you; it holds while a pointer is over the window
     const t = setTimeout(() => {
       const nk = k + 1, [r, c] = TOUR[nk];
       setK(nk); setSel([r, c]);
@@ -228,13 +229,13 @@ function Tree() {
       if (ul && li) ul.scrollTo({ top: Math.max(0, li.offsetTop - 12), behavior: 'smooth' }); // the pane scrolls, never the page
     }, 3800);
     return () => clearTimeout(t);
-  }, [k, touring, seen, paused]);
+  }, [k, touring, seen, paused, over]);
   const toggle = (r) => { setMine(true); setOpen((o) => { const s = new Set(o); s.has(r) ? s.delete(r) : s.add(r); return s; }); };
   const pick = (r, c) => { setMine(true); setSel([r, c]); };
   const [res, cmds] = TREE[sel[0]];
   const [leaf, cmd, desc] = cmds[sel[1]];
   return (
-    <div className="cli-fs" ref={ref}>
+    <div className="cli-fs" ref={ref} onPointerEnter={(e) => e.pointerType === 'mouse' && setOver(true)} onPointerLeave={() => setOver(false)}>
       <div className="cli-fs-bar">
         <span className="cli-crumb x-mono" aria-label="Path">
           <Mark size={13} /><span>hanzo</span><i aria-hidden="true">/</i><span>{res}</span>{leaf && <><i aria-hidden="true">/</i><b>{leaf}</b></>}

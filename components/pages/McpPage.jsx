@@ -6,7 +6,7 @@
 // Signature: cards that open: six tool domains on a drag rail, each card growing into the sheet that lists its tools.
 // Beyond: each opened domain lists the tool names Hanzo gives for it, so you see what an agent gets before you install; the config copies as valid JSON.
 /* Hanzo MCP.
-   V2: 8/10 ink only (silver tool bars, the live call in white, grey sheets); captions under headlines, not over them; .mcp.json and bash in two CodeBlocks, each with its own Copy; phone h1 in 3 lines with the ask inside 812; one solid in a light close beside the repo card, where the one command types itself; 44px phone targets.
+   V2: 8/10 ink only; captions under headlines; .mcp.json copies as JSON and bash copies one command per row (notes shown, never copied, so it runs in zsh); phone is its own composition (h1 40px in 4 lines, the live stream inside 660px, the ask inside 812); one mover per screen (top sheet only, the rail's centre card only); domain cards lift and preview more tools on hover; 44px Copy everywhere.
    Signature: cards that open. The six tool domains sit on a rail you drag (or swipe); click one and the card itself
    grows into a full sheet (a shared-element morph, synchronized.studio) holding every tool name that domain carries.
    Around it: the hero's live tool-call stream (Hanzo's tools firing with latency bars; the only figures are Hanzo's,
@@ -16,6 +16,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { A, Cta, CodeBlock } from '../kit';
+import { Copy } from '../ui';
 import A2Lines from '../v2/A2Lines';
 import A2Paste from '../v2/A2Paste';
 import A2Pause from '../v2/A2Pause';
@@ -87,11 +88,18 @@ function Stream() {
 const CLIENTS = ['Claude Desktop', 'Claude Code', 'Cursor', 'Hanzo Dev', 'Any MCP client'];
 
 function Hero() {
+  const via = useRef(null);
+  const viaSeen = useInView(via, { once: true, amount: 0.8 });
   return (
     <section className="mcp-hero" aria-labelledby="mcp-h1">
       <div className="a2-wrap a2-grid mcp-hero-grid">
         <div className="mcp-hero-copy">
-          <A2Lines as="h1" id="mcp-h1" className="a2-display mcp-h1" lines={['The complete MCP runtime', 'for coding, decisions,', 'browser, and cloud']} now />
+          {/* one h1, two line sets: Hanzo's three lines on wide screens, the same words in four lines at the phone's deck size
+              (the inactive set is display:none, so it is neither seen nor read) */}
+          <h1 id="mcp-h1" className="a2-display mcp-h1">
+            <A2Lines as="span" className="mcp-h1-d" lines={['The complete MCP runtime', 'for coding, decisions,', 'browser, and cloud']} now />
+            <A2Lines as="span" className="mcp-h1-p" lines={['The complete MCP', 'runtime for', 'coding, decisions,', 'browser, and cloud']} now />
+          </h1>
           <p className="a2-kick show mcp-cap"><b>Hanzo MCP</b> · 260+ tools · 117 cloud services</p>
           <p className="a2-lede mcp-lede">Give any model a filesystem, shell, semantic AST code index, Kai sub-10ms decisions, Playwright &amp; Chrome DevTools browser control, issue tracking, persistent memory, and 1,538 typed Hanzo Cloud operations over stdio or streamable HTTP.</p>
           <div className="a2-acts">
@@ -104,11 +112,12 @@ function Hero() {
           <Stream />
         </motion.div>
       </div>
-      <div className="a2-wrap mcp-via">
+      <div className={'a2-wrap mcp-via' + (viaSeen ? ' seen' : '')} ref={via}>
         <p className="mcp-oss">Open source, MIT. Identical tool names and schemas in TypeScript, Python, and Rust — plus remote streamable HTTP at api.hanzo.ai/v1/mcp.</p>
         <div className="mcp-via-l">
           <span className="a2-kick show">Available through</span>
-          <ul>{CLIENTS.map((c) => <li key={c}>{c}</li>)}</ul>
+          {/* arrival: each client lights in turn once (about 4 s), then rests */}
+          <ul>{CLIENTS.map((c, k) => <li key={c} style={{ '--k': k }}>{c}</li>)}</ul>
         </div>
       </div>
     </section>
@@ -125,8 +134,10 @@ function Fig({ v, d = 0 }) {
 
 /* The summary line, as three figures: they rest at 64px and grow while they are the moment, then settle back. */
 function Figures() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.5 }); // the "+" signs breathe three times on arrival, then rest
   return (
-    <section className="a2-sec mcp-figs" aria-label="38 unified action tools + 1,538 Cloud operations + 260+ specialized servers">
+    <section ref={ref} className={'a2-sec mcp-figs' + (seen ? ' seen' : '')} aria-label="38 unified action tools + 1,538 Cloud operations + 260+ specialized servers">
       <div className="a2-wrap">
         <A2Grow to={1.45} origin="50% 50%">
         <p className="mcp-sum">
@@ -161,15 +172,40 @@ function PartArt({ i }) {
   );
 }
 
+/* Only the sheet on top runs its art: the last one whose top has passed 60% of the screen. One mover per screen. */
+function useTopSheet(list) {
+  const [on, setOn] = useState(0);
+  useEffect(() => {
+    const el = list.current;
+    if (!el) return;
+    let raf = 0;
+    const pick = () => {
+      raf = 0;
+      const kids = [...el.children];
+      let k = 0;
+      kids.forEach((c, i) => { if (c.getBoundingClientRect().top < innerHeight * 0.6) k = i; });
+      setOn(k);
+    };
+    const go = () => { if (!raf) raf = requestAnimationFrame(pick); };
+    pick();
+    addEventListener('scroll', go, { passive: true });
+    addEventListener('resize', go);
+    return () => { cancelAnimationFrame(raf); removeEventListener('scroll', go); removeEventListener('resize', go); };
+  }, [list]);
+  return on;
+}
+
 function Parts() {
   const [paused, setPaused] = useState(false);
+  const list = useRef(null);
+  const on = useTopSheet(list);
   return (
     <section className="a2-sec mcp-parts" aria-label="The runtime">
       <div className={'a2-wrap mcp-parts-in' + (paused ? ' a2-paused' : '')}>
         <A2Pause paused={paused} onChange={setPaused} label="Pause" className="mcp-parts-pause" />
-        <ol className="mcp-stack">
+        <ol className="mcp-stack" ref={list}>
           {PARTS.map(([t, d], i) => (
-            <li key={t} className="mcp-sheet" style={{ '--i': i }}>
+            <li key={t} className={'mcp-sheet' + (on === i ? ' on' : '')} style={{ '--i': i }}>
               <div className="mcp-sheet-copy">
                 <div className="mcp-sheet-head">
                   <h2 className="a2-headline">{t}</h2>
@@ -240,6 +276,27 @@ function Domains() {
     addEventListener('keydown', key);
     return () => { clearTimeout(t); removeEventListener('keydown', key); l?.start?.(); last.current?.focus({ preventScroll: true }); };
   }, [open]);
+  // idle on the rail: only the card nearest the rail's centre calls its tools (one mover), and only while the rail is seen
+  const railSeen = useInView(rail, { amount: 0.1 });
+  const [live, setLive] = useState(0);
+  useEffect(() => {
+    const el = rail.current;
+    if (!el) return;
+    let raf = 0;
+    const pick = () => {
+      raf = 0;
+      const r = el.getBoundingClientRect();
+      const mid = Math.max(r.left, 0) + Math.min(r.width, innerWidth) / 2;
+      let best = 0, bd = Infinity;
+      [...el.querySelectorAll('.mcp-card')].forEach((c, i) => { const q = c.getBoundingClientRect(); const dd = Math.abs(q.left + q.width / 2 - mid); if (dd < bd) { bd = dd; best = i; } });
+      setLive(best);
+    };
+    const go = () => { if (!raf) raf = requestAnimationFrame(pick); };
+    pick();
+    el.addEventListener('scroll', go, { passive: true });
+    addEventListener('resize', go);
+    return () => { cancelAnimationFrame(raf); el.removeEventListener('scroll', go); removeEventListener('resize', go); };
+  }, []);
   const d = DOMAINS[open];
   return (
     <section className="a2-sec mcp-doms" aria-labelledby="mcp-doms-h">
@@ -256,11 +313,15 @@ function Domains() {
       <motion.ul className={'mcp-rail' + (paused ? ' a2-paused' : '')} ref={rail} layoutScroll>
         {DOMAINS.map(([t, desc, tools], i) => (
           <li key={t}>
-            <motion.button type="button" layoutId={'mcp-dom-' + i} className={'mcp-card d' + i} aria-haspopup="dialog" aria-expanded={open === i}
+            <motion.button type="button" layoutId={'mcp-dom-' + i} className={'mcp-card d' + i + (railSeen && live === i ? ' live' : '')} aria-haspopup="dialog" aria-expanded={open === i}
               onClick={(e) => { if (moved.current) { e.preventDefault(); return; } last.current = e.currentTarget; setOpen(i); }} transition={MOVE} style={{ visibility: open === i ? 'hidden' : 'visible' }}>
               <h3 className="x-mono">{t}</h3>
               <p>{desc}</p>
-              <span className="mcp-card-tools" aria-hidden="true">{tools.slice(0, 4).map((x, k) => <i key={x} className="x-mono" style={{ '--cd': ((i * 1.3 + k * 1.8) % 7.2).toFixed(1) + 's' }}>{x}</i>)}{tools.length > 4 && <i className="x-mono more">+{tools.length - 4}</i>}</span>
+              <span className="mcp-card-tools" aria-hidden="true">
+                <span className="mcp-chips rest">{tools.slice(0, 4).map((x, k) => <i key={x} className="x-mono" style={{ '--cd': (k * 1.8).toFixed(1) + 's' }}>{x}</i>)}{tools.length > 4 && <i className="x-mono more">+{tools.length - 4}</i>}</span>
+                {/* hover / focus preview: two more of the tools the sheet holds, and what is still behind it */}
+                {tools.length > 4 && <span className="mcp-chips peek">{tools.slice(0, 6).map((x) => <i key={x} className="x-mono">{x}</i>)}{tools.length > 6 && <i className="x-mono more">+{tools.length - 6}</i>}</span>}
+              </span>
               <span className="mcp-card-open" aria-hidden="true">+</span>
             </motion.button>
           </li>
@@ -305,7 +366,27 @@ const CONFIG = `// .mcp.json — add Hanzo MCP to any MCP client
 
 /* the config split in two: a .mcp.json that copies as valid JSON, and the shell lines; each copies exactly what it shows */
 const JSON_BLOCK = CONFIG.split('\n').slice(1, 9).join('\n');
-const SHELL = ['npm i -g hanzo', 'hanzo mcp              # stdio; the binary downloads on first run', 'hanzo mcp -t sse       # or over HTTP'].join('\n');
+/* the shell lines: one Copy per command, so a paste never queues a blocking `hanzo mcp` before `-t sse`, and Hanzo's
+   `#` notes stay on screen as unselectable annotations (default zsh has no interactive comments, so they never ride along) */
+const SHELL = [['npm i -g hanzo'], ['hanzo mcp', '# stdio; the binary downloads on first run'], ['hanzo mcp -t sse', '# or over HTTP']];
+
+function Shell() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.6 }); // the rows light in turn once (about 4 s), then rest
+  return (
+    <figure ref={ref} className={'x-codeblock mcp-sh' + (seen ? ' go' : '')} data-room="dark">
+      <figcaption className="x-codeblock-h"><span>bash</span></figcaption>
+      <ol className="mcp-sh-rows">
+        {SHELL.map(([cmd, note], i) => (
+          <li key={cmd} style={{ '--k': i }}>
+            <span className="mcp-sh-line x-mono"><span className="mcp-sh-cmd"><span className="mcp-sh-p" aria-hidden="true">$ </span><code>{cmd}</code></span>{note && <span className="mcp-sh-note">{note}</span>}</span>
+            <Copy text={cmd} label="Copy" />
+          </li>
+        ))}
+      </ol>
+    </figure>
+  );
+}
 
 function Config() {
   return (
@@ -324,7 +405,7 @@ function Config() {
           </div>
           <div>
             <p className="mcp-code-c x-mono">// Or install the whole native stack once and run it yourself:</p>
-            <CodeBlock code={SHELL} label="bash" />
+            <Shell />
           </div>
           {/* the block exactly as Hanzo writes it, for search */}
           <pre className="x-sr" aria-hidden="true">{CONFIG}</pre>

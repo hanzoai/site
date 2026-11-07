@@ -423,8 +423,19 @@
 .xmo-cat .xmo-group:nth-last-child(2) { border-bottom: 0; padding-bottom: 44px; }
 .xmo-every { margin-top: 0; }
 .xmo-priced { padding-top: 96px; }
+.xmo-vs { padding-bottom: 112px; }
+.xmo-fig-g { padding-top: 112px; }
 .xmo-try { padding-top: 112px; }
-@media (max-width: 899px) { .xmo-priced { padding-top: 56px; } .xmo-try { padding-top: 72px; } }
+@media (max-width: 899px) { .xmo-priced { padding-top: 56px; } .xmo-try { padding-top: 72px; } .xmo-vs { padding-bottom: 72px; } .xmo-fig-g { padding-top: 72px; } }
+
+/* idle life where nothing played by itself: the labs head's contour field, the price list's live dot, the code's caret */
+.xmo-gh-film.art { background: #f5f5f5; }
+.xmo-gh-sigil { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--ink); opacity: .6; }
+.xmo-n-dot { display: inline-block; width: 7px; height: 7px; margin-right: 8px; border-radius: 50%; background: var(--ink); vertical-align: 1px; animation: xmo-ping-ink 2s var(--out) infinite; }
+@keyframes xmo-ping-ink { 0% { box-shadow: 0 0 0 0 rgba(10, 10, 10, .35); } 70%, 100% { box-shadow: 0 0 0 7px rgba(10, 10, 10, 0); } }
+.xmo-code[data-caret] .x-codeblock-l:last-child::after { content: ''; display: inline-block; width: 8px; height: 1.1em; margin-left: 3px; vertical-align: -2px; background: #a3a3a3; animation: xmo-blink 1.1s steps(2, jump-none) infinite; }
+[data-mpaused] .xmo-n-dot, [data-mpaused] .xmo-code[data-caret] .x-codeblock-l:last-child::after { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .xmo-n-dot, .xmo-code[data-caret] .x-codeblock-l:last-child::after { animation: none; } }
 
 /* phone rows' thumbs: hidden on wide screens */
 .xmo-thumb { display: none; }

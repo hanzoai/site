@@ -502,16 +502,30 @@ function Stack() {
 const QUESTIONS = ['Is it understandable?', 'Is it composable?', 'Is it verifiable?', 'Can it operate privately?', 'Can the user leave?', 'Can it survive failure?', 'Can it evolve without being destroyed?', 'Does it increase human agency?'];
 
 function Change() {
+  // the one big thing of this screen: the question's own trigram drawn large; it walks the eight once on arrival,
+  // then follows the pointer or focus
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount: 0.4 });
+  const calm = useReducedMotion();
+  const [q, setQ] = useState(0);
+  const [mine, setMine] = useState(false);
+  useEffect(() => {
+    if (!seen || mine || calm) return;
+    const t = setTimeout(() => { if (q >= 7) { setMine(true); setQ(0); } else setQ(q + 1); }, 900);
+    return () => clearTimeout(t);
+  }, [seen, mine, calm, q]);
+  const pick = (i) => { setMine(true); setQ(i); };
   return (
-    <section className="pf-sec xph-change">
+    <section className="pf-sec xph-change" ref={ref}>
       <div className="pf-wrap pf-grid xph-change-g">
         <div className="xph-change-l">
           <h2 className="pf-head">Build systems that can change</h2>
           <p className="pf-lede">The purpose of a philosophy is not to decorate a company. It is to make difficult decisions clearer.</p>
+          <div className="xph-change-big" aria-hidden="true"><Hexa ls={TRI[TRI_ORDER[q]]} size={150} /><span className="pf-mono">{pad(q + 1)} / 08</span></div>
         </div>
         <div className="xph-change-r">
           <p className="pf-body">When we design a model, an API, an agent, a database or a network, we return to the same questions:</p>
-          <ol className="xph-qs">{QUESTIONS.map((q, i) => <li key={q}><Hexa ls={TRI[TRI_ORDER[i]]} size={22} /><span className="pf-mono">{pad(i + 1)}</span><span>{q}</span></li>)}</ol>
+          <ol className="xph-qs">{QUESTIONS.map((x, i) => <li key={x} data-on={q === i ? '' : undefined} tabIndex={-1} onPointerEnter={(e) => e.pointerType === 'mouse' && pick(i)} onClick={() => pick(i)}><Hexa ls={TRI[TRI_ORDER[i]]} size={22} /><span className="pf-mono">{pad(i + 1)}</span><span>{x}</span></li>)}</ol>
         </div>
       </div>
     </section>
@@ -520,20 +534,22 @@ function Change() {
 
 /* ---------- the belief statement, filling in word by word as you read it ---------- */
 const WHOLE = 'The Zen of Hanzo is not a promise that systems will remain still. It is a method for building systems that remain whole while everything changes.';
-function Word({ p, a, b, children }) {
+function Word({ p, a, b, calm, children }) {
   const o = useTransform(p, [a, b], [0.14, 1]);
-  return <motion.span className="xph-w" style={{ opacity: o }}>{children}</motion.span>;
+  return <motion.span className="xph-w" style={{ opacity: calm ? 1 : o }}>{children}</motion.span>;
 }
 function Whole() {
   const ref = useRef(null);
-  const calm = useReducedMotion();
+  const rm = useReducedMotion();
+  const [calm, setCalm] = useState(false); // applied after hydration, so the server's word spans and the client's match
+  useEffect(() => setCalm(!!rm), [rm]);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.85', 'end 0.45'] });
   const words = WHOLE.split(' ');
   return (
     <section className="pf-sec xph-whole" ref={ref}>
       <div className="pf-wrap">
         <h2 className="pf-moment xph-whole-t">
-          {calm ? WHOLE : words.map((w, i) => <Word key={i} p={scrollYProgress} a={i / words.length} b={(i + 1.6) / words.length}>{w}{i < words.length - 1 ? ' ' : ''}</Word>)}
+          {words.map((w, i) => <Word key={i} p={scrollYProgress} a={i / words.length} b={(i + 1.6) / words.length} calm={calm}>{w}{i < words.length - 1 ? ' ' : ''}</Word>)}
         </h2>
       </div>
     </section>

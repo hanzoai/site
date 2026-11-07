@@ -4,7 +4,7 @@ Page file: `components/pages/apps/Captable.jsx` · gallery: `docs/gallery/captab
 
 Open copy questions for James: none new. ("Try Hanzo" is kept as the ask until `lib/cta.js` lands. The example company's inputs, 8,000,000 founder shares, a 1,000,000 pool, a $500,000 SAFE at an $8M cap and 20% discount, a $2M raise, are v1's labelled example, shown as "Example company. Every number in it is an input you would give your own."; James may want them confirmed.)
 Shared changes requested (`docs/requests/captable.md`): none.
-Forks this page deleted: the raw `.x-btn` asks and the interim `BizAsk` (now the kit `Cta`), the v1 `Get` block and `Rise` fade-ups, the drift's `setInterval` (now one setTimeout), the pulse dot, the inverted price chip, every spring, the kickers above headlines.
+Forks this page deleted: the raw `.x-btn` asks and the interim `BizAsk` (now the kit `Cta`), the v1 `Get` block and `Rise` fade-ups, the drift's `setInterval` (now one setTimeout), the pulse dot, the inverted price chip and (round 2) the solid black "Founders, fully diluted" chip (now ink-on-white mono), every spring, the kickers above headlines, BizChapters' six stacked phone tables (replaced on phones by the page-local `captable/PhoneSteps.jsx`), the stray "×" on the term sheet's signature line.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
 
@@ -33,7 +33,7 @@ Done here: links are `A`, `More` and the kit `Cta`; parity links 7/7. Plan cards
 - [x] Ends in proof strip, `Band`, footer (the close: one 44px sentence, the ask, a full-width "Read the docs" row)
 - [ ] Card-to-page links use Morph; title lands within 12px (n/a: plan cards open panels in place)
 
-Done here: the h1 cuts in by CSS line mask; the founders' share is the one big thing, 112px at the top and settling to 64px over the first 360px of scroll, while the price drifts within 1.3 s. The audit finds 0 inline `opacity:0` runs; the table's top sits at 148px at 1470×801 and 459px at 375×812 (201px inside 660px).
+Done here: the h1 cuts in by CSS line mask; the founders' share is the one big thing, 112px at the top and settling to 64px over the first 360px of scroll. The first price step fires 450ms after the hero is live (measured about 590ms after hydration), then one every 1.3s. Blank bands between sections are 188px or less at 1470 (measured: 188, 142, 188, 188, 188, ~120). On phones the six chapters no longer repeat the table: one compact table pins under the header and the chapter text scrolls under it, so no run of same-height sections. The table's top sits at 148px at 1470×801.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -75,7 +75,7 @@ Done here: taste OK; colours are `--bz-*` tokens plus #000000, #fafafa, #fdfdfd,
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: listed below
 
-Done here: pause, chips, rows, the ways list and the Growth card have a hover fill inside `@media (hover: hover)`, press scale .97 and a 2px focus ring; the two range inputs have labels, 44px hit areas and `aria-valuetext`.
+Done here: pause, chips, the close row, the Documentation / For Developers / Custom Solution rows (fill #f2f2f2 and the link steps 4px, measured transparent → rgb(242,242,242)) and the Growth card have a hover answer inside `@media (hover: hover)`; the hero "Documentation →" draws an underline in from the left and steps its arrow 4px; press scale .97 and a 2px focus ring; the two range inputs have labels, 44px hit areas and `aria-valuetext`.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -84,7 +84,7 @@ Done here: pause, chips, rows, the ways list and the Growth card have a hover fi
 - [x] Reduced motion shows the final state; no `setInterval`
 - [ ] Sound only on the listed moments, through the one kit (n/a: no sound of its own)
 
-Done here: signature (the round re-runs itself, idle) + the figure settling (scroll) + chapters (scroll) + BizOpen (state); the exit price grows 64→84px only while dragged (pointer). variety OK, 0 `Rise`, 0 springs (digit roll is a 300ms ease-emphasis tween), the drift is one setTimeout; reduced motion stops the drift and shows the figure at rest.
+Done here: signature (the round re-runs itself, idle) + the figure settling (scroll) + chapters (scroll) + BizOpen (state) + the fork drawing's lines drawing in once in view; the exit price grows 64→84px only while dragged (pointer), anchored at its bottom-left with a 34px reserve, so the digits stay clear of the "Exit price" label. variety OK, 0 `Rise`, 0 springs (digit roll is a 300ms ease-emphasis tween), the drift is one setTimeout; reduced motion stops the drift and shows the figure at rest.
 
 ## 10. Media
 - [ ] `Film` and `Pic` only; sizes and posters set (n/a: no image or film)
@@ -92,7 +92,7 @@ Done here: signature (the round re-runs itself, idle) + the figure settling (scr
 - [x] Budgets met; nothing missing; alt on every image (n/a: no image)
 - [x] No dimmed or filtered photo; 4+ real visuals together where the page has them (n/a)
 
-Done here: the page's objects are drawn product UI (table, bar, term sheet, waterfall); the self-running round has its own pause button.
+Done here: the page's objects are drawn product UI (table, bar, term sheet, waterfall, plan cards, the fork drawing of hanzoai/captable branching from captableinc/captable, the "Get Captable" repo card with its Apache-2.0 and 3-stars chips); the self-running round has its own pause button.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -100,7 +100,7 @@ Done here: the page's objects are drawn product UI (table, bar, term sheet, wate
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: film at 375×812 width 375/375; the hero stacks title, figure, ask, table, then the lede; chapters stack with a compact table each; the ask sits at about 450px.
+Done here: overflow 0 at 375×812 and 1470×801 (errs.js); the hero stacks title, figure, ask, table, then the lede; the chapters pin one compact table under the header with the text scrolling under it (`captable/PhoneSteps.jsx`); under 600px the close row stacks ("Get started with Cap Table" on one line, "Read the docs →" right-aligned below, each 1 line); the ask sits at about 430px.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -157,4 +157,4 @@ Done here: no live data; the SAFE says whether it converts at its cap or its dis
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/captable.md` verdict 8 or more (no review written yet)
 
-Done here: `data-cta="captable.hero"`, `"captable.docs"`, `"captable.close"`; gallery `desktop.mp4`, `desktop-hero.jpg`, `phone-1..3.jpg` filmed at 1470×801 and 375×812, no console errors.
+Done here: `data-cta="captable.hero"`, `"captable.docs"`, `"captable.close"`; gallery `desktop.mp4`, `desktop-hero.jpg`, `phone-1..3.jpg`, and round 2's `desktop-r2.jpg`, `phone-r2.jpg` at 1470×801 and 375×812; errs.js 0 errors at both sizes; V2 line updated for round 2.

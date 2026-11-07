@@ -91,7 +91,8 @@ function Kept() {
         <LayoutGroup>
           <svg className="s3-fan" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
             {Array.from({ length: N }).map((_, i) => {
-              const x = VX(i), y = VY(i), m = (19 + x) / 2;
+              // each line stops at the volume grid's edge, spread over its row's height: nothing runs under a tile
+              const x = 35.6, y = VY(i) + ((i % 7) - 3) * 4.2, m = (19 + x) / 2;
               return <path key={i} d={`M18 50 C ${m} 50, ${m} ${y}, ${x} ${y}`} className={(live1(i) ? 'on' : phase >= 2 && lost.has(i) ? 'cut' : '') + (hov === i ? ' hov' : '')} />;
             })}
           </svg>

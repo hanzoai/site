@@ -10,13 +10,15 @@
    stops off screen.
    Beyond: "Find an endpoint". Type what you want to do (refund, cart, affiliate…) and every group's matching endpoints
    answer at once, in five columns, instead of hunting tab by tab. Built only from Hanzo's own endpoint list.
-   Motion: the order on the rail (idle, signature) + the same journey as a sticky horizontal scene that the scroll drives
-   (scroll) + the ten nouns as a type index of cards that open into their endpoints (state, BizOpen) + headlines cut
-   into their line; the processor switch glides (state) and the endpoints answer as you type (time). Tweens only.
+   Motion: the order on the rail (idle, signature; first move at 700ms) + the journey as a sticky horizontal scene that
+   the scroll drives, each stop a line drawing that draws itself as its pane lands (scroll, svg line draw) + the ten
+   nouns as a type index of cards that open into their endpoints (state, BizOpen) + headlines cut into their line; the
+   processor switch glides (state), the endpoints answer as you type (time), the spec sheet opens a row at a time and
+   lights its part of the install drawing (state). Tweens only.
    Every word and link is Hanzo's; each endpoint list sits inside an open card or a sheet.
-V2: 8/10 on the deck: h1 52, headings 26, figures 64; the order rides a full-bleed rail on the first screen at both sizes, a scroll-driven horizontal journey, the ten nouns as a type index that opens, find-an-endpoint black room, one ask
+V2: 8/10 r2: h1 and lede up to 40% above the rail and the order moves at 700ms; the journey draws each stop instead of repeating the cards; spec sheet opens beside a lit drawing; tick follows the stop; gaps closed; ways rows aligned with press states
 */
-import { useEffect, useRef, useState } from 'react';
+import { cloneElement, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent, useReducedMotion } from 'motion/react';
 import { EASE_OUT_EXPO as EASE } from '../../../lib/motion';
 import { A, More, Cta } from '../../kit';
@@ -128,6 +130,9 @@ const EP = {
 const GROUPS = Object.keys(EP);
 const FIND = Object.fromEntries(GROUPS.flatMap((g) => EP[g].map(([p, d]) => [p, [g, p, d]])));
 const eps = (paths) => paths.map((p) => FIND[p]);
+/* a path may only break after a slash, never inside a word ("/order/{id}/capture") */
+const brk = (s, k = '') => s.split(/(?<=\/)/).flatMap((x, i) => (i ? [<wbr key={k + 'w' + i} />, x] : [x]));
+const P = ({ p }) => <>{brk(p)}</>;
 
 /* What the order card shows at each stop: the shape changes, the endpoint is the real one. */
 const Lock = () => <svg viewBox="0 0 24 24" width="1.4em" height="1.4em" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.4" fill="none" stroke="currentColor" strokeWidth="1.7" /><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3" fill="none" stroke="currentColor" strokeWidth="1.7" /></svg>;
@@ -148,7 +153,7 @@ function Order({ at }) {
         <AnimatePresence mode="wait" initial={false}>
           <motion.div key={at} className="cm-order-s" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }} transition={{ duration: 0.35, ease: EASE }}>
             <Glyph at={at} />
-            <code className="cm-ep">{STOPS[at][2]}</code>
+            <code className="cm-ep"><P p={STOPS[at][2]} /></code>
           </motion.div>
         </AnimatePresence>
       </div>
@@ -166,11 +171,15 @@ function Rail() {
   const [at, setAt] = useState(0);
   const [held, setHeld] = useState(false);
   const [paused, setPaused] = useState(false);
+  const first = useRef(true);
   useEffect(() => {
     if (!live || paused) return;
-    const t = setTimeout(() => (held ? setHeld(false) : setAt((a) => (a + 1) % 5)), held ? 9000 : 3200);
+    /* the first move comes at 700ms so the screen is alive within a second; then a stop every 3.2s */
+    const wait = held ? 9000 : first.current ? 700 : 3200;
+    const t = setTimeout(() => { first.current = false; if (held) setHeld(false); else setAt((a) => (a + 1) % 5); }, wait);
     return () => clearTimeout(t);
   }, [at, live, held, paused]);
+  const glide = { duration: 0.5, ease: [0.4, 0, 0.2, 1] };
   return (
     <div className="cm-band" ref={ref}>
       <div className="bz-wrap cm-band-in">
@@ -179,14 +188,18 @@ function Rail() {
           {!calm && <button type="button" className="cm-pause" onClick={() => setPaused(!paused)} aria-pressed={paused} aria-label={paused ? 'Play' : 'Pause'}><PauseIcon on={paused} /></button>}
         </div>
         <div className="cm-track">
+          {/* the card rides a lane one card narrower than the rail, so it starts on the gutter and ends on it;
+              the tick is its own piece and always stands over the active stop */}
           <div className="cm-ride">
-            <motion.div className="cm-rider" initial={false} animate={{ x: `${at * 100}%` }} transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}>
-              <Order at={at} />
-              <i className="cm-stem" aria-hidden="true" />
-            </motion.div>
+            <div className="cm-lane">
+              <motion.div className="cm-rider" initial={false} animate={{ x: `${at * 25}%` }} transition={glide}>
+                <Order at={at} />
+              </motion.div>
+            </div>
+            <motion.i className="cm-stem" aria-hidden="true" initial={false} animate={{ x: `${at * 100}%` }} transition={glide} />
           </div>
           <ol className="cm-stops">
-            <li className="cm-line" aria-hidden="true"><motion.b initial={false} animate={{ scaleX: at / 4 }} transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }} /></li>
+            <li className="cm-line" aria-hidden="true"><motion.b initial={false} animate={{ scaleX: at / 4 }} transition={glide} /></li>
             {STOPS.map(([t], i) => (
               <li key={t} className={(at === i ? 'on' : '') + (i < at ? ' past' : '')}>
                 <button type="button" aria-pressed={at === i} onClick={() => { setAt(i); setHeld(true); }}>
@@ -231,15 +244,33 @@ const STOP_EP = [
   ['/order/{id}/refund', '/return/{id}', '/return'],
 ];
 
+/* What the journey shows that the hero does not: a line drawing of each stop, drawn as its pane lands, and the
+   stop's endpoint rows arriving under it. The order card itself lives only on the rail. */
+const STOP_ART = [
+  [<rect key="a" x="26" y="22" width="92" height="106" rx="12" />, <circle key="b" cx="72" cy="64" r="20" className="f" />, <path key="c" d="M44 104h56M44 116h36" />, <path key="d" d="M118 42h22M118 75h22M118 108h22" />, <rect key="e" x="140" y="30" width="74" height="24" rx="8" />, <rect key="f" x="140" y="63" width="74" height="24" rx="8" className="f" />, <rect key="g" x="140" y="96" width="74" height="24" rx="8" />],
+  [<path key="a" d="M28 34h24l20 70h104l18-50H62" />, <path key="b" d="M80 74h104" />, <circle key="c" cx="92" cy="122" r="8" />, <circle key="d" cx="168" cy="122" r="8" />, <rect key="e" x="104" y="20" width="56" height="34" rx="8" className="f" />],
+  [<rect key="a" x="24" y="30" width="136" height="86" rx="12" />, <path key="b" d="M24 56h136M42 94h40" />, <rect key="c" x="146" y="70" width="62" height="52" rx="10" className="f" />, <path key="d" d="M158 70V58a19 19 0 0 1 38 0v12" />],
+  [<path key="a" d="M114 44l48-22 48 22v58l-48 22-48-22z M114 44l48 22 48-22 M162 66v58" />, <path key="b" d="M24 56h64M40 76h56M24 96h64" />, <circle key="c" cx="162" cy="66" r="5" className="f" />],
+  [<path key="a" d="M128 44l44-20 44 20v54l-44 20-44-20z M128 44l44 20 44-20 M172 64v54" />, <path key="b" d="M112 112H64a30 30 0 0 1 0-60h40" />, <path key="c" d="M92 38l14 14-14 14" />, <rect key="d" x="24" y="98" width="42" height="28" rx="8" className="f" />],
+];
+const Draw = ({ i }) => (
+  <svg className="cm-draw" viewBox="0 0 240 150" aria-hidden="true">
+    {STOP_ART[i].map((el, k) => cloneElement(el, { pathLength: 1, style: { '--k': k } }))}
+  </svg>
+);
+
 function Journey() {
   const ref = useRef(null);
   const calm = useReducedMotion();
   const [flat, setFlat] = useState(false);
+  const [ready, setReady] = useState(false);
   const [at, setAt] = useState(0);
+  const [seen, setSeen] = useState(0);
   useEffect(() => {
     const m = matchMedia('(max-width: 900px)');
     const f = () => setFlat(m.matches);
     f();
+    setReady(true);
     m.addEventListener('change', f);
     return () => m.removeEventListener('change', f);
   }, []);
@@ -247,7 +278,11 @@ function Journey() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   const x = useTransform(scrollYProgress, [0.06, 0.94], ['0%', '-80%']);
   const fill = useTransform(scrollYProgress, [0.06, 0.94], [0, 1]);
-  useMotionValueEvent(scrollYProgress, 'change', (v) => setAt(Math.max(0, Math.min(4, Math.round(((v - 0.06) / 0.88) * 4)))));
+  useMotionValueEvent(scrollYProgress, 'change', (v) => {
+    const a = Math.max(0, Math.min(4, Math.round(((v - 0.06) / 0.88) * 4)));
+    setAt(a);
+    setSeen((s) => Math.max(s, a));
+  });
   return (
     <section ref={ref} className={'cm-jr' + (still ? ' still' : '')} aria-labelledby="cm-jr-h">
       <div className="cm-jr-pin">
@@ -268,13 +303,13 @@ function Journey() {
           <div className="cm-jr-view">
             <motion.ol className="cm-jr-strip" style={still ? undefined : { x }}>
               {STOPS.map(([t, d], i) => (
-                <li key={t} className={'cm-jr-p' + (at === i ? ' on' : '')}>
+                <li key={t} className={'cm-jr-p' + (at === i ? ' on' : '') + (ready && !still && i > seen ? ' ahead' : '')}>
                   <div className="cm-pane">
                     <p className="cm-pane-top"><span className="x-mono">{two(i + 1)} / 05</span><b>{t}</b></p>
                     <p className="cm-pane-d">{d}</p>
-                    <div className="cm-pane-o"><Order at={i} /></div>
+                    <div className="cm-pane-o"><Draw i={i} /></div>
                     <ul className="cm-pane-ep">
-                      {eps(STOP_EP[i]).map(([, p, desc]) => <li key={p}><code>{p}</code><span>{desc}</span></li>)}
+                      {eps(STOP_EP[i]).map(([, p, desc], k) => <li key={p} style={{ '--k': k }}><code><P p={p} /></code><span>{desc}</span></li>)}
                     </ul>
                   </div>
                 </li>
@@ -302,7 +337,8 @@ const NOUNS = [
 
 const EpList = ({ list, group }) => (
   <ul className="cm-eps">
-    {list.map(([g, p, d]) => <li key={g + p}><code>{p}</code><span>{d}</span>{group && <em className="x-mono">{g}</em>}</li>)}
+    {/* the group is named once where a run of it starts, not on every row */}
+    {list.map(([g, p, d], i) => <li key={g + p}><code><P p={p} /></code><span>{d}</span>{group && <em className="x-mono">{i && list[i - 1][0] === g ? '' : g}</em>}</li>)}
   </ul>
 );
 
@@ -355,10 +391,9 @@ function Nouns() {
 
 /* Beyond, the one dark room: type, and every group's matching endpoints answer at once. */
 function Mark({ text, q }) {
-  if (!q) return text;
-  const i = text.toLowerCase().indexOf(q);
-  if (i < 0) return text;
-  return <>{text.slice(0, i)}<mark>{text.slice(i, i + q.length)}</mark>{text.slice(i + q.length)}</>;
+  const i = q ? text.toLowerCase().indexOf(q) : -1;
+  if (i < 0) return brk(text);
+  return <>{brk(text.slice(0, i), 'a')}<mark>{brk(text.slice(i, i + q.length), 'b')}</mark>{brk(text.slice(i + q.length), 'c')}</>;
 }
 const TRY = ['refund', 'cart', 'affiliate', 'store'];
 
@@ -506,17 +541,42 @@ const RUN = [
   ['Open source', 'MIT or Apache-2.0, your choice. Read how your money is handled instead of taking our word for it.'],
 ];
 
-/* What you are running, as a spec sheet. */
+/* What you are running: one drawing of the install beside a spec sheet that opens one row at a time. The row you
+   open lights its part of the drawing: the container, the stores inside it, the card boundary outside it, IAM, the
+   cloud binary around it, the open source. */
+const RUN_ART = [
+  <rect key="0" x="70" y="40" width="120" height="96" rx="12" />,
+  <g key="1"><rect x="86" y="84" width="24" height="36" rx="5" /><rect x="118" y="84" width="24" height="36" rx="5" /><rect x="150" y="84" width="24" height="36" rx="5" /></g>,
+  <g key="2"><rect x="214" y="58" width="74" height="60" rx="10" strokeDasharray="5 5" /><path d="M190 88h24" /><rect x="232" y="78" width="38" height="20" rx="4" /></g>,
+  <g key="3"><circle cx="34" cy="62" r="13" /><path d="M14 104a20 20 0 0 1 40 0" /><path d="M54 76h16" /></g>,
+  <rect key="4" x="60" y="14" width="140" height="138" rx="18" strokeDasharray="2 6" />,
+  <path key="5" d="M108 54l-12 10 12 10 M152 54l12 10-12 10 M136 50l-12 28" />,
+];
+
 function Running() {
+  const [open, setOpen] = useState(0);
   return (
     <section className="bz-sec cm-run" aria-labelledby="cm-run-h">
       <div className="bz-wrap bz-grid">
         <div className="cm-run-h">
           <h2 id="cm-run-h" className="bz-headline">What you are running</h2>
           <p className="bz-body">Worth knowing before you put your revenue behind it.</p>
+          <div className="cm-run-art" aria-hidden="true">
+            <svg viewBox="0 0 300 166">{RUN_ART.map((el, i) => cloneElement(el, { className: open === i ? 'on' : undefined }))}</svg>
+            <p className="x-mono"><span>{two(open + 1)} / 06</span></p>
+          </div>
         </div>
         <dl className="cm-spec">
-          {RUN.map(([t, d]) => <div key={t} className="cm-spec-row"><dt>{t}</dt><dd>{d}</dd></div>)}
+          {RUN.map(([t, d], i) => (
+            <div key={t} className={'cm-spec-row' + (open === i ? ' open' : '')}>
+              <dt>
+                <button type="button" id={'cm-run-b' + i} aria-expanded={open === i} aria-controls={'cm-run-d' + i} onClick={() => setOpen(i)}>
+                  <span className="x-mono">{two(i + 1)}</span><b>{t}</b><i className="cm-spec-pm" aria-hidden="true" />
+                </button>
+              </dt>
+              <dd id={'cm-run-d' + i} role="region" aria-labelledby={'cm-run-b' + i}><div><p>{d}</p></div></dd>
+            </div>
+          ))}
         </dl>
       </div>
     </section>

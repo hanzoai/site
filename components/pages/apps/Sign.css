@@ -251,6 +251,23 @@ html.js .sg-lines.up i:nth-child(8) { animation-delay: 420ms; } html.js .sg-line
 .sg-flap span { min-width: 0 !important; font: inherit; color: inherit; background: none !important; padding: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
 @media (hover: hover) { .sg-run button:not([aria-pressed='true']):hover { color: var(--ink); background: rgba(255, 255, 255, .6); } }
 .sg-run button:active { transform: scale(.97); }
+/* phones: the desk stays as a compact strip (a third of the screen) so each step's words read in full beneath it */
+@media (max-width: 899px) {
+  .sg-pin .w2-pin-visual { padding: 4px 0 10px; box-shadow: 0 12px 16px -12px rgba(0, 0, 0, .12); }
+  .sg-pin .sg-desk { padding: 6px 10px 10px !important; gap: 6px; }
+  .sg-pin .sg-desk .sg-page { zoom: .5 !important; }
+  .sg-pin .sg-desk-bar { height: 36px; margin: 0; }
+  .sg-pin .sg-desk-bar .sg-desk-k { display: none; }
+  .sg-pin .w2-pin-t:not(.lead) { min-height: 62svh; }
+  .sg-pin .sg-desk .sg-f span { font-size: 12px !important; letter-spacing: .02em; }
+  .sg-pin .sg-f.box .x-tick { display: none; }
+}
+.sg-f.box span { padding-left: 20px; white-space: nowrap; }
+.sg-f.box { overflow: hidden; }
+.sg-tile { outline: 0; border: 0; }
+.sg-cards .w2-oc-card { border: 0; }
+.sg-oss a { display: inline-flex; align-items: center; min-height: 44px; }
+.sg-oss .w2-body a { display: inline; min-height: 0; padding: 12px 0; margin: -12px 0; }
 /* the pad's ghost signature: drawn once in faint ink when the pad is reached */
 .sg-pad-c { position: relative; }
 .sg-pad-ghost { position: absolute; left: 50%; top: 50%; width: min(52%, 420px); height: auto; transform: translate(-50%, -50%); pointer-events: none; }

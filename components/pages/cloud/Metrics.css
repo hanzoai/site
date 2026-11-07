@@ -92,8 +92,9 @@ html:has(main.mt) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
 .mt-ch[data-pin] .mt-ch-stick { position: sticky; top: 0; height: 100svh; padding: 0; display: flex; align-items: center; overflow: hidden; }
 .mt-ch[data-pin] .mt-ch-grid { padding-top: 56px; }
 .mt-ch[data-pin] .mt-ch-steps { gap: 0; }
-.mt-ch[data-pin] .mt-ch-step { grid-area: 1 / 1; transition: opacity .4s cubic-bezier(0, 0, .2, 1), transform .5s cubic-bezier(.16, 1, .3, 1), visibility 0s; }
-.mt-ch[data-pin] .mt-ch-step[data-at='past'], .mt-ch[data-pin] .mt-ch-step[data-at='next'] { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .3s cubic-bezier(0, 0, .2, 1), transform .4s cubic-bezier(.16, 1, .3, 1), visibility 0s .3s; }
+.mt-ch[data-pin] .mt-ch-step { grid-area: 1 / 1; transition: opacity .4s cubic-bezier(0, 0, .2, 1), transform .5s cubic-bezier(.16, 1, .3, 1), visibility 0s, scale 0s; }
+/* once faded, a hidden chapter also folds to nothing (scale, which leaves the layout alone) so no probe or pointer finds it */
+.mt-ch[data-pin] .mt-ch-step[data-at='past'], .mt-ch[data-pin] .mt-ch-step[data-at='next'] { opacity: 0; visibility: hidden; scale: 0; pointer-events: none; transition: opacity .3s cubic-bezier(0, 0, .2, 1), transform .4s cubic-bezier(.16, 1, .3, 1), visibility 0s .3s, scale 0s .4s; }
 .mt-ch[data-pin] .mt-ch-step[data-at='past'] { transform: translateY(-24px); }
 .mt-ch[data-pin] .mt-ch-step[data-at='next'] { transform: translateY(24px); }
 /* the rail: numbered ticks; the one on fills while its chapter plays */
@@ -106,9 +107,14 @@ html:has(main.mt) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
 .mt-ch-rail i { position: relative; display: block; width: 100%; height: 3px; border-radius: 3px; background: #d4d4d4; overflow: hidden; }
 .mt-ch-rail i::after { content: ''; position: absolute; inset: 0; border-radius: 3px; background: var(--ink); transform: scaleX(0); transform-origin: 0 50%; transition: transform .3s cubic-bezier(.4, 0, .2, 1); }
 .mt-ch-rail button[data-at='past'] i::after { transform: scaleX(1); background: #737373; }
-.mt-ch-rail button[aria-current] i::after { animation: mt-fill 2.6s cubic-bezier(.4, 0, .2, 1) forwards; }
+.mt-ch-rail button[aria-current] i::after { animation: mt-fill 3.2s cubic-bezier(.4, 0, .2, 1) forwards; }
 @keyframes mt-fill { from { transform: scaleX(.08); } to { transform: scaleX(1); } }
-@media (hover: hover) { .mt-ch-rail button:not([aria-current]):hover { color: var(--ink); } .mt-ch-rail button:not([aria-current]):hover i::after { transform: scaleX(.5); background: var(--ink); } }
+.mt-ch-rail i { transition: transform .15s cubic-bezier(0, 0, .2, 1); transform-origin: 50% 100%; }
+@media (hover: hover) {
+  .mt-ch-rail button:hover i { transform: scaleY(1.67); }
+  .mt-ch-rail button:not([aria-current]):hover { color: var(--ink); }
+  .mt-ch-rail button:not([aria-current]):hover i::after { transform: scaleX(.5); background: var(--ink); }
+}
 
 /* the chapters' table: outlined, not raised; each chapter plays its states once as it arrives (data-beat) */
 .mt-tab { background: #fff; border-radius: 24px; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .1); overflow: hidden; }
@@ -128,7 +134,7 @@ html:has(main.mt) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
 .mt-mode { flex: none; font: 500 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink); animation: mt-in .3s cubic-bezier(.16, 1, .3, 1); }
 @keyframes mt-in { from { opacity: 0; transform: translateY(6px); } }
 .mt-grid { padding: 6px 0 10px; }
-.mt-row { display: grid; grid-template-columns: 100px 1.5fr 1fr .7fr .9fr .7fr; align-items: center; gap: 12px; height: 48px; padding: 0 24px; font: 500 14px/1 var(--mono); color: #737373; white-space: nowrap; transition: opacity .4s cubic-bezier(0, 0, .2, 1), background-color .3s cubic-bezier(0, 0, .2, 1); }
+.mt-row { display: grid; grid-template-columns: 96px 1.8fr .9fr .6fr 1fr .6fr; align-items: center; gap: 12px; height: 48px; padding: 0 24px; font: 500 14px/1 var(--mono); color: #737373; white-space: nowrap; transition: opacity .4s cubic-bezier(0, 0, .2, 1), background-color .3s cubic-bezier(0, 0, .2, 1); }
 .mt-row + .mt-row { border-top: 1px solid rgba(0, 0, 0, .1); }
 .mt-row.head { height: 40px; font-size: 12px; color: #737373; letter-spacing: .14em; text-transform: uppercase; }
 .mt-row > span { overflow: hidden; text-overflow: ellipsis; transition: color .3s cubic-bezier(0, 0, .2, 1); }
@@ -279,7 +285,7 @@ html:has(main.mt) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
   /* chapters stack: each chapter's own table above its words, nothing pinned, every word kept */
   .mt-ch-stick { padding: 40px 0 64px; }
   .mt-ch-grid { grid-template-columns: minmax(0, 1fr); }
-  .mt-ch-steps { gap: 64px; }
+  .mt-ch-steps { gap: 48px; }
   .mt-ch-own { margin-bottom: 20px; }
   .mt-ch-it { font-size: 32px; }
   .mt-ch-il { font-size: 17px; margin-top: 12px; }

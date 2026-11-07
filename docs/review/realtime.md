@@ -1,92 +1,71 @@
 # /realtime — James-eye review
 
 Verdict: 7/10
-First complaint: "The top's right now. The title, the button, then the three screens with the record landing on all of them. Then I scroll and it's eight screens of the same thing: a bit of text on the left and a grey box with a black bar on the right. PubSub, S3 and Registry have that exact box. It's a template again."
+First complaint: "Top's good, the three screens are alive. Then I scroll and it's seven screens of the same thing: words on the left, the same three little boxes on the right, lots of white around them. It's the right idea, it just goes on too long and nothing gets big. Then there's a big empty gap before the next bit."
 
-Walked 7 Nov 2026, about 16:45 UTC, on main `fa67b96f`, which includes the fix `45ffde99`. I walked it fresh and did not reuse the earlier critic's frames. I used Playwright Chromium against the dev server on :4180:
+Walked 7 Nov 2026, about 17:00 UTC, on main `b9ca6fb0`, which includes the fix `6edadcc1` (chapters pin the hero's clients, one hard stop on the rail, card hovers). I walked it fresh with my own frames. I used Playwright Chromium against the dev server on :4180:
 - **Desktop** at 1470×801 and **phone** at 375×812 (isMobile, hasTouch, DPR 2), both recorded on video.
 - **First frames with no input** at 0.25, 0.6, 1, 1.6, 2.5, 3.5, 4.8 and 6 s.
-- **Scroll:** the whole page in 1/16-viewport steps, wheel on desktop and small scrollBy steps on phone, dwelling 0.8 s per screen. That gave 34 stops on desktop and 37 on phone, viewed as contact sheets.
-- **Controls:** hovered and pressed the hero ask, the docs link, all three rule switches, the hero pause, the three handshake calls, "The handshake, in full", the three growth rows, the rail (a drag throw plus the Next and Prev arrows) and the close ask.
-- **Other checks:** reduced motion, JS off, CLS, fixed elements, 375×667 fold, 320 width, and the phone bottom layers while scrolling. Non-localhost POSTs were blocked.
+- **Scroll:** the whole page in quarter-viewport steps, wheel on desktop and scrollBy on phone, 0.5 s dwell per step, frames every half screen, viewed as contact sheets and at full size.
+- **Controls:** hovered and pressed the hero ask, "View Documentation", Client 3's rule switch, the hero pause, a drag throw on the rail then Next and Prev, a use-case card hover, the three handshake calls, "The handshake, in full", the three growth figures and the close ask.
+- **Other checks:** reduced motion, JS off, CLS, fixed elements, section heights, 375×667 fold, 320 width. Non-localhost POSTs blocked.
 
-Stills in `docs/review/realtime/`: `d-hero.jpg`, `d-chapter.jpg` and `p-hero.jpg`.
+Stills in `docs/review/realtime/`: `d-hero.jpg`, `d-chapter.jpg`, `d-gap.jpg` and `p-hero.jpg`.
 
 ## What works
-- **The hero is fixed and it sells.** At 1470 the read order is now the h1 (52px, 2 lines, y 132), then "Live record updates", **Start Building** and "View Documentation" on one line (y 268), then the three clients below. The old complaint about the ask hanging alone bottom-right is gone. On phone the h1 is 2 lines and the ask's bottom is at 259px at 375×667, well above the fold.
-- **Alive at once.** The record cycles create → update → delete across Client 1 and Client 2. Client 3 (dashed, "no b") never sees b. That is Hanzo's "deletes are checked too" played out as the hero object.
-- **Interactions answer:**
-  - Flipping Client 3's switch changes it to "reads b" (`aria-pressed` true).
-  - Pause turns into Play.
-- **No shift.** The client heights are now fixed: `rt-say` sits at y 860 across 10 samples over 7 s. CLS is 0.0010 on desktop and 0.0048 on phone over the full walk (it was 0.051 on phone before).
-- **Every control I pressed answered:**
-  - **Hero ask:** hover goes #0a0a0a → #262626, press scales 0.974. Not an opacity fade.
-  - **"View Documentation":** the underline goes from 30% to full ink and its offset moves 3 → 7px. This was dead last round.
-  - **Handshake calls:** each one marks its line in the wire (`/v1/realtime/token`, `subscriptions`, `render(record)`).
-  - **The disclosure** opens.
-  - **The third growth row** adds org c's lane to the tenant map (3 → 4 lanes).
-  - **Close ask:** same hover and press as the hero ask.
-- **One solid fill.** At the close, the header ask goes quiet (transparent "Start Building") while the close's solid shows.
-- **The black room is good.** It has three calls, one open at a time, beside the real `realtime.js` on graphite. It is the strongest middle section.
+- **The hero sells and is alive.** h1 52px on 2 lines at y 132, then "Live record updates", **Start Building** and "View Documentation" on one line (y 268–316), then the three clients. The record cycles create → update → delete inside the first second; Client 3 ("no b") never sees b. On phone the h1 is 34px on 2 lines and the ask's bottom sits at 259px at 375×667 (330 at 320 wide).
+- **The chapter template is gone.** The eight pinned chapters now show the hero's own three clients, and each chapter changes what they do: the stream drops and reconnects, Client 3 watches one record (`orders/ord_42`), clients become org a / org a / org b brokers, a delete skips the client that cannot read b, the rule labels change, the grant counts down, org c waits on the limit of two. This is no longer the PubSub/S3/Registry box (`d-chapter.jpg`).
+- **Last round's bugs are fixed:**
+  - **Rail:** a drag throw stops at −822px, exactly where Next stops; Next after a throw stays at −822, Prev returns to 0. No overshoot, no backwards move.
+  - **Use-case cards:** hover steps the fill #f5f5f5 → #ededed and lifts the vignette 6px.
+- **Every other control answers:**
+  - **Hero and close asks:** hover #0a0a0a → #262626, press scale 0.971. Not an opacity fade.
+  - **"View Documentation":** underline 30% → full ink, offset 3 → 7px.
+  - **Client 3's switch:** "no b" → "reads b", `aria-pressed` false → true. Pause → Play.
+  - **Handshake calls** mark `/v1/realtime/token`, `subscriptions` and `render(record)` in the wire; the disclosure opens.
+  - **Growth figures** change the tenant map (data-at 0/1/2; the third adds org c's lane, 3 → 4).
+- **One solid at a time on desktop.** The header swaps to "Start Building" after the hero and goes quiet (transparent) at the close.
 - **Checks:**
-  - Parity 138/138 text and 4/4 links. `taste.py` OK. `unique.py` OK.
+  - CLS 0.0023 desktop, 0.0008 phone over the full walk; no shift entry over 0.002.
+  - Parity 138/138 text, 4/4 links. `taste.py` OK. `unique.py` OK.
   - Reduced motion: 0 running animations after 3.5 s.
-  - JS off: 75 text blocks, 0 hidden.
-  - No horizontal scroll at 375 or 320.
-  - No phone target under 44px.
+  - JS off: 93 text blocks, 0 hidden.
+  - No horizontal scroll at 375 or 320; no target under 44px at 375×667 or 320.
 
 ## The 11 answers
-1. **Sells in 5 s? Moves in 1 s?** Yes on both counts. The first change lands inside the first second, and the h1, ask and stage read in that order.
-2. **One in, one out, or a document?** Better, but still a document in the middle.
-   - **The chapters:** the eight pinned chapters change one panel at a time. That is the Apple move. But it is about 10 screens of the identical composition: title, `0N / 08` and a paragraph left, an outlined grey tile with a black header bar right, and a tick row. By chapter 4 or 5 nothing new is happening to the *page*, only inside the box (`d-chapter.jpg`).
-   - **Statement section:** "Open one stream…" has roughly 300px of empty white above it at 1470 before the paragraph and code arrive (`d-s01`).
-   - **Before "Two calls…":** the page opens a half-screen of blank space just before that strip (`d-s27`).
-3. **A real visual in every section?** Yes:
-   - the three clients
-   - the subscribe code
-   - the per-chapter stream panel
-   - six drawn use-case vignettes
-   - the wire
-   - the tenant map
-   - the GitHub card art
-   - the close contour Sigil
-
-   There is no Hanzo media for Realtime, so there is no 4-image block, which is fair.
+1. **Sells in 5 s? Moves in 1 s?** Yes. The h1, ask and stage read in that order, and the first change lands before 1 s.
+2. **One in, one out, or a document?** One in, one out, but too long in one place.
+   - The pinned chapters run 5,559px at 1470 (5,635 at 375): 44% of the page, about seven screens, all one composition (title, `0N / 08`, paragraph left; the three clients at about 620×300 right, with ~250px of white above and below). The object changes; the page does not. Nothing grows or shrinks across the run.
+   - When the pin releases, there is about 400px of empty white before "Build Interactive Experiences" (`d-gap.jpg`). On phone, "Limits belong to the deployment" sits alone over most of a blank screen before the rail.
+   - The growth section ends with ~520px of space below its last row at 1470 (~450 on phone) before the "Two calls" strip.
+3. **A real visual in every section?** Yes: the three clients, the subscribe code, the chapter clients, six drawn use-case vignettes, the wire, the tenant map, the GitHub card art and the close contour. No Hanzo media exists for Realtime, so no 4-image block, which is fair. The "Two calls" card art and the close Sigil are both contour drawings, one after the other.
 4. **One ask, nothing floating? Scale rhythm?**
-   - **Desktop:** one solid at a time. The header swaps "Try Hanzo" to "Start Building" after the hero and goes quiet at the close.
-   - **Phone:** the slim "Start Building" bar rises through the chapters and sits clear of content. The phone header keeps a black "Try Hanzo" pill, so the phone shows two asks in different words. That is the shared header and is not held against the page.
-   - **Scale:** h1 52, chapter titles about 26, mono captions small, the growth headings large-light, and "Get Realtime" the one big thing at the end. Good rhythm.
-5. **Every hover and press answers, no jumps?** Mostly.
-   - **The rail still breaks.** A drag throw carries the track to −981px, past the arrow clamp of −822px. Pressing **Next** then moves it *back* to −822. The previous review flagged this exact bug and it is not fixed.
-   - **The use-case cards** show no measured change on hover (fill stays #f5f5f5, no transform).
-6. **Overlap, font swap, layout shift?**
-   - No overlap at either size. The h1 box doesn't move. CLS is 0.001 on desktop and 0.005 on phone.
-   - A red "1 Issue" badge (a React hydration attribute mismatch) appeared in the recorded walk. It did not appear on a single quiet load (0 console errors). This matches `_shared.md` §3: it only shows under load, it is shared, and it is not held against the page.
+   - **Ask:** desktop is right. On phone the shared header keeps a black "Try Hanzo" pill all the way down, so the phone shows two asks in different words. That is shared chrome and not held against the page. The cookie card (203px on phone) is shared too.
+   - **Scale:** h1 52, chapter titles about 30, mono captions small, growth figures 21 → 32 while open, "Get Realtime" the one big thing at the end. Good at the ends, flat in the middle: seven screens with no big moment.
+5. **Every hover and press answers, no jumps?** Yes, everything I pressed answered without a layout jump.
+6. **Overlap, font swap, layout shift?** None at either size. The red "1 Issue" badge (a hydration attribute mismatch) appeared during the long recorded walks under shared load. It did not appear on six single loads, with or without video. That matches `_shared.md` §3, so it is not counted.
 7. **Which reference, and is its motion there?**
-   - **Apple pinned scenes with one changing panel:** present.
-   - **motion.dev:** layout glides, the drag rail with inertia (but no hard stop), and the magnetic close are present.
-   - **osply/hamol editorial asymmetry:** absent. Every chapter uses the same split.
-8. **Different from its neighbours?** The hero is its own: three devices of three widths receiving one record. The body is not. `PinnedChapters` with text left and box right is used by 9 cloud pages (Metrics, Mq, Network, Node, O11y, Pubsub, Realtime, Registry, S3). Realtime runs it longest, with 8 chapters.
-9. **18 parts covered?** The card has all 18 headings with `Done here:` filled. See below.
-10. **Banned tells?**
-    - None: no hue, no gradient text, nothing above the h1 or an h2, no Inter, no springs.
-    - "OPEN A STREAM" sits over a card title, not a headline, which is acceptable.
-    - The ✓ and × marks are status shapes, which is allowed.
-11. **Copy untouched?** Yes. Parity is 0 missing. The drawn demo words are flagged on the card.
+   - **Apple pinned scene with one changing panel:** present, and now with the page's own product.
+   - **motion.dev:** layout glides, a drag rail with inertia and a hard stop, the black-room wipe. Present.
+   - **osply/hamol editorial asymmetry:** still absent. Every chapter uses the same split at the same size.
+8. **Different from its neighbours?** Yes now. The hero medium (three devices of three widths receiving one record) carries into the chapters, so the body no longer reads as the shared cloud chapter page.
+9. **18 parts covered?** Yes: 18 headings, every `Done here:` filled. See the card check.
+10. **Banned tells?** None: no hue, no gradient text, nothing above the h1 or an h2, no Inter, no springs. The ✓/× and dashed outlines are status shapes. "POPULAR USE CASES" and "OPEN A STREAM" sit below their headings, not above.
+11. **Copy untouched?** Yes. Parity 0 missing. The drawn demo words are flagged on the card.
 
 ## Card check
-`docs/coverage/realtime.md` has 18 headings, every `Done here:` filled, and copy questions, requests and deleted forks listed. It is mostly truthful now. CLS, the docs hover and the hero order are all verified. Corrections:
-- **Part 9 and Part 8:** "the drag rail with inertia and hard stops" is false. The throw overshoots to −981 against an arrow clamp of −822, and Next then moves backwards.
-- **Part 6 / Part 3:** the phone h1 measures 34px on 2 lines. MASTER asks for 3 lines at 40px. Two lines is arguably better, but it should be stated on the card as a decision.
-- **Part 18:** `V2: 8/10` in the page file is the builder's own score. This review is 7.
+`docs/coverage/realtime.md` has all 18 parts filled, with copy questions, requests and deleted forks listed. Most of it checks out (rail hard stop, card hover, CLS, phone h1 decision now stated in part 15). Corrections:
+- **Part 11:** "the ask's bottom at 355px at 375×667". I measured 259px at 375×667 (330 at 320×700). That is better than claimed, but the number is wrong.
+- **Part 18:** "no review file exists yet". One does (this one, and a 7/10 before it).
+- **Part 9:** "magnetic close ask". A centred hover moved nothing measurable (transform none). It may only pull off-centre; worth stating how far.
+- **Part 3:** "One idea per 100svh" is true, but the card does not say the chapter run is 44% of the page. It should.
+- **`V2: 8/10`** in the page file is the builder's own score. This review is 7.
 
 ## To reach 8
-- **Break the eight-chapter run.** This is the main issue, and every word should stay. Either:
-  - **Group into 3–4 beats:** stream + collection, isolation + deletes, one store + the rule, grant + limits. Each beat's panel shows two states.
-  - **Change the composition partway:** for 2–3 chapters (for example "Deletes are checked too", which is the page's own thesis), flip the stage to the left, or go full-width with the words underneath.
-
-  Either way, Realtime should stop reading as the shared cloud chapter template that 8 other pages use.
-- **Clamp the rail drag** to the same minimum the arrows use (−822 at 1470), so a throw stops hard and Next never moves backwards. Then give the use-case cards a hover answer (a fill step to #ededed or a vignette that plays).
-- **Close the two empty bands:** about 300px of white above the statement paragraph, and the half-screen gap before "Two calls and the page keeps itself current". The next thing should arrive as the last one leaves.
-- **Note the 2-line phone h1 on the card** as a decision against MASTER's "3 lines at 40px".
-- **Shared, not held against the page:** the phone header's "Try Hanzo" pill against the page's "Start Building" bar, and the hydration badge under load.
+- **Shorten and shape the chapter run.** Keep all eight chapters' words, but cut the pinned distance (about 5,600px → 3,200–3,600px, roughly 450px per chapter). Give the run one moment of scale: for example the clients grow to near hero size on "Deletes are checked too" (the page's own thesis, 04/08) and settle back after. Or flip that chapter's stage to the left. Seven screens of one size at one split is the main complaint.
+- **Close the empty bands:**
+  - The ~400px blank after the pin releases before "Build Interactive Experiences" (and the near-blank phone screen under "Limits belong to the deployment"). The rail heading should be arriving as the last chapter leaves.
+  - The ~520px under the growth list before the "Two calls" strip.
+- **Make the last two art pieces different.** The "Two calls" card and the close both use contour Sigils back to back. Give the card a different drawing, or let the close own the contour.
+- **Fix the card's numbers:** part 11 fold (259px), part 18 review status, part 9 magnetic ask.
+- **Shared, not held against the page:** the phone header's "Try Hanzo" pill against the page's "Start Building", the phone cookie card, and the hydration badge under load.

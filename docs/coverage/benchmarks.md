@@ -11,7 +11,9 @@ Forks this page deleted:
 - the floating `AskBar`;
 - the sticky compare tray (now in the flow);
 - the floating scatter tooltips (now a record band under the chart);
-- every spring.
+- every spring;
+- the v2 `DetailSheet` (its closed panels were laid out off-screen and shoved the page sideways): replaced by the page-local `components/pages/benchmarks/Sheet.jsx`, fixed to the viewport, hidden and inert when closed;
+- the page's own copy row (now the kit's `CodeBlock`).
 
 ## 1. Strategy and conversion
 - [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
@@ -38,7 +40,7 @@ Done here: A sticky in-page product band sits under the header: Enso, Kai, Zen 6
 - [x] Ends in a closing room (Band equivalent) and the footer
 - [x] Card-to-page links use Morph (site layer; every in-site link morphs)
 
-Done here: In the first second the h1 cuts in line by line and the frontier draws its dashed line and points. It reads the GLM 5.3 record at 900ms. On scroll the headline lifts away and the large chart settles beside its caption (Stage). After that, one idea per screen. With JS off, a `<noscript>` rule lays the stage flat and shows every record and filter. The JS-off check finds 0 hidden text blocks.
+Done here: In the first second the h1 cuts in line by line (0, 60, 120ms), then the lede, the meta line and the ask follow 380, 440 and 500ms after, so the screen reads left to right and never shows a finished right half beside a blank h1. The frontier draws its dashed line and points and reads the GLM 5.3 record at 900ms. On scroll the headline lifts away and the large chart settles beside its caption (Stage). The long lists show their head and fold the rest behind a (+) count (4 of the 16 duel tiles, with "16 of 16" itself as the opener; 5 of 11 board rows; 6 of 24 shelf rows; the "Every benchmark page" index), and on the phone side-by-side panels become swipe rails: about 25 screens at desktop (was 29) and 34 on the phone (was 47). With JS off, a `NoJs` rule lays the stage flat and shows every record, fold and filter.
 
 ## 4. Conversion system
 - [x] `<Cta>` only for the asks; no raw `.x-btn`
@@ -46,7 +48,7 @@ Done here: In the first second the h1 cuts in line by line and the frontier draw
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: `Cta thumb` drives the system bar with "Start on Hanzo Cloud". The command copy and "Copy link" now return early on a clipboard failure, so they never show "Copied" unless the copy worked.
+Done here: `Cta thumb` drives the system bar with "Start on Hanzo Cloud". The methods command is the kit `CodeBlock` (whole line shown, wrapped; a 44px Copy beside it). "Copy link" returns early on a clipboard failure, so they never show "Copied" unless the copy worked.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -59,16 +61,16 @@ Done here: Every figure sits with its source on the same screen or in its sheet:
 ## 6. Content presentation (copy untouched)
 - [x] No text under 13px (14px phone) except mono capitals
 - [x] Measures held; no orphan word in a heading (`text-wrap: balance`)
-- [x] Tables use the kit's `DataTable`. ~~FAQ, tabs, code~~: no FAQ. Tabs are the page's own (Evidence and the race, `role=tab`). The command line is a copy row.
+- [x] Tables use the kit's `DataTable`. ~~FAQ~~: no FAQ. Tabs are the page's own (Evidence and the race, `role=tab`). The command line is the kit `CodeBlock`.
 - [x] `python3 scripts/parity.py /benchmarks`: 0 missing
 
-Done here: Detail lives in (+) sheets, which stay in the server HTML: the 12 runs, every system, the Decision Suite, the evidence, trolley and qualification, coding, handlers, context lengths, the race numbers, the platform note, methodology and papers. Font sizes are snapped to the deck list (12–112).
+Done here: Detail lives in (+) sheets, which stay in the server HTML: the 12 runs, every system, the Decision Suite, the evidence, trolley and qualification, coding, handlers, context lengths, the race numbers, the platform note, methodology and papers. Font sizes are snapped to the deck list (12–112). "Subquadratic Ultra-Long Context" keeps "Ultra-Long Context" on one line, so it never breaks on its hyphen.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; deck greys only
 - [x] No label, tag, badge or pill above a headline
 - [x] Radii and sizes from tokens; tiles are flat `#f5f5f5` at 24px (`ProofRhythm`); never box plus shadow
-- [x] One icon set (inline strokes); no icon in a rounded box
+- [x] One icon set (inline strokes); no icon in a rounded box; no colour emoji (the race lanes' ⚡ ⚙️ 🐌 are mono stroke marks, the words unchanged)
 - [x] Differs from neighbours in hero medium (a data chart that settles) and room order
 
 Done here: Scale rhythm comes from `ProofRhythm.css` with `pf-r`: h1 52/40, section headings 26, figures 64, and one 84px `pf-moment` per screen (3.02×, 2.0×, 477 bytes, ~3,665 tok/s, 72.40×). Two-part layouts split 8/5. There are two black rooms, Zen 6 and the close, never back to back, and each enters as a rounded card.
@@ -76,7 +78,7 @@ Done here: Scale rhythm comes from `ProofRhythm.css` with `pf-r`: h1 52/40, sect
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled and loading where it applies (the race button's disabled "Racing...", Cta busy on leaving)
 - [x] Focus ring visible on every stop of a Tab crawl (2px ink, white in the black rooms)
-- [x] Dialogs trap focus and return it (kit `DetailSheet`; not a native `<dialog>`, which is kit-owned)
+- [x] Dialogs trap focus and return it (page-local `benchmarks/Sheet.jsx`: closed sheets are `visibility:hidden` and `inert`; the open one is `position:fixed` in the viewport; Esc, the scrim and × close it and focus returns to its (+) with `preventScroll`; opening never changes scrollX or scrollY, measured at both sizes)
 - [x] Inputs 16px or larger; no bare `:hover` (all 47 hover rules sit under `@media (hover: hover)`)
 - [x] Forks this page deleted: listed above
 
@@ -105,7 +107,7 @@ Done here: The hero objects are product-style data UI drawn from Hanzo's own fig
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: `phone.mjs` passes (375/375) and layout shift is 0.000. On the phone the stage lies flat and pinned scenes stack. A point's record reads in a reserved band, so nothing moves. The ask sits at about 480px from the top at 375.
+Done here: No overflow at either size (`errs.js`: overflow 0). Layout shift measured with a full scroll: desktop 0.002; phone 0.057, all of it from the shared footer (0.026 + 0.031), none from this page. The context dial's number crosses inside a fixed 64px box, so it no longer shifts. The sub-nav rail is opaque (#fff, #000 in Zen 6) with a hairline, so nothing shows through it. On the phone the stage lies flat, pinned scenes stack and paired panels swipe. The ask sits at about 500px from the top at 375.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured: body #525252 on white is 7.8:1, captions #737373 4.7:1, white 55% on black about 6:1
@@ -122,7 +124,7 @@ Done here: Tabs use `role=tab` and `aria-selected`, toggles use `aria-pressed`, 
 - [x] No poller; no third-party request before consent
 - [x] Nothing heavy run on James's laptop (cloud only)
 
-Done here: Motion is transform, opacity and clip-path only. Scroll-linked opacity uses function transforms, because Motion's ScrollTimeline acceleration misread the sticky runway. Idle loops stop off screen (`useInView`).
+Done here: 0 console errors at both sizes (`errs.js`), 0 hydration diffs (`hyd.js`). The dial's fill variable sits on its wrapper and the page's inputs carry `suppressHydrationWarning`, because a screenshot taken before hydration writes an inline caret style on every input. Motion is transform, opacity and clip-path only. Scroll-linked opacity uses function transforms, because Motion's ScrollTimeline acceleration misread the sticky runway. Idle loops stop off screen (`useInView`).
 
 ## 14. SEO and machine files
 - [x] Title and description match live (`app/benchmarks/page.jsx` equals `content/pages.json`)
@@ -141,7 +143,7 @@ Done here: All text is in the server HTML, including every sheet, chapter and vi
 Done here: The shelf (24 of 166 runs) is searchable and filterable. It has saved views and reorder, a compare panel in the flow, and CSV/JSON export.
 
 ## 16. Developer experience
-- [x] The command line is shown and copied exactly. A `CodeBlock` swap is pending: the copy row predates it.
+- [x] The command line is shown whole in the kit `CodeBlock` and copied exactly (the `$ ` prompt is not copied).
 - [ ] ~~Config blocks parse on their own~~ n/a: no config.
 - [ ] ~~Terminal pauses and ends on a static frame~~ n/a: no terminal. The race ends on its final lanes.
 - [x] No hand-typed version number beyond Hanzo's own run ids
@@ -160,6 +162,6 @@ Done here: "All 11" resets Your suites. The board view is kept in the address. T
 - [x] `data-cta` on every primary. Events are sent by the kit's `Cta` (`hz-event`, `cta_click`).
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/benchmarks.md`, verdict 8 or more (no review filed yet)
+- [x] Review read: `docs/review/benchmarks.md` (5/10); every listed fix addressed in round 2
 
-Done here: Filmed with `scripts/motion.mjs` (desktop: 0 still screens, layout shift 0.000). Gallery: `desktop.mp4`, `desktop.jpg` and `phone-1..3.jpg`.
+Done here: Round 2 proofs: `desktop-r2.jpg` and `phone-r2.jpg` (first screens). Earlier: `desktop.mp4`, `desktop.jpg` and `phone-1..3.jpg`.

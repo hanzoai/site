@@ -31,7 +31,7 @@ Done here: parity links 7/7.
 - [x] Ends on a band ("Talk to us"), then footer
 - [x] n/a Morph
 
-Done here: one big thing per screen: the gauge in the hero, the 44px endpoints under a 32px statement, the 64px-free plans.
+Done here: one thing per screen: the gauge in the hero (decision word 32px, its label a caption under it), then "Where this is today" peeks under the hero (no void) as one engine with two faces, then one object per section in the second half: the rule card (its three descriptions swap under it), the declare stack, the request flow, the tier ladder (the active tier's words swap under it), the named gaps.
 
 ## 4. Conversion system
 - [x] Kit `A` + `.w2-cta`
@@ -55,7 +55,7 @@ Done here: the dial is labelled an illustration in Hanzo's words.
 - [x] Sheets via OpenSheet (focus trapped)
 - [x] `parity.py /risk`: 0 missing
 
-Done here: parity `text 114/114 links 7/7`.
+Done here: parity `text 114/114 links 7/7`; no sentence under any tile (Decides-on and Plans words open or swap), no side-by-side text columns (Rules and Platforms are separate screens).
 
 ## 7. Visual design system
 - [x] `taste.py` passes (0 hues)
@@ -155,4 +155,4 @@ Done here: look.cjs both widths errors none.
 - [x] `V2:` line in `app/risk/page.jsx`
 - [x] Review requested from an independent critic after this pass
 
-Done here: previous review 6/10; all eight fixes addressed. Round 2 (this pass): "Rules, lists and suppression" gets a rule card (list chips light, Lists → Suppression, a "suppressed" stamp), the declare stack steps while in view instead of playing once, "How it connects" gets a request-flow drawing (your system → Risk, a decision back, the processor untouched), stage tabs take Home/End, off-deck greys swapped to the deck ramp, radii moved to the MASTER set, dead CSS dropped. Idle motion now reaches every screen: the decision-card drawings loop in view, the tier ladder steps, the three named gaps step, the live face pings, and on desktop the shorter column (Platforms, What this is not) stays sticky beside the longer one; a 1 s/2.4 s screenshot diff per screen finds STILL only in the shared footer (desktop 1 of 15, phone 3 of 18). Phone: the header's "Try Hanzo" stays solid (shared Ask.jsx), so the page's own asks are the quiet ring there: one solid per viewport.
+Done here: previous review 6/10; all eight fixes addressed. Round 2 (this pass): "Rules, lists and suppression" gets a rule card (list chips light, Lists → Suppression, a "suppressed" stamp), the declare stack steps while in view instead of playing once, "How it connects" gets a request-flow drawing (your system → Risk, a decision back, the processor untouched), stage tabs take Home/End, off-deck greys swapped to the deck ramp, radii moved to the MASTER set, dead CSS dropped. Idle motion now reaches every screen: the decision-card drawings loop in view, the tier ladder steps, the three named gaps step, the live face pings, and on desktop the shorter column (Platforms, What this is not) stays sticky beside the longer one; a 1 s/2.4 s screenshot diff per screen finds STILL only in the shared footer (desktop 1 of 15, phone 3 of 18). Round 3 (critic 7/10): voids removed (hero and section padding), the faces drawn as one engine, Rules and Platforms split into one screen each with their text folded into the object or a sheet, connect notes open from their names, ladder tiles carry the tier names with the words swapping under, the phone keeps the hero "Talk to us" solid, phone stage pill on one line, gaps marked in place.

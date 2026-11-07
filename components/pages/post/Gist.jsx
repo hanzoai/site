@@ -54,7 +54,86 @@ export function gist(blocks) {
   return null;
 }
 
+/* Life objects for a post that already holds the Game of Life (its own board and rules, no new words):
+   'collide' runs two gliders into each other on a small board with dead edges, so the debris settles, then starts again;
+   'emblem' is the glider alone in its 3×3 box (the hacker emblem), turning through its four phases. */
+const GL = [[1, 0], [2, 1], [0, 2], [1, 2], [2, 2]];
+function sim(w, h, wrap) {
+  return (g) => {
+    const n = new Uint8Array(w * h);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      let c = 0;
+      for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+        if (!dx && !dy) continue;
+        let X = x + dx, Y = y + dy;
+        if (wrap) { X = (X + w) % w; Y = (Y + h) % h; } else if (X < 0 || Y < 0 || X >= w || Y >= h) continue;
+        c += g[Y * w + X];
+      }
+      n[y * w + x] = c === 3 || (c === 2 && g[y * w + x]) ? 1 : 0;
+    }
+    return n;
+  };
+}
+const SHOWS = {
+  collide: () => {
+    const w = 22, h = 14, g = new Uint8Array(w * h);
+    GL.forEach(([x, y]) => { g[(y + 1) * w + x + 1] = 1; g[(y + 1) * w + (w - 2 - x)] = 1; }); // one heading right, its mirror heading left
+    return { w, h, start: g, next: sim(w, h, false), turns: 72, ms: 200 };
+  },
+  emblem: () => {
+    const w = 8, h = 8, g = new Uint8Array(w * h);
+    GL.forEach(([x, y]) => { g[(y + 2) * w + x + 2] = 1; });
+    return { w, h, start: g, next: sim(w, h, true), turns: 0, ms: 700, crop: 3 };
+  },
+};
+// the live cells' 3×3 box, so the emblem stays put while the glider turns
+function crop(g, w, h, k) {
+  let x0 = w, y0 = h;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (g[y * w + x]) { x0 = Math.min(x0, x); y0 = Math.min(y0, y); }
+  const out = new Uint8Array(k * k);
+  for (let y = 0; y < k; y++) for (let x = 0; x < k; x++) out[y * k + x] = g[((y0 + y) % h) * w + ((x0 + x) % w)];
+  return out;
+}
+function LifeShow({ kind }) {
+  const ref = useRef(null), cells = useRef([]);
+  const s = useRef(null);
+  if (!s.current) s.current = SHOWS[kind]();
+  const { w, h, crop: k } = s.current;
+  const cols = k || w, rows = k || h;
+  useEffect(() => {
+    const el = ref.current, S = s.current;
+    let g = S.start, n = 0, raf = 0, last = 0, on = false;
+    const paint = () => { const v = S.crop ? crop(g, S.w, S.h, S.crop) : g; cells.current.forEach((c, i) => { if (c) c.dataset.on = v[i] ? '1' : ''; }); };
+    paint();
+    const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const loop = (t) => {
+      if (t - last >= S.ms) { last = t; n += 1; if (S.turns && n > S.turns) { g = S.start; n = 0; } else g = S.next(g); paint(); }
+      raf = requestAnimationFrame(loop);
+    };
+    const io = new IntersectionObserver(([e]) => {
+      el.dataset.on = String(e.isIntersecting);
+      if (e.isIntersecting && !on && !calm) { on = true; raf = requestAnimationFrame(loop); }
+      else if (!e.isIntersecting && on) { on = false; cancelAnimationFrame(raf); }
+    }, { threshold: 0.2 });
+    io.observe(el);
+    return () => { io.disconnect(); cancelAnimationFrame(raf); };
+  }, []);
+  const v = k ? crop(s.current.start, w, h, k) : s.current.start;
+  return (
+    <div className={'xbg-gist life ' + kind} ref={ref} aria-hidden="true">
+      <div className="xbg-gist-board" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
+        {Array.from({ length: cols * rows }, (_, i) => <i key={i} ref={(el) => { cells.current[i] = el; }} data-on={v[i] ? '1' : ''} />)}
+      </div>
+    </div>
+  );
+}
+
 export default function Gist({ g }) {
+  if (g.kind === 'collide' || g.kind === 'emblem') return <LifeShow kind={g.kind} />;
+  return <GistDrawn g={g} />;
+}
+
+function GistDrawn({ g }) {
   const ref = useRef(null);
   useEffect(() => {
     const el = ref.current;

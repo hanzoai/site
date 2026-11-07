@@ -136,10 +136,11 @@ html.js .se2-w1:not(.go) i.near { transform: scale(.4); }
 .se2-end .se2-hb-bar span { font-size: 17px; font-weight: 500; font-family: var(--sans); }
 .se2-end ol { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
 .se2-end li { display: flex; align-items: center; gap: 14px; height: 54px; padding: 0 16px; border-radius: 12px; background: var(--se-paper); border: 1px solid rgba(0, 0, 0, .08); font-size: 16px; font-weight: 500; }
-.se2-end li:first-child { background: var(--ink); color: var(--se-paper); border-color: var(--ink); }
+.se2-end ol.m:not(.wait) li:first-child { background: var(--ink); color: var(--se-paper); border-color: var(--ink); }
 .se2-end li > span { font-size: 13px; color: var(--se-body); }
 .se2-end li em { margin-left: auto; font-size: 13px; font-style: normal; color: var(--se-body); }
-.se2-end li:first-child > span, .se2-end li:first-child em { color: var(--se-track); }
+.se2-end ol.m:not(.wait) li:first-child > span, .se2-end ol.m:not(.wait) li:first-child em { color: var(--se-track); }
+.se2-end-out ol.a li, .se2-end-out ol.b li { color: var(--ink); }
 
 /* pricing */
 .se2-price { background: var(--se-room); }
@@ -192,6 +193,8 @@ html.js .se2-w1:not(.go) i.near { transform: scale(.4); }
 @media (max-width: 900px) {
   .se2 .l2-acts a, .se2-fin .l2-band-acts a, .se2-fin .l2-get-meta a { display: inline-flex; align-items: center; min-height: 44px; }
   .se2-fixc, .se2-fix { white-space: nowrap; flex: none; }
+  .se2-rows .se2-fix { display: none; } /* chapter 01 shows the fix; the phone hero row reads the title in full */
+  .se2-doc b { white-space: normal; overflow: visible; }
   .se2-w0 li { min-width: 0; }
   .se2 .l2-stage-obj { padding-inline: 16px; box-sizing: border-box; }
   .se2-end-bar { height: 60px; }
@@ -242,3 +245,7 @@ html.js .se2-w1:not(.go) i.near { transform: scale(.4); }
   .se2-plan .x-btn { width: 100%; }
 }
 @media (prefers-reduced-motion: reduce) { .se2-caret { animation: none; } .se2-w1 line { animation: none; opacity: 1; } }
+/* phone: the shared header keeps its solid "Try Hanzo", so the hero's ask is the quiet one (one solid per screen) */
+@media (max-width: 700px) {
+  .se2 .l2-acts [data-thumb] { background: transparent !important; color: var(--ink) !important; box-shadow: inset 0 0 0 1.5px var(--ink) !important; border-color: var(--ink) !important; }
+}

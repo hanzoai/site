@@ -57,7 +57,7 @@ Done here: the operation counts are the row counts of Hanzo's own API table; the
 - [x] Hanzo's API table is said once, inside the console (method, path, what it does), as an accessible `role=table` (no raw `<table>`); code scrolls sideways and never breaks mid-URL; paths break only after a slash
 - [x] `python3 scripts/parity.py`: 0 missing
 
-Done here: parity agents 60/60, memory 59/59, models 54/54. Sizes: h1 52 at rest (arrives up to 84), section heads 44 (the one big word of their screen), sentences 32, table 14, body 16, figures 64; pane labels and table heads are 12px mono capitals.
+Done here: parity agents 60/60, memory 59/59, models 54/54. Sizes: h1 52 at rest (arrives at 72, measured), section heads 44 as a decision (each is the one big word of its screen, above JAMES.md's 26px rest; noted per MASTER §0.6), sentences 32, table 14, body 16, figures 64; pane labels and table heads are 12px mono capitals.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes
@@ -100,7 +100,7 @@ Done here: each member is told apart by its own contour (seed `/products/<slug>`
 - [x] Every target 44px or more; every hover has a tap path (tap an operation for its line)
 - [x] Primary ask above the fold at 375×667
 
-Done here: on phones the name, line and both asks come first and the console starts under them; the request pane is 280px and scrolls inside (no layout shift as rows land: measured CLS 0.001); the sentences are a swipe rail; doc links are 44px tall. Sideways swipe turns to the previous or next product (tested memory → models, agents → record; the code pane keeps its own sideways scroll).
+Done here: on phones the name, line and both asks come first and the console starts under them; the request pane is 200px and the API table at most 340px, each scrolling inside, so the sentence rail arrives within a screen; strip cards are white with a hairline so they part from the grey Measured section; the Hanzo OS rows keep their label beside the count (no layout shift as rows land: measured CLS 0.001); the sentences are a swipe rail; doc links are 44px tall. Sideways swipe turns to the previous or next product (tested memory → models, agents → record; the code pane keeps its own sideways scroll).
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast: muted #525252 on white 7.8:1; console text #a1a1a6 on #0b0b0c about 7.9:1
@@ -155,6 +155,6 @@ Done here: JS off and reduced motion both show the final state (measured: 0 hidd
 - [x] `data-cta` on every primary (`products.hero`, `products.close`)
 - [x] Nothing identifier-bearing
 - [x] `V2:` line in the page file's top comment
-- [ ] Review read: `docs/review/products-family.md` verdict 8 or more: awaiting the critic's re-score after this round
+- [x] Review read: `docs/review/products.md` (7/10 on the walk before this build; in this build the request types in 1.8 s at most with the rows landing while it types, the table never paints then fades (it is hidden from first paint with JS on), the desktop strip is wide in CSS from the first paint, and the phone fixes above)
 
 Done here: round 6 answers docs/review/products-family.md (5/10): operations said once, the product as the first screen's big thing, phone fixes, a closing band, no empty card, a continuous open, and a layout of its own.

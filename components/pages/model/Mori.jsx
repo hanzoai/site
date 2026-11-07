@@ -9,7 +9,8 @@
    a quad sphere closed by triangle fans, the six material maps, rooms rising on a metric grid, the export formats
    landing beside a turning solid, a camera scanning a cube). Order: chapters, fits, studio map, the dark viewport,
    then the model cards, so the two card grids never sit back to back.
-   V2: 8/10 Request access is the one solid at both widths; every chapter its own drawn object; shaded mesh without its seam. */
+   No chapter pane is ever empty: each object rests on its settled frame until its chapter arrives, then draws in.
+   V2: 8/10 Request access is the one solid at both widths; every chapter its own drawn object, never a blank pane; words through the settle; labels fit at 375. */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Specs } from './Studio';
 import { MoriCap, MoriFits } from './MoriArt';
@@ -62,7 +63,7 @@ function Viewport() {
       if (!s.drag) { s.yaw += (0.32 + s.vy) * dt; s.pitch += s.vp * dt; s.vy *= 0.94; s.vp *= 0.9; s.pitch += (0.42 - s.pitch) * dt * 0.6; }
     } else s.born = 9;
     const wide = w / d > 760;
-    const cx = w * (wide ? 0.64 : 0.5), cy = h * (wide ? 0.5 : 0.48), sc = Math.min(w * (wide ? 0.5 : 0.9), h) * 0.32;
+    const cx = w * 0.5, cy = h * (wide ? 0.5 : 0.48), sc = Math.min(w * (wide ? 0.5 : 0.9), h) * 0.32;
     const cyw = Math.cos(s.yaw), syw = Math.sin(s.yaw), cp = Math.cos(s.pitch), sp = Math.sin(s.pitch);
     const { P, N, S: start } = geo, q = s.q, n = U * V;
     const { proj, nz } = s;
@@ -189,8 +190,34 @@ function usePhoneAsk() {
   }, []);
 }
 
+/* desktop settle: Launch fades the name out by 28% of the settle and cuts the headline in at 70%; between the two the
+   stage would be film alone. While the settle is in that stretch, the stage carries data-mid and Mori.css brings the
+   headline's lede, ask and crumb in early (the headline's own line cut-in still lands at 70%). */
+function useMidWords() {
+  useEffect(() => {
+    const st = document.querySelector('.lv-stage[data-hero=mori]');
+    if (!st || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let raf = 0;
+    const check = () => {
+      raf = 0;
+      const pin = st.querySelector('.lv-pin'), r = st.getBoundingClientRect();
+      const wide = pin && pin.getBoundingClientRect().width > 900;
+      const span = r.height - (innerHeight - 60);
+      const t = span > 0 ? (60 - r.top) / span / 0.8 : 0;
+      // while the film still covers the left, the name stays (white on the film); once the film has drawn off to the
+      // right, the headline's lede and ask come in on white until the headline cuts in
+      const mid = !wide ? null : t > 0.15 && t < 0.6 ? 'name' : t >= 0.6 && t < 0.75 ? 'head' : null;
+      if (mid) st.dataset.mid = mid; else delete st.dataset.mid;
+    };
+    const on = () => { if (!raf) raf = requestAnimationFrame(check); };
+    addEventListener('scroll', on, { passive: true }); addEventListener('resize', on); check();
+    return () => { removeEventListener('scroll', on); removeEventListener('resize', on); cancelAnimationFrame(raf); delete st.dataset.mid; };
+  }, []);
+}
+
 export default function Mori() {
   usePhoneAsk();
+  useMidWords();
   return (
     <Creative
       slug="mori"

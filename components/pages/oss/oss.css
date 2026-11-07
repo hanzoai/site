@@ -76,6 +76,12 @@ html.js .xos-list:not([data-in]) > li { animation-play-state: paused; }
 /* the forge's own figures, once, as hairline rows with their shares */
 .xos-fg { padding: clamp(44px, 5vw, 72px) 0; }
 .xos-fg-g { align-items: start; row-gap: 27px; }
+/* a forge with one figure or none reads as one column: the heading, then its line, no half-empty grid */
+.xos-fg.thin .xos-fg-l, .xos-fg.thin .xos-fg-r { grid-column: 1 / -1; position: static; }
+.xos-fg.thin .xos-fr > div { padding-top: 27px; }
+/* one big figure per screen: the forge's strongest row is the moment (64px, growing); the others rest at 32px */
+.v2f.xos .xos-fr dd.v2f-fig { font-size: 32px; }
+.v2f.xos .xos-fr .v2f-grow dd.v2f-fig { font-size: 64px; }
 .xos-fg-l { grid-column: 1 / span 5; display: flex; flex-direction: column; gap: 10px; position: sticky; top: 104px; }
 .xos-fg-r { grid-column: 7 / span 6; min-width: 0; }
 .xos-fr { margin: 0; }
@@ -135,10 +141,10 @@ html.js .xos-list:not([data-in]) > li { animation-play-state: paused; }
 .xos-lang { font: 606 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink); }
 .xos-arch { padding: 3px 8px; border-radius: 99px; border: 1px solid rgba(0, 0, 0, .14); letter-spacing: .06em; text-transform: uppercase; }
 .xos-row-w { color: #d4d4d4; height: 32px !important; }
-.xos-list li.lead .xos-row { padding: 32px 12px; }
+.xos-list li.lead .xos-row { padding: 20px 12px; }
 .xos-list li.lead .xos-name { font-size: 26px; letter-spacing: -.02em; }
 .xos-list li.lead .xos-desc { -webkit-line-clamp: 2; font-size: 16px; }
-.xos-list li.lead .xos-row-w { height: 72px !important; color: #a3a3a3; }
+.xos-list li.lead .xos-row-w { height: 48px !important; }
 .xos-ends { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 6px; flex: none; }
 .xos-gh { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; color: var(--soft); text-decoration: none; transition: background-color var(--ui) var(--ease-o), color var(--ui) var(--ease-o), transform 150ms var(--ease-o); }
 @media (hover: hover) { .xos-gh:hover { background: var(--card); color: var(--ink); } }

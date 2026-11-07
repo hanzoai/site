@@ -27,6 +27,8 @@ import Sigil from '../../Sigil';
 import { Loose } from '../models/parts';
 import { media } from '../../../lib/models';
 import { play } from '../../../lib/sound';
+import { useRouter } from 'next/navigation';
+import { openTile, prefetchTile } from './openTile';
 import FamLines from '../../v2/FamLines';
 import FamDrawer from '../../v2/FamDrawer';
 import '../../v2/fam.css';
@@ -70,10 +72,10 @@ export function useReel(n, box, ms = 5200) {
 }
 
 /* each job's own framing of the film (where it looks, how close) and its own moment of it */
-/* job 01 is the solution's own model film (as on hanzo.ai); jobs 02–05 and the closing band each take another of
-   Hanzo's nine model films, so the page never shows one picture twice in a row */
+/* the hero is the solution's own model film (as on hanzo.ai); the five jobs and the closing band each take another
+   of Hanzo's nine model films, so the page never shows one picture twice */
 const FILMS = ['kai', 'enso', 'iro', 'koe', 'koma', 'mori', 'oto', 'uta', 'zen'];
-const otherFilm = (own, k) => { const rest = FILMS.filter((f) => f !== own); return rest[(FILMS.indexOf(own) + k * 2 + rest.length) % rest.length]; };
+const otherFilm = (own, k) => { const rest = FILMS.filter((f) => f !== own); return rest[(Math.max(0, FILMS.indexOf(own)) + k * 3) % rest.length]; }; // 3 is coprime with 8: six distinct films
 // [where it looks, how close, mirrored, turned]: five framings that read as five different shots of one film
 const FRAMES = [['50% 50%', 1.06, 1, 0], ['40% 35%', 1.9, -1, 0], ['62% 62%', 1.4, 1, 0], ['45% 70%', 2.5, -1, 0], ['58% 40%', 1.6, 1, 0], ['50% 55%', 2.1, -1, 0]];
 function Shot({ slug, k, n, on, plain }) {
@@ -167,7 +169,7 @@ function Strip({ reel, n }) {
           <motion.ol ref={track} className="xs2-track" style={wide ? { x } : undefined}>
             {reel.steps.map((s, k) => (
               <li key={s.title} className="xs2-panel" data-on={k === at ? '' : undefined}>
-                <Shot slug={k ? otherFilm(reel.slug, k) : reel.slug} plain={k > 0} k={k} n={n} on={k === at} />
+                <Shot slug={otherFilm(reel.slug, k + 1)} plain k={k} n={n} on={k === at} />
                 <div className="xs2-panel-t">
                   <h2 className="v2f-head">{s.title}</h2>
                   {s.text && <p className="v2f-body">{s.text}</p>}
@@ -183,14 +185,16 @@ function Strip({ reel, n }) {
 
 /* the other teams as a block of their own film stills, each opening into its page (title → the next page's h1) */
 function Teams({ cards, label }) {
+  const router = useRouter();
   if (!cards.length) return null;
   return (
     <nav className={'xs2-teams' + (cards.length < 4 ? ' few' : '')} aria-label={label} data-swipe-own>
       {cards.slice(0, 6).map((c) => (
-        <A key={c.href} to={c.href} className="xs2-team">
+        // a team card opens into its page: its still grows from the card while that page loads, its title lands on the h1
+        <A key={c.href} to={c.href} className="xs2-team" data-no-morph onClick={(e) => openTile(e, c.href, router)} onPointerEnter={() => prefetchTile(c.href, router)} onTouchStart={() => prefetchTile(c.href, router)}>
           <span className="xs2-team-f" aria-hidden="true">{c.film ? <Img src={media(c.film, 'webp')} w={1200} h={1500} /> : null}</span>
           <span className="xs2-team-m x-mono">{c.meta}</span>
-          <span className="xs2-team-t" data-morph>{c.title}</span>
+          <span className="xs2-team-t" data-morph data-open-name>{c.title}</span>
           {c.preview && <span className="xs2-team-p">{c.preview}</span>}
         </A>
       ))}
@@ -341,7 +345,7 @@ export default function Solution({ doc, data }) {
 
       {doc.band && (
         <section className="xs2-band" data-room="dark" data-ask-hide>
-          <Film slug={reel && otherFilm(reel.slug, 5)} className="xs2-band-film" />
+          <Film slug={reel && otherFilm(reel.slug, 6)} className="xs2-band-film" />
           <div className="v2f-wrap v2f-grid xs2-band-g">
             <h2 className="v2f-display small xs2-band-h">{doc.band.title}</h2>
             <div className="xs2-band-r">

@@ -9,8 +9,9 @@ Measured on 7 Nov with Playwright, page unchanged on this point (no page-side he
   "Try Hanzo" at 0 and 300 (the hero's own solid ask is on screen, header quiet), "Talk to sales" from 600 to the end,
   solid ink from 1500 on (a light fill over the dark Visit room). No floating bar on desktop.
 - **Phone (375×812): the header keeps "Try Hanzo" at every scroll position.** The slim phone bar carries "Talk to sales"
-  only where nothing sits under it: with the cookie note dismissed it rested once (at scroll 1800, in the Visit room),
-  covering nothing; it never showed over the community rows. With the cookie note still open it never shows.
+  only where nothing sits under it, so it is rare: with the cookie note rejected it rested at one of ~28 scroll steps
+  (about 1760, the Visit room's empty bottom), never over the community rows; a critic saw it at none of 24 steps.
+  With the cookie note still open it never shows.
 
 Ask: on phones, let the header's solid button carry the page's `data-thumb` after the hero, as it already does above
 700px (the same swap in `Ask.jsx`'s desktop effect, without the `min-width: 701px` gate). Then the page's one ask lives

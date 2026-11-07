@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { registerHooks } from 'node:module';
 // the site's modules import without extensions (Next resolves them); plain node needs the .js
 registerHooks({ resolve: (s, c, next) => { try { return next(s, c); } catch (e) { if (s.startsWith('.')) return next(s + '.js', c); throw e; } } });
-const { measure, benchDoc } = await import('./benchData.js');
+const { measure, benchDoc, figureOf } = await import('./benchData.js');
 
 assert.deepEqual(measure('92.9%'), { v: 92.9, dim: '%' });
 assert.deepEqual(measure('$5.58'), { v: 5.58, dim: '$' });
@@ -23,4 +23,6 @@ assert.equal(benchDoc('fleet').chart.kind, 'versus');                       // H
 const gpqa = benchDoc('gpqa').chart;
 assert.equal(gpqa.rows.find((r) => r.label === 'deepseek-v4-pro').cells[2].s, '$0.203'); // the live re-priced run cost
 assert.equal(benchDoc('sandbox').chart.kind, 'one');
+assert.equal(figureOf(benchDoc('gpqa')), '92.9%');                          // a sibling card's figure: Hanzo's own row
+assert.equal(figureOf(benchDoc('fleet')), '477 bytes');
 console.log('bench data: OK');

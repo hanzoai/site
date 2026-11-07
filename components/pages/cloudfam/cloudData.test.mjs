@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import { registerHooks } from 'node:module';
 registerHooks({ resolve: (s, c, next) => { try { return next(s, c); } catch (e) { if (s.startsWith('.')) return next(s + '.js', c); throw e; } } });
-const { MEMBERS, cloudDoc, googlePairs } = await import('./cloudData.js');
+const { MEMBERS, cloudDoc, googlePairs, previewsOf } = await import('./cloudData.js');
 
 assert.equal(MEMBERS().length, 42);
 const g = cloudDoc('gpus');
@@ -17,4 +17,8 @@ assert.equal(cloudDoc('local').boot.lines[0].text, 'curl -fsSL https://hanzo.sh 
 assert.deepEqual(cloudDoc('chat').related.more, [{ href: 'https://docs.hanzo.ai/docs/chat', label: 'Chat docs →' }]);
 assert.equal(googlePairs().length, 18);
 assert.ok(googlePairs().every((p) => p.google && p.api.startsWith('/v1/')));
+// a neighbour's hover preview is that product's own words, and only /cloud/* products have one
+assert.deepEqual(previewsOf(cloudDoc('kubernetes'))['/cloud/gpus'], { name: 'GPUs', label: 'Generally available', lede: 'On-demand accelerators, by the second.', api: '/v1/compute/gpus', google: 'Compute Engine GPUs' });
+assert.equal(previewsOf(cloudDoc('kubernetes'))['/machines'], undefined);
+assert.deepEqual(previewsOf(cloudDoc('local')), {});
 console.log('cloud data: OK');

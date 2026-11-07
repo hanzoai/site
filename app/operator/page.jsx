@@ -1,5 +1,5 @@
-// Signature: the reconcile loop, live — git on one side, the cluster on the other, a sweep logging created, reverted or already in sync
-// Beyond: break it yourself — edit by hand, remove a file from git, install twice, push or turn on autoscaling, and the loop answers as Hanzo says it does
+// Signature: drift, reverted, said out loud — a live cluster board where a Kind drifts and the next sweep puts it back, the log saying created, reverted or already in sync
+// Beyond: drift it yourself — drag a Kind out of place (or tap it on a phone) and the next sweep reverts it, with the log saying so
 import Operator from '../../components/pages/Operator';
 import JsonLd from '../../components/JsonLd';
 import INDEX from '../../content/pages.json';

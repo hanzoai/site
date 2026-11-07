@@ -149,7 +149,7 @@ Done here: one code pane, Hanzo's `hanzo.payments.create` request in greys (kit 
 - [x] A failed submit keeps its values and shows no success (n/a: no form)
 - [x] A thrown island does not blank the page
 
-Done here: no live data; the checkout shows every state it narrates (method, vault token, rule, soft decline as an inverted chip, backup, `succeeded` as an outlined chip); the split's empty state is "Roll back at once" disabled at 0%. Film: no console errors.
+Done here: no live data; the checkout shows every state it narrates (method, vault token, rule, soft decline as an inverted chip, backup, `succeeded` as an outlined chip); the split's empty state is "Roll back at once" disabled at 0%. Each attempt row wraps its chip inside the row when narrow (measured 0px overflow at step 04 at 1470 and 375). The split's `--f` style is a string on server and client (one cause of a hydration warning the critic traced); the shared footer's own mismatch is not this page's file.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary; events only through `lib/track.js` (data-cta set; `lib/track.js` not on main yet)

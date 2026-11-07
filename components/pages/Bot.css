@@ -67,21 +67,27 @@
 .bt-pk.v { background: #737373; }
 
 .bt-log { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; padding: 0 10px 10px; }
-.bt-msg { display: flex; gap: 12px; align-items: flex-start; height: 200px; padding: 16px; border-radius: 16px; background: #f5f5f5; overflow: hidden; }
+.bt-msg { display: flex; gap: 12px; align-items: flex-start; min-height: 168px; padding: 16px; border-radius: 16px; background: #f5f5f5; overflow: hidden; }
 .bt-msg .bt-face { transition: opacity .3s; }
 .bt-msg-in { position: relative; flex: 1; min-width: 0; }
 .bt-msg p { margin: 0; font-size: 14px; line-height: 1.5; color: #0a0a0a; }
 .bt-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; margin-bottom: 6px !important; }
 .bt-meta b { font-size: 14px; font-weight: 606; }
 .bt-meta span { font-size: 13px !important; color: #525252 !important; }
-.bt-dots { position: absolute; left: 0; top: 30px; display: flex; gap: 5px; }
+.bt-dots { position: absolute; right: 0; top: 7px; display: flex; gap: 5px; }
 .bt-dots i { width: 6px; height: 6px; border-radius: 50%; background: #737373; }
 .bt-msg.on .bt-dots { display: none; }
 .js .bt-msg:not(.on) .bt-dots i { animation: bt-dot 1s ease-in-out infinite; }
 .bt-dots i:nth-child(2) { animation-delay: .15s !important; } .bt-dots i:nth-child(3) { animation-delay: .3s !important; }
 @keyframes bt-dot { 0%, 100% { transform: none; } 40% { transform: translateY(-4px); } }
-.js .bt-msg:not(.on) .bt-reply { opacity: 0; transform: translate3d(0, 6px, 0); }
-.bt-reply { transition: opacity .3s var(--av-ease), transform .4s var(--av-ease); }
+/* while the bot types, its reply shows as skeleton lines the exact size of the coming text (one bar per line), then the words fill in */
+.bt-reply p, .bt-reply .bt-badge { transition: color .35s var(--av-ease), background-color .35s var(--av-ease), box-shadow .35s var(--av-ease); }
+.js .bt-msg:not(.on) .bt-reply p:not(.bt-art) { color: transparent; background: repeating-linear-gradient(to bottom, transparent 0 .3em, #e4e4e4 .3em 1.2em, transparent 1.2em 1.5em); border-radius: 4px; }
+.js .bt-msg:not(.on) .bt-reply .bt-art { color: transparent !important; background: #ededed; box-shadow: none; }
+.js .bt-msg:not(.on) .bt-reply .bt-badge { color: transparent !important; background: #e4e4e4; }
+.js .bt-msg:not(.on) .bt-reply p:has(.bt-badge) { background: none; }
+.js .bt-msg:not(.on) .bt-reply { animation: bt-skel 1.4s ease-in-out infinite; }
+@keyframes bt-skel { 50% { opacity: .55; } }
 .bt-art { display: inline-block; margin-top: 10px !important; padding: 6px 10px; border-radius: 8px; background: #fff; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .1); font-size: 13px !important; color: #525252 !important; }
 .bt-badge { display: inline-block; margin-bottom: 6px; padding: 3px 8px; border-radius: 6px; background: #0a0a0a; color: #fff !important; font-size: 12px !important; letter-spacing: .1em; }
 
@@ -367,7 +373,11 @@
 .bt-need input:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 4px; border-radius: 8px; }
 .bt-need output { font-size: 14px; color: #525252; }
 .bt-need output b { color: #0a0a0a; font-weight: 606; }
-.bt-plans { grid-column: 7 / -1; list-style: none; margin: 0; padding: 0; align-self: start; }
+.bt-price .av-grid { align-items: start; }
+/* pricing reads as one screen: the slider, the plan it lights and the footnote, without a dead band above */
+.bt-price.av-sec { padding-top: clamp(72px, 7vw, 104px); }
+.bt-plans-w { grid-column: 7 / -1; }
+.bt-plans { list-style: none; margin: 0; padding: 0; }
 .bt-plans > li { position: relative; padding: 20px 22px; border-top: 1px solid rgba(0, 0, 0, .1); }
 .bt-plans > li:last-child { border-bottom: 1px solid rgba(0, 0, 0, .1); }
 .bt-plans > li.pick, .bt-plans > li.pick + li { border-top-color: transparent; }
@@ -385,18 +395,32 @@
 .bt-plan-l li::before { content: ''; position: absolute; left: 0; top: .6em; width: 5px; height: 5px; border-radius: 50%; background: #a3a3a3; }
 .bt-plan-l li.bt-bots { color: #0a0a0a; font-weight: 606; }
 .bt-plan-l li.bt-bots::before { background: #0a0a0a; }
-.bt-free { grid-column: 7 / -1; margin: 20px 0 0; padding-left: 22px; font-size: 14px; color: #525252; }
-.bt-fleet { margin-top: clamp(56px, 6vw, 88px); padding-top: 32px; border-top: 1px solid rgba(0, 0, 0, .1); }
-.bt-fleet .bt-cap { margin-top: 24px; }
-.bt-fleet-l { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; margin-top: 27px; padding-top: 27px; border-top: 1px solid rgba(0, 0, 0, .1); }
+.bt-free { margin: 16px 0 0; padding-left: 22px; font-size: 14px; color: #525252; }
+.bt-fleet { margin-top: clamp(56px, 6vw, 88px); padding-top: 44px; border-top: 1px solid rgba(0, 0, 0, .1); align-items: start; }
+.bt-fleet-c { grid-column: 1 / span 5; }
+.bt-fleet-l { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+/* the rack: one drawn machine per bot on the slider; its four parts light in turn with the matching row */
+.bt-rack { grid-column: 7 / -1; display: flex; flex-direction: column; gap: 20px; }
+.bt-rack-m { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 6px; padding: 14px; border-radius: 20px; background: #f5f5f5; }
+.bt-mc { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 4px; border-radius: 10px; background: #fff; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .08); transition: opacity .35s var(--av-ease), transform .35s var(--av-ease); transition-delay: calc(var(--i) * 30ms); }
+.bt-mc:not(.on) { opacity: .28; transform: scale(.94); }
+.bt-mc > i { display: flex; align-items: center; gap: 2px; width: 100%; height: 10px; padding: 0 3px; box-sizing: border-box; border-radius: 3px; background: #f2f2f2; transition: background-color .3s var(--av-ease); }
+.bt-mc > i b { display: block; height: 3px; flex: 1; border-radius: 2px; background: #d4d4d4; transition: background-color .3s var(--av-ease); }
+.bt-mc > i.z0 { height: 4px; }
+.bt-mc > i.z3 b { flex: none; width: 6px; height: 6px; border-radius: 50%; }
+.bt-rack[data-hl='0'] .bt-mc.on .z0, .bt-rack[data-hl='1'] .bt-mc.on .z1, .bt-rack[data-hl='2'] .bt-mc.on .z2, .bt-rack[data-hl='3'] .bt-mc.on .z3 { background: #0a0a0a; }
+.bt-rack[data-hl='1'] .bt-mc.on .z1 b, .bt-rack[data-hl='2'] .bt-mc.on .z2 b, .bt-rack[data-hl='3'] .bt-mc.on .z3 b { background: #fafafa; }
+.bt-rack .bt-cap { margin-top: 0; }
 .bt-fleet-acts { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
 .bt-fleet-acts .x-arrow { color: #0a0a0a; }
 .bt-fleet-l .av-sh-btn { text-align: left; height: auto; min-height: 48px; padding-top: 12px; padding-bottom: 12px; line-height: 1.3; }
-.bt-feats { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px var(--gut); }
-.bt-feats li { display: flex; flex-direction: column; gap: 8px; }
-.bt-feat-f { display: flex; gap: 3px; margin-bottom: 4px; }
-.bt-feats h4 { margin: 0; font-size: 16px; font-weight: 606; }
-.bt-feats p { margin: 0; font-size: 14px; line-height: 1.55; color: #525252; }
+.bt-feats { margin: 0; border-top: 1px solid rgba(0, 0, 0, .1); }
+.bt-feats > div { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: 4px 24px; padding: 14px 0; border-bottom: 1px solid rgba(0, 0, 0, .1); cursor: default; }
+.bt-feats dt { display: flex; align-items: baseline; gap: 10px; font-size: 15px; font-weight: 606; color: #737373; transition: color .3s var(--av-ease); }
+.bt-feats dt .av-num { font-size: 12px; font-weight: 400; color: #737373; }
+.bt-feats dd { margin: 0; font-size: 14px; line-height: 1.5; color: #737373; transition: color .3s var(--av-ease); }
+.bt-feats > div.on dt { color: #0a0a0a; }
+.bt-feats > div.on dd { color: #525252; }
 .bt-why { padding-top: 8px; }
 .bt-why-lede { margin: 0 0 8px; font-size: 16px; line-height: 1.6; color: #525252; }
 .bt-why-i { padding: 22px 0; border-bottom: 1px solid rgba(0, 0, 0, .1); }
@@ -432,12 +456,20 @@
 /* Questions: the first three arrive as messages, then a bot starts to answer */
 .bt-asks { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 100%; }
 .bt-qs { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; width: 100%; margin: 0; }
-.bt-qs > span { max-width: 90%; padding: 10px 16px; border-radius: 18px 18px 4px 18px; background: #0a0a0a; color: #fff; font-size: 16px; line-height: 1.4; }
-.js .bt-asks:not(.on) .bt-qs > span, .js .bt-asks:not(.on) .bt-qs-bot { opacity: 0; transform: translate3d(0, 10px, 0); }
-.js .bt-qs > span, .js .bt-qs-bot { transition: opacity .45s var(--av-ease), transform .6s var(--av-ease); transition-delay: calc(var(--i, 0) * 450ms); }
-.bt-qs-bot { --i: 3; display: flex; align-items: center; gap: 10px; }
-.bt-qs-bot .bt-dots { position: static; padding: 12px 14px; border-radius: 18px 18px 18px 4px; background: #f5f5f5; }
-.js .bt-asks.on .bt-qs-bot .bt-dots i { animation: bt-dot 1s ease-in-out infinite; }
+/* each question is a real button: tap it and the bot answers it in place with Hanzo's own answer */
+.bt-qs > button { max-width: 90%; min-height: 44px; padding: 10px 16px; border: 0; border-radius: 18px 18px 4px 18px; background: #fff; color: #0a0a0a; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .18); font: 400 16px/1.4 var(--sans); text-align: left; cursor: pointer; transition: opacity .45s var(--av-ease), transform .6s var(--av-ease), background-color .2s, color .2s, box-shadow .2s; }
+.bt-qs > button[aria-pressed='true'] { background: #0a0a0a; color: #fff; box-shadow: none; }
+.bt-qs > button:active { transform: scale(.98); }
+.bt-qs > button:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 2px; }
+@media (hover: hover) { .bt-qs > button:not([aria-pressed='true']):hover { box-shadow: inset 0 0 0 1.5px #0a0a0a; } }
+.js .bt-asks:not(.on) .bt-qs > button, .js .bt-asks:not(.on) .bt-qs-bot { opacity: 0; }
+.js .bt-asks.on .bt-qs > button, .js .bt-asks.on .bt-qs-bot { animation: bt-qin .55s var(--av-ease) backwards; animation-delay: calc(var(--i, 0) * 450ms); }
+@keyframes bt-qin { from { opacity: 0; transform: translate3d(0, 10px, 0); } }
+.bt-qs-bot { --i: 3; display: flex; align-items: flex-start; gap: 10px; width: 100%; }
+.bt-qs-a { flex: 1; min-width: 0; min-height: 44px; }
+.bt-qs-a .bt-dots { position: static; display: inline-flex; padding: 12px 14px; border-radius: 18px 18px 18px 4px; background: #f5f5f5; }
+.bt-qs-a p { margin: 0; padding: 12px 16px; border-radius: 18px 18px 18px 4px; background: #f5f5f5; font-size: 16px; line-height: 1.5; color: #0a0a0a; }
+.js .bt-asks.on .bt-qs-a .bt-dots i { animation: bt-dot 1s ease-in-out infinite; }
 .bt-meta2 { display: flex; gap: 32px; margin: 6px 0 4px; font-size: 15px; }
 .bt-meta2 dt { font: 600 12px/1.4 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #737373; }
 .bt-meta2 dd { margin: 4px 0 0; color: #0a0a0a; }
@@ -475,7 +507,7 @@ html:not(.js) .bt .x-line-in { transform: none !important; }
 
 @media (prefers-reduced-motion: reduce) {
   .bt *, .bt *::before, .bt *::after { animation: none !important; }
-  .js .bt-qs > span, .js .bt-qs-bot { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .js .bt-qs > button, .js .bt-qs-bot { opacity: 1 !important; }
   .bt-board li:first-child::before, .bt-board li:first-child em { opacity: 1; }
 }
 
@@ -502,7 +534,9 @@ html:not(.js) .bt .x-line-in { transform: none !important; }
   .bt-row li > b { display: none; }
   .bt-row .bt-face { --s: 30px; }
   .bt-log { grid-template-columns: 1fr; padding: 0 8px 8px; gap: 8px; }
-  .bt-msg { height: 210px; padding: 14px; }
+  .bt-msg { min-height: 0; padding: 14px; }
+  /* phone: the second card stays one line (face, name, dots) until its reply arrives */
+  .js .bt-msg + .bt-msg:not(.on) .bt-reply { display: none; }
   .bt-tabs { margin: 0 8px 8px; }
   .bt-tabs li { flex: none; }
   .bt-tabs button { padding: 0 12px; }
@@ -547,7 +581,8 @@ html:not(.js) .bt .x-line-in { transform: none !important; }
   .bt-plan-l { grid-template-columns: 1fr; }
   .bt-free { padding-left: 0; }
   .bt-fleet-l .av-sh-btn { width: 100%; justify-content: space-between; }
-  .bt-feats { grid-template-columns: 1fr; gap: 24px; }
+  .bt-feats > div { grid-template-columns: 1fr; }
+  .bt-rack-m { grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 10px; }
   .bt-get, .bt-qa, .bt-rel { grid-row: auto; }
 
   .bt-rel { margin-top: 0; }

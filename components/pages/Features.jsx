@@ -171,15 +171,18 @@ function Product({ gi }) {
           <h2 id={'xft-p' + gi} className="w2-headline xft-prod-h"><A to={TO[gi]}>{g}</A></h2>
           {tag && <p className="xft-prod-tag x-mono">{tag}</p>}
           <ol className="xft-rows">
-            {fs.map(([t, d], i) => (
+            {fs.map(([t], i) => (
               <li key={t} className={row === i ? 'on' : ''}>
-                <button type="button" aria-expanded={row === i} onClick={() => pick(i)} onFocus={() => pick(i)} onPointerEnter={(e) => { if (e.pointerType === 'mouse') pick(i); }}>
+                <button type="button" aria-pressed={row === i} aria-controls={'xft-d' + gi} onClick={() => pick(i)} onFocus={() => pick(i)}>
                   <span className="x-mono">{pad(i + 1)}</span><b>{t}</b>
                 </button>
-                <div className="xft-row-d"><p>{d}</p></div>
               </li>
             ))}
           </ol>
+          {/* one panel holds every description in the same cell, so it is as tall as the longest and never moves the page */}
+          <div className="xft-desc" id={'xft-d' + gi} aria-live="polite">
+            {fs.map(([t, d], i) => <p key={t} className={row === i ? 'on' : ''} aria-hidden={row !== i}>{d}</p>)}
+          </div>
         </div>
         <div className="xft-film-w">
           <A to={TO[gi]} className="xft-film" tabIndex={-1} aria-hidden="true">

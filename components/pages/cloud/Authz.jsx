@@ -1,6 +1,6 @@
 'use client';
 /* Authz.
-   V2: 8/10 First screen tightened so the true/false answer is above the fold (phones get a compact answer line); the statement gets a drawn token → question → true line; spec figures count up with hairlines drawing; related rows point the console; phone rules become a snap swipe rail; request marks name themselves on hover.
+   V2: 8/10 Round 3: hero on a shared 8/5 baseline with the whole decision panel above 801; the pin is 0.7 screen a chapter and each scene grows .94→1 as it arrives (05's token scrubs across the edge, 04 on white); token and chips never break mid-word; 64px answer only in the hero (44 elsewhere); the statement's "true" is in the HTML from the start; hovers on GitHub, the switch and the location rows.
    Persona: a developer adding authorization to a service (Hanzo's own words: "a library, not a service").
    Goal: understand the one rule in one look, then read the docs or take the library.
    CTA: "Read the docs" → https://docs.hanzo.ai/docs/projects/hanzoai/authz (solid, data-cta authz.hero, data-thumb);
@@ -17,7 +17,7 @@
    be delegated, with Hanzo's own sentence on why. Built only from the path rule on this page.
    Every word and link is Hanzo's; the demo's labels (caller, location, can, grant, target) are UI. */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion } from 'motion/react';
+import { motion, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
 import { Count } from '../../ui';
 import { useLive, useSteps } from './Frame';
 import KeynoteStage, { useStagePause } from '../../v2/KeynoteStage';
@@ -201,7 +201,7 @@ function SayLine() {
       <span className="az-line-l" style={{ '--d': '.75s' }}><i /></span>
       <div className="az-line-n a">
         <span className="az-line-k">can</span>
-        <span className="az-line-w"><span className="az-a-t">true</span></span>
+        <span className="az-line-w">true<i className="az-line-u" /></span>
       </div>
     </div>
   );
@@ -316,6 +316,10 @@ function DelegateScene() {
 /* 05: more grants, the same token */
 function TokenScene({ p, on }) {
   const k = useStepOf(p, LOC.length, on);
+  /* desktop: the token is written at the grants and travels across the edge as you scroll through the chapter
+     (phones: it stands at rest, p is null) */
+  const rest = useMotionValue(1);
+  const x = useTransform(p || rest, [0, 0.6], ['-45%', '0%'], { clamp: true });
   return (
     <div className="kn-obj az-sc az-tok">
       <div className="az-tok-g">
@@ -323,14 +327,14 @@ function TokenScene({ p, on }) {
         <ul>{LOC.map((l, i) => <li key={l} className={i <= k ? 'on' : ''}>{l}</li>)}</ul>
       </div>
       <div className="az-tok-e" aria-hidden="true"><span>edge</span></div>
-      <div className="az-tok-t">
+      <motion.div className="az-tok-t" style={p ? { x } : undefined}>
         <p className="az-sc-k">token</p>
         <div className="az-jwt" aria-hidden="true"><i /><i /><i /></div>
         <dl>
           <div><dt>path</dt><dd>{LOC[Math.min(k, 2)]}</dd></div>
           <div><dt>role</dt><dd><i aria-hidden="true" /></dd></div>
         </dl>
-      </div>
+      </motion.div>
     </div>
   );
 }
@@ -460,6 +464,7 @@ export default function Authz() {
         className="az-ch"
         side="right"
         swap="fade"
+        tall={70}
         count
         head={
           <div className="kn-grid az-say">

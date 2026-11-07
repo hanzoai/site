@@ -87,7 +87,15 @@ Done here: parity text 72/72, links 10/10. The lede is 44ch and the row text 44c
 - [x] Differs from neighbours in hero medium and room order
 
 Done here:
-- `deck.css` is imported. The h1 is the deck's clamp(52px, 7vw, 84px) at 1.02. Headings are 497, and the hero and stage figures are Air 220.
+- **Scale has rhythm (round 2, JAMES 1).** Measured computed sizes:
+  - h1 52px (phone 40px);
+  - "Every launch", "Backed by builders." and "Launch with us" all 26px;
+  - index names 21px (phone 17px);
+  - stage figure 64px at rest (it arrives at 84px as the moment, then settles);
+  - second stage figures 26px.
+
+  One big thing per screen: the plate's $8.4M (112px) on the first screen, the stage figure in the index, and the sliding close figures (176px). These are page-local overrides of `company/deck.css`; the shared file is untouched. Headings are 497, and figures are Air 220.
+- The plate never prints the case name twice. A missing logo leaves the corner to the year only ("2020", "2015"), and the h3 carries the name.
 - Container 1152, sections clamp(72px, 11vw, 188px), buttons 48px.
 - Radii are deck values: plate 20 (art card), stage 24 (tile), pills full. These are literals in page CSS because `tokens.css` has not merged.
 - The row sheet ends 12px short of the stage.
@@ -112,8 +120,10 @@ Done here:
 - [ ] n/a: sound (the shared kit has not merged)
 
 Done here:
-- **Signature:** the launch stage. As each row crosses the middle, or under the pointer, the outgoing figure leaves (150ms, rising 16px), then the incoming one arrives (300ms ease-emphasis). Playwright saw at most 1 layer at a time.
-- Figures longer than 8 characters step down, and every figure stays on one line. Measured with a text Range at 1470: every stage figure is 1 line box; "120,000 ETH" is 51.45px and 282px wide with 22px to spare; "250,000" at 84px is 300px wide with 4px to spare.
+- **Signature (round 2):** the launch stage rolls like a slot. As each row crosses the middle, or under the pointer, the outgoing panel rises out of the stage's mask while the incoming one rises in right behind it: 400ms ease-in-out each, edge to edge.
+  - Measured by scrolling the index continuously in 60px steps (26 samples): the stage was never blank (0/26), two panels were in flight in 10 samples, and they overlapped by 0px, so nothing overprints. The old exit-then-enter gap read blank in 6 of 30 samples in the review.
+  - The lead figure arrives as the moment (scale 84/64, or 1.15 for long figures), holds about 1.1s, then settles to its 64px rest (500ms). Long figures ("120,000 ETH") rest at 44px. Every figure stays on one line.
+- **Phone, one number once per screen:** while a row is the one being read, its own first figure fades out (300ms), because the strip carries it. Sampled 12 swipes: the strip's figure never appeared twice on screen (0/12).
 - **Phone scene:** a slim sticky strip (64px) sits right under the year rail (rail 60–121px, strip 121–185px at 375×812) and carries the first figure and label of the row crossing the middle, swapping as the desktop stage does (out 150ms rising 16px, then in 300ms ease-emphasis, `AnimatePresence mode="wait"`). Playwright, scrolling 300px at a time through the index: $2.5M → 250,000 → $135K → 120,000 ETH → $500M → $650M → €150M → 169M → Cover Build → Myle Tap → Personas Social, with exactly one strip layer each time. Rows also still read in (name to ink, figures settle once). Under reduced motion the strip swaps with no movement.
 - **Supporting:** the line-mask h1; the plate's turn (Damon, KANOA, back to Damon, rest), where the outgoing text fades in 0.15s before the edge crosses it; the closing figure rows sliding with scroll.
 - **State:** the year filter closes the list up with a 300ms glide.
@@ -148,7 +158,7 @@ Done here:
 - [x] Keyboard reaches every control
 
 Done here:
-- Plate cases are `role=tabpanel`, labelled by the kit tabs; inactive ones are `inert`.
+- Plate cases are `role=tabpanel`, labelled by the kit tabs; inactive ones are `inert`. **Hydration check:** `at` starts at 0 on the server and on the first client render, so `inert` and `aria-hidden` match. Reduced motion is read with the hydration-safe `useCalm` (false until mounted). A real reduced-motion mismatch from `useReducedMotion` was found and fixed in round 1. No attribute mismatch was logged in this round's 8 Playwright loads.
 - Row figures stay in the accessibility tree on desktop (visually hidden), while the stage is `aria-hidden`.
 - A year tap announces one line through a `role=status` count ("2018: 3 launches"), not the whole list.
 
@@ -207,6 +217,13 @@ Done here: with hanzo.ai blocked (this box), the page is complete. The only cons
   - Hanzo's order is kept;
   - `aria-live` is narrowed;
   - the card is corrected.
+
+  Round 2 (7/10, scale): all five fixes are in.
+  - Scale rests at h1 52 / headings 26 / names 21, with one big figure per screen.
+  - The phone strip never doubles a figure.
+  - The plate never prints the name twice.
+  - The stage is never blank.
+  - Hydration was checked.
 
   The next review is pending.
 

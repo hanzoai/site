@@ -1,6 +1,6 @@
 'use client';
 /* Studio.
-   V2: 8/10 hero recomposed (52px h1 at 38%, monitor and first timeline row on the first screen, ask row inline on phone), the six explainer boxes became one wired node graph with a single detail pane, specs a hairline list, REC moved under "Get Studio", "Open Studio" drops into the monitor instead of reloading the page, 26px section heads, deck greys and timings, hovers that say something (timecodes, arrow, chip fills), reduced-motion film hydration fixed.
+   V2: 8/10 white holes closed (47-131px between sections, the reel pulled up under the card), changeovers cut instead of blending (out in 150 ms, titles in by line mask), reel 240svh with bigger subject-framed moves and a frame that grows .92 to 1, phone reel a sticky 2.39:1 frame that swaps per pillar, phone h1 36px in 3 lines with the monitor at 413px, one solid plus one text link at the close.
    Persona: a director or a VFX team. Goal: launch Studio. CTA: Launch studio.hanzo.ai (studio.hero).
    Metric: cta_click on studio.hero and studio.close (data-cta; the event layer is the conductor's).
    Signature: the camera moves with your scroll. After the cutting room, a 2.39:1 frame pins on a white stage; each
@@ -52,6 +52,12 @@ const SPECS = [
   'Multi-shot NLE timeline sequencer with frame-chained Koma 2.0 video, Oto foley, Uta score & Node Graph pipeline',
 ];
 const pad = (n) => String(n).padStart(2, '0');
+// bring one item of a horizontal rail to its centre by scrolling the rail itself (never the page)
+const follow = (rail, el, smooth) => {
+  if (!rail || !el || rail.scrollWidth <= rail.clientWidth + 1) return;
+  const r = rail.getBoundingClientRect(), b = el.getBoundingClientRect();
+  rail.scrollTo({ left: rail.scrollLeft + (b.left + b.width / 2) - (r.left + r.width / 2), behavior: smooth ? 'smooth' : 'auto' });
+};
 const wave = (k, n) => Array.from({ length: n }, (_, i) => 22 + ((i * 37 + k * 23) % 61)); // a fixed waveform per clip
 
 function Cinema() {
@@ -64,6 +70,11 @@ function Cinema() {
   const [model, setModel] = useState(1);
   const t = useRef(0), cur = useRef(0), sec = useRef(-1), drag = useRef(false);
   const imgs = useRef([]), lanes = useRef(null), ph = useRef(null), tc = useRef(null), bar = useRef(null), ret = useRef(null);
+  const lib = useRef(null), inLib = useRef(false);
+  useEffect(() => { // the library rail follows the shot on the monitor (left alone while the pointer is in it)
+    if (inLib.current) return;
+    follow(lib.current, lib.current?.querySelector('[aria-pressed="true"]')?.parentElement, !calm);
+  }, [shot, calm]);
 
   // one frame of the film, written straight to the elements (no React render per frame)
   const paint = () => {
@@ -142,7 +153,7 @@ function Cinema() {
               {SHOTS.map((x, i) => <span key={x.title} className={'xst-clip w' + (i === shot ? ' now' : '')}>{wave(i, 16).map((h, j) => <i key={j} style={{ transform: `scaleY(${h / 100})` }} />)}</span>)}
             </div>
             <div className={'xst-track k' + (MODELS[model] === 'Koe' ? ' on' : '')}>
-              {SHOTS.map((x, i) => <span key={x.title} className={'xst-clip' + (i % 2 ? ' gap' : '') + (i === shot ? ' now' : '')}>{i % 2 ? null : wave(i + 7, 10).map((h, j) => <i key={j} style={{ transform: `scaleY(${h / 100})` }} />)}</span>)}
+              {SHOTS.map((x, i) => <span key={x.title} className={'xst-clip' + (i % 2 ? ' gap' : i === shot ? ' now' : '')}>{i % 2 ? null : wave(i + 7, 10).map((h, j) => <i key={j} style={{ transform: `scaleY(${h / 100})` }} />)}</span>)}
             </div>
             <div className={'xst-track u' + (MODELS[model] === 'Uta' ? ' on' : '')}>
               <span className="xst-clip score">{wave(3, 48).map((h, j) => <i key={j} style={{ transform: `scaleY(${h / 120})` }} />)}</span>
@@ -171,7 +182,8 @@ function Cinema() {
           <i className="xst-caret" aria-hidden="true" />
         </A>
         <p className="xst-ik">Library</p>
-        <ul className="xst-lib">
+        {/* three tiles show, the rest wait in the rail with a peek; the rail follows the shot that is playing */}
+        <ul className="xst-lib" ref={lib} onPointerEnter={() => { inLib.current = true; }} onPointerLeave={() => { inLib.current = false; }}>
           {LIB.map(([m, t, k]) => (
             <li key={t}>
               <button type="button" aria-pressed={shot === k && SHOTS[k].title === t} className={MODELS[model] === NAME[m] ? 'mine' : ''} onClick={() => go(k)}>
@@ -181,7 +193,10 @@ function Cinema() {
             </li>
           ))}
         </ul>
+        <p className="xst-note">Hanzo Studio runs at studio.hanzo.ai on dedicated Hanzo Cloud GPUs.</p>
       </aside>
+      {/* Hanzo's three specs, one compact line each, straight under the timeline: no band of their own */}
+      <ul className="xst-specs">{SPECS.map((x, i) => <li key={x}><span className="x-mono">{pad(i + 1)}</span><span>{x}</span></li>)}</ul>
     </div>
   );
 }
@@ -216,10 +231,6 @@ function Hero() {
         <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}>
           <Cinema />
         </motion.div>
-        <div className="xst-foot">
-          <ul className="xst-specs">{SPECS.map((t, i) => <li key={t}><span className="x-mono">{pad(i + 1)}</span><span>{t}</span></li>)}</ul>
-          <p className="xst-note">Hanzo Studio runs at studio.hanzo.ai on dedicated Hanzo Cloud GPUs.</p>
-        </div>
       </div>
     </section>
   );
@@ -254,7 +265,7 @@ function Which() {
           ['Hanzo Design', 'builds everyday visuals, decks, docs, and interactive apps inside your workspace.', <Go key="d" to="/design" solid>Open Hanzo Design</Go>],
           ['Hanzo Studio', 'is a full cinema production suite built for directors, filmmakers, and VFX teams.', <Go key="s" to="https://studio.hanzo.ai" solid>Launch studio.hanzo.ai</Go>],
         ].map(([h, d, go], i) => (
-          <div key={h} className={'xst-ans-c' + (side === i ? ' on' : '')} aria-hidden={side !== i} inert={side !== i}><b>{h}</b><p>{d}</p>{go}</div>
+          <div key={h} className={'xst-ans-c' + (side === i ? ' on' : '')} aria-hidden={side !== i} inert={side !== i}><b><span className="xst-m"><span>{h}</span></span></b><p>{d}</p>{go}</div>
         ))}
       </div>
     </div>
@@ -282,35 +293,71 @@ const PILLARS = [
   ['Character & World Consistency Lock', 'Lock Actor ID identity embeddings, wardrobe, reference stills, and Koe voice profiles so your cast and environment stay frame-accurate across every angle and cut.', 'iro', 1, 'Crane Rise'],
   ['Multi-Shot Timeline & Node Graph', 'Chain shots directly with last-frame conditioning (ConcatVideo), layer Oto foley and Uta musical scores on a multi-track timeline, or drop into the full Comfy-compatible Node Graph pipeline.', 'koe', 4, '360° Orbit'],
 ];
+/* The reel's own moves, bigger than the monitor's so they read at scroll speed. The stills are portrait pictures with
+   their subject right of centre on black, so each move is framed on its subject: the dolly scales about the right edge
+   (the subject slides from the right third into the centre as it pushes in), the crane rises through the mountain,
+   the orbit pans across the wave while the horizon tilts. p = 0..1 through the pillar. */
+const REEL = [
+  (p) => `scale(${1.25 + 0.45 * p})`,
+  (p) => `translate3d(0, ${12 - 24 * p}%, 0) scale(1.32)`,
+  (p) => `translate3d(${-4 - 23 * p}%, 0, 0) scale(1.62) rotate(${-2.5 + 5 * p}deg)`,
+];
+const NARROW = '(max-width: 899px)';
 
 function Reel() {
   const ref = useRef(null);
   const imgs = useRef([]);
+  const frame = useRef(null);
+  const subs = useRef([]);
   const calm = useReducedMotion();
   const [on, setOn] = useState(0);
+  const now = useRef(0), narrow = useRef(false);
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
-  useMotionValueEvent(p, 'change', (v) => {
-    const x = Math.min(0.9999, Math.max(0, v)) * PILLARS.length;
-    const k = Math.floor(x);
-    setOn(k);
+  // one frame of the reel, written straight to the still and the frame (no React render per frame)
+  const paint = (v) => {
+    const q = Math.min(0.9999, Math.max(0, v));
+    // pinned (desktop): the scroll third picks the pillar. Stacked (phone): the caption under the sticky frame does.
+    const k = narrow.current ? now.current : Math.floor(q * PILLARS.length);
+    if (!narrow.current && k !== now.current) { now.current = k; setOn(k); }
+    if (calm) return;
     const el = imgs.current[k];
-    if (el && !calm) el.style.transform = MOVE[PILLARS[k][3]](x - k); // written straight to the still, no render per frame
-  });
+    if (el) el.style.transform = REEL[k](Math.min(1, Math.max(0, q * PILLARS.length - k)));
+    // the frame is the moment: it grows from .92 to full size over the first 15% of the pin, then holds
+    if (frame.current) frame.current.style.transform = narrow.current ? 'none' : `scale(${0.92 + 0.08 * Math.min(1, q / 0.15)})`;
+  };
+  useMotionValueEvent(p, 'change', paint);
+  useEffect(() => { // read after mount: the layout (pinned or stacked) and reduced motion
+    const mq = matchMedia(NARROW);
+    const set = () => { narrow.current = mq.matches; if (calm && frame.current) frame.current.style.transform = 'none'; paint(p.get()); };
+    set();
+    mq.addEventListener('change', set);
+    return () => mq.removeEventListener('change', set);
+  }, [calm]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { // phone: the frame stays stuck under the header and swaps its still as each caption passes under it
+    if (!narrow.current) return;
+    const io = new IntersectionObserver((es) => {
+      es.forEach((e) => { if (e.isIntersecting) { const k = subs.current.indexOf(e.target); if (k >= 0 && k !== now.current) { now.current = k; setOn(k); paint(p.get()); } } });
+    }, { rootMargin: '-30% 0px -60% 0px' });
+    subs.current.forEach((el) => el && io.observe(el));
+    return () => io.disconnect();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <section className="xst-reel" ref={ref} aria-label="Three pillars">
-      <noscript><style>{'.xst-reel{height:auto!important;padding:96px 0}.xst-reel-stick{position:static!important;height:auto!important;display:block!important}.xst-subs{gap:36px}.xst-subs li{grid-area:auto!important;opacity:1!important;transform:none!important}'}</style></noscript>
+      <noscript><style>{'.xst-reel{height:auto!important;padding:96px 0}.xst-reel-stick{position:static!important;height:auto!important;display:block!important}.xst-subs{gap:36px}.xst-subs li{grid-area:auto!important;opacity:1!important;transform:none!important}.xst-m>span{transform:none!important}'}</style></noscript>
       <div className="xst-reel-stick">
         <div className="a2-wrap">
-          <div className="xst-frame">
-            {PILLARS.map(([t, , img], i) => <img key={t} ref={(el) => { imgs.current[i] = el; }} src={`/models/${img}.webp`} alt="" className={i === on ? 'on' : ''} draggable="false" />)}
-            <span className="xst-frame-rig x-mono" aria-hidden="true">{PILLARS[on][4]}</span>
-            <span className="xst-frame-n x-mono" aria-hidden="true">{pad(on + 1)} / 03</span>
+          <div className="xst-frame-pin">
+            <div className="xst-frame" ref={frame}>
+              {PILLARS.map(([t, , img], i) => <img key={t} ref={(el) => { imgs.current[i] = el; }} src={`/models/${img}.webp`} alt="" className={i === on ? 'on' : ''} style={{ transform: REEL[i](0.5) }} draggable="false" />)}
+              <span className="xst-frame-rig x-mono" aria-hidden="true">{PILLARS[on][4]}</span>
+              <span className="xst-frame-n x-mono" aria-hidden="true">{pad(on + 1)} / 03</span>
+            </div>
           </div>
           <ol className="xst-subs">
             {PILLARS.map(([t, d], i) => (
-              <li key={t} className={i === on ? 'on' : ''}>
+              <li key={t} className={i === on ? 'on' : ''} ref={(el) => { subs.current[i] = el; }}>
                 <span className="x-mono">{pad(i + 1)}</span>
-                <h3 className="a2-title">{t}</h3>
+                <h3 className="a2-title"><span className="xst-m"><span>{t}</span></span></h3>
                 <p>{d}</p>
               </li>
             ))}
@@ -363,7 +410,7 @@ function Graph() {
   };
   return (
     <section className="a2-sec xst-graph" ref={ref} aria-labelledby="xst-graph-h">
-      <noscript><style>{'.xst-pane-st{gap:28px}.xst-pane-c,.xst-ans-c{grid-area:auto!important;opacity:1!important;transform:none!important;clip-path:none!important}'}</style></noscript>
+      <noscript><style>{'.xst-pane-st{gap:28px}.xst-pane-c,.xst-ans-c{grid-area:auto!important;opacity:1!important;transform:none!important;clip-path:none!important}.xst-m>span{transform:none!important}'}</style></noscript>
       <div className="a2-wrap">
         <div className="xst-gh">
           <p className="a2-kick">Capabilities</p>
@@ -399,7 +446,7 @@ function Graph() {
               {CAPS.map(([h, d, tag], i) => (
                 <div key={h} className={'xst-pane-c' + (i === lit ? ' on' : '')} aria-hidden={i !== lit}>
                   <em className="x-mono">{tag}</em>
-                  <h3 className="a2-title">{h}</h3>
+                  <h3 className="a2-title"><span className="xst-m"><span>{h}</span></span></h3>
                   <p>{d}</p>
                 </div>
               ))}
@@ -468,14 +515,15 @@ function Chair() {
         <div className="xst-chair-copy">
           <A2Lines id="xst-chair-h" className="a2-display m" lines={['Step into', 'the director’s chair']} />
           <p className="a2-lede">Launch Hanzo Studio at studio.hanzo.ai or open Hanzo Design at hanzo.ai/design.</p>
+          {/* one solid ask and one text link; "Open Studio" (back up into the monitor) waits under the related list */}
           <div className="a2-acts">
             <Cta to="https://studio.hanzo.ai" id="studio.close" thumb className="xst-ask">Launch studio.hanzo.ai</Cta>
-            <Go to="/design">Open Hanzo Design</Go>
-            <Cta to="/studio" kind="link" className="xst-jump" onClick={jump}>Open Studio</Cta>
+            <More to="/design">Open Hanzo Design</More>
           </div>
           <div className="xst-rel">
             <p className="a2-kick">Related capabilities</p>
             <ul>{[['Chat', '/cloud/chat', 'Conversational AI'], ['Bot', '/bot', 'Multi-agent platform'], ['Search', '/search', 'Retrieval & answers']].map(([t, to, d]) => <li key={t}><A to={to} className="xst-rel-a"><b>{t}</b><span>{d}</span><i aria-hidden="true">→</i></A></li>)}</ul>
+            <Cta to="/studio" kind="link" className="xst-jump xst-up" onClick={jump}>Open Studio</Cta>
           </div>
         </div>
         <div className="xst-get">
@@ -483,7 +531,7 @@ function Chair() {
           <p>Visual builder studio</p>
           <span className="xst-mark" aria-hidden="true"><i />REC</span>
           <p className="xst-get-meta x-mono"><span><span>License:</span> GPL-3.0</span><A to="https://github.com/hanzoai">hanzoai</A></p>
-          <Go to="https://platform.hanzo.ai/deploy">Deploy to Cloud</Go>
+          <More to="https://platform.hanzo.ai/deploy">Deploy to Cloud</More>
         </div>
       </div>
     </section>

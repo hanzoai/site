@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import JsonLd from '../../../components/JsonLd';
 import BenchRun from '../../../components/pages/bench/BenchRun';
-import { MEMBERS, benchDoc, metaOf } from '../../../components/pages/bench/benchData';
+import { MEMBERS, benchDoc, metaOf, figureOf } from '../../../components/pages/bench/benchData';
 
 export const dynamicParams = false;
 export const generateStaticParams = () => MEMBERS().map((slug) => ({ slug }));
@@ -26,7 +26,7 @@ export default async function Page({ params }) {
   const T = (n) => (n && typeof n === 'object' ? n.c.map(T).join('') : n || '');
   const peek = Object.fromEntries(all.map((s) => {
     const d = benchDoc(s);
-    const fig = d.latest[0] ? d.latest[0].parts[0] : '';
+    const fig = figureOf(d);
     return [s, { lede: T(d.lede).replace(/\s+/g, ' ').trim(), figure: fig, data: d.figures.map((f) => parseFloat(String(f).replace(/,/g, ''))).filter(Number.isFinite).slice(0, 5) }];
   }));
   return <><JsonLd route={'/benchmarks/' + slug} /><BenchRun doc={doc} near={near} peek={peek} /></>;

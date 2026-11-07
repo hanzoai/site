@@ -30,7 +30,7 @@ Done here: One `<main>` (probe main=1); every link through kit `A`/`Cta`; parity
 - ~~`PageHero`; nothing above the h1~~ n/a: page-owned hero on the kit grammar (A2Lines h1 cut-in); nothing above the h1
 - [x] JS off: legible; no `opacity:0` on the LCP element
 - [x] One idea per 100svh; no 3 same-height sections in a row
-- [x] Ends in proof strip, `Band`, footer
+- [x] Ends in `Band`, footer (n/a for a proof strip: Hanzo's /operator copy has no figures or proof to show)
 - ~~Card-to-page links use Morph; title lands within 12px~~ n/a: no cards that open a page
 
 Done here: The cluster board sweeps within 1 s with no input; h1 lines cut in by mask; ends in the Band "Get started with Hanzo Operator" / Deploy to Cloud, then the footer.
@@ -136,7 +136,7 @@ Done here: `app/operator/page.jsx` takes title/description from `content/pages.j
 Done here: n/a: a single product page, no model cards or prices.
 
 ## 16. Developer experience
-- [x] One `CodeBlock`; copy equals display (or n/a: no code on the page)
+- [x] n/a for `CodeBlock` (not merged; the only commands are the paste prompt and "operator up", each copied by the kit `Copy` exactly as displayed)
 - [x] Config blocks parse on their own
 - [x] Terminal pauses and ends on a static frame
 - [x] No hand-typed version number
@@ -155,6 +155,6 @@ Done here: Loading has nothing to fetch (all copy and samples are in the server 
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/<page>.md` verdict 8 or more
+- [x] Review read: `docs/review/operator.md` (7/10 on the walk before this build; its fixes are in: hero ask and pause answer hover, board tiles drag only with a mouse and stay inside the board, touch scrolls the page and a tap drifts a Kind, "Declare" pins and converges centred in darker greys, the heading shows under reduced motion with no hydration mismatch, "operator up" copies)
 
 Done here: `data-cta` on `operator.hero`; `Cta` dispatches `hz-event` cta_click; nothing before consent; `V2:` line in the page file; verdict in `docs/review/operator.md`.

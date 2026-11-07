@@ -234,7 +234,14 @@
   .xsd-code-first, .xsd-words { grid-row: auto; }
   .xsd-pre { min-height: 0; }
   /* phone: h1, lede and ask, then the console moving right under them; the two dialect notes follow it */
-  .xsd-first { display: flex; flex-direction: column; row-gap: 0; }
+  .xsd-first { display: flex; flex-direction: column; row-gap: 0; align-items: stretch; }
+  .xsd-code-first { width: 100%; min-width: 0; }
+  .xsd-code-first .xsd-con, .xsd-code-first .xsd-pre { min-width: 0; max-width: 100%; }
+  .xsd-pre { overflow-x: auto; }
+  .xsd-con-top { flex-wrap: wrap; row-gap: 8px; }
+  .xsd-mod { min-height: 44px; display: inline-flex; align-items: center; }
+  .xsd-langs { flex-wrap: wrap; row-gap: 4px; }
+  .xsd-langs button { padding: 0 10px; }
   .xsd-words { display: contents; }
   .xsd-words > * { order: 0; }
   .xsd-code-first { order: 1; margin-top: 28px; }
@@ -244,3 +251,5 @@
    library card and the picker's chosen language */
 .xsd-half.dark, .xsd-half.dark h2, .xsd-half.dark h3, .xsd-lib.lead, .xsd-lib.lead h3, .xsd-lib.lead h2 { color: #fafafa; }
 .xsd-pick-l button[aria-selected='true'] { color: #fafafa; }
+/* h3s rest below the 32px section h2s they sit under */
+.xsd-pick-p h3, .xsd-lib h3 { font-size: clamp(21px, 1.8vw, 26px); font-weight: 497; letter-spacing: -.02em; }

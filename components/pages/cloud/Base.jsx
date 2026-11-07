@@ -1,6 +1,6 @@
 'use client';
 /* Base.
-   V2: 8/10 Hero "Try Hanzo" solid on desktop and the stage pulled up (h1 baseline ~36%); collection input and reduced-motion build no longer differ server vs client; unbuilt tiles are faint sketches, pinned under the header; capabilities set 4+2 / 2+4 / 3+3 with hovers that act out each drawing; phones interleave each paragraph with its tile; tighter section steps.
+   V2: 8/10 "Run the binary" is Base's own object (the four places answering the typed collection's records path, cycling idle, hover picks); one solid per viewport at both sizes (header outlines while a page ask shows); capability drawings play once at 60% in view; hero admin row hover shows its record path; dead bands closed; link hovers; deck #262626 solid hover.
    Persona: a developer who needs an app backend (data, users, files, live updates) without wiring one together.
    Goal: see that one binary and one file is the whole backend, then sign in or read the docs.
    CTA: "Try Hanzo" → /login (solid, data-cta base.hero, data-thumb); "Read the docs" → docs.hanzo.ai/…/base (link,
@@ -13,10 +13,11 @@
    its verbs), Auth is Hanzo IAM (a token in, an identity out) and Files and live updates (one stream, records
    arriving). Unbuilt tiles are faint hairline sketches, built ones fill white, the one being built is ink. Phones set
    each paragraph beside its tile and build a tile as it comes into view.
-   Supporting: the Stage hero (the admin settles to the right as you scroll), capability cards that open into a sheet
-   with a shared-element morph (synchronized.studio), and the closing dark room.
+   Supporting: the Stage hero (the admin settles to the right as you scroll; a hovered row shows its record path),
+   capability cards that open into a sheet with a shared-element morph (synchronized.studio) and play their drawing
+   once on arrival, "Run the binary" (the same Base in four places), and the closing dark room.
    Beyond: "Your collection": name the collection you would declare and the whole scene declares that one, with its
-   records path /v1/collections/{name}/records written out the same second.
+   records path /v1/collections/{name}/records written out the same second and carried down to the four places.
    Every word and link is Hanzo's; example rows are blank bars and ids, never invented data. */
 import { useEffect, useRef, useState } from 'react';
 import { useScroll, useMotionValueEvent, useInView } from 'motion/react';
@@ -29,7 +30,6 @@ import KeynoteLines from '../../v2/KeynoteLines';
 import KeynoteOpen from '../../v2/KeynoteOpen';
 import KeynoteClose from '../../v2/KeynoteClose';
 import { useWide } from '../../v2/KeynoteChapters';
-import ExampleConsole from './ExampleConsole';
 import './Base.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/projects/hanzoai/base';
@@ -43,7 +43,9 @@ function Admin() {
   const paused = useStagePause();
   const [view, setView] = useState(0);
   const [n, setN] = useState(9);
-  const run = live && view === 0 && !paused;
+  // pointer: the row under the cursor shows its own record path in the address pill
+  const [hov, setHov] = useState(null);
+  const run = live && view === 0 && !paused && hov === null;
   useEffect(() => {
     if (!run) return;
     const t = setTimeout(() => setN((v) => v + 1), 2600);
@@ -54,7 +56,7 @@ function Admin() {
       <div className="bs-adm-bar">
         <i /><i /><i />
         <span className="bs-adm-t">base</span>
-        <code className="bs-adm-url"><b>GET</b> /v1/collections/posts/records</code>
+        <code className={'bs-adm-url' + (hov !== null ? ' one' : '')}><b>GET</b> /v1/collections/posts/records{hov !== null && <em>/{hex(hov)}</em>}</code>
       </div>
       <div className="bs-adm-b">
         <div className="bs-adm-side" aria-hidden="true">
@@ -72,9 +74,9 @@ function Admin() {
           {view === 0 ? (
             <div className="bs-tbl" aria-hidden="true">
               <div className="bs-tr bs-th"><span>id</span>{FIELDS.slice(0, 1).concat(FIELDS.slice(2)).map(([f]) => <span key={f}>{f}</span>)}</div>
-              <div className="bs-rows" key={n}>
+              <div className="bs-rows" key={n} onMouseLeave={() => setHov(null)}>
                 {Array.from({ length: 8 }, (_, i) => n - i).map((id, i) => (
-                  <div key={id} className={'bs-tr' + (i === 0 ? ' new' : '')}>
+                  <div key={id} className={'bs-tr' + (i === 0 ? ' new' : '') + (hov === id ? ' hov' : '')} onMouseEnter={() => setHov(id)}>
                     <code>{hex(id)}</code>
                     <span><i style={{ width: 38 + ((id * 29) % 50) + '%' }} /></span>
                     <span className="bs-au"><b /><i style={{ width: 30 + ((id * 17) % 40) + '%' }} /></span>
@@ -127,14 +129,13 @@ const PILLARS = [
 const STAGES = ['declare', 'it exists', '01', '02', '03'];
 
 /* The signature: the collection is declared as you scroll and the backend assembles around it. */
-function Declare() {
+function Declare({ name, setName }) {
   const run = useRef(null);
   const vis = useRef(null);
   const wide = useWide();
   // reduced motion is read only after mount, so the server HTML and the first client render match
   const calm = useCalm();
   const seen = useInView(run, { amount: 0.25 });
-  const [name, setName] = useState('posts');
   const coll = name || 'posts';
   const { scrollYProgress: p } = useScroll({ target: run, offset: ['start start', 'end end'] });
   const [s, setS] = useState(0);
@@ -259,9 +260,25 @@ const CAPS = [
 ];
 
 function Caps() {
+  const box = useRef(null);
+  const calm = useCalm();
+  // each card's drawing acts out its idea once as the card comes 60% into view, then rests (hover replays it)
+  useEffect(() => {
+    if (calm || !box.current || typeof IntersectionObserver === 'undefined') return;
+    const timers = [];
+    const io = new IntersectionObserver((es) => es.forEach((e) => {
+      if (!e.isIntersecting) return;
+      io.unobserve(e.target);
+      const el = e.target;
+      timers.push(setTimeout(() => { el.dataset.play = ''; }, 120));
+      timers.push(setTimeout(() => { delete el.dataset.play; }, 1500));
+    }), { threshold: 0.6 });
+    box.current.querySelectorAll('.kno-card').forEach((c) => io.observe(c));
+    return () => { io.disconnect(); timers.forEach(clearTimeout); };
+  }, [calm]);
   return (
     <section className="kn-sec bs-caps">
-      <div className="kn-wrap">
+      <div className="kn-wrap" ref={box}>
         <div className="bs-caps-h">
           <KeynoteLines className="kn-headline" lines="What you get" />
           <p className="kn-kick">Capabilities</p>
@@ -273,23 +290,86 @@ function Caps() {
 }
 
 const PLACES = ['Hanzo Cloud', 'a laptop', 'a box', 'a cluster'];
-function Run() {
+const SIDE = [['Base', '/base'], ['Datastore', '/datastore'], ['Object Storage', '/s3'], ['Memory', '/cloud/memory']];
+const PROJ = [['gateway', 'Ready'], ['payments-api', 'Ready'], ['checkout-web', 'Building'], ['docs-site', 'Ready']];
+
+/* Run the binary's object: the same Base in four places. Pick (or hover) a place and its row answers the same records
+   path, with the collection you named in the build-up carried down; the example project's apps read it. */
+function Deploy({ coll }) {
+  const [ref, live] = useLive(0.4);
+  const [at, setAt] = useState(0);
+  const [hand, setHand] = useState(false);
+  const [built, setBuilt] = useState(false);
+  // idle: while seen and untouched, the request moves to the next place every 2.8 s; a touch hands it to the visitor
+  useEffect(() => {
+    if (!live || hand) return;
+    const t = setTimeout(() => setAt((a) => (a + 1) % PLACES.length), 2800);
+    return () => clearTimeout(t);
+  }, [live, hand, at]);
+  // the building app finishes its build once while seen, then rests
+  useEffect(() => {
+    if (!live || built) return;
+    const t = setTimeout(() => setBuilt(true), 4200);
+    return () => clearTimeout(t);
+  }, [live, built]);
+  const pick = (i) => { setHand(true); setAt(i); };
+  const seed = at * 977 + coll.length * 31;
+  return (
+    <div className="bs-dep" ref={ref}>
+      <div className="bs-dep-bar">
+        <i /><i /><i />
+        <A to="/home" className="bs-dep-t">Base — Hanzo</A>
+      </div>
+      <nav className="bs-dep-nav" aria-label="Products">
+        {SIDE.map(([t, to], i) => <A key={t} to={to} aria-current={i === 0 ? 'page' : undefined}>{t}</A>)}
+      </nav>
+      <div className="bs-dep-b">
+        <div className="bs-dep-places" role="group" aria-label="Places">
+          {PLACES.map((p, i) => (
+            <button key={p} type="button" aria-pressed={at === i} onClick={() => pick(i)} onMouseEnter={() => pick(i)} onFocus={() => pick(i)}>
+              <span>{p}</span>
+              <code aria-hidden="true">/v1/collections/<b>{coll}</b>/records</code>
+            </button>
+          ))}
+        </div>
+        <div className="bs-dep-res" aria-hidden="true">
+          <p className="bs-dep-req"><b>GET</b> /v1/<wbr />collections/<wbr />{coll}/<wbr />records</p>
+          <div className="bs-dep-rows" key={at + coll}>
+            {[0, 1, 2].map((i) => (
+              <div key={i}><code>{hex(seed + i)}</code><i style={{ width: 36 + ((seed + i * 13) % 44) + '%' }} /></div>
+            ))}
+          </div>
+        </div>
+      </div>
+      <ul className="bs-dep-proj" aria-label="Example project">
+        {PROJ.map(([n, st]) => {
+          const s = n === 'checkout-web' && built ? 'Ready' : st;
+          return <li key={n}><i className={s === 'Building' ? 'b' : ''} aria-hidden="true" /><span>{n}</span><em>{s}</em></li>;
+        })}
+      </ul>
+      <p className="bs-dep-cap">Every request enters here, so the limiter does too.</p>
+      <div className="bs-dep-foot">
+        <span>api.hanzo.ai<b>/v1/base</b></span>
+        <A to="https://hanzo.team/" className="bs-dep-open">Open in the console ↗</A>
+      </div>
+    </div>
+  );
+}
+
+function Run({ coll }) {
   return (
     <section className="kn-sec bs-run">
       <div className="kn-wrap kn-grid bs-run-g">
         <div className="bs-run-l">
           <KeynoteLines className="kn-headline" lines="Run the binary" />
           <p className="kn-body">Deploy Base managed on Hanzo Cloud, or run it yourself on a laptop, a box, or a cluster. Same API in all four places.</p>
-          <ul className="bs-places" aria-hidden="true">
-            {PLACES.map((p) => <li key={p}><span>{p}</span><code>/v1/collections/{'{name}'}/records</code></li>)}
-          </ul>
           <div className="kn-acts bs-run-acts">
             <Cta to="https://platform.hanzo.ai" id="base.run">Deploy on Hanzo Cloud</Cta>
             <Cta to={GH} kind="link" id="base.run-2">GitHub</Cta>
           </div>
         </div>
         <div className="bs-run-r">
-          <ExampleConsole name="Base" api="/v1/base" side={[['Base', '/base'], ['Datastore', '/datastore'], ['Object Storage', '/s3'], ['Memory', '/cloud/memory']]} />
+          <Deploy coll={coll} />
           <p className="bs-note">Example project. Every name in it is one you would give your own.</p>
         </div>
       </div>
@@ -297,9 +377,27 @@ function Run() {
   );
 }
 
+/* One solid per screen: while a section's own ask (or the hero's, on phones) is on screen, the header's "Try Hanzo"
+   steps back to its outline. A class on <html> that only this page sets, removed when the page leaves. */
+function useOwnAsk() {
+  useEffect(() => {
+    if (typeof IntersectionObserver === 'undefined') return;
+    const H = document.documentElement;
+    const seen = new Set();
+    const io = new IntersectionObserver((es) => {
+      es.forEach((e) => (e.isIntersecting ? seen.add(e.target) : seen.delete(e.target)));
+      H.classList.toggle('bs-own-ask', seen.size > 0);
+    }, { rootMargin: '-60px 0px 0px 0px' });
+    document.querySelectorAll('.bs [data-cta="base.hero"], .bs [data-cta="base.run"], .bs [data-cta="base.close"]').forEach((el) => io.observe(el));
+    return () => { io.disconnect(); H.classList.remove('bs-own-ask'); };
+  }, []);
+}
+
 const REL = [['Base docs →', DOCS], ['Datastore', '/datastore', 'Analytical columnar store'], ['Object Storage', '/s3', 'Object storage'], ['Memory', '/cloud/memory']];
 
 export default function Base() {
+  const [name, setName] = useState('posts');
+  useOwnAsk();
   return (
     <main className="kn bs">
       <KeynoteStage
@@ -315,9 +413,9 @@ export default function Base() {
       </KeynoteStage>
 
       <OneFile />
-      <Declare />
+      <Declare name={name} setName={setName} />
       <Caps />
-      <Run />
+      <Run coll={name || 'posts'} />
 
       <KeynoteClose
         name="Base"

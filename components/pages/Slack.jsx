@@ -1,6 +1,6 @@
 'use client';
 /* Hanzo Tag for Slack.
-   V2: 8/10 the hero now sells first (52px h1 at the 38% line, the window peeking), faces are drawn discs, the three rooms are one tile with three states, the promises light a window crop as you read, the platform is a runtime map, and the close has one solid ask.
+   V2: 8/10 the scene's thread now scrolls inside the window so the merged PR and Archive Channel land in view at step 6, every heading is Hanzo's own (the setup card is labelled by its own name; Hanzo's sentence heads the close only), the setup demo plays once from the ask and ends at rest in one 429px card, sections hand over at 72px, and the lit promise alone grows to 21px.
    Persona: an engineering lead whose team lives in Slack. Goal: set up Hanzo Tag. CTA: Set up Hanzo Tag (slack.hero).
    Metric: cta_click on slack.hero and slack.close (data-cta; the event layer is the conductor's).
    Signature: scroll plays the thread. A white first screen with the headline hands over to the one dark room, where
@@ -8,7 +8,7 @@
    (1. Code trace … 6. Session complete) while the Code, View and Canvas artifacts follow the step. The step rail on
    top jumps to any step. Phones pin a compact window under a 44px snap rail, and scroll plays it the same way.
    After it: the promises light the matching part of a window crop as each is read; the setup card connects in three
-   steps and the first exchange plays; the three rooms as one tile that swaps; the six features open in a sheet; the
+   steps beside its channel and the first exchange plays once, then rests; the three rooms as one tile that swaps; the six features open in a sheet; the
    platform as one runtime with the product you point at drawn in ink; questions; the close.
    Beyond: Contrast slider: drag between the before (1.9:1) and after (8.9:1) Buy Now button, using only Hanzo's own
    figures; both colourways are drawn as greys of equal luminance, so no hue reaches the page.
@@ -315,39 +315,44 @@ function Notes() {
   );
 }
 
-/* The setup card: three steps connect in turn, then the first exchange plays in the channel. */
+/* The setup card: three steps connect in turn beside the channel, then the first exchange plays there and stays.
+   Hanzo's own sentence for this ("Connect @Hanzo to your Slack workspace in three steps.") heads the close, where
+   the live page has it, so the card carries its own name as the section's label. The demo plays once: the ask is
+   already in the channel (so the dark box is never empty), the steps tick, Hanzo answers, and it ends at rest. */
 function Setup() {
   const ref = useRef(null);
-  const live = useInView(ref, { amount: 0.2 });
+  const live = useInView(ref, { amount: 0.6 });
   const calm = useCalm();
-  const [k, setK] = useState(9); // the HTML shows the finished exchange; the browser replays it from the start
-  const began = useRef(false);
+  const [k, setK] = useState(9); // the HTML shows the finished exchange; the browser plays it once from the ask
+  const pos = useRef(-1); // -1: not begun; it pauses while out of view and resumes where it was
   useEffect(() => {
-    if (!live || calm) return;
-    if (!began.current) { began.current = true; setK(0); }
+    if (!live || calm || pos.current >= 9) return;
+    if (pos.current < 0) { pos.current = 0; setK(0); }
     let t = 0;
-    const tick = () => { setK((v) => (v >= 9 ? 0 : v + 1)); t = setTimeout(tick, 1300); };
-    t = setTimeout(tick, 1300);
+    const tick = () => {
+      pos.current = Math.min(9, pos.current + 1);
+      setK(pos.current);
+      if (pos.current < 9) t = setTimeout(tick, 1000);
+    };
+    t = setTimeout(tick, 1000);
     return () => clearTimeout(t);
   }, [live, calm]);
   const s = calm ? 9 : k;
   return (
     <section className={`a2-sec ${P}-setup`} ref={ref} aria-labelledby="xsq-setup-h">
-      <div className="a2-wrap a2-grid">
-        <div className={`${P}-setup-copy`}>
-          <A2Lines id="xsq-setup-h" className="a2-display s" lines={['Connect @Hanzo', 'in three steps']} />
-          <p className="a2-lede">{CLOSE.lede}</p>
-        </div>
+      <div className="a2-wrap">
         <div className={`${P}-card`}>
-          <p className={`${P}-card-t`}><span>{SETUP.title}</span><b className={s >= 3 ? 'on' : ''}><i aria-hidden="true" />{SETUP.verified}</b></p>
-          <div className={`${P}-card-h`}><Face who="hanzo" p={P} size={34} /><span><b>{SETUP.name}</b><span>{SETUP.sub}</span></span></div>
-          <ol className={`${P}-card-steps`}>
-            {SETUP.steps.map(([t, d], i) => <li key={t} className={s > i ? 'on' : ''}><i aria-hidden="true">{s > i ? '✓' : i + 1}</i><span><b>{t}</b><span>{d}</span></span></li>)}
-          </ol>
-          <p className={`${P}-card-m`}><span>{SETUP.model}</span><span>{SETUP.retention}</span></p>
+          <div className={`${P}-card-a`}>
+            <p className={`${P}-card-t`}><span>{SETUP.title}</span><b className={s >= 3 ? 'on' : ''}><i aria-hidden="true" />{SETUP.verified}</b></p>
+            <div className={`${P}-card-h`}><Face who="hanzo" p={P} size={34} /><span><b id="xsq-setup-h">{SETUP.name}</b><span>{SETUP.sub}</span></span></div>
+            <ol className={`${P}-card-steps`}>
+              {SETUP.steps.map(([t, d], i) => <li key={t} className={s > i ? 'on' : ''}><i aria-hidden="true">{s > i ? '✓' : i + 1}</i><span><b>{t}</b><span>{d}</span></span></li>)}
+            </ol>
+            <p className={`${P}-card-m`}><span>{SETUP.model}</span><span>{SETUP.retention}</span></p>
+          </div>
           <div className={`${P}-mini`}>
             <p className={`${P}-mini-h`}><b>{SETUP.channel}</b><span>{SETUP.artifacts}</span></p>
-            <div className={`${P}-mini-m` + (s >= 3 ? ' in' : '')}><Msg m={ASK} p={P} /></div>
+            <div className={`${P}-mini-m in`}><Msg m={ASK} p={P} /></div>
             <p className={`${P}-busy` + (s === 4 ? ' in' : '')} aria-hidden="true"><i /><i /><i /></p>
             <div className={`${P}-mini-m` + (s >= 5 ? ' in' : '')}>
               <Msg m={ANSWER} p={P} />
@@ -388,6 +393,31 @@ function RoomArt({ k }) {
   );
 }
 
+/* The six features as checkpoints along one thread, from the mention to the merge: the line fills as you scroll
+   down it, each checkpoint it reaches turns to ink, and the one at the head of the fill is drawn in full. Under
+   reduced motion the whole thread is reached. The sheet still carries each one's sentence. */
+function Thread() {
+  const ref = useRef(null);
+  const calm = useCalm();
+  const [at, setAt] = useState(0);
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start 72%', 'end 52%'] });
+  useMotionValueEvent(p, 'change', (v) => { if (!calm) setAt(Math.min(5, Math.max(0, Math.floor(v * 6)))); });
+  const k = calm ? 5 : at;
+  return (
+    <div className={`${P}-thr`} ref={ref}>
+      <p className={`${P}-thr-bar`} aria-hidden="true"><i /><i /><i /></p>
+      <div className={`${P}-thr-body`}>
+        <i className={`${P}-thr-line`} aria-hidden="true"><motion.b style={{ scaleY: calm ? 1 : p }} /></i>
+        <ol className={`${P}-thr-l`}>
+          {BUILT.items.map(([t], i) => (
+            <li key={t} className={i < k ? 'past' : i === k ? 'on' : ''} aria-current={i === k ? 'step' : undefined}><i aria-hidden="true" /><span>{t}</span></li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  );
+}
+
 /* What it is: the three rooms as one tile that swaps, and the six features one tap away. */
 function What() {
   const [i, setI] = useState(0);
@@ -421,7 +451,7 @@ function What() {
             <p className="a2-kick">{BUILT.kick}</p>
             <h2 className="a2-headline">{BUILT.title}</h2>
           </div>
-          <ul className={`${P}-built-l`}>{BUILT.items.map(([t]) => <li key={t}>{t}</li>)}</ul>
+          <Thread />
           <div className={`${P}-built-acts`}>
             <A2Sheet label="How each one works" title={BUILT.title} btnClass={`${P}-sheet-btn`}>
               <ul className={`${P}-runs`}>{BUILT.items.map(([t, d]) => <li key={t}><b>{t}</b><span>{d}</span></li>)}</ul>
@@ -434,9 +464,21 @@ function What() {
   );
 }
 
-/* One runtime, four places: a line the signal runs along, a drop to each product, the one you point at in ink. */
+/* One runtime, four places: the rail is the object. A signal runs along the line; the product you point at (tap, or
+   reach with the arrow keys) drops from it and grows into an ink node carrying its name, and only its sentence shows
+   under the rail, swapping like the rooms tile. The other three stay names on the line. Every sentence stays in the HTML. */
 function Platform() {
   const [i, setI] = useState(0);
+  const tabs = useRef(null);
+  const key = (e) => {
+    const n = PLATFORM.items.length;
+    const k = { ArrowRight: i + 1, ArrowDown: i + 1, ArrowLeft: i - 1, ArrowUp: i - 1, Home: 0, End: n - 1 }[e.key];
+    if (k === undefined) return;
+    e.preventDefault();
+    const j = (k + n) % n;
+    setI(j);
+    tabs.current?.children[j]?.focus();
+  };
   return (
     <section className={`a2-sec ${P}-plat`} aria-labelledby="xsq-plat-h">
       <div className="a2-wrap">
@@ -444,18 +486,23 @@ function Platform() {
           <p className="a2-kick">{PLATFORM.kick}</p>
           <h2 id="xsq-plat-h" className="a2-headline">{PLATFORM.title}</h2>
         </div>
-        <div className={`${P}-plat-map`} aria-hidden="true">
-          <i className={`${P}-plat-rail`}><b /></i>
-          {PLATFORM.items.map(([t], k) => <i key={t} className={`${P}-plat-drop` + (i === k ? ' on' : '')} style={{ '--k': k }} />)}
+        <div className={`${P}-plat-map`}>
+          <i className={`${P}-plat-rail`} aria-hidden="true"><b /></i>
+          <div className={`${P}-plat-stops`} role="tablist" aria-label={PLATFORM.kick} onKeyDown={key} ref={tabs}>
+            {PLATFORM.items.map(([t], k) => (
+              <button key={t} type="button" role="tab" id={`${P}-pt-${k}`} aria-selected={i === k} aria-controls={`${P}-pp-${k}`} tabIndex={i === k ? 0 : -1}
+                className={`${P}-plat-stop` + (i === k ? ' on' : '')} onPointerEnter={(e) => { if (e.pointerType === 'mouse') setI(k); }} onClick={() => setI(k)}>
+                <i className={`${P}-plat-drop`} aria-hidden="true" />
+                <span className={`${P}-plat-name`}>{t}</span>
+              </button>
+            ))}
+          </div>
+          <div className={`${P}-plat-stage`}>
+            {PLATFORM.items.map(([t, d], k) => (
+              <p key={t} id={`${P}-pp-${k}`} role="tabpanel" aria-labelledby={`${P}-pt-${k}`} aria-hidden={i !== k} className={i === k ? 'on' : ''} style={{ '--c': Math.min(k, 2) + 1 }}>{d}</p>
+            ))}
+          </div>
         </div>
-        <ol className={`${P}-plat-l`}>
-          {PLATFORM.items.map(([t, d], k) => (
-            <li key={t} className={i === k ? 'on' : ''} onPointerEnter={() => setI(k)} onClick={() => setI(k)}>
-              <span className={`${P}-mark m${k}`} aria-hidden="true"><i /><i /><i /><i /></span>
-              <h3>{t}</h3><p>{d}</p>
-            </li>
-          ))}
-        </ol>
         <div className={`${P}-runtime`}>
           <p>{PLATFORM.runtime}</p>
           <ul>{PLATFORM.links.map(([t, to]) => <li key={t}><A to={to} className={`${P}-rt`}>{t}</A></li>)}</ul>
@@ -470,7 +517,8 @@ function Questions() {
   return (
     <section className={`a2-sec ${P}-faq`} aria-labelledby="xsq-faq-h">
       <div className="a2-wrap a2-grid">
-        <div className={`${P}-faq-h`}><h2 id="xsq-faq-h" className="a2-display s">Questions</h2></div>
+        {/* Hanzo's page gives its questions no label of its own: the heading is for screen readers only */}
+        <h2 id="xsq-faq-h" className={`${P}-sr`}>Questions</h2>
         <div className={`${P}-faq-l`}><A2Faq items={FAQ} /></div>
       </div>
     </section>

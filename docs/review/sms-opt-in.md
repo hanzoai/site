@@ -1,46 +1,52 @@
 # /sms-opt-in/: James-eye review
-Verdict: 7/10
-First complaint: "It's a one-box form and I read the same three lines four times: in the intro, in the tick box, on the phone, and then again huge in a black room I had to scroll through. Say it once."
+Verdict: 8/10
+First complaint: "The button's grey and I press it and nothing happens. Tell me what I've missed, don't just sit there."
 
-Walked 7 Nov 2026 on the dev server at 1470x801 and 375x812, moving (walk.mjs both sizes, frames at 300/1000/1700/3000/6000 ms, hover/press probes, 503-intercepted submit, 8 cold loads).
+Walked 7 Nov 2026, 17:05-17:10 UTC, on the dev server at 1470x801 and 375x812 (isMobile, hasTouch), moving. I ran walk.mjs at both sizes and took frames at 150, 700, 1400 and 4400 ms. I hovered and pressed the 5 chips, the field, the box and the submit (unready and ready). I sent one submit per size, intercepted by page.route and fulfilled with 503, so nothing went out. I did 4 cold loads in fresh contexts plus 2 more in America/Los_Angeles time.
+
 ## The 11 answers
-1. **Sells in 5 s, moves in 1 s: yes.**
-   - By 1000 ms the h1 (52px) has cut in, the phone has risen and its first bubble has landed; the clock colon ticks each second.
-   - At 0.9 s the consent "tour" starts. Each of the five chips lights in turn every 1.3 s and highlights its clause in the paragraph and on the phone (Cost lights the To line, How to stop fills STOP/HELP). It then rests at about 7.4 s. This is the page's real moment.
-2. **One in, one out: half.** Hero, then one black room, then the footer: 2942px on desktop.
-   - The black room replays the phone's three bubbles at 44px/26px, taking turns as you scroll, over STOP/HELP keys that repeat the phone's.
-   - It brings no new idea. MASTER 4.5 says "no scroll theatre, at most one delight", and this is a second delight made of scroll theatre.
-3. **Real object in every section: yes.** A live handset that mirrors the typed number ("TO 4155550123", not formatted) and the bubble room. Neither is a picture.
-4. **One ask, scale rhythm: page side yes.**
-   - "Yes, sign me up!" is the only filled control in the hero. It stays disabled (black 8%) until the box is ticked and there are 10 digits, then turns to #0a0a0a.
-   - Scale: h1 52, lede 21, chips 13 mono, form 16. That is good rhythm on the first screen.
-   - In the room, one 44px bubble against 26px bubbles also reads as rhythm, but it is the same words again.
-   - Shared: the header ask swaps from "Try Hanzo" to a solid "Yes, sign me up!" once the hero ask scrolls away. That fires a submit that still needs the tick box. The phone header's "Try Hanzo" is a solid fill.
-5. **Hover and press: yes, with one gap.**
-   - Chips invert on hover (white to #0a0a0a fill, border ink). Submit hover goes #0a0a0a to #262626, press scales 0.97. Room STOP/HELP hover goes #fafafa to #e4e4e7, press goes to graphite and lights its half of the sentence.
-   - Gap: a submit fulfilled at once with a 503 showed no visible sending state (label unchanged, no aria-busy at 150 ms).
-6. **Overlap, swap, shift: none found.**
-   - No horizontal overflow at either size. The h1 box holds through the cut-in.
-   - The form card rises 16px at 0.4 s by transform, so there is no CLS.
-   - Phone: the five chips sit below the submit (y765-861), cut off at the fold. The tour lights clauses in the paragraph above while its own chips are out of view.
-7. **Reference: apple.com product page in miniature.** The device is the hero and one idea sits in the room. The measured part is not there yet: the room is a scroll-indexed class swap, not a scrubbed scene.
-8. **Different from its neighbours: yes.** No other utility page has a mirroring handset or a consent read in parts.
-9. **18 parts:**
-   - Covered: one h1, Field at 56px with label above, autocomplete=tel, inputmode=tel, 16px on phone, custom checkbox, Terms and Privacy by the submit, failed submit keeps number and tick and refocuses the field, payload matches live.
-   - Missing: enterkeyhint (empty).
-   - Terms/Privacy links are 18px tall on phone.
-   - Failure copy is "Request failed (503)", which is a status code, not words. It sits half below the fold at 1470x801 (y756).
-   - The black room is full-bleed from the first pixel, not a card opening out.
-10. **Banned tells: none.**
-    - "SMS NOTIFICATIONS" is set under the h1 as a caption, which is allowed.
-    - No hue, no gradient text, no floating bar.
-    - The active chip, enabled submit and header ask can be three ink fills in one viewport.
-11. **Copy: untouched.** parity.py: text 11/11, links 2/2.
+1. **Sell in 5 s, move in 1 s.**
+   - Yes. At 150 ms the h1 is mid line-mask cut; by 700 ms both lines have landed. The lede rises at 300 ms and the phone at 200 ms (48px).
+   - At 900 ms the consent tour starts. It lights "Cost", "How to stop" and "Purchases" in turn, 1.3 s each, then rests (the active chip reads "" from about 5 s on).
+   - The phone's colon blinks every second.
+2. **One in, one out.**
+   - Mostly n/a: this is a one-screen form. The desktop page is 2065px and the form plus phone hold the first screen; the footer follows at 681px.
+   - On phone (4406px) the handset follows the fine print and its bubbles take turns as it scrolls in. There is no dead stretch before the footer, and the second dark room from run 5 is gone.
+3. **A real object in every section.**
+   - Yes: one section, and its object is the handset. It mirrors your number live: typing 4155550142 shows "+1 (415) 555-0142" on its To line.
+   - Weak spot: on desktop the screen sits empty for 239px between the last bubble (y 412) and STOP/HELP (y 651).
+4. **One ask; scale.**
+   - At rest the header's "Try Hanzo" goes quiet (outlined) while the form's ask is in view. Once scrolled, the header swaps to a solid "Yes, sign me up!" (shared chrome).
+   - The submit is the only fill once the box is ticked. Nothing floats over the content.
+   - Scale has rhythm: one 52px h1 (40px on phone), a 21px lede, 16px body and an 11px mono caption below the h1. Nothing else on the page is 40px or larger.
+5. **Hover and press.**
+   - Chip hover goes from white to #0a0a0a fill with white text, and lights its own words in the paragraph and on the phone, so the hover tells you something. Press is scale .971.
+   - The ready submit goes from #0a0a0a to #262626 and presses at scale .97. The tick draws in. No layout jump.
+   - The unready submit is `disabled`. A press does nothing and focus drops to `<body>`, so nothing tells you that the box or the number is missing.
+6. **Overlaps, font swap, shift.**
+   - CLS 0.00024 and no horizontal overflow at 375. There are no overlaps at either size.
+   - Console: 0 errors on 4 of 4 cold loads, and 0 in LA time. One "1 Issue" badge (a hydration mismatch) appeared once in a probe context. It did not reproduce, so I do not count it.
+   - At 1470x801 the second line of the fine print sits at 795px, cut by the fold. The Terms and Privacy line is visible.
+7. **Reference.**
+   - apple.com product page: the product (a phone) is the hero and mirrors your input, with one idea on the screen.
+   - The calm proof-listing of chatgpt enterprise is in the fine print. Its motion is present but restrained, as Utility asks.
+8. **Neighbours.**
+   - The handset is used only on this page (`Handset` appears in no other page component). Its "consent read in parts" is its own signature.
+9. **18 parts.**
+   - One h1 and a skip link. The field is 56px with type=tel, autocomplete=tel and inputmode=tel. The chips are a 44px rail with x scroll-snap on phone.
+   - Privacy and Terms sit in the submit viewport. Failure keeps the values and the reason. 2xx-only success is in the code (I did not exercise it).
+   - The 4 states are covered except unready guidance (item 5).
+   - Tap targets: everything is 44px or more, except the inline Terms and Privacy links (18px tall, inline text, exempt). The 26px box sits inside a full-paragraph label.
+10. **Banned tells.**
+    - None on the page: no hue, no badge above the h1 (the caption sits below), no gradient text and no browser-default checkbox.
+    - Shared: the disabled button text is rgb(110,110,115). That is #6e6e73, which is off the deck ramp (nearest is #737373) and comes from the shared `Cta`.
+11. **Copy.**
+    - The consent paragraph is word-for-word, split into spans and beside the submit. The h1, caption, lede, field label, button and fine print match live.
+    - The 5 chip labels (What, How often, Cost, How to stop, Purchases) and the group label "Read the consent in parts" are not in live HTML or in `content/ui-strings.json`. They are not sentences, but they are unregistered UI strings.
+    - The failure text "Request failed (503)" reuses the Startups form's wording.
 
-Console: 0 errors on 8 cold loads (4 desktop, 4 phone). A hydration-mismatch badge ("A tree hydrated but some attributes of the server rendered HTML didn't match...") appeared only in the 2 runs that used request interception, so it is not counted. Worth a look at the Clock's server/client first render.
-
-## Fixes (in order)
-1. Cut the black room's scroll-scrubbed bubbles. It repeats the phone. Utility allows one delight, and the mirroring phone plus the consent tour is that delight. If a second screen is kept, keep only STOP/HELP with its sentence lighting, at rest, as a quiet strip, not a 44px scroll scene.
-2. Phone: put the five chips above the tick box (between the field and the consent) so the tour and the clause it lights share one screen. Show the handset as a short crop (45svh or less) rather than a full device after the form.
-3. Failure state: show the reason in plain words next to the submit, inside the first viewport. Add a visible sending state on the submit (aria-busy, label kept, width kept). Briefly reflect the failure on the handset (the bubble does not arrive) so the signature answers both outcomes.
-4. Polish: format the mirrored number as typed (+1 (415) 555-0123); add enterkeyhint="send"; bring Terms/Privacy tap height to 44px on phone. Shared: the header ask should not offer a submit that needs a tick box.
+## Fixes (in order, polish)
+1. **Unready press answers.** Use `aria-disabled` instead of `disabled`. A press then focuses the first missing thing (the field if it has under 10 digits, else the box) and pulses the box border once (scale .97, 150 ms). No new words.
+2. **Fill the handset's dead middle on desktop.** Set the screen's height to its content, or let the three bubbles sit lower toward the keys, so the 239px between them stays quiet but not empty. The phone frame's 632px height also pushes the fine print to the fold.
+3. **Register the 6 new UI labels** (5 chips plus the group label) in `content/ui-strings.json`, or list them as a copy question on the card.
+4. **Shared, not this page:** the disabled `Cta` text colour #6e6e73 should be deck grey #737373. The header's solid "Try Hanzo" and the scrolled header ask are shared chrome.

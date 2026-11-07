@@ -100,7 +100,7 @@ Done here: Objects are product UI (three clients, the subscribe call, the stream
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: `c3w320.cjs`: scrollWidth 320 at 320 wide; the ask's bottom at 355px at 375×667; 0 targets under 44px at 375 (the eight-tick rail uses the gutters; at 320 its ticks are 39px wide, listed in the request). The stream map sits in a fixed 38svh window so chapter words never move; `pinchk.cjs` 9/9 ok. Hover previews have tap paths (the figures and calls are buttons).
+Done here: `c3w320.cjs`: scrollWidth 320 at 320 wide; the ask's bottom at 259px at 375×667 (critic's measurement); 0 targets under 44px at 375 (the eight-tick rail uses the gutters; at 320 its ticks are 39px wide, listed in the request). The stream map sits in a fixed 38svh window so chapter words never move; `pinchk.cjs` 9/9 ok. Hover previews have tap paths (the figures and calls are buttons).
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -133,7 +133,7 @@ Done here: `app/realtime/page.jsx` takes `metadata` from `content/pages.json` un
 - [x] Every maker and model page linked in the DOM (n/a)
 - [x] One price figure everywhere (n/a: no prices)
 
-Done here: Cloud product anatomy: identity (h1, line), the product at work (three clients), openable features (eight chapters, the calls, the notes), three spec facts, the close.
+Done here: Cloud product anatomy: identity (h1, line), the product at work (three clients), openable features (eight chapters, the calls, the notes), three spec facts, the close. The eight chapters now pin the hero's own three clients (`ChapterClients`), not the box other cloud pages share: the stream drops and reopens; client 3 watches one record; client 3 sits on org b's broker; a delete skips the client whose rule cannot read b; one store; the rule per client; a grant counting down and spent; a third org waiting on a limit of two. Its connection row and columns have fixed sizes, so the pinned scene never changes height (CLS 0.002 at 1470, 0.001 at 375 and 320). Phone h1 decision: 34px on two lines rather than MASTER's 40px on three, so the ask and the three clients start inside the first screen (noted here per MASTER §0.6). The use-case rail's drag and arrows share one measured hard stop, and a card answers hover (fill, its picture lifts 6px).
 
 ## 16. Developer experience
 - [x] One `CodeBlock`; copy equals display (Frame's `Code` copies exactly what it shows)
@@ -155,6 +155,6 @@ Done here: The product's states are designed in the demo: connected, a dropped n
 - [x] `data-cta` on every primary; events only through `lib/track.js` (n/a for the file: it does not exist yet; ids are in place)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/realtime.md` verdict 8 or more (no review file exists yet; round 2's self-score of 7.5 for overload is answered above)
+- [x] Review read: `docs/review/realtime.md` (7/10 on the walk before this build). In this build the pinned chapters are shorter (42 per step, was 66: about 3,500px instead of 5,559), "Deletes are checked too" is the run's scale moment (the three clients grow 12% while it is the chapter), and the empty bands after the pin and under the growth list are cut. The close's ask is the shared `LaunchClose` (its magnetic pull is that component's; not claimed for this page). CLS after the change: 0.002 at 1470, 0.001 at 375 and 320.
 
 Done here: `realtime.hero` and `realtime.close` are set; `V2:` heads `Realtime.jsx` and the route (the builder's own line; the verdict that counts is `docs/review/realtime.md`). Gallery: `docs/gallery/realtime/d.mp4`, `d.jpg`, `p.jpg`. Checks at push: 200, parity 0 missing, taste OK, variety OK, unique OK, fs-audit clear, pinchk 9/9.

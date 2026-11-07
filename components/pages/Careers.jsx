@@ -21,7 +21,7 @@
    tooltips, the second solid button in Academic, solid "Apply" on every sheet.
    The role pages (/careers/<slug>) are CareerRole.jsx; this index has its own CareersBoard.css. */
 import { useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { AnimatePresence, motion, useInView, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { useRouter } from 'next/navigation';
 import { A, Cta } from '../kit';
 import Sigil from '../Sigil';
@@ -36,7 +36,7 @@ import './CareersBoard.css';
 
 const EASE = [0.16, 1, 0.3, 1];
 // JS off: the hero is legible; the hiring steps read as a plain list (only one step per row, no counter, no bars)
-const NOJS = { __html: '<style>.xcb-hero-f,.xcb-hero-o{opacity:1!important;transform:none!important}.xcb-hire-stage{display:block!important;overflow:visible!important}.xcb-hire-s{transform:none!important;margin-top:20px}.xcb-hire-n,.xcb-hire-h .vc-num{display:none!important}</style>' };
+const NOJS = { __html: '<style>.xcb-hero-f,.xcb-hero-o{opacity:1!important;transform:none!important}.xcb-hire-stage{display:block!important;overflow:visible!important}.xcb-hire-s{transform:none!important;margin-top:20px}.xcb-hire-n,.xcb-hire-t,.xcb-hire-h .vc-num{display:none!important}</style>' };
 
 /* How we hire: the four steps slide through a mask by themselves (never two titles at once); tap a step to hold it. */
 function Hire({ how }) {
@@ -47,8 +47,9 @@ function Hire({ how }) {
   const calm = useReducedMotion();
   const n = how.steps.length;
   useEffect(() => {
-    if (mine || calm || !seen) return;
-    const t = setTimeout(() => setAt((v) => (v + 1) % n), 3400);
+    if (calm || !seen) return;
+    // a tapped step holds for two beats, then the card carries on by itself
+    const t = mine ? setTimeout(() => setMine(false), 6800) : setTimeout(() => setAt((v) => (v + 1) % n), 3400);
     return () => clearTimeout(t);
   }, [at, mine, calm, seen, n]);
   return (
@@ -57,6 +58,8 @@ function Hire({ how }) {
         <span className="xcb-hire-k">{how.title}</span>
         <span className="xcb-hire-k vc-num" aria-hidden="true">{String(at + 1).padStart(2, '0')} / {String(n).padStart(2, '0')}</span>
       </div>
+      {/* phones: the step's timer also runs along the card's top, so the peek of the card shows it moving */}
+      <i className="xcb-hire-t" aria-hidden="true"><u key={at + (mine ? 'm' : '')} className={mine ? 'done' : seen ? 'run' : 'wait'} /></i>
       <div className="xcb-hire-stage">
         {how.steps.map(([t, d], i) => (
           <motion.div key={t} className="xcb-hire-s" initial={false} aria-hidden={i !== at}
@@ -117,15 +120,17 @@ function Marked({ text, know }) {
    (data-no-morph): it times out today (docs/requests/careers.md). */
 const open = (e, to, router, el) => openSheet(e, hrefOf(to), router, el || e.currentTarget.closest('.xcb-sheet-in'));
 
-function Sheet({ r, i, n, know, progress }) {
+function Sheet({ r, i, n, know, progress, on }) {
   const router = useRouter();
   const card = useRef(null);
   const [where, kind, team] = r.chips;
   const miss = know.length > 0 && !know.some((k) => asks(r, k));
   const scale = useTransform(progress, [i / n, 1], [1, 1 - (n - 1 - i) * 0.028]);
   return (
-    <li id={r.id} className={'xcb-sheet' + (miss ? ' miss' : '')} style={{ '--i': i }}>
+    <li id={r.id} className={'xcb-sheet' + (miss ? ' miss' : '') + (on ? ' on' : '')} style={{ '--i': i }}>
       <motion.div className="xcb-sheet-in" style={{ scale }} ref={card}>
+        {/* the role's own contour (seeded with its slug, like its page's), drifting only on the sheet in front */}
+        <Sigil seed={'/careers/' + r.href.split('/').filter(Boolean).pop()} data={[r.desc.length, i + 1]} className="xcb-sheet-c" still={!on} />
         <A to={r.href} className="xcb-sheet-a" data-no-morph onClick={(e) => open(e, r.href, router, card.current)}>
           <span className="xcb-sheet-no vc-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
           <span className="xcb-sheet-t">{r.title}</span>
@@ -147,9 +152,11 @@ function Deck({ roles, know, dont, dontA }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   const n = roles.length + 1;
+  const [front, setFront] = useState(0);
+  useMotionValueEvent(scrollYProgress, 'change', (v) => setFront(Math.min(n - 1, Math.max(0, Math.round(v * (n - 1))))));
   return (
     <ul className="xcb-deck" ref={ref}>
-      {roles.map((r, i) => <Sheet key={r.id} r={r} i={i} n={n} know={know} progress={scrollYProgress} />)}
+      {roles.map((r, i) => <Sheet key={r.id} r={r} i={i} n={n} know={know} progress={scrollYProgress} on={front === i} />)}
       <li className="xcb-sheet last" style={{ '--i': roles.length }}>
         <div className="xcb-sheet-in">
           <span className="xcb-sheet-sig" aria-hidden="true"><Sigil seed="careers/open" data={[n]} /></span>

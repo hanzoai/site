@@ -3,16 +3,18 @@
    room of six monitors, the last one a replay you scrub → Get World → one closing band.
    Persona: a team running models in production who wants one view of them. Goal: open World Monitor.
    CTA: "Open World Monitor" (hero, ask bar, close; data-cta primary / close). Metric: cta_click:world.primary.
-   V2: 8/10 a turning globe that eases out as you leave, then a pinned control room where one big monitor is on air at a time (its drawing plays as it arrives) beside a numbered rail of six, a replay you scrub; phone stacks with a cut-in per monitor
+   V2: 8/10 a turning globe that visibly eases out across the hero's last stretch, then a pinned control room where one big monitor is on air at a time (clean cut, no crossfade; real chart drawings: keyed latency lanes, thin score rows on a gridded track, sources sized to their names into a hairline view), its drawing playing as it arrives then keeping one live beat, beside one figure and a numbered rail of six; phones ride a sideways snap rail of centred drawings under a rolling 01 / 06
    Signature: every model, everywhere, live. A dotted globe turns beside the title; requests arc from the edge to the GPUs
    that served them while P50, P95 and P99 tick by model, and a drift alert fires when production leaves its baseline.
    Beyond: scrub an agent session step by step (prompt, tool call, IO, model output), the way Forensic Replay
    reconstructs one.
    Motion: the canvas globe (signature, idle, pausable; on desktop it shrinks, rises and slows as the hero leaves) +
    latency bars ticking (time) + the control room pinned on desktop, scroll choosing which monitor is on air, each
-   monitor's drawing playing once as it arrives and its h3 cutting in by line mask (scroll, state; on phones the same
-   moment plays as each monitor scrolls in) + the topology trace on hover or press (pointer, state) + the replay scrub
-   (state) + a magnetic hero ask on fine pointers. Every word and link is Hanzo's; arcs, bars and the session are drawn
+   monitor's drawing playing once as it arrives and its h3 cutting in by line mask (scroll, state; on phones a sideways
+   snap rail, the same moment playing as each card comes into view) + one idle beat on the monitor on air only, while on
+   screen, none under reduced motion (time: the route swaps zen/kai, latency bars re-draw in their lanes, the drift ring
+   pulses, v2 nudges, the sources signal in turn, the replay steps itself until touched) + the topology trace on hover
+   or press (pointer, state) + the replay scrub (state) + a magnetic hero ask on fine pointers. Every word and link is Hanzo's; arcs, bars and the session are drawn
    examples, not measurements. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useMotionValueEvent, useInView } from 'motion/react';
@@ -82,6 +84,7 @@ const cancelIdle = (id) => clearTimeout(id);
 
 const MODELS = ['zen', 'kai', 'enso'];
 const rnd = (i) => { const x = Math.sin(i * 78.233) * 43758.5453; return x - Math.floor(x); };
+const fix = (v) => Math.round(v * 1000) / 1000; // inline style values the server and the first client render print identically
 
 /* Latency by model, ticking; a drift alert when production leaves its baseline. */
 function Panel({ run, children }) {
@@ -95,7 +98,7 @@ function Panel({ run, children }) {
         {MODELS.map((m, k) => (
           <div key={m} className="wd2-lat">
             <b className="l2-mono">{m}</b>
-            {['P50', 'P95', 'P99'].map((q, j) => <span key={q}><em className="l2-mono">{q}</em><i><u style={{ transform: `scaleX(${0.2 + j * 0.24 + rnd(n * 3 + k * 7 + j) * 0.16})` }} /></i></span>)}
+            {['P50', 'P95', 'P99'].map((q, j) => <span key={q}><em className="l2-mono">{q}</em><i><u style={{ transform: `scaleX(${fix(0.2 + j * 0.24 + rnd(n * 3 + k * 7 + j) * 0.16)})` }} /></i></span>)}
           </div>
         ))}
         <p className={'wd2-drift l2-mono' + (drift ? ' on' : '')}>drift · production diverges from baseline</p>
@@ -223,7 +226,8 @@ function Latency({ live }) {
   for (let t = n; t > 0 && !hit; t--) if (MODELS.some((m, k) => at(t, k, 2) > 0.95)) hit = t;
   return (
     <div className="wd2-lc">
-      {MODELS.map((m, k) => <p key={m}><b className="l2-mono">{m}</b>{[0.34, 0.58, 0.82].map((b, j) => <i key={j} style={{ width: (b - k * 0.05) * 100 + '%', '--d': (k * 3 + j) * 60 + 'ms' }} className={'q' + j}><u style={{ transform: `scaleX(${w(k, j)})` }} /></i>)}</p>)}
+      <div className="wd2-lc-key l2-mono">{['P50', 'P95', 'P99'].map((q, j) => <span key={q} className={'q' + j}><s />{q}</span>)}</div>
+      {MODELS.map((m, k) => <p key={m}><b className="l2-mono">{m}</b>{[34, 58, 82].map((b, j) => <i key={j} style={{ width: b - k * 5 + '%', '--d': (k * 3 + j) * 60 + 'ms' }} className={'q' + j}><u style={{ transform: `scaleX(${fix(w(k, j))})` }} /></i>)}</p>)}
       <p className="spike l2-mono"><i key={hit} className={hit ? 'again' : ''} />auto-anomaly · cost spike</p>
     </div>
   );
@@ -245,7 +249,7 @@ function Drift({ live }) {
 /* Eval: while on air the pinned v2 score nudges inside its own bar every 1.5s; v1 holds. */
 function Evals({ live }) {
   const n = useBeat(1500, live);
-  return <div className="wd2-ev">{['v1', 'v2'].map((v, k) => <p key={v} className={k ? 'b' : ''}><span className="l2-mono">{v}</span><i style={{ width: k ? '82%' : '68%' }}><u style={k && n ? { transform: `scaleX(${0.95 + rnd(n) * 0.05})` } : undefined} /></i><em className="l2-mono">{k ? 'pinned' : ''}</em></p>)}</div>;
+  return <div className="wd2-ev">{['v1', 'v2'].map((v, k) => <p key={v} className={k ? 'b' : ''}><span className="l2-mono">{v}</span><s className="lane"><i style={{ width: k ? '82%' : '68%' }}><u style={k && n ? { transform: `scaleX(${fix(0.95 + rnd(n) * 0.05)})` } : undefined} /></i></s><em className="l2-mono">{k ? 'pinned' : ''}</em></p>)}</div>;
 }
 
 /* Multi-cloud: while on air each source lights its signal dot in turn, feeding the one view. */

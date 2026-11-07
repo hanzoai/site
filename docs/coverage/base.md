@@ -1,6 +1,6 @@
 # /base coverage (MASTER.md part 2, the 18 parts)
 
-Page file: `components/pages/cloud/Base.jsx` (+ `Base.css`, page-local `ExampleConsole.jsx/.css` shared with /authz) · gallery: `docs/gallery/base/` · metric id: `api_key_created` (developers; the click is `cta_click base.hero`)
+Page file: `components/pages/cloud/Base.jsx` (+ `Base.css`; the shared `ExampleConsole` is no longer used here: "Run the binary" has its own `Deploy` object) · gallery: `docs/gallery/base/` · metric id: `api_key_created` (developers; the click is `cta_click base.hero`)
 
 Open copy questions for James: the hero's primary is Hanzo's "Try Hanzo" (/login), the same words as the header's ask: on desktop the header outlines while the hero's solid is on screen (SYSTEM §5), and on phones the header keeps the solid "Try Hanzo" while the hero's is outlined; keep Hanzo's order, or lead with "Read the docs"? The demo's UI labels are ours ("collection", "the moment it exists", "exists", "one stream", "declare", "it exists", "single Go binary", the step names); keep them or move them to `content/ui-strings.json`? "4 stars" is the live page's static GitHub figure. The hero lede is Hanzo's "Open source (MIT)…" line and Hanzo's hero paragraph ("Base is a single Go binary…") opens the next section: same words, new order.
 Shared changes requested (`docs/requests/base.md`): none. Kit notes for the Cloud 1 owner: KeynoteClose's text-link "Self-host" reads `--ink` inside the dark room (ink on graphite) and the kit link asks are 21px tall; this page sets them white and 44px locally.
@@ -15,7 +15,7 @@ Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line
 - [x] No dead or self-looping button; ~~prices from `lib/plans.js`~~ n/a: no prices
 - [x] Open copy questions for James listed, none decided
 
-Done here: The hero's one own solid is "Try Hanzo" → /login (`base.hero`, `data-thumb`): KeynoteStage draws it quiet, so Base.css fills it with `--btn-solid-bg/ink/hover` from 701px (computed rgb(10,10,10) on white at 1470), while the header's ask outlines; on phones the header keeps the solid and the hero's stays outlined. "Read the docs" and "View on GitHub" are kit text links. "Run the binary" has one solid ("Deploy on Hanzo Cloud", `base.run`) and a link ("GitHub"); the close has "Deploy to Cloud" (`base.close`) and the "Self-host" link. The first screen reads "An app backend in one file" beside the admin with records landing.
+Done here: The hero's one own solid is "Try Hanzo" → /login (`base.hero`, `data-thumb`): KeynoteStage draws it quiet, so Base.css fills it with `--btn-solid-bg/ink` at every size (computed rgb(10,10,10)); hover is the deck's #262626, not the kit's #2c2c2e. One solid per viewport, measured every 400px of scroll at 1470 and 375 (`solids.js`: 1 everywhere): while a page ask (`base.hero`, `base.run`, `base.close`) is on screen, `useOwnAsk()` sets `html.bs-own-ask` and the header's "Try Hanzo" outlines; between them the header carries the one solid. "Read the docs" and "View on GitHub" are kit text links. "Run the binary" has one solid ("Deploy on Hanzo Cloud", `base.run`) and a link ("GitHub"); the close has "Deploy to Cloud" (`base.close`) and the "Self-host" link. The first screen reads "An app backend in one file" beside the admin with records landing.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -41,7 +41,7 @@ Done here: With Next's JS blocked (`prehyd.cjs`), the admin's newest row lands (
 - [x] Copy button copies exactly the displayed text (the close's kit `CodeBlock`); failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: Asks are kit `Cta`s only: `base.hero`, `base.hero-2`, `base.hero-3` (KeynoteStage), `base.run`, `base.run-2`, `base.close`, `base.close-self`. On desktop the header's button outlines while the hero's solid is on screen and carries the ask after it; the phone bar stays away because the hero's words equal the header's (SYSTEM §5).
+Done here: Asks are kit `Cta`s only: `base.hero`, `base.hero-2`, `base.hero-3` (KeynoteStage), `base.run`, `base.run-2`, `base.close`, `base.close-self`. At both sizes the header's button outlines while any page ask is on screen (hero, "Deploy on Hanzo Cloud", "Deploy to Cloud") and is the one solid between them; the phone bar stays away because the hero's words equal the header's (SYSTEM §5).
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -75,7 +75,7 @@ Done here: `taste.py` (main's stricter 0.03 chroma) OK. Colours: #fff, #fafafa, 
 - [x] Inputs 16px or larger (the collection field is 17px); no bare `:hover`
 - [x] Forks this page deleted: listed above
 
-Done here: The view switch, steps, related links and console rows press to .97 in 90 ms, hover by fill or underline (never opacity) inside `@media (hover: hover)`, and focus with `2px solid var(--focus)`; the collection field shows the ring on its whole label. Capability cards on hover lift 4px, the plus turns 90°, and each drawing acts out its idea (the stream's dots all fill, the files' page slides to its record, denied rules slide out, the tenant files spread, the arrow to /records grows). No `title=` attributes.
+Done here: The view switch, steps, related links and console rows press to .97 in 90 ms, hover by fill or underline (never opacity) inside `@media (hover: hover)`, and focus with `2px solid var(--focus)`; the collection field shows the ring on its whole label. Capability cards on hover lift 4px, the plus turns 90°, and each drawing acts out its idea (the stream's dots all fill, the files' page slides to its record, denied rules slide out, the tenant files spread, the arrow to /records grows). Text-link asks ("Read the docs", "View on GitHub", "GitHub", "Self-host") underline and their arrow steps 4px. In the hero admin a hovered row turns its id ink and the address pill shows that record's path (`/v1/collections/posts/records/<id>`), pausing the stream while pointed at. In "Run the binary" each place is a button (hover, focus or click picks it; pressed = ink). No `title=` attributes.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -84,7 +84,7 @@ Done here: The view switch, steps, related links and console rows press to .97 i
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit
 
-Done here: `variety.py` OK (useScroll; 0 `Rise`). Idle: a record lands every 2.6 s (gated on `live && !useStagePause()`). Scroll (1 of 5 kinds): the pinned build-up and the Stage settle. State: typing a collection name re-declares the scene; Records/Schema; cards open by shared-element morph (600 ms in-out). Time: the stream's records arrive three times and rest. Arrival: line masks. 0 springs; deck easing; loops end at rest.
+Done here: `variety.py` OK (useScroll; 0 `Rise`). Idle: a record lands every 2.6 s (gated on `live && !useStagePause()`). Scroll (1 of 5 kinds): the pinned build-up and the Stage settle. State: typing a collection name re-declares the scene; Records/Schema; cards open by shared-element morph (600 ms in-out). Time: the stream's records arrive three times and rest; in "Run the binary" the request moves to the next place every 2.8 s while seen and untouched, its rows landing, and checkout-web finishes building once. Arrival: line masks; each capability card's drawing plays its idea once as the card is 60% in view (`data-play` for 1.4 s), then rests. 0 springs; deck easing; loops end at rest.
 
 ## 10. Media
 - [x] ~~`Film` and `Pic`~~ n/a: no photo or film; the objects are drawn product UI
@@ -92,7 +92,7 @@ Done here: `variety.py` OK (useScroll; 0 `Rise`). Idle: a record lands every 2.6
 - [x] Nothing missing; ~~alt~~ n/a: no image
 - [x] ~~No dimmed photo; 4+ real visuals~~ n/a: Base has no Hanzo media
 
-Done here: Every section's object is product UI in HTML: the admin, the binary, the build-up tiles, six card drawings, the console.
+Done here: Every section's object is product UI in HTML: the admin, the binary, the build-up tiles, six card drawings, and Base's own deploy window in "Run the binary": the four places (Hanzo Cloud, a laptop, a box, a cluster) each answering `/v1/collections/{the typed name}/records`, the example project's apps reading it, and Hanzo's console words (api.hanzo.ai/v1/base, "Open in the console").
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -100,7 +100,7 @@ Done here: Every section's object is product UI in HTML: the admin, the binary, 
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: `sweep.cjs base`: no sideways scroll, no errors (desk + 375). `audit2.cjs`: 0 sideways at 320, 0 targets under 44px on phone (the kit's link asks set to 44px here). At 375 "Try Hanzo" sits at y≈295–338. On phones the build-up is one thing in, one out: each paragraph is followed by its own tile (CSS `display: contents` + `order`), and each tile builds as it comes into view (IntersectionObserver, threshold 0.6), then rests built. On desktop the pin sits at top 60px, under the glass header, and all five tiles fit the pinned screen (y≈122–738 at 801).
+Done here: `sweep.cjs base`: no sideways scroll, no errors (desk + 375). `audit2.cjs`: 0 sideways at 320, 0 targets under 44px on phone (the kit's link asks set to 44px here). At 375 "Try Hanzo" sits at y≈295–338. On phones the build-up is one thing in, one out: each paragraph is followed by its own tile (CSS `display: contents` + `order`), and each tile builds as it comes into view (IntersectionObserver, threshold 0.6), then rests built. On desktop the pin sits at top 60px, under the glass header, and all five tiles fit the pinned screen (y≈122–738 at 801). The admin's "live" marker sits under the collections (y≈448), not at the fold. Section steps: admin to the binary card ≈130px; the dark room ends one step under its content (related links in two columns).
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -117,7 +117,7 @@ Done here: On white #525252/#737373; in the quiet room `--quiet`/`--body` become
 - [x] No poller; no third-party request before consent
 - [x] Nothing heavy run on James's laptop
 
-Done here: One `setTimeout` per record, only while seen and unpaused; motion is transform, opacity and colour. Filmed in the cloud container.
+Done here: One `setTimeout` per record, only while seen and unpaused; the deploy window's cycle and build are single `setTimeout`s while seen; the card play and the one-solid watcher are IntersectionObservers, disconnected on unmount; motion is transform, opacity and colour. Filmed in the cloud container.
 
 ## 14. SEO and machine files
 - [x] Title and description match live (from `content/pages.json`)
@@ -133,7 +133,7 @@ Done here: `app/base/page.jsx` is unchanged: metadata from `content/pages.json` 
 - [x] ~~Every maker and model page linked~~ n/a
 - [x] ~~One price figure everywhere~~ n/a: no price
 
-Done here: Cloud product anatomy: identity (hero), the live object (the admin), facts that open in turn (the build-up, six cards), the console, the close.
+Done here: Cloud product anatomy: identity (hero), the live object (the admin), facts that open in turn (the build-up, six cards), the deploy window (four places, one API), the close.
 
 ## 16. Developer experience
 - [x] One `CodeBlock`; copy equals display (the close's agent prompt)
@@ -141,7 +141,7 @@ Done here: Cloud product anatomy: identity (hero), the live object (the admin), 
 - [x] ~~Terminal pauses~~ n/a: no terminal; the self-running admin has the Stage pause
 - [x] No hand-typed version number
 
-Done here: The agent prompt is the kit `CodeBlock` inside KeynoteClose; the records path in the build-up follows the typed collection name.
+Done here: The agent prompt is the kit `CodeBlock` inside KeynoteClose; the records path in the build-up follows the typed collection name, and the same name is carried down into all four places in "Run the binary".
 
 ## 17. States and resilience
 - [x] Loading, empty, error and offline states designed (n/a beyond: no fetch)
@@ -157,4 +157,4 @@ Done here: An empty collection field falls back to "posts" so the scene is never
 - [x] `V2: 8/10 …` in the page file's top comment
 - [x] Review read: `docs/review/base.md` (7/10), its fixes applied
 
-Done here: ids listed in part 4; metric `api_key_created`. Gallery: `docs/gallery/base/` (desktop.mp4, desktop.jpg, phone-1..3.jpg, and after the review desktop-r2.jpg, phone-r2.jpg). Own score 8/10; the critic's verdict decides. Not fixed here: the console's example rows (gateway, payments-api…) are ExampleConsole's shared copy.
+Done here: ids listed in part 4; metric `api_key_created`. Gallery: `docs/gallery/base/` (desktop.mp4, desktop.jpg, phone-1..3.jpg, after review 1 desktop-r2.jpg, phone-r2.jpg; after review 2 desktop-r3.jpg, phone-r3.jpg). Own score 8/10; the critic's verdict decides. The example project's names (gateway, payments-api, checkout-web, docs-site) and the limiter sentence are Hanzo's live copy on /base (parity needs them), so they stay, now as the apps reading this Base inside its own window.

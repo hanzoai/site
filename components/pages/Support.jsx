@@ -37,6 +37,7 @@ const DOORS = [
   { t: 'Email us', d: 'Prefer email? Reach the team directly and we’ll get back to you.', go: 'support@hanzo.ai', to: 'mailto:support@hanzo.ai' },
 ];
 const DEMO = 'support ticket'; // Hanzo's own words, from the Help Center's line: the ask stays Open Help Center
+const DEMO2 = 'uptime'; // from System Status's own line: the list re-orders and System Status rises into the answer
 // JS off: all six answers readable in order; the demo's pause steps aside (PLAN 2.3)
 const NOJS = { __html: '<style>.xsp-panes{display:flex!important;flex-direction:column;gap:40px}.xsp-pane{opacity:1!important;transform:none!important;visibility:visible!important;pointer-events:auto!important}.xsp-pause{display:none!important}.xsp-in,.xsp-up{animation:none!important}.xsp .x-band .x-word,.xsp .x-band [style]{opacity:1!important;transform:none!important;filter:none!important}</style>' };
 
@@ -109,7 +110,7 @@ export default function Support() {
   const subject = q.trim();
   // the answer: a door you point at; else the best match; with finished words that match nothing, the email door
   const best = peek >= 0 ? peek : hit ? ranked[0].i : mine && typed ? 5 : 0;
-  const order = mine ? ranked : DOORS.map((_, i) => ranked.find((r) => r.i === i));
+  const order = mine || hit ? ranked : DOORS.map((_, i) => ranked.find((r) => r.i === i));
 
   // the demo, once, after the headline has landed: type Hanzo's phrase, hold, clear, rest
   useEffect(() => {
@@ -125,8 +126,17 @@ export default function Support() {
         await sleep(60 + (c % 4) * 18);
       }
       if (!alive) return;
-      await sleep(2600);
+      await sleep(2400);
       for (let c = DEMO.length; c >= 0 && alive; c--) { el.value = DEMO.slice(0, c); await sleep(14); }
+      // then one more of Hanzo's own words, and the answer visibly moves: "uptime" lifts System Status into the card
+      for (let c = 1; c <= DEMO2.length && alive; c++) {
+        el.value = DEMO2.slice(0, c);
+        if (c === DEMO2.length) { setQ(el.value); setDq(el.value); }
+        await sleep(70 + (c % 3) * 20);
+      }
+      if (!alive) return;
+      await sleep(2600);
+      for (let c = DEMO2.length; c >= 0 && alive; c--) { el.value = DEMO2.slice(0, c); await sleep(16); }
       if (alive) { setQ(''); setDq(''); setDone(true); }
     })();
     return () => { alive = false; clearTimeout(timer); };
@@ -149,7 +159,7 @@ export default function Support() {
             <form role="search" aria-label="Support" ref={form} className="xsp-search" onSubmit={(e) => { e.preventDefault(); if (hit || (mine && typed)) btn.current?.click(); }}>
               <label htmlFor="xsp-q" className="x-sr">How can we help?</label>
               <svg viewBox="0 0 20 20" width="24" height="24" aria-hidden="true"><circle cx="9" cy="9" r="6" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="m13.5 13.5 4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-              <input id="xsp-q" ref={input} type="search" autoComplete="off" spellCheck="false" enterKeyHint="go"
+              <input id="xsp-q" ref={input} type="search" autoComplete="off" spellCheck="false" enterKeyHint="go" placeholder={done && !mine ? DEMO : undefined}
                 onPointerDown={take} onFocus={take} onKeyDown={take}
                 onChange={(e) => { setMine(true); setDone(true); setQ(e.target.value); }} />
               {playing && (
@@ -207,7 +217,11 @@ export default function Support() {
       </section>
 
       <Band title="On an enterprise plan or need a dedicated channel?" action="Email support@hanzo.ai" to="mailto:support@hanzo.ai"
-        note={<span className="xsp-note">and we’ll route you to your team.</span>} />
+        note={<>
+          <span className="xsp-note">and we’ll route you to your team.</span>
+          {/* the room's object: Hanzo's six doors as one quiet row, each its own destination */}
+          <span className="xsp-band-doors">{DOORS.map((d) => <A key={d.t} to={d.to}>{d.t}</A>)}</span>
+        </>} />
     </main>
   );
 }

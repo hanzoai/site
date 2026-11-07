@@ -146,6 +146,24 @@ export function sigilOf(slug) {
     : [d.window ? d.window.siblings.length : 0, d.features.length, ...nums([d.lede, ...d.desc, ...d.features].join(' '))].slice(0, 6);
   return { seed: 'cloud/' + slug, data };
 }
+/* what a neighbour shows when you point at it (a console sibling, a family pill, a related row): that product's own
+   name, status, endpoint, lede and Google Cloud pair, read from its own page. Only /cloud/* products have one. */
+export function previewsOf(doc) {
+  if (doc.kind !== 'product') return {};
+  const hrefs = new Set([...(doc.window ? doc.window.siblings.map((s) => s.href) : []), ...(doc.related ? doc.related.items.map((i) => i.href) : [])]);
+  const out = {};
+  for (const h of hrefs) {
+    const m = /^\/cloud\/([^/#?]+)$/.exec(h || '');
+    if (!m || !MEMBERS().includes(m[1])) continue;
+    const d = cloudDoc(m[1]);
+    if (d.kind !== 'product') continue;
+    const api = d.meta.find((x) => x.k === 'API');
+    const g = d.meta.find((x) => x.k === 'Google Cloud');
+    out[h] = { name: d.name, label: d.label, lede: d.lede, api: api ? api.v : '', google: g ? g.v : '' };
+  }
+  return out;
+}
+
 /* a related card shows the picture its page opens with, so the card can open into that page */
 export function relatedSigils(doc) {
   if (!doc.related) return {};

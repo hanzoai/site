@@ -1,6 +1,6 @@
 'use client';
 /* Persona: enterprise buyer (fraud, AML and trust-and-safety leads). Goal: start a sales conversation. CTA: "Talk to us" → /contact-sales. Metric: contact_sales_submit.
-   Risk. V2: 8/10 an unframed gauge decides beside the h1 (needle, reasons, action; no invented digits); rules, platforms and connects each get a stepping object (rule card, declare stack, request flow); deck greys and radii; one solid per viewport on phone
+   Risk. V2: 8/10 an unframed gauge decides beside the h1 (needle, reasons, action; no invented digits); one engine with two faces; then one object per screen (rule card, declare stack, request flow, tier ladder) with the words folded in; no voids; deck greys and radii
    Signature: the dial that decides, and shows its work. Pick a stage (signup, payment, post-purchase; the stage is a
    field) and signals light; the needle swings to a score and the plane returns an action and its reasons. It never
    declines on its own: past the line it summons a person, the ceiling Hanzo's engine refuses to start above.
@@ -71,7 +71,7 @@ function Dial() {
           <span className="rk-l0 x-mono">0</span><span className="rk-lline x-mono">the line</span><span className="rk-l1 x-mono">100</span>
         </div>
         <div className="rk-out" aria-live={mine ? 'polite' : 'off'}>
-          <div className="rk-action"><span className="w2-kicker">action</span><span className="rk-action-box"><AnimatePresence mode="wait" initial={false}><motion.b key={act} className={hot ? 'hot' : ''} {...roll}>{act}</motion.b></AnimatePresence></span></div>
+          <div className="rk-action"><span className="rk-action-box"><AnimatePresence mode="wait" initial={false}><motion.b key={act} className={hot ? 'hot' : ''} {...roll}>{act}</motion.b></AnimatePresence></span><span className="rk-action-k x-mono">action</span></div>
         </div>
       </div>
       <div className="rk-dial-r">
@@ -124,27 +124,22 @@ function Faces() {
     <section className={'w2-sec rk-say' + (live ? ' on' : '')} aria-labelledby="rk-today" ref={ref}>
       <div className="w2-wrap">
         <h2 id="rk-today" className="w2-headline rk-today-h">Where this is today</h2>
-        <p className="rk-say-p">
-          <span className="rk-say-h">Two faces over one engine, at two different stages.</span>{' '}
-          <span className="rk-say-c" data-pill="live"><b>Available now</b> — the compliance face, at api.hanzo.ai/v1/aml: monitoring, alerts, cases, rules, sanctions screening, relationship lookback and a retained-record clock.</span>{' '}
-          <span className="rk-say-c" data-pill="dev"><b>In development</b> — the decide plane, which will score an account, a transaction, a session or an agent and return a decision you can explain, from a model trained on your organization's own data rather than a pooled model of somebody else's traffic.</span>
-        </p>
-        <div className="rk-faces">
-          <div className="rk-face live">
-            <p className="rk-face-k"><i />compliance face</p>
-            <code className="rk-face-ep x-mono">/v1/aml</code>
-            <Detail title="compliance face" kicker="/v1/aml">
-              <p>Hanzo Risk is two faces over one engine, and they are not at the same stage. The <strong>compliance face is live</strong> at <strong>api.hanzo.ai/v1/aml</strong>, behind your Hanzo identity: monitoring, alerts, cases, rules, sanctions screening, relationship lookback, and a retained-record plane that keeps a five-year clock.</p>
-              <p>Its source is public and every rule cites the instrument it implements, so what this page claims can be read back out of the code. It is <strong>not open source</strong>: the engine is licensed under the Lux Ecosystem License — free for research and on Lux networks, and licensed separately for commercial use anywhere else.</p>
-            </Detail>
+        <p className="rk-say-h">Two faces over one engine, at two different stages.</p>
+        <div className="rk-engine">
+          <p className="rk-say-c live"><b>Available now</b> — the compliance face, at api.hanzo.ai/v1/aml: monitoring, alerts, cases, rules, sanctions screening, relationship lookback and a retained-record clock.</p>
+          <p className="rk-say-c dev"><b>In development</b> — the decide plane, which will score an account, a transaction, a session or an agent and return a decision you can explain, from a model trained on your organization's own data rather than a pooled model of somebody else's traffic.</p>
+          <div className="rk-eng-core" aria-hidden="true">
+            <span className="rk-eng-w live"><i /></span>
+            <span className="rk-eng-box x-mono">one engine</span>
+            <span className="rk-eng-w dev" />
           </div>
-          <div className="rk-face dev">
-            <p className="rk-face-k"><i />decide plane</p>
-            <code className="rk-face-ep x-mono">/v1/risk</code>
-            <Detail title="decide plane" kicker="/v1/risk">
-              <p>The <strong>decide plane</strong> — <strong>/v1/risk</strong>, everything else on this page — and the shared model plane behind both are being built. Every capability below says which of the two it is.</p>
-            </Detail>
-          </div>
+          <Detail className="rk-d-live" label="compliance face" title="compliance face" kicker="/v1/aml">
+            <p>Hanzo Risk is two faces over one engine, and they are not at the same stage. The <strong>compliance face is live</strong> at <strong>api.hanzo.ai/v1/aml</strong>, behind your Hanzo identity: monitoring, alerts, cases, rules, sanctions screening, relationship lookback, and a retained-record plane that keeps a five-year clock.</p>
+            <p>Its source is public and every rule cites the instrument it implements, so what this page claims can be read back out of the code. It is <strong>not open source</strong>: the engine is licensed under the Lux Ecosystem License — free for research and on Lux networks, and licensed separately for commercial use anywhere else.</p>
+          </Detail>
+          <Detail className="rk-d-dev" label="decide plane" title="decide plane" kicker="/v1/risk">
+            <p>The <strong>decide plane</strong> — <strong>/v1/risk</strong>, everything else on this page — and the shared model plane behind both are being built. Every capability below says which of the two it is.</p>
+          </Detail>
         </div>
       </div>
     </section>
@@ -295,7 +290,6 @@ const ON = [
   ['Abuse', 'Score the usage plane, not only the money: pay-as-you-go abuse, credential stuffing, scraping, quota abuse and spam. This is the plane that defends an AI product, where the loss is inference spend rather than a chargeback.'],
   ['Disputes', 'Assemble what a dispute response needs — the decision, the rules that fired, the values behind it and the identity of the model that produced it — out of a tamper-evident record. Hanzo does not process payments and has no dispute-network integration; the evidence is yours to submit.'],
 ];
-const first = (d) => d.split(/(?<=\.)\s/)[0];
 
 /* A small object per subject: accounts acting as one, a transaction meeting its decision, usage climbing, a dispute's record. */
 function OnArt({ i }) {
@@ -314,7 +308,7 @@ function DecidesOn() {
           <h2 className="w2-headline">What it decides on</h2>
           <p className="w2-lede">In development. Fraud is a use of a scoring plane, not a product that sits beside one. One call will judge an account, a transaction, a session or an agent.</p>
         </div>
-        <OpenCards cols={4} className="rk-cards" items={ON.map(([t, d], i) => ({ id: 'rk-' + t, k: String(i + 1).padStart(2, '0'), t, d: first(d), art: <OnArt i={i} />, body: <p>{d}</p> }))} />
+        <OpenCards cols={4} className="rk-cards" items={ON.map(([t, d], i) => ({ id: 'rk-' + t, k: String(i + 1).padStart(2, '0'), t, art: <OnArt i={i} />, body: <p>{d}</p> }))} />
       </div>
     </section>
   );
@@ -347,57 +341,73 @@ function Model() {
 }
 
 const LISTS = ['addresses', 'emails', 'accounts', 'card ranges', 'networks', 'devices'];
+const RULES = [['Custom rules', 'Write rules over your own fields in the same vocabulary the shipped library uses, and replay them over your own history before you turn them on.'], ['Lists', 'Allow and deny lists over addresses, emails, accounts, card ranges, networks and devices, referenced directly from a rule. Your lists are yours; a designation from a sanctions authority is not editable by a tenant, and the two never merge.'], ['Suppression', 'Suppress an activation you have already judged. A suppressed hit is recorded as suppressed rather than dropped, because silence must never read back as a clean result.']];
 
-/* Rules, lists and suppression as one object: a rule references a list, the list hits, the hit is recorded as
-   suppressed rather than dropped. Steps once a beat while in view; pause stops it. */
-function RuleCard({ on }) {
-  const [k, setK] = useState(4);
+/* Rules, lists and suppression as one object: three steps on one card. The rule reads your fields, a list hits, the hit
+   is recorded as suppressed rather than dropped. The step's own words swap under the card, one at a time. */
+function Rules() {
+  const [ref, live] = useLive(0.3);
+  const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
+  const [at, setAt] = useState(0);
+  const [mine, setMine] = useState(false);
   const [n, setN] = useState(0);
-  useEffect(() => { if (on) setK(0); }, [on]);
-  useEvery(1300, on, () => { if (k === 5) setN((v) => v + 1); setK((v) => (v + 1) % 6); });
-  const hit = [2, 4, 1, 5][n % 4];
+  const run = live && !paused;
+  useEvery(3200, run && !mine, () => setAt((v) => (v + 1) % 3));
+  useEvery(800, run && at === 1, () => setN((v) => v + 1));
+  const hit = [2, 4, 1, 5, 0, 3][n % 6];
   return (
-    <div className="rk-rule" aria-hidden="true">
-      <p className="rk-rule-r x-mono"><b className={k >= 0 ? 'on' : ''}>Custom rules</b><span>your own fields</span></p>
-      <ul className="rk-rule-l">{LISTS.map((t, i) => <li key={t} className={k >= 1 && i === hit ? 'on' : ''}>{t}</li>)}</ul>
-      <div className="rk-rule-h">
-        <span className={'rk-rule-step' + (k >= 2 ? ' on' : '')}>Lists</span>
-        <i className={k >= 2 ? 'on' : ''} />
-        <span className={'rk-rule-step' + (k >= 3 ? ' on' : '')}>Suppression</span>
-        <motion.b className="rk-rule-stamp x-mono" initial={false} animate={{ opacity: k >= 4 ? 1 : 0, rotate: k >= 4 ? -6 : 0, scale: k >= 4 ? 1 : 1.2 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>suppressed</motion.b>
+    <section className="w2-sec rk-rules" ref={ref}>
+      <div className="w2-wrap rk-pair">
+        <div className="rk-pair-h">
+          <h2 className="w2-headline">Rules, lists and suppression</h2>
+          <p className="rk-dev">In development.</p>
+        </div>
+        <div className={'rk-rule s' + at}>
+          <div className="rk-rule-tabs" role="tablist" aria-label="Rules, lists and suppression" onKeyDown={(e) => { const k = { ArrowRight: (at + 1) % 3, ArrowLeft: (at + 2) % 3, Home: 0, End: 2 }[e.key]; if (k === undefined) return; e.preventDefault(); setMine(true); setAt(k); e.currentTarget.children[k]?.focus(); }}>
+            {RULES.map(([t], i) => (
+              <button key={t} type="button" role="tab" aria-selected={at === i} tabIndex={at === i ? 0 : -1} onClick={() => { setMine(true); setAt(i); }}><h3>{t}</h3></button>
+            ))}
+            <span className="rk-pause">{pauseBtn}</span>
+          </div>
+          <div className="rk-rule-stage" aria-hidden="true">
+            <p className="rk-rule-r x-mono"><b>rule</b><span>your own fields</span></p>
+            <ul className="rk-rule-l">{LISTS.map((t, i) => <li key={t} className={at >= 1 && i === hit ? 'on' : ''}>{t}</li>)}</ul>
+            <div className="rk-rule-h">
+              <span className="rk-rule-step on">{LISTS[hit]}</span>
+              <i className={at === 2 ? 'on' : ''} />
+              <motion.b className="rk-rule-stamp x-mono" initial={false} animate={{ opacity: at === 2 ? 1 : 0, rotate: at === 2 ? -6 : 0, scale: at === 2 ? 1 : 1.2 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>suppressed</motion.b>
+            </div>
+          </div>
+          <div className="rk-rule-d">
+            {RULES.map(([t, d], i) => <p key={t} className={at === i ? 'on' : ''} aria-hidden={at !== i}>{d}</p>)}
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
 
-function RulesPlat() {
+/* Platforms: the declare stack is the screen; the paragraph on why the two planes stay apart opens from its words. */
+function Platforms() {
   const [ref, live] = useLive(0.25);
   const [d, setD] = useState(0);
   useEvery(1400, live, () => setD((v) => (v + 1) % 5));
   return (
-    <section className="w2-sec rk-rules" ref={ref}>
-      <div className="w2-wrap rk-rules-grid">
-        <div>
-          <h2 className="w2-headline">Rules, lists and suppression</h2>
-          <p className="rk-dev">In development.</p>
-          <RuleCard on={live} />
-          <ul className="rk-trio">
-            {[['Custom rules', 'Write rules over your own fields in the same vocabulary the shipped library uses, and replay them over your own history before you turn them on.'], ['Lists', 'Allow and deny lists over addresses, emails, accounts, card ranges, networks and devices, referenced directly from a rule. Your lists are yours; a designation from a sanctions authority is not editable by a tenant, and the two never merge.'], ['Suppression', 'Suppress an activation you have already judged. A suppressed hit is recorded as suppressed rather than dropped, because silence must never read back as a clean result.']].map(([t, d]) => (
-              <li key={t}><h3 className="w2-title">{t}</h3><p className="w2-body">{d}</p></li>
-            ))}
-          </ul>
-        </div>
-        <div className="rk-plat">
+    <section className="w2-sec rk-platsec" ref={ref}>
+      <div className="w2-wrap rk-pair flip">
+        <div className="rk-pair-h">
           <h2 className="w2-headline">Platforms and marketplaces</h2>
           <p className="rk-dev">In development.</p>
-          <p className="w2-body">If you run a platform, your risk is your sellers as much as your buyers. Risk will <em>declare</em> a control against a subject — hold a payout, set a reserve, restrict a merchant, block a suspect transaction — and the money plane will read it. Risk will never move money itself.</p>
-          <div className="rk-ctrl" aria-hidden="true">
-            {['hold a payout', 'set a reserve', 'restrict a merchant', 'block a suspect transaction'].map((c, i) => (
-              <span key={c} className={d === i ? 'on' : ''}><b className="x-mono">declare</b>{c}</span>
-            ))}
-            <em className={'x-mono' + (d === 4 ? ' on' : '')}>money plane reads it</em>
-          </div>
-          <p className="w2-body">That separation is deliberate. The thing that decides and the thing that pays should not be the same thing, and a control that is a written record rather than a side effect is one you can still account for a year later.</p>
+          <p className="rk-plat-l">If you run a platform, your risk is your sellers as much as your buyers. Risk will <em>declare</em> a control against a subject — hold a payout, set a reserve, restrict a merchant, block a suspect transaction — and the money plane will read it. Risk will never move money itself.</p>
+          <Detail label="That separation is deliberate." title="Platforms and marketplaces" kicker="In development">
+            <p>That separation is deliberate. The thing that decides and the thing that pays should not be the same thing, and a control that is a written record rather than a side effect is one you can still account for a year later.</p>
+          </Detail>
+        </div>
+        <div className="rk-ctrl" aria-hidden="true">
+          {['hold a payout', 'set a reserve', 'restrict a merchant', 'block a suspect transaction'].map((c, i) => (
+            <span key={c} className={d === i ? 'on' : ''}><b className="x-mono">declare</b>{c}</span>
+          ))}
+          <em className={'x-mono' + (d === 4 ? ' on' : '')}>money plane reads it</em>
         </div>
       </div>
     </section>
@@ -427,8 +437,9 @@ function Flow() {
 
 function ConnectPlans() {
   const [ref, live] = useLive(0.1);
-  const [tier, setTier] = useState(3);
-  useEvery(1600, live, () => setTier((v) => (v + 1) % 4));
+  const [tier, setTier] = useState(0);
+  const [mine, setMine] = useState(false);
+  useEvery(2600, live && !mine, () => setTier((v) => (v + 1) % 4));
   return (
     <section className="w2-sec rk-plans" ref={ref}>
       <div className="w2-wrap">
@@ -436,12 +447,14 @@ function ConnectPlans() {
           <div>
             <h2 className="w2-headline">How it connects</h2>
             <p className="w2-lede rk-conn-l">In development. Risk will ingest signals and return a decision. Everything about how you take money stays where it is.</p>
-            <Flow />
           </div>
           <div className="rk-conn-r">
-            {[['Keep the processor you have', 'Risk takes signals and returns a decision. It never touches a processor, so nothing about your payment stack has to move and there is no migration to schedule.'], ['Pure API', 'One call from your own system: send what you know, get back an action, a score and the reasons. A signup, a payment, a session and an agent are the same call — the stage is a field, not a different endpoint.']].map(([t, d]) => (
-              <div key={t} className="rk-conn-i w2-card"><h3 className="w2-title">{t}</h3><p className="w2-body">{d}</p></div>
-            ))}
+            <Flow />
+            <div className="rk-conn-d">
+              {[['Keep the processor you have', 'Risk takes signals and returns a decision. It never touches a processor, so nothing about your payment stack has to move and there is no migration to schedule.'], ['Pure API', 'One call from your own system: send what you know, get back an action, a score and the reasons. A signup, a payment, a session and an agent are the same call — the stage is a field, not a different endpoint.']].map(([t, d]) => (
+                <Detail key={t} label={t} title={t} kicker="How it connects"><p>{d}</p></Detail>
+              ))}
+            </div>
           </div>
         </div>
         <div className="rk-split">
@@ -449,14 +462,18 @@ function ConnectPlans() {
           <p className="w2-lede">In development. Four tiers, each a subscription with screens included and metered beyond that on the Hanzo bill you already have. A screen is one decision about one transaction, account or customer. Nothing here is priced yet.</p>
         </div>
         <ol className="rk-ladder">
-          {TIERS.map(([t, d], i) => (
+          {TIERS.map(([t], i) => (
             <li key={t} className={i === tier ? 'on' : ''} style={{ '--h': 52 + i * 16 + '%' }}>
-              <span className="rk-ladder-n x-mono" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-              <h3>{t}</h3>
-              <p>{d}</p>
+              <button type="button" aria-pressed={i === tier} onClick={() => { setMine(true); setTier(i); }} onPointerEnter={() => { setMine(true); setTier(i); }}>
+                <span className="rk-ladder-n x-mono" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                <h3>{t}</h3>
+              </button>
             </li>
           ))}
         </ol>
+        <div className="rk-tier-d" aria-live={mine ? 'polite' : 'off'}>
+          {TIERS.map(([t, d], i) => <p key={t} className={i === tier ? 'on' : ''} aria-hidden={i !== tier}><b>{t}</b>{d}</p>)}
+        </div>
       </div>
     </section>
   );
@@ -501,7 +518,8 @@ export default function Risk() {
       <Chapters />
       <DecidesOn />
       <Model />
-      <RulesPlat />
+      <Rules />
+      <Platforms />
       <ConnectPlans />
       <Not />
       <section className="w2-sec tight rk-band" aria-label="Talk to us">

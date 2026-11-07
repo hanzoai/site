@@ -81,6 +81,8 @@ html:has(main.xbg):not([data-xbg-solid]) header[data-slot=masthead] a[data-x-ask
   .js .alt .xbg-plate-film { right: auto; left: 0; object-position: 40% 45%; -webkit-mask-image: linear-gradient(270deg, transparent 0, #000 30%); mask-image: linear-gradient(270deg, transparent 0, #000 30%); }
   .js .alt .xbg-plate-f { align-self: flex-end; transform-origin: 100% 100%; }
   .js .alt .xbg-plate-k { flex-direction: row-reverse; }
+  /* the figures settle on the film's right: a gradient under that column only (dimming as a gradient under text) */
+  .js .alt .xbg-stage.film .xbg-plate-c::before { content: ''; position: absolute; z-index: -1; top: 0; bottom: 0; left: calc(50% - 50vw); right: calc(50% - 50vw); background: linear-gradient(90deg, rgba(0, 0, 0, 0) 34%, rgba(0, 0, 0, .8) 50%, rgba(0, 0, 0, .9) 100%); pointer-events: none; }
 }
 /* a figures post keeps its reading rail on the right of the column */
 @media (min-width: 1200px) {
@@ -163,6 +165,14 @@ html:not(.js) .xbg-gist-track i { transform: none; }
 .xbg-gist.steps li .xbg-gist-dot { animation: xbg-dot calc(var(--n) * 1.6s) linear infinite; animation-delay: inherit; animation-play-state: inherit; }
 @keyframes xbg-dot { 0%, 30% { background: var(--ink2); transform: scale(1.15); } 36%, 100% { background: var(--room-bg); transform: scale(1); } }
 
+/* the Life gists: the collision on a small board, the glider alone as the emblem */
+.xbg-gist.life { display: flex; }
+.xbg-gist-board { display: grid; gap: 2px; padding: 10.5px; border-radius: 20px; background: var(--room-surface); width: 100%; max-width: 520px; }
+.xbg-gist.emblem .xbg-gist-board { max-width: 188px; gap: 6.5px; padding: 17px; border-radius: 16px; }
+.xbg-gist-board i { aspect-ratio: 1; border-radius: 2px; background: var(--hz-100); transition: background-color 180ms cubic-bezier(0, 0, .2, 1), transform 180ms cubic-bezier(.4, 0, .2, 1); }
+.xbg-gist.emblem .xbg-gist-board i { border-radius: 50%; }
+.xbg-gist-board i[data-on='1'] { background: var(--ink2); transform: scale(.92); }
+
 /* code: kit CodeBlock (and kit Tabs above it) */
 .xbg-code { margin: 44px 0; display: flex; flex-direction: column; gap: 10.5px; align-items: flex-start; }
 .xbg-code > *, .xbg-code [role='tabpanel'] { width: 100%; }
@@ -171,7 +181,7 @@ html:not(.js) .xbg-gist-track i { transform: none; }
 /* Game of Life */
 .xbg-life { margin: 0; display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: 17px 44px; align-items: start; }
 .xbg-board { display: grid; gap: 2px; padding: 10.5px; border-radius: 24px; background: var(--room-surface); touch-action: none; }
-.xbg-board button { aspect-ratio: 1; padding: 0; border: 0; border-radius: 3px; background: var(--hz-100); cursor: crosshair; transition: background-color 150ms cubic-bezier(0, 0, .2, 1), transform 150ms cubic-bezier(.4, 0, .2, 1); }
+.xbg-board button { aspect-ratio: 1; width: 100%; min-width: 0; min-height: 0; height: auto; padding: 0; border: 0; border-radius: 3px; background: var(--hz-100); cursor: crosshair; transition: background-color 150ms cubic-bezier(0, 0, .2, 1), transform 150ms cubic-bezier(.4, 0, .2, 1); }
 @media (hover: hover) { .xbg-board button:hover { background: var(--hz-200); } }
 .xbg-board button[data-on='1'] { background: var(--ink2); transform: scale(.94); }
 .xbg-board button:focus-visible { outline: 2px solid var(--ink2); outline-offset: 1px; position: relative; z-index: 1; }
@@ -227,10 +237,39 @@ html:not(.js) .xbg-gist-track i { transform: none; }
 .xbg-card-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 75% 45%; transition: transform 500ms cubic-bezier(.4, 0, .2, 1); }
 .xbg-card-art .xbg-sigil { position: absolute; inset: 0; width: 100%; height: 100%; transition: transform 500ms cubic-bezier(.4, 0, .2, 1); }
 @media (hover: hover) { .xbg-card:hover .xbg-card-art img, .xbg-card:hover .xbg-card-art .xbg-sigil { transform: scale(1.04); } }
+/* hover tells something: the post's tag and read time rise into the picture's foot */
+.xbg-card-peek { position: absolute; left: 17px; bottom: 17px; z-index: 1; display: flex; gap: 10.5px; padding: 6.5px 10.5px; border-radius: 6px; background: rgba(0, 0, 0, .72); color: #fafafa; font-size: 12px; font-weight: 606; letter-spacing: .14em; text-transform: uppercase; transform: translateY(calc(100% + 17px)); transition: transform 300ms cubic-bezier(.16, 1, .3, 1); }
+@media (hover: hover) { .xbg-card:hover .xbg-card-peek, .xbg-card:focus-visible .xbg-card-peek { transform: none; } }
+
+/* the closing band: Hanzo's words cut in by line mask when they arrive (no blur), then the ask */
+.xbg-band-h { text-wrap: balance; }
+.xbg-band-h .xbg-bm { display: inline-block; overflow: hidden; padding: .04em 0 .12em; margin: -.04em 0 -.12em; vertical-align: top; }
+.xbg-band-h .xbg-bi { display: inline-block; }
+.js .xbg-band:not([data-in='true']) .xbg-bi { transform: translateY(105%); }
+.js .xbg-band[data-in='true'] .xbg-bi { animation: xbg-rise 800ms cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(var(--i, 0) * 55ms); }
+.xbg-band .x-band-act { transition: transform 600ms cubic-bezier(.16, 1, .3, 1) 300ms; }
+.js .xbg-band:not([data-in='true']) .x-band-act { transform: translateY(17px); }
+@media (prefers-reduced-motion: reduce) { .js .xbg-band .xbg-bi, .js .xbg-band .x-band-act { transform: none !important; animation: none !important; } }
+
+/* the Frontier's sources: one caption line under the chart, out of the chip row */
+.xbg-srcs { margin: 17px 0 0; font-size: 13px; line-height: 1.6; color: var(--mute); }
+.xbg-srcs > span + span::before { content: ' · '; }
+
+/* the hero art at rest beside the title when the scene does not pin (reduced motion, no JavaScript) */
+.xbg-rest { display: none; }
+@media (min-width: 900px) and (prefers-reduced-motion: reduce) {
+  .xbg-cover-g { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); column-gap: 27px; align-items: center; }
+  .alt .xbg-cover-t { order: 2; }
+  .xbg-rest { display: block; position: relative; aspect-ratio: 4 / 3; border-radius: 24px; overflow: hidden; background: #000; color: rgba(255, 255, 255, .6); }
+}
+@media (min-width: 900px) {
+  html:not(.js) .xbg-cover-g { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); column-gap: 27px; align-items: center; }
+  html:not(.js) .xbg-rest { display: block; position: relative; aspect-ratio: 4 / 3; border-radius: 24px; overflow: hidden; background: #000; color: rgba(255, 255, 255, .6); }
+}
+.xbg-rest img, .xbg-rest .xbg-sigil { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .xbg-card-t { font-size: 21px; font-weight: 497; line-height: 1.25; letter-spacing: -.01em; max-width: 26ch; text-wrap: balance; }
 .xbg-card-k { display: flex; flex-wrap: wrap; gap: 6.5px 17px; color: var(--mute); }
 .xbg-card-r { color: var(--ink2); }
-.xbg .x-band h2 { text-wrap: balance; }
 .xbg-band-more { display: flex; flex-wrap: wrap; justify-content: center; gap: 10.5px 27px; }
 .xbg-band-more .x-arrow { color: #fafafa; }
 

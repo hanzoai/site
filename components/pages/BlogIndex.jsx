@@ -18,7 +18,7 @@
 // Metric: post opens (data-cta="blog.*")
 // Signature: a magazine cover that turns itself: the headline wipes and a silver curtain crosses the art plate as it changes
 // Beyond: the publishing strip: a bar per month counted from Hanzo's own post dates that narrows the contents to a month
-// V2: 8/10 round 5: masthead cuts in by CSS from first paint, the cover plate's first contour frame is server SVG (BlogIndexFrame), header outlined from first paint while the page's solid is on screen (no flip), phone strip scrolls inside the column with All 24 under it, card art clipped to its radius, big card fills the column, AnimatePresence popLayout. Round 4: JS off shows one cover story (NoJs, no <noscript>); one solid per screen (masthead "Read the latest" solid on desktop where the header quiets, outlined on phones beside the header's solid); the on-site trio plays Hanzo's own films (Zen, Enso, Kai) so four real visuals show with the cover; the contents show one month at a time, the bars swap it in and out, All 24 opens all; the count sits under Contents; trio tilt, count-up, idle bar sweep and row arrival kept
+// V2: 8/10 round 6: phone month bars fit the column (9 equal columns, no rail), active All 24 outlined not filled, one All 24 control, tighter cover-to-films gap. Round 5: masthead cuts in by CSS from first paint, the cover plate's first contour frame is server SVG (BlogIndexFrame), header outlined from first paint while the page's solid is on screen (no flip), phone strip scrolls inside the column with All 24 under it, card art clipped to its radius, big card fills the column, AnimatePresence popLayout. Round 4: JS off shows one cover story (NoJs, no <noscript>); one solid per screen (masthead "Read the latest" solid on desktop where the header quiets, outlined on phones beside the header's solid); the on-site trio plays Hanzo's own films (Zen, Enso, Kai) so four real visuals show with the cover; the contents show one month at a time, the bars swap it in and out, All 24 opens all; the count sits under Contents; trio tilt, count-up, idle bar sweep and row arrival kept
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useInView, useReducedMotion } from 'motion/react';
 import { A, Cta, Film, Img } from '../kit';
@@ -245,7 +245,7 @@ function Strip({ m, setM, months, top, all }) {
         );
       })}
     </div>
-      <button type="button" className={'xbl-allbtn' + (!m && all ? ' on' : '')} aria-pressed={!m && all} onClick={() => setM(null)}>All {POSTS.length}</button>
+      <button type="button" className={'xbl-allbtn' + (!m && all ? ' on' : '')} aria-pressed={!m && all} onClick={() => setM(null)}>All {POSTS.length} <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.5 6 8 10.5 12.5 6" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
     </div>
   );
 }
@@ -311,7 +311,6 @@ function Contents() {
             </motion.section>
           ))}
           </AnimatePresence>
-          {!m && !all && <button type="button" className="xbl-more" onClick={() => setAll(true)} aria-expanded="false">All {POSTS.length} <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.5 6 8 10.5 12.5 6" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg></button>}
         </div>
       </div>
     </section>
