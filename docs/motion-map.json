@@ -1,0 +1,872 @@
+{
+ "signatures": {
+  "drag-canvas": {
+   "name": "Drag to explore",
+   "what": "An infinite canvas the visitor pans with the pointer (or a finger); the product's parts are laid out on it."
+  },
+  "zoom-map": {
+   "name": "Zoom into the system",
+   "what": "Scroll zooms from the whole system down into one part, which then fills the screen and explains itself."
+  },
+  "h-gallery": {
+   "name": "Sideways gallery",
+   "what": "Vertical scroll drives a horizontal track of panels; the page moves sideways for one stretch, then releases."
+  },
+  "spotlight": {
+   "name": "Spotlight",
+   "what": "A dark section the cursor lights up; what is under the light reveals detail (touch: tap to place the light)."
+  },
+  "compare": {
+   "name": "Before / after slider",
+   "what": "A divider the visitor drags across two states: without Hanzo and with it, old and new."
+  },
+  "card-stack": {
+   "name": "Card stack",
+   "what": "A stack of cards flicked or dragged away one at a time; each card is one idea."
+  },
+  "terminal": {
+   "name": "Live terminal",
+   "what": "A terminal types the real commands and streams real output; the visitor can pick the next command."
+  },
+  "object-3d": {
+   "name": "Turn the object",
+   "what": "One 3D object (or 2.5D layered render) the visitor drags to rotate; parts label themselves as they face front."
+  },
+  "film-scrub": {
+   "name": "Scrub the film",
+   "what": "Scroll scrubs a film or image sequence frame by frame, forwards and back."
+  },
+  "race": {
+   "name": "Live race",
+   "what": "Bars, lanes or counters race against each other in real time, at the real ratios."
+  },
+  "graph": {
+   "name": "Living graph",
+   "what": "Nodes and links that settle like a physics graph; hovering a node lights its paths and names them."
+  },
+  "split": {
+   "name": "Split screen",
+   "what": "One side holds still while the other scrolls and changes it (the old pinned-chapters scene: rationed)."
+  },
+  "decode": {
+   "name": "Decode",
+   "what": "Headlines and figures resolve out of scrambled characters as they arrive; hovering re-scrambles them."
+  },
+  "magnet-grid": {
+   "name": "Magnetic grid",
+   "what": "A field of tiles or dots that bends toward the cursor and ripples when clicked."
+  },
+  "timeline": {
+   "name": "Drag the timeline",
+   "what": "A timeline the visitor drags or scrubs; the page's content changes with the year or step."
+  },
+  "rows-open": {
+   "name": "Rows that open",
+   "what": "A tight list whose rows expand in place on hover or tap into a full detail panel."
+  },
+  "live-chat": {
+   "name": "Live conversation",
+   "what": "The product answers in real time on screen, with a choice of questions to ask it."
+  },
+  "flip-board": {
+   "name": "Flip board",
+   "what": "Departure-board tiles flip through values (statuses, prices, regions) as data changes."
+  },
+  "ribbons": {
+   "name": "Velocity ribbons",
+   "what": "Bands of words or logos whose speed and direction follow the scroll and lean with it."
+  },
+  "peel": {
+   "name": "Peel the layers",
+   "what": "The product's stack lifts apart into floating layers in 3D, then closes again."
+  },
+  "word-light": {
+   "name": "Words light up",
+   "what": "A long statement lights word by word as it is read (story pages)."
+  },
+  "stamp": {
+   "name": "Stamp",
+   "what": "Elements land with weight: a short drop, a squash and a settle, like stamping a document."
+  },
+  "globe": {
+   "name": "Globe",
+   "what": "A turning globe with live points and arcs between regions; drag to spin it."
+  },
+  "particles": {
+   "name": "Particles form it",
+   "what": "A cloud of dots assembles into the product's shape or mark and scatters at the cursor."
+  },
+  "morph-panel": {
+   "name": "One panel, many states",
+   "what": "A single panel that morphs smoothly between states as tabs or steps change, never cutting."
+  },
+  "waveform": {
+   "name": "Waveform",
+   "what": "A live audio waveform that plays, scrubs and reacts to the pointer (voice and audio pages)."
+  },
+  "calculator": {
+   "name": "Live calculator",
+   "what": "Sliders and inputs that reprice or re-plan everything on the page instantly."
+  },
+  "one-question": {
+   "name": "One question at a time",
+   "what": "A form that asks one thing per screen, sliding to the next, with the answer summarised as it builds."
+  },
+  "keep": {
+   "name": "Keep as is",
+   "what": "James approved this page's motion (7 Nov). Do not change it."
+  }
+ },
+ "pages": [
+  {
+   "key": "/",
+   "title": "/",
+   "signature": "keep"
+  },
+  {
+   "key": "/enso",
+   "title": "Hanzo Enso",
+   "signature": "particles"
+  },
+  {
+   "key": "/iro",
+   "title": "Iro",
+   "signature": "compare"
+  },
+  {
+   "key": "/kai",
+   "title": "Hanzo Kai",
+   "signature": "live-chat"
+  },
+  {
+   "key": "/koe",
+   "title": "Koe",
+   "signature": "waveform"
+  },
+  {
+   "key": "/koma",
+   "title": "Koma",
+   "signature": "film-scrub"
+  },
+  {
+   "key": "/models",
+   "title": "Models",
+   "signature": "race"
+  },
+  {
+   "key": "/mori",
+   "title": "Mori",
+   "signature": "particles"
+  },
+  {
+   "key": "/oto",
+   "title": "Oto",
+   "signature": "waveform"
+  },
+  {
+   "key": "/uta",
+   "title": "Uta",
+   "signature": "film-scrub"
+  },
+  {
+   "key": "/zen",
+   "title": "The Zen family",
+   "signature": "particles"
+  },
+  {
+   "key": "/agents",
+   "title": "Hanzo for agents: free to start, pay as you go",
+   "signature": "live-chat"
+  },
+  {
+   "key": "/api",
+   "title": "One API for models, agents and tools",
+   "signature": "terminal"
+  },
+  {
+   "key": "/bot",
+   "title": "Hanzo Bot",
+   "signature": "live-chat"
+  },
+  {
+   "key": "/chat",
+   "title": "Hanzo Chat",
+   "signature": "card-stack"
+  },
+  {
+   "key": "/chrome",
+   "title": "Hanzo in Chrome",
+   "signature": "terminal"
+  },
+  {
+   "key": "/cli",
+   "title": "A senior engineer in your shell",
+   "signature": "compare"
+  },
+  {
+   "key": "/computer",
+   "title": "Hanzo Computer",
+   "signature": "terminal"
+  },
+  {
+   "key": "/console",
+   "title": "Hanzo Console",
+   "signature": "drag-canvas"
+  },
+  {
+   "key": "/design",
+   "title": "Hanzo Design",
+   "signature": "compare"
+  },
+  {
+   "key": "/desktop",
+   "title": "Hanzo Desktop",
+   "signature": "terminal"
+  },
+  {
+   "key": "/dev",
+   "title": "Hanzo Dev",
+   "signature": "compare"
+  },
+  {
+   "key": "/download",
+   "title": "Download Hanzo",
+   "signature": "terminal"
+  },
+  {
+   "key": "/extension",
+   "title": "Hanzo Extension",
+   "signature": "compare"
+  },
+  {
+   "key": "/gen",
+   "title": "Hanzo Gen",
+   "signature": "film-scrub"
+  },
+  {
+   "key": "/gui",
+   "title": "Hanzo GUI",
+   "signature": "compare"
+  },
+  {
+   "key": "/ide",
+   "title": "An IDE that remembers your codebase",
+   "signature": "terminal"
+  },
+  {
+   "key": "/identity",
+   "title": "Hanzo Identity",
+   "signature": "spotlight"
+  },
+  {
+   "key": "/kata",
+   "title": "Hanzo Kata",
+   "signature": "terminal"
+  },
+  {
+   "key": "/mcp",
+   "title": "Hanzo MCP",
+   "signature": "compare"
+  },
+  {
+   "key": "/operative",
+   "title": "Hanzo Operative",
+   "signature": "live-chat"
+  },
+  {
+   "key": "/operator",
+   "title": "Hanzo Operator",
+   "signature": "card-stack"
+  },
+  {
+   "key": "/playground",
+   "title": "Playground",
+   "signature": "drag-canvas"
+  },
+  {
+   "key": "/sdks",
+   "title": "SDKs for every language",
+   "signature": "peel"
+  },
+  {
+   "key": "/skills",
+   "title": "Skills",
+   "signature": "drag-canvas"
+  },
+  {
+   "key": "/slack",
+   "title": "Hanzo Tag for Slack",
+   "signature": "live-chat"
+  },
+  {
+   "key": "/studio",
+   "title": "Hanzo Studio",
+   "signature": "film-scrub"
+  },
+  {
+   "key": "/tag",
+   "title": "Hanzo Tag",
+   "signature": "drag-canvas"
+  },
+  {
+   "key": "/templates",
+   "title": "Start from a product",
+   "signature": "h-gallery"
+  },
+  {
+   "key": "/ui",
+   "title": "Hanzo UI",
+   "signature": "magnet-grid"
+  },
+  {
+   "key": "/analytics",
+   "title": "Hanzo Analytics",
+   "signature": "flip-board"
+  },
+  {
+   "key": "/authz",
+   "title": "Hanzo Authz",
+   "signature": "spotlight"
+  },
+  {
+   "key": "/auto",
+   "title": "Workflow automation in one binary",
+   "signature": "drag-canvas"
+  },
+  {
+   "key": "/automations",
+   "title": "The apps a workflow can reach",
+   "signature": "h-gallery"
+  },
+  {
+   "key": "/base",
+   "title": "The backend in one file",
+   "signature": "zoom-map"
+  },
+  {
+   "key": "/benchmarks",
+   "title": "Hanzo",
+   "signature": "race"
+  },
+  {
+   "key": "/billing",
+   "title": "Hanzo Billing",
+   "signature": "calculator"
+  },
+  {
+   "key": "/blockchain",
+   "title": "One API key, every chain. And an agent that can use it.",
+   "signature": "drag-canvas"
+  },
+  {
+   "key": "/blog",
+   "title": "Blog",
+   "signature": "word-light"
+  },
+  {
+   "key": "/captable",
+   "title": "Hanzo Cap Table - Equity Management Platform",
+   "signature": "calculator"
+  },
+  {
+   "key": "/commerce",
+   "title": "Hanzo Commerce - Headless Commerce API",
+   "signature": "flip-board"
+  },
+  {
+   "key": "/compare",
+   "title": "How we compare, row by row, with the source on every row",
+   "signature": "race"
+  },
+  {
+   "key": "/comparison",
+   "title": "What it costs to run it yourself",
+   "signature": "rows-open"
+  },
+  {
+   "key": "/crawl",
+   "title": "Hanzo Crawl - AI-Ready Web Crawler",
+   "signature": "flip-board"
+  },
+  {
+   "key": "/dashboards",
+   "title": "Hanzo Dashboards",
+   "signature": "spotlight"
+  },
+  {
+   "key": "/dataroom",
+   "title": "Hanzo Dataroom - Secure Document Sharing & Analytics",
+   "signature": "drag-canvas"
+  },
+  {
+   "key": "/datastore",
+   "title": "Hanzo Datastore",
+   "signature": "zoom-map"
+  },
+  {
+   "key": "/dns",
+   "title": "Hanzo DNS",
+   "signature": "globe"
+  },
+  {
+   "key": "/edge",
+   "title": "Hanzo Edge",
+   "signature": "graph"
+  },
+  {
+   "key": "/engine",
+   "title": "Hanzo Engine",
+   "signature": "zoom-map"
+  },
+  {
+   "key": "/features",
+   "title": "Features",
+   "signature": "h-gallery"
+  },
+  {
+   "key": "/flow",
+   "title": "Hanzo Flow",
+   "signature": "rows-open"
+  },
+  {
+   "key": "/functions",
+   "title": "Hanzo Functions",
+   "signature": "peel"
+  },
+  {
+   "key": "/gallery",
+   "title": "Gallery",
+   "signature": "film-scrub"
+  },
+  {
+   "key": "/gateway",
+   "title": "Hanzo Gateway",
+   "signature": "globe"
+  },
+  {
+   "key": "/guard",
+   "title": "Guard",
+   "signature": "spotlight"
+  },
+  {
+   "key": "/help/privacy/model-training",
+   "title": "How do I change my model improvement setting?",
+   "signature": "h-gallery"
+  },
+  {
+   "key": "/hsm",
+   "title": "Hanzo HSM",
+   "signature": "spotlight"
+  },
+  {
+   "key": "/iam",
+   "title": "Hanzo IAM",
+   "signature": "decode"
+  },
+  {
+   "key": "/idv",
+   "title": "Hanzo IDV",
+   "signature": "spotlight"
+  },
+  {
+   "key": "/ingress",
+   "title": "Hanzo Ingress",
+   "signature": "globe"
+  },
+  {
+   "key": "/insights",
+   "title": "Hanzo Insights",
+   "signature": "flip-board"
+  },
+  {
+   "key": "/integrations",
+   "title": "Integrations",
+   "signature": "h-gallery"
+  },
+  {
+   "key": "/jin",
+   "title": "Jin",
+   "signature": "rows-open"
+  },
+  {
+   "key": "/kai/guide",
+   "title": "How to use Kai, Hanzo\u2019s decision model",
+   "signature": "live-chat"
+  },
+  {
+   "key": "/kms",
+   "title": "Hanzo KMS",
+   "signature": "spotlight"
+  },
+  {
+   "key": "/leaderboard",
+   "title": "Leaderboard",
+   "signature": "race"
+  },
+  {
+   "key": "/learn",
+   "title": "Learn Hanzo",
+   "signature": "word-light"
+  },
+  {
+   "key": "/ledger",
+   "title": "Hanzo Ledger",
+   "signature": "calculator"
+  },
+  {
+   "key": "/machines",
+   "title": "Hanzo Machines",
+   "signature": "zoom-map"
+  },
+  {
+   "key": "/metrics",
+   "title": "Hanzo Metrics",
+   "signature": "flip-board"
+  },
+  {
+   "key": "/mq",
+   "title": "Hanzo MQ",
+   "signature": "globe"
+  },
+  {
+   "key": "/network",
+   "title": "Hanzo Network",
+   "signature": "graph"
+  },
+  {
+   "key": "/node",
+   "title": "Hanzo Node",
+   "signature": "zoom-map"
+  },
+  {
+   "key": "/o11y",
+   "title": "Hanzo O11y",
+   "signature": "flip-board"
+  },
+  {
+   "key": "/open-source",
+   "title": "Open Source",
+   "signature": "h-gallery"
+  },
+  {
+   "key": "/payments",
+   "title": "Hanzo Payments",
+   "signature": "calculator"
+  },
+  {
+   "key": "/platform",
+   "title": "Hanzo Platform",
+   "signature": "zoom-map"
+  },
+  {
+   "key": "/pubsub",
+   "title": "Hanzo PubSub",
+   "signature": "globe"
+  },
+  {
+   "key": "/realtime",
+   "title": "Instant data sync across all clients",
+   "signature": "graph"
+  },
+  {
+   "key": "/registry",
+   "title": "Hanzo Registry",
+   "signature": "zoom-map"
+  },
+  {
+   "key": "/research",
+   "title": "Work we publish",
+   "signature": "word-light"
+  },
+  {
+   "key": "/risk",
+   "title": "Hanzo Risk",
+   "signature": "decode"
+  },
+  {
+   "key": "/s3",
+   "title": "Hanzo S3",
+   "signature": "peel"
+  },
+  {
+   "key": "/search",
+   "title": "Hanzo Search",
+   "signature": "flip-board"
+  },
+  {
+   "key": "/sentinel",
+   "title": "Hanzo Sentinel",
+   "signature": "decode"
+  },
+  {
+   "key": "/sign",
+   "title": "Hanzo Sign",
+   "signature": "stamp"
+  },
+  {
+   "key": "/solutions",
+   "title": "Solutions for every team and industry",
+   "signature": "h-gallery"
+  },
+  {
+   "key": "/stream",
+   "title": "Hanzo Stream",
+   "signature": "globe"
+  },
+  {
+   "key": "/tabs",
+   "title": "Keep tabs on your agents",
+   "signature": "calculator"
+  },
+  {
+   "key": "/telemetry",
+   "title": "Hanzo Telemetry",
+   "signature": "graph"
+  },
+  {
+   "key": "/treasury",
+   "title": "Hanzo Treasury",
+   "signature": "calculator"
+  },
+  {
+   "key": "/tunnel",
+   "title": "Hanzo Tunnel",
+   "signature": "peel"
+  },
+  {
+   "key": "/visor",
+   "title": "Hanzo Visor",
+   "signature": "graph"
+  },
+  {
+   "key": "/world",
+   "title": "Hanzo World",
+   "signature": "globe"
+  },
+  {
+   "key": "/zap",
+   "title": "Hanzo ZAP",
+   "signature": "calculator"
+  },
+  {
+   "key": "/zen/7",
+   "title": "Zen 7 Frontier Foundation",
+   "signature": "particles"
+  },
+  {
+   "key": "/zen/models",
+   "title": "The complete Zen API catalog",
+   "signature": "object-3d"
+  },
+  {
+   "key": "/zen/zen6-max",
+   "title": "Zen 6 Max",
+   "signature": "particles"
+  },
+  {
+   "key": "/affiliate",
+   "title": "Affiliates",
+   "signature": "one-question"
+  },
+  {
+   "key": "/beta",
+   "title": "Get there first",
+   "signature": "stamp"
+  },
+  {
+   "key": "/bounty",
+   "title": "Bounties",
+   "signature": "one-question"
+  },
+  {
+   "key": "/buying-specialist",
+   "title": "AI Buying Specialist",
+   "signature": "stamp"
+  },
+  {
+   "key": "/enterprise",
+   "title": "Enterprise AI",
+   "signature": "rows-open"
+  },
+  {
+   "key": "/grants",
+   "title": "Open Source & Research Credit Grants",
+   "signature": "stamp"
+  },
+  {
+   "key": "/pricing",
+   "title": "Pricing",
+   "signature": "morph-panel"
+  },
+  {
+   "key": "/referral",
+   "title": "Bring a builder to Hanzo",
+   "signature": "one-question"
+  },
+  {
+   "key": "/sms-opt-in",
+   "title": "Get Hanzo text messages",
+   "signature": "stamp"
+  },
+  {
+   "key": "/startups",
+   "title": "The Hanzo Startup Program",
+   "signature": "morph-panel"
+  },
+  {
+   "key": "/about",
+   "title": "Chasing the Pareto Frontier of AI",
+   "signature": "word-light"
+  },
+  {
+   "key": "/brand",
+   "title": "Hanzo Brand Guidelines.",
+   "signature": "magnet-grid"
+  },
+  {
+   "key": "/careers",
+   "title": "Compilers, cryptography, and the cloud they run on",
+   "signature": "word-light"
+  },
+  {
+   "key": "/contact",
+   "title": "Contact",
+   "signature": "one-question"
+  },
+  {
+   "key": "/contact-sales",
+   "title": "Talk to sales",
+   "signature": "stamp"
+  },
+  {
+   "key": "/customers",
+   "title": "Products Hanzo built and launched",
+   "signature": "word-light"
+  },
+  {
+   "key": "/founder",
+   "title": "Founder Program",
+   "signature": "one-question"
+  },
+  {
+   "key": "/history",
+   "title": "History & Track Record",
+   "signature": "word-light"
+  },
+  {
+   "key": "/investors",
+   "title": "Hanzo Investor Relations",
+   "signature": "timeline"
+  },
+  {
+   "key": "/legal",
+   "title": "Legal & Trust Center",
+   "signature": "rows-open"
+  },
+  {
+   "key": "/newsletter",
+   "title": "Subscribe to Hanzo AI Newsletter & Developer Updates",
+   "signature": "one-question"
+  },
+  {
+   "key": "/philosophy",
+   "title": "The Zen of Hanzo",
+   "signature": "timeline"
+  },
+  {
+   "key": "/press",
+   "title": "Press Resources.",
+   "signature": "magnet-grid"
+  },
+  {
+   "key": "/security",
+   "title": "What protects your data, and how.",
+   "signature": "decode"
+  },
+  {
+   "key": "/support",
+   "title": "Support",
+   "signature": "one-question"
+  },
+  {
+   "key": "/team",
+   "title": "Hanzo Team",
+   "signature": "timeline"
+  },
+  {
+   "key": "/trust",
+   "title": "Security you can read",
+   "signature": "decode"
+  },
+  {
+   "key": "/agents/*",
+   "title": "The agents in every workspace",
+   "signature": "split"
+  },
+  {
+   "key": "/benchmarks/*",
+   "title": "CronQuestions benchmark",
+   "signature": "race"
+  },
+  {
+   "key": "/blockchain/*",
+   "title": "Bundler API",
+   "signature": "rows-open"
+  },
+  {
+   "key": "/blog/*",
+   "title": "Kai 1: Decisions, Not Completions",
+   "signature": "timeline"
+  },
+  {
+   "key": "/careers/*",
+   "title": "Academic & PhD Research Intern (AI Research & Systems)",
+   "signature": "magnet-grid"
+  },
+  {
+   "key": "/cloud/*",
+   "title": "AI Metrics",
+   "signature": "rows-open"
+  },
+  {
+   "key": "/compare/*",
+   "title": "Enso vs OpenRouter, Portkey, LiteLLM",
+   "signature": "race"
+  },
+  {
+   "key": "/customers/*",
+   "title": "Damon Motorcycles \u00b7 $8.4M in bikes sold in 30 days",
+   "signature": "timeline"
+  },
+  {
+   "key": "/integrations/*",
+   "title": "Use Hanzo AI with Anthropic SDK",
+   "signature": "graph"
+  },
+  {
+   "key": "/legal/*",
+   "title": "Acceptable Use Policy",
+   "signature": "morph-panel"
+  },
+  {
+   "key": "/models/*",
+   "title": "Aion Labs Models via Hanzo AI",
+   "signature": "race"
+  },
+  {
+   "key": "/oss/*",
+   "title": "Crowdstart",
+   "signature": "graph"
+  },
+  {
+   "key": "/products/*",
+   "title": "Agents: Workers the company keeps: a model, instructions, tools and a budget",
+   "signature": "morph-panel"
+  },
+  {
+   "key": "/solutions/*",
+   "title": "Hanzo for AI agents",
+   "signature": "ribbons"
+  }
+ ]
+}
