@@ -217,7 +217,7 @@ function Boundary() {
   };
 
   const line = (t, d) => (
-    <span className="xe-line"><motion.span initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 0.7, ease: EASE, delay: d }}>{t}</motion.span></span>
+    <span className="xe-line"><span style={{ animationDelay: d + 's' }}>{t}</span></span>
   );
 
   return (
@@ -226,13 +226,13 @@ function Boundary() {
         <motion.div className="xe-intro xe-w" ref={intro} style={{ opacity: introO, y: introY }}>
           <h1 id="xe-h1" className="xe-d">{line('Give every team AI.', 0)}{line('Run it where you choose.', 0.06)}</h1>
           <div className="xe-intro-row">
-            <motion.p className="xe-lede" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.45 }}>
+            <p className="xe-lede">
               Models, agents and one shared workspace for everyone in your company, in your cloud, on your servers or fully offline.
-            </motion.p>
-            <motion.div className="xe-acts" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.55 }}>
+            </p>
+            <div className="xe-acts">
               <Cta to="/enterprise/start" size="lg" id="enterprise.hero" thumb>Get Enterprise plan</Cta>
               <Cta to="https://platform.hanzo.ai" kind="link" id="enterprise.platform">Build on Hanzo Platform</Cta>
-            </motion.div>
+            </div>
           </div>
           {/* the trust strip, in the first screen (brief 5.3): Hanzo's three promises and where to verify them */}
           <div className="xe-trust">
@@ -256,7 +256,7 @@ function Boundary() {
           </div>
         </motion.div>
 
-        <motion.div className="xe-ch" style={{ opacity: chO, y: chY }}>
+        <motion.div className="xe-ch" style={{ opacity: chO, y: chY }} data-ask-hide>
           <h2 className="xe-h">Run it where your data lives.</h2>
           <p className="xe-b xe-soft">One platform, four places to run it. Choose one, or start in our cloud and move when you are ready.</p>
           <p className="xe-k xe-tag">Deployment</p>
@@ -317,8 +317,9 @@ function Includes() {
         </header>
         <div className="xe-tiles">
           <article className="xe-tile t-infra">
-            <div className="xe-tile-v" aria-hidden="true">
-              {PLACES.map((pl, i) => <span key={pl[0]} style={{ '--i': i }}><Glyph at={i} />{pl[0]}</span>)}
+            <div className="xe-tile-walls" aria-hidden="true">
+              {PLACES.map((pl, i) => <span key={pl[0]} style={{ inset: `${i * 10}% ${i * 8}%` }}><em>{pl[0]}</em></span>)}
+              <b />
             </div>
             <h3>Your infrastructure</h3>
             <p>Run Hanzo in your cloud, on your own servers, or fully offline.</p>
@@ -533,17 +534,18 @@ function Proof() {
         </A>
       </div>
       <div className="xe-w">
-        <ul className="xe-board">
+        <ol className="xe-ledger">
           {PROOF.map(([fig, what, who, how, to, logo]) => (
             <li key={who}>
-              <A to={to} className="xe-res">
+              <A to={to} className="xe-led">
                 <Fig value={fig} />
                 <span className="xe-what">{what}</span>
                 <span className="xe-who"><Mark src={logo} /><b>{who}</b><span className="xe-dot">·</span><span>{how}</span></span>
+                <span className="xe-led-go" aria-hidden="true">→</span>
               </A>
             </li>
           ))}
-        </ul>
+        </ol>
         <div className="xe-links"><More to="/customers">All customer stories</More></div>
       </div>
     </section>
@@ -558,25 +560,62 @@ const SEC = [
   ['Roles and second factors', 'Grant access by organization, workspace and project. Every account can add an authenticator app, or a code by SMS or email.'],
 ];
 
+// the workspace's own security settings, drawn from the four lines below; the row you are reading lights
+const PANEL = [
+  ['Single sign-on', ['OpenID Connect', 'SCIM 2.0']],
+  ['Your data, apart', ['Hanzo Base', 'its own database file']],
+  ['Audit log', ['who acted', 'from where', 'what they called', 'status']],
+  ['Roles and second factors', ['organization', 'workspace', 'project', 'authenticator app', 'SMS', 'email']],
+];
+
+function SecPanel({ at }) {
+  return (
+    <div className="xe-panel" aria-hidden="true">
+      <div className="xe-panel-bar"><i /><i /><i /><span>Hanzo Enterprise · Your company</span></div>
+      <ul>
+        {PANEL.map(([t, chips], i) => (
+          <li key={t} className={i === at ? 'on' : undefined}>
+            <span className="xe-panel-t"><b />{t}</span>
+            <span className="xe-panel-c">{chips.map((c) => <em key={c}>{c}</em>)}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 function Security() {
+  const list = useRef(null);
+  const [at, setAt] = useState(0);
+  useEffect(() => {
+    const items = [...(list.current?.children || [])];
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(items.indexOf(e.target)); }), { rootMargin: '-40% 0px -50% 0px' });
+    items.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
   return (
     <section className="xe-sec xe-secu" aria-labelledby="xe-sec-h">
-      <div className="xe-w xe-g">
-        <header className="xe-head xe-stick">
+      <div className="xe-w">
+        <header className="xe-head">
           <h2 id="xe-sec-h" className="xe-h">Ready for your security review.</h2>
-          <p className="xe-b xe-soft">A security review is part of every Enterprise contract. We answer your questionnaire against the code, and the engineers who wrote it walk your reviewers through it.</p>
+          <p className="xe-l xe-soft">A security review is part of every Enterprise contract. We answer your questionnaire against the code, and the engineers who wrote it walk your reviewers through it.</p>
           <p className="xe-k xe-tag">Security</p>
-          <div className="xe-links"><More to="/security">How Hanzo is secured</More><More to="/trust">Trust center</More></div>
         </header>
-        <ul className="xe-proofs">
-          {SEC.map(([t, d], i) => (
-            <li key={t}>
-              <span className="x-mono">{String(i + 1).padStart(2, '0')}</span>
-              <h3>{t}</h3>
-              <p>{d}</p>
-            </li>
-          ))}
-        </ul>
+        <div className="xe-g xe-sec-g">
+          <div className="xe-stick xe-sec-obj">
+            <SecPanel at={at} />
+            <div className="xe-links"><More to="/security">How Hanzo is secured</More><More to="/trust">Trust center</More></div>
+          </div>
+          <ul className="xe-proofs" ref={list}>
+            {SEC.map(([t, d], i) => (
+              <li key={t} className={i === at ? 'on' : undefined}>
+                <span className="x-mono">{String(i + 1).padStart(2, '0')}</span>
+                <h3>{t}</h3>
+                <p>{d}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </section>
   );
