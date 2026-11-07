@@ -12,7 +12,7 @@ import { A, More, Cta, Img, Stat, DataTable, Band } from '../../kit';
 import { useLoop, fit } from './live';
 import Launch, { Lines, ring, film } from '../../v2/Launch';
 import ModelCards from './ModelCards';
-import ModelFilm from '../../v2/ModelFilm';
+import ModelFilm, { usePaused } from '../../v2/ModelFilm';
 import Chapters from '../../v2/x-cray/Chapters';
 import './Enso.css';
 
@@ -36,6 +36,7 @@ function Switchboard() {
   const [hit, setHit] = useState(-1);
   const [last, setLast] = useState(['chat', 'coding', 'research']);
   const calm = useReducedMotion();
+  const paused = usePaused();
 
   const measure = () => {
     const b = board.current?.getBoundingClientRect();
@@ -84,7 +85,7 @@ function Switchboard() {
     const { inP, outP } = geom.current;
     curve(inP, 0.16);
     outP.forEach((p, i) => curve(p, i === hit ? 0.42 : 0.13));
-    if (still) return;
+    if (still || paused) return;
     const ck = clock.current;
     ck.hold = Math.max(0, ck.hold - dt);
     ck.next -= dt;
@@ -192,11 +193,12 @@ function Gpqa() {
   const [mine, setMine] = useState(false);
   const [sort, setSort] = useState('score');
   const calm = useReducedMotion();
+  const paused = usePaused();
   useEffect(() => {
-    if (!seen || mine || calm) return;
+    if (!seen || mine || calm || paused) return;
     const t = setInterval(() => setSel((s) => (s + 1) % OTHERS.length), 2600);
     return () => clearInterval(t);
-  }, [seen, mine, calm]);
+  }, [seen, mine, calm, paused]);
   const pick = (i) => { setSel(i); setMine(true); };
   const m = OTHERS[sel];
   const rows = [...GPQA].sort(sort === 'score' ? (a, b) => b[1] - a[1] : (a, b) => a[2] - b[2]);
@@ -359,7 +361,7 @@ export default function Enso() {
   return (
     <Launch
       slug="enso"
-      ask={{ label: 'Try Hanzo', to: '/login', id: 'enso-hero-try' }}
+      ask={{ label: 'Try Hanzo', to: '/login', id: 'enso.first' }}
       shape={RING}
       headClass="eo-head"
       head={
@@ -367,8 +369,8 @@ export default function Enso() {
           <Lines id="eo-h" lines={['The right intelligence.', 'Every time.']} />
           <p className="lv-lede">One endpoint for every frontier model. Enso routes each request for quality, speed and cost.</p>
           <div className="lv-acts">
-            <Cta to="/login" id="enso-hero-try" thumb>Try Hanzo</Cta>
-            <Cta to="https://platform.hanzo.ai" kind="quiet" id="enso-hero-platform">API Platform</Cta>
+            <Cta to="/login" id="enso.hero" thumb>Try Hanzo</Cta>
+            <Cta to="https://platform.hanzo.ai" kind="quiet" id="enso.hero-platform">API Platform</Cta>
             <More to="https://github.com/hanzoai/enso">Docs on GitHub</More>
           </div>
           <p className="lv-crumb">Hanzo / Enso</p>

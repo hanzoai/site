@@ -8,10 +8,11 @@
                    lead="Get started with Hanzo Engine" api="/v1/engine" />
    - light: render on white instead (when the page's dark room is elsewhere).
    - license, repo [label, href], stars, deploy, self: as on Hanzo's own "Get X" block.
+   - prompt: shown in the kit's CodeBlock (the one code surface; Copy copies exactly the displayed text).
    - children: anything else Hanzo's page has in its closing (links, notes), shown under the actions.
    - lead: Hanzo's line, set under "Get X" (never above it). cta: the data-cta id of "Deploy to Cloud". */
-import { Copy, Magnetic } from '../ui';
-import { A, Cta } from '../kit';
+import { Magnetic } from '../ui';
+import { A, Cta, CodeBlock } from '../kit';
 import KeynoteRoom from './KeynoteRoom';
 import KeynoteLines from './KeynoteLines';
 import './Keynote.css';
@@ -41,15 +42,8 @@ function Body({ name, tag, lead, prompt, api, cta = 'close', license = 'Apache-2
           <div className="knx-paste">
             <p className="kn-title knx-pt">Paste and ship</p>
             <p className="knx-pd">Paste this into any agent. It reads the skill manifest and calls {name} from there.</p>
-            <div className="knx-term">
-              <div className="knx-bar">
-                <i /><i /><i />
-                <span className="knx-k">Agent prompt</span>
-                {api && <span className="knx-api"><i>api</i>{api}</span>}
-                <Copy text={prompt} />
-              </div>
-              <pre className="knx-code"><code>{prompt}</code><span className="knx-caret" aria-hidden="true" /></pre>
-            </div>
+            {api && <p className="knx-api"><i>api</i>{api}</p>}
+            <CodeBlock code={prompt} label="Agent prompt" className="knx-code" />
           </div>
         )}
       </div>

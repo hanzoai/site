@@ -1,32 +1,35 @@
 /* /solutions index, v3 (prefix xso-). The solution pages keep solutions.css; this file is the index's own.
    JAMES.md: 0 UI hues. Ink, greys and black/white alpha steps; colour comes only from Hanzo's model films. */
-.xso { --ink2: #1d1d1f; --sec: #424245; --mut: #6e6e73; --raised: #f5f5f7; --sunk: #ececf0; overflow-x: clip; color: var(--ink2); }
-.xso ::selection { background: #e3e3e8; }
+.xso { --ink2: #0a0a0a; --sec: #525252; --mut: #737373; --raised: #f5f5f5; --sunk: #ededed; overflow-x: clip; color: var(--ink2); }
+/* deck space: container 1152, gutter clamp(16px, 4vw, 32px), sections clamp(72px, 11vw, 188px) */
+.xso .vc-wrap, .xso .vc-grid { width: min(100% - 2 * clamp(16px, 4vw, 32px), 1152px); }
+.xso .vc-sec { padding: clamp(72px, 11vw, 188px) 0; }
+.xso ::selection { background: #e4e4e7; }
 .xso :focus-visible { outline: 2px solid var(--ink2); outline-offset: 3px; box-shadow: 0 0 0 5px #fff; }
 .xso-res :focus-visible { outline-color: #fff; box-shadow: 0 0 0 5px #000; }
 
 /* the asks: one solid ink pill; the second ask is a quiet outline; white in the dark room. Press .98. */
 .xso-acts { display: flex; flex-wrap: wrap; gap: 12px; }
-.xso-cta { display: inline-flex; align-items: center; justify-content: center; height: 52px; padding: 0 28px; border-radius: 999px; border: 1px solid var(--ink2); background: var(--ink2); color: #fff; font: 500 16px/1 var(--sans); text-decoration: none; transition: background-color .22s, border-color .22s, transform .12s var(--ease); }
-.xso-cta.q { background: transparent; color: var(--ink2); border-color: rgba(0, 0, 0, .14); }
+.xso-cta { display: inline-flex; align-items: center; justify-content: center; height: 48px; padding: 0 28px; border-radius: 999px; border: 1px solid var(--ink2); background: var(--ink2); color: #fff; font: 500 16px/1 var(--sans); text-decoration: none; transition: background-color .15s cubic-bezier(0, 0, .2, 1), border-color .15s cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
+.xso-cta.q { background: transparent; color: var(--ink2); border-color: rgba(0, 0, 0, .1); }
 .xso-cta.lt { background: #fff; color: #0a0a0a; border-color: #fff; }
-@media (hover: hover) { .xso-cta:hover { background: #3a3a3c; border-color: #3a3a3c; } .xso-cta.q:hover { background: var(--raised); border-color: rgba(0, 0, 0, .28); } .xso-cta.lt:hover { background: #e8e8ed; border-color: #e8e8ed; } }
-.xso-cta:active { transform: scale(.98); }
+@media (hover: hover) { .xso-cta:hover { background: #262626; border-color: #262626; } .xso-cta.q:hover { background: var(--raised); border-color: rgba(0, 0, 0, .22); } .xso-cta.lt:hover { background: #e5e5e5; border-color: #e5e5e5; } }
+.xso-cta:active { transform: scale(.97); }
 
 /* arrival that needs no script: CSS keyframes play even with JS off, so no text waits on hydration */
 @keyframes xso-up { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
 .xso-in { animation: xso-up .9s var(--ease) .55s both; }
 .xso-in2 { animation: xso-up 1.2s var(--ease) .2s both; }
+html.x-arriving .xso-in, html.x-arriving .xso-in2 { animation-play-state: paused; }
 
 /* 1. hero: three masked lines beside the live reel */
 .xso-hero { padding: 88px 0 48px; }
 .xso-hero-g { align-items: center; row-gap: 48px; }
 .xso-hero-c { grid-column: 1 / 8; display: flex; flex-direction: column; gap: 32px; }
-.xso-h1 { font-size: clamp(52px, 7.2vw, 108px); line-height: .94; }
 .xso-hero-f { display: flex; flex-direction: column; gap: 32px; }
 .xso-hero-f .vc-lede { max-width: 44ch; }
 .xso-hero-o { grid-column: 8 / 13; }
-.xso-reel { position: relative; aspect-ratio: 4 / 5; max-height: 72svh; margin-left: auto; overflow: hidden; background: #1d1d1f; color: #fff; isolation: isolate; }
+.xso-reel { position: relative; aspect-ratio: 4 / 5; max-height: 72svh; margin-left: auto; overflow: hidden; background: #0a0a0a; color: #fff; isolation: isolate; box-shadow: none; border-radius: 24px; }
 .xso-reel-f { position: absolute; inset: 0; }
 .xso-reel-f img, .xso-reel-f video, .xso-res-film img, .xso-res-film video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .xso-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0, 0, 0, .35) 0%, rgba(0, 0, 0, 0) 26%, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, .78) 100%); pointer-events: none; }
@@ -35,7 +38,7 @@
 .xso-panes { position: absolute; left: 28px; right: 84px; bottom: 36px; display: grid; }
 .xso-pane { grid-area: 1 / 1; align-self: end; display: flex; flex-direction: column; gap: 12px; color: #fff; text-decoration: none; opacity: 0; transform: translateY(18px); transition: opacity .35s var(--ease), transform .6s var(--ease); pointer-events: none; }
 .xso-pane.on { opacity: 1; transform: none; pointer-events: auto; transition-delay: .12s; }
-.xso-pane-n { font-size: clamp(36px, 3.2vw, 48px); font-weight: 600; letter-spacing: -.04em; line-height: 1; }
+.xso-pane-n { font-size: clamp(32px, 3.2vw, 40px); font-weight: 497; letter-spacing: -.035em; line-height: 1.02; }
 .xso-pane-t { font-size: 17px; line-height: 1.45; color: rgba(255, 255, 255, .86); max-width: 34ch; }
 .xso-pane-j, .xso-jobs { display: flex; flex-wrap: wrap; gap: 6px; }
 .xso-pane-j span, .xso-jobs span { display: inline-flex; align-items: center; min-height: 30px; padding: 4px 12px; border-radius: 999px; background: rgba(255, 255, 255, .16); font: 500 13px/1.25 var(--mono); color: #fff; }
@@ -50,65 +53,68 @@
 .xso-cat { padding-top: clamp(96px, 10vw, 160px); }
 .xso-groups { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 44px; }
 .xso-groups h2 { margin: 0; }
-.xso-groups h2 button { display: inline-flex; align-items: flex-start; padding: 0; border: 0; background: none; cursor: pointer; font: 600 clamp(44px, 6.4vw, 96px)/1.04 var(--sans); letter-spacing: -.05em; color: var(--ink2); transition: color .35s var(--ease), transform .12s var(--ease); }
-.xso-groups:has(h2 button[aria-pressed='true']) h2 button:not([aria-pressed='true']) { color: #c7c7cc; }
+.xso-groups h2 button { position: relative; display: inline-flex; align-items: flex-start; padding: .06em .32em .1em; margin: 0 -.32em; border: 0; border-radius: 999px; background: none; cursor: pointer; font: 497 clamp(40px, 6.6vw, 84px)/1.02 var(--sans); letter-spacing: -.035em; color: var(--ink2); transition: color .15s cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
+.xso-pill { position: absolute; inset: 0; border-radius: 999px; background: #ededed; }
+.xso-g-t, .xso-groups sup { position: relative; }
+.xso-groups:has(h2 button[aria-pressed='true']) h2 button:not([aria-pressed='true']) { color: #a3a3a3; }
 @media (hover: hover) { .xso-groups h2 button:hover { color: var(--ink2) !important; } }
-.xso-groups h2 button:active { transform: translateY(1px); }
-.xso-groups sup { margin: .3em 0 0 .3em; font: 500 15px/1 var(--mono); letter-spacing: 0; color: var(--mut); }
+.xso-groups h2 button:active { transform: scale(.97); }
+.xso-groups sup { margin: .3em 0 0 .3em; font: 606 12px/1 var(--mono); letter-spacing: .14em; color: var(--sec); }
 .xso-grid { list-style: none; margin: clamp(48px, 5vw, 80px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); grid-auto-rows: clamp(300px, 27vw, 400px); gap: 16px; }
 .xso-tile { grid-column: span 3; min-width: 0; }
 .xso-tile.w4 { grid-column: span 4; }
 .xso-tile.w6 { grid-column: span 6; }
 .xso-tile.w12 { grid-column: span 12; }
-.xso-tile-a { position: relative; display: block; height: 100%; border-radius: 24px; overflow: hidden; background: #2a2a2c; color: #fff; text-decoration: none; isolation: isolate; transition: transform .12s var(--ease); }
-.xso-tile-a:active { transform: scale(.985); }
+.xso-tile-a { position: relative; display: block; height: 100%; border-radius: 24px; overflow: hidden; background: #262626; color: #fff; text-decoration: none; isolation: isolate; transition: transform .12s var(--ease); }
+.xso-tile-a:active { transform: scale(.97); }
 .xso-tile-m { position: absolute; inset: 0; z-index: -1; }
 .xso-tile-m img, .xso-tile-m video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
 .xso-tile-m video { animation: xso-show .6s ease both; }
 @keyframes xso-show { from { opacity: 0; } to { opacity: 1; } }
 .xso-tile-a::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(0, 0, 0, .3) 0%, rgba(0, 0, 0, 0) 28%, rgba(0, 0, 0, 0) 42%, rgba(0, 0, 0, .74) 100%); }
-.xso-tile-go { position: absolute; top: 20px; right: 20px; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #fff; color: #0a0a0a; opacity: 0; transform: scale(.7); transition: opacity .3s var(--ease), transform .45s var(--ease); }
+.xso-tile-no { position: absolute; top: 24px; left: 24px; font: 606 12px/1 var(--mono); letter-spacing: .14em; color: rgba(255, 255, 255, .78); }
+.xso-tile-go { position: absolute; top: 14px; right: 14px; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #fff; color: #0a0a0a; opacity: 0; transition: opacity .3s var(--ease); }
 .xso-tile-b { position: absolute; left: 24px; right: 24px; bottom: 24px; display: flex; flex-direction: column; gap: 10px; }
-.xso-tile-n { font-size: clamp(24px, 2vw, 30px); font-weight: 600; letter-spacing: -.03em; line-height: 1.05; }
-.xso-tile.w6 .xso-tile-n, .xso-tile.w12 .xso-tile-n { font-size: clamp(32px, 3.2vw, 48px); }
+.xso-tile-n { font-size: clamp(21px, 2vw, 26px); font-weight: 497; letter-spacing: -.02em; line-height: 1.1; }
+.xso-tile.w6 .xso-tile-n, .xso-tile.w12 .xso-tile-n { font-size: clamp(26px, 3vw, 40px); letter-spacing: -.035em; }
 .xso-tile-t { font-size: 16px; line-height: 1.45; color: rgba(255, 255, 255, .86); max-width: 40ch; }
 /* hover / focus: the film plays, the jobs rise into the tile over a darker frame, the open arrow arrives */
-.xso-jobs { position: absolute; left: 24px; right: 76px; top: 24px; flex-direction: column; align-items: flex-start; opacity: 0; transform: translateY(14px); transition: opacity .3s var(--ease), transform .5s var(--ease); pointer-events: none; }
+.xso-jobs { position: absolute; left: 24px; right: 76px; top: 56px; flex-direction: column; align-items: flex-start; opacity: 0; transform: translateY(14px); transition: opacity .3s var(--ease), transform .5s var(--ease); pointer-events: none; }
 .xso-tile-a::before { content: ''; position: absolute; inset: 0; z-index: -1; background: rgba(0, 0, 0, .5); opacity: 0; transition: opacity .4s var(--ease); }
 .xso-tile-a:focus-visible::before, .xso-tile-a:focus-visible .xso-jobs, .xso-tile-a:focus-visible .xso-tile-go { opacity: 1; transform: none; }
 @media (hover: hover) {
   .xso-tile-a:hover .xso-tile-m img, .xso-tile-a:hover .xso-tile-m video { transform: scale(1.04); }
-  .xso-tile-a:hover::before, .xso-tile-a:hover .xso-jobs, .xso-tile-a:hover .xso-tile-go { opacity: 1; transform: none; }
+  .xso-tile-a:hover::before, .xso-tile-a:hover .xso-jobs { opacity: 1; transform: none; }
+  .xso-tile-a:hover .xso-tile-go { opacity: 1; }
 }
 .xso-tile.w3 .xso-jobs span { font-size: 13px; }
 
 /* 3. the reserved tier: the one dark room, over a film */
-.xso-res { position: relative; overflow: hidden; background: #000; color: #f5f5f7; padding: clamp(160px, 18vw, 260px) 0; isolation: isolate; }
+.xso-res { position: relative; overflow: hidden; background: #000; color: #f5f5f5; padding: clamp(160px, 18vw, 260px) 0; isolation: isolate; }
 .xso-res-film { position: absolute; inset: 0; z-index: -2; }
 .xso-res-scrim { position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(0, 0, 0, .86) 0%, rgba(0, 0, 0, .55) 55%, rgba(0, 0, 0, .3) 100%); }
 .xso-res-g { align-items: end; row-gap: 40px; }
-.xso-res .vc-display { grid-column: 1 / 8; color: #f5f5f7; }
+.xso-res .vc-display { grid-column: 1 / 8; color: #f5f5f5; }
 .xso-res-r { grid-column: 8 / 13; display: flex; flex-direction: column; align-items: flex-start; gap: 28px; }
-.xso-res .vc-lede { color: #d2d2d7; }
+.xso-res .vc-lede { color: #d4d4d4; }
 
-@media (max-width: 900px) {
+@media (max-width: 899px) {
   .xso-hero { padding: 96px 0 32px; min-height: 0; }
   .xso-hero-c { gap: 24px; }
   .xso-hero-f { gap: 24px; }
-  .xso-h1 { font-size: clamp(44px, 12.8vw, 60px); }
   .xso-reel { max-height: none; aspect-ratio: 4 / 5.2; border-radius: 24px; }
   .xso-reel-top { top: 22px; left: 22px; right: 22px; }
   .xso-panes { left: 22px; right: 76px; bottom: 28px; }
   .xso-pause { right: 18px; bottom: 22px; }
-  .xso-pane-n { font-size: 34px; }
+  .xso-pane-n { font-size: 32px; }
   .xso-pane-t { font-size: 16px; }
   .xso-groups { gap: 0 24px; }
-  .xso-groups h2 button { font-size: 44px; }
+  .xso-groups h2 button { font-size: 40px; }
   .xso-grid { grid-template-columns: minmax(0, 1fr); grid-auto-rows: 320px; gap: 12px; }
   .xso-tile { grid-column: 1 / -1; }
-  .xso-tile-n, .xso-tile.w6 .xso-tile-n, .xso-tile.w12 .xso-tile-n { font-size: 30px; }
+  .xso-tile-n, .xso-tile.w6 .xso-tile-n, .xso-tile.w12 .xso-tile-n { font-size: 26px; }
   .xso-jobs { display: none; }
   .xso-res-scrim { background: linear-gradient(180deg, rgba(0, 0, 0, .6), rgba(0, 0, 0, .88)); }
 }
-@media (hover: none) { .xso-tile-go { opacity: 1; transform: none; } }
+@media (hover: none) { .xso-tile-go { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .xso-in, .xso-in2 { animation: none; } }

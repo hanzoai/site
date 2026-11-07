@@ -3,7 +3,7 @@
    layout applies only on wide screens once JS runs (html.js is set before first paint). */
 .knc { position: relative; }
 .knc-run { position: relative; }
-.knc-head { padding: clamp(96px, 14vw, 220px) 0 24px; }
+.knc-head { padding: clamp(72px, 8vw, 116px) 0 0; }
 .knc .knc-g { position: relative; display: block; }
 .knc-a { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 24px 56px; align-items: center; padding: 72px 0; border-top: 1px solid var(--line); }
 .knc-a:first-child { border-top: 0; }
@@ -68,7 +68,7 @@
 }
 
 @media (max-width: 899px) {
-  .knc-head { padding: 96px 0 24px; }
+  .knc-head { padding: 72px 0 17px; }
   .knc-a, .knc.right .knc-a { display: block; padding: 56px 0; }
   .knc-a:first-child { padding-top: 16px; }
   .knc-v { height: auto; aspect-ratio: 4 / 3.4; margin-top: 32px; }

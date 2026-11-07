@@ -56,8 +56,8 @@
 .dz-drop span { font-size: 17px; color: var(--faint); }
 
 /* the track's colour: Hanzo's line art screened over a magenta ground */
-.dz-slide, .dz-ad, .dz-poster, .dz-disc, .dz-doc img, .dz-ca-visual, .dz-ca-deck i, .dz-ca-ads i, .dz-shapes .deck, .dz-shapes .ad { background: radial-gradient(120% 90% at 75% 85%, var(--ac) 0%, #262626 38%, #0b0710 78%); }
-.dz-ad.square, .dz-ca-deck i:nth-child(2) { background: radial-gradient(120% 90% at 25% 90%, var(--hot) 0%, #171717 42%, #0b0710 80%); }
+.dz-slide, .dz-ad, .dz-poster, .dz-disc, .dz-doc img, .dz-ca-visual, .dz-ca-deck i, .dz-ca-ads i, .dz-shapes .deck, .dz-shapes .ad { background: radial-gradient(120% 90% at 75% 85%, var(--ac) 0%, #262626 38%, #0a0a0a 78%); }
+.dz-ad.square, .dz-ca-deck i:nth-child(2) { background: radial-gradient(120% 90% at 25% 90%, var(--hot) 0%, #171717 42%, #0a0a0a 80%); }
 .dz-slide img, .dz-ad img, .dz-poster img, .dz-disc img, .dz-ca-visual img, .dz-ca-deck img, .dz-ca-ads img, .dz-shapes img { mix-blend-mode: screen; }
 
 /* music app */

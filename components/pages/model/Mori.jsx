@@ -7,6 +7,7 @@
    Beyond: the studio map (Creative.jsx): every creative model serving your field, in its own words and colour. */
 import { useMemo, useRef, useState } from 'react';
 import { Specs } from './Studio';
+import { usePaused } from '../../v2/ModelFilm';
 import Creative from './Creative';
 import { poly, dense, focus } from '../../v2/Launch';
 import { useLoop, fit, rng, arrows } from './live';
@@ -41,7 +42,11 @@ function Viewport() {
   const [mode, setMode] = useState(0);
   const S = useRef({ yaw: 0.6, pitch: 0.42, vy: 0, vp: 0, drag: null, born: 0, q: new Float32Array(U * V * 3), proj: new Float32Array(U * V * 3), nz: new Float32Array(U * V * 3) });
 
-  useLoop(stage, (t, dt, still) => {
+  const paused = usePaused();
+  const pausedRef = useRef(paused);
+  pausedRef.current = paused;
+  useLoop(stage, (t, dt, still0) => {
+    const still = still0 || pausedRef.current;
     const c = cv.current, s = S.current;
     if (!c) return;
     const { w, h, d } = fit(c, 1.5);
@@ -119,7 +124,7 @@ function Viewport() {
   return (
     <div className="mr-view" ref={stage}>
       <div className="mb-bar mr-bar"><i /><i /><i /><b>studio.hanzo.ai / <span>mori-1</span></b><em>mori</em><em>example</em></div>
-      <canvas ref={cv} className="mr-cv" role="img" aria-label="A 3D mesh turning; drag or use the arrow keys to orbit" tabIndex={0} onKeyDown={(e) => { const s = S.current, k = { ArrowLeft: [-0.3, 0], ArrowRight: [0.3, 0], ArrowUp: [0, -0.2], ArrowDown: [0, 0.2] }[e.key]; if (k) { e.preventDefault(); s.yaw += k[0]; s.pitch = Math.max(-1.1, Math.min(1.3, s.pitch + k[1])); } }} data-cursor="Drag" onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} />
+      <canvas ref={cv} className="mr-cv" role="img" aria-label="A 3D mesh turning; drag or use the arrow keys to orbit" tabIndex={0} onKeyDown={(e) => { const s = S.current, k = { ArrowLeft: [-0.3, 0], ArrowRight: [0.3, 0], ArrowUp: [0, -0.2], ArrowDown: [0, 0.2] }[e.key]; if (k) { e.preventDefault(); s.yaw += k[0]; s.pitch = Math.max(-1.1, Math.min(1.3, s.pitch + k[1])); } }} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} />
       <div className="mr-hud mr-tl">
         <p className="mb-mono">SDF ➔ QUAD MESH: 245,820 TRIS</p>
         <p className="mb-mono mr-spin"><i ref={deg} aria-hidden="true" />SPINNING · 360°</p>

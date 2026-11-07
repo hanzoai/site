@@ -16,11 +16,15 @@
 // Goal: find the post worth reading now and open it
 // CTA: Read the latest (the newest post) in the masthead and the ask bar; the close is the kit Band, Every post (hanzo.blog)
 // Metric: post opens (data-cta="blog.*")
+// Signature: a magazine cover that turns itself: the headline wipes and a silver curtain crosses the art plate as it changes
+// Beyond: the publishing strip: a bar per month counted from Hanzo's own post dates that narrows the contents to a month
+// V2: 6/10 critic round 1 (index under the fold, hover curtain, eyebrows, long contents); all fixed, re-review pending
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { A, Img } from '../kit';
 import Sigil from '../Sigil';
 import StoryClose from './StoryClose';
+import StoryPause from './StoryPause';
 import Lines from '../v2/Lines';
 import '../v2/system.css';
 import './story.css';
@@ -69,11 +73,12 @@ function Cover() {
   const [at, setAt] = useState(0);
   const [art, setArt] = useState(0);
   const [hold, setHold] = useState(false);
+  const [paused, setPaused] = useState(false);
   const how = useRef('auto'); // the timer turns the page with the curtain; a hand cuts straight to its story
   const box = useRef(null);
   const seen = useInView(box, { amount: 0.35 });
   const calm = useReducedMotion();
-  const run = seen && !hold && !calm;
+  const run = seen && !hold && !calm && !paused;
   useEffect(() => {
     if (!run) return;
     const t = setTimeout(() => { how.current = 'auto'; setAt((v) => (v + 1) % COVER.length); }, HOLD * 1000);
@@ -86,6 +91,7 @@ function Cover() {
   const p = COVER[art];
   return (
     <div className="xbl-cover" ref={box} onPointerLeave={() => setHold(false)} aria-roledescription="carousel" aria-label="Latest posts">
+      <StoryPause paused={paused} onToggle={() => setPaused((v) => !v)} />
       <div className="xbl-cover-l">
         <div className="xbl-stories">
           {COVER.map((s, i) => {
@@ -131,7 +137,7 @@ function Hero() {
       <div className="v2s-wrap">
         <div className="xbl-mast">
           <div className="xbl-mast-l">
-            <Lines as="h1" id="xbl-h1" className="v2s-display xbl-h1" now delay={0.05} lines={['News & Guides.']} />
+            <Lines as="h1" id="xbl-h1" className="v2s-display xbl-h1" now delay={0.05} stagger={0.06} lines={['News & Guides.']} />
           </div>
           <motion.div className="xbl-mast-r" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.45 }}>
             <p className="v2s-lede"><span className="v2s-label xbl-runin">Blog</span> Product launches, architecture deep dives, and how-to guides from the team building the AI workforce platform.</p>
@@ -215,8 +221,8 @@ function Contents() {
     <section className="v2s-sec xbl-contents" aria-labelledby="xbl-c-h">
       <div className="v2s-wrap">
         <div className="v2s-head xbl-c-head">
-          <p className="v2s-label">Every post</p>
           <h2 id="xbl-c-h" className="v2s-display xbl-c-h">Contents</h2>
+          <p className="v2s-cap">Every post</p>
           <div className="xbl-c-strip"><Strip m={m} setM={choose} months={months} top={top} all={all} /></div>
         </div>
         <div className="xbl-toc" ref={top0}>
@@ -250,7 +256,7 @@ function Contents() {
 
 export default function BlogIndex() {
   return (
-    <main className="xbl v2s">
+    <main id="main" className="xbl v2s">
       {/* JavaScript off: the masthead and the first cover story show at rest */}
       <noscript><style>{'.xbl .v2-line>span,.xbl-mast-r,.xbl-story.on *{transform:none!important;opacity:1!important;clip-path:none!important}'}</style></noscript>
       <Hero />

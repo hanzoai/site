@@ -1,21 +1,25 @@
 'use client';
 /* Engine.
-   V2: 8/10 Apple-style launch: the terminal starts huge and settles, six pinned chapters each with its own scene (a scrubbed quantization block is the moment), a spec sheet, one dark close.
-   Signature: the quantization scrub. Inside six pinned chapters ("One process, laptop to GPU cluster"), a block of
-   weights loses precision as you scroll, GGUF 8 bits down to 2, the shades visibly collapsing; around it each chapter
-   brings its own scene (three verbs, continuous batching lanes, five modalities into one process, the silicon, /ui).
-   Supporting: the Stage hero (the engine's terminal starts huge and settles as you scroll, serving by itself), the
-   tech-spec sheet, and the closing dark room that opens out to full width.
-   Beyond: "Write the command" - choose the verb, name a Hugging Face model and whether you want the built-in UI, and the
-   one line to run is written for you to copy, with Hanzo's sentence on what it does.
-   Accent: engine red, from the terminal's own prompt. Every word and link is Hanzo's. */
+   V2: 8/10 Launch page on the deck: a 52px title over the engine's own terminal (the one big thing, serving by itself from first paint, pausable); six pinned chapters, one idea and one scene each, the moment a block of weights losing precision from 8 bits to 2 as you scroll; "One binary, three verbs" writes the command; one graphite close.
+   Persona: Developer. Goal: run Hanzo Engine (read the source, then deploy it).
+   CTA: "View on GitHub" → https://github.com/hanzoai (data-cta engine.hero, data-thumb for the ask bar); "Deploy to
+   Cloud" → platform.hanzo.ai/deploy (engine.close). Metric: api_key_created (proxy on this page: engine.hero click).
+   Signature: the quantization scrub. In the fourth pinned chapter a block of weights loses precision as you scroll,
+   GGUF 8 bits down to 2: the shades visibly collapse while a marker travels from Hanzo's 8 to Hanzo's 2.
+   Supporting: the Stage hero (the terminal starts big and settles as you scroll; run streams tokens by CSS from first
+   paint, serve shows continuous batching, bench measures), the line-mask title, the graphite close opening to full width.
+   Motion kinds: idle (the terminal), time (tokens streaming, lanes), state (verb tabs, the switch), arrival (title cut-in),
+   scroll (the chapters and the scrub only).
+   Beyond: "One binary, three verbs": choose the verb, name a Hugging Face model and whether you want the built-in UI,
+   and the one line to run is written for you to copy, with Hanzo's sentence on what it does.
+   Every word, figure and link is Hanzo's; the scenes are drawn, not measured, and show no numbers. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { EASE, Copy } from '../../ui';
+import { Field } from '../../kit';
 import { useLive, useSteps, useFrame } from './Frame';
-import KeynoteStage from '../../v2/KeynoteStage';
+import KeynoteStage, { useStagePause } from '../../v2/KeynoteStage';
 import KeynoteChapters from '../../v2/KeynoteChapters';
-import KeynoteSpec, { Fig } from '../../v2/KeynoteSpec';
 import KeynoteClose from '../../v2/KeynoteClose';
 import KeynoteLines from '../../v2/KeynoteLines';
 import './Engine.css';
@@ -29,9 +33,9 @@ function useStepOf(p, n, on) {
   useEffect(() => {
     if (p) { const f = (v) => setK(Math.min(n - 1, Math.max(0, Math.floor(v * n)))); f(p.get()); return p.on('change', f); }
     if (!on || calm) return;
-    const t = setInterval(() => setK((x) => (x + 1) % n), 1500);
-    return () => clearInterval(t);
-  }, [p, n, on, calm]);
+    const t = setTimeout(() => setK((x) => (x + 1) % n), 1500);
+    return () => clearTimeout(t);
+  }, [p, n, on, calm, k]);
   return k;
 }
 
@@ -59,7 +63,7 @@ function Lanes({ live, n = 8 }) {
       if (bar) bar.style.transform = `scaleX(${Math.max(0, s.left / s.len)})`;
     });
   });
-  return <div className="en-lanes" ref={ref}>{Array.from({ length: n }).map((_, i) => <div key={i} className="en-lane"><b /><span>req</span></div>)}</div>;
+  return <div className="en-lanes" ref={ref}>{Array.from({ length: n }).map((_, i) => <div key={i} className="en-lane"><b /></div>)}</div>;
 }
 
 function Bench() {
@@ -73,7 +77,9 @@ function Bench() {
 
 /* The hero object: the engine's own terminal, cycling its three verbs by itself until you pick one. */
 function Term() {
-  const [ref, live] = useLive(0.25);
+  const [ref, seen] = useLive(0.25);
+  const paused = useStagePause();
+  const live = seen && !paused;
   const [at, choose] = useSteps(3, 4600, live);
   return (
     <div className="kn-obj ink en-term" ref={ref}>
@@ -164,8 +170,10 @@ function QuantScene({ p, on }) {
   return (
     <div className="kn-obj en-sc en-sc-q">
       <div className="en-q-top">
-        <p className="en-sc-k">GGUF from 2 to 8 bits</p>
-        <p className="en-q-b kn-fig"><b>{b}</b><span>bits</span></p>
+        <p className="en-q-scale kn-fig" style={{ '--q': (8 - b) / 6 }}>
+          <b className={b === 8 ? 'on' : ''}>8</b><span aria-hidden="true"><i /></span><b className={b === 2 ? 'on' : ''}>2</b>
+          <em>GGUF from 2 to 8 bits</em>
+        </p>
       </div>
       <div className="en-q-grid" aria-hidden="true">
         {W.map((w, i) => {
@@ -226,13 +234,13 @@ function Write() {
     <section className="kn-sec en-write">
       <div className="kn-wrap kn-grid en-write-g">
         <div className="en-write-l">
-          <p className="kn-kick ac">One binary, three verbs</p>
-          <KeynoteLines className="kn-headline" lines="Write the command" />
+          <KeynoteLines className="kn-headline" lines="One binary, three verbs" />
+          <p className="kn-kick">run, serve, bench</p>
           <div className="en-write-verbs" role="radiogroup" aria-label="Verb">
             {VERBS.map((v) => <button key={v} type="button" role="radio" aria-checked={verb === v} onClick={() => setVerb(v)}>{v}</button>)}
           </div>
-          <label className="en-write-f"><span>Hugging Face model</span><input value={model} onChange={(e) => setModel(e.target.value)} placeholder="<model>" spellCheck={false} autoComplete="off" maxLength={96} /></label>
-          {verb === 'serve' && <label className="en-write-ui"><input type="checkbox" checked={ui} onChange={() => setUi(!ui)} /> The built-in UI at /ui</label>}
+          <Field label="Hugging Face model" name="model" value={model} onChange={(e) => setModel(e.target.value)} placeholder="<model>" spellCheck={false} autoComplete="off" autoCapitalize="none" enterKeyHint="done" maxLength={96} />
+          {verb === 'serve' && <button type="button" role="switch" aria-checked={ui} className="en-switch" onClick={() => setUi(!ui)}><i aria-hidden="true" />The built-in UI at /ui</button>}
         </div>
         <div className="en-write-out">
           <code className="en-write-cmd"><b>$</b> {cmd}</code>
@@ -245,7 +253,7 @@ function Write() {
 
 export default function Engine() {
   return (
-    <main className="kn en" style={{ '--ac': '#737373' }}>
+    <main className="kn en">
       <KeynoteStage
         kick="hanzoai/engine"
         title={['Hanzo Engine']}
@@ -253,14 +261,15 @@ export default function Engine() {
         acts={[['View on GitHub', 'https://github.com/hanzoai']]}
         meta={<span>Apache-2.0 · CUDA · Metal · CPU</span>}
         from={1.12}
+        cta="engine.hero"
       >
         <Term />
       </KeynoteStage>
 
       <KeynoteChapters
         className="en-ch"
-        head={<KeynoteLines className="kn-display sm en-ch-h" lines={['One process,', 'laptop to GPU cluster']} />}
-        items={DECK.map(([t, d], i) => ({ kick: i === 3 ? 'The moment' : undefined, title: t, body: <p>{d}</p> }))}
+        head={<KeynoteLines className="kn-headline en-ch-h" lines={['One process,', 'laptop to GPU cluster']} />}
+        items={DECK.map(([t, d]) => ({ title: t, body: <p>{d}</p> }))}
         visual={(i, on, p) => { const S = SCENES[i]; return <S on={on} p={p} />; }}
         swap="wipe"
         count
@@ -268,25 +277,12 @@ export default function Engine() {
 
       <Write />
 
-      <KeynoteSpec
-        kick="Hanzo Engine"
-        title="Tech specs"
-        rows={[
-          ['Verbs', <><Fig n="3" u="run, serve, bench" /><p>Chat with a model, put it behind an HTTP API, or measure it.</p></>],
-          ['Serving', <p>Paged attention and continuous batching. A disk-first KV cache carries a session across a restart.</p>],
-          ['Modalities', <><Fig n="5" u="Vision, audio, speech, image and embeddings" /><p>The same modality pipeline as generation, in the same process.</p></>],
-          ['Quantization', <><Fig n="2–8" u="bits, GGUF" /><p>In-situ quantization of any Hugging Face model, plus GPTQ, AWQ, HQQ, FP8 and bitsandbytes.</p></>],
-          ['Silicon', <ul><li><b>CUDA</b> with FlashAttention and multi-GPU tensor parallelism</li><li><b>Metal</b> on Apple Silicon</li><li><b>CPU</b></li></ul>],
-          ['Tools and UI', <p>MCP servers over a process, HTTP or a WebSocket. The built-in UI at /ui; --no-ui for a plain API server.</p>],
-          ['License', <p><b>Apache-2.0</b></p>],
-        ]}
-      />
-
       <KeynoteClose
         name="Engine"
         tag="AI inference engine"
         lead="Get started with Hanzo Engine"
         prompt="Read https://hanzo.ai/skill.md and use Hanzo Engine in my project. Start with: hanzo engine serve <model>"
+        cta="engine.close"
       />
     </main>
   );

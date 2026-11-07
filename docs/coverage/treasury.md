@@ -1,27 +1,158 @@
-# /treasury coverage (PLAN-COMPONENTS areas 2.1–2.18)
+# /treasury coverage (MASTER.md part 2, the 18 parts)
 
-Page file: `components/pages/apps/Treasury.jsx` · gallery: `docs/gallery/treasury/` · Persona: developers building wallets, splits and payouts inside their product · Goal and metric: `api_key_created` via the docs · CTA: "Read the docs" → docs.hanzo.ai/docs/cli/treasury
+Page file: `components/pages/apps/Treasury.jsx` (+ `Treasury.css`) · gallery: `docs/gallery/treasury/` · metric id: `api_key_created` (docs hand-off)
 
-1. **Strategy and conversion.** One ask, Hanzo's "Read the docs": solid in the hero (`data-thumb`, `data-cta="treasury.hero"`), in the ask bar after the hero, and solid again at the close (`data-cta="treasury.close"`). GitHub, "View on GitHub" and "Deploy to Cloud" are outlined.
-2. **Information architecture and navigation.** Header and footer unchanged. Order: the dark-room split, the one-line statement, five pinned parts, the wallet you drive, the close.
-3. **First impression and page narrative.** "Hanzo Treasury" cuts in over the dark room; split.num writes itself under it and each destination's stream pours out until "balanced". Then one part per screen.
-4. **Conversion system.** One solid per viewport. The wallet's buttons are controls.
-5. **Trust and proof.** The only figures are the split's own (10,000 / 9,000 / 500 / 500, USD/2). No uptime or customer numbers.
-6. **Content presentation (copy untouched).** Parity 57/57, 3/3. "Treasury Operations" names the editor bar instead of sitting above the headline; "Wallets with holds" sits under its headline; part tags sit under the words.
-7. **Visual design system.** v2 scale. 0 UI hues: the 90% stream is white, the 5% silver, the remainder grey; a break is an inverted ink mark; a hold is a grey hatch. One dark room (the hero).
-8. **UI component library.** Kit `A`, `Magnetic`; v2 `Settle`, `x-gauss/PinChapters`, `LineMask`, `Pause`, `NoJs`.
-9. **Motion and interaction.**
-   - Idle: split.num types itself and the streams draw (line draw); the flow chapter walks capture, split, pay out, retry with events; the wallet takes, holds, pays and releases by itself.
-   - Pointer: magnetic ask; buttons press at .98.
-   - State: the wallet's numbers roll; events arrive one by one.
-   - Scroll: the split settles; parts pin.
-   - Pause buttons on the split, the parts and the wallet.
-10. **Media.** Product UI only (editor, streams, ledger rows, wallet).
-11. **Mobile and responsive.** At 375px the editor and the streams stack, part visuals pin above their words, the wallet stacks; targets 44px; no sideways scroll.
-12. **Accessibility.** One h1. Event list is `aria-live`. JS off: `NoJs` (the editor shows every line).
-13. **Performance and engineering.** Loops stop off screen and when paused.
-14. **SEO and machine files.** Unchanged.
-15. **Catalogue and product pages.** Does not apply.
-16. **Developer experience.** The Numscript split is shown in full as Hanzo writes it.
-17. **States and resilience.** The wallet has idle, held, paid and released; buttons disable when they don't apply.
-18. **Measurement and handover.** `data-cta` on both asks. Filmed into `docs/gallery/treasury/`.
+Open copy questions for James: the wallet's four controls are icons with aria-labels ("Take at checkout", "Delivered: pay the seller", "Release the hold", "Reset"); visible labels would need `content/ui-strings.json`.
+Shared changes requested (`docs/requests/treasury.md`): none. Noted for shared owners: no skip link in shared chrome; `useEvery` uses `setInterval`; `tokens.css` not merged (page CSS uses deck values as literals).
+Forks this page deleted: the separate Hold section (its h2 and lede were cut and spliced from Hanzo's sentences), the static `.ts-say` statement screen (now the chapters' lead), the solid "Take at checkout" button, the floating hero pause, the gold comment and duplicate `.ts-ed`/`.ts-flow`/`pre` rules, every spring.
+
+## 1. Strategy and conversion
+- [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
+- [x] One solid fill per viewport; "Read the docs" → docs.hanzo.ai/docs/cli/treasury
+- [x] One h1; the page is clear in 5 seconds
+- [x] No dead or self-looping button; n/a prices
+- [x] Open copy questions for James listed, none decided
+
+Done here: gate: 1 h1, max 1 solid per desktop viewport ("Read the docs" at y 0). Wallet buttons are outlined icons; the close's ask carries `data-thumb` so the bar steps aside.
+
+## 2. Information architecture and navigation
+- [x] One `<main id="main">`; n/a skip link (shared chrome)
+- [x] Every link through `A`
+- [x] n/a breadcrumb: depth 1
+- [x] Link parity: 0 removed, 0 unexpected
+
+Done here: parity links 3/3 (docs, GitHub, platform deploy).
+
+## 3. First impression and page narrative
+- [x] Sells in 5 s; something moves within 1 s without input
+- [x] h1 line-mask cut-in (CSS, painted by the server), one lede, one primary, one object; nothing above the h1
+- [x] JS off: legible; no `opacity:0` on the LCP element
+- [x] One idea per 100svh; heights vary (dark hero, pinned chapters, short close)
+- [x] Ends on the close's one ask and the Get card, then the footer
+- [x] n/a Morph
+
+Done here: the server paints the split finished and balanced; it holds, then re-writes from the source line so a destination is named within 0.8 s (no empty box). Gate: JS-off hidden 0.
+
+## 4. Conversion system
+- [x] Kit `A` + `.w2-cta`; no raw `.x-btn`
+- [x] Sticky ask: header, bar after the hero, same label "Read the docs"
+- [x] n/a copy button
+- [x] `data-cta` and `data-thumb` on every primary
+
+Done here: `treasury.hero` and `treasury.close`, both `data-thumb="Read the docs"`. Primary appears twice.
+
+## 5. Trust and proof
+- [x] No logo, seal or invented number
+- [x] Every figure is the split's own (10,000 = 9,000 + 500 + 500 from Hanzo's split.num)
+- [x] n/a marquees
+- [x] n/a submit
+
+Done here: figures come only from the 90% / 5% / remaining split of USD/2 10000; posting lines use only Hanzo's account names.
+
+## 6. Content presentation (copy untouched)
+- [x] No text under 13px (14px phone); mono capitals 12px only
+- [x] Measures held; headings balanced
+- [x] n/a tables (chapter rows are drawings, aria-hidden); n/a FAQ/tabs
+- [x] `python3 scripts/parity.py /treasury`: 0 missing
+
+Done here: parity `text 57/57 links 3/3`; gate small375 []. Editor comments raised to #a3a3a3 on #0f0f0f (≥7:1).
+
+## 7. Visual design system
+- [x] `taste.py` passes (0 hues)
+- [x] No label above a headline (the lede now leads the chapters as a 32px statement)
+- [x] Tiles flat; only the chapter cards float
+- [x] One inline icon set (1.5px strokes)
+- [x] Differs from neighbours: a dark room with an editor and money streams, not a window or a dial
+
+Done here: gate hues []; deck values (#0a0a0a, #171717, #262626, #a3a3a3, #f2f2f2, #ededed). One chapter grid so the destination column holds still.
+
+## 8. UI component library
+- [x] Hover inside `@media (hover:hover)`, press .97, focus-visible, disabled
+- [x] Focus ring on every stop
+- [x] n/a dialogs
+- [x] No bare `:hover`; chips 44px with hover and press
+- [x] Forks deleted: listed above
+
+Done here: wallet buttons invert on hover, the `hanzoai` chip 44px inverts on hover, the pause inverts.
+
+## 9. Motion and interaction
+- [x] Signature (the split writes itself), 3 supporting (Settle, PinChapters, magnetic), 0 fade-ups
+- [x] Idle (split, flow events), time (typing), state (wallet), pointer (magnetic), scroll (pin)
+- [x] Something moves without input; every control answers
+- [x] Reduced motion: the split rests finished, the coin and log rest; no springs
+- [x] n/a sound (shared kit)
+
+Done here: `variety.py` OK. The coin travels by transform only (500ms in-out); nothing below the wallet moves (log height fixed to 4 rows).
+
+## 10. Media
+- [x] n/a: no Hanzo media on the live page; objects are drawn UI
+- [x] n/a
+- [x] n/a
+- [x] n/a
+
+Done here: n/a, the page has no images or films.
+
+## 11. Mobile and responsive
+- [x] 375×812 and 1470×801 pass with no overlap
+- [x] No horizontal scroll at 320
+- [x] Targets 44px or more
+- [x] Primary above the fold at 375×667
+
+Done here: on phone the streams stack as rows (no SVG), the balanced line sits under them (not over an account), the wallet stacks vertically with the coin sliding down the rows, and the pause lives in the editor bar.
+
+## 12. Accessibility (WCAG 2.2 AA)
+- [x] Contrast measured (comments #a3a3a3 on #0f0f0f, body #525252 on white)
+- [x] Pause control on every moving item (editor bar, chapter visual)
+- [x] n/a forms
+- [x] One h1, h2/h3 order
+- [x] Keyboard reaches every control; hidden chapter visuals are `inert`
+
+Done here: wallet log is `aria-live` only after the visitor drives it.
+
+## 13. Performance and engineering
+- [x] h1 and code in server HTML
+- [x] No images
+- [x] No poller, no third party
+- [x] Nothing heavy on James's laptop
+
+Done here: one client island; the h1 cut-in is CSS.
+
+## 14. SEO and machine files
+- [x] Title and description from `content/pages.json`
+- [x] Canonical from shared layout
+- [x] `<JsonLd route="/treasury" />`
+- [x] n/a cards
+
+Done here: `app/treasury/page.jsx`.
+
+## 15. Catalogue and product pages
+- [x] n/a: not a catalogue or model page
+- [x] n/a
+- [x] n/a
+- [x] n/a
+
+Done here: n/a.
+
+## 16. Developer experience
+- [x] The split is Hanzo's own Numscript, displayed as written
+- [x] n/a config blocks
+- [x] The split pauses and rests finished
+- [x] No hand-typed version
+
+Done here: n/a copy button; the code is a display of Hanzo's example.
+
+## 17. States and resilience
+- [x] n/a live data
+- [x] Blocked network leaves a complete page, no console errors
+- [x] n/a submit
+- [x] Reset returns the wallet to its start
+
+Done here: look.cjs at both widths: errors none.
+
+## 18. Measurement and handover
+- [x] `data-cta` on every primary
+- [x] Nothing identifier-bearing
+- [x] `V2:` line in `app/treasury/page.jsx`
+- [ ] Review read: verdict 8 or more (re-review pending after this rework)
+
+Done here: previous review 6/10; all seven numbered fixes addressed in this push.

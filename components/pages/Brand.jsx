@@ -1,5 +1,6 @@
 'use client';
-/* /brand. V2: 8/10 A brand book that is a drawing, in Hanzo's own black, white and greys. The hero is the mark's
+/* /brand. Story page (treated so; MASTER 4), Hanzo's deck only.
+   V2: 8/10 A brand book that is a drawing, in Hanzo's own black, white and greys. The hero is the mark's
    construction drawn full-bleed across the stage (not a card): once the curtain lifts, the guides draw, the five
    pieces land, the mark opens once to show its build, and then it stays alive: its pieces lean toward the pointer
    anywhere in the hero, and the compass turns slowly (pause control). The principles are a pinned scene, one line
@@ -21,19 +22,19 @@
    "construction", "mark", "Copied"); the tick on a failed copy.
    Every word is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, animate, useInView, useMotionValue, useReducedMotion, useSpring, useTransform } from 'motion/react';
-import { Btn } from '../ui';
-import { A } from '../kit';
-import { href as hrefOf } from '../../lib/route';
+import { motion, animate, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
+import { Cta } from '../kit';
 import MaskLines from './company/MaskLines';
 import PinScenes from './company/PinScenes';
 import useArrived from './company/useArrived';
 import '../v2/vc-type.css';
+import './company/deck.css';
 import './Brand.css';
 
 const EASE = [0.16, 1, 0.3, 1];
-const SLOW = { type: 'spring', stiffness: 90, damping: 18 }; // CANON springs
-const SOFT = { type: 'spring', stiffness: 300, damping: 30 };
+// MASTER 3.1: no springs, no overshoot. Arrivals use ease-emphasis; things the hand moves settle in 300 ms.
+const LAND = { duration: 0.8, ease: EASE };
+const SOFT = { duration: 0.3, ease: EASE };
 // JS off: the hero's lede, asks and the drawing show in place (PLAN 2.3)
 const NOJS = { __html: '<style>.xbr-hero-f,.xbr-piece,.xbr-dr{opacity:1!important;transform:none!important}.xbr-g{stroke-dasharray:none!important;stroke-dashoffset:0!important}.xbr-grays .xbr-sw{transform:none!important}</style>' };
 
@@ -42,11 +43,11 @@ const FROM = [[-18, 22], [0, 0], [-18, -22], [18, -22], [18, 22]];
 const DRIFT = [[-4, 4], [0, 0], [-4, -4], [4, -4], [4, 4]];
 const DEPTH = [3.2, 1.2, 3.2, 3.2, 3.2]; // how far each piece leans toward the pointer (the corner blocks lean most)
 
-/* One piece of the mark: it lands, opens with the others, and leans toward the pointer on a spring. */
+/* One piece of the mark: it lands, opens with the others, and leans toward the pointer (300 ms, ease-emphasis). */
 function Piece({ d, i, go, open, mx, my }) {
   const land = useMotionValue(1);
   const op = useMotionValue(0);
-  useEffect(() => { if (go) { const c = animate(land, 0, { ...SLOW, delay: 0.25 + i * 0.07 }); return () => c.stop(); } }, [go]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (go) { const c = animate(land, 0, { ...LAND, delay: 0.25 + i * 0.07 }); return () => c.stop(); } }, [go]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { const c = animate(op, open ? 1 : 0, SOFT); return () => c.stop(); }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
   const x = useTransform([land, op, mx], ([l, o, m]) => l * FROM[i][0] + o * DRIFT[i][0] + m * DEPTH[i]);
   const y = useTransform([land, op, my], ([l, o, m]) => l * FROM[i][1] + o * DRIFT[i][1] + m * DEPTH[i]);
@@ -113,20 +114,21 @@ function Drawing({ mx, my }) {
 function Hero() {
   const ok = useArrived();
   const calm = useReducedMotion();
-  // the pointer anywhere in the hero pulls the pieces toward it (fine pointers only), on a soft spring
-  const mx = useSpring(0, { stiffness: 300, damping: 30 });
-  const my = useSpring(0, { stiffness: 300, damping: 30 });
+  // the pointer anywhere in the hero pulls the pieces toward it (fine pointers only), settling in 300 ms (no spring)
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const to = (mv, v) => animate(mv, v, SOFT);
   const lean = (e) => {
     if (calm || (e.pointerType !== 'mouse' && e.pointerType !== 'pen')) return;
     const art = e.currentTarget.querySelector('.xbr-dr svg');
     if (!art) return;
     const r = art.getBoundingClientRect();
     const cx = r.left + r.width * 0.5, cy = r.top + r.height * 0.5;
-    mx.set(Math.max(-1, Math.min(1, (e.clientX - cx) / (r.width * 0.9))));
-    my.set(Math.max(-1, Math.min(1, (e.clientY - cy) / (r.height * 0.9))));
+    to(mx, Math.max(-1, Math.min(1, (e.clientX - cx) / (r.width * 0.9))));
+    to(my, Math.max(-1, Math.min(1, (e.clientY - cy) / (r.height * 0.9))));
   };
   return (
-    <section className="xbr-hero vc-scene" aria-label="Design System" data-ask-name="Hanzo Brand Guidelines" onPointerMove={lean} onPointerLeave={() => { mx.set(0); my.set(0); }}>
+    <section className="xbr-hero vc-scene" aria-label="Design System" data-ask-name="Hanzo Brand Guidelines" onPointerMove={lean} onPointerLeave={() => { to(mx, 0); to(my, 0); }}>
       <noscript dangerouslySetInnerHTML={NOJS} />
       <Drawing mx={mx} my={my} />
       <div className="vc-grid xbr-hero-g">
@@ -135,8 +137,8 @@ function Hero() {
           <motion.div className="xbr-hero-f" initial={{ opacity: 0, y: 12 }} animate={ok ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 0.52, ease: EASE, delay: 0.45 }}>
             <p className="vc-lede">How to build interfaces that look like the rest of Hanzo across our platform and products.</p>
             <div className="xbr-acts">
-              <Btn href="#assets" solid className="xbr-big" data-thumb="Download Assets" data-cta="brand.hero">Download Assets</Btn>
-              <Btn href={hrefOf('/press')} className="xbr-big" data-cta="brand.press">Press Kit</Btn>
+              <Cta to="/brand#assets" className="xbr-big" id="brand.hero" thumb>Download Assets</Cta>
+              <Cta to="/press" kind="quiet" className="xbr-big" id="brand.press">Press Kit</Cta>
             </div>
           </motion.div>
         </div>
@@ -193,7 +195,7 @@ function Swatch({ name, hex, big, dark, i = 0, fan }) {
   const [ok, go] = useCopy(hex);
   const enter = fan ? { initial: { x: `${-i * 100}%` }, whileInView: { x: '0%' }, viewport: { once: true, amount: 0.7 }, transition: { duration: 0.8, ease: EASE, delay: 0.1 + (5 - i) * 0.04 } } : {};
   return (
-    <motion.button type="button" className={'xbr-sw' + (big ? ' big' : '') + (dark ? ' dk' : '')} style={{ '--c': hex, zIndex: fan ? 6 - i : undefined }} onClick={go} whileTap={{ scale: 0.98 }} aria-label={`${name} ${hex}`} aria-pressed={ok} {...enter}>
+    <motion.button type="button" className={'xbr-sw' + (big ? ' big' : '') + (dark ? ' dk' : '')} style={{ '--c': hex, zIndex: fan ? 6 - i : undefined }} onClick={go} whileTap={{ scale: 0.97 }} transition={{ duration: 0.09 }} aria-label={`${name} ${hex}`} aria-pressed={ok} {...enter}>
       <span className="xbr-sw-t"><b>{name}</b><span className="vc-num">{hex}</span></span>
       <span className="xbr-ok" aria-hidden="true"><CopyIcon ok={ok} /></span>
     </motion.button>
@@ -321,7 +323,7 @@ function Components() {
           <h3 className="vc-title">Buttons</h3>
           <div className="xbr-btns">
             {[['Primary Button', 'p'], ['Secondary Button', 's'], ['Ghost Button', 'g'], ['Link Button', 'l']].map(([n, k]) => (
-              <motion.button key={k} type="button" className={'xbr-b ' + k} whileTap={{ scale: 0.98 }} transition={SOFT}>{n}</motion.button>
+              <motion.button key={k} type="button" className={'xbr-b ' + k} whileTap={{ scale: 0.97 }} transition={{ duration: 0.09 }}>{n}</motion.button>
             ))}
           </div>
         </div>
@@ -335,7 +337,7 @@ function Components() {
         </div>
         <div className="xbr-bench c">
           <h3 className="vc-title">Badges</h3>
-          <div className="xbr-badges"><span className="xbr-badge brand">Brand Badge</span><span className="xbr-badge">Default Badge</span><span className="xbr-badge ok">Success Badge</span></div>
+          <div className="xbr-badges"><span className="xbr-badge brand">Brand Badge</span><span className="xbr-badge">Default Badge</span><span className="xbr-badge ok"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="currentColor" /><path d="M5 8.3l2 2 4-4.3" fill="none" stroke="#ffffff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>Success Badge</span></div>
         </div>
       </div>
     </section>
@@ -361,9 +363,9 @@ function Assets() {
           <h3 className="vc-title">Need brand assistance?</h3>
           <p className="vc-body">Our team can help with custom assets, co-branding requests, and other brand-related inquiries.</p>
           <div className="xbr-help-a">
-            <Btn href={hrefOf('/contact')} data-cta="brand.contact">Contact Us</Btn>
+            <Cta to="/contact" kind="quiet" id="brand.contact">Contact Us</Cta>
             <a href="mailto:brand@hanzo.ai" className="xbr-mail">brand@hanzo.ai</a>
-            <motion.button type="button" className="xbr-cp" aria-label="Copy" aria-pressed={ok} whileTap={{ scale: 0.94 }} onClick={go}><CopyIcon ok={ok} /></motion.button>
+            <motion.button type="button" className="xbr-cp" aria-label="Copy" aria-pressed={ok} whileTap={{ scale: 0.97 }} transition={{ duration: 0.09 }} onClick={go}><CopyIcon ok={ok} /></motion.button>
           </div>
         </div>
       </div>

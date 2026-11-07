@@ -1,8 +1,8 @@
 'use client';
 /* Home, cost (v2), the second chapter of the dark argument room. Two hero figures split by one hairline: Enso, up to 14.2× less, and Kai, up to 530× less.
    One control lets you say how many questions you ask; the rates are Hanzo's, only the count changes. */
-import { useState } from 'react';
-import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
+import { useRef, useState } from 'react';
+import { motion, useMotionValue, useScroll, useTransform } from 'motion/react';
 import { Arrow } from './ui';
 import Lines from './v2/Lines';
 
@@ -20,9 +20,16 @@ const KAI = [
   ['GPT-6 Astra', 11.13, 55.65],
   ['Claude Fable 5.1', 11.13, 55.65],
 ];
+/* the claim rests at 64px and grows while it crosses the middle of the screen, then settles (MASTER 3.1) */
+function useMoment() {
+  const ref = useRef(null);
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start end', 'end start'] });
+  const scale = useTransform(p, [0.2, 0.42, 0.58, 0.8], [1, 1.45, 1.45, 1]);
+  return [ref, scale];
+}
 const money = (v) => (v >= 1e6 ? '$' + (v / 1e6).toFixed(2) + 'M' : v >= 1000 ? '$' + Math.round(v).toLocaleString('en-US') : '$' + v.toFixed(2));
 const nice = (q) => { const p = 10 ** Math.floor(Math.log10(q)); return Math.round(q / p * 2) / 2 * p; };
-const bar = (i) => ({ h: { scaleX: 0 }, s: { scaleX: 1, transition: { type: 'spring', stiffness: 90, damping: 18, delay: 0.2 + i * 0.08 } } });
+const bar = (i) => ({ h: { scaleX: 0 }, s: { scaleX: 1, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.15 + i * 0.06 } } });
 
 function EnsoLane({ row, i, vol }) {
   const [who, acc, cost, hi] = row;
@@ -36,14 +43,15 @@ function EnsoLane({ row, i, vol }) {
 }
 
 function Enso() {
+  const [ref, scale] = useMoment();
   const [exp, setExp] = useState(0); // 10^exp thousand questions
   const raw = useMotionValue(1000);
-  const vol = useSpring(raw, { stiffness: 300, damping: 30 });
+  const vol = raw;
   const q = nice(1000 * 10 ** exp);
   return (
     <div className="hv-cost">
-      <p className="hv-cost-big"><span className="hv-upto">up to</span> <span className="v2-figure">14.2×</span> <span className="hv-less">less</span></p>
-      <p className="v2-title">per 1,000 questions, at higher accuracy</p>
+      <motion.p className="hv-cost-big" ref={ref} style={{ scale }}><span className="hv-upto">up to</span> <span className="v2-figure">14.2×</span> <span className="hv-less">less</span></motion.p>
+      <p className="hv-cap">per 1,000 questions, at higher accuracy</p>
       <p className="v2-kicker hv-run-k">Enso vs frontier LLMs · GPQA Diamond</p>
       <p className="hv-run-note">Enso Flash answers 90.6% of new GPQA Diamond questions at $3.26 per 1,000 — higher accuracy than Claude Fable 5.1 (87.9% at $46.25). Enso reaches 93.7% at $10.03, ahead of the best single model (93.1%).</p>
       <label className="hv-vol">
@@ -64,11 +72,12 @@ function Enso() {
 }
 
 function Kai() {
+  const [ref, scale] = useMoment();
   const max = 11.13 + 55.65;
   return (
     <div className="hv-cost">
-      <p className="hv-cost-big"><span className="hv-upto">up to</span> <span className="v2-figure">530×</span> <span className="hv-less">less</span></p>
-      <p className="v2-title">than frontier LLMs, per input token</p>
+      <motion.p className="hv-cost-big" ref={ref} style={{ scale }}><span className="hv-upto">up to</span> <span className="v2-figure">530×</span> <span className="hv-less">less</span></motion.p>
+      <p className="hv-cap">than frontier LLMs, per input token</p>
       <p className="v2-kicker hv-run-k">Kai vs frontier LLMs</p>
       <p className="hv-run-note">Kai bills input only; an LLM also bills every token it writes.</p>
       <p className="hv-vol"><span className="x-mono">Per million tokens, input and output · less is cheaper</span></p>
@@ -93,9 +102,9 @@ export default function Cheaper() {
     <section className="hv-cheap hv-room v2-sec" data-room="dark" id="cheaper" aria-labelledby="cheaper-h">
       <div className="v2-wrap">
         <header className="hv-head v2-grid">
-          <Lines as="h2" id="cheaper-h" className="v2-display-s hv-head-t" lines={['The same intelligence.', 'A smaller bill.']} />
+          <Lines as="h2" id="cheaper-h" className="hv-h2 hv-head-t" lines={['The same intelligence. A smaller bill.']} />
           <div className="hv-head-r">
-            <p className="v2-lede">Enso routes each answer to the right model. Kai answers a decision directly.</p>
+            <p className="hv-lead">Enso routes each answer to the right model. Kai answers a decision directly.</p>
             <div className="hv-links">
               <Arrow href="https://docs.hanzo.ai/docs/models/enso">Which Enso tier for which job</Arrow>
               <Arrow href="/pricing">Every model rate</Arrow>

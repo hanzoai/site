@@ -39,7 +39,7 @@ function Open() {
       {items.length ? (
         <ul className="xbo-issues">
           {items.map((it, i) => (
-            <motion.li key={it.url} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30, delay: i * 0.06 }}>
+            <motion.li key={it.url} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], delay: i * 0.06 }}>
               <a href={it.url} target="_blank" rel="noopener noreferrer">
                 <span className="xbo-dot" aria-hidden="true" />
                 <span className="xbo-iss-t">{it.title}</span>
@@ -149,7 +149,7 @@ function Rewards() {
           <div className="xbo-total-n"><b className="xp-fig">{lo === hi ? n(lo) : `${n(lo)} – ${n(hi)}`}</b><span className="x-mono">pts</span></div>
           <div className="xbo-total-c"><b className="xp-fig">{`+$${n(credits)}`}</b><span className="x-mono">AI credits</span></div>
           <div className="xbo-track" aria-hidden="true">
-            <motion.i className="xbo-you" animate={{ left: pos(lo), width: `calc(${pos(hi)} - ${pos(lo)} + 8px)` }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} />
+            <motion.i className="xbo-you" animate={{ left: pos(lo), width: `calc(${pos(hi)} - ${pos(lo)} + 8px)` }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />
             {STAND.map((st, i) => <span key={st[0]} className="xbo-mk" style={{ left: pos(st[3]) }}><b className="x-mono">#{i + 1}</b></span>)}
           </div>
         </div>
