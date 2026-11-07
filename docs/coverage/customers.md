@@ -6,6 +6,7 @@ Open copy questions for James:
 - (1) May the backer names and logos show? PLAN 1.3 #3 / MASTER part 5. They show as live shows them, as names only, with no tiles.
 - (2) May "Case studies" stay as the caption under the plate? It is Hanzo's heading, moved below the plate.
 - (3) There is no current proof (benchmarks, GitHub figures) on this page's copy to put above the 2015–2020 cases. Should any be linked in?
+- (5) The index keeps Hanzo's own order: SKULLY first, as on hanzo.ai. An earlier build moved it after Triller; that change is reverted, so there is nothing to decide.
 - (4) $8.4M and $7M+ sit on the plate beside the case year. Both come word for word from the case pages, with the year as the case copy prints it.
 
 Shared changes requested (`docs/requests/customers.md`):
@@ -13,6 +14,7 @@ Shared changes requested (`docs/requests/customers.md`):
 
 Forks this page deleted:
 - The hand-rolled case tabs, now kit `Tabs`.
+- The overprinting stage hand-off: it now runs exit then enter (`mode="wait"`).
 - The pointer preview card, replaced by the stage.
 - The seven backer tiles.
 - The `data-morph` plate, now doorway.
@@ -44,9 +46,11 @@ Done here: parity links 10/10. Both case plates are real `<a href>` links to `/c
 - [x] Card-to-page links open into their page. The doorway is used instead of Morph, which times out site-wide (reported by the conductor).
 
 Done here:
-- **Arrival:** once the curtain lifts, the h1 cuts in by line and the plate's progress line starts filling. The plate starts at 12% in view, so it runs on the first screen. Tested: the line was at 0.57–0.75 of its fill 4.2s after load, and the plate had turned to KANOA by 7.7s.
+- **Arrival order:** the h1 cuts in first, as the company MaskLines CSS at first paint (+0.5s). Then the lede and ask (CSS, 0.95s), then the plate (1.15s). Playwright saw the h1 visible at 1.34s, the lede at 1.46s and the plate at 1.72s.
+- **First screen at 1470×801:** the figure block sits in the plate's upper half, so $8.4M is on screen at y 638–739.
+- **The plate turn:** Damon to KANOA, then back to Damon, then it rests. Each case has its own tone: a graphite gradient, with a lighter Sigil on KANOA. The incoming text arrives at 0.25s, so the wipe edge reads.
 - **Rhythm:** hero, plate, launch scene, a quiet names row, the black close.
-- **JS off:** MaskLines' `<noscript>` rule, plus CSS keyframe arrivals that only pause while `html.x-arriving` is set.
+- **JS off:** the MaskLines and page `<noscript>` rules stack both cases readably and set the phone figures in place. CSS keyframe arrivals pause only while `html.x-arriving` is set. A Playwright run with JS disabled found 0 faint or offset text.
 
 ## 4. Conversion system
 - [x] No raw `.x-btn`. The asks are one page-local pill; kit `Cta` has not merged.
@@ -84,6 +88,8 @@ Done here: parity text 72/72, links 10/10. The lede is 44ch and the row text 44c
 Done here:
 - `deck.css` is imported. The h1 is the deck's clamp(52px, 7vw, 84px) at 1.02. Headings are 497, and the hero and stage figures are Air 220.
 - Container 1152, sections clamp(72px, 11vw, 188px), buttons 48px.
+- Radii are deck values: plate 20 (art card), stage 24 (tile), pills full. These are literals in page CSS because `tokens.css` has not merged.
+- The row sheet ends 12px short of the stage.
 - One black room (the close). The plate is a card, not a room.
 
 ## 8. UI component library
@@ -95,7 +101,7 @@ Done here:
 
 Done here:
 - The year chips are `aria-pressed` buttons whose gliding pill now has size (111×48).
-- The case tabs are kit `Tabs` (arrow keys, Home/End). Press is .97.
+- The case tabs are kit `Tabs` (arrow keys, Home/End). Every page control presses at .97: the asks, the years, the wall and the plate arrow.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -105,8 +111,10 @@ Done here:
 - [ ] n/a: sound (the shared kit has not merged)
 
 Done here:
-- **Signature:** the launch stage. Each row's figures rise in (24px, 300ms ease-emphasis) as it crosses the middle, or under the pointer.
-- **Supporting:** the line-mask h1; the plate turning once (wipe, with the outgoing text fading before the edge, so no "$8M+" frame); the closing figure rows sliding with scroll.
+- **Signature:** the launch stage. As each row crosses the middle, or under the pointer, the outgoing figure leaves (150ms, rising 16px), then the incoming one arrives (300ms ease-emphasis). Playwright saw at most 1 layer at a time.
+- Figures longer than 8 characters step down, and every figure stays on one line: "120,000 ETH" fits the stage exactly.
+- **Phone scene:** rows read in as they reach the middle. The name goes from #737373 to ink, and the figures settle out of their mask (500ms ease-emphasis), once. Playwright: STONED's figure went from translateY 44px to none, and the row's classes became `on read`.
+- **Supporting:** the line-mask h1; the plate's turn (Damon, KANOA, back to Damon, rest), where the outgoing text fades in 0.15s before the edge crosses it; the closing figure rows sliding with scroll.
 - **State:** the year filter closes the list up with a 300ms glide.
 - **Kinds:** arrival, idle, pointer, state and scroll; scroll is 2 of 6.
 - No springs. The kit `Tabs` pill is the kit's own.
@@ -117,7 +125,7 @@ Done here:
 - [x] Alt on every image (covers carry their case alt, logos are decorative or named)
 - [x] No dimmed or filtered photo. The plate uses only a gradient under its text. 4+ visuals together: n/a, the page has two covers.
 
-Done here: covers and logos come from Hanzo's /public. They are blocked in this cloud box, so the films show the Sigil fallback and the names; on localhost they load.
+Done here: covers and logos are referenced at Hanzo's /public paths. They are not mirrored into this repo's `public/` (MASTER part 10, a shared media task): dev pulls them from hanzo.ai by rewrite, and the static export would need the mirror. In this cloud box they are blocked, so the films show the Sigil fallback and the names.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -140,7 +148,7 @@ Done here:
 Done here:
 - Plate cases are `role=tabpanel`, labelled by the kit tabs; inactive ones are `inert`.
 - Row figures stay in the accessibility tree on desktop (visually hidden), while the stage is `aria-hidden`.
-- The list is `aria-live`.
+- A year tap announces one line through a `role=status` count ("2018: 3 launches"), not the whole list.
 
 ## 13. Performance and engineering
 - [x] h1 and LCP element in server HTML
@@ -164,7 +172,7 @@ Done here: metadata unchanged in `app/customers/page.jsx`. All rows, both cases 
 - [ ] n/a: maker and model pages
 - [ ] n/a: prices
 
-Done here: the plate opens Damon and KANOA by the doorway. The ink grows from the plate's rectangle, and the case page lifts it (`useArrival` in Story.jsx).
+Done here: the plate opens Damon and KANOA by the doorway. The ink grows from the plate's rectangle, and the case page lifts it (`useArrival` in Story.jsx). The hold is capped at 700ms: if the page hasn't lifted the ink by then, the page cuts to it.
 
 ## 16. Developer experience
 - [ ] n/a: no code on the page
@@ -183,6 +191,21 @@ Done here: with hanzo.ai blocked (this box), the page is complete with no consol
 - [x] `data-cta` on every primary. `lib/track.js` does not exist yet.
 - [x] Nothing identifier-bearing; no payload
 - [x] `V2: 8/10 …` in the page file's top comment
-- [x] Review read: `docs/review/customers.md` was 6/10. Every fix it lists is done: the years filter (11 to 3 rows), the pill size, the row sheet, the index scene, the hover no longer covering its row, the first screen wakes, the ask beside the lede, kit Tabs, no 01/02 marks, no tiles. The re-review is pending.
+- [x] Review read: `docs/review/customers.md` re-run was 7/10. Its fixes are done:
+  - the phone scene (rows read in);
+  - the stage hands off in sequence;
+  - "120,000 ETH" is on one line;
+  - the h1 leads;
+  - $8.4M is above the fold;
+  - each case has its own tone, and text arrives at 0.25s;
+  - the sheet stops short of the stage;
+  - press is .97;
+  - radii are 20 and 24;
+  - the doorway hold is capped;
+  - Hanzo's order is kept;
+  - `aria-live` is narrowed;
+  - the card is corrected.
+
+  The next review is pending.
 
 Done here: verified by Playwright on the dev server: filter 11→3→11, pill 111×48, row sheet opacity 1, stage figures Bellabeat 250,000 → Unikrn 120,000 ETH → Palladium €150M as you scroll, no console errors.

@@ -1,4 +1,4 @@
-// V2: 8/10 Stage stack (the documents arrive as paper that deals itself), filter chips with cards that re-flow and open into their document, the data-use ladder, calm contact rows, deck greys only
+// V2: a pile of paper that deals itself (the top sheet leaves on top, then tucks under), a ruled index filtered by chips, the four data-use states as a ladder, calm contact rows; no ask; deck greys only
 // Signature: the legal documents as a stack of paper that deals itself, each sheet carrying its own address on hanzo.ai/legal
 // Beyond: find the one you need — filter the twelve documents by kind and the cards re-flow, each opening into its document
 import LegalIndex from '../../components/pages/LegalIndex';

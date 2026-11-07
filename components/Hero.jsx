@@ -97,7 +97,7 @@ function Roster({ on }) {
   const [step, setStep] = useState(0);
   useEffect(() => {
     // row 32 looks exactly like row 0, so the jump back to 0 is invisible
-    const t = setInterval(() => { if (shown.current && !document.querySelector('.x-hero[data-off]')) setStep((s) => (s >= ROSTER.length ? 0 : s + 1)); }, 2200);
+    const t = setInterval(() => { if (shown.current && !document.querySelector('.x-hero[data-off], .x-hero[data-paused]')) setStep((s) => (s >= ROSTER.length ? 0 : s + 1)); }, 2200);
     return () => clearInterval(t);
   }, []);
   // like Hanzo's demo, every agent's speed moves and the bill ticks: written straight to the text, no re-render
@@ -105,7 +105,7 @@ function Roster({ on }) {
   useEffect(() => {
     let cost = 0;
     const t = setInterval(() => {
-      if (!shown.current || document.querySelector('.x-hero[data-off]') || !box.current) return;
+      if (!shown.current || document.querySelector('.x-hero[data-off], .x-hero[data-paused]') || !box.current) return;
       box.current.querySelectorAll('[data-tps]').forEach((el) => { if (Math.random() < 0.45) { const b = +el.dataset.tps; el.textContent = Math.max(1, Math.round(b * (0.82 + Math.random() * 0.36))) + '/s'; } });
       cost += 0.0001 + Math.random() * 0.0004;
       const c = box.current.querySelector('[data-cost]');
@@ -160,13 +160,42 @@ function Account() {
   );
 }
 
+/* The terminal's Copy: puts exactly the command on the clipboard; if the clipboard is blocked it selects the command
+   for ⌘C and never claims success. "Copied" is announced politely. */
+function TermCopy({ cmdEl }) {
+  const [ok, setOk] = useState(false);
+  const t = useRef(0);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(CMD);
+      setOk(true);
+      clearTimeout(t.current);
+      t.current = setTimeout(() => setOk(false), 1600);
+    } catch {
+      const r = document.createRange();
+      r.selectNodeContents(cmdEl.current);
+      const sel = getSelection();
+      sel.removeAllRanges();
+      sel.addRange(r);
+    }
+  };
+  return (
+    <button type="button" className="x-term-copy hv-term-copy" onClick={copy} data-cta="home.hero.install_copy" data-ok={ok || undefined}>
+      {ok && <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>}
+      Copy
+      <span className="x-sr" role="status">{ok ? 'Copied' : ''}</span>
+    </button>
+  );
+}
+
 export default function Hero() {
   const host = useRef(null);
   const fit = useRef(null);
   const calm = useReducedMotion();
   const inView = useInView(host, { amount: 0.2 });
+  const [paused, setPaused] = useState(false);
   const live = useRef(true);
-  live.current = inView;
+  live.current = inView && !paused;
   const user = useRef(false);
 
   const [typed, setTypedState] = useState(0);
@@ -186,13 +215,14 @@ export default function Hero() {
     const w = (ms) => new Promise((r) => setTimeout(r, ms));
     const held = async () => { while (!dead && !live.current) await w(400); };
     (async () => {
-      await w(1100);
-      (async () => { for (let i = 0; i <= CMD.length && !dead; i++) { setCmd(i); await w(i < 4 ? 90 : 36); } })();
+      setCmd(0);
+      await w(450);
+      (async () => { for (let i = 0; i <= CMD.length && !dead; i++) { await held(); setCmd(i); await w(i < 4 ? 90 : 36); } })();
       while (!dead) {
         await held();
         setPhase(0); setLog(0); setTyped(0);
         if (!user.current) setTab('chat');
-        for (let i = 0; i <= PROMPT.length && !dead; i++) { setTyped(i); await w(PROMPT[i] === ' ' ? 55 : 26); }
+        for (let i = 0; i <= PROMPT.length && !dead; i++) { await held(); setTyped(i); await w(PROMPT[i] === ' ' ? 55 : 26); }
         await w(500); if (dead) return;
         setPhase(1);
         await w(900); if (dead) return;
@@ -200,7 +230,7 @@ export default function Hero() {
         await w(2000); if (dead) return;
         if (!user.current) setTab('dev');
         setPhase(3);
-        for (let j = 1; j <= 4 && !dead; j++) { await w(430); setLog(j); }
+        for (let j = 1; j <= 4 && !dead; j++) { await w(430); await held(); setLog(j); }
         await w(500); if (dead) return;
         setPhase(4);
         await w(9000);
@@ -237,18 +267,19 @@ export default function Hero() {
   const stageY = useTransform(p, [0, 1], [0, 120]);
   const stageS = useTransform(p, [0, 1], [1, 0.9]);
 
+  // every word is in its final state in the server HTML; with JS the lines cut in from a class set before first paint
   const line = (text, d) => (
     <span className="x-line">
-      <motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: d }}>{text}</motion.span>
+      <span className="x-line-in" style={{ '--d': d + 's' }}>{text}</span>
     </span>
   );
 
   return (
-    <section className="x-hero" ref={host} onPointerMove={onMove} onPointerLeave={() => { rx.set(0); ry.set(0); }} aria-labelledby="home-title">
+    <section className="x-hero" ref={host} onPointerMove={onMove} onPointerLeave={() => { rx.set(0); ry.set(0); }} aria-labelledby="home-title" data-paused={paused || undefined}>
       <Dots host={host} />
       <div className="x-wrap x-hero-grid">
         <motion.div className="x-hero-copy" style={{ y: copyY, opacity: copyO }}>
-          <motion.a href="/blog/pareto-frontier" className="x-badge" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE }} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+          <motion.a href="/blog/pareto-frontier" className="x-badge" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
             <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M8 1.5l1.6 4.2 4.2 1.6-4.2 1.6L8 13.1 6.4 8.9 2.2 7.3l4.2-1.6z" fill="currentColor" /></svg>
             A New Pareto Frontier
             <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -257,7 +288,7 @@ export default function Hero() {
             <span className="x-h1-a">{line('Smarter, Faster, Open Source.', 0.1)}</span>
             <span className="x-h1-b">{line('Pick all three.', 0.25)}</span>
           </h1>
-          <motion.p className="x-hero-lede" initial={{ opacity: 0, y: 16, filter: 'blur(8px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ duration: 1, ease: EASE, delay: 0.5 }}>
+          <motion.p className="x-hero-lede">
             Frontier intelligence over <b><Count to={200} suffix="×" duration={1.8} delay={0.6} /></b> faster and <b><Count to={400} suffix="×" duration={2} delay={0.7} /></b> cheaper. Every model behind one key.
           </motion.p>
           <motion.div className="x-auth" initial="h" animate="s" variants={{ s: { transition: { staggerChildren: 0.07, delayChildren: 0.75 } } }}>
@@ -280,6 +311,12 @@ export default function Hero() {
         </motion.div>
 
         <motion.div className="x-hero-stage" ref={fit} style={{ y: stageY, scale: stageS, height: `calc(var(--sh) * ${k})` }}>
+          {/* WCAG 2.2.2: the demo can be paused; this control comes before the devices */}
+          <button type="button" className="hv-hero-pause" aria-label="Pause" aria-pressed={paused} onClick={() => setPaused((x) => !x)} hidden={calm || undefined}>
+            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+              {paused ? <path d="M5 3.5v9l7.5-4.5z" fill="currentColor" /> : <><rect x="4" y="3.5" width="2.6" height="9" rx=".8" fill="currentColor" /><rect x="9.4" y="3.5" width="2.6" height="9" rx=".8" fill="currentColor" /></>}
+            </svg>
+          </button>
           <div className="x-fit" style={{ transform: `scale(${k})` }}>
             <motion.div className="x-3d" style={{ rotateX: rx, rotateY: ry }}>
               {/* the desktop app */}
@@ -320,10 +357,10 @@ export default function Hero() {
               <motion.div className="x-term" initial={{ opacity: 0, z: -120, y: 70 }} animate={{ opacity: 1, z: 70, y: 0 }} transition={{ duration: 1.3, ease: EASE, delay: 0.35 }}>
                 <div className="x-term-bar"><i /><i /><i /><span>install</span></div>
                 <div className="x-term-body x-mono">
-                  <span className="x-dim">$ </span><span ref={cmdEl} /><Caret />
+                  <span className="x-dim">$ </span><span ref={cmdEl}>{CMD}</span><Caret />
                 </div>
                 <div className="x-term-f">
-                  <span className="x-term-copy">Copy</span>
+                  <TermCopy cmdEl={cmdEl} />
                   <a href="https://docs.hanzo.ai/docs/cli">Install CLI ↗</a>
                 </div>
               </motion.div>
@@ -360,7 +397,7 @@ export default function Hero() {
               </motion.div>
             </motion.div>
           </div>
-          <SetupMenu up initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 1.1 }} />
+          <SetupMenu up />
         </motion.div>
       </div>
     </section>
