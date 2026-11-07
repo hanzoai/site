@@ -130,12 +130,12 @@ html:has(main.xlr[data-ask-on]) header[data-slot=masthead] a[data-x-ask] { backg
 .xlr-posts > li.lead { grid-column: 1 / -1; }
 .xlr-post { position: relative; display: flex; flex-direction: column; gap: 12px; height: 100%; padding: 28px; border-radius: 24px; background: #171717; color: #fafafa; text-decoration: none; transition: background-color .25s, transform .15s var(--xp-ease); }
 .xlr-post time { font-size: 13px; color: #a3a3a3; }
-.xlr-post b { font: 497 21px/1.25 var(--sans); letter-spacing: -.015em; text-wrap: balance; }
+.xlr-post .xlr-post-t { font: 497 21px/1.25 var(--sans); letter-spacing: -.015em; text-wrap: balance; }
 .xlr-post > span:last-child { font-size: 16px; line-height: 1.5; color: #a3a3a3; }
 /* the lead post is the room's one big thing: a full-width row, the 44px title on the left 8, its line on the right 5 */
 .lead .xlr-post { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 5fr); grid-template-rows: auto 1fr; gap: 16px clamp(32px, 4vw, 72px); align-items: end; padding: clamp(28px, 3.4vw, 48px); }
 .lead .xlr-post time { grid-column: 1 / -1; }
-.lead .xlr-post b { font-size: clamp(30px, 3.2vw, 44px); line-height: 1.08; letter-spacing: -.03em; max-width: 20ch; }
+.lead .xlr-post .xlr-post-t { font-size: clamp(30px, 3.2vw, 44px); line-height: 1.08; letter-spacing: -.03em; max-width: 20ch; }
 .lead .xlr-post > span:last-child { max-width: 44ch; padding-bottom: 6px; }
 .xlr-post-m { position: relative; display: block; margin: -16px -16px 4px; aspect-ratio: 16 / 10; border-radius: 16px; overflow: hidden; background: #000; }
 .xlr-post-m video { width: 100%; height: 100%; object-fit: cover; object-position: 70% 45%; transition: transform .6s var(--xp-ease); }
@@ -148,7 +148,7 @@ html:has(main.xlr[data-ask-on]) header[data-slot=masthead] a[data-x-ask] { backg
 .xlr-post-l::after { content: ''; position: absolute; inset: 0; z-index: 1; border-radius: 24px; }
 @media (hover: hover) {
   .xlr-post:not(.has-film):hover, .has-film:has(.xlr-post-l:hover) { background: #262626; }
-  .xlr-post:not(.has-film):hover b, .has-film:has(.xlr-post-l:hover) b { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+  .xlr-post:not(.has-film):hover .xlr-post-t, .has-film:has(.xlr-post-l:hover) .xlr-post-t { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
   .xlr-post:not(.has-film):hover time, .has-film:has(.xlr-post-l:hover) time { color: #fafafa; }
   .has-film:has(.xlr-post-l:hover) video { transform: scale(1.03); }
 }
@@ -162,10 +162,10 @@ html:has(main.xlr[data-ask-on]) header[data-slot=masthead] a[data-x-ask] { backg
 .xlr-think-grid { grid-column: 6 / -1; list-style: none; margin: 0; padding: 0; }
 .xlr-think-grid > li + li { border-top: 1px solid rgba(255, 255, 255, .1); }
 .xlr-think-a { position: relative; display: grid; grid-template-columns: minmax(0, 14ch) minmax(0, 1fr); align-items: baseline; gap: 6px 24px; padding: 18px 40px 18px 0; color: #fafafa; text-decoration: none; transition: transform .15s var(--xp-ease); }
-.xlr-think-a b { font: 497 17px/1.3 var(--sans); }
-.xlr-think-a span { font-size: 14px; line-height: 1.5; color: #a3a3a3; }
+.xlr-think-a .xlr-think-t { font: 497 17px/1.3 var(--sans); }
+.xlr-think-a .xlr-think-d { font-size: 14px; line-height: 1.5; color: #a3a3a3; }
 .xlr-think-a i { position: absolute; top: 20px; right: 4px; font-style: normal; color: #a3a3a3; transition: transform .3s var(--xp-ease), color .15s; }
-@media (hover: hover) { .xlr-think-a:hover b { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; } .xlr-think-a:hover i { transform: translateX(4px); color: #fafafa; } }
+@media (hover: hover) { .xlr-think-a:hover .xlr-think-t { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; } .xlr-think-a:hover i { transform: translateX(4px); color: #fafafa; } }
 .xlr-think-a:active { transform: scale(.97); }
 .xlr-think-a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 
@@ -293,7 +293,7 @@ html:not(.js) .xlr-tiles { display: none; }
   .xlr [data-e=drift-r][data-in] { animation: xlr-dr 1.25s cubic-bezier(.22, 1, .36, 1) .08s backwards; }
   .xlr [data-e=drift-split][data-in] > .xlr-post { animation: xlr-fade .5s ease-out backwards; }
   .xlr [data-e=drift-split][data-in] :is(.xlr-post > time, .xlr-post > b, .xp-head) { animation: xlr-dl 1.25s cubic-bezier(.22, 1, .36, 1) backwards; }
-  .xlr [data-e=drift-split][data-in] :is(.xlr-post > span, .xlr-think-grid) { animation: xlr-dr 1.25s cubic-bezier(.22, 1, .36, 1) .06s backwards; }
+  .xlr [data-e=drift-split][data-in] :is(.xlr-post > span:not(.xlr-post-t), .xlr-think-grid) { animation: xlr-dr 1.25s cubic-bezier(.22, 1, .36, 1) .06s backwards; }
 
   /* 4, spiral-in (questions): the heading and number spiral in from the left edge, the answers from the right */
   .xlr [data-e=spiral][data-in] > .xlr-sticky { animation: xlr-spl 1.3s cubic-bezier(.45, .05, .55, .95) backwards; }

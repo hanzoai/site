@@ -304,7 +304,7 @@ function Rail() {
                 <Img src={TRY_ART[i]} w={1200} h={1500} alt="" />
                 <span className="xlr-card-n xp-fig">{String(i + 1).padStart(2, '0')}</span>
               </span>
-              <b className="xlr-card-t" data-morph>{t}</b>
+              <span className="xlr-card-t" data-morph>{t}</span>
               <span className="xlr-card-d">{d}</span>
               <i aria-hidden="true">→</i>
             </A>
@@ -322,7 +322,7 @@ function Rows({ items }) {
       {items.map(([t, d, h]) => (
         <li key={t + h}>
           <A to={h} className="xlr-row">
-            <b className="xlr-row-t" data-morph>{t}</b>
+            <span className="xlr-row-t" data-morph>{t}</span>
             <span className="xlr-row-d">{d}</span>
             <i aria-hidden="true">→</i>
           </A>
@@ -399,7 +399,7 @@ function Read() {
           <li className="lead" data-e="drift-split">
             <A to={lead[3]} className="xlr-post">
               <time className="x-mono" dateTime={lead[1]}>{lead[1]}</time>
-              <b>{lead[0]}</b>
+              <span className="xlr-post-t">{lead[0]}</span>
               <span>{lead[2]}</span>
             </A>
           </li>
@@ -408,7 +408,7 @@ function Read() {
               <div className="xlr-post has-film">
                 <Loop className="xlr-post-m" src="/learn/kai-640.webm" poster="/models/kai.webp" />
                 <time className="x-mono" dateTime={date}>{date}</time>
-                <A to={h} className="xlr-post-l"><b>{t}</b></A>
+                <A to={h} className="xlr-post-l xlr-post-t">{t}</A>
                 <span>{d}</span>
               </div>
             </li>
@@ -416,7 +416,7 @@ function Read() {
             <li key={h} data-e={k % 2 ? 'drift-r' : 'drift-l'}>
               <A to={h} className="xlr-post">
                 <time className="x-mono" dateTime={date}>{date}</time>
-                <b>{t}</b>
+                <span className="xlr-post-t">{t}</span>
                 <span>{d}</span>
               </A>
             </li>
@@ -426,7 +426,7 @@ function Read() {
           <h2 id="xlr-think-h" className="xp-head">Read the thinking</h2>
           <ul className="xlr-think-grid">
             {THINK.map(([t, d, h]) => (
-              <li key={t}><A to={h} className="xlr-think-a"><b>{t}</b><span>{d}</span><i aria-hidden="true">→</i></A></li>
+              <li key={t}><A to={h} className="xlr-think-a"><span className="xlr-think-t">{t}</span><span className="xlr-think-d">{d}</span><i aria-hidden="true">→</i></A></li>
             ))}
           </ul>
         </div>
