@@ -1,41 +1,30 @@
-# /newsletter — James-eye review
+# /newsletter: James-eye review (independent critic, 7 Nov)
 
-Reviewed: main at `648b798` (page files at `57dfa0a`; shared ask fix `d2b5ab8c` in), 7 Nov 15:19 UTC, under MASTER.md. Earlier: 6/10 at `ca08189`. Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped). The form was never submitted.
+Verdict: 6/10
+First complaint: "On my phone the big lines jump about as I scroll, and once you're past the paper it's just huge sentences. There's nothing to look at and nothing feels premium."
 
-Verdict: 5/10 (no card; labels over the headings; three equal big steps)
-
-First complaint: "There's still a little label on top of the headline and another on the steps. The three steps are three big words in three equal boxes. And 'Subscribe' doesn't react when I hover."
-
-**Cap: part card (MASTER section 6).** There is no `docs/coverage/newsletter.md`. Capped at 7 until the card is copied from `docs/coverage/_TEMPLATE.md` with 18 `Done here:` lines true on the page.
-
-**Floats over content (MASTER 3.2 rule 6):** passes: no pill on desktop, and my phone walk saw no bar over content.
-
-**Scale and space (MASTER 3.1, fail):** the statements pass (one 88px line per screen, "New models and what they measured, the day they ship"). The dark three-step room fails: "Subscribe", "Confirm", "Read" at 44px in three equal columns, all big at once, which is also the banned three equal boxes.
-
-## What changed since the last review
-Fixed: the red is gone (0 UI hues) and the paper issue now rests after it types instead of looping. Still there: "• NEWSLETTER" above the h1, and "• THREE STEPS" above the step room's h2.
+Walked moving at 1470x801 and 375x812 with Playwright (cookie bar dismissed, the subscribe POST intercepted and answered with a fake `{"status":"pending"}`). Ran `scripts/parity.py /newsletter`: OK, text 7/7, links 3/3. The intercepted payload is `{"email","source":"hanzo.ai/newsletter","locale":"en-US"}`, the same as `content/forms.json`. Console: 0 errors on a clean load. One hydration warning appeared only when a screenshot fired before hydration (Playwright's caret hiding), so it does not count against the page. Proof: `img/newsletter-phone-first.jpg`, `img/newsletter-statements.jpg`.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Yes: "The Hanzo newsletter", one email field, and the tilted paper issue typing Hanzo's lines, then resting.
-2. **One in, one out?** Yes for a short page: hero, three statements, the step room.
-3. **A real object in every section?** Paper issue, statements (type only), the step room.
-4. **One ask, sticky after the hero?** The sticky header carries a solid "Try Hanzo"; "Subscribe" does not follow you. 0 `data-cta` on desktop.
-5. **Every hover and press answers?** No: "Subscribe" (the page's ask) has no hover; it does press. "Privacy" has no hover.
-6. **Overlap, font swap, layout shift?** No overlap. Phone layout shift 0.032 from the step list (`li.xnl-st`) moving as it arrives.
-7. **Which reference, and is its motion there?** osply.co copy-in-place (type on paper). Present.
-8. **Different from its neighbours?** Yes: the paper issue is its own.
-9. **All 18 parts covered?** No card (cap above).
-10. **Banned tells?** Labels directly above the h1 and an h2; three equal boxes in a row; everything big at once in the step room.
-11. **Copy untouched?** Parity 7/7 at the last check; "Read" and "Nothing is sent to you until you do." are still not in Hanzo's copy.
 
-## Missing from the 18 parts (MASTER, measured)
-- **Part 7:** labels above headings.
-- **Part 8 button states:** the page's own ask has no hover.
-- **Part 13:** phone layout shift 0.032.
-- **Part 17 submit states:** not exercised (the walk never sends real forms).
+1. **Sells in 5 s, moves within 1 s?** Yes on desktop. The h1 cuts in by line mask, the paper issue tilts in, its three lines set one after another, and the Sigil in the masthead drifts by itself. The name, lede and one email field read in a glance. On phone the paper sits under the fold, starts at y=533 and is cropped 6px past the left edge.
+2. **One in, one out, or a document?** Halfway. The hero and the dark opt-in stage are scenes. In the middle, three 64px sentences stack one under another, and two of them are full size on screen at once (`img/newsletter-statements.jpg`). That reads as a typeset document that scrolls past. About 370px of empty white sits between the hero and statement 01 at desktop.
+3. **A real visual object in every section?** No. The hero has one: the paper issue with its Sigil masthead, which becomes an envelope addressed to you. The "what each issue carries" section is only type. The opt-in room is type plus a 1px rail. After the first screen, nothing on the page is an object.
+4. **One ask in the sticky header, nothing floating? Scale rhythm?** On desktop, yes: the header swaps "Try Hanzo" for a solid "Subscribe" once the hero ask leaves view. On phone the header keeps a solid **"Try Hanzo"** for the whole page, which is the wrong ask, and the first phone screen has two solid fills (Try Hanzo and Subscribe). In the dark room on desktop, the header's solid Subscribe and the white-filled "Subscribe ↑" share one viewport, which makes two solids. Scale: 52px h1, then 64, 64, 64, then 64 again in the dark stage. That is four big moments in a row with little medium or small between them. The statements breathe from 0.75 to 1, but they are still the biggest thing on every screen.
+5. **Every hover and press answers, no jumps?** Mostly. Subscribe darkens on hover, Privacy thickens its underline, the steps underline and brighten, "Subscribe ↑" fills and lifts its arrow, and the mark ring brightens. Steps press at 0.97. The paper has no pointer response, so the page's one object is inert to the hand. The Subscribe hover fill is `#2c2c2e`, which is not on the deck ramp (it comes from the shared Cta; flag it to the owner). After a successful submit, the h1 drops about 22px because the envelope is shorter than the paper and the hero is centred.
+6. **Overlap, font swap, layout shift?** **Fails on phone.** The statements scrub their `wght` axis, and at 32px on phone that rewraps the lines. Statement 03 jumped 32px (one shift of 0.078). Cumulative CLS over one phone scroll was **0.296**. Desktop measured 0.008. No overlap and no horizontal scroll at either size. No visible font swap.
+7. **Which reference, and is its motion there?** Mostly apple.com: one idea per screen and huge type, with a pinned-stage feel in the opt-in room, where one panel changes and the marker glides. That stage is not pinned, though, and it runs once and stops. Nothing comes from osply.co, hamol.studio or grubogrubo.com (pointer-aware detail, image-led layout). The fold-into-envelope payoff only shows after a real submit.
+8. **Different from its neighbours?** Yes. A paper issue that becomes an envelope is this page's own idea, and the hero medium is unlike the other utility pages.
+9. **All 18 parts?** Not met. There is a layout shift (parts 11 and 13). The ask is in the header on desktop but not on phone (part 4). Desktop's dark room has two solid fills (parts 1 and 4). Success and error strings ("Check your inbox: we sent … a link to confirm.", "We could not reach our mail service…") are not in `content/` or `ui-strings.json` (part 1, copy questions). The paper film has no reduced-motion problem: the CSS shows its final state.
+10. **Banned tells?** No hue, gradient text, Inter, emoji, kicker above a headline or cursor glow. The ones that apply are "everything big at once" in the statements run and "a layout shift".
+11. **Copy untouched?** Parity passes. Hanzo's one sentence "We email a link to confirm first, and every issue has a one-click unsubscribe" is cut into fragments and re-set three times: in the terms line, as the dark room's h2, and as the step labels "a link to confirm", "once or twice a month" and "one-click unsubscribe". The wording is unchanged, but the copy is recomposed into new UI. Note it as a copy question for James.
 
-## Fixes
-1. Write the 18-part card (lifts the cap).
-2. Move "Newsletter" and "Three steps" below their headings as captions.
-3. Turn the three steps into one object that changes (the paper moving Subscribe → Confirm → Read), one step big at a time.
-4. Give "Subscribe" the kit hover and `data-cta`; reserve the step list's height on the phone.
+## Fixes to reach 8
+
+1. **Kill the phone layout shift.** Under 900px, drop the `wght` scrub, or hold each statement's line box fixed with a reserved height and no rewrap. Re-measure CLS on a 375x812 wheel scroll; it must be under 0.02.
+2. **Give the middle section an object.** Let the paper issue carry the three statements: pin it while each line lands on the paper as it crosses the middle, so the page's own object does the telling. A single statement at 64px with the others at 26px also works. Only one big thing per screen, and remove the empty white gap above 01.
+3. **Fix the asks.** On phone the sticky header must carry "Subscribe" (request it from the Chrome owner if needed) so the first screen has one solid fill. In the dark room, make "Subscribe ↑" the quiet outlined style while the header's solid is visible, or hide the header solid inside that room.
+4. **Make the hero object answer the hand.** Give the paper a pointer tilt (2.5° or less, fine pointers only). Typing a valid email could also write the address onto the paper, which would preview the envelope before submit.
+5. **Keep the h1 still on success.** Give `.xnl-stage` a fixed height, or align the hero grid to start, so the envelope swap does not move the copy column.
+6. **Pin the opt-in stage** while it walks its four steps, so it reads as Apple's pinned scene and not a strip that plays once in passing. On phone the paper must not bleed past the left gutter.
+7. List the invented success and error strings and the re-cut confirmation sentence as copy questions for James on the card, or take the success line from `ui-strings.json`.
