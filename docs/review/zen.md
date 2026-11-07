@@ -1,121 +1,134 @@
-# /zen: James-eye review (fifth walk)
+# /zen: James-eye review (sixth walk)
 
-Reviewed on the working tree at `c7106d43`; the last /zen change is `cc66ca92` ("zen 4 asks not 8, no invisible tab stops, scoped hover, fewer repeats"). Page files: `app/zen/page.jsx`, `components/pages/model/Zen.jsx` and `Zen.css`, and the shared `components/v2/Launch.jsx`. Walked on 7 Nov 2026 against the dev server on :4180, which was not restarted. Only the /zen index page was walked.
+I reviewed the working tree at `4df4f37b` ("zen keyboard reaches the settled headline, header carries the one solid, trace done sound, tighter room"). Page files: `app/zen/page.jsx`, `components/pages/model/Zen.jsx` and `Zen.css`, and the shared `components/v2/Launch.jsx` (unchanged since the last walk). I walked it on 7 Nov 2026 against the dev server on :4180, which I did not restart. Only the /zen index page was walked.
 
-How it was walked: Playwright Chromium at 1470×801 and 375×812, plus 375×667.
-- Arrival frames at 0.3 s, 1 s and 2.5 s. The ask states were sampled every frame for the first 7 s.
-- A slow walk down the page, a quarter screen at a time, with a 1.8 s untouched dwell on every screen. Frames were compared to see what moves, and the solid fills in each viewport were listed.
-- A 20 s untouched dwell on the reasoning room at all three sizes, then taps on all three tabs and five taps on Next/Replay.
-- A PerformanceObserver over the whole walk. The h1 box was sampled every frame for 4 s, and font loading events were logged.
-- Hover and press on every page control, reading computed styles at rest, on hover and while pressed.
-- A 75-stop Tab crawl, then a forward and backward keyboard walk around the settled headline.
-- Reduced motion and JS off at both widths, with full-page captures.
-- Console errors on 9 fresh loads.
-- `parity.py /zen` (text 23/23, links 6/6), `taste.py` and `variety.py` all pass.
+How I walked it, in Playwright Chromium at 1470×801, 375×812 and 375×667:
+- **Arrival.** The h1 box and every opaque button on screen were sampled every 150 ms for the first 4 s.
+- **Slow walk.** I went down the page half a screen at a time, with a 2.2 s untouched dwell on every screen. I compared frames to see what moves and listed the solid fills in each viewport.
+- **Trace room.** I dwelled on it at 1470 and 375 (six samples, 1.6 s apart), logging which card row is lit and whether it is on screen. Then I tapped all three tabs and pressed Next/Replay five times.
+- **Shift and fonts.** A PerformanceObserver ran over the whole walk, and font `loadingdone` events were logged.
+- **Hover and press.** I read the computed style at rest, on hover and while pressed for 15 page controls.
+- **Keyboard.** A full Tab crawl from the top to the footer at 1470 (34 stops) and 375 (32 stops), waiting 800 ms per stop. Then a Shift+Tab walk back from chapter 1.
+- **Reduced motion and JS off** at both widths, with full-page captures and a hidden/blurred-text scan.
+- **Console errors** on 7 fresh loads.
+- **Scripts.** `parity.py /zen` (text 23/23, links 6/6) and `taste.py` both pass.
 
 Verdict: 7/10
 
-First complaint: "On my phone the reasoning bit lights up rows on cards I can't even see. They're down below, and all I get is a black gap and a 'Next' button. And the opening still feels like Kai's opening with a different ball in it."
+First complaint: "Where's the button? I land on Zen and nothing is solid. The Try Hanzo up top goes white after a second and the one on the film is just an outline. Then it's the same ball four screens in a row."
 
-**Cap: one coverage claim is false, so the verdict cannot go above 7.**
-- Part 12 says "Keyboard reaches every control". It does not on desktop. The settled headline's three links are `zen.hero` "Try Hanzo", `zen.hero-platform` "API Platform" and "Docs on GitHub". They stay `visibility: hidden` until scrolling settles the stage. Tab does not scroll the stage, so focus jumps from the stage's Pause (scrollY 0) straight to chapter 1's "Docs on GitHub" (scrollY 1766). Shift+Tab back goes Docs, then Pause, then Close. Those three links are never reached in either direction. A keyboard user never sees "Open models. Yours to run." settle at all. The phone is fine, because the headline shows by time there.
-- Stale rather than false: Part 9 marks sound "n/a: the shared sound kit is not on main". The kit is on main (`f99df11e`) and already covers this page: trace tabs tick, the asks tap and the pause ticks through `components/Sound.jsx`. Only "a self-running demo finishing (a faint chime)" is not wired for the trace. The card's opening note also says the desktop ask bar floats over content. No ask bar floated on desktop in this walk.
+**Cap: two coverage claims are false, so the verdict cannot go above 7.**
+- **Part 4 is false.** It says "The header's 'Try Hanzo' is the one solid fill from arrival to the closing band at both widths."
+  - At 1470 the header ask is solid black only until about 1.7 s. Then the shared `Ask.jsx` sets `html[data-ask=quiet]`, because a "Try Hanzo" twin (`zen.first`) is visible, and the header turns white with an outline.
+  - `zen.first` is outlined too (transparent, `rgba(250,250,250,.6)` border). So the desktop first screen at rest has **0 solid fills** (`d-w00`).
+  - The same happens at scrollY 1203, where the outlined `zen.hero` is still in view and the header has gone quiet again (`d-w03`): 0 solids.
+  - The header is solid only with the headline settled at scrollY 881, and from the figures onward.
+  - At 375 the claim holds: the header stays solid, because the phone branch of `Ask.jsx` does not run.
+- **Part 4 is also stale.** It still says "The settled headline's links stay out of the tab order (`visibility: hidden`) until the headline shows." That CSS was removed, and the links are now in the tab order, which is the right fix.
+- **Part 1 is false.** It says the first-screen ask is "solid (white on the film) … while the header ask stays quiet, solid beside the settled headline". Both page asks are now outlined (`kind="quiet"`). Parts 1 and 4 of the card contradict each other.
 
 Claims that checked out:
-- "Try Hanzo" appears 4 times: the header, `zen.first`, `zen.hero` and `zen.band`. `zen.first` has `data-cta` but no `data-thumb`, and the card says so (requested from the shared Launch).
-- The Tab crawl has 0 invisible stops. Every stop it reached had a 2px ring, in ink on white and white on the dark room. Hidden chapters keep their links out of the order.
-- The chapter link hover leak is gone: "Open in Workbench" on white now underlines in ink. "API Platform" underlines on hover.
-- The solid hand-off is right at rest. On desktop chapters 2-3 and in the trace room, the header carries the solid; with the headline or the band in view, the header goes quiet. On phones the header holds the solid and the headline ask is outlined.
-- CLS is 0.00048 at 1470 (the shared header and the pause disc) and 0 at 375 and 375×667. That includes the 20 s trace dwell and all the taps (trace CLS 0 at every size). The trace holds 521px on desktop and 620px on the phone.
-- The h1 box never moved on desktop (135/459, 1200×122, from first paint to 4 s). On the phone only y moves, with the stage settle; the height holds at 57px. No visible font swap.
-- At 375×667 the arch now clears "Open models." by about 18px (arch foot about 321, h2 top 339).
-- JS off shows every word with 0 hidden or blurred text at both widths, the finished trace included. Reduced motion shows the settled trace, and `getAnimations()` is empty.
-- No horizontal scroll at 375 or 1470.
-- Chapter 1 now uses Hanzo's own sentence ("Download the weights, or call them on Hanzo Cloud.").
-- The hydration error is not this page's. It fired only when a screenshot was taken the instant `load` fired. Next's diff names the shared `FooterHTML`, which holds the "Ask Hanzo anything" input, so this is the documented `style=""` test artifact. 6 loads with the first screenshot 300 ms after load had 0 console errors and no badge.
+- **Keyboard (last walk's cap) is fixed.** At 1470 the Tab order is `zen.first` → `zen.hero` → `zen.hero-platform` → "Docs on GitHub". Focus scrolls the stage to its settled point (scrollY 881), so all three links show at y 487 with full opacity (`d-tab1`). Then come Close, Pause, chapter 1, the rail, the trace and the band.
+  - Shift+Tab back from Close reaches Docs, then API Platform, then Try Hanzo.
+  - The crawl had 0 invisible, faded, covered or under-header stops at both widths. Every page stop had a 2px ring.
+  - The footer input shows no outline. That is shared.
+- **The room fits one screen.** The desktop dark room is now 665px, with the console 521px inside it. The 162px black bands are gone.
+- **Sound.** `play('done')` fires once when the trace lands its answer (`Zen.jsx:64`).
+- **The two `V2:` lines agree** at 7/10.
+- **CLS** is 0.00048 at 1470 (the shared header at 1.3 s and the pause disc) and 0 at 375×812 and 375×667. That includes the trace dwell and all the taps.
+- **Fonts and the h1.** Fonts finished loading at 740 ms (desktop) and 1.4 s (phone). The h1 box never changed size: 135,459 at 1200×122 from the first sample to 4 s on desktop. On the phone only y moves, with the time settle, and the height holds at 57.
+- **JS off:** 0 hidden or blurred text at both widths, h1 "Zen". **Reduced motion:** 0 running animations after 3 s and 0 hidden text.
+- **No horizontal scroll** at 375 or 1470. Console: 0 errors on all loads.
+- **Repeats:** "Download the weights" is down to 2 (the lede and chapter 1).
 
 ## The 11 answers
 
-1. **Does the first screen sell in 5 seconds, and does something move within 1 second?** Yes.
-   - Desktop: Zen's sphere film is playing by 0.3 s, and "Zen" cuts in by about 1 s. The white "Try Hanzo" rises at 1.4 to 1.7 s.
-   - Phone: the name lives for about a second (the cut-in ends around 2.2 s, and the settle starts at 2.3 s). Then the film closes into the arch and "Open models. Yours to run." rises with its outlined ask. The settled state sells well (`mst-first-clean`).
-   - Small flaw: for about 1 s on arrival there are two solid "Try Hanzo"s, the black header and the white first-screen ask. The header only goes quiet at 2.35 s on desktop. On the phone both are solid until the name leaves (about 1.5 to 2.3 s).
+1. **Does the first screen sell in 5 seconds, and does something move within 1 second?** It moves, but it does not fully sell.
+   - Zen's sphere film is playing at first paint, and "Zen" cuts in within about 1 s at both widths.
+   - On desktop, the ask on screen after 1.7 s is a thin outline on a dark film. The header's ask has also gone white, so nothing on the first screen says "press me" (`d-w00`).
+   - On the phone it sells better: the header is solid, and the arch with "Open models. Yours to run." settles by about 2.6 s. The shared cookie card covers about 218px of it on first visit.
 
-2. **One thing in as one goes out, or a document?** On desktop it is a sequence: stage → arch with headline → figures → three pinned chapters on a numbered rail → the dark reasoning room → family tiles → Hanzo's model grid → band. The gap before the model grid is down to about 150px.
-   - Repeats are much lower but still there. In visible text, "Packed ternary, 5.95 GB" appears 4 times (the Zen 6 Flash art card, a trace tab, a trace step and a card pill). "Download the weights" appears 3 times (the lede, chapter 1 and trace step 1).
-   - The phone reads more like a document in the trace room. The trace reserves 620px, but its two cards sit below it, off screen. While it runs you see 1 to 2 steps, a dashed empty slot, about 130 to 170px of black, then "Next" at y 692 (`mst-trace1`). The signature is "the row lights up on the card", and on a phone you never see the trace and its lit card together.
-   - Desktop room: the console is 521px inside an 844px room, so about 162px of plain black sits above and below it. The room is taller than the 801px screen.
+2. **One thing in as one goes out, or a document?** On desktop it is a sequence: stage → arch and headline → figure strip → three pinned chapters on a numbered rail → the dark trace room (one screen now) → family tiles → Hanzo's model grid → band.
+   - **Weak spot: repetition.** Zen's sphere film is the object on four consecutive screens: the stage, then chapters 1, 2 and 3 at zoom 1.1, 1.35 and 1.7. Chapter 3's film was still for a full 2.2 s dwell (`d-w08`).
+   - **"Packed ternary, 5.95 GB"** still shows in 4 places: chapter 2's card, a trace tab, trace step 3, and the card pill.
+   - **Trace step 01 reads "Open weights"**, the same words as the selected tab directly above it. That step reasons nothing.
+   - **Phone:** the trace is better, because no step slot sits empty for long and "Next" sits right under the answer. But the room is still 1436px tall, with the cards 590px below the trace's top. For steps 1 and 3 the lit card row is off screen (measured at y 919 and 1263 on an 812 screen). Only step 2's row peeks in at the bottom edge (`p-trace1`).
 
 3. **Does every section hold a real visual object?** Yes:
-   - Zen's film in the stage, the arch and each chapter, with a white model card on it.
-   - The 64/26px figure strip.
-   - The trace with its two live cards.
-   - The Sigil family tiles.
-   - Hanzo's model grid: 9 real films.
+   - the film in the stage, the arch and each chapter;
+   - the 64/26 figure strip;
+   - the trace with its two live cards;
+   - the Sigil family tiles;
+   - Hanzo's grid of 9 real films.
 
 4. **One ask in Hanzo's words, in the sticky header, nothing floating? Does scale have rhythm?**
-   - Ask: "Try Hanzo" appears 4 times, with one solid per screen at rest. The exceptions are the arrival overlap in answer 1, and the band, where the closing ask is solid and the header goes quiet, which is correct.
-   - Floating: no page-owned float. The shared cookie card covers the bottom of the arch on desktop. On the phone it covers 203px, including the settled headline's asks (`sst-first7s`). That is shared chrome.
-   - Scale has rhythm: h1 112, settled h2 44, figures 64 with 26 beside it, section and chapter heads at 44 and 26, the family hero tile at 64, and the band at 64.
+   - **Ask.** "Try Hanzo" appears 4 times. The desktop first screen and the screen just past the headline have 0 solid fills (see the cap). On the phone there is one solid on every screen, plus the band's.
+   - **Floating.** Nothing floats that the page owns. The shared cookie card sits over the stage foot and the arch, and on the phone over the headline's asks.
+   - **Scale has rhythm:** h1 112 → h2 44 → figures 64 with 26 beside them → chapter heads 44 → family hero tile 64 → band 64. Big, medium and small alternate.
 
-5. **Does every hover and press answer, with no jumps?** Yes, now:
-   - First-screen ask: #fafafa → #e5e5e5, press 0.98.
-   - Headline ask: #0a0a0a → #2c2c2e, press 0.98.
-   - "API Platform", "Docs on GitHub" and the chapter links: underline on hover, press 1px down.
-   - Pause: border to 60%, press 0.94.
+5. **Does every hover and press answer, with no jumps?** Yes. These were measured:
+   - `zen.first`: fill to white 12%, press 0.98.
+   - `zen.hero`: border 8% to 18%, press 0.98.
+   - "API Platform" and "Docs on GitHub": underline, press 1px down.
+   - Pause: border 24% to 60%, press 0.94.
    - Close: rotates 90°.
-   - Rail: ink on hover, press 0.97.
-   - Trace tabs: border and colour, press 0.96.
-   - Next/Replay: press 0.97.
-   - Trace card links: underline, press 0.97.
-   - Family tiles: fill step and arrow slide, press 0.98.
-   - Model cards: 3° tilt.
-   - "Explore model pricing": underline.
-   - Band ask: press 0.98.
+   - Rail: press 0.97.
+   - Trace tabs: #d4d4d4 to white with a border step, press 0.96.
+   - Next: press 0.97.
+   - Card links: underline, press 0.97.
+   - Family tile: #000 to #0a0a0a, press 0.98.
+   - Model card: 3D tilt.
+   - Band ask: #f5f5f7 to #fff, press 0.98.
 
-   No layout jump anywhere.
+   No box moved on hover. Two of these are weak: the `zen.hero` hover is only a border tint, and the family tile's step from #000 to #0a0a0a is almost invisible.
 
 6. **Do overlaps, a font swap or layout shift appear?**
    - Font swap: none.
-   - CLS: about 0 at all sizes.
-   - Overlap: none at rest at 1470×801, 375×812 or 375×667. The 375×667 arch overlap is fixed.
-   - Console: clean apart from the test artifact above.
-   - Desktop only, cosmetic, shared: the header's glass shows a grey smear at its right end over the arch and the chapters (`d-s01b`, `d-s04b`).
+   - CLS: below 0.0005 everywhere.
+   - Overlap: none from the page at 1470×801, 375×812 or 375×667.
+   - Shared, cosmetic: the header glass shows a grey smear at its ends over the film and the family tiles (`d-w03`, `d-w12`).
 
-7. **Which reference does it feel like, and is its motion there?**
-   - apple.com product page: the pinned stage closes into an arch, then the pinned chapters with a numbered rail.
-   - synchronized.studio: the close (×) runs the film back into its card, and the model cards open through the WebGL opener.
-   - Idle motion is real. The trace runs itself through all three needs in about 20 s untouched, lights the card row it reads and lands the answer chip on its card.
-   - Motion mix: arrival, scroll, idle, pointer (tilt) and state. Scroll-linked motion is less than half (`variety.py` OK).
+7. **Which reference does it feel like, and is its motion there?** It feels like an apple.com product page:
+   - the pinned stage closes into an arch;
+   - pinned chapters run on a numbered rail;
+   - a self-running demo plays in a dark room.
 
-8. **Is it different from its neighbours?** Only partly. The first two screens use the shared `v2/Launch` (film → name → settle into a shape → headline), as /kai, /enso, /iro and the rest do. The arch and the reasoning room are Zen's own, but James's first five seconds look like a sibling's.
+   synchronized.studio shows in the close (×) running the film back into its card, and in the WebGL opener on the model cards. The motion mix is arrival, scroll, idle (the trace runs itself), pointer (tilt) and state (tabs), so it is not scroll-only.
 
-9. **Are all 18 parts covered?** Not as claimed. Part 12's "Keyboard reaches every control" is false on desktop (see the cap). Part 9's sound line is stale. Part 18's two `V2:` lines still disagree: `app/zen/page.jsx` says 7/10 and `Zen.jsx` says 6/10.
+8. **Is it different from its neighbours?** Only partly. The first two screens are the shared `v2/Launch` (film, name, settle into a shape, headline), as on /kai, /enso, /iro and the rest. Only the arch outline is Zen's. The trace room is Zen's own, but it arrives on screen 5 to 6.
+
+9. **Are all 18 parts covered?** Not as claimed. Part 4 is false and stale, and Part 1 is false (see the cap). Part 18 now agrees with itself.
 
 10. **Any banned tells?** None found:
-    - Deck greys only: no hue, no gradient text, no blur reveal.
-    - Nothing above the h1. The REASONING pill sits below the name, as on Hanzo's card.
-    - The grid's "FLAGSHIP MODEL" pill is Hanzo's own card per SPEC.
+    - deck greys only;
+    - no gradient text and no blur reveal;
+    - nothing above the h1 (the REASONING pill sits below the name, as on Hanzo's card);
+    - no Inter.
 
-11. **Is the copy untouched?** Yes. Parity is text 23/23 and links 6/6, and chapter 1 is Hanzo's own sentence again. The trace's tab names, "Next" and "Replay", and the h1/h2 choice are listed for James on the card. They are questions, not defects.
+11. **Is the copy untouched?** Yes. Parity is text 23/23 and links 6/6. The h1/h2 choice, the trace's tab names and "Next"/"Replay" are listed on the card as questions for James. They are not defects.
 
 ## Missing from the 18 parts (measured)
 
-- **Part 1 and Part 4:** about 1 s of two solid asks on arrival, at both widths. `zen.first` has no `data-thumb` (requested from Launch).
-- **Part 3:** the phone trace shows a black void and hides the cards it lights. The desktop room carries about 162px of empty black above and below the console.
-- **Part 6:** "Packed ternary, 5.95 GB" appears 4 times and "Download the weights" 3 times.
-- **Part 7:** the first two screens are the shared Launch, not Zen's own.
-- **Part 9:** no "demo finished" chime when the trace lands its answer. The card's sound line is stale.
-- **Part 12:** the settled headline's three links can't be reached by keyboard on desktop.
-- **Part 18:** the two `V2:` lines disagree, and the card's Part 9 and Part 12 lines need correcting.
+- **Part 1 and Part 4:**
+  - At 1470, no solid primary on the first screen, and none at scrollY around 1200.
+  - The card describes asks that do not exist.
+  - `zen.first` has no `data-thumb`. That is the shared Launch's doing.
+- **Part 3:** the same sphere film is the object for 4 screens in a row. On the phone the trace still lights card rows that are off screen.
+- **Part 6:** "Packed ternary, 5.95 GB" appears 4 times. Trace step 01 repeats its own tab's words.
+- **Part 7 and Part 8 (variation):** the opening two screens are the shared Launch, not Zen's own.
+- **Part 11:** on phone first visit the shared cookie card (about 218px) covers the settled headline's asks. That is shared.
 
 ## Fixes
 
-1. **Keyboard path to the headline (lifts the cap):** when anything inside `.ze-head .lv-acts` takes focus, or when Tab leaves the stage, scroll the stage to its settled point so `data-on` is set. Otherwise keep the links focusable, then scroll and settle on `focusin`. A forward and a backward crawl must both reach "Try Hanzo" (`zen.hero`), "API Platform" and "Docs on GitHub".
-2. **Arrival hand-off:** quiet the header's ask the moment `zen.first` starts to rise, not 600 ms after. On the phone, either make `zen.first` outlined while the header is solid, or quiet the header during the name state. There should never be two solids, even for a second.
-3. **Phone trace:** put the two cards beside or above the steps in a compact form, for example the two price/size rows as a strip above the steps, so the lit row is on screen with the step that reads it. Also cut the reserved height so "Next" sits about 16px under the answer row, with no black void.
-4. **Desktop room:** trim the room's padding so the room (not just the console) fits in 801px, with no 162px black bands.
-5. **Repeats:** show "Packed ternary, 5.95 GB" in the trace once, as the pill or the step, not both alongside the tab. Consider dropping trace step 1's "Download the weights…", which already sits in the lede and chapter 1, in favour of the card's "Open weights" row alone.
-6. **Own opening:** give Zen's first screen one move the other Launch pages don't have. For example, the arch draws while the film is still full-bleed, or the sphere stays still while the ripples settle into the arch, so the first five seconds are Zen's alone.
-7. **Sound:** dispatch `hz-sound` with `chime` when the self-running trace lands its answer (once per run, never while muted). Update Part 9 on the card.
-8. **Handover:** make the two `V2:` lines agree, correct Parts 9 and 12 on the card, add `data-thumb` to `zen.first` when Launch allows it, and ask for a fresh walk.
+1. **One solid on the desktop first screen (lifts the cap together with fix 2).** Pick one of these:
+   - (a) Make `zen.first` solid white on the film and leave the header quiet. That is the old behaviour, and the header then goes solid when `zen.first` leaves.
+   - (b) Keep the page asks outlined and ask the `Ask.jsx` owner (`docs/requests/zen-names.md`) to quiet the header only when the visible twin is solid.
+
+   Then check frames at 0.5, 2, 5 s and at scrollY 0, 881 and 1203. Each must show exactly one solid "Try Hanzo".
+2. **Correct the card.** Part 1 must describe the asks as they are now. Part 4 must say which one is solid on each screen at each width, and drop the stale `visibility: hidden` sentence.
+3. **Break the sphere repeat.** Give each chapter a different picture from what the page has: Hanzo's own model-card art, the open-weights card list on a quiet room instead of the film, or the film's poster as a still crop. The sphere then lives on the stage and the arch only. At least keep one chapter's film playing, so no pinned screen sits still.
+4. **Phone trace.** Put a compact strip of the two cards' rows above the steps, so the lit row is on screen with the step reading it. Or pin the cards and scroll the steps. Cut the room from 1436px toward one screen.
+5. **Trace words.** Step 01 should read a fact the tab does not already say, for example the card's "Open weights" pill lighting with the description as the step. Show "Packed ternary, 5.95 GB" in the trace once, not as tab, step and pill together.
+6. **Own opening.** Give Zen's first five seconds one move no other Launch page has. For example, the ripples draw the arch outline before the clip closes, or the sphere holds still while the frame closes around it.
+7. **Small hovers.** Make the `zen.hero` hover tell more than a border tint (fill to #f5f5f5), and make the family tile's hover visible (the Sigil drifts or brightens, not #000 to #0a0a0a).
+8. **Handover.** Ask for a fresh walk once fixes 1 and 2 are in.
