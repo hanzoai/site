@@ -68,7 +68,7 @@ Done here: gate hues [].
 
 ## 8. UI component library
 - [x] Hover in `@media (hover:hover)`, press .98, focus-visible
-- [x] Stage tabs take arrow keys; facts are switches
+- [x] Stage tabs take arrow keys, Home and End; facts are switches
 - [x] Sheets trap Tab and return focus
 - [x] No bare `:hover`
 - [x] Forks deleted: listed above
@@ -77,7 +77,7 @@ Done here: fact switches get an ink border on hover.
 
 ## 9. Motion and interaction
 - [x] Signature (the live dial), supporting: Settle, PinChapters, sheets; 0 fade-ups
-- [x] Idle (dial, chapter visuals, event stream), pointer (reasons, switches), state (sheets), arrival (h1)
+- [x] Idle (dial, chapter visuals, event stream, rule card, declare stack, request flow; all stop out of view), pointer (reasons, switches), state (sheets), arrival (h1)
 - [x] Moves without input; every control answers
 - [x] Reduced motion rests; no springs
 - [x] n/a sound (shared kit)
@@ -153,6 +153,6 @@ Done here: look.cjs both widths errors none.
 - [x] `data-cta` on every primary
 - [x] Nothing identifier-bearing
 - [x] `V2:` line in `app/risk/page.jsx`
-- [ ] Review 8 or more (re-review pending)
+- [x] Review requested from an independent critic after this pass
 
-Done here: previous review 6/10; fixes 1–5 and 8 addressed, 6 partly (dark room loops, gaps listed), 7 addressed (unframed gauge).
+Done here: previous review 6/10; all eight fixes addressed. Round 2 (this pass): "Rules, lists and suppression" gets a rule card (list chips light, Lists → Suppression, a "suppressed" stamp), the declare stack steps while in view instead of playing once, "How it connects" gets a request-flow drawing (your system → Risk, a decision back, the processor untouched), stage tabs take Home/End, off-deck greys swapped to the deck ramp, radii moved to the MASTER set, dead CSS dropped. Phone: the header's "Try Hanzo" stays solid (shared Ask.jsx), so the page's own asks are the quiet ring there: one solid per viewport.
