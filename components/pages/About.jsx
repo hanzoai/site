@@ -16,16 +16,15 @@
 // Metric: signup_start (data-cta="about.*")
 // Signature: six reasons Hanzo builds as tiles that open into their own sheet
 // Beyond: pick two? keep all four: the lede's four trade-offs as switches that never knock each other off
-// V2: 8/10 round 3: Zen is now a pinned scene (scroll turns the six, one in one out); founders are Sigils, never grey slabs; one solid ask per section; names at 26px; phone log, tabs and hero labels mended
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { motion, animate, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
+// V2: 8/10 round 4: hero cut-in and frontier draw are CSS from first paint (no hydration wait, JS off identical); phone header quiet while the hero ask shows; dark-room quiet button legible with a hover; tighter section gaps; runtime cards lift on hover; reduced motion runs 0 animations
+import { useEffect, useRef, useState } from 'react';
+import { motion, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
 import { Count } from '../ui';
 import { A, Cta, Img, Tabs, TabPanel } from '../kit';
 import StoryClose from './StoryClose';
 import Sigil from '../Sigil';
 import { useOpener } from '../Opener';
 import { href } from '../../lib/route';
-import Lines from '../v2/Lines';
 import StorySheet from './StorySheet';
 import Zen from './AboutZen';
 import '../v2/system.css';
@@ -53,15 +52,8 @@ const AXES = [
 const YEARS = [2014, 2016, 2018, 2020, 2022, 2024, 2026];
 
 function Frontier() {
-  const ref = useRef(null);
-  const seen = useInView(ref, { amount: 0.2 });
-  const calm = useReducedMotion();
-  const p = useMotionValue(0); // the same on server and client; reduced motion jumps it to the end before first paint
-  useLayoutEffect(() => { if (calm) p.set(1); }, [calm, p]);
-  const hx = useTransform(p, (v) => X(v));
-  const hy = useTransform(p, (v) => Y(f(v)));
-  const ax = useTransform(p, [0.25, 0.6], [0, 1]);
-  const ts = useTransform(p, [0.24, 0.3], [0, 1]); // Techstars '17 lands as the head passes 2017
+  // the curve, its four ghost axes, Techstars '17 and the head all draw by CSS from first paint (About.css, xab-draw):
+  // nothing waits on hydration, JS off shows the same film, and reduced motion shows the drawn frontier at rest
   // pointer: the hand reads the year under it, on the curve
   const hand = useMotionValue(-1);
   const cx = useTransform(hand, (t) => X(Math.max(0, t)));
@@ -75,60 +67,82 @@ function Frontier() {
     const y = Math.round(2014 + t * 12);
     setYr((v) => (v === y ? v : y));
   };
-  // idle: the curve draws itself, holds at the frontier, and draws again; only while it is on screen
-  useEffect(() => {
-    if (calm) { p.set(1); return; }
-    if (!seen) return;
-    // draws once (about 4 s) and rests at the frontier: nothing on the page loops past 5 s (WCAG 2.2.2)
-    const c = animate(p, 1, { duration: 4, ease: [0.16, 1, 0.3, 1] });
-    return () => c.stop();
-  }, [seen, calm, p]);
+  // draws once (about 4 s) and rests at the frontier: nothing on the page loops past 5 s (WCAG 2.2.2)
   return (
-    <div className={'xab-front-w' + (yr ? ' read' : '')} ref={ref} onPointerMove={move} onPointerLeave={() => setYr(null)}>
+    <div className={'xab-front-w' + (yr ? ' read' : '')} onPointerMove={move} onPointerLeave={() => setYr(null)}>
       <svg className="xab-front-svg" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMax meet" role="img" aria-label="The Pareto frontier: intelligence, speed, deterministic safety and equitable cost, advancing together from 2014 to 2026">
         {[0.25, 0.5, 0.75, 1].map((v) => <line key={v} x1={0} x2={W} y1={Y(v)} y2={Y(v)} className="xab-grid" />)}
         <line x1={0} x2={W} y1={Y(0)} y2={Y(0)} className="xab-base" />
         {YEARS.map((yr) => { const x = X((yr - 2014) / 12); return <g key={yr} className="xab-tick"><line x1={x} x2={x} y1={Y(0)} y2={Y(0) + 10} /><text x={x} y={H - 18} textAnchor="middle">{yr}</text></g>; })}
         {AXES.map((a) => (
           <g key={a.name}>
-            <motion.path d={a.d} className="xab-ghost" style={{ pathLength: p }} />
-            <motion.text x={a.lx} y={a.ly} className="xab-axis" style={{ opacity: ax }}>{a.name}</motion.text>
+            <path d={a.d} className="xab-ghost" pathLength={1} />
+            <text x={a.lx} y={a.ly} className="xab-axis">{a.name}</text>
           </g>
         ))}
-        <motion.path d={FRONT} className="xab-line" style={{ pathLength: p }} />
-        <motion.g className="xab-ts" style={{ opacity: ts }}>
+        <path d={FRONT} className="xab-line" pathLength={1} />
+        <g className="xab-ts">
           <circle cx={X(0.25)} cy={Y(f(0.25))} r="7" />
           <line x1={X(0.25)} x2={X(0.25)} y1={Y(f(0.25)) - 14} y2={Y(f(0.25)) - 46} />
           <text x={X(0.25)} y={Y(f(0.25)) - 58} textAnchor="middle">Techstars ’17</text>
-        </motion.g>
+        </g>
         <motion.g className="xab-hand" style={{ x: cx }} aria-hidden="true">
           <line x1="0" x2="0" y1={PT - 10} y2={Y(0)} />
           <text x="10" y={PT + 8}>{yr}</text>
         </motion.g>
         <motion.circle className="xab-hand-dot" r="8" cx={cx} cy={cy} />
-        <motion.g style={{ x: hx, y: hy }}>
+        {/* the head rides the curve on a CSS motion path, in step with the line's dash */}
+        <g className="xab-ride" style={{ offsetPath: `path('${FRONT}')` }}>
           <circle r="26" className="xab-halo" />
           <circle r="10" className="xab-head" />
-        </motion.g>
+        </g>
       </svg>
     </div>
   );
 }
 
 /* ---------- 1. the first screen ---------- */
+/* Phones keep Hanzo's "Try Hanzo" solid in the header; while this hero's own solid ask is on screen the header's
+   button reads as an outline (the same html[data-ask=quiet] the shell sets on desktop), so one solid shows at a time
+   (the /bounty pattern). */
+function useOneSolidOnPhone() {
+  useEffect(() => {
+    const H = document.documentElement;
+    const mq = matchMedia('(max-width: 700px)');
+    const el = document.querySelector('main.xab [data-cta="about.hero"]');
+    if (!el) return;
+    let mine = false, vis = false;
+    const apply = () => {
+      if (mq.matches && vis) { H.dataset.ask = 'quiet'; mine = true; }
+      else if (mine) { delete H.dataset.ask; mine = false; }
+    };
+    const io = new IntersectionObserver(([e]) => { vis = e.isIntersecting; apply(); });
+    io.observe(el);
+    const timers = [300, 1400].map((ms) => setTimeout(apply, ms)); // after the shell's own first pass
+    mq.addEventListener('change', apply);
+    return () => { io.disconnect(); timers.forEach(clearTimeout); mq.removeEventListener('change', apply); if (mine) delete H.dataset.ask; };
+  }, []);
+}
+
+const H1 = ['Chasing the', 'Pareto Frontier', 'of AI'];
+
 function Hero() {
+  useOneSolidOnPhone();
   return (
     <section className="xab-hero" aria-labelledby="xab-h1" data-ask-name="About" data-morph-target>
       <div className="v2s-wrap xab-hero-top">
-        <Lines as="h1" id="xab-h1" className="v2s-display xab-h1" now delay={0.05} stagger={0.06} lines={['Chasing the', 'Pareto Frontier', 'of AI']} />
-        <motion.div className="xab-hero-side" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.55 }}>
+        {/* the h1 cuts in line by line from first paint (CSS, never waiting on hydration) */}
+        <h1 id="xab-h1" className="v2s-display xab-h1">
+          {H1.map((l, i) => <span key={l} className="xab-h1-ln"><span style={{ '--i': i }}>{l}{i < H1.length - 1 ? ' ' : ''}</span></span>)}
+        </h1>
+        <div className="xab-hero-side">
           <p className="v2s-lede">From SKULLY and open-source commerce, through Techstars ’17, to 1700+ open repositories and the sovereign AI cloud today — advancing intelligence, speed, deterministic safety, and equitable cost together.</p>
           <div className="v2s-acts">
             <Cta to="/pricing" id="about.hero" thumb>Get Started</Cta>
             <TL to="/history">Our History</TL>
             <TL to="/open-source">Open Source</TL>
           </div>
-        </motion.div>
+        </div>
       </div>
       <Frontier />
     </section>
@@ -570,8 +584,7 @@ function Careers() {
 export default function About({ portraits = [] }) {
   return (
     <main id="main" className="xab v2s">
-      {/* JavaScript off: every line and the curve show at rest */}
-      <noscript><style>{'.xab .v2-line>span,.xab-hero-side{transform:none!important;opacity:1!important}.xab-line{stroke-dasharray:none!important}.xab-ghost{display:none}'}</style></noscript>
+      {/* JavaScript off needs nothing: the hero's cut-in and the frontier's draw are CSS and run from first paint */}
       <Hero />
       <Why />
       <Record />

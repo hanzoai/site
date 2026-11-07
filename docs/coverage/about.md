@@ -31,7 +31,7 @@ Done here: `<main id="main">`; parity links 36/36; model cards are real `<a href
 - [x] Ends in proof strip, Band, footer
 - [x] Card-to-page links use the opener (model cards) and Morph (paper titles carry `data-morph`)
 
-Done here: h1 (52px, cut in by line, 60 ms apart) with the lede and one ask to its right on 8/5 columns, the frontier drawing itself under them from 0.5 s; a `noscript` rule shows every line and the curve. Order: hero, statement and switches, tiles, figures, founders, Zen (the one pinned scene: the scroll turns its six principles one at a time), black room (enters as a rounded card), models and papers, roles, Band. At 1470×801 the hero leaves the next section's head peeking under the fold.
+Done here: h1 (52px, cut in by line by a CSS animation from first paint, 60 ms apart) with the lede and one ask to its right on 8/5 columns, at full opacity in the server HTML; the frontier, its ghost axes and its head draw by CSS from 0.1 s (no hydration wait), so JS off shows the same film ending with the head at 2026. Order: hero, statement and switches, tiles, figures, founders, Zen (the one pinned scene: the scroll turns its six principles one at a time), black room (enters as a rounded card), models and papers, roles, Band. At 1470×801 the hero leaves the next section's head peeking under the fold.
 
 ## 4. Conversion system
 - [x] kit `Cta` only (solid, quiet, link); no raw `.x-btn`
@@ -39,7 +39,7 @@ Done here: h1 (52px, cut in by line, 60 ms apart) with the lede and one ask to i
 - [x] n/a: no copy button on this page
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: `<Cta thumb id="about.hero">` puts "Get Started" in the phone bar; `about.record` and `about.band` ids; the header carries the desktop ask (shared).
+Done here: `<Cta thumb id="about.hero">` puts "Get Started" in the phone bar; `about.record` and `about.band` ids; the header carries the desktop ask (shared). On phones the header's solid "Try Hanzo" turns quiet (`html[data-ask=quiet]`, the /bounty pattern) while the hero's solid ask is on screen, so one solid fill shows at a time.
 
 ## 5. Trust and proof
 - [x] No logo, no seal, no invented number
@@ -73,7 +73,7 @@ Done here: headings rest at 26px (h1 52px, Book 497; founders' names 26px, so th
 - [x] n/a: no inputs
 - [x] Forks deleted: listed above
 
-Done here: switches are `role="switch"`, ease-emphasis 300 ms (no overshoot); the sheet is `StorySheet` (a page-owned tween copy of v2/Unfold, not a native `<dialog>`: noted).
+Done here: switches are `role="switch"`, ease-emphasis 300 ms (no overshoot); the dark room's quiet button is a light outline on black that fills light on hover (it was light text on its own white fill); runtime cards lift their render 6px and ink their kind on hover, and press to .98; the sheet footer's counter sits centred on its arrows; the sheet is `StorySheet` (a page-owned tween copy of v2/Unfold, not a native `<dialog>`: noted).
 
 ## 9. Motion and interaction
 - [x] One signature, 3 supporting, 0 fade-ups (`variety.py` OK)
@@ -141,7 +141,7 @@ Done here: n/a: no code blocks; commit hashes are real links.
 - [x] n/a: no submit
 - [x] Reduced motion and JS off designed
 
-Done here: without the portrait files the page is complete with Sigil portraits and no console errors; reduced motion shows the curve drawn and figures at rest.
+Done here: without the portrait files the page is complete with Sigil portraits and no console errors from the page (the shared FooterHTML hydration warning is requested in `docs/requests/about.md`); reduced motion shows the curve drawn and figures at rest, with `document.getAnimations()` empty after 3.5 s.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary; no analytics wired yet (needs `lib/track.js`)
@@ -149,4 +149,4 @@ Done here: without the portrait files the page is complete with Sigil portraits 
 - [x] `V2:` line in the page file's top comment
 - [x] Review read: `docs/review/about.md` verdict 7/10, every fix applied, re-review pending
 
-Done here: `docs/review/about.md` (7/10). Round 3: Zen pinned scene; founders always Sigil (never grey), names 26px; "Start Building" a text link; github link 44px; log shadow removed; role rows not focus stops; dark room rounded; hero peek; phone hero labels. Page is 12,491px at 1470 (the pinned scene's six steps are about 1,400px of it). Proof: `docs/gallery/about/v3-*`.
+Done here: `docs/review/about.md` (7/10). Round 3: Zen pinned scene; founders always Sigil (never grey), names 26px; "Start Building" a text link; github link 44px; log shadow removed; role rows not focus stops; dark room rounded; hero peek; phone hero labels. Round 4 (review 6/10): hero visible in server HTML and moving from first paint; phone header quiet beside the hero ask; dark-room button legible with hover; section padding 80px max (was 116); runtime hover; counter aligned; reduced motion 0 running animations. Page is 12,088px at 1470 (the pinned scene's six steps are about 1,400px of it). Proof: `docs/gallery/about/v3-*`.
