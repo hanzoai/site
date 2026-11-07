@@ -576,13 +576,16 @@ html:not(.js) .xe-card { margin-bottom: 17px; }
 .xe-proof-r { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 24px; }
 .xe-proof-h { margin: 0; font-size: 17px; font-weight: 497; letter-spacing: -.01em; color: #0a0a0a; }
 .xe-proof-row { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; font-size: 13px; color: #525252; }
-.xe-proof-row li { display: inline-flex; align-items: center; min-height: 44px; }
+.xe-proof-row li { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; }
 .xe-proof-row li + li::before { content: '·'; margin: 0 10px; color: #a3a3a3; }
 .xe-proof-row a { display: inline-flex; align-items: center; min-height: 44px; color: #0a0a0a; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; transition: text-decoration-thickness .15s var(--xe-out); }
 @media (hover: hover) { .xe-proof-row a:hover { text-decoration-thickness: 2px; } }
 @media (max-width: 899px) {
   .xe-proof { grid-template-columns: minmax(0, 1fr); gap: 10px; padding: 24px 0; }
   .xe-proof-r { gap: 0 20px; }
+  .xe-proof-row { flex-direction: column; align-items: flex-start; }
+  .xe-proof-row li { min-height: 32px; }
+  .xe-proof-row li + li::before { display: none; }
   /* the hero on a phone: the switcher first, then the window at true size, its film whole and framed, the panel under it */
   .xe-deal { order: 0; margin: 0 0 17px; justify-content: flex-start; }
   .xe-stack { aspect-ratio: auto; height: 640px; }
