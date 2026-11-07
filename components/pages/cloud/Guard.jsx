@@ -6,7 +6,7 @@
 // Signature: both directions, live: a request types, its secrets become typed markers, the injection is scored, the reply is read too; below, the six facts pin as one detector board stepped by a numbered rail.
 // Beyond: Paste your own with real dials: detectors on or off and the marker text, run in the page.
 /* Guard (v2, archetype A Launch).
-   V2: 8/10 round 3: the stage is a 5/8 split (the fact at 32px beside a content-height board, the section title and numbered rail as a quiet row under it), both directions drawn as two lanes through one gate, the three ways in as one focused proxy plus two smaller, every section in the one 1152px container with standard padding, reduced-motion loads hydrate cleanly, no resize grip, a flat composer, the close given room; deck greys only; one ask.
+   V2: 8/10 round 4: the stage's 26px title and numbered rail lead the left column (no navigation in the bottom of the screen), chapter titles 21px under it; each panel does one thing as it arrives (shapes light, the Luhn tick, a token through the gate and back, dials flip and the bucket drains, content struck while its hash is written, the proxy wires itself to CLI and MCP) on its own surface; phones get a sideways snap rail, one chapter per screen, panel first, words clamped behind Read more; the close's ask is quiet; touch-safe hovers; deck greys only; one ask.
    Signature: both directions, live. In the composer a request types itself; as it is sent, the things people paste by
    accident turn into typed markers and the injection attempt gets a confidence (not a verdict) against the threshold;
    then the model's reply streams back and is read by the same detectors.
@@ -128,28 +128,37 @@ const BOARD = [
 
 const it = (j) => ({ in: { opacity: 0, y: 18 }, on: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE, delay: 0.05 + j * 0.05 } } });
 
+/* Each panel does one thing as it arrives (CSS keyframes, so they restart whenever the panel is remounted and freeze
+   under reduced motion): the six shapes light in turn, [CARD] gets its Luhn tick, a token runs through the gate and
+   back, the dials flip on and the bucket drains, "content" is struck while its hash is written, the proxy draws its
+   lines to the CLI tool and the MCP server. Each kind also sits on its own surface, so it is not one grey box six times. */
 function Board({ at, still }) {
   const b = BOARD[at];
   return (
-    <div className="gd-board" aria-hidden="true">
+    <div className="gd-board" data-k={b.kind} aria-hidden="true">
       <AnimatePresence mode="wait" initial={false}>
         <motion.div key={at} className={'gd-b gd-b-' + b.kind} initial={still ? 'on' : 'in'} animate="on" exit={{ opacity: 0, transition: { duration: 0.16 } }}>
           {b.kind === 'list' && (
             <>
-              <ol>{b.items.map((t, j) => <motion.li key={t} variants={it(j)}><span>{String(j + 1).padStart(2, '0')}</span>{t}</motion.li>)}</ol>
+              <ol>{b.items.map((t, j) => <motion.li key={t} variants={it(j)} style={{ '--j': j }}><span>{String(j + 1).padStart(2, '0')}</span>{t}</motion.li>)}</ol>
               <motion.div className="gd-b-conf" variants={it(6)}><span>{b.foot}</span><div><motion.i variants={{ in: { scaleX: 0 }, on: { scaleX: 0.82, transition: { duration: 1.2, ease: EASE, delay: 0.5 } } }} /></div></motion.div>
             </>
           )}
-          {b.kind === 'tiles' && <div className="gd-tiles">{b.items.map(([t, s], j) => <motion.p key={t} variants={it(j)}><b>[{t}]</b>{s && <span>{s} ✓</span>}</motion.p>)}</div>}
+          {b.kind === 'tiles' && <div className="gd-tiles">{b.items.map(([t, s], j) => <motion.p key={t} variants={it(j)}><b>[{t}]</b>{s && <span className="gd-luhn">{s} ✓</span>}</motion.p>)}</div>}
           {b.kind === 'lanes' && (
             <>
-              {b.items.map(([t, d], j) => <motion.div key={t} className="gd-lane" variants={it(j)}><b>{t}</b><s /><i>Guard</i><s /><span>{d}</span></motion.div>)}
+              {b.items.map(([t, d], j) => <motion.div key={t} className={'gd-lane' + (j ? ' back' : '')} variants={it(j)}><b>{t}</b><s /><i>Guard</i><s /><span>{d}</span><em className="gd-tokw"><em className="gd-tok" /></em></motion.div>)}
               <motion.p className="gd-b-off" variants={it(3)}><i />{b.foot}</motion.p>
             </>
           )}
-          {b.kind === 'dials' && <ul>{b.items.map((t, j) => <motion.li key={t} variants={it(j)}><span>{t}</span><i className={j === 4 ? 'bucket' : 'sw'} /></motion.li>)}</ul>}
-          {b.kind === 'log' && b.items.map(([t, ok], j) => <motion.p key={t} className={'gd-logl' + (ok ? ' ok' : ' no')} variants={it(j)}><b>{ok ? '✓' : '×'}</b>{t}</motion.p>)}
-          {b.kind === 'modes' && <div className="gd-modes">{b.items.map(([t, d], j) => <motion.div key={t} className={j ? 'gd-mode' : 'gd-mode lead'} variants={it(j)}><b>{t}</b><span>{d}</span></motion.div>)}</div>}
+          {b.kind === 'dials' && <ul>{b.items.map((t, j) => <motion.li key={t} variants={it(j)} style={{ '--j': j }}><span>{t}</span><i className={j === 4 ? 'bucket' : 'sw'} /></motion.li>)}</ul>}
+          {b.kind === 'log' && b.items.map(([t, ok], j) => <motion.p key={t} className={'gd-logl' + (ok ? ' ok' : ' no')} variants={it(j)}><b>{ok ? '✓' : '×'}</b><span>{t}</span></motion.p>)}
+          {b.kind === 'modes' && (
+            <div className="gd-modes">
+              {b.items.map(([t, d], j) => <motion.div key={t} className={j ? 'gd-mode' : 'gd-mode lead'} variants={it(j)}><b>{t}</b><span>{d}</span></motion.div>)}
+              <svg className="gd-wire" viewBox="0 0 44 100" preserveAspectRatio="none"><path d="M0 50 C22 50 22 25 44 25" /><path d="M0 50 C22 50 22 75 44 75" /></svg>
+            </div>
+          )}
         </motion.div>
       </AnimatePresence>
     </div>
@@ -216,6 +225,15 @@ function Passes() {
   const n = FACTS.length;
   const [at, setAt] = useState(0);
   const [peek, setPeek] = useState(null);
+  const [open, setOpen] = useState({});
+  // phones: a panel plays its arrival once its card is mostly on screen in the sideways rail
+  useEffect(() => {
+    const els = ref.current ? [...ref.current.querySelectorAll('.gd-f-vis')] : [];
+    if (!els.length || typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && e.target.classList.add('on')), { threshold: 0.6 });
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   useMotionValueEvent(scrollYProgress, 'change', (p) => setAt(Math.max(0, Math.min(n - 1, Math.floor(p * n * 0.9999)))));
   const go = (i) => {
@@ -248,7 +266,8 @@ function Passes() {
                   <h3 className="gd-f-t"><span>{t}</span></h3>
                   <p className="gd-f-n x-mono">{pad(i + 1)} / {pad(n)}</p>
                 </div>
-                <p className="v2-body gd-f-d">{d}</p>
+                <p className="v2-body gd-f-d" id={'gd-fd' + i} data-open={open[i] || undefined}>{d}</p>
+                {!open[i] && <button type="button" className="gd-f-more" aria-expanded="false" aria-controls={'gd-fd' + i} onClick={() => setOpen((o) => ({ ...o, [i]: true }))}>Read more</button>}
                 <div className="gd-f-vis"><Board at={i} still /></div>
               </article>
             ))}

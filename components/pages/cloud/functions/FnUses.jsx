@@ -125,7 +125,8 @@ export default function FnUses({ children }) {
     from.current = card ? card.getBoundingClientRect() : null;
     openRef.current = i;
     setOpen(i);
-    try { history.pushState({ fnUse: i }, ''); } catch {}
+    // the entry keeps the router's own state (without it Next reloads the page on Back), plus a mark of ours
+    try { history.pushState({ ...(history.state || {}), fnUse: i }, ''); } catch {}
   };
   useLayoutEffect(() => {
     const d = dlg.current;

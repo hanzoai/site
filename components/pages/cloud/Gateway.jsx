@@ -6,13 +6,13 @@
 // Signature: the gate, running: one request at a time checked, stripped, stamped or turned away (429) across a full-width lane.
 // Beyond: Forge one yourself: pick a credential and fake headers, see what the service behind the gate receives.
 /* Gateway (v2, archetype A Launch).
-   V2: 8/10 round 2: the lane is the same inset card from first paint (no server/client snap, no hydration mismatch) and recedes as you leave; a request already in flight and a landed result at 0 s; the statement grows as it crosses the screen over its own request lane; chapter counters under the titles and each rule's figure lands big and settles; deck greys only; hovers that answer; 44px targets.
+   V2: 8/10 round 3: six chapters are six scenes that act their rule out (JWKS check, headers struck and written, an empty route map, buckets draining to a 429, a ping that stops at the process, the gateway sliding into the cloud binary); phone pins one short scene under the header while the words swap; dots name their chapter; reduced motion shows every final frame; Settle and the growing statement carry no inline style before mount (no hydration mismatch); prompt wraps under its api line; related rows preview where they go.
    Signature: the gate, running across the whole screen. One request at a time arrives from the left carrying a token and
    a forged X-Org-Id; at the gate the token is checked against JWKS, the forged header is torn off, the real identity is
    stamped on from the claims and the request walks through to Hanzo Cloud. A token bucket on the gate drains with each
    one, and when it is empty the next caller is turned back with a 429 and a Retry-After.
-   Supporting: kinetic title lines; the lane settles from huge into place on scroll (Stage); the six rules as pinned
-   chapters whose request inspector changes with each rule.
+   Supporting: kinetic title lines; the lane recedes as you leave it (scroll); the six rules as pinned chapters, each
+   acted out by its own scene (gateway/GwChapters, gateway/GwScenes).
    Beyond: "Forge one yourself" - build a request (a JWT, an opaque API key or nothing, plus whichever identity headers
    you want to fake) and see what the service behind the gate receives under Hanzo's two rules.
    Greys only (Hanzo's deck). Every word and link is Hanzo's; header values are examples.

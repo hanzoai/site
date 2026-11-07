@@ -47,7 +47,7 @@ function Inline({ inl }) {
 }
 
 /* the walk: which platform, how far the hand has pressed, the switch, and whether it plays by itself */
-function useWalk(setting, live, mode) {
+function useWalk(setting, live, mode, row) {
   const calm = useReducedMotion();
   const [plat, setPlat] = useState(0);
   const [level, setLevel] = useState(0);
@@ -92,8 +92,19 @@ function useWalk(setting, live, mode) {
   useEffect(() => { const t = setTimeout(rest, 40); return () => clearTimeout(t); }, [plat]); // eslint-disable-line react-hooks/exhaustive-deps
   // reduced motion: the finished state, the switch already off
   useEffect(() => { if (calm) { setAuto(false); setLevel(n); setOn(false); } }, [calm]); // eslint-disable-line react-hooks/exhaustive-deps
-  // sections 03 and 04 show the setting off, so the switch under the picture says off too
-  useEffect(() => { if (mode !== 'walk') setOn(false); }, [mode]);
+  // each part of the document sets the switch, and both switches (in the picture and under it) agree:
+  // 01 shows the setting itself (it turns on once), 03 shows it off, 04 turns it off once while its rows stay put,
+  // and coming back to the walk starts it again from the top, switched on
+  useEffect(() => {
+    if (mode === 'walk') {
+      if (calm) { setLevel(n); setOn(false); return undefined; } // reduced motion: the walk's finished state
+      setLevel(0); setOn(true); setTimeout(rest, 30); return undefined;
+    }
+    if (calm || mode === 'after') { setOn(mode === 'what'); return undefined; }
+    setOn(mode !== 'what');
+    const t = setTimeout(() => setOn(mode === 'what'), 600);
+    return () => clearTimeout(t);
+  }, [mode, calm]); // eslint-disable-line react-hooks/exhaustive-deps
   // the hand plays by itself while the panel is on screen, nobody is pointing at it and nobody has taken over
   useEffect(() => {
     if (!auto || !live || hold || calm || mode !== 'walk') return;
@@ -102,12 +113,9 @@ function useWalk(setting, live, mode) {
     const t2 = setTimeout(() => hit(level), level ? 1450 : 1350);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [auto, live, hold, calm, plat, level, mode]); // eslint-disable-line react-hooks/exhaustive-deps
-  // section 04 in view: the panel lights the other settings one at a time (what this switch leaves alone)
-  useEffect(() => {
-    if (mode !== 'still' || !auto || litHold || calm) return;
-    const t = setTimeout(() => setLit((k) => (k + 1) % 4), 1800);
-    return () => clearTimeout(t);
-  }, [mode, auto, litHold, calm, lit]);
+  // section 04 in view: the panel lights the setting for the row being read (what this switch leaves alone); a pointer
+  // on a row takes over
+  const shown = litHold ? lit : row == null ? 0 : row;
   // a step pressed in the text: show the screen just before it, move the hand there, press
   useEffect(() => {
     if (want === null || want !== level) return;
@@ -117,7 +125,7 @@ function useWalk(setting, live, mode) {
   }, [want, level, plat]); // eslint-disable-line react-hooks/exhaustive-deps
   const active = targets[Math.min(level, n - 1)].step;
   return {
-    plat, level, on, auto, press, saved, stage, x, y, flow, targets, active, n, mode, lit, touch, placed,
+    plat, level, on, auto, press, saved, stage, x, y, flow, targets, active, n, mode, lit: shown, touch, placed,
     hold: setHold,
     light: (k) => { if (k === null) { setLitHold(false); return; } setLit(k); setLitHold(true); },
     paused: !auto,
@@ -147,7 +155,7 @@ function Screen({ w, setting }) {
         <div className="xhp-nav"><i /><span className="xhp-item" data-t="2" data-on={lv >= 3 || undefined}>{label(2)}</span><i /><i /></div>
         <div className="xhp-pane">
           <p className="xhp-pane-h">{label(2)}</p>
-          <div className="xhp-row">
+          <div className="xhp-row" data-on={w.mode === 'what' || undefined}>
             <span className="xhp-row-t">{setting.name}</span>
             <button type="button" tabIndex={-1} className="xhp-sw" data-t="3" data-on={w.on || undefined} onClick={w.flip}><i /></button>
           </div>
@@ -185,6 +193,10 @@ function Panel({ setting, w, doc, cur }) {
   const total = w.flow.steps.length;
   const walk = w.mode === 'walk';
   const si = doc.sections.findIndex((s) => s.id === cur);
+  // one counter, always the document's sections: the walk is the steps section, its steps are the dots
+  const stepsIdx = doc.sections.findIndex((s) => s.blocks.some((b) => b.k === 'h3' && setting.flows.some((f) => f.label === b.text)));
+  const at = walk ? Math.max(stepsIdx, 0) : Math.max(si, 0);
+  const count = String(at + 1).padStart(2, '0') + ' / ' + String(doc.sections.length).padStart(2, '0');
   return (
     <div className="xhp-panel" ref={box} role="group" aria-label={setting.name}>
       <div className="xhp-panel-bar">
@@ -212,18 +224,11 @@ function Panel({ setting, w, doc, cur }) {
         </motion.span>
       </div>
       <div className="xhp-cap" aria-hidden="true">
-        {walk || si < 0 ? (
-          <>
-            <span className="xhp-cap-n x-mono">{String(w.active + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}</span>
-            <span className="xhp-cap-t" key={w.plat + '-' + w.active}>{say(w.flow.steps[w.active].inl)}</span>
-            <span className="xhp-cap-dots">{w.flow.steps.map((s, i) => <i key={i} data-on={i <= w.active || undefined} />)}</span>
-          </>
-        ) : (
-          <>
-            <span className="xhp-cap-n x-mono">{String(si + 1).padStart(2, '0')} / {String(doc.sections.length).padStart(2, '0')}</span>
-            <span className="xhp-cap-t" key={'s-' + cur}>{doc.sections[si].title}</span>
-          </>
-        )}
+        <span className="xhp-cap-n x-mono">{count}</span>
+        {walk
+          ? <span className="xhp-cap-t" key={w.plat + '-' + w.active}>{say(w.flow.steps[w.active].inl)}</span>
+          : <span className="xhp-cap-t" key={'s-' + at}>{doc.sections[at].title}</span>}
+        <span className="xhp-cap-dots" data-walk={walk || undefined}>{Array.from({ length: total }, (_, i) => <i key={i} data-on={(walk && i <= w.active) || undefined} />)}</span>
       </div>
       <div className="xhp-try">
         <button type="button" role="switch" aria-checked={w.on} className="xhp-try-b" onClick={w.flip}>
