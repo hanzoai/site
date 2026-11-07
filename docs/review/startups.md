@@ -1,63 +1,78 @@
 # /startups/: James-eye review
 Verdict: 7/10
-First complaint: "On my phone that black Acme box sticks under the header and rides over the form. It covers the questions as I scroll and ends up sitting on the privacy line under Submit. Something's floating over the content again."
+First complaint: "The application card is lovely, it answers me as I type. But the rest is dead. The money counter flips once and then it's a white box with a shadow. Then I hit a big black 'Not venture-backed?' slab with nothing in it, just text and two buttons."
 
-Walked 2026-11-07 17:06 UTC on the dev server at 1470x801 and 375x812, moving. All three form steps were walked with test values, and every non-GET request was aborted, so nothing was sent.
+Walked 2026-11-07 17:18 UTC on the dev server at 1470x801 and 375x812, moving. I walked all three form steps with test values. Every non-GET request was aborted (the one POST to api.hanzo.ai …/hanzo.startups-apply/responses), so nothing was sent.
 
 ## The 11 answers
 1. **First screen**
-   - Sells in 5 s: the 52px h1, the lede, the primary, and a $150,000 odometer card as the object.
-   - Motion within 1 s: yes. Frames at 300 ms and 1000 ms differ as the odometer digits roll in and the CTAs rise 16px.
-   - After about 3 s the hero is still. Frames at 4 s and 7 s are identical, with no idle life on the first screen.
+   - Sells in 5 s: the 52px h1, the lede, "Apply for credits" and a $150,000 odometer card.
+   - Motion within 1 s: yes. At 250 ms the card is absent and the lede sits 16px low. At 950 ms the digits are mid-roll.
+   - On the first screen nothing moves after about 3 s. The only running animation at 6 s is a shared `prism-spin`.
+   - Phone: the ask's bottom edge is at 519px, above the 667 fold.
 2. **One in, one out**
-   - Partly. The program list lights one row at a time (the active row is ink #0a0a0a, the rest #737373).
-   - The active row lags the viewport. At scrollY 1100, row 03 is on screen at top 90 and still grey, while row 02 (at -86, off screen) is still the lit row. Row 03's own $150,000 odometer stays grey.
-   - The Techstars paragraph sits in about 500px of white with nothing else in it. That is a dead stretch.
+   - The program rows now track the viewport. Row 02 is ink at scrollY 500 and row 03 from 700 on. Inactive rows are #737373 at scale 0.6. This is fixed since the last review.
+   - Dead stretches:
+     - About 216px of empty white between the hero buttons (bottom 490) and "THE PROGRAM" (706).
+     - The Techstars paragraph alone in white.
+     - The Band's roughly 600px of black.
 3. **A real object per section**
    - Hero: the odometer card.
-   - Form: a live summary card. It runs a demo by itself ("Acme AI", "0/5 · Select stage" moving to "2/5 · Seed") and then follows what you enter: "Test Co · 4/5 · Seed". Ticking Sequoia swaps it to "Up to $150,000 in credits"; Compute and the "heard about" answer light up too. This is the page's moment and it is good.
-   - No object: the Techstars paragraph and the black "Not venture-backed?" Band (text and two buttons only).
+   - Form: the live summary card. It follows the form, e.g. "Testco Critic · 4 / 5 · Pre-seed". Ticking Sequoia turns its tile into "Up to $150,000 in credits · Sequoia · Techstars". BYO compute and "AI & inference" also light up. This is the page's moment.
+   - No object in three places: the Techstars paragraph, the black "Not venture-backed?" Band, and row 03, which re-uses the hero's $150,000 odometer as its object (a duplicate, not a new object).
 4. **One ask; rhythm**
-   - The header ask swaps from a quiet "Try Hanzo" to a solid "Apply for credits" once the hero ask leaves view. Good.
-   - Phone: the sticky summary bar (56px, top 60 to 116) floats over the form. Content measured under it: "How will you use Hanzo?", "A friend or colleague", "Hanzo docs or GitHub", and at the end "By submitting…" and "Submit application". It never releases at the form's end.
-   - Rhythm is mostly fine: the h1 is 52px and the h3 rows grow when active. On the first screen, though, the 52px h1 and the about 59px odometer digits are two big things side by side.
+   - The header ask swaps from a quiet "Try Hanzo" to a solid "Apply for credits" after the hero.
+   - The first screen has one solid fill on desktop.
+   - The phone summary strip is now static: no floating over content. This is fixed.
+   - Rhythm: a 52px h1, about 59px odometer digits, and 44px rows that settle to 0.6 when inactive. The h1 and the odometer are two big things side by side on the hero.
 5. **Hover and press**
-   - Every control changes background, not opacity: primary #0a0a0a to #262626, ghost to #f5f5f5, Band white to #e4e4e7.
-   - Press is a 0.97 scale with no layout jump.
-   - The stage chip hover is barely visible (#f2f2f2 to #ececef), and no hover tells you anything.
-   - Pressing the primary scrolls to the form, but focus stays on `<body>`.
+   - Every page control changes background or border, not opacity:
+     - primary #0a0a0a to #262626;
+     - ghost to #f5f5f5 with an ink border;
+     - Band "Start free" #fafafa to #e4e4e7.
+   - Press scales to 0.97 or 0.98 with no jump.
+   - Stage chips go from #f2f2f2 to #ececef on hover, which you can barely see.
+   - No hover tells you anything, and the hero card ignores the pointer (transform `none`).
+   - The ask now lands focus on `input[name=company]`. This is fixed.
 6. **Overlap, font swap, layout shift**
-   - CLS is 0.0002 to 0.0008 over 4 cold loads, with no font swap.
-   - Phone overlap: the sticky summary bar (see 4).
-   - Form bug, 4 of 4 runs: pressing "02 / 03" with the form empty shows a grey box, "Company name is required." The box stays after the field is filled. There is no `aria-invalid` on the field and no inline error under it.
+   - CLS is 0.0002 desktop and 0 phone, with no font swap and no horizontal scroll at 375.
+   - No tap target under 44px in main.
+   - Phone: the strip's "1 / 5 · Select stage" line is clipped. Its text bottom is 368 and the black strip ends at 365.
 7. **Reference**
-   - It feels like chatgpt.com/business/enterprise: calm, with quiet proof.
-   - The live card has the synchronized.studio "it answers you" feel, but there is no Morph or pointer layer.
-   - Kinds of motion: arrival (rise, odometer), idle (the card demo), state (steps, the card reacting), scroll (the row highlight). There is no pointer motion at all.
+   - Calm like chatgpt.com/business/enterprise.
+   - The live card gives the "it answers you" feel.
+   - Kinds of motion: arrival (h1 cut, odometer), scroll (rows), state (steps, card mirror).
+   - No pointer motion and no idle life after arrival.
 8. **Neighbours**
-   - Its own medium: an odometer hero plus a live application card. Not template-like.
+   - Its own medium: an odometer hero plus a live application card. Not a template.
 9. **The 18 parts**
-   - Present: one h1, the sticky ask, a Privacy link in the submit viewport, a honeypot, steps "01 / 03", a Band, and the footer.
-   - Missing or weak: inline field errors (part 12), focus on the first field after the ask (part 8), and a Band with an object.
+   - Present: one h1, `data-cta="startups.hero"`, the sticky ask, a honeypot, the Privacy line by Submit, the 01 / 03 steps, a Band and the footer.
+   - Weak:
+     - The empty required field gets a grey summary box and no `aria-invalid` (0 fields flagged).
+     - A failed POST shows the browser's raw "Failed to fetch", not Hanzo's error string. The entries are kept, which is good.
 10. **Banned tells**
-    - No hue, no eyebrow above a headline (the "TECHSTARS '17" caption sits below the h1), no gradient text.
-    - The hero card is both outlined (1px) and raised (a large soft shadow). The deck says one or the other, and a boxed white card reads close to a "framed hero".
+    - No hue, no gradient text, and no eyebrow above a headline. "TECHSTARS '17" is a caption below the h1, and "The program" is itself a 12px h2.
+    - The hero card is both outlined (1px) and raised (a large soft shadow): a boxed white card next to the h1.
+    - The Band is full-bleed from the start (radius 0, x 0, width 1470 at every offset). It never enters as a rounded card.
 11. **Copy**
-    - parity.py `/startups: OK text 82/82 links 3/3`.
+    - parity.py: `/startups: OK text 82/82 links 3/3`.
+    - Every rendered sentence is in content/live or forms.json. The only additions are the "/ 5 ·" separator and the aria-label "Your match".
 
-Console: 0 errors on 4 of 4 cold loads, desktop and phone. One "1 Issue" badge appeared once during an interaction run and did not come back on 4 fresh loads, so it is not counted.
+Console: no reproducing error. One batch of 4 cold loads showed a hydration-mismatch "1 Issue" badge on 4 of 4 during a recompile. Two later batches of 4 fresh loads showed 0, so it is not counted.
 
-Shared (not this page): on phone the header "Try Hanzo" is always solid, so the first screen has two solid fills. On desktop the glass header shows a grey smear over the dark card while scrolling.
+Shared (not this page): the phone header's "Try Hanzo" is always solid, so the phone first screen has two solid fills. The header ask's hover is opacity only (1 to 0.88).
 
 ## Fixes (in order)
-1. Phone: stop the summary bar overlapping content.
-   - Either let it scroll inside the form column, or give it its own reserved row (padding-top on the form equal to the bar height plus 10.5px).
-   - Release it when the form's last button leaves; it must never sit over Submit or the privacy line.
-   - Give the "4 / 5 · Seed" line room: it touches the bar's bottom edge.
-2. Program list: drive the active row from the viewport centre (the row crossing about 45% of 100svh), so row 03 lights while it is on screen. Its $150,000 should roll to ink when it lights.
-3. Form errors:
-   - Clear the error as soon as the field is valid.
-   - Put it inline under the field with `aria-invalid` and `aria-describedby`.
-   - Move focus to the first field when "Apply for credits" lands on the form.
-4. Give the hero life after arrival, for example a very slow re-tick of one odometer column or a pointer-aware sheen on the card. Drop either the border or the shadow on the card.
-5. Fill the dead Techstars stretch and the Band with something to look at: the "Techstars '17" mark or a small figure from existing copy beside the paragraph, and something quiet in the Band so the black room is not just text.
+1. Band:
+   - Enter it as a rounded card inside the gutters that opens to full width.
+   - Cut its empty black height by about half.
+   - Give it a quiet object built from existing words. No new sentences.
+2. Hero card:
+   - Drop either the 1px border or the shadow.
+   - Add a fine-pointer response (a tilt to 2.5° or a sheen) so it lives after the roll.
+   - Close the 216px gap so the next section peeks 56px.
+3. Phone strip: give the "n / 5 · stage" line room inside the black strip (it is clipped by 3px).
+4. Form states:
+   - Set `aria-invalid` and `aria-describedby` on the empty field and show the error inline under it.
+   - On a failed POST, show Hanzo's existing error string instead of "Failed to fetch".
+5. Row 03: give it something other than a second copy of the hero odometer. For example, let it roll to ink only when lit, so it reads as the hero figure arriving rather than a duplicate. Make the stage-chip hover visible.
