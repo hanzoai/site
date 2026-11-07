@@ -1,15 +1,17 @@
 'use client';
-/* /press. V2: 8/10 Story on the Hanzo deck (third review's fixes: scale rhythm, a beat per lower section, phone news card, kit signature). The headline and its one ask sit beside a stack of the
-   three press-kit plates; scroll and the stack itself fans out into the kit (one object, one pinned stage, never shown
-   twice). Hanzo's boilerplate is read word by word, the four facts settle once, the news reads as an editorial index with
+/* /press. V2: 8/10 slice D: the motion-map rebuild verified (magnet-grid signature with three idle ripples; conveyor, pull-back,
+   velocity-skew calmed to 3°, orbit-in, stack-drop without bounce), kit plates on one baseline, light plate visible, zip line unclipped.
+   The headline and its one ask sit beside the magnet grid (Hanzo's mark in a field of dots that bends to the pointer
+   and ripples at a click); the three press-kit plates follow, pulled back from a close-up of the dark one. Hanzo's boilerplate is read word by word, the four facts settle once, the news reads as an editorial index with
    a card beside the row you point at, press contact is the one black room where the email cuts in with its copy button
    beside it, then brand assets with the partners as one still row, the channels as a hairline list, and the leadership.
    Persona: a journalist or analyst writing about Hanzo (MASTER: investors and press).
    Goal: leave with the kit, the facts and the right person to email.
    CTA: "Contact Press Team" (mailto:press@hanzo.ai) in the hero and the shared sticky ask bar (data-thumb), data-cta
    press.hero; "Request Executive Bios" (press.bios) closes the page; metric: one contact click.
-   Signature: the kit deals out. The three press-kit plates sit as one stack beside the headline; pinned, the stack fans
-   out into the kit spread as you scroll (stack to spread), a move no other page makes. A sheen crosses the dark plate.
+   Signature (MOTION-MAP `magnet-grid`, press/MagnetGrid.jsx): Hanzo's mark drawn in a field of dots beside the headline;
+   the field bends toward the pointer, a click or tap ripples out, one ripple on arrival and three slow idle ones.
+   Entrances (press/Enter.jsx, in order): conveyor, pull-back, velocity-skew, orbit-in, stack-drop. A sheen crosses the dark plate.
    Demoted to support: the boilerplate read word by word (scroll), the facts settling once.
    Supporting (3): masked headline cut-in, once (with the team names and section heads); the boilerplate word fill
    (scroll); the email typed into the black room, one beat per section below it (time: the partner hairlines drawing

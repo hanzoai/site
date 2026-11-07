@@ -59,9 +59,14 @@
 /* 2. the kit: three plates in a row, pulled back from a close-up of the dark plate */
 .xpe-kit { padding: clamp(24px, 3vw, 48px) 0 clamp(48px, 6vw, 96px); }
 .xen-pb { overflow: hidden; border-radius: 24px; }
+/* the clip's rounded corner must not bite the zip line at its foot: room below it, given back to the section */
+.xpe-kit .xen-pb { padding-bottom: 24px; margin-bottom: -24px; }
 .xpe-kit-g > .xen { grid-column: 1 / -1; display: grid; row-gap: 32px; }
-.xpe-plates { position: relative; grid-column: 1 / -1; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 3fr) minmax(0, 3fr); column-gap: 24px; align-items: end; }
-.xpe-kitc-w { position: relative; display: flex; flex-direction: column; gap: 16px; }
+/* plates share one baseline and their titles one top line (a subgrid row each), whatever a title's length */
+.xpe-plates { position: relative; grid-column: 1 / -1; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 3fr) minmax(0, 3fr); grid-auto-rows: auto; column-gap: 24px; }
+.xpe-kitc-w { position: relative; display: grid; grid-row: span 2; grid-template-rows: subgrid; row-gap: 16px; }
+.xpe-kitc-w > .xpe-kp { align-self: end; }
+.xpe-kitc-w > .xpe-kitc-t { align-self: start; }
 .xpe-kp { position: relative; display: block; aspect-ratio: 4 / 3.2; border-radius: 24px; overflow: hidden; text-decoration: none; transform-origin: 50% 50%; transition: box-shadow .15s cubic-bezier(0, 0, .2, 1); }
 .xpe-plate { display: flex; align-items: center; justify-content: center; gap: 14px; width: 100%; height: 100%; color: #fff; background: #0a0a0a; font-size: 22px; }
 .xpe-plate b { font-size: 1.6em; font-weight: 497; letter-spacing: -.035em; }
@@ -69,7 +74,7 @@
 .xpe-kitc-w.dark .xpe-plate { position: relative; overflow: hidden; }
 .xpe-kitc-w.dark .xpe-plate::after { content: ''; position: absolute; inset: -20% auto -20% 0; width: 40%; background: linear-gradient(100deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, .1), rgba(255, 255, 255, 0)); transform: translateX(-120%) skewX(-12deg); animation: xpe-sheen 4.8s cubic-bezier(.4, 0, .2, 1) .9s 3 both; pointer-events: none; }
 @keyframes xpe-sheen { 0% { transform: translateX(-120%) skewX(-12deg); } 90%, 100% { transform: translateX(320%) skewX(-12deg); } }
-.xpe-plate.light { background: #fff; color: #0a0a0a; }
+.xpe-plate.light { background: var(--xr); color: #0a0a0a; }
 .xpe-plate.icon { background: var(--xk); color: #0a0a0a; }
 .xpe-kitc-w.dark .xpe-plate { font-size: 30px; }
 .xpe-fmt { position: absolute; top: 16px; right: 16px; display: flex; gap: 6px; }

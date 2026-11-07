@@ -31,7 +31,7 @@ Forks this page deleted:
 - [x] No dead or self-looping button
 - [x] Open copy questions for James listed, none decided
 
-Done here: at 1470×801 the h1, its caption, the lede and both actions sit above the fold beside the kit stack. At 375×812 the ask ends at y≈411.
+Done here: at 1470×801 the h1, its caption, the lede and both actions sit above the fold beside the magnet grid (Hanzo's mark in a field of dots). At 375×812 the ask ends at y≈411.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">` and the skip link (both from the layout)
@@ -48,13 +48,13 @@ Done here: links 20/20.
   - 0 faint or offset text.
   - The pointer card is hidden.
   - All six summaries show.
-  - The pinned stage lies flat.
+  - No pinned stage: the hero and the kit are plain sections.
   - The boilerplate sits beside its heading, because the `<noscript>` moved out of the grid.
-- [x] One idea per 100svh, and the rhythm varies: the pinned hero-kit stage, the statement, the facts, the news, the black room, the assets row, the hairline list, the quiet team room.
+- [x] One idea per 100svh, and the rhythm varies: the hero with its magnet grid, the kit, the statement, the facts, the news, the black room, the assets row, the hairline list, the quiet team room.
 - [x] Ends on the page's own closing link ("Request Executive Bios"), then the footer.
 - [ ] n/a: Morph. No card opens into a page; the news rows link to /blog, as on hanzo.ai.
 
-Done here: the hero and the kit are one object. As the stage scrolls, the headline fades and the stack fans out into the three kit plates. The three plates are never shown twice.
+Done here: the hero rides in on a conveyor beside the magnet grid, which ripples once from the mark on arrival (motion inside the first second). The kit follows as its own section, pulled back from a close-up of the dark plate; the plates are shown once, on one baseline with their titles on one top line (subgrid).
 
 ## 4. Conversion system
 - [x] No raw `.x-btn`. The ask is a page-local pill until kit `Cta` merges.
@@ -88,7 +88,7 @@ Done here: text 83/83, links 20/20. Every Hanzo label is visible:
 - [x] No label above a headline. All captions sit below.
 - [x] Never box plus shadow. Only the floating kit plates take the deck's floating shadow. The news column, the tiles and the guidelines card are flat fills; the partners and channels are hairline lists (no three equal boxes anywhere).
 - [x] One icon set; no icon in a rounded box (the channel icon circles are gone)
-- [x] Differs from neighbours: a stack that turns into a spread on scroll, which /brand, /investors and /contact don't have
+- [x] Differs from neighbours: the mark as a magnetic dot field (MOTION-MAP `magnet-grid`), which /brand, /investors and /contact don't have
 
 Done here:
 - deck.css's `--ink2: #525252` is back. Page tokens use their own names (`--xi`, `--xs`, `--xm`, `--xr`, `--xk`), so ledes, body and labels show the deck's second tone again.
@@ -105,19 +105,20 @@ Done here: the copy buttons are 48px icons with an aria-label, and they sit besi
 
 ## 9. Motion and interaction
 - [x] One signature, 3 supporting, 1 fade-up (the lede and asks, in CSS)
-- [x] At least 3 kinds, scroll under half: arrival (line masks), scroll (the stage fan-out, the belief line), time (the email types itself, the partner hairlines draw one by one, the channel index walks 01 to 09 once, the team plates open, the phone news card walks the six stories once; each runs once in view, then rests), idle (the plate sheen), pointer (row focus steps the others back; plates, partners and channels answer hover), state (the news column swaps its story with a 300 ms rise and a progress hairline, copy and download ticks, the email mask)
+- [x] At least 3 kinds, scroll under half: arrival (line masks), scroll (velocity-skew on About, the belief line), time (the email types itself, the partner hairlines draw one by one, the channel index walks 01 to 09 once, the team plates open, the phone news card walks the six stories once; each runs once in view, then rests), idle (the grid's arrival ripple and three idle ripples, the plate sheen), pointer on the grid (dots bend, a click ripples), pointer (row focus steps the others back; plates, partners and channels answer hover), state (the news column swaps its story with a 300 ms rise and a progress hairline, copy and download ticks, the email mask)
 - [x] Something moves without input; every control answers
-- [x] Reduced motion shows the final state (plain words, settled facts, the full email with its copy button, drawn hairlines, open plates, the stage flat). The one `setInterval` (`useBeat`) runs only in view, never under reduced motion, and clears itself at its last step.
+- [x] Reduced motion shows the final state (plain words, settled facts, the full email with its copy button, drawn hairlines, open plates, a still dot field). The one `setInterval` (`useBeat`) runs only in view, never under reduced motion, and clears itself at its last step.
 - [ ] n/a: sound (kit not merged)
 
 Done here:
-- Signature: the kit deals out. The three press-kit plates sit as one stack beside the h1 and fan out into the kit spread as the pinned stage scrolls (230svh, ease-in-out); a sheen crosses the dark plate three times, then rests. No other page makes this move (the word fill is shared with Philosophy and Research, so it is demoted).
+- Signature (MOTION-MAP `magnet-grid`, `press/MagnetGrid.jsx`): Hanzo's mark drawn in a canvas field of dots; the field bends toward the pointer, a click or tap sends a ripple, one ripple runs on arrival and three slow idle ripples follow (5.2 s apart, measured: canvas changes at 0.4-2.9 s, 6.5-7.7 s, 11.8-13 s), then it rests. The rAF runs only while something moves and only on screen; reduced motion draws a still field. A sheen crosses the dark plate three times, then rests.
+- Entrances (`press/Enter.jsx`, in page order): conveyor (hero), pull-back (kit), velocity-skew (about, capped at 3°: measured 2.6° on a fast wheel), orbit-in (news), stack-drop (the black room, damped so it lands without a bounce).
 - Supporting:
   - line masks (the h1, every section head, the team names);
   - the belief line, demoted: 60 words go from opacity .16 to 1 with the scroll, then the facts settle;
   - one time beat per section below the news (the email typed with a caret, copy appearing after the last letter; partner hairlines drawn 160 ms apart; the channel index walking 01 to 09 once until pointed at; the team plates opening by clip; the guidelines mark drawing in);
   - the news index: a still dark column beside it holds the story in focus (`01 / 06` at 64px Air, a progress hairline, the summary and date rising in at 300 ms). Focus follows the pointer, the keyboard, or, untouched, the row crossing the middle of the screen. Nothing follows the cursor.
-- No springs.
+- No visible springs: stack-drop's spring is damped (32) so it settles without overshoot.
 
 ## 10. Media
 - [x] `Pic` (kit `Img`, with a fallback) only; sizes set
@@ -133,7 +134,7 @@ Done here: the portraits and partner logos load from Hanzo's /public paths. They
 - [x] Every target 44px or more; each summary shows under its headline
 - [x] Primary ask above the fold at 375×667
 
-Done here: on phones the stage lies flat. The dark plate spans the width, light and icon sit side by side, and the channels are a one-column hairline list with no mid-word breaks.
+Done here: on phones the grid is 4:3 under the asks. The dark plate spans the width, light and icon sit side by side, and the channels are a one-column hairline list with no mid-word breaks.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured in the black room:
@@ -153,7 +154,7 @@ Done here: the news column is `aria-hidden`, because the summary it repeats is i
 - [x] No poller; no third-party request
 - [x] Filmed in the cloud
 
-Done here: transform, opacity and clip only. The stage reads one measurement on mount and on resize.
+Done here: transform, opacity and clip only; the magnet grid is one canvas whose rAF runs only while dots move and the field is on screen, rebuilt on resize (ResizeObserver).
 
 ## 14. SEO and machine files
 - [x] Title and description unchanged
@@ -179,13 +180,14 @@ Done here: n/a.
 - [ ] n/a: no submit
 - [x] A thrown island does not blank the page
 
-Done here: Playwright ran with hanzo.ai blocked, and the console was clean.
+Done here: Playwright ran with hanzo.ai's media missing locally: the only console lines are 8 resource errors (the 2 portraits and 6 partner logos under Hanzo's /authors and /press/partners paths, which this repo does not mirror); each falls back to its Sigil plate or letter chip, and there are no script errors.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary (`lib/track.js` pending)
 - [x] Nothing identifier-bearing
 - [x] `V2: 8/10 …` in the page file header
-- [x] Review read: `docs/review/press.md` was 6/10. Its fixes are done:
+- [x] Review read: `docs/review/press.md` (7/10, critic 3). Slice D, 7 Nov: the motion-map rebuild (left unverified mid-work) checked and finished: kit plates share a baseline and their titles a top line, the light plate has its grey ground (it was white on white), the zip line is no longer bitten by the pull-back clip's corner, velocity-skew calmed from 8° to 3°, stack-drop no longer bounces, the magnet grid breathes three idle ripples. The review's five fixes (phone pills, a live middle, tighter bands, boilerplate ink at rest, partners as one row) were done in ebf5c606 and hold.
+  Earlier: was 6/10. Its fixes are done:
   - the black room is lit;
   - the deck greys are back;
   - the captions are visible;
