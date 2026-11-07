@@ -39,7 +39,7 @@ const LINES = [
   { k: 'Press & General', go: 'hello@hanzo.ai' },
 ];
 // JS off: every route stacked and readable; no cable, no hands on the dial, no plate, no dead copy button (PLAN 2.3)
-const NOJS = { __html: '<style>.xct-panel{display:flex!important;flex-direction:column;gap:40px;margin-top:24px!important}.xct-route{opacity:1!important;transform:none!important}.xct-cable,.xct-plug,.xct-plate,.xct-cp{display:none!important}.xct-in,.xct-in2{animation:none!important}.xct .x-band .x-word,.xct .x-band [style]{opacity:1!important;transform:none!important;filter:none!important}</style>' };
+const NOJS = { __html: '<style>.xct-hero-g{align-items:start!important}.xct-jacks{display:none!important}.xct-panel{display:flex!important;flex-direction:column;gap:40px;margin-top:24px!important}.xct-route{opacity:1!important;transform:none!important}.xct-cable,.xct-plug,.xct-plate,.xct-cp{display:none!important}.xct-in,.xct-in2{animation:none!important}.xct .x-band .x-word,.xct .x-band [style]{opacity:1!important;transform:none!important;filter:none!important}</style>' };
 
 /* `go` turns true when the page may start its entrance: at once on a return visit; on a first visit, 550ms after
    the arrival curtain starts lifting (it wipes up from the bottom, so the top of the screen is clear by then). */
@@ -157,6 +157,7 @@ function Panel({ go }) {
 
   // the arrival sweep (desktop): Sales → Dispatch → Support → Press → Sales, the cable only, after the h1 has landed
   useEffect(() => {
+    if (!wide && go && !held) { setHeld(true); return; } // phones: no sweep; rest (and sway) after the entrance
     if (held || calm || !go || !seen || !wide) return;
     let k = 0, t = 0;
     const path = [1, 2, 3, 0];
@@ -178,9 +179,11 @@ function Panel({ go }) {
     if (!g || !wire.current) return;
     const x0 = sx.get(), y0 = sy.get(), x1 = g.px, y1 = g.py;
     const sag = (y1 - y0) * 0.9;
-    const s = sway.get() * 10;
+    // idle: the belly drifts sideways about 10px and breathes a little; the two ends never move
+    const s = sway.get() * (g.px < 300 ? 48 : 16); // the phone's short wire swings wider so its drift reads
+    const b = 1 + sway.get() * 0.06;
     const l = leanTo.current >= 0 && g.js[leanTo.current] ? (g.js[leanTo.current][0] - x0) * 0.22 * lean.get() : 0;
-    wire.current.setAttribute('d', `M ${x0} ${y0} C ${x0 + s + l} ${y0 + sag}, ${x1 - s + l * 0.6} ${y1 - sag * 0.7}, ${x1} ${y1}`);
+    wire.current.setAttribute('d', `M ${x0} ${y0} C ${x0 + s + l} ${y0 + sag * b}, ${x1 + s * 0.8 + l * 0.6} ${y1 - sag * 0.7 * b}, ${x1} ${y1}`);
     nub.current.setAttribute('transform', `translate(${x0 - 9} ${y0 - 7})`);
     if (!box.current.dataset.wired) box.current.dataset.wired = '1';
   };
@@ -232,6 +235,15 @@ function Panel({ go }) {
     animate(lean, 1, { duration: 0.3, ease: IO });
   };
   const unpoint = () => animate(lean, 0, { duration: 0.3, ease: IO });
+
+  // once the chosen route has faded in, the shared ask bar (components/Ask.jsx) looks again on a scroll event, so the
+  // header's ask stays an outline beside the route's own solid button: one solid fill at a time
+  const first = useRef(true);
+  useEffect(() => {
+    if (first.current) { first.current = false; return; }
+    const t = setTimeout(() => dispatchEvent(new Event('scroll')), 450);
+    return () => clearTimeout(t);
+  }, [at]);
 
   // phones: the jacks are a swipe row, so the chosen one slides into view (the row scrolls, never the page)
   useEffect(() => {
@@ -398,7 +410,7 @@ export default function Contact() {
   const go = useGo();
   const [curtain] = useState(() => typeof document !== 'undefined' && document.documentElement.classList.contains('x-arriving'));
   return (
-    <main className="vc xct" style={{ '--acc': '#0a0a0a' }} data-ask-name="Contact" data-go={go || undefined}>
+    <main className="vc xct" style={{ '--acc': '#0a0a0a' }} data-ask-name="Contact">
       <section className="xct-hero" aria-labelledby="xct-h1">
         <div className="vc-grid xct-hero-g">
           <div className="xct-hero-c">
@@ -414,7 +426,7 @@ export default function Contact() {
       <section className="xct-visit" data-room="dark" aria-labelledby="xct-visit-h">
         <div className="vc-grid xct-visit-g">
           <div className="xct-visit-c">
-            <MaskLines id="xct-visit-h" lines={['Visit']} className="vc-display" />
+            <MaskLines id="xct-visit-h" lines={['Visit']} className="vc-headline" />
             <p className="vc-headline xct-addr">1 Ferry Building</p>
             <p className="vc-lede xct-city">San Francisco, CA 94105</p>
           </div>
