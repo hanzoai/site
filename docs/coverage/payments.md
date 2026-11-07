@@ -4,7 +4,7 @@ Page file: `components/pages/apps/Payments.jsx` · gallery: `docs/gallery/paymen
 
 Open copy questions for James: none new. ("Try Hanzo" is kept as the ask until `lib/cta.js` lands; the order "6735", amount 2000 and connector 'adyen' on the phone are Hanzo's own request sample, not new figures.)
 Shared changes requested (`docs/requests/payments.md`): none.
-Forks this page deleted: the raw `.x-btn` hero and close asks (now `BizAsk`), the v1 `Get` block and `Rise` fade-ups (24), the hand-written step list beside the phone, the `data-cursor` label, the page-level AskBar, every spring.
+Forks this page deleted: the raw `.x-btn` hero and close asks and the interim `BizAsk` (now the kit `Cta`), the v1 `Get` block and `Rise` fade-ups (24), the hand-written step list beside the phone, the `data-cursor` label, the page-level AskBar, every spring.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
 
@@ -23,7 +23,7 @@ Done here: the top comment carries Persona, Goal, CTA, `Metric: signup_start`, S
 - [x] Breadcrumb at depth 2 or more (n/a: depth 1)
 - [x] Link parity: 0 removed, 0 unexpected
 
-Done here: every link is `A`, `More` or `BizAsk` (which wraps `A`); parity reports links 6/6; the BizOpen cards open panels, and every panel link is a real `<a>` in the server HTML.
+Done here: every link is `A`, `More` or the kit `Cta` (which wraps `A`); parity reports links 6/6; the BizOpen cards open panels, and every panel link is a real `<a>` in the server HTML.
 
 ## 3. First impression and page narrative
 - [x] Sells in 5 s; something moves within 1 s without input
@@ -36,12 +36,12 @@ Done here: every link is `A`, `More` or `BizAsk` (which wraps `A`); parity repor
 Done here: the h1 "Hanzo Payments" cuts in by CSS line mask (no JS), the caption sits under it; the phone starts its checkout within 1 s. The audit finds 0 inline `opacity:0` runs in the hero's server HTML; the phone's top sits at 258px at 1470×801 and 388px at 375×812 (272px of product inside 660px).
 
 ## 4. Conversion system
-- [x] `<Cta>` only; no raw `.x-btn` (kit `BizAsk` until `<Cta>` merges)
+- [x] `<Cta>` only; no raw `.x-btn`
 - [x] Sticky ask in header and bar after the hero, same label (the site's shared ask bar reads `data-thumb`)
 - [x] Copy button copies exactly the displayed text; failure never says Copied (the kit `Code` copy)
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: hero `BizAsk to="/login" thumb="Try Hanzo" cta="payments.hero"`, close `cta="payments.close"`; the shared bar takes the hero's `data-thumb`, so the same "Try Hanzo" follows the reader. "Explore APIs", "API Reference", "Deploy to Cloud" and "Contact Sales" are text links.
+Done here: hero `<Cta to="/login" id="payments.hero" thumb>`, close `<Cta id="payments.close">`, "Explore APIs" is `<Cta kind="link" id="payments.apis">`; the header carries the same "Try Hanzo" on desktop and the phone bar reads the hero's `data-thumb`. "Explore APIs", "API Reference", "Deploy to Cloud" and "Contact Sales" are text links.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
