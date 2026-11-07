@@ -15,7 +15,7 @@ import { motion, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Copy, Mark } from '../ui';
 import { A, Cta } from '../kit';
 import { play } from '../../lib/sound';
-import Lines from '../v2/x-edison/AppLines';
+import Lines from './cli/Cut';
 import '../v2/AppType.css';
 import './CliPage.css';
 
@@ -49,7 +49,9 @@ function Session({ onDone, paused, runKey }) {
     const run = async () => {
       rows.current.forEach((el, i) => { if (el && i < 2) el.textContent = ''; });
       setN(1);
-      await wait(350);
+      // the h1 paints first: wait for the fonts and the h1's own cut-in (about 760 ms) before the first keystroke
+      if (runKey === 0) { try { await Promise.race([document.fonts?.ready, new Promise((r) => setTimeout(r, 1200))]); } catch {} await wait(820); }
+      else await wait(350);
       for (let i = 0; i < SESSION.length && alive; i++) {
         setN(i + 1);
         const el = rows.current[i], txt = SESSION[i][1];
@@ -73,7 +75,7 @@ function Session({ onDone, paused, runKey }) {
           <span className="cli-p" aria-hidden={i > 1 ? 'true' : undefined}>{p}</span>
           <span className="cli-tx">
             <span className="cli-ghost" aria-hidden="true">{t}</span>
-            <span className="cli-typed"><span ref={(el) => (rows.current[i] = el)}>{t}</span>{i === n - 1 && i < 2 && <span className="cli-caret" aria-hidden="true" />}</span>
+            <span className="cli-typed"><span ref={(el) => (rows.current[i] = el)}>{t}</span>{((i === n - 1 && i < 2) || (i === SESSION.length - 1 && n > SESSION.length)) && <span className="cli-caret" aria-hidden="true" />}</span>
           </span>
           {i === 2 && <span className={'cli-spin' + (n === 3 ? ' on' : '')} ref={spin} aria-hidden="true">{SPIN[0]}</span>}
         </li>
@@ -102,13 +104,12 @@ function Hero() {
             <A to="/desktop">Desktop</A>
             <A to="/cloud/api-keys">API Keys</A>
           </nav>
-          <span className="cli-who x-mono">Hanzo CLI · Developers</span>
           <button type="button" className="cli-ctl" onClick={ctl} aria-label={done ? 'Replay' : 'Pause'} aria-pressed={done ? undefined : paused}>
             {done ? <IconReplay /> : paused ? <IconPlay /> : <IconPause />}
           </button>
         </div>
         <div className="cli-body">
-          <h1 id="cli-h1" className="av-display cli-h1"><span>An AI engineer</span> <span>in your terminal</span></h1>
+          <h1 id="cli-h1" className="av-display cli-h1"><span className="cli-m"><span>An AI engineer</span></span> <span className="cli-m"><span>in your terminal</span></span></h1>
           <p className="av-lede cli-lede">Type <code>hanzo</code> in a repo and you get a coding session. Type <code>hanzo</code> and a noun and you get the rest of the cloud — identity, usage, billing, clusters, machines, networks — typed straight from the API&apos;s own document.</p>
           <Session onDone={setDone} paused={paused} runKey={runKey} />
           <div className="cli-acts">
@@ -126,7 +127,10 @@ function Hero() {
             <p className="cli-note">Example project. Every name in it is one you would give your own.</p>
           </div>
         </div>
-        <p className="cli-status">Open source (MIT). One static Rust binary — macOS and Linux on amd64 and arm64, Windows on amd64. No runtime, no daemon.</p>
+        <div className="cli-status">
+          <p>Open source (MIT). One static Rust binary — macOS and Linux on amd64 and arm64, Windows on amd64. No runtime, no daemon.</p>
+          <span className="cli-who x-mono">Hanzo CLI · Developers</span>
+        </div>
       </div>
     </section>
   );
@@ -139,7 +143,7 @@ function Paste() {
     <section className="cli-paste">
       <div className="av-wrap av-grid">
         <div className="cli-prompt">
-          <code>{text}</code>
+          <code>{text}<span className="cli-caret" aria-hidden="true" /></code>
           <Copy text={text} />
           <span className="cli-prompt-k x-mono">Agent prompt</span>
         </div>
@@ -169,6 +173,7 @@ const TOUR = [[0, 0], [5, 0], [3, 0], [6, 0], [4, 0], [8, 1], [1, 0]];
 function Print({ cmd, desc }) {
   const ref = useRef(null);
   const calm = useReducedMotion();
+  const first = useRef(cmd); // the first command is the server frame: its description is in the HTML at full opacity
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -188,7 +193,7 @@ function Print({ cmd, desc }) {
           <span className="cli-typed"><span ref={ref}>{cmd}</span><span className="cli-caret" aria-hidden="true" /></span>
         </span>
       </p>
-      <motion.p className="cli-what" key={desc + cmd} initial={calm ? false : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE, delay: Math.min(0.9, cmd.length * 0.026 + 0.15) }}>
+      <motion.p className="cli-what" key={desc + cmd} initial={calm || cmd === first.current ? false : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: Math.min(0.9, cmd.length * 0.026 + 0.15) }}>
         <span aria-hidden="true"># </span>{desc}
       </motion.p>
     </div>
@@ -203,7 +208,10 @@ function Tree() {
   const [paused, setPaused] = useState(false);
   const ref = useRef(null);
   const seen = useInView(ref, { amount: 0.35 });
-  const calm = useReducedMotion();
+  const rm = useReducedMotion();
+  const [up, setUp] = useState(false);
+  useEffect(() => setUp(true), []);
+  const calm = up && rm; // the server and the first client render agree; reduced motion applies after mount
   const touring = !mine && !calm && k < TOUR.length - 1;
   useEffect(() => {
     if (!touring || !seen || paused) return; // it walks the tree once, then rests; a press anywhere hands it to you
@@ -276,6 +284,21 @@ const WHAT = [
   ['hanzo api', 'No raw-path escape hatch', 'There is no hanzo api verb and no URL to hand-write. Every cloud capability arrives as a typed subcommand, which is what keeps the CLI and the API from disagreeing.'],
 ];
 
+function Claim({ c, t, d, i }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.6 });
+  return (
+    <li ref={ref} className={(i === 2 ? 'no ' : '') + (seen ? 'in' : '')} style={{ '--n': c.length + 2 }}>
+      <span className="cli-win" aria-hidden="true">
+        <span className="cli-win-bar"><i /><i /><i /><b className="x-mono av-num">{String(i + 1).padStart(2, '0')}</b></span>
+        <span className="cli-three-c x-mono"><span className="cli-win-l"><span>$ </span>{i === 2 ? <s>{c}</s> : c}</span><span className="cli-caret" /></span>
+      </span>
+      <h3 className="av-title"><span className="cli-three-n x-mono av-num">{String(i + 1).padStart(2, '0')}</span>{t}</h3>
+      <p className="av-body">{d}</p>
+    </li>
+  );
+}
+
 function What() {
   return (
     <section className="av-sec cli-what-sec" aria-labelledby="cli-tree-h">
@@ -286,13 +309,7 @@ function What() {
         </div>
         <Tree />
         <ol className="cli-three">
-          {WHAT.map(([c, t, d], i) => (
-            <li key={t} className={i === 2 ? 'no' : ''}>
-              <span className="cli-three-c x-mono" aria-hidden="true"><span>$ </span>{i === 2 ? <s>{c}</s> : c}</span>
-              <h3 className="av-title"><span className="cli-three-n x-mono av-num">{String(i + 1).padStart(2, '0')}</span>{t}</h3>
-              <p className="av-body">{d}</p>
-            </li>
-          ))}
+          {WHAT.map(([c, t, d], i) => <Claim key={t} c={c} t={t} d={d} i={i} />)}
         </ol>
       </div>
     </section>
@@ -369,19 +386,19 @@ hanzo billing balance`;
 const BASE = SCRIPT.split('\n\n');
 const EXTRA = CAPS.filter(([c]) => c.startsWith('hanzo ')).map(([c, t]) => ['# ' + t + '\n' + c, t, c]);
 
-function Block({ b, i, added }) {
+function Block({ b, i, added, last }) {
   const [c, ...lines] = b.split('\n');
   const calm = useReducedMotion();
   const body = (
     <>
       <span className="cli-blk-n x-mono av-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-      <pre><span className="cli-c">{c}</span>{'\n'}{lines.map((l) => <span key={l} className="cli-ln">{l}{'\n'}</span>)}</pre>
+      <pre><span className="cli-c">{c}</span>{'\n'}{lines.map((l, j) => <span key={l} className="cli-ln">{l}{last && j === lines.length - 1 && <span className="cli-caret" aria-hidden="true" />}{'\n'}</span>)}</pre>
       <Copy text={lines.join('\n')} label="Copy" className="cli-blk-cp" />
     </>
   );
   if (!added) return <div className="cli-blk">{body}</div>;
   return (
-    <motion.div className="cli-blk add" initial={calm ? false : { clipPath: 'inset(0 100% 0 0)', opacity: 0.4 }} animate={{ clipPath: 'inset(0 0% 0 0)', opacity: 1 }} transition={{ duration: 0.6, ease: EASE }}>
+    <motion.div className="cli-blk add" initial={calm ? false : { clipPath: 'inset(0 100% 0 0)', opacity: 0.4 }} animate={{ clipPath: 'inset(0 0% 0 0)', opacity: 1 }} transition={{ duration: 0.5, ease: EASE }}>
       {body}
     </motion.div>
   );
@@ -423,7 +440,7 @@ function Start() {
             <Copy text={blocks.join('\n\n')} label="Copy script" />
           </div>
           <div className="cli-script-body">
-            {blocks.map((b, i) => <Block key={b} b={b} i={i} added={i >= BASE.length} />)}
+            {blocks.map((b, i) => <Block key={b} b={b} i={i} added={i >= BASE.length} last={i === blocks.length - 1} />)}
           </div>
         </div>
       </div>

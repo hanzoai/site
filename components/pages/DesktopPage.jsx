@@ -45,6 +45,16 @@ const MSGS = [
 // the run log beside the thread: Hanzo's own steps from the thread, each with its state drawn as a shape
 const STEPS = [['Read 14 files.', 5], ['gateway/limit.go', 6], ['100 req/min per key', 7], ['Tests pass.', 8]];
 
+// the file the thread names, drawn as the file: gateway/limit.go, 100 req/min per key (the visual of Hanzo's own example)
+const CODE = [
+  'package gateway',
+  '',
+  '// 100 req/min per key',
+  'func Limit(next http.Handler) http.Handler {',
+  '  return rate.PerKey(100, time.Minute, next)',
+  '}',
+];
+
 const Tick = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 /* ---------- the hero window: it puts itself together, then builds the limiter. s = 0..9 ---------- */
@@ -132,10 +142,13 @@ function Window({ os }) {
               </li>
             ))}
           </ol>
-          <div className="dk-test">
-            <span className="x-mono">100 req/min per key</span>
-            <i className="dk-test-bar"><b /></i>
-            <span className="dk-pass"><Tick />Tests pass</span>
+          <pre className="dk-code x-mono">
+            {CODE.map((l, i) => <span key={i} className={'dk-ln' + (l.startsWith('//') ? ' cm' : '')} style={{ '--l': i }}><em>{i + 1}</em>{l || ' '}</span>)}
+          </pre>
+          <div className="dk-test x-mono">
+            <span className="dk-test-cmd">$ go test ./gateway</span>
+            <span className="dk-test-out">ok  gateway  100 req/min per key</span>
+            <span className="dk-pass"><Tick />Tests pass.</span>
           </div>
         </div>
       </div>
@@ -188,14 +201,19 @@ const POINTS = [
   ['MCP is how it reaches your tools', 'Agents speak the Model Context Protocol, so a tool you have already connected elsewhere works here without a second integration written for this app.'],
 ];
 
+// a line of real text that is always there in grey and inks itself in when its chapter plays (never an empty bar)
+const Ink = ({ children, className = '' }) => (
+  <span className={'dk-ink ' + className}><span className="dk-ink-b">{children}</span><span className="dk-ink-t">{children}</span></span>
+);
+
 function Scaffold({ on }) {
   return (
     <div className={'dk-vis dk-new' + (on ? ' on' : '')} aria-hidden="true">
       <div className="dk-pane">
         <div className="dk-new-h"><span className="dk-pane-h"><span className="dk-ico"><Mark size={13} /></span><b>Desktop</b></span><span className="dk-run"><i />Running</span></div>
-        <div className="dk-fld f1"><em className="x-mono">job</em><span className="dk-val"><span className="dk-wipe">{MSGS[0][1]}</span></span></div>
+        <div className="dk-fld f1"><em className="x-mono">job</em><span className="dk-val"><Ink className="dk-wipe">{MSGS[0][1]}</Ink></span></div>
         <div className="dk-fld f2"><em className="x-mono">tools</em><span className="dk-val"><span className="dk-chip">MCP</span></span></div>
-        <div className="dk-fld f3"><em className="x-mono">model</em><span className="dk-val"><span className="dk-chip ac">Local</span></span></div>
+        <div className="dk-fld f3"><em className="x-mono">model</em><span className="dk-val"><span className="dk-chip ac">Local model</span></span></div>
       </div>
     </div>
   );
@@ -218,13 +236,14 @@ function PerAgent({ on }) {
 
 function Together({ on }) {
   const lines = ['Read 14 files.', 'Wrote gateway/limit.go', 'Tests pass.'];
+  const SUBS = ['gateway · payments', '100 req/min per key', 'one place, every route'];
   return (
     <div className={'dk-vis dk-tog' + (on ? ' on' : '')} aria-hidden="true">
       <div className="dk-flow">
         {lines.map((l, i) => (
           <div key={l} className="dk-pane dk-node" style={{ '--i': i }}>
             <span className="dk-pane-h"><span className="dk-ico"><Mark size={13} /></span><b className="x-mono">{l}</b></span>
-            <i className="dk-node-bar"><b /></i>
+            <Ink className="dk-node-sub x-mono">{SUBS[i]}</Ink>
             <span className="dk-node-ok"><Tick /></span>
           </div>
         ))}

@@ -12,7 +12,7 @@
    pointer, each figure's own characters rise into place (only Hanzo's figure is ever drawn, never an in-between
    number), a pressed figure travels to its sentence and marks it, the wall's frames wipe open on arrival. Deck motion
    tokens only (90/150/300/400/500 ms, ease-emphasis), no springs.
-   V2: 8/10 on the deck: black room opening from a card, 84→52 name, 21px lede and 64px Air figures (never an in-between number), chapters as wiping 100svh scenes, frames wall, next-launch card; kit Img and Cta; nothing floating */
+   V2: 8/10 on the deck: black room opening from a card (a graphite ledger of the launch's own figures holds the room when its picture cannot load; the contour stops under reduced motion), 84→52 name, 21px lede and 64px Air figures (never an in-between number), chapters as wiping 100svh scenes, frames wall, next-launch card; kit Img and Cta; nothing floating */
 // Signature: the campaign as scene changes: each chapter a 100svh scene that wipes up over the last (scrubbed clip-path), its picture pushing in
 // Beyond: where each figure comes from: press a headline figure, the page travels to the sentence that states it and marks it, else the case study PDF
 // Persona: enterprise buyer or founder checking that Hanzo has delivered results for others (Buy journey)
@@ -93,10 +93,11 @@ function Hero({ doc, ask }) {
   return (
     <section ref={box} className="xst-hero" data-room="dark" data-hero={doc.slug} data-ready={ready ? '' : undefined} data-bare={bare || undefined} aria-labelledby="xst-h1">
       {/* the black room enters as a rounded card inside the gutters and opens to full width */}
-      <motion.div className="xst-cover" data-morph-target initial={{ clipPath: 'inset(0px 32px 0px 32px round 24px)' }} animate={{ clipPath: 'inset(0px 0px 0px 0px round 0px)' }} transition={{ duration: 0.8, ease: EASE_IO, delay: 0.1 }}>
+      <motion.div className="xst-cover" data-morph-target initial={calm ? false : { clipPath: 'inset(0px 32px 0px 32px round 24px)' }} animate={{ clipPath: 'inset(0px 0px 0px 0px round 0px)' }} transition={{ duration: 0.8, ease: EASE_IO, delay: 0.1 }}>
         {doc.cover && <span className="xst-cover-in"><Pic img={doc.cover} priority box="hero" /></span>}
         <span className="xst-scrim" aria-hidden="true" />
-        <Sigil seed={doc.route} data={nums} className="xst-sigil" />
+        {/* still={calm}: the contour stops (one frame) the moment reduced motion is on, also when it is switched on later */}
+        <Sigil seed={doc.route} data={nums} className="xst-sigil" still={calm} />
       </motion.div>
       <div className="xst-hero-in">
         <nav className="xst-crumb" aria-label="Breadcrumb">
@@ -112,8 +113,24 @@ function Hero({ doc, ask }) {
           <p className="xst-meta x-mono"><span>{doc.year}</span><i aria-hidden="true" /><span>{doc.kind}</span></p>
           {ask && <Cta to={ask.href} id="customers.hero" size="lg" thumb className="xst-ask">{ask.label}</Cta>}
         </div>
+        {bare && doc.figures.length > 0 && <Ledger figures={doc.figures} calm={calm} />}
       </div>
     </section>
+  );
+}
+
+/* when the launch's picture cannot load, the room still holds a real object: the launch's own figures on a graphite
+   plate (Hanzo's values and labels, exactly as the header prints them; aria-hidden, the figures section below is the
+   readable copy). It wipes open once, then each figure's characters rise into place, never an in-between number. */
+function Ledger({ figures, calm }) {
+  const [first, ...rest] = figures;
+  return (
+    <motion.div className="xst-ledger" aria-hidden="true" data-in=""
+      initial={calm ? false : { clipPath: 'inset(0% 0% 100% 0% round 20px)' }} animate={{ clipPath: 'inset(0% 0% 0% 0% round 20px)' }}
+      transition={{ duration: 0.5, ease: EM, delay: 0.3 }}>
+      <span className="xst-ledger-a"><Figure value={first.value} /><span>{first.label}</span></span>
+      {rest.length > 0 && <span className="xst-ledger-r">{rest.map((f) => <span key={f.value}><b>{f.value}</b><span>{f.label}</span></span>)}</span>}
+    </motion.div>
   );
 }
 

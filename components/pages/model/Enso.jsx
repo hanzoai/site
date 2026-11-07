@@ -186,8 +186,8 @@ const py = (s) => Math.round((540 - ((s - 75) / 25) * 500) * 100) / 100;
 const money = (c) => '$' + (c < 1 ? c.toFixed(3) : c.toFixed(2));
 
 function Gpqa() {
-  const box = useRef(null);
-  const seen = useInView(box, { amount: 0.35 });
+  const box = useRef(null), plot = useRef(null);
+  const seen = useInView(plot, { amount: 0.35 }); // the plot, not the whole (tall) section, so the tour starts when the chart is in view
   const once = useInView(box, { once: true, amount: 0.25 });
   const [sel, setSel] = useState(OTHERS.findIndex((g) => g[0] === 'Opus 5.5'));
   const [mine, setMine] = useState(false);
@@ -213,7 +213,7 @@ function Gpqa() {
         <div className="lv-stats eo-figs">
           {[...ENSO].reverse().map((g) => <Stat key={g[0]} value={`${g[1].toFixed(1)}%`} label={g[0]} note={`${money(g[2])} per 1,000 questions`} />)}
         </div>
-        <div className="eo-plotwrap">
+        <div className="eo-plotwrap" ref={plot}>
           <svg className="eo-plot" viewBox="0 0 1000 600" role="group" aria-label="GPQA Diamond % against $ per 1,000 questions">
             {[75, 80, 85, 90, 95, 100].map((v) => (
               <g key={v}><line x1="70" x2="970" y1={py(v)} y2={py(v)} className="eo-grid" /><text x="56" y={py(v) + 5} textAnchor="end" className="eo-tick">{v}</text></g>
@@ -340,7 +340,10 @@ function Spec() {
     <section className="lv-sec eo-spec" aria-labelledby="eo-spec-h">
       <div className="x-wrap">
         <div className="lv-sh">
-          <h2 id="eo-spec-h" className="lv-h">One endpoint for every frontier model.</h2>
+          <div className="eo-spec-h">
+            <svg className="eo-spec-ring" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 8a42 42 0 1 1-30.4 13" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" /></svg>
+            <h2 id="eo-spec-h" className="lv-h">One endpoint for every frontier model.</h2>
+          </div>
           <p className="lv-p">Enso routes each request for quality, speed and cost.</p>
         </div>
         <DataTable

@@ -26,6 +26,16 @@
 .eo-l { display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; font-weight: 500; color: var(--ink); text-decoration: none; text-underline-offset: 4px; }
 @media (hover: hover) { .eo-l:hover { text-decoration: underline; } }
 .eo-l:active { transform: translateY(1px); }
+/* the tier rail answers a hover: the row steps in and its number darkens (transform only, no layout jump) */
+#eo-tiers .lv-ch-rail button { transition: color .15s cubic-bezier(0, 0, .2, 1), transform .3s var(--ease); }
+#eo-tiers .lv-ch-rail button .mb-tnum { transition: color .15s cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) {
+  #eo-tiers .lv-ch-rail button:hover { color: var(--ink); transform: translateX(6px); }
+  #eo-tiers .lv-ch-rail button:hover .mb-tnum { color: var(--ink); }
+}
+#eo-tiers .lv-ch-rail button:active { transform: translateX(6px) scale(.97); transition-duration: .09s; }
+/* the tiers not being read keep their links out of reach once their words have faded (no stacked invisible links) */
+#eo-tiers[data-live] .lv-ch-t:not([data-on]) .eo-l { visibility: hidden; transform: scale(0); transition: visibility 0s .3s, transform 0s .3s; }
 
 /* the dark room */
 .eo-live .lv-h { max-width: 14ch; }
@@ -70,9 +80,19 @@
 .eo-send { grid-area: send; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, .08); }
 .eo-all { margin: 28px 4px 0; }
 
-/* GPQA explorer */
-.eo-figs { --c: 3; }
-.eo-figs .x-stat:first-child .x-stat-v { color: var(--ink); }
+/* GPQA explorer: Enso Ultra's figure is the one big thing (8 of 13 columns); Enso and Enso Flash stack beside it at medium */
+.eo-figs.lv-stats { grid-template-columns: repeat(13, minmax(0, 1fr)); column-gap: 27px; }
+.eo-figs.lv-stats > .x-stat { grid-column: 9 / 14; padding: 24px 0 20px 27px; border-left: 1px solid rgba(0, 0, 0, .1); }
+.eo-figs.lv-stats > .x-stat:first-child { grid-column: 1 / 9; grid-row: 1 / 3; padding: 32px 0 8px; border-left: 0; justify-content: flex-end; }
+.eo-figs.lv-stats > .x-stat:nth-child(3) { border-top: 1px solid rgba(0, 0, 0, .1); }
+.eo-figs.lv-stats > .x-stat:first-child .x-stat-v { font-size: clamp(5rem, 9vw, 8.5rem); font-weight: 220; letter-spacing: -.05em; color: var(--ink); }
+.eo-figs.lv-stats > .x-stat:not(:first-child) .x-stat-v { font-size: 32px; font-weight: 400; letter-spacing: -.02em; color: var(--ink); }
+.eo-figs.lv-stats > .x-stat:not(:first-child) .x-stat-l { font-size: 15px; }
+/* the spec heading carries Enso's ring, breathing: a slow sway and swell, never a spin (stops with the page pause and reduced motion) */
+.eo-spec-h { display: flex; align-items: center; gap: 18px; }
+.eo-spec-ring { flex: none; width: 44px; height: 44px; color: var(--ink); animation: eo-breathe 5s cubic-bezier(.65, 0, .35, 1) infinite alternate; }
+@keyframes eo-breathe { from { transform: rotate(-14deg) scale(.88); } to { transform: rotate(14deg) scale(1); } }
+[data-mpaused] .eo-spec-ring, [data-mpaused] .eo-enso { animation-play-state: paused; }
 .eo-plotwrap { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 48px; align-items: start; margin-top: clamp(72px, 8vw, 120px); }
 .eo-plot { width: 100%; height: auto; overflow: visible; }
 .eo-grid { stroke: rgba(0, 0, 0, .07); }
@@ -126,6 +146,14 @@
   .eo-lane { grid-template-columns: 1fr; padding: 16px; }
   .eo-last { grid-column: 1; grid-row: auto; }
   .eo-plotwrap { grid-template-columns: 1fr; gap: 24px; margin-top: 36px; }
+  .eo-figs.lv-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; }
+  .eo-figs.lv-stats > .x-stat { grid-column: auto; padding: 22px 0; border-left: 0; border-top: 1px solid rgba(0, 0, 0, .1); }
+  .eo-figs.lv-stats > .x-stat:first-child { grid-column: 1 / -1; grid-row: auto; padding: 28px 0 24px; border-top: 0; }
+  .eo-figs.lv-stats > .x-stat:nth-child(3) { padding-left: 20px; border-left: 1px solid rgba(0, 0, 0, .1); }
+  .eo-figs.lv-stats > .x-stat:first-child .x-stat-v { font-size: 72px; }
+  .eo-figs.lv-stats > .x-stat:not(:first-child) .x-stat-v { font-size: 26px; }
+  .eo-figs.lv-stats > .x-stat:not(:first-child) .x-stat-n { font-size: 14px; }
+  .eo-spec-ring { width: 34px; height: 34px; }
   .eo-read { position: static; }
   .eo-tick, .eo-axis { font-size: 40px; }
   .eo-axis { font-size: 34px; }
@@ -134,4 +162,4 @@
   .eo-dot circle:first-of-type { r: 13px; }
   .eo-dot.enso circle:first-of-type { r: 16px; }
 }
-@media (prefers-reduced-motion: reduce) { .eo-enso { animation: none; } .eo-lane[data-hit]::after { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .eo-enso, .eo-spec-ring { animation: none; } .eo-lane[data-hit]::after { animation: none; } }

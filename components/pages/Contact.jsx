@@ -7,7 +7,7 @@
    Goal: reach the right people in one choice.
    CTA: "Talk to sales" (/contact-sales), data-cta contact.hero; metric: the one contact click (contact_sales_submit downstream).
    Signature: a patch panel. Four jacks sit across the top; a cable hangs from the jack you choose into the route
-   below, its plug lifting out of one socket and seating in the next (500ms, ease-in-out, no spring). On arrival the
+   below, its plug lifting out of one socket and seating in the next (400ms, ease-emphasis, no spring). On arrival the
    cable alone sweeps the four sockets once and lands back on Sales; the Sales route and its button stay put until
    you choose. Phones keep the cable: a short wire from the chosen pill down into its route.
    Supporting (3): masked kinetic headline, once, after the curtain has cleared the top; the live clock; the
@@ -22,6 +22,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useReducedMotion } from 'motion/react';
 import { A, Go, Band } from '../kit';
+import { copyText } from '../ui';
 import Sigil from '../Sigil';
 import MaskLines from './company/MaskLines';
 import useArrived from './company/useArrived';
@@ -31,7 +32,7 @@ import './Contact.css';
 
 const EM = [0.16, 1, 0.3, 1]; // deck ease-emphasis (arrivals)
 const IO = [0.4, 0, 0.2, 1]; // deck ease-in-out (things that move and stay)
-const SWING = { duration: 0.5, ease: IO };
+const SWING = { duration: 0.4, ease: EM }; // the plug lifts and seats: ease-emphasis, no spring, no overshoot
 const LINES = [
   { k: 'Sales', go: 'Talk to sales' },
   { k: 'Developer Dispatch', go: 'Subscribe to newsletter' },
@@ -55,23 +56,25 @@ function useGo() {
   return go;
 }
 
-/* Copy hello@hanzo.ai: an icon that turns into a drawn tick; its name is for screen readers only (no new visible words). */
+/* Copy hello@hanzo.ai: the icon turns into a drawn tick and a visible "Copied" slides out beside it (role=status), only
+   when the copy really happened (clipboard API, then the select-and-copy fallback phones need; the kit's chime). */
 function CopyMail({ text }) {
   const [ok, setOk] = useState(false);
   const t = useRef(0);
+  useEffect(() => () => clearTimeout(t.current), []);
   return (
-    <button type="button" className="xct-cp" aria-label={ok ? 'Copied' : 'Copy ' + text}
-      onClick={async () => {
-        let done = true;
-        try { await navigator.clipboard.writeText(text); } catch { done = false; }
-        if (!done) return;
-        setOk(true); clearTimeout(t.current); t.current = setTimeout(() => setOk(false), 1600);
-      }}>
-      {ok
-        ? <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><motion.path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.3, ease: EM }} /></svg>
-        : <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><rect x="5" y="5" width="8.5" height="8.5" rx="2" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M10.5 3.2V3a.8.8 0 0 0-.8-.8H3a.8.8 0 0 0-.8.8v6.7c0 .44.36.8.8.8h.2" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>}
-      <span className="x-sr" role="status">{ok ? 'Copied' : ''}</span>
-    </button>
+    <span className="xct-cpw">
+      <button type="button" className={'xct-cp' + (ok ? ' ok' : '')} aria-label={'Copy ' + text} data-sound=""
+        onClick={async () => {
+          if (!(await copyText(text))) return; // a failed copy never says "Copied"
+          setOk(true); clearTimeout(t.current); t.current = setTimeout(() => setOk(false), 1800);
+        }}>
+        {ok
+          ? <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><motion.path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.3, ease: EM }} /></svg>
+          : <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><rect x="5" y="5" width="8.5" height="8.5" rx="2" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M10.5 3.2V3a.8.8 0 0 0-.8-.8H3a.8.8 0 0 0-.8.8v6.7c0 .44.36.8.8.8h.2" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>}
+      </button>
+      <span className={'xct-cpt' + (ok ? ' on' : '')} role="status" aria-live="polite">{ok ? 'Copied' : ''}</span>
+    </span>
   );
 }
 
@@ -359,9 +362,12 @@ const NETS = [
   ['Instagram', 'https://www.instagram.com/hanzoinc'],
 ];
 
-/* The community: a big index of Hanzo's channels beside a contour plate. The plate follows the row you scroll to
-   (on phones too, where it rides at the top while the rows pass) and the row you point at or focus; it redraws from
-   that channel's own address with a short cross-fade, its name rising in. */
+/* The community: an index of Hanzo's channels beside a contour plate, in three sizes: names at section-heading size
+   (26px), each over its own address in small mono (the link's own words, https:// dropped), and the plate's big name.
+   Only the row you are on grows (scale 1.3, 400ms ease-emphasis) and settles back as you leave it. The plate follows
+   the row you scroll to and the row you point at or focus; it redraws from that channel's own address with a short
+   cross-fade, its name rising in. On phones the plate rides at the top without its name (the row below already says it). */
+const where = (u) => u.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
 function Community() {
   const [on, setOn] = useState(0);
   const [hyd, setHyd] = useState(false);
@@ -382,20 +388,20 @@ function Community() {
       <div className="vc-grid">
         <div className="xct-com-l">
           <MaskLines id="xct-com-h" lines={['Join the community']} className="vc-headline" />
-          <div className="xct-plate" aria-hidden="true">
+          <div className="xct-plate-m"><div className="xct-plate" aria-hidden="true">
             <motion.div key={u} className="xct-plate-s" initial={hyd ? { opacity: 0 } : false} animate={{ opacity: 1 }} transition={{ duration: 0.3, ease: EM }}>
               <Sigil seed={u} data={[n.length, u.length]} />
             </motion.div>
             <span className="xct-plate-w">
               <motion.span key={n} className="xct-plate-n" initial={hyd ? { y: '100%' } : false} animate={{ y: 0 }} transition={{ duration: 0.3, ease: EM }}>{n}</motion.span>
             </span>
-          </div>
+          </div></div>
         </div>
         <ul className="xct-nets" onPointerLeave={() => { hover.current = false; }}>
           {NETS.map(([name, url], i) => (
             <li key={name} ref={(el) => { rows.current[i] = el; }} data-i={i}>
               <A to={url} className={'xct-net' + (on === i ? ' on' : '')} data-cursor="Open" onPointerEnter={() => { hover.current = true; setOn(i); }} onFocus={() => setOn(i)}>
-                <span className="xct-net-n">{name}</span>
+                <span className="xct-net-t"><span className="xct-net-n">{name}</span><span className="xct-net-u" aria-hidden="true">{where(url)}</span></span>
                 <svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </A>
             </li>
