@@ -214,20 +214,16 @@ html.js .mcp-via.mcp-wipe { animation-delay: .42s; }
 .mcp-cfg-copy .a2-headline { margin: 0; }
 .mcp-cfg-copy .a2-body { margin: 20px 0 24px; }
 .mcp-ref { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font: 500 16px/1 var(--sans); color: #fafafa; text-decoration: none; }
-.mcp-ref span { display: inline-block; transition: transform .3s var(--a2-ease); }
-.mcp-ref:active span { transform: translateX(2px); }
-@media (hover: hover) { .mcp-ref:hover span { transform: translateX(5px); } }
+.mcp-ref svg { flex: none; transition: transform .3s var(--a2-ease); }
+.mcp-ref:active svg { transform: translateX(2px); }
+@media (hover: hover) { .mcp-ref:hover svg { transform: translateX(5px); } }
 .mcp-codes { grid-column: 7 / span 6; display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; min-width: 0; }
 .mcp-codes > div { min-width: 0; }
 .mcp-code-c { margin: 0 0 10px; font-size: 13px; line-height: 1.5; color: #a3a3a3; white-space: normal; overflow-wrap: anywhere; }
 /* the bash block: one row per command, each with its own Copy; "$ " and Hanzo's "#" notes are shown, never copied */
 .mcp-sh-rows { list-style: none; margin: 0; padding: 8px 6px; }
 .mcp-sh-rows li { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 6px 6px 6px 12px; border-radius: 10px; }
-.mcp-sh-line { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 18px; font-size: 14px; line-height: 1.5; color: #e5e5e5; }
-.mcp-sh-line code { font: inherit; white-space: nowrap; }
-.mcp-sh-p, .mcp-sh-note { color: #737373; user-select: none; -webkit-user-select: none; }
-.mcp-sh-cmd { white-space: nowrap; }
-.mcp-sh-note { color: #a3a3a3; }
+.mcp-sh-line { flex: 1; min-width: 0; padding-left: 5ch; text-indent: -5ch; font-size: 14px; line-height: 1.5; color: #e5e5e5; white-space: pre-wrap; overflow-wrap: anywhere; }
 .mcp-sh .x-copy { flex: none; }
 .mcp-sh.go li { animation: mcp-sh-step 1.4s calc(var(--k) * 1.3s) ease-in-out 1 both; }
 @keyframes mcp-sh-step { 0%, 100% { background: transparent; } 30%, 70% { background: rgba(255, 255, 255, .07); } }

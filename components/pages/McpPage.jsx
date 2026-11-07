@@ -106,7 +106,7 @@ function Hero() {
             <span className="mcp-h1-d"><Lines lines={['The complete MCP runtime', 'for coding, decisions,', 'browser, and cloud']} /></span>
             <span className="mcp-h1-p"><Lines lines={['The complete MCP', 'runtime for', 'coding, decisions,', 'browser, and cloud']} /></span>
           </h1>
-          <p className="a2-kick show mcp-cap"><b>Hanzo MCP</b> · 260+ tools · 117 cloud services</p>
+          <p className="a2-kick show mcp-cap">Hanzo MCP · 260+ tools · 117 cloud services</p>
           <p className="a2-lede mcp-lede">Give any model a filesystem, shell, semantic AST code index, Kai sub-10ms decisions, Playwright &amp; Chrome DevTools browser control, issue tracking, persistent memory, and 1,538 typed Hanzo Cloud operations over stdio or streamable HTTP.</p>
           <div className="a2-acts">
             <Cta to={ALL} id="mcp.hero" thumb>Browse 260+ tools</Cta>
@@ -149,9 +149,11 @@ function Figures() {
   const seen = useInView(ref, { once: true, amount: 0.5 }); // the "+" signs breathe three times on arrival, then rest
   useEnter(ref, { ms: 2200, amount: 0.5 });
   return (
-    <section ref={ref} className={'a2-sec mcp-figs' + (seen ? ' seen' : '')} aria-label="38 unified action tools + 1,538 Cloud operations + 260+ specialized servers">
+    <section ref={ref} className={'a2-sec mcp-figs' + (seen ? ' seen' : '')}>
       <div className="a2-wrap">
-        <p className="mcp-sum">
+        {/* Hanzo's line whole, for readers; the rolling digits below are its picture */}
+        <p className="x-sr">38 unified action tools + 1,538 Cloud operations + 260+ specialized servers</p>
+        <p className="mcp-sum" aria-hidden="true">
           <span className="mcp-f"><Fig v="38" /> <span>unified action tools</span></span>
           <span className="mcp-plus" aria-hidden="true">+</span>
           <span className="mcp-f"><Fig v="1,538" d={0.12} /> <span>Cloud operations</span></span>
@@ -394,9 +396,10 @@ const CONFIG = `// .mcp.json — add Hanzo MCP to any MCP client
 
 /* the config split in two: a .mcp.json that copies as valid JSON, and the shell lines; each copies exactly what it shows */
 const JSON_BLOCK = CONFIG.split('\n').slice(1, 9).join('\n');
-/* the shell lines: one Copy per command, so a paste never queues a blocking `hanzo mcp` before `-t sse`, and Hanzo's
-   `#` notes stay on screen as unselectable annotations (default zsh has no interactive comments, so they never ride along) */
-const SHELL = [['npm i -g hanzo'], ['hanzo mcp', '# stdio; the binary downloads on first run'], ['hanzo mcp -t sse', '# or over HTTP']];
+/* the shell lines, shown exactly as Hanzo writes them ("//   hanzo mcp   # stdio; …", one line each), with one Copy per
+   command that copies the bare command only, so a paste never carries the "//" or the "#" note and never queues a
+   blocking `hanzo mcp` before `-t sse` */
+const SHELL = CONFIG.split('\n').slice(-3).map((line) => [line.replace(/^\/\/\s+/, '').split(/\s+#/)[0].trim(), line]);
 
 function Shell() {
   const ref = useRef(null);
@@ -405,9 +408,9 @@ function Shell() {
     <figure ref={ref} className={'x-codeblock mcp-sh' + (seen ? ' go' : '')} data-room="dark">
       <figcaption className="x-codeblock-h"><span>bash</span></figcaption>
       <ol className="mcp-sh-rows">
-        {SHELL.map(([cmd, note], i) => (
+        {SHELL.map(([cmd, line], i) => (
           <li key={cmd} style={{ '--k': i }}>
-            <span className="mcp-sh-line x-mono"><span className="mcp-sh-cmd"><span className="mcp-sh-p" aria-hidden="true">$ </span><code>{cmd}</code></span>{note && <span className="mcp-sh-note">{note}</span>}</span>
+            <span className="mcp-sh-line x-mono">{line}</span>
             <Copy text={cmd} label="Copy" />
           </li>
         ))}
@@ -427,7 +430,7 @@ function Config() {
           <h2 id="mcp-cfg-h" className="a2-headline">One config block</h2>
           <p className="a2-kick show mcp-cap">Get started</p>
           <p className="a2-body">Use the --package= form for local stdio, or point any MCP client directly at https://api.hanzo.ai/v1/mcp over streamable HTTP.</p>
-          <A to={ALL} className="mcp-ref">All MCP Tools Reference <span aria-hidden="true">→</span></A>
+          <A to={ALL} className="mcp-ref">All MCP Tools Reference<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A>
         </div>
         <div className="mcp-codes">
           <div className="mcp-cur" style={{ '--c': 1 }}>
