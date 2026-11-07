@@ -31,6 +31,7 @@
 .xbr-pause { position: absolute; right: 24px; bottom: 72px; z-index: 2; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border-radius: 50%; border: 1px solid var(--b-line); background: var(--b-white); color: var(--b-ink); cursor: pointer; transition: background-color 150ms, transform .12s; -webkit-mask-image: none; }
 .xbr-pause:active { transform: scale(.94); }
 @media (hover: hover) { .xbr-pause:hover { background: var(--b-raised); } }
+@media (prefers-reduced-motion: reduce) { .xbr-pause { display: none; } .xbr-ticks { opacity: 1; } } /* nothing turns, so no Pause */
 
 /* 2. principles: a pinned scene; each numeral stands in the principle's own material */
 .xbr-pr { padding-top: clamp(64px, 8vw, 120px); }
@@ -63,7 +64,8 @@
 .xbr-sw.big.dk { box-shadow: inset 0 0 0 1px var(--b-dk-line); } /* Hanzo Black on the black room needs its edge */
 .xbr-sw-t { display: flex; flex-direction: column; gap: 6px; transition: transform 500ms var(--b-out); }
 .xbr-sw-t b { font-size: 17px; font-weight: 497; letter-spacing: -.01em; }
-.xbr-sw.big .xbr-sw-t b { font-size: clamp(28px, 3vw, 44px); letter-spacing: -.04em; }
+.xbr-sw.big .xbr-sw-t b { font-size: clamp(28px, 3vw, 44px); line-height: 1.05; letter-spacing: -.04em; }
+.xbr-sw.big .xbr-sw-t { gap: 10px; }
 .xbr-sw-t .vc-num { font: 500 14px/1 var(--mono); opacity: .75; }
 .xbr-sw.big .xbr-sw-t .vc-num { font-size: 17px; }
 .xbr-ok { position: absolute; top: 18px; right: 18px; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--b-tint); color: currentColor; transition: transform 300ms var(--b-out); }
@@ -92,7 +94,12 @@
 .xbr-grads { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 4fr) minmax(0, 3fr); gap: 24px; }
 .xbr-grad { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: baseline; }
 .xbr-grad span { grid-column: 1 / -1; height: 220px; border-radius: var(--b-r-l); border: 1px solid var(--b-dk-hair); }
-.xbr-grad b { font-size: 17px; font-weight: 497; }
+.xbr-grad span { transition: transform var(--d-slower) var(--b-out), border-color var(--d-fast) var(--e-out); }
+.xbr-grad b { font-size: 17px; font-weight: 497; transition: transform var(--d-slower) var(--b-out); }
+@media (hover: hover) {
+  .xbr-grad:hover span { transform: translateY(-6px); border-color: var(--b-dk-line); }
+  .xbr-grad:hover b { transform: translateX(6px); }
+}
 .xbr-grad small { font: 500 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--b-faint); }
 
 /* 4. type: the signature, a specimen that fills the screen */
@@ -109,11 +116,18 @@
 .xbr-spec-c input:active::-webkit-slider-thumb { transform: scale(1.1); }
 .xbr-scale { grid-column: 5 / 13; list-style: none; margin: 0; padding: 0; }
 .xbr-scale li { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 24px; align-items: baseline; padding: 22px 0; border-top: 1px solid var(--b-line); }
-.xbr-sc-n { font-weight: 497; letter-spacing: -.03em; line-height: 1.05; color: var(--b-ink); }
-.xbr-sc-d { font-size: 17px; color: var(--b-ink2); }
+.xbr-sc-n { font-weight: 497; letter-spacing: -.03em; line-height: 1.05; color: var(--b-ink); transition: transform var(--d-base) var(--b-out); }
+.xbr-sc-d { font-size: 17px; color: var(--b-ink2); transition: color var(--d-fast) var(--e-out); }
+.xbr-scale li { transition: border-color var(--d-fast) var(--e-out); }
+@media (hover: hover) {
+  .xbr-scale li:hover { border-top-color: var(--b-ink); }
+  .xbr-scale li:hover .xbr-sc-n { transform: translateX(10px); }
+  .xbr-scale li:hover .xbr-sc-d { color: var(--b-ink); }
+}
 
 /* 5. components: a bench you can press */
 .xbr-comp { background: var(--b-raised); }
+.xbr .xbr-comp { padding-bottom: clamp(44px, 5vw, 72px); } /* no slack tail: the assets band is the next thing in */
 .xbr-comp-h { grid-column: 1 / 7; display: flex; flex-direction: column; gap: 20px; margin-bottom: 64px; }
 .xbr-bench { padding: clamp(28px, 3vw, 44px); border-radius: var(--b-r-m); background: var(--b-white); display: flex; flex-direction: column; gap: 24px; }
 .xbr-bench.a { grid-column: 1 / 8; }
@@ -142,7 +156,7 @@
 .xbr-badge.ok svg { flex: none; }
 
 /* 6. assets: the marks the ZIP holds, and the one ask */
-.xbr-assets { padding: clamp(120px, 14vw, 220px) 0; }
+.xbr-assets { padding: clamp(44px, 5vw, 72px) 0 clamp(120px, 14vw, 220px); }
 .xbr-dl { grid-column: 1 / 8; padding: clamp(32px, 4vw, 56px); border-radius: var(--b-r-l); background: var(--b-black); color: var(--b-dk-ink); display: flex; flex-direction: column; gap: 40px; }
 .xbr-dl .vc-headline { color: var(--b-dk-ink); max-width: 16ch; }
 .xbr-plates { display: flex; gap: 12px; }
@@ -151,7 +165,8 @@
 .xbr-plates .w { background: var(--b-white); color: var(--b-black); }
 .xbr-plates .g { background: var(--b-ink2); color: var(--b-white); }
 @media (hover: hover) { .xbr-dl:hover .xbr-plates span:nth-child(1) { transform: translateY(-6px) rotate(-3deg); } .xbr-dl:hover .xbr-plates span:nth-child(3) { transform: translateY(-6px) rotate(3deg); } }
-.xbr-dl-a { display: inline-flex; align-items: center; gap: 16px; align-self: flex-start; min-height: 60px; font-size: 19px; font-weight: 497; color: var(--b-dk-ink); text-decoration: none; }
+.xbr-dl-a { display: inline-flex; align-items: center; gap: 16px; align-self: flex-start; min-height: 60px; margin-left: -6px; padding: 6px 24px 6px 6px; border-radius: 999px; font-size: 19px; font-weight: 497; color: var(--b-dk-ink); text-decoration: none; transition: background-color var(--d-fast) var(--e-out); }
+@media (hover: hover) { .xbr-dl-a:hover { background: var(--b-dk-raised); } }
 .xbr-dl-i { display: grid; place-items: center; width: 60px; height: 60px; border-radius: 50%; background: var(--b-dk-ink); color: var(--b-black); transition: transform 500ms var(--b-out); }
 .xbr-dl-a:active .xbr-dl-i { transform: scale(.94); }
 @media (hover: hover) { .xbr-dl-a:hover .xbr-dl-i { transform: translateY(4px); } .xbr-dl-a:hover { text-decoration: underline; text-underline-offset: 6px; } }
@@ -163,12 +178,14 @@
 @media (hover: hover) { .xbr-cp:hover { background: var(--b-raised); } }
 
 @media (max-width: 900px) {
-  .xbr-hero { padding: 104px 0 0; min-height: 0; display: flex; flex-direction: column; }
+  .xbr-hero { padding: 84px 0 0; min-height: 0; display: flex; flex-direction: column; }
   .xbr-hero-g { order: 1; }
   .xbr-dr { order: 2; }
   .xbr-hero-c { gap: 24px; }
-  .xbr-dr { position: relative; width: 100%; height: 360px; margin-top: 24px; -webkit-mask-image: linear-gradient(180deg, transparent, var(--b-black) 18%, var(--b-black) 82%, transparent); mask-image: linear-gradient(180deg, transparent, var(--b-black) 18%, var(--b-black) 82%, transparent); }
-  .xbr-dr svg { width: 300px; margin: 0; }
+  .xbr-dr { position: relative; width: 100%; height: 300px; margin-top: -8px; -webkit-mask-image: linear-gradient(180deg, transparent, var(--b-black) 18%, var(--b-black) 82%, transparent); mask-image: linear-gradient(180deg, transparent, var(--b-black) 18%, var(--b-black) 82%, transparent); }
+  .xbr-dr svg { width: 260px; margin: 0; } /* the mark builds inside the first phone screen */
+  .xbr-grays .xbr-sw { transform: none !important; } /* the fan is a desktop strip move; in the 2-column grid all six show in place */
+  .xbr-grays .xbr-sw:active .xbr-sw-t, .xbr-grays .xbr-sw:active .xbr-ok { transform: scale(.97); } /* the press, kept */
   .xbr-pause { right: 20px; bottom: 20px; }
   .xbr-pr { padding-top: 72px; }
   .xbr-pr .vc-wrap { width: min(100% - 40px, 1440px); }

@@ -114,7 +114,7 @@ Done here: The assets panel shows the three logo plates the ZIP holds (mark on b
 - [x] Primary ask above the fold at 375×667
 
 Done here:
-- At 375 the h1, lede and both asks come first and the drawing follows. The principles stack with their numerals, the swatches go 2 across and the contrast list 1 column.
+- At 375 the h1, lede and both asks come first and the drawing follows inside the first screen (84px top, 260px drawing; the mark builds at y 566 to 597 of 812). All six grays show in the 2-column grid (the fan is desktop only; the press stays). The principles stack with their numerals, the swatches go 2 across and the contrast list 1 column.
 - At 360 and under, the assets headline is 30px and the segment labels do not wrap.
 
 ## 12. Accessibility (WCAG 2.2 AA)
@@ -132,7 +132,7 @@ Done here: The heading order is h1, then h2 (each principle, Color Palette, Typo
 - [x] No poller; no third-party request
 - [x] Nothing heavy run on James's laptop
 
-Done here: The one continuous mover (the compass) runs only while the hero is seen. The tick coordinates are rounded so the server and browser markup match (no hydration warning).
+Done here: The one continuous mover (the compass) runs only while the hero is seen. The tick coordinates are rounded so the server and browser markup match (no hydration warning). No markup depends on reduced motion: the Pause button always renders (CSS hides it under reduce) and the drawing's `on` class is set after mount; 0 console errors at 1470 and 375, with and without reduced motion.
 
 ## 14. SEO and machine files
 - [x] Title and description match live
@@ -164,6 +164,6 @@ Done here: All figures are computed or static, so there is no loading state. The
 - [x] `data-cta` on every primary (through `Cta`)
 - [x] Nothing identifier-bearing before consent
 - [x] `V2: 8/10 …` in the page file's top comment
-- [ ] Review read: `docs/review/brand.md` was 6/10; every listed fix is done, awaiting re-review
+- [ ] Review read: `docs/review/brand.md` round 2 was 7/10; all six fixes are done, awaiting re-review
 
-Done here: Re-walked 7 Nov (v3-): fixed the colour room's "Brand Colors", "Gray Scale" and "Gradients" h3s, which deck.css's `.vc .vc-title` had set ink on black (now #fafafa); added the colour swap scene. The review's six fixes are done in its order: the arrival after the curtain and a live hero; scenes instead of a list; JS off; the signature in view; the hero split from /press; and the tidy list (except the ZIP mirror, which is requested). Gallery: `docs/gallery/brand/` (v3-desktop.jpg, v3-phone.jpg, v3-colour-swap.jpg, v3-desktop-walk.webm).
+Done here: Round 2 (7/10) fixes: all six phone grays (fan triggered by the strip, desktop only); no hydration error under reduced motion; big swatch title at line-height 1.05; Components to the assets band now 72 + 72px (was 235 + 206); the mark builds in the first phone screen; hovers on the gradient cards (lift), scale rows (ink rule, name nudges) and the ZIP row (pill fill). Earlier, re-walked 7 Nov (v3-): fixed the colour room's "Brand Colors", "Gray Scale" and "Gradients" h3s, which deck.css's `.vc .vc-title` had set ink on black (now #fafafa); added the colour swap scene. The review's six fixes are done in its order: the arrival after the curtain and a live hero; scenes instead of a list; JS off; the signature in view; the hero split from /press; and the tidy list (except the ZIP mirror, which is requested). Gallery: `docs/gallery/brand/` (v3-desktop.jpg, v3-phone.jpg, v3-colour-swap.jpg, v3-desktop-walk.webm).

@@ -1,6 +1,7 @@
 'use client';
 /* /brand. Story page (treated so; MASTER 4), Hanzo's deck only.
-   V2: 8/10 (7 Nov re-walk: colour-room h3s visible again on black, the contrast board swaps White to Black and back
+   V2: 8/10 (round 2: six grays on phone, no reduced-motion hydration error, mark in the first phone screen, hovers on
+   gradients, scale rows and the ZIP row, no slack after Components. 7 Nov re-walk: colour-room h3s visible again on black, the contrast board swaps White to Black and back
    once in view with a gliding pill, compass ticks arrive after their circle, CSS colours on deck tokens.)
    A brand book that is a drawing, in Hanzo's own black, white and greys. The hero is the mark's
    construction drawn full-bleed across the stage (not a card): once the curtain lifts, the guides draw, the five
@@ -80,10 +81,13 @@ function Drawing({ mx, my }) {
     const c = animate(turn, turn.get() + 360, { duration: 60, ease: 'linear', repeat: Infinity });
     return () => c.stop();
   }, [calm, go, live, spin, turn]);
+  // class set after mount: the server never knows the reduced-motion setting, so markup never depends on it
+  const [on, setOn] = useState(false);
+  useEffect(() => { if (go) setOn(true); }, [go]);
   const g = [0, 22.3, 44.6, 67];
   const draw = (k) => ({ initial: { pathLength: 0 }, animate: go ? { pathLength: 1 } : undefined, transition: { duration: 1.1, ease: EASE, delay: k } });
   return (
-    <div className={'xbr-dr' + (go ? ' on' : '')} ref={ref}>
+    <div className={'xbr-dr' + (on ? ' on' : '')} ref={ref}>
       <svg viewBox="-60 -60 187 187" aria-hidden="true">
         {g.map((v, i) => (
           <g key={v}>
@@ -102,13 +106,12 @@ function Drawing({ mx, my }) {
         </motion.g>
         {PIECES.map((d, i) => <Piece key={i} d={d} i={i} go={go} open={open} mx={mx} my={my} />)}
       </svg>
-      {!calm && (
-        <button type="button" className="xbr-pause" aria-label={spin ? 'Pause' : 'Replay'} aria-pressed={!spin} onClick={() => setSpin((v) => !v)}>
-          {spin
-            ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
-            : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.2v9.6L12.5 8z" fill="currentColor" /></svg>}
-        </button>
-      )}
+      {/* always rendered (same markup on server and client); CSS hides it under reduced motion, where nothing turns */}
+      <button type="button" className="xbr-pause" aria-label={spin ? 'Pause' : 'Replay'} aria-pressed={!spin} onClick={() => setSpin((v) => !v)}>
+        {spin
+          ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
+          : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.2v9.6L12.5 8z" fill="currentColor" /></svg>}
+      </button>
     </div>
   );
 }
@@ -193,9 +196,11 @@ const CopyIcon = ({ ok }) => (ok
   ? <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><motion.path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.3 }} /></svg>
   : <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><rect x="5" y="5" width="8.5" height="8.5" rx="2" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M10.5 3.2V3a.8.8 0 0 0-.8-.8H3a.8.8 0 0 0-.8.8v6.7c0 .44.36.8.8.8h.2" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>);
 
-function Swatch({ name, hex, big, dark, i = 0, fan }) {
+// The fan is triggered by the strip (the parent), not each swatch: a swatch tucked behind its neighbour inside the
+// clipped strip can never be 70% visible itself. Below 900px the CSS shows the six in place (no fan).
+function Swatch({ name, hex, big, dark, i = 0, fan, open }) {
   const [ok, go] = useCopy(hex);
-  const enter = fan ? { initial: { x: `${-i * 100}%` }, whileInView: { x: '0%' }, viewport: { once: true, amount: 0.7 }, transition: { duration: 0.8, ease: EASE, delay: 0.1 + (5 - i) * 0.04 } } : {};
+  const enter = fan ? { initial: { x: `${-i * 100}%` }, animate: open ? { x: '0%' } : undefined, transition: { duration: 0.8, ease: EASE, delay: 0.1 + (5 - i) * 0.04 } } : {};
   return (
     <motion.button type="button" className={'xbr-sw' + (big ? ' big' : '') + (dark ? ' dk' : '')} style={{ '--c': hex, zIndex: fan ? 6 - i : undefined }} onClick={go} whileTap={{ scale: 0.97 }} transition={{ duration: 0.09 }} aria-label={`${name} ${hex}`} aria-pressed={ok} {...enter}>
       <span className="xbr-sw-t"><b>{name}</b><span className="vc-num">{hex}</span></span>
@@ -260,6 +265,8 @@ function Reads() {
 }
 
 function Colour() {
+  const strip = useRef(null);
+  const fanOpen = useInView(strip, { once: true, amount: 0.6 });
   return (
     <section className="vc-sec xbr-col" data-room="dark" aria-labelledby="xbr-col-h">
       <div className="vc-grid xbr-col-g">
@@ -270,7 +277,7 @@ function Colour() {
         <h3 className="vc-title xbr-sub">Brand Colors</h3>
         <div className="xbr-brand"><Swatch name="Hanzo Black" hex="#0A0A0B" big dark /><Swatch name="Hanzo White" hex="#FFFFFF" big /></div>
         <h3 className="vc-title xbr-sub">Gray Scale</h3>
-        <div className="xbr-grays">{GRAYS.map(([n, h], i) => <Swatch key={n} name={n} hex={h} dark={h !== '#A3A3A3'} i={i} fan />)}</div>
+        <div className="xbr-grays" ref={strip}>{GRAYS.map(([n, h], i) => <Swatch key={n} name={n} hex={h} dark={h !== '#A3A3A3'} i={i} fan open={fanOpen} />)}</div>
         <Reads />
         <h3 className="vc-title xbr-sub">Gradients</h3>
         <div className="xbr-grads">{GRADS.map(([n, k, bg]) => <div key={n} className="xbr-grad"><span style={{ background: bg }} /><b>{n}</b><small>{k}</small></div>)}</div>
