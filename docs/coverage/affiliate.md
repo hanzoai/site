@@ -14,7 +14,7 @@ Forks this page deleted: the forked xp-cta button colours (now kit `Cta` sized b
 - [x] No dead or self-looping button; prices from `lib/plans.js`
 - [x] Open copy questions for James listed, none decided
 
-Done here: Header comment in `app/affiliate/page.jsx` names Persona, Goal, CTA, Metric `contact_click`, Signature, Beyond. One solid per screen: the kit `Cta` "Apply" (hero `affiliate.hero`, close `affiliate.close`); the header's Try Hanzo turns outline while it is on screen. No copy questions.
+Done here: Header comment in `app/affiliate/page.jsx` names Persona, Goal, CTA, Metric `contact_click`, Signature, Beyond. One solid per screen: the kit `Cta` "Apply" (hero `affiliate.hero`, close `affiliate.close`); the header's Try Hanzo turns outline while it is on screen (desktop by the shared header; on phones the page sets the shared `html[data-ask=quiet]` hook while its own Apply is in view). No copy questions.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -32,7 +32,7 @@ Done here: One `<main>` from the layout's `#main`; links via `A`/`Cta`; /referra
 - [ ] Ends in proof strip, `Band`, footer
 - ~~Card-to-page links use Morph; title lands within 12px~~ n/a: no cards on this page.
 
-Done here: First screen at 1470×801 holds the h1 (52px, top 265), lede, Apply and the whole link (64px mono, bottom 650). No label above the h1; "Refer customers to Hanzo" (52px) cuts in by CSS line mask from the first paint, then the link writes itself once within 1 s of being reached (CSS from an empty first frame, so nothing is wiped and retyped; JS off shows it whole). `PageHero` is not in the kit yet: the hero is page-local (headline, lede, one Cta). The page ends on its own light close (headline + Apply) then the footer; kit `Band` would be a second dark room back to back with the rule room. JS off: `NoJs` shows every final state.
+Done here: First screen at 1470×801 holds the h1 (52px, top 265), lede, Apply and the whole link (64px mono, bottom 650). No label above the h1; "Refer customers to Hanzo" (52px) cuts in by CSS line mask from the first paint, then the link writes itself once from the first paint: typed by 0.8 s, `<code>` marked by 1.1 s (CSS, so nothing is wiped and retyped; JS off shows it whole). The link band hands straight into "How it works" (no bottom padding; the stage starts 96px under the caption), and the pin is 0.55 viewport per step (2563px for 4 steps). `PageHero` is not in the kit yet: the hero is page-local (headline, lede, one Cta). The page ends on its own light close (headline + Apply) then the footer; kit `Band` would be a second dark room back to back with the rule room. JS off: `NoJs` shows every final state.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -148,7 +148,7 @@ Done here: The one endpoint `POST /v1/affiliate/apply` copies exactly as shown; 
 - ~~A failed submit keeps its values and shows no success~~ n/a: no form.
 - [x] A thrown island does not blank the page
 
-Done here: Static Hanzo copy; nothing to load or fail. With JS off every state is final and legible.
+Done here: Static Hanzo copy; nothing to load or fail. With JS off every state is final and legible; the four steps sit in a 2-column grid inside the 1152px container, the POST bar unclipped.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary; events only through `lib/track.js`
