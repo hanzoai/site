@@ -12,13 +12,11 @@
    Every word, link and line of code is Hanzo's (hanzo.ai/integrations). */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { play } from '../../../lib/sound';
-import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { Copy } from '../../ui';
 import { A, More } from '../../kit';
 import { Loose } from '../models/parts';
 import Logo from './logos';
-import SceneWipe from './Wipe';
-import MaskLines from './Mask';
 import '../../v2/ProofScale.css';
 import '../../v2/ProofRhythm.css';
 import './IntegrationsIndex.css';
@@ -52,7 +50,8 @@ function Hub({ cards, base, held, setHeld }) {
       </div>
       <ul className="xii-ring" aria-label="Every integration">
         {cards.map((c, i) => (
-          <li key={c.href} style={{ '--a': (i / n) * 360 + 'deg' }}>
+          // entrance 1 (explode-gather): each mark starts flung out from its place and gathers into the ring
+          <li key={c.href} style={{ '--a': (i / n) * 360 + 'deg', '--ex': (((i * 73) % 200) - 100) * 2.4 + 'px', '--ey': (((i * 47) % 200) - 100) * 1.8 + 'px', '--i': i }}>
             <A to={c.href} className="xii-sat" aria-label={c.name} onPointerEnter={() => setHot(c)} onPointerLeave={() => setHot(null)} onFocus={() => setHot(c)} onBlur={() => setHot(null)}>
               <Logo slug={c.slug} name={c.name} />
             </A>
@@ -82,6 +81,7 @@ function Starter({ samples, base }) {
   const [held, setHeld] = useState(false);
   const box = useRef(null);
   const seen = useInView(box, { amount: 0.4 });
+  const arrived = useInView(box, { once: true, amount: 0.25 });
   const calm = useReducedMotion();
   const auto = seen && !calm && !held;
   // the editor switches language on its own until you pick one or press Pause (one timer per step, no interval)
@@ -129,6 +129,11 @@ function Starter({ samples, base }) {
         ))}
       </div>
       <div className="xii-win-f pf-mono"><span>{base}</span><span>{samples[on].lang}</span></div>
+      {/* entrance 2 (pixel-resolve): the editor is covered by coarse blocks of its own colour that clear, block by
+          block in a scattered order, as it arrives; the code underneath is whole all along */}
+      <span className="xii-px" aria-hidden="true" data-in={arrived ? '' : undefined}>
+        {Array.from({ length: 14 * 6 }, (_, k) => <i key={k} style={{ '--d': ((k * 37) % 84) * 9 + 'ms' }} />)}
+      </span>
     </div>
   );
 }
@@ -208,6 +213,31 @@ function Catalogue({ groups, label, previews = {} }) {
   const calm = useReducedMotion();
   const gridRef = useRef(null);
   const gridIn = useInView(gridRef, { once: true, amount: 0.05 });
+  /* the signature (MOTION-MAP: h-gallery): on a desktop the catalogue pins under the header and the vertical scroll
+     drives its cards sideways, one long track, then lets go. Its length is the track's overflow, measured. Phones and
+     reduced motion keep the plain list. */
+  const hgRef = useRef(null);
+  const viewRef = useRef(null);
+  const [hg, setHg] = useState(false);
+  const [dist, setDist] = useState(0);
+  useEffect(() => {
+    const mq = matchMedia('(min-width: 900px) and (prefers-reduced-motion: no-preference)');
+    const on = () => setHg(mq.matches);
+    on();
+    mq.addEventListener('change', on);
+    return () => mq.removeEventListener('change', on);
+  }, []);
+  useEffect(() => {
+    if (!hg) return;
+    const fit = () => { const v = viewRef.current, u = gridRef.current; if (v && u) setDist(Math.max(0, u.scrollWidth - v.clientWidth)); };
+    fit();
+    const ro = new ResizeObserver(fit);
+    gridRef.current && ro.observe(gridRef.current);
+    viewRef.current && ro.observe(viewRef.current);
+    return () => ro.disconnect();
+  }, [hg, shown.length]);
+  const { scrollYProgress } = useScroll({ target: hgRef, offset: ['start start', 'end end'] });
+  const x = useTransform(scrollYProgress, (v) => -Math.min(1, Math.max(0, v)) * dist);
   const keys = (e) => {
     const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
     if (!d) return;
@@ -217,6 +247,8 @@ function Catalogue({ groups, label, previews = {} }) {
   };
   return (
     <section className="pf-sec xii-cat" id="all" aria-labelledby="xii-cat-h">
+      <div className="xii-hg" ref={hgRef} data-on={hg ? '' : undefined} style={hg ? { '--dist': dist + 'px' } : undefined}>
+      <div className="xii-hg-pin">
       <div className="pf-wrap">
         <div className="xii-cat-top">
           <h2 className="pf-head" id="xii-cat-h">{fam === 'All' ? label : fam}</h2>
@@ -240,9 +272,11 @@ function Catalogue({ groups, label, previews = {} }) {
             <button type="button" className="xii-none-a" onClick={() => { setQ(''); setFam('All'); }}><span>All</span><span className="pf-mono">{cards.length}</span></button>
           </div>
         )}
-        {/* the cards open in place (their own morph, so the site's page-turn stage stays out of it); the grid arrives
-            as one list when it is reached */}
-        <ul className="xii-grid" aria-live="polite" data-no-morph ref={gridRef} data-in={gridIn ? '' : undefined}>
+      </div>
+        {/* the cards open in place (their own morph, so the site's page-turn stage stays out of it); entrance 3
+            (orbit-in): the cards swing into their places on a curve when the catalogue is reached */}
+        <div className="xii-hg-view" ref={viewRef}>
+        <motion.ul className="xii-grid" aria-live="polite" data-no-morph ref={gridRef} data-in={gridIn ? '' : undefined} style={hg ? { x } : undefined}>
           <AnimatePresence initial={false} mode="popLayout">
             {cards.map((c, i) => {
               const on = shown.includes(c);
@@ -272,8 +306,71 @@ function Catalogue({ groups, label, previews = {} }) {
               );
             })}
           </AnimatePresence>
-        </ul>
-        <AnimatePresence>{open && <Open key={open.slug} c={open} p={previews[open.slug]} onClose={shut} />}</AnimatePresence>
+        </motion.ul>
+        </div>
+      </div>
+      </div>
+      <AnimatePresence>{open && <Open key={open.slug} c={open} p={previews[open.slug]} onClose={shut} />}</AnimatePresence>
+    </section>
+  );
+}
+
+/* ---------- paste and ship: the closing black room ----------
+   entrance 4 (typewriter): its heading types itself out with a caret when the room is reached;
+   entrance 5 (cursor-lens): a round lens sweeps across the agent prompt once as it arrives, magnifying what it passes,
+   then follows the pointer over the prompt. The words are whole in the HTML all along (the server renders them typed). */
+function Paste({ doc }) {
+  const room = useRef(null);
+  const seen = useInView(room, { once: true, amount: 0.3 });
+  const word = doc.paste.kicker;
+  const [n, setN] = useState(word.length);
+  const lens = useRef(null);
+  const [lensOn, setLensOn] = useState(false);
+  const place = (x, y) => { const el = lens.current; if (el) { el.style.setProperty('--lx', x + 'px'); el.style.setProperty('--ly', y + 'px'); } };
+  useEffect(() => {
+    if (!seen || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let k = 0, t = 0;
+    setN(0);
+    const step = () => { k++; setN(k); if (k < word.length) t = setTimeout(step, 70); };
+    t = setTimeout(step, 250);
+    // the lens's first pass: left to right across the prompt's middle, about 1.4 s, then it waits for the pointer
+    const el = lens.current;
+    let raf = 0;
+    if (el) {
+      const w = el.clientWidth, h = el.clientHeight, t0 = performance.now() + 500;
+      setLensOn(true);
+      const go = (now) => { const p = Math.min(1, Math.max(0, (now - t0) / 1400)); place(40 + p * (w - 80), h * 0.45); if (p < 1) raf = requestAnimationFrame(go); else setLensOn(false); };
+      raf = requestAnimationFrame(go);
+    }
+    return () => { clearTimeout(t); cancelAnimationFrame(raf); };
+  }, [seen, word.length]);
+  const move = (e) => {
+    if (e.pointerType !== 'mouse') return;
+    const r = lens.current.getBoundingClientRect();
+    place(e.clientX - r.left, e.clientY - r.top);
+    setLensOn(true);
+  };
+  const code = <code><span className="xii-caret" aria-hidden="true">›</span>{doc.paste.code}</code>;
+  return (
+    <section className="xii-paste" data-room="dark" aria-label={word} ref={room}>
+      <div className="pf-sec">
+        <div className="pf-wrap pf-grid">
+          <div className="xii-paste-a">
+            <h2 className="pf-head xii-paste-h">
+              <span className="x-sr">{word}</span>
+              <span aria-hidden="true">{word.slice(0, n)}<i className={'xii-tw-c' + (n < word.length ? ' on' : '')} /></span>
+            </h2>
+            <p className="pf-lede xii-paste-l">{doc.paste.lede}</p>
+            <A to={doc.actions[0].href} className="pf-btn xii-band-ask" data-cta="integrations.band">{doc.actions[0].label}</A>
+          </div>
+          <div className="xii-prompt">
+            <div className="xii-prompt-h"><span className="pf-mono">{doc.paste.label}</span><Copy text={doc.paste.code} label="Copy the agent prompt" className="xii-copy" /></div>
+            <div className="xii-prompt-b" onPointerMove={move} onPointerLeave={() => setLensOn(false)}>
+              <pre tabIndex={0}>{code}</pre>
+              <div className="xii-lens" ref={lens} aria-hidden="true" data-on={lensOn ? '' : undefined}><div className="xii-lens-in"><pre>{code}</pre></div></div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -317,23 +414,7 @@ export default function IntegrationsIndex({ doc, previews }) {
       <Catalogue groups={doc.groups} label={doc.label || 'Integrations'} previews={previews} />
       </div>
 
-      {doc.paste && (
-        <SceneWipe className="xii-paste" label={doc.paste.kicker}>
-          <div className="pf-sec">
-            <div className="pf-wrap pf-grid">
-              <div className="xii-paste-a">
-                <MaskLines as="h2" className="pf-head xii-paste-h" lines={[doc.paste.kicker]} />
-                <p className="pf-lede xii-paste-l">{doc.paste.lede}</p>
-                <A to={doc.actions[0].href} className="pf-btn xii-band-ask" data-cta="integrations.band">{doc.actions[0].label}</A>
-              </div>
-              <div className="xii-prompt">
-                <div className="xii-prompt-h"><span className="pf-mono">{doc.paste.label}</span><Copy text={doc.paste.code} label="Copy the agent prompt" className="xii-copy" /></div>
-                <pre tabIndex={0}><code><span className="xii-caret" aria-hidden="true">›</span>{doc.paste.code}</code></pre>
-              </div>
-            </div>
-          </div>
-        </SceneWipe>
-      )}
+      {doc.paste && <Paste doc={doc} />}
     </main>
   );
 }
