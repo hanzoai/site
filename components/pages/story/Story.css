@@ -28,7 +28,9 @@
 
 /* 1. the stage: a black room that enters as a rounded card inside the gutters and opens to full width */
 .xst-hero { position: relative; height: calc(100svh - var(--x-top, 60px) - 56px); min-height: 560px; color: #fafafa; background: #fff; overflow: hidden; }
-.xst-cover { position: absolute; inset: 0; background: #000; }
+.xst-cover { position: absolute; inset: 0; background: #000; animation: xst-open 800ms var(--e-io) 100ms both; }
+@keyframes xst-open { from { clip-path: inset(0px 32px 0px 32px round 24px); } to { clip-path: inset(0px 0px 0px 0px round 0px); } }
+@keyframes xst-open-s { from { clip-path: inset(0px 8px 0px 8px round 20px); } to { clip-path: inset(0px 0px 0px 0px round 0px); } }
 .xst-cover-in, .xst-cover-in .xst-pic { position: absolute; inset: 0; display: block; }
 .xst-hero .xst-pic { background: #171717; }
 .xst-hero .xst-plate { color: rgba(255, 255, 255, .55); align-items: flex-end; justify-content: flex-start; font: 500 12px/1.4 var(--mono); letter-spacing: .14em; text-transform: uppercase; padding: 27px max(var(--gutter), calc((100vw - 1152px) / 2)) 0; }
@@ -47,14 +49,11 @@
 .xst-meta { display: flex; align-items: center; gap: 14px; margin-top: 27px; color: rgba(255, 255, 255, .78); }
 .xst-meta i { width: 32px; height: 1px; background: rgba(255, 255, 255, .3); }
 .xst-ask { margin-top: 27px; }
-/* the bare room's object (the picture could not load): the launch's own figures on a graphite plate, lower right */
-.xst-ledger { position: absolute; right: 0; bottom: 44px; width: min(400px, 34%); display: flex; flex-direction: column; gap: 17px; padding: 27px; border-radius: 20px; background: #262626; color: #fafafa; }
+/* the bare room's object (the picture could not load): Hanzo's lead figure on a graphite plate, lower right */
+.xst-ledger { position: absolute; right: 0; bottom: 44px; width: min(360px, 32%); display: flex; flex-direction: column; padding: 27px; border-radius: 20px; background: #262626; color: #fafafa; }
 .xst-ledger-a { display: flex; flex-direction: column; gap: 10px; }
 .xst-ledger-a .xst-fig-v { font-size: 64px; }
-.xst-ledger-a > span:last-child, .xst-ledger-r span span { font-size: 14px; line-height: 1.4; color: rgba(255, 255, 255, .78); }
-.xst-ledger-r { display: flex; flex-direction: column; }
-.xst-ledger-r > span { display: grid; grid-template-columns: minmax(0, 9ch) minmax(0, 1fr); column-gap: 17px; align-items: baseline; padding: 10px 0; border-top: 1px solid rgba(255, 255, 255, .1); }
-.xst-ledger-r b { font-size: 21px; font-weight: 220; letter-spacing: -.02em; font-feature-settings: 'tnum'; white-space: nowrap; }
+.xst-ledger-a > span:last-child { font-size: 14px; line-height: 1.4; color: rgba(255, 255, 255, .78); }
 .xst-ledger .xst-ch { animation: xst-rise var(--d-slower) var(--e-em) calc(700ms + var(--k) * 60ms) both; }
 @keyframes xst-rise { from { transform: translateY(105%); } }
 
@@ -78,6 +77,7 @@
   .xst-fig-b:hover::before { transform: scaleX(1); }
   .xst-fig-b:hover .xst-fig-w { color: var(--ink); }
   .xst-fig-b:hover .xst-fig-w i { transform: translateY(3px); }
+  .xst-fig-b:hover .xst-fig-w.up i { transform: translateY(-3px); }
   a.xst-fig-b:hover .xst-fig-w i { transform: translate(2px, -2px); }
   .xst-crumb a:hover { text-decoration: underline; text-underline-offset: 3px; }
 }
@@ -107,6 +107,18 @@
 .xst-h3 { margin: 0 0 17px; font-size: 32px; font-weight: 497; letter-spacing: -.025em; line-height: 1.1; text-wrap: balance; }
 .xst-n { margin-top: 27px; }
 .xst-scene-pic { grid-column: 6 / span 8; height: min(66svh, 640px); border-radius: 20px; }
+/* the compositions vary chapter by chapter (osply-style asymmetry), all on the same 13-column grid */
+.xst-scene[data-lay='b'] .xst-scene-t { grid-column: 9 / span 5; grid-row: 1; }
+.xst-scene[data-lay='b'] .xst-scene-pic { grid-column: 1 / span 8; grid-row: 1; }
+.xst-scene[data-lay='c'] .xst-scene-g { align-content: center; row-gap: 27px; }
+.xst-scene[data-lay='c'] .xst-scene-pic { grid-column: 1 / -1; grid-row: 1; height: min(40svh, 400px); }
+.xst-scene[data-lay='c'] .xst-scene-t { grid-column: 1 / -1; grid-row: 2; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); column-gap: 17px; align-items: start; }
+.xst-scene[data-lay='c'] .xst-h3 { grid-row: 1 / span 2; margin: 0; }
+.xst-scene[data-lay='c'] .xst-n { margin-top: 17px; }
+.xst-scene[data-lay='d'] .xst-scene-t { grid-column: 1 / span 7; }
+.xst-scene[data-lay='d'] .xst-h3 { font-size: 44px; line-height: 1.05; letter-spacing: -.03em; }
+.xst-scene[data-lay='d'] .xst-t { font-size: 17px; }
+.xst-scene[data-lay='d'] .xst-scene-pic { grid-column: 9 / span 5; height: min(70svh, 660px); }
 .xst-scene.bare .xst-scene-t { grid-column: 1 / span 9; }
 .xst-scene.bare .xst-h3 { font-size: 52px; line-height: 1; letter-spacing: -.03em; }
 .xst-scene.bare .xst-t { font-size: 21px; line-height: 1.45; max-width: 52ch; }
@@ -160,11 +172,19 @@
   .xst-hero { min-height: 560px; }
   .xst-sigil { width: 100%; height: 72%; }
   .xst-hero .xst-plate > span { display: none; }
-  .xst-hero-t { top: auto; bottom: 44px; }
-  .xst-ledger { left: 0; right: auto; bottom: auto; top: 72px; width: 100%; padding: 17px 20px; gap: 10px; }
-  .xst-ledger-a .xst-fig-v { font-size: 52px; }
-  .xst-ledger-r > span { padding: 6.5px 0; }
-  .xst-ledger-r b { font-size: 17px; }
+  .xst-cover { animation-name: xst-open-s; }
+  /* phones: the name and the ask read first; the room's object (the lead figure) sits below them, smaller than the h1 */
+  .xst-hero-t { top: 96px; bottom: auto; }
+  .xst-ledger { left: 0; right: auto; bottom: 24px; width: 100%; padding: 17px 20px; }
+  .xst-ledger-a { flex-direction: row; align-items: baseline; gap: 17px; }
+  .xst-ledger-a .xst-fig-v { font-size: 32px; }
+  .xst-scene[data-lay] .xst-scene-t, .xst-scene[data-lay] .xst-scene-pic { grid-row: auto; }
+  .xst-scene[data-lay='c'] .xst-scene-t { display: block; }
+  .xst-scene[data-lay='c'] .xst-h3 { margin: 0 0 17px; }
+  .xst-scene[data-lay='c'] .xst-scene-pic, .xst-scene[data-lay='d'] .xst-scene-pic { height: auto; }
+  .xst-scene[data-lay='c'] .xst-scene-pic { aspect-ratio: 16 / 10; }
+  .xst-scene[data-lay='d'] .xst-h3 { font-size: 26px; }
+  .xst-scene[data-lay='d'] .xst-t { font-size: 16px; }
   .xst-h1 { font-size: 44px; line-height: 1; }
   .xst-meta { flex-wrap: wrap; }
   .xst-lede { font-size: 17px; }
@@ -184,7 +204,7 @@
   .xst-next-t { padding-right: 60px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .xst-cover, .xst-h1 { clip-path: none !important; transform: none !important; }
+  .xst-cover, .xst-h1 { clip-path: none !important; transform: none !important; animation: none !important; }
   .xst-tile .xst-pic, .xst-scene-pic { clip-path: none !important; transition: none !important; }
   .xst-shot, .xst-ch { transform: none !important; transition: none !important; animation: none !important; }
   .xst-ledger { clip-path: none !important; }

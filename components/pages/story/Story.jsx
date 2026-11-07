@@ -36,6 +36,13 @@ const NOJS = '.xst .x-line-in,.xst-h1-s,.xst-scene-t,.xst-scene-pic img,.xst-sho
   + '.xst-scene{position:relative!important;inset:auto!important;display:block!important;clip-path:none!important;padding:clamp(72px,11vw,188px) 0!important}'
   + '.xst-scene-pic,.xst-tile .xst-pic{clip-path:none!important}';
 const calmNow = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+// a keyboard stop that lands off screen is brought into view at once (the smooth scroll would leave it below the fold)
+const reveal = (e) => {
+  const el = e.currentTarget, r = el.getBoundingClientRect();
+  if (r.top >= 72 && r.bottom <= innerHeight - 72) return;
+  const y = r.top + scrollY - innerHeight / 2 + r.height / 2;
+  if (window.__lenis) window.__lenis.scrollTo(y, { immediate: true }); else window.scrollTo({ top: y, behavior: 'instant' });
+};
 const travel = (y) => { if (window.__lenis) window.__lenis.scrollTo(y, { duration: 1.2 }); else window.scrollTo({ top: y, behavior: calmNow() ? 'auto' : 'smooth' }); };
 const marked = (text, m) => {
   if (!m || !text.includes(m)) return text;
@@ -46,23 +53,36 @@ const marked = (text, m) => {
 /* a picture (kit Img, its box reserved) over its own caption plate: if the file cannot load, the plate is what shows
    (quiet: the caption already sits under the frame, so the plate stays plain) */
 const BOX = { hero: [1920, 1080], scene: [1200, 1500], tile: [1200, 1500], shot: [1600, 1000], next: [1600, 900] };
-function Pic({ img, className = '', priority, style, n, box = 'tile', quiet, art, live = true }) {
+const LATE = 1200; // a picture not decoded this long after it is in view counts as missing (it can still arrive later)
+function Pic({ img, className = '', priority, style, n, box = 'tile', quiet, art = true, live = true }) {
   const [w, h] = BOX[box];
   const ref = useRef(null);
   const [bad, setBad] = useState(false);
+  const [near, setNear] = useState(false);
   const calm = useCalm();
-  // `art`: when the picture cannot load, the plate carries a slow contour seeded by the picture's own path (MASTER part
-  // 10, media failure falls back to an aspect-ratio box with Sigil); it pauses off screen and stands still for reduced motion
+  // every plate: when the picture has not arrived 1.2s after it comes into view (or fails), the plate carries a slow
+  // contour seeded by the picture's own path (MASTER part 10, media failure falls back to an aspect-ratio box with
+  // Sigil). The canvas exists only while the plate is near the screen (so never more than a few at once), pauses off
+  // screen, and stands still for reduced motion or when its chapter is not on stage. If the picture arrives, it wins.
   useEffect(() => {
-    const i = art && ref.current && ref.current.querySelector('img');
+    const el = ref.current, i = art && el && el.querySelector('img');
     if (!i) return;
+    const ok = () => i.complete && i.naturalWidth > 0;
+    let t = 0;
     const fail = () => setBad(true);
-    if (i.complete && !i.naturalWidth) fail(); else i.addEventListener('error', fail, { once: true });
-    return () => i.removeEventListener('error', fail);
+    const load = () => { clearTimeout(t); setBad(false); };
+    const io = new IntersectionObserver(([e]) => {
+      setNear(e.isIntersecting);
+      if (e.isIntersecting && !t && !ok()) t = setTimeout(() => { if (!ok()) fail(); }, LATE);
+    }, { rootMargin: '200px 0px' });
+    io.observe(el);
+    if (i.complete && !i.naturalWidth) fail();
+    i.addEventListener('error', fail); i.addEventListener('load', load);
+    return () => { io.disconnect(); clearTimeout(t); i.removeEventListener('error', fail); i.removeEventListener('load', load); };
   }, [art]);
   return (
     <span className={'xst-pic ' + className} data-plate ref={ref}>
-      <span className="xst-plate" aria-hidden="true">{bad && <Sigil seed={img.src} className="xst-pic-sigil" still={calm || !live} />}{n && <b className="x-mono">{n}</b>}{!quiet && <span>{img.alt}</span>}</span>
+      <span className="xst-plate" aria-hidden="true">{bad && near && <Sigil seed={img.src} className="xst-pic-sigil" still={calm || !live} />}{n && <b className="x-mono">{n}</b>}{!quiet && <span>{img.alt}</span>}</span>
       <motion.span className="xst-pic-in" style={style}><Img src={img.src} alt={img.alt} w={w} h={h} priority={priority} /></motion.span>
     </span>
   );
@@ -97,20 +117,28 @@ function Hero({ doc, ask }) {
   const nums = doc.figures.map((f) => parseFloat(f.value.replace(/[^\d.]/g, ''))).filter(Number.isFinite);
   useEffect(() => {
     const el = box.current.querySelector('.xst-cover img');
-    if (!el) return;
-    const done = () => setReady(true);
-    const fail = () => { setBare(true); done(); };
-    if (el.complete) { if (!el.naturalWidth) fail(); else (el.decode ? el.decode().then(done, done) : done()); } else { el.addEventListener('load', done, { once: true }); el.addEventListener('error', fail, { once: true }); }
+    if (!el) { setBare(true); return; }
+    let shown = false;
+    const done = () => { shown = true; setReady(true); setBare(false); };
+    const fail = () => { setBare(true); setReady(true); };
+    // decide on time: if the cover has not decoded ~1.2s after mount, the room shows its object now (the error event
+    // can arrive seconds late); should the picture still arrive, it takes the room back
+    const t = setTimeout(() => { if (!shown) fail(); }, LATE);
+    const load = () => (el.decode ? el.decode().then(done, done) : done());
+    if (el.complete) { if (!el.naturalWidth) fail(); else load(); } else { el.addEventListener('load', load, { once: true }); el.addEventListener('error', fail, { once: true }); }
+    return () => { clearTimeout(t); el.removeEventListener('load', load); el.removeEventListener('error', fail); };
   }, []);
   return (
     <section ref={box} className="xst-hero" data-room="dark" data-hero={doc.slug} data-ready={ready ? '' : undefined} data-bare={bare || undefined} aria-labelledby="xst-h1">
       {/* the black room enters as a rounded card inside the gutters and opens to full width */}
-      <motion.div className="xst-cover" data-morph-target initial={calm ? false : { clipPath: 'inset(0px 32px 0px 32px round 24px)' }} animate={{ clipPath: 'inset(0px 0px 0px 0px round 0px)' }} transition={{ duration: 0.8, ease: EASE_IO, delay: 0.1 }}>
-        {doc.cover && <span className="xst-cover-in"><Pic img={doc.cover} priority box="hero" /></span>}
+      {/* a CSS keyframe (not hydration-gated), inset 32px on desktop and 8px on phones so the crumb and meta at the 16px
+          gutter are never cut off while it opens */}
+      <div className="xst-cover" data-morph-target>
+        {doc.cover && <span className="xst-cover-in"><Pic img={doc.cover} priority box="hero" art={false} /></span>}
         <span className="xst-scrim" aria-hidden="true" />
         {/* still={calm}: the contour stops (one frame) the moment reduced motion is on, also when it is switched on later */}
         <Sigil seed={doc.route} data={nums} className="xst-sigil" still={calm} />
-      </motion.div>
+      </div>
       <div className="xst-hero-in">
         <nav className="xst-crumb" aria-label="Breadcrumb">
           <ol>
@@ -131,23 +159,25 @@ function Hero({ doc, ask }) {
   );
 }
 
-/* when the launch's picture cannot load, the room still holds a real object: the launch's own figures on a graphite
-   plate (Hanzo's values and labels, exactly as the header prints them; aria-hidden, the figures section below is the
-   readable copy). It wipes open once, then each figure's characters rise into place, never an in-between number. */
+/* when the launch's picture cannot load, the room still holds a real object: Hanzo's lead figure on a graphite plate
+   (value and label exactly as the header prints them; aria-hidden, the figures row below is the readable copy, and
+   the full set lives only there, so nothing repeats back to back). It wipes open once, then its characters rise. */
 function Ledger({ figures, calm }) {
-  const [first, ...rest] = figures;
+  const [first] = figures;
   return (
     <motion.div className="xst-ledger" aria-hidden="true" data-in=""
       initial={calm ? false : { clipPath: 'inset(0% 0% 100% 0% round 20px)' }} animate={{ clipPath: 'inset(0% 0% 0% 0% round 20px)' }}
-      transition={{ duration: 0.5, ease: EM, delay: 0.3 }}>
+      transition={{ duration: 0.5, ease: EM, delay: 0.15 }}>
       <span className="xst-ledger-a"><Figure value={first.value} /><span>{first.label}</span></span>
-      {rest.length > 0 && <span className="xst-ledger-r">{rest.map((f) => <span key={f.value}><b>{f.value}</b><span>{f.label}</span></span>)}</span>}
     </motion.div>
   );
 }
 
 function Figures({ doc, mark, onPress }) {
-  const where = (f) => (f.from.step !== undefined ? doc.how.steps[f.from.step].n + ' · ' + doc.how.steps[f.from.step].title : f.from.report ? doc.report.h2 : null);
+  // the source hint, in Hanzo's own words: the chapter's number and title, the report's heading, or (for a figure the lede
+  // states) the launch's name, with an up arrow: the sentence sits just above
+  const where = (f) => (f.from.step !== undefined ? doc.how.steps[f.from.step].n + ' · ' + doc.how.steps[f.from.step].title : f.from.report ? doc.report.h2 : f.from.lede ? doc.name : null);
+  const dir = (f) => (f.from.lede ? '↑' : '↓');
   return (
     <dl className="xst-figs">
       {doc.figures.map((f) => (
@@ -162,7 +192,7 @@ function Figures({ doc, mark, onPress }) {
             ) : (
               <button type="button" className="xst-fig-b" aria-pressed={mark === f.value} onClick={() => onPress(f)} disabled={!f.from}>
                 <Figure value={f.value} /><span className="xst-fig-l">{f.label}</span>
-                {where(f) && <span className="xst-fig-w x-mono" aria-hidden="true"><i>↓</i>{where(f)}</span>}
+                {where(f) && <span className={'xst-fig-w x-mono' + (f.from.lede ? ' up' : '')} aria-hidden="true"><i>{dir(f)}</i>{where(f)}</span>}
               </button>
             )}
           </dd>
@@ -172,17 +202,21 @@ function Figures({ doc, mark, onPress }) {
   );
 }
 
-/* one chapter: a full scene that wipes up over the one before it, then lifts its words away as the next arrives */
+/* one chapter: a full scene that wipes up over the one before it. Its words lift and fade out *before* the next wipe
+   starts (one out, then one in), so the wipe's edge never crosses live words and two paragraphs never splice.
+   Compositions vary by chapter: a (words left, plate right), b (plate left, words right), c (a wide plate over two
+   columns of words), d (a wide column of words beside a narrow portrait plate); the picture-less chapter is words only. */
+const LAYS = ['a', 'b', 'c', 'd'];
 function Scene({ s, i, n, p, mark, calm, last, live }) {
   const t = (v) => v * (n - 1);
   const enter = (v) => (i ? c01((t(v) - (i - 0.8)) / 0.55) : 1);
-  const leave = (v) => c01((t(v) - (i + 0.2)) / 0.55);
+  const leave = (v) => c01((t(v) - (i + 0.06)) / 0.14); // gone by i + 0.2, when the next wipe starts
   const clip = useTransform(p, (v) => `inset(${((1 - enter(v)) * 100).toFixed(2)}% 0% 0% 0%)`);
   const words = useTransform(p, (v) => (1 - enter(v)) * 72 - leave(v) * 44);
-  const fade = useTransform(p, (v) => 1 - leave(v) * 0.85);
+  const fade = useTransform(p, (v) => 1 - leave(v));
   const push = useTransform(p, (v) => 1 + (1 - enter(v)) * 0.12 + leave(v) * 0.03);
   return (
-    <motion.article className={'xst-scene' + (s.img ? '' : ' bare')} id={'xst-step-' + i} data-step={i} data-tone={i % 2 ? 'b' : 'a'} style={i && !calm ? { clipPath: clip } : undefined} aria-labelledby={'xst-st-' + i}>
+    <motion.article className={'xst-scene' + (s.img ? '' : ' bare')} id={'xst-step-' + i} data-step={i} data-lay={s.img ? LAYS[i % LAYS.length] : undefined} data-tone={i % 2 ? 'b' : 'a'} style={i && !calm ? { clipPath: clip } : undefined} aria-labelledby={'xst-st-' + i}>
       <div className="xst-g xst-scene-g">
         <motion.div className="xst-scene-t" style={calm ? undefined : { y: words, opacity: fade }}>
           <h3 id={'xst-st-' + i} className="xst-h3">{s.title}</h3>
@@ -217,7 +251,7 @@ function Wall({ g }) {
       {g.imgs.map((p, i) => (
         <li key={p.src} className="xst-tile" style={{ '--i': i }}>
           <figure>
-            <Pic img={p} quiet art={i < 3} />
+            <Pic img={p} quiet />
             <figcaption>{p.alt}</figcaption>
           </figure>
         </li>
@@ -299,7 +333,7 @@ export default function Story({ doc, next }) {
         <div className="xst-g xst-end-g">
           <div className="xst-end-a">
             {doc.links.map((l, i) => (i === 0
-              ? <Cta key={l.href} to={l.href} id="customers.close" size="lg" className="xst-pdf">{l.label}</Cta>
+              ? <Cta key={l.href} to={l.href} id="customers.close" size="lg" className="xst-pdf" onFocus={reveal}>{l.label}</Cta>
               : <A key={l.href} to={l.href} className="xst-all">{l.label}</A>))}
           </div>
           {next && (

@@ -220,4 +220,5 @@ Done here:
 
 Done here:
 - **Payload.** It is identical in shape to `content/forms.json` (name, email, company, size, need, source, visit). Inclusions join `need` only at send, one sentence per line after your own words.
-- **Gallery.** `desktop.mp4`, `desktop-1.jpg`, `desktop-2.jpg`, `phone.jpg`, `before-desktop.jpg`.
+- **Gallery.** `desktop-demo.jpg` (the self-playing conversation, 1470×801 film strip at 3 frames a second) and `phone-sheet.jpg` (375×812: demo typing, chip landed, rest, a tapped row inked, the Band, the footer), plus the earlier `desktop.mp4`, `desktop-1.jpg`, `desktop-2.jpg`, `phone.jpg`, `before-desktop.jpg`.
+- **Film (7 Nov, film.mjs motion).** Desktop run 1: 0 still screens, layout shift 0.044; run 3: layout shift 0.000, one screen (the inclusions, at rest) read still, and its "dead" hovers on the route rows and "Next" were re-measured by hand and do change (route text slides 6px and inks, the arrow slides −6px, Next goes `#262626`, a logo name lifts 4px and inks). The phone walk inside film.mjs failed both times on a touch-dispatch timeout in the tool, so the phone was checked with my own probe (touch taps, demo, Band, console) and the strip above.

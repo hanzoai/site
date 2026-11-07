@@ -82,7 +82,7 @@ Done here: kit `Cta` gives hover, press (scale), focus and the leaving state. Ch
 - [x] Reduced motion shows the final state; no `setInterval` (gap: one typing interval remains in v1 demo code where present)
 - [ ] n/a: sound only on the listed moments, through the one kit (the shared sound kit is not on main)
 
-Done here: Signature: the live switchboard (requests route themselves to their tier; send one by hand). Supporting: the stage settle and the chapter wipes (scroll, desktop only), the h1 line cut-in (arrival), and the model-card tilt (pointer). Phones settle the stage by time, with no pin. Idle: the GPQA tour now starts when the plot itself is 35% in view (it read the whole tall section before and never started), and the spec heading's ensō breathes (5s sway and swell, stops with the page pause and reduced motion). Film run `enso-run3` desktop: 0 still screens (was 2 at y=5400 and y=7200), layout shift 0.001. `variety.py` passes, with 0 fade-ups. Ease-emphasis throughout, no springs.
+Done here: Signature: the live switchboard (requests route themselves to their tier; send one by hand). Supporting: the stage settle and the chapter wipes (scroll, desktop only), the h1 line cut-in (arrival), and the model-card tilt (pointer). Phones settle the stage by time, with no pin. Idle: the GPQA tour now starts when the plot itself is 35% in view (it read the whole tall section before and never started), and the spec heading's ensō breathes (5s sway and swell, stops with the page pause and reduced motion). Film run `enso-run4` desktop: 0 still screens, layout shift 0.001; phone layout shift 0.000, 0 dead taps. After the settle the film's pause rides the ring's lower right (measured at x 1238, y 465 at 1470×801, was alone at the page edge x 1402). `variety.py` passes, with 0 fade-ups. Ease-emphasis throughout, no springs.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set (kit `Img`, `Film`, shared `ModelFilm`)
@@ -155,4 +155,4 @@ Done here: JS off shows every word. Reduced motion shows the settled stage and t
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/enso.md` verdict 8 or more (pending a fresh walk of the current build)
 
-Done here: the `V2:` line is in `app/enso/page.jsx`. Proof is in `docs/gallery/enso/` (desktop film, 4 phone stills, and the film-strip sheets `desktop-sheet.jpg` and `phone-sheet.jpg` from run `enso-run3`). Fixes from the 7/10 review (GPQA lead figure, × hover) are in; open shared items are in `docs/requests/enso.md`. This card is refreshed after each review.
+Done here: the `V2:` line is in `app/enso/page.jsx`. Proof is in `docs/gallery/enso/` (desktop film, 4 phone stills, and the film-strip sheets `desktop-sheet.jpg` and `phone-sheet.jpg` from run `enso-run4`). Fixes from the 7/10 review (GPQA lead figure, × hover) are in; open shared items are in `docs/requests/enso.md`. This card is refreshed after each review.
