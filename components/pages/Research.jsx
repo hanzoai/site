@@ -1,23 +1,26 @@
 'use client';
 /* Research. Its idea is the paper itself, typeset.
-   V2: 8/10 rebuilt as an editorial library: a staged hero deck of the six newest title pages that fans out as you scroll and deals itself, the library as a big index with a re-flowing filter rail, and every paper opening from its row into its own title page; the open-source note as the one dark room.
+   V2: 8/10 an editorial library in ink only: a staged hero deck of the six newest title pages that deals itself and fans as you scroll, the library at a glance, a big index with a gliding kinds rail that re-flows, every paper opening from its row into its own title page, one ask that follows you, and the open-source note as the one dark room.
    The hero is the newest paper's title page, big, with the next five stacked behind it; scroll and the deck settles and
    fans open, and it deals itself one sheet to the back every few seconds (or at your hand). Then the library at a
    glance: how many papers, specifications and standards, and when they came out. Then the index itself: a rail of kinds
    and a search on the left, the papers, HIPs and standards on the right as an editorial list that re-flows as you
    filter. Press any row and its title page lifts off the row and opens to full size (shared-element morph), with the way
    to read it on papers.hanzo.ai or hips.hanzo.ai. The open-source note closes the page in the one dark room.
-   Motion: signature, the open (row → title page). Supporting: the hero deck (scroll-staged, self-dealing), line-masked
-   headings, the dark room wiping in. Accent: crimson, one per page.
+   Motion: signature, the open (row → title page). Supporting: the hero deck (self-dealing; it fans as you scroll),
+   line-masked headings, the dark room wiping in. Idle: the deck deals within a second. Pointer: rows fill from the left,
+   thumbs lift, bars rise. State: the kinds pill glides (layoutId), the list re-flows, the title page opens. Ink only:
+   hierarchy is alpha steps of black and white (JAMES.md 7).
    Signature: every paper in the library opens from its row into its own full-size title page, the small sheet lifting off the list and growing in place.
    Beyond: "When it was published". The papers' own dates become a bar per month (each bar is a count of Hanzo's list, nothing more); press a month and the index narrows to what came out then.
    Every word, date and link is Hanzo's. */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, useInView, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from 'motion/react';
-import { A } from '../kit';
+import { A, More } from '../kit';
 import MaskLines from '../v2/MaskLines';
 import SceneWipe from '../v2/SceneWipe';
+import AskBar from '../v2/AskBar';
 import '../v2/ProofScale.css';
 import './Research.css';
 
@@ -128,6 +131,7 @@ function Hero() {
   const live = useInView(ref, { amount: 0.2 });
   const [top, setTop] = useState(0);
   const [mine, setMine] = useState(false);
+  const [dealt, setDealt] = useState(false);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   const scrub = useTransform(scrollYProgress, [0, 0.75], [0, 1], { clamp: true });
   const one = useMotionValue(1);
@@ -137,22 +141,22 @@ function Hero() {
   const deckY = useTransform(fan, [0, 1], staged ? [24, 0] : [0, 0]);
   useEffect(() => {
     if (mine || calm || !live) return;
-    const t = setTimeout(() => setTop((v) => (v + 1) % 6), 3400);
+    const t = setTimeout(() => { setTop((v) => (v + 1) % 6); setDealt(true); }, dealt ? 3400 : 900); // the first deal comes within a second
     return () => clearTimeout(t);
-  }, [top, mine, calm, live]);
+  }, [top, mine, calm, live, dealt]);
   const go = (d) => { setMine(true); setTop((v) => (v + d + 6) % 6); };
   return (
     <section ref={ref} className={'xrs-hero' + (staged ? ' staged' : '')} aria-labelledby="xrs-h1">
       <div className="xrs-hero-stick">
         <div className="pf-wrap pf-grid xrs-hero-g">
           <div className="xrs-hero-c">
-            <p className="pf-kick">Research</p>
             <MaskLines as="h1" id="xrs-h1" className="pf-display xrs-h1" lines={['Work we', 'publish']} amount={0.1} />
+            <p className="pf-mono xrs-cap-h">Research</p>
             <p className="pf-lede xrs-lede">Hanzo builds infrastructure that has to hold up under audit, regulation and adversaries.</p>
             <div className="xrs-acts">
               <A to="https://papers.hanzo.ai" className="pf-btn solid" data-thumb="Explore papers.hanzo.ai">Explore papers.hanzo.ai ↗</A>
-              <A to="https://hips.hanzo.ai" className="pf-btn">Specifications (HIPs) ↗</A>
-              <A to="/benchmarks" className="pf-btn">Benchmarks</A>
+              <A to="https://hips.hanzo.ai" className="xrs-more">Specifications (HIPs) ↗</A>
+              <More to="/benchmarks">Benchmarks</More>
             </div>
           </div>
           <div className="xrs-deck-w">
@@ -185,8 +189,8 @@ function Glance({ mon, pickMonth }) {
     <section className="pf-sec xrs-glance" aria-label="The library at a glance">
       <div className="pf-wrap pf-grid xrs-glance-g">
         <dl className="xrs-tally">
-          {GROUPS.map(([k, , list]) => (
-            <div key={k}>
+          {GROUPS.map(([k, , list], i) => (
+            <div key={k} className={i ? 'xrs-tally-s' : 'xrs-tally-b'}>
               <dd className="pf-num">{list.length - (k === 'Specifications' ? 1 : 0)}</dd>
               <dt className="pf-mono">{k}</dt>
             </div>
@@ -224,6 +228,7 @@ function Library({ mon, setMon, open, openKey }) {
           <div className="xrs-kinds">
             {['All', ...GROUPS.map((g) => g[0])].map((k) => (
               <button key={k} type="button" aria-pressed={kind === k} onClick={() => setKind(k)}>
+                {kind === k && <motion.span layoutId="xrs-kind-pill" className="xrs-kind-pill" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />}
                 <span>{k}</span><span className="pf-mono">{k === 'All' ? total : counts[k]}</span>
               </button>
             ))}
@@ -301,7 +306,7 @@ function Reader({ it, close }) {
       </motion.div>
       <motion.div className="xrs-reader-bar" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0, transition: { delay: 0.2, duration: 0.4, ease: EASE } }} exit={{ opacity: 0, transition: { duration: 0.12 } }}>
         <A to={it.to} className="pf-btn solid">Read on {hip ? 'hips.hanzo.ai' : 'papers.hanzo.ai'} ↗</A>
-        <button ref={btn} type="button" className="pf-btn" onClick={close}>Close</button>
+        <button ref={btn} type="button" className="xrs-reader-x" onClick={close}>Close</button>
       </motion.div>
     </div>,
     document.body,
@@ -341,6 +346,7 @@ export default function Research() {
       <Library mon={mon} setMon={setMon} open={(it, from) => setOpen({ it, from })} openKey={open ? key(open.it) : null} />
       <Open />
       <AnimatePresence>{open && <Reader key={key(open.it)} it={open.it} close={close} />}</AnimatePresence>
+      <AskBar title="Research" label="Explore papers.hanzo.ai ↗" to="https://papers.hanzo.ai" />
     </main>
   );
 }
