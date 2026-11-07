@@ -150,7 +150,7 @@ export default function ModelSheet({ doc }) {
         <nav className="xmf-fam" aria-label={doc.family.title}>
           <div className="x-wrap xmf-fam-in">
             <h2 className="xmf-h3">{doc.family.title}</h2>
-            <ul data-swipe-own>{doc.family.links.map((l) => {
+            <ul data-swipe-own data-cursor="">{doc.family.links.map((l) => {
               const inner = <><span>{l.label}</span>{l.note && <i className="x-mono">{l.note}</i>}</>;
               return <li key={l.label}>{l.href ? <A to={l.href}>{inner}</A> : <span className="xmf-fam-here" aria-current="page">{inner}</span>}</li>;
             })}</ul>
@@ -201,7 +201,7 @@ export default function ModelSheet({ doc }) {
             {rate && plotted > 1 && <Field points={field} here={doc.route} label={`${doc.provider.name} models by context window and output rate`} />}
             {rate && <div className="xmf-cost"><Bill self={self} others={sibs} /></div>}
             {doc.more && (
-              <ul className="xmf-rail" data-swipe-own>
+              <ul className="xmf-rail" data-swipe-own data-cursor="">
                 {doc.more.cards.map((c) => {
                   const sib = sibs.find((x) => x.href === c.href);
                   return (
