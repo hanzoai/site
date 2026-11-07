@@ -82,7 +82,17 @@ function Card({ r, onClose }) {
     html.classList.add('x-lock');
     window.__lenis && window.__lenis.stop();
     close.current && close.current.focus({ preventScroll: true });
-    const esc = (e) => { if (e.key === 'Escape') onClose(); };
+    // Esc closes; Tab and Shift+Tab stay inside the card (a modal keeps focus until it is closed)
+    const esc = (e) => {
+      if (e.key === 'Escape') { onClose(); return; }
+      if (e.key !== 'Tab') return;
+      const box = document.querySelector('.xos-card');
+      const f = box ? [...box.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')].filter((el) => el.offsetParent !== null) : [];
+      if (!f.length) return;
+      const [first, last] = [f[0], f[f.length - 1]];
+      if (e.shiftKey && (document.activeElement === first || !box.contains(document.activeElement))) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && (document.activeElement === last || !box.contains(document.activeElement))) { e.preventDefault(); first.focus(); }
+    };
     addEventListener('keydown', esc);
     return () => {
       removeEventListener('keydown', esc);
@@ -163,7 +173,7 @@ function Year({ doc, lead }) {
       <p className="xos-year-h x-mono"><span>{doc.org}</span><span>{when}</span></p>
       {lead && (
         <div className="xos-lead">
-          <FamGrow to={1.5}>
+          <FamGrow to={1.25}>
             <b className="v2f-num v2f-fig xos-dgs" aria-label={lead.value}>
               {[...lead.value].map((c, i) => <span key={i} className="xos-dg" aria-hidden="true"><span style={{ '--i': i }}>{c}</span></span>)}
             </b>
@@ -269,9 +279,10 @@ export default function OrgPage({ doc }) {
   // GitHub's figures, minus the lead, in one small row; the forge's own, minus the lead, as rows (zeros in a line)
   const ghFigs = ghC ? ghC.figures.filter((f) => f !== lead) : [];
   const commits = doc.counts.flatMap((c) => c.figures).find((f) => /^commits/.test(f.label));
-  const forgeFigs = forgeC ? forgeC.figures.filter((f) => f !== lead) : [];
-  const forgeRows = forgeFigs.filter((f) => f.n > 0);
-  const forgeZero = forgeFigs.filter((f) => !(f.n > 0));
+  // a forge figure that says the lead's number again ("11" public repositories, then "11" repositories) drops to the small line
+  const forgeFigs = forgeC ? forgeC.figures.filter((f) => f !== lead).map((f) => (lead && f.value === lead.value && f.n > 0 ? { ...f, again: true } : f)) : [];
+  const forgeRows = forgeFigs.filter((f) => f.n > 0 && !f.again);
+  const forgeZero = forgeFigs.filter((f) => !(f.n > 0) || f.again);
   const shareOf = (f) => {
     const m = /^repositories, ([\d,]+) of them private/.exec(f.label);
     if (m) return [num(m[1]), f.n];
@@ -328,7 +339,7 @@ export default function OrgPage({ doc }) {
       </section>
 
       {forgeC && (
-        <section className="xos-fg" aria-labelledby="xos-forge-h" ref={fgRef} data-in={fgIn}>
+        <section className={'xos-fg' + (forgeRows.length <= 1 ? ' thin' : '')} aria-labelledby="xos-forge-h" ref={fgRef} data-in={fgIn}>
           <div className="v2f-wrap v2f-grid xos-fg-g">
             <div className="xos-fg-l">
               <FamLines as="h2" id="xos-forge-h" play="view" text={forgeC.title} className="v2f-head" />
@@ -428,7 +439,7 @@ export default function OrgPage({ doc }) {
               )}
               <AnimatePresence>{cur && <Card key={cur.name} r={cur} onClose={() => setOpen(null)} />}</AnimatePresence>
             </LayoutGroup>
-            {paged && shown.length > PAGE ? (
+            {shown.length === 0 ? null : paged && shown.length > PAGE ? (
               <p className="xos-more">
                 {R.more
                   ? <button type="button" className="v2f-btn" onClick={showAll}>{R.more}</button>
