@@ -21,8 +21,8 @@
    Every word and link is Hanzo's (parity 330/330, 129/129). Coverage: docs/coverage/platform.md. */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { Mark } from '../ui';
-import { A, Band, Tabs, TabPanel, Cta, CodeBlock } from '../kit';
+import { Mark, Copy } from '../ui';
+import { A, Band, Tabs, TabPanel, Cta } from '../kit';
 import Sigil from '../Sigil';
 import IsoStack, { zOf, LIFT } from '../v2/IsoStack';
 import PinChapters from '../v2/PinChapters';
@@ -77,6 +77,15 @@ function Lines({ as: Tag = 'h2', lines, className = '', id, now }) {
     </Tag>
   );
 }
+
+/* a command as Hanzo prints it: "$ " and the command in one line of text (the prompt is greyed in CSS); Copy copies the
+   command without the prompt */
+const Cmd = ({ code, className = '' }) => (
+  <figure className={'x-codeblock xpl-cmd ' + className} data-room="dark">
+    <figcaption className="x-codeblock-h"><span /><Copy text={code} /></figcaption>
+    <pre tabIndex={0} aria-label="Code"><code><span className="x-codeblock-l xpl-cmd-l">{'$ ' + code}</span></code></pre>
+  </figure>
+);
 
 const Arrow = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const Go = ({ to, children }) => <A to={to} className="xpl-go"><span>{children}</span><Arrow /></A>;
@@ -293,7 +302,7 @@ function Journey({ openLayer }) {
               <Cta to={KEY_URL} id="platform.hero" thumb>Start building</Cta>
               <Cta to="#stack" kind="quiet" id="platform.stack" onClick={(ev) => { ev.preventDefault(); goTo(0.235); }}>Inspect the stack</Cta>
             </div>
-            <CodeBlock code="docker run -p 8080:8080 ghcr.io/hanzoai/cloud" prompt className="xpl-run" />
+            <Cmd code="docker run -p 8080:8080 ghcr.io/hanzoai/cloud" className="xpl-run" />
           </div>
         </motion.div>
 
@@ -350,7 +359,7 @@ function Journey({ openLayer }) {
             <span>01—11 / owned and connected</span>
             <span>Interactive drawing · not telemetry</span>
             <span className="xpl-zap">
-              <b>ZAP / native interconnect</b>
+              <span className="xpl-zap-t">ZAP / native interconnect</span>
               <span>Agent ↔ tool RPC · MCP bridge · typed service communication</span>
               <A to="https://docs.hanzo.ai/docs/zap">Protocol</A>
               <A to="https://github.com/hanzoai/zap">Source</A>
@@ -385,7 +394,7 @@ function Inspector({ sel, open, onClose, step }) {
         </article>
       ))}
       <div className="xpl-ins-f">
-        <p><span>Select / explore</span> Product · docs · source</p>
+        <p><span>Select / explore</span> <span>Product · docs · source</span></p>
         <div className="xpl-ins-nav">
           <button type="button" className="xpl-chip" onClick={() => step(-1)} aria-label="Previous layer"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M13 8H4M7.5 4.5 4 8l3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
           <button type="button" className="xpl-chip" onClick={() => step(1)} aria-label="Next layer"><Arrow /></button>
@@ -545,8 +554,8 @@ function Loop() {
                 <button type="button" aria-pressed={i === at} onClick={() => { setAt(i); setHeld(true); }} onPointerEnter={(ev) => { if (ev.pointerType === 'mouse') { setAt(i); setHeld(true); } }}>
                   <span className="xpl-ring-lab">
                     <span className="xpl-ring-n">{n}</span>
-                    <b>{t}</b>
-                    <small>{s}</small>
+                    <span className="xpl-ring-t">{t}</span>
+                    <span className="xpl-ring-s">{s}</span>
                   </span>
                 </button>
               </li>
@@ -574,29 +583,30 @@ function ConsoleWin() {
     <div className="xpl-win" data-room="dark">
       <div className="xpl-win-bar">
         <span className="xpl-dots" aria-hidden="true"><i /><i /><i /></span>
-        <A to="https://hanzo.team/" className="xpl-win-t"><Mark size={13} /> <span>API Platform</span> <span className="xpl-win-h">— Hanzo</span></A>
+        <A to="https://hanzo.team/" className="xpl-win-t"><Mark size={13} /> <span>API Platform — Hanzo</span></A>
       </div>
       <div className="xpl-win-body">
         <ul className="xpl-win-nav">{NAV.map(([t, h], i) => <li key={t}><A to={h} className={i === 0 ? 'on' : ''}>{t}</A></li>)}</ul>
         <div className="xpl-win-main">
+          <p className="xpl-win-k">Containers — Hanzo</p>
           <ul className="xpl-win-tiles">{TILES.map(([t, h]) => <li key={t}><A to={h}><i aria-hidden="true">{t[0]}</i>{t}</A></li>)}</ul>
           <Tabs id="xpl-work" tabs={DEPLOY.map(([t]) => t)} value={tab} onChange={setTab} label="Kinds of work" className="xpl-tabs" />
           {DEPLOY.map(([t, d], i) => <TabPanel key={t} id="xpl-work" i={i} value={tab} className="xpl-pane"><p>{d}</p></TabPanel>)}
           <ul className="xpl-win-rows">
             {ROWS.map(([n, s], i) => (
               <li key={n} className={s === 'Building' ? 'busy' : ''}>
-                <b>{n}</b>
-                <span className="xpl-st"><i aria-hidden="true" />{s}</span>
-                {i === 0 && <small>Every request enters here, so the limiter does too.</small>}
+                <span className="xpl-win-n">{n}</span>
+                <span className="xpl-st"><i aria-hidden="true" /><span>{s}</span></span>
+                {i === 0 && <span className="xpl-win-note">Every request enters here, so the limiter does too.</span>}
               </li>
             ))}
           </ul>
-          <p className="xpl-ep"><span>api.hanzo.ai</span><b>/v1/functions</b></p>
+          <p className="xpl-ep">api.hanzo.ai/v1/functions</p>
         </div>
       </div>
       <div className="xpl-win-f">
         <A to="/home" className="xpl-go"><span>Open in the console</span><Arrow /></A>
-        <small>Example project. Every name in it is one you would give your own.</small>
+        <span className="xpl-win-cap">Example project. Every name in it is one you would give your own.</span>
       </div>
     </div>
   );
@@ -710,13 +720,15 @@ const OPS = [
 
 /* the call path types itself into a text node, a character at a time (no React state per character) */
 function typing(el, text, alive) {
+  // visual only: the text node always holds the whole path; a clip widens one character at a time over it
   return new Promise((done) => {
     let i = 0;
-    el.textContent = '';
+    el.dataset.typing = '';
+    el.style.setProperty('--n', 0);
     const step = () => {
       if (!alive()) return done(false);
-      el.textContent = text.slice(0, ++i);
-      if (i < text.length) setTimeout(step, 42); else done(true);
+      el.style.setProperty('--n', ++i);
+      if (i < text.length) setTimeout(step, 42); else { delete el.dataset.typing; done(true); }
     };
     setTimeout(step, 160);
   });
@@ -736,7 +748,7 @@ function OneApi() {
     const el = out.current[at];
     if (el) typing(el, OPS[at].p, () => live);
     const t = setTimeout(() => live && setAt((v) => (v + 1) % OPS.length), 2600);
-    return () => { live = false; clearTimeout(t); if (el) el.textContent = OPS[at].p; };
+    return () => { live = false; clearTimeout(t); if (el) { delete el.dataset.typing; el.style.removeProperty('--n'); } };
   }, [at, on, seen]);
   return (
     <section className="xpl-sec xpl-api" aria-labelledby="xpl-api-h">
@@ -751,7 +763,7 @@ function OneApi() {
             {OPS.slice(0, 6).map((o, i) => (
               <li key={o.p}>
                 <button type="button" className={at === i ? 'on' : ''} aria-pressed={at === i} onClick={() => { setAt(i); setPlay(false); }}>
-                  <span>api.hanzo.ai</span><b>{o.p}</b>
+                  <span className="xpl-ep-h">api.hanzo.ai</span><span className="xpl-ep-p">{o.p}</span>
                 </button>
               </li>
             ))}
@@ -770,7 +782,7 @@ function OneApi() {
               {OPS.map((o, i) => (
                 <div key={o.p} className={'xpl-step' + (i === at ? ' on' : '')} aria-hidden={i !== at} inert={i !== at}>
                   {o.cap && <p className="xpl-cap">{o.cap}</p>}
-                  <p className="xpl-call">{o.m && <em>{o.m}</em>}<span>api.hanzo.ai</span><b ref={(el) => { out.current[i] = el; }}>{o.p}</b>{i === at && on && <i className="xpl-caret" aria-hidden="true" />}</p>
+                  <p className="xpl-call">{o.m && <em>{o.m}</em>}<span>api.hanzo.ai</span><span className="xpl-call-p" ref={(el) => { out.current[i] = el; }}>{o.p}</span>{i === at && on && <i className="xpl-caret" aria-hidden="true" />}</p>
                   {o.d && <p className="xpl-res">{o.d}</p>}
                   {o.tags && <p className="xpl-tags">{o.tags.map((t) => <span key={t}>{t}</span>)}</p>}
                 </div>
@@ -796,8 +808,8 @@ function OpenSec() {
           <div className="xpl-links"><Go to="https://docs.hanzo.ai/docs/quickstart">Quickstart</Go><Go to="/open-source">Open source</Go><Go to="https://github.com/hanzoai/cloud">Source</Go></div>
         </div>
         <div className="xpl-tty">
-          <CodeBlock code="curl -fsSL https://hanzo.sh | sh" prompt />
-          <CodeBlock code="hanzo serve cloud" prompt />
+          <Cmd code="curl -fsSL https://hanzo.sh | sh" />
+          <Cmd code="hanzo serve cloud" />
           <p className="xpl-cap-s">Open</p>
         </div>
       </div>
@@ -861,21 +873,18 @@ function Proof() {
         <div className="xpl-facts" data-enter="explode-gather">
           {FACTS.map(([f, h, d, l, to], i) => (
             <div key={h} className={'xpl-fact' + (i ? '' : ' big')}>
-              <p className="xpl-fact-h">{f && <b>{f}</b>} <span>{h}</span></p>
+              <p className="xpl-fact-h">{f ? f + ' ' + h : h}</p>
               <p className="xpl-fact-d">{d}</p>
               <Go to={to}>{l}</Go>
             </div>
           ))}
           <ul className="xpl-pfs">
             {PROOF.map(([f, l, to]) => (
-              <li key={f}><A to={to} className="xpl-pf"><b>{f}</b><span>{l}</span><Arrow /></A></li>
+              <li key={f}><A to={to} className="xpl-pf"><span>{f + ' ' + l}</span><Arrow /></A></li>
             ))}
           </ul>
         </div>
-        <details className="xpl-foot">
-          <summary>GPU targets are parallel hardware backends, not sequential stages.<Arrow /></summary>
-          <p>Zen is generative reasoning; Kai provides decision intelligence. ZAP is a native RPC protocol for supported interconnect paths. Research and evaluation form a gated improvement loop. “Native” describes Hanzo’s architecture surfaces; not every implementation, weight, driver or operating system is owned or open sourced by Hanzo.</p>
-        </details>
+        <p className="xpl-foot">GPU targets are parallel hardware backends, not sequential stages. Zen is generative reasoning; Kai provides decision intelligence. ZAP is a native RPC protocol for supported interconnect paths. Research and evaluation form a gated improvement loop. “Native” describes Hanzo’s architecture surfaces; not every implementation, weight, driver or operating system is owned or open sourced by Hanzo.</p>
       </div>
     </section>
   );
@@ -885,19 +894,7 @@ function Proof() {
    explode-gather), page-local. One observer marks each [data-enter] once with data-in when a quarter of it (or a
    quarter of the screen) is in view; Platform.css plays the entrance it names. Start states live in the CSS under
    html.js and prefers-reduced-motion: no-preference, so the server markup is final, JS off and reduced motion show
-   everything at rest. count-roll also counts its figures up to Hanzo's own value, ending on the exact string. ---------- */
-function countUp(el) {
-  const to = el.textContent;
-  const m = to.match(/^(\D*)(\d+(?:\.\d+)?)(.*)$/);
-  if (!m || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const [, pre, num, post] = m, dec = (num.split('.')[1] || '').length, end = +num, t0 = performance.now();
-  const tick = (t) => {
-    const k = Math.min(1, (t - t0) / 1100), e = 1 - Math.pow(1 - k, 3);
-    el.textContent = k < 1 ? pre + (end * e).toFixed(dec) + post : to;
-    if (k < 1) requestAnimationFrame(tick);
-  };
-  requestAnimationFrame(tick);
-}
+   everything at rest. Every entrance is visual only: the text in the page is always Hanzo's final text. ---------- */
 function useEnter(root) {
   useEffect(() => {
     const els = [...(root.current?.querySelectorAll('[data-enter]') || [])];
@@ -908,7 +905,6 @@ function useEnter(root) {
       const el = e.target;
       el.dataset.in = '';
       io.unobserve(el);
-      if (el.dataset.enter === 'count-roll') el.querySelectorAll('[data-on="true"] .xpl-tile-fig b').forEach(countUp);
       timers.push(setTimeout(() => { el.dataset.done = ''; }, 1800));
     }), { threshold: [0, 0.1, 0.25, 0.5] });
     els.forEach((el) => io.observe(el));

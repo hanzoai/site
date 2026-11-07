@@ -121,7 +121,7 @@
 .xpl-hint.off { opacity: 0; }
 .xpl-jr[data-ph='1'] .xpl-bar a, .xpl-jr[data-ph='1'] .xpl-ask { pointer-events: auto; }
 .xpl-zap { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-left: auto; padding: 6px 6px 6px 16px; border-radius: 999px; border: 1px solid var(--k-line-d); text-transform: none; letter-spacing: 0; font: 400 13px/1.3 var(--sans); color: var(--k-on-2); }
-.xpl-zap b { font: 606 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--k-on); }
+.xpl-zap-t { font: 606 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--k-on); }
 .xpl-zap a { display: inline-flex; align-items: center; min-height: 36px; padding: 0 14px; border-radius: 999px; background: rgba(255, 255, 255, .1); color: var(--k-on); text-decoration: none; transition: background-color var(--k-fast) var(--k-out), color var(--k-fast) var(--k-out), transform var(--k-press); }
 .xpl-zap a:active { transform: scale(.97); }
 @media (hover: hover) { .xpl-zap a:hover { background: var(--k-on); color: var(--k-black); } }
@@ -298,9 +298,9 @@
 .xpl-ring li button:active .xpl-ring-lab { transform: scale(.97); }
 .xpl-ring-lab { display: block; transition: transform var(--k-press); }
 .xpl-ring-n { display: block; font: 606 12px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--k-dim); }
-.xpl-ring b { display: block; margin-top: 6px; font-size: 17px; font-weight: 497; letter-spacing: -.01em; color: var(--k-dim); white-space: nowrap; transition: color var(--k-base) var(--k-out); }
-.xpl-ring small { display: none; }
-.xpl-ring li.on b { color: var(--k-ink); }
+.xpl-ring-t { display: block; margin-top: 6px; font-size: 17px; font-weight: 497; letter-spacing: -.01em; color: var(--k-dim); white-space: nowrap; transition: color var(--k-base) var(--k-out); }
+.xpl-ring-s { display: none; }
+.xpl-ring li.on .xpl-ring-t { color: var(--k-ink); }
 .xpl-ring-mid { position: absolute; left: 50%; top: 50%; width: 52cqw; margin: 0; transform: translate(-50%, -50%); text-align: center; }
 .xpl-ring-mid b { display: block; font-size: 26px; font-weight: 497; letter-spacing: -.02em; color: var(--k-ink); }
 .xpl-ring-mid span { display: block; margin-top: 6px; font-size: 13px; color: var(--k-body); }
@@ -358,8 +358,8 @@
 .xpl-pane p { margin: 0; min-height: 3em; font-size: 13px; line-height: 1.5; color: var(--k-on-2); }
 .xpl-win-rows { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
 .xpl-win-rows li { position: relative; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px; padding: 9px 12px; border-radius: 12px; border: 1px solid var(--k-line-d); }
-.xpl-win-rows b { font: 497 13px/1.4 var(--mono); }
-.xpl-win-rows small { flex-basis: 100%; font-size: 13px; color: var(--k-on-4); }
+.xpl-win-n { font: 497 13px/1.4 var(--mono); }
+.xpl-win-note { flex-basis: 100%; font-size: 13px; color: var(--k-on-4); }
 /* status by shape: Ready a filled dot, Building a turning ring */
 .xpl-st { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--k-on-2); }
 .xpl-st i { width: 8px; height: 8px; border-radius: 50%; background: var(--k-on); }
@@ -369,7 +369,7 @@
 .xpl-ep b { color: var(--k-on); font-weight: 497; }
 .xpl-win-f { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 16px; padding: 8px 17px; border-top: 1px solid var(--k-line-d); }
 .xpl-win-f .xpl-go { color: var(--k-on); font-size: 13px; }
-.xpl-win-f small { font-size: 13px; color: var(--k-on-4); }
+.xpl-win-cap { font-size: 13px; color: var(--k-on-4); }
 
 /* data shapes */
 .xpl-prims { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
@@ -446,9 +446,9 @@
 .xpl-ep-bg[data-on='false'] { opacity: 0; }
 .xpl-eps button { position: relative; display: flex; width: 100%; align-items: center; height: 44px; padding: 0 12px; border: 0; border-radius: 12px; background: none; color: var(--k-on-4); font: 497 13px/1.3 var(--mono); text-align: left; cursor: pointer; transition: color var(--k-fast) var(--k-out), transform var(--k-press); }
 .xpl-eps button:active { transform: scale(.97); }
-.xpl-eps button b { color: var(--k-on-2); font-weight: 497; }
-.xpl-eps button.on b { color: var(--k-on); }
-@media (hover: hover) { .xpl-eps button:hover b { color: var(--k-on); } }
+.xpl-eps button .xpl-ep-p { color: var(--k-on-2); font-weight: 497; }
+.xpl-eps button.on .xpl-ep-p { color: var(--k-on); }
+@media (hover: hover) { .xpl-eps button:hover .xpl-ep-p { color: var(--k-on); } }
 .xpl-eps-more { padding: 12px; font: 497 13px/1.3 var(--mono); color: var(--k-on-4); }
 .xpl-term-r { position: relative; display: flex; flex-direction: column; padding: 27px; min-height: 420px; }
 .xpl-term-h { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
@@ -465,7 +465,7 @@
 .xpl-call { display: flex; flex-wrap: wrap; align-items: center; gap: 0 2px; margin: 0; font: 497 32px/1.25 var(--mono); letter-spacing: -.02em; }
 .xpl-call em { margin-right: 12px; padding: 4px 10px; border-radius: 6px; background: var(--k-on); color: var(--k-black); font-style: normal; font-size: 13px; letter-spacing: .04em; }
 .xpl-call span { color: var(--k-on-4); }
-.xpl-call b { color: var(--k-on); font-weight: 497; }
+.xpl-call .xpl-call-p { color: var(--k-on); font-weight: 497; }
 .xpl-caret { display: inline-block; width: .5em; height: 1em; margin-left: 4px; background: var(--k-on); animation: xpl-car 1s steps(1) infinite; }
 @keyframes xpl-car { 50% { opacity: 0; } }
 .xpl-res { margin: 17px 0 0; max-width: 52ch; font-size: 16px; line-height: 1.5; color: var(--k-on-2); }
@@ -572,7 +572,7 @@
   .xpl-chips li { font-size: 14px; }
   .xpl-row { min-height: 64px; }
   .xpl-row-b b { font-size: 21px; }
-  .xpl-row-b em, .xpl-row-n, .xpl-st, .xpl-win-rows small, .xpl-win-f small, .xpl-ep, .xpl-ins-f p, .xpl-win-t, .xpl-win-nav a, .xpl-win-tiles a, .xpl-win-rows b, .xpl-tags span, .xpl-pane p, .xpl-eps button, .xpl-eps-more, .xpl-tile-sd, .xpl-foot, .xpl-zap, .xpl-ring-mid span { font-size: 14px; }
+  .xpl-row-b em, .xpl-row-n, .xpl-st, .xpl-win-note, .xpl-win-cap, .xpl-ep, .xpl-ins-f p, .xpl-win-t, .xpl-win-nav a, .xpl-win-tiles a, .xpl-win-n, .xpl-tags span, .xpl-pane p, .xpl-eps button, .xpl-eps-more, .xpl-tile-sd, .xpl-foot, .xpl-zap, .xpl-ring-mid span { font-size: 14px; }
   .xpl-call em { font-size: 14px; }
   .xpl-head, .xpl-lp-g, .xpl-op-g, .xpl-cap-g, .xpl-facts { display: block; }
   .xpl-head { margin-bottom: 44px; }
@@ -592,8 +592,8 @@
   .xpl-ring-d { position: relative; margin: 0; transform: none; }
   .xpl-ring li button { position: static; width: auto; transform: none; padding: 12px 0; text-align: left; }
   .xpl-ring-lab { display: grid; grid-template-columns: 112px 1fr; align-items: baseline; gap: 2px 10px; }
-  .xpl-ring b { margin: 0; }
-  .xpl-ring small { display: block; grid-column: 2; margin: 0; font-size: 14px; color: var(--k-body); }
+  .xpl-ring-t { margin: 0; }
+  .xpl-ring-s { display: block; grid-column: 2; margin: 0; font-size: 14px; color: var(--k-body); }
   .xpl-fact.big { padding-bottom: 27px; border-bottom: 1px solid var(--k-line); }
   .xpl-fact.big .xpl-fact-h b { font-size: 84px; }
   .xpl-pc .xpl-ch-h { max-width: none; }
@@ -621,7 +621,7 @@
   .xpl-eps { display: flex; overflow-x: auto; gap: 4px; padding: 10px; border-right: 0; border-bottom: 1px solid var(--k-line-d); scrollbar-width: none; }
   .xpl-ep-bg { display: none; }
   .xpl-eps li { flex: none; }
-  .xpl-eps button span { display: none; }
+  .xpl-eps button .xpl-ep-h { display: none; }
   .xpl-eps button.on { background: rgba(255, 255, 255, .1); }
   .xpl-eps-more { white-space: nowrap; }
   .xpl-term-r { min-height: 380px; padding: 20px; }
@@ -679,9 +679,11 @@
   .js .xpl-dir[data-in] .xpl-dir-pv { animation-delay: 200ms; }
   @keyframes xpl-throw { 0% { opacity: 0; transform: translateX(220px); } 12% { opacity: 1; } 78% { transform: translateX(-6px); } 100% { opacity: 1; transform: none; } }
 
-  /* 2. count-roll: the capability numbers roll up into their slots while the figure counts to its value */
+  /* 2. count-roll: the capability numbers and the figure roll up into their slots (visual only; the text is final) */
   .js .xpl-reach[data-enter]:not([data-in]) .xpl-cap-n { opacity: 0; }
   .js .xpl-reach[data-in]:not([data-done]) .xpl-cap-n { display: inline-block; animation: xpl-roll .6s cubic-bezier(.16, 1, .3, 1) both; }
+  .js .xpl-reach[data-enter]:not([data-in]) .xpl-tile-fig b { opacity: 0; }
+  .js .xpl-reach[data-in]:not([data-done]) .xpl-tile-fig b { display: inline-block; animation: xpl-roll .8s cubic-bezier(.16, 1, .3, 1) .35s both; }
   .js .xpl-reach[data-in] .xpl-cap-list li:nth-child(2) .xpl-cap-n { animation-delay: 70ms; }
   .js .xpl-reach[data-in] .xpl-cap-list li:nth-child(3) .xpl-cap-n { animation-delay: 140ms; }
   .js .xpl-reach[data-in] .xpl-cap-list li:nth-child(4) .xpl-cap-n { animation-delay: 210ms; }
@@ -710,3 +712,14 @@
   .js .xpl-facts > :nth-child(4) { --gx: -40px; --gy: 70px; --gr: 3deg; animation-delay: 180ms; }
   @keyframes xpl-gather { 0% { opacity: 0; transform: translate(var(--gx), var(--gy)) rotate(var(--gr)) scale(.9); } 40% { opacity: 1; } 100% { opacity: 1; transform: none; } }
 }
+
+/* copy pass (8 Nov): Hanzo's lines as single lines of text */
+.xpl-cmd-l { display: block; }
+.xpl-cmd-l::first-letter { color: rgba(255, 255, 255, .45); }
+.xpl-win-k { margin: 0 0 10px; font: 497 13px/1.4 var(--mono); color: var(--k-on-4); }
+.xpl-call-p[data-typing] { display: inline-block; overflow: hidden; white-space: nowrap; vertical-align: bottom; width: calc(var(--n, 0) * (1ch - .02em)); }
+.xpl-fact-h { display: block; font-size: 26px; font-weight: 220; line-height: 1.1; letter-spacing: -.03em; }
+.xpl-fact.big .xpl-fact-h { font-size: 64px; line-height: 1; letter-spacing: -.04em; }
+.xpl-pf span { font-size: 21px; font-weight: 220; letter-spacing: -.02em; color: var(--k-ink); }
+.xpl-foot { font-size: 13px; }
+@media (max-width: 899px) { .xpl-fact.big .xpl-fact-h { font-size: 44px; } .xpl-fact-h { font-size: 21px; } .xpl-pf span { font-size: 17px; } }
