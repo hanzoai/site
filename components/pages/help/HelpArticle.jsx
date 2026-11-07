@@ -5,24 +5,25 @@
    is on lights in the text. Choose web and desktop or mobile, press any step to see it, or flip the switch yourself.
    Every word is Hanzo's; the panel's grey bars are placeholders, not invented items. No UI hue: ink, greys and white;
    nothing sits above the question (the topic line sits under it). Motion is time and state, not scroll: the hand
-   walks by itself, screens slide as it presses, the switch springs, a tick draws when it saves.
-   Signature: the setting, walked. A live settings panel where a spring-driven cursor presses through Hanzo's own steps
+   walks by itself, screens slide as it presses, the switch slides (300ms ease-emphasis), a tick draws when it saves.
+   Signature: the setting, walked. A live settings panel where a cursor glides (ease-emphasis, no spring) through Hanzo's own steps
    for the chosen platform, screens opening as it goes, the matching step lit in the text and a drawn tick when it saves.
    Beyond: try the choice. Flip the switch and the panel answers with what that choice means, in the article's own
    words: on, what Hanzo may use; off, what turning it off changes.
-   V2: 8/10 rebuilt from the ported page: large question, numbered answer index, 64ch document, and a self-walking settings panel you can drive; no UI hues */
-// Signature: the setting, walked: a live settings panel where a spring cursor presses through the article's own steps, the matching step lit in the text
+   V2: 8/10 on the deck: breadcrumb, 52px question with nothing above it, 21px lede, numbered index, 64ch document, and a self-walking settings panel on a flat 24px tile (glide, no spring) you can drive; no UI hues */
+// Signature: the setting, walked: a live settings panel where a gliding cursor presses through the article's own steps, the matching step lit in the text
 // Beyond: try the choice: flip the switch and the panel answers with what that choice means, in the article's own words
 // Persona: a Hanzo Chat or Dev user deciding whether their chats and coding sessions may train Hanzo's models
 // Goal: find and change "Help improve Hanzo's models" and know what each choice means; metric: none in PLAN-COMPONENTS 1.1 (support page)
 // CTA: none of Hanzo's on this page (the action is the setting in the app); text links to Terms of Service, Privacy Policy and privacy@hanzo.ai
+// Metric: none assigned (support page); the switch tryout is a demo and sends nothing
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion, useSpring } from 'motion/react';
+import { animate, motion, useInView, useMotionValue, useReducedMotion } from 'motion/react';
 import { EASE } from '../../ui';
 import { A, Tick } from '../../kit';
 import './HelpArticle.css';
 
-const SPRING = { stiffness: 300, damping: 30, mass: 1.3 };
+const GLIDE = { duration: 0.5, ease: EASE }; // the hand travels on the deck's ease-emphasis: no spring, no overshoot
 // with scripts off, the question and lede show at once and the hand (which needs scripts to walk) is hidden
 const NOJS = '.xhp .x-line-in,.xhp-lede{transform:none!important;opacity:1!important}.xhp-hand{display:none!important}';
 const say = (inl) => inl.map((x) => (typeof x === 'string' ? x : x.b || x.t)).join('').replace(/\s+/g, ' ').trim();
@@ -57,7 +58,7 @@ function useWalk(setting, live) {
   const [saved, setSaved] = useState(0);
   const [want, setWant] = useState(null);
   const stage = useRef(null);
-  const x = useSpring(0, SPRING), y = useSpring(0, SPRING);
+  const x = useMotionValue(0), y = useMotionValue(0);
   const flow = setting.flows[plat];
   const targets = flow.steps.flatMap((s, i) => s.targets.map((t) => ({ t, step: i })));
   const n = targets.length;
@@ -66,7 +67,7 @@ function useWalk(setting, live) {
     const s = stage.current, el = s && s.querySelector(`[data-t="${k}"]`);
     if (!el) return;
     const a = s.getBoundingClientRect(), b = el.getBoundingClientRect();
-    x.set(b.left - a.left + Math.min(b.width * 0.5, 40)); y.set(b.top - a.top + b.height * 0.55);
+    animate(x, b.left - a.left + Math.min(b.width * 0.5, 40), GLIDE); animate(y, b.top - a.top + b.height * 0.55, GLIDE);
   };
   const hit = (k) => {
     setPress((p) => p + 1);
@@ -80,8 +81,8 @@ function useWalk(setting, live) {
   useEffect(() => {
     if (!auto || !live || hold || calm) return;
     if (level >= n) { const t = setTimeout(() => { setLevel(0); rest(); }, 3400); return () => clearTimeout(t); }
-    const t1 = setTimeout(() => aim(level), level ? 650 : 1000);
-    const t2 = setTimeout(() => hit(level), level ? 1450 : 1800);
+    const t1 = setTimeout(() => aim(level), level ? 650 : 550);
+    const t2 = setTimeout(() => hit(level), level ? 1450 : 1350);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [auto, live, hold, calm, plat, level]); // eslint-disable-line react-hooks/exhaustive-deps
   // a step pressed in the text: show the screen just before it, move the hand there, press
@@ -95,6 +96,8 @@ function useWalk(setting, live) {
   return {
     plat, level, on, auto, press, saved, stage, x, y, flow, targets, active, n,
     hold: setHold,
+    paused: !auto,
+    pause: () => setAuto((v) => !v), // the walk's own pause control (it loops), first in the panel
     platform: (p) => { if (p === plat) return; setPlat(p); setLevel(0); setWant(null); setTimeout(rest, 30); },
     step: (p, i) => { setAuto(false); setPlat(p); const k = setting.flows[p].steps.slice(0, i).reduce((m, s) => m + s.targets.length, 0); setLevel(k); setWant(k); },
     flip: () => { setAuto(false); setOn((o) => !o); setSaved((v) => v + 1); setLevel(n); setWant(null); },
@@ -137,6 +140,11 @@ function Panel({ setting, w }) {
   return (
     <div className="xhp-panel" ref={box} role="group" aria-label={setting.name}>
       <div className="xhp-panel-bar">
+        <button type="button" className="xhp-pause" aria-pressed={w.paused} aria-label={w.paused ? 'Play' : 'Pause'} onClick={w.pause}>
+          {w.paused
+            ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9l7-4.5z" fill="currentColor" /></svg>
+            : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>}
+        </button>
         <div className="xhp-seg" role="radiogroup" aria-label={setting.flows.map((f) => f.label).join(' / ')}>
           {setting.flows.map((f, i) => (
             <button key={f.label} type="button" role="radio" aria-checked={w.plat === i} onClick={() => w.platform(i)}>
@@ -148,7 +156,7 @@ function Panel({ setting, w }) {
       <div className="xhp-stage" ref={w.stage} onPointerEnter={(e) => e.pointerType === 'mouse' && w.hold(true)} onPointerLeave={() => w.hold(false)}>
         <Screen w={w} setting={setting} />
         <motion.span className="xhp-hand" style={{ x: w.x, y: w.y }} aria-hidden="true">
-          {w.press > 0 && <motion.i key={w.press} className="xhp-ring" initial={{ scale: 0.2, opacity: 0.55 }} animate={{ scale: 1.6, opacity: 0 }} transition={{ duration: 0.6, ease: EASE }} />}
+          {w.press > 0 && <motion.i key={w.press} className="xhp-ring" initial={{ scale: 0.2, opacity: 0.55 }} animate={{ scale: 1.6, opacity: 0 }} transition={{ duration: 0.4, ease: EASE }} />}
           <svg viewBox="0 0 20 24" width="20" height="24"><path d="M2 1.5v17.2l4.6-4.3 3 6.9 3.2-1.4-3-6.8 6.3-.3L2 1.5z" fill="#0a0a0a" stroke="#fff" strokeWidth="1.4" strokeLinejoin="round" /></svg>
         </motion.span>
       </div>
@@ -218,10 +226,17 @@ function Layout({ doc, w, aside }) {
       <noscript><style>{NOJS}</style></noscript>
       <div className="xhp-g">
         <header className="xhp-hero">
+          <nav className="xhp-crumb" aria-label="Breadcrumb">
+            <ol>
+              <li><A to="/support">Help center</A></li>
+              {doc.kicker.split(' · ').slice(1).map((t) => <li key={t}>{t}</li>)}
+              <li aria-current="page"><span>{doc.title}</span></li>
+            </ol>
+          </nav>
           <h1 className="xhp-h1" data-morph-target>
-            <span className="x-line"><motion.span className="x-line-in" initial={{ y: '106%' }} animate={{ y: 0 }} transition={{ duration: 1, ease: EASE, delay: 0.08 }}>{doc.title}</motion.span></span>
+            <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 0.7, ease: EASE, delay: 0.08 }}>{doc.title}</motion.span></span>
           </h1>
-          <motion.p className="xhp-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: EASE, delay: 0.3 }}>{doc.lede}</motion.p>
+          <p className="xhp-lede">{doc.lede}</p>
           <p className="xhp-kick x-mono">{doc.kicker}</p>
           <nav className="xhp-toc" aria-label={doc.contents.label}>
             <h2 className="xhp-toc-h x-mono">{doc.contents.label}</h2>
