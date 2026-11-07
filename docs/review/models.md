@@ -1,7 +1,7 @@
 # /models — James-eye review
 
 Verdict: 6/10
-Ready: 7 Nov, GA item 15. Each model shows its own rate where Hanzo prints one (snapshots and /pricing's API tab; none guessed) and has a "Use it now" to /chat. Re-measured against this review: the 11 never touches its label (26 frames at 1470 and 375), Copy is 44px and legible, the code tabs sit on one row, catalogue cards are quiet (phone: 72px rows), no hero timer, 0 console errors in dev, no overlaps at 1470x801 or 375x812. Parity 305/305 and 58/58; taste, unique and the build pass.
+Ready: 7 Nov, GA item 15. Each model shows its own rate where Hanzo prints one (snapshots and /pricing's API tab; none guessed) and has a "Use it now" to /chat. Re-measured against this review: the 11 never touches its label (26 frames at 1470 and 375), Copy is 44px and legible, the code tabs sit on one row, catalogue cards are quiet (phone: 72px rows), no hero timer, 0 console errors in dev, no overlaps at 1470x801 or 375x812. Copy (COPY-RULE, 8 Nov): copycheck missing 0 of 134 against content/live/models.json, live.mjs's capture of hanzo.ai/models (hanzo.ai itself is blocked from the cloud session); "Explore Enso / Kai / Zen →" restored. Taste, unique and the build pass.
 First complaint: "The top is right. It's the real grid and it moves. Then the big 11 crashes into its own label, and after the black room it turns into a long wall of black text boxes. I'm scrolling a document again."
 
 Walked 7 Nov on main at `b8c4ac3` (`components/pages/ModelsPage.jsx`, `ModelsPage.css`, `components/v2/SpecCard.jsx`) on the dev server, judged against `docs/MASTER.md` (parts 1–18, section 3, 4.3), `docs/JAMES.md` and `docs/refs/hanzo-model-cards/SPEC.md`.

@@ -33,7 +33,8 @@ const SPRING = { duration: 0.3, ease: [0.16, 1, 0.3, 1] }; // the deck has no sp
 
 /* A link with its arrow as text, the way Hanzo writes them. */
 const Lk = ({ to, children, className = '', ...r }) => {
-  const inner = <><span>{children}</span><i aria-hidden="true">→</i></>;
+  // the arrow is in the label's own text (COPY-RULE, 8 Nov: "Explore Enso →" reads as one line, as Hanzo prints it)
+  const inner = <span>{typeof children === 'string' ? `${children} →` : children}</span>;
   return to.startsWith('#')
     ? <a href={to} className={'xmo-lk ' + className} {...r}>{inner}</a>
     : <A to={to} className={'xmo-lk ' + className} {...r}>{inner}</A>;
@@ -232,7 +233,7 @@ function Versus() {
           </div>
           {[0, 1, 2].map((r) => (
             <div className="xmo-vs-r" role="row" key={r}>
-              {VS.map((c) => <div key={c.k} role="cell" className={'xmo-vs-c ' + c.k}><i aria-hidden="true">✓</i>{c.items[r]}</div>)}
+              {VS.map((c) => <div key={c.k} role="cell" className={'xmo-vs-c ' + c.k}><i aria-hidden="true">✓</i><span>{c.items[r]}</span></div>)}
             </div>
           ))}
           <div className="xmo-vs-r foot" role="row">
@@ -353,7 +354,7 @@ COUNT.all = Object.values(COUNT).reduce((a, b) => a + b, 0);
 /* A catalogue card: Hanzo's model card (SpecCard). Its name flies into the model page's h1 (morph); the id and Hanzo's
    rate are its mono line, the context window and modalities its pills. */
 /* ids and endpoints break only after a "/" (never mid-word) */
-const slashes = (t) => String(t).split('/').flatMap((x, i) => (i ? [<wbr key={i} />, '/' + x] : [x]));
+const slashes = (t) => <><span aria-hidden="true">{String(t).split('/').flatMap((x, i) => (i ? [<wbr key={i} />, '/' + x] : [x]))}</span><span className="x-sr">{t}</span></>;
 function MCard({ to, name, id, ctx, d, tags, rate }) {
   const r = rateLine(rate);
   return <SpecCard hush to={to} title={name} desc={d} meta={<><span>{slashes(id)}</span>{r && <><br /><b>{r}</b></>}</>} tags={[...(ctx ? [ctx] : []), ...tags]} />;
@@ -435,12 +436,12 @@ function Catalogue({ makers }) {
       <ul className="xmo-cards">{ENSO.map(([id, name, ctx, d, tags]) => card(id, name, ctx, d, tags, '/models/hanzo/' + id, 'enso'))}</ul>],
     ['zen', (
       <Head slug="zen" title="Zen models" link={<Lk to="https://docs.hanzo.ai/docs/models/zen">Run Zen: the docs</Lk>}>
-        <p>Open weights, made with <A to="https://zoo.ngo">Zoo Labs Foundation</A>. Download every Zen model at <A to="https://huggingface.co/zenlm">huggingface.co/zenlm</A>, or call it here.</p>
+        <p><span>Open weights, made with </span><A to="https://zoo.ngo">Zoo Labs Foundation</A><span>. Download every Zen model at </span><A to="https://huggingface.co/zenlm">huggingface.co/zenlm</A><span>, or call it here.</span></p>
       </Head>
     ), (
       <ul className="xmo-cards">
         {ZEN.map(([id, name, ctx, d, tags]) => card(id, name, ctx, d, tags, '/models/hanzo/' + id, 'zen'))}
-        <li><Thumb fam="zen" /><SpecCard hush to="/zen/7" title="Zen 7" meta={<><span>zen7</span><br /><b>Request access</b></>} desc="The next open-weight generation after Zen 6, in research preview." tags={['Research preview']} /></li>
+        <li><Thumb fam="zen" /><SpecCard hush to="/zen/7" title="Zen 7" meta={<><span>zen7</span><br /><b><span>Request access</span></b></>} desc="The next open-weight generation after Zen 6, in research preview." tags={['Research preview']} /></li>
       </ul>
     )],
     ['kai', <Head slug="kai" title="Kai decision models" link={<Lk to="/kai" onClick={(e) => open(e, e.currentTarget.closest('.xmo-gh').querySelector('.xmo-gh-film'), 'kai')}>Kai: decisions and their benchmarks</Lk>} />,
@@ -509,7 +510,7 @@ function Priced({ at }) {
     const fold = !all && k++ >= FOLD;
     return (
       <motion.tr key={r[0]} layout="position" hidden={fold} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3, ease: EASE }}>
-        <td><A to={to} className="xmo-row-n"><b>{r[1]}</b><code>{r[0]}</code></A></td>
+        <td><A to={to} className="xmo-row-n"><b><span>{r[1]}</span></b><code><span>{r[0]}</span></code></A></td>
         <td className="x-mono" data-label="In $/M">{cost(r, 2)}</td>
         <td className="x-mono" data-label="Out $/M"><span className="xmo-out">{cost(r, 3)}<i className="xmo-bar" aria-hidden="true"><b style={{ transform: `scaleX(${PRICED.has(r[0]) && r[3] ? Math.max(0.03, Math.log10(r[3] * 100 + 1) / topOut) : 0})` }} /></i></span></td>
         <td className="x-mono" data-label="Context">{ctxOf(r[4])}</td>
@@ -591,7 +592,7 @@ function Try() {
         </header>
         <div className="xmo-req" ref={box}>
           <div className="xmo-req-bar">
-            <span className="xmo-live"><i aria-hidden="true" />Live from api.hanzo.ai</span>
+            <span className="xmo-live"><i aria-hidden="true" /><span>Live from api.hanzo.ai</span></span>
             <span className="x-mono">POST /v1/chat/completions</span>
             <span className="xmo-eg x-mono">example</span>
           </div>
