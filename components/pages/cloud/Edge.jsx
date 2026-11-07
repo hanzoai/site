@@ -22,7 +22,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useScroll, useTransform, useMotionTemplate, useReducedMotion } from 'motion/react';
 import { useWide } from '../../v2/KeynoteChapters';
-import { A } from '../../kit';
+import { A, Film } from '../../kit';
 import { useCalm } from '../../ui';
 import KeynoteStage, { useStagePause } from './SafeStage';
 import KeynoteOpen from '../../v2/KeynoteOpen';
@@ -243,7 +243,13 @@ function Field() {
       <div className="eg-cv" ref={wrap} aria-hidden="true">
         <canvas ref={canvas} />
       </div>
-      <div className="kn-wrap kn-grid eg-facts" role="group" aria-label="Where it runs">
+      <div className="kn-wrap kn-grid eg-facts">
+        {/* Hanzo's own picture for these three facts: the Oto film, as on hanzo.ai/edge */}
+        <div className="eg-film" aria-hidden="true">
+          <Film src="/models/oto.webm" poster="/models/oto.webp" w={1200} h={1500} />
+          <span className="eg-film-n kn-fig">{pad(at + 1)} / 03</span>
+        </div>
+        <div className="eg-fact-l" role="group" aria-label="Where it runs">
         {FACTS.map(([t, d], i) => (
           <button key={t} type="button" aria-pressed={at === i} onClick={() => { setAt(i); setMine(true); }} className="eg-fact">
             <span className="eg-fact-bar" aria-hidden="true"><i key={at === i ? 'on' + at : 'off'} /></span>
@@ -252,6 +258,7 @@ function Field() {
             <span className="eg-fact-n kn-fig">{pad(i + 1)} / 03</span>
           </button>
         ))}
+        </div>
       </div>
     </section>
   );
@@ -373,57 +380,46 @@ function Room({ children, className = '' }) {
   );
 }
 
-/* the dark room as one stage: four cases on the left, the chosen one on the right with its own object, a localhost
-   window with the network off streaming the case's three uses. It moves on by itself every 6 s while seen, until you
-   choose. Every case is in the HTML (JS off shows all four, stacked). */
+/* the dark room: Hanzo's four cases, every word readable as a list. Beside them (wide screens) the room's one object:
+   a localhost window with the network off, streaming the uses of the case you are reading (the one nearest the middle
+   of the screen, or the one you point at). */
 function When() {
-  const ref = useRef(null);
-  const seen = useInView(ref, { amount: 0.35 });
-  const calm = useCalm();
   const [at, setAt] = useState(0);
-  const [mine, setMine] = useState(false);
-  const tabs = useRef([]);
+  const items = useRef([]);
+  const calm = useCalm();
   useEffect(() => {
-    if (!seen || calm || mine) return;
-    const t = setTimeout(() => setAt((v) => (v + 1) % WHEN.length), 6000);
-    return () => clearTimeout(t);
-  }, [at, seen, calm, mine]);
-  const pick = (i) => { setAt(i); setMine(true); };
-  const key = (e, i) => {
-    const k = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
-    if (!k) return;
-    e.preventDefault();
-    const j = (i + k + WHEN.length) % WHEN.length;
-    pick(j); tabs.current[j]?.focus();
-  };
+    const els = items.current.filter(Boolean);
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(+e.target.dataset.i); }), { rootMargin: '-45% 0px -45% 0px' });
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
   return (
     <Room className="kn-sec eg-when">
-      <div className="kn-wrap" ref={ref}>
+      <div className="kn-wrap">
         <div className="kn-grid eg-when-h">
           <KeynoteLines className="kn-headline eg-when-t" lines="When to reach for it" />
           <p className="kn-lede eg-when-l">Use Edge when the data cannot leave, the network cannot be relied on, or a per-call bill is the wrong shape. Use Hanzo Engine when you need full precision or many users at once.</p>
         </div>
-        <div className="kn-grid eg-cases" data-mine={mine ? '' : undefined}>
-          <div className="eg-tabs" role="tablist" aria-label="When to reach for it" aria-orientation="vertical">
-            {WHEN.map(([t], i) => (
-              <button key={t} ref={(el) => { tabs.current[i] = el; }} type="button" role="tab" id={'eg-wt' + i} aria-controls={'eg-wp' + i} aria-selected={at === i} tabIndex={at === i ? 0 : -1} data-sound="tick" onClick={() => pick(i)} onKeyDown={(e) => key(e, i)} className="eg-tab">
-                <span className="eg-case-n kn-fig" aria-hidden="true">{pad(i + 1)}</span>
-                <span className="eg-tab-t">{t}</span>
-                <span className="eg-tab-bar" aria-hidden="true"><i key={at === i ? 'on' + at : 'off'} /></span>
-              </button>
-            ))}
+        <div className="kn-grid eg-cases">
+          <div className="eg-mini-wrap" aria-hidden="true">
+            <div className="eg-mini">
+              <div className="eg-mini-bar"><span className="eg-dots"><i /><i /><i /></span><span className="eg-host">localhost</span><span className="eg-net"><Off /></span></div>
+              <p className="eg-mini-k kn-fig">{pad(at + 1)} / 04</p>
+              <ul key={calm ? 'c' : at}>{WHEN[at][2].map((p, k) => <li key={p} style={{ '--k': k }}><span>data:</span><span>{p}</span></li>)}</ul>
+            </div>
           </div>
-          <div className="eg-panels">
+          <ol className="eg-list">
             {WHEN.map(([t, d, pts], i) => (
-              <div key={t} className="eg-case" role="tabpanel" id={'eg-wp' + i} aria-labelledby={'eg-wt' + i} data-on={at === i ? '' : undefined} aria-hidden={at === i ? undefined : true}>
-                <div className="eg-case-t"><h3 className="eg-case-h">{t}</h3><p>{d}</p></div>
-                <div className="eg-mini">
-                  <div className="eg-mini-bar" aria-hidden="true"><span className="eg-dots"><i /><i /><i /></span><span className="eg-host">localhost</span><span className="eg-net"><Off /></span></div>
-                  <ul>{pts.map((p, k) => <li key={p} style={{ '--k': k }}><span aria-hidden="true">data:</span>{p}</li>)}</ul>
+              <li key={t} ref={(el) => { items.current[i] = el; }} data-i={i} className={'eg-case' + (at === i ? ' on' : '')} onPointerEnter={() => setAt(i)}>
+                <span className="eg-case-n kn-fig" aria-hidden="true">{pad(i + 1)}</span>
+                <div className="eg-case-t">
+                  <h3 className="eg-case-h">{t}</h3>
+                  <p>{d}</p>
+                  <ul>{pts.map((p) => <li key={p}><span>{p}</span></li>)}</ul>
                 </div>
-              </div>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
       </div>
     </Room>
