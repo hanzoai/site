@@ -58,7 +58,10 @@
 
 /* Facts 02–06: sheets that stack */
 .sn2-sheets { padding-block: clamp(120px, 14vw, 200px) clamp(24px, 3vw, 48px); }
-.sn2-sheet { position: sticky; top: calc(88px + var(--i) * 18px); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: start; min-height: min(560px, calc(100svh - 200px)); margin-bottom: 14vh; padding: clamp(36px, 4vw, 64px); border-radius: 24px; background: #fff; box-shadow: 0 -1px 0 rgba(0, 0, 0, .02), 0 -30px 80px -40px rgba(0, 0, 0, .22); }
+.sn2-sheet { position: sticky; top: calc(88px + var(--i) * 18px); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center; margin-bottom: 14vh; padding: clamp(36px, 4vw, 64px); border-radius: 24px; background: #fff; box-shadow: 0 -1px 0 rgba(0, 0, 0, .1), 0 -16px 40px -32px rgba(0, 0, 0, .18); }
+/* alternate sheets put the picture first, so five facts do not read as one layout five times */
+.sn2-sheet:nth-child(even) .sn2-sheet-copy { grid-column: 8 / span 5; grid-row: 1; }
+.sn2-sheet:nth-child(even) .sn2-pic { grid-column: 1 / span 6; grid-row: 1; }
 .sn2-sheet:nth-child(even) { background: #f5f5f5; }
 .sn2-sheet:last-child { margin-bottom: 0; }
 .sn2-sheet-copy { grid-column: 1 / span 5; }

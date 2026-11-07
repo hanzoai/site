@@ -59,6 +59,7 @@ function Issue() {
           <p className="sn2-k l2-mono">Top frame</p>
           <div className="sn2-code">
             <AnimatePresence initial={false}>
+              {/* crossfade, never a blank bar */}
               {resolved
                 ? <motion.code key="r" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.35, ease: EASE }}><b>checkout/cart.ts:42</b> · applyDiscount()</motion.code>
                 : <motion.code key="m" className="min" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.3 }}>main.3f9a.js:1:88213 · t.a()</motion.code>}
@@ -168,6 +169,18 @@ function Route() {
   const [w, setW] = useState(1);
   const [d, setD] = useState(1);
   const [k, setK] = useState(2);
+  // once, when the router comes into view, it builds one rule by itself (a spike → PagerDuty → Jira, then back to a
+  // regression → Slack → GitHub) so the sentence visibly rewrites; any press stops it
+  const box = useRef(null);
+  const seen = useInView(box, { amount: 0.6, once: true });
+  const calm = useCalm();
+  const [mine, setMine] = useState(false);
+  useEffect(() => {
+    if (!seen || calm || mine) return;
+    const plan = [() => setW(2), () => setD(3), () => setK(0), () => setW(0), () => setD(1), () => setK(2)];
+    const ids = plan.map((f, i) => setTimeout(f, 500 + i * 900));
+    return () => ids.forEach(clearTimeout);
+  }, [seen, calm, mine]);
   const pick = (list, at, set, label) => (
     <div className="sn2-rt-row" role="group" aria-label={label}>
       <p className="l2-mono">{label}</p>
@@ -175,7 +188,7 @@ function Route() {
     </div>
   );
   return (
-    <div className="sn2-route">
+    <div className="sn2-route" ref={box} onPointerDown={() => setMine(true)} onKeyDown={() => setMine(true)}>
       {pick(WHAT.map((x) => x[0]), w, setW, 'when')}
       {pick(DEST, d, setD, 'route to')}
       {pick(TRACK, k, setK, 'opens a ticket in')}
