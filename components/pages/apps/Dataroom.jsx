@@ -132,6 +132,19 @@ function Live() {
   );
 }
 
+/* Hanzo's picture on this page: the Zen film (its poster first; still under reduced motion). */
+function ZenFilm() {
+  const calm = useCalm();
+  const ref = useRef(null);
+  useEffect(() => { const v = ref.current; if (!v) return; if (calm) v.pause(); else v.play?.().catch(() => {}); }, [calm]);
+  return (
+    <span className="dr-film-m" aria-hidden="true">
+      <img src="/models/zen.webp" alt="" width="1200" height="1500" decoding="async" loading="lazy" />
+      <video ref={ref} muted loop playsInline preload="metadata" poster="/models/zen.webp" disablePictureInPicture><source src="/models/zen.webm" type="video/webm" /></video>
+    </span>
+  );
+}
+
 function Hero() {
   return (
     <section className="dr-hero" aria-labelledby="dr-h1">
@@ -157,7 +170,7 @@ function Hero() {
 const STEPS = [
   ['Add the documents', 'A folder tree rather than a single file, shared as one link.'],
   ['Set who may open it', 'A password, a verified email, an NDA to accept, an expiry date, downloads off. Set them per link.'],
-  ['Send the link', ''],
+  ['Send the link', 'You send a link instead of an attachment, and the link keeps working for you after it leaves.'],
   ['See what they read', 'Time spent on each page, how far they got, and whether they came back.'],
   ['Change your mind', 'Access can change after the link has gone, which an emailed PDF never allowed.'],
 ];
@@ -355,9 +368,9 @@ function Ten() {
 }
 
 const PLANS = [
-  ['Free', '$0', 'Get started with document sharing and analytics.', ['Get on GitHub', 'https://github.com/hanzoai/'], ['1 team member', '50 links', '50 documents', 'Unlimited visitors', 'Community support']],
+  ['Free', '$0', 'Get started with document sharing and analytics.', ['Get on GitHub', 'https://github.com/hanzoai/'], ['1 team member', '50 links', '50 documents', 'Unlimited visitors', 'Page-by-page analytics', 'Community support']],
   ['Pro', '$25', 'For professionals who need branding and more capacity.', ['Contact Sales', '/contact-sales'], ['Unlimited links', '100 documents', 'Large file uploads', 'Custom branding', 'Video support', 'Folder organization']],
-  ['Business', '$59', 'For teams that need custom domains and advanced access controls.', ['Contact Sales', '/contact-sales'], ['Everything in Pro', '3 team members', '1,000 documents', 'Custom domain', 'Allow/block lists', 'Screenshot protection']],
+  ['Business', '$59', 'For teams that need custom domains and advanced access controls.', ['Contact Sales', '/contact-sales'], ['Everything in Pro', '3 team members', '1,000 documents', 'Custom domain', 'Email verification', 'Allow/block lists', 'Screenshot protection', 'Webhooks']],
   ['Data Rooms', '$99', 'Full data room capabilities for fundraising and due diligence.', ['Contact Sales', '/contact-sales'], ['Everything in Business', 'Unlimited data rooms', 'Data room analytics', 'NDA agreements', 'Dynamic watermark', 'Granular permissions', 'Custom data room domain', '24/7 email support']],
 ];
 
@@ -420,9 +433,9 @@ function Plans() {
           </div>
           {/* the two repositories, upstream feeding ours and ours sending work back along the same line */}
           <div className="dr-repos">
-            <A to="https://github.com/mfts/papermark" className="dr-repo up"><span className="dr-repo-i"><Gh /></span><b className="x-mono">Upstream: mfts/papermark</b><Arrow /></A>
+            <A to="https://github.com/mfts/papermark" className="dr-repo up"><span className="dr-repo-i"><Gh /></span><span className="dr-repo-n x-mono">Upstream: mfts/papermark</span><Arrow /></A>
             <span className="dr-repo-line" aria-hidden="true"><i /><i /></span>
-            <A to={REPO} className="dr-repo"><span className="dr-repo-i"><Gh /></span><b className="x-mono">hanzoai/dataroom</b><Arrow /></A>
+            <A to={REPO} className="dr-repo"><span className="dr-repo-i"><Gh /></span><span className="dr-repo-n x-mono">hanzoai/dataroom</span><Arrow /></A>
           </div>
         </div>
       </div>
@@ -439,9 +452,10 @@ const DOORS = [
   [DOCS, 'Documentation', 'Explore our guides and API references', 'View Docs'],
   [REPO, 'For Developers', 'Integrate document sharing into your apps', 'View on GitHub'],
   ['/contact-sales', 'Need a Custom Solution?', 'Our team can help you design a tailored data room setup for your fundraising or due diligence needs.', 'Contact Sales'],
-  [DOCS, 'Get started with Dataroom', null, 'Read the docs'],
 ];
 
+/* The close, in Hanzo's order: the sentence and the one solid ask (Start Sharing), the three doors as rows, then how to
+   start: the docs and the repository, and the repository itself, ready to deploy. */
 function End() {
   return (
     <section className="bz-sec dr-end" aria-labelledby="dr-end-h">
@@ -452,17 +466,28 @@ function End() {
             <p className="bz-lede">You will know whether it was read before you have to ask.</p>
           </div>
           <div className="dr-end-go">
+            <h3 className="dr-end-k">Start Sharing</h3>
+            <p className="dr-end-d">Share documents with real-time analytics</p>
             <Cta to="/login" id="dataroom.close" size="lg" thumb>Try Hanzo</Cta>
-            <p className="dr-end-note"><b>Start Sharing</b><span>Share documents with real-time analytics</span></p>
           </div>
         </div>
         <ul className="dr-rows">
           {DOORS.map(([to, t, d, a]) => (
-            <li key={t}><A to={to} className="dr-row"><b>{t}</b><span>{d}</span><em>{a}</em><Arrow /></A></li>
+            <li key={t}><A to={to} className="dr-row"><h3>{t}</h3><p>{d}</p><span className="dr-row-a">{a}</span><Arrow /></A></li>
           ))}
-          <li><A to="https://platform.hanzo.ai/deploy" className="dr-row"><b>Get Dataroom</b><span>Secure data room <i className="x-mono">License: AGPL-3.0</i></span><em>Deploy to Cloud</em><Arrow /></A></li>
-          <li><A to={REPO} className="dr-row"><b className="x-mono dr-gh"><Gh />hanzoai/dataroom</b><span>3 stars</span><em /><Arrow /></A></li>
         </ul>
+        <div className="dr-start">
+          <div className="dr-start-l">
+            <h2 className="bz-headline">Get started with Dataroom</h2>
+            <div className="dr-start-links"><More to={DOCS}>Read the docs</More><More to={REPO}>View on GitHub</More></div>
+          </div>
+          <div className="dr-get bz-obj">
+            <h2 className="dr-get-h">Get Dataroom</h2>
+            <p className="dr-get-d">Secure data room</p>
+            <p className="dr-get-meta"><span className="dr-lic x-mono"><span>License:</span> AGPL-3.0</span><A to={REPO} className="dr-get-repo x-mono"><Gh /><span>hanzoai/dataroom</span></A><span className="dr-stars">3 stars</span></p>
+            <Cta to="https://platform.hanzo.ai/deploy" kind="quiet" id="dataroom.deploy" className="dr-deploy">Deploy to Cloud</Cta>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -475,7 +500,10 @@ export default function Dataroom() {
       <Hero />
       <BizChapters label="A link, shared" className="dr-ch" items={STEPS.map(([t, d]) => ({ t, d }))} stage={(at) => <Room at={at} />}>
         <header className="bz-wrap dr-ch-head">
-          <BizLines className="bz-headline" lines={['A link, shared']} />
+          <div className="dr-film">
+            <BizLines className="bz-headline" lines={['A link, shared']} />
+            <ZenFilm />
+          </div>
         </header>
       </BizChapters>
       <Files />

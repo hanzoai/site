@@ -292,18 +292,18 @@
 .dr-end-top { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--g); align-items: end; padding-bottom: clamp(48px, 6vw, 88px); }
 .dr-end-main { grid-column: 1 / span 8; display: flex; flex-direction: column; gap: 24px; }
 .dr-end-go { grid-column: 9 / span 4; display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
-.dr-end-note { display: flex; flex-direction: column; gap: 4px; margin: 0; font-size: 16px; color: var(--bz-muted); }
-.dr-end-note b { color: var(--ink); font-weight: 606; }
+.dr-end-go { gap: 8px; }
+.dr-end-k { margin: 0; font-size: 17px; font-weight: 606; letter-spacing: -.012em; }
+.dr-end-d { margin: 0 0 12px; font-size: 16px; color: var(--bz-muted); }
 .dr-rows { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--ink); }
 .dr-rows > li { border-bottom: 1px solid var(--bz-line); }
 .dr-row { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 6fr) minmax(120px, auto) 24px; align-items: center; gap: 24px; min-height: 76px; padding: 0 8px; color: var(--ink); text-decoration: none; transition: background-color .15s, transform .09s; }
 @media (hover: hover) { .dr-row:hover { background: #f5f5f5; } }
 .dr-row:active { transform: scale(.995); }
 .dr-row:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
-.dr-row b { font-size: 17px; font-weight: 606; letter-spacing: -.012em; }
-.dr-row > span { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 6px 14px; font-size: 16px; line-height: 1.45; color: var(--bz-muted); }
-.dr-row > span i { font-style: normal; font-size: 14px; color: var(--ink); }
-.dr-row em { font-style: normal; font-size: 16px; font-weight: 497; text-align: right; }
+.dr-row h3 { margin: 0; font-size: 17px; font-weight: 606; letter-spacing: -.012em; }
+.dr-row p { margin: 0; font-size: 16px; line-height: 1.45; color: var(--bz-muted); }
+.dr-row .dr-row-a { font-size: 16px; font-weight: 497; text-align: right; }
 .dr-row svg:last-child { transition: transform .15s var(--bz-emph); }
 .dr-gh { display: inline-flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 497 !important; }
 
@@ -425,7 +425,7 @@
   .dr-end-top { grid-template-columns: minmax(0, 1fr); row-gap: 32px; }
   .dr-end-main, .dr-end-go { grid-column: 1 / -1; }
   .dr-row { grid-template-columns: minmax(0, 1fr) 24px; gap: 6px 12px; padding: 16px 4px; min-height: 64px; }
-  .dr-row > span, .dr-row em { grid-column: 1; text-align: left; }
+  .dr-row p, .dr-row .dr-row-a { grid-column: 1; text-align: left; }
   .dr-row svg:last-child { grid-column: 2; grid-row: 1; }
   .dr .x-arrow { min-height: 44px; }
   .dr .bz-kick, .dr-tag, .dr-chip, .dr-strip-k .x-mono, .dr-pg-n, .dr-pg em, .dr-room-n, .dr-sc-note, .dr-doc em, .dr-one em, .dr-att em, .dr-sent, .dr-heat b, .dr-heat em, .dr-heat-k, .dr-pdf em, .dr-link-set > .x-mono:first-child, .dr-after, .dr-finder-bar span, .dr-file-n, .dr-wm b, .dr-doc-page .dr-wm b, .dr-viewer-bar .x-mono, .dr-viewer-foot, .dr-rung-k > .x-mono:last-child, .dr-popular, .dr-plan-tab em span { font-size: 14px; }
@@ -459,3 +459,35 @@
 .dr .x-arrow:active { transform: translateY(1px); }
 /* a gate waiting behind the front one shows only its edge; its words come forward with it */
 .dr-gate.back > * { visibility: hidden; }
+
+/* copy rule (8 Nov): Hanzo's close in its own order: the doors as rows, then how to start, then the repository to deploy */
+.dr-start { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--g); row-gap: 32px; align-items: center; margin-top: clamp(72px, 8vw, 120px); }
+.dr-start-l { grid-column: 1 / span 5; display: flex; flex-direction: column; gap: 20px; }
+.dr-start-links { display: flex; flex-wrap: wrap; gap: 4px 28px; }
+.dr-get { grid-column: 7 / -1; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 28px; border-radius: 24px; background: var(--ink); color: #fafafa; }
+.dr-get-h { margin: 0; font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.15; }
+.dr-get-d { margin: 0; font-size: 16px; color: #a3a3a3; }
+.dr-get-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin: 8px 0 14px; font-size: 14px; }
+.dr-lic { padding: 7px 12px; border-radius: 999px; background: #262626; color: #fafafa; }
+.dr-lic span { color: #a3a3a3; }
+.dr-get-repo { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #fafafa; text-decoration: underline; text-underline-offset: 3px; }
+@media (hover: hover) { .dr-get-repo:hover { text-decoration-thickness: 2px; text-underline-offset: 5px; } }
+.dr-stars { color: #a3a3a3; }
+.dr .dr-get .dr-deploy { background: transparent; color: #fafafa; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .4); border-color: transparent; }
+@media (hover: hover) { .dr .dr-get .dr-deploy:hover { background: #262626; box-shadow: inset 0 0 0 1px #fafafa; } }
+.dr .dr-get .dr-deploy:active { transform: scale(.98); }
+.dr-repo .dr-repo-n { font-size: 16px; font-weight: 497; line-height: 1.35; word-break: break-word; }
+/* Hanzo's picture: the Zen film in a dark band beside "A link, shared" */
+.dr-film { position: relative; display: flex; align-items: flex-end; min-height: 220px; padding: 32px 36px; border-radius: 28px; background: #000; color: #fafafa; overflow: hidden; }
+.dr-film .bz-headline { position: relative; z-index: 1; color: #fafafa; }
+.dr-film-m { position: absolute; top: 0; right: 0; bottom: 0; width: min(46%, 520px); }
+.dr-film-m img, .dr-film-m video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.dr-film-m::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, #000 0%, rgba(0, 0, 0, 0) 40%); }
+.dr-get-h { color: #fafafa; }
+@media (max-width: 900px) {
+  .dr-start-l, .dr-get { grid-column: 1 / -1; }
+  .dr-get { padding: 22px; }
+  .dr-film { min-height: 180px; padding: 22px; border-radius: 22px; }
+  .dr-film-m { width: 62%; }
+  .dr-ch-head { margin-bottom: 24px; }
+}
