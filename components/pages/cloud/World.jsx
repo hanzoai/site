@@ -3,16 +3,18 @@
    room of six monitors, the last one a replay you scrub → Get World → one closing band.
    Persona: a team running models in production who wants one view of them. Goal: open World Monitor.
    CTA: "Open World Monitor" (hero, ask bar, close; data-cta primary / close). Metric: cta_click:world.primary.
-   V2: 8/10 a turning globe that eases out as you leave, then a pinned control room where one big monitor is on air at a time (its drawing plays as it arrives) beside a numbered rail of six, a replay you scrub; phone stacks with a cut-in per monitor
+   V2: 8/10 a turning globe that visibly eases out across the hero's last stretch, then a pinned control room where one big monitor is on air (its drawing fills the stage, plays as it arrives, then keeps one live beat) beside a figure and a numbered rail of six; phones ride a sideways snap rail under a rolling 01 / 06
    Signature: every model, everywhere, live. A dotted globe turns beside the title; requests arc from the edge to the GPUs
    that served them while P50, P95 and P99 tick by model, and a drift alert fires when production leaves its baseline.
    Beyond: scrub an agent session step by step (prompt, tool call, IO, model output), the way Forensic Replay
    reconstructs one.
    Motion: the canvas globe (signature, idle, pausable; on desktop it shrinks, rises and slows as the hero leaves) +
    latency bars ticking (time) + the control room pinned on desktop, scroll choosing which monitor is on air, each
-   monitor's drawing playing once as it arrives and its h3 cutting in by line mask (scroll, state; on phones the same
-   moment plays as each monitor scrolls in) + the topology trace on hover or press (pointer, state) + the replay scrub
-   (state) + a magnetic hero ask on fine pointers. Every word and link is Hanzo's; arcs, bars and the session are drawn
+   monitor's drawing playing once as it arrives and its h3 cutting in by line mask (scroll, state; on phones a sideways
+   snap rail, the same moment playing as each card comes into view) + one idle beat on the monitor on air only, while on
+   screen, none under reduced motion (time: the route swaps zen/kai, latency bars re-draw in their lanes, the drift ring
+   pulses, v2 nudges, the sources signal in turn, the replay steps itself until touched) + the topology trace on hover
+   or press (pointer, state) + the replay scrub (state) + a magnetic hero ask on fine pointers. Every word and link is Hanzo's; arcs, bars and the session are drawn
    examples, not measurements. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useMotionValueEvent, useInView } from 'motion/react';
