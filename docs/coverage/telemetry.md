@@ -33,7 +33,7 @@ Done here: `<main id="main" data-ask="off">`; the layout's "Skip to content" tar
 - [x] Ends in proof strip, `Band`, footer
 - [ ] Card-to-page links use Morph; title lands within 12px (n/a: no card on this page opens another page)
 
-Done here: Hero is split (title on 8 columns, line and action on 4, the pipe rising under); the object is the OTLP pipe: traces, metrics and logs enter, batch in the collector and leave in batches, so the signals moving through the pipe moves within the first second. `PageHero` is not merged; the existing equivalent (`StageHero` or the page's own hero with the same line-mask cut-in, 700 ms ease-emphasis) is used, and the mono caption sits under the h1. JS off: h1 "Hanzo Telemetry" at opacity 1, 0 hidden headings or paragraphs. Rooms: hero (light) → six chapters beside the config file (light, pinned) → closing band with "your config" (dark). The live page has no proof strip, so it ends on the band and the footer.
+Done here: Hero is split (title on 8 columns, line and action on 4, the pipe rising under); the object is the OTLP pipe: traces, metrics and logs enter, batch in the collector and leave in batches, so the signals moving through the pipe moves within the first second. `PageHero` is not merged; the existing equivalent (`StageHero` or the page's own hero with the same line-mask cut-in, 700 ms ease-emphasis) is used, and the mono caption sits under the h1. JS off: h1 "Hanzo Telemetry" at opacity 1, 0 hidden headings or paragraphs. Rooms: hero (light) → six chapters beside the config file (light, pinned) → closing band with "your config" (dark). The live page has no proof strip, so it ends on the band and the footer. The band ends on the page's own object: the collector at rest (OTLP in → collector → OTLP out) on top of "Your config", redrawn by its toggles, with "Put it in front of your backend" and its ask riding beside it (sticky on desktop) so the band never shows an empty half.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -57,7 +57,7 @@ Done here: No partner logos; product names appear as text only. Parity holds eve
 - [x] Tables, FAQ, tabs and code use the kit parts
 - [x] `python3 scripts/parity.py /telemetry`: 0 missing
 
-Done here: Small text: 0 runs under 13px on desktop, 0 under 14px on the phone (mono capitals excepted). Sizes follow the deck: h1 52px (40 phone), section heads 26px, h3 17px, lede 20px, body 15px, figures 64px Air, growing only in their moment. Lede 44ch, body 66ch, headings balanced. Code: the config file is the chapter object; the agent prompt in the band. Parity: 0 missing.
+Done here: Small text: 0 runs under 13px on desktop, 0 under 14px on the phone (mono capitals excepted). Sizes follow the deck: h1 52px (40 phone), section heads 26px (including the band's "Put it in front of your backend" and "Get Telemetry"), chapter h3 21px, lede 20px, body 15px, figures 64px Air, growing only in their moment. Lede 44ch, body 66ch, headings balanced. Code: the config file is the chapter object; the agent prompt in the band. Parity: 0 missing.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
@@ -75,7 +75,7 @@ Done here: `taste.py` OK on the page JSX and CSS and the Cloud 4 shared files; o
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: listed below
 
-Done here: Hover sits under `@media (hover: hover)` and changes fill or border (the config toggles also fill grey and nudge their check, on or off); press is scale .97 in 90 ms; focus-visible draws a 2px ink or white ring; disabled controls drop to 40%. Nothing on the page loads data, so no loading state. Dialogs: none. Inputs: the config pills (aria-pressed). Forks deleted: see the top of this card.
+Done here: Hover sits under `@media (hover: hover)` and changes fill or border (the config toggles also fill grey and nudge their check, on or off); press is scale .98 (the config toggles) or the kit's press (Cta, Copy, Pause); focus-visible draws a 2px ink or white ring; disabled controls drop to 40%. Nothing on the page loads data, so no loading state. Dialogs: none. Inputs: the config pills (aria-pressed). Forks deleted: see the top of this card.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -84,7 +84,7 @@ Done here: Hover sits under `@media (hover: hover)` and changes fill or border (
 - [x] Reduced motion shows the final state; no `setInterval`
 - [ ] Sound only on the listed moments, through the one kit (n/a: the page plays no sound of its own; the kit owns it)
 
-Done here: Signature: read the collector's config as you scroll (pinned scene). Supporting: batch filling (time), the chapter arrival (a span runs the pipeline strip to the lit stage in 1.2 s, the lit lines write in by clip-path 80 ms apart, a caret blinks 5 times and stops; on phones each stacked chapter plays it once as it comes into view), config pills (state). `scripts/variety.py` OK. Kinds: idle (the hero collector), time (write-in, caret), state (pills, chapter swap), pointer (hover a signal in the hero and only that kind flows in), with scroll only in the pinned scene. Timers are timeout chains (`useTick`), no `setInterval`. Reduced motion (`useCalm`) renders the settled frame. No springs: every transition is 300 ms ease-emphasis or shorter.
+Done here: Signature: read the collector's config as you scroll (pinned scene). Supporting: batch filling (time), the chapter arrival (a span runs the pipeline strip to the lit stage in 1.2 s, the lit lines write in by clip-path 80 ms apart, a caret blinks 5 times and stops; on phones each stacked chapter plays it once as it comes into view), config pills (state; the collector at rest above them strikes through a signal or processor you switch off). `scripts/variety.py` OK. Kinds: idle (the hero collector), time (write-in, caret), state (pills, chapter swap), pointer (hover a signal in the hero and only that kind flows in), with scroll only in the pinned scene. Timers are timeout chains (`useTick`), no `setInterval`. Reduced motion (`useCalm`) renders the settled frame. No springs: every transition is 300 ms ease-emphasis or shorter.
 
 ## 10. Media
 - [ ] `Film` and `Pic` only; sizes and posters set (n/a: no photo or video)
@@ -117,7 +117,7 @@ Done here: Lowest measured text contrast 7.11:1 (0 runs flagged). Headings 12333
 - [x] No poller; no third-party request before consent
 - [x] Nothing heavy run on James's laptop
 
-Done here: `curl /telemetry/` returns the h1 in the HTML. Demos run only while on screen (`useInView`) and stop when paused or off screen. No fetch, poller or third-party script on the page. Layout shift over a full wheel scroll: 0.003 at 1470×801, 0.005 at 375×812 (the code window holds its 20-line height, so builder.yaml no longer re-centres the stage). 0 console errors at both widths (0 desktop, 0 phone).
+Done here: `curl /telemetry/` returns the h1 in the HTML. Demos run only while on screen (`useInView`) and stop when paused or off screen. No fetch, poller or third-party script on the page. Layout shift over a full wheel scroll (16:28, `scripts/motion.mjs` and a PerformanceObserver walk): 0.007–0.010 at 1470×801, 0.005–0.016 at 375×812 (the code window holds its 20-line height, so builder.yaml no longer re-centres the stage). 0 console errors at both widths (0 desktop, 0 phone).
 
 ## 14. SEO and machine files
 - [x] Title and description match live (or are listed for James)
