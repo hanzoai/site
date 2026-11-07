@@ -259,7 +259,7 @@ button.fl-node:active { scale: .97; }
 @media (hover: hover) { .fl-pg-ctl button.main:hover { border-color: #f5f5f5; background: #262626; } }
 .fl-pg-ctl button:focus-visible, .fl-pg-steps button:focus-visible { outline: 2px solid #f5f5f5; outline-offset: 2px; }
 .fl-pg-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
-.fl-pg-steps button { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; width: 100%; min-height: 60px; padding: 10px 12px 12px; border: 0; border-radius: 12px; background: #171717; color: #a3a3a3; font: 497 14px/1.2 var(--sans); text-align: left; cursor: pointer; overflow: hidden; transition: background .3s, color .3s; }
+.fl-pg-steps button { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; width: 100%; min-height: 60px; padding: 10px 12px 12px; border: 0; border-radius: 12px; background: #171717; color: #a3a3a3; font: 497 14px/1.2 var(--sans); text-align: left; cursor: pointer; overflow: hidden; transition: background .3s, color .3s, transform .09s; }
 .fl-pg-steps button span { font-size: 13px; color: #737373; }
 /* every tab reserves two lines, so a long name never makes its tab taller than the rest */
 .fl-pg-steps button b { display: block; min-height: 2.4em; font-weight: 497; line-height: 1.2; max-width: 100%; text-wrap: balance; overflow-wrap: normal; hyphens: none; }
@@ -274,6 +274,8 @@ button.fl-node:active { scale: .97; }
 .fl-pg-steps button.on { background: #f5f5f5; color: #0a0a0a; }
 .fl-pg-steps button.on span { color: #0a0a0a; font-weight: 606; }
 .fl-pg-steps button.on::after { background: #0a0a0a; }
+/* the lit step answers the pointer too: a ring outside it (its fill is already the lightest) */
+@media (hover: hover) { .fl-pg-steps button.on:hover { background: #ffffff; color: #0a0a0a; outline: 1px solid rgba(255, 255, 255, .45); outline-offset: 3px; } }
 /* the playground's object: the inspector itself, large. The node, what it received, a wire the hand-off travels, and
    what it returned, streaming in */
 .fl-pg-stage { display: flex; flex-direction: column; gap: clamp(28px, 3vw, 44px); padding: clamp(32px, 4vw, 56px) clamp(24px, 3vw, 44px); background: radial-gradient(circle, rgba(255, 255, 255, .08) 1.1px, transparent 1.5px) 0 0 / 24px 24px, #0a0a0a; }
@@ -363,6 +365,8 @@ button.fl-node:active { scale: .97; }
 .fl-chip { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); font: 497 14px/1 var(--mono); color: var(--ink); text-decoration: none; }
 .fl-chip span { color: var(--faint); }
 @media (hover: hover) { a.fl-chip:hover { border-color: rgba(0, 0, 0, .22); } }
+a.fl-chip { transition: border-color .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(0, 0, .2, 1); }
+a.fl-chip:active { transform: translateY(1px); }
 
 /* the close: the two commands */
 .fl-end-top { align-items: center; }
