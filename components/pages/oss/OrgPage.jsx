@@ -22,7 +22,8 @@
    Colour: none of our own (MASTER.md 3.1); organizations differ by their contour, figures and repositories.
    V2: 8/10 v6: a light, full-width year strip as the hero object (its own face: no black card, no pinned chapters, no dark close), each figure said once with the forge's shares drawn from Hanzo's numbers, zeros in a small line, repositories as numbered rows (72px on phones), siblings named by id, a quiet close with the contour and the ask. */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { motion, AnimatePresence, LayoutGroup, useInView, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence, LayoutGroup, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import useCalm from '../../v2/useCalm';
 import NoJs from '../../NoJs';
 import { Copy, Magnetic } from '../../ui';
 import { A } from '../../kit';
@@ -108,8 +109,8 @@ function Card({ r, onClose }) {
           </header>
           {r.desc && <p className="xos-card-d">{r.desc}</p>}
           <dl className="xos-stats">
-            {r.stars != null && <div><dt><Star /><span className="x-sr">stars</span></dt><dd className="v2f-num">{n0(r.stars)}</dd></div>}
-            {r.forks != null && <div><dt><Fork /><span className="x-sr">forks</span></dt><dd className="v2f-num">{n0(r.forks)}</dd></div>}
+            {r.stars != null && <div className={r.stars ? '' : 'nil'}><dt><Star /><span className="x-sr">stars</span></dt><dd className="v2f-num">{n0(r.stars)}</dd></div>}
+            {r.forks != null && <div className={r.forks ? '' : 'nil'}><dt><Fork /><span className="x-sr">forks</span></dt><dd className="v2f-num">{n0(r.forks)}</dd></div>}
             {r.commits && <div className="xos-stats-c"><dt className="x-sr">{r.commits}</dt><dd><Split s={r.commits} /></dd></div>}
             {r.pushed && <div className="xos-stats-w"><dt className="x-sr">{r.pushed}</dt><dd className="xos-when">{r.pushed}</dd></div>}
           </dl>
@@ -198,6 +199,18 @@ function useArrive(amount = 0.2) {
 /* with scripts off every held arrival shows at rest */
 const NOJS = '.xos .xos-dg>span,.xos .xos-list>li{animation:none!important;transform:none!important;opacity:1!important}';
 
+/* one goes out as the next comes in: as you scroll on, the year strip settles back (a little smaller, lifting away)
+   while the counted figures rise under it. Scroll-linked, transform only; still under reduced motion. */
+function Recede({ children }) {
+  const ref = useRef(null);
+  const calm = useCalm();
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start 0.35', 'end start'] });
+  const scale = useTransform(p, [0, 1], [1, 0.9]);
+  const y = useTransform(p, [0, 1], [0, -48]);
+  const opacity = useTransform(p, [0, 0.55, 1], [1, 1, 0.35]);
+  return <motion.div ref={ref} className="xos-recede" style={calm ? undefined : { scale, y, opacity }}>{children}</motion.div>;
+}
+
 /* a share, drawn from two of Hanzo's own figures */
 function Share({ part, of }) {
   if (!(part > 0) || !(of > 0) || part > of) return null;
@@ -266,7 +279,9 @@ export default function OrgPage({ doc }) {
     return null;
   };
   const growIx = forgeRows.reduce((b, f, k) => (f.n > (forgeRows[b] ? forgeRows[b].n : -1) ? k : b), 0);
-  const near = (doc.near || []).map((o) => ({
+  // the next organizations: never this one, and each name once
+  const seenNames = new Set([doc.name]);
+  const near = (doc.near || []).filter((o) => o.org !== doc.org && !seenNames.has(o.name) && seenNames.add(o.name)).map((o) => ({
     href: '/oss/' + o.org, title: o.name, preview: o.lede, seed: '/oss/' + o.org, data: o.data,
     meta: [o.org, o.repos && o.repos.value + ' ' + o.repos.label, o.commits && o.commits.n > 0 && o.commits.value + ' ' + o.commits.label.replace(/,.*$/, '')].filter(Boolean).join(' · '),
   }));
@@ -292,16 +307,22 @@ export default function OrgPage({ doc }) {
             </div>
           </div>
         </div>
-        <div className="v2f-wrap"><Year doc={doc} lead={lead} /></div>
+        <div className="v2f-wrap"><Recede><Year doc={doc} lead={lead} /></Recede></div>
         {ghC && (
           <div className="v2f-wrap v2f-grid xos-ghr" ref={ghRef} data-in={ghIn}>
             <div className="xos-ghr-l">
               <FamLines as="h2" play="view" text={ghC.title} className="v2f-head" />
               {ghC.notes.map((n) => <p key={n} className="xos-note">{n}</p>)}
             </div>
-            <dl className="xos-row-figs">
-              {ghFigs.map((f) => <div key={f.label}><dd className="v2f-num"><Digits value={f.value} /></dd><dt>{f.label}</dt></div>)}
-            </dl>
+            {/* a figure stands big only when it is more than zero; zeros drop into one small grey line */}
+            <div className="xos-ghr-r">
+              {ghFigs.some((f) => f.n > 0) && (
+                <dl className="xos-row-figs">
+                  {ghFigs.filter((f) => f.n > 0).map((f) => <div key={f.label}><dd className="v2f-num"><Digits value={f.value} /></dd><dt>{f.label}</dt></div>)}
+                </dl>
+              )}
+              {ghFigs.some((f) => !(f.n > 0)) && <p className="xos-zero">{ghFigs.filter((f) => !(f.n > 0)).map((f) => <span key={f.label}><b>{f.value}</b> {f.label}</span>)}</p>}
+            </div>
           </div>
         )}
       </section>
@@ -346,9 +367,10 @@ export default function OrgPage({ doc }) {
                     <input type="search" placeholder={R.search} aria-label={'Search the repositories of ' + doc.org} value={q} onChange={(e) => setQ(e.target.value)} />
                   </label>
                 )}
-                {R.items.length > 1 && (
+                {R.items.length > 1 && all.some((r) => r.stars > 0 || r.nCommits > 0) && (
                   <div className="xos-seg" role="group" aria-label={ui('oss_sort')}>
-                    {SORTS.map(([k, l, Icon]) => (
+                    {/* a sort that would change nothing (no stars, or no commits this year, anywhere) is not offered */}
+                    {SORTS.filter(([k]) => k === 'listed' || all.some((r) => (k === 'stars' ? r.stars : r.nCommits) > 0)).map(([k, l, Icon]) => (
                       <button key={k} type="button" aria-pressed={sort === k} aria-label={ui(l)} onClick={() => setSort(k)}>
                         {sort === k && <motion.span layoutId="xos-seg" className="xos-seg-bg" transition={GLIDE} />}
                         <span><Icon /></span>
