@@ -1,24 +1,33 @@
 'use client';
 /* Base.
-   V2: 8/10 Apple-style launch: the Base admin is the hero object, records landing in it live; "declare a collection, get an API" is its own pinned scene that builds the backend as you scroll; six capabilities are cards that open in place; one dark close.
-   Signature: the build-up. A pinned scene where a collection is declared field by field as you scroll, and the
-   backend assembles around it in Hanzo's order: the four things it does the moment it exists, then Data (the records
-   path and its verbs), Auth is Hanzo IAM (a token in, an identity out) and Files and live updates (one stream, records
-   arriving). Phones play it by itself when it is seen.
-   Supporting: the Stage hero (the admin starts big and settles to the right as you scroll), capability cards that open
-   into a sheet with a shared-element morph (synchronized.studio), and the closing dark room.
-   Beyond: "Your collection" - name the collection you would declare and the whole scene declares that one, with its
+   V2: 8/10 The Base admin is the hero, a record landing every few seconds; "Declare a collection, get an API" builds the backend tile by tile as you scroll; six capabilities open in place; run it anywhere beside the example console; one dark close. Deck greys, deck scale, no springs.
+   Persona: a developer who needs an app backend (data, users, files, live updates) without wiring one together.
+   Goal: see that one binary and one file is the whole backend, then sign in or read the docs.
+   CTA: "Try Hanzo" → /login (solid, data-cta base.hero, data-thumb); "Read the docs" → docs.hanzo.ai/…/base (link,
+        base.hero-2); "View on GitHub" → github.com/hanzoai/base (link, base.hero-3); "Deploy on Hanzo Cloud" →
+        platform.hanzo.ai (solid in its own screen, base.run); "GitHub" (link, base.run-2); "Deploy to Cloud" →
+        platform.hanzo.ai/deploy (solid in the close, base.close); "Self-host" (link, base.close-self).
+   Metric: api_key_created (developers; the hero click is cta_click base.hero).
+   Signature: the build-up. A pinned scene where a collection is declared field by field as you scroll, and the backend
+   assembles around it in Hanzo's order: the four things it does the moment it exists, then Data (the records path and
+   its verbs), Auth is Hanzo IAM (a token in, an identity out) and Files and live updates (one stream, records
+   arriving). Unbuilt tiles are hollow slots, built ones fill white, the one being built is ink. Phones play it once.
+   Supporting: the Stage hero (the admin settles to the right as you scroll), capability cards that open into a sheet
+   with a shared-element morph (synchronized.studio), and the closing dark room.
+   Beyond: "Your collection": name the collection you would declare and the whole scene declares that one, with its
    records path /v1/collections/{name}/records written out the same second.
-   Accent: Base orange. Every word and link is Hanzo's; example rows are blank bars, never invented data. */
+   Every word and link is Hanzo's; example rows are blank bars and ids, never invented data. */
 import { useEffect, useRef, useState } from 'react';
 import { useScroll, useMotionValueEvent, useInView, useReducedMotion } from 'motion/react';
-import { A } from '../../kit';
-import { Console, useLive, useEvery } from './Frame';
-import KeynoteStage from '../../v2/KeynoteStage';
+import { A, Cta } from '../../kit';
+import { useLive } from './Frame';
+import { scrollToY } from '../../../lib/scroll';
+import KeynoteStage, { useStagePause } from '../../v2/KeynoteStage';
 import KeynoteLines from '../../v2/KeynoteLines';
 import KeynoteOpen from '../../v2/KeynoteOpen';
 import KeynoteClose from '../../v2/KeynoteClose';
 import { useWide } from '../../v2/KeynoteChapters';
+import ExampleConsole from './ExampleConsole';
 import './Base.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/projects/hanzoai/base';
@@ -26,12 +35,18 @@ const GH = 'https://github.com/hanzoai/base';
 const FIELDS = [['title', 'text'], ['body', 'text'], ['author', 'relation'], ['published', 'bool']];
 const hex = (n) => ((n * 2654435761) >>> 0).toString(16).padStart(8, '0').slice(0, 8);
 
-/* The hero object: the Base admin, a collection's records arriving live. Records / Schema are real tabs. */
+/* The hero object: the Base admin, a collection's records arriving live. Records / Schema switch the view. */
 function Admin() {
   const [ref, live] = useLive(0.25);
-  const [tab, setTab] = useState(0);
+  const paused = useStagePause();
+  const [view, setView] = useState(0);
   const [n, setN] = useState(9);
-  useEvery(2600, live && tab === 0, () => setN((v) => v + 1));
+  const run = live && view === 0 && !paused;
+  useEffect(() => {
+    if (!run) return;
+    const t = setTimeout(() => setN((v) => v + 1), 2600);
+    return () => clearTimeout(t);
+  }, [run, n]);
   return (
     <div className="kn-obj bs-adm" ref={ref}>
       <div className="bs-adm-bar">
@@ -48,11 +63,11 @@ function Admin() {
         <div className="bs-adm-main">
           <div className="bs-adm-h">
             <b>posts</b>
-            <div className="bs-adm-tabs" role="tablist" aria-label="Collection">
-              {['Records', 'Schema'].map((t, i) => <button key={t} type="button" role="tab" aria-selected={tab === i} onClick={() => setTab(i)}>{t}</button>)}
+            <div className="bs-adm-tabs" role="group" aria-label="Collection">
+              {['Records', 'Schema'].map((t, i) => <button key={t} type="button" aria-pressed={view === i} onClick={() => setView(i)}>{t}</button>)}
             </div>
           </div>
-          {tab === 0 ? (
+          {view === 0 ? (
             <div className="bs-tbl" aria-hidden="true">
               <div className="bs-tr bs-th"><span>id</span>{FIELDS.slice(0, 1).concat(FIELDS.slice(2)).map(([f]) => <span key={f}>{f}</span>)}</div>
               <div className="bs-rows" key={n}>
@@ -83,7 +98,7 @@ function OneFile() {
   return (
     <section className="kn-sec bs-one">
       <div className="kn-wrap kn-grid bs-one-g">
-        <p className="bs-one-say">Base is a single Go binary that serves your data, your users, your files, live updates and scheduled work over one HTTP API. The store is a SQLite file on disk, so deploying is copying a binary and backing up is copying a file.</p>
+        <p className="kn-lede bs-one-say">Base is a single Go binary that serves your data, your users, your files, live updates and scheduled work over one HTTP API. The store is a SQLite file on disk, so deploying is copying a binary and backing up is copying a file.</p>
         <div className="bs-one-v" aria-hidden="true">
           <div className="bs-one-bin">
             <p className="bs-k">single Go binary</p>
@@ -120,13 +135,14 @@ function Declare() {
   const { scrollYProgress: p } = useScroll({ target: run, offset: ['start start', 'end end'] });
   const [s, setS] = useState(0);
   useMotionValueEvent(p, 'change', (v) => setS(v));
+  // phones: the build plays once by itself while seen (a step every 900 ms), then rests built
   const [auto, setAuto] = useState(1);
   const [hand, setHand] = useState(false);
   useEffect(() => {
-    if (wide || !seen || calm || hand) return;
-    const id = setInterval(() => setAuto((a) => (a >= 4 ? 1 : a + 1)), 2200);
-    return () => clearInterval(id);
-  }, [wide, seen, calm, hand]);
+    if (wide || !seen || calm || hand || auto >= 4) return;
+    const t = setTimeout(() => setAuto((a) => Math.min(4, a + 1)), 900);
+    return () => clearTimeout(t);
+  }, [wide, seen, calm, hand, auto]);
   const st = wide && !calm ? Math.min(4, Math.floor(s * 5 * 0.9999)) : calm && !hand ? 4 : auto;
   const nf = wide && !calm ? Math.min(4, Math.floor(s * 26)) : 4;
   const txt = st <= 1 ? 0 : st - 1;
@@ -134,22 +150,23 @@ function Declare() {
     if (!wide) { setAuto(i); setHand(true); return; }
     const el = run.current;
     const top = el.getBoundingClientRect().top + window.scrollY;
-    const y = top + ((el.offsetHeight - window.innerHeight) * (i + 0.5)) / 5;
-    window.__lenis ? window.__lenis.scrollTo(y, { duration: 1.1 }) : window.scrollTo({ top: y, behavior: 'smooth' });
+    scrollToY(top + ((el.offsetHeight - window.innerHeight) * (i + 0.5)) / 5);
   };
   const cls = (k) => 'bs-tile' + (st >= k ? ' on' : '') + (st === k ? ' now' : '');
-  const live = seen && !calm && (wide ? st === 4 : true);
+  const live = seen && !calm && st === 4;
   return (
     <section className="bs-dec">
       <div ref={run} className="bs-dec-run">
         <div className="bs-dec-pin">
           <div className="kn-wrap kn-grid bs-dec-g">
             <div className="bs-dec-l">
-              <p className="kn-kick ac">What is Hanzo Base</p>
-              <KeynoteLines className="kn-headline bs-dec-h" lines={['Declare a collection,', 'get an API']} />
+              <div className="bs-dec-hd">
+                <KeynoteLines className="kn-headline bs-dec-h" lines={['Declare a collection,', 'get an API']} />
+                <p className="kn-kick">What is Hanzo Base</p>
+              </div>
               <label className="bs-name">
                 <span>collection</span>
-                <input type="text" value={name} maxLength={24} spellCheck={false} autoComplete="off" placeholder="posts" onChange={(e) => setName(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))} aria-label="Collection name" />
+                <input type="text" value={name} maxLength={24} spellCheck={false} autoComplete="off" enterKeyHint="done" placeholder="posts" onChange={(e) => setName(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))} aria-label="Collection name" />
               </label>
               <div className="bs-says">
                 <div className="bs-say" data-on={txt === 0 ? '' : undefined}>
@@ -157,15 +174,15 @@ function Declare() {
                 </div>
                 {PILLARS.map(([t, d], i) => (
                   <div key={t} className="bs-say" data-on={txt === i + 1 ? '' : undefined}>
-                    <p className="bs-say-n kn-fig">{String(i + 1).padStart(2, '0')}</p>
                     <h3 className="kn-title">{t}</h3>
                     <p>{d}</p>
+                    <p className="bs-say-n kn-fig">{String(i + 1).padStart(2, '0')}</p>
                   </div>
                 ))}
               </div>
-              <div className="bs-steps" role="tablist" aria-label="Steps">
-                {STAGES.map((t, i) => <button key={t} type="button" role="tab" aria-selected={st === i} onClick={() => go(i)}>{t}</button>)}
-              </div>
+              <nav className="bs-steps" aria-label="Steps">
+                {STAGES.map((t, i) => <button key={t} type="button" aria-current={st === i ? 'step' : undefined} onClick={() => go(i)}>{t}</button>)}
+              </nav>
             </div>
 
             <div className="bs-dec-v" aria-hidden="true">
@@ -181,7 +198,7 @@ function Declare() {
               </div>
               <div className={cls(2) + ' bs-t-api'}>
                 <p className="bs-k">Data</p>
-                <code className="bs-path">/v1/collections/<b>{coll}</b>/records</code>
+                <code className="bs-path">/v1/<wbr />collections/<wbr /><b>{coll}</b>/<wbr />records</code>
                 <p className="bs-verbs">{['list', 'read', 'create', 'update', 'delete'].map((v) => <span key={v}>{v}</span>)}</p>
                 <p className="bs-stores"><span>SQLite</span><span>Postgres DSN</span></p>
               </div>
@@ -237,11 +254,9 @@ function Caps() {
   return (
     <section className="kn-sec bs-caps">
       <div className="kn-wrap">
-        <div className="kn-grid bs-caps-h">
-          <div className="bs-caps-ht">
-            <p className="kn-kick ac">Capabilities</p>
-            <KeynoteLines className="kn-display sm" lines="What you get" />
-          </div>
+        <div className="bs-caps-h">
+          <KeynoteLines className="kn-headline" lines="What you get" />
+          <p className="kn-kick">Capabilities</p>
         </div>
         <KeynoteOpen cols={3} className="bs-open" items={CAPS.map(([id, t, d], i) => { const Pic = Art[id]; return { id, kick: String(i + 1).padStart(2, '0'), title: t, art: <Pic />, body: <p>{d}</p> }; })} />
       </div>
@@ -260,13 +275,13 @@ function Run() {
           <ul className="bs-places" aria-hidden="true">
             {PLACES.map((p) => <li key={p}><span>{p}</span><code>/v1/collections/{'{name}'}/records</code></li>)}
           </ul>
-          <div className="kn-acts">
-            <A to="https://platform.hanzo.ai" className="kn-btn solid">Deploy on Hanzo Cloud</A>
-            <A to={GH} className="kn-btn">GitHub</A>
+          <div className="kn-acts bs-run-acts">
+            <Cta to="https://platform.hanzo.ai" id="base.run">Deploy on Hanzo Cloud</Cta>
+            <Cta to={GH} kind="link" id="base.run-2">GitHub</Cta>
           </div>
         </div>
         <div className="bs-run-r">
-          <Console name="Base" api="/v1/base" light side={[['Base', '/base'], ['Datastore', '/datastore'], ['Object Storage', '/s3'], ['Memory', '/cloud/memory']]} />
+          <ExampleConsole name="Base" api="/v1/base" side={[['Base', '/base'], ['Datastore', '/datastore'], ['Object Storage', '/s3'], ['Memory', '/cloud/memory']]} />
           <p className="bs-note">Example project. Every name in it is one you would give your own.</p>
         </div>
       </div>
@@ -278,14 +293,15 @@ const REL = [['Base docs →', DOCS], ['Datastore', '/datastore', 'Analytical co
 
 export default function Base() {
   return (
-    <main className="kn bs" style={{ '--ac': '#a3a3a3' }}>
+    <main className="kn bs">
       <KeynoteStage
         look="side"
         kick="Hanzo Base · App backend"
         title={['An app backend', 'in one file']}
         lede="Open source (MIT). Runs as one binary — self-host or deploy managed on Hanzo Cloud."
         acts={[['Try Hanzo', '/login'], ['Read the docs', DOCS], ['View on GitHub', GH]]}
-        from={1.15}
+        cta="base.hero"
+        from={1.08}
       >
         <Admin />
       </KeynoteStage>
@@ -304,6 +320,7 @@ export default function Base() {
         stars="4 stars"
         self={DOCS}
         api="/v1/base"
+        cta="base.close"
         prompt="Read https://hanzo.ai/skill.md and use Hanzo Base in my project. Start with: hanzo base bases list"
       >
         <div className="bs-rel">
