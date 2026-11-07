@@ -1,6 +1,7 @@
-/* Stage (components/v2/Stage.jsx): pinned for --v2-len screens on desktop; plain flow on phones and for reduced motion. */
+/* Stage (components/v2/Stage.jsx): pinned for --v2-len screens on desktop; plain flow on phones, for reduced motion
+   and with JS off. */
 .v2-stage { position: relative; }
-@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) and (scripting: enabled) {
   .v2-stage { height: calc((1 + var(--v2-len, 1)) * 100svh); }
   .v2-stage-in { position: sticky; top: 0; height: 100svh; overflow: hidden; }
 }
