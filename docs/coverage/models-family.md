@@ -93,7 +93,7 @@ Done here: Shelf rows answer hover with a #f5f5f5 fill, the name easing 4px and 
 - [x] Signature: the Morph arrival. Supporting: the Sigil field, the sibling field's light, the layoutId pills. 0 fade-ups.
 - [x] Kinds of movement:
   - **Arrival:** the name, the figures, the spec's rate bars and Kai's reach cells drawing in.
-  - **Idle:** the Sigil or the model's film, the field's light, the current dot's ring.
+  - **Idle:** the Sigil or the model's film, the field's light, the current dot's ring; the field's light carries on as a faint band sweeping the shelf rows and Hanzo's other "More from" rows, a light runs along the spec's rate bars, and the quick-start code waits on a caret (the screens `motion.mjs` found still now each have one).
   - **Pointer:** the Sigil leans; dots tell rates; card tilt; rows reveal their description.
   - **State:** bill sliders, picks, tabs, spec fold, shelf sort and filter.
   - **Scroll:** the hero object easing up.
@@ -159,7 +159,7 @@ Done here: The spec sheet sits right under the hero with its object, the model's
 - [x] ~~Terminal~~ n/a · the maker's guest cURL is static with Copy
 - [x] No hand-typed version
 
-Done here: The chosen quick-start language persists across model pages (`localStorage` in try/catch).
+Done here: The chosen quick-start language persists across model pages (`localStorage` in try/catch). The quick start shows its whole sample (no inner vertical scroll), so the wheel never gets trapped in the code on its way down the page.
 
 ## 17. States and resilience
 - [x] A missing rate is an em dash; spec groups fold
