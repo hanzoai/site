@@ -233,8 +233,17 @@ curl -X POST http://localhost:3068/v2/main/transactions \\
 #     destination = { ${c.pct}% to @merchants:042
 #                    ${String(100 - c.pct).padStart(3)}% to @platform:fees }
 #   )`;
+/* The highlighter splits each line into coloured tokens, so the highlighted pane is presentation only: the request is
+   also in the page line by line, whole, in a visually hidden copy beside it (what a screen reader reads). */
 const SheetCode = memo(function SheetCode({ code }) {
-  return <Code tabs={[{ k: 'bash', code }]} light mark="Idempotency-Key: order_42_payout" />;
+  const ref = useRef(null);
+  useEffect(() => { ref.current?.querySelectorAll('.cf-code-body pre').forEach((p) => p.setAttribute('aria-hidden', 'true')); }, [code]);
+  return (
+    <div ref={ref}>
+      <Code tabs={[{ k: 'bash', code }]} light mark="Idempotency-Key: order_42_payout" />
+      <div className="x-sr">{code.split('\n').map((l, i) => <p key={i}>{l}</p>)}</div>
+    </div>
+  );
 });
 
 /* The signature: type an amount, drag the split; every figure on the page follows, and the two sides always balance. */
