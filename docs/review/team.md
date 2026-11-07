@@ -1,5 +1,7 @@
 # /team — James-eye review
 
+Ready: 7 Nov 23:05, held up next to /api and /affiliate. The six handoffs are one stage on a desktop (the row at mid-screen or under the pointer takes it: faces, relay, sentence), not two lists of sentences; chapter 01 shows the real #bugfix thread with a reply being typed (no grey bars); the channels drift under "One workspace", call faces and teammates speak, portraits breathe; arrow links and tabs answer; 44px phone targets; phone CLS 0.000 (the room walks only on desktop, the task joins after its cards). taste/unique/parity OK (242/242, 20/20); 0 console errors besides hanzo.ai memoji/portraits blocked in this sandbox; no overlap at 1470 and 375.
+
 Verdict: 6/10
 First complaint: "The top is great, the little cursors doing the work. Then it's section after section of little boxes with a sentence under each. I lost the thread halfway down."
 

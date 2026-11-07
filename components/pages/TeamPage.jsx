@@ -234,7 +234,16 @@ const WHAT = [
 const SceneChannels = () => (
   <div className="xtm-v chan" aria-hidden="true">
     <ul>{CHANNELS.map((c, i) => <li key={c} className={i === 0 ? 'on' : ''}><span>#</span>{c}{i === 2 && <i />}</li>)}</ul>
-    <div className="xtm-v-thread"><b /><b /><b className="s" /><div><b /><b className="s" /></div><b /><b className="s" /></div>
+    {/* the #bugfix thread itself (Hanzo's own words from the workflow room below), a reply being typed under it */}
+    <div className="xtm-v-thread">
+      <p className="xtm-v-h x-mono"># bugfix</p>
+      <div className="xtm-v-m"><span className="xtm-av">ZM</span><p><b>Zoe Maxwell</b>Checkout button is unresponsive on mobile Safari when Apple Pay sheet closes.</p></div>
+      <div className="xtm-v-r">
+        <div className="xtm-v-m"><Face n="dev" size={28} /><p><b>Dev</b>Cleared lock in finally block and opened PR #{418}.</p></div>
+        <div className="xtm-v-m"><Face n="sci" size={28} /><p><b>Qa</b><span className="x-mono">42/42 E2E GREEN</span></p></div>
+      </div>
+      <p className="xtm-v-typing"><Face n="vi" size={20} /><i /><i /><i /></p>
+    </div>
   </div>
 );
 const SceneMates = () => (
@@ -300,6 +309,8 @@ function What() {
         <div className="vc-grid">
           <MaskLines id="xtm-what" lines={['One workspace.', 'Everything connected.']} className="vc-display m" />
           <p className="vc-lede">Stop jumping between tools just to get work done.</p>
+          {/* the workspace keeps moving under the statement: its ten channels drifting by (the same names as below) */}
+          <div className="xtm-drift" aria-hidden="true"><div>{[0, 1].map((k) => <span key={k}>{CHANNELS.map((c) => <i key={c}># {c}</i>)}</span>)}</div></div>
         </div>
       </section>
       <Chapters
@@ -336,32 +347,48 @@ function useMid(box, sel) {
   return mid;
 }
 /* a scripted run while the section is in view and untouched: steps through n states every ms, once or looping */
-function useRun(box, n, ms, loop) {
+function useRun(box, n, ms, loop, wideOnly = false) {
   const seen = useInView(box, { amount: 0.15 });
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
   useEffect(() => {
     if (!seen || mine || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    // wideOnly: on a phone the states have different heights, so only a tap changes them (no layout shift by itself)
+    if (wideOnly && matchMedia('(max-width: 899px)').matches) return;
     if (!loop && at >= n - 1) return;
     const t = setTimeout(() => setAt((v) => (v + 1) % n), ms);
     return () => clearTimeout(t);
-  }, [seen, mine, at, n, ms, loop]);
+  }, [seen, mine, at, n, ms, loop, wideOnly]);
   return [at, (v) => { setMine(true); setAt(v); }];
 }
 
 function Together() {
   const box = useRef(null);
   const mid = useMid(box, 'li');
+  // a pointer or a tap holds a handoff on the stage; otherwise the row crossing the middle of the screen takes it
+  const [held, setHeld] = useState(-1);
+  const on = held >= 0 ? held : Math.max(0, mid);
   return (
     <section className="vc-sec xtm-tog" aria-label="Together">
       <div className="vc-grid">
         <header className="xtm-tog-h">
           <h2 id="xtm-tog" className="vc-headline">Humans and agents, on the same work</h2>
           <Lk to="https://hanzo.team/agents">Meet the AI teammates</Lk>
+          {/* desktop: one handoff on the stage at a time, the person handing the work to the agent */}
+          <div className="xtm-tog-st" aria-hidden="true">
+            {TOGETHER.map(([t, d, [a, b]], k) => (
+              <div key={t} className={'xtm-tog-c' + (k === on ? ' on' : '')}>
+                <div className="xtm-hand big"><Face n={a} size={64} /><i /><Face n={b} size={64} /></div>
+                <span className="xtm-tog-n vc-num">{String(k + 1).padStart(2, '0')}</span>
+                <p className="xtm-tog-t">{t}</p>
+                <p className="xtm-tog-d">{d}</p>
+              </div>
+            ))}
+          </div>
         </header>
-        <ul className="xtm-tog-l" ref={box}>
+        <ul className="xtm-tog-l" ref={box} onPointerLeave={() => setHeld(-1)}>
           {TOGETHER.map(([t, d, [a, b]], k) => (
-            <li key={t} data-k={k} className={mid === k ? 'on' : ''}>
+            <li key={t} data-k={k} className={on === k ? 'on' : ''} onPointerEnter={(e) => e.pointerType === 'mouse' && setHeld(k)} onClick={() => setHeld(k)}>
               <div className="xtm-hand" aria-hidden="true"><Face n={a} size={40} /><i /><Face n={b} size={40} /></div>
               <h3 className="vc-title">{t}</h3>
               <p className="vc-body">{d}</p>
@@ -485,8 +512,8 @@ function Bugfix() {
 function Flows() {
   const n = FLOWS.length;
   const box = useRef(null);
-  // the channel list walks itself while the room is in view (one channel every 3.2 s) until you pick one
-  const [at, setAt] = useRun(box, n, 3200, true);
+  // the channel list walks itself while the room is in view (one channel every 2.6 s) until you pick one
+  const [at, setAt] = useRun(box, n, 2600, true, true);
   return (
     <section className="vc-sec xtm-flows" data-room="dark" aria-labelledby="xtm-fl" ref={box}>
       <div className="vc-grid">
