@@ -1,0 +1,32 @@
+/* PinChapters (see PinChapters.jsx) */
+.w2-pin { position: relative; height: calc(var(--n) * 90svh + 100svh); }
+.w2-pin-stick { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; overflow: hidden; }
+.w2-pin-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 24px clamp(32px, 5vw, 96px); align-items: center; }
+.w2-pin.flip .w2-pin-words { order: 2; }
+.w2-pin-words { position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 24px; align-items: center; }
+.w2-pin-rail { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.w2-pin-rail button { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; width: 44px; min-height: 44px; padding: 8px 0; border: 0; background: none; cursor: pointer; color: var(--faint); }
+.w2-pin-rail button[aria-current] { color: var(--ink); }
+.w2-pin-rail span { font-size: 13px; }
+.w2-pin-rail i { display: block; width: 28px; height: 2px; border-radius: 2px; background: var(--line); overflow: hidden; }
+.w2-pin-rail b { display: block; height: 100%; background: var(--acc); transform-origin: 0 50%; }
+.w2-pin-texts { display: grid; }
+.w2-pin-t { grid-area: 1 / 1; display: flex; flex-direction: column; gap: 20px; pointer-events: none; }
+.w2-pin-t.on { pointer-events: auto; }
+.w2-pin-b { display: flex; flex-direction: column; gap: 16px; }
+.w2-pin-b > p { margin: 0; font-size: clamp(17px, 1.32vw, 19px); line-height: 1.6; color: var(--soft); max-width: 46ch; }
+.w2-pin-b strong { color: var(--ink); font-weight: 560; }
+.w2-pin-visual { position: relative; min-width: 0; }
+
+@media (max-width: 900px) {
+  .w2-pin { height: auto; padding: 24px 0 64px; }
+  .w2-pin-stick { position: relative; height: auto; display: block; overflow: visible; }
+  .w2-pin-grid { display: flex; flex-direction: column; gap: 0; }
+  .w2-pin-visual { position: sticky; top: 60px; z-index: 2; order: -1; padding: 8px 0 16px; background: var(--bg, #fff); }
+  .w2-pin.w2-dark .w2-pin-visual { background: #050506; }
+  .w2-pin-words { display: block; }
+  .w2-pin-rail { display: none; }
+  .w2-pin-texts { display: flex; flex-direction: column; gap: 0; }
+  .w2-pin-t { grid-area: auto; min-height: 62svh; padding: 40px 0; opacity: 1 !important; transform: none !important; pointer-events: auto; border-top: 1px solid var(--line); }
+  .w2-pin-t:first-child { border-top: 0; }
+}
