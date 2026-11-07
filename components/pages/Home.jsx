@@ -46,7 +46,7 @@ function Spine() {
     return () => { io.disconnect(); top.disconnect(); };
   }, []);
   if (!list.length) return null;
-  const dark = at === 'faster';
+  const dark = ['faster', 'cheaper', 'pareto'].includes(at);
   return (
     <nav className={'hv-spine' + (at ? ' on' : '') + (dark ? ' dark' : '')} aria-label="On this page">
       <ol>{list.map(([id, t], i) => <li key={id}><a href={'#' + id} aria-current={at === id ? 'true' : undefined}><span><b>{String(i + 1).padStart(2, '0')}</b>{t}</span></a></li>)}</ol>
