@@ -48,3 +48,4 @@
   .pc-copy:first-of-type { padding-top: 0; }
   .pc-vis, .pc-vis[data-past='true'] { order: calc(var(--i) * 2 + 1); clip-path: none; transition: none; margin-top: 40px; }
 }
+@media (max-width: 899px) { .pc-n { font-size: 14px; } }
