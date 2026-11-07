@@ -1,0 +1,7 @@
+/* MaskLines (see MaskLines.jsx). Hero lines (`now`) cut in with CSS, so they play at first paint without waiting for
+   JavaScript, wait while the site's arrival curtain is up (html.x-arriving pauses them, delay included), then rise.
+   Page-local kit of the Wave 2 Company chat. */
+.vc-ml-css { animation: vc-ml-rise .8s cubic-bezier(.16, 1, .3, 1) var(--d, .5s) both; }
+@keyframes vc-ml-rise { from { transform: translateY(120%); } to { transform: none; } }
+html.x-arriving .vc-ml-css { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .vc-ml-css { animation: none; } }
