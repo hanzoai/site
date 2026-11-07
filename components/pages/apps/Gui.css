@@ -35,7 +35,7 @@
 .gu-fig figcaption span { font-size: 14px; color: var(--soft); }
 
 /* device frames: sized by their own width (container units), so one drawing serves every size */
-.gu-dev { container-type: inline-size; }
+.gu-dev { position: relative; container-type: inline-size; }
 .gu-frame { position: relative; }
 .gu-ios, .gu-android { aspect-ratio: 9 / 19.5; padding: 3.4cqw; background: #0a0a0a; box-shadow: none; }
 .gu-ios { border-radius: 17cqw; }

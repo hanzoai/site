@@ -43,6 +43,8 @@ const VENDORS = [
   ['Plaid', 'polling', 'polled from the provider', 'poll'],
   ['the rest', 'refuse', 'refuse until their response parsing is written', 'no'],
 ];
+// what each vendor's answer is, shown under its tab on hover (the "how" words, all Hanzo's)
+const HOW = Object.fromEntries(VENDORS.map(([n, h]) => [n, h]));
 const TICK = <svg className="iv-tk" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" /></svg>;
 const CROSS = <svg className="iv-tk" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" /></svg>;
 
@@ -97,6 +99,7 @@ function Board() {
             onPointerEnter={(e) => e.pointerType === 'mouse' && setPeek(i)} onPointerLeave={() => setPeek(null)}>
             {v === i && <motion.span layoutId="iv-v" className="iv-v-bg" transition={{ duration: 0.3, ease: EASE }} />}
             <span className="iv-v-t">{n}</span>
+            <span className="iv-v-hint" aria-hidden="true">{HOW[n]}</span>
           </button>
         ))}
       </div>
@@ -110,6 +113,8 @@ function Board() {
             <motion.div key={shown} className={'iv-verdict ' + k} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10, transition: { duration: 0.12 } }} transition={{ duration: 0.45, ease: EASE, delay: peek === null ? 0.2 : 0.05 }}>
               <p className="iv-vn">{name}</p>
               <p className="iv-how">{how}</p>
+              {/* the rest: only "approved" (what they used to return) is struck; Hanzo's true statement stays in ink */}
+              {k === 'no' && <p className="iv-was"><span>approved</span></p>}
               <p className="iv-says">{k === 'ok' && TICK}<span>{verdict}</span></p>
             </motion.div>
           </AnimatePresence>
@@ -136,7 +141,8 @@ function Lede() {
     const p = animate(0, 1, { duration: 1.4, delay: 0.35, ease: [0.4, 0, 0.2, 1], onUpdate: (v) => el.style.setProperty('--p', v.toFixed(3)) });
     return () => p.stop();
   }, []);
-  const word = (w, i) => <span key={i} className={i < FIRST ? 'on' : undefined} style={{ '--i': ((i - FIRST) / (WORDS.length - FIRST)).toFixed(3) }}>{w} </span>;
+  // --i runs 0 to 0.88 so the last word reaches full ink before --p reaches 1 (at rest nothing stays grey)
+  const word = (w, i) => <span key={i} className={i < FIRST ? 'on' : undefined} style={{ '--i': (0.88 * (i - FIRST) / (WORDS.length - FIRST)).toFixed(3) }}>{w} </span>;
   return <p className="iv-lede" ref={ref} style={{ '--p': 0 }}>{WORDS.map(word)}</p>;
 }
 
@@ -165,17 +171,13 @@ const TAMPER = 'approved';
 const HEX = '3e0a3f07e38a0f77005d918935b9cc388c685af72cf9bd0274457e042aa2e2cd';
 const RISK = ['Sanctions lists', 'transaction monitoring', 'cases', 'the five-year record clock'];
 
-/* 01: the four calls light one by one and the figure counts to 4. */
+/* 01: one big figure that counts up to 4 (the HTML holds 4; reduced motion stays at 4). The four calls themselves are
+   the hero's; this sheet does not list them again. */
 function Four() {
-  const [ref, s] = useStage(4, 380);
+  const [ref, s] = useStage(4, 320);
   return (
     <figure className="iv-o iv-o-four" ref={ref}>
-      <div className="iv-o-row">
-        <p className="iv-o-n" aria-hidden="true">{s}</p>
-        <ol className="iv-o-calls" aria-hidden="true">
-          {CALLS.map((c, i) => <li key={c} data-on={s > i || undefined}><span>{String(i + 1).padStart(2, '0')}</span>{c}</li>)}
-        </ol>
-      </div>
+      <p className="iv-o-n" aria-hidden="true">{s}</p>
       <figcaption className="v2-kick iv-o-cap">What it is</figcaption>
     </figure>
   );
@@ -241,9 +243,8 @@ function Split() {
   const [ref, s] = useStage(5, 260);
   return (
     <figure className="iv-o iv-o-split" ref={ref} aria-hidden="true" data-s={s}>
-      <div>
-        <p className="iv-o-tag">Hanzo IDV</p>
-        <ul>{CALLS.map((c) => <li key={c}>{c}</li>)}</ul>
+      <div className="iv-o-side">
+        <p className="iv-o-big">Hanzo IDV</p>
       </div>
       <i className="iv-o-rule" />
       <div>
@@ -271,13 +272,18 @@ const FACTS = [
 function Sheet({ i, t, d, Obj, next }) {
   const { scrollYProgress } = useScroll({ target: next, offset: ['start end', 'start start'] });
   const last = i === FACTS.length - 1;
-  const fade = useTransform(scrollYProgress, [0.32, 0.46], [1, last ? 1 : 0]);
-  const sink = useTransform(scrollYProgress, [0.3, 0.7], [1, last ? 1 : 0.96]);
+  // the outgoing sheet keeps its words and object: it dims and steps back (0.94) while the next one covers it, so it is
+  // never an empty slab; every sheet is the same height on desktop, so only a 16px edge of it peeks above the next
+  const dim = useTransform(scrollYProgress, [0.45, 0.95], [1, last ? 1 : 0.35]);
+  const sink = useTransform(scrollYProgress, [0.3, 0.95], [1, last ? 1 : 0.94]);
+  const title = useRef(null);
+  const seen = useInView(title, { once: true, amount: 0.6 });
   return (
     <motion.article className={'iv-sheet s' + (i + 1)} style={{ '--k': i, scale: sink }}>
-      <motion.div className="iv-sheet-in" style={{ opacity: fade }}>
+      <motion.div className="iv-sheet-in" style={{ opacity: dim }}>
         <div className="iv-sheet-l">
-          <h3 className="v2-headline" id={'iv-f' + i}>{t}</h3>
+          {/* the title cuts into its line once (line mask, CSS); its words are in the HTML and JS-off shows them */}
+          <h3 className="v2-headline iv-cut" id={'iv-f' + i} ref={title} data-in={seen || undefined}><span><span>{t}</span></span></h3>
           <p className="v2-kick acc iv-sheet-n">{String(i + 1).padStart(2, '0')} / 06</p>
           <p className="v2-body">{d}</p>
         </div>
@@ -289,9 +295,30 @@ function Sheet({ i, t, d, Obj, next }) {
 
 function Sheets() {
   const marks = useRef(FACTS.map(() => ({ current: null }))).current;
+  // on a desk-size screen every sheet takes the tallest sheet's height, so a sheet is always fully covered by the next
+  // (only its 16px top edge peeks); phones and reduced motion unstack and keep their natural heights
+  const wrap = useRef(null);
+  useEffect(() => {
+    const w = wrap.current;
+    if (!w) return;
+    const mq = matchMedia('(min-width: 901px) and (prefers-reduced-motion: no-preference)');
+    const fit = () => {
+      w.style.removeProperty('--iv-h');
+      if (!mq.matches) return;
+      const h = Math.max(...[...w.querySelectorAll('.iv-sheet')].map((s) => s.offsetHeight));
+      w.style.setProperty('--iv-h', h + 'px');
+    };
+    fit();
+    let t;
+    const later = () => { clearTimeout(t); t = setTimeout(fit, 150); };
+    addEventListener('resize', later);
+    mq.addEventListener('change', fit);
+    document.fonts?.ready?.then(fit);
+    return () => { clearTimeout(t); removeEventListener('resize', later); mq.removeEventListener('change', fit); };
+  }, []);
   return (
     <section className="iv-sheets" aria-label="What it is">
-      <div className="v2-wrap">
+      <div className="v2-wrap" ref={wrap}>
         {FACTS.map(([t, d, Obj], i) => [
           i > 0 && <i key={'m' + i} className="iv-mark" ref={marks[i]} aria-hidden="true" />,
           <Sheet key={t} i={i} t={t} d={d} Obj={Obj} next={marks[Math.min(i + 1, FACTS.length - 1)]} />,
@@ -301,11 +328,11 @@ function Sheets() {
   );
 }
 
-// what each verdict means, in Hanzo's own sentences (fact 03 and fact 04)
+// what each verdict means: a short state word, then Hanzo's own sentence as the second line (facts 03 and 04)
 const SAYS = {
-  accepted: 'A webhook whose signature we can check is accepted',
-  'turned away': 'anything else is polled from the provider directly, so the verdict always comes from the source.',
-  refused: 'An empty signing secret is a refusal, never a skip',
+  accepted: ['accepted', 'A webhook whose signature we can check is accepted'],
+  'turned away': ['polled', 'anything else is polled from the provider directly, so the verdict always comes from the source.'],
+  refused: ['refusal', 'An empty signing secret is a refusal, never a skip'],
 };
 // the four states the room plays as you scroll: as sent, a changed body, a forgery, an empty signing secret
 const SCENES = [
@@ -345,11 +372,18 @@ function Forge() {
   const lit = !cur.secret ? 'empty' : cur.forgery ? 'forgery' : cur.body === TAMPER ? 'approved' : null;
   const choose = (c) => setMine(c === lit ? { ...SCENES[0] } : { ...SCENES[{ approved: 1, forgery: 2, empty: 3 }[c]] });
   const ok = verdict === 'accepted';
+  const [word, line] = SAYS[verdict] || ['', ''];
+  // the room enters as a rounded card inside the gutters and opens to full width as it is reached (clip-path only;
+  // server and first client frame share the same value; reduced motion: full width, in CSS)
+  const { scrollYProgress: reach } = useScroll({ target: room, offset: ['start end', 'start 0.15'] });
+  const gut = useTransform(reach, [0, 1], [32, 0]);
+  const rad = useTransform(reach, [0, 1], [28, 0]);
+  const clip = useTransform([gut, rad], ([g, r]) => `inset(0px ${g.toFixed(1)}px round ${r.toFixed(1)}px)`);
   return (
-    <section className="iv-forge v2-dark" data-room="dark" aria-labelledby="iv-f2" ref={room}>
+    <motion.section className="iv-forge v2-dark" data-room="dark" aria-labelledby="iv-forge-h" ref={room} style={{ clipPath: clip }}>
       <div className="iv-forge-pin">
         <div className="v2-wrap">
-          <p className="iv-forge-q">An empty signing secret is a refusal, never a skip — an HMAC under a key everybody knows is one anybody can compute.</p>
+          <h2 className="iv-forge-q" id="iv-forge-h">A webhook has to prove it is one</h2>
           <div className="iv-forge-grid">
             <div className="iv-pane">
               <p className="v2-kick">the provider you chose</p>
@@ -379,10 +413,10 @@ function Forge() {
               </div>
               <div className={'iv-stamp ' + (ok ? 'ok' : 'no')} aria-live="polite">
                 <AnimatePresence mode="wait" initial={false}>
-                  <motion.p key={verdict} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.12 } }} transition={{ duration: 0.3, ease: EASE }}>
-                    {ok ? TICK : CROSS}
-                    <span>{SAYS[verdict] || ' '}</span>
-                  </motion.p>
+                  <motion.div key={verdict} className="iv-stamp-in" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.12 } }} transition={{ duration: 0.3, ease: EASE }}>
+                    <p className="iv-stamp-w">{ok ? TICK : CROSS}<span>{word}</span></p>
+                    <p className="iv-stamp-l">{line}</p>
+                  </motion.div>
                 </AnimatePresence>
               </div>
               <button type="button" className="iv-x" onClick={() => setMine(null)} disabled={!mine}>Reset</button>
@@ -394,7 +428,7 @@ function Forge() {
           </ol>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }
 

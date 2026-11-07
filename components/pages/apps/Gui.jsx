@@ -89,8 +89,7 @@ function Dev({ k, v, parts, tag, flat, delay, children }) {
         <div className="gu-bar" aria-hidden="true"><span className="gu-lights"><i /><i /><i /></span>{k === 'web' ? <span className="gu-url" /> : <span className="gu-wt">Welcome</span>}</div>
       )}
       <div className={'gu-scr' + (flat ? ' flat' : '')}>{children || (flat ? <Flat v={v} /> : <Welcome v={v} parts={parts} delay={delay} />)}</div>
-      {tag && <span className="gu-tag x-mono">{tag}</span>}
-    </div></div>
+    </div>{tag && <span className="gu-tag x-mono">{tag}</span>}</div>
   );
 }
 

@@ -3,7 +3,7 @@
 .gd .v2-dark, .gd [data-room='dark'] { --acc: #f5f5f5; --glow: #e5e5e5; }
 
 /* hero: the black room, a left-set head (5/13) beside the composer (8/13); the next section peeks 56px at the fold */
-.gd-hero { box-sizing: border-box; min-height: calc(100svh - 56px); display: flex; align-items: center; padding: clamp(84px, 6vw, 96px) 0 clamp(44px, 5vw, 56px); }
+.gd-hero { box-sizing: border-box; min-height: calc(100svh - var(--x-top, 60px) - 56px); display: flex; align-items: center; padding: clamp(84px, 6vw, 96px) 0 clamp(44px, 5vw, 56px); }
 .gd-hero .v2-kick.acc { color: var(--glow); }
 .gd-hero-g { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); column-gap: 44px; align-items: center; }
 .gd-hero-t { text-align: left; display: flex; flex-direction: column; align-items: flex-start; }
@@ -77,7 +77,7 @@
 .gd-f-go { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 44px; padding: 6px 10px; border: 0; border-radius: 12px; background: none; text-align: left; cursor: pointer; color: var(--faint); font: 497 17px/1.25 var(--sans); letter-spacing: -.01em; transition: color 300ms cubic-bezier(0, 0, .2, 1), background-color 150ms cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
 .gd-f-go::before { content: ''; flex: none; width: 8px; height: 8px; border-radius: 99px; box-shadow: inset 0 0 0 1.5px currentColor; transition: background-color 300ms cubic-bezier(0, 0, .2, 1), box-shadow 300ms cubic-bezier(0, 0, .2, 1); }
 .gd-f-i { flex: none; font-size: 12px; letter-spacing: .08em; }
-.gd-f-tt { display: block; transform-origin: left center; transition: transform 500ms cubic-bezier(.16, 1, .3, 1); }
+.gd-f-tt { display: block; min-width: 0; max-width: calc((100% - 52px) / 1.18); text-wrap: balance; transform-origin: left center; transition: transform 500ms cubic-bezier(.16, 1, .3, 1); } /* wraps at the width it can grow into */
 .gd-f[data-past] .gd-f-go { color: var(--soft); }
 .gd-f[data-on] .gd-f-go { color: var(--ink); }
 .gd-f[data-on] .gd-f-go::before { background: var(--ink); box-shadow: none; }
@@ -289,6 +289,7 @@
   .gd-f { flex: 0 0 84%; display: flex; flex-direction: column; align-items: stretch; padding: 0; border: 0; scroll-snap-align: start; }
   .gd-f-go, .gd-f[data-on] .gd-f-go, .gd-f[data-past] .gd-f-go { padding: 0; min-height: 0; color: var(--ink); font-size: 21px; cursor: default; pointer-events: none; }
   .gd-f-go::before, .gd-f-i { display: none; }
+  .gd-f-tt { max-width: none; }
   .gd-f[data-on] .gd-f-tt { transform: none; }
   .gd-f-cap, .gd-f[data-on] .gd-f-cap { position: static; display: block; opacity: 1; transform: none; pointer-events: auto; }
   .gd-f-n { margin: 8px 0 0; }
@@ -333,6 +334,7 @@
   .gd-f > :not(.gd-f-vis) { grid-column: 1; }
   .gd-f-go, .gd-f[data-on] .gd-f-go, .gd-f[data-past] .gd-f-go { padding: 0; color: var(--ink); font-size: 21px; cursor: default; pointer-events: none; }
   .gd-f-go::before { display: none; }
+  .gd-f-tt { max-width: none; }
   .gd-f[data-on] .gd-f-tt { transform: none; }
   .gd-f-cap, .gd-f[data-on] .gd-f-cap { position: static; display: block; opacity: 1; transform: none; margin-top: 10px; }
   .gd-f-vis { display: block; grid-column: 2; grid-row: 1 / span 2; }
