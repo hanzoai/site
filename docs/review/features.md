@@ -1,7 +1,5 @@
 # /features — James-eye review
 Verdict: 7/10
-Ready: 8 Nov, held up next to /api and /agents (no score). Display no longer sticks over the keys on phone, one phone block with 16:9 films and a different order per room, first self-press at 0.9 s, no overshoot, press states on keys and band cards; Hanzo's own hero "Try Hanzo" link restored, and the parity reference trimmed to the page's <main> (the capture had swallowed hanzo.ai's header, mega-menus and footer). taste/unique/parity OK (text 44/44, links 3/3); 0 console errors, no overflow/overlap at 1470x801 and 375x812.
-
 First complaint: "On my phone, when I scroll down the keyboard, that black box sits on top of the keys and hides half of them, with a big empty black gap at its bottom. Then the three product bits underneath are all the same layout, one after another."
 (walked 7 Nov 2026 at HEAD `49183125`, 1470×801 fine pointer and 375×812 touch, plus 320, 375×667, 768, reduced motion and JS off)
 
