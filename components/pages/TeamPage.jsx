@@ -183,7 +183,7 @@ function Hero() {
   const rotateX = useTransform(scrollYProgress, [0, 0.45], calm ? [0, 0] : [18, 0]);
   const scale = useTransform(scrollYProgress, [0, 0.45], calm ? [1, 1] : [0.9, 1]);
   return (
-    <section className="xtm-hero" ref={ref} aria-labelledby="xtm-h1">
+    <section className="xtm-hero" ref={ref} aria-labelledby="xtm-h1" data-ask-name="Hanzo Team">
       <div className="vc-grid xtm-hero-g">
         <div className="xtm-hero-t">
           <MaskLines as="h1" id="xtm-h1" now delay={0.05} lines={['The playground', 'for humans + AI']} className="vc-display xtm-h1" />
@@ -587,7 +587,7 @@ function Close() {
 
 export default function TeamPage() {
   return (
-    <main className="vc xtm" style={{ '--acc': '#1d1d1f' }} data-ask-name="Hanzo Team">
+    <main className="vc xtm" style={{ '--acc': '#1d1d1f' }}>
       <Hero />
       <What />
       <Together />

@@ -108,7 +108,7 @@ function Roll() {
 
 function Hero() {
   return (
-    <section className="xin-hero" aria-label="Hanzo Investor Relations">
+    <section className="xin-hero" aria-label="Hanzo Investor Relations" data-ask-name="Hanzo Investor Relations">
       <div className="vc-grid xin-hero-g">
         <div className="xin-hero-t">
           <MaskLines as="h1" id="xin-h1" now delay={0.05} lines={['The intelligence', 'layer for business.']} className="vc-display xin-h1" />
@@ -398,7 +398,7 @@ function Close() {
 
 export default function Investors() {
   return (
-    <main className="vc xin" style={{ '--acc': '#1d1d1f' }} data-ask-name="Hanzo Investor Relations">
+    <main className="vc xin" style={{ '--acc': '#1d1d1f' }}>
       <Hero />
       <Thesis />
       <Stack />

@@ -170,8 +170,8 @@ export default function Careers({ d }) {
   const [intA, intB] = d.intern.leaves;
   const ask = d.hacts[0];
   return (
-    <main className="vc xcb" style={{ '--acc': '#1d1d1f' }} data-ask-name={d.kicker}>
-      <section className="xcb-hero vc-scene" aria-label={d.kicker}>
+    <main className="vc xcb" style={{ '--acc': '#1d1d1f' }}>
+      <section className="xcb-hero vc-scene" aria-label={d.kicker} data-ask-name={d.kicker}>
         <div className="vc-grid xcb-hero-g">
           <div className="xcb-hero-c">
             <MaskLines as="h1" id="xcb-h1" now delay={0.05} lines={lines} className="vc-display xcb-h1" />
