@@ -14,6 +14,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { Mark } from '../ui';
 import { A, Cta, Img } from '../kit';
+import { play } from '../../lib/sound';
 import Lines from '../v2/x-edison/AppLines';
 import Scenes from '../v2/AppScenes';
 import Sheet from '../v2/AppSheet';
@@ -99,6 +100,7 @@ function Stack({ mineWin }) {
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
   const [held, setHeld] = useState(false);
+  const walked = useRef(false);
   useEffect(() => { setFront(mineWin); }, [mineWin]);
   // the walk: five points, three browsers shuffle under "one behaviour", then the panel steps away and comes back
   useEffect(() => {
@@ -110,7 +112,7 @@ function Stack({ mineWin }) {
       let n = 0;
       const step = () => { n++; setFront(order[n % 3]); if (n < 3) t = setTimeout(step, 1100); else t = setTimeout(() => setAt(4), 900); };
       t = setTimeout(step, 1000);
-    } else t = setTimeout(() => (at < POINTS.length - 1 ? setAt(at + 1) : setOpen(false)), 3600);
+    } else t = setTimeout(() => { if (at < POINTS.length - 1) setAt(at + 1); else { setOpen(false); if (!walked.current) { walked.current = true; play('done'); } } }, 3600); // the walk ends: a faint chime, the first time only
     return () => clearTimeout(t);
   }, [at, open, mine, held, calm, seen, mineWin]);
   const order = [front, ...WINS.map((w) => w[0]).filter((w) => w !== front)];
