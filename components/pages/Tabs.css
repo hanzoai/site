@@ -214,7 +214,7 @@
   .xtb-pane-acts button:first-child { display: none; }
   .xtb-pane-acts button { position: relative; width: 32px !important; height: 32px !important; }
   .xtb-pane-acts button::after { content: ''; position: absolute; inset: -6px; }
-  .xtb-pane-bar > span:first-child { min-width: 4ch; font-size: 13px; }
+  .xtb-pane-bar > span:first-child { min-width: 4ch; font-size: 14px; }
 }
 
 /* v2.2: rhythm, the map's window, the dark room's objects, one ask closing the room */

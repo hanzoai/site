@@ -21,6 +21,7 @@ import { OpenCards } from '../../v2/OpenSheet';
 import NoJs from '../../v2/x-gauss/NoJs';
 import { usePause } from '../../v2/x-gauss/Pause';
 import '../../v2/Scale.css';
+import '../../v2/x-gauss/Rhythm.css';
 import './Sign.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/projects/hanzoai/esign';
@@ -47,7 +48,7 @@ function Page({ at }) {
       <div className="sg-lines" aria-hidden="true">{Array.from({ length: 9 }).map((_, i) => <i key={i} style={{ width: [92, 86, 95, 70, 88, 94, 60, 82, 74][i] + '%' }} />)}</div>
       <div className="sg-fields">
         {FIELDS.map(([t, k], i) => (
-          <motion.div key={k} className={'sg-f ' + k} initial={false} animate={placed ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: -26, scale: 0.9 }} transition={{ type: 'spring', stiffness: 300, damping: 24, delay: placed ? i * 0.06 : 0 }}>
+          <motion.div key={k} className={'sg-f ' + k} initial={false} animate={placed ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: -26, scale: 0.9 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], delay: placed ? i * 0.06 : 0 }}>
             <span>{t}</span>
             {k === 'sig' && (
               <svg viewBox="0 0 160 60" aria-hidden="true"><motion.path d={INK} initial={false} animate={{ pathLength: signed ? 1 : 0 }} transition={{ duration: signed ? 1.8 : 0.2, ease: [0.45, 0, 0.2, 1], delay: signed ? 0.3 : 0 }} /></svg>
@@ -58,7 +59,7 @@ function Page({ at }) {
       </div>
       <AnimatePresence>
         {at >= 4 && (
-          <motion.div className="sg-cert" initial={{ opacity: 0, scale: 1.4, rotate: -12 }} animate={{ opacity: 1, scale: 1, rotate: -6 }} exit={{ opacity: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 18 }}>
+          <motion.div className="sg-cert" initial={{ opacity: 0, scale: 1.4, rotate: -12 }} animate={{ opacity: 1, scale: 1, rotate: -6 }} exit={{ opacity: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
             <b>Certificate</b><span>signer · time · address</span>
           </motion.div>
         )}
@@ -359,7 +360,7 @@ function First() {
 
 export default function Sign() {
   return (
-    <main className="sg w2">
+    <main id="main" className="sg w2 gx">
       <NoJs />
       <Story />
       <Parts />

@@ -15,6 +15,10 @@ Proof: `img/treasury.jpg`, four panels:
 3. Phone, the streams' payoff: the pill and the pause button sit on the third account.
 4. Phone, the close: the ask bar sits on the close's own "Read the docs".
 
+Previous review: 5/10 at `86852aa`.
+- Fixed since then: the gold hue and the eyebrows. The JS-off text and the phone type floor have been fixed too.
+- Still open: the joined Hanzo sentences (the Hold lede) and the shared skeleton.
+
 ## The 11 answers
 1. **Sells in 5 seconds, moves within 1 second?** The parts are right: name, lede, "Read the docs" and the product (split.num plus the money streams) are on the desktop first screen, and the title cuts in by line mask. The order is wrong.
    - **Load sequence.** The server HTML paints the finished, balanced split with an empty black band where the h1 goes; LineMask starts the line at y 108%. On hydration, `useEffect(() => setK(0))` wipes it: 11 lines go to 0 and 3 streams go to 0. It then re-types at 380 ms a line.
