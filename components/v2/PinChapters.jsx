@@ -29,7 +29,7 @@ export default function PinChapters({ chapters, label, className = '' }) {
   });
   const pinned = useRef(true);
   useEffect(() => {
-    const mq = matchMedia('(max-width: 900px), (prefers-reduced-motion: reduce)');
+    const mq = matchMedia('(max-width: 899px), (prefers-reduced-motion: reduce)');
     const on = () => { pinned.current = !mq.matches; };
     on();
     mq.addEventListener('change', on);
@@ -53,7 +53,7 @@ export default function PinChapters({ chapters, label, className = '' }) {
                 <span className="pc-n">{String(i + 1).padStart(2, '0')}</span>
                 <span className="pc-t">{c.tab}</span>
                 {i === at && (
-                  <motion.i layoutId={'pc-bar-' + (label || 'x')} className="pc-bar" transition={{ type: 'spring', stiffness: 300, damping: 30 }} aria-hidden="true">
+                  <motion.i layoutId={'pc-bar-' + (label || 'x')} className="pc-bar" transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }} aria-hidden="true">
                     <motion.b style={{ scaleX: local }} />
                   </motion.i>
                 )}

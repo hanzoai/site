@@ -24,10 +24,20 @@ export function Sheet({ open, onClose, layoutId, title, kicker, children, wide, 
     if (!open) return;
     window.__lenis?.stop();
     document.documentElement.classList.add('x-lock');
-    const k = (e) => e.key === 'Escape' && onClose();
+    const back = document.activeElement; // focus returns here when the sheet closes
+    const k = (e) => {
+      if (e.key === 'Escape') { onClose(); return; }
+      if (e.key !== 'Tab' || !box.current) return; // Tab stays inside the sheet
+      const f = [...box.current.querySelectorAll('a[href], button:not([disabled]), input, textarea, select, [tabindex]:not([tabindex="-1"])')].filter((el) => el.getClientRects().length);
+      if (!f.length) return;
+      const first = f[0], last = f[f.length - 1], at = document.activeElement;
+      if (!box.current.contains(at)) { e.preventDefault(); first.focus(); }
+      else if (e.shiftKey && at === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && at === last) { e.preventDefault(); first.focus(); }
+    };
     addEventListener('keydown', k);
     const t = setTimeout(() => box.current?.querySelector('button')?.focus({ preventScroll: true }), 60);
-    return () => { window.__lenis?.start(); document.documentElement.classList.remove('x-lock'); removeEventListener('keydown', k); clearTimeout(t); };
+    return () => { window.__lenis?.start(); document.documentElement.classList.remove('x-lock'); removeEventListener('keydown', k); clearTimeout(t); back?.focus?.({ preventScroll: true }); };
   }, [open, onClose]);
   if (!host) return null;
   return createPortal(
@@ -42,8 +52,8 @@ export function Sheet({ open, onClose, layoutId, title, kicker, children, wide, 
             <motion.div className="w2-sheet-in" initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { delay: 0.18, duration: 0.35 } }} exit={{ opacity: 0, transition: { duration: 0.12 } }}>
               <button type="button" className="w2-sheet-x" onClick={onClose} aria-label="Close"><span aria-hidden="true">×</span></button>
               {art && <div className="w2-sheet-art">{art}</div>}
-              {kicker && <p className="w2-kicker acc">{kicker}</p>}
               <h3 className="w2-sheet-t">{title}</h3>
+              {kicker && <p className="w2-kicker acc w2-sheet-k">{kicker}</p>}
               <div className="w2-sheet-b">{children}</div>
             </motion.div>
           </motion.div>

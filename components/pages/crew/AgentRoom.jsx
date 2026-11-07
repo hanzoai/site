@@ -12,24 +12,32 @@
    opens the chat with them. On the SDK, its own install line for pip or cargo, ready to copy.
    Persona: Developer (SDK) and team buyer (Crew). Goal: start building with agents. Metric: install_copy (SDK), signup_start (Crew).
    CTA: "Read the docs" (SDK), "Launch a bot" (Crew): one solid ask, hero to close; every other action a text link.
-   V2: 8.5/10 Apple-style launch: pinned stage where the live ring or console settles as chapter one hands over; greyscale, labels under every headline, one solid ask hero to close, every control answers hover and press, real objects in parts and both closes. */
+   V2: 8.5/10 On Hanzo's deck: 52/26 type at Book weight, 1152 container on a 5/8 split, no springs, kit Cta/Field/CodeBlock/Lines, rooms that open from a rounded card, the ask bar carrying the page's own ask. */
+// Persona: developer (SDK) and team buyer (Crew), from the Developer and Consumer rows of MASTER §1
+// Goal: start building with agents. Metric: install_copy (agents-sdk), signup_start (agents-crew)
+// CTA: "Read the docs" (agents-sdk.hero) and "Launch a bot" (agents-crew.hero): one solid ask, data-thumb, repeated at the close
 // Signature: who has the turn: a baton passes by itself around the agents' ring and through the console turns, the hero object settling on a pinned stage
 // Beyond: start in one step: type a need and the agent whose own role matches takes the baton (Enter opens the chat); the SDK's own pip or cargo line, ready to copy
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, useInView, useMotionValueEvent, useScroll, useTransform } from 'motion/react';
-import { EASE, Copy, Magnetic } from '../../ui';
-import { A } from '../../kit';
+import { Copy, Lines } from '../../ui';
+import { EASE_OUT_EXPO as EASE, DUR } from '../../../lib/motion';
+import { A, Cta, CodeBlock, Field } from '../../kit';
 import Sigil from '../../Sigil';
 import { href as route } from '../../../lib/route';
 import './AgentRoom.css';
 
 const ASSET = (p) => p; // Hanzo's own pictures, by their own paths (live dev fetches files this repo lacks from hanzo.ai)
-const INK = { type: 'spring', stiffness: 300, damping: 30 };
-/* JavaScript off: show what starts hidden for its entrance (line masks, ledes, code lines, the hub's name) and unpin the stage */
-const NOJS = '.xag .x-line-in,.xag-lede,.xag-ln,.xag-hub b,.xag-hub span,.xag-shot{transform:none!important;opacity:1!important}'
-  + '@media (min-width:901px){.xag-stage{height:auto!important}.xag-pin{position:relative!important;height:auto!important;display:block!important;overflow:visible!important}'
-  + '.xag-stage-g{padding:150px 0 96px!important;row-gap:80px!important}.xag-one{grid-row:1!important}.xag-two{grid-row:2!important;opacity:1!important;transform:none!important}.xag-obj{grid-row:1/span 2!important;transform:none!important}}';
+const MOVE = [0.4, 0, 0.2, 1]; // the deck's ease-in-out, for things that move and stay (no springs)
+const INK = { duration: DUR.fade, ease: EASE };
+// a dark room enters as a rounded card inside the gutters and opens to the full width as it is reached
+const OPEN = {
+  initial: { clipPath: 'inset(0% 2.2% 0% 2.2% round 24px)' },
+  whileInView: { clipPath: 'inset(0% 0% 0% 0% round 0px)' },
+  viewport: { once: true, amount: 0.12 },
+  transition: { duration: DUR.reveal, ease: EASE },
+};
 const fade = (v, from, to) => Math.min(1, Math.max(0, (v - from) / (to - from))); // 0 at `from`, 1 at `to`
 
 /* client-only facts, read after mount so the server HTML and the first client render agree */
@@ -52,9 +60,10 @@ function useBaton(n, ms, box, calm) {
   const [held, setHeld] = useState(false);
   useEffect(() => { // one full round each time it comes into view, then it rests where it started
     if (!live || held || n < 2 || calm) return;
-    let k = 0;
-    const id = setInterval(() => { setAt((a) => (a + 1) % n); k += 1; if (k >= n) clearInterval(id); }, ms);
-    return () => clearInterval(id);
+    let k = 0, id = 0;
+    const step = () => { setAt((a) => (a + 1) % n); k += 1; if (k >= n) clearInterval(id); };
+    const first = setTimeout(() => { step(); id = setInterval(step, ms); }, 650); // something moves within the first second
+    return () => { clearTimeout(first); clearInterval(id); };
   }, [live, held, n, ms, calm]);
   return { at, take: (i) => { setAt(i); setHeld(true); }, free: () => setHeld(false) };
 }
@@ -64,7 +73,7 @@ function Kick({ children, className = '' }) { return children ? <p className={'x
 /* ---------- the stage: chapter one leaves, chapter two arrives, the live object settles (desktop); stacked on phones ---------- */
 function Stage({ first, second, object, art, from = 1.12, low = '8%' }) {
   const box = useRef(null);
-  const pin = useMedia('(min-width: 901px) and (prefers-reduced-motion: no-preference)'); // the same test the stylesheet pins with
+  const pin = useMedia('(min-width: 900px) and (prefers-reduced-motion: no-preference)'); // the same test the stylesheet pins with
   const { scrollYProgress: p } = useScroll({ target: box, offset: ['start start', 'end end'] });
   const outY = useTransform(p, [0.12, 0.46], [0, -90]);
   const outO = useTransform(p, (v) => fade(v, 0.4, 0.12)); // a function, so Motion keeps it on the main thread in step with Lenis
@@ -94,10 +103,7 @@ function Stage({ first, second, object, art, from = 1.12, low = '8%' }) {
 function Title({ f }) {
   return (
     <>
-      <h1 id="xag-h1" className={'xag-h1' + (f.h1.length > 34 ? ' long' : '')} data-morph-target>
-        <noscript><style>{NOJS}</style></noscript>
-        <span className="x-line"><motion.span className="x-line-in" initial={{ y: '106%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.1 }}>{f.h1}</motion.span></span>
-      </h1>
+      <Lines as="h1" play="load" id="xag-h1" className="xag-h1" lines={[f.h1]} data-morph-target="" />
       {f.label && <p className="xag-meta">{f.label}</p>}
     </>
   );
@@ -105,12 +111,12 @@ function Title({ f }) {
 
 const Chev = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 /* one solid ask (the first, in Hanzo's words); every other action is a text link with an arrow */
-function Acts({ list, big, solid = true }) {
+function Acts({ list, big, solid = true, thumb, id }) {
   if (!list || !list.length) return null;
   return (
-    <div className="xag-acts">
+    <div className="xag-acts" {...(solid && !thumb ? { 'data-ask-hide': '' } : {})}>
       {list.map((a, i) => (i === 0 && solid
-        ? <Magnetic key={a.href + i} strength={0.25}><A to={a.href} className={'x-btn solid' + (big ? ' xag-big' : '')} data-thumb=""><span>{a.label}</span><Chev /></A></Magnetic>
+        ? <Cta key={a.href + i} to={a.href} kind="solid" id={id} thumb={thumb} className="xag-ask" data-thumb={thumb ? a.label : undefined}><span>{a.label}</span><Chev /></Cta>
         : <A key={a.href + i} to={a.href} className="xag-tl"><span>{a.label}</span><Chev /></A>))}
     </div>
   );
@@ -133,17 +139,17 @@ function Ring({ r, b }) {
   return (
     <div className="xag-ring" ref={box} onMouseLeave={b.free} style={{ '--n': r.agents.length }}>
       <span className="xag-orbit" aria-hidden="true" />
-      <motion.span className="xag-baton" aria-hidden="true" animate={{ rotate: b.at * step }} transition={{ type: 'spring', stiffness: 120, damping: 20 }}><i /></motion.span>
+      <motion.span className="xag-baton" aria-hidden="true" animate={{ rotate: b.at * step }} transition={{ duration: DUR.fade, ease: MOVE }}><i /></motion.span>
       {r.agents.map((a, i) => (
         <A key={a.name} to={a.href} className="xag-seat" style={{ '--a': i * step + 'deg' }} data-on={i === b.at || undefined} data-dim={b.hit && !b.hit.includes(i) ? '' : undefined}
-          onMouseEnter={() => b.take(i)} onFocus={() => b.take(i)} onBlur={b.free} data-cursor="Talk">
+          onMouseEnter={() => b.take(i)} onFocus={() => b.take(i)} onBlur={b.free}>
           <Face a={a} />
           <span className="x-sr">{a.name}{a.role ? ', ' + a.role : ''}</span>
         </A>
       ))}
       <div className="xag-hub" aria-live="polite">
-        <motion.b key={cur.name} initial={{ y: 14, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.4, ease: EASE }}>{cur.name}</motion.b>
-        <motion.span key={cur.name + 'r'} initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.4, ease: EASE, delay: 0.05 }}>{cur.role}</motion.span>
+        <motion.b key={cur.name} initial={{ y: 14, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: DUR.fade, ease: EASE }}>{cur.name}</motion.b>
+        <motion.span key={cur.name + 'r'} initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: DUR.fade, ease: EASE, delay: 0.06 }}>{cur.role}</motion.span>
         <span className="xag-hub-n x-mono">{String(b.at + 1).padStart(2, '0')} / {String(r.agents.length).padStart(2, '0')}</span>
       </div>
     </div>
@@ -155,10 +161,9 @@ function Find({ r, b, q, setQ }) {
   const top = b.hit && b.hit.length ? r.agents[b.hit[0]] : null;
   return (
     <div className="xag-find">
-      <label className="xag-find-l x-mono" htmlFor="xag-q">Find an agent</label>
-      <div className="xag-find-f">
-        <input id="xag-q" type="search" value={q} autoComplete="off" spellCheck="false" placeholder="design, legal, support…" onChange={(e) => setQ(e.target.value)}
-          onKeyDown={(e) => { if (e.key === 'Enter' && top) router.push(route(top.href)); }} />
+      <Field label="Find an agent" name="agent" type="search" className="xag-find-f" value={q} autoComplete="off" spellCheck="false" enterKeyHint="go"
+        onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && top) router.push(route(top.href)); }} />
+      <div>
         <span className="xag-find-n" aria-live="polite">{b.hit ? (top ? <><Face a={top} size={28} />{top.name}{top.role ? <em>{top.role}</em> : null}<kbd>↵</kbd></> : '—') : ''}</span>
       </div>
     </div>
@@ -184,7 +189,7 @@ function Crew({ doc, roster, room, build }) {
     <>
       <Stage
         art={<Sigil seed={doc.route} data={nums} className="xag-sigil" />}
-        first={<><Title f={f} />{f.lede.map((p, i) => <motion.p key={i} className="xag-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE, delay: 0.35 + i * 0.08 }}>{p}</motion.p>)}<Acts list={ask} big /></>}
+        first={<><Title f={f} />{f.lede.map((p, i) => <motion.p key={i} className="xag-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, ease: EASE, delay: 0.35 + i * 0.06 }}>{p}</motion.p>)}<Acts list={ask} big thumb id="agents-crew.hero" /></>}
         second={<><h2 className="xag-h2">{roster.h2}</h2><Kick className="under">{roster.eyebrow}</Kick>{roster.lede && <p className="xag-lede">{roster.lede}</p>}<Find r={roster} b={b} q={q} setQ={setQ} /></>}
         object={<div ref={box}><Ring r={roster} b={b} /></div>}
       />
@@ -199,10 +204,10 @@ function Crew({ doc, roster, room, build }) {
             <div className="xag-build-g">
               <ul className="xag-mates" aria-label={roster.h2}>
                 {roster.agents.map((a, i) => (
-                  <li key={a.name} style={{ '--i': i }}><A to={a.href} className="xag-mate" data-cursor="Talk"><Face a={a} /><span className="xag-mate-n">{a.name}</span></A></li>
+                  <li key={a.name} style={{ '--i': i }}><A to={a.href} className="xag-mate"><Face a={a} /><span className="xag-mate-n">{a.name}</span></A></li>
                 ))}
               </ul>
-              {ask && <Acts list={ask} big />}
+              {ask && <Acts list={ask} big id="agents-crew.close" />}
             </div>
           </div>
         </section>
@@ -216,19 +221,14 @@ function Room({ s, agents }) {
   const [night, setNight] = useState(true);
   const [dark, light] = s.shots.length > 1 ? s.shots : [s.shots[0], s.shots[0]];
   const shot = night ? dark : light;
-  const box = useRef(null);
-  const calm = useCalm();
-  const { scrollYProgress: p } = useScroll({ target: box, offset: ['start end', 'center center'] });
-  const sc = useTransform(p, [0, 1], [0.86, 1]);
-  const y = useTransform(p, [0, 1], [90, 0]);
   return (
-    <section className="xag-sec xag-room" data-room="dark">
+    <motion.section className="xag-sec xag-room" data-room="dark" {...OPEN}>
       <div className="xag-wrap">
         <div className="xag-room-h">
           <div><h2 className="xag-h2 xag-room-t">{s.h2}</h2><Kick className="under">{s.eyebrow}</Kick></div>
-          <div className="xag-room-r">{s.lede && <p className="xag-lede">{s.lede}</p>}<Acts list={s.actions} big /></div>
+          <div className="xag-room-r">{s.lede && <p className="xag-lede">{s.lede}</p>}<Acts list={s.actions} big id="agents-crew.room" /></div>
         </div>
-        <motion.figure ref={box} className="xag-shot" data-night={night || undefined} style={calm ? undefined : { scale: sc, y }}>
+        <figure className="xag-shot" data-night={night || undefined}>
           <div className="xag-shot-bar">
             <span className="xag-dots" aria-hidden="true"><i /><i /><i /></span>
             <span className="xag-url x-mono"><i className="xag-live" aria-hidden="true" />{s.url}</span>
@@ -249,10 +249,10 @@ function Room({ s, agents }) {
             )}
             <span className="xag-shot-p" role="img" aria-label={shot.alt} style={{ backgroundImage: `url(${ASSET(shot.src)})` }} />
           </div>
-        </motion.figure>
+        </figure>
         <p className="xag-cap x-mono">{s.caption}</p>
       </div>
-    </section>
+    </motion.section>
   );
 }
 
@@ -382,21 +382,12 @@ function Spec({ s, seed }) {
 function Code({ s }) {
   const src = s.lines.map((l) => l.map((x) => x[1]).join('')).join('\n');
   return (
-    <section className="xag-sec xag-code" data-room="dark">
+    <motion.section className="xag-sec xag-code" data-room="dark" {...OPEN}>
       <div className="xag-wrap xag-code-g">
-        <div className="xag-code-h"><Head s={s} /><Acts list={s.actions} /></div>
-        <figure className="xag-pre">
-          <div className="xag-pre-bar"><span className="xag-dots" aria-hidden="true"><i /><i /><i /></span><span className="x-mono">{s.lang}</span><Copy text={src} /></div>
-          <motion.pre tabIndex={0} data-lenis-prevent initial="h" whileInView="s" viewport={{ once: true, amount: 0.3 }} variants={{ h: {}, s: { transition: { staggerChildren: 0.045 } } }}>
-            <code>{s.lines.map((l, j) => (
-              <motion.span key={j} className="xag-ln" variants={{ h: { opacity: 0, x: -14 }, s: { opacity: 1, x: 0, transition: { duration: 0.45, ease: EASE } } }}>
-                {l.map(([k, t], i) => <span key={i} data-k={k}>{t}</span>)}{j === s.lines.length - 1 && <i className="xag-caret" aria-hidden="true" />}{'\n'}
-              </motion.span>
-            ))}</code>
-          </motion.pre>
-        </figure>
+        <div className="xag-code-h"><Head s={s} /><Acts list={s.actions} id="agents-sdk.code" /></div>
+        <CodeBlock code={src} label={s.lang} className="xag-pre" />
       </div>
-    </section>
+    </motion.section>
   );
 }
 
@@ -408,7 +399,7 @@ function Close({ s, get, ask, install }) {
         <div className="xag-close-g">
           <div className="xag-close-l">
             {s.lede && <p className="xag-lede">{s.lede}</p>}
-            <Acts list={[...(ask || []), ...s.actions]} big solid={!!(ask && ask.length)} />
+            <Acts list={[...(ask || []), ...s.actions]} big solid={!!(ask && ask.length)} id="agents-sdk.close" />
           </div>
           {install && install.length > 1 && (
             <figure className="xag-term">
@@ -441,7 +432,7 @@ function Sdk({ doc }) {
     <>
       <Stage from={1.03} low="6%"
         art={<Sigil seed={doc.route} data={nums} className="xag-sigil" />}
-        first={<><Title f={f} />{lead && <motion.p className="xag-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE, delay: 0.35 }}>{lead}</motion.p>}<Acts list={f.actions} big /></>}
+        first={<><Title f={f} />{lead && <motion.p className="xag-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, ease: EASE, delay: 0.35 }}>{lead}</motion.p>}<Acts list={f.actions} big thumb id="agents-sdk.hero" /></>}
         second={<>
           {rest.map((p) => <p key={p} className="xag-lede xag-lede-b">{p}</p>)}
           {f.install.length > 1 && <Install lines={f.install} />}
@@ -463,6 +454,7 @@ export default function AgentRoom({ doc }) {
   const roster = doc.sections.find((s) => s.k === 'roster');
   return (
     <main className="xag" data-kind={roster ? 'crew' : 'sdk'}>
+      <div className="xag-first" aria-hidden="true" />
       {roster
         ? <Crew doc={doc} roster={roster} room={doc.sections.find((s) => s.k === 'room')} build={roster.more} />
         : <Sdk doc={doc} />}
