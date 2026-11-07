@@ -17,6 +17,7 @@
 .w2-pin-b > p { margin: 0; font-size: clamp(17px, 1.32vw, 19px); line-height: 1.6; color: var(--soft); max-width: 46ch; }
 .w2-pin-b strong { color: var(--ink); font-weight: 560; }
 .w2-pin-visual { position: relative; min-width: 0; }
+.w2-pin-meta { margin: 4px 0 0; font-size: 13px; letter-spacing: .04em; color: var(--soft); }
 
 @media (max-width: 900px) {
   .w2-pin { height: auto; padding: 24px 0 64px; }
