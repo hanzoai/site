@@ -23,7 +23,7 @@
 @keyframes xbo-pulse { 0% { box-shadow: 0 0 0 0 rgba(10, 10, 11, .35); } 70%, 100% { box-shadow: 0 0 0 10px rgba(10, 10, 11, 0); } }
 .xbo-win[data-state='unreachable'] .xbo-live, .xbo-win[data-state='none'] .xbo-live { background: var(--faint); animation: none; }
 .xbo-issues { list-style: none; margin: 0; padding: 8px; }
-.xbo-issues a { display: grid; grid-template-columns: 18px 1fr; gap: 6px 12px; min-height: 44px; padding: 14px; border-radius: 14px; color: var(--ink); text-decoration: none; transition: background .25s; }
+.xbo-issues a { position: relative; display: grid; grid-template-columns: 18px 1fr; gap: 6px 12px; min-height: 44px; padding: 14px; border-radius: 14px; color: var(--ink); text-decoration: none; transition: background .25s; }
 .xbo-issues a:hover { background: var(--card); }
 .xbo-issues a:focus-visible { outline: 2px solid var(--xp-accent); outline-offset: -2px; }
 .xbo-dot { grid-row: span 2; margin-top: 3px; width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--xp-accent); position: relative; }
@@ -79,7 +79,8 @@
 .xbo-you { position: absolute; bottom: -5px; height: 8px; border-radius: 8px; background: #f5f5f7; min-width: 8px; }
 .xbo-mk { position: absolute; bottom: 0; translate: -50% 0; display: grid; justify-items: center; }
 .xbo-mk::after { content: ''; width: 2px; height: 12px; background: var(--hz-400); }
-.xbo-mk b { font-size: 13px; font-weight: 500; color: var(--hz-400); margin-bottom: 4px; }
+.xbo-total .xbo-mk b { font-size: 13px; font-weight: 500; letter-spacing: 0; color: var(--hz-400); margin-bottom: 4px; }
+.xbo-total .xbo-mk:nth-child(4) b { transform: translateY(-16px); }
 
 /* standings: an editorial table of big totals */
 .xbo-podium { list-style: none; margin: clamp(56px, 6vw, 96px) 0 0; padding: 0; border-top: 1px solid var(--ink); }
@@ -94,7 +95,8 @@
 .xbo-pts small { font-size: 14px; letter-spacing: -.01em; color: var(--hz-500); margin-left: .2em; }
 .xbo-wire { margin-top: clamp(80px, 9vw, 140px); align-items: start; row-gap: 32px; }
 .xbo-wire-h { grid-column: 1 / span 4; display: grid; gap: 20px; justify-items: start; position: sticky; top: 120px; }
-.xbo-wire ul { grid-column: 6 / span 7; list-style: none; margin: 0; padding: 0; }
+.xbo-deck { grid-column: 6 / span 7; }
+.xbo-wire ul { list-style: none; margin: 0; padding: 0; }
 .xbo-wire ul.xbo-aw { padding: 8px 28px; }
 .xbo-wire li { display: grid; gap: 10px; padding: 24px 0; border-bottom: 1px solid var(--line); }
 .xbo-wire li:last-child { border-bottom: 0; }
@@ -127,7 +129,7 @@
 /* how a bounty is taken: a GitHub timeline */
 .xbo-take .xp-grid { row-gap: 48px; align-items: start; }
 .xbo-take-l { grid-column: 1 / span 5; display: grid; gap: 28px; }
-.xbo-tl { grid-column: 7 / span 6; list-style: none; margin: 0; padding: clamp(28px, 3vw, 40px); position: relative; }
+.xbo-tl { list-style: none; margin: 0; padding: clamp(28px, 3vw, 40px); position: relative; }
 /* each step's line runs to the next mark and inks in once the next step is reached */
 .xbo-tl li:not(:last-child)::before, .xbo-tl li:not(:last-child)::after { content: ''; position: absolute; left: 21px; top: 22px; bottom: -22px; width: 2px; background: var(--line); }
 .xbo-tl li:not(:last-child)::after { background: var(--hz-950); transform: scaleY(0); transform-origin: 50% 0; transition: transform .5s var(--xp-ease); z-index: 1; }
@@ -196,6 +198,97 @@
 .xbo-rewards { padding-top: clamp(80px, 9vw, 144px) !important; }
 @media (max-width: 900px) {
   .xbo-win { height: 520px; }
-  .xbo-mk:nth-child(3) b { transform: translateY(-16px); }
   .xbo-copy { padding-top: 0; }
 }
+
+/* the window comes alive once it is in: rows deal in, the newest bounty arrives at the top as the count ticks up by one,
+   then a quiet reader walks the rows. Final states first; .js scopes every waiting state (JS off shows the full list). */
+.xbo-issues li { display: grid; grid-template-rows: 1fr; transition: grid-template-rows .8s var(--xp-ease), opacity .6s var(--xp-ease); }
+.xbo-iss-in { min-height: 0; overflow: hidden; }
+.js .xbo-issues li { animation: xbo-deal .6s var(--xp-ease) backwards; animation-delay: calc(var(--i, 0) * 60ms + .35s); }
+@keyframes xbo-deal { from { opacity: 0; transform: translateX(24px); } }
+.js .xbo-issues li.pend { grid-template-rows: 0fr; opacity: 0; }
+.xbo-issues li.fresh a { animation: xbo-fresh 2.4s var(--xp-ease) .2s backwards; }
+@keyframes xbo-fresh { from { background: var(--hz-100); } to { background: transparent; } }
+.xbo-issues li.fresh .xbo-dot { animation: xbo-ping 1.2s var(--xp-ease) .3s 2; }
+@keyframes xbo-ping { 0% { box-shadow: 0 0 0 0 rgba(10, 10, 11, .3); } 100% { box-shadow: 0 0 0 9px rgba(10, 10, 11, 0); } }
+.xbo-issues li.walk a { background: var(--hz-50); }
+.xbo-issues li.walk .xbo-dot { transform: scale(1.12); }
+.xbo-dot { transition: transform .5s var(--xp-ease); }
+.xbo-issues a { transition: background .5s var(--xp-ease), transform .1s; }
+.xbo-issues a:active { transform: scale(.99); }
+.xbo-n { display: inline-block; height: 1.2em; line-height: 1.2em; overflow: hidden; }
+.xbo-roll { display: grid; transform: translateY(-50%); transition: transform .6s var(--xp-ease); }
+.xbo-roll i { font-style: normal; text-align: right; }
+.js .xbo-roll[data-on='n'] { transform: translateY(0); }
+html:not(.js) .xbo-roll i:first-child { visibility: hidden; }
+.xbo-more[data-cta] { cursor: pointer; }
+
+/* the awards as one deck: the front report is read and the two behind it peek; three bars pick one and run its time */
+.xbo-deck { display: grid; gap: 20px; }
+.js .xbo-wire ul.xbo-aw { display: grid; padding: 0 0 36px; border: 0; background: none; border-radius: 0; }
+.js .xbo-wire .xbo-aw li { grid-area: 1 / 1; padding: clamp(24px, 2.6vw, 36px); border: 1px solid var(--line); border-radius: 24px; background: #fff; transform-origin: 50% 100%; transition: transform .8s var(--xp-ease), box-shadow .8s var(--xp-ease); }
+.js .xbo-wire .xbo-aw li:last-child { border-bottom: 1px solid var(--line); }
+.js .xbo-aw li > * { transition: opacity .5s var(--xp-ease); }
+.js .xbo-aw li[data-pos='0'] { z-index: 3; box-shadow: 0 24px 48px -32px rgba(10, 10, 11, .35); }
+.js .xbo-aw li[data-pos='1'] { z-index: 2; transform: translateY(18px) scale(.95); cursor: pointer; }
+.js .xbo-aw li[data-pos='2'] { z-index: 1; transform: translateY(36px) scale(.9); cursor: pointer; background: var(--hz-50); }
+.js .xbo-aw li:not([data-pos='0']) > * { opacity: 0; }
+.xbo-wire .xbo-aw li p { font-size: 19px; line-height: 1.45; }
+.xbo-deck-pg { display: none; }
+.js .xbo-deck-pg { display: flex; gap: 8px; }
+.xbo-deck-pg button { flex: 1; height: 44px; padding: 0; border: 0; background: none; cursor: pointer; display: grid; align-items: center; transition: transform .1s; }
+.xbo-deck-pg button:active { transform: translateY(1px); }
+.xbo-deck-pg button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+.xbo-deck-pg i { position: relative; display: block; height: 3px; border-radius: 3px; background: var(--hz-200); overflow: hidden; transition: background .3s; }
+@media (hover: hover) { .xbo-deck-pg button:hover i { background: var(--hz-300); } }
+.xbo-deck-pg i::after { content: ''; position: absolute; inset: 0; background: var(--hz-950); transform: scaleX(0); transform-origin: 0 50%; }
+.xbo-deck-pg [aria-pressed='true'] i::after { transform: scaleX(1); }
+.xbo-deck-pg i[data-run='y']::after { animation: xbo-run 5s linear; }
+@keyframes xbo-run { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* how a bounty is taken: the PR itself, pinned on desktop while its state changes */
+.xbo-take { padding-bottom: clamp(80px, 9vw, 140px) !important; }
+.xbo-pr { grid-column: 7 / span 6; overflow: hidden; }
+.xbo-pr-head { position: relative; display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 16px; align-items: start; padding: 24px clamp(24px, 3vw, 36px); border-bottom: 1px solid var(--line); background: #fff; color: var(--hz-950); transition: background .6s var(--xp-ease), color .6s var(--xp-ease); }
+.xbo-pr-t { display: grid; gap: 8px; color: inherit; text-decoration: none; min-width: 0; }
+.xbo-pr-t b { font: 560 19px/1.3 var(--sans); letter-spacing: -.01em; }
+.xbo-pr-t span { font-size: 13px; color: var(--hz-500); transition: color .6s var(--xp-ease); }
+@media (hover: hover) { .xbo-pr-t:hover b { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; } }
+.xbo-pr-t:active { transform: translateY(1px); }
+.xbo-pr-bar { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; }
+.xbo-pr-bar i { position: absolute; inset: 0; background: var(--hz-950); transform-origin: 0 50%; }
+.xbo-gl { margin-top: 1px; overflow: visible; }
+.xbo-gl g { transform-box: fill-box; transform-origin: center; transition: opacity .45s var(--xp-ease), transform .6s var(--xp-ease); }
+.xbo-gl .g1, .xbo-gl .g2 { opacity: 0; transform: scale(.6) rotate(-30deg); }
+.xbo-pr[data-step='1'] .g0, .xbo-pr[data-step='2'] .g0, .xbo-pr[data-step='2'] .g1 { opacity: 0; transform: scale(.6) rotate(30deg); }
+.xbo-pr[data-step='1'] .g1, .xbo-pr[data-step='2'] .g2 { opacity: 1; transform: none; }
+.xbo-pr[data-step='2'] .xbo-pr-head { background: var(--hz-950); color: #f5f5f7; --xbo-gl-on: var(--hz-950); }
+.xbo-pr[data-step='2'] .xbo-gl .g2 circle { fill: #f5f5f7; }
+.xbo-pr[data-step='2'] .xbo-pr-t span { color: var(--hz-400); }
+.xbo-pr[data-step='2'] .xbo-pr-bar i { background: #f5f5f7; }
+.xbo-tl li.now .xp-title { transform: translateX(6px); }
+.xbo-tl li .xp-title { transition: color .3s var(--xp-ease), transform .5s var(--xp-ease); }
+.xbo-take-foot { row-gap: 24px; align-items: start; }
+@media (min-width: 901px) {
+  .xbo-pin { height: 210vh; }
+  .xbo-stage { position: sticky; top: calc(var(--x-top, 60px) + clamp(40px, 8vh, 96px)); align-items: start; }
+  .xbo-take-foot { margin-top: clamp(24px, 4vw, 64px); }
+}
+@media (max-width: 900px) {
+  .xbo-pr { grid-column: 1 / -1; }
+  .xbo-pr-head { padding: 20px; gap: 14px; }
+  .xbo-pr-t b { font-size: 17px; }
+  .xbo-deck { grid-column: 1 / -1; }
+  .js .xbo-wire ul.xbo-aw { padding-bottom: 28px; }
+  .js .xbo-aw li[data-pos='1'] { transform: translateY(14px) scale(.95); }
+  .js .xbo-aw li[data-pos='2'] { transform: translateY(28px) scale(.9); }
+  .xbo-wire .xbo-aw li p { font-size: 17px; }
+  .xbo-take-foot { margin-top: 24px; }
+}
+
+/* Hanzo's "Asking GitHub…" line: a mono caption at the foot of the list while GitHub is asked, then it folds away */
+.xbo-asking { display: grid; grid-template-rows: 0fr; margin: 0; padding: 0 22px; font-size: 13px; color: var(--hz-500); transition: grid-template-rows .5s var(--xp-ease), opacity .4s var(--xp-ease); opacity: 0; }
+.xbo-asking span { min-height: 0; overflow: hidden; }
+.xbo-asking[data-on='y'] { grid-template-rows: 1fr; opacity: 1; padding-bottom: 12px; animation: xbo-sh 1.4s var(--xp-ease) infinite alternate; }
+html:not(.js) .xbo-asking { display: none; }

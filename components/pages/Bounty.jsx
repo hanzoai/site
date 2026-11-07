@@ -2,66 +2,115 @@
 /* Bounties & Rewards. Its idea is the ledger of what a contribution earns.
    Persona: a developer who wants to contribute to Hanzo's open repositories. Goal: take an open bounty.
    CTA: "Every open bounty" (GitHub search of Hanzo's bounty issues). Metric: github_click.
-   V2: 8/10 grey deck: display hero beside the live GitHub window of open bounties; the four ways to earn are huge-figure tiles you can count on (steppers on each tile total your points and credits by Hanzo's own rates and place you against the listed top three); the standings as big totals; the token race scrubbed by scroll as the dark room; a GitHub-style timeline for taking a bounty.
+   V2: 8/10 grey deck: display hero beside the GitHub window of open bounties (live, or the build snapshot) where the newest bounty arrives once and the count ticks up, then a reader walks the rows; countable reward tiles; the standings as big totals; the awards as one deck that deals; the token race scrubbed as the dark room; how a bounty is taken as the PR itself, pinned while it goes open → pull request → merged.
    Signature: the token race: in the dark room the ten organizations' bars race out on a log line as you scroll.
    Beyond: count on the tiles: steppers on each way to earn add up the points and AI credits Hanzo's rates give, with a
    marker placed against the standings Hanzo lists. No words but Hanzo's.
    Motion: scrubbed race with @hanzo's figure growing 52→84px while it is the moment (scroll, the signature) + open
-   bounties arriving live with a pulse (time, idle) + steppers gliding the marker (pointer, state) + line-mask headline
-   (arrival) + the take timeline filling as it is read. 0 UI hues. */
+   bounty arriving and the count ticking (time, idle) + the awards deck dealing (time) + steppers gliding the marker (pointer,
+   state) + line-mask headline (arrival) + the PR changing state as it is read (state). 0 UI hues. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
 import { A, Cta } from '../kit';
 import { Count } from '../ui';
 import LineReveal, { NoJs } from '../v2/LineReveal';
 import { SEARCH, REPOS, CONTRIBUTING, useBounties, SAY } from './Bounty.github';
+import { SNAP } from './Bounty.snapshot';
 import '../v2/ProgramScale.css';
 import './Bounty.css';
 
 const EASE = [0.16, 1, 0.3, 1];
 const n = (v) => v.toLocaleString('en-US');
 
-/* The live window: open bounties straight from GitHub. */
-function Open() {
-  const st = useBounties();
-  const items = st.kind === 'ready' ? st.open.items.slice(0, 6) : [];
-  const total = st.kind === 'ready' ? st.open.total : 0;
+/* The live window: open bounties straight from GitHub, the build snapshot until it answers (or when it does not).
+   Once the list is in, the newest bounty arrives at the top and the count ticks up by one; then a quiet reader walks
+   the rows (paused under the pointer, off screen and under reduced motion). */
+function Open({ st }) {
+  const live = st.kind === 'ready';
+  const data = live ? st.open : SNAP;
+  const items = data.items.slice(0, 6);
+  const total = data.total;
   const more = Math.max(0, total - items.length);
-  const say = st.kind === 'reading' ? SAY.reading : st.kind === 'unreachable' ? SAY.unreachable : SAY.none;
+  const calm = useReducedMotion();
+  const box = useRef(null);
+  const seen = useInView(box, { amount: 0.4 });
+  const [arrived, setArrived] = useState(false);
+  const [walk, setWalk] = useState(-1);
+  const [hold, setHold] = useState(false);
+  useEffect(() => {
+    if (calm) { setArrived(true); return; }
+    const t = setTimeout(() => setArrived(true), 2400);
+    return () => clearTimeout(t);
+  }, [calm]);
+  useEffect(() => {
+    if (!arrived || calm || !seen || hold || !items.length) return;
+    const t = setTimeout(() => setWalk((w) => (w + 1) % items.length), walk < 0 ? 2600 : 3200);
+    return () => clearTimeout(t);
+  }, [arrived, calm, seen, hold, walk, items.length]);
+  const say = SAY.none;
   return (
-    <div className="xbo-win xp-obj" data-state={st.kind === 'ready' && !total ? 'none' : st.kind}>
+    <div ref={box} className="xbo-win xp-obj" data-state={live && !total ? 'none' : 'ready'}
+      onPointerEnter={() => setHold(true)} onPointerLeave={() => setHold(false)} onFocus={() => setHold(true)} onBlur={() => setHold(false)}>
       <div className="xbo-win-bar">
         <i className="xbo-live" aria-hidden="true" />
         <span className="xbo-win-k">Bounties &amp; Rewards</span>
         <b>Open bounties</b>
-        {total > 0 && <span className="xbo-n x-mono" aria-hidden="true">{n(total)}</span>}
+        {total > 0 && (
+          <span className="xbo-n x-mono" aria-hidden="true">
+            <span className="xbo-roll" data-on={arrived ? 'y' : 'n'}><i>{n(Math.max(0, total - 1))}</i><i>{n(total)}</i></span>
+          </span>
+        )}
       </div>
       {items.length ? (
         <ul className="xbo-issues">
           {items.map((it, i) => (
-            <motion.li key={it.url} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], delay: i * 0.06 }}>
-              <a href={it.url} target="_blank" rel="noopener noreferrer">
-                <span className="xbo-dot" aria-hidden="true" />
-                <span className="xbo-iss-t">{it.title}</span>
-                <span className="xbo-iss-r x-mono">{`${it.repo}#${it.number}`}{it.tier && <em>{it.tier}</em>}</span>
-              </a>
-            </motion.li>
+            <li key={it.url} style={{ '--i': i }} className={(i === 0 ? (arrived ? 'fresh' : 'pend') : '') + (walk === i ? ' walk' : '')}>
+              <div className="xbo-iss-in">
+                <a href={it.url} target="_blank" rel="noopener noreferrer" tabIndex={i === 0 && !arrived ? -1 : undefined}>
+                  <span className="xbo-dot" aria-hidden="true" />
+                  <span className="xbo-iss-t">{it.title}</span>
+                  <span className="xbo-iss-r x-mono">{`${it.repo}#${it.number}`}{it.tier && <em>{it.tier}</em>}</span>
+                </a>
+              </div>
+            </li>
           ))}
         </ul>
       ) : (
         <div className="xbo-say" role={st.kind === 'reading' ? 'status' : undefined} aria-live="polite">
           <span className="xbo-ghosts" aria-hidden="true"><i /><i /><i /><i /></span>
           {say && <p className="xbo-shimmer">{say}</p>}
-          {st.kind === 'unreachable' && <Cta to={SEARCH} kind="quiet" id="bounty.retry" className="xp-ghost">Every open bounty</Cta>}
-          {st.kind === 'ready' && !total && <Cta to="#propose" kind="quiet" id="bounty.propose" className="xp-ghost">Propose a bounty</Cta>}
+          <Cta to="#propose" kind="quiet" id="bounty.propose" className="xp-ghost">Propose a bounty</Cta>
         </div>
       )}
-      {more > 0 && <a className="xbo-more" href={SEARCH} target="_blank" rel="noopener noreferrer"><span>Every open bounty</span><i aria-hidden="true">↗</i></a>}
+      <p className="xbo-asking x-mono" role="status" data-on={st.kind === 'reading' ? 'y' : 'n'} aria-hidden={st.kind === 'reading' ? undefined : true}><span>{SAY.reading}</span></p>
+      {more > 0 && <a className="xbo-more" href={SEARCH} target="_blank" rel="noopener noreferrer" data-cta="bounty.window"><span>Every open bounty</span><i aria-hidden="true">↗</i></a>}
     </div>
   );
 }
 
-function Hero() {
+/* Phones keep Hanzo's "Try Hanzo" solid in the header; while this hero's own solid ask is on screen the header's
+   button reads as an outline (the same html[data-ask=quiet] the shell sets on desktop), so one solid shows at a time. */
+function useOneSolidOnPhone() {
+  useEffect(() => {
+    const H = document.documentElement;
+    const mq = matchMedia('(max-width: 700px)');
+    const el = document.querySelector('main.xbo [data-cta="bounty.hero"]');
+    if (!el) return;
+    let mine = false, vis = false;
+    const apply = () => {
+      if (mq.matches && vis) { H.dataset.ask = 'quiet'; mine = true; }
+      else if (mine) { delete H.dataset.ask; mine = false; }
+    };
+    const io = new IntersectionObserver(([e]) => { vis = e.isIntersecting; apply(); });
+    io.observe(el);
+    const timers = [300, 1400].map((ms) => setTimeout(apply, ms)); // after the shell's own first pass
+    mq.addEventListener('change', apply);
+    return () => { io.disconnect(); timers.forEach(clearTimeout); mq.removeEventListener('change', apply); if (mine) delete H.dataset.ask; };
+  }, []);
+}
+
+function Hero({ st }) {
+  useOneSolidOnPhone();
   return (
     <section className="xbo-hero" aria-labelledby="xbo-h1">
       <div className="xp-wrap xp-grid">
@@ -71,13 +120,13 @@ function Hero() {
             <p className="xp-lede xbo-lede">Open issues and bug reports across Hanzo’s repositories. Ship a fix or report a verified bug to earn AI credits and climb the global leaderboard.</p>
             <div className="xbo-acts">
               <Cta to={SEARCH} id="bounty.hero" thumb className="xp-cta">Every open bounty</Cta>
-              <A to="/leaderboard" className="xbo-link">Leaderboard</A>
-              <A to={CONTRIBUTING} className="xbo-link">How to contribute</A>
+              <A to="/leaderboard" className="xbo-link" data-cta="bounty.leaderboard">Leaderboard</A>
+              <A to={CONTRIBUTING} className="xbo-link" data-cta="bounty.contributing">How to contribute</A>
             </div>
           </motion.div>
         </div>
         <motion.div className="xbo-hero-win" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.2 }}>
-          <Open />
+          <Open st={st} />
         </motion.div>
       </div>
     </section>
@@ -164,6 +213,46 @@ const AWARDS = [
   ['zlatan mioslav (@valerypetrov) · hanzo-inc/cloud#slack-thread-pr-review', '+50 pts', 'Reported Slack @Hanzo thread parent context loss and multi-repo PR review handling in channel threads.'],
 ];
 
+/* The awards as one deck: the front report is read, the two behind it peek; it deals the next one every 5s while in
+   view (paused under the pointer or focus), and the three bars below pick one and show its time running. */
+const DEAL = 5000;
+function Awards() {
+  const [cur, setCur] = useState(0);
+  const [hold, setHold] = useState(false);
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount: 0.5 });
+  const calm = useReducedMotion();
+  const run = seen && !hold && !calm;
+  useEffect(() => {
+    if (!run) return;
+    const t = setTimeout(() => setCur((c) => (c + 1) % AWARDS.length), DEAL);
+    return () => clearTimeout(t);
+  }, [cur, run]);
+  return (
+    <div className="xbo-deck" ref={ref} onPointerEnter={() => setHold(true)} onPointerLeave={() => setHold(false)} onFocus={() => setHold(true)} onBlur={() => setHold(false)}>
+      <ul className="xp-obj xbo-aw">
+        {AWARDS.map(([h, prize, d], i) => {
+          const pos = (i - cur + AWARDS.length) % AWARDS.length;
+          return (
+            <li key={h} data-pos={pos} onClick={() => pos && setCur(i)}>
+              <span className="xbo-wire-k x-mono">{h}</span>
+              <p>{d}</p>
+              <span className="xbo-wire-p x-mono">{prize}</span>
+            </li>
+          );
+        })}
+      </ul>
+      <div className="xbo-deck-pg">
+        {AWARDS.map(([h], i) => (
+          <button key={h} type="button" aria-label={h} aria-pressed={i === cur} data-sound="tick" onClick={() => setCur(i)}>
+            <i key={i === cur ? 'on' + cur : 'off'} data-run={i === cur && run ? 'y' : 'n'} />
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function Standings() {
   return (
     <section className="xp-sec tight xbo-stand" aria-labelledby="xbo-st">
@@ -190,15 +279,7 @@ function Standings() {
             <h3 className="xp-title">Recent verified bug reports &amp; awards</h3>
             <A to="/leaderboard" className="xbo-link">View global token &amp; bounty leaderboard</A>
           </div>
-          <ul className="xp-obj xbo-aw">
-            {AWARDS.map(([h, prize, d]) => (
-              <li key={h}>
-                <span className="xbo-wire-k x-mono">{h}</span>
-                <p>{d}</p>
-                <span className="xbo-wire-p x-mono">{prize}</span>
-              </li>
-            ))}
-          </ul>
+          <Awards />
         </div>
       </div>
     </section>
@@ -275,34 +356,71 @@ function Volume() {
 const TAKE = ['Say on the issue that you are taking it.', 'Open a pull request that says Fixes and the issue’s number.', 'A maintainer reviews it, merges it, and credits your account with points and AI credits.'];
 const MARKS = [['Issue', 'open'], ['Pull request', 'pr'], ['Merged', 'merged']];
 
-function Mark({ p, i, children, cls }) {
-  const on = useTransform(p, (v) => (v >= i / TAKE.length + 0.08 ? 1 : 0));
-  const [lit, setLit] = useState(false);
-  useMotionValueEvent(on, 'change', (x) => setLit(!!x));
-  useEffect(() => setLit(!!on.get()), []); // eslint-disable-line react-hooks/exhaustive-deps
-  return <li className={cls + (lit ? ' on' : '')}>{children}</li>;
+/* The PR itself: one pinned window whose state changes as you read the three steps (desktop pins it for the read;
+   phones read it in place). Its title is the newest open bounty, live from GitHub or the build snapshot; the glyph
+   goes open issue → pull request → merged, and the head inks in at merged. */
+function useWide() {
+  const [w, setW] = useState(false);
+  useEffect(() => {
+    const mq = matchMedia('(min-width: 901px)');
+    const f = () => setW(mq.matches);
+    f(); mq.addEventListener('change', f);
+    return () => mq.removeEventListener('change', f);
+  }, []);
+  return w;
 }
 
-function Take() {
-  const ref = useRef(null);
+function Glyph() {
+  return (
+    <svg className="xbo-gl" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+      <g className="g0" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="2.6" fill="currentColor" stroke="none" /></g>
+      <g className="g1" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="6.5" cy="5.5" r="2.2" /><circle cx="6.5" cy="18.5" r="2.2" /><circle cx="17.5" cy="18.5" r="2.2" /><path d="M6.5 7.7v8.6M17.5 16.3V9.5a3 3 0 0 0-3-3H11" /><path d="m13 4.3-2.2 2.2L13 8.7" /></g>
+      <g className="g2"><circle cx="12" cy="12" r="11" fill="currentColor" /><path d="m7.2 12.3 3.1 3.1 6.5-6.6" fill="none" stroke="var(--xbo-gl-on, #fff)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></g>
+    </svg>
+  );
+}
+
+function Take({ st }) {
+  const pin = useRef(null);
   const calm = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.75', 'end 0.55'] });
+  const wide = useWide();
+  const lead = (st.kind === 'ready' && st.open.items[0]) || SNAP.items[0];
+  const { scrollYProgress } = useScroll({ target: pin, offset: wide ? ['start 0.2', 'end 0.85'] : ['start 0.75', 'end 0.55'] });
   const p = useTransform(scrollYProgress, (v) => (calm ? 1 : v));
+  const at = (v) => (v >= 0.7 ? 2 : v >= 0.36 ? 1 : v >= 0.04 ? 0 : -1);
+  const [step, setStep] = useState(-1);
+  useMotionValueEvent(p, 'change', (v) => setStep(at(v)));
+  useEffect(() => setStep(at(p.get())), [wide, calm]); // eslint-disable-line react-hooks/exhaustive-deps
+  const bar = useTransform(p, [0.04, 0.7], [0, 1], { clamp: true });
   return (
     <section className="xp-sec xbo-take" aria-labelledby="xbo-take-h">
-      <div className="xp-wrap xp-grid">
-        <div className="xbo-take-l">
-          <h2 id="xbo-take-h" className="xp-head">How a bounty is taken</h2>
-          <p className="xp-body xbo-take-note">Verified bug reports and merged bounties earn Hanzo AI credits and leaderboard points, with email notifications sent as you climb ranks.</p>
+      <div className="xbo-pin" ref={pin}>
+        <div className="xp-wrap xp-grid xbo-stage">
+          <div className="xbo-take-l">
+            <h2 id="xbo-take-h" className="xp-head">How a bounty is taken</h2>
+            <p className="xp-body xbo-take-note">Verified bug reports and merged bounties earn Hanzo AI credits and leaderboard points, with email notifications sent as you climb ranks.</p>
+          </div>
+          <div className="xbo-pr xp-obj" data-step={Math.max(0, step)}>
+            <div className="xbo-pr-head">
+              <Glyph />
+              <a className="xbo-pr-t" href={lead.url} target="_blank" rel="noopener noreferrer">
+                <b>{lead.title}</b>
+                <span className="x-mono">{`${lead.repo}#${lead.number}`}</span>
+              </a>
+              <span className="xbo-pr-bar" aria-hidden="true"><motion.i style={{ scaleX: bar }} /></span>
+            </div>
+            <ol className="xbo-tl">
+              {TAKE.map((t, i) => (
+                <li key={t} className={MARKS[i][1] + (step >= i ? ' on' : '') + (step === i ? ' now' : '')}>
+                  <span className="xbo-tl-m" aria-hidden="true" />
+                  <p className="xp-title">{t}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
-        <ol className="xbo-tl xp-obj" ref={ref}>
-          {TAKE.map((t, i) => (
-            <Mark key={t} p={p} i={i} cls={MARKS[i][1]}>
-              <span className="xbo-tl-m" aria-hidden="true" />
-              <p className="xp-title">{t}</p>
-            </Mark>
-          ))}
-        </ol>
+      </div>
+      <div className="xp-wrap xp-grid xbo-take-foot">
         <div className="xbo-propose" id="propose">
           <h3 className="xp-title">Propose a bounty</h3>
           <p className="xp-body">Found something worth fixing? Open an issue in its repository saying what is wrong, where, and how a fix is checked, and ask for the bounty label. A maintainer decides.</p>
@@ -315,14 +433,15 @@ function Take() {
 }
 
 export default function Bounty() {
+  const st = useBounties();
   return (
     <main className="xp xbo">
       <NoJs />
-      <Hero />
+      <Hero st={st} />
       <Rewards />
       <Standings />
       <Volume />
-      <Take />
+      <Take st={st} />
     </main>
   );
 }
