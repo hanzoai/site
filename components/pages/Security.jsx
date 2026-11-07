@@ -282,7 +282,7 @@ function None() {
         </div>
         <ol className="xsc-opts">
           {OPTIONS.map(([t, d], i) => (
-            <li key={t}><span className="xsc-opt-n pf-mono" aria-hidden="true">{pad(i)}</span><b className="pf-title">{t}</b><span>{d}</span></li>
+            <li key={t}><span className="xsc-opt-n pf-mono" aria-hidden="true">{pad(i)}</span><span className="pf-title xsc-opt-t">{t}</span><span>{d}</span></li>
           ))}
         </ol>
       </div>
