@@ -131,7 +131,7 @@
 .xbr-badges { display: flex; flex-wrap: wrap; gap: 10px; }
 .xbr-badge { display: inline-flex; align-items: center; height: 32px; padding: 0 14px; border-radius: 999px; background: var(--b-raised); font: 500 14px/1 var(--sans); color: var(--b-ink); }
 .xbr-badge.brand { background: var(--b-ink); color: var(--b-white); }
-.xbr-badge.ok { background: #e8f6ee; color: #0f5a2a; } /* Hanzo's own Success Badge sample: content, not accent */
+.xbr-badge.ok { background: #e8f6ee; color: #404040; } /* Hanzo's own Success Badge sample: content, not accent */
 
 /* 6. assets: the marks the ZIP holds, and the one ask */
 .xbr-assets { padding: clamp(120px, 14vw, 220px) 0; }
