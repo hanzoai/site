@@ -1,6 +1,6 @@
 // Signature: stacked sheets: in the dark room the three ways to build and research arrive as full sheets, each pinning while the next slides over it and the one beneath settles back
-// Beyond: your application as Hanzo files it: a filing card beside the form shows the track, role and every field sent
-// V2: 8/10 display hero beside the page’s own living contour field; the four steps as one drawn timeline; benefits as an editorial list; the three ways as stacked sheets in the dark room; the application with its filing card
+// Beyond: your application as it will be sent: a card beside the form writes itself as you type, under the form’s own labels
+// V2: 8/10 grey deck, no eyebrow; the page’s living contour field as the hero art; one drawn timeline; the three ways as stacked sheets in the dark room; the application with its card; one sticky Apply
 import Grants from '../../components/pages/Grants';
 import JsonLd from '../../components/JsonLd';
 
