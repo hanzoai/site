@@ -246,3 +246,18 @@ html.js .nw-sm[data-st='intro'] .nw-sp:not(.you) > i { animation: nw-found 4.4s 
   .nw-sm-links line.flow { display: none; }
 }
 .nw-sm .nw-sp[data-p='4'] .nw-tags { top: 12px; }
+/* chapter four: peer 03's tags open to its left, so peer 04's ring never sits on them */
+.nw-sm[data-st='3'] .nw-sp[data-p='3'] .nw-tags { left: auto; right: 16px; }
+@media (max-width: 899px) {
+  .nw-sm[data-st='3'] .nw-sp[data-p='3'] .nw-tag:not(.hit) { display: none; }
+  /* the placement tag lifts above peer 07 and shows only uta's render (the caption names it), clear of peer 06's ring */
+  .nw-sm[data-st='3'] .nw-sp[data-p='7'] .nw-tags { top: -54px; right: -20px; }
+  .nw-sm[data-st='3'] .nw-tag.place { font-size: 0; gap: 0; padding: 4px; }
+}
+/* the replay control stays quiet when it shows play: white with a hairline ring and an ink glyph, never a solid
+   disc beside the one solid ask */
+.nw .nw-pause[aria-pressed='true'] { background: #fff; color: #0a0a0a; border-color: #d4d4d4; }
+@media (hover: hover) { .nw .nw-pause:hover, .nw .nw-pause[aria-pressed='true']:hover { background: #f2f2f2; color: #0a0a0a; } }
+/* the resting bead: smaller and quieter than the demo's packet */
+.nw-packet.idle { left: -5px; top: -5px; width: 10px; height: 10px; }
+
