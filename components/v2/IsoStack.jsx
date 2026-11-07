@@ -10,7 +10,8 @@
    - explode: a MotionValue from 0 (one slab) to 1 (every gap open). camX / camY / camScale: optional MotionValues.
    - zOf(b, e) is exported so a page can aim its camera at a plate (b counts from the bottom plate, 0).
    - The plates are a picture (aria-hidden): give keyboard users the same choices as real buttons elsewhere.
-   Styles: IsoStack.css (--iso-acc is the accent, --iso-w / --iso-h the plate size). */
+   Styles: IsoStack.css (--iso-acc colours a lit plate's edge, --iso-w / --iso-h the plate size, --iso-tx / --iso-tz
+   turn the stack in degrees, e.g. from the pointer; it follows with a soft transition). */
 import { motion, useTransform } from 'motion/react';
 import './IsoStack.css';
 
