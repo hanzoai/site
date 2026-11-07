@@ -1,9 +1,10 @@
 'use client';
 /* Registry, v2 launch page (Cloud 3).
-   V2: 8/10 Object-left Stage hero where a docker push asks IAM first and the token travels to the terminal, scrubbable
-   by pointer (hover a step to see it) and pausable; the section's own statement opens the pinned repository view with a
-   token that expires on its own; the dockerconfigjson secret deleted in the one dark room; related as an index of cards
-   that open; one ask; grey only, status read by ✓ / ! marks and weight.
+   V2: 8/10 one outlined window where a docker push asks IAM first, runs once (~9 s) and rests on the signed image with a
+   blinking prompt and Replay; the dark room follows the hero straight off its last words (the secret); then a short
+   pin (about 3 screens) whose object is the image itself, a big inked stack of layers each fact visibly acts on and
+   labels (a password struck off as the token seats, the org inks the top, signature and attestation dock, a layer
+   slides out as storage shrinks, people fold into one directory), one caption under it, no lists; every control answers.
    Signature: a push that asks IAM first. docker push meets a 401 that names Hanzo IAM, a short-lived token travels from
    IAM to the client, the registry checks its signature, the layers go up, and the image lands in the org's repository
    with its cosign signature beside it as an ordinary artifact.
@@ -12,9 +13,10 @@
    Persona: Developer. Goal: read the source, then push a first image with an IAM token.
    CTA: "View Source" → https://github.com/hanzoai (data-cta registry.hero, registry.close; the site's sticky ask bar
    carries the same words from data-thumb). Metric: api_key_created.
-   Motion: idle = the push and the building console; pointer = hovering a step of the push shows that moment, the
-   magnetic ask; state = the secret switch and its rows, pause; arrival = the cut-in title, the timed wipe into the
-   dark room; scroll = the Stage settle and the pinned repository view (where the intro's token runs out on its own).
+   Motion: idle = the push (once), the resting caret, the stack's slow float, the building console; pointer = hovering
+   (or tapping, on a phone) a step of the push shows that moment, the magnetic ask; state = the secret switch, its rows
+   and the struck heading, pause and replay; arrival = the cut-in title, the timed wipe into the dark room; scroll = the
+   Stage settle and the pinned layer stack (where the intro's token runs out on its own).
    Every word and link is Hanzo's; repository and people names are examples. */
 import { useEffect, useState } from 'react';
 import { Paste, Code, useLive } from './Frame';
@@ -45,19 +47,29 @@ function Push() {
   const [ref, live, calm] = useLive(0.3);
   const [paused, pause] = usePause();
   const [t, setT] = useState(0); // 0 push, 1 401, 2 token, 3 signature checked, 4 layers, 5 pushed, 6 signed
-  const [hov, setHov] = useState(null); // a step under a fine pointer shows that moment
+  const [hov, setHov] = useState(null); // a step under a fine pointer (or a tap on a phone) shows that moment
   useEffect(() => { if (calm) setT(6); }, [calm]);
+  // the push runs once (about 9 s), then rests on the signed image; Replay runs it again
   useEffect(() => {
-    if (calm || !live || paused || hov !== null) return;
-    const id = setTimeout(() => setT((v) => (v >= 6 ? 0 : v + 1)), WAIT[t]);
+    if (calm || !live || paused || hov !== null || t >= 6) return;
+    const id = setTimeout(() => setT((v) => v + 1), WAIT[t]);
     return () => clearTimeout(id);
   }, [t, live, calm, paused, hov]);
   const s = hov ?? t;
-  const peek = (i) => ({ 'data-step': i, onPointerEnter: (e) => e.pointerType === 'mouse' && setHov(i) });
+  const peek = (i) => ({
+    'data-step': i,
+    onPointerEnter: (e) => e.pointerType === 'mouse' && setHov(i),
+    onClick: () => setHov((h) => (h === i ? null : i)),
+  });
   const st = (i) => (s >= i ? ' in' : '') + (s === i ? ' now' : '');
+  const done = t >= 6 && !calm;
   return (
-    <div className="rg-push" ref={ref} data-t={s} onPointerLeave={() => setHov(null)}>
-      <LivePause paused={paused} onToggle={pause} className="rg-pause" />
+    <div className={'rg-push' + (done ? ' done' : '')} ref={ref} data-t={s} onPointerLeave={(e) => e.pointerType === 'mouse' && setHov(null)}>
+      {done
+        ? <button type="button" className="lx-pause rg-pause rg-replay" aria-label="Replay" onClick={() => { setHov(null); setT(0); }}>
+            <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M3.2 8a4.8 4.8 0 1 0 1.5-3.5M3 2.5v3h3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </button>
+        : <LivePause paused={paused} onToggle={pause} className="rg-pause" />}
       <div className="rg-term" aria-hidden="true">
         <div className="rg-term-bar"><i /><i /><i /><span>terminal</span></div>
         <div className="rg-term-body">
@@ -67,6 +79,7 @@ function Push() {
               <div key={i} className="rg-layer"><span>layer {i + 1}</span><i><b style={{ transitionDuration: (0.9 + w) + 's', transitionDelay: s >= 4 && hov === null ? i * 0.18 + 's' : '0s' }} /></i></div>
             ))}
           </div>
+          <p className={'rg-caret' + (s >= 6 ? ' in' : '')}>$ <i /></p>
         </div>
         <div className="rg-iamchip"><span className="rg-iam-k">Hanzo IAM</span><b className="rg-token">token</b></div>
       </div>
@@ -87,59 +100,45 @@ function Push() {
   );
 }
 
-/* ---------- the chapters' object: the repository, per fact; the intro's token runs out on its own ---------- */
+/* ---------- the chapters' object: the image itself, one big stack of layers that each fact acts on ---------- */
 const CLIENTS = ['docker', 'podman', 'buildkit', 'skopeo', 'crane'];
 const PEOPLE = [['ana', 'push'], ['kai', 'push'], ['lee', 'pull'], ['sam', 'revoked']];
 
+/* The image drawn as its layers, a stack of inked plates seen from above, large enough to be each screen's one object.
+   Every chapter does one visible thing to it, labelled on the object itself:
+   intro: an IAM token hovers over it while its time runs out; 01: a password is struck off and falls away while the
+   token seats on the stack; 02: the org claims the top plate (it turns ink, "acme/* · push"); 03: the signature and the
+   attestation dock beside the image; 04: the stack squares up for /v2/; 05: a tag slides out and storage shrinks;
+   06: four people fold into one directory, one of them revoked. One short caption sits under it. */
 function Repo({ step, intro }) {
   const on = (i) => (!intro && step === i) || undefined;
   return (
     <div className="rg-rv" data-step={intro ? 'intro' : step}>
-      <div className="rg-rv-bar"><span className="rg-rv-dots"><i /><i /><i /></span><span className="rg-rv-path">oci.hanzo.ai / <b>acme</b> / api</span></div>
+      <div className="rg-iso" aria-hidden="true">
+        <div className="rg-iso-s">
+          {[0, 1, 2, 3].map((i) => <i key={i} className="rg-pl" style={{ '--z': i }} />)}
+          <i className="rg-pl rg-pl-top" style={{ '--z': 4 }} />
+          <i className="rg-pl rg-pl-sig" style={{ '--z': 4 }} />
+          <i className="rg-pl rg-pl-att" style={{ '--z': 3 }} />
+          <i className="rg-pl rg-pl-tok" style={{ '--z': 7 }} />
+        </div>
+        <span className="rg-t rg-t-tok" data-on={intro || undefined}><b>Hanzo IAM · token</b><span className="rg-ttl-bar"><i /></span></span>
+        <span className="rg-t rg-t-pw" data-on={on(0)}>password</span>
+        <span className="rg-t rg-t-seat" data-on={on(0)}>✓ token · signature checked</span>
+        <span className="rg-t rg-t-org" data-on={on(1)}><b>acme</b>/* · push</span>
+        <span className="rg-t rg-t-sig" data-on={on(2)}>cosign signature</span>
+        <span className="rg-t rg-t-att" data-on={on(2)}>in-toto attestation</span>
+        <span className="rg-t rg-t-del" data-on={on(4)}>v1.2.3-oops</span>
+        <span className="rg-ppl" data-on={on(5)}>{PEOPLE.map(([n, r], i) => <i key={n} className={r === 'revoked' ? 'off' : ''} style={{ '--i': i }}>{n[0]}</i>)}</span>
+        <p className="rg-iso-n">oci.hanzo.ai / <b>acme</b> / api</p>
+      </div>
       <div className="rg-rv-panes" aria-hidden="true">
-        <div className="rg-rv-pane rg-ttl" data-on={intro || undefined}>
-          <div className="rg-ttl-tok">
-            <span className="rg-k">Hanzo IAM</span>
-            <b>token</b>
-            <span className="rg-ttl-bar"><i /></span>
-          </div>
-          <ul className="rg-repos">{['api', 'web', 'worker'].map((r) => <li key={r}><b>acme</b>/{r}</li>)}</ul>
-        </div>
-        <div className="rg-rv-pane" data-on={on(0)}>
-          <ol className="rg-hs">
-            {[['client', 'docker push'], ['registry', '401 · Hanzo IAM'], ['Hanzo IAM', 'token minted'], ['registry', 'signature checked'], ['registry', 'push goes through']].map(([w, m], i) => (
-              <li key={i} style={{ '--i': i }} className={i === 1 ? 'warn' : i >= 3 ? 'ok' : ''}><span>{w}</span><b>{m}</b></li>
-            ))}
-          </ol>
-          <p className="rg-rv-foot">no password stored at either end</p>
-        </div>
-        <div className="rg-rv-pane" data-on={on(1)}>
-          <div className="rg-scope"><span className="rg-k">token · minted by IAM</span><code><b>acme</b>/* · push</code></div>
-          <ul className="rg-repos">{['api', 'web', 'worker'].map((r) => <li key={r}><b>acme</b>/{r}</li>)}</ul>
-          <p className="rg-rv-foot">one grant in one place</p>
-        </div>
-        <div className="rg-rv-pane" data-on={on(2)}>
-          <ul className="rg-arts">
-            {[['v1.2.3', 'image', ''], ['v1.2.3', 'cosign signature', 'sig'], ['v1.2.3', 'in-toto attestation', 'att']].map(([tag, k, c], i) => <li key={k} className={c} style={{ '--i': i }}><b>{tag}</b><span>{k}</span></li>)}
-          </ul>
-          <p className="rg-rv-foot">same repository as the image they describe</p>
-        </div>
-        <div className="rg-rv-pane" data-on={on(3)}>
-          <p className="rg-v2"><span className="lx-num">/v2/</span><em>registry HTTP API v2</em></p>
-          <ul className="rg-clients">{CLIENTS.map((c, i) => <li key={c} style={{ '--i': i }}>{c}</li>)}</ul>
-        </div>
-        <div className="rg-rv-pane" data-on={on(4)}>
-          <ul className="rg-tags">
-            <li><b>v1.2.3</b><span>image</span></li>
-            <li className="del"><b>v1.2.3-oops</b><span>deleted · blobs reclaimed</span></li>
-            <li><b>v1.2.2</b><span>image</span></li>
-          </ul>
-          <div className="rg-store"><i /><span>storage after the delete</span></div>
-        </div>
-        <div className="rg-rv-pane" data-on={on(5)}>
-          <p className="rg-k">one directory of people · Hanzo Cloud</p>
-          <ul className="rg-people">{PEOPLE.map(([n, r]) => <li key={n} className={r === 'revoked' ? 'off' : ''}><i>{n[0]}</i><b>{n}</b><span>{r}</span></li>)}</ul>
-        </div>
+        <p className="rg-rv-pane" data-on={on(0)}>no password stored at either end</p>
+        <p className="rg-rv-pane" data-on={on(1)}>one grant in one place</p>
+        <p className="rg-rv-pane" data-on={on(2)}>same repository as the image they describe</p>
+        <div className="rg-rv-pane rg-v2" data-on={on(3)}><span className="lx-num">/v2/</span><span className="rg-clients">{CLIENTS.join(' · ')}</span></div>
+        <div className="rg-rv-pane rg-store" data-on={on(4)}><i /><span>deleted · blobs reclaimed</span></div>
+        <p className="rg-rv-pane" data-on={on(5)}>one directory of people · Hanzo Cloud</p>
       </div>
     </div>
   );
@@ -156,19 +155,13 @@ const FACTS = [
 
 // [row, the dockerconfigjson way, the IAM way]: both sides are Hanzo's phrases from this page
 const SWAP = [
-  ['The credential', 'a password living in a dockerconfigjson secret', 'a short-lived token minted by your Hanzo IAM login'],
   ['Adding a teammate', 'a secret copied into a second', 'one grant in one place'],
   ['Someone leaves', 'a separate registry account to remember when they leave', 'one place to revoke someone'],
 ];
 
-function Swap() {
-  const [gone, setGone] = useState(false);
+function Swap({ gone }) {
   return (
     <div className={'rg-swap' + (gone ? ' on' : '')}>
-      <button type="button" className="rg-swap-b" aria-pressed={gone} onClick={() => setGone((g) => !g)}>
-        <span className="rg-swap-sw" aria-hidden="true"><i /></span>
-        <span className="rg-swap-l">Delete the dockerconfigjson secret</span>
-      </button>
       <dl className="rg-swap-t">
         {SWAP.map(([k, a, b]) => (
           <div key={k} className="rg-swap-r">
@@ -178,6 +171,29 @@ function Swap() {
           </div>
         ))}
       </dl>
+    </div>
+  );
+}
+
+/* the dark room: the heading is the instruction and the switch carries it out (the switch is named by the heading,
+   so the words are said once); pressed, the heading strikes through and IAM's way wipes in row by row */
+function DelRoom() {
+  const [gone, setGone] = useState(false);
+  return (
+    <div className={'lx-wrap rg-del-grid' + (gone ? ' on' : '')}>
+      <div className="rg-del-l">
+        <h2 className="lx-headline rg-del-h" id="rg-del-h">Delete the dockerconfigjson secret</h2>
+        <button type="button" className="rg-swap-b" aria-pressed={gone} aria-labelledby="rg-del-h" onClick={() => setGone((g) => !g)}>
+          <span className="rg-swap-sw" aria-hidden="true"><i /></span>
+        </button>
+        <p className="lx-lede">Put a token IAM mints in its place, and let it expire on its own. There is nothing left to rotate.</p>
+        <div className="rg-del-acts">
+          <A to="https://docs.hanzo.ai/docs/openapi/registry/" className="lx-ghost">Quickstart<Arr /></A>
+          <A to="/iam" className="lx-text">About IAM</A>
+        </div>
+      </div>
+      <Code title="Registry terminal" tabs={[{ k: 'terminal', code: '$ hanzo login oci.hanzo.ai\n# IAM mints a short-lived token\n$ docker push oci.hanzo.ai/acme/api:v1.2.3' }]} className="rg-code" />
+      <Swap gone={gone} />
     </div>
   );
 }
@@ -199,28 +215,17 @@ export default function Registry() {
         </div>
       </section>
 
+      <ClipWipe dark className="rg-del">
+        <DelRoom />
+      </ClipWipe>
+
       <PinnedChapters
         label="Built on Hanzo IAM"
-        per={72}
+        per={46}
         intro={{ title: ['Built on', 'Hanzo IAM'], lede: 'The credential expires on its own, so there is nothing to rotate and nothing to leak' }}
         steps={FACTS.map(([t, d], i) => ({ t, d, k: String(i + 1).padStart(2, '0') }))}
         visual={(at, intro) => <Repo step={at} intro={intro} />}
       />
-
-      <ClipWipe dark className="rg-del">
-        <div className="lx-wrap rg-del-grid">
-          <div className="rg-del-l">
-            <h2 className="lx-headline">Delete the dockerconfigjson secret</h2>
-            <p className="lx-lede">Put a token IAM mints in its place, and let it expire on its own. There is nothing left to rotate.</p>
-            <div className="rg-del-acts">
-              <A to="https://docs.hanzo.ai/docs/openapi/registry/" className="lx-ghost">Quickstart<Arr /></A>
-              <A to="/iam" className="lx-text">About IAM</A>
-            </div>
-          </div>
-          <Code title="Registry terminal" tabs={[{ k: 'terminal', code: '$ hanzo login oci.hanzo.ai\n# IAM mints a short-lived token\n$ docker push oci.hanzo.ai/acme/api:v1.2.3' }]} className="rg-code" />
-          <Swap />
-        </div>
-      </ClipWipe>
 
       <section className="lx-sec rg-con">
         <div className="lx-wrap rg-con-grid">

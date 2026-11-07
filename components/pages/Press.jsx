@@ -11,15 +11,15 @@
    Signature: the belief line (MASTER 4.4 Story). Hanzo's boilerplate is read word by word: each word turns from faint to
    ink as it scrolls through the screen, and the four facts below it settle into place once.
    Supporting (3): masked headline cut-in, once; the kit stack fanning out into the three kit plates as you scroll
-   (pinned stage); the news index, whose other headlines step back while a card with the story's date and summary sits
-   beside the row (300ms ease-out). State: copy and download draw a tick. Arrival: the lede and asks rise once (1 fade-up).
+   (pinned stage); the news index beside a still dark column that holds the story in focus (01 / 06, a progress
+   hairline, its summary and date rising in at 300ms); focus follows pointer, keyboard, or the row crossing mid-screen. State: copy and download draw a tick. Arrival: the lede and asks rise once (1 fade-up).
    Beyond: the boilerplate copies in one press, and the press email copies beside itself in the black room, so a writer
    leaves with both without retyping. Every word and link is Hanzo's.
    Deletes: the second copy of the kit plates (the stack becomes the spread), the 3×3 channel tiles and their icon
    circles, the six partner boxes, the page tokens that overrode deck.css's greys, the hidden-only "Press & Media" and
    "Leadership" (now captions under their headings), springs, filters on photos. */
 import { useLayoutEffect, useRef, useState } from 'react';
-import { motion, animate, useInView, useMotionValue, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, AnimatePresence, useInView, useMotionValue, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { Copy, Mark } from '../ui';
 import { A, Img } from '../kit';
 import Sigil from '../Sigil';
@@ -213,49 +213,54 @@ const NEWS = [
   ['February 27, 2026', 'Complete AI Pricing Breakdown: Models, Cloud, GPU, and Audio', 'Every Hanzo rate in one place — gateway, cloud, GPU, and audio.'],
 ];
 
-/* The news index: big headlines; a card with the story's date and summary sits beside the row, never over its words. */
+/* The news index: big headlines on the left; a still column on the right holds the story in focus (its number, date
+   and summary). Focus follows the pointer, the keyboard, or, untouched, the row passing the middle of the screen. */
 function News() {
   const box = useRef(null);
-  const [at, setAt] = useState(-1);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const place = (row) => {
-    const r = box.current.getBoundingClientRect(), q = row.getBoundingClientRect();
-    const tt = row.querySelector('.xpe-tt'), rg = document.createRange();
-    rg.selectNodeContents(tt);
-    const edge = Math.max(...[...rg.getClientRects()].map((c) => c.right)); // the headline's real right edge
-    const t = { duration: 0.3, ease: [0, 0, 0.2, 1] };
-    animate(x, Math.min(r.width - 340, edge - r.left + 32), t);
-    animate(y, q.top - r.top + 16, t);
-  };
-  const on = (e, i) => { place(e.currentTarget); setAt(i); };
+  const [at, setAt] = useState(0);
+  const [pointing, setPointing] = useState(false);
+  const calm = useReducedMotion();
+  useLayoutEffect(() => {
+    const rows = box.current ? [...box.current.querySelectorAll('.xpe-feed li')] : [];
+    const ob = new IntersectionObserver((es) => {
+      es.forEach((e) => { if (e.isIntersecting && !box.current?.dataset.hold) setAt(+e.target.dataset.i); });
+    }, { rootMargin: '-48% 0px -48% 0px' });
+    rows.forEach((r) => ob.observe(r));
+    return () => ob.disconnect();
+  }, []);
+  const hold = (i) => { box.current.dataset.hold = '1'; setPointing(true); setAt(i); };
+  const free = () => { delete box.current.dataset.hold; setPointing(false); };
+  const [d, , s] = NEWS[at];
   return (
     <section className="vc-sec xpe-news" aria-labelledby="xpe-news-h">
       <div className="vc-grid xpe-news-g">
         <MaskLines id="xpe-news-h" lines={['Recent News']} className="vc-headline" />
         <p className="vc-lede xpe-news-l">Latest press releases and company announcements.</p>
       </div>
-      <div className="vc-wrap xpe-news-w" ref={box} onPointerLeave={() => setAt(-1)}>
-        <ol className={'xpe-feed' + (at >= 0 ? ' pointing' : '')}>
-          {NEWS.map(([d, t, s], i) => (
-            <li key={t} className={i === at ? 'on' : ''}>
-              <A to="/blog" className="xpe-item" onPointerEnter={(e) => { if (e.pointerType === 'mouse') on(e, i); }} onFocus={(e) => on(e, i)} onBlur={() => setAt(-1)}>
+      <div className="vc-wrap xpe-news-w" ref={box} onPointerLeave={free}>
+        <ol className={'xpe-feed' + (pointing ? ' pointing' : '')}>
+          {NEWS.map(([dd, t, ss], i) => (
+            <li key={t} data-i={i} className={i === at ? 'on' : ''}>
+              <A to="/blog" className="xpe-item" onPointerEnter={(e) => { if (e.pointerType === 'mouse') hold(i); }} onFocus={() => hold(i)} onBlur={free}>
                 <span className="xpe-no vc-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-                <span className="xpe-ts vc-num">{d}</span>
                 <span className="xpe-tt">{t}</span>
-                <span className="xpe-ts2">{s}</span>
+                <span className="xpe-ts vc-num">{dd}</span>
+                <span className="xpe-ts2">{ss}</span>
                 <span className="xpe-go" aria-hidden="true">{ARROW}</span>
               </A>
             </li>
           ))}
         </ol>
-        <motion.div className="xpe-card" aria-hidden="true" style={{ x, y }} initial={false}
-          animate={at >= 0 ? { opacity: 1 } : { opacity: 0 }} transition={{ duration: 0.2, ease: EASE }}>
-          {at >= 0 && <>
-            <span className="vc-kick vc-num">{NEWS[at][0]}</span>
-            <span className="xpe-card-s">{NEWS[at][2]}</span>
-          </>}
-        </motion.div>
+        <aside className="xpe-card" aria-hidden="true">
+          <span className="xpe-card-n vc-num"><b>{String(at + 1).padStart(2, '0')}</b> / {String(NEWS.length).padStart(2, '0')}</span>
+          <span className="xpe-card-bar"><i style={{ transform: `scaleX(${(at + 1) / NEWS.length})` }} /></span>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.span key={at} className="xpe-card-b" initial={calm ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={calm ? undefined : { opacity: 0, y: -10 }} transition={{ duration: 0.3, ease: EASE }}>
+              <span className="xpe-card-s">{s}</span>
+              <span className="vc-kick vc-num">{d}</span>
+            </motion.span>
+          </AnimatePresence>
+        </aside>
       </div>
     </section>
   );
@@ -308,9 +313,9 @@ function BrandAssets() {
         <ul className="xpe-partners">
           {PARTNERS.map(([n, f, l]) => (
             <li key={n}>
-              <span className="xpe-p-img"><Pic src={f} alt={n} w={140} h={32} fallback={<span className="xpe-p-alt" aria-hidden="true">{n}</span>} /></span>
+              <span className="xpe-p-img"><Pic src={f} alt={n} w={140} h={32} fallback={<span className="xpe-p-alt" aria-hidden="true">{n.slice(0, 1)}</span>} /></span>
               <b>{n}</b>
-              <a href={f} download>{l}{DOWN}</a>
+              <a href={f} download aria-label={n + ' ' + l}><span>{l}</span>{DOWN}</a>
             </li>
           ))}
         </ul>
@@ -330,8 +335,8 @@ function Social() {
           <p className="vc-body">Follow us on social media for the latest updates.</p>
         </div>
         <ul className="xpe-soc">
-          {SOCIAL.map(([n, h, to]) => (
-            <li key={n}><A to={to}><b>{n}</b><span className="vc-num">{h}</span><i aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M5 11 11 5M6 5h5v5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></i></A></li>
+          {SOCIAL.map(([n, h, to], i) => (
+            <li key={n}><A to={to}><span className="xpe-soc-n vc-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><b>{n}</b><span className="vc-num">{h}</span><i aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M5 11 11 5M6 5h5v5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></i></A></li>
           ))}
         </ul>
       </div>
@@ -339,7 +344,7 @@ function Social() {
   );
 }
 
-const LEADS = [['/authors/antje-worring-portrait.jpg', 'Antje Worring'], ['/authors/zach-kelling-portrait.jpg', 'Zach Kelling']];
+const LEADS = [['/authors/antje-worring-portrait.jpg', 'Antje Worring', 'CEO'], ['/authors/zach-kelling-portrait.jpg', 'Zach Kelling', 'CTO']];
 
 function Team() {
   return (
@@ -357,10 +362,13 @@ function Team() {
           </div>
         </div>
         <ul className="xpe-faces">
-          {LEADS.map(([src, n], i) => (
+          {LEADS.map(([src, n, role], i) => (
             <li key={n} className={'f' + i}>
-              <span className="xpe-face-f" aria-hidden="true"><Sigil seed={src} data={[n.length, i + 1]} /></span>
-              <Pic src={src} alt={n} w={600} h={750} fallback={<span className="x-sr">{n}</span>} />
+              <span className="xpe-face">
+                <span className="xpe-face-f" aria-hidden="true"><Sigil seed={src} data={[n.length, i + 1]} /></span>
+                <Pic src={src} alt={n} w={600} h={750} fallback={<span className="xpe-face-i" aria-hidden="true">{n.split(' ').map((w) => w[0]).join('')}</span>} />
+              </span>
+              <span className="xpe-face-t"><b>{n}</b><span className="vc-num">{role}</span></span>
             </li>
           ))}
         </ul>

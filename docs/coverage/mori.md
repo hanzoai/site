@@ -39,7 +39,7 @@ Done here: Mori's own film plays full-bleed under the h1 cut-in within the first
 - [x] Copy button copies exactly the displayed text; failure never says Copied (n/a: no copy button on this page)
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: the header carries the one solid "Try Hanzo"; the page's own asks are outlined (`<Cta kind="quiet" thumb>`), and on phones the shared bar carries "Request access" after the hero. `data-cta` ids: `mori.first` (first screen), `mori.hero` (headline), `mori.preview` (preview).
+Done here: one solid at a time. While Mori's own "Request access" is on screen it is the solid fill (white on the film, ink beside the settled cube, `Mori.css` scoped by `data-cta`, desktop) and the header's "Try Hanzo" steps back to an outline (Ask.jsx); once it has gone by, the header is solid again and on phones, where the header always keeps its solid "Try Hanzo", the page asks stay outlined and the shared bar carries "Request access" after the hero. `data-cta` ids: `mori.first` (first screen), `mori.hero` (headline), `mori.preview` (preview).
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -55,7 +55,7 @@ Done here: Hanzo's own research-preview note (samples publish only after blind r
 - [x] Tables, FAQ, tabs and code use the kit parts
 - [x] `python3 scripts/parity.py /mori`: 0 missing
 
-Done here: parity text 52/52, links 4/4. Section headings rest at 26px, the settled headline at 44px, body 16px, ledes 20px. Mono captions are 12-13px; Hanzo's model-card pills are 11px mono capitals (SPEC 10px, raised one step at the critics' ask). Tables: n/a: no table on this page. Headings use `text-wrap: balance`.
+Done here: parity text 52/52, links 4/4. Section headings rest at 26px, the settled headline at 44px, body 16px, ledes 20px. Mono captions rest at 13px on this page (crumb, side labels, chapter rail, fit rows: `Mori.css`, scoped to `[data-hero=mori]`); Hanzo's model-card pills are 11px mono capitals (SPEC 10px, raised one step at the critics' ask). Tables: n/a: no table on this page. Headings use `text-wrap: balance`.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens (deck values only; `tokens.css` not on main)
@@ -155,4 +155,4 @@ Done here: JS off shows every word. Reduced motion shows the settled stage and t
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/mori.md` verdict 8 or more (pending a fresh walk of the current build)
 
-Done here: the `V2:` line is in `app/mori/page.jsx`. Proof is in `docs/gallery/mori/` (desktop film and 4 phone stills). This card is refreshed after each review.
+Done here: the `V2:` line is in the top comment of `components/pages/model/Mori.jsx`. Proof is in `docs/gallery/mori/` (desktop film and 4 phone stills). This card is refreshed after each review.

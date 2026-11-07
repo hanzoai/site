@@ -1,6 +1,6 @@
 'use client';
 /* Persona: enterprise buyer (fraud, AML and trust-and-safety leads). Goal: start a sales conversation. CTA: "Talk to us" → /contact-sales. Metric: contact_sales_submit.
-   Risk. V2: 7/10 an unframed gauge decides beside the h1 (needle, reasons, action; no invented digits), three pinned chapters, cards that open into sheets, one dark room streaming events, a closing band; greys only
+   Risk. V2: 8/10 an unframed gauge decides beside the h1 (needle, reasons, action; no invented digits); rules, platforms and connects each get a stepping object (rule card, declare stack, request flow); deck greys and radii; one solid per viewport on phone
    Signature: the dial that decides, and shows its work. Pick a stage (signup, payment, post-purchase; the stage is a
    field) and signals light; the needle swings to a score and the plane returns an action and its reasons. It never
    declines on its own: past the line it summons a person, the ceiling Hanzo's engine refuses to start above.
@@ -75,7 +75,7 @@ function Dial() {
         </div>
       </div>
       <div className="rk-dial-r">
-        <div className="rk-stage-row"><div className="rk-stage" role="tablist" aria-label="Stage" onKeyDown={(e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { const n = (st + (e.key === 'ArrowRight' ? 1 : 2)) % 3; pick(n); e.currentTarget.children[n]?.focus(); } }}>
+        <div className="rk-stage-row"><div className="rk-stage" role="tablist" aria-label="Stage" onKeyDown={(e) => { const n = { ArrowRight: (st + 1) % 3, ArrowLeft: (st + 2) % 3, Home: 0, End: 2 }[e.key]; if (n === undefined) return; e.preventDefault(); pick(n); e.currentTarget.children[n]?.focus(); }}>
           {STAGES.map(([k], i) => (
             <button key={k} type="button" role="tab" aria-selected={st === i} tabIndex={st === i ? 0 : -1} onClick={() => pick(i)}>
               <span>{k}</span>
@@ -344,13 +344,41 @@ function Model() {
   );
 }
 
-function RulesPlat() {
+const LISTS = ['addresses', 'emails', 'accounts', 'card ranges', 'networks', 'devices'];
+
+/* Rules, lists and suppression as one object: a rule references a list, the list hits, the hit is recorded as
+   suppressed rather than dropped. Steps once a beat while in view; pause stops it. */
+function RuleCard({ on }) {
+  const [k, setK] = useState(4);
+  const [n, setN] = useState(0);
+  useEffect(() => { if (on) setK(0); }, [on]);
+  useEvery(1300, on, () => { if (k === 5) setN((v) => v + 1); setK((v) => (v + 1) % 6); });
+  const hit = [2, 4, 1, 5][n % 4];
   return (
-    <section className="w2-sec rk-rules">
+    <div className="rk-rule" aria-hidden="true">
+      <p className="rk-rule-r x-mono"><b className={k >= 0 ? 'on' : ''}>Custom rules</b><span>your own fields</span></p>
+      <ul className="rk-rule-l">{LISTS.map((t, i) => <li key={t} className={k >= 1 && i === hit ? 'on' : ''}>{t}</li>)}</ul>
+      <div className="rk-rule-h">
+        <span className={'rk-rule-step' + (k >= 2 ? ' on' : '')}>Lists</span>
+        <i className={k >= 2 ? 'on' : ''} />
+        <span className={'rk-rule-step' + (k >= 3 ? ' on' : '')}>Suppression</span>
+        <motion.b className="rk-rule-stamp x-mono" initial={false} animate={{ opacity: k >= 4 ? 1 : 0, rotate: k >= 4 ? -6 : 0, scale: k >= 4 ? 1 : 1.2 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>suppressed</motion.b>
+      </div>
+    </div>
+  );
+}
+
+function RulesPlat() {
+  const [ref, live] = useLive(0.25);
+  const [d, setD] = useState(0);
+  useEvery(1400, live, () => setD((v) => (v + 1) % 5));
+  return (
+    <section className="w2-sec rk-rules" ref={ref}>
       <div className="w2-wrap rk-rules-grid">
         <div>
           <h2 className="w2-headline">Rules, lists and suppression</h2>
           <p className="rk-dev">In development.</p>
+          <RuleCard on={live} />
           <ul className="rk-trio">
             {[['Custom rules', 'Write rules over your own fields in the same vocabulary the shipped library uses, and replay them over your own history before you turn them on.'], ['Lists', 'Allow and deny lists over addresses, emails, accounts, card ranges, networks and devices, referenced directly from a rule. Your lists are yours; a designation from a sanctions authority is not editable by a tenant, and the two never merge.'], ['Suppression', 'Suppress an activation you have already judged. A suppressed hit is recorded as suppressed rather than dropped, because silence must never read back as a clean result.']].map(([t, d]) => (
               <li key={t}><h3 className="w2-title">{t}</h3><p className="w2-body">{d}</p></li>
@@ -363,9 +391,9 @@ function RulesPlat() {
           <p className="w2-body">If you run a platform, your risk is your sellers as much as your buyers. Risk will <em>declare</em> a control against a subject — hold a payout, set a reserve, restrict a merchant, block a suspect transaction — and the money plane will read it. Risk will never move money itself.</p>
           <div className="rk-ctrl" aria-hidden="true">
             {['hold a payout', 'set a reserve', 'restrict a merchant', 'block a suspect transaction'].map((c, i) => (
-              <span key={c} style={{ animationDelay: i * 0.9 + 's' }}><b className="x-mono">declare</b>{c}</span>
+              <span key={c} className={d === i ? 'on' : ''}><b className="x-mono">declare</b>{c}</span>
             ))}
-            <em className="x-mono">money plane reads it</em>
+            <em className={'x-mono' + (d === 4 ? ' on' : '')}>money plane reads it</em>
           </div>
           <p className="w2-body">That separation is deliberate. The thing that decides and the thing that pays should not be the same thing, and a control that is a written record rather than a side effect is one you can still account for a year later.</p>
         </div>
@@ -381,6 +409,20 @@ const TIERS = [
   ['Pro', 'Platform and marketplace controls, the compliance face alongside the decide plane, and the retention that goes with it.'],
 ];
 
+/* How it connects, drawn: your system sends what it knows, Risk returns a decision; the processor is never touched. */
+function Flow() {
+  const [ref, live] = useLive(0.4);
+  return (
+    <div className={'rk-flow' + (live ? ' on' : '')} ref={ref} aria-hidden="true">
+      <span className="rk-flow-n x-mono">your system</span>
+      <span className="rk-flow-w"><i /></span>
+      <span className="rk-flow-n ink x-mono">Risk</span>
+      <span className="rk-flow-back x-mono">an action, a score and the reasons</span>
+      <span className="rk-flow-p x-mono">Keep the processor you have</span>
+    </div>
+  );
+}
+
 function ConnectPlans() {
   return (
     <section className="w2-sec rk-plans">
@@ -389,6 +431,7 @@ function ConnectPlans() {
           <div>
             <h2 className="w2-headline">How it connects</h2>
             <p className="w2-lede rk-conn-l">In development. Risk will ingest signals and return a decision. Everything about how you take money stays where it is.</p>
+            <Flow />
           </div>
           <div className="rk-conn-r">
             {[['Keep the processor you have', 'Risk takes signals and returns a decision. It never touches a processor, so nothing about your payment stack has to move and there is no migration to schedule.'], ['Pure API', 'One call from your own system: send what you know, get back an action, a score and the reasons. A signup, a payment, a session and an agent are the same call — the stage is a field, not a different endpoint.']].map(([t, d]) => (
