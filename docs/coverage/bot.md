@@ -3,7 +3,7 @@
 Page file: `components/pages/Bot.jsx` (+ `Bot.css`, `Bot.data.js`, shared `components/v2/AppType.css`, `AppScenes`, `AppSheet`) · gallery: `docs/gallery/bot/` · metric id: `signup_start`
 
 Open copy questions for James: none decided. Two of Hanzo's own figures disagree and both are kept word for word: the pricing-model drawer says "Why a $100/mo entry floor?" while the FAQ says "Why is there a $15/mo floor for cloud resident bots?" (and plans start at $15). Which is right?
-Shared changes requested (`docs/requests/apps1.md`): the header ask should carry the page's own label; a desktop-off mode for the ask bar (until then `data-ask="off"` on `<main>`, because a floating pill over content is banned); and `Band` with an `id` prop.
+Shared changes requested (`docs/requests/apps1.md`): only the `Band` `id` prop is still open (this page closes on its own Band markup with `<Cta id>` until then). The header ask and the phone ask bar landed in the shared system, so `data-ask="off"` is gone from `<main>`.
 Forks this page deleted: the centred kicker-over-display hero, three equal hero asks, the Stage wrapper, the ten-row workflow index (now one drawer), the FAQ section (now one drawer), the separate "Need more than one resident bot?" and "Three steps" sections (folded into pricing and install), the solid "Deploy to Cloud" after the close, the floating verifier chip over the chart, raw `<img>` (now kit `Img`), every kicker over a headline (11), spring transitions, the drawn `Tick` in the drawer, the tangerine and green hues.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -37,7 +37,7 @@ Done here: At 1470×801 the h1 (52px), lede, "Try Hanzo" and the live org chart 
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn` (exceptions: the four "Get <plan>" quiet buttons and the drawer's "Open Hanzo Bot / Team" pair keep Hanzo's own links as `A.x-btn`, outlined or inside a closed drawer)
-- [x] Sticky ask in header and bar after the hero, same label (the header's "Try Hanzo" stays; the floating bar is off because MASTER 3.3 bans a pill over content; request in `docs/requests/apps1.md`)
+- [x] Sticky ask in header and bar after the hero, same label (the shared header always carries a solid "Try Hanzo"; on phones the slim quiet bar carries this page's own `data-thumb` ask; no floating bar on desktop)
 - [x] Copy button copies exactly the displayed text; failure never says Copied (kit `Copy`; the `$ ` prompts are `user-select: none` and not in the copied text)
 - [x] `data-cta` and `data-thumb` on every primary
 
@@ -82,9 +82,9 @@ Done here: Tabs, category chips, routine switches, "Yes, add it / Not yet", the 
 - [x] At least 3 kinds of movement; scroll-linked is half or less
 - [x] Something moves without input; every control answers
 - [x] Reduced motion shows the final state; no `setInterval`
-- ~~Sound only on the listed moments, through the one kit~~ n/a: the shared sound kit is not merged; no page sound
+- [x] Sound only on the listed moments, through the one kit (`lib/sound.js`; tabs, switches and pressed buttons tick through `components/Sound.jsx`)
 
-Done here: Idle (the org chart routes a packet through ten workflows; the sample thread plays), pointer (magnetic ask), state (tab pill glides at 300ms ease-emphasis, drawers rise), time (the reply arrives after the bot's dots), arrival (h1 line cut-in), scroll (pinned chapters; the Band opens from a rounded card). No springs.
+Done here: Idle (the org chart routes a packet through ten workflows; the sample thread plays), pointer (magnetic ask), state (tab pill glides at 300ms ease-emphasis, drawers rise), time (the reply arrives after the bot's dots), arrival (h1 line cut-in), scroll (pinned chapters; the Band opens from a rounded card). No springs. Sound: `play('done')` when a run the visitor picked is verified and when the sample thread finishes; `data-sound="tick"` on "Yes, add it", "Not yet" and the plan slider.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set (kit `Img` with width and height inside the page's `Pic` fallback)
