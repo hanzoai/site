@@ -51,6 +51,11 @@
 .l2-stage.rise .l2-acts { justify-content: center; }
 .l2-stage-obj { position: relative; z-index: 1; flex: 1; display: flex; align-items: flex-start; justify-content: center; padding: clamp(40px, 6svh, 72px) 0 0; transform-origin: 50% 0; }
 .l2-stage-obj > * { width: min(100%, 1120px); }
+.l2-stage.split .l2-stage-copy { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: end; }
+.l2-stage.split .l2-stage-kick { grid-column: 1 / -1; }
+.l2-stage.split .l2-display { grid-column: 1 / span 8; grid-row: 2 / span 2; }
+.l2-stage.split .l2-lede { grid-column: 9 / span 4; grid-row: 2; margin: 0; align-self: end; font-size: clamp(19px, 1.5vw, 22px); }
+.l2-stage.split .l2-acts { grid-column: 9 / span 4; grid-row: 3; margin-top: 24px; }
 .l2-stage.side .l2-stage-pin { justify-content: center; }
 .l2-stage.side .l2-stage-in { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center; height: 100%; }
 .l2-stage.side .l2-stage-copy { grid-column: 1 / span 5; padding-top: 64px; }
@@ -162,6 +167,8 @@ a.l2-chip:hover { border-color: var(--ink); }
   .l2-stage-copy { padding-top: 112px; }
   .l2-stage-obj { padding-top: 48px; transform: none !important; }
   .l2-stage.side .l2-stage-in { display: block; }
+  .l2-stage.split .l2-stage-copy { display: block; }
+  .l2-stage.split .l2-lede { margin-top: 20px; }
   .l2-stage.side .l2-stage-copy { padding-top: 112px; }
   .l2-stage.side .l2-stage-obj { padding-top: 48px; }
   .l2-stage.frame .l2-stage-pin { min-height: 92svh; }

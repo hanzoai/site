@@ -2,12 +2,13 @@
 /* StageHero — the v2 launch hero (Cloud 4 chat; VISION.md motion 2, "Stage").
    Usage:
      <StageHero kick="sentry.hanzo.ai" title={['Hanzo Sentinel']} sub="Error tracking…" lede="…"
-                acts={[['Read the docs', url], ['View on GitHub', url]]} look="rise|side|frame" dark cue="Scroll">
+                acts={[['Read the docs', url], ['View on GitHub', url]]} look="rise|split|side|frame" dark cue="Scroll">
        <YourLiveProductObject />
      </StageHero>
    - The title lines rise out of a mask once (kinetic type). The first act is the magnetic primary and the phone thumb action.
    - The object starts large and settles into place as the hero scrolls away, using scale, position and clip only:
      rise  = centred copy, the object big and low, then up into place;
+     split = the title on 8 columns, the line and actions on 4 beside it (editorial), the object rising under both;
      side  = copy on 5 columns, the object on 7, arriving from the right edge;
      frame = the object full-bleed behind the copy, then clipped into a 28px card.
    - Desktop pins for ~75svh so the settle reads. Phones and reduced motion get the settled state with no pin.
@@ -23,6 +24,7 @@ const up = (d) => ({ initial: { opacity: 0, y: 18 }, animate: { opacity: 1, y: 0
 
 const LOOKS = {
   rise: { s: [1.22, 1], y: ['14svh', '-27svh'], x: ['0%', '0%'], clip: [0, 0] },
+  split: { s: [1.14, 1], y: ['12svh', '-20svh'], x: ['0%', '0%'], clip: [0, 0] },
   side: { s: [1.16, 1], y: ['6svh', '0svh'], x: ['22%', '0%'], clip: [0, 0] },
   frame: { s: [1.08, 1], y: ['0svh', '0svh'], x: ['0%', '0%'], clip: [0, 1] },
 };
@@ -40,9 +42,9 @@ export default function StageHero({ kick, title, sub, lede, acts = [], look = 'r
   const k = useTransform(p, [0, 0.85], L.clip);
   const inset = useTransform(k, (v) => `inset(${v * 7}% ${v * 6}% ${v * 7}% ${v * 6}% round ${v * 28}px)`);
   const clip = useMotionTemplate`${inset}`;
-  const copyY = useTransform(p, [0, 0.8], ['0svh', look === 'rise' ? '-22svh' : '-4svh']);
+  const copyY = useTransform(p, [0, 0.8], ['0svh', look === 'rise' || look === 'split' ? '-22svh' : '-4svh']);
   // opacity as a function, not a range: Motion would hand a range to a scroll-linked WAAPI animation, which forgets its clamp
-  const [o0, o1] = look === 'rise' ? [0.15, 0.6] : [0.25, 0.8], oEnd = look === 'side' ? 0.16 : 0;
+  const [o0, o1] = look === 'rise' || look === 'split' ? [0.15, 0.6] : [0.25, 0.8], oEnd = look === 'side' ? 0.16 : 0;
   const copyO = useTransform(p, (v) => 1 - (1 - oEnd) * Math.min(1, Math.max(0, (v - o0) / (o1 - o0))));
   const cueO = useTransform(p, (v) => Math.max(0, 1 - v / 0.12));
   const copyPE = useTransform(copyO, (v) => (v < 0.2 ? 'none' : 'auto'));
