@@ -43,7 +43,7 @@ const root = (n) => { let x = (n * 2654435761) >>> 0; return '0x' + Array.from({
 const JOBS = [1, 0, 2, 4];
 const END = 3 + JOBS.length * 2 - 1; // up, starting, joined, then four jobs lit and settled: about nine seconds, once
 const pad = (n) => String(n).padStart(2, '0');
-const PID = '48213'; // drawn, like the roots: the pid this CLI records when it starts the node
+const PID = '—'; // the recorded pid: Hanzo prints no value, so an em dash (copy is word-for-word Hanzo)
 
 /* ---------- the hero object: one machine ---------- */
 function Machine() {
