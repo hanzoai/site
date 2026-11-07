@@ -75,7 +75,7 @@ Done here: `taste.py` OK on the page JSX and CSS; only the deck neutrals (the CS
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: listed below
 
-Done here: Hover sits under `@media (hover: hover)` and changes fill or border only; press is scale .97 in 90 ms; focus-visible draws a 2px ink or white ring; disabled controls drop to 40%. Nothing on the page loads data, so no loading state. Dialogs: the tiles open in the kit Sheet (focus held, Escape closes, focus returns). Inputs: prefix input (20px), machine count (44px icon buttons), dry run or launch toggle. Forks deleted: see the top of this card.
+Done here: Hover sits under `@media (hover: hover)` and changes fill or border only; press is scale .97 in 90 ms; focus-visible draws a 2px ink or white ring; disabled controls drop to 40%. Nothing on the page loads data, so no loading state. Dialogs: the tiles open in the kit Sheet (focus held, Escape closes, focus returns). Inputs: prefix input (20px), machine count (48px icon buttons), dry run or launch toggle. Forks deleted: see the top of this card.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -84,7 +84,7 @@ Done here: Hover sits under `@media (hover: hover)` and changes fill or border o
 - [x] Reduced motion shows the final state; no `setInterval`
 - [ ] Sound only on the listed moments, through the one kit (n/a: the page plays no sound of its own; the kit owns it)
 
-Done here: Signature: every tile opens into its card (kit Sheet). Supporting: launch sequence (time, pausable), each tile's picture playing once as it arrives and again on hover (bars price, machines name themselves, the pool fills, "quote" cuts in by line mask, SSH is picked, audit rows land), the naming tool's batch naming itself 01, 02, 03 on arrival (time), a blinking console caret (the one idle mover in the tile room), inventory re-flow (state). `scripts/variety.py` OK. Kinds: idle (the hero object), time, state, pointer, with scroll only in the pinned scene. Timers are timeout chains (`useTick`), no `setInterval`. Reduced motion (`useCalm`) renders the settled frame. No springs: every transition is 300 ms ease-emphasis or shorter.
+Done here: Signature: every tile opens into its card (kit Sheet). Supporting: launch sequence (time, pausable), each tile's picture playing once as it arrives and again on hover (bars price, machines name themselves, the pool fills, "quote" cuts in by line mask, SSH is picked, audit rows land), the naming tool's batch naming itself 01, 02, 03 on arrival (time), a blinking console caret (the one idle mover in the tile room), inventory re-flow (state). `scripts/variety.py` OK. Kinds: idle (the hero object), time, state, pointer, with scroll only in the pinned scene. Timers are timeout chains (`useTick`), no `setInterval`. Reduced motion (`useCalm`) renders the settled frame. No springs: controls answer in 90 to 300 ms; the tile pictures' one-time arrivals (bars, the "quote" line mask) run 500 to 700 ms with ease-emphasis.
 
 ## 10. Media
 - [ ] `Film` and `Pic` only; sizes and posters set (n/a: no photo or video)
@@ -117,7 +117,7 @@ Done here: Lowest measured text contrast 6.67:1 (0 runs flagged). Headings 12222
 - [x] No poller; no third-party request before consent
 - [x] Nothing heavy run on James's laptop
 
-Done here: `curl /visor/` returns the h1 in the HTML. Layout shift 0.003 desktop, 0.000 phone (`scripts/motion.mjs`): the hero inventory reserves five rows and new machines land below the pool and cluster, so nothing moves. Demos run only while on screen (`useInView`) and stop when paused or off screen. No fetch, poller or third-party script on the page. 0 console errors at both widths (0 desktop, 0 phone).
+Done here: `curl /visor/` returns the h1 in the HTML. Layout shift 0.008 desktop, 0.000 phone (Playwright walk, whole page, 16:40): the hero inventory reserves five rows and new machines land below the pool and cluster, so nothing moves. Demos run only while on screen (`useInView`) and stop when paused or off screen. No fetch, poller or third-party script on the page. 0 console errors at both widths (0 desktop, 0 phone).
 
 ## 14. SEO and machine files
 - [x] Title and description match live (or are listed for James)
