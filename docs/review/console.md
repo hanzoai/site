@@ -1,5 +1,5 @@
 # /console — James-eye review
-Was ready (7 Nov), withdrawn 8 Nov: copycheck.mjs shows Hanzo lines missing (docs/COPY-RULE.md). 2026-11-07 phone Keys chip no longer sits on its scope line; phone canvas is one sideways swipe row (page still scrolls under a finger, tallest card fits); hero views centre their object in the pane (no dead pane) and the phone Projects view is no longer clipped; stacked heading fades out under the canvas card; pressed module tab and Revoke answer hover. taste OK, parity 93/93 + 14/14, unique OK, check.mjs 0 errors / 0 Next issues / no overflow / 0 overlaps at 1470 and 375.
+Ready: 2026-11-08 copycheck missing 0 of 51 (COPY-RULE): the Projects rows name each service as its own text (payments-api, checkout-web), the caption under them is Hanzo's "The service the session above is changing." (our own line removed), "Console docs →" is one link text, the /v1 tile's code peek shows the call lines incl. post_v1_chat_completions; live has no images to keep. taste OK, unique OK, check.mjs 0 errors / 0 Next issues / no overflow / 0 overlaps at 1470 and 375.
 
 Verdict: 7/10
 First complaint: "You show me the same console window three times, and when I type in the search the word snaps in half: 'Usa' on one line, 'ge' under it. And on the phone the little window cuts its own text off."

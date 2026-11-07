@@ -115,10 +115,10 @@ function Projects({ play }) {
         <p className="cs-tr cs-th"><span>Name</span><span>Status</span></p>
         {PROJECTS.map(([p, s], i) => {
           const st = p === 'checkout-web' && k ? 'Ready' : s;
-          return <p key={p} className={'cs-tr' + (i === 0 ? ' on' : '')}><span className="x-mono"><i className={'cs-dot' + (st === 'Building' ? ' b' : '')} />{p}</span><em>{st}</em></p>;
+          return <p key={p} className={'cs-tr' + (i === 0 ? ' on' : '')}><span className="x-mono"><i className={'cs-dot' + (st === 'Building' ? ' b' : '')} /><span>{p}</span></span><em>{st}</em></p>;
         })}
       </div>
-      <p className="cs-cap"><b className="x-mono">gateway</b>Every request enters here, so the limiter does too.</p>
+      <p className="cs-cap"><b className="x-mono">gateway</b><span>The service the session above is changing.</span></p>
     </div>
   );
 }
@@ -566,7 +566,7 @@ function Client() {
         <BizOpen label="What the console stands on" className="cs-facts" cardClass="cs-fact" items={FACTS.map((x) => ({
           id: x.id,
           label: x.t,
-          card: <><b className="bz-fig">{x.f}</b>{x.id === 'v1' && <span className="cs-fact-peek x-mono" aria-hidden="true">{CODE.split('\n').slice(0, 5).join('\n')}</span>}<span className="cs-fact-t">{x.t}</span></>,
+          card: <><b className="bz-fig">{x.f}</b>{x.id === 'v1' && <span className="cs-fact-peek x-mono" aria-hidden="true">{CODE.split('\n').slice(2, 10).map((l, i) => <span key={i}>{l || ' '}</span>)}</span>}<span className="cs-fact-t">{x.t}</span></>,
           panel: (
             <div className={'cs-fp' + (x.id === 'v1' ? ' wide' : '')}>
               <div className="cs-fp-copy">
@@ -598,7 +598,7 @@ function GetConsole() {
         <div className="cs-rel">
           <p className="bz-title">Related capabilities</p>
           <ul>
-            <li><A to={DOCS}><b>Console docs →</b></A></li>
+            <li><A to={DOCS} className="cs-rel-docs">Console docs →</A></li>
             {SIDE.slice(0, 3).map(([t, to, d]) => <li key={t}><A to={to}><b>{t}</b><span>{d}</span></A></li>)}
           </ul>
         </div>

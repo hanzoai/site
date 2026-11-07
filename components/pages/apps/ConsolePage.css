@@ -520,3 +520,8 @@
 .cs .cf-code .s { color: #d4d4d4; }
 .cs .cf-code .k { color: #ffffff; font-weight: 606; }
 .cs .cf-mark { background-image: linear-gradient(rgba(255, 255, 255, .2), rgba(255, 255, 255, .2)); }
+/* copy rule: Hanzo's lines stay their own text (the docs row, the peek's lines) */
+.cs-rel a.cs-rel-docs { font-size: 17px; font-weight: 497; }
+.cs-fact-peek > span { display: block; }
+.cs-facts > :first-child .cs-fact-peek { max-height: 13.6em; }
+.cs-facts > :first-child .cs-fact-peek { -webkit-mask-image: linear-gradient(#000 86%, transparent); mask-image: linear-gradient(#000 86%, transparent); }
