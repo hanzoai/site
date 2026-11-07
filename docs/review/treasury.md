@@ -1,4 +1,5 @@
 # /treasury: James-eye review (round 3)
+Ready: 8 Nov 00:45, copycheck missing 0 of 24 (captured page), Hanzo's images kept (it shows none). Hanzo's "What it is made of" is a visible heading again over the decoding statement (it had only been an aria-label); the editor's Treasury Operations name and both Read the docs asks read as Hanzo's own lines. taste/unique/parity OK (57/57, 3/3); 0 console errors, no overlap at 1470 and 375.
 
 
 Verdict: 6/10

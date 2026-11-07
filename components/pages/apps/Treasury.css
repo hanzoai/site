@@ -46,6 +46,7 @@
 .ts-ok { position: absolute; left: 24px; bottom: 18px; margin: 0; padding: 8px 12px; border-radius: 999px; background: #fafafa; color: #0a0a0a; font-size: 13px; }
 
 /* chapters: the lede leads, then the ledger part by part */
+.ts-say-h { margin: 0 0 21px; color: #737373; }
 .ts-say-p { margin: 0; text-wrap: balance; }
 .ts-vis { display: grid; padding-bottom: 56px; }
 .ts-vis.paused * { animation-play-state: paused !important; }
