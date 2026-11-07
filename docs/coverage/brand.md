@@ -21,7 +21,7 @@ Page file: `components/pages/Brand.jsx` (+ `Brand.css`) · route: `app/brand/pag
    - Hanzo's group words (Brand Colors, Gray Scale, Gradients, Buttons, Cards, Badges) are real h3 headings in title type, not mono eyebrows.
 7. **Visual design system.**
    - Hanzo's black, white and greys only. Values come from CANON as page tokens at the top of `Brand.css`: no literal hex below that block except the Success Badge sample, which is Hanzo's own component.
-   - Radii are 32, 24, 16 and 10 (CANON). Springs are SOFT {300,30} and SLOW {90,18}. Press is .98.
+   - x
    - There is one dark room, Color Palette.
 8. **UI component library.**
    - Swatches and the e-mail copy are buttons with `aria-pressed`. A tick replaces the copy icon only when the clipboard write succeeds; a blocked clipboard leaves the icon as it was.
