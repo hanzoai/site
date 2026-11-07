@@ -1,4 +1,5 @@
 # /risk: James-eye review (independent critic, walk 2, 7 Nov)
+Ready: 2026-11-07, slice D — the unverified motion-map pass checked: the ink-spread under "What it decides on" never fired (empty screen on both sizes) and now arrives; the six review fixes from 00a0c63e verified (h1 ~38%, gauge beside it, flat chapter cards, pause clear of labels, calmer loops)
 
 Verdict: 7/10
 First complaint: "The first screen is mostly empty white. The headline sits two-thirds of the way down, the dial floats off on its own to the right with a big dead gap between them, and nothing peeks below it. It reads like a widget on a blank page, not a premium opener."

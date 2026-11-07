@@ -1,6 +1,6 @@
 'use client';
 /* Persona: enterprise buyer (fraud, AML and trust-and-safety leads). Goal: start a sales conversation. CTA: "Talk to us" → /contact-sales. Metric: contact_sales_submit.
-   Risk. V2: 8/10 a first screen of h1 + dial side by side (next section peeking); an unframed gauge decides beside the h1 (needle, reasons, action; no invented digits); one engine with two faces; then one object per screen (rule card, declare stack, request flow, tier ladder) with the words folded in; no voids; deck greys and radii
+   Risk. V2: 8/10 a first screen of h1 + dial side by side (next section peeking); the decision word decodes (the motion-map signature); chapters as rows with their own stepping object; slice D: the ink-spread on "What it decides on" now fires (it watched its own clipped box and never arrived, leaving an empty screen); deck greys and radii
    Signature: the dial that decides, and shows its work. Pick a stage (signup, payment, post-purchase; the stage is a
    field) and signals light; the needle swings to a score and the plane returns an action and its reasons. It never
    declines on its own: past the line it summons a person, the ceiling Hanzo's engine refuses to start above.
