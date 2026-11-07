@@ -80,7 +80,7 @@ html[data-ko-ask] header[data-slot=masthead] :is(a[href='https://hanzo.ai/signup
 .ko-sh { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; margin-bottom: 40px; }
 .ko-fits { padding-top: 0; }
 .ko-map { padding-top: 0; }
-@media (min-width: 901px) { .ko-scene { padding-bottom: 116px; } .ko-fits { padding-bottom: 116px; } }
+@media (min-width: 901px) { .ko-scene { padding-bottom: 116px; } .ko-fits { padding-bottom: 116px; } .lv-sec.ko-map { padding-bottom: 58px; } .ko-map + .mc.lv-sec { padding-top: 58px; } }
 
 /* phones: the capsule keeps speaking after it settles (Meter in Koe.jsx) and the film breathes inside it */
 .ko-pill { position: absolute; overflow: hidden; pointer-events: none; }
