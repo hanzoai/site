@@ -12,12 +12,6 @@
 .ob-hero-r { display: flex; flex-direction: column; align-items: flex-start; gap: 24px; }
 .ob-sub { max-width: 30ch; }
 .ob-stage { margin-top: clamp(32px, 3.4vw, 48px); }
-/* desktop: the pinned suite tucks 120px under the hero (the hero paints above it), so its window peeks ~56px under
-   the first screen at 1470×801 */
-@media (min-width: 900px) {
-  .ob-hero { z-index: 1; }
-  .ob-pin { margin-top: -120px; }
-}
 /* the hero ask answers: a deck-silver fill and the arrow steps 4px on; press .97 (the kit's) */
 .ob .ob-cta svg { transition: transform .15s cubic-bezier(0, 0, .2, 1); }
 @media (hover: hover) {
@@ -91,16 +85,23 @@ button.ob-pv-row:active { transform: scale(.97); transition-duration: .09s; }
 .ob-tabs button { position: relative; z-index: 1; height: 40px; padding: 0 2px; white-space: nowrap; border: 0; border-radius: 999px; background: none; font: 500 13px/1 var(--sans); color: #a3a3a3; cursor: pointer; touch-action: manipulation; transition: color .15s cubic-bezier(0, 0, .2, 1), background-color .15s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); }
 .ob-tabs button:active { transform: scale(.97); transition-duration: .09s; }
 .ob-tabs button.on { color: #fafafa; }
-@media (hover: hover) { .ob-tabs button:not(.on):hover { color: #fafafa; background: rgba(255, 255, 255, .14); } }
+/* hover inks the word and draws a hairline under it; only the lit tab sits on the filled pill */
+@media (hover: hover) { .ob-tabs button:not(.on):hover { color: #fafafa; text-decoration: underline 1px; text-underline-offset: 6px; } }
 .ob-tab-ink { position: absolute; z-index: 0; top: 0; bottom: 0; left: 0; width: calc(100% / 6); border-radius: 999px; background: #404040; transition: transform .4s cubic-bezier(.4, 0, .2, 1), opacity .3s cubic-bezier(0, 0, .2, 1); }
 .ob-suite[data-step='intro'] .ob-tab-ink { opacity: 0; }
 .ob-suite[data-step='intro'] .ob-tabs button { color: rgba(255, 255, 255, .78); }
-.ob-panes { display: grid; padding: 28px 28px 32px; min-height: 400px; }
+/* the panes share one fixed stage (400px of content on desktop); every pane fills it: one part of each grows (the
+   rows, the chart, the linked trace), so no chapter leaves the window half empty */
+.ob-panes { display: grid; grid-template-rows: minmax(0, 1fr); padding: 28px 28px 32px; height: 460px; }
 .ob-pane { grid-area: 1 / 1; display: flex; flex-direction: column; gap: 14px; min-width: 0; opacity: 0; transition: opacity .3s cubic-bezier(0, 0, .2, 1); pointer-events: none; }
 .ob-pane[data-on] { opacity: 1; }
 /* the intro: six parts draw into one query (line art, 900ms) */
 .ob-one, .ob-wire { display: grid; grid-template-columns: auto minmax(32px, .7fr) minmax(0, 2fr); align-items: stretch; gap: 0; }
-.ob-one-tabs, .ob-src { list-style: none; margin: 0; padding: 0; display: grid; grid-template-rows: repeat(6, 54px); }
+/* the labels and the wire share one grid row, and the labels split it into equal rows, so each curve (drawn in the
+   same proportions in its viewBox) leaves from the vertical centre of its label at any height */
+.ob-one { grid-template-rows: minmax(0, 1fr); }
+.ob-wire { grid-template-rows: minmax(0, 1fr) auto; row-gap: 14px; }
+.ob-one-tabs, .ob-src { list-style: none; margin: 0; padding: 0; display: grid; grid-template-rows: repeat(6, minmax(0, 1fr)); min-height: 0; }
 .ob-one-tabs li, .ob-src li { display: flex; align-items: center; justify-content: flex-end; padding-right: 12px; font: 500 15px/1 var(--mono); color: #525252; transition: color .3s cubic-bezier(0, 0, .2, 1); }
 .ob-pane[data-on] .ob-one-tabs li, .ob-pane[data-on] .ob-src li { color: #fafafa; transition-delay: calc(.1s + var(--i, 0) * 60ms); }
 .ob-one-wire { position: relative; min-width: 0; }
@@ -144,13 +145,31 @@ button.ob-pv-row:active { transform: scale(.97); transition-duration: .09s; }
 .ob-routes li { padding: 12px 18px; border-radius: 999px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14); font: 500 15px/1 var(--sans); color: #fafafa; opacity: 0; transform: translateY(12px); transition: opacity .3s cubic-bezier(0, 0, .2, 1), transform .4s cubic-bezier(.16, 1, .3, 1); }
 .ob-pane[data-on] .ob-routes li { opacity: 1; transform: none; transition-delay: calc(.12s + var(--i) * 60ms); }
 /* OTLP: an OTel SDK and a collector wire straight into one endpoint; the agent is struck out */
-.ob-src { grid-template-rows: repeat(3, 72px); }
+.ob-src { grid-template-rows: repeat(3, minmax(0, 1fr)); }
 .ob-src li.no { color: #525252; text-decoration: line-through 1.5px; }
 .ob-pane[data-on] .ob-src li.no { color: #737373; }
 .ob-dst { align-self: center; display: grid; gap: 10px; padding: 22px; border-radius: 16px; background: #262626; }
 .ob-dst b { font: 500 21px/1.2 var(--mono); color: #fafafa; overflow-wrap: anywhere; }
 .ob-dst em { font: 500 14px/1 var(--mono); font-style: normal; color: #a3a3a3; }
-.ob-wire-k { grid-column: 1 / -1; }
+.ob-wire-k { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 10px; }
+.ob-env { display: block; padding: 14px 16px; border-radius: 12px; background: #262626; font: 500 14px/1.4 var(--mono); color: #fafafa; overflow-wrap: anywhere; }
+.ob-env span { color: #a3a3a3; }
+.ob-wire-k .ob-same { margin: 0; }
+/* the panes that grow to fill the stage */
+.ob-tr { flex: 1 1 0; height: auto; min-height: 0; }
+.ob-log { flex: 1 1 0; height: auto; min-height: 0; }
+.ob-tail { flex: 1 1 0; height: auto; min-height: 0; }
+.ob-met .ob-chart, .ob-al { flex: 1 1 0; height: auto; min-height: 0; }
+/* exceptions: the trace the folded row links to, the hero's waterfall drawn small with the raising span lit */
+.ob-ex-tr { flex: 1 1 0; min-height: 0; list-style: none; margin: 0; padding: 0; display: grid; grid-template-rows: repeat(6, minmax(0, 1fr)); }
+.ob-ex-tr li { display: grid; grid-template-columns: 90px 1fr; gap: 12px; align-items: center; font: 500 14px/1 var(--mono); color: #737373; }
+.ob-ex-tr i { position: relative; height: 8px; }
+.ob-ex-tr b { position: absolute; top: 0; bottom: 0; border-radius: 6px; background: #404040; transform-origin: 0 50%; transform: scaleX(0); }
+.ob-pane[data-on] .ob-ex-tr b { transform: none; transition: transform .5s cubic-bezier(.16, 1, .3, 1) calc(.5s + var(--i) * 60ms); }
+.ob-ex-tr li.hot { color: #fafafa; }
+.ob-ex-tr li.hot b { background: repeating-linear-gradient(135deg, #d4d4d4 0 2px, #525252 2px 6px); }
+/* alerts: the saved query's line and its threshold (a dashed hairline) */
+.ob-al path.t { stroke: #737373; stroke-width: 1; stroke-dasharray: 4 5; }
 
 /* the OTLP room (Quiet #f5f5f5): two parts on the 5/8 split, bottom-aligned; the agent prompt on the same split below */
 .ob-otlp { --wipe: #f5f5f5; padding: clamp(72px, 11vw, 188px) 0; }
@@ -198,6 +217,10 @@ button.ob-pv-row:active { transform: scale(.97); transition-duration: .09s; }
 .ob .cf-paste-bar .x-copy { background: #262626; border-color: transparent; color: #fafafa; }
 .ob .cf-api { background: #262626; color: rgba(255, 255, 255, .78); }
 .ob .cf-caret { background: #fafafa; }
+/* the end runs tight: the cards follow the paste room without a second section gap, and the close sits on the footer
+   with one step of air (no empty screen under the paste room or under the close ask) */
+.ob .lx-rel { padding: 44px 0 72px; }
+.ob .lx-close { padding: 116px 0 72px; }
 /* the kit's small print, lifted to the floors (13px; the related heading is a caption) */
 .ob .lx-rel-h { font-size: 13px; }
 @media (hover: hover) {
@@ -218,8 +241,8 @@ button.ob-pv-row:active { transform: scale(.97); transition-duration: .09s; }
 @keyframes ob-beat { 0%, 100% { transform: scale(1); } 50% { transform: scale(.5); } }
 .ob-live { position: relative; }
 .ob-live::after { content: ''; position: absolute; top: -6px; bottom: -6px; left: 0; width: 100%; border-left: 1px solid rgba(255, 255, 255, .3); transform: translateX(0); opacity: 0; pointer-events: none; }
-.ob-trs.ob-live::after { left: 186px; width: calc(100% - 186px); bottom: auto; height: 262px; }
-.ob-met.ob-live::after { top: 40px; bottom: 30px; }
+.ob-trs.ob-live::after { left: 186px; width: calc(100% - 186px); top: 0; bottom: 0; }
+.ob-met.ob-live::after { top: 40px; bottom: 36px; }
 .ob-pane.ob-live[data-on]::after { opacity: 1; animation: ob-sweep-a 6s linear 1.2s infinite; }
 .ob-tail { height: 44px; display: flex; align-items: center; padding-left: 72px; }
 .ob-tail b { width: 9px; height: 18px; background: #fafafa; animation: ob-caret 1.1s steps(1) infinite; }
@@ -261,8 +284,8 @@ button.ob-pv-row:active { transform: scale(.97); transition-duration: .09s; }
   .ob-suite-bar { height: 52px; padding: 0 12px; }
   .ob-suite-host { display: none; }
   .ob-clock { min-width: 0; font-size: 13px; }
-  .ob-trs.ob-live::after { left: 152px; width: calc(100% - 152px); height: 152px; }
-  .ob-met.ob-live::after { top: 36px; bottom: auto; height: 104px; }
+  .ob-trs.ob-live::after { left: 152px; width: calc(100% - 152px); }
+  .ob-met.ob-live::after { top: 36px; bottom: 32px; }
   .ob-tail { height: 34px; padding-left: 56px; }
   .ob-tail b { height: 14px; }
   .ob-suite[data-step='intro'] .ob-suite-host { display: inline; }
@@ -270,10 +293,13 @@ button.ob-pv-row:active { transform: scale(.97); transition-duration: .09s; }
   .ob-tab-now { display: inline-flex; align-items: center; gap: 9px; height: 34px; padding: 0 14px; border-radius: 999px; background: #404040; color: #fafafa; font: 500 14px/1 var(--sans); animation: ob-in .3s cubic-bezier(.16, 1, .3, 1); }
   .ob-tab-now i { width: 6px; height: 6px; border-radius: 50%; background: #fafafa; }
   .ob-same { margin-top: 4px; }
-  .ob-panes { padding: 14px 14px 16px; min-height: 0; }
+  /* phone: the stage is what the kit's object height leaves under the 52px bar */
+  .ob-panes { padding: 14px 14px 16px; height: calc(var(--objh, 38svh) - 52px); }
+  .ob-wire { row-gap: 10px; }
+  .ob-env { padding: 10px 12px; font-size: 13px; }
+  .ob-ex-tr li { grid-template-columns: 72px 1fr; font-size: 13px; }
+  .ob-ex-tr i { height: 6px; }
   .ob-one, .ob-wire { grid-template-columns: auto 28px minmax(0, 1fr); }
-  .ob-one-tabs { grid-template-rows: repeat(6, 28px); }
-  .ob-src { grid-template-rows: repeat(3, 40px); }
   .ob-one-tabs li, .ob-src li { font-size: 14px; padding-right: 6px; }
   .ob-one-q, .ob-dst { padding: 12px; font-size: 14px; border-radius: 12px; }
   .ob-one-q { padding: 10px; }
