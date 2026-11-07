@@ -378,7 +378,8 @@ export default function Captable() {
   const [pre, setPre] = useState(12_000_000);
   const [mine, setMine] = useState(false);
   return (
-    <main className="bz ct" data-ask-name="Cap Table">
+    <main className="bz ct">
+      <span data-ask-name="Hanzo Cap Table" hidden />
       <Hero pre={pre} setPre={setPre} mine={mine} setMine={setMine} />
       <BizChapters label="A round, run first" className="ct-ch" items={STEPS.map(([t, d]) => ({ t, d }))} stage={(at) => <Stage at={at} pre={pre} />}>
         <header className="bz-wrap bz-grid ct-ch-head">

@@ -279,7 +279,8 @@ export default function BlockchainIndex({ doc, all }) {
   const chains = chainsBlock ? chainsBlock.chains : ['Ethereum'];
   const pieces = find('pieces'), groups = find('groups'), agent = find('agent'), last = find('band');
   return (
-    <main className="bz bci" data-ask-name="Hanzo Blockchain">
+    <main className="bz bci">
+      <span data-ask-name="Hanzo Blockchain" hidden />
       <Hero doc={doc} chains={chains} all={all} />
       {pieces && <Pieces b={pieces} all={all} />}
       {groups && <Groups b={groups} />}

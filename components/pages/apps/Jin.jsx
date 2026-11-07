@@ -414,7 +414,8 @@ function End() {
 
 export default function Jin() {
   return (
-    <main className="bz jn" data-ask-name="Jin">
+    <main className="bz jn">
+      <span data-ask-name="Jin" hidden />
       <Hero />
       <Paper />
       <Yours />

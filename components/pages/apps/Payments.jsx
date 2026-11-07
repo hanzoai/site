@@ -474,7 +474,8 @@ function End() {
 
 export default function Payments() {
   return (
-    <main className="bz pay" data-ask-name="Payments">
+    <main className="bz pay">
+      <span data-ask-name="Hanzo Payments" hidden />
       <Hero />
       <BizChapters label="A payment, routed" className="pay-ch" items={STEPS.map(([t, d], i) => ({ t, d, x: CH[i] }))} stage={(at) => <ChStage at={at} />}>
         <header className="bz-wrap bz-grid pay-ch-head">

@@ -568,7 +568,8 @@ function End() {
 
 export default function Commerce() {
   return (
-    <main className="bz cm" data-ask-name="Commerce">
+    <main className="bz cm">
+      <span data-ask-name="Hanzo Commerce" hidden />
       <Hero />
       <Journey />
       <Nouns />

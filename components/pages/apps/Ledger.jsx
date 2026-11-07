@@ -378,7 +378,8 @@ function End() {
 
 export default function Ledger() {
   return (
-    <main className="bz ld" data-ask-name="Hanzo Ledger">
+    <main className="bz ld">
+      <span data-ask-name="Hanzo Ledger" hidden />
       <Hero />
       <BizChapters label="Every cent lands somewhere" className="ld-ch" items={STEPS.map(([t, d]) => ({ t, d }))} stage={(at) => <Scenes at={at} />}>
         <header className="bz-wrap ld-ch-head">

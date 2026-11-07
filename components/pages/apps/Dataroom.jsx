@@ -430,7 +430,8 @@ function End() {
 
 export default function Dataroom() {
   return (
-    <main className="bz dr" data-ask-name="Hanzo Dataroom">
+    <main className="bz dr">
+      <span data-ask-name="Hanzo Dataroom" hidden />
       <Hero />
       <BizChapters label="A link, shared" className="dr-ch" items={STEPS.map(([t, d]) => ({ t, d }))} stage={(at) => <Room at={at} />}>
         <header className="bz-wrap dr-ch-head">
