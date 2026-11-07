@@ -36,7 +36,7 @@ Done here: Nothing above the h1. "Merge a pull request. / Get Pro." (52px) cuts 
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
-- [x] Sticky ask in header and bar after the hero, same label
+- [ ] Sticky ask in header and bar after the hero, same label (desktop yes: the header swaps to "Claim a merged pull request"; phone keeps the shared header's "Try Hanzo", requested in `docs/requests/founder.md`)
 - ~~Copy button copies exactly the displayed text; failure never says Copied~~ n/a: no copy control.
 - [x] `data-cta` and `data-thumb` on every primary
 
@@ -48,7 +48,7 @@ Done here: Kit `Cta` only (no raw `.x-btn` in the page file); `data-cta` and `da
 - ~~Marquees pause, freeze under reduced motion, hide duplicates~~ n/a: no marquee.
 - [x] Privacy link and owner line beside every submit
 
-Done here: No figures but Hanzo's thresholds; no logos or seals; the privacy of the claim is Hanzo's own sentence (granted by hand by a Hanzo admin).
+Done here: No figures but Hanzo's thresholds; no logos or seals; "Privacy Policy" (Hanzo's own link words, hanzo.ai/privacy) sits beside "Send the claim", and the owner line is Hanzo's own sentence (granted by hand by a Hanzo admin).
 
 ## 6. Content presentation (copy untouched)
 - [x] No text under 13px (14px phone) except mono capitals
@@ -65,7 +65,7 @@ Done here: Parity 37/37 text. Type from MASTER: h1 52px, section heads 26px, the
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: `taste.py` passes (greys only); nothing above a headline; cards 24 radius with a hairline that inks when lit, no shadow; one dark room (repositories). The hero object is a pull request, unlike /bounty (live list) and /grants.
+Done here: `taste.py` passes (greys only; the off-deck #6e6e73, #a1a1a6, #f5f5f7 replaced by #a3a3a3, #fafafa and white 30/55%, round 3); nothing above a headline; cards 24 radius with a hairline that inks when lit, no shadow; one dark room (repositories). The hero object is a pull request, unlike /bounty (live list) and /grants.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
