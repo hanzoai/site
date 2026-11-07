@@ -4,7 +4,8 @@
    Usage: <BizSheet label="See the request" kick="Numscript" title="One transaction, however many parties">…</BizSheet>
    A pill button opens a sheet: from the right on desktop, rising from the bottom on phones. Esc, the backdrop or Close
    shut it; focus moves in and comes back; the page behind stops scrolling. The content is always in the HTML (inert
-   while shut), so nothing is lost. Put it outside any transformed or faded parent (position: fixed needs that). */
+   while shut), so nothing is lost. Put it outside any transformed or faded parent (position: fixed needs that).
+   aria-modal is set only while it is open, so the site's ask bar (components/Ask.jsx) is not hidden by a shut sheet. */
 import { useEffect, useId, useRef, useState } from 'react';
 import './Biz.css';
 
@@ -37,7 +38,7 @@ export default function BizSheet({ label, title, kick, children, className = '',
         <Plus />{label}
       </button>
       <div className="bz-sheet-back" onClick={() => setOpen(false)} aria-hidden="true" />
-      <div ref={panel} id={id} className="bz-sheet" role="dialog" aria-modal="true" aria-label={title} tabIndex={-1} inert={!open} data-lenis-prevent="">
+      <div ref={panel} id={id} className="bz-sheet" role="dialog" aria-modal={open ? 'true' : undefined} aria-label={title} tabIndex={-1} inert={!open} data-lenis-prevent="">
         <div className="bz-sheet-top">
           <div>
             {kick && <p className="bz-kick">{kick}</p>}

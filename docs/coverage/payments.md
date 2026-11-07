@@ -2,14 +2,14 @@
 
 Page file: `components/pages/apps/Payments.jsx` · gallery: `docs/gallery/payments/`
 
-1. **Strategy and conversion.** One ask, Hanzo's "Try Hanzo" (/login): solid in the hero, in the sticky AskBar after the hero, on the phone thumb bar and as the one solid button in the close. "Explore APIs", "API Reference", "Deploy to Cloud" and "Contact Sales" are text links.
+1. **Strategy and conversion.** One ask, Hanzo's "Try Hanzo" (/login): solid in the hero, in the sticky site ask bar after the hero, on the phone thumb bar and as the one solid button in the close. "Explore APIs", "API Reference", "Deploy to Cloud" and "Contact Sales" are text links.
 2. **Information architecture and navigation.** Hanzo's header and footer are unchanged. Order: the checkout (what it does), the four steps (how), the one API and its code, the checkout methods, tax and fraud, the traffic split, when a switch earns its place, where to read further, the close.
 3. **First impression and page narrative.** The title cuts into its line over one huge phone that is already running the checkout. At 1470×801 the amount and the live step screen show; at 375×812 the phone starts under the ask, well inside the first 660px.
-4. **Conversion system.** `data-thumb="Try Hanzo"` and `data-cta="primary"` on the hero ask; `data-cta="primary"` on the close; `AskBar title="Payments"` as the last child of main. One solid button per screen.
+4. **Conversion system.** `data-thumb="Try Hanzo"` and `data-cta="primary"` on the hero ask; `data-cta="primary"` on the close; `site ask bar title="Payments"` as the last child of main. One solid button per screen.
 5. **Trust and proof.** The proof is Hanzo's own code: the phone ends on `'succeeded'` and `payment.connector 'adyen'`, the same values the request in "One API in front of all of them" prints. No invented figures.
 6. **Content presentation (copy untouched).** Parity 139/139 text, 6/6 links. Detail sits behind clicks: the developer kit and the checkout features in sheets, tax and fraud and the four use cases in cards that open. No label sits above a headline.
 7. **Visual design system.** Biz grammar (display 128, headline 56, title 28, body 19, Zen Mono labels). Ink, greys and white only: a decline is an inverted ink chip, a success an outlined chip with the word. One dark room: the traffic split.
-8. **UI component library.** Kit `A`, `More`, `Code`; v2 `BizLines`, `BizStage`, `BizChapters`, `BizSheet`, `BizOpen`, `AskBar`. The slider, tracker, pause button and chips are styled; no browser-default control.
+8. **UI component library.** Kit `A`, `More`, `Code`; v2 `BizLines`, `BizStage`, `BizChapters`, `BizSheet`, `BizOpen`, the site's ask bar (`components/Ask.jsx`). The slider, tracker, pause button and chips are styled; no browser-default control.
 9. **Motion and interaction.**
    - Idle: the checkout runs its four steps (signature), with a pause button.
    - Scroll: the phone rises and settles (Stage); four sticky chapters pin the phone beside its route.
