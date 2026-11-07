@@ -125,7 +125,7 @@
 .xkt-row-g { font-size: 12px; letter-spacing: .04em; text-transform: uppercase; color: #737373; }
 .xkt-row-t { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
 .xkt-row-t b { font-size: 16px; font-weight: 497; }
-.xkt-row-t span { font-size: 15px; color: #525252; }
+.xkt-row-t > span { font-size: 15px; color: #525252; }
 .xkt-row-to { font-size: 13px; color: #525252; opacity: 0; transform: translateX(-8px); transition: opacity .25s var(--a2-ease), transform .3s var(--a2-ease); }
 .xkt-row i { font-style: normal; color: #737373; transition: transform .3s var(--a2-ease), color .15s; }
 .xkt-row:active { transform: translateY(1px); }

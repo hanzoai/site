@@ -145,7 +145,7 @@ function Editor() {
         <aside className="ide-agent">
           <span className="ide-agent-h"><Mark size={13} /> Hanzo</span>
           <ul>
-            {SESSION.map(([p, s], i) => <li key={s} className={'k' + i + (t >= LAST + 2 + i ? ' on' : '')}><span className="ide-p">{p}</span>{s}</li>)}
+            {SESSION.map(([p, s], i) => <li key={s} className={'k' + i + (t >= LAST + 2 + i ? ' on' : '')}><span className="ide-p">{p}</span><span>{s}</span></li>)}
           </ul>
           <A to="https://hanzo.team/" className={'ide-open' + (t >= LAST + 5 ? ' on' : '')}>Open in the console</A>
         </aside>
@@ -193,7 +193,7 @@ function Stage() {
     <section className="ide-stage" ref={ref} aria-labelledby="ide-h1">
       <div className="ide-stick">
         <motion.div className="a2-wrap ide-copy" style={{ opacity: fade, y: lift }} ref={copy}>
-          <p className="a2-kick"><b>Hanzo IDE</b> · Developers</p>
+          <p className="a2-kick">Hanzo IDE · Developers</p>
           <Lines as="h1" id="ide-h1" className="a2-display ide-h1" lines={['An IDE that remembers', 'your codebase']} now />
           <div className="ide-copy-row">
             <p className="a2-lede">The editor you already know, on a Rust engine that is ours. The agent keeps a memory of your project across sessions, reads the call graph before it changes a line, and runs every tool in a sandbox.</p>
@@ -204,7 +204,7 @@ function Stage() {
           <Editor />
           <motion.div className="ide-under" style={{ opacity: cap }}>
             <p>Open source (Apache 2.0). The VS Code workbench on a Rust engine. Open VSX extensions run as they are.</p>
-            <p>Example project. Every name in it is one you would give your own. <A to="/home">Open in the console</A></p>
+            <p><span>Example project. Every name in it is one you would give your own.</span> <A to="/home">Open in the console</A></p>
           </motion.div>
         </motion.div>
       </div>

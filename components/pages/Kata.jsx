@@ -126,7 +126,7 @@ function Hero() {
           ))}
           <span className="xkt-auto">Autonomous loop.</span>
         </h1>
-        <p className="a2-kick"><b>Hanzo Kata</b> · Test repair</p>
+        <p className="a2-kick">Hanzo Kata · Test repair</p>
         <div className="a2-grid xkt-hero-grid">
           <div className="xkt-hero-copy">
             <p className="a2-lede">Kata keeps your tests green. It triages a failing CI run, finds the regression, writes the fix and runs the suite again before anything lands.</p>
@@ -236,12 +236,12 @@ function Wipe() {
         <i className="xkt-wipe-dark" data-room="dark" aria-hidden="true" />
         <div className="xkt-wipe-stick">
           <div className="xkt-wipe-l fail" aria-hidden="true">
-            <p className="xkt-wipe-cmd x-mono">kata run --suite tests/unit<span className="xkt-wcur" /></p>
+            <p className="xkt-wipe-cmd x-mono"><span>kata run --suite tests/unit</span><span className="xkt-wcur" /></p>
             <motion.p className="xkt-wipe-fig" style={{ scale }}>1 <span>failed</span></motion.p>
             <p className="xkt-wipe-cap x-mono">12 passed · 1 failed (test_token_expiry)</p>
           </div>
           <motion.div className="xkt-wipe-l pass" style={{ clipPath: clip }}>
-            <p className="xkt-wipe-cmd x-mono">kata repair --model enso-ultra<span className="xkt-wcur" aria-hidden="true" /></p>
+            <p className="xkt-wipe-cmd x-mono"><span>kata repair --model enso-ultra</span><span className="xkt-wcur" aria-hidden="true" /></p>
             <motion.p className="xkt-wipe-fig" style={{ scale }}>0 <span>failed</span></motion.p>
             <p className="xkt-wipe-cap x-mono">13 passed · 0 failed · 100% green verification</p>
           </motion.div>
@@ -354,7 +354,7 @@ function Read() {
               <A to={to} className="xkt-row">
                 <span className="xkt-row-g x-mono">{k === 0 ? h : null}</span>
                 {/* site pages open by Morph: the title you click becomes the next page's hero */}
-                <span className="xkt-row-t"><b {...(to.startsWith('/') ? { 'data-morph': '' } : {})}>{t}</b>{d && <span>{d}</span>}</span>
+                <span className="xkt-row-t"><b {...(to.startsWith('/') ? { 'data-morph': '' } : {})}><span>{t}</span></b>{d && <span>{d}</span>}</span>
                 <span className="xkt-row-to x-mono" aria-hidden="true">{to.startsWith('/') ? 'hanzo.ai' + to : to.replace('https://', '')}</span>
                 <i aria-hidden="true">→</i>
               </A>
