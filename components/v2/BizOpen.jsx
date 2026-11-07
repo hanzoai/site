@@ -6,7 +6,8 @@
    Click (or Enter on) a card and the card itself grows into a panel over the page (a spring, 300/30); the panel's words
    arrive once it has landed. Esc, the backdrop or Close send it back into its card, and focus returns to it.
    Phones: the panel rises as a full-width sheet. Reduced motion: it simply appears. Every panel's words are also in the
-   card's hidden copy, so they are in the HTML before anything is opened. Card and panel content are yours to style. */
+   card's hidden copy, so they are in the HTML before anything is opened. Card and panel content are yours to style.
+   radius (default 16) sets the card's corner, which Motion keeps true while it morphs. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { Close } from './BizSheet';
@@ -15,7 +16,7 @@ import './Biz.css';
 const SPRING = { type: 'spring', stiffness: 300, damping: 30 };
 const Plus = () => <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1v12M1 7h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>;
 
-export default function BizOpen({ items, label, className = '', cardClass = '', as = 'ul' }) {
+export default function BizOpen({ items, label, className = '', cardClass = '', as = 'ul', radius = 16 }) {
   const [open, setOpen] = useState(null);
   const calm = useReducedMotion();
   const cards = useRef({});
@@ -46,7 +47,7 @@ export default function BizOpen({ items, label, className = '', cardClass = '', 
               layoutId={calm ? undefined : 'bzo-' + it.id}
               transition={SPRING}
               className={'bz-open-card ' + cardClass}
-              style={{ borderRadius: 16 }}
+              style={{ borderRadius: radius }}
               onClick={() => setOpen(it.id)}
               aria-haspopup="dialog"
               aria-label={it.label ? 'Open ' + it.label : undefined}
