@@ -16,10 +16,12 @@
 // Metric: contact_sales_submit via the Band (data-cta="history.*")
 // Signature: the timeline scrub: one pinned scene where your scroll cuts a giant year into its line as each year's story comes in and the last goes out
 // Beyond: your year: type the year you started and the card cuts to what Hanzo was building then, with its posts
-// V2: 6/10 critic round 1 (two years at once, invented flap digits, eyebrows); all fixed, re-review pending
+// V2: 7/10 critic round 2 (blank stage between years, metric twice, text per year, scale, phone rail); all fixed, re-review pending
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { A, Img, Film } from '../kit';
+import { A, Cta, Img, Film } from '../kit';
+import Sigil from '../Sigil';
+import UI from '../../content/ui-strings.json';
 import StoryClose from './StoryClose';
 import StoryPause from './StoryPause';
 import Lines from '../v2/Lines';
@@ -28,8 +30,7 @@ import { YEARS, ERAS } from './historyData';
 import './story.css';
 import './History.css';
 
-const Chev = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-const TL = ({ to, children }) => <A to={to} className="v2s-tlink">{children}<Chev /></A>;
+const TL = ({ to, children }) => <Cta to={to} kind="link">{children}</Cta>;
 const Arr = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const N = YEARS.length;
 
@@ -62,14 +63,14 @@ function Hero() {
   }, [seen, calm, paused, t]);
   const era = ERAS.reduce((a, e, k) => (at >= e[3] ? k : a), 0);
   return (
-    <section className="xhi-hero" aria-labelledby="xhi-h1" data-ask-name="History" ref={box}>
+    <section className="xhi-hero" aria-labelledby="xhi-h1" data-ask-name="History" ref={box} data-morph-target>
       <div className="v2s-wrap xhi-hero-g">
         <div className="xhi-hero-l">
           <Lines as="h1" id="xhi-h1" className="v2s-display xhi-h1" now delay={0.05} stagger={0.06} lines={['Sovereign', 'intelligence', 'since 2014.']} />
           <motion.div className="xhi-hero-side" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.5 }}>
             <p className="v2s-lede">From open-source commerce and early AI head-up displays with SKULLY in 2014, through Techstars ’17 and over $1B in venture-backed client revenue, to 1,600+ repositories and sovereign intelligence today.</p>
             <div className="v2s-acts">
-              <a href="#timeline" className="v2s-btn solid" data-cta="history.hero">Explore Our History</a>
+              <Cta to="#timeline" kind="link" id="history.hero">Explore Our History</Cta>
               <TL to="/about">About Hanzo</TL>
               <TL to="/open-source">Open Source</TL>
             </div>
@@ -134,7 +135,7 @@ function Record() {
         <h2 id="xhi-rec-h" className="v2s-headline">Shipping for venture-funded companies since 2014</h2>
         <p className="v2s-cap">Track record</p>
       </div>
-      <div className={'xhi-rail' + (hand ? ' hand' : '')} ref={rail} data-drag={hand ? '' : undefined} data-swipe-own="" onFocusCapture={reveal}>
+      <div className={'xhi-rail' + (hand ? ' hand' : '')} ref={rail} data-swipe-own="" onFocusCapture={reveal}>
         <motion.ol className="xhi-clips" style={{ x }} drag={hand ? 'x' : false} dragConstraints={rail} dragElastic={0.06} dragTransition={{ power: 0.3, timeConstant: 280 }} onDragStart={() => { moved.current = Date.now(); }} onClickCapture={(e) => { if (Date.now() - moved.current < 250) e.preventDefault(); }}>
           {CLIPS.map(([fig, t, src], i) => (
             <li key={fig} style={{ '--r': TILT[i] + 'deg' }}>
@@ -166,12 +167,13 @@ function Plate({ y, on }) {
   const p = y.pic;
   const img = useRef(null);
   const [ok, setOk] = useState(false);
-  useEffect(() => { const el = img.current; if (el?.complete && el.naturalWidth) setOk(true); }, []);
+  const [failed, setFailed] = useState(false);
+  useEffect(() => { const el = img.current; if (el?.complete) { if (el.naturalWidth) setOk(true); else setFailed(true); } }, []);
   const src = p.photo || p.logo;
   return (
     <div className={'xhi-plate' + (p.photo ? ' photo' : p.logo ? ' logo' : ' fig') + (ok ? ' ok' : '')} aria-hidden="true">
-      <span className="xhi-plate-f">{y.metric}</span>
-      {src && <Img ref={img} src={src} alt="" w={1200} h={750} onLoad={() => setOk(true)} onError={() => setOk(false)} />}
+      {(!src || failed) && on && <Sigil seed={'history-' + y.year} className="xhi-plate-sigil" />}
+      {src && <Img ref={img} src={src} alt="" w={1200} h={750} onLoad={() => setOk(true)} onError={() => setFailed(true)} />}
       {p.logo2 && ok && <Img className="two" src={p.logo2} alt="" w={480} h={160} />}
       {p.video && on && <Film src={p.video} poster={p.photo} w={1200} h={750} />}
     </div>
@@ -187,14 +189,18 @@ function Year({ y, i, at }) {
       <div className="xhi-yr-t">
         <h3 id={'xhi-y' + y.year} className="v2s-headline">{y.title}</h3>
         <span className="xhi-yr-b">{y.badge}</span>
-        {y.lines.map((l) => <p key={l} className="xhi-yr-l">{l}</p>)}
-        <div className="xhi-hl">
-          <b>{y.metric}</b>
-          <strong>{y.htitle}</strong>
-          <span>{y.desc}</span>
-          <span className="xhi-hl-tag">{y.tag}</span>
-        </div>
+        <b className="xhi-yr-fig">{y.metric}</b>
+        <p className="xhi-yr-l">{y.lines[0]}</p>
         <p className="xhi-posts">{(y.posts || []).map(([l, to]) => <A key={l + to} to={to}>{l} →</A>)}</p>
+        <details className="xhi-more">
+          <summary aria-label={UI.strings.more.string}><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg></summary>
+          {y.lines.slice(1).map((l) => <p key={l} className="xhi-yr-l">{l}</p>)}
+          <div className="xhi-hl">
+            <strong>{y.htitle}</strong>
+            <span>{y.desc}</span>
+            <span className="xhi-hl-tag">{y.tag}</span>
+          </div>
+        </details>
       </div>
     </article>
   );
@@ -233,7 +239,7 @@ function Journey() {
                 <span className="xhi-odo-era">{ERAS[era][1]}</span>
               </div>
             )}
-            <div className="xhi-years" data-swipe-own="">
+            <div className="xhi-years">
               {YEARS.map((y, i) => <Year key={y.year} y={y} i={i} at={pinned ? at : i} />)}
             </div>
           </div>
@@ -275,7 +281,8 @@ function Yours() {
         <div className="v2s-c-8-12 xhi-you-a" aria-live="polite">
           {y ? (
             <>
-              <YearCut at={YEARS.indexOf(y)} className="you" />
+              <Plate key={y.year} y={y} on />
+              <span className="xhi-you-y v2s-num">{y.year}</span>
               <h3 className="v2s-title">{y.title}</h3>
               <p className="xhi-you-b">{y.badge}</p>
               <p className="v2s-body">{y.lines[0]}</p>

@@ -2,9 +2,9 @@
 
 Page file: `components/pages/About.jsx` (+ `About.css`, `story.css`, `StoryClose.jsx`, `StorySheet.jsx`) · gallery: `docs/gallery/about/` · metric id: `signup_start` (`data-cta="about.*"`)
 
-Open copy questions for James: none decided. "Illustration, not data" and "2 of 4 kept" were strings the page had added; both are gone rather than registered.
+Open copy questions for James: "1700+" repositories in the page copy against "1,600+" in its meta description and on /history (left as Hanzo has them). "Illustration, not data" and "2 of 4 kept" were strings the page had added; both are gone rather than registered.
 Shared changes requested (`docs/requests/about.md`): Unfold spring → tween; kit Band word blur; kit Tabs spring pill; v2/Lines timing; the floating ask bar; `taste.py --fix` rewriting copy ("#299").
-Forks this page deleted: three equal buttons in three places (now one solid plus text links); the page's own dark close (now `StoryClose`); raw `<img>`/`<video>` on the model cards and portraits; the badge above the h1 and every kicker above a heading; the ultramarine accent, the green status dot and the italic accent words; the auto-rotating tile cue and Zen auto-turn (nothing loops past 5 s).
+Forks this page deleted: the page's own buttons and text links (now kit `Cta`: solid, quiet, link); the cursor labels (`data-cursor`); three equal buttons in three places (now one solid plus text links); the page's own dark close (now `StoryClose`); raw `<img>`/`<video>` on the model cards and portraits; the badge above the h1 and every kicker above a heading; the ultramarine accent, the green status dot and the italic accent words; the auto-rotating tile cue and Zen auto-turn (nothing loops past 5 s).
 
 ## 1. Strategy and conversion
 - [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
@@ -13,7 +13,7 @@ Forks this page deleted: three equal buttons in three places (now one solid plus
 - [x] No dead or self-looping button; n/a: no prices on this page
 - [x] Open copy questions for James listed, none decided
 
-Done here: one solid "Get Started" (/pricing) in the hero, one "Start Building" after the track record, one "Explore Open Roles" in the closing Band; every other action is a text link with a chevron. Story pages' one action is the closing link, carried by `data-cta="about.band"`.
+Done here: kit `Cta` everywhere; one solid "Get Started" (/pricing) in the hero, one "Start Building" after the track record, one "Explore Open Roles" in the closing Band; every other action is a text link with a chevron. Story pages' one action is the closing link, carried by `data-cta="about.band"`.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it (shared chrome)
@@ -34,12 +34,12 @@ Done here: `<main id="main">`; parity links 36/36; model cards are real `<a href
 Done here: h1 (52px, cut in by line, 60 ms apart) with the lede and one ask to its right on 8/5 columns, the frontier drawing itself under them from 0.5 s; a `noscript` rule shows every line and the curve. Order: hero, statement and switches, tiles, figures, founders, Zen, black room, models and papers, roles, Band.
 
 ## 4. Conversion system
-- [x] Page-owned `v2s-btn` until the kit `Cta` lands; no raw `.x-btn`
+- [x] kit `Cta` only (solid, quiet, link); no raw `.x-btn`
 - [x] Sticky ask: the shared ask bar carries the hero's "Get Started" (`data-thumb`)
 - [x] n/a: no copy button on this page
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: `data-thumb="Get Started"` and `data-cta="about.hero"`, `about.record`, `about.band`; the bar itself is shared chrome (request 5).
+Done here: `<Cta thumb id="about.hero">` puts "Get Started" in the phone bar; `about.record` and `about.band` ids; the header carries the desktop ask (shared).
 
 ## 5. Trust and proof
 - [x] No logo, no seal, no invented number
@@ -90,7 +90,7 @@ Done here: signature = tile opens into its sheet (600 ms ease-in-out). Nothing l
 - [x] Alt on every image (portraits named; decorative art `alt=""`)
 - [x] No dimmed photo; Kai, Zen and Enso art shown together
 
-Done here: 3 model artworks plus a Sigil plate for Hanzo Engine in one row; founders fall back to a monogram when the portrait cannot load.
+Done here: 3 model artworks plus a Sigil plate for Hanzo Engine in one row; a founder whose portrait cannot load gets a contour field from their name with the initials in the corner (no empty grey slab).
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -98,7 +98,7 @@ Done here: 3 model artworks plus a Sigil plate for Hanzo Engine in one row; foun
 - [x] Targets 44px (socials, commit links); every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: phone composition stacks the hero, the switches go two by two, tiles stack with the radar top right, the sheet rises from the bottom, the black room's tabs sit above the log; scrollWidth 375 at 375.
+Done here: phone composition stacks the hero with the frontier cropped at true scale, the commit log runs message then time (no letter-by-letter dates), the black room's tabs wrap; the switches go two by two, tiles stack with the radar top right, the sheet rises from the bottom, the black room's tabs sit above the log; scrollWidth 375 at 375.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast: #0a0a0a and #525252 on white, #525252 on #f5f5f5, #a3a3a3 and white 78% on black
@@ -147,6 +147,6 @@ Done here: with hanzo.ai blocked (the cloud) the page is complete with monograms
 - [x] `data-cta` on every primary; no analytics wired yet (needs `lib/track.js`)
 - [x] Nothing identifier-bearing
 - [x] `V2:` line in the page file's top comment
-- [x] n/a: no `docs/review/about.md` yet (critic round 1: 7/10, fixes in; re-review pending)
+- [ ] Review read: `docs/review/about.md` verdict 7/10, fixes pushed, re-review pending
 
-Done here: `V2: 7/10` recorded from the round-1 critic; every round-1 complaint has a fix in this push.
+Done here: `docs/review/about.md` (critic round 2: 7/10); all five fixes in this push (phone log, founders' fallback, length 12,350 → under 11,000px, ghost axes draw, phone hero crop).

@@ -78,8 +78,6 @@
 /* the closing Band (StoryClose): the kit's black room, a centred head (the only centred head on the page) */
 .xst-close h2 { font-size: clamp(32px, 3.4vw, 44px) !important; font-weight: 497 !important; letter-spacing: -.03em !important; max-width: 22ch !important; }
 .xst-close p { font-size: 17px !important; color: rgba(255, 255, 255, .78) !important; }
-.xst-close .v2s-btn.solid { background: #fafafa; color: #0a0a0a; border-color: #fafafa; }
-@media (hover: hover) { .xst-close .v2s-btn.solid:hover { background: #fff; border-color: #fff; } }
 .xst-close .x-band-note a { display: inline-flex; align-items: center; min-height: 44px; color: #fafafa; text-underline-offset: 3px; }
 
 /* the pause control (StoryPause): 44px, quiet, first in the DOM of what moves by itself */
