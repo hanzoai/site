@@ -88,6 +88,8 @@ function Stream() {
 const CLIENTS = ['Claude Desktop', 'Claude Code', 'Cursor', 'Hanzo Dev', 'Any MCP client'];
 
 function Hero() {
+  const via = useRef(null);
+  const viaSeen = useInView(via, { once: true, amount: 0.8 });
   return (
     <section className="mcp-hero" aria-labelledby="mcp-h1">
       <div className="a2-wrap a2-grid mcp-hero-grid">
@@ -110,11 +112,12 @@ function Hero() {
           <Stream />
         </motion.div>
       </div>
-      <div className="a2-wrap mcp-via">
+      <div className={'a2-wrap mcp-via' + (viaSeen ? ' seen' : '')} ref={via}>
         <p className="mcp-oss">Open source, MIT. Identical tool names and schemas in TypeScript, Python, and Rust — plus remote streamable HTTP at api.hanzo.ai/v1/mcp.</p>
         <div className="mcp-via-l">
           <span className="a2-kick show">Available through</span>
-          <ul>{CLIENTS.map((c) => <li key={c}>{c}</li>)}</ul>
+          {/* arrival: each client lights in turn once (about 4 s), then rests */}
+          <ul>{CLIENTS.map((c, k) => <li key={c} style={{ '--k': k }}>{c}</li>)}</ul>
         </div>
       </div>
     </section>
@@ -274,7 +277,7 @@ function Domains() {
     return () => { clearTimeout(t); removeEventListener('keydown', key); l?.start?.(); last.current?.focus({ preventScroll: true }); };
   }, [open]);
   // idle on the rail: only the card nearest the rail's centre calls its tools (one mover), and only while the rail is seen
-  const railSeen = useInView(rail, { amount: 0.3 });
+  const railSeen = useInView(rail, { amount: 0.1 });
   const [live, setLive] = useState(0);
   useEffect(() => {
     const el = rail.current;

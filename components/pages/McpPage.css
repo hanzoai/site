@@ -33,6 +33,8 @@
 .mcp-via-l { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 12px 28px; }
 .mcp-via-l ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 28px; }
 .mcp-via-l li { font-size: 17px; font-weight: 497; letter-spacing: -.01em; color: var(--ink); }
+.mcp-via.seen .mcp-via-l li { animation: mcp-client .9s calc(var(--k) * .75s) ease-in-out 1 both; }
+@keyframes mcp-client { 0%, 100% { color: var(--ink); transform: none; } 40%, 60% { color: #a3a3a3; transform: translateY(-3px); } }
 
 /* figures: 64px at rest; the row grows while it crosses the screen (A2Grow) */
 .mcp-figs { padding-bottom: clamp(72px, 8vw, 128px); }
