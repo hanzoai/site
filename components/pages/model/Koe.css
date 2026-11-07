@@ -27,6 +27,46 @@
 .lv:has(.ko-v2) .lv-close:active { background: #e5e5e5; }
 .ko-v2[data-on] ~ .lv-close:active { background: #262626; color: #fafafa; }
 
+/* one solid ask per screen: Koe's own "Request access" is solid (white on the film, ink beside the settled headline);
+   while it shows (html[data-ko-ask], Koe.jsx) the header's ask is outlined, after it the header's ask is the solid one */
+html[data-ko-ask] header[data-slot=masthead] :is(a[href='https://hanzo.ai/signup'], a[data-x-ask]) { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); transition: background-color .15s cubic-bezier(0, 0, .2, 1), box-shadow .15s cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) { html[data-ko-ask] header[data-slot=masthead] :is(a[href='https://hanzo.ai/signup'], a[data-x-ask]):hover { background-color: #f5f5f5; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .4); opacity: 1; } }
+.lv:has(.ko-v2) .lv-name-ask .x-btn { background: #fafafa; border-color: #fafafa; color: #0a0a0a; transition: background-color .15s cubic-bezier(0, 0, .2, 1), transform .12s cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) { .lv:has(.ko-v2) .lv-name-ask .x-btn:hover { background: #e5e5e5; border-color: #e5e5e5; } }
+.lv:has(.ko-v2) .lv-name-ask .x-btn:active, .ko-v2 .x-btn:active { transform: scale(.97); }
+.ko-v2 .x-btn.solid { transition: background-color .15s cubic-bezier(0, 0, .2, 1), transform .12s cubic-bezier(0, 0, .2, 1); }
+/* every quiet button on the page answers with a fill, not only a border */
+@media (hover: hover) { .lv:has(.ko-v2) .lv-body .x-btn:not(.solid):hover { background: #f5f5f5; border-color: rgba(0, 0, 0, .18); } }
+/* "Try it in Design →": the arrow steps 4px right and the words take a 1px ink underline */
+.ko-v2 [data-cta='koe.hero-design'] { text-decoration: none; transition: color .15s cubic-bezier(0, 0, .2, 1); }
+.ko-v2 [data-cta='koe.hero-design'] span { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: transparent; transition: text-decoration-color .15s cubic-bezier(0, 0, .2, 1); }
+.ko-v2 [data-cta='koe.hero-design'] svg { transition: transform .15s cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) {
+  .ko-v2 [data-cta='koe.hero-design']:hover { color: #000; }
+  .ko-v2 [data-cta='koe.hero-design']:hover span { text-decoration-color: currentColor; }
+  .ko-v2 [data-cta='koe.hero-design']:hover svg { transform: translateX(4px); }
+}
+.ko-v2 [data-cta='koe.hero-design']:active svg { transform: translateX(6px); }
+
+/* the name stays: once the film has settled, "Koe" (the h1) rests above the headline on desktop and in the white band
+   above the pill on phones, rising in as the headline does */
+.lv:not([data-calm]):has(.ko-v2[data-on]) .lv-name[data-gone] { opacity: 1 !important; transform: none !important; top: auto; bottom: calc(50% + 96px); left: auto; right: max(24px, calc((100% - var(--wrap)) / 2)); width: min(50%, 620px); max-width: none; margin: 0; padding: 0; }
+.lv:not([data-calm]):has(.ko-v2[data-on]) .lv-name[data-gone] .lv-name-h { color: #0a0a0a; font-size: 52px; letter-spacing: -.035em; line-height: 1; animation: ko-name .7s cubic-bezier(.16, 1, .3, 1) both; }
+.lv:not([data-calm]):has(.ko-v2[data-on]) .lv-name[data-gone] :is(.lv-name-d, .lv-name-t, .lv-name-ask) { display: none; }
+@keyframes ko-name { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@media (min-width: 901px) { .lv:not([data-calm]) .ko-v2 { top: calc(50% - 80px); transform: none; } }
+
+/* the booth window is a static tile: a flat fill, no shadow */
+.ko-scene .mb-panel { box-shadow: none; }
+/* chapter and fits pictures drawn from the booth (KoePanels.jsx) */
+.ko-panel { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.ko-fits-art { background: #0a0a0a; }
+/* captions sit under their headings; the rooms after the booth close up */
+.ko-sh { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+.ko-fits { padding-top: 0; }
+.ko-map { padding-top: 0; }
+@media (min-width: 901px) { .ko-scene { padding-bottom: 116px; } .ko-fits { padding-bottom: 116px; } }
+
 /* phones: the capsule keeps speaking after it settles (Meter in Koe.jsx) and the film breathes inside it */
 .ko-pill { position: absolute; overflow: hidden; pointer-events: none; }
 .ko-sweep { position: absolute; top: 0; bottom: 0; left: 0; width: 2px; background: rgba(255, 255, 255, .85); box-shadow: 0 0 0 1px rgba(0, 0, 0, .2); animation: ko-sweep 6s linear infinite; }
@@ -44,7 +84,23 @@
   .ko-top { padding: 12px 14px; }
   .ko-script { padding: 20px 14px 6px; }
   .ko-presets { padding: 12px 14px 16px; }
+  .lv:not([data-calm]):has(.ko-v2[data-on]) .lv-name[data-gone] { top: 23px; bottom: auto; left: 20px; right: 84px; width: auto; }
+  .lv:not([data-calm]):has(.ko-v2[data-on]) .lv-name[data-gone] .lv-name-h { font-size: 44px; }
+  /* the pause disc docks on the settled pill's right end, on its own film */
+  .lv:not([data-calm]):has(.ko-v2[data-on]) .lv-pause { top: calc((76px + 47%) / 2 - 22px); bottom: auto; right: 32px; animation: ko-dock .5s cubic-bezier(.16, 1, .3, 1) both; }
+  /* the map's fields: one row that scrolls sideways (the next field peeks), never two rows in the pill */
+  .ko-tabs { flex-wrap: nowrap; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; scrollbar-width: none; border-radius: 999px; width: auto; }
+  .ko-tabs::-webkit-scrollbar { display: none; }
+  .ko-tabs .cr-tab { flex: none; white-space: nowrap; scroll-snap-align: start; }
 }
-@media (max-width: 900px) and (max-height: 700px) { .ko-v2 { top: calc(41% + 24px); } }
+@keyframes ko-dock { from { opacity: 0; transform: scale(.8); } to { opacity: 1; transform: none; } }
+@media (max-width: 900px) and (max-height: 700px) {
+  /* short phones: the ask comes straight under the headline so it clears the cookie card; the lede follows it */
+  .lv:not([data-calm]) .ko-v2 { top: calc(34% + 22px); display: flex; flex-direction: column; }
+  .lv:not([data-calm]) .ko-v2 > .lv-acts { order: 1; margin-top: 16px; }
+  .lv:not([data-calm]) .ko-v2 > .lv-lede { order: 2; margin-top: 14px; }
+  .lv:not([data-calm]) .ko-v2 > .lv-crumb { order: 3; }
+  .lv:not([data-calm]):has(.ko-v2[data-on]) .lv-pause { top: calc((76px + 34%) / 2 - 22px); }
+}
 @keyframes ko-breathe { from { transform: scale(1); } to { transform: scale(1.1) translateY(-2%); } }
 @media (prefers-reduced-motion: reduce) { .lv:has(.ko-v2) .lv-film-in > * { animation: none !important; } }
