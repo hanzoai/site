@@ -1,26 +1,29 @@
 'use client';
-/* Telemetry (v2, Cloud 4 chat). Archetype A, Launch: an editorial split Stage with the live collector → the six facts as
-   chapters over the collector's own config (the one dark room) → Get Telemetry with a config you assemble → closing band.
-   Ink, greys and white only.
+/* Telemetry (v2, Cloud 4 chat, motion-map build). Order: the split Stage with the live collector → the living graph
+   (signature, one dark room) → the six facts → the collector's own config, read fact by fact → Get Telemetry with a
+   config you assemble. No pinned chapter scene (MOTION-MAP rule 3). Ink, greys and white only.
    Persona: a platform engineer who wants one collector between apps and backends. Goal: open the repo.
-   CTA: "View on GitHub" (hero, ask bar, close). Metric: cta_click:telemetry.primary.
-   V2: 8/10 the live collector rising under an editorial split hero, the six facts scrolled through its own config file, a config you assemble and copy
-   Signature: read the collector's config as you scroll. A config file pins on the left; each fact lights the block that
-   does it (receivers, pipelines, batch, memory_limiter, the builder manifest, exporters) while the pipeline strip above
-   it lights the same stage.
+   CTA: "View on GitHub" (hero, close). Metric: cta_click:telemetry.primary.
+   V2: 7/10 motion-map build: living-graph signature second, five page-local entrances, pinned chapters removed
+   Signature: graph. The pipeline (traces, metrics, logs → gRPC / HTTP → OTLP in → collector → memory_limiter → batch →
+   OTLP out) settles like a physics graph; hover, focus or tap a node and its paths light and are named.
+   Entrances: domino, ink-spread, text-mask-film, magnet-gather, shutter (hero collector columns tip in like dominoes;
+   the graph room spreads in as an ink blot; the facts' heading plays a signal film through its letters; the config's
+   lines are pulled together from scattered; the close opens behind a shutter).
    Beyond: "Your config". Choose the signals, the protocols and the processors and the collector config writes itself,
    ready to copy, from the parts Hanzo names (OTLP over gRPC and HTTP, batching, a memory ceiling, OTLP out).
-   Motion: pinned chapters (signature, scroll) + the hero's running collector (idle, with Pause; hover a signal and only
-   that kind flows in) + each chapter's arrival (a span runs the strip to the lit stage and keeps running it until Pause,
-   the lit lines write in, a caret blinks 5 times) + the config builder (state) + the stage settle (scroll). Every word and link is Hanzo's;
-   the config is a standard OpenTelemetry collector config with placeholders, not a Hanzo default. */
+   Motion: the graph (signature: arrival, idle, pointer) + the hero's running collector (idle, with Pause; hover a signal
+   and only that kind flows in) + the config stepping through the six facts (time, with Pause; tap a key to read it) +
+   the config builder (state) + the five entrances. Every word and link is Hanzo's; the config is a standard
+   OpenTelemetry collector config with placeholders, not a Hanzo default. */
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView } from 'motion/react';
 import { EASE, Copy, useCalm } from '../../ui';
 import { useDemo, PauseBtn, useTick } from '../../v2/x-hamilton/Demo';
 import StageHero from '../../v2/StageHero';
-import PinScenes from '../../v2/x-hamilton/PinScenes';
 import Finale from '../../v2/Finale';
+import Graph from './telemetry/Graph';
+import { useEnter } from './telemetry/enter';
 import './Telemetry.css';
 
 const GH = 'https://github.com/hanzoai';
@@ -52,7 +55,7 @@ function Pipe() {
   return (
     <div className="l2-obj tl2-pipe" ref={ref}>
       <PauseBtn paused={paused} onClick={toggle} />
-      <div className="tl2-col" aria-hidden="true">
+      <div className="tl2-col" aria-hidden="true" style={{ '--i': 0 }}>
         <p className="tl2-k l2-mono">OTLP in · gRPC · HTTP</p>
         <div className="tl2-lane">
           <AnimatePresence>
@@ -62,7 +65,7 @@ function Pipe() {
         </div>
         <ul className="tl2-sig l2-mono" onPointerLeave={() => setOnly(-1)}>{['traces', 'metrics', 'logs'].map((n, i) => <li key={n} className={(only < 0 ? i === s.t % 3 : i === only) ? 'on' : ''} onPointerEnter={(e) => e.pointerType === 'mouse' && setOnly(i)}>{n}</li>)}</ul>
       </div>
-      <div className="tl2-col core" aria-hidden="true">
+      <div className="tl2-col core" aria-hidden="true" style={{ '--i': 1 }}>
         <p className="tl2-k l2-mono">collector</p>
         <div className="tl2-batch">{Array.from({ length: 6 }).map((_, i) => <i key={i} className={i < s.held ? 'on' : ''} />)}</div>
         <p className="tl2-sub l2-mono">batching</p>
@@ -71,7 +74,7 @@ function Pipe() {
           <i><b style={{ transform: `scaleX(${s.mem})` }} className={s.mem > 0.85 ? 'hot' : ''} /><em /></i>
         </div>
       </div>
-      <div className="tl2-col" aria-hidden="true">
+      <div className="tl2-col" aria-hidden="true" style={{ '--i': 2 }}>
         <p className="tl2-k l2-mono">OTLP out</p>
         <ul className="tl2-out">
           <AnimatePresence initial={false}>
@@ -116,9 +119,8 @@ function Config({ at, compact }) {
   const [held] = useContext(Hold);
   const box = useRef(null);
   const seen = useInView(box, { amount: 0.3 });
-  // after the arrival, a span keeps running the strip to the lit stage (idle), until Pause. Pinned (desktop) the picture
-  // is on screen whenever its chapter is, so the flow follows the chapter index; stacked (phone) it waits to be seen.
-  const flow = go && !held && (compact ? seen : true);
+  // after the arrival, a span keeps running the strip to the lit stage (idle) while the file is on screen, until Pause
+  const flow = go && !held && seen;
   const strip = useRef(null);
   const [to, setTo] = useState(`${((dest + 0.5) / STAGES.length) * 100}%`);
   useEffect(() => { // park the span under the lit stage itself (the pills wrap and differ in width)
@@ -140,7 +142,9 @@ function Config({ at, compact }) {
             const m = l.match(/^(\s*)(-\s)?([\w${}.-]+:)?(.*)$/);
             const on = f === at;
             const body = <>{m[1]}{m[2]}{m[3] && <b>{m[3]}</b>}{m[4]}{i === lastOn && <i className="tl2-caret" />}</>;
-            return <span key={(at === 4 ? 'b' : 'c') + i} className={'tl2-ln' + (on ? ' on' : '')}><em>{String(i + 1).padStart(2, ' ')}</em>{on
+            // magnet-gather: each line starts scattered (a fixed offset per line, the same on server and client)
+            const mg = { '--i': i, '--dx': `${((i * 37) % 11 - 5) * 16}px`, '--dy': `${((i * 53) % 9 - 4) * 12}px`, '--r': `${((i * 29) % 7 - 3) * 2}deg` };
+            return <span key={(at === 4 ? 'b' : 'c') + i} className={'tl2-ln' + (on ? ' on' : '')} style={mg}><em>{String(i + 1).padStart(2, ' ')}</em>{on
               ? <motion.span className="tl2-w" variants={{ a: { clipPath: 'inset(0 100% 0 0)' }, b: { clipPath: 'inset(0 0% 0 0)' } }} transition={{ duration: 0.5, delay: 0.5 + 0.08 * n++, ease: [0.16, 1, 0.3, 1] }}>{body}</motion.span>
               : body}{'\n'}</span>;
           })}
@@ -155,10 +159,100 @@ function Config({ at, compact }) {
   );
 }
 
-/* the chapter's own Pause (the visual beside it is decorative), the same switch as the hero's */
-function ChapterKey({ k }) {
+/* 2. The living graph (signature) in the one dark room. Entrance: ink-spread (an ink blot opens the room). */
+// the blot: 12 points round the centre at uneven radii, small then past the corners (same point count, so it morphs)
+const R = [1, 0.82, 1.1, 0.9, 1.05, 0.78, 1, 0.88, 1.12, 0.85, 0.96, 0.8];
+const blob = (s, cx, cy) => `polygon(${R.map((r, i) => { const a = (i / R.length) * Math.PI * 2; return `${(cx + Math.cos(a) * r * s).toFixed(1)}% ${(cy + Math.sin(a) * r * s * 1.4).toFixed(1)}%`; }).join(', ')})`;
+const INK = { '--b0': blob(4, 30, 45), '--b1': blob(190, 30, 45) };
+
+function GraphRoom() {
+  const [ref, inn] = useEnter(0.2);
   const [held, toggle] = useContext(Hold);
-  return <div className="tl2-kr"><p className="tl2-key l2-mono">{k}:</p><PauseBtn paused={held} onClick={toggle} className="tl2-kp" /></div>;
+  return (
+    <section className="l2-dark tl2-gsec" data-room="dark" aria-label="The collector's pipeline" ref={ref} data-in={inn} style={INK}>
+      <div className="l2-wrap"><Graph held={held} onHold={toggle} /></div>
+    </section>
+  );
+}
+
+/* 3. The six facts. Entrance: text-mask-film (a signal film plays through the heading's letters, then it settles). */
+function FilmHead({ text, inn }) {
+  // the film: rows of dashes running through the letters at different speeds (transform only)
+  const rows = Array.from({ length: 7 });
+  return (
+    <h2 className="l2-head tl2-fh" data-in={inn}>
+      <span className="tl2-fh-t">{text}</span>
+      <svg className="tl2-fh-film" aria-hidden="true" width="100%" height="1.15em">
+        <defs><clipPath id="tl2-fh-clip"><text x="0" y="50%" dominantBaseline="central">{text}</text></clipPath></defs>
+        <g clipPath="url(#tl2-fh-clip)">
+          <rect width="100%" height="100%" fill="#d4d4d4" />
+          {rows.map((_, i) => (
+            <g key={i} className="tl2-fh-row" style={{ '--s': `${1.1 + (i % 3) * 0.45}s`, '--d': `${-i * 0.3}s` }}>
+              {Array.from({ length: 14 }).map((__, k) => <rect key={k} x={k * 64 + (i % 2) * 22} y={`${(i / rows.length) * 100}%`} width={18 + ((i + k) % 4) * 10} height="14%" fill="#0a0a0a" />)}
+            </g>
+          ))}
+        </g>
+      </svg>
+    </h2>
+  );
+}
+
+function Facts() {
+  const [ref, inn] = useEnter(0.3);
+  return (
+    <section className="l2-sec tl2-facts" ref={ref}>
+      <div className="l2-wrap">
+        <FilmHead text="One hop you control" inn={inn} />
+        <ol className="tl2-fl">
+          {FACTS.map(([t, d, k], i) => (
+            <li key={t}>
+              <p className="tl2-fl-n l2-mono">{String(i + 1).padStart(2, '0')}</p>
+              <h3>{t}</h3>
+              <p>{d}</p>
+              <p className="tl2-key l2-mono">{k}:</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
+/* 4. The collector's config, read fact by fact: it steps through the six facts by itself (Pause), or tap a key.
+   Entrance: magnet-gather (the file's lines are pulled together from scattered). */
+function ConfigRoom() {
+  const [ref, inn] = useEnter(0.25);
+  const [held, toggle] = useContext(Hold);
+  const [at, setAt] = useState(0);
+  const [mine, setMine] = useState(false);
+  const [phone, setPhone] = useState(false);
+  const calm = useCalm();
+  const seen = useInView(ref, { amount: 0.3 });
+  useEffect(() => { const m = matchMedia('(max-width: 900px)'); const s = () => setPhone(m.matches); s(); m.addEventListener('change', s); return () => m.removeEventListener('change', s); }, []);
+  useTick(4800, seen && !held && !mine && !calm, () => setAt((a) => (a + 1) % FACTS.length));
+  return (
+    <section className="l2-sec tl2-cfg" ref={ref}>
+      <div className="l2-wrap tl2-mg" data-in={inn}>
+        <div className="tl2-cfg-keys" role="group" aria-label="config.yaml">
+          {FACTS.map(([t, , k], i) => <button key={k} type="button" aria-pressed={i === at} aria-label={t} onClick={() => { setMine(true); setAt(i); }} className="l2-mono">{k}</button>)}
+          <PauseBtn paused={held} onClick={toggle} className="tl2-cfg-pause" />
+        </div>
+        <p className="tl2-cfg-t">{FACTS[at][0]}</p>
+        <Config at={at} compact={phone} />
+      </div>
+    </section>
+  );
+}
+
+/* 5. The close. Entrance: shutter (bars close from the top and bottom, then open on it). */
+function Shutter({ children }) {
+  const [ref, inn] = useEnter(0.15);
+  return (
+    <div className="tl2-shut" ref={ref} data-in={inn}>
+      {children}
+      <i className="tl2-shut-b t" aria-hidden="true" /><i className="tl2-shut-b b" aria-hidden="true" />
+    </div>
+  );
 }
 
 const SIG = ['traces', 'metrics', 'logs'];
@@ -213,11 +307,16 @@ export default function Telemetry() {
   return (
     <Hold.Provider value={hold}>
     <main id="main" className="l2-page tl2">
+      {/* 1. Entrance: domino (the collector's three columns tip into place one after another) */}
       <StageHero look="split" kick="telemetry.hanzo.ai" title="Hanzo Telemetry" sub="The collector that sits between your app and wherever the data goes" acts={[['View on GitHub', GH]]}>
         <Pipe />
       </StageHero>
-      <PinScenes flip head="One hop you control" items={FACTS.map(([t, d, k]) => [t, d, <ChapterKey key="k" k={k} />])} visual={(at, p) => <Config at={at} compact={!p} />} />
-      <Finale name="Telemetry" head="Put it in front of your backend" ask={['View on GitHub', GH]} object={<YourConfig />} prompt="Read https://hanzo.ai/skill.md and use Hanzo Telemetry in my project." tag="OpenTelemetry ingest" />
+      <GraphRoom />
+      <Facts />
+      <ConfigRoom />
+      <Shutter>
+        <Finale name="Telemetry" head="Put it in front of your backend" ask={['View on GitHub', GH]} object={<YourConfig />} prompt="Read https://hanzo.ai/skill.md and use Hanzo Telemetry in my project." tag="OpenTelemetry ingest" />
+      </Shutter>
     </main>
     </Hold.Provider>
   );
