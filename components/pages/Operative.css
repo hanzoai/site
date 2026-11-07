@@ -247,3 +247,6 @@
 .xov-desk.h3 .xov-typed { max-width: 9ch; }
 .xov-read span { font-size: 13px; font-weight: 500; }
 @media (max-width: 900px) { .xov-win-p { display: none; } }
+
+.xov-card-h b { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.xov-rec { margin: 0 !important; font-size: 12px; letter-spacing: 0; vertical-align: middle; }
