@@ -5,9 +5,10 @@
    CTA: "Open Help Center" (https://hanzo.help), data-cta support.answer.1; metric: the one contact click.
    Signature: one-question. Screen 1 asks the h1's question with the search pill (free text, still answering as you
    type: each finished word, a space or 300ms, re-ranks the six ways and the best rises into the answer card, its
-   words marked). Enter or the arrow slides to screen 2: the six ways as the choices, ranked by your words, best
-   marked; arrow keys move, Enter or a tap picks one. The answer card on the right is the summary as it builds: your
-   words, the way, its one action. Back slides to screen 1. The demo still types "support ticket", then "uptime".
+   words marked). Under it, the six ways sit in Hanzo's order and light up
+   in place as your words match them (best outlined); Enter or the arrow focuses the best, arrow keys move, Enter or a
+   tap picks one. The answer card on the right is the summary as it builds: your
+   words, the way, its one action. The demo still types "support ticket", then "uptime".
    Entrances: 1 card-deal on the h1 (its words dealt from a deck at the line's end), 2 cursor-lens on the lede (a
    lens opens from the pointer and the words settle from magnified), 3 fold-out on the question screens (unfold from a
    top hinge), 4 tile-flip on the answer card (a grid of tiles flips in to form it), 5 tilt-3d-hover on the closing
@@ -94,7 +95,8 @@ function useEnter(gate = true, before) {
       el.setAttribute('data-in', '');
       io.disconnect();
     }, { threshold: 0.25 });
-    io.observe(el);
+    // watch the section, not the element: an element hidden by its own clip-path (the lens) never reads as on screen
+    io.observe(el.closest('section') || el);
     return () => io.disconnect();
   }, [gate]); // eslint-disable-line react-hooks/exhaustive-deps
   return ref;
@@ -116,7 +118,6 @@ export default function Support() {
   const [done, setDone] = useState(false); // the demo has played, or was stopped
   const [peek, setPeek] = useState(-1); // a way the pointer or focus is on
   const [pick, setPick] = useState(-1); // the way chosen on screen 2
-  const [step, setStep] = useState(0); // 0: your words, 1: the six ways
   const [hyd, setHyd] = useState(false);
   const go = useGo();
   const input = useRef(null);
@@ -178,7 +179,8 @@ export default function Support() {
   const subject = q.trim();
   // the summary: a way you point at; else the one you picked; else the best match; with words that match nothing, email
   const best = peek >= 0 ? peek : pick >= 0 ? pick : hit ? ranked[0].i : mine && typed ? 5 : 0;
-  const order = mine || hit ? ranked : DOORS.map((_, i) => ranked.find((r) => r.i === i));
+  // the six ways keep Hanzo's order; your words light the matches in place (nothing jumps while you type)
+  const order = DOORS.map((_, i) => ranked.find((r) => r.i === i));
 
   // the demo, once, after the headline has landed: type Hanzo's phrase, hold, clear, rest
   useEffect(() => {
@@ -214,13 +216,14 @@ export default function Support() {
   const playing = !mine && !done && !calm;
   const live = (mine && typed) || pick >= 0 ? DOORS[best].t : '';
 
-  // slide to the six ways; the best for your words takes focus (no scroll: the rail is clipped, not scrolled)
+  // Enter or the arrow: the best way for your words takes focus, right under the question
   const next = () => {
     take();
-    setDq(q); setPeek(-1); setStep(1);
-    requestAnimationFrame(() => ways.current[0]?.focus({ preventScroll: true }));
+    setDq(q); setPeek(-1);
+    const k = hit ? ranked[0].i : mine && typed ? 5 : 0;
+    requestAnimationFrame(() => ways.current[k]?.focus({ preventScroll: true }));
   };
-  const back = () => { setStep(0); setPeek(-1); requestAnimationFrame(() => input.current?.focus({ preventScroll: true })); };
+  const back = () => { setPeek(-1); requestAnimationFrame(() => input.current?.focus({ preventScroll: true })); };
   const choose = (i) => { setPick(i); setPeek(-1); requestAnimationFrame(() => btn.current?.focus({ preventScroll: true })); };
   const keys = (e, k) => {
     const n = DOORS.length;
@@ -241,11 +244,10 @@ export default function Support() {
 
           {/* the page's ask lives on the whole help-finder (both screens and the summary), never on a pane that swaps */}
           <div className="xsp-room" onPointerEnter={stop} onPointerLeave={() => setPeek(-1)} data-thumb="Open Help Center" data-href="https://hanzo.help">
-            <div ref={e3} className="xsp-ask xsp-fold" data-step={step}>
-              <div className="xsp-steps" aria-hidden="true"><i className="on" /><i className={step ? 'on' : ''} /></div>
+            <div ref={e3} className="xsp-ask xsp-fold">
               <div className="xsp-track">
-                <div className="xsp-rail" style={{ '--step': step }}>
-                  <div className="xsp-q xsp-q1" {...(hyd && step !== 0 ? { 'aria-hidden': true, inert: true } : {})}>
+                <div className="xsp-rail">
+                  <div className="xsp-q xsp-q1">
                     <form role="search" aria-label="Support" ref={form} className="xsp-search" onSubmit={(e) => { e.preventDefault(); next(); }}>
                       <label htmlFor="xsp-q" className="x-sr">{H1}</label>
                       <Lens size={24} />
@@ -262,8 +264,7 @@ export default function Support() {
                     </form>
                   </div>
 
-                  <div className="xsp-q xsp-q2" {...(hyd && step !== 1 ? { 'aria-hidden': true, inert: true } : {})}>
-                    <button type="button" className="xsp-back" aria-label="Back" onClick={back}><Arrow back /></button>
+                  <div className="xsp-q xsp-q2">
                     <ol className="xsp-ways" aria-label="Support">
                       {order.map(({ i, score }, k) => (
                         <motion.li key={DOORS[i].t} layout transition={{ duration: 0.3, ease: IO }}>

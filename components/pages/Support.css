@@ -27,9 +27,9 @@
 .xsp-steps i.on { background: var(--ink); }
 /* one screen at a time: the rail slides; it is clipped (never a scroll box, so focus cannot pull it), with room for rings */
 .xsp-track { overflow: clip; margin: -6px; }
-.xsp-rail { display: flex; transform: translateX(calc(var(--step, 0) * -100%)); transition: transform var(--d-slower) var(--e-io); }
+.xsp-rail { display: flex; flex-direction: column; gap: 10px; }
 .xsp-q { flex: 0 0 100%; min-width: 0; padding: 6px; transition: opacity var(--d-slow) var(--e-io); }
-.xsp-ask[data-step='1'] .xsp-q1, .xsp-ask[data-step='0'] .xsp-q2 { opacity: 0; }
+
 
 .xsp-search { display: flex; align-items: center; gap: 13px; height: 56px; padding: 0 6px 0 20px; border-radius: 999px; background: #fff; border: 1px solid var(--line); color: var(--ink2); transition: border-color var(--d-fast) var(--e-out), box-shadow var(--d-fast) var(--e-out); }
 @media (hover: hover) { .xsp-search:hover { border-color: rgba(0, 0, 0, .3); } }
@@ -96,7 +96,7 @@
   .xsp-room { grid-template-columns: minmax(0, 1fr); row-gap: 27px; }
   .xsp-ask, .xsp-answer { grid-column: 1 / -1; }
   .xsp-answer { padding: 24px 20px; border-radius: 24px; }
-  .xsp-way { padding: 10px 13px; font-size: 16px; }
+  .xsp-way { padding: 10px 12px; column-gap: 6px; font-size: 15px; }
 }
 
 /* the tiles of entrance 4 exist only while it can play */

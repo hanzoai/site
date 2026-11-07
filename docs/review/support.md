@@ -1,4 +1,6 @@
 # /support/: James-eye review
+
+Ready: 7 Nov 22:40, held up next to /api and /affiliate. The header ask holds (Try Hanzo, quiet) while the panel swaps; no hydration mismatch; the lede's lens entrance now plays; the six ways sit under the question in Hanzo's order and light in place (no hidden second screen, no reorder, no dead half-screen); the band's doors are one quiet row. taste/unique/parity OK (24/24, 6/6); 0 console errors, no overlap at 1470 and 375.
 Verdict: 7/10
 First complaint: "Why does the button up top keep changing? I'm not touching anything and it flips from Try Hanzo to a black Open Help Center and back. Now there are two black buttons fighting."
 
