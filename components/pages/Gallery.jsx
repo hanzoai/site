@@ -154,7 +154,7 @@ function Wall() {
   const step = (f) => setOpen((v) => { const n = typeof f === 'function' ? f(v) : f; if (n !== from) setStepped(true); return n; });
   const close = () => { if (stepped) setLit(open); setOpen(-1); };
   const [origin, setOrigin] = useState('50% 50%');
-  const gone = () => { const i = from; setFrom(-1); setStepped(false); document.getElementById('xga-f' + i)?.focus(); };
+  const gone = () => { setFrom(-1); setStepped(false); document.getElementById('xga-f' + lit)?.focus(); }; // focus lands on the template you closed on
   const openFrom = (i, el) => {
     const r = el.getBoundingClientRect(); // the viewer's box is centred in the screen: its origin is the frame's centre
     const w = Math.min(1100, innerWidth - 48), h = Math.min(innerHeight - 48, 640);
@@ -300,6 +300,7 @@ function Moves() {
             </li>
           ))}
         </ol>
+        <Settle from={0.94} lift={40}>
         <div className="xga-moves-obj" aria-hidden="true">
           <span className="xga-moves-bar"><i /><i /><i /><b className="x-mono">hanzo-apps/gallery</b></span>
           <AnimatePresence mode="wait" initial={false}>
@@ -309,6 +310,7 @@ function Moves() {
           </AnimatePresence>
           <span className="xga-moves-dots">{MOVES.map((m, i) => <i key={i} className={at === i ? 'on' : ''} />)}</span>
         </div>
+        </Settle>
       </div>
     </section>
   );

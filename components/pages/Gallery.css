@@ -208,8 +208,10 @@
   .xga .xga-mini .xga-mini-f { transform: none; height: 120px; overflow: hidden; }
   .xga .xga-mini-f .xga-r { zoom: .7; justify-content: flex-start; padding-top: 28px; }
 }
-/* the prompt box hugs its prompt */
-.xga-term-t { min-height: 0; padding: 28px; }
+/* the prompt box hugs its prompt; the room is short */
+.xga-term-t { min-height: 0; padding: 28px; font-size: clamp(16px, 1.5vw, 21px); }
+.xga-paste { padding: clamp(56px, 6vw, 88px) 0 !important; }
+.xga-term .x-copy { min-height: 44px; padding-inline: 14px; }
 
 /* the close: the dark room, with the wall in miniature */
 .xga-band-in { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 5fr); gap: 32px clamp(32px, 5vw, 96px); align-items: end; }

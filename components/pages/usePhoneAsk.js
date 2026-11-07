@@ -45,6 +45,7 @@ export default function usePhoneAsk() {
       const bar = document.querySelector('.x-ask'); // the shared slim bar, when it rises, is the solid one
       const barOn = !!bar && seen(bar) && +getComputedStyle(bar).opacity > 0.5;
       if (asks.length || barOn) H.dataset.pq = ''; else delete H.dataset.pq;
+      H.dataset.pqReady = ''; // from here the hook decides (the arrival default in usePhoneAsk.css lifts)
       if (!phone || !own || !label || !href || words(label) === words(btn.dataset.xAsk)) return;
       const past = own.getBoundingClientRect().bottom < 60;
       if (past !== swapped) {
@@ -62,7 +63,7 @@ export default function usePhoneAsk() {
     const timers = [120, 400, 1400, 2800].map((ms) => setTimeout(update, ms));
     return () => {
       clearTimeout(t); clearTimeout(t2); timers.forEach(clearTimeout); removeEventListener('scroll', onScroll);
-      delete H.dataset.pq;
+      delete H.dataset.pq; delete H.dataset.pqReady;
       if (btn && swapped) { btn.textContent = btn.dataset.xAsk; btn.setAttribute('href', btn.dataset.xHref); }
     };
   }, []);

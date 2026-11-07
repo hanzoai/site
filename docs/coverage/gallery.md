@@ -15,7 +15,7 @@ Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line
 - [x] No dead or self-looping button; n/a prices: no prices on the page
 - [x] Open copy questions for James listed, none decided
 
-Done here: one solid per screen at both widths (phones via `usePhoneAsk`, which outlines the header's "Try Hanzo" while the page's ask shows). "Browse the Gallery" is the one solid in the hero (`Cta thumb`, `gallery.hero`) and again only in the dark close; Documentation, Deploy to Cloud and View on GitHub are quiet or text links.
+Done here: one solid per screen at both widths, from the first paint: `usePhoneAsk.css` outlines the header's button in the server HTML on this route (measured outlined at 0, 250, 500 and 1,500 ms after load), and the hook keeps it outlined while the page's ask shows. "Browse the Gallery" is the one solid in the hero (`Cta thumb`, `gallery.hero`) and again only in the dark close; Documentation, Deploy to Cloud and View on GitHub are quiet or text links.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -37,7 +37,7 @@ Done here: the h1 cuts in at first paint and the Zen film and walking light move
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
-- [x] Sticky ask in the header after the hero, same label (desktop by the shared Ask; phones by `usePhoneAsk`: outlined while the page's ask shows, "Browse the Gallery" after it; no bottom bar)
+- [ ] Sticky ask in the header after the hero, same label: desktop yes (the shared Ask); phones keep "Try Hanzo" because "Browse the Gallery" does not fit the phone header unclipped (outlined while the page's ask shows, solid after); no bottom bar
 - [x] Copy button copies exactly the displayed text; failure never says Copied (kit `Copy`)
 - [x] `data-cta` and `data-thumb` on every primary
 
@@ -149,7 +149,7 @@ Done here: the agent prompt copies exactly "Read https://hanzo.ai/skill.md and u
 - n/a: Failed submit (no form)
 - [x] A thrown island does not blank the page (film failure leaves the black plaque and its words)
 
-Done here: qc with api.hanzo.ai blocked: 0 page errors, 0 console errors at 1470, 375 and 320 on warm loads. Critics saw an intermittent hydration warning on some cold dev loads, traced on other pages to the shared footer; not reproduced here.
+Done here: qc with api.hanzo.ai blocked: 0 page errors, 0 console errors at 1470, 375 and 320 on warm loads. An intermittent hydration warning (red "1 Issue" dev badge) shows on about 2 of 13 cold dev loads; critics on /kata and /gen traced it to the shared footer's `FooterHTML`, not this page's files.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary (gallery.hero, gallery.viewer, gallery.close)
