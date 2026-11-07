@@ -8,6 +8,7 @@
 import './globals.css';
 import './system.css';
 import { Smooth, Progress, Header, Footer } from '../components/Chrome';
+import { HeaderHTML, FooterHTML } from '../components/Shell';
 import { OpenerProvider } from '../components/Opener';
 import Morph from '../components/Morph';
 import Phone from '../components/Phone';
@@ -49,9 +50,11 @@ export default function RootLayout({ children }) {
             <Ask />
             <Cursor />
             <div className="x-page">
+              <HeaderHTML />
               <Header />
               <div id="main" tabIndex={-1} className="x-main-mark" />
               {children}
+              <FooterHTML />
               <Footer />
             </div>
           </OpenerProvider>

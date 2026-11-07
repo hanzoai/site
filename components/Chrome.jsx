@@ -3,8 +3,9 @@
    - Smooth: Lenis weighted scrolling, the site-wide reduced-motion policy (MotionConfig reducedMotion="user"),
      [data-off] on any <main> section that is off screen (pause your CSS loops with `[data-off] .x { animation-play-state: paused }`),
      and every new page starting at its top.
-   - Progress, Header, Footer: the scroll bar and Hanzo's own header and footer. Mark a dark section with
-     data-room="dark" and the header turns dark over it.
+   - Progress, Header, Footer: the scroll bar and the behaviour of Hanzo's own header and footer (their HTML is
+     rendered on the server by components/Shell.jsx, so it costs no JS). Mark a dark section with data-room="dark" and
+     the header turns dark over it.
    - Marquee: <Marquee items={[{ name, src, href }]} label="Trusted by" reverse /> an endless logo strip (it stands still
      under reduced motion and rests under the pointer or focus).
    - After every in-site navigation, focus moves to the new page's <main> h1 (tabindex -1, no ring, no scroll). */
@@ -13,7 +14,6 @@ import { usePathname } from 'next/navigation';
 import Lenis from 'lenis';
 import { motion, MotionConfig, useAnimationFrame, useInView, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform, useVelocity } from 'motion/react';
 import { animate, scroll } from 'motion';
-import C from '../content';
 import Nav from './Nav';
 import HeaderTools from './HeaderTools';
 import { onDomChange } from '../lib/domwatch';
@@ -67,9 +67,15 @@ export function Progress() {
   return <motion.div className="x-progress" style={{ scaleX }} aria-hidden="true" />;
 }
 
-/* Hanzo's own header, untouched; it gains its hairline once the page moves. */
+// the server-rendered shell (components/Shell.jsx), read lazily so children's effects can use it on mount
+const shell = (name) => ({ get current() { return typeof document === 'undefined' ? null : document.querySelector(`[data-x-shell="${name}"]`); } });
+const HEADER = shell('header');
+const FOOTER = shell('footer');
+
+/* Hanzo's own header (its HTML comes from the server, components/Shell.jsx): it gains its hairline once the page
+   moves, turns dark over dark rooms, and its menus and tools come alive. */
 export function Header() {
-  const ref = useRef(null);
+  const ref = HEADER;
   useEffect(() => {
     const h = ref.current?.querySelector('header');
     if (!h) return;
@@ -89,16 +95,15 @@ export function Header() {
   }, []);
   return (
     <>
-      <div ref={ref} style={{ display: 'contents' }} dangerouslySetInnerHTML={{ __html: C.header }} />
       <Nav headerRef={ref} />
       <HeaderTools headerRef={ref} />
     </>
   );
 }
 
-/* Hanzo's own footer, untouched; its giant wordmark rises into place as the page ends. */
+/* Hanzo's own footer (HTML from the server, components/Shell.jsx); its giant wordmark rises into place as the page ends. */
 export function Footer() {
-  const ref = useRef(null);
+  const ref = FOOTER;
   useEffect(() => {
     const f = ref.current?.querySelector('footer');
     if (!f || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -109,7 +114,7 @@ export function Footer() {
     const stop = scroll(animate(el, { transform: ['translateY(36%)', 'translateY(0%)'], opacity: [0.2, 1] }, { ease: 'linear' }), { target: f, offset: ['start end', 'end end'] });
     return () => stop && stop();
   }, []);
-  return <div ref={ref} style={{ display: 'contents' }} dangerouslySetInnerHTML={{ __html: C.footer }} />;
+  return null;
 }
 
 const wrap = (min, max, v) => { const r = max - min; return ((((v - min) % r) + r) % r) + min; };
