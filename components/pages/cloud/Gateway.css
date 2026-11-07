@@ -195,6 +195,9 @@
   .gw-rail-end.r { justify-self: end; }
   /* the gateway card: the pause sits in the lane's top-left corner, the request card keeps clear of the gate */
   .gw-pause { right: auto; left: 24px; }
+  .gw-chip { white-space: nowrap; flex: none; }
+  .gw-say { margin-bottom: 0; padding-bottom: 32px; }
+  .gw-rail-dot em { padding: 7px 10px; font-size: 12px; }
   .gw-lane { --cw: 262px; }
   .gw-req { margin-left: -14px; }
   .gw-proj-t { padding-bottom: 0; border-bottom: 0; }
@@ -210,5 +213,8 @@
   .gw-rail-mov, .gw-rail-dot, .gw-rail-in, .gw-rail-out { animation: none; }
   .gw-rail-mov { transform: translateX(100%); }
   .gw-rail-dot { transform: translate(-100%, -50%); }
-  .gw-rail-in { opacity: 0; }
+  .gw-rail-in { opacity: 0; visibility: hidden; }
 }
+/* the console's hover tips are hidden, not merely transparent, until they show */
+.gw .cf-tip { visibility: hidden; }
+.gw .cf-con-ico:hover .cf-tip, .gw .cf-con-ico:focus-visible .cf-tip { visibility: visible; }

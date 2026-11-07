@@ -132,6 +132,7 @@ export default function FnUses({ children }) {
     if (open < 0 || !d) return;
     if (!d.open) d.showModal();
     const b = box.current, r = from.current;
+    b?.focus({ preventScroll: true }); // the sheet itself takes focus (no ring on a button the visitor did not reach)
     if (!b || !r || calm) return;
     const W = innerWidth, H = innerHeight;
     b.animate([
@@ -221,7 +222,7 @@ export default function FnUses({ children }) {
 
       <dialog ref={dlg} className="fn-uc-sheet" aria-labelledby="fn-uc-sh-h" onCancel={(e) => { e.preventDefault(); close(); }}>
         {open >= 0 && (
-          <div className="fn-uc-sh" ref={box} data-live={calm ? undefined : ''}>
+          <div className="fn-uc-sh" ref={box} tabIndex={-1} data-live={calm ? undefined : ''}>
             <div className="fn-uc-sh-in kn-wrap">
               <div className="fn-uc-sh-bar">
                 <span className="fn-uc-sh-n kn-fig">{pad(open + 1)} / {pad(n)}</span>

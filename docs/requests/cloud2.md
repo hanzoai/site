@@ -26,6 +26,12 @@ reduced motion it renders a transform on the server and none in the browser; own
 inputs. A screenshot taken before React hydrates (the "0 s" frame) therefore causes a hydration mismatch of its own, which is
 what most critics saw as the badge. Take screenshots with `{ caret: 'initial' }`, or after hydration, before counting it.
 
+## 1b. `@property --w` in `public/hanzo.css` (owner: shared styles)
+Found by the /extension fixer: `public/hanzo.css` registers `@property --w`, so any page that sets `--w` inline and uses it in
+`scaleX(var(--w))` or `width: var(--w)` silently gets the registered initial value: every bar renders the same length. /extension
+now uses `--xw`, and /help uses per-bar widths in CSS. Other pages that use `--w` this way may have the same hidden bug. Asked for:
+rename the registered property, or list it as reserved.
+
 ## 2. Header ask (shared chrome)
 Critics of /functions, /gui, /guard, /gateway and /flow asked for one solid fill on the phone's first screen: the header's
 "Try Hanzo" stays solid beside each page's own hero ask. Same ask as `docs/review/_shared.md` section 1: let a page name its

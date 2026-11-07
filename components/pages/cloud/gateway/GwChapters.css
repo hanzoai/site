@@ -13,7 +13,7 @@
 .gwc-t > span { display: block; padding-bottom: .08em; margin-bottom: -.08em; }
 .js .gwc-t > span { clip-path: inset(0 0 100% 0); transition: clip-path .95s var(--e); }
 .js .gwc-art[data-on] .gwc-t > span { clip-path: inset(0 0 0 0); transition-delay: .12s; }
-.gwc-n { margin: 12px 0 20px; color: #737373; }
+.gwc .gwc-n { margin: 14px 0 22px; color: #737373; }
 .gwc-d { margin: 0; font-size: 16px; line-height: 1.6; color: var(--soft); text-wrap: pretty; max-width: 46ch; }
 
 /* the dots: the title shows on hover or focus, a press answers, a click jumps */
@@ -22,12 +22,12 @@
 .gwc-dots button:active { transform: scale(.9); }
 .gwc-dots i { width: 8px; height: 8px; border-radius: 999px; background: rgba(0, 0, 0, .16); transition: transform .3s var(--e), background-color .15s cubic-bezier(0, 0, .2, 1); }
 .gwc-dots button[aria-current] i { background: #0a0a0a; transform: scale(1.5); }
-.gwc-tip { position: absolute; left: 50%; bottom: calc(100% + 2px); padding: 7px 10px; border-radius: 8px; background: #0a0a0a; color: #fafafa; font: 500 12px/1.2 var(--mono); white-space: nowrap; opacity: 0; transform: translate(-50%, 6px); pointer-events: none; transition: opacity .15s cubic-bezier(0, 0, .2, 1), transform .3s var(--e); z-index: 2; }
+.gwc-tip { position: absolute; left: 50%; bottom: calc(100% + 2px); padding: 7px 10px; border-radius: 8px; background: #0a0a0a; color: #fafafa; font: 500 12px/1.2 var(--mono); white-space: nowrap; opacity: 0; visibility: hidden; transform: translate(-50%, 6px); pointer-events: none; transition: opacity .15s cubic-bezier(0, 0, .2, 1), transform .3s var(--e), visibility 0s .15s; z-index: 2; }
 .gwc-dots button:focus-visible { outline: 2px solid #0a0a0a; outline-offset: -4px; }
-.gwc-dots button:focus-visible .gwc-tip { opacity: 1; transform: translate(-50%, 0); }
+.gwc-dots button:focus-visible .gwc-tip { opacity: 1; visibility: visible; transform: translate(-50%, 0); transition-delay: 0s; }
 @media (hover: hover) {
   .gwc-dots button:hover i { background: #525252; transform: scale(1.35); }
-  .gwc-dots button:hover .gwc-tip { opacity: 1; transform: translate(-50%, 0); }
+  .gwc-dots button:hover .gwc-tip { opacity: 1; visibility: visible; transform: translate(-50%, 0); transition-delay: 0s; }
 }
 
 /* phone: one short scene sticks under the header and swaps; the words scroll beneath it */
