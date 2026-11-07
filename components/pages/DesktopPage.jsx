@@ -107,7 +107,7 @@ function Window({ os }) {
         </button>
         {os === 'mac' && <span className="dk-lights" aria-hidden="true"><i /><i /><i /></span>}
         {os === 'win' && <span className="dk-appi" aria-hidden="true"><Mark size={14} /></span>}
-        <span className="dk-name"><b>Desktop</b> — Hanzo</span>
+        <span className="dk-name">Desktop — Hanzo</span>
         <nav className="dk-tabs" aria-label="Hanzo apps">
           <A to="/desktop" className="on">Desktop</A><A to="/cli">CLI</A><A to="/playground">Playground</A><A to="/cloud/api-keys">API Keys</A>
         </nav>
@@ -188,7 +188,7 @@ function Hero({ os, setOs, mine }) {
               </button>
             ))}
           </div>
-          <p className="dk-note">Example project. Every name in it is one you would give your own. <A to="/home">Open in the console</A></p>
+          <p className="dk-note"><span>Example project. Every name in it is one you would give your own.</span> <A to="/home">Open in the console</A></p>
         </div>
       </div>
     </section>

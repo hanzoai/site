@@ -31,8 +31,7 @@
 .dk-ctl, .dk-close { order: 6; }
 .dk-lights { display: flex; gap: 8px; }
 .dk-lights i { width: 12px; height: 12px; border-radius: 50%; background: #d4d4d4; }
-.dk-name { font-size: 14px; color: #737373; white-space: nowrap; }
-.dk-name b { color: #0a0a0a; font-weight: 600; }
+.dk-name { font-size: 14px; font-weight: 500; color: #0a0a0a; white-space: nowrap; }
 .dk-tabs { position: absolute; left: 50%; top: 50%; translate: -50% -50%; display: flex; gap: 2px; padding: 3px; border-radius: 12px; background: #ededed; }
 .dk-tabs a { display: block; height: 30px; padding: 0 14px; border-radius: 9px; font: 500 13px/30px var(--sans); color: #525252; text-decoration: none; white-space: nowrap; }
 .dk-tabs a.on { background: #fff; color: #0a0a0a; box-shadow: 0 0 0 1px rgba(0, 0, 0, .08); }
