@@ -53,6 +53,8 @@
   --shadow-2: 0 24px 48px -28px rgba(0, 0, 0, .28);
   --shadow-pop: 0 40px 100px -30px rgba(0, 0, 0, .35);
 
+  /* the sticky header's height: use top: var(--x-top) for your own sticky parts */
+  --x-top: 60px;
   /* layers */
   --x-z-ask: 70; --x-z-sheet: 985; --x-z-skip: 2147483001;
 }
@@ -73,10 +75,18 @@
   --btn-solid-bg: #0a0a0b; --btn-solid-ink: #fff; --btn-solid-hover: #2c2c2e;
 }
 
+/* ---------- scrolling: anchors and focused elements never land under the header ---------- */
+html { scroll-padding-top: calc(var(--x-top) + 16px); }
+html.lenis, html.lenis body { scroll-snap-type: none !important; } /* hanzo.css proximity snap fights Lenis */
+
 /* ---------- focus: one ring, in the room's ink ---------- */
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 :focus:not(:focus-visible) { outline: none; }
 header[data-x-dark='true'] { --focus: #f5f5f7; }
+/* Hanzo's atomic classes (_outlineWidth-0px …) would hide the ring in its header and on ported pages */
+header[data-slot=masthead] :focus-visible, main.x-ported :focus-visible, footer :focus-visible { outline: 2px solid var(--focus) !important; outline-offset: 2px !important; }
+/* after a page change focus lands on the h1 (components/Chrome.jsx): no ring for that programmatic landing */
+main h1[tabindex='-1']:focus { outline: none; }
 
 /* ---------- skip link: the first tab stop ---------- */
 .x-skip { position: fixed; left: 12px; top: 10px; z-index: var(--x-z-skip); padding: 12px 18px; border-radius: var(--x-radius-pill); background: var(--hz-950); color: #fff; font: 500 14px/1 var(--sans); text-decoration: none; transform: translateY(-160%); transition: transform var(--dur-hover) var(--ease-calm); }
@@ -86,9 +96,10 @@ main:focus, .x-main-mark:focus { outline: none; }
 
 /* ---------- buttons (.x-btn, Btn, Go) ---------- */
 .x-btn { position: relative; transition: background-color var(--dur-hover) var(--ease-soft), border-color var(--dur-hover) var(--ease-soft), color var(--dur-hover) var(--ease-soft), transform var(--dur-press) var(--ease-out-expo), box-shadow var(--dur-hover) var(--ease-soft); -webkit-tap-highlight-color: transparent; }
-.x-btn:not(.solid):hover { box-shadow: inset 0 0 0 100vmax rgba(128, 128, 128, .1); } /* a grey veil darkens light buttons and lifts dark ones, whatever colours a page gave them */
+/* hover on an outline button: a grey veil darkens light buttons and lifts dark ones, whatever colours a page gave them */
+@media (hover: hover) { .x-btn:not(.solid):hover { box-shadow: inset 0 0 0 100vmax rgba(128, 128, 128, .1); } }
 .x-btn.solid { background-color: var(--btn-solid-bg); border-color: var(--btn-solid-bg); color: var(--btn-solid-ink); }
-.x-btn.solid:hover { background-color: var(--btn-solid-hover); border-color: var(--btn-solid-hover); }
+@media (hover: hover) { .x-btn.solid:hover { background-color: var(--btn-solid-hover); border-color: var(--btn-solid-hover); } }
 .x-btn:active { transform: scale(.98); transition-duration: 0s; }
 /* selected: the choice you made reads inverted, not tinted */
 .x-btn[aria-pressed='true'], .x-btn[aria-current='page'], .x-btn[data-selected] { background-color: var(--room-ink); border-color: var(--room-ink); color: var(--room-bg); }
@@ -103,7 +114,7 @@ main:focus, .x-main-mark:focus { outline: none; }
 
 /* round icon buttons, copy chips, the arrow link */
 .x-round, .x-copy, .x-replay { transition: background-color var(--dur-hover) var(--ease-soft), border-color var(--dur-hover) var(--ease-soft), color var(--dur-hover) var(--ease-soft), transform var(--dur-press) var(--ease-out-expo); }
-.x-round:hover, .x-copy:hover { box-shadow: inset 0 0 0 100vmax rgba(128, 128, 128, .1); }
+@media (hover: hover) { .x-round:hover, .x-copy:hover { box-shadow: inset 0 0 0 100vmax rgba(128, 128, 128, .1); } }
 .x-round:active, .x-copy:active, .x-replay:active { transform: scale(.94); transition-duration: 0s; }
 .x-round:disabled, .x-round[aria-disabled='true'] { opacity: .4; cursor: not-allowed; transform: none; }
 .x-arrow { transition: transform var(--dur-press) var(--ease-out-expo); }
@@ -113,7 +124,8 @@ main:focus, .x-main-mark:focus { outline: none; }
 /* ---------- text links ---------- */
 /* .x-link: an underline that draws in from the left on hover, and stays for the page you are on */
 .x-link { color: inherit; text-decoration: none; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .35s var(--ease-out-expo), color var(--dur-hover); padding-bottom: 1px; }
-.x-link:hover, .x-link:focus-visible, .x-link[aria-current='page'] { background-size: 100% 1px; }
+@media (hover: hover) { .x-link:hover { background-size: 100% 1px; } }
+.x-link:focus-visible, .x-link[aria-current='page'] { background-size: 100% 1px; }
 .x-link:active { transform: translateY(1px); display: inline-block; }
 .x-link[aria-disabled='true'] { color: var(--room-faint); pointer-events: none; }
 
@@ -137,7 +149,7 @@ main:focus, .x-main-mark:focus { outline: none; }
 .x-tablist { position: relative; display: inline-flex; gap: 2px; padding: 4px; border-radius: var(--x-radius-pill); background: var(--room-fill); max-width: 100%; overflow-x: auto; scrollbar-width: none; }
 .x-tablist::-webkit-scrollbar { display: none; }
 .x-tab { position: relative; flex: none; height: 36px; padding: 0 16px; border: 0; border-radius: var(--x-radius-pill); background: none; color: var(--room-soft); font: 500 14px/1 var(--sans); cursor: pointer; white-space: nowrap; transition: color var(--dur-hover) var(--ease-soft), transform var(--dur-press) var(--ease-out-expo); -webkit-tap-highlight-color: transparent; }
-.x-tab:hover { color: var(--room-ink); }
+@media (hover: hover) { .x-tab:hover { color: var(--room-ink); } }
 .x-tab:active { transform: scale(.97); transition-duration: 0s; }
 .x-tab[aria-selected='true'] { color: var(--room-ink); }
 .x-tab:disabled, .x-tab[aria-disabled='true'] { color: var(--room-faint); opacity: .5; cursor: not-allowed; }
@@ -147,6 +159,12 @@ main:focus, .x-main-mark:focus { outline: none; }
 [data-room=dark] .x-tab-pill { box-shadow: 0 0 0 1px rgba(255, 255, 255, .1); }
 .x-tablist.lg .x-tab { height: 44px; padding: 0 20px; font-size: 15px; }
 @media (pointer: coarse) { .x-tab { min-height: 44px; } }
+
+/* ---------- touch: 44 px targets for small controls, without moving a pixel ---------- */
+@media (pointer: coarse) {
+  .x-btn.sm, .x-copy, .x-round, .x-replay, .x-arrow, .x-link { position: relative; touch-action: manipulation; }
+  .x-btn.sm::before, .x-copy::before, .x-replay::before { content: ''; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%); }
+}
 [role=tabpanel]:focus-visible { outline-offset: 8px; border-radius: 16px; }
 
 /* ---------- sheets (kit <Sheet>) ---------- */
@@ -158,7 +176,7 @@ main:focus, .x-main-mark:focus { outline: none; }
 .x-sheet2-head h2 { margin: 0; font-size: clamp(24px, 2.4vw, 32px); font-weight: 560; letter-spacing: -.025em; line-height: 1.1; }
 .x-sheet2-kick { display: block; margin: 0 0 10px; font: 500 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--room-faint); }
 .x-sheet2-x { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--room-line); background: var(--room-raised); color: var(--room-ink); display: grid; place-items: center; cursor: pointer; transition: background-color var(--dur-hover), transform var(--dur-press) var(--ease-out-expo); }
-.x-sheet2-x:hover { background: var(--room-fill-strong); }
+@media (hover: hover) { .x-sheet2-x:hover { background: var(--room-fill-strong); } }
 .x-sheet2-x:active { transform: scale(.94); }
 .x-sheet2-body { flex: 1; min-height: 0; overflow-y: auto; padding: 0 28px 40px; overscroll-behavior: contain; }
 @media (max-width: 700px) {
@@ -204,7 +222,7 @@ main:focus, .x-main-mark:focus { outline: none; }
 .x-input2 { height: 48px; padding: 0 16px; border-radius: 14px; border: 1px solid var(--room-line-strong); background: var(--room-raised); color: var(--room-ink); font: 400 16px/1.2 var(--sans); transition: border-color var(--dur-hover), box-shadow var(--dur-hover); -webkit-appearance: none; appearance: none; }
 textarea.x-input2 { height: auto; min-height: 120px; padding: 14px 16px; resize: vertical; line-height: 1.5; }
 .x-input2::placeholder { color: var(--room-faint); }
-.x-input2:hover { border-color: var(--room-soft); }
+@media (hover: hover) { .x-input2:hover { border-color: var(--room-soft); } }
 .x-input2:focus-visible { outline: none; border-color: var(--room-ink); box-shadow: 0 0 0 1px var(--room-ink); }
 .x-input2[aria-invalid='true'] { border-color: var(--room-ink); border-style: dashed; }
 .x-input2:disabled { background: var(--room-fill); color: var(--room-faint); cursor: not-allowed; }
@@ -221,26 +239,26 @@ textarea.x-input2 { height: auto; min-height: 120px; padding: 14px 16px; resize:
 
 /* ---------- Hanzo's header: its ask never fades, and it steps back while the ask bar carries the ask ---------- */
 header[data-slot=masthead] a[href='https://hanzo.ai/signup'] { transition: background-color var(--dur-hover) var(--ease-soft), color var(--dur-hover) var(--ease-soft), box-shadow var(--dur-hover) var(--ease-soft), transform var(--dur-press) var(--ease-out-expo); }
-header[data-slot=masthead] a[href='https://hanzo.ai/signup']:hover { opacity: 1 !important; background-color: color-mix(in srgb, var(--foreground) 84%, var(--background)); }
+@media (hover: hover) { header[data-slot=masthead] a[href='https://hanzo.ai/signup']:hover { opacity: 1 !important; background-color: color-mix(in srgb, var(--foreground) 84%, var(--background)); } }
 header[data-slot=masthead] a[href='https://hanzo.ai/signup']:active, header[data-slot=masthead] :is(button, a):active { transform: scale(.97); }
 html[data-ask=on] header[data-slot=masthead] a[href='https://hanzo.ai/signup'] { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
-html[data-ask=on] header[data-slot=masthead] a[href='https://hanzo.ai/signup']:hover { background-color: var(--hover, rgba(0, 0, 0, .05)); }
+@media (hover: hover) { html[data-ask=on] header[data-slot=masthead] a[href='https://hanzo.ai/signup']:hover { background-color: var(--hover, rgba(0, 0, 0, .05)); } }
 
 /* ---------- the ask bar (components/Ask.jsx): one solid ask, after the hero, on every page and width ---------- */
 .x-ask { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom)); z-index: var(--x-z-ask); display: flex; align-items: center; gap: 6px; padding: 6px 6px 6px 18px; border-radius: var(--x-radius-pill); background: var(--room-raised); color: var(--room-ink); border: 1px solid var(--room-line); box-shadow: 0 18px 50px -18px rgba(0, 0, 0, .35), 0 2px 6px rgba(0, 0, 0, .06); translate: -50% 0; max-width: calc(100vw - 32px); }
 .x-ask[data-tone=dark] { --room-raised: #1c1c1e; --room-ink: #f5f5f7; --room-soft: #a1a1a6; --room-line: rgba(255, 255, 255, .14); --room-fill-strong: rgba(255, 255, 255, .12); --btn-solid-bg: #f5f5f7; --btn-solid-ink: #0a0a0b; --btn-solid-hover: #fff; --focus: #f5f5f7; box-shadow: 0 18px 50px -18px rgba(0, 0, 0, .7), 0 0 0 1px rgba(255, 255, 255, .04); }
 .x-ask-name { border: 0; background: none; color: inherit; cursor: pointer; padding: 0; display: flex; align-items: center; gap: 9px; margin-right: 10px; font: 560 14px/1 var(--sans); letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 30ch; }
 .x-ask-name svg { flex: none; transition: transform .35s var(--ease-out-expo); }
-.x-ask-name:hover svg { transform: translateY(-2px); }
+@media (hover: hover) { .x-ask-name:hover svg { transform: translateY(-2px); } }
 .x-ask-name span { overflow: hidden; text-overflow: ellipsis; }
 .x-ask-s { flex: none; width: 40px; height: 40px; border-radius: 50%; border: 0; background: none; color: var(--room-soft); display: grid; place-items: center; cursor: pointer; transition: background-color var(--dur-hover), color var(--dur-hover), transform var(--dur-press) var(--ease-out-expo); }
-.x-ask-s:hover { background: var(--room-fill-strong); color: var(--room-ink); }
+@media (hover: hover) { .x-ask-s:hover { background: var(--room-fill-strong); color: var(--room-ink); } }
 .x-ask-s:active { transform: scale(.92); }
 .x-ask-a { flex: none; display: inline-flex; align-items: center; gap: 10px; height: 40px; padding: 0 16px 0 20px; border-radius: var(--x-radius-pill); background: var(--btn-solid-bg); color: var(--btn-solid-ink); font: 560 14.5px/1 var(--sans); text-decoration: none; white-space: nowrap; transition: background-color var(--dur-hover) var(--ease-soft), transform var(--dur-press) var(--ease-out-expo); }
-.x-ask-a:hover { background: var(--btn-solid-hover); }
+@media (hover: hover) { .x-ask-a:hover { background: var(--btn-solid-hover); } }
 .x-ask-a:active { transform: scale(.98); transition-duration: 0s; }
 .x-ask-a i { font-style: normal; display: inline-block; transition: transform .35s var(--ease-out-expo); }
-.x-ask-a:hover i { transform: translateX(3px); }
+@media (hover: hover) { .x-ask-a:hover i { transform: translateX(3px); } }
 .x-ask-note { margin-left: 4px; margin-right: 8px; font-size: 12px; color: var(--room-faint); white-space: nowrap; }
 @media (max-width: 900px) {
   /* phones: a full-width bar under the thumb, 52 px targets */

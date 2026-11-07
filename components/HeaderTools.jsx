@@ -9,7 +9,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence, useDragControls } from 'motion/react';
-import { LOGIN, LANGS, RTL, SEARCH, COOKIES } from '../lib/header';
+import { LOGIN, LANGS, SEARCH, COOKIES } from '../lib/header';
 
 const EASE = [0.16, 1, 0.3, 1];
 const UP = { API: 1, CLI: 1, DNS: 1, HSM: 1, IAM: 1, IDE: 1, KMS: 1, MCP: 1, MQ: 1, UI: 1, GUI: 1, S3: 1, ZAP: 1, IDV: 1, SDKS: 'SDKs', O11Y: 'O11y' };
@@ -231,10 +231,11 @@ export default function HeaderTools({ headerRef }) {
   useEffect(() => {
     try { const l = localStorage.getItem('hz-lang'); if (l) setLang(l); } catch {}
   }, []);
+  // the content is English, so <html lang="en" dir="ltr"> stays truthful whatever is chosen (PLAN 2.2): the choice is
+  // remembered and shown on the button, and read by Hanzo's app when you go there
   useEffect(() => {
-    const base = lang.split('-')[0];
-    document.documentElement.lang = lang;
-    document.documentElement.dir = RTL.has(base) ? 'rtl' : 'ltr';
+    document.documentElement.lang = 'en';
+    document.documentElement.dir = 'ltr';
   }, [lang]);
 
   useEffect(() => {
