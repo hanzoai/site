@@ -1,42 +1,29 @@
-# /referral — James-eye review
+# /referral: James-eye review
 
-Reviewed: main, page files at `4b53974` (re-walked after the site-wide palette recolour of 14:29; first review at `3a5cb5f`, 5/10). Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
+Verdict: 6.5/10
+First complaint: "It's the same thing three times. The seven sites in the card, then again huge in the strip, then again in the drawing, and the bottom box just repeats the sentences I already read. One thing in, one thing out, not the same thing over and over."
 
-Note (7 Nov 14:12): a hydration error seen in the first walks came from the shared shell and is gone on main; it is not counted against this page. Text is now legible with JavaScript off (shared fix at 14:05, re-checked).
-
-Verdict: 5/10 (scale fails; no card)
-
-What changed: the palette recolour took the lime out (0 UI hues measured). Nothing else on the page changed: the eyebrow, the icon boxes and the fading Copy are still there.
-
-First complaint: "That second screen is just giant words, LinkedIn, Facebook, Reddit, all the same huge size, nothing small anywhere. And there's still a label on top of the headline."
-
-**Cap: part card (MASTER section 6).** There is no `docs/coverage/referral.md`. Capped at 7 until the card is copied from `docs/coverage/_TEMPLATE.md` with 18 `Done here:` lines true on the page. The shared desktop ask bar floats over content (site-wide, see `_shared.md`); not counted against this page.
-
-**Scale (MASTER 3.1, fail):** the rails screen holds about 25 words at 128px ("LinkedIn", "Facebook", "Bluesky", "Reddit", "Hacker News" …) and nothing medium or small: everything big at once (52px on the phone, same effect). Fix: one rail at display size that grows as it passes the centre, the other at 26–32px, or one big word at a time.
+Walked moving at 1470x801 and 375x812 (cookie bar dismissed, nothing submitted). Parity: `OK text 20/20 links 3/3`. Console: 0 errors. CLS 0.0004 desktop, 0.0002 phone (only the hero rider ring, ~0 each). The h1 box does not move while loading (159,223 to 159,223 desktop; 16,84 to 16,84 phone).
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** It reads: "Bring a builder to Hanzo." and Hanzo's line, "Get your link", beside hanzo.ai's own referral card. But the card is small and nearly still: after arrival the first screen changes by 0.2% (a few dots moving in the counts). It does not feel alive.
-2. **One in, one out?** Partly. The display-size rails ("Referred → Pending → Qualified", the ways to share) run past in opposite directions, which is a good moment. "How it works" is a row of four boxes. The dark room compares referral and affiliate side by side.
-3. **A real object in every section?** Hero card and rails, yes. "How it works" is icons and sentences.
-4. **One ask, sticky after the hero?** Yes on desktop: a floating pill carries "Get your link" after the hero and the header's "Try Hanzo" turns outlined. On the phone the header's solid "Try Hanzo" shows beside the pill.
-5. **Every hover and press answers?** "Get your link" answers on hover; "Sign in" does not. **"Copy" only fades on hover** (a banned tell); it does press.
-6. **Overlap, font swap, layout shift?** None; layout shift 0.
-7. **Which reference, and is its motion there?** grubogrubo (big type rails, playful) and a product-card hero. The rails are there; the card is too small to carry the first screen.
-8. **Different from its neighbours?** Yes: the rails are its own.
-9. **All 18 parts covered?** See below. No `docs/coverage/referral.md`.
-10. **Banned tells?** Yes:
-    - Eyebrow above the h1 ("• REFERRALS", now a grey dot, mono caps).
-    - Icon boxes in a row ("How it works": four icons in rounded boxes with a sentence each).
-    - A button that fades on hover ("Copy").
-11. **Copy untouched?** Yes as measured: parity 20/20 text, 3/3 links.
 
-## Missing from the 18 parts (PLAN-COMPONENTS 2.1–2.18, measured)
-- **2.8 Button states:** "Copy" hover is opacity only.
-- **2.4:** two solid buttons after the hero on the phone; 0 `data-cta`.
+1. **Sells in 5 s, moves in 1 s?** Yes. "Bring a builder to Hanzo." at 52px (40px phone) with the lede and "Get your link" all inside the first screen on both sizes. Within a second the share chips start lighting in turn and the card rises; a ring drops onto Referred, Pending, Qualified over ~5 s. Good first screen.
+2. **One in, one out, or a document?** Half. Hero, rails, How it works are each one idea. The dark room is a document: a two-column definition list whose rows are the headline sentence and the How-it-works sentences again, word for word. The page ends there and drops straight into the footer, no closing ask.
+3. **Real visual object in every section?** Hero: the referral card (yes). Rails: type as object (yes). How: a self-drawing SVG stage that steps 01 to 04 on its own and rests (yes, best part of the page). Dark room: no object, text rows only (fails).
+4. **One ask in the sticky header, nothing floating; scale rhythm?** Desktop yes: the header's quiet "Try Hanzo" becomes solid "Get your link" once the hero ask leaves view, one solid fill per screen. Phone no: the header carries a solid "Try Hanzo" from the first screen, so the first screen has two solid fills with two different asks, and further down a "Get your link" bottom bar appears too (three asks in two wordings on one walk; see `img/referral-phone-asks.jpg`). Scale has rhythm: 52 h1, 84 rail line with 26 and 17 rails, 21 steps, 44 dark heading.
+5. **Every hover and press answers, no jumps?** Yes. Primary darkens to graphite and presses to 0.98; Sign in border firms; Copy and Pause fill ink; step titles slide 6px; dark rows fill white 5%; "Affiliates" arrow moves 4px; press is scale or 1px, no layout jump. The Copy button is `aria-disabled` and only nudges the sign-in line, which is honest.
+6. **Overlap, font swap, layout shift?** No shift or swap. One small overlap: the "builders on their way" dots ride across the three count tiles above their content, so at 375 a pair of grey dots sits on the "Pending" tile next to its label and one sits inside the black Qualified tile. It reads as a glitch, not a flow.
+7. **Which reference, and is its motion there?** Apple product page is the intent (one idea per screen, the product card as hero) and the scroll-answering marquee is real (rail moves ~230px/s after a scroll, then settles to idle speed; pause works and holds). The How stage is a proper pinned-panel-that-changes in spirit. The dark room borrows chatgpt enterprise's "proof listed quietly" but has nothing to list that is not already on the page.
+8. **Different from neighbours?** Yes. Display-size rails plus a self-stepping SVG stage is its own signature next to /affiliate and /bounty.
+9. **All 18 parts covered?** Mostly, with gaps: no closing `Band` (part 3, "proof, Band, footer"); phone header ask is not the page's label (part 4 sticky ask); the dark room is a full-bleed block that does not enter as a rounded card (section 3.1 rooms). Skip-link, one main, one h1, tablist with arrow keys, pause control, reduced-motion final states are present.
+10. **Banned tells?** No eyebrow over a headline ("Referrals" sits under the buttons, "Referral or affiliate" under the h2). No hue (deck greys; header uses #f5f5f7 from shared chrome). No fade-on-hover. The repetition is the tell James will catch: "overload of information" through repeats.
+11. **Copy untouched?** Parity passes, but words were added that are not on Hanzo's referral page: the seven channel names ("X, LinkedIn, Facebook, Bluesky, Reddit, Hacker News, Email"; Hacker News and Email appear nowhere in Hanzo's own links), the row labels "Pays / Moves / Counts / Joins / Terms", the caption "Referral or affiliate", and "The terms are agreed with each affiliate we approve.", a cut-down half of an /affiliate sentence. Copy is frozen: adding and splitting is a breach even when the parity script does not see it.
 
-## Fixes
-1. Remove "• REFERRALS" from above the h1.
-2. Give the rails rhythm: one big moment, the rest medium and small (see Scale).
-3. Replace the four icon boxes with one object (for example the referral card itself stepping through Share → Signs up → Qualifies → Moves up), so the steps happen rather than sit in boxes.
-4. Make the hero card larger and let one builder visibly land in it, once, so the first screen moves.
-5. Give "Copy" a real hover (not opacity) and the copy confirmation from the brief.
+## Fixes needed to reach 8
+
+1. **Stop saying it three times.** Keep the seven-ways idea in one place, the rails or the How-it-works 01 drawing, not both plus the hero chips. Better: drop the invented channel list entirely and let the rails carry only Hanzo's own words (the link and the three counts), or show the ways only as the 01 drawing.
+2. **Remove the added words.** Take out "Pays/Moves/Counts/Joins/Terms", "Referral or affiliate" and the split affiliate sentence. The dark room should hold Hanzo's two sentences ("A referral pays nothing. Affiliates are paid on what their referrals spend.") with one real object (for example two meters side by side: an empty one for referral, a filling one for affiliate), not a table that repeats the page.
+3. **End on an ask.** Add the closing `Band` with the same "Get your link" (and the Sign in text link) after the dark room, so the page does not fall into the footer from a definition list.
+4. **Phone header must carry the page ask.** At 375 the header shows solid "Try Hanzo" over the hero's solid "Get your link". Make the header quiet while the hero ask is in view and swap it to "Get your link", exactly as desktop does; one ask, one wording, one solid fill. Write the shared-chrome request if the header is not yours.
+5. **Fix the dots in the hero card.** Run the flow dots in the gap under or between the tiles, or behind them (z-index below `.xrf-count`), so nothing sits on a tile label at 375 or 1470.
+6. **Open the dark room as a card.** Let it enter as a rounded card inside the gutters and widen to full bleed as it is reached (section 3.1), so the last section has a moment instead of a hard black cut.
