@@ -115,7 +115,7 @@ function MusicApp({ live }) {
       </div>
       <div className="dz-pads">
         {PADS.map((p, i) => (
-          <motion.button key={p} type="button" className={hit === i ? 'on' : ''} whileTap={{ scale: 0.94 }}
+          <motion.button key={p} type="button" data-sound="" className={hit === i ? 'on' : ''} whileTap={{ scale: 0.94 }}
             onClick={() => { energy.current = 1; synth(i); setHit(i); setTimeout(() => setHit((h) => (h === i ? -1 : h)), 380); }}>{p}</motion.button>
         ))}
       </div>
@@ -534,7 +534,7 @@ function Band() {
 
 export default function DesignPage() {
   return (
-    <main className="av dz" data-ask="off" style={{ '--ac': '#0a0a0a' }}>
+    <main className="av dz" style={{ '--ac': '#0a0a0a' }}>
       <Hero />
       <What />
       <Caps />

@@ -3,7 +3,7 @@
 Page file: `components/pages/DesignPage.jsx` (+ `DesignPage.css`, shared `components/v2/AppType.css`, `AppScenes`, `x-edison/AppLines`, `components/Opener.jsx`) · gallery: `docs/gallery/design/` · metric id: `signup_start`
 
 Open copy questions for James: none decided. The hero ask "Open Design" points at /design itself (Hanzo's own link); kept as live, but it is a self-loop on this page: should it go to the app?
-Shared changes requested (`docs/requests/apps1.md`): the header ask should carry the page's own label ("Open Design"); a desktop-off mode for the ask bar (until then `data-ask="off"` on `<main>`); and `Band` with an `id` prop.
+Shared changes requested (`docs/requests/apps1.md`): only the `Band` `id` prop is still open (this page closes on its own Band markup with `<Cta id>` until then). The header ask and the phone ask bar landed in the shared system, so `data-ask="off"` is gone from `<main>`.
 Forks this page deleted: the oversized 112px editorial headline (now 52px beside the window), four kickers over headlines (now captions under them), the "Hanzo Design" pill over the studio heading, the outlined "Read the docs" and "Open Hanzo Studio (Cinema)" buttons (now text links), the solid "Deploy to Cloud" (now a text link before the Band), the "1 / 4", ratio and format chips that floated over the artifacts, the "Open" cursor label on the model tiles, the hover videos on six model tiles (now kit `Img`; the one clip uses kit `Film`), raw `<img>`/`<video>`, `setInterval`, spring transitions, the magenta hue.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -37,7 +37,7 @@ Done here: At 1470×801 the window (left) and the 52px headline, lede and "Open 
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
-- [x] Sticky ask in header and bar after the hero, same label (the header's ask stays; the floating bar is off per MASTER 3.3; request filed in `docs/requests/apps1.md`)
+- [x] Sticky ask in header and bar after the hero, same label (the shared header always carries a solid "Try Hanzo"; on phones the slim quiet bar carries this page's own `data-thumb` ask; no floating bar on desktop)
 - [x] Copy button copies exactly the displayed text; failure never says Copied (kit `Copy`)
 - [x] `data-cta` and `data-thumb` on every primary
 
@@ -82,9 +82,9 @@ Done here: The brief input is 56px with 21px text and a 2px ink focus ring; the 
 - [x] At least 3 kinds of movement; scroll-linked is half or less
 - [x] Something moves without input; every control answers
 - [x] Reduced motion shows the final state; no `setInterval`
-- ~~Sound only on the listed moments, through the one kit~~ n/a: the shared sound kit is not merged; the four synth pads play a note only when pressed (they are the product's own pads)
+- [x] Sound only on the listed moments, through the one kit (`lib/sound.js`; tabs, switches and pressed buttons tick through `components/Sound.jsx`)
 
-Done here: Idle (the workspace cycles six artifacts, the spectrum runs at 124 BPM), state (the frame morphs to each artifact's shape; the headline's highlight and tab pill glide at 300ms ease-emphasis), pointer (pads and modes), arrival (h1 line cut-in, window clip-in), scroll (pinned chapters, stacking sheets, black rooms opening from cards). No springs.
+Done here: Idle (the workspace cycles six artifacts, the spectrum runs at 124 BPM), state (the frame morphs to each artifact's shape; the headline's highlight and tab pill glide at 300ms ease-emphasis), pointer (pads and modes), arrival (h1 line cut-in, window clip-in), scroll (pinned chapters, stacking sheets, black rooms opening from cards). No springs. Sound: the six artifact tabs, the visualizer modes and the brief chips tick through the shared kit; the four synth pads are `data-sound=""` because they play their own note.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set (kit `Img` 1200×1500 everywhere; kit `Film` with a poster for the one clip)
