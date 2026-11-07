@@ -10,7 +10,7 @@
    for the chosen platform, screens opening as it goes, the matching step lit in the text and a drawn tick when it saves.
    Beyond: try the choice. Flip the switch and the panel answers with what that choice means, in the article's own
    words: on, what Hanzo may use; off, what turning it off changes.
-   V2: 8/10 round 3 (critic 7): the demo agrees with itself (both switches mirror; every walk starts on and ends off; 03 and 04 show it off), tabs fit at 320, placeholder bars stay inside both windows, a tap mark on touch and the hand rests inside the window, two caption lines reserved, phone 03 and 04 carry their own inline stage, phone demo shorter, breadcrumb separators trail (no lone slash), "More" at 26px with a Help center next step, a real breadcrumb hover, no white gap before the footer on phones. Round 2: the panel now follows the reading (01-02 the walk, 03 a drawn line where the switch turns off and later chats go hollow, 04 the other settings lit row by row in step with its rows), the switch answers with the tick and saved line instead of repeating 03, panel capped to the viewport, 62ch column, flat step tiles that become tabs on phones, full breadcrumb, real hovers on index rows and links, hairlines that draw in, the last section closes as a quiet room into the footer */
+   V2: 8/10 round 4 (critic 7): one section counter on the panel (the walk's steps are its dots), 01 has its own scene (the setting, turning on), 04 turns the switch off and lights the row being read, the panel keeps the section just read and stops 56px above the closing band, platform labels on one line at every width, phone demo card at 56% of the screen with the contents inside 1.25 screens, phone 01 and 05 carry small objects, contents rows show an arrow and press 1px, every hairline on the text edge, the question visible from first paint (CSS cut-in), Hanzo's own "Help Center" and no invented labels. Round 3: the demo agrees with itself (both switches mirror; every walk starts on and ends off; 03 and 04 show it off), tabs fit at 320, placeholder bars stay inside both windows, a tap mark on touch and the hand rests inside the window, two caption lines reserved, phone 03 and 04 carry their own inline stage, phone demo shorter, breadcrumb separators trail (no lone slash), "More" at 26px with a Help center next step, a real breadcrumb hover, no white gap before the footer on phones. Round 2: the panel now follows the reading (01-02 the walk, 03 a drawn line where the switch turns off and later chats go hollow, 04 the other settings lit row by row in step with its rows), the switch answers with the tick and saved line instead of repeating 03, panel capped to the viewport, 62ch column, flat step tiles that become tabs on phones, full breadcrumb, real hovers on index rows and links, hairlines that draw in, the last section closes as a quiet room into the footer */
 // Signature: the setting, walked: a live settings panel where a gliding cursor presses through the article's own steps, the matching step lit in the text
 // Beyond: try the choice: flip the switch and the panel answers with what that choice means, in the article's own words
 // Persona: a Hanzo Chat or Dev user deciding whether their chats and coding sessions may train Hanzo's models
@@ -270,9 +270,11 @@ function Pages() {
   return (
     <svg className="xhp-pages" viewBox="0 0 240 96" aria-hidden="true">
       {[0, 1, 2].map((k) => (
-        <g key={k} className="xhp-page" style={{ '--i': k }} transform={`translate(${16 + k * 76} 10)`}>
-          <rect width="56" height="76" rx="8" fill="#fff" stroke="#0a0a0a" strokeWidth="1.25" pathLength="1" />
-          {[18, 30, 42, 54].map((y, j) => <path key={y} d={`M12 ${y}H${j === 3 ? 30 : 44}`} stroke="#a3a3a3" strokeWidth="1.25" strokeLinecap="round" pathLength="1" />)}
+        <g key={k} transform={`translate(${16 + k * 76} 10)`}>
+          <g className="xhp-page" style={{ '--i': k }}>
+            <rect width="56" height="76" rx="8" fill="#fff" stroke="#0a0a0a" strokeWidth="1.25" pathLength="1" />
+            {[18, 30, 42, 54].map((y, j) => <path key={y} d={`M12 ${y}H${j === 3 ? 30 : 44}`} stroke="#a3a3a3" strokeWidth="1.25" strokeLinecap="round" pathLength="1" />)}
+          </g>
         </g>
       ))}
     </svg>

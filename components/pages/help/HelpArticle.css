@@ -284,6 +284,7 @@
   /* the narrowest phones: the platform tabs take their own row under the pause control, so neither label wraps */
   .xhp-panel-bar { flex-wrap: wrap; }
   .xhp-seg { flex-basis: 100%; order: 2; }
+  .xhp-stage { height: 168px; }
   .xhp-flow-tab { padding: 8px 8px; font-size: 12.5px; letter-spacing: -.01em; }
 }
 @media (prefers-reduced-motion: reduce) {

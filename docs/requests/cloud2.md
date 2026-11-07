@@ -41,6 +41,12 @@ rename the registered property, or list it as reserved.
 Other chats' pages built the same way likely have the same problem. Suggested: a reverse check in `parity.py` (page text
 not found in the source, excluding code fragments and ui-strings).
 
+Invented strings inside shared components (not this group's files):
+- `components/pages/cloud/Frame.jsx` console: "A build is running from the last commit on main." is not Hanzo's copy and shows on every
+  cloud page that uses the console (hidden page-locally on /gateway only). The "↗" it appends to "Open in the console" is also added.
+- `components/v2/x-hypatia/PinChapters.jsx`: builds the screen-reader label "<heading>: go to" for its dots; ": go to" is not a
+  registered UI string.
+
 ## 2. Header ask (shared chrome)
 Critics of /functions, /gui, /guard, /gateway and /flow asked for one solid fill on the phone's first screen: the header's
 "Try Hanzo" stays solid beside each page's own hero ask. Same ask as `docs/review/_shared.md` section 1: let a page name its
