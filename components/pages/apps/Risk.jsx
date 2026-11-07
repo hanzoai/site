@@ -1,6 +1,6 @@
 'use client';
 /* Persona: enterprise buyer (fraud, AML and trust-and-safety leads). Goal: start a sales conversation. CTA: "Talk to us" → /contact-sales. Metric: contact_sales_submit.
-   Risk. V2: 8/10 an unframed gauge decides beside the h1 (needle, reasons, action; no invented digits); one engine with two faces; then one object per screen (rule card, declare stack, request flow, tier ladder) with the words folded in; no voids; deck greys and radii
+   Risk. V2: 8/10 a first screen of h1 + dial side by side (next section peeking); an unframed gauge decides beside the h1 (needle, reasons, action; no invented digits); one engine with two faces; then one object per screen (rule card, declare stack, request flow, tier ladder) with the words folded in; no voids; deck greys and radii
    Signature: the dial that decides, and shows its work. Pick a stage (signup, payment, post-purchase; the stage is a
    field) and signals light; the needle swings to a score and the plane returns an action and its reasons. It never
    declines on its own: past the line it summons a person, the ceiling Hanzo's engine refuses to start above.
@@ -33,6 +33,15 @@ const STAGES = [
   ['post-purchase', 'Ongoing and post-purchase', [['payout fraud', 30], ['negative balances', 16], ['disputes', 11]]],
 ];
 const LINE = 50;
+
+/* Runs a short sequence once each time its section comes into view (0 … n-1, ms apart), then rests on `rest`. */
+function useRun(n, ms, on, rest) {
+  const [i, setI] = useState(rest);
+  const [go, setGo] = useState(false);
+  useEffect(() => { if (on) { setI(0); setGo(true); } else setGo(false); }, [on]);
+  useEvery(ms, on && go, () => { if (i >= n - 1) { setGo(false); setI(rest); } else setI(i + 1); });
+  return [i, setI, go];
+}
 
 /* The hero object: a gauge on the left, the decision and its reasons on the right. */
 function Dial() {
@@ -105,7 +114,7 @@ function Hero() {
     <section className="rk-hero" aria-labelledby="rk-h1" data-morph-target>
       <div className="w2-wrap rk-hero-g">
         <div className="rk-hero-copy">
-          <LineMask as="h1" id="rk-h1" now className="w2-display rk-h1" lines={['One risk plane', 'for accounts,', 'payments', 'and agents']} />
+          <LineMask as="h1" id="rk-h1" now className="w2-display rk-h1" lines={['One risk plane', 'for accounts, payments', 'and agents']} />
           <motion.div className="rk-hero-act" initial={{ y: 12 }} animate={{ y: 0 }} transition={{ duration: 0.8, ease: EASE, delay: 0.45 }}>
             <Magnetic strength={0.25}><A to="/contact-sales" className="w2-cta" data-thumb="Talk to us" data-cta="risk.hero">Talk to us <i aria-hidden="true">→</i></A></Magnetic>
           </motion.div>
@@ -390,8 +399,7 @@ function Rules() {
 /* Platforms: the declare stack is the screen; the paragraph on why the two planes stay apart opens from its words. */
 function Platforms() {
   const [ref, live] = useLive(0.25);
-  const [d, setD] = useState(0);
-  useEvery(1400, live, () => setD((v) => (v + 1) % 5));
+  const [d] = useRun(5, 1100, live, 4);
   return (
     <section className="w2-sec rk-platsec" ref={ref}>
       <div className="w2-wrap rk-pair flip">
@@ -436,10 +444,10 @@ function Flow() {
 }
 
 function ConnectPlans() {
-  const [ref, live] = useLive(0.1);
-  const [tier, setTier] = useState(0);
+  const [ref] = useLive(0.1);
   const [mine, setMine] = useState(false);
-  useEvery(2600, live && !mine, () => setTier((v) => (v + 1) % 4));
+  const [lref, llive] = useLive(0.6);
+  const [tier, setTier] = useRun(4, 1400, llive && !mine, 3);
   return (
     <section className="w2-sec rk-plans" ref={ref}>
       <div className="w2-wrap">
@@ -461,7 +469,7 @@ function ConnectPlans() {
           <h2 className="w2-headline">Plans</h2>
           <p className="w2-lede">In development. Four tiers, each a subscription with screens included and metered beyond that on the Hanzo bill you already have. A screen is one decision about one transaction, account or customer. Nothing here is priced yet.</p>
         </div>
-        <ol className="rk-ladder">
+        <ol className="rk-ladder" ref={lref}>
           {TIERS.map(([t], i) => (
             <li key={t} className={i === tier ? 'on' : ''} style={{ '--h': 52 + i * 16 + '%' }}>
               <button type="button" aria-pressed={i === tier} onClick={() => { setMine(true); setTier(i); }} onPointerEnter={() => { setMine(true); setTier(i); }}>
@@ -481,8 +489,7 @@ function ConnectPlans() {
 
 function Not() {
   const [ref, live] = useLive(0.2);
-  const [g, setG] = useState(-1);
-  useEvery(1500, live, () => setG((v) => (v + 1) % 4));
+  const [g] = useRun(3, 1200, live, -1);
   return (
     <section className="w2-sec rk-not" ref={ref}>
       <div className="w2-wrap rk-not-grid">
