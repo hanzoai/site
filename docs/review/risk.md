@@ -81,7 +81,7 @@ Since the last review (6/10 at `572a1c3`):
      - "How it connects";
      - "What this is not", which is a "+" only. "An icon alone fails."
 4. **One ask in the header, nothing floating over content, scale with rhythm?** These rules are new in JAMES.md and MASTER as of 14:41.
-   - **The header:** "Try Hanzo" is solid at every stop (29 of 29 on desktop, 35 of 35 on phone).
+   - **The header:** "Try Hanzo" is solid at every stop of the walk (29 on desktop, 35 on phone); over the dark room it inverts to a light fill.
    - **The page's own ask:** "Talk to us" is solid only in the hero, where it is a second solid. After the hero it never returns as a solid:
      - the desktop bar is gone (shared, 15:01);
      - the phone bar showed at 0 of 35 stops, because it only appears where it covers nothing;
