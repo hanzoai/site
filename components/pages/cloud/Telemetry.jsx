@@ -40,7 +40,9 @@ export function tick(s) {
 function Pipe() {
   const [ref, live, , paused, toggle] = useDemo(0.05);
   const [s, setS] = useState({ t: 0, held: 3, out: [{ id: -1, n: 6 }, { id: -2, n: 6 }], mem: 0.5, refused: false });
+  const [only, setOnly] = useState(-1); // pointer: hover a signal and only that kind comes in
   useTick(420, live, () => setS(tick));
+  const kind = only >= 0 ? KINDS[only] : KINDS[s.t % 3];
   return (
     <div className="l2-obj tl2-pipe" ref={ref}>
       <PauseBtn paused={paused} onClick={toggle} />
@@ -48,11 +50,11 @@ function Pipe() {
         <p className="tl2-k l2-mono">OTLP in · gRPC · HTTP</p>
         <div className="tl2-lane">
           <AnimatePresence>
-            {!s.refused && <motion.span key={s.t} className={'tl2-span ' + KINDS[s.t % 3]} initial={{ x: -60, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: 120, opacity: 0, transition: { duration: 0.3 } }} transition={{ duration: 0.32, ease: EASE }}>{KINDS[s.t % 3]}</motion.span>}
+            {!s.refused && <motion.span key={s.t} className={'tl2-span ' + kind} initial={{ x: -60, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: 120, opacity: 0, transition: { duration: 0.3 } }} transition={{ duration: 0.32, ease: EASE }}>{kind}</motion.span>}
           </AnimatePresence>
           {s.refused && <span className="tl2-refuse l2-mono">refused</span>}
         </div>
-        <ul className="tl2-sig l2-mono"><li className="trace">traces</li><li className="metric">metrics</li><li className="log">logs</li></ul>
+        <ul className="tl2-sig l2-mono" onPointerLeave={() => setOnly(-1)}>{['traces', 'metrics', 'logs'].map((n, i) => <li key={n} className={(only < 0 ? i === s.t % 3 : i === only) ? 'on' : ''} onPointerEnter={(e) => e.pointerType === 'mouse' && setOnly(i)}>{n}</li>)}</ul>
       </div>
       <div className="tl2-col core" aria-hidden="true">
         <p className="tl2-k l2-mono">collector</p>
@@ -98,19 +100,30 @@ const STAGES = [['OTLP in', [0]], ['pipelines', [1]], ['memory_limiter', [3]], [
 function Config({ at, compact }) {
   // on phones (stacked chapters) each chapter shows only its own block, not the whole file six times
   const file = (at === 4 ? BUILD : CFG).filter(([, f]) => !compact || f === at || at === 4);
+  const stop = Math.max(0, STAGES.findIndex(([, f]) => f.includes(at)));
+  const dest = at === 4 ? STAGES.length - 1 : stop;
+  const lastOn = file.reduce((k, [, f], i) => (f === at ? i : k), -1);
+  let n = 0;
   return (
-    <div className="tl2-ed">
-      <div className="tl2-strip">{STAGES.map(([t, f], i) => <span key={t} className={'l2-mono' + (f.includes(at) || at === 4 ? ' on' : '')}>{t}{i < STAGES.length - 1 && <i />}</span>)}</div>
+    <motion.div className={'tl2-ed' + (compact ? ' cp' : '')} key={at} initial="a" whileInView="b" viewport={{ once: !!compact, amount: 0.4 }}>
+      <div className="tl2-strip">
+        {STAGES.map(([t, f], i) => <span key={t} className={'l2-mono' + (f.includes(at) || at === 4 ? ' on' : '')}>{t}</span>)}
+        <motion.i className="tl2-run" variants={{ a: { left: '0%' }, b: { left: `${((dest + 0.5) / STAGES.length) * 100}%` } }} transition={{ duration: 1.2, ease: [0.4, 0, 0.2, 1] }} />
+      </div>
       <div className="tl2-win">
         <div className="tl2-tabs l2-mono"><span className={at !== 4 ? 'on' : ''}>config.yaml</span><span className={at === 4 ? 'on' : ''}>builder.yaml</span></div>
         <pre className="tl2-code"><code>
           {file.map(([l, f], i) => {
             const m = l.match(/^(\s*)(-\s)?([\w${}.-]+:)?(.*)$/);
-            return <span key={(at === 4 ? 'b' : 'c') + i} className={'tl2-ln' + (f === at ? ' on' : '')}><em>{String(i + 1).padStart(2, ' ')}</em>{m[1]}{m[2]}{m[3] && <b>{m[3]}</b>}{m[4]}{'\n'}</span>;
+            const on = f === at;
+            const body = <>{m[1]}{m[2]}{m[3] && <b>{m[3]}</b>}{m[4]}{i === lastOn && <i className="tl2-caret" />}</>;
+            return <span key={(at === 4 ? 'b' : 'c') + i} className={'tl2-ln' + (on ? ' on' : '')}><em>{String(i + 1).padStart(2, ' ')}</em>{on
+              ? <motion.span className="tl2-w" variants={{ a: { clipPath: 'inset(0 100% 0 0)' }, b: { clipPath: 'inset(0 0% 0 0)' } }} transition={{ duration: 0.5, delay: 0.5 + 0.08 * n++, ease: [0.16, 1, 0.3, 1] }}>{body}</motion.span>
+              : body}{'\n'}</span>;
           })}
         </code></pre>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
