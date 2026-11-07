@@ -184,3 +184,13 @@
   .mcp-codes { grid-column: 1 / -1; }
   .mcp-code-c { padding: 14px 20px 0; }
 }
+
+.mcp-fig { display: inline-block; overflow: hidden; padding-bottom: .06em; }
+.mcp-fig > span { display: inline-block; }
+
+.mcp-card h3 { margin-top: 64px; }
+.mcp-card-n { position: absolute; left: 32px; top: 32px; }
+@media (max-width: 900px) {
+  .mcp-sheet { position: relative; top: auto; } /* on a phone a sheet can be taller than the screen, so the sheets read as a list */
+  .mcp-stack { gap: 16px; }
+}
