@@ -6,7 +6,7 @@
 @media (hover: hover) { .xgr-link:hover { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; } }
 
 /* hero */
-.xgr-hero { padding: clamp(48px, 7vw, 112px) 0 clamp(96px, 12vw, 180px); }
+.xgr-hero { padding: clamp(48px, 7vw, 112px) 0 clamp(56px, 7vw, 116px); }
 .xgr-hero .xp-grid { align-items: stretch; row-gap: 56px; }
 .xgr-copy { grid-column: 1 / span 7; align-self: center; }
 .xgr-lede { margin-top: 36px; }
@@ -25,7 +25,10 @@
 .xgr-line i { position: absolute; inset: 0; background: var(--xp-accent); transform-origin: 0 50%; }
 .xgr-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
 .xgr-steps li { position: relative; display: grid; gap: 14px; align-content: start; padding-top: 40px; }
-.xgr-dot { position: absolute; top: -8px; left: 0; width: 14px; height: 14px; border-radius: 50%; background: #fff; border: 2px solid var(--xp-accent); transition: background .15s; }
+.xgr-dot { position: absolute; top: -8px; left: 0; width: 14px; height: 14px; border-radius: 50%; background: var(--hz-white); border: 2px solid var(--xp-accent); transition: background-color .3s cubic-bezier(0, 0, .2, 1), transform .3s cubic-bezier(.16, 1, .3, 1); }
+.xgr-steps li.on .xgr-dot { background: var(--xp-accent); transform: scale(1.15); }
+.xgr-steps li .xp-title, .xgr-steps li .xp-body { transition: color .3s cubic-bezier(0, 0, .2, 1); }
+.xgr-steps li:not(.on) .xp-title { color: #737373; }
 @media (hover: hover) { .xgr-steps li:hover .xgr-dot { background: var(--xp-accent); } }
 .xgr-n { font-size: 14px; color: var(--hz-500); }
 .xgr-steps .xp-title { font-size: 21px; }
@@ -37,6 +40,11 @@
 .xgr-gets-g { grid-column: 7 / span 6; list-style: none; margin: 0; padding: 8px clamp(24px, 3vw, 40px); }
 .xgr-gets-g li { display: grid; grid-template-columns: 40px 1fr; gap: 8px 16px; padding: 28px 0; border-bottom: 1px solid var(--line); }
 .xgr-gets-g li:last-child { border-bottom: 0; }
+/* each row answers the pointer: a quiet fill behind it and its tick drawn again */
+.xgr-gets-g li { position: relative; isolation: isolate; }
+.xgr-gets-g li::before { content: ''; position: absolute; inset: 0 -16px; z-index: -1; border-radius: 12px; background: #f5f5f5; opacity: 0; transition: opacity .15s cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) { .xgr-gets-g li:hover::before { opacity: 1; } .xgr-gets-g li:hover .x-tick path { animation: xgr-redraw .5s cubic-bezier(.16, 1, .3, 1); } }
+@keyframes xgr-redraw { from { stroke-dashoffset: 24; stroke-dasharray: 24; } to { stroke-dashoffset: 0; stroke-dasharray: 24; } }
 .xgr-gets-n { grid-row: span 2; color: var(--hz-950); padding-top: 2px; }
 .xgr-gets-n .x-tick { stroke: currentColor; }
 .xgr-gets-g .xp-title { font-size: 21px; }
@@ -48,12 +56,35 @@
 .xgr-stack { list-style: none; margin: clamp(64px, 7vw, 112px) 0 0; padding: 0; display: grid; gap: 40px; }
 .xgr-sheet-li { position: sticky; top: calc(96px + var(--i) * 24px); }
 .xgr-sheet-li:focus-within { z-index: 4; }
-.xgr-sheet { position: relative; min-height: min(78svh, 740px); display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 32px; align-items: end; padding: clamp(32px, 4.5vw, 72px); border-radius: 24px; overflow: hidden; transform-origin: 50% 0; background: #f5f5f5; color: var(--ink); }
+.xgr-sheet { position: relative; min-height: min(64svh, 600px); display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: 32px; align-items: stretch; padding: clamp(32px, 4.5vw, 72px); border-radius: 24px; overflow: hidden; transform-origin: 50% 0; background: #f5f5f5; color: var(--ink); }
 .xgr-sheet.s1 { background: #171717; color: #fafafa; border: 1px solid rgba(255, 255, 255, .1); }
-.xgr-sheet.s2 { background: #fff; }
+.xgr-sheet.s2 { background: var(--hz-white); }
 .xgr-sheet-n { align-self: start; font-size: 64px; line-height: 1; color: var(--hz-400); }
 .xgr-sheet.s1 .xgr-sheet-n { color: var(--hz-600); }
-.xgr-sheet-b { display: grid; gap: 24px; justify-items: start; }
+.xgr-sheet-b { display: grid; gap: 24px; justify-items: start; align-self: end; }
+/* the sheet's object: its own facts as a figure and chips */
+.xgr-sheet-o { display: flex; flex-direction: column; justify-content: space-between; gap: 32px; }
+.xgr-facts { display: grid; gap: 16px; justify-items: start; }
+.xgr-fact-big { font: 497 32px/1.1 var(--sans); letter-spacing: -.025em; max-width: 14ch; }
+.xgr-fact-big.num { display: grid; gap: 6px; }
+.xgr-count { display: inline-block; font: 220 64px/1 var(--sans); letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+.xgr-fact-big small { font: 500 12px/1.3 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #525252; }
+.xgr-sheet.s1 .xgr-fact-big small { color: #a3a3a3; }
+.xgr-fact-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.xgr-fact-chips em { font: 500 13px/1 var(--mono); font-style: normal; padding: 8px 12px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); color: #525252; }
+.xgr-sheet.s1 .xgr-fact-chips em { border-color: rgba(255, 255, 255, .2); color: rgba(255, 255, 255, .78); }
+/* the quiet asks answer: border to the room's ink, arrow moves */
+.xgr-way-a .xp-ghost::after { content: '→'; margin-left: 8px; display: inline-block; transition: transform .3s cubic-bezier(.16, 1, .3, 1); }
+@media (hover: hover) { .xgr-way-a .xp-ghost:hover { border-color: #0a0a0a !important; } .xgr-sheet.s1 .xgr-way-a .xp-ghost:hover { border-color: #fafafa !important; } .xgr-way-a .xp-ghost:hover::after { transform: translateX(4px); } }
+/* JS off: a still contour stands in for the drifting field */
+.xgr-static { position: absolute; inset: 0; width: 100%; height: 100%; color: #0a0a0a; }
+html.js .xgr-static { display: none; }
+/* the submit row: the ask and the Privacy Policy beside it */
+.xgr-send-row { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-top: 8px; }
+.xgr-send-row .xgr-send { margin-top: 0; }
+.xgr-priv { display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; color: #525252; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+@media (hover: hover) { .xgr-priv:hover { color: #0a0a0a; } }
+.xgr-mail a { display: inline-block; padding: 12px 0; margin: -12px 0; }
 .xgr-way-m { margin: 0; font-size: 14px; color: var(--soft); }
 .xgr-sheet.s1 .xgr-way-m { color: #a3a3a3; }
 .xgr-way-t { color: inherit !important; max-width: 18ch; font-size: 32px !important; letter-spacing: -.025em; }
@@ -62,7 +93,7 @@
 .xgr-sheet:not(.s1) .xgr-way-d, .xgr-sheet:not(.s1) .xgr-way-m { color: var(--soft); }
 .xgr-sheet:not(.s1) .xgr-link { color: var(--ink); }
 .xgr-way-a { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; margin-top: 8px; }
-.xgr-sheet-dim { position: absolute; inset: 0; background: #000; pointer-events: none; border-radius: inherit; }
+.xgr-sheet-dim { position: absolute; inset: 0; background: var(--hz-black); pointer-events: none; border-radius: inherit; }
 
 /* the application */
 .xgr-apply-in { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 24px clamp(40px, 6vw, 112px); align-items: start; }

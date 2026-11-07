@@ -9,7 +9,7 @@ Forks this page deleted: `x-btn` buttons (now kit `Cta`), raw inputs (now kit `F
 
 ## 1. Strategy and conversion
 - [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
-- [x] One solid fill per viewport; label and href from `lib/cta.js`
+- [ ] One solid fill per viewport (desktop yes; on phones the shared header keeps a solid "Try Hanzo" beside the hero ask, requested in `docs/requests/founder.md` for all program pages)
 - [x] One h1; the page is clear in 5 seconds
 - [x] No dead or self-looping button; prices from `lib/plans.js`
 - [x] Open copy questions for James listed, none decided
@@ -36,7 +36,7 @@ Done here: Nothing above the h1. "Open Source & Research Credit Grants" (52px) c
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
-- [x] Sticky ask in header and bar after the hero, same label
+- [ ] Sticky ask in header and bar after the hero, same label (desktop: the header carries "Apply for a Grant" after the hero; phone: shared Ask, see request)
 - ~~Copy button copies exactly the displayed text; failure never says Copied~~ n/a: no copy control.
 - [x] `data-cta` and `data-thumb` on every primary
 
@@ -48,7 +48,7 @@ Done here: Kit `Cta` only (no raw `.x-btn` in the page file); `data-cta` and `da
 - ~~Marquees pause, freeze under reduced motion, hide duplicates~~ n/a: no marquee.
 - [x] Privacy link and owner line beside every submit
 
-Done here: Figures are Hanzo's (2,137+ repositories · 122 organizations) with their words beside them; no logos or seals; the form shows "Or email us directly at careers@hanzo.ai" beside it.
+Done here: Figures are Hanzo's (2,137+ repositories · 122 organizations) with their words beside them; no logos or seals; "Privacy Policy" (hanzo.ai/privacy) sits beside "Submit Grant Application", with Hanzo's review sentence and "Or email us directly at careers@hanzo.ai" as the owner line. The 2,137+ figure counts up once from its true value in the HTML.
 
 ## 6. Content presentation (copy untouched)
 - [x] No text under 13px (14px phone) except mono capitals
@@ -59,7 +59,7 @@ Done here: Figures are Hanzo's (2,137+ repositories · 122 organizations) with t
 Done here: Parity 57/57 text. Type from MASTER: h1 52px, section heads 26px, step and list titles 21px, sheet numbers 64px (44 phone), sheet titles 32px (26 phone), body 16px, labels 15px, caption 12px mono caps.
 
 ## 7. Visual design system
-- [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
+- [x] `python3 scripts/taste.py <files>` passes (white and black now `--hz-white`/`--hz-black`; the remaining literals are deck greys with no token: #f5f5f5, #171717, #a3a3a3, #525252, #737373)
 - [x] No label, tag, badge or pill above a headline
 - [x] Radii, shadows and sizes from tokens; never box plus shadow
 - [x] One icon set; no icon in a rounded box
@@ -83,7 +83,7 @@ Done here: Kit `Cta` and `Field` states (hover, press .97, focus ring, busy, das
 - [x] Reduced motion shows the final state; no `setInterval`
 - ~~Sound only on the listed moments, through the one kit~~ n/a: the shared sound kit is not on main yet; the track radios carry `data-sound="tick"` for it.
 
-Done here: Signature: the stacked sheets, each shrinking to .92 and dimming as the next slides over it (driven by the list's own progress). Time: the contour field (pausable). Arrival: line-mask h1; the timeline draws across; ticks draw on the ledger row by row. State: the track chip glides; the filing card fills as you type. Ease-emphasis, no springs; reduced motion shows final states and freezes the field.
+Done here: Signature: the stacked sheets, each shrinking to .92 and dimming as the next slides over it (driven by the list's own progress). Time: the contour field (pausable). Arrival: line-mask h1; the timeline draws across; ticks draw on the ledger row by row. State: the track chip glides; the filing card fills as you type. Ease-emphasis, no springs. Reduced motion (round 3): the sheets render at scale 1 with no dim layer, the steps show all lit, the count shows its true value, the field is still. The timeline is now scrubbed by scroll and lights each step as the line reaches it; hover redraws a ledger tick.
 
 ## 10. Media
 - ~~`Film` and `Pic` only; sizes and posters set~~ n/a: no images or video; the hero art is the page's own Sigil field.
@@ -148,12 +148,12 @@ Done here: n/a: no code on the page.
 - [x] A failed submit keeps its values and shows no success
 - [x] A thrown island does not blank the page
 
-Done here: The form checks before sending; a refused application keeps every value and shows the error with the grants@hanzo.ai address; success shows only on a 2xx (tested with interception).
+Done here: Offline (round 3): the `online`/`offline` events disable "Submit Grant Application" and show Hanzo's existing error sentence with grants@hanzo.ai. The form checks before sending; a refused application keeps every value and shows the error with the grants@hanzo.ai address; success shows only on a 2xx (tested with interception).
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/grants.md` verdict 8 or more
+- [ ] Review read: `docs/review/grants.md` verdict 8 or more (read: 7/10 on 7 Nov; every fix in it applied in round 3, awaiting the next walk)
 
 Done here: `data-cta` ids `grants.hero`, `grants.apply`, `grants.oss`, `grants.academic`, `grants.internship`, `grants.again` (kit Cta fires `cta_click`); the lead carries only what the visitor typed, on submit; V2 line in the route header; critic review (6/10 at `57dfa0a`): JS-off sheets, the stack's motion, keyboard under sheets, hierarchy, the list as an object, phone filing card, track sound, form focus, kit parts all fixed; strings listed above.
