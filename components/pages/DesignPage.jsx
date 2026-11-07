@@ -8,7 +8,7 @@
    Metric: signup_start
    V2: 8/10 motion map: compare — the pinned three-chapter scene is gone; "What is Hanzo Design" is a before/after divider over the raw upload and what it became, driven by the three steps; the capability sheets no longer stack on scroll. Earlier: round 2: the workspace window left and a 52px headline right, both in the first screen; one ask with text links; no labels over headlines; kit media; a pause control; the models' black room opens from a card; ends on one Band. Round 1: editorial 5/7 hero, oversized type running into a workspace window whose artifact morphs by itself; three pinned chapters; the six capabilities as sticky stacked sheets; One brief kept as the Beyond; the models in the one dark room open into their pages
    Motion: signature = the workspace window (the frame morphs to each artifact's shape, the headline's word follows). Supporting:
-   the before/after divider, line-masked headline, the capabilities stage (six step through one frame by themselves). Greys only.
+   pinned chapters (components/v2/AppScenes), line-masked headline, sheets that stack as you scroll. Accent: magenta.
    The music app is live: its spectrum dances to 124 BPM and the four synth pads play. Every word is Hanzo's; the brief is yours. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useScroll, useTransform } from 'motion/react';
@@ -220,7 +220,7 @@ function Workspace({ at, pick, live, mine, calm, paused, onPause }) {
       <div className="dz-stage" id="dz-art" role="tabpanel" aria-label={TABS[at]}>
         <motion.div layout className={'dz-frame k-' + KIND[at]} style={{ borderRadius: 16 }} transition={{ layout: { duration: 0.6, ease: [0.76, 0, 0.24, 1] } }}>
           <AnimatePresence mode="popLayout" initial={false}>
-            <motion.div key={at} className={'dz-art a-' + KIND[at]} initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1, transition: { duration: 0.45, ease: EASE, delay: 0.4 } }} exit={{ opacity: 0, transition: { duration: 0.15 } }}>
+            <motion.div key={at} className="dz-art" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1, transition: { duration: 0.45, ease: EASE, delay: 0.4 } }} exit={{ opacity: 0, transition: { duration: 0.15 } }}>
               {art}
             </motion.div>
           </AnimatePresence>
@@ -253,7 +253,7 @@ function useEnter(onGo) {
       io.disconnect();
       el.dataset.enter = 'go';
       go.current?.(el);
-    }, { rootMargin: '0px 0px -30% 0px' }); // fires when the top crosses 70% of the screen, however tall the section
+    }, { threshold: 0.3 });
     io.observe(el);
     return () => { io.disconnect(); delete el.dataset.enter; };
   }, [calm]);
@@ -277,6 +277,21 @@ function shuffleIn(root) {
       w.style.transition = `transform .8s cubic-bezier(.16,1,.3,1) ${0.1 + i * 0.05}s, opacity .4s ease ${0.1 + i * 0.05}s`;
       w.style.transform = ''; w.style.opacity = '';
     });
+  });
+}
+
+/* count-roll: each sheet's "0n / 06" rolls up from 00 to its value, one digit at a time */
+function rollIn(root) {
+  root.querySelectorAll('.dz-sheet-n').forEach((el, k) => {
+    const end = el.textContent;
+    const n = parseInt(end, 10);
+    let v = 0;
+    const step = () => {
+      el.textContent = String(v).padStart(2, '0') + end.slice(2);
+      el.classList.remove('roll'); void el.offsetWidth; el.classList.add('roll');
+      if (v < n) { v += 1; setTimeout(step, 110); }
+    };
+    setTimeout(step, 120 + k * 90);
   });
 }
 
@@ -472,6 +487,7 @@ function What() {
   );
 }
 
+/* ---------- capabilities: six sheets that stack as you scroll ---------- */
 const CAPS = [
   ['Visuals, images & posters', 'High-resolution imagery, product photography, posters, and vector brand assets powered by Iro.', 'visual', 'Powered by Iro'],
   ['Slide decks & presentations', 'Structured 16:9 slide decks with keyboard navigation, speaker flow, and vector PDF download.', 'deck', '16:9 · vector PDF'],
@@ -481,63 +497,37 @@ const CAPS = [
   ['Music, voice & interactive apps', 'Original music (Uta), narration (Koe), sound effects (Oto), and self-contained interactive HTML5/Canvas/WebAudio apps.', 'music', 'Uta · Koe · Oto'],
 ];
 
-/* Each capability's own media (not the hero's track art): Iro's film, Hanzo's deck pages, Koma's film, Uta/Koe/Oto. */
-function CapArt({ k, live = false }) {
-  const F = (slug) => (live ? <Film src={`/models/${slug}.webm`} poster={`/models/${slug}.webp`} w={1200} h={1500} /> : <Img src={`/models/${slug}.webp`} alt="" w={1200} h={1500} />);
-  if (k === 'visual') return <span className="dz-ca dz-ca-visual">{F('iro')}</span>;
-  if (k === 'deck') return <span className="dz-ca dz-ca-deck"><i className="main"><Img src="/models/zen.webp" alt="" w={1200} h={1500} /></i>{['kai', 'enso', 'zen'].map((m) => <i key={m}><Img src={`/models/${m}.webp`} alt="" w={1200} h={1500} /></i>)}</span>;
-  if (k === 'doc') return <span className="dz-ca dz-ca-doc">{[0, 1].map((p) => <i key={p}><Img src={p ? '/models/kai.webp' : '/models/enso.webp'} alt="" w={1200} h={1500} />{[90, 100, 84, 100, 62, 96, 74].map((w, j) => <em key={j} style={{ width: w + '%' }} />)}</i>)}</span>;
-  if (k === 'ads') return <span className="dz-ca dz-ca-ads">{['story', 'square', 'banner'].map((s, i) => <i key={s} className={s}>{i ? <Img src="/models/mori.webp" alt="" w={1200} h={1500} /> : F('mori')}</i>)}</span>;
-  if (k === 'video') return <span className="dz-ca dz-ca-video">{F('koma')}<span className="dz-tl">{[34, 22, 28, 16].map((w, i) => <i key={i} style={{ flexGrow: w }} />)}<b /></span></span>;
-  return <span className="dz-ca dz-ca-music"><i className="main">{F('uta')}</i><i><Img src="/models/koe.webp" alt="" w={1200} h={1500} /></i><i><Img src="/models/oto.webp" alt="" w={1200} h={1500} /></i></span>;
+function CapArt({ k }) {
+  if (k === 'visual') return <span className="dz-ca dz-ca-visual"><Img src="/models/iro.webp" alt="" w={1200} h={1500} /><b>Neon<br />Horizon</b></span>;
+  if (k === 'deck') return <span className="dz-ca dz-ca-deck">{[0, 1, 2].map((i) => <i key={i}><Img src={['/models/oto.webp', '/models/uta.webp', '/models/koe.webp'][i]} alt="" w={1200} h={1500} /></i>)}</span>;
+  if (k === 'doc') return <span className="dz-ca dz-ca-doc">{[0, 1].map((p) => <i key={p}><b />{[90, 100, 84, 100, 62, 96, 74].map((w, j) => <em key={j} style={{ width: w + '%' }} />)}</i>)}</span>;
+  if (k === 'ads') return <span className="dz-ca dz-ca-ads">{['story', 'square', 'banner'].map((s) => <i key={s} className={s}><Img src="/models/mori.webp" alt="" w={1200} h={1500} /></i>)}</span>;
+  if (k === 'video') return <span className="dz-ca dz-ca-video"><Img src="/models/koma.webp" alt="" w={1200} h={1500} /><span className="dz-tl">{[34, 22, 28, 16].map((w, i) => <i key={i} style={{ flexGrow: w }} />)}<b /></span></span>;
+  return <span className="dz-ca dz-ca-music">{Array.from({ length: 28 }).map((_, i) => <i key={i} style={{ animationDelay: -i * 0.11 + 's', animationDuration: 0.7 + (i % 5) * 0.13 + 's' }} />)}</span>;
 }
 
-/* ---------- capabilities: one stage. The six step through one large frame by themselves while it is on screen;
-   a click holds one. The frame keeps its size (no layout shift); each capability's media cuts in inside it. ---------- */
-const CAP_DWELL = 3800;
 function Caps() {
-  const [at, setAt] = useState(0);
-  const [held, setHeld] = useState(false);
-  const calm = useCalm();
-  const box = useRef(null);
-  const seen = useInView(box, { amount: 0.35 });
-  const run = seen && !calm && !held;
-  useEffect(() => {
-    if (!run) return;
-    const t = setTimeout(() => setAt((v) => (v + 1) % CAPS.length), CAP_DWELL);
-    return () => clearTimeout(t);
-  }, [at, run]);
-  const [, , k, tag] = CAPS[at];
+  const ref = useEnter(rollIn);
   return (
-    <section className="av-sec dz-caps" ref={box}>
+    <section className="av-sec dz-caps dz-e-roll" ref={ref}>
       <div className="av-wrap">
         <div className="av-grid dz-caps-top">
           <h2 className="av-head dz-caps-h">Everything a creative team ships</h2>
           <span className="dz-cap x-mono dz-caps-k">Capabilities</span>
         </div>
-        <div className="dz-cs">
-          <ol className="dz-cs-list">
-            {CAPS.map(([ct, cd], i) => (
-              <li key={ct} className={at === i ? 'on' : ''}>
-                <button type="button" aria-pressed={at === i} onClick={() => { setAt(i); setHeld(true); }}>
-                  <span className="x-mono av-num">{String(i + 1).padStart(2, '0')}</span>
-                  <h3>{ct}</h3>
-                  {at === i && run && <i key={'t' + at} className="dz-cs-t" aria-hidden="true" />}
-                </button>
-                <p className="av-body">{cd}</p>
-              </li>
-            ))}
-          </ol>
-          <div className="dz-cs-frame" aria-live="polite">
-            <AnimatePresence initial={false}>
-              <motion.div key={k} className="dz-cs-art" initial={calm ? false : { clipPath: 'inset(0 0 100% 0)' }} animate={{ clipPath: 'inset(0 0 0% 0)' }} exit={{ opacity: 0, transition: { duration: 0.3, delay: 0.35 } }} transition={{ duration: 0.7, ease: [0.76, 0, 0.24, 1] }}>
-                <CapArt k={k} live />
-              </motion.div>
-            </AnimatePresence>
-            <span className="dz-cs-n x-mono av-num">{String(at + 1).padStart(2, '0')} / 06</span>
-            <span className="dz-cs-tag x-mono">{tag}</span>
-          </div>
-        </div>
+        <ol className="dz-stack">
+          {CAPS.map(([t, d, k, tag], i) => (
+            <li key={t} className={'dz-sheet c-' + k} style={{ '--i': i }}>
+              <div className="dz-sheet-t">
+                <span className="x-mono dz-sheet-n av-num">{String(i + 1).padStart(2, '0')} / 06</span>
+                <h3 className="av-head">{t}</h3>
+                <p className="av-body">{d}</p>
+                <span className="x-mono dz-sheet-tag">{tag}</span>
+              </div>
+              <div className="dz-sheet-a"><CapArt k={k} /></div>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   );
@@ -547,7 +537,7 @@ function Caps() {
 function Brief() {
   const [brief, setBrief] = useState('');
   const [on, setOn] = useState(() => CAPS.map(() => true));
-  const title = brief.trim();
+  const title = brief.trim() || 'Your brief';
   const picked = CAPS.filter((_, i) => on[i]);
   // opposite-drift: as the section crosses the screen its two halves drift apart and meet in the middle
   const ref = useRef(null);
@@ -584,8 +574,8 @@ function Brief() {
                 <li key={t} className={'k-' + k}>
                   <span className="dz-brief-art" aria-hidden="true"><CapArt k={k} /></span>
                   <span className="dz-brief-k x-mono">{tag}</span>
-                  <b>{title || t}</b>
-                  {title && <span>{t}</span>}
+                  <b>{title}</b>
+                  <span>{t}</span>
                 </li>
               ))}
             </ul>
@@ -687,11 +677,10 @@ function Band() {
   const calm = useCalm();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.2'] });
   const clip = useTransform(scrollYProgress, [0, 1], ['inset(0% 3% 0% 3% round 24px)', 'inset(0% 0% 0% 0% round 0px)']);
-  const grow = useTransform(scrollYProgress, [0, 1], [0.7, 1]);
   return (
     <motion.section ref={ref} className="x-band dz-band" data-room="dark" style={calm ? undefined : { clipPath: clip }}>
       <div className="av-wrap">
-        <motion.h2 className="dz-band-h" style={calm ? undefined : { scale: grow }}>Start creating in Hanzo Design</motion.h2>
+        <h2 className="dz-band-h">Start creating in Hanzo Design</h2>
         <p>Open the Design workspace in your browser and upload your first file.</p>
         <div className="x-band-act">
           <Cta to="/design" id="design-band-open" size="lg">Open Design</Cta>
