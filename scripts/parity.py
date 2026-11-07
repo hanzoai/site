@@ -63,7 +63,7 @@ def canon(h):
 def check(path):
     want, links = units(path)
     try:
-        page = urllib.request.urlopen('http://localhost:4180' + path.rstrip('/') + '/', timeout=120).read().decode('utf-8', 'replace')
+        page = urllib.request.urlopen(os.environ.get('HZ_BASE', 'http://localhost:4180') + path.rstrip('/') + '/', timeout=120).read().decode('utf-8', 'replace')
     except Exception as e:
         print(f'{path}: cannot load ({e})'); return 1
     s = BeautifulSoup(page, 'html.parser')

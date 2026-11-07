@@ -24,7 +24,7 @@ for (const p of paths) {
     page.on('pageerror', (e) => errs.push(e.message.slice(0, 160)));
     page.on('console', (x) => x.type() === 'error' && !/favicon|Failed to load resource/.test(x.text()) && errs.push(x.text().slice(0, 160)));
     try {
-      await page.goto('http://localhost:4180' + p.replace(/\/?$/, '/'), { waitUntil: 'networkidle2', timeout: 120000 });
+      await page.goto((process.env.HZ_BASE || 'http://localhost:4180') + p.replace(/\/?$/, '/'), { waitUntil: 'networkidle2', timeout: 120000 });
       await page.evaluate(() => { localStorage.setItem('hz-consent', JSON.stringify({ necessary: true })); document.querySelectorAll('[role=dialog]').forEach((d) => /cookie/i.test(d.innerText) && d.remove()); });
       await new Promise((r) => setTimeout(r, 1800));
       const H = await page.evaluate(() => document.documentElement.scrollHeight), V = m === 'd' ? 900 : 812;
