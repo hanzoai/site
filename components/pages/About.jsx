@@ -149,17 +149,24 @@ function useOneSolidOnPhone() {
     const H = document.documentElement;
     const mq = matchMedia('(max-width: 700px)');
     const el = document.querySelector('main.xab [data-cta="about.hero"]');
+    // the closing band's solid "Explore Open Roles": while it is on screen the header's ask is quiet at every width
+    const band = document.querySelector('main.xab .x-band [data-cta="about.band"], main.xab .x-band .x-btn, main.xab .x-band a');
     if (!el) return;
-    let mine = false, vis = false;
+    let mine = false, vis = false, inBand = false, t = 0;
     const apply = () => {
-      if (mq.matches && vis) { H.dataset.ask = 'quiet'; mine = true; }
+      if ((mq.matches && vis) || inBand) { H.dataset.ask = 'quiet'; mine = true; }
       else if (mine) { delete H.dataset.ask; mine = false; }
     };
     const io = new IntersectionObserver(([e]) => { vis = e.isIntersecting; apply(); });
     io.observe(el);
+    const bo = new IntersectionObserver(([e]) => { inBand = e.isIntersecting; apply(); });
+    if (band) bo.observe(band);
+    // the shell rewrites data-ask about 80 ms after the scroll settles on desktop; say it again after it while the band shows
+    const onScroll = () => { clearTimeout(t); if (inBand) t = setTimeout(apply, 160); };
+    addEventListener('scroll', onScroll, { passive: true });
     const timers = [300, 1400].map((ms) => setTimeout(apply, ms)); // after the shell's own first pass
     mq.addEventListener('change', apply);
-    return () => { io.disconnect(); timers.forEach(clearTimeout); mq.removeEventListener('change', apply); if (mine) delete H.dataset.ask; };
+    return () => { io.disconnect(); bo.disconnect(); clearTimeout(t); removeEventListener('scroll', onScroll); timers.forEach(clearTimeout); mq.removeEventListener('change', apply); if (mine) delete H.dataset.ask; };
   }, []);
 }
 

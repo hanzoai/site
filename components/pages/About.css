@@ -414,3 +414,21 @@
   .xab-fig-r { animation: none; }
   .xab-tile-t, .xab-tile-plus, .xab-zen-t, .xab-sw::after { transition: none; }
 }
+
+/* 8 Nov (Ready pass): one idea per beat in "Why we build". Desktop: the figure and its four switches share the screen;
+   the six principles come in after them as their own row. Phones: one switch per row; papers show two and the commit
+   log three (the rest stays in the page, behind "Papers →" and the dashboard link); the founder figures' stair is
+   shallower so the first figure arrives with its heading. */
+@media (min-width: 901px) {
+  .xab-fig { grid-column: 1 / 6; grid-row: 1; }
+  .xab-picks { grid-column: 7 / 13; grid-row: 1; }
+  .xab-tiles { grid-column: 1 / -1; grid-row: 2; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: clamp(56px, 9vh, 96px); }
+}
+.xab-figs > div:nth-child(1) { margin-top: clamp(40px, 4.5vw, 64px); }
+.xab-figs > div:nth-child(2) { margin-top: clamp(20px, 2.2vw, 32px); }
+@media (max-width: 900px) {
+  .xab-picks ul { grid-template-columns: minmax(0, 1fr); }
+  .xab-picks li, .xab-picks li:nth-child(even) { padding: 8px 0 10px; border-left: 0; }
+  .xab-papers li:nth-child(n + 3) { display: none; }
+  .xab-log li:nth-child(n + 4) { display: none; }
+}

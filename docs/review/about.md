@@ -1,6 +1,7 @@
 # /about — James-eye review
 
 Verdict: 7/10
+Ready: 8 Nov, held up next to /api and /affiliate (James's new bar, no score). Why we build is now two beats (figure and switches, then the six principles as their own row), switches stack one per row on phones, the header ask goes quiet while the band's solid ask shows, phone papers and commit log trimmed to 2 and 3 rows, and the founder figures' stair is shallower. taste/unique/parity OK (text 167/167, links 36/36); 0 console errors, no overflow at 1470 and 375. Shared, not this page: the cookie card floats over content in shots; the phone ask bar is components/Ask.jsx.
 First complaint: "The 'why we build' screen gives me a chart, four switches and six cards all at once, and half of them say the same thing. That's the overload I talked about. One thing comes in, one goes out."
 
 Walked 2026-11-07 17:10 UTC, HEAD 2e1b77aa, at 1470x801 and 375x812 (isMobile, hasTouch). First screen captured at 0.2, 1, 3, 6 and 7 s plus a reload. Scrolled the whole page in 160px wheel notches with a screenshot every ~0.6 screen. Hovered, pressed and clicked the hero ask, the hero chart, 4 switches, 6 principle tiles (sheet, Esc), the Zen rows, the dark-room tabs, the runtime cards, the paper rows, the founder plates and the band ask. Tapped the same on phone. Also checked reduced motion and JS off. taste.py OK (3 files), parity 167/167 text and 36/36 links. 0 console errors and 0 page errors on either size (only canvas readback and font-preload warnings). No horizontal scroll.
