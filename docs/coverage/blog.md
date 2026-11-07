@@ -4,7 +4,7 @@ Page file: `components/pages/BlogIndex.jsx` (+ `BlogIndex.css`, `story.css`, `St
 
 Open copy questions for James: none decided.
 Shared changes requested (`docs/requests/about.md`, shared by the Story pages): kit Band word blur; v2/Lines timing; the floating ask bar.
-Forks this page deleted: the "Blog" kicker above the h1, "Every post" above "Contents", the tag above the cover headline and above each phone row; the red accent; the italic "&"; the curtain on hand-picked stories; the corner numerals and circle buttons on the on-site cards (they echoed /about's tiles); 18 of 24 archive rows on first view (behind "All 24"); the outlined second button in the masthead; the page's own dark close (now `StoryClose`).
+Forks this page deleted: the page's own buttons and text links (now kit `Cta`); the cover's repeated date; the h1's nowrap; the "Blog" kicker above the h1, "Every post" above "Contents", the tag above the cover headline and above each phone row; the red accent; the italic "&"; the curtain on hand-picked stories; the corner numerals and circle buttons on the on-site cards (they echoed /about's tiles); 18 of 24 archive rows on first view (behind "All 24"); the outlined second button in the masthead; the page's own dark close (now `StoryClose`).
 
 ## 1. Strategy and conversion
 - [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
@@ -34,7 +34,7 @@ Done here: parity links 29/29; the three on-site posts open into their pages by 
 Done here: the masthead (52px), the cover story with its plate (the one big thing) and the six-headline index all fit 1470×801; then the on-site posts, the contents (two latest months, then "All 24"), the Band.
 
 ## 4. Conversion system
-- [x] Page-owned `v2s-btn` until kit `Cta`; no raw `.x-btn`
+- [x] kit `Cta` only; no raw `.x-btn`
 - [x] Sticky ask: the shared bar carries "Read the latest" (`data-thumb`)
 - [x] n/a: no copy button
 - [x] `data-cta` and `data-thumb` on the primary
@@ -82,7 +82,7 @@ Done here: index buttons `aria-pressed`; strip bars are buttons with spoken coun
 - [x] Reduced motion final states; no `setInterval`
 - [x] n/a: sound is the shared kit's
 
-Done here: signature = the self-turning cover (silver curtain on the timer's turn only).
+Done here: signature = the self-turning cover (silver curtain on the timer's turn only); its pause button has its own column and works by click (tested: the cover held for 8 s); choosing a month makes the post count grow to 1.75× and settle at 64px.
 
 ## 10. Media
 - [x] kit `Img` for the Kai art; Sigil fields elsewhere
@@ -147,6 +147,6 @@ Done here: reduced motion: no turning, no curtain, bars at rest; JS off: masthea
 - [x] `data-cta` on primaries; no analytics wired yet
 - [x] Nothing identifier-bearing
 - [x] `V2:` line in the page file
-- [x] n/a: no `docs/review/blog.md` yet (critic round 1: 6/10, every complaint fixed; re-review pending)
+- [ ] Review read: `docs/review/blog.md` verdict 6/10, fixes pushed, re-review pending
 
-Done here: `V2: 6/10` from round 1; index under the fold, hover curtain, eyebrows, long contents and tap targets fixed.
+Done here: `docs/review/blog.md` (critic round 2: 6/10); its five fixes pushed (pause, phone plate and strip, a figure moment and Kai art below the fold, Contents aligned, cover headlines are h2).

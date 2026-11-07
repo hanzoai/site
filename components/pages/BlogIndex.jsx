@@ -18,10 +18,10 @@
 // Metric: post opens (data-cta="blog.*")
 // Signature: a magazine cover that turns itself: the headline wipes and a silver curtain crosses the art plate as it changes
 // Beyond: the publishing strip: a bar per month counted from Hanzo's own post dates that narrows the contents to a month
-// V2: 6/10 critic round 1 (index under the fold, hover curtain, eyebrows, long contents); all fixed, re-review pending
+// V2: 6/10 critic round 2 (pause covered by the index, phone plate and strip, quiet below the fold, headings); all fixed, re-review pending
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
-import { A, Img } from '../kit';
+import { A, Cta, Img } from '../kit';
 import Sigil from '../Sigil';
 import StoryClose from './StoryClose';
 import StoryPause from './StoryPause';
@@ -30,7 +30,6 @@ import '../v2/system.css';
 import './story.css';
 import './BlogIndex.css';
 
-const Chev = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 /* a post whose tag names a Hanzo model shows that model's own art; the rest draw their own contour field */
 const ART = { kai: '/models/kai.webp', enso: '/models/enso.webp', zen: '/models/zen.webp' };
 const Arr = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
@@ -99,10 +98,10 @@ function Cover() {
             return (
               <article key={s.to} className={'xbl-story' + (on ? ' on' : '')} aria-hidden={!on} inert={!on ? true : undefined}>
                 <a href={s.to} target="_blank" rel="noopener noreferrer" className="xbl-story-a" tabIndex={on ? 0 : -1}>
-                  <motion.h3 className="v2s-headline xbl-story-t" initial={false} animate={on ? { clipPath: 'inset(-10% 0% -10% 0%)', y: 0 } : { clipPath: 'inset(-10% 0% 110% 0%)', y: -14 }} transition={on ? (hand ? { duration: 0.25, ease: EASE, delay: 0.12 } : { duration: 1, ease: EASE, delay: 0.32 }) : { duration: hand ? 0.12 : 0.3, ease: [0.7, 0, 0.84, 0] }} style={{ clipPath: on ? 'inset(-10% 0% -10% 0%)' : 'inset(-10% 0% 110% 0%)' }}>{s.title}</motion.h3>
+                  <motion.h2 className="v2s-headline xbl-story-t" initial={false} animate={on ? { clipPath: 'inset(-10% 0% -10% 0%)', y: 0 } : { clipPath: 'inset(-10% 0% 110% 0%)', y: -14 }} transition={on ? (hand ? { duration: 0.25, ease: EASE, delay: 0.12 } : { duration: 1, ease: EASE, delay: 0.32 }) : { duration: hand ? 0.12 : 0.3, ease: [0.7, 0, 0.84, 0] }} style={{ clipPath: on ? 'inset(-10% 0% -10% 0%)' : 'inset(-10% 0% 110% 0%)' }}>{s.title}</motion.h2>
                 </a>
                 <motion.p className="xbl-story-m" initial={false} animate={{ opacity: on ? 1 : 0 }} transition={{ duration: on ? 0.4 : 0.12, delay: on ? (hand ? 0.15 : 0.4) : 0 }}>
-                  <span className="xbl-tag">{s.tag}</span><time>{s.date}</time>
+                  <span className="xbl-tag">{s.tag}</span>
                 </motion.p>
                 <motion.p className="v2s-lede xbl-story-d" initial={false} animate={on ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }} transition={on ? { duration: hand ? 0.25 : 0.6, ease: EASE, delay: hand ? 0.15 : 0.5 } : { duration: hand ? 0.1 : 0.2 }}>{`${s.date}. ${s.desc}`}</motion.p>
               </article>
@@ -133,7 +132,7 @@ function Cover() {
 
 function Hero() {
   return (
-    <section className="xbl-hero" aria-labelledby="xbl-h1" data-ask-name="Blog">
+    <section className="xbl-hero" aria-labelledby="xbl-h1" data-ask-name="Blog" data-morph-target>
       <div className="v2s-wrap">
         <div className="xbl-mast">
           <div className="xbl-mast-l">
@@ -142,8 +141,8 @@ function Hero() {
           <motion.div className="xbl-mast-r" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.45 }}>
             <p className="v2s-lede"><span className="v2s-label xbl-runin">Blog</span> Product launches, architecture deep dives, and how-to guides from the team building the AI workforce platform.</p>
             <div className="v2s-acts">
-              <A to={POSTS[0].to} className="v2s-btn solid" data-thumb="Read the latest" data-cta="blog.hero">Read the latest</A>
-              <A to="https://hanzo.blog" className="v2s-tlink">hanzo.blog<Chev /></A>
+              <Cta to={POSTS[0].to} id="blog.hero" thumb>Read the latest</Cta>
+              <Cta to="https://hanzo.blog" kind="link">hanzo.blog</Cta>
             </div>
           </motion.div>
         </div>
@@ -162,7 +161,7 @@ function Here() {
           {HERE.map(([t, to], i) => (
             <li key={to} className={i ? 'small' : 'big'}>
               <A to={to} className="xbl-here-a">
-                <span className="xbl-here-art"><Sigil seed={to} /></span>
+                <span className="xbl-here-art">{to.includes('kai') ? <Img src="/models/kai.webp" w={1200} h={1500} className="xbl-here-img" /> : <Sigil seed={to} />}</span>
                 <span className={'xbl-here-t ' + (i ? 'v2s-title' : 'v2s-headline')}><span data-morph>{t}</span> <Arr /></span>
               </A>
             </li>
@@ -178,6 +177,7 @@ function Strip({ m, setM, months, top, all }) {
   const ref = useRef(null);
   const seen = useInView(ref, { once: true, amount: 0.6 });
   return (
+    <div className="xbl-strip-w">
     <div className="xbl-strip" ref={ref} role="group" aria-label="Posts by month, 2026">
       {months.map(([k, n], i) => {
         const Tag = n ? 'button' : 'span'; // a month with no posts is a gap in the strip, not a control
@@ -189,6 +189,7 @@ function Strip({ m, setM, months, top, all }) {
           </Tag>
         );
       })}
+    </div>
       <button type="button" className={'xbl-allbtn' + (!m && all ? ' on' : '')} aria-pressed={!m && all} onClick={() => setM(null)}>All {POSTS.length}</button>
     </div>
   );
@@ -223,7 +224,10 @@ function Contents() {
         <div className="v2s-head xbl-c-head">
           <h2 id="xbl-c-h" className="v2s-display xbl-c-h">Contents</h2>
           <p className="v2s-cap">Every post</p>
-          <div className="xbl-c-strip"><Strip m={m} setM={choose} months={months} top={top} all={all} /></div>
+          <div className="v2s-side xbl-c-strip">
+            <p className="xbl-count v2s-num" key={m || 'all'} aria-live="polite">{m ? (months.find(([k]) => k === m) || [0, 0])[1] : POSTS.length}<span className="v2s-cap">{m ? m + ' 2026' : ''}</span></p>
+            <Strip m={m} setM={choose} months={months} top={top} all={all} />
+          </div>
         </div>
         <div className="xbl-toc" ref={top0}>
           {shown.map(([k, list], gi) => (
