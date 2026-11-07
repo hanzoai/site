@@ -3,7 +3,7 @@
 Page file: `components/pages/model/Zen.jsx` and `components/v2/Launch.jsx` · gallery: `docs/gallery/zen/` · metric id: `signup_start`
 
 Open copy questions for James: none decided here. The page shows Hanzo's words only; labels that sat above headlines now sit below or beside them as captions.
-Shared changes requested (`docs/requests/zen.md`): none filed. The page uses the shared ask bar as it is; `lib/cta.js`, `lib/track.js` and `tokens.css` are not on main yet.
+Shared changes requested (`docs/requests/zen-names.md`): the desktop ask bar floats over content (Ask.jsx); the sound kit; `lib/cta.js`, `lib/track.js` and `tokens.css` are not on main yet.
 Forks this page deleted: our spec table and headings, raw `.x-btn` asks (now `Cta`), raw `<img>` (now `Img`, `ModelFilm`), cursor labels.
 
 ## 1. Strategy and conversion
