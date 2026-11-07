@@ -13,6 +13,9 @@
    V2: 8/10 rebuilt from the ported page: large question, numbered answer index, 64ch document, and a self-walking settings panel you can drive; no UI hues */
 // Signature: the setting, walked: a live settings panel where a spring cursor presses through the article's own steps, the matching step lit in the text
 // Beyond: try the choice: flip the switch and the panel answers with what that choice means, in the article's own words
+// Persona: a Hanzo Chat or Dev user deciding whether their chats and coding sessions may train Hanzo's models
+// Goal: find and change "Help improve Hanzo's models" and know what each choice means; metric: none in PLAN-COMPONENTS 1.1 (support page)
+// CTA: none of Hanzo's on this page (the action is the setting in the app); text links to Terms of Service, Privacy Policy and privacy@hanzo.ai
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion, useSpring } from 'motion/react';
 import { EASE } from '../../ui';

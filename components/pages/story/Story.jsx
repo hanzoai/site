@@ -18,6 +18,9 @@
    V2: 8.5/10 rebuilt as an editorial feature: stage hero with one ask, statement lede, huge figures on a rule, chapters as wiping 100svh scenes, asymmetric media wall, next-launch card; no UI hues */
 // Signature: the campaign as scene changes: each chapter a 100svh scene that wipes up over the last (scrubbed clip-path), picture pushing in, reel counting
 // Beyond: where each figure comes from: press a headline figure, the page travels to the sentence that states it and marks it, else the case study PDF
+// Persona: enterprise buyer or founder checking that Hanzo has delivered results for others (Buy journey)
+// Goal: proof of a past launch, every headline figure traceable to its sentence or the PDF; metric contact_sales_submit (journey level, no event wired yet)
+// CTA: "The original case study (PDF)", Hanzo's label, the one solid ask in the stage and at the close; "Every launch →" stays a text link
 import { useEffect, useRef, useState } from 'react';
 import { motion, useMotionValueEvent, useScroll, useTransform } from 'motion/react';
 import { EASE } from '../../ui';
