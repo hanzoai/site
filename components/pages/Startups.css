@@ -37,6 +37,35 @@
 .xst-not-o { grid-column: 1 / span 5; grid-row: 2; max-width: 420px; }
 .xst-not-o .xst-match { background: #171717; box-shadow: none; }
 @media (max-width: 899px) { .xst-not-o { grid-column: auto; grid-row: auto; } .xst-not-o .xst-track p, .xst-not-o .xst-lit, .xst-not-o .xst-byo { display: revert; } }
+/* phones: the live card docks as one slim strip above the form while you fill it in (56px, never over a label) */
+@media (max-width: 899px) {
+  .xst-apply-grid > .xst-match-col { order: -1; position: sticky; top: 60px; z-index: 5; }
+  .xst-match { display: flex; align-items: center; justify-content: space-between; gap: 10px; height: 56px; padding: 8px 12px; box-sizing: border-box; }
+  .xst-match-top svg { width: 28px; height: 28px; }
+  .xst-match .xst-track { display: none; }
+  .xst-match .xst-track .x-mono, .xst-match .xst-track p, .xst-match .xst-lit, .xst-match .xst-byo, .xst-match .xst-tech { display: none !important; }
+  .xst-match .xst-track b { margin: 0; font-size: 14px; white-space: nowrap; }
+  .xst-co { font-size: 15px; }
+  .xst-form { scroll-margin-top: 140px; }
+}
+/* the application in three steps (JS off: every step shows, as one form) */
+html.js .xst-step:not(.on) { display: none; }
+.xst-step { display: grid; gap: 20px; }
+html.js .xst-step.on { animation: xst-step .4s cubic-bezier(.16, 1, .3, 1) both; }
+@keyframes xst-step { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+html:not(.js) .xst-steps, html:not(.js) .xst-next, html:not(.js) .xst-prev { display: none; }
+html.js .xst-submit.later { display: none; }
+.xst-steps { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+.xst-steps i { flex: 1; max-width: 120px; height: 3px; border-radius: 2px; background: #e4e4e7; transform-origin: 0 50%; transition: background .3s cubic-bezier(0, 0, .2, 1); }
+.xst-steps i.done, .xst-steps i.on { background: var(--ink); }
+.xst-steps span { margin-left: 10px; font-size: 13px; color: #525252; }
+.xst-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.xst-nav button { gap: 12px; }
+.xst-prev { width: 48px; padding: 0 !important; }
+.xst-next i, .xst-prev i { font-style: normal; transition: transform .3s cubic-bezier(.16, 1, .3, 1); }
+@media (hover: hover) { .xst-next:hover i { transform: translateX(4px); } .xst-prev:hover i { transform: translateX(-4px); } }
+.xst-row { align-items: start; }
+@media (prefers-reduced-motion: reduce) { html.js .xst-step.on { animation: none; } }
 /* no dead bands: under the hero asks, and after the Techstars note */
 .xst-hero { padding-bottom: clamp(48px, 6vw, 96px); }
 .xst-ts { margin-top: clamp(40px, 4vw, 64px); }
