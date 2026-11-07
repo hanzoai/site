@@ -186,7 +186,7 @@ function Stage() {
   const k = (v) => (still ? 1 : ramp(v, 0, 0.55));
   const scale = useTransform([p, ss], ([v, s0]) => (still ? 1 : s0 + (1 - s0) * k(v)));
   const y = useTransform([p, sy], ([v, up]) => (still ? 0 : -up * k(v)));
-  const fade = useTransform(p, (v) => (still ? 1 : 1 - ramp(v, 0.04, 0.3))); // functions: an accelerated scroll fade does not clamp
+  const fade = useTransform(p, (v) => (still ? 1 : 1 - ramp(v, 0.03, 0.19))); // gone before the rising editor reaches the words (it meets them at about 0.22); functions: an accelerated scroll fade does not clamp
   const lift = useTransform(p, (v) => (still ? 0 : -160 * ramp(v, 0, 0.3)));
   const cap = useTransform(p, (v) => (still ? 1 : ramp(v, 0.5, 0.62)));
   return (
@@ -219,15 +219,16 @@ function Planes() {
   // no reduced-motion branch in render (it would differ from the server); CSS shows the final state under reduced motion
   const lift = useTransform(p, [0.2, 1], [0, -120]);
   const tilt = useTransform(p, [0.2, 1], [0, 14]);
+  const seen = useInView(ref, { once: true, amount: 0.5 }); // the engine runs through its parts twice once it is seen
   return (
-    <div className="ide-planes" ref={ref} aria-hidden="true">
+    <div className={'ide-planes' + (seen ? ' go' : '')} ref={ref} aria-hidden="true">
       <motion.div className="ide-plane top" style={{ y: lift, rotateX: tilt }}>
         <span className="ide-plane-k x-mono">VS Code workbench</span>
         <div className="ide-plane-row">{['editor surface', 'extension model', 'keybindings'].map((t) => <span key={t}>{t}</span>)}</div>
       </motion.div>
       <div className="ide-plane bot">
         <span className="ide-plane-k x-mono">Rust</span>
-        <div className="ide-plane-row">{['agent loop', 'memory', 'indexing', 'sandbox'].map((t) => <span key={t}>{t}</span>)}</div>
+        <div className="ide-plane-row">{['agent loop', 'memory', 'indexing', 'sandbox'].map((t, k) => <span key={t} style={{ '--k': k }}>{t}</span>)}</div>
       </div>
     </div>
   );
@@ -259,18 +260,27 @@ const GRAPH = [[50, 50, 0], [24, 26, 1], [78, 24, 1], [20, 72, 1], [80, 74, 1], 
 const EDGES = [[0, 1], [0, 2], [0, 3], [0, 4], [1, 5], [2, 5], [1, 6], [3, 6], [2, 7], [4, 7], [3, 8], [4, 8]];
 
 function Picture({ i }) {
+  // the picture's own animations (the arrival and the short idle loops) wait until it is on screen
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.4 });
+  const go = seen ? ' go' : '';
   if (i === 0) return (
-    <div className="ide-pic ide-pic-mem" key="m">
+    <div className={'ide-pic ide-pic-mem' + go} key="m" ref={ref}>
+      {/* each memory sits in the flow of its own line, after the code: the code gives way (ellipsis), never sits under it */}
       <ol className="ide-pic-code x-mono">
-        {SCRIPT_LINES.map((l, k) => <li key={k}><span>{k + 1}</span><span className="ide-pic-src"><Shell l={l} /></span></li>)}
+        {SCRIPT_LINES.map((l, k) => {
+          const m = MEMS.findIndex(([line]) => line === k);
+          return (
+            <li key={k} className={m >= 0 ? 'm' : ''}><span>{k + 1}</span><span className="ide-pic-src"><Shell l={l} /></span>
+              {m >= 0 && <span className={'ide-pic-chip k-' + MEMS[m][1]} style={{ animationDelay: 0.12 + m * 0.14 + 's', '--k': m }}><span className="x-mono">{MEMS[m][1]}</span><span className="ide-pic-w">{MEMS[m][2]}</span></span>}
+            </li>
+          );
+        })}
       </ol>
-      {MEMS.map(([line, kind, what], k) => (
-        <p key={kind} className={'ide-pic-chip k-' + kind} style={{ top: 28 + line * 34 + 'px', animationDelay: 0.12 + k * 0.14 + 's' }}><span className="x-mono">{kind}</span><span className="ide-pic-w">{what}</span></p>
-      ))}
     </div>
   );
   if (i === 1) return (
-    <div className="ide-pic ide-pic-graph" key="g">
+    <div className={'ide-pic ide-pic-graph' + go} key="g" ref={ref}>
       <svg viewBox="0 0 100 100" preserveAspectRatio="none">
         {EDGES.map(([a, b], k) => <line key={k} x1={GRAPH[a][0]} y1={GRAPH[a][1]} x2={GRAPH[b][0]} y2={GRAPH[b][1]} className={GRAPH[b][2] < 2 ? 'in' : ''} vectorEffect="non-scaling-stroke" />)}
       </svg>
@@ -280,7 +290,7 @@ function Picture({ i }) {
     </div>
   );
   return (
-    <div className="ide-pic ide-pic-safe" key="s">
+    <div className={'ide-pic ide-pic-safe' + go} key="s" ref={ref}>
       <div className="ide-box"><span className="x-mono">sandbox</span><p>tool call</p></div>
       <div className="ide-key"><svg viewBox="0 0 24 24" width="22" height="22"><rect x="5" y="10.5" width="14" height="10" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" fill="none" stroke="currentColor" strokeWidth="1.6" /></svg><span>keychain</span><em>encrypted at rest</em></div>
       <ol className="ide-trail">

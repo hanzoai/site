@@ -1,4 +1,5 @@
 # /ide — James-eye review
+Ready: 2026-11-08 chapter memories sit in their own code line (chips can never cover code, measured at 1470 and 375), no arrival pop or wipe, uncut stage shadow, Teach as one hairline sheet, start script wraps, hero words gone before the editor rises over them, short idle loops in the chapter pictures and Rust plane (0 still screens).
 Verdict: 7/10
 First complaint: "Those little memory tags are still sitting on top of the code. On my phone 'episodic' hides half the git clone line, and on the laptop it eats the last letter of ide.git. Then when the page opens the editor pops a bit bigger and wipes itself clean."
 (Walked 7 Nov 17:00–17:23 UTC at HEAD `252e313a` (the page's last change is round 7, `6b0d251b`). Sizes: 1470×801 (fine pointer) and 375×812 (isMobile, hasTouch), plus 320×700, 375×667, reduced motion and JS off. Requests to api.hanzo.ai were blocked and no form was sent. The frames are in the critic's scratch folder; nothing was added to the repo.)
