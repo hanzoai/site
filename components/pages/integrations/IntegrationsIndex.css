@@ -25,6 +25,12 @@
 @keyframes xii-h1 { from { transform: translate3d(0, 105%, 0); } }
 /* scale rhythm in the catalogue: the first guide of each family is a wide card, the rest pack around it */
 .xii-grid { grid-auto-flow: row; }
+/* the catalogue arrives as one list: each card rises 16px, 60 ms after the last (400 ms, ease-emphasis), once */
+@keyframes xii-card-in { from { opacity: 0; transform: translate3d(0, 16px, 0); } }
+@media (prefers-reduced-motion: no-preference) {
+  .xii-grid > li > .xii-card { animation: xii-card-in 400ms var(--e-emph) backwards; animation-delay: calc(var(--k, 0) * 60ms); }
+  html.js .xii-grid:not([data-in]) > li > .xii-card { animation-play-state: paused; }
+}
 .xii-grid > li.wide { grid-column: span 2; }
 .xii-grid > li.wide .xii-card-n { font-size: 26px; }
 .xii-grid > li.wide .xii-card-d { max-width: 44ch; }

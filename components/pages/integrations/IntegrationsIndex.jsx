@@ -142,6 +142,8 @@ function Catalogue({ groups, label }) {
   const shown = cards.filter((c) => (fam === 'All' || c.fam === fam) && hit(c));
   const fams = [['All', cards.filter(hit).length], ...groups.map((g) => [g.title, g.cards.filter((c) => hit({ ...c, fam: g.title })).length])];
   const calm = useReducedMotion();
+  const gridRef = useRef(null);
+  const gridIn = useInView(gridRef, { once: true, amount: 0.05 });
   const keys = (e) => {
     const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
     if (!d) return;
@@ -174,15 +176,20 @@ function Catalogue({ groups, label }) {
             <button type="button" className="xii-none-a" onClick={() => { setQ(''); setFam('All'); }}><span>All</span><span className="pf-mono">{cards.length}</span></button>
           </div>
         )}
-        <ul className="xii-grid" aria-live="polite">
+        {/* the cards go straight to their guide (no stage between: a guide's headline is longer than the card's name,
+            so a flying title could never land on it); the grid arrives as one list when it is reached */}
+        <ul className="xii-grid" aria-live="polite" data-no-morph ref={gridRef} data-in={gridIn ? '' : undefined}>
           <AnimatePresence initial={false} mode="popLayout">
             {cards.map((c, i) => {
               const on = shown.includes(c);
               if (!on && !calm) return null;
-              // each family's first guide is wide when the family has three or more (rows then fill in reading order)
-              const wide = fam === 'All' && !t && (i === 0 || cards[i - 1].fam !== c.fam) && cards.filter((x) => x.fam === c.fam).length >= 3;
+              // each family's first guide is wide when the family has three or more (rows then fill in reading order);
+              // if that would leave the last row one short, the last guide is wide too, so no row ends in a hole
+              const lead = (k) => (k === 0 || cards[k - 1].fam !== cards[k].fam) && cards.filter((x) => x.fam === cards[k].fam).length >= 3;
+              const slots = cards.length + cards.filter((_, k) => lead(k)).length;
+              const wide = fam === 'All' && !t && (lead(i) || (i === cards.length - 1 && slots % 4 === 3));
               return (
-                <motion.li key={c.href} layout={!calm} hidden={!on} className={wide ? 'wide' : undefined} initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.15, ease: [0, 0, 0.2, 1] } }} transition={PILL}>
+                <motion.li key={c.href} layout={!calm} hidden={!on} className={wide ? 'wide' : undefined} style={{ '--k': Math.min(i, 12) }} initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.15, ease: [0, 0, 0.2, 1] } }} transition={PILL}>
                   <A to={c.href} className="xii-card" onPointerMove={lean} onPointerLeave={rest}>
                     <span className="xii-card-e" aria-hidden="true"><Logo slug={c.slug} name={c.name} /></span>
                     <span className="xii-card-fam pf-mono" aria-hidden="true">{String(cards.indexOf(c) + 1).padStart(2, '0')} / {cards.length}</span>
