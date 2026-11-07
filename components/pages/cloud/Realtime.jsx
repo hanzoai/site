@@ -565,7 +565,7 @@ export default function Realtime() {
         </div>
       </section>
 
-      <PinnedChapters label="What the stream gives you" per={66} objH={38}
+      <PinnedChapters label="What the stream gives you" per={42} objH={38}
         intro={{ title: ['What the stream', 'gives you'], lede: 'One connection, and the rules you already wrote deciding what goes down it' }}
         steps={steps}
         visual={(at, intro) => <ChapterClients step={at} intro={intro} />} />

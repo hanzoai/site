@@ -168,6 +168,13 @@
 .rt-cstage .rt-pause { margin-left: auto; flex: none; }
 .rt-cstage .rt-top span, .rt-cstage .rt-top em { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .rt-screen.other { border-color: var(--ink); }
+/* the run's one scale moment: on "Deletes are checked too" the three clients grow toward hero size, then settle */
+.rt-cstage .rt-screens { transform-origin: 50% 0; transition: transform .5s cubic-bezier(.16, 1, .3, 1); }
+@media (min-width: 900px) { .rt-cstage[data-step='3'] .rt-screens { transform: scale(1.12); } }
+@media (prefers-reduced-motion: reduce) { .rt-cstage .rt-screens { transition: none; } }
+/* no empty bands after the pin releases or under the growth list */
+.rt-uses.lx-sec { padding-top: clamp(40px, 4vw, 72px); }
+.rt-grow.lx-sec { padding-bottom: clamp(32px, 3vw, 56px); }
 /* the two empty bands: the statement sits close under the hero, the "Two calls" strip close under growth */
 .rt-say.lx-sec { padding-top: clamp(24px, 3vw, 48px); }
 .rt-open { padding-top: clamp(40px, 4vw, 64px) !important; }
