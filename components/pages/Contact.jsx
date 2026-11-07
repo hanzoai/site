@@ -14,7 +14,7 @@ import { motion, useInView, useReducedMotion } from 'motion/react';
 import { Copy } from '../ui';
 import { A, More } from '../kit';
 import Sigil from '../Sigil';
-import MaskLines from '../v2/MaskLines';
+import MaskLines from './company/MaskLines';
 import '../v2/vc-type.css';
 import './Contact.css';
 

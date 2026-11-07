@@ -1,0 +1,27 @@
+/* PinScenes (see PinScenes.jsx). Owned by the Wave 2 Company chat. */
+.vc-pin { position: relative; height: calc(var(--n) * 100svh); }
+.vc-pin-sticky { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; overflow: hidden; }
+.vc-pin-stage { position: relative; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: clamp(32px, 5vw, 96px); align-items: center; }
+.vc-pin.flip .vc-pin-stage { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+.vc-pin-scene { display: contents; }
+.vc-pin-t { grid-area: 1 / 1; align-self: center; display: flex; flex-direction: column; gap: 22px; padding-left: 36px; }
+.vc-pin-v { grid-area: 1 / 2; position: relative; aspect-ratio: 7 / 6; border-radius: 28px; overflow: hidden; background: var(--card); }
+.vc-pin.flip .vc-pin-t { grid-area: 1 / 2; }
+.vc-pin.flip .vc-pin-v { grid-area: 1 / 1; }
+.vc-pin-rail { position: absolute; left: 0; top: 50%; translate: 0 -50%; height: min(52svh, 420px); width: 1px; background: var(--line); }
+.vc-pin.flip .vc-pin-rail { left: auto; right: 0; }
+.vc-pin-rail i { position: absolute; inset: 0; background: var(--acc, var(--ink)); transform-origin: 50% 0; }
+.vc-pin-rail span { position: absolute; top: -34px; left: 0; white-space: nowrap; }
+.vc-pin.flip .vc-pin-rail span { left: auto; right: 0; }
+
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+  .vc-pin { height: auto; }
+  .vc-pin-sticky { position: static; height: auto; display: block; overflow: visible; }
+  .vc-pin-stage, .vc-pin.flip .vc-pin-stage { display: block; }
+  .vc-pin-rail { display: none; }
+  .vc-pin-scene { display: flex; flex-direction: column; gap: 28px; padding: 56px 0; border-top: 1px solid var(--line); }
+  .vc-pin-rail + .vc-pin-scene { border-top: 0; }
+  .vc-pin-t, .vc-pin-v { opacity: 1 !important; transform: none !important; clip-path: none !important; }
+  .vc-pin-t { padding-left: 0; gap: 16px; }
+  .vc-pin-v { aspect-ratio: 4 / 3.4; }
+}

@@ -12,7 +12,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, animate, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
 import { Copy } from '../ui';
 import { A, Flap } from '../kit';
-import MaskLines from '../v2/MaskLines';
+import MaskLines from './company/MaskLines';
 import '../v2/vc-type.css';
 import './Brand.css';
 
