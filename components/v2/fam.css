@@ -80,10 +80,18 @@
 .v2f-ch-g { align-items: center; }
 .v2f-ch-i { display: contents; }
 .v2f-ch-t { grid-column: 1 / span 5; grid-row: 1; align-self: center; transition: opacity .55s var(--out), transform .7s var(--out); }
-.v2f-ch-t:not([data-on]) { opacity: 0; transform: translateY(var(--dy, 48px)); pointer-events: none; }
+/* hidden states only once scripts run (html.js, set before first paint): JS off reads every chapter */
+html.js .v2f-ch-t:not([data-on]) { opacity: 0; transform: translateY(var(--dy, 48px)); pointer-events: none; }
 .v2f-ch-t[data-on] { transition-delay: .12s; }
 .v2f-ch-v { grid-column: 7 / span 6; grid-row: 1; position: relative; min-width: 0; height: min(70svh, 660px); clip-path: inset(0 0 0 0 round var(--r-hero)); transition: clip-path .9s cubic-bezier(.76, 0, .24, 1); }
-.v2f-ch-v:not([data-on]) { clip-path: inset(var(--cy, 100% 0 0 0) round var(--r-hero)); pointer-events: none; }
+html.js .v2f-ch-v:not([data-on]) { clip-path: inset(var(--cy, 100% 0 0 0) round var(--r-hero)); pointer-events: none; }
+/* JS off: the chapters read as a plain story, one after another (the phone layout) */
+html:not(.js) .v2f-ch { height: auto; }
+html:not(.js) .v2f-ch-pin { position: static; height: auto; display: block; overflow: visible; padding: 96px 0; }
+html:not(.js) .v2f-ch-g { display: flex; flex-direction: column; align-items: stretch; gap: 96px; }
+html:not(.js) .v2f-ch-i { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: var(--gut); align-items: center; }
+html:not(.js) .v2f-ch-v { height: auto; min-height: 320px; }
+html:not(.js) .v2f-ch-nav { display: none; }
 .v2f-ch-v[data-on] { z-index: 1; }
 .v2f-ch-nav { position: absolute; left: max(24px, calc((100vw - var(--wrap2)) / 2)); bottom: 40px; display: flex; gap: 6px; z-index: 2; }
 .v2f-ch-nav button { position: relative; height: 44px; min-width: 44px; padding: 0 4px; border: 0; background: none; cursor: pointer; display: flex; align-items: center; }
@@ -134,6 +142,8 @@
   .v2f-ch-t, .v2f-ch-v { opacity: 1 !important; transform: none !important; clip-path: none !important; pointer-events: auto !important; }
   .v2f-ch-v { height: auto; }
   .v2f-ch-nav { display: none; }
+  html:not(.js) .v2f-ch-i { display: flex; flex-direction: column; gap: 32px; }
+  html:not(.js) .v2f-ch-pin { padding: 0; }
   .v2f-next { grid-auto-columns: 82%; gap: 12px; }
   .v2f-next-c { min-height: 260px; padding: 24px; }
 }
