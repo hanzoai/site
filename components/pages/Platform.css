@@ -10,7 +10,7 @@
   --k-press: 90ms; --k-fast: 150ms; --k-base: 300ms; --k-slow: 400ms; --k-slower: 500ms;
   --k-out: cubic-bezier(0, 0, .2, 1); --k-io: cubic-bezier(.4, 0, .2, 1); --k-em: cubic-bezier(.16, 1, .3, 1);
   /* space (golden steps) */
-  --gut: clamp(16px, 4vw, 32px); --side: max(var(--gut), calc((100vw - 1152px) / 2)); --sec: clamp(72px, 11vw, 188px); --hdr: 60px;
+  --gut: clamp(16px, 4vw, 32px); --side: max(var(--gut), calc((100vw - 1152px) / 2)); --sec: clamp(64px, 7.5vw, 116px); --hdr: 60px;
   --acc: var(--k-ink);
   background: var(--k-white); color: var(--k-ink);
 }
@@ -92,6 +92,23 @@
 .xpl-bar { display: flex; align-items: center; gap: 24px; font: 606 12px/1.3 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--k-on-4); }
 .xpl-bar-t { position: absolute; top: 88px; left: calc(var(--side) + 16px); right: calc(var(--side) + 16px); justify-content: space-between; }
 .xpl-bar-b { position: absolute; bottom: 32px; left: calc(var(--side) + 16px); right: calc(var(--side) + 16px); flex-wrap: wrap; gap: 8px 24px; }
+/* the room's two bars sit on their own black band, above the drawing, so no plate ever runs under their words */
+@media (min-width: 900px) {
+  .xpl-bar-t, .xpl-bar-b { z-index: 3; }
+  .xpl-bar-t::before, .xpl-bar-b::before { content: ''; position: absolute; left: -24px; right: -48px; z-index: -1; pointer-events: none; }
+  .xpl-bar-t::before { top: -32px; bottom: -40px; background: linear-gradient(var(--k-black) 62%, transparent); }
+  .xpl-bar-b::before { top: -64px; bottom: -40px; background: linear-gradient(transparent, var(--k-black) 46%); }
+}
+/* the chapter index stays on one line at desktop widths (it may run under the picture's column) */
+@media (min-width: 1200px) { .xpl .pc-idx { grid-column: 1 / 9; flex-wrap: nowrap; } }
+html.js .xpl-art:not([data-sized]) { visibility: hidden; }
+/* idle life in the room: one packet travels the interconnect, 4.8 s a crossing */
+.xpl-zap { position: relative; }
+.xpl-zap::after { content: ''; position: absolute; left: 24px; bottom: -1px; width: 28px; height: 1px; background: var(--k-on); opacity: 0; pointer-events: none; animation: xpl-packet 4.8s cubic-bezier(.4, 0, .2, 1) 1s infinite; }
+@keyframes xpl-packet { 0% { opacity: 0; transform: translateX(0); } 10%, 85% { opacity: .8; } 100% { opacity: 0; transform: translateX(calc(var(--zap-w, 560px))); } }
+@media (prefers-reduced-motion: reduce) { .xpl-zap::after { display: none; } }
+/* the hero art reads as line art on paper: its floor shadow is kept small and faint */
+.xpl-iso .iso-shadow { transform: rotate(-8deg) scale(.55); opacity: .5; }
 .xpl-hint { transition: opacity var(--k-base) var(--k-out); }
 .xpl-hint.off { opacity: 0; }
 .xpl-jr[data-ph='1'] .xpl-bar a, .xpl-jr[data-ph='1'] .xpl-ask { pointer-events: auto; }
@@ -144,6 +161,8 @@
 .xpl-ask-in:focus-within { border-color: var(--k-on-2); }
 .xpl-ask-in input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: none; color: var(--k-on); font: 400 16px/1 var(--sans); caret-color: var(--k-on); }
 .xpl-ask-in input::-webkit-search-cancel-button { display: none; }
+.xpl-ask-in input::placeholder { color: var(--k-on-4); }
+.xpl-ask-row { display: inline-flex; align-items: center; gap: 17px; }
 .xpl-ask-x { display: grid; place-items: center; width: 28px; height: 28px; margin-right: -8px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .14); color: var(--k-on); cursor: pointer; }
 .xpl-ask-x:active { transform: scale(.97); }
 .xpl-ask-n { position: absolute; right: 18px; top: -20px; margin: 0; font: 497 12px/1 var(--mono); color: var(--k-on-4); }
@@ -450,6 +469,7 @@
 .xpl-dir { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); column-gap: 24px; align-items: start; }
 .xpl-dir-cols { grid-column: 1 / 9; column-count: 4; column-gap: 20px; }
 .xpl-dir-g + .xpl-dir-g { margin-top: 27px; }
+.xpl-dir-g { break-inside: avoid; } /* a group's heading never leaves its items */
 .xpl-dir-h { break-after: avoid; }
 .xpl-dir-g li { break-inside: avoid; }
 .xpl-dir-g ul { margin: 6px 0 0; padding: 0; list-style: none; }

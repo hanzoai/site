@@ -18,7 +18,7 @@
    typing is done, and the guide's contour drifting in the close; state, the switch dimming every window at once, the
    window turning to its next tab, the card that opens into a sibling guide; pointer, the magnetic ask and the sibling
    rail that drags with inertia; arrival, the promise's masked rise; scroll, the window settling and the chapters.
-   Colour: none of our own (MASTER.md 3.1); the tool's emoji appears once, greyed, in the credit tile.
+   Colour: none of our own (MASTER.md 3.1); the tool's mark is set in type (two letters of its name), never an emoji.
    V2: 8/10 v5: only Hanzo's lines type (no blink, by time not frames), one pinned window that changes tab with the heading, a face per category (light, mirrored, graphite editor, terminal beside the title), ask bar from the moment the hero ask leaves, siblings ranked by category, JSON comments as a caption so Copy parses, phone lines wrap, 44px links, live hanzo.ai type sizes. */
 import { useMemo, useState } from 'react';
 import { Copy, Magnetic } from '../../ui';
@@ -30,7 +30,7 @@ import FamStage from '../../v2/FamStage';
 import FamChapters from '../../v2/FamChapters';
 import FamNext from '../../v2/FamNext';
 import { ui } from '../../v2/famUi';
-import { Editor, CodeCard, Only } from './intParts';
+import { Editor, CodeCard, Only, monoOf } from './intParts';
 import './guide.css';
 
 const FACES = { Infrastructure: 'term', 'Platforms & Editors': 'ide', Languages: 'mirror' };
@@ -65,8 +65,15 @@ export default function Guide({ doc, emojis }) {
     name: s.title,
     text: (
       <div className="xig-ch-t">
+        <p className="xig-ch-n x-mono" aria-hidden="true"><b>{String(k + 1).padStart(2, '0')}</b> / {String(rest.length).padStart(2, '0')}</p>
         <h2 className="v2f-head">{s.title}</h2>
         {s.lang && <p className="xig-ch-l x-mono">{s.lang}</p>}
+        <div className="xig-ch-route" aria-hidden="true">
+          <i className="xig-ch-req" />
+          <span className="xig-node">{name}</span>
+          <span className="xig-node hub x-mono">{doc.base.replace(/^https:\/\//, '')}</span>
+          {ends[0] && <span className="xig-node end x-mono">{ends[Math.min(k, ends.length - 1)]}</span>}
+        </div>
         {s.code && <div className="xig-ch-acts"><Only only={only} setOnly={setOnly} code={s.code} /></div>}
       </div>
     ),
@@ -123,7 +130,7 @@ export default function Guide({ doc, emojis }) {
       <section className="v2f-sec tight xig-credit">
         <div className="v2f-wrap v2f-grid xig-credit-g">
           <div className="xig-credit-l">
-            <span className="xig-credit-e" aria-hidden="true">{doc.emoji}</span>
+            <span className="xig-credit-e" aria-hidden="true"><Sigil seed={doc.route + '#credit'} data={seedData} className="xig-credit-s" still /><b>{monoOf(name)}</b></span>
             <div>
               {doc.created && <p className="xig-by"><Loose nodes={doc.created} /></p>}
               {doc.license && <p className="xig-lic"><Loose nodes={doc.license} /></p>}

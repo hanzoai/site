@@ -41,8 +41,10 @@ const DIFF = [
   ['ctx', '      try { return await fn(); } catch (e) { last = e; }'],
   ['ctx', '    }'],
 ];
-const FILE = [DIFF[1][1].slice(2), DIFF[2][1].slice(2), DIFF[4][1].slice(2), DIFF[5][1].slice(2)];
+/* the file as Dev reads it (an illustration, like the session): the hunk's lines plus the function's close */
+const FILE = [DIFF[1][1].slice(2), '  let last;', DIFF[2][1].slice(2), DIFF[4][1].slice(2), DIFF[5][1].slice(2), '  throw last;', '}'];
 const FIXED = DIFF[3][1].slice(2);
+const HOT = 2; // the line the change lands on
 const HIGHLIGHTS = ['Reads the repository, makes the change and runs the tests', 'Shows you the diff and waits for your review', 'In your terminal, on the web, in the cloud and in Slack', 'Enso by default, every Hanzo model by name'];
 const ASK = 'Describe the change.'; // what you give Dev, in Hanzo's own words
 
@@ -50,15 +52,16 @@ const ASK = 'Describe the change.'; // what you give Dev, in Hanzo's own words
 function File({ stage }) {
   return (
     <div className={'xdv-file s' + stage} aria-hidden="true">
-      <div className="xdv-file-tab x-mono"><i />src/retry.ts{stage >= 2 && <em>M</em>}</div>
+      <div className="xdv-file-tab x-mono"><i />src/retry.ts<em className="xdv-file-ct"><b>+1</b> <s>−1</s> <u>M</u></em></div>
+      {/* the change lands as a hunk: the old line is struck through as it leaves, the new one wipes in under it */}
       <ol className="xdv-src x-mono">
         {FILE.map((l, i) => (
-          <li key={i} className={i === 1 ? 'hot' : ''} style={{ '--i': i }}>
-            <span className="n">{i + 1}</span>
-            {i === 1
-              ? <span className="xdv-swap"><span className="old"><b>-</b>{l}</span><span className="new"><b>+</b>{FIXED}</span></span>
-              : <span>{l}</span>}
-          </li>
+          i === HOT ? [
+            <li key="del" className="del" style={{ '--i': i }}><span className="n">{i + 1}</span><span><b className="sg">−</b>{l}</span></li>,
+            <li key="add" className="add" style={{ '--i': i }}><span className="n">{i + 1}</span><span><b className="sg">+</b>{FIXED}</span></li>,
+          ] : (
+            <li key={i} style={{ '--i': i }}><span className="n">{i + 1}</span><span><b className="sg"> </b>{l}</span></li>
+          )
         ))}
       </ol>
     </div>
@@ -172,10 +175,10 @@ function Dot({ t, at }) {
   const o = useTransform(t, (v) => (v >= at ? 1 : 0.14));
   return <motion.i style={{ opacity: o }} />;
 }
-/* the clock shows only Hanzo's own numbers: 0.00 s until that side is done, then its median (never a running count) */
+/* the clock runs in real time while that side works and stops on its own median (Hanzo's figure), never past it */
 function Side({ t, side }) {
   const { who, s, calls, dots, run, win } = side;
-  const clock = useTransform(t, (v) => (v >= s ? s.toFixed(2) : '0.00') + ' s');
+  const clock = useTransform(t, (v) => Math.min(v, s).toFixed(2) + ' s');
   const st = useTransform(t, (v) => (v <= 0 ? 'ready' : v >= s ? 'done' : 'running'));
   const glow = useTransform(t, (v) => (v >= s ? 1 : 0));
   return (
@@ -369,7 +372,7 @@ function Rows({ list, at, set, label }) {
 
 function Sheet({ n, kick, title, lede, links, children }) {
   return (
-    <Play as="article" className="xdv-sheet" style={{ '--k': n }}>
+    <Play as="article" className={'xdv-sheet' + (n % 2 ? ' flip' : '')} style={{ '--k': n }}>
       <div className="xdv-sheet-in v2a-grid">
         <div className="xdv-sheet-l">
           <h3 className="v2a-head">{title}</h3>
@@ -518,6 +521,15 @@ function Source() {
           <p className="xdv-oss-p">Dev is Apache-2.0 on GitHub. Build it, change it, send a pull request — <A to="https://github.com/hanzoai/dev">hanzoai/dev</A>.</p>
           <div className="xdv-oss-links"><Lk to="https://github.com/hanzoai/dev" id="dev.source">The source</Lk><Lk to="https://github.com/hanzoai/dev/releases" id="dev.releases">Releases</Lk></div>
         </div>
+      </div>
+      {/* the repository as an object: its name, licence and latest release, all words already on this page */}
+      <div className="v2a-wrap">
+        <Play className="xdv-repo x-mono" aria-hidden="true">
+          <span className="xdv-repo-n"><i />hanzoai/dev</span>
+          <span className="xdv-repo-t">Apache-2.0</span>
+          <span className="xdv-repo-t">v0.7.7</span>
+          <span className="xdv-repo-tree">{FILE.map((l, i) => <b key={i} style={{ '--w': Math.max(8, l.trim().length) + 'ch', '--i': i }} />)}</span>
+        </Play>
       </div>
       <div className="v2a-wrap v2a-grid xdv-qa">
         <div className="xdv-qa-l">

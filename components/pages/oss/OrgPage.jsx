@@ -22,7 +22,8 @@
    Colour: none of our own (MASTER.md 3.1); organizations differ by their contour, figures and repositories.
    V2: 8/10 v6: a light, full-width year strip as the hero object (its own face: no black card, no pinned chapters, no dark close), each figure said once with the forge's shares drawn from Hanzo's numbers, zeros in a small line, repositories as numbered rows (72px on phones), siblings named by id, a quiet close with the contour and the ask. */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { motion, AnimatePresence, LayoutGroup, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence, LayoutGroup, useInView, useReducedMotion } from 'motion/react';
+import NoJs from '../../NoJs';
 import { Copy, Magnetic } from '../../ui';
 import { A } from '../../kit';
 import Sigil from '../../Sigil';
@@ -180,6 +181,23 @@ function Year({ doc, lead }) {
   );
 }
 
+/* a figure whose digits rise out of their masks (the same move as the lead), held until its section arrives */
+function Digits({ value, className = '' }) {
+  return (
+    <b className={'xos-dgs ' + className} aria-label={value}>
+      {[...value].map((c, i) => <span key={i} className="xos-dg" aria-hidden="true"><span style={{ '--i': i }}>{c}</span></span>)}
+    </b>
+  );
+}
+/* data-in on a section once a fifth of it is on screen: its held arrivals (digits, rows) play then, once */
+function useArrive(amount = 0.2) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount });
+  return [ref, seen ? '' : undefined];
+}
+/* with scripts off every held arrival shows at rest */
+const NOJS = '.xos .xos-dg>span,.xos .xos-list>li{animation:none!important;transform:none!important;opacity:1!important}';
+
 /* a share, drawn from two of Hanzo's own figures */
 function Share({ part, of }) {
   if (!(part > 0) || !(of > 0) || part > of) return null;
@@ -253,12 +271,17 @@ export default function OrgPage({ doc }) {
     meta: [o.org, o.repos && o.repos.value + ' ' + o.repos.label, o.commits && o.commits.n > 0 && o.commits.value + ' ' + o.commits.label.replace(/,.*$/, '')].filter(Boolean).join(' · '),
   }));
   const [gh, forge, every] = doc.links;
+  const [ghRef, ghIn] = useArrive();
+  const [fgRef, fgIn] = useArrive();
+  const [listRef, listIn] = useArrive(0.05);
+  const clear = () => { setQ(''); setLang(''); };
   return (
     <main className="v2f xos">
+      <NoJs css={NOJS} />
       <section className="xos-hero" aria-labelledby="xos-h1">
         <div className="v2f-wrap v2f-grid xos-top">
           <div className="xos-top-l" style={{ '--len': longest }}>
-            <FamLines as="h1" id="xos-h1" text={doc.name} className="v2f-display xos-h1" data-morph-target />
+            <FamLines as="h1" id="xos-h1" text={doc.name} className="v2f-display xos-h1" settle={false} data-morph-target />
           </div>
           <div className="xos-top-r">
             {doc.lede && <p className="v2f-lede xos-lede">{doc.lede}</p>}
@@ -271,23 +294,23 @@ export default function OrgPage({ doc }) {
         </div>
         <div className="v2f-wrap"><Year doc={doc} lead={lead} /></div>
         {ghC && (
-          <div className="v2f-wrap v2f-grid xos-ghr">
+          <div className="v2f-wrap v2f-grid xos-ghr" ref={ghRef} data-in={ghIn}>
             <div className="xos-ghr-l">
-              <h2 className="v2f-head">{ghC.title}</h2>
+              <FamLines as="h2" play="view" text={ghC.title} className="v2f-head" />
               {ghC.notes.map((n) => <p key={n} className="xos-note">{n}</p>)}
             </div>
             <dl className="xos-row-figs">
-              {ghFigs.map((f) => <div key={f.label}><dd className="v2f-num">{f.value}</dd><dt>{f.label}</dt></div>)}
+              {ghFigs.map((f) => <div key={f.label}><dd className="v2f-num"><Digits value={f.value} /></dd><dt>{f.label}</dt></div>)}
             </dl>
           </div>
         )}
       </section>
 
       {forgeC && (
-        <section className="xos-fg" aria-labelledby="xos-forge-h">
+        <section className="xos-fg" aria-labelledby="xos-forge-h" ref={fgRef} data-in={fgIn}>
           <div className="v2f-wrap v2f-grid xos-fg-g">
             <div className="xos-fg-l">
-              <h2 id="xos-forge-h" className="v2f-head">{forgeC.title}</h2>
+              <FamLines as="h2" id="xos-forge-h" play="view" text={forgeC.title} className="v2f-head" />
               {forgeC.notes.map((n) => <p key={n} className="xos-note">{n}</p>)}
             </div>
             <div className="xos-fg-r">
@@ -295,7 +318,7 @@ export default function OrgPage({ doc }) {
                 <dl className="xos-fr">
                   {forgeRows.map((f, k) => {
                     const s = shareOf(f);
-                    const v = <dd className="v2f-num v2f-fig">{f.value}</dd>;
+                    const v = <dd className="v2f-num v2f-fig"><Digits value={f.value} /></dd>;
                     return (
                       <div key={f.label}>
                         {k === growIx && forgeRows.length > 1 ? <FamGrow to={1.35}>{v}</FamGrow> : v}
@@ -315,7 +338,7 @@ export default function OrgPage({ doc }) {
         <section className="xos-repos" id="repositories" aria-labelledby="xos-repos-h">
           <div className="v2f-wrap">
             <div className="v2f-grid xos-repos-h">
-              <FamLines as="h2" id="xos-repos-h" play="view" text={R.title} className="v2f-display small" />
+              <FamLines as="h2" id="xos-repos-h" play="view" text={R.title} className="v2f-head" />
               <div className="xos-tools">
                 {R.search && (
                   <label className="xos-search">
@@ -338,14 +361,17 @@ export default function OrgPage({ doc }) {
             {langs.length > 1 && (
               <div className="xos-chips" role="group" aria-label={ui('oss_language')} data-swipe-own>
                 {['', ...langs].map((l) => (
-                  <button key={l || 'all'} type="button" aria-pressed={lang === l} aria-label={l ? undefined : ui('oss_all')} onClick={() => setLang(l)}>{l || <Grid />}</button>
+                  <button key={l || 'all'} type="button" aria-pressed={lang === l} aria-label={l ? undefined : ui('oss_all')} onClick={() => setLang(l)}>
+                    {lang === l && <motion.span layoutId="xos-chip" className="xos-chip-bg" transition={GLIDE} />}
+                    <span>{l || <Grid />}</span>
+                  </button>
                 ))}
               </div>
             )}
             <LayoutGroup>
-              <ol className="xos-list">
+              <ol className="xos-list" ref={listRef} data-in={listIn}>
                 {[...vis, ...all.filter((r) => !hit.has(r.name))].map((r, k) => (
-                  <motion.li key={r.name} layout={calm || all.length > 80 ? false : 'position'} transition={GLIDE} hidden={!hit.has(r.name)} className={k === 0 && vis.length > 2 && paged ? 'lead' : ''}>
+                  <motion.li key={r.name} layout={calm || all.length > 80 ? false : 'position'} transition={GLIDE} hidden={!hit.has(r.name)} className={k === 0 && vis.length > 2 && paged ? 'lead' : ''} style={{ '--k': Math.min(k, 12) }}>
                     <motion.div layoutId={'xos-' + r.name} className="xos-row" transition={MORPH}>
                       <span className="xos-no x-mono" aria-hidden="true">{String(k + 1).padStart(2, '0')}</span>
                       <div className="xos-row-m">
@@ -362,7 +388,7 @@ export default function OrgPage({ doc }) {
                           {r.pushed && <span className="xos-hide-p">{r.pushed}</span>}
                         </p>
                       </div>
-                      <Wave bars={r.spark} className="xos-row-w" />
+                      {r.spark && r.spark.length ? <Wave bars={r.spark} className="xos-row-w" /> : <span className="xos-row-w" aria-hidden="true" />}
                       <span className="xos-ends">
                         {r.forge && <A to={r.forge} className="xos-forge">{r.forgeLabel || 'Forge'}</A>}
                         {r.href && <A to={r.href} className="xos-gh" aria-label={r.name}><Out /></A>}
@@ -372,10 +398,11 @@ export default function OrgPage({ doc }) {
                 ))}
               </ol>
               {shown.length === 0 && (
-                <p className="xos-empty" role="status">
+                <div className="xos-empty" role="status">
                   <svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M10.5 10.5 14 14M4.6 4.6l4.8 4.8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>
-                  <span className="x-sr">{ui('oss_no_match')}</span><span aria-hidden="true">“{q}”</span>
-                </p>
+                  <span>{ui('oss_no_match')}{q && <> “{q}”</>}</span>
+                  <button type="button" className="v2f-btn" onClick={clear}><Grid />{ui('oss_all')}</button>
+                </div>
               )}
               <AnimatePresence>{cur && <Card key={cur.name} r={cur} onClose={() => setOpen(null)} />}</AnimatePresence>
             </LayoutGroup>
