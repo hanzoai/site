@@ -141,7 +141,7 @@
 .tl2-code, .tl2-ln em { color: #a3a3a3; }
 .tl2-ln b { color: #d4d4d4; }
 /* chapter 05: config.yaml dimmed under builder.yaml, so the window stays full */
-.tl2-ln.tl2-ghost { color: #737373; }
+.tl2-ln.tl2-ghost, .tl2-ln.tl2-ghost em { color: #a3a3a3; }
 .tl2-ln.tl2-ghost-h { margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255, 255, 255, .08); color: #a3a3a3; }
 /* the collector at rest: 13px desktop, 14px phone */
 .tl2-rest { font-size: 13px; }
