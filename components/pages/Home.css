@@ -521,3 +521,5 @@
 .hv .x-band .x-btn.solid { background: transparent; color: #f5f5f7; border: 1px solid rgba(255, 255, 255, .55); transition: background-color .22s, color .22s, border-color .22s, transform .12s var(--v2-ease); }
 .hv .x-band .x-btn.solid:active { transform: scale(.98); }
 @media (hover: hover) { .hv .x-band .x-btn.solid:hover { background: #f5f5f7; color: #000; border-color: #f5f5f7; } }
+/* the band's heading rises without the kit's blur (PLAN-COMPONENTS 2.8: no filter in animated paths) */
+.hv .x-band .x-word { filter: none !important; }
