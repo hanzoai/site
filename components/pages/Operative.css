@@ -283,7 +283,7 @@
 .xov-browser-bar .x-mono { margin-left: 10px; font-size: 13px; color: var(--g400); }
 .xov-browser-bar em { margin-left: auto; font-style: normal; font-size: 13px; color: var(--g400); }
 .xov-screen { position: relative; aspect-ratio: 16 / 10; overflow: hidden; }
-.xov-screen img { width: 100%; height: 100%; object-fit: cover; }
+.xov-screen img, .xov-screen video { display: block; width: 100%; height: 100%; object-fit: cover; }
 .xov-shot { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
 .xov-screen.s2 .xov-shot { animation: xov-flash .5s var(--e-out); }
 @keyframes xov-flash { 0% { opacity: .45; } 100% { opacity: 0; } }
@@ -309,7 +309,13 @@
 .xov-box i { position: absolute; left: 10%; right: 10%; bottom: 64px; height: 72px; border-radius: 16px; background: #fff; border: 1px solid rgba(0, 0, 0, .12); transform: translateY(calc(var(--i) * -6px)) rotateX(52deg); transition: transform .5s var(--a2-ease); }
 .xov-get:not(.shut) .xov-box i { transform: translateY(calc(var(--i) * -22px)) rotateX(52deg); }
 @media (hover: hover) and (pointer: fine) { .xov-get.shut:hover .xov-box i { transform: translateY(calc(var(--i) * -12px)) rotateX(52deg); } }
-.xov-get-cmd { position: absolute; left: 6%; right: 6%; bottom: 0; margin: 0; padding: 14px 16px; border-radius: 14px; background: var(--ink); color: var(--g100); font-size: 13px; line-height: 1.5; text-align: center; }
+.xov-get-cmd { position: absolute; left: 0; right: 0; bottom: 0; margin: 0; padding: 14px 16px; border-radius: 14px; background: var(--ink); color: var(--g100); font-size: 12.5px; line-height: 1.5; text-align: center; }
+.xov-get-cmd span { white-space: nowrap; } /* the image's name never breaks; only the space after pull may */
+/* the close: Hanzo's black band, the headline out of its line mask, the ask in white */
+.xov-band h2 { line-height: 1.04; }
+.xov-band .x-btn.solid { background: var(--g50); border-color: var(--g50); color: var(--ink); height: 52px; padding: 0 30px; font-size: 16px; transition: background-color .15s var(--e-out), border-color .15s var(--e-out), transform .09s var(--e-out); }
+.xov-band .x-btn.solid:active { transform: scale(.98); }
+@media (hover: hover) { .xov-band .x-btn.solid:hover { background: var(--g300); border-color: var(--g300); } }
 
 @media (max-width: 899px) {
   .xov-hero { padding-top: 112px; }
@@ -372,8 +378,14 @@
 .xov-zoom[data-enter='in'] > :nth-child(2) { animation-delay: .08s; }
 .xov-zoom[data-enter='in'] > :nth-child(3) { animation-delay: .16s; }
 @keyframes xov-zoom { from { opacity: 0; transform: perspective(900px) translateZ(-1600px); } }
-/* 4 sticky-stack: the five links are cards that stack at the top as you scroll past them */
-.xov-social li { position: sticky; top: calc(var(--x-top, 64px) + 12px + var(--n) * 8px); background: #fff; box-shadow: 0 -1px 0 var(--line); }
+/* 4 deal: each link row's rule draws across from the left, then its words rise onto it, one row after another */
+.xov-social li { position: relative; }
+.xov-read-b[data-enter='wait'] .xov-social li { border-bottom-color: transparent; }
+.xov-read-b[data-enter='wait'] .xov-soc { opacity: 0; transform: translateY(14px); }
+.xov-read-b[data-enter='in'] .xov-social li::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: var(--ink); transform-origin: 0 50%; animation: xov-rule .9s var(--a2-ease) calc(var(--n) * 90ms) both; }
+@keyframes xov-rule { 0% { transform: scaleX(0); opacity: 1; } 60% { transform: scaleX(1); opacity: 1; } 100% { transform: scaleX(1); opacity: 0; } }
+.xov-read-b[data-enter='in'] .xov-soc { animation: xov-deal .6s var(--a2-ease) calc(var(--n) * 90ms + 160ms) backwards; }
+@keyframes xov-deal { from { opacity: 0; transform: translateY(14px); } }
 /* 5 orbit-in: the four ways in swing round on a curve into their places (the two rotations cancel, so only the path curves) */
 .xov-ways [data-enter='wait'] .xov-orb { opacity: 0; transform: rotate(-70deg) translateX(-240px) rotate(70deg); }
 .xov-ways [data-enter='in'] .xov-orb { animation: xov-orbit .9s var(--a2-ease) calc(var(--n) * 60ms) backwards; }
@@ -382,5 +394,4 @@
 @media (prefers-reduced-motion: reduce) {
   .xov *, .xov *::before, .xov *::after { animation: none !important; transition: none !important; }
   .xov-crate { transform: none; }
-  .xov-social li { position: static; }
 }

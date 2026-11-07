@@ -6,7 +6,7 @@
 // Signature: live-chat (Live conversation): pick an objective from this page's words and Operative answers on screen; its steps stream in while the hero desktop acts each one out.
 // Beyond: pick the provider and only the one environment variable in the command changes; the container stays the same.
 /* Operative.
-   V2: 8/10 Motion map: live-chat — the hero desktop grew a conversation (three objectives, scripted steps that stream while the desktop's hands act them out), the 400svh pinned explode became a plain section whose stack explodes once in view (tap to replay), sections reordered (run, inside, the loop, read, providers) and each enters its own way: iris, accordion, zoom-through, sticky-stack, orbit-in.
+   V2: 8/10 Motion map: live-chat — the hero desktop grew a conversation (three objectives, scripted steps that stream while the desktop's hands act them out), the 400svh pinned explode became a plain section whose stack explodes once in view (tap to replay), sections reordered (run, inside, the loop, read, providers) and each enters its own way: iris, accordion, zoom-through, deal, orbit-in.
    Signature: live conversation. Beside the hero desktop, "Say what you want" offers three objectives in Hanzo's own
    words (Star on GitHub, Read the Blog, Pull the image). Pick one: it types into the desktop's field, then
    Operative's answer streams in a step at a time (the loop's verb, the hand it uses, what it works on) while the
@@ -14,14 +14,14 @@
    No call leaves the page. One docker run types itself and the four ports light. Inside the container the six
    slabs explode once as the section arrives; a row lifts its layer out. The one dark room is the loop: plans,
    acts, looks at the result, goes again, and you can stop it. Get Operative closes the box.
-   Entrances (entrances.jsx + Operative.css): Run iris, Inside accordion, the loop zoom-through, Read sticky-stack,
+   Entrances (entrances.jsx + Operative.css): Run iris, Inside accordion, the loop zoom-through, Read deal (rules draw, words rise),
    Where the model comes from orbit-in.
    Beyond: choose the provider and only the one environment variable in the command changes; the container, desktop
    and tools stay identical, as Hanzo says. Every word, port and command is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, animate, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
-import { Copy, Mark } from '../ui';
-import { A, Cta, Band, Img } from '../kit';
+import { Copy, Mark, Rise, Magnetic } from '../ui';
+import { A, Cta, Img, Film } from '../kit';
 import A2Lines from '../v2/A2Lines';
 import A2Pause from '../v2/A2Pause';
 import A2Room from '../v2/A2Room';
@@ -53,7 +53,7 @@ const GO = 'Run it and watch'; // the window's button
    one out. Scripted from Hanzo's text only; no call leaves the page. */
 const ASK = [
   { q: 'Star on GitHub', btn: 'Star on GitHub', keys: ['Star', 'on', 'GitHub'], steps: [
-    ['plans', 0, 'localhost:8501'], ['plans', 1, 'Open Source on GitHub'], ['acts', 2, 'Star on GitHub'], ['looks at the result', 1, 'GitHub']] },
+    ['plans', 0, 'localhost:8501'], ['plans', 1, 'Open Source on GitHub'], ['acts', 2, 'Star on GitHub'], ['looks at the result', 0, 'GitHub']] },
   { q: 'Read the Blog', btn: 'Read the Blog', keys: ['Read', 'the', 'Blog'], steps: [
     ['plans', 0, 'localhost:6080'], ['plans', 1, 'Read the Blog'], ['acts', 2, 'Read the Blog'], ['looks at the result', 0, 'Watch it work']] },
   { q: 'Pull the image', btn: GO, keys: ['docker', 'pull'], steps: [
@@ -459,6 +459,12 @@ function Action() {
   const [live] = useLive(ref, 0.3);
   const [held, setHeld] = useState(false);
   const [k, setK] = useState(0);
+  const screen = useRef(null);
+  useEffect(() => { // the pause control holds the film as well as the loop
+    const v = screen.current?.querySelector('video');
+    if (!v) return;
+    if (held) v.pause(); else if (live) v.play?.().catch(() => {});
+  }, [held, live]);
   useEffect(() => { // a chain of timeouts (no setInterval); the pause control stops it
     if (!live || held) return;
     const t = setTimeout(() => setK((v) => (v + 1) % 4), 1500);
@@ -484,8 +490,8 @@ function Action() {
         </div>
         <div className="xov-browser" aria-hidden="true">
           <div className="xov-browser-bar"><i /><i /><i /><span className="x-mono">localhost:6080</span><em>Demo Video</em></div>
-          <div className={'xov-screen s' + k + (held ? ' held' : '')}>
-            <Img src="/models/iro.webp" alt="" w={1200} h={1500} sizes="(max-width: 900px) 100vw, 480px" />
+          <div className={'xov-screen s' + k + (held ? ' held' : '')} ref={screen}>
+            <Film src="/models/koma.webm" poster="/models/koma.webp" w={1200} h={1500} />
             <div className="xov-shot" />
             <motion.div className="xov-aim-w" animate={{ x: AIM[k][0] * 100 + '%', y: AIM[k][1] * 100 + '%' }} transition={{ duration: T.slower, ease: EMPH }}>
               <span className="xov-aim"><svg viewBox="0 0 20 20" width="24" height="24"><path d="M3 2l12 7-5.2 1.3L7 16z" fill="#fff" stroke="#0a0a0a" strokeWidth="1.2" strokeLinejoin="round" /></svg></span>
@@ -502,11 +508,12 @@ const SOCIAL = [['Star on GitHub', 'https://github.com/hanzoai'], ['Join Discord
 /* Read before you run it, and the box closed again: the six layers press back into one image. */
 function Watch() {
   const box = useRef(null);
+  const [deal, enter] = useEnter(0.25); // entrance 4, deal: each row's rule draws across, then its words rise onto it
   const shut = useInView(box, { once: true, amount: 0.5 });
   return (
     <section className="a2-sec xov-watch" aria-labelledby="xov-read-h">
       <div className="a2-wrap a2-grid">
-        <div className="xov-read-b">
+        <div className="xov-read-b" ref={deal} data-enter={enter}>
           <h2 id="xov-read-h" className="a2-headline">Read before you run it</h2>
           <div className="a2-acts"><Cta to="https://docs.hanzo.ai" kind="quiet">Read the docs</Cta><Cta to="https://github.com/hanzoai" kind="link">View on GitHub</Cta></div>
           <ul className="xov-social">{SOCIAL.map(([t, to], n) => <li key={t} style={{ '--n': n }}><A to={to} className="xov-soc"><span>{t}</span><i aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M4.5 11.5l7-7M5.5 4.5h6v6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></i></A></li>)}</ul>
@@ -519,9 +526,25 @@ function Watch() {
           </div>
           <div className="xov-box" aria-hidden="true">
             {INSIDE.map(([t], i) => <i key={t} style={{ '--i': 5 - i }} />)}
-            <p className="xov-get-cmd x-mono">docker pull ghcr.io/<wbr />hanzoai/<wbr />operative:latest</p>
+            <p className="xov-get-cmd x-mono">docker pull <span>ghcr.io/hanzoai/operative:latest</span></p>
           </div>
         </div>
+      </div>
+    </section>
+  );
+}
+
+/* The close, page-local: the kit Band's word reveal blurs (MASTER part 9 bans it; requested in docs/requests/operative.md),
+   so the headline rises out of its line mask instead, and the ask carries its data-cta. */
+function Close() {
+  return (
+    <section className="x-band xov-band" data-room="dark" aria-labelledby="xov-band-h">
+      <div className="x-wrap">
+        <A2Lines as="h2" id="xov-band-h" lines={['Run it and watch']} />
+        <Rise as="p" delay={0.2}>The most useful hour you can spend with computer use is the first one, watching where it gets stuck.</Rise>
+        <Rise delay={0.3} className="x-band-act">
+          <Magnetic><Cta to="https://platform.hanzo.ai/deploy" id="operative.band" className="xov-band-go">Deploy to Cloud</Cta></Magnetic>
+        </Rise>
       </div>
     </section>
   );
@@ -536,7 +559,7 @@ export default function Operative() {
       <Action />
       <Watch />
       <Ways />
-      <Band title="Run it and watch" lede="The most useful hour you can spend with computer use is the first one, watching where it gets stuck." action="Deploy to Cloud" to="https://platform.hanzo.ai/deploy" />
+      <Close />
     </main>
   );
 }
