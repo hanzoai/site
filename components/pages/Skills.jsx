@@ -16,7 +16,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { Copy } from '../ui';
 import { A } from '../kit';
-import A2Lines from '../v2/A2Lines';
+import Lines from './skills/Lines'; // page-local A2Lines without the reduced-motion hydration mismatch (docs/requests/skills.md)
 import A2Paste from '../v2/A2Paste';
 import { T, EMPH } from '../v2/A2Motion';
 import '../v2/A2.css';
@@ -113,7 +113,7 @@ function Hero() {
     <section className="xsk-hero" aria-labelledby="xsk-h1">
       <div className="a2-wrap a2-grid xsk-hero-grid">
         <div className="xsk-hero-copy">
-          <A2Lines as="h1" id="xsk-h1" className="a2-display xsk-h1" lines={['Skills']} now />
+          <Lines as="h1" id="xsk-h1" className="a2-display xsk-h1" lines={['Skills']} now />
           <p className="a2-lede">Development knowledge your coding agent loads <mark>only when it needs it</mark></p>
           <div className="a2-acts"><A to={GH} className="x-btn solid xsk-ask" data-thumb="View on GitHub" data-cta="skills.hero">View on GitHub<Arw /></A></div>
           <p className="xsk-repo-cap x-mono"><A to={GH} className="xsk-repo">hanzoai/skills</A></p>
@@ -136,7 +136,7 @@ function Trade() {
   return (
     <section className="a2-sec xsk-trade" ref={ref} aria-labelledby="xsk-trade-h">
       <div className="a2-wrap a2-grid xsk-trade-grid">
-        <A2Lines id="xsk-trade-h" className="a2-display m xsk-trade-h" lines={['Coverage costs context.', 'This is the trade.']} />
+        <Lines id="xsk-trade-h" className="a2-display m xsk-trade-h" lines={['Coverage costs context.', 'This is the trade.']} />
         <div className="xsk-bars" aria-hidden="true">
           <div className="xsk-bar-row"><span className="x-mono">one monolithic guide</span><div className="xsk-track"><motion.b className="xsk-mono" style={{ scaleX: mono }}>{Array.from({ length: 9 }, (_, k) => <i key={k} />)}</motion.b></div></div>
           <div className="xsk-bar-row"><span className="x-mono">five focused reads</span><div className="xsk-track"><motion.div className="xsk-five" style={{ '--f': five }}>{[0, 1, 2, 3, 4].map((k) => <b key={k} style={{ '--k': k }}><i /><i /><i /></b>)}</motion.div></div></div>
@@ -298,7 +298,7 @@ function Get() {
   return (
     <section className="a2-sec xsk-get" aria-labelledby="xsk-get-h">
       <div className="a2-wrap xsk-get-in">
-        <A2Lines id="xsk-get-h" className="a2-display s xsk-get-h" lines={['Get started', 'with Skills']} />
+        <Lines id="xsk-get-h" className="a2-display s xsk-get-h" lines={['Get started', 'with Skills']} />
         <div className="xsk-get-card">
           <div className="xsk-get-copy">
             <h3>Get Skills</h3>
