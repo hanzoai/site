@@ -1,8 +1,7 @@
 'use client';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { motion, useInView, useScroll, useTransform } from 'motion/react';
-import { EASE, Arrow } from './ui';
-import Lines from './v2/Lines';
+import { motion, useInView } from 'motion/react';
+import { EASE, Head, Arrow, Rise } from './ui';
 
 // placed exactly where Hanzo's own chart places them (log cost across, accuracy up).
 // [name as Hanzo writes it, label on the chart, GPQA Diamond %, $ per 1,000 questions as Hanzo prints it, kind, reported by, date, source]
@@ -30,13 +29,7 @@ const lx = (c) => L + ((Math.log10(c) - Math.log10(0.8)) / (Math.log10(60) - Mat
 const ly = (a) => B - ((a - 75) / 25) * (B - T);
 const cost = (x) => 10 ** (Math.log10(0.8) + ((x - L) / (R - L)) * (Math.log10(60) - Math.log10(0.8)));
 
-/* Home, the frontier (v2), the last chapter of the dark argument room: Hanzo's GPQA Diamond chart, wide on the room's
-   floor. Drag the budget line (or use the arrow keys) and the most accurate model under it lights up; point at any disc
-   to read it. As the room ends it closes like a door again, back to the white page. */
 export default function Pareto() {
-  const sec = useRef(null);
-  const { scrollYProgress: out } = useScroll({ target: sec, offset: ['end 0.9', 'end 0.2'] });
-  const door = useTransform(out, (v) => { const e = Math.min(1, Math.max(0, v)) ** 2; return `inset(0% ${e * 5}% 0% ${e * 5}% round 0 0 ${e * 40}px ${e * 40}px)`; });
   const box = useRef(null);
   const seen = useInView(box, { once: true, amount: 0.45 });
   const [hot, setHot] = useState(null);
@@ -65,19 +58,10 @@ export default function Pareto() {
   const c = cost(cap);
 
   return (
-    <motion.section className="hv-pareto hv-room v2-sec" data-room="dark" id="pareto" aria-labelledby="pareto-h" ref={sec} style={{ clipPath: door }}>
-      <div className="v2-wrap">
-        <header className="hv-head v2-grid">
-          <Lines as="h2" id="pareto-h" className="hv-h2 hv-head-t" lines={['A New Pareto Frontier of Intelligence']} />
-          <div className="hv-head-r">
-            <p className="hv-lead">GPQA Diamond challenges AI with 198 graduate-level science questions. See how Enso balances accuracy and cost across 1,000 answers.</p>
-            <div className="hv-links">
-              <Arrow href="/enso">How Enso routes</Arrow>
-              <Arrow href="https://docs.hanzo.ai/docs/guides/cookbook/route">Route your own requests with Enso</Arrow>
-            </div>
-          </div>
-        </header>
-        <div className="x-plot hv-plot" ref={box} onPointerDown={(e) => { if (!e.target.closest('.pt, .x-tip')) setHot(null); }}>
+    <section className="x-sec x-pareto" id="pareto" aria-labelledby="pareto-h">
+      <div className="x-wrap">
+        <Head title="A New Pareto Frontier of Intelligence" lede="GPQA Diamond challenges AI with 198 graduate-level science questions. See how Enso balances accuracy and cost across 1,000 answers." />
+        <Rise className="x-plot" ref={box} onPointerDown={(e) => { if (!e.target.closest('.pt, .x-tip')) setHot(null); }}>
           <div className="x-plot-read" aria-live="polite">
             <span className="x-mono">Budget · ${c < 10 ? c.toFixed(2) : Math.round(c)} per 1,000 questions</span>
             <b>{pick ? `${pick.full} · ${pick.a.toFixed(1)}%` : '—'}</b>
@@ -90,7 +74,7 @@ export default function Pareto() {
             {[1, 3, 10, 30].map((v) => <text key={v} x={lx(v)} y={B + 26} textAnchor="middle" className="tick">${v}</text>)}
             <text x={L} y={T - 8} className="tick">GPQA Diamond %</text>
             <text x={R} y={B + 50} textAnchor="end" className="tick">cheaper ← $ per 1,000 questions → dearer</text>
-            <motion.rect x={L} y={T} height={B - T} width={cap - L} className="x-plot-zone" initial={false} animate={{ width: cap - L }} transition={{ duration: 0.3, ease: [0, 0, 0.2, 1] }} />
+            <motion.rect x={L} y={T} height={B - T} className="x-plot-zone" animate={{ width: cap - L }} transition={{ type: 'spring', stiffness: 400, damping: 40 }} />
             <motion.path d={path} className="front" initial={{ pathLength: 0 }} animate={{ pathLength: seen ? 1 : 0 }} transition={{ duration: 1.6, ease: EASE, delay: 0.9 }} />
             {hot && (
               <g className="guide" aria-hidden="true">
@@ -115,7 +99,7 @@ export default function Pareto() {
                   onPointerEnter={() => show(p)} onPointerLeave={hide} onFocus={() => show(p)} onBlur={() => hide()}
                   initial={{ opacity: 0, scale: 0 }}
                   animate={seen ? { opacity: lit ? 1 : 0.28, scale: 1 } : {}}
-                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1], delay: seen && !hot ? 0.15 + i * 0.05 : 0 }}
+                  transition={{ type: 'spring', stiffness: 360, damping: 20, delay: seen && !hot ? 0.15 + i * 0.05 : 0 }}
                   style={{ originX: p.x + 'px', originY: p.y + 'px', transformBox: 'view-box' }}
                 >
                   {p.src ? <a href={p.src} target="_blank" rel="noopener noreferrer" aria-label={p.say}>{body}</a> : body}
@@ -151,8 +135,12 @@ export default function Pareto() {
             Dashed discs are scores reported by a lab or an independent evaluation:
             {pts.filter((p) => p.src).map((p) => <a key={p.n} href={p.src} target="_blank" rel="noopener noreferrer">{p.full} ↗</a>)}
           </p>
+        </Rise>
+        <div className="x-row-links">
+          <Arrow href="/enso">How Enso routes</Arrow>
+          <Arrow href="https://docs.hanzo.ai/docs/guides/cookbook/route">Route your own requests with Enso</Arrow>
         </div>
       </div>
-    </motion.section>
+    </section>
   );
 }

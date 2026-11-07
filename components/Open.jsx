@@ -1,10 +1,9 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { DAYS } from '../lib/commits';
-import { Arrow, Count } from './ui';
+import { EASE, Head, Arrow, Count } from './ui';
 import C from '../content';
-import Lines from './v2/Lines';
 
 const TILES = [
   ['Commits', 805254, 'In the past year', 'https://git.hanzo.ai/explore/repos', 0],
@@ -20,9 +19,8 @@ const WAYS = [
   ['Mod Hanzo', 'Every layer of the stack is open, hackable, and modifiable. Fork repositories and build your own stack.', 'Fork on GitHub', 'https://github.com/hanzoai'],
 ];
 
-/* Home, open source (v2). The year's commits are the hero figure; beside it the other counts sit on one hairline.
-   Hanzo's commit calendar, rebuilt from its own numbers: point at any day (or move with the arrow keys) for Hanzo's
-   readout, and the days around it swell like a lens. The repositories ride a rail you can throw. */
+/* Hanzo's commit calendar, rebuilt from its own numbers. Point at any day (or move with the arrow keys) for Hanzo's
+   readout; the days around it swell like a lens. While nobody is pointing, a light sweeps the year week by week. */
 const LEAD = 6; // Hanzo's grid opens with six blank days so the weeks line up
 const LV = (() => { const s = DAYS.map((x) => x.c).sort((a, b) => a - b); return [0.2, 0.4, 0.6, 0.8].map((q) => s[Math.floor(q * (s.length - 1))]); })();
 const level = (c) => LV.filter((t) => c > t).length;
@@ -31,11 +29,16 @@ const MONTHS = (() => { const out = []; DAYS.forEach((x, i) => { if (x.d === 1 |
 function Calendar() {
   const ref = useRef(null);
   const seen = useInView(ref, { once: true, amount: 0.4 });
+  const live = useInView(ref, { amount: 0.2 });
   const calm = useReducedMotion();
   const [hot, setHot] = useState(null);
-  // decided after mount, so the server's HTML and the first browser render agree
-  const [lit, setLit] = useState(false);
-  useEffect(() => { if (seen || calm) setLit(true); }, [seen, calm]);
+  const [sweep, setSweep] = useState(-1);
+  useEffect(() => {
+    if (!seen || calm || hot !== null || !live) return;
+    let w = sweep;
+    const t = setInterval(() => { w = w >= 56 ? -4 : w + 1; setSweep(w); }, 90);
+    return () => clearInterval(t);
+  }, [seen, calm, hot, live]); // eslint-disable-line react-hooks/exhaustive-deps
   const pick = (e) => {
     const g = e.currentTarget.getBoundingClientRect();
     const col = Math.floor(((e.clientX - g.left) / g.width) * 53), row = Math.floor(((e.clientY - g.top) / g.height) * 7);
@@ -51,11 +54,12 @@ function Calendar() {
   const h = hot !== null ? DAYS[hot] : null;
   const hc = hot !== null ? Math.floor((hot + LEAD) / 7) : 0, hr = hot !== null ? (hot + LEAD) % 7 : 0;
   return (
-    <div className="x-cal hv-cal">
+    <div className="x-cal">
+      <p className="x-race-k">Commits a day</p>
       <div className="x-cal-months" aria-hidden="true">{MONTHS.map(([m, c]) => <span key={m + c} style={{ gridColumn: c + 1 }}>{m}</span>)}</div>
       <div
         ref={ref}
-        className={'x-cal-grid2' + (lit ? ' on' : '')}
+        className={'x-cal-grid2' + (seen || calm ? ' on' : '')}
         role="img"
         tabIndex={0}
         aria-label={`Commits a day over the past year across every repository, private ones counted: 805,254 in all. Use the arrow keys to read each day.`}
@@ -68,8 +72,8 @@ function Calendar() {
         {DAYS.map((x, i) => {
           const col = Math.floor((i + LEAD) / 7), row = (i + LEAD) % 7;
           const dist = hot !== null ? Math.hypot(col - hc, (row - hr) * 1.1) : 9;
-          const s = hot !== null ? (dist < 0.5 ? 1.55 : dist < 2.6 ? 1 + (2.6 - dist) * 0.12 : 1) : 1;
-          return <i key={x.label} className={'l' + level(x.c) + (i === hot ? ' hot' : '')} style={{ '--i': i, '--s': s }} />;
+          const s = hot !== null ? (dist < 0.5 ? 1.55 : dist < 2.6 ? 1 + (2.6 - dist) * 0.12 : 1) : Math.abs(col - sweep) < 1 ? 1.22 : 1;
+          return <i key={x.label} className={'l' + level(x.c) + (i === hot ? ' hot' : '') + (hot === null && Math.abs(col - sweep) < 1 ? ' sw' : '')} style={{ '--i': i, '--s': s }} />;
         })}
         <AnimatePresence>
           {h && (
@@ -78,14 +82,13 @@ function Calendar() {
               initial={{ opacity: 0, y: 6, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1, left: `${((hc + 0.5) / 53) * 100}%`, top: `${(hr / 7) * 100}%` }}
               exit={{ opacity: 0, y: 6 }}
-              transition={{ duration: 0.15, ease: [0, 0, 0.2, 1] }}
+              transition={{ type: 'spring', stiffness: 500, damping: 38 }}
             >
               <b>{h.c.toLocaleString('en-US')} commits</b> {h.label}
             </motion.span>
           )}
         </AnimatePresence>
       </div>
-      <p className="hv-cal-k">Commits a day</p>
       <div className="x-cal-f">
         <span aria-live="polite">{h ? `${h.label} · ${h.c.toLocaleString('en-US')} commits across ${h.r.toLocaleString('en-US')} repositories` : 'Commits a day, from Nov 7, 2025 to Nov 6, 2026'}</span>
         <span className="x-cal-key">Less <i className="l0" /><i className="l1" /><i className="l2" /><i className="l3" /><i className="l4" /> More</span>
@@ -94,23 +97,15 @@ function Calendar() {
   );
 }
 
-/* the year's commits arrive large and shrink to their resting 64px as they settle into the row (MASTER 3.1) */
-function Big({ n }) {
-  const ref = useRef(null);
-  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start end', 'start 0.4'] });
-  const scale = useTransform(p, [0, 1], [1.75, 1]);
-  return <motion.span ref={ref} className="hv-stat-big" style={{ scale }}><Count className="v2-figure hv-stat-n" to={n} duration={1.2} /></motion.span>;
-}
-
 function Tile({ t, i }) {
   const [label, n, sub, href, spark] = t;
   return (
-    <a href={href} className={'hv-stat' + (i === 0 ? ' hero' : '')}>
-      {i === 0 ? <Big n={n} /> : <span className="hv-stat-n">{n.toLocaleString('en-US')}</span>}
-      <span className="hv-stat-k">{label}</span>
-      <span className="hv-stat-s">{sub}</span>
-      {spark !== undefined && <span className="hv-stat-spark" dangerouslySetInnerHTML={{ __html: C.spark[spark] }} />}
-    </a>
+    <motion.a href={href} className="x-tile" whileTap={{ scale: 0.98 }}>
+      <span className="x-tile-k">{label}</span>
+      <Count className="x-tile-n" to={n} duration={2} delay={i * 0.06} />
+      <span className="x-tile-s">{sub}</span>
+      {spark !== undefined && <span className="x-tile-spark" dangerouslySetInnerHTML={{ __html: C.spark[spark] }} />}
+    </motion.a>
   );
 }
 
@@ -129,10 +124,10 @@ function Rail() {
   }, []);
   const by = (d) => ref.current.scrollBy({ left: d * ref.current.clientWidth * 0.8, behavior: 'smooth' });
   return (
-    <div className="x-rail-wrap hv-rail-wrap">
-      <div className="x-rail hv-rail" ref={ref} tabIndex={0} aria-label="Hanzo repositories" data-lenis-prevent-wheel="">
+    <div className="x-rail-wrap">
+      <div className="x-rail" ref={ref} tabIndex={0} aria-label="Hanzo repositories" data-lenis-prevent-wheel="">
         {C.repos.map((h, i) => (
-          <div key={i} className="x-repo hv-repo" dangerouslySetInnerHTML={{ __html: h }} />
+          <motion.div key={i} className="x-repo" initial={{ opacity: 0, x: 60 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.8, ease: EASE, delay: Math.min(i, 4) * 0.07 }} whileHover={{ y: -4 }} dangerouslySetInnerHTML={{ __html: h }} />
         ))}
       </div>
       <div className="x-rail-nav">
@@ -143,33 +138,29 @@ function Rail() {
   );
 }
 
-function Way({ w, i }) {
+function Way({ w }) {
   return (
-    <a href={w[3]} className="hv-way" data-cta={`home.oss.way${i + 1}`}>
-      <span className="hv-way-n x-mono" aria-hidden="true">0{i + 1}</span>
-      <b className="hv-way-t">{w[0]}</b>
-      <span className="hv-way-d">{w[1]}</span>
-      <em>{w[2]} <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></em>
-    </a>
+    <motion.a href={w[3]} className="x-way" whileHover={{ y: -4 }} whileTap={{ scale: 0.985 }}>
+      <b>{w[0]}</b>
+      <span>{w[1]}</span>
+      <em>{w[2]} →</em>
+    </motion.a>
   );
 }
 
 export default function Open() {
   return (
-    <section className="hv-oss v2-sec" id="open-source" aria-labelledby="open-source-h">
-      <div className="v2-wrap">
-        <header className="hv-head v2-grid">
-          <Lines as="h2" id="open-source-h" className="hv-h2 hv-head-t" lines={['We ship every day. Fork anything. Build your own.']} />
-          <div className="hv-head-r"><p className="hv-lead">Every layer of the stack is open, hackable and modifiable — recursively self-upgrading AI from the ground up. Fork, remix, and build the apps only you can imagine.</p></div>
-        </header>
-        <div className="hv-stats">{TILES.map((t, i) => <Tile key={i} t={t} i={i} />)}</div>
+    <section className="x-sec x-oss" id="open-source" aria-labelledby="open-source-h">
+      <div className="x-wrap">
+        <Head title="We ship every day. Fork anything. Build your own." lede="Every layer of the stack is open, hackable and modifiable — recursively self-upgrading AI from the ground up. Fork, remix, and build the apps only you can imagine." />
+        <div className="x-tiles">{TILES.map((t, i) => <Tile key={i} t={t} i={i} />)}</div>
         <Calendar />
       </div>
       <Rail />
-      <div className="v2-wrap">
-        <div className="hv-links"><Arrow href="/open-source">Explore every repository</Arrow></div>
-        <div className="hv-ways">{WAYS.map((w, i) => <Way key={w[0]} w={w} i={i} />)}</div>
-        <div className="hv-links">
+      <div className="x-wrap">
+        <div className="x-row-links"><Arrow href="/open-source">Explore every repository</Arrow></div>
+        <div className="x-ways">{WAYS.map((w) => <Way key={w[0]} w={w} />)}</div>
+        <div className="x-row-links">
           <Arrow href="https://git.hanzo.ai/explore/repos">Explore the forge</Arrow>
           <Arrow href="/grants">OSS &amp; research credit grants</Arrow>
         </div>

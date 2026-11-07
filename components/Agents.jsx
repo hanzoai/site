@@ -1,32 +1,36 @@
 'use client';
-/* Home, the agents (v2). One idea: every agent you already use works with Hanzo. The agents stand as a wall that
-   swells toward the pointer like a dock; the detail lives in one console you open by tab: start with the CLI, or let
-   your agent sign itself up with no human in the loop. */
 import { useEffect, useRef, useState } from 'react';
-import { useInView, useReducedMotion } from 'motion/react';
-import { Arrow, Copy, Mark } from './ui';
-import { Tabs, TabPanel } from './kit';
+import { motion, AnimatePresence, useInView, useMotionValue, useReducedMotion, useSpring, useTransform } from 'motion/react';
+import { EASE, Head, Arrow, Copy, Mark, fine } from './ui';
 import C from '../content';
 import { SCRIPT } from '../lib/script';
 import SetupMenu from './SetupMenu';
-import Lines from './v2/Lines';
 
-/* Every agent Hanzo works with, as a still wall of their own marks; pointing at (or focusing) one names it. */
-function Ico({ a }) {
+/* Every agent Hanzo works with, as a field that swells toward the pointer, like a dock. */
+function Ico({ a, mx, my, i }) {
+  const ref = useRef(null);
+  const d = useTransform(() => {
+    const x = mx.get(), y = my.get(), el = ref.current;
+    if (x === Infinity || !el) return 999;
+    const r = el.getBoundingClientRect();
+    return Math.hypot(x - (r.left + r.width / 2), y - (r.top + r.height / 2));
+  });
+  const scale = useSpring(useTransform(d, [0, 70, 160], [1.65, 1.25, 1]), { stiffness: 320, damping: 22, mass: 0.35 });
+  const lift = useSpring(useTransform(d, [0, 160], [-8, 0]), { stiffness: 320, damping: 22, mass: 0.35 });
   return (
-    <li>
-      <a href={a.href} className="hv-ico" data-name={a.name} aria-label={a.name + ' docs'}>
+    <motion.li initial={{ opacity: 0, y: 20, scale: 0.6 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true }} transition={{ type: 'spring', stiffness: 300, damping: 22, delay: 0.02 * i }}>
+      <motion.a ref={ref} href={a.href} className="x-ico" style={{ scale, y: lift }} data-name={a.name} aria-label={a.name + ' docs'}>
         <span dangerouslySetInnerHTML={{ __html: a.icon }} />
-      </a>
-    </li>
+      </motion.a>
+    </motion.li>
   );
 }
 
 function Cmd({ bin, rest, copy }) {
   return (
-    <div className="hv-cmd x-mono">
+    <div className="x-cmd x-mono">
       <span className="x-dim">$</span>
-      <span className="hv-cmd-t"><b>{bin}</b> {rest}</span>
+      <span className="x-cmd-t"><b>{bin}</b> {rest}</span>
       <Copy text={copy} />
     </div>
   );
@@ -49,8 +53,7 @@ function Code({ text }) {
   ));
 }
 
-/* The agent's own sign-up, four calls. The active endpoint types itself; left alone, it walks all four steps. */
-function Steps({ open }) {
+function Steps() {
   const ref = useRef(null);
   const seen = useInView(ref, { amount: 0.5 });
   const calm = useReducedMotion();
@@ -58,105 +61,102 @@ function Steps({ open }) {
   const [mine, setMine] = useState(false);
   const [code, setCode] = useState(false);
   const typed = useRef(null);
+  // the active endpoint types itself, straight into its text node; left alone, the agent walks all four steps
   useEffect(() => {
     const full = STEPS[on][1], el = typed.current;
     if (!el) return;
-    if (calm || !open) { el.textContent = full; return; }
+    if (calm) { el.textContent = full; return; }
     let i = 0;
     el.textContent = '';
-    let t = 0;
-    const step = () => { i++; el.textContent = full.slice(0, i); if (i < full.length) t = setTimeout(step, 24); };
-    t = setTimeout(step, 24);
-    return () => clearTimeout(t);
-  }, [on, calm, open]);
+    const t = setInterval(() => { i++; el.textContent = full.slice(0, i); if (i >= full.length) clearInterval(t); }, 24);
+    return () => clearInterval(t);
+  }, [on, calm]);
   useEffect(() => {
-    if (mine || !seen || calm || !open) return;
+    if (mine || !seen || calm) return;
     const t = setTimeout(() => setOn((v) => (v + 1) % 4), 3200);
     return () => clearTimeout(t);
-  }, [on, mine, seen, calm, open]);
+  }, [on, mine, seen, calm]);
+  const fill = useSpring(0, { stiffness: 120, damping: 20 });
+  useEffect(() => { fill.set(on / 3); }, [on, fill]);
   return (
-    <div className="hv-steps" ref={ref}>
-      <p className="hv-con-k">No human required</p>
-      <ol className="hv-step-list">
+    <div className="x-panel" ref={ref}>
+      <div className="x-panel-h"><Mark size={14} /> <b>Hanzo.Agents</b></div>
+      <p className="x-panel-k">No human required</p>
+      <ol className="x-steps">
+        <i className="x-steps-line" aria-hidden="true"><motion.b style={{ scaleY: fill }} /></i>
         {STEPS.map(([t, e], i) => (
           <li key={t}>
             <button type="button" aria-pressed={on === i} onClick={() => { setMine(true); setOn(i); }}>
-              <span className={'hv-step-n' + (i <= on ? ' done' : '')}>{i + 1}</span>
-              <span className="hv-step-t"><b>{t}</b><span className="x-mono">{e}</span></span>
+              {on === i && <motion.span layoutId="step-bg" className="x-step-bg" transition={{ type: 'spring', stiffness: 420, damping: 36 }} />}
+              <span className={'x-step-n' + (i <= on ? ' done' : '')}>{i + 1}</span>
+              <span className="x-step-t"><b>{t}</b><span className="x-mono">{e}</span></span>
             </button>
           </li>
         ))}
       </ol>
-      <div className="hv-script x-mono" aria-live="polite">
+      <div className="x-script x-mono" aria-live="polite">
         <span className="x-dim">step {on + 1}/4 ›</span> <span ref={typed} /><span className="x-caret" aria-hidden="true" />
       </div>
-      <button type="button" className="x-code-t hv-code-t" aria-expanded={code} aria-controls="agent-script" onClick={() => { setMine(true); setCode((c) => !c); }}>
+      <button type="button" className="x-code-t" aria-expanded={code} aria-controls="agent-script" onClick={() => { setMine(true); setCode((c) => !c); }}>
         <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5.5 4 2 8l3.5 4M10.5 4 14 8l-3.5 4" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
         <span className="x-code-lbl">
           <span aria-hidden={code} data-on={!code}>{`Show step ${on + 1} of the script`}</span>
           <span aria-hidden={!code} data-on={code}>{`Hide step ${on + 1} of the script`}</span>
         </span>
       </button>
-      {/* every step's script is in the page; the open one shows */}
-      <div className="x-code hv-code" id="agent-script" data-open={code} inert={!code}>
+      {/* every step's script is in the page; the open one types in line by line */}
+      <div className="x-code" id="agent-script" data-open={code} inert={!code}>
         <div className="x-code-in">
           {SCRIPT.map((c, i) => (
             <pre className="x-code-blk x-mono" key={i} hidden={on !== i} tabIndex={0} aria-label={`Script for step ${i + 1}`}><code><Code text={c} /></code></pre>
           ))}
         </div>
       </div>
-      <div className="hv-con-f">
+      <div className="x-panel-f">
         <Copy text={SCRIPT[on]} label="Copy this step" />
         <Copy text={SCRIPT.join('\n\n')} label="Copy the whole script" />
       </div>
-      <div className="hv-con-links">
-        <a className="hv-btn solid" href="/agents#headless">Start as an agent</a>
-        <a className="hv-btn" href="https://hanzo.ai/llms.txt">Read llms.txt</a>
+      <div className="x-panel-links">
+        <a className="x-btn sm solid" href="/agents#headless">Start as an agent</a>
+        <a className="x-btn sm" href="https://hanzo.ai/llms.txt">Read llms.txt</a>
       </div>
     </div>
   );
 }
 
 export default function Agents() {
-  const [tab, setTab] = useState(0);
+  const mx = useMotionValue(Infinity);
+  const my = useMotionValue(Infinity);
   return (
-    <section className="hv-agents v2-sec" id="compatible" aria-labelledby="compatible-h">
-      <div className="v2-wrap">
-        <header className="hv-head v2-grid">
-          <Lines as="h2" id="compatible-h" className="hv-h2 hv-head-t" lines={['Works with every agent, bot and CLI tool.']} />
-          <div className="hv-head-r">
-            <p className="hv-lead">Claude Code, Codex, Cursor and the rest, every model behind one key. Or let your agent sign itself up.</p>
-          </div>
-        </header>
-        <ul className="hv-wall">
-          {C.agents.map((a) => <Ico key={a.name} a={a} />)}
+    <section className="x-sec x-agents" id="compatible" aria-labelledby="compatible-h">
+      <div className="x-wrap">
+        <Head title="Works with every agent, bot and CLI tool." lede="Claude Code, Codex, Cursor and the rest, every model behind one key. Or let your agent sign itself up." />
+        <ul
+          className="x-dock"
+          onPointerMove={(e) => { if (fine(e)) { mx.set(e.clientX); my.set(e.clientY); } }}
+          onPointerLeave={() => { mx.set(Infinity); my.set(Infinity); }}
+        >
+          {C.agents.map((a, i) => <Ico key={a.name} a={a} i={i} mx={mx} my={my} />)}
         </ul>
-        <div className="hv-ag-grid v2-grid">
-          <div className="hv-ag-side">
-            <div className="hv-links col">
-              <Arrow href="https://docs.hanzo.ai/docs/guides/coding">Integration guides</Arrow>
-              <Arrow href="https://docs.hanzo.ai/docs/guides/migrate/coding-agents">Migrate &amp; conventions map</Arrow>
-              <Arrow href="https://docs.hanzo.ai/docs/mcp">Hanzo MCP</Arrow>
-              <Arrow href="https://github.com/hanzoai">Hanzo OSS</Arrow>
-            </div>
+        <div className="x-panels">
+          <div className="x-panel">
+            <div className="x-panel-h"><Mark size={14} /> <b>Hanzo.Start</b></div>
+            <p className="x-panel-k">Install the Hanzo CLI</p>
+            <Cmd bin="curl" rest="-fsSL https://hanzo.sh | sh" copy="curl -fsSL https://hanzo.sh | sh" />
+            <div className="x-or small"><span>or</span></div>
+            <Cmd bin="npm" rest="i -g hanzo" copy="npm i -g hanzo" />
+            <p className="x-panel-k">Accelerate Claude Code with Hanzo</p>
+            <Cmd bin="hanzo" rest="dev --claude" copy="hanzo dev --claude" />
+            <p className="x-panel-k">Set up Codex, Cursor and more</p>
+            <SetupMenu inline />
           </div>
-          <div className="hv-console v2-object">
-            <span className="hv-con-mark" aria-hidden="true"><Mark size={14} /></span>
-            <Tabs id="hv-con" tabs={['Hanzo.Start', 'Hanzo.Agents']} value={tab} onChange={setTab} label="Works with every agent, bot and CLI tool." className="hv-con-tabs" />
-            <TabPanel id="hv-con" i={0} value={tab} className="hv-pan">
-              <p className="hv-con-k">Install the Hanzo CLI</p>
-              <Cmd bin="curl" rest="-fsSL https://hanzo.sh | sh" copy="curl -fsSL https://hanzo.sh | sh" />
-              <div className="hv-or2"><span>or</span></div>
-              <Cmd bin="npm" rest="i -g hanzo" copy="npm i -g hanzo" />
-              <p className="hv-con-k">Accelerate Claude Code with Hanzo</p>
-              <Cmd bin="hanzo" rest="dev --claude" copy="hanzo dev --claude" />
-              <p className="hv-con-k">Set up Codex, Cursor and more</p>
-              <SetupMenu inline />
-            </TabPanel>
-            <TabPanel id="hv-con" i={1} value={tab} className="hv-pan">
-              <Steps open={tab === 1} />
-            </TabPanel>
-          </div>
+          <div className="x-panel-wrap"><Steps /></div>
+        </div>
+        <div className="x-row-links">
+          <Arrow href="https://docs.hanzo.ai/docs/guides/coding">Integration guides</Arrow>
+          <Arrow href="https://docs.hanzo.ai/docs/guides/migrate/coding-agents">Migrate &amp; conventions map</Arrow>
+          <Arrow href="https://docs.hanzo.ai/docs/mcp">Hanzo MCP</Arrow>
+          <Arrow href="https://github.com/hanzoai">Hanzo OSS</Arrow>
         </div>
       </div>
     </section>
