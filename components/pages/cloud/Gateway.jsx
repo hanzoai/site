@@ -20,11 +20,12 @@
    Goal: see, in one request, that the token is checked once at the edge and identity is written, not trusted.
    CTA: Read the docs (hero, the sticky ask bar and the close; one solid button per screen). */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform, useReducedMotion } from 'motion/react';
-import { A, Cta } from '../../kit';
+import { motion, AnimatePresence, useScroll, useMotionValueEvent, useReducedMotion } from 'motion/react';
+import { Cta } from '../../kit';
 import { Console, useLive } from './Frame';
 import { Lines } from '../../v2/LiftStage';
-import PinChapters from '../../v2/x-hypatia/PinChapters';
+import GwChapters from './gateway/GwChapters';
+import GwScene from './gateway/GwScenes';
 import ShipPrompt from '../../v2/ShipPrompt';
 import GetIt from '../../v2/GetIt';
 import LivePause, { usePause } from '../../v2/LivePause';
@@ -37,13 +38,15 @@ const CALLERS = ['payments-api', 'checkout-web', 'docs-site'];
 /* The lane: one request at a time through the gate (arrive, token checked, forged header torn off, identity stamped,
    through), or a 429 when the bucket is empty. Runs only while on screen. */
 function Lane() {
-  const [ref, seen] = useLive(0.25);
+  const [ref, seen, calm] = useLive(0.25);
   const [paused, togglePause] = usePause();
   const live = seen && !paused;
   const [n, setN] = useState(1); // one request has already landed, so the log is never empty
   const [phase, setPhase] = useState(0);
   const [bucket, setBucket] = useState(4);
   const limited = bucket === 0;
+  // reduced motion: the finished check, at rest at the gate (JWKS ticked, forged header gone, identity written)
+  useEffect(() => { if (calm) { setBucket(4); setPhase(3); } }, [calm]);
   useEffect(() => {
     if (!live) return;
     const steps = limited ? [1000, 1500, 900] : [1100, 950, 900, 950, 1200];
@@ -125,43 +128,6 @@ const RULES = [
   ['A hop, or no hop at all', "Run it as its own service in front of the API, or mount it inside the cloud binary with one call. Same checks either way — one less network hop when you don't want one."],
 ];
 
-/* What each rule looks like at work, drawn from that rule's own words. */
-const PROOF = [
-  [['JWT', 'JWKS ✓', 'ok'], ['API key', 'to its issuer', '']],
-  [['X-User-Id', 'stripped → sub', 'ok'], ['X-Org-Id', 'stripped → owner', 'ok'], ['X-Roles', 'stripped → roles', 'ok'], ['X-IAM-*', 'stripped', 'x']],
-  [['api.hanzo.ai/*', 'Hanzo Cloud', 'ok'], ['/v1 mount table', 'Hanzo Cloud', '']],
-  [['client IP', 'bucket', 'ok'], ['the edge', 'bucket', 'ok'], ['empty', '429 · Retry-After', 'x']],
-  [['health', 'process up', 'ok'], ['backends', 'dialed lazily', '']],
-  [['own service', 'one hop', ''], ['inside the cloud binary', 'no hop', 'ok']],
-];
-
-/* the figure each rule comes down to, in its own words */
-const BIG = ['JWKS ✓', 'sub · owner · roles', '/* → Hanzo Cloud', '429 · Retry-After', 'process up', 'no hop'];
-
-function Inspector({ at }) {
-  return (
-    <div className="gw-insp v2-obj" aria-hidden="true">
-      <div className="gw-insp-bar"><span className="gw-insp-dots"><i /><i /><i /></span><span>api.hanzo.ai</span><b>{String(at + 1).padStart(2, '0')} / {String(RULES.length).padStart(2, '0')}</b></div>
-      <div className="gw-insp-body">
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div key={at} className="gw-insp-in" initial="in" animate="on" exit="out" variants={{ out: { opacity: 0, y: -14, transition: { duration: 0.18 } } }}>
-            <motion.p className={'gw-big' + (at === 3 ? ' x' : '')} variants={{ in: { opacity: 0, scale: 1.45 }, on: { opacity: 1, scale: 1, transition: { opacity: { duration: 0.3 }, scale: { duration: 0.9, ease: EASE, delay: 0.35 } } } }}>{BIG[at]}</motion.p>
-            <ul className="gw-insp-rows">
-            {PROOF[at].map(([a, b, k], j) => (
-              <motion.li key={a} className={k} variants={{ in: { opacity: 0, y: 22 }, on: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE, delay: 0.06 + j * 0.06 } } }}>
-                <span className="gw-k">{a}</span>
-                <motion.i className="gw-lead" variants={{ in: { scaleX: 0 }, on: { scaleX: 1, transition: { duration: 0.7, ease: EASE, delay: 0.15 + j * 0.06 } } }} />
-                <b>{b}</b>
-              </motion.li>
-            ))}
-            </ul>
-          </motion.div>
-        </AnimatePresence>
-      </div>
-    </div>
-  );
-}
-
 const FAKE = [['X-User-Id', 'sub'], ['X-Org-Id', 'owner'], ['X-Roles', 'roles'], ['X-IAM-*', '']];
 const CRED = ['JWT', 'API key', 'None'];
 
@@ -228,19 +194,23 @@ function Forge() {
   );
 }
 
-/* The hero lane as the same inset card from first paint: no transform until you scroll. As the hero leaves, the card
-   recedes a little (scale and lift tied to scroll only), so the server frame and the client frame are identical. */
+/* The hero lane as the same inset card from first paint: no transform in the server HTML or the first client render
+   (a plain element with a class, never a style object that reduced motion could render differently). After mount, as
+   the hero leaves, the card recedes a little (scale and lift written straight to the element, tied to scroll only). */
 function Settle({ children, className }) {
   const ref = useRef(null);
+  const inner = useRef(null);
   const calm = useReducedMotion();
-  const still = useRef(false);
-  useEffect(() => { still.current = !!calm; }, [calm]);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.3', 'end start'] });
-  const scale = useTransform(scrollYProgress, (p) => (still.current ? 1 : 1 - 0.06 * Math.min(1, Math.max(0, p))));
-  const y = useTransform(scrollYProgress, (p) => (still.current ? 0 : -40 * Math.min(1, Math.max(0, p))));
+  useMotionValueEvent(scrollYProgress, 'change', (p) => {
+    const el = inner.current;
+    if (!el) return;
+    const k = calm ? 0 : Math.min(1, Math.max(0, p));
+    el.style.transform = k ? `translateY(${(-40 * k).toFixed(1)}px) scale(${(1 - 0.06 * k).toFixed(4)})` : '';
+  });
   return (
     <div ref={ref} className={className}>
-      <motion.div style={{ scale, y, transformOrigin: '50% 0%' }}>{children}</motion.div>
+      <div ref={inner} className="gw-settle">{children}</div>
     </div>
   );
 }
@@ -249,16 +219,22 @@ function Settle({ children, className }) {
    a forged header is torn off at the gate and the org id that walks through is the one Gateway wrote. */
 function Say() {
   const ref = useRef(null);
+  const head = useRef(null);
   const calm = useReducedMotion();
-  const still = useRef(false);
-  const k = useRef(0.42); // 44px grows toward 64px on desktop; a phone grows a little (32px toward 38px)
-  useEffect(() => { still.current = !!calm; k.current = innerWidth < 900 ? 0.18 : 0.42; }, [calm]);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
-  const grow = useTransform(scrollYProgress, (p) => (still.current ? 1 : 1 + k.current * Math.max(0, 1 - Math.abs(p - 0.5) / 0.3)));
+  // 44px grows toward 64px on desktop; a phone grows a little (32px toward 38px). Written after mount, so the server
+  // HTML and the first client render carry no transform.
+  useMotionValueEvent(scrollYProgress, 'change', (p) => {
+    const el = head.current;
+    if (!el) return;
+    const k = innerWidth < 900 ? 0.18 : 0.42;
+    const s = calm ? 1 : 1 + k * Math.max(0, 1 - Math.abs(p - 0.5) / 0.3);
+    el.style.transform = s === 1 ? '' : `scale(${s.toFixed(4)})`;
+  });
   return (
     <section className="v2-sec gw-say" ref={ref}>
       <div className="v2-wrap v2-grid">
-        <motion.h2 className="v2-display m gw-say-h" style={{ scale: grow, transformOrigin: '0% 100%' }}>Nothing downstream has to ask who is calling</motion.h2>
+        <h2 ref={head} className="v2-display m gw-say-h">Nothing downstream has to ask who is calling</h2>
         <p className="v2-lede gw-say-l">Gateway answers that once, at the edge, so every service behind it can read an org id and believe it.</p>
         <div className="gw-rail" aria-hidden="true">
           <span className="gw-rail-end">client</span>
@@ -293,7 +269,7 @@ export default function Gateway() {
 
       <Say />
 
-      <PinChapters className="gw-ch" label="How Gateway decides" items={RULES} look="right" visual={(at) => <Inspector at={at} />} />
+      <GwChapters className="gw-ch" label="How Gateway decides" items={RULES} scene={(at) => <GwScene at={at} total={RULES.length} />} />
 
       <ShipPrompt
         name="Gateway"

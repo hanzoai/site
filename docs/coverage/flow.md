@@ -2,7 +2,7 @@
 
 Page file: `components/pages/apps/Flow.jsx` · gallery: `docs/gallery/flow/` · metric id: `app_handoff`
 
-Open copy questions for James: "Step through it" is both a chapter heading and the playground's heading (kept both, live wording). Shared request: the phone header keeps a solid "Try Hanzo" beside the hero's solid "Open Flow", and is clipped at 320 (shared chrome). Node names are Hanzo's own component list; "received"/"returned" and "in"/"out" are the playground's UI labels from Hanzo's "shows what each one received and returned").
+Open copy questions for James: "Step through it" is both a chapter heading and the playground's heading (kept both, live wording). Licence: Hanzo's live /flow copy says both "MIT" (the fact strip, "MIT · Self-hosted") and "License: Apache-2.0" (Get Flow); both are kept word for word, so which is true needs James. Shared request: the phone header keeps a solid "Try Hanzo" beside the hero's solid "Open Flow", and is clipped at 320 (shared chrome). Node names are Hanzo's own component list; "received"/"returned" and "in"/"out" are the playground's UI labels from Hanzo's "shows what each one received and returned").
 Shared changes requested (`docs/requests/<page>.md`): none; `lib/cta.js` is not on main yet, so the ask label is the live hero's own "Open Flow".
 Forks this page deleted: the v1 hand-written `Hero`, the props accordion, the `Get` block from cloud/Frame, `Rise` fade-ups, raw `.x-btn` asks and the wrapping data-thumb spans (now kit `Cta`), the duplicate desktop `AskBar`.
 
@@ -15,7 +15,7 @@ Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line
 - [x] No dead or self-looping button; prices from `lib/plans.js` (n/a: no prices)
 - [x] Open copy questions for James listed, none decided
 
-Done here: Header lists Persona, `Metric: app_handoff`, Goal, CTA "Open Flow" → flow.hanzo.ai, Signature, Beyond, V2. The only solid fills are the hero ask (`<Cta id="flow.hero" thumb>`) and the close ask (`<Cta id="flow.close">`); measured one visible solid at 375×812 and at 1470×801.
+Done here: Header lists Persona, `Metric: app_handoff`, Goal, CTA "Open Flow" → flow.hanzo.ai, Signature, Beyond, V2. The only page solids are the hero ask (`BizAsk cta="flow.hero" thumb`) and the closing band's ask (`BizAsk cta="flow.close"`), never on one screen together. Each other link appears once: Deploy to Cloud (Get Flow), View on GitHub (the row under the terminal), the hanzoai chip (Get Flow); Documentation sits beside the hero and close asks only.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -41,7 +41,7 @@ Done here: The first screen is the dotted canvas with the 52px h1 among six node
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: kit `Cta` (`flow.hero` with `thumb`, `flow.close`); the site's header and ask bar carry "Open Flow". The terminal Copy copies `uv pip install hanzoflow\nuv run hanzoflow run`, exactly the two commands shown (the `$` is a separate glyph).
+Done here: v2 `BizAsk` (`flow.hero` with `thumb`, `flow.close`); the desktop header carries "Open Flow" past the hero (the phone header label is shared chrome, requested in docs/requests/cloud2.md). The terminal Copy copies `uv pip install hanzoflow\nuv run hanzoflow run`, exactly the two commands shown (the `$` is a separate glyph).
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -84,7 +84,7 @@ Done here: Hovers live in `@media (hover: hover)` and fill (fact cards, step chi
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit
 
-Done here: Signature: the run (idle). Supporting: line-masked headings, chapters (scroll), open cards (state); the playground is the hand. No springs: the pulse rides the edge in 900ms ease-in-out (a scene move), arrivals 300–400ms ease-emphasis; the run is a `setTimeout` chain that stops off screen and on Pause. No page sounds.
+Done here: Signature: the run (idle; a tap on a hero node holds it there). Supporting: line-masked headings, chapters (scroll: a build-up on desktop, one pinned scene swapping one chapter at a time on phones), open cards (state); the playground is the hand, its returned value streaming in (time). No springs: the pulse rides the edge in 900ms ease-in-out (a scene move), arrivals 300–400ms ease-emphasis; the run is a `setTimeout` chain that stops off screen and on Pause. No page sounds.
 
 ## 10. Media
 - [ ] ~~`Film` and `Pic` only~~ n/a: no image or film for Flow
@@ -92,7 +92,7 @@ Done here: Signature: the run (idle). Supporting: line-masked headings, chapters
 - [ ] ~~Budgets met; alt~~ n/a
 - [ ] ~~No dimmed photo~~ n/a
 
-Done here: The objects are product UI drawn in HTML and SVG: the canvas, the inspector, the playground and the terminal.
+Done here: The objects are product UI drawn in HTML and SVG: the running canvas, the compact build-up diagram, the large playground inspector and the terminal. No Flow screenshots or film exist in `public/`, so there is no media block.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -100,7 +100,7 @@ Done here: The objects are product UI drawn in HTML and SVG: the canvas, the ins
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: Filmed at both sizes (width 375/375, 1470/1470); on phones the canvas re-lays as a two-column snake, chapters stack (kit), the playground controls are 48px; the ask sits at 236px from the top at 375.
+Done here: Filmed at both sizes (width 375/375, 1470/1470); on phones the canvas re-lays as a two-column snake that keeps the 16px gutter at 320 (nodes at x 20–300), chapters become one pinned scene (mini-graph plus the current chapter, opaque, nothing behind it), the playground controls are 48px; the ask sits at 236px from the top at 375.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -109,7 +109,7 @@ Done here: Filmed at both sizes (width 375/375, 1470/1470); on phones the canvas
 - [x] One h1; no heading skips; names start with visible text
 - [x] Keyboard reaches every control
 
-Done here: Pause sits on the hero inspector (44px, labelled) and Play/Pause leads the playground controls; nodes and steps are buttons with `aria-pressed`/`aria-current`; the run state is `aria-live`.
+Done here: Pause sits on the hero inspector (44px, labelled) and Play/Pause leads the playground controls; hero nodes and playground steps are buttons with `aria-pressed`/`aria-current`; the run state is `aria-live` (the streaming value is not, so it is announced once).
 
 ## 13. Performance and engineering
 - [x] h1 and LCP element in server HTML
@@ -149,7 +149,7 @@ Done here: The close's terminal shows Hanzo's two commands and `→ 127.0.0.1:78
 - [ ] ~~A failed submit keeps its values~~ n/a: no form
 - [x] A thrown island does not blank the page
 
-Done here: Nothing is fetched live; with JS off the canvas shows its nodes and every word; filmed with no console errors.
+Done here: Nothing is fetched live; with JS off the canvas shows its nodes and every word, and the phone chapters stack instead of pinning (the pin is scoped to `html.js`); walked with no console errors at 1470, 375, 320 and reduced motion.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary; events only through `lib/track.js` (kit `Cta` emits `cta_click`)

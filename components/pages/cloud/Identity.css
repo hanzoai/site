@@ -227,13 +227,13 @@ html:not(.js) .id-three li { opacity: 1; transform: none; }
   /* phones: no pin; one card sticks under the header and swaps with the stage crossing the middle */
   .id-pin { height: auto; }
   .id-pin-stage { position: static; height: auto; display: block; padding-top: 88px; background: none; }
-  .id-pin-grid { display: flex; flex-direction: column; padding-top: 0; }
+  .id-pin-grid { display: flex; flex-direction: column; align-items: stretch; padding-top: 0; }
   .id-layers, .js .id-layers { display: contents; }
   .js .id-layer { grid-area: auto; transform: none !important; pointer-events: auto; opacity: 1; }
   .id-hero { order: 0; padding-bottom: 27px; }
   .id-card-wrap { order: 1; position: sticky; top: calc(var(--x-top, 60px) + 4px); z-index: 2; padding: 6px 0 12px; background: #fff; align-items: center; gap: 10px; }
   .id-card-wrap::after { content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 24px; background: linear-gradient(#fff, rgba(255, 255, 255, 0)); pointer-events: none; }
-  .id-stage { order: 2; min-height: 40svh; padding: 36px 0 27px; border-top: 1px solid var(--line); }
+  .id-stage { order: 2; min-height: 34svh; padding: 36px 0 27px; border-top: 1px solid var(--line); }
   .id-stage:last-child { min-height: 0; padding-bottom: 0; }
   .id .id-does { padding-top: 44px; }
   .js .id-stage { opacity: .45; transition: opacity .3s var(--e-out); }
@@ -253,8 +253,9 @@ html:not(.js) .id-three li { opacity: 1; transform: none; }
   .id-code { margin-top: 4px; }
   .id-code i { height: 28px; border-radius: 8px; }
   .id-ok { margin-top: 4px; }
-  .id-token { gap: 6px; }
-  .id-token p:not(.id-t) { flex-direction: column; align-items: flex-start; justify-content: center; gap: 4px; min-height: 0; padding: 9px 14px; font-size: 13px; }
+  .id-token { gap: 5px; }
+  .id-token .id-t { margin-bottom: 0; }
+  .id-token p:not(.id-t) { flex-direction: column; align-items: flex-start; justify-content: center; gap: 3px; min-height: 0; padding: 7px 12px; border-radius: 10px; font-size: 12px; }
   .id-token span { text-align: left; }
   .id-apps div { width: 72%; margin: 0 auto; gap: 6px; }
   .id-apps i { border-radius: 12px; }

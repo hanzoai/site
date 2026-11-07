@@ -162,7 +162,7 @@ button.fl-node:active { scale: .97; }
 .fl-pg-node b { font-size: 21px; font-weight: 497; letter-spacing: -.01em; color: #f5f5f5; }
 .fl-pg-io { display: grid; grid-template-columns: minmax(0, 1fr) minmax(64px, 160px) minmax(0, 1.3fr); align-items: end; gap: 28px; }
 .fl-pg-io p { display: flex; flex-direction: column; gap: 14px; margin: 0; min-width: 0; }
-.fl-pg-io p span { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #737373; }
+.fl-pg-io p > span { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #737373; }
 .fl-pg-io b { font-size: 32px; font-weight: 497; letter-spacing: -.03em; line-height: 1.05; color: #ffffff; text-wrap: balance; }
 .fl-pg-io b.out { align-self: flex-start; padding: 6px 16px 10px; border-radius: 16px; background: #f5f5f5; color: #0a0a0a; font-size: 44px; }
 .fl-pg-io b.wait { color: #404040; font-size: 44px; }
@@ -293,7 +293,7 @@ button.fl-node:active { scale: .97; }
   .fl-node-h b { font-size: 14px; }
   .fl-node-o { padding-top: 7px; }
   .fl-insp { padding: 14px 16px 10px; }
-  .fl-insp-k, .fl-insp p span, .fl-node-o, .fl-io, .fl-pg-bar, .fl-ways-p p b, .fl-vars, .fl-term-bar .x-mono, .fl-pg-io p span { font-size: 14px; }
+  .fl-insp-k, .fl-insp p span, .fl-node-o, .fl-io, .fl-pg-bar, .fl-ways-p p b, .fl-vars, .fl-term-bar .x-mono, .fl-pg-io p > span { font-size: 14px; }
   .fl .cf-paste-k, .fl .x-copy-t { font-size: 14px; }
   .fl .x-arrow { min-height: 44px; }
   .fl-chip { height: 44px; }

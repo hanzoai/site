@@ -9,12 +9,14 @@
    a run leaves each node as a pulse that travels its edge to the next, the node runs, and what it returned appears on it.
    The inspector on the canvas follows the run and carries its Pause.
    Beyond: "Step through it" yourself. In the playground (the one dark room), play, pause, or take the flow one node at
-   a time (next, previous, or tap a node or a step); the inspector shows what each node received and returned, the way
-   Hanzo says you find the node that gave the strange answer. The REST card opens into the same flow published three
-   ways (REST, JSON, MCP) as tabs.
+   a time (next, previous, or pick a step); the inspector is the object there, large: the node, what it received, the
+   hand-off travelling its wire, and what it returned streaming in, the way Hanzo says you find the node that gave the
+   strange answer. The REST card opens into the same flow published three ways (REST, JSON, MCP) as tabs.
+   One graph, three readings: the hero's running cards (tap one to hold the run there), the pinned build-up drawn as a
+   compact diagram, and the playground as the inspector alone, so the six nodes are never reprinted the same way.
    Not only scroll: the run is idle motion; the playground answers the hand; the facts open (state); chapters are scroll.
    Motion: the running canvas (signature) + line-masked headings + sticky chapters + nodes that open into their page.
-V2: 8/10 round 2: words on the left 5 columns with the h1 near 38%, the running canvas on the right 8 and its inspector docked under it; the pinned chapter graph now builds one node per chapter (phones: one sticky mini-graph that follows the chapter); nodes carry a mono index, not an icon box, and never truncate; the fact figures take turns being the big one; Python and :7860 open onto their own object; a quiet closing band with the one ask, then the footer; deck hover greys
+V2: 8/10 round 3: the pipeline no longer repeats four times (hero cards run and answer a tap; the pinned build-up is a compact diagram; the playground is its inspector, large, with the returned value streaming in; no chip chain in the close); phones get one pinned scene where the mini-graph builds and one chapter swaps in at a time, nothing behind it; no gap before the stage; one Deploy, one GitHub row, one hanzoai chip; "Run it locally first" settles to 26px so the close is the one big line; hero nodes keep the 16px gutter at 320
    Every word and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';

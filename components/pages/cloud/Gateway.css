@@ -53,25 +53,7 @@
 .gw-say-h { grid-column: 1 / span 8; max-width: 13ch; }
 .gw-say-l { grid-column: 9 / -1; padding-bottom: 10px; }
 
-/* chapters: the request inspector */
-.gw-ch { --acc: #737373; }
-@media (min-width: 901px) { .gw-ch .pc-vis { height: min(66svh, 600px); } }
-.gw-insp { position: relative; height: 100%; display: flex; flex-direction: column; overflow: hidden; background: #fff; }
-.gw-insp-bar { display: flex; align-items: center; gap: 14px; padding: 18px 22px; border-bottom: 1px solid var(--line); font: 500 14px/1 var(--mono); color: var(--soft); }
-.gw-insp-dots { display: flex; gap: 6px; }
-.gw-insp-dots i { width: 10px; height: 10px; border-radius: 999px; background: #e4e4e7; }
-.gw-insp-bar b { margin-left: auto; color: var(--acc); font-weight: 600; }
-.gw-insp-body { flex: 1; display: flex; align-items: center; padding: 0 clamp(24px, 3.4vw, 56px); position: relative; z-index: 1; }
-.gw-insp-in { width: 100%; }
-.gw-big { margin: 0 0 32px; font-weight: 497; font-size: 44px; line-height: 1; letter-spacing: -.045em; color: var(--acc); font-variant-numeric: tabular-nums; }
-.gw-big.x { color: #262626; }
-.gw-insp-rows { list-style: none; margin: 0; padding: 0; width: 100%; display: grid; gap: 16px; }
-.gw-insp-rows li { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 20px; padding: 20px 22px; border-radius: 16px; background: #f5f5f5; font: 500 clamp(15px, 1.35vw, 20px)/1.2 var(--mono); letter-spacing: -.02em; }
-.gw-insp-rows .gw-k { color: var(--ink); }
-.gw-lead { height: 0; border-top: 1.5px dashed rgba(0, 0, 0, .16); transform-origin: left center; }
-.gw-insp-rows b { font-weight: 600; color: var(--soft); }
-.gw-insp-rows li.ok b { color: var(--acc); }
-.gw-insp-rows li.x b { color: #262626; }
+/* chapters: page-local, each rule acted out by its own scene (gateway/GwChapters, gateway/GwScenes) */
 
 /* forge: the dark room */
 .gw-forge { padding: clamp(72px, 8vw, 116px) 0; }
@@ -110,9 +92,9 @@
 .gw-arrow span { position: relative; z-index: 1; writing-mode: vertical-rl; padding: 12px 6px; background: #000; font: 600 12px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--glow); }
 
 /* example project */
-.gw-proj .v2-grid { align-items: center; }
-.gw-proj-t { grid-column: 1 / span 4; }
-.gw-proj-l { margin: 0; max-width: 18ch; }
+.gw-proj .v2-grid { align-items: end; }
+.gw-proj-t { grid-column: 1 / span 4; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+.gw-proj-l { margin: 0; max-width: 30ch; font-size: 16px; line-height: 1.5; color: var(--soft); }
 .gw-proj-c { grid-column: 6 / -1; }
 
 @media (max-width: 900px) {
@@ -127,11 +109,6 @@
   .gw-h { min-height: 32px; padding: 0 8px; }
   .gw-req-top span { display: none; }
   .gw-429 { font-size: 34px; }
-  .gw-insp-rows { gap: 8px; }
-  .gw-insp-rows li { padding: 12px 14px; gap: 10px; font-size: 13px; }
-  .gw-insp-body { padding: 0 16px; }
-  .gw-big { font-size: 30px; margin-bottom: 14px; }
-  .gw-insp-bar { padding: 12px 16px; }
   .gw-forge { padding: 120px 0; }
   .gw-forge-pick { justify-self: start; }
   .gw-forge-grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
@@ -169,17 +146,29 @@
 @keyframes gw-rail-in { 0%, 44% { opacity: 1; } 48%, 100% { opacity: 0; } }
 @keyframes gw-rail-out { 0%, 44% { opacity: 0; } 48%, 100% { opacity: 1; } }
 
-/* chapters: the counter sits under the title as its caption, never above it */
-.gw-ch .pc-art { display: flex; flex-direction: column; }
-.gw-ch .pc-t { order: 0; }
-.gw-ch .pc-n { order: 1; margin: -6px 0 18px; }
-.gw-ch .pc-d { order: 2; }
-.gw-ch .pc-vis-m { order: 3; }
-.gw-big { transform-origin: 0% 50%; }
+/* transforms written after mount (Settle, Say) grow from these corners */
+.gw-settle { transform-origin: 50% 0%; }
+.gw-say-h { transform-origin: 0% 100%; }
 
-/* the code card: the api pill rides in the code block's own header, not above it */
-.gw .sp-card { position: relative; }
-.gw .sp-api { position: absolute; z-index: 1; top: 12px; right: 64px; }
+/* the code card: "api /v1/gateway" sits on its own line above the block; the prompt wraps instead of being cut */
+.gw .sp-api { justify-self: start; }
+.gw .sp-code pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+/* the copy button: only the icon that is arriving shows, so the tick never draws over the outgoing copy icon */
+.gw .sp-code .x-copy { display: inline-flex; align-items: center; gap: 6px; }
+.gw .sp-code .x-copy svg { flex: none; }
+.gw .sp-code .x-copy[aria-label='Copied'] svg:has(rect) { display: none; }
+
+/* related capabilities: one shape for all four, arrow at the right edge, a hover that previews where it goes */
+.gw .sp-rel-a { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 12px; padding: 18px 12px; margin: 0 -12px; border-radius: 12px; transition: background-color .15s cubic-bezier(0, 0, .2, 1); }
+.gw .sp-rel-a b { grid-column: 1; }
+.gw .sp-rel-a svg { grid-column: 2; grid-row: 1; margin: 0; }
+.gw .sp-rel-a span { grid-column: 1 / -1; }
+.gw .sp-rel-a::after { content: attr(href); grid-column: 1 / -1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 500 12px/1.4 var(--mono); color: #737373; opacity: 0; transform: translateY(-4px); transition: opacity .15s cubic-bezier(0, 0, .2, 1), transform .3s cubic-bezier(.16, 1, .3, 1); }
+@media (hover: hover) {
+  .gw .sp-rel-a:hover { background: #f5f5f5; }
+  .gw .sp-rel-a:hover::after { opacity: 1; transform: none; }
+}
+.gw .sp-rel-a:focus-visible::after { opacity: 1; transform: none; }
 
 /* answers to the pointer: fills and moves, never opacity alone */
 .gw .x-btn { transition: background-color .15s cubic-bezier(0, 0, .2, 1), border-color .15s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); }
@@ -201,8 +190,14 @@
   .gw-lane { height: 400px; }
   .gw-gate-k { top: 76px; }
   .gw-req { margin-top: -112px; }
-  .gw-rail { grid-template-columns: minmax(0, 1fr); gap: 10px; margin-top: 44px; }
+  .gw-rail { grid-template-columns: minmax(0, 1fr); gap: 10px; margin-top: 44px; min-width: 0; overflow: hidden; }
+  .gw-rail-line { min-width: 0; }
   .gw-rail-end.r { justify-self: end; }
+  /* the gateway card: the pause sits in the lane's top-left corner, the request card keeps clear of the gate */
+  .gw-pause { right: auto; left: 24px; }
+  .gw-lane { --cw: 262px; }
+  .gw-req { margin-left: -14px; }
+  .gw-proj-t { padding-bottom: 0; border-bottom: 0; }
   .gw-say-h { max-width: 11ch; }
   .gw .sp-api { position: static; }
   /* the close: the contour sits low and right, clear of the words */
