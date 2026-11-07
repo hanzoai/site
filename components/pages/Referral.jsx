@@ -312,7 +312,7 @@ function Which() {
   const seen = on;
   const words = (link) => <>
     <span className="xrf-half a">A referral pays nothing. </span>
-    <span className="xrf-half b">{link ? <A to="/affiliate">Affiliates</A> : <u>Affiliates</u>} are paid on what their referrals spend.</span>
+    <span className="xrf-half b">{link ? <A to="/affiliate">Affiliates</A> : <u>Affiliates</u>} <span>are paid on what their referrals spend.</span></span>
   </>;
   return (
     <section className="xp-sec xp-dark xrf-which" data-room="dark" ref={box} aria-labelledby="xrf-which-h">
