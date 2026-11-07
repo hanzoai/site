@@ -83,7 +83,7 @@ Done here: Kit `Cta` and `Field` states (hover, press .97, focus ring, busy, das
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit: the shared `lib/sound.js` (header mute toggle) sounds the `data-cta` asks; the track radios carry `data-sound="tick"`; the page plays nothing of its own.
 
-Done here: Signature: the stacked sheets, each shrinking to .92 and dimming as the next slides over it (driven by the list's own progress). Time: the contour field (pausable). Arrival: line-mask h1; the timeline draws across; ticks draw on the ledger row by row. State: the track chip glides; the filing card fills as you type. Ease-emphasis, no springs. Reduced motion (round 3): the sheets render at scale 1 with no dim layer, the steps show all lit, the count shows its true value, the field is still. The timeline is now scrubbed by scroll and lights each step as the line reaches it; hover redraws a ledger tick.
+Done here: Signature: the stacked sheets, each shrinking to .92 and dimming as the next slides over it (driven by the list's own progress). Time: the contour field (pausable). Arrival: line-mask h1; the timeline draws across; ticks draw on the ledger row by row. State: the track chip glides; the filing card fills as you type. Ease-emphasis, no springs. Reduced motion (round 6): nothing branches on the preference while rendering any more (that had broken hydration); CSS shows the final state instead: the sheets at scale 1 with no dim layer, the line drawn, every step and ledger row lit with its tick, the field still. Measured: 0 console errors at 1470 and 375 with reduced motion on and off. The timeline is now scrubbed by scroll and lights each step as the line reaches it; hover redraws a ledger tick.
 
 ## 10. Media
 - ~~`Film` and `Pic` only; sizes and posters set~~ n/a: no images or video; the hero art is the page's own Sigil field.
@@ -108,7 +108,7 @@ Done here: round 5: the grants@hanzo.ai link in the error line now has a 44px bo
 - [x] One h1; no heading skips; names start with visible text
 - [x] Keyboard reaches every control
 
-Done here: Greys at 4.5:1+ on white and dark; one h1, h2s in order, h3s under them; radiogroup with roving focus; a hidden sheet's link lifts its sheet on focus (`:focus-within`); wrong fields are `aria-invalid`, the first takes focus; the result takes focus.
+Done here: Greys at 4.5:1+ on white and dark (round 6: unlit ledger titles are #525252 on #f5f5f5, 7:1; with JS off every row shows lit); one h1, h2s in order, h3s under them; radiogroup with roving focus; a hidden sheet's link lifts its sheet on focus (`:focus-within`); wrong fields are `aria-invalid`, the first takes focus; the result takes focus.
 
 ## 13. Performance and engineering
 - [x] h1 and LCP element in server HTML

@@ -103,7 +103,26 @@ html.js .xgr-static { display: none; }
 .xgr-sheetlist li { grid-template-columns: 40px 1fr 24px; }
 .xgr-sheetlist li .xgr-gets-n { font-size: 12px; color: #737373; padding-top: 4px; }
 .xgr-sheetlist li .xp-title, .xgr-sheetlist li .xp-body { transition: color .4s cubic-bezier(0, 0, .2, 1); }
-.xgr-sheetlist li:not(.on) .xp-title { color: #737373; }
+.xgr-sheetlist li:not(.on) .xp-title { color: #525252; }
+.xgr-sheetlist li .xgr-gets-t { opacity: 0; transition: opacity .3s cubic-bezier(0, 0, .2, 1); }
+.xgr-sheetlist li.on .xgr-gets-t { opacity: 1; }
+html:not(.js) .xgr-sheetlist li .xp-title { color: #0a0a0a; }
+html:not(.js) .xgr-sheetlist li .xgr-gets-t { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .xgr-sheetlist li .xp-title { color: #0a0a0a !important; }
+  .xgr-sheetlist li .xgr-gets-t { opacity: 1; }
+  .xgr-line i { transform: none !important; }
+  .xgr-sheet { transform: none !important; }
+  .xgr-sheet-dim { display: none; }
+  .xgr-steps li .xp-title { color: #0a0a0a !important; }
+  .xgr-steps li .xgr-dot { background: var(--xp-accent); }
+}
+@media (max-width: 899px) {
+  .xgr-sheetlist { padding: 4px 16px !important; }
+  .xgr-sheetlist li { grid-template-columns: 28px 1fr 22px; gap: 6px 12px; }
+}
+.xgr-apply { padding-bottom: clamp(56px, 6vw, 88px) !important; }
+.xgr-proof-big { display: block; font: 220 64px/1 var(--sans); letter-spacing: -.04em; color: #0a0a0a; font-variant-numeric: tabular-nums; }
 .xgr-sheetlist li .xgr-gets-t { grid-column: 3; grid-row: 1; color: #0a0a0a; }
 .xgr-sheetlist li::before { inset: 0 -12px; }
 @media (hover: hover) { .xgr-sheetlist li:hover::before { background: #ededed; } }
