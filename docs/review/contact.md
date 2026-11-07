@@ -1,5 +1,7 @@
 # /contact — James-eye review
 
+Ready: 2026-11-08 round-2 fixes verified on the live page: Visit room's one big thing is the clock (Visit 26px, address 21px, city 17px), h1 rests at 52px, phone plate scrolls away without its name, desktop plate redraws with a hairline draw-on, data-cursor gone; cable sweep, jack hover/press, route swap and Copy→"Copied" re-walked at 1470 and 375; reduced motion 0 running animations. taste OK, parity 29/29 + 15/15, unique OK, check.mjs 0 errors / 0 overlaps / no h-scroll at both sizes.
+
 Verdict: 7/10
 First complaint: "The patch panel's lovely, then I scroll into Visit and it's all big at once: 'Visit' and the address are the same huge size beside a giant clock, and on my phone the community bit is a pale grey smudge stuck under the header with a name peeking out above it. It looks unfinished."
 
