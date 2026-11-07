@@ -1,4 +1,4 @@
-// Signature: every total is a sum that adds itself up: the podium's tape re-adds each hunter's score, then the four ways to earn pin as chapters while a receipt builds a total line by line.
+// Signature: race — the global board's own ten token volumes race from zero to their exact figures, bars and tabular counters at the true ratios every frame, Linear or Log, replayable, in the second screen.
 // Beyond: your points, worked out with the page's own rules, and where your tokens would sit on the global board.
 import Leaderboard from '../../components/pages/Leaderboard';
 import JsonLd from '../../components/JsonLd';

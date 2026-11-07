@@ -69,7 +69,7 @@
 
 /* 2. contributors: an editorial list with huge ranks */
 .xlb-con.pf-sec { padding-top: 72px; }
-.xlb-con-head { grid-column: 1 / span 4; align-self: start; position: sticky; top: 120px; }
+.xlb-con-head { grid-column: 1 / span 4; align-self: start; }
 .xlb-con-head .pf-body { margin: 24px 0 32px; }
 .xlb-rows { grid-column: 6 / -1; list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--k-hair); }
 .xlb-row { position: relative; isolation: isolate; display: grid; grid-template-columns: 72px minmax(0, 1fr) auto; gap: 24px; align-items: baseline; padding: 40px 0; border-bottom: 1px solid var(--k-hair); }
@@ -99,8 +99,10 @@
   .xlb-row:hover .xlb-rank { transform: translate3d(8px, 0, 0); }
 }
 
-/* 3. the first dark room: the token board */
-.xlb-tok { padding: clamp(116px, 12vw, 188px) 0 clamp(72px, 8vw, 116px); }
+.xlb-l { display: block; }
+
+/* 2. the race: the page's first black room, simply there (no wipe); the board's volumes race from zero */
+.xlb-tok { padding: clamp(116px, 12vw, 188px) 0 clamp(72px, 8vw, 116px); background: var(--k-black); color: var(--k-fg-dark); }
 .xlb-tok .pf-head { color: var(--k-fg-dark); }
 .xlb-tok .pf-body { color: var(--k-on-black); margin-top: 24px; max-width: 46ch; }
 .xlb-tok-head { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 24px; align-items: end; }
@@ -108,7 +110,16 @@
 .xlb-figs div { display: grid; gap: 12px; }
 .xlb-figs dt { order: 2; font: 606 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--k-on-black); }
 .xlb-figs dd { margin: 0; color: var(--k-fg-dark); }
-.xlb-scale { position: relative; display: inline-flex; margin: clamp(44px, 5vw, 72px) 0 24px; padding: 4px; border-radius: 99px; background: var(--k-w8); }
+.xlb-tools { display: flex; align-items: center; gap: 12px; margin: clamp(44px, 5vw, 72px) 0 24px; }
+.xlb-scale { position: relative; display: inline-flex; padding: 4px; border-radius: 99px; background: var(--k-w8); }
+.xlb-replay { display: grid; place-items: center; width: 48px; height: 48px; padding: 0; border: 1px solid var(--k-w14); border-radius: 50%; background: none; color: var(--k-fg-dark); cursor: pointer; transition: background-color var(--k-fast) var(--k-out), color var(--k-fast) var(--k-out), transform var(--k-press) var(--k-out); }
+.xlb-replay svg { transition: transform var(--k-slower) var(--k-emph); }
+@media (hover: hover) { .xlb-replay:hover:not(:disabled) { background: var(--k-fg-dark); color: var(--k-ink); } .xlb-replay:hover:not(:disabled) svg { transform: rotate(-120deg); } }
+.xlb-replay:active:not(:disabled) { transform: scale(.97); }
+.xlb-replay:disabled { color: var(--k-w55); cursor: default; }
+.xlb-replay:disabled svg { animation: xlb-spin 1s linear infinite; }
+@keyframes xlb-spin { to { transform: rotate(-360deg); } }
+.xlb-replay:focus-visible { outline: 2px solid var(--k-fg-dark); outline-offset: 2px; }
 .xlb-scale button { position: relative; min-height: 40px; padding: 0 20px; border: 0; background: none; color: var(--k-on-black); font: 606 14px/1 var(--sans); cursor: pointer; border-radius: 99px; transition: color var(--k-fast) var(--k-out), transform var(--k-press) var(--k-out); }
 .xlb-scale button[aria-selected='true'] { color: var(--k-ink); }
 .xlb-scale-t { position: relative; z-index: 1; display: block; }
@@ -126,21 +137,34 @@
 .xlb-org-m .xlb-req { color: var(--k-w55); font-size: 13px; }
 /* flat bars: the lead in the room's ink, the rest in the deck's text-on-black grey; a lit row turns its bar up a step */
 .xlb-bar { display: block; height: 10px; border-radius: 10px; background: var(--k-w6); overflow: hidden; }
-.xlb-bar i { display: block; height: 100%; border-radius: 10px; background: var(--k-on-black); transform-origin: 0 50%; transition: background-color var(--k-base) var(--k-out); }
+.xlb-bar i { display: block; height: 100%; border-radius: 10px; background: var(--k-on-black); transform-origin: 0 50%; transform: scaleX(var(--w)); transition: background-color var(--k-base) var(--k-out); }
+/* at rest the Linear/Log switch eases the bars over; while racing they follow the clock frame by frame */
+.xlb-board[data-race='rest'] .xlb-bar i { transition: background-color var(--k-base) var(--k-out), transform var(--k-slower) var(--k-io); }
 .xlb-org.lead .xlb-bar i, .xlb-org.lit .xlb-bar i { background: var(--k-fg-dark); }
 @media (hover: hover) and (pointer: fine) { .xlb-org:hover .xlb-bar i { background: var(--k-fg-dark); } }
-.xlb-org-t { font-size: 14px; color: var(--k-fg-dark); text-align: right; }
+.xlb-org-t { font-size: 14px; color: var(--k-fg-dark); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; }
 .xlb-all { display: none; }
 
-/* 4. earn: the intro, then four pinned chapters building a receipt */
-.xlb-earn-intro { padding: 116px 0 0; }
+/* 3. earn: the intro, then Hanzo's four cards as a list beside the self-printing receipt (a plain section) */
+.xlb-earn.pf-sec { padding: 116px 0 0; }
 .xlb-earn-intro .pf-lede { margin-top: 17px; }
-/* the shared chapter meter keeps its drawing line; its "01 / 04" numerals are not Hanzo copy, so they are not shown */
-.xlb-earn-pin .pf-pin-meter span { visibility: hidden; }
+.xlb-earn-body { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 44px; align-items: start; margin-top: 72px; }
+.xlb-ways { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--k-hair); }
+.xlb-way { display: grid; gap: 10px; padding: 27px 0; border-bottom: 1px solid var(--k-hair); }
+.xlb-way h3 { margin: 0; }
+.xlb-way .pf-body { margin: 0; }
+/* focus-pull-scroll's background: an unlabeled field of ghost bars behind the section, under the subject */
+.xlb-fp { position: relative; isolation: isolate; }
+.xlb-fp-field { position: absolute; inset: 0 0 auto; height: 100%; z-index: -1; display: grid; align-content: space-around; pointer-events: none; }
+.xlb-fp-field i { display: block; height: 10px; border-radius: 10px; background: var(--k-muted); width: 44%; justify-self: end; }
+.xlb-fp-field i:nth-child(odd) { justify-self: start; }
+.xlb-fp-field i:nth-child(3n) { width: 62%; }
+.xlb-fp-field i:nth-child(4n) { width: 30%; }
+.xlb-fp-field i:nth-child(5n) { width: 76%; }
 .xlb-tags { display: flex; flex-wrap: wrap; gap: 8px; }
 .xlb-tags span { font-size: 14px; padding: 7px 12px; border-radius: 99px; background: var(--k-muted); color: var(--k-ink); }
 .xlb-tags span:first-child { background: var(--k-ink); color: var(--k-white); }
-.xlb-rcpt { width: min(100%, 560px); justify-self: end; padding: 27px 36px 36px; }
+.xlb-rcpt { width: min(100%, 560px); justify-self: end; padding: 27px 36px 36px; background: var(--k-quiet); }
 .xlb-rcpt-k { display: flex; justify-content: flex-end; gap: 16px; margin: 0 0 17px; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--k-body); }
 .xlb-rcpt-k span { white-space: nowrap; }
 .xlb-rcpt-ls { list-style: none; margin: 0; padding: 0; }
@@ -201,8 +225,8 @@
 .xlb-end { display: flex; flex-wrap: wrap; align-items: center; gap: 28px; margin-top: 44px; }
 .xlb-end a { min-height: 44px; display: inline-flex; align-items: center; }
 
-/* 6. the close: the second dark room, a rounded panel opening to full width, words cut in at 52px */
-.xlb-close { padding: clamp(116px, 12vw, 188px) 0; }
+/* 6. the close: the second dark room, simply there, the h1's words at 52px */
+.xlb-close { padding: clamp(116px, 12vw, 188px) 0; background: var(--k-black); color: var(--k-fg-dark); }
 .xlb-close-in { display: flex; flex-direction: column; align-items: center; gap: 27px; text-align: center; }
 .xlb-close .xlb-close-h { color: var(--k-fg-dark); max-width: 18ch; }
 .xlb-close .pf-btn.solid { background: var(--k-fg-dark); color: var(--k-ink); border-color: var(--k-fg-dark); }
@@ -261,7 +285,6 @@
   .xlb-tok-head { grid-template-columns: minmax(0, 1fr); gap: 27px; }
   .xlb-figs { justify-content: flex-start; }
   .xlb-figs dt { font-size: 12px; }
-  .xlb-scale { margin-top: 27px; }
   .xlb-scale button { min-height: 44px; }
   .xlb-org { grid-template-columns: 36px minmax(0, 1fr); gap: 6px 12px; padding: 14px 0; }
   .xlb-org-r { grid-row: 1 / span 3; align-self: start; font-size: 14px; }
@@ -276,10 +299,10 @@
   .xlb-all:focus-visible { outline: 2px solid var(--k-fg-dark); outline-offset: 2px; }
   .xlb-board[data-all='true'] .xlb-org:nth-child(n + 4) { animation: xlb-row-in var(--k-slow) var(--k-emph) both; animation-delay: calc((var(--i) - 3) * 60ms); }
 
-  .xlb-earn-intro { padding-top: 56px; }
-  .xlb-earn-pin .pf-pin-flat-v:empty { display: none; }
-  .xlb-earn-pin.pf-pin-flat { padding-top: 56px; }
-  .xlb-earn-pin .pf-pin-flat-c + .pf-pin-flat-c { margin-top: 44px; }
+  .xlb-earn.pf-sec { padding-top: 72px; }
+  .xlb-earn-body { grid-template-columns: minmax(0, 1fr); gap: 27px; margin-top: 44px; }
+  .xlb-way { padding: 20px 0; }
+  .xlb-tools { margin-top: 27px; }
   .xlb-rcpt { justify-self: stretch; padding: 20px 20px 24px; }
   .xlb-rcpt-k { font-size: 12px; }
   .xlb-rcpt-ls li { font-size: 15px; }
@@ -293,8 +316,31 @@
   .xlb-close { padding: 96px 0; }
 }
 @keyframes xlb-row-in { from { transform: translate3d(0, 16px, 0); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* The five section entrances (leaderboard/entrances.jsx). Start states only under html.js and without reduced motion,
+   so JS off and reduced motion stand at the final state. Transform, opacity and filter only: no layout moves. */
+.xlb-cw { display: inline-block; white-space: nowrap; }
+.xlb-cl { display: inline-block; }
+@media (prefers-reduced-motion: no-preference) {
+  /* 1. card-deal: the three steps and the tape are dealt from one deck off the podium's right edge, last card first to land */
+  html.js [data-ent='deal'] .xlb-card { transition: transform 700ms var(--k-emph), opacity var(--k-base) var(--k-out); transition-delay: calc(200ms + var(--d) * 110ms); }
+  html.js [data-ent='deal'][data-in='false'] .xlb-card { opacity: 0; transform: translate3d(calc((3.6 - var(--d)) * 16vw), -32px, 0) rotate(calc(9deg - var(--d) * 2deg)); }
+  /* 2. rack-focus: the race room's contents pull into focus from a blur */
+  html.js [data-ent='rack'] > .pf-wrap { transition: filter 900ms var(--k-emph), opacity 600ms var(--k-out), transform 900ms var(--k-emph); }
+  html.js [data-ent='rack'][data-in='false'] > .pf-wrap { filter: blur(16px); opacity: .25; transform: scale(1.03); }
+  /* 3. focus-pull-scroll: with the scroll (--fp 0 to 1, set by FocusPull), the field blurs and the subject sharpens */
+  html.js .xlb-fp:not([data-in='true']) > .xlb-fp-subj { filter: blur(calc((1 - var(--fp, 0)) * 12px)); opacity: calc(.3 + var(--fp, 0) * .7); }
+  html.js .xlb-fp > .xlb-fp-field { filter: blur(calc(var(--fp, 0) * 8px)); opacity: calc(1 - var(--fp, 0) * .55); }
+  /* 4. orbit-in: the Beyond's parts swing in on an arc about a pivot far to their left, one after another */
+  html.js [data-ent='orbit'] .xlb-orb { transform-origin: -40vw 50%; transition: transform 900ms var(--k-emph), opacity var(--k-slow) var(--k-out); transition-delay: calc(var(--o) * 90ms); }
+  html.js [data-ent='orbit'][data-in='false'] .xlb-orb { opacity: 0; transform: rotate(12deg); }
+  /* 5. letter-cascade: the contributors' heading, letter by letter, falling into place */
+  html.js [data-ent='cascade'] .xlb-cl { transition: transform var(--k-slower) var(--k-emph), opacity var(--k-base) var(--k-out); transition-delay: calc(var(--k) * 24ms); }
+  html.js [data-ent='cascade'][data-in='false'] .xlb-cl { opacity: 0; transform: translate3d(0, -.9em, 0) rotate(-8deg); }
+}
 @media (prefers-reduced-motion: reduce) {
   .xlb-rcpt-ls li { transform: none; transition: opacity .01ms; }
   .xlb-rcpt-ls li[data-new='true']::after, .xlb-calc-rule { animation: none; }
   .xlb-board[data-all='true'] .xlb-org { animation: none; }
+  .xlb-replay { display: none; }
 }

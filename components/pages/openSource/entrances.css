@@ -1,0 +1,45 @@
+/* /open-source section entrances. Hidden states apply only while JS has armed an element (data-e="wait"),
+   so JS off and reduced motion show every section at rest. */
+
+/* 1. snap-sections: one screen that snaps up into place, a hard in-out, no drift */
+.xe-snap[data-e='wait'] { opacity: 0; transform: translate3d(0, 18vh, 0); }
+.xe-snap[data-e='in'] { animation: xe-snap 560ms cubic-bezier(.83, 0, .17, 1) both; }
+@keyframes xe-snap { from { opacity: 0; transform: translate3d(0, 18vh, 0); } 40% { opacity: 1; } to { opacity: 1; transform: none; } }
+
+/* 2. magnet-gather: scattered pieces pulled together, overshooting a little as they lock */
+.xe-gather > * { transform-origin: 50% 50%; }
+.xe-gather[data-e='wait'] > * { opacity: 0; transform: translate3d(var(--gx), var(--gy), 0) rotate(var(--gr)) scale(.92); }
+.xe-gather[data-e='in'] > * { animation: xe-gather 900ms cubic-bezier(.34, 1.4, .64, 1) both; animation-delay: calc(var(--gi, 0) * 70ms); }
+@keyframes xe-gather {
+  from { opacity: 0; transform: translate3d(var(--gx), var(--gy), 0) rotate(var(--gr)) scale(.92); }
+  35% { opacity: 1; }
+  to { opacity: 1; transform: none; }
+}
+
+/* 3. scroll-tilt: JS writes the rotateX; the hinge is the top edge */
+.xe-tilt { transform-origin: 50% 0; will-change: transform; }
+
+/* 4. letter-cascade: each letter falls from a line above, 28ms apart */
+.xe-cascade .xe-w { display: inline-block; white-space: pre; }
+.xe-cascade .xe-l { display: inline-block; }
+.xe-cascade[data-e='wait'] .xe-l { opacity: 0; transform: translate3d(0, -.9em, 0) rotate(-8deg); }
+.xe-cascade[data-e='in'] .xe-l { animation: xe-fall 520ms cubic-bezier(.2, .9, .3, 1.25) both; animation-delay: calc(var(--c) * 28ms); }
+@keyframes xe-fall { from { opacity: 0; transform: translate3d(0, -.9em, 0) rotate(-8deg); } 50% { opacity: 1; } to { opacity: 1; transform: none; } }
+
+/* 5. ripple: three rings spread from the centre; the section opens behind the first one */
+.xe-ripple { position: relative; overflow: clip; }
+.xe-rings { position: absolute; left: 50%; top: 50%; width: 0; height: 0; pointer-events: none; }
+.xe-rings i { position: absolute; left: -40px; top: -40px; width: 80px; height: 80px; border-radius: 50%; border: 1px solid #0a0a0a; opacity: 0; }
+.xe-ripple-c { position: relative; }
+.xe-ripple[data-e='wait'] .xe-ripple-c { clip-path: circle(0 at 50% 50%); }
+.xe-ripple[data-e='in'] .xe-ripple-c { animation: xe-open 1100ms cubic-bezier(.4, 0, .2, 1) both; }
+.xe-ripple[data-e='in'] .xe-rings i { animation: xe-ring 1400ms cubic-bezier(0, 0, .2, 1) both; }
+.xe-ripple[data-e='in'] .xe-rings i:nth-child(2) { animation-delay: 160ms; }
+.xe-ripple[data-e='in'] .xe-rings i:nth-child(3) { animation-delay: 320ms; }
+@keyframes xe-open { from { clip-path: circle(0 at 50% 50%); } to { clip-path: circle(75% at 50% 50%); } }
+@keyframes xe-ring { from { opacity: .5; transform: scale(0); } to { opacity: 0; transform: scale(22); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .xe-snap, .xe-gather > *, .xe-cascade .xe-l, .xe-ripple-c { animation: none !important; opacity: 1 !important; transform: none !important; clip-path: none !important; }
+  .xe-rings { display: none; }
+}

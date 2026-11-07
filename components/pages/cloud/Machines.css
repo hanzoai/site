@@ -14,18 +14,6 @@
 .mc-hero { padding: 84px 0 clamp(72px, 8vw, 116px); background: radial-gradient(60% 50% at 50% 78%, rgba(163, 163, 163, .16), transparent 70%), var(--mc-k); }
 .mc-hero-t { text-align: center; display: flex; flex-direction: column; align-items: center; }
 .mc-h1 { margin: 0 auto; }
-/* the h1 cuts in (and the lede rises) once the page is live, so the arrival is seen; until then they wait under their
-   masks, with a 3 s failsafe. A new animation name on [data-up] restarts each from its first frame. */
-.js .mc:not([data-up]) .mc-h1 .v2-cut { animation-name: mc-cut-a; animation-delay: 3s !important; }
-.js .mc:not([data-up]) .mc-sub.v2-in { animation-name: mc-in-a; animation-delay: 3.3s !important; }
-.js .mc[data-up] .mc-h1 .v2-cut { animation-name: mc-cut-b; }
-.js .mc[data-up] .mc-sub.v2-in { animation-name: mc-in-b; }
-@keyframes mc-cut-a { from { transform: translate3d(0, 105%, 0); } }
-@keyframes mc-cut-b { from { transform: translate3d(0, 105%, 0); } }
-@keyframes mc-in-a { from { opacity: 0; transform: translate3d(0, 16px, 0); } }
-@keyframes mc-in-b { from { opacity: 0; transform: translate3d(0, 16px, 0); } }
-/* JS off: everything at its final state */
-html:not(.js) .mc .v2-in, html:not(.js) .mc .v2-cut { animation: none; opacity: 1; transform: none; }
 .mc-cap { margin-top: 14px; color: var(--mc-s1); }
 .mc-sub { margin-top: 14px; color: var(--mc-w5); text-align: center; max-width: 30ch; }
 .mc-acts { margin-top: 22px; justify-content: center; gap: 28px; }
@@ -43,7 +31,7 @@ html:not(.js) .mc .v2-in, html:not(.js) .mc .v2-cut { animation: none; opacity: 
   .mc-acts .x-arrow:hover { color: var(--mc-w5); text-decoration-color: var(--mc-w); }
   .mc-acts .x-arrow:hover span { text-decoration: none; }
 }
-/* the object sits inside the gutters even while it settles (scale 1.04 at most) */
+/* the object sits inside the gutters */
 .mc-lift { width: min(100% - 120px, 1280px); margin: 36px auto 0; }
 
 .mc-rent { display: grid; grid-template-columns: 6fr 5fr; gap: clamp(20px, 2.4vw, 40px); align-items: center; }
@@ -85,17 +73,65 @@ html:not(.js) .mc .v2-in, html:not(.js) .mc .v2-cut { animation: none; opacity: 
 .mc-quote dd { margin: 8px 0 0; font: 497 clamp(21px, 1.8vw, 26px)/1 var(--sans); letter-spacing: -.03em; font-variant-numeric: tabular-nums; color: var(--mc-w5); }
 .mc-rate { margin: 14px 0 0; font-size: 14px; color: var(--mc-s1); }
 
-/* tech specs: one big figure (the H100's memory) beside a hairline list, split 5 and 8 */
+/* the zoom (signature): a fleet of racks on a white stage; one lit card grows until it is the screen, then its sheet */
+.mc-zoom { position: relative; background: var(--mc-w); }
+.mc-zstage { position: relative; height: clamp(560px, 78svh, 720px); overflow: hidden; background: var(--mc-w); }
+/* fine pointers with motion allowed: 1.3 screens of scroll travel while the stage holds the screen */
+@media (min-width: 901px) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .js .mc-zoom { height: 230svh; }
+  .js .mc-zstage { position: sticky; top: 0; height: 100svh; }
+}
+.mc-fleet { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 168px)); place-content: center; gap: 22px 16px; will-change: transform; }
+.mc-zrack { display: grid; gap: 6px; padding: 10px; border-radius: 16px; background: var(--mc-w2); box-shadow: inset 0 0 0 1px var(--line); }
+.mc-zrack .mc-card { height: 26px; padding: 0 10px; gap: 8px; border-radius: 6px; transform: none; transition-delay: 0s; }
+.mc-zrack .mc-card-n { font: 500 11px/1 var(--mono); letter-spacing: .08em; }
+.mc-zrack .mc-fins { gap: 3px; }
+.mc-zrack .mc-led { width: 6px; height: 6px; }
+.mc-ztarget { width: 100%; border: 0; font: inherit; cursor: zoom-in; outline: 1px solid transparent; outline-offset: 3px; transition: outline-color .15s var(--mc-out); }
+.mc-ztarget .mc-led { animation: mc-led 2.4s var(--mc-io) infinite; }
+.mc-ztarget:focus-visible { outline: 2px solid var(--mc-ink); }
+.mc-ztarget:active { transform: scale(.98); }
+@media (hover: hover) { .mc-ztarget:hover { outline-color: var(--mc-g6); } }
+@keyframes mc-led { 50% { opacity: .35; } }
+/* the card's own sheet: the same surface as a lit card, filling the stage */
+.mc-zsheet { position: absolute; inset: 0; display: flex; background: linear-gradient(180deg, var(--mc-k3), var(--mc-k2)); color: var(--mc-w5); pointer-events: none; }
+.mc-zsheet[data-on] { pointer-events: auto; }
+.mc-zsheet-in { display: flex; flex-direction: column; width: 100%; padding-top: 92px; padding-bottom: 56px; }
+.mc-zbar { display: flex; align-items: center; justify-content: space-between; }
+.mc-zbar .mc-card-n { font-size: 21px; color: var(--mc-w5); }
+.mc-zbar-r { display: flex; align-items: center; gap: 20px; }
+.mc-zbar .mc-led { background: var(--mc-s3); box-shadow: 0 0 14px var(--mc-s3); }
+.mc-zback { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid rgba(255, 255, 255, .22); border-radius: 999px; background: none; color: var(--mc-w5); cursor: zoom-out; transition: border-color .15s var(--mc-out), transform 90ms var(--mc-out); }
+.mc-zback:active { transform: scale(.97); }
+.mc-zback:focus-visible { outline: 2px solid var(--mc-w); outline-offset: 2px; }
+@media (hover: hover) { .mc-zback:hover { border-color: var(--mc-w5); } }
+.mc-zfins { display: flex; flex: none; height: 44px; margin-top: 24px; }
+.mc-zfins i { background: rgba(163, 163, 163, .18); }
+.mc-zbody { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); column-gap: 24px; align-items: end; margin-top: auto; }
+.mc-zhead { grid-column: 1 / span 5; }
+.mc-zhead .v2-headline { color: var(--mc-w5); }
+.mc-zdesc { margin: 10px 0 0; font-size: 17px; line-height: 1.45; color: rgba(255, 255, 255, .78); max-width: 30ch; }
+.mc-zfig { grid-column: 7 / -1; }
+.mc-zsheet .mc-moment { margin: 0; }
+.mc-zsheet .mc-moment dd { font-size: 112px; color: var(--mc-w5); }
+.mc-zsheet .mc-moment dt, .mc-zsheet .mc-rows dt { color: var(--mc-s1); }
+.mc-zsheet .mc-rows { margin-top: 28px; border-top-color: rgba(255, 255, 255, .1); }
+.mc-zsheet .mc-rows > div { border-bottom-color: rgba(255, 255, 255, .1); }
+.mc-zsheet .mc-rows > div::before { background: rgba(255, 255, 255, .05); }
+.mc-zsheet .mc-rows dd { color: var(--mc-w5); }
+/* JS off: the sheet prints under the fleet */
+html:not(.js) .mc-zstage { height: auto; }
+html:not(.js) .mc-fleet { position: relative; padding: 72px 0; }
+html:not(.js) .mc-zsheet { position: relative; opacity: 1 !important; }
+
+/* the other machines' specs: two hairline lists side by side */
 .mc-specs { padding: 116px 0 72px; }
-.mc-specs-in { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); column-gap: 24px; align-items: start; }
-.mc-specs-h { grid-column: 1 / span 5; position: sticky; top: 104px; }
-.mc-specs-d { margin: 10px 0 28px; font-size: 17px; line-height: 1.45; color: var(--mc-g5); max-width: 30ch; }
-.mc-card.solo { transform: none; max-width: 420px; }
-.mc-moment { margin: 32px 0 0; }
 .mc-moment dt, .mc-rows dt { font: 500 12px/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--mc-g5); }
 .mc-moment dd { margin: 12px 0 0; font-weight: 220; font-size: 64px; line-height: 1; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
 .mc-cnt { display: inline-block; }
-.mc-specs-list { grid-column: 7 / -1; display: grid; gap: 56px; }
+.mc-specs-list { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); column-gap: 24px; row-gap: 56px; }
+.mc-specs-list .mc-group:first-child { grid-column: 1 / span 6; }
+.mc-specs-list .mc-group:last-child { grid-column: 8 / -1; }
 .mc-group-d { margin: 8px 0 18px; font-size: 16px; line-height: 1.5; color: var(--mc-g5); }
 .mc-rows { margin: 0; border-top: 1px solid var(--line); }
 .mc-specs-h .mc-rows { margin-top: 28px; }
