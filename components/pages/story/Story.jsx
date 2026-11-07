@@ -150,7 +150,7 @@ function Hero({ doc, ask }) {
           <motion.h1 id="xst-h1" className="xst-h1" style={calm ? undefined : { scale: settle }}>
             <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 0.7, ease: EM, delay: 0.2 }}>{doc.name}</motion.span></span>
           </motion.h1>
-          <p className="xst-meta x-mono"><span>{doc.year}</span><i aria-hidden="true" /><span>{doc.kind}</span></p>
+          <p className="xst-meta x-mono"><span>{doc.year} · {doc.kind}</span></p>
           {ask && <Cta to={ask.href} id="customers.hero" size="lg" thumb className="xst-ask">{ask.label}</Cta>}
         </div>
         {bare && doc.figures.length > 0 && <Ledger figures={doc.figures} calm={calm} />}
