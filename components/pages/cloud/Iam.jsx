@@ -1,6 +1,12 @@
 'use client';
+// Persona: a developer wiring sign-in for an app or service on Hanzo.
+// Goal: trust how hanzo.id issues and protects tokens.
+// CTA: API reference (iam.hero, iam.close).
+// Metric: cta_click iam.hero
+// Signature: the refresh-token family, live: it grows link by link and is revoked at once when a spent token is replayed.
+// Beyond: Try to steal one: copy the token as a thief and refresh in any order.
 /* IAM (v2, archetype A Launch).
-   V2: 8/10 Object-first hero where a refresh-token family grows link by link and dies at once when a spent token is replayed; the eight facts as a rail of big cards that slides sideways as you scroll; try-to-steal-one as the dark room.
+   V2: 8/10 Object-first hero where a refresh-token family grows and is revoked at once; eight facts on a sideways rail; try-to-steal-one as the dark room; greys only, one ask.
    Signature: the refresh-token family, live. A sign-in at hanzo.id runs the PKCE exchange (S256) and mints the first
    token; each refresh spends the last one and issues the next; then a spent one is presented again and the whole
    family turns over to revoked at once.
@@ -14,12 +20,13 @@
    CTA: API reference (hero, the sticky ask bar and the close; one solid button per screen). */
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { A } from '../../kit';
+import { A, Cta } from '../../kit';
 import { useLive } from './Frame';
 import { Lines, Lift } from '../../v2/LiftStage';
 import ScrubRail from '../../v2/ScrubRail';
 import ShipPrompt from '../../v2/ShipPrompt';
 import GetIt from '../../v2/GetIt';
+import LivePause, { usePause } from '../../v2/LivePause';
 import '../../v2/v2scale.css';
 import './Iam.css';
 
@@ -27,7 +34,9 @@ const EASE = [0.16, 1, 0.3, 1];
 
 /* hero: 0 authorize (PKCE S256), 1 code, 2 rt1, 3 rt2, 4 rt3, 5 rt1 presented again, 6 family revoked, 7 hold */
 function Family() {
-  const [ref, live, calm] = useLive(0.3);
+  const [ref, seen, calm] = useLive(0.3);
+  const [paused, togglePause] = usePause();
+  const live = seen && !paused;
   const [t, setT] = useState(0);
   useEffect(() => { if (calm) setT(6); }, [calm]);
   useEffect(() => {
@@ -38,6 +47,8 @@ function Family() {
   const n = Math.max(0, Math.min(3, t - 1));
   const dead = t >= 6;
   return (
+    <div className="lp-host">
+    <LivePause paused={paused} onToggle={togglePause} className="ia-pause" />
     <div className={'ia-fam' + (dead ? ' dead' : '')} ref={ref} aria-hidden="true">
       <div className="ia-fam-top">
         <p className="ia-host"><i />hanzo.id</p>
@@ -74,6 +85,7 @@ function Family() {
         </AnimatePresence>
       </div>
     </div>
+    </div>
   );
 }
 
@@ -109,9 +121,9 @@ function Steal() {
           <p className="v2-kick acc ia-steal-cap">Refresh tokens</p>
           <p className="v2-body">Refresh tokens are single-use and kept only as a hash. Presenting a spent one revokes the whole family.</p>
           <div className="ia-steal-acts">
-            <button type="button" className="v2-btn" onClick={() => setS((v) => ({ ...v, thief: v.you }))} disabled={!!dead || !!thief}>Copy it as the thief</button>
-            <button type="button" className="v2-btn solid" onClick={() => use('you')} disabled={!!dead}>Refresh as you</button>
-            <button type="button" className="v2-btn" onClick={() => use('thief')} disabled={!!dead || !thief}>Refresh as the thief</button>
+            <Cta kind="quiet" onClick={() => setS((v) => ({ ...v, thief: v.you }))} disabled={!!dead || !!thief}>Copy it as the thief</Cta>
+            <Cta kind="solid" onClick={() => use('you')} disabled={!!dead}>Refresh as you</Cta>
+            <Cta kind="quiet" onClick={() => use('thief')} disabled={!!dead || !thief}>Refresh as the thief</Cta>
             <button type="button" className="ia-steal-x" onClick={() => setS({ n: 1, you: 1, thief: 0, dead: '' })}>Start again</button>
           </div>
         </div>
@@ -119,7 +131,7 @@ function Steal() {
           <ol className="ia-steal-chain">
             <AnimatePresence initial={false}>
               {Array.from({ length: n }, (_, i) => i + 1).map((k) => (
-                <motion.li key={k} className={dead ? 'dead' : k < n ? 'spent' : 'live'} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+                <motion.li key={k} className={dead ? 'dead' : k < n ? 'spent' : 'live'} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: EASE }}>
                   <b>rt{k}</b><span>{dead ? 'revoked' : k < n ? 'spent' : 'live'}</span>
                   <em>{you === k && 'you'}{you === k && thief === k && ' · '}{thief === k && 'thief'}</em>
                 </motion.li>
@@ -147,9 +159,9 @@ export default function Iam() {
           <div className="ia-hero-r">
             <p className="v2-lede ia-sub v2-in" style={{ animationDelay: '.3s' }}>The sign-in behind every Hanzo service.</p>
             <div className="v2-acts v2-in" style={{ animationDelay: '.42s' }}>
-              <A to="https://docs.hanzo.ai/docs/openapi/iam" className="v2-btn solid" data-thumb="API reference" data-cta="iam-api-reference">API reference</A>
-              <A to="https://hanzo.id/.well-known/openid-configuration" className="v2-btn">Discovery document</A>
-              <A to="https://github.com/hanzoai/iam" className="v2-link ia-src">Source →</A>
+              <Cta to="https://docs.hanzo.ai/docs/openapi/iam" id="iam.hero" thumb>API reference</Cta>
+              <Cta to="https://hanzo.id/.well-known/openid-configuration" kind="quiet" id="iam.discovery-document">Discovery document</Cta>
+              <Cta to="https://github.com/hanzoai/iam" kind="link" id="iam.source">Source</Cta>
             </div>
           </div>
         </div>
@@ -182,7 +194,7 @@ export default function Iam() {
 
       <Steal />
 
-      <GetIt name="IAM" tag="Identity + access (hanzo.id)" seed="iam" data={[256, 65, 3]} repo={['hanzoai/iam', 'https://github.com/hanzoai/iam']} stars="3 stars" ask={['API reference', 'https://docs.hanzo.ai/docs/openapi/iam', 'iam-api-reference']} />
+      <GetIt name="IAM" tag="Identity + access (hanzo.id)" seed="iam" data={[256, 65, 3]} repo={['hanzoai/iam', 'https://github.com/hanzoai/iam']} stars="3 stars" ask={['API reference', 'https://docs.hanzo.ai/docs/openapi/iam', 'iam.close']} />
     </main>
   );
 }
