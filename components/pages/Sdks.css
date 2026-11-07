@@ -34,7 +34,7 @@
 .xsd-l { position: relative; display: inline; }
 .xsd-l.chg { background: rgba(255, 255, 255, .08); box-shadow: -22px 0 0 rgba(255, 255, 255, .08), 22px 0 0 rgba(255, 255, 255, .08); border-radius: 2px; animation: xsd-mark 2.4s var(--ease) var(--d) both; }
 @keyframes xsd-mark { 0% { color: transparent; background: rgba(255, 255, 255, .22); } 25% { color: #fff; } 100% { background: rgba(255, 255, 255, 0); box-shadow: none; } }
-.xsd-s { color: #a8d8a0; }
+.xsd-s { color: #cbcbcb; }
 .xsd-c { color: #6e6e73; }
 .xsd-cap { margin: 0; padding: 14px 22px 18px; border-top: 1px solid rgba(255, 255, 255, .06); font-size: 14px; color: #a1a1a6; }
 
@@ -212,3 +212,7 @@ a.xsd-tr:hover { background: rgba(255, 255, 255, .06); }
   .xsd-mod { font-size: 18px; }
 }
 .xsd-lib.lead .xsd-repo { color: rgba(255, 255, 255, .82); }
+
+/* 0 UI hues (James 7 Nov 14:20): the accent is ink in light rooms and #f5f5f7 in dark panels */
+.xsd-con { --acc: #f5f5f7; }
+.xsd-con .xsd-dia button[aria-selected='true'] { color: #000; }

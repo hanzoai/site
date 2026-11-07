@@ -188,7 +188,7 @@ function Hero() {
           <div className={`${P}-top-r`}>
             <p className="a2-lede">{HERO.lede}</p>
             <div className="a2-acts">
-              <A to={HERO.acts[0][1]} className="x-btn solid" data-thumb={HERO.acts[0][0]}>{HERO.acts[0][0]}</A>
+              <A to={HERO.acts[0][1]} className="x-btn solid" data-thumb={HERO.acts[0][0]} data-cta="tag.hero">{HERO.acts[0][0]}</A>
               <A to={HERO.acts[1][1]} className="x-btn">{HERO.acts[1][0]}</A>
             </div>
             <p className={`${P}-docs`}><More to={HERO.acts[2][1]}>{HERO.acts[2][0]}</More></p>
@@ -397,13 +397,13 @@ function Close() {
           <h2 className="a2-display s">{CLOSE.lede}</h2>
           <p className="a2-lede">{CLOSE.note}</p>
           <div className="a2-acts">
-            {CLOSE.acts.map(([t, to], k) => <A key={t} to={to} className={'x-btn' + (k ? '' : ' solid')}>{t}</A>)}
+            {CLOSE.acts.map(([t, to], k) => <A key={t} to={to} className={'x-btn' + (k ? '' : ' solid')} {...(k ? {} : { 'data-cta': 'tag.close' })}>{t}</A>)}
           </div>
         </div>
         <div className={`${P}-get`}>
           <span className={`${P}-get-at`} aria-hidden="true">@</span>
           <h2>Get Hanzo Tag</h2>
-          <Go to="https://platform.hanzo.ai/deploy" solid>Deploy to Cloud</Go>
+          <Go to="https://platform.hanzo.ai/deploy">Deploy to Cloud</Go>
         </div>
       </div>
     </section>
@@ -412,7 +412,7 @@ function Close() {
 
 export default function Tag() {
   return (
-    <main className={`a2 ${P}`} style={{ '--acc': '#e8479a' }} data-acc-btn="">
+    <main className={`a2 ${P}`}>
       <Hero />
       <Channels />
       <Setup />

@@ -96,7 +96,7 @@ function Hero() {
           <p className="a2-kick"><A to={GH} className="xop-repo">hanzoai/operator</A></p>
           <A2Lines as="h1" id="xop-h1" className="a2-display xop-h1" lines={['Hanzo', 'Operator']} now />
           <p className="a2-lede">One binary that runs the stack on Kubernetes</p>
-          <div className="a2-acts"><span data-thumb="View on GitHub" data-href={GH} style={{ display: 'contents' }}><Go to={GH} solid>View on GitHub</Go></span></div>
+          <div className="a2-acts"><A to={GH} className="x-btn solid" data-thumb="View on GitHub" data-cta="operator.hero">View on GitHub</A></div>
         </div>
         <motion.div className="xop-hero-obj" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}>
           <Board />
@@ -185,7 +185,7 @@ function Get() {
           <p>K8s operator</p>
           <p className="xop-get-meta x-mono"><span><span>License:</span> Apache-2.0</span><A to={GH}>hanzoai</A></p>
           <p className="xop-get-cmd x-mono" aria-hidden="true">operator up</p>
-          <Go to="https://platform.hanzo.ai/deploy" solid>Deploy to Cloud</Go>
+          <A to="https://platform.hanzo.ai/deploy" className="x-btn solid" data-cta="operator.close">Deploy to Cloud</A>
         </div>
       </div>
     </section>
@@ -194,7 +194,7 @@ function Get() {
 
 export default function Operator() {
   return (
-    <main className="a2 xop" style={{ '--acc': '#14b8a6' }}>
+    <main className="a2 xop">
       <Hero />
       <Declare />
       <Track />
