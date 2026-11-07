@@ -1,12 +1,12 @@
 'use client';
-// Signature: Editorial type runs into a live workspace window: one conversation, and its tab morphs on its own between music app, deck, ad suite, visual, document and video while the matching word of the headline lights up
+// Signature: Before and after: the raw neon-horizon-master.mp3 upload on one side, what one conversation made of it on the other, and a divider you drag (or arrow) across them; the three steps choose what the upload became
 // Beyond: One brief: write your own brief once, choose the artifacts you want, and the set one conversation hands back is laid out with each one's format and the model behind it
 /* Hanzo Design, v2 (Archetype A, launch: the workspace is the product).
    Persona: a marketer or founder who has raw files (a track, a photo, a PDF) and needs decks, docs, ads and visuals from them.
    Goal: watch one conversation turn one upload into every artifact, then open Design.
    CTA: "Open Design" (/design), the one solid button, in the hero and the closing Band.
    Metric: signup_start
-   V2: 8/10 round 2: the workspace window left and a 52px headline right, both in the first screen; one ask with text links; no labels over headlines; kit media; a pause control; the models' black room opens from a card; ends on one Band. Round 1: editorial 5/7 hero, oversized type running into a workspace window whose artifact morphs by itself; three pinned chapters; the six capabilities as sticky stacked sheets; One brief kept as the Beyond; the models in the one dark room open into their pages
+   V2: 8/10 motion map: compare — the pinned three-chapter scene is gone; "What is Hanzo Design" is a before/after divider over the raw upload and what it became, driven by the three steps; the capability sheets no longer stack on scroll. Earlier: round 2: the workspace window left and a 52px headline right, both in the first screen; one ask with text links; no labels over headlines; kit media; a pause control; the models' black room opens from a card; ends on one Band. Round 1: editorial 5/7 hero, oversized type running into a workspace window whose artifact morphs by itself; three pinned chapters; the six capabilities as sticky stacked sheets; One brief kept as the Beyond; the models in the one dark room open into their pages
    Motion: signature = the workspace window (the frame morphs to each artifact's shape, the headline's word follows). Supporting:
    pinned chapters (components/v2/AppScenes), line-masked headline, sheets that stack as you scroll. Accent: magenta.
    The music app is live: its spectrum dances to 124 BPM and the four synth pads play. Every word is Hanzo's; the brief is yours. */
@@ -15,8 +15,6 @@ import { motion, AnimatePresence, useInView, useScroll, useTransform } from 'mot
 import { Copy, Mark, useCalm } from '../ui';
 import { A, More, Cta, Img, Film } from '../kit';
 import { useOpener } from '../Opener';
-import Lines from '../v2/x-edison/AppLines';
-import Scenes from '../v2/AppScenes';
 import '../v2/AppType.css';
 import './DesignPage.css';
 
@@ -237,6 +235,78 @@ function Workspace({ at, pick, live, mine, calm, paused, onPause }) {
   );
 }
 
+/* ---------- section entrances (motion map: drop-in, explode-gather, opposite-drift, word-shuffle, count-roll) ----------
+   Each main section arrives its own way, once, when about a third of it is in view. The server and the first render show
+   the final state; the start state is set on the element after mount (data-enter="pre"), so JS-off and reduced motion
+   simply show the section. */
+function useEnter(onGo) {
+  const ref = useRef(null);
+  const calm = useCalm();
+  const go = useRef(onGo); go.current = onGo;
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || calm) return;
+    if (el.getBoundingClientRect().top < innerHeight * 0.7) return; // already on screen: leave it be
+    el.dataset.enter = 'pre';
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      io.disconnect();
+      el.dataset.enter = 'go';
+      go.current?.(el);
+    }, { threshold: 0.3 });
+    io.observe(el);
+    return () => { io.disconnect(); delete el.dataset.enter; };
+  }, [calm]);
+  return ref;
+}
+
+/* word-shuffle: each word starts where another word sits and swaps into its own place (FLIP), text unchanged */
+function Shuffle({ text, as: Tag = 'p', className }) {
+  const words = text.split(' ');
+  return <Tag className={className}>{words.map((w, i) => <span key={i} className="dz-sw">{w}{i < words.length - 1 ? ' ' : ''}</span>)}</Tag>;
+}
+function shuffleIn(root) {
+  root.querySelectorAll('.dz-shuf').forEach((line, li) => {
+    const ws = [...line.querySelectorAll('.dz-sw')];
+    if (ws.length < 2) return;
+    const pos = ws.map((w) => [w.offsetLeft, w.offsetTop]);
+    const perm = ws.map((_, i) => (i * 3 + 1 + li) % ws.length);
+    ws.forEach((w, i) => { w.style.transition = 'none'; w.style.transform = `translate(${pos[perm[i]][0] - pos[i][0]}px, ${pos[perm[i]][1] - pos[i][1]}px)`; w.style.opacity = '0.4'; });
+    void line.offsetWidth;
+    ws.forEach((w, i) => {
+      w.style.transition = `transform .8s cubic-bezier(.16,1,.3,1) ${0.1 + i * 0.05}s, opacity .4s ease ${0.1 + i * 0.05}s`;
+      w.style.transform = ''; w.style.opacity = '';
+    });
+  });
+}
+
+/* count-roll: each sheet's "0n / 06" rolls up from 00 to its value, one digit at a time */
+function rollIn(root) {
+  root.querySelectorAll('.dz-sheet-n').forEach((el, k) => {
+    const end = el.textContent;
+    const n = parseInt(end, 10);
+    let v = 0;
+    const step = () => {
+      el.textContent = String(v).padStart(2, '0') + end.slice(2);
+      el.classList.remove('roll'); void el.offsetWidth; el.classList.add('roll');
+      if (v < n) { v += 1; setTimeout(step, 110); }
+    };
+    setTimeout(step, 120 + k * 90);
+  });
+}
+
+/* The h1's lines rise out of their own masks at first paint (CSS only, so the server and client render the same;
+   reduced motion and JS off show them in place). The page's one reveal style. */
+function Lines({ as: Tag = 'h1', id, className, lines }) {
+  return (
+    <Tag id={id} className={className}>
+      {lines.map((l, i) => (
+        <span key={i} className="dz-ln"><span className="dz-ln-in" style={{ '--i': i }}>{l}{i < lines.length - 1 ? ' ' : ''}</span></span>
+      ))}
+    </Tag>
+  );
+}
+
 /* Headline words that are also the tabs: the highlight follows the artifact on screen. */
 function Word({ w, k, at, pick, after = '' }) {
   return (
@@ -271,7 +341,7 @@ function Hero() {
           <Workspace at={at} pick={pick} live={live} mine={mine} calm={calm} paused={paused} onPause={() => setPaused((p) => !p)} />
         </motion.div>
         <div className="dz-hero-t">
-          <Lines as="h1" id="dz-h1" className="dz-h1" now delay={0.05}
+          <Lines as="h1" id="dz-h1" className="dz-h1"
             lines={[<>Create {W('visuals', 3, ',')}</>, <>{W('decks', 1, ',')} {W('docs', 4, ',')} {W('ads', 2, ',')}</>, <>{W('videos', 5)} &amp;</>, W('interactive apps', 0)]} />
           <p className="dz-lede">Your AI design studio inside Hanzo. Upload any file — a music track, product photo, PDF, or dataset — and turn it into visuals, presentations, documents, ads, videos, or a full-blown interactive music &amp; visualizer app.</p>
           <div className="dz-acts">
@@ -326,20 +396,94 @@ const STEPS = [
   { title: 'Interactive music & visual apps', body: <p className="av-body">Upload a song or audio stem and build a full-blown interactive WebAudio music app with a 60fps FFT spectrum visualizer, waveform scrubber, 3-band EQ, and playable synth pads.</p>, visual: (on) => <Eq on={on} /> },
 ];
 
-function What() {
+/* ---------- the signature: before / after. The raw upload on one side, what one conversation made of it on the other;
+   drag the divider (or use the arrow keys) across them. The step you choose decides what the upload became. ---------- */
+function Compare({ step }) {
+  const box = useRef(null);
+  const calm = useCalm();
+  const seen = useInView(box, { amount: 0.5, once: true });
+  const [x, setX] = useState(50);
+  const [held, setHeld] = useState(false);
+  const [hinted, setHinted] = useState(false);
+  // once, on arrival: the divider sweeps from the raw side to the middle, so the drag is obvious
+  useEffect(() => {
+    if (!seen || calm || hinted) return;
+    setHinted(true);
+    let raf = 0; const t0 = performance.now();
+    const run = (t) => {
+      const k = Math.min(1, (t - t0) / 1100);
+      const e = 1 - Math.pow(1 - k, 3);
+      setX(88 - 38 * e);
+      if (k < 1) raf = requestAnimationFrame(run);
+    };
+    raf = requestAnimationFrame(run);
+    return () => cancelAnimationFrame(raf);
+  }, [seen, calm, hinted]);
+  const at = (e) => {
+    const r = box.current.getBoundingClientRect();
+    setX(Math.max(4, Math.min(96, ((e.clientX - r.left) / r.width) * 100)));
+  };
+  const key = (e) => {
+    const d = { ArrowLeft: -5, ArrowRight: 5, Home: -100, End: 100 }[e.key];
+    if (d === undefined) return;
+    e.preventDefault();
+    setX((v) => Math.max(4, Math.min(96, v + d)));
+  };
+  const after = [<Files key="f" on />, <Shapes key="s" on />, <Eq key="e" on />][step];
   return (
-    <>
-      <section className="av-sec dz-what">
-        <div className="av-wrap av-grid">
-          <div className="dz-what-l">
-            <h2 className="av-display s">One conversation, every creative artifact in a tab</h2>
-            <span className="dz-cap x-mono">What is Hanzo Design</span>
-          </div>
-          <p className="av-lede dz-what-r">Describe what you need or drop in your raw files. Hanzo Design creates and iterates on each artifact side-by-side in live tabs you can inspect, play, and export.</p>
+    <div
+      ref={box} className={'dz-cmp' + (held ? ' held' : '')} style={{ '--x': x + '%' }}
+      onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); setHeld(true); at(e); }}
+      onPointerMove={(e) => { if (held) at(e); }}
+      onPointerUp={() => setHeld(false)} onPointerCancel={() => setHeld(false)}
+    >
+      <div className="dz-cmp-a" aria-hidden="true">
+        <div className="dz-raw">
+          <div className="dz-file"><span className="dz-file-i">♪</span><span className="x-mono">neon-horizon-master.mp3 (4.8 MB)</span></div>
+          <div className="dz-raw-w">{Array.from({ length: 64 }).map((_, i) => <i key={i} style={{ height: 14 + ((i * 53) % 37) + ((i * 7) % 11) + '%' }} />)}</div>
+          <div className="dz-drop"><span>＋</span>Drop audio, image, PDF, CSV or video</div>
         </div>
-      </section>
-      <Scenes label="What is Hanzo Design" items={STEPS} flip className="dz-sc" />
-    </>
+      </div>
+      <div className="dz-cmp-b" aria-hidden="true">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div key={step} className="dz-cmp-art" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3, ease: EASE }}>{after}</motion.div>
+        </AnimatePresence>
+      </div>
+      <div className="dz-cmp-line" aria-hidden="true" />
+      <button type="button" className="dz-cmp-h" role="slider" aria-label={STEPS[step].title} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(x)} onKeyDown={key}>
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 7 4 12l5 5M15 7l5 5-5 5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      </button>
+    </div>
+  );
+}
+
+function What() {
+  const [step, setStep] = useState(2);
+  const ref = useEnter();
+  return (
+    <section className="av-sec dz-what dz-e-drop" ref={ref}>
+      <div className="av-wrap av-grid">
+        <div className="dz-what-l">
+          <h2 className="av-display s">One conversation, every creative artifact in a tab</h2>
+          <span className="dz-cap x-mono">What is Hanzo Design</span>
+        </div>
+        <p className="av-lede dz-what-r">Describe what you need or drop in your raw files. Hanzo Design creates and iterates on each artifact side-by-side in live tabs you can inspect, play, and export.</p>
+      </div>
+      <div className="av-wrap dz-cmp-g">
+        <Compare step={step} />
+        <ol className="dz-steps" aria-label="What is Hanzo Design">
+          {STEPS.map((s, i) => (
+            <li key={s.title}>
+              <button type="button" aria-pressed={step === i} onClick={() => setStep(i)} className={step === i ? 'on' : ''}>
+                <span className="x-mono av-num">{String(i + 1).padStart(2, '0')}</span>
+                <span className="dz-step-t">{s.title}</span>
+              </button>
+              <div className="dz-step-b">{s.body}</div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
   );
 }
 
@@ -363,8 +507,9 @@ function CapArt({ k }) {
 }
 
 function Caps() {
+  const ref = useEnter(rollIn);
   return (
-    <section className="av-sec dz-caps">
+    <section className="av-sec dz-caps dz-e-roll" ref={ref}>
       <div className="av-wrap">
         <div className="av-grid dz-caps-top">
           <h2 className="av-head dz-caps-h">Everything a creative team ships</h2>
@@ -394,8 +539,25 @@ function Brief() {
   const [on, setOn] = useState(() => CAPS.map(() => true));
   const title = brief.trim() || 'Your brief';
   const picked = CAPS.filter((_, i) => on[i]);
+  // opposite-drift: as the section crosses the screen its two halves drift apart and meet in the middle
+  const ref = useRef(null);
+  const calm = useCalm();
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || calm) return;
+    let raf = 0;
+    const set = () => {
+      raf = 0;
+      const r = el.getBoundingClientRect();
+      const p = (r.top + r.height / 2 - innerHeight / 2) / innerHeight; // 0 when centred
+      el.style.setProperty('--dz-d', Math.max(-1, Math.min(1, p)).toFixed(3));
+    };
+    const on = () => { if (!raf) raf = requestAnimationFrame(set); };
+    set(); addEventListener('scroll', on, { passive: true });
+    return () => { removeEventListener('scroll', on); cancelAnimationFrame(raf); el.style.removeProperty('--dz-d'); };
+  }, [calm]);
   return (
-    <section className="av-sec dz-brief">
+    <section className="av-sec dz-brief dz-e-drift" ref={ref}>
       <div className="av-wrap av-grid">
         <div className="dz-brief-l">
           <h2 className="av-display m">One brief</h2>
@@ -456,13 +618,9 @@ function Model({ n }) {
 }
 
 function Studio() {
-  const ref = useRef(null);
-  const calm = useCalm();
-  // a black room arrives as a rounded card inside the gutters and opens to the full width as it is reached
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.2'] });
-  const clip = useTransform(scrollYProgress, [0, 1], ['inset(0% 3% 0% 3% round 24px)', 'inset(0% 0% 0% 0% round 0px)']);
+  const ref = useEnter(); // explode-gather: the six model cards start scattered and collapse into the grid
   return (
-    <motion.section ref={ref} className="av-sec av-dark dz-dark" data-room="dark" style={calm ? undefined : { clipPath: clip }}>
+    <section ref={ref} className="av-sec av-dark dz-dark dz-e-gather" data-room="dark">
       <div className="av-wrap av-grid">
         <div className="dz-dark-l">
           <h2 className="av-head">Every creative model, in one studio.</h2>
@@ -475,7 +633,7 @@ function Studio() {
         </div>
         <ul className="dz-models">{NODES.map((n) => <Model key={n[0]} n={n} />)}</ul>
       </div>
-    </motion.section>
+    </section>
   );
 }
 
@@ -483,11 +641,12 @@ function Studio() {
 const PASTE = 'Read https://hanzo.ai/skill.md and use Hanzo Design in my project.';
 
 function Repo() {
+  const ref = useEnter(shuffleIn); // word-shuffle
   return (
-    <section className="av-sec tight dz-start">
+    <section className="av-sec tight dz-start dz-e-shuffle" ref={ref}>
       <div className="av-wrap av-grid dz-start-g">
         <div className="dz-paste">
-          <p className="av-title">Paste and ship</p>
+          <Shuffle className="av-title dz-shuf" text="Paste and ship" />
           <p className="av-body">Paste this into any agent. It reads the skill manifest and calls Design from there.</p>
           <div className="dz-prompt">
             <span className="dz-cap x-mono">Agent prompt</span>
@@ -497,8 +656,8 @@ function Repo() {
         </div>
         <div className="dz-repo">
           <span className="dz-repo-mark"><Mark size={22} /></span>
-          <p className="av-title">Get Design</p>
-          <p className="av-body">Creative AI workspace for visuals, decks, documents, ads &amp; interactive apps</p>
+          <Shuffle className="av-title dz-shuf" text="Get Design" />
+          <Shuffle className="av-body dz-shuf" text="Creative AI workspace for visuals, decks, documents, ads & interactive apps" />
           <dl className="x-mono"><div><dt>License:</dt><dd>Apache-2.0</dd></div></dl>
           <div className="dz-repo-acts">
             <A to="https://github.com/hanzoai" className="dz-gh" data-cta="design-github">
@@ -521,7 +680,7 @@ function Band() {
   return (
     <motion.section ref={ref} className="x-band dz-band" data-room="dark" style={calm ? undefined : { clipPath: clip }}>
       <div className="av-wrap">
-        <Lines as="h2" className="dz-band-h" lines={['Start creating', 'in Hanzo Design']} />
+        <h2 className="dz-band-h">Start creating in Hanzo Design</h2>
         <p>Open the Design workspace in your browser and upload your first file.</p>
         <div className="x-band-act">
           <Cta to="/design" id="design-band-open" size="lg">Open Design</Cta>
@@ -537,10 +696,10 @@ export default function DesignPage() {
     <main className="av dz" style={{ '--ac': '#0a0a0a' }}>
       <Hero />
       <What />
-      <Caps />
       <Studio />
       <Brief />
       <Repo />
+      <Caps />
       <Band />
     </main>
   );
