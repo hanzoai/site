@@ -26,8 +26,12 @@
    Scale (MASTER 3.1): h1 52 (40 phone), section heads 26, ledes 20, body 16–17, figures 64 (the deck numeral, the
    fit counts); the total beside the form grows past 64 only while it crosses the middle (FamGrow). The sheet is
    outlined, never outlined and shadowed; the one dark room is the application.
-   V2: 8/10 hero is the deck's own white sheet (numeral, tags, line, contents) landing where you clicked it; ink only;
-   no eyebrows; sticky apply; chapter book; three-step apply in the dark room; sibling roles drag and open. */
+   Arrival from /careers: the clicked sheet's title and numeral fly onto this h1 and numeral (careers/door.js).
+   Idle on the first screen: the contour drifts, the contents' hairlines draw in once and their counts fill once.
+   Hanzo object per team: only roles whose words name Hanzo's models get renders (no Engine render exists in public/).
+   V2: 8/10 grey deck for every member (no hue); tags under the title; hero sheet with the contents plate fully in the
+   first screen at 1470×801, alive on arrival; chapters read with JS off (html.js scoped); the why and apply rooms each
+   hold a drifting contour; three-step apply in the dark room; sibling roles drag and open. No sticky ask (careers). */
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { EASE, Magnetic } from '../ui';

@@ -61,7 +61,7 @@ Done here: there are no logos or seals. Each figure is a button that travels to 
 
 Done here: deck sizes only: h1 84 settling to 52 (phone 44), h2 26, scene h3 32 (phone 26; the picture-less last chapter 52 / phone 44), lede 21 (phone 17), body 16, figure labels 14, captions 13, mono capitals 12. Measures: lede 44ch, body 62ch, and headings use `text-wrap: balance`. Parity: Damon 37/37 text and 2/2 links; KANOA 26/26 and 2/2.
 
-Film (`tools/film.mjs motion`, Damon): layout shift went from 0.304 to 0.001. The fallback contour used to widen from 64vw to 100% when the picture failed, and that rule is gone. Phone: 0.000. The 5 "DEAD hover" lines are a tool artifact: its headless Chromium reports `(hover: hover)` false (checked with puppeteer), and MASTER part 8 keeps every hover inside that query. In Playwright the hovers answer.
+Film (`tools/film.mjs motion`, Damon): layout shift went from 0.304 to 0.001. The fallback contour used to widen from 64vw to 100% when the picture failed, and that rule is gone. Phone: 0.000. KANOA (run 3): desktop layout shift 0.001 with 1 still screen, the lede-and-figures screen, which is quiet once its figures have risen; phone 0.000 with 0 still screens. The 5 "DEAD hover" lines are a tool artifact: its headless Chromium reports `(hover: hover)` false (checked with puppeteer), and MASTER part 8 keeps every hover inside that query. In Playwright the hovers answer.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
