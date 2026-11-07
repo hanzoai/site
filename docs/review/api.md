@@ -3,7 +3,7 @@
 Verdict: 6/10
 First complaint: "The thing that's meant to be the hero is cut in half at the bottom of my screen. And why is everything blue?"
 
-Walked 7 Nov, page file at `f44badd` (`components/pages/ApiPage.jsx`, `ApiPage.css`, shared `v2/AppStage`, `AppScenes`, `AppLines`), on the preview of main plus the Apps 1 branch. Filmed moving at 1470×801 and 375×812 (wheel and finger scroll, dwell on every screen, hover and press on desktop, taps on phone), plus reduced motion and JS off. Stills: `review/api/desktop-walk.jpg`, `review/api/phone-walk.jpg`.
+Walked 7 Nov, page file at `a1dcdca` (`components/pages/ApiPage.jsx`, `ApiPage.css`, shared `v2/AppStage`, `AppScenes`, `v2/x-edison/AppLines`), on the preview of main plus the Apps 1 branch. The full walk was filmed at `f44badd`. Merge `a1dcdca` only moved the headline component's import and fixed the tab-pill CSS, and a fresh hero shot at `a1dcdca` matches. Filmed moving at 1470×801 and 375×812 (wheel and finger scroll, dwell on every screen, hover and press on desktop, taps on phone), plus reduced motion and JS off. Stills: `review/api/desktop-walk.jpg`, `review/api/phone-walk.jpg`.
 
 ## What works
 - The idea is right. A big console types each endpoint after `https://api.hanzo.ai`, streams what it returns, and plays the real model film beside it (Koma, Iro and the rest). That is Hanzo's own media giving the colour.
