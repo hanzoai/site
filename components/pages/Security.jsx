@@ -150,6 +150,7 @@ function Layers({ at, setAt, held, hold }) {
   const ref = useRef(null);
   const live = useInView(ref, { amount: 0.45 });
   const calm = useReducedMotion();
+  const [under, setUnder] = useState(false); // the pointer is on the stage: it waits under the hand
   const [ok, setOk] = useState([]); // the reviewer's ticks, kept in this browser only
   useEffect(() => { try { const v = JSON.parse(localStorage.getItem(KEY) || '[]'); if (Array.isArray(v)) setOk(v.filter((i) => i >= 0 && i < 6)); } catch {} }, []);
   const tick = (i) => setOk((o) => {
@@ -158,7 +159,7 @@ function Layers({ at, setAt, held, hold }) {
     return v;
   });
   // by itself: the next layer every DWELL ms while the stage is on screen and nobody is choosing
-  const auto = live && !held && !calm;
+  const auto = live && !held && !calm && !under;
   useEffect(() => {
     if (!auto) return;
     const t = setTimeout(() => setAt((v) => (v + 1) % 6), DWELL);
@@ -174,7 +175,7 @@ function Layers({ at, setAt, held, hold }) {
   };
   return (
     <section className="pf-sec tight xsc-layers" id="controls" ref={ref} aria-labelledby="xsc-layers-h">
-      <div className="pf-wrap xsc-layers-g">
+      <div className="pf-wrap xsc-layers-g" onPointerEnter={(e) => e.pointerType === 'mouse' && setUnder(true)} onPointerLeave={() => setUnder(false)}>
         <div className="xsc-layers-l">
           <MaskLines id="xsc-layers-h" className="pf-head" lines={['The controls,', 'named']} />
           <div className="xsc-tabs" role="tablist" aria-label="The controls" aria-orientation="vertical" onKeyDown={keys}>
