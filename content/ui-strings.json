@@ -1,17 +1,245 @@
 {
   "_about": "PLAN-COMPONENTS 0.6: every functional string that is not Hanzo marketing copy. Until James approves an entry (needs_james), its control renders icon-only and the string is used as its accessible name.",
   "strings": {
-    "close": { "string": "Close", "where": "every sheet and card that opens (Families A kit: FamDrawer, open cards)", "reason": "control label", "needs_james": true },
-    "more": { "string": "Read more", "where": "FamDrawer trigger (the sheet that holds a section's detail)", "reason": "control label", "needs_james": true },
-    "chapter": { "string": "Chapter", "where": "FamChapters marks (aria-label: Chapter 2 of 4)", "reason": "accessibility", "needs_james": true },
-    "of": { "string": "of", "where": "FamChapters marks, counters (2 of 4)", "reason": "accessibility", "needs_james": true },
-    "previous": { "string": "Previous", "where": "sibling rails and pagers (arrow icon)", "reason": "control label", "needs_james": true },
-    "next": { "string": "Next", "where": "sibling rails and pagers (arrow icon)", "reason": "control label", "needs_james": true },
-    "table": { "string": "Table", "where": "/benchmarks/* chart card view switch (icon)", "reason": "control label", "needs_james": true },
-    "chart": { "string": "Chart", "where": "/benchmarks/* chart card view switch (icon)", "reason": "control label", "needs_james": true },
-    "read_run": { "string": "Read the run", "where": "/benchmarks/* source room: reads the cited research run from api.hanzo.ai", "reason": "control label", "needs_james": true },
-    "contents": { "string": "Contents", "where": "/legal/* reading rail", "reason": "navigation label", "needs_james": true },
-    "find": { "string": "Find in this document", "where": "/legal/* reading rail search field", "reason": "form label", "needs_james": true },
-    "not_found": { "string": "Not in this document", "where": "/legal/* find result when nothing matches", "reason": "status message", "needs_james": true }
+    "close": {
+      "string": "Close",
+      "where": "every sheet and card that opens (Families A kit: FamDrawer, open cards)",
+      "reason": "control label",
+      "needs_james": true
+    },
+    "more": {
+      "string": "Read more",
+      "where": "FamDrawer trigger (the sheet that holds a section's detail)",
+      "reason": "control label",
+      "needs_james": true
+    },
+    "chapter": {
+      "string": "Chapter",
+      "where": "FamChapters marks (aria-label: Chapter 2 of 4)",
+      "reason": "accessibility",
+      "needs_james": true
+    },
+    "of": {
+      "string": "of",
+      "where": "FamChapters marks, counters (2 of 4)",
+      "reason": "accessibility",
+      "needs_james": true
+    },
+    "previous": {
+      "string": "Previous",
+      "where": "sibling rails and pagers (arrow icon)",
+      "reason": "control label",
+      "needs_james": true
+    },
+    "next": {
+      "string": "Next",
+      "where": "sibling rails and pagers (arrow icon)",
+      "reason": "control label",
+      "needs_james": true
+    },
+    "table": {
+      "string": "Table",
+      "where": "/benchmarks/* chart card view switch (icon)",
+      "reason": "control label",
+      "needs_james": true
+    },
+    "chart": {
+      "string": "Chart",
+      "where": "/benchmarks/* chart card view switch (icon)",
+      "reason": "control label",
+      "needs_james": true
+    },
+    "read_run": {
+      "string": "Read the run",
+      "where": "/benchmarks/* source room: reads the cited research run from api.hanzo.ai",
+      "reason": "control label",
+      "needs_james": true
+    },
+    "contents": {
+      "string": "Contents",
+      "where": "/legal/* reading rail",
+      "reason": "navigation label",
+      "needs_james": true
+    },
+    "find": {
+      "string": "Find in this document",
+      "where": "/legal/* reading rail search field",
+      "reason": "form label",
+      "needs_james": true
+    },
+    "not_found": {
+      "string": "Not in this document",
+      "where": "/legal/* find result when nothing matches",
+      "reason": "status message",
+      "needs_james": true
+    },
+    "oss_sort": {
+      "string": "Sort",
+      "where": "/oss/* repository tiles: sort control (icons)",
+      "reason": "control label",
+      "needs_james": true
+    },
+    "oss_sort_pushed": {
+      "string": "Recently pushed",
+      "where": "/oss/* sort: as Hanzo lists them (clock icon)",
+      "reason": "control label",
+      "needs_james": true
+    },
+    "oss_sort_stars": {
+      "string": "Stars",
+      "where": "/oss/* sort: by stars (star icon)",
+      "reason": "control label",
+      "needs_james": true
+    },
+    "oss_sort_commits": {
+      "string": "Commits this year",
+      "where": "/oss/* sort: by this year's commits (bars icon)",
+      "reason": "control label",
+      "needs_james": true
+    },
+    "oss_language": {
+      "string": "Language",
+      "where": "/oss/* language filter group",
+      "reason": "control label",
+      "needs_james": true
+    },
+    "oss_all": {
+      "string": "All languages",
+      "where": "/oss/* language filter: clear (icon)",
+      "reason": "control label",
+      "needs_james": true
+    },
+    "oss_clone_from": {
+      "string": "Clone from",
+      "where": "/oss/* open card: GitHub or Hanzo Forge",
+      "reason": "control label",
+      "needs_james": true
+    },
+    "oss_copy": {
+      "string": "Copy clone command",
+      "where": "/oss/* open card: copy button",
+      "reason": "control label",
+      "needs_james": true
+    },
+    "oss_show_all": {
+      "string": "Show all",
+      "where": "/oss/* tiles: show the rest (a plus and the count)",
+      "reason": "control label",
+      "needs_james": true
+    },
+    "oss_loading": {
+      "string": "Reading GitHub",
+      "where": "/oss/* tiles: while the rest of the organization loads from GitHub",
+      "reason": "status message",
+      "needs_james": true
+    },
+    "oss_no_match": {
+      "string": "No repository matches",
+      "where": "/oss/* tiles: empty search (icon, status text read to screen readers)",
+      "reason": "status message",
+      "needs_james": true
+    },
+    "log": {
+      "string": "log",
+      "where": "/benchmarks/* bars on a log scale (the column name is followed by it)",
+      "reason": "chart scale note",
+      "needs_james": true
+    },
+    "loading": {
+      "string": "Loading",
+      "where": "live reads (aria-live while a request runs)",
+      "reason": "status message",
+      "needs_james": true
+    },
+    "failed": {
+      "string": "Could not load",
+      "where": "live reads (aria-live when a request fails; the HTTP status shows in the panel)",
+      "reason": "status message",
+      "needs_james": true
+    },
+    "replay": {
+      "string": "Replay",
+      "where": "/products/* console: runs Hanzo's own request again (icon)",
+      "reason": "control label",
+      "needs_james": true
+    },
+    "named_here": {
+      "string": "Named on this page",
+      "where": "/blockchain/* chain finder: the tick when this product names the chain (icon-only until approved)",
+      "reason": "accessibility",
+      "needs_james": true
+    },
+    "not_named_here": {
+      "string": "Not named on this page",
+      "where": "/blockchain/* chain finder: the dash when it does not",
+      "reason": "accessibility",
+      "needs_james": true
+    },
+    "others_name": {
+      "string": "Other products that name",
+      "where": "/blockchain/* chain finder: the count of other products (followed by the chain's name)",
+      "reason": "accessibility",
+      "needs_james": true
+    },
+    "kind": {
+      "string": "Kind",
+      "where": "/blockchain/directory kind filter group",
+      "reason": "accessibility",
+      "needs_james": true
+    },
+    "marked": {
+      "string": "Marked",
+      "where": "/blockchain/directory card sheet: a product marked for the chain",
+      "reason": "accessibility",
+      "needs_james": true
+    },
+    "not_marked": {
+      "string": "Not marked",
+      "where": "/blockchain/directory: a product not marked for the chain",
+      "reason": "accessibility",
+      "needs_james": true
+    },
+    "no_match": {
+      "string": "No chain matches.",
+      "where": "/blockchain/directory empty state (shown as an empty frame with this as its accessible name until approved)",
+      "reason": "status message",
+      "needs_james": true
+    },
+    "int_only": {
+      "string": "Only the Hanzo lines",
+      "where": "/integrations/* editor and chapters: dims every line that does not point at Hanzo (switch, icon)",
+      "reason": "control label",
+      "needs_james": true
+    },
+    "int_hits": {
+      "string": "lines point at Hanzo",
+      "where": "/integrations/* switch: read after the count (2 of 9 …)",
+      "reason": "accessibility",
+      "needs_james": true
+    },
+    "int_copy": {
+      "string": "Copy",
+      "where": "/integrations/* editor and chapters: copy the sample (icon)",
+      "reason": "control label",
+      "needs_james": true
+    },
+    "int_copy_base": {
+      "string": "Copy base URL",
+      "where": "/integrations/* editor side pane (icon)",
+      "reason": "control label",
+      "needs_james": true
+    },
+    "copied": {
+      "string": "Copied",
+      "where": "/careers/* share (the link is on the clipboard): a drawn tick, this as its status",
+      "reason": "status message",
+      "needs_james": true
+    },
+    "email_ready": {
+      "string": "Your email is ready to send",
+      "where": "/careers/* application, after the form writes the email (a tick and the address show; this is the status)",
+      "reason": "status message",
+      "needs_james": true
+    }
   }
 }

@@ -224,7 +224,7 @@ function Figures() {
 
 export default function Auto() {
   return (
-    <main className="l2-page au2" style={{ '--ac': '#4c4de8' }}>
+    <main className="l2-page au2" style={{ '--ac': '#525252' }}>
       <Hero />
       <Index />
       <Pieces />

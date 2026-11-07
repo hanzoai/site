@@ -1,5 +1,5 @@
 /* ---------- sms opt-in (v2) ---------- */
-.xsm { --xp-accent: #5856d6; }
+.xsm { --xp-accent: #525252; }
 .xsm-hero { padding: clamp(40px, 6vw, 96px) 0 clamp(120px, 14vw, 220px); }
 .xsm-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); grid-template-areas: 'words side' 'card side'; column-gap: clamp(40px, 7vw, 128px); align-items: start; }
 .xsm-words { grid-area: words; }
@@ -10,7 +10,7 @@
 .xsm-form { position: relative; display: grid; gap: 28px; }
 .xsm-l { display: block; margin-bottom: 12px; font-size: 16px; font-weight: 500; }
 .xsm-form input[type='tel'] { width: 100%; box-sizing: border-box; height: 72px; padding: 0 24px; border-radius: 20px; border: 1px solid rgba(0, 0, 0, .14); background: #fff; font: 500 clamp(20px, 2vw, 26px)/1 var(--mono); letter-spacing: .02em; color: var(--ink); outline: none; box-shadow: 0 30px 60px -44px rgba(0, 0, 0, .35); transition: border-color .2s, box-shadow .2s; }
-.xsm-form input[type='tel']:focus-visible { border-color: var(--xp-accent); box-shadow: 0 0 0 5px rgba(88, 86, 214, .14); }
+.xsm-form input[type='tel']:focus-visible { border-color: var(--xp-accent); box-shadow: 0 0 0 5px rgba(82, 82, 82, .14); }
 .xsm-parts { display: flex; flex-wrap: wrap; gap: 8px; }
 .xsm-parts button { height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: #fff; font: 500 14px/1 var(--mono); letter-spacing: .02em; color: var(--soft); cursor: pointer; transition: color .2s, background .2s, border-color .2s, transform .2s var(--xp-ease); }
 .xsm-parts button:hover, .xsm-parts button[aria-pressed='true'] { color: #fff; background: var(--xp-accent); border-color: var(--xp-accent); }
@@ -24,7 +24,7 @@
 .xsm-agree:hover .xsm-box { border-color: var(--xp-accent); }
 .xsm-consent { font-size: 16px; line-height: 1.65; color: var(--soft); }
 .xsm-consent span { border-radius: 4px; transition: background .25s, color .25s, box-shadow .25s; }
-.xsm-consent span.lit { background: rgba(88, 86, 214, .12); color: var(--ink); box-shadow: 0 0 0 3px rgba(88, 86, 214, .12); }
+.xsm-consent span.lit { background: rgba(82, 82, 82, .12); color: var(--ink); box-shadow: 0 0 0 3px rgba(82, 82, 82, .12); }
 .xsm-go { width: 100%; height: 64px; }
 .xsm-go:disabled { opacity: .35; cursor: not-allowed; }
 .xsm-spin { width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .35); border-top-color: #fff; animation: xsm-spin .8s linear infinite; }
@@ -37,7 +37,7 @@
 
 /* the phone */
 .xsm-side { position: sticky; top: 96px; align-self: start; display: flex; justify-content: center; }
-.xsm-phone { width: min(100%, 380px); aspect-ratio: 9 / 19; padding: 12px; border-radius: 52px; background: var(--ink); box-shadow: 0 80px 140px -60px rgba(40, 36, 140, .55); }
+.xsm-phone { width: min(100%, 380px); aspect-ratio: 9 / 19; padding: 12px; border-radius: 52px; background: var(--ink); box-shadow: 0 80px 140px -60px rgba(38, 38, 38, .55); }
 .xsm-screen { position: relative; height: 100%; border-radius: 41px; background: #fff; overflow: hidden; display: flex; flex-direction: column; }
 .xsm-bar { display: flex; justify-content: space-between; align-items: center; padding: 16px 26px 0; font-size: 13px; font-weight: 600; }
 .xsm-bar i { width: 22px; height: 10px; border-radius: 3px; border: 1.5px solid var(--ink); }
@@ -48,7 +48,7 @@
 .xsm-av { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--xp-accent); color: #fff; }
 .xsm-msgs { list-style: none; margin: 12px 16px 0; padding: 0; display: grid; gap: 8px; }
 .xsm-msgs li { justify-self: start; max-width: 86%; padding: 11px 15px; border-radius: 18px 18px 18px 6px; background: var(--card); font-size: 15px; line-height: 1.35; opacity: 0; transform: translateY(14px) scale(.96); animation: xsm-in 9s var(--xp-ease) infinite; animation-delay: calc(.8s + var(--i) * 1.4s); }
-.xsm-msgs.lit li { background: rgba(88, 86, 214, .14); }
+.xsm-msgs.lit li { background: rgba(82, 82, 82, .14); }
 .xsm-msgs.done li { animation: none; opacity: 1; transform: none; }
 .xsm-msgs li.xsm-ok { animation: none; opacity: 1; background: var(--xp-accent); color: #fff; transform: none; }
 @keyframes xsm-in { 0% { opacity: 0; transform: translateY(14px) scale(.96); } 8%, 86% { opacity: 1; transform: none; } 96%, 100% { opacity: 0; transform: translateY(-6px); } }

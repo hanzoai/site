@@ -1,4 +1,7 @@
 'use client';
+// Persona: a developer or technical buyer weighing models on accuracy, cost and speed (arrives from the header's Research menu, /models or a model page)
+// Goal: see Hanzo's measured results, check how each number was taken, and start building
+// CTA: Start on Hanzo Cloud -> https://cloud.hanzo.ai (hero, sticky AskBar and thumb bar, close) · metric cta_click (data-cta="start-on-hanzo-cloud")
 /* Benchmarks, v2: a model launch told as a story (anthropic.com's launch pages, apple.com's chapters). One idea a
    screen; every full table, method and run opens in a sheet, so the page reads in figures and the detail is a press away.
    Signature: Stage — the GPQA frontier starts huge under the headline and, as you scroll, settles into its place beside
@@ -9,12 +12,12 @@
    Beyond: "Your suites". Tick the suites that look like your work and the board's summary re-adds itself for just
    those: how many Kai won and the mean accuracy, Kai against Jev, worked out from the board's own numbers with the
    same arithmetic as Hanzo's eleven-suite mean.
-   V2: 8/10 rebuilt as chapters to JAMES.md: a Stage hero whose frontier settles into place and reads itself aloud, hero figures, a 4-beat pinned Kai story, a scroll-swept Zen dark room, every table in a sheet, ink-only (0 UI hues), one ask (Start on Hanzo Cloud) sticky after the hero.
+   V2: 8/10 rebuilt as chapters to JAMES.md (headline over a full-bleed frontier, not a split): a Stage hero whose frontier settles into place and reads itself aloud, hero figures, a 4-beat pinned Kai story, a scroll-swept Zen dark room, every table in a sheet, ink-only (0 UI hues), one ask (Start on Hanzo Cloud) sticky after the hero.
    Every word and figure is Hanzo's (hanzo.ai/benchmarks and its research API). */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { EASE } from '../ui';
-import { A, More, Band } from '../kit';
+import { A, More } from '../kit';
 import MaskLines from '../v2/MaskLines';
 import PinScenes from '../v2/PinScenes';
 import DetailSheet from '../v2/DetailSheet';
@@ -99,7 +102,7 @@ const Down = () => <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="
 function Bar({ f, on, d = 0, tone = '' }) {
   return (
     <i className={'xbm-bar ' + tone} aria-hidden="true">
-      <motion.b initial={{ scaleX: 0 }} animate={{ scaleX: on ? Math.max(0.004, Math.min(1, f)) : 0 }} transition={{ duration: 1.1, ease: EASE, delay: d }} />
+      <motion.b style={{ '--f': Math.max(0.004, Math.min(1, f)) }} initial={{ scaleX: 0 }} animate={{ scaleX: on ? Math.max(0.004, Math.min(1, f)) : 0 }} transition={{ duration: 1.1, ease: EASE, delay: d }} />
     </i>
   );
 }
@@ -187,6 +190,8 @@ const HEAD = [
   ['~3,665 tok/s', 'Speed · Prefill · Zen 6 on NVIDIA Grace-Blackwell', 'Decode ~70 tok/s · 141.2 tok/s with DFlash2 · 46.29× prefill & 78.57× decode at 1M context (99.8% KV pruned) · measured by Hanzo on Nov 4, 2026.', '#zen'],
 ];
 
+const NOJS = '<style>.xbm-stage.run{height:auto!important}.xbm-stage.run .xbm-stage-stick{position:static!important;height:auto!important;overflow:visible!important;padding:120px 0 80px}.xbm-stage.run .xbm-stage-head{position:static!important;opacity:1!important;transform:none!important}.xbm-stage.run .xbm-stage-grid{height:auto!important;margin-top:72px;padding-top:0!important}.xbm-stage-cap,.xbm-stage-obj{opacity:1!important;transform:none!important}.xbm-pt circle:first-child{opacity:1!important;transform:none!important}.xbm-bar b{transform:scaleX(var(--f))!important}.xbm-stack{gap:32px}.xbm-stack-i{grid-area:auto!important;opacity:1!important;transform:none!important}.xbm-mb,.xbm-b477,.xbm-b477-l{opacity:1!important;transform:none!important}.xbm-facets{height:auto!important;opacity:1!important}.xbm-sc{padding-bottom:0!important}.xbm-read{position:static!important;display:block!important;opacity:1!important;transform:none!important;width:auto!important;max-width:none!important;margin:0!important;padding:6px 0!important;background:none!important;color:inherit!important;box-shadow:none!important;border-top:1px solid rgba(0,0,0,.08)}.xbm-read span{color:#6e6e73!important}</style>';
+
 function Stage() {
   const ref = useRef(null), stick = useRef(null), head = useRef(null), slot = useRef(null);
   const wide = useWide();
@@ -229,6 +234,8 @@ function Stage() {
   const reported = D.GPQA.filter((q) => q.kind === 'reported');
   return (
     <section ref={ref} className={'xbm-stage ' + (run ? 'run' : 'flat')} data-ready={ready ? 'true' : undefined} aria-labelledby="xbm-h1">
+      {/* JS off: the stage lies flat, and nothing that starts hidden or offset stays that way */}
+      <noscript dangerouslySetInnerHTML={{ __html: NOJS }} />
       <div ref={stick} className="xbm-stage-stick">
         <motion.div ref={head} className="pf-wrap xbm-stage-head" style={run ? { opacity: headO, y: headY } : undefined}>
           <div className="xbm-stage-hgrid">
@@ -237,7 +244,7 @@ function Stage() {
               <p className="xbm-lede">Zen 6 prefills ~3,665 tokens a second and decodes ~70 on NVIDIA Grace-Blackwell, measured Nov 4, 2026.</p>
               <p className="xbm-pill"><i aria-hidden="true" />Hanzo AI · Benchmarks · Last measured Oct 16, 2026</p>
               <div className="xbm-acts">
-                <span data-thumb="Start on Hanzo Cloud" data-href="https://cloud.hanzo.ai"><A to="https://cloud.hanzo.ai" className="pf-btn solid">Start on Hanzo Cloud</A></span>
+                <span data-thumb="Start on Hanzo Cloud" data-href="https://cloud.hanzo.ai"><A to="https://cloud.hanzo.ai" className="pf-btn solid" data-cta="start-on-hanzo-cloud">Start on Hanzo Cloud</A></span>
                 <a href="#enso" className="xbm-go">The results<Chev /></a>
                 <a href="#all" className="xbm-go">Every benchmark<Chev /></a>
               </div>
@@ -1360,6 +1367,21 @@ function Shelf() {
   );
 }
 
+/* ---------- 12. the close: the one ask again, in the closing room ---------- */
+function Close() {
+  return (
+    <section className="xbm-close" data-room="dark" aria-labelledby="xbm-close-h">
+      <div className="pf-wrap xbm-close-g">
+        <MaskLines as="h2" id="xbm-close-h" className="pf-display m" lines={['Build on', 'Hanzo Cloud']} />
+        <div className="xbm-close-a">
+          <A to="https://cloud.hanzo.ai" className="pf-btn solid" data-cta="start-on-hanzo-cloud">Start on Hanzo Cloud</A>
+          <p className="xbm-close-n">Hanzo AI Cloud · <A to="/pricing">View Models &amp; Pricing</A></p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function Benchmarks() {
   return (
     <main className="xbm">
@@ -1376,13 +1398,8 @@ export default function Benchmarks() {
       <Platform />
       <Methods />
       <Shelf />
-      <Band
-        title="Build on Hanzo Cloud"
-        action="Start on Hanzo Cloud"
-        to="https://cloud.hanzo.ai"
-        note={<p className="x-band-note">Hanzo AI Cloud · <A to="/pricing">View Models &amp; Pricing</A></p>}
-      />
-      <AskBar title="Benchmarks" label="Start on Hanzo Cloud" to="https://cloud.hanzo.ai" />
+      <Close />
+      <AskBar title="Benchmarks" label="Start on Hanzo Cloud" to="https://cloud.hanzo.ai" cta="start-on-hanzo-cloud" />
     </main>
   );
 }

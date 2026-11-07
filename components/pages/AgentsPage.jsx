@@ -1,21 +1,25 @@
 'use client';
-/* Hanzo for agents, v2 (VISION.md archetype A, Launch, in the developer key). One idea per screen:
-     1. In the page's one dark room, over Koma's own film: "free to start, pay as you go", and beside it an agent
-        signing itself up, live: it walks the five steps and writes each request as it makes it.
-     2. Install: one command, and a block that keeps only the lines your path needs.
-     3. Headless: Hanzo's agent.ts, run by your scroll; each of the five steps lights on the index as the run reaches it.
-     4. The agent prompt to paste. 5. Questions, then the one action.
-   Signature: the five steps as one running agent, each step lighting as the agent reaches it, its requests written
-   out exactly as Hanzo's agent prompt spells them. Tap any step to read its requests.
-   Supporting: headlines rise out of masks; the script is scrubbed by the scroll on desktop (it plays once on phones);
-   the install block writes itself line by line.
-   Beyond: "Who is installing?" Pick a person, a headless agent, the MCP tools or local inference, and the install block
-   keeps only the lines that path needs (and copies only those); a headless agent is pointed at the wallet path instead.
-   Accent: the amber of the running step. Every word and line of code is Hanzo's. */
+/* Hanzo for agents, v3 (JAMES.md, PLAN-COMPONENTS 5.8). Persona: an agent (or the developer behind one) that must sign up
+   and pay by itself. Goal: the headless sign-up. CTA: "Sign up headless" (#headless), one solid ask in hero, the site's
+   sticky ask bar and the close. Metric: api_key_created (and the llms.txt fetch).
+   One idea per screen:
+     1. In the one dark room, over Koma's own film: "free to start, pay as you go", and beside it the sequence as a
+        numbered terminal: an agent signs itself up, writing each request exactly as Hanzo's agent prompt spells it.
+     2. Install: one command; the block writes itself line by line, once.
+     3. Headless (#headless): Hanzo's agent.ts, run by your scroll; each of the five steps lights on the index.
+     4. The agent prompt to paste, in one scrollable block. 5. Questions, then the one action.
+   Signature: the terminal demo of the five steps, with pause and a static final frame (server HTML, JS off, reduced
+   motion). Tap any step to read its requests.
+   Motion mix (JAMES.md 9): time (the sign-up writes itself, the install block), arrival (headline cut-in, terminal
+   rise), state (steps that open with springs, the ticks), pointer (step and index previews), scroll (agent.ts only).
+   Greys only; colour arrives only through Koma's film. Every word and line of code is Hanzo's. Removed in v3: the
+   "Who is installing?" picker (an install picker, deferred by PLAN-COMPONENTS 2.16, with words that were not
+   Hanzo's) and the prompt's "Show all"/"Fold" labels. */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useMotionValueEvent, useReducedMotion, useScroll } from 'motion/react';
-import { EASE, Copy } from '../ui';
-import { Go, More, Faq } from '../kit';
+import { useDemo, DemoCtl } from '../v2/AppDemo';
+import { EASE, Copy, Magnetic } from '../ui';
+import { A, More, Faq, Film } from '../kit';
 import AppLines from '../v2/AppLines';
 import './AgentsPage.css';
 
@@ -39,7 +43,6 @@ const CALLS = [
   ['GET https://api.hanzo.ai/v1/billing/crypto/options', 'POST https://api.hanzo.ai/v1/billing/crypto/deposit {"chain":"base","token":"usdc","amountCents":2000}', 'GET https://api.hanzo.ai/v1/billing/crypto/deposit/<id>'],
   ['GET /v1/pricing'],
 ];
-const STOP = Symbol('stop');
 const useWide = () => {
   const [w, setW] = useState(false);
   useEffect(() => {
@@ -51,74 +54,50 @@ const useWide = () => {
   return w;
 };
 
-/* 1. The agent at work: it walks the five steps by itself, writing each request as it makes it. */
+/* 1. The agent at work: the five steps as a numbered terminal. The server HTML holds the final frame (every request
+   written, every step ticked); in view it clears and writes itself once, then rests. */
 function Run() {
   const box = useRef(null);
-  const outs = useRef([]);
-  const seen = useInView(box, { amount: 0.3 });
-  const calm = useReducedMotion();
-  const [at, setAt] = useState(0);
-  const [done, setDone] = useState(-1);
-  const [mine, setMine] = useState(false);
-
-  useEffect(() => {
-    if (mine || calm || !seen) return;
-    let live = true;
-    const sleep = (ms) => new Promise((ok, no) => setTimeout(() => (live ? ok() : no(STOP)), ms));
-    const write = async (el, text) => {
-      const d = document.createElement('p'); d.className = 'agt-req'; el.appendChild(d);
-      const [verb, ...rest] = text.split(' ');
-      const v = document.createElement('b'); v.textContent = verb; d.append(v, ' ');
-      const t = document.createElement('span'); d.appendChild(t);
-      const caret = document.createElement('i'); d.appendChild(caret);
-      const body = rest.join(' ');
-      for (let i = 1; i <= body.length; i += 2) { t.textContent = body.slice(0, i); await sleep(14); }
-      t.textContent = body; caret.remove();
-    };
-    (async () => {
-      try {
-        while (live) {
-          outs.current.forEach((o) => { if (o) o.textContent = ''; });
-          setDone(-1);
-          for (let i = 0; i < STEPS.length; i++) {
-            setAt(i);
-            await sleep(520);
-            for (const c of CALLS[i]) { await write(outs.current[i], c); await sleep(260); }
-            await sleep(500);
-            setDone(i);
-            await sleep(420);
-          }
-          await sleep(3400);
-        }
-      } catch (e) { if (e !== STOP) throw e; }
-    })();
-    return () => { live = false; };
-  }, [mine, calm, seen]);
-
-  // reduced motion: the run is shown finished, its last step open with its request
-  useEffect(() => { if (calm) pick(STEPS.length - 1, true); }, [calm]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const pick = (i, still) => {
-    if (!still) setMine(true);
-    setAt(i); setDone(still ? i : i - 1);
-    outs.current.forEach((o, j) => { if (o) o.textContent = ''; });
-    const el = outs.current[i];
-    if (el) CALLS[i].forEach((c) => { const d = document.createElement('p'); d.className = 'agt-req'; const [verb, ...rest] = c.split(' '); const v = document.createElement('b'); v.textContent = verb; d.append(v, ' ' + rest.join(' ')); el.appendChild(d); });
-  };
-
+  const reqs = useRef([]);
+  const [at, setAt] = useState(STEPS.length - 1);
+  const [done, setDone] = useState(STEPS.length - 1);
+  const [peek, setPeek] = useState(null);
+  const demo = useDemo(box, async (sleep) => {
+    setPeek(null); setDone(-1); setAt(0);
+    const all = reqs.current.flat().filter(Boolean);
+    all.forEach((el) => { el.textContent = ''; el.parentElement.classList.remove('on'); });
+    await sleep(400);
+    for (let i = 0; i < STEPS.length; i++) {
+      setAt(i);
+      await sleep(420);
+      for (const [j, text] of CALLS[i].entries()) {
+        const el = reqs.current[i]?.[j];
+        if (!el) continue;
+        el.parentElement.classList.add('on');
+        const body = text.slice(text.indexOf(' ') + 1); // the verb is its own <b>; write the rest
+        for (let k = 1; k <= body.length; k += 2) { el.textContent = body.slice(0, k); await sleep(12); }
+        el.textContent = body;
+        await sleep(220);
+      }
+      await sleep(320);
+      setDone(i);
+    }
+  }, { amount: 0.35 });
+  const open = peek ?? at;
   return (
     <div className="agt-run" ref={box}>
       <div className="agt-run-h">
-        <span className="agt-run-k x-mono"><i aria-hidden="true" />Headless</span>
+        <span className="agt-run-dots" aria-hidden="true"><i /><i /><i /></span>
+        <span className="agt-run-k x-mono">Headless</span>
         <AnimatePresence mode="popLayout" initial={false}>
-          <motion.span key={at} className="agt-run-n x-mono" initial={{ y: 14, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -14, opacity: 0 }} transition={{ duration: 0.35, ease: EASE }}>{n2(at)}</motion.span>
+          <motion.span key={open} className="agt-run-n x-mono" initial={{ y: 12, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -12, opacity: 0 }} transition={{ duration: 0.3, ease: EASE }}>{n2(open)}</motion.span>
         </AnimatePresence>
+        <DemoCtl demo={demo} className="dark agt-ctl" />
       </div>
-      <div className="agt-rail" aria-hidden="true"><b style={{ transform: `scaleX(${(Math.max(done, at - 0.5) + 1) / 5})` }} /></div>
-      <ol className="agt-steps" role="tablist" aria-label="The headless path">
+      <ol className="agt-steps" aria-label="Headless">
         {STEPS.map(([t, d], i) => (
-          <li key={t} className={(i === at ? 'on' : '') + (i <= done ? ' done' : '')}>
-            <button type="button" role="tab" aria-selected={i === at} onClick={() => pick(i)}>
+          <li key={t} className={(i === open ? 'on' : '') + (i <= done ? ' done' : '')}>
+            <button type="button" aria-expanded={i === open} onClick={() => setPeek(i)}>
               <span className="agt-step-n x-mono">{String(i + 1).padStart(2, '0')}</span>
               <span className="agt-step-t">{t}</span>
               <svg className="agt-step-ok" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -126,7 +105,12 @@ function Run() {
             <div className="agt-step-b">
               <div>
                 <p className="agt-step-d">{d}</p>
-                <div className="agt-out x-mono" ref={(el) => (outs.current[i] = el)} aria-hidden="true" />
+                <div className="agt-out x-mono">
+                  {CALLS[i].map((c, j) => {
+                    const [verb, ...rest] = c.split(' ');
+                    return <p key={j} className="agt-req on"><b>{verb}</b> <span ref={(el) => { (reqs.current[i] ||= [])[j] = el; }}>{rest.join(' ')}</span></p>;
+                  })}
+                </div>
               </div>
             </div>
             <span className="x-sr">{n2(i)}</span>
@@ -138,28 +122,22 @@ function Run() {
 }
 
 function Hero() {
-  const calm = useReducedMotion();
-  const box = useRef(null);
-  const seen = useInView(box, { amount: 0.2 });
-  const vid = useRef(null);
-  useEffect(() => { const v = vid.current; if (!v) return; if (seen && !calm) v.play().catch(() => {}); else v.pause(); }, [seen, calm]);
   return (
-    <section className="agt-hero" ref={box} data-room="dark" aria-labelledby="agt-h1" data-morph-target>
+    <section className="agt-hero" data-room="dark" aria-labelledby="agt-h1" data-morph-target data-ask-name="For agents">
       <div className="agt-bg" aria-hidden="true">
-        <img src="/models/koma.webp" alt="" />
-        <video ref={vid} src="/models/koma.webm" muted loop playsInline preload="metadata" />
+        <Film src="/models/koma.webm" poster="/models/koma.webp" w={1200} h={1500} className="agt-film" />
       </div>
       <div className="v2a-wrap v2a-grid agt-hero-in">
         <div className="agt-hero-copy">
-          <p className="v2a-kick">For agents</p>
           <AppLines as="h1" id="agt-h1" className="v2a-display agt-h1" lines={['Hanzo for agents:', 'free to start, pay as you go']} soft={[1]} />
-          <motion.p className="agt-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>Sign up free with a wallet. Get an API key free. A small free allowance to try it. Top up in USDC or USDT over the API to raise your limits and pay as you go. No human required.</motion.p>
-          <motion.div className="agt-acts" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.45 }}>
-            <Go to="#headless" solid>Sign up headless</Go><i hidden data-thumb="Sign up headless" data-href="#headless" />
-            <Go to="https://docs.hanzo.ai/docs/agents">Read the docs</Go>
+          <motion.p className="agt-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE, delay: 0.3 }}>Sign up free with a wallet. Get an API key free. A small free allowance to try it. Top up in USDC or USDT over the API to raise your limits and pay as you go. No human required.</motion.p>
+          <motion.div className="agt-acts" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE, delay: 0.4 }}>
+            <Ask slot="hero" dark />
+            <Docs dark />
           </motion.div>
+          <p className="v2a-folio">For agents</p>
         </div>
-        <motion.div className="agt-hero-run" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.3 }}>
+        <motion.div className="agt-hero-run" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.25 }}>
           <Run />
         </motion.div>
       </div>
@@ -167,19 +145,31 @@ function Hero() {
   );
 }
 
-/* Beyond: the install lines each path needs (indexes into INSTALL); a headless agent needs none of them */
-const PATHS = [['A person', [0, 1, 2]], ['Headless agent', []], ['MCP tools', [3, 6, 7]], ['Local inference', [0, 4]]];
-const HEADLESS = 'npm i @hanzo/ai viem   ·   node agent.ts';
+/* the one ask (to the headless path on this page) and its text secondary */
+function Ask({ slot, dark }) {
+  return (
+    <Magnetic strength={0.18}>
+      <a href="#headless" className={'x-btn solid agt-ask' + (dark ? ' on-dark' : '')} data-thumb="Sign up headless" data-cta={'agents.' + slot}>
+        <span>Sign up headless</span>
+        <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M8 3v9M4 8.5 8 12.5l4-4" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      </a>
+    </Magnetic>
+  );
+}
+const Docs = ({ dark }) => (
+  <A to="https://docs.hanzo.ai/docs/agents" className={'agt-link' + (dark ? ' dark' : '')}>
+    <span>Read the docs</span>
+    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+  </A>
+);
 
-/* 2. The install block writes itself, one command at a time, and keeps only the lines your path needs. */
+/* 2. The install block writes itself, one command at a time, once. */
 function Install() {
   const ref = useRef(null);
   const seen = useInView(ref, { once: true, amount: 0.5 });
   const calm = useReducedMotion();
   const lines = INSTALL.split('\n');
   const [shown, setShown] = useState(lines.length);
-  const [path, setPath] = useState(-1);
-  const keep = path < 0 ? null : PATHS[path][1];
   useEffect(() => { if (!calm) setShown(0); }, [calm]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!seen || calm || shown >= lines.length) return;
@@ -190,22 +180,18 @@ function Install() {
     <section className="v2a-sec agt-install" aria-labelledby="agt-in-h">
       <div className="v2a-wrap v2a-grid agt-install-in">
         <div className="agt-install-l">
-          <p className="v2a-kick">Install</p>
           <AppLines as="h2" view id="agt-in-h" className="v2a-head agt-in-h" lines={['One command installs', 'the whole stack']} />
           <p className="v2a-body agt-in-lede">The CLI, the coding agent, the MCP server and the inference engine are native Rust binaries. npm installs a small launcher; each binary downloads, checksum-verified, the first time it runs. Any OS, Windows included.</p>
-          <p className="agt-paths-k x-mono" id="agt-who">Who is installing?</p>
-          <div className="agt-paths" role="group" aria-labelledby="agt-who">
-            {PATHS.map(([t], i) => <button key={t} type="button" aria-pressed={path === i} onClick={() => setPath(path === i ? -1 : i)}>{t}</button>)}
-          </div>
+          <p className="v2a-folio">Install</p>
         </div>
         <div className="agt-install-r">
           <div className="agt-term" ref={ref}>
-            <div className="agt-term-bar"><span aria-hidden="true"><i /><i /><i /></span><span className="x-mono">Install</span><Copy text={keep ? (keep.length ? keep.map((i) => lines[i]).join('\n') : HEADLESS) : INSTALL} /></div>
+            <div className="agt-term-bar"><span aria-hidden="true"><i /><i /><i /></span><span className="x-mono">Install</span><Copy text={INSTALL} /></div>
             <pre className="agt-term-body"><code>
               {lines.map((l, i) => {
                 const [cmd, ...c] = l.split(/(?=#)/);
                 return (
-                  <span key={i} className={'agt-tl' + (i < shown ? ' on' : '') + (keep && !keep.includes(i) ? ' dim' : '')}>
+                  <span key={i} className={'agt-tl' + (i < shown ? ' on' : '')}>
                     {l.startsWith('#') ? <span className="agt-c">{l}</span> : <>{cmd && <span className="agt-cmd">{cmd}</span>}{c.length > 0 && <span className="agt-c">{c.join('')}</span>}</>}
                     {'\n'}
                   </span>
@@ -213,9 +199,6 @@ function Install() {
               })}
             </code></pre>
           </div>
-          {path === 1 && (
-            <p className="agt-headless">No human required: sign up with a wallet, get a key, call the API, top up in USDC or USDT. <code>{HEADLESS}</code> <a href="#headless">Sign up headless</a></p>
-          )}
         </div>
       </div>
     </section>
@@ -291,9 +274,9 @@ function Script() {
   return (
     <section className="agt-script" id="headless" ref={box} aria-labelledby="agt-sc-h">
       <div className="v2a-wrap agt-script-head">
-        <p className="v2a-kick">Headless</p>
         <AppLines as="h2" view id="agt-sc-h" className="v2a-display md" lines={['The five steps,', 'as one script']} soft={[1]} />
         <p className="v2a-lede agt-sc-lede">Every step is one request. This file makes them all, as it was run against production.</p>
+        <p className="v2a-folio">Headless</p>
       </div>
       <div className="agt-track" ref={track}>
         <div className="agt-pin">
@@ -332,9 +315,8 @@ function Script() {
   );
 }
 
-/* 4. The agent prompt, as a page an agent keeps: folded, and opened to its full length on request. */
+/* 4. The agent prompt, as one block an agent keeps: the whole of it, in a scroll region you can read with the keys. */
 function Prompt() {
-  const [open, setOpen] = useState(false);
   return (
     <section className="v2a-sec agt-prompt" aria-labelledby="agt-pr-h">
       <div className="v2a-wrap v2a-grid agt-prompt-in">
@@ -347,12 +329,11 @@ function Prompt() {
             <More to="https://cal.com/hanzo">Book a call</More>
           </div>
         </div>
-        <div className={'agt-paper' + (open ? ' open' : '')}>
-          <div className="agt-paper-bar"><span className="x-mono">Agent prompt</span><Copy text={PROMPT} /></div>
-          <div className="agt-paper-body">
+        <div className="agt-paper">
+          <div className="agt-paper-bar"><span className="x-mono" id="agt-pr-l">Agent prompt</span><Copy text={PROMPT} /></div>
+          <div className="agt-paper-body" tabIndex={0} role="region" aria-labelledby="agt-pr-l" data-lenis-prevent>
             <pre>{PROMPT}</pre>
           </div>
-          <button type="button" className="agt-more" aria-expanded={open} onClick={() => setOpen(!open)}>{open ? 'Fold' : 'Show all'}</button>
         </div>
       </div>
     </section>
@@ -378,7 +359,7 @@ function Questions() {
       </div>
       <div className="v2a-wrap agt-end">
         <p className="agt-end-t">No human required.</p>
-        <div className="agt-end-acts"><Go to="#headless" solid>Sign up headless</Go><Go to="https://docs.hanzo.ai/docs/agents">Read the docs</Go></div>
+        <div className="agt-end-acts"><Ask slot="close" /><Docs /></div>
       </div>
     </section>
   );

@@ -1,20 +1,26 @@
 'use client';
-/* Console (v2, archetype A "Launch"; accent lime, the console's own Ready light: #4a9400 on white, #8be03c on dark).
-   V2: 8/10 chaptered: the hero is the page's one dark room, the shell huge under the title and driving itself; six sticky chapters pin the shell on each module; the palette is real and wide; the four facts open into their own pages; one closing CTA.
+/* Console (v2, archetype A "Launch"): one admin for everything you run, shown as the shell itself.
+   Persona: a developer or operator running Hanzo services for an organization (keys, usage, apps, models)
+   Goal: watch the console's modules open one by one, find anything by typing, then open the console
+   CTA: Open Console -> https://platform.hanzo.ai (hero, the site's sticky ask bar at every width, close; data-thumb, data-cta)
    Signature: the shell, driving itself. The console window fills the dark hero: its command palette types a module's
    name, the module opens in the shell (projects, keys, usage, apps, models, organization) and plays its own moment (a
    build finishes, a key is revoked, usage records land, an app gets an identity and a store, your own provider
-   connects, the organization switches the whole page), and the palette comes back for the next one.
+   connects, the organization switches the whole page), and the palette comes back for the next one. A Pause sits on
+   the window; tapping a module also takes over.
    Beyond: "Find it by typing it", for real. Click the palette (or press / anywhere) and type: every module and every
-   product in the sidebar answers as you type, the letters lit where they match; Enter opens a module in the shell beside
-   it, or takes you to the product's page.
+   product in the sidebar answers as you type, the letters marked where they match; Enter opens a module in the shell
+   beside it, or takes you to the product's page.
+   Not only scroll: the shell runs by itself (idle) and types (time); the palette and the fact cards answer the hand
+   (state); Stage and chapters are the scroll half.
    Motion: the shell (signature) + Stage (it settles as you scroll) + sticky chapters + cards that open into their page.
+V2: 8/10 the dark-room hero is the shell, huge under the title and driving itself, with a Pause; six sticky chapters pin it on each module; the palette is real and wide; four facts open into their page; Get Console, then a close with one ask; greys only, nothing above a headline
    The v1 drag-to-reorder sidebar is gone (its words stay, with the palette). Every word and link is Hanzo's. */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { useRouter } from 'next/navigation';
-import { EASE } from '../../ui';
-import { A, More } from '../../kit';
+import { EASE_OUT_EXPO as EASE, SPRING as SP } from '../../../lib/motion';
+import { A, Go, More } from '../../kit';
 import { href } from '../../../lib/route';
 import { Paste, Code, useLive } from '../cloud/Frame';
 import BizStage from '../../v2/BizStage';
@@ -27,7 +33,7 @@ const DOCS = 'https://docs.hanzo.ai/docs/console';
 const GH = 'https://github.com/hanzoai';
 const DEPLOY = 'https://platform.hanzo.ai/deploy';
 const TEAM = 'https://hanzo.team/';
-const SPRING = { type: 'spring', stiffness: 300, damping: 30 };
+const SPRING = SP.sheet;
 
 /* the sidebar: Hanzo's products, as the console shows them */
 const SIDE = [['Chat', '/cloud/chat', 'Conversational AI'], ['Bot', '/bot', 'Multi-agent platform'], ['Search', '/search', 'Retrieval & answers'], ['Crawl', '/crawl'], ['Studio', '/studio'], ['Console', '/console'], ['Referrals', '/cloud/referrals'], ['Marketplace', '/cloud/marketplace']];
@@ -248,6 +254,7 @@ function Shell({ auto, view: want, size = 'lg' }) {
   const [go, setGo] = useState(false);
   const [mine, setMine] = useState(false);
   const step = useRef(0);
+  const P = (k) => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">{k ? <path d="M5 3.2v9.6L12.6 8z" fill="currentColor" /> : <path d="M4.5 3h2.4v10H4.5zM9.1 3h2.4v10H9.1z" fill="currentColor" />}</svg>;
   const first = useRef(true);
   useEffect(() => { if (want) setView(want); }, [want]);
   useEffect(() => {
@@ -274,7 +281,10 @@ function Shell({ auto, view: want, size = 'lg' }) {
       <div className="cs-bar">
         <span className="cs-lights" aria-hidden="true"><i /><i /><i /></span>
         <span className="cs-url x-mono">platform.hanzo.ai</span>
-        {auto ? <A to="/home" className="cs-wt">Console — Hanzo</A> : <span className="cs-wt">Console — Hanzo</span>}
+        <span className="cs-bar-r">
+          {auto ? <A to="/home" className="cs-wt">Console — Hanzo</A> : <span className="cs-wt">Console — Hanzo</span>}
+          {auto && <button type="button" className="cs-hold" onClick={() => { setMine(!mine); setPal(false); }} aria-pressed={mine} aria-label={mine ? 'Play the console film' : 'Pause the console film'}>{P(mine)}</button>}
+        </span>
       </div>
       <div className="cs-body">
         {auto ? (
@@ -330,24 +340,21 @@ function Shell({ auto, view: want, size = 'lg' }) {
   );
 }
 
-/* The one dark room: the title, and the shell huge under it, settling as you scroll. */
+/* The one dark room: the title, one line, the ask, and the shell huge under them, settling as you scroll. */
 function Hero() {
   return (
     <section className="cs-hero" data-room="dark" aria-labelledby="cs-h1">
       <div className="bz-wrap cs-top">
-        <div className="cs-title">
-          <p className="bz-kick">Operator console for the cloud</p>
-          <h1 id="cs-h1" className="bz-display">Hanzo Console</h1>
-        </div>
+        <h1 id="cs-h1" className="bz-display cs-h1">Hanzo Console</h1>
         <div className="cs-intro">
           <p className="bz-lede">One admin for everything you run</p>
           <div className="bz-acts">
-            <A to={APP} className="x-btn solid cs-go" data-thumb="Open Console">Open Console</A>
-            <A to={DOCS} className="x-btn cs-ghost">Documentation</A>
+            <span data-thumb="Open Console" data-cta="primary"><Go to={APP} solid>Open Console</Go></span>
+            <More to={DOCS}>Documentation</More>
           </div>
         </div>
       </div>
-      <BizStage from={1.035} over={720} lift={64} className="bz-wrap cs-stage"><Shell auto /></BizStage>
+      <BizStage from={1.035} over={720} lift={40} className="bz-wrap cs-stage"><Shell auto /></BizStage>
     </section>
   );
 }
@@ -491,32 +498,45 @@ function Client() {
   );
 }
 
-/* The close: one action, Open Console; the ways to get it beside it. */
-function End() {
+/* Getting it: the licence, the ways to run it, the agent prompt and the related products. Text links only. */
+function GetConsole() {
   return (
-    <section className="bz-sec cs-end" aria-labelledby="cs-end-h">
+    <section className="bz-sec cs-get" aria-labelledby="cs-get-h">
       <div className="bz-wrap bz-grid">
-        <div className="cs-end-main">
-          <h2 id="cs-end-h" className="bz-display md">Open the console</h2>
-          <p className="bz-lede">Sign in with your Hanzo identity. The organization you land in is the one that gets billed, and everything on these screens belongs to it.</p>
-          <div className="bz-acts"><A to={APP} className="x-btn solid cs-cta">Open Console</A></div>
+        <div className="cs-get-main">
+          <h2 id="cs-get-h" className="bz-headline">Get Console</h2>
+          <p className="bz-lede">Operator console for the cloud</p>
+          <div className="cs-chips"><span className="cs-chip"><span>License:</span> Apache-2.0</span><A to={GH} className="cs-chip"><Gh />hanzoai</A></div>
+          <div className="cs-end-links"><More to={DEPLOY}>Deploy to Cloud</More><More to={DOCS}>Self-host</More></div>
         </div>
-        <div className="cs-end-get">
-          <h3 className="bz-title">Get Console</h3>
-          <p className="bz-body">Operator console for the cloud</p>
-          <div className="cs-chips"><span className="cs-chip"><span>License:</span> Apache-2.0</span></div>
-          <div className="cs-end-links"><More to={DEPLOY}>Deploy to Cloud</More><More to={DOCS}>Self-host</More><More to={GH}>View on GitHub</More></div>
-        </div>
-      </div>
-      <div className="bz-wrap bz-grid cs-end-low">
-        <Paste name="Console" prompt="Read https://hanzo.ai/skill.md and use Hanzo Console in my project." className="cs-paste" />
         <div className="cs-rel">
-          <p className="bz-kick">Related capabilities</p>
+          <p className="bz-title">Related capabilities</p>
           <ul>
             <li><A to={DOCS}><b>Console docs →</b></A></li>
             {SIDE.slice(0, 3).map(([t, to, d]) => <li key={t}><A to={to}><b>{t}</b><span>{d}</span></A></li>)}
           </ul>
         </div>
+      </div>
+      <div className="bz-wrap cs-get-paste">
+        <Paste name="Console" prompt="Read https://hanzo.ai/skill.md and use Hanzo Console in my project." className="cs-paste" />
+      </div>
+    </section>
+  );
+}
+
+const Arrow = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+
+/* The close: one sentence at Display size, the one ask, one text row. */
+function End() {
+  return (
+    <section className="bz-sec cs-end" aria-labelledby="cs-end-h">
+      <div className="bz-wrap">
+        <div className="cs-end-main">
+          <h2 id="cs-end-h" className="bz-display md">Open the console</h2>
+          <p className="bz-lede">Sign in with your Hanzo identity. The organization you land in is the one that gets billed, and everything on these screens belongs to it.</p>
+          <div className="bz-acts"><span data-cta="primary"><Go to={APP} solid>Open Console</Go></span></div>
+        </div>
+        <A to={GH} className="cs-row"><span>View on GitHub</span><Arrow /></A>
       </div>
     </section>
   );
@@ -524,11 +544,12 @@ function End() {
 
 export default function ConsolePage() {
   return (
-    <main className="bz cs" style={{ '--acc': '#4a9400', '--lime': '#8be03c' }}>
+    <main className="bz cs" data-ask-name="Hanzo Console">
       <Hero />
       <Chapters />
       <Find />
       <Client />
+      <GetConsole />
       <End />
     </main>
   );

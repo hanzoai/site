@@ -99,12 +99,12 @@ export function orgDoc(org, withNear = true) {
   const fig = (k) => doc.counts.flatMap((c) => c.figures).find((f) => f.label.startsWith(k));
   doc.key = ['public repositories', 'stars', 'forks', 'commits in the past year'].map(fig).filter(Boolean);
   doc.spark = (doc.counts.find((c) => c.spark) || {}).spark || null;
-  // its place in the family (one accent per page, neighbours never share one) and the next organizations, as cards
+  // its place in the family and the next organizations, as cards that open into their page (each with its own line)
   const all = ORGS();
   doc.i = all.indexOf(org);
   doc.near = withNear ? [1, 2, 3, 4].map((k) => all[(doc.i + k) % all.length]).map((o) => {
     const d = orgDoc(o, false);
-    return { org: o, i: d.i, name: d.name, repos: d.key[0] || null, commits: d.key.find((f) => /^commits/.test(f.label)) || null, data: d.key.map((f) => f.n) };
+    return { org: o, i: d.i, name: d.name, lede: d.lede, repos: d.key[0] || null, commits: d.key.find((f) => /^commits/.test(f.label)) || null, data: d.key.map((f) => f.n) };
   }) : [];
   return doc;
 }

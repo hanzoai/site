@@ -3,8 +3,11 @@
    and set the page's one accent with style={{ '--acc': '#…' }}. Type, space and grid follow docs/VISION.md:
    Display 128/96/80 (phone 56/48), Headline 56/36, Title 28, Lede 24/21, Body 19/17, Kicker Zen Mono 13 caps .12em;
    8pt space, sections 240 px of air (120 on phones), a 12-column 1440 grid with 24 px gutters, 28 px hero radii,
-   16 px card radii, hairlines and long soft shadows. Class names start with a2- so no other chat's styles collide. */
-.a2 { --acc: #0a0a0a; --acc-soft: color-mix(in srgb, var(--acc) 12%, #fff); --r-hero: 28px; --r-card: 16px; --a2-ease: cubic-bezier(.16, 1, .3, 1); --a2-shadow: 0 50px 100px -40px rgba(0, 0, 0, .28), 0 18px 36px -24px rgba(0, 0, 0, .18); }
+   16 px card radii, hairlines and long soft shadows. Class names start with a2- so no other chat's styles collide.
+   7 Nov 14:20 (docs/JAMES.md wins on taste): 0 UI hues, so --acc is ink in light rooms and #f5f5f7 in dark ones (a page
+   no longer sets its own), and .a2-kick is never shown above a headline: its words stay in the page for screen readers
+   and search (visually hidden). Give a label that is not an eyebrow the class .a2-kick.show. */
+.a2 { --acc: #0a0a0b; --acc-soft: color-mix(in srgb, var(--acc) 12%, #fff); --r-hero: 28px; --r-card: 16px; --a2-ease: cubic-bezier(.16, 1, .3, 1); --a2-shadow: 0 50px 100px -40px rgba(0, 0, 0, .28), 0 18px 36px -24px rgba(0, 0, 0, .18); }
 .a2-wrap { width: min(100% - 48px, 1440px); margin-inline: auto; }
 .a2-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; }
 .a2-sec { position: relative; padding: clamp(120px, 15vw, 240px) 0; }
@@ -19,8 +22,10 @@
 .a2-title { margin: 0; font-size: clamp(22px, 1.95vw, 28px); font-weight: 580; line-height: 1.15; letter-spacing: -.024em; color: var(--ink); text-wrap: balance; }
 .a2-lede { margin: 0; max-width: 36ch; font-size: clamp(19px, 1.67vw, 24px); line-height: 1.42; letter-spacing: -.012em; color: var(--soft); text-wrap: pretty; }
 .a2-body { margin: 0; max-width: 64ch; font-size: clamp(17px, 1.32vw, 19px); line-height: 1.58; color: var(--soft); text-wrap: pretty; }
-.a2-kick { margin: 0; font: 500 13px/1.2 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
-.a2-kick b { font-weight: 500; color: var(--acc); }
+.a2-kick:not(.show) { position: absolute !important; width: 1px; height: 1px; margin: 0 !important; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.a2-kick.show { margin: 0; font: 500 13px/1.2 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
+.a2 [data-room='dark'], .a2 .a2-dark, .a2 .a2-darkpanel { --acc: #f5f5f7; --acc-soft: #1c1c1f; }
+.a2-kick b { font-weight: 500; }
 .a2-fig { font-family: var(--sans); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -.055em; line-height: .9; }
 .a2-dark .a2-display, .a2-dark .a2-headline, .a2-dark .a2-title { color: #f5f5f7; }
 .a2-dark .a2-lede, .a2-dark .a2-body { color: #a1a1a6; }
@@ -33,7 +38,6 @@
 /* buttons: the solid one wears the accent only when a page asks (data-acc) */
 .a2-acts { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
 .a2-acts .x-btn { height: 48px; padding: 0 24px; font-size: 16px; }
-.a2[data-acc-btn] .a2-acts .x-btn.solid { background: var(--acc); border-color: var(--acc); }
 
 /* the paste strip, one line with a copy button */
 .a2-paste { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 24px; align-items: center; padding: 40px 0; border-block: 1px solid var(--line); }

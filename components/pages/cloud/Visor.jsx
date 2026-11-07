@@ -191,7 +191,7 @@ function Name() {
 
 export default function Visor() {
   return (
-    <main className="l2-page vs2" style={{ '--ac': '#d4379c' }}>
+    <main className="l2-page vs2" style={{ '--ac': '#525252' }}>
       <StageHero look="side" flip kick="hanzoai/visor" title="Hanzo Visor" sub="Machines from several clouds, through one API" acts={[['View on GitHub', GH]]}>
         <Fleet />
       </StageHero>

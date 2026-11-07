@@ -444,3 +444,6 @@
   .xmo-fam-t { opacity: 1; visibility: visible; transform: none; padding: 24px 0 0; }
   .xmo-fam-h span { opacity: 1; }
 }
+
+/* the page's pause stops its CSS loops too */
+[data-mpaused] .xmo-live i, [data-mpaused] .xmo-caret { animation-play-state: paused; }

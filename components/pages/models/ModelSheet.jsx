@@ -15,6 +15,7 @@ import { motion, useScroll, useTransform } from 'motion/react';
 import { EASE, Copy } from '../../ui';
 import { A, Flap } from '../../kit';
 import Sigil from '../../Sigil';
+import { FilmPause, usePaused } from '../../v2/ModelFilm';
 import { Field, Bill, Codes, Loose, useCatalog, rateFrom, rateText, money } from './parts';
 import './models.css';
 
@@ -48,7 +49,7 @@ export default function ModelSheet({ doc }) {
   const need = !doc.rate || doc.siblings.some((s) => !s.rate);
   const cat = useCatalog(need);
   const rate = rateFrom(cat, doc.id, doc.rate);
-  const price = doc.price || (cat && rate ? rateText(rate) : DASH);
+  const price = doc.price || (rate ? rateText(rate) : DASH);
   const sibs = doc.siblings.map((s) => ({ ...s, rate: rateFrom(cat, s.id, s.rate) }));
   const self = { name: doc.name, href: doc.route, rate, tokens: doc.tokens, ctx: doc.ctx };
   const field = [self, ...sibs];
@@ -60,6 +61,7 @@ export default function ModelSheet({ doc }) {
   const ctxFig = doc.ctx && doc.ctx.length <= 6 ? doc.ctx : doc.tokens ? short(doc.tokens) : null;
   const ctxLabel = doc.ctx ? (doc.facts.flatMap((g) => g.facts).find((f) => f.value === doc.ctx) || {}).label : null;
   const hero = useRef(null);
+  const paused = usePaused();
   const { scrollYProgress: hp } = useScroll({ target: hero, offset: ['start start', 'end start'] });
   const artY = useTransform(hp, [0, 1], ['0%', '18%']);
   const moreTitle = (doc.more && doc.more.title) || doc.provider.name;
@@ -104,7 +106,8 @@ export default function ModelSheet({ doc }) {
           </div>
           {/* the hero object: the model's own contour field at 4:5, its maker label and its ID to copy */}
           <motion.figure className="xmf-obj" style={{ y: artY }} initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.1, ease: EASE, delay: 0.15 }}>
-            <Sigil seed={doc.route} data={[doc.tokens, rate && rate.in, rate && rate.out].filter((v) => v != null)} className="xmf-obj-sigil" />
+            <Sigil seed={doc.route} data={[doc.tokens, rate && rate.in, rate && rate.out].filter((v) => v != null)} className="xmf-obj-sigil" still={paused} />
+            <FilmPause className="xmf-obj-pause" />
             {doc.label && <p className="xmf-obj-l x-mono">{doc.label}</p>}
             <figcaption className="xmf-obj-id">
               <span className="x-mono">Model ID</span>
@@ -191,7 +194,7 @@ export default function ModelSheet({ doc }) {
 
       {doc.band && (
         <section className="xmf-end">
-          <Sigil seed={doc.route + '#end'} data={[doc.siblings.length + 1, doc.tokens].filter(Boolean)} className="xmf-end-sigil" />
+          <Sigil seed={doc.route + '#end'} data={[doc.siblings.length + 1, doc.tokens].filter(Boolean)} className="xmf-end-sigil" still={paused} />
           <div className="x-wrap">
             <div className="xmf-band">
               <h2>{doc.band.title}</h2>

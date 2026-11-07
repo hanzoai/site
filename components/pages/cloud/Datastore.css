@@ -1,5 +1,5 @@
 /* Datastore (v2): see Datastore.jsx. Built on components/v2/Keynote*. */
-.ds { --ac-t: rgba(10, 132, 255, .1); --ac-l: rgba(10, 132, 255, .35); }
+.ds { --ac-t: rgba(115, 115, 115, .1); --ac-l: rgba(115, 115, 115, .35); }
 .ds-k { margin: 0; font: 500 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
 
 /* the hero object: the query console */
@@ -16,7 +16,7 @@
 .ds-files { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 8px; padding: clamp(24px, 2.6vw, 36px) clamp(28px, 8vw, 124px) 16px; }
 .ds-file { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 12px 8px 10px; border-radius: 14px; border: 1px solid var(--line); background: #fff; cursor: pointer; overflow: hidden; text-align: center; transition: border-color .3s, background .3s, box-shadow .4s var(--ease); }
 .ds-file:hover { border-color: rgba(0, 0, 0, .2); }
-.ds-file.on { border-color: var(--ac); background: #f7fbff; box-shadow: 0 16px 30px -22px rgba(10, 132, 255, .6); }
+.ds-file.on { border-color: var(--ac); background: #f7fbff; box-shadow: 0 16px 30px -22px rgba(115, 115, 115, .6); }
 .ds-file.fixed { cursor: default; }
 .ds-file:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
 .ds-name { font: 500 13px/1.1 var(--mono); color: var(--soft); overflow-wrap: anywhere; min-height: 2.2em; display: flex; align-items: center; justify-content: center; }
@@ -24,7 +24,7 @@
 .ds-blocks { display: grid; gap: 4px; }
 .ds-blocks i { height: 12px; border-radius: 3px; background: var(--ink); transition: background .3s; }
 .ds-file.on .ds-blocks i { background: var(--ac); }
-.ds-beam { position: absolute; left: 0; right: 0; top: 0; height: 36%; background: linear-gradient(180deg, rgba(10, 132, 255, 0), rgba(10, 132, 255, .22) 70%, rgba(10, 132, 255, .5)); pointer-events: none; animation: ds-beam 1.6s cubic-bezier(.45, 0, .25, 1) infinite; }
+.ds-beam { position: absolute; left: 0; right: 0; top: 0; height: 36%; background: linear-gradient(180deg, rgba(115, 115, 115, 0), rgba(115, 115, 115, .22) 70%, rgba(115, 115, 115, .5)); pointer-events: none; animation: ds-beam 1.6s cubic-bezier(.45, 0, .25, 1) infinite; }
 @keyframes ds-beam { from { transform: translateY(-100%); } to { transform: translateY(290%); } }
 .ds-q-foot { padding: 4px clamp(28px, 8vw, 124px) clamp(20px, 2.4vw, 32px); }
 .ds-q-foot p { margin: 0; font-size: 15px; color: var(--faint); }

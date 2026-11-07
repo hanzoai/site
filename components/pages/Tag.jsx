@@ -1,6 +1,8 @@
 'use client';
 /* Hanzo Tag (governance view of the same product as /slack).
    V2: 8/10 the mention as a map that spreads from one @Hanzo across the channels into canvases, diffs and the merged PR, set big beside the moment it opened; governance as the one dark room; the rest chaptered in the v2 grammar with a pink accent from the fixed button.
+   Persona: a workspace owner weighing what Hanzo can see. Goal: set up Hanzo Tag. CTA: Set up Hanzo Tag (tag.hero).
+   Metric: cta_click on tag.hero and tag.close (data-cta; the event layer is the conductor's).
    Signature: Mention map: one @Hanzo at the centre, rings spreading out across a field of channels, then branching into
    Canvas, Diff, Preview and the merged PR #418; click any node to read that moment of the thread.
    Beyond: "Will Hanzo see this?": pick where a message lives (a channel with @Hanzo added or not, tagged or not,
@@ -179,20 +181,16 @@ function MentionMap() {
 function Hero() {
   return (
     <section className={`${P}-hero`} aria-labelledby="xtg-h1">
-      <div className="a2-wrap">
-        <div className={`a2-grid ${P}-top`}>
-          <div className={`${P}-copy`}>
-            <p className="a2-kick"><b>@</b> {HERO.kick}</p>
-            <A2Lines as="h1" id="xtg-h1" className={`a2-display s ${P}-h1`} lines={HERO.title} now />
+      <div className={`a2-wrap ${P}-hero2`}>
+        <div className={`${P}-copy`}>
+          <p className="a2-kick"><b>@</b> {HERO.kick}</p>
+          <A2Lines as="h1" id="xtg-h1" className={`a2-headline ${P}-h1`} lines={HERO.title} now />
+          <p className="a2-body">{HERO.lede}</p>
+          <div className="a2-acts">
+            <A to={HERO.acts[0][1]} className="x-btn solid" data-thumb={HERO.acts[0][0]} data-cta="tag.hero">{HERO.acts[0][0]}</A>
+            <A to={HERO.acts[1][1]} className="x-btn">{HERO.acts[1][0]}</A>
           </div>
-          <div className={`${P}-top-r`}>
-            <p className="a2-lede">{HERO.lede}</p>
-            <div className="a2-acts">
-              <A to={HERO.acts[0][1]} className="x-btn solid" data-thumb={HERO.acts[0][0]}>{HERO.acts[0][0]}</A>
-              <A to={HERO.acts[1][1]} className="x-btn">{HERO.acts[1][0]}</A>
-            </div>
-            <p className={`${P}-docs`}><More to={HERO.acts[2][1]}>{HERO.acts[2][0]}</More></p>
-          </div>
+          <p className={`${P}-docs`}><More to={HERO.acts[2][1]}>{HERO.acts[2][0]}</More></p>
         </div>
         <div className={`${P}-hero-grid`}>
           <MentionMap />
@@ -397,13 +395,13 @@ function Close() {
           <h2 className="a2-display s">{CLOSE.lede}</h2>
           <p className="a2-lede">{CLOSE.note}</p>
           <div className="a2-acts">
-            {CLOSE.acts.map(([t, to], k) => <A key={t} to={to} className={'x-btn' + (k ? '' : ' solid')}>{t}</A>)}
+            {CLOSE.acts.map(([t, to], k) => <A key={t} to={to} className={'x-btn' + (k ? '' : ' solid')} {...(k ? {} : { 'data-cta': 'tag.close' })}>{t}</A>)}
           </div>
         </div>
         <div className={`${P}-get`}>
           <span className={`${P}-get-at`} aria-hidden="true">@</span>
           <h2>Get Hanzo Tag</h2>
-          <Go to="https://platform.hanzo.ai/deploy" solid>Deploy to Cloud</Go>
+          <Go to="https://platform.hanzo.ai/deploy">Deploy to Cloud</Go>
         </div>
       </div>
     </section>
@@ -412,7 +410,7 @@ function Close() {
 
 export default function Tag() {
   return (
-    <main className={`a2 ${P}`} style={{ '--acc': '#e8479a' }} data-acc-btn="">
+    <main className={`a2 ${P}`}>
       <Hero />
       <Channels />
       <Setup />

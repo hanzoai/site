@@ -1,6 +1,8 @@
 'use client';
 /* Hanzo Tag for Slack.
    V2: 8/10 the code channel as an Apple-style pinned scene: your scroll plays the thread from @Hanzo to merged PR in one dark room, with the setup card, the promises and the details chaptered after it.
+   Persona: an engineering lead whose team lives in Slack. Goal: set up Hanzo Tag. CTA: Set up Hanzo Tag (slack.hero).
+   Metric: cta_click on slack.hero and slack.close (data-cta; the event layer is the conductor's).
    Signature: scroll plays the thread. A white first screen with the headline hands over to the one dark room, where
    the Slack window pins and settles to full size; each stretch of scroll plays the next step of #bug-button-darkmode
    (1. Code trace … 6. Session complete) while the Code, View and Canvas artifacts follow the step. The step rail on
@@ -224,7 +226,7 @@ function Hero() {
         <div className={`${P}-hero-r`}>
           <p className="a2-lede">{HERO.lede}</p>
           <div className="a2-acts">
-            <A to={HERO.acts[0][1]} className="x-btn solid" data-thumb={HERO.acts[0][0]}>{HERO.acts[0][0]}</A>
+            <A to={HERO.acts[0][1]} className="x-btn solid" data-thumb={HERO.acts[0][0]} data-cta="slack.hero">{HERO.acts[0][0]}</A>
             <A to={HERO.acts[1][1]} className="x-btn">{HERO.acts[1][0]}</A>
           </div>
           <p className={`${P}-docs`}><More to={HERO.acts[2][1]}>{HERO.acts[2][0]}</More></p>
@@ -258,9 +260,11 @@ function Setup() {
   const ref = useRef(null);
   const live = useInView(ref, { amount: 0.2 });
   const calm = useReducedMotion();
-  const [k, setK] = useState(0);
+  const [k, setK] = useState(9); // the HTML shows the finished exchange; the browser replays it from the start
+  const began = useRef(false);
   useEffect(() => {
     if (!live || calm) return;
+    if (!began.current) { began.current = true; setK(0); }
     const t = setInterval(() => setK((v) => (v >= 9 ? 0 : v + 1)), 1300);
     return () => clearInterval(t);
   }, [live, calm]);
@@ -367,14 +371,14 @@ function Close() {
           <h2 id="xsq-close-h" className="a2-display s">{CLOSE.lede}</h2>
           <p className="a2-lede">{CLOSE.note}</p>
           <div className="a2-acts">
-            <A to={CLOSE.acts[0][1]} className="x-btn solid">{CLOSE.acts[0][0]}</A>
+            <A to={CLOSE.acts[0][1]} className="x-btn solid" data-cta="slack.close">{CLOSE.acts[0][0]}</A>
             <A to={CLOSE.acts[1][1]} className="x-btn">{CLOSE.acts[1][0]}</A>
             <A to={CLOSE.acts[2][1]} className="x-btn">{CLOSE.acts[2][0]}</A>
           </div>
         </div>
         <div className={`${P}-get`}>
           <h2>Get Hanzo Tag</h2>
-          <Go to="https://platform.hanzo.ai/deploy" solid>Deploy to Cloud</Go>
+          <Go to="https://platform.hanzo.ai/deploy">Deploy to Cloud</Go>
         </div>
       </div>
     </section>
@@ -383,7 +387,7 @@ function Close() {
 
 export default function Slack() {
   return (
-    <main className={`a2 ${P}`} style={{ '--acc': '#611f69' }} data-acc-btn="">
+    <main className={`a2 ${P}`}>
       <Hero />
       <Scene />
       <Notes />

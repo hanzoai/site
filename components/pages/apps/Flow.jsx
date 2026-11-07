@@ -2,8 +2,7 @@
 /* Flow (v2, archetype A "Launch"): the canvas is the hero, and a run travels it.
    Persona: a developer building an AI workflow (retrieval, a model, a parser) who wants to ship it as an API
    Goal: see a flow run node by node, find out how it is published and run, then open Flow
-   CTA: Open Flow -> https://flow.hanzo.ai (hero, sticky, close; data-thumb, data-cta). The sticky ask is the site's own
-   ask bar (components/Ask.jsx) reading data-thumb at every width; v2/AskBar would stack a second bar on top of it.
+   CTA: Open Flow -> https://flow.hanzo.ai (hero, the site's sticky ask bar at every width, close; data-thumb, data-cta)
    Signature: the canvas, running. Hanzo's own components (a document loader, a text splitter, a vector store, a
    retriever, a model, an output parser) are wired on a full-bleed dotted canvas with "Hanzo Flow" sitting among them;
    a run leaves each node as a pulse that travels its edge to the next, the node runs, and what it returned appears on it.
@@ -393,7 +392,7 @@ function End() {
 
 export default function Flow() {
   return (
-    <main className="bz fl">
+    <main className="bz fl" data-ask-name="Hanzo Flow">
       <Hero />
       <Chapters />
       <Playground />

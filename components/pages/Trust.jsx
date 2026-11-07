@@ -1,6 +1,9 @@
 'use client';
-/* Trust. Its idea is calm proof: big statements, and the evidence kept in drawers you open. The first screen is the
-   headline over one wide product object — the evidence locker, a cabinet of the six things a review gets, whose
+// Persona: a security or procurement reviewer checking Hanzo before signing (arrives from /security, /enterprise, the footer or a questionnaire)
+// Goal: read what is published, find the control the questionnaire asks about, and request a review
+// CTA: Request a review or an enterprise deployment -> /contact-sales (hero, sticky AskBar and thumb bar, close) · metric cta_click (data-cta="request-a-review")
+/* Trust. Its idea is calm proof: big statements, and the evidence kept in drawers you open. The first screen is a
+   centred statement (chatgpt.com/business/enterprise) over one wide product object — the evidence locker, a cabinet of the six things a review gets, whose
    drawers pull themselves out one at a time (or at your hand), each marked Published or On request, its contents in
    the tray beside it. Then the two published papers, which open into their pages; where Hanzo stands, said plainly;
    and every control, grouped as Hanzo groups them, as a quiet list whose rows open their evidence in a sheet. It
@@ -12,7 +15,7 @@
    controls match, and nothing matching is met with Hanzo's own line: if a control you need is not on this page, ask.
    Motion: signature (drawers on springs, idle) + MaskLines headline cut-in (arrival) + answers re-flowing as you type
    (state; sheets rise) + the SceneWipe dark room (the one scroll-linked effect).
-   V2: 8/10 calm-proof rebuild in ink only: headline over a wide self-opening evidence cabinet, papers that open into their pages, plain statements, five control groups as a quiet list of evidence sheets with answer-as-you-type, one ask sticky after the hero. */
+   V2: 8/10 calm-proof rebuild in ink only: a centred statement over a wide self-opening evidence cabinet, papers that open into their pages, plain statements, five control groups as a quiet list of evidence sheets with answer-as-you-type, one ask sticky after the hero. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { A, More } from '../kit';
@@ -38,15 +41,16 @@ const pad = (i) => String(i + 1).padStart(2, '0');
 function Locker() {
   const [at, setAt] = useState(-1); // -1: every drawer shut, as the page arrives
   const [mine, setMine] = useState(false);
+  const [under, setUnder] = useState(false); // the pointer is on the locker: it waits under the hand
   const calm = useReducedMotion();
   const ref = useRef(null);
   const live = useInView(ref, { amount: 0.3 });
   useEffect(() => {
     if (calm) { setAt((v) => (v < 0 ? 0 : v)); return; }
-    if (mine || !live) return;
+    if (mine || !live || (under && at >= 0)) return;
     const t = setTimeout(() => setAt((v) => (v + 1) % 6), at < 0 ? 650 : 3400);
     return () => clearTimeout(t);
-  }, [at, mine, calm, live]);
+  }, [at, mine, calm, live, under]);
   const pick = (i) => { setMine(true); setAt(i); };
   const keys = (e) => {
     const k = { ArrowDown: 1, ArrowUp: -1 }[e.key];
@@ -57,7 +61,7 @@ function Locker() {
     document.getElementById('xtr-dr-' + n)?.focus();
   };
   return (
-    <div className="xtr-locker" ref={ref}>
+    <div className="xtr-locker" ref={ref} onPointerEnter={(e) => e.pointerType === 'mouse' && setUnder(true)} onPointerLeave={() => setUnder(false)}>
       <div className="xtr-cab-w">
         <p className="xtr-locker-h">
           <span>What a review gets</span>
@@ -98,14 +102,10 @@ function Hero() {
     <section className="xtr-hero" aria-labelledby="xtr-h1">
       <div className="pf-wrap">
         <div className="xtr-hero-top">
-          <div>
-            <MaskLines as="h1" id="xtr-h1" className="pf-display" lines={['Security', 'you can read']} />
-            <p className="pf-kick xtr-cap">Trust</p>
-          </div>
-          <div className="xtr-hero-r">
-            <p className="pf-lede">How you get in, what a credential reaches, what gets written down, and where the keys live — each one a mechanism you can point at in the source.</p>
-            <A to="/contact-sales" className="pf-btn solid" data-thumb={ASK}>{ASK}</A>
-          </div>
+          <MaskLines as="h1" id="xtr-h1" className="pf-display xtr-h1" lines={['Security', 'you can read']} />
+          <p className="pf-kick xtr-cap">Trust</p>
+          <p className="pf-lede">How you get in, what a credential reaches, what gets written down, and where the keys live — each one a mechanism you can point at in the source.</p>
+          <A to="/contact-sales" className="pf-btn solid" data-thumb={ASK} data-cta="request-a-review">{ASK}</A>
         </div>
         <Locker />
       </div>
@@ -201,7 +201,8 @@ function Group({ g, gi, k }) {
     <li className={'xtr-grp' + (k && !hits.length ? ' miss' : '')}>
       <span className="xtr-grp-n" aria-hidden="true">{pad(gi)}</span>
       <div className="xtr-grp-c">
-        <DetailSheet label={name} title={name} className={'xtr-g-btn xtr-g-btn-' + gi} wide>
+        <div className="xtr-grp-h">
+        <DetailSheet label={<span className="xtr-vh">{name}</span>} title={name} className={'xtr-g-btn xtr-g-btn-' + gi} wide>
           <p className="xtr-sh-lede">{lede}</p>
           {items.map(([t, d], i) => (
             <article key={t} id={`xtr-c-${gi}-${i}`} className={'xtr-sh-c' + (hit([t, d]) ? ' hit' : '')}>
@@ -210,6 +211,8 @@ function Group({ g, gi, k }) {
             </article>
           ))}
         </DetailSheet>
+        <h2 className="xtr-grp-t" onClick={() => document.querySelector('.xtr-g-btn-' + gi)?.click()}>{name}</h2>
+        </div>
         <p className="xtr-grp-l">{lede}</p>
         <AnimatePresence initial={false}>
           {k && hits.length > 0 && (
@@ -233,13 +236,13 @@ function Controls() {
   const k = q.trim().toLowerCase();
   const n = k ? ALL.filter(has(k)).length : ALL.length;
   return (
-    <section className="pf-sec xtr-ctl" id="controls" aria-label="Find a control">
+    <section className="pf-sec xtr-ctl" id="controls" aria-labelledby="xtr-find-h">
       <div className="pf-wrap">
         <div className="xtr-find">
-          <label className="xtr-find-l" htmlFor="xtr-q">Find a control</label>
+          <h2 className="xtr-find-l" id="xtr-find-h">Find a control</h2>
           <div className="xtr-find-f">
             <svg viewBox="0 0 20 20" width="22" height="22" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.7" /><path d="M13 13l4 4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></svg>
-            <input id="xtr-q" type="search" className="xtr-find-i" value={q} placeholder="PKCE, SCIM, argon2id, HKDF…" autoComplete="off" spellCheck="false" onChange={(e) => setQ(e.target.value)} />
+            <input id="xtr-q" type="search" aria-labelledby="xtr-find-h" className="xtr-find-i" value={q} placeholder="PKCE, SCIM, argon2id, HKDF…" autoComplete="off" spellCheck="false" onChange={(e) => setQ(e.target.value)} />
             {q && <button type="button" className="xtr-find-x" aria-label="Clear" onClick={() => setQ('')}><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></svg></button>}
           </div>
           <p className="xtr-find-n pf-mono" aria-live="polite"><b>{n}</b> / {ALL.length}</p>
@@ -305,7 +308,7 @@ function Close() {
           <MaskLines className="pf-display m" lines={['Bring us the', 'hard questions']} />
           <div className="xtr-band-r">
             <p className="pf-lede">Your questionnaire, your architecture review, your framework. We answer against the code, we move at the speed of your review, and you will always know which of those two you are getting.</p>
-            <A to="/contact-sales" className="pf-btn solid xtr-light">{ASK}</A>
+            <A to="/contact-sales" className="pf-btn solid xtr-light" data-cta="request-a-review">{ASK}</A>
           </div>
         </div>
       </div>
@@ -316,13 +319,15 @@ function Close() {
 export default function Trust() {
   return (
     <main className="xtr">
+      {/* JS off: every drawer's contents stand stacked in the tray, and the dark room is simply there */}
+      <noscript dangerouslySetInnerHTML={{ __html: '<style>.xtr-tray-p{opacity:1!important;transform:none!important;grid-area:auto!important;pointer-events:auto!important;margin-top:28px}.pf-wipe>div[aria-hidden]{clip-path:none!important}.xtr-grp-h{flex-wrap:wrap}.xtr-grp-h .pf-sheet{order:3;flex:1 1 100%}</style>' }} />
       <Hero />
       <Docs />
       <Stand />
       <Controls />
       <Facts />
       <Close />
-      <AskBar title="Trust" label={ASK} to="/contact-sales" />
+      <AskBar title="Trust" label={ASK} to="/contact-sales" cta="request-a-review" />
     </main>
   );
 }

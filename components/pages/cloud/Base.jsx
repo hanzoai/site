@@ -278,7 +278,7 @@ const REL = [['Base docs →', DOCS], ['Datastore', '/datastore', 'Analytical co
 
 export default function Base() {
   return (
-    <main className="kn bs" style={{ '--ac': '#ff9500' }}>
+    <main className="kn bs" style={{ '--ac': '#a3a3a3' }}>
       <KeynoteStage
         look="side"
         kick="Hanzo Base · App backend"

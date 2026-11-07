@@ -22,10 +22,22 @@ import { onDomChange } from '../lib/domwatch';
 
 const HEADER_ASK = { label: 'Try Hanzo', href: 'https://hanzo.ai/signup' }; // Hanzo's own header words
 const OVERLAY = '.x-cookie:not([hidden]), .x-sheet, .x-pal, .x-pop, .x-nav-panel, .x-sheet2-wrap, [aria-modal="true"], [data-dock], .xcr-dock';
+// an overlay counts only while it is actually showing (closed drawers often keep aria-modal in the DOM)
+const shown = (el) => el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden' && +getComputedStyle(el).opacity > 0.05 && !el.closest('[hidden], [inert], [aria-hidden="true"]');
+const overlayOpen = () => [...document.querySelectorAll(OVERLAY)].some(shown);
+// a page button counts as "a solid ask on screen" only if you can see it as one: filled, opaque, not mid-entrance
+const filled = (box) => {
+  if (box.matches('.x-band')) return shown(box);
+  const el = box.matches('a, button') ? box : box.querySelector('a, button'); // the control, not a card around it
+  if (!el || !el.isConnected || !shown(el)) return false;
+  for (let x = el; x && x !== document.body; x = x.parentElement) if (+getComputedStyle(x).opacity < 0.6) return false;
+  const m = getComputedStyle(el).backgroundColor.match(/[\d.]+/g);
+  return !!m && !(m[3] !== undefined && +m[3] < 0.5);
+};
 const nameOf = (t) => (t || '').split(/\s+[—|–-]\s+/)[0].trim();
 // a wrapper with display: contents has no box for IntersectionObserver; watch the link or button inside it instead
 const boxOf = (el) => (el.getClientRects().length ? el : el.querySelector('a, button') || el.firstElementChild || el);
-const SOLID = 'main .x-btn.solid, main [data-thumb], .x-band';
+const SOLID = 'main .x-btn.solid, main a.solid, main button.solid, main [data-thumb], .x-band';
 
 export default function Ask() {
   const path = usePathname();
@@ -59,9 +71,10 @@ export default function Ask() {
       let solids = new Set();
       const update = () => {
         if (off) return;
-        const show = past && !blocking.size && !solids.size && !typing && !document.querySelector(OVERLAY);
+        const seen = [...solids].some(filled);
+        const show = past && !blocking.size && !seen && !typing && !overlayOpen();
         setOn(show);
-        setQuiet(solids.size > 0);
+        setQuiet(seen);
       };
       const io = new IntersectionObserver((es) => {
         es.forEach((e) => {
@@ -74,7 +87,16 @@ export default function Ask() {
       document.querySelectorAll('footer, .x-band, [data-ask-hide], main [data-thumb]').forEach((el) => io.observe(boxOf(el)));
       // every solid button in the page: while one is on screen, the header's ask is an outline (one solid at a time)
       solids = new Set();
-      const sio = new IntersectionObserver((es) => { es.forEach((e) => (e.isIntersecting ? solids.add(e.target) : solids.delete(e.target))); update(); }, { rootMargin: '-60px 0px 0px 0px' });
+      // entrances fade buttons in after they enter the screen: look again once they have settled
+      let again = 0;
+      const sio = new IntersectionObserver((es) => {
+        es.forEach((e) => (e.isIntersecting ? solids.add(e.target) : solids.delete(e.target)));
+        update(); clearTimeout(again); again = setTimeout(update, 1300);
+      }, { rootMargin: '-60px 0px 0px 0px' });
+      // sticky buttons never re-enter the screen, and fades finish later: look again whenever scrolling settles
+      let settle = 0;
+      const onScroll = () => { clearTimeout(settle); settle = setTimeout(update, 180); };
+      addEventListener('scroll', onScroll, { passive: true });
       const watchSolids = () => document.querySelectorAll(SOLID).forEach((el) => sio.observe(boxOf(el)));
       watchSolids();
 
@@ -98,7 +120,7 @@ export default function Ask() {
       // menus, sheets, search and the cookie note come and go without telling anyone; late sections bring new asks
       const watchMore = () => { document.querySelectorAll('.x-band, [data-ask-hide], main [data-thumb]').forEach((el) => io.observe(boxOf(el))); watchSolids(); update(); };
       const offDom = onDomChange(watchMore);
-      cleanups.push(() => { io.disconnect(); sio.disconnect(); roomIo?.disconnect(); offDom(); removeEventListener('resize', watchRooms); removeEventListener('focusin', fin); removeEventListener('focusout', fout); });
+      cleanups.push(() => { clearTimeout(again); clearTimeout(settle); removeEventListener('scroll', onScroll); io.disconnect(); sio.disconnect(); roomIo?.disconnect(); offDom(); removeEventListener('resize', watchRooms); removeEventListener('focusin', fin); removeEventListener('focusout', fout); });
     };
     const r = requestAnimationFrame(() => setTimeout(start, 120));
     return () => { off = true; cancelAnimationFrame(r); cleanups.forEach((f) => f()); };

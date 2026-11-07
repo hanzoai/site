@@ -25,7 +25,7 @@ export const metadata = {
   formatDetection: { telephone: false, email: false, address: false },
   twitter: { card: 'summary_large_image', site: '@hanzoai' },
 };
-export const viewport = { width: 'device-width', initialScale: 1, viewportFit: 'cover', themeColor: '#ffffff', colorScheme: 'light' };
+export const viewport = { width: 'device-width', initialScale: 1, viewportFit: 'cover', interactiveWidget: 'resizes-content', themeColor: '#ffffff', colorScheme: 'light' };
 
 export default function RootLayout({ children }) {
   return (

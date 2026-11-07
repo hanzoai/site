@@ -7,7 +7,7 @@
 .fn-trigs ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
 .fn-trigs li { display: flex; align-items: center; gap: 10px; padding: 15px 16px; border-radius: 14px; background: #fff; border: 1px solid var(--line); font: 500 15px/1 var(--mono); color: var(--soft); white-space: nowrap; transition: color .3s var(--ease), border-color .3s, box-shadow .4s var(--ease), transform .4s var(--ease); }
 .fn-trigs li i { flex: none; width: 8px; height: 8px; border-radius: 50%; background: #d1d1d6; transition: background .3s; }
-.fn-trigs li.on { color: var(--ink); border-color: var(--ac); box-shadow: 0 0 0 4px rgba(94, 92, 230, .12); transform: translateX(6px); }
+.fn-trigs li.on { color: var(--ink); border-color: var(--ac); box-shadow: 0 0 0 4px rgba(115, 115, 115, .12); transform: translateX(6px); }
 .fn-trigs li.on i { background: var(--ac); }
 .fn-calls { position: absolute; top: 50%; right: calc(-1 * clamp(16px, 2.2vw, 36px)); width: clamp(16px, 2.2vw, 36px); height: 2px; margin-top: 10px; background: var(--line); }
 .fn-calls i { position: absolute; top: -3px; left: 0; width: 8px; height: 8px; border-radius: 50%; background: var(--ac); opacity: 0; }
@@ -44,7 +44,7 @@
 .fn-slots i { aspect-ratio: 1; border-radius: 5px; background: #ececf0; transform: scale(.55); transition: transform .4s cubic-bezier(.34, 1.56, .64, 1), background .25s; }
 .fn-slots i.on { background: var(--ac); transform: none; }
 .fn-warm { margin: 0; display: flex; align-items: center; gap: 8px; font: 500 13px/1 var(--mono); color: var(--soft); }
-.fn-warm i { width: 10px; height: 10px; border-radius: 3px; border: 1.5px solid var(--ac); background: rgba(94, 92, 230, .15); }
+.fn-warm i { width: 10px; height: 10px; border-radius: 3px; border: 1.5px solid var(--ac); background: rgba(115, 115, 115, .15); }
 
 /* ---------- chapters ---------- */
 .fn-ch-head { display: flex; flex-direction: column; gap: 24px; }
@@ -66,7 +66,7 @@
 .fn-rt.box.on span { color: rgba(255, 255, 255, .8); }
 
 .fn-pool { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 10px; }
-.fn-pool i { aspect-ratio: 1 / 1.35; border-radius: 12px; background: rgba(94, 92, 230, .2); border: 1px solid rgba(94, 92, 230, .55); box-shadow: 0 0 30px -8px rgba(94, 92, 230, .7); transition: background .3s, transform .5s var(--ease); }
+.fn-pool i { aspect-ratio: 1 / 1.35; border-radius: 12px; background: rgba(115, 115, 115, .2); border: 1px solid rgba(115, 115, 115, .55); box-shadow: 0 0 30px -8px rgba(115, 115, 115, .7); transition: background .3s, transform .5s var(--ease); }
 .fn-pool i.hit { background: var(--ac); transform: translateY(-6px); }
 .fn-req { position: relative; height: 44px; border-radius: 22px; background: rgba(255, 255, 255, .05); overflow: hidden; }
 .fn-req-dot, .fn-req-l { position: absolute; top: 50%; }
@@ -104,7 +104,7 @@
 .fn-gnode.gpu { background: var(--ink); color: #fff; }
 .fn-gnode.gpu > div { border-color: rgba(255, 255, 255, .2); }
 .fn-gnode .fn-pod.in { width: 56px; height: 56px; opacity: 0; transform: scale(.3) translateY(-60px); }
-.fn-sc-gpu[data-k='1'] .fn-gnode.gpu { box-shadow: 0 0 0 3px var(--ac), 0 30px 60px -30px rgba(94, 92, 230, .8); }
+.fn-sc-gpu[data-k='1'] .fn-gnode.gpu { box-shadow: 0 0 0 3px var(--ac), 0 30px 60px -30px rgba(115, 115, 115, .8); }
 .fn-sc-gpu[data-k='2'] .fn-gnode .fn-pod.in { opacity: 1; transform: none; }
 .fn-sc-gpu[data-k='2'] .fn-want .fn-pod { opacity: .15; transform: scale(.8); }
 
@@ -154,7 +154,7 @@
 .fn-card-h span.gpu { background: var(--ac); }
 .fn-card-t { display: flex; flex-wrap: wrap; gap: 6px; padding: 18px 0; }
 .fn-card-t span { padding: 7px 11px; border-radius: 8px; background: #f5f5f7; font: 500 13px/1 var(--mono); color: var(--faint); transition: background .3s, color .3s; }
-.fn-card-t span.on { background: rgba(94, 92, 230, .12); color: var(--ac); }
+.fn-card-t span.on { background: rgba(115, 115, 115, .12); color: var(--ac); }
 .fn-card-l { margin: 0; padding: 18px 0 0 1.4em; border-top: 1px solid var(--line); display: grid; gap: 14px; }
 .fn-card-l li { padding-left: 4px; font-size: 17px; line-height: 1.5; color: var(--soft); }
 .fn-card-l li::marker { font: 500 14px var(--mono); color: var(--ac); }

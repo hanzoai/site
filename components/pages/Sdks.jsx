@@ -3,6 +3,8 @@
 // Beyond: pick your language and its install line, registry, docs and org line up in one place, ready to copy; and a Go import path you can type to find.
 /* SDKs.
    V2: 8/10 code as the hero: one big console where only the lines that differ between the OpenAI and Anthropic dialects re-set, Hanzo's six languages as a picker, the per-language orgs as the one dark room, and the Go modules as a type wall you filter by typing.
+   Persona: a developer choosing a client library. Goal: call the API from their language. CTA: API reference (sdks.hero).
+   Metric: cta_click on sdks.hero and sdks.close (data-cta; the event layer is the conductor's).
    SDKs. The first screen is the gateway's own request, written three ways and spoken two ways: the console flips
    between the OpenAI and Anthropic dialects by itself (until you take over), and only the lines that change between
    them are re-set, so the difference reads at a glance (base URL, header, max_tokens). Every sample is Hanzo's. */
@@ -200,7 +202,7 @@ function Hero() {
           <div className="xsd-top-r">
             <p className="a2-lede xsd-lede">A <b>full Cloud SDK</b> generated from the OpenAPI document the API itself serves, and a hand-written <b>AI + Agents</b> library.</p>
             <div className="x-row-links tight xsd-hero-links">
-              <span data-thumb="API reference" data-href="https://docs.hanzo.ai/docs/openapi/"><More to="https://docs.hanzo.ai/docs/openapi/">API reference</More></span>
+              <span data-thumb="API reference" data-href="https://docs.hanzo.ai/docs/openapi/" data-cta="sdks.hero"><More to="https://docs.hanzo.ai/docs/openapi/">API reference</More></span>
               <More to="https://github.com/hanzoai/sdk">hanzoai/sdk</More>
             </div>
           </div>
@@ -368,9 +370,21 @@ function Mods() {
   );
 }
 
+/* The close: one line, one ask (ink on paper; the orgs are the page's one dark room). */
+function Close() {
+  return (
+    <section className="a2-sec xsd-close" aria-label="API reference">
+      <div className="a2-wrap xsd-close-in">
+        <p className="a2-display xsd-close-h" aria-hidden="true">SDKs for every language</p>
+        <div className="a2-acts"><A to="https://docs.hanzo.ai/docs/openapi/" className="x-btn solid" data-cta="sdks.close">API reference</A><More to="https://docs.hanzo.ai/docs/sdks">SDKs docs →</More></div>
+      </div>
+    </section>
+  );
+}
+
 export default function Sdks() {
   return (
-    <main className="a2 xsd" style={{ '--acc': '#0891b2' }}>
+    <main className="a2 xsd">
       <Hero />
       <A2Paste name="SDKs" text={PROMPT} />
       <Two />
@@ -378,6 +392,7 @@ export default function Sdks() {
       <Orgs />
       <Flagship />
       <Mods />
+      <Close />
     </main>
   );
 }
