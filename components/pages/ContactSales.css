@@ -21,7 +21,8 @@ html.x-arriving .xcs-in, html.x-arriving .xcs-up { animation-play-state: paused;
 .xcs-route { display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 48px; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; font-size: 17px; }
 .xcs-route span { color: var(--ink2); transition: color var(--d-fast) var(--e-out); }
 .xcs-route b { display: inline-flex; font-weight: 606; transition: transform var(--d-base) var(--e-io); }
-@media (hover: hover) { .xcs-route:hover b { transform: translateX(-6px); } .xcs-route:hover span { color: var(--ink); } }
+.xcs-route span { display: inline-block; transition: color var(--d-fast) var(--e-out), transform var(--d-base) var(--e-em); }
+@media (hover: hover) { .xcs-route:hover b { transform: translateX(-6px); } .xcs-route:hover span { color: var(--ink); transform: translateX(6px); } }
 .xcs-alt { margin: 0; font-size: 16px; line-height: 1.5; color: var(--ink2); max-width: 520px; }
 .xcs-ai { font-weight: 606; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; white-space: nowrap; transition: text-underline-offset var(--d-base) var(--e-out); }
 @media (hover: hover) { .xcs-ai:hover { text-decoration-thickness: 2px; text-underline-offset: 6px; } }
@@ -107,7 +108,8 @@ html.x-arriving .xcs-in, html.x-arriving .xcs-up { animation-play-state: paused;
 @keyframes xcs-rail { to { transform: translateX(-50%); } }
 .xcs-logo { flex: none; display: grid; place-items: center; width: 200px; height: 88px; color: var(--ink); text-decoration: none; }
 .xcs-logo img { max-height: 30px; max-width: 128px; width: auto; height: auto; object-fit: contain; filter: grayscale(1); opacity: .6; transition: opacity var(--d-base) var(--e-out); }
-@media (hover: hover) { .xcs-logo:hover img { opacity: 1; } .xcs-logo:hover span { color: var(--ink); } }
+.xcs-logo > * { transition: transform var(--d-base) var(--e-em), opacity var(--d-base) var(--e-out), color var(--d-base) var(--e-out); }
+@media (hover: hover) { .xcs-logo:hover img { opacity: 1; } .xcs-logo:hover span { color: var(--ink); } .xcs-logo:hover > * { transform: translateY(-4px); } }
 .xcs-logo.bad img { display: none; }
 .xcs-logo span { font: 497 21px/1 var(--sans); letter-spacing: -.02em; color: var(--muted); transition: color var(--d-base) var(--e-out); }
 

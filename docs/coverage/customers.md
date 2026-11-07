@@ -117,7 +117,8 @@ Done here:
 - **Phone scene:** a slim sticky strip (64px) sits right under the year rail (rail 60–121px, strip 121–185px at 375×812) and carries the first figure and label of the row crossing the middle, swapping as the desktop stage does (out 150ms rising 16px, then in 300ms ease-emphasis, `AnimatePresence mode="wait"`). Playwright, scrolling 300px at a time through the index: $2.5M → 250,000 → $135K → 120,000 ETH → $500M → $650M → €150M → 169M → Cover Build → Myle Tap → Personas Social, with exactly one strip layer each time. Rows also still read in (name to ink, figures settle once). Under reduced motion the strip swaps with no movement.
 - **Supporting:** the line-mask h1; the plate's turn (Damon, KANOA, back to Damon, rest), where the outgoing text fades in 0.15s before the edge crosses it; the closing figure rows sliding with scroll.
 - **State:** the year filter closes the list up with a 300ms glide.
-- **Kinds:** arrival, idle, pointer, state and scroll; scroll is 2 of 6.
+- **Kinds:** arrival, idle, pointer, state and scroll; scroll is 2 of 6. **Idle in the index:** the stage dot for the launch being read gives off a slow 1px ring (2.4s ease-in-out loop, off under reduced motion), so the mid-index screen is no longer still.
+- **Film** (`film.mjs motion customers-run3`, before the dot): desktop layout shift 0.000, 1 still screen (the mid-index, now answered by the dot); phone 0.000, 0 still screens. The desktop "DEAD hover" lines (asks, years, tab) are the tool's headless Chromium reporting `(hover: hover)` false (puppeteer check). Playwright shows the ask going #0a0a0a → #262626 on hover. The phone's "DEAD tap" is a tap on the already-selected case tab.
 - No springs. The kit `Tabs` pill is the kit's own.
 
 ## 10. Media

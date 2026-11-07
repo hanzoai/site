@@ -1,20 +1,25 @@
 'use client';
-/* /careers. V2: 8/10 to MASTER.md (deck type and greys, kit Cta, no ask bar, still perks). Earlier: v3 to JAMES.md: no labels over headlines, ink and greys only, the hero and its one ask fit
-   1470×801, one solid per screen with the ask sticky after the hero (the site's Ask bar, from data-thumb), every section holds an object, perks pinned.
+/* /careers.
+   V2: 8/10 re-review fixes: JS-off and reduced motion clean; the 21-button toolbar is one quiet skill row with a gliding
+   ink pill; perks crossfade (300ms) and stay in view on phones; phone numerals in their own row; a sheet opens in its own
+   white carrying its title and numeral onto the role page's h1 and numeral (page-local careers/door.js); the next
+   section peeks at 1470×801.
    Persona: an engineer or researcher deciding whether to apply (PLAN 1.1 "one contact click").
-   Goal: open a role and apply.  CTA: "View Open Positions" (careers.hero), the same ask in the site Ask bar (data-thumb) and the close.
+   Goal: open a role and apply.  CTA: "View Open Positions" (careers.hero), again only in the dark close (careers has no
+   sticky ask: data-ask="off", MASTER part 4).
    Metric: cta_click careers.* leading to a role page.
    Signature: the open roles are a deck of sheets. Scroll and each role rises over the last while the stack behind it
-   settles back; click a sheet and its title flies into the role page's headline (Morph, synchronized.studio).
-   Supporting (3): masked kinetic headline, once; the How-we-hire card sliding its steps by itself; the perk list's
-   Sigil field redrawing for the perk you point at. A Utility page (MASTER 4.5): the deck is its one delight, no
-   sticky ask (careers has none), entries 0.4s.
-   Beyond: match what you know. Tap the skills you have, taken word for word from the role descriptions (LLVM, RLHF,
-   zero-knowledge, data visualization…): the roles that ask for them stay lit with the words marked, the rest step back.
-   Deletes: the orange accent, the kicker over the h1 and over every headline, "Link" / "Copied" / "Clear" / "Match what
-   you know" / "ask for it" as visible words (icons with aria-labels now), native title= tooltips, the cross-fade in the
-   hiring card, the second solid button in Academic, solid "Apply" on every sheet.
-   The role pages (/careers/<slug>) keep Careers.css; this index has its own CareersBoard.css. */
+   settles back; click a sheet and it grows to fill the screen in its own white, its title and numeral flying onto the
+   role page's h1 and numeral (synchronized.studio; the site Morph times out, docs/requests/careers.md).
+   Supporting (3): masked kinetic headline, once, from first paint (CSS); the How-we-hire card sliding its steps by
+   itself; the perk tile crossfading its Sigil field and numeral to the perk you point at or tap. A Utility page (MASTER
+   4.5): the deck is its one delight, entries 0.4s.
+   Beyond: match what you know. Pick a skill, word for word from the role descriptions (LLVM, RLHF, zero-knowledge, data
+   visualization…): the ink pill glides to it, the roles that ask for it stay lit with the words marked, the rest step back.
+   Deletes: the orange accent, the kicker over the h1 and over every headline, the 8-pill team filter (each team had one
+   role), "Link" / "Copied" / "Clear" / "Match what you know" as visible words (icons with aria-labels), native title=
+   tooltips, the second solid button in Academic, solid "Apply" on every sheet.
+   The role pages (/careers/<slug>) are CareerRole.jsx; this index has its own CareersBoard.css. */
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { useRouter } from 'next/navigation';

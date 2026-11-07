@@ -224,7 +224,14 @@
 .xe-rackcard { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr) 48px; align-items: center; gap: 24px 48px; width: 100%; margin-top: clamp(40px, 4.4vw, 72px); padding: clamp(24px, 2.6vw, 40px); border-radius: 24px; border: 1px solid var(--line); background: #fff; color: var(--ink); text-align: left; cursor: pointer; transition: background-color .15s var(--eo), border-color .15s var(--eo); }
 @media (hover: hover) { .xe-rackcard:hover { background: #fafafa; border-color: rgba(0, 0, 0, .18); } }
 .xe-rackcard:active { transform: scale(.99); transition: transform 90ms var(--eo); }
-.xe-rackcard-t { display: flex; flex-direction: column; }
+.xe-rackcard-t { display: flex; flex-direction: column; grid-row: 1 / span 2; }
+.xe-rackcard-figs { grid-column: 2; grid-row: 2; }
+.xe-rackcard-go { grid-column: 3; grid-row: 1 / span 2; }
+/* four 8-GPU servers; the 32 GPUs light one by one when the card is first reached */
+.xe-rackglyph { grid-column: 2; grid-row: 1; display: grid; gap: 5px; }
+.xe-rackglyph > span { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; padding: 5px; border-radius: 6px; background: #f5f5f5; }
+.xe-rackglyph i { display: block; height: 10px; border-radius: 2px; background: #d4d4d4; transition: background-color .3s var(--eio); }
+.xe-rackglyph.on i { background: var(--ink); transition-delay: calc(300ms + var(--k) * 40ms); }
 .xe-rackcard-t .xe-k { margin-bottom: 0; }
 .xe-rackcard-say { font-size: var(--s-t); font-weight: 497; line-height: 1.3; letter-spacing: -.015em; text-wrap: balance; }
 .xe-rackcard-figs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
@@ -266,6 +273,9 @@
 .xe-fig > span { display: inline-block; }
 /* "16 of 16" is the one big figure (64px); the six results below rest at 28px in a hairline ledger */
 .xe-hero-fig .xe-fig { font-size: 64px; }
+.xe-tally { display: flex; gap: 4px; margin-top: 4px; }
+.xe-tally i { width: 14px; height: 4px; border-radius: 2px; background: #d4d4d4; transition: background-color .3s var(--eio); }
+.xe-tally.on i { background: var(--ink); transition-delay: calc(400ms + var(--k) * 80ms); }
 .xe-what { font-size: var(--s-body); font-weight: 606; letter-spacing: -.005em; }
 .xe-hero-fig .xe-soft { font-size: 15px; max-width: 48ch; }
 .xe-go { font: 500 15px/1 var(--sans); color: var(--ink); transition: transform .15s var(--eo); }
@@ -276,7 +286,8 @@
 /* hover: a quiet wash runs past the row's edges (no box at rest), the figure darkens a step and the arrow moves */
 .xe-led::before { content: ''; position: absolute; inset: 0 -16px; z-index: -1; border-radius: 12px; background: #f5f5f5; opacity: 0; transition: opacity .15s var(--eo); }
 .xe-ledger li { position: relative; isolation: isolate; }
-@media (hover: hover) { .xe-led:hover::before { opacity: 1; } .xe-led:hover .xe-led-go { transform: translateX(4px); color: var(--ink); } }
+.xe-led .xe-fig { transition: transform .3s var(--ee); }
+@media (hover: hover) { .xe-led:hover::before { opacity: 1; } .xe-led:hover .xe-fig { transform: translateX(6px); } .xe-led:hover .xe-led-go { transform: translateX(4px); color: var(--ink); } }
 .xe-led:active { transform: scale(.98); transition: transform 90ms var(--eo); }
 .xe-led .xe-fig { font-size: 28px; }
 .xe-led .xe-what { font-size: 15px; font-weight: 500; }
@@ -391,11 +402,12 @@ html:not(.js) .xe-r { position: relative; transform: none !important; }
 html:not(.js) .xe-r.gone { display: none; }
 html:not(.js) .xe-ch { left: auto; width: min(100% - 2 * var(--gut), 760px); margin: 64px auto 0; padding: 0 0 96px; }
 html:not(.js) .xe-caps { min-height: 0; }
+html:not(.js) .xe-tally i, html:not(.js) .xe-rackglyph i { background: var(--ink); }
 html:not(.js) .xe-cap { position: relative; margin-top: 28px; }
 @media (prefers-reduced-motion: reduce) {
   .xe-cut .xe-line > span, .xe-cam.ready .xe-ring { animation: none; }
   .xe-live i, .xe-r.new, .xe-r.new::before, .xe-panel-r { animation: none; }
-  .xe-roll, .xe-pf-u, .xe-tile-fig, .xe-rackcard-figs b, .xe-offer p.xe-offer-fig { transition: none; }
+  .xe-tally i, .xe-rackglyph i, .xe-led .xe-fig, .xe-roll, .xe-pf-u, .xe-tile-fig, .xe-rackcard-figs b, .xe-offer p.xe-offer-fig { transition: none; }
   .js .xe-cap, .js .xe-cap.on, .xe-r { transition: none; }
 }
 @media (max-width: 899px) {
@@ -442,6 +454,7 @@ html:not(.js) .xe-cap { position: relative; margin-top: 28px; }
   .xe-pf-chart button { grid-template-columns: 100px minmax(0, 1fr) 52px; gap: 10px; padding: 0 8px; }
   .xe-rackcard { grid-template-columns: minmax(0, 1fr); gap: 20px; padding: 20px; border-radius: 20px; }
   .xe-rackcard-go { display: none; }
+  .xe-rackcard-t, .xe-rackcard-figs, .xe-rackglyph { grid-column: auto; grid-row: auto; }
   .xe-racks, .xe-plan { grid-template-columns: minmax(0, 1fr); }
   .xe-specs div { grid-template-columns: 116px minmax(0, 1fr); }
   .xe-hero-fig { margin-top: 48px; }

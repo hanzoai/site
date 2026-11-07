@@ -6,7 +6,7 @@
 // CTA: Install from hanzo.sh (docs.hanzo.ai/docs/cli): hero solid (data-thumb) + the closing band; everything else is a text link. The header keeps the shared "Try Hanzo" (page ask requested in docs/requests/cli.md).
 // Metric: api_key_created (developer: copy the install line, then sign in with hanzo auth login)
 /* Hanzo CLI (Archetype: Developer, terminal-first, code as the hero).
-   V2: 8/10 round 3: the hero ask is the one pure-white solid on the black room (was the room's #f5f5f7 grey); the h1 cuts in on first paint and the session waits for fonts plus that cut-in before typing; "Hanzo CLI · Developers" moved from the bar above the h1 to the status line below it; the three claims are small terminal windows that type their command in (stepped clip) with the missing verb struck after; h2s use page-local cli/Cut (no reduced-motion hydration error, legible with JS off); resting carets keep the hero, prompt and script alive; 44 px tabs; every hover answers
+   V2: 8/10 round 4: the hero session is masked from first paint and only grows (0 resets); the tree starts fully open so the tour never reflows rows (phone CLS 0.0017); one caret steps down the band's places; the script window arrives block by block while its line count rolls up; rail cards fit their content; tree window outlined only; ending runs on (145/44 px). Round 3:the hero ask is the one pure-white solid on the black room (was the room's #f5f5f7 grey); the h1 cuts in on first paint and the session waits for fonts plus that cut-in before typing; "Hanzo CLI · Developers" moved from the bar above the h1 to the status line below it; the three claims are small terminal windows that type their command in (stepped clip) with the missing verb struck after; h2s use page-local cli/Cut (no reduced-motion hydration error, legible with JS off); resting carets keep the hero, prompt and script alive; 44 px tabs; every hover answers
    Motion: signature = the typed session in the hero terminal (text nodes via refs, stops off screen, runs once then rests).
    Supporting: the tree's selection that glides between leaves (layoutId, 300 ms ease), the added script block and the claim
    windows that wipe in (clip), the line-masked headlines. Colour: Hanzo's deck greys only. Every word is Hanzo's. */
@@ -351,7 +351,7 @@ function Caps() {
       <div className="av-wrap av-grid cli-caps-top">
         <Lines as="h2" id="cli-caps-h" className="av-head cli-caps-h" lines={['What the binary carries']} />
         <div className="cli-caps-r">
-          <p className="cli-help-k x-mono">Capabilities <span aria-hidden="true">· $ hanzo --help</span></p>
+          <p className="cli-help-k x-mono">Capabilities <span aria-hidden="true">· $ hanzo --help<span className="cli-caret" /></span></p>
           <div className="cli-arrows">
             <button type="button" onClick={() => go(-1)} disabled={edge[0]} aria-label="Previous capability"><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
             <button type="button" onClick={() => go(1)} disabled={edge[1]} aria-label="Next capability"><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg></button>

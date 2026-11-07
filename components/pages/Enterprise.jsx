@@ -380,13 +380,23 @@ function Prefill() {
   const [hot, setHot] = useState(false); // the figures rest small and grow while a size is being picked
   const timer = useRef(0);
   useEffect(() => () => clearTimeout(timer.current), []);
-  const pick = (i) => { setK(i); setHot(true); clearTimeout(timer.current); timer.current = setTimeout(() => setHot(false), 1600); };
+  const pick = (i) => { setMine(true); setK(i); setHot(true); clearTimeout(timer.current); timer.current = setTimeout(() => setHot(false), 1600); };
+  // until a hand takes over, the instrument steps through the sizes by itself while it is on screen (figures at rest)
+  const box = useRef(null);
+  const seen = useInView(box, { amount: 0.4 });
+  const calm = useReducedMotion();
+  const [mine, setMine] = useState(false);
+  useEffect(() => {
+    if (!seen || mine || calm) return;
+    const t = setTimeout(() => setK((v) => (v + 1) % PREFILL.length), 1800);
+    return () => clearTimeout(t);
+  }, [seen, mine, calm, k]);
   const [, t, r] = PREFILL[k];
   return (
-    <div className={'xe-pf' + (hot ? ' hot' : '')}>
+    <div className={'xe-pf' + (hot ? ' hot' : '')} ref={box}>
       <div className="xe-pf-read">
         <p className="xe-k">Zen 6 on one DGX Spark, as Hanzo measured it</p>
-        <div className="xe-pf-figs" aria-live="polite">
+        <div className="xe-pf-figs" aria-live={mine ? 'polite' : 'off'}>
           <div><span className="xe-pf-l">Prefill time</span><Roll k={'t' + k}>{t} s</Roll></div>
           <div><span className="xe-pf-l">Prefill rate</span><Roll k={'r' + k}>{r.toLocaleString('en-US')}</Roll><span className="xe-pf-u">tokens a second</span></div>
         </div>
@@ -417,6 +427,17 @@ function Rack({ name, total, specs, guide, to }) {
   );
 }
 
+// four 8-GPU servers, drawn: the 32 GPUs light one by one the first time the card is reached
+function RackGlyph() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.6 });
+  return (
+    <span ref={ref} className={'xe-rackglyph' + (seen ? ' on' : '')} aria-hidden="true">
+      {Array.from({ length: 4 }, (_, s) => <span key={s}>{Array.from({ length: 8 }, (__, k) => <i key={k} style={{ '--k': s * 8 + k }} />)}</span>)}
+    </span>
+  );
+}
+
 /* Your own GPUs: the measurement in the open, the rack detail in a drawer that grows out of its card */
 function Gpus() {
   const [src, setSrc] = useState(null);
@@ -442,6 +463,7 @@ function Gpus() {
             <span className="xe-rackcard-say">We recommend at least four 8-GPU NVIDIA Blackwell servers, B300 or B200, for Zen 6 Max on your own premises.</span>
             <span className="xe-k xe-tag">Zen 6 Max</span>
           </span>
+          <RackGlyph />
           <span className="xe-rackcard-figs">
             <span><b>9,216 GB</b><small>DGX B300</small></span>
             <span><b>5,760 GB</b><small>DGX B200</small></span>
@@ -511,6 +533,17 @@ function Mark({ src }) {
   return LOGOS ? <Img src={src} alt="" w={96} h={20} /> : null;
 }
 
+// sixteen marks, one per task of the suite, filled one by one the first time the figure is reached
+function Tally({ n }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.5 });
+  return (
+    <span ref={ref} className={'xe-tally' + (seen ? ' on' : '')} aria-hidden="true">
+      {Array.from({ length: n }, (_, i) => <i key={i} style={{ '--k': i }} />)}
+    </span>
+  );
+}
+
 function Proof() {
   return (
     <section className="xe-sec xe-proof" aria-labelledby="xe-proof-h">
@@ -522,6 +555,7 @@ function Proof() {
         </header>
         <A to="/benchmarks#decision-suite" className="xe-hero-fig">
           <Fig value="16 of 16" className="big" />
+          <Tally n={16} />
           <span className="xe-what">Decision Suite tasks won · Kai vs Jev</span>
           <span className="xe-soft">Every task of the suite, its row linking its runs and how to re-run it.</span>
           <span className="xe-go">See the runs →</span>

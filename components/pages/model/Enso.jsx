@@ -135,7 +135,7 @@ function Switchboard() {
         <strong>Enso</strong>
         {AXES.map((a, i) => <span key={a} className={'eo-ax eo-ax' + i} data-on={axis === i ? '' : undefined}>{a}</span>)}
       </div>
-      <ol className="eo-lanes">
+      <ol className="eo-lanes" aria-label="All Enso models">
         {TIERS.map((tr, i) => (
           <li key={tr.code} className="eo-lane" ref={(el) => (lanes.current[i] = el)} data-hit={hit === i ? '' : undefined}>
             <div className="eo-lane-top">
@@ -144,6 +144,7 @@ function Switchboard() {
             </div>
             <span className="eo-why">{AXES[tr.axis]} · {tr.why}</span>
             <p className="eo-last" aria-hidden="true"><i />{last[i]}</p>
+            <p className="eo-lane-p mb-tnum"><b>{tr.inp}</b> <span>in · per 1M tokens</span> <b>{tr.out}</b> <span>out</span>{tr.ctx && <> <b>1M</b> <span>context</span></>}</p>
           </li>
         ))}
       </ol>
@@ -200,6 +201,23 @@ function Gpqa() {
     return () => clearInterval(t);
   }, [seen, mine, calm, paused]);
   const pick = (i) => { setSel(i); setMine(true); };
+  // every result sits in a drawer under the chart: closed it is hidden="until-found" (find-in-page and #eo-results open it)
+  const drawer = useRef(null);
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    const el = drawer.current;
+    const show = () => setOpen(true);
+    const byHash = () => { if (location.hash === '#eo-results') show(); };
+    byHash();
+    el.addEventListener('beforematch', show);
+    addEventListener('hashchange', byHash);
+    return () => { el.removeEventListener('beforematch', show); removeEventListener('hashchange', byHash); };
+  }, []);
+  // React writes hidden as a boolean, so the drawer sets "until-found" itself; the server sends it open (JS off reads every row)
+  useEffect(() => {
+    const el = drawer.current;
+    if (open) el.removeAttribute('hidden'); else el.setAttribute('hidden', 'until-found');
+  }, [open]);
   const m = OTHERS[sel];
   const rows = [...GPQA].sort(sort === 'score' ? (a, b) => b[1] - a[1] : (a, b) => a[2] - b[2]);
   const frontier = ENSO.map((g) => `${px(g[2])},${py(g[1])}`).join(' ');
@@ -272,23 +290,29 @@ function Gpqa() {
             </ul>
           </aside>
         </div>
-        <div className="eo-table">
-          <div className="eo-sort" role="group" aria-label="Sort">
-            <button type="button" className="eo-sortb" aria-pressed={sort === 'score'} onClick={() => setSort('score')}>By score</button>
-            <button type="button" className="eo-sortb" aria-pressed={sort === 'cost'} onClick={() => setSort('cost')}>By cost</button>
+        <div className="eo-table" data-open={open ? '' : undefined}>
+          <button type="button" className="eo-disc" aria-expanded={open} aria-controls="eo-results" onClick={() => setOpen((o) => !o)}>
+            <span className="eo-disc-t">GPQA Diamond</span>
+            <span className="eo-disc-a">{open ? 'Close' : 'Show all'}<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 3v10M3 8h10" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg></span>
+          </button>
+          <div id="eo-results" className="eo-results" ref={drawer}>
+            <div className="eo-sort" role="group" aria-label="Sort">
+              <button type="button" className="eo-sortb" aria-pressed={sort === 'score'} onClick={() => setSort('score')}>By score</button>
+              <button type="button" className="eo-sortb" aria-pressed={sort === 'cost'} onClick={() => setSort('cost')}>By cost</button>
+            </div>
+            <DataTable
+              caption="GPQA Diamond"
+              cols={[{ key: 'm', label: 'Model' }, { key: 's', label: 'GPQA Diamond %', num: true }, { key: 'c', label: '$ per 1,000 questions', num: true }]}
+              rows={rows.map((g) => {
+                const enso = g[0].startsWith('Enso');
+                return {
+                  m: <>{enso ? <b>{g[0]}</b> : g[0]} {g[4] && <A to={g[4]} className="eo-src" aria-label={g[0] + ' source'}>↗</A>}</>,
+                  s: enso ? <b>{`${g[1].toFixed(1)}%`}</b> : `${g[1].toFixed(1)}%`,
+                  c: enso ? <b>{money(g[2])}</b> : money(g[2]),
+                };
+              })}
+            />
           </div>
-          <DataTable
-            caption="GPQA Diamond"
-            cols={[{ key: 'm', label: 'Model' }, { key: 's', label: 'GPQA Diamond %', num: true }, { key: 'c', label: '$ per 1,000 questions', num: true }]}
-            rows={rows.map((g) => {
-              const enso = g[0].startsWith('Enso');
-              return {
-                m: <>{enso ? <b>{g[0]}</b> : g[0]} {g[4] && <A to={g[4]} className="eo-src" aria-label={g[0] + ' source'}>↗</A>}</>,
-                s: enso ? <b>{`${g[1].toFixed(1)}%`}</b> : `${g[1].toFixed(1)}%`,
-                c: enso ? <b>{money(g[2])}</b> : money(g[2]),
-              };
-            })}
-          />
         </div>
       </div>
     </section>
@@ -333,33 +357,6 @@ const CHAPTERS = TIERS.map((tr, i) => ({
   ),
 }));
 
-// the three tiers side by side, every cell in Hanzo's own words and figures
-function Spec() {
-  const head = (tr) => <>{tr.name} <code>{tr.code}</code></>;
-  return (
-    <section className="lv-sec eo-spec" aria-labelledby="eo-spec-h">
-      <div className="x-wrap">
-        <div className="lv-sh">
-          <div className="eo-spec-h">
-            <svg className="eo-spec-ring" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 8a42 42 0 1 1-30.4 13" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" /></svg>
-            <h2 id="eo-spec-h" className="lv-h">One endpoint for every frontier model.</h2>
-          </div>
-          <p className="lv-p">Enso routes each request for quality, speed and cost.</p>
-        </div>
-        <DataTable
-          caption="All Enso models"
-          cols={[{ key: 'k', label: 'Enso' }, ...TIERS.map((tr) => ({ key: tr.code, label: head(tr), num: true }))]}
-          rows={[
-            { k: 'in · per 1M tokens', ...Object.fromEntries(TIERS.map((tr) => [tr.code, tr.inp])) },
-            { k: 'out', ...Object.fromEntries(TIERS.map((tr) => [tr.code, tr.out])) },
-            { k: 'context', ...Object.fromEntries(TIERS.map((tr) => [tr.code, tr.ctx ? '1M' : ''])) },
-          ]}
-        />
-      </div>
-    </section>
-  );
-}
-
 export default function Enso() {
   return (
     <Launch
@@ -381,14 +378,21 @@ export default function Enso() {
       }
     >
       <Chapters id="eo-tiers" label="Enso" items={CHAPTERS} />
-      <section className="lv-room lv-sec eo-live" data-room="dark" aria-label="Enso">
+      {/* the dark room: Hanzo's spec heading over the live router; each tier's lane carries its own prices (one object, not a second table) */}
+      <section className="lv-room lv-sec eo-live" data-room="dark" aria-labelledby="eo-spec-h">
         <div className="x-wrap">
+          <div className="lv-sh">
+            <div className="eo-spec-h">
+              <svg className="eo-spec-ring" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 8a42 42 0 1 1-30.4 13" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" /></svg>
+              <h2 id="eo-spec-h" className="lv-h">One endpoint for every frontier model.</h2>
+            </div>
+            <p className="lv-p">Enso routes each request for quality, speed and cost.</p>
+          </div>
           <Switchboard />
           <p className="eo-all"><More to="/models/enso">All Enso models</More></p>
         </div>
       </section>
       <Gpqa />
-      <Spec />
       <ModelCards slug="enso" />
       <Band title="The right intelligence. Every time." action="Try Hanzo" to="/login" />
     </Launch>
