@@ -447,3 +447,7 @@
 .xmf-maker-pause { position: absolute; right: 0; top: 0; }
 .xmf-maker-g { position: relative; }
 [data-mpaused] .xmf-sweep, [data-mpaused] .xmf-dot.me::after, [data-mpaused] .xmf-field.on .xmf-dot b { animation-play-state: paused; }
+
+/* Hanzo's model cards (SpecCard) in the rail and on the shelf */
+.xmf-rail > li, .xmf-grid > li { min-width: 0; }
+.xmf-rail .sc-card { min-height: 240px; }

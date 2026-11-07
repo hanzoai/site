@@ -12,6 +12,7 @@ import { EASE, Copy, Count } from '../../ui';
 import { A } from '../../kit';
 import Sigil from '../../Sigil';
 import { FilmPause, usePaused } from '../../v2/ModelFilm';
+import SpecCard from '../../v2/SpecCard';
 import { Field, useCatalog, rateFrom, money } from './parts';
 import './models.css';
 
@@ -118,14 +119,7 @@ export default function ProviderShelf({ doc }) {
             <ul className="xmf-grid">
               {[...shown, ...cards.filter((c) => hidden.has(c.href))].map((c) => (
                 <motion.li key={c.href} layout={anim ? 'position' : false} transition={{ type: 'spring', stiffness: 260, damping: 30 }} hidden={hidden.has(c.href)}>
-                  <A to={c.href} className="xmf-card">
-                    <span className="xmf-card-t"><b data-morph>{c.name}</b>{c.ctx && <i className="x-mono">{c.ctx}</i>}</span>
-                    <span className="xmf-card-d">{c.desc}</span>
-                    <span className="xmf-card-f">
-                      {c.tags.map((t) => <em key={t} className="x-mono">{t}</em>)}
-                      <span className="x-mono">{c.rate ? `${money(c.rate.in)} → ${money(c.rate.out)}` : ''}</span>
-                    </span>
-                  </A>
+                  <SpecCard to={c.href} title={c.name} desc={c.desc} tags={[...(c.ctx ? [c.ctx] : []), ...c.tags]} meta={c.rate ? <b>{`${money(c.rate.in)} → ${money(c.rate.out)}`}</b> : null} />
                 </motion.li>
               ))}
             </ul>

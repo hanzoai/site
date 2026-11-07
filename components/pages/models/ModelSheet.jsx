@@ -16,6 +16,7 @@ import { EASE, Copy } from '../../ui';
 import { A, Flap } from '../../kit';
 import Sigil from '../../Sigil';
 import { FilmPause, usePaused } from '../../v2/ModelFilm';
+import SpecCard from '../../v2/SpecCard';
 import { Field, Bill, Codes, Loose, useCatalog, rateFrom, rateText, money } from './parts';
 import './models.css';
 
@@ -178,11 +179,7 @@ export default function ModelSheet({ doc }) {
                   const sib = sibs.find((x) => x.href === c.href);
                   return (
                     <li key={c.href}>
-                      <A to={c.href} className="xmf-card" data-cursor="Open">
-                        <span className="xmf-card-t"><b data-morph>{c.name}</b>{c.ctx && <i className="x-mono">{c.ctx}</i>}</span>
-                        <span className="xmf-card-d">{c.desc}</span>
-                        <span className="xmf-card-f x-mono">{sib && sib.rate ? `${money(sib.rate.in)} → ${money(sib.rate.out)}` : ' '}</span>
-                      </A>
+                      <SpecCard to={c.href} title={c.name} desc={c.desc} tags={c.ctx ? [c.ctx] : []} meta={sib && sib.rate ? <b>{`${money(sib.rate.in)} → ${money(sib.rate.out)}`}</b> : null} />
                     </li>
                   );
                 })}
