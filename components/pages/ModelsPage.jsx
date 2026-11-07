@@ -16,12 +16,13 @@
    No UI hue: greys, black and white; colour arrives only through the films. Every word, id, rate and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
-import { EASE, Count, Copy } from '../ui';
+import { EASE, Copy } from '../ui';
 import { A } from '../kit';
 import { useOpener } from '../Opener';
 import Sigil from '../Sigil';
 import ModelFilm, { FilmPause, usePaused } from '../v2/ModelFilm';
 import SpecCard, { useSpecTilt } from '../v2/SpecCard';
+import MaskFig from '../v2/MaskFig';
 import { media, bySlug } from '../../lib/models';
 import { ROWS, OTHERS } from './models/rates';
 import './ModelsPage.css';
@@ -205,7 +206,7 @@ function Families() {
                   <p className="xmo-verb">{f.verb}</p>
                   <h3>{f.name}</h3>
                   <p className="xmo-fam-d">{f.d}</p>
-                  {f.stat && <p className="xmo-fam-stat"><b className="x-mono"><Count to={f.stat} /></b><span>Suites won · Kai vs Jev</span></p>}
+                  {f.stat && <p className="xmo-fam-stat"><b className="x-mono"><MaskFig>{f.stat}</MaskFig></b><span>Suites won · Kai vs Jev</span></p>}
                   {f.foot && <p className="xmo-fam-foot">{f.foot}</p>}
                   <Lk to={f.to} onClick={(e) => open(e, e.currentTarget.closest('.xmo-fam-c').querySelector('.xmo-fam-film'), f.slug)}>{`Explore ${f.name}`}</Lk>
                 </div>
@@ -276,12 +277,12 @@ function Figures() {
           <Lk to="/kai#benchmarks">Kai: decisions and their benchmarks</Lk>
         </header>
         <div className="xmo-fig-big">
-          <p className="xmo-num x-mono"><Count to={11} /></p>
+          <p className="xmo-num x-mono"><MaskFig>11</MaskFig></p>
           <p className="xmo-num-k">Suites won · Kai vs Jev</p>
         </div>
         {DUELS.map((d, i) => (
           <figure key={d.say} className="xmo-duel">
-            <p className="xmo-duel-n x-mono"><Count to={d.kai} decimals={1} suffix="%" delay={0.15 + i * 0.1} /></p>
+            <p className="xmo-duel-n x-mono"><MaskFig delay={0.12 + i * 0.1}>{`${d.kai.toFixed(1)}%`}</MaskFig></p>
             <figcaption>{d.say}</figcaption>
             <div className="xmo-bars" aria-hidden="true">
               <span className="kai"><b>Kai</b><i style={{ '--v': d.kai / 100 }} /><em className="x-mono">{d.kai.toFixed(1)}%</em></span>
