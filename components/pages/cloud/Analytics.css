@@ -671,3 +671,8 @@
   .an-shop li i b, .an-shop .an-m > span, .an-ins li, .an-spike, .an-coh i::after, .an-anom-plot path, .an-sw, .an-sw::after, .an-repo-g i { transition: none !important; }
   .kno-card:hover .an-art-rt p, .kno-card:hover .an-art-e p, .kno-card:hover .an-art-rt i::after, .kno-card:hover .an-j-hot, .kno-card:hover .an-art-j circle.hot, .kno-card:hover .an-art-f i, .kno-card:hover .an-a-bar span { animation: none; }
 }
+
+/* leaf spans inside bold labels (so each label is one text run): they take everything from their label */
+.an span.lf { all: unset; display: inline; }
+/* the install line draws its own "$ " (not text: never copied, never read) */
+.an .an-npm .x-codeblock-l::before { content: '$ '; color: #6e6e73; user-select: none; -webkit-user-select: none; }

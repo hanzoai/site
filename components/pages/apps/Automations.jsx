@@ -269,9 +269,11 @@ function Hero(props) {
         <div className="am2-top am2-ent e-sweep" ref={top} data-ent={e1}>
           <div className="am2-name">
             <h1 id="am2-h1" className="l2-display">
-              <span className="l2-ln">The apps </span>
-              <span className="l2-ln">a <span className="am2-ul">workflow</span> </span>
-              <span className="l2-ln">can <span className="am2-ul u2">reach</span></span>
+              {/* the sentence whole for readers (and the copy check); the lines below carry the underlines */}
+              <span className="x-sr">The apps a workflow can reach</span>
+              <span className="l2-ln" aria-hidden="true">The apps </span>
+              <span className="l2-ln" aria-hidden="true">a <span className="am2-ul">workflow</span> </span>
+              <span className="l2-ln" aria-hidden="true">can <span className="am2-ul u2">reach</span></span>
             </h1>
             <p className="l2-stage-kick l2-mono am2-kick">Hanzo Auto · Connectors</p>
           </div>

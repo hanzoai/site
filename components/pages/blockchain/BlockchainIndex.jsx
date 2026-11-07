@@ -145,7 +145,7 @@ function Intro({ doc }) {
           <ul className="bci-cats">{doc.cats.map((c) => <li key={c}>{c}</li>)}</ul>
         </div>
         <dl className="bci-facts">
-          {doc.facts.map(([a, b, c]) => <div key={a}><dt className="x-mono">{a}</dt><dd><b>{b}</b><span>{c}</span></dd></div>)}
+          {doc.facts.map(([a, b, c]) => <div key={a}><dt className="x-mono">{a}</dt><dd><b><span>{b}</span></b><span>{c}</span></dd></div>)}
         </dl>
       </div>
     </section>
@@ -207,7 +207,7 @@ function Pieces({ b, all, chain, onSeen }) {
               <li key={c2.name} data-k={j} hidden={j >= FIRST && !more} className={j === k ? 'on' : ''}>
                 <A to={c2.href} className="bci-card" onPointerEnter={(e) => e.pointerType === 'mouse' && setPoint(j)} onFocus={() => setPoint(j)} onBlur={() => setPoint(-1)}>
                   <span className="bci-card-n x-mono" aria-hidden="true">{two(j + 1)}</span>
-                  <b className="bci-card-t" data-morph>{c2.name}</b>
+                  <b className="bci-card-t" data-morph><span>{c2.name}</span></b>
                   <span className="bci-card-d">{c2.text}</span>
                   <span className="bci-card-c x-mono">{q ? <><i className={'bci-dot' + (has ? ' on' : '')} aria-hidden="true" /><b>{q.chains.length}</b> chains on its page</> : ' '}</span>
                   <span className="bci-card-go"><i>{c2.cta}</i><Arrow /></span>
@@ -259,7 +259,7 @@ function Groups({ b }) {
             <li key={g.title} className={open === k ? 'on' : lit === k ? 'lit' : ''}>
               <button type="button" aria-expanded={open === k} aria-controls={'bci-g' + k} onClick={() => { setMine(true); setOpen(open === k ? -1 : k); }} onPointerEnter={() => take(k)} onPointerLeave={() => setPeek(-1)}>
                 <span className="x-mono">{two(k + 1)}</span>
-                <b>{g.title}</b>
+                <b><span>{g.title}</span></b>
                 <i aria-hidden="true" />
               </button>
               <p id={'bci-g' + k} className="bci-gtext" hidden={open !== k}>{g.text}</p>
@@ -326,7 +326,7 @@ function Agent({ b }) {
           <BizLines id="bci-agent-h" className="bz-headline" lines={b.title} />
           <p className="bci-tag x-mono">{b.chip}</p>
           <p className="bz-body">{b.lede}</p>
-          <ul className="bci-bul">{b.bullets.map((x, k) => <li key={x}><span className="x-mono" aria-hidden="true">{two(k + 1)}</span>{x}</li>)}</ul>
+          <ul className="bci-bul">{b.bullets.map((x, k) => <li key={x}><span className="x-mono" aria-hidden="true">{two(k + 1)}</span><span>{x}</span></li>)}</ul>
         </div>
         <Streamed code={b.code.text} label={b.file} />
       </div>
