@@ -130,7 +130,7 @@ export default function Guide({ doc, emojis }) {
       <section className="v2f-sec tight xig-credit">
         <div className="v2f-wrap v2f-grid xig-credit-g">
           <div className="xig-credit-l">
-            <span className="xig-credit-e" aria-hidden="true">{monoOf(name)}</span>
+            <span className="xig-credit-e" aria-hidden="true"><Sigil seed={doc.route + '#credit'} data={seedData} className="xig-credit-s" still /><b>{monoOf(name)}</b></span>
             <div>
               {doc.created && <p className="xig-by"><Loose nodes={doc.created} /></p>}
               {doc.license && <p className="xig-lic"><Loose nodes={doc.license} /></p>}
