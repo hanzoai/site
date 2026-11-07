@@ -1,4 +1,4 @@
-// V2: 8/10 Apple-grade launch in Hanzo's own black and white: the film lands full-bleed and settles into an ensō ring (pinned on desktop, by itself on phones); the three tiers pin as chapters over Enso's film; the live router is the one dark room; GPQA as hero figures, the Pareto chart and a sortable table; the tiers side by side; Hanzo's exact model cards; a closing band
+// V2: 8/10 after the 7/10 review: Enso Ultra's 98.0% now leads alone (8 of 13 columns, counts up) with Enso 96.5% and Flash 95.5% stacked beside it at 32px; tier rail rows step in on hover, hidden chapters' links leave reach, the × close takes the kit hover page-locally, the GPQA tour starts when the plot is in view, and the spec heading carries a breathing ensō. Still: film lands full-bleed and settles into the ring, tiers pin as chapters, the live router room, Pareto chart and sortable table, Hanzo's model cards, a closing band
 // Persona: Developer
 // Goal: route every request through one endpoint
 // CTA: Try Hanzo (/login, data-thumb)

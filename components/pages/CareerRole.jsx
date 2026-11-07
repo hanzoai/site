@@ -284,6 +284,8 @@ export default function CareerRole({ role, no, peers = [] }) {
           <div className="v2f-wrap v2f-grid">
             <div className="xcj-why-l">
               <FamLines as="h2" play="view" id="xcj-why-h" text={why.title} className="v2f-head" />
+              {/* the section's object: the role's contour, drifting by itself (one idle mover on this screen) */}
+              <div className="xcj-why-s" aria-hidden="true"><Sigil seed={'/careers/' + role.slug + '/why'} data={[why.cards.length, total]} /></div>
             </div>
             <ol className="xcj-why-r">
               {why.cards.map(([t, d], i) => (
@@ -310,6 +312,7 @@ export default function CareerRole({ role, no, peers = [] }) {
               </p>
             )}
             <p className="xcj-note">{role.form.note.text} <a href={role.form.note.href}>{role.form.note.mail}</a></p>
+            <div className="xcj-apply-s" aria-hidden="true"><Sigil seed={'/careers/' + role.slug + '/apply'} data={[role.form.fields.length, total]} /></div>
           </div>
           <div className="xcj-apply-r"><Steps f={role.form} role={role} /></div>
         </div>

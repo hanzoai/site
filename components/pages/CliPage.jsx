@@ -36,11 +36,13 @@ function Session({ onDone, paused, runKey }) {
   const hold = useRef(paused);
   hold.current = paused;
   const ran = useRef(-1);
-  const [n, setN] = useState(SESSION.length + 1); // the whole session is in the HTML (the final frame); the browser plays it once
+  const [n, setN] = useState(SESSION.length + 1); // the whole session is in the HTML (the final frame) for JS off and reduced motion
+  // with JS on, the rows are masked from first paint (`.js .cli-sess:not(.live)`), so the session only ever grows: never shown, wiped and retyped
+  const [live, setLive] = useState(false);
   useEffect(() => { onDone(n > SESSION.length); }, [n, onDone]);
   useEffect(() => {
     const fill = () => rows.current.forEach((el, i) => { if (el) el.textContent = SESSION[i][1]; });
-    if (calm) { fill(); setN(SESSION.length + 1); return; }
+    if (calm) { fill(); setN(SESSION.length + 1); setLive(true); return; }
     if (!seen || ran.current === runKey) return;
     ran.current = runKey;
     let alive = true, t = 0;
@@ -49,8 +51,9 @@ function Session({ onDone, paused, runKey }) {
     const run = async () => {
       rows.current.forEach((el, i) => { if (el && i < 2) el.textContent = ''; });
       setN(1);
+      setLive(true);
       // the h1 paints first: wait for the fonts and the h1's own cut-in (about 760 ms) before the first keystroke
-      if (runKey === 0) { try { await Promise.race([document.fonts?.ready, new Promise((r) => setTimeout(r, 1200))]); } catch {} await wait(820); }
+      if (runKey === 0) { try { await Promise.race([document.fonts?.ready, new Promise((r) => setTimeout(r, 1200))]); } catch {} await wait(Math.max(60, 900 - performance.now())); }
       else await wait(350);
       for (let i = 0; i < SESSION.length && alive; i++) {
         setN(i + 1);
@@ -66,10 +69,10 @@ function Session({ onDone, paused, runKey }) {
       if (alive) { setN(SESSION.length + 1); play('done'); } // it ends at rest on the final frame, with the faint chime
     };
     run();
-    return () => { alive = false; clearTimeout(t); fill(); setN(SESSION.length + 1); };
+    return () => { alive = false; clearTimeout(t); fill(); setN(SESSION.length + 1); setLive(true); };
   }, [seen, calm, runKey]);
   return (
-    <ul className="cli-lines cli-sess" ref={box}>
+    <ul className={'cli-lines cli-sess' + (live ? ' live' : '')} ref={box}>
       {SESSION.map(([p, t], i) => (
         <li key={t} className={'cli-l k' + i + (i < n ? ' on' : '')}>
           <span className="cli-p" aria-hidden={i > 1 ? 'true' : undefined}>{p}</span>
@@ -143,7 +146,7 @@ function Paste() {
     <section className="cli-paste">
       <div className="av-wrap av-grid">
         <div className="cli-prompt">
-          <code>{text}<span className="cli-caret" aria-hidden="true" /></code>
+          <code>{text}</code>
           <Copy text={text} />
           <span className="cli-prompt-k x-mono">Agent prompt</span>
         </div>
@@ -201,7 +204,10 @@ function Print({ cmd, desc }) {
 }
 
 function Tree() {
-  const [open, setOpen] = useState(() => new Set([0]));
+  // fixed row slots: every folder starts open, so the self-running tour never opens or collapses a row (no reflow, no layout shift);
+  // it only moves the selection and scrolls the tree's own pane to it. A press still opens and closes folders by hand.
+  const [open, setOpen] = useState(() => new Set(TREE.map((_, r) => r)));
+  const pane = useRef(null);
   const [sel, setSel] = useState([0, 0]);
   const [mine, setMine] = useState(false);
   const [k, setK] = useState(0);
@@ -217,7 +223,9 @@ function Tree() {
     if (!touring || !seen || paused) return; // it walks the tree once, then rests; a press anywhere hands it to you
     const t = setTimeout(() => {
       const nk = k + 1, [r, c] = TOUR[nk];
-      setK(nk); setOpen(new Set([r])); setSel([r, c]);
+      setK(nk); setSel([r, c]);
+      const ul = pane.current, li = ul?.querySelectorAll(':scope > li')[r];
+      if (ul && li) ul.scrollTo({ top: Math.max(0, li.offsetTop - 12), behavior: 'smooth' }); // the pane scrolls, never the page
     }, 3800);
     return () => clearTimeout(t);
   }, [k, touring, seen, paused]);
@@ -235,7 +243,7 @@ function Tree() {
         <button type="button" className="cli-ctl light" onClick={() => setPaused((p) => !p)} aria-label="Pause" aria-pressed={paused} hidden={!touring}>{paused ? <IconPlay /> : <IconPause />}</button>
       </div>
       <div className="cli-fs-main">
-        <ul className="cli-tree" role="tree" aria-label="hanzo">
+        <ul className="cli-tree" role="tree" aria-label="hanzo" ref={pane}>
           {TREE.map(([name, list], r) => {
             const isOpen = open.has(r);
             const last = r === TREE.length - 1;
@@ -396,7 +404,7 @@ function Block({ b, i, added, last }) {
       <Copy text={lines.join('\n')} label="Copy" className="cli-blk-cp" />
     </>
   );
-  if (!added) return <div className="cli-blk">{body}</div>;
+  if (!added) return <div className="cli-blk" style={{ '--i': i }}>{body}</div>;
   return (
     <motion.div className="cli-blk add" initial={calm ? false : { clipPath: 'inset(0 100% 0 0)', opacity: 0.4 }} animate={{ clipPath: 'inset(0 0% 0 0)', opacity: 1 }} transition={{ duration: 0.5, ease: EASE }}>
       {body}
@@ -404,11 +412,37 @@ function Block({ b, i, added, last }) {
   );
 }
 
+/* the script's line count rolls to its value: from 0 as the window arrives (in step with the blocks wiping in), then from the old
+   count to the new one each time a block is added or removed. The true value is in the HTML; tabular numerals, fixed ch width. */
+function Roll({ value, go }) {
+  const ref = useRef(null);
+  const from = useRef(null);
+  const calm = useReducedMotion();
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (calm || !go) { el.textContent = value; if (go) from.current = value; return; }
+    const a = from.current ?? 0, b = value, t0 = performance.now(), dur = a === 0 ? 900 : 400;
+    from.current = b;
+    let raf = 0;
+    const tick = (t) => {
+      const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(a + (b - a) * e);
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => { cancelAnimationFrame(raf); el.textContent = b; };
+  }, [value, go, calm]);
+  return <span ref={ref} className="cli-roll">{value}</span>;
+}
+
 function Start() {
   const [add, setAdd] = useState([]);
   const blocks = [...BASE, ...add.map((i) => EXTRA[i][0])];
   const flip = (i) => setAdd((a) => (a.includes(i) ? a.filter((x) => x !== i) : [...a, i]));
   const lines = blocks.join('\n\n').split('\n').length;
+  const win = useRef(null);
+  const arrived = useInView(win, { once: true, amount: 0.3 });
   return (
     <section className="av-sec cli-start" aria-labelledby="cli-start-h">
       <div className="av-wrap av-grid">
@@ -432,11 +466,11 @@ function Start() {
             })}
           </div>
         </div>
-        <div className="cli-script av-obj">
+        <div className={'cli-script av-obj' + (arrived ? ' in' : '')} ref={win}>
           <div className="cli-script-bar">
             <span className="cli-script-t">Get started</span>
             <span className="x-mono">bash</span>
-            <span className="cli-script-n x-mono av-num" aria-live="polite">{lines} lines</span>
+            <span className="cli-script-n x-mono av-num"><span aria-hidden="true"><Roll value={lines} go={arrived} /> lines</span><span className="x-vh" aria-live="polite">{lines} lines</span></span>
             <Copy text={blocks.join('\n\n')} label="Copy script" />
           </div>
           <div className="cli-script-body">
@@ -482,6 +516,16 @@ function Get() {
 const PLACES = ['A local repo', 'a CI job', 'a machine you sshed into', 'a fix at 2am'];
 
 function Band() {
+  // one caret, stepping down the four places while the band is on screen: one mover in the viewport, not four
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount: 0.4 });
+  const calm = useReducedMotion();
+  const [at, setAt] = useState(0);
+  useEffect(() => {
+    if (!seen || calm) return;
+    const t = setTimeout(() => setAt((a) => (a + 1) % PLACES.length), 2400);
+    return () => clearTimeout(t);
+  }, [seen, calm, at]);
   return (
     <section className="x-band cli-band" aria-labelledby="cli-band-h">
       <div className="av-wrap av-grid">
@@ -494,11 +538,11 @@ function Band() {
             <Cta to="https://platform.hanzo.ai" kind="link" id="cli.band-platform">Hanzo Platform</Cta>
           </div>
         </div>
-        <ul className="cli-places" aria-hidden="true">
-          {PLACES.map((p) => (
-            <li key={p}>
+        <ul className="cli-places" aria-hidden="true" ref={ref}>
+          {PLACES.map((p, i) => (
+            <li key={p} className={i === at ? 'on' : ''}>
               <span className="cli-place-k">{p}</span>
-              <span className="cli-place-t x-mono"><span>$</span> hanzo<i /></span>
+              <span className="cli-place-t x-mono"><span>$</span> hanzo<i className={i === at ? 'cli-caret' : ''} /></span>
             </li>
           ))}
         </ul>
