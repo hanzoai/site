@@ -1,17 +1,17 @@
 'use client';
 /* Bounties & Rewards. Its idea is the ledger of what a contribution earns.
    Persona: a developer who wants to contribute to Hanzo's open repositories. Goal: take an open bounty.
-   CTA: "Every open bounty" (GitHub search of Hanzo's bounty issues). Metric: GitHub click (PLAN-COMPONENTS 1.1, the
-   researcher/contributor row).
+   CTA: "Every open bounty" (GitHub search of Hanzo's bounty issues). Metric: github_click.
    V2: 8/10 grey deck: display hero beside the live GitHub window of open bounties; the four ways to earn are huge-figure tiles you can count on (steppers on each tile total your points and credits by Hanzo's own rates and place you against the listed top three); the standings as big totals; the token race scrubbed by scroll as the dark room; a GitHub-style timeline for taking a bounty.
    Signature: the token race: in the dark room the ten organizations' bars race out on a log line as you scroll.
    Beyond: count on the tiles: steppers on each way to earn add up the points and AI credits Hanzo's rates give, with a
    marker placed against the standings Hanzo lists. No words but Hanzo's.
-   Motion: scrubbed race (scroll, the signature) + open bounties arriving live with a pulse (time, idle) + tiles lifting
-   and steppers springing the marker (pointer, state) + line-mask headline (arrival). 0 UI hues. */
+   Motion: scrubbed race with @hanzo's figure growing 52→84px while it is the moment (scroll, the signature) + open
+   bounties arriving live with a pulse (time, idle) + steppers gliding the marker (pointer, state) + line-mask headline
+   (arrival) + the take timeline filling as it is read. 0 UI hues. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
-import { A } from '../kit';
+import { A, Cta } from '../kit';
 import { Count } from '../ui';
 import LineReveal, { NoJs } from '../v2/LineReveal';
 import { SEARCH, REPOS, CONTRIBUTING, useBounties, SAY } from './Bounty.github';
@@ -52,8 +52,8 @@ function Open() {
         <div className="xbo-say" role={st.kind === 'reading' ? 'status' : undefined} aria-live="polite">
           <span className="xbo-ghosts" aria-hidden="true"><i /><i /><i /><i /></span>
           {say && <p className="xbo-shimmer">{say}</p>}
-          {st.kind === 'unreachable' && <a className="x-btn xp-ghost" href={SEARCH} target="_blank" rel="noopener noreferrer">Every open bounty<i aria-hidden="true">↗</i></a>}
-          {st.kind === 'ready' && !total && <a className="x-btn xp-ghost" href="#propose">Propose a bounty<i aria-hidden="true">↓</i></a>}
+          {st.kind === 'unreachable' && <Cta to={SEARCH} kind="quiet" id="bounty.retry" className="xp-ghost">Every open bounty</Cta>}
+          {st.kind === 'ready' && !total && <Cta to="#propose" kind="quiet" id="bounty.propose" className="xp-ghost">Propose a bounty</Cta>}
         </div>
       )}
       {more > 0 && <a className="xbo-more" href={SEARCH} target="_blank" rel="noopener noreferrer"><span>Every open bounty</span><i aria-hidden="true">↗</i></a>}
@@ -67,16 +67,16 @@ function Hero() {
       <div className="xp-wrap xp-grid">
         <div className="xbo-copy">
           <LineReveal as="h1" id="xbo-h1" className="xp-display md" lines={['Take an issue.', 'Ship the fix.']} />
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.4 }}>
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.3 }}>
             <p className="xp-lede xbo-lede">Open issues and bug reports across Hanzo’s repositories. Ship a fix or report a verified bug to earn AI credits and climb the global leaderboard.</p>
             <div className="xbo-acts">
-              <a href={SEARCH} target="_blank" rel="noopener noreferrer" className="x-btn solid xp-cta" data-thumb="Every open bounty" data-cta="bounty.hero">Every open bounty<i aria-hidden="true">↗</i></a>
+              <Cta to={SEARCH} id="bounty.hero" thumb className="xp-cta">Every open bounty</Cta>
               <A to="/leaderboard" className="xbo-link">Leaderboard</A>
               <A to={CONTRIBUTING} className="xbo-link">How to contribute</A>
             </div>
           </motion.div>
         </div>
-        <motion.div className="xbo-hero-win" initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.25 }}>
+        <motion.div className="xbo-hero-win" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.2 }}>
           <Open />
         </motion.div>
       </div>
@@ -190,7 +190,7 @@ function Standings() {
             <h3 className="xp-title">Recent verified bug reports &amp; awards</h3>
             <A to="/leaderboard" className="xbo-link">View global token &amp; bounty leaderboard</A>
           </div>
-          <ul>
+          <ul className="xp-obj xbo-aw">
             {AWARDS.map(([h, prize, d]) => (
               <li key={h}>
                 <span className="xbo-wire-k x-mono">{h}</span>
@@ -249,12 +249,13 @@ function Volume() {
   const calm = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.85', 'end 0.85'] });
   const p = useTransform(scrollYProgress, (v) => (calm ? 1 : v));
+  const grow = useTransform(p, [0.05, 0.55], [0.62, 1], { clamp: true }); // 52px while the race waits, 84px once it has run
   return (
     <section className="xp-sec xp-dark xbo-vol" data-room="dark" aria-labelledby="xbo-vol-h">
       <div className="xp-wrap">
         <div className="xp-grid xbo-vol-head">
           <div className="xbo-vol-hl">
-            <p className="xbo-vol-fig xp-fig"><Tally p={p} to={ORGS[0][3]} /></p>
+            <motion.p className="xbo-vol-fig xp-fig" style={{ scale: grow }}><Tally p={p} to={ORGS[0][3]} /></motion.p>
             <p className="xbo-vol-u x-mono"><span>@hanzo</span><span>Core Fleet</span><span>tokens</span></p>
           </div>
           <div className="xbo-vol-hr">
@@ -274,7 +275,19 @@ function Volume() {
 const TAKE = ['Say on the issue that you are taking it.', 'Open a pull request that says Fixes and the issue’s number.', 'A maintainer reviews it, merges it, and credits your account with points and AI credits.'];
 const MARKS = [['Issue', 'open'], ['Pull request', 'pr'], ['Merged', 'merged']];
 
+function Mark({ p, i, children, cls }) {
+  const on = useTransform(p, (v) => (v >= i / TAKE.length + 0.08 ? 1 : 0));
+  const [lit, setLit] = useState(false);
+  useMotionValueEvent(on, 'change', (x) => setLit(!!x));
+  useEffect(() => setLit(!!on.get()), []); // eslint-disable-line react-hooks/exhaustive-deps
+  return <li className={cls + (lit ? ' on' : '')}>{children}</li>;
+}
+
 function Take() {
+  const ref = useRef(null);
+  const calm = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.75', 'end 0.55'] });
+  const p = useTransform(scrollYProgress, (v) => (calm ? 1 : v));
   return (
     <section className="xp-sec xbo-take" aria-labelledby="xbo-take-h">
       <div className="xp-wrap xp-grid">
@@ -282,12 +295,12 @@ function Take() {
           <h2 id="xbo-take-h" className="xp-head">How a bounty is taken</h2>
           <p className="xp-body xbo-take-note">Verified bug reports and merged bounties earn Hanzo AI credits and leaderboard points, with email notifications sent as you climb ranks.</p>
         </div>
-        <ol className="xbo-tl">
+        <ol className="xbo-tl xp-obj" ref={ref}>
           {TAKE.map((t, i) => (
-            <li key={t} className={MARKS[i][1]}>
+            <Mark key={t} p={p} i={i} cls={MARKS[i][1]}>
               <span className="xbo-tl-m" aria-hidden="true" />
               <p className="xp-title">{t}</p>
-            </li>
+            </Mark>
           ))}
         </ol>
         <div className="xbo-propose" id="propose">

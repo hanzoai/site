@@ -1,82 +1,165 @@
-# /benchmarks coverage (PLAN-COMPONENTS areas 2.1–2.18)
+# /benchmarks coverage (MASTER.md part 2, the 18 parts)
 
-Page file: `components/pages/Benchmarks.jsx` · gallery: `docs/gallery/benchmarks/`
+Page file: `components/pages/Benchmarks.jsx` · gallery: `docs/gallery/benchmarks/` · metric id: `cta_click` (`benchmarks.hero`, `benchmarks.close`)
+
+Open copy questions for James: none. Section labels Hanzo shows as eyebrows ("Enso · intelligence per dollar", "Kai · decisions", "Leaderboard") now sit under their headings as captions, with the words unchanged.
+Shared changes requested (`docs/requests/benchmarks.md`): none.
+Forks this page deleted:
+- the hand-built `<table>` helper and the evidence table (now the kit's `DataTable`);
+- the hero and close `pf-btn` links (now the kit's `Cta`);
+- the kit `Band` (replaced by a closing room that carries `data-cta`);
+- the floating `AskBar`;
+- the sticky compare tray (now in the flow);
+- the floating scatter tooltips (now a record band under the chart);
+- every spring.
 
 ## 1. Strategy and conversion
-Done here: One ask, Hanzo's "Start on Hanzo Cloud" (cloud.hanzo.ai). It is solid in the hero, sticky after the hero, and solid again in the closing room. "The results" and "Every benchmark" are text links with a chevron. Persona, goal and CTA lines sit at the top of the page file.
+- [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
+- [x] One solid fill per viewport; label and href from `lib/cta.js`. Note: `lib/cta.js` does not exist yet, so the label is Hanzo's own Band label, verbatim.
+- [x] One h1; the page is clear in 5 seconds
+- [x] No dead or self-looping button. ~~Prices from `lib/plans.js`~~ n/a: the page shows no plan prices.
+- [x] Open copy questions for James listed, none decided
+
+Done here: One ask, "Start on Hanzo Cloud" → cloud.hanzo.ai. It is `Cta` in the hero (`benchmarks.hero`, thumb) and again in the closing room (`benchmarks.close`). "The results" and "Every benchmark" are text links with a chevron. The one h1 is "Intelligence, cost and speed, each measured." at 52px, over the frontier chart.
 
 ## 2. Information architecture and navigation
-Done here: Hanzo's header and footer are unchanged. A sticky product rail sits under the header (Enso, Kai, Zen 6, Agent harness, Agent platform, Methods, Every benchmark). It has a scroll-spy pill and a "/" jump-to-benchmark search. The order follows a model launch: frontier, figures, Enso, Kai, the board, Zen 6, harness, platform, methods, shelf.
+- [x] One `<main>`; the skip link reaches the layout's `#main` mark (the page adds no second `id="main"`)
+- [x] Every link through `A`, `Go`, `More` or `href()`; every card a real link
+- [ ] ~~Breadcrumb at depth 2 or more~~ n/a: /benchmarks is depth 1.
+- [x] Link parity: 0 removed, 0 unexpected
+
+Done here: A sticky in-page product band sits under the header: Enso, Kai, Zen 6, Agent harness, Agent platform, Methods and Every benchmark. It has a scroll-spy pill and a "/" jump-to-benchmark search. Parity links: 134/134.
 
 ## 3. First impression and page narrative
-Done here: The headline (display, line-mask cut-in) sits over a full-bleed GPQA frontier. Within 1s, without input, its points plot themselves and it starts reading points aloud. As you scroll, the headline lifts away and the chart settles beside its caption (Stage). After that comes one idea per screen.
+- [x] Sells in 5 s; something moves within 1 s without input
+- [x] Nothing above the h1. ~~`PageHero`~~ not merged in the kit yet, so the page uses its own Stage.
+- [x] JS off: legible; no `opacity:0` on the LCP element
+- [x] One idea per 100svh; no 3 same-height sections in a row
+- [x] Ends in a closing room (Band equivalent) and the footer
+- [x] Card-to-page links use Morph (site layer; every in-site link morphs)
+
+Done here: In the first second the h1 cuts in line by line and the frontier draws its dashed line and points. It reads the GLM 5.3 record at 900ms. On scroll the headline lifts away and the large chart settles beside its caption (Stage). After that, one idea per screen. With JS off, a `<noscript>` rule lays the stage flat and shows every record and filter. The JS-off check finds 0 hidden text blocks.
 
 ## 4. Conversion system
-Done here: The thumb bar on phones comes from `data-thumb="Start on Hanzo Cloud"`, and `AskBar` gives the same label on desktop once the hero has gone. All three asks carry `data-cta="start-on-hanzo-cloud"`. There is one solid button per screen; sheet triggers and the race button are light.
+- [x] `<Cta>` only for the asks; no raw `.x-btn`
+- [x] Sticky ask in the header and the system's bar after the hero, same label (the page adds no floating bar of its own)
+- [x] Copy button copies exactly the displayed text; failure never says Copied
+- [x] `data-cta` and `data-thumb` on every primary
+
+Done here: `Cta thumb` drives the system bar with "Start on Hanzo Cloud". The command copy and "Copy link" now return early on a clipboard failure, so they never show "Copied" unless the copy worked.
 
 ## 5. Trust and proof
-Done here: Every figure is Hanzo's, and it sits beside its source:
-- run links and re-run links;
-- API endpoints;
-- commit hashes;
-- "Hanzo-measured; harness private" notes.
+- [x] No logo without documented permission; no seal; no invented number
+- [x] Every figure traces to Hanzo's copy; qualifier beside the number
+- [ ] ~~Marquees pause, freeze under reduced motion, hide duplicates~~ n/a: no marquee.
+- [ ] ~~Privacy link and owner line beside every submit~~ n/a: no form submit.
 
-   The full tables and methods open in sheets, and Methodology is one press away.
+Done here: Every figure sits with its source on the same screen or in its sheet: run links, re-run links, API endpoints, commit hashes and "Hanzo-measured; harness private" notes. Parity text: 860/860.
 
 ## 6. Content presentation (copy untouched)
-Done here: Parity is 860/860 text and 134/134 links. Detail sits behind (+) sheets, which are kept in the server HTML: the 12 runs, every system, the Decision Suite, the evidence, the trolley and qualification tables, coding, handlers, context lengths, the race numbers, the platform note, methodology and papers. There are no labels above headlines; Hanzo's section labels sit under them as captions.
+- [x] No text under 13px (14px phone) except mono capitals
+- [x] Measures held; no orphan word in a heading (`text-wrap: balance`)
+- [x] Tables use the kit's `DataTable`. ~~FAQ, tabs, code~~: no FAQ. Tabs are the page's own (Evidence and the race, `role=tab`). The command line is a copy row.
+- [x] `python3 scripts/parity.py /benchmarks`: 0 missing
+
+Done here: Detail lives in (+) sheets, which stay in the server HTML: the 12 runs, every system, the Decision Suite, the evidence, trolley and qualification, coding, handlers, context lengths, the race numbers, the platform note, methodology and papers. Font sizes are snapped to the deck list (12–112).
 
 ## 7. Visual design system
-Done here: v2 scale from `components/v2/ProofScale.css` (display 116, headline 56, body 19, Zen Mono captions) on a 1440 grid with asymmetric 4/8, 5/7 and 7/5 splits. Colour is ink, greys and silvers only, with no UI hue: Hanzo's series is ink and the rest is grey. Hero objects use 28px radii and tiles 16px. There is one dark middle room (Zen 6) and a dark closing room.
+- [x] `python3 scripts/taste.py <files>` passes; deck greys only
+- [x] No label, tag, badge or pill above a headline
+- [x] Radii and sizes from tokens; tiles are flat `#f5f5f5` at 24px (`ProofRhythm`); never box plus shadow
+- [x] One icon set (inline strokes); no icon in a rounded box
+- [x] Differs from neighbours in hero medium (a data chart that settles) and room order
+
+Done here: Scale rhythm comes from `ProofRhythm.css` with `pf-r`: h1 52/40, section headings 26, figures 64, and one 84px `pf-moment` per screen (3.02×, 2.0×, 477 bytes, ~3,665 tok/s, 72.40×). Two-part layouts split 8/5. There are two black rooms, Zen 6 and the close, never back to back, and each enters as a rounded card.
 
 ## 8. UI component library
-Done here: Uses the kit `A` and `More`, plus the v2 pieces `MaskLines`, `PinScenes`, `DetailSheet` and `AskBar`. Seg pills, tool buttons, tick boxes, the shelf checkboxes, the dial's range and the search field are all styled; no control uses browser defaults. Platform and start-up figures are spec-sheet rows (96px, hairlines), not box grids.
+- [x] Every control has hover, press, focus-visible, disabled and loading where it applies (the race button's disabled "Racing...", Cta busy on leaving)
+- [x] Focus ring visible on every stop of a Tab crawl (2px ink, white in the black rooms)
+- [x] Dialogs trap focus and return it (kit `DetailSheet`; not a native `<dialog>`, which is kit-owned)
+- [x] Inputs 16px or larger; no bare `:hover` (all 47 hover rules sit under `@media (hover: hover)`)
+- [x] Forks this page deleted: listed above
+
+Done here: Seg pills, tool buttons, tick boxes, checkboxes, the dial's range and the search field are all styled. Presses are .98 or a 1px drop, and hovers move something (the figure slides, tiles lift, rows fill, underlines open).
 
 ## 9. Motion and interaction
-Done here: see below.
-- Idle: the frontier reads points by itself, the live dot pulses, and the race runs once in view.
-- Pointer: figures slide, tiles and panels lift, spec rows fill with a clip-path wipe, links open their underline, chevrons nudge, presses are .98 or a 1px drop, and scatter points ring.
-- State: the board's eleven rows spring into a new order (layoutId), seg and rail pills glide, sheets rise, and the dial springs.
-- Scroll (about half): the Stage settle, two pinned scenes (Kai in 4 beats, Zen 6 in 3, each ≤ 250svh) with the Zen dial swept by scroll, bars drawing, and headline masks.
+- [x] One signature, at most 3 supporting techniques, at most 2 fade-ups (`variety.py` OK)
+- [x] At least 3 kinds of movement; scroll-linked is half or less
+- [x] Something moves without input; every control answers
+- [x] Reduced motion shows the final state; no `setInterval`
+- [ ] ~~Sound only on the listed moments, through the one kit~~ n/a: no sound moment on this page.
+
+Done here: The signature is Stage. Supporting: line-mask headlines, the board's rows gliding into a new order (layout, 300ms ease-emphasis) and the pinned chapters. Movement kinds: idle (points read themselves), state (sheets, pills, board), pointer and scroll. Timings are deck only (90, 150, 300, 400, 500ms, line art 1.2s) with no springs.
 
 ## 10. Media
-Done here: The page has no Hanzo images or film. Its hero objects are product-style data UI: the frontier, the 16 duel tiles, the board, the context dial, the race arena and the 477-byte square drawn to scale.
+- [ ] ~~`Film` and `Pic` only; sizes and posters set~~ n/a: Hanzo has no image or film for /benchmarks.
+- [ ] ~~At most 2 videos playing; pause button on loops over 5 s~~ n/a: no video.
+- [ ] ~~Budgets met; nothing missing; alt on every image~~ n/a: no image.
+- [ ] ~~No dimmed or filtered photo; 4+ real visuals together~~ n/a: no photos.
+
+Done here: The hero objects are product-style data UI drawn from Hanzo's own figures. They are the frontier chart, the 16 duel tiles, the board, the context dial, the race arena and the 477-byte square drawn to scale.
 
 ## 11. Mobile and responsive
-Done here: At 375px the page is designed for the phone:
-- the Stage lies flat (headline, ask, then chart);
-- the pinned scenes become stacked chapters, each with its visual;
-- a point's record reads in a reserved band under the chart, so nothing moves;
-- targets are 44px or more, there is no sideways scroll, no text is under 14px, and layout shift is 0.
+- [x] 375×812 and 1470×801 pass with no overlap
+- [x] No horizontal scroll at 320
+- [x] Every target 44px or more; every hover has a tap path
+- [x] Primary ask above the fold at 375×667
 
-## 12. Accessibility
-Done here: see below.
-- Real buttons, with `role=tab` and `aria-selected`, `aria-pressed` and `aria-expanded`.
-- The board summary is `aria-live`, and scatter points are focusable with aria-labels.
-- Sheets trap focus and close on Esc, then focus returns. Keyboard focus inside a pinned chapter scrolls to it.
-- Reduced motion shows final states (the Stage lies flat).
+Done here: `phone.mjs` passes (375/375) and layout shift is 0.000. On the phone the stage lies flat and pinned scenes stack. A point's record reads in a reserved band, so nothing moves. The ask sits at about 480px from the top at 375.
+
+## 12. Accessibility (WCAG 2.2 AA)
+- [x] Contrast measured: body #525252 on white is 7.8:1, captions #737373 4.7:1, white 55% on black about 6:1
+- [x] Pause control on every moving item. The frontier's self-reading stops for good once you point at, focus or tap any point. The live dot pulses three times, then rests.
+- [ ] ~~Forms labelled; first error focused~~ n/a: no form. The search fields have aria-labels.
+- [x] One h1; no heading skips; names start with visible text
+- [x] Keyboard reaches every control (focus inside a pinned chapter scrolls the scene to it)
+
+Done here: Tabs use `role=tab` and `aria-selected`, toggles use `aria-pressed`, and sheets use `aria-expanded`. The board summary is `aria-live`.
 
 ## 13. Performance and engineering
-Done here: see below.
-- Motion is transform, opacity and clip-path only, with no backdrop blur on the page.
-- Scroll-linked opacity uses function transforms, because Motion's ScrollTimeline acceleration misread the sticky runway.
-- Idle loops (point reading, dial) stop off screen via `useInView`.
+- [x] h1 and LCP element in server HTML
+- [x] JS and CSS inside budget; no image or video
+- [x] No poller; no third-party request before consent
+- [x] Nothing heavy run on James's laptop (cloud only)
+
+Done here: Motion is transform, opacity and clip-path only. Scroll-linked opacity uses function transforms, because Motion's ScrollTimeline acceleration misread the sticky runway. Idle loops stop off screen (`useInView`).
 
 ## 14. SEO and machine files
-Done here: Metadata and JSON-LD are unchanged (`app/benchmarks/page.jsx`). All text is in the server HTML, including every sheet, every chapter and every visual state. With JS off the Stage lies flat and every text block is visible, including point records and filters.
+- [x] Title and description match live (`app/benchmarks/page.jsx` equals `content/pages.json`)
+- [x] Canonical equals og:url equals the live URL (site layout)
+- [x] `<JsonLd route="/benchmarks">` unchanged
+- [x] Every card is a real link
+
+Done here: All text is in the server HTML, including every sheet, chapter and visual state.
 
 ## 15. Catalogue and product pages
-Done here: The shelf is a catalogue of 24 runs (of 166). You can search, filter by facet, use saved views, reorder (springs), compare rows of one benchmark in a sticky compare tray, and export CSV or JSON. There is also an index of every benchmark page.
+- [ ] ~~Model card matches `SPEC.md`~~ n/a: no model cards on this page.
+- [ ] ~~Every card opens by Morph~~ n/a beyond the site layer: the shelf rows and spec rows are links that morph.
+- [x] Every benchmark page linked in the DOM (the index of every benchmark page)
+- [ ] ~~One price figure everywhere~~ n/a: the only price is Kai against Jev, shown the same in figures, chapter and sheet.
+
+Done here: The shelf (24 of 166 runs) is searchable and filterable. It has saved views and reorder, a compare panel in the flow, and CSV/JSON export.
 
 ## 16. Developer experience
-Done here: The regenerate command is a copy-to-clipboard line. The research API endpoints and harness commits are links, and CSV, JSON and copy-link exports sit on every board.
+- [x] The command line is shown and copied exactly. A `CodeBlock` swap is pending: the copy row predates it.
+- [ ] ~~Config blocks parse on their own~~ n/a: no config.
+- [ ] ~~Terminal pauses and ends on a static frame~~ n/a: no terminal. The race ends on its final lanes.
+- [x] No hand-typed version number beyond Hanzo's own run ids
+
+Done here: Research API endpoints and harness commits are links, and every board has CSV, JSON and copy-link.
 
 ## 17. States and resilience
-Done here: see below.
-- Shelf: an empty state ("No run on this page matches", with "Show all 166") and a Clear control.
-- Board: "All 11" resets Your suites, and the view is kept in the address.
-- Race: a running state with a disabled button and a "Racing..." label.
-- The figures are static as Hanzo publishes them, so there is no loading or error state.
+- [x] Loading, empty, error and offline states designed where data is interactive (shelf empty state: "No run on this page matches", "Show all 166", Clear)
+- [x] Blocked live data leaves a complete page: the figures are static as Hanzo publishes them, and there are no console errors
+- [ ] ~~A failed submit keeps its values~~ n/a: no submit.
+- [x] A thrown island does not blank the page (each section is self-contained; no data fetch)
+
+Done here: "All 11" resets Your suites. The board view is kept in the address. The race shows a running state.
 
 ## 18. Measurement and handover
-Done here: The asks carry `data-cta`; no analytics are wired yet (pending Hanzo's event log). Filmed with `scripts/motion.mjs`: desktop 0 still screens and layout shift 0.000; phone layout shift 0 after the fix. Gallery: `desktop.mp4`, `desktop.jpg` and `phone-1..3.jpg`.
+- [x] `data-cta` on every primary. Events are sent by the kit's `Cta` (`hz-event`, `cta_click`).
+- [x] Nothing identifier-bearing before consent; no field value in a payload
+- [x] `V2: <score>/10 <one line>` in the page file's top comment
+- [ ] Review read: `docs/review/benchmarks.md`, verdict 8 or more (no review filed yet)
+
+Done here: Filmed with `scripts/motion.mjs` (desktop: 0 still screens, layout shift 0.000). Gallery: `desktop.mp4`, `desktop.jpg` and `phone-1..3.jpg`.

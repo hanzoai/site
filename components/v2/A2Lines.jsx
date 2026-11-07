@@ -7,6 +7,7 @@
    shows every masked line (and anything a page started at opacity 0) in its final place. */
 import { useRef } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
+import NoJs from '../NoJs';
 
 import { T, EMPH } from './A2Motion';
 
@@ -18,7 +19,7 @@ export default function A2Lines({ lines, as = 'h2', className = '', now, delay =
   const go = now || seen;
   return (
     <>
-    <noscript><style>{'.a2-ln-in{transform:none!important}.a2 [style*="opacity:0"]{opacity:1!important;transform:none!important}'}</style></noscript>
+    <NoJs css={'.a2-ln-in{transform:none!important}.a2 [style*="opacity:0"]{opacity:1!important;transform:none!important}'} />
     <Tag className={className} id={id} ref={ref}>
       {lines.map((l, i) => (
         <span className="a2-ln" key={i}>

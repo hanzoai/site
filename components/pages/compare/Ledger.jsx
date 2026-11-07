@@ -8,27 +8,35 @@
    provenance stamped on every row.
    Supporting: the hero figures race to their published counts, a sliding ink on the switches, a clip-path wipe opening
    the dark room, a magnetic ask. Greys only (v3): hierarchy comes from ink, silver and the stamps, not from hues.
-   Beyond: only where they differ. One switch folds every row on which all four say the same, and counts what is left,
+   Beyond: where they do differ. One switch (named in the lede's own words) folds every row on which all four say the same, and counts what is left,
    so you can test the page's own claim that they differ less than any of them advertise.
    Persona: Developer weighing OpenRouter, Portkey or LiteLLM. Goal: check the comparison and choose Enso. Metric: api_key_created.
    CTA: "Hanzo Enso" (to /enso): the one solid ask, in the hero and in "Go deeper"; vendor sites are text links.
-   V2: 8/10 From a raw ported table to a launch-style proof page: hero figure race, a ledger that files in with verdict marks and provenance stamps, a differences-only switch, one dark room; greyscale, one solid ask hero to close. */
+   V2: 8.5/10 On Hanzo's deck: race of published counts as the 64px Air hero object that keeps reading after it lands, kit Tabs + DataTable ledger whose reported rows file in, subject column tinted, 13px floor, black room opening from a card, no springs. */
+// Persona: developer weighing OpenRouter, Portkey or LiteLLM (MASTER §1 Developer row)
+// Goal: check the comparison, then open Enso. Metric: api_key_created
+// CTA: "Hanzo Enso" (compare-model-routing.hero, data-thumb), repeated at "Go deeper" (compare-model-routing.close)
 // Signature: the ledger files in: measured rows first, the vendors' own claims filing in under them, every cell a verdict mark, every row stamped with its provenance
 // Beyond: only where they differ: one switch folds the rows where all four say the same and counts what is left
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useInView } from 'motion/react';
-import { EASE, Count, Magnetic } from '../../ui';
-import { A } from '../../kit';
+import { Count, Lines } from '../../ui';
+import { EASE_OUT_EXPO as EASE, DUR } from '../../../lib/motion';
+import { A, Cta, Tabs, TabPanel, DataTable } from '../../kit';
 import './Ledger.css';
 
-const INK = { type: 'spring', stiffness: 300, damping: 30 };
 /* JavaScript off: the headline and lede that cut in, the race bars at their real lengths, the dark room unclipped */
-const NOJS = '.xvs .x-line-in,.xvs-lede{transform:none!important;opacity:1!important}.xvs-race-b i{transform:scaleX(var(--w))!important}.xvs-honest{clip-path:none!important}';
+/* JavaScript off: the race bars at their real lengths (the shared rule clears the other entrance states) */
+const NOJS = '.xvs-race-b i{transform:scaleX(var(--w))!important}';
 const Chev = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 /* the page's one ask, in Hanzo's words: its own product, the first door in "Go deeper"; solid once per screen */
-function Ask({ to, big }) {
+function Ask({ to, big, thumb, id }) {
   if (!to) return null;
-  return <Magnetic strength={0.25}><A to={to.href} className={'x-btn solid xvs-ask' + (big ? ' big' : '')} data-thumb=""><span>{to.label}</span><Chev /></A></Magnetic>;
+  return (
+    <span className="xvs-ask-w" {...(thumb ? {} : { 'data-ask-hide': '' })}>
+      <Cta to={to.href} kind="solid" id={id} className="xvs-ask" data-thumb={thumb ? to.label : undefined}><span>{to.label}</span><Chev /></Cta>
+    </span>
+  );
 }
 const num = (t) => { const m = /^([\d,.]+)\+?/.exec(t || ''); return m ? parseFloat(m[1].replace(/,/g, '')) : null; };
 const host = (h) => { try { return new URL(h).host.replace(/^www\./, ''); } catch { return ''; } };
@@ -51,96 +59,89 @@ function Said({ c }) {
 /* ---------- hero figures: the published counts, raced in the table's order ---------- */
 function Race({ row, cols, stamp }) {
   const box = useRef(null);
-  const seen = useInView(box, { once: true, amount: 0.5 });
+  const seen = useInView(box, { once: true, amount: 0.3 });
+  const live = useInView(box, { amount: 0.3 });
   const vals = row.cells.map((c) => num(c.t));
   const max = Math.max(...vals.filter((v) => v !== null), 1);
+  const [at, setAt] = useState(-1); // the router being read; -1 before the race lands
+  const [held, setHeld] = useState(false);
+  useEffect(() => {
+    if (!live || held || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let id = 0;
+    const t = setTimeout(() => { setAt((a) => (a < 0 ? 0 : a)); id = setInterval(() => setAt((a) => (a + 1) % vals.length), 2600); }, at < 0 ? 2300 : 600);
+    return () => { clearTimeout(t); clearInterval(id); };
+  }, [live, held, vals.length]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
-    <figure className="xvs-race" ref={box}>
-      <figcaption className="xvs-race-h"><span className="xvs-kick x-mono">{row.label}</span>{stamp && <span className="xvs-stamp" data-k="theirs">{stamp}</span>}</figcaption>
+    <figure className="xvs-race" ref={box} data-reading={at >= 0 || undefined} onMouseLeave={() => setHeld(false)}>
+      <figcaption className="xvs-race-h">
+        <span className="xvs-kick x-mono">{row.label}</span>
+        {stamp && <motion.span className="xvs-stamp" data-k="theirs" initial={{ opacity: 0, y: 6 }} animate={seen ? { opacity: 1, y: 0 } : {}} transition={{ duration: DUR.fade, ease: EASE, delay: 1.7 }}>{stamp}</motion.span>}
+      </figcaption>
       <ol>
         {row.cells.map((c, i) => {
           const f = /^([\d,.]+)(\+?)\s*(.*)$/.exec(c.t) || [];
           return (
-            <li key={cols[i]} data-us={i === 0 || undefined}>
+            <li key={cols[i]} data-us={i === 0 || undefined} data-on={i === at || undefined} onMouseEnter={() => { setHeld(true); setAt(i); }}>
               <span className="xvs-race-n">{cols[i]}</span>
-              <span className="xvs-race-b" aria-hidden="true"><motion.i style={{ '--w': (vals[i] || 0) / max }} initial={false} animate={{ scaleX: seen ? (vals[i] || 0) / max : 0.02 }} transition={{ duration: 1.4, ease: EASE, delay: 0.15 + i * 0.12 }} /></span>
-              <span className="xvs-race-f x-mono">{vals[i] !== null ? <Count to={vals[i]} suffix={f[2] || ''} run={seen} delay={0.15 + i * 0.12} duration={1.4} /> : c.t}</span>
+              <span className="xvs-race-b" aria-hidden="true"><motion.i style={{ '--w': (vals[i] || 0) / max }} initial={false} animate={{ scaleX: seen ? (vals[i] || 0) / max : 0.02 }} transition={{ duration: DUR.reveal, ease: EASE, delay: 0.15 + i * 0.06 }} /></span>
+              <span className="xvs-race-f x-mono">{vals[i] !== null ? <Count to={vals[i]} suffix={f[2] || ''} run={seen} delay={0.15 + i * 0.06} duration={DUR.reveal} /> : c.t}</span>
               {f[3] && <span className="xvs-race-x">{f[3]}</span>}
             </li>
           );
         })}
       </ol>
+      <noscript><style>{NOJS}</style></noscript>
     </figure>
   );
 }
 
 /* ---------- the ledger ---------- */
-function Ledger({ s, theirs }) {
-  const [more, setMore] = useState(false);
+function Ledger({ s, theirs, diffLabel }) {
+  const [tab, setTab] = useState(0);
   const [diff, setDiff] = useState(false);
   const rows = useMemo(() => [
     ...s.measured.map((r) => ({ ...r, k: 'ours' })),
     ...s.reported.map((r) => ({ ...r, k: 'theirs', mark: theirs })),
   ], [s, theirs]);
   const same = (r) => r.cells.every((c) => c.v === r.cells[0].v && c.v !== 'figure');
-  const open = rows.filter((r) => (r.k === 'ours' || more));
-  const shown = open.filter((r) => !diff || !same(r));
-  const folded = open.filter((r) => diff && same(r));
   const toggles = s.toggles.length === 2 ? s.toggles : ['Measured', '+ Reported'];
+  // the kit's DataTable: the first column is the row header, Enso the tinted subject column, provenance last
+  const cols = [{ key: 'label', label: s.corner }, ...s.head.map((h, i) => ({ key: 'c' + i, label: h, subject: i === 0 })), { key: 'prov', label: s.prov }];
+  const cell = (c) => (
+    <span className="xvs-cell" data-v={c.v}>
+      <Mark v={c.v} />
+      <Said c={c} />
+      {c.link && <A to={c.link.href} className="xvs-run x-mono">[ {c.link.label} ]</A>}
+    </span>
+  );
+  const row = (r) => ({ label: r.label, ...Object.fromEntries(r.cells.map((c, i) => ['c' + i, cell(c)])), prov: <span className="xvs-stamp" data-k={r.k}>{r.mark}</span> });
+  const measured = rows.filter((r) => r.k === 'ours');
+  const all = rows.filter((r) => !diff || !same(r));
+  const folded = diff ? rows.filter(same) : [];
   return (
     <section className="xvs-sec xvs-side" aria-labelledby="xvs-side-h">
+      <div className="xvs-wrap xvs-split">
+        <h2 id="xvs-side-h" className="xvs-h2">{s.h2}</h2>
+        <p className="xvs-lede">{s.lede}</p>
+      </div>
       <div className="xvs-wrap">
-        <div className="xvs-side-h">
-          <h2 id="xvs-side-h" className="xvs-h2">{s.h2}</h2>
-          <p className="xvs-lede">{s.lede}</p>
-        </div>
         <div className="xvs-ctl">
-          <div role="radiogroup" aria-label="Which rows to show" className="xvs-seg">
-            {toggles.map((t, i) => (
-              <button key={t} type="button" role="radio" aria-checked={more === (i === 1)} tabIndex={more === (i === 1) ? 0 : -1} onClick={() => setMore(i === 1)}
-                onKeyDown={(e) => { if (/Arrow(Right|Left|Up|Down)/.test(e.key)) { e.preventDefault(); setMore(!more); e.currentTarget.parentNode.children[more ? 0 : 1]?.focus(); } }}>
-                {more === (i === 1) && <motion.i layoutId="xvs-seg-ink" transition={INK} />}<span>{t}</span>
-              </button>
-            ))}
-          </div>
+          <Tabs id="xvs-rows" label="Which rows to show" tabs={toggles} value={tab} onChange={setTab} />
           {s.reported.length > 0 && (
-            <button type="button" role="switch" aria-checked={diff} className="xvs-diff" onClick={() => setDiff((d) => !d)}>
+            <button type="button" role="switch" aria-checked={diff} aria-controls="xvs-rows-panel-1" className="xvs-diff" disabled={tab !== 1} onClick={() => setDiff((d) => !d)}>
               <span className="xvs-diff-k" aria-hidden="true"><i /></span>
-              <span>Only where they differ</span>
-              <span className="xvs-diff-n x-mono" aria-live="polite">{open.filter((r) => !same(r)).length} of {open.length}</span>
+              <span>{diffLabel}</span>
+              <span className="xvs-diff-n x-mono" aria-live="polite">{rows.filter((r) => !same(r)).length} / {rows.length}</span>
             </button>
           )}
         </div>
-
-        <div className="xvs-tab" role="table" aria-label={s.corner}>
-          <div className="xvs-tr xvs-thead" role="row">
-            <span role="columnheader" className="xvs-corner">{s.corner}</span>
-            {s.head.map((h, i) => <span key={h} role="columnheader" className="xvs-col" data-us={i === 0 || undefined}>{h}</span>)}
-            <span role="columnheader" className="xvs-prov-h">{s.prov}</span>
-          </div>
-          {rows.map((r, ri) => {
-            const on = shown.includes(r);
-            const n = shown.indexOf(r);
-            return (
-              <motion.div key={r.label} role="row" className="xvs-tr" data-k={r.k} hidden={!on} initial={false}
-                animate={on ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }} transition={{ duration: 0.55, ease: EASE, delay: on && r.k === 'theirs' ? 0.06 * n : 0 }}>
-                <span role="rowheader" className="xvs-rh">{r.label}</span>
-                {r.cells.map((c, i) => (
-                  <span key={i} role="cell" className="xvs-td" data-us={i === 0 || undefined} data-v={c.v}>
-                    <span className="xvs-td-c x-mono" aria-hidden="true">{s.cols[i]}</span>
-                    <Mark v={c.v} />
-                    <Said c={c} />
-                    {c.link && <A to={c.link.href} className="xvs-run x-mono">[ {c.link.label} ]</A>}
-                  </span>
-                ))}
-                <span role="cell" className="xvs-prov"><span className="xvs-stamp" data-k={r.k}>{r.mark}</span></span>
-              </motion.div>
-            );
-          })}
+        <div className="xvs-led">
+          <TabPanel id="xvs-rows" i={0} value={tab}><DataTable caption={s.corner} cols={cols} rows={measured.map(row)} /></TabPanel>
+          <TabPanel id="xvs-rows" i={1} value={tab}>
+            <DataTable key={diff ? 'd' : 'a'} caption={s.corner} cols={cols} rows={all.map(row)} />
+            {folded.length > 0 && <p className="xvs-folded"><span className="x-mono">{folded.length}</span> {folded.map((r) => r.label).join(' · ')}</p>}
+          </TabPanel>
         </div>
-        {folded.length > 0 && (
-          <p className="xvs-folded"><span className="x-mono">{folded.length}</span> {folded.map((r) => r.label).join(' · ')}</p>
-        )}
         {s.note && <p className="xvs-note"><strong>{s.note.k}</strong> {s.note.t}</p>}
       </div>
     </section>
@@ -157,7 +158,7 @@ function Honest({ h }) {
   const marks = { 'we ran this': 'ours', 'they published this': 'theirs', 'not published': 'none' };
   return (
     <motion.section className="xvs-sec xvs-honest" data-room="dark" aria-labelledby="xvs-hon-h"
-      initial={{ clipPath: 'inset(10% 4% 10% 4% round 28px)' }} whileInView={{ clipPath: 'inset(0% 0% 0% 0% round 0px)' }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 1.1, ease: EASE }}>
+      initial={{ clipPath: 'inset(0% 2.2% 0% 2.2% round 24px)' }} whileInView={{ clipPath: 'inset(0% 0% 0% 0% round 0px)' }} viewport={{ once: true, amount: 0.12 }} transition={{ duration: DUR.reveal, ease: EASE }}>
       <div className="xvs-wrap">
         <h2 id="xvs-hon-h" className="xvs-kick x-mono">{h.h2}</h2>
         {big && <p className="xvs-quote">{big}</p>}
@@ -182,12 +183,12 @@ function Deeper({ d }) {
       <div className="xvs-wrap">
         <div className="xvs-deep-h">
           <h2 id="xvs-deep-h" className="xvs-h2">{d.h2}</h2>
-          <Ask to={us} big />
+          <Ask to={us} big id="compare-model-routing.close" />
         </div>
         <ul className="xvs-them">
           {them.map((l) => (
             <li key={l.href}>
-              <A to={l.href} data-cursor="Open">
+              <A to={l.href}>
                 <span className="xvs-them-t">{l.label}</span>
                 <span className="xvs-them-h x-mono">{host(l.href)} ↗</span>
               </A>
@@ -203,23 +204,23 @@ export default function Versus({ doc }) {
   const s = doc.side;
   const theirs = doc.honest && doc.honest.paras.flat().find((k) => k && k.em && /published this/.test(k.em));
   const hero = s && s.reported.find((r) => r.cells.every((c) => c.v === 'figure'));
+  // the switch's label is the lede's own words ("…and where they do differ…")
+  const said = /where they (do )?differ/i.exec(doc.lede || '');
+  const diffLabel = said ? said[0][0].toUpperCase() + said[0].slice(1) : s && s.toggles[1];
   return (
     <main className="xvs">
       <section className="xvs-hero" aria-labelledby="xvs-h1">
         <div className="xvs-wrap xvs-hero-g">
           <div className="xvs-hero-t">
-            <h1 id="xvs-h1" className="xvs-h1" data-morph-target>
-              <noscript><style>{NOJS}</style></noscript>
-              <span className="x-line"><motion.span className="x-line-in" initial={{ y: '106%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.1 }}>{doc.h1}</motion.span></span>
-            </h1>
+            <Lines as="h1" play="load" id="xvs-h1" className="xvs-h1" lines={[doc.h1]} data-morph-target="" />
             {doc.label && <p className="xvs-meta">{doc.label}</p>}
-            <motion.p className="xvs-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE, delay: 0.35 }}>{doc.lede}</motion.p>
-            {doc.deeper && <div className="xvs-hero-a"><Ask to={doc.deeper.links[0]} big /></div>}
+            <motion.p className="xvs-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, ease: EASE, delay: 0.35 }}>{doc.lede}</motion.p>
           </div>
           {hero && <Race row={hero} cols={s.cols} stamp={theirs && theirs.em} />}
+          {doc.deeper && <div className="xvs-hero-a"><Ask to={doc.deeper.links[0]} big thumb id="compare-model-routing.hero" /></div>}
         </div>
       </section>
-      {s && <Ledger s={s} theirs={theirs ? theirs.em : ''} />}
+      {s && <Ledger s={s} theirs={theirs ? theirs.em : ''} diffLabel={diffLabel} />}
       {doc.honest && <Honest h={doc.honest} />}
       {doc.deeper && <Deeper d={doc.deeper} />}
     </main>

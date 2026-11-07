@@ -13,7 +13,7 @@
    Numscript that says the same thing are written for you, and the two sides always balance.
    Motion: the book (idle, signature) + Stage (it settles as you scroll) + sticky chapters (scroll) + the capability
    switch in the dark room (state, a gliding pill); headlines cut into their line. The request lives in a sheet.
-V2: 8/10 the live book on the first screen at both sizes, greys only, three sticky chapters, a dark room with a real object per capability, the splitter, one ask everywhere (hero, sticky bar, close)
+V2: 8/10 deck scale (h1 52, headings 26, one figure big per screen), the live book beside the title at both sizes, chapters stacked on phones, the receipt close; greys only, no springs, nothing floating
 */
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -76,7 +76,7 @@ function Book() {
   const hot = new Set(ptTx ? touched(ptTx) : pt?.acct != null ? [pt.acct] : lastTx && !fr.bad ? touched(lastTx) : []);
   const lit = (t) => (pt?.tx === t.id) || (pt?.acct != null && touched(t).includes(pt.acct));
   return (
-    <div className="ld-book bz-obj" ref={ref} data-cursor="Watch">
+    <div className="ld-book bz-obj" ref={ref}>
       <div className="ld-bar">
         <span className="ld-bar-t"><i aria-hidden="true" />Double-Entry Ledger</span>
         <AnimatePresence mode="wait" initial={false}>
@@ -98,7 +98,7 @@ function Book() {
               <span className="x-mono">@{a}</span>
               <span className="ld-bal">
                 <AnimatePresence mode="popLayout" initial={false}>
-                  <motion.b key={fr.b[i]} className="bz-fig" initial={{ y: '60%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-60%', opacity: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>{fmt(fr.b[i])}</motion.b>
+                  <motion.b key={fr.b[i]} className="bz-fig" initial={{ y: '60%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-60%', opacity: 0 }} transition={{ duration: 0.3, ease: EASE }}>{fmt(fr.b[i])}</motion.b>
                 </AnimatePresence>
               </span>
               <em>{i === 0 ? 'may go below zero' : 'stays at or above zero'}</em>
@@ -139,10 +139,10 @@ function Hero() {
   return (
     <section className="ld-hero" aria-labelledby="ld-h1">
       <div className="bz-wrap ld-hero-grid">
-        <BizLines as="h1" id="ld-h1" className="bz-display md ld-h1" lines={['Hanzo', 'Ledger']} now delay={0.05} />
+        <BizLines as="h1" id="ld-h1" className="bz-display ld-h1" lines={['Hanzo', 'Ledger']} now delay={0.05} />
         <p className="ld-copy"><span className="bz-lede ld-one">A double-entry ledger you post to over HTTP.</span> <span className="bz-body ld-more">Money here only ever moves: a posting names a source account, a destination account, an amount and an asset. There is no way to write a debit without its credit, because a one-sided entry is not something the API can express.</span></p>
         <div className="bz-acts ld-acts">
-          <BizAsk to={DOCS} thumb="Read the docs">Read the docs</BizAsk>
+          <BizAsk to={DOCS} thumb="Read the docs" cta="ledger.hero">Read the docs</BizAsk>
           <More to={GH}>GitHub</More>
         </div>
         <BizStage from={1.03} over={560} lift={40} className="ld-stage"><Book /></BizStage>
@@ -250,7 +250,7 @@ function Caps() {
         <div className="ld-caps-tabs" role="tablist" aria-label="Capabilities" onKeyDown={key}>
           {CAPS.map(([g], k) => (
             <button key={g} type="button" role="tab" id={'ld-cap-t' + k} aria-selected={i === k} aria-controls={'ld-cap-p' + k} tabIndex={i === k ? 0 : -1} onClick={() => setI(k)} className="x-mono">
-              {i === k && <motion.span layoutId="ld-cap-pill" className="ld-caps-pill" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />}
+              {i === k && <motion.span layoutId="ld-cap-pill" className="ld-caps-pill" transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }} />}
               <span>{g}</span>
             </button>
           ))}
@@ -357,7 +357,7 @@ function End() {
         <div className="ld-end-say">
           <BizLines id="ld-start-h" className="bz-display md" lines={['Get started', 'with Ledger']} />
           <p className="bz-lede">Post your first transaction over HTTP, or describe the whole split once in Numscript and let the ledger do the arithmetic.</p>
-          <div className="bz-acts"><BizAsk to={DOCS}>Read the docs</BizAsk></div>
+          <div className="bz-acts"><BizAsk to={DOCS} cta="ledger.close">Read the docs</BizAsk></div>
         </div>
         <div className="ld-receipt bz-obj">
           <h2 className="bz-title">Get Ledger</h2>
@@ -371,7 +371,7 @@ function End() {
           <p className="ld-rc-sum x-mono" aria-hidden="true"><span>Σ</span><b>0</b></p>
         </div>
       </div>
-      <div className="bz-wrap"><A to={DEPLOY} className="ld-row" data-cta="secondary"><span>Deploy to Cloud</span><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A></div>
+      <div className="bz-wrap"><A to={DEPLOY} className="ld-row" data-cta="ledger.deploy"><span>Deploy to Cloud</span><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A></div>
     </section>
   );
 }
