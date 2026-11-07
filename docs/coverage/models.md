@@ -91,7 +91,7 @@ Done here: Chips and tabs glide on a layoutId pill (300 ms ease-emphasis). The d
 ## 9. Motion and interaction
 - [x] One signature (a card opens into its page) plus pinned families with a clip wipe, chip re-flow and the growing figure; 0 fade-ups
 - [x] Kinds of movement, scroll half or less:
-  - **Idle:** Enso's film, the request switching models, the Sigil.
+  - **Idle:** Enso's film, the request switching models, the Related Sigil, the "Flagships from other labs" head's drifting contour field, the price list's live dot and the code's caret (the screens `motion.mjs` found still now each have one).
   - **Scroll:** the grid's light walks Kai to Mori as the grid passes (that card's film plays, its arrow leans), the pinned room, the growing 11.
   - **Pointer:** the measured tilt; the card under the pointer or focus plays its film.
   - **State:** chips, tabs, the open. **Arrival:** the h1 cut-in, figures rising.
