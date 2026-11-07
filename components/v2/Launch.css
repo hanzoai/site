@@ -24,9 +24,12 @@
 .lv-name-ask { margin: 22px 0 0; pointer-events: auto; }
 .lv-name[data-gone] .lv-name-ask { visibility: hidden; }
 .js .lv-name-ask { opacity: 0; transform: translateY(16px); transition: opacity .5s var(--ease2) .36s, transform .5s var(--ease2) .36s; }
-.lv-name-ask .x-btn.solid { background: #fafafa; border-color: #fafafa; color: #0a0a0a; }
-@media (hover: hover) { .lv-name-ask .x-btn.solid:hover { background: #ffffff; border-color: #ffffff; } }
-.lv-close { top: 20px; }
+.lv-name-ask .x-btn { background: transparent; border-color: rgba(250, 250, 250, .6); color: #fafafa; }
+@media (hover: hover) { .lv-name-ask .x-btn:hover { background: rgba(250, 250, 250, .12); border-color: #fafafa; } }
+.lv-close { top: 20px; transition: background-color .15s cubic-bezier(0, 0, .2, 1), border-color .15s cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) { .lv-close:hover { background: rgba(255, 255, 255, .3); border-color: rgba(255, 255, 255, .55); } }
+/* figures: one leads, the rest sit at medium (MASTER 3.1: never everything big at once) */
+.lv-stats > .x-stat:not(:first-child) .x-stat-v { font-size: 32px; font-weight: 400; letter-spacing: -.02em; }
 .lv-pause { position: absolute; right: 24px; bottom: 24px; z-index: 3; }
 
 /* JS off and reduced motion: the film stays a full-bleed poster with the name on it, and the headline, lede and asks read below it
@@ -107,6 +110,8 @@ html:not(.js) .lv-pause { display: none; }
 .lv-ch.flip .lv-ch-stack { grid-column: 1 / 8; grid-row: 1; }
 .lv-ch[data-live] .lv-ch-words { height: min(calc(100svh - 60px - 112px), 760px); display: flex; flex-direction: column; gap: 24px; }
 .lv-ch[data-live] .lv-ch-texts { position: relative; flex: 1; }
+.lv-ch-top { flex: none; grid-column: 1 / -1; }
+.lv-ch-top > * { margin: 0; }
 .lv-ch[data-live] .lv-ch-stack { height: min(calc(100svh - 60px - 112px), 760px); border-radius: 24px; overflow: hidden; background: #000; }
 .lv-ch[data-live] .lv-ch-t { position: absolute; left: 0; right: 0; top: 50%; opacity: 0; transform: translateY(calc(-50% - 20px)); transition: opacity .22s ease-out, transform .3s ease-out; pointer-events: none; }
 .lv-ch[data-live] .lv-ch-t[data-on] { opacity: 1; transform: translateY(-50%); transition: opacity .4s var(--ease2) .12s, transform .5s var(--ease2) .12s; pointer-events: auto; }
@@ -155,6 +160,7 @@ html:not(.js) .lv-pause { display: none; }
   .lv-stats > .x-stat, .lv-stats > .x-stat + .x-stat { padding: 28px 0; border-left: 0; }
   .lv-stats > .x-stat + .x-stat { border-top: 1px solid rgba(0, 0, 0, .1); }
   .lv-stats .x-stat-v { font-size: 44px; }
+  .lv-stats > .x-stat:not(:first-child) .x-stat-v { font-size: 26px; }
   /* chapters become a vertical story: picture, then words */
   .lv-ch-pin { padding: 72px 0; }
   .lv-ch-grid, .lv-ch:not([data-live]) .lv-ch-grid { display: flex; flex-direction: column; align-items: stretch; gap: 0; }

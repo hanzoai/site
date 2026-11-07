@@ -92,7 +92,7 @@
   .ze-open p { grid-template-columns: auto 1fr; font-size: 14px; }
   .ze-open em { display: none; }
   .ze-console { grid-template-columns: 1fr; }
-  .ze-trace { border-right: 0; border-bottom: 1px solid rgba(255, 255, 255, .08); padding: 20px 16px; }
+  .ze-trace { border-right: 0; border-bottom: 1px solid rgba(255, 255, 255, .08); padding: 20px 16px; min-height: 620px; } /* the trace's tallest state, reserved so the cards never move */
   .ze-steps { min-height: 300px; }
   .ze-steps li { font-size: 14px; padding: 11px 12px; grid-template-columns: 28px 1fr; }
   .ze-cards { padding: 14px; }

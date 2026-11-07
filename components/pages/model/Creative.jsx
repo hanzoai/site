@@ -29,8 +29,8 @@ function Head({ slug }) {
       <Lines id={'cr-h-' + slug} lines={[d.head]} />
       <p className="lv-lede">{d.desc}</p>
       <div className="lv-acts">
-        <Cta to={'/research-access?models=' + slug} id={slug + '.hero'} thumb>Request access</Cta>
-        <Cta to="/design" kind="quiet" id={slug + '.hero-design'}>Try it in Design</Cta>
+        <Cta kind="quiet" to={'/research-access?models=' + slug} id={slug + '.hero'} thumb>Request access</Cta>
+        <Cta to="/design" kind="link" id={slug + '.hero-design'}>Try it in Design</Cta>
       </div>
       <p className="lv-crumb"><span>{d.kind}</span><span>{d.ver}</span></p>
     </>
@@ -60,20 +60,14 @@ function CapArt({ slug, i, on, subject, pos }) {
 function Caps({ slug, flip, subject, pos }) {
   const d = C[slug];
   return (
-    <>
-      <section className="lv-sec cr-caps-t" aria-labelledby={'cr-caps-' + slug}>
-        <div className="x-wrap lv-sh cr-caps-sh">
-          <Lines id={'cr-caps-' + slug} className="cr-caps-h" lines={[`What ${d.name} does`]} reveal />
-          <p className="lv-side">Capabilities</p>
-        </div>
-      </section>
-      <Chapters
-        id={'cr-ch-' + slug}
-        label={`What ${d.name} does`}
-        flip={flip}
-        items={d.caps.map(([t, x], i) => ({ k: d.kind, rail: t, title: t, body: <p>{x}</p>, art: (on) => <CapArt slug={slug} i={i} on={on} subject={subject} pos={pos} /> }))}
-      />
-    </>
+    <Chapters
+      id={'cr-ch-' + slug}
+      label={`What ${d.name} does`}
+      flip={flip}
+      className="cr-caps"
+      head={<><h2 id={'cr-caps-' + slug} className="cr-caps-h">What {d.name} does</h2><p className="lv-side cr-caps-side">Capabilities</p></>}
+      items={d.caps.map(([t, x], i) => ({ k: d.kind, rail: t, title: t, body: <p>{x}</p>, art: (on) => <CapArt slug={slug} i={i} on={on} subject={subject} pos={pos} /> }))}
+    />
   );
 }
 

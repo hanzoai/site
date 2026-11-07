@@ -9,6 +9,7 @@
      ]} />
    - items: k (a short label for the chapter rail; no eyebrow is drawn above the title), rail (overrides k on the rail), title (heading text), body (node), art (node drawn inside a 28px frame; it may move by itself,
      or a function (on) => node, where on is true while its chapter is the one being read).
+   - head (optional): the section's own 26px heading, pinned above the chapter words so it never sits alone on a screen.
    - flip puts the picture on the left. The chapter rail on the side jumps to a chapter (buttons, keyboard).
    - Phones and reduced motion get a plain vertical story (picture, then words); every word is always in the HTML. */
 import { useEffect, useRef, useState } from 'react';
@@ -30,7 +31,7 @@ function Layer({ p, i, n, live, children }) {
   );
 }
 
-export default function Chapters({ id, label, items, flip, className = '' }) {
+export default function Chapters({ id, label, items, flip, head, className = '' }) {
   const sec = useRef(null);
   const calm = useReducedMotion();
   const [wide, setWide] = useState(false);
@@ -58,6 +59,7 @@ export default function Chapters({ id, label, items, flip, className = '' }) {
       <div className="lv-ch-pin">
         <div className="x-wrap lv-ch-grid">
           <div className="lv-ch-words">
+            {head && <div className="lv-ch-top">{head}</div>}
             <div className="lv-ch-texts">
               {items.map((c, i) => (
                 <article key={c.title} className="lv-ch-t" style={{ '--o': i }} data-on={!live || i === at ? '' : undefined} aria-hidden={live && i !== at ? 'true' : undefined}>

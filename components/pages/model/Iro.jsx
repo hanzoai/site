@@ -70,6 +70,7 @@ function Canvas() {
     g.putImageData(out, 0, 0);
     if (stepEl.current) stepEl.current.textContent = String(step);
     if (range.current && document.activeElement !== range.current) range.current.value = String(step);
+    range.current?.style.setProperty('--f', (((step - 1) / (STEPS - 1)) * 100).toFixed(1) + '%');
   };
 
   useEffect(() => {

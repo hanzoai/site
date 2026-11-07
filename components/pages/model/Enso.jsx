@@ -369,8 +369,8 @@ export default function Enso() {
           <Lines id="eo-h" lines={['The right intelligence.', 'Every time.']} />
           <p className="lv-lede">One endpoint for every frontier model. Enso routes each request for quality, speed and cost.</p>
           <div className="lv-acts">
-            <Cta to="/login" id="enso.hero" thumb>Try Hanzo</Cta>
-            <Cta to="https://platform.hanzo.ai" kind="quiet" id="enso.hero-platform">API Platform</Cta>
+            <Cta kind="quiet" to="/login" id="enso.hero" thumb>Try Hanzo</Cta>
+            <Cta to="https://platform.hanzo.ai" kind="link" id="enso.hero-platform">API Platform</Cta>
             <More to="https://github.com/hanzoai/enso">Docs on GitHub</More>
           </div>
           <p className="lv-crumb">Hanzo / Enso</p>

@@ -105,8 +105,8 @@ function Monitor() {
          
           onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); S.current.drag = true; vid.current.pause(); seek(fromX(e)); }}
           onPointerMove={(e) => { if (S.current.drag) seek(fromX(e)); }}
-          onPointerUp={() => { S.current.drag = false; }}
-          onPointerCancel={() => { S.current.drag = false; }}
+          onPointerUp={() => { S.current.drag = false; if (play) vid.current.play().catch(() => {}); }}
+          onPointerCancel={() => { S.current.drag = false; if (play) vid.current.play().catch(() => {}); }}
           onKeyDown={(e) => { const k = { ArrowRight: 0.5, ArrowLeft: -0.5, ArrowUp: 3, ArrowDown: -3 }[e.key]; if (k) { e.preventDefault(); vid.current.pause(); seek(S.current.t + k); } }}
         >
           <ol className="kf-shots">

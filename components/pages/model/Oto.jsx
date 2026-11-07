@@ -23,9 +23,9 @@ const PROPS = [
 ];
 const BUS = [['Direct Prop Spot Mic', 88], ['Foley Pit Room Atmos', 79], ['Sub-Harmonic Exciter (40Hz)', 92], ['Ribbon High Air Texture', 59]];
 const H = 128, LOOP = 6;
-// cool monochrome heat: black, ink blue, steel, white
+// monochrome heat: black, graphite, grey, white (no hue: colour lives only in Hanzo's films)
 const LUT = (() => {
-  const st = [[0, 0, 0, 0], [0.22, 18, 20, 36], [0.5, 66, 74, 116], [0.78, 178, 184, 214], [1, 255, 255, 255]];
+  const st = [[0, 0, 0, 0], [0.22, 22, 22, 22], [0.5, 82, 82, 82], [0.78, 190, 190, 190], [1, 255, 255, 255]];
   const o = new Uint8ClampedArray(256 * 3);
   for (let i = 0; i < 256; i++) {
     const v = i / 255, k = st.findIndex((s) => s[0] >= v), a = st[Math.max(0, k - 1)], b = st[k], f = (v - a[0]) / (b[0] - a[0] || 1);
@@ -173,7 +173,7 @@ function Board() {
 // the film closes into a waveform: a band whose edges follow a sound's envelope. It closes as one band (its top edge
 // comes down from above the screen, its bottom edge up from below), so every frame between reads as sound.
 const WAVE = (t, W, H, wide) => {
-  const n = 30, x0 = wide ? W * 0.42 : W * 0.05, x1 = wide ? W * 0.96 : W * 0.95, cy = wide ? H * 0.5 : H * 0.25, A = wide ? H * 0.38 : H * 0.18;
+  const n = 30, x0 = wide ? W * 0.47 : W * 0.05, x1 = wide ? W * 0.96 : W * 0.95, cy = wide ? H * 0.5 : H * 0.25, A = wide ? H * 0.38 : H * 0.18;
   const amp = (k) => { const u = k / (n - 1); const env = Math.pow(Math.sin(Math.PI * u), 0.55); return A * (0.12 + 0.88 * env * Math.abs(0.55 * Math.sin(u * 19.3) + 0.3 * Math.sin(u * 41.7 + 1.2) + 0.28 * Math.sin(u * 7.1 + 0.4))); };
   const M = Math.max(W, H) * 0.3, pt = (k, sgn) => {
     const u = k / (n - 1), x = lerp(-M + u * (W + 2 * M), x0 + u * (x1 - x0), t), y = lerp(sgn < 0 ? -M : H + M, cy + sgn * amp(k), t);

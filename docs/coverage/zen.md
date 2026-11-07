@@ -39,7 +39,7 @@ Done here: Zen's own film plays full-bleed under the h1 cut-in within the first 
 - [x] Copy button copies exactly the displayed text; failure never says Copied (n/a: no copy button on this page)
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: the hero ask is `<Cta thumb>`, so the shared ask bar carries "Try Hanzo" after the hero. `data-cta` ids: `zen.first` (first screen), `zen.hero` (headline).
+Done here: the header carries the one solid "Try Hanzo"; the page's own asks are outlined (`<Cta kind="quiet" thumb>`), and on phones the shared bar carries "Try Hanzo" after the hero. `data-cta` ids: `zen.first` (first screen), `zen.hero` (headline).
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -55,7 +55,7 @@ Done here: Zen's figures in kit `Stat` (5.95 GB, 27.3B, $2.28) and the family ti
 - [x] Tables, FAQ, tabs and code use the kit parts
 - [x] `python3 scripts/parity.py /zen`: 0 missing
 
-Done here: parity text 23/23, links 6/6. Section headings rest at 26px, the settled headline at 44px, body 16px, ledes 20px. Mono captions are 12-13px; Hanzo's model-card pills are 10px per SPEC. Tables: n/a: no table on /zen. Headings use `text-wrap: balance`.
+Done here: parity text 23/23, links 6/6. Section headings rest at 26px, the settled headline at 44px, body 16px, ledes 20px. Mono captions are 12-13px; Hanzo's model-card pills are 11px mono capitals (SPEC 10px, raised one step at the critics' ask). Tables: n/a: no table on /zen. Headings use `text-wrap: balance`.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens (deck values only; `tokens.css` not on main)
@@ -115,7 +115,7 @@ Done here: body text is #525252 on white and #a3a3a3 or better on black. The `Fi
 - [x] No poller; no third-party request before consent
 - [x] Nothing heavy run on James's laptop
 
-Done here: the h1 and the priority poster (`Img priority`, 1200×1500) are in server HTML. Only transform, opacity and clip-path animate; the trace timers stop off screen and with the page pause. CLS measured 0.000 at 1470 and at 375 during a scroll of the page.
+Done here: the h1 and the priority poster (`Img priority`, 1200×1500) are in server HTML. Only transform, opacity and clip-path animate; the trace timers stop off screen and with the page pause. CLS measured 0.000 at 1470. At 375 the trace grew and pushed the cards (0.018 on a slow walk, 0.166 in the critic's run); the trace now reserves its tallest state (620px): re-measured 0.000 at 375 on a slow walk.
 
 ## 14. SEO and machine files
 - [x] Title and description match live (or are listed for James)
@@ -131,7 +131,7 @@ Done here: `metadata` in `app/zen/page.jsx` is unchanged, and `<JsonLd route="/z
 - [ ] n/a: every maker and model page linked in the DOM (that is `/models`)
 - [x] One price figure everywhere
 
-Done here: `ModelCards.jsx` copies SPEC: grid 2fr + 4×1fr at 1131px, rows 220px, gap 12, #000 cards, radius 20, title 22/500 (Enso 44), 10px mono pills, the film over its poster with a 0.6s crossfade, and a pointer tilt of 3° that settles flat. This page's card is marked. Each card opens through the WebGL opener.
+Done here: `ModelCards.jsx` copies SPEC: grid 2fr + 4×1fr at 1131px, rows 220px, gap 12, #000 cards, radius 20, title 22/500 (Enso 44), 11px mono pills (SPEC 10px), the film over its poster with a 0.6s crossfade, and a pointer tilt of 3° that settles flat. This page's card is marked. Each card opens through the WebGL opener.
 
 ## 16. Developer experience
 - [ ] One `CodeBlock`; copy equals display (or n/a: no code on the page)
