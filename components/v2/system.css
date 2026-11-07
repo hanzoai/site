@@ -1,0 +1,52 @@
+/* v2 system (docs/VISION.md "The v2 system"), owned by the Home chat. Import it once from any v2 page or piece:
+     import '../v2/system.css';      (from components/pages/*)    import './v2/system.css';   (from components/*)
+   It only defines v2- classes and --v2- tokens, so v1 pages are untouched.
+   Type: .v2-display (128/96/80 → 56/48), .v2-headline (56 → 36), .v2-title (28), .v2-lede (24/21), .v2-body (19/17),
+         .v2-kicker (Zen Mono 13 caps). Numbers: .v2-figure (huge, tabular).
+   Space: .v2-wrap (12 columns, max 1440, 24px gutters), .v2-sec (200–260px of air on desktop, 120px on phone).
+   Material: .v2-object (28px radius, hairline, soft long shadow), .v2-card (16px radius).
+   Accent: set --v2-accent on the page root (one per page, taken from that page's own media). */
+:root {
+  --v2-accent: #0a0a0a;
+  --v2-display: clamp(3.5rem, 8.9vw, 8rem);
+  --v2-display-m: clamp(3rem, 6.67vw, 6rem);
+  --v2-display-s: clamp(2.75rem, 5.56vw, 5rem);
+  --v2-headline: clamp(2.25rem, 3.9vw, 3.5rem);
+  --v2-title: clamp(1.375rem, 1.95vw, 1.75rem);
+  --v2-lede: clamp(1.1875rem, 1.67vw, 1.5rem);
+  --v2-body: clamp(1.0625rem, 1.32vw, 1.1875rem);
+  --v2-sec: clamp(120px, 16vw, 240px); /* the air between two sections */
+  --v2-gut: 24px;
+  --v2-max: 1440px;
+  --v2-ease: cubic-bezier(.16, 1, .3, 1);
+  --v2-shadow: 0 1px 1px rgba(0, 0, 0, .04), 0 24px 48px -18px rgba(0, 0, 0, .16), 0 80px 120px -60px rgba(0, 0, 0, .22);
+}
+
+.v2-wrap { width: 100%; max-width: var(--v2-max); margin-inline: auto; padding-inline: var(--v2-gut); box-sizing: border-box; }
+.v2-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--v2-gut); }
+.v2-sec { padding-block: calc(var(--v2-sec) / 2); position: relative; }
+
+.v2-display, .v2-display-m, .v2-display-s, .v2-headline { margin: 0; font-weight: 600; color: var(--ink); text-wrap: balance; }
+.v2-display { font-size: var(--v2-display); line-height: .92; letter-spacing: -.05em; }
+.v2-display-m { font-size: var(--v2-display-m); line-height: .92; letter-spacing: -.05em; }
+.v2-display-s { font-size: var(--v2-display-s); line-height: .94; letter-spacing: -.045em; }
+.v2-headline { font-size: var(--v2-headline); line-height: 1; letter-spacing: -.04em; max-width: 18ch; }
+.v2-title { margin: 0; font-size: var(--v2-title); line-height: 1.15; letter-spacing: -.025em; font-weight: 560; }
+.v2-lede { margin: 0; font-size: var(--v2-lede); line-height: 1.4; letter-spacing: -.012em; color: var(--soft); max-width: 40ch; text-wrap: pretty; }
+.v2-body { margin: 0; font-size: var(--v2-body); line-height: 1.55; color: var(--soft); max-width: 64ch; text-wrap: pretty; }
+.v2-kicker { margin: 0; font: 500 13px/1.2 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
+.v2-figure { display: block; font-weight: 600; font-size: clamp(5rem, 15vw, 13.5rem); line-height: .82; letter-spacing: -.06em; font-feature-settings: 'tnum'; font-variant-numeric: tabular-nums; }
+
+.v2-object { border-radius: 28px; border: 1px solid rgba(0, 0, 0, .08); background: #fff; box-shadow: var(--v2-shadow); overflow: hidden; }
+.v2-card { border-radius: 16px; }
+.v2-rule { height: 1px; border: 0; margin: 0; background: rgba(0, 0, 0, .08); }
+
+/* line-masked headings (components/v2/Lines.jsx) */
+.v2-lines { display: block; }
+.v2-line { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; }
+.v2-line > span { display: block; will-change: auto; }
+
+@media (max-width: 900px) {
+  :root { --v2-gut: 16px; }
+  .v2-headline { max-width: none; }
+}
