@@ -5,7 +5,8 @@
                 acts={[['Read the docs', url], ['View on GitHub', url]]} look="rise|split|side|frame" dark cue="Scroll">
        <YourLiveProductObject />
      </StageHero>
-   - The title lines rise out of a mask once (kinetic type). The first act is the magnetic primary and the phone thumb action.
+   - The title lines rise out of a mask once (kinetic type). Nothing sits above the h1 (JAMES.md): kick renders as a mono
+     caption under it. The first act is the one solid ask (<Cta thumb>, data-cta="<cta>"), the rest are text links.
    - The object starts large and settles into place as the hero scrolls away, using scale, position and clip only:
      rise  = centred copy, the object big and low, then up into place;
      split = the title on 8 columns, the line and actions on 4 beside it (editorial), the object rising under both;
@@ -17,21 +18,21 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform, useMotionTemplate } from 'motion/react';
 import useCalm from './useCalm';
-import { EASE, Magnetic } from '../ui';
-import { A } from '../kit';
+import { EASE } from '../ui';
+import { Cta } from '../kit';
 import { useWide } from './useWide';
 import './x-hamilton/Launch.css';
 
 const up = (d) => ({ initial: { opacity: 0, y: 18 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
 
 const LOOKS = {
-  rise: { s: [1.22, 1], y: ['14svh', '-27svh'], x: ['0%', '0%'], clip: [0, 0] },
-  split: { s: [1.14, 1], y: ['12svh', '-20svh'], x: ['0%', '0%'], clip: [0, 0] },
+  rise: { s: [1.08, 1], y: ['2svh', '-24svh'], x: ['0%', '0%'], clip: [0, 0] },
+  split: { s: [1.06, 1], y: ['2svh', '-18svh'], x: ['0%', '0%'], clip: [0, 0] },
   side: { s: [1.16, 1], y: ['6svh', '0svh'], x: ['22%', '0%'], clip: [0, 0] },
   frame: { s: [1.08, 1], y: ['0svh', '0svh'], x: ['0%', '0%'], clip: [0, 1] },
 };
 
-export default function StageHero({ kick, title, sub, lede, acts = [], look = 'rise', travel, flip, dark, cue, thumb, children, className = '', id }) {
+export default function StageHero({ kick, title, sub, lede, acts = [], look = 'rise', travel, flip, dark, cue, thumb, cta = 'primary', children, className = '', id }) {
   const ref = useRef(null);
   const calm = useCalm();
   const wide = useWide();
@@ -57,19 +58,19 @@ export default function StageHero({ kick, title, sub, lede, acts = [], look = 'r
       <div className="l2-stage-pin">
         <div className={look === 'side' ? 'l2-wrap l2-stage-in' : 'l2-stage-in'} style={look === 'side' ? undefined : { display: 'contents' }}>
           <motion.div className={look === 'side' ? 'l2-stage-copy' : 'l2-wrap l2-stage-copy'} style={on ? { y: copyY, opacity: copyO, pointerEvents: copyPE } : undefined}>
-            {kick && <motion.p className="l2-kick l2-stage-kick" {...up(0)}><i aria-hidden="true" />{kick}</motion.p>}
             <h1 className="l2-display">
               {lines.map((t, i) => (
                 <span className="l2-ln" key={i}><motion.span initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.15, ease: EASE, delay: 0.08 + i * 0.12 }}>{t}</motion.span></span>
               ))}
             </h1>
+            {kick && <motion.p className="l2-kick l2-stage-kick" {...up(0.24)}>{kick}</motion.p>}
             {sub && <motion.p className="l2-lede" {...up(0.32)}>{sub}</motion.p>}
             {lede && <motion.p className="l2-lede" {...up(0.4)}>{lede}</motion.p>}
             {acts.length > 0 && (
               <motion.div className="l2-acts" {...up(0.5)}>
                 {acts.map(([t, to], i) => (i === 0
-                  ? <Magnetic key={t} strength={0.25}><A to={to} className="x-btn solid" data-thumb={thumb || t}>{t}</A></Magnetic>
-                  : <A key={t} to={to} className="x-btn">{t}</A>))}
+                  ? <Cta key={t} to={to} id={cta} size="lg" thumb data-thumb={thumb || t}>{t}</Cta>
+                  : <Cta key={t} to={to} kind="link" id={cta + '-' + (i + 1)}>{t}</Cta>))}
               </motion.div>
             )}
           </motion.div>

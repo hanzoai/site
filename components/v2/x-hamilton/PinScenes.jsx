@@ -6,13 +6,15 @@
    - Desktop: the track is one screen per chapter. Copy and visual pin; as you scroll, one chapter goes out (up, fast) while
      the next comes in (from below, slower), and the page draws its visual for the current chapter (progress is the track's
      scroll MotionValue, 0 → 1, for anything scrubbed). A rail of ticks shows where you are and jumps there on click.
-   - Each chapter's number reads "01 / 06" (Hanzo's own counter). Every chapter's words stay in the HTML.
+   - Each chapter's number reads "01 / 06" (Hanzo's own counter), under its title; the kick sits under the head
+     (JAMES.md: nothing above a headline). Every chapter's words stay in the HTML.
    - Phones and reduced motion: chapters stack, each with its own visual (visual(i) is drawn once per chapter), no pin.
    - before / after: optional nodes inside the section, above the track / below it. */
 import { useRef, useState } from 'react';
 import { useScroll, useMotionValueEvent } from 'motion/react';
 import useCalm from '../useCalm';
 import { useWide } from '../useWide';
+import { scrollToY } from '../../../lib/scroll';
 import './Launch.css';
 
 const pad = (i) => String(i + 1).padStart(2, '0');
@@ -31,15 +33,15 @@ export default function PinScenes({ id, kick, head, lede, items, visual, flip, d
     if (!el) return;
     const top = el.getBoundingClientRect().top + scrollY;
     const y = top + ((el.offsetHeight - innerHeight) * (i + 0.5)) / n;
-    window.__lenis ? window.__lenis.scrollTo(y, { duration: 1.1 }) : scrollTo({ top: y, behavior: 'smooth' });
+    scrollToY(y);
   };
   const total = `/ ${pad(n - 1)}`;
   return (
     <section id={id} className={`l2-pin ${flip ? 'flip' : ''} ${pin ? '' : 'stack'} ${dark ? 'l2-dark' : ''} ${className}`} data-room={dark ? 'dark' : undefined}>
       {(kick || head || lede) && (
         <header className="l2-wrap l2-pin-head">
-          {kick && <p className="l2-kick ac">{kick}</p>}
-          {head && <h2 className="l2-head" style={kick ? { marginTop: 18 } : undefined}>{head}</h2>}
+          {head && <h2 className="l2-head">{head}</h2>}
+          {kick && <p className="l2-kick">{kick}</p>}
           {lede && <p className="l2-lede">{lede}</p>}
         </header>
       )}
@@ -49,8 +51,8 @@ export default function PinScenes({ id, kick, head, lede, items, visual, flip, d
           <div className="l2-pin-copy">
             {items.map(([t, d, extra], i) => (
               <article key={t} className={'l2-ch' + (!pin || i === at ? ' on' : '') + (pin && i < at ? ' past' : '')} aria-hidden={pin && i !== at ? true : undefined}>
-                <p className="l2-ch-n">{pad(i)} {total}</p>
                 <h3 className="l2-title">{t}</h3>
+                <p className="l2-ch-n">{pad(i)} {total}</p>
                 {d && <p className="l2-body">{d}</p>}
                 {extra}
                 {!pin && <div className="l2-ch-vis" aria-hidden="true">{visual(i, null)}</div>}

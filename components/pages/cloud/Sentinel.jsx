@@ -235,7 +235,7 @@ export default function Sentinel() {
       </StageHero>
       <Collapse />
       <Sheets />
-      <Finale name="Sentinel" head="Get started with Hanzo Sentinel" prompt="Read https://hanzo.ai/skill.md and use Hanzo Sentinel in my project." tag="Error tracking" license="BSL-1.1" />
+      <Finale name="Sentinel" head="Get started with Hanzo Sentinel" ask={['Read the docs', DOCS]} links={[['View on GitHub', GH]]} prompt="Read https://hanzo.ai/skill.md and use Hanzo Sentinel in my project." tag="Error tracking" license="BSL-1.1" />
     </main>
   );
 }
