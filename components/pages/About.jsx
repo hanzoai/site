@@ -6,7 +6,8 @@
    Signature: the six reasons Hanzo builds are tiles that open. Click one and the tile itself grows into a full sheet
    (shared-element morph, synchronized.studio); previous / next turn through the six inside it; it folds back on close.
    Supporting (three): the frontier draws itself and answers the pointer; the startups figure counts up on a rising
-   staircase of figures; the Zen of Hanzo is the one pinned scene, the scroll turning its six principles one at a time.
+   staircase of figures. Motion map (James, 7 Nov): signature word-light (about/WordLight.jsx) and five section entrances
+   (about/enter.js); no pinned scene.
    Beyond: "Pick two? Keep all four." The lede's four trade-offs as switches; nothing switches anything else off, and
    each shows the line on this page that holds it.
    Every word, figure and link is Hanzo's (content/live/about.json). */
@@ -14,9 +15,9 @@
 // Goal: believe the team and its record, then start building
 // CTA: Get Started (/pricing) in the hero and in the sticky ask ("Start Building" after the track record is a text link); the close is the careers ask
 // Metric: signup_start (data-cta="about.*")
-// Signature: six reasons Hanzo builds as tiles that open into their own sheet
+// Signature: word-light on the pick-two belief (lit word by word as read), then six reasons Hanzo builds that open into their own sheet
 // Beyond: pick two? keep all four: the lede's four trade-offs as switches that never knock each other off
-// V2: 8/10 round 6: Why is one screen (one diamond figure the four switches drive, the six principles as an index that previews in it and opens the sheet); one track-record figure big at a time; phone hero plots all of 2014–2026; JS off shows the drawn frontier; SPEC tilt on model cards
+// V2: 8/10 motion map: signature word-light (the Why belief statement lights word by word as it is read; a hand reads ahead); entrances ink-spread (Why figure + switches + principles), magnet-gather (track record), squash-land (founders), letter-cascade (Zen of Hanzo, now a plain index, no pinned scene), accordion (the dark room); phone chart labels clear of the curve
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
 import { Count } from '../ui';
@@ -28,6 +29,8 @@ import { useOpener } from '../Opener';
 import { href } from '../../lib/route';
 import StorySheet from './StorySheet';
 import Zen from './AboutZen';
+import WordLight from './about/WordLight';
+import { useEntrances } from './about/enter';
 import '../v2/system.css';
 import './story.css';
 import './About.css';
@@ -48,19 +51,22 @@ const YEARS = [2014, 2016, 2018, 2020, 2022, 2024, 2026];
 
 /* phones get the same frontier drawn on its own, taller plot, so the whole 2014–2026 curve, Techstars '17 and the four
    axis names fit 343px at a readable size (both plots are in the HTML; CSS shows one) */
-const geo = (W, H, PL, PR, PT, PB) => {
+// ph: the phone plot sets the four axis names as a right-aligned stack in the empty lower right of the plot (in the
+// order their lines run), clear of the curve, the head and the plot's edges
+const geo = (W, H, PL, PR, PT, PB, ph = false) => {
   const X = (t) => PL + t * (W - PL - PR);
   const Y = (v) => H - PB - v * (H - PB - PT);
   const tr = (g) => Array.from({ length: 81 }, (_, i) => { const t = i / 80; return (i ? 'L' : 'M') + X(t).toFixed(1) + ' ' + Y(g(t)).toFixed(1); }).join('');
   const axes = [['Intelligence', 0.42, 1.6, 0.3], ['Speed', 0.55, 1.2, 0.44], ['Deterministic safety', 0.66, 2.1, 0.58], ['Equitable cost', 0.78, 1.4, 0.72]]
-    .map(([name, a, q, at]) => { const g = (t) => f(t) * (a + (1 - a) * Math.pow(t, q)); return { name, d: tr(g), lx: X(at), ly: Y(g(at)) + 24 }; });
-  return { W, H, PT, X, Y, front: tr(f), axes };
+    .map(([name, a, q, at], i) => { const g = (t) => f(t) * (a + (1 - a) * Math.pow(t, q)); return ph ? { name, d: tr(g), lx: X(1), ly: Y(0.12 + i * 0.11) } : { name, d: tr(g), lx: X(at), ly: Y(g(at)) + 24 }; });
+  return { W, H, PT, X, Y, front: tr(f), axes, ph };
 };
 const DESK = geo(W, H, PL, PR, PT, PB);
-const PH = geo(700, 470, 24, 44, 56, 60);
+const PH = geo(700, 470, 40, 44, 56, 60, true);
 
 function Plot({ g, cls, children }) {
-  const { W, H, X, Y, front, axes } = g;
+  const { W, H, X, Y, front, axes, ph } = g;
+  const tx = X(0.25), ty = Y(f(0.25));
   return (
     <svg className={'xab-front-svg ' + cls} viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMax meet" role="img" aria-label="The Pareto frontier: intelligence, speed, deterministic safety and equitable cost, advancing together from 2014 to 2026">
       {[0.25, 0.5, 0.75, 1].map((v) => <line key={v} x1={0} x2={W} y1={Y(v)} y2={Y(v)} className="xab-grid" />)}
@@ -69,14 +75,15 @@ function Plot({ g, cls, children }) {
       {axes.map((a) => (
         <g key={a.name}>
           <path d={a.d} className="xab-ghost" pathLength={1} />
-          <text x={a.lx} y={a.ly} className="xab-axis">{a.name}</text>
+          <text x={a.lx} y={a.ly} textAnchor={ph ? 'end' : undefined} className="xab-axis">{a.name}</text>
         </g>
       ))}
       <path d={front} className="xab-line" pathLength={1} />
       <g className="xab-ts">
-        <circle cx={X(0.25)} cy={Y(f(0.25))} r="7" />
-        <line x1={X(0.25)} x2={X(0.25)} y1={Y(f(0.25)) - 14} y2={Y(f(0.25)) - 46} />
-        <text x={X(0.25)} y={Y(f(0.25)) - 58} textAnchor="middle">Techstars ’17</text>
+        <circle cx={tx} cy={ty} r="7" />
+        {ph
+          ? <text x={tx - 16} y={ty - 46} textAnchor="end"><tspan x={tx - 16}>Techstars</tspan><tspan x={tx - 16} dy="30">’17</tspan></text> /* above and left of the marker, on two lines: the curve there runs below it */
+          : <><line x1={tx} x2={tx} y1={ty - 14} y2={ty - 46} /><text x={tx} y={ty - 58} textAnchor="middle">Techstars ’17</text></>}
       </g>
       {children}
       {/* idle: a reader walks the curve from 2014 to the frontier, slowly, until a hand takes over */}
@@ -329,12 +336,13 @@ function Why() {
   return (
     <section className="v2s-sec xab-why" id="why" aria-labelledby="xab-why-h">
       <div className="v2s-wrap">
-        <div className="v2s-head side xab-why-head">
+        <div className="v2s-head xab-why-head">
           <h2 id="xab-why-h" className="v2s-headline xab-why-h">Moving the frontier without trading away safety, privacy, or ownership.</h2>
           <p className="v2s-cap">Why We Build</p>
-          <p className="v2s-lede xab-why-l">Most AI platforms ask you to pick two: raw capability, low latency, affordable cost, or control over your data. Chasing the Pareto frontier means advancing every axis at once through better systems engineering and open research.</p>
         </div>
-        <div className="xab-why-g" ref={grid}>
+        {/* the signature: Hanzo's belief, lit word by word as it is read */}
+        <WordLight className="xab-why-l" text="Most AI platforms ask you to pick two: raw capability, low latency, affordable cost, or control over your data. Chasing the Pareto frontier means advancing every axis at once through better systems engineering and open research." />
+        <div className="xab-why-g" ref={grid} data-enter="ink-spread">
           <Figure on={on} peek={shown} />
           <Picks on={on} flip={flip} touched={touched} />
           <ul className="xab-tiles">
@@ -393,7 +401,7 @@ function Record() {
     return () => removeEventListener('scroll', pick);
   }, [seen]);
   return (
-    <section className="v2s-sec xab-rec" aria-labelledby="xab-rec-h">
+    <section className="v2s-sec xab-rec" aria-labelledby="xab-rec-h" data-enter="magnet-gather">
       <div className="v2s-wrap">
         <div className="v2s-head">
           <h2 id="xab-rec-h" className="v2s-headline">Built with founders, scaled to public markets.</h2>
@@ -448,7 +456,7 @@ function Portrait({ p, has }) {
 
 function Founders({ portraits = [] }) {
   return (
-    <section className="v2s-sec tight xab-people" aria-label="Founders">
+    <section className="v2s-sec tight xab-people" aria-label="Founders" data-enter="squash-land">
       <div className="v2s-wrap xab-people-g">
         {FOUNDERS.map((p, i) => (
           <article key={p.name} className={'xab-person' + (i ? ' two' : '')}>
@@ -496,7 +504,7 @@ function Log() {
       </div>
       <ul>
         {COMMITS.map(([repo, msg, sha, when, to], i) => (
-          <li key={sha + i} style={{ '--i': COMMITS.length - 1 - i }}>
+          <li key={sha + i} style={{ '--n': i }}>
             <span className="xab-repo">{repo}</span>
             <A to={to} className="xab-msg">{msg}</A>
             <code>{sha}</code>
@@ -522,7 +530,7 @@ function Open() {
           <p className="v2s-cap">Open Source &amp; Deterministic Safety</p>
           <p className="v2s-lede xab-open-l">Opaque black-box platforms ask you to trust what you cannot inspect. Hanzo pairs public source code and open specifications with calibrated decision bounds and full infrastructure sovereignty.</p>
         </div>
-        <div className="xab-open-g">
+        <div className="xab-open-g" data-enter="accordion">
           <div className="xab-panes">
             <Tabs id="xab-pane" tabs={PANES.map((x) => x[0])} value={pane} onChange={setPane} label="Open Source & Deterministic Safety" size="lg" />
             {PANES.map(([t, k, d, items, l, to], i) => (
@@ -662,6 +670,7 @@ function Careers() {
 }
 
 export default function About({ portraits = [] }) {
+  useEntrances(); // the five section entrances (about/enter.js)
   return (
     <main id="main" className="xab v2s">
       {/* JavaScript off: the frontier shows drawn at rest (no film to stop part way), and the idle loops and their pause

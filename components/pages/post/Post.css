@@ -4,10 +4,10 @@
 .xbg-w { width: min(100% - 2 * var(--gut), 1152px); margin-inline: auto; }
 .xbg-meta, .xbg-role, .xbg-plate-k, .xbg-src > p, .xbg-card-k, .xbg-num, .xbg-numeral-of { font-family: var(--mono); font-size: 12px; font-weight: 606; letter-spacing: .14em; text-transform: uppercase; }
 
-/* ---------- the first screen and the plate: one scene (stacked by default; pinned on desktops) ---------- */
-.xbg-stage { position: relative; container-type: inline-size; --W: min(100cqw - 2 * var(--gut), 1152px); --L: calc((100cqw - var(--W)) / 2); --cl: calc(var(--L) + (var(--W) + 27px) * 5 / 13); --ct: 116px; --cb: 9svh; }
-.xbg-stage-in { display: flex; flex-direction: column; }
-.xbg-cover { order: -1; padding: 116px 0 44px; }
+/* ---------- screen one: plain, no pinned scene. The words on the 5, the film card on the 8 ---------- */
+.xbg-hero { padding: 116px 0 44px; }
+.xbg-hero-g { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); column-gap: 27px; align-items: center; min-height: min(calc(100svh - 160px), 640px); }
+.xbg-hero.alt .xbg-cover-t { order: 2; }
 .xbg-cover-t { display: flex; flex-direction: column; align-items: flex-start; }
 .xbg-crumbs ol { display: flex; flex-wrap: wrap; align-items: center; gap: 0 10.5px; margin: 0; padding: 0; list-style: none; }
 .xbg-crumbs li { display: inline-flex; align-items: center; }
@@ -21,9 +21,9 @@
 .xbg-wi { display: inline-block; animation: xbg-rise 700ms cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(50ms + var(--i, 0) * 55ms); }
 @keyframes xbg-rise { from { transform: translateY(105%); } }
 /* the film (or its poster, before it plays) drifts from first paint, so the first second is never still */
-.xbg-plate-film { animation: xbg-drift 9s ease-in-out infinite alternate; }
+.xbg-art-film { animation: xbg-drift 9s ease-in-out infinite alternate; }
 @keyframes xbg-drift { from { transform: scale(1.06) translate3d(1.5%, 1%, 0); } to { transform: scale(1) translate3d(0, 0, 0); } }
-@media (prefers-reduced-motion: reduce) { .xbg-wi, .xbg-plate-film, .xbg-gist * { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { .xbg-wi, .xbg-art-film, .xbg-gist * { animation: none !important; } }
 .xbg-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0 17px; margin: 6.5px 0 0; color: var(--mute); }
 /* one solid at a time from the first paint (the /affiliate pattern): the header's ask is outlined on a post until the
    post's hook says none of its own asks is on screen (html[data-xbg-solid]) */
@@ -33,57 +33,24 @@ html:has(main.xbg):not([data-xbg-solid]) header[data-slot=masthead] a[data-x-ask
 .xbg-chip::before { content: ''; width: 17px; height: 1px; background: currentColor; }
 .xbg-lede { margin: 27px 0 0; max-width: 44ch; font-size: 21px; line-height: 1.4; color: var(--mute); text-wrap: pretty; }
 .xbg-ask { margin-top: 27px; }
-.xbg-slot { display: none; }
 
-/* the plate (the page's first black room) */
-.xbg-plate-in { position: relative; margin: 0 var(--gut); border-radius: 24px; background: #000; color: #fafafa; overflow: hidden; }
-.xbg-mark { position: absolute; inset: 0; pointer-events: none; }
-.xbg-plate-in .xbg-sigil { position: absolute; inset: 0; width: 100%; height: 100%; color: rgba(255, 255, 255, .6); }
-.xbg-plate-film { position: absolute; top: 0; right: 0; width: 56%; height: 100%; object-fit: cover; object-position: 62% 45%; -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 30%); mask-image: linear-gradient(90deg, transparent 0, #000 30%); }
-.xbg-plate-in::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, .8) 100%); pointer-events: none; }
-.xbg-stage.film .xbg-plate-in::after { display: none; }
-.xbg-plate-c { position: relative; z-index: 1; min-height: max(100svh, 640px); display: flex; flex-direction: column; justify-content: space-between; gap: 44px; padding: 116px 0 72px; }
-.xbg-plate-k { display: flex; justify-content: space-between; gap: 17px; margin: 0; color: rgba(255, 255, 255, .78); }
-.xbg-plate-f { transform-origin: 0 100%; }
-.xbg-plate-t { margin: 0; font-size: 112px; font-weight: 220; line-height: 1; letter-spacing: -.04em; }
-.xbg-facts { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); column-gap: 27px; row-gap: 44px; max-width: 760px; }
-.xbg-facts li { display: flex; flex-direction: column; gap: 10.5px; padding-top: 17px; border-top: 1px solid rgba(255, 255, 255, .2); }
-.xbg-fig { font-size: 64px; font-weight: 220; line-height: 1; letter-spacing: -.03em; font-feature-settings: 'tnum'; }
-.xbg-facts .xbg-role { color: rgba(255, 255, 255, .55); }
-.xbg-facts .xbg-note { color: rgba(255, 255, 255, .78); max-width: 34ch; font-size: 14px; line-height: 1.5; }
-.xbg-stage.film .xbg-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.xbg-stage.film .xbg-facts:not(.figs) { grid-template-columns: minmax(0, 1fr); }
-.xbg-stage.film .xbg-facts:not(.figs) li { display: grid; grid-template-columns: 188px minmax(0, 1fr); grid-template-areas: 'f r' 'f n'; column-gap: 27px; row-gap: 6.5px; align-items: end; }
-.xbg-stage.film .xbg-facts:not(.figs) .xbg-fig { grid-area: f; }
-.xbg-stage.film .xbg-facts:not(.figs) .xbg-role { grid-area: r; }
-.xbg-stage.film .xbg-facts:not(.figs) .xbg-note { grid-area: n; }
-.xbg-pause { position: absolute; top: 17px; right: 17px; z-index: 2; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid rgba(255, 255, 255, .2); border-radius: 50%; background: rgba(0, 0, 0, .55); color: #fafafa; cursor: pointer; transition: background-color 150ms cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
+/* the film card */
+.xbg-art { position: relative; aspect-ratio: 8 / 7; border-radius: 24px; overflow: hidden; background: #000; color: rgba(255, 255, 255, .6); }
+.xbg-art .xbg-sigil, .xbg-art-film { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 62% 45%; }
+.xbg-pause { position: absolute; right: 17px; bottom: 17px; z-index: 2; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid rgba(255, 255, 255, .2); border-radius: 50%; background: rgba(0, 0, 0, .55); color: #fafafa; cursor: pointer; transition: background-color 150ms cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
 @media (hover: hover) { .xbg-pause:hover { background: #262626; } }
 .xbg-pause:active { transform: scale(.97); }
 
-/* desktop: one pinned scene. The film plays in a card on the 8 of the split, then opens to full bleed */
-@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
-  .js .xbg-stage { height: 210svh; }
-  .js .xbg-stage-in { position: sticky; top: 0; height: 100svh; min-height: 640px; overflow: hidden; display: block; }
-  .js .xbg-stage .xbg-plate-in { position: absolute; inset: 0; margin: 0; border-radius: 0; clip-path: inset(var(--ct) var(--L) var(--cb) var(--cl) round 24px); }
-  .js .xbg-stage .xbg-plate-c { min-height: 100%; height: 100%; opacity: 0; }
-  .js .xbg-mark { transform: translateY(100%); }
-  .js .xbg-pause { top: auto; right: calc(var(--L) + 17px); bottom: calc(var(--cb) + 17px); }
-  .js .xbg-cover { position: absolute; inset: 0; z-index: 1; display: flex; align-items: center; padding: 60px 0 0; pointer-events: none; }
-  .js .xbg-cover-t { max-width: calc((var(--W) - 27px) * 5 / 13); pointer-events: auto; }
-  .js .xbg-slot { display: block; position: absolute; top: var(--ct); bottom: var(--cb); left: var(--cl); right: var(--L); pointer-events: none; }
-  .js .xbg-stage[data-gone='true'] .xbg-cover { visibility: hidden; }
-  /* a figures post (Kai) mirrors the scene: card on the left, title on the right, figures settle on the right */
-  .js .alt .xbg-stage .xbg-plate-in { clip-path: inset(var(--ct) var(--cl) var(--cb) var(--L) round 24px); }
-  .js .alt .xbg-slot { left: var(--L); right: var(--cl); }
-  .js .alt .xbg-cover-t { margin-left: auto; }
-  .js .alt .xbg-pause { right: auto; left: calc(var(--L) + 17px); }
-  .js .alt .xbg-plate-film { right: auto; left: 0; object-position: 40% 45%; -webkit-mask-image: linear-gradient(270deg, transparent 0, #000 30%); mask-image: linear-gradient(270deg, transparent 0, #000 30%); }
-  .js .alt .xbg-plate-f { align-self: flex-end; transform-origin: 100% 100%; }
-  .js .alt .xbg-plate-k { flex-direction: row-reverse; }
-  /* the figures settle on the film's right: a gradient under that column only (dimming as a gradient under text) */
-  .js .alt .xbg-stage.film .xbg-plate-c::before { content: ''; position: absolute; z-index: -1; top: 0; bottom: 0; left: calc(50% - 50vw); right: calc(50% - 50vw); background: linear-gradient(90deg, rgba(0, 0, 0, 0) 34%, rgba(0, 0, 0, .8) 50%, rgba(0, 0, 0, .9) 100%); pointer-events: none; }
-}
+/* the plate: a plain black section after the reading, the post's products or figures */
+.xbg-plate { background: #000; color: #fafafa; padding: clamp(72px, 9vw, 116px) 0; }
+.xbg-plate-k { display: flex; justify-content: space-between; gap: 17px; margin: 0 0 44px; color: rgba(255, 255, 255, .78); }
+.xbg-facts { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 27px; row-gap: 44px; }
+.xbg-facts:not(.figs) { grid-template-columns: repeat(var(--n), minmax(0, 1fr)); }
+.xbg-facts li { display: flex; flex-direction: column; gap: 10.5px; padding-top: 17px; border-top: 1px solid rgba(255, 255, 255, .2); }
+.xbg-fig, .xbg-facts .x-stat-v { font-size: 64px; font-weight: 220; line-height: 1; letter-spacing: -.03em; font-feature-settings: 'tnum'; color: #fafafa; }
+.xbg-facts .xbg-role { color: rgba(255, 255, 255, .55); }
+.xbg-facts .xbg-note { color: rgba(255, 255, 255, .78); max-width: 34ch; font-size: 14px; line-height: 1.5; }
+
 /* a figures post keeps its reading rail on the right of the column */
 @media (min-width: 1200px) {
   .alt .xbg-room { grid-template-columns: minmax(0, 768px) minmax(0, 1fr); }
@@ -241,37 +208,30 @@ html:not(.js) .xbg-gist-track i { transform: none; }
 .xbg-card-peek { position: absolute; left: 17px; bottom: 17px; z-index: 1; display: flex; gap: 10.5px; padding: 6.5px 10.5px; border-radius: 6px; background: rgba(0, 0, 0, .72); color: #fafafa; font-size: 12px; font-weight: 606; letter-spacing: .14em; text-transform: uppercase; transform: translateY(calc(100% + 17px)); transition: transform 300ms cubic-bezier(.16, 1, .3, 1); }
 @media (hover: hover) { .xbg-card:hover .xbg-card-peek, .xbg-card:focus-visible .xbg-card-peek { transform: none; } }
 
-/* the closing band: Hanzo's words cut in by line mask when they arrive (no blur), then the ask */
+/* the closing band: Hanzo's words, balanced; its entrance is the underline sweep (enter.css) */
 .xbg-band-h { text-wrap: balance; }
-.xbg-band-h .xbg-bm { display: inline-block; overflow: hidden; padding: .04em 0 .12em; margin: -.04em 0 -.12em; vertical-align: top; }
-.xbg-band-h .xbg-bi { display: inline-block; }
-.js .xbg-band:not([data-in='true']) .xbg-bi { transform: translateY(105%); }
-.js .xbg-band[data-in='true'] .xbg-bi { animation: xbg-rise 800ms cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(var(--i, 0) * 55ms); }
-.xbg-band .x-band-act { transition: transform 600ms cubic-bezier(.16, 1, .3, 1) 300ms; }
-.js .xbg-band:not([data-in='true']) .x-band-act { transform: translateY(17px); }
-@media (prefers-reduced-motion: reduce) { .js .xbg-band .xbg-bi, .js .xbg-band .x-band-act { transform: none !important; animation: none !important; } }
 
 /* the Frontier's sources: one caption line under the chart, out of the chip row */
 .xbg-srcs { margin: 17px 0 0; font-size: 13px; line-height: 1.6; color: var(--mute); }
 .xbg-srcs > span + span::before { content: ' · '; }
 
-/* the hero art at rest beside the title when the scene does not pin (reduced motion, no JavaScript) */
-.xbg-rest { display: none; }
-@media (min-width: 900px) and (prefers-reduced-motion: reduce) {
-  .xbg-cover-g { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); column-gap: 27px; align-items: center; }
-  .alt .xbg-cover-t { order: 2; }
-  .xbg-rest { display: block; position: relative; aspect-ratio: 4 / 3; border-radius: 24px; overflow: hidden; background: #000; color: rgba(255, 255, 255, .6); }
-}
-@media (min-width: 900px) {
-  html:not(.js) .xbg-cover-g { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); column-gap: 27px; align-items: center; }
-  html:not(.js) .xbg-rest { display: block; position: relative; aspect-ratio: 4 / 3; border-radius: 24px; overflow: hidden; background: #000; color: rgba(255, 255, 255, .6); }
-}
-.xbg-rest img, .xbg-rest .xbg-sigil { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .xbg-card-t { font-size: 21px; font-weight: 497; line-height: 1.25; letter-spacing: -.01em; max-width: 26ch; text-wrap: balance; }
 .xbg-card-k { display: flex; flex-wrap: wrap; gap: 6.5px 17px; color: var(--mute); }
 .xbg-card-r { color: var(--ink2); }
 .xbg-band-more { display: flex; flex-wrap: wrap; justify-content: center; gap: 10.5px 27px; }
 .xbg-band-more .x-arrow { color: #fafafa; }
+
+/* ---------- the signature: drag the timeline (the rail's spine on desktop, the bar's line on phones) ---------- */
+.xbg-spine { cursor: grab; touch-action: none; }
+.xbg-spine::before { content: ''; position: absolute; top: 0; bottom: 0; left: -11px; width: 24px; }
+.xbg-thread[data-drag] .xbg-spine { cursor: grabbing; }
+.xbg-spine .xbg-thumb { position: absolute; left: 1px; width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 50%; background: var(--room-bg); box-shadow: inset 0 0 0 2px var(--ink2), 0 2px 8px rgba(0, 0, 0, .12); outline: none; transition: transform 200ms cubic-bezier(.16, 1, .3, 1), box-shadow 200ms; }
+@media (hover: hover) { .xbg-spine:hover .xbg-thumb { transform: scale(1.15); } }
+.xbg-thread[data-drag] .xbg-thumb, .xbg-thumb:focus-visible { transform: scale(1.3); box-shadow: inset 0 0 0 6px var(--ink2), 0 2px 10px rgba(0, 0, 0, .18); }
+.xbg-tip { position: absolute; left: 30px; top: 50%; transform: translate(-6px, -50%); display: block; width: max-content; max-width: 220px; padding: 6.5px 10.5px; border-radius: 6px; background: var(--ink2); color: var(--room-bg); font-size: 12px; letter-spacing: .06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0; pointer-events: none; transition: opacity 150ms, transform 200ms cubic-bezier(.16, 1, .3, 1); z-index: 3; }
+.xbg-thread[data-drag] .xbg-tip, .xbg-thumb:focus-visible .xbg-tip { opacity: 1; transform: translate(0, -50%); }
+.alt .xbg-tip { left: auto; right: 30px; }
+.xbg-scrub { display: none; }
 
 /* ---------- tablet and phone ---------- */
 @media (max-width: 1199px) {
@@ -289,23 +249,24 @@ html:not(.js) .xbg-gist-track i { transform: none; }
   .xbg-bar-m { font-size: 12px; color: var(--mute); white-space: nowrap; }
   .xbg-bar-b svg { transition: transform 300ms cubic-bezier(.4, 0, .2, 1); }
   .xbg-bar-b svg.up { transform: rotate(180deg); }
-  .xbg-bar-line { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--ink2); transform-origin: left; }
+  /* the bar's line is the phone's timeline: a 24px touch strip on the bar's foot, a thumb that grows while dragged */
+  .xbg-scrub { display: block; position: absolute; left: 0; right: 0; bottom: -12px; height: 24px; z-index: 2; touch-action: none; cursor: grab; }
+  .xbg-bar-line { position: absolute; left: 0; right: 0; top: 11px; height: 2px; background: var(--ink2); transform-origin: left; }
+  .xbg-scrub .xbg-thumb { position: absolute; top: 12px; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: var(--ink2); outline: none; transition: transform 200ms cubic-bezier(.16, 1, .3, 1); }
+  .xbg-scrub[data-drag] .xbg-thumb, .xbg-scrub .xbg-thumb:focus-visible { transform: scale(1.5); }
   .xbg-sheet { padding: 4px var(--gut) 17px; }
 }
 @media (max-width: 899px) {
-  .xbg-cover { padding: 68px 0 27px; }
+  .xbg-hero { padding: 68px 0 27px; }
+  .xbg-hero-g { grid-template-columns: minmax(0, 1fr); row-gap: 27px; min-height: 0; }
+  .xbg-hero.alt .xbg-cover-t { order: 0; }
+  .xbg-art { aspect-ratio: auto; height: 45svh; }
   .xbg-h1 { font-size: 40px; line-height: 1.06; }
   .xbg-lede { margin-top: 17px; font-size: 17px; }
   .xbg-ask { margin-top: 17px; }
-  .xbg-plate-c { min-height: 0; padding: 17px 17px 27px; gap: 27px; }
-  .xbg-plate-film { position: relative; display: block; width: 100%; height: 45svh; -webkit-mask-image: linear-gradient(180deg, #000 60%, transparent 100%); mask-image: linear-gradient(180deg, #000 60%, transparent 100%); }
-  .xbg-stage.film .xbg-plate-in { display: flex; flex-direction: column; }
-  .xbg-stage:not(.film) .xbg-plate-c { min-height: 60svh; }
-  .xbg-plate-t { font-size: 64px; }
-  .xbg-facts, .xbg-stage.film .xbg-facts, .xbg-stage.film .xbg-facts:not(.figs) { grid-template-columns: minmax(0, 1fr); row-gap: 27px; }
-  .xbg-facts.figs, .xbg-stage.film .xbg-facts.figs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .xbg-fig { font-size: 44px; }
-  .xbg-stage.film .xbg-facts:not(.figs) li { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'f' 'r' 'n'; }
+  .xbg-facts, .xbg-facts:not(.figs) { grid-template-columns: minmax(0, 1fr); row-gap: 27px; }
+  .xbg-facts.figs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .xbg-fig, .xbg-facts .x-stat-v { font-size: 44px; }
   .xbg-parts { grid-template-columns: minmax(0, 1fr); }
   .xbg-parts li, .xbg-parts li.lead { grid-column: 1; grid-row: auto; }
   .xbg-parts li.lead { margin-bottom: 17px; }
@@ -333,5 +294,5 @@ html:not(.js) .xbg-gist-track i { transform: none; }
 }
 .xbg-sheet-m { display: none; }
 @media (max-width: 599px) {
-  .xbg-facts.figs, .xbg-stage.film .xbg-facts.figs { grid-template-columns: minmax(0, 1fr); }
+  .xbg-facts.figs { grid-template-columns: minmax(0, 1fr); }
 }

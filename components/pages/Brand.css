@@ -43,17 +43,28 @@ html.x-arriving .xbr-hero .vc-ml-css { animation-play-state: running; }
 @media (hover: hover) { .xbr-pause:hover { background: var(--b-raised); } }
 @media (prefers-reduced-motion: reduce) { .xbr-pause { display: none; } } /* nothing turns, so no Pause */
 
-/* 2. principles: a pinned scene; each numeral stands in the principle's own material */
-.xbr-pr { padding-top: clamp(64px, 8vw, 120px); }
-.xbr-pr-t { max-width: 11ch; }
-.xbr-pin .vc-pin-v { background: var(--b-raised); border-radius: var(--b-r-l); aspect-ratio: auto; height: min(66svh, 600px); }
-.xbr-num { position: absolute; inset: 0; display: grid; place-items: end start; padding: clamp(28px, 3.5vw, 48px); overflow: hidden; }
+/* the magnet field (signature, ./brand/MagnetGrid.jsx) fills the drawing's stage under the SVG. Server HTML / JS off:
+   the same dots as a CSS background; once the canvas is drawing (.live) the background steps aside */
+.xbr-mg { position: absolute; inset: 0; --mg-rest: var(--b-line2); --mg-ink: var(--b-ink); color: var(--b-line2);
+  background-image: radial-gradient(circle, var(--b-line2) 1.3px, transparent 1.6px); background-size: 26px 26px; background-position: center; }
+.xbr-mg.live { background: none; }
+.xbr-mg canvas { display: block; }
+.xbr-mg:focus-visible { outline-offset: -6px; }
+.xbr-dr svg { position: relative; z-index: 1; pointer-events: none; }
+
+/* 2. principles: three plain rows (no pinned stage), alternating sides; each numeral stands in the principle's own material */
+.xbr-pr { padding: clamp(64px, 8vw, 120px) 0 clamp(40px, 5vw, 72px); }
+.xbr-pb { display: flex; flex-direction: column; gap: clamp(40px, 5vw, 72px); }
+.xbr-pr-row { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 96px); align-items: center; }
+.xbr-pr-row.r1 { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+.xbr-pr-row.r1 .xbr-pr-w { order: 2; }
+.xbr-pr-w { display: flex; flex-direction: column; gap: 22px; }
+.xbr-pr-t { max-width: 11ch; margin: 0; }
+.xbr-pr-v { position: relative; height: clamp(300px, 30vw, 420px); border-radius: var(--b-r-xl); overflow: hidden; background: var(--b-raised); }
+.xbr-num { position: absolute; inset: 0; display: grid; place-items: end start; padding: clamp(28px, 3.5vw, 48px); overflow: hidden; border-radius: inherit; }
 .xbr-num-n { position: relative; z-index: 1; font: 600 clamp(28px, 3vw, 44px)/1 var(--sans); letter-spacing: -.04em; color: var(--b-muted); }
-.xbr-num-n b { display: block; font-size: clamp(160px, 22vw, 320px); line-height: .78; letter-spacing: -.07em; color: var(--b-ink); }
+.xbr-num-n b { display: block; font-size: clamp(140px, 16vw, 240px); line-height: .78; letter-spacing: -.07em; color: var(--b-ink); }
 .xbr-num.n0 { background: var(--b-white); box-shadow: inset 0 0 0 1px var(--b-line); }
-/* the panel's corners match PinScenes' 28px clip, so the 01 hairline runs edge to edge instead of being cut at the corners */
-.xbr-pin .vc-pin-v { border-radius: var(--b-r-xl); }
-.xbr-num { border-radius: inherit; }
 .xbr-num-mark { position: absolute; top: 18%; right: 16%; color: var(--b-ink); }
 /* 02 is a quiet room (MASTER: at most two dark rooms, the colour room and the assets card); the Brand Glow is its object */
 .xbr-num.n1 { background: var(--b-raised); }
@@ -223,12 +234,11 @@ html.x-arriving .xbr-hero .vc-ml-css { animation-play-state: running; }
   .xbr-hero-c { gap: 24px; }
   .xbr-dr { position: relative; width: 100%; height: 300px; margin-top: -8px; -webkit-mask-image: linear-gradient(180deg, transparent, var(--b-black) 18%, var(--b-black) 82%, transparent); mask-image: linear-gradient(180deg, transparent, var(--b-black) 18%, var(--b-black) 82%, transparent); }
   .xbr-dr svg { width: 260px; margin: 0; } /* the mark builds inside the first phone screen */
-  .xbr-grays .xbr-sw { transform: none !important; } /* the fan is a desktop strip move; in the 2-column grid all six show in place */
-  .xbr-grays .xbr-sw:active .xbr-sw-t, .xbr-grays .xbr-sw:active .xbr-ok { transform: scale(.97); } /* the press, kept */
   .xbr-pause { right: 20px; bottom: 20px; }
   .xbr-pr { padding-top: 72px; }
-  .xbr-pr .vc-wrap { width: min(100% - 40px, 1440px); }
-  .xbr-pr-t { font-size: 44px; }
+  .xbr-pr-row, .xbr-pr-row.r1 { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .xbr-pr-row.r1 .xbr-pr-w { order: 0; }
+  .xbr-pr-v { height: 280px; }
   .xbr-num-n b { font-size: 140px; }
   .xbr-col-h { display: flex; flex-direction: column; align-items: flex-start; gap: 24px; margin-bottom: 64px; }
   .xbr .xbr-col .xbr-sub { margin: 56px 0 16px; }

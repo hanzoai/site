@@ -1,0 +1,58 @@
+/* /affiliate entrances (enter.js). Five ways in, one per section, in page order. Everything ends in its plain final
+   state; reduced motion turns every one of them off. */
+
+/* 1. depth-parallax (hero): three layers at three depths. They arrive from the first paint, the deepest (Apply) from
+   furthest away and slowest, the h1 nearest; as you scroll away each drifts at its own speed (--xaf-sy from enter.js)
+   and the hero goes soft, the background to the link band's focus pull. The h1 never starts transparent (it is the LCP). */
+.xaf-d1 { animation: xaf-depth1 .9s cubic-bezier(.16, 1, .3, 1) both; translate: 0 calc(var(--xaf-sy, 0) * -.06px); }
+.xaf-d2 { animation: xaf-depth2 1.05s cubic-bezier(.16, 1, .3, 1) .08s both; translate: 0 calc(var(--xaf-sy, 0) * -.16px); }
+.xaf-d3 { animation: xaf-depth3 1.2s cubic-bezier(.16, 1, .3, 1) .14s both; translate: 0 calc(var(--xaf-sy, 0) * -.28px); }
+.xaf-enter .xaf-hero .xp-wrap { filter: blur(calc(min(var(--xaf-sy, 0), 400) * .01px)); }
+@keyframes xaf-depth1 { from { transform: translateY(36px) scale(.985); } to { transform: none; } }
+@keyframes xaf-depth2 { from { transform: translateY(84px) scale(.96); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes xaf-depth3 { from { transform: translateY(150px) scale(.92); opacity: 0; } to { transform: none; opacity: 1; } }
+.xaf-h1-l { display: block; }
+
+/* 2. focus-pull-scroll (the link band): the link comes into focus as it writes itself, while its caption and rules
+   (the background) go out of focus and settle back once the link is sharp. Filter only, so the link's lean
+   (an inline transform) is untouched. */
+.xaf-link .xaf-link-in { animation: xaf-pull 1.1s cubic-bezier(.16, 1, .3, 1) .05s both; }
+.xaf-link .xaf-link-k { animation: xaf-push 1.4s cubic-bezier(.16, 1, .3, 1) .05s both; }
+@keyframes xaf-pull { from { filter: blur(14px); opacity: .35; } 70% { filter: blur(0); opacity: 1; } to { filter: none; opacity: 1; } }
+@keyframes xaf-push { 0% { filter: blur(0); opacity: .4; } 45% { filter: blur(6px); opacity: .5; } to { filter: none; opacity: 1; } }
+
+/* 3. iris (the one-question flow): a circle opens from the centre. Fill backwards only, so nothing stays clipped. */
+/* (the observer watches the section: a fully clipped element never counts as intersecting) */
+.xaf-enter .xaf-q-sec:not([data-in]) .xaf-q { clip-path: circle(0% at 50% 50%); }
+.xaf-enter .xaf-q-sec[data-in] .xaf-q { animation: xaf-iris .9s cubic-bezier(.65, 0, .35, 1) backwards; }
+@keyframes xaf-iris { from { clip-path: circle(0% at 50% 50%); } to { clip-path: circle(75% at 50% 50%); } }
+
+/* 4. noise-dissolve (the dark rule room): the room arrives out of grain. A monochrome noise layer covers it and thins
+   out in steps while the content resolves from a soft, stepped fade. */
+.xaf-rule { position: relative; }
+.xaf-rule::after { content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none; opacity: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0 / 180px 180px, var(--hz-950); }
+.xaf-enter .xaf-rule:not([data-in])::after { opacity: 1; }
+.xaf-enter .xaf-rule:not([data-in]) > .xp-wrap { opacity: 0; }
+.xaf-enter .xaf-rule[data-in]::after { animation: xaf-grain .8s steps(8, end) both; }
+.xaf-enter .xaf-rule[data-in] > .xp-wrap { animation: xaf-resolve .8s steps(8, end) both; }
+@keyframes xaf-grain { from { opacity: 1; background-position: 0 0, 0 0; } 50% { opacity: .7; background-position: 61px 37px, 0 0; } to { opacity: 0; background-position: 17px 93px, 0 0; } }
+@keyframes xaf-resolve { from { opacity: 0; filter: blur(4px) contrast(1.6); } to { opacity: 1; filter: none; } }
+
+/* 5. glitch-in (the close): a short monochrome glitch, slices of the heading and the ask jump sideways, then it holds. */
+.xaf-enter .xaf-close:not([data-in]) .xaf-close-h, .xaf-enter .xaf-close:not([data-in]) .xaf-close-act { opacity: 0; }
+.xaf-enter .xaf-close[data-in] .xaf-close-h { animation: xaf-glitch .62s steps(1, end) both; }
+.xaf-enter .xaf-close[data-in] .xaf-close-act { animation: xaf-glitch .62s steps(1, end) .12s both; }
+@keyframes xaf-glitch {
+  0% { opacity: 1; clip-path: inset(38% 0 44% 0); transform: translateX(-14px); }
+  12% { clip-path: inset(8% 0 72% 0); transform: translateX(12px); }
+  24% { clip-path: inset(66% 0 6% 0); transform: translateX(-8px) skewX(-6deg); }
+  36% { clip-path: inset(0 0 52% 0); transform: translateX(6px); }
+  48% { clip-path: inset(30% 0 0 0); transform: translateX(-3px); }
+  60% { clip-path: inset(0 0 0 0); transform: translateX(2px); }
+  72%, 100% { opacity: 1; clip-path: inset(0 0 0 0); transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xaf-d1, .xaf-d2, .xaf-d3, .xaf-link .xaf-link-in, .xaf-link .xaf-link-k { animation: none; translate: none; }
+}

@@ -13,10 +13,11 @@
    can't load. Every word, figure and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { Copy, Magnetic, Lines, copyText } from '../ui';
+import { Copy, Magnetic, copyText } from '../ui';
 import { A, More, Faq, Cta, Img } from '../kit';
-import Scenes from '../v2/AppScenes';
 import Sheet from '../v2/AppSheet';
+import Chat from './bot/Chat';
+import useEntrances from './bot/enter';
 import useCalm from '../v2/useCalm';
 import { WORKFLOWS, TOOLS } from './Bot.data';
 import { play } from '../../lib/sound';
@@ -277,7 +278,7 @@ const PTS = ['Each bot has its own computer: a browser, a terminal and your apps
 
 function Cases() {
   return (
-    <section className="av-sec bt-cases" id="use-cases">
+    <section className="av-sec bt-cases" id="use-cases" data-enter="tile-flip">
       <div className="av-wrap">
         <div className="av-grid bt-cases-top">
           <div className="bt-cases-l">
@@ -286,7 +287,7 @@ function Cases() {
           </div>
           <div className="bt-cases-r">
             <Sheet trigger="bt-wall" kick="10 KILLER WORKFLOWS"
-              label={<><span className="bt-pairs" aria-hidden="true">{WORKFLOWS.map((w) => <span key={w.id} className="bt-pair"><span className="bt-pair-f"><Face size={30} id={w.primary.id} /><Face size={30} id={w.verifier.id} /></span><b># {w.channel}</b></span>)}</span><span className="bt-wall-t">See all ten workflows</span></>} title="Ten everyday workflows your team hands off in a single mention.">
+              label={<><span className="bt-pairs" aria-hidden="true" data-tiles="">{WORKFLOWS.map((w) => <span key={w.id} className="bt-pair" data-tile=""><span className="bt-pair-f"><Face size={30} id={w.primary.id} /><Face size={30} id={w.verifier.id} /></span><b># {w.channel}</b></span>)}</span><span className="bt-wall-t">See all ten workflows</span></>} title="Ten everyday workflows your team hands off in a single mention.">
               <div className="bt-all">
                 <p className="bt-dom x-mono">Engineering · Security · Launch · Support · Ops · Research · Sales · Finance · Legal · Growth</p>
                 <p className="bt-crewline"><Face size={26} id="dev" /><b>Hanzo</b><span className="x-mono">10 channels</span></p>
@@ -479,6 +480,51 @@ const CHAPTERS = [
   { kick: 'Gets better as it goes', title: 'It remembers what it learns', body: <Items items={[['Memory is files', 'Decisions, preferences and running notes go into Markdown files in its workspace, not into the model.'], ['It looks things up', 'It searches those notes when it needs them, so what you told it last week still counts.'], ['Yours to read and fix', 'Open the files, correct them or delete them. The next session starts from what you left.']]} link="How memory works" to="https://docs.hanzo.bot/docs/concepts/memory" />, visual: (on) => <Memory on={on} /> },
 ];
 
+/* Five plain sections (no pin): words on one side, the live picture on the other, alternating. Each picture runs only
+   while it is on screen. They enter with the page's `ripple` (components/pages/bot/enter.css). */
+function Chapter({ it, i }) {
+  const ref = useRef(null);
+  const on = useInView(ref, { amount: 0.4 });
+  return (
+    <div ref={ref} className={'av-wrap av-grid bt-ch' + (i % 2 ? ' alt' : '')} data-enter="ripple">
+      <div className="bt-cht">
+        <h3 className="av-head">{it.title}</h3>
+        {it.body}
+        <p className="x-mono bt-cap">{it.kick}</p>
+      </div>
+      <div className="bt-chv">{it.visual(on)}</div>
+    </div>
+  );
+}
+
+function Chapters() {
+  return (
+    <section className="av-sec bt-chs" aria-label="What a bot does">
+      {CHAPTERS.map((it, i) => <Chapter key={it.title} it={it} i={i} />)}
+    </section>
+  );
+}
+
+/* ---------- the signature: ask it, and it answers live (components/pages/bot/Chat.jsx) ---------- */
+function Ask() {
+  return (
+    <section className="av-sec bt-askq" id="faq" aria-labelledby="bt-q-h">
+      <div className="av-wrap av-grid">
+        <div className="bt-qa">
+          <h2 className="av-head" id="bt-q-h">Questions</h2>
+          <p className="av-body">{QA.slice(0, 3).map(([q]) => q).join(' ')}</p>
+          <Sheet trigger="bt-open" label="Read all ten answers" kick="FAQ" title="Questions">
+            <Faq items={QA} />
+          </Sheet>
+        </div>
+        <div className="bt-chat-w">
+          <Chat qa={QA} Face={Face} />
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ---------- the tools it signs in to, and where you talk to it ---------- */
 const CHANNELS = ['Desktop', 'iPhone', 'WhatsApp', 'Telegram', 'Slack', 'Discord', 'iMessage', 'Signal', 'Web chat'];
 
@@ -493,7 +539,7 @@ function Tools() {
           <p className="bt-200 av-num" aria-hidden="true">200</p>
           <p className="bt-fine">200 tools. Each mark belongs to its owner and is shown to say what Hanzo connects to — not to imply any partnership or endorsement.</p>
         </div>
-        <div className="bt-tools-r">
+        <div className="bt-tools-r" data-enter="grid-wave">
           <div className="bt-cats" role="tablist" aria-label="Kinds of tools">
             {TOOLS.map(([c], i) => (
               <button key={c} type="button" role="tab" aria-selected={i === cat} aria-controls={'bt-tc' + i} id={'bt-tt' + i} onClick={() => setCat(i)}>{c}</button>
@@ -501,7 +547,7 @@ function Tools() {
           </div>
           {TOOLS.map(([c, list], i) => (
             <ul key={c} id={'bt-tc' + i} role="tabpanel" aria-labelledby={'bt-tt' + i} className="bt-names" hidden={i !== cat}>
-              {list.map(([f, n]) => <li key={f}><span className="bt-logo"><b aria-hidden="true">{n.replace(/[^A-Za-z0-9]/g, '').slice(0, 1)}</b><Pic src={`https://hanzo.ai/connectors/${f}.png`} alt={n} /></span><span>{n}</span><i aria-hidden="true">✓</i></li>)}
+              {list.map(([f, n]) => <li key={f} data-cell=""><span className="bt-logo"><b aria-hidden="true">{n.replace(/[^A-Za-z0-9]/g, '').slice(0, 1)}</b><Pic src={`https://hanzo.ai/connectors/${f}.png`} alt={n} /></span><span>{n}</span><i aria-hidden="true">✓</i></li>)}
             </ul>
           ))}
         </div>
@@ -597,7 +643,7 @@ function InstallStage() {
           </ol>
         </div>
       </div>
-      <div className={'bt-term-big' + (k < 3 ? ' run' : '')}>
+      <div className={'bt-term-big' + (k < 3 ? ' run' : '')} data-fold="">
         <div className="bt-term-bar"><i /><i /><i /><span className="x-mono">terminal</span>
           <button type="button" className="bt-again" onClick={again} aria-label="Type it again" data-sound="tick" disabled={k < 3}>
             <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.5-3.55M13 2.5V5h-2.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -616,7 +662,7 @@ function InstallStage() {
 
 function Install() {
   return (
-    <section className="av-sec bt-inst-sec" id="install">
+    <section className="av-sec bt-inst-sec" id="install" data-enter="fold-out">
       <div className="av-wrap">
         <InstallStage />
         <div className="bt-paste">
@@ -624,7 +670,7 @@ function Install() {
             <p className="av-title">Paste and ship</p>
             <p className="av-body">Paste this into any agent. It reads the skill manifest and calls Bot from there.</p>
           </div>
-          <div className="bt-prompt">
+          <div className="bt-prompt" data-fold="2">
             <p className="bt-prompt-k x-mono"><span>Agent prompt</span><span className="bt-api"><b>api</b> /v1/bot</span></p>
             <code className="x-mono">{PASTE}</code>
             <Copy text={PASTE} label="Copy the agent prompt" />
@@ -673,7 +719,7 @@ function Pricing() {
   const k = planFor(n);
   return (
     <section className="av-sec bt-price" id="pricing">
-      <div className="av-wrap av-grid">
+      <div className="av-wrap av-grid" data-enter="grow-from-point">
         <div className="bt-price-l">
           <h2 className="av-head">Included in plans from $15</h2>
           <p className="av-body">Each plan below includes resident cloud bots. Or run Hanzo Bot free on your own machine.</p>
@@ -775,20 +821,10 @@ const QA = [
   ['How do model token costs work for bots?', 'Routine tasks (sorting inboxes, web scraping, scheduling, receipt parsing) execute on fast, cost-effective Enso and Sol 6.1 models at ~1/5th the token cost of frontier models, preserving 85-90% of your plan allowance. Higher tiers include Zen Ultra and Astra Ultra frontier models for complex multi-step reasoning.'],
 ];
 
-/* ---------- before the close: the repo and Deploy to Cloud, then questions, then related ---------- */
+/* ---------- before the close: the repo and Deploy to Cloud, then related ---------- */
 function More2() {
-  const qref = useRef(null);
-  const asked = useInView(qref, { once: true, amount: 0.6 });
-  const calm = useCalm();
-  const [qa, setQa] = useState(null); // which of the first three questions the bot is answering
-  // the bot's dots resolve once into the first answer, after the three questions have arrived
-  useEffect(() => {
-    if (!asked) return;
-    const t = setTimeout(() => setQa((v) => (v === null ? 0 : v)), calm ? 0 : 2600);
-    return () => clearTimeout(t);
-  }, [asked, calm]);
   return (
-    <section className="av-sec tight bt-more2" id="faq">
+    <section className="av-sec tight bt-more2">
       <div className="av-wrap av-grid">
         <div className="bt-get">
           <div className="bt-repo">
@@ -801,25 +837,6 @@ function More2() {
             <dl className="bt-meta2"><div><dt>License:</dt><dd>MIT</dd></div><div><dt>Source</dt><dd><A to="https://github.com/hanzoai/bot" className="bt-src">hanzoai/bot</A> <span className="x-mono bt-star"><svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M8 1.5l1.9 4 4.3.5-3.2 2.9.9 4.3L8 11l-3.9 2.2.9-4.3L1.8 6l4.3-.5z" fill="currentColor" /></svg>5 stars</span></dd></div></dl>
             <Cta to="https://platform.hanzo.ai/deploy" kind="link" id="bot-deploy">Deploy to Cloud</Cta>
           </div>
-        </div>
-        <div className="bt-qa">
-          <h2 className="av-head">Questions</h2>
-          <div className={'bt-asks' + (asked ? ' on' : '')} ref={qref}>
-            <div className="av-body bt-qs">{QA.slice(0, 3).map(([q], i) => (
-              <button key={q} type="button" style={{ '--i': i }} aria-pressed={qa === i} aria-controls="bt-qs-a" onClick={() => setQa(i)}>{q}{i < 2 ? ' ' : ''}</button>
-            ))}</div>
-            <div className={'bt-qs-bot' + (qa === null ? '' : ' said')}>
-              <Face k="p" size={34} id="su" />
-              <div className="bt-qs-a" id="bt-qs-a" role="status" aria-live="polite">
-                {qa === null
-                  ? <span className="bt-dots" aria-hidden="true"><i /><i /><i /></span>
-                  : <motion.p key={qa} initial={calm ? false : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}>{QA[qa][1]}</motion.p>}
-              </div>
-            </div>
-          </div>
-          <Sheet trigger="bt-open" label="Read all ten answers" kick="FAQ" title="Questions">
-            <Faq items={QA} />
-          </Sheet>
         </div>
         <div className="bt-rel">
           <p className="x-mono bt-cap">Related capabilities</p>
@@ -843,7 +860,7 @@ function Close() {
     <motion.section ref={ref} className="x-band bt-band" data-room="dark" style={calm ? undefined : { clipPath: clip }}>
       <div className="av-wrap">
         <span className="bt-meet-f" aria-hidden="true">{CREW.map(([id]) => <Face key={id} size={44} id={id} />)}</span>
-        <Lines as="h2" className="bt-band-h" lines={['Meet your first bot']} />
+        <h2 className="bt-band-h">Meet your first bot</h2>
         <p>A teammate you can trust with real work.</p>
         <div className="x-band-act">
           <Cta to="/login" id="bot-band-try" size="lg">Try Hanzo</Cta>
@@ -855,11 +872,14 @@ function Close() {
 }
 
 export default function Bot() {
+  const main = useRef(null);
+  useEntrances(main); // the five page-local entrances (components/pages/bot/enter.js)
   return (
-    <main className="av bt" style={{ '--ac': '#0a0a0a' }}>
+    <main ref={main} className="av bt" style={{ '--ac': '#0a0a0a' }}>
       <Hero />
+      <Ask />
       <Cases />
-      <Scenes label="What a bot does" items={CHAPTERS} flip tone={['#ffffff', '#f7f7f7', '#ffffff', '#f7f7f7', '#ffffff']} className="bt-sc" />
+      <Chapters />
       <Tools />
       <Install />
       <Pricing />

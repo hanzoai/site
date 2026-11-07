@@ -19,8 +19,10 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useMotionValueEvent, useScroll, useTransform } from 'motion/react';
 import { EASE, Magnetic } from '../../ui';
-import { A, Cta, CodeBlock, Film as KitFilm, Img, Tabs, TabPanel } from '../../kit';
+import { A, Cta, CodeBlock, Film as KitFilm, Img, Stat, Tabs, TabPanel } from '../../kit';
 import Sigil from '../../Sigil';
+import { useEnter } from './enter';
+import './enter.css';
 import Gist, { gist } from './Gist';
 import Life from './Life';
 import Frontier from './Frontier';
@@ -108,11 +110,6 @@ function Title({ text }) {
   );
 }
 
-/* The first screen and the plate in one scene. On a desktop the post's own film (or its Sigil) plays in a card on the
-   8 of an 8/5 split from the first second; as you scroll the scene holds, the card opens to full bleed (clip-path from
-   the measured slot), the title steps back and the post's figures settle onto the film. Phones (under 900px), reduced
-   motion and no-JS get the same parts stacked. The header turns dark only once the plate fills the screen. */
-const PIN = '(min-width: 900px) and (prefers-reduced-motion: no-preference)';
 
 /* One solid at a time, from the first paint (the /affiliate pattern): Post.css draws the header's ask outlined on a post
    unless <html> carries data-xbg-solid. This hook sets that flag only while none of the post's own solid asks (the hero
@@ -140,103 +137,65 @@ function useQuietHeader() {
   }, []);
 }
 
-/* a plate figure counted up by the scroll as the plate opens (posts whose plate holds figures); the string is Hanzo's */
-function ScrubFig({ value, p, from, to }) {
-  const m = /^([^0-9]*)([0-9][0-9,]*(?:\.[0-9]+)?)(.*)$/.exec(value);
-  const mv = useTransform(p, (v) => {
-    if (!m) return value;
-    const k = Math.min(1, Math.max(0, (v - from) / (to - from)));
-    if (k >= 1) return value;
-    const n = parseFloat(m[2].replace(/,/g, '')), dec = (m[2].split('.')[1] || '').length;
-    const x = n * (1 - Math.pow(1 - k, 3));
-    return m[1] + (m[2].includes(',') ? x.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec }) : x.toFixed(dec)) + m[3];
-  });
-  return <motion.span aria-hidden="true">{mv}</motion.span>;
-}
-function Stage({ doc, nums, ask, alt }) {
-  const ref = useRef(null), plate = useRef(null), slot = useRef(null);
-  const box = useRef({ t: 120, r: 32, b: 72, l: 520 });
-  const [pin, setPin] = useState(false);
+/* Screen one, plain (no pinned scene): the title, breadcrumb, lede and the post's ask on the 5, and on the 8 the post's
+   own film (or its Sigil) in a card that swings in like a pendulum from first paint (entrance 1, pure CSS so it never
+   waits for hydration). A figures post (Kai) puts the card on the left. Phones stack the parts. */
+function Hero({ doc, nums, ask, alt }) {
+  const art = useRef(null);
   const [paused, setPaused] = useState(false);
-  useEffect(() => {
-    const m = matchMedia(PIN);
-    const measure = () => {
-      const s = slot.current?.getBoundingClientRect(), p = plate.current?.getBoundingClientRect();
-      if (s && p && s.width) box.current = { t: s.top - p.top, r: p.right - s.right, b: p.bottom - s.bottom, l: s.left - p.left };
-    };
-    const on = () => { measure(); setPin(m.matches); };
-    on();
-    m.addEventListener('change', on);
-    addEventListener('resize', measure);
-    return () => { m.removeEventListener('change', on); removeEventListener('resize', measure); };
-  }, []);
-  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
-  // function maps keep these on the main thread (Motion's native scroll-timeline shortcut mis-maps such ranges)
-  const ramp = (a, b) => (v) => Math.min(1, Math.max(0, (v - a) / (b - a)));
-  const clipPath = useTransform(p, (t) => {
-    const k = 1 - ramp(0, 0.55)(t), c = box.current;
-    return `inset(${(c.t * k).toFixed(1)}px ${(c.r * k).toFixed(1)}px ${(c.b * k).toFixed(1)}px ${(c.l * k).toFixed(1)}px round ${(24 * k).toFixed(1)}px)`;
-  });
-  const coverO = useTransform(p, (v) => 1 - ramp(0, 0.28)(v));
-  const coverY = useTransform(p, (v) => -32 * ramp(0, 0.28)(v));
-  const factsO = useTransform(p, ramp(0.48, 0.72));
-  const factsS = useTransform(p, (v) => 1.3125 - 0.3125 * ramp(0.48, 0.8)(v)); // the figures arrive at 84px and settle to 64px
-  const markY = useTransform(p, (v) => (v >= 0.54 ? '0%' : '100%'));
-  useMotionValueEvent(coverO, 'change', (v) => { if (ref.current) ref.current.dataset.gone = String(pin && v < 0.04); });
-  const figs = doc.facts.some((c) => /\d/.test(c[1]));
   const toggle = () => {
-    const v = plate.current?.querySelector('video');
+    const v = art.current?.querySelector('video');
     if (!v) return;
     if (v.paused) { v.play().catch(() => {}); setPaused(false); } else { v.pause(); setPaused(true); }
   };
   return (
-    <section className={'xbg-stage' + (doc.film ? ' film' : '')} ref={ref} aria-labelledby="xbg-h1" data-ask-hide>
-      <div className="xbg-stage-in">
-        <motion.div className="xbg-plate-in" ref={plate} style={pin ? { clipPath } : undefined}>
+    <section className={'xbg-hero' + (doc.film ? ' film' : '') + (alt ? ' alt' : '')} aria-labelledby="xbg-h1" data-ask-hide>
+      <div className="xbg-w xbg-hero-g">
+        <div className="xbg-cover-t">
+          <Title text={doc.title} />
+          <div className="xbg-meta x-mono">
+            <nav aria-label="Breadcrumb" className="xbg-crumbs">
+              <ol>
+                <li><A to={doc.back.href} className="xbg-back"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M13 8H4M7.5 4.5 4 8l3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg><span>{doc.back.label}</span></A></li>
+                <li aria-current="page" className="xbg-chip">{doc.chip}</li>
+              </ol>
+            </nav>
+            <span>{doc.date}</span><span>{doc.read}</span>
+          </div>
+          <p className="xbg-lede">{doc.lede}</p>
+          {ask && <div className="xbg-ask"><Cta to={ask.href} id="blog-post.hero" thumb>{ask.label}</Cta></div>}
+        </div>
+        <div className="xbg-art" ref={art} data-enter="pendulum">
+          {doc.film ? <Film slug={doc.film} className="xbg-art-film" /> : <Sigil seed={doc.route} data={nums} className="xbg-sigil" />}
           {doc.film && (
             <button type="button" className="xbg-pause" onClick={toggle} aria-label={paused ? 'Play' : 'Pause'} aria-pressed={paused}>
               <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">{paused ? <path d="M5 3.5v9l7.5-4.5z" fill="currentColor" /> : <path d="M5 3.5h2v9H5zM9 3.5h2v9H9z" fill="currentColor" />}</svg>
             </button>
           )}
-          <motion.i className="xbg-mark" data-room="dark" aria-hidden="true" style={pin ? { y: markY } : undefined} />
-          {doc.film ? <Film slug={doc.film} className="xbg-plate-film" /> : <Sigil seed={doc.route} data={nums} className="xbg-sigil" />}
-          <motion.div className="xbg-plate-c xbg-w" style={pin ? { opacity: factsO } : undefined} aria-label={doc.chip} role="group">
-            <p className="xbg-plate-k x-mono"><span>{doc.chip}</span><span>{doc.date}</span></p>
-            <motion.div className="xbg-plate-f" style={pin ? { scale: factsS } : undefined}>
-              {doc.facts.length > 0 ? (
-                <ul className={'xbg-facts' + (figs ? ' figs' : '')} style={{ '--n': doc.facts.length > 3 ? 2 : doc.facts.length }}>
-                  {doc.facts.map(([role, name, note], i) => (
-                    <li key={name + i}>
-                      <b className="xbg-fig" aria-label={pin && alt ? name : undefined}>{pin && alt ? <ScrubFig value={name} p={p} from={0.46} to={0.8} /> : name}</b>
-                      <span className="xbg-role x-mono">{role}</span>
-                      <span className="xbg-note">{note}</span>
-                    </li>
-                  ))}
-                </ul>
-              ) : <p className="xbg-plate-t" aria-hidden="true">{doc.chip}</p>}
-            </motion.div>
-          </motion.div>
-        </motion.div>
-        <motion.div className="xbg-cover" style={pin ? { opacity: coverO, y: coverY } : undefined}>
-          <div className="xbg-w xbg-cover-g">
-            <div className="xbg-cover-t">
-              <Title text={doc.title} />
-              <div className="xbg-meta x-mono">
-                <nav aria-label="Breadcrumb" className="xbg-crumbs">
-                  <ol>
-                    <li><A to={doc.back.href} className="xbg-back"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M13 8H4M7.5 4.5 4 8l3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg><span>{doc.back.label}</span></A></li>
-                    <li aria-current="page" className="xbg-chip">{doc.chip}</li>
-                  </ol>
-                </nav>
-                <span>{doc.date}</span><span>{doc.read}</span>
-              </div>
-              <p className="xbg-lede">{doc.lede}</p>
-              {ask && <div className="xbg-ask"><Cta to={ask.href} id="blog-post.hero" thumb>{ask.label}</Cta></div>}
-            </div>
-            <i className="xbg-slot" ref={slot} aria-hidden="true" />
-            <span className="xbg-rest" aria-hidden="true">{doc.film ? <Img src={film(doc.film, 'webp')} alt="" w={1200} h={1500} /> : <Sigil seed={doc.route} data={nums} className="xbg-sigil" />}</span>
-          </div>
-        </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* The post's plate, a plain black section after the reading (no pinned room): its products or figures, which ripple in
+   by distance from the pointer (entrance 3, grid-wave); figures count up once (kit Stat). */
+function Plate({ doc }) {
+  if (!doc.facts.length) return null;
+  const figs = doc.facts.some((c) => /\d/.test(c[1]));
+  return (
+    <section className="xbg-plate" data-room="dark" aria-label={doc.chip}>
+      <div className="xbg-w">
+        <p className="xbg-plate-k x-mono"><span>{doc.chip}</span><span>{doc.date}</span></p>
+        <ul className={'xbg-facts' + (figs ? ' figs' : '')} data-enter="grid-wave" style={{ '--n': doc.facts.length > 3 ? 2 : doc.facts.length }}>
+          {doc.facts.map(([role, name, note], i) => (
+            <li key={name + i} data-wave>
+              {figs ? <Stat value={name} className="xbg-fig" /> : <b className="xbg-fig">{name}</b>}
+              <span className="xbg-role x-mono">{role}</span>
+              <span className="xbg-note">{note}</span>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );
@@ -270,6 +229,43 @@ function Thread({ doc, chapters, body, ask }) {
     done.current = v > 0.985;
     [left.current, leftP.current, leftS.current].forEach((el) => { if (el && el.textContent !== s) el.textContent = s; });
   });
+  /* the signature, drag the timeline: the spine (desktop, vertical) and the reading bar's line (phone, horizontal) are
+     one scrubber. Drag or press anywhere on it and the post moves to that point of the reading; the numeral, the knots,
+     the bar's chapter and the minutes left change with it, and a tip by the thumb names the chapter you are dragging to.
+     Keyboard: the thumb is a slider; arrows, Home and End move by chapter. */
+  const [drag, setDrag] = useState(false);
+  const thumbY = useTransform(fill, (v) => v * 100 + '%');
+  const scrub = (axis) => ({
+    onPointerDown: (e) => {
+      const el = e.currentTarget;
+      el.setPointerCapture?.(e.pointerId);
+      setDrag(true);
+      const to = (ev) => {
+        const r = el.getBoundingClientRect();
+        const v = Math.min(1, Math.max(0, axis === 'y' ? (ev.clientY - r.top) / r.height : (ev.clientX - r.left) / r.width));
+        const b = body.current.getBoundingClientRect();
+        const A = b.top + scrollY - innerHeight * 0.4, B = b.bottom + scrollY - innerHeight * 0.85;
+        const y = A + v * (B - A);
+        if (window.__lenis) window.__lenis.scrollTo(y, { immediate: true }); else window.scrollTo(0, y);
+      };
+      to(e);
+      const move = (ev) => to(ev);
+      const up = () => { setDrag(false); el.removeEventListener('pointermove', move); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up); };
+      el.addEventListener('pointermove', move);
+      el.addEventListener('pointerup', up);
+      el.addEventListener('pointercancel', up);
+    },
+  });
+  const key = (e) => {
+    const n = chapters.length - 1;
+    const j = { ArrowDown: at + 1, ArrowRight: at + 1, ArrowUp: at - 1, ArrowLeft: at - 1, Home: 0, End: n }[e.key];
+    if (j === undefined) return;
+    e.preventDefault();
+    const k = Math.min(n, Math.max(0, j));
+    go(chapters[k].h.id);
+    e.currentTarget.focus({ preventScroll: true });
+  };
+  const slider = { role: 'slider', tabIndex: 0, 'aria-label': 'Chapters', 'aria-valuemin': 1, 'aria-valuemax': chapters.length, 'aria-valuenow': at + 1, 'aria-valuetext': chapters[at] ? pad(at + 1) + ' ' + chapters[at].h.text : '', onKeyDown: key };
   const list = (tap) => (
     <ol className="xbg-knots">
       {chapters.map((c, i) => (
@@ -291,8 +287,13 @@ function Thread({ doc, chapters, body, ask }) {
           <span className="xbg-numeral-of x-mono">/ {pad(chapters.length)}</span>
         </div>
         <p className="xbg-left x-mono"><span className="xbg-read">{doc.read}</span><span ref={left}>{say(0)}</span></p>
-        <div className="xbg-thread">
-          <div className="xbg-spine" aria-hidden="true"><motion.i style={{ scaleY: fill }} /></div>
+        <div className="xbg-thread" data-drag={drag || undefined}>
+          <div className="xbg-spine" {...scrub('y')}>
+            <motion.i aria-hidden="true" style={{ scaleY: fill }} />
+            <motion.span className="xbg-thumb" style={{ top: thumbY }} {...slider}>
+              <span className="xbg-tip x-mono" aria-hidden="true"><b>{pad(at + 1)}</b> {chapters[at] ? chapters[at].h.text : ''}</span>
+            </motion.span>
+          </div>
           {list(false)}
         </div>
       </aside>
@@ -306,7 +307,10 @@ function Thread({ doc, chapters, body, ask }) {
           </button>
           {ask && <Cta to={ask.href} id="blog-post.bar" size="sm" className="xbg-bar-ask">{ask.label}</Cta>}
         </div>
-        <motion.span className="xbg-bar-line" aria-hidden="true" style={{ scaleX: fill }} />
+        <div className="xbg-scrub" data-drag={drag || undefined} {...scrub('x')}>
+          <motion.span className="xbg-bar-line" aria-hidden="true" style={{ scaleX: fill }} />
+          <motion.span className="xbg-thumb" style={{ left: thumbY }} {...slider} />
+        </div>
         <div id="xbg-sheet" className="xbg-sheet" hidden={!open}>
           {ask && <p className="xbg-sheet-m x-mono"><span>{doc.read}</span><span ref={leftS}>{say(0)}</span></p>}
           {list(true)}
@@ -318,28 +322,19 @@ function Thread({ doc, chapters, body, ask }) {
 
 const Chevron = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
-/* The closing band, page-local: the kit Band reveals its headline word by word with opacity and blur (against MASTER
-   part 9), so this draws the same .x-band (same look, same words) with the headline cut in by line mask when it
-   arrives, the post's own ask as a kit Cta (magnetic, as the Band's was) and the other closing links beside it.
-   Request to the kit owner: docs/requests/blog-family.md. */
+/* The closing band, page-local (the kit Band reveals with blur, against MASTER part 9): the same .x-band look and words;
+   on arrival an underline sweeps under each word in turn (entrance 5, underline-sweep), then the post's own ask as a
+   kit Cta (magnetic, as the Band's was) and the other closing links. Request to the kit owner: docs/requests/blog-family.md. */
 function Close({ cta }) {
-  const ref = useRef(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { el.dataset.in = 'true'; io.disconnect(); } }, { threshold: 0.35 });
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
   const words = cta.label.split(' ');
   return (
-    <section className="x-band xbg-band" data-room="dark" ref={ref}>
+    <section className="x-band xbg-band" data-room="dark" data-enter="underline-sweep">
       <div className="x-wrap">
         <h2 className="xbg-band-h">
           <span className="x-sr">{cta.label}</span>
           {words.map((w, i) => (
             <Fragment key={i}>
-              <span className="xbg-bm" aria-hidden="true"><span className="xbg-bi" style={{ '--i': i }}>{w}</span></span>
+              <span className="xbg-uw" aria-hidden="true" style={{ '--i': i }}>{w}</span>
               {i < words.length - 1 ? ' ' : ''}
             </Fragment>
           ))}
@@ -370,7 +365,7 @@ function End({ doc, cta, sources }) {
             </aside>
           )}
           {doc.next.length > 0 && (
-            <ul className="xbg-next">
+            <ul className="xbg-next" data-enter="page-curl">
               {doc.next.map((n, i) => (
                 <li key={n.href} className={i === 0 ? 'big' : ''}>
                   <A to={n.href} className="xbg-card" data-cta={'blog-post.next-' + (i + 1)}>
@@ -412,15 +407,16 @@ export default function Post({ doc }) {
   }
   const nums = [doc.minutes, doc.title.length];
   const ask = cta && cta.links[0];
-  // each post's own data sets its rhythm: a post whose plate holds figures (Kai) mirrors the scene (film card on the
-  // left, title on the right, figures counted up by the scroll, the reading rail on the right); a post whose plate
-  // names products (Pareto) keeps the card on the right and the rail on the left; a post without a film keeps its Sigil
+  // each post's own data sets its rhythm: a post whose plate holds figures (Kai) puts its film card on the left and its
+  // timeline rail on the right; a post whose plate names products (Pareto) keeps card right, rail left; a post without
+  // a film keeps its Sigil
   const alt = !!doc.film && doc.facts.length > 0 && doc.facts.every((c) => /\d/.test(c[1]));
   useQuietHeader();
+  useEnter();
   // data-ask-hide: the post's ask lives inline (hero, phone chapter bar, Band), so the shared rising bar never floats over it
   return (
     <main className={'xbg' + (alt ? ' alt' : '')}>
-      <Stage doc={doc} nums={nums} ask={ask} alt={alt} />
+      <Hero doc={doc} nums={nums} ask={ask} alt={alt} />
 
       <section className="xbg-body" data-ask-hide>
         <div className="xbg-w xbg-room">
@@ -430,7 +426,7 @@ export default function Post({ doc }) {
               <section key={c.h.id} className="xbg-ch" aria-labelledby={c.h.id}>
                 <header className="xbg-ch-h">
                   <span className="xbg-num x-mono" aria-hidden="true">{pad(n + 1)}</span>
-                  <h2 id={c.h.id} tabIndex={-1} className="xbg-h2" data-knot>{c.h.text}</h2>
+                  <h2 id={c.h.id} tabIndex={-1} className="xbg-h2" data-knot data-enter="typewriter">{c.h.text}</h2>
                 </header>
                 {c.blocks.map(({ b, i }, k) => (doc.body[i - 1] && doc.body[i - 1].k === 'figure' && doc.body[i - 1].kind === 'life' && b.k === 'p' ? null : (
                   <Fragment key={i}>
@@ -443,6 +439,8 @@ export default function Post({ doc }) {
           </article>
         </div>
       </section>
+
+      <Plate doc={doc} />
 
       <End doc={doc} cta={cta} sources={sources} />
     </main>

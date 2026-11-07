@@ -12,14 +12,16 @@
    specialist brief, the transcript filed as Hanzo files it, and Hanzo's own written answers when the endpoint cannot
    be reached. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
-import { EASE } from '../ui';
+import { motion, AnimatePresence, useInView, useReducedMotion, useAnimate } from 'motion/react';
+import { EASE, Magnetic } from '../ui';
 import { scrollToEl } from '../../lib/scroll';
-import { A, Band, Cta } from '../kit';
+import { A, Cta } from '../kit';
 import LineReveal, { NoJs } from '../v2/LineReveal';
 import { P, r2, usd, BRIEF, written } from './BuyingSpecialist.data';
+import { useEnter, useRollIn } from './buying-specialist/enter';
 import '../v2/ProgramScale.css';
 import './BuyingSpecialist.css';
+import './buying-specialist/enter.css';
 
 const API = 'https://api.hanzo.ai/v1/chat/public';
 const FORM = 'https://api.hanzo.ai/v1/form/public/hanzo.sales-chat/responses';
@@ -84,20 +86,43 @@ function Roll({ v }) {
    second card. Team: 2-100 members, annual or monthly. Enterprise: 20-500 seats, billed annually only, so it shows
    one rate and no saving (one square stands for five seats). */
 const teamUrl = (n) => `/pay/cart?plan=team&interval=year&quantity=${n}`;
-function Sheet({ seats, setSeats, mine, plan }) {
+/* Signature, stamp: whenever a plan is settled (the sheet comes to rest, you let go of the seats, or an answer
+   proposes a plan) the plan and its seats land on the quote like a rubber stamp: a short drop, a squash, a settle,
+   and the sheet takes the hit. Its words are the sheet's own (the plan's name, "members"). */
+function Stamp({ n, ent, seats }) {
+  if (!n) return null;
+  return (
+    <motion.span key={n} className="xbs-stamp x-mono" aria-hidden="true"
+      initial={{ opacity: 0, scale: 1.9, y: -26, rotate: -14 }}
+      animate={{ opacity: [0, 1, 1, 1], scale: [1.9, 0.86, 1.05, 1], y: [-26, 0, 0, 0], rotate: [-14, -7, -7, -7] }}
+      transition={{ duration: 0.55, times: [0, 0.42, 0.7, 1], ease: 'easeOut' }}>
+      <b>{ent ? 'Enterprise' : 'Hanzo Team'}</b><span>{seats} members</span>
+    </motion.span>
+  );
+}
+
+function Sheet({ seats: target, setSeats, mine, plan, stamp, onSettle }) {
   const ent = plan === 'ent';
+  const [scope, animate] = useAnimate();
+  const seats = useRollIn(scope, target); // entrance 1, count-roll: the figures roll up from zero
+  useEffect(() => {
+    if (!stamp || !scope.current) return;
+    // the sheet takes the stamp's weight as it lands: down 3px and a hair shorter, then back
+    animate(scope.current, { y: [0, 4, -1, 0], scaleY: [1, 0.985, 1.003, 1] }, { duration: 0.42, delay: 0.2, ease: 'easeOut' });
+  }, [stamp, animate, scope]);
   const yr = seats * (ent ? P.ent : P.std);
   const mo = seats * P.stdMo;
   const fill = ent ? Math.round(seats / 5) : seats;
   const title = ent ? 'Enterprise Configuration' : 'Hanzo Team Configuration';
   return (
-    <aside className={'xbs-sheet xbs-ink' + (ent ? ' ent' : '')} id="xbs-sheet" aria-label={`${title}, ${seats} members`}>
+    <aside ref={scope} className={'xbs-sheet xbs-ink' + (ent ? ' ent' : '')} id="xbs-sheet" aria-label={`${title}, ${target} members`} data-enter="count-roll">
       <div className="xbs-sheet-h"><b>{title}</b>{!ent && <span className="x-mono">SAVE {P.save}% ANNUALLY</span>}</div>
+      <Stamp n={stamp} ent={ent} seats={target} />
       <label className="xbs-team x-mono" htmlFor="xbs-seats"><b><Roll v={seats} /></b> members</label>
       <div className="xbs-seats" aria-hidden="true">
         {Array.from({ length: 100 }, (_, i) => <i key={i} className={i < fill ? 's' : ''} style={{ transitionDelay: (i % 20) * 8 + 'ms' }} />)}
       </div>
-      <input id="xbs-seats" className="xbs-range" type="range" min={ent ? 20 : 2} max={ent ? 500 : 100} step={ent ? 5 : 1} value={seats} onChange={(e) => { mine(); setSeats(+e.target.value); }} />
+      <input id="xbs-seats" className="xbs-range" type="range" min={ent ? 20 : 2} max={ent ? 500 : 100} step={ent ? 5 : 1} value={target} onChange={(e) => { mine(); setSeats(+e.target.value); }} onPointerUp={onSettle} onKeyUp={(e) => { if (/^(Arrow|Home|End|Page)/.test(e.key)) onSettle(); }} />
       <dl className={'xbs-tot' + (ent ? ' one' : '')}>
         <div><dt>Annual Rate (Recommended)</dt><dd className="x-mono"><Roll v={usd(r2(yr / 12))} /><small>/mo</small></dd><dd className="xbs-sub">Billed {usd(yr)} annually upfront</dd></div>
         {!ent && <div><dt>Monthly Rate</dt><dd className="x-mono"><Roll v={usd(mo)} /><small>/mo</small></dd><dd className="xbs-sub">Cancel anytime</dd></div>}
@@ -105,11 +130,11 @@ function Sheet({ seats, setSeats, mine, plan }) {
       {ent ? (
         <>
           <Cta to="/enterprise/start" id="buying-specialist.quote" thumb className="xbs-start">Start Enterprise Plan →</Cta>
-          <A to={teamUrl(Math.min(100, seats))} className="x-arrow xbs-more"><span>Start Team Plan →</span></A>
+          <A to={teamUrl(Math.min(100, target))} className="x-arrow xbs-more"><span>Start Team Plan →</span></A>
         </>
       ) : (
         <>
-          <Cta to={teamUrl(seats)} id="buying-specialist.quote" thumb className="xbs-start">Start Team Plan →</Cta>
+          <Cta to={teamUrl(target)} id="buying-specialist.quote" thumb className="xbs-start">Start Team Plan →</Cta>
           <A to="/enterprise/start" className="x-arrow xbs-more"><span>Start Enterprise Plan →</span></A>
         </>
       )}
@@ -162,41 +187,26 @@ function Scene({ i, seats }) {
   </div>);
 }
 
+/* The six promises as three plain sections of two (no pinned stage): each promise with its own small card of the
+   page's interface. Each pair enters its own way (enter.js): rack-focus, swing-door, tile-flip. */
+const PAIRS = [['rack-focus', 0], ['swing-door', 2], ['tile-flip', 4]];
 function Promises({ seats }) {
-  const [on, setOn] = useState(0);
-  const rows = useRef([]);
-  useEffect(() => {
-    const io = new IntersectionObserver((es) => { for (const e of es) if (e.isIntersecting) setOn(+e.target.dataset.i); }, { rootMargin: '-42% 0px -48% 0px' });
-    rows.current.forEach((r) => r && io.observe(r));
-    return () => io.disconnect();
-  }, []);
-  return (
-    <section className="xp-sec xbs-why" aria-label="The fastest path in.">
-      <div className="xp-wrap xbs-why-g">
-        <div className="xbs-stage-w"><div className="xbs-stage xbs-ink" aria-hidden="true">
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div key={on} className="xbs-scene" initial={{ opacity: 0, y: 16, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -12, transition: { duration: 0.18 } }} transition={{ duration: 0.45, ease: EASE }}>
-              <Scene i={on} seats={seats} />
-            </motion.div>
-          </AnimatePresence>
-          <div className="xbs-pips">{PROMISES.map((_, k) => <i key={k} className={k === on ? 'on' : ''} />)}</div>
-        </div></div>
-        <ol className="xbs-ledger">
-          {PROMISES.map(([b, t], i) => (
-            <li key={b} ref={(el) => { rows.current[i] = el; }} data-i={i} className={i === on ? 'on' : ''} onMouseEnter={() => setOn(i)} onFocus={() => setOn(i)} tabIndex={-1}>
-              <i className="xbs-mark" aria-hidden="true" />
-              <strong className="xp-title">{b}</strong>
-              <span className="xp-body">{t}</span>
-              {/* under 900px the scenes stack: each promise carries its own small card, nothing pinned over the list */}
-              <motion.div className="xbs-pcard xbs-ink" aria-hidden="true" initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.5, ease: EASE }}>
-                <div className="xbs-scene"><Scene i={i} seats={seats} /></div>
-              </motion.div>
-            </li>
-          ))}
-        </ol>
-      </div>
+  return PAIRS.map(([how, at], k) => (
+    <section key={how} className={'xp-sec xbs-why' + (k ? ' next' : '')} data-enter={how}>
+      <ol className="xp-wrap xbs-pair" start={at + 1}>
+        {PROMISES.slice(at, at + 2).map(([b, t], j) => (
+          <li key={b} className="xbs-item">
+            <strong className="xp-title">{b}</strong>
+            <span className="xp-body">{t}</span>
+            <div className="xbs-pcard xbs-ink" aria-hidden="true">
+              {how === 'tile-flip' && <div className="xbs-tiles">{Array.from({ length: 24 }, (_, i) => <i key={i} style={{ '--t': (i % 6) + Math.floor(i / 6) * 3 + j * 4 }} />)}</div>}
+              <div className="xbs-scene"><Scene i={at + j} seats={seats} /></div>
+            </div>
+          </li>
+        ))}
+      </ol>
     </section>
-  );
+  ));
 }
 
 /* One solid at a time, from the first paint: BuyingSpecialist.css outlines the header's ask on this route unless
@@ -271,6 +281,11 @@ export default function BuyingSpecialist() {
   const seen = useInView(desk, { amount: 0.2 });
   const calm = useReducedMotion();
   const started = msgs.length > 0;
+  const [stamp, setStamp] = useState(0); // the signature: each settle stamps the plan onto the quote
+  const stamped = useRef(false);
+  const stampIt = () => setStamp((s) => s + 1);
+  const root = useRef(null);
+  useEnter(root);
   useQuietHeader();
 
   useEffect(() => { const n = new URLSearchParams(location.search).get('name'); if (n && n.trim()) setName(n.trim().slice(0, 40)); }, []);
@@ -287,11 +302,17 @@ export default function BuyingSpecialist() {
   }, [msgs.length, started, calm]);
   // the sheet re-prices itself (4, 10, 25, 50 members) until you or the chat set it
   useEffect(() => {
-    if (own || calm || !seen) return;
-    const STEPS = [10, 25, 50, 4, 10]; // one cycle through, then it rests on 10
+    if (own || !seen) return;
+    const STEPS = [10, 25, 50, 4, 10]; // one cycle through, then it rests on 10 and the plan is stamped
     const i = STEPS.indexOf(seats, cycle.current);
-    if (i < 0 || i >= STEPS.length - 1) return;
-    const t = setTimeout(() => { cycle.current = i + 1; setSeats(STEPS[i + 1]); }, i === 0 ? 900 : 2400); // the first move lands inside a second
+    if (i === STEPS.length - 1 || (calm && i === 0)) {
+      if (stamped.current) return;
+      const t = setTimeout(() => { stamped.current = true; stampIt(); }, calm ? 0 : 700);
+      return () => clearTimeout(t);
+    }
+    if (calm || i < 0) return;
+    // the first move follows the count-roll entrance (0.7 s), so the figures never fight
+    const t = setTimeout(() => { cycle.current = i + 1; setSeats(STEPS[i + 1]); }, i === 0 ? 1300 : 2200);
     return () => clearTimeout(t);
   }, [seats, own, calm, seen]);
 
@@ -319,13 +340,13 @@ export default function BuyingSpecialist() {
     } catch { /* the written answer stands in */ }
     setMsgs((m) => [...m, { role: 'assistant', content: a, quote: w.quote }]);
     // the answer's plan moves the one quote card; no second card is printed in the chat
-    if (w.quote) { setOwn(true); setPlan(w.quote.plan === 'Enterprise' ? 'ent' : 'team'); setSeats(w.quote.plan === 'Enterprise' ? w.quote.seats : Math.min(100, w.quote.seats)); }
+    if (w.quote) { setOwn(true); setPlan(w.quote.plan === 'Enterprise' ? 'ent' : 'team'); setSeats(w.quote.plan === 'Enterprise' ? w.quote.seats : Math.min(100, w.quote.seats)); stampIt(); }
     file(q, a, w.quote, list);
     setBusy(false);
   };
 
   return (
-    <main className="xp xbs">
+    <main className="xp xbs" ref={root}>
       <NoJs />
       <section className="xbs-desk" ref={desk} aria-labelledby="xbs-h1">
         <div className="xp-wrap xbs-grid">
@@ -382,12 +403,22 @@ export default function BuyingSpecialist() {
             <p className="xbs-legal" ref={end}>By continuing, you agree to our <A to="/privacy">Privacy Policy</A>.</p>
           </div>
           <motion.div className="xbs-side" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.2 }}>
-            <Sheet seats={seats} setSeats={setSeats} mine={() => setOwn(true)} plan={plan} />
+            <Sheet seats={seats} setSeats={setSeats} mine={() => setOwn(true)} plan={plan} stamp={stamp} onSettle={stampIt} />
           </motion.div>
         </div>
       </section>
       <Promises seats={seats} />
-      <Band title="The fastest path in." lede="You'll have a quote and a plan by the end of this conversation." action="Start Team Plan →" to={`/pay/cart?plan=team&interval=year&quantity=${seats}`} />
+      {/* the closing band, page-local so its headline can split and merge (entrance 5); the kit Band's own reveal is
+          not used here: one reveal per section */}
+      <section className="x-band xbs-band" data-room="dark" data-enter="split-merge">
+        <div className="x-wrap">
+          <h2 className="xbs-band-h"><span className="a">The fastest path in.</span><span className="b" aria-hidden="true">The fastest path in.</span></h2>
+          <div className="xbs-band-rest">
+            <p>You&apos;ll have a quote and a plan by the end of this conversation.</p>
+            <div className="x-band-act"><Magnetic><Cta to={teamUrl(seats)} id="buying-specialist.band">Start Team Plan →</Cta></Magnetic></div>
+          </div>
+        </div>
+      </section>
       <Dock seats={seats} plan={plan} />
     </main>
   );

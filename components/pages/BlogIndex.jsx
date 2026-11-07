@@ -6,9 +6,11 @@
    the next wipes in, a brushed-silver curtain crosses the art plate, and the plate changes behind it: Hanzo's own Kai
    art for the Kai posts, otherwise a contour field drawn from the post's own title. The issue's six headlines sit beside
    it as an index with a hairline timing the current one; hover or tap any of them to bring it to the cover.
-   Supporting (three): every picture is a living contour field from its own post's title that leans toward the pointer
-   (Sigil); the publishing strip's bars rise once when reached; the month you are reading pins at the left of the
-   contents as you scroll. A hand on the issue index cuts straight to that story (no curtain); the timer keeps the curtain.
+   MOTION-MAP signature (word-light, blog/WordLight.jsx): the masthead lede lights word by word as it is read; a hand
+   takes the light word by word. Entrances, in page order (blog/enter.js + enter.css): ink-spread (cover plate),
+   typewriter (on-site post titles), pendulum (publishing strip), tilt-3d-hover (contents), diagonal-wipe (band).
+   Supporting: the contour fields lean toward the pointer (Sigil); the strip's bars rise once and a silver light runs
+   across them. A hand on the issue index cuts straight to that story (no curtain); the timer keeps the curtain.
    Beyond: the publishing strip. Every month Hanzo has published in, from its own post dates, as a bar of its count;
    tap a month and the contents close up to just that month.
    Every word and date is Hanzo's (content/live/blog.json). */
@@ -18,7 +20,7 @@
 // Metric: post opens (data-cta="blog.*")
 // Signature: a magazine cover that turns itself: the headline wipes and a silver curtain crosses the art plate as it changes
 // Beyond: the publishing strip: a bar per month counted from Hanzo's own post dates that narrows the contents to a month
-// V2: 8/10 round 6: phone month bars fit the column (9 equal columns, no rail), active All 24 outlined not filled, one All 24 control, tighter cover-to-films gap. Round 5: masthead cuts in by CSS from first paint, the cover plate's first contour frame is server SVG (BlogIndexFrame), header outlined from first paint while the page's solid is on screen (no flip), phone strip scrolls inside the column with All 24 under it, card art clipped to its radius, big card fills the column, AnimatePresence popLayout. Round 4: JS off shows one cover story (NoJs, no <noscript>); one solid per screen (masthead "Read the latest" solid on desktop where the header quiets, outlined on phones beside the header's solid); the on-site trio plays Hanzo's own films (Zen, Enso, Kai) so four real visuals show with the cover; the contents show one month at a time, the bars swap it in and out, All 24 opens all; the count sits under Contents; trio tilt, count-up, idle bar sweep and row arrival kept
+// V2: 8/10 motion map: signature word-light (the masthead lede lights word by word; pointer, tap and arrow keys take the light), entrances ink-spread (cover plate), typewriter (on-site titles), pendulum (publishing strip), tilt-3d-hover (contents), diagonal-wipe (band); no pinned month headings, no scroll-linked band, old row/card reveals removed. Round 6: phone month bars fit the column (9 equal columns, no rail), active All 24 outlined not filled, one All 24 control, tighter cover-to-films gap. Round 5: masthead cuts in by CSS from first paint, the cover plate's first contour frame is server SVG (BlogIndexFrame), header outlined from first paint while the page's solid is on screen (no flip), phone strip scrolls inside the column with All 24 under it, card art clipped to its radius, big card fills the column, AnimatePresence popLayout. Round 4: JS off shows one cover story (NoJs, no <noscript>); one solid per screen (masthead "Read the latest" solid on desktop where the header quiets, outlined on phones beside the header's solid); the on-site trio plays Hanzo's own films (Zen, Enso, Kai) so four real visuals show with the cover; the contents show one month at a time, the bars swap it in and out, All 24 opens all; the count sits under Contents; trio tilt, count-up, idle bar sweep and row arrival kept
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useInView, useReducedMotion } from 'motion/react';
 import { A, Cta, Film, Img } from '../kit';
@@ -27,6 +29,10 @@ import Sigil from '../Sigil';
 import StoryClose from './StoryClose';
 import StoryPause from './StoryPause';
 import Frame from './BlogIndexFrame';
+import WordLight from './blog/WordLight';
+import Typed from './blog/Typed';
+import { useEnter } from './blog/enter';
+import './blog/enter.css';
 import '../v2/system.css';
 import './story.css';
 import './BlogIndex.css';
@@ -133,7 +139,7 @@ function Cover() {
           })}
         </div>
       </div>
-      <a href={p.to} target="_blank" rel="noopener noreferrer" className="xbl-plate" tabIndex={-1} aria-hidden="true">
+      <a href={p.to} target="_blank" rel="noopener noreferrer" className="xbl-plate" tabIndex={-1} aria-hidden="true" data-enter="ink">
         {ART[p.tag.toLowerCase()] ? <Img key={p.to} src={ART[p.tag.toLowerCase()]} w={1200} h={1500} className="xbl-plate-img" /> : <Sigil seed={p.title} className="xbl-plate-art" />}
         {!live && !ART[p.tag.toLowerCase()] && <Frame seed={p.title} className="xbl-plate-art" />}
         <span className="xbl-plate-k v2s-num">{pad(art + 1)} / {pad(COVER.length)}</span>
@@ -183,7 +189,7 @@ function Hero() {
             <h1 id="xbl-h1" className="v2s-display xbl-h1"><span className="xbl-ln"><span>News &amp; Guides.</span></span></h1>
           </div>
           <div className="xbl-mast-r">
-            <p className="v2s-lede"><span className="v2s-label xbl-runin">Blog</span> Product launches, architecture deep dives, and how-to guides from the team building the AI workforce platform.</p>
+            <WordLight className="v2s-lede" lead={<span className="v2s-label xbl-runin">Blog</span>} text="Product launches, architecture deep dives, and how-to guides from the team building the AI workforce platform." />
             <div className="v2s-acts">
               <Cta to={POSTS[0].to} id="blog.hero" thumb>Read the latest</Cta>
               <Cta to="https://hanzo.blog" kind="link">hanzo.blog</Cta>
@@ -212,14 +218,14 @@ function Here() {
     <section className="v2s-sec tight xbl-here" aria-labelledby="xbl-here-h">
       <div className="v2s-wrap">
         <h2 id="xbl-here-h" className="xbl-sr">Posts on hanzo.ai</h2>
-        <ul className="xbl-here-g">
+        <ul className="xbl-here-g" data-enter="type">
           {HERE.map(([t, to, film], i) => (
-            <motion.li key={to} className={i ? 'small' : 'big'} initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.9, ease: EASE, delay: i * 0.12 }}>
+            <li key={to} className={i ? 'small' : 'big'}>
               <A to={to} className="xbl-here-a" onPointerMove={tilt} onPointerLeave={untilt}>
                 <span className="xbl-here-art"><Film src={`/models/${film}.webm`} poster={`/models/${film}.webp`} w={1200} h={1500} className="xbl-here-img" aria-hidden="true" /></span>
-                <span className={'xbl-here-t ' + (i ? 'v2s-title' : 'v2s-headline')}><span data-morph>{t}</span> <Arr /></span>
+                <span className={'xbl-here-t ' + (i ? 'v2s-title' : 'v2s-headline')}><span data-morph><Typed text={t} /></span> <Arr /></span>
               </A>
-            </motion.li>
+            </li>
           ))}
         </ul>
       </div>
@@ -282,11 +288,11 @@ function Contents() {
           <h2 id="xbl-c-h" className="v2s-display xbl-c-h">Contents</h2>
           <p className="v2s-cap">Every post</p>
           <Count key={m || 'all'} n={m ? (months.find(([k]) => k === m) || [0, 0])[1] : POSTS.length} label={m ? m + ' 2026' : ''} go={headSeen} from={m ? null : 0} />
-          <div className="v2s-side xbl-c-strip">
+          <div className="v2s-side xbl-c-strip" data-enter="swing">
             <Strip m={m} setM={choose} months={months} top={top} all={all} />
           </div>
         </div>
-        <div className="xbl-toc" ref={top0}>
+        <div className="xbl-toc" ref={top0} data-enter="tilt">
           {/* one month at a time: the newest first; a bar brings its month in as the last one leaves; All 24 opens every month */}
           <AnimatePresence mode="popLayout" initial={false}>
           {shown.map(([k, list], gi) => (
@@ -297,15 +303,15 @@ function Contents() {
               </div>
               <ol>
                 {list.map((p) => (
-                  <motion.li key={p.to} initial="off" whileInView="on" viewport={{ once: true, amount: 0.4 }} variants={{ off: { opacity: 0, x: 24 }, on: { opacity: 1, x: 0 } }} transition={{ duration: 0.7, ease: EASE }} className="xbl-li">
+                  <li key={p.to} className="xbl-li">
                     <a href={p.to} target="_blank" rel="noopener noreferrer" className="xbl-row">
                       <span className="xbl-row-k">{p.tag}</span>
                       <span className="xbl-row-main">
-                        <span className="xbl-row-line"><b>{p.title}</b><motion.i aria-hidden="true" variants={{ off: { scaleX: 0 }, on: { scaleX: 1 } }} transition={{ duration: 0.9, ease: EASE, delay: 0.25 }} /><span className="xbl-row-d v2s-num">{p.date}</span></span>
+                        <span className="xbl-row-line"><b>{p.title}</b><i aria-hidden="true" /><span className="xbl-row-d v2s-num">{p.date}</span></span>
                         <span className="xbl-row-p">{p.desc}</span>
                       </span>
                     </a>
-                  </motion.li>
+                  </li>
                 ))}
               </ol>
             </motion.section>
@@ -318,14 +324,18 @@ function Contents() {
 }
 
 export default function BlogIndex() {
+  const root = useRef(null);
+  useEnter(root);
   return (
-    <main id="main" className="xbl v2s">
+    <main id="main" className="xbl v2s" ref={root}>
       {/* JavaScript off: the masthead and the first cover story show at rest */}
       <NoJs css={'.xbl .v2-line>span,.xbl-mast-r,.xbl-story.on *,.xbl-here li,.xbl-li{transform:none!important;opacity:1!important;clip-path:none!important} .xbl-story:not(.on){visibility:hidden!important} .xbl-curtain{display:none} .xbl-month[hidden]{display:grid!important} .xbl-more,.xbl-allbtn,.xst-pause{display:none!important}'} />
       <Hero />
       <Here />
       <Contents />
-      <StoryClose title="Build with Hanzo" lede="Deploy AI agents that code, market, and operate — starting free." action="Every post" to="https://hanzo.blog" cta="blog.band" note={<p className="x-band-note"><A to="https://docs.hanzo.ai">Read the docs</A></p>} />
+      <div className="xbl-close" data-enter="wipe">
+        <StoryClose title="Build with Hanzo" lede="Deploy AI agents that code, market, and operate — starting free." action="Every post" to="https://hanzo.blog" cta="blog.band" note={<p className="x-band-note"><A to="https://docs.hanzo.ai">Read the docs</A></p>} />
+      </div>
     </main>
   );
 }

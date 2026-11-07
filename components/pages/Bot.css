@@ -154,6 +154,21 @@
 .bt-run-links { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; padding-top: 28px; }
 .bt-run-links .x-btn { height: 48px; }
 
+/* ---------- the signature, second screen: ask it and it answers live ---------- */
+.bt-askq { padding-top: clamp(40px, 4vw, 64px); }
+.bt-askq .av-grid { align-items: center; }
+.bt-askq .bt-qa { grid-column: 1 / span 4; grid-row: auto; }
+.bt-chat-w { grid-column: 6 / -1; min-width: 0; }
+
+/* ---------- five plain sections, picture and words alternating (no pin) ---------- */
+.bt-chs { display: flex; flex-direction: column; gap: clamp(64px, 7vw, 112px); }
+.bt-ch { align-items: center; }
+.bt-cht { grid-column: 1 / span 5; display: flex; flex-direction: column; gap: 17px; }
+.bt-cht .bt-cap { margin: 0; }
+.bt-chv { grid-column: 7 / -1; height: 460px; min-width: 0; }
+.bt-ch.alt .bt-cht { grid-column: 8 / -1; grid-row: 1; }
+.bt-ch.alt .bt-chv { grid-column: 1 / span 6; grid-row: 1; }
+
 /* ---------- five chapters ---------- */
 .bt-chb { display: flex; flex-direction: column; align-items: flex-start; gap: 17px; }
 .bt-chb-lede { font-size: 16px; }
@@ -476,7 +491,7 @@
 .bt-src { display: inline-flex; align-items: center; min-height: 44px; color: #0a0a0a; text-underline-offset: 3px; }
 .bt-meta2 dd .x-mono { margin-left: 6px; font-size: 13px; color: #525252; }
 .bt-get .x-arrow { color: #0a0a0a; }
-.bt-rel { grid-column: 1 / span 5; grid-row: 2; display: flex; flex-direction: column; margin-top: 44px; }
+.bt-rel { grid-column: 7 / -1; grid-row: 1; align-self: center; display: flex; flex-direction: column; }
 .bt-rel .bt-cap { margin-bottom: 8px; }
 .bt-rel-a { display: grid; grid-template-columns: 96px minmax(0, 1fr) 20px; align-items: center; gap: 12px; min-height: 56px; border-bottom: 1px solid rgba(0, 0, 0, .1); color: #0a0a0a; text-decoration: none; }
 .bt-rel-a b { font-size: 17px; font-weight: 606; }
@@ -548,6 +563,9 @@ html:not(.js) .bt .x-line-in { transform: none !important; }
   .bt-pts li span { margin: 3px 0 0; }
 
   .bt-vis { min-height: 420px; border-radius: 20px; padding: 16px; }
+  .bt-chv { height: auto; }
+  .bt-ch.alt .bt-cht, .bt-ch.alt .bt-chv { grid-row: auto; }
+  .bt-askq .bt-qa { grid-row: auto; }
   .bt-win-body { grid-template-columns: 1fr; }
   .bt-br { border-right: 0; border-bottom: 1px solid rgba(0, 0, 0, .1); }
   .bt-dock span { font-size: 14px; padding: 0 8px; gap: 6px; }

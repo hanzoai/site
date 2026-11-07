@@ -1,24 +1,19 @@
 'use client';
 /* /brand. Story page (treated so; MASTER 4), Hanzo's deck only.
-   V2: 8/10 (round 4: the hero is whole on the first frame (server SVG mark, visible lede, h1 cut-in from 0 ms), its
-   build and turn run after paint; the colour room is one desktop scene with the board beside the swatches. Round 3: no page hydration diff, h1 at 52 and section heads at 44 so the objects lead, gaps closed,
-   card and specimen hovers, the 02 panel quiet so two dark rooms. Round 2: six grays on phone, no reduced-motion hydration error, mark in the first phone screen, hovers on
-   gradients, scale rows and the ZIP row, no slack after Components. 7 Nov re-walk: colour-room h3s visible again on black, the contrast board swaps White to Black and back
-   once in view with a gliding pill, compass ticks arrive after their circle, CSS colours on deck tokens.)
-   A brand book that is a drawing, in Hanzo's own black, white and greys. The hero is the mark's
-   construction drawn full-bleed across the stage (not a card): once the curtain lifts, the guides draw, the five
-   pieces land, the mark opens once to show its build, and then it stays alive: its pieces lean toward the pointer
-   anywhere in the hero, and the compass turns slowly (pause control). The principles are a pinned scene, one line
-   replacing the last, each with its giant numeral; the colour room opens its gray strip from one bar into six; the
-   type chapter is a full-screen specimen whose weight sweeps once when it is in view, then is yours; a working
-   component bench; assets with the marks they contain.
+   V2: 8/10 (MOTION-MAP: signature `magnet-grid`, the dot field around the mark bends toward the cursor and ripples
+   on a click, tap or Enter, and every ripple parts the mark once; entrances in order pull-back (principles),
+   cursor-trail (colour room), spiral-in (type specimen), curtain-rise (components), stretch-scroll (assets); the
+   pinned 01/02/03 stage is gone, the principles are plain rows; one reveal besides them, the h1 cut-in.)
+   A brand book that is a drawing, in Hanzo's own black, white and greys. The hero is the mark's construction drawn
+   full-bleed on a magnetic field of dots, whole on the first frame; then it lives: the dots bend to the pointer and
+   ripple, the pieces lean toward the pointer, the compass turns slowly (pause control). Then the three principles
+   with their giant numerals, the colour room as one scene, the type specimen whose weight sweeps once, a working
+   component bench, and the assets with the marks they contain.
    Persona: a designer, partner or journalist who needs the marks and rules (PLAN 1.1 "Investor and press").
    Goal: take the brand assets. CTA: "Download Assets" (to the assets ZIP), metric: the one contact click
    (cta_click brand.*); one solid per screen, carried by the site's shared ask bar after the hero.
-   Signature: the type specimen. Zen's variable weight sweeps once across a screen-filling "Aa" with the whole heading
-   scale moving in time, as soon as the specimen is on screen; then the slider puts the weight in your hand.
-   Supporting (3): line-mask headlines, once; the hero drawing (draws in, leans to the pointer, its compass turning
-   slowly with a pause); the principles as a pinned scene. The colour room's strip opening is its entrance.
+   Signature: `magnet-grid` (./brand/MagnetGrid.jsx). Entrances: ./brand/enter.js + enter.css.
+   Supporting: the h1 cut-in (CSS), the specimen's one weight sweep then the slider, the contrast board's swap.
    Beyond: set any of Hanzo's six grays on Hanzo White or Hanzo Black and see, as a shape, whether it meets the WCAG AA
    line, worked out from the two hex values (filled check 4.5:1, half disc 3:1 large text only, cross below).
    Deletes: the proof-red accent; every eyebrow and kicker over a headline ("Design System", "Design Principles",
@@ -30,8 +25,9 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
 import { Cta } from '../kit';
 import MaskLines from './company/MaskLines';
-import PinScenes from './company/PinScenes';
 import useArrived from './company/useArrived';
+import MagnetGrid from './brand/MagnetGrid';
+import useEnter from './brand/enter';
 import '../v2/vc-type.css';
 import './company/deck.css';
 import './Brand.css';
@@ -40,8 +36,8 @@ const EASE = [0.16, 1, 0.3, 1];
 // MASTER 3.1: no springs, no overshoot. Arrivals use ease-emphasis; things the hand moves settle in 300 ms.
 const SOFT = { duration: 0.3, ease: EASE };
 const PART = { duration: 0.9, ease: [0.4, 0, 0.2, 1] }; // the build: things that move and stay (ease-in-out)
-// JS off: the hero is already whole in the server HTML; the grays sit in place and Pause (which needs JS) is hidden
-const NOJS = { __html: '<style>.xbr-grays .xbr-sw{transform:none!important}.xbr-pause{display:none!important}</style>' };
+// JS off: the hero is already whole in the server HTML (the dot field is a CSS background); Pause needs JS, so it hides
+const NOJS = { __html: '<style>.xbr-pause{display:none!important}</style>' };
 
 const PIECES = ['M22.21 67V44.6369H0V67H22.21Z', 'M66.7038 22.3184H22.2534L0.0878906 44.6367H44.4634L66.7038 22.3184Z', 'M22.21 0H0V22.3184H22.21V0Z', 'M66.7198 0H44.5098V22.3184H66.7198V0Z', 'M66.7198 44.6369H44.5098V67H66.7198V44.6369Z'];
 const FROM = [[-18, 22], [0, 0], [-18, -22], [18, -22], [18, 22]];
@@ -58,7 +54,7 @@ function Piece({ d, i, open, mx, my }) {
 }
 
 /* The construction, drawn full-bleed on the hero's stage. */
-function Drawing({ mx, my }) {
+function Drawing({ mx, my, stage }) {
   const ref = useRef(null);
   const live = useInView(ref, { amount: 0.3 });
   const calm = useReducedMotion();
@@ -74,6 +70,14 @@ function Drawing({ mx, my }) {
     const b = setTimeout(() => setOpen(false), 2600);
     return () => { clearTimeout(a); clearTimeout(b); };
   }, [go, live]);
+  // every ripple of the field (click, tap, Enter) parts the mark along its guides and closes it again
+  const [ripples, setRipples] = useState(0);
+  useEffect(() => {
+    if (!ripples) return undefined;
+    setOpen(true);
+    const t = setTimeout(() => setOpen(false), 650);
+    return () => clearTimeout(t);
+  }, [ripples]);
   // the compass turns slowly (one turn a minute) while the hero is seen; Pause stops it (WCAG 2.2.2)
   const [spin, setSpin] = useState(true);
   const turn = useMotionValue(0);
@@ -86,6 +90,7 @@ function Drawing({ mx, my }) {
   // guides, circle and mark are all in the server HTML: the first frame is the finished drawing
   return (
     <div className="xbr-dr" ref={ref}>
+      <MagnetGrid stage={stage} onRipple={() => setRipples((n) => n + 1)} label="Design System" />
       <svg viewBox="-60 -60 187 187" aria-hidden="true">
         {g.map((v, i) => (
           <g key={v} style={{ '--i': i }}>
@@ -116,6 +121,7 @@ function Drawing({ mx, my }) {
 
 function Hero() {
   const calm = useReducedMotion();
+  const stage = useRef(null); // the whole hero takes the pointer for the magnet field
   // the pointer anywhere in the hero pulls the pieces toward it (fine pointers only), settling in 300 ms (no spring)
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
@@ -130,9 +136,9 @@ function Hero() {
     to(my, Math.max(-1, Math.min(1, (e.clientY - cy) / (r.height * 0.9))));
   };
   return (
-    <section className="xbr-hero vc-scene" aria-label="Design System" data-ask-name="Hanzo Brand Guidelines" onPointerMove={lean} onPointerLeave={() => { to(mx, 0); to(my, 0); }}>
+    <section ref={stage} className="xbr-hero vc-scene" aria-label="Design System" data-ask-name="Hanzo Brand Guidelines" onPointerMove={lean} onPointerLeave={() => { to(mx, 0); to(my, 0); }}>
       <noscript dangerouslySetInnerHTML={NOJS} />
-      <Drawing mx={mx} my={my} />
+      <Drawing mx={mx} my={my} stage={stage} />
       <div className="vc-grid xbr-hero-g">
         <div className="xbr-hero-c">
           {/* CSS cut-in from first paint at 0.1 s (MaskLines' base 0.5 s minus 0.4) */}
@@ -151,7 +157,7 @@ function Hero() {
   );
 }
 
-/* ---------- principles: a pinned scene, one line replacing the last, each with its giant numeral ---------- */
+/* ---------- principles: three plain rows, each with its giant numeral (no pinned stage); they pull back in ---------- */
 const PRINCIPLES = [['Minimal & Focused', 'Reduce visual noise and focus on essential elements. Each design decision should have purpose and enhance the user experience.'], ['Elegant & Refined', 'Use subtle gradients, appropriate spacing, and thoughtful typography to create elegant and sophisticated interfaces.'], ['Consistent & Cohesive', 'Maintain consistency in design patterns, spacing, and visual hierarchy to create a unified experience across all touchpoints.']];
 const MarkSvg = ({ s = 40 }) => <svg viewBox="0 0 67 67" width={s} height={s} aria-hidden="true">{PIECES.map((d, i) => <path key={i} d={d} fill="currentColor" />)}</svg>;
 // each numeral stands in the principle's own material: one mark in a lot of space, the Brand Glow, the mark on a grid
@@ -166,17 +172,18 @@ const Numeral = ({ i }) => (
 
 function Principles() {
   return (
-    <section className="xbr-pr" aria-label="Design Principles">
-      <PinScenes
-        label="Design Principles"
-        className="xbr-pin"
-        scenes={PRINCIPLES.map(([t, d], i) => ({
-          key: t,
-          title: <h2 className="vc-display s xbr-pr-t">{t}</h2>,
-          body: <p className="vc-body">{d}</p>,
-          visual: <Numeral i={i} />,
-        }))}
-      />
+    <section className="xbr-pr" aria-label="Design Principles" data-enter="pull-back">
+      <div className="vc-wrap xbr-pb">
+        {PRINCIPLES.map(([t, d], i) => (
+          <div className={'xbr-pr-row r' + i} key={t}>
+            <div className="xbr-pr-w">
+              <h2 className="vc-display s xbr-pr-t">{t}</h2>
+              <p className="vc-body">{d}</p>
+            </div>
+            <div className="xbr-pr-v"><Numeral i={i} /></div>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }
@@ -196,13 +203,11 @@ const CopyIcon = ({ ok }) => (ok
   ? <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><motion.path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.3 }} /></svg>
   : <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><rect x="5" y="5" width="8.5" height="8.5" rx="2" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M10.5 3.2V3a.8.8 0 0 0-.8-.8H3a.8.8 0 0 0-.8.8v6.7c0 .44.36.8.8.8h.2" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>);
 
-// The fan is triggered by the strip (the parent), not each swatch: a swatch tucked behind its neighbour inside the
-// clipped strip can never be 70% visible itself. Below 900px the CSS shows the six in place (no fan).
-function Swatch({ name, hex, big, dark, i = 0, fan, open, sel }) {
+// The colour room arrives by its cursor-trail entrance (./brand/enter.js), so the swatches carry no reveal of their own.
+function Swatch({ name, hex, big, dark, sel }) {
   const [ok, go] = useCopy(hex);
-  const enter = fan ? { initial: { x: `${-i * 100}%` }, animate: open ? { x: '0%' } : undefined, transition: { duration: 0.8, ease: EASE, delay: 0.1 + (5 - i) * 0.04 } } : {};
   return (
-    <motion.button type="button" className={'xbr-sw' + (big ? ' big' : '') + (dark ? ' dk' : '') + (sel ? ' sel' : '')} style={{ '--c': hex, zIndex: fan ? 6 - i : undefined }} onClick={go} whileTap={{ scale: 0.97 }} transition={{ duration: 0.09 }} aria-label={`${name} ${hex}`} aria-pressed={ok} {...enter}>
+    <motion.button type="button" className={'xbr-sw' + (big ? ' big' : '') + (dark ? ' dk' : '') + (sel ? ' sel' : '')} style={{ '--c': hex }} onClick={go} whileTap={{ scale: 0.97 }} transition={{ duration: 0.09 }} aria-label={`${name} ${hex}`} aria-pressed={ok}>
       <span className="xbr-sw-t"><b>{name}</b><span className="vc-num">{hex}</span></span>
       <span className="xbr-ok" aria-hidden="true"><CopyIcon ok={ok} /></span>
     </motion.button>
@@ -264,22 +269,20 @@ function Reads({ bg, setBg }) {
 }
 
 function Colour() {
-  const strip = useRef(null);
-  const fanOpen = useInView(strip, { once: true, amount: 0.6 });
   // one scene: the board's background is the scene's state, and the brand swatch it stands on is marked
   const [bg, setBg] = useState('#FFFFFF');
   return (
-    <section className="vc-sec xbr-col" data-room="dark" aria-labelledby="xbr-col-h">
-      <div className="vc-grid xbr-col-g">
+    <section className="vc-sec xbr-col" data-room="dark" aria-labelledby="xbr-col-h" data-enter="cursor-trail">
+      <div className="vc-grid xbr-col-g xbr-ct">
         <header className="xbr-col-h">
-          <MaskLines id="xbr-col-h" lines={['Color Palette']} className="vc-display m" />
+          <h2 id="xbr-col-h" className="vc-display m">Color Palette</h2>
           <p className="vc-lede">Our colors are carefully selected to create a bold, modern aesthetic.</p>
         </header>
         <div className="xbr-col-l">
           <h3 className="vc-title xbr-sub">Brand Colors</h3>
           <div className="xbr-brand"><Swatch name="Hanzo Black" hex="#0A0A0B" big dark sel={bg === '#0A0A0B'} /><Swatch name="Hanzo White" hex="#FFFFFF" big sel={bg === '#FFFFFF'} /></div>
           <h3 className="vc-title xbr-sub">Gray Scale</h3>
-          <div className="xbr-grays" ref={strip}>{GRAYS.map(([n, h], i) => <Swatch key={n} name={n} hex={h} dark={h !== '#A3A3A3'} i={i} fan open={fanOpen} />)}</div>
+          <div className="xbr-grays">{GRAYS.map(([n, h]) => <Swatch key={n} name={n} hex={h} dark={h !== '#A3A3A3'} />)}</div>
         </div>
         <Reads bg={bg} setBg={setBg} />
         <h3 className="vc-title xbr-sub xbr-grads-h">Gradients</h3>
@@ -316,7 +319,7 @@ function Type() {
     return () => c.stop();
   }, [mine, calm, live, w]);
   return (
-    <section className="vc-sec xbr-type" aria-labelledby="xbr-type-h">
+    <section className="vc-sec xbr-type" aria-labelledby="xbr-type-h" data-enter="spiral-in">
       <div className="vc-grid xbr-type-g">
         <header className="xbr-type-h">
           <h2 id="xbr-type-h" className="vc-headline">Typography</h2>
@@ -346,8 +349,8 @@ function Type() {
 /* ---------- components you can press ---------- */
 function Components() {
   return (
-    <section className="vc-sec xbr-comp" aria-labelledby="xbr-comp-h">
-      <div className="vc-grid">
+    <section className="vc-sec xbr-comp" aria-labelledby="xbr-comp-h" data-enter="curtain-rise">
+      <div className="vc-grid xbr-cr">
         <header className="xbr-comp-h">
           <h2 id="xbr-comp-h" className="vc-headline">Components</h2>
           <p className="vc-body">Reusable UI components that maintain consistency across our products.</p>
@@ -380,8 +383,8 @@ function Components() {
 function Assets() {
   const [ok, go] = useCopy('brand@hanzo.ai');
   return (
-    <section className="xbr-assets" id="assets" aria-labelledby="xbr-dl-h">
-      <div className="vc-grid">
+    <section className="xbr-assets" id="assets" aria-labelledby="xbr-dl-h" data-enter="stretch-scroll">
+      <div className="vc-grid" data-stretch>
         <div className="xbr-dl">
           <h2 id="xbr-dl-h" className="vc-headline">Get our brand assets for your projects and presentations.</h2>
           <div className="xbr-plates" aria-hidden="true">
@@ -407,8 +410,10 @@ function Assets() {
 }
 
 export default function Brand() {
+  const root = useRef(null);
+  useEnter(root); // the five section entrances (./brand/enter.js)
   return (
-    <main className="vc xbr" style={{ '--acc': 'var(--ink)' }}>
+    <main ref={root} className="vc xbr" style={{ '--acc': 'var(--ink)' }}>
       <Hero />
       <Principles />
       <Colour />
