@@ -85,7 +85,7 @@ Done here: Hero ask: fill steps #0a0a0a to #262626 and the arrow nudges 3px up-r
 - ~~Sound only on the listed moments, through the one kit~~ n/a: the page plays no sound of its own; the shared kit owns it
 
 Done here: variety.py OK (2 techniques: typing, useScroll). Kinds: idle (wake loop, thread auto-cycle), time (typing, terminal wipe, frontmatter line wipes, gateway pull, link lines drawing, the close's done line), scroll (trade scrub, h1 settle, the room's rounded-card clip opening to full width, pinned stage swaps, highlighter), state (pills, rail, peek), pointer (arrow nudges, card hover). Tray sheets now drop clear of the CONTEXT label (label under the tray). Curves only ease-out / ease-in-out / ease-emphasis at 90/150/300/400/500 ms, scene moves 900 ms; the sheets' overshoot is gone. Reduced motion: `getAnimations()` 0, `.xsk .a2-ln-in{transform:none!important}` shows the two masked headings (0 hidden lines measured), every scene shows its after state; the thread cycle is a setTimeout chain.
-
+ 7 Nov (Ready pass): the stage scene in focus keeps breathing at rest (a waiting caret on the word and the install, a signal down the gateway's wire, the five reads taking turns, the frontmatter highlight pulsing), so no stage screen is still between scrolls.
 ## 10. Media
 - ~~`Film` and `Pic` only; sizes and posters set~~ n/a: no images or films; every visual is drawn in the DOM
 - ~~At most 2 videos playing; pause button on loops over 5 s~~ n/a: no video
@@ -101,7 +101,7 @@ Done here: No media: the skill file, shelf, tray, frontmatter close up, gateway,
 - [x] Primary ask above the fold at 375×667
 
 Done here: Walked both sizes (scratchpad fix-skills-2 frames). Phone page 10,591px to 9,239px (hero 731, essay 3,099, each point's object capped at 280px, no overflow). Stage ticks sit inside the panel's bottom edge and the essay's bottom padding is trimmed. Thread cards are a staircase in normal flow (16px gaps), so no card covers another's text. scrollWidth equals the viewport at 320, 375, 768, 1024, 1470. Targets under 44px: 0 (Copy buttons and caption links raised to 44px). Ask bottom at y 370 on 375. Under 900px the pinned stage stacks: each point carries its own scene (point 03 keeps its command box).
-
+ 7 Nov: on phones scene 02 shows the two pulled discover-database files and one quiet file between them, each name on one line (no mid-word wraps).
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
 - [ ] Pause control on every moving item
