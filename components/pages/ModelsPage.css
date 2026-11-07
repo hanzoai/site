@@ -55,7 +55,7 @@
 .xmo-pill.flag { margin-bottom: 22px; }
 .xmo-card.big { padding: 28px; }
 .xmo-card.big .xmo-card-t { font-size: 44px; letter-spacing: -.88px; line-height: 48px; }
-.xmo-card.big .xmo-card-d { margin-top: 18px; max-width: 160px; font-size: 15px; line-height: 21px; }
+.xmo-card.big .xmo-card-d { margin-top: 18px; max-width: 160px; font-size: 13px; line-height: 18px; }
 .xmo-card:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 .xmo-grid-cap { display: flex; align-items: center; justify-content: flex-end; gap: 17px; margin-top: 17px; }
 .xmo-grid-cap > span { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--quiet); }
@@ -107,9 +107,12 @@
 .xmo-fig-head { grid-column: 1 / 5; grid-row: 1 / 3; align-self: start; position: sticky; top: calc(var(--top) + 44px); }
 .xmo-suites { display: flex; flex-wrap: wrap; gap: 6.5px; margin: 27px 0 17px; padding: 0; list-style: none; }
 .xmo-suites li { padding: 6.5px 10.5px; border-radius: 6px; background: var(--room); font-size: 13px; color: var(--body); }
-.xmo-fig-big { grid-column: 6 / 14; grid-row: 1; display: flex; align-items: flex-end; gap: 27px; min-height: 200px; }
+.xmo-fig-big { grid-column: 6 / 14; grid-row: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start; gap: 10.5px; min-height: 200px; }
+/* the box holds the figure at rest; its ×1.75 peak grows up and right from the bottom-left corner, into the empty room
+   above, so it never reaches the label below */
+.xmo-num-box { display: flex; align-items: flex-end; height: 58px; }
 .xmo-num { margin: 0; font-size: 64px; font-weight: 220; line-height: .9; letter-spacing: -.04em; color: var(--ink); font-variant-numeric: tabular-nums; transform-origin: 0 100%; }
-.xmo-num-k { margin: 0 0 6.5px; max-width: 14ch; font-size: 17px; line-height: 1.35; color: var(--body); }
+.xmo-num-k { margin: 0; font-size: 17px; line-height: 1.35; color: var(--body); }
 .xmo-duel { grid-row: 2; margin: 0; padding-top: 17px; border-top: 1px solid var(--ink); }
 .xmo-duel:nth-of-type(1) { grid-column: 6 / 10; }
 .xmo-duel:nth-of-type(2) { grid-column: 10 / 14; }
@@ -172,7 +175,8 @@
 @media (hover: hover) { .xmo-every-m li a:hover, .xmo-every-h:hover { color: var(--ink); text-decoration-color: currentColor; } }
 
 /* ---------- 6. every model, priced ---------- */
-.xmo-priced { border-top: 1px solid var(--line); }
+.xmo-cat { padding-bottom: 0; }
+.xmo-priced { border-top: 1px solid var(--line); padding-bottom: 0; }
 .xmo-pr-g { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); column-gap: 24px; align-items: start; }
 .xmo-pr-g > header { grid-column: 1 / 5; position: sticky; top: calc(var(--top) + 44px); }
 .xmo-pr-g > header .xmo-lk { margin-top: 10.5px; }
@@ -251,10 +255,22 @@
 .xmo-links { display: flex; flex-direction: column; align-items: flex-start; margin-top: 17px; }
 .xmo-code { grid-column: 1 / 9; grid-row: 1; border-radius: 24px; overflow: hidden; background: #171717; color: #e5e5e5; }
 .xmo-code-top { display: flex; align-items: center; justify-content: space-between; gap: 10.5px; padding: 17px 17px 0; }
-.xmo-code .x-copy, .xmo-code button:not([role]) { color: #fafafa; }
+/* Copy on graphite: a quiet outlined pill with a white-78% label, 44px tall; white on hover */
+.xmo-code .x-copy { height: 44px; min-width: 44px; padding: 0 17px; justify-content: center; background: transparent; border-color: rgba(255, 255, 255, .2); color: rgba(255, 255, 255, .78); font-size: 14px; transition: color .15s var(--out), border-color .15s var(--out); }
+@media (hover: hover) { .xmo-code .x-copy:hover { color: #fafafa; border-color: rgba(255, 255, 255, .4); } }
 .xmo-pane pre { margin: 0; padding: 27px; min-height: 320px; overflow-x: auto; font: 500 13.5px/1.65 var(--mono); }
 .xmo-pane code { font: inherit; color: #a3a3a3; }
 .xmo-pane .s { color: #fafafa; }
+
+/* ---------- 10. the close: a black room, the page's words at 44px, the one ask, Enso's film as the object ---------- */
+.xmo-close { padding: var(--pad) 0; background: #000; color: #fafafa; }
+.xmo-close-g { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); column-gap: 24px; align-items: center; }
+.xmo-close-t { grid-column: 1 / 8; }
+.xmo-close h2 { margin: 0; font-size: 44px; font-weight: 497; line-height: 1.05; letter-spacing: -.03em; color: #fafafa; text-wrap: balance; }
+.xmo-close p { margin: 17px 0 0; max-width: 40ch; font-size: 17px; line-height: 1.5; color: rgba(255, 255, 255, .78); }
+.xmo-close .xmo-acts { margin-top: 27px; }
+.xmo-close-film { grid-column: 9 / 14; position: relative; display: block; aspect-ratio: 4 / 5; overflow: hidden; background: #000; -webkit-mask-image: radial-gradient(closest-side, #000 72%, transparent); mask-image: radial-gradient(closest-side, #000 72%, transparent); }
+.xmo-close :focus-visible { outline-color: #fafafa; box-shadow: 0 0 0 6px #000; }
 
 /* ---------- 9. related: an editorial index over a drifting Sigil ---------- */
 .xmo-rel { padding-top: 0; overflow: hidden; }
@@ -306,16 +322,34 @@
   .xmo-vs-c { font-size: 15px; gap: 6.5px; }
 
   .xmo-fig-g { padding-top: 72px; }
-  .xmo-fig-big { margin: 44px 0 0; min-height: 0; gap: 17px; }
+  .xmo-fig-big { margin: 44px 0 0; min-height: 120px; }
+  .xmo-close-g { display: block; }
+  .xmo-close h2 { font-size: 32px; }
+  .xmo-close-film { margin-top: 27px; aspect-ratio: 1 / 1; }
   .xmo-duel { margin-top: 44px; }
 
   .xmo-chips { flex-wrap: nowrap; overflow-x: auto; margin: 0 calc(-1 * var(--gut)); padding: 10.5px var(--gut); scroll-padding: var(--gut); }
   .xmo-chips button { flex: none; min-height: 44px; }
   .xmo-group { padding: 44px 0; }
   .xmo-gh { padding: 0; margin-bottom: 27px; }
-  .xmo-cards, .xmo-cards.tiles { grid-template-columns: 1fr; gap: 10px; }
-  .xmo-cards.tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* phone: the catalogue is a list of 72px rows (name, id and price); the description and pills wait on the model's page */
+  .xmo-cards:not(.tiles) { display: block; border-top: 1px solid var(--ink); }
+  .xmo-cards:not(.tiles) > li { border-bottom: 1px solid var(--line); }
+  .xmo-cards:not(.tiles) .sc-card { min-height: 72px; height: auto; padding: 13px 0; gap: 0; justify-content: center; border-radius: 0; background: transparent; color: var(--ink); transform: none !important; }
+  .xmo-cards:not(.tiles) .sc-card:active { background: var(--room); transform: none !important; }
+  .xmo-cards:not(.tiles) .sc-card:focus-visible { outline-offset: -2px; box-shadow: none; }
+  .xmo-cards:not(.tiles) .sc-t { font-size: 17px; line-height: 24px; letter-spacing: -.2px; color: var(--ink); }
+  .xmo-cards:not(.tiles) .sc-meta { margin-top: 2px; font-size: 12px; line-height: 17px; color: var(--quiet); }
+  .xmo-cards:not(.tiles) .sc-meta b { color: var(--ink); }
+  .xmo-cards:not(.tiles) .sc-meta br { display: none; }
+  .xmo-cards:not(.tiles) .sc-meta b::before { content: ' · '; color: var(--quiet); }
+  .xmo-cards:not(.tiles) .sc-d, .xmo-cards:not(.tiles) .sc-tags { display: none; }
+  .xmo-cards.tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .xmo-cards.tiles .sc-card { aspect-ratio: auto; min-height: 220px; }
+  /* the creative tiles keep their film; the words sit on a black fade at the top, clear of the art (never a dimmed film) */
+  .xmo-cards.tiles .sc-card::after { content: ''; position: absolute; inset: 0 0 35% 0; z-index: -1; background: linear-gradient(#000 55%, rgba(0, 0, 0, 0)); pointer-events: none; }
+  .xmo-cards.tiles .sc-d { -webkit-line-clamp: 3; }
+  .xmo-cards.tiles .sc-meta br, .xmo-cards.tiles .sc-meta span + span { display: none; }
 
   .xmo-pr-t { margin-top: 27px; }
   .xmo-chips.flat { flex-wrap: nowrap; overflow-x: auto; margin: 0 calc(-1 * var(--gut)); padding: 0 var(--gut); }
@@ -340,6 +374,9 @@
   .xmo-compose { flex-wrap: wrap; border-radius: 24px; }
   .xmo-gate .x-btn { height: 44px; }
   .xmo-code { margin-top: 27px; }
+  /* the four languages stay on one row (it scrolls in place if it must) */
+  .xmo-code .x-tablist { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .xmo-code .x-tab { flex: none; }
   .xmo-pane pre { padding: 17px; min-height: 0; font-size: 13px; }
 
   .xmo-rel a { grid-template-columns: 36px minmax(0, 1fr) 28px; gap: 10.5px; min-height: 72px; padding: 10.5px 0; }
