@@ -7,6 +7,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useInView, useReducedMotion } from 'motion/react';
 import { Copy } from '../../ui';
 import { ui } from '../../v2/famUi';
+import { play } from '../../../lib/sound';
 
 export const HANZO = /hanzo/i;
 export const lineText = (l) => l.map((t) => t[1]).join('');
@@ -109,7 +110,7 @@ export function Editor({ sample, only, setOnly, aside, name, face }) {
       });
       if (at && at.ghost.previousSibling !== caret) at.ghost.before(caret);
       if (want < total) raf = requestAnimationFrame(step);
-      else finish();
+      else { finish(); play('done'); } // the demo has finished on its own: the kit's faint chime
     };
     raf = requestAnimationFrame(step);
     return () => { cancelAnimationFrame(raf); caret.remove(); spans.forEach((s, n) => { s.textContent = full[n]; }); stop.current = null; };

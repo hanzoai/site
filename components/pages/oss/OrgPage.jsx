@@ -1,24 +1,26 @@
 'use client';
-/* One of Hanzo's GitHub organizations (/oss/<org>, 56 of them, one template): a catalogue with a launch-page first
-   screen. The organization's name runs at display size on the left; its ledger (this year's commits huge, then
-   repositories, stars and forks, and the year as a waveform a playhead keeps reading) is the hero object on the right,
-   a black instrument over the organization's own contour (Sigil seeded with its route and drawn from its figures), and
-   it settles into place as you scroll. Two chapters then count it, GitHub's figures and the forge's; then the
-   repositories, as tiles you filter by language; then the next organizations, as cards that open into their page.
-   Persona: Developer and researcher (PLAN-COMPONENTS 1.1). Goal: find a repository and clone it.
-   CTA: "<org> on GitHub" (Hanzo's hero link; data-thumb, so the site's ask bar carries it after the hero).
+/* One of Hanzo's GitHub organizations (/oss/<org>, 56 of them, one template): a catalogue whose first screen is the
+   organization's year, laid flat. Its own face among the families: no black card and no pinned chapters. The name
+   sits left with Hanzo's lede, caption and one ask on the right; under them, full width and light, the year's commits
+   run as a wide strip of bars (a playhead keeps reading them) with the organization's strongest figure set on it and
+   its own contour behind; an organization with no commits this year lets its repositories pass along the strip
+   instead. Every figure is said once: GitHub's in a small row under the strip, the forge's own in hairline rows, each
+   with its share drawn from Hanzo's own numbers (private of all repositories, by our people and agents of all
+   commits). Zeros never stand big: they drop into a small grey line. Then the repositories as a numbered list whose
+   rows open into cards; the next organizations; and a quiet close, the organization's contour full width with the ask.
+   Persona: Developer and researcher (MASTER.md 1). Goal: find a repository and clone it.
+   CTA: "<org> on GitHub" (Hanzo's hero link; data-thumb, so the site's ask carries it after the hero).
    Metric: GitHub or weights click.
-   Signature: every repository opens into its own card. Press a tile and it lifts and grows into a full card
-   (shared-element morph, synchronized.studio): stars, forks, this year's commits and last push at full size, its
-   monthly bars across the card, and its clone command.
+   Signature: every repository opens into its own card. Press a row and it grows into a full card (shared-element
+   morph, synchronized.studio): stars, forks, this year's commits and last push, its monthly bars, its clone command.
    Beyond: clone in one press. Each card hands you the git clone command for GitHub or Hanzo Forge, ready to copy; the
-   tiles filter by language, re-sort (as listed, by stars, by this year's commits) and search as you type.
-   Motion, by kind (scroll is two of them): idle, the ledger's playhead reading the year and the contour drifting;
-   pointer, the magnetic ask, a hovered tile's own playhead, the sibling rail that drags with inertia; state, the tile
-   that opens into its card, the sort pill gliding, tiles re-flowing as you filter; arrival, the name's masked rise;
-   scroll, the ledger settling and the counted chapters swapping.
-   Colour: none of our own (JAMES.md 7): ink, greys and white; the organizations differ by their contour and figures.
-   V2: 8/10 v5: live hanzo.ai sizes (h1 52, figures 64, the ledger's lead grows past its rest only on arrival and settles as you scroll), no springs (600 ms in-out open, 300 ms glides), no cursor label, deck greys. v4: the ledger leads with the strongest true figure (never a zero), its digits rise into place, and an org with no commits shows its own repositories as a slow ticker, so the first screen moves within 1 s for every member. v3: name and ledger side by side so the ledger is whole on the first screen at 1470×801 and 375×812, no labels above headings, 0 hues (white-on-black ledger, silver waveforms), icon controls with registered names, Hanzo's own words on every card, siblings with their own line on hover. */
+   rows filter by language, re-sort (as listed, by stars, by this year's commits) and search as you type.
+   Motion, by kind (scroll is one of them): idle, the strip's playhead or its passing repositories, the contour
+   drifting (it leans toward the pointer); pointer, the magnetic ask, a hovered row's own playhead, the sibling rail
+   that drags with inertia; state, the row that opens into its card, the sort pill, rows re-flowing as you filter;
+   arrival, the name arriving large and settling, the lead's digits rising; scroll, the lead growing as it passes.
+   Colour: none of our own (MASTER.md 3.1); organizations differ by their contour, figures and repositories.
+   V2: 8/10 v6: a light, full-width year strip as the hero object (its own face: no black card, no pinned chapters, no dark close), each figure said once with the forge's shares drawn from Hanzo's numbers, zeros in a small line, repositories as numbered rows (72px on phones), siblings named by id, a quiet close with the contour and the ask. */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, LayoutGroup, useReducedMotion } from 'motion/react';
 import { Copy, Magnetic } from '../../ui';
@@ -26,15 +28,14 @@ import { A } from '../../kit';
 import Sigil from '../../Sigil';
 import { Loose } from '../models/parts';
 import FamLines from '../../v2/FamLines';
-import FamStage from '../../v2/FamStage';
-import FamChapters from '../../v2/FamChapters';
 import FamNext from '../../v2/FamNext';
 import FamGrow from '../../v2/FamGrow';
 import { ui } from '../../v2/famUi';
 import './oss.css';
 
 const n0 = (v) => (v == null ? '—' : v.toLocaleString('en-US'));
-const PAGE = 11; // a wide lead tile and ten more: four even rows of three
+const num = (s) => { const v = parseFloat(String(s).replace(/,/g, '')); return Number.isFinite(v) ? v : 0; };
+const PAGE = 11;
 const MORPH = { duration: 0.6, ease: [0.4, 0, 0.2, 1] }; // the open: 600 ms in-out, no spring (MASTER.md 3.1)
 const GLIDE = { duration: 0.3, ease: [0.16, 1, 0.3, 1] };
 
@@ -63,7 +64,7 @@ function Name({ name }) {
   const k = name.indexOf('/');
   return k < 0 ? <>{name}</> : <><span className="xos-org">{name.slice(0, k + 1)}</span>{name.slice(k + 1)}</>;
 }
-/* "2,107 commits this year": the figure big, Hanzo's words after it */
+/* "2,107 commits this year": the figure, then Hanzo's words after it */
 function Split({ s }) {
   const m = /^([\d,.]+)\s+(.*)$/.exec(s || '');
   return m ? <><b className="v2f-num">{m[1]}</b><span>{m[2]}</span></> : <span>{s}</span>;
@@ -93,8 +94,8 @@ function Card({ r, onClose }) {
   return (
     <div className="xos-modal" role="dialog" aria-modal="true" aria-label={r.name} data-swipe-own>
       <motion.button type="button" className="xos-scrim" aria-label={ui('close')} tabIndex={-1} onClick={onClose} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.2 } }} />
-      <motion.article className="xos-card" layoutId={'xos-' + r.name} transition={MORPH} style={{ borderRadius: 32 }} data-lenis-prevent>
-        <motion.div className="xos-card-in" initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { delay: 0.14, duration: 0.3 } }} exit={{ opacity: 0, transition: { duration: 0.1 } }}>
+      <motion.article className="xos-card" layoutId={'xos-' + r.name} transition={MORPH} style={{ borderRadius: 24 }} data-lenis-prevent>
+        <motion.div className="xos-card-in" initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { delay: 0.18, duration: 0.3 } }} exit={{ opacity: 0, transition: { duration: 0.1 } }}>
           <header className="xos-card-h">
             <div>
               <h3><Name name={r.name} /></h3>
@@ -117,12 +118,11 @@ function Card({ r, onClose }) {
               <div className="xos-clone-h">
                 <span className="x-mono">git clone</span>
                 {r.href && r.forge && (
-                  <div className="xos-src" role="group" aria-label={ui('oss_clone_from')}>
+                  /* the pill is placed by CSS, so it never slides in while the card opens */
+                  <div className="xos-src" role="group" aria-label={ui('oss_clone_from')} data-at={src}>
+                    <span className="xos-src-bg" aria-hidden="true" />
                     {[['gh', 'GitHub'], ['forge', 'Hanzo Forge']].map(([k, t]) => (
-                      <button key={k} type="button" aria-pressed={src === k} onClick={() => setSrc(k)}>
-                        {src === k && <motion.span layoutId="xos-src" className="xos-src-bg" transition={GLIDE} />}
-                        <span>{t}</span>
-                      </button>
+                      <button key={k} type="button" aria-pressed={src === k} onClick={() => setSrc(k)}><span>{t}</span></button>
                     ))}
                   </div>
                 )}
@@ -140,66 +140,50 @@ function Card({ r, onClose }) {
   );
 }
 
-/* the hero object: the organization's ledger. Its lead is its strongest true figure, never a zero (this year's
-   commits, then its public repositories, then the forge's count); zeros stay in the small row. The lead's digits rise
-   into place (Hanzo's own figure throughout, never a count passing through other numbers). Something is always
-   alive on arrival: the year's waveform and its playhead where the organization has commits, otherwise its own
-   repositories passing as a slow ticker; the contour drifts behind both. */
-function Ledger({ doc }) {
-  const key = doc.key;
-  const forge = doc.counts.flatMap((c) => c.figures).filter((f) => !key.includes(f));
-  const pick = (re, list) => list.find((f) => re.test(f.label) && f.n > 0);
-  const lead = pick(/^commits/, key) || pick(/^public repositories/, key) || pick(/^repositories/, forge) || [...key].sort((a, b) => b.n - a.n)[0];
-  const rest = key.filter((f) => f !== lead);
+/* the figures, each once: the lead (the strongest true figure, never a zero) goes on the strip; GitHub's others in a
+   small row; the forge's own in rows. A forge figure that only restates the lead is not repeated. */
+function figures(doc) {
+  const [gh, forge] = [doc.counts.find((c) => /GitHub/.test(c.title)), doc.counts.find((c) => /Forge/.test(c.title))];
+  const all = doc.counts.flatMap((c) => c.figures);
+  const pick = (re) => all.find((f) => re.test(f.label) && f.n > 0);
+  const lead = pick(/^commits/) || pick(/^public repositories/) || pick(/^repositories/) || all.find((f) => f.n > 0) || all[0];
+  return { gh, forge, lead };
+}
+
+/* the hero object: the year, laid flat across the page */
+function Year({ doc, lead }) {
   const when = doc.counts[0] && doc.counts[0].notes[0] ? doc.counts[0].notes[0].replace(/^.*read from /, '') : '';
-  const names = doc.repos ? doc.repos.items.slice(0, 14).map((r) => r.name) : [];
-  if (!lead) return null;
+  const names = doc.repos ? doc.repos.items.slice(0, 16).map((r) => r.name) : [];
+  const live = doc.spark && doc.spark.some((v) => v > 0);
   return (
-    <div className="xos-ledger">
-      <Sigil seed={doc.route} data={key.map((f) => f.n)} className="xos-sigil" />
-      <p className="xos-ledger-h x-mono"><span>{doc.org}</span><span>{when}</span></p>
-      <div className="xos-lead">
-        <FamGrow to={1.6}>
-          <b className="v2f-num xos-dgs" style={{ '--ch': lead.value.length }} aria-label={lead.value}>
-            {[...lead.value].map((c, i) => <span key={i} className="xos-dg" aria-hidden="true"><span style={{ '--i': i }}>{c}</span></span>)}
-          </b>
-        </FamGrow>
-        <span className="xos-lead-l">{lead.label.replace(/,.*$/, '')}</span>
-      </div>
-      {doc.spark && doc.spark.some((v) => v > 0)
-        ? <Wave bars={doc.spark} className="xos-ledger-w" play />
+    <div className={'xos-year' + (live ? '' : ' tick')}>
+      <Sigil seed={doc.route} data={doc.key.map((f) => f.n)} className="xos-year-s" />
+      <p className="xos-year-h x-mono"><span>{doc.org}</span><span>{when}</span></p>
+      {lead && (
+        <div className="xos-lead">
+          <FamGrow to={1.5}>
+            <b className="v2f-num v2f-fig xos-dgs" aria-label={lead.value}>
+              {[...lead.value].map((c, i) => <span key={i} className="xos-dg" aria-hidden="true"><span style={{ '--i': i }}>{c}</span></span>)}
+            </b>
+          </FamGrow>
+          <span className="xos-lead-l">{lead.label}</span>
+        </div>
+      )}
+      {live
+        ? <Wave bars={doc.spark} className="xos-year-w" play />
         : names.length > 0 && (
           <div className="xos-tick" aria-hidden="true" style={{ '--n': names.length }}>
             <div className="xos-tick-r">{[0, 1].map((k) => <span key={k}>{names.map((n) => <i key={n}>{n}</i>)}</span>)}</div>
           </div>
         )}
-      <dl className="xos-ledger-r">
-        {rest.map((f) => (
-          <div key={f.label}>
-            <dd className="v2f-num">{f.value}</dd>
-            <dt>{f.label.replace(/,.*$/, '')}</dt>
-          </div>
-        ))}
-      </dl>
     </div>
   );
 }
 
-/* one chapter's picture: a counted ledger at full size */
-function Counted({ c, dark }) {
-  return (
-    <div className={'xos-ct' + (dark ? ' dark' : '') + (c.figures.length % 2 ? ' odd' : '')}>
-      <dl>
-        {c.figures.map((f) => (
-          <div key={f.label}>
-            <dd className="v2f-num" style={{ '--ch': f.value.length }}>{f.value}</dd>
-            <dt>{f.label}</dt>
-          </div>
-        ))}
-      </dl>
-      {c.spark && <Wave bars={c.spark} className="xos-ct-w" />}
-    </div>
-  );
+/* a share, drawn from two of Hanzo's own figures */
+function Share({ part, of }) {
+  if (!(part > 0) || !(of > 0) || part > of) return null;
+  return <span className="xos-share" aria-hidden="true"><i style={{ transform: `scaleX(${(part / of).toFixed(4)})` }} /></span>;
 }
 
 export default function OrgPage({ doc }) {
@@ -250,46 +234,85 @@ export default function OrgPage({ doc }) {
   };
   const showAll = () => { setAll2(true); if (R.more && more.state === 'idle') loadAll(); };
   const longest = Math.max(...doc.name.split(/\s+/).map((w) => w.length));
-  const chapters = doc.counts.map((c, k) => ({
-    key: c.title,
-    name: c.title,
-    text: (
-      <div className="xos-ch-t">
-        <h2 className="v2f-head">{c.title}</h2>
-        {c.notes.map((n) => <p key={n} className="v2f-body xos-ch-n">{n}</p>)}
-      </div>
-    ),
-    visual: <Counted c={c} dark={k === doc.counts.length - 1 && doc.counts.length > 1} />,
-  }));
+  const { gh: ghC, forge: forgeC, lead } = figures(doc);
+  // GitHub's figures, minus the lead, in one small row; the forge's own, minus the lead, as rows (zeros in a line)
+  const ghFigs = ghC ? ghC.figures.filter((f) => f !== lead) : [];
+  const commits = doc.counts.flatMap((c) => c.figures).find((f) => /^commits/.test(f.label));
+  const forgeFigs = forgeC ? forgeC.figures.filter((f) => f !== lead) : [];
+  const forgeRows = forgeFigs.filter((f) => f.n > 0);
+  const forgeZero = forgeFigs.filter((f) => !(f.n > 0));
+  const shareOf = (f) => {
+    const m = /^repositories, ([\d,]+) of them private/.exec(f.label);
+    if (m) return [num(m[1]), f.n];
+    if (/^of those commits/.test(f.label) && commits) return [f.n, commits.n];
+    return null;
+  };
+  const growIx = forgeRows.reduce((b, f, k) => (f.n > (forgeRows[b] ? forgeRows[b].n : -1) ? k : b), 0);
   const near = (doc.near || []).map((o) => ({
     href: '/oss/' + o.org, title: o.name, preview: o.lede, seed: '/oss/' + o.org, data: o.data,
-    meta: [o.repos && o.repos.value + ' ' + o.repos.label, o.commits && o.commits.n > 0 && o.commits.value + ' ' + o.commits.label.replace(/,.*$/, '')].filter(Boolean).join(' · '),
+    meta: [o.org, o.repos && o.repos.value + ' ' + o.repos.label, o.commits && o.commits.n > 0 && o.commits.value + ' ' + o.commits.label.replace(/,.*$/, '')].filter(Boolean).join(' · '),
   }));
   const [gh, forge, every] = doc.links;
   return (
     <main className="v2f xos">
       <section className="xos-hero" aria-labelledby="xos-h1">
-        <div className="v2f-wrap v2f-grid xos-hero-g">
-          <div className="xos-hero-t" style={{ '--len': longest }}>
+        <div className="v2f-wrap v2f-grid xos-top">
+          <div className="xos-top-l" style={{ '--len': longest }}>
             <FamLines as="h1" id="xos-h1" text={doc.name} className="v2f-display xos-h1" data-morph-target />
+          </div>
+          <div className="xos-top-r">
             {doc.lede && <p className="v2f-lede xos-lede">{doc.lede}</p>}
             {doc.label && <p className="v2f-kick xos-meta-l">{doc.label}</p>}
             <div className="xos-acts">
               {gh && <Magnetic strength={0.2}><A to={gh.href} className="v2f-btn solid" data-thumb="" data-cta="oss.hero">{gh.label}<Out /></A></Magnetic>}
               {forge && <A to={forge.href} className="x-arrow xos-link"><span>{forge.label}</span></A>}
-              {every && <A to={every.href} className="x-arrow xos-link"><span>{every.label}</span></A>}
             </div>
           </div>
-          <FamStage className="xos-stage" from={1.05} span={480}>
-            <Ledger doc={doc} />
-          </FamStage>
         </div>
+        <div className="v2f-wrap"><Year doc={doc} lead={lead} /></div>
+        {ghC && (
+          <div className="v2f-wrap v2f-grid xos-ghr">
+            <div className="xos-ghr-l">
+              <h2 className="v2f-head">{ghC.title}</h2>
+              {ghC.notes.map((n) => <p key={n} className="xos-note">{n}</p>)}
+            </div>
+            <dl className="xos-row-figs">
+              {ghFigs.map((f) => <div key={f.label}><dd className="v2f-num">{f.value}</dd><dt>{f.label}</dt></div>)}
+            </dl>
+          </div>
+        )}
       </section>
 
-      {chapters.length > 0 && <FamChapters label={doc.name} items={chapters} className="xos-ch" />}
+      {forgeC && (
+        <section className="xos-fg" aria-labelledby="xos-forge-h">
+          <div className="v2f-wrap v2f-grid xos-fg-g">
+            <div className="xos-fg-l">
+              <h2 id="xos-forge-h" className="v2f-head">{forgeC.title}</h2>
+              {forgeC.notes.map((n) => <p key={n} className="xos-note">{n}</p>)}
+            </div>
+            <div className="xos-fg-r">
+              {forgeRows.length > 0 && (
+                <dl className="xos-fr">
+                  {forgeRows.map((f, k) => {
+                    const s = shareOf(f);
+                    const v = <dd className="v2f-num v2f-fig">{f.value}</dd>;
+                    return (
+                      <div key={f.label}>
+                        {k === growIx && forgeRows.length > 1 ? <FamGrow to={1.35}>{v}</FamGrow> : v}
+                        <dt>{f.label}{s && <Share part={s[0]} of={s[1]} />}</dt>
+                      </div>
+                    );
+                  })}
+                </dl>
+              )}
+              {forgeZero.length > 0 && <p className="xos-zero">{forgeZero.map((f) => <span key={f.label}><b>{f.value}</b> {f.label}</span>)}</p>}
+            </div>
+          </div>
+        </section>
+      )}
 
       {R && (
-        <section className="v2f-sec xos-repos" id="repositories" aria-labelledby="xos-repos-h">
+        <section className="xos-repos" id="repositories" aria-labelledby="xos-repos-h">
           <div className="v2f-wrap">
             <div className="v2f-grid xos-repos-h">
               <FamLines as="h2" id="xos-repos-h" play="view" text={R.title} className="v2f-display small" />
@@ -320,37 +343,34 @@ export default function OrgPage({ doc }) {
               </div>
             )}
             <LayoutGroup>
-              <ul className="xos-list">
+              <ol className="xos-list">
                 {[...vis, ...all.filter((r) => !hit.has(r.name))].map((r, k) => (
-                  <motion.li key={r.name} layout={calm || all.length > 80 ? false : 'position'} transition={GLIDE} hidden={!hit.has(r.name)} className={k === 0 && vis.length > 2 ? 'lead' : ''}>
-                    <motion.div layoutId={'xos-' + r.name} className="xos-row" style={{ borderRadius: 16 }} transition={MORPH}>
-                      <button type="button" className="xos-open" onClick={() => setOpen(r.name)} aria-haspopup="dialog">
-                        <span className="xos-name"><Name name={r.name} /></span>
-                      </button>
-                      {r.desc && <p className="xos-desc">{r.desc}</p>}
-                      <div className="xos-row-f">
-                        <Wave bars={r.spark} className="xos-row-w" />
-                        <span className="xos-row-s">
-                          {r.commits && <span className="x-mono">{r.commits}</span>}
-                          {r.pushed && <span>{r.pushed}</span>}
-                        </span>
-                      </div>
-                      <div className="xos-row-t">
-                        <span className="xos-meta">
+                  <motion.li key={r.name} layout={calm || all.length > 80 ? false : 'position'} transition={GLIDE} hidden={!hit.has(r.name)} className={k === 0 && vis.length > 2 && paged ? 'lead' : ''}>
+                    <motion.div layoutId={'xos-' + r.name} className="xos-row" transition={MORPH}>
+                      <span className="xos-no x-mono" aria-hidden="true">{String(k + 1).padStart(2, '0')}</span>
+                      <div className="xos-row-m">
+                        <button type="button" className="xos-open" onClick={() => setOpen(r.name)} aria-haspopup="dialog">
+                          <span className="xos-name"><Name name={r.name} /></span>
+                        </button>
+                        {r.desc && <p className="xos-desc">{r.desc}</p>}
+                        <p className="xos-row-s">
                           {r.lang && <span className="xos-lang">{r.lang}</span>}
                           {r.archived && <span className="xos-arch x-mono">{r.archived}</span>}
                           {r.stars != null && <span className="x-mono" aria-label={r.stars + ' stars'}><Star />{n0(r.stars)}</span>}
-                          {r.forks != null && <span className="x-mono" aria-label={r.forks + ' forks'}><Fork />{n0(r.forks)}</span>}
-                        </span>
-                        <span className="xos-ends">
-                          {r.forge && <A to={r.forge} className="xos-forge">{r.forgeLabel || 'Forge'}</A>}
-                          {r.href && <A to={r.href} className="xos-gh" aria-label={r.name}><Out /></A>}
-                        </span>
+                          {r.forks != null && <span className="x-mono xos-hide-p" aria-label={r.forks + ' forks'}><Fork />{n0(r.forks)}</span>}
+                          {r.commits && <span className="x-mono xos-hide-p">{r.commits}</span>}
+                          {r.pushed && <span className="xos-hide-p">{r.pushed}</span>}
+                        </p>
                       </div>
+                      <Wave bars={r.spark} className="xos-row-w" />
+                      <span className="xos-ends">
+                        {r.forge && <A to={r.forge} className="xos-forge">{r.forgeLabel || 'Forge'}</A>}
+                        {r.href && <A to={r.href} className="xos-gh" aria-label={r.name}><Out /></A>}
+                      </span>
                     </motion.div>
                   </motion.li>
                 ))}
-              </ul>
+              </ol>
               {shown.length === 0 && (
                 <p className="xos-empty" role="status">
                   <svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M10.5 10.5 14 14M4.6 4.6l4.8 4.8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>
@@ -377,23 +397,20 @@ export default function OrgPage({ doc }) {
       {doc.extra.map((e, i) => <section className="v2f-sec" key={i}><div className="v2f-wrap"><Loose nodes={e.nodes} /></div></section>)}
 
       {near.length > 0 && (
-        <section className="v2f-sec tight xos-near" aria-label={every ? every.label : doc.name}>
+        <section className="xos-near" aria-label={every ? every.label : doc.name}>
           <div className="v2f-wrap">
+            {every && <p className="xos-near-h"><A to={every.href} className="x-arrow"><span>{every.label}</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A></p>}
             <FamNext items={near} label={every ? every.label : doc.name} />
-            {every && <p className="xos-near-f"><A to={every.href} className="x-arrow"><span>{every.label}</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A></p>}
           </div>
         </section>
       )}
 
-      {/* the close: the organization's own contour, its name and line, and the one ask (the site's ask bar steps aside) */}
-      <section className="x-band xos-close" data-room="dark" aria-labelledby="xos-close-h">
+      {/* the close: its own moment, the organization's contour full width (it leans toward the pointer) and the one ask */}
+      <section className="x-band xos-close" aria-label={doc.name}>
         <Sigil seed={doc.route + '#close'} data={doc.key.map((f) => f.n)} className="xos-close-s" />
-        <div className="v2f-wrap v2f-grid xos-close-g">
-          <FamLines as="h2" id="xos-close-h" play="view" text={doc.name} className="v2f-display small xos-close-h" />
-          <div className="xos-close-r">
-            {doc.lede && <p className="v2f-lede">{doc.lede}</p>}
-            {gh && <Magnetic strength={0.2}><A to={gh.href} className="v2f-btn xos-close-b" data-cta="oss.close">{gh.label}<Out /></A></Magnetic>}
-          </div>
+        <div className="v2f-wrap xos-close-g">
+          <p className="v2f-kick xos-close-k">{doc.org}</p>
+          {gh && <Magnetic strength={0.2}><A to={gh.href} className="v2f-btn solid xos-close-b" data-cta="oss.close">{gh.label}<Out /></A></Magnetic>}
         </div>
       </section>
     </main>
