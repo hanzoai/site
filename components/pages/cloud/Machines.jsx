@@ -396,11 +396,13 @@ const OWN = [
 
 const Gh = () => <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" /></svg>;
 
-/* The close: "Get Machines" beside the rack at rest; its four cards wake one after another as it arrives. */
+/* The close: "Get Machines" beside the rack at rest, ending lit at the size the visitor last saw in the hero (chosen, or
+   where the cycle stood), with that request beside it. Its cards wake one after another as it arrives. */
 function Close() {
   const ref = useRef(null);
   const seen = useInView(ref, { amount: 0.5, once: true });
   const calm = useReducedMotion();
+  const [label, cards] = SIZES[useLastSize()];
   return (
     <section className="mc-close">
       <div className="v2-wrap mc-close-in">
@@ -417,7 +419,8 @@ function Close() {
           </div>
         </div>
         <div className="mc-close-art" ref={ref}>
-          <Rack on={seen || calm ? 4 : 0} className="rest" />
+          <Rack on={seen || calm ? cards : 0} className="rest" />
+          <pre className="mc-body mc-close-body" aria-hidden="true"><code>{'{ "gpu": '}<b><Roll v={'"' + label + '"'} k="c" /></b>{', "dryRun": true }'}</code></pre>
         </div>
       </div>
     </section>
@@ -425,8 +428,11 @@ function Close() {
 }
 
 export default function Machines() {
+  // the h1 and lede cut in once the page is live (CSS holds them until then; a 3 s CSS failsafe frees them anyway)
+  const root = useRef(null);
+  useEffect(() => { root.current?.setAttribute('data-up', ''); }, []);
   return (
-    <main className="v2 mc">
+    <main className="v2 mc" ref={root}>
       <section className="mc-hero v2-dark" data-room="dark">
         <div className="v2-wrap mc-hero-t">
           <Lines as="h1" className="v2-display mc-h1" lines={['Hanzo Machines']} data-morph-target="" />
@@ -453,35 +459,9 @@ export default function Machines() {
         visual={(at) => <StepCon at={at} />}
       />
 
-      <section className="v2-sec mc-uses">
-        <div className="v2-wrap">
-          <div className="v2-grid mc-uses-h">
-            <h2 className="v2-headline">When you want a whole machine</h2>
-            <p className="v2-lede">Reach for one when the work outlasts a request, or needs a card of its own</p>
-          </div>
-          <div className="mc-tiles">
-            {USES.map(([t, d, pts], i) => <Tile key={t} i={i} t={t} d={d} pts={pts} />)}
-          </div>
-        </div>
-      </section>
+      <Uses />
 
-      <section className="v2-sec mc-own">
-        <div className="v2-wrap">
-          <div className="v2-grid mc-own-h">
-            <h2 className="v2-headline">Whose machine it is</h2>
-            <p className="v2-lede">Ownership, region and account are decisions the API makes you state</p>
-          </div>
-          <div className="mc-own-list">
-            {OWN.map(([t, d], i) => (
-              <div key={t} className="mc-own-i">
-                <span className="mc-own-n">{String(i + 1).padStart(2, '0')}</span>
-                <h3 className="v2-title">{t}</h3>
-                <p className="v2-body">{d}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <Own />
 
       <ShipPrompt
         name="Machines"
