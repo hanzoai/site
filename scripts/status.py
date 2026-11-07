@@ -47,12 +47,15 @@ def row(key, route, page, members=0):
     rm = re.search(r"Verdict:\s*(\d+(?:\.\d+)?)\s*/\s*10", rtext)
     review = float(rm.group(1)) if rm else None
     complaint = (re.search(r"(?:First complaint|Complaint):\s*(.+)", rtext) or [None, ""])[1]
-    if review is not None: score, note = review, f"critic: {complaint}" if complaint else note  # the critic's verdict outranks the chat's own
-    state = ("ready" if review is not None and review >= 8 and var_ok and media else
+    if review is not None: score, note = review, f"critic: {complaint}" if complaint else note
+    cv = HZ / "docs/coverage" / f"{name}.md"
+    ctext = cv.read_text(errors="ignore") if cv.is_file() else ""
+    parts = sum(1 for sec in re.split(r"\n(?=## \d+\.)", ctext)[1:] if re.search(r"Done here:\s*\S", sec))  # 18-part card: a part counts once its "Done here:" line is filled  # the critic's verdict outranks the chat's own
+    state = ("ready" if review is not None and review >= 8 and var_ok and media and parts >= 18 else
              "v2" if score is not None else "todo")
     title = (INDEX.get(route) or {}).get("title", route).split(" — ")[0]
     return dict(key=key, route=route, title=title, members=members, score=score, note=note, var_ok=var_ok,
-                media=[m.relative_to(HZ / "docs").as_posix() for m in media[:3]], state=state,
+                media=[m.relative_to(HZ / "docs").as_posix() for m in media[:3]], state=state, parts=parts,
                 owner=owner.get(key) or owner.get(route) or owner.get("/" + route.strip("/").split("/")[0], "unassigned"), age=int((time.time() - comp.stat().st_mtime) / 60))
 
 rows = []
@@ -80,7 +83,7 @@ def tr(r):
     return (f'<tr class="{r["state"]}"><td><a href="{BASE}{html.escape(r["route"].rstrip("/"))}/" target="_blank">{html.escape(r["key"])}</a>{fam}'
             f'<div class="t">{html.escape(r["title"])}</div><div class="n">{html.escape(r["note"])}</div></td>'
             f'<td><span class="s {r["state"]}">{LABEL[r["state"]]}</span></td><td class="num">{score}</td>'
-            f'<td>{"✓" if r["var_ok"] else "✗ overdone"}</td><td class="g">{media or "–"}</td>'
+            f'<td class="num">{r["parts"]}/18</td><td>{"✓" if r["var_ok"] else "✗ fails"}</td><td class="g">{media or "–"}</td>'
             f'<td class="o">{html.escape(r["owner"])}<div class="t">edited {r["age"]} min ago</div></td></tr>')
 
 order = {"ready": 0, "v2": 1, "todo": 2}
@@ -102,9 +105,9 @@ td{{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}}a{{
 .g img,.g video{{width:120px;height:75px;object-fit:cover;border-radius:8px;margin-right:6px;background:var(--card)}}.o{{font-size:12px;white-space:nowrap}}
 @media(max-width:800px){{.g,.o,th:nth-child(5),th:nth-child(6){{display:none}}}}
 </style><main><h1>Hanzo v2 status board</h1>
-<p class="lede">{len(rows)} designs cover {urls} pages (families share one template). Ready to hand over means v2 scored at least 8/10, motion not overdone,
+<p class="lede">{len(rows)} designs cover {urls} pages (families share one template). Ready means a critic scored it 8/10 or more, all 18 parts of the master brief are done on the page (its 18-part card), only Hanzo's colours, motion not overdone,
 and video or screenshots as proof. Refreshes every minute; the conductor regenerates it every 10 minutes.</p>
 <div class="bar"><i></i></div><div class="kpis">{"".join(f'<div class="kpi"><b>{count[s]}</b>{LABEL[s]}</div>' for s in order)}</div>
-<table><tr><th>Page</th><th>State</th><th>Score</th><th>Motion</th><th>Proof</th><th>Chat</th></tr>{"".join(map(tr, rows))}</table></main>"""
+<table><tr><th>Page</th><th>State</th><th>Score</th><th>18 parts</th><th>Taste + motion</th><th>Proof</th><th>Chat</th></tr>{"".join(map(tr, rows))}</table></main>"""
 (HZ / "docs/status.html").write_text(out)
 print(f"status: {count['ready']} ready, {count['v2']} v2, {count['todo']} todo of {len(rows)} designs ({urls} pages)")
