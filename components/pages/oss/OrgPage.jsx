@@ -18,7 +18,7 @@
    that opens into its card, the sort pill gliding, tiles re-flowing as you filter; arrival, the name's masked rise;
    scroll, the ledger settling and the counted chapters swapping.
    Colour: none of our own (JAMES.md 7): ink, greys and white; the organizations differ by their contour and figures.
-   V2: 8/10 v4: the ledger leads with the strongest true figure (never a zero), its digits rise into place, and an org with no commits shows its own repositories as a slow ticker, so the first screen moves within 1 s for every member. v3: name and ledger side by side so the ledger is whole on the first screen at 1470×801 and 375×812, no labels above headings, 0 hues (white-on-black ledger, silver waveforms), icon controls with registered names, Hanzo's own words on every card, siblings with their own line on hover. */
+   V2: 8/10 v5: live hanzo.ai sizes (h1 52, figures 64, the ledger's lead grows past its rest only on arrival and settles as you scroll), no springs (600 ms in-out open, 300 ms glides), no cursor label, deck greys. v4: the ledger leads with the strongest true figure (never a zero), its digits rise into place, and an org with no commits shows its own repositories as a slow ticker, so the first screen moves within 1 s for every member. v3: name and ledger side by side so the ledger is whole on the first screen at 1470×801 and 375×812, no labels above headings, 0 hues (white-on-black ledger, silver waveforms), icon controls with registered names, Hanzo's own words on every card, siblings with their own line on hover. */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, LayoutGroup, useReducedMotion } from 'motion/react';
 import { Copy, Magnetic } from '../../ui';
@@ -29,12 +29,14 @@ import FamLines from '../../v2/FamLines';
 import FamStage from '../../v2/FamStage';
 import FamChapters from '../../v2/FamChapters';
 import FamNext from '../../v2/FamNext';
+import FamGrow from '../../v2/FamGrow';
 import { ui } from '../../v2/famUi';
 import './oss.css';
 
 const n0 = (v) => (v == null ? '—' : v.toLocaleString('en-US'));
 const PAGE = 11; // a wide lead tile and ten more: four even rows of three
-const MORPH = { type: 'spring', stiffness: 300, damping: 34 };
+const MORPH = { duration: 0.6, ease: [0.4, 0, 0.2, 1] }; // the open: 600 ms in-out, no spring (MASTER.md 3.1)
+const GLIDE = { duration: 0.3, ease: [0.16, 1, 0.3, 1] };
 
 /* icons: Hanzo's page names stars and forks in its own aria-labels ("3 stars", "0 forks") */
 function Star() { return <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 1.8l1.8 3.9 4.2.5-3.1 2.9.8 4.2L8 11.2l-3.7 2.1.8-4.2L2 6.2l4.2-.5z" fill="currentColor" /></svg>; }
@@ -118,7 +120,7 @@ function Card({ r, onClose }) {
                   <div className="xos-src" role="group" aria-label={ui('oss_clone_from')}>
                     {[['gh', 'GitHub'], ['forge', 'Hanzo Forge']].map(([k, t]) => (
                       <button key={k} type="button" aria-pressed={src === k} onClick={() => setSrc(k)}>
-                        {src === k && <motion.span layoutId="xos-src" className="xos-src-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+                        {src === k && <motion.span layoutId="xos-src" className="xos-src-bg" transition={GLIDE} />}
                         <span>{t}</span>
                       </button>
                     ))}
@@ -157,9 +159,11 @@ function Ledger({ doc }) {
       <Sigil seed={doc.route} data={key.map((f) => f.n)} className="xos-sigil" />
       <p className="xos-ledger-h x-mono"><span>{doc.org}</span><span>{when}</span></p>
       <div className="xos-lead">
-        <b className="v2f-num xos-dgs" style={{ '--ch': lead.value.length }} aria-label={lead.value}>
-          {[...lead.value].map((c, i) => <span key={i} className="xos-dg" aria-hidden="true"><span style={{ '--i': i }}>{c}</span></span>)}
-        </b>
+        <FamGrow to={1.6}>
+          <b className="v2f-num xos-dgs" style={{ '--ch': lead.value.length }} aria-label={lead.value}>
+            {[...lead.value].map((c, i) => <span key={i} className="xos-dg" aria-hidden="true"><span style={{ '--i': i }}>{c}</span></span>)}
+          </b>
+        </FamGrow>
         <span className="xos-lead-l">{lead.label.replace(/,.*$/, '')}</span>
       </div>
       {doc.spark && doc.spark.some((v) => v > 0)
@@ -300,7 +304,7 @@ export default function OrgPage({ doc }) {
                   <div className="xos-seg" role="group" aria-label={ui('oss_sort')}>
                     {SORTS.map(([k, l, Icon]) => (
                       <button key={k} type="button" aria-pressed={sort === k} aria-label={ui(l)} onClick={() => setSort(k)}>
-                        {sort === k && <motion.span layoutId="xos-seg" className="xos-seg-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+                        {sort === k && <motion.span layoutId="xos-seg" className="xos-seg-bg" transition={GLIDE} />}
                         <span><Icon /></span>
                       </button>
                     ))}
@@ -318,9 +322,9 @@ export default function OrgPage({ doc }) {
             <LayoutGroup>
               <ul className="xos-list">
                 {[...vis, ...all.filter((r) => !hit.has(r.name))].map((r, k) => (
-                  <motion.li key={r.name} layout={calm || all.length > 80 ? false : 'position'} transition={{ type: 'spring', stiffness: 300, damping: 32 }} hidden={!hit.has(r.name)} className={k === 0 && vis.length > 2 ? 'lead' : ''}>
+                  <motion.li key={r.name} layout={calm || all.length > 80 ? false : 'position'} transition={GLIDE} hidden={!hit.has(r.name)} className={k === 0 && vis.length > 2 ? 'lead' : ''}>
                     <motion.div layoutId={'xos-' + r.name} className="xos-row" style={{ borderRadius: 16 }} transition={MORPH}>
-                      <button type="button" className="xos-open" onClick={() => setOpen(r.name)} aria-haspopup="dialog" data-cursor="Open">
+                      <button type="button" className="xos-open" onClick={() => setOpen(r.name)} aria-haspopup="dialog">
                         <span className="xos-name"><Name name={r.name} /></span>
                       </button>
                       {r.desc && <p className="xos-desc">{r.desc}</p>}
