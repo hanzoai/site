@@ -157,4 +157,4 @@ Done here: The machine's own states are designed: stopped (hollow LED, blinking 
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [x] Review read: `docs/review/node.md` verdict 8 or more (pending: no verdict had landed at push time)
 
-Done here: `node.hero` and `node.close` are set. Gallery: `docs/gallery/node/d.mp4`, `d.jpg`, `p.jpg` (`film.cjs`, no errors). My own score is 8/10; the critic's verdict decides.
+Done here: `node.hero` and `node.close` are set. Gallery: `docs/gallery/node/d.mp4`, `d.jpg`, `p.jpg` (`film.cjs`, no errors), round 4 `round2-desktop.jpg`, `round2-stage.jpg`, `round2-phone.jpg`. Review 7/10 read; all six page fixes done, the phone header ask filed in `docs/requests/node.md`. The critic's verdict decides.

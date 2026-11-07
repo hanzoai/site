@@ -2,9 +2,9 @@
 
 Page file: `components/pages/Leaderboard.jsx` · gallery: `docs/gallery/leaderboard/` · metric id: `cta_click` on `leaderboard.hero`
 
-Open copy questions for James: none.
-Shared changes requested (`docs/requests/<page>.md`): none. (The Morph freeze on in-site clicks was filed under "Requests to the shared system" in `docs/review/SYSTEM.md`.)
-Forks this page deleted: the v1 hero `Go` pair (second outlined button became a `More` text link); its own sticky pill (AskBar now defers to the shared ask bar); the gold accent; the 128px totals.
+Open copy questions for James: none (every visible string is Hanzo's or the register's).
+Shared changes requested (`docs/requests/leaderboard.md`): kit `Band` (line-mask reveal, `cta` prop, 52px h2, no focusable magnetic wrapper); shared greys on the Apple ramp moved to the deck; PinScenes meter numerals. (The Morph freeze on in-site clicks was filed in `docs/review/SYSTEM.md`.)
+Forks this page deleted: the v1 hero `Go` pair (second outlined button became a `More` text link); its own sticky pill (AskBar now defers to the shared ask bar); the gold accent; the 128px totals; round 2: the kit `Band` (replaced by a page-local close until the kit fix lands), the black calculator result panel, the receipt's invented line labels and summed totals, the points calculator (its steppers, +100…+500 chips, credits line and sum line showed figures Hanzo never prints; it became a scrubber over the board's own volumes), the visible "Linear"/"Log" words (icon tabs now), the infinite print-head loop.
 
 ## 1. Strategy and conversion
 - [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
@@ -13,33 +13,33 @@ Forks this page deleted: the v1 hero `Go` pair (second outlined button became a 
 - [x] No dead or self-looping button (no prices on the page)
 - [x] Open copy questions for James listed, none decided
 
-Done here: One audience (builders and bug hunters) and one ask, "Open bounties": solid in the hero, carried by the shared sticky ask, and repeated once in the closing `Band`. "GitHub issues" and "Browse open bounties" are text links.
+Done here: One audience (builders and bug hunters) and one ask, "Open bounties": solid in the hero, carried by the shared sticky ask, and repeated once in the page-local close (`data-cta="leaderboard.band"`). "GitHub issues" and "Browse open bounties" (44px hit area) are text links.
 
 ## 2. Information architecture and navigation
 - [x] One `<main>`; skip link from the shared layout
-- [x] Every link through `A`, `More` or the kit `Band`
+- [x] Every link through `A` or `More`
 - n/a Breadcrumb: /leaderboard is depth 1
 - [x] Link parity: 0 removed, 0 unexpected (2/2)
 
-Done here: The order is who leads, how ranks are counted, the token board, how to earn, then your own points, then the `Band`. Hanzo's header and footer are unchanged, and parity reports links 2/2.
+Done here: The order is who leads, how ranks are counted, the token board, how to earn, then your own points, then the close. Hanzo's header and footer are unchanged, and parity reports links 2/2.
 
 ## 3. First impression and page narrative
 - [x] Sells in 5 s; something moves within 1 s without input (the podium lights a hunter and its tape adds up)
 - [x] Nothing above the h1 ("Leaderboard" is a caption under it); `PageHero` n/a until the shared part merges
 - [x] JS off: legible (0 hidden blocks measured with JS disabled); no `opacity:0` on the h1
 - [x] One idea per 100svh; heights alternate (hero, list, dark board, pinned chapters, calculator, band)
-- [x] Ends in proof (the calculator worked from the board's own rules), `Band`, footer
+- [x] Ends in proof (a scrubber over the board's own ten volumes), a band, footer
 - n/a Card-to-page Morph: the page has no cards that open into pages
 
-Done here: The h1 rests at 52px. The one big thing on the first screen is the tape's total (84px Air), which re-adds itself for each lit hunter. The page closes on the kit `Band`, "Climb the ranks. Earn AI credits.", with "Open bounties".
+Done here: The h1 rests at 52px. At 1470x801 the whole podium and the tape's 84px total sit above the fold (pod 310 to 676, total 553 to 629); on phone the tape sits first and level, so the total (486 to 533) and the lit block (580 to 656) are inside 660px. The "Leaderboard" caption clears the h1 box by 12px. The close is page-local: "Climb the ranks. Earn AI credits." cut in by line mask at 52px in a wiped black room, with "Open bounties".
 
 ## 4. Conversion system
-- [x] No raw `.x-btn` in the page (solid asks are `.pf-btn`; the `Band` uses the kit's `Go`)
+- [x] No raw `.x-btn` in the page (every solid ask is `.pf-btn`)
 - [x] Sticky ask after the hero, same label: `data-thumb="Open bounties"` feeds the shared ask bar (`components/Ask.jsx`)
 - n/a Copy button: none on the page
-- [x] `data-cta="leaderboard.hero"` and `data-thumb` on the primary
+- [x] `data-cta="leaderboard.hero"` and `data-thumb` on the primary; `data-cta="leaderboard.band"` on the close
 
-Done here: The solid fill sits in one place at a time: first the hero ask, then the shared bar, then the `Band`. The `Band`'s `Go` has no `data-cta` because the kit does not take one, and I may not edit the kit.
+Done here: The solid fill sits in one place at a time: first the hero ask, then the shared bar, then the close. The close is page-local (the kit `Band` takes no `cta`; request filed), so its ask carries `leaderboard.band` and has no extra wrapper in the tab order. Solid hover is the deck's `#262626`.
 
 ## 5. Trust and proof
 - [x] No logo, no seal, no invented number
@@ -47,7 +47,7 @@ Done here: The solid fill sits in one place at a time: first the hero ask, then 
 - n/a Marquees: none
 - n/a Submit: no form
 
-Done here: Every name, total and token count is Hanzo's own (parity 94/94). The receipt and the calculator only add up Hanzo's stated rules: +50 a bug, +100 to +500 a PR, +20 a referral, +1 per 100K tokens.
+Done here: No figure is worked out on the page. A rendered-text audit at 1470 and 375 finds every visible string in `content/live/leaderboard.json`, `content/pages/leaderboard.html` or `content/ui-strings.json`. The tape prints each hunter's own lines ("+450 bounty pts", "106,039,884 tokens (#1 global)") up to Hanzo's total; the receipt prints Hanzo's four card titles and rolls each card's own points (+50, +100, +20, +1); the scrubber shows the board's own ranks, orgs and volumes. The merged pull request card keeps "+$20 AI credits": it is on Hanzo's card in `content/pages/leaderboard.html` (the live text list de-duplicates the string).
 
 ## 6. Content presentation (copy untouched)
 - [x] No text under 13px (14px on phone) except mono capitals
@@ -58,13 +58,13 @@ Done here: Every name, total and token count is Hanzo's own (parity 94/94). The 
 Done here: Text 94/94, links 2/2. Detail sits behind a click: the three recent rewards open in a sheet, and the four earning rules come one per pinned chapter.
 
 ## 7. Visual design system
-- [x] `python3 scripts/taste.py` passes (ink, greys and silvers only)
+- [x] `python3 scripts/taste.py` passes; the deck ramp is named once as `--k-*` tokens at the top of `Leaderboard.css`, no literal hex below it
 - [x] No label above a headline
-- [x] Flat tiles (`.pf-r .pf-obj` is `#f5f5f5`, no shadow); hairline rows; the tape is the one dashed paper
+- [x] Flat tiles (`.pf-r .pf-obj` is `#f5f5f5`, no shadow); hairline rows; the tape and the calculator result are paper on the quiet tile
 - n/a Icons: only drawn arrows and the pause glyph
-- [x] Differs from neighbours: podium hero (vs /trust's centred cabinet, /security's layer map, /benchmarks' chart stage)
+- [x] Differs from neighbours: podium hero (vs /bounty's and /referral's right-hand panel heroes)
 
-Done here: Scale rhythm comes from `components/v2/ProofRhythm.css`: h1 52px, headings 26px, figures 64px, and one 84px Air "moment" per screen (tape total, 140.1M, receipt total, calculator total). There are two black rooms (the token board and the `Band`), never back to back.
+Done here: Apple greys replaced by the deck: quiet `#f5f5f5`, tiles `#ededed`, text `#525252`/`#737373`, `#a3a3a3` only on black, deck silver `#f6f6f6 → #e9e9e9` on the #1 block; weights 220/400/497/606 only. Token bars are flat (lead `#fafafa`, the rest `#a3a3a3`). Two black rooms (token board, close), never back to back; the calculator's result is now light.
 
 ## 8. UI component library
 - [x] Every control has hover, press (.97/.98), focus-visible and disabled (steppers at 0 and 99)
@@ -72,16 +72,16 @@ Done here: Scale rhythm comes from `components/v2/ProofRhythm.css`: h1 52px, hea
 - [x] The sheet traps focus, Esc closes it, and focus returns (`components/v2/DetailSheet.jsx`)
 - n/a Inputs: only the styled range slider and steppers
 
-Done here: The podium steps, pause, Log/Linear tabs, steppers, per-PR radio chips, slider and sheet each answer hover, press and focus. The slider is styled (no browser default).
+Done here: The podium steps, pause, icon Linear/Log tabs (hover fill, press .97), the scrubber's icon stepper (hover fills ink, press .97, no scale on hover), slider (ink fill track, ring on hover) and sheet each answer hover, press and focus. The lists' auto-reader steps aside while the mouse is over them, so only one row is ever filled.
 
 ## 9. Motion and interaction
 - [x] One signature (the self-adding sum) plus 3 supporting (line-mask cut-in, dark-room wipe, bars drawing); 0 fade-ups
-- [x] 4 kinds: idle (podium cycle), pointer (row fill, step lift), state (pill glide, sheet, totals swap), scroll (pinned receipt, wipe)
+- [x] 4 kinds: idle (podium cycle, lists reading themselves, the scrubber climbing the board once), pointer (row fill, step lift), state (pill glide, sheet, totals roll, board disclosure), scroll (pinned receipt, wipes)
 - [x] Moves without input; every control answers
 - [x] Reduced motion shows final states; no `setInterval` (the cycle is a `setTimeout` chain that stops off screen)
 - n/a Sound: the shared sound kit is not merged yet
 
-Done here: Springs are gone. Swaps, bars and the pill run on ease-emphasis at 300ms (bars draw in 900ms). The podium's roster has a 44px pause control, first in its panel.
+Done here: Durations are the deck's only (90/150/300/400/500 ms as `--k-*` tokens; scene moves: blocks 1 s, bars 900 ms). The receipt's print head draws once per new line (500 ms) and rests, so the pinned screen's mover is the rolling total. Every existing motion stays: podium adding up, auto-lit rows, rolling counters.
 
 ## 10. Media
 - n/a `Film`/`Pic`: the page has no Hanzo images or films. Its objects are product-style UI (podium, tape, board, receipt, calculator).
@@ -94,7 +94,7 @@ Done here: The page uses no images or video, so it has no media budget, alt text
 - [x] Every target 44px or more; tap replaces hover (steps, pause)
 - [x] Primary ask above the fold at 375×667
 
-Done here: On phones the podium hides handles (still in the HTML), the pinned chapters stack each with its receipt, and big figures step down to 52px.
+Done here: On phones the podium is cropped to its moment (tape first, blocks only; names stay in each step's accessible name), the token board shows three rows behind a "Show all" disclosure, the four chapters stack and one receipt prints after them, and big figures step down to 52px. Phone page 8,772px (was 11,561).
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast: body `#525252` on white, captions `#737373` on white, light greys only on black
@@ -132,7 +132,7 @@ Done here: Not applicable: /leaderboard lists people and organizations, not mode
 Done here: Not applicable: the page shows no code, config or terminal.
 
 ## 17. States and resilience
-- [x] Figures are Hanzo's published board (static), so there is no loading or empty state; the calculator has edge states (steppers disable at 0/99; "Below #10…" when your tokens fall under the tenth org)
+- [x] Figures are Hanzo's published board (static), so there is no loading or empty state; the scrubber's stepper disables at #10 and #1
 - [x] No live data fetched, so a blocked API cannot blank the page
 - n/a Forms: none
 - [x] The shared error boundary covers a throw
@@ -143,6 +143,6 @@ Done here: With JS off every word reads in place (`<noscript>` overrides in the 
 - [x] `data-cta="leaderboard.hero"` on the primary; no tracking SDK imported (`lib/track.js` not merged yet)
 - [x] Nothing identifier-bearing; no form
 - [x] `V2:` line in the page file's top comment
-- [ ] Review read: no `docs/review/leaderboard.md` yet
+- [x] Review read: `docs/review/leaderboard.md` (6/10), all ten fixes worked through in round 2
 
-Done here: Filmed with `scripts/motion.mjs` (0 still screens, layout shift 0.000). Gallery holds `desktop.mp4`, `desktop.jpg` and `phone-1..3.jpg`. Waiting for the critic.
+Done here: The range input no longer raises a hydration mismatch (its fill rides `--f` on the label; `suppressHydrationWarning` on the input); the only console error left is the shared FooterHTML one. Round 2 proof: `docs/gallery/leaderboard/round2-*.jpg`.

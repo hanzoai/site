@@ -4,21 +4,27 @@
 // CTA: Open KMS (kms.hero, kms.mid, kms.close).
 // Metric: cta_click kms.hero
 // Signature: a secret, sealed and rotated: the vault seals, rotates, refuses a stale writer and records the read.
-// Beyond: Seal one yourself: real AES-256-GCM under an HKDF-SHA256 key in the browser.
+// Beyond: Sealed on your machine: type into DATABASE_PASSWORD and real AES-256-GCM under an HKDF-SHA256 key seals it in the browser.
 /* KMS (v2, archetype A Launch).
-   V2: 8/10 Round 2: the vault holds one height through its loop (fixed version stack and log, rows slide by transform,
-   no layout re-flow) and tilts 2.5 degrees to a fine pointer; "What it holds" pins a rule panel that redraws per rule
-   (seal chain, kms run, refused write, the agent's read, the clients, will not boot) with a masked 01 / 06 caption,
-   rows hover-fill and take the panel, 44svh each; captions moved under their headings; the dark room opens from a
-   rounded card, its one big figure is "Every read recorded" and the rest count in small; GitHub is a text link.
+   V2: 8/10 Round 3: the tail is one KMS screen instead of three quiet white sections: on a quiet room the example
+   console sits over the vault's own secret (DATABASE_PASSWORD v4 and its fingerprint) and the secret follows the
+   console - hover, click or Enter on a project, or left alone it steps through the projects by pressing the console's
+   own rows, with a hairline timing each step and a pause; the agent prompt sits beside it (wrapping, not clipped) and
+   the related links are one hairline row under both; then one quiet Get KMS. The Beyond block uses only Hanzo's words
+   (Sealed on your machine, the organization key line, DATABASE_PASSWORD as the field label; no IV, no prose of ours).
+   Also: one 1152px container for every section; the pinned chapter h2 at 26px over 21px rule h3s; the phone pause
+   clear of the production tag and the refused chip inside its box; 44px phone targets on the console and the close;
+   a fade on the phone terminal's right edge; Documentation fills on hover and presses to .98.
+   Round 2 (kept): the vault holds one height through its loop and tilts to a fine pointer; "What it holds" pins a
+   rule panel that redraws per rule with a masked 01 / 06 caption; the dark room opens from a rounded card.
    Signature: a secret, sealed and rotated. DATABASE_PASSWORD goes through Hanzo's chain (Argon2id, HKDF-SHA256,
    AES-256-GCM) and comes out as ciphertext; then it is rotated - each write names the version it replaces, so a second
    writer holding the old version is refused - and the read lands in the append-only record under the agent's name.
    Supporting: kinetic title lines; the vault settles on scroll (Stage); the six rules scroll past one pinned panel that
    redraws for the rule you are reading; the dark room opens from a card as it is reached.
-   Beyond: "Seal one yourself" - type a value and your browser seals it with AES-256-GCM under a key derived with
+   Beyond: "Sealed on your machine" - type a value and your browser seals it with AES-256-GCM under a key derived with
    HKDF-SHA256 (WebCrypto), so you watch the ciphertext and the key never leaves the page; Argon2id, the passphrase step,
-   is named but not run here, and that is said.
+   is shown struck through because it is not run here.
    Greys only, from Hanzo's deck. Every word and link is Hanzo's. */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
@@ -126,8 +132,8 @@ function Vault() {
 /* Beyond: seal one yourself (WebCrypto: HKDF-SHA256 then AES-256-GCM; the key is random and never leaves). */
 const b64 = (u8) => btoa(String.fromCharCode(...u8));
 function Seal() {
-  const [val, setVal] = useState('correct horse battery staple');
-  const [out, setOut] = useState({ ct: '', iv: '' });
+  const [val, setVal] = useState('');
+  const [out, setOut] = useState({ ct: '' });
   const [err, setErr] = useState('');
   const master = useRef(null);
   useEffect(() => {
@@ -139,8 +145,8 @@ function Seal() {
         const key = await S.deriveKey({ name: 'HKDF', hash: 'SHA-256', salt: new Uint8Array(16), info: new TextEncoder().encode('organization') }, master.current, { name: 'AES-GCM', length: 256 }, false, ['encrypt']);
         const iv = crypto.getRandomValues(new Uint8Array(12));
         const ct = new Uint8Array(await S.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(val)));
-        if (on) setOut({ ct: b64(ct), iv: b64(iv) });
-      } catch { if (on) setErr('This browser cannot seal here.'); }
+        if (on) setOut({ ct: b64(ct) });
+      } catch { if (on) setErr('—'); } // no WebCrypto: an em dash, not a sentence of our own
     })();
     return () => { on = false; };
   }, [val]);
@@ -148,19 +154,16 @@ function Seal() {
     <section className="v2-sec km-seal">
       <div className="v2-wrap v2-grid">
         <div className="km-seal-l">
-          <h2 className="v2-headline">Seal one yourself</h2>
-          <p className="v2-kick acc km-cap">Sealed before it leaves you</p>
-          <p className="v2-body">Your browser seals what you type with AES-256-GCM, under a key derived with HKDF-SHA256 that never leaves this page. Nothing is sent. KMS starts one step earlier, with Argon2id turning a passphrase into the key; browsers do not offer Argon2id, so here the key is random.</p>
+          <h2 className="v2-headline">Sealed on your machine</h2>
+          <p className="v2-body km-seal-d">The organization key stays on the client.</p>
         </div>
         <div className="km-seal-box v2-obj">
-          <label className="km-seal-k" htmlFor="km-in">value</label>
-          <input id="km-in" value={val} onChange={(e) => setVal(e.target.value)} maxLength={200} spellCheck={false} autoComplete="off" suppressHydrationWarning />
+          <label className="km-seal-k" htmlFor="km-in">DATABASE_PASSWORD</label>
+          <input id="km-in" value={val} onChange={(e) => setVal(e.target.value)} maxLength={200} placeholder="••••••••" spellCheck={false} autoComplete="off" suppressHydrationWarning />
           <div className="km-seal-chain" aria-hidden="true">
             <span className="off">Argon2id</span><i /><span>HKDF-SHA256</span><i /><span>AES-256-GCM</span>
           </div>
-          <p className="km-seal-k">ciphertext</p>
           <p className="km-ct" aria-live="polite">{err || out.ct}</p>
-          <p className="km-seal-k">iv <span>{out.iv}</span></p>
         </div>
       </div>
     </section>
@@ -355,7 +358,6 @@ function Ship() {
     return () => clearTimeout(id);
   }, [at, run]);
   const svc = SVC[at];
-  const agent = svc === 'checkout-web';
   return (
     <section className="v2-sec km-ship">
       <div className="v2-wrap km-ship-g">
@@ -377,17 +379,17 @@ function Ship() {
               <span className="km-key-name">DATABASE_PASSWORD<em>production</em></span>
               <span className="km-key-v"><b>v4</b>{noise(10, 4)}</span>
               <span className="km-key-read">
-                <i className={agent ? 'a' : ''} />
+                <i />
                 <span className="km-roll km-key-roll">
                   <AnimatePresence mode="popLayout" initial={false}>
                     <motion.span key={svc} initial={{ y: '105%' }} animate={{ y: '0%' }} exit={{ y: '-105%' }} transition={{ duration: 0.4, ease: EASE }}>
-                      read · {agent ? 'agent ' : ''}{svc}
+                      {svc}
                     </motion.span>
                   </AnimatePresence>
                 </span>
               </span>
-              {!calm && <i key={'run' + at + (run ? 'r' : 'h')} className={'km-key-run' + (run ? '' : ' held')} />}
             </div>
+            {!calm && <i key={'run' + at + (run ? 'r' : 'h')} className={'km-key-run' + (run ? '' : ' held')} aria-hidden="true" />}
           </div>
           <div className="km-ship-cap">
             <p className="v2-title">Example project. Every name in it is one you would give your own.</p>
