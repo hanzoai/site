@@ -150,5 +150,5 @@ The cap: the coverage card makes three claims the page does not bear out (see qu
 7. **Small control fixes:**
    - Give the prefix input the one focus ring (2px ink, white halo) and drop the box-shadow.
    - Let the hero pause also stop the hero caret.
-   - Make the tile hover one step stronger (#171717 → #2a2a2a plus the picture replay is fine; the disc fill is the tell).
+   - Make the tile hover read at a glance. The #171717 → #262626 step is too faint for the filmer, so let the "+" disc fill plus the picture replay carry it, and lift the tile title to ink-white on hover.
    - Keep the six paragraphs findable with `hidden="until-found"` copies.
