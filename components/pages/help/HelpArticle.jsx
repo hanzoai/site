@@ -59,12 +59,20 @@ function useWalk(setting, live, mode) {
   const [want, setWant] = useState(null);
   const [lit, setLit] = useState(0); // section 04: which of its rows the panel lights
   const [litHold, setLitHold] = useState(false);
+  const [touch, setTouch] = useState(false); // a touch screen shows a tap mark, not an arrow
+  const [placed, setPlaced] = useState(false); // the hand shows only once it rests inside the window
   const stage = useRef(null);
   const x = useMotionValue(0), y = useMotionValue(0);
   const flow = setting.flows[plat];
   const targets = flow.steps.flatMap((s, i) => s.targets.map((t) => ({ t, step: i })));
   const n = targets.length;
-  const rest = () => { const r = stage.current?.getBoundingClientRect(); if (r) { x.set(r.width * 0.78); y.set(r.height * 0.84); } };
+  // the hand rests inside the drawn window (the phone is narrower than the stage), never half outside it
+  const rest = () => {
+    const s = stage.current, app = s && s.querySelector('.xhp-app');
+    if (!app) return;
+    const a = s.getBoundingClientRect(), b = app.getBoundingClientRect();
+    x.set(b.left - a.left + b.width * 0.7); y.set(b.top - a.top + b.height * 0.72); setPlaced(true);
+  };
   const aim = (k) => {
     const s = stage.current, el = s && s.querySelector(`[data-t="${k}"]`);
     if (!el) return;
@@ -73,16 +81,23 @@ function useWalk(setting, live, mode) {
   };
   const hit = (k) => {
     setPress((p) => p + 1);
-    if (targets[k] && targets[k].t === 'switch') { setOn((o) => !o); setSaved((v) => v + 1); }
+    if (targets[k] && targets[k].t === 'switch') { setOn(false); setSaved((v) => v + 1); } // the walk always turns it off
     setLevel(k + 1);
   };
-  // on a phone, start with the phone's own steps (when the article has them)
-  useEffect(() => { if (setting.flows.length > 1 && matchMedia('(max-width: 900px)').matches) setPlat(setting.flows.findIndex((f) => /mobile/i.test(f.label)) > 0 ? setting.flows.findIndex((f) => /mobile/i.test(f.label)) : 0); }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { if (calm) { setAuto(false); setLevel(n - 1); } else rest(); }, [calm]); // eslint-disable-line react-hooks/exhaustive-deps
+  // on a phone, start with the phone's own steps (when the article has them); a touch screen gets the tap mark
+  useEffect(() => {
+    setTouch(matchMedia('(pointer: coarse)').matches);
+    if (setting.flows.length > 1 && matchMedia('(max-width: 900px)').matches) setPlat(setting.flows.findIndex((f) => /mobile/i.test(f.label)) > 0 ? setting.flows.findIndex((f) => /mobile/i.test(f.label)) : 0);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { const t = setTimeout(rest, 40); return () => clearTimeout(t); }, [plat]); // eslint-disable-line react-hooks/exhaustive-deps
+  // reduced motion: the finished state, the switch already off
+  useEffect(() => { if (calm) { setAuto(false); setLevel(n); setOn(false); } }, [calm]); // eslint-disable-line react-hooks/exhaustive-deps
+  // sections 03 and 04 show the setting off, so the switch under the picture says off too
+  useEffect(() => { if (mode !== 'walk') setOn(false); }, [mode]);
   // the hand plays by itself while the panel is on screen, nobody is pointing at it and nobody has taken over
   useEffect(() => {
     if (!auto || !live || hold || calm || mode !== 'walk') return;
-    if (level >= n) { const t = setTimeout(() => { setLevel(0); rest(); }, 3400); return () => clearTimeout(t); }
+    if (level >= n) { const t = setTimeout(() => { setLevel(0); setOn(true); rest(); }, 3400); return () => clearTimeout(t); } // each walk starts on and ends off
     const t1 = setTimeout(() => aim(level), level ? 650 : 550);
     const t2 = setTimeout(() => hit(level), level ? 1450 : 1350);
     return () => { clearTimeout(t1); clearTimeout(t2); };
@@ -102,7 +117,7 @@ function useWalk(setting, live, mode) {
   }, [want, level, plat]); // eslint-disable-line react-hooks/exhaustive-deps
   const active = targets[Math.min(level, n - 1)].step;
   return {
-    plat, level, on, auto, press, saved, stage, x, y, flow, targets, active, n, mode, lit,
+    plat, level, on, auto, press, saved, stage, x, y, flow, targets, active, n, mode, lit, touch, placed,
     hold: setHold,
     light: (k) => { if (k === null) { setLitHold(false); return; } setLit(k); setLitHold(true); },
     paused: !auto,
@@ -124,7 +139,7 @@ function Screen({ w, setting }) {
           <span className="xhp-dots"><i /><i /><i /></span>
           <span className="xhp-avatar" data-t="0"><svg viewBox="0 0 24 24" width="16" height="16"><circle cx="12" cy="9" r="4" fill="currentColor" /><path d="M4.5 20c1.2-3.6 4.2-5.4 7.5-5.4s6.3 1.8 7.5 5.4" fill="currentColor" /></svg></span>
         </div>
-        <div className="xhp-chat"><i style={{ '--w': '62%' }} /><i style={{ '--w': '44%' }} className="me" /><i style={{ '--w': '78%' }} /><i style={{ '--w': '56%' }} /></div>
+        <div className="xhp-chat"><i /><i className="me" /><i /><i /></div>
         <div className="xhp-menu"><i /><span className="xhp-item" data-t="1">{label(1)}</span><i /><i /></div>
       </div>
       <div className="xhp-set">
@@ -134,7 +149,7 @@ function Screen({ w, setting }) {
           <p className="xhp-pane-h">{label(2)}</p>
           <div className="xhp-row">
             <span className="xhp-row-t">{setting.name}</span>
-            <button type="button" tabIndex={-1} className="xhp-sw" data-t="3" data-on={(walk ? w.on : false) || undefined} onClick={w.flip}><i /></button>
+            <button type="button" tabIndex={-1} className="xhp-sw" data-t="3" data-on={w.on || undefined} onClick={w.flip}><i /></button>
           </div>
           {[0, 1, 2, 3].map((k) => <span key={k} className="xhp-skel" data-on={(w.mode === 'still' && w.lit === k) || undefined}><i /><i /></span>)}
         </div>
@@ -189,9 +204,11 @@ function Panel({ setting, w, doc, cur }) {
       <div className="xhp-stage" data-mode={w.mode} ref={w.stage} onPointerEnter={(e) => e.pointerType === 'mouse' && w.hold(true)} onPointerLeave={() => w.hold(false)}>
         <Screen w={w} setting={setting} />
         {w.mode === 'after' && <After key="after" calm={calm} />}
-        <motion.span className="xhp-hand" style={{ x: w.x, y: w.y }} aria-hidden="true">
+        <motion.span className="xhp-hand" data-touch={w.touch || undefined} data-placed={w.placed || undefined} style={{ x: w.x, y: w.y }} aria-hidden="true">
           {w.press > 0 && <motion.i key={w.press} className="xhp-ring" initial={{ scale: 0.2, opacity: 0.55 }} animate={{ scale: 1.6, opacity: 0 }} transition={{ duration: 0.4, ease: EASE }} />}
-          <svg viewBox="0 0 20 24" width="20" height="24"><path d="M2 1.5v17.2l4.6-4.3 3 6.9 3.2-1.4-3-6.8 6.3-.3L2 1.5z" fill="#0a0a0a" stroke="#fff" strokeWidth="1.4" strokeLinejoin="round" /></svg>
+          {w.touch
+            ? <i className="xhp-tap" />
+            : <svg viewBox="0 0 20 24" width="20" height="24"><path d="M2 1.5v17.2l4.6-4.3 3 6.9 3.2-1.4-3-6.8 6.3-.3L2 1.5z" fill="#0a0a0a" stroke="#fff" strokeWidth="1.4" strokeLinejoin="round" /></svg>}
         </motion.span>
       </div>
       <div className="xhp-cap" aria-hidden="true">
@@ -223,7 +240,24 @@ function Panel({ setting, w, doc, cur }) {
   );
 }
 
-function Section({ s, i, setting, w, still, end }) {
+/* on a phone the panel is not beside the text, so sections 03 and 04 carry their own small stage inline: 03 the line where
+   the switch turns off, 04 the Privacy pane with the switch off and the other settings lit in step with its rows */
+function Mini({ kind, setting, w }) {
+  const calm = useReducedMotion();
+  const here = w.mode === kind;
+  if (kind === 'after') {
+    return <div className="xhp-mini" aria-hidden="true"><After key={here ? 'play' : 'rest'} calm={calm || !here} /></div>;
+  }
+  return (
+    <div className="xhp-mini xhp-mini-pane" aria-hidden="true">
+      <p className="xhp-pane-h">{w.targets[2] ? w.targets[2].t : ''}</p>
+      <div className="xhp-row"><span className="xhp-row-t">{setting.name}</span><span className="xhp-sw"><i /></span></div>
+      {[0, 1, 2, 3].map((k) => <span key={k} className="xhp-skel" data-on={(here && w.lit === k) || undefined}><i /><i /></span>)}
+    </div>
+  );
+}
+
+function Section({ s, i, setting, w, still, after, end }) {
   const flows = setting ? setting.flows : [];
   const out = [], cards = [];
   for (let k = 0; k < s.blocks.length; k++) {
@@ -262,7 +296,14 @@ function Section({ s, i, setting, w, still, end }) {
   return (
     <section id={s.id} className={end ? 'xhp-sec xhp-end' : 'xhp-sec'} aria-labelledby={s.id + '-h'} tabIndex={-1}>
       <h2 id={s.id + '-h'} className="xhp-h2"><span className="xhp-sec-n x-mono" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>{s.title}</h2>
+      {w && (after || still) && <Mini kind={after ? 'after' : 'still'} setting={setting} w={w} />}
       {out.map((x) => (x === 'cards' ? <div key="cards" className="xhp-flows">{cards}</div> : x))}
+      {end && (
+        <A to="/support" className="xhp-next">
+          <span>Help center</span>
+          <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        </A>
+      )}
     </section>
   );
 }
@@ -287,10 +328,10 @@ function useModes(doc) {
     return () => { io.disconnect(); seen.disconnect(); };
   }, [doc]);
   const mode = off >= 0 && cur === doc.sections[off].id ? 'after' : stillId && cur === stillId ? 'still' : 'walk';
-  return { cur, mode, stillId };
+  return { cur, mode, stillId, offId: off >= 0 ? doc.sections[off].id : null };
 }
 
-function Layout({ doc, w, aside, cur, stillId }) {
+function Layout({ doc, w, aside, cur, stillId, offId }) {
   const body = doc.sections.length > 1 ? doc.sections.slice(0, -1) : doc.sections;
   const last = doc.sections.length > 1 ? doc.sections[doc.sections.length - 1] : null;
   return (
@@ -325,7 +366,7 @@ function Layout({ doc, w, aside, cur, stillId }) {
         </aside>
 
         <article className="xhp-doc">
-          {body.map((s, i) => <Section key={s.id} s={s} i={i} setting={doc.setting} w={w} still={s.id === stillId} />)}
+          {body.map((s, i) => <Section key={s.id} s={s} i={i} setting={doc.setting} w={w} still={s.id === stillId} after={s.id === offId} />)}
         </article>
       </div>
       {last && (
@@ -340,9 +381,9 @@ function Layout({ doc, w, aside, cur, stillId }) {
 function Walked({ doc }) {
   const aside = useRef(null);
   const live = useInView(aside, { amount: 0.35 });
-  const { cur, mode, stillId } = useModes(doc);
+  const { cur, mode, stillId, offId } = useModes(doc);
   const w = useWalk(doc.setting, live, mode);
-  return <Layout doc={doc} w={w} aside={aside} cur={cur} stillId={stillId} />;
+  return <Layout doc={doc} w={w} aside={aside} cur={cur} stillId={stillId} offId={offId} />;
 }
 
 function Plain({ doc }) {

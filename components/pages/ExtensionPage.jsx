@@ -340,22 +340,19 @@ const BUILDS = [
 ];
 const NAME = { chrome: 'Chrome', firefox: 'Firefox', edge: 'Edge', other: null };
 
-const LOOK = { chrome: 'chrome', firefox: 'firefox', edge: 'chrome', other: 'safari' };
+/* the build you are pointing at, as one figure: its name and its size, rolling in when it changes; under it the three
+   builds' sizes as hairline bars, the one you point at in ink (Edge has no size of its own on the page, so it shows none) */
+const BAR = ['chrome', 'firefox', 'safari'];
 function Peek({ k }) {
-  const win = LOOK[k];
+  const name = BUILDS.find((b) => b[0] === k)[1];
+  const lit = k === 'edge' ? 'chrome' : k === 'other' ? 'safari' : k;
   return (
     <div className="xe-peek" aria-hidden="true">
-      <div className={'xe-win front w-' + win} key={k}>
-        <Chrome k={win} open front={false} toggle={() => {}} />
-        <div className="xe-view">
-          <div className="xe-page">
-            <span className="xe-page-nav"><Mark size={12} /><b>Hanzo</b></span>
-            <Img src={'/models/' + { chrome: 'koma', firefox: 'zen', edge: 'iro', other: 'uta' }[k] + '.webp'} w={1200} h={1500} alt="" />
-            <span className="xe-page-t"><b>Hanzo Extension</b><span>Your browser, as a tool an agent can use.</span></span>
-          </div>
-        </div>
-      </div>
-      <span className="xe-peek-k x-mono">{BUILDS.find((b) => b[0] === k)[1]}{SIZE[k] ? ' · ' + SIZE[k] : ''}</span>
+      <span className="xe-peek-n" key={'n' + k}>{name}</span>
+      <span className="xe-peek-f av-num" key={'f' + k}>{SIZE[k] || 'v1.9.31'}</span>
+      <span className="xe-peek-bars">
+        {BAR.map((b) => <span key={b} className={b === lit ? 'on' : ''} style={{ '--w': parseInt(SIZE[b], 10) / 976 }}><i /><em className="x-mono">{SIZE[b]}</em></span>)}
+      </span>
     </div>
   );
 }
@@ -363,7 +360,9 @@ function Peek({ k }) {
 function Builds({ mine }) {
   const order = mine ? [...BUILDS].sort((a, b) => (b[0] === mine) - (a[0] === mine)) : BUILDS;
   const [hot, setHot] = useState(null);
-  const show = hot || mine || 'chrome';
+  const lead = mine || 'chrome'; // the one filled ask: your browser's build (Chrome when it cannot tell)
+  const show = hot || lead;
+  const brief = useBrief();
   return (
     <section className="av-sec xe-builds" id="browsers">
       <div className="av-wrap av-grid">
@@ -379,7 +378,9 @@ function Builds({ mine }) {
               <h3 className="av-title">{t}</h3>
               <p>{d}</p>
               {k === mine && <span className="xe-yours x-mono">{NAME[k] ? `You are on ${NAME[k]}` : 'Your browser'}</span>}
-              <Cta to={REL} id={'extension-build-' + k} kind="quiet">{cta}</Cta>
+              {k === lead
+                ? <Cta to={REL} id={'extension-build-' + k} {...brief}>{cta}</Cta>
+                : <span className="xe-row-a"><Cta to={REL} id={'extension-build-' + k} kind="link">{cta}</Cta>{SIZE[k] && <em className="xe-row-sz x-mono">{SIZE[k]}</em>}</span>}
             </motion.li>
           ))}
         </ul>
@@ -397,28 +398,33 @@ const USES = [
 ];
 
 /* what the agent sees, per use: a page and its console, a dashboard behind a sign-in, the requests, a form filling in */
+const T = (t, d, cls = '') => <span className={'xe-type ' + cls} style={{ '--n': t.length, '--d': d + 's' }}>{t}</span>;
 function UseRender({ i }) {
   return (
     <div className={'xe-ur u' + i} aria-hidden="true">
-      <span className="xe-mini-bar"><i /><i /><i /><span className="x-mono">hanzo.ai/extension</span></span>
-      <div className="xe-ur-v">
-        {i === 0 && <>
-          <div className="xe-ur-page"><Img src="/models/koma.webp" w={1200} h={1500} alt="" /><b>Hanzo Extension</b></div>
-          <div className="xe-ur-log"><em className="x-mono">console messages</em><i /><i /><i /></div>
-        </>}
-        {i === 1 && <>
-          <div className="xe-ur-gate"><span className="xe-ur-lock" /><i /><i /><b /></div>
-          <div className="xe-ur-dash">{[0, 1, 2, 3].map((n) => <i key={n} style={{ '--i': n }} />)}</div>
-        </>}
-        {i === 2 && <div className="xe-ur-net">
-          <em className="x-mono">network requests</em>
-          {[62, 44, 78, 36, 54].map((w, n) => <span key={n} style={{ '--i': n, '--w': w + '%' }}><b /><i /></span>)}
-        </div>}
-        {i === 3 && <div className="xe-ur-form">
-          {[0, 1, 2].map((n) => <span key={n} style={{ '--i': n }}><i /><b /></span>)}
-          <span className="xe-ur-step x-mono">{[1, 2, 3].map((n) => <i key={n} style={{ '--i': n - 1 }} />)}</span>
-        </div>}
-      </div>
+      {/* 01: the page it just changed, ringed as it looks, and what came back from the console */}
+      {i === 0 && <div className="xe-ur-check">
+        <div className="xe-ur-page"><Img src="/models/koma.webp" w={1200} h={1500} alt="" /><span><b>Hanzo Extension</b><span>Your browser, as a tool an agent can use.</span></span><i className="xe-ur-ring" /></div>
+        <div className="xe-ur-log x-mono"><em>console messages</em>{T('page content', 0.9)}{T('console messages', 1.3)}</div>
+      </div>}
+      {/* 02: the three places a login guards, unlocking one by one in the session you already have */}
+      {i === 1 && <ul className="xe-ur-locks">
+        {['An internal dashboard', 'a vendor console', 'an admin panel'].map((t, n) => (
+          <li key={t} style={{ '--i': n }}><span className="xe-ur-lock" /><b>{t}</b></li>
+        ))}
+      </ul>}
+      {/* 03: the request's own path, hop by hop, as data the agent can read */}
+      {i === 2 && <ol className="xe-ur-trace x-mono">
+        <em>network requests</em>
+        {HOPS.slice(0, 5).map((h, n) => <li key={h} style={{ '--i': n, '--w': [0.18, 0.32, 0.54, 0.7, 1][n] }}><span>{h}</span><i /></li>)}
+      </ol>}
+      {/* 04: a multi-step flow filled in, and the step where it got stuck */}
+      {i === 3 && <div className="xe-ur-form">
+        <span className="xe-ur-step x-mono">{['01', '02', '03'].map((n, k) => <i key={n} style={{ '--i': k }}>{n}</i>)}</span>
+        <span className="xe-ur-f">{T('Multi-step flows', 0.4)}</span>
+        <span className="xe-ur-f">{T('exist only in a UI', 1.2)}</span>
+        <span className="xe-ur-f stuck"><b className="xe-ur-caret" /><em className="x-mono">where it got stuck</em></span>
+      </div>}
     </div>
   );
 }

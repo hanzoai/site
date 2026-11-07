@@ -6,7 +6,7 @@
 // Signature: both directions, live: a request types, its secrets become typed markers, the injection is scored, the reply is read too; below, the six facts pin as one detector board stepped by a numbered rail.
 // Beyond: Paste your own with real dials: detectors on or off and the marker text, run in the page.
 /* Guard (v2, archetype A Launch).
-   V2: 8/10 round 2: the composer is at its true size from the first paint (no jump; it settles small only as you leave), lede and ask are in the HTML at t=0, the reply sits inside 801px, a 2.5° pointer tilt; the six facts are Guard's own pinned board (board on top, a numbered rail you can hover, the fact under it, h2 + h3 on the deck scale, captions under headings), hairline board, deck greys only, real hovers, a short pressed state, no 3px bar, no glow; one ask.
+   V2: 8/10 round 3: the stage is a 5/8 split (the fact at 32px beside a content-height board, the section title and numbered rail as a quiet row under it), both directions drawn as two lanes through one gate, the three ways in as one focused proxy plus two smaller, every section in the one 1152px container with standard padding, reduced-motion loads hydrate cleanly, no resize grip, a flat composer, the close given room; deck greys only; one ask.
    Signature: both directions, live. In the composer a request types itself; as it is sent, the things people paste by
    accident turn into typed markers and the injection attempt gets a confidence (not a verdict) against the threshold;
    then the model's reply streams back and is read by the same detectors.

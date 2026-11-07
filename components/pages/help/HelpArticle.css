@@ -16,7 +16,8 @@
 /* the breadcrumb, the question, the answer in one line, the topic under it, and the index */
 .xhp-crumb ol { list-style: none; display: flex; flex-wrap: wrap; align-items: center; gap: 0 10px; margin: 0; padding: 0; font-size: 14px; color: var(--muted); }
 .xhp-crumb li { display: inline-flex; align-items: center; min-height: 44px; min-width: 0; }
-.xhp-crumb li + li::before { content: '/'; margin-right: 10px; color: var(--quiet); }
+/* the separator trails the item before it, so a wrapped line never starts with a lone slash */
+.xhp-crumb li:not(:last-child)::after { content: '/'; margin-left: 10px; color: var(--quiet); }
 .xhp-crumb li[aria-current] span { display: inline-block; padding: 12px 0; line-height: 1.45; }
 .xhp-crumb a { color: var(--ink); text-decoration: underline; text-decoration-color: rgba(0, 0, 0, .3); text-decoration-thickness: 1px; text-underline-offset: 3px; transition: text-underline-offset var(--d-fast) var(--e-out), text-decoration-color var(--d-fast) var(--e-out); }
 .xhp-h1 { margin: 27px 0 0; max-width: 18ch; font-size: 52px; font-weight: 497; letter-spacing: -.03em; line-height: 1.04; text-wrap: balance; }
@@ -91,7 +92,9 @@
 .xhp-avatar { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--tile-2); color: #404040; }
 .xhp-chat { display: flex; flex-direction: column; gap: 12px; padding: 17px 16px; }
 .xhp-chat i, .xhp-menu i, .xhp-nav i, .xhp-skel i { display: block; height: 8px; border-radius: 4px; background: var(--tile-2); }
-.xhp-chat i { width: var(--w); }
+.xhp-chat { overflow: hidden; }
+.xhp-chat i { max-width: 100%; }
+.xhp-chat i:nth-child(1) { width: 62%; } .xhp-chat i:nth-child(2) { width: 44%; } .xhp-chat i:nth-child(3) { width: 78%; } .xhp-chat i:nth-child(4) { width: 56%; }
 .xhp-chat i.me { align-self: flex-end; background: var(--track); }
 .xhp-menu { position: absolute; top: 48px; right: 10px; width: 168px; display: flex; flex-direction: column; gap: 8px; padding: 10px; border-radius: 12px; background: #fff; box-shadow: 0 0 0 1px var(--hair), 0 24px 60px -16px rgba(0, 0, 0, .18); opacity: 0; transform: translateY(-6px); transition: opacity var(--d-base) var(--e-em), transform var(--d-base) var(--e-em); pointer-events: none; }
 .xhp-menu i { width: 70%; margin: 3px 8px; }
@@ -117,14 +120,17 @@
 .xhp-sw i { position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: transform var(--d-base) var(--e-em); }
 .xhp-sw[data-on] { background: var(--ink); }
 .xhp-sw[data-on] i { transform: translateX(18px); }
-.xhp-stage:not([data-mode='walk']) .xhp-hand { opacity: 0; }
 .xhp-after { position: absolute; inset: 0 10px; width: calc(100% - 20px); height: 100%; padding: 17px; border-radius: 16px; background: #fff; box-shadow: 0 0 0 1px var(--hair); color: var(--ink); animation: xhp-in var(--d-base) var(--e-em); }
 .xhp-skel { padding: 4px 6px; margin: 0 -6px; border-radius: 6px; transition: background-color var(--d-base) var(--e-out); }
 .xhp-skel[data-on] { background: var(--tile); }
 .xhp-skel i { transition: background-color var(--d-base) var(--e-out); }
 .xhp-skel[data-on] i:first-child { background: #a3a3a3; }
-.xhp-hand { transition: opacity var(--d-base) var(--e-out); position: absolute; z-index: 5; top: 0; left: 0; margin: -2px 0 0 -2px; pointer-events: none; }
+.xhp-hand { transition: opacity var(--d-base) var(--e-out); position: absolute; z-index: 5; top: 0; left: 0; margin: -2px 0 0 -2px; pointer-events: none; opacity: 0; }
+.xhp-stage[data-mode='walk'] .xhp-hand[data-placed] { opacity: 1; }
 .xhp-hand svg { display: block; }
+/* a touch screen: a fingertip mark, not an arrow */
+.xhp-tap { display: block; width: 22px; height: 22px; margin: -9px 0 0 -9px; border-radius: 50%; background: rgba(10, 10, 10, .18); box-shadow: 0 0 0 1.5px #0a0a0a, 0 0 0 3px #fff; }
+.xhp-hand[data-touch] .xhp-ring { left: -15px; top: -15px; }
 .xhp-ring { position: absolute; left: -14px; top: -14px; width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--ink); }
 
 /* the phone: the same screens in a handset; the menu rises as a sheet, settings and the pane slide in turn */
@@ -141,7 +147,8 @@
 
 .xhp-cap { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 10px 17px; font-size: 14px; }
 .xhp-cap-n { flex: none; font-size: 12px; color: var(--muted); }
-.xhp-cap-t { flex: 1; min-width: 0; animation: xhp-in var(--d-base) var(--e-em); }
+/* two lines are always reserved, so a wrapping step never moves the card */
+.xhp-cap-t { flex: 1; min-width: 0; display: flex; align-items: center; min-height: 2.9em; line-height: 1.45; animation: xhp-in var(--d-base) var(--e-em); }
 @keyframes xhp-in { from { opacity: 0; transform: translateY(6px); } }
 .xhp-cap-dots { display: flex; gap: 4px; }
 .xhp-cap-dots i { width: 16px; height: 2px; border-radius: 2px; background: var(--track); transition: background-color var(--d-base) var(--e-out); }
@@ -162,14 +169,26 @@
 /* the close: the page's own last section, set as a quiet room that runs into the footer */
 .xhp-close { margin-top: 0; background: var(--tile); }
 .xhp-close .xhp-end { width: min(100% - 2 * var(--gutter), 1152px); margin-inline: auto; padding: clamp(72px, 8vw, 116px) 0; display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); column-gap: 17px; align-items: end; }
-.xhp-end .xhp-h2 { grid-column: 1 / span 5; margin: 0; font-size: 32px; }
+.xhp-end .xhp-h2 { grid-column: 1 / span 5; margin: 0; font-size: 26px; }
 .xhp-end .xhp-p { grid-column: 6 / span 8; margin: 0; max-width: 44ch; font-size: 21px; line-height: 1.5; color: var(--muted); }
 .xhp-end .xhp-a { color: var(--ink); }
+/* the next step: back to the help center, an ink row whose arrow travels on hover */
+.xhp-next { grid-column: 6 / span 8; display: inline-flex; align-items: center; justify-content: space-between; gap: 17px; max-width: 44ch; min-height: 56px; margin-top: 27px; padding: 0 20px; border-radius: 999px; background: #fff; color: var(--ink); font-size: 16px; font-weight: 500; text-decoration: none; transition: background-color var(--d-fast) var(--e-out), transform var(--d-fast) var(--e-out); }
+.xhp-next svg { transition: transform var(--d-base) var(--e-em); }
+.xhp-next:active { transform: scale(.97); transition-duration: var(--d-press); }
+.xhp-next:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+/* the phone's inline stages for 03 and 04 (the panel is beside the text only on wide screens) */
+.xhp-mini { display: none; }
+.xhp-mini .xhp-after { inset: 0; width: 100%; }
+.xhp-mini-pane { flex-direction: column; gap: 10px; padding: 12px 14px; border-radius: 16px; background: #fff; box-shadow: 0 0 0 1px var(--hair); font-size: 13px; color: var(--ink); }
+.xhp-mini-pane .xhp-row { flex-direction: row; }
 
 @media (hover: hover) {
   .xhp-toc a:hover { background: var(--tile); }
   .xhp-a:hover { text-decoration-color: var(--ink); background: rgba(0, 0, 0, .05); }
-  .xhp-crumb a:hover { text-decoration-color: var(--ink); }
+  .xhp-crumb a:hover { text-decoration-color: var(--ink); text-decoration-thickness: 2px; color: #000; }
+  .xhp-next:hover { background: var(--tile-2); }
+  .xhp-next:hover svg { transform: translateX(4px); }
   .xhp-flow-tab:hover { color: var(--ink); background: rgba(0, 0, 0, .04); }
   .xhp-ul li:hover { background: var(--tile); }
   .xhp-crumb a:hover, .xhp-a:hover { text-underline-offset: 5px; }
@@ -192,7 +211,7 @@
   .xhp-crumb { order: 0; } .xhp-h1 { order: 1; } .xhp-lede { order: 2; } .xhp-aside { order: 3; } .xhp-kick { order: 4; } .xhp-toc { order: 5; } .xhp-doc { order: 6; }
   .xhp-crumb ol { font-size: 13px; }
   .xhp-crumb li[aria-current] span { padding: 0 0 6px; }
-  .xhp-aside { position: relative; top: auto; margin-top: 27px; max-height: none; overflow: visible; }
+  .xhp-aside { position: relative; top: auto; margin-top: 17px; max-height: none; overflow: visible; }
   .xhp-kick { margin-top: 27px; }
   /* the two platforms' steps: their headings become tabs, one list at a time */
   .xhp-flows { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 0 6px; padding: 6px; border-radius: 16px; background: var(--tile); }
@@ -205,18 +224,22 @@
   .xhp-flow ol { grid-row: 2; grid-column: 1 / -1; }
   .xhp-flow:not([data-on]) ol { display: none; }
   .xhp-close .xhp-end { grid-template-columns: minmax(0, 1fr); row-gap: 17px; padding: 72px 0; }
-  .xhp-end .xhp-h2, .xhp-end .xhp-p { grid-column: 1; }
+  .xhp-end .xhp-h2, .xhp-end .xhp-p, .xhp-next { grid-column: 1; }
+  .xhp-next { margin-top: 10px; }
+  .xhp-mini { display: block; position: relative; height: 196px; margin: 0 0 27px; }
+  .xhp-mini-pane { display: flex; height: auto; }
   .xhp-end .xhp-h2 { font-size: 26px; }
   .xhp-end .xhp-p { font-size: 17px; }
   .xhp-ul.leads { margin-inline: 0; }
   .xhp-ul.leads li { padding-inline: 0; }
   .xhp-h1 { margin-top: 10px; font-size: 32px; line-height: 1.05; }
-  .xhp-lede { font-size: 17px; }
+  .xhp-lede { font-size: 17px; margin-top: 17px; }
   .xhp-toc { margin-top: 44px; }
   .xhp-panel { border-radius: 20px; }
-  .xhp-seg { display: flex; flex: 1; }
-  .xhp-seg button { flex: 1; min-height: 44px; padding: 0 10px; }
-  .xhp-stage { height: 288px; }
+  .xhp-seg { display: flex; flex: 1; min-width: 0; }
+  /* both tabs fit the card at any width: they share it and wrap their words rather than run off it */
+  .xhp-seg button { flex: 1 1 0; min-width: 0; min-height: 44px; padding: 4px 10px; white-space: normal; line-height: 1.2; text-wrap: balance; }
+  .xhp-stage { height: 232px; }
   .xhp-set { grid-template-columns: 40% 1fr; }
   .xhp-sec { padding-top: 56px; }
   .xhp-doc { padding-bottom: 72px; }
