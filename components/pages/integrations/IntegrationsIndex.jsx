@@ -15,8 +15,9 @@ import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/rea
 import { Copy } from '../../ui';
 import { A, More } from '../../kit';
 import { Loose } from '../models/parts';
-import SceneWipe from '../../v2/SceneWipe';
-import MaskLines from '../../v2/MaskLines';
+import { monoOf } from './intParts';
+import SceneWipe from './Wipe';
+import MaskLines from './Mask';
 import '../../v2/ProofScale.css';
 import '../../v2/ProofRhythm.css';
 import './IntegrationsIndex.css';
@@ -52,7 +53,7 @@ function Hub({ cards, base, held, setHeld }) {
         {cards.map((c, i) => (
           <li key={c.href} style={{ '--a': (i / n) * 360 + 'deg' }}>
             <A to={c.href} className="xii-sat" aria-label={c.name} onPointerEnter={() => setHot(c)} onPointerLeave={() => setHot(null)} onFocus={() => setHot(c)} onBlur={() => setHot(null)}>
-              <span aria-hidden="true">{c.emoji}</span>
+              <span aria-hidden="true">{monoOf(c.name)}</span>
             </A>
           </li>
         ))}
@@ -68,7 +69,7 @@ function Local({ n, label, ask, held }) {
       <div className="pf-wrap xii-local-in">
         <span className={'xii-mini' + (held ? ' held' : '')} aria-hidden="true">{Array.from({ length: n }, (_, i) => <i key={i} style={{ '--a': (i / n) * 360 + 'deg' }} />)}</span>
         <span className="pf-mono xii-local-t">{label}</span>
-        <A to={ask.href} className="pf-btn xii-local-a" data-cta="integrations.sticky">{ask.label}</A>
+        <span className="pf-mono xii-local-n" aria-hidden="true">{n}</span>
       </div>
     </div>
   );
@@ -175,7 +176,7 @@ function Catalogue({ groups, label }) {
               return (
                 <motion.li key={c.href} layout={!calm} hidden={!on} initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.15, ease: [0, 0, 0.2, 1] } }} transition={PILL}>
                   <A to={c.href} className="xii-card" onPointerMove={lean} onPointerLeave={rest}>
-                    <span className="xii-card-e" aria-hidden="true">{c.emoji}</span>
+                    <span className="xii-card-e" aria-hidden="true">{monoOf(c.name)}</span>
                     <span className="xii-card-fam pf-mono" aria-hidden="true">{String(cards.indexOf(c) + 1).padStart(2, '0')} / {cards.length}</span>
                     <b className="xii-card-n" data-morph>{c.name}</b>
                     <span className="xii-card-d">{c.desc}</span>

@@ -1,5 +1,5 @@
-import JsonLd from '../../components/JsonLd';
 import IntegrationsIndex from '../../components/pages/integrations/IntegrationsIndex';
+import JsonLd from '../../components/JsonLd';
 import { indexDoc, metaOf } from '../../components/pages/integrations/intData';
 
 const m = metaOf('/integrations') || {};

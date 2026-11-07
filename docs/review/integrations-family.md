@@ -1,32 +1,44 @@
-# /integrations/* — James-eye review
+# /integrations/* (template) — James-eye review
+Verdict: 6/10
+First complaint: "The top's alive, then I scroll and it's three screens of white with a little box of code chopped off at the edge. It goes dead in the middle. And what's that red '1 Issue' thing in the corner?"
 
-Reviewed: main, page files at `f4231e5` (second review; the first, at `3389ac0`, scored 5/10). Members walked: `/integrations/openai-sdk` and `/integrations/langchain`, moving, at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
-
-Verdict: 7/10
-
-First complaint: "Better: the code is right there and it types. But on my phone the page still jumps while it types, and the list of other integrations at the bottom is a wall of little coloured icons."
-
-## What changed since the first review
-Fixed: no tag or emoji above the h1 (the category now sits in the breadcrumb under the lede), no blue or green UI, the editor sits in the first screen and types on arrival, "Get API key — Free" is the solid ask in the hero and sticky after it, text reads with JavaScript off, and the hero ask and Copy answer on hover and press.
+Walked: `/integrations/openai-sdk/` and `/integrations/langchain/`, moving, at 1470x801 and 375x812 (Playwright, DPR 1). 250 ms frames for the first 8 s untouched, slow wheel scroll through the whole page, hover/press probes on every main control, layout-shift observer (buffered, first 10 s on phone), console, overflow at 375 and 320, JS off, reduced motion. No arrival curtain on these pages. Proof: `docs/review/integrations-family/` (3 JPEGs).
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Yes: the promise at display size beside Hanzo's lede and the ask, with the editor typing `pip install openai` and the client lines below it. On desktop the full code shows for a moment, clears, then types; that flash reads as a glitch.
-2. **One in, one out?** Yes for the samples (pinned 01 / 04 chapters). Then the integrations list and the dark "Ready to get started?" close.
-3. **A real object in every section?** Yes until the list.
-4. **One ask, sticky after the hero?** Yes: "Get API key — Free" in the hero, the shared ask bar and the close; the header's "Try Hanzo" turns outlined on desktop. On the phone it stays solid beside the bar.
-5. **Every hover and press answers?** Yes on the ask and Copy; the breadcrumb has hover only.
-6. **Overlap, font swap, layout shift?** No overlap. **Phone layout shift 0.17 (openai-sdk) and 0.15 (langchain)**, still over Google's 0.1, as the editor and chapters fill in. Desktop 0.04–0.05.
-7. **Which reference, and is its motion there?** motion.dev typewriter and apple.com chapters. Both there.
-8. **Different from its neighbours?** The typed editor and "Only the Hanzo lines" switch are its own; members differ by their code.
-9. **All 18 parts covered?** `docs/coverage/integrations-family.md` exists; gaps below.
-10. **Banned tells?** The integrations list at the end carries a small coloured icon (emoji or logo glyph) beside every item's category; it reads as "icons everywhere".
-11. **Copy untouched?** Yes: parity 93/93 and 92/92 text, 23/23 links.
 
-## Missing from the 18 parts (PLAN-COMPONENTS 2.1–2.18, measured)
-- **2.13 Layout shift:** 0.15–0.17 on the phone.
-- **2.6 Content:** the integrations list is long and icon-led; plan says lists over six collapse with a true count.
+**1. First screen sells in 5 s, moves within 1 s?** Yes, mostly. The h1, lede, breadcrumb, one solid "Get API key — Free" and the "Install & configure" code window fit the first screen on both sizes. Within 250 ms the key lines start typing themselves (`api_key=`, `base_url=`), and the right-hand route diagram (SDK → `api.hanzo.ai/v1` → models) pulses a dot down the line. That is a real idle and time moment, and it sells "change two lines". Weaknesses: the h1 sits at 72px (resting size is 52px) with its baseline at 43–47% of the viewport (target about 38%), so the hero reads heavy and low. On desktop, the cookie card floats over the bottom of the code window. The red Next "1 Issue" badge sits bottom left on every load.
 
-## Fixes
-1. Reserve the editor's and each chapter's final height on the phone so typing never pushes the page (target under 0.02).
-2. Start the editor empty on first paint; show the full code only for no-JS and reduced motion.
-3. Drop the coloured icons from the integrations list (names and categories in ink), and collapse it to the first six with "show all".
+**2. One thing in, one thing out, or a document?** Half and half. The pinned chapter stage (Streaming / Vision model / Environment variable; LangChain: Chain with prompt / TypeScript / RAG) is the right idea: one panel changes while you scroll, with dash progress below. But the stage is about 3 screens of mostly white: a 26px heading and a mono caption float alone on the left, and the code card on the right is 60% empty under short snippets. After that, "Created by …", "More integrations", the list and the Band are plain document sections stacked in order. On phone the pinned scene stacks as heading, card, heading, card, which reads as a document.
+
+**3. Real visual object in every section?** Hero: yes (live code window plus route diagram). Chapters: a code card, but half blank and clipped on the right ("What is in this image…", "OpenAIEmbedd…" cut off, with no wrap, fade or scroll hint). "Created by OpenAI/LangChain AI": a small grey logo and a paragraph, so no object. More integrations: contour-line cards. The art is the same generic topo pattern on every card on every member, so it is decoration, not a picture of anything. Band: contour art on black. Weakest: the credit section and the chapter cards.
+
+**4. One ask, in the sticky header, nothing floating; scale rhythm?** Partly. Desktop: the header shows outlined "Try Hanzo" and swaps to solid "Get API key — Free" once the hero ask leaves view, which is good. Phone: the header "Try Hanzo" is solid black *and* the hero "Get API key — Free" is solid black on the same first screen, so two solid fills and two different labels. The cookie card (desktop: a floating bar over the code; phone: a 220px+ card covering the hero object for the whole walk until dismissed) floats over content. Scale: a 72px h1, then everything else is 26px headings and 13–14px code. There is a big and a small, no medium, and nothing grows or shrinks as you go.
+
+**5. Every hover and press answers, no jumps?** Mostly yes. The primary darkens (#0a0a0a to #262626) and presses to scale .97. Copy turns into a tick, really copies exactly the displayed text (verified on the clipboard), and says "Copied". Replay re-types. "Only the Hanzo lines" dims every line except the Hanzo ones (lovely, it tells you something). Related cards fill #f5f5f5 to #ededed, reveal their description and turn the arrow on hover, press to .974, then **open into their page** (the title flies to the destination h1). List rows nudge 4px. Failures: the chapter card's "Streaming / Vision model / Environment variable" strip looks like tabs but is plain spans, so clicking does nothing. The only control is the three 44px dashes. The header ask fades to opacity .88 on hover (banned "buttons that fade on hover"). "Browse Models" only changes its border alpha.
+
+**6. Overlap, font swap or layout shift?** No horizontal overflow at 375 or 320. Desktop CLS is 0.0007. Phone CLS in the first 10 s is **0.0188 on openai-sdk** (one 0.012 text shift at 3.6 s) and 0.008 on langchain. That is under 0.02 but right at the line, and it is text moving after the page has settled. No visible font swap. Overlaps: the cookie card sits over the hero code window on both sizes, and the dev "1 Issue" badge comes from a **hydration-mismatch console error on every load of both members at both sizes** ("A tree hydrated but some attributes of the server rendered HTML didn't match…"). DONE says no red badge, no console errors.
+
+**7. Which reference, and is its motion there?** apple.com product page in intent: a pinned scene where one panel changes, and a sticky header ask that swaps. synchronized.studio's card-opens-into-page is genuinely there from the More integrations cards. But Apple's pinned scenes fill the screen with the product. Here the pinned stage is a small card on an empty white field, so the apple moment doesn't land. The typing code plus route diagram is motion.dev-grade and the best thing on the page.
+
+**8. Different from its neighbours?** As a family it has its own object: the "two lines change" typed config plus the route diagram, which no other page type uses. Between members, only the code, the route nodes and the contour seed differ. That is acceptable for a family template, but the identical topo art on every related card makes the bottom half of every member look the same.
+
+**9. All 18 parts covered?** Visible gaps: part 4 (two solid fills on phone; the header label is not the hero label until scroll), part 6 (code clipped without wrap or scroll cue on desktop chapters; mid-token wraps on phone such as `https://api.hanzo.a` / `i/v1`), part 8 (fake tabs, fading header button), part 11 (one bottom layer: the cookie card covers the hero object on phone), part 13/17 (a console error on load), and part 15 (the related rail clips the 4th card with no snap, peek control or arrows; `scroll-snap-type: none`). Covered well: breadcrumb, one h1, copy-equals-display, Morph, JS-off legible (all copy and code render; only the 6 hover descriptions on related cards stay hidden), reduced motion (final code state, 0 running animations after 3.5 s), and the sound toggle in the header.
+
+**10. Banned tells?** Buttons that fade on hover (the header ask, opacity .88). Floating panel over content (the cookie card over the hero object). Otherwise clean: monochrome, Zen/Zen Mono, no gradient text, no pill above the h1 (the "AI SDKS" / "FRAMEWORKS" mono label sits below the lede, which is allowed).
+
+**11. Copy untouched?** As walked, yes: titles, ledes, code, the "Created by" lines and the Band read as Hanzo's integration copy. One oddity worth a parity check: the phone chapters print each label twice ("Streaming / PYTHON" as a heading, then again as the card head). That is duplication rather than rewriting, but it reads as a bug.
+
+## Fixes (ordered by impact)
+
+1. **Kill the hydration mismatch.** 0 console errors and no red "1 Issue" badge on both members at both sizes, measured on a cold load. It is a DONE gate.
+2. **Make the pinned chapter stage a full stage, not a small card on white.** The code card fills at least 70% of the viewport height with no more than 25% empty interior. The left column carries a live object (re-use the route diagram with this chapter's node lit, or the chapter's output streaming). The stage runs 2 screens at most, not 3.
+3. **No clipped code.** Every code line is fully visible at 1470 (wrap with a hanging indent, or a visible horizontal-scroll fade plus `tabindex=0`). On phone, never break inside a URL or token (`overflow-wrap: anywhere` off; scroll the block instead).
+4. **The chapter "tabs" must be real tabs or not look like tabs.** Either APG tabs (click or arrow switches the panel and scrolls the pin to that chapter, tick sound) or plain caption text with no tab styling. 0 clickable-looking dead controls.
+5. **One solid fill per viewport on phone.** The header ask is quiet (outlined) while the hero "Get API key — Free" is in view, and solid only after it leaves. Use the same label as the hero (part 4), not "Try Hanzo".
+6. **The header ask hover must not fade.** Opacity stays 1; change fill or offset instead (shared chrome: file a request).
+7. **The cookie card never covers the hero object.** At 375x812 it is 220px tall or less and sits below the hero code window's first 5 lines, or docks into the bottom bar slot. On desktop it avoids overlapping the code window (shared chrome: request).
+8. **Phone chapters: show each label once.** Drop the duplicate heading-plus-card-head ("Streaming PYTHON" twice), so each chapter is one card with one title.
+9. **Related rail:** `scroll-snap-type: x proximity`, a 14–18% peek, and prev/next or drag inertia. Give each card art from its own integration (a mark, a code glyph, a seed visibly tied to the name) instead of the same topo pattern.
+10. **Hero scale and position:** rest the h1 at 52–64px with its baseline at about 38% of 100svh, so the code window rises into the first screen by at least 120px more on desktop.
+11. **"Created by …" section needs an object.** For example, the logo at true size with the GitHub stars/licence as a figure, or a small diff of the two changed lines. Not a 64px grey icon beside a paragraph.
+12. **Phone CLS:** find the 0.012 text shift at about 3.6 s on openai-sdk (likely the typing block re-measuring). Reserve its final height so the first 10 s total is 0.005 or less.

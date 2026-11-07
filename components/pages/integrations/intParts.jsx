@@ -160,3 +160,14 @@ export function CodeCard({ sample, only, Loose, name, tabs, at }) {
     </div>
   );
 }
+
+/* each tool's mark, set in type (no emoji, no borrowed logo): two letters from its own name, like a table of elements.
+   Words such as SDK, AI and .dev are dropped; a single word gives its first two letters, several give their initials. */
+const SKIP = /^(sdk|ai|\.dev)$/i;
+export function monoOf(name = '') {
+  const words = name.replace(/\.dev$/i, '').split(/\s+/).filter((w) => w && !SKIP.test(w));
+  const parts = words.length > 1 ? words : (words[0] || '').split(/(?<=[a-z])(?=[A-Z])/).filter((w) => !SKIP.test(w));
+  if (parts.length > 1 && parts[0].length > 1) return (parts[0][0] + parts[1][0]).toUpperCase();
+  const w = parts.join('');
+  return w.slice(0, 1).toUpperCase() + w.slice(1, 2).toLowerCase();
+}
