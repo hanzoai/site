@@ -99,11 +99,11 @@ html.js .sg-f.box .x-tick { transform-origin: 50% 100%; animation: sg-stamp .4s 
 .sg-steps button.past::before { transform: scaleX(1); opacity: .25; }
 .sg-steps button[aria-pressed='true']::before { transform: scaleX(1); opacity: 1; }
 .sg-steps button .x-mono { font-size: 13px; }
-.sg-steps button b { font-size: 17px; font-weight: 497; color: #525252; transition: color .15s cubic-bezier(0, 0, .2, 1); }
+.sg-steps button .sg-step-t { font-size: 17px; font-weight: 497; color: #525252; transition: color .15s cubic-bezier(0, 0, .2, 1); }
 .sg-step-d { font-size: 14px; line-height: 1.5; }
 .sg-steps button[aria-pressed='true'] { color: #404040; }
-.sg-steps button[aria-pressed='true'] b { color: var(--ink); }
-@media (hover: hover) { .sg-steps button:hover b { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; } }
+.sg-steps button[aria-pressed='true'] .sg-step-t { color: var(--ink); }
+@media (hover: hover) { .sg-steps button:hover .sg-step-t { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; } }
 .sg-steps button:active { transform: translateY(1px); }
 .sg-steps button:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
 

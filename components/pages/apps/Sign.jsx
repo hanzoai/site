@@ -159,7 +159,7 @@ function Opening() {
               <li key={t} style={{ '--i': i }}>
                 <button type="button" aria-pressed={at === i} className={i < at ? 'past' : ''} onClick={() => pick(i)}>
                   <span className="x-mono">{String(i + 1).padStart(2, '0')}</span>
-                  <b>{t}</b>
+                  <span className="sg-step-t">{t}</span>
                   <span className="sg-step-d">{d}</span>
                 </button>
               </li>
@@ -385,9 +385,9 @@ function Cost() {
         <div className="sg-oss">
           <h2 className="w2-headline">Built on Open Source</h2>
           <div>
-            <p className="w2-body">Hanzo Sign is built on <A to="https://documenso.com">Documenso</A>, an open-source document signing platform, under the AGPL.</p>
+            <p className="w2-body"><span>Hanzo Sign is built on </span><A to="https://documenso.com">Documenso</A><span>, an open-source document signing platform, under the AGPL.</span></p>
             <p className="w2-body">The upstream project is named here and in the licence, because naming what you forked is required and is a different act from branding yourself with it. Run our build, or run your own — the whole thing is a TypeScript application over Postgres, and you can read every line that touches a document before you trust it with one.</p>
-            <div className="sg-oss-links"><A to={REPO} className="w2-ghost">hanzoai/esign <i aria-hidden="true">↗</i></A><A to="https://github.com/documenso/documenso" className="w2-ghost">Upstream: documenso/documenso <i aria-hidden="true">↗</i></A></div>
+            <div className="sg-oss-links"><A to={REPO} className="w2-ghost"><span>hanzoai/esign</span> <i aria-hidden="true">↗</i></A><A to="https://github.com/documenso/documenso" className="w2-ghost"><span>Upstream: documenso/documenso</span> <i aria-hidden="true">↗</i></A></div>
             <Fork />
           </div>
         </div>
@@ -414,12 +414,12 @@ function First() {
           {/* one ledger, quiet rows divided by hairlines: everything else Hanzo says here, never a second box or ask */}
           <ul className="sg-first-links">
             {[['Documentation', 'Setup, self-hosting, and the API reference', 'View Docs', DOCS], ['The source', 'Read it before you trust a contract to it', 'View on GitHub', REPO]].map(([t, d, a, to], i) => (
-              <li key={t} className="sg-fold" style={{ '--i': i + 2 }}><h3>{t}</h3><p>{d}</p><A to={to} className="sg-tlink">{a} <i aria-hidden="true">→</i></A></li>
+              <li key={t} className="sg-fold" style={{ '--i': i + 2 }}><h3>{t}</h3><p>{d}</p><A to={to} className="sg-tlink"><span>{a}</span> <i aria-hidden="true">→</i></A></li>
             ))}
             <li className="sg-fold" style={{ '--i': 4 }}>
               <h3>Something more specific</h3>
               <p>Signing inside your own product, a flow with approvals before the send, or running it on your infrastructure. Tell us the shape and we will tell you whether it fits.</p>
-              <A to="/contact-sales" className="sg-tlink">Contact Sales <i aria-hidden="true">→</i></A>
+              <A to="/contact-sales" className="sg-tlink"><span>Contact Sales</span> <i aria-hidden="true">→</i></A>
             </li>
             <li className="sg-fold" style={{ '--i': 5 }}>
               <h3>Get started with Sign</h3>
@@ -431,7 +431,7 @@ function First() {
               <span className="sg-get-meta">
                 <span className="sg-chip"><span>License:</span> AGPL-3.0</span>
                 <A to="https://github.com/hanzoai" className="sg-chip">hanzoai</A>
-                <A to="https://platform.hanzo.ai/deploy" className="sg-tlink">Deploy to Cloud <i aria-hidden="true">→</i></A>
+                <A to="https://platform.hanzo.ai/deploy" className="sg-tlink"><span>Deploy to Cloud</span> <i aria-hidden="true">→</i></A>
               </span>
             </li>
           </ul>
