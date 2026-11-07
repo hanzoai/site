@@ -1,15 +1,29 @@
 'use client';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useInView } from 'motion/react';
 import { EASE, Head, Arrow, Rise } from './ui';
 
-// placed exactly where Hanzo's own chart places them (log cost across, accuracy up)
+// placed exactly where Hanzo's own chart places them (log cost across, accuracy up).
+// [name as Hanzo writes it, label on the chart, GPQA Diamond %, $ per 1,000 questions as Hanzo prints it, kind, reported by, date, source]
+// kind: m = one model tested on the same 198 questions, r = a score reported by a lab or an independent evaluation, e = an Enso tier
 const D = [
-  ['DeepSeek V4 Pro', 76.3, 1.04], ['Sonnet 5', 77.8, 42.91], ['Fable 5', 82.8, 14.93], ['Haiku 5.5', 83.3, 1.06],
-  ['Opus 4.8', 87.4, 45.01], ['Fable 5.1', 87.9, 46.25], ['Sonnet 5.5', 90.4, 10.39], ['GPT-5.5', 90.4, 18.62],
-  ['GLM 5.3', 90.9, 0.94], ['Opus 5.5', 90.9, 21.21], ['GPT-5.6 Sol', 91.9, 10.07], ['Grok 4.7', 92.7, 4.56],
-  ['Kimi K3', 93.5, 10.59], ['GPT-6 Sol', 94.3, 5.08], ['Enso Flash', 95.5, 3.25, 1], ['Enso', 96.5, 10.01, 1], ['Enso Ultra', 98.0, 14.74, 1],
+  ['DeepSeek V4 Pro 0423', 'DeepSeek V4 Pro', 76.3, '1.05', 'm'], ['Claude Sonnet 5', 'Sonnet 5', 77.8, '42.91', 'm'], ['Claude Fable 5', 'Fable 5', 82.8, '14.95', 'm'], ['Claude Haiku 5.5', 'Haiku 5.5', 83.3, '1.07', 'm'],
+  ['Claude Opus 4.8', 'Opus 4.8', 87.4, '45.01', 'm'], ['Claude Fable 5.1', 'Fable 5.1', 87.9, '46.25', 'm'], ['Claude Sonnet 5.5', 'Sonnet 5.5', 90.4, '10.41', 'm'], ['GPT-5.5', 'GPT-5.5', 90.4, '18.64', 'm'],
+  ['GLM 5.3', 'GLM 5.3', 90.9, '0.945', 'r', 'Epoch AI (independent)', '2026-08-14', 'https://epoch.ai/models/glm-5-3'], ['Claude Opus 5.5', 'Opus 5.5', 90.9, '21.23', 'm'], ['GPT-5.6 Sol', 'GPT-5.6 Sol', 91.9, '10.08', 'm'],
+  ['Grok 4.7', 'Grok 4.7', 92.7, '4.57', 'r', 'Epoch AI (independent)', '2026-09-21', 'https://epoch.ai/models/grok-4-7'],
+  ['Kimi K3', 'Kimi K3', 93.5, '10.61', 'r', 'Moonshot AI (lab)', '2026-07-16', 'https://github.com/MoonshotAI/Kimi-K3'],
+  ['GPT-6 Sol', 'GPT-6 Sol', 94.3, '5.09', 'r', 'Epoch AI (independent)', '2026-09-22', 'https://epoch.ai/models/gpt-6-sol'],
+  ['Enso Flash', 'Enso Flash', 95.5, '3.26', 'e'], ['Enso', 'Enso', 96.5, '10.03', 'e'], ['Enso Ultra', 'Enso Ultra', 98.0, '14.76', 'e'],
 ];
+// Hanzo's words for each point, kept in the page for readers who cannot hover
+const say = (full, a, c, k, who, date, src) => (k === 'm'
+  ? `${full} ${a}%, a single model tested on the same 198 GPQA Diamond questions, $${c} per 1,000 of them`
+  : k === 'r'
+    ? `${full} ${a}% on GPQA Diamond, reported by ${who}, ${date}; $${c} per 1,000 questions estimated from its list price. ${src}`
+    : `${full} at $${c} per 1,000, its cost on new questions: ${a}% · questions it has seen`);
+// the sentence shown on the card: the model's name and score are already its heading, and the source is its link
+const tipText = (p) => (p.e ? p.say : p.say.replace(`${p.full} ${p.a.toFixed(1)}%`, '').replace(/^[,\s]+/, '').replace(p.src ? ' ' + p.src : '', '').replace(/^./, (m) => m.toUpperCase()));
+const KEY = "GPQA Diamond accuracy against what 1,000 questions cost, on a log scale; models under 70% are not drawn. Plain discs are single models tested on the same 198 questions, each at its best run and the cost it filed. Ink discs wearing Hanzo's H are Enso's tiers on questions it has seen, each at its tier's cost on new questions. Dashed discs are scores reported by a lab or an independent evaluation, each at its model's list price times the median tokens a question took in our runs of its lab's models, or of all of them. The frontier, the points no other beats on both accuracy and cost, is GLM 5.3, Enso Flash, Enso, Enso Ultra.";
 const VW = 1152, VH = 470, L = 60, R = 1120, T = 24, B = 412;
 const lx = (c) => L + ((Math.log10(c) - Math.log10(0.8)) / (Math.log10(60) - Math.log10(0.8))) * (R - L);
 const ly = (a) => B - ((a - 75) / 25) * (B - T);
@@ -21,8 +35,16 @@ export default function Pareto() {
   const [hot, setHot] = useState(null);
   const [cap, setCap] = useState(lx(4));
   const [dragging, setDragging] = useState(false);
+  // a point's card stays while the pointer travels to its source link; touch keeps it until you tap elsewhere
+  const gone = useRef(0);
+  const show = (p) => { clearTimeout(gone.current); setHot(p); };
+  const hide = (e) => { if (e && e.pointerType === 'touch') return; clearTimeout(gone.current); gone.current = setTimeout(() => setHot(null), 180); };
+  useEffect(() => () => clearTimeout(gone.current), []);
   // rounded so the server and the browser draw identical numbers
-  const pts = useMemo(() => D.map(([n, a, c, e]) => ({ n, a, c, e: !!e, x: Math.round(lx(c) * 100) / 100, y: Math.round(ly(a) * 100) / 100 })).sort((p, q) => p.c - q.c), []);
+  const pts = useMemo(() => D.map(([full, n, a, cs, k, who, date, src]) => {
+    const c = parseFloat(cs);
+    return { full, n, a, c, e: k === 'e', r: k === 'r', src, say: say(full, a.toFixed(1), cs, k, who, date, src), x: Math.round(lx(c) * 100) / 100, y: Math.round(ly(a) * 100) / 100 };
+  }).sort((p, q) => p.c - q.c), []);
   const front = useMemo(() => { let best = -1; return pts.filter((p) => (p.a > best ? ((best = p.a), true) : false)); }, [pts]);
   const path = front.map((p, i) => (i ? 'L' : 'M') + p.x.toFixed(1) + ' ' + p.y.toFixed(1)).join(' ');
   const within = pts.filter((p) => p.x <= cap);
@@ -39,12 +61,13 @@ export default function Pareto() {
     <section className="x-sec x-pareto" id="pareto" aria-labelledby="pareto-h">
       <div className="x-wrap">
         <Head title="A New Pareto Frontier of Intelligence" lede="GPQA Diamond challenges AI with 198 graduate-level science questions. See how Enso balances accuracy and cost across 1,000 answers." />
-        <Rise className="x-plot" ref={box}>
+        <Rise className="x-plot" ref={box} onPointerDown={(e) => { if (!e.target.closest('.pt, .x-tip')) setHot(null); }}>
           <div className="x-plot-read" aria-live="polite">
             <span className="x-mono">Budget · ${c < 10 ? c.toFixed(2) : Math.round(c)} per 1,000 questions</span>
-            <b>{pick ? `${pick.n} · ${pick.a.toFixed(1)}%` : '—'}</b>
+            <b>{pick ? `${pick.full} · ${pick.a.toFixed(1)}%` : '—'}</b>
           </div>
-          <svg viewBox={`0 0 ${VW} ${VH}`} role="img" aria-label="GPQA Diamond accuracy against what 1,000 questions cost, on a log scale" onPointerMove={onMove} onPointerUp={() => setDragging(false)}>
+          <div className="x-plot-svg">
+          <svg viewBox={`0 0 ${VW} ${VH}`} role="group" aria-label={KEY} onPointerMove={onMove} onPointerUp={() => setDragging(false)}>
             {[75, 80, 85, 90, 95, 100].map((a) => (
               <g key={a}><line x1={L} x2={R} y1={ly(a)} y2={ly(a)} className="ax" /><text x={L - 12} y={ly(a) + 4} textAnchor="end" className="tick">{a}</text></g>
             ))}
@@ -61,22 +84,25 @@ export default function Pareto() {
             {pts.map((p, i) => {
               const lit = (hot ? hot.n === p.n : true) && p.x <= cap;
               const best = pick && pick.n === p.n;
+              const body = (
+                <>
+                  {p.e && <circle cx={p.x} cy={p.y} r="15" className="halo" />}
+                  <circle cx={p.x} cy={p.y} r={p.e ? 7 : 5} />
+                  <text x={p.x + (p.x > 940 ? -12 : 12)} y={p.y + 4} textAnchor={p.x > 940 ? 'end' : 'start'}>{p.n} {p.a.toFixed(1)}%</text>
+                </>
+              );
               return (
                 <motion.g
                   key={p.n}
-                  className={'pt' + (p.e ? ' enso' : '') + (best ? ' best' : '')}
-                  tabIndex={0}
-                  role="img"
-                  aria-label={`${p.n} ${p.a.toFixed(1)}%`}
-                  onPointerEnter={() => setHot(p)} onPointerLeave={() => setHot(null)} onFocus={() => setHot(p)} onBlur={() => setHot(null)}
+                  className={'pt' + (p.e ? ' enso' : '') + (p.r ? ' rep' : '') + (best ? ' best' : '') + (hot && hot.n === p.n ? ' hot' : '')}
+                  {...(p.src ? {} : { tabIndex: 0, role: 'img', 'aria-label': p.say })}
+                  onPointerEnter={() => show(p)} onPointerLeave={hide} onFocus={() => show(p)} onBlur={() => hide()}
                   initial={{ opacity: 0, scale: 0 }}
                   animate={seen ? { opacity: lit ? 1 : 0.28, scale: 1 } : {}}
                   transition={{ type: 'spring', stiffness: 360, damping: 20, delay: seen && !hot ? 0.15 + i * 0.05 : 0 }}
                   style={{ originX: p.x + 'px', originY: p.y + 'px', transformBox: 'view-box' }}
                 >
-                  {p.e && <circle cx={p.x} cy={p.y} r="15" className="halo" />}
-                  <circle cx={p.x} cy={p.y} r={p.e ? 7 : 5} />
-                  {(p.e || best || (hot && hot.n === p.n)) && <text x={p.x + (p.x > 940 ? -12 : 12)} y={p.y + 4} textAnchor={p.x > 940 ? 'end' : 'start'}>{p.n} {p.a.toFixed(1)}%</text>}
+                  {p.src ? <a href={p.src} target="_blank" rel="noopener noreferrer" aria-label={p.say}>{body}</a> : body}
                 </motion.g>
               );
             })}
@@ -96,7 +122,19 @@ export default function Pareto() {
               <rect x="-22" y={T - 6} width="44" height={B - T + 30} className="hit" />
             </g>
           </svg>
+          {hot && (
+            <div className={'x-tip' + (hot.y < 190 ? ' below' : '')} style={{ left: Math.max(24, Math.min(76, (hot.x / VW) * 100)) + '%', top: (hot.y / VH) * 100 + '%' }} onPointerEnter={() => show(hot)} onPointerLeave={hide}>
+              <b>{hot.full}<i>{hot.a.toFixed(1)}%</i></b>
+              <span>{tipText(hot)}</span>
+              {hot.src && <a href={hot.src} target="_blank" rel="noopener noreferrer">Source: {hot.src.replace('https://', '')} ↗</a>}
+            </div>
+          )}
+          </div>
           <p className="x-plot-hint">Drag the line to set a budget. Point at any model to read it.</p>
+          <p className="x-plot-src">
+            Dashed discs are scores reported by a lab or an independent evaluation:
+            {pts.filter((p) => p.src).map((p) => <a key={p.n} href={p.src} target="_blank" rel="noopener noreferrer">{p.full} ↗</a>)}
+          </p>
         </Rise>
         <div className="x-row-links">
           <Arrow href="/enso">How Enso routes</Arrow>

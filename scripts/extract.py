@@ -66,5 +66,7 @@ print({k: (len(v) if isinstance(v, list) else len(v)) for k, v in C.items()}, [p
 css = open('source/hanzo-a.css').read() + '\n' + open('source/hanzo-b.css').read() + '\n' + '\n'.join(re.findall(r'<style[^>]*>(.*?)</style>', h, re.S))
 css = re.sub(r'url\(\.\./media/Zen-Variable[^)]*\)', 'url(/fonts/Zen-Variable.woff2)', css)
 css = re.sub(r'url\(\.\./media/ZenMono-Variable[^)]*\)', 'url(/fonts/ZenMono-Variable.woff2)', css)
+# fonts must be same-origin (browsers block cross-site fonts); download them into public/fonts with the hash dropped
+css = re.sub(r'url\(\.\./media/([A-Za-z0-9-]+)\.[A-Za-z0-9_-]+\.woff2\)', r'url(/fonts/\1.woff2)', css)
 css = css.replace('url(../media/', 'url(https://hanzo.ai/_next/static/media/')
 open('public/hanzo.css', 'w').write(css); print('css', len(css))

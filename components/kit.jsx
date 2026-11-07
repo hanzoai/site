@@ -10,6 +10,7 @@ import { href } from '../lib/route';
 /* A link that stays inside the site when it can. */
 export function A({ to, children, className, ...rest }) {
   const h = href(to);
+  // a bare link, no wrapper: pages lay links out as grid and flex items, and Morph and Cursor read the <a> itself
   if (h && h.startsWith('/')) return <Link href={h} className={className} {...rest}>{children}</Link>;
   const ext = h && !h.startsWith('https://hanzo.ai');
   return <a href={h} className={className} {...(ext ? { target: '_blank', rel: 'noopener noreferrer' } : {})} {...rest}>{children}</a>;

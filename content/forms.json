@@ -1,0 +1,310 @@
+{
+ "/contact-sales": [
+  {
+   "fields": [
+    {
+     "name": "name",
+     "type": "text",
+     "required": true,
+     "label": "Full name"
+    },
+    {
+     "name": "email",
+     "type": "email",
+     "required": true,
+     "label": "Work email"
+    },
+    {
+     "name": "company",
+     "type": "text",
+     "required": true,
+     "label": "Company"
+    },
+    {
+     "name": "size",
+     "type": "select-one",
+     "required": true,
+     "label": "Team size",
+     "options": [
+      "",
+      "1-49",
+      "50-249",
+      "250-999",
+      "1000-4999",
+      "5000+"
+     ]
+    },
+    {
+     "name": "need",
+     "type": "textarea",
+     "required": false,
+     "label": "What do you want to build?"
+    },
+    {
+     "name": "website",
+     "type": "text",
+     "required": false,
+     "label": "Leave this empty"
+    }
+   ],
+   "sends": [
+    {
+     "url": "https://api.hanzo.ai/v1/marketing/leads",
+     "method": "POST",
+     "type": "application/json",
+     "fields": [
+      "name",
+      "email",
+      "company",
+      "size",
+      "need",
+      "source",
+      "visit"
+     ],
+     "body": "{\"name\":\"Test\",\"email\":\"test@example.com\",\"company\":\"Test\",\"size\":\"5000+\",\"need\":\"Test\",\"source\":\"hanzo.ai/contact-sales\",\"visit\":{\"consent\":\"\",\"tags\":\"\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36\",\"url\":\"https://hanzo.ai/contact-sales\"}}"
+    }
+   ]
+  }
+ ],
+ "/newsletter": [
+  {
+   "fields": [
+    {
+     "name": "email",
+     "type": "email",
+     "required": false,
+     "label": "Email address"
+    }
+   ],
+   "sends": [
+    {
+     "url": "https://api.hanzo.ai/v1/marketing/subscribe",
+     "method": "POST",
+     "type": "application/json",
+     "fields": [
+      "email",
+      "source",
+      "locale"
+     ],
+     "body": "{\"email\":\"test@example.com\",\"source\":\"hanzo.ai/newsletter\",\"locale\":\"en-US\"}"
+    }
+   ]
+  }
+ ],
+ "/grants": [
+  {
+   "fields": [],
+   "sends": []
+  }
+ ],
+ "/startups": [
+  {
+   "fields": [
+    {
+     "name": "company",
+     "type": "text",
+     "required": true,
+     "label": "Company name"
+    },
+    {
+     "name": "website",
+     "type": "text",
+     "required": false,
+     "label": "Website"
+    },
+    {
+     "name": "contactName",
+     "type": "text",
+     "required": true,
+     "label": "Your name"
+    },
+    {
+     "name": "email",
+     "type": "email",
+     "required": true,
+     "label": "Work email"
+    },
+    {
+     "name": "role",
+     "type": "text",
+     "required": false,
+     "label": "Your role"
+    },
+    {
+     "name": "stage",
+     "type": "select-one",
+     "required": true,
+     "label": "Company stage",
+     "options": [
+      "",
+      "idea",
+      "pre-seed",
+      "seed",
+      "series-a",
+      "series-b-plus"
+     ]
+    },
+    {
+     "name": "investors",
+     "type": "text",
+     "required": false,
+     "label": "Who are your investors? \n(funds, angels)"
+    },
+    {
+     "name": "amountRaised",
+     "type": "text",
+     "required": false,
+     "label": "Amount raised \n(optional)"
+    },
+    {
+     "name": "teamSize",
+     "type": "text",
+     "required": false,
+     "label": "Team size"
+    },
+    {
+     "name": "building",
+     "type": "textarea",
+     "required": true,
+     "label": "What are you building?"
+    },
+    {
+     "name": "infraSpend",
+     "type": "text",
+     "required": false,
+     "label": "Current infra / compute spend per month \n(optional)"
+    },
+    {
+     "name": "techstarsBatch",
+     "type": "text",
+     "required": false,
+     "label": "Techstars affiliation \n(optional)"
+    },
+    {
+     "name": "heardVia",
+     "type": "select-one",
+     "required": false,
+     "label": "How did you hear about us?",
+     "options": [
+      "",
+      "Search",
+      "X / Twitter",
+      "LinkedIn",
+      "A friend or colleague",
+      "A Techstars connection",
+      "An investor",
+      "An event or conference",
+      "Hanzo docs or GitHub",
+      "Other"
+     ]
+    },
+    {
+     "name": "hp",
+     "type": "text",
+     "required": false,
+     "label": "Do not fill this in"
+    }
+   ],
+   "sends": []
+  }
+ ],
+ "/founder": [
+  {
+   "fields": [
+    {
+     "name": "founder-email",
+     "type": "email",
+     "required": true,
+     "label": "Email of your Hanzo account"
+    },
+    {
+     "name": "founder-name",
+     "type": "text",
+     "required": false,
+     "label": "Name"
+    },
+    {
+     "name": "founder-github",
+     "type": "text",
+     "required": true,
+     "label": "GitHub username"
+    },
+    {
+     "name": "founder-pull",
+     "type": "url",
+     "required": true,
+     "label": "Merged pull request"
+    }
+   ],
+   "sends": []
+  }
+ ],
+ "/sms-opt-in": [
+  {
+   "fields": [
+    {
+     "name": "phone",
+     "type": "tel",
+     "required": true,
+     "label": "Mobile phone number"
+    }
+   ],
+   "sends": []
+  }
+ ],
+ "/features": [
+  {
+   "fields": [],
+   "sends": [
+    {
+     "url": "https://api.hanzo.ai/v1/event?ingest_key=pk-CmfLA2K6kvsPflrS9DSkt06H_kSoQB_21sjedt6VJdc",
+     "method": "POST",
+     "type": "text/plain",
+     "fields": [
+      "batch"
+     ]
+    },
+    {
+     "url": "https://api.hanzo.ai/v1/event?ingest_key=pk-CmfLA2K6kvsPflrS9DSkt06H_kSoQB_21sjedt6VJdc",
+     "method": "POST",
+     "type": "text/plain",
+     "fields": [
+      "batch"
+     ]
+    },
+    {
+     "url": "https://api.hanzo.ai/v1/chat/public",
+     "method": "POST",
+     "type": "application/json",
+     "fields": [
+      "model",
+      "messages"
+     ]
+    }
+   ]
+  }
+ ],
+ "/careers/compiler-engineer": [
+  {
+   "fields": [],
+   "sends": []
+  }
+ ],
+ "/chat": [
+  {
+   "fields": [],
+   "sends": [
+    {
+     "url": "https://api.hanzo.ai/v1/chat/public",
+     "method": "POST",
+     "type": "application/json",
+     "fields": [
+      "model",
+      "messages"
+     ],
+     "body": "{\"model\":\"enso\",\"messages\":[{\"role\":\"user\",\"content\":\"How does Hanzo unify frontier models, computer-use agents, MCP, and cloud?\"}]}"
+    }
+   ]
+  }
+ ]
+}

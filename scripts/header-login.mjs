@@ -1,5 +1,7 @@
 // What Hanzo's "Log in" control and the cookie notice's "Manage preferences" show (read once, signed out, throwaway browser).
 import puppeteer from 'puppeteer-core';
+import { lock } from './lock.mjs';
+await lock();
 
 const b = await puppeteer.launch({ executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: true });
 const p = await b.newPage();

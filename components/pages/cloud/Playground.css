@@ -1,0 +1,90 @@
+/* ---------- playground (pg-) ---------- */
+.pg .cf-hero { padding-bottom: clamp(48px, 6vw, 88px); }
+.pg-win { position: relative; border-radius: 22px; background: #fff; border: 1px solid rgba(0, 0, 0, .1); box-shadow: 0 60px 120px -60px rgba(0, 0, 0, .35), 0 2px 6px rgba(0, 0, 0, .04); overflow: hidden; }
+.pg-bar { display: flex; align-items: center; gap: 7px; height: 42px; padding: 0 16px; border-bottom: 1px solid var(--line); background: #fafafa; }
+.pg-bar i { width: 11px; height: 11px; border-radius: 50%; background: #e0e0e5; }
+.pg-bar span { margin-left: 12px; font: 500 13px/1 var(--sans); color: var(--soft); }
+.pg-bar b { margin-left: auto; padding: 5px 10px; border-radius: 999px; background: var(--ink); color: #fff; font: 500 13px/1 var(--mono); }
+.pg-modes { display: flex; gap: 2px; padding: 10px 12px; border-bottom: 1px solid var(--line); overflow-x: auto; scrollbar-width: none; }
+.pg-modes::-webkit-scrollbar { display: none; }
+.pg-modes button { position: relative; flex: none; border: 0; background: none; height: 36px; padding: 0 14px; border-radius: 10px; font: 500 14px/1 var(--sans); color: var(--soft); cursor: pointer; transition: color .2s; }
+.pg-modes button:hover { color: var(--ink); }
+.pg-modes button[aria-selected='true'] { color: var(--ink); }
+.pg-modes button span { position: relative; }
+.pg-modes .pg-mode-bg { position: absolute; inset: 0; border-radius: 10px; background: var(--card); }
+.pg-mode-t { position: absolute; left: 12px; right: 12px; bottom: 5px; height: 2px; border-radius: 2px; background: var(--ink); transform-origin: 0 50%; opacity: .5; }
+.pg-body { display: grid; grid-template-columns: minmax(0, 1fr) 240px; min-height: 360px; }
+.pg-canvas { position: relative; display: flex; flex-direction: column; padding: 28px; background: radial-gradient(circle, rgba(0, 0, 0, .07) 1px, transparent 1.5px) 0 0 / 22px 22px, radial-gradient(circle at 50% 40%, #fbfbfd, #f1f1f4); overflow: hidden; }
+.pg-stagebox { position: relative; flex: 1; min-height: 320px; }
+.pg-cv { position: absolute; inset: 0; display: grid; place-items: center; }
+.pg-input { display: flex; align-items: center; gap: 10px; margin-top: 18px; height: 48px; padding: 0 6px 0 18px; border-radius: 14px; background: #fff; border: 1px solid var(--line); box-shadow: 0 6px 18px -12px rgba(0, 0, 0, .2); font-size: 15px; color: var(--ink); }
+.pg-input span { flex: 1; }
+.pg-input b { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; background: var(--ink); color: #fff; }
+.pg-run { padding: 22px 22px 24px; border-left: 1px solid var(--line); display: flex; flex-direction: column; }
+.pg-run-k { margin: 0 0 10px; font: 500 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
+.pg-run dl { margin: 0 0 24px; }
+.pg-run dl div { display: flex; justify-content: space-between; align-items: baseline; padding: 11px 0; border-bottom: 1px solid var(--line); }
+.pg-run dt { font-size: 14px; color: var(--soft); }
+.pg-run dd { margin: 0; font: 500 15px/1 var(--mono); font-feature-settings: 'tnum'; color: var(--ink); }
+.pg-cost { display: block; height: 8px; border-radius: 8px; background: var(--card); overflow: hidden; }
+.pg-cost b { display: block; height: 100%; border-radius: 8px; background: var(--ink); transform-origin: 0 50%; }
+
+/* the eight canvases */
+.pg-chat { width: min(100%, 680px); display: flex; flex-direction: column; gap: 14px; }
+.pg-bub { margin: 0; padding: 16px 20px; border-radius: 20px; font-size: 17px; }
+.pg-bub.me { align-self: flex-end; background: var(--ink); color: #fff; border-bottom-right-radius: 6px; }
+.pg-bub.ai { align-self: flex-start; width: 78%; background: #fff; border: 1px solid var(--line); border-bottom-left-radius: 6px; display: flex; flex-direction: column; gap: 9px; }
+.pg-bub.ai i, .pg-comp i { display: block; height: 12px; border-radius: 6px; background: #d9d9de; transform-origin: 0 50%; }
+.pg-comp { position: relative; width: min(100%, 680px); display: flex; flex-direction: column; gap: 12px; }
+.pg-comp i { height: 14px; background: #c7c7cc; }
+.pg-comp i.given { background: var(--ink); }
+.pg-caret { position: absolute; left: calc(48% + 6px); bottom: -1px; width: 2px; height: 16px; background: var(--ink); animation: pg-blink 1s steps(1) infinite 2.6s; opacity: 0; }
+@keyframes pg-blink { 0% { opacity: 1; } 50% { opacity: 0; } }
+.pg-tree { width: min(100%, 560px); overflow: visible; }
+.pg-tree path { fill: none; stroke: #c7c7cc; stroke-width: 2; }
+.pg-tree path.on { stroke: var(--ink); stroke-width: 2.5; }
+.pg-tree circle { fill: #fff; stroke: #c7c7cc; stroke-width: 2; transform-box: fill-box; transform-origin: center; }
+.pg-tree .root { fill: var(--ink); stroke: var(--ink); }
+.pg-tree .pick { fill: var(--ink); stroke: var(--ink); }
+.pg-tree .ring { fill: none; stroke: var(--ink); opacity: 0; animation: pg-ring 1.8s var(--ease) infinite 1.4s; }
+@keyframes pg-ring { 0% { opacity: .6; transform: scale(.6); } 100% { opacity: 0; transform: scale(1.8); } }
+.pg-emb { width: min(100%, 640px); overflow: visible; }
+.pg-emb .c0 { fill: var(--ink); }
+.pg-emb .c1 { fill: #8e8e93; }
+.pg-emb .c2 { fill: #c7c7cc; }
+.pg-img, .pg-vis { position: relative; height: 100%; max-width: 100%; aspect-ratio: 4 / 3; border-radius: 14px; overflow: hidden; background: #000; }
+.pg-img img, .pg-vis img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pg-tiles { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(10, 1fr); }
+.pg-tiles i { background: #e8e8ed; border: .5px solid #f5f5f7; }
+.pg-vid { position: relative; width: 100%; height: 70%; border-radius: 12px; overflow: hidden; background: #111; padding: 10px 0; }
+.pg-strip { display: flex; gap: 6px; height: 100%; width: max-content; animation: pg-film 9s linear infinite; }
+.pg-strip img { height: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 6px; }
+@keyframes pg-film { to { transform: translateX(-50%); } }
+.pg-head { position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; background: #ff453a; box-shadow: 0 0 0 4px rgba(255, 69, 58, .15); }
+.pg-wave { width: 100%; height: 60%; display: flex; align-items: center; gap: 3px; }
+.pg-wave i { flex: 1; border-radius: 3px; background: var(--ink); transform-origin: 50% 50%; animation: pg-wave 1.2s ease-in-out infinite alternate; }
+@keyframes pg-wave { from { transform: scaleY(.2); } to { transform: scaleY(1); } }
+.pg-box { position: absolute; border: 2px solid #fff; border-radius: 10px; box-shadow: 0 0 0 999px rgba(0, 0, 0, .35); }
+.pg-box span { position: absolute; left: -2px; top: -26px; padding: 4px 8px; border-radius: 6px; background: #fff; color: var(--ink); font: 500 13px/1 var(--mono); }
+
+/* from code */
+.pg-code { background: var(--card); }
+.pg-code-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 80px); align-items: center; }
+.pg-code h2 { margin: 0; max-width: 14ch; font-size: clamp(2.3rem, 4.4vw, 4rem); font-weight: 560; letter-spacing: -.04em; line-height: 1.02; text-wrap: balance; }
+.pg-anat { margin: 26px 0 0; max-width: 34ch; font-size: clamp(1.2rem, 1.7vw, 1.5rem); line-height: 1.5; letter-spacing: -.01em; color: var(--soft); }
+.pg-anat button { border: 0; padding: 0 2px; margin: 0 -2px; background: none; font: inherit; color: var(--ink); cursor: pointer; border-radius: 4px; background-image: linear-gradient(rgba(255, 204, 0, .4), rgba(255, 204, 0, .4)); background-repeat: no-repeat; background-size: 0 100%; transition: background-size .45s var(--ease); text-decoration: underline; text-decoration-color: rgba(0, 0, 0, .2); text-underline-offset: 4px; }
+.pg-anat button.on { background-size: 100% 100%; text-decoration-color: transparent; }
+
+.pg-paste { background: #050506; }
+.pg-rel { padding: clamp(56px, 6vw, 88px) 0 clamp(56px, 6vw, 88px); }
+
+@media (max-width: 900px) {
+  .pg-body { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+  .pg-canvas { padding: 18px; }
+  .pg-stagebox { min-height: 230px; }
+  .pg-run { border-left: 0; border-top: 1px solid var(--line); padding: 16px 18px 18px; }
+  .pg-run dl { display: grid; grid-template-columns: 1fr 1fr; column-gap: 16px; margin-bottom: 16px; }
+  .pg-modes button { height: 44px; }
+  .pg-code-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) { .pg-strip, .pg-wave i, .pg-tree .ring, .pg-caret { animation: none; } .pg-caret { opacity: 1; } }

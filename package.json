@@ -2,7 +2,8 @@
   "name": "hanzo-home",
   "private": true,
   "scripts": {
-    "dev": "HZ_DEV=1 next dev -p 4180",
+    "dev": "HZ_DEV=1 next dev --turbopack -p 4180",
+    "prebuild": "node scripts/live.mjs",
     "build": "next build",
     "preview": "node scripts/serve.mjs 4181",
     "capture": "python3 scripts/capture.py",

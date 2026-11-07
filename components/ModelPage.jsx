@@ -1,17 +1,24 @@
 'use client';
 /* A model's page. Its hero is the card's film at full bleed, exactly where the open transition lands, so the card
-   and the page are one continuous object. Close runs the transition back into the card. Hanzo's own page follows. */
+   and the page are one continuous object. Close runs the transition back into the card. The body below is the
+   model's own rebuilt page (passed as children by app/<slug>/page.jsx); a route without one falls back to the port.
+   The page ends on the next model, whose film is already playing.
+   Signature: the open. The card's film lands as this hero (WebGL opener), Close runs it back into the card, and the
+   next model's card opens the same way; on phones a sideways swipe turns to the neighbouring model.
+   Beyond: carried by each model's own body (passed as children); this shell adds none of its own. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { EASE } from './ui';
 import { useOpener } from './Opener';
 import Ported from './Ported';
 import { bySlug, media, MODELS } from '../lib/models';
+import { useFilms } from './pages/model/live';
+import './pages/model/Model.css';
 
-export default function ModelPage({ slug, html }) {
+export default function ModelPage({ slug, html, children }) {
   const m = bySlug[slug];
   const opener = useOpener();
-  const hero = useRef(null);
+  const hero = useRef(null), root = useRef(null);
   const [ready, setReady] = useState(false);
   const { scrollYProgress: p } = useScroll({ target: hero, offset: ['start start', 'end start'] });
   const y = useTransform(p, [0, 1], ['0%', '18%']);
@@ -23,13 +30,14 @@ export default function ModelPage({ slug, html }) {
   useEffect(() => {
     const img = hero.current.querySelector('img');
     const done = () => setReady(true);
-    if (img.complete) img.decode().then(done, done); else img.addEventListener('load', done, { once: true });
+    if (img.complete) img.decode().then(done, done); else { img.addEventListener('load', done, { once: true }); img.addEventListener('error', done, { once: true }); }
   }, []);
+  useFilms(root);
 
   const rise = (d) => ({ initial: { opacity: 0, y: 30 }, animate: ready ? { opacity: 1, y: 0 } : {}, transition: { duration: 1, ease: EASE, delay: d } });
 
   return (
-    <main className="x-model">
+    <main className="x-model" ref={root}>
       <section className="x-mhero" ref={hero} data-hero={slug} data-ready={ready ? '' : undefined} aria-labelledby="mh">
         <motion.div className="x-mhero-media" style={{ y }}>
           <img src={media(slug, 'webp')} alt="" />
@@ -55,9 +63,10 @@ export default function ModelPage({ slug, html }) {
         </motion.a>
         <motion.span className="x-scrollcue" {...rise(0.7)} aria-hidden="true">Scroll</motion.span>
       </section>
-      <div className="x-model-body"><Ported html={html} /></div>
-      <a href={'/' + next.slug} className="x-next" data-card={next.slug} onClick={(e) => opener.open(e, { el: e.currentTarget, src: media(next.slug, 'webp'), href: '/' + next.slug, key: next.slug })}>
+      <div className="x-model-body">{children || <Ported html={html} />}</div>
+      <a href={'/' + next.slug} className="x-next" data-card={next.slug} data-cursor="Open" onClick={(e) => opener.open(e, { el: e.currentTarget, src: media(next.slug, 'webp'), href: '/' + next.slug, key: next.slug })}>
         <img src={media(next.slug, 'webp')} alt="" />
+        <video className="mb-next-film" src={media(next.slug, 'webm')} autoPlay muted loop playsInline preload="metadata" aria-hidden="true" />
         <span className="x-next-k">Next model</span>
         <span className="x-next-n">{next.name}</span>
         <span className="x-next-d">{next.desc}</span>

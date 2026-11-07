@@ -1,0 +1,78 @@
+/* ---------- affiliates ---------- */
+.xaf-hero { padding: clamp(56px, 8vw, 120px) 0 clamp(72px, 9vw, 140px); overflow: hidden; }
+.xaf-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(32px, 6vw, 96px); align-items: center; }
+.xaf-h1 { margin: 0; font-size: clamp(3rem, 6.4vw, 6.4rem); font-weight: 560; letter-spacing: -.05em; line-height: .96; color: var(--ink); }
+.xaf-lede { margin: 28px 0 0; max-width: 44ch; font-size: clamp(1.1rem, 1.45vw, 1.35rem); line-height: 1.5; color: var(--soft); text-wrap: pretty; }
+.xaf-apply { margin-top: 32px; gap: 10px; padding: 0 26px; height: 52px; font-size: 16px; }
+.xaf-apply span { transition: transform .3s var(--ease); }
+.xaf-apply:hover span { transform: translateX(4px); }
+
+/* the link stage */
+.xaf-stage { position: relative; border-radius: 28px; background: var(--card); border: 1px solid var(--line); padding: clamp(20px, 3vw, 34px); display: grid; gap: 0; }
+.xaf-bar { display: flex; align-items: center; gap: 7px; height: 54px; padding: 0 16px; border-radius: 16px; background: #fff; border: 1px solid var(--line); box-shadow: 0 18px 40px -26px rgba(0, 0, 0, .35); }
+.xaf-bar > i { width: 9px; height: 9px; border-radius: 50%; background: rgba(0, 0, 0, .12); flex: none; }
+.xaf-url { margin-left: 10px; min-width: 0; font: 500 clamp(13px, 1.25vw, 16px)/1 var(--mono); color: var(--ink); white-space: nowrap; overflow: hidden; display: flex; align-items: center; }
+.xaf-caret { width: 2px; height: 1.15em; margin-left: 2px; background: var(--ink); opacity: 0; }
+.xaf-caret.on { animation: xaf-blink 1s steps(1) infinite; }
+@keyframes xaf-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+.xaf-wire { position: relative; height: 88px; width: 2px; margin: 0 auto; background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, .22) 0 4px, transparent 4px 9px); }
+.xaf-pulse { position: absolute; left: 50%; top: 0; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 6px rgba(0, 0, 0, .08); }
+.xaf-land { display: grid; justify-items: center; gap: 12px; text-align: center; }
+.xaf-org { display: inline-flex; align-items: center; gap: 12px; height: 56px; padding: 0 20px 0 8px; border-radius: 999px; background: var(--ink); color: #fff; font: 500 15px/1 var(--sans); box-shadow: 0 24px 50px -24px rgba(0, 0, 0, .55); }
+.xaf-org-i { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: #fff; color: var(--ink); font: 600 13px/1 var(--mono); }
+.xaf-you { font: 560 clamp(1.4rem, 2.2vw, 2rem)/1.1 var(--sans); letter-spacing: -.03em; color: var(--faint); transition: color .5s var(--ease); }
+.xaf-you.on { color: var(--ink); }
+.xaf-rules { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.xaf-rules li { height: 30px; padding: 0 12px; display: inline-flex; align-items: center; border-radius: 999px; border: 1px solid var(--line); background: #fff; font: 500 13px/1 var(--mono); color: var(--ink); }
+
+/* how it works */
+.xaf-how-grid { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
+.xaf-how-grid .x-head { position: sticky; top: 110px; }
+.xaf-steps-wrap { position: relative; padding-left: 0; }
+.xaf-rail { position: absolute; left: 27px; top: 10px; bottom: 76px; width: 2px; background: var(--line); }
+.xaf-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(28px, 4vw, 48px); }
+.xaf-steps li { position: relative; display: grid; grid-template-columns: 56px 1fr; gap: 20px; align-items: start; }
+.xaf-n { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: #fff; border: 1px solid var(--line); font-size: 14px; color: var(--ink); position: relative; z-index: 1; }
+.xaf-steps p { margin: 12px 0 0; font-size: clamp(1.15rem, 1.6vw, 1.5rem); line-height: 1.45; letter-spacing: -.012em; color: var(--ink); max-width: 40ch; text-wrap: pretty; }
+.xaf-steps p a, .xaf-note a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(0, 0, 0, .3); }
+.xaf-steps .x-copy { margin: 0 6px; vertical-align: 3px; }
+.xaf-code { font: 500 .82em/1.4 var(--mono); padding: 3px 8px; border-radius: 8px; background: var(--card); border: 1px solid var(--line); white-space: nowrap; }
+.xaf-note { margin: 44px 0 0 76px; font-size: 16px; color: var(--soft); }
+
+/* the attribution check (the dark room) */
+.xaf-dark { background: #0a0a0a; color: #f5f5f7; }
+.xaf-check { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(20px, 3vw, 40px); margin-top: clamp(40px, 5vw, 64px); }
+.xaf-cases { display: grid; gap: 8px; align-content: start; }
+.xaf-cases button { position: relative; display: grid; gap: 6px; text-align: left; padding: 20px 22px; min-height: 44px; border-radius: 18px; border: 1px solid rgba(255, 255, 255, .1); background: transparent; color: #f5f5f7; cursor: pointer; transition: border-color .3s var(--ease); }
+.xaf-cases button:hover { border-color: rgba(255, 255, 255, .28); }
+.xaf-cases button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.xaf-cases b, .xaf-cases span { position: relative; }
+.xaf-cases b { font: 560 18px/1.2 var(--sans); letter-spacing: -.015em; }
+.xaf-cases span { font-size: 14.5px; line-height: 1.45; color: var(--faint); }
+.xaf-case-bg { position: absolute; inset: 0; border-radius: 18px; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .3); }
+.xaf-verdict { position: relative; overflow: hidden; border-radius: 26px; background: #161617; border: 1px solid rgba(255, 255, 255, .08); padding: clamp(28px, 4vw, 52px); min-height: 320px; display: grid; align-content: center; }
+.xaf-mark { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; border: 1.5px solid rgba(255, 255, 255, .3); font: 400 28px/1 var(--sans); color: var(--faint); }
+.xaf-mark.yes { background: #f5f5f7; color: #0a0a0a; border-color: #f5f5f7; }
+.xaf-v { margin: 26px 0 0; font: 560 clamp(2.2rem, 4.4vw, 4rem)/1 var(--sans); letter-spacing: -.045em; }
+.xaf-why { margin: 18px 0 0; font-size: 16px; color: var(--faint); }
+.xaf-why b { color: #f5f5f7; font-weight: 500; font-family: var(--mono); font-size: 14.5px; }
+.xaf-timer { position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: rgba(255, 255, 255, .5); transform-origin: 0 50%; animation: xaf-run 3.2s linear forwards; }
+@keyframes xaf-run { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+@media (prefers-reduced-motion: reduce) { .xaf-caret.on, .xaf-timer { animation: none; } }
+@media (max-width: 900px) {
+  .xaf-grid, .xaf-how-grid, .xaf-check { grid-template-columns: 1fr; }
+  .xaf-how-grid .x-head { position: static; }
+  .xaf-h1 { font-size: clamp(2.7rem, 12vw, 3.6rem); }
+  .xaf-apply { width: 100%; }
+  .xaf-url { font-size: 13px; margin-left: 6px; }
+  .xaf-bar { padding: 0 12px; gap: 5px; }
+  .xaf-wire { height: 64px; }
+  .xaf-steps li { grid-template-columns: 44px 1fr; gap: 14px; }
+  .xaf-n { width: 44px; height: 44px; font-size: 13px; }
+  .xaf-rail { left: 21px; }
+  .xaf-steps p { margin-top: 8px; font-size: 1.08rem; }
+  .xaf-code { white-space: normal; word-break: break-all; }
+  .xaf-note { margin-left: 58px; }
+  .xaf-verdict { min-height: 240px; }
+}

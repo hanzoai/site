@@ -1,4 +1,11 @@
 'use client';
+/* The shell every page shares (mounted once in app/layout.jsx; pages import nothing from here except Marquee):
+   - Smooth: Lenis weighted scrolling, the site-wide reduced-motion policy (MotionConfig reducedMotion="user"),
+     [data-off] on any <main> section that is off screen (pause your CSS loops with `[data-off] .x { animation-play-state: paused }`),
+     and every new page starting at its top.
+   - Progress, Header, Footer: the scroll bar and Hanzo's own header and footer. Mark a dark section with
+     data-room="dark" and the header turns dark over it.
+   - Marquee: <Marquee items={[{ name, src, href }]} label="Trusted by" reverse /> an endless logo strip. */
 import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Lenis from 'lenis';
@@ -32,6 +39,8 @@ export function Smooth({ children }) {
     if (window.__hzHold) return; // a close transition is restoring the previous scroll
     window.__lenis ? window.__lenis.scrollTo(0, { immediate: true, force: true }) : scrollTo(0, 0);
   }, [path]);
+  // reduced motion: Motion skips transform and layout animations for people who ask for less movement (DESIGN rule 6).
+  // It decides when each element mounts, after hydration, so the server HTML and the first client render still match.
   return <MotionConfig reducedMotion="user">{children}</MotionConfig>;
 }
 

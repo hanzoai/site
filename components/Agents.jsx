@@ -1,8 +1,10 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useMotionValue, useReducedMotion, useSpring, useTransform } from 'motion/react';
-import { EASE, Head, Arrow, Copy, Mark, Rise, fine } from './ui';
+import { EASE, Head, Arrow, Copy, Mark, fine } from './ui';
 import C from '../content';
+import { SCRIPT } from '../lib/script';
+import SetupMenu from './SetupMenu';
 
 /* Every agent Hanzo works with, as a field that swells toward the pointer, like a dock. */
 function Ico({ a, mx, my, i }) {
@@ -41,12 +43,23 @@ const STEPS = [
   ['Top up in USDC or Card', 'POST /v1/billing/crypto/deposit · hanzo.ai/pay'],
 ];
 
+// a few colours for the script, in the page's own words: comments, strings, keywords
+const TOK = /(\/\/.*|`[^`]*`|'[^']*'|\b(?:const|await|new)\b)/;
+function Code({ text }) {
+  return text.split('\n').map((ln, i) => (
+    <span className="x-code-l" key={i} style={{ '--i': i }}>
+      {ln.split(TOK).map((t, k) => (k % 2 ? <span key={k} className={t[0] === '/' ? 'c' : /^[`']/.test(t) ? 's' : 'k'}>{t}</span> : t))}
+    </span>
+  ));
+}
+
 function Steps() {
   const ref = useRef(null);
   const seen = useInView(ref, { amount: 0.5 });
   const calm = useReducedMotion();
   const [on, setOn] = useState(0);
   const [mine, setMine] = useState(false);
+  const [code, setCode] = useState(false);
   const typed = useRef(null);
   // the active endpoint types itself, straight into its text node; left alone, the agent walks all four steps
   useEffect(() => {
@@ -84,9 +97,24 @@ function Steps() {
       <div className="x-script x-mono" aria-live="polite">
         <span className="x-dim">step {on + 1}/4 ›</span> <span ref={typed} /><span className="x-caret" aria-hidden="true" />
       </div>
+      <button type="button" className="x-code-t" aria-expanded={code} aria-controls="agent-script" onClick={() => { setMine(true); setCode((c) => !c); }}>
+        <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5.5 4 2 8l3.5 4M10.5 4 14 8l-3.5 4" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        <span className="x-code-lbl">
+          <span aria-hidden={code} data-on={!code}>{`Show step ${on + 1} of the script`}</span>
+          <span aria-hidden={!code} data-on={code}>{`Hide step ${on + 1} of the script`}</span>
+        </span>
+      </button>
+      {/* every step's script is in the page; the open one types in line by line */}
+      <div className="x-code" id="agent-script" data-open={code} inert={!code}>
+        <div className="x-code-in">
+          {SCRIPT.map((c, i) => (
+            <pre className="x-code-blk x-mono" key={i} hidden={on !== i} tabIndex={0} aria-label={`Script for step ${i + 1}`}><code><Code text={c} /></code></pre>
+          ))}
+        </div>
+      </div>
       <div className="x-panel-f">
-        <Copy text={STEPS[on][1]} label="Copy this step" />
-        <Copy text={STEPS.map((s) => s[1]).join('\n')} label="Copy the whole script" />
+        <Copy text={SCRIPT[on]} label="Copy this step" />
+        <Copy text={SCRIPT.join('\n\n')} label="Copy the whole script" />
       </div>
       <div className="x-panel-links">
         <a className="x-btn sm solid" href="/agents#headless">Start as an agent</a>
@@ -111,7 +139,7 @@ export default function Agents() {
           {C.agents.map((a, i) => <Ico key={a.name} a={a} i={i} mx={mx} my={my} />)}
         </ul>
         <div className="x-panels">
-          <Rise className="x-panel">
+          <div className="x-panel">
             <div className="x-panel-h"><Mark size={14} /> <b>Hanzo.Start</b></div>
             <p className="x-panel-k">Install the Hanzo CLI</p>
             <Cmd bin="curl" rest="-fsSL https://hanzo.sh | sh" copy="curl -fsSL https://hanzo.sh | sh" />
@@ -120,13 +148,9 @@ export default function Agents() {
             <p className="x-panel-k">Accelerate Claude Code with Hanzo</p>
             <Cmd bin="hanzo" rest="dev --claude" copy="hanzo dev --claude" />
             <p className="x-panel-k">Set up Codex, Cursor and more</p>
-            <motion.a href="https://hanzo.ai/skill.md" className="x-setup inline" whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }}>
-              Copy setup prompt
-              <span className="x-setup-ics">{C.agents.slice(1, 7).map((a) => <span key={a.name} className="x-setup-i" dangerouslySetInnerHTML={{ __html: a.icon }} />)}</span>
-              <b>+26</b>
-            </motion.a>
-          </Rise>
-          <Rise delay={0.12} className="x-panel-wrap"><Steps /></Rise>
+            <SetupMenu inline />
+          </div>
+          <div className="x-panel-wrap"><Steps /></div>
         </div>
         <div className="x-row-links">
           <Arrow href="https://docs.hanzo.ai/docs/guides/coding">Integration guides</Arrow>

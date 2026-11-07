@@ -1,0 +1,144 @@
+'use client';
+/* A model maker's shelf in Hanzo's catalogue (73 makers, one template). The first screen leads with the maker's own
+   count and a contour field seeded from its name and its models' numbers, beside the guest-key terminal.
+   Signature: the sibling field at full size: every model the maker has on Hanzo, placed by context window and output
+   rate, a light sweeping across; each dot opens its model.
+   Beyond: the shelf re-sorts by context window or by rate (and filters by modality), so the cheapest or the
+   longest-context model is one press away. */
+import { useMemo, useState } from 'react';
+import { motion, LayoutGroup } from 'motion/react';
+import { EASE, Copy, Count } from '../../ui';
+import { A } from '../../kit';
+import Sigil from '../../Sigil';
+import { Field, useCatalog, rateFrom, money } from './parts';
+import './models.css';
+
+const up = (d) => ({ initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
+const SORTS = [['shelf', 'As listed'], ['ctx', 'Context window'], ['rate', 'Output rate']];
+
+export default function ProviderShelf({ doc }) {
+  const cat = useCatalog(doc.cards.some((c) => !c.rate));
+  const cards = doc.cards.map((c, i) => ({ ...c, n: i, rate: rateFrom(cat, c.id, c.rate) }));
+  const [sort, setSort] = useState('shelf');
+  const [mod, setMod] = useState('all');
+  const mods = useMemo(() => [...new Set(doc.cards.flatMap((c) => c.tags))], [doc.cards]);
+  const shown = cards.filter((c) => mod === 'all' || c.tags.includes(mod)).sort((a, b) => {
+    if (sort === 'ctx') return (b.tokens || 0) - (a.tokens || 0) || a.n - b.n;
+    if (sort === 'rate') return (a.rate ? a.rate.out : Infinity) - (b.rate ? b.rate.out : Infinity) || a.n - b.n;
+    return a.n - b.n;
+  });
+  const hidden = new Set(cards.filter((c) => !shown.includes(c)).map((c) => c.href));
+  const n = parseInt(doc.count, 10);
+  const word = doc.count.replace(/^\d+\s*/, '');
+  const tokens = cards.map((c) => c.tokens).filter(Boolean);
+  const outs = cards.map((c) => c.rate && c.rate.out).filter((v) => v != null);
+  const plotted = cards.filter((c) => c.tokens && c.rate).length;
+  const anim = cards.length <= 60; // re-flow by layout only where it stays smooth
+  return (
+    <main className="xmf xmf-prov">
+      <section className="xmf-hero" aria-labelledby="xmf-h1">
+        <div className="x-wrap xmf-hero-g">
+          <div className="xmf-hero-t">
+            <motion.nav className="xmf-crumbs" aria-label="Breadcrumb" {...up(0)}>
+              <span><A to="/models">Models</A></span><span><span className="x-mono" aria-current="page">{doc.name}</span></span>
+            </motion.nav>
+            <h1 id="xmf-h1" className="xmf-h1" data-morph-target>
+              <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.08 }}>{doc.h1}</motion.span></span>
+            </h1>
+            {doc.lede && <motion.p className="xmf-lede" {...up(0.3)}>{doc.lede}</motion.p>}
+            <motion.div className="xmf-acts" {...up(0.42)}>
+              {doc.actions.map((a, i) => <A key={a.label} to={a.href} className={'x-btn' + (i ? '' : ' solid')} {...(i ? {} : { 'data-thumb': '' })}>{a.label}</A>)}
+            </motion.div>
+          </div>
+          <motion.div className="xmf-read xmf-read-p" initial={{ opacity: 0, y: 24, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 1.1, ease: EASE, delay: 0.2 }}>
+            <div className="xmf-read-art">
+              <Sigil seed={doc.route} data={[n, Math.max(0, ...tokens), outs.length ? Math.min(...outs) : 0, outs.length ? Math.max(...outs) : 0]} className="xmf-sigil" />
+              <p className="xmf-read-big xmf-count">
+                <b>{Number.isFinite(n) ? <Count to={n} /> : null}</b>
+                <span className="xmf-k x-mono"> {Number.isFinite(n) ? word : doc.count}</span>
+              </p>
+            </div>
+            {doc.guest.code && (
+              <div className="xmf-guest">
+                <div className="xmf-guest-h">
+                  {doc.guest.title && <b>{doc.guest.title}</b>}
+                  {doc.guest.key && <code className="x-mono">{doc.guest.key}</code>}
+                  {doc.guest.note && <span>{doc.guest.note}</span>}
+                </div>
+                {doc.guest.prompt && <p>{doc.guest.prompt}</p>}
+                <div className="xmf-term">
+                  <div className="xmf-term-h"><span className="x-mono">{doc.guest.label}</span><Copy text={doc.guest.code} /></div>
+                  <pre tabIndex={0}><code>{doc.guest.code}</code></pre>
+                </div>
+              </div>
+            )}
+          </motion.div>
+        </div>
+      </section>
+
+      {plotted > 1 && (
+        <section className="x-sec xmf-among" aria-label="Context window and output rate">
+          <div className="x-wrap">
+            <Field points={cards} here={null} label={`${doc.name} models by context window and output rate`} />
+          </div>
+        </section>
+      )}
+
+      <section className="x-sec xmf-shelf" id="shelf">
+        <div className="x-wrap">
+          <div className="xmf-shelf-bar">
+            <div className="xmf-seg" role="group" aria-label="Sort">
+              {SORTS.map(([k, t]) => (
+                <button key={k} type="button" aria-pressed={sort === k} onClick={() => setSort(k)}>
+                  {sort === k && <motion.span layoutId="xmf-seg" className="xmf-seg-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+                  <span>{t}</span>
+                </button>
+              ))}
+            </div>
+            {mods.length > 1 && (
+              <div className="xmf-seg" role="group" aria-label="Modality">
+                {['all', ...mods].map((k) => (
+                  <button key={k} type="button" aria-pressed={mod === k} onClick={() => setMod(k)}>
+                    {mod === k && <motion.span layoutId="xmf-mod" className="xmf-seg-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+                    <span>{k === 'all' ? 'All' : k}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          <LayoutGroup>
+            <ul className="xmf-grid">
+              {[...shown, ...cards.filter((c) => hidden.has(c.href))].map((c) => (
+                <motion.li key={c.href} layout={anim ? 'position' : false} transition={{ type: 'spring', stiffness: 260, damping: 30 }} hidden={hidden.has(c.href)}>
+                  <A to={c.href} className="xmf-card">
+                    <span className="xmf-card-t"><b data-morph>{c.name}</b>{c.ctx && <i className="x-mono">{c.ctx}</i>}</span>
+                    <span className="xmf-card-d">{c.desc}</span>
+                    <span className="xmf-card-f">
+                      {c.tags.map((t) => <em key={t} className="x-mono">{t}</em>)}
+                      <span className="x-mono">{c.rate ? `${money(c.rate.in)} → ${money(c.rate.out)}` : ''}</span>
+                    </span>
+                  </A>
+                </motion.li>
+              ))}
+            </ul>
+          </LayoutGroup>
+        </div>
+      </section>
+
+      {doc.band && (
+        <section className="xmf-end">
+          <Sigil seed={doc.route + '#end'} data={[n, cards.length]} className="xmf-end-sigil" />
+          <div className="x-wrap">
+            <div className="xmf-band">
+              <h2>{doc.band.title}</h2>
+              {doc.band.lede && <p>{doc.band.lede}</p>}
+              <div className="xmf-acts">
+                {doc.band.actions.map((a, i) => <A key={a.label} to={a.href} className={'x-btn' + (i ? '' : ' solid')}>{a.label}</A>)}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+    </main>
+  );
+}

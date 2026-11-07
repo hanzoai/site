@@ -1,0 +1,6 @@
+/* /blockchain only (the family's styles live in blockchain.css): phone tap targets and type floor for the overview. */
+@media (max-width: 900px) {
+  .xbc-index .xbc-mx tbody th a { min-height: 44px; }
+  .xbc-index .xbc-mx td { height: 44px; }
+  .xbc-index .xbc-pcard .x-arrow { font-size: 14px; }
+}

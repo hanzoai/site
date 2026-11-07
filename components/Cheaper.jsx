@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
-import { EASE, Head, Arrow, Rise } from './ui';
+import { EASE, Head, Arrow } from './ui';
 
 const ENSO = [
   ['Enso Flash', 90.6, 3.26, true],
@@ -41,7 +41,7 @@ function EnsoCard() {
   const vol = useSpring(raw, { stiffness: 120, damping: 22 });
   const q = nice(1000 * 10 ** exp);
   return (
-    <Rise className="x-cost">
+    <div className="x-cost">
       <p className="x-race-k">Enso vs frontier LLMs · GPQA Diamond</p>
       <p className="x-cost-big">up to 14.2× less</p>
       <p className="x-race-cap">per 1,000 questions, at higher accuracy</p>
@@ -59,7 +59,7 @@ function EnsoCard() {
         {ENSO.map((r, i) => <EnsoLane key={r[0]} row={r} i={i} vol={vol} dim={dim} setDim={setDim} />)}
       </motion.div>
       <div className="x-race-end"><Arrow href="/enso">How Enso lowers the cost of an answer</Arrow></div>
-    </Rise>
+    </div>
   );
 }
 
@@ -67,7 +67,7 @@ function KaiCard() {
   const [dim, setDim] = useState(null);
   const max = 11.13 + 55.65;
   return (
-    <Rise className="x-cost" delay={0.1}>
+    <div className="x-cost">
       <p className="x-race-k">Kai vs frontier LLMs</p>
       <p className="x-cost-big">up to 530× less</p>
       <p className="x-race-cap">than frontier LLMs, per input token</p>
@@ -85,7 +85,7 @@ function KaiCard() {
         ))}
       </motion.div>
       <div className="x-race-end"><Arrow href="/kai">How Kai makes decisions</Arrow></div>
-    </Rise>
+    </div>
   );
 }
 

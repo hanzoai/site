@@ -1,7 +1,8 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, LayoutGroup } from 'motion/react';
-import { EASE, Words, Rise } from './ui';
+import { EASE, Words } from './ui';
+import { More } from './kit';
 
 const go = 'https://hanzo.ai/pay/confirm/card?plan=go&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat';
 const TIERS = {
@@ -91,7 +92,7 @@ export default function Pricing() {
     <section className="x-sec x-pricing" id="pricing" aria-labelledby="pricing-h">
       <div className="x-wrap">
         <header className="x-head center"><Words text="Pricing" /></header>
-        <Rise className="x-center"><Seg opts={['Personal', 'Team', 'API']} val={tab} set={setTab} id="price-tab" /></Rise>
+        <div className="x-center"><Seg opts={['Personal', 'Team', 'API']} val={tab} set={setTab} id="price-tab" /></div>
         <LayoutGroup>
           <motion.div layout className={'x-plans n' + (tab === 'Personal' ? 3 : 2)}>
             <AnimatePresence mode="popLayout" initial={false}>
@@ -122,6 +123,7 @@ export default function Pricing() {
             </AnimatePresence>
           </motion.div>
         </LayoutGroup>
+        <div className="x-row-links"><More to="/pricing">Every plan, model rate and tool price</More></div>
       </div>
     </section>
   );

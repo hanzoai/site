@@ -1,0 +1,32 @@
+/* Mori (mr-): a full-bleed viewport, the page's one dark room, with the head laid over it */
+.mr-intro { background: #000; color: #f5f5f7; }
+.mr-stage { position: relative; }
+.mr-view { position: relative; height: min(92svh, 900px); min-height: 560px; overflow: hidden; background: radial-gradient(ellipse at 64% 50%, #121216, #000 62%); }
+.mr-bar { position: absolute; inset: 0 0 auto 0; z-index: 2; background: rgba(0, 0, 0, .5); }
+.mr-cv { position: absolute; inset: 44px 0 0 0; width: 100%; height: calc(100% - 44px); display: block; cursor: grab; touch-action: pan-y; }
+.mr-cv:active { cursor: grabbing; }
+.mr-hud { position: absolute; top: 66px; z-index: 2; display: grid; gap: 6px; pointer-events: none; }
+.mr-hud p { margin: 0; }
+.mr-tl { left: 24px; }
+.mr-tr { right: 24px; text-align: right; max-width: 46%; }
+.mr-spin { display: flex; align-items: center; gap: 8px; color: #f5f5f7; }
+.mr-spin i { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid #f5f5f7; border-top-color: transparent; }
+.mr-modes { position: absolute; right: 24px; bottom: 28px; z-index: 2; }
+.mr-modes .mb-chip { background: rgba(0, 0, 0, .55); }
+.mr-modes .mb-chip[aria-checked='true'] { background: #f5f5f7; }
+.mr-headwrap { position: absolute; left: 0; right: 0; bottom: clamp(32px, 6vh, 64px); z-index: 2; pointer-events: none; }
+.mr-head { max-width: 560px; pointer-events: auto; }
+.mr-head .cr-h { font-size: clamp(2.8rem, 5.4vw, 5.2rem); }
+.mr-below { padding: 28px 0 clamp(72px, 9vw, 120px); }
+.mr-specs { border-radius: 22px; border: 1px solid rgba(255, 255, 255, .1); overflow: hidden; }
+.mr-specs .mb-specs { border-top: 0; }
+.mr-below .mb-cap { color: #6e6e73; }
+@media (max-width: 900px) {
+  .mr-view { height: 74svh; min-height: 480px; }
+  .mr-hud { top: 58px; }
+  .mr-tl { left: 14px; right: 14px; }
+  .mr-tr { top: auto; bottom: 84px; left: 14px; right: 14px; text-align: left; max-width: none; }
+  .mr-modes { left: 14px; right: 14px; bottom: 18px; }
+  .mr-headwrap { position: static; padding-top: 36px; }
+}
+@media (prefers-reduced-motion: reduce) { .mr-cv { cursor: default; } }

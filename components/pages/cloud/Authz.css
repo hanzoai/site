@@ -1,0 +1,81 @@
+/* ---------- authz (az-) ---------- */
+.az .cf-lede { font-size: clamp(1rem, 1.2vw, 1.12rem); }
+.az-check { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 12px; padding: 12px; border-radius: 30px; background: var(--card); }
+.az-tree { display: flex; flex-direction: column; gap: 8px; padding: 22px; border-radius: 22px; background: #fff; border: 1px solid var(--line); }
+.az-node { position: relative; display: flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--line); font: 500 14px/1.2 var(--mono); color: var(--soft); transition: border-color .35s, background .35s, color .35s; }
+.az-node::before { content: ''; position: absolute; left: -16px; top: 50%; width: 12px; border-top: 1px solid rgba(0, 0, 0, .15); }
+.az-node:first-child::before { display: none; }
+.az-node:last-child span { font-style: italic; font-family: var(--sans); }
+.az-node em { margin-left: auto; padding: 4px 8px; border-radius: 6px; font: 500 13px/1 var(--mono); font-style: normal; background: var(--ink); color: #fff; }
+.az-node em.t { background: #0a84ff; }
+.az-node em + em { margin-left: 4px; }
+.az-node.grant { border-color: var(--ink); color: var(--ink); }
+.az-node.target { color: var(--ink); background: #f0f6ff; border-color: #0a84ff; }
+.az-node.path { background: #effaf2; border-color: #30d158; }
+.az-q { display: flex; flex-direction: column; padding: 24px; border-radius: 22px; background: #0b0b0c; color: #f5f5f7; min-height: 320px; }
+.az-q-k { margin: 0 0 14px; font: 500 13px/1 var(--mono); color: #86868b; }
+.az-q-line { margin: 0; font: 500 clamp(15px, 1.4vw, 18px)/1.5 var(--mono); }
+.az-q-line span { color: #d1d1d6; }
+.az-q-line b { color: #ff9f0a; font-weight: 500; }
+.az-dec { display: inline-block; margin: 22px 0 0; padding: 10px 18px; border-radius: 12px; font: 500 clamp(28px, 3vw, 40px)/1 var(--mono); }
+.az-dec.ok { background: rgba(48, 209, 88, .15); color: #30d158; }
+.az-dec.no { background: rgba(255, 69, 58, .16); color: #ff6961; }
+.az-why { margin: 14px 0 0; font-size: 14.5px; line-height: 1.5; color: #a1a1a6; }
+.az-dots { display: flex; gap: 6px; margin-top: auto; padding-top: 20px; }
+.az-dots button { width: 28px; height: 28px; border: 0; padding: 0; background: none; cursor: pointer; position: relative; }
+.az-dots button::after { content: ''; position: absolute; left: 6px; right: 6px; top: 12px; height: 4px; border-radius: 4px; background: #3a3a3e; transition: background .3s; }
+.az-dots button[aria-selected='true']::after { background: #f5f5f7; }
+
+/* rules: the dark room */
+.az-rules { background: #050506; color: #f5f5f7; }
+.az-rules-grid { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: clamp(32px, 5vw, 80px); align-items: start; }
+.az-side { position: sticky; top: 110px; }
+.az-note { margin: 14px 0 0; font-size: 13.5px; color: #86868b; }
+.az-rules .cf-con { border-color: rgba(255, 255, 255, .1); }
+.az-list { list-style: none; margin: 0; padding: 0; counter-reset: r; }
+.az-list li { padding: 0 0 36px; margin-bottom: 36px; border-bottom: 1px solid rgba(255, 255, 255, .1); }
+.az-list li:last-child { border-bottom: 0; margin-bottom: 0; }
+.az-list span { font: 300 44px/1 var(--sans); letter-spacing: -.05em; color: #3a3a3e; font-feature-settings: 'tnum'; }
+.az-list h3 { margin: 12px 0 0; text-wrap: balance; font-size: clamp(1.35rem, 2vw, 1.8rem); font-weight: 560; letter-spacing: -.03em; }
+.az-list p { margin: 12px 0 0; max-width: 56ch; font-size: 16px; line-height: 1.65; color: #a1a1a6; }
+.az-paste { background: var(--card); }
+.az-rel { margin-top: clamp(48px, 6vw, 80px); padding-top: 32px; border-top: 1px solid var(--line); }
+
+/* Beyond: ask it yourself */
+.az-ask-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(28px, 5vw, 80px); align-items: center; }
+.az-ask h2 { margin: 0; font-size: clamp(2rem, 3.6vw, 3.2rem); font-weight: 560; letter-spacing: -.04em; line-height: 1.04; text-wrap: balance; }
+.az-ask-grid > div > p { margin: 16px 0 0; max-width: 46ch; font-size: 17px; line-height: 1.6; color: var(--soft); }
+.az-ask-box { display: grid; gap: 18px; padding: clamp(18px, 2.4vw, 28px); border-radius: 26px; background: var(--card); }
+.az-ask-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.az-ask-row p { width: 100%; margin: 0 0 2px; font: 500 13px/1 var(--mono); color: var(--faint); }
+.az-ask-row button { min-height: 44px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--line); background: #fff; font: 500 14px/1 var(--mono); color: var(--soft); cursor: pointer; transition: border-color .25s, color .25s, background .25s; }
+.az-ask-row button:hover { color: var(--ink); border-color: rgba(0, 0, 0, .2); }
+.az-ask-row button[aria-checked='true'] { background: var(--ink); border-color: var(--ink); color: #fff; }
+.az-ask-row:nth-child(2) button[aria-checked='true'] { background: #0a84ff; border-color: #0a84ff; }
+.az-ask-a { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 16px; align-items: center; padding-top: 18px; border-top: 1px solid var(--line); }
+.az-ask-a b { grid-row: span 2; padding: 10px 16px; border-radius: 12px; font: 500 clamp(24px, 2.4vw, 32px)/1 var(--mono); }
+.az-ask-a b.ok { background: rgba(48, 209, 88, .14); color: #1f9d48; }
+.az-ask-a b.no { background: rgba(255, 69, 58, .12); color: #d70015; }
+.az-ask-a span { font: 500 15px/1.4 var(--mono); color: var(--ink); }
+.az-ask-a em { font-style: normal; font-size: 14.5px; line-height: 1.45; color: var(--soft); }
+
+@media (max-width: 900px) {
+  .az-ask-grid { grid-template-columns: minmax(0, 1fr); }
+  .az-ask-row button { font-size: 14px; }
+  .az-ask-a { grid-template-columns: minmax(0, 1fr); }
+  .az-ask-a b { grid-row: auto; justify-self: start; }
+  .az-check { grid-template-columns: minmax(0, 1fr); padding: 10px; border-radius: 22px; }
+  .az-tree { padding: 16px; }
+  .az-node { min-height: 44px; font-size: 14px; }
+  .az-node em { font-size: 14px; }
+  .az-q { min-height: 260px; }
+  .az-dots button { width: 44px; height: 44px; }
+  .az-dots button::after { top: 20px; }
+  .az-rules-grid { grid-template-columns: minmax(0, 1fr); }
+  .az-side { position: relative; top: 0; }
+}
+
+/* type floor on phones: nothing under 14px */
+@media (max-width: 900px) {
+  .az-q-k, .az-note, .az-ask-row p { font-size: 14px; }
+}

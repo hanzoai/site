@@ -1,0 +1,120 @@
+/* Enso (eo-): the switchboard and the GPQA explorer */
+.eo-intro { padding-bottom: clamp(56px, 7vw, 96px); }
+.eo-top { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px 64px; align-items: end; margin-bottom: clamp(48px, 6vw, 80px); }
+.eo-top-r .mb-lede { margin-top: 0; }
+
+.eo-board { display: grid; grid-template-columns: 250px 210px minmax(0, 1fr); grid-template-areas: 'in node lanes' 'send send send'; gap: 28px 40px; align-items: center; padding: 36px; }
+.eo-wires { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+.eo-board > *:not(canvas) { position: relative; z-index: 1; }
+.eo-in { grid-area: in; align-self: start; }
+.eo-in .mb-mono, .eo-send .mb-mono { margin: 0 0 14px; }
+.eo-queue { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; height: 206px; align-content: start; }
+.eo-queue li { display: flex; align-items: center; justify-content: space-between; gap: 10px; height: 44px; padding: 0 14px; border-radius: 12px; background: #151517; border: 1px solid rgba(255, 255, 255, .08); font-size: 14.5px; color: #f5f5f7; }
+.eo-queue li:first-child { border-color: rgba(255, 255, 255, .22); }
+.eo-queue em { font: 500 11px/1 var(--mono); font-style: normal; letter-spacing: .06em; text-transform: uppercase; color: #6e6e73; white-space: nowrap; }
+.eo-queue em[data-done] { color: #c7c7cc; }
+
+.eo-node { grid-area: node; position: relative; width: 210px; aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; border: 1px solid rgba(255, 255, 255, .12); background: radial-gradient(circle at 50% 40%, #19191b, #0a0a0a 70%); }
+.eo-node strong { font-size: 26px; font-weight: 560; letter-spacing: -.03em; }
+.eo-enso { position: absolute; inset: 16px; color: rgba(255, 255, 255, .78); animation: eo-turn 16s linear infinite; }
+@keyframes eo-turn { to { transform: rotate(360deg); } }
+.eo-ax { position: absolute; padding: 5px 9px; border-radius: 999px; font: 500 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: #6e6e73; background: #0a0a0a; border: 1px solid rgba(255, 255, 255, .1); transition: color .3s, background .3s, transform .4s var(--ease); }
+.eo-ax2 { top: -12px; left: 50%; translate: -50% 0; }
+.eo-ax1 { bottom: 6px; left: -18px; }
+.eo-ax0 { bottom: 6px; right: -10px; }
+.eo-ax[data-on] { color: #0a0a0a; background: #f5f5f7; transform: scale(1.12); }
+
+.eo-lanes { grid-area: lanes; list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.eo-lane { position: relative; padding: 18px 22px 16px; border-radius: 18px; background: #121214; border: 1px solid rgba(255, 255, 255, .08); overflow: hidden; transition: border-color .6s var(--ease), transform .6s var(--ease); }
+.eo-lane::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .09), transparent); transform: translateX(-100%); pointer-events: none; }
+.eo-lane[data-hit] { border-color: rgba(255, 255, 255, .5); transform: translateX(6px); }
+.eo-lane[data-hit]::after { animation: eo-sweep .9s var(--ease); }
+@keyframes eo-sweep { to { transform: translateX(100%); } }
+.eo-lane-top { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 10px; }
+.eo-lane h3 { margin: 0; color: #f5f5f7; font-size: 20px; font-weight: 560; letter-spacing: -.02em; }
+.eo-lane code { font: 500 12px/1 var(--mono); padding: 4px 7px; border-radius: 6px; background: #1d1d20; color: #c7c7cc; }
+.eo-why { margin-left: auto; font: 500 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: #8e8e93; }
+.eo-price { margin: 10px 0 0; font-size: 13px; color: #8e8e93; }
+.eo-price b { font-size: 20px; font-weight: 560; letter-spacing: -.02em; color: #f5f5f7; }
+.eo-price b + span { margin-right: 10px; }
+.eo-desc { margin: 8px 0 0; max-width: 56ch; font-size: 15px; line-height: 1.45; color: #c7c7cc; }
+.eo-meta { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 0; }
+.eo-meta span { padding: 5px 8px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, .1); font: 500 11px/1 var(--mono); color: #a1a1a6; }
+.eo-acts { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 12px 0 0; }
+.eo-l { display: inline-flex; align-items: center; min-height: 32px; font-size: 14px; color: #f5f5f7; text-decoration: none; text-underline-offset: 4px; transition: color .2s; }
+.eo-l:hover { color: #fff; text-decoration: underline; }
+.eo-last { position: absolute; right: 20px; bottom: 18px; margin: 0; display: flex; align-items: center; gap: 7px; font: 500 11px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: #6e6e73; }
+.eo-last i { width: 6px; height: 6px; border-radius: 50%; background: #3a3a3c; transition: background .3s; }
+.eo-lane[data-hit] .eo-last { color: #f5f5f7; }
+.eo-lane[data-hit] .eo-last i { background: #30d158; }
+.eo-send { grid-area: send; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, .08); }
+.eo-all { margin: 28px 4px 0; }
+
+/* GPQA explorer */
+.eo-gpqa { padding-top: clamp(64px, 8vw, 120px); }
+.eo-gpqa-head { max-width: 760px; }
+.eo-plotwrap { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 40px; align-items: start; margin-top: 56px; }
+.eo-plot { width: 100%; height: auto; overflow: visible; }
+.eo-grid { stroke: rgba(0, 0, 0, .07); }
+.eo-tick { font: 500 13px var(--mono); fill: var(--faint); }
+.eo-axis { font: 500 13px var(--sans); fill: var(--soft); }
+.eo-front { fill: none; stroke: var(--ink); stroke-width: 2; }
+.eo-link { stroke: rgba(0, 0, 0, .28); stroke-width: 1.2; stroke-dasharray: 4 5; }
+.eo-dot { cursor: pointer; outline: none; }
+.eo-dot circle:first-of-type { fill: #fff; stroke: #aeaeb2; stroke-width: 1.5; transition: fill .3s, stroke .3s; }
+.eo-dot:hover circle:first-of-type, .eo-dot:focus-visible circle:first-of-type { stroke: var(--ink); }
+.eo-dot.on circle:first-of-type { fill: var(--ink); stroke: var(--ink); }
+.eo-dot.enso { cursor: default; }
+.eo-dot.enso circle:first-of-type { fill: var(--ink); stroke: var(--ink); }
+.eo-hit { fill: transparent; }
+.eo-lab { font: 500 12.5px var(--sans); fill: var(--soft); opacity: 0; transition: opacity .3s, fill .3s; pointer-events: none; }
+.eo-dot:hover .eo-lab, .eo-dot:focus-visible .eo-lab, .eo-dot.on .eo-lab, .eo-dot.enso .eo-lab { opacity: 1; }
+.eo-dot.on .eo-lab, .eo-dot.enso .eo-lab { fill: var(--ink); font-weight: 600; }
+.eo-dot:focus-visible .eo-lab { fill: #0a84ff; }
+.eo-read { position: sticky; top: 96px; padding: 24px; border-radius: 22px; background: var(--card); }
+.eo-read .mb-mono { margin: 0 0 14px; color: var(--faint); }
+.eo-read-m { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin: 0; }
+.eo-read-m b { font-size: 22px; font-weight: 560; letter-spacing: -.02em; }
+.eo-read-m span { font: 500 13px var(--mono); color: var(--soft); }
+.eo-read-s { margin: 10px 0 0; font-size: 13.5px; line-height: 1.5; color: var(--soft); min-height: 4.5em; }
+.eo-src { font-size: 14px; color: var(--ink); text-underline-offset: 3px; transition: color .2s; }
+.eo-src:hover { color: #0a84ff; }
+.eo-vs { list-style: none; margin: 18px 0 0; padding: 14px 0 0; border-top: 1px solid var(--line); display: grid; gap: 10px; }
+.eo-vs li { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center; font-size: 14px; }
+.eo-vs span { font: 500 12.5px var(--mono); color: var(--soft); }
+.eo-vs em { font: 500 10.5px/1 var(--mono); font-style: normal; letter-spacing: .06em; text-transform: uppercase; padding: 5px 7px; border-radius: 999px; background: #e8e8ed; color: var(--soft); transition: background .3s, color .3s; }
+.eo-vs em[data-yes] { background: var(--ink); color: #fff; }
+.eo-table { margin-top: 56px; }
+.eo-sort { display: flex; gap: 8px; margin-bottom: 14px; }
+.eo-sortb { min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--soft); font: 500 14px var(--sans); cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
+.eo-sortb:hover { border-color: rgba(0, 0, 0, .25); color: var(--ink); }
+.eo-sortb[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: #fff; }
+.eo-table table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.eo-table th, .eo-table td { padding: 12px 10px; text-align: left; border-bottom: 1px solid var(--line); font-weight: 400; }
+.eo-table thead th { font: 500 11.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
+.eo-table td { font-family: var(--mono); font-size: 14px; color: var(--soft); }
+.eo-table tbody tr { cursor: pointer; transition: background .3s; }
+.eo-table tbody tr:hover, .eo-table tbody tr.on { background: var(--card); }
+.eo-table tr.enso { cursor: default; }
+.eo-table tr.enso th, .eo-table tr.enso td { color: var(--ink); font-weight: 600; }
+
+@media (max-width: 900px) {
+  .eo-top { grid-template-columns: 1fr; }
+  .eo-board { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'in' 'node' 'lanes' 'send'; padding: 22px 18px; gap: 28px; }
+  .eo-node { width: 168px; justify-self: center; }
+  .eo-queue { height: 202px; }
+  .eo-lanes { margin-left: 18px; }
+  .eo-lane { padding: 16px 16px 14px; }
+  .eo-why { margin-left: 0; width: 100%; }
+  .eo-last { position: static; margin-top: 10px; }
+  .eo-plotwrap { grid-template-columns: 1fr; gap: 24px; margin-top: 36px; }
+  .eo-read { position: static; }
+  .eo-tick, .eo-axis { font-size: 40px; }
+  .eo-axis { font-size: 34px; }
+  .eo-lab { display: none; font-size: 40px; }
+  .eo-dot.on .eo-lab { display: block; }
+  .eo-dot circle:first-of-type { r: 13px; }
+  .eo-dot.enso circle:first-of-type { r: 16px; }
+  .eo-table th, .eo-table td { padding: 11px 6px; font-size: 14px; }
+}
+@media (prefers-reduced-motion: reduce) { .eo-enso { animation: none; } .eo-lane[data-hit]::after { animation: none; } }

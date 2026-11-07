@@ -1,0 +1,65 @@
+.xcs { --xs: 13px; }
+@media (max-width: 900px) { .xcs { --xs: 14px; } }
+/* ---------- talk to sales ---------- */
+.xcs-top { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(32px, 6vw, 96px); align-items: start; padding: clamp(48px, 7vw, 104px) 0 clamp(64px, 8vw, 120px); }
+.xcs-sigil { position: absolute; left: -8%; top: 0; width: 64%; height: 100%; color: var(--ink); opacity: .08; pointer-events: none; }
+.xcs-copy, .xcs-top > div:last-child { position: relative; }
+.xcs-h1 { margin: 0; text-wrap: balance; font-size: clamp(3rem, 6vw, 5.6rem); font-weight: 560; letter-spacing: -.05em; line-height: 1; }
+.xcs-lede { margin: 24px 0 0; max-width: 40ch; font-size: clamp(1.1rem, 1.45vw, 1.3rem); line-height: 1.5; color: var(--soft); }
+.xcs-alt { margin-top: 36px; padding: 20px 22px; border-radius: 20px; background: var(--card); border: 1px solid var(--line); }
+.xcs-alt p { margin: 0 0 6px; font-size: 15px; color: var(--soft); }
+.xcs-ai { font-weight: 560; color: var(--ink); text-decoration: none; }
+.xcs-ai:hover { text-decoration: underline; text-underline-offset: 4px; }
+.xcs-routes { display: flex; flex-direction: column; margin-top: 24px; border-top: 1px solid var(--line); }
+.xcs-route { display: flex; justify-content: space-between; gap: 12px; padding: 16px 2px; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; font-size: 15px; }
+.xcs-route > * { transition: transform .35s var(--ease); }
+.xcs-route:hover > * { transform: translateX(6px); }
+.xcs-route span { color: var(--soft); } .xcs-route b { font-weight: 560; }
+.xcs-card { position: sticky; top: 96px; scroll-margin-top: 96px; padding: clamp(24px, 3vw, 36px); border-radius: 28px; background: #fff; border: 1px solid var(--line); box-shadow: 0 40px 90px -50px rgba(0, 0, 0, .35); }
+.xcs-progress { display: block; height: 3px; border-radius: 3px; background: var(--card); overflow: hidden; margin-bottom: 18px; }
+.xcs-progress b { display: block; height: 100%; background: var(--ink); transform-origin: 0 50%; }
+.xcs-step { padding: 14px 0; border-bottom: 1px solid var(--line); }
+.xcs-step label { display: flex; align-items: baseline; gap: 12px; font-size: 15px; font-weight: 500; color: var(--ink); cursor: text; }
+.xcs-n { font-size: var(--xs); color: var(--faint); }
+.xcs-choose { margin-left: auto; font-size: var(--xs); font-weight: 400; color: var(--faint); }
+.xcs-step input, .xcs-step textarea { width: 100%; margin-top: 8px; padding: 10px 0 6px 32px; border: 0; border-bottom: 1.5px solid transparent; background: transparent; font: 400 clamp(1.15rem, 1.6vw, 1.45rem)/1.35 var(--sans); color: var(--ink); outline: none; resize: vertical; transition: border-color .3s; }
+.xcs-step.on input, .xcs-step.on textarea { border-bottom-color: var(--ink); }
+.xcs-sizes { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 2px 32px; }
+.xcs-size { position: relative; display: inline-flex; align-items: center; height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); font-size: max(13.5px, var(--xs)); color: var(--soft); cursor: pointer; }
+.xcs-size input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; padding: 0; }
+.xcs-size:has(input:focus-visible) { outline: 2px solid #0a84ff; outline-offset: 2px; }
+.xcs-size.on { color: #fff; border-color: var(--ink); }
+.xcs-size span { position: relative; }
+.xcs-size-bg { position: absolute; inset: -1px; border-radius: 999px; background: var(--ink); }
+.xcs-need { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 2px 32px; }
+.xcs-need button { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 6px 12px; border-radius: 12px; border: 1px solid var(--line); background: #fff; font: 400 var(--xs)/1.35 var(--sans); color: var(--soft); text-align: left; cursor: pointer; transition: border-color .25s, color .25s, background .25s; }
+.xcs-need button:hover { border-color: rgba(0, 0, 0, .25); color: var(--ink); }
+.xcs-need button.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+.xcs-need button i { font-style: normal; width: 12px; text-align: center; }
+.xcs-need button:focus-visible { outline: 2px solid #0a84ff; outline-offset: 2px; }
+.xcs-trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.xcs-err { margin: 14px 0 0; font-size: 14px; color: #c9341d; }
+.xcs-acts { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+.xcs-sent { text-align: center; padding: 40px 10px; }
+.xcs-sent h2 { margin: 18px 0 8px; font-size: 30px; font-weight: 560; letter-spacing: -.03em; }
+.xcs-sent p { margin: 0 auto; max-width: 36ch; color: var(--soft); line-height: 1.5; }
+.xcs-inc { padding: 0 0 clamp(64px, 8vw, 120px); }
+.xcs-inc h2 { margin: 0 0 18px; font-size: clamp(1.6rem, 2.6vw, 2.2rem); font-weight: 560; letter-spacing: -.03em; }
+.xcs-inc ul { list-style: none; margin: 0 0 22px; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0 32px; }
+.xcs-inc li { display: flex; gap: 12px; align-items: center; padding: 16px 0; border-top: 1px solid var(--line); font-size: 15.5px; }
+.xcs-logos { padding: 0 0 clamp(72px, 9vw, 130px); text-align: center; }
+.xcs-logo-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 28px 48px; width: min(100% - 48px, var(--wrap)); margin: 0 auto; }
+.xcs-logo { display: grid; place-items: center; height: 40px; opacity: .55; filter: grayscale(1); transition: opacity .3s, filter .3s, transform .3s var(--ease); }
+.xcs-logo:hover { opacity: 1; filter: none; transform: translateY(-2px); }
+.xcs-logo img { max-height: 28px; max-width: 120px; object-fit: contain; }
+@media (max-width: 900px) {
+  .xcs-top { grid-template-columns: 1fr; }
+  .xcs-card { position: static; }
+  .xcs-step { opacity: 1 !important; }
+  .xcs-step input, .xcs-step textarea, .xcs-sizes, .xcs-need { padding-left: 0; margin-left: 0; }
+  .xcs-size, .xcs-need button { min-height: 44px; }
+  .xcs-sigil { left: 0; width: 100%; height: 60%; }
+}
+
+/* phones: every control is at least a thumb high (x-btn.sm is 34px site-wide) */
+@media (max-width: 900px) { .xcs .x-btn.sm { min-height: 44px; } .xcs .x-btn.sm { font-size: 14px; } }

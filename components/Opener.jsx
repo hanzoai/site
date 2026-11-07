@@ -121,7 +121,7 @@ export function OpenerProvider({ children }) {
     busy.current = true;
     try {
       router.prefetch(href);
-      sessionStorage.setItem('hz:ret:' + key, String(scrollY));
+      sessionStorage.setItem('hz:ret:' + key, JSON.stringify({ y: scrollY, from: location.pathname })); // close returns to the page and card it opened from
       el.setAttribute('data-opening', '');
       const img = await load(src);
       gl.current.image(img);
@@ -148,10 +148,12 @@ export function OpenerProvider({ children }) {
   }, [router, fly]);
 
   /* page -> card, when the page was opened from one */
-  const close = useCallback(async (e, { key, src, home = '/' }) => {
+  const close = useCallback(async (e, { key, src, home: fallback = '/' }) => {
     e?.preventDefault?.();
-    const ret = sessionStorage.getItem('hz:ret:' + key);
-    if (off() || ret === null) { router.push(home); return; }
+    let ret = null;
+    try { ret = JSON.parse(sessionStorage.getItem('hz:ret:' + key)); } catch {}
+    const home = ret?.from || fallback;
+    if (off() || !ret) { router.push(home); return; }
     if (busy.current) return;
     busy.current = true;
     try {
@@ -164,9 +166,9 @@ export function OpenerProvider({ children }) {
       veil.current.animate([{ opacity: 1 }, { opacity: 1 }], { duration: 1, fill: 'forwards' });
       window.__hzHold = true;
       router.push(home, { scroll: false });
-      const card = await waitFor(() => location.pathname === home && document.querySelector(`.x-mgrid [data-card="${key}"]`), 2500);
+      const card = await waitFor(() => location.pathname.replace(/\/$/, '') === home.replace(/\/$/, '') && document.querySelector(`[data-card="${key}"]`), 2500);
       await new Promise((r) => setTimeout(r, 30)); // let the new page's effects settle before placing the scroll
-      window.__lenis ? window.__lenis.scrollTo(+ret, { immediate: true, force: true }) : scrollTo(0, +ret);
+      window.__lenis ? window.__lenis.scrollTo(ret.y, { immediate: true, force: true }) : scrollTo(0, ret.y);
       await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
       if (!card) throw new Error('no card');
       card.setAttribute('data-lifted', '');

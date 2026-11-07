@@ -147,10 +147,16 @@ export function Btn({ href, children, solid, small, className = '', ...rest }) {
 
 export function Arrow({ href, children, className = '' }) {
   return (
-    <a href={href} className={'x-arrow ' + className}>
+    <motion.a
+      href={href}
+      className={'x-arrow ' + className}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.97 }}
+      transition={{ duration: 0.2, ease: EASE }}
+    >
       <span>{children}</span>
       <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
-    </a>
+    </motion.a>
   );
 }
 

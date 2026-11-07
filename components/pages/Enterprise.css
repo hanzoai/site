@@ -149,3 +149,15 @@
 .xe-research-d { font-size: 14px; color: #a1a1a6; }
 .xe-research .xe-offer-go { grid-row: span 2; }
 @media (max-width: 900px) { .xe-research { grid-template-columns: 1fr; } .xe-research .x-flap, .xe-research .xe-offer-go { grid-row: auto; } }
+
+/* which wall is yours */
+.xe-fit-q { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-top: 8px; }
+.xe-fit-q button { min-height: 46px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: inherit; font: 500 15px/1.2 var(--sans); text-align: left; cursor: pointer; transition: background .3s var(--ease), color .3s var(--ease); }
+.xe-fit-q button[aria-pressed='true'] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.xe-fit-q button:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.xe-fit-a { padding: clamp(26px, 3.2vw, 44px); border-radius: 28px; background: var(--card); }
+.xe-fit-a .xe-glyph i { opacity: .12; transition: opacity .5s var(--ease); }
+.xe-fit-a .xe-glyph i.on { opacity: .85; }
+.xe-fit-a h3 { margin: 8px 0 0; font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 560; letter-spacing: -.035em; }
+.xe-fit-a > p:not(.xe-panel-k) { margin: 12px 0 24px; max-width: 44ch; font-size: 16.5px; line-height: 1.55; color: var(--soft); }
+@media (prefers-reduced-motion: reduce) { .xe-fit-a .xe-glyph i { transition: none; } }

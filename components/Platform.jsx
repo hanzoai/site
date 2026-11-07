@@ -2,6 +2,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useTransform } from 'motion/react';
 import { EASE, Head, mod } from './ui';
+import { A } from './kit';
 import C from '../content';
 
 const P = C.products;
@@ -34,7 +35,7 @@ function Slide({ i, pos, W, active, onPick }) {
     >
       <div className="x-slide-vis" dangerouslySetInnerHTML={{ __html: p.vis }} />
       <footer className="x-slide-f">
-        <div><b>{p.name}</b><span>{p.addr}</span></div>
+        <div><b>{p.name}</b><A className="x-slide-addr" to={p.addr.startsWith('hanzo.ai/') ? p.addr.slice(8) : 'https://' + p.addr} aria-label={`Open Hanzo ${p.name} at ${p.addr}`}>{p.addr}</A></div>
         <div className="x-slide-acts">
           {p.acts.map((a, k) => (
             <motion.a key={a.label} href={a.href} className={'x-btn sm' + (k === p.acts.length - 1 ? ' solid' : '')} whileTap={{ scale: 0.96 }}>{a.label}{k === p.acts.length - 1 ? ' ↗' : ''}</motion.a>

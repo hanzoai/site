@@ -1,6 +1,8 @@
 // Read what Hanzo's signed-out header controls show (language, log in, search) so the rebuild keeps all of it.
 // Usage: node scripts/header-menus.mjs
 import puppeteer from 'puppeteer-core';
+import { lock } from './lock.mjs';
+await lock();
 
 const b = await puppeteer.launch({ executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: true });
 const p = await b.newPage();

@@ -1,8 +1,9 @@
 'use client';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useSpring, useTransform } from 'motion/react';
-import { EASE, Count, Magnetic, fine, Mark } from './ui';
+import { motion, useInView, useReducedMotion, useScroll, useSpring, useTransform } from 'motion/react';
+import { EASE, Count, fine, Mark } from './ui';
 import C from '../content';
+import SetupMenu from './SetupMenu';
 
 const PROMPT = 'Build maxpower: every AI I use in one place, and faster at coding.';
 const CMD = 'curl -fsSL https://hanzo.sh | sh';
@@ -70,17 +71,18 @@ function Dots({ host }) {
 
 function Caret() { return <span className="x-caret" aria-hidden="true" />; }
 
-function Bubble({ children, me }) {
+// Every demo part is in the page from the first paint (search engines, screen readers); the demo only reveals them.
+function Bubble({ children, me, on = true }) {
   return (
-    <motion.div className={'x-bub' + (me ? ' me' : '')} initial={{ opacity: 0, y: 10, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ type: 'spring', stiffness: 380, damping: 30 }}>
+    <motion.div className={'x-bub' + (me ? ' me' : '')} initial={false} animate={on ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 10, scale: 0.96 }} aria-hidden={on ? undefined : true} transition={{ type: 'spring', stiffness: 380, damping: 30 }}>
       {children}
     </motion.div>
   );
 }
 
-function AppCard() {
+function AppCard({ on = true }) {
   return (
-    <motion.div className="x-appcard" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE }}>
+    <motion.div className="x-appcard" initial={false} animate={on ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }} aria-hidden={on ? undefined : true} transition={{ duration: 0.6, ease: EASE }}>
       <span className="x-appicon"><Mark size={13} /></span>
       <span><b>maxpower</b><small>Mobile + Duo app</small></span>
       <span className="x-open">Open</span>
@@ -88,12 +90,14 @@ function AppCard() {
   );
 }
 
-function Roster() {
+function Roster({ on }) {
+  const shown = useRef(on);
+  shown.current = on;
   // the list steps up one agent at a time, then rests: alive, without repainting the phone every frame
   const [step, setStep] = useState(0);
   useEffect(() => {
     // row 32 looks exactly like row 0, so the jump back to 0 is invisible
-    const t = setInterval(() => { if (!document.querySelector('.x-hero[data-off]')) setStep((s) => (s >= ROSTER.length ? 0 : s + 1)); }, 2200);
+    const t = setInterval(() => { if (shown.current && !document.querySelector('.x-hero[data-off]')) setStep((s) => (s >= ROSTER.length ? 0 : s + 1)); }, 2200);
     return () => clearInterval(t);
   }, []);
   // like Hanzo's demo, every agent's speed moves and the bill ticks: written straight to the text, no re-render
@@ -101,7 +105,7 @@ function Roster() {
   useEffect(() => {
     let cost = 0;
     const t = setInterval(() => {
-      if (document.querySelector('.x-hero[data-off]') || !box.current) return;
+      if (!shown.current || document.querySelector('.x-hero[data-off]') || !box.current) return;
       box.current.querySelectorAll('[data-tps]').forEach((el) => { if (Math.random() < 0.45) { const b = +el.dataset.tps; el.textContent = Math.max(1, Math.round(b * (0.82 + Math.random() * 0.36))) + '/s'; } });
       cost += 0.0001 + Math.random() * 0.0004;
       const c = box.current.querySelector('[data-cost]');
@@ -118,7 +122,7 @@ function Roster() {
     </div>
   ));
   return (
-    <motion.div className="x-roster" ref={box} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: EASE }}>
+    <motion.div className="x-roster" ref={box} initial={false} animate={on ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }} aria-hidden={on ? undefined : true} transition={{ duration: 0.7, ease: EASE }}>
       <div className="x-ros-h"><b>maxpower</b><span>All on</span></div>
       <div className="x-ros-view">
         <motion.div animate={{ y: (-step * (100 / (ROSTER.length * 2))) + '%' }} transition={step === 0 ? { duration: 0 } : { type: 'spring', stiffness: 170, damping: 24 }}>
@@ -127,6 +131,32 @@ function Roster() {
       </div>
       <div className="x-ros-f"><span className="x-mono" data-cost="">$0.0000</span><span className="x-demo">demo</span></div>
     </motion.div>
+  );
+}
+
+/* The desktop app's account menu: a real button; the menu is always in the page and opens with a spring. */
+function Account() {
+  const [open, setOpen] = useState(false);
+  const box = useRef(null);
+  const btn = useRef(null);
+  useEffect(() => {
+    if (!open) return;
+    const away = (e) => { if (!box.current.contains(e.target)) setOpen(false); };
+    document.addEventListener('pointerdown', away);
+    return () => document.removeEventListener('pointerdown', away);
+  }, [open]);
+  return (
+    <div className="x-acct" ref={box} onKeyDown={(e) => { if (e.key === 'Escape' && open) { setOpen(false); btn.current.focus(); } }}>
+      <button ref={btn} type="button" className="x-acct-b" aria-label="Account" aria-haspopup="true" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+        <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><circle cx="8" cy="5.6" r="2.7" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M2.8 13.6c.7-2.4 2.7-3.7 5.2-3.7s4.5 1.3 5.2 3.7" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>
+      </button>
+      <div className="x-acct-m" data-open={open} inert={!open}>
+        <div className="x-acct-who"><b>Developer</b><span>dev@hanzo.ai</span></div>
+        <a href="https://hanzo.ai/beta" onClick={() => setOpen(false)}>Beta Dashboard</a>
+        <button type="button" onClick={() => { setOpen(false); btn.current.focus(); }}>Settings</button>
+        <a className="x-acct-open" href="https://hanzo.ai/beta" onClick={() => setOpen(false)}>Open /beta →</a>
+      </div>
+    </div>
   );
 }
 
@@ -242,9 +272,9 @@ export default function Hero() {
               </motion.a>
             </div>
             <motion.div variants={rise} className="x-or"><span>or</span></motion.div>
-            <Magnetic className="x-auth-mag">
+            <div className="x-auth-mag">
               <motion.a variants={rise} href="https://hanzo.ai/signup" className="x-auth-b solid" whileTap={{ scale: 0.97 }}>Continue with email</motion.a>
-            </Magnetic>
+            </div>
             <motion.p variants={rise} className="x-terms">By continuing, you agree to Hanzo&apos;s <a href="https://hanzo.ai/terms">Terms</a> and <a href="https://hanzo.ai/privacy">Privacy Policy</a>.</motion.p>
           </motion.div>
         </motion.div>
@@ -267,17 +297,19 @@ export default function Hero() {
                     <div className="x-side-i on">maxpower</div>
                     <div className="x-side-i">Launch plan</div>
                     <div className="x-side-i">Weekly report</div>
+                    <Account />
                   </aside>
                   <div className="x-chat">
                     <div className="x-chat-log">
-                      <AnimatePresence>
-                        {phase >= 1 && <Bubble me key="me">{PROMPT}</Bubble>}
-                        {phase >= 2 && <AppCard key="card" />}
-                      </AnimatePresence>
+                      <Bubble me on={phase >= 1}>{PROMPT}</Bubble>
+                      <AppCard on={phase >= 2} />
                     </div>
                     <div className="x-input">
                       <span className="x-plus">+</span>
-                      <span className="x-input-t">{phase >= 1 ? <em>Ask anything</em> : <><span ref={promptEl} />{''}<Caret /></>}</span>
+                      <span className="x-input-t">
+                        <em hidden={phase < 1}>Ask Hanzo</em>
+                        <span hidden={phase >= 1}><span ref={promptEl} /><Caret /></span>
+                      </span>
                       <motion.span className="x-send" animate={{ scale: typed === PROMPT.length && phase === 0 ? [1, 1.18, 1] : 1 }} transition={{ duration: 0.4 }}>↑</motion.span>
                     </div>
                   </div>
@@ -302,45 +334,33 @@ export default function Hero() {
                   <div className="x-status"><b>9:41</b><span className="x-island" /><span>●●●</span></div>
                   <div className="x-tabs" role="tablist" aria-label="Phone app">
                     {['chat', 'dev'].map((t) => (
-                      <button key={t} type="button" role="tab" aria-selected={tab === t} onClick={() => { user.current = true; setTab(t); }}>
-                        {tab === t && <motion.span layoutId="phone-tab" className="x-tab-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+                      <button key={t} type="button" role="tab" aria-selected={tab === t} aria-controls={'phone-' + t} onClick={() => { user.current = true; setTab(t); }}>
+                        {tab === t && <span className="x-tab-bg" />}
                         <span>{t === 'chat' ? 'Chat' : 'Dev'}</span>
                       </button>
                     ))}
                   </div>
                   <div className="x-phone-body">
-                    <AnimatePresence mode="wait" initial={false}>
-                      {tab === 'chat' ? (
-                        <motion.div key="chat" className="x-pane" initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.35, ease: EASE }}>
-                          {phase >= 1 && <Bubble me>{PROMPT}</Bubble>}
-                          {phase >= 2 && <AppCard />}
-                        </motion.div>
-                      ) : (
-                        <motion.div key="dev" className="x-pane" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 16 }} transition={{ duration: 0.35, ease: EASE }}>
-                          <Bubble me>Show me the build</Bubble>
-                          <div className="x-log x-mono">
-                            {LOG.slice(0, log).map((l, i) => (
-                              <motion.div key={l} initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.35, ease: EASE }} className={i === 3 ? 'ok' : ''}>{i < 3 ? '• ' : ''}{l}</motion.div>
-                            ))}
-                          </div>
-                          {phase >= 4 && <Roster />}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                    <div className="x-pane" id="phone-chat" role="tabpanel" data-on={tab === 'chat'} inert={tab !== 'chat'}>
+                      <Bubble me on={phase >= 1}>{PROMPT}</Bubble>
+                      <AppCard on={phase >= 2} />
+                    </div>
+                    <div className="x-pane right" id="phone-dev" role="tabpanel" data-on={tab === 'dev'} inert={tab !== 'dev'}>
+                      <Bubble me>Show me the build</Bubble>
+                      <div className="x-log x-mono">
+                        {LOG.map((l, i) => (
+                          <motion.div key={l} initial={false} animate={i < log ? { opacity: 1, x: 0 } : { opacity: 0, x: -6 }} transition={{ duration: 0.35, ease: EASE }} className={i === 3 ? 'ok' : ''}>{i < 3 ? '• ' : ''}{l}</motion.div>
+                        ))}
+                      </div>
+                      <Roster on={phase >= 4} />
+                    </div>
                   </div>
                   <a className="x-phone-dl" href="/download">Download App</a>
                 </div>
               </motion.div>
             </motion.div>
           </div>
-          <motion.a href="https://hanzo.ai/skill.md" className="x-setup" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 1.1 }} whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }}>
-            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="5" y="5" width="8.5" height="8.5" rx="2" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M10.5 3.2V3a.8.8 0 0 0-.8-.8H3a.8.8 0 0 0-.8.8v6.7c0 .44.36.8.8.8h.2" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>
-            Copy setup prompt
-            <span className="x-setup-ics">
-              {C.agents.slice(1, 7).map((a) => <span key={a.name} className="x-setup-i" dangerouslySetInnerHTML={{ __html: a.icon }} />)}
-            </span>
-            <b>+26</b>
-          </motion.a>
+          <SetupMenu up initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 1.1 }} />
         </motion.div>
       </div>
     </section>

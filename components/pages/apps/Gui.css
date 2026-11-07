@@ -1,0 +1,87 @@
+/* ---------- gui (gu-) ---------- */
+.gu-hero { padding: clamp(28px, 4vw, 60px) 0 clamp(64px, 8vw, 112px); overflow: hidden; }
+.gu-top { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: clamp(28px, 5vw, 80px); align-items: end; }
+.gu-kick { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 18px; padding: 5px 12px 5px 5px; border-radius: 999px; border: 1px solid var(--line); font-size: 12.5px; color: var(--soft); }
+.gu-kick img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; }
+.gu-h1 { margin: 0; font-size: clamp(3.4rem, 8vw, 8rem); font-weight: 560; letter-spacing: -.06em; line-height: .88; }
+.gu-lede { margin: 18px 0 0; font-size: clamp(1.3rem, 2vw, 1.8rem); line-height: 1.2; letter-spacing: -.025em; }
+.gu-acts { margin-top: 24px; }
+
+/* props editor */
+.gu-props { padding: 18px; border-radius: 22px; background: #0b0b0c; color: #e9e9ec; }
+.gu-props-k { margin: 0; font-size: 14px; color: #8ab4ff; }
+.gu-prop { display: grid; grid-template-columns: 76px minmax(0, 1fr) 120px; align-items: center; gap: 10px; padding: 8px 0 8px 14px; }
+.gu-prop > span { font-size: 14px; color: #f5f5f7; }
+.gu-opts { display: flex; flex-wrap: wrap; gap: 4px; }
+.gu-opts button { height: 32px; padding: 0 10px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, .12); background: #141416; color: #a1a1a6; font-size: 12.5px; cursor: pointer; transition: background .2s, color .2s; }
+.gu-opts button[aria-checked='true'] { background: #f5f5f7; color: #0a0a0a; border-color: #f5f5f7; }
+.gu-prop input { width: 100%; height: 34px; padding: 0 10px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, .14); background: #141416; color: #a8e6a1; font-size: 13px; outline: none; }
+.gu-prop input:focus { border-color: #f5f5f7; }
+.gu-prop input.bad { border-color: #ff6961; color: #ff6961; }
+.gu-tc { margin: 12px 0 0; padding: 10px 12px; border-radius: 10px; background: rgba(48, 209, 88, .12); color: #30d158; font-size: 12.5px; }
+.gu-tc.bad { background: rgba(255, 105, 97, .14); color: #ff6961; }
+
+/* four devices */
+.gu-devs { display: grid; grid-template-columns: .62fr .62fr 1.2fr 1.4fr; gap: clamp(10px, 1.6vw, 22px); align-items: end; margin-top: clamp(32px, 4vw, 56px); }
+.gu-dev p { display: flex; flex-direction: column; gap: 3px; margin: 12px 0 0; text-align: center; }
+.gu-dev p b { font-size: 15px; font-weight: 560; }
+.gu-dev p span { font-size: 12.5px; color: var(--soft); }
+.gu-scr { position: relative; display: grid; place-items: center; background: #f5f5f7; overflow: hidden; }
+.gu-dev.phone .gu-scr { aspect-ratio: 9 / 18; border-radius: 30px; border: 6px solid #0a0a0a; padding: 14px; }
+.gu-dev.android .gu-scr { border-radius: 18px; }
+.gu-dev.ios .gu-scr::before { content: ''; position: absolute; top: 8px; left: 50%; width: 34%; height: 14px; margin-left: -17%; border-radius: 10px; background: #0a0a0a; }
+.gu-dev.android .gu-scr::before { content: ''; position: absolute; top: 9px; left: 50%; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; background: #0a0a0a; }
+.gu-dev.win .gu-scr { aspect-ratio: 16 / 11; border-radius: 14px; border: 1px solid rgba(0, 0, 0, .14); padding: 38px 20px 20px; box-shadow: 0 30px 60px -40px rgba(0, 0, 0, .4); }
+.gu-dev.desk .gu-scr { aspect-ratio: 16 / 10; background: linear-gradient(135deg, #e9e9ee, #f7f7f9); }
+.gu-dots { position: absolute; left: 12px; top: 12px; display: flex; gap: 5px; }
+.gu-dots i { width: 9px; height: 9px; border-radius: 50%; background: #d1d1d6; }
+.gu-w { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; width: min(100%, 220px); border: 1px solid rgba(0, 0, 0, .08); box-shadow: 0 10px 30px -18px rgba(0, 0, 0, .3); }
+.gu-t { font-size: clamp(15px, 1.4vw, 19px); font-weight: 560; letter-spacing: -.02em; }
+.gu-b { display: inline-flex; align-items: center; height: 34px; padding: 0 14px; font-size: 13.5px; font-weight: 500; }
+
+/* rail */
+.gu-rail-sec { border-top: 1px solid var(--line); overflow: hidden; }
+.gu-rail-k { display: flex; justify-content: space-between; margin: 0 0 24px; font: 500 12.5px/1 var(--mono); color: var(--faint); }
+.gu-rail-view { padding-left: max(24px, calc((100vw - var(--wrap)) / 2)); }
+.gu-rail { list-style: none; margin: 0; padding: 0; display: flex; width: max-content; }
+.gu-rail li { width: min(420px, 78vw); padding-right: 14px; }
+.gu-rail button { display: flex; flex-direction: column; gap: 14px; width: 100%; min-height: 300px; padding: 28px; border-radius: 26px; border: 1px solid var(--line); background: #fff; text-align: left; font: inherit; color: inherit; cursor: pointer; transition: background .4s var(--ease), color .4s, border-color .4s; }
+.gu-rail li.on button { background: var(--ink); color: #f5f5f7; border-color: var(--ink); }
+.gu-rail button > span { font-size: 12.5px; color: var(--faint); }
+.gu-rail h3 { margin: 0; font-size: clamp(1.5rem, 2.4vw, 2.1rem); font-weight: 560; letter-spacing: -.035em; line-height: 1.05; }
+.gu-rail p { margin: auto 0 0; font-size: 15.5px; line-height: 1.6; color: var(--soft); }
+.gu-rail li.on p { color: #a1a1a6; }
+.gu-rail-nav { display: flex; gap: 8px; margin-top: 18px; }
+.gu-rail-nav button { width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--line); background: #fff; font-size: 18px; cursor: pointer; }
+.gu-rail-nav button:hover { border-color: var(--ink); }
+
+/* ship: the dark room */
+.gu-ship { background: #060607; color: #f5f5f7; }
+.gu-plat { list-style: none; margin: 0 0 clamp(56px, 7vw, 96px); padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-block: 1px solid rgba(255, 255, 255, .1); }
+.gu-plat li { display: flex; flex-direction: column; gap: 8px; padding: 26px 22px; }
+.gu-plat li + li { border-left: 1px solid rgba(255, 255, 255, .1); }
+.gu-plat b { font-size: clamp(1.8rem, 3.2vw, 2.8rem); font-weight: 400; letter-spacing: -.045em; line-height: 1; }
+.gu-plat span { font-size: 14.5px; color: #a1a1a6; }
+.gu-ship-grid { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: clamp(28px, 5vw, 80px); align-items: center; }
+.gu-ship h2, .gu-end h2 { margin: 0; font-size: clamp(2.3rem, 4.6vw, 4.2rem); font-weight: 560; letter-spacing: -.045em; line-height: 1; text-wrap: balance; }
+.gu-ship h2 { color: #f5f5f7; }
+.gu-ship-grid > div > p { margin: 18px 0 0; font-size: 17px; color: #a1a1a6; }
+
+/* end */
+.gu-end-in { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 22px; }
+.gu-end h2 { max-width: 16ch; }
+.gu-end-in > p { margin: 0; max-width: 46ch; font-size: clamp(1.05rem, 1.4vw, 1.25rem); color: var(--soft); }
+
+@media (max-width: 1000px) { .gu-devs { grid-template-columns: repeat(2, minmax(0, 1fr)); } .gu-dev.phone .gu-scr { max-height: 340px; margin: 0 auto; width: 70%; } }
+@media (max-width: 900px) {
+  .gu-top, .gu-ship-grid { grid-template-columns: minmax(0, 1fr); }
+  .gu-h1 { font-size: clamp(3.2rem, 17vw, 4.8rem); }
+  .gu-prop { grid-template-columns: 64px minmax(0, 1fr); padding-left: 6px; }
+  .gu-prop input { grid-column: 2; }
+  .gu-opts button { height: 36px; }
+  .gu-dev.phone .gu-scr { width: 100%; }
+  .gu-rail button { min-height: 260px; }
+  .gu-plat { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gu-plat li:nth-child(3) { border-left: 0; }
+  .gu-plat li:nth-child(n + 3) { border-top: 1px solid rgba(255, 255, 255, .1); }
+}

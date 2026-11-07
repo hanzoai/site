@@ -1,0 +1,92 @@
+/* Kai (ka-): the decision tree, the model cards, the three question types */
+.ka-split { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 56px; align-items: start; }
+.ka-copy { position: sticky; top: 120px; padding-top: 12px; }
+.ka-copy .mb-h { font-size: clamp(3rem, 6.2vw, 6rem); }
+
+.ka-tree { padding: 22px 24px 20px; }
+.ka-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+.ka-body { position: relative; }
+.ka-root { max-width: 560px; margin: 0 auto; padding: 16px 18px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, .18); background: #141416; text-align: center; }
+.ka-root .mb-mono { margin: 0 0 8px; }
+.ka-state { margin: 0; min-height: 3em; font: 400 14.5px/1.5 var(--mono); color: #f5f5f7; overflow-wrap: anywhere; }
+.ka-caret { display: inline-block; width: 8px; height: 1.05em; margin-left: 2px; vertical-align: -2px; background: #f5f5f7; opacity: 0; }
+.ka-caret[data-on] { opacity: 1; animation: mb-blink .9s steps(2, jump-none) infinite; }
+.ka-wires { display: block; width: 100%; height: 44px; overflow: visible; }
+.ka-wires path { fill: none; stroke: rgba(255, 255, 255, .45); stroke-width: 1.4; }
+.ka-qs { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 12px; min-height: 248px; }
+.ka-q { padding: 16px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, .08); background: #111113; transition: border-color .5s var(--ease); }
+.ka-q[data-on] { border-color: rgba(255, 255, 255, .22); }
+.ka-q-h { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0; }
+.ka-q-h b { font: 600 14px var(--mono); color: #f5f5f7; overflow-wrap: anywhere; }
+.ka-q-h em { font: 500 13px/1 var(--mono); font-style: normal; letter-spacing: .08em; text-transform: uppercase; padding: 5px 7px; border-radius: 999px; background: #f5f5f7; color: #0a0a0a; }
+.ka-q-i { margin: 8px 0 14px; font-size: 13.5px; line-height: 1.4; color: #a1a1a6; }
+.ka-opts { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.ka-opts li { display: grid; gap: 3px; }
+.ka-opt-k { font: 500 13px var(--mono); color: #c7c7cc; overflow-wrap: anywhere; transition: color .3s; }
+.ka-opt-d { font-size: 13px; color: #6e6e73; }
+.ka-opts li[data-win] .ka-opt-k { color: #fff; }
+.ka-opts li[data-win] .ka-opt-k::after { content: ' ✓'; color: #30d158; }
+.ka-bar { position: relative; height: 4px; border-radius: 4px; background: #222225; overflow: hidden; }
+.ka-bar i { position: absolute; inset: 0; background: #f5f5f7; transform-origin: 0 50%; transform: scaleX(0); }
+.ka-track { position: relative; height: 4px; border-radius: 4px; background: #2a2a2d; margin: 10px 7px; }
+.ka-run { position: absolute; inset: 0; pointer-events: none; }
+.ka-mark { position: absolute; top: 50%; left: -7px; width: 14px; height: 14px; margin-top: -7px; border-radius: 50%; background: #f5f5f7; box-shadow: 0 0 0 5px rgba(255, 255, 255, .12); }
+.ka-tick { position: absolute; top: -3px; width: 1px; height: 10px; background: rgba(255, 255, 255, .3); }
+.ka-levels { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; }
+.ka-levels li { font: 500 13px var(--mono); color: #6e6e73; transition: color .3s; }
+.ka-levels li[data-win] { color: #fff; }
+.ka-levels li[data-win]::after { content: ' ✓'; color: #30d158; }
+.ka-noul { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px; font: 500 13px var(--mono); color: #8e8e93; }
+.ka-noul .ka-track { margin: 0 7px; }
+.ka-noul em { grid-column: 1 / -1; font-style: normal; color: #6e6e73; }
+.ka-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; margin-top: 20px; padding-top: 18px; border-top: 1px solid rgba(255, 255, 255, .08); }
+.ka-foot-t { margin: 0 auto 0 0; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+.ka-foot code { font: 500 13px var(--mono); color: #f5f5f7; }
+.ka-foot-t span { font: 500 13px var(--mono); color: #8e8e93; }
+.ka-foot .x-copy { background: #1c1c1e; border-color: rgba(255, 255, 255, .14); color: #d1d1d6; height: 36px; }
+.ka-foot .x-copy:hover { color: #fff; border-color: rgba(255, 255, 255, .4); }
+.ka-foot .x-arrow { color: #f5f5f7; }
+.ka-note { margin: 14px 0 0; font-size: 13px; line-height: 1.5; color: #8e8e93; max-width: 70ch; }
+
+.ka-models { padding-top: clamp(56px, 7vw, 104px); }
+.ka-models .mb-lede { margin-top: 12px; }
+.ka-cards { list-style: none; margin: 48px 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.ka-card { position: relative; display: flex; flex-direction: column; justify-content: flex-end; gap: 10px; min-height: 360px; padding: 30px; border-radius: 28px; background: #0a0a0a; color: #f5f5f7; text-decoration: none; overflow: hidden; isolation: isolate; }
+.ka-sig { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; color: rgba(255, 255, 255, .5); transition: color .5s var(--ease); }
+.ka-card:hover .ka-sig { color: rgba(255, 255, 255, .85); }
+.ka-card-l { font: 500 13px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #a1a1a6; }
+.ka-card-n { font-size: clamp(3rem, 6vw, 5.5rem); font-weight: 560; letter-spacing: -.05em; line-height: .95; }
+.ka-card code { align-self: flex-start; font: 500 13px var(--mono); padding: 5px 9px; border-radius: 7px; background: rgba(255, 255, 255, .1); color: #e5e5ea; }
+.ka-card-go { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 15px; color: #f5f5f7; }
+.ka-card-go svg { transition: transform .35s var(--ease); }
+.ka-card:hover .ka-card-go svg { transform: translateX(5px); }
+
+.ka-types { list-style: none; margin: 16px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.ka-type { display: grid; gap: 8px; height: 100%; padding: 24px; border-radius: 22px; background: var(--card); color: var(--ink); text-decoration: none; transition: background .3s, transform .4s var(--ease); }
+.ka-type:hover { background: #ececf0; transform: translateY(-3px); }
+.ka-type b { font: 600 18px var(--mono); }
+.ka-type span:not(.ka-glyph) { font-size: 14.5px; line-height: 1.45; color: var(--soft); }
+/* each type's answer shape, alive: choice bars weigh up, a score marker steps, a noul tips */
+.ka-glyph { position: relative; display: block; height: 34px; margin-bottom: 6px; }
+.ka-g0 i { position: absolute; left: 0; height: 5px; width: 100%; border-radius: 3px; background: var(--ink); transform-origin: 0 50%; animation: ka-w 3.6s var(--ease) infinite; }
+.ka-g0 i:nth-child(1) { top: 2px; } .ka-g0 i:nth-child(2) { top: 14px; animation-delay: -1.2s; opacity: .45; } .ka-g0 i:nth-child(3) { top: 26px; animation-delay: -2.4s; opacity: .25; }
+@keyframes ka-w { 0%, 100% { transform: scaleX(.18); } 45%, 70% { transform: scaleX(.86); } }
+.ka-g1 i { position: absolute; top: 15px; height: 4px; left: 0; right: 0; border-radius: 2px; background: #d2d2d7; }
+.ka-g1 i:nth-child(2) { top: 9px; left: 0; width: 16px; height: 16px; border-radius: 50%; background: var(--ink); right: auto; animation: ka-step 4s var(--ease) infinite; }
+.ka-g1 i:nth-child(3) { display: none; }
+@keyframes ka-step { 0%, 15% { transform: translateX(0); } 30%, 45% { transform: translateX(70px); } 60%, 75% { transform: translateX(140px); } 90%, 100% { transform: translateX(0); } }
+.ka-g2 i { position: absolute; top: 15px; left: 0; width: 180px; height: 4px; border-radius: 2px; background: #d2d2d7; }
+.ka-g2 i:nth-child(2) { top: 6px; left: 82px; width: 22px; height: 22px; border-radius: 50%; background: var(--ink); animation: ka-tip 3.2s cubic-bezier(.76, 0, .24, 1) infinite alternate; }
+.ka-g2 i:nth-child(3) { display: none; }
+@keyframes ka-tip { 0%, 20% { transform: translateX(-70px); } 80%, 100% { transform: translateX(70px); } }
+
+@media (max-width: 900px) {
+  .ka-split { grid-template-columns: 1fr; gap: 40px; }
+  .ka-copy { position: static; }
+  .ka-tree { padding: 18px 14px; }
+  .ka-wires { display: none; }
+  .ka-qs { grid-template-columns: 1fr; margin-top: 12px; padding-left: 14px; border-left: 1px solid rgba(255, 255, 255, .3); min-height: 0; }
+  .ka-cards, .ka-types { grid-template-columns: 1fr; }
+  .ka-card { min-height: 300px; padding: 24px; }
+}
+@media (prefers-reduced-motion: reduce) { .ka-glyph i { animation: none !important; } .ka-caret[data-on] { animation: none; } }

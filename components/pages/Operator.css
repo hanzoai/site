@@ -1,0 +1,102 @@
+/* ---------- operator (xop-): the reconcile loop ---------- */
+.xop-hero { padding: clamp(28px, 4vw, 60px) 0 clamp(72px, 9vw, 128px); overflow: hidden; }
+.xop-top { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'repo repo' 'h1 h1' 'sub acts'; gap: 14px 32px; align-items: end; padding-bottom: clamp(28px, 4vw, 48px); }
+.xop-top > div:first-child { grid-area: repo; justify-self: start; }
+.xop-repo { display: inline-flex; padding: 8px 13px; border: 1px solid var(--line); border-radius: 999px; font-size: 12.5px; color: var(--soft); text-decoration: none; transition: border-color .25s, color .25s; }
+.xop-repo:hover { color: var(--ink); border-color: rgba(0, 0, 0, .25); }
+.xop-h1 { grid-area: h1; margin: 0; font-size: clamp(3.6rem, 10.5vw, 10.5rem); font-weight: 560; letter-spacing: -.065em; line-height: .86; white-space: nowrap; }
+.xop-sub { grid-area: sub; margin: 0; max-width: 30ch; font-size: clamp(1.25rem, 2vw, 1.8rem); line-height: 1.2; letter-spacing: -.025em; color: var(--soft); text-wrap: balance; }
+.xop-acts { grid-area: acts; }
+
+/* the loop */
+.xop-loop { display: grid; grid-template-columns: minmax(0, 1fr) clamp(160px, 18vw, 230px) minmax(0, 1fr); grid-template-areas: 'git ring live' 'try try log'; gap: 18px; padding: clamp(16px, 2vw, 24px); border-radius: 28px; background: var(--card); }
+.xop-side { position: relative; grid-area: git; padding: 18px; border-radius: 20px; background: #fff; overflow: hidden; }
+.xop-side.cluster { grid-area: live; }
+.xop-side-k { display: flex; justify-content: space-between; align-items: center; margin: 0 0 14px; font-size: 12.5px; color: var(--faint); }
+.xop-watch { width: 7px; height: 7px; border-radius: 50%; background: #30d158; animation: xop-watch 1.6s ease-in-out infinite; }
+@keyframes xop-watch { 50% { opacity: .25; } }
+.xop-side ul { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.xop-side li { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; min-height: 40px; padding: 8px 12px; border-radius: 10px; background: var(--card); font-size: 14px; transition: opacity .4s var(--ease); }
+.xop-side li em { font-style: normal; font-size: 12.5px; color: var(--soft); }
+.xop-side li.gone { opacity: .35; text-decoration: line-through; }
+.xop-obj i { width: 8px; height: 8px; border-radius: 50%; background: #d1d1d6; transition: background .4s var(--ease) calc(var(--i) * 90ms); }
+.xop-obj b { margin-left: auto; font-size: 12.5px; font-weight: 500; color: var(--faint); transition: color .4s var(--ease) calc(var(--i) * 90ms); }
+.xop-obj.ok i { background: #30d158; }
+.xop-obj.ok b { color: #1a7f37; }
+.xop-obj.drift { background: #fff4e5; }
+.xop-obj.drift i { background: #ff9f0a; }
+.xop-obj.drift b { color: #b25000; }
+.xop-beam { position: absolute; left: 0; right: 0; top: 0; height: 40%; background: linear-gradient(180deg, transparent, rgba(48, 209, 88, .14), transparent); transform: translateY(-100%); animation: xop-beam 1.1s var(--ease) both; pointer-events: none; }
+@keyframes xop-beam { to { transform: translateY(260%); } }
+
+.xop-ring { grid-area: ring; position: relative; display: grid; place-items: center; align-self: center; aspect-ratio: 1; }
+.xop-ring svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+.xop-ring circle { fill: none; stroke: #e5e5ea; stroke-width: 3; }
+.xop-ring .xop-arc { stroke: var(--ink); stroke-linecap: round; stroke-dasharray: 314.2; stroke-dashoffset: 314.2; animation: xop-arc 4.2s linear infinite; }
+@keyframes xop-arc { to { stroke-dashoffset: 0; } }
+.xop-ring-n { position: relative; margin-top: -14px; font-size: 15px; color: var(--ink); }
+.xop-ring-t { position: absolute; top: 58%; font-size: 12.5px; color: var(--faint); }
+
+.xop-try { grid-area: try; padding: 18px; border-radius: 20px; background: #fff; }
+.xop-try-k { margin: 0 0 12px; font: 500 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
+.xop-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+.xop-btns button { min-height: 44px; padding: 0 16px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--ink); font-size: 14.5px; cursor: pointer; transition: background .25s var(--ease), color .25s var(--ease), border-color .25s var(--ease), transform .2s var(--ease); }
+.xop-btns button:hover { border-color: rgba(0, 0, 0, .3); transform: translateY(-1px); }
+.xop-btns button:active { transform: scale(.97); }
+.xop-btns button[aria-pressed='true'] { background: var(--ink); color: #fff; border-color: var(--ink); }
+.xop-log { grid-area: log; display: grid; align-content: start; gap: 6px; height: 214px; margin: 0; padding: 16px 18px; list-style: none; border-radius: 20px; background: #0b0b0c; color: #d1d1d6; font-size: 13px; overflow: hidden; }
+.xop-log li { padding-left: 14px; position: relative; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.xop-log li::before { content: ''; position: absolute; left: 0; top: .55em; width: 6px; height: 6px; border-radius: 50%; background: #48484f; }
+.xop-log li.new::before { background: #30d158; }
+.xop-log li.warn { color: #ffd60a; }
+.xop-log li.warn::before { background: #ff9f0a; }
+.xop-log li.dim { color: #86868b; }
+
+/* the deck: the dark room */
+.xop-deck { background: #050506; color: #f5f5f7; }
+/* hanzo.css colours headings dark; the dark room sets its own */
+.xop-deck h2 { color: #f5f5f7; }
+.xop-card h3 { color: var(--ink); }
+.xop-deck-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(36px, 6vw, 96px); align-items: center; }
+.xop-deck h2, .xop-paste-h { margin: 0; font-size: clamp(2.3rem, 4.6vw, 4.2rem); font-weight: 560; letter-spacing: -.045em; line-height: 1; text-wrap: balance; }
+.xop-count { margin: 28px 0 0; font-size: 15px; color: #a1a1a6; }
+.xop-nav { display: flex; gap: 8px; margin-top: 18px; }
+.xop-nav button { width: 48px; height: 48px; border: 1px solid rgba(255, 255, 255, .2); border-radius: 50%; background: transparent; color: #f5f5f7; font-size: 18px; cursor: pointer; transition: background .25s, color .25s, transform .2s var(--ease); }
+.xop-nav button:hover { background: #f5f5f7; color: #0a0a0a; }
+.xop-nav button:active { transform: scale(.94); }
+.xop-dots { display: flex; gap: 4px; margin: 18px 0 0; padding: 0; list-style: none; }
+.xop-dots button { display: grid; place-items: center; width: 32px; height: 44px; padding: 0; border: 0; background: none; cursor: pointer; }
+.xop-dots i { width: 22px; height: 3px; border-radius: 3px; background: #3a3a40; transition: background .3s var(--ease), transform .3s var(--ease); }
+.xop-dots button:hover i { background: #86868b; }
+.xop-dots button[aria-pressed='true'] i { background: #f5f5f7; transform: scaleY(1.6); }
+.xop-cards { position: relative; display: grid; min-height: 340px; touch-action: pan-y; user-select: none; }
+.xop-card { grid-area: 1 / 1; align-self: start; padding: clamp(24px, 3vw, 36px); border-radius: 26px; background: #f5f5f7; color: var(--ink); box-shadow: 0 30px 60px -30px rgba(0, 0, 0, .7); transform-origin: 50% 0; }
+.xop-card:not(.on) { pointer-events: none; }
+.xop-card svg { color: var(--ink); }
+.xop-card h3 { margin: 18px 0 12px; font-size: clamp(1.4rem, 2.2vw, 1.9rem); font-weight: 560; letter-spacing: -.035em; line-height: 1.1; }
+.xop-card p { margin: 0; font-size: 16px; line-height: 1.65; color: var(--soft); }
+
+.xop-paste-h { margin-bottom: clamp(32px, 4vw, 56px); }
+.xop-get { display: inline-flex; align-items: center; gap: 4px; margin: 22px 0 0; font-size: 14px; color: var(--soft); }
+.xop-get i { width: 8px; height: 1.1em; background: var(--ink); animation: xop-blink 1.1s steps(1) infinite; }
+@keyframes xop-blink { 50% { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .xop-beam, .xop-get i, .xop-watch { animation: none; opacity: 0; }
+  .xop-watch { opacity: 1; }
+  .xop-get i { opacity: 1; }
+  .xop-ring .xop-arc { animation: none; stroke-dashoffset: 0; }
+}
+
+@media (max-width: 900px) {
+  .xop-top { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'repo' 'h1' 'sub' 'acts'; }
+  .xop-h1 { white-space: normal; font-size: clamp(3.4rem, 17vw, 5.4rem); }
+  .xop-loop { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'ring' 'git' 'live' 'try' 'log'; padding: 12px; border-radius: 22px; }
+  .xop-ring { width: 150px; justify-self: center; }
+  .xop-side li { font-size: 14px; }
+  .xop-log { height: 200px; font-size: 13px; }
+  .xop-log li { white-space: normal; }
+  .xop-deck-grid { grid-template-columns: minmax(0, 1fr); }
+  .xop-cards { min-height: 420px; }
+  .xop-card p { font-size: 15px; }
+}

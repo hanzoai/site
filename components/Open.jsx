@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { DAYS } from '../lib/commits';
-import { EASE, Head, Arrow, Count, Rise, useTilt } from './ui';
+import { EASE, Head, Arrow, Count } from './ui';
 import C from '../content';
 
 const TILES = [
@@ -54,7 +54,7 @@ function Calendar() {
   const h = hot !== null ? DAYS[hot] : null;
   const hc = hot !== null ? Math.floor((hot + LEAD) / 7) : 0, hr = hot !== null ? (hot + LEAD) % 7 : 0;
   return (
-    <Rise className="x-cal">
+    <div className="x-cal">
       <p className="x-race-k">Commits a day</p>
       <div className="x-cal-months" aria-hidden="true">{MONTHS.map(([m, c]) => <span key={m + c} style={{ gridColumn: c + 1 }}>{m}</span>)}</div>
       <div
@@ -93,24 +93,14 @@ function Calendar() {
         <span aria-live="polite">{h ? `${h.label} · ${h.c.toLocaleString('en-US')} commits across ${h.r.toLocaleString('en-US')} repositories` : 'Commits a day, from Nov 7, 2025 to Nov 6, 2026'}</span>
         <span className="x-cal-key">Less <i className="l0" /><i className="l1" /><i className="l2" /><i className="l3" /><i className="l4" /> More</span>
       </div>
-    </Rise>
+    </div>
   );
 }
 
 function Tile({ t, i }) {
   const [label, n, sub, href, spark] = t;
-  const { rx, ry, glow, on } = useTilt(5, 'rgba(0,0,0,.05)');
   return (
-    <motion.a
-      href={href}
-      className="x-tile"
-      {...on}
-      style={{ rotateX: rx, rotateY: ry }}
-      initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.4 }}
-      transition={{ duration: 0.9, ease: EASE, delay: i * 0.06 }}
-      whileTap={{ scale: 0.98 }}
-    >
-      <motion.span className="x-mglow" style={{ background: glow }} aria-hidden="true" />
+    <motion.a href={href} className="x-tile" whileTap={{ scale: 0.98 }}>
       <span className="x-tile-k">{label}</span>
       <Count className="x-tile-n" to={n} duration={2} delay={i * 0.06} />
       <span className="x-tile-s">{sub}</span>
@@ -148,11 +138,9 @@ function Rail() {
   );
 }
 
-function Way({ w, i }) {
-  const { glow, on } = useTilt(0, 'rgba(255,255,255,.12)');
+function Way({ w }) {
   return (
-    <motion.a href={w[3]} className="x-way" {...on} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: EASE, delay: i * 0.08 }} whileHover={{ y: -4 }} whileTap={{ scale: 0.985 }}>
-      <motion.span className="x-mglow" style={{ background: glow }} aria-hidden="true" />
+    <motion.a href={w[3]} className="x-way" whileHover={{ y: -4 }} whileTap={{ scale: 0.985 }}>
       <b>{w[0]}</b>
       <span>{w[1]}</span>
       <em>{w[2]} →</em>
@@ -171,7 +159,7 @@ export default function Open() {
       <Rail />
       <div className="x-wrap">
         <div className="x-row-links"><Arrow href="/open-source">Explore every repository</Arrow></div>
-        <div className="x-ways">{WAYS.map((w, i) => <Way key={w[0]} w={w} i={i} />)}</div>
+        <div className="x-ways">{WAYS.map((w) => <Way key={w[0]} w={w} />)}</div>
         <div className="x-row-links">
           <Arrow href="https://git.hanzo.ai/explore/repos">Explore the forge</Arrow>
           <Arrow href="/grants">OSS &amp; research credit grants</Arrow>

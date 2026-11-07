@@ -39,47 +39,78 @@ export default function Nav({ headerRef }) {
   const [sheet, setSheet] = useState(false);
   const [acc, setAcc] = useState(null);
   const timer = useRef(0);
+  const openedAt = useRef({ name: null, t: 0 });
   const btns = useRef({});
   const path = usePathname();
 
   const show = useCallback((name) => {
-    clearTimeout(timer.current);
+    clearTimeout(timer.current); timer.current = 0;
+    openedAt.current = { name, t: performance.now() };
     setOpen((cur) => { if (cur && name && cur !== name) setDir(MENUS.indexOf(name) > MENUS.indexOf(cur) ? 1 : -1); return name; });
   }, []);
-  const later = useCallback(() => { clearTimeout(timer.current); timer.current = setTimeout(() => setOpen(null), 160); }, []);
-  const close = useCallback(() => { clearTimeout(timer.current); setOpen(null); setSheet(false); }, []);
+  const later = useCallback(() => { clearTimeout(timer.current); timer.current = setTimeout(() => { timer.current = 0; setOpen(null); }, 600); }, []);
+  const close = useCallback(() => { clearTimeout(timer.current); timer.current = 0; setOpen(null); setSheet(false); }, []);
 
   useEffect(close, [path, close]); // a new page closes every menu
 
-  // wire Hanzo's own header buttons
+  // wire Hanzo's own header buttons. Hover intent is decided by WHERE the pointer is, not by enter/leave events:
+  // while a menu is open it stays open as long as the pointer is over the header, the panel, or the corridor between
+  // the heading it opened from and the panel; it closes 600 ms after the pointer has truly left. Switching to another
+  // heading needs the pointer to rest on it (160 ms), so a diagonal trip down to a link never flips the menu.
+  const openRef = useRef(null);
+  useEffect(() => { openRef.current = open; }, [open]);
   useEffect(() => {
     const h = headerRef.current?.querySelector('header');
     if (!h) return;
     const offs = [];
-    const on = (el, ev, fn) => { el.addEventListener(ev, fn); offs.push(() => el.removeEventListener(ev, fn)); };
+    const on = (el, ev, fn, o) => { el.addEventListener(ev, fn, o); offs.push(() => el.removeEventListener(ev, fn, o)); };
+    let rest = 0, origin = null;
+    const nameOf = (b) => (b.getAttribute('aria-label') === 'Company' ? 'Company' : b.textContent.trim());
     h.querySelectorAll('button').forEach((b) => {
-      const name = b.getAttribute('aria-label') === 'Company' ? 'Company' : b.textContent.trim();
+      const name = nameOf(b);
       if (!NAV[name]) return;
       btns.current[name] = b;
       b.setAttribute('aria-haspopup', 'true');
       b.setAttribute('aria-expanded', 'false');
       b.setAttribute('aria-controls', 'x-nav-panel');
-      let hover = 0;
-      on(b, 'pointerenter', (e) => { if (e.pointerType === 'mouse' && innerWidth > 900) hover = setTimeout(() => show(name), 70); });
-      on(b, 'pointerleave', () => { clearTimeout(hover); });
+      on(b, 'pointerenter', (e) => {
+        if (e.pointerType !== 'mouse' || innerWidth <= 900) return;
+        clearTimeout(rest);
+        const cur = openRef.current;
+        rest = setTimeout(() => { if (b.matches(':hover')) { origin = b.getBoundingClientRect(); show(name); } }, cur && cur !== name ? 160 : 70);
+      });
+      on(b, 'pointerleave', () => clearTimeout(rest));
       on(b, 'click', (e) => {
         e.preventDefault();
         if (innerWidth <= 900) { setSheet((s) => !s); return; } // on phones the chevron opens the sheet
-        setOpen((cur) => (cur === name ? null : (cur && setDir(MENUS.indexOf(name) > MENUS.indexOf(cur) ? 1 : -1), name)));
+        // a click right after hover opened the menu keeps it open (hover-then-click must not close it)
+        const fresh = openedAt.current.name === name && performance.now() - openedAt.current.t < 900;
+        origin = b.getBoundingClientRect();
+        setOpen((cur) => (cur === name && !fresh ? null : (cur && cur !== name && setDir(MENUS.indexOf(name) > MENUS.indexOf(cur) ? 1 : -1), name)));
+        openedAt.current = { name, t: 0 };
       });
     });
-    on(h, 'pointerleave', (e) => { if (e.pointerType === 'mouse') later(); });
-    on(h, 'pointerenter', () => clearTimeout(timer.current));
-    const key = (e) => { if (e.key === 'Escape') { const b = btns.current[open]; close(); b?.focus(); } };
-    addEventListener('keydown', key);
-    offs.push(() => removeEventListener('keydown', key));
-    return () => offs.forEach((f) => f());
-  }, [headerRef, show, later, close, open]);
+    // inside = header, panel, or the funnel from the heading down to the panel's full width
+    const inside = (x, y) => {
+      const hr = h.getBoundingClientRect();
+      if (y >= hr.top && y <= hr.bottom + 2) return true;
+      const p = document.getElementById('x-nav-panel');
+      if (!p) return false;
+      const pr = p.getBoundingClientRect();
+      if (x >= pr.left && x <= pr.right && y >= pr.top - 2 && y <= pr.bottom + 24) return true;
+      if (origin && y > origin.top && y < pr.top + 40) { const k = (y - origin.bottom) / Math.max(1, pr.top - origin.bottom); return x > origin.left - k * origin.left - 40 && x < origin.right + k * (pr.right - origin.right) + 40; }
+      return false;
+    };
+    on(window, 'pointermove', (e) => {
+      if (e.pointerType !== 'mouse' || !openRef.current) return;
+      if (inside(e.clientX, e.clientY)) { clearTimeout(timer.current); timer.current = 0; }
+      else if (!timer.current) timer.current = setTimeout(() => { timer.current = 0; setOpen(null); }, 600);
+    }, { passive: true });
+    on(document.documentElement, 'pointerleave', () => { if (openRef.current) later(); }); // pointer left the window
+    const key = (e) => { if (e.key === 'Escape' && openRef.current) { const b = btns.current[openRef.current]; close(); b?.focus(); } };
+    on(window, 'keydown', key);
+    return () => { clearTimeout(rest); offs.forEach((f) => f()); };
+  }, [headerRef, show, later, close]);
 
   useEffect(() => { Object.entries(btns.current).forEach(([n, b]) => b.setAttribute('aria-expanded', String(open === n || (sheet && n === 'Company')))); }, [open, sheet]);
   useEffect(() => {
@@ -94,21 +125,20 @@ export default function Nav({ headerRef }) {
       <AnimatePresence>
         {open && (
           <>
-            <motion.div key="scrim" className="x-nav-scrim" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} onPointerEnter={later} onClick={close} aria-hidden="true" />
+            <motion.div key="scrim" className="x-nav-scrim" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} onClick={close} aria-hidden="true" />
             <motion.div
               key="panel"
               id="x-nav-panel"
               className="x-nav-panel"
               role="region"
               aria-label={open + ' menu'}
-              onPointerEnter={() => clearTimeout(timer.current)}
-              onPointerLeave={later}
-              initial={{ clipPath: 'inset(0 0 100% 0)' }}
-              animate={{ clipPath: 'inset(0 0 0% 0)' }}
-              exit={{ clipPath: 'inset(0 0 100% 0)', transition: { duration: 0.28, ease: [0.7, 0, 0.84, 0] } }}
-              transition={{ duration: 0.5, ease: EASE }}
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6, transition: { duration: 0.22, ease: [0.7, 0, 0.84, 0] } }}
+              transition={{ duration: 0.35, ease: EASE }}
               layout
             >
+              <span className="x-nav-bridge" aria-hidden="true" />
               <AnimatePresence mode="popLayout" initial={false} custom={dir}>
                 <motion.div
                   key={open}

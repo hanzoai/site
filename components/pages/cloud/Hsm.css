@@ -1,0 +1,67 @@
+/* ---------- hsm (hs-) ---------- */
+.hs .cf-hero { background: radial-gradient(700px 480px at 72% 50%, #14141a, #050506 70%); }
+.hs .cf-lede { max-width: 50ch; }
+.hs-sign { display: grid; grid-template-columns: minmax(0, 4fr) minmax(40px, 2fr) minmax(0, 5fr); align-items: center; min-height: 440px; }
+.hs-proc { display: flex; flex-direction: column; gap: 8px; padding: 20px; border-radius: 22px; border: 1px solid rgba(255, 255, 255, .1); background: #0d0d10; }
+.hs-k { margin: 0 0 6px; font: 500 12px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: #86868b; }
+.hs-chip { padding: 12px 14px; border-radius: 12px; background: #19191d; font: 500 14px/1 var(--mono); color: #d1d1d6; }
+.hs-chip.sig { background: #f5f5f7; color: #0a0a0a; }
+.hs-pipe { position: relative; height: 40px; overflow: hidden; }
+.hs-pipe::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; border-top: 1px dashed rgba(255, 255, 255, .2); }
+.hs-pipe i { position: absolute; left: 0; width: 100%; height: 3px; border-radius: 3px; }
+.hs-pipe i.in { top: 12px; background: linear-gradient(90deg, transparent, #8ab4ff); }
+.hs-pipe i.out { bottom: 12px; background: linear-gradient(270deg, transparent, #30d158); }
+.hs-mod { display: flex; flex-direction: column; gap: 12px; }
+.hs-bound { position: relative; aspect-ratio: 1.15; border-radius: 28px; border: 1.5px solid rgba(255, 255, 255, .5); background: repeating-linear-gradient(135deg, #0d0d10 0 10px, #111115 10px 20px); display: grid; place-content: center; justify-items: center; gap: 14px; box-shadow: inset 0 0 60px rgba(48, 209, 88, .08); }
+.hs-key { display: grid; place-items: center; width: 84px; height: 84px; border-radius: 50%; background: rgba(48, 209, 88, .12); color: #30d158; animation: hs-glow 2.6s ease-in-out infinite; }
+.hs-key svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+@keyframes hs-glow { 50% { box-shadow: 0 0 0 14px rgba(48, 209, 88, .06), 0 0 40px rgba(48, 209, 88, .3); } }
+.hs-bound p { margin: 0; font: 500 13px/1 var(--mono); color: #a1a1a6; }
+.hs-names { height: 44px; display: grid; place-items: center; border-radius: 12px; background: #f5f5f7; color: #0a0a0a; overflow: hidden; }
+.hs-names p { margin: 0; font: 600 14px/1 var(--mono); }
+
+/* what it is */
+.hs-what-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
+.hs-draw { position: sticky; top: 110px; }
+.hs-draw-k { margin: 0 0 14px; font: 500 12.5px/1 var(--mono); color: var(--faint); }
+.hs-box { position: relative; aspect-ratio: 1; border-radius: 30px; background: var(--card); overflow: hidden; }
+.hs-box-in { position: absolute; inset: 0; display: grid; place-items: center; }
+.hs-in { position: absolute; inset: 22%; display: grid; place-items: center; text-align: center; padding: 16px; border-radius: 22px; background: #0b0b0c; color: #30d158; font: 500 clamp(14px, 1.3vw, 17px)/1.3 var(--mono); box-shadow: 0 30px 60px -30px rgba(0, 0, 0, .5); }
+.hs-in::before { content: ''; position: absolute; inset: -12px; border-radius: 30px; border: 1.5px dashed rgba(0, 0, 0, .25); }
+.hs-out { position: absolute; top: 7%; left: 8%; right: 8%; text-align: center; font: 500 14px/1.3 var(--mono); color: var(--soft); }
+.hs-what-h { margin: 0 0 28px; font-size: clamp(2.4rem, 4.6vw, 4.3rem); font-weight: 560; letter-spacing: -.042em; line-height: 1; }
+.hs-facts { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.hs-facts li { border-bottom: 1px solid var(--line); }
+.hs-facts button { width: 100%; display: flex; flex-direction: column; gap: 6px; padding: 22px 0 10px; border: 0; background: none; text-align: left; cursor: pointer; color: var(--soft); }
+.hs-facts li.on button { color: var(--ink); }
+.hs-n { font: 500 12.5px/1 var(--mono); color: var(--faint); }
+.hs-t { font-size: clamp(1.25rem, 1.8vw, 1.6rem); font-weight: 560; letter-spacing: -.025em; line-height: 1.15; }
+.hs-facts p { margin: 0 0 22px; max-width: 60ch; font-size: 16px; line-height: 1.6; color: var(--soft); transition: color .3s; }
+.hs-facts li:not(.on) p { color: var(--faint); }
+.hs-paste { background: var(--card); }
+.hs-start { margin: 0 0 clamp(36px, 4.5vw, 64px); font-size: clamp(2.2rem, 4.4vw, 4rem); font-weight: 560; letter-spacing: -.04em; line-height: 1; }
+
+@media (max-width: 900px) {
+  .hs-sign { grid-template-columns: minmax(0, 1fr); gap: 0; min-height: 0; }
+  .hs-pipe { height: 48px; width: 3px; margin: 0 auto; }
+  .hs-pipe::before { left: 50%; right: auto; top: 0; bottom: 0; border-top: 0; border-left: 1px dashed rgba(255, 255, 255, .2); }
+  .hs-pipe i { display: none; }
+  .hs-bound { aspect-ratio: 1.6; }
+  .hs-what-grid { grid-template-columns: minmax(0, 1fr); }
+  .hs-draw { position: relative; top: 0; }
+  .hs-box { aspect-ratio: 1.5; }
+}
+@media (prefers-reduced-motion: reduce) { .hs-key { animation: none; } }
+
+/* pick your module */
+.hs-pick-h { margin: 0 0 28px; font-size: clamp(2.2rem, 4.2vw, 3.8rem); font-weight: 560; letter-spacing: -.04em; line-height: 1; }
+.hs-pick-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+.hs-pick-tabs button { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: inherit; font: 500 14.5px/1 var(--sans); cursor: pointer; transition: background .3s var(--ease), color .3s var(--ease); }
+.hs-pick-tabs button[aria-selected='true'] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.hs-pick-tabs button:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.hs-pick-p { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 22px 0 0; }
+.hs-pick-p div { padding: clamp(22px, 2.6vw, 32px); border-radius: 24px; background: var(--card); }
+.hs-pick-p dt { font: 500 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
+.hs-pick-p dd { margin: 14px 0 0; font-size: 17px; line-height: 1.5; }
+.hs-pick-f { margin: 20px 0 0; max-width: 60ch; font-size: 15px; line-height: 1.5; color: var(--soft); }
+@media (max-width: 900px) { .hs-pick-p { grid-template-columns: minmax(0, 1fr); } }
