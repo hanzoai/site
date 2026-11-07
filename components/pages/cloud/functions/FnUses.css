@@ -1,7 +1,8 @@
 /* FnUses (prefix fn-uc / fn-uo): see FnUses.jsx. Deck values only: ink, greys, white; flat fills, no outline plus
    shadow; radii 6/8/12/16/24/999; motion is transform and opacity only; loops run only while the case is in front and
    on screen. With JS off the four cases simply stand stacked with their points. */
-.fn-uc { position: relative; padding: clamp(44px, 6vw, 72px) 0 clamp(72px, 8vw, 116px); }
+/* no top padding: the pinned stage centres itself in the screen, which is already the section's breathing room */
+.fn-uc { position: relative; padding: 0 0 clamp(72px, 8vw, 116px); }
 .fn-uc-g { align-items: center; row-gap: 27px; }
 .fn-uc-l { grid-column: 1 / span 5; display: flex; flex-direction: column; gap: 44px; }
 .fn-uc-h { display: flex; flex-direction: column; gap: 17px; }
@@ -122,7 +123,9 @@
 .fn-uc-sheet::backdrop { background: transparent; }
 .fn-uc-sh { position: absolute; inset: 0; transform-origin: 0 0; background: #f5f5f5; overflow: auto; overscroll-behavior: contain; outline: none; }
 /* the drawings read larger where there is room: in the tile on desktop, and larger again in the sheet */
-@media (min-width: 900px) { .fn-uc-obj .fn-uo { zoom: 1.15; } .fn-uc-sh-obj .fn-uo { zoom: 1.4; } }
+@media (min-width: 900px) { .fn-uc-obj .fn-uo { zoom: 1.15; } .fn-uc-sh-obj .fn-uo { zoom: 1.4; } .fn-uc-sh-obj :is(.fn-uo-api, .fn-uo-stream) { zoom: 1.05; } .fn-uc-sh-obj .fn-uo-gpu { zoom: .95; } }
+/* a drawing never spills out of its card */
+.fn-uc-sh-obj, .fn-uc-obj { min-width: 0; overflow: hidden; }
 .fn-uc-sh-in { padding-top: 17px; padding-bottom: 72px; }
 .fn-uc-sh-bar { display: flex; align-items: center; justify-content: space-between; gap: 17px; min-height: 72px; }
 .fn-uc-sh-n { font: 500 13px/1 var(--mono); letter-spacing: .1em; color: #525252; }
@@ -166,10 +169,15 @@
   .fn-uo { gap: 8px; }
   .fn-uo-pill { min-height: 32px; padding: 0 10px; font-size: 13px; }
   .fn-uo-box { padding: 10px; font-size: 13px; }
-  .fn-uo-api, .fn-uo-gpu { grid-template-columns: auto minmax(12px, 1fr) auto; }
-  .fn-uo-api > .fn-uo-lane:nth-of-type(2), .fn-uo-api .fn-uo-pods, .fn-uo-gpu > .fn-uo-lane:nth-of-type(2), .fn-uo-gpu > .fn-uo-pill { display: none; }
-  .fn-uo-stream { grid-template-columns: auto minmax(24px, 1fr) auto; }
-  .fn-uo-bars { display: none; }
+  /* phones: every drawing stacks top to bottom and keeps all of its parts; the lanes turn upright (the dots still travel
+     them, now downward) */
+  .fn-uo-api, .fn-uo-gpu, .fn-uo-stream { grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 6px; }
+  .fn-uo-api .fn-uo-col, .fn-uo-gpu .fn-uo-col { flex-direction: row; }
+  .fn-uo-lane, .fn-uo-lane.wide { width: 40px; min-width: 0; margin: 19px 0; transform: rotate(90deg); }
+  .fn-uo-box { flex-direction: row; gap: 10px; }
+  .fn-uo-pods { grid-template-columns: repeat(6, 18px); gap: 5px; }
+  .fn-uo-bars { height: 40px; }
+  .fn-uo-chip { flex-direction: row; padding: 10px 14px; }
   .fn-uo-cells { grid-template-columns: repeat(4, 10px); }
   .fn-uo-clock { width: 96px; height: 96px; }
   .fn-uo-hand { top: 13px; height: 35px; }
@@ -179,7 +187,6 @@
   .fn-uc-sh-t, .fn-uc-sh-obj { grid-column: 1; }
   .fn-uc-sh-h { font-size: 32px; }
   .fn-uc-sh-obj { min-height: 240px; padding: 17px; border-radius: 20px; }
-  .fn-uc-sh-obj .fn-uo-api, .fn-uc-sh-obj .fn-uo-gpu { grid-template-columns: auto minmax(12px, 1fr) auto; }
 }
 @media (prefers-reduced-motion: reduce) {
   .fn-uc-card, .fn-uc-n, .fn-uc-lt, .fn-uo, .fn-uc-list button::before { transition: none !important; }

@@ -68,7 +68,7 @@
 .xhp-step-n { font-size: 12px; color: var(--quiet); transition: color var(--d-fast) var(--e-out); }
 .xhp-flow li[data-on] .xhp-step-n { color: var(--ink); }
 .xhp-flow li button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-.xhp-flow li button:active, .xhp-seg button:active, .xhp-try-b:active, .xhp-flow-tab:active { transform: scale(.97); transition-duration: var(--d-press); }
+.xhp-flow li button:active, .xhp-seg button:active, .xhp-try-b:active, .xhp-flow-tab:active { transform: scale(.98); transition-duration: var(--d-press); }
 
 /* lists: what changes (ink dashes) and what does not (bold lead | answer) */
 .xhp-ul { list-style: none; margin: 0 0 17px; padding: 0; max-width: 62ch; border-bottom: 1px solid var(--hair); }
@@ -88,11 +88,11 @@
 .xhp-panel { border-radius: 24px; background: var(--tile); overflow: hidden; }
 .xhp-panel-bar { display: flex; align-items: center; gap: 6px; padding: 10px; }
 .xhp-pause { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: none; color: var(--ink); cursor: pointer; transition: background-color var(--d-fast) var(--e-out), transform var(--d-fast) var(--e-out); }
-.xhp-pause:active { transform: scale(.97); transition-duration: var(--d-press); }
+.xhp-pause:active { transform: scale(.98); transition-duration: var(--d-press); }
 .xhp-pause:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
 .xhp-pause[aria-pressed='true'] { background: var(--tile-2); }
 .xhp-seg { display: inline-flex; gap: 2px; padding: 4px; border-radius: 999px; background: var(--tile-2); max-width: 100%; }
-.xhp-seg button { min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: none; color: var(--muted); font: 500 14px/1 var(--sans); cursor: pointer; white-space: nowrap; transition: background-color var(--d-fast) var(--e-out), color var(--d-fast) var(--e-out), transform var(--d-fast) var(--e-out); }
+.xhp-seg button { min-height: 40px; padding: 0 12px; border: 0; border-radius: 999px; background: none; color: var(--muted); font: 500 14px/1 var(--sans); cursor: pointer; white-space: nowrap; transition: background-color var(--d-fast) var(--e-out), color var(--d-fast) var(--e-out), transform var(--d-fast) var(--e-out); }
 .xhp-seg button[aria-checked='true'] { background: #fff; color: var(--ink); }
 .xhp-seg button:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
 .xhp-stage { position: relative; height: clamp(240px, min(24vw, 32svh), 320px); overflow: hidden; touch-action: pan-y; }
@@ -113,8 +113,10 @@
 .xhp-item { display: block; padding: 6px 8px; border-radius: 8px; font-weight: 500; }
 .xhp-screen[data-level='1'] .xhp-menu { opacity: 1; transform: none; }
 .xhp-screen[data-level='1'] .xhp-menu .xhp-item { background: var(--tile); }
-.xhp-set { display: grid; grid-template-columns: 38% 1fr; grid-template-rows: auto 1fr; opacity: 0; transform: translateX(24px); transition: opacity var(--d-base) var(--e-em), transform var(--d-slow) var(--e-em); pointer-events: none; }
-.xhp-screen[data-level='2'] .xhp-set, .xhp-screen[data-level='3'] .xhp-set { opacity: 1; transform: none; pointer-events: auto; }
+/* the next screen slides in opaque over the last one (300ms ease-emphasis): a slide, never a cross-fade, so two frames
+   never show through each other */
+.xhp-set { display: grid; grid-template-columns: 38% 1fr; grid-template-rows: auto 1fr; transform: translateX(calc(100% + 12px)); visibility: hidden; transition: transform var(--d-base) var(--e-em), visibility 0s linear var(--d-base); pointer-events: none; }
+.xhp-screen[data-level='2'] .xhp-set, .xhp-screen[data-level='3'] .xhp-set { transform: none; visibility: visible; transition: transform var(--d-base) var(--e-em), visibility 0s; pointer-events: auto; }
 .xhp-set-h { grid-column: 1 / -1; margin: 0; padding: 10px 12px; border-bottom: 1px solid var(--hair); font-size: 14px; font-weight: 606; }
 .xhp-nav { display: flex; flex-direction: column; gap: 8px; padding: 10px; border-right: 1px solid var(--hair); }
 .xhp-nav i { width: 64%; margin: 4px 8px; }
@@ -128,14 +130,27 @@
 .xhp-row-t { font-weight: 500; line-height: 1.3; }
 /* 01's scene: the setting itself, its row lit */
 .xhp-row { border-radius: 6px; transition: background-color var(--d-base) var(--e-out); }
-.xhp-row[data-on] { background: var(--tile); box-shadow: -8px 0 0 var(--tile), 8px 0 0 var(--tile); }
+.xhp-row[data-on] { background: var(--tile); box-shadow: -8px 0 0 var(--tile), 8px 0 0 var(--tile); border-color: transparent; }
 .xhp-skel { display: flex; justify-content: space-between; gap: 17px; }
 .xhp-skel i:first-child { width: 58%; } .xhp-skel i:last-child { width: 18%; }
 .xhp-sw { flex: none; position: relative; display: inline-block; width: 44px; height: 26px; padding: 0; border: 0; border-radius: 999px; background: var(--track); cursor: pointer; transition: background-color var(--d-base) var(--e-out); }
 .xhp-sw i { position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: transform var(--d-base) var(--e-em); }
 .xhp-sw[data-on] { background: var(--ink); }
 .xhp-sw[data-on] i { transform: translateX(18px); }
-.xhp-after { position: absolute; inset: 0 10px; width: calc(100% - 20px); height: 100%; padding: 17px; border-radius: 16px; background: #fff; box-shadow: 0 0 0 1px var(--hair); color: var(--ink); animation: xhp-in var(--d-base) var(--e-em); }
+.xhp-after { position: absolute; inset: 0 10px; width: calc(100% - 20px); height: 100%; padding: 17px; border-radius: 16px; background: #fff; box-shadow: 0 0 0 1px var(--hair); color: var(--ink); }
+/* 04: the ledger of what the switch leaves alone, a cut over the screen (opaque, never a cross-fade) */
+.xhp-ledger { position: absolute; inset: 0 10px; display: flex; flex-direction: column; gap: 6px; padding: 14px 17px; border-radius: 16px; background: #fff; box-shadow: 0 0 0 1px var(--hair); color: var(--ink); font-size: 14px; overflow: hidden; }
+.xhp-ledger-h { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--ink); }
+.xhp-ledger ul { list-style: none; margin: 0; padding: 0; display: grid; }
+.xhp-ledger li { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 40px; padding: 0 8px; margin: 0 -8px; border-bottom: 1px solid var(--hair); border-radius: 6px; color: var(--muted); transition: background-color var(--d-base) var(--e-out), color var(--d-base) var(--e-out); }
+.xhp-ledger li svg { flex: none; color: var(--quiet); transition: color var(--d-base) var(--e-out); }
+.xhp-ledger li[data-on] { background: var(--tile); color: var(--ink); border-color: transparent; }
+.xhp-ledger li[data-on] svg { color: var(--ink); }
+.xhp-ledger .xhp-sw { cursor: default; }
+.xhp-ledger-mini { position: relative; inset: auto; }
+/* 01 on a phone: the switch alone, turning on once (the settings screen is drawn only in the demo at the top) */
+.xhp-chip { display: flex; align-items: center; justify-content: space-between; gap: 17px; min-height: 64px; padding: 0 17px; border-radius: 16px; background: var(--tile); font-size: 16px; color: var(--ink); }
+.xhp-chip .xhp-sw { cursor: default; }
 .xhp-skel { padding: 4px 6px; margin: 0 -6px; border-radius: 6px; transition: background-color var(--d-base) var(--e-out); }
 .xhp-skel[data-on] { background: var(--tile); }
 .xhp-skel i { transition: background-color var(--d-base) var(--e-out); }
@@ -165,20 +180,26 @@
 /* two lines are always reserved, so a wrapping step never moves the card */
 .xhp-cap-t { flex: 1; min-width: 0; display: flex; align-items: center; min-height: 2.9em; line-height: 1.45; animation: xhp-in var(--d-base) var(--e-em); }
 @keyframes xhp-in { from { opacity: 0; transform: translateY(6px); } }
+/* the walk's last step, shown instead of the current one only by the reduced-motion rule below */
+.xhp-cap-last { display: none !important; }
 .xhp-cap-dots { display: flex; gap: 4px; }
 .xhp-cap-dots i { width: 16px; height: 2px; border-radius: 2px; background: var(--track); transition: background-color var(--d-base) var(--e-out); }
 .xhp-cap-dots i[data-on] { background: var(--ink); }
 .xhp-try { padding: 10px 17px 17px; border-top: 1px solid var(--hair); }
 .xhp-try-b { display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0; border: 0; background: none; color: var(--ink); font: 606 16px/1.3 var(--sans); text-align: left; cursor: pointer; transition: transform var(--d-fast) var(--e-out); }
 .xhp-try-b:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; border-radius: 8px; }
-.xhp-means { min-height: 6.2em; margin-top: 6px; font-size: 14px; line-height: 1.5; color: var(--muted); }
+.xhp-means { margin-top: 6px; font-size: 14px; line-height: 1.5; color: var(--muted); }
 .xhp-means p { margin: 0; }
+/* Hanzo's on/off pair, always both, at one height; the half that holds now is in ink */
+.xhp-pair span { color: var(--quiet); transition: color var(--d-base) var(--e-out); }
+.xhp-pair span[data-cur] { color: var(--ink); }
+.xhp-saved:not([data-show]) { visibility: hidden; }
 .xhp-means-on, .xhp-means ul { animation: xhp-in var(--d-base) var(--e-em); }
 .xhp-means-k { margin: 0 0 6px !important; font: 500 12px/1.4 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
 .xhp-means ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 .xhp-means li { position: relative; padding-left: 17px; }
 .xhp-means li::before { content: ''; position: absolute; left: 0; top: .72em; width: 8px; height: 1px; background: var(--ink); }
-.xhp-saved { display: flex; align-items: center; gap: 8px; margin: 0 0 10px !important; color: var(--ink); font-weight: 500; }
+.xhp-saved { display: flex; align-items: center; gap: 8px; margin: 10px 0 0 !important; color: var(--ink); font-weight: 500; }
 .xhp-saved .x-tick { flex: none; stroke: var(--ink); }
 
 /* the close: the page's own last section, set as a quiet room that runs into the footer */
@@ -190,7 +211,7 @@
 /* the next step: back to the help center, an ink row whose arrow travels on hover */
 .xhp-next { grid-column: 6 / span 8; display: inline-flex; align-items: center; justify-content: space-between; gap: 17px; max-width: 44ch; min-height: 56px; margin-top: 27px; padding: 0 20px; border-radius: 999px; background: #fff; color: var(--ink); font-size: 16px; font-weight: 500; text-decoration: none; transition: background-color var(--d-fast) var(--e-out), transform var(--d-fast) var(--e-out); }
 .xhp-next svg { transition: transform var(--d-base) var(--e-em); }
-.xhp-next:active { transform: scale(.97); transition-duration: var(--d-press); }
+.xhp-next:active { transform: scale(.98); transition-duration: var(--d-press); }
 .xhp-next:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 /* the phone's inline stages for 03 and 04 (the panel is beside the text only on wide screens) */
 .xhp-mini { display: none; }
@@ -198,12 +219,6 @@
 .xhp-mini-pane { flex-direction: column; gap: 10px; padding: 12px 14px; border-radius: 16px; background: #fff; box-shadow: 0 0 0 1px var(--hair); font-size: 13px; color: var(--ink); }
 .xhp-mini-pane .xhp-row { flex-direction: row; }
 .xhp-mini-pane .xhp-sw { cursor: default; }
-/* 05 on a phone: three pages that lay themselves down once the section arrives */
-.xhp-pages { display: none; width: 100%; max-width: 240px; height: auto; margin: 0 0 4px; }
-.xhp-page { opacity: 0; transform: translateY(12px); transition: opacity var(--d-slow) var(--e-em), transform var(--d-slow) var(--e-em); transition-delay: calc(var(--i, 0) * 90ms); }
-.xhp-page rect, .xhp-page path { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 900ms var(--e-io); transition-delay: calc(200ms + var(--i, 0) * 90ms); }
-.xhp-sec[data-seen] .xhp-page { opacity: 1; transform: none; }
-.xhp-sec[data-seen] .xhp-page rect, .xhp-sec[data-seen] .xhp-page path { stroke-dashoffset: 0; }
 
 @media (hover: hover) {
   .xhp-toc a:hover { background: var(--tile); }
@@ -221,6 +236,25 @@
   .xhp-flow li button:hover { color: var(--ink); background: #fff; }
   .xhp-seg button:hover:not([aria-checked='true']) { color: var(--ink); background: rgba(0, 0, 0, .05); }
   .xhp-pause:hover { background: var(--tile-2); }
+  /* the switch under the picture answers the pointer: its track darkens one step */
+  .xhp-try-b:hover .xhp-sw { background: #a3a3a3; }
+  .xhp-try-b:hover .xhp-sw[data-on] { background: #262626; }
+}
+/* until the page is live both platforms are drawn: wide screens show the web and desktop app, phones the phone's own,
+   so "On mobile" is chosen from the first paint and nothing flips when the scripts arrive */
+@media (min-width: 900px) {
+  .xhp[data-pre] .xhp-screen[data-pf='mobile'], .xhp[data-pre] .xhp-cap[data-pf='mobile'] { display: none; }
+}
+@media (max-width: 899px) {
+  .xhp[data-pre] .xhp-screen[data-pf='other'], .xhp[data-pre] .xhp-cap[data-pf='other'] { display: none; }
+  .xhp[data-pre] .xhp-seg button[data-pf='other'] { background: none; color: var(--muted); }
+  .xhp[data-pre] .xhp-seg button[data-pf='mobile'] { background: #fff; color: var(--ink); }
+  .xhp[data-pre] .xhp-flow[data-pf='other'] ol { display: none; }
+  .xhp[data-pre] .xhp-flow[data-pf='mobile'] ol { display: block; }
+  .xhp[data-pre] .xhp-flow[data-pf='other'] .xhp-flow-tab { background: none; color: var(--quiet); }
+  .xhp[data-pre] .xhp-flow[data-pf='mobile'] .xhp-flow-tab { background: #fff; color: var(--ink); }
+  .xhp[data-pre] .xhp-flow[data-pf='mobile'] li:first-child button { color: var(--ink); background: #fff; }
+  .xhp[data-pre] .xhp-flow[data-pf='mobile'] li:first-child .xhp-step-n { color: var(--ink); }
 }
 @media (max-width: 1199px) and (min-width: 900px) {
   .xhp-flows { grid-template-columns: minmax(0, 1fr); }
@@ -231,12 +265,15 @@
   /* the question, then the live panel, then the index and the document */
   .xhp-hero { display: contents; }
   .xhp-hero > *, .xhp-aside, .xhp-doc { grid-column: 1; grid-row: auto; }
-  .xhp-crumb { order: 0; } .xhp-h1 { order: 1; } .xhp-lede { order: 2; } .xhp-aside { order: 3; } .xhp-kick { order: 4; } .xhp-toc { order: 5; } .xhp-doc { order: 6; }
+  /* the topic line stays with the lede it belongs to, never stranded between the demo and the index */
+  .xhp-crumb { order: 0; } .xhp-h1 { order: 1; } .xhp-lede { order: 2; } .xhp-kick { order: 3; } .xhp-aside { order: 4; } .xhp-toc { order: 5; } .xhp-doc { order: 6; }
   .xhp-crumb ol { font-size: 13px; }
-  .xhp-crumb li[aria-current] span { padding: 0 0 6px; }
+  /* the h1 says the title right below, so the phone breadcrumb ends on the topic, with no trailing slash */
+  .xhp-crumb li[aria-current] { display: none; }
+  .xhp-crumb li:nth-last-child(2)::after { content: none; }
   .xhp-crumb li:not(:first-child) { min-height: 32px; } /* only the link needs the 44px target */
-  .xhp-aside { position: relative; top: auto; margin-top: 17px; max-height: none; overflow: visible; }
-  .xhp-kick { margin-top: 27px; }
+  .xhp-aside { position: relative; top: auto; margin-top: 27px; max-height: none; overflow: visible; }
+  .xhp-kick { margin-top: 10px; }
   /* the two platforms' steps: their headings become tabs, one list at a time */
   /* the longer platform takes the room it needs, the shorter one its own width, so neither label wraps */
   .xhp-flows { grid-template-columns: minmax(0, 1fr) auto !important; gap: 0 6px; padding: 6px; border-radius: 16px; background: var(--tile); }
@@ -253,25 +290,34 @@
   .xhp-end .xhp-h2, .xhp-end .xhp-p, .xhp-next { grid-column: 1; }
   .xhp-next { margin-top: 10px; }
   .xhp-mini { display: block; position: relative; height: 196px; margin: 0 0 27px; }
-  .xhp-mini-pane { display: flex; height: auto; }
+  .xhp-mini.xhp-mini-auto { height: auto; }
   .xhp-end .xhp-h2 { font-size: 26px; }
   .xhp-end .xhp-p { font-size: 17px; }
-  .xhp-ul.leads { margin-inline: 0; }
-  .xhp-ul.leads li { padding-inline: 0; }
+  /* phone: the rows' hairlines and their fill share one edge (the text column) */
+  .xhp-ul.leads { margin-inline: 0; max-width: none; background-position: 0 100%; background-size: 100% 1px; }
+  .xhp-ul.leads li { padding-inline: 0; border-radius: 0; background-position: 0 0; background-size: 100% 1px; }
+  .xhp-ul.leads li::after { left: 0; right: 0; }
   .xhp-h1 { margin-top: 10px; font-size: 32px; line-height: 1.05; }
   .xhp-lede { font-size: 17px; margin-top: 17px; }
   .xhp-toc { margin-top: 44px; }
   .xhp-panel { border-radius: 20px; }
   .xhp-seg { display: flex; flex: 1; min-width: 0; }
-  /* both tabs fit on one line: each takes its own width and the longer label gets the rest (never shortened) */
-  .xhp-seg button { flex: 1 1 auto; min-width: 0; min-height: 44px; padding: 0 10px; font-size: 13px; white-space: nowrap; }
-  /* the demo card stays near 60% of the screen: a shorter stage, and the switch's answer takes only the lines it needs */
-  .xhp-stage { height: 184px; }
+  /* both tabs fit on one line in Hanzo's full words: each takes its own width, tighter type and padding (never shortened) */
+  .xhp-seg button { flex: 1 1 auto; min-width: 0; min-height: 44px; padding: 0 8px; font-size: 13px; letter-spacing: -.01em; white-space: nowrap; }
+  /* the pause control sits in the stage's free corner (still first in the DOM), so the tabs have the bar's whole width */
+  .xhp-panel { position: relative; }
+  .xhp-pause { position: absolute; z-index: 6; left: 10px; top: 72px; background: var(--tile); }
+  .xhp-panel-bar { padding: 10px; }
+  /* the demo card stays near 60% of the screen; the handset is tall enough that its switch always shows whole */
+  .xhp-stage { height: 204px; }
+  .xhp-screen[data-device='phone'] .xhp-set-h { padding: 8px 10px; font-size: 13px; }
+  .xhp-screen[data-device='phone'] .xhp-pane { padding: 8px 10px; gap: 6px; }
+  .xhp-screen[data-device='phone'] .xhp-row { gap: 6px; padding: 6px 0; }
+  .xhp-screen[data-device='phone'] .xhp-row-t { font-size: 12px; line-height: 1.25; }
+  .xhp-screen[data-device='phone'] .xhp-pane-h { font-size: 13px; }
   .xhp-cap { min-height: 0; padding: 6px 14px; }
   .xhp-try { padding: 6px 14px 12px; }
-  .xhp-means { min-height: 4.5em; margin-top: 2px; }
-  .xhp-pages { display: block; }
-  .xhp-mini-what .xhp-row { margin-inline: 8px; }
+  .xhp-means { margin-top: 2px; font-size: 13px; }
   .xhp-set { grid-template-columns: 40% 1fr; }
   .xhp-sec { padding-top: 56px; }
   .xhp-doc { padding-bottom: 72px; }
@@ -281,10 +327,13 @@
 }
 @media (max-width: 359px) {
   .xhp-cap-t { min-height: 4.35em; } /* the narrowest phones: a step can take three lines */
-  /* the narrowest phones: the platform tabs take their own row under the pause control, so neither label wraps */
-  .xhp-panel-bar { flex-wrap: wrap; }
-  .xhp-seg { flex-basis: 100%; order: 2; }
-  .xhp-stage { height: 168px; }
+  /* the narrowest phones: Hanzo's two full labels still share one row, in tighter type and padding (never shortened);
+     pause stays in the stage's corner, never on a row of its own */
+  .xhp-panel-bar { padding: 8px 6px; }
+  .xhp-seg { gap: 0; padding: 3px; }
+  .xhp-seg button { padding: 0 6px; font-size: 12px; letter-spacing: -.02em; }
+  .xhp-pause { top: 70px; }
+  .xhp-stage { height: 196px; }
   .xhp-flow-tab { padding: 8px 8px; font-size: 12.5px; letter-spacing: -.01em; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -292,7 +341,16 @@
   .xhp-menu, .xhp-set, .xhp-pane, .xhp-pane > *, .xhp-sw, .xhp-sw i, .xhp-ul li::after { transition: none !important; }
   .xhp-ul li::after { transform: none; }
   .xhp-cap-t, .xhp-means-on, .xhp-means ul, .xhp-after, .xhp-h1-in { animation: none; }
-  .xhp-page { opacity: 1; transform: none; transition: none; }
-  .xhp-page rect, .xhp-page path { stroke-dashoffset: 0; transition: none; }
   .xhp-toc-go, .xhp-toc a { transition: none; }
+  /* at rest (nothing pressed yet) the walk shows its last screen, by CSS alone: the Privacy pane with the setting, the
+     caption on the last step, every dot on. The scripts never change state for this, so nothing flips at hydration. */
+  .xhp-panel[data-rest] .xhp-menu { opacity: 0; }
+  .xhp-panel[data-rest] .xhp-set { transform: none; visibility: visible; }
+  .xhp-panel[data-rest] .xhp-pane > * { opacity: 1; transform: none; }
+  .xhp-panel[data-rest] .xhp-screen[data-device='phone'] .xhp-pane { transform: none; }
+  .xhp-panel[data-rest] .xhp-nav .xhp-item { background: var(--tile); }
+  .xhp-panel[data-rest] .xhp-cap-now { display: none; }
+  .xhp-panel[data-rest] .xhp-cap-n.xhp-cap-last { display: inline !important; }
+  .xhp-panel[data-rest] .xhp-cap-t.xhp-cap-last { display: flex !important; }
+  .xhp-panel[data-rest] .xhp-cap-dots[data-walk] i { background: var(--ink); }
 }
