@@ -19,7 +19,9 @@
    part their strokes under the pointer (James's "strokes parting"), rows and tiles fill. State: the sheet rises.
    The one dark room enters as a rounded card and opens to full width (MASTER §3.1 rooms). Deck timings only: 150 ms hover, 300 ms state, 400 ms fills, 800 ms line art; no springs, no overshoot.
    Ink only: hierarchy is alpha steps of black and white. Every word is Hanzo's.
-   V2: 8/10 slice D: the h1 cut-in and the hexagram's draw run on CSS from first paint (arrival no longer waits for hydration); Sequence names stay whole down to 320px. */
+   V2: 8/10 slice D: the h1 cut-in and the hexagram's draw run on CSS from first paint (arrival no longer waits for hydration); Sequence names stay whole down to 320px.
+   Entrances (MOTION-MAP, philosophy/enter.js + enter.css, in order): typewriter (laws heading), venetian-type (premise),
+   fold-out (the 64's view), invert-flash (method ring), side-carousel (stack rows); each plays once, none scroll-linked. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { A, More } from '../kit';
@@ -32,6 +34,8 @@ import '../v2/ProofRhythm.css';
 import '../v2/DetailSheet.css';
 import { GROUPS, HEX, LENSES } from './philosophyData';
 import './Philosophy.css';
+import { useEnter } from './philosophy/enter';
+import './philosophy/enter.css';
 
 const TRI = { Heaven: [1, 1, 1], Lake: [1, 1, 0], Fire: [1, 0, 1], Thunder: [1, 0, 0], Wind: [0, 1, 1], Water: [0, 1, 0], Mountain: [0, 0, 1], Earth: [0, 0, 0] };
 const TRI_ORDER = Object.keys(TRI);
@@ -125,7 +129,7 @@ function Premise() {
     <section className="pf-sec xph-premise">
       <div className="pf-wrap">
         <div className="pf-grid xph-premise-top">
-          <MaskLines as="p" className="pf-moment xph-big" lines={['No intelligent system', 'remains fixed.']} />
+          <p className="pf-moment xph-big" data-enter="ven"><span className="xph-ven-l">No intelligent system</span> <span className="xph-ven-l">remains fixed.</span></p>
           <div className="xph-one" aria-hidden="true"><span className="xph-hl yang xph-one-l"><i /><i /></span></div>
         </div>
         <div className="pf-grid xph-premise-g">
@@ -229,9 +233,9 @@ function Laws() {
   return (
     <section className="pf-sec xph-laws" ref={ref} aria-labelledby="xph-laws-h">
       <div className="pf-wrap">
-        <div className="pf-grid xph-laws-top">
+        <div className="pf-grid xph-laws-top" data-enter="type">
           <div className="xph-laws-t">
-            <h2 className="pf-head xph-laws-h" id="xph-laws-h">Five operating laws</h2>
+            <h2 className="pf-head xph-laws-h" id="xph-laws-h"><span className="xph-type"><span className="xph-type-t">Five operating laws</span></span></h2>
             <p className="pf-mono xph-cap">The synthesis</p>
           </div>
           <p className="pf-mono xph-laws-hint" aria-hidden="true">Drag the line · {pad(at + 1)} / 05</p>
@@ -472,9 +476,11 @@ function Patterns() {
           <div className="xph-hints">{VIEWS.map((v, i) => <p key={v} className="pf-mono xph-hint" hidden={view !== v}>{HINTS[i]}</p>)}</div>
         </div>
         {/* all three views are in the page; the chosen one is shown */}
+        <div className="xph-fold" data-enter="fold">
         <div id="panel-sequence" role="tabpanel" aria-labelledby="tab-sequence" hidden={view !== 'Sequence'}><Sequence open={setSel} /></div>
         <div id="panel-matrix" role="tabpanel" aria-labelledby="tab-matrix" hidden={view !== 'Matrix'}><Matrix open={setSel} /></div>
         <div id="panel-lenses" role="tabpanel" aria-labelledby="tab-lenses" hidden={view !== 'Lenses'}><Lenses /></div>
+        </div>
       </div>
       <PatternSheet sel={sel} setSel={setSel} />
     </section>
@@ -503,7 +509,7 @@ function Method() {
         <div className="xph-method-l">
           <h2 className="pf-head">How we build</h2>
           <p className="pf-mono xph-cap">The method</p>
-          <div className="xph-ring" aria-hidden="true" style={{ '--at': at }}>
+          <div className="xph-ring" data-enter="invert" aria-hidden="true" style={{ '--at': at }}>
             <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="86" /></svg>
             <i className="xph-hand" />
             {METHOD.map(([t], i) => {
@@ -547,7 +553,7 @@ function Stack() {
           <h2 className="pf-head">One philosophy</h2>
           <p className="pf-mono xph-cap">Across the stack</p>
         </div>
-        <ul className="xph-stack-l">
+        <ul className="xph-stack-l" data-enter="carousel">
           {STACK.map(([t, d, to], i) => (
             <li key={t}>
               <A to={to}>
@@ -636,6 +642,7 @@ function Close() {
 }
 
 export default function Philosophy() {
+  useEnter('.xph');
   return (
     <main id="main" className="xph pf-r">
       {/* JavaScript off: the five laws are laid out one under another and the strip is hidden, every view and all 64 patterns are laid out in the page, tiles show their principle */}
