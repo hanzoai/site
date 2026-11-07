@@ -23,9 +23,9 @@
    (pubsub/PsEnter.jsx): line-draw, cursor-trail, spring-snap, cover-slide, pixel-resolve. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { A } from '../../kit';
+import { A, Img } from '../../kit';
 import { useCalm } from '../../ui';
-import { Paste, Code } from './Frame';
+import { LeafPaste as Paste, LeafCode as Code } from './close3/Leaf';
 import SpecDrawer from '../../v2/SpecDrawer';
 import LaunchClose, { Arr } from './close3/Close';
 import LineMask from '../../v2/LineMask';
@@ -112,7 +112,7 @@ function Planet() {
   return (
     <div className="ps-busw" ref={ref} data-paused={paused || undefined}>
       <div className="ps-bar">
-        <p className="ps-bar-k"><i aria-hidden="true" />NATS JetStream</p>
+        <p className="ps-bar-k">NATS JetStream</p>
         <p className="ps-rp" aria-hidden="true">
           <AnimatePresence mode="wait" initial={false}>
             {line && (
@@ -237,6 +237,8 @@ export default function Pubsub() {
             <h2 className="lx-headline">Put it between your services</h2>
             <p className="lx-lede">Free tier includes 1M messages/month.</p>
             <A to={GH} className="lx-ghost">View on GitHub<Arr /></A>
+            {/* Hanzo's own picture on this page (mori), kept: a black card under the words */}
+            <div className="ps-mori"><Img src="/models/mori.webp" alt="" w={1200} h={1500} /></div>
           </div>
           <Walked />
         </div>

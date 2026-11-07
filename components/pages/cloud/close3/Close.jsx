@@ -48,7 +48,7 @@ export default function Close({ name, tag, seed, data = [], ask, cta, repo = ['h
           </div>
           <ul className="lx-close-facts">
             {license && <li><span>License:</span> {license}</li>}
-            {repo && <li><A to={repo[1]} className="lx-close-repo"><Gh />{repo[0]}{stars && <em>{stars}</em>}</A></li>}
+            {repo && <li><A to={repo[1]} className="lx-close-repo"><Gh /><span>{repo[0]}</span>{stars && <em>{stars}</em>}</A></li>}
           </ul>
           {children}
         </div>
