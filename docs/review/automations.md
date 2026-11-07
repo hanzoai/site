@@ -3,7 +3,7 @@
 Reviewed 7 Nov 2026 (round 3 walk), walked moving at 1470x801 and 375x812.
 
 Verdict: 6.5/10
-Ready: 8 Nov, held up next to /api and /affiliate (James's new bar, no score). On the rebuilt sideways gallery the track now rests on each panel for half its scroll and glides to the next (one in, one out, no half panels sliding past on phone), the panel in view runs an idle wave across its + marks, and tile hovers answer under (hover: hover), (pointer: none). taste/unique/parity OK (text 102/102, links 2/2); 0 console errors, no overflow at 1470 and 375. Left alone (shared): the v2 Demo PauseBtn has no hover state; motion.mjs hovers tiles clipped behind the tray (rect on screen, overflow-hidden), so its DEAD tile counts there are probe artefacts.
+Ready: 8 Nov, held up next to /api and /affiliate (James's new bar, no score). On the rebuilt sideways gallery the track now rests on each panel for half its scroll and glides to the next (one in, one out, no half panels sliding past on phone), the panel in view runs an idle wave across its + marks, and tile hovers answer under (hover: hover), (pointer: none). taste/unique/parity OK (text 102/102, links 2/2); 0 console errors, no overflow at 1470 and 375. Left alone (shared): the v2 Demo PauseBtn has no hover state; motion.mjs hovers tiles clipped behind the tray (rect on screen, overflow-hidden), so its DEAD tile counts there are probe artefacts. copycheck missing 0 of 26 (8 Nov: the h1 sentence whole for readers).
 
 First complaint: "The top is nice, it builds itself. But then it's just a wall of 81 grey emoji boxes for two and a half screens. That's a directory, not a premium page. And the thing I add gets wiped by the demo a second later."
 
