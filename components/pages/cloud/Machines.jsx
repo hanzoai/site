@@ -3,29 +3,26 @@
 // Goal: price a machine before it exists and see how renting works through the API.
 // CTA: Try Hanzo (machines.hero, machines.close).
 // Metric: signup_start (cta_click machines.hero)
-// Signature: priced before it exists: H100 cards wake as the dry-run quote rolls in.
+// Signature: zoom-map
 // Beyond: the dry-run quote for every size: an hour, a working day and a month before anything is created.
 /* Machines (v2, archetype A Launch).
-   V2: 8/10 Round 2: the spec wall is one H100 moment (80GB HBM3 counts up once as its card lights) beside a hairline
-   list; one solid ask in the hero (docs is a text link) and the price sits above the fold at 1470x801; the renting
-   console is one object whose request and answer stream in, in the step's own words (no invented labels, no
-   traffic-light dots) and the step text cuts instead of crossfading; tiles tilt and run their diagram on hover, rows
-   fill; headings rest at 26/21; section breaks alternate; the close is the rack waking at rest, not the shared contours.
-   Signature: priced before it exists. A rack of H100 cards sits in the dark; choose 1, 2 or 4 (or let it choose) and
-   that many cards wake, the dryRun request rewrites itself and the quote rolls in at the price list's rate.
-   Supporting: kinetic title lines; the rack settles on scroll (Lift); the six steps as pinned chapters
-   (PinChapters) whose one console streams what each call answers; the size pill glides (layoutId).
-   Beyond: the dry-run quote itself - every size priced for an hour, a working day and a month before anything is
-   created, exactly what the API's dryRun answers.
+   V2: 8/10 Motion map: zoom-map — scroll zooms from a fleet of H100 racks into one card that fills the screen with its own spec sheet (tap-to-zoom on touch); the pinned renting chapters became a plain list and the sections enter five different ways.
+   Order: hero (rack and quote) -> the zoom -> the other machines' specs -> uses -> how renting works -> ownership ->
+   paste and ship -> close. Entrances (MachinesEnter.jsx), one each, no other reveal: glitch-in (hero), diagonal-wipe
+   (zoom), snap-sections (uses), page-curl (renting), noise-dissolve (ownership).
+   Kept: the rack wake-up, the rolling price and the gliding size pill (layoutId) in the hero; the quote is always
+   Hanzo's 1x H100 figures, labelled "1x H100"; 2x and 4x light their cards and rewrite the request only. Tiles tilt and
+   run their diagram, rows fill, the 80 GB count (now on the zoomed card), the closing rack wakes card by card.
+   Beyond: the dry-run quote itself - priced for an hour, a working day and a month before anything is created.
    Greys only: the card LED is a grey light. Every word, figure and link is Hanzo's. */
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion, animate } from 'motion/react';
+import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { A, Cta } from '../../kit';
 import { useLive } from './Frame';
-import { Lines, Lift } from '../../v2/LiftStage';
-import PinChapters from '../../v2/x-hypatia/PinChapters';
 import ShipPrompt from '../../v2/ShipPrompt';
 import LivePause, { usePause } from '../../v2/LivePause';
+import MachinesZoom from './MachinesZoom';
+import { Glitch, Snap, Curl, Dissolve } from './MachinesEnter';
 import '../../v2/v2scale.css';
 import './Machines.css';
 
@@ -134,50 +131,16 @@ function Rent() {
   );
 }
 
-const H100 = [['Cores', '16,896 CUDA'], ['Tensor Cores', '528 TCs']];
 const SPECS = [
   ['AMD EPYC 7763', 'High-core count CPU instances', [['Cores', '64 Cores'], ['Threads', '128 Threads'], ['Memory', 'Up to 2TB']]],
   ['Storage Options', 'Ultra-fast NVMe and persistent storage', [['Local NVMe', 'Up to 8TB'], ['Network Storage', 'Unlimited'], ['I/O Performance', '7GB/s']]],
 ];
 
-/* One big figure: the H100 card lights and its 80 GB counts up once, beside a hairline list of the rest. */
+/* The other machines, beside the zoom's H100: two hairline lists, side by side. */
 function Specs() {
-  const ref = useRef(null);
-  const seen = useInView(ref, { amount: 0.45, once: true });
-  const calm = useReducedMotion();
-  const [n, setN] = useState(80);
-  const armed = useRef(false);
-  useEffect(() => {
-    // only count when the figure arrives from below; a deep link or reduced motion keeps the true value
-    if (calm || !ref.current || ref.current.getBoundingClientRect().top < innerHeight) return;
-    armed.current = true;
-    setN(10);
-  }, [calm]);
-  useEffect(() => {
-    // 10 to 80: always two tabular digits, so "GB HBM3" never moves while it counts
-    if (!seen || !armed.current) return;
-    const c = animate(10, 80, { duration: 1.1, ease: EASE, delay: 0.25, onUpdate: (v) => setN(Math.round(v)) });
-    return () => c.stop();
-  }, [seen]);
-  const lit = seen || calm;
   return (
     <section className="mc-specs">
       <div className="v2-wrap mc-specs-in">
-        <div className="mc-specs-h" ref={ref}>
-          <h2 className="v2-headline">NVIDIA H100</h2>
-          <p className="mc-specs-d">Dedicated GPU instances for AI/ML training</p>
-          <div className={'mc-card solo' + (lit ? ' on' : '')} aria-hidden="true" style={{ '--i': 0 }}>
-            <span className="mc-card-n">H100</span>
-            <span className="mc-fins">{Array.from({ length: 14 }).map((_, k) => <i key={k} />)}</span>
-            <span className="mc-led" />
-          </div>
-          <dl className="mc-moment">
-            <div><dt>VRAM</dt><dd><span className="mc-cnt">{n}</span>GB HBM3</dd></div>
-          </dl>
-          <dl className="mc-rows">
-            {H100.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}
-          </dl>
-        </div>
         <div className="mc-specs-list">
           {SPECS.map(([t, d, rows]) => (
             <div key={t} className="mc-group">
@@ -201,61 +164,26 @@ const STEPS = [
   ['A machine can carry an agent', 'Bind a cloud agent to a machine and the pair is one thing to launch, message, stop and tear down. Unbinding is separate, so the agent can move without the machine going with it.'],
 ];
 
-/* One console for all six steps: the shapes the API asks and answers, never the step's sentences again. Every string is
-   Hanzo's own, already on this page: the size list, the dryRun request and its quote, the CLI line from the prompt, the
-   accounts that fold into the fleet, the rack of cards, the agent and machine pair. A step with no such shape shows the
-   request line and a wordless figure. */
-const CALLS = [
-  { rows: [['1x H100'], ['2x H100'], ['4x H100']] },
-  { ask: '{ "gpu": "1x H100", "dryRun": true }', rows: [['1x H100', '80 GB'], ['an hour', '$3.48'], ['a working day', '$27.84'], ['all month', '$2,540']] },
-  { ask: 'POST /v1/compute/machines', fig: 'meter' },
-  { ask: 'hanzo visor machines list', rows: [['DigitalOcean'], ['AWS'], ['GCP'], ['hanzo link']] },
-  { ask: 'nvidia-smi', fig: 'rack' },
-  { ask: 'POST /v1/compute/machines', fig: 'pair' },
-];
-
-const lineIn = (d) => ({ in: { y: '105%' }, on: { y: 0, transition: { duration: 0.5, ease: EASE, delay: d } } });
-
-/* The cards in the console wake one after another once the step is on. */
-function WakeRack({ n, count = 4 }) {
-  const [on, setOn] = useState(0);
-  useEffect(() => { const t = setTimeout(() => setOn(n), 300); return () => clearTimeout(t); }, [n]);
-  return <Rack on={on} count={count} className="rest mc-con-rack" />;
-}
-
-function ConFig({ kind }) {
-  if (kind === 'rack') return <WakeRack n={4} />;
-  if (kind === 'pair') return <div className="mc-art a3 mc-con-pair"><b>agent</b><i /><b>machine</b></div>;
-  // metered: one card up while the org's balance draws down
+/* How renting one works: a plain numbered list (it was a pinned chapter scene). The section enters by page-curl. */
+function Steps() {
   return (
-    <div className="mc-meter">
-      <WakeRack n={1} count={1} />
-      <span className="mc-meter-t"><i /></span>
-    </div>
-  );
-}
-
-function StepCon({ at }) {
-  const { ask, rows, fig } = CALLS[at];
-  return (
-    <div className="mc-con v2-obj" aria-hidden="true">
-      <div className="mc-con-bar"><span>/v1/compute/machines</span><b>{String(at + 1).padStart(2, '0')} / 06</b></div>
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.div key={at} className="mc-con-body" initial="in" animate="on" exit={{ opacity: 0, transition: { duration: 0.15 } }}>
-          {ask && <p className="mc-con-ask"><span className="mc-mask"><motion.span variants={lineIn(0)}>{ask}</motion.span></span></p>}
-          {rows && (
-            <ul className={'mc-con-back' + (ask ? '' : ' solo')}>
-              {rows.map(([k, v], j) => (
-                <li key={k + j}>
-                  <span className="mc-mask"><motion.span variants={lineIn((ask ? 0.3 : 0.05) + j * 0.12)}><span>{k}</span>{v && <b>{v}</b>}</motion.span></span>
-                </li>
-              ))}
-            </ul>
-          )}
-          {fig && <motion.div className="mc-con-fig" variants={{ in: { opacity: 0, y: 16 }, on: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE, delay: 0.25 } } }}><ConFig kind={fig} /></motion.div>}
-        </motion.div>
-      </AnimatePresence>
-    </div>
+    <Curl className="v2-sec mc-steps">
+      <div className="v2-wrap mc-steps-in">
+        <div className="mc-steps-h">
+          <h2 className="v2-headline">How renting one works</h2>
+          <p className="mc-ch-l">Every step is an API call, so anything you do once by hand you can put in a script afterwards</p>
+        </div>
+        <ol className="mc-steps-l">
+          {STEPS.map(([t, d], i) => (
+            <li key={t} className="mc-own-i mc-step">
+              <span className="mc-own-n">{String(i + 1).padStart(2, '0')}</span>
+              <h3 className="v2-title">{t}</h3>
+              <p className="v2-body">{d}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </Curl>
   );
 }
 
@@ -319,8 +247,8 @@ function Uses() {
   };
   const n = USES.length;
   return (
-    <section className="v2-sec mc-uses">
-      <div className="v2-wrap">
+    <Snap className="v2-sec mc-uses">
+      <div className="v2-wrap mc-snap-in">
         <div className="v2-grid mc-uses-h">
           <h2 className="v2-headline">When you want a whole machine</h2>
           <p className="v2-lede">Reach for one when the work outlasts a request, or needs a card of its own</p>
@@ -335,7 +263,7 @@ function Uses() {
           <button type="button" aria-label="Next" disabled={at === n - 1} onClick={() => go(at + 1)}>{arrowR}</button>
         </div>
       </div>
-    </section>
+    </Snap>
   );
 }
 
@@ -364,7 +292,7 @@ function Own() {
   const [hov, setHov] = useState(null);
   const at = hov ?? auto;
   return (
-    <section className="v2-sec mc-own">
+    <Dissolve className="v2-sec mc-own">
       <div className="v2-wrap">
         <div className="v2-grid mc-own-h">
           <h2 className="v2-headline">Whose machine it is</h2>
@@ -384,7 +312,7 @@ function Own() {
           <OwnMap at={at} />
         </div>
       </div>
-    </section>
+    </Dissolve>
   );
 }
 
@@ -428,38 +356,30 @@ function Close() {
 }
 
 export default function Machines() {
-  // the h1 and lede cut in once the page is live (CSS holds them until then; a 3 s CSS failsafe frees them anyway)
-  const root = useRef(null);
-  useEffect(() => { root.current?.setAttribute('data-up', ''); }, []);
   return (
-    <main className="v2 mc" ref={root}>
-      <section className="mc-hero v2-dark" data-room="dark">
+    <main className="v2 mc">
+      <Glitch as="section" className="mc-hero v2-dark" data-room="dark">
         <div className="v2-wrap mc-hero-t">
-          <Lines as="h1" className="v2-display mc-h1" lines={['Hanzo Machines']} data-morph-target="" />
+          <h1 className="v2-display mc-h1 mc-gl-t" data-text="Hanzo Machines" data-morph-target="">Hanzo Machines</h1>
           <p className="v2-kick mc-cap">High-Performance Computing</p>
-          <p className="v2-lede mc-sub v2-in" style={{ animationDelay: '.3s' }}>Rent a machine by the hour, metered to your organization.</p>
+          <p className="v2-lede mc-sub mc-gl-t" data-text="Rent a machine by the hour, metered to your organization.">Rent a machine by the hour, metered to your organization.</p>
           <div className="v2-acts mc-acts">
             <Cta to="/login" id="machines.hero" thumb>Try Hanzo</Cta>
             <Cta to="https://docs.hanzo.ai" kind="link" id="machines.view-documentation">View Documentation</Cta>
           </div>
         </div>
-        <Lift className="mc-lift" from={1.04} y={24} origin="50% 0%" offset={['start end', 'start 0.2']}>
+        <div className="mc-lift">
           <Rent />
-        </Lift>
-      </section>
+        </div>
+      </Glitch>
+
+      <MachinesZoom />
 
       <Specs />
 
-      <PinChapters
-        className="mc-ch"
-        label="How renting one works"
-        items={STEPS}
-        look="left"
-        head={<div className="mc-ch-h"><h2 className="v2-headline">How renting one works</h2><p className="mc-ch-l">Every step is an API call, so anything you do once by hand you can put in a script afterwards</p></div>}
-        visual={(at) => <StepCon at={at} />}
-      />
-
       <Uses />
+
+      <Steps />
 
       <Own />
 

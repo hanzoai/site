@@ -3,10 +3,11 @@
 // Goal: see the scale of what Hanzo publishes, open an organization, and go to Hanzo's GitHub
 // CTA: View on GitHub -> https://github.com/hanzoai (hero, header thumb bar; the closing band keeps Hanzo's "Start Contributing") · data-cta="open-source.hero", "open-source.band"
 // Metric: github_click (MASTER §1, researchers: a GitHub or weights click)
-// Signature: cards that open. Every organization is a card that opens into its own /oss page, title first (Morph); in the hero every cluster of light is one of them, named under the pointer and opened by a press.
+// Signature: h-gallery Sideways gallery. "What Hanzo is built on" is the second screen: on desktop vertical scroll drives its twelve credit panels sideways for one stretch, then releases; on phones it is a native snap rail with a 16% peek. The glyph row above marks the panel in view and jumps to a panel on a press.
 // Beyond: "Contribute in your language". Pick a language: the featured repositories written in it across Hanzo, Lux and Zoo, and its share of each ecosystem's repositories, from Hanzo's own language shares.
 /* Open source. Its idea is the scale of it, made literal: a catalogue of 2,247 repositories you can open.
-   V2: 8/10 Round 2: the list rise (xos-in) now lands on opacity 1, so Totals with its count-up, all six charter articles and the Contribute repositories show at both sizes; hero lede white 78% on black; hero 1,733 rests at 64px so the h1 is the one big thing; one ask per screen (the local band drops its GitHub button on desktop, the band carries data-thumb); "Built on" gains a monochrome mark row of Hanzo's twelve glyphs that lights the credit under the pointer, two credits a row on phone; secondary links and the sheet trigger answer hover with a fill, closing ask hovers #262626; tighter seams between paper sections. Copy rule: every invented string removed (the pointer hint, the "Charter" caption, card index numbers, composed sheet labels and share sentences, typed arrows and star/fork glyphs now drawn as icons, invented aria-labels); sheets open from "Read more" (ui-strings).
+   V2: 8/10 Motion map: h-gallery — "Built on" moved up to the second screen as a scroll-driven sideways track (phone snap rail); sticky Totals/Charter/Contribute columns, line masks, list rises and the invented "Article" labels removed; five entrances (snap-sections, magnet-gather, scroll-tilt, letter-cascade, ripple); glyphs in colour; phone pause moved off the figures.
+   Before: Round 2: the list rise (xos-in) now lands on opacity 1, so Totals with its count-up, all six charter articles and the Contribute repositories show at both sizes; hero lede white 78% on black; hero 1,733 rests at 64px so the h1 is the one big thing; one ask per screen (the local band drops its GitHub button on desktop, the band carries data-thumb); "Built on" gains a monochrome mark row of Hanzo's twelve glyphs that lights the credit under the pointer, two credits a row on phone; secondary links and the sheet trigger answer hover with a fill, closing ask hovers #262626; tighter seams between paper sections. Copy rule: every invented string removed (the pointer hint, the "Charter" caption, card index numbers, composed sheet labels and share sentences, typed arrows and star/fork glyphs now drawn as icons, invented aria-labels); sheets open from "Read more" (ui-strings).
    Supporting: the sky drifting and twinkling by itself (idle), the ecosystem and galaxy tabs whose pill glides while
    the year of commits re-lights cell by cell (state), and the charter signed with a drawn line (arrival).
    Every figure is Hanzo's, as its build read GitHub and its forge. */
@@ -15,8 +16,8 @@ import { motion, useInView, useReducedMotion } from 'motion/react';
 import { A, More } from '../kit';
 import { Count } from '../ui';
 import { href } from '../../lib/route';
-import MaskLines from '../v2/MaskLines';
 import DetailSheet from '../v2/x-pascal/DetailSheet';
+import { SnapIn, Gather, Tilt, Cascade, Ripple } from './openSource/entrances';
 import { ECO, TOTAL, ORGS } from './openSourceData';
 import '../v2/ProofRhythm.css';
 import './OpenSource.css';
@@ -31,13 +32,6 @@ const lean = (e) => {
   el.style.setProperty('--rx', ((0.5 - (e.clientY - r.top) / r.height) * 5).toFixed(2) + 'deg');
 };
 const rest = (e) => { e.currentTarget.style.setProperty('--rx', '0deg'); e.currentTarget.style.setProperty('--ry', '0deg'); };
-
-/* a list arrives as one when it is reached: its items rise 16px in a 60 ms stagger (MASTER part 9, list-level entrance) */
-function useArrive() {
-  const ref = useRef(null);
-  const seen = useInView(ref, { once: true, margin: '0px 0px -12% 0px' });
-  return { ref, 'data-arrive': seen ? 'in' : '' };
-}
 
 /* stars and forks are drawn beside Hanzo's figures, never typed as glyphs */
 const Star = () => <svg className="xos-ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5l1.9 4 4.4.5-3.3 3 .9 4.4L8 11.2l-3.9 2.2.9-4.4-3.3-3 4.4-.5z" fill="currentColor" /></svg>;
@@ -204,15 +198,15 @@ function Hero() {
       <Sky paused={held} />
       <div className="pf-wrap xos-hero-c">
         <div className="xos-hero-a">
-          <MaskLines as="h1" id="xos-h1" className="pf-display xos-h1" lines={['Building in the', 'open.']} delay={0.05} />
-          <p className="xos-cap xos-in" style={{ '--i': 1 }}>Open Source First</p>
-          <p className="pf-lede xos-lede xos-in" style={{ '--i': 2 }}>We publish what we build, fix the bugs we find upstream instead of patching them in private, and pay the projects we depend on. The commitments below are specific enough to hold us to.</p>
-          <div className="xos-acts xos-in" style={{ '--i': 3 }}>
+          <h1 id="xos-h1" className="pf-display xos-h1">Building in the<br />open.</h1>
+          <p className="xos-cap">Open Source First</p>
+          <p className="pf-lede xos-lede">We publish what we build, fix the bugs we find upstream instead of patching them in private, and pay the projects we depend on. The commitments below are specific enough to hold us to.</p>
+          <div className="xos-acts">
             <A to="https://github.com/hanzoai" className="pf-btn xos-btn-l" data-thumb="View on GitHub" data-cta="open-source.hero">View on GitHub</A>
             <More to="https://github.com/hanzoai">Star Our Repos</More>
           </div>
         </div>
-        <div className="xos-hero-b xos-in" style={{ '--i': 4 }}>
+        <div className="xos-hero-b">
           <dl className="xos-hstats">
             {HERO_STATS.map(([v, k], i) => (
               <div key={k} className={i ? '' : 'xos-hs-m'}><dd className={i ? '' : 'pf-figure'}>{v}</dd><dt>{k}</dt></div>
@@ -312,6 +306,8 @@ function EcoSheet({ e, i }) {
 
 function Publish() {
   const [at, setAt] = useState(0);
+  const swapped = useRef(false);
+  if (at) swapped.current = true;
   const keys = (e) => {
     const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
     if (!k) return;
@@ -320,10 +316,10 @@ function Publish() {
     document.getElementById('xos-t-' + n)?.focus();
   };
   return (
-    <section className="pf-sec xos-pub" id="publish" aria-labelledby="xos-pub-h">
-      <div className="pf-wrap">
+    <section className={'pf-sec xos-pub' + (swapped.current ? ' sw' : '')} id="publish" aria-labelledby="xos-pub-h">
+      <SnapIn className="pf-wrap">
         <div className="pf-grid xos-pub-top">
-          <MaskLines as="h2" id="xos-pub-h" className="pf-head xos-pub-h" lines={['What we publish']} />
+          <h2 id="xos-pub-h" className="pf-head xos-pub-h">What we publish</h2>
           <p className="pf-lede xos-pub-l">Read from GitHub by every build: the year of commits, the languages and the repositories of each ecosystem, then every organization.</p>
         </div>
         <div className="xos-eco" role="tablist" aria-label="Ecosystem" onKeyDown={keys}>
@@ -351,25 +347,23 @@ function Publish() {
           </div>
           <div className="xos-pub-b"><Dash at={at} /></div>
         </div>
-      </div>
+      </SnapIn>
     </section>
   );
 }
 
 /* ---------- the total, as figures ---------- */
 function Totals() {
-  const arrive = useArrive();
   return (
     <section className="pf-sec xos-total">
       <div className="pf-wrap pf-grid">
         <header className="xos-total-h">
-          <MaskLines as="h2" className="pf-head" lines={['Total across Hanzo']} />
+          <h2 className="pf-head">Total across Hanzo</h2>
           <p className="pf-body">Aggregate open-source activity counted from the forge and GitHub.</p>
           <p className="xos-grants"><A to="/grants">OSS &amp; research credit grants</A></p>
         </header>
-        <ul className="xos-total-n" {...arrive}>
-          {TOTAL.map(([v, k], i) => <li key={k} style={{ '--k': i }}><b className={i ? 'pf-num xos-tot-s' : 'pf-moment'}>{i ? v : <Count to={num(v)} duration={1.2} />}</b><span>{k}</span></li>)}
-        </ul>
+        <Gather className="xos-total-n" items={TOTAL}
+          render={([v, k], i, style) => <li key={k} style={style}><b className={i ? 'pf-num xos-tot-s' : 'pf-moment'}>{i ? v : <Count to={num(v)} duration={1.2} />}</b><span>{k}</span></li>} />
       </div>
     </section>
   );
@@ -378,7 +372,6 @@ function Totals() {
 /* ---------- every organization: cards that open ---------- */
 function Orgs() {
   const [g, setG] = useState(0);
-  const arrive = useArrive();
   const keys = (e) => {
     const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
     if (!k) return;
@@ -390,7 +383,7 @@ function Orgs() {
     <section className="pf-sec xos-orgs" aria-labelledby="xos-orgs-h">
       <div className="pf-wrap">
         <div className="xos-orgs-top">
-          <MaskLines as="h2" id="xos-orgs-h" className="pf-head" lines={['Every organization']} />
+          <h2 id="xos-orgs-h" className="pf-head">Every organization</h2>
           <div className="xos-chips" role="tablist" aria-label="Ecosystem" onKeyDown={keys}>
             {ORGS.map((x, i) => (
               <button key={x.name} id={'xos-og-' + i} type="button" role="tab" aria-selected={g === i} aria-controls={'xos-op-' + i} tabIndex={g === i ? 0 : -1} onClick={() => setG(i)}>
@@ -400,13 +393,14 @@ function Orgs() {
             ))}
           </div>
         </div>
+        <Tilt>
         {ORGS.map((x, i) => {
           const top = [...x.orgs].sort((a, b) => num(b.repos) - num(a.repos)).slice(0, 8);
           const max = num(top[0].repos);
           return (
             <div key={x.name} id={'xos-op-' + i} role="tabpanel" aria-labelledby={'xos-og-' + i} hidden={g !== i} className="xos-opanel">
               <p className="xos-gal-sub pf-mono">{x.sub}</p>
-              <ul className="xos-ocards" {...(i === g ? arrive : {})}>
+              <ul className="xos-ocards">
                 {top.map((o, j) => (
                   <li key={o.login} style={{ '--k': j }}>
                     <A to={'/oss/' + o.login} className="xos-ocard" onPointerMove={lean} onPointerLeave={rest}>                      <span className="xos-oc-top"><b data-morph>{o.name}</b><small className="pf-mono">{o.login}</small></span>
@@ -437,12 +431,13 @@ function Orgs() {
             </div>
           );
         })}
+        </Tilt>
       </div>
     </section>
   );
 }
 
-/* ---------- what Hanzo is built on: a wall of credits ---------- */
+/* ---------- what Hanzo is built on: the sideways gallery (signature) ---------- */
 const BUILT = [
   ['🐍', 'Python', 'https://github.com/python/cpython', 'Python Software Foundation', 'https://python.org', 'The language powering our ML/AI stack', 'PSF'],
   ['⚙️', 'Rust', 'https://github.com/rust-lang/rust', 'Rust Foundation', 'https://rust-lang.org', 'Systems language for our high-performance runtimes', 'MIT/Apache-2.0'],
@@ -458,24 +453,75 @@ const BUILT = [
   ['📊', 'OpenTelemetry', 'https://github.com/open-telemetry/opentelemetry-specification', 'CNCF', 'https://opentelemetry.io', 'Observability across every service', 'Apache-2.0'],
 ];
 
-/* the object: Hanzo's own twelve glyphs as one monochrome mark row; pointing at a credit lights its mark */
+/* Desktop (fine pointer room, motion allowed): the section is as tall as the track is wide; its stage sticks for that
+   stretch and the scroll position moves the track sideways, then the page releases. Phone and reduced motion: the
+   same track is a native horizontal snap rail. The height lives in CSS, so nothing reflows when JS arrives. */
+const PINNED = '(min-width: 900px) and (prefers-reduced-motion: no-preference)';
+const goTo = (y) => (window.__lenis ? window.__lenis.scrollTo(y, { immediate: true }) : window.scrollTo(0, y));
+
+/* the object: Hanzo's own twelve glyphs as one mark row; it marks the panel in view and the credit under the pointer */
 function Built() {
-  const arrive = useArrive();
-  const marks = useArrive();
+  const sec = useRef(null), stage = useRef(null), track = useRef(null);
   const [hot, setHot] = useState(-1);
+  const [cur, setCur] = useState(0);
+  useEffect(() => {
+    const mq = matchMedia(PINNED);
+    const S = sec.current, T = track.current;
+    let raf = 0;
+    const tick = () => {
+      raf = 0;
+      const lis = T.children, step = lis.length > 1 ? lis[1].offsetLeft - lis[0].offsetLeft : 1;
+      if (!mq.matches) { T.style.transform = ''; setCur(Math.round(T.scrollLeft / step)); return; }
+      const r = S.getBoundingClientRect(), run = r.height - innerHeight;
+      const p = run > 0 ? clamp(-r.top / run) : 0;
+      const dist = Math.max(0, T.scrollWidth - stage.current.clientWidth);
+      T.style.transform = `translate3d(${(-p * dist).toFixed(1)}px, 0, 0)`;
+      setCur(Math.round(p * (lis.length - 1)));
+    };
+    const ask = () => { if (!raf) raf = requestAnimationFrame(tick); };
+    tick();
+    window.addEventListener('scroll', ask, { passive: true });
+    window.addEventListener('resize', ask);
+    T.addEventListener('scroll', ask, { passive: true });
+    mq.addEventListener('change', ask);
+    return () => { cancelAnimationFrame(raf); window.removeEventListener('scroll', ask); window.removeEventListener('resize', ask); T.removeEventListener('scroll', ask); mq.removeEventListener('change', ask); };
+  }, []);
+  /* bring panel i into view: on desktop by scrolling the page to its stretch, on the rail by scrolling the rail */
+  const show = (i, smooth) => {
+    const S = sec.current, T = track.current, li = T.children[i];
+    if (!li) return;
+    if (!matchMedia(PINNED).matches) { T.scrollTo({ left: li.offsetLeft - parseFloat(getComputedStyle(T).scrollPaddingLeft || 0), behavior: smooth ? 'smooth' : 'auto' }); return; }
+    const dist = Math.max(1, T.scrollWidth - stage.current.clientWidth);
+    const want = Math.max(0, Math.min(dist, li.offsetLeft + li.offsetWidth / 2 - stage.current.clientWidth / 2));
+    const top = S.getBoundingClientRect().top + scrollY, run = S.offsetHeight - innerHeight;
+    const y = top + (want / dist) * run;
+    if (smooth && window.__lenis) window.__lenis.scrollTo(y, { duration: 0.9 }); else if (smooth) window.scrollTo({ top: y, behavior: 'smooth' }); else goTo(y);
+  };
+  /* keyboard: tabbing to a credit's link scrolls the page so its panel is in the stage */
+  const focus = (e) => {
+    const li = e.target.closest('.xos-tile');
+    if (!li || !matchMedia(PINNED).matches) return;
+    const i = [...track.current.children].indexOf(li);
+    requestAnimationFrame(() => show(i, false));
+  };
   return (
-    <section className="pf-sec xos-built" aria-labelledby="xos-built-h">
-      <div className="pf-wrap">
-        <div className="xos-built-top">
-          <MaskLines as="h2" id="xos-built-h" className="pf-head" lines={['What Hanzo is built on']} />
-          <p className="pf-body">The projects our platform actually runs on, each with its licence and the people who maintain it.</p>
+    <section className="xos-built xos-hg" ref={sec} aria-labelledby="xos-built-h">
+      <div className="xos-hg-stage" ref={stage}>
+        <div className="pf-wrap">
+          <div className="xos-built-top">
+            <h2 id="xos-built-h" className="pf-head">What Hanzo is built on</h2>
+            <p className="pf-body">The projects our platform actually runs on, each with its licence and the people who maintain it.</p>
+          </div>
+          <ul className={'xos-marks' + (hot >= 0 ? ' has-hot' : '')} aria-hidden="true">
+            {BUILT.map(([ic, name], i) => (
+              <li key={name} className={(hot === i ? 'on' : '') + (cur === i ? ' cur' : '')} onClick={() => show(i, true)}><span>{ic}</span></li>
+            ))}
+          </ul>
         </div>
-        <ul className={'xos-marks' + (hot >= 0 ? ' has-hot' : '')} aria-hidden="true" {...marks}>
-          {BUILT.map(([ic, name], i) => <li key={name} style={{ '--k': i }} className={hot === i ? 'on' : ''}><span>{ic}</span></li>)}
-        </ul>
-        <ul className="xos-tiles" {...arrive} onPointerLeave={() => setHot(-1)} onBlur={() => setHot(-1)}>
+        <ul className="xos-tiles xos-track" ref={track} onFocus={focus} onPointerLeave={() => setHot(-1)} onBlur={() => setHot(-1)}>
           {BUILT.map(([ic, name, repo, who, site, what, lic], i) => (
-            <li key={name} className="xos-tile" style={{ '--k': i % 4 + Math.floor(i / 4) }} onPointerMove={lean} onPointerLeave={rest} onPointerEnter={(e) => e.pointerType === 'mouse' && setHot(i)} onFocus={() => setHot(i)}>              <span className="xos-tile-lic pf-mono">{lic}</span>
+            <li key={name} className="xos-tile" onPointerMove={lean} onPointerLeave={rest} onPointerEnter={(e) => e.pointerType === 'mouse' && setHot(i)} onFocus={() => setHot(i)}>
+              <span className="xos-tile-lic pf-mono">{lic}</span>
               <A to={repo} className="xos-tile-n">{name}</A>
               <span className="xos-tile-d">{what}</span>
               <A to={site} className="xos-tile-w">{who}</A>
@@ -496,23 +542,20 @@ const CHARTER = [
   ['We fund what we depend on', 'Through GitHub Sponsors, Open Collective, and direct partnerships, we invest back into the projects that power Hanzo.'],
   ['We welcome all contributors', 'Good code can come from anywhere. We maintain a contributor-friendly CONTRIBUTING.md, respond to PRs within 48 hours on active repos, and recognize every contributor.'],
 ];
-const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI'];
-
 function Charter() {
-  const arrive = useArrive();
   const end = useRef(null);
   const signed = useInView(end, { once: true, amount: 1 });
   return (
     <section className="pf-sec xos-charter" aria-labelledby="xos-ch-h">
       <div className="pf-wrap pf-grid">
         <header className="xos-ch-h">
-          <MaskLines as="h2" id="xos-ch-h" className="pf-head" lines={['Our Stewardship Commitments']} />          <p className="pf-lede">We hold ourselves to explicit, public commitments — not vague marketing language.</p>
+          <Cascade id="xos-ch-h" className="pf-head" text="Our Stewardship Commitments" />
+          <p className="pf-lede">We hold ourselves to explicit, public commitments — not vague marketing language.</p>
         </header>
         <div className="xos-ch-body">
-          <ol className="xos-arts" {...arrive}>
-            {CHARTER.map(([t, d], i) => (
-              <li key={t} style={{ '--k': i }}>
-                <span className="pf-mono xos-art-n">Article {ROMAN[i]}</span>
+          <ol className="xos-arts">
+            {CHARTER.map(([t, d]) => (
+              <li key={t}>
                 <h3 className="pf-title">{t}</h3>
                 <p className="pf-body">{d}</p>
               </li>
@@ -539,14 +582,15 @@ const LANGS = Object.entries(ALL.reduce((m, r) => ((m[r.lang] = (m[r.lang] || 0)
 
 function Contribute() {
   const [lang, setLang] = useState(LANGS[0]);
-  const arrive = useArrive();
+  const swapped = useRef(false);
+  if (lang !== LANGS[0]) swapped.current = true;
   const repos = ALL.filter((r) => r.lang === lang);
   const share = ECO.map((e, i) => { const hit = e.langs.find(([l]) => l === lang); return [NAMES[i], hit ? hit[1] : null, e.stats[3][1]]; });
   return (
-    <section className="pf-sec xos-con" aria-labelledby="xos-con-h">
+    <Ripple className="pf-sec xos-con" aria-labelledby="xos-con-h">
       <div className="pf-wrap pf-grid">
         <div className="xos-con-a">
-          <MaskLines as="h2" id="xos-con-h" className="pf-display" lines={['Contribute']} />
+          <h2 id="xos-con-h" className="pf-display">Contribute</h2>
           <p className="xos-cap">Join the Community</p>
           <p className="pf-lede">We welcome contributions of all kinds: code, documentation, bug reports and feature requests.</p>
           <div className="xos-con-acts">
@@ -567,31 +611,36 @@ function Contribute() {
                 : <span key={n} className="off"><b className="pf-mono">—</b> {n}</span>
             ))}
           </p>
-          <ul className="xos-lrepos" key={lang} {...arrive}>
+          <ul className={'xos-lrepos' + (swapped.current ? ' sw' : '')} key={lang}>
             {repos.map((r, j) => (
-              <li key={r.name} style={{ '--k': j }}>
+              <li key={r.name} style={{ '--j': j }}>
                 <A to={r.to}><span className="pf-mono">{r.name}</span><small>{r.eco} · <Star />{r.stars}</small></A>
               </li>
             ))}
           </ul>
         </div>
       </div>
-    </section>
+    </Ripple>
   );
 }
+
+/* JS off: the tabs cannot switch, so every ecosystem and galaxy panel shows, one after another; the gallery cannot be
+   driven by scroll, so it is the native sideways rail it is on phones */
+const NOSCRIPT = '<style>.xos-panel[hidden],.xos-opanel[hidden]{display:block!important;margin-top:64px}.xos-eco,.xos-chips{display:none!important}'
+  + '.xos-hg{height:auto!important}.xos-hg-stage{position:static!important;height:auto!important;padding:72px 0!important;overflow:visible!important}'
+  + '.xos-track{overflow-x:auto!important;scroll-snap-type:x mandatory}</style>';
 
 export default function OpenSource() {
   return (
     <main className="xos pf-r">
-      {/* JS off: the tabs cannot switch, so every ecosystem and galaxy panel shows, one after another */}
-      <noscript dangerouslySetInnerHTML={{ __html: '<style>.xos-panel[hidden],.xos-opanel[hidden]{display:block!important;margin-top:64px}.xos-eco,.xos-chips{display:none!important}[data-arrive]>li{opacity:1!important;transform:none!important}</style>' }} />
+      <noscript dangerouslySetInnerHTML={{ __html: NOSCRIPT }} />
       <Hero />
       <div className="xos-after">
         <Local />
+        <Built />
         <Publish />
         <Totals />
         <Orgs />
-        <Built />
         <Charter />
         <Contribute />
       </div>

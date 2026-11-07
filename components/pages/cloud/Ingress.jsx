@@ -3,41 +3,39 @@
 // Goal: see routes, certificates and middleware handled from what they already wrote, without restarts.
 // CTA: View on GitHub (ingress.hero, ingress.close).
 // Metric: cta_click ingress.hero
-// Signature: the routing board, live: requests by host and path, a backend leaving and rejoining rotation, a certificate arriving.
+// Signature: globe — a turning globe where requests arc in from points around the world to the one edge and route on to a backend; drag (or swipe) to spin it.
 // Beyond: Chain your own pipeline: pick and reorder Hanzo's middleware and watch a request walk it.
 /* Ingress (v2, archetype A Launch).
-   V2: 8/10 Round 3 (review 7/10): the stage never moves the page any more (the auto-settle is gone; scrollTo and wheel
-   rest where sent); mid-wipe the outgoing text and card fade out by 30% of the wipe and the incoming caption and h3 cut
-   in by line mask at 50%, so two headings never stack; each drawing starts as its wipe begins (no empty card); the
-   middleware box holds two chips so the board no longer jumps, and the board opens on the issued certificate; the
-   chip request dot runs under the lettering; the prompt wraps; GetIt spacing and the hero ask's arrow hover are
-   page-local; every invented string is gone (board and pipeline now speak only Hanzo's words from this page).
-   Round 2: each of the six wipe scenes now plays its drawing once as it arrives (sources slide in and
-   the IngressClass ticks on, the lock shackle closes, a request passes the black chips, the hollow pod empties and refills,
-   the paths type in, 80 and 443 settle); (a scroll settle, removed in round 3); "What happens at the edge" rides in the first scene (no empty intro screen); the phone
-   board keeps its middleware row; the dark room opens from a rounded card, its chips and arrows hover and press, and the
-   request dot lights each step it passes; deck tokens only, tiles flat.
-   Signature: the routing board, live. Requests arrive by hostname and path, pass the middleware named in annotations
-   and land on backends; a backend that stops answering health checks drops out of rotation and comes back when it
-   recovers; a new hostname fetches its own certificate; a docs path is served from disk with no pod at all.
-   Supporting: kinetic title lines; the board settles from huge on scroll (Stage); the six facts as scroll-scrubbed
-   clip-path scene changes (WipeScenes), each scene in its own tint.
+   V2: 8/10 Motion map: globe — the pinned six-scene wipe and the board's scroll settle are gone; the hero now holds a
+   turning, draggable globe (requests arc into the edge and on to backends, one backend leaves and rejoins rotation),
+   the six facts are a snapping side carousel, and each main section enters its own way (side-carousel, stretch-scroll,
+   inertia-drag, count-roll, curtain-rise).
+   Order: statement and globe -> What happens at the edge (carousel) -> the routing board -> Paste and ship -> Chain your
+   own pipeline (dark room) -> Get Ingress.
+   Signature: the globe (IngressGlobe.jsx). Requests leave unlabeled points, arc into the edge and are routed to one of
+   three backends; the middle backend goes hollow (out of rotation) and is put back when it recovers, the note beside it
+   saying so in the page's words. Drag to spin and tilt with inertia; phones swipe sideways; arrow keys on focus; a pause
+   control; reduced motion is a still frame that still turns by hand.
+   Entrances (ingress/entrances.jsx), one per main section, in the map's order; no other section reveal on the page.
+   Supporting: the h1's line cut-in at first paint; the routing board's idle loop; each fact's drawing plays once as its
+   card comes into view.
    Beyond: "Chain your own pipeline" - press Hanzo's middleware to add it, drag (or use the arrows) to change the order,
    and a request walks the chain top to bottom each time it changes.
-   Greys only (Hanzo's deck). Every word and link is Hanzo's; hostnames are examples.
+   Greys only (Hanzo's deck). Every word and link is Hanzo's.
    Persona: a platform engineer choosing what sits on ports 80 and 443 of a Kubernetes cluster.
    Goal: see routes, certificates and middleware handled from what they already wrote, without restarts.
    CTA: View on GitHub (hero, the sticky ask bar and the close; one solid button per screen). */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, Reorder, useInView, useScroll, useTransform } from 'motion/react';
+import { motion, AnimatePresence, Reorder, useInView, useReducedMotion } from 'motion/react';
 import { play } from '../../../lib/sound';
-import { A, Cta } from '../../kit';
+import { Cta } from '../../kit';
 import { useLive } from './Frame';
-import { Lines, Lift, useTick } from '../../v2/LiftStage';
-import WipeScenes from '../../v2/WipeScenes';
+import { Lines, useTick } from '../../v2/LiftStage';
 import ShipPrompt from '../../v2/ShipPrompt';
 import GetIt from '../../v2/GetIt';
 import LivePause, { usePause } from '../../v2/LivePause';
+import IngressGlobe from './IngressGlobe';
+import { SideCarousel, StretchScroll, InertiaDrag, RollNum, CurtainRise, useArrive } from './ingress/entrances';
 import '../../v2/v2scale.css';
 import './Ingress.css';
 
@@ -107,66 +105,7 @@ const FACTS = [
 
 const MW = ['rate limiting', 'retry', 'circuit breaking', 'compression', 'header rewriting', 'IP allowlists', 'redirects', 'prefix stripping'];
 
-/* a media query, read after hydration so the server HTML and the first client render agree */
-function useMedia(q) {
-  const [n, setN] = useState(false);
-  useEffect(() => {
-    const m = matchMedia(q);
-    const f = () => setN(m.matches);
-    f();
-    m.addEventListener('change', f);
-    return () => m.removeEventListener('change', f);
-  }, [q]);
-  return n;
-}
-// phones (under 900px, where WipeScenes stacks its scenes instead of pinning them); reduced motion
-const useNarrow = () => useMedia('(max-width: 900px)');
-const useCalm = () => useMedia('(prefers-reduced-motion: reduce)');
-
-/* The pinned wipe, read from the page (it never moves the scroll): [ref, reach] where reach is the last scene whose
-   wipe has begun, so each drawing starts playing as its scene starts to rise, never into an empty card. It also hands
-   the text over cleanly: each scene gets --out (the outgoing text and drawing fade out over the first 30% of the next
-   wipe) and data-t (its own text cuts in by line mask once its wipe passes 50%), so two headings never stack.
-   Desktop only; phones and reduced motion stack the scenes and show everything. */
-const REST = 0.62; // WipeScenes finishes each wipe at 62% of its scene's span
-function useWipe(n, off) {
-  const ref = useRef(null);
-  const [reach, setReach] = useState(-1);
-  useEffect(() => {
-    const el = ref.current;
-    if (off || !el) return;
-    const span = 1 / (n - 1);
-    let raf = 0;
-    el.setAttribute('data-wipe', '');
-    const look = () => {
-      raf = 0;
-      const r = el.getBoundingClientRect();
-      const L = el.offsetHeight - innerHeight;
-      const v = L > 0 ? -r.top / L : 0;
-      const kin = (i) => (i <= 0 ? 1 : i >= n ? 0 : Math.min(1, Math.max(0, (v - (i - 1) * span) / (span * REST))));
-      let j = r.top < innerHeight * 0.6 ? 0 : -1; // the first drawing plays as the stage comes up into view
-      el.querySelectorAll('.ig-scene').forEach((sc, i) => {
-        const a = kin(i);
-        if (i > 0 && a > 0.02) j = Math.max(j, i);
-        sc.setAttribute('data-t', a >= 0.5 ? '1' : '0');
-        sc.style.setProperty('--out', Math.max(0, 1 - kin(i + 1) / 0.3).toFixed(3));
-      });
-      if (j >= 0) setReach((x) => Math.max(x, j));
-    };
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(look); };
-    addEventListener('scroll', onScroll, { passive: true });
-    addEventListener('resize', onScroll, { passive: true });
-    look();
-    return () => {
-      removeEventListener('scroll', onScroll); removeEventListener('resize', onScroll); cancelAnimationFrame(raf);
-      el.removeAttribute('data-wipe');
-      el.querySelectorAll('.ig-scene').forEach((sc) => { sc.removeAttribute('data-t'); sc.style.removeProperty('--out'); });
-    };
-  }, [n, off]);
-  return [ref, reach];
-}
-
-/* each scene's drawing, from its own words; it plays once when its scene is fully in (`on`), then rests.
+/* each fact's drawing, from its own words; it plays once when its card is half in view, then rests.
    With JS off or reduced motion it is simply its final frame. */
 function Draw({ k, on }) {
   const c = (name) => name + (on ? ' play' : '');
@@ -198,32 +137,26 @@ function Draw({ k, on }) {
   return <div className={c('ig-d ig-d-ports')}><b>80</b><b>443</b><p>every Linux capability dropped except the one that lets it</p></div>;
 }
 
-/* phones: a drawing plays when half of it is on screen */
-function SceneDraw({ k, i, reach, narrow, calm }) {
+function FactDraw({ k }) {
   const ref = useRef(null);
+  const calm = useReducedMotion();
   const seen = useInView(ref, { amount: 0.5, once: true });
-  return <div ref={ref} className="ig-scene-r" aria-hidden="true"><Draw k={k} on={calm || (narrow ? seen : reach >= i)} /></div>;
+  return <div ref={ref} className="ig-fact-r" aria-hidden="true"><Draw k={k} on={calm || seen} /></div>;
 }
 
+/* the globe's note: the page's own words for where the backend loop is */
+const NOTE = ['no reload, no dropped connection', 'out of rotation', 'out of rotation', 'put back when it recovers'];
+
 /* Beyond: chain your own pipeline. Pick middleware, drag to reorder; a request walks the chain again on every change,
-   lighting each step as it passes. The black room enters as a rounded card inside the gutters and opens to full width. */
+   lighting each step as it passes. Its entrance is count-roll: the step numbers roll up into their values. */
 function Pipeline() {
   const [chain, setChain] = useState(['IP allowlists', 'rate limiting', 'retry']);
   const toggle = (m) => setChain((c) => (c.includes(m) ? c.filter((x) => x !== m) : [...c, m]));
   const move = (i, d) => setChain((c) => { const n = [...c]; [n[i], n[i + d]] = [n[i + d], n[i]]; return n; });
-  const room = useRef(null);
+  const [room] = useArrive();
   const run = useRef(null);
-  const calm = useCalm();
-  const narrow = useNarrow();
-  const flat = useRef(false);
-  flat.current = calm || narrow;
+  const calm = useReducedMotion();
   const seen = useInView(run, { amount: 0.5, once: true });
-  const { scrollYProgress: p } = useScroll({ target: room, offset: ['start end', 'start 0.25'] });
-  const clip = useTransform(p, (v) => {
-    if (flat.current) return 'inset(0px 0px round 0px)';
-    const q = 1 - Math.min(1, Math.max(0, v));
-    return `inset(0px ${Math.round(q * 32)}px round ${Math.round(q * 28)}px)`;
-  });
   // the walk: -2 resting, -1 at "request", 0..n-1 on a step, n at "backend"
   const [at, setAt] = useState(-2);
   const [y, setY] = useState(0);
@@ -246,7 +179,7 @@ function Pipeline() {
     setY(Math.round(b.top - a.top + b.height / 2 - 4));
   }, [at, sig]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
-    <motion.section ref={room} className="ig-pipe v2-dark" data-room="dark" style={{ clipPath: clip }}>
+    <section ref={room} className="ig-pipe v2-dark" data-room="dark">
       <div className="v2-wrap v2-grid">
         <div className="ig-pipe-l">
           <h2 className="v2-headline ig-pipe-h">Name one in an annotation, or chain several into a named pipeline and name that.</h2>
@@ -259,7 +192,7 @@ function Pipeline() {
           <Reorder.Group as="ol" axis="y" values={chain} onReorder={setChain} className="ig-pipe-chain" data-swipe-own="">
             {chain.map((m, i) => (
               <Reorder.Item as="li" key={m} value={m} className={at === i ? 'lit' : ''} onDragEnd={() => play('tick')} whileDrag={{ scale: 1.03, boxShadow: '0 18px 40px -18px rgba(0,0,0,.6)' }} transition={{ duration: 0.3, ease: EASE }}>
-                <span className="ig-pipe-n">{String(i + 1).padStart(2, '0')}</span>{m}
+                <span className="ig-pipe-n"><RollNum value={String(i + 1).padStart(2, '0')} /></span>{m}
                 <span className="ig-pipe-mv">
                   <button type="button" data-sound="tick" aria-label={'Move ' + m + ' up'} disabled={i === 0} onClick={() => move(i, -1)}>↑</button>
                   <button type="button" data-sound="tick" aria-label={'Move ' + m + ' down'} disabled={i === chain.length - 1} onClick={() => move(i, 1)}>↓</button>
@@ -272,14 +205,12 @@ function Pipeline() {
           <span className={'ig-pipe-walk' + (at >= -1 ? ' on' : '')} style={{ transform: `translateY(${y}px)` }} aria-hidden="true" />
         </div>
       </div>
-    </motion.section>
+    </section>
   );
 }
 
 export default function Ingress() {
-  const narrow = useNarrow();
-  const calm = useCalm();
-  const [wipe, reach] = useWipe(FACTS.length, narrow || calm);
+  const [phase, setPhase] = useState(0);
   return (
     <main className="v2 ig">
       <section className="ig-hero">
@@ -289,41 +220,62 @@ export default function Ingress() {
           </div>
           <div className="ig-ports" aria-hidden="true"><span>:80</span><span>:443</span></div>
           <div className="ig-hero-b">
-            <p className="v2-lede ig-sub v2-in" style={{ animationDelay: '.3s' }}>The entry point of a Kubernetes cluster</p>
-            <Cta to="https://github.com/hanzoai" id="ingress.hero" thumb className="v2-in" style={{ animationDelay: '.42s' }}>View on GitHub</Cta>
+            <p className="v2-lede ig-sub" id="ig-lede">The entry point of a Kubernetes cluster</p>
+            <Cta to="https://github.com/hanzoai" id="ingress.hero" thumb>View on GitHub</Cta>
           </div>
         </div>
-        <Lift className="v2-wrap ig-lift" from={1.05} y={20} origin="50% 0%" offset={['start end', 'start 0.4']}>
-          <Board />
-        </Lift>
+        {/* the signature: the globe, with a legend in the page's own words */}
+        <div className="v2-wrap ig-stage">
+          <div className="ig-stage-l">
+            <ul className="ig-legend">
+              <li><i className="dot" aria-hidden="true" />hostname</li>
+              <li><i className="edge" aria-hidden="true" />hanzoai/ingress</li>
+              <li><i className="back" aria-hidden="true" />backend</li>
+            </ul>
+            <p className={'ig-stage-note' + (phase === 1 || phase === 2 ? ' down' : '')} aria-hidden="true">{NOTE[phase]}</p>
+          </div>
+          <IngressGlobe onPhase={setPhase} />
+        </div>
       </section>
 
-      <div ref={wipe} className="ig-wipe">
-        <WipeScenes
-          className="ig-ws"
+      {/* entrance 1, side-carousel */}
+      <section className="ig-facts" aria-labelledby="ig-edge-h">
+        <div className="v2-wrap ig-facts-h">
+          <h2 className="v2-display m ig-edge" id="ig-edge-h">What happens at the edge</h2>
+        </div>
+        <SideCarousel
           label="What happens at the edge"
           items={FACTS}
-          scene={([t, d, k], i) => (
-            <div className={'ig-scene s' + (i % 3)}>
-              <div className="v2-wrap v2-grid ig-scene-g">
-                <div className="ig-scene-l">
-                  {i === 0 && <h2 className="v2-display m ig-edge">What happens at the edge</h2>}
-                  <p className="v2-kick acc">{String(i + 1).padStart(2, '0')} / 06</p>
-                  <h3 className="v2-headline">{t}</h3>
-                  <p className="v2-body">{d}</p>
-                </div>
-                <SceneDraw k={k} i={i} reach={reach} narrow={narrow} calm={calm} />
+          render={([t, d, k], i) => (
+            <article className={'ig-fact s' + (i % 2)}>
+              <div className="ig-fact-l">
+                <h3 className="v2-headline">{t}</h3>
+                <p className="v2-kick acc">{String(i + 1).padStart(2, '0')} / 06</p>
+                <p className="v2-body">{d}</p>
               </div>
-            </div>
+              <FactDraw k={k} />
+            </article>
           )}
         />
-      </div>
+      </section>
 
-      <ShipPrompt name="Ingress" prompt="Read https://hanzo.ai/skill.md and use Hanzo Ingress in my project. Start with: hanzo ingress routes list" flip />
+      {/* entrance 2, stretch-scroll */}
+      <section className="ig-board-s">
+        <StretchScroll className="v2-wrap"><Board /></StretchScroll>
+      </section>
 
+      {/* entrance 3, inertia-drag */}
+      <InertiaDrag target=".sp-card" from={-1}>
+        <ShipPrompt name="Ingress" prompt="Read https://hanzo.ai/skill.md and use Hanzo Ingress in my project. Start with: hanzo ingress routes list" flip />
+      </InertiaDrag>
+
+      {/* entrance 4, count-roll */}
       <Pipeline />
 
-      <GetIt name="Ingress" tag="K8s ingress + static plugin" seed="ingress" data={[80, 443, 6]} lead="Get started with Hanzo Ingress" ask={['View on GitHub', 'https://github.com/hanzoai', 'ingress.close']} />
+      {/* entrance 5, curtain-rise */}
+      <CurtainRise>
+        <GetIt name="Ingress" tag="K8s ingress + static plugin" seed="ingress" data={[80, 443, 6]} lead="Get started with Hanzo Ingress" ask={['View on GitHub', 'https://github.com/hanzoai', 'ingress.close']} />
+      </CurtainRise>
     </main>
   );
 }
