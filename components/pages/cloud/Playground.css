@@ -126,6 +126,22 @@ html:has(main.pg) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
 .pg .cf-paste { opacity: 1 !important; transform: none !important; }
 .pg .x-copy-t { font-size: 13px; }
 .pg-paste .cf-paste-t { font-size: clamp(36px, 3.9vw, 56px); font-weight: 600; letter-spacing: -.042em; }
+.pg-paste-grid { display: grid; grid-template-columns: 5fr 7fr; gap: clamp(32px, 5vw, 88px); align-items: center; }
+/* the wall: nine of Hanzo's model films; one plays at a time (the hovered one, or the next in turn) */
+.pg-wall { position: relative; }
+.pg-wall-pause { top: -58px; right: 0; }
+.pg-wall-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.pg-tile { position: relative; display: block; aspect-ratio: 3 / 2; border-radius: 16px; overflow: hidden; background: #161618; color: #f5f5f7; text-decoration: none; transform: translateZ(0); transition: transform .5s cubic-bezier(.16, 1, .3, 1), box-shadow .5s cubic-bezier(.16, 1, .3, 1); }
+.pg-tile-img, .pg-tile-film { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.pg-tile-img { transition: transform .9s cubic-bezier(.16, 1, .3, 1); }
+.pg-tile.on .pg-tile-img { transform: scale(1.05); }
+.pg-tile.on { box-shadow: 0 0 0 2px #f5f5f7; }
+.pg-tile-film { opacity: 0; animation: pg-film-in .6s .2s both; }
+@keyframes pg-film-in { to { opacity: 1; } }
+.pg-tile-n { position: absolute; left: 12px; bottom: 10px; padding: 6px 10px; border-radius: 999px; background: rgba(10, 10, 10, .72); font: 500 14px/1 var(--sans); letter-spacing: -.01em; transform: translateY(4px); transition: transform .4s cubic-bezier(.16, 1, .3, 1), background-color .3s; }
+.pg-tile.on .pg-tile-n { transform: none; background: #f5f5f7; color: #0a0a0a; }
+.pg-tile:active { transform: scale(.98); }
+@media (hover: hover) { .pg-tile:hover .pg-tile-img { transform: scale(1.05); } }
 .pg-paste .cf-paste-d { font-size: clamp(17px, 1.32vw, 19px); color: #a1a1a6; }
 .pg-paste .cf-paste-code { font-size: clamp(15px, 1.25vw, 18px); padding: 28px 28px 34px; }
 
@@ -164,6 +180,11 @@ html:has(main.pg) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
   .pg-req pre { font-size: 14px; line-height: 1.6; }
   .pg-first[data-live] .pg-req-pane:last-child pre { max-height: 190px; overflow: hidden; -webkit-mask-image: linear-gradient(#000 75%, transparent); mask-image: linear-gradient(#000 75%, transparent); }
   .pg-paste { padding: 120px 0; }
+  .pg-paste-grid { grid-template-columns: minmax(0, 1fr); gap: 48px; }
+  .pg-wall-pause { top: -54px; }
+  .pg-wall-grid { gap: 6px; }
+  .pg-tile { aspect-ratio: 4 / 5; border-radius: 12px; }
+  .pg-tile-n { left: 6px; bottom: 6px; padding: 5px 8px; font-size: 14px; }
   .pg-rel .lx-rel-grid[data-n='3'] { grid-template-columns: minmax(0, 1fr); }
   .pg-rel .lx-rel-grid[data-n='3'] > li:first-child { grid-row: auto; }
   .pg-rel .lx-rel-grid[data-n='3'] > li:first-child .lx-rel-art { min-height: 160px; }

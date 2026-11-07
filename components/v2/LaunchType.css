@@ -58,6 +58,9 @@
 .lx .cf-dot.b { background: #8e8e93 !important; box-shadow: none !important; }
 .lx .cf-dot.r { background: var(--ink) !important; }
 .lx .x-copy { min-height: 44px; }
+.lx .x-copy-t, .lx .cf-code-k { font-size: 13px; }
+/* Frame's Paste arrives with Rise (opacity 0 until JS): Hanzo's words must read with JS off, so it simply sits */
+.lx .cf-paste { opacity: 1 !important; transform: none !important; }
 /* Frame's "Paste and ship" stacked for a narrow column: pass className="lx-paste" */
 .lx .cf-paste.lx-paste { grid-template-columns: minmax(0, 1fr); gap: 22px; }
 .lx .lx-paste .cf-paste-t { font-size: clamp(22px, 1.95vw, 28px); font-weight: 560; letter-spacing: -.025em; }
@@ -70,7 +73,7 @@
   .lx-lede { font-size: 19px; }
   .lx-body { font-size: 17px; }
   .lx-cta, .lx-ghost { height: 50px; min-height: 50px; }
-  .lx-kick, .lx .cf-paste-k, .lx .cf-api { font-size: 14px; }
+  .lx-kick, .lx .cf-paste-k, .lx .cf-api, .lx .x-copy-t, .lx .cf-code-k { font-size: 14px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .lx-lm .lx-line > span { animation: none !important; transform: none !important; }

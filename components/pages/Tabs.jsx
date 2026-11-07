@@ -129,7 +129,7 @@ function Hero() {
           <div>
             <LineMask as="h1" id="xtb-h1" now className="w2-display xtb-h1" lines={['Keep tabs on', 'your agents.']} />
           </div>
-          <motion.div className="xtb-top-r" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
+          <motion.div className="xtb-top-r" initial={{ y: 14 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
             <p className="w2-lede">Your coding agents work in shells on real machines. Tabs puts every one of those shells in front of you — split, tiled, and reachable from anywhere you can open a browser.</p>
             <Magnetic strength={0.25}><A to="https://tabs.hanzo.ai" className="w2-cta" data-thumb="Open Tabs" data-cta="tabs.hero">Open Tabs <i aria-hidden="true">↗</i></A></Magnetic>
           </motion.div>
@@ -226,7 +226,8 @@ function Why() {
   return (
     <div ref={ref}>
       <PinChapters id="xtb-why" label="Why it is shaped this way" className="xtb-pin"
-        chapters={WHY.map(([t, d], i) => ({ k: i === 0 ? 'Why it is shaped this way' : `Why · ${String(i + 1).padStart(2, '0')}`, t, b: <p>{d}</p> }))}
+        title="Why it is shaped this way"
+        chapters={WHY.map(([t, d]) => ({ t, b: <p>{d}</p> }))}
         visual={(at) => (
           <div className={'xtb-vis' + (paused ? ' paused' : '')}>
             {pauseBtn}

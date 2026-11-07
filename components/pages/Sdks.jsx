@@ -193,28 +193,23 @@ function Console() {
 function Hero() {
   return (
     <section className="xsd-hero" aria-labelledby="xsd-h1">
-      <div className="a2-wrap">
-        <div className="a2-grid xsd-top">
-          <div className="xsd-top-l">
-            <p className="a2-kick"><b>SDKs</b></p>
-            <A2Lines as="h1" id="xsd-h1" className="a2-display m xsd-h1" lines={['SDKs for', 'every language']} now />
+      {/* code first: the console takes the left of the first screen, the words sit beside it */}
+      <div className="a2-wrap a2-grid xsd-first">
+        <div className="xsd-words">
+          <p className="a2-kick"><b>SDKs</b></p>
+          <A2Lines as="h1" id="xsd-h1" className="a2-display s xsd-h1" lines={['SDKs for', 'every language']} now />
+          <p className="a2-lede xsd-lede">A <b>full Cloud SDK</b> generated from the OpenAPI document the API itself serves, and a hand-written <b>AI + Agents</b> library.</p>
+          <div className="x-row-links tight xsd-hero-links">
+            <span data-thumb="API reference" data-href="https://docs.hanzo.ai/docs/openapi/" data-cta="sdks.hero"><More to="https://docs.hanzo.ai/docs/openapi/">API reference</More></span>
+            <More to="https://github.com/hanzoai/sdk">hanzoai/sdk</More>
           </div>
-          <div className="xsd-top-r">
-            <p className="a2-lede xsd-lede">A <b>full Cloud SDK</b> generated from the OpenAPI document the API itself serves, and a hand-written <b>AI + Agents</b> library.</p>
-            <div className="x-row-links tight xsd-hero-links">
-              <span data-thumb="API reference" data-href="https://docs.hanzo.ai/docs/openapi/" data-cta="sdks.hero"><More to="https://docs.hanzo.ai/docs/openapi/">API reference</More></span>
-              <More to="https://github.com/hanzoai/sdk">hanzoai/sdk</More>
-            </div>
+          <p className="xsd-ex x-mono">Code Examples</p>
+          <div className="xsd-dias">
+            {Object.values(DIALECTS).map((v) => <div key={v.name}><b>{v.title}</b><span>{v.line}</span></div>)}
           </div>
         </div>
-        <motion.div className="a2-grid xsd-stage" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.2 }}>
-          <div className="xsd-stage-con"><Console /></div>
-          <div className="xsd-stage-side">
-            <p className="xsd-ex x-mono">Code Examples</p>
-            <div className="xsd-dias">
-              {Object.values(DIALECTS).map((v) => <div key={v.name}><b>{v.title}</b><span>{v.line}</span></div>)}
-            </div>
-          </div>
+        <motion.div className="xsd-code-first" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.15 }}>
+          <Console />
         </motion.div>
       </div>
       {/* every sample, in the page for search and find-in-page; the console shows one at a time */}

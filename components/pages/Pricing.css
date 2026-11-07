@@ -8,14 +8,14 @@
 .xpr-w { width: min(100% - 48px, 1392px); margin-inline: auto; }
 
 /* hero: one word, one line */
-.xpr-hero { padding: clamp(56px, 8vw, 120px) 0 clamp(28px, 3vw, 44px); }
+.xpr-hero { padding: clamp(40px, 4.4vw, 64px) 0 clamp(20px, 2vw, 28px); }
 .xpr-hero-g { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 48px; }
 .xpr-h1 { margin: 0; font-size: var(--d); font-weight: 600; line-height: .92; letter-spacing: -.055em; color: var(--ink); }
 .xpr-lede { margin: 0 0 .5em; max-width: 20ch; font-size: var(--l); line-height: 1.35; letter-spacing: -.012em; color: var(--soft); text-wrap: balance; }
 
 /* the room: tabs that stay with you while you read the plans */
 .xpr-tabs { position: sticky; top: var(--x-top, 60px); z-index: 20; padding: 12px 0; background: #fff; box-shadow: 0 1px 0 var(--line); }
-.xpr-panels { padding-top: clamp(32px, 3.4vw, 48px); }
+.xpr-panels { padding-top: clamp(24px, 2.2vw, 32px); }
 
 /* the small segmented choices inside cards */
 .xpr-seg { position: relative; display: inline-flex; gap: 2px; padding: 4px; border-radius: 999px; background: #efeff2; }

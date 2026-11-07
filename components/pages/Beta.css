@@ -1,13 +1,13 @@
 /* ---------- beta (v2, grey deck) ---------- */
 
 /* hero */
-.xbt-hero { padding: clamp(56px, 8vw, 128px) 0 clamp(120px, 15vw, 240px); }
-.xbt-top { row-gap: 32px; align-items: end; }
-.xbt-copy { grid-column: 1 / span 7; }
-.xbt-side { grid-column: 8 / span 5; display: grid; gap: 28px; justify-items: start; padding-bottom: 12px; }
+.xbt-hero { padding: clamp(56px, 8vw, 128px) 0 clamp(24px, 3vw, 48px); }
+.xbt-h1 { font-size: clamp(3.5rem, 10.4vw, 9.5rem); }
+.xbt-side { display: flex; flex-wrap: wrap; align-items: center; gap: 24px 40px; margin-top: clamp(28px, 3vw, 48px); }
+.xbt-side .xp-lede { max-width: 30ch; }
+.xbt-strip-s { padding: clamp(32px, 4vw, 64px) 0 clamp(120px, 12vw, 200px); }
 .xbt-prod { color: var(--hz-950); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .14em; text-decoration-color: var(--hz-300); transition: text-decoration-color .2s; }
 @media (hover: hover) { .xbt-prod:hover { text-decoration-color: var(--hz-950); } }
-.xbt-strip { margin-top: clamp(56px, 6vw, 96px); }
 .xbt-shelf { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
 .xbt-shelf-k { font: 500 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--hz-500); }
 .xbt-pause { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--hz-950); cursor: pointer; transition: transform .1s, box-shadow .2s; }
@@ -28,13 +28,18 @@
 .xbt-tile:focus-visible::after { opacity: 1; transform: none; }
 .xbt-tile:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 .xbt-sk { position: absolute; inset: 24px 24px 76px; display: flex; flex-direction: column; justify-content: center; gap: 12px; padding: 22px; border-radius: 16px; background: #fff; border: 1px solid var(--line); box-shadow: 0 30px 60px -40px rgba(0, 0, 0, .35); }
-.xbt-sk i { display: block; height: 9px; border-radius: 5px; background: var(--hz-100); }
+.xbt-sk i { display: block; height: 9px; border-radius: 5px; background: var(--hz-100); transform-origin: 0 50%; }
+.xbt-sk.dev.run i { animation: xbt-write .7s var(--xp-ease) both; animation-delay: calc(var(--i) * 110ms); }
+@keyframes xbt-write { from { transform: scaleX(0); } to { transform: none; } }
+.xbt-sk.studio.run b { animation: xbt-play 6s linear both; }
+@keyframes xbt-play { from { transform: translateX(-180px); } to { transform: translateX(120px); } }
+.xbt-sk.studio.run i { animation: xbt-write .8s var(--xp-ease) both; animation-delay: calc(var(--i) * 140ms); }
 .xbt-sk.dev i.add { background: var(--hz-700); }
 .xbt-sk.dev i.del { background: var(--hz-300); }
 .xbt-sk.studio { gap: 16px; }
 .xbt-sk.studio i { height: 26px; border-radius: 8px; background: var(--hz-100); }
 .xbt-sk.studio i:nth-child(2) { background: var(--hz-700); }
-.xbt-sk.studio b { position: absolute; top: 14px; bottom: 14px; left: 46%; width: 2px; background: var(--hz-950); border-radius: 2px; }
+.xbt-sk.studio b { position: absolute; top: 14px; bottom: 14px; left: 46%; width: 2px; background: var(--hz-950); border-radius: 2px; box-shadow: 0 0 0 4px rgba(10, 10, 11, .06); }
 
 /* the passes: tiles carrying Hanzo's own media; each opens into a sheet */
 .xbt-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(360px, 42svh)); gap: 24px; }
@@ -47,6 +52,8 @@
 .xbt-pass:active { transform: scale(.985); }
 .xbt-pass-m { position: absolute; inset: 0; z-index: -1; }
 .xbt-pass-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 35%; transition: transform 1.2s var(--xp-ease); }
+.xbt-pass-img.zen { object-position: 50% 8%; }
+.xbt-cell.c1 .xbt-pass.dark .xbt-pass-m::after { inset: 30% 0 0 0; background: linear-gradient(transparent, rgba(0, 0, 0, .85) 55%); }
 .xbt-pass.dark .xbt-pass-m::after { content: ''; position: absolute; inset: 45% 0 0 0; background: linear-gradient(transparent, rgba(0, 0, 0, .7)); }
 .xbt-pass-sk { position: absolute; inset: 0 0 46% 0; }
 .xbt-pass-sk .xbt-sk { inset: 28px; }
@@ -77,11 +84,13 @@
 .xbt-close:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 
 /* the dark close, over Enso's film */
+.xbt-passes { padding: clamp(40px, 5vw, 80px) 0 clamp(120px, 14vw, 200px) !important; }
 .xbt-foot { position: relative; overflow: hidden; min-height: 70svh; display: flex; align-items: center; background: #000; }
 .xbt-foot-film { position: absolute; top: 0; bottom: 0; right: 0; width: min(46%, 640px); opacity: .9; }
 .xbt-foot-film video { width: 100%; height: 100%; object-fit: cover; }
 .xbt-foot-film::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 40%; z-index: 1; background: linear-gradient(90deg, #000, transparent); }
 .xbt-foot-in { position: relative; z-index: 2; display: grid; gap: clamp(8px, 1.6vw, 20px); justify-items: start; }
+.xbt-foot-in .xp-l { padding-bottom: .12em; }
 .xbt-big { display: inline-flex; align-items: baseline; gap: .3em; color: #f5f5f7; font: 600 clamp(3rem, 7.2vw, 7rem)/1 var(--sans); letter-spacing: -.05em; text-decoration: none; transition: transform .1s; }
 .xbt-big span { font-weight: 400; color: var(--hz-400); transition: transform .35s var(--xp-ease), color .3s; }
 @media (hover: hover) { .xbt-big:hover span { transform: translate(6px, -6px); color: #f5f5f7; } }
@@ -89,9 +98,12 @@
 .xbt-big:focus-visible { outline: 2px solid var(--focus); outline-offset: 6px; border-radius: 8px; }
 
 @media (max-width: 900px) {
-  .xbt-hero { padding: 32px 0 88px; }
-  .xbt-side { gap: 22px; padding: 0; }
-  .xbt-strip { width: 100%; padding: 0; margin-top: 40px; }
+  .xbt-hero { padding: 32px 0 16px; }
+  .xbt-h1 { font-size: clamp(3rem, 14vw, 3.75rem); }
+  .xbt-side { gap: 20px; margin-top: 20px; }
+  .xbt-side .xp-cta { width: 100%; }
+  .xbt-strip-s { padding: 24px 0 88px; }
+  .xbt-strip { width: 100%; padding: 0; }
   .xbt-shelf { padding: 0 16px; }
   .xbt-tiles { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; padding: 0 16px 8px; scrollbar-width: none; transform: none !important; }
   .xbt-tiles::-webkit-scrollbar { display: none; }
@@ -109,3 +121,6 @@
   .xbt-big { font-size: clamp(2.75rem, 12.8vw, 3.5rem); }
 }
 .xbt-sheet.dark .xp-lede { color: var(--hz-300); }
+
+@media (prefers-reduced-motion: reduce) { .xbt-sk.run i, .xbt-sk.run b { animation: none; } }
+[data-off] .xbt-sk i, [data-off] .xbt-sk b { animation-play-state: paused; }

@@ -98,7 +98,7 @@ function Wall() {
             <LineMask as="h1" id="xga-h1" now className="w2-display xga-h1" lines={['Gallery']} />
             <p className="xga-kick x-mono">gallery.hanzo.ai</p>
           </div>
-          <motion.div className="xga-top-r" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
+          <motion.div className="xga-top-r" initial={{ y: 14 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
             <p className="w2-lede xga-lede">Curated template showcase for Hanzo products</p>
             <div className="xga-acts">
               <Magnetic strength={0.25}><A to="https://gallery.hanzo.ai" className="w2-cta" data-thumb="Browse the Gallery" data-cta="gallery.hero">Browse the Gallery <i aria-hidden="true">↗</i></A></Magnetic>
@@ -132,8 +132,8 @@ function Wall() {
               onPointerLeave={() => setHold(false)}
               onFocus={() => { setHold(true); setLit(i); }}
               onBlur={() => setHold(false)}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ y: 30 }}
+              animate={{ y: 0 }}
               transition={{ duration: 0.9, ease: EASE, delay: 0.2 + i * 0.06 }}
               aria-haspopup="dialog"
               data-cursor="View"

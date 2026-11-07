@@ -322,7 +322,7 @@ export default function Network() {
   const [lend, setLend] = useState(0);
   const steps = FACTS.map(([t, d], i) => ({ t, d, extra: i === 4 ? <Lend k={lend} setK={setLend} /> : null }));
   return (
-    <main className="lx nw" data-ask-name="Hanzo Network">
+    <main className="lx nw">
       <Hero />
 
       <PinnedChapters flip label="How the Network Works" per={76}
@@ -341,7 +341,7 @@ export default function Network() {
         </div>
       </ClipWipe>
 
-      <section className="lx-sec nw-paste">
+      <section className="lx-sec nw-paste" data-ask-name="Hanzo Network">
         <div className="lx-wrap">
           <Paste name="Network" prompt="Read https://hanzo.ai/skill.md and use Hanzo Network in my project. Start with: hanzo network list" />
           <div className="nw-docs"><span className="lx-kick">Network</span><A to={DOCS} className="nw-docs-a">Network docs →</A></div>
