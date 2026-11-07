@@ -458,7 +458,7 @@ const BUILT = [
   ['📊', 'OpenTelemetry', 'https://github.com/open-telemetry/opentelemetry-specification', 'CNCF', 'https://opentelemetry.io', 'Observability across every service', 'Apache-2.0'],
 ];
 
-/* the object: Hanzo's own twelve glyphs as one monochrome mark row (ink silhouettes); pointing at a credit lights its mark */
+/* the object: Hanzo's own twelve glyphs as one monochrome mark row; pointing at a credit lights its mark */
 function Built() {
   const arrive = useArrive();
   const marks = useArrive();

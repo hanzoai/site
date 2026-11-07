@@ -193,11 +193,11 @@ function StepCon({ at }) {
       <div className="mc-con-bar"><span>/v1/compute/machines</span><b>{String(at + 1).padStart(2, '0')} / 06</b></div>
       <AnimatePresence mode="wait" initial={false}>
         <motion.div key={at} className="mc-con-body" initial="in" animate="on" exit={{ opacity: 0, transition: { duration: 0.15 } }}>
-          <motion.p className="mc-con-ask" variants={{ in: { y: '105%' }, on: { y: 0, transition: { duration: 0.5, ease: EASE } } }}><span>{ask}</span></motion.p>
+          <p className="mc-con-ask"><span className="mc-mask"><motion.span variants={{ in: { y: '105%' }, on: { y: 0, transition: { duration: 0.5, ease: EASE } } }}>{ask}</motion.span></span></p>
           <ul className="mc-con-back">
             {back.map((b, j) => (
               <li key={b} className={j === back.length - 1 ? 'last' : ''}>
-                <motion.span variants={{ in: { y: '105%' }, on: { y: 0, transition: { duration: 0.5, ease: EASE, delay: 0.3 + j * 0.12 } } }}>{b}</motion.span>
+                <span className="mc-mask"><motion.span variants={{ in: { y: '105%' }, on: { y: 0, transition: { duration: 0.5, ease: EASE, delay: 0.3 + j * 0.12 } } }}>{b}</motion.span></span>
               </li>
             ))}
           </ul>
