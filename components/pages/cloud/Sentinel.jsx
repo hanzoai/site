@@ -227,7 +227,7 @@ function Sheets() {
 export default function Sentinel() {
   const calm = useReducedMotion();
   return (
-    <main className="l2 sn2" style={{ '--ac': '#7a5af8' }}>
+    <main className="l2-page sn2" style={{ '--ac': '#7a5af8' }}>
       <StageHero look="side" kick="sentry.hanzo.ai" title="Hanzo Sentinel" sub="Error tracking and performance monitoring" acts={[['Read the docs', DOCS], ['View on GitHub', GH]]}>
         <Issue />
       </StageHero>

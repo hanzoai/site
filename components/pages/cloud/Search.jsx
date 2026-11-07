@@ -244,7 +244,7 @@ function Pricing() {
 
 export default function Search() {
   return (
-    <main className="l2 se2" style={{ '--ac': '#0066ff' }}>
+    <main className="l2-page se2" style={{ '--ac': '#0066ff' }}>
       <StageHero look="rise" kick="Hybrid Search + RAG" title="Hanzo Search" sub="Keyword and meaning in the same query" acts={[['Read the docs', DOCS], ['GitHub', GH]]}>
         <Ask />
       </StageHero>
