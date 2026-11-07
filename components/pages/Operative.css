@@ -35,12 +35,12 @@
 .xov-desk.h3 .xov-typed { clip-path: inset(0 0 0 0); }
 .xov-field b { width: 2px; height: 18px; margin-left: 3px; background: var(--ink); animation: xov-blink 1s steps(1) infinite; }
 @keyframes xov-blink { 50% { opacity: 0; } }
-.xov-win-btn { justify-self: end; padding: 9px 20px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 13px; font-weight: 600; }
+.xov-win-btn { justify-self: end; width: 64px; height: 34px; border-radius: 999px; background: var(--ink); }
 .xov-scan { position: absolute; inset: 0; border: 3px solid var(--g50); opacity: 0; pointer-events: none; transition: opacity .3s var(--e-out); }
 .xov-read { position: absolute; right: 6%; top: 10%; display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 14px; background: #fff; color: #000; opacity: 0; transform: translateY(10px); transition: opacity .4s var(--e-out), transform .5s var(--a2-ease); }
 .xov-read span { font-size: 13px; font-weight: 500; }
 .xov-keys { position: absolute; left: 50%; bottom: 7%; display: flex; gap: 8px; translate: -50% 0; opacity: 0; transition: opacity .4s var(--e-out); }
-.xov-keys b { padding: 9px 13px; border-radius: 9px; background: rgba(255, 255, 255, .92); color: #000; font: 600 13px/1 var(--sans); box-shadow: 0 2px 0 rgba(0, 0, 0, .25); }
+.xov-keys b { display: block; height: 34px; border-radius: 9px; background: rgba(255, 255, 255, .92); box-shadow: 0 2px 0 rgba(0, 0, 0, .25); }
 .xov-aim-w { position: absolute; inset: 0; pointer-events: none; }
 .xov-aim { position: absolute; left: 0; top: 0; display: block; }
 .xov-ring { position: absolute; left: -16px; top: -16px; width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--g50); animation: xov-ring 1s var(--a2-ease) .5s both; }
@@ -190,7 +190,7 @@
 @keyframes xov-drop { from { opacity: 0; transform: translateY(-8px); } }
 .xov-req, .xov-usage { list-style: none; margin: 0 0 12px; padding: 0; }
 .xov-req li { display: flex; gap: 14px; padding: 14px 0; border-top: 1px solid var(--line); font-size: 16px; line-height: 1.45; }
-.xov-chk { color: var(--ink); font-weight: 700; }
+.xov-chk { flex: none; width: 6px; height: 11px; margin: 3px 4px 0 3px; border-right: 2px solid var(--ink); border-bottom: 2px solid var(--ink); rotate: 45deg; }
 .xov-usage li { padding: 14px 0; border-top: 1px solid var(--line); }
 .xov-usage p { margin: 0 0 6px; font-size: 16px; color: var(--g600); }
 .xov-usage code { display: block; font-size: 14px; line-height: 1.6; white-space: pre-wrap; overflow-wrap: normal; }
@@ -265,7 +265,7 @@
 .xov-social li { border-bottom: 1px solid var(--line); }
 .xov-soc { display: flex; align-items: center; justify-content: space-between; min-height: 56px; font-size: 17px; font-weight: 497; color: var(--ink); text-decoration: none; transition: transform .3s var(--a2-ease); }
 .xov-soc:active { transform: translateY(1px); }
-.xov-soc i { font-style: normal; color: var(--g500); transition: transform .3s var(--a2-ease), color .15s var(--e-out); }
+.xov-soc i { display: inline-grid; font-style: normal; color: var(--g500); transition: transform .3s var(--a2-ease), color .15s var(--e-out); }
 @media (hover: hover) { .xov-soc:hover { transform: translateX(4px); } .xov-soc:hover i { transform: translate(3px, -3px); color: var(--ink); } }
 .xov-get { grid-column: 8 / span 5; display: flex; flex-direction: column; gap: 32px; padding: 32px; border-radius: var(--r-hero); background: var(--g100); }
 .xov-get-t { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
@@ -288,7 +288,7 @@
   .xov-desk-r { display: none; }
   .xov-win { left: 6%; width: 70%; }
   .xov-win-p { display: none; }
-  .xov-keys b { padding: 7px 9px; font-size: 12px; }
+  .xov-keys b { height: 28px; scale: .8; }
   .xov-hands { flex-direction: column; align-items: flex-start; }
   .xov-hands li button { height: 44px; padding: 0 14px; font-size: 14px; }
   /* the pinned scene stacks: one layer open at a time, stepped by tapping its row */

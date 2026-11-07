@@ -6,7 +6,7 @@
 // Signature: the container comes apart: six slabs pressed into one box explode upward, then each layer lifts out and opens as you scroll.
 // Beyond: pick the provider and only the one environment variable in the command changes; the container stays the same.
 /* Operative.
-   V2: 8/10 round 2: the pinned stack now works the whole scroll (it explodes, then each of the six layers lifts out flat and opens to show what it is while the gap travels up the stack), the chapter text sits in one fixed slot (no accordion shift), the four provider boxes became one panel behind the gliding tabs, requirements and usage fold under the terminal, Get Operative is the closed container again, every hover answers (hand ghost on the desktop, slab lift, env preview, port light), hero reads name first with a 2.5° pointer tilt, deck greys only.
+   V2: 8/10 round 2: the pinned stack now works the whole scroll (it explodes, then each of the six layers lifts out flat and opens to show what it is while the gap travels up the stack), the chapter text sits in one fixed slot (no accordion shift), the four provider boxes became one panel behind the gliding tabs, requirements and usage fold under the terminal, Get Operative is the closed container again, every hover answers (hand ghost on the desktop, slab lift, env preview, port light), hero reads name first with a 2.5° pointer tilt, invented labels removed (every visible string is Hanzo's), deck greys only.
    Signature: the container comes apart. Pinned on screen, the image is a stack of six slabs pressed into one box;
    as you scroll the box explodes upward, then layer by layer the active slab lifts out, turns flat to face you and
    opens to show what it is (a screen, the ports, the objective field, a prompt, the allowlist, the three providers),
@@ -80,7 +80,7 @@ function Desk({ at, peek }) {
         </div>
         <div className="xov-scan" />
         <div className="xov-read"><Mark size={14} /><span>Multimodal Models</span></div>
-        <div className="xov-keys">{['Esc', 'Tab', 'Ctrl', '⌘', 'Enter'].map((k, i) => <b key={k} style={{ '--k': i }}>{k}</b>)}</div>
+        <div className="xov-keys">{[40, 52, 44, 36, 64].map((w, i) => <b key={i} style={{ '--k': i, width: w }} />)}</div>
         {/* the layer is the screen's size, so a % translate is a % of the screen: the cursor moves by transform only */}
         <motion.div className={'xov-aim-w xov-ghost-w' + (peek != null && peek !== at ? ' on' : '')} animate={{ x: g[0] * 100 + '%', y: g[1] * 100 + '%' }} transition={{ duration: T.slow, ease: EMPH }}>
           <span className="xov-aim"><svg viewBox="0 0 20 20" width="22" height="22"><path d="M3 2l12 7-5.2 1.3L7 16z" fill="none" stroke="#fff" strokeWidth="1.4" strokeLinejoin="round" /></svg></span>
@@ -146,7 +146,7 @@ const INSIDE = [
   ['A desktop in the image', 'Xvfb and X11 give the container a screen with no monitor attached, so a real window manager and real applications run inside it.', 'Xvfb · X11'],
   ['Watch it work', 'VNC on 5900 for a native client, noVNC on 6080 in a browser, and the control page on 8501. You see the cursor move as it moves.', '5900 · 6080 · 8501'],
   ['Say what you want', 'Type an objective and it plans, acts, looks at the result, and goes again. You can interrupt at any point.', 'objective'],
-  ['Bash and a file editor too', 'Not only the screen. It can run a command or edit a file directly when that is the shorter path, instead of typing into a GUI text editor.', 'bash · edit'],
+  ['Bash and a file editor too', 'Not only the screen. It can run a command or edit a file directly when that is the shorter path, instead of typing into a GUI text editor.', 'Bash · edit'],
   ['Blast radius is the container', 'Stop it and everything it touched goes with it. Give it the narrowest privileges and an allowlist of domains, and keep credentials that matter out of the image.', 'allowlist'],
   ['Where the model comes from', 'The API directly, AWS Bedrock, or Google Vertex — chosen with an environment variable. The container is the same in all three cases.', 'API · Bedrock · Vertex'],
 ];
@@ -221,7 +221,7 @@ function Inside() {
 /* One docker run: the two commands type themselves, then the four ports come up one by one. */
 const PULL = 'docker pull ghcr.io/hanzoai/operative:latest';
 const RUN = 'docker run -e ANTHROPIC_API_KEY -p 8501:8501 -p 6080:6080 -p 5900:5900 -p 8080:8080 -it ghcr.io/hanzoai/operative:latest';
-const PORTS = [['8501', 'the control page'], ['6080', 'noVNC, in a browser'], ['5900', 'VNC, for a native client'], ['8080', '']];
+const PORTS = [['8501', 'the control page'], ['6080', 'noVNC on 6080 in a browser'], ['5900', 'VNC on 5900 for a native client'], ['8080', '']];
 const USAGE = [
   ['Watch it in a browser, no VNC client needed', 'open http://localhost:6080'],
   ['Send the model through Bedrock instead', 'docker run -e API_PROVIDER=bedrock -e AWS_PROFILE -e AWS_REGION=us-west-2 …'],
@@ -271,7 +271,7 @@ function Run() {
             </ol>
             <div className="xov-term-f"><Copy text={PULL + '\n' + RUN} label="Copy Installation Commands" /></div>
           </div>
-          <div className="xov-ports" aria-label="The four ports, lit as the container starts">
+          <div className="xov-ports">
             <span className="x-mono xov-ports-k">operative</span>
             {PORTS.map(([p, what], i) => (
               <div key={p} className={'xov-port' + (i < lit ? ' on' : '')}>
@@ -284,7 +284,7 @@ function Run() {
           <div className="xov-more-w">
             <details className="xov-dis">
               <summary><h3 className="a2-title">System Requirements</h3><i aria-hidden="true" /></summary>
-              <ul className="xov-req">{REQ.map((r) => <li key={r}><span className="xov-chk" aria-hidden="true">✓</span><span>{r}</span></li>)}</ul>
+              <ul className="xov-req">{REQ.map((r) => <li key={r}><span className="xov-chk" aria-hidden="true" /><span>{r}</span></li>)}</ul>
             </details>
             <details className="xov-dis">
               <summary><h3 className="a2-title">Basic Usage</h3><i aria-hidden="true" /></summary>
@@ -391,7 +391,7 @@ function Action() {
         </div>
         <div className="xov-loop-w">
           <A2Grow to={1.3}>
-            <ol className="xov-loop" aria-label="The loop">
+            <ol className="xov-loop">
               {LOOP.map((l, i) => <li key={l} className={(i === k ? 'on' : '') + (held ? ' held' : '')}><span className="x-mono">{String(i + 1).padStart(2, '0')}</span>{l}</li>)}
             </ol>
           </A2Grow>
@@ -423,7 +423,7 @@ function Watch() {
         <div className="xov-read-b">
           <h2 id="xov-read-h" className="a2-headline">Read before you run it</h2>
           <div className="a2-acts"><Cta to="https://docs.hanzo.ai" kind="quiet">Read the docs</Cta><Cta to="https://github.com/hanzoai" kind="link">View on GitHub</Cta></div>
-          <ul className="xov-social">{SOCIAL.map(([t, to]) => <li key={t}><A to={to} className="xov-soc"><span>{t}</span><i aria-hidden="true">↗</i></A></li>)}</ul>
+          <ul className="xov-social">{SOCIAL.map(([t, to]) => <li key={t}><A to={to} className="xov-soc"><span>{t}</span><i aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M4.5 11.5l7-7M5.5 4.5h6v6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></i></A></li>)}</ul>
         </div>
         <div className={'xov-get' + (shut ? ' shut' : '')} ref={box}>
           <div className="xov-get-t">
@@ -443,7 +443,7 @@ function Watch() {
 
 export default function Operative() {
   return (
-    <main className="a2 xov" id="main">
+    <main className="a2 xov">
       <Hero />
       <Inside />
       <Run />
