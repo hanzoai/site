@@ -1,7 +1,11 @@
 'use client';
 /* Persona: front-end developers building React products. Goal: add @hanzo/ui to a project. CTA: "GitHub" → github.com/hanzoai/ui. Metric: install_copy.
-   UI. V2: 7/10 the component board uses itself beside its token panel (drawn sliders), six chapters acting on one real sticky board (phone: a swipe rail under it), a dark init room that types once and renders its button, one ask closes; greys only
-   Signature: the component board that uses itself. Buttons, a field, a panel and a table sit on a board; the
+   UI. V2: 7/10 motion-map build: magnetic grid signature after the hero, five page-local entrances, no pinned chapters (six chapter cards with their own boards), order hero → grid → dark init room → chapters → paste/Get UI → closing band; greys only
+   Signature: magnet-grid. A field of the library's parts bends toward the cursor and ripples out from a click or tap
+   (components/pages/apps/ui/Motion.jsx). The hero keeps the component board that uses itself:
+   Entrances: accordion (the grid), page-curl (the dark init room), magnet-gather (the six chapter cards), cursor-trail
+   (paste and Get UI strip; touch shows it at rest), zoom-through (the closing band).
+   Hero board: buttons, a field, a panel and a table sit on a board; the
    DropdownMenu and the Dialog (the two real components) open on their own with a focus ring walking the keyboard path,
    and the tokens under everything retune now and then, so the whole board changes at once.
    Beyond: "Retune the tokens". Pick an accent, drag the radius and the density: every component on the board moves
@@ -20,6 +24,7 @@ import { usePause } from '../../v2/x-gauss/Pause';
 import Slider from '../../v2/x-gauss/Slider';
 import '../../v2/Scale.css';
 import '../../v2/x-gauss/Rhythm.css';
+import { MagnetGrid, Curl, Trail, In } from './ui/Motion';
 import './UiPage.css';
 
 const GH = 'https://github.com/hanzoai/ui';
@@ -342,43 +347,36 @@ function ShowBoard({ at, run, bare }) {
   );
 }
 
-function Props() {
-  const [ref, live] = useLive(0.05);
-  const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
-  const [at, setAt] = useState(0);
-  const [peek, setPeek] = useState(null); // hovering a chapter number previews that chapter on the board
-  const arts = useRef([]), rail = useRef(null);
-  useEffect(() => {
-    const mq = matchMedia('(max-width: 899px)');
-    if (mq.matches) return undefined;
-    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(+e.target.dataset.i); }), { rootMargin: '-48% 0px -48% 0px' });
-    arts.current.forEach((el) => el && io.observe(el));
-    return () => io.disconnect();
-  }, []);
-  const onRail = () => {
-    const r = rail.current; const w = r?.firstElementChild?.offsetWidth;
-    if (r && w && matchMedia('(max-width: 899px)').matches) setAt(Math.max(0, Math.min(5, Math.round(r.scrollLeft / (w + 12)))));
-  };
-  const go = (i) => { const el = arts.current[i]; if (!el) return; if (matchMedia('(max-width: 899px)').matches) rail.current?.scrollTo({ left: el.offsetLeft - rail.current.offsetLeft, behavior: 'smooth' }); else el.scrollIntoView({ block: 'center', behavior: 'smooth' }); };
+/* The six chapters as plain, quick cards (no pinned scene: /ui is not a `split` page). Each card carries its own small
+   board in that chapter's state, running only while the card is on screen. They arrive by magnet-gather. */
+const SCATTER = [[-120, 60, -6], [140, -40, 5], [-80, 120, 4], [110, 90, -5], [-150, -30, 3], [90, 140, -4]];
+function Card({ i, t, d, paused }) {
+  const [ref, live] = useLive(0.3);
+  const [gx, gy, gr] = SCATTER[i];
   return (
-    <section className="uc" ref={ref} aria-labelledby="uc-h">
+    <li ref={ref} className="uc-ch ux-card" style={{ '--i': i, '--gx': gx + 'px', '--gy': gy + 'px', '--gr': gr + 'deg' }}>
+      <ShowBoard at={i} run={live && !paused} />
+      <div className="uc-ct">
+        <span className="uc-n2 x-mono">{String(i + 1).padStart(2, '0')}</span>
+        <h3 className="uc-t">{t}</h3>
+        <p>{d}</p>
+      </div>
+    </li>
+  );
+}
+
+function Props() {
+  const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
+  return (
+    <section className="uc" aria-labelledby="uc-h">
       <div className="w2-wrap">
         <div className="uc-head">
           <h2 id="uc-h" className="w2-title uc-h">Components your design team will sign off on</h2>
           <span className="ui-pause">{pauseBtn}</span>
         </div>
-        <div className="uc-grid">
-          <div className="uc-stage"><ShowBoard at={peek ?? at} run={live && !paused} /></div>
-          <ol className="uc-list" ref={rail} onScroll={onRail}>
-            {PROPS.map(([t, d], i) => (
-              <li key={t} ref={(el) => { arts.current[i] = el; }} data-i={i} className={'uc-ch' + (at === i ? ' on' : '')}>
-                <button type="button" className="uc-n2 x-mono" onClick={() => { setPeek(null); go(i); }} onPointerEnter={(e) => { if (e.pointerType === 'mouse') setPeek(i); }} onPointerLeave={() => setPeek(null)} aria-current={at === i ? 'step' : undefined}>{String(i + 1).padStart(2, '0')}</button>
-                <h3 className="uc-t">{t}</h3>
-                <p>{d}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
+        <In as="ol" className="uc-cards ux-gather" amount={0.1}>
+          {PROPS.map(([t, d], i) => <Card key={t} i={i} t={t} d={d} paused={paused} />)}
+        </In>
       </div>
     </section>
   );
@@ -424,7 +422,7 @@ function Init() {
   const ship = () => { setSent(true); clearTimeout(sentT.current); sentT.current = setTimeout(() => setSent(false), 1800); };
   useEffect(() => () => clearTimeout(sentT.current), []);
   return (
-    <section className="w2-sec ui-init w2-dark" data-room="dark" ref={ref}>
+    <Curl><section className="w2-sec ui-init w2-dark" data-room="dark" ref={ref}>
       <div className="w2-wrap">
         <header className="ui-init-h">
           <h2 className="w2-display s ui-init-t">From <code>init</code> to UI in <span className="ui-60">{sec}</span> seconds</h2>
@@ -442,7 +440,7 @@ function Init() {
           </div>
         </div>
       </div>
-    </section>
+    </section></Curl>
   );
 }
 
@@ -453,6 +451,7 @@ function Stop() {
   return (
     <section className="w2-sec ui-stop" ref={ref}>
       <div className="w2-wrap">
+        <Trail>
         <div className="ui-paste"><Paste name="UI" prompt="Read https://hanzo.ai/skill.md and use Hanzo UI in my project." /></div>
         <div className="ui-get">
           <div><h2 className="w2-title">Get UI</h2><p className="ui-get-tag">Headless UI primitives</p></div>
@@ -462,7 +461,8 @@ function Stop() {
             <A to="https://platform.hanzo.ai/deploy" className="ui-tlink">Deploy to Cloud</A>
           </div>
         </div>
-        <div className="ui-stop-in">
+        </Trail>
+        <In className="ui-stop-in ux-zoom" amount={0.3}>
           <div className="ui-stop-l">
             <h2 className="w2-display gx-stay">Stop reinventing buttons.</h2>
             <p className="w2-lede">Hanzo UI gives you the components — you focus on what makes your product different.</p>
@@ -472,7 +472,7 @@ function Stop() {
             </div>
           </div>
           <div className="ui-stop-obj"><ShowBoard at={6} run={live} bare /></div>
-        </div>
+        </In>
       </div>
     </section>
   );
@@ -483,8 +483,9 @@ export default function UiPage() {
     <main id="main" className="uip w2 gx">
       <NoJs />
       <Hero />
-      <Props />
+      <MagnetGrid />
       <Init />
+      <Props />
       <Stop />
     </main>
   );

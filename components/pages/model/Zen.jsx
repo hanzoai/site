@@ -1,13 +1,16 @@
 'use client';
-/* Zen: open models, yours to run. v2 launch page (Launch + Chapters, ink on white, Zen's own film).
-   Signature: the reasoning trace. Zen thinks out loud, step by step, about which Zen to run: every step reads one
-   fact off the two model cards beside it (that row lights up), and the answer lands on its card. It runs three needs
-   in turn; pick one by hand, or step through it yourself.
+/* Zen: open models, yours to run. v2 launch page (Launch, ink on white, Zen's own film), built to docs/MOTION-MAP.md.
+   Signature: particles (Particles form it). Right after the stage, about 900 ink dots assemble into Zen's own picture,
+   the sphere over its turning rings; the pointer pushes them apart, a tap scatters them, and they re-form.
+   Entrances: diagonal-wipe, letter-cascade, tilt-3d-hover, glitch-in, focus-pull-scroll (the signature room, the
+   reasoning room, the three parts, the family tiles, Hanzo's model cards; each page-local, in that order).
+   Order: stage, particles + figures, the reasoning room, the parts, the family, the model cards, the band; no pinned
+   chapter scene. The reasoning trace stays: Zen thinks out loud about which Zen to run, lighting the card rows it reads.
    Beyond: the trace is a chooser built only from Zen's own facts (local use, video, price), and the family tiles
    below lead to every Zen model, Zen 7 and Zen 6 Max with each one's living sigil.
-   V2: 7/10 (critic) trace fills fixed slots with Hanzo's card words (CLS 0), no-blur closing band, solid first-screen ask, fewer price repeats */
+   V2: 7/10 motion-map build: particles signature, five page-local entrances, own section order, no pinned chapters */
 import { useEffect, useRef, useState } from 'react';
-import { useInView, useReducedMotion } from 'motion/react';
+import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { Magnetic } from '../../ui';
 import { A, More, Cta, Img, Stat } from '../../kit';
 import Sigil from '../../Sigil';
@@ -16,7 +19,8 @@ import { play } from '../../../lib/sound';
 import Launch, { Lines, lerp, film } from '../../v2/Launch';
 import ModelCards from './ModelCards';
 import ModelFilm, { usePaused } from '../../v2/ModelFilm';
-import Chapters from '../../v2/x-cray/Chapters';
+import Swarm from './zen/Swarm';
+import { useEnter, Letters } from './zen/enter';
 import './Zen.css';
 
 const CARDS = [
@@ -72,7 +76,7 @@ function Console() {
     <div className="ze-console mb-panel" ref={box}>
       <div className="ze-trace">
         <div className="ze-tabs" role="tablist" aria-label="Zen" onKeyDown={arrows}>
-          {NEEDS.map((k, i) => <button key={k.tab} type="button" role="tab" aria-selected={i === n} className="mb-chip" onClick={() => pick(i)}>{k.tab}</button>)}
+          {NEEDS.map((k, i) => <button key={k.tab} type="button" role="tab" aria-selected={i === n} className="mb-chip" onClick={() => pick(i)}><Letters text={k.tab} from={i * 4} /></button>)}
         </div>
         <p className="ze-think" aria-hidden="true"><span className="ze-dot" data-on={!done ? '' : undefined} /><span className="ze-dots" data-on={!done && step > 0 ? '' : undefined}><i /><i /><i /></span></p>
         {/* every slot is in the DOM from the start at a fixed height; a step fills its slot by opacity and transform only */}
@@ -92,7 +96,7 @@ function Console() {
       <ul className="ze-cards">
         {CARDS.map((c, ci) => (
           <li key={c.code} className="ze-card" data-pick={done && need.pick.includes(ci) ? '' : undefined}>
-            <div className="ze-card-h"><h3>{c.name}</h3><code>{c.code}</code></div>
+            <div className="ze-card-h"><h3><Letters text={c.name} from={8 + ci * 6} /></h3><code>{c.code}</code></div>
             <p className="ze-row ze-price mb-tnum" data-l={lit(ci, 'price')}><b>$2.28</b> <span>in · per 1M tokens</span> <b>$7.26</b> <span>out</span></p>
             <p className="ze-row" data-l={lit(ci, 'desc')}>{c.desc}</p>
             <p className="ze-specs">
@@ -163,6 +167,105 @@ const CHAPTERS = [
   { k: CARDS[1].name, title: CARDS[1].name, art: (on) => <CardArt ci={1} z={1.7} on={on} />, body: cardBody(CARDS[1]) },
 ];
 
+// entrance 3, tilt-3d-hover: the three parts arrive tipped back in depth and level out one after another; then each
+// tilts toward a fine pointer (2.5° at most) and settles flat when it leaves. No pinned chapter scene on /zen.
+function Part({ c, i }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount: 0.35 });
+  const tilt = (e) => {
+    if (e.pointerType !== 'mouse' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const r = ref.current.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+    ref.current.style.setProperty('--rx', (-y * 5).toFixed(2) + 'deg');
+    ref.current.style.setProperty('--ry', (x * 5).toFixed(2) + 'deg');
+  };
+  const flat = () => { ref.current.style.setProperty('--rx', '0deg'); ref.current.style.setProperty('--ry', '0deg'); };
+  return (
+    <article ref={ref} className="ze-part" style={{ '--d': i }} onPointerMove={tilt} onPointerLeave={flat}>
+      <div className="ze-part-art">{c.art(seen)}</div>
+      <h3>{c.title}</h3>
+      <div className="ze-part-b">{c.body}</div>
+    </article>
+  );
+}
+
+function Parts() {
+  const [ref, inn] = useEnter(0.2);
+  return (
+    <section ref={ref} className="lv-sec ze-parts ze-e-tilt" data-in={inn ? '' : undefined} aria-label="Zen">
+      <div className="x-wrap ze-parts-g">
+        {CHAPTERS.map((c, i) => <Part key={c.title} c={c} i={i} />)}
+      </div>
+    </section>
+  );
+}
+
+// entrance 1, diagonal-wipe: the signature room arrives behind a diagonal clip that sweeps from left to right
+function SwarmRoom() {
+  const [ref, inn] = useEnter(0.2);
+  return (
+    <section ref={ref} className="lv-sec ze-swarm ze-e-wipe" data-in={inn ? '' : undefined} aria-label="Zen 6 Flash, Zen 6">
+      <div className="x-wrap ze-swarm-g">
+        <div className="ze-swarm-art"><Swarm label="Zen" /></div>
+        <div className="lv-stats ze-figs">
+          <Stat value="5.95 GB" label={CARDS[0].name} />
+          <Stat value="27.3B" label={CARDS[1].name} />
+          <Stat value="$2.28" label="in · per 1M tokens" note="$7.26 out" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// entrance 2, letter-cascade: the reasoning room's tab names and card names fall into place letter by letter
+function TraceRoom() {
+  const [ref, inn] = useEnter(0.25);
+  return (
+    <section ref={ref} className="lv-sec ze-live ze-e-letters" data-room="dark" data-in={inn ? '' : undefined} aria-label="Zen">
+      <div className="x-wrap">
+        <Console />
+      </div>
+    </section>
+  );
+}
+
+// entrance 4, glitch-in: the family tiles arrive through a short monochrome glitch, then hold still
+function Family() {
+  const [ref, inn] = useEnter(0.3);
+  return (
+    <section ref={ref} className="lv-sec ze-family ze-e-glitch" data-in={inn ? '' : undefined} aria-label="The Zen family">
+      <div className="x-wrap">
+        <ul className="ze-fam">
+          {FAMILY.map(([to, name, line, data], i) => (
+            <li key={to} className={i === 0 ? 'big' : ''} style={{ '--d': i }}>
+              <A to={to} className="ze-fam-a" data-cursor="">
+                <Sigil seed={to} data={data} className="ze-sig" />
+                <span className="ze-fam-n" data-morph>{name}</span>
+                <span className="ze-fam-d">{line}</span>
+                <svg className="ze-fam-go" viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              </A>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+// entrance 5, focus-pull-scroll: Hanzo's model cards come into focus as they scroll in (blur 4px to 0, scale 1.03 to
+// 1, tied to the scroll; the page's one blur)
+function FocusPull({ children }) {
+  const ref = useRef(null);
+  const calm = useReducedMotion();
+  const [still, setStill] = useState(false); // read after mount: the server cannot know, so first render matches it
+  useEffect(() => setStill(!!calm), [calm]);
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start end', 'start 0.35'] });
+  const blur = useTransform(p, [0, 1], ['blur(4px)', 'blur(0px)']);
+  const scale = useTransform(p, [0, 1], [1.03, 1]);
+  const op = useTransform(p, [0, 0.6], [0.55, 1]);
+  return <motion.div ref={ref} className="ze-e-focus" style={still ? undefined : { filter: blur, scale, opacity: op }}>{children}</motion.div>;
+}
+
 // keyboard: focus entering the settled headline's links scrolls the stage to its settled point, so they show
 const settleTo = () => {
   const s = document.querySelector('.lv-stage[data-hero="zen"]');
@@ -192,38 +295,12 @@ export default function Zen() {
         </>
       }
     >
-      <section className="lv-sec ze-figs-sec" aria-label="Zen 6 Flash, Zen 6">
-        <div className="x-wrap">
-          <div className="lv-stats ze-figs">
-            <Stat value="5.95 GB" label={CARDS[0].name} />
-            <Stat value="27.3B" label={CARDS[1].name} />
-            <Stat value="$2.28" label="in · per 1M tokens" note="$7.26 out" />
-          </div>
-        </div>
-      </section>
-      <Chapters id="ze-ch" label="Zen" items={CHAPTERS} />
-      <section className="lv-room lv-sec ze-live" data-room="dark" aria-label="Zen">
-        <div className="x-wrap">
-          <Console />
-        </div>
-      </section>
-      <section className="lv-sec ze-family" aria-label="The Zen family">
-        <div className="x-wrap">
-          <ul className="ze-fam">
-            {FAMILY.map(([to, name, line, data], i) => (
-              <li key={to} className={i === 0 ? 'big' : ''}>
-                <A to={to} className="ze-fam-a" data-cursor="">
-                  <Sigil seed={to} data={data} className="ze-sig" />
-                  <span className="ze-fam-n" data-morph>{name}</span>
-                  <span className="ze-fam-d">{line}</span>
-                  <svg className="ze-fam-go" viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                </A>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-      <ModelCards slug="zen" />
+      {/* /zen's own order: the particle signature, then straight into the reasoning room, then the three parts */}
+      <SwarmRoom />
+      <TraceRoom />
+      <Parts />
+      <Family />
+      <FocusPull><ModelCards slug="zen" /></FocusPull>
       {/* the closing band, page-local: the same words as the kit Band, cut in by line mask (no blur), final with JS off */}
       <section className="x-band ze-band" data-room="dark" aria-label="Zen">
         <div className="x-wrap">

@@ -1,4 +1,4 @@
-// V2: 7/10 (critic) Apple-grade launch in Hanzo's own black and white: the film lands full-bleed and settles into an arch around Zen's sphere; Zen's figures as heroes; open weights, Zen 6 Flash and Zen 6 pin as chapters; the reasoning trace is the one dark room; the Zen family as tiles; Hanzo's exact model cards; a closing band
+// V2: 7/10 motion-map build (particles signature, five page-local entrances, no pinned chapters). Was: Apple-grade launch in Hanzo's own black and white: the film lands full-bleed and settles into an arch around Zen's sphere; Zen's figures as heroes; open weights, Zen 6 Flash and Zen 6 pin as chapters; the reasoning trace is the one dark room; the Zen family as tiles; Hanzo's exact model cards; a closing band
 // Persona: Developer
 // Goal: pick a Zen and run it
 // CTA: Try Hanzo (/login, data-thumb)

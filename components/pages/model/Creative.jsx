@@ -22,15 +22,14 @@ import { arrows } from './live';
 import './Creative.css';
 
 // the headline that sits beside the settled film
-// thumb (default true): the ask marks itself for the header hand-off; onFocus: called when focus enters the actions
-function Head({ slug, thumb = true, onFocus }) {
+function Head({ slug }) {
   const d = C[slug];
   return (
     <>
       <Lines id={'cr-h-' + slug} lines={[d.head]} />
       <p className="lv-lede">{d.desc}</p>
-      <div className="lv-acts" onFocus={onFocus}>
-        <Cta kind="quiet" to={'/research-access?models=' + slug} id={slug + '.hero'} thumb={thumb}>Request access</Cta>
+      <div className="lv-acts">
+        <Cta kind="quiet" to={'/research-access?models=' + slug} id={slug + '.hero'} thumb>Request access</Cta>
         <Cta to="/design" kind="link" id={slug + '.hero-design'}>Try it in Design</Cta>
       </div>
       <p className="lv-crumb"><span>{d.kind}</span><span>{d.ver}</span></p>

@@ -1,20 +1,23 @@
 'use client';
-// Signature: a deck of live browser windows that riffles itself; pull one forward (drag, arrows or a dot) and its address bar types its .hanzo.app name.
+// V2: 7/10 motion-map build (honest guess, not yet re-walked by a critic): h-gallery signature, five page-local entrances, no shared reveal
+// Signature: h-gallery (MOTION-MAP) — the vertical scroll drives all twelve templates sideways for one stretch, then lets go; phones swipe the same rail. The hero deck of live windows (drag, arrows or a dot) stays.
+// Entrances: velocity-skew (hero deck), fold-out (gallery tiles), count-roll (the twelve by kind), explode-gather (the setup room), shutter (the close)
 // Beyond: the commands for the template in front, with its slug and its source repository filled in, ready to copy.
 /* Persona: builders who want a finished product to start from. Goal: open a template in Hanzo. CTA: "Edit in Hanzo" → /chat?template=<slug>. Metric: first_chat.
    Templates. Hanzo's twelve products with previews, as a deck of browser windows: the one in front is the one you
    open, the next three wait behind it, the ones you passed fly off to the left. The chips re-deal the deck by kind.
    Under it, a dense wall of all twelve previews that open into sheets (the ring follows the deck); the setup room in
    the dark with the commands for the template in front; a closing band with the one ask. Deck greys only.
-   Motion budget: signature = the riffling deck (drag); supporting = Settle, Open (wall sheets), magnetic. No springs. */
+   Order: hero deck → the sideways gallery → the counts by kind → the setup room → the close.
+   Motion: signature = h-gallery; the deck riffles and drags (kept); supporting = Open (sheets), magnetic. */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../ui';
 import { A, Img } from '../kit';
 import SetupMenu from '../SetupMenu';
 import LineMask from '../v2/x-gauss/LineMask';
-import Settle from '../v2/Settle';
 import { OpenCards } from '../v2/OpenSheet';
+import { VelocitySkew, HGallery, useFoldOut, useEntrance, Roll, SCATTER } from './templates/Motion';
 import NoJs from '../v2/x-gauss/NoJs';
 import { usePause } from '../v2/x-gauss/Pause';
 import '../v2/Scale.css';
@@ -204,21 +207,24 @@ function Commands({ t }) {
   const total = lines.reduce((s, [c]) => s + c.length, 0);
   const n = useTyped(total, slug, seen);
   let left = n; // characters still to show, line by line; a line starts once the one before it is done
+  // explode-gather: the room's five pieces start scattered and collapse into place as the room arrives
+  const [room, arm, gathered] = useEntrance(0.3);
+  const eg = (i) => ({ className: 'xtp-eg', style: { '--ex': SCATTER[i][0] + 'px', '--ey': SCATTER[i][1] + 'px', '--er': SCATTER[i][2] + 'deg', '--k': i } });
   return (
-    <section className="w2-sec xtp-cmd w2-dark" data-room="dark" aria-labelledby="xtp-cmd-h">
+    <section ref={room} className={'w2-sec xtp-cmd w2-dark' + (arm ? ' arm' : '') + (gathered ? ' in' : '')} data-room="dark" aria-labelledby="xtp-cmd-h">
       <div className="w2-wrap xtp-cmd-in">
         <div>
-          <h2 id="xtp-cmd-h" className="w2-display s xtp-cmd-h">Drop into any agent</h2>
-          <div className="xtp-setup2"><SetupMenu inline up /></div>
-          <Strip />
+          <div {...eg(0)}><h2 id="xtp-cmd-h" className="w2-display s xtp-cmd-h">Drop into any agent</h2></div>
+          <div {...eg(1)}><div className="xtp-setup2"><SetupMenu inline up /></div></div>
+          <div {...eg(2)}><Strip /></div>
         </div>
         <div className="xtp-term" ref={term}>
-          <div className="xtp-term-top">
+          <div className="xtp-term-top xtp-eg" style={eg(3).style}>
             <span className="xtp-lights" aria-hidden="true"><i /><i /><i /></span>
             <span key={slug} className="x-mono xtp-term-t">{title}</span>
             <Copy text={lines.map((l) => l[0]).join('\n')} />
           </div>
-          <pre className="xtp-pre">
+          <pre className="xtp-pre xtp-eg" style={eg(4).style}>
             {lines.map(([c], li) => {
               const k = Math.max(0, Math.min(c.length, left));
               const typing = left >= 0 && (k < c.length || li === lines.length - 1); // the line the caret is on (the last, once done)
@@ -237,21 +243,19 @@ function Commands({ t }) {
   );
 }
 
-/* The shelf: all twelve as tiles; each opens into a sheet with its preview, what it is, and its commands. */
+/* The signature (h-gallery): all twelve as one sideways track the vertical scroll drives; each tile unfolds from its
+   hinge as it arrives (fold-out) and opens into a sheet with its preview, what it is, and its commands. */
 function Shelf({ cur, onSeen }) {
-  const ref = useRef(null);
-  const seen = useInView(ref, { once: true, amount: 0.15 });
-  const here = useInView(ref, { amount: 0.25 });
+  const [root, setRoot] = useState(null);
+  const probe = useRef(null);
+  const here = useInView(probe, { amount: 0.1 });
   useEffect(() => { onSeen(here); }, [here, onSeen]);
-  const calm = useReducedMotion();
-  const [armed, setArmed] = useState(false); // the wall deals in only once JS runs; JS off and reduced motion show it whole
-  useEffect(() => { if (!calm) setArmed(true); }, [calm]);
-  // while the wall is in view every preview drifts down its own page, out of step with its neighbours (CSS, paused off screen)
+  useFoldOut(root);
+  // while the track is in view every preview drifts down its own page, out of step with its neighbours (CSS, paused off screen)
   return (
-    <section ref={ref} className={'w2-sec tight xtp-shelf' + (armed ? ' arm' : '') + (seen ? ' in' : '') + (here ? ' here' : '')} aria-labelledby="xtp-shelf-h">
-      <div className="w2-wrap">
+    <HGallery className={'xtp-shelf' + (here ? ' here' : '')} label="xtp-shelf-h" onTiles={setRoot}>
+      <div ref={probe} className="xtp-hg-in">
         <h2 id="xtp-shelf-h" className="x-sr">Templates</h2>
-        <p className="xtp-shelf-k w2-kicker">All <span className="x-mono">{pad(ALL.length)}</span></p>
         <OpenCards cols={4} className="xtp-tiles" items={ALL.map(([slug, title, kind, what]) => ({
           id: 'xtp-' + slug, k: kind, t: title,
           art: <span className={'xtp-tile-img' + (slug === cur ? ' on' : '')}><Shot slug={slug} title={title} kind={kind} alt="" /><span className="x-mono">{slug}.hanzo.app</span></span>,
@@ -261,6 +265,31 @@ function Shelf({ cur, onSeen }) {
             <p className="xtp-sheet-cmd x-mono">hanzo template get {slug}</p>
           </>),
         }))} />
+      </div>
+    </HGallery>
+  );
+}
+
+/* count-roll: the twelve by kind, as figures that roll into their values as the row arrives; each one re-deals the deck
+   above with that kind and takes you to it. Only the page's own labels and counts. */
+function Counts({ kind, pick }) {
+  const [ref, arm, seen] = useEntrance(0.4);
+  return (
+    <section ref={ref} className={'w2-sec tight xtp-counts' + (arm ? ' arm' : '') + (seen ? ' in' : '')} aria-label="Kind of template">
+      <div className="w2-wrap">
+        <ul className="xtp-counts-l">
+          {KINDS.map((k) => {
+            const n = k === 'All' ? ALL.length : ALL.filter((t) => t[2] === k).length;
+            return (
+              <li key={k} className={k === 'All' ? 'all' : ''}>
+                <button type="button" aria-pressed={kind === k} onClick={() => pick(k)} aria-label={`${k} ${pad(n)}`}>
+                  <Roll v={n} />
+                  <span className="xtp-counts-k">{k}</span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </section>
   );
@@ -272,6 +301,7 @@ export default function Templates() {
   const [wall, setWall] = useState(false);
   const list = useMemo(() => (kind === 'All' ? ALL : ALL.filter((t) => t[2] === kind)), [kind]);
   const front = list[Math.min(at, list.length - 1)];
+  const calm = useReducedMotion();
   return (
     <main id="main" className="xtp w2 gx">
       <NoJs />
@@ -287,16 +317,24 @@ export default function Templates() {
               <Magnetic strength={0.25}><A to={'/chat?template=' + encodeURIComponent(front[0])} className="w2-cta" data-thumb="Edit in Hanzo" data-cta="templates.hero">Edit in Hanzo <i aria-hidden="true">→</i></A></Magnetic>
             </motion.div>
           </div>
-          <Settle from={1.02} lift={0}>
-            <div className="xtp-stage">
-              <Deck kind={kind} setKind={setKind} at={Math.min(at, list.length - 1)} setAt={setAt} list={list} front={front} wall={wall} />
-            </div>
-          </Settle>
+          <VelocitySkew className="xtp-stage">
+            <Deck kind={kind} setKind={setKind} at={Math.min(at, list.length - 1)} setAt={setAt} list={list} front={front} wall={wall} />
+          </VelocitySkew>
         </div>
       </section>
       <Shelf cur={front[0]} onSeen={setWall} />
+      <Counts kind={kind} pick={(k) => { setKind(k); setAt(0); document.querySelector('.xtp-deck')?.scrollIntoView({ block: 'center', behavior: calm ? 'auto' : 'smooth' }); }} />
       <Commands t={front} />
-      <section className="w2-sec tight xtp-band" aria-label="Edit in Hanzo">
+      <Band front={front} />
+    </main>
+  );
+}
+
+/* shutter: two ink bars close from the top and bottom, then open on the close */
+function Band({ front }) {
+  const [ref, arm, seen] = useEntrance(0.5);
+  return (
+      <section ref={ref} className={'w2-sec tight xtp-band' + (arm ? ' arm' : '') + (seen ? ' in' : '')} aria-label="Edit in Hanzo">
         <div className="w2-wrap xtp-band-in">
           {/* the close carries the window in front, small: the thing the ask opens */}
           <A to={'/chat?template=' + encodeURIComponent(front[0])} className="xtp-band-win" tabIndex={-1} aria-hidden="true">
@@ -307,6 +345,5 @@ export default function Templates() {
           <Magnetic strength={0.25}><A to={'/chat?template=' + encodeURIComponent(front[0])} className="w2-cta" data-thumb="Edit in Hanzo" data-cta="templates.close">Edit in Hanzo <i aria-hidden="true">→</i></A></Magnetic>
         </div>
       </section>
-    </main>
   );
 }

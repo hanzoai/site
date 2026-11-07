@@ -352,3 +352,24 @@ a.ui-chip:active { transform: scale(.98); }
 @media (max-width: 700px) {
   .uip .w2-cta[data-cta^='ui.'] { background: transparent; color: #0a0a0a; box-shadow: inset 0 0 0 1px rgba(10, 10, 10, .9); }
 }
+
+/* motion-map build: the six chapters are plain cards in a two-column grid, each with its own small board (no pin) */
+.uc-cards { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 44px 24px; }
+.uc-cards .uc-ch { display: flex; flex-direction: column; justify-content: flex-start; gap: 20px; min-height: 0; padding: 0; border: 0; }
+.uc-cards .uc-ch::before { display: none; }
+.uc-cards .uc-ch h3 { color: #0a0a0a; }
+.uc-cards .uc-ch p { color: #525252; }
+.uc-cards .uc-board { box-shadow: 0 0 0 1px rgba(0, 0, 0, .08); transition: border-radius .5s cubic-bezier(.4, 0, .2, 1), box-shadow .3s cubic-bezier(0, 0, .2, 1); }
+.uc-cards .uc-body { height: 330px; padding: 22px; }
+.uc-ct { display: flex; flex-direction: column; gap: 12px; padding: 0 4px; }
+.uc-cards .uc-n2 { display: inline-flex; align-items: center; min-height: 0; margin: 0; padding: 0; cursor: default; color: #737373; }
+@media (hover: hover) {
+  .uc-cards .uc-ch:hover .uc-board { box-shadow: 0 0 0 1px rgba(0, 0, 0, .2), 0 24px 60px -16px rgba(0, 0, 0, .18); }
+  .uc-cards .uc-ch:hover .uc-n2 { color: #0a0a0a; }
+  .uc-cards .uc-n2:hover { background: none; }
+}
+@media (max-width: 899px) {
+  .uc-cards { grid-template-columns: minmax(0, 1fr); gap: 36px; }
+  .uc-cards .uc-ch { flex: none; padding: 0; border-radius: 0; background: none; }
+  .uc-cards .uc-body { height: 300px; padding: 18px; }
+}

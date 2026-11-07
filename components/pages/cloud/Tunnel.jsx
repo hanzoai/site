@@ -1,7 +1,14 @@
 'use client';
-/* Tunnel (v2, Cloud 4 chat). Archetype F/A: a terminal-first hero where the URL is the headline → one dark scene that opens
-   localhost to the internet and closes it again → the other four facts, one with the four modes → one command → close.
-   Ink, greys and white only.
+/* Tunnel (v2, Cloud 4 chat; motion-map build, 7 Nov). A terminal-first hero where the URL is the headline → the share
+   peeled into its layers → one command → the four facts, one with the four modes → the dark room where the URL opens and
+   closes → close. Ink, greys and white only.
+   Signature: peel (MOTION-MAP.md). The share as a stack (127.0.0.1:3000, café network, Hanzo fabric, the public URL) lifts
+   apart into named layers in 3D and closes again: scroll and drag on desktop, by itself and by tap on phones
+   (tunnel/Peel.jsx). No pinned chapter scene.
+   Entrances: noise-dissolve (the peel), explode-gather (one command), count-roll (the facts), spiral-in (the dark room),
+   glitch-in (the close). Each is its own CSS in Tunnel.css; tunnel/enter.js only says when.
+   V2: 7/10 motion-map build: peel signature, five page-local entrances, the dark room no longer pinned
+   (the notes below are from before the motion map; "Signature:" there is the old one, now the dark room's own loop).
    Persona: a developer who needs a real URL for something on their laptop (a webhook, a demo, a phone test).
    Goal: install the CLI and share a port. CTA: "View Source" (hero, ask bar) / "View on GitHub" (close), same href.
    Metric: github_click (MASTER §1 researchers: a GitHub click), fired as cta_click with data-cta="tunnel.hero".
@@ -24,8 +31,26 @@ import { Cta } from '../../kit';
 import { PauseBtn } from '../../v2/x-hamilton/Demo';
 import { useLive } from './Frame';
 import Finale from '../../v2/Finale';
-import { useWide } from '../../v2/useWide';
+import Peel from './tunnel/Peel';
+import { useEnter, scatter } from './tunnel/enter';
 import './Tunnel.css';
+
+/* count-roll: a two-digit number whose digits roll down into place as the facts arrive (the real number is read out) */
+function Roll({ n }) {
+  const d = String(n).padStart(2, '0');
+  return (
+    <span className="tn2-roll">
+      <span className="tn2-sr">{d}</span>
+      {[...d].map((c, k) => (
+        <span key={k} className="tn2-roll-d" aria-hidden="true">
+          <span className="tn2-roll-s" style={{ '--n': +c, '--k': k }}>{'0123456789'.split('').map((x) => <i key={x}>{x}</i>)}</span>
+        </span>
+      ))}
+    </span>
+  );
+}
+/* explode-gather: each piece starts thrown out from its place (a deterministic scatter) and collapses into it */
+const frag = (i) => ({ '--fx': ((scatter(i, 1) - 0.5) * 260).toFixed(0) + 'px', '--fy': ((scatter(i, 2) - 0.5) * 200).toFixed(0) + 'px', '--fr': ((scatter(i, 4) - 0.5) * 40).toFixed(0) + 'deg', '--fd': i * 60 + 'ms' });
 
 const GH = 'https://github.com/hanzoai';
 const URL_ = 'https://wispyfox7421.share.hanzo.ai';
@@ -93,9 +118,9 @@ const FACTS = [
 function Scene() {
   const sec = useRef(null);
   const calm = useCalm();
-  const wide = useWide();
-  const pin = wide && !calm;
+  const pin = false; // motion map: no pinned chapter scene on /tunnel; the room plays by itself on every width
   const [ref, live] = useLive(0.3);
+  const [eref, ein] = useEnter(0.15);
   const [paused, setPaused] = useState(false);
   const { scrollYProgress } = useScroll({ target: sec, offset: ['start start', 'end end'] });
   const clock = useMotionValue(0);
@@ -131,7 +156,7 @@ function Scene() {
   const closed = q >= 80;
   const cap = q < 50 ? 0 : 4;
   return (
-    <section ref={sec} className={'l2-dark tn2-scene' + (pin ? ' pin' : '')} data-room="dark" style={pin ? { height: '320svh' } : undefined}>
+    <section ref={(el) => { sec.current = el; eref.current = el; }} className={'l2-dark tn2-scene' + (pin ? ' pin' : '')} data-room="dark" data-in={ein ? '' : undefined} style={pin ? { height: '320svh' } : undefined}>
       <div className={'tn2-scene-pin' + (paused ? ' still' : '')} ref={ref}>
         <PauseBtn paused={paused} onClick={() => setPaused((v) => !v)} className="dk tn2-pause" />
         <div className="l2-wrap tn2-scene-in">
@@ -184,6 +209,7 @@ function Facts() {
   const touched = useRef(false);
   const [mref, mlive] = useLive(0.6);
   const calm = useCalm();
+  const [eref, ein] = useEnter(0.12);
   useEffect(() => {
     const items = [...(list.current?.children || [])];
     const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(+e.target.dataset.i); }), { rootMargin: '-45% 0px -45% 0px' });
@@ -209,7 +235,7 @@ function Facts() {
     e.currentTarget.querySelectorAll('button')[k]?.focus();
   };
   return (
-    <section className="l2-sec tn2-facts">
+    <section className="l2-sec tn2-facts" ref={eref} data-in={ein ? '' : undefined}>
       <div className="l2-wrap l2-grid">
         <div className="tn2-facts-l">
           <h2 className="l2-display m tn2-facts-h">For the things that need a real URL</h2>
@@ -217,9 +243,9 @@ function Facts() {
         </div>
         <ol className="tn2-list" ref={list}>
           {[1, 2, 3, 5].map((i) => (
-            <li key={i} data-i={i} className={at === i ? 'on' : undefined}>
+            <li key={i} data-i={i} className={at === i ? 'on' : undefined} style={{ '--li': i }}>
               <h3 className="l2-title">{FACTS[i][0]}</h3>
-              <span className="l2-ch-n">{String(i + 1).padStart(2, '0')} / 06</span>
+              <span className="l2-ch-n"><Roll n={i + 1} /> / 06</span>
               <p className="l2-body">{i === 1 ? FACTS[i][1].split('--name').flatMap((s, k) => (k ? [<span key={k} className="tn2-nb">--name</span>, s] : [s])) : FACTS[i][1]}</p>
               {i === 1 && <div className="tn2-name-in-list"><Name /></div>}
               {i === 2 && <Print />}
@@ -321,15 +347,16 @@ function One() {
     return () => clearTimeout(t);
   }, [live, calm]);
   const end = n >= CMD.length;
+  const [eref, ein] = useEnter(0.25);
   return (
-    <section className="l2-sec tn2-one">
+    <section className="l2-sec tn2-one" ref={eref} data-in={ein ? '' : undefined}>
       <div className="l2-wrap l2-grid">
         <div className="tn2-one-l">
-          <h2 className="l2-head">One command, one URL</h2>
-          <p className="l2-body">Install the CLI, sign in once, and name a port. It is the same sign-in that runs your agents and bills your usage, so there is nothing else to set up.</p>
-          <div className="l2-acts"><Cta to="https://docs.hanzo.ai/docs/cli" kind="quiet" id="tunnel.install-cli">Install the CLI</Cta><Cta to="/pricing" kind="link" id="tunnel.pricing" className="tn2-link">See Pricing</Cta></div>
+          <h2 className="l2-head tn2-frag" style={frag(0)}>One command, one URL</h2>
+          <p className="l2-body tn2-frag" style={frag(1)}>Install the CLI, sign in once, and name a port. It is the same sign-in that runs your agents and bills your usage, so there is nothing else to set up.</p>
+          <div className="l2-acts tn2-frag" style={frag(2)}><Cta to="https://docs.hanzo.ai/docs/cli" kind="quiet" id="tunnel.install-cli">Install the CLI</Cta><Cta to="/pricing" kind="link" id="tunnel.pricing" className="tn2-link">See Pricing</Cta></div>
         </div>
-        <div className="tn2-one-r">
+        <div className="tn2-one-r tn2-frag" style={frag(3)}>
           {/* the Copy takes the command only: the "$" and the two output lines are shown, never copied */}
           <div className="cf-code" ref={ref}>
             <div className="cf-code-bar"><i /><i /><i /><span className="cf-code-k">terminal</span><Copy text={CMD} /></div>
@@ -364,15 +391,22 @@ function Shared() {
   );
 }
 
+/* glitch-in: the close arrives as a short monochrome glitch (slices jump, ≤ 280 ms), then holds still */
+function Glitch({ children }) {
+  const [ref, on] = useEnter(0.2);
+  return <div ref={ref} className="tn2-gl" data-in={on ? '' : undefined}>{children}</div>;
+}
+
 export default function Tunnel() {
   return (
     <main id="main" className="l2-page tn2">
       <NoJs css=".tn2-url,.tn2-share{opacity:1!important;transform:none!important}.tn2-cap-i{position:relative!important;opacity:1!important;transform:none!important}.tn2-cap{min-height:0!important}" />
       <Hero />
-      <Scene />
-      <Facts />
+      <Peel />
       <One />
-      <Finale name="Tunnel" head="Get started with Tunnel" ask={['View on GitHub', GH]} object={<Shared />} prompt="Read https://hanzo.ai/skill.md and use Hanzo Tunnel in my project. Start with: hanzo share" tag="Secure tunnels" className="tn2-fin" />
+      <Facts />
+      <Scene />
+      <Glitch><Finale name="Tunnel" head="Get started with Tunnel" ask={['View on GitHub', GH]} object={<Shared />} prompt="Read https://hanzo.ai/skill.md and use Hanzo Tunnel in my project. Start with: hanzo share" tag="Secure tunnels" className="tn2-fin" /></Glitch>
     </main>
   );
 }

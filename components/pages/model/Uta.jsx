@@ -1,7 +1,12 @@
 'use client';
-/* Uta: compose beyond imagination. v2 launch page (Creative on Launch + Chapters, Hanzo's black and white). The film splits
-   into four stems, faders of different heights, beside the headline.
-   Signature: a piano roll that plays. Two bars in D minor at 96 BPM loop by themselves across Uta's four stems
+/* Uta: compose beyond imagination. v2 launch page (on Launch, composed page-locally; Hanzo's black and white). The film
+   splits into four stems, faders of different heights, beside the headline.
+   V2: 7/10 motion-map build: film-scrub signature, five page-local entrances, own section order, no pinned chapters.
+   Signature: film-scrub (MOTION-MAP). Scroll scrubs Uta's film frame by frame, forwards and back, while what Uta does
+   follows it; drag across the film to scrub it too (uta/Motion.jsx `Scrub`).
+   Entrances: page-curl (the scrub), iris (the studio), scroll-tilt (Hanzo's model cards), count-roll (where it fits),
+   spiral-in (the closing band).
+   Studio demo (kept): a piano roll that plays. Two bars in D minor at 96 BPM loop by themselves across Uta's four stems
    (timpani, low strings and tuba, horns and strings, choir and cello); the playhead lights each note as it sounds.
    Solo a stem, switch the composition preset (each one re-voices the same score), tap the roll to add or remove a
    melody note, and turn on Sound to hear it, synthesised in the browser. (An illustration, not Uta's output.)
@@ -9,12 +14,12 @@
    MIDI File at the same 96 BPM, one channel per stem, so the sketch opens in any music app. Nothing leaves the page. */
 import { useEffect, useRef, useState } from 'react';
 import { useReducedMotion } from 'motion/react';
-import { Film, Img, Cta, More, A } from '../../kit';
-import { Magnetic } from '../../ui';
-import ModelFilm from '../../v2/ModelFilm';
+import { Film, Img, Cta } from '../../kit';
 import { Studio } from './Studio';
-import Creative, { Scene } from './Creative';
-import { lerp, film, focus, Lines } from '../../v2/Launch';
+import { Scene } from './Creative';
+import Launch, { lerp, film, focus, Lines } from '../../v2/Launch';
+import { C } from './creative';
+import { Scrub, Iris, Tilt, Fits, Close } from './uta/Motion';
 import { useLoop, fit, audio, tone, burst, hush, arrows } from './live';
 import { midi } from './Uta.midi.mjs';
 import './Uta.css';
@@ -172,36 +177,20 @@ const STEMS = (t, W, H, wide) => {
   return `polygon(${pts.map(([x, y]) => `${x.toFixed(1)}px ${y.toFixed(1)}px`).join(',')})`;
 };
 
-// each capability chapter gets its own picture of Uta's film: the whole fan (01), the film under a moving playhead
-// with its cuts (02, cue scoring), the film split into four stems (03, stem separation), the film over a D-minor
-// keyboard lighting the roll's scale (04, theory controls). No words of ours; all aria-hidden pictures.
-const KEYS = [38, 45, 50, 53, 57, 62, 64, 65, 67, 69, 70, 72, 74];
-function capArt(i, on, base) {
+// the headline beside the settled film (the family's words, page-local): the page's asks carry no data-thumb, so the
+// shared header keeps one still solid ask; focus entering the actions scrolls the stage to its settled point
+function Head() {
+  const d = C.uta;
   return (
-    <div className={'cr-art ut-art ut-art-' + i} style={base} data-on={on ? '' : undefined} aria-hidden="true">
-      <Img src={film('uta', 'webp')} w={1200} h={1500} />
-      {/* one continuous mover per screen: under the playhead (02) and the keys (04) the film rests on its frame */}
-      <ModelFilm slug="uta" play={on && i !== 1 && i !== 3} />
-      {i === 1 && <span className="ut-cue-l"><i /><i /><i /><b /></span>}
-      {i === 3 && <span className="ut-keys">{KEYS.map((m, k) => <i key={m} style={{ '--k': k }} />)}</span>}
-    </div>
-  );
-}
-
-// the closing band, page-local: the kit Band's words, its headline cut in by line mask (the kit Band's word reveal
-// blurs, which MASTER part 9 bans); final with JS off. Its two links are 44px and alike.
-function Close() {
-  return (
-    <section className="x-band ut-band" data-room="dark" aria-label="Uta">
-      <div className="x-wrap">
-        <Lines reveal lines={['Try Uta on your own work']} />
-        <p>Samples of Uta&apos;s own output publish only after blind review, so the pictures here are illustrations. A studio can apply now to test it in its own pipeline.</p>
-        <div className="x-band-act">
-          <Magnetic><Cta to="/research-access?models=uta" id="uta.band" thumb>Request access</Cta></Magnetic>
-          <p className="cr-band-note ut-band-note"><More to="/models">Every model</More><A to="/beta/research">Research preview</A></p>
-        </div>
+    <>
+      <Lines id="cr-h-uta" lines={[d.head]} />
+      <p className="lv-lede">{d.desc}</p>
+      <div className="lv-acts" onFocus={settleTo}>
+        <Cta kind="quiet" to="/research-access?models=uta" id="uta.hero">Request access</Cta>
+        <Cta to="/design" kind="link" id="uta.hero-design">Try it in Design</Cta>
       </div>
-    </section>
+      <p className="lv-crumb"><span>{d.kind}</span><span>{d.ver}</span></p>
+    </>
   );
 }
 
@@ -248,31 +237,32 @@ function useStillHeader() {
   }, []);
 }
 
+// The page's own order (not the family's hero → chapters → proof → band): the stage, then the film scrub with what
+// Uta does (the signature), the studio, Hanzo's model cards, where it fits, the closing band.
 export default function Uta() {
   useHold();
   useStillHeader();
   return (
-    <Creative
-      headThumb={false}
-      onHeadFocus={settleTo}
-      fitsFirst
-      capArt={capArt}
-      map={false}
-      band={<Close />}
+    <Launch
       slug="uta"
-      shape={STEMS}
       pos="50% 88%"
-      subject={[0.7, 0.66]}
+      ask={{ label: 'Request access', to: '/research-access?models=uta', id: 'uta.first' }}
+      shape={STEMS}
       aim={(W, H, wide) => (wide ? focus(0.66, 0.66, W * 0.72, H * 0.55, 1.12, [W * 0.5, H * 0.08, W * 0.94, H * 0.9], [0.5, 0.88]) : focus(0.7, 0.66, W / 2, H * 0.3, 1.3, [W * 0.06, H * 0.06, W * 0.94, H * 0.47], [0.5, 0.88]))(W, H)}
-      headClass="ut-v2"
-      first="demo"
-      demo={
-        <Scene slug="uta" className="ut-scene">
+      headClass="cr-head ut-v2"
+      head={<Head />}
+    >
+      <Scrub />
+      <Scene slug="uta" className="ut-scene">
+        <Iris>
           <Studio slug="uta" specs={[['Arrangement Span', 'Full Compositions', 'Up to 4 Minutes'], ['Stem Separation', 'Isolated Codebooks', '4 Master Stems'], ['Score Synchronization', 'Frame-Accurate', 'Zero Cue Drift']]}>
             <Roll />
           </Studio>
-        </Scene>
-      }
-    />
+        </Iris>
+      </Scene>
+      <Tilt />
+      <Fits />
+      <Close />
+    </Launch>
   );
 }

@@ -1,13 +1,16 @@
 'use client';
 /* Persona: developers building marketplaces, wallets and payouts inside their product. Goal: post a first transaction. CTA: "Read the docs" → docs.hanzo.ai/docs/cli/treasury. Metric: api_key_created (docs handoff).
-   Treasury. V2: 6/10 the dark-room split writes itself from a finished, balanced state; five pinned chapters whose rows are read in turn, the fourth a wallet whose 10,000 travels from buyer to hold to seller; the close carries the finished split; greys only
-   Signature: the split that writes itself, in a dark room. Hanzo's split.num is written line by line and, as each
+   Treasury. V2: 7/10 motion-map build: the live calculator re-plans the whole page (hero streams, postings, balances, wallet, close) and always balances; five page-local section entrances; no pinned chapters; greys only
+   Signature: calculator (MOTION-MAP). The visitor sets the amount and the split (treasury/calc.jsx) and every figure
+   on the page re-plans at once. Order: hero, the calculator, the wallet, the statement, the parts carousel, the close.
+   Entrances: accordion (calculator), iris (wallet), scramble (statement), side-carousel (parts), pixel-resolve (close).
+   The hero keeps: the split that writes itself, in a dark room. Hanzo's split.num is written line by line and, as each
    destination is named, its stream of money pours out of @users:001 into its account: 90%, 5%, and the remaining,
    which Numscript works out. When the three meet the amount, the split is marked balanced, then it runs again.
    Beyond: "Hold it, then pay", inside chapter 04. A wallet with a hold you drive: hold the 10,000 at checkout, then pay
    the seller on delivery (the split lands 9,000 / 500 / 500) or release it, and watch each posting arrive. Controls are
    icons with aria-labels (no new words); the posting lines use only Hanzo's account names and the split's figures.
-   Motion budget: signature = the split (line draw); supporting = Stage (Settle), Chapters (PinChapters), magnetic
+   Motion budget: signature = the calculator; supporting = the hero split (line draw), Stage (settle), magnetic
    primary. No springs. Colour: none (0 UI hues): the 90% stream is white, the 5% silver, the remainder grey. Pause in the
    editor bar and under the chapter visual. One dark room: the hero. Scale rhythm via Rhythm.css. Every word and link is Hanzo's; the only figures are
    the split's own. */
@@ -17,12 +20,14 @@ import { EASE, Magnetic } from '../../ui';
 import { A } from '../../kit';
 import { useLive, useEvery } from '../cloud/Frame';
 import LineMask from '../../v2/x-gauss/LineMask';
-import PinChapters from '../../v2/x-gauss/PinChapters';
 import NoJs from '../../v2/x-gauss/NoJs';
 import { usePause } from '../../v2/x-gauss/Pause';
+import { CalcProvider, Calculator, useCalc } from './treasury/calc';
+import { useEnter, Scramble, Pixels } from './treasury/enter';
 import '../../v2/Scale.css';
 import '../../v2/x-gauss/Rhythm.css';
 import './Treasury.css';
+import './treasury/motion.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/cli/treasury';
 const GH = 'https://github.com/hanzoai';
@@ -65,32 +70,48 @@ function Stage({ children, from = 1.015, lift = 12 }) {
   return <motion.div ref={ref} className="w2-settle" style={{ scale, y, transformOrigin: '50% 0%' }}>{children}</motion.div>;
 }
 
-/* Three streams out of one source, widths in proportion to the split (with a floor so 5% still reads). */
+/* The split as the calculator has it: the three accounts' shares and figures, and the balanced line. */
+function useSplit() {
+  const c = useCalc();
+  const pct = [c.p0 + '%', c.p1 + '%', 'remaining'];
+  const sum = `${fmt(c.parts[0])} + ${fmt(c.parts[1])} + ${fmt(c.parts[2])} = ${fmt(c.a)} · balanced`;
+  return { ...c, pct, sum };
+}
+
+/* Three streams out of one source, widths in proportion to the split (with a floor so a small share still reads). */
 function Streams({ shown, done, still }) {
+  const s = useSplit();
   const y = [70, 200, 300];
-  const w = [104, 16, 16];
+  const w = s.parts.map((v) => Math.max(4, (120 * v) / s.a));
   return (
     <div className={'ts-flow' + (still ? ' still' : '')} aria-hidden="true">
-      <div className="ts-src"><span className="x-mono">@users:001</span><b className="x-mono">10,000</b></div>
+      <div className="ts-src"><span className="x-mono">@users:001</span><b className="x-mono">{fmt(s.a)}</b></div>
       <svg viewBox="0 0 400 360" preserveAspectRatio="none">
         {DEST.map((_, i) => {
-          const s = 130 + (i === 0 ? -8 : i === 1 ? 54 : 70);
-          return <motion.path key={i} d={`M0 ${s} C 180 ${s}, 220 ${y[i]}, 400 ${y[i]}`} strokeWidth={w[i]} initial={false} animate={{ pathLength: shown[i] ? 1 : 0, opacity: shown[i] ? 1 : 0 }} transition={{ duration: 0.9, ease: EASE }} />;
+          const st = 130 + (i === 0 ? -8 : i === 1 ? 54 : 70);
+          return <motion.path key={i} d={`M0 ${st} C 180 ${st}, 220 ${y[i]}, 400 ${y[i]}`} strokeWidth={w[i]} initial={false} animate={{ pathLength: shown[i] ? 1 : 0, opacity: shown[i] ? 1 : 0 }} transition={{ duration: 0.9, ease: EASE }} />;
         })}
       </svg>
       <ul className="ts-dst">
-        {DEST.map(([a, p, v], i) => (
+        {DEST.map(([a], i) => (
           <li key={a} className={shown[i] ? 'on' : ''} style={{ top: (i === 0 ? 70 : i === 1 ? 200 : 300) / 3.6 + '%' }}>
             <span className="x-mono">{a}</span>
-            <b className="x-mono">{shown[i] ? fmt(v) : '—'}</b>
-            <em>{p}</em>
+            <b className="x-mono">{shown[i] ? fmt(s.parts[i]) : '—'}</b>
+            <em>{s.pct[i]}</em>
           </li>
         ))}
       </ul>
       {/* always in the layout, so the balanced line never pushes anything as the split re-writes */}
-      <motion.p className="ts-ok x-mono" initial={false} animate={{ opacity: done ? 1 : 0, y: done ? 0 : 8 }} transition={{ duration: 0.4, ease: EASE }}>9,000 + 500 + 500 = 10,000 · balanced</motion.p>
+      <motion.p className="ts-ok x-mono" initial={false} animate={{ opacity: done ? 1 : 0, y: done ? 0 : 8 }} transition={{ duration: 0.4, ease: EASE }}>{s.sum}</motion.p>
     </div>
   );
+}
+/* the editor's lines carry the calculator's figures (the server paints Hanzo's own: 10000, 90%, 5%) */
+function codeLine(t, l, c) {
+  if (t === 's') return `send [USD/2 ${c.a}] (`;
+  if (t === 'd0') return `    ${(c.p0 + '%').padEnd(4)}to @merchants:042`;
+  if (t === 'd1') return `    ${(c.p1 + '%').padEnd(4)}to @fees:processing`;
+  return l;
 }
 
 function Hero() {
@@ -102,6 +123,7 @@ function Hero() {
   useEvery(380, live && !paused && !calm, () => setK((v) => (v >= N + 9 ? 5 : v + 1)));
   const has = (tag) => CODE.findIndex((l) => l[0] === tag) < k;
   const shown = [has('d0'), has('d1'), has('d2')];
+  const c = useCalc();
   return (
     <section className="ts-hero w2-dark" data-room="dark" aria-labelledby="ts-h1" data-morph-target>
       <div className="w2-wrap">
@@ -124,7 +146,7 @@ function Hero() {
                 <div className="ts-ed-bar"><i /><i /><i /><span className="x-mono">split.num</span><b className="ts-name x-mono">Treasury Operations</b><span className="ts-pause">{pauseBtn}</span></div>
                 <pre className="x-mono"><code>
                   {CODE.map(([t, l], i) => (
-                    <span key={i} className={'ts-l ' + (t === 'c' ? 'c' : '') + (i < k ? ' in' : '') + (t.startsWith('d') && i < k ? ' d' : '')}>{l || ' '}{'\n'}</span>
+                    <span key={i} className={'ts-l ' + (t === 'c' ? 'c' : '') + (i < k ? ' in' : '') + (t.startsWith('d') && i < k ? ' d' : '')}>{codeLine(t, l, c) || ' '}{'\n'}</span>
                   ))}
                 </code></pre>
               </div>
@@ -154,12 +176,13 @@ function useRow(on, n, ms = 1300) {
 }
 function Postings({ on }) {
   const r = useRow(on, 3);
+  const s = useCalc();
   return (
     <div className="ts-v" aria-hidden="true">
       <p className="ts-v-k x-mono"><span>transaction</span><span>USD/2</span></p>
       <div className="ts-v-row h x-mono"><span>source</span><span>destination</span><span>amount</span></div>
-      {DEST.map(([a, , v], i) => <div key={a} className={'ts-v-row post x-mono' + (r === i ? ' hot' : '')}><span>@users:001</span><span><i className="ts-arr" />{a}</span><b>{fmt(v)}</b></div>)}
-      <div className="ts-v-sum x-mono"><span>balanced</span><b>10,000 = 10,000</b></div>
+      {DEST.map(([a], i) => <div key={a} className={'ts-v-row post x-mono' + (r === i ? ' hot' : '')}><span>@users:001</span><span><i className="ts-arr" />{a}</span><b>{fmt(s.parts[i])}</b></div>)}
+      <div className="ts-v-sum x-mono"><span>balanced</span><b>{fmt(s.a)} = {fmt(s.parts[0] + s.parts[1] + s.parts[2])}</b></div>
     </div>
   );
 }
@@ -177,21 +200,26 @@ function Recon({ on }) {
 }
 function Balances({ on }) {
   const r = useRow(on, 3);
+  const s = useCalc();
   return (
     <div className="ts-v" aria-hidden="true">
       <p className="ts-v-k x-mono"><span>accounts</span><span>per currency</span></p>
-      {DEST.map(([a, , v], i) => <div key={a} className={'ts-v-row bal x-mono' + (r === i ? ' hot' : '')}><span>{a}</span><span>USD/2</span><b>{fmt(v)}</b></div>)}
+      {DEST.map(([a], i) => <div key={a} className={'ts-v-row bal x-mono' + (r === i ? ' hot' : '')}><span>{a}</span><span>USD/2</span><b>{fmt(s.parts[i])}</b></div>)}
       <div className="ts-v-sum x-mono"><span>settles against</span><b>per deployment</b></div>
     </div>
   );
 }
 /* Chapter 04, the Beyond: the 10,000 travels from @users:001 into the hold, then on to @merchants:042 (or back). */
 const SPOTS = ['@users:001', 'held', '@merchants:042'];
-const ST = {
-  idle: { at: 0, coin: '10,000', log: [] },
-  held: { at: 1, coin: '10,000', log: ['@users:001 → held · 10,000'] },
-  paid: { at: 2, coin: '9,000', log: ['@users:001 → held · 10,000', 'held → @merchants:042 · 9,000', 'held → @fees:processing · 500', 'held → @platform:revenue · 500'] },
-  back: { at: 0, coin: '10,000', log: ['@users:001 → held · 10,000', 'held → @users:001 · 10,000'] },
+// the wallet's states, from the calculator's split (Hanzo's 10,000 / 9,000 / 500 / 500 by default)
+const states = ({ a, parts: [m, f, r] }) => {
+  const A = fmt(a), take = '@users:001 → held · ' + A;
+  return {
+    idle: { at: 0, coin: A, log: [] },
+    held: { at: 1, coin: A, log: [take] },
+    paid: { at: 2, coin: fmt(m), log: [take, 'held → @merchants:042 · ' + fmt(m), 'held → @fees:processing · ' + fmt(f), 'held → @platform:revenue · ' + fmt(r)] },
+    back: { at: 0, coin: A, log: [take, 'held → @users:001 · ' + A] },
+  };
 };
 const AUTO = ['idle', 'held', 'paid', 'idle', 'held', 'back'];
 const Ico = ({ d }) => <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d={d} fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>;
@@ -201,7 +229,7 @@ function Wallet({ on }) {
   const [i, setI] = useState(1);
   useEvery(2400, on && !mine, () => { const n = (i + 1) % AUTO.length; setI(n); setS(AUTO[n]); });
   const go = (x) => { setMine(true); setS(x); };
-  const v = ST[s];
+  const v = states(useCalc())[s];
   return (
     <div className="ts-v ts-hv">
       <p className="ts-v-k x-mono" aria-hidden="true"><span>wallet</span><span>hold</span></p>
@@ -237,76 +265,76 @@ function Flow({ on }) {
 const VIS = [Postings, Recon, Balances, Wallet, Flow];
 const SAY = ['A ledger, a language for writing', 'transactions, and the machinery', 'around them.'];
 
-/* Phones, and the server (so JS off reads it too): each chapter is its words, then its own card, in flow. Nothing is
-   pinned over text. The wallet (04) takes a full screen of its own and stays playable. */
-function Chapter({ i, t, d, paused }) {
-  const [ref, live] = useLive(0.35);
-  const V = VIS[i];
+/* 1 · accordion: the signature, straight after the hero. The calculator unfolds row by row as it arrives. */
+function CalcSection() {
+  const [ref, st] = useEnter(0.2);
   return (
-    <article ref={ref} className={'ts-sc' + (i === 3 ? ' ts-sc-w' : '')}>
-      <h2 className="w2-headline">{t}</h2>
-      <p className="ts-sc-b">{d}</p>
-      <V on={live && !paused} />
-    </article>
+    <section ref={ref} data-enter={st} className="ts-calc ten-acc" aria-label="split.num">
+      <div className="w2-wrap"><Calculator Postings={Postings} /></div>
+    </section>
   );
 }
 
-function Parts() {
-  // wide screens pin the chapters beside one changing card; that pin mounts after hydration, so the server and the
-  // first client render are the same stacked markup in every motion mode (no reduced-motion hydration mismatch).
-  // Each branch owns its own in-view watcher, so the pinned branch never watches the detached stacked section.
-  const [wide, setWide] = useState(false);
-  useEffect(() => {
-    const m = matchMedia('(min-width: 900px)');
-    const on = () => setWide(m.matches);
-    on();
-    m.addEventListener('change', on);
-    return () => m.removeEventListener('change', on);
-  }, []);
-  return wide ? <PinnedParts /> : <StackedParts />;
-}
-
-function StackedParts() {
-  const [ref] = useLive(0.05);
-  const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
+/* 2 · iris: the wallet with a hold (part 04, the Beyond) in its own quiet room, opening out of a circle. */
+function WalletSection() {
+  const [ref, st] = useEnter(0.25);
+  const [lref, live] = useLive(0.35);
+  const [t, d] = PARTS[3];
   return (
-    <section className="ts-stack" aria-label="What it is made of" ref={ref}>
+    <section ref={ref} data-enter={st} className="ts-wal ten-iris">
       <div className="w2-wrap">
-        <div className="ts-stack-top">
-          <LineMask as="p" className="gx-say ts-say-p" lines={SAY} />
-          <span className="ts-stack-pause">{pauseBtn}</span>
-        </div>
-        <div className={paused ? 'ts-stack-l paused' : 'ts-stack-l'}>
-          {PARTS.map(([t, d], i) => <Chapter key={t} i={i} t={t} d={d} paused={paused} />)}
+        <div className="ts-wal-in" ref={lref}>
+          <div><h2 className="w2-headline">{t}</h2><p className="ts-sc-b">{d}</p></div>
+          <Wallet on={live} />
         </div>
       </div>
     </section>
   );
 }
 
-function PinnedParts() {
-  const [ref, live] = useLive(0.05);
-  const [paused, pauseBtn] = usePause({ right: 0, bottom: 0, top: 'auto' });
-  const lead = { rail: false, node: <LineMask as="p" className="gx-say ts-say-p" lines={SAY} /> };
+/* 3 · scramble: the statement decodes out of noise. */
+function SaySection() {
+  const [ref, st] = useEnter(0.4);
   return (
-    <div ref={ref}>
-      <PinChapters id="ts-parts" label="What it is made of" className="ts-pin"
-        title="What it is made of"
-        chapters={[lead, ...PARTS.map(([t, d]) => ({ t, b: <p>{d}</p> }))]}
-        visual={(at) => {
-          const v = Math.max(0, at - 1);
-          return (
-            <div className={'ts-vis' + (paused ? ' paused' : '')}>
-              {pauseBtn}
-              {VIS.map((V, i) => (
-                <motion.div key={i} className="ts-vis-i" initial={false} animate={{ opacity: v === i ? 1 : 0, y: v === i ? 0 : v > i ? -24 : 24 }} transition={{ duration: 0.5, ease: EASE }} aria-hidden={v !== i} inert={v !== i}>
-                  <V on={live && !paused && v === i} />
-                </motion.div>
-              ))}
-            </div>
-          );
-        }} />
-    </div>
+    <section ref={ref} className="ts-say" aria-label="What it is made of">
+      <div className="w2-wrap"><Scramble lines={SAY} className="gx-say ts-say-p" go={st} /></div>
+    </section>
+  );
+}
+
+/* 4 · side-carousel: the other four parts on a horizontal snapping track, each with its own live card. */
+function Card({ i, n, paused }) {
+  const [ref, live] = useLive(0.5);
+  const [t, d] = PARTS[i];
+  const V = VIS[i];
+  return (
+    <article ref={ref} className="ts-card" aria-label={`${n} / 4`}>
+      <h2 className="w2-headline">{t}</h2>
+      <p className="ts-sc-b">{d}</p>
+      <V on={live && !paused} />
+    </article>
+  );
+}
+function PartsCarousel() {
+  const [ref, st] = useEnter(0.2);
+  const tr = useRef(null);
+  const [at, setAt] = useState(0);
+  const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
+  const ids = [0, 1, 2, 4];
+  const step = (k) => { const el = tr.current; const c = el.children[0]; if (c) el.scrollBy({ left: k * (c.getBoundingClientRect().width + 12), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); };
+  const onScroll = () => { const el = tr.current; const c = el.children[0]; if (c) setAt(Math.min(3, Math.round(el.scrollLeft / (c.getBoundingClientRect().width + 12)))); };
+  return (
+    <section ref={ref} data-enter={st} className="ts-car ten-car" aria-label="What it is made of">
+      <div className="w2-wrap ts-car-top">
+        <span className="ts-car-n x-mono" aria-hidden="true">0{at + 1} / 04</span>
+        {pauseBtn}
+        <button type="button" className="ts-car-b" aria-label="Previous" onClick={() => step(-1)}><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
+        <button type="button" className="ts-car-b" aria-label="Next" onClick={() => step(1)}><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
+      </div>
+      <div className={'ts-car-t' + (paused ? ' paused' : '')} ref={tr} onScroll={onScroll} tabIndex={0} aria-label="What it is made of">
+        {ids.map((i, n) => <Card key={i} i={i} n={n + 1} paused={paused} />)}
+      </div>
+    </section>
   );
 }
 
@@ -317,7 +345,16 @@ function PinnedParts() {
 function Total() {
   const ref = useRef(null);
   const seen = useInView(ref, { once: true, amount: 0.8 });
+  const { a } = useCalc();
   const [v, setV] = useState(10000);
+  const done = useRef(false);
+  // after its first count, the figure rolls to whatever amount the calculator now holds
+  useEffect(() => {
+    if (!done.current) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { setV(a); return; }
+    const c = animate(v, a, { duration: 0.4, ease: EASE, onUpdate: (x) => setV(Math.round(x)) });
+    return () => c.stop();
+  }, [a]); // eslint-disable-line react-hooks/exhaustive-deps
   // the server paints the true 10,000; if the figure is still below the fold after hydration, it rests at 0 out of
   // sight and counts up when it arrives, so it never visibly drops and climbs back
   useEffect(() => {
@@ -325,41 +362,46 @@ function Total() {
     if (r && r.top > innerHeight && !matchMedia('(prefers-reduced-motion: reduce)').matches) setV(0);
   }, []);
   useEffect(() => {
-    if (!seen || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const c = animate(0, 10000, { duration: 1.1, ease: EASE, onUpdate: (x) => setV(Math.round(x / 100) * 100) });
+    if (!seen) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { done.current = true; setV(a); return; }
+    const c = animate(0, a, { duration: 1.1, ease: EASE, onUpdate: (x) => setV(Math.round(x / 100) * 100), onComplete: () => { done.current = true; setV(a); } });
     return () => c.stop();
-  }, [seen]);
-  return <p ref={ref} className="ts-total x-mono" aria-label="10,000">{fmt(v)}</p>;
+  }, [seen]); // eslint-disable-line react-hooks/exhaustive-deps
+  return <p ref={ref} className="ts-total x-mono" aria-label={fmt(a)}>{fmt(v)}</p>;
 }
 
 function Split() {
   const [hot, setHot] = useState(-1);
-  const x = [0, 360, 380];
-  const w = [360, 20, 20];
+  const s = useSplit();
+  const w = s.parts.map((v) => (400 * v) / s.a);
+  const x = [0, w[0], w[0] + w[1]];
   return (
     <figure className="ts-split" aria-label="split.num">
       <Total />
       <svg viewBox="0 0 400 12" preserveAspectRatio="none" aria-hidden="true">
         {DEST.map((_, i) => (
-          <motion.path key={i} d={`M${x[i] + (i ? 1 : 0)} 6 H${x[i] + w[i] - 1}`} strokeWidth="12" className={hot === -1 || hot === i ? 'on' : ''}
+          <motion.path key={i} d={`M${(x[i] + (i ? 1 : 0)).toFixed(1)} 6 H${Math.max(x[i] + (i ? 1 : 0), x[i] + w[i] - 1).toFixed(1)}`} strokeWidth="12" className={hot === -1 || hot === i ? 'on' : ''}
             initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true, amount: 0.6 }} transition={{ duration: 0.9, ease: EASE, delay: 0.2 + i * 0.3 }} />
         ))}
       </svg>
       <ul>
-        {DEST.map(([a, p, v], i) => (
+        {DEST.map(([a], i) => (
           <li key={a} tabIndex={0} className={hot === i ? 'hot' : ''} onPointerEnter={() => setHot(i)} onPointerLeave={() => setHot(-1)} onFocus={() => setHot(i)} onBlur={() => setHot(-1)}>
-            <span className="x-mono">{a}</span><em className="x-mono">{p}</em><b className="x-mono">{fmt(v)}</b>
+            <span className="x-mono">{a}</span><em className="x-mono">{s.pct[i]}</em><b className="x-mono">{fmt(s.parts[i])}</b>
           </li>
         ))}
       </ul>
-      <figcaption className="x-mono"><span>@users:001</span><b>9,000 + 500 + 500 = 10,000 · balanced</b></figcaption>
+      <figcaption className="x-mono"><span>@users:001</span><b>{s.sum}</b></figcaption>
     </figure>
   );
 }
 
+/* 5 · pixel-resolve: the close resolves out of coarse, then fine, blocks. */
 function First() {
+  const [ref, st] = useEnter(0.25);
   return (
-    <section className="w2-sec ts-first">
+    <section ref={ref} data-enter={st} className="w2-sec ts-first ten-px">
+      <Pixels />
       <div className="w2-wrap">
         <div className="ts-first-top">
           <h2 className="w2-display m ts-first-h">Post your first transaction</h2>
@@ -385,9 +427,14 @@ export default function Treasury() {
   return (
     <main id="main" className="ts w2 gx">
       <NoJs />
-      <Hero />
-      <Parts />
-      <First />
+      <CalcProvider>
+        <Hero />
+        <CalcSection />
+        <WalletSection />
+        <SaySection />
+        <PartsCarousel />
+        <First />
+      </CalcProvider>
     </main>
   );
 }

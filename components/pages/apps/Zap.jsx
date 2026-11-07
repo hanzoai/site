@@ -1,8 +1,13 @@
 'use client';
 /* Persona: developers running many agents against shared MCP tool servers. Goal: start zapd from the quick start. CTA: "Read the docs" → zap-proto.dev/docs/quick-start. Metric: install_copy.
-   ZAP. V2: 7/10 the wire is the hero object (pointer versus parser in the dark room), four points, eight packets whose headers fill, a typed terminal, the gateway drawn as a diagram beside the sidecar counter, one ask closes; greys only
+   ZAP. V2: 7/10 motion-map build: the calculator comes second (agents slider + server keys re-plan the diagram, both topologies and the N:1 / 1:M / 0 figures), five page-local entrances, no pinned stage; greys only
+   Signature: calculator (docs/MOTION-MAP.md). Set the agents you run and which of the terminal's three servers run, and
+   the gateway diagram, the sidecar and zapd topologies and the N:1 / 1:M / 0 figures re-plan at once.
+   Entrances: velocity-skew (the calculator), page-curl (the terminal room), cursor-trail (why bother), drop-in (point
+   one agent at it), pendulum (the closing band). Page-local in ./zap/Enter.jsx; final state in server HTML, JS off and
+   reduced motion. Order: hero, calculator, terminal, why bother, point + band.
    The wire is the object.
-   Signature: pointer versus parser. The message lies in the buffer as it arrived (a sixteen-byte header, then a struct, a
+   Hero: pointer versus parser. The message lies in the buffer as it arrived (a sixteen-byte header, then a struct, a
    list, text and bytes on eight-byte boundaries); a reader asks for a field and the pointer jumps straight to its offset,
    while the same message as JSON text is walked character by character to get there. Choose the field yourself.
    Beyond: sidecars or one daemon. Set how many agents you run and count the tool-server processes each topology starts
@@ -12,7 +17,8 @@
    typing (the terminal). No springs. Colour: none (0 UI hues): the pointer and the walked text are white and silver in the
    dark room. Pause buttons sit in each object's own bar or control row. One dark room: the hero. Every word and link is Hanzo's. */
 import { Fragment, useEffect, useRef, useState } from 'react';
-import { motion, useInView, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, useInView } from 'motion/react';
+import { VSkew, Curl, Trail, Drop, Swing } from './zap/Enter';
 import { EASE, Copy, Magnetic } from '../../ui';
 import { A, Img } from '../../kit';
 import { useLive, useEvery, useSteps } from '../cloud/Frame';
@@ -148,62 +154,35 @@ const WHY = [
 /* Each reason is a packet: a sixteen-byte header, filled a little more on every packet; the packet that lands fills it all. */
 const Hdr = ({ n }) => <span className="zp-hdr" aria-hidden="true">{Array.from({ length: 16 }).map((_, b) => <i key={b} className={b < 2 + n ? 'f' : ''} style={{ '--b': b }} />)}</span>;
 
-/* Why bother is a pinned stage on wide screens: the eight packets ride past on one wire as you scroll, one lands at a
-   time (its header fills) and the caption counts 01 / 08. Phones and reduced motion get a swipe rail with a peek. */
+/* Why bother: no pinned stage (the map gives /zap no split scene). The eight packets sit as a plain grid on wide screens
+   and a swipe rail on phones; they arrive behind a cursor trail (Trail). The packet you point at, focus or swipe to
+   lands (its header fills) and the caption counts 01 / 08. */
 function Why() {
-  const sec = useRef(null), track = useRef(null);
-  const calm = useReducedMotion();
-  const [span, setSpan] = useState(0);
+  const track = useRef(null);
   const [on, setOn] = useState(0);
   useEffect(() => {
-    const m = () => {
-      const t = track.current; if (!t) return;
-      const ul = t.querySelector('ul');
-      setSpan(!calm && innerWidth >= 900 && ul ? Math.max(0, ul.scrollWidth - t.clientWidth) : 0);
-    };
-    m(); addEventListener('resize', m);
-    return () => removeEventListener('resize', m);
-  }, [calm]);
-  const { scrollYProgress } = useScroll({ target: sec, offset: ['start start', 'end end'] });
-  const x = useTransform(scrollYProgress, [0, 1], [0, -span]);
-  useMotionValueEvent(scrollYProgress, 'change', (v) => { if (span) setOn(Math.min(WHY.length - 1, Math.max(0, Math.round(v * (WHY.length - 1))))); });
-  useEffect(() => {
     // on the rail (phone), the packet nearest the left edge is the one that has landed
-    const t = track.current; if (!t || span) return;
-    const ul = t.querySelector('ul');
-    const f = () => { const li = ul.children; let best = 0, d = 1e9; for (let i = 0; i < li.length; i++) { const k = Math.abs(li[i].getBoundingClientRect().left - ul.getBoundingClientRect().left); if (k < d) { d = k; best = i; } } setOn(best); };
+    const ul = track.current?.querySelector('ul'); if (!ul) return;
+    const f = () => { if (ul.scrollWidth <= ul.clientWidth + 2) return; const li = ul.children; let best = 0, d = 1e9; for (let i = 0; i < li.length; i++) { const k = Math.abs(li[i].getBoundingClientRect().left - ul.getBoundingClientRect().left); if (k < d) { d = k; best = i; } } setOn(best); };
     ul.addEventListener('scroll', f, { passive: true });
     return () => ul.removeEventListener('scroll', f);
-  }, [span]);
+  }, []);
   useEffect(() => { track.current?.querySelectorAll('.zp-packets > li').forEach((li, i) => li.classList.toggle('on', i === on)); }, [on]);
-  // keyboard: focusing a packet on the pinned stage scrolls the page to the point where that packet has landed (the
-  // inverse of the scrub), so the wire carries it into view; the stick never scrolls sideways (overflow: clip in CSS)
-  const focusIn = (e) => {
-    if (!span) return;
-    const li = e.target.closest?.('.zp-packets > li'); if (!li) return;
-    const i = [...li.parentElement.children].indexOf(li); if (i < 0) return;
-    const s = sec.current; const top = s.getBoundingClientRect().top + scrollY;
-    const run = s.offsetHeight - innerHeight;
-    s.querySelector('.zp-why-stick').scrollLeft = 0;
-    scrollTo({ top: top + run * (i / (WHY.length - 1)), behavior: 'instant' });
-    setOn(i);
-  };
+  const pick = (e) => { const li = e.target.closest?.('.zp-packets > li'); if (!li) return; const i = [...li.parentElement.children].indexOf(li); if (i >= 0) setOn(i); };
   return (
-    <section ref={sec} className={'zp-why' + (span ? ' pinned' : '')} style={span ? { height: `calc(100svh + ${span}px)` } : undefined}>
-      <div className="zp-why-stick">
+    <section className="zp-why">
+      <Trail>
         <div className="w2-wrap">
           <div className="zp-split">
             <LineMask as="h2" className="w2-display s" lines={['Why bother']} />
             <p className="w2-lede">JSON over HTTP is fine until a hundred agents are calling the same tools. Then the cost is the copies, and the fix is to stop making them.</p>
           </div>
-          <div className="zp-why-track" ref={track} onFocus={focusIn}>
-            <motion.div style={span ? { x } : undefined}>
-              <OpenCards cols={4} className="zp-packets" items={WHY.map(([t, d], i) => ({ id: 'zp-' + i, k: String(i + 1).padStart(2, '0'), t, art: <Hdr n={i} />, body: <p>{d}</p> }))} />
-            </motion.div>
+          <div className="zp-why-track" ref={track} onFocus={pick} onPointerOver={pick}>
+            <OpenCards cols={4} className="zp-packets" items={WHY.map(([t, d], i) => ({ id: 'zp-' + i, k: String(i + 1).padStart(2, '0'), t, art: <Hdr n={i} />, body: <p>{d}</p> }))} />
           </div>
           <p className="zp-why-at x-mono" aria-hidden="true"><b>{String(on + 1).padStart(2, '0')}</b> / 08<i style={{ '--p': (on + 1) / WHY.length }} /></p>
         </div>
-      </div>
+      </Trail>
     </section>
   );
 }
@@ -252,6 +231,7 @@ function Running() {
   useEvery(600, live, () => setK((v) => (v >= lines.length + 4 ? 0 : v + 1)));
   return (
     <section className="w2-sec tight zp-run" ref={ref}>
+      <Curl>
       <div className="w2-wrap zp-run-grid">
         <div className="zp-run-copy">
           <LineMask as="h2" className="w2-headline" lines={['Four lines and it is running']} />
@@ -265,6 +245,7 @@ function Running() {
           <pre className="x-mono" tabIndex={0} role="region" aria-label="Terminal">{lines.map((l, i) => <Fragment key={i}><span className={(l.startsWith('#') ? 'c' : '') + (i < k ? ' in' : '') + (i === k - 1 ? ' last' : '')}>{l.startsWith('$ ') ? <><span className="zp-ps">$ </span>{l.slice(2)}</> : l}</span>{i < lines.length - 1 ? '\n' : ''}</Fragment>)}</pre>
         </div>
       </div>
+      </Curl>
     </section>
   );
 }
@@ -293,15 +274,12 @@ function Slide({ n, set }) {
   );
 }
 
-/* Sidecars or one daemon: the processes each topology starts, for as many agents as you say. */
-function Fleet() {
-  const [ref, live] = useLive(0.3);
-  const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
-  const [n, setN] = useState(4);
-  const [mine, setMine] = useState(false);
-  // until you take the slider, the swarm grows by itself
-  useEvery(1100, live && !mine && !paused, () => setN((v) => (v >= 16 ? 1 : v + 1)));
-  const side = n * SERVERS.length;
+/* Sidecars or one daemon: the processes each topology starts, for as many agents and servers as you say. The calculator
+   (the signature): the slider sets the agents, the server keys set which of the terminal's three servers run, and the
+   diagram, both topologies and the N:1 / 1:M / 0 figures re-plan at once. */
+function Fleet({ n, setN, srv, setSrv, setMine, live, paused, pauseBtn }) {
+  const m = srv.length;
+  const side = n * m;
   const box = (k, cls) => Array.from({ length: k }).map((_, i) => <i key={i} className={cls} style={{ '--s': i % 3 }} />);
   // the sidecar squares take the largest size at which every process still fits the box (108px tall), so a small
   // fleet fills it with big squares and a large one packs small ones; the box itself never changes height
@@ -316,13 +294,17 @@ function Fleet() {
   // four sizes only, so the squares re-pack at a few counts rather than on every step
   let sz = 10;
   for (const s of [48, 30, 20, 14]) { const cols = Math.max(1, Math.floor((bw + 4) / (s + 4))); if (Math.ceil(Math.min(side, 300) / cols) * (s + 4) - 4 <= 108) { sz = s; break; } }
+  const toggle = (s) => { setMine(true); setSrv((cur) => (cur.includes(s) ? (cur.length > 1 ? cur.filter((x) => x !== s) : cur) : SERVERS.filter((x) => x === s || cur.includes(x)))); };
   return (
-    <div className="zp-fleet w2-object" ref={ref}>
+    <div className="zp-fleet w2-object">
       <div className="zp-fleet-k">
         <span>Agents you run</span>
         <b className="w2-fig">{n}</b>
         <span className="zp-pause">{pauseBtn}</span>
         <Slide n={n} set={(v) => { setMine(true); setN(v); }} />
+      </div>
+      <div className="zp-srv" role="group" aria-label="MCP servers">
+        {SERVERS.map((s) => <button key={s} type="button" className="x-mono" aria-pressed={srv.includes(s)} onClick={() => toggle(s)}>{s}</button>)}
       </div>
       <div className="zp-topos">
         <div className="zp-topo">
@@ -333,8 +315,8 @@ function Fleet() {
         </div>
         <div className="zp-topo one">
           <p className="zp-topo-k">One zapd in front, servers shared</p>
-          <div className="zp-procs" aria-hidden="true">{box(SERVERS.length, 'p')}<i className="d" /></div>
-          <p className="zp-topo-n x-mono"><b>{SERVERS.length}</b> tool-server processes and zapd · none repeated</p>
+          <div className="zp-procs" aria-hidden="true">{box(m, 'p')}<i className="d" /></div>
+          <p className="zp-topo-n x-mono"><b>{m}</b> tool-server processes and zapd · none repeated</p>
         </div>
       </div>
     </div>
@@ -352,14 +334,16 @@ function Wires({ d, late, seen }) {
 }
 
 /* Hanzo's gateway diagram, drawn: the same words as the ASCII (kept in the HTML, hidden, for the record). */
-function Diagram() {
+function Diagram({ n = 4, srv = SERVERS }) {
   const ref = useRef(null);
   const seen = useInView(ref, { once: true, amount: 0.4 });
+  // the calculator re-plans it: the agent boxes light up to the count you set, and a server you switch off goes quiet
+  const off = { GitHub: !srv.includes('github'), Slack: !srv.includes('slack') };
   return (
     <figure className="zp-dia" ref={ref}>
       <div className="zp-dia-swarm">
-        <p className="x-mono">Agent Swarm</p>
-        <div className="zp-dia-row">{['Agent 1', 'Agent 2', 'Agent 3', 'Agent N'].map((a) => <span key={a} className="x-mono">{a}</span>)}<em aria-hidden="true">...</em></div>
+        <p className="x-mono">Agent Swarm<b className="zp-dia-n" key={n}>{n}</b></p>
+        <div className="zp-dia-row">{['Agent 1', 'Agent 2', 'Agent 3', 'Agent N'].map((a, i) => <span key={a} className="x-mono" data-on={i < Math.min(n, 3) || (i === 3 && n > 3) ? '' : undefined}>{a}</span>)}<em aria-hidden="true">...</em></div>
       </div>
       <Wires d={['M12.5 0 V16 H50', 'M87.5 0 V16 H50', 'M37.5 0 V16', 'M62.5 0 V16', 'M50 16 V32']} seen={seen} />
       <div className="zp-dia-gw">
@@ -368,33 +352,45 @@ function Diagram() {
         <ul>{['Schema Federation', 'Request Routing', 'Capability Control'].map((t) => <li key={t}>{t}</li>)}</ul>
       </div>
       <Wires d={['M50 0 V16', 'M50 16 H16.7 V32', 'M50 16 H83.3 V32', 'M50 16 V32']} late seen={seen} />
-      <div className="zp-dia-row srv">{[['MCP Srv', 'GitHub'], ['ZAP Srv', 'Native'], ['MCP Srv', 'Slack']].map(([a, b]) => <span key={b}><b className="x-mono">{a}</b>{b}</span>)}<em aria-hidden="true">...</em></div>
+      <div className="zp-dia-row srv">{[['MCP Srv', 'GitHub'], ['ZAP Srv', 'Native'], ['MCP Srv', 'Slack']].map(([a, b]) => <span key={b} data-off={off[b] ? '' : undefined}><b className="x-mono">{a}</b>{b}</span>)}<em aria-hidden="true">...</em></div>
       <pre className="x-mono" hidden>{ASCII}</pre>
     </figure>
   );
 }
 
+/* The calculator, second on the page: set the agents and the servers, and the diagram, the two topologies and the
+   figures all re-plan at once. Until you take it, the swarm grows by itself. */
 function Built() {
   // the scale moment: N:1 and 1:M arrive at hero size, hold, then settle to figure size (the 0 stays medium, MASTER part 5)
   const stats = useRef(null);
   const seen = useInView(stats, { once: true, amount: 0.6 });
+  const [ref, live] = useLive(0.3);
+  const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
+  const [n, setN] = useState(4);
+  const [srv, setSrv] = useState(SERVERS);
+  const [mine, setMine] = useState(false);
+  useEvery(1100, live && !mine && !paused, () => setN((v) => (v >= 16 ? 1 : v + 1)));
+  const m = srv.length;
+  const now = [`${n}:1`, `1:${m}`, `${n * m - m} → 0`];
   return (
-    <section className="w2-sec tight zp-built">
+    <section className="w2-sec tight zp-built" ref={ref}>
+      <VSkew>
       <div className="w2-wrap">
         <div className="zp-split">
           <LineMask as="h2" className="w2-headline" lines={['How it is put together']} />
           <p className="w2-lede">Many agents on one side, many tool servers on the other, one address in the middle.</p>
         </div>
         <ul className={'zp-stats' + (seen ? ' seen' : '')} ref={stats}>
-          {[['N:1', 'Every agent, one address'], ['1:M', 'One schema over every backend'], ['0', 'Copies of the same tool server']].map(([k, d]) => (
-            <li key={d} className={k === '0' ? 'zero' : undefined}><LineMask as="p" className="w2-fig zp-fig" lines={[k]} /><span>{d}</span></li>
+          {[['N:1', 'Every agent, one address'], ['1:M', 'One schema over every backend'], ['0', 'Copies of the same tool server']].map(([k, d], i) => (
+            <li key={d} className={k === '0' ? 'zero' : undefined}><LineMask as="p" className="w2-fig zp-fig" lines={[k]} /><span>{d}</span><em className="zp-now x-mono" key={now[i]} aria-live={mine ? 'polite' : 'off'}>{now[i]}</em></li>
           ))}
         </ul>
         <div className="zp-built-grid">
-          <Diagram />
-          <Fleet />
+          <Diagram n={n} srv={srv} />
+          <Fleet n={n} setN={setN} srv={srv} setSrv={setSrv} setMine={setMine} live={live} paused={paused} pauseBtn={pauseBtn} />
         </div>
       </div>
+      </VSkew>
     </section>
   );
 }
@@ -403,6 +399,7 @@ function Point() {
   return (
     <section className="w2-sec tight zp-point">
       <div className="w2-wrap">
+        <Drop>
         <div className="zp-point-grid">
           <div className="zp-point-copy">
             <LineMask as="h2" className="w2-display s" lines={['Point one agent at it']} />
@@ -415,7 +412,8 @@ function Point() {
             <p>What ZAP saves depends on your workload, your payload size and your topology. The claim here is about mechanism, not about a number: a reader that walks the buffer in place does no parsing and no allocation, and shared backends run one process where per-agent sidecars run many. Measure it on your own traffic — we have not published a benchmark and will not quote one we cannot show you.</p>
           </div>
         </div>
-        <Band />
+        </Drop>
+        <Swing><Band /></Swing>
       </div>
     </section>
   );
@@ -461,9 +459,9 @@ export default function Zap() {
     <main id="main" className="zp w2 gx">
       <NoJs />
       <Hero />
-      <Why />
-      <Running />
       <Built />
+      <Running />
+      <Why />
       <Point />
     </main>
   );
