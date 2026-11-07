@@ -667,3 +667,10 @@ html:not(.js) .xe-card { margin-bottom: 17px; }
   .xe-deal-tabs button { padding: 0 6px; }
 }
 @media (prefers-reduced-motion: reduce) { .xe-win { transition: none !important; } }
+
+/* the lit tab answers the pointer too (its colour is already ink): its name draws an underline */
+@media (hover: hover) and (pointer: fine) {
+  .xe-deal-tabs button[aria-selected='true']:hover, .xe-tabs button[aria-selected='true']:hover .xe-tt { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 4px; }
+  .xe .xe-band .x-btn.solid:hover { background: #262626; border-color: #262626; }
+}
+.xe-bm-a:active { transform: translateY(1px); }

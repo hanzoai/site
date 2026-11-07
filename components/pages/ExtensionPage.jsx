@@ -390,6 +390,9 @@ function Text({ on }) {
 
 // sizes only beside their own build (download.json): "Safari & Others" names many browsers, so it carries no figure
 const SIZE = { chrome: '976 KB', firefox: '956 KB', safari: '310 KB', edge: null, other: null };
+/* each browser's own build asset (download.json, v1.9.31); "Safari & Others" names many browsers, so it keeps the release page */
+const ASSET = (b) => `https://github.com/hanzoai/extension/releases/download/v1.9.31/hanzo-ai-${b}-v1.9.31.zip`;
+const HREF = { chrome: ASSET('chrome'), firefox: ASSET('firefox'), edge: ASSET('edge'), other: REL };
 function Build({ on }) {
   return (
     <div className={'xe-vis xe-build' + (on ? ' on' : '')} aria-hidden="true">
@@ -457,7 +460,7 @@ function Builds({ mine }) {
               <p>{d}</p>
               {/* one ask style for every row: a text link with its size beside it; your browser's row is marked by a filled dot
                   and bold weight (the header carries the one solid "Download Extension" here) */}
-              <span className="xe-row-a"><Cta to={REL} id={'extension-build-' + k} kind="link" {...(k === lead ? brief : {})}>{cta}</Cta>{SIZE[k] && <em className="xe-row-sz x-mono">{SIZE[k]}</em>}</span>
+              <span className="xe-row-a"><Cta to={HREF[k] || REL} id={'extension-build-' + k} kind="link" {...(k === lead ? brief : {})}>{cta}</Cta>{SIZE[k] && <em className="xe-row-sz x-mono">{SIZE[k]}</em>}</span>
             </motion.li>
           ))}
         </ul>
