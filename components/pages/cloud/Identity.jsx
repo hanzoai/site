@@ -8,6 +8,11 @@
 // Beyond: white-labelled by hostname: the hosted card redrawn from your hostname, your mark and the ways in.
 /* Identity (v2, archetype A Launch).
    V2: 8/10 motion map: no pinned scene; the hosted card leads and re-hosts itself on a customer's hostname; the dark Add sign-in room is the spotlight (second screen); five page-local entrances in order: the room's outline draws then fills (line-draw), the three stages spread in by ink (ink-spread), "What it does" types itself (typewriter), the large-organization panel stretches with scroll (stretch-scroll), the white-label card and form ride in on a conveyor (conveyor)
+   C1 (7 Nov): the first screen is Identity's own, not /iam's split: the title centred over a fan of three hosted cards
+   (before: the ways in; live: re-hosting on a customer's hostname and signing in; after: every app), the side cards
+   sliding out from behind and parting toward the pointer. The motion-map CSS that was missing is written (spotlight
+   layers, line-draw room, ink-spread stages, typewriter, stretch panel, conveyor form); the token rows and the
+   append-only log run while seen (pausable); phone stages stack.
    Signature: spotlight. The hosted card leads the first screen (its address bar rewrites from hanzo.id to a
    customer's hostname, then it signs someone in by itself). Next, the dark Add sign-in room: the cursor is a light;
    what sits under it (the client id, authorize to callback, the runtimes) comes up to full ink, the rest stays dim.
@@ -129,11 +134,11 @@ function SignCard() {
 function StageCard({ i }) {
   const [ref, live] = useLive(0.4);
   const [paused, togglePause] = usePause();
-  const [w, setW] = useState(0); // which way in is lit
-  useTick(900, i === 1 && live && !paused, () => setW((v) => (v + 1) % 5));
+  const [w, setW] = useState(0); // which way in (stage 1) or which claim (stage 2) is lit
+  useTick(i === 1 ? 900 : 1300, i < 3 && live && !paused, () => setW((v) => (v + 1) % (i === 1 ? 5 : 3)));
   return (
     <div className="lp-host id-st-host" ref={ref}>
-      {i === 1 && <LivePause paused={paused} onToggle={togglePause} className="id-pause" />}
+      {i < 3 && <LivePause paused={paused} onToggle={togglePause} className="id-pause" />}
       <div className="id-card st" aria-hidden="true">
         <p className="id-url"><i /><span className="id-host"><span className="id-host-t">hanzo.id</span></span></p>
         <div className="id-screen">
@@ -150,7 +155,7 @@ function StageCard({ i }) {
           {i === 2 && (
             <div className="id-token">
               <p className="id-t">token</p>
-              {CLAIMS.map((g, k) => <p key={k} style={{ '--k': k }}><b>{g}</b><span className="id-mask">{'•'.repeat([9, 13, 7][k])}</span></p>)}
+              {CLAIMS.map((g, k) => <p key={k} className={w === k ? 'lit' : undefined} style={{ '--k': k }}><b>{g}</b><span className="id-mask">{'•'.repeat([9, 13, 7][k])}</span></p>)}
             </div>
           )}
           {i === 3 && (
@@ -168,34 +173,67 @@ function StageCard({ i }) {
   );
 }
 
-/* the card leans toward a fine pointer (2.5° at most) and a soft light follows it across the stage; touch: nothing */
+/* a tile leans toward a fine pointer (2.5° at most); touch: nothing */
 function lean(e) {
   if (e.pointerType !== 'mouse') return;
   const el = e.currentTarget;
   if (el.hasAttribute('data-open')) return; // an open tile holds still so its words are sharp
   const r = el.getBoundingClientRect();
   const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
-  el.style.setProperty('--sx', (x * 100).toFixed(1) + '%');
-  el.style.setProperty('--sy', (y * 100).toFixed(1) + '%');
   el.style.setProperty('--ry', ((x - 0.5) * 5).toFixed(2) + 'deg');
   el.style.setProperty('--rx', ((0.5 - y) * 5).toFixed(2) + 'deg');
 }
 function unlean(e) { const s = e.currentTarget.style; s.setProperty('--ry', '0deg'); s.setProperty('--rx', '0deg'); }
 
-/* The first screen: the hosted card leads (it re-hosts itself, then signs someone in), the title beside it. */
+/* the two cards fanned behind the live one: the same hosted sign-in, before (the ways in) and after (every app). They
+   slide out from behind it as the page arrives and part a little toward a fine pointer. */
+function Ghost({ k }) {
+  return (
+    <div className="id-card ghost" aria-hidden="true">
+      <p className="id-url"><i /><span className="id-host"><span className="id-host-t">{k ? THEIRS : 'hanzo.id'}</span></span></p>
+      <div className="id-screen">
+        {k === 0 ? (
+          <div className="id-form">
+            <p className="id-t">Sign-in</p>
+            <span className="id-btn dark">passkey</span>
+            <span className="id-btn">Google</span>
+            <span className="id-btn">GitHub</span>
+          </div>
+        ) : (
+          <div className="id-apps"><div>{MARKS.map((m, i) => <i key={i}><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" stroke="currentColor" strokeWidth="0">{m}</svg></i>)}</div></div>
+        )}
+      </div>
+    </div>
+  );
+}
+function part(e) {
+  if (e.pointerType !== 'mouse') return;
+  const r = e.currentTarget.getBoundingClientRect();
+  const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+  const s = e.currentTarget.style;
+  s.setProperty('--px', x.toFixed(3));
+  s.setProperty('--ry', (x * 5).toFixed(2) + 'deg');
+  s.setProperty('--rx', (-y * 5).toFixed(2) + 'deg');
+}
+function unpart(e) { const s = e.currentTarget.style; s.setProperty('--px', '0'); s.setProperty('--ry', '0deg'); s.setProperty('--rx', '0deg'); }
+
+/* The first screen, Identity's own: the title centred over a fan of hosted cards. The middle one is live (it re-hosts
+   itself on a customer's hostname, then signs someone in); behind it, the same card before and after. */
 function Hero() {
   return (
     <section className="id-hero-s" aria-label="Hanzo Identity">
-      <div className="v2-wrap v2-grid id-hero-grid" onPointerMove={lean} onPointerLeave={unlean}>
-        <div className="id-hero">
-          <Lines as="h1" className="v2-display id-h1" lines={['Hanzo', 'Identity']} data-morph-target="" />
-          <p className="v2-lede id-sub v2-in" style={{ animationDelay: '.3s' }}>The sign-in your users actually see.</p>
-          <div className="v2-acts">
-            <Cta to="/login" id="identity.hero" thumb>Try Hanzo</Cta>
-            <Cta to="https://docs.hanzo.ai/docs/openapi/iam" kind="link" id="identity.view-documentation">View Documentation</Cta>
-          </div>
+      <div className="v2-wrap id-hero">
+        <Lines as="h1" className="v2-display id-h1" lines={['Hanzo Identity']} data-morph-target="" />
+        <p className="v2-lede id-sub v2-in" style={{ animationDelay: '.3s' }}>The sign-in your users actually see.</p>
+        <div className="v2-acts id-hero-acts">
+          <Cta to="/login" id="identity.hero" thumb>Try Hanzo</Cta>
+          <Cta to="https://docs.hanzo.ai/docs/openapi/iam" kind="link" id="identity.view-documentation">View Documentation</Cta>
         </div>
+      </div>
+      <div className="id-fan" onPointerMove={part} onPointerLeave={unpart}>
+        <div className="id-fan-side l"><Ghost k={0} /></div>
         <div className="id-card-wrap"><SignCard /></div>
+        <div className="id-fan-side r"><Ghost k={1} /></div>
       </div>
     </section>
   );
@@ -235,22 +273,38 @@ const DOES = [
 const PERSON = <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><circle cx="12" cy="9" r="4" fill="currentColor" /><path d="M4.5 20c1.2-3.6 4.2-5.4 7.5-5.4s6.3 1.8 7.5 5.4" fill="currentColor" /></svg>;
 
 /* each tile's small drawing, from its own words; it plays once on arrival and again on hover */
-function Glyph({ k }) {
+function Glyph({ k, paused }) {
   if (k === 'code') return <div className="id-g-code">{[0, 1, 2, 3, 4, 5].map((i) => <i key={i} style={{ '--k': i }} />)}</div>;
   if (k === 'people') return <div className="id-g-people">{[0, 1, 2, 3, 4].map((i) => <i key={i} style={{ '--k': i }}>{PERSON}</i>)}<span>SCIM 2.0</span></div>;
   if (k === 'sso') return <div className="id-g-sso"><span style={{ '--k': 0 }}>client id</span><span style={{ '--k': 1 }}>client id</span><span style={{ '--k': 2 }}>client id</span><b>authorize</b></div>;
   if (k === 'places') return <div className="id-g-places"><span>organization<span>workspace<span>project</span></span></span></div>;
   if (k === 'key') return <div className="id-g-key"><svg viewBox="0 0 48 48" width="56" height="56"><path d="M24 6c-7 0-12 5-12 12v6M36 24v-6c0-3-1-6-3-8M18 42c-2-4-3-9-3-14 0-5 4-9 9-9s9 4 9 9c0 3 0 6-1 9M24 27c0 6-1 11-4 15M29 40c1-3 2-7 2-12" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" /></svg><span>WebAuthn</span></div>;
-  return <div className="id-g-log">{['write', 'write', 'write', 'write'].map((t, i) => <p key={i} style={{ '--k': i }}><i />{t}</p>)}<p className="no"><i />edit</p></div>;
+  return <LogGlyph paused={paused} />;
+}
+
+/* the append-only log, live: while it is on screen a new write lands at the foot every 2.6 s and the oldest leaves; the
+   struck "edit" never arrives. Pausable; reduced motion holds three writes still. */
+function LogGlyph({ paused }) {
+  const [ref, live] = useLive(0.4);
+  const [n, setN] = useState(3);
+  useTick(2600, live && !paused, () => setN((v) => v + 1));
+  return (
+    <div className="id-g-log" ref={ref}>
+      <div className="id-log-rows">{[n - 3, n - 2, n - 1].map((k) => <p key={k} style={{ '--k': k % 3 }}><i />write</p>)}</div>
+      <p className="no"><i />edit</p>
+    </div>
+  );
 }
 
 /* a tile: its drawing and title at rest; the + opens Hanzo's sentence over the drawing, so the grid never moves */
 function Tile({ t, d, g, i }) {
   const [open, setOpen] = useState(false);
+  const [paused, togglePause] = usePause(); // only the live log uses it
   const toggle = () => setOpen((o) => !o);
   return (
     <article className={'id-tile t' + i} data-open={open || undefined} onPointerMove={lean} onPointerLeave={unlean} onClick={toggle}>
-      <div className="id-tile-g" aria-hidden="true"><Glyph k={g} /></div>
+      {g === 'log' && <span className="id-log-p" onClick={(e) => e.stopPropagation()}><LivePause paused={paused} onToggle={togglePause} className="id-pause" /></span>}
+      <div className="id-tile-g" aria-hidden="true"><Glyph k={g} paused={paused} /></div>
       <div className="id-tile-h">
         <h3 className="v2-title">{t}</h3>
         <button type="button" className="id-more" aria-expanded={open} aria-controls={'id-d' + i} aria-label={t} onClick={(e) => { e.stopPropagation(); toggle(); }}>

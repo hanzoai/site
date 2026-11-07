@@ -6,12 +6,26 @@
 .id .v2-display.s { font-size: 26px; line-height: 1.15; letter-spacing: -.025em; }
 .id .v2-display.m { font-size: 44px; }
 
-/* the first screen: the hosted card leads on the left, the title on the right; the next room peeks below */
-.id-hero-s { padding: calc(var(--x-top, 60px) + 44px) 0 56px; }
-.id-hero-grid { align-items: center; min-height: calc(100svh - var(--x-top, 60px) - 160px); }
-.id-hero { grid-column: 8 / -1; grid-row: 1; }
-.id-sub { margin: 27px 0 36px; color: var(--ink); font-size: 21px; }
-.id-card-wrap { grid-column: 1 / span 6; grid-row: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 17px; }
+/* the first screen, Identity's own: the title centred over a fan of three hosted cards (before, live, after). The live
+   card sits in front; the other two slide out from behind it as the page arrives and part toward a fine pointer. */
+.id-hero-s { --px: 0; --rx: 0deg; --ry: 0deg; position: relative; padding: calc(var(--x-top, 60px) + 28px) 0 clamp(56px, 7vw, 96px); overflow-x: clip; }
+.id-hero { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.id-h1 { margin: 0; }
+.id-sub { margin: 14px 0 24px; color: var(--ink); font-size: 21px; }
+.id-hero-acts { justify-content: center; }
+.id-fan { position: relative; display: flex; justify-content: center; margin-top: 36px; }
+.id-card-wrap { position: relative; z-index: 2; display: flex; justify-content: center; }
+.id-fan-side { position: absolute; z-index: 1; top: 44px; left: 50%; width: 340px; margin-left: -170px; pointer-events: none;
+  transform: translateX(calc(var(--fx) + var(--px) * 24px)) rotate(var(--fr)); transition: transform .6s var(--e-em); }
+.id-fan-side.l { --fx: -330px; --fr: -4deg; }
+.id-fan-side.r { --fx: 330px; --fr: 4deg; }
+.js .id-fan-side { animation: id-fan-out 1s var(--e-em) .45s both; }
+@keyframes id-fan-out { from { transform: translateX(0) rotate(0) scale(.9); } }
+.id-card.ghost { width: 100%; height: 380px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .06); }
+.id-card.ghost .id-t { color: #737373; }
+.id-card.ghost .id-btn { min-height: 46px; color: #737373; }
+.id-card.ghost .id-btn.dark { background: #d4d4d4; border-color: #d4d4d4; color: #404040; }
+.id-card.ghost .id-apps i { background: #f2f2f2; color: #a3a3a3; border-radius: 18px; }
 .id .v2-sec { padding: clamp(72px, 8vw, 116px) 0; }
 
 /* the three stages: rows on an 8/5 split, the card on alternating sides; the 0N / 03 caption under the heading */
@@ -31,14 +45,14 @@
 .id-card.st { width: 100%; height: 400px; }
 /* the token rows and the app marks arrive with the stages (after the ink has spread) */
 .js .id-stages:not([data-in]) .id-token p:not(.id-t) { opacity: 0; transform: translateX(-12px); }
-.id-token p:not(.id-t) { transition: opacity .4s var(--e-out), transform .5s var(--e-em); transition-delay: calc(.9s + var(--k) * 180ms); }
+.id-token p:not(.id-t) { transition: opacity .4s var(--e-out) calc(.9s + var(--k) * 180ms), transform .5s var(--e-em) calc(.9s + var(--k) * 180ms), background-color .3s var(--e-out), color .3s var(--e-out); }
 .id-apps i { background: #0a0a0a; color: #fafafa; transition: background-color .4s var(--e-out), color .4s var(--e-out), transform .4s var(--e-em); transition-delay: calc(1s + var(--k) * 110ms); }
 .js .id-stages:not([data-in]) .id-apps i { background: #f2f2f2; color: #a3a3a3; transform: scale(.86); }
 
 /* the hosted card; it leans toward a fine pointer (2.5° at most) */
 .id-card { position: relative; width: min(100%, 420px); display: flex; flex-direction: column; border-radius: 36px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .06), 0 24px 60px -16px rgba(0, 0, 0, .18); overflow: hidden; }
 /* the pinned card is sized to its tallest state (the sign-in), and every state sits centred in it: no empty bottom third */
-.id-card-wrap .id-card { height: 456px; transform: perspective(1100px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .4s var(--e-out); backface-visibility: hidden; }
+.id-card-wrap .id-card { height: 420px; transform: perspective(1100px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .4s var(--e-out); backface-visibility: hidden; }
 .id-url { display: flex; align-items: center; gap: 8px; min-height: 18px; margin: 0; padding: 18px 24px; border-bottom: 1px solid var(--line); font: 500 14px/1 var(--mono); color: var(--soft); }
 .id-url i { flex: none; width: 9px; height: 9px; border-radius: 99px; background: var(--glow); }
 .id-url.off i { background: transparent; box-shadow: inset 0 0 0 1.5px #737373; }
@@ -89,12 +103,13 @@
 .id-apps i { aspect-ratio: 1; display: grid; place-items: center; border-radius: 22px; }
 
 /* the pause control sits inside the card's title bar, centred on its line of text */
-.id .lx-pause.id-pause { top: 5px; right: 10px; z-index: 4; border-color: transparent; background: transparent; }
+.id .lx-pause.id-pause { top: -3px; right: 10px; z-index: 4; border-color: transparent; background: transparent; }
 @media (hover: hover) { .id .lx-pause.id-pause:hover { background: #f2f2f2; } }
 .id .lx-pause.id-pause[aria-pressed='true'] { background: #0a0a0a; color: #fff; }
 .id-card .id-url { padding-right: 64px; }
 .lp-host { position: relative; }
-.id-card-wrap .lp-host { width: min(100%, 420px); }
+.id-card-wrap .lp-host { width: 400px; max-width: 100%; }
+.id-card-wrap .id-card { width: 100%; }
 
 /* what it does: a bento in 8/5 rows; the drawing and title at rest, the sentence opening over the drawing */
 .id-does-h { align-items: end; margin-bottom: 44px; row-gap: 24px; }
@@ -157,7 +172,17 @@
 .id-tile[data-in] .id-g-key path { stroke-dashoffset: 0; }
 .id-g-log { display: grid; gap: 8px; width: 100%; max-width: 420px; }
 .id-g-log p { display: flex; align-items: center; gap: 12px; margin: 0; padding: 10px 16px; border-radius: 12px; background: #fff; font: 500 14px/1 var(--mono); color: var(--ink); }
-.id-g-log p:nth-child(4) { opacity: 0; transform: translateY(-6px); transition: opacity .3s var(--e-out), transform .4s var(--e-em); }
+.id-log-rows { display: grid; gap: 8px; }
+.id-log-rows p:last-child { animation: id-log-in .5s var(--e-em) both; }
+@keyframes id-log-in { from { opacity: 0; transform: translateY(10px); } }
+.id-log-p { position: absolute; top: 14px; right: 14px; z-index: 3; }
+.id .id-log-p .lx-pause.id-pause { position: static; }
+.id-tile[data-open] .id-log-p { display: none; }
+.id-tile.t5 .id-tile-g { padding-top: 36px; }
+.id-token p.lit { background: #0a0a0a; color: #fafafa; }
+.id-token p.lit b { color: #fafafa; }
+.id-token p.lit .id-mask { color: #d4d4d4; }
+@media (hover: hover) { .id-wear-f:hover input:not(:focus) { border-color: rgba(0, 0, 0, .4); } }
 .id-g-log i { width: 8px; height: 8px; border-radius: 99px; background: #0a0a0a; }
 .id-g-log p.no { color: #737373; text-decoration: line-through; background: transparent; box-shadow: inset 0 0 0 1px var(--line); }
 .id-g-log p.no i { background: #737373; }
@@ -167,7 +192,6 @@
   .id-tile:hover .id-g-sso span { transform: translateX(8px); background: #0a0a0a; color: #fafafa; }
   .id-tile:hover .id-g-places span, .id-tile:hover .id-g-places > span { border-color: #0a0a0a; }
   .id-tile:not([data-open]):hover .id-g-key path { animation: id-draw 1.2s cubic-bezier(.4, 0, .2, 1) both; }
-  .id-tile:hover .id-g-log p:nth-child(4) { opacity: 1; transform: none; }
 }
 @keyframes id-dot { from { transform: scale(0); } to { transform: scale(1); } }
 @keyframes id-join { from { opacity: .25; transform: translateX(-12px); } to { opacity: 1; transform: none; } }
@@ -213,6 +237,9 @@
 .id-art-region { display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr); align-items: center; align-content: center; }
 .id-art-pin { position: absolute; top: 24px; right: 28px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; background: #0a0a0a; color: #fafafa; animation: id-drop .6s var(--e-em) .2s both; }
 .id-art-pin::before { content: ''; width: 8px; height: 8px; border-radius: 99px; background: #fafafa; }
+/* the region is live: its dot pings softly while the tab is open (off under reduced motion) */
+.id-art-pin::before { animation: id-ping 2.4s var(--e-out) 1s infinite; }
+@keyframes id-ping { 0% { box-shadow: 0 0 0 0 rgba(250, 250, 250, .7); } 70%, 100% { box-shadow: 0 0 0 8px rgba(250, 250, 250, 0); } }
 @keyframes id-drop { from { opacity: 0; transform: translateY(-18px); } }
 .id-art-org { position: relative; display: grid; gap: 12px; padding: 18px; border-radius: 16px; background: #fff; box-shadow: inset 0 0 0 1.5px #0a0a0a; animation: id-pop .5s var(--e-em) both; }
 .id-art-org.ghost { align-self: stretch; min-height: 150px; background: transparent; box-shadow: inset 0 0 0 1.5px rgba(0, 0, 0, .14); animation-delay: .15s; }
@@ -230,6 +257,9 @@
 .id-art-node.dark b, .id-art-node.dark .id-art-k { color: #fafafa; }
 .id-art-wire { position: relative; flex: 1; min-width: 120px; display: grid; justify-items: center; gap: 10px; padding: 0 8px; }
 .id-art-wire i { width: 100%; height: 2px; background: #0a0a0a; transform-origin: 0 50%; animation: id-wire .7s cubic-bezier(.4, 0, .2, 1) .25s both; }
+/* a request runs the wire from the issuer to Identity, again and again */
+.id-art-wire::before { content: ''; position: absolute; top: -3px; left: 8px; width: 8px; height: 8px; border-radius: 99px; background: #0a0a0a; animation: id-run 2.2s cubic-bezier(.4, 0, .2, 1) 1.2s infinite both; }
+@keyframes id-run { 0% { left: 8px; opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { left: calc(100% - 16px); opacity: 0; } }
 .id-art-wire span { animation: id-up .4s var(--e-em) .6s both; }
 @keyframes id-wire { from { transform: scaleX(0); } }
 .id-art-issuer .id-art-foot { flex-basis: auto; margin-top: 8px; }
@@ -279,25 +309,14 @@
 .id-card.small .id-field, .id-card.small .id-btn { min-height: 42px; font-size: 14px; }
 
 /* add sign-in: a rounded black card that opens to full width; a scene showing what each step makes */
-.id-add { padding: 0 0 clamp(44px, 6vw, 72px); }
+.id-add { --id-in: clamp(16px, 2.4vw, 32px); padding: 0 0 clamp(44px, 6vw, 72px); }
 .id-add-room { padding: clamp(72px, 8vw, 116px) 0; }
-.js .id-add-room { clip-path: inset(0 clamp(16px, 2.4vw, 32px) round 28px); transition: clip-path .9s var(--e-em); }
-.js .id-add-room[data-open] { clip-path: inset(0 0 round 0); }
 .id-add .v2-grid { align-items: center; }
 .id-add-l { grid-column: 1 / span 5; }
 .id-add-l .v2-lede { margin: 17px 0 36px; }
 .id-add .x-arrow { color: #fafafa; }
-.id-scene { grid-column: 7 / -1; display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; min-width: 0; }
-.id-steps { display: grid; border-top: 1px solid rgba(255, 255, 255, .1); }
-.id-steps button { display: flex; align-items: center; gap: 17px; min-height: 60px; padding: 0 8px; border: 0; border-bottom: 1px solid rgba(255, 255, 255, .1); background: transparent; font: 497 19px/1.3 var(--sans); letter-spacing: -.01em; color: rgba(255, 255, 255, .55); text-align: left; cursor: pointer; transition: color .3s var(--e-out), background-color .15s var(--e-out), transform .15s var(--e-out); }
-.id-steps button[aria-pressed='true'] { color: #fafafa; }
-.id-steps button:active { transform: translateY(1px); transition-duration: .09s; }
-.id-steps button:focus-visible { outline: 2px solid #fafafa; outline-offset: -2px; border-radius: 8px; }
-@media (hover: hover) { .id-steps button:hover { color: #fafafa; background: rgba(255, 255, 255, .05); } }
 .id-step-n { flex: none; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 99px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .3); color: #fafafa; font: 500 14px/1 var(--mono); font-variant-numeric: tabular-nums; transition: background-color .3s var(--e-out), color .3s var(--e-out); }
-.id-steps button[aria-pressed='true'] .id-step-n { background: #fafafa; color: #0a0a0a; box-shadow: none; }
-.id-made { position: relative; display: grid; align-items: center; min-height: 160px; min-width: 0; padding: 24px; border-radius: 20px; background: #171717; box-sizing: border-box; }
-.id-made-in { display: grid; gap: 16px; min-width: 0; }
+.id-spot-row[data-on] .id-step-n { background: #fafafa; color: #0a0a0a; box-shadow: none; }
 /* the client id, masked: a key and groups of bullets in mono, wrapping inside the card */
 .id-made-id { display: flex; align-items: center; gap: 14px; min-width: 0; color: #fafafa; }
 .id-made-id svg { flex: none; }
@@ -309,6 +328,88 @@
 .id-made-flow em { display: inline-flex; font-style: normal; animation: id-in-x .4s var(--e-em) .15s both; }
 .id-made-rt { display: flex; flex-wrap: wrap; gap: 8px; }
 .id-made-rt i { padding: 8px 12px; border-radius: 999px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .22); font: 500 14px/1 var(--mono); font-style: normal; color: #fafafa; animation: id-up .4s var(--e-em) both; animation-delay: calc(var(--k) * 90ms); }
+
+
+/* the spotlight (the signature): the steps sit dim in the dark room; a second, ink copy of the same rows is masked to a
+   circle of light at --id-mx / --id-my. Untouched, the light walks the steps (the variables glide); a fine pointer
+   drives it directly; a tap places it. The real controls are the dim layer's buttons; the lit layer is only a picture. */
+@property --id-mx { syntax: '<length>'; inherits: true; initial-value: 0px; }
+@property --id-my { syntax: '<length>'; inherits: true; initial-value: 0px; }
+.id-add-room { position: relative; }
+.id-add-in { position: relative; z-index: 1; }
+.id-spot { grid-column: 7 / -1; position: relative; min-width: 0; padding: 8px 0; border-radius: 24px; background: #0a0a0a; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08); cursor: default; touch-action: pan-y;
+  transition: --id-mx .7s var(--e-em), --id-my .7s var(--e-em); }
+.id-spot[data-hand] { transition-duration: .12s; }
+.id-spot-l { display: grid; }
+.id-spot-l.lit { position: absolute; inset: 8px 0; pointer-events: none; color: #fafafa;
+  -webkit-mask-image: radial-gradient(circle 170px at var(--id-mx) calc(var(--id-my) - 8px), #000 45%, transparent 100%);
+  mask-image: radial-gradient(circle 170px at var(--id-mx) calc(var(--id-my) - 8px), #000 45%, transparent 100%); }
+.id-spot-row { display: grid; grid-template-columns: 210px minmax(0, 1fr); align-items: center; gap: 24px; min-height: 112px; padding: 14px 24px; box-sizing: border-box; }
+.id-spot-row + .id-spot-row { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08); }
+.id-spot-row > button, .id-spot-b { display: flex; align-items: center; gap: 14px; min-height: 44px; padding: 0; border: 0; background: none; font: 497 19px/1.25 var(--sans); letter-spacing: -.01em; color: inherit; text-align: left; }
+.id-spot-row > button { cursor: pointer; border-radius: 10px; transition: transform .15s var(--e-out), color .3s var(--e-out); }
+.id-spot-row > button:active { transform: translateY(1px); transition-duration: .09s; }
+.id-spot-row > button:focus-visible { outline: 2px solid #fafafa; outline-offset: 4px; }
+.id-spot-made { min-width: 0; }
+.id-spot-l.base { color: rgba(255, 255, 255, .42); }
+.id-spot-l.base .id-spot-made { opacity: .32; transition: opacity .3s var(--e-out); }
+.id-spot-l.base .id-spot-row[data-on] > button { color: rgba(255, 255, 255, .7); }
+.id-spot-l.lit .id-spot-made { opacity: 1; }
+@media (hover: hover) {
+  .id-spot-row > button:hover { color: #fafafa; }
+  .id-spot-row > button:hover .id-step-n { box-shadow: inset 0 0 0 1px #fafafa; }
+}
+html:not(.js) .id-spot-l.lit { display: none; }
+html:not(.js) .id-spot-l.base, html:not(.js) .id-spot-l.base .id-spot-made { color: #fafafa; opacity: 1; }
+
+/* Entrance 1, line-draw: the room's rounded outline draws itself on the white page, then it fills black (its words
+   come up with the fill) and opens to full width */
+.id-ld { position: absolute; z-index: 2; top: 0; bottom: 0; left: var(--id-in); width: calc(100% - 2 * var(--id-in)); height: 100%; overflow: visible; pointer-events: none; }
+.id-ld rect { x: .75px; y: .75px; width: calc(100% - 1.5px); height: calc(100% - 1.5px); rx: 28px; fill: none; stroke: #0a0a0a; stroke-width: 1.5; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.js .id-add-room { clip-path: inset(0 var(--id-in) round 28px); background-color: transparent; transition: background-color .5s var(--e-out) .75s, clip-path .9s var(--e-em) 1.15s; }
+.js .id-add-in { opacity: 0; transition: opacity .5s var(--e-out) 1s; }
+.js .id-add[data-in] .id-add-room { clip-path: inset(0 0 round 0); background-color: #000; }
+.js .id-add[data-in] .id-add-in { opacity: 1; }
+.js .id-add[data-in] .id-ld rect { stroke-dashoffset: 0; transition: stroke-dashoffset .9s cubic-bezier(.4, 0, .2, 1); }
+.js .id-add[data-in] .id-ld { opacity: 0; transition: opacity .3s var(--e-out) 1.15s; }
+html:not(.js) .id-ld { display: none; }
+
+/* Entrance 2, ink-spread: two soft blots grow from the top of the stages and run together until the rows are revealed */
+.js .id-stages .id-ink { -webkit-mask-image: radial-gradient(closest-side, #000 62%, transparent), radial-gradient(closest-side, #000 62%, transparent); mask-image: radial-gradient(closest-side, #000 62%, transparent), radial-gradient(closest-side, #000 62%, transparent);
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: 28% 0, 72% 6%; mask-position: 28% 0, 72% 6%; -webkit-mask-size: 0 0, 0 0; mask-size: 0 0, 0 0; }
+.js .id-stages[data-in] .id-ink { animation: id-ink 1.8s cubic-bezier(.4, 0, .2, 1) both; }
+@keyframes id-ink {
+  0% { -webkit-mask-size: 0 0, 0 0; mask-size: 0 0, 0 0; }
+  99% { -webkit-mask-size: 300% 260%, 280% 300%; mask-size: 300% 260%, 280% 300%; }
+  100% { -webkit-mask-image: none; mask-image: none; }
+}
+
+/* Entrance 3, typewriter: "What it does" types itself out, a caret riding the last letter, then rests */
+.id-sr { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.id-tw-w { white-space: nowrap; }
+.id-tw-c { position: relative; }
+.js .id-does:not([data-in]) .id-tw-c { opacity: 0; }
+.js .id-does[data-in] .id-tw-c { animation: id-type .08s linear both; animation-delay: calc(var(--i) * 60ms); }
+@keyframes id-type { from { opacity: 0; } to { opacity: 1; } }
+.id-tw-c.last::after { content: ''; position: absolute; right: -6px; top: .1em; bottom: .05em; width: 2px; background: #0a0a0a; opacity: 0; }
+.js .id-does[data-in] .id-tw-c.last::after { animation: id-caret 2.2s steps(1) .7s both; }
+@keyframes id-caret { 0%, 30%, 60% { opacity: 1; } 15%, 45%, 75%, 100% { opacity: 0; } }
+
+/* Entrance 4, stretch-scroll: the large-organization panel arrives stretched and relaxes; it then stretches a little with
+   scroll speed (at most 6%, --st from the script) and relaxes when the scroll stops */
+.id-stretch { transform-origin: 50% 0; transform: scaleY(var(--st, 1)); transition: transform .45s var(--e-em), opacity .5s var(--e-out); }
+.js .id-large:not([data-in]) .id-stretch { transform: scaleY(1.1) translateY(24px); opacity: 0; }
+
+/* Entrance 5, conveyor: the hostname, the mark, the ways in and the card ride in from the right on a belt and stop */
+.id-wear { position: relative; overflow-x: clip; }
+.id-belt { position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: #d4d4d4; transform: scaleX(0); transform-origin: 100% 50%; pointer-events: none; }
+.js .id-wear[data-in] .id-belt { animation: id-belt 1.6s cubic-bezier(.4, 0, .2, 1) both; }
+@keyframes id-belt { 0% { transform: scaleX(0); opacity: 1; } 45% { transform: scaleX(1); opacity: 1; } 100% { transform: scaleX(1); opacity: 0; } }
+.id-wear-l > *, .id-wear-r { transition: transform .9s var(--e-em), opacity .5s var(--e-out); }
+.js .id-wear:not([data-in]) .id-wear-l > *, .js .id-wear:not([data-in]) .id-wear-r { transform: translateX(160px); opacity: 0; }
+.id-wear-l > :nth-child(2) { transition-delay: .12s; }
+.id-wear-l > :nth-child(3) { transition-delay: .24s; }
+.id-wear-r { transition-delay: .06s; }
 
 /* the close: every app in the organization at rest; it grows past its resting size as it arrives, then settles */
 .id-end { padding: clamp(72px, 9vw, 116px) 0; }
@@ -325,19 +426,22 @@
 @media (max-width: 900px) {
   .id .v2-wrap { width: min(100% - 32px, 1152px); }
   .id .v2-display.m { font-size: 32px; }
-  /* phones: the first screen pins too; the title or the stage on top, the same card under it, swapping as you scroll */
-  .js .id-pin { height: 340svh; }
-  html:not(.js) .id-pin { height: auto; }
-  .id-pin-stage { display: block; padding-top: calc(var(--x-top, 60px) + 16px); box-sizing: border-box; background: none; }
-  html:not(.js) .id-pin-stage { position: static; height: auto; }
-  .id-pin-grid { display: flex; flex-direction: column; align-items: stretch; gap: 16px; padding-top: 0; }
-  .id-layers { width: 100%; }
   .id-hero .v2-display { font-size: 40px; }
   .id-sub { margin: 14px 0 20px; font-size: 17px; }
-  .id-stage .v2-headline { font-size: 26px; margin-bottom: 10px; }
-  .id-stage .v2-body { font-size: 17px; }
-  .id-card-wrap { align-items: center; gap: 10px; padding-left: 0; }
+  .id-hero-s { padding-top: calc(var(--x-top, 60px) + 12px); }
+  /* phones: each stage stacks, its words over its card */
+  .id-stage-row { grid-template-columns: minmax(0, 1fr); row-gap: 24px; }
+  .id-stage-txt, .id-stage-card, .id-stage-row.r1 .id-stage-txt, .id-stage-row.r1 .id-stage-card { grid-column: 1 / -1; grid-row: auto; }
+  .id-st-host { width: min(100%, 300px); }
+  .id-card.st { height: 340px; }
+  .id-fan { margin-top: 28px; }
   .id-card-wrap .lp-host { width: min(100%, 280px); }
+  /* phones: the two cards behind peek at the screen's edges */
+  .id-fan-side { top: 34px; width: 240px; margin-left: -120px; }
+  .id-fan-side.l { --fx: -184px; }
+  .id-fan-side.r { --fx: 184px; }
+  .id-card.ghost { height: 270px; border-radius: 24px; }
+  .id-card.ghost .id-btn { min-height: 32px; }
   .id-card { border-radius: 24px; }
   .id-card-wrap .id-card { height: 322px; transform: none; }
   .id-url { padding: 14px 16px; font-size: 13px; }
@@ -383,6 +487,7 @@
   .id-art-org.ghost .id-art-k { display: none; }
   .id-art-node { min-width: 0; flex: 1 1 100%; }
   .id-art-wire { flex-basis: 100%; min-height: 44px; }
+  .id-art-wire::before { display: none; }
   .id-art-wire i { width: 2px; height: 28px; transform-origin: 50% 0; animation-name: id-wire-y; }
   @keyframes id-wire-y { from { transform: scaleY(0); } }
   .id-art-sub { font-size: 10px; padding: 12px 6px; overflow-wrap: anywhere; hyphens: none; }
@@ -391,8 +496,10 @@
   .id-wear-r { margin-top: 8px; }
   .id-card.wear { min-height: 0; width: 100%; }
   .id-add-room { padding: 72px 0; }
-  .id-steps button { font-size: 17px; min-height: 56px; }
-  .id-made { min-height: 210px; }
+  .id-spot { grid-column: 1 / -1; margin-top: 8px; }
+  .id-spot-row { grid-template-columns: minmax(0, 1fr); gap: 12px; min-height: 0; padding: 18px 16px; }
+  .id-spot-row > button, .id-spot-b { font-size: 17px; }
+  .id-spot-l.lit { -webkit-mask-image: radial-gradient(circle 130px at var(--id-mx) calc(var(--id-my) - 8px), #000 45%, transparent 100%); mask-image: radial-gradient(circle 130px at var(--id-mx) calc(var(--id-my) - 8px), #000 45%, transparent 100%); }
   .id-end-r { justify-content: flex-start; }
   .id-end-apps { width: min(100%, 240px); }
   .id-end-apps i { border-radius: 16px; }
@@ -401,12 +508,27 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .id-card-wrap .id-card, .id-tile { transform: none !important; }
-  .js .id-add-room { clip-path: none; transition: none; }
-  .id-g-people i, .id-g-log p:nth-child(4) { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .js .id-add-room { clip-path: none !important; transition: none !important; }
+  .js .id-fan-side { animation: none; }
+  .id-fan-side { transition: none; }
+  .id-g-people i { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .id-log-rows p { animation: none !important; }
   .id-g-code i::after { transform: scale(1); transition: none; }
   .id-g-key path { stroke-dashoffset: 0; transition: none; }
-  .id-art *, .id-art, .id-made-in * { animation: none !important; }
+  .id-art *, .id-art, .id-art-pin::before, .id-art-wire::before { animation: none !important; }
   .id-end-apps, .id-end-apps[data-in] { animation: none; }
+  .js .id-add-room { background-color: #000 !important; }
+  .js .id-add-in, .js .id-add-in * { opacity: 1 !important; transition: none !important; }
+  .id-ld { display: none; }
+  .id-spot { transition: none; }
+  .js .id-stages .id-ink, .js .id-stages[data-in] .id-ink { -webkit-mask-image: none; mask-image: none; animation: none; }
+  .js .id-stages .id-token p:not(.id-t), .js .id-stages .id-apps i { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .js .id-stages:not([data-in]) .id-apps i { background: #0a0a0a; color: #fafafa; }
+  .js .id-does .id-tw-c { opacity: 1 !important; animation: none !important; }
+  .id-tw-c.last::after { display: none; }
+  .id-stretch, .js .id-large:not([data-in]) .id-stretch { transform: none; opacity: 1; transition: none; }
+  .js .id-wear .id-wear-l > *, .js .id-wear .id-wear-r { transform: none !important; opacity: 1 !important; transition: none !important; }
+  .id-belt { display: none; }
   .id-end-apps i { background: #0a0a0a; color: #fafafa; transition: none; }
   .id-mark-row .id-mark { transition: none; }
 }
