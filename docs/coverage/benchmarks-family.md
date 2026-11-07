@@ -1,28 +1,158 @@
-# /benchmarks/* coverage (PLAN-COMPONENTS areas 2.1–2.18)
+# /benchmarks/* coverage (MASTER.md part 2, the 18 parts)
 
-Template: `components/pages/bench/BenchRun.jsx`, `bench.css`, data `benchData.js`, route `app/benchmarks/[slug]/page.jsx` (27 members). Kit: `components/v2/Fam*`. Gallery: `docs/gallery/benchmarks/` (gpqa and kai-ag-news: desktop film at 1470×801, three phone screens each).
+Page file: `components/pages/bench/BenchRun.jsx` (+ `bench.css`, data `benchData.js`, route `app/benchmarks/[slug]/page.jsx`, 27 members) · gallery: `docs/gallery/benchmarks/` · metric id: `signup_start` (and GitHub or weights click)
 
-1. **Strategy and conversion.** Persona: researcher, and the developer weighing Hanzo's router and engines. Goal: believe the figure by seeing how it was measured. One ask in Hanzo's words: a paper page's own "Start on Hanzo Cloud" (from its close), a result page the header's "Try Hanzo". It is the hero's only solid button (magnetic), then rides in the site's ask bar after the hero at every width (`data-thumb`, read by `components/Ask.jsx`). `data-cta="benchmarks.hero"` and `benchmarks.band`. Metric: signup_start; GitHub or weights click.
-2. **Information architecture and navigation.** Hanzo's header and footer unchanged. The crumb (Benchmarks / …) sits in the meta row under the lede, not above the title. Every section keeps its id (`#history` and the method's anchors). Previous, next and the board close the page as cards; result pages get their neighbours among the results plus the board.
-3. **First impression and page narrative.** The title at display size on the left, its lede, the one ask and the crumb on the right; the benchmark's own card is on the first screen at 1470×801 (its live readout figure and first rows visible) and at 375×812 (the readout figure visible). The readout rolls within a second. Then one idea per screen: latest figures huge (result pages), the method as sticky chapters, a spec list, the source room, the close.
-4. **Conversion system.** One solid per viewport: the hero ask, then the band's "Start on Hanzo Cloud" (light on the dark close). "View Models & Pricing" is a text link. The source room's button is an icon (its name from the register), not a second solid label.
-5. **Trust and proof.** Every figure is Hanzo's own cell (`benchData.js` reads the captured table; the chart re-draws those cells). The source room reads the cited research run live from api.hanzo.ai and lays the raw record beside the transcribed figures; where the source is a repository, the exact command to run it.
-6. **Content presentation (copy untouched).** Parity: gpqa 110/110 text and 41/41 links, kai-ag-news 80/80 and 17/17, fleet 59/59 and 27/27, zen-6 97/97, sandbox 56/56. Long sections show their first paragraph; the rest sits in a sheet whose trigger previews it in Hanzo's own first words. No eyebrow above any headline (the kicker and crumb moved under the lede; chapter counters removed). Tables keep every cell and scroll in their own frame.
-7. **Visual design system.** v2 scale from `fam.css` (display 128/96/80, head 56, lede 21–24, mono 13 for figures' labels). 0 UI hues: ink, greys, silver bars, white; the lit row is ink. Hero object 32px radius, cards 16px, hairlines, long soft shadow. One dark middle room (the source) and a dark closing band.
-8. **UI component library.** Kit `A`, `Magnetic`, `Copy`; v2 `FamLines`, `FamStage`, `FamChapters`, `FamDrawer`, `FamNext`; the site's `Ask` bar. View switch, column chips and sheet triggers are styled controls with 44px+ targets; no native tooltips.
-9. **Motion and interaction.**
-   - Idle: the playhead walks the table's rows every 1.9 s; the readout figure rolls up out of its mask with a timing bar.
-   - State: the table lifts into its chart (layout re-flow), the view switch slides, column chips re-scale the bars, sheets slide in.
-   - Pointer: hovering a row picks it (its figure takes the readout), the ask is magnetic, the sibling rail drags with inertia, cards lift and show their own lede.
-   - Time: the source room types the run ids as they arrive.
-   - Scroll (under half): the card settles from close up; chapters wipe.
-   - One signature plus three supporting; `variety.py` OK.
-10. **Media.** Hanzo has no photographs or film for benchmarks; the hero object is the benchmark's own table/chart, and each member's contour (Sigil seeded `bench/<slug>` with its own figures) sits behind the title and on its sibling card.
-11. **Mobile and responsive.** At 375 the title, lede, full-width ask and crumb come first, the card follows on the first screen; chapters stack; the sibling rail is a native swipe rail; the site layer turns to the previous/next benchmark on a sideways swipe (nothing large on the page claims the swipe; only tables and the rail do). No sideways scroll; text 14px or more.
-12. **Accessibility.** One h1; icon controls carry names from `content/ui-strings.json`; the view switch uses `aria-pressed`; sheets are dialogs with focus return and Escape; the live read announces through `aria-live`; tables are labelled regions. Reduced motion: chart shown turned, no playhead, no typing.
-13. **Performance and engineering.** Transform and opacity; the playhead is one interval that sleeps in hidden tabs; the line draws by clip, not dash maths; ≤6 canvases (hero Sigil plus at most 3 sibling contours, drawn once).
-14. **SEO and machine files.** Metadata and JSON-LD per member unchanged; every word, table and link is in the server HTML (sheets included); JS off: chapters stack and sheets show inline (noscript styles).
-15. **Catalogue and product pages.** Siblings are real links, at most 6, one tab stop each; the title is the Morph source into the next page's h1 (`data-morph-target`); each card shows its own contour and, on hover, its own lede.
-16. **Developer experience.** The reproduce command and the API query keep Copy; the source can be opened as raw JSON.
-17. **States and resilience.** The live read has loading (skeleton, `aria-busy`), empty (`{ "data": [] }`), and error (the HTTP status, plus the JSON link) states; nothing else depends on the network.
-18. **Measurement and handover.** `data-cta` on both primaries; `Persona:`/`Goal:`/`CTA:` and the metric in the file's header. Ledger (deleted): the crumb/kicker eyebrow over the title, the per-member accent colour, the invented "Source", "Table", "Chart", "Previous", "Next" labels, the duplicated readout rails, the light CTA box.
+Open copy questions for James: none decided here. Functional strings used (all `needs_james` in `content/ui-strings.json`): table, chart, pause, replay, read_run, loading, failed, log, previous, next, close, more, chapter, of.
+Shared changes requested (`docs/requests/benchmarks.md`): none.
+Forks this page deleted: its own button (`v2f-btn` on the asks → kit `Cta`), its own table wrapper (`xbr-tw` → kit `DataTable`), its own command block (`xbr-cmd` → kit `CodeBlock`), its own sticky bar (`AskBar` → the site's ask bar).
+
+## 1. Strategy and conversion
+- [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
+- [x] One solid fill per viewport; label and href from Hanzo's copy (n/a `lib/cta.js`: not on main yet)
+- [x] One h1; the page is clear in 5 seconds
+- [x] No dead or self-looping button (n/a prices: none on these pages)
+- [x] Open copy questions for James listed, none decided
+
+Done here: Persona (researcher, developer weighing the router and engines), Goal, CTA and metric in the file header. The one solid is the page's own "Start on Hanzo Cloud" (paper pages, from their close) or the header's "Try Hanzo" (result pages), via `Cta id="benchmarks.hero" thumb`.
+
+## 2. Information architecture and navigation
+- [x] One `<main>` (the layout's skip link reaches it); no second main
+- [x] Every link through `A` or `Cta`; every sibling card a real link
+- [x] Breadcrumb at depth 2: Hanzo's own crumb ("Benchmarks / GPQA-Diamond") under the title
+- [x] Link parity: 0 removed, 0 unexpected (gpqa 41/41, fleet 27/27, kai-ag-news 17/17, locomo 29/29, zen-6 6/6)
+
+Done here: the crumb moved from above the title to a caption under it; previous/next and the board close the page; result pages get their neighbours among the results plus the board.
+
+## 3. First impression and page narrative
+- [x] Sells in 5 s; something moves within 1 s without input (title cuts in; the card turns to its chart and the readout rolls)
+- [x] Nothing above the h1 (n/a `PageHero`: the kit has none on main; the stage is built from kit parts)
+- [x] JS off: legible (chapters stack, sheets show inline); no `opacity:0` on the h1
+- [x] One idea per 100svh; sections alternate (stage, figures, pinned chapters, spec rows, dark source, tail, dark band)
+- [x] Ends in sibling cards, a closing band (paper pages), footer
+- [x] Sibling titles carry `data-morph` into the next page's h1 (`data-morph-target`)
+
+Done here: at 1470×801 the title (52px), lede, ask and the chart card with its 84px readout are on the first screen; at 375×812 the title, lede, ask, crumb and the card's figure.
+
+## 4. Conversion system
+- [x] Kit `Cta` only for the asks; no raw `.x-btn` in the template
+- [x] Sticky ask: the site bar carries the hero's `data-thumb` after the hero (`components/Ask.jsx`)
+- [x] Copy copies exactly the displayed text (kit `CodeBlock`; "$ " drawn, not copied)
+- [x] `data-cta` on every primary (`benchmarks.hero`, `benchmarks.band`, `benchmarks.band-2`) and `data-thumb` on the hero ask
+
+Done here: one solid per viewport; the dark band's solid is light on black; the source room's button is an icon, not a second label.
+
+## 5. Trust and proof
+- [x] No logo, no seal, no invented number
+- [x] Every figure is a cell of Hanzo's own table (`benchData.js` parses the capture; the chart re-draws those cells)
+- [x] n/a marquees: none
+- [x] n/a submit: no form
+
+Done here: the source room reads the cited research run live from api.hanzo.ai and lays its raw record beside the transcribed figures; the "02 / 13" row counter (not Hanzo's number) was removed.
+
+## 6. Content presentation (copy untouched)
+- [x] No text under 13px (14px phone) except mono capitals (figure labels 13px mono caps)
+- [x] Measures held (body 16px at 68ch); headings balance
+- [x] Tables use `DataTable`, code uses `CodeBlock` (n/a FAQ, tabs)
+- [x] `python3 scripts/parity.py /benchmarks/gpqa /benchmarks/kai-ag-news /benchmarks/fleet`: 0 missing
+
+Done here: long sections show their first paragraph; the rest is in a sheet whose trigger previews it in Hanzo's own first words.
+
+## 7. Visual design system
+- [x] `python3 scripts/taste.py components/pages/bench/BenchRun.jsx components/pages/bench/bench.css`: OK
+- [x] No label, tag, badge or pill above a headline
+- [x] Objects outlined, tiles flat, no box plus shadow; radii 24/20; sizes on the live scale (h1 52, heads 26, figures 64, readout 84 as the screen's one big thing)
+- [x] One icon set (inline 1.5–1.8px strokes for view switch, pause, play, JSON); no icon in a rounded box
+- [x] Differs from neighbours: the hero object is the benchmark's own chart card (integrations: an editor; oss: a ledger)
+
+Done here: two dark rooms (graphite source, black close), never back to back; each enters as a rounded card inside the gutters and opens to full width as it is reached (`FamRoom`).
+
+## 8. UI component library
+- [x] Controls have hover (inside `@media (hover:hover)`), press (scale .97), focus-visible, disabled (source button while loading)
+- [x] Focus ring visible (site ring) on the view switch, columns, pause, sheet triggers, sibling cards
+- [x] Sheets trap focus and return it; Escape closes
+- [x] n/a inputs: none
+- [x] Forks deleted: listed above
+
+Done here: `FamDrawer` sheet (dialog, `aria-modal`, inert when closed, focus returns to its trigger).
+
+## 9. Motion and interaction
+- [x] One signature (table turns into chart), supporting: stage settle, title cut-in, sigil field; 0 fade-ups
+- [x] Kinds: idle (playhead walk, readout roll), state (re-flow, switch, sheets), pointer (row hover picks its figure, magnetic ask, rail drags with inertia), time (source types its reply), scroll (settle, chapters, the latest figure grows while it is the moment); scroll is under half
+- [x] Something moves without input; every control answers
+- [x] Reduced motion: chart shown turned, no playhead, no typing, no stage transform; the playhead is one `setInterval` that stops after one pass (it rests on Hanzo's first row)
+- [x] n/a sound
+
+Done here: `variety.py` OK; the walk plays once and has a 44px pause/replay control.
+
+## 10. Media
+- [x] n/a `Film`/`Pic`: Hanzo has no imagery for benchmarks
+- [x] n/a videos
+- [x] Nothing missing
+- [x] n/a photos: the visuals are the benchmark's own chart and each member's contour (Sigil seeded `bench/<slug>` with its figures)
+
+Done here: ≤4 canvases (hero Sigil and at most 3 sibling contours drawn once).
+
+## 11. Mobile and responsive
+- [x] 375×812 and 1470×801 pass with no overlap (screenshots `docs/gallery/benchmarks/*-phone-*.jpg`)
+- [x] No horizontal scroll at 375 (tables scroll inside their own region)
+- [x] Targets 44px or more (switch, pause, chips, sheet triggers); hover details have tap paths (tap a row)
+- [x] Primary ask above the fold at 375×667 (full-width, under the lede)
+
+Done here: phone layout shift 0.000 on fleet and 0.013 on gpqa (it was 0.38 before the readout got fixed boxes); the sideways swipe turns to the next benchmark (gpqa → inference).
+
+## 12. Accessibility (WCAG 2.2 AA)
+- [x] Text contrast at 4.5:1 or better (ink #0a0a0a, muted #525252 on white)
+- [x] Pause control on the moving playhead
+- [x] n/a forms
+- [x] One h1; sections h2; sheets h2; names start with visible text (icon controls named from the register)
+- [x] Keyboard reaches every control (switch, chips, pause, rows, sheets, cards)
+
+Done here: the readout is `aria-hidden` (the table holds the same figures); the live read announces via `aria-live`.
+
+## 13. Performance and engineering
+- [x] h1 and the chart card in server HTML
+- [x] Transform and opacity only (clip-path for rooms and wipes); no image or video to size
+- [x] No poller; the only request is the user-triggered source read
+- [x] Nothing heavy run on James's laptop (all checks in the cloud)
+
+Done here: one interval for the playhead, paused in hidden tabs, stopped after one pass.
+
+## 14. SEO and machine files
+- [x] Title and description from `content/pages.json` (unchanged)
+- [x] Canonical: route unchanged (shared layout)
+- [x] `<JsonLd route>` per member
+- [x] Every sibling card is a real `<a href>`
+
+Done here: every word, table and link is in the server HTML, sheets included.
+
+## 15. Catalogue and product pages
+- [x] n/a model card: no model card on these pages
+- [x] Sibling cards hand their title to the next h1 (`data-morph`)
+- [x] Every benchmark linked: Hanzo's own "Other benchmarks" list stays in the tail
+- [x] n/a price
+
+Done here: at most 6 siblings, each with its own contour and, on hover, its own lede.
+
+## 16. Developer experience
+- [x] One `CodeBlock`; copy equals display
+- [x] n/a config blocks
+- [x] The source reply types once and ends on its static record
+- [x] No hand-typed version number
+
+Done here: the reproduce command and the API query are `CodeBlock`s; the source can be opened as raw JSON.
+
+## 17. States and resilience
+- [x] Loading (skeleton, `aria-busy`), empty (`{ "data": [] }`), error (the HTTP status) states for the live read
+- [x] Blocked live data leaves a complete page (the read is opt-in)
+- [x] n/a submit
+- [x] A failed read shows its status, never a blank panel
+
+Done here: nothing else on the page depends on the network.
+
+## 18. Measurement and handover
+- [x] `data-cta` on every primary (n/a `lib/track.js`: not on main; the kit `Cta` dispatches `cta_click`)
+- [x] Nothing identifier-bearing; no field values
+- [x] `V2:` line in the file's top comment
+- [ ] Review read: `docs/review/benchmarks-family.md` verdict 8 or more (waiting on the critic's walk of this version)
+
+Done here: every review complaint so far is addressed (layout shift, looping card, invented counter, first-screen figure).
