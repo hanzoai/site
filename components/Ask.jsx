@@ -64,7 +64,12 @@ export default function Ask() {
       setAsk({ label, href, name, note });
 
       // the hero: the first block of the page that is more than a strip
-      const hero = [...main.children].find((c) => c.getBoundingClientRect().height > 200) || main;
+      // the trigger: the hero's own ask button when the page marks one in its first screen (the bar arrives as soon as
+      // it scrolls away, even if the hero is a tall pinned scene), otherwise the first block that is more than a strip
+      const ownBox = own && boxOf(own);
+      const hero = ownBox && ownBox.getBoundingClientRect().top < innerHeight * 1.2 && ownBox.getBoundingClientRect().height > 0
+        ? ownBox
+        : [...main.children].find((c) => c.getBoundingClientRect().height > 200) || main;
       const phone = matchMedia('(max-width: 900px)');
       let past = false, typing = false;
       const blocking = new Set();
@@ -72,7 +77,12 @@ export default function Ask() {
       const update = () => {
         if (off) return;
         const seen = [...solids].some(filled);
-        const show = past && !blocking.size && !seen && !typing && !overlayOpen();
+        // a hero ask that stays pinned on screen but has faded out also counts as gone, once you are past the first screen
+        if (!past && hero === ownBox && scrollY > innerHeight * 0.8 && !filled(ownBox)) past = true;
+        if (past && hero === ownBox && scrollY < innerHeight * 0.5 && filled(ownBox)) past = false;
+        // the footer, the closing band and [data-ask-hide] always make room; a page's own ask only once you can see it
+        const blocked = [...blocking].some((el) => (el.closest('[data-thumb]') || el.matches('[data-thumb]') ? filled(el) : true));
+        const show = past && !blocked && !seen && !typing && !overlayOpen();
         setOn(show);
         setQuiet(seen);
       };
