@@ -70,7 +70,7 @@
 .xgn-tabs { display: inline-flex; padding: 4px; border-radius: 999px; background: var(--card); }
 .xgn-tabs button { position: relative; height: 40px; min-width: 76px; padding: 0 16px; border: 0; border-radius: 999px; background: none; color: var(--soft); font: 500 15px/1 var(--sans); cursor: pointer; }
 .xgn-tabs button[aria-selected='true'] { color: var(--ink); }
-.xgn-tabs button span { position: relative; }
+.xgn-tabs button span:not(.xgn-tab-bg) { position: relative; }
 .xgn-tabs button:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
 .xgn-tab-bg { position: absolute; inset: 0; border-radius: 999px; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .12); }
 .xgn-win-k { margin-left: auto; font-size: 13px; color: var(--faint); }
