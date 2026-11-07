@@ -328,6 +328,7 @@ a.ui-chip:active { transform: scale(.98); }
 .uip .cf-paste-bar .x-copy { background: #f2f2f2; border-color: transparent; color: #0a0a0a; }
 .ui-stop .ui-get { margin: 12px 0 0; }
 .ui-stop-in { margin-top: clamp(96px, 10vw, 160px); }
+.ui-stop .ui-stop-obj { padding: 0; background: none; } /* one surface: the board itself, no tray behind it */
 @media (max-width: 899px) {
   .uc-pair { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
   .uc-pc { min-height: 0; }
@@ -335,8 +336,11 @@ a.ui-chip:active { transform: scale(.98); }
   .uc-pdlg p { display: none; }
   .uc-pair .uc-pmenu li { padding: 9px; font-size: 13px; }
   .uc-quiet span { padding: 6px 10px; }
-  .uc-keys { max-width: none; gap: 8px; margin-top: 52px; }
-  .uc-keys li { min-height: 44px; padding: 0 12px; grid-template-columns: 28px minmax(0, 1fr) auto; }
+  .uc-board .uc-body, .uc-board.bare .uc-body { height: 300px; }
+  .uc-board.c6 .uc-body { height: auto; }
+  .uc-keys { max-width: calc(100% - 76px); gap: 8px; margin: 0; padding: 0; }
+  .uc-keys li { min-height: 52px; padding: 0 12px; grid-template-columns: 28px minmax(0, 1fr); }
+  .uc-keys em { display: none; }
   .uc-kx { font-size: 15px; }
 }
 
