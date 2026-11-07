@@ -4,7 +4,7 @@
 // CTA: "Talk to us" (/contact), data-cta customers.hero / customers.close; metric contact_sales_submit
 // Signature: the launch stage (desktop: a pinned stage; phones: a sticky figure strip under the year rail), one in, one out
 // Beyond: a year index over Hanzo's own launch list that narrows the index to one year
-// V2: 8/10 phone index now a scene (sticky figure strip swaps with the row crossing the middle, 150ms out then 300ms in), JS-off stacks both cases on phones too, press .97 throughout
+// V2: 8/10 scale with rhythm (h1 52, headings 26, names 21; one big figure per screen), stage rolls edge to edge (never blank, no overprint), phone strip never doubles a figure, plate never prints the name twice; earlier: phone index now a scene (sticky figure strip swaps with the row crossing the middle, 150ms out then 300ms in), JS-off stacks both cases on phones too, press .97 throughout
 /* /customers (v3.2, the re-review's fixes). No hues, no eyebrows. A two-line kinetic headline with its lede and
    its one ask side by side; one big case plate coloured only by the case's own picture, whose progress line starts the
    moment the curtain lifts and which opens into its story; every launch as a scene: the rows scroll past a pinned stage

@@ -12,7 +12,7 @@
    pointer, each figure's own characters rise into place (only Hanzo's figure is ever drawn, never an in-between
    number), a pressed figure travels to its sentence and marks it, the wall's frames wipe open on arrival. Deck motion
    tokens only (90/150/300/400/500 ms, ease-emphasis), no springs.
-   V2: 8/10 on the deck: black room opening from a card (a graphite ledger of the launch's own figures holds the room when its picture cannot load; the contour stops under reduced motion), 84→52 name, 21px lede and 64px Air figures (never an in-between number), chapters as wiping 100svh scenes, frames wall, next-launch card; kit Img and Cta; nothing floating */
+   V2: 8/10 on the deck: black room opening from a card (when its picture has not decoded in 1.2s, Hanzo's lead figure alone holds the room, under the name on phones; the contour stops under reduced motion), chapters in four compositions whose words leave before each wipe, a contour on every missing plate, 84→52 name, 21px lede and 64px Air figures (never an in-between number), chapters as wiping 100svh scenes, frames wall, next-launch card; kit Img and Cta; nothing floating */
 // Signature: the campaign as scene changes: each chapter a 100svh scene that wipes up over the last (scrubbed clip-path), its picture pushing in
 // Beyond: where each figure comes from: press a headline figure, the page travels to the sentence that states it and marks it, else the case study PDF
 // Persona: enterprise buyer or founder checking that Hanzo has delivered results for others (Buy journey)
