@@ -124,7 +124,7 @@ function Tiles() {
   const [idle, setIdle] = useState(0); // bumps on every scroll; the idle step waits on it
   const live = useInView(sec, { amount: 0.25 });
   const { scrollYProgress: p } = useScroll({ target: sec, offset: ['start start', 'end end'] });
-  useMotionValueEvent(p, 'change', (v) => { if (!pin) return; setCur(Math.min(5, Math.max(0, Math.floor(v * 6.0001)))); setIdle((k) => k + 1); });
+  useMotionValueEvent(p, 'change', (v) => { if (!pin || !live) return; setCur(Math.min(5, Math.max(0, Math.floor(v * 6.0001)))); setIdle((k) => k + 1); });
   useEffect(() => {
     if (!pin || !live || open >= 0) return;
     const id = setTimeout(() => setCur((c) => (c + 1) % 6), 4000);

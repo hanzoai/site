@@ -10,9 +10,9 @@
 .vs2-hero .l2-stage-obj > * { width: min(100%, 1152px); }
 @media (min-width: 901px) {
   .vs2-hero .vs2-fleet { grid-template-columns: minmax(0, .95fr) minmax(0, .8fr) minmax(0, 1fr) minmax(0, .95fr);
-    grid-template-areas: 'req cat k con' 'req cat ul con' 'dry cat ul audit'; grid-template-rows: auto 1fr auto; gap: 10px 12px; padding: 12px; }
-  .vs2-hero .vs2-req { grid-area: req; }
-  .vs2-hero .vs2-dry { grid-area: dry; height: auto; padding: 0 4px; }
+    grid-template-areas: 'req cat k con' 'req cat ul con' 'req cat ul audit'; grid-template-rows: auto 1fr auto; gap: 10px 12px; padding: 12px; }
+  .vs2-hero .vs2-req { grid-area: req; align-self: start; min-height: 180px; }
+  .vs2-hero .vs2-dry { grid-area: req; align-self: end; height: auto; padding: 0 4px 4px; text-wrap: balance; }
   .vs2-hero .vs2-cat { grid-area: cat; grid-template-columns: minmax(0, 1fr); align-content: start; }
   .vs2-hero .vs2-inv { display: contents; }
   .vs2-hero .vs2-inv > .vs2-k { grid-area: k; margin: 0; padding: 6px 4px 0; }
@@ -76,7 +76,7 @@ i.k { background: #d4d4d4; }
 .vs2-tiles { position: relative; padding: clamp(72px, 11vw, 188px) 0; }
 .vs2-tiles-h { max-width: 22ch; }
 .vs2-grid { list-style: none; margin: clamp(32px, 4vw, 48px) 0 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
-.vs2-tile { position: relative; width: 100%; height: 280px; display: flex; flex-direction: column; align-items: flex-start; padding: 20px; border: 0; border-radius: 24px; background: #171717; color: #fafafa; font: inherit; text-align: left; cursor: pointer; overflow: hidden; transition: background-color .3s var(--ease), transform 90ms var(--ease); }
+.vs2-tile { position: relative; width: 100%; min-height: 280px; display: flex; flex-direction: column; align-items: flex-start; padding: 20px; border: 0; border-radius: 24px; background: #171717; color: #fafafa; font: inherit; text-align: left; cursor: pointer; overflow: hidden; transition: background-color .3s var(--ease), transform 90ms var(--ease); }
 .vs2-tile:active { transform: scale(.97); }
 .vs2-tile:focus-visible { outline: 2px solid #fafafa; outline-offset: 3px; }
 .vs2-n { font-size: 13px; color: #a3a3a3; }
@@ -114,8 +114,7 @@ i.k { background: #d4d4d4; }
   .vs2-prog i { display: block; height: 100%; background: #fafafa; transform-origin: 0 50%; transition: transform .5s var(--ease); }
   /* pinned: the room stays on screen for six steps of scroll */
   .vs2-tiles.pin { height: 340svh; padding: 0; }
-  .vs2-tiles.pin .vs2-pin { position: sticky; top: var(--x-top, 60px); height: calc(100svh - var(--x-top, 60px)); display: flex; align-items: center; }
-  .vs2-tiles.pin .vs2-room { width: 100%; }
+  .vs2-tiles.pin .vs2-pin { position: sticky; top: var(--x-top, 60px); height: calc(100svh - var(--x-top, 60px)); display: grid; align-content: center; }
 }
 .vs2-sheet .vs2-cp { display: flex; align-items: center; min-height: 220px; padding: 24px; border-radius: 20px; background: #0a0a0a; color: #fafafa; }
 .vs2-sheet .vs2-cp > * { width: 100%; }
@@ -231,7 +230,7 @@ html:not(.js) .vs2-ns { display: grid; gap: 12px; margin-top: 32px; }
   .vs2-prov span, .vs2-prov em { display: none; }
   .vs2-req { padding-top: 16px !important; padding-bottom: 16px !important; }
   .vs2-req .vs2-k { margin-bottom: 6px; }
-  .vs2-dry { height: 28px; }
+  .vs2-fleet .vs2-dry { height: auto; min-height: 28px; padding: 0 10px; font-size: 13px; letter-spacing: -.02em; white-space: nowrap; }
   .vs2-inv li.mc { order: -1; }
   .vs2-fleet .vs2-inv ul { min-height: 0; }
   .vs2-pause.l2-pause { top: 16px; right: 16px; }
@@ -240,7 +239,7 @@ html:not(.js) .vs2-ns { display: grid; gap: 12px; margin-top: 32px; }
   .vs2-audit { grid-column: 1; }
   .vs2-grid { grid-template-columns: minmax(0, 1fr); }
   .vs2-grid li:nth-child(1), .vs2-grid li:nth-child(6) { grid-column: auto; }
-  .vs2-tile { height: 280px; padding: 20px; }
+  .vs2-tile { padding: 20px; }
   .vs2-sheet .vs2-cp { min-height: 180px; padding: 18px; }
   .vs2-name-l, .vs2-name-r { grid-column: auto; }
   .vs2-name-r { margin-top: 48px; }
