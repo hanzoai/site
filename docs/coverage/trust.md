@@ -1,75 +1,161 @@
-# /trust coverage (PLAN-COMPONENTS areas 2.1–2.18)
+# /trust coverage (MASTER.md part 2, the 18 parts)
 
-Page file: `components/pages/Trust.jsx` · gallery: `docs/gallery/trust/`
+Page file: `components/pages/Trust.jsx` · gallery: `docs/gallery/trust/` · metric id: `contact_sales_submit` (cta_click on `trust.hero`, `trust.band`)
+
+Open copy questions for James: none decided. "Find a control" (the search heading) and the placeholder "PKCE, SCIM, argon2id, HKDF…" are v1 UI strings, not hanzo.ai copy; they should be in `content/ui-strings.json` once it exists.
+Shared changes requested (`docs/requests/<page>.md`): none.
+Forks this page deleted: the page-level AskBar pill (the shared ask bar in `components/Ask.jsx` carries the ask), the spring physics on drawers and answers, the v1 "seal" image, the 112px hero headline at rest.
+Conflict noted (MASTER §0.6): MASTER §3.1 keeps centred heads for the closing section, but the hero is a centred statement because the critic found /trust sharing /leaderboard's frame and JAMES.md 8 asks that neighbouring pages differ (the coordinator's call); the 52px h1 follows the rhythm rule.
+
+Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
 
 ## 1. Strategy and conversion
-Done here: One ask, Hanzo's "Request a review or an enterprise deployment" (/contact-sales): solid in the hero, then the sticky ask after the hero, then again at the close, word for word. `// Persona:`, `// Goal:` and `// CTA:` head the page file. Everything else is a text link with an arrow: the two published papers, "Ask for it", and the link to the security page.
+- [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
+- [x] One solid fill per viewport; label and href from `lib/cta.js`
+- [x] One h1; the page is clear in 5 seconds
+- [x] No dead or self-looping button; prices from `lib/plans.js`
+- [x] Open copy questions for James listed, none decided
+
+Done here: One ask, Hanzo's "Request a review or an enterprise deployment" (/contact-sales), solid in the hero and word for word in the closing band; everything else is a text link. `lib/cta.js` has no entry for /trust yet, so the label is the page's own Band words (no prices on this page).
 
 ## 2. Information architecture and navigation
-Done here: Hanzo's header and footer are unchanged. Order: what a review gets (the locker), what you can read now (the two papers), where Hanzo stands today, every control (find, then five groups), the first-email facts, then the dark room (where to send what you find, the one ask). The two papers open into /legal/dpa and /legal/subprocessors with the morph layer (`data-morph` on the title).
+- [x] One `<main id="main">`; skip link reaches it
+- [x] Every link through `A`, `Go`, `More` or `href()`; every card a real link
+- ~~Breadcrumb at depth 2 or more~~ n/a: /trust is depth 1
+- [x] Link parity: 0 removed, 0 unexpected
+
+Done here: One `<main>` after the layout's `#main` skip target; the two papers are real links to /legal/dpa and /legal/subprocessors; the mailto and security.txt are plain `<a>` as on hanzo.ai. Parity links 6/6.
 
 ## 3. First impression and page narrative
-Done here: The first screen is a centred statement (chatgpt.com/business/enterprise): the 112px headline (line-mask cut-in), one sentence and the one ask, all centred, with one wide live object centred below it, the evidence locker, visible at 1470×801. Its first drawer pulls itself out within 1s, and the rest follow every 3.4s with no input. After that, one idea per screen.
+- [x] Sells in 5 s; something moves within 1 s without input
+- [x] `PageHero`; nothing above the h1
+- [x] JS off: legible; no `opacity:0` on the LCP element
+- [x] One idea per 100svh; no 3 same-height sections in a row
+- [x] Ends in proof strip, `Band`, footer
+- [x] Card-to-page links use Morph; title lands within 12px
+
+Done here: A centred 52px h1 (line-mask cut-in), caption, lede and the ask over the evidence cabinet, whose first drawer slides out at 0.65 s and the rest every 3.4 s. `PageHero` is not merged yet, so the hero uses the kit's `MaskLines`. JS off: a `<noscript>` rule stacks every tray entry; checked headless, 0 invisible text. The papers carry `data-morph` on their titles (the Morph layer flies them); the /legal pages belong to another chat, so the landing offset is not verified.
 
 ## 4. Conversion system
-Done here: `data-thumb` with the ask's label drives the shared ask bar: the shared ask bar (components/Ask.jsx) carries the same label at every width once the hero has gone. `data-cta="request-a-review"` is on every solid ask and on the AskBar. There is one solid button per screen.
+- [x] `<Cta>` only; no raw `.x-btn`
+- [x] Sticky ask in header and bar after the hero, same label
+- ~~Copy button copies exactly the displayed text; failure never says Copied~~ n/a: no copy button
+- [x] `data-cta` and `data-thumb` on every primary
+
+Done here: `<Cta>` is not merged yet; the asks are `A` with the kit's `.pf-btn` (no `.x-btn`). `data-thumb` hands the label to the shared ask bar; `data-cta="trust.hero"` and `"trust.band"`.
 
 ## 5. Trust and proof
-Done here: Everything shown is in Hanzo's words: Published or On request for each document, the honest limits kept in place (the DPA is a draft, SCIM groups are not implemented, a passkey cannot complete a sign-in, the actor is not indexed, signing keys are held by the platform). There are no seals, no certification marks and no uptime figure.
+- [x] No logo without documented permission; no seal; no invented number
+- [x] Every figure traces to Hanzo's copy; qualifier beside the number
+- ~~Marquees pause, freeze under reduced motion, hide duplicates~~ n/a: no marquee
+- ~~Privacy link and owner line beside every submit~~ n/a: no form
+
+Done here: Published / On request comes from whether Hanzo links the document; SOC 2 stays "compatible", FIPS and passkeys keep Hanzo's own limits. The only figure is the live count of the 16 controls.
 
 ## 6. Content presentation (copy untouched)
-Done here: Parity is 87/87 text and 6/6 links. There are no labels above headlines; "Trust" sits under the h1 as a caption. Every Hanzo headline is a real heading: the five group names are h2s, as on hanzo.ai, each beside the (+) that opens its sheet, and "Find a control" is an h2 that labels the search. The 16 controls, sixteen long paragraphs on v1's scroll, now sit in five evidence sheets, one per group, all of them in the HTML.
+- [x] No text under 13px (14px phone) except mono capitals
+- [x] Measures held; no orphan word in a heading
+- [x] Tables, FAQ, tabs and code use the kit parts
+- [x] `python3 scripts/parity.py /trust`: 0 missing
+
+Done here: Parity text 87/87, links 6/6. The 16 controls sit in five kit `DetailSheet`s under real h2s; the cabinet is an APG tablist with every tray in the HTML.
 
 ## 7. Visual design system
-Done here: v2 scale from `components/v2/ProofScale.css` (display 128, headline 56, body 19, Zen Mono captions). Ink, greys and silvers only: Published is a filled ink chip, On request a hollow mark (a shape cue, not a colour). Hero objects use a 28px radius and papers 16px. There is one dark room: the close.
+- [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
+- [x] No label, tag, badge or pill above a headline
+- [x] Radii, shadows and sizes from tokens; never box plus shadow
+- [x] One icon set; no icon in a rounded box
+- [x] Differs from neighbours in hero medium and room order
+
+Done here: taste.py OK; deck values only (ink, #525252, #737373, #f5f5f5, #ededed, #d4d4d4, black, white steps), radii 6/12/16/24/28, the floating shadow only on the pulled drawer and the papers. `tokens.css` does not exist yet, so the deck hexes are page variables on `.xtr`. Rhythm via `ProofRhythm.css`: h1 52, headings 26, figures 64 (the tray numeral, the live count), one 84px moment (the closing line). Differs from /security: centred statement over a wide cabinet against /security's split hero with the layer map.
 
 ## 8. UI component library
-Done here: Uses the kit (`A`, `More`) and the v2 pieces `MaskLines`, `SceneWipe`, `DetailSheet` and `AskBar`. The search field is styled (no browser cancel button; its own clear button), and the locker is a real `role=tablist`. No control uses browser defaults.
+- [x] Every control has hover, press, focus-visible, disabled, loading
+- [x] Focus ring visible on every stop of a Tab crawl
+- [x] Dialogs are native, trap focus and return it
+- [x] Inputs 16px or larger; no bare `:hover`
+- [x] Forks this page deleted: listed below
+
+Done here: Drawers, papers, group rows, answers, the search and its clear button answer hover with a transform inside `@media (hover:hover)` and press at .97 in 90 ms; 2px ink focus ring (white in the black room). The search input is 17px in a 56px field. Sheets are the kit's `DetailSheet`. Deleted: the page-level AskBar and the springs.
 
 ## 9. Motion and interaction
-Done here: see below.
-- Idle: the locker's drawers pull themselves out one at a time while it is on screen.
-- Pointer: drawers' handles nudge; papers straighten and lift; group numerals darken; group titles nudge; answers shift; buttons lift 1px and press at .98; the clear button turns.
-- State: drawers ride springs; the tray's contents change; answers appear in place as you type and the count and the per-group dots update; sheets rise.
-- Scroll: only the dark-room wipe (and the line-mask cut-ins on arrival).
+- [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
+- [x] At least 3 kinds of movement; scroll-linked is half or less
+- [x] Something moves without input; every control answers
+- [x] Reduced motion shows the final state; no `setInterval`
+- ~~Sound only on the listed moments, through the one kit~~ n/a: the shared sound kit is not merged; the page plays none
+
+Done here: Signature: the evidence locker (idle, 300 ms ease-emphasis slides, pauses under the pointer). Supporting: line-mask cut-in (arrival), answers appearing as you type with the live count (state), the black room's entry (the only scroll-linked move). variety.py OK. Timers are `setTimeout` and stop off screen or once you choose.
 
 ## 10. Media
-Done here: The page has no Hanzo images or film that belong to it, and the v1 "seal" image was removed (no seals). Its objects are product-style: the cabinet, the two papers typeset as title pages, the evidence sheets.
+- ~~`Film` and `Pic` only; sizes and posters set~~ n/a: no images or film on this page
+- ~~At most 2 videos playing; pause button on loops over 5 s~~ n/a
+- ~~Budgets met; nothing missing; alt on every image~~ n/a
+- ~~No dimmed or filtered photo; 4+ real visuals together where the page has them~~ n/a: hanzo.ai's /trust has no media of its own
+
+Done here: n/a: the objects are product-style (the cabinet, the two papers, the evidence sheets); the v1 decorative image was removed (no seals).
 
 ## 11. Mobile and responsive
-Done here: At 375px the layouts are designed, not shrunk:
-- the locker stacks drawers over its tray, with chips under titles;
-- the papers stack upright;
-- the search, count and groups run in one column;
-- all targets are 44px or more, there is no sideways scroll (`scripts/phone.mjs` passes), and no text is under 14px.
+- [x] 375×812 and 1470×801 pass with no overlap
+- [x] No horizontal scroll at 320
+- [x] Every target 44px or more; every hover has a tap path
+- [x] Primary ask above the fold at 375×667
 
-## 12. Accessibility
-Done here: see below.
-- The locker is a tablist with arrow keys; the tray panels are `role=tabpanel`, and inactive ones are `inert`.
-- The search has a real label and an `aria-live` count.
-- Each group's sheet traps focus, Esc closes it, and focus returns. Reduced motion opens the first drawer and stops the cycle.
+Done here: `scripts/phone.mjs /trust` OK (375/375). On phones the cabinet stacks drawers over the tray, the papers stand upright, and the search sits under its heading and count; the ask is a full-width button at about y 420.
+
+## 12. Accessibility (WCAG 2.2 AA)
+- [x] Contrast measured, text at 4.5:1 or better
+- [x] Pause control on every moving item
+- [x] Forms labelled; first error focused
+- [x] One h1; no heading skips; names start with visible text
+- [x] Keyboard reaches every control
+
+Done here: Text is #0a0a0a or #525252 on white and #f5f5f5, #fafafa or white 78% on black. The cabinet's cycle stops when you choose a drawer, while the pointer rests on it, and off screen. The search is labelled by its h2 with an `aria-live` count. The tablist takes arrow keys; inactive trays are `inert`.
 
 ## 13. Performance and engineering
-Done here: see below.
-- Motion is transform, opacity and clip-path only.
-- The locker's cycle is a timer that stops off screen (`useInView`) and once you choose a drawer.
-- No canvas, video, blur or looping decoration (v1's pulsing green chip is gone).
+- [x] h1 and LCP element in server HTML
+- [x] JS and CSS inside budget; every image and video sized
+- [x] No poller; no third-party request before consent
+- [x] Nothing heavy run on James's laptop
+
+Done here: Transform, opacity and clip-path only; one timer for the cabinet, stopped off screen. Filming ran in the cloud session.
 
 ## 14. SEO and machine files
-Done here: Metadata and JSON-LD are unchanged (`app/trust/page.jsx`). All text is in the server HTML, including every tray and every sheet. The security.txt link is kept.
+- [x] Title and description match live (or are listed for James)
+- [x] Canonical equals og:url equals the live URL
+- [x] `<JsonLd route>` parses; no broken URL
+- [x] Every card is a real link
+
+Done here: `app/trust/page.jsx` keeps the metadata and `<JsonLd route="/trust" />` unchanged; the security.txt link is kept.
 
 ## 15. Catalogue and product pages
-Done here: Does not apply: /trust is a System page, not a catalogue.
+- ~~Model card matches `SPEC.md`~~ n/a: not a catalogue or model page
+- ~~Every card opens by Morph~~ n/a
+- ~~Every maker and model page linked in the DOM~~ n/a
+- ~~One price figure everywhere~~ n/a
+
+Done here: n/a: /trust has no models, catalogue cards or prices.
 
 ## 16. Developer experience
-Done here: Does not apply.
+- ~~One `CodeBlock`; copy equals display~~ n/a: no code on the page
+- ~~Config blocks parse on their own~~ n/a
+- ~~Terminal pauses and ends on a static frame~~ n/a
+- ~~No hand-typed version number~~ n/a
+
+Done here: n/a: no code.
 
 ## 17. States and resilience
-Done here: see below.
-- Empty: a search with no match shows Hanzo's own line, "If a control you need is not on this page, ask.", with "Ask for it".
-- Partial: non-matching groups dim, and their dots stay hollow.
-- The content is static Hanzo copy, so there is no loading or error state.
-- JS off: every drawer's contents stand stacked in the tray, the dark room is unclipped, and each group's sheet shows inline under its h2 (the kit's own fallback). Checked headless with JavaScript disabled: no text is invisible.
+- [x] Loading, empty, error and offline states designed
+- [x] Blocked live data leaves a complete page, no console errors
+- ~~A failed submit keeps its values and shows no success~~ n/a: no form
+- [x] A thrown island does not blank the page
+
+Done here: Empty: a search with no match shows Hanzo's own line, "If a control you need is not on this page, ask.", with "Ask for it"; non-matching groups dim. Static copy with no fetch, so there is nothing to load or fail; JS off and reduced motion each show the final state.
 
 ## 18. Measurement and handover
-Done here: The asks are standard links; no analytics are wired yet (BRIEF-v3 §1, pending Hanzo's event log). Filmed with `scripts/motion.mjs`. Gallery: `desktop.mp4`, `desktop.jpg`, `phone-1..3.jpg`.
+- [x] `data-cta` on every primary; events only through `lib/track.js`
+- [x] Nothing identifier-bearing before consent; no field value in a payload
+- [x] `V2: <score>/10 <one line>` in the page file's top comment
+- [ ] Review read: `docs/review/<page>.md` verdict 8 or more
+
+Done here: `data-cta="trust.hero"` and `"trust.band"`; the search sends nothing anywhere. V2 line present. No critic review exists yet on origin/main.

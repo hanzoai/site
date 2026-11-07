@@ -1,7 +1,10 @@
 'use client';
 // Persona: a security or procurement reviewer checking Hanzo before signing (arrives from /security, /enterprise, the footer or a questionnaire)
 // Goal: read what is published, find the control the questionnaire asks about, and request a review
-// CTA: Request a review or an enterprise deployment -> /contact-sales (hero, sticky AskBar and thumb bar, close) · metric cta_click (data-cta="request-a-review")
+// CTA: Request a review or an enterprise deployment -> /contact-sales (hero; the shared ask bar after it; the closing band) · data-cta="trust.hero" / "trust.band"
+// Metric: contact_sales_submit (enterprise buyers, MASTER §1) via cta_click on trust.hero and trust.band
+// Signature: the evidence locker — a wide cabinet under the headline whose drawers pull themselves out one by one, each with its Published or On request mark and its contents in the tray beside it
+// Beyond: "Find a control" — type what your questionnaire asks (PKCE, SCIM, argon2id, HKDF) and the answers appear in place under each group, each opening the drawer that holds it, with a count of Hanzo's controls that match
 /* Trust. Its idea is calm proof: big statements, and the evidence kept in drawers you open. The first screen is a
    centred statement (chatgpt.com/business/enterprise) over one wide product object — the evidence locker, a cabinet of the six things a review gets, whose
    drawers pull themselves out one at a time (or at your hand), each marked Published or On request, its contents in
@@ -13,20 +16,26 @@
    Beyond: "Find a control". Type what your questionnaire asks (PKCE, SCIM, argon2id, HKDF): the answers appear in
    place under each group as you type, each opening the drawer that holds it; the count says how many of Hanzo's
    controls match, and nothing matching is met with Hanzo's own line: if a control you need is not on this page, ask.
-   Motion: signature (drawers on springs, idle) + MaskLines headline cut-in (arrival) + answers re-flowing as you type
-   (state; sheets rise) + the SceneWipe dark room (the one scroll-linked effect).
-   V2: 8/10 calm-proof rebuild in ink only: a centred statement over a wide self-opening evidence cabinet, papers that open into their pages, plain statements, five control groups as a quiet list of evidence sheets with answer-as-you-type, one ask sticky after the hero. */
+   Motion (deck ease-emphasis, no springs): signature (drawers slide out, idle) + MaskLines headline cut-in (arrival) +
+   answers appearing as you type (state; sheets rise) + the black room's entry (the one scroll-linked move).
+   Scale has rhythm (ProofRhythm): h1 52, headings 26, figures 64; one big thing per screen (the cabinet, the papers, the
+   statement, the live count, the facts heading, the closing line at 84).
+   Conflict noted on the card: MASTER §3.1 keeps centred heads for the closing section, but the hero is a centred
+   statement at the coordinator's request after the critic found /trust sharing /leaderboard's frame (JAMES.md 8,
+   neighbouring pages differ).
+   V2: 8/10 calm proof on the deck: a 52px centred statement over the self-opening evidence cabinet, papers that open into their pages, five control groups as evidence sheets with answer-as-you-type, one ask in the hero and the closing band. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { A, More } from '../kit';
 import MaskLines from '../v2/MaskLines';
 import SceneWipe from '../v2/SceneWipe';
 import DetailSheet from '../v2/DetailSheet';
-import AskBar from '../v2/AskBar';
 import '../v2/ProofScale.css';
+import '../v2/ProofRhythm.css';
 import './Trust.css';
 
 const ASK = 'Request a review or an enterprise deployment';
+const EMPH = [0.16, 1, 0.3, 1]; // deck ease-emphasis
 const REVIEW = [
   ['The Data Processing Addendum', 'The processor terms in full — roles and instructions, subprocessor governance, security measures, the Standard Contractual Clause modules for EEA and UK transfers, and the U.S. state service-provider terms. Still a draft pending counsel, which the page says at the top, so read it as terms proposed rather than terms signed.', '/legal/dpa'],
   ['The subprocessor register', 'Which providers can process your data, what each one does, where it runs, and whether it may train on your content — including the model providers a routed request reaches through a gateway. Rows still being confirmed against a provider’s signed terms are marked as such rather than left to look settled.', '/legal/subprocessors'],
@@ -72,7 +81,7 @@ function Locker() {
             <motion.button
               key={t} type="button" role="tab" id={'xtr-dr-' + i} aria-selected={at === i} aria-controls={'xtr-tray-' + i} tabIndex={at === i || (at < 0 && i === 0) ? 0 : -1}
               className={'xtr-drawer' + (at === i ? ' on' : '')} onClick={() => pick(i)}
-              initial={false} animate={{ x: at === i ? 28 : 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              initial={false} animate={{ x: at === i ? 28 : 0 }} transition={{ duration: 0.3, ease: EMPH }}
             >
               <span className="xtr-dr-n pf-mono">{pad(i)}</span>
               <span className="xtr-dr-t">{t}</span>
@@ -86,7 +95,7 @@ function Locker() {
         {/* every drawer's contents are in the page; the open one is shown */}
         {REVIEW.map(([t, d, to], i) => (
           <div key={t} id={'xtr-tray-' + i} role="tabpanel" aria-labelledby={'xtr-dr-' + i} className="xtr-tray-p" data-on={at === i || (at < 0 && i === 0)} inert={!(at === i || (at < 0 && i === 0))}>
-            <span className="xtr-tray-n" aria-hidden="true">{pad(i)}</span>
+            <span className="xtr-tray-n pf-figure" aria-hidden="true">{pad(i)}</span>
             <b className="pf-title">{t}</b>
             <p>{d}</p>
             {to ? <More to={to}>Read {t.replace(/^The /, 'the ')}</More> : <More to="/contact-sales">Ask for it</More>}
@@ -102,10 +111,10 @@ function Hero() {
     <section className="xtr-hero" aria-labelledby="xtr-h1">
       <div className="pf-wrap">
         <div className="xtr-hero-top">
-          <MaskLines as="h1" id="xtr-h1" className="pf-display xtr-h1" lines={['Security', 'you can read']} />
+          <MaskLines as="h1" id="xtr-h1" className="pf-display" lines={['Security', 'you can read']} />
           <p className="pf-kick xtr-cap">Trust</p>
           <p className="pf-lede">How you get in, what a credential reaches, what gets written down, and where the keys live — each one a mechanism you can point at in the source.</p>
-          <A to="/contact-sales" className="pf-btn solid" data-thumb={ASK} data-cta="request-a-review">{ASK}</A>
+          <A to="/contact-sales" className="pf-btn solid" data-thumb={ASK} data-cta="trust.hero">{ASK}</A>
         </div>
         <Locker />
       </div>
@@ -216,7 +225,7 @@ function Group({ g, gi, k }) {
         <p className="xtr-grp-l">{lede}</p>
         <AnimatePresence initial={false}>
           {k && hits.length > 0 && (
-            <motion.ul className="xtr-ans" initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6, transition: { duration: 0.2 } }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+            <motion.ul className="xtr-ans" initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }} transition={{ duration: 0.3, ease: EMPH }}>
               {hits.map(([[t], i]) => (
                 <li key={t}><button type="button" onClick={() => openAt(gi, i)}><span className="pf-mono">{pad(i)}</span>{t}</button></li>
               ))}
@@ -249,7 +258,7 @@ function Controls() {
         </div>
         <AnimatePresence initial={false}>
           {k && !n && (
-            <motion.div className="xtr-none" initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+            <motion.div className="xtr-none" initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.15 } }} transition={{ duration: 0.3, ease: EMPH }}>
               <p className="pf-title">If a control you need is not on this page, ask.</p>
               <More to="/contact-sales">Ask for it</More>
             </motion.div>
@@ -276,7 +285,7 @@ function Facts() {
     <section className="pf-sec xtr-facts" aria-labelledby="xtr-facts-h">
       <div className="pf-wrap xtr-facts-g">
         <div className="xtr-facts-h">
-          <MaskLines id="xtr-facts-h" className="pf-display s" lines={['Where we stand']} />
+          <MaskLines id="xtr-facts-h" className="xtr-facts-t" lines={['Where we stand']} />
           <p className="pf-lede">Everything a reviewer establishes in the first email, answered here instead.</p>
         </div>
         <dl className="xtr-fact-l">
@@ -305,10 +314,10 @@ function Close() {
           </div>
         </div>
         <div className="pf-wrap xtr-band">
-          <MaskLines className="pf-display m" lines={['Bring us the', 'hard questions']} />
+          <MaskLines className="pf-moment" lines={['Bring us the', 'hard questions']} />
           <div className="xtr-band-r">
             <p className="pf-lede">Your questionnaire, your architecture review, your framework. We answer against the code, we move at the speed of your review, and you will always know which of those two you are getting.</p>
-            <A to="/contact-sales" className="pf-btn solid xtr-light" data-cta="request-a-review">{ASK}</A>
+            <A to="/contact-sales" className="pf-btn solid xtr-light" data-cta="trust.band">{ASK}</A>
           </div>
         </div>
       </div>
@@ -318,7 +327,7 @@ function Close() {
 
 export default function Trust() {
   return (
-    <main className="xtr">
+    <main className="xtr pf-r">
       {/* JS off: every drawer's contents stand stacked in the tray, and the dark room is simply there */}
       <noscript dangerouslySetInnerHTML={{ __html: '<style>.xtr-tray-p{opacity:1!important;transform:none!important;grid-area:auto!important;pointer-events:auto!important;margin-top:28px}.pf-wipe>div[aria-hidden]{clip-path:none!important}.xtr-grp-h{flex-wrap:wrap}.xtr-grp-h .pf-sheet{order:3;flex:1 1 100%}</style>' }} />
       <Hero />
@@ -327,7 +336,6 @@ export default function Trust() {
       <Controls />
       <Facts />
       <Close />
-      <AskBar title="Trust" label={ASK} to="/contact-sales" cta="request-a-review" />
     </main>
   );
 }
