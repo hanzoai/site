@@ -188,113 +188,95 @@ function CrawlMap({ beat }) {
   );
 }
 
-/* ---------- the signature: a departure board. Six jobs, one per chapter, flip through Fetch, Extract and Render to
-   what came back (or to refused). Point at a row, or tap it, to read its chapter beside the board. ---------- */
-const FLAP = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./-';
-// [the job, its chapter, what it ends as, whether it is stopped at Fetch]
-const JOBS = [
-  ['/docs/api', 0, 'MD', 0],
-  ['/app', 1, 'JS', 0],
-  ['/blog/launch', 2, 'MD', 0],
-  ['169.254.169.254', 3, 'refused', 1],
-  ['302', 4, 'refused', 1],
-  ['MCP', 5, 'MD', 0],
-];
-const STEP = ['', 'Fetch', 'Extract', 'Render'];
-const W_STEP = 7, W_OUT = 7;
-
-/* one split-flap word: every cell steps through the flap alphabet to its letter and flips as it goes */
-function Flap({ text, w, calm }) {
-  const want = text.toUpperCase().padEnd(w).slice(0, w);
-  const [shown, setShown] = useState(want);
-  const [tick, setTick] = useState(0);
-  useEffect(() => {
-    if (calm) { setShown(want); return; }
-    let t = 0;
-    const step = () => {
-      let done = true;
-      setShown((s) => {
-        const next = s.split('').map((c, i) => {
-          if (c === want[i]) return c;
-          done = false;
-          const k = FLAP.indexOf(c);
-          return FLAP[(k < 0 ? 0 : k + 1 + (i % 2)) % FLAP.length] === want[i] || Math.abs(FLAP.indexOf(want[i]) - k) < 3 ? want[i] : FLAP[(k + 2) % FLAP.length];
-        }).join('');
-        return next;
-      });
-      setTick((x) => x + 1);
-      if (!done) t = setTimeout(step, 42);
-    };
-    t = setTimeout(step, 42);
-    return () => clearTimeout(t);
-  }, [want, calm]);
-  return (
-    <span className="cr-flap" aria-hidden="true">
-      {shown.split('').map((c, i) => <i key={i + '-' + (c === want[i] ? 'k' : tick)} className={c === ' ' ? 'sp' : ''}>{c}</i>)}
-    </span>
-  );
-}
-
-function Board() {
+function Scene() {
+  const run = useRef(null);
   const box = useRef(null);
+  const wide = useWide();
   const calm = useCalm();
-  const seen = useInView(box, { amount: 0.35 });
-  const [hold, setHold] = useState(false);
-  const [t, setT] = useState(99); // server and first render: every job finished
-  const [at, setAt] = useState(0);
+  const p = useMotionValue(0);
+  const p6 = useTransform(p, (v) => v * 6);
+  const [beat, setBeat] = useState(0);
+  const { scrollYProgress } = useScroll({ target: run, offset: ['start start', 'end end'] });
+  useMotionValueEvent(scrollYProgress, 'change', (v) => { if (wide) p.set(v); });
+  useMotionValueEvent(p, 'change', (v) => setBeat(Math.min(5, Math.max(0, Math.floor(v * 6 * 0.9999)))));
+  useEffect(() => { if (wide) p.set(scrollYProgress.get()); }, [wide]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // phones: the same scene, once through by itself while it is seen (pausable), or by tap
+  const seen = useInView(box, { amount: 0.4 });
+  const [k, setK] = useState(0);
   const [mine, setMine] = useState(false);
-  // the board runs while it is seen: each job starts one beat after the one above, then the board rests and runs again
+  const [hold, setHold] = useState(false);
   useEffect(() => {
-    if (calm || !seen || hold) return;
-    const id = setTimeout(() => setT((v) => (v >= 14 ? 0 : v + 1)), t >= 14 ? 2600 : 760);
-    return () => clearTimeout(id);
-  }, [t, seen, hold, calm]);
-  useEffect(() => { if (seen && !calm) setT(0); }, [seen, calm]);
-  const stage = (i, stop) => Math.max(0, Math.min(stop ? 1 : 4, t - i));
-  const live = mine ? at : Math.max(0, Math.min(5, t - 2));
-  const show = mine ? at : live;
+    if (wide) return;
+    if (calm) { p.set((k + 0.999) / 6); return; }
+    p.set(k / 6);
+    const c = animate(p, (k + 0.97) / 6, { duration: 2.4, ease: MOVE });
+    return () => c.stop();
+  }, [k, wide, calm]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (wide || !seen || mine || calm || hold || k >= 5) return;
+    const t = setTimeout(() => setK((x) => x + 1), 4200);
+    return () => clearTimeout(t);
+  }, [k, wide, seen, mine, calm, hold]);
+
+  // the stage leans toward a fine pointer, 2.5 degrees at most (none on touch or under reduced motion)
+  const lean = (e) => {
+    if (calm || e.pointerType !== 'mouse') return;
+    const el = e.currentTarget, r = el.getBoundingClientRect();
+    el.style.setProperty('--ry', (((e.clientX - r.left) / r.width - 0.5) * 5).toFixed(2) + 'deg');
+    el.style.setProperty('--rx', (((e.clientY - r.top) / r.height - 0.5) * -5).toFixed(2) + 'deg');
+  };
+  const unlean = (e) => { e.currentTarget.style.setProperty('--rx', '0deg'); e.currentTarget.style.setProperty('--ry', '0deg'); };
+  const go = (i) => {
+    if (!wide) { setMine(true); setK(i); return; }
+    const el = run.current;
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.scrollY;
+    scrollToY(top + ((el.offsetHeight - window.innerHeight) * (i + 0.8)) / 6, { duration: 1.2 });
+  };
+
   return (
-    <section className="kn-sec cr-bd" aria-labelledby="cr-sc-h" ref={box}>
-      <div className="kn-wrap kn-grid cr-bd-head">
-        <h2 id="cr-sc-h" className="kn-headline cr-sc-h">Three steps, and a boundary</h2>
+    <section className="cr-sc" aria-labelledby="cr-sc-h" data-paused={hold ? '' : undefined}>
+      <div className="kn-wrap kn-grid cr-sc-head">
+        <KeynoteLines id="cr-sc-h" className="kn-headline cr-sc-h" lines={['Three steps,', 'and a boundary']} />
         <p className="kn-lede cr-sc-lede">Fetch, extract, render. Then the part that matters when the URL comes from a stranger.</p>
       </div>
-      <div className="kn-wrap kn-grid cr-bd-g">
-        <div className="cr-board">
-          <div className="cr-board-top">
-            <button type="button" className="kn-pause" aria-pressed={hold} aria-label="Pause" onClick={() => setHold((v) => !v)}><PauseIcon on={hold} /></button>
-            <span className="cr-board-k" aria-hidden="true"><b>POST</b> /v1/crawl</span>
-          </div>
-          <ol className="cr-rows" onPointerLeave={() => setMine(false)}>
-            {JOBS.map(([path, beat, out, stop], i) => {
-              const s = stage(i, stop);
-              const done = stop ? s >= 1 : s >= 4;
-              const step = stop ? (s >= 1 ? 'Fetch' : '') : STEP[Math.min(3, s)];
-              return (
-                <li key={path}>
-                  <button
-                    type="button" className={'cr-row' + (show === i ? ' on' : '') + (done ? ' done' : '') + (stop ? ' stop' : '')}
-                    aria-pressed={show === i} aria-label={pad(i + 1) + ' ' + BEATS[beat][0]}
-                    onPointerEnter={(e) => { if (e.pointerType === 'mouse') { setAt(i); setMine(true); } }}
-                    onFocus={() => { setAt(i); setMine(true); }} onClick={() => { setAt(i); setMine(true); }}
-                  >
-                    <span className="cr-row-n kn-fig">{pad(i + 1)}</span>
-                    <span className="cr-row-p">{path}</span>
-                    <Flap text={step} w={W_STEP} calm={calm} />
-                    <span className="cr-row-o"><Flap text={done ? out : ''} w={W_OUT} calm={calm} /></span>
-                  </button>
-                </li>
-              );
-            })}
-          </ol>
-        </div>
-        <div className="cr-bd-say">
-          {BEATS.map(([title, d], i) => (
-            <div key={title} className="cr-say" data-on={show === i ? '' : undefined}>
-              <h3 className="cr-say-t"><span className="kn-fig">{pad(i + 1)}</span>{title}</h3>
-              <p className="kn-body">{d}</p>
+      <div className="cr-run" ref={run}>
+        <div className="cr-pin">
+          <div className="kn-wrap kn-grid cr-sc-g" ref={box}>
+            <div className="cr-sc-l">
+              {/* phones: the pause control first, then a step for each chapter (shown after the map) */}
+              <div className="cr-ctl">
+                <button type="button" className="kn-pause" aria-pressed={hold} aria-label="Pause" onClick={() => setHold((v) => !v)}><PauseIcon on={hold} /></button>
+                <div className="cr-steps" role="group" aria-label="Three steps, and a boundary">
+                  {BEATS.map(([t], i) => <button key={t} type="button" aria-label={t} aria-current={beat === i ? 'step' : undefined} onClick={() => go(i)}><span className="kn-fig">{pad(i + 1)}</span></button>)}
+                </div>
+              </div>
+              <ol className="cr-toc">
+                {BEATS.map(([t], i) => (
+                  <li key={t} className={(i === 3 ? 'gap' : '') + (beat === i ? ' on' : '')}>
+                    <h3>
+                      <button type="button" aria-current={beat === i ? 'step' : undefined} onClick={() => go(i)}>
+                        <span className="kn-fig">{pad(i + 1)}</span><span className="cr-toc-t">{t}</span>
+                      </button>
+                    </h3>
+                  </li>
+                ))}
+              </ol>
+              <div className="cr-sc-body">
+                {BEATS.map(([t, d], i) => <p key={t} className="kn-body" data-on={beat === i ? '' : undefined}>{d}</p>)}
+              </div>
             </div>
-          ))}
+            <motion.div className="kn-obj cr-map" style={{ '--p': p6 }} aria-hidden="true" onPointerMove={lean} onPointerLeave={unlean}>
+              <CrawlMap beat={beat} />
+              <span className="cr-map-bar"><i style={{ '--k': 0 }} /><i style={{ '--k': 1 }} /><i style={{ '--k': 2 }} /><i style={{ '--k': 3 }} /><i style={{ '--k': 4 }} /><i style={{ '--k': 5 }} /></span>
+            </motion.div>
+            {/* phones: the chapter the chips point at, read right under the stage */}
+            <div className="cr-now" aria-hidden="true">
+              <p className="cr-now-t"><span className="kn-fig">{pad(beat + 1)}</span>{BEATS[beat][0]}</p>
+              <p className="kn-body">{BEATS[beat][1]}</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>

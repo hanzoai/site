@@ -1,8 +1,7 @@
 'use client';
-// V2: 8/10 (own estimate) motion-map pass (7 Nov): the second screen is a live race of eight catalogue models on Hanzo's own context and $/M figures; the pinned black room is a plain dark section whose headline plays Enso's film through its letters; every section arrives its own way; SPEC grid and cards untouched
+// V2: 8/10 (own estimate; critic pending) the 11 on its own line; catalogue cards quiet until hover (phone: 72px rows with a thumb); Copy legible, 44px, announced; closing black room; no hero timer (pointer- and scroll-lit); SPEC grid 385/192; no hydration mismatch
 // Persona: Developer choosing a model (and the buyer comparing labs). Goal: find the model, open its page. CTA: "Get API key" (platform.hanzo.ai/api-keys). Metric: api_key_created.
-// Signature: race. Second screen: Enso, Enso Ultra, Zen6, Kai and four other labs' flagships race on context window, in $/M and out $/M (Hanzo's printed rates, live from api.hanzo.ai when it answers); one meter for all, each bar stops at its real value; a metric re-races, ↻ replays. The cards still lift into their pages (the WebGL opener).
-// Entrances: pull-back, text-mask-film, vertical-ticker, spring-snap, tile-flip
+// Signature: a card opens into its page. The first screen is Hanzo's model grid exactly as live hanzo.ai draws it (SPEC.md); every card lifts into its model's page (the WebGL opener), every catalogue card's name flies into its sheet (morph).
 // Beyond: every model reachable. One collapsed "Every model" list links all of Hanzo's model and maker pages from here, findable with Ctrl-F, so no page of the 544 is an orphan.
 /* Models, v2 (docs/VISION.md archetype C, docs/JAMES.md, docs/PLAN-COMPONENTS.md 5.4 and 2.15), one idea per screen:
    1 Hanzo's model grid exactly (SPEC.md): Enso's film plays; the light follows the pointer, or walks the cards as
@@ -28,8 +27,6 @@ import MaskFig from '../v2/MaskFig';
 import { media, bySlug } from '../../lib/models';
 import { ROWS, OTHERS } from './models/rates';
 import { CopyStatus } from './models/parts';
-import Race from './models/Race';
-import { useEnter } from './models/enter';
 import './ModelsPage.css';
 
 const SPRING = { duration: 0.3, ease: [0.16, 1, 0.3, 1] }; // the deck has no springs: ease-emphasis, 300 ms
@@ -46,6 +43,18 @@ const Lk = ({ to, children, className = '', ...r }) => {
 function useOpen() {
   const opener = useOpener();
   return (e, el, slug) => opener.open(e, { el, src: media(slug, 'webp'), href: '/' + slug, key: slug });
+}
+
+/* Desktop gets the pinned scenes; phones get plain scroll and rails (decided in CSS, read here only for films). */
+function useWide() {
+  const [wide, setWide] = useState(false);
+  useEffect(() => {
+    const q = matchMedia('(min-width: 901px)');
+    const on = () => setWide(q.matches);
+    on(); q.addEventListener('change', on);
+    return () => q.removeEventListener('change', on);
+  }, []);
+  return wide;
 }
 
 /* A model's film in its box: the poster at once, the clip only while asked and on screen (two at most on the page). */
@@ -117,10 +126,8 @@ function Stage() {
   useMotionValueEvent(gp, 'change', (v) => setWalk(v <= 0.02 || v >= 0.98 ? 0 : 1 + Math.min(7, Math.floor(v * 8))));
   const on = lit || walk;
   const go = 'https://platform.hanzo.ai/api-keys';
-  // entrance 1, pull-back: the grid opens zoomed right into Enso's card and pulls back to the whole nine
-  const [box, inView] = useEnter('0px');
   return (
-    <section className={'xmo-stage xmo-pb' + (inView ? ' in' : '')} aria-labelledby="xmo-h1" ref={box}>
+    <section className="xmo-stage" aria-labelledby="xmo-h1">
       <div className="x-wrap">
         <div className="xmo-intro">
           <h1 id="xmo-h1" className="xmo-display"><Lines lines={['Frontier AI families']} delay={0.05} /></h1>
@@ -145,42 +152,7 @@ function Stage() {
   );
 }
 
-/* ---------- the signature: the live race ----------
-   Eight models the page itself shows (Hanzo's three families and four other labs' flagships), on the figures the
-   price list prints: context window, in and out per million tokens. Hanzo's lanes run in ink. */
-const RACERS = ['enso', 'enso-ultra', 'zen6', 'kai', 'anthropic/claude-fable-5', 'google/gemini-2.5-pro', 'x-ai/grok-4.20', 'deepseek/deepseek-chat'];
-const METRICS = [
-  { k: 'ctx', label: 'Context', fmt: (v) => ctxOf(v) },
-  { k: 'in', label: 'In $/M', fmt: (v) => dollars(v) },
-  { k: 'out', label: 'Out $/M', fmt: (v) => dollars(v) },
-];
-function Racing({ at }) {
-  const lanes = RACERS.map((id) => {
-    const r = at(ALL[id]);
-    const ours = !id.includes('/');
-    return {
-      key: id, name: r[1], me: ours, href: ours ? '/models/hanzo/' + id : '/models/' + id,
-      values: { ctx: r[4], in: r[2], out: r[3] },
-      text: { ctx: ctxOf(r[4]), in: cost(r, 2), out: cost(r, 3) },
-    };
-  });
-  return (
-    <section className="xmo-sec xmo-race" aria-labelledby="xmo-race-h">
-      <div className="x-wrap xmo-race-g">
-        <header>
-          <h2 id="xmo-race-h" className="xmo-headline">Context and price, side by side</h2>
-          <p className="xmo-body">Dollars per million tokens, in and out, from the live catalog.</p>
-          <Lk to="#priced">Every model, priced</Lk>
-        </header>
-        <Race lanes={lanes} metrics={METRICS} label="Models raced" />
-      </div>
-    </section>
-  );
-}
-
-/* ---------- 2. three families: the dark room, now plain (entrance 2, text-mask-film) ----------
-   No pin: the three families sit side by side in one black section. As it arrives, Enso's film plays through the
-   letters of "Enso routes. Kai decides. Zen reasons." for a moment, then the words settle white. */
+/* ---------- 2. three families: the dark room ---------- */
 const FAM = [
   { slug: 'enso', verb: 'routes', name: 'Enso', d: 'Picks the model for every call, in every modality.', to: '/enso' },
   { slug: 'kai', verb: 'decides', name: 'Kai', d: 'Answers a choice, a score or a yes/no, with the probability of each.', to: '/kai', stat: 11 },

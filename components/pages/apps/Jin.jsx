@@ -1,31 +1,30 @@
 'use client';
-// Persona: an ML researcher or engineer curious about self-supervised vision
-// Metric: docs_click (a GitHub or docs click)
-// Goal: see the saccade idea work in one figure, then open the docs
-// CTA: Read the docs -> https://docs.hanzo.ai (hero, the header ask at every width, close; data-thumb, data-cta)
-// Signature: rows-open: the six research chapters are a tight numbered list; hovering, tapping or focusing a row opens it in place into its full panel (its text and its figure, which draws itself in), one row at a time, the chapter rail counting along; closed rows keep their text in the HTML (hidden="until-found") and a row opens by its hash.
-// Beyond: "Make the saccade yourself". Drag the image (arrow keys too): the predicted embedding follows your shift live, the three losses are plotted as a trace over your drags; let go and the image shifts back and draws the round trip it closes.
-/* Jin (v2, archetype D "Story": an editorial research paper after osply.co / hamol.studio / grubogrubo.com; greys and
-   ink only, JAMES.md 7). Figure 1 under the title is the self-running saccade: the image jitters, the predictor guesses
-   where its embedding will move, the image shifts back and the embedding has to land where it started; the three
-   losses lean with each phase. It runs twice while seen, then rests; its own button pauses and replays it (WCAG 2.2.2).
-   Motion: Figure 1 (idle) + the rows that open, each figure drawing in as its row opens (pointer / state) + the drag
-   (pointer) + legend letters lighting their part of the drawing (pointer) + Table 1 in a native dialog (state) + five
-   section entrances, one each (JinEnter.jsx). Every word and link is Hanzo's.
-V2: 8/10 Motion map: rows-open — the pinned chapter stage (sticky plate, scroll-scrubbed points and running head) is gone; the six chapters are one tight numbered list whose rows open in place (hover, tap, focus or hash) with their figures drawing in, the rail counting the open row; headings no longer cut in; sections enter by squash-land, curtain-rise, pull-back, venetian-type and domino
+/* Jin (v2, archetype D "Story": an editorial research paper after osply.co / hamol.studio / grubogrubo.com, with
+   apple.com's pinned stage for the six chapters; greys and ink only, JAMES.md 7).
+   Persona: an ML researcher or engineer curious about self-supervised vision
+   Metric: docs_click (a GitHub or docs click)
+   Goal: see the saccade idea work in one figure, then open the docs
+   CTA: Read the docs -> https://docs.hanzo.ai (hero, the header ask at every width, close; data-thumb, data-cta)
+   Signature: Figure 1, a saccade that checks itself, under the title on the first screen. The image jitters, the
+   predictor guesses where its embedding will move, the image shifts back and the embedding has to land where it
+   started; the three losses (Huber, cycle-consistency, VICReg) lean with each phase. It runs twice by itself while
+   seen, then rests on its last step; its own button pauses it and replays it (WCAG 2.2.2).
+   Beyond: "Make the saccade yourself". Drag the image (arrow keys too): the predicted embedding follows your shift
+   live, and the three losses are plotted as a trace over your drags; let go and the image shifts back and draws the
+   round trip it closes.
+   Motion: Figure 1 (idle, signature) + headlines cut into their line (arrival) + the chapters as one pinned stage
+   whose plate draws each figure out and the next one in, with a point scrubbed along the round trip (scroll) + the
+   drag (pointer) + legend letters lighting their part of the drawing (pointer) + Table 1 in a native dialog
+   (state). Every word and link is Hanzo's.
+V2: 8/10 round 3 (review 7/10): chapters 1-6 are one pinned stage on desktop (texts scroll left; a plate pinned right draws each chapter's figure out and the next in, a hairline and a point on the round trip scrub with the scroll; stacked under 900px with figures alternating above and below and a one-line legend); chapter 3 breaks out at full width with numeral 112, chapter 5 at 84, nothing dwindles; Figure 8 plots the losses as a trace over your drags instead of repeating Figure 1's bars, its status is a mono caption on the black; legend letters and drawing parts light each other on hover; the counter switches as a chapter crosses the line; Table 1 is a native dialog; Figure 1 runs twice and rests, with replay; the phone header carries the page's ask after the hero
 */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, useMotionValue, useTransform, animate } from 'motion/react';
 import { A, More, Cta, Img, DataTable } from '../../kit';
 import { useLive } from '../cloud/Frame';
 import BizPaste from '../../v2/BizPaste';
-import { useEnter } from './JinEnter';
+import BizLines from '../../v2/BizLines';
 import './Jin.css';
-
-/* Headings set still in the shared line markup (no cut-in: the sections' own entrances are the page's only reveal). */
-function Lines({ as: Tag = 'h2', id, className = '', lines }) {
-  return <Tag id={id} className={'bz-lines ' + className}>{lines.map((l, i) => <span className="bz-line" key={i}><span>{l}</span></span>)}</Tag>;
-}
 
 const DOCS = 'https://docs.hanzo.ai';
 const GH = 'https://github.com/hanzoai';
@@ -161,7 +160,7 @@ function Hero() {
       <div className="bz-wrap jn-hero-in">
         <div className="bz-grid jn-hero-top">
           <div className="jn-hero-copy">
-            <Lines as="h1" id="jn-h1" className="bz-display" lines={['Research on learning', 'without labels']} />
+            <BizLines as="h1" id="jn-h1" className="bz-display" lines={['Research on learning', 'without labels']} now delay={0.2} />
             <p className="jn-byline"><span className="x-mono jn-name">Jin</span><span className="x-mono">hanzoai/jin</span></p>
             <div className="jn-acts">
               <Cta to={DOCS} id="jin.hero" thumb>Read the docs</Cta>
@@ -236,9 +235,11 @@ const FIGS = [
     </K>
     <K k="d">
       <circle cx="410" cy="226" r="7" className="fk" /><circle cx="410" cy="226" r="16" className="sa" />
-      <path className="sa dash" markerEnd="url(#jn-a3)" d={TRIP3} />
+      <path className="sa dash" markerEnd="url(#jn-a3)" d={TRIP3} data-scrub="" />
       <L x="240" y="306" c="d" a />
-      {/* drawn in as the row opens: a point travels the round trip and lands where it started */}
+      {/* scrubbed with the scroll: a point rides the round trip while this chapter is read */}
+      <circle r="5" className="jn-scrub" transform="translate(402 246)" />
+      {/* drawn in once: a point travels the round trip and lands where it started */}
       <circle r="6" className="jn-trip"><animateMotion dur="1.2s" begin="indefinite" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".4 0 .2 1" path={TRIP3} /></circle>
     </K>
   </svg>,
@@ -254,8 +255,9 @@ const FIGS = [
       <L x="170" y="256" c="a" />
     </K>
     <K k="b">
-      <path className="sk thick" d={LOOP4} />
+      <path className="sk thick" d={LOOP4} data-scrub="" />
       <circle cx="454" cy="96" r="6" className="fk" /><circle cx="445" cy="96" r="6" className="sa" />
+      <circle r="5" className="jn-scrub" transform="translate(454 96)" />
       <circle r="4.5" className="jn-trip"><animateMotion dur="1.4s" begin="indefinite" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".4 0 .2 1" path={LOOP4} /></circle>
       <L x="460" y="256" c="b" a />
     </K>
@@ -324,42 +326,65 @@ const SECS = [
   ['Ways to see what it learned', ['Ways to see', 'what it learned'], 'Self-supervised training has no validation loss to watch, so there are linear probes, KNN, attention-map visualisation in a Dash dashboard, correlation dimension, and UMAP coloured by true class.', ['UMAP coloured by true class', 'attention-map visualisation']],
   ['The papers', ['The papers'], 'Grant proposals on hierarchical JEPA for edge AI, where the interesting constraint is learning useful representations on hardware that cannot phone home.', ['hierarchical JEPA', 'edge AI', 'hardware that cannot phone home']],
 ];
-const slug = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+// chapter 3 breaks out of the stage at full width; the others share the pinned plate (run a: 1-2, run b: 4-6)
+const BREAK = 2;
+const run = (i) => (i < BREAK ? ' ra' : ' rb');
 
-/* Each figure is an authored scene that draws itself in as its row opens: strokes draw (pathLength, 1.1 s ease-in-out,
-   50 ms apart), marks and mask cells fill after them, dashed guides and letters land last, and a point travels the
-   round trip where the figure has one; a row that closes undraws its figure quickly. The server HTML is the finished
-   drawing; JS off and reduced motion show it as is. */
-function useDraw(on) {
+/* Each figure is an authored scene that draws itself in: strokes draw (pathLength, 1.1 s ease-in-out, 50 ms apart),
+   marks and mask cells fill after them, dashed guides and letters land last, and a point travels the round trip
+   where the figure has one. On the pinned stage (desktop) the plate draws the old figure out and the new one in each
+   time a chapter crosses the line; stacked (phone, or the break-out chapter) a figure draws in once at 60% visible.
+   The server HTML is the finished drawing; JS off, reduced motion and a figure already on screen show it as is. */
+function useDraw(staged, on) {
   const ref = useRef(null);
+  const prep = useRef(null);
   const [armed, setArmed] = useState(false);
+  const [seen, setSeen] = useState(false);
   useIso(() => {
     const el = ref.current;
-    if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    let s = 0, f = 0;
-    el.querySelectorAll('svg .sk, svg .sa, svg .sg').forEach((n) => {
-      if (n.closest('marker') || n.classList.contains('dash') || n.hasAttribute('stroke-dasharray')) return;
-      n.setAttribute('pathLength', '1');
-      n.classList.add('jn-dw');
-      n.style.transitionDelay = Math.min(s++, 12) * 50 + 'ms';
-    });
-    el.querySelectorAll('svg .fk, svg .fa, svg .fg, svg .fl, svg .fz, svg .fo').forEach((n) => { n.style.transitionDelay = 320 + Math.min(f++, 40) * 20 + 'ms'; });
+    if (!el) return;
+    if (prep.current === null) {
+      prep.current = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prep.current) {
+        let s = 0, f = 0;
+        el.querySelectorAll('svg .sk, svg .sa, svg .sg').forEach((n) => {
+          if (n.closest('marker') || n.classList.contains('dash') || n.hasAttribute('stroke-dasharray')) return;
+          n.setAttribute('pathLength', '1');
+          n.classList.add('jn-dw');
+          n.style.transitionDelay = Math.min(s++, 12) * 50 + 'ms';
+        });
+        el.querySelectorAll('svg .fk, svg .fa, svg .fg, svg .fl, svg .fz, svg .fo').forEach((n) => { n.style.transitionDelay = 320 + Math.min(f++, 40) * 20 + 'ms'; });
+      }
+    }
+    if (!prep.current) return;
+    if (staged) { setArmed(true); return; }
+    if (seen || el.getBoundingClientRect().top < innerHeight) { setSeen(true); return; }
     setArmed(true);
-  }, []);
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { io.disconnect(); setSeen(true); } }, { threshold: 0.6 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [staged]);
+  const drawn = staged ? on : seen;
   useEffect(() => {
-    if (!armed || !on) return;
+    if (!armed || !drawn) return;
     const t = setTimeout(() => ref.current?.querySelectorAll('animateMotion').forEach((a) => a.beginElement && a.beginElement()), 900);
     return () => clearTimeout(t);
-  }, [armed, on]);
-  return [ref, armed ? ' armed' + (on ? ' drawn' : '') : ''];
+  }, [armed, drawn]);
+  return [ref, armed ? ' armed' + (drawn ? ' drawn' : '') : ''];
 }
 
-function Fig({ i, keys, on }) {
-  const [ref, st] = useDraw(on);
+function Fig({ i, keys, plate, staged, on }) {
+  const [ref, st] = useDraw(plate && staged, on);
   const [hot, setHot] = useState(null);
   const over = (e) => { const g = e.target.closest?.('[data-k]'); setHot(g && g.dataset.k ? g.dataset.k : null); };
   return (
-    <figure ref={ref} data-fig={i} data-hot={hot || undefined} className={'jn-mfig' + st}>
+    <figure
+      ref={ref} data-fig={i} data-hot={hot || undefined}
+      className={'jn-mfig' + (plate ? ' jn-pfig' + run(i) + (on ? ' on' : '') : '') + st}
+      style={plate ? { '--o': 2 * i + (i % 2 ? 0 : 1) } : undefined}
+      aria-hidden={plate && staged && !on ? 'true' : undefined}
+    >
+      <i className="jn-scrub-bar" aria-hidden="true" />
       <div className="jn-fsvg" onPointerOver={over} onPointerLeave={() => setHot(null)}>{FIGS[i]}</div>
       <figcaption>
         <span className="x-mono">Figure {i + 2}</span>

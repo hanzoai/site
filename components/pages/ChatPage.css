@@ -23,8 +23,10 @@
 .cht-lede { margin: 26px 0 0; max-width: 30ch; color: #404040; }
 .cht-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 26px; margin-top: 32px; }
 .cht-win-wrap { position: relative; min-width: 0; animation: cht-win-in 1.1s var(--emph) .05s 1 both; }
-/* the headline's glitch-in lives in chat/chat-motion.css; the lede, the asks and the window rise and slide from the first paint */
+/* the line-mask cut-in, 700 ms, 60 ms apart (MASTER part 3), running from the first paint */
+.cht-cut { animation: cht-cut .7s var(--emph) 1 both; animation-delay: calc(.05s + var(--i) * 60ms); }
 .cht-up { animation: cht-in .6s var(--emph) 1 both; animation-delay: var(--d, 0s); }
+@keyframes cht-cut { from { transform: translateY(105%); } }
 @keyframes cht-win-in { from { transform: translateX(48px); } } /* painted from the first frame: it only slides */
 @keyframes cht-win-up { from { transform: translateY(24px); } }
 
