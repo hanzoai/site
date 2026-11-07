@@ -30,8 +30,15 @@ import '../../v2/v2scale.css';
 import './Iam.css';
 
 /* the sign-in's stations, in Hanzo's words (hanzo.id; "Authorization code with PKCE, always S256"; "signed RS256 … the same JWKS") */
-const STATIONS = ['hanzo.id', 'Authorization code', 'PKCE · S256', 'RS256', 'JWKS'];
+const STATIONS = ['hanzo.id', 'Authorization code', ['PKCE', 'S256'], 'RS256', 'JWKS'];
 const ALL = STATIONS.length;
+/* the line's caption, in Hanzo's own sentences, changing as the line reaches each part (index = stations lit) */
+const SAY = [
+  'Sign-in arrives from Google, from GitHub or from any OIDC issuer you name, and SCIM 2.0 keeps a directory in step.',
+  'Authorization code with PKCE, always S256.',
+  'Tokens are signed RS256, with ML-DSA-65 available per certificate and published in the same JWKS.',
+];
+const sayAt = (s) => (s <= 1 ? 0 : s <= 3 ? 1 : 2);
 /* s: stations lit. The server paints the finished line (s = 5); then it starts over and runs. */
 const BEAT = [1700, 520, 640, 640, 640, 640];
 
@@ -64,19 +71,14 @@ function SignIn() {
       <div className="ia-sign" ref={(el) => { ref.current = el; card.current = el; }} aria-hidden="true" onPointerMove={tilt} onPointerLeave={flat} data-s={s}>
         <ol className="ia-path">
           {STATIONS.map((t, i) => (
-            <li key={t} className={'ia-st' + (i < s ? ' on' : '') + (i === s - 1 ? ' now' : '')}>
+            <li key={i} className={'ia-st' + (i < s ? ' on' : '') + (i === s - 1 ? ' now' : '')}>
               {i > 0 && <i className="ia-seg"><i /></i>}
-              <span className="ia-dot" />
-              <span className="ia-lab">{t}</span>
+              <span className="ia-dot">{i === ALL - 1 && <svg viewBox="0 0 24 24" width="14" height="14"><path d="M6 12.5l4 4 8-9" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg>}</span>
+              <span className="ia-lab">{Array.isArray(t) ? t.map((w) => <span key={w} className="ia-w">{w}</span>) : t}</span>
             </li>
           ))}
         </ol>
-        <div className="ia-jwt">
-          <span className={'ia-part h' + (s >= 2 ? ' on' : '')}><i /></span>
-          <span className={'ia-part p' + (s >= 3 ? ' on' : '')}><i /></span>
-          <span className={'ia-part g' + (s >= 4 ? ' on' : '')}><i /></span>
-          <span className={'ia-ok' + (s >= 5 ? ' on' : '')}><svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 12.5l4 4 8-9" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
-        </div>
+        <p className="ia-say"><span key={sayAt(s)}>{SAY[sayAt(s)]}</span></p>
       </div>
     </div>
   );

@@ -253,16 +253,33 @@ function Mini({ kind, setting, w }) {
   if (kind === 'after') {
     return <div className="xhp-mini" aria-hidden="true"><After key={here ? 'play' : 'rest'} calm={calm || !here} /></div>;
   }
+  // 01: the setting itself, turning on once as the section is read; 04: the switch off, the settings it leaves alone lit
+  const what = kind === 'what';
+  const sw = what ? (here ? w.on : true) : here ? w.on : false;
   return (
-    <div className="xhp-mini xhp-mini-pane" aria-hidden="true">
+    <div className={'xhp-mini xhp-mini-pane' + (what ? ' xhp-mini-what' : '')} aria-hidden="true">
       <p className="xhp-pane-h">{w.targets[2] ? w.targets[2].t : ''}</p>
-      <div className="xhp-row"><span className="xhp-row-t">{setting.name}</span><span className="xhp-sw"><i /></span></div>
-      {[0, 1, 2, 3].map((k) => <span key={k} className="xhp-skel" data-on={(here && w.lit === k) || undefined}><i /><i /></span>)}
+      <div className="xhp-row" data-on={what || undefined}><span className="xhp-row-t">{setting.name}</span><span className="xhp-sw" data-on={sw || undefined}><i /></span></div>
+      {(what ? [0, 1] : [0, 1, 2, 3]).map((k) => <span key={k} className="xhp-skel" data-on={(!what && here && w.lit === k) || undefined}><i /><i /></span>)}
     </div>
   );
 }
 
-function Section({ s, i, setting, w, still, after, end }) {
+/* 05 on a phone: the documents the last section points to, drawn as three pages that lay themselves down once */
+function Pages() {
+  return (
+    <svg className="xhp-pages" viewBox="0 0 240 96" aria-hidden="true">
+      {[0, 1, 2].map((k) => (
+        <g key={k} className="xhp-page" style={{ '--i': k }} transform={`translate(${16 + k * 76} 10)`}>
+          <rect width="56" height="76" rx="8" fill="#fff" stroke="#0a0a0a" strokeWidth="1.25" pathLength="1" />
+          {[18, 30, 42, 54].map((y, j) => <path key={y} d={`M12 ${y}H${j === 3 ? 30 : 44}`} stroke="#a3a3a3" strokeWidth="1.25" strokeLinecap="round" pathLength="1" />)}
+        </g>
+      ))}
+    </svg>
+  );
+}
+
+function Section({ s, i, setting, w, still, after, what, end }) {
   const flows = setting ? setting.flows : [];
   const out = [], cards = [];
   for (let k = 0; k < s.blocks.length; k++) {
@@ -289,7 +306,7 @@ function Section({ s, i, setting, w, still, after, end }) {
       out.push(
         <ul key={k} className={'xhp-ul' + (b.items.some((it) => it.lead) ? ' leads' : '')}>
           {b.items.map((it, j) => (
-            <li key={j} style={{ '--i': j }} data-on={(lights && w.mode === 'still' && w.lit === j) || undefined}
+            <li key={j} style={{ '--i': j }} data-row={lights ? j : undefined} data-on={(lights && w.mode === 'still' && w.lit === j) || undefined}
               onPointerEnter={lights ? (e) => e.pointerType === 'mouse' && w.light(j) : undefined} onPointerLeave={lights ? () => w.light(null) : undefined}>
               {it.lead && <strong className="xhp-lead">{it.lead}</strong>}<span><Inline inl={it.inl} /></span>
             </li>
@@ -301,7 +318,8 @@ function Section({ s, i, setting, w, still, after, end }) {
   return (
     <section id={s.id} className={end ? 'xhp-sec xhp-end' : 'xhp-sec'} aria-labelledby={s.id + '-h'} tabIndex={-1}>
       <h2 id={s.id + '-h'} className="xhp-h2"><span className="xhp-sec-n x-mono" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>{s.title}</h2>
-      {w && (after || still) && <Mini kind={after ? 'after' : 'still'} setting={setting} w={w} />}
+      {w && (after || still || what) && <Mini kind={after ? 'after' : still ? 'still' : 'what'} setting={setting} w={w} />}
+      {end && <Pages />}
       {out.map((x) => (x === 'cards' ? <div key="cards" className="xhp-flows">{cards}</div> : x))}
       {end && (
         <A to="/support" className="xhp-next">
@@ -316,27 +334,38 @@ function Section({ s, i, setting, w, still, after, end }) {
 /* which part of the document is being read: 03 and 04 get their own panel state */
 function useModes(doc) {
   const [cur, setCur] = useState(null);
+  const [row, setRow] = useState(null);
   const off = doc.setting ? doc.sections.findIndex((s) => s.title === doc.setting.offTitle) : -1;
   const next = off >= 0 ? doc.sections[off + 1] : null;
   const stillId = next && next.blocks.some((b) => b.k === 'ul' && b.items.some((it) => it.lead)) ? next.id : null;
+  // 01 gets its own scene (the setting itself) when the walk belongs to a later section
+  const whatId = off > 1 ? doc.sections[0].id : null;
   useEffect(() => {
     const els = doc.sections.map((s) => document.getElementById(s.id)).filter(Boolean);
     const on = new Set();
     const io = new IntersectionObserver((es) => {
       es.forEach((e) => (e.isIntersecting ? on.add(e.target.id) : on.delete(e.target.id)));
       const ids = doc.sections.map((s) => s.id).filter((id) => on.has(id));
-      setCur(ids.length ? ids[ids.length - 1] : null);
+      // between two sections the panel keeps the one just read; it returns to the walk only above the first section
+      const first = els[0] && els[0].getBoundingClientRect().top > innerHeight * 0.55;
+      setCur((prev) => (ids.length ? ids[ids.length - 1] : first ? null : prev));
     }, { rootMargin: '-40% 0px -45% 0px' });
     // each list's hairlines draw in once, as its section arrives
     const seen = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.setAttribute('data-seen', ''); seen.unobserve(e.target); } }), { threshold: 0.25 });
     els.forEach((el) => { io.observe(el); seen.observe(el); });
-    return () => { io.disconnect(); seen.disconnect(); };
-  }, [doc]);
-  const mode = off >= 0 && cur === doc.sections[off].id ? 'after' : stillId && cur === stillId ? 'still' : 'walk';
-  return { cur, mode, stillId, offId: off >= 0 ? doc.sections[off].id : null };
+    // 04: the row being read is the setting the panel lights
+    const rows = stillId ? [...document.querySelectorAll('#' + stillId + ' [data-row]')] : [];
+    const ro = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setRow(Number(e.target.getAttribute('data-row'))); }), { rootMargin: '-38% 0px -50% 0px' });
+    rows.forEach((r) => ro.observe(r));
+    return () => { io.disconnect(); seen.disconnect(); ro.disconnect(); };
+  }, [doc, stillId]);
+  const ci = doc.sections.findIndex((s) => s.id === cur);
+  const si = stillId ? doc.sections.findIndex((s) => s.id === stillId) : -1;
+  const mode = off >= 0 && ci === off ? 'after' : si >= 0 && ci >= si ? 'still' : whatId && cur === whatId ? 'what' : 'walk';
+  return { cur, mode, row, stillId, whatId, offId: off >= 0 ? doc.sections[off].id : null };
 }
 
-function Layout({ doc, w, aside, cur, stillId, offId }) {
+function Layout({ doc, w, aside, cur, stillId, offId, whatId }) {
   const body = doc.sections.length > 1 ? doc.sections.slice(0, -1) : doc.sections;
   const last = doc.sections.length > 1 ? doc.sections[doc.sections.length - 1] : null;
   return (
@@ -352,7 +381,8 @@ function Layout({ doc, w, aside, cur, stillId, offId }) {
             </ol>
           </nav>
           <h1 className="xhp-h1" data-morph-target>
-            <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 0.7, ease: EASE, delay: 0.08 }}>{doc.title}</motion.span></span>
+            {/* the cut-in is CSS, so it runs from the first paint; it starts with the line already mostly in its mask, never an empty slot */}
+            <span className="x-line"><span className="x-line-in xhp-h1-in">{doc.title}</span></span>
           </h1>
           <p className="xhp-lede">{doc.lede}</p>
           <p className="xhp-kick x-mono">{doc.kicker}</p>
@@ -360,7 +390,7 @@ function Layout({ doc, w, aside, cur, stillId, offId }) {
             <h2 className="xhp-toc-h x-mono">{doc.contents.label}</h2>
             <ol>
               {doc.contents.items.map((c, i) => (
-                <li key={c.id}><a href={'#' + c.id}><span className="x-mono">{String(i + 1).padStart(2, '0')}</span><span>{c.text}</span></a></li>
+                <li key={c.id}><a href={'#' + c.id}><span className="x-mono">{String(i + 1).padStart(2, '0')}</span><span>{c.text}</span><svg className="xhp-toc-go" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 3v10M4 9l4 4 4-4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg></a></li>
               ))}
             </ol>
           </nav>
@@ -371,7 +401,7 @@ function Layout({ doc, w, aside, cur, stillId, offId }) {
         </aside>
 
         <article className="xhp-doc">
-          {body.map((s, i) => <Section key={s.id} s={s} i={i} setting={doc.setting} w={w} still={s.id === stillId} after={s.id === offId} />)}
+          {body.map((s, i) => <Section key={s.id} s={s} i={i} setting={doc.setting} w={w} still={s.id === stillId} after={s.id === offId} what={s.id === whatId} />)}
         </article>
       </div>
       {last && (
@@ -386,9 +416,9 @@ function Layout({ doc, w, aside, cur, stillId, offId }) {
 function Walked({ doc }) {
   const aside = useRef(null);
   const live = useInView(aside, { amount: 0.35 });
-  const { cur, mode, stillId, offId } = useModes(doc);
-  const w = useWalk(doc.setting, live, mode);
-  return <Layout doc={doc} w={w} aside={aside} cur={cur} stillId={stillId} offId={offId} />;
+  const { cur, mode, row, stillId, offId, whatId } = useModes(doc);
+  const w = useWalk(doc.setting, live, mode, row);
+  return <Layout doc={doc} w={w} aside={aside} cur={cur} stillId={stillId} offId={offId} whatId={whatId} />;
 }
 
 function Plain({ doc }) {
