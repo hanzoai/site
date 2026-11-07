@@ -15,7 +15,7 @@ export default function A2Sheet({ label, title, children, className = '', btnCla
     if (!open) return;
     const l = window.__lenis;
     l?.stop?.();
-    const t = setTimeout(() => x.current?.focus(), 60);
+    const t = setTimeout(() => x.current?.focus({ preventScroll: true }), 60);
     const key = (e) => { if (e.key === 'Escape') setOpen(false); };
     addEventListener('keydown', key);
     return () => { clearTimeout(t); removeEventListener('keydown', key); l?.start?.(); btn.current?.focus({ preventScroll: true }); };
