@@ -8,7 +8,7 @@
    Motion budget: signature = the dealing stack; supporting = Stage (Settle), layout re-flow (filter), open-into-page
    (Morph navigation). Utility archetype: calm, precise, one delight. Colour: none (0 UI hues). The stack has a pause
    button. Every word and link is Hanzo's. */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { EASE } from '../ui';
 import { A } from '../kit';
@@ -23,11 +23,14 @@ import '../v2/Scale.css';
 import './LegalIndex.css';
 
 const LADDER = [['service-only', 'by default'], ['private improvement'], ['research and training'], ['public commons']];
+/* Hanzo's own line for a document, as plain text (its note, without the leading dash) */
+const flat = (n) => (typeof n === 'string' ? n : n && n.c ? n.c.map(flat).join('') : '');
+const lineOf = (it) => it.note.map(flat).join('').replace(/^\s*—\s*/, '').trim();
 
 /* The hero object: the documents as a stack of paper; the top sheet goes to the back on its own. */
 function Stack({ docs }) {
   const [ref, live] = useLive(0.3);
-  const [paused, pauseBtn] = usePause({ right: 8, top: 8 });
+  const [paused, pauseBtn] = usePause({ right: 0, top: -4 });
   const [top, setTop] = useState(0);
   useEvery(2400, live && !paused, () => setTop((t) => (t + 1) % docs.length));
   const order = docs.map((_, i) => (i - top + docs.length) % docs.length);
@@ -35,15 +38,16 @@ function Stack({ docs }) {
     <div className="lgi-stack" ref={ref}>
       {pauseBtn}
       {docs.map((it, i) => {
-        const k = order[i];
-        if (k > 4) return null;
+        // every sheet stays on the desk: the top one slides out and settles at the back of the pile
+        const k = Math.min(order[i], 4);
+        const back = order[i] >= 4;
         return (
           <motion.div key={it.href} className="lgi-sheet" aria-hidden="true" initial={false}
-            animate={{ x: k * 26, y: k * -22, rotate: k * 2.2 - 2, scale: 1 - k * 0.04, opacity: k === 4 ? 0 : 1, zIndex: 10 - k }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+            animate={{ x: k * 24, y: k * -20, rotate: k * 2 - 2, scale: 1 - k * 0.04, opacity: back ? 0 : 1, zIndex: 20 - order[i] }}
+            transition={order[i] === docs.length - 1 ? { duration: 0.7, ease: EASE } : { type: 'spring', stiffness: 300, damping: 30 }}>
             <span className="lgi-sheet-u x-mono">hanzo.ai{it.href}</span>
             <b>{it.title}</b>
-            <span className="lgi-sheet-l"><i /><i /><i /><i /><i /></span>
+            <span className="lgi-sheet-p">{lineOf(it)}</span>
             <span className="lgi-sheet-s x-mono">draft · pending counsel</span>
           </motion.div>
         );
@@ -55,10 +59,11 @@ function Stack({ docs }) {
 function Card({ it, group }) {
   const note = it.note.map((n, k) => (k === 0 && typeof n === 'string' ? n.replace(/^\s*—\s*/, '') : n));
   return (
-    <A to={it.href} className="lgi-card" data-cursor="Open">
+    <A to={it.href} className="lgi-card" data-cursor="Open" data-cta={'legal.doc' + it.href.replace(/\//g, '.')}>
       <span className="lgi-card-k x-mono">{group}</span>
       <span className="lgi-card-t" data-morph>{it.title}</span>
       <span className="lgi-card-d"><span className="lgi-dash" aria-hidden="true">—</span> <Nodes nodes={note} /></span>
+      <span className="lgi-card-u x-mono" aria-hidden="true">hanzo.ai{it.href}</span>
       <span className="lgi-card-go" aria-hidden="true">
         <svg viewBox="0 0 16 16" width="16" height="16"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
       </span>
@@ -69,6 +74,12 @@ function Card({ it, group }) {
 function Catalogue({ groups }) {
   const [on, setOn] = useState('all');
   const all = groups.flatMap((g) => g.items.map((it) => ({ ...it, g })));
+  // #agreements, #policies … pick their chip
+  useEffect(() => {
+    const pick = () => { const h = location.hash.slice(1); if (groups.some((g) => g.id === h)) setOn(h); };
+    pick(); addEventListener('hashchange', pick);
+    return () => removeEventListener('hashchange', pick);
+  }, [groups]);
   return (
     <section className="w2-sec lgi-cat" aria-label="Documents">
       <div className="w2-wrap">
@@ -82,8 +93,8 @@ function Catalogue({ groups }) {
         </div>
         <motion.ul className="lgi-cards" layout>
           <AnimatePresence initial={false}>
-            {all.filter((it) => on === 'all' || it.g.id === on).map((it) => (
-              <motion.li key={it.href} layout initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.15 } }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+            {all.filter((it) => on === 'all' || it.g.id === on).map((it, i) => (
+              <motion.li key={it.href} layout initial={{ y: 24 }} whileInView={{ y: 0 }} viewport={{ once: true, amount: 0.4 }} exit={{ opacity: 0, transition: { duration: 0.15 } }} transition={{ type: 'spring', stiffness: 300, damping: 30, delay: (i % 4) * 0.04 }}>
                 <Card it={it} group={it.g.title} />
               </motion.li>
             ))}
@@ -100,9 +111,9 @@ function Ladder() {
   return (
     <ol className="lgi-ladder" aria-hidden="true">
       {LADDER.map(([t, s], i) => (
-        <li key={t} style={{ '--k': i }}>
+        <motion.li key={t} style={{ '--k': i, originY: 1 }} initial={{ scaleY: 0.3 }} whileInView={{ scaleY: 1 }} viewport={{ once: true, amount: 0.6 }} transition={{ duration: 0.8, ease: EASE, delay: i * 0.08 }}>
           <span className="lgi-step-n x-mono">0{i + 1}</span><b>{t}</b>{s && <em>{s}</em>}
-        </li>
+        </motion.li>
       ))}
     </ol>
   );
@@ -124,7 +135,7 @@ export default function LegalIndex({ d }) {
           <div className="lgi-hero-copy">
             <LineMask as="h1" id="lgi-h1" now className="w2-display lgi-h1" lines={d.title.split(' & ').map((t, i, a) => (i < a.length - 1 ? t + ' &' : t))} />
             <p className="lgi-kick x-mono">{d.kicker}</p>
-            <motion.p className="w2-lede lgi-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>{d.lede}</motion.p>
+            <motion.p className="w2-lede lgi-lede" initial={{ y: 14 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>{d.lede}</motion.p>
           </div>
           <Settle from={1.08} lift={50}><Stack docs={docs} /></Settle>
         </div>
@@ -143,7 +154,7 @@ export default function LegalIndex({ d }) {
         <section className="w2-sec lgi-how">
           <div className="w2-wrap lgi-how-g">
             <div>
-              <h2 className="w2-headline">{how.title}<span id={how.id} className="lgi-anchor" /></h2>
+              <LineMask as="h2" className="w2-headline" lines={[how.title]} /><span id={how.id} className="lgi-anchor" />
               <div className="lgi-prose lgi-how-p"><Nodes nodes={how.nodes} /></div>
             </div>
             <Ladder />
@@ -160,7 +171,7 @@ export default function LegalIndex({ d }) {
       {contact && (
         <section className="w2-sec lgi-contact">
           <div className="w2-wrap lgi-contact-g">
-            <h2 className="w2-display s">{contact.title}<span id={contact.id} className="lgi-anchor" /></h2>
+            <div><LineMask as="h2" className="w2-display s" lines={[contact.title]} /><span id={contact.id} className="lgi-anchor" /></div>
             <ul className="lgi-mail">
               {mail.c.map((li, i) => (
                 <li key={i}><span>{li.c[0]}</span><Nodes nodes={li.c.slice(1)} /></li>

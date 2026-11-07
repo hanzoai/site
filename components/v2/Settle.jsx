@@ -26,9 +26,8 @@ export default function Settle({ children, from = 1.14, lift = 80, span, bleed =
   const f = Math.max(1, Math.min(phone ? 1 + (from - 1) / 2 : from, cap));
   const scale = useTransform(scrollY, [0, end], [f, 1], { clamp: true });
   const y = useTransform(scrollY, [0, end], [lift, 0], { clamp: true });
-  if (calm) return <div ref={ref} className={'w2-settle ' + className}>{children}</div>;
   return (
-    <motion.div ref={ref} className={'w2-settle ' + className} style={{ scale, y, transformOrigin: '50% 0%' }}>
+    <motion.div ref={ref} className={'w2-settle ' + className} style={calm ? { scale: 1, y: 0 } : { scale, y, transformOrigin: '50% 0%' }}>
       {children}
     </motion.div>
   );
