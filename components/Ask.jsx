@@ -26,11 +26,15 @@ const OVERLAY = '.x-cookie:not([hidden]), .x-sheet, .x-pal, .x-pop, .x-nav-panel
 const shown = (el) => el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden' && +getComputedStyle(el).opacity > 0.05 && !el.closest('[hidden], [inert], [aria-hidden="true"]');
 const overlayOpen = () => [...document.querySelectorAll(OVERLAY)].some(shown);
 // a page button counts as "a solid ask on screen" only if you can see it as one: filled, opaque, not mid-entrance
+const seenNow = (el) => {
+  if (!el || !el.isConnected || !shown(el)) return false;
+  for (let x = el; x && x !== document.body; x = x.parentElement) if (+getComputedStyle(x).opacity < 0.6) return false;
+  return true;
+};
 const filled = (box) => {
   if (box.matches('.x-band')) return shown(box);
   const el = box.matches('a, button') ? box : box.querySelector('a, button'); // the control, not a card around it
-  if (!el || !el.isConnected || !shown(el)) return false;
-  for (let x = el; x && x !== document.body; x = x.parentElement) if (+getComputedStyle(x).opacity < 0.6) return false;
+  if (!seenNow(el)) return false;
   const m = getComputedStyle(el).backgroundColor.match(/[\d.]+/g);
   return !!m && !(m[3] !== undefined && +m[3] < 0.5);
 };
@@ -74,15 +78,17 @@ export default function Ask() {
       let past = false, typing = false;
       const blocking = new Set();
       let solids = new Set();
+      const twins = new WeakSet();
       const update = () => {
         if (off) return;
         const seen = [...solids].some(filled);
+        const twin = [...solids].some((el) => twins.has(el) && seenNow(el)); // the page's own ask, solid or not
         // a hero ask that stays pinned on screen but has faded out also counts as gone, once you are past the first screen
         if (!past && hero === ownBox && scrollY > innerHeight * 0.8 && !filled(ownBox)) past = true;
         if (past && hero === ownBox && scrollY < innerHeight * 0.5 && filled(ownBox)) past = false;
         // the footer, the closing band and [data-ask-hide] always make room; a page's own ask only once you can see it
         const blocked = [...blocking].some((el) => (el.closest('[data-thumb]') || el.matches('[data-thumb]') ? filled(el) : true));
-        const show = past && !blocked && !seen && !typing && !overlayOpen();
+        const show = past && !blocked && !seen && !twin && !typing && !overlayOpen();
         setOn(show);
         setQuiet(seen);
       };
@@ -107,8 +113,16 @@ export default function Ask() {
       let settle = 0;
       const onScroll = () => { clearTimeout(settle); settle = setTimeout(update, 180); };
       addEventListener('scroll', onScroll, { passive: true });
-      const watchSolids = () => document.querySelectorAll(SOLID).forEach((el) => sio.observe(boxOf(el)));
+      // the page's own ask is also any link or button with the bar's words (a close's "Launch a bot", a card's CTA):
+      // while one is on screen the bar steps aside, so it never lands on top of it (phones especially)
+      const same = (el) => el.textContent.replace(/[→↗\s]+/g, ' ').trim().toLowerCase() === label.replace(/[→↗\s]+/g, ' ').trim().toLowerCase();
+      const watchSolids = () => {
+        document.querySelectorAll(SOLID).forEach((el) => sio.observe(boxOf(el)));
+        main.querySelectorAll('a, button').forEach((el) => { if (same(el)) { twins.add(el); sio.observe(el); } });
+      };
       watchSolids();
+      // heroes fade their buttons in over the first seconds: look again a few times while the page settles
+      const settleTimers = [400, 1300, 2600, 4200].map((ms) => setTimeout(update, ms));
 
       // the room under the bar: a dark one turns the bar dark
       const rooms = new Set();
@@ -130,7 +144,7 @@ export default function Ask() {
       // menus, sheets, search and the cookie note come and go without telling anyone; late sections bring new asks
       const watchMore = () => { document.querySelectorAll('.x-band, [data-ask-hide], main [data-thumb]').forEach((el) => io.observe(boxOf(el))); watchSolids(); update(); };
       const offDom = onDomChange(watchMore);
-      cleanups.push(() => { clearTimeout(again); clearTimeout(settle); removeEventListener('scroll', onScroll); io.disconnect(); sio.disconnect(); roomIo?.disconnect(); offDom(); removeEventListener('resize', watchRooms); removeEventListener('focusin', fin); removeEventListener('focusout', fout); });
+      cleanups.push(() => { settleTimers.forEach(clearTimeout); clearTimeout(again); clearTimeout(settle); removeEventListener('scroll', onScroll); io.disconnect(); sio.disconnect(); roomIo?.disconnect(); offDom(); removeEventListener('resize', watchRooms); removeEventListener('focusin', fin); removeEventListener('focusout', fout); });
     };
     const r = requestAnimationFrame(() => setTimeout(start, 120));
     return () => { off = true; cancelAnimationFrame(r); cleanups.forEach((f) => f()); };
