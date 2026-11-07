@@ -2,7 +2,7 @@
 
 Page file: `components/pages/cloud/Machines.jsx` · gallery: `docs/gallery/machines/` · metric id: `signup_start (cta_click machines.hero)`
 
-Open copy questions for James: (1) the hero quote's 2x and 4x rows ($6.96, $55.68, $5,081, 160 GB; $13.92, $111.36, $10,162, 320 GB) are not in `content/live/machines.json`, which captured only the 1x quote ($3.48, $27.84, $2,540, 80 GB); they are the 1x rate times the cards with one rounding rule (cents on the hour and the day, whole dollars on the month, as Hanzo's $2,540). Keep, or show only the 1x quote? (2) The "Tech specs" caption above the spec sheet was not Hanzo's copy and was removed; restore it only if James wants a label there.
+Open copy questions for James: none. Decided by the conductor (7 Nov, DONE.md point 2, copy word-for-word): the derived 2x and 4x prices are dropped; only Hanzo's 1x quote ($3.48, $27.84, $2,540, 80 GB) is printed, and the live 2x / 4x size tabs light their cards with an em dash in the quote. The "Tech specs" label stays out.
 Shared changes requested (`docs/requests/machines.md`): cookie card size, the header strip near the page end, the PinChapters crossfade (fixed page-locally), `tokens.css` (page tokens declared locally until it lands).
 Forks this page deleted: the page's own hero shell (Frame `Hero`), hand-made buttons (`.v2-btn` became the kit `Cta`), a second ending (the agent prompt moved mid-page), the sticky phone visual over text (chapters now stack), every spring transition; round 2: the three-column spec wall, the shared `GetIt` contour close (the close is the page's own rack), the step console's six sets of boxes and its traffic-light dots, the invented console labels, the "Tech specs" label
 
@@ -49,7 +49,7 @@ Done here: Hero `<Cta thumb id="machines.hero">Try Hanzo</Cta>` with a 2px rise 
 - ~~Marquees pause, freeze, hide duplicates~~ n/a: no marquee
 - ~~Privacy link beside every submit~~ n/a: no form submits
 
-Done here: $3.48, $27.84, $2,540, 80 GB and every spec value are Hanzo's; the 2x and 4x quote rows are derived from the 1x rate and listed as a copy question above, now with one rounding rule ($111.36, not $111).
+Done here: $3.48, $27.84, $2,540, 80 GB and every spec value are Hanzo's; no derived price is printed: 2x and 4x show an em dash, since Hanzo's live quote covers 1x H100 only.
 
 ## 6. Content presentation (copy untouched)
 - [x] No text under 13px (14px on phones) except 11–12px mono capitals and the kit's own copy label

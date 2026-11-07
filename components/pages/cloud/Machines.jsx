@@ -31,13 +31,13 @@ import './Machines.css';
 
 const EASE = [0.16, 1, 0.3, 1];
 
-// [label, cards, VRAM, an hour, a working day, all month]. The 1x row is the live page's dry-run quote; the 2x and 4x
-// rows are what the live quote shows for those sizes (the 1x rate times the cards: cents kept on the hour and the
-// day, whole dollars on the month). Copy question on docs/coverage/machines.md.
+// [label, cards, VRAM, an hour, a working day, all month]. Copy is word-for-word Hanzo: the live page prints the quote
+// for 1x H100 only, so 2x and 4x (live size labels) light their cards and show an em dash, never a derived price.
+const NONE = '—';
 const SIZES = [
   ['1x H100', 1, '80 GB', '$3.48', '$27.84', '$2,540'],
-  ['2x H100', 2, '160 GB', '$6.96', '$55.68', '$5,081'],
-  ['4x H100', 4, '320 GB', '$13.92', '$111.36', '$10,162'],
+  ['2x H100', 2, NONE, NONE, NONE, NONE],
+  ['4x H100', 4, NONE, NONE, NONE, NONE],
 ];
 
 function Roll({ v, k }) {
@@ -102,8 +102,8 @@ function Rent() {
           </dl>
           <p className="mc-rate">On demand, at the price list’s rate as it stands.</p>
         </div>
-        {/* every size's quote stays in the page */}
-        <table className="x-sr"><tbody>{SIZES.map((s) => <tr key={s[0]}><td>{s[0]}</td><td>{s[2]}</td><td>{s[3]} / h</td><td>{s[4]}</td><td>{s[5]}</td></tr>)}</tbody></table>
+        {/* the live quote stays in the page */}
+        <table className="x-sr"><tbody>{SIZES.slice(0, 1).map((s) => <tr key={s[0]}><td>{s[0]}</td><td>{s[2]}</td><td>{s[3]} / h</td><td>{s[4]}</td><td>{s[5]}</td></tr>)}</tbody></table>
       </div>
     </div>
   );
