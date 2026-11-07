@@ -20,7 +20,7 @@
    Goal: see that the key never leaves the hardware and that the module is a line of configuration.
    CTA: View on GitHub (hero, the sticky ask bar and the close; one solid button per screen). */
 import { useRef, useState } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import { Cta } from '../../kit';
 import { useLive, useSteps } from './Frame';
 import { Lines } from '../../v2/LiftStage';
@@ -39,13 +39,14 @@ const LAYERS = ['handle', 'boundary', 'key', 'firmware', 'module'];
    then eases back and down a little as the hero scrolls away, so the module recedes as the chapters arrive. */
 function Settle({ children, className }) {
   const ref = useRef(null);
-  const calm = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.2', 'end start'] });
   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.94]);
   const y = useTransform(scrollYProgress, [0, 1], [0, 48]);
+  // one style object on the server and on every client paint (no reduced-motion branch here, so hydration matches);
+  // reduced motion holds it still in CSS (Hsm.css, .hs-settle).
   return (
     <div ref={ref} className={className}>
-      <motion.div style={calm ? undefined : { scale, y, transformOrigin: '50% 30%' }}>{children}</motion.div>
+      <motion.div className="hs-settle" style={{ scale, y, transformOrigin: '50% 30%' }}>{children}</motion.div>
     </div>
   );
 }
@@ -82,12 +83,22 @@ function Sign() {
   const [paused, togglePause] = usePause();
   const live = seen && !paused;
   const [m] = useSteps(MODULES.length, 3400, live);
+  // a fine pointer tilts the module up to 2.5° (CSS vars, no re-render); touch and reduced motion stay flat (Hsm.css)
+  const tilt = (e) => {
+    if (e.pointerType !== 'mouse') return;
+    const r = e.currentTarget.getBoundingClientRect();
+    e.currentTarget.style.setProperty('--tx', (((e.clientX - r.left) / r.width - 0.5) * 5).toFixed(2) + 'deg');
+    e.currentTarget.style.setProperty('--ty', (((e.clientY - r.top) / r.height - 0.5) * -5).toFixed(2) + 'deg');
+  };
+  const flat = (e) => { e.currentTarget.style.setProperty('--tx', '0deg'); e.currentTarget.style.setProperty('--ty', '0deg'); };
   return (
     <div className="lp-host">
     <LivePause paused={paused} onToggle={togglePause} className="hs-pause" />
-    <div className="hs-sign" ref={ref} aria-hidden="true">
+    <div className={'hs-sign' + (live ? ' live' : '')} ref={ref} aria-hidden="true" onPointerMove={tilt} onPointerLeave={flat}>
       <Module gap={22} base={MODULES[m]} />
-      <AnimatePresence mode="popLayout" initial={false}>
+      {/* the signing pulse: from "key id + bytes" through the module to "signature ✓", once per module, from the first second */}
+      <i key={'p' + m} className="hs-pulse" />
+      <AnimatePresence mode="popLayout">
         <motion.p key={'in' + m} className="hs-io in" initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 30, transition: { duration: 0.3 } }} transition={{ duration: 0.8, ease: EASE }}>key id + bytes</motion.p>
         <motion.p key={'out' + m} className="hs-io out" initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, transition: { duration: 0.2 } }} transition={{ duration: 0.8, ease: EASE, delay: 1.1 }}>signature ✓</motion.p>
       </AnimatePresence>
@@ -136,6 +147,17 @@ const PICK = [
   ['In-memory signer', 'An in-memory signer for development.', 'Threshold signing, where the hardware can do it.', 'Without post-quantum firmware it runs in the process.'],
 ];
 
+/* How each module draws in the picker (line art, the layer that answers lit): a cloud KMS keeps the key in the module and
+   hands Hanzo a handle (handle + key lit, opening wider for each provider); Zymbit holds the key as shares inside its
+   boundary; the in-memory signer has no boundary to speak of, so only the handle (your process) is lit. */
+const PICKED = [
+  { gap: 16, lit: [0, 2] },
+  { gap: 22, lit: [0, 2] },
+  { gap: 28, lit: [0, 2] },
+  { gap: 30, lit: [1, 2] },
+  { gap: 10, lit: [0] },
+];
+
 /* Beyond: pick your module. */
 function Pick() {
   const [at, setAt] = useState(0);
@@ -161,9 +183,11 @@ function Pick() {
             threshold signing and ML-DSA-65 as hairline rows beside it. Every tab changes the plate, the name and the words. */}
         <div className="hs-pick-p" id="hs-pick-p" role="tabpanel" aria-live="polite">
           <div className="hs-pick-main">
-            <div className="hs-pick-obj" aria-hidden="true">
-              <Module gap={18} lit={[4]} base={PICK[at][0]} shares={at === 3} small />
-            </div>
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div key={'o' + at} className="hs-pick-obj" aria-hidden="true" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, transition: { duration: 0.15 } }} transition={{ duration: 0.3, ease: EASE }}>
+                <Module gap={PICKED[at].gap} lit={PICKED[at].lit} base={PICK[at][0]} shares={at === 3} small />
+              </motion.div>
+            </AnimatePresence>
             <dl className="hs-pick-key">
               <AnimatePresence mode="wait" initial={false}>
                 <motion.p key={'n' + at} className="hs-pick-name" aria-hidden="true" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.15 } }} transition={{ duration: 0.3, ease: EASE }}>{PICK[at][0]}</motion.p>

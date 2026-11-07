@@ -167,7 +167,7 @@ html:not(.js) .xe-card { margin-bottom: 17px; }
 @media (max-width: 899px) { .xe-type { white-space: normal; width: auto; } .xe-outs-v { padding-left: 0; } }
 @media (max-width: 899px) {
   .xe-rows li, .xe-rows li.yours { grid-template-columns: minmax(0, 1fr); }
-  .xe-rows .xe-row-a, .xe-rows li.yours .xe-row-a, .xe-rows li .x-btn { grid-column: 1; grid-row: auto; justify-self: start; }
+  .xe-rows .xe-row-a, .xe-rows li.yours .xe-row-a, .xe-rows li .x-btn, .xe-rows li.yours .x-btn { grid-column: 1; grid-row: auto; justify-self: start; margin-top: 6px; }
   .xe .xe-builds-l { position: static; }
 }
 @media (prefers-reduced-motion: reduce) { .js .xe-type { clip-path: none; } }
