@@ -137,8 +137,10 @@ function ProCard({ open }) {
   // idle: the card walks up its own ladder until a hand takes over
   useEffect(() => {
     if (mine || calm || !seen) return;
-    const t = setInterval(() => setX((v) => PRO[(PRO.findIndex((p) => p.x === v) + 1) % PRO.length].x), 2800);
-    return () => clearInterval(t);
+    const step = () => setX((v) => PRO[(PRO.findIndex((p) => p.x === v) + 1) % PRO.length].x);
+    let t = 0;
+    const first = setTimeout(() => { step(); t = setInterval(step, 2800); }, 1000);
+    return () => { clearTimeout(first); clearInterval(t); };
   }, [mine, calm, seen]);
   const p = PRO[at];
   // each row holds all four variants in one cell, so the card never changes height as it walks
