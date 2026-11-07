@@ -12,12 +12,7 @@
 /* the kit Go adds a focusable wrapper around its link: give that stop the pill's own round ring; on black, a light ring */
 .xct .x-go:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 999px; box-shadow: 0 0 0 5px #fff; }
 .xct .x-band :focus-visible { outline: 2px solid #fafafa; outline-offset: 3px; border-radius: 999px; box-shadow: 0 0 0 5px #000; }
-/* Utility entries, 0.4s (MASTER 4.5), on CSS delays only: they follow the h1's cut-in (about .55s after first paint)
-   and never wait for the app bundle, so a failed script still shows the panel and its ask. */
-.xct-in { animation: xct-in .4s var(--e-em) .85s both; }
-.xct-in2 { animation: xct-up .4s var(--e-em) .7s both; }
-@keyframes xct-in { from { opacity: 0; } }
-@keyframes xct-up { from { opacity: 0; transform: translateY(24px); } }
+/* the five section entrances live in ./contact/enter.css (tile-flip on the panel, then focus-pull, tilt, spring, ticker) */
 
 /* resting type follows live hanzo.ai (JAMES rule 1): h1 52px, section headings 26px; the cable, the clock and the
    row you are on are the moments that grow */
@@ -30,7 +25,7 @@
 .xct-hero-g { align-items: start; row-gap: 44px; }
 .xct-hero-c { padding-top: 27px; }
 .xct-hero-c { grid-column: 1 / 7; display: flex; flex-direction: column; gap: 27px; }
-.xct-hero-o { grid-column: 7 / 13; }
+.xct-hero-o { grid-column: 7 / 13; position: relative; }
 
 .xct-obj { position: relative; display: flex; flex-direction: column; }
 .xct-jacks { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6.5px; }
@@ -65,6 +60,31 @@
 .xct-plug { position: absolute; left: 50%; top: -8px; width: 18px; height: 24px; margin-left: -9px; border-radius: 6px; background: var(--ink); box-shadow: 0 0 0 4px var(--card); transition: opacity var(--d-fast) var(--e-out); }
 /* the plug shows only once its wire is drawn */
 .xct-obj:not([data-wired]) .xct-plug { opacity: 0; }
+/* one question at a time: two screens share one cell and slide sideways (500ms ease-emphasis); the panel keeps the
+   height of the taller one, so nothing below moves */
+.xct-track { display: grid; overflow: hidden; margin: -6px; padding: 6px; }
+.xct-scr { grid-area: 1 / 1; min-width: 0; display: flex; flex-direction: column; gap: 20px; transition: transform var(--d-slower) var(--e-em), opacity var(--d-base) var(--e-out); }
+.xct-panel[data-step="0"] .xct-a { transform: translateX(calc(100% + 48px)); opacity: 0; }
+.xct-panel[data-step="1"] .xct-q { transform: translateX(calc(-100% - 48px)); opacity: 0; }
+.xct .xct-qp { margin: 0; max-width: 26ch; font-size: clamp(21px, 1.9vw, 26px); line-height: 1.3; color: var(--ink); }
+.xct-qf { display: flex; align-items: center; justify-content: space-between; margin-top: auto; color: var(--ink); }
+.xct-qf svg { animation: xct-nudge 1.6s var(--e-io) infinite; }
+@keyframes xct-nudge { 50% { transform: translateY(-5px); } }
+.xct-dots { display: inline-flex; gap: 6px; }
+.xct-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(0, 0, 0, .2); transition: width var(--d-base) var(--e-em), background var(--d-fast) var(--e-out); }
+.xct-dots i.on { width: 20px; border-radius: 3px; background: var(--ink); }
+/* the answer, summarised: back, the chosen line as a chip, progress */
+.xct-sum { display: flex; align-items: center; gap: 10px; }
+.xct-sum .xct-dots { margin-left: auto; }
+.xct-back { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .14); background: #fff; color: var(--ink); cursor: pointer; transition: border-color var(--d-fast) var(--e-out), transform var(--d-press) var(--e-out); }
+.xct-back:active { transform: scale(.97); }
+@media (hover: hover) { .xct-back:hover { border-color: rgba(0, 0, 0, .4); } .xct-back:hover svg { transform: translateX(-2px); } }
+.xct-back svg { transition: transform var(--d-base) var(--e-em); }
+.xct-chip { display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 14px 0 10px; border-radius: 999px; background: #fff; font: 606 15px/1 var(--sans); color: var(--ink); }
+.xct-chip > i { width: 8px; height: 8px; border-radius: 50%; background: var(--ink); }
+.xct-chip-w { display: block; overflow: hidden; padding: 2px 0; }
+.xct-chip-t { display: block; }
+.xct-routes { display: grid; }
 .xct-route { grid-area: 1 / 1; display: flex; flex-direction: column; gap: 17px; align-self: start; }
 .xct-cpw { position: relative; display: inline-flex; align-items: center; }
 /* "Copied" slides out beside the button (absolute, so nothing reflows) and stays readable on a phone tap */
@@ -82,12 +102,6 @@
 
 /* 2. the dark middle room: the address beside a big live San Francisco clock */
 .xct-visit { position: relative; background: #000; color: #fafafa; padding: clamp(72px, 11vw, 188px) 0; }
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .xct-visit { animation: xct-open linear both; animation-timeline: view(); animation-range: entry 0% cover 35%; }
-    @keyframes xct-open { from { clip-path: inset(0 clamp(16px, 4vw, 32px) round 28px); } to { clip-path: inset(0 0 round 0); } }
-  }
-}
 .xct-visit-g { align-items: center; row-gap: 44px; }
 .xct-visit-c { grid-column: 1 / 7; display: flex; flex-direction: column; gap: 27px; }
 /* one big thing in this room: the clock. "Visit" rests at the section-heading size (26px), the address sits under
@@ -112,10 +126,11 @@
 /* 3. the community: names at section-heading size over their mono addresses; only the row you are on grows, then
    settles back; the plate follows the row you reach or point at */
 .xct-com { padding: clamp(72px, 11vw, 188px) 0; }
-.xct-com-l { grid-column: 1 / 6; align-self: start; position: sticky; top: 104px; display: flex; flex-direction: column; gap: 44px; }
-.xct-plate-m { display: contents; }
+/* nothing pinned: the heading and plate sit beside the list and scroll with it */
+.xct-com-l { grid-column: 1 / 6; align-self: start; display: flex; flex-direction: column; gap: 44px; }
+.xct-plate-m { display: block; }
 /* the contour one step darker on the ramp (#525252, was 50% black) so the plate reads at rest */
-.xct-plate { position: relative; overflow: hidden; aspect-ratio: 5 / 4; border-radius: 24px; background: var(--quiet); color: var(--ink2); }
+.xct-plate { position: relative; overflow: hidden; aspect-ratio: 5 / 4; border-radius: 24px; background: var(--quiet); color: var(--ink2); transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform var(--d-base) var(--e-em); }
 .xct-plate-s { position: absolute; inset: 0; }
 /* the new contour covers the last one as it draws on; a hairline rides its leading edge */
 .xct-plate-s.now { background: var(--quiet); }
@@ -162,7 +177,8 @@
   .xct-net-u { font-size: 14px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .xct-in, .xct-in2 { animation: none; }
+  .xct-qf svg { animation: none; }
+  .xct-scr, .xct-plate { transition: none; }
   .xct-net-n, .xct-net-u, .xct-cpt { transition-duration: 0s; }
   .xct-h { transition: none; }
 }

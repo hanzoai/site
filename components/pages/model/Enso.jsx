@@ -9,12 +9,150 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE } from '../../ui';
 import { A, More, Cta, Img, Stat, DataTable, Band } from '../../kit';
-import { useLoop, fit } from './live';
+import { useLoop, fit, rng } from './live';
 import Launch, { Lines, ring, film } from '../../v2/Launch';
 import ModelCards from './ModelCards';
 import ModelFilm, { usePaused } from '../../v2/ModelFilm';
-import Chapters from '../../v2/x-cray/Chapters';
 import './Enso.css';
+
+/* ---------- entrances (page-local; James's motion map: fold-out, cursor-lens, ink-spread, word-shuffle, orbit-in) ----------
+   Each section arrives once, the first time it scrolls in. The final state is the server HTML (JS off reads it all);
+   start states live only under html.js in Enso.css; reduced motion jumps straight to data-in. */
+const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+const EMPH = 'cubic-bezier(.16, 1, .3, 1)';
+const pointer = { x: -1, y: -1 }; // the last pointer position on the page (client px), for the lens
+function useEnter(play, margin = '0px 0px -16% 0px') {
+  const ref = useRef(null);
+  const fn = useRef(play);
+  fn.current = play;
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (reduced()) { el.setAttribute('data-in', ''); return; }
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      io.disconnect();
+      el.setAttribute('data-in', '');
+      fn.current?.(el);
+    }, { rootMargin: margin });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [margin]);
+  return ref;
+}
+// cursor-lens: the section opens through a round lens centred on the pointer, magnified at first; the lens follows the
+// pointer while it opens (no pointer, as on a phone: it opens from the middle)
+function lens(el) {
+  const wrap = el.querySelector('.x-wrap');
+  const t0 = performance.now(), D = 1150;
+  let cx = null, cy = null;
+  const step = (now) => {
+    const r = el.getBoundingClientRect();
+    const has = pointer.x >= 0 && pointer.y >= r.top && pointer.y <= r.bottom;
+    const tx = has ? pointer.x - r.left : r.width / 2, ty = has ? pointer.y - r.top : Math.min(r.height / 2, innerHeight * 0.5 - r.top);
+    cx = cx === null ? tx : cx + (tx - cx) * 0.18; cy = cy === null ? ty : cy + (ty - cy) * 0.18;
+    const k = Math.min(1, (now - t0) / D), e = 1 - Math.pow(1 - k, 3);
+    const far = Math.hypot(Math.max(cx, r.width - cx), Math.max(cy, r.height - cy));
+    el.style.clipPath = `circle(${(60 + e * (far - 60)).toFixed(1)}px at ${cx.toFixed(1)}px ${cy.toFixed(1)}px)`;
+    if (wrap) { wrap.style.transformOrigin = `${cx.toFixed(1)}px ${cy.toFixed(1)}px`; wrap.style.transform = `scale(${(1.14 - 0.14 * e).toFixed(4)})`; }
+    if (k < 1) requestAnimationFrame(step);
+    else { el.style.clipPath = ''; if (wrap) { wrap.style.transform = ''; wrap.style.transformOrigin = ''; } el.querySelector('.eo-board')?.dispatchEvent(new Event('eo-measure')); }
+  };
+  requestAnimationFrame(step);
+}
+// ink-spread: an organic blot (one jagged polygon, same points every frame) spreads from a point until it covers all
+function ink(el) {
+  const n = 28, R = rng(7);
+  const jag = Array.from({ length: n }, () => 0.72 + R() * 0.5);
+  const blot = (s) => `polygon(${jag.map((j, i) => { const a = (i / n) * Math.PI * 2; return `calc(32% + ${(Math.cos(a) * j * s).toFixed(1)}vmax) calc(38% + ${(Math.sin(a) * j * s).toFixed(1)}vmax)`; }).join(',')})`;
+  el.animate([{ clipPath: blot(0.5) }, { clipPath: blot(22), offset: 0.55 }, { clipPath: blot(190) }], { duration: 1500, easing: 'cubic-bezier(.45, 0, .2, 1)' });
+}
+// word-shuffle: each word starts in another word's place and swaps back into its own
+function shuffle(el) {
+  const ws = [...el.querySelectorAll('.eo-w')];
+  if (ws.length < 2) return;
+  const at = ws.map((w) => [w.offsetLeft, w.offsetTop]);
+  const order = ws.map((_, i) => (i * 3 + 2) % ws.length); // a fixed derangement for 6 words
+  ws.forEach((w, i) => {
+    const j = order[i] === i ? (i + 1) % ws.length : order[i];
+    w.style.transition = 'none';
+    w.style.transform = `translate(${at[j][0] - at[i][0]}px, ${at[j][1] - at[i][1]}px)`;
+    w.style.opacity = '.35';
+  });
+  void el.offsetWidth;
+  ws.forEach((w, i) => {
+    w.style.transition = `transform .7s ${EMPH} ${0.18 + i * 0.07}s, opacity .5s ease ${0.18 + i * 0.07}s`;
+    w.style.transform = '';
+    w.style.opacity = '';
+  });
+}
+
+/* ---------- the signature: particles form Enso's ring ----------
+   A cloud of ink dots drifts, then assembles into the ensō (the same open brush stroke as Enso's mark) when the section
+   comes into view, breathes, and scatters away from the cursor or a finger. One canvas, one rAF (useLoop: only while on
+   screen and the tab is visible), stops with the page pause; reduced motion draws the finished ring once. */
+function Form() {
+  const box = useRef(null), cv = useRef(null), dots = useRef(null), ptr = useRef(null), at = useRef(-1);
+  const seen = useInView(box, { once: true, amount: 0.3 });
+  const paused = usePaused();
+  const home = (p, w, h, t) => [p.hx * w + Math.sin(t * 0.4 + p.ph) * 18, p.hy * h + Math.cos(t * 0.33 + p.ph) * 18];
+  const target = (p, w, h, t, still) => {
+    const s = Math.min(w, h), b = still ? 1 : 1 + Math.sin(t * 0.9) * 0.012;
+    const r = s * 0.36 * b + p.off * s * 0.075 * (0.4 + 0.6 * Math.sin(Math.PI * p.u));
+    const a = -Math.PI / 2 + p.u * Math.PI * 2 * 0.875;
+    return [w / 2 + Math.cos(a) * r, h / 2 + Math.sin(a) * r];
+  };
+  useLoop(box, (t, dt, still) => {
+    const c = cv.current;
+    if (!c) return;
+    const { w: W, h: H, d } = fit(c);
+    const w = W / d, h = H / d;
+    if (!dots.current) {
+      const R = rng(42), n = w < 520 ? 800 : 1500;
+      dots.current = Array.from({ length: n }, (_, i) => {
+        const p = { u: R(), off: R() - 0.5, hx: R(), hy: R(), ph: R() * 6.28, sz: 1.3 + R() * 1.7, al: 0.45 + R() * 0.55, lag: R() * 0.9, vx: 0, vy: 0 };
+        if (i % 9 === 0) p.off *= 3.2; // a few stray specks off the stroke, as a brush leaves
+        [p.x, p.y] = [p.hx * w, p.hy * h];
+        return p;
+      });
+    }
+    const P = dots.current, g = c.getContext('2d');
+    if (still) { // reduced motion: the finished ring
+      P.forEach((p) => { [p.x, p.y] = target(p, w, h, 0, true); });
+    } else if (!paused) {
+      if (seen && at.current < 0) at.current = t;
+      const since = at.current < 0 ? -1 : t - at.current;
+      const q = ptr.current;
+      for (const p of P) {
+        const go = since >= p.lag;
+        const [tx, ty] = go ? target(p, w, h, t, false) : home(p, w, h, t);
+        const K = go ? 16 : 2.2, D = go ? 8 : 2.6;
+        let ax = (tx - p.x) * K - p.vx * D, ay = (ty - p.y) * K - p.vy * D;
+        if (q) {
+          const dx = p.x - q[0], dy = p.y - q[1], dd = Math.hypot(dx, dy) || 1, Rr = w < 520 ? 70 : 96;
+          if (dd < Rr) { const f = (1 - dd / Rr) * 5200; ax += (dx / dd) * f; ay += (dy / dd) * f; }
+        }
+        p.vx += ax * dt; p.vy += ay * dt; p.x += p.vx * dt; p.y += p.vy * dt;
+      }
+    }
+    g.clearRect(0, 0, W, H);
+    g.fillStyle = '#0a0a0a';
+    for (const p of P) { g.globalAlpha = p.al; const s = p.sz * d; g.fillRect(p.x * d - s / 2, p.y * d - s / 2, s, s); }
+    g.globalAlpha = 1;
+  });
+  const move = (e) => { const r = cv.current.getBoundingClientRect(); ptr.current = [e.clientX - r.left, e.clientY - r.top]; };
+  return (
+    <section className="lv-sec eo-form" ref={box} aria-labelledby="eo-spec-h">
+      <div className="x-wrap eo-form-in">
+        <div className="eo-form-t">
+          <h2 id="eo-spec-h" className="lv-h">One endpoint for every frontier model.</h2>
+          <p className="lv-p">Enso routes each request for quality, speed and cost.</p>
+        </div>
+        <canvas ref={cv} className="eo-dots" aria-hidden="true" onPointerMove={move} onPointerDown={move} onPointerLeave={() => (ptr.current = null)} onPointerUp={(e) => e.pointerType !== 'mouse' && (ptr.current = null)} />
+      </div>
+    </section>
+  );
+}
 
 const TIERS = [
   { name: 'Enso Flash', code: 'enso', inp: '$0.33', out: '$1.65', ctx: true, axis: 0, why: 'at volume', wb: 'https://platform.hanzo.ai/workbench?model=enso', desc: 'For chat, extraction, classification and simple agent steps at volume.' },
@@ -61,8 +199,10 @@ function Switchboard() {
   useEffect(() => {
     measure();
     const ro = new ResizeObserver(measure);
-    ro.observe(board.current);
-    return () => ro.disconnect();
+    const el = board.current;
+    ro.observe(el);
+    el.addEventListener('eo-measure', measure); // the room's lens entrance asks again once its magnification ends
+    return () => { ro.disconnect(); el.removeEventListener('eo-measure', measure); };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const send = (k, byHand) => {
@@ -221,11 +361,12 @@ function Gpqa() {
   const m = OTHERS[sel];
   const rows = [...GPQA].sort(sort === 'score' ? (a, b) => b[1] - a[1] : (a, b) => a[2] - b[2]);
   const frontier = ENSO.map((g) => `${px(g[2])},${py(g[1])}`).join(' ');
+  const head = useEnter(shuffle, '0px 0px -8% 0px');
   return (
     <section className="eo-gpqa lv-sec" ref={box} aria-labelledby="eo-gpqa-h">
       <div className="x-wrap">
         <div className="lv-sh">
-          <h2 id="eo-gpqa-h" className="lv-h">A New Pareto Frontier of Intelligence</h2>
+          <h2 id="eo-gpqa-h" className="lv-h eo-shuffle" ref={head}>{'A New Pareto Frontier of Intelligence'.split(' ').map((w, i, a) => <span key={i}><span className="eo-w">{w}</span>{i < a.length - 1 ? ' ' : ''}</span>)}</h2>
           <p className="lv-p">GPQA Diamond challenges AI with 198 graduate-level science questions. See how Enso balances accuracy and cost across 1,000 answers.</p>
         </div>
         <div className="lv-stats eo-figs">
@@ -357,7 +498,31 @@ const CHAPTERS = TIERS.map((tr, i) => ({
   ),
 }));
 
+// the three tiers as plain quick sections (no pinned chapter scene); each unfolds like paper from its top edge (fold-out)
+function Tier({ c, i }) {
+  const ref = useEnter();
+  return (
+    <article className={'eo-tier' + (i % 2 ? ' flip' : '')} ref={ref}>
+      <div className="eo-tier-in">
+        <div className="eo-tier-art">{c.art(true)}</div>
+        <div className="eo-tier-t">
+          <h3 className="eo-tier-h">{c.title}</h3>
+          <div className="eo-tier-b">{c.body}</div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
 export default function Enso() {
+  const room = useEnter(lens, '0px 0px -12% 0px');
+  const cards = useEnter(ink, '0px 0px -12% 0px');
+  const band = useEnter(null, '0px 0px -10% 0px');
+  useEffect(() => {
+    const f = (e) => { if (e.pointerType === 'mouse') { pointer.x = e.clientX; pointer.y = e.clientY; } };
+    addEventListener('pointermove', f, { passive: true });
+    return () => removeEventListener('pointermove', f);
+  }, []);
   return (
     <Launch
       slug="enso"
@@ -377,24 +542,22 @@ export default function Enso() {
         </>
       }
     >
-      <Chapters id="eo-tiers" label="Enso" items={CHAPTERS} />
-      {/* the dark room: Hanzo's spec heading over the live router; each tier's lane carries its own prices (one object, not a second table) */}
-      <section className="lv-room lv-sec eo-live" data-room="dark" aria-labelledby="eo-spec-h">
+      {/* order (motion map: lead with the signature): particles form the ring → tiers (fold-out) → router room (cursor-lens)
+          → model cards (ink-spread) → GPQA (word-shuffle; the figures still count up) → band (orbit-in) */}
+      <Form />
+      <section id="eo-tiers" className="eo-tiers" aria-label="Enso">
+        <div className="x-wrap">{CHAPTERS.map((c, i) => <Tier key={c.title} c={c} i={i} />)}</div>
+      </section>
+      {/* the dark room: the live router; each tier's lane carries its own prices (one object, not a second table) */}
+      <section className="lv-room lv-sec eo-live eo-lens" data-room="dark" aria-label="Enso" ref={room}>
         <div className="x-wrap">
-          <div className="lv-sh">
-            <div className="eo-spec-h">
-              <svg className="eo-spec-ring" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 8a42 42 0 1 1-30.4 13" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" /></svg>
-              <h2 id="eo-spec-h" className="lv-h">One endpoint for every frontier model.</h2>
-            </div>
-            <p className="lv-p">Enso routes each request for quality, speed and cost.</p>
-          </div>
           <Switchboard />
           <p className="eo-all"><More to="/models/enso">All Enso models</More></p>
         </div>
       </section>
+      <div className="eo-ink" ref={cards}><ModelCards slug="enso" /></div>
       <Gpqa />
-      <ModelCards slug="enso" />
-      <Band title="The right intelligence. Every time." action="Try Hanzo" to="/login" />
+      <div className="eo-orbit" ref={band}><Band title="The right intelligence. Every time." action="Try Hanzo" to="/login" /></div>
     </Launch>
   );
 }

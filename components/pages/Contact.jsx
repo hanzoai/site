@@ -28,6 +28,7 @@ import { copyText } from '../ui';
 import Sigil from '../Sigil';
 import MaskLines from './company/MaskLines';
 import useArrived from './company/useArrived';
+import { Enter, Tiles, useTilt } from './contact/enter';
 import '../v2/vc-type.css';
 import './company/deck.css';
 import './Contact.css';
@@ -42,7 +43,7 @@ const LINES = [
   { k: 'Press & General', go: 'hello@hanzo.ai' },
 ];
 // JS off: every route stacked and readable; no cable, no hands on the dial, no plate, no dead copy button (PLAN 2.3)
-const NOJS = { __html: '<style>.xct-hero-g{align-items:start!important}.xct-jacks{display:none!important}.xct-panel{display:flex!important;flex-direction:column;gap:40px;margin-top:24px!important}.xct-route{opacity:1!important;transform:none!important}.xct-cable,.xct-plug,.xct-plate,.xct-cp{display:none!important}.xct-in,.xct-in2{animation:none!important}.xct .x-band .x-word,.xct .x-band [style]{opacity:1!important;transform:none!important;filter:none!important}</style>' };
+const NOJS = { __html: '<style>.xct-hero-g{align-items:start!important}.xct-jacks{display:none!important}.xct-panel{display:flex!important;flex-direction:column;gap:40px;margin-top:24px!important}.xct-route{opacity:1!important;transform:none!important}.xct-cable,.xct-plug,.xct-plate,.xct-cp{display:none!important}.xct-track,.xct-routes{display:flex!important;flex-direction:column;gap:40px}.xct-scr{transform:none!important;opacity:1!important}.xct-sum,.xct-qf,.xcte-tiles{display:none!important}.xct .x-band .x-word,.xct .x-band [style]{opacity:1!important;transform:none!important;filter:none!important}</style>' };
 
 /* `go` turns true when the page may start its entrance: at once on a return visit; on a first visit, 550ms after
    the arrival curtain starts lifting (it wipes up from the bottom, so the top of the screen is clear by then). */
@@ -79,6 +80,9 @@ function CopyMail({ text }) {
     </span>
   );
 }
+
+// the flow's progress: two marks, the current one filled (no words)
+const Dots = ({ n }) => <span className="xct-dots" aria-hidden="true">{[0, 1].map((k) => <i key={k} className={k === n ? 'on' : ''} />)}</span>;
 
 const Arr = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
@@ -157,19 +161,32 @@ function Panel({ go }) {
     on(); m.addEventListener('change', on);
     return () => m.removeEventListener('change', on);
   }, []);
-  const pick = (i) => { setHeld(true); setAt(i); setCab(i); };
+  // one question at a time: step 0 asks (the jacks are the answers), step 1 slides in the answer's route and its action,
+  // with the answer summarised above it
+  const [step, setStep] = useState(0);
+  const pick = (i) => { setHeld(true); setAt(i); setCab(i); setStep(1); };
   const hold = () => { if (!held) { setHeld(true); setCab(at); } };
+  const back = () => {
+    setHeld(true); setStep(0);
+    requestAnimationFrame(() => jacks.current[at]?.focus());
+  };
 
-  // the arrival sweep (desktop): Sales → Dispatch → Support → Press → Sales, the cable only, after the h1 has landed
+  // the arrival (desktop): the cable alone sweeps Sales → Dispatch → Support → Press → Sales after the h1 has landed,
+  // then the flow answers itself once with Sales and slides on to its ask. Touching the panel first stops the demo.
   useEffect(() => {
-    if (!wide && go && !held) { setHeld(true); return; } // phones: no sweep; rest (and sway) after the entrance
+    if (!wide && go && !held && !calm) { // phones: no sweep; after the entrance the flow answers Sales and slides on
+      const t = setTimeout(() => { setHeld(true); setStep(1); }, 1400);
+      return () => clearTimeout(t);
+    }
     if (held || calm || !go || !seen || !wide) return;
     let k = 0, t = 0;
     const path = [1, 2, 3, 0];
-    const step = () => { setCab(path[k]); k += 1; if (k < path.length) t = setTimeout(step, 600); else setHeld(true); };
-    t = setTimeout(step, 1000);
+    const tick = () => { setCab(path[k]); k += 1; if (k < path.length) t = setTimeout(tick, 600); else t = setTimeout(() => { setHeld(true); setStep(1); }, 450); };
+    t = setTimeout(tick, 1000);
     return () => clearTimeout(t);
   }, [held, calm, go, seen, wide]);
+  // reduced motion: the final state at once, Sales answered and its ask on screen
+  useEffect(() => { if (calm && hyd) { setHeld(true); setStep(1); } }, [calm, hyd]);
 
   // idle: once at rest, the wire sways a few pixels, slowly, while the panel is on screen
   useEffect(() => {
@@ -248,7 +265,7 @@ function Panel({ go }) {
     if (first.current) { first.current = false; return; }
     const t = setTimeout(() => dispatchEvent(new Event('scroll')), 450);
     return () => clearTimeout(t);
-  }, [at]);
+  }, [at, step]);
 
   // phones: the jacks are a swipe row, so the chosen one slides into view (the row scrolls, never the page)
   useEffect(() => {
@@ -287,17 +304,42 @@ function Panel({ go }) {
         <path ref={wire} className="xct-wire" />
         <g ref={nub}><rect width="18" height="12" rx="3" className="xct-nub" /></g>
       </svg>
-      <div className="xct-panel">
+      <div className="xct-panel" data-step={step}>
         <span className="xct-plug" ref={plug} aria-hidden="true" />
-        {LINES.map((l, i) => (
-          <motion.div key={l.k} id={'xct-p' + i} role="tabpanel" aria-labelledby={'xct-t' + i} className="xct-route"
-            initial={false}
-            animate={i === at ? { opacity: 1, y: 0 } : { opacity: 0, y: i < at ? -16 : 16 }}
-            transition={{ duration: i === at ? 0.3 : 0.15, ease: EM, delay: i === at ? 0.1 : 0 }}
-            {...(hyd && i !== at ? { 'aria-hidden': true, inert: true } : {})}>
-            <Route i={i} />
-          </motion.div>
-        ))}
+        <div className="xct-track">
+          {/* screen 1: the question (the h1 asks it; the jacks above are the answers) */}
+          <div className="xct-scr xct-q" {...(hyd && step !== 0 ? { 'aria-hidden': true, inert: true } : {})}>
+            <p className="vc-lede xct-qp">Sales, support, press or anything else: reach the right people here.</p>
+            <div className="xct-qf" aria-hidden="true">
+              <svg viewBox="0 0 16 16" width="22" height="22"><path d="M8 13V3.5M4 7l4-4 4 4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              <Dots n={0} />
+            </div>
+          </div>
+          {/* screen 2: the answer, summarised, and its route with the one action */}
+          <div className="xct-scr xct-a" {...(hyd && step !== 1 ? { 'aria-hidden': true, inert: true } : {})}>
+            <div className="xct-sum">
+              <button type="button" className="xct-back" aria-label="Previous" onClick={back}>
+                <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M13 8H4M7.5 4.5 4 8l3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              </button>
+              <span className="xct-chip" aria-hidden="true">
+                <i />
+                <span className="xct-chip-w"><motion.span key={at} className="xct-chip-t" initial={hyd ? { y: '100%' } : false} animate={{ y: 0 }} transition={{ duration: 0.3, ease: EM }}>{LINES[at].k}</motion.span></span>
+              </span>
+              <Dots n={1} />
+            </div>
+            <div className="xct-routes">
+              {LINES.map((l, i) => (
+                <motion.div key={l.k} id={'xct-p' + i} role="tabpanel" aria-labelledby={'xct-t' + i} className="xct-route"
+                  initial={false}
+                  animate={i === at ? { opacity: 1, y: 0 } : { opacity: 0, y: i < at ? -16 : 16 }}
+                  transition={{ duration: i === at ? 0.3 : 0.15, ease: EM, delay: i === at ? 0.1 : 0 }}
+                  {...(hyd && i !== at ? { 'aria-hidden': true, inert: true } : {})}>
+                  <Route i={i} />
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -393,12 +435,13 @@ function Community() {
   const pu = shown[1] >= 0 ? NETS[shown[1]][1] : null;
   const calm = useReducedMotion();
   const fresh = hyd && !calm;
+  const tilt = useTilt(7);
   return (
     <section className="xct-com" aria-labelledby="xct-com-h">
       <div className="vc-grid">
-        <div className="xct-com-l">
-          <MaskLines id="xct-com-h" lines={['Join the community']} className="vc-headline" />
-          <div className="xct-plate-m"><div className="xct-plate" aria-hidden="true">
+        <Enter kind="tilt" className="xct-com-l">
+          <h2 id="xct-com-h" className="vc-headline">Join the community</h2>
+          <div className="xct-plate-m"><div className="xct-plate" aria-hidden="true" ref={tilt}>
             {pu && pu !== u && (
               <div key={'was-' + pu} className="xct-plate-s">
                 <Sigil seed={pu} data={[NETS[shown[1]][0].length, pu.length]} still />
@@ -412,17 +455,17 @@ function Community() {
               <motion.span key={n} className="xct-plate-n" initial={fresh ? { y: '100%' } : false} animate={{ y: 0 }} transition={{ duration: 0.3, ease: EM }}>{n}</motion.span>
             </span>
           </div></div>
-        </div>
-        <ul className="xct-nets" onPointerLeave={() => { hover.current = false; }}>
+        </Enter>
+        <Enter as="ul" kind="spring" className="xct-nets" onPointerLeave={() => { hover.current = false; }}>
           {NETS.map(([name, url], i) => (
-            <li key={name} ref={(el) => { rows.current[i] = el; }} data-i={i}>
+            <li key={name} ref={(el) => { rows.current[i] = el; }} data-i={i} style={{ '--i': i }}>
               <A to={url} className={'xct-net' + (on === i ? ' on' : '')} onPointerEnter={() => { hover.current = true; setOn(i); }} onFocus={() => setOn(i)}>
                 <span className="xct-net-t"><span className="xct-net-n">{name}</span><span className="xct-net-u" aria-hidden="true">{where(url)}</span></span>
                 <svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </A>
             </li>
           ))}
-        </ul>
+        </Enter>
       </div>
     </section>
   );
@@ -437,27 +480,29 @@ export default function Contact() {
         <div className="vc-grid xct-hero-g">
           <div className="xct-hero-c">
             <MaskLines as="h1" id="xct-h1" now delay={curtain ? 0.55 : 0.05} stagger={0.06} lines={['How can', 'we help?']} className="vc-display" />
-            <p className="vc-lede xct-in">Sales, support, press or anything else: reach the right people here.</p>
           </div>
-          <div className="xct-hero-o xct-in2">
+          <div className="xct-hero-o">
             <Panel go={go} />
+            <Tiles />
           </div>
         </div>
       </section>
 
-      <section className="xct-visit" data-room="dark" aria-labelledby="xct-visit-h">
+      <Enter as="section" kind="focus" className="xct-visit" data-room="dark" aria-labelledby="xct-visit-h">
         <div className="vc-grid xct-visit-g">
           <div className="xct-visit-c">
-            <MaskLines id="xct-visit-h" lines={['Visit']} className="vc-headline" />
+            <h2 id="xct-visit-h" className="vc-headline">Visit</h2>
             <p className="xct-addr">1 Ferry Building</p>
             <p className="vc-lede xct-city">San Francisco, CA 94105</p>
           </div>
           <Clock />
         </div>
-      </section>
+      </Enter>
 
       <Community />
-      <Band title="Bring Hanzo to your company." action="Talk to sales" to="/contact-sales" />
+      <Enter kind="ticker" className="xcte-band">
+        <Band title="Bring Hanzo to your company." action="Talk to sales" to="/contact-sales" />
+      </Enter>
     </main>
   );
 }

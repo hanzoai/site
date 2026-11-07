@@ -1,14 +1,15 @@
 'use client';
-// Signature: The Hanzo Desktop window assembles itself centre stage in your own system's chrome (detected): title bar, sidebar, composer, then it builds one thing in front of you, the payments rate limiter, file written and tests passing
+// Signature: terminal (Live terminal): second screen, the window's own job run as a terminal: it types the real commands (the job, cat gateway/limit.go, go test ./gateway) and streams their real output, and the visitor picks the next command (components/pages/desktop/Terminal.jsx). The hero window still assembles itself in your system's chrome and builds the rate limiter.
+// Entrances: swing-door, domino, inertia-drag, shrink-to-card, page-curl
 // Beyond: Cut the network: make an agent in the page, pin its model on your machine or on Hanzo Cloud, pull the wire and watch which one keeps running and where its keys and data stay
 // Persona: a developer who wants agents running on their own machine, with their own keys, offline if need be
 // Goal: see the app build something real in the first screen, then download it
 // CTA: "Download" (docs.hanzo.ai/docs/apps/desktop): the hero's one solid with data-thumb (the shared header carries it once the hero leaves), and the closing band's one solid
 // Metric: desktop_download (data-cta desktop-download, desktop-download-end)
 /* Hanzo Desktop (Launch: the app window is the hero).
-   V2: 8/10 round 3: no bar or empty field left anywhere: the window's right pane is the file itself (gateway/limit.go, line by line) and the test run ("$ go test ./gateway", "Tests pass."); the chapter panes carry the job, MCP and "Local model" rows and real sub-lines that ink in over grey text; greys only, status as shape and word; JS off shows every word (notes open, spec inline); the page ends on "Download it and build one" with one solid
-   Motion: signature = the window assembling and building (a step loop that stops off screen; the ask is written into a
-   text node). Supporting: pinned chapters with wipes (components/v2/AppScenes), line-masked headline, magnetic ask.
+   V2: 8/10 round 4 (motion map): the pinned chapters are gone; a live terminal in the second screen runs the window's job, file and test and lets you pick the next command; the three points are one domino list; five different entrances (terminal swings in, points tip like dominoes, the agent card is thrown in and can be thrown again, the systems section shrinks into a card as you leave, and that card curls away off Paste and ship); the hero window build, the cut-the-network room and every hover stay
+   Motion: signature = the terminal; the hero window still builds itself (a step loop that stops off screen). One reveal
+   style beyond the entrances: the line-mask cut-in, on the h1 and the closing band only. Magnetic ask.
    Greys only; every word is Hanzo's; the job in the window is Hanzo's example. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
@@ -16,7 +17,8 @@ import { Copy, Mark, Magnetic } from '../ui';
 import { A, Cta } from '../kit';
 import { play } from '../../lib/sound';
 import Lines from './desktop/Lines';
-import Scenes from '../v2/AppScenes';
+import Terminal from './desktop/Terminal';
+import { useEnter, ShrinkCard, Curl } from './desktop/enter';
 import Sheet from '../v2/AppSheet';
 import '../v2/AppType.css';
 import './DesktopPage.css';
@@ -201,74 +203,47 @@ const POINTS = [
   ['MCP is how it reaches your tools', 'Agents speak the Model Context Protocol, so a tool you have already connected elsewhere works here without a second integration written for this app.'],
 ];
 
-// a line of real text that is always there in grey and inks itself in when its chapter plays (never an empty bar)
-const Ink = ({ children, className = '' }) => (
-  <span className={'dk-ink ' + className}><span className="dk-ink-b">{children}</span><span className="dk-ink-t">{children}</span></span>
-);
-
-function Scaffold({ on }) {
-  return (
-    <div className={'dk-vis dk-new' + (on ? ' on' : '')} aria-hidden="true">
-      <div className="dk-pane">
-        <div className="dk-new-h"><span className="dk-pane-h"><span className="dk-ico"><Mark size={13} /></span><b>Desktop</b></span><span className="dk-run"><i />Running</span></div>
-        <div className="dk-fld f1"><em className="x-mono">job</em><span className="dk-val"><Ink className="dk-wipe">{MSGS[0][1]}</Ink><i className="dk-caret dk-job-caret" /></span></div>
-        <div className="dk-fld f2"><em className="x-mono">tools</em><span className="dk-val"><span className="dk-chip">MCP</span></span></div>
-        <div className="dk-fld f3"><em className="x-mono">model</em><span className="dk-val"><span className="dk-chip ac">Local model</span></span></div>
-      </div>
-    </div>
-  );
-}
-
-function PerAgent({ on }) {
-  return (
-    <div className={'dk-vis dk-per' + (on ? ' on' : '')} aria-hidden="true">
-      <div className="dk-pane dk-agent a0">
-        <span className="dk-pane-h"><span className="dk-ico"><Mark size={13} /></span><b>Running on your machine</b></span>
-        <div className="dk-seg"><i className="dk-seg-th" /><span>Local</span><span>Hanzo Cloud</span></div>
-      </div>
-      <div className="dk-pane dk-agent a1">
-        <span className="dk-pane-h"><span className="dk-ico"><Mark size={13} /></span><span className="dk-where"><b className="w0">Running on your machine</b><b className="w1">On Hanzo Cloud</b></span></span>
-        <div className="dk-seg"><i className="dk-seg-th" /><span>Local</span><span>Hanzo Cloud</span></div>
-      </div>
-    </div>
-  );
-}
-
-function Together({ on }) {
-  const lines = ['Read 14 files.', 'Wrote gateway/limit.go', 'Tests pass.'];
-  const SUBS = ['gateway · payments', '100 req/min per key', 'one place, every route'];
-  return (
-    <div className={'dk-vis dk-tog' + (on ? ' on' : '')} aria-hidden="true">
-      <div className="dk-flow">
-        {lines.map((l, i) => (
-          <div key={l} className="dk-pane dk-node" style={{ '--i': i }}>
-            <span className="dk-pane-h"><span className="dk-ico"><Mark size={13} /></span><b className="x-mono">{l}</b></span>
-            <Ink className="dk-node-sub x-mono">{SUBS[i]}</Ink>
-            <span className="dk-node-ok"><Tick /></span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-const CHAPTERS = [Scaffold, PerAgent, Together].map((V, i) => ({
-  title: POINTS[i][0],
-  body: <p className="av-body">{POINTS[i][1]}</p>,
-  visual: (on) => <V on={on} />,
-}));
+/* ---------- the signature: the window's job as a live terminal; pick the next command ---------- */
+const RUNS = [
+  { p: '>', cmd: MSGS[0][1], out: [MSGS[1][1], MSGS[2][1]] },
+  { p: '$', cmd: 'cat gateway/limit.go', out: CODE, code: true },
+  { p: '$', cmd: 'go test ./gateway', out: ['ok  gateway  100 req/min per key', 'Tests pass.'], ok: 'Tests pass.' },
+];
 
 function Build() {
+  const door = useEnter(0.25);
   return (
-    <>
-      <section className="dk-intro">
-        <div className="av-wrap av-grid">
-          <Lines as="h2" className="av-display s dk-intro-h" lines={['What you can', 'build in it']} />
-          <p className="av-lede dk-intro-l">Free and open source. Download it, and the first agent is a few minutes of clicking.</p>
+    <section className="av-sec dk-build" aria-labelledby="dk-build-h">
+      <div className="av-wrap av-grid">
+        <div className="dk-build-l">
+          <h2 id="dk-build-h" className="av-display s">What you can build in it</h2>
+          <p className="av-lede">Free and open source. Download it, and the first agent is a few minutes of clicking.</p>
         </div>
-      </section>
-      <Scenes label="What you can build in it" items={CHAPTERS} flip />
-    </>
+        <div className="dk-build-r en-swing" ref={door}>
+          <div className="en-door"><Terminal runs={RUNS} labelledBy="dk-build-h" /></div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- the three points, one quick list; they tip into place like dominoes ---------- */
+function Points() {
+  const row = useEnter(0.3);
+  return (
+    <section className="av-sec tight dk-points" aria-label="What you can build in it">
+      <div className="av-wrap">
+        <ol className="dk-pts en-domino" ref={row}>
+          {POINTS.slice(0, 3).map(([t, d], i) => (
+            <li key={t} style={{ '--i': i }}>
+              <span className="x-mono av-num">{String(i + 1).padStart(2, '0')}</span>
+              <h3 className="av-head">{t}</h3>
+              <p className="av-body">{d}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
   );
 }
 
@@ -281,10 +256,11 @@ function Offline() {
   const runs = local || net;
   const cut = () => { setNet(!net); setNote(3); };
   const pick = (v) => { setLocal(v); setNote(v ? 4 : 3); };
+  const thrown = useEnter(0.3);
   return (
     <section className="av-sec av-dark dk-dark" data-room="dark" aria-labelledby="dk-off-h">
       <div className="av-wrap">
-        <Lines as="h2" id="dk-off-h" className="av-display s" lines={['Cut the network']} />
+        <h2 id="dk-off-h" className="av-display s">Cut the network</h2>
         <div className="av-grid dk-off">
           <div className="dk-off-l">
             <label className="dk-job"><span className="dk-job-k x-mono">Give it a job</span><input value={job} onChange={(e) => setJob(e.target.value)} maxLength={90} /></label>
@@ -307,7 +283,10 @@ function Offline() {
               })}
             </ol>
           </div>
-          <div className={'dk-card' + (runs ? '' : ' wait') + (net ? '' : ' cut')} aria-live="polite">
+          <div className="dk-throw en-throw" ref={thrown}>
+          <motion.div className={'dk-card' + (runs ? '' : ' wait') + (net ? '' : ' cut')} aria-live="polite"
+            drag="x" dragSnapToOrigin dragElastic={0.5} dragMomentum dragTransition={{ bounceStiffness: 260, bounceDamping: 22 }}
+            whileDrag={{ rotate: 2, scale: 0.98 }}>
             <div className="dk-map" aria-hidden="true">
               <div className="dk-site"><span className="dk-site-k x-mono">Your machine</span><div className="dk-slot">{local && <motion.span layoutId="dk-agent" className="dk-token" transition={GLIDE}><Mark size={16} /></motion.span>}</div></div>
               <div className="dk-wire"><i /><i /><b>×</b></div>
@@ -320,6 +299,7 @@ function Offline() {
               <div><dt className="x-mono">Keys and data</dt><dd>{local ? 'Keys and the data an agent touches stay local.' : 'It is a setting on the agent, not a decision about the whole install.'}</dd></div>
             </dl>
             <p className="dk-say">{local ? 'With a local model pinned, an agent keeps running when the connection goes. Nothing has to be uploaded for it to do its job.' : runs ? 'Point one agent at a model running on your machine and another at one on Hanzo Cloud.' : 'Pin a local model and it keeps running when the connection goes.'}</p>
+          </motion.div>
           </div>
         </div>
       </div>
@@ -336,7 +316,7 @@ function Everywhere({ os, setOs, mine }) {
     window.__lenis ? window.__lenis.scrollTo(y, { duration: 1.2 }) : scrollTo({ top: y, behavior: 'smooth' });
   };
   return (
-    <section className="av-sec dk-every">
+    <ShrinkCard className="av-sec dk-every">
       <div className="av-wrap av-grid">
         <div className="dk-every-l">
           <h2 className="av-head">Available everywhere you work</h2>
@@ -368,15 +348,17 @@ function Everywhere({ os, setOs, mine }) {
           ))}
         </ul>
       </div>
-    </section>
+    </ShrinkCard>
   );
 }
 
 /* ---------- before the end: the line to paste into an agent, the repo, the related apps ---------- */
 function Kit() {
   const text = 'Read https://hanzo.ai/skill.md and use Hanzo Desktop in my project.';
+  const curl = useEnter(0.35);
   return (
-    <section className="av-sec tight dk-kit">
+    <section className="av-sec tight dk-kit en-curl-host" ref={curl}>
+      <Curl />
       <div className="av-wrap av-grid">
         <div className="dk-kit-l">
           <h2 className="av-head">Paste and ship</h2>
@@ -430,6 +412,7 @@ export default function DesktopPage() {
     <main className="av dk" style={{ '--ac': '#737373' }}>
       <Hero os={os} setOs={setOs} mine={mine} />
       <Build />
+      <Points />
       <Offline />
       <Everywhere os={os} setOs={setOs} mine={mine} />
       <Kit />

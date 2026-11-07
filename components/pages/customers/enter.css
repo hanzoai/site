@@ -1,0 +1,59 @@
+/* /customers (index) entrances and signature (see enter.jsx). Five sections, five ways in, in the map's order:
+   hero = cursor-lens, case plate = underline-sweep, every launch = curtain-rise, backers = magnet-gather,
+   close = rack-focus. Initial states only under html.js and no-preference, so JS off and reduced motion show the final
+   state. Transform, opacity, clip-path and filter only. */
+
+/* signature: word-light. Hanzo's lede as a long statement; each word goes from quiet grey to ink as it is read */
+.xcu-say { padding: clamp(72px, 9vw, 140px) 0 clamp(44px, 5vw, 72px); }
+.xcu-wl { grid-column: 1 / span 10; margin: 0; max-width: 30ch; font-size: clamp(26px, 3vw, 44px); font-weight: 497; line-height: 1.2; letter-spacing: -.025em; color: #0a0a0a; text-wrap: pretty; }
+.xcu-wl .w { transition: color .3s cubic-bezier(0, 0, .2, 1); }
+@media (prefers-reduced-motion: no-preference) { html.js .xcu-wl .w:not(.on) { color: #d4d4d4; } }
+
+/* 1. hero: cursor-lens. The headline opens out of a round lens on arrival (a circle growing from the lower left);
+   then, on a fine pointer, a round lens follows the cursor over the headline and magnifies it */
+@keyframes xcu-lens-in { from { clip-path: circle(0% at 14% 78%); } to { clip-path: circle(150% at 14% 78%); } }
+@media (prefers-reduced-motion: no-preference) {
+  html.js .xcu-hero-g { animation: xcu-lens-in 1s cubic-bezier(.16, 1, .3, 1) .15s both; }
+  html.x-arriving .xcu-hero-g { animation-play-state: paused; }
+}
+.xcu-hero-g > .xcu-h1, .xcu-lens { grid-column: 1 / -1; grid-row: 1; align-self: start; }
+.xcu-lens { position: relative; margin: 0; pointer-events: none; }
+.xcu-lens-in { display: block; background: #fff; transform-origin: var(--lx, 0) var(--ly, 0); transform: scale(1.4); clip-path: circle(0px at var(--lx, 0) var(--ly, 0)); transition: clip-path .3s cubic-bezier(.16, 1, .3, 1); }
+.xcu-lens-l { display: block; }
+.xcu-lens[data-on] .xcu-lens-in { clip-path: circle(58px at var(--lx, 0) var(--ly, 0)); }
+.xcu-lens::after { content: ''; position: absolute; left: calc(var(--lx, 0px) - 82px); top: calc(var(--ly, 0px) - 82px); width: 164px; height: 164px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .14); opacity: 0; transform: scale(.6); transition: opacity .15s cubic-bezier(0, 0, .2, 1), transform .3s cubic-bezier(.16, 1, .3, 1); }
+.xcu-lens[data-on]::after { opacity: 1; transform: none; }
+@media (max-width: 899px) { .xcu-lens { display: none; } }
+
+/* 2. case plate: underline-sweep. Underlines sweep under its key words in sequence (the figure's label, the case
+   name, the "Case studies" caption), each drawing in from the left and leaving to the right */
+.xcu-cases .xcu-fig span, .xcu-case-r h3, .xcu-cs { position: relative; }
+.xcu-cases .xcu-fig span::after, .xcu-case-r h3::after, .xcu-cs::after { content: ''; position: absolute; left: 0; right: 0; bottom: -6px; height: 2px; background: currentColor; transform: scaleX(0); transform-origin: 0 50%; pointer-events: none; }
+@keyframes xcu-sweep { 0% { transform: scaleX(0); transform-origin: 0 50%; } 45% { transform: scaleX(1); transform-origin: 0 50%; } 55% { transform: scaleX(1); transform-origin: 100% 50%; } 100% { transform: scaleX(0); transform-origin: 100% 50%; } }
+@media (prefers-reduced-motion: no-preference) {
+  .xcu-cases[data-in] .xcu-fig span::after { animation: xcu-sweep 1.1s cubic-bezier(.4, 0, .2, 1) .1s both; }
+  .xcu-cases[data-in] .xcu-case-r h3::after { animation: xcu-sweep 1.1s cubic-bezier(.4, 0, .2, 1) .45s both; }
+  .xcu-cases[data-in] .xcu-cs::after { animation: xcu-sweep 1.1s cubic-bezier(.4, 0, .2, 1) .8s both; }
+}
+
+/* 3. every launch: curtain-rise. The heading, the year rail and each row rise from below behind their own floor line */
+@media (prefers-reduced-motion: no-preference) {
+  /* rows are layout-animated by the year filter, so the curtain runs on each row's cells, not on the row itself */
+  html.js .xcu-every h2[data-e='curtain'], html.js .xcu-every .xcu-years[data-e='curtain'], html.js .xcu-row[data-e='curtain'] > * { transition: transform .7s cubic-bezier(.16, 1, .3, 1), clip-path .7s cubic-bezier(.16, 1, .3, 1); clip-path: inset(-20px -40px 0 -20px); }
+  html.js .xcu-every h2[data-e='curtain']:not([data-in]), html.js .xcu-every .xcu-years[data-e='curtain']:not([data-in]), html.js .xcu-row[data-e='curtain']:not([data-in]) > * { transform: translateY(100%); clip-path: inset(-20px -40px 100% -20px); }
+  html.js .xcu-row[data-e='curtain'] > :nth-child(2) { transition-delay: 60ms; }
+  html.js .xcu-row[data-e='curtain'] > :nth-child(3) { transition-delay: 120ms; }
+  html.js .xcu-row[data-e='curtain'] > :nth-child(4) { transition-delay: 180ms; }
+}
+
+/* 4. backers: magnet-gather. The names start scattered and are pulled together into the row */
+@media (prefers-reduced-motion: no-preference) {
+  html.js .xcu-wall li { transition: transform .8s cubic-bezier(.16, 1, .3, 1) calc(var(--k) * 60ms), opacity .4s cubic-bezier(0, 0, .2, 1) calc(var(--k) * 60ms); }
+  html.js .xcu-wall:not([data-in]) li { transform: translate(var(--mx), var(--my)) rotate(var(--mr)); opacity: 0; }
+}
+
+/* 5. close: rack-focus. The room's words and ask come into focus from a blur, like a camera pulling focus */
+@media (prefers-reduced-motion: no-preference) {
+  html.js .xcu-close-g { transition: filter .9s cubic-bezier(.4, 0, .2, 1), opacity .9s cubic-bezier(.4, 0, .2, 1), transform .9s cubic-bezier(.16, 1, .3, 1); }
+  html.js .xcu-close:not([data-in]) .xcu-close-g { filter: blur(14px); opacity: .25; transform: scale(1.04); }
+}

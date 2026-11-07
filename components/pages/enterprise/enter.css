@@ -1,0 +1,43 @@
+/* /enterprise entrances. Final state is the default; the start states apply only with JS on and motion allowed. */
+.xe-scr { position: relative; display: inline; }
+.xe-scr.run .xe-scr-t { visibility: hidden; }
+.xe-scr-o { position: absolute; left: 0; top: 0; right: 0; white-space: pre-wrap; }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* 1 scramble (the places): the words decode (Scramble); the rows below arrive with them, no fade-up */
+  html.js .xe-en-scramble:not(.in) .xe-rows-l > li { opacity: 0; }
+  html.js .xe-en-scramble .xe-rows-l > li { transition: opacity .15s var(--eo); transition-delay: calc(var(--n, 0) * 90ms + 200ms); }
+
+  /* 2 snap-sections (results): each block snaps into place a full step at a time, hard in, no drift */
+  html.js .xe-en-snap .xe-snap-b { transition: transform .3s cubic-bezier(.7, 0, .2, 1), opacity 90ms linear; transition-delay: calc(var(--n, 0) * 110ms); }
+  html.js .xe-en-snap:not(.in) .xe-snap-b { transform: translateY(72px); opacity: 0; }
+
+  /* 3 inertia-drag (includes): the tiles are thrown in from the right and decay to rest (JS), then can be dragged */
+  html.js .xe-en-inertia:not(.in) .xe-tiles { opacity: 0; }
+  html.js .xe-en-inertia .xe-tiles { transition: opacity .15s var(--eo); }
+
+  /* 4 diagonal-wipe (security): a diagonal clip sweeps across, left to right */
+  html.js .xe-en-wipe .xe-wipe { clip-path: polygon(0% 0%, 140% 0%, 100% 100%, -40% 100%); transition: clip-path .9s cubic-bezier(.4, 0, .2, 1); }
+  html.js .xe-en-wipe:not(.in) .xe-wipe { clip-path: polygon(0% 0%, 0% 0%, -40% 100%, -40% 100%); }
+
+  /* 5 line-draw (your own GPUs): the instrument's outline draws itself, then it fills; the bars draw last */
+  html.js .xe-en-draw .xe-pf-line rect { stroke-dashoffset: 0; transition: stroke-dashoffset .9s cubic-bezier(.4, 0, .2, 1), opacity .3s var(--eio) 1.2s; opacity: 0; }
+  html.js .xe-en-draw:not(.in) .xe-pf-line rect { stroke-dashoffset: 1; opacity: 1; }
+  html.js .xe-en-draw.in .xe-pf-line rect { opacity: 0; }
+  html.js .xe-en-draw .xe-pf { transition: background-color .4s var(--eio) .7s; }
+  html.js .xe-en-draw:not(.in) .xe-pf { background-color: transparent; }
+  html.js .xe-en-draw .xe-pf-read, html.js .xe-en-draw .xe-pf-chart button { transition: opacity .3s var(--eio) .8s; }
+  html.js .xe-en-draw:not(.in) .xe-pf-read, html.js .xe-en-draw:not(.in) .xe-pf-chart button { opacity: 0; }
+  html.js .xe-en-draw .xe-pf-bar { clip-path: inset(0 0 0 0); transition: clip-path .5s var(--ee); transition-delay: calc(1s + var(--n, 0) * 60ms); }
+  html.js .xe-en-draw:not(.in) .xe-pf-bar { clip-path: inset(0 100% 0 0); }
+}
+.xe-pf { position: relative; }
+.xe-pf-line { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.xe-pf-line rect { width: calc(100% - 2px); height: calc(100% - 2px); fill: none; stroke: var(--ink); stroke-width: 1.5px; stroke-dasharray: 1; stroke-dashoffset: 0; opacity: 0; }
+@media (max-width: 899px) { .xe-pf-line rect { rx: 20px; } }
+
+/* phones: the results section snaps to the top of the screen as it is reached (native proximity snap; touch only) */
+@media (pointer: coarse) and (prefers-reduced-motion: no-preference) {
+  html:has(main.xe) { scroll-snap-type: y proximity; }
+  .xe-en-snap { scroll-snap-align: start; scroll-margin-top: 64px; }
+}

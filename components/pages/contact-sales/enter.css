@@ -1,0 +1,71 @@
+/* /contact-sales entrances and the `stamp` signature (docs/MOTION-MAP.md). Initial states only under html.js, so JS off
+   shows every word; reduced motion: the final state at once. Transform, opacity, clip-path and mask only. */
+
+/* the signature, stamp: a short drop, a squash and a settle (MOTION-MAP's own words; it may overshoot slightly) */
+@keyframes xcs-stamp {
+  0% { opacity: 0; transform: translateY(-14px) scale(1.16); }
+  42% { opacity: 1; transform: translateY(0) scale(1.07, .86); }
+  68% { transform: translateY(0) scale(.97, 1.04); }
+  86% { transform: translateY(0) scale(1.01, .99); }
+  100% { opacity: 1; transform: none; }
+}
+.xcs-stamp { display: inline-block; animation: xcs-stamp .52s cubic-bezier(.2, .7, .3, 1) both; transform-origin: 50% 100%; }
+
+/* 1. pendulum: the hero stage swings in from a pivot above it and settles */
+@keyframes xcs-pendulum {
+  0% { opacity: 0; transform: rotate(-11deg); }
+  22% { opacity: 1; transform: rotate(6.5deg); }
+  44% { transform: rotate(-3.4deg); }
+  64% { transform: rotate(1.6deg); }
+  82% { transform: rotate(-.6deg); }
+  100% { opacity: 1; transform: none; }
+}
+html.js .xcs-e-pendulum:not(.in) { opacity: 0; }
+.xcs-e-pendulum.in { transform-origin: 50% -40%; animation: xcs-pendulum 1.3s cubic-bezier(.33, .1, .3, 1) .1s both; }
+
+/* 2. accordion: the route rows unfold one after another from a hinge at their top */
+@keyframes xcs-fold {
+  from { opacity: 0; transform: perspective(700px) rotateX(-78deg); clip-path: inset(0 0 100% 0); }
+  60% { opacity: 1; clip-path: inset(0 0 0 0); }
+  to { opacity: 1; transform: none; clip-path: inset(0 0 0 0); }
+}
+html.js .xcs-e-accordion:not(.in) .xcs-route, html.js .xcs-e-accordion:not(.in) .xcs-alt { opacity: 0; }
+.xcs-e-accordion.in .xcs-route, .xcs-e-accordion.in .xcs-alt { transform-origin: 50% 0; animation: xcs-fold .5s cubic-bezier(.16, 1, .3, 1) both; }
+.xcs-e-accordion.in .xcs-route:nth-child(1) { animation-delay: .35s; }
+.xcs-e-accordion.in .xcs-route:nth-child(2) { animation-delay: .47s; }
+.xcs-e-accordion.in .xcs-route:nth-child(3) { animation-delay: .59s; }
+.xcs-e-accordion.in .xcs-alt { animation-delay: .71s; }
+
+/* 3. grow-from-point: the inclusions grow out of the point you last clicked or pointed at */
+@keyframes xcs-grow { from { opacity: 0; transform: scale(.12); } 40% { opacity: 1; } to { opacity: 1; transform: none; } }
+html.js .xcs-e-grow:not(.in) { opacity: 0; }
+.xcs-e-grow.in { transform-origin: var(--ox, 50%) var(--oy, 0); animation: xcs-grow .7s cubic-bezier(.16, 1, .3, 1) both; }
+
+/* 4. letter-cascade: the launches heading's letters fall into place one by one */
+.xcs-word { white-space: nowrap; }
+.xcs-ch { display: inline-block; }
+@keyframes xcs-fall { from { opacity: 0; transform: translateY(-.9em) rotate(-12deg); } to { opacity: 1; transform: none; } }
+html.js .xcs-e-cascade:not(.in) .xcs-ch { opacity: 0; }
+.xcs-e-cascade.in .xcs-ch { animation: xcs-fall .5s cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(var(--i) * 22ms); }
+
+/* 5. text-mask-film: frames of a film run through the letters of the Band's line, then it holds solid */
+@keyframes xcs-film {
+  0% { -webkit-mask-position: 0 0; mask-position: 0 0; }
+  99% { -webkit-mask-position: -720px 0; mask-position: -720px 0; -webkit-mask-image: repeating-linear-gradient(90deg, #000 0 26px, rgba(0, 0, 0, .18) 26px 32px, #000 32px 44px, rgba(0, 0, 0, .42) 44px 48px); mask-image: repeating-linear-gradient(90deg, #000 0 26px, rgba(0, 0, 0, .18) 26px 32px, #000 32px 44px, rgba(0, 0, 0, .42) 44px 48px); }
+  100% { -webkit-mask-image: none; mask-image: none; }
+}
+.xcs .x-band h2.xcs-film .x-word {
+  -webkit-mask-image: repeating-linear-gradient(90deg, #000 0 26px, rgba(0, 0, 0, .18) 26px 32px, #000 32px 44px, rgba(0, 0, 0, .42) 44px 48px);
+  mask-image: repeating-linear-gradient(90deg, #000 0 26px, rgba(0, 0, 0, .18) 26px 32px, #000 32px 44px, rgba(0, 0, 0, .42) 44px 48px);
+  -webkit-mask-size: 240px 100%; mask-size: 240px 100%;
+  animation: xcs-film 1.9s linear .15s both;
+}
+
+/* the arrival curtain holds them */
+html.x-arriving .xcs-e-pendulum.in, html.x-arriving .xcs-e-accordion.in .xcs-route, html.x-arriving .xcs-e-accordion.in .xcs-alt { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .xcs-stamp, .xcs-e-pendulum.in, .xcs-e-accordion.in .xcs-route, .xcs-e-accordion.in .xcs-alt, .xcs-e-grow.in, .xcs-e-cascade.in .xcs-ch, .xcs .x-band h2.xcs-film .x-word { animation: none; }
+  html.js .xcs-e-pendulum:not(.in), html.js .xcs-e-accordion:not(.in) .xcs-route, html.js .xcs-e-accordion:not(.in) .xcs-alt, html.js .xcs-e-grow:not(.in), html.js .xcs-e-cascade:not(.in) .xcs-ch { opacity: 1; }
+  .xcs .x-band h2.xcs-film .x-word { -webkit-mask-image: none; mask-image: none; }
+}
