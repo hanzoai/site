@@ -42,7 +42,7 @@ const MECH = [
 ];
 const pad = (i) => String(i + 1).padStart(2, '0');
 const KEY = 'hz-security-checked';
-const DWELL = 6500; // ms each layer faces you when nobody is choosing
+const DWELL = 5000; // ms each layer faces you when nobody is choosing
 const Check = ({ s = 16 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 /* ---------- hero: the whole map, a request passing through every layer ---------- */

@@ -200,3 +200,10 @@
   .xsc-mail a { font-size: clamp(30px, 9vw, 40px); }
   .xsc .x-copy { min-height: 44px; }
 }
+
+/* every hover answers with more than colour */
+.xsc .x-copy { transition: transform .2s var(--ease), color .2s; }
+.xsc .x-copy:hover { transform: translate3d(0, -1px, 0); }
+.xsc .x-copy:active { transform: scale(.98); }
+.xsc-note a { text-decoration-thickness: 1px; transition: text-underline-offset .2s var(--ease); }
+.xsc-note a:hover { text-underline-offset: 6px; }
