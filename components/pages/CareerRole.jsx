@@ -8,7 +8,8 @@
    the application closes the page in its one dark room. Ink, greys and white only. All wording is Hanzo's.
    Persona: an engineer, designer or researcher deciding whether to apply
    Goal: apply for this role
-   CTA: "Apply for this position" (Hanzo's words), riding the site ask bar after the hero
+   CTA: "Apply for this position" (Hanzo's words), the hero's one solid; careers pages carry no sticky ask (MASTER
+   part 4), so the ask bar is off (data-ask="off")
    Metric: one contact click (the application email)
    Signature: the chapter book. About the role, what you will do, what we look for and what is nice to have turn like
    pages: the chapter's words pin on the left while its page wipes up into place on the right, a row of marks shows
@@ -22,6 +23,9 @@
    Ledger: deleted the orange accent, the kicker over the h1 and the counters over every headline, the separate
    contents plate (folded into the hero sheet), and the invented "Back" / "Next" / "· Copied" / "Your email is ready"
    strings (icons and register names now).
+   Scale (MASTER 3.1): h1 52 (40 phone), section heads 26, ledes 20, body 16–17, figures 64 (the deck numeral, the
+   fit counts); the total beside the form grows past 64 only while it crosses the middle (FamGrow). The sheet is
+   outlined, never outlined and shadowed; the one dark room is the application.
    V2: 8/10 hero is the deck's own white sheet (numeral, tags, line, contents) landing where you clicked it; ink only;
    no eyebrows; sticky apply; chapter book; three-step apply in the dark room; sibling roles drag and open. */
 import { useEffect, useRef, useState } from 'react';
@@ -32,6 +36,7 @@ import Sigil from '../Sigil';
 import FamLines from '../v2/FamLines';
 import FamChapters from '../v2/FamChapters';
 import FamNext from '../v2/FamNext';
+import FamGrow from '../v2/FamGrow';
 import { ui } from '../v2/famUi';
 import { useArrival } from './doorway';
 import '../v2/fam.css';
@@ -161,7 +166,7 @@ export default function CareerRole({ role, no, peers = [] }) {
           {b.paras[0] && <p className="v2f-lede xcj-ch-l">{b.paras[0]}</p>}
           {isList && (
             <p className="xcj-fit" aria-live="polite">
-              <b className="v2f-num">{mine}</b><span className="x-mono">/ {b.items.length}</span>
+              <b className="v2f-num v2f-fig">{mine}</b><span className="x-mono">/ {b.items.length}</span>
               <i aria-hidden="true"><u style={{ transform: `scaleX(${b.items.length ? mine / b.items.length : 0})` }} /></i>
             </p>
           )}
@@ -198,7 +203,7 @@ export default function CareerRole({ role, no, peers = [] }) {
   const media = !!(role.models && role.models.length);
   const sibs = peers.map((p) => ({ href: '/careers/' + p.slug, title: p.title, preview: p.lede, meta: p.chips.join(' · '), seed: '/careers/' + p.slug }));
   return (
-    <main className="v2f xcj">
+    <main className="v2f xcj" data-ask="off">
       <section className="xcj-hero" aria-labelledby="xcj-h1" data-ask-name={role.title}>
         <div className="v2f-wrap">
           <div className="xcj-top">
@@ -229,7 +234,7 @@ export default function CareerRole({ role, no, peers = [] }) {
               </div>
             </div>
             <div className="xcj-sheet-r">
-              {no && <span className="xcj-no v2f-num" aria-hidden="true">{no}</span>}
+              {no && <span className="xcj-no v2f-num v2f-fig" aria-hidden="true">{no}</span>}
               {media && (
                 <ul className="xcj-media">
                   {role.models.slice(0, 3).map(([m, name], i) => (
@@ -263,7 +268,7 @@ export default function CareerRole({ role, no, peers = [] }) {
         <section className="xcj-why v2f-sec" id="xcj-why" aria-labelledby="xcj-why-h">
           <div className="v2f-wrap v2f-grid">
             <div className="xcj-why-l">
-              <FamLines as="h2" play="view" id="xcj-why-h" text={why.title} className="v2f-display small" />
+              <FamLines as="h2" play="view" id="xcj-why-h" text={why.title} className="v2f-head" />
             </div>
             <ol className="xcj-why-r">
               {why.cards.map(([t, d], i) => (
@@ -281,11 +286,11 @@ export default function CareerRole({ role, no, peers = [] }) {
       <section className="xcj-apply" id="apply" data-room="dark" aria-labelledby="xcj-apply-h">
         <div className="v2f-wrap v2f-grid">
           <div className="xcj-apply-l">
-            <FamLines as="h2" play="view" id="xcj-apply-h" text={role.form.title} className="v2f-display small" />
+            <FamLines as="h2" play="view" id="xcj-apply-h" text={role.form.title} className="v2f-head" />
             <p className="xcj-apply-i">{role.form.intro}</p>
             {total > 0 && (
               <p className="xcj-fit dark" aria-hidden="true">
-                <b className="v2f-num">{marks.size}</b><span className="x-mono">/ {total}</span>
+                <FamGrow to={1.75}><b className="v2f-num v2f-fig">{marks.size}</b></FamGrow><span className="x-mono">/ {total}</span>
                 <i><u style={{ transform: `scaleX(${marks.size / total})` }} /></i>
               </p>
             )}
