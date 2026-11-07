@@ -211,7 +211,7 @@ export default function Tunnel() {
       <Scene />
       <Facts />
       <One />
-      <Finale name="Tunnel" head="Get started with Tunnel" acts={[['View on GitHub', GH]]} prompt="Read https://hanzo.ai/skill.md and use Hanzo Tunnel in my project. Start with: hanzo share" tag="Secure tunnels" />
+      <Finale name="Tunnel" head="Get started with Tunnel" ask={['View on GitHub', GH]} prompt="Read https://hanzo.ai/skill.md and use Hanzo Tunnel in my project. Start with: hanzo share" tag="Secure tunnels" />
     </main>
   );
 }

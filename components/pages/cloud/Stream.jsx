@@ -180,7 +180,7 @@ export default function Stream() {
         name="Stream"
         head="Point the bootstrap server at it"
         lede="The clients stay as they are. The cluster underneath them goes away."
-        acts={[['View on GitHub', GHS]]}
+        ask={['View on GitHub', GHS]}
         prompt="Read https://hanzo.ai/skill.md and use Hanzo Stream in my project."
         tag="Event stream"
         repo={['hanzoai/stream', GHS]}

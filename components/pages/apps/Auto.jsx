@@ -233,7 +233,8 @@ export default function Auto() {
         name="Auto"
         head="Or run it yourself"
         lede="One container, one port, a SQLite file for state. Nothing else to stand up first."
-        acts={[['Open Auto', OPEN], ['View on GitHub', 'https://github.com/hanzoai']]}
+        ask={['Open Auto', OPEN]}
+        links={[['View on GitHub', 'https://github.com/hanzoai']]}
         prompt="Read https://hanzo.ai/skill.md and use Hanzo Auto in my project. Start with: hanzo auto flows list"
         tag="Workflow automations"
       />
