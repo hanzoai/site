@@ -5,11 +5,12 @@
    Usage:
      <PinScenes
        label="How a key is kept"                 // aria-label of the section
-       chapters={[{ kicker: '01', title: 'Edge', body: <p>…</p> }, …]}
+       chapters={[{ title: 'Edge', kicker: 'a caption under the title', body: <p>…</p> }, …]}
+                                                  // (JAMES.md: nothing sits above a headline, so kicker renders below)
        visual={(at, progress) => <Stage at={at} />}   // at = active chapter; progress = MotionValue 0..1 over the scene
        flip                                       // visual on the left, words on the right
        dark                                       // the page's one dark room (header turns dark over it)
-       per={80}                                   // svh of scrolling per chapter
+       per={80}                                   // svh of scrolling per chapter (capped so the scene is ≤ 250svh)
      />
    Every chapter's words are in the HTML; the server renders visual(0) only, so words a visual shows for a later
    chapter must also be in that chapter's body (or the visual renders every state, hidden). Keyboard focus inside a chapter scrolls the scene to it. Reduced motion:
@@ -36,6 +37,8 @@ export default function PinScenes({ chapters, visual, label, className = '', fli
   const wide = useWide();
   const [at, setAt] = useState(0);
   const n = chapters.length;
+  // BRIEF-v3 §8.3: a pinned scene's outer section is 250svh at most, so each beat gets at most 150svh / n
+  const step = Math.min(per, 150 / n);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   useMotionValueEvent(scrollYProgress, 'change', (p) => setAt(Math.min(n - 1, Math.max(0, Math.floor(p * n * 0.999)))));
 
@@ -56,8 +59,8 @@ export default function PinScenes({ chapters, visual, label, className = '', fli
           {chapters.map((c, i) => (
             <article key={i} className="pf-pin-flat-c">
               <div className="pf-pin-t-in">
-                {c.kicker && <p className="pf-kick">{c.kicker}</p>}
                 {c.title && <h3 className="pf-head">{c.title}</h3>}
+                {c.kicker && <p className="pf-kick pf-pin-cap">{c.kicker}</p>}
                 {c.body}
               </div>
               <div className="pf-pin-flat-v">{visual(i, scrollYProgress)}</div>
@@ -69,7 +72,7 @@ export default function PinScenes({ chapters, visual, label, className = '', fli
   }
 
   return (
-    <section ref={ref} id={id} className={'pf-pin ' + (flip ? 'flip ' : '') + className} style={{ '--n': n, '--per': per + 'svh' }} aria-label={label} data-room={dark ? 'dark' : undefined}>
+    <section ref={ref} id={id} className={'pf-pin ' + (flip ? 'flip ' : '') + className} style={{ '--n': n, '--per': step + 'svh' }} aria-label={label} data-room={dark ? 'dark' : undefined}>
       <div className="pf-pin-stick">
         <div className="pf-wrap pf-pin-grid">
           <div className="pf-pin-copy">
@@ -82,8 +85,8 @@ export default function PinScenes({ chapters, visual, label, className = '', fli
               {chapters.map((c, i) => (
                 <article key={i} className="pf-pin-t" data-on={i === at} data-past={i < at} onFocusCapture={() => i !== at && go(i)}>
                   <div className="pf-pin-t-in">
-                    {c.kicker && <p className="pf-kick">{c.kicker}</p>}
                     {c.title && <h3 className="pf-head">{c.title}</h3>}
+                    {c.kicker && <p className="pf-kick pf-pin-cap">{c.kicker}</p>}
                     {c.body}
                   </div>
                 </article>
