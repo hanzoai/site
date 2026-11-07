@@ -1,5 +1,6 @@
 'use client';
-/* Skills. V2: 8/10 an editorial paper page: the skill file is the hero and a word wakes its gateway, the trade drawn as one monolith against five small reads, the six points set like a printed essay with a highlighter that strikes as you read.
+/* Skills.
+   V2: 8/10 an editorial paper page: the skill file is the hero and a word wakes its gateway, the trade drawn as one monolith against five small reads, the six points set like a printed essay with a highlighter that strikes as you read.
    Signature: say a word, a gateway wakes. The hero is a markdown skill file beside an agent's context tray. A prompt
    types a word on its own (Postgres, then comptime); the gateway that notices it (discover-database, discover-zig)
    lights, and its specific files fly into the tray while everything else stays on the shelf.
