@@ -46,8 +46,17 @@ function PullRequest() {
     return () => { live = false; done.current = false; };
   }, [seen, calm]);
   const merged = s === 2;
+  // a fine pointer tilts the card a little (2.5° at most); it lies flat on leave, and never under reduced motion
+  const tilt = (e) => {
+    const el = box.current;
+    if (!el || calm || e.pointerType !== 'mouse' || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty('--ry', (((e.clientX - r.left) / r.width - 0.5) * 5).toFixed(2) + 'deg');
+    el.style.setProperty('--rx', ((0.5 - (e.clientY - r.top) / r.height) * 5).toFixed(2) + 'deg');
+  };
+  const flat = () => { box.current?.style.setProperty('--rx', '0deg'); box.current?.style.setProperty('--ry', '0deg'); };
   return (
-    <div className={'xfo-pr xp-obj' + (seen || calm ? ' go' : '')} ref={box} aria-hidden="true">
+    <div className={'xfo-pr xp-obj' + (seen || calm ? ' go' : '') + (merged ? ' merged' : '')} ref={box} aria-hidden="true" onPointerMove={tilt} onPointerLeave={flat}>
       <div className="xfo-pr-top">{PR_ICON}<span className="xfo-pr-k">Founder Program</span><span className="x-mono">https://github.com/hanzoai/ui/pull/1</span></div>
       <div className="xfo-diff">
         {[['', 72], ['del', 54], ['add', 80], ['add', 46], ['', 62], ['add', 70], ['', 38]].map(([k, w], i) => (
@@ -60,7 +69,7 @@ function PullRequest() {
             <motion.span key={merged ? 'm' : 'o'} className={'xfo-badge' + (merged ? ' merged' : '')} initial={{ y: '110%' }} animate={{ y: 0 }} exit={{ y: '-110%' }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>{PR_ICON}{merged ? 'Merged' : 'Open'}</motion.span>
           </AnimatePresence>
         </span>
-        <span className={'xfo-btn' + (s === 1 ? ' press' : '') + (merged ? ' done' : '')}>{merged ? '✓' : 'Merge'}</span>
+        <span className={'xfo-btn' + (s === 1 ? ' press' : '') + (merged ? ' done' : '')}>{merged ? <svg className="xfo-tick" viewBox="0 0 24 24" width="22" height="22"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg> : 'Merge'}</span>
       </div>
     </div>
   );
@@ -171,8 +180,8 @@ function Mine() {
         </div>
         <div className="xfo-mine">
           <div className="xfo-mine-c">
-            <div><span>Merged pull request</span><span className="xfo-st"><button type="button" onClick={() => step(setPrs, prs, -1, 99)} disabled={!prs} aria-label="Fewer merged pull requests">−</button><output className="x-mono" aria-live="polite"><AnimatePresence mode="popLayout" initial={false}><motion.span key={prs} className="xfo-roll" initial={{ y: '70%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-70%', opacity: 0 }} transition={{ duration: 0.2, ease: EASE }}>{prs}</motion.span></AnimatePresence></output><button type="button" onClick={() => step(setPrs, prs, 1, 99)} aria-label="More merged pull requests">+</button></span></div>
-            <div><span>lines merged</span><span className="xfo-st"><button type="button" onClick={() => step(setLines, lines, -250, 100000)} disabled={!lines} aria-label="Fewer lines merged">−</button><output className="x-mono" aria-live="polite"><AnimatePresence mode="popLayout" initial={false}><motion.span key={lines} className="xfo-roll" initial={{ y: '70%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-70%', opacity: 0 }} transition={{ duration: 0.2, ease: EASE }}>{lines.toLocaleString('en-US')}</motion.span></AnimatePresence></output><button type="button" onClick={() => step(setLines, lines, 250, 100000)} aria-label="More lines merged">+</button></span></div>
+            <div><span>Merged pull request</span><span className="xfo-st"><button type="button" data-sound="tick" onClick={() => step(setPrs, prs, -1, 99)} disabled={!prs} aria-label="Fewer merged pull requests">−</button><output className="x-mono" aria-live="polite"><AnimatePresence mode="popLayout" initial={false}><motion.span key={prs} className="xfo-roll" initial={{ y: '70%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-70%', opacity: 0 }} transition={{ duration: 0.2, ease: EASE }}>{prs}</motion.span></AnimatePresence></output><button type="button" data-sound="tick" onClick={() => step(setPrs, prs, 1, 99)} aria-label="More merged pull requests">+</button></span></div>
+            <div><span>lines merged</span><span className="xfo-st"><button type="button" data-sound="tick" onClick={() => step(setLines, lines, -250, 100000)} disabled={!lines} aria-label="Fewer lines merged">−</button><output className="x-mono" aria-live="polite"><AnimatePresence mode="popLayout" initial={false}><motion.span key={lines} className="xfo-roll" initial={{ y: '70%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-70%', opacity: 0 }} transition={{ duration: 0.2, ease: EASE }}>{lines.toLocaleString('en-US')}</motion.span></AnimatePresence></output><button type="button" data-sound="tick" onClick={() => step(setLines, lines, 250, 100000)} aria-label="More lines merged">+</button></span></div>
           </div>
         </div>
       </div>
