@@ -55,7 +55,8 @@ function usePhoneHeaderAsk() {
     let btn = null, text = '', link = '', io = null;
     const undo = () => {
       io?.disconnect(); io = null;
-      if (btn) { btn.textContent = text; btn.setAttribute('href', link); btn.removeAttribute('data-ask-hide'); btn.removeAttribute('data-cta'); }
+      if (!btn) return; // only undo what this hook did (on desktop Ask.jsx owns the header)
+      btn.textContent = text; btn.setAttribute('href', link); btn.removeAttribute('data-ask-hide'); btn.removeAttribute('data-cta');
       if (H.dataset.ask === 'quiet') delete H.dataset.ask;
       btn = null;
     };
@@ -82,9 +83,10 @@ function usePhoneHeaderAsk() {
       io.observe(own);
       if (close) io.observe(close);
     };
-    const t = setTimeout(start, 300);
+    // Ask.jsx restores the header on its own schedule after a route change, so set up again a few times
+    const ts = [300, 1500, 3200].map((ms) => setTimeout(start, ms));
     mq.addEventListener('change', start);
-    return () => { clearTimeout(t); mq.removeEventListener('change', start); undo(); };
+    return () => { ts.forEach(clearTimeout); mq.removeEventListener('change', start); undo(); };
   }, []);
 }
 
@@ -216,9 +218,10 @@ function Scene({ k }) {
         <path d="M80 220a120 120 0 0 1 240 0" className="xrf-s-track" />
         <motion.path d="M80 220a120 120 0 0 1 240 0" className="xrf-s-line thick" {...draw(0)} />
         {[0, 1, 2, 3, 4, 5, 6].map((i) => { const a = Math.PI - (i / 6) * Math.PI; return <path key={i} d={`M${200 + Math.cos(a) * 104} ${220 - Math.sin(a) * 104}L${200 + Math.cos(a) * 92} ${220 - Math.sin(a) * 92}`} className="xrf-s-tick" />; })}
-        <motion.g style={{ originX: '200px', originY: '220px' }} initial={{ rotate: -90 }} animate={{ rotate: 50 }} transition={{ duration: 1.2, ease: EASE, delay: 0.3 }}>
+        {/* pivots on the hub (200, 220): CSS rotate with transform-box view-box, so the origin is in viewBox units */}
+        <g className="xrf-s-swing">
           <path d="M200 220V128" className="xrf-s-needle" />
-        </motion.g>
+        </g>
         <circle cx="200" cy="220" r="8" className="xrf-s-ink" />
       </g>}
       {k === 'up' && <g>

@@ -153,6 +153,6 @@ Done here: `usePhoneHeaderAsk` undoes its label, href and `data-ask` on route ch
 - [x] `data-cta` on every primary; events through the kit's `hz-event`
 - [x] Nothing before consent
 - [x] `V2:` line in the page file
-- [x] Review read: `docs/review/referral.md` (7/10) fix list answered point by point
+- [x] Review read: `docs/review/referral.md` (7/10, third walk) fix list answered: the step 03 needle now rotates by CSS with `transform-box: view-box; transform-origin: 200px 220px`, measured in Playwright at 0.00px from the hub at rest (50°), mid-replay (37.7°) and after replay, at 1470 and 375; every other anchor measured the same way (share dots, the locked account, the waitlist bar: 0.00px). The hero's dead band is gone: the journey's word peeks under the hero at 1470×801 and its stage sticks at 22svh, so nothing blank follows it
 
 Done here: 1 the tiled rails became one pinned journey (link once, one word big at a time); 2 phone clip starts at 8px inside a 24px text margin; 3 the close is a band with the card at rest; 4 the steps are one four-column strip, not a list beside a grey box; 5 "Affiliates" shows once; 6 phone header goes quiet at the closing ask.

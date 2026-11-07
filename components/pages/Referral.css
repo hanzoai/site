@@ -1,6 +1,6 @@
 /* ---------- referral (v2) ---------- */
 .xrf { --xp-accent: #0a0a0a; }
-.xrf-hero { padding: clamp(40px, 6vw, 96px) 0 clamp(72px, 9vw, 140px); }
+.xrf-hero { padding: clamp(40px, 6vw, 96px) 0 clamp(56px, 6vw, 96px); }
 .xrf-hero .xp-grid { align-items: center; row-gap: 48px; }
 .xrf-words { grid-column: 1 / span 6; }
 .xrf-card { grid-column: 7 / span 6; }
@@ -57,8 +57,9 @@
 .xrf-q { margin: 0; font-size: 14px; color: #525252; }
 
 /* one referral's journey: pinned on wide screens, one word big at a time over the link shown once */
-.xrf-jour { position: relative; height: 260svh; border-top: 1px solid var(--line); }
-.xrf-jour-pin { position: sticky; top: 0; height: 100svh; display: grid; align-items: center; overflow: hidden; }
+/* the stage sticks at 22svh (no blank half-screen when it lets go) and its word peeks under the hero */
+.xrf-jour { position: relative; height: 230svh; padding-top: clamp(72px, 12svh, 140px); border-top: 1px solid var(--line); }
+.xrf-jour-pin { position: sticky; top: 22svh; overflow: hidden; }
 .xrf-jour-in { display: grid; gap: 44px; }
 .xrf-jour-word { overflow: clip; padding: .04em 0 .1em; font: 497 112px/1 var(--sans); letter-spacing: -.045em; color: #0a0a0a; }
 .xrf-jour-word { display: grid; }
@@ -101,6 +102,8 @@
 .xrf-s-track { fill: none; stroke: #d4d4d4; stroke-width: 3; }
 .xrf-s-tick { stroke: #737373; stroke-width: 1.5; }
 .xrf-s-needle { stroke: #0a0a0a; stroke-width: 3; stroke-linecap: round; }
+.xrf-s-swing { transform-box: view-box; transform-origin: 200px 220px; transform: rotate(50deg); animation: xrf-swing 1.2s cubic-bezier(.16, 1, .3, 1) .3s both; }
+@keyframes xrf-swing { from { transform: rotate(-90deg); } to { transform: rotate(50deg); } }
 .xrf-s-dot, .xrf-s-ink { fill: #0a0a0a; }
 .xrf-s-hole { fill: none; stroke: #fff; stroke-width: 2.5; }
 .xrf-s-bar { fill: #e5e5e5; }
@@ -137,7 +140,7 @@
 .xrf-close .xrf-acts { align-items: center; gap: 27px; margin-top: 27px; }
 
 @media (prefers-reduced-motion: reduce) {
-  .xrf-flow b, .xrf-win, .xrf-rest, .xrf-tracks.on .xrf-track b, .xrf-link.nudge, .xrf-link.nudge2, .xrf-si.p0, .xrf-si.p1, .xrf-jour-rider::after, .xrf-st.on .xrf-st-art::before { animation: none; }
+  .xrf-flow b, .xrf-win, .xrf-rest, .xrf-tracks.on .xrf-track b, .xrf-link.nudge, .xrf-link.nudge2, .xrf-si.p0, .xrf-si.p1, .xrf-jour-rider::after, .xrf-st.on .xrf-st-art::before, .xrf-s-swing { animation: none; }
   .xrf-tracks.on .xrf-track.b .xrf-fill { animation: none; transform: none; }
   .xrf-tracks.on .xrf-track.b em { animation: none; background: #fafafa; border-color: #fafafa; }
 }
@@ -149,7 +152,7 @@ html:not(.js) .xrf-rest, html:not(.js) .xrf-win { animation: none; }
   .xrf-win-in { padding: 18px; gap: 16px; }
   .xrf-count { padding: 12px 10px; }
   .xrf-count span:first-child { font-size: 32px; }
-  .xrf-jour { height: auto; }
+  .xrf-jour { height: auto; padding-top: 0; }
   .xrf-jour-pin { position: static; height: auto; padding: 72px 0; }
   .xrf-jour-in { gap: 27px; }
   .xrf-jour-word { font-size: 52px; }
