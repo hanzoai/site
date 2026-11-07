@@ -1,4 +1,5 @@
 # /idv — James-eye review
+Ready: 2026-11-07 all 10 page fixes in (round 5, checked in C1): outgoing sheets step back with a 16px edge and keep their words (no empty slabs), three sheet shapes with a counting 4 and no repeated four-call list, lede rests in full ink and leads on phones, all four vendors visible on phones with a hover that names how each answers, forge under Hanzo's own title with word-first verdicts and phone order data→choice→verdict, only "approved" struck; C1: the forge's opening inset kept inside the text gutter so its heading is never cut. Item 11 stays a shared request in docs/requests/cloud2.md.
 7 Nov, round 4, walked at 1470x801, 375x812 and 320 (phone: isMobile, hasTouch) with Playwright Chromium: frames at 0, 1 and 3 s with no input, wheel or scroll a screen at a time with 1.5 s dwell, finer 200px steps through the stacked sheets, hover and press on desktop, taps on phone, every forge option pressed, a prefers-reduced-motion load, console and overflow checks. Screenshots taken with caret: 'initial'.
 
 Verdict: 6/10

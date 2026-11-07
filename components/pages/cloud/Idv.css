@@ -140,6 +140,7 @@
 .iv-o-split:not([data-s='0']) .iv-o-rule { transform: none; }
 
 /* the forge: the dark room. On a desk-size screen it pins and plays its four states as you scroll. */
+.iv-forge { --iv-m: 16px; }
 .iv-forge-pin { padding: clamp(72px, 8vw, 116px) 0; }
 .iv-forge-q { margin: 0 0 clamp(27px, 3vw, 44px); max-width: 30ch; font: 497 26px/1.2 var(--sans); letter-spacing: -.02em; color: #fafafa; text-wrap: balance; }
 .iv-forge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
@@ -203,6 +204,7 @@
 }
 
 @media (max-width: 900px) {
+  .iv-forge { --iv-m: 8px; }
   .iv-hero { padding: 88px 0 32px; }
   .iv-hero-r { justify-content: flex-start; padding: 0; }
   .iv-hero-g { grid-template-columns: minmax(0, 1fr); margin-top: 20px; gap: 24px; }
