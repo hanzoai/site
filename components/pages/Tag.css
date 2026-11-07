@@ -405,6 +405,7 @@
   .xtg-copy .a2-body { order: 1; margin-bottom: 18px; font-size: 16px; }
   .xtg-copy .x-btn.solid { order: 2; }
   .xtg-docs { order: 3; margin: 6px 0 0; }
+  .xtg-copy .xtg-kick.a2-kick.show { order: 5; margin: 14px 0 0; }
   .xtg-copy .xtg-wimse { order: 4; height: 44px; padding: 0; border: 0; background: none; font: 500 15px/1.4 var(--sans); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
   .xtg-hero-grid { grid-template-areas: 'map' 'rail' 'moment'; gap: 12px; }
   .xtg-map { border-radius: 22px; }
@@ -512,3 +513,11 @@
 @keyframes xtg-tokp { 50% { opacity: .35; } }
 @keyframes xtg-addp { 50% { background-color: #e4e4e7; } }
 @keyframes xtg-ringp { 0%, 100% { box-shadow: 0 0 0 0 rgba(10, 10, 10, .18); } 50% { box-shadow: 0 0 0 6px rgba(10, 10, 10, 0); } }
+
+/* Copy rule (8 Nov): a plain text leaf inside a styled b/em/code/pill, so every Hanzo line stands on its own; it takes the parent's look */
+span.xtg-t.xtg-t.xtg-t { display: inline; margin: 0; padding: 0; border: 0; border-radius: 0; background: none; min-height: 0; width: auto; height: auto; font: inherit; color: inherit; letter-spacing: inherit; text-transform: inherit; opacity: 1; transform: none; animation: none; }
+/* Hanzo's eyebrow label, kept visible but below the headline and asks (never above it) */
+.xtg-kick.a2-kick.show { margin: 12px 0 0; font-size: 11px; letter-spacing: .06em; }
+/* Hanzo's memoji over the initial disc (Dev, Qa) */
+.xtg-face.pic, .xtg-fr-face.pic { position: relative; overflow: hidden; }
+.xtg-face.pic::after, .xtg-fr-face.pic::after { content: ''; position: absolute; inset: 0; background: var(--img) center / cover no-repeat; }

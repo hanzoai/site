@@ -99,7 +99,7 @@ function Moment({ n, archived, setArchived }) {
   );
   if (n.k === 'canvas') return (
     <div className={`${P}-cv`}>
-      <p className={`${P}-cv-t`}><i aria-hidden="true" /><span><b>{CANVAS.title}</b><span>{CANVAS.meta}</span></span></p>
+      <p className={`${P}-cv-t`}><i aria-hidden="true" /><span><b><span className={`${P}-t`}>{CANVAS.title}</span></b><span>{CANVAS.meta}</span></span></p>
       <p className={`${P}-cv-q`}><Parts body={SESSION[0].msgs[0].body} p={P} /></p>
       <p className={`${P}-cv-q`}><Parts body={SESSION[2].msgs[0].body} p={P} /></p>
     </div>
@@ -219,7 +219,6 @@ function Hero() {
     <section className={`${P}-hero`} aria-labelledby="xtg-h1">
       <div className={`a2-wrap ${P}-hero2`}>
         <div className={`${P}-copy`}>
-          <p className="a2-kick"><b>@</b> {HERO.kick}</p>
           <A2Lines as="h1" id="xtg-h1" className={`a2-headline ${P}-h1`} lines={HERO.title} now />
           <p className="a2-body">{HERO.lede}</p>
           <div className={`a2-acts ${P}-acts`}>
@@ -227,6 +226,7 @@ function Hero() {
             <A to={HERO.acts[1][1]} className={`x-btn ${P}-wimse`}>{HERO.acts[1][0]}</A>
           </div>
           <p className={`${P}-docs`}><More to={HERO.acts[2][1]}>{HERO.acts[2][0]}</More></p>
+          <p className={`a2-kick show ${P}-kick`}>{HERO.kick}</p>
         </div>
         <div className={`${P}-hero-grid`}>
           <MentionMap />
@@ -255,10 +255,10 @@ function Channels() {
             <p className={`${P}-pr-f`}><span>{DIFF.file}</span><em>{DIFF.viewed}</em></p>
             <ol className={`${P}-pr-l`}>
               {DIFF.lines.map(([a, b, s, t], k) => (
-                <li key={k} className={s === '+' ? 'add' : s === '-' ? 'del' : ''} style={{ '--i': k }}><span>{a ?? ''}</span><span>{b ?? ''}</span><code>{s.trim() || ' '} {t}</code></li>
+                <li key={k} className={s === '+' ? 'add' : s === '-' ? 'del' : ''} style={{ '--i': k }}><span>{a ?? ''}</span><span>{b ?? ''}</span><code><span className={`${P}-t`}>{s.trim() || ' '} {t}</span></code></li>
               ))}
             </ol>
-            <p className={`${P}-pr-c`}><i /><span><b>{CANVAS.title}</b><span>{CANVAS.meta}</span></span><em>{SESSION[5].msgs[0].done}</em></p>
+            <p className={`${P}-pr-c`}><i /><span><b><span className={`${P}-t`}>{CANVAS.title}</span></b><span>{CANVAS.meta}</span></span><em><span className={`${P}-t`}>{SESSION[5].msgs[0].done}</span></em></p>
           </div>
         </div>
         <ul className={`${P}-quad`}>
@@ -295,14 +295,14 @@ function Setup() {
             {SETUP.steps.map(([t, d], i) => (
               <li key={t} className={n > i ? 'on' : ''}>
                 <span className={`${P}-wire-n x-mono`}>{n > i ? '✓' : i + 1}</span>
-                <b>{t}</b>
+                <b><span className={`${P}-t`}>{t}</span></b>
                 <span className="x-mono">{d}</span>
               </li>
             ))}
           </ol>
         </div>
         <div className={`${P}-setup-f`}>
-          <span className={n >= 3 ? 'on' : ''}><i aria-hidden="true" />{SETUP.verified}</span>
+          <span className={n >= 3 ? 'on' : ''}><i aria-hidden="true" /><span className={`${P}-t`}>{SETUP.verified}</span></span>
           <span>{SETUP.model}</span>
           <span>{SETUP.retention}</span>
           <span>{SETUP.artifacts}</span>
@@ -317,7 +317,7 @@ function RoomArt({ k }) {
   if (k === 0) return <div className={`${P}-art t0`}><Msg m={ASK} p={P} /><Msg m={ANSWER} p={P} /></div>;
   if (k === 1) return (
     <div className={`${P}-art t1`}>
-      <p className={`${P}-cv-t`}><i /><span><b>{CANVAS.title}</b><span>{CANVAS.meta}</span></span></p>
+      <p className={`${P}-cv-t`}><i /><span><b><span className={`${P}-t`}>{CANVAS.title}</span></b><span>{CANVAS.meta}</span></span></p>
       <pre>{DIFF.lines.slice(3, 8).map(([, , s, t], i) => <span key={i} className={s === '+' ? 'add' : 'del'}>{s} {t}{'\n'}</span>)}</pre>
     </div>
   );

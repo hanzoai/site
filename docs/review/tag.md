@@ -1,4 +1,5 @@
 # /tag — James-eye review
+Ready: 8 Nov 23:25, copycheck missing 0 of 126 (captured page), Hanzo's images kept (Dev and Qa memoji now drawn over their discs). Setup steps, verified pill, Canvas title, PR banner and diff lines are text leaves; Hanzo's label (Hanzo Tag · @Hanzo & Code Channels for Slack) is visible under the asks on one line, never above the h1. taste/unique/parity OK; 0 console errors besides the sandbox's blocked hanzo.ai image loads; no overlap at 1470 and 375.
 
 Verdict: 7/10
 First complaint: "The map's lovely, but why is there a big empty black box under it, then a gap of nothing? And further down it's the same list on the left with a box on the right, twice in a row, then a dark room where everything's shouting at the same size. Tighten it up. It still feels long."
