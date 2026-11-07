@@ -21,6 +21,7 @@ import StageHero from '../../v2/StageHero';
 import Finale from '../../v2/Finale';
 import { useWide } from '../../v2/useWide';
 import './Stream.css';
+import ArtCard from './ArtCard';
 
 const GHS = 'https://github.com/hanzoai/stream';
 const CLIENTS = ['kafka-python', 'sarama', 'confluent-kafka', 'franz-go'];
@@ -94,6 +95,7 @@ function Ruler() {
     <div className="st2-rul-h">
       <h2 className="l2-display m">Your clients, our store</h2>
       <p className="l2-mono st2-range">01 / 06 — 06 / 06</p>
+      <ArtCard slug="mori" className="st2-art" />
       {!pin && !calm && <p className="st2-commit-m l2-mono" aria-hidden="true">committed offset <b>{String(seenAt).padStart(4, '0')}</b></p>}
     </div>
   );
@@ -214,7 +216,7 @@ function Group() {
   return (
     <div className="st2-grp" ref={ref}>
       <PauseBtn paused={paused} onClick={toggle} />
-      <p className="st2-grp-k l2-mono" aria-hidden="true"><span>my-service</span><b>stream.hanzo.ai:9092</b></p>
+      <p className="st2-grp-k l2-mono" aria-hidden="true"><span>my-service</span><span className="st2-grp-b">stream.hanzo.ai:9092</span></p>
       <ol className="st2-grp-rows" aria-hidden="true">
         {[0, 1, 2, 3].map((l) => {
           const end = 1290 + l * 41 + tick * (2 + (l % 2));
@@ -249,7 +251,7 @@ export default function Stream() {
         object={<Group />}
         prompt="Read https://hanzo.ai/skill.md and use Hanzo Stream in my project."
         tag="Event stream"
-        repo={['hanzoai/stream', GHS]}
+        repo={[<span key="r">hanzoai/stream</span>, GHS]}
         stars="4 stars"
       />
     </main>

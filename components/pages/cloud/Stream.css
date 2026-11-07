@@ -201,7 +201,7 @@
 /* the close: the consumer group, four committed offsets climbing */
 .st2-grp { position: relative; padding: 22px 24px 18px; border-radius: 24px; background: #0a0a0a; border: 1px solid rgba(255, 255, 255, .12); color: #f5f5f5; }
 .st2-grp-k { display: flex; justify-content: space-between; gap: 12px; margin: 0 56px 16px 0; font-size: 13px; color: #a3a3a3; }
-.st2-grp-k b { font-weight: 500; color: #f5f5f5; }
+.st2-grp-k b, .st2-grp-k .st2-grp-b { font-weight: 500; color: #f5f5f5; }
 .st2-grp .l2-pause { top: 12px; right: 12px; }
 .st2-grp-rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
 .st2-grp-rows li { display: grid; grid-template-columns: 96px 1fr 56px; grid-template-rows: auto auto; align-items: center; column-gap: 14px; padding: 10px 0; border-top: 1px solid rgba(255, 255, 255, .08); font: 500 13px/1.2 var(--mono); }
@@ -218,3 +218,5 @@
 @media (max-width: 900px) { .st2-p { padding-right: 44px; background: linear-gradient(90deg, #000 calc(100% - 28px), transparent); } .st2-bad-slot { width: 190px; } }
 .st2-grp-rows small { color: #8f8f8f; }
 .st2-rec .st2-big { transform-origin: left top; }
+/* Hanzo's Mori art (live: the black card behind the six facts), kept under the heading (COPY-RULE.md rule 5) */
+.st2-art { margin-top: 28px; }
