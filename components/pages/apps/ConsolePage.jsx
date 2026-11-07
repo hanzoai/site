@@ -269,7 +269,7 @@ function Shell({ auto, view: want, size = 'lg' }) {
     const ts = [];
     const at = (ms, fn) => ts.push(setTimeout(fn, ms));
     setPal(false); setGo(false);
-    let t = first.current ? 1500 : 3600;
+    let t = first.current ? 700 : 3600;
     first.current = false;
     at(t, () => { setQ(''); setPal(true); });
     t += 560;
@@ -466,7 +466,7 @@ function Find() {
                 {hits.map((r, i) => (
                   <li key={r.x.kind + r.x.name} id={'cs-o-' + i} role="option" aria-selected={i === h} className={(i === h ? 'hi' : '') + (went === r.x.kind + r.x.name ? ' went' : '')} onMouseEnter={() => setHi(i)} onClick={() => { setHi(i); pick(r); }}>
                     <span className="cs-find-i"><Ico d={r.x.d} /></span>
-                    <span className="cs-find-n"><Hl name={r.x.name} at={r.at} n={q.trim().length} /><em>{r.x.sub}</em></span>
+                    <span className="cs-find-n"><span><Hl name={r.x.name} at={r.at} n={q.trim().length} /></span><em>{r.x.sub}</em></span>
                     <span className="cs-find-k x-mono">{i === h ? (r.x.kind === 'module' ? '↵ open' : '↵ go') : r.x.kind}</span>
                   </li>
                 ))}
