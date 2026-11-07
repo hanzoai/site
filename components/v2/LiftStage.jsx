@@ -6,11 +6,13 @@
    - <Lift from={1.22} y={80} origin="50% 0%" className="...">{hero object}</Lift>
      The hero object starts huge and settles into its place as it scrolls up into view (scale, position and clip only),
      so the camera feel comes from the scroll. Phones settle from a quarter of the scale. Reduced motion: the final state.
+   - useTick(ms, run, fn): calls fn every ms while run is true, with a setTimeout chain (no setInterval; it stops the
+     moment run turns false, e.g. off screen or paused).
    Both need '../../v2/v2scale.css' (the .v2-line mask). */
 import { useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react';
 
-export function Lines({ lines, as = 'h1', className = '', delay = 0.05, gap = 0.11, id, ...rest }) {
+export function Lines({ lines, as = 'h1', className = '', delay = 0.05, gap = 0.06, id, ...rest }) {
   const Tag = as;
   return (
     <Tag className={className} id={id} {...rest}>
@@ -21,6 +23,18 @@ export function Lines({ lines, as = 'h1', className = '', delay = 0.05, gap = 0.
       ))}
     </Tag>
   );
+}
+
+export function useTick(ms, run, fn) {
+  const f = useRef(fn);
+  f.current = fn;
+  useEffect(() => {
+    if (!run) return;
+    let t;
+    const step = () => { f.current(); t = setTimeout(step, ms); };
+    t = setTimeout(step, ms);
+    return () => clearTimeout(t);
+  }, [ms, run]);
 }
 
 /* offset: when the settle starts and ends, as useScroll offsets of the object against the viewport. */

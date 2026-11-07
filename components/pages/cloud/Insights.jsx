@@ -1,6 +1,12 @@
 'use client';
+// Persona: a product team deciding what to ship and how it is used.
+// Goal: see a flag roll out and be killed without a deploy, and find the tool for their question.
+// CTA: Open Insights (insights.hero, insights.close).
+// Metric: cta_click insights.hero
+// Signature: a flag you roll out by hand: a field of people lights as the flag climbs, the kill switch drops it.
+// Beyond: Ask it a question: pick your question, get the tool and Hanzo's sentence.
 /* Insights (v2, archetype A Launch).
-   V2: 8/10 A rollout you can watch: the new-dashboard flag climbs across a field of people who light up and send events until the kill switch drops it, no deploy; the six tools in one product window that tours itself; the code and the app it flips in the dark room.
+   V2: 8/10 A flag rolled out to a percentage, a cohort or one account across a field of people, then killed without a deploy; six tools in a self-touring window; code beside the app it flips; greys only, one ask.
    Signature: a flag you roll out by hand. A field of people, each a dot; the new-dashboard flag rolls out to a share of
    them (drag it, or let it climb), the ones in the rollout light up and send button_clicked events; the kill switch
    turns it off for everyone at once.
@@ -12,11 +18,12 @@
    Accent: violet, from the flag. Every word and link is Hanzo's; the people are dots. */
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { A } from '../../kit';
-import { Code, useLive, useEvery } from './Frame';
-import { Lines } from '../../v2/LiftStage';
+import { A, Cta, CodeBlock } from '../../kit';
+import { useLive } from './Frame';
+import { Lines, useTick } from '../../v2/LiftStage';
 import ShipPrompt from '../../v2/ShipPrompt';
 import GetIt from '../../v2/GetIt';
+import LivePause, { usePause } from '../../v2/LivePause';
 import '../../v2/v2scale.css';
 import './Insights.css';
 
@@ -25,48 +32,58 @@ const N = 120;
 const rank = Array.from({ length: N }, (_, i) => ({ i, r: (Math.sin(i * 12.9898) * 43758.5453) % 1 })).sort((a, b) => Math.abs(a.r) - Math.abs(b.r)).map((x) => x.i);
 const order = new Array(N);
 rank.forEach((cell, k) => { order[cell] = k; });
-const STEPS = [10, 25, 50, 100];
+// Hanzo's three ways to roll a flag out ("a percentage, a cohort, or one account"), drawn as which people light up.
+// No percentages are shown: Hanzo states none.
+const MODES = ['a percentage', 'a cohort', 'one account'];
+const lit = (m, i) => (m === 0 ? order[i] < N * 0.3 : m === 1 ? i % 15 >= 4 && i % 15 < 11 && i >= 30 && i < 90 : i === 52);
 
-/* the rollout: a flag, a field of people, the events they send */
+/* the rollout: a flag, a field of people, the events they send; then the kill switch, no deploy */
 function Rollout() {
-  const [ref, live] = useLive(0.3);
-  const [pct, setPct] = useState(25);
+  const [ref, seen] = useLive(0.3);
+  const [paused, togglePause] = usePause();
+  const live = seen && !paused;
+  const [m, setM] = useState(0);
   const [kill, setKill] = useState(false);
   const [mine, setMine] = useState(false);
-  const [k, setK] = useState(1);
   const [ev, setEv] = useState(0);
   useEffect(() => {
     if (mine || !live) return;
     const t = setTimeout(() => {
-      if (k === STEPS.length) { setKill(true); setK(k + 1); return; }
-      if (k > STEPS.length) { setKill(false); setPct(STEPS[0]); setK(1); return; }
-      setPct(STEPS[k]); setK(k + 1);
-    }, k >= STEPS.length ? 2600 : 2000);
+      if (kill) { setKill(false); setM(0); return; }
+      if (m === MODES.length - 1) { setKill(true); return; }
+      setM(m + 1);
+    }, kill ? 2600 : 2400);
     return () => clearTimeout(t);
-  }, [k, mine, live]);
-  useEvery(600, live && !kill && pct > 0, () => setEv((e) => e + 1));
-  const on = kill ? 0 : Math.round((pct / 100) * N);
+  }, [m, kill, mine, live]);
+  useTick(700, live && !kill, () => setEv((e) => e + 1));
   return (
     <div className="in-roll" ref={ref}>
       <div className="in-flag">
         <div className="in-flag-top">
           <code>new-dashboard</code>
           <button type="button" role="switch" aria-checked={!kill} aria-label="Kill switch" className={'in-kill' + (kill ? ' off' : '')} onClick={() => { setMine(true); setKill(!kill); }}><i />{kill ? 'off' : 'on'}</button>
+          <LivePause paused={paused} onToggle={togglePause} inline className="in-pause" />
         </div>
-        <label className="in-pct">
+        <div className="in-pct">
           <span>roll out to</span>
-          <b className="v2-num">{kill ? 0 : pct}%</b>
-          <input type="range" min="0" max="100" step="5" value={pct} onChange={(e) => { setMine(true); setKill(false); setPct(+e.target.value); }} aria-label="Rollout percentage" style={{ '--v': (kill ? 0 : pct) + '%' }} />
-        </label>
+          <div className="in-modes" role="radiogroup" aria-label="Roll out to">
+            {MODES.map((t, i) => (
+              <button key={t} type="button" role="radio" data-sound="tick" aria-checked={!kill && m === i} onClick={() => { setMine(true); setKill(false); setM(i); }}>
+                {!kill && m === i && <motion.span layoutId="in-mode" className="in-mode-bg" transition={{ duration: 0.3, ease: EASE }} />}
+                <span>{t}</span>
+              </button>
+            ))}
+          </div>
+        </div>
         <div className="in-events" aria-hidden="true">
           <AnimatePresence initial={false} mode="popLayout">
-            {on > 0 && <motion.p key={ev} initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} transition={{ duration: 0.3, ease: EASE }}>capture · button_clicked · variant: primary</motion.p>}
+            {!kill && <motion.p key={ev} initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} transition={{ duration: 0.3, ease: EASE }}>capture · button_clicked · variant: primary</motion.p>}
             {kill && <motion.p key="k" className="kill" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>kill switch · no deploy</motion.p>}
           </AnimatePresence>
         </div>
       </div>
       <div className="in-field" aria-hidden="true">
-        {Array.from({ length: N }).map((_, i) => <i key={i} className={order[i] < on ? 'on' : ''} style={{ transitionDelay: (order[i] % 30) * 10 + 'ms' }} />)}
+        {Array.from({ length: N }).map((_, i) => <i key={i} className={!kill && lit(m, i) ? 'on' : ''} style={{ transitionDelay: (order[i] % 30) * 10 + 'ms' }} />)}
       </div>
     </div>
   );
@@ -125,7 +142,9 @@ function Pane({ k }) {
 
 /* The six tools in one window; tabs tour themselves with a progress line until you pick one. */
 function Tour() {
-  const [ref, live] = useLive(0.35);
+  const [ref, seen] = useLive(0.35);
+  const [paused, togglePause] = usePause();
+  const live = seen && !paused;
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
   useEffect(() => {
@@ -141,7 +160,7 @@ function Tour() {
           <ul className="in-figs">{[['Events', 'Auto-capture'], ['Flags', 'A/B'], ['OSS', 'Self-hosted']].map(([a, b]) => <li key={a}><b>{a}</b><span>{b}</span></li>)}</ul>
         </div>
         <div className="in-win v2-obj" ref={ref}>
-          <div className="in-win-bar"><span className="in-dots"><i /><i /><i /></span><span>insights.hanzo.ai</span></div>
+          <div className="in-win-bar"><span className="in-dots"><i /><i /><i /></span><span>insights.hanzo.ai</span><LivePause paused={paused} onToggle={togglePause} inline className="in-pause" /></div>
           <div className="in-win-body">
             <div className="in-tabs" role="tablist" aria-label="Ship it, then find out">
               {LOG.map(([t], i) => (
@@ -191,7 +210,7 @@ function Ask() {
         <div className="in-ask-l">
           <p className="v2-kick acc">Ask it a question</p>
           <ul className="in-ask-q" role="radiogroup" aria-label="Your question">
-            {ASK.map(([q], i) => <li key={q}><button type="button" role="radio" aria-checked={at === i} onClick={() => setAt(i)}>{q}</button></li>)}
+            {ASK.map(([q], i) => <li key={q}><button type="button" role="radio" data-sound="tick" aria-checked={at === i} onClick={() => setAt(i)}>{q}</button></li>)}
           </ul>
         </div>
         <div className="in-ask-a" aria-live="polite">
@@ -232,10 +251,14 @@ function MyApp() {
 
 /* the app the code renders: the same flag flips it */
 function Flip() {
-  const [ref, live] = useLive(0.3);
+  const [ref, seen] = useLive(0.3);
+  const [paused, togglePause] = usePause();
+  const live = seen && !paused;
   const [on, setOn] = useState(true);
-  useEvery(2800, live, () => setOn((v) => !v));
+  useTick(2800, live, () => setOn((v) => !v));
   return (
+    <div className="lp-host">
+    <LivePause paused={paused} onToggle={togglePause} className="in-flip-pause" dark />
     <div className="in-flip" ref={ref} aria-hidden="true">
       <p className="in-flip-k"><code>showNewUI</code><span className={on ? 'on' : ''}>{on ? 'true' : 'false'}</span></p>
       <AnimatePresence mode="wait" initial={false}>
@@ -244,6 +267,7 @@ function Flip() {
           <div className="in-app-g">{[0, 1, 2, 3, 4, 5].map((i) => <i key={i} />)}</div>
         </motion.div>
       </AnimatePresence>
+    </div>
     </div>
   );
 }
@@ -255,10 +279,9 @@ export default function Insights() {
         <div className="v2-wrap v2-grid in-hero-g">
           <div className="in-hero-obj"><Rollout /></div>
           <div className="in-hero-c">
-            <p className="v2-kick acc">insights.hanzo.ai</p>
             <Lines as="h1" className="v2-display in-h1" lines={['Hanzo', 'Insights']} data-morph-target="" />
-            <p className="v2-lede in-sub">Product analytics and feature flags</p>
-            <A to="https://insights.hanzo.ai" className="v2-btn solid">Open Insights</A>
+            <p className="v2-lede in-sub v2-in" style={{ animationDelay: '.3s' }}>Product analytics and feature flags</p>
+            <Cta to="https://insights.hanzo.ai" id="insights.hero" thumb>Open Insights</Cta>
           </div>
         </div>
       </section>
@@ -271,7 +294,7 @@ export default function Insights() {
         <div className="v2-wrap">
           <h2 className="v2-display s in-code-h">The flag and the event, in one provider</h2>
           <div className="in-code-g">
-            <Code title="Insights" mark="new-dashboard" tabs={[{ k: 'app.tsx', code: CODE }]} className="in-code-c" />
+            <CodeBlock code={CODE} label="app.tsx" className="in-code-c" />
             <Flip />
           </div>
         </div>
@@ -282,14 +305,14 @@ export default function Insights() {
           <h2 className="v2-display m in-start-h">Start with autocapture</h2>
           <div className="in-start-r">
             <p className="v2-lede">Drop the provider in and you have data by this afternoon. Name the events that matter once you know which ones those are. There is a free tier, and the whole thing is open source if you would rather run it yourself.</p>
-            <div className="v2-acts"><A to="/login" className="v2-btn solid">Try Hanzo</A><A to="https://github.com/hanzoai/insights" className="v2-btn">View on GitHub</A></div>
+            <div className="v2-acts"><Cta to="/login" kind="quiet" id="insights.try-hanzo">Try Hanzo</Cta><Cta to="https://github.com/hanzoai/insights" kind="quiet" id="insights.view-on-github">View on GitHub</Cta></div>
           </div>
         </div>
       </section>
 
       <ShipPrompt name="Insights" prompt="Read https://hanzo.ai/skill.md and use Hanzo Insights in my project." flip />
 
-      <GetIt name="Insights" tag="Product insights + experiments" seed="insights" data={[4, 6]} license="MIT" repo={['hanzoai/insights', 'https://github.com/hanzoai/insights']} stars="4 stars" />
+      <GetIt name="Insights" tag="Product insights + experiments" seed="insights" data={[4, 6]} license="MIT" repo={['hanzoai/insights', 'https://github.com/hanzoai/insights']} stars="4 stars" ask={['Open Insights', 'https://insights.hanzo.ai', 'insights.close']} />
     </main>
   );
 }
