@@ -1,6 +1,8 @@
 'use client';
-/* Platform features, v2. V2: 8/10 Stage keyboard (the self-playing instrument arrives huge and settles), three pinned product chapters with their own live product UI, the real chat as the dark room, pink accent
+/* Persona: anyone weighing Hanzo's products (developers, teams, people who chat). Goal: start a first chat. CTA: "Open Chat" → /chat?skip=login. Metric: first_chat.
+   Platform features, v2. V2: 8/10 Stage keyboard (the self-playing instrument arrives huge and settles), three pinned product chapters with their own live product UI, the real chat as the dark room, pink accent
    Motion budget: signature = the self-playing keyboard; supporting = Stage (Settle), Chapters (PinChapters), magnetic primary.
+   Colour: none (0 UI hues); the pressed key is ink. Pause buttons on the keyboard and the product chapters.
    Platform features. Its idea is the instrument you play to chat, build and ship.
    Signature: Hanzo's ten features are keycaps on one keyboard, set in three clusters (Hanzo Chat, Hanzo Dev, Hanzo
    Design & Cloud). It plays itself, a key pressing every couple of seconds and its feature lighting on the display
@@ -12,11 +14,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Magnetic } from '../ui';
-import { A } from '../kit';
+import { A, Img } from '../kit';
 import { useLive, useEvery } from './cloud/Frame';
 import LineMask from '../v2/x-gauss/LineMask';
 import Settle from '../v2/Settle';
 import PinChapters from '../v2/x-gauss/PinChapters';
+import NoJs from '../v2/x-gauss/NoJs';
+import { usePause } from '../v2/x-gauss/Pause';
 import '../v2/Scale.css';
 import './Features.css';
 
@@ -47,6 +51,7 @@ function Instrument() {
   const [at, setAt] = useState(0);
   const [down, setDown] = useState(-1);
   const [mine, setMine] = useState(false);
+  const [paused, pauseBtn] = usePause({ right: 18, top: 18 });
   const [q, setQ] = useState('');
   const box = useRef(null);
   const seen = useInView(box, { amount: 0.05 }); // the keyboard is tall on a phone: a sliver in view is enough
@@ -58,10 +63,10 @@ function Instrument() {
   }, [q]);
   const press = (i, hand) => { setAt(i); setDown(i); if (hand) setMine(true); setTimeout(() => setDown((d) => (d === i ? -1 : d)), 180); };
   useEffect(() => {
-    if (mine || calm || !seen) return;
+    if (mine || calm || !seen || paused) return;
     const t = setTimeout(() => press((at + 1) % KEYS.length), 2100);
     return () => clearTimeout(t);
-  }, [at, mine, calm, seen]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [at, mine, calm, seen, paused]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     const key = (e) => {
       if (e.metaKey || e.ctrlKey || e.altKey || /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName) || !seen) return;
@@ -74,6 +79,7 @@ function Instrument() {
   const k = KEYS[at];
   return (
     <div className="xft-inst" ref={box}>
+      {pauseBtn}
       <div className="xft-screen" aria-live="polite">
         <div className="xft-screen-top">
           <span className="x-mono">{k.g}{k.tag ? ` · ${k.tag}` : ''}</span>
@@ -122,19 +128,19 @@ function Hero() {
       <div className="w2-wrap">
         <div className="xft-top">
           <div>
-            <motion.p className="w2-kicker acc xft-kick" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>Platform Features</motion.p>
             <LineMask as="h1" id="xft-h1" now className="w2-display xft-h1" lines={['Everything you need to', 'chat, build and ship.']} />
+            <p className="xft-kick x-mono">Platform Features</p>
           </div>
           <motion.div className="xft-top-r" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
             <p className="w2-lede xft-lede">Explore Hanzo Chat, Dev, and Studio — intelligent model routing, repo-scale coding agents, and unified cloud APIs.</p>
             <div className="xft-acts">
-              <Magnetic strength={0.25}><A to="/chat?skip=login" className="w2-cta acc" data-thumb="Open Chat">Open Chat <i aria-hidden="true">→</i></A></Magnetic>
+              <Magnetic strength={0.25}><A to="/chat?skip=login" className="w2-cta" data-thumb="Open Chat" data-cta="features.hero">Open Chat <i aria-hidden="true">→</i></A></Magnetic>
               <A to="/dev" className="w2-ghost">Launch Dev</A>
               <A to="/signup" className="w2-ghost">Try Hanzo</A>
             </div>
           </motion.div>
         </div>
-        <Settle from={1.06} lift={60}><Instrument /></Settle>
+        <Settle from={1.04} lift={24}><Instrument /></Settle>
       </div>
     </section>
   );
@@ -150,7 +156,7 @@ function ChatUI({ on }) {
       <div className="xft-ui-bar"><i /><i /><i /><span className="x-mono">Hanzo Chat</span></div>
       <div className="xft-ui-in">
         <p className="xft-ui-q">Ask Hanzo anything</p>
-        <div className="xft-ui-enso"><img src="/models/enso.webp" alt="" /><b>Enso</b><span className="x-mono">routes each prompt</span></div>
+        <div className="xft-ui-enso"><Img src="/models/enso.webp" alt="" w={36} h={36} /><b>Enso</b><span className="x-mono">routes each prompt</span></div>
         <ul className="xft-ui-chips">{fs.map(([t], i) => <li key={t} className={i < k ? 'on' : ''}>{t}</li>)}</ul>
       </div>
     </div>
@@ -184,17 +190,19 @@ function CanvasUI({ on }) {
 
 function Products() {
   const [ref, live] = useLive(0.05);
+  const [paused, pauseBtn] = usePause({ right: 0, top: -60 });
   return (
     <div ref={ref}>
       <PinChapters id="xft-products" label="Hanzo Chat, Hanzo Dev, Hanzo Design & Cloud" className="xft-pin"
-        chapters={GROUPS.map(([g, tag, fs]) => ({ k: tag || 'Platform', t: g, b: (
+        chapters={GROUPS.map(([g, tag, fs]) => ({ k: tag || undefined, t: g, b: (
           <ul className="xft-ch-list">{fs.map(([t, d]) => <li key={t}><b>{t}</b><span>{d}</span></li>)}</ul>
         ) }))}
         visual={(at) => (
           <div className="xft-vis">
+            {pauseBtn}
             {[ChatUI, DevUI, CanvasUI].map((V, i) => (
               <motion.div key={i} className="xft-vis-i" initial={false} animate={{ opacity: at === i ? 1 : 0, scale: at === i ? 1 : 0.96 }} transition={{ duration: 0.55, ease: EASE }} aria-hidden={at !== i}>
-                <V on={live && at === i} />
+                <V on={live && !paused && at === i} />
               </motion.div>
             ))}
           </div>
@@ -287,7 +295,7 @@ function Ask() {
           {state !== 'idle' && (
             <motion.div className="xft-answer" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.45, ease: EASE }} aria-live="polite">
               <p className="xft-q">{q}</p>
-              <span className="xft-who"><img src="/models/enso.webp" alt="" />Enso</span>
+              <span className="xft-who"><Img src="/models/enso.webp" alt="" w={22} h={22} />Enso</span>
               {state === 'wait' && <span className="xft-dots" aria-label="Thinking"><i /><i /><i /></span>}
               {(state === 'stream' || state === 'done') && <p className="xft-a"><span ref={out}>{state === 'done' ? full.current : ''}</span>{state === 'stream' && <b className="xft-caret" aria-hidden="true" />}</p>}
               {state === 'error' && <p className="xft-a">No answer came back this time. <A to="/chat?skip=login">Open Hanzo Chat</A></p>}
@@ -302,6 +310,7 @@ function Ask() {
 export default function Features() {
   return (
     <main className="xft w2">
+      <NoJs />
       <Hero />
       <Products />
       <Ask />
