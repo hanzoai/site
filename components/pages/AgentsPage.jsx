@@ -1,25 +1,24 @@
 'use client';
-/* Hanzo for agents, v3 (JAMES.md, PLAN-COMPONENTS 5.8). Persona: an agent (or the developer behind one) that must sign up
-   and pay by itself. Goal: the headless sign-up. CTA: "Sign up headless" (#headless), one solid ask in hero, the site's
-   sticky ask bar and the close. Metric: api_key_created (and the llms.txt fetch).
-   One idea per screen:
-     1. In the one dark room, over Koma's own film: "free to start, pay as you go", and beside it the sequence as a
-        numbered terminal: an agent signs itself up, writing each request exactly as Hanzo's agent prompt spells it.
-     2. Install: one command; the block writes itself line by line, once.
-     3. Headless (#headless): Hanzo's agent.ts, run by your scroll; each of the five steps lights on the index.
-     4. The agent prompt to paste, in one scrollable block. 5. Questions, then the one action.
-   Signature: the terminal demo of the five steps, with pause and a static final frame (server HTML, JS off, reduced
-   motion). Tap any step to read its requests.
-   Motion mix (JAMES.md 9): time (the sign-up writes itself, the install block), arrival (headline cut-in, terminal
-   rise), state (steps that open with springs, the ticks), pointer (step and index previews), scroll (agent.ts only).
-   Greys only; colour arrives only through Koma's film. Every word and line of code is Hanzo's. Removed in v3: the
-   "Who is installing?" picker (an install picker, deferred by PLAN-COMPONENTS 2.16, with words that were not
-   Hanzo's) and the prompt's "Show all"/"Fold" labels. */
+// Persona: an agent, or the developer behind one, that must sign up and pay by itself (MASTER 1: machine agents).
+// Goal: the headless sign-up. Metric: api_key_created (and the llms.txt fetch).
+// CTA: "Sign up headless" -> #headless (hero, header ask bar, closing Band).
+// Signature: the five steps as a numbered terminal; an agent signs itself up once, writing Hanzo's own requests, then rests.
+// Beyond: agent.ts run by your scroll, each of the five steps lighting and growing on the index as the run reaches it.
+/* Hanzo for agents (MASTER 4.1: hero, the literal sequence at #headless as a numbered code block, one AgentPrompt, Band;
+   a terminal demo with pause and a static final frame).
+     1. The black room: Koma's own film on the left, played once and resting on its last frame, the headline over a
+        gradient; on the right the numbered terminal, a box of fixed height so nothing on the page moves while it plays.
+     2. Install: one command, large, then the rest of Hanzo's install lines as quiet rows (not another dark box).
+     3. Headless (#headless): agent.ts pinned on desktop; the scroll moves the run; the step it reaches grows on the index.
+     4. The agent prompt, one block. 5. Questions, then the Band.
+   Motion mix (JAMES.md 9): time (the sign-up writes itself, the install rows), arrival (h1 line mask, terminal entry),
+   state (steps open at 300 ms ease-emphasis, ticks land, the active step grows), pointer (step and index previews),
+   scroll (agent.ts only). Deck greys; colour only through Koma's film. Every word and line of code is Hanzo's. */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useMotionValueEvent, useReducedMotion, useScroll } from 'motion/react';
 import { useDemo, DemoCtl } from '../v2/AppDemo';
-import { EASE, Copy, Magnetic } from '../ui';
-import { A, More, Faq, Film } from '../kit';
+import { EASE, Copy } from '../ui';
+import { A, More, Faq, Film, Cta, Band } from '../kit';
 import AppLines from '../v2/AppLines';
 import './AgentsPage.css';
 
@@ -88,35 +87,38 @@ function Run() {
     <div className="agt-run" ref={box}>
       <div className="agt-run-h">
         <span className="agt-run-dots" aria-hidden="true"><i /><i /><i /></span>
-        <span className="agt-run-k x-mono">Headless</span>
+        <span className="agt-run-k x-mono">For agents</span>
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.span key={open} className="agt-run-n x-mono" initial={{ y: 12, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -12, opacity: 0 }} transition={{ duration: 0.3, ease: EASE }}>{n2(open)}</motion.span>
         </AnimatePresence>
         <DemoCtl demo={demo} className="dark agt-ctl" />
       </div>
       <ol className="agt-steps" aria-label="Headless">
-        {STEPS.map(([t, d], i) => (
-          <li key={t} className={(i === open ? 'on' : '') + (i <= done ? ' done' : '')}>
-            <button type="button" aria-expanded={i === open} onClick={() => setPeek(i)}>
+        {STEPS.map(([title], i) => (
+          <li key={title} className={(i === open ? 'on' : '') + (i <= done ? ' done' : '')}>
+            <button type="button" aria-pressed={i === open} aria-controls="agt-detail" onClick={() => setPeek(i)}>
               <span className="agt-step-n x-mono">{String(i + 1).padStart(2, '0')}</span>
-              <span className="agt-step-t">{t}</span>
+              <span className="agt-step-t">{title}</span>
               <svg className="agt-step-ok" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </button>
-            <div className="agt-step-b">
-              <div>
-                <p className="agt-step-d">{d}</p>
-                <div className="agt-out x-mono">
-                  {CALLS[i].map((c, j) => {
-                    const [verb, ...rest] = c.split(' ');
-                    return <p key={j} className="agt-req on"><b>{verb}</b> <span ref={(el) => { (reqs.current[i] ||= [])[j] = el; }}>{rest.join(' ')}</span></p>;
-                  })}
-                </div>
-              </div>
-            </div>
             <span className="x-sr">{n2(i)}</span>
           </li>
         ))}
       </ol>
+      {/* every step's line and requests stay in the HTML, stacked in one cell of fixed size: one shows, nothing moves */}
+      <div className="agt-detail" id="agt-detail" aria-live="polite">
+        {STEPS.map(([title, d], i) => (
+          <div key={title} className={'agt-step-b' + (i === open ? ' on' : '')} aria-hidden={i !== open}>
+            <p className="agt-step-d">{d}</p>
+            <div className="agt-out x-mono">
+              {CALLS[i].map((c, j) => {
+                const [verb, ...rest] = c.split(' ');
+                return <p key={j} className="agt-req on"><b>{verb}</b> <span ref={(el) => { (reqs.current[i] ||= [])[j] = el; }}>{rest.join(' ')}</span></p>;
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -125,19 +127,18 @@ function Hero() {
   return (
     <section className="agt-hero" data-room="dark" aria-labelledby="agt-h1" data-morph-target data-ask-name="For agents">
       <div className="agt-bg" aria-hidden="true">
-        <Film src="/models/koma.webm" poster="/models/koma.webp" w={1200} h={1500} className="agt-film" />
+        <Film src="/models/koma.webm" poster="/models/koma.webp" w={1200} h={1500} loop={false} className="agt-film" />
       </div>
       <div className="v2a-wrap v2a-grid agt-hero-in">
         <div className="agt-hero-copy">
-          <AppLines as="h1" id="agt-h1" className="v2a-display agt-h1" lines={['Hanzo for agents:', 'free to start, pay as you go']} soft={[1]} />
-          <motion.p className="agt-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE, delay: 0.3 }}>Sign up free with a wallet. Get an API key free. A small free allowance to try it. Top up in USDC or USDT over the API to raise your limits and pay as you go. No human required.</motion.p>
-          <motion.div className="agt-acts" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE, delay: 0.4 }}>
-            <Ask slot="hero" dark />
-            <Docs dark />
+          <AppLines as="h1" id="agt-h1" className="v2a-display agt-h1" lines={['Hanzo for agents:', 'free to start, pay as you go']} />
+          <motion.p className="agt-lede" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.3 }}>Sign up free with a wallet. Get an API key free. A small free allowance to try it. Top up in USDC or USDT over the API to raise your limits and pay as you go. No human required.</motion.p>
+          <motion.div className="agt-acts" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.4 }}>
+            <Cta to="#headless" id="agents.hero" thumb size="lg">Sign up headless</Cta>
+            <Docs id="agents.docs" />
           </motion.div>
-          <p className="v2a-folio">For agents</p>
         </div>
-        <motion.div className="agt-hero-run" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.25 }}>
+        <motion.div className="agt-hero-run" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE, delay: 0.2 }}>
           <Run />
         </motion.div>
       </div>
@@ -145,60 +146,49 @@ function Hero() {
   );
 }
 
-/* the one ask (to the headless path on this page) and its text secondary */
-function Ask({ slot, dark }) {
-  return (
-    <Magnetic strength={0.18}>
-      <a href="#headless" className={'x-btn solid agt-ask' + (dark ? ' on-dark' : '')} data-thumb="Sign up headless" data-cta={'agents.' + slot}>
-        <span>Sign up headless</span>
-        <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M8 3v9M4 8.5 8 12.5l4-4" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
-      </a>
-    </Magnetic>
-  );
-}
-const Docs = ({ dark }) => (
-  <A to="https://docs.hanzo.ai/docs/agents" className={'agt-link' + (dark ? ' dark' : '')}>
-    <span>Read the docs</span>
-    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
-  </A>
-);
+const Docs = ({ id }) => <Cta to="https://docs.hanzo.ai/docs/agents" kind="link" id={id}>Read the docs</Cta>;
 
-/* 2. The install block writes itself, one command at a time, once. */
+/* 2. Install: Hanzo's first line large, with Copy; the rest of its lines as quiet rows that write themselves in, once. */
 function Install() {
   const ref = useRef(null);
-  const seen = useInView(ref, { once: true, amount: 0.5 });
+  const seen = useInView(ref, { once: true, amount: 0.4 });
   const calm = useReducedMotion();
   const lines = INSTALL.split('\n');
-  const [shown, setShown] = useState(lines.length);
+  const [first, ...rest] = lines;
+  const [cmd0, note0] = first.split(/(?=#)/);
+  const [shown, setShown] = useState(rest.length);
   useEffect(() => { if (!calm) setShown(0); }, [calm]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
-    if (!seen || calm || shown >= lines.length) return;
-    const t = setTimeout(() => setShown((v) => v + 1), shown === 0 ? 300 : 380);
-    return () => clearTimeout(t);
-  }, [seen, calm, shown, lines.length]);
+    if (!seen || calm || shown >= rest.length) return;
+    const tm = setTimeout(() => setShown((v) => v + 1), shown === 0 ? 400 : 160);
+    return () => clearTimeout(tm);
+  }, [seen, calm, shown, rest.length]);
   return (
     <section className="v2a-sec agt-install" aria-labelledby="agt-in-h">
       <div className="v2a-wrap v2a-grid agt-install-in">
         <div className="agt-install-l">
-          <AppLines as="h2" view id="agt-in-h" className="v2a-head agt-in-h" lines={['One command installs', 'the whole stack']} />
-          <p className="v2a-body agt-in-lede">The CLI, the coding agent, the MCP server and the inference engine are native Rust binaries. npm installs a small launcher; each binary downloads, checksum-verified, the first time it runs. Any OS, Windows included.</p>
+          <AppLines as="h2" view id="agt-in-h" className="v2a-head" lines={['One command installs the whole stack']} />
           <p className="v2a-folio">Install</p>
+          <p className="v2a-body agt-in-lede">The CLI, the coding agent, the MCP server and the inference engine are native Rust binaries. npm installs a small launcher; each binary downloads, checksum-verified, the first time it runs. Any OS, Windows included.</p>
         </div>
-        <div className="agt-install-r">
-          <div className="agt-term" ref={ref}>
-            <div className="agt-term-bar"><span aria-hidden="true"><i /><i /><i /></span><span className="x-mono">Install</span><Copy text={INSTALL} /></div>
-            <pre className="agt-term-body"><code>
-              {lines.map((l, i) => {
-                const [cmd, ...c] = l.split(/(?=#)/);
-                return (
-                  <span key={i} className={'agt-tl' + (i < shown ? ' on' : '')}>
-                    {l.startsWith('#') ? <span className="agt-c">{l}</span> : <>{cmd && <span className="agt-cmd">{cmd}</span>}{c.length > 0 && <span className="agt-c">{c.join('')}</span>}</>}
-                    {'\n'}
-                  </span>
-                );
-              })}
-            </code></pre>
+        <div className="agt-install-r" ref={ref}>
+          <div className="agt-one">
+            <code className="x-mono"><span aria-hidden="true" className="agt-one-p">$ </span>{cmd0.trim()}</code>
+            <Copy text={INSTALL} />
           </div>
+          <p className="agt-one-n x-mono">{note0}</p>
+          <pre className="x-sr">{INSTALL}</pre>
+          <ul className="agt-rows x-mono" aria-hidden="true">
+            {rest.map((l, i) => {
+              if (!l.trim()) return <li key={i} className="agt-gap" aria-hidden="true" />;
+              const [c, ...n] = l.split(/(?=#)/);
+              return (
+                <li key={i} className={'agt-row' + (i < shown ? ' on' : '')}>
+                  {l.startsWith('#') ? <span className="agt-c">{l}</span> : <><span className="agt-cmd">{c.trim()}</span>{n.length > 0 && <span className="agt-c">{n.join('')}</span>}</>}
+                </li>
+              );
+            })}
+          </ul>
         </div>
       </div>
     </section>
@@ -274,7 +264,7 @@ function Script() {
   return (
     <section className="agt-script" id="headless" ref={box} aria-labelledby="agt-sc-h">
       <div className="v2a-wrap agt-script-head">
-        <AppLines as="h2" view id="agt-sc-h" className="v2a-display md" lines={['The five steps,', 'as one script']} soft={[1]} />
+        <AppLines as="h2" view id="agt-sc-h" className="v2a-head" lines={['The five steps, as one script']} />
         <p className="v2a-lede agt-sc-lede">Every step is one request. This file makes them all, as it was run against production.</p>
         <p className="v2a-folio">Headless</p>
       </div>
@@ -293,7 +283,7 @@ function Script() {
               ))}
             </ol>
             <div className="agt-file">
-              <div className="agt-file-bar"><span className="x-mono">agent.ts</span><span className="agt-file-ln x-mono" aria-hidden="true">{Math.max(0, ln) + 1} / {lines.length}</span><Copy text={SCRIPT} /></div>
+              <div className="agt-file-bar"><span className="x-mono">agent.ts</span><Copy text={SCRIPT} /></div>
               <div className="agt-code" ref={code} data-lenis-prevent={scrub ? undefined : ''}>
                 <i className="agt-band" style={{ transform: `translateY(${band.y}px)`, height: band.h, opacity: ln >= 0 ? 1 : 0 }} aria-hidden="true" />
                 <pre><code>
@@ -349,17 +339,13 @@ const QA = [
   ['Which tools can my agent use?', 'The native Hanzo MCP server, over stdio from one line in Claude Code, Codex, Cursor and Zed: npx -y hanzo mcp. It carries the Kai decision tools beside files, shell, git, code search, the browser and the computer.'],
 ];
 
-/* 5. Questions, then the one action. */
+/* 5. Questions. */
 function Questions() {
   return (
     <section className="v2a-sec agt-faq" aria-labelledby="agt-qa-h">
       <div className="v2a-wrap v2a-grid agt-faq-in">
         <div className="agt-faq-l"><h2 className="v2a-head" id="agt-qa-h">Questions</h2></div>
-        <div className="agt-faq-r"><Faq items={QA} /></div>
-      </div>
-      <div className="v2a-wrap agt-end">
-        <p className="agt-end-t">No human required.</p>
-        <div className="agt-end-acts"><Ask slot="close" /><Docs /></div>
+        <div className="agt-faq-r"><Faq items={QA} multi /></div>
       </div>
     </section>
   );
@@ -373,6 +359,7 @@ export default function AgentsPage() {
       <Script />
       <Prompt />
       <Questions />
+      <Band title="No human required." action="Sign up headless" to="#headless" note={<Docs id="agents.close-docs" />} />
     </main>
   );
 }
