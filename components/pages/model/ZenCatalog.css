@@ -77,9 +77,13 @@
 .zc-fig dd { margin: 0; font-size: 64px; font-weight: 220; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .zc-figs[data-live] { height: 200svh; }
 .zc-figs[data-live] .zc-figs-pin { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; overflow: hidden; isolation: isolate; }
-.zc-figs[data-live] .zc-figs-r { grid-column: 6 / -1; display: grid; gap: 44px; align-content: center; }
+/* the figure sits high and its drawing fills the rest of the screen down to 44px above the fold, so the scene hands
+   over to the Zen5 heading without an empty band */
+.zc-figs[data-live] .zc-figs-g { height: 100%; }
+.zc-figs[data-live] .zc-figs-idx { align-self: center; }
+.zc-figs[data-live] .zc-figs-r { grid-column: 6 / -1; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 44px; padding: max(104px, 15svh) 0 44px; }
 /* the stage object: each figure draws its own number as data under it, crossfading as the figure cuts in */
-.zc-figs-art { position: relative; height: min(36svh, 300px); pointer-events: none; }
+.zc-figs-art { position: relative; min-height: 200px; pointer-events: none; }
 .zc-figs-draw { position: absolute; inset: 0; }
 .zc-fa { position: absolute; inset: 0; }
 .zc-fa i { display: block; }
@@ -89,7 +93,7 @@
 .zc-fa-18 i[data-z] { background: var(--ink); }
 @keyframes zc-wave { 0%, 60%, 100% { opacity: 1; } 30% { opacity: .35; } }
 /* 2M context: the Zen5 contexts on one linear 2M ruler, a playhead sweeping it */
-.zc-fa-ctx { display: grid; align-content: center; gap: 17px; --lab: 56px; }
+.zc-fa-ctx { display: grid; align-content: space-evenly; gap: 17px; --lab: 56px; }
 .zc-fa-axis { position: relative; display: block; margin-left: calc(var(--lab) + 17px); height: 21px; }
 .zc-fa-ticks { position: absolute; inset: auto 0 0; height: 10px; border-bottom: 1px solid var(--ink); background: repeating-linear-gradient(90deg, var(--track) 0 1px, transparent 1px 6.25%); }
 .zc-fa-axis b { position: absolute; right: 0; bottom: 14px; font-weight: 500; color: var(--ink); }
@@ -107,21 +111,21 @@
 .zc-fa-cents i[data-z]::after { content: ''; position: absolute; inset: -6px; border-radius: 6px; border: 1px solid var(--ink); animation: zc-breathe 2.4s var(--eio) .8s infinite; }
 @keyframes zc-breathe { 0%, 100% { opacity: 0; transform: scale(.7); } 50% { opacity: 1; transform: none; } }
 /* MoE + Dense: the five Zen5 sizes, total against active per token, on one shared scale */
-.zc-fa-size { display: grid; align-content: center; gap: 21px; }
+.zc-fa-size { display: grid; align-content: space-evenly; gap: 21px; }
 .zc-fa-srow { display: grid; grid-template-columns: 132px minmax(0, 1fr) 52px; gap: 17px; align-items: center; }
 .zc-fa-n { font-size: 14px; color: var(--mute); white-space: nowrap; }
 .zc-fa-srow .zc-mono { text-align: right; letter-spacing: .06em; color: var(--ink); }
 .zc-fa-srow .zc-fa-tot { background: var(--track); }
 .zc-fa-srow .zc-fa-act { background: var(--ink); animation: zc-wave 3.6s var(--eio) calc(var(--k) * .3s + .9s) infinite; }
-/* 7 modalities: seven rings, filling one after another */
-.zc-fa-7 { display: flex; align-items: center; justify-content: space-between; }
-.zc-fa-7 i { position: relative; width: 12%; aspect-ratio: 1; border-radius: 50%; border: 1.5px solid var(--ink); }
-.zc-fa-7 i::after { content: ''; position: absolute; inset: 22%; border-radius: 50%; background: var(--ink); opacity: 0; animation: zc-fill 4.2s var(--eio) calc(var(--k) * .6s + .6s) infinite; }
-@keyframes zc-fill { 0%, 40%, 100% { opacity: 0; transform: scale(.4); } 14%, 26% { opacity: 1; transform: none; } }
+/* 7 modalities: seven capsules, each filling from the floor in turn */
+.zc-fa-7 { display: flex; align-items: stretch; justify-content: space-between; }
+.zc-fa-7 i { position: relative; width: 11%; border-radius: 999px; border: 1.5px solid var(--ink); overflow: hidden; transform-origin: 50% 100%; }
+.zc-fa-7 i::after { content: ''; position: absolute; inset: 0; background: var(--ink); transform: scaleY(0); transform-origin: 50% 100%; animation: zc-fill 4.2s var(--eio) calc(var(--k) * .6s + .6s) infinite; }
+@keyframes zc-fill { 0%, 40%, 100% { transform: scaleY(0); } 14%, 26% { transform: none; } }
 .zc-figs[data-live] .zc-figs-idx { grid-column: 1 / span 5; display: grid; gap: 10px; align-content: center; margin: 0; padding: 0; list-style: none; }
 .zc-figs-idx li { display: flex; align-items: baseline; gap: 17px; min-height: 28px; padding-left: 17px; border-left: 2px solid transparent; font-size: 17px; color: var(--quiet); transition: color .3s var(--eo), border-color .3s var(--eo); }
 .zc-figs-idx li[data-on] { color: var(--ink); border-left-color: var(--ink); }
-.zc-figs[data-live] .zc-figs-list { grid-column: 6 / -1; padding: 0; }
+.zc-figs[data-live] .zc-figs-list { padding: 0; }
 .zc-figs[data-live] .zc-fig { grid-area: 1 / 1; align-self: center; }
 .zc-figs[data-live] .zc-fig-in { gap: 17px; }
 .zc-figs[data-live] .zc-fig dd { font-size: 112px; }
