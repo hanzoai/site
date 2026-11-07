@@ -1,17 +1,19 @@
 'use client';
 /* Hanzo Tag (governance view of the same product as /slack).
-   V2: 8/10 the mention as a map that spreads from one @Hanzo across the channels into canvases, diffs and the merged PR, set big beside the moment it opened; governance as the one dark room; the rest chaptered in the v2 grammar with a pink accent from the fixed button.
+   V2: 8/10 after the hero every section now holds an object (a live PR card, a stage that follows scroll through the three rooms, product frames around the runtime), row titles rest at 21px, the Built panel is a quiet room, the close has one solid ask, and the phone shows the map on its first screen.
    Persona: a workspace owner weighing what Hanzo can see. Goal: set up Hanzo Tag. CTA: Set up Hanzo Tag (tag.hero).
    Metric: cta_click on tag.hero and tag.close (data-cta; the event layer is the conductor's).
    Signature: Mention map: one @Hanzo at the centre, rings spreading out across a field of channels, then branching into
    Canvas, Diff, Preview and the merged PR #418; click any node to read that moment of the thread.
    Beyond: "Will Hanzo see this?": pick where a message lives (a channel with @Hanzo added or not, tagged or not,
    scheduled work, a direct message) and get the answer from Hanzo's own FAQ sentences.
+   Idle movers are the map and the "see" picker; the three rooms and the Built index follow your scroll (a click takes
+   over), and the four promises take the light in turn under the PR card they describe.
    The field holds 42 points because Hanzo's setup card says 42 channels enabled; only the tagged one lights.
    Every word, figure and link is Hanzo's (components/pages/slackData.js). */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion } from 'motion/react';
-import { A, Go, More } from '../kit';
+import { motion, useInView, useReducedMotion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
+import { A, More } from '../kit';
 import Sigil from '../Sigil';
 import A2Lines from '../v2/A2Lines';
 import A2Paste from '../v2/A2Paste';
@@ -22,19 +24,30 @@ import './Tag.css';
 
 const P = 'xtg';
 const EASE = [0.16, 1, 0.3, 1];
+/* The server cannot know the visitor's motion setting: anything that depends on it waits for the first browser render,
+   so the server HTML and the first client render match (no hydration mismatch under reduced motion). */
+function useMounted() {
+  const [m, setM] = useState(false);
+  useEffect(() => setM(true), []);
+  return m;
+}
 function useLive(amount = 0.2) {
   const ref = useRef(null);
   const seen = useInView(ref, { amount });
   const calm = useReducedMotion();
-  return [ref, seen && !calm, calm];
+  const mounted = useMounted();
+  const still = mounted && !!calm;
+  return [ref, seen && mounted && !calm, still];
 }
 function useEvery(ms, run, fn) {
   const f = useRef(fn);
   f.current = fn;
   useEffect(() => {
     if (!run) return;
-    const t = setInterval(() => f.current(), ms);
-    return () => clearInterval(t);
+    let t = 0;
+    const tick = () => { f.current(); t = setTimeout(tick, ms); };
+    t = setTimeout(tick, ms);
+    return () => clearTimeout(t);
   }, [ms, run]);
 }
 /* A section head in the v2 grammar: kicker, a line-masked headline, one sentence. */
@@ -166,9 +179,10 @@ function MentionMap() {
           <button key={n.k} type="button" aria-pressed={cur === i} tabIndex={-1} onClick={() => pick(i)}>{n.k === 'mention' ? '@Hanzo' : n.label}</button>
         ))}
       </div>
+      {/* every moment sits in one cell, so the panel keeps the height of the tallest and nothing below it jumps */}
       <div className={`${P}-moment` + (archived ? ' archived' : '')} aria-live="polite">
         {NODES.map((n, i) => (
-          <div key={cur === i ? n.k + again : n.k} id={`${P}-m-${n.k}`} className={`${P}-m`} hidden={cur !== i}>
+          <div key={cur === i ? n.k + again : n.k} id={`${P}-m-${n.k}`} className={`${P}-m` + (cur === i ? ' on' : '')} aria-hidden={cur !== i} inert={cur !== i}>
             <p className={`${P}-m-k`}><span>{String(i + 1).padStart(2, '0')} / {String(NODES.length).padStart(2, '0')}</span>{n.k === 'mention' ? '@Hanzo · #bug-button-darkmode' : n.label}</p>
             <Moment n={n} archived={archived} setArchived={setArchived} />
           </div>
@@ -186,9 +200,9 @@ function Hero() {
           <p className="a2-kick"><b>@</b> {HERO.kick}</p>
           <A2Lines as="h1" id="xtg-h1" className={`a2-headline ${P}-h1`} lines={HERO.title} now />
           <p className="a2-body">{HERO.lede}</p>
-          <div className="a2-acts">
+          <div className={`a2-acts ${P}-acts`}>
             <A to={HERO.acts[0][1]} className="x-btn solid" data-thumb={HERO.acts[0][0]} data-cta="tag.hero">{HERO.acts[0][0]}</A>
-            <A to={HERO.acts[1][1]} className="x-btn">{HERO.acts[1][0]}</A>
+            <A to={HERO.acts[1][1]} className={`x-btn ${P}-wimse`}>{HERO.acts[1][0]}</A>
           </div>
           <p className={`${P}-docs`}><More to={HERO.acts[2][1]}>{HERO.acts[2][0]}</More></p>
         </div>
@@ -200,17 +214,32 @@ function Hero() {
   );
 }
 
-/* The four promises as a quadrant, each taking the light in turn. */
+/* The four promises under the one thing they produce: the pull request, drawn in as it arrives. Each promise takes the
+   light in turn; pointing at one gives it the light. */
 function Channels() {
   const [ref, live] = useLive(0.15);
+  const card = useRef(null);
+  const shown = useInView(card, { once: true, amount: 0.4 });
   const [i, setI] = useState(0);
   useEvery(2800, live, () => setI((v) => (v + 1) % 4));
   return (
     <section className={`a2-sec ${P}-chans`} ref={ref}>
       <div className="a2-wrap">
-        <Head kick={CODE.kick} title={CODE.title} lede={CODE.lede} size="a2-display s" />
+        <div className={`${P}-chans-g`}>
+          <Head kick={CODE.kick} title={CODE.title} lede={CODE.lede} size="a2-display s" />
+          <div className={`${P}-pr` + (shown ? ' in' : '')} ref={card} aria-hidden="true">
+            <p className={`${P}-pr-h`}><span>{DIFF.head}</span><span>{DIFF.stat} <b>{DIFF.add}</b> <b>{DIFF.del}</b></span></p>
+            <p className={`${P}-pr-f`}><span>{DIFF.file}</span><em>{DIFF.viewed}</em></p>
+            <ol className={`${P}-pr-l`}>
+              {DIFF.lines.map(([a, b, s, t], k) => (
+                <li key={k} className={s === '+' ? 'add' : s === '-' ? 'del' : ''} style={{ '--i': k }}><span>{a ?? ''}</span><span>{b ?? ''}</span><code>{s.trim() || ' '} {t}</code></li>
+              ))}
+            </ol>
+            <p className={`${P}-pr-c`}><i /><span><b>{CANVAS.title}</b><span>{CANVAS.meta}</span></span><em>{SESSION[5].msgs[0].done}</em></p>
+          </div>
+        </div>
         <ul className={`${P}-quad`}>
-          {HERO.points.map((t, k) => <li key={t} className={i === k ? 'on' : ''}><i aria-hidden="true">@</i><p>{t}</p><b className={`${P}-timer`} aria-hidden="true" /></li>)}
+          {HERO.points.map((t, k) => <li key={t} className={i === k ? 'on' : ''} onPointerEnter={() => setI(k)}><span className="x-mono">{String(k + 1).padStart(2, '0')}</span><p>{t}</p><b className={`${P}-timer`} aria-hidden="true" /></li>)}
         </ul>
         <p className={`${P}-safe`}>{HERO.safe}</p>
       </div>
@@ -255,42 +284,73 @@ function Setup() {
   );
 }
 
-function What() {
-  const [ref, live] = useLive(0.3);
-  const [i, setI] = useState(0);
-  useEvery(3200, live, () => setI((v) => (v + 1) % 3));
+/* What each room looks like, drawn from the same channel: the mention, the canvas and diff, the federated identity. */
+function RoomArt({ k }) {
+  if (k === 0) return <div className={`${P}-art t0`}><Msg m={ASK} p={P} /><Msg m={ANSWER} p={P} /></div>;
+  if (k === 1) return (
+    <div className={`${P}-art t1`}>
+      <p className={`${P}-cv-t`}><i /><span><b>{CANVAS.title}</b><span>{CANVAS.meta}</span></span></p>
+      <pre>{DIFF.lines.slice(3, 8).map(([, , s, t], i) => <span key={i} className={s === '+' ? 'add' : 'del'}>{s} {t}{'\n'}</span>)}</pre>
+    </div>
+  );
   return (
-    <section className={`a2-sec ${P}-what`} ref={ref}>
+    <div className={`${P}-art t2`}>
+      <p className={`${P}-art-v`}><i>✓</i>{SETUP.verified}</p>
+      <p className={`${P}-art-role`}><b>{BUILT.items[4][0]}</b><span>{SETUP.steps[2][1]}</span></p>
+      <p className={`${P}-art-tok`}>{[6, 10, 4, 13, 7, 9, 5, 11].map((w, i) => <i key={i} style={{ '--w': w, '--i': i }} />)}</p>
+    </div>
+  );
+}
+
+/* What it is: the three rooms; the one at the middle of the screen is the one the stage beside them shows. */
+function What() {
+  const list = useRef(null);
+  const [i, setI] = useState(0);
+  const { scrollYProgress: p } = useScroll({ target: list, offset: ['start 0.7', 'end 0.45'] });
+  useMotionValueEvent(p, 'change', (v) => setI(Math.min(2, Math.max(0, Math.floor(v * 3)))));
+  const fill = useTransform(p, (v) => { const x = Math.min(1, Math.max(0, v)) * 3; return x >= 3 ? 1 : x - Math.floor(x); });
+  return (
+    <section className={`a2-sec ${P}-what`}>
       <div className="a2-wrap">
         <Head kick={WHAT.kick} title={WHAT.title} lede={WHAT.lede} />
-        <ol className={`${P}-rows`}>
-          {WHAT.items.map(([n, t, d], k) => (
-            <li key={n} className={i === k ? 'on' : ''} onPointerEnter={() => setI(k)}>
-              <span className="x-mono">{n}</span><h3>{t}</h3><p>{d}</p><b className={`${P}-timer`} aria-hidden="true" />
-            </li>
-          ))}
-        </ol>
+        <div className={`${P}-what-g`}>
+          <ol className={`${P}-rows`} ref={list}>
+            {WHAT.items.map(([n, t, d], k) => (
+              <li key={n} className={i === k ? 'on' : ''} onPointerEnter={() => setI(k)}>
+                <span className="x-mono">{n}</span><h3>{t}</h3><p>{d}</p>
+                <div className={`${P}-row-art`} aria-hidden="true"><RoomArt k={k} /></div>
+                {i === k ? <motion.b className={`${P}-timer`} style={{ scaleX: fill }} aria-hidden="true" /> : <b className={`${P}-timer`} aria-hidden="true" />}
+              </li>
+            ))}
+          </ol>
+          <div className={`${P}-stage`} aria-hidden="true">
+            {WHAT.items.map(([n], k) => <div key={n} className={`${P}-stage-p` + (i === k ? ' on' : '')}><RoomArt k={k} /></div>)}
+          </div>
+        </div>
       </div>
     </section>
   );
 }
 
-/* Six features as an index you read one at a time; it turns its own pages until you choose one. */
+/* Six features as an index you read one at a time; it follows your scroll until you choose one. */
 function Built() {
-  const [ref, live] = useLive(0.05);
+  const list = useRef(null);
   const [i, setI] = useState(0);
   const [mine, setMine] = useState(false);
-  useEvery(3000, live && !mine, () => setI((v) => (v + 1) % BUILT.items.length));
+  const n = BUILT.items.length;
+  const { scrollYProgress: p } = useScroll({ target: list, offset: ['start 0.75', 'end 0.4'] });
+  useMotionValueEvent(p, 'change', (v) => { if (!mine) setI(Math.min(n - 1, Math.max(0, Math.floor(v * n)))); });
+  const fill = useTransform(p, (v) => { const x = Math.min(1, Math.max(0, v)) * n; return x >= n ? 1 : x - Math.floor(x); });
   return (
-    <section className={`a2-sec ${P}-built`} ref={ref}>
+    <section className={`a2-sec ${P}-built`}>
       <div className="a2-wrap">
         <Head kick={BUILT.kick} title={BUILT.title} />
         <div className={`${P}-idx`}>
-          <div role="tablist" aria-label={BUILT.kick} aria-orientation="vertical" className={`${P}-idx-l`}>
+          <div role="tablist" aria-label={BUILT.kick} aria-orientation="vertical" className={`${P}-idx-l`} ref={list}>
             {BUILT.items.map(([t], k) => (
               <button key={t} type="button" role="tab" aria-selected={i === k} aria-controls={`${P}-b-${k}`} onClick={() => { setI(k); setMine(true); }}>
                 <span className="x-mono">{String(k + 1).padStart(2, '0')}</span>{t}
-                {i === k && !mine && <i className={`${P}-idx-t`} aria-hidden="true" />}
+                {i === k && !mine && <motion.i className={`${P}-idx-t`} style={{ scaleX: fill }} aria-hidden="true" />}
               </button>
             ))}
           </div>
@@ -363,7 +423,7 @@ function See() {
   );
 }
 
-/* Four products around one runtime; a signal crosses between them. */
+/* Four products around one runtime; a signal crosses between them. Each quadrant shows its surface as a small frame. */
 function Platform() {
   return (
     <section className={`a2-sec ${P}-plat`}>
@@ -373,7 +433,12 @@ function Platform() {
           <i className={`${P}-cross-h`} aria-hidden="true"><b /></i>
           <i className={`${P}-cross-v`} aria-hidden="true"><b /></i>
           <i className={`${P}-cross-c`} aria-hidden="true" />
-          {PLATFORM.items.map(([t, d], k) => <div key={t} className={`${P}-cross-i`}><h3>{t}</h3><p>{d}</p></div>)}
+          {PLATFORM.items.map(([t, d], k) => (
+            <div key={t} className={`${P}-cross-i`}>
+              <span className={`${P}-frame f${k}`} aria-hidden="true"><i /><i /><i /><i /><i /></span>
+              <div><h3>{t}</h3><p>{d}</p></div>
+            </div>
+          ))}
         </div>
         <div className={`${P}-runtime`}>
           <p>{PLATFORM.runtime}</p>
@@ -385,6 +450,7 @@ function Platform() {
   );
 }
 
+/* The close: one solid ask; the two Explore links and the deploy door are quiet. */
 function Close() {
   return (
     <section className={`a2-sec ${P}-close`}>
@@ -394,14 +460,15 @@ function Close() {
           <p className="a2-kick">{CLOSE.title}</p>
           <h2 className="a2-display s">{CLOSE.lede}</h2>
           <p className="a2-lede">{CLOSE.note}</p>
-          <div className="a2-acts">
-            {CLOSE.acts.map(([t, to], k) => <A key={t} to={to} className={'x-btn' + (k ? '' : ' solid')} {...(k ? {} : { 'data-cta': 'tag.close' })}>{t}</A>)}
+          <div className={`a2-acts ${P}-close-acts`}>
+            <A to={CLOSE.acts[0][1]} className="x-btn solid" data-cta="tag.close">{CLOSE.acts[0][0]}</A>
+            <More to={CLOSE.acts[1][1]}>{CLOSE.acts[1][0]}</More>
+            <More to={CLOSE.acts[2][1]}>{CLOSE.acts[2][0]}</More>
           </div>
         </div>
         <div className={`${P}-get`}>
-          <span className={`${P}-get-at`} aria-hidden="true">@</span>
           <h2>Get Hanzo Tag</h2>
-          <Go to="https://platform.hanzo.ai/deploy">Deploy to Cloud</Go>
+          <More to="https://platform.hanzo.ai/deploy">Deploy to Cloud</More>
         </div>
       </div>
     </section>
