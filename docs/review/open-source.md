@@ -1,80 +1,47 @@
 # /open-source — James-eye review
 
-Verdict: 5/10
-First complaint: "Half the page is blank. The totals, the commitments and the repos under Contribute never appear, so I'm scrolling through white space and it looks broken."
+Verdict: 7/10
+First complaint: "The top is alive and it's ours: the dots gather into Hanzo, Lux and Zoo. Then it turns into grey boxes, eight of them, then twelve with greyed-out emojis on top, and it reads like a spreadsheet of repos. And on the phone the pause button is sitting on top of the stars number."
 
-Walked 7 Nov 2026 on the dev server at 1470x801 and 375x812 (recorder walk at both sizes: first 0/1000/3000 ms, 13 desktop and 20 phone scroll stops with a/b idle frames, 14 hovers, 9 clicks. Then my own Playwright probes: a slow wheel scroll through the whole page at both sizes logging the charter list's opacity, hero frames every 200 ms for 2.4 s, hovering and clicking a constellation cluster, hover on the org cards, tiles and closing ask, the Zoo org tab, reduced motion, JS off, and 375x667 ask position). Parity: `scripts/parity.py /open-source` OK, text 417/417, links 139/139. The console's one error is the known FooterHTML hydration mismatch (shared chrome, not counted). It is also what causes the red "1 Issue" badge.
+Walked 7 Nov 2026 on the dev server at 1470x801 and 375x812 (recorder walk at both sizes, all 12 desktop and 18 phone scroll stops, a vs b idle frames; my own Playwright probes: hero arrival every 100 ms for 1.6 s, Total count-up final value, Zoo organization tab, org card hover, "Read more" sheet open and Esc, Built-on mark hover, charter signature draw, phone overlap measure, reduced motion, JS off).
+
+Frames: [phone pause over 5,125](open-source/r2-phone-pause-over-stat.jpg) · [Built on: emoji row over 12 equal tiles](open-source/r2-built-on-tile-wall.jpg) · ["Article III/IV/V" labels](open-source/r2-article-labels.jpg)
 
 ## What works
-- **The hero is a real idea.** A black room with a canvas "sky" of every repository. At 0 ms it is black with the lede. By 400 ms the h1 is cutting in by line mask (`probe/hero-0400.jpg`). By 1.6 s the dots pull back into three labelled galaxies: Lux, Hanzo, Zoo, each with its organization and repository counts. It drifts while idle (idle diff 426 bytes at rest). Pointing at a cluster rings it and shows a tip with real numbers ("hanzoskill · 749 repositories · 786 commits this year"), and clicking it opens `/oss/hanzoskill/`. This is the "one live object", and it is this page's alone. See `open-source/hero-sky-hover.jpg`.
-- The h1 is 52px / 497, its box never moves, CLS is 0.0015 on desktop and 0 on phone, and there is no horizontal overflow at either size.
-- **"What we publish"** is a proper state change. The ecosystem tabs re-light a commit-year heat grid, a language bar and the latest three commits, inside a quiet `#f5f5f5` panel. The sheet "The year in Zoo, every repository" opens and closes.
-- **"Every organization"**: numbered `01 / 37` cards with a repository bar. The Hanzo/Lux/Zoo tabs work (Zoo `aria-selected=true`). Cards rise in properly (`xos-up`), and hover shifts the fill `#f5f5f5` → `#ededed` and tilts.
-- Colour is monochrome throughout: no hue, and greys only.
-- Reduced motion shows every final state, and `getAnimations()` is 0 after 3 s. With JS off the h1 and every charter article are legible.
-- At 375x667 the hero ask sits at 571–619px, above the fold.
+- **The hero object is Hanzo's own and it moves.** A black room with a dot-field canvas (`canvas.x-gl`). On load the dots arrive scattered and gather into three clusters labelled LUX, HANZO, ZOO with their real organization and repository counts. The field keeps drifting while idle: the LUX label moved from y 91 to y 153 between the 3 s frame and the first scroll stop, with a non-zero idle diff. It moves within 1 s, it is a real data object, and no other page has it.
+- **The h1 cuts in by line mask.** The 1.2 s probe frame shows "Building in the" half out of its mask. The probe then read `transform: none` at y 204, with no shift while fonts loaded. The h1 is 52px/497, and nothing sits above it: "OPEN SOURCE FIRST" is set below it as a caption.
+- **Figures are honest and they count.** Total across Hanzo counts up and rests on 805,254 / 2,247 / 6,041, byte-identical to `openSourceData.js` TOTAL and the page source. Under reduced motion it renders 805,254 at once, and `getAnimations()` returns 0 after 3 s.
+- **State changes are real.** The ecosystem tabs (Hanzo 1,733 / Lux 456 / Zoo 58) and the organization tabs (Hanzo 37 / Lux 15 / Zoo 4) swap their content; clicking Zoo shows the 4 Zoo orgs. "Read more" opens a sheet with the full commit list, the date range and a "Read the source" link, and Esc closes it. The Contribute language chips (Go, TypeScript, Rust…) re-weight the ecosystem percentages.
+- **The heat map is the best object on the page.** It is a year of commits per day in the ink ramp, with Less/More, languages and latest commits. Proof, made visible.
+- **It holds up with JS off** (19,984 characters of main text render), CLS is 0.0015 on desktop and 0 on phone, and there is no horizontal overflow at either size.
 
 ## The 11 answers
-1. **Sells in 5 s, moves within 1 s?** Yes on desktop. At 1000 ms the field is already moving and the h1 is cut in, and by 1.6 s the galaxies have formed. On phone the h1 sits over the dot field at 1000 ms, then the field settles above it by 3000 ms. Two faults:
-   - **The hero lede is low-contrast dark mode, which is a banned tell.** Computed colour is `rgb(82,82,82)` on `#000`, about 2.7:1. `.pf-r .pf-lede` in `components/v2/ProofRhythm.css:19` (specificity 0,2,0) beats `.xos-lede { color: rgba(255,255,255,.78) }` in `OpenSource.css:40`.
-   - **Two big things compete in the first screen.** The 112px "1,733" and the 44px row of figures sit directly under the 52px h1, and at 1470x801 the 1,733 is cut by the fold (top 680px).
-2. **One in, one out, or a document?** Neither, because whole screens are empty. The slow wheel probe shows `.xos-arts > li` stuck at opacity 0 even after `data-arrive="in"`, and the same happens at both sizes:
-   - **Totals:** "Total across Hanzo" sits pinned next to nothing (`d/screen-03-a.jpg`, phone `open-source/totals-blank-phone.jpg`). The page's count-up "moment" is inside that invisible list, so nobody ever sees it.
-   - **Charter:** about 1,000px of white under "Our Stewardship Commitments" (`open-source/charter-blank-desktop.jpg`). Only the signature line draws.
-   - **Contribute:** the language chips switch, but the repository list under them is invisible (`d/screen-10-a.jpg`: the right column is empty).
-
-   **Cause:** `@keyframes xos-in` (`OpenSource.css:7`) has only a `from`, so the animation ends at the element's own value. That value is `opacity:0; transform:translate3d(0,16px,0)` from `[data-arrive] > li` (`OpenSource.css:13`). `xos-ocards` and `xos-tiles` work only because line 15 swaps them to `xos-up`, which has a `to`.
-3. **Real visual object in every section?** Hero: yes (the sky). Publish: yes (the heat-grid dashboard). Orgs: yes (the cards and bars). The other four fall short:
-   - **Built on:** 12 tiles with greyscaled emoji glyphs. The glyphs are Hanzo's live copy, but at 32px in grayscale they read as lazy placeholders.
-   - **Totals, Charter, Contribute:** today they show nothing (answer 2). On phone, "Built on" is 12 identical tall cards, about 3.5 screens of the same shape.
-4. **One ask, nothing floating; scale rhythm?**
-   - **Duplicate ask.** On desktop the header ask swaps to quiet "View on GitHub". The page's own sticky local bar (`.xos-local`, top 60px) then shows a second "View on GitHub" 60px under it, so two identical buttons are stacked on every screen after the hero.
-   - **Phone header mismatch.** On phone the header keeps a solid black "Try Hanzo" while the local bar says "View on GitHub", so the page has two different asks. The header is shared chrome, but the local-bar duplicate is the page's.
-   - **No `data-thumb`.** The closing "Start Contributing" has `data-cta` but no `data-thumb`.
-   - **Scale rhythm.** It is right below the hero: 26px heads, 17px titles, mono captions, with "Contribute" as the one display word at the end. The hero breaks it (answer 1).
-5. **Every hover and press answers, no jumps?** Mostly.
-   - **Answers:** cluster hover gives a tip with numbers; org cards and tiles change fill and tilt (`#f5f5f5`→`#ededed`); the closing ask lifts 1px; the pause button and chips have `scale(.97)`.
-   - **Dead hovers:** "Star Our Repos" and the "The year in Hanzo" disclosure (4/14 dead on desktop).
-   - **Off-palette fill:** the closing ask's hover fill is `rgb(42,42,44)`, which is not a deck value.
-   - **Touch hint:** on phone the hint still says "POINT AT A CLUSTER", and there is no pointer on touch.
-6. **Overlaps, font swap, layout shift?**
-   - **Layout shift:** none (CLS 0.0015 / 0).
-   - **Overlap:** no overlap of the page's own content.
-   - **Shared chrome:** the cookie card covers the hero figures and the phone's lower 220px (shared chrome).
-   - **Visual gaps:** the empty screens read as a broken layout, which is worse than a shift.
-7. **Which reference, and is its motion there?** It is a Catalogue page reaching for synchronized.studio: the cluster and the card open their org page, and titles carry `data-morph`. The click navigates. I did not verify a Morph hand-off frame by frame. The hero pull-back has the restraint of motion.dev. The charter's "signed" line-art is a good Story beat, but it signs an empty page.
-8. **Different from neighbours?** Yes. A canvas constellation of repositories is not used elsewhere, and the heat-grid dashboard and the signed charter are its own.
-9. **18 parts?** Parts that fail on what I saw:
-   - Part 3: one-in/one-out is broken by the blank screens.
-   - Part 4: duplicate ask in the local bar; `data-thumb` missing on the band primary.
-   - Part 9: the "count once" figure is never seen.
-   - Part 11: hover-only wording on touch.
-   - Part 12: hero lede contrast 2.7:1.
-
-   Copy parity passes, and reduced motion and JS off pass.
-10. **Banned tells?**
-    - **Present:** low-contrast text in the dark room (the hero lede).
-    - **Borderline:** emoji glyphs as tile icons (live copy, not headings).
-    - **Not seen:** purple/blue gradient, gradient text, Inter, cursor glow, or a pill above an h1. "OPEN SOURCE FIRST" and "CHARTER" sit below their headings, which is correct.
-11. **Copy untouched?** Yes. `parity.py`: 417/417 text, 139/139 links.
+1. **Sells in 5 s, moves in 1 s?** Mostly. At 1,000 ms the lede, buttons and figures are already up but the h1 is not. The h1 arrives about 1.2 s, so the page reads lede first and headline second. The dot field makes the first second worth watching. On the phone the field crowds the h1 top (h1 at y 336), and the primary bottom sits at 668px, 8px past the 660 budget.
+2. **One in, one out, or a document?** Half and half. Hero → What we publish (tabs, heat map, sheet) → Total (count-up) works as a sequence. After that, Every organization (8 equal tiles) and What Hanzo is built on (12 equal tiles) come back to back as two 4-column walls of the same `#f5f5f5` rounded card. Then a six-article list and a repo list follow. From Total onward it scrolls like a long document.
+3. **A real visual object in every section?** Hero: canvas, yes. Publish: heat map, yes. Total: big figure, yes. Organizations: tiles with a bar, weak. Built on: a row of 12 greyscaled emojis (`filter: grayscale(1) contrast(1.25)`) over text tiles, which looks cheap. Charter: a signature line that draws in, with the Hanzo mark. Mid-draw it reads as a stray "/" squiggle and a 10px mark (desktop screen 08, phone screen 10). Contribute: chips and a repo list.
+4. **One ask in the header, scale rhythm?** On desktop the header ask swaps from "Try Hanzo" to "View on GitHub" once the hero ask leaves view. That is correct, and it is the only solid in the chrome. On the phone the header keeps a solid "Try Hanzo" while a local band directly under it carries an outlined "View on GitHub". The two stacked bars take 117px of an 812px screen, and they carry two different asks. Scale: h1 52, hero figure 64, Total 84-ish as the moment, h2s at 26, and "Contribute" at h1-like size near the end. The rhythm is good in the top half. In the tile walls everything is the same medium size.
+5. **Every hover and press answers?** Buttons, tabs, the pause control, stat tiles and links answer. The org card hover is only a fill change (transparent to rgb(245,245,245)) and tells you nothing new. On the Built-on mark row, hovering the React mark showed no visible change in either the mark or the React tile in my probe. The recorder's "dead" items were the already-active tabs (Hanzo 1,733, Hanzo 37), which is correct, and "Zoo 58", which was under the cookie card. I clicked Zoo 4 myself and it works.
+6. **Overlap, font swap, shift?** One overlap, on the phone: the hero's 44px Pause button (`.xos-pause`, absolute, right gutter, bottom 27px) sits on the "5,125" GitHub stars figure. It was measured as an intersection at x 315, y 907. There is no font swap and no shift. During arrival the canvas dots drift across the lede for about half a second.
+7. **Which reference, and is its motion there?** It wants to be apple.com (one idea per screen, the product as hero) and the anthropic launch (figures as heroes). The hero and Total deliver that. There is no pinned scene, and the cards do not open into their pages (the organization arrows link out, with no Morph). The osply/hamol editorial confidence is missing from the bottom half.
+8. **Different from its neighbours?** Yes in the hero: an ecosystem dot field is its own medium and signature. No below it: the tile grids are the kit's generic card, the same as catalogue pages.
+9. **18 parts?** Most are present: one h1, one `<main>`, tabs, a sheet, a pause control on the moving field, reduced motion final state, JS-off legibility, `data-cta` and the sticky ask. Missing: the closing `Band`. The page ends on Contribute's repo list and goes straight into the footer, with no proof strip or band in the page's own words. The phone overlap fails part 11.
+10. **Banned tells?** No hue, no gradient text, no kicker above the h1. The greyscaled emoji row is a filtered-image tell and reads as AI-made. The two runs of 8 and 12 equal grey boxes in rows of four are the "equal boxes" clutter James rejects. They are not three in a row, but they repeat one tone and one shape.
+11. **Copy untouched?** One invented string. "Article I" to "Article VI" (`OpenSource.jsx:499` `ROMAN`, `:515` `Article {ROMAN[i]}`) appears over each stewardship commitment. "Article" is in neither `content/live/open-source.json`, `content/pages/open-source.html` nor `content/ui-strings.json`. Everything else I checked traces to Hanzo's words: "Forge listing · read…", "What we publish", "Total across Hanzo", "as GitHub counts them", "UTC", "Start Contributing", "Read more", "Pause" and every figure.
 
 ## Fixes (in order)
-1. **Make the hidden lists appear.** In `components/pages/OpenSource.css:7`, give the keyframe an end state: `@keyframes xos-in { from { opacity: 0; transform: translate3d(0,16px,0); } to { opacity: 1; transform: none; } }`. Alternatively, point line 14 at `xos-up`. This one change brings back:
-   - Totals, including the count-up moment.
-   - All six charter articles.
-   - The Contribute repository list.
+1. **Remove the invented "Article I–VI" labels.** In `components/pages/OpenSource.jsx`, delete the `ROMAN` array (line 499) and the `<span className="pf-mono xos-art-n">Article {ROMAN[i]}</span>` (line 515). If the list needs a marker, use a hairline or the numeral alone drawn as a non-text mark, never a word Hanzo did not write.
+2. **Fix the phone overlap.** `.xos-pause` (`OpenSource.css:21`) is absolutely positioned at bottom 27px over the hero figure row. Under 899px, move it into flow above the figures (or top-right of the room, below the header), and reserve its 44px so it never meets "5,125". Check it again at 320 and 375.
+3. **Break the two tile walls.** Every organization and What Hanzo is built on must not be two back-to-back 4-column grids of identical `#f5f5f5` cards.
+   - Make one of them a list. Built on, for example, could be 48px rows with the licence in mono at the right and the maintainer in grey, plus a row hover fill.
+   - Or give the organizations a true scale object: bars sized by repositories, so hanzoskill 749 is visibly ten times zap-proto 55.
+   - Show the first row and open the rest with the existing "Read more" pattern. That keeps one thing in and one out.
+4. **Replace the greyscaled emoji row.** The emoji glyphs (🐍 ⚙️ 🐹 …) with `grayscale(1) contrast(1.25)` look cheap and filtered.
+   - Either drop the row (the copy survives in the tiles), or render each as a plain mono monogram in ink.
+   - Whichever you keep, make the pointer link real: hovering a mark must visibly light its credit (ink border-free fill, the licence chip inverting), and the reverse. My probe saw no change.
+5. **Add the closing `Band`.** End on one proof strip and one Band in the page's own words before the footer (part 3). "Start Contributing" plus Join Discord and Founder Program is the natural band; set it as the closing centred room rather than a left column beside a repo list.
+6. **Give the arrival a sensible order.** Hold the lede, buttons and figures until the h1 cut-in has started (60 ms stagger after the h1 lines), so the 1 s frame shows the headline, not a headless lede. Keep the dot field off the lede column while it gathers. On the phone, end the field above the h1 and bring the primary inside 660px.
+7. **Make the charter signature read as a signature.** Draw it once, 800–1,400 ms, when the last article is 60% in view. Then hold it fully drawn with the Hanzo mark beside it at a readable size (24px, not 10.8px). Partly drawn, it looks like a stray slash.
+8. **Use one ask on the phone.** Either the local band drops its "View on GitHub" (the header can carry it, as on desktop), or the header shows the band's label. Two bars with two different asks take 117px of an 812px screen.
+9. **Make card hovers tell you something.** The org card hover should reveal something already on the card's data (its commits this year as a bar filling, or the repositories bar extending), not only a fill change. Keep the arrow nudge within the allowed transforms.
 
-   Then re-walk both sizes and confirm `.xos-arts > li` and `.xos-total-n > li` reach opacity 1 and the `.xos-lrepos` items are visible.
-2. **Fix the hero lede contrast.** `.xos-lede` loses to `.pf-r .pf-lede` (`#525252`). Use `.xos-hero .xos-lede { color: rgba(255,255,255,.78); }` in `OpenSource.css:40` to reach at least 4.5:1 on black.
-3. **One ask on screen.** Remove the "View on GitHub" button from `.xos-local` (`OpenSource.jsx`, Local, `.xos-local-a`) on desktop, since the header already carries it. Alternatively, keep the local bar's button and let the header stay quiet. Add `data-thumb` to `[data-cta="open-source.band"]`. Ask the shared-chrome owner (`docs/requests/open-source.md`) to swap the phone header ask to "View on GitHub" as the desktop header does.
-4. **Calm the first screen.** Let the 1,733 rest at 64px (deck figure size) under the h1, or move the hero stat row below the fold so the h1 is the one big thing. Do not cut a 112px figure in half at the fold at 1470x801. Let it grow only as the moment, in Totals, once that list is visible.
-5. **Give "Built on" an object and a phone composition.**
-   - Render the live emoji glyphs smaller, as a monochrome mark row, rather than as 32px greyscale icons heading 12 equal tiles.
-   - On phone, use 72px list rows or a 2-column grid instead of 12 full-width cards (about 3.5 screens).
-6. **Touch and hover details.**
-   - Hide "POINT AT A CLUSTER" under `(hover: none)`, or swap it for "tap".
-   - Give "Star Our Repos" and the "The year in …" disclosure a hover change other than opacity.
-   - Replace the closing ask's hover fill `rgb(42,42,44)` with a deck value (`#262626` or `#171717`).
-7. **Re-walk after fix 1.** Once the lists show, check that the totals and charter sticky headers (`.xos-total-h`, `.xos-ch-h`, top 120px) still pair with visible content all the way down, and that no section leaves more than about 40px of dead white between the outgoing and incoming object.
-
-Frames: `open-source/hero-sky-hover.jpg` (what works), `open-source/charter-blank-desktop.jpg` and `open-source/totals-blank-phone.jpg` (what is broken).
+Shared chrome, not scored: the FooterHTML hydration mismatch, which produces the red "1 Issue" badge on both sizes, and the phone cookie card covering about 200px of every screen.
