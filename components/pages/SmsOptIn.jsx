@@ -3,12 +3,12 @@
 // Beyond: the consent read in parts: what, how often, cost, how to stop, purchases; each lights its own words in the paragraph and on the phone.
 /* SMS opt-in.
    Persona: a Hanzo user who wants codes and alerts by text. Goal: opt in. CTA: "Yes, sign me up!". Metric: lead_submit.
-   V2: 8/10 MASTER scale: a 52px headline with its caption under it and one calm form; a phone pinned beside it that mirrors your number, receives the three kinds of text once and rests, and lights what each part of the consent means; then a quiet dark strip: the three texts in one row and the STOP and HELP keys, each lighting what its reply does.
+   V2: 8/10 MASTER scale: a 52px headline with its caption under it and one calm form; a phone pinned beside it that mirrors your number, receives the three kinds of text once and rests, and lights what each part of the consent means; said once: no second room repeats the texts or the keys.
    Motion: the mirroring phone (signature) + line-masked type + the bubbles taking turns as you scroll + a drawn tick.
    0 UI hues. The form is hanzo.ai's own: one number, one box, one button, enabled once the box is ticked and the
    number has ten digits. It sends exactly what hanzo.ai sends: POST https://api.hanzo.ai/v1/notify/consent
    {phone, consent, channel, source, consentText}. */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { EASE, Mark } from '../ui';
 import { A, Cta, Field, Tick } from '../kit';
@@ -37,12 +37,20 @@ function Clock() {
   return <span>{h}<em className={'xsm-colon' + (t.getSeconds() % 2 ? ' off' : '')}>:</em>{m}</span>;
 }
 
+/* how the phone shows a typed US number (display only; the request sends exactly what was typed) */
+function show(v) {
+  const s = v.trim();
+  const d = s.replace(/\D/g, '');
+  if (/^1?\d{10}$/.test(d) && !/[a-z]/i.test(s)) { const n = d.slice(-10); return '+1 (' + n.slice(0, 3) + ') ' + n.slice(3, 6) + '-' + n.slice(6); }
+  return s;
+}
+
 function Handset({ phone, lit, done, failed }) {
   return (
     <div className="xsm-phone" aria-hidden="true">
       <div className="xsm-screen">
         <div className="xsm-bar x-mono"><Clock /><i /></div>
-        <div className={'xsm-to' + (lit === 'Cost' ? ' lit' : '') + (failed ? ' fail' : '')}><span className="x-mono">To</span><b>{phone.trim() || '+1 (555) 000-0000'}</b></div>
+        <div className={'xsm-to' + (lit === 'Cost' ? ' lit' : '') + (failed ? ' fail' : '')}><span className="x-mono">To</span><b>{show(phone) || '+1 (555) 000-0000'}</b></div>
         <div className={'xsm-from' + (lit === 'What' || lit === 'Purchases' ? ' lit' : '')}><span className="xsm-av"><Mark size={12} /></span>Hanzo AI</div>
         <ul className={'xsm-msgs' + (done ? ' done' : '') + (lit === 'What' || lit === 'How often' ? ' lit' : '')}>
           {KINDS.map((k, i) => <li key={k} style={{ '--i': i }}>{k}</li>)}
@@ -51,34 +59,6 @@ function Handset({ phone, lit, done, failed }) {
         <div className={'xsm-keys' + (lit === 'How to stop' ? ' lit' : '')}><span>STOP</span><span>HELP</span></div>
       </div>
     </div>
-  );
-}
-
-/* The dark strip */
-function Kinds() {
-  const ref = useRef(null);
-  // a quiet strip at rest (MASTER 4.5: the phone and the consent tour are the page's one delight): the three kinds as
-  // received texts in one row, and the two reply keys that light what each reply does
-  const at = -1;
-  const [key, setKey] = useState(null);
-  return (
-    <section className="xp-sec xp-dark xsm-kinds" data-room="dark" aria-labelledby="xsm-kinds-h">
-      <div className="xp-wrap">
-        <p className="xsm-sender" id="xsm-kinds-h"><span className="xsm-av"><Mark size={14} /></span>Hanzo AI</p>
-        <ul className="xsm-bubbles" ref={ref}>
-          {KINDS.map((k, i) => (
-            <motion.li key={k} className={'b' + i + (at === i ? ' on' : '')} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.6 }} transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1], delay: i * 0.06 }}>{k}</motion.li>
-          ))}
-        </ul>
-        {/* the keys answer: press one and its half of Hanzo's sentence lights (what that reply does) */}
-        <div className="xsm-big-keys">
-          {['STOP', 'HELP'].map((k) => (
-            <button key={k} type="button" className="x-mono" aria-pressed={key === k} onClick={() => setKey(key === k ? null : k)}>{k}</button>
-          ))}
-          <p className="xp-lede"><span className={key === 'STOP' ? 'lit' : ''}>Reply STOP to opt out at any time,</span> <span className={key === 'HELP' ? 'lit' : ''}>or HELP for help.</span></p>
-        </div>
-      </div>
-    </section>
   );
 }
 
@@ -118,7 +98,9 @@ export default function SmsOptIn() {
       setState('idle'); setFailed(why);
       setTimeout(() => {
         document.querySelector('.xsm-form [name="phone"]')?.focus({ preventScroll: true });
-        document.querySelector('.xsm-err')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); // the reason is on screen
+        // the reason is on screen: if it landed under the fold, the page moves just enough to show it
+        const r = document.querySelector('.xsm-err')?.getBoundingClientRect();
+        if (r && r.bottom > innerHeight - 16) window.scrollTo({ top: scrollY + r.bottom - innerHeight + 32, behavior: 'smooth' });
       }, 0);
     }
   };
@@ -141,7 +123,7 @@ export default function SmsOptIn() {
                 <motion.div key="done" className="xsm-done" role="status" tabIndex={-1} ref={(el) => el?.focus()} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
                   <Tick size={56} />
                   <h2 className="xp-head">You&apos;re opted in</h2>
-                  <p>Thanks — you&apos;ll now receive SMS from Hanzo at {phone}. You can reply <strong>STOP</strong> at any time to opt out, or <strong>HELP</strong> for help.</p>
+                  <p>Thanks — you&apos;ll now receive SMS from Hanzo at {show(phone)}. You can reply <strong>STOP</strong> at any time to opt out, or <strong>HELP</strong> for help.</p>
                 </motion.div>
               ) : (
                 <motion.form key="form" onPointerDown={stopTour} onFocus={stopTour} onSubmit={submit} id="sms" className="xsm-form" exit={{ opacity: 0, y: -10, transition: { duration: 0.15 } }} data-thumb="Yes, sign me up!" data-href="#sms">
@@ -156,8 +138,8 @@ export default function SmsOptIn() {
                     <span className="xsm-box" aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
                     <span className="xsm-consent">{PARTS.map(([k, t]) => <span key={t} className={k && lit === k ? 'lit' : ''}>{t}</span>)}</span>
                   </label>
-                  {failed && <p className="xsm-err" role="alert">{failed}</p>}
                   <Cta type="submit" id="sms-opt-in.submit" busy={state === 'submitting'} disabled={!ready} className="xp-cta xsm-go">Yes, sign me up!</Cta>
+                  {failed && <p className="xsm-err" role="alert"><i aria-hidden="true">!</i>{failed}</p>}
                   <p className="xsm-fine">By submitting, you agree to our <A to="/legal/terms" className="xsm-link">Terms of Service</A> and <A to="/legal/privacy" className="xsm-link">Privacy Policy</A>. We never sell or share your mobile number with third parties for marketing.</p>
                 </motion.form>
               )}
@@ -165,7 +147,8 @@ export default function SmsOptIn() {
           </motion.div>
         </div>
       </section>
-      <Kinds />
+      {/* said once: the three kinds of text and STOP / HELP live on the phone and in the consent itself, so there is
+          no second room repeating them */}
     </main>
   );
 }
