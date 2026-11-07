@@ -12,8 +12,8 @@
 //   from the warm pool, and when the calls stop they empty back to "Scale to zero". State is shown as filled against
 //   hollow slots, never a counting number or an invented word (no figure here is Hanzo's).
 // Supporting: six pinned chapters ("A handler file, a trigger, and the cluster you already run") whose scenes rise in
-//   beside the words (the triggers' lines draw in, the canary slice grows into a flip); the use cases one at a time on a
-//   pinned stage, each tile opening into its own sheet.
+//   beside the words (the triggers' lines draw in, the canary slice grows into a flip); the use cases as an uneven grid of
+//   live tiles, each tile growing into its own sheet. The moment: the cluster swells as it fills from zero, then settles.
 // Motion kinds: arrival (title cut-in, stage), time (the file writing itself, calls arriving), idle (slots filling and
 //   emptying, each use case's drawing), state (the choices below, a tile opening into its sheet), scroll (stage settle,
 //   chapters, the use-case stage: under half).
@@ -72,7 +72,7 @@ function Life() {
   const calm = useReducedMotion() && mounted;
   const paused = useStagePause();
   const [ready, setReady] = useState(false);
-  const [t, setT] = useState(0);
+  const [t, setT] = useState(6); // first paint: a run already under way, slots filled, so the first frame sells
   // the visitor can choose the trigger that fires (the composer's trigger choice, folded into the hero)
   const [pick, setPick] = useState(null);
   useEffect(() => { const id = setTimeout(() => setReady(true), WRITTEN); return () => clearTimeout(id); }, []);
@@ -85,15 +85,23 @@ function Life() {
   const going = ready || calm;
   const c = t % CYCLE;
   const burst = going && !calm && c < 13;
-  const pods = !going ? 0 : calm ? 12 : c < 13 ? Math.min(SLOTS - 6, c) : Math.max(0, 12 - (c - 13) * 2);
-  const trig = pick != null ? pick : going ? Math.floor(t / CYCLE) % 4 : -1;
+  const pods = calm ? 12 : c < 13 ? Math.min(SLOTS - 6, c) : Math.max(0, 12 - (c - 13) * 2);
+  const trig = pick != null ? pick : Math.floor(t / CYCLE) % 4;
+  // the moment: as the slots fill up from zero the cluster swells a little, then settles back
+  const grow = burst && c >= 1 && c <= 5;
+  // clicking a trigger fires it now: a fresh burst from that trigger, the pods filling and the handler pulsing
+  const fire = (i) => {
+    setPick((v) => (v === i ? null : i));
+    setReady(true);
+    setT((v) => (Math.floor(v / CYCLE) + 1) * CYCLE);
+  };
   return (
-    <div className="kn-obj fn-life" ref={ref} data-burst={burst ? '' : undefined}>
+    <div className="kn-obj fn-life" ref={ref} data-burst={burst ? '' : undefined} data-grow={grow ? '' : undefined}>
       <div className="fn-trigs">
         <p className="fn-col-k" aria-hidden="true">Triggers</p>
         <div className="fn-trig-b" role="group" aria-label="Triggers">
           {TRIGGERS.map((t2, i) => (
-            <button key={t2} type="button" data-sound="tick" aria-pressed={pick === i} className={trig === i ? 'on' : ''} onClick={() => setPick((v) => (v === i ? null : i))}><i aria-hidden="true" />{t2}</button>
+            <button key={t2} type="button" data-sound="tick" aria-pressed={pick === i} className={trig === i ? 'on' : ''} onClick={() => fire(i)}><i aria-hidden="true" />{t2}</button>
           ))}
         </div>
         <span className="fn-calls" aria-hidden="true"><i /><i /><i /><i /><i /></span>
@@ -182,7 +190,7 @@ function WarmScene({ p, on }) {
       <p className="fn-sc-k">Pools are prewarmed</p>
       <div className="fn-pool">{Array.from({ length: 8 }).map((_, i) => <i key={i} className={i === 0 && k >= 2 ? 'hit' : ''} />)}</div>
       <div className="fn-req"><span className="fn-req-dot" /><span className="fn-req-l">request</span></div>
-      <p className="fn-zero"><span className="fn-zero-i" aria-hidden="true"><i /><i /><i /></span><span>Scale to zero is still the default when nothing is calling.</span></p>
+      <p className="fn-zero"><span className="fn-zero-i" aria-hidden="true"><i /><i /><i /></span><span>Scale to zero</span></p>
     </div>
   );
 }
@@ -208,6 +216,7 @@ function ClusterScene({ p, on }) {
 
 /* chapter 04: the request lands on the node that has the GPU; press the request to ask for it yourself (the composer's
    GPU choice, folded in). Nodes are shapes, not names; only the GPU node carries Hanzo's words. */
+const BUSY = [[0, 1, 3], [0, 2]]; // the plain nodes carry other work (filled slots); the GPU node waits for the ask
 function GpuScene({ p, on }) {
   const k0 = useStepOf(p, 3, on);
   const [pick, setPick] = useState(null); // null: follow the scroll; true or false: the visitor's choice
@@ -218,8 +227,8 @@ function GpuScene({ p, on }) {
       <div className="fn-gnodes" aria-hidden="true">
         {[0, 1, 2].map((i) => (
           <div key={i} className={'fn-gnode' + (i === 2 ? ' gpu' : '')}>
-            {i === 2 ? <span>NVIDIA GPU</span> : <span className="fn-gnode-s"><i /><i /></span>}
-            <div>{i === 2 && <span className="fn-pod in" />}</div>
+            <span className="fn-gnode-k">{i === 2 ? 'NVIDIA GPU' : ''}</span>
+            <div className="fn-gslots">{Array.from({ length: 6 }).map((_, j) => <i key={j} className={(i < 2 && BUSY[i].includes(j)) || (i === 2 && j === 0) ? 'on' + (i === 2 ? ' in' : '') : ''} />)}</div>
           </div>
         ))}
       </div>
@@ -252,6 +261,7 @@ function VersionScene({ p, on }) {
   const refs = useRef([]);
   const mode = pick ?? (k0 >= 2 ? 1 : 0);
   const k = pick == null ? k0 : pick === 1 ? 2 : 1;
+  const share = k >= 2 ? 1 : k === 1 ? 0.125 : 0; // the next version's slice of the traffic
   return (
     <div className="kn-obj fn-sc fn-sc-ver" data-k={k}>
       <div className="fn-modes" role="radiogroup" aria-label="Versions you can move between">
@@ -261,11 +271,13 @@ function VersionScene({ p, on }) {
         ))}
       </div>
       <div className="fn-vers" aria-hidden="true">
-        <div className="fn-ver a"><i /><i /><i /></div>
-        <div className="fn-ver b"><i /><i /><i /></div>
+        {[1 - share, share].map((w, v) => (
+          <div key={v} className={'fn-ver' + (w >= 0.5 ? ' on' : '')}>
+            <div className="fn-ver-p">{Array.from({ length: 6 }).map((_, j) => <i key={j} className={j < Math.round(w * 6) ? 'on' : ''} />)}</div>
+          </div>
+        ))}
       </div>
-      <div className="fn-traffic" aria-hidden="true"><i className="a" /><i className="b" /></div>
-      <p className="fn-sc-k">a traffic decision rather than another build</p>
+      <div className="fn-traffic" aria-hidden="true"><i style={{ flexGrow: 1 - share }} /><i style={{ flexGrow: share }} /></div>
     </div>
   );
 }
@@ -275,7 +287,7 @@ const SCENES = [RuntimeScene, WarmScene, ClusterScene, GpuScene, TriggerScene, V
 /* ---------- Beyond: the composer's four choices now live in the objects that show them (a trigger in the hero, a
    runtime in chapter 01, the GPU in 04, canary or Blue/green in 06), so the page never lists them a third time ---------- */
 
-/* ---------- common use cases: one at a time on a pinned stage, each opening into its own sheet (functions/FnUses) ---------- */
+/* ---------- common use cases: an uneven grid of live tiles, each growing into its own sheet (functions/FnUses) ---------- */
 
 /* related, on the graphite close: hairline rows (Frame's Related is retired); each name with Hanzo's line under it, and
    on hover the row tells you where it goes (its path draws in beside the arrow); the name flies into its page (Morph) */

@@ -1,29 +1,16 @@
 /* FnUses (prefix fn-uc / fn-uo): see FnUses.jsx. Deck values only: ink, greys, white; flat fills, no outline plus
-   shadow; radii 6/8/12/16/24/999; motion is transform and opacity only; loops run only while the case is in front and
-   on screen. With JS off the four cases simply stand stacked with their points. */
-/* no top padding: the pinned stage centres itself in the screen, which is already the section's breathing room */
-.fn-uc { position: relative; padding: 0 0 clamp(72px, 8vw, 116px); }
-.fn-uc-g { align-items: center; row-gap: 27px; }
-.fn-uc-l { grid-column: 1 / span 5; display: flex; flex-direction: column; gap: 44px; }
-.fn-uc-h { display: flex; flex-direction: column; gap: 17px; }
-.fn-uc-h .kn-lede { max-width: 30ch; }
-.fn-uc-r { grid-column: 6 / -1; position: relative; display: grid; gap: 27px; }
-
-/* the list of cases: hairline rows, the one in front in ink */
-.fn-uc-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--hair); }
-.fn-uc-list li { border-bottom: 1px solid var(--hair); }
-.fn-uc-list button { position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: center; width: 100%; min-height: 56px; padding: 0; border: 0; background: none; text-align: left; cursor: pointer; color: #737373; transition: color .15s var(--e-out), transform .15s var(--e-out); }
-.fn-uc-list button::before { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: #0a0a0a; transform: scaleX(0); transform-origin: 0 50%; transition: transform .4s var(--e-in); }
-.fn-uc-list button[aria-current] { color: #0a0a0a; }
-.fn-uc-list button[aria-current]::before { transform: none; }
-.fn-uc-ln { font: 500 13px/1 var(--mono); letter-spacing: .06em; }
-.fn-uc-lt { font-size: 17px; font-weight: 497; letter-spacing: -.01em; transition: transform .3s var(--e-in); }
-.fn-uc-list button:active { transform: scale(.98); transition-duration: 90ms; }
-.fn-uc-list button:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 2px; border-radius: 8px; }
-@media (hover: hover) { .fn-uc-list button:hover { color: #0a0a0a; } .fn-uc-list button:hover .fn-uc-lt { transform: translateX(6px); } }
+   shadow; radii 6/8/12/16/24/999; motion is transform and opacity only; loops run only while the grid is on screen.
+   With JS off the four cases simply stand with their points. */
+.fn-uc { position: relative; padding: clamp(72px, 8vw, 116px) 0; }
+.fn-uc-h { display: flex; flex-direction: column; gap: 17px; margin-bottom: 44px; }
+.fn-uc-h .kn-lede { max-width: 40ch; }
+/* an uneven grid, not a row of equal boxes: 7 + 5 columns twice (the two wide drawings take the wide tiles) */
+.fn-uc-r { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--kn-g, 24px); }
+.fn-uc-card:nth-child(odd) { grid-column: span 7; }
+.fn-uc-card:nth-child(even) { grid-column: span 5; }
 
 /* one case: a flat quiet tile, the drawing on top, the words under it */
-.fn-uc-card { position: relative; display: grid; grid-template-rows: minmax(0, 1fr) auto; min-height: 460px; border-radius: 24px; background: #f5f5f5; overflow: hidden; }
+.fn-uc-card { position: relative; display: grid; grid-template-rows: minmax(0, 1fr) auto; min-height: 440px; border-radius: 24px; background: #f5f5f5; overflow: hidden; transition: background-color .3s var(--e-out), transform .15s var(--e-out); }
 .fn-uc-obj { display: grid; place-items: center; min-height: 220px; padding: 27px clamp(24px, 3vw, 44px); }
 .fn-uc-t { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 0 clamp(24px, 3vw, 44px) clamp(24px, 3vw, 36px); }
 .fn-uc-t .kn-body { max-width: 46ch; margin: 0; padding-right: 64px; }
@@ -35,22 +22,22 @@
 .fn-uc-pts { margin: 6px 0 0; padding: 0; list-style: none; border-top: 1px solid var(--hair); }
 .fn-uc-pts li { padding: 12px 0; border-bottom: 1px solid var(--hair); font-size: 16px; }
 .fn-uc-card:has(.fn-uc-open:focus-visible) { outline: 2px solid #0a0a0a; outline-offset: 4px; }
+.fn-uc-card:active { transform: scale(.98); transition-duration: 90ms; }
 .fn-uc-card:active .fn-uc-go { transform: scale(.94); transition-duration: 90ms; }
 .fn-uo { transition: transform .4s var(--e-in); }
 @media (hover: hover) {
+  .fn-uc-card:hover { background: #efefef; }
   .fn-uc-card:hover .fn-uc-go { background: #0a0a0a; color: #fafafa; transform: translate(2px, -2px); }
-  .fn-uc-card:hover .fn-uc-n { color: #0a0a0a; }
+  .fn-uc-card:hover .fn-uc-n { color: #0a0a0a; transform: scale(1.08); }
   .fn-uc-card:hover .fn-uo { transform: scale(1.03); }
 }
 
-/* JS on: the stage pins and holds one case at a time; the rest wait above or below, hidden */
-.js .fn-uc-run { height: calc(100svh + var(--n) * 50svh); }
-.js .fn-uc-pin { position: sticky; top: 0; height: 100svh; display: flex; flex-direction: column; justify-content: center; padding-top: 60px; }
-.js .fn-uc-r { display: block; height: min(560px, calc(100svh - 160px)); }
-.js .fn-uc-card { position: absolute; inset: 0; min-height: 0; opacity: 0; visibility: hidden; transform: translate3d(0, 32px, 0); transition: opacity .32s var(--e-out), transform .6s var(--e-move), visibility 0s linear .6s; }
-.js .fn-uc-card[data-pos='past'] { transform: translate3d(0, -32px, 0); }
-.js .fn-uc-card[data-on] { opacity: 1; visibility: visible; transform: none; transition: opacity .5s var(--e-out) .08s, transform .8s var(--e-in), visibility 0s; }
-.js .fn-uc-card:not([data-on]) .fn-uc-n { transform: scale(.6); }
+/* JS on: the tiles rise in as they are reached (the right-hand one a beat later); the open tile hands its place to its
+   sheet, so the tile is what grows */
+.js .fn-uc-card { opacity: 0; transform: translate3d(0, 40px, 0); transition: opacity .6s var(--e-out), transform .9s var(--e-in), background-color .3s var(--e-out); transition-delay: calc(var(--j, 0) * .12s); }
+.js .fn-uc-card[data-seen] { opacity: 1; transform: none; }
+.js .fn-uc-card[data-seen]:active { transform: scale(.98); transition-duration: 90ms; transition-delay: 0s; }
+.js .fn-uc-card[data-away] { visibility: hidden; }
 .js .fn-uc-pts { display: none; }
 
 /* ---------- the drawings ---------- */
@@ -97,18 +84,18 @@
 .fn-uo-jobs i::before { background: #0a0a0a; }
 .fn-uo-jobs li:first-child i::before { transform: none; }
 
-/* the loops: only for the case in front while the stage is on screen, or inside an open sheet */
-:is(.fn-uc[data-live] .fn-uc-card[data-on], .fn-uc-sh[data-live]) .fn-uo-pill.a::after { animation: fn-uo-swap 4.8s var(--e-move) infinite; }
-:is(.fn-uc[data-live] .fn-uc-card[data-on], .fn-uc-sh[data-live]) .fn-uo-pill.b::after { animation: fn-uo-swap 4.8s var(--e-move) -2.4s infinite; }
-:is(.fn-uc[data-live] .fn-uc-card[data-on], .fn-uc-sh[data-live]) .fn-uo-dot { opacity: 0; animation: fn-uo-go 2.4s linear infinite; }
-:is(.fn-uc[data-live] .fn-uc-card[data-on], .fn-uc-sh[data-live]) .fn-uo-dot.late { animation-delay: 1.2s; }
-:is(.fn-uc[data-live] .fn-uc-card[data-on], .fn-uc-sh[data-live]) .fn-uo-dot.back { animation-name: fn-uo-back; animation-delay: .6s; }
-:is(.fn-uc[data-live] .fn-uc-card[data-on], .fn-uc-sh[data-live]) .fn-uo-ev { opacity: 0; animation: fn-uo-go 1.8s linear infinite; animation-delay: calc(var(--j) * -.26s); }
-:is(.fn-uc[data-live] .fn-uc-card[data-on], .fn-uc-sh[data-live]) .fn-uo-pods i::before { animation: fn-uo-pod 4.8s var(--e-in) infinite; animation-delay: calc(var(--j) * .3s); }
-:is(.fn-uc[data-live] .fn-uc-card[data-on], .fn-uc-sh[data-live]) .fn-uo-bars i { animation: fn-uo-bar 1.6s var(--e-move) infinite alternate; animation-delay: calc(var(--j) * -.23s); }
-:is(.fn-uc[data-live] .fn-uc-card[data-on], .fn-uc-sh[data-live]) .fn-uo-cells i::before { animation: fn-uo-cell 2.4s var(--e-out) infinite; animation-delay: calc(var(--j) * .12s); }
-:is(.fn-uc[data-live] .fn-uc-card[data-on], .fn-uc-sh[data-live]) .fn-uo-hand { animation: fn-uo-turn 6s linear infinite; }
-:is(.fn-uc[data-live] .fn-uc-card[data-on], .fn-uc-sh[data-live]) .fn-uo-jobs i::before { animation: fn-uo-job 6s var(--e-in) infinite; animation-delay: calc(var(--j) * 2s); }
+/* the loops: only while the grid is on screen, or inside an open sheet */
+:is(.fn-uc[data-live] .fn-uc-card, .fn-uc-sh[data-live]) .fn-uo-pill.a::after { animation: fn-uo-swap 4.8s var(--e-move) infinite; }
+:is(.fn-uc[data-live] .fn-uc-card, .fn-uc-sh[data-live]) .fn-uo-pill.b::after { animation: fn-uo-swap 4.8s var(--e-move) -2.4s infinite; }
+:is(.fn-uc[data-live] .fn-uc-card, .fn-uc-sh[data-live]) .fn-uo-dot { opacity: 0; animation: fn-uo-go 2.4s linear infinite; }
+:is(.fn-uc[data-live] .fn-uc-card, .fn-uc-sh[data-live]) .fn-uo-dot.late { animation-delay: 1.2s; }
+:is(.fn-uc[data-live] .fn-uc-card, .fn-uc-sh[data-live]) .fn-uo-dot.back { animation-name: fn-uo-back; animation-delay: .6s; }
+:is(.fn-uc[data-live] .fn-uc-card, .fn-uc-sh[data-live]) .fn-uo-ev { opacity: 0; animation: fn-uo-go 1.8s linear infinite; animation-delay: calc(var(--j) * -.26s); }
+:is(.fn-uc[data-live] .fn-uc-card, .fn-uc-sh[data-live]) .fn-uo-pods i::before { animation: fn-uo-pod 4.8s var(--e-in) infinite; animation-delay: calc(var(--j) * .3s); }
+:is(.fn-uc[data-live] .fn-uc-card, .fn-uc-sh[data-live]) .fn-uo-bars i { animation: fn-uo-bar 1.6s var(--e-move) infinite alternate; animation-delay: calc(var(--j) * -.23s); }
+:is(.fn-uc[data-live] .fn-uc-card, .fn-uc-sh[data-live]) .fn-uo-cells i::before { animation: fn-uo-cell 2.4s var(--e-out) infinite; animation-delay: calc(var(--j) * .12s); }
+:is(.fn-uc[data-live] .fn-uc-card, .fn-uc-sh[data-live]) .fn-uo-hand { animation: fn-uo-turn 6s linear infinite; }
+:is(.fn-uc[data-live] .fn-uc-card, .fn-uc-sh[data-live]) .fn-uo-jobs i::before { animation: fn-uo-job 6s var(--e-in) infinite; animation-delay: calc(var(--j) * 2s); }
 @keyframes fn-uo-swap { 0%, 42% { opacity: 1; } 50%, 92% { opacity: 0; } 100% { opacity: 1; } }
 @keyframes fn-uo-go { 0% { opacity: 0; transform: translateX(0); } 12% { opacity: 1; } 88% { opacity: 1; } 100% { opacity: 0; transform: translateX(calc(100cqw - 8px)); } }
 @keyframes fn-uo-back { 0% { opacity: 0; transform: translateX(calc(100cqw - 8px)); } 12% { opacity: 1; } 88% { opacity: 1; } 100% { opacity: 0; transform: translateX(0); } }
@@ -123,7 +110,7 @@
 .fn-uc-sheet::backdrop { background: transparent; }
 .fn-uc-sh { position: absolute; inset: 0; transform-origin: 0 0; background: #f5f5f5; overflow: auto; overscroll-behavior: contain; outline: none; }
 /* the drawings read larger where there is room: in the tile on desktop, and larger again in the sheet */
-@media (min-width: 900px) { .fn-uc-obj .fn-uo { zoom: 1.15; } .fn-uc-sh-obj .fn-uo { zoom: 1.4; } .fn-uc-sh-obj :is(.fn-uo-api, .fn-uo-stream) { zoom: 1.05; } .fn-uc-sh-obj .fn-uo-gpu { zoom: .95; } }
+@media (min-width: 900px) { .fn-uc-obj .fn-uo { zoom: 1.05; } .fn-uc-card:nth-child(even) .fn-uc-obj .fn-uo { zoom: .92; } .fn-uc-sh-obj .fn-uo { zoom: 1.4; } .fn-uc-sh-obj :is(.fn-uo-api, .fn-uo-stream) { zoom: 1.05; } .fn-uc-sh-obj .fn-uo-gpu { zoom: .95; } }
 /* a drawing never spills out of its card */
 .fn-uc-sh-obj, .fn-uc-obj { min-width: 0; overflow: hidden; }
 .fn-uc-sh-in { padding-top: 17px; padding-bottom: 72px; }
@@ -145,20 +132,11 @@
 .fn-uc-sh-obj .fn-uo-pill, .fn-uc-sh-obj .fn-uo-box:not(.ink) { background: #f5f5f5; }
 
 @media (max-width: 899px) {
-  .fn-uc-l, .fn-uc-r { grid-column: 1 / -1; }
-  .fn-uc-l { gap: 17px; }
-  .fn-uc-h { gap: 10px; }
+  .fn-uc-h { gap: 10px; margin-bottom: 27px; }
   .fn-uc-h .kn-lede { font-size: 16px; max-width: none; }
-  .fn-uc-list { display: flex; gap: 8px; border: 0; }
-  .fn-uc-list li { border: 0; }
-  .fn-uc-list button { grid-template-columns: 1fr; justify-items: center; width: 52px; min-height: 44px; border-radius: 999px; background: #f5f5f5; }
-  .fn-uc-list button::before { display: none; }
-  .fn-uc-list button[aria-current] { background: #0a0a0a; color: #fafafa; }
-  .fn-uc-lt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  .js .fn-uc-pin { padding-top: 64px; justify-content: flex-start; }
-  .js .fn-uc-pin .fn-uc-g { padding-top: 17px; }
-  .js .fn-uc-r { height: min(500px, calc(100svh - 300px)); }
-  .js .fn-uc-run { height: calc(100svh + var(--n) * 60svh); }
+  .fn-uc-r { grid-template-columns: minmax(0, 1fr); gap: 17px; }
+  .fn-uc-card:nth-child(n) { grid-column: 1; }
+  .js .fn-uc-card { transition-delay: 0s; }
   .fn-uc-card { min-height: 380px; border-radius: 20px; }
   .fn-uc-obj { min-height: 0; padding: 17px; }
   .fn-uc-t { padding: 0 17px 17px; gap: 6px; }
@@ -189,5 +167,6 @@
   .fn-uc-sh-obj { min-height: 240px; padding: 17px; border-radius: 20px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .fn-uc-card, .fn-uc-n, .fn-uc-lt, .fn-uo, .fn-uc-list button::before { transition: none !important; }
+  .fn-uc-card, .fn-uc-n, .fn-uo { transition: none !important; }
+  .js .fn-uc-card { opacity: 1; transform: none; }
 }

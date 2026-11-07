@@ -1,4 +1,6 @@
 # /functions — James-eye review
+
+Ready: 8 Nov, held up next to /api and /agents (no score). Wireframe filler replaced with real state (GPU nodes hold filled and hollow pods, versions carry pods and a two-part traffic bar that moves with canary or Blue/green), trigger curves reach handler.js, phone chapters run top to bottom, use cases became an uneven grid of live tiles that each grow into their sheet, hero triggers fire a fresh run on click and the first frame shows filled slots, the cluster swells as it fills and settles, no lifted runtime tile, no doubled sentences, 320 fixes. taste/unique/parity OK (text 79/79, links 7/7); 0 console errors, no overflow/overlap at 1470x801, 375x812 and 320.
 7 Nov, round 4. Walked in Playwright Chromium at 1470x801, 375x812 and 320x812 (phones with isMobile and hasTouch). At each size: frames at 0, 1 and 3 s; wheel-scrolled one screen at a time with a 1.5 s dwell; hovered, pressed and tapped the triggers, runtime tiles, chapter steppers, GPU toggle, canary/Blue-green radio, use-case rows and sheet (closed with Esc and with Back), Copy and related links. Also loaded with prefers-reduced-motion at 1470 and 375. Screenshots use caret 'initial' and the cookie card was dismissed.
 
 Verdict: 7/10
