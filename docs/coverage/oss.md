@@ -13,7 +13,9 @@ Template: `components/pages/oss/OrgPage.jsx`, `oss.css`, `ossData.js` · route `
    - "Every organization" leads back to the catalogue twice: in the hero and under the cards.
 3. **First impression and page narrative.**
    - At 1470×801 the name and the whole ledger share the first screen: this year's commits huge, the year as a waveform, then repositories, stars and forks. At 375×812 the ledger's lead figure and waveform sit on the first screen under the name and the ask.
-   - Something moves within 1 s: the name rises out of its masks and the bars rise.
+   - Something moves within 1 s for every member, without input. The lead figure's digits rise into place, and the contour drifts.
+   - An organization with commits has its year's waveform and a playhead that keeps reading it. One without commits (e.g. hanzo-app, crowdstart) has its own repositories passing as a slow ticker along the ledger's foot.
+   - The ledger leads with the organization's strongest true figure, never a zero: this year's commits, else its public repositories, else the forge's count. Zeros stay in the small row.
    - After that, one idea per screen: the counted chapters (one in as the other goes out), the tiles, the cards, the close.
    - Labels never sit above a heading. "Open source · Hanzo" is a meta line under the lede, and the chapter counters are gone (the chapter marks show where you are).
 4. **Conversion system.**
@@ -35,7 +37,8 @@ Template: `components/pages/oss/OrgPage.jsx`, `oss.css`, `ossData.js` · route `
    - From Families A: `FamLines`, `FamStage`, `FamChapters`, `FamNext`.
    - The search field, the sort control (three icons in one pill that glides) and the language chips are all styled, so no browser defaults show.
 9. **Motion and interaction.** Scroll is 2 of 5 kinds.
-   - Idle: the ledger's playhead reads the year, and the contour drifts in the hero and the close.
+   - Idle: the ledger's playhead reads the year (or its repositories pass as a ticker), and the contour drifts in the hero and the close.
+   - Counters: none count up. The lead's digits rise into place, but every frame shows Hanzo's own figure.
    - Pointer: the ask is magnetic. A hovered tile lifts and its own playhead reads its bars. A hovered sibling card shows its line. The rail drags with inertia.
    - State: a tile grows into its card (shared-element morph); the sort pill glides; tiles re-flow as you filter.
    - Arrival: the name's masked rise.
@@ -65,7 +68,7 @@ Template: `components/pages/oss/OrgPage.jsx`, `oss.css`, `ossData.js` · route `
 17. **States and resilience.**
    - Empty search shows an icon, the query, and a status read to screen readers.
    - "Show all" loads the rest from GitHub, with a spinner and `aria-busy`. On failure it falls back to Hanzo's own link.
-   - JS off: every heading and paragraph is visible (0 hidden, tested).
+   - JS off: every heading, paragraph and chapter is visible (0 hidden, tested with each element's ancestors' opacity). The kit hides a chapter that is not on screen only under `html.js`.
 18. **Measurement and handover.**
    - `data-cta` sits on the hero ask (`oss.hero`), the card link (`oss.card`) and the close (`oss.close`). No analytics are wired yet.
    - Ledger: this round deleted the accent colours, the kicker over the h1, the chapter counters over the headings, the invented sort and card labels, the "Open on GitHub" and "Open on Hanzo Forge" button words, and the visible "Copy clone command" text.
