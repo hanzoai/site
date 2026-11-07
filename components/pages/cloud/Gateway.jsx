@@ -90,8 +90,9 @@ function Lane() {
   // where the card goes: onto the line (centred on the gate) to be checked; then, on a wide lane, across into the ledger
   // on the Hanzo Cloud side (it shrinks into the ledger's top row); on a phone, on past the gate; a 429 goes back
   const cw = 420;
-  const toLedger = `${Math.round(((wd / 2 - 32 - 130 - cw / 2) / cw) * 100)}%`;
-  const x = limited ? (phase >= 2 ? '-190%' : '-50%') : phase >= 4 ? (wide ? toLedger : '120%') : '-50%';
+  // the card's resting place (x 0) is centred on the gate by CSS, so the server HTML and the first client frame agree
+  const toLedger = `${Math.round(((wd / 2 - 32 - 130) / cw) * 100)}%`;
+  const x = limited ? (phase >= 2 ? '-140%' : '0%') : phase >= 4 ? (wide ? toLedger : '170%') : '0%';
   const gone = limited ? phase >= 2 : phase >= 4;
   const enter = (v) => (boot.current ? false : v);
   return (
@@ -121,7 +122,7 @@ function Lane() {
         <motion.div
           key={n}
           className="gw-req"
-          initial={{ x: '-260%', opacity: 0 }}
+          initial={{ x: '-210%', opacity: 0 }}
           animate={{ x, opacity: gone ? 0 : 1, scale: !limited && phase >= 4 && wide ? 0.56 : 1 }}
           exit={{ opacity: 0, transition: { duration: 0.15 } }}
           transition={{ x: { duration: phase === 0 ? 1.0 : 1.0, ease: [0.4, 0, 0.2, 1] }, scale: { duration: 1.0, ease: [0.4, 0, 0.2, 1] }, opacity: { duration: gone ? 0.35 : 0.4, delay: gone ? 0.7 : 0 } }}
