@@ -1,6 +1,6 @@
 'use client';
 /* Network, Cloud 3 launch page, round 3 to docs/MASTER.md (the only brief), answering the 7/10 review.
-   V2: 8/10 The fabric is the page: title, lede and ask on the left five columns, the live peer map on the right eight, its peers wearing Hanzo's own renders of the models they have loaded; a request walks to whoever has the model, once, and rests on the placement; the same fabric is the pinned chapters' object and each fact changes it (topology draws in, links thicken by the work, attested peers fill, the route and placement play, a machine joins, the work settles into one root); one black room for the two ends and the agent prompt; deck greys, flat surfaces, no springs.
+   V2: 8/10 The chapters' intro shows unlinked peers being discovered and each pinned chapter keeps an ink bead running its own links (no still chapter). The fabric is the page: title, lede and ask on the left five columns, the live peer map on the right eight, its peers wearing Hanzo's own renders of the models they have loaded; a request walks to whoever has the model, once, and rests on the placement; the same fabric is the pinned chapters' object and each fact changes it (topology draws in, links thicken by the work, attested peers fill, the route and placement play, a machine joins, the work settles into one root); one black room for the two ends and the agent prompt; deck greys, flat surfaces, no springs.
    Persona: Developer who needs compute (buys it on the fabric, then calls it with a key).
    Goal: buy compute on hanzo.network.
    CTA: "Buy Compute" → https://docs.hanzo.ai/docs/network (data-cta network.hero, network.close; the site's sticky ask
@@ -221,6 +221,17 @@ const JOIN = [16, 27]; // the machine that joins in chapter five, linked to peer
 const SETTLE = [3, 6, 10, 4]; // peers whose work settles into the block in chapter six
 const ROUTE = [9, 5, 3]; // kai, from you
 const ROOT = [70, 97];
+const P = (i) => PEERS[i];
+// the links each chapter's dash runs: 01 discovery from you, 02 the links carrying work, 03 trust reaching the attested,
+// 04 the route to kai, 05 the new machine to its two peers, 06 the work into the root
+const flows = (step) => [
+  [[P(9), P(5)], [P(9), P(6)], [P(9), P(8)], [P(9), P(10)]],
+  Object.keys(WORK).filter((k) => WORK[k] > 1).map((k) => k.split('-').map((n) => P(+n))),
+  [[P(5), P(3)], [P(3), P(0)], [P(3), P(4)], [P(6), P(10)]],
+  [[P(9), P(5)], [P(5), P(3)]],
+  [[JOIN, P(0)], [JOIN, P(5)]],
+  SETTLE.map((p) => [P(p), ROOT]),
+][step] || [];
 
 function Story({ step, intro, lend }) {
   const box = useRef(null);
@@ -238,6 +249,9 @@ function Story({ step, intro, lend }) {
               const wk = !intro && step === 1 ? WORK[key(a, b)] || 0 : 0;
               return <line key={key(a, b) + (draw ? 'd' : '')} x1={X(PEERS[a][0])} y1={Y(PEERS[a][1])} x2={X(PEERS[b][0])} y2={Y(PEERS[b][1])} pathLength="1" className={(draw ? 'draw ' : '') + (wk ? 'w' + wk : '') + (lit(a, b) ? ' on' : '')} style={draw ? { animationDelay: i * 40 + 'ms' } : undefined} />;
             })}
+            {/* the work keeps moving while you read: a short dash runs the links this chapter is about, again and again
+                (the one continuous mover on the screen; frozen under reduced motion) */}
+            {!intro && flows(step).map(([a, b], i) => <line key={'f' + step + '-' + a + '-' + b} x1={X(a[0])} y1={Y(a[1])} x2={X(b[0])} y2={Y(b[1])} pathLength="1" className="flow" style={{ animationDelay: (i * 0.35).toFixed(2) + 's' }} />)}
             {step === 4 && !intro && [0, 5].map((p) => <line key={'j' + p + lend} x1={X(JOIN[0])} y1={Y(JOIN[1])} x2={X(PEERS[p][0])} y2={Y(PEERS[p][1])} pathLength="1" className="draw join" />)}
             {step === 5 && !intro && SETTLE.map((p, i) => <line key={'s' + p} x1={X(PEERS[p][0])} y1={Y(PEERS[p][1])} x2={X(ROOT[0])} y2={Y(ROOT[1])} pathLength="1" className="draw settle" style={{ animationDelay: i * 90 + 'ms' }} />)}
           </svg>
@@ -251,7 +265,7 @@ function Story({ step, intro, lend }) {
           if (!intro && step === 5 && SETTLE.includes(i)) c.push('lit');
           if (x > 80) c.push('l');
           return (
-            <div key={i} className={c.join(' ')} style={{ left: x + '%', top: y + '%', '--i': i }}>
+            <div key={i} className={c.join(' ')} data-p={i} style={{ left: x + '%', top: y + '%', '--i': i }}>
               <i />
               <span className="nw-tags">
                 {i === YOU && <b className="nw-tag me">you</b>}
