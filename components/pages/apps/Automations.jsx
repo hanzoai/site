@@ -254,7 +254,7 @@ function NotHere() {
 
 export default function Automations() {
   return (
-    <main className="l2-page am2" style={{ '--ac': '#ff3b5c' }}>
+    <main className="l2-page am2" style={{ '--ac': '#737373' }}>
       <Hero />
       <Catalog />
       <NotHere />

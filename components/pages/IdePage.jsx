@@ -2,6 +2,7 @@
 /* Hanzo IDE.
    V2: 8/10 real code in a live editor that starts under the buttons and settles as you scroll, memories surfacing in its gutter from the first second; the workbench exploding off its Rust engine, three pinned chapters, one dark room, a start script that types itself, related apps as cards that open into their pages. Greys only.
    Persona: a developer choosing an AI editor. Goal: open the IDE. CTA: Open the IDE (ide.hero, sticky in the ask bar).
+   Metric: cta_click on ide.hero and ide.close (data-cta; the event layer is the conductor's).
    Signature: an editor that remembers. The hero object is the workbench itself: it starts huge and settles as you
    scroll (Stage), while a cursor walks the code and memories surface in the gutter beside the lines they belong to,
    the impact radius of a change glows through the file and the agent panel runs Hanzo's example session (live).

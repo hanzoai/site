@@ -12,6 +12,7 @@ import { A, More, Cta, Img, Stat, DataTable, Band } from '../../kit';
 import { useLoop, fit } from './live';
 import Launch, { Lines, ring, film } from '../../v2/Launch';
 import ModelCards from './ModelCards';
+import ModelFilm from '../../v2/ModelFilm';
 import Chapters from '../../v2/x-cray/Chapters';
 import './Enso.css';
 
@@ -296,11 +297,12 @@ const RING = ring((W, H, wide) => (wide ? { x: W * 0.71, y: H * 0.5, r: Math.min
 const TIER_TASKS = TIERS.map((_, i) => TASKS.filter(([, k]) => k === i).map(([w]) => w));
 
 // a chapter's picture: Enso's own film, framed a little closer each tier, with that tier's card laid on it
-function TierArt({ i }) {
+function TierArt({ i, on }) {
   const tr = TIERS[i];
   return (
     <div className="eo-art" style={{ '--z': 1.12 + i * 0.22, '--x': ['-4%', '6%', '-2%'][i], '--y': ['3%', '-5%', '2%'][i], ...[{}, { '--cl': 'auto', '--cr': '32px', '--ct': '32px', '--cb': 'auto' }, { '--cl': 'auto', '--cr': '32px' }][i] }}>
       <Img src={film('enso', 'webp')} w={1200} h={1500} />
+      <ModelFilm slug="enso" play={on} />
       <div className="eo-tcard" aria-hidden="true">
         <p className="eo-tcard-top"><b>{tr.name}</b><code>{tr.code}</code></p>
         <p className="eo-tcard-ax">{AXES[tr.axis]}</p>
@@ -314,7 +316,7 @@ function TierArt({ i }) {
 const CHAPTERS = TIERS.map((tr, i) => ({
   k: tr.name,
   title: tr.name,
-  art: <TierArt i={i} />,
+  art: (on) => <TierArt i={i} on={on} />,
   body: (
     <>
       <p className="eo-ch-price mb-tnum"><b>{tr.inp}</b> <span>in · per 1M tokens</span> <b>{tr.out}</b> <span>out</span></p>
@@ -357,6 +359,7 @@ export default function Enso() {
   return (
     <Launch
       slug="enso"
+      ask={{ label: 'Try Hanzo', to: '/login', id: 'enso-hero-try' }}
       shape={RING}
       headClass="eo-head"
       head={

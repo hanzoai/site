@@ -1,5 +1,5 @@
 /* DNS (v2): see Dns.jsx. Built on components/v2/Keynote*. */
-.dn { --ac-t: #d1123f; --dn-soft: rgba(255, 45, 85, .14); }
+.dn { --ac-t: #404040; --dn-soft: rgba(82, 82, 82, .14); }
 .dn .kn-kick.ac { color: var(--ac-t); }
 
 /* ---------- hero: the zone, as code ---------- */
@@ -62,7 +62,7 @@
 .dn-hub b { font-size: clamp(20px, 1.8vw, 26px); font-weight: 600; letter-spacing: -.02em; }
 .dn-hub span { font: 500 13px/1 var(--mono); color: var(--ac); }
 .dn-pv { position: absolute; transform: translate(-50%, -50%); padding: 12px 18px; border-radius: 999px; background: #fff; border: 1px solid var(--line); box-shadow: 0 10px 30px -18px rgba(0, 0, 0, .35); font: 600 16px/1 var(--sans); letter-spacing: -.01em; white-space: nowrap; transition: transform .45s var(--ease), border-color .3s, box-shadow .3s; }
-.dn-pv.on { transform: translate(-50%, -50%) scale(1.1); border-color: var(--ac); box-shadow: 0 0 0 3px var(--dn-soft), 0 16px 34px -18px rgba(255, 45, 85, .6); }
+.dn-pv.on { transform: translate(-50%, -50%) scale(1.1); border-color: var(--ac); box-shadow: 0 0 0 3px var(--dn-soft), 0 16px 34px -18px rgba(82, 82, 82, .6); }
 
 .dn-sc-par { background: #fff; justify-content: space-between; }
 .dn-par { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 20px; align-items: center; }
@@ -113,7 +113,7 @@
 .dn-dial .t { fill: #f5f5f7; stroke: rgba(0, 0, 0, .08); stroke-width: 1.5; }
 .dn-dial line { stroke: #c7c7cc; stroke-width: 2; stroke-linecap: round; }
 .dn-key { position: absolute; inset: 0; }
-.dn-key i { position: absolute; left: 50%; top: 0; width: 48px; height: 48px; margin: -6px 0 0 -24px; border-radius: 50%; display: grid; place-items: center; background: var(--ac); color: #fff; box-shadow: 0 10px 24px -10px rgba(255, 45, 85, .7); }
+.dn-key i { position: absolute; left: 50%; top: 0; width: 48px; height: 48px; margin: -6px 0 0 -24px; border-radius: 50%; display: grid; place-items: center; background: var(--ac); color: #fff; box-shadow: 0 10px 24px -10px rgba(82, 82, 82, .7); }
 .dn-dial.spin .dn-key { animation: dn-turn 8s linear infinite; }
 @keyframes dn-turn { to { transform: rotate(360deg); } }
 .dn-dial-c { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; }
@@ -138,12 +138,12 @@
 .dn-flow { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(40px, 96px) minmax(0, 1.2fr) minmax(40px, 96px) minmax(0, 1fr); align-items: center; }
 .dn-col { padding: clamp(20px, 2.2vw, 32px); border-radius: 24px; background: #161618; border: 1px solid rgba(255, 255, 255, .08); }
 .dn-col.c0 { grid-column: 1; }
-.dn-col.c1 { grid-column: 3; border-color: var(--ac); box-shadow: 0 0 0 4px rgba(255, 45, 85, .12), 0 40px 80px -40px rgba(255, 45, 85, .35); }
+.dn-col.c1 { grid-column: 3; border-color: var(--ac); box-shadow: 0 0 0 4px rgba(82, 82, 82, .12), 0 40px 80px -40px rgba(82, 82, 82, .35); }
 .dn-col.c2 { grid-column: 5; }
 .dn-col-h { margin: 0 0 16px; font: 600 17px/1.25 var(--sans); color: #f5f5f7; letter-spacing: -.01em; }
 .dn-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 .dn-col li { padding: 11px 14px; border-radius: 12px; background: rgba(255, 255, 255, .05); font: 500 14px/1 var(--mono); color: #d1d1d6; }
-.dn-col.c1 li { background: rgba(255, 45, 85, .1); color: #fff; }
+.dn-col.c1 li { background: rgba(82, 82, 82, .1); color: #fff; }
 .dn-wire { position: relative; grid-row: 1; height: 2px; background: rgba(255, 255, 255, .16); clip-path: inset(-12px 0); }
 .dn-wire.w0 { grid-column: 2; }
 .dn-wire.w1 { grid-column: 4; }
@@ -195,7 +195,7 @@
 .dn-plan .kn-btn { align-self: stretch; }
 .dn-plan.pop .kn-btn.solid { background: #fff; border-color: #fff; color: var(--ink); }
 .dn-plans.picking .dn-plan.short { opacity: .38; transform: scale(.97); }
-.dn-plan.fit { border-color: var(--ac); box-shadow: 0 0 0 4px var(--dn-soft), 0 40px 80px -40px rgba(255, 45, 85, .45); transform: translate3d(0, -8px, 0); }
+.dn-plan.fit { border-color: var(--ac); box-shadow: 0 0 0 4px var(--dn-soft), 0 40px 80px -40px rgba(82, 82, 82, .45); transform: translate3d(0, -8px, 0); }
 
 /* ---------- close ---------- */
 .dn-close .knx-caret { background: var(--ac); }

@@ -1,20 +1,26 @@
 'use client';
-/* Search (v2, Cloud 4 chat). Archetype A, Launch: Stage hero → four chapters → a dark "how it works" room → frameworks →
-   pricing with a fit-finder → close. Accent: search-link blue.
-   V2: 8/10 one query answered four ways in pinned scroll chapters, a Spotlight-size live search as the Stage hero, the plans as rows with a fit-finder
+/* Search (v2, Cloud 4 chat). Archetype A, Launch: Stage hero → four chapters → a dark "how it works" room driven by its
+   three steps → frameworks → pricing with a fit-finder → Get Search → one closing band. Ink, greys and white only.
+   Persona: a developer adding search to their docs or product. Goal: read the docs and create an index.
+   CTA: "Read the docs" (hero, ask bar, close; data-cta primary / close). Metric: cta_click:search.primary.
+   V2: 8/10 a Spotlight-size search types on arrival and settles; one query answered four ways in pinned chapters; the dark room is the bar itself driven by its three steps; greys only, one ask, a closing band
    Signature: one query, four answers. "Kubernets" types itself into a search bar the size of the screen, and as you scroll
    the same index answers it four ways: the typo fixed, the neighbours by meaning, the two lists fused by rank (the rows
    re-flow into one), then a streamed answer with its sources.
    Beyond: "Which plan fits?" Set your projects and docs per project and the plan whose limits cover them lights up, read
    straight from Hanzo's own plan limits.
-   Motion: scroll-pinned chapters (signature) + typing + layout re-flow + magnetic primary. Every word, price and link is
-   Hanzo's; the query and its results are examples. */
+   Motion: scroll-pinned chapters (signature) + typing and streaming (time) + tab pill and step re-flow (state) + the
+   stage settle (scroll). The hero object runs on arrival and carries a pause control. Every word, price and link is
+   Hanzo's; the query, the results and the RAG question are examples, and the streamed answer is Hanzo's own sentence. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import useCalm from '../../v2/useCalm';
 import { EASE } from '../../ui';
-import { A } from '../../kit';
-import { Console, useLive, useSteps } from './Frame';
+import { Cta } from '../../kit';
+import { useSteps } from './Frame';
+import { useDemo, PauseBtn } from '../../v2/x-hamilton/Demo';
+import Console from '../../v2/x-hamilton/Console';
+import Drawer from '../../v2/Drawer';
 import StageHero from '../../v2/StageHero';
 import PinScenes from '../../v2/x-hamilton/PinScenes';
 import Finale from '../../v2/Finale';
@@ -28,13 +34,42 @@ const TEXT = ['Deploy to Kubernetes', 'Kubernetes ingress', 'Cluster quotas'];
 const VEC = ['Running containers in production', 'Deploy to Kubernetes', 'Scaling a service'];
 const RRF = ['Deploy to Kubernetes', 'Kubernetes ingress', 'Running containers in production', 'Cluster quotas'];
 const FROM = { 'Deploy to Kubernetes': 'text · vector', 'Kubernetes ingress': 'text', 'Running containers in production': 'vector', 'Cluster quotas': 'text' };
-const SRC = ['Deploy to Kubernetes', 'Kubernetes ingress'];
+// RAG: an example question about Hanzo's own docs; the streamed answer is Hanzo's sentence, the sources its headings
+const RAG_Q = 'How does RAG chat answer?';
+const RAG_A = 'The retrieved passages go to a model and come back as an answer with links to what it read.';
+const SRC = ['RAG chat', 'How it works'];
+
+/* An answer that streams in word by word (written into a text node), sources after it. */
+function Streamed({ run, big }) {
+  const out = useRef(null);
+  const [done, setDone] = useState(!run);
+  useEffect(() => {
+    const words = RAG_A.split(' ');
+    if (!run) { if (out.current) out.current.textContent = RAG_A; setDone(true); return; }
+    let i = 0;
+    setDone(false);
+    if (out.current) out.current.textContent = '';
+    const t = setInterval(() => {
+      i++;
+      if (out.current) out.current.textContent = words.slice(0, i).join(' ');
+      if (i >= words.length) { clearInterval(t); setDone(true); }
+    }, 90);
+    return () => clearInterval(t);
+  }, [run]);
+  return (
+    <div className={'se2-rag' + (big ? ' big' : '')}>
+      <p className="se2-rag-q">{RAG_Q}</p>
+      <p className="se2-rag-a"><span ref={out}>{RAG_A}</span>{!done && <i className="se2-caret sm" aria-hidden="true" />}</p>
+      <div className={'se2-srcs' + (done ? ' on' : '')}>{SRC.map((x, i) => <span key={x} className="l2-mono">[{i + 1}] {x}</span>)}</div>
+    </div>
+  );
+}
 
 /* The Stage object: a search bar the size of the screen. The query types itself (into a text node), then the four
    modes take turns over the same results; press a mode to hold it. */
 function Ask() {
-  const [ref, live, calm] = useLive(0.25);
-  const [at, choose] = useSteps(4, 3600, live);
+  const [ref, live, calm, paused, toggle] = useDemo(0.05);
+  const [at, choose] = useSteps(4, 4200, live);
   const box = useRef(null);
   const [typed, setTyped] = useState(true);
   useEffect(() => {
@@ -53,6 +88,7 @@ function Ask() {
   const rows = at === 0 ? TEXT : at === 1 ? VEC : RRF;
   return (
     <div className="l2-obj se2-ask" ref={ref}>
+      <PauseBtn paused={paused} onClick={toggle} />
       <div className="se2-bar">
         <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" strokeWidth="2" /><path d="M15.5 15.5 21 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
         <span className="se2-q" ref={box} aria-hidden="true">{Q}</span><i className="se2-caret" aria-hidden="true" />
@@ -79,11 +115,7 @@ function Ask() {
             ))}
           </ol>
         ) : (
-          <div className="se2-rag">
-            <p className="se2-rag-q">How do I deploy to Kubernetes?</p>
-            <div className="se2-rag-a">{[94, 86, 91, 48].map((w, i) => <motion.i key={i} style={{ width: w + '%' }} initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.45, delay: 0.15 + i * 0.32, ease: 'linear' }} />)}</div>
-            <div className="se2-srcs">{SRC.map((s, i) => <motion.span key={s} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.5 + i * 0.12, duration: 0.3 }}>[{i + 1}] {s}</motion.span>)}</div>
-          </div>
+          <Streamed run={live} />
         )}
       </div>
     </div>
@@ -114,7 +146,7 @@ function Way({ at }) {
             <div className="se2-w0">
               <p className="se2-w0-q">Kubern<mark>e</mark>tes</p>
               <div className="se2-w0-f l2-mono"><span>docs</span><span className="on">last quarter</span></div>
-              <ol>{TEXT.map((r, i) => <li key={r}><span className="l2-mono">{i + 1}</span>{r}{i === 0 && <em className="l2-mono">typo fixed</em>}</li>)}</ol>
+              <ol>{TEXT.map((r, i) => <li key={r}><span className="l2-mono">{i + 1}</span>{r}{i === 0 && <em className="se2-fixc l2-mono">typo fixed</em>}</li>)}</ol>
             </div>
           )}
           {at === 1 && (
@@ -134,11 +166,7 @@ function Way({ at }) {
             </div>
           )}
           {at === 3 && (
-            <div className="se2-w3">
-              <p className="se2-rag-q">How do I deploy to Kubernetes?</p>
-              <div className="se2-rag-a big">{[96, 90, 93, 88, 52].map((w, i) => <motion.i key={i} style={{ width: w + '%' }} initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.4, delay: 0.2 + i * 0.28, ease: 'linear' }} />)}</div>
-              <div className="se2-srcs">{SRC.map((s, i) => <motion.span key={s} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.7 + i * 0.12 }}>[{i + 1}] {s}</motion.span>)}</div>
-            </div>
+            <div className="se2-w3"><Streamed run={!calm} big /></div>
           )}
         </motion.div>
       </AnimatePresence>
@@ -152,25 +180,50 @@ const STEPS = [
   ['Let people ask instead', 'Turn on RAG chat and a question gets an answer built from the passages that were retrieved, each one linked. If the index has nothing, the answer says so rather than inventing one.'],
 ];
 
+const CALLERS = ['React hook', 'REST API', 'MCP tool'];
+const LANDING = ['Deploy to Kubernetes', 'Kubernetes ingress', 'Cluster quotas', 'Scaling a service'];
+
+/* The dark room's object is the bar itself, small, showing what each step does: documents landing in the index, the
+   three callers reaching the same index, and an answer with its two linked sources. A step is chosen by hand (hover,
+   focus or tap); nothing here runs by itself. */
+function HowBar({ at }) {
+  return (
+    <div className="se2-hb" aria-hidden="true">
+      <div className="se2-hb-bar"><svg viewBox="0 0 24 24" width="18" height="18"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" strokeWidth="2" /><path d="M15.5 15.5 21 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg><span className="l2-mono">/v1/search</span><b className="l2-mono">one index</b></div>
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div key={at} className="se2-hb-in" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10, transition: { duration: 0.18 } }} transition={{ duration: 0.45, ease: EASE }}>
+          {at === 0 && <ol className="se2-hb-docs">{LANDING.map((d, i) => <motion.li key={d} initial={{ opacity: 0, y: -18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 + i * 0.09, type: 'spring', stiffness: 300, damping: 30 }}><span className="l2-mono">text</span>{d}<em className="l2-mono">vector</em></motion.li>)}</ol>}
+          {at === 1 && <div className="se2-hb-call">{CALLERS.map((c, i) => <motion.span key={c} className="l2-mono" initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1, duration: 0.4, ease: EASE }}>{c}<i /></motion.span>)}<b className="l2-mono">one index</b></div>}
+          {at === 2 && <Streamed run />}
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
 function How() {
+  const [at, setAt] = useState(0);
   return (
     <section className="l2-sec l2-dark se2-how" data-room="dark">
       <div className="l2-wrap l2-grid">
         <div className="se2-how-l">
-          <p className="l2-kick">/v1/search</p>
           <h2 className="l2-head">How it works</h2>
           <p className="l2-lede">Content in, ranked results out, and a model over the top if you want one.</p>
-          <div className="se2-con">
-            <Console name="Search" api="/v1/search" side={[['Search', '/search'], ['Chat', '/cloud/chat'], ['Bot', '/bot'], ['Crawl', '/crawl'], ['Studio', '/studio'], ['Console', '/console'], ['Referrals', '/cloud/referrals'], ['Marketplace', '/cloud/marketplace']]} />
-            <p className="se2-note">Example project. Every name in it is one you would give your own.</p>
+          <HowBar at={at} />
+          <div className="se2-con-open">
+            <Drawer label="See the example console" title="Search console">
+              <Console name="Search" api="/v1/search" side={[['Search', '/search'], ['Chat', '/cloud/chat'], ['Bot', '/bot'], ['Crawl', '/crawl'], ['Studio', '/studio'], ['Console', '/console'], ['Referrals', '/cloud/referrals'], ['Marketplace', '/cloud/marketplace']]} />
+              <p className="se2-note">Example project. Every name in it is one you would give your own.</p>
+            </Drawer>
           </div>
         </div>
         <ol className="se2-steps">
           {STEPS.map(([t, d], i) => (
-            <li key={t}>
-              <span className="se2-step l2-mono">Step {String(i + 1).padStart(2, '0')}</span>
+            <li key={t} className={at === i ? 'on' : ''} onPointerEnter={(e) => e.pointerType === 'mouse' && setAt(i)}>
               <h3 className="l2-title">{t}</h3>
+              <span className="se2-step l2-mono">Step {String(i + 1).padStart(2, '0')}</span>
               <p className="l2-body">{d}</p>
+              <button type="button" className="se2-step-hit" aria-pressed={at === i} aria-label={t} onClick={() => setAt(i)} onFocus={() => setAt(i)} />
             </li>
           ))}
         </ol>
@@ -219,9 +272,9 @@ function Pricing() {
           <h2 className="l2-head">Pricing</h2>
           <p className="l2-body">Pay for hosted search, vector, and AI. Self-host Meilisearch free forever.</p>
           <div className="se2-fit" role="group" aria-label="Which plan fits">
-            <p className="l2-kick ac">Which plan fits</p>
-            <label><span>Projects</span><b className="l2-mono">{proj}</b><input type="range" min="0" max={PROJ.length - 1} value={p} onChange={(e) => setP(+e.target.value)} aria-valuetext={proj + ' projects'} /></label>
-            <label><span>Docs per project</span><b className="l2-mono">{k(docs)}</b><input type="range" min="0" max={DOCN.length - 1} value={d} onChange={(e) => setD(+e.target.value)} aria-valuetext={k(docs) + ' docs per project'} /></label>
+            <p className="l2-kick">Which plan fits</p>
+            <label><span>Projects</span><b className="l2-mono">{proj}</b><input className="l2-range" style={{ '--p': (p / (PROJ.length - 1)) * 100 + '%' }} type="range" min="0" max={PROJ.length - 1} value={p} onChange={(e) => setP(+e.target.value)} aria-valuetext={proj + ' projects'} /></label>
+            <label><span>Docs per project</span><b className="l2-mono">{k(docs)}</b><input className="l2-range" style={{ '--p': (d / (DOCN.length - 1)) * 100 + '%' }} type="range" min="0" max={DOCN.length - 1} value={d} onChange={(e) => setD(+e.target.value)} aria-valuetext={k(docs) + ' docs per project'} /></label>
             <p className="se2-fit-r" aria-live="polite"><span className="l2-mono">fits</span> <b>{PLANS[fit][0]}</b></p>
           </div>
         </div>
@@ -233,7 +286,7 @@ function Pricing() {
                 <p className="se2-amt l2-fig">{pr}{pr.startsWith('$') && <span>mo</span>}</p>
               </div>
               <ul>{pts.map((x) => <li key={x}>{x}</li>)}</ul>
-              <A to={to} className={'x-btn' + (i === fit ? ' solid' : '')}>{cta}</A>
+              <Cta to={to} kind="quiet" id={'plan-' + n.toLowerCase()}>{cta}</Cta>
             </li>
           ))}
         </ol>
@@ -245,7 +298,7 @@ function Pricing() {
 
 export default function Search() {
   return (
-    <main className="l2-page se2" style={{ '--ac': '#0066ff' }}>
+    <main className="l2-page se2">
       <StageHero look="rise" kick="Hybrid Search + RAG" title="Hanzo Search" sub="Keyword and meaning in the same query" acts={[['Read the docs', DOCS], ['GitHub', GH]]}>
         <Ask />
       </StageHero>
@@ -258,7 +311,8 @@ export default function Search() {
         head="Make your content searchable and conversational"
         lede="Index once, search everywhere."
         small="Full-text, vector, hybrid, and RAG -- all from one API."
-        acts={[['Read the docs', DOCS], ['View on GitHub', GH]]}
+        ask={['Read the docs', DOCS]}
+        links={[['View on GitHub', GH]]}
         prompt="Read https://hanzo.ai/skill.md and use Hanzo Search in my project. Start with: hanzo search create"
         api="/v1/search"
         related={[['Chat', '/cloud/chat', 'Conversational AI'], ['Bot', '/bot', 'Multi-agent platform'], ['Crawl', '/crawl', 'Web crawler']]}

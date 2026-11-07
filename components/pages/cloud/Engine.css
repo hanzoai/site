@@ -30,15 +30,15 @@
 .en-serve { display: grid; grid-template-rows: 1fr auto; gap: 16px; height: 100%; }
 .en-lanes { display: grid; gap: 8px; align-content: start; }
 .en-lane { position: relative; height: 18px; border-radius: 6px; background: rgba(255, 255, 255, .05); overflow: hidden; }
-.en-lane b { position: absolute; inset: 0; background: linear-gradient(90deg, var(--ac), #ff9f0a); transform-origin: 0 50%; border-radius: 6px; }
+.en-lane b { position: absolute; inset: 0; background: linear-gradient(90deg, var(--ac), #a3a3a3); transform-origin: 0 50%; border-radius: 6px; }
 .en-lane span { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font: 500 11px/1 var(--mono); color: rgba(0, 0, 0, .55); mix-blend-mode: normal; }
 .en-util { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; font: 500 13px/1 var(--mono); color: #a1a1a6; }
 .en-util i { height: 8px; border-radius: 4px; background: rgba(255, 255, 255, .08); overflow: hidden; }
-.en-util b { display: block; height: 100%; background: #30d158; }
-.en-util em { font-style: normal; color: #30d158; }
+.en-util b { display: block; height: 100%; background: #a3a3a3; }
+.en-util em { font-style: normal; color: #a3a3a3; }
 .en-bench { display: flex; flex-direction: column; gap: 16px; height: 100%; }
 .en-bars { flex: 1; display: flex; align-items: flex-end; gap: 10px; min-height: 90px; }
-.en-bars i { flex: 1; height: 100%; border-radius: 8px 8px 2px 2px; background: linear-gradient(180deg, var(--ac), rgba(255, 69, 58, .35)); transform-origin: 50% 100%; }
+.en-bars i { flex: 1; height: 100%; border-radius: 8px 8px 2px 2px; background: linear-gradient(180deg, var(--ac), rgba(115, 115, 115, .35)); transform-origin: 50% 100%; }
 .en-bench p { margin: 0; font: 500 15px/1.4 var(--mono); color: #d1d1d6; }
 
 /* chapters */
@@ -84,7 +84,7 @@
 .en-chip { aspect-ratio: 1 / 1.05; display: flex; flex-direction: column; justify-content: space-between; padding: 22px; border-radius: 22px; background: #fff; border: 1px solid var(--line); transition: transform .6s var(--ease), box-shadow .6s var(--ease), border-color .4s; }
 .en-chip b { font-size: clamp(26px, 2.4vw, 36px); font-weight: 600; letter-spacing: -.03em; }
 .en-chip span { font-size: 14px; line-height: 1.35; color: var(--soft); }
-.en-chip.on { transform: translateY(-10px); border-color: var(--ac); box-shadow: 0 30px 50px -30px rgba(255, 69, 58, .55); }
+.en-chip.on { transform: translateY(-10px); border-color: var(--ac); box-shadow: 0 30px 50px -30px rgba(115, 115, 115, .55); }
 .en-doc { display: grid; gap: 8px; padding: 18px 22px; border-radius: 16px; background: var(--ink); }
 .en-doc code { font: 500 15px/1.4 var(--mono); color: #f5f5f7; }
 .en-doc code b { color: var(--ac); margin-right: .4em; }

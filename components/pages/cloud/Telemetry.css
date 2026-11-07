@@ -8,24 +8,24 @@
 .tl2-k { margin: 0 0 18px; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
 .tl2-lane { position: relative; flex: 1; display: grid; place-items: center; min-height: 140px; background: repeating-linear-gradient(90deg, transparent 0 14px, rgba(0, 0, 0, .06) 14px 16px) center / 100% 2px no-repeat; }
 .tl2-span { padding: 12px 16px; border-radius: 12px; font: 600 15px/1 var(--mono); }
-.tl2-span.trace { background: var(--ac); color: #241a00; }
+.tl2-span.trace { background: var(--ac); color: #171717; }
 .tl2-span.metric { background: #0b0b0c; color: #fff; }
 .tl2-span.log { background: #e8e8ed; color: var(--ink); }
-.tl2-refuse { padding: 12px 16px; border-radius: 12px; background: #e5484d; color: #fff; font-size: 15px; font-weight: 600; }
+.tl2-refuse { padding: 12px 16px; border-radius: 12px; background: #737373; color: #fff; font-size: 15px; font-weight: 600; }
 .tl2-sig { list-style: none; margin: 0; padding: 0; display: flex; gap: 6px; }
 .tl2-sig li { padding: 7px 10px; border-radius: 8px; font-size: 13px; background: #f5f5f7; color: var(--soft); }
-.tl2-sig li.trace { background: color-mix(in srgb, var(--ac) 22%, #fff); color: #6b4b00; }
+.tl2-sig li.trace { background: color-mix(in srgb, var(--ac) 22%, #fff); color: #525252; }
 .tl2-batch { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .tl2-batch i { aspect-ratio: 1.7; border-radius: 10px; background: #1f1f22; transition: background .25s; }
 .tl2-batch i.on { background: var(--ac); }
 .tl2-sub { margin: 12px 0 0; font-size: 13px; color: #86868b; }
 .tl2-mem { margin-top: auto; padding-top: 22px; }
 .tl2-mem p { display: flex; justify-content: space-between; margin: 0 0 10px; font-size: 13px; color: #a1a1a6; }
-.tl2-mem p .c { color: #ff6b6b; }
+.tl2-mem p .c { color: #737373; }
 .tl2-mem i { position: relative; display: block; height: 14px; border-radius: 14px; background: #1f1f22; }
 .tl2-mem b { position: absolute; inset: 0; border-radius: 14px; background: #f5f5f7; transform-origin: 0 50%; transition: transform .4s var(--ease), background .3s; }
-.tl2-mem b.hot { background: #e5484d; }
-.tl2-mem em { position: absolute; left: 92%; top: -7px; bottom: -7px; width: 2px; background: #ff6b6b; }
+.tl2-mem b.hot { background: #737373; }
+.tl2-mem em { position: absolute; left: 92%; top: -7px; bottom: -7px; width: 2px; background: #737373; }
 .tl2-out { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 .tl2-out li { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; border-radius: 14px; background: #f5f5f7; }
 .tl2-out li:first-child { background: color-mix(in srgb, var(--ac) 16%, #fff); }
@@ -38,9 +38,9 @@
 .tl2-ed { display: flex; flex-direction: column; gap: 14px; }
 .tl2-strip { display: flex; flex-wrap: wrap; gap: 6px; }
 .tl2-strip span { display: inline-flex; align-items: center; gap: 6px; padding: 9px 12px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .12); font-size: 13px; color: #86868b; transition: background .4s var(--ease), color .4s, border-color .4s; }
-.tl2-strip span.on { background: var(--ac); border-color: var(--ac); color: #241a00; }
+.tl2-strip span.on { background: var(--ac); border-color: var(--ac); color: #171717; }
 .tl2-strip i { display: none; }
-.tl2-win { border-radius: 28px; background: #111113; border: 1px solid rgba(255, 255, 255, .1); box-shadow: 0 60px 140px -60px rgba(242, 169, 0, .35); overflow: hidden; }
+.tl2-win { border-radius: 28px; background: #111113; border: 1px solid rgba(255, 255, 255, .1); box-shadow: 0 60px 140px -60px rgba(163, 163, 163, .35); overflow: hidden; }
 .tl2-tabs { display: flex; gap: 2px; padding: 10px 10px 0; border-bottom: 1px solid rgba(255, 255, 255, .08); }
 .tl2-tabs span { padding: 12px 16px; border-radius: 12px 12px 0 0; font-size: 13px; color: #86868b; }
 .tl2-tabs span.on { background: #1c1c1f; color: #f5f5f7; }
@@ -48,7 +48,7 @@
 .tl2-ln { display: block; padding: 0 24px; white-space: pre; transition: color .35s, background .35s; }
 .tl2-ln em { display: inline-block; width: 34px; font-style: normal; color: #3a3a3c; }
 .tl2-ln b { font-weight: 400; color: #8e8e93; }
-.tl2-ln.on { background: rgba(242, 169, 0, .1); color: #f5f5f7; box-shadow: inset 3px 0 0 var(--ac); }
+.tl2-ln.on { background: rgba(163, 163, 163, .1); color: #f5f5f7; box-shadow: inset 3px 0 0 var(--ac); }
 .tl2-ln.on b { color: var(--ac); }
 
 /* Beyond: your config */

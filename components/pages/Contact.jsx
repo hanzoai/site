@@ -1,35 +1,42 @@
 'use client';
 /* /contact. V2: 8/10 Utility, calm and exact, in ink and greys only: a two-line kinetic question beside a patch panel
-   whose cable swings into the route you choose; "Visit" as the one dark room over Hanzo's address and a live
-   San Francisco clock; the community as a big index beside a contour plate that redraws for the network you point at.
+   whose cable, once the curtain lifts, sweeps the four jacks and plugs back into Sales, the one ask never moving;
+   "Visit" as the one dark middle room, the address beside a big live San Francisco clock; the community as a big
+   index beside a contour plate that follows the row you reach or point at; a closing Band in Hanzo's words.
    Persona: anyone with a question for Hanzo: a buyer, a developer, a customer who needs help, the press.
    Goal: reach the right people in one choice.
    CTA: "Talk to sales" (/contact-sales), data-cta contact.hero; metric: the one contact click (contact_sales_submit downstream).
    Signature: a patch panel. Four jacks sit across the top; a cable hangs from the jack you choose and swings on a
-   spring into the route below, which slides in with the right people and actions. On arrival it patches each line
-   once, then rests on Sales.
-   Supporting (3): masked kinetic headline, once; the live clock; the community plate redrawing on hover.
+   spring into the route below, its plug lifting out of one socket and seating in the next. On arrival the cable alone
+   sweeps the four sockets once and lands back on Sales; the Sales route and its button stay put until you choose.
+   Supporting (3): masked kinetic headline, once, after the curtain; the live clock; the community plate following
+   the row you reach.
    Beyond: San Francisco's local time on a live dial beside Hanzo's Ferry Building address, and one tap to copy
    hello@hanzo.ai.
-   Deletes: the blue accent; the "Contact" eyebrow over the h1 and the "Visit" eyebrow over the address; the "01 / 04"
-   counters over each route; the invented clock captions; the endless re-patching loop and the running wire pulse;
-   the text-only community section; the opacity-0 arrivals that hid the lede with JS off.
+   Deletes: the blue accent; the eyebrows over the h1 and the address; the route counters and the 01–04 jack numerals;
+   the mono URL lines under the networks; the invented clock captions; the auto-switching routes and the running wire
+   pulse; the contour map under the Visit room (the community plate is the page's one contour); raw .x-btn heroes (now
+   Go); the opacity-0 and inert states that hid three routes with JS off.
    Every word and link is Hanzo's. */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion } from 'motion/react';
-import { A, More } from '../kit';
+import { motion, animate, useInView, useMotionValue, useReducedMotion } from 'motion/react';
+import { A, Go, Band } from '../kit';
 import Sigil from '../Sigil';
 import MaskLines from './company/MaskLines';
+import useArrived from './company/useArrived';
 import '../v2/vc-type.css';
 import './Contact.css';
 
 const EASE = [0.16, 1, 0.3, 1];
+const SWING = { type: 'spring', stiffness: 140, damping: 16, mass: 0.9 };
 const LINES = [
-  { k: 'Sales', n: '01' },
-  { k: 'Developer Dispatch', n: '02' },
-  { k: 'Support', n: '03' },
-  { k: 'Press & General', n: '04' },
+  { k: 'Sales', go: 'Talk to sales' },
+  { k: 'Developer Dispatch', go: 'Subscribe to newsletter' },
+  { k: 'Support', go: 'Get support' },
+  { k: 'Press & General', go: 'hello@hanzo.ai' },
 ];
+// JS off: every route stacked and readable, no cable, no hands on the dial (PLAN 2.3 / 2.17)
+const NOJS = { __html: '<style>.xct-panel{display:flex!important;flex-direction:column;gap:40px;margin-top:24px!important}.xct-route{opacity:1!important;transform:none!important}.xct-cable,.xct-plug{display:none!important}.xct-in,.xct-in2{animation:none!important}.xct .x-band .x-word,.xct .x-band [style]{opacity:1!important;transform:none!important;filter:none!important}</style>' };
 
 /* Copy hello@hanzo.ai: an icon that turns into a drawn tick; its name is for screen readers only (no new visible words). */
 function CopyMail({ text }) {
@@ -57,8 +64,11 @@ function Route({ i }) {
       <h2 className="xct-rh">Bring Hanzo to your company.</h2>
       <p className="xct-rp">Enterprise plans, your own infrastructure, dedicated compute and engineers on call around the clock.</p>
       <div className="xct-acts">
-        <A to="/contact-sales" className="x-btn solid xct-big" data-thumb="Talk to sales" data-cta="contact.hero">Talk to sales</A>
-        <div className="xct-more"><More to="/enterprise">See Enterprise</More><More to="https://cal.com/hanzo/30min">Book a 30-minute call</More></div>
+        <span className="xct-go" data-thumb="Talk to sales" data-cta="contact.hero"><Go to="/contact-sales" solid className="xct-big">Talk to sales</Go></span>
+        <div className="xct-more">
+          <A to="/enterprise" className="x-arrow"><span>See Enterprise</span><Arr /></A>
+          <A to="https://cal.com/hanzo/30min" className="x-arrow"><span>Book a 30-minute call</span><Arr /></A>
+        </div>
       </div>
     </>
   );
@@ -66,14 +76,14 @@ function Route({ i }) {
     <>
       <h2 className="xct-rh">Developer Dispatch</h2>
       <p className="xct-rp">Frontier AI model releases (Enso, Zen 6), tutorials, and engineering announcements.</p>
-      <div className="xct-acts"><A to="/newsletter" className="x-btn solid xct-big" data-cta="contact.dispatch">Subscribe to newsletter</A></div>
+      <div className="xct-acts"><span className="xct-go" data-cta="contact.dispatch"><Go to="/newsletter" solid className="xct-big">Subscribe to newsletter</Go></span></div>
     </>
   );
   if (i === 2) return (
     <>
       <h2 className="xct-rh">Support</h2>
       <p className="xct-rp">Help with your account, billing or the product: the Help Center, the docs and live status.</p>
-      <div className="xct-acts"><A to="/support" className="x-btn solid xct-big" data-cta="contact.support">Get support</A></div>
+      <div className="xct-acts"><span className="xct-go" data-cta="contact.support"><Go to="/support" solid className="xct-big">Get support</Go></span></div>
     </>
   );
   return (
@@ -81,32 +91,95 @@ function Route({ i }) {
       <h2 className="xct-rh">Press & General</h2>
       <p className="xct-rp">Stories, interviews, partnerships and general inquiries.</p>
       <div className="xct-acts">
-        <a className="x-btn solid xct-big" href="mailto:hello@hanzo.ai" data-cta="contact.press">hello@hanzo.ai</a>
+        <span className="xct-go" data-cta="contact.press"><Go to="mailto:hello@hanzo.ai" solid className="xct-big">hello@hanzo.ai</Go></span>
         <CopyMail text="hello@hanzo.ai" />
       </div>
     </>
   );
 }
+const Arr = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
-/* The patch panel: choosing a jack swings the cable to it and slides its route in. On arrival it patches each line
-   once, then rests on Sales; after that it moves only when you choose. */
+/* The patch panel. `at` is the route you chose (it starts, and stays, on Sales); `cab` is the socket the cable is in.
+   After the curtain, the cable alone sweeps the four sockets once and lands back on Sales. Pointer or focus on the
+   panel ends the sweep at once. The plug and the wire are one drawing, so the wire never hangs from empty air. */
 function Panel() {
   const [at, setAt] = useState(0);
-  const [mine, setMine] = useState(false);
-  const [lap, setLap] = useState(0);
+  const [cab, setCab] = useState(0);
+  const [held, setHeld] = useState(false); // the visitor is here: no demo
+  const [hyd, setHyd] = useState(false);
+  const ok = useArrived();
   const calm = useReducedMotion();
   const box = useRef(null);
   const plug = useRef(null);
   const jacks = useRef([]);
+  const wire = useRef(null);
+  const nub = useRef(null);
+  const geo = useRef(null);
+  const [size, setSize] = useState(null);
   const seen = useInView(box, { amount: 0.35 });
-  const [geo, setGeo] = useState(null);
-  const pick = (i) => { setAt(i); setMine(true); };
+  const sx = useMotionValue(0);
+  const sy = useMotionValue(0);
+  const placed = useRef(false);
 
+  useEffect(() => setHyd(true), []);
+  const pick = (i) => { setHeld(true); setAt(i); setCab(i); };
+  const hold = () => { if (!held) { setHeld(true); setCab(at); } };
+
+  // the arrival sweep: Sales → Dispatch → Support → Press → Sales, the cable only
   useEffect(() => {
-    if (mine || calm || !seen || lap >= LINES.length) return;
-    const t = setTimeout(() => { setAt((v) => (v + 1) % LINES.length); setLap((n) => n + 1); }, lap === 0 ? 2200 : 2600);
+    if (held || calm || !ok || !seen) return;
+    let k = 0, t = 0;
+    const path = [1, 2, 3, 0];
+    const step = () => { setCab(path[k]); k += 1; if (k < path.length) t = setTimeout(step, 620); else setHeld(true); };
+    t = setTimeout(step, 700);
     return () => clearTimeout(t);
-  }, [lap, mine, calm, seen]);
+  }, [held, calm, ok, seen]);
+
+  // draw the wire from the socket point (sx, sy) to the plug on the route; the nub rides the same point
+  const draw = () => {
+    const g = geo.current;
+    if (!g || !wire.current) return;
+    const x0 = sx.get(), y0 = sy.get(), x1 = g.px, y1 = g.py;
+    const sag = (y1 - y0) * 0.9;
+    wire.current.setAttribute('d', `M ${x0} ${y0} C ${x0} ${y0 + sag}, ${x1} ${y1 - sag * 0.7}, ${x1} ${y1}`);
+    nub.current.setAttribute('transform', `translate(${x0 - 9} ${y0 - 7})`);
+  };
+  useEffect(() => {
+    const a = sx.on('change', draw), b = sy.on('change', draw);
+    return () => { a(); b(); };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useLayoutEffect(() => {
+    const measure = () => {
+      const b = box.current;
+      if (!b || !plug.current) return;
+      const r = b.getBoundingClientRect();
+      const p = plug.current.getBoundingClientRect();
+      geo.current = {
+        px: p.left - r.left + p.width / 2, py: p.top - r.top + 2,
+        js: jacks.current.map((j) => { const q = j.getBoundingClientRect(); return [q.left - r.left + q.width / 2, q.bottom - r.top + 2]; }),
+      };
+      setSize([r.width, r.height]);
+      const [x, y] = geo.current.js[cabRef.current];
+      sx.jump(x); sy.jump(y); placed.current = true;
+      draw();
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(box.current);
+    return () => ro.disconnect();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const cabRef = useRef(0);
+  useEffect(() => {
+    cabRef.current = cab;
+    const g = geo.current;
+    if (!g || !placed.current) return;
+    const [x, y] = g.js[cab];
+    if (calm) { sx.jump(x); sy.jump(y); draw(); return; }
+    const a = animate(sx, x, SWING), b = animate(sy, y, SWING);
+    return () => { a.stop(); b.stop(); };
+  }, [cab, calm]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // phones: the jacks are a swipe row, so the chosen one slides into view (the row scrolls, never the page)
   useEffect(() => {
@@ -115,32 +188,6 @@ function Panel() {
     if (!row || row.scrollWidth <= row.clientWidth) return;
     row.scrollTo({ left: Math.max(0, j.offsetLeft - 14), behavior: calm ? 'auto' : 'smooth' });
   }, [at, calm]);
-
-  // the cable hangs from the chosen jack to the plug seated on top of the route
-  useLayoutEffect(() => {
-    const measure = () => {
-      const b = box.current;
-      if (!b || !plug.current) return;
-      const r = b.getBoundingClientRect();
-      const p = plug.current.getBoundingClientRect();
-      setGeo({
-        w: r.width, h: r.height, px: p.left - r.left + p.width / 2, py: p.top - r.top + 2,
-        js: jacks.current.map((j) => { const q = j.getBoundingClientRect(); return [q.left - r.left + q.width / 2, q.bottom - r.top - 2]; }),
-      });
-    };
-    measure();
-    const ro = new ResizeObserver(measure);
-    ro.observe(box.current);
-    return () => ro.disconnect();
-  }, []);
-
-  let d = '';
-  if (geo) {
-    const [x0, y0] = geo.js[at];
-    const { px: x1, py: y1 } = geo;
-    const sag = (y1 - y0) * 0.9;
-    d = `M ${x0} ${y0} C ${x0} ${y0 + sag}, ${x1} ${y1 - sag * 0.7}, ${x1} ${y1}`;
-  }
 
   const key = (e, i) => {
     const n = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
@@ -152,19 +199,21 @@ function Panel() {
   };
 
   return (
-    <div className="xct-obj vc-obj" ref={box}>
+    <div className="xct-obj vc-obj" ref={box} onPointerEnter={hold} onFocusCapture={hold}>
+      <noscript dangerouslySetInnerHTML={NOJS} />
       <div className="xct-jacks" role="tablist" aria-label="Contact">
         {LINES.map((l, i) => (
           <button key={l.k} type="button" role="tab" id={'xct-t' + i} aria-controls={'xct-p' + i} aria-selected={at === i} tabIndex={at === i ? 0 : -1}
-            className={'xct-jack' + (at === i ? ' on' : '')} onClick={() => pick(i)} onKeyDown={(e) => key(e, i)} ref={(el) => { jacks.current[i] = el; }}>
+            className={'xct-jack' + (at === i ? ' on' : '') + (cab === i ? ' lit' : '')} onClick={() => pick(i)} onKeyDown={(e) => key(e, i)} ref={(el) => { jacks.current[i] = el; }}>
             <span className="xct-hole" aria-hidden="true"><i /></span>
-            <span className="xct-n vc-num" aria-hidden="true">{l.n}</span>
             <span className="xct-k">{l.k}</span>
+            <span className="xct-peek" aria-hidden="true">{l.go}</span>
           </button>
         ))}
       </div>
-      <svg className="xct-cable" width={geo ? geo.w : 0} height={geo ? geo.h : 0} aria-hidden="true">
-        {d && <motion.path d={d} initial={false} animate={{ d }} transition={{ type: 'spring', stiffness: 120, damping: 14, mass: 0.9 }} className="xct-wire" />}
+      <svg className="xct-cable" width={size ? size[0] : 0} height={size ? size[1] : 0} aria-hidden="true">
+        <path ref={wire} className="xct-wire" />
+        <g ref={nub}><rect width="18" height="12" rx="3" className="xct-nub" /></g>
       </svg>
       <div className="xct-panel">
         <span className="xct-plug" ref={plug} aria-hidden="true" />
@@ -173,7 +222,7 @@ function Panel() {
             initial={false}
             animate={i === at ? { opacity: 1, y: 0 } : { opacity: 0, y: i < at ? -22 : 22 }}
             transition={{ duration: i === at ? 0.52 : 0.22, ease: EASE, delay: i === at ? 0.16 : 0 }}
-            aria-hidden={i !== at} inert={i !== at}>
+            {...(hyd && i !== at ? { 'aria-hidden': true, inert: true } : {})}>
             <Route i={i} />
           </motion.div>
         ))}
@@ -182,9 +231,11 @@ function Panel() {
   );
 }
 
-/* San Francisco's time on a dial, beside the address; drawn in the browser only (no server clock). */
+/* San Francisco's time on a big dial, beside the address. Drawn in the browser only: the hands appear with the first
+   tick (none with JS off), and the dial's name carries the time for screen readers, once a minute. */
 function Clock() {
   const box = useRef(null);
+  const dial = useRef(null);
   const t = useRef(null);
   const hr = useRef(null);
   const mn = useRef(null);
@@ -195,13 +246,17 @@ function Clock() {
     if (!seen) return;
     const f = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
     const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles', hour: 'numeric', minute: 'numeric', second: 'numeric', hourCycle: 'h23' });
+    let last = '';
     const tick = () => {
       const now = new Date();
-      if (t.current) t.current.textContent = f.format(now);
+      const s = f.format(now);
+      if (t.current) t.current.textContent = s;
+      if (s !== last && box.current) { box.current.setAttribute('aria-label', 'San Francisco, ' + s); last = s; }
       const p = Object.fromEntries(parts.formatToParts(now).map((x) => [x.type, +x.value]));
       if (hr.current) hr.current.style.transform = `rotate(${(p.hour % 12) * 30 + p.minute * 0.5}deg)`;
       if (mn.current) mn.current.style.transform = `rotate(${p.minute * 6 + p.second * 0.1}deg)`;
       if (sc.current) sc.current.style.transform = `rotate(${p.second * 6}deg)`;
+      dial.current?.classList.add('live');
     };
     tick();
     // reduced motion: the hands are set once a minute, so nothing sweeps
@@ -210,7 +265,7 @@ function Clock() {
   }, [seen, calm]);
   return (
     <div className="xct-clock" ref={box} role="img" aria-label="San Francisco">
-      <svg viewBox="0 0 200 200" className="xct-dial" aria-hidden="true">
+      <svg viewBox="0 0 200 200" className="xct-dial" ref={dial} aria-hidden="true">
         <circle cx="100" cy="100" r="98" className="xct-face" />
         {Array.from({ length: 60 }, (_, i) => (
           <line key={i} x1="100" y1={i % 5 ? 8 : 6} x2="100" y2={i % 5 ? 12 : 20} transform={`rotate(${i * 6} 100 100)`} className={i % 5 ? 'xct-tk' : 'xct-tk big'} />
@@ -236,14 +291,24 @@ const NETS = [
   ['TikTok', 'https://www.tiktok.com/@hanzoinc'],
   ['Instagram', 'https://www.instagram.com/hanzoinc'],
 ];
-const where = (u) => u.replace(/^https:\/\/(www\.)?/, '').replace(/\/$/, '');
-// let a long address break after its slashes and dots, never mid-word
-const breakable = (t) => t.split(/(?<=[/.])/).flatMap((p, i) => (i ? [<wbr key={i} />, p] : [p]));
 
-/* The community: a big index of Hanzo's channels beside a contour plate. Point at (or focus) a channel and the plate
-   redraws from that channel's own address, its name settling in below. */
+/* The community: a big index of Hanzo's channels beside a contour plate. The plate follows the row you scroll to
+   (on phones too, where it rides at the top while the rows pass) and the row you point at or focus; it redraws from
+   that channel's own address with a short cross-fade, its name springing up. */
 function Community() {
   const [on, setOn] = useState(0);
+  const [hyd, setHyd] = useState(false);
+  const hover = useRef(false);
+  const rows = useRef([]);
+  useEffect(() => setHyd(true), []);
+  useEffect(() => {
+    const io = new IntersectionObserver((es) => {
+      if (hover.current) return;
+      es.forEach((e) => { if (e.isIntersecting) setOn(+e.target.dataset.i); });
+    }, { rootMargin: '-46% 0px -50% 0px' });
+    rows.current.forEach((r) => r && io.observe(r));
+    return () => io.disconnect();
+  }, []);
   const [n, u] = NETS[on];
   return (
     <section className="vc-sec xct-com" aria-labelledby="xct-com-h">
@@ -251,17 +316,20 @@ function Community() {
         <div className="xct-com-l">
           <MaskLines id="xct-com-h" lines={['Join the community']} className="vc-headline" />
           <div className="xct-plate vc-obj" aria-hidden="true">
-            <Sigil seed={u} data={[n.length, u.length]} className="xct-plate-s" />
-            <motion.span key={n} className="xct-plate-n" initial={{ y: '100%' }} animate={{ y: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>{n}</motion.span>
+            <motion.div key={u} className="xct-plate-s" initial={hyd ? { opacity: 0 } : false} animate={{ opacity: 1 }} transition={{ duration: 0.32, ease: EASE }}>
+              <Sigil seed={u} data={[n.length, u.length]} />
+            </motion.div>
+            <span className="xct-plate-w">
+              <motion.span key={n} className="xct-plate-n" initial={hyd ? { y: '100%' } : false} animate={{ y: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>{n}</motion.span>
+            </span>
           </div>
         </div>
-        <ul className="xct-nets">
+        <ul className="xct-nets" onPointerLeave={() => { hover.current = false; }}>
           {NETS.map(([name, url], i) => (
-            <li key={name}>
-              <A to={url} className={'xct-net' + (on === i ? ' on' : '')} data-cursor="Open" onPointerEnter={() => setOn(i)} onFocus={() => setOn(i)}>
+            <li key={name} ref={(el) => { rows.current[i] = el; }} data-i={i}>
+              <A to={url} className={'xct-net' + (on === i ? ' on' : '')} data-cursor="Open" onPointerEnter={() => { hover.current = true; setOn(i); }} onFocus={() => setOn(i)}>
                 <span className="xct-net-n">{name}</span>
-                <span className="xct-net-u">{breakable(where(url))}</span>
-                <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                <svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </A>
             </li>
           ))}
@@ -287,7 +355,6 @@ export default function Contact() {
       </section>
 
       <section className="xct-visit" data-room="dark" aria-labelledby="xct-visit-h">
-        <Sigil seed="1 Ferry Building, San Francisco" data={[1, 94105]} className="xct-map" still />
         <div className="vc-grid xct-visit-g">
           <div className="xct-visit-c">
             <MaskLines id="xct-visit-h" lines={['Visit']} className="vc-display" />
@@ -299,6 +366,7 @@ export default function Contact() {
       </section>
 
       <Community />
+      <Band title="Bring Hanzo to your company." action="Talk to sales" to="/contact-sales" />
     </main>
   );
 }

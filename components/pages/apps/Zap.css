@@ -157,3 +157,4 @@
   .zp-pick button { min-height: 44px; }
   .zp-lane-k, .zp-pick > span, .zp-term-bar > span, .zp-topo-n, .zp-chip { font-size: 14px; }
 }
+@media (max-width: 900px) { .zp-kick, .zp-points span { font-size: 14px; } }

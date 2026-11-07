@@ -162,9 +162,9 @@ function Canvas() {
             {msg(1, ['vi', 'Zoe'], '9:42 AM', <p>{TASK_TEXT} <em>@Dev</em></p>)}
             {msg(2, ['dev', 'Dev'], '', (
               <>
-                <p>Fixed unhandled promise in PaySheet.tsx:84 and opened PR #418.</p>
+                <p>Fixed unhandled promise in PaySheet.tsx:84 and opened PR #262626.</p>
                 <ul className="xtm-steps">
-                  {['Reproduced in WebKit mobile', 'Patched PaySheet.tsx:84', 'Opened PR #418 (+18 -4)'].map((s, i) => <li key={s} className={steps > i ? 'ok' : ''}><span aria-hidden="true">{steps > i ? '✓' : '○'}</span>{s}</li>)}
+                  {['Reproduced in WebKit mobile', 'Patched PaySheet.tsx:84', 'Opened PR #262626 (+18 -4)'].map((s, i) => <li key={s} className={steps > i ? 'ok' : ''}><span aria-hidden="true">{steps > i ? '✓' : '○'}</span>{s}</li>)}
                 </ul>
               </>
             ))}
@@ -344,7 +344,7 @@ function Bugfix() {
       <div className="xtm-case-g">
         <div className="xtm-thread">
           <div className="xtm-m"><span className="xtm-av">ZM</span><div><p className="xtm-who"><b>Zoe Maxwell</b><span>10:14 AM</span></p><p>Checkout button is unresponsive on mobile Safari when Apple Pay sheet closes — <em>@Dev</em> can we patch this before noon?</p></div></div>
-          <div className="xtm-m"><Face n="dev" size={32} /><div><p className="xtm-who"><b>Dev</b><span>Software · 10:14 AM</span></p><p>Reproduced in WebKit simulator: oncancel left the sheet lock active in PaySheet.tsx:84. Cleared lock in finally block and opened PR #418.</p><p className="xtm-pr x-mono">PR #418 · fix(checkout): release PaySheet lock on cancel (+14 -3)</p></div></div>
+          <div className="xtm-m"><Face n="dev" size={32} /><div><p className="xtm-who"><b>Dev</b><span>Software · 10:14 AM</span></p><p>Reproduced in WebKit simulator: oncancel left the sheet lock active in PaySheet.tsx:84. Cleared lock in finally block and opened PR #262626.</p><p className="xtm-pr x-mono">PR #262626 · fix(checkout): release PaySheet lock on cancel (+14 -3)</p></div></div>
           <div className="xtm-m"><Face n="sci" size={32} /><div><p className="xtm-who"><b>Qa</b><span>Quality · 10:15 AM</span></p><p className="xtm-green x-mono">42/42 E2E GREEN</p><p>Verified e2e across iOS 18 Safari &amp; Chromium — 42/42 checkout specs green. Ready to merge.</p></div></div>
         </div>
         <div className="xtm-auto">
@@ -411,7 +411,7 @@ function Flows() {
 
 /* ---------- 6. the code channel: a wide product window, stepped by hand ---------- */
 const STEP6 = ['1. Code trace', '2. Loop in design', '3. Decision', '4. Canvas summary', '5. E2E verify', '6. Session complete'];
-const DIFF = [['12', '12', '', '.cta-button {'], ['13', '13', '', 'display: inline-flex;'], ['14', '14', '', 'align-items: center;'], ['15', '', 'del', '- color: #e5e7eb;'], ['16', '', 'del', '- background: #ec4899;'], ['', '15', 'add', '+ color: #1a1a1a;'], ['', '16', 'add', '+ background: #f472b6;'], ['', '17', 'add', '+ font-weight: 600;'], ['17', '18', '', 'border-radius: 8px;'], ['18', '19', '', '}']];
+const DIFF = [['12', '12', '', '.cta-button {'], ['13', '13', '', 'display: inline-flex;'], ['14', '14', '', 'align-items: center;'], ['15', '', 'del', '- color: #e5e7eb;'], ['16', '', 'del', '- background: #737373;'], ['', '15', 'add', '+ color: #1a1a1a;'], ['', '16', 'add', '+ background: #a3a3a3;'], ['', '17', 'add', '+ font-weight: 600;'], ['17', '18', '', 'border-radius: 8px;'], ['18', '19', '', '}']];
 
 function Channel() {
   const [s, setS] = useState(6);
@@ -474,7 +474,7 @@ function Channel() {
                 <p>Verified e2e across Chromium &amp; Safari — WCAG AAA contrast (8.9:1) and checkout specs 28/28 green.</p>
               </div>
               <div className={'xtm-cm done' + show(6)}>
-                <p className="xtm-pr2"><Check />PR #418 merged · E2E green</p>
+                <p className="xtm-pr2"><Check />PR #262626 merged · E2E green</p>
                 <span className="xtm-archive">Archive Channel</span>
               </div>
             </div>

@@ -480,7 +480,7 @@ export default function Gen() {
   const setAt = (i, byHand) => { setAtState(i); if (byHand) setMine(true); };
   const pick = (i) => setAt(i, true);
   return (
-    <main className="av xgn" style={{ '--ac': '#e5484d' }}>
+    <main className="av xgn" style={{ '--ac': '#737373' }}>
       <Hero at={at} setAt={setAt} mine={mine} />
       <Install />
       <Two />

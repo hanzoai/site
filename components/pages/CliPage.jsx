@@ -460,7 +460,7 @@ function Carry() {
 
 export default function CliPage() {
   return (
-    <main className="av cli" style={{ '--ac': '#7ed321' }}>
+    <main className="av cli" style={{ '--ac': '#a3a3a3' }}>
       <Hero />
       <Paste />
       <What />

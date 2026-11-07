@@ -4,6 +4,7 @@
 /* SDKs.
    V2: 8/10 code as the hero: one big console where only the lines that differ between the OpenAI and Anthropic dialects re-set, Hanzo's six languages as a picker, the per-language orgs as the one dark room, and the Go modules as a type wall you filter by typing.
    Persona: a developer choosing a client library. Goal: call the API from their language. CTA: API reference (sdks.hero).
+   Metric: cta_click on sdks.hero and sdks.close (data-cta; the event layer is the conductor's).
    SDKs. The first screen is the gateway's own request, written three ways and spoken two ways: the console flips
    between the OpenAI and Anthropic dialects by itself (until you take over), and only the lines that change between
    them are re-set, so the difference reads at a glance (base URL, header, max_tokens). Every sample is Hanzo's. */
@@ -369,6 +370,18 @@ function Mods() {
   );
 }
 
+/* The close: one line, one ask (ink on paper; the orgs are the page's one dark room). */
+function Close() {
+  return (
+    <section className="a2-sec xsd-close" aria-label="API reference">
+      <div className="a2-wrap xsd-close-in">
+        <p className="a2-display xsd-close-h" aria-hidden="true">SDKs for every language</p>
+        <div className="a2-acts"><A to="https://docs.hanzo.ai/docs/openapi/" className="x-btn solid" data-cta="sdks.close">API reference</A><More to="https://docs.hanzo.ai/docs/sdks">SDKs docs →</More></div>
+      </div>
+    </section>
+  );
+}
+
 export default function Sdks() {
   return (
     <main className="a2 xsd">
@@ -379,6 +392,7 @@ export default function Sdks() {
       <Orgs />
       <Flagship />
       <Mods />
+      <Close />
     </main>
   );
 }

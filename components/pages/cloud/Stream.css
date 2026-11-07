@@ -1,7 +1,7 @@
 /* ---------- stream v2 (st2-) ---------- */
 
 /* Stage object (frame look): partitions running full-bleed in the dark */
-.st2-tape { position: relative; height: 100%; background: radial-gradient(120% 70% at 70% 10%, rgba(18, 181, 166, .16), transparent 60%), #000; overflow: hidden; display: flex; flex-direction: column; padding-top: clamp(108px, 15svh, 150px); }
+.st2-tape { position: relative; height: 100%; background: radial-gradient(120% 70% at 70% 10%, rgba(163, 163, 163, .16), transparent 60%), #000; overflow: hidden; display: flex; flex-direction: column; padding-top: clamp(108px, 15svh, 150px); }
 .st2-lanes { display: flex; flex-direction: column; gap: clamp(10px, 1.6svh, 18px); }
 .st2-lane { position: relative; display: flex; align-items: center; height: clamp(54px, 8svh, 76px); border-block: 1px solid rgba(255, 255, 255, .06); }
 .st2-p { position: absolute; left: 24px; z-index: 2; padding: 6px 10px; border-radius: 8px; background: #000; font-size: 13px; color: #86868b; }
@@ -12,14 +12,14 @@
 .st2-lane.still .st2-strip { animation-play-state: paused; }
 @keyframes st2-run { to { transform: translateX(-50%); } }
 .st2-run { display: flex; gap: 8px; padding-right: 8px; }
-.st2-run i { display: flex; align-items: flex-end; width: clamp(96px, 9vw, 132px); height: clamp(44px, 6.4svh, 60px); padding: 8px 10px; border-radius: 10px; background: linear-gradient(180deg, rgba(18, 181, 166, .26), rgba(18, 181, 166, .1)); border: 1px solid rgba(18, 181, 166, .34); }
-.st2-run b { font-size: 13px; font-weight: 500; font-style: normal; color: #9ff0e6; }
+.st2-run i { display: flex; align-items: flex-end; width: clamp(96px, 9vw, 132px); height: clamp(44px, 6.4svh, 60px); padding: 8px 10px; border-radius: 10px; background: linear-gradient(180deg, rgba(163, 163, 163, .26), rgba(163, 163, 163, .1)); border: 1px solid rgba(163, 163, 163, .34); }
+.st2-run b { font-size: 13px; font-weight: 500; font-style: normal; color: #e4e4e4; }
 .st2-run i { font-style: normal; }
 .st2-lane.ln3 .st2-run i:nth-child(3n) { background: rgba(255, 255, 255, .05); border-color: rgba(255, 255, 255, .1); }
-.st2-mark { position: absolute; left: 42%; top: 50%; z-index: 3; transform: translateY(-50%); padding: 9px 12px; border-radius: 10px; background: #12b5a6; color: #001b18; font-size: 13px; font-weight: 600; box-shadow: 0 0 0 6px rgba(18, 181, 166, .2); transition: background .3s, box-shadow .3s; }
-.st2-mark::before { content: ''; position: absolute; left: -8px; top: -14px; bottom: -14px; width: 2px; background: #12b5a6; }
+.st2-mark { position: absolute; left: 42%; top: 50%; z-index: 3; transform: translateY(-50%); padding: 9px 12px; border-radius: 10px; background: #a3a3a3; color: #171717; font-size: 13px; font-weight: 600; box-shadow: 0 0 0 6px rgba(163, 163, 163, .2); transition: background .3s, box-shadow .3s; }
+.st2-mark::before { content: ''; position: absolute; left: -8px; top: -14px; bottom: -14px; width: 2px; background: #a3a3a3; }
 .st2-mark.down { background: #3a3a3c; color: #f5f5f7; box-shadow: none; }
-.st2-bad { position: absolute; right: 8%; z-index: 3; padding: 9px 12px; border-radius: 10px; background: #e5484d; color: #fff; font-size: 13px; font-weight: 600; animation: st2-bounce .9s var(--ease) both; }
+.st2-bad { position: absolute; right: 8%; z-index: 3; padding: 9px 12px; border-radius: 10px; background: #737373; color: #fff; font-size: 13px; font-weight: 600; animation: st2-bounce .9s var(--ease) both; }
 @keyframes st2-bounce { from { transform: translateX(-60px); opacity: 0; } 55% { transform: translateX(10px); opacity: 1; } to { transform: translateX(40px); opacity: 0; } }
 .st2-clients { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 24px 22px auto; padding: 0 0 0 24px; }
 .st2-clients span { padding: 8px 12px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .14); font-size: 13px; color: #a1a1a6; }
@@ -60,7 +60,7 @@
 .st2-code-l { grid-column: 1 / span 5; }
 .st2-code-r { grid-column: 7 / span 6; }
 .st2-code-r .cf-code { border-radius: 28px; box-shadow: 0 48px 120px -48px rgba(0, 0, 0, .3); }
-.st2-code-r .cf-mark { background: color-mix(in srgb, var(--ac) 18%, #fff); color: #075e56; border-radius: 4px; }
+.st2-code-r .cf-mark { background: color-mix(in srgb, var(--ac) 18%, #fff); color: #525252; border-radius: 4px; }
 .st2-check { margin-top: 48px; padding: 26px; border-radius: 28px; background: #f5f5f7; }
 .st2-check label { display: flex; flex-direction: column; gap: 14px; }
 .st2-check input { height: 56px; padding: 0 18px; border-radius: 14px; border: 1px solid var(--hair); background: #fff; font: 500 20px/1 var(--mono); color: var(--ink); outline: none; transition: border-color .2s, box-shadow .2s; }

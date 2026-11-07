@@ -2,7 +2,7 @@
 /* Payments (v2, archetype A "Launch"; greys and ink only, JAMES.md 7).
    Persona: a developer or payments lead tied to one processor, who wants to route, retry and switch without a rewrite (metric signup_click)
    Goal: watch one checkout settle through the routing and the cascade, then start with Hanzo
-   CTA: Try Hanzo -> /login (hero, sticky AskBar, phone thumb bar, close; data-thumb, data-cta)
+   CTA: Try Hanzo -> /login (hero, the site's sticky ask bar at every width, close; data-thumb, data-cta)
    Signature: a checkout settling on one huge phone under the centred title. A method is picked, the number becomes a
    vault token, the rule picks a processor, the first one soft-declines and the cascade settles it on the backup,
    ending on `succeeded` from the connector Hanzo's own code names. It runs by itself while on screen, pauses on its own
@@ -24,7 +24,6 @@ import BizLines from '../../v2/BizLines';
 import BizChapters from '../../v2/BizChapters';
 import BizSheet from '../../v2/BizSheet';
 import BizOpen from '../../v2/BizOpen';
-import AskBar from '../../v2/AskBar';
 import './Payments.css';
 
 const API = 'https://docs.hanzo.ai/docs/openapi';
@@ -474,7 +473,7 @@ function End() {
 
 export default function Payments() {
   return (
-    <main className="bz pay">
+    <main className="bz pay" data-ask-name="Payments">
       <Hero />
       <BizChapters label="A payment, routed" className="pay-ch" items={STEPS.map(([t, d], i) => ({ t, d, x: CH[i] }))} stage={(at) => <ChStage at={at} />}>
         <header className="bz-wrap bz-grid pay-ch-head">
@@ -491,7 +490,6 @@ export default function Payments() {
       <Cases />
       <Further />
       <End />
-      <AskBar title="Payments" label="Try Hanzo" to="/login" />
     </main>
   );
 }
