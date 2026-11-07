@@ -367,7 +367,8 @@ const NETS = [
    Only the row you are on grows (scale 1.3, 400ms ease-emphasis) and settles back as you leave it. The plate follows
    the row you scroll to and the row you point at or focus; it redraws from that channel's own address with a short
    cross-fade, its name rising in. On phones the plate rides at the top without its name (the row below already says it). */
-const where = (u) => u.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
+// the link's own address, https:// and www. dropped, breakable only after a slash
+const where = (u) => u.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '').split('/').flatMap((s, i) => (i ? [<wbr key={i} />, '/' + s] : [s]));
 function Community() {
   const [on, setOn] = useState(0);
   const [hyd, setHyd] = useState(false);

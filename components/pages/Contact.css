@@ -116,7 +116,7 @@
 .xct-net { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 24px; min-height: 84px; padding: 13px 0; border-top: 1px solid var(--line); color: var(--muted); text-decoration: none; transition: color var(--d-fast) var(--e-out); }
 .xct-net-t { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-width: 0; }
 .xct-net-n { display: block; font-size: 26px; font-weight: 497; letter-spacing: -.025em; line-height: 1.1; transform-origin: 0 100%; transition: transform var(--d-slow) var(--e-em); }
-.xct-net-u { font: 400 13px/1.3 var(--mono); letter-spacing: 0; color: var(--muted); overflow-wrap: anywhere; transition: color var(--d-fast) var(--e-out), transform var(--d-slow) var(--e-em); }
+.xct-net-u { font: 400 13px/1.3 var(--mono); letter-spacing: 0; color: var(--muted); overflow-wrap: break-word; transition: color var(--d-fast) var(--e-out), transform var(--d-slow) var(--e-em); }
 .xct-net svg { color: var(--muted); transition: color var(--d-fast) var(--e-out), transform var(--d-base) var(--e-io); }
 .xct-net.on { color: var(--ink); }
 .xct-net.on .xct-net-n { transform: translateY(-2px) scale(1.3); }
@@ -151,8 +151,6 @@
   .xct-net { min-height: 72px; }
   .xct-net-n { font-size: 24px; }
   .xct-net-u { font-size: 14px; }
-  /* reserve the shared phone ask bar's height under the last row, so the bar can rest without covering a row */
-  .xct-com { padding-bottom: 120px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .xct-in, .xct-in2 { animation: none; }

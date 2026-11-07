@@ -3,13 +3,13 @@
 // Beyond: Add to the script: the install script takes any of the binary's own commands (scan, share, status, link, auth show) as one press each, under Hanzo's own heading for it, and every block and the whole script copy as you built them
 // Persona: a developer deciding whether to put one more binary on their path.
 // Goal: install the CLI (the line is right there to copy) after seeing it work in a real session.
-// CTA: Install from hanzo.sh (docs.hanzo.ai/docs/cli): hero solid + ask bar (data-thumb) + the closing band; everything else is a text link.
+// CTA: Install from hanzo.sh (docs.hanzo.ai/docs/cli): hero solid (data-thumb) + the closing band; everything else is a text link. The header keeps the shared "Try Hanzo" (page ask requested in docs/requests/cli.md).
 // Metric: api_key_created (developer: copy the install line, then sign in with hanzo auth login)
 /* Hanzo CLI (Archetype: Developer, terminal-first, code as the hero).
-   V2: 8/10 round 2: no green (white on the black terminal, ink on white); one solid ask in the hero and again as the one closing band; kickers gone (their words title the windows they describe); rest sizes on the deck scale (h1 52); the session runs once and rests with Pause/Replay, the tree tour pauses; terminal, tree and print pane hold fixed heights so nothing moves under a thumb; 44 px targets; no springs
+   V2: 8/10 round 3: the hero ask is the one pure-white solid on the black room (was the room's #f5f5f7 grey); the h1 cuts in on first paint and the session waits for fonts plus that cut-in before typing; "Hanzo CLI · Developers" moved from the bar above the h1 to the status line below it; the three claims are small terminal windows that type their command in (stepped clip) with the missing verb struck after; h2s use page-local cli/Cut (no reduced-motion hydration error, legible with JS off); resting carets keep the hero, prompt and script alive; 44 px tabs; every hover answers
    Motion: signature = the typed session in the hero terminal (text nodes via refs, stops off screen, runs once then rests).
-   Supporting: the tree's selection that glides between leaves (layoutId, 300 ms ease), the added script block that wipes
-   in (clip), the line-masked headlines. Colour: Hanzo's deck greys only. Every word is Hanzo's. */
+   Supporting: the tree's selection that glides between leaves (layoutId, 300 ms ease), the added script block and the claim
+   windows that wipe in (clip), the line-masked headlines. Colour: Hanzo's deck greys only. Every word is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Copy, Mark } from '../ui';

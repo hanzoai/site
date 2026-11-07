@@ -186,14 +186,14 @@ Done here: n/a. The page has no code, terminal or config.
 - [ ] n/a: no submit
 - [x] A thrown island does not blank the page (Sigil is only a fallback)
 
-Done here: with hanzo.ai blocked (this box), the page is complete with no console errors (Playwright run).
+Done here: with hanzo.ai blocked (this box), the page is complete. The only console lines are the browser's "Failed to load resource" 404s for the remote covers and logos (request 1). There are no script or hydration errors at 1470×801 or 375×812, with or without reduced motion. A reduced-motion hydration mismatch in the plate's line (`useReducedMotion` read on the first client render) was fixed by switching to the hydration-safe `useCalm`.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary. `lib/track.js` does not exist yet.
 - [x] Nothing identifier-bearing; no payload
 - [x] `V2: 8/10 …` in the page file's top comment
 - [x] Review read: `docs/review/customers.md` re-run was 7/10. Its fixes are done:
-  - the phone scene (rows read in);
+  - the phone scene (a sticky figure strip that swaps one in, one out, plus rows reading in);
   - the stage hands off in sequence;
   - "120,000 ETH" is on one line;
   - the h1 leads;

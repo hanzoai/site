@@ -1,6 +1,8 @@
 /* Enso (eo-): the switchboard and the GPQA explorer */
 /* stage: the headline sits left of the ring */
 .eo-head { width: min(46%, 600px); }
+/* the × close: the kit hover (lighter glass, firmer rim) for every non-touch pointer, beside its quarter turn */
+@media (hover: hover), not all and (pointer: coarse) { .eo-head ~ .lv-close:hover { background: rgba(255, 255, 255, .3); border-color: rgba(255, 255, 255, .55); } }
 
 /* chapters: Enso's film, a little closer each tier, with the tier's card on it */
 .eo-art { position: absolute; inset: 0; overflow: hidden; background: #000; }
@@ -24,12 +26,13 @@
 .eo-meta b { font-weight: 497; color: var(--ink); }
 .eo-acts { display: flex; flex-wrap: wrap; gap: 4px 22px; }
 .eo-l { display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; font-weight: 500; color: var(--ink); text-decoration: none; text-underline-offset: 4px; }
-@media (hover: hover) { .eo-l:hover { text-decoration: underline; } }
+/* hovers apply wherever the pointer is not a finger (a mouse, a trackpad, a stylus), not only where (hover: hover) reports */
+@media (hover: hover), not all and (pointer: coarse) { .eo-l:hover { text-decoration: underline; } }
 .eo-l:active { transform: translateY(1px); }
 /* the tier rail answers a hover: the row steps in and its number darkens (transform only, no layout jump) */
 #eo-tiers .lv-ch-rail button { transition: color .15s cubic-bezier(0, 0, .2, 1), transform .3s var(--ease); }
 #eo-tiers .lv-ch-rail button .mb-tnum { transition: color .15s cubic-bezier(0, 0, .2, 1); }
-@media (hover: hover) {
+@media (hover: hover), not all and (pointer: coarse) {
   #eo-tiers .lv-ch-rail button:hover { color: var(--ink); transform: translateX(6px); }
   #eo-tiers .lv-ch-rail button:hover .mb-tnum { color: var(--ink); }
 }
@@ -119,7 +122,7 @@
 .eo-read-m span { font: 500 13px var(--mono); color: var(--soft); }
 .eo-read-s { margin: 10px 0 0; font-size: 13.5px; line-height: 1.5; color: var(--soft); min-height: 4.5em; }
 .eo-src { font-size: 14px; color: var(--ink); text-underline-offset: 3px; transition: color .2s; }
-@media (hover: hover) { .eo-src:hover { text-decoration: underline; } }
+@media (hover: hover), not all and (pointer: coarse) { .eo-src:hover { text-decoration: underline; } }
 .eo-vs { list-style: none; margin: 18px 0 0; padding: 14px 0 0; border-top: 1px solid var(--line); display: grid; gap: 10px; }
 .eo-vs li { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center; font-size: 14px; }
 .eo-vs span { font: 500 13px var(--mono); color: var(--soft); }
@@ -130,7 +133,7 @@
 .eo-spec .x-table td { font-size: 17px; }
 .eo-sort { display: flex; gap: 8px; margin-bottom: 14px; }
 .eo-sortb { min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--soft); font: 500 14px var(--sans); cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
-@media (hover: hover) { .eo-sortb:hover { border-color: rgba(0, 0, 0, .25); color: var(--ink); } }
+@media (hover: hover), not all and (pointer: coarse) { .eo-sortb:hover { border-color: rgba(0, 0, 0, .25); color: var(--ink); } }
 .eo-sortb:active { transform: scale(.98); }
 .eo-sortb[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: #fff; }
 .eo-table b { font-weight: 497; color: var(--ink); }
