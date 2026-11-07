@@ -2,7 +2,7 @@
 /* Dataroom (v2, archetype A "Launch"; greys and ink only, JAMES.md 7).
    Persona: a founder raising, or a deal team running diligence, who sends documents to people outside (metric signup_click)
    Goal: see what a link can tell you and control after it has gone, then start sharing
-   CTA: Try Hanzo -> /login (hero, sticky AskBar, phone thumb bar, close; data-thumb, data-cta)
+   CTA: Try Hanzo -> /login (hero, the site's sticky ask bar at every width, close; data-thumb, data-cta)
    Signature: a link's views ticking in. Beside the title on the first screen, the room after the link has gone:
    Deck.pdf's ten pages in a row running off the right edge, each page's reading time filling as the visitor works
    through it, the camera following them, the page they came back to marked 2×, the visits arriving in a feed (verified
@@ -13,16 +13,15 @@
    by one, then the page with your email printed across it.
    Motion: the reading room (idle, signature) + sticky chapters (scroll) + headlines cut into their line (arrival) +
    files that open into their page (state, BizOpen); the switches and gates answer the hand. Every word and link is Hanzo's.
-V2: 8/10 the live reading room beside the title on the first screen at both sizes, five pinned chapters, the folder tree whose files open into their page, one dark room to share it ten ways, plans as a ladder, greys only, one ask everywhere (hero, sticky bar, close)
+V2: 8/10 the live reading room beside the title on the first screen at both sizes, five pinned chapters, the folder tree whose files open into their page, one dark room to share it ten ways, plans as a ladder, greys only, one ask everywhere (hero, the site's sticky bar, close)
 */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { A, More } from '../../kit';
 import { useLive } from '../cloud/Frame';
 import BizLines from '../../v2/BizLines';
 import BizChapters from '../../v2/BizChapters';
 import BizOpen from '../../v2/BizOpen';
-import AskBar from '../../v2/AskBar';
 import { EASE_OUT_EXPO as EASE, SPRING } from '../../../lib/motion';
 import './Dataroom.css';
 
@@ -337,7 +336,7 @@ function Ten() {
               <Slide n={6} />
               {on.wm && <span className="dr-wm" aria-hidden="true">{Array.from({ length: 14 }).map((_, k) => <b key={k}>{me}</b>)}</span>}
             </div>
-            <AnimatePresence>
+            <AnimatePresence initial={false}>
               {gates.map((k, i) => <Gate key={k} k={k} i={i} mail={me} go={() => setPast((p) => [...p, k])} />)}
             </AnimatePresence>
           </div>
@@ -392,8 +391,8 @@ function Plans() {
 
 const Gh = () => <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" /></svg>;
 
-/* The close: one sentence at Display size, the same solid ask, and full-width text rows for every other door. The
-   sticky ask steps aside while it is on screen, so one solid button shows at a time. */
+/* The close: one sentence at Display size, the same solid ask, and full-width text rows for every other door (the
+   site's ask bar steps aside while this data-thumb button is on screen, so one solid button shows at a time). */
 const Arrow = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const DOORS = [
   [DOCS, 'Documentation', 'Explore our guides and API references', 'View Docs'],
@@ -403,16 +402,8 @@ const DOORS = [
 ];
 
 function End() {
-  const ref = useRef(null);
-  useEffect(() => {
-    const el = ref.current, main = el?.closest('main');
-    if (!el || !main) return;
-    const io = new IntersectionObserver(([e]) => main.toggleAttribute('data-end', e.isIntersecting), { threshold: 0.15 });
-    io.observe(el);
-    return () => { io.disconnect(); main.removeAttribute('data-end'); };
-  }, []);
   return (
-    <section className="bz-sec dr-end" aria-labelledby="dr-end-h" ref={ref}>
+    <section className="bz-sec dr-end" aria-labelledby="dr-end-h">
       <div className="bz-wrap">
         <div className="dr-end-top">
           <div className="dr-end-main">
@@ -438,7 +429,7 @@ function End() {
 
 export default function Dataroom() {
   return (
-    <main className="bz dr">
+    <main className="bz dr" data-ask-name="Hanzo Dataroom">
       <Hero />
       <BizChapters label="A link, shared" className="dr-ch" items={STEPS.map(([t, d]) => ({ t, d }))} stage={(at) => <Room at={at} />}>
         <header className="bz-wrap dr-ch-head">
@@ -449,7 +440,6 @@ export default function Dataroom() {
       <Ten />
       <Plans />
       <End />
-      <AskBar title="Dataroom" label="Try Hanzo" to="/login" />
     </main>
   );
 }
