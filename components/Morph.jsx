@@ -22,7 +22,7 @@ const top = () => (window.__lenis ? window.__lenis.scrollTo(0, { immediate: true
 const frames = (n, f) => (n ? requestAnimationFrame(() => frames(n - 1, f)) : f());
 
 // the card's own picture and colour, for the stage it grows into
-function stageFor(src) {
+function stageFor(src, link = src) {
   const stage = document.createElement('div');
   stage.className = 'x-stage';
   stage.setAttribute('aria-hidden', 'true');
@@ -31,16 +31,22 @@ function stageFor(src) {
   const full = area(src.getBoundingClientRect());
   let bg = '', best = 0;
   for (const el of [src, ...src.querySelectorAll('*')].slice(0, 80)) {
-    const c = getComputedStyle(el).backgroundColor, a = area(el.getBoundingClientRect());
-    if (c && !/rgba\(0, 0, 0, 0\)|transparent/.test(c) && a > best && a >= full * 0.5) { bg = c; best = a; }
+    const cs = getComputedStyle(el), a = area(el.getBoundingClientRect());
+    if (a <= best || a < full * 0.5) continue;
+    const grad = /gradient/.test(cs.backgroundImage) && cs.backgroundImage.match(/rgba?\([^)]+\)|#[0-9a-f]{3,8}/i); // a gradient's first colour
+    const c = !/rgba\(0, 0, 0, 0\)|transparent/.test(cs.backgroundColor) ? cs.backgroundColor : grad ? grad[0] : '';
+    if (c) { bg = c; best = a; }
   }
-  for (let el = src.parentElement; !bg && el; el = el.parentElement) {
-    const c = getComputedStyle(el).backgroundColor;
-    if (c && !/rgba\(0, 0, 0, 0\)|transparent/.test(c)) bg = c;
+  // no readable surface (a pseudo-element or an image paints it): light text means a dark card, dark text a light one
+  if (!bg) {
+    const m = getComputedStyle(src).color.match(/[\d.]+/g);
+    const l = m ? (0.2126 * m[0] + 0.7152 * m[1] + 0.0722 * m[2]) / 255 : 0;
+    bg = l > 0.6 ? '#0a0a0a' : '#ffffff';
   }
-  stage.style.background = bg || '#fff';
+  stage.style.background = bg;
   const lum = ((c) => { const m = (c || '').match(/[\d.]+/g); return m ? (0.2126 * m[0] + 0.7152 * m[1] + 0.0722 * m[2]) / 255 : 1; })(stage.style.background);
-  const media = [...src.querySelectorAll('img, video, canvas, svg')].find((el) => area(el.getBoundingClientRect()) >= full * 0.25);
+  // the flying element may itself be the picture (data-morph on an <svg> or <img>)
+  const media = [src, ...src.querySelectorAll('img, video, canvas, svg')].find((el) => /^(img|video|canvas|svg)$/i.test(el.tagName) && area(el.getBoundingClientRect()) >= full * 0.25);
   if (media && media.tagName.toLowerCase() === 'svg') {
     const m = media.cloneNode(true);
     m.setAttribute('class', 'x-stage-m'); m.setAttribute('preserveAspectRatio', 'xMidYMid slice'); m.style.color = getComputedStyle(media).color;
@@ -61,7 +67,7 @@ function stageFor(src) {
   }
   // the card's own title (its largest words) takes the hero's place while the page loads
   let title = null, size = 0;
-  for (const el of src.querySelectorAll('h1, h2, h3, h4, b, strong, span, p')) {
+  for (const el of link.querySelectorAll('h1, h2, h3, h4, b, strong, span, p')) { // the whole link: the title may sit beside the picture
     const t = el.textContent.trim(), fs = parseFloat(getComputedStyle(el).fontSize);
     if (t.length >= 2 && t.length <= 80 && !el.querySelector('h1, h2, h3, h4, p, div') && fs > size) { title = t; size = fs; }
   }
@@ -104,9 +110,9 @@ export default function Morph() {
     };
 
     // a card: it grows into the stage now; the page comes in under it; the stage settles into the hero and dissolves
-    const open = (src, from, go) => {
+    const open = (src, from, go, link = src) => {
       play('whoosh'); // a card opening into its page (JAMES rule 10)
-      const stage = stageFor(src);
+      const stage = stageFor(src, link);
       H.dataset.morph = 'open';
       src.style.viewTransitionName = 'hz-morph';
       const vt = document.startViewTransition(() => {
@@ -125,19 +131,36 @@ export default function Morph() {
         // the stage settles into the hero's box, then dissolves into the page
         if (hero && document.startViewTransition && hero.getBoundingClientRect().height > 40) {
           H.dataset.morph = 'land';
+          // the card's title flies onto the page's headline (it is the same words when the page is the card's page)
+          const from = stage.querySelector('.x-stage-t'), h1 = document.querySelector('main h1');
+          const flyTitle = from && h1 && h1.getBoundingClientRect().height > 0;
+          if (flyTitle) from.style.viewTransitionName = 'hz-title';
           const vt2 = document.startViewTransition(() => {
             stage.style.viewTransitionName = '';
             stage.remove();
             hero.style.viewTransitionName = 'hz-morph';
+            if (flyTitle) h1.style.viewTransitionName = 'hz-title';
           });
           vt2.ready.catch(() => {}); vt2.updateCallbackDone.catch(() => {});
-          vt2.finished.catch(() => {}).finally(() => { hero.style.viewTransitionName = ''; clear(); });
+          vt2.finished.catch(() => {}).finally(() => { hero.style.viewTransitionName = ''; if (h1) h1.style.viewTransitionName = ''; clear(); });
         } else {
           stage.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 450, easing: 'cubic-bezier(.22,1,.36,1)' }).finished.finally(() => stage.remove());
           clear();
         }
       };
-      pending.current = { from, done: () => { top(); grown.then(() => setTimeout(dissolve, 60)); } };
+      // land once the page's headline is really visible (many pages cut it in with a line mask), or after 1.6 s
+      const headlineShown = () => {
+        const h1 = document.querySelector('main h1');
+        if (!h1) return true;
+        for (let x = h1; x && x !== document.body; x = x.parentElement) if (+getComputedStyle(x).opacity < 0.9) return false;
+        const hr = h1.getBoundingClientRect();
+        const line = [...h1.querySelectorAll('span, div')].find((e) => e.textContent.trim() && !e.closest('.x-sr, .sr-only') && e.getBoundingClientRect().height > 0);
+        if (!line) return true;
+        const lr = line.getBoundingClientRect();
+        return lr.top >= hr.top - 4 && lr.bottom <= hr.bottom + 4 && +getComputedStyle(line).opacity > 0.9;
+      };
+      const whenShown = (t0 = performance.now()) => (headlineShown() || performance.now() - t0 > 1600 ? dissolve() : setTimeout(() => whenShown(t0), 90));
+      pending.current = { from, done: () => { top(); grown.then(() => setTimeout(() => whenShown(), 60)); } };
       setTimeout(() => { if (!gone) { pending.current = null; grown.then(dissolve); } }, 8000); // a page that never comes: let go
     };
 
@@ -168,7 +191,7 @@ export default function Morph() {
       const go = () => router.push(u.pathname + u.search + u.hash, { scroll: false });
       const own = a.matches('[data-morph]') ? a : a.querySelector('[data-morph]');
       const src = own || (BIG(a.getBoundingClientRect()) ? a : null);
-      if (src && document.startViewTransition) open(src, location.pathname, go);
+      if (src && document.startViewTransition) open(src, location.pathname, go, a);
       else turn(location.pathname, go);
     };
     addEventListener('popstate', pop);

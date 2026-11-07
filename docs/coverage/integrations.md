@@ -35,7 +35,7 @@ Done here: "Works with everything" + the base URL lede + one ask; the hub turns 
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn` — kit `.pf-btn` until `<Cta>` merges
-- [ ] Sticky ask in header and bar after the hero, same label — n/a: "nothing floats over content" (conductor) removed the bar; the phone thumb bar comes from `data-thumb`
+- [x] Sticky ask in header and bar after the hero, same label — an in-page sticky band (not floating) under Hanzo's header carries "Get an API key" (quiet) from the editor to the catalogue's end; the phone thumb bar uses `data-thumb`
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 

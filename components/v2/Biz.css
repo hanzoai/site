@@ -89,7 +89,7 @@
 .bz-sheet-wrap[data-open='true'] .bz-sheet-back { opacity: 1; visibility: visible; transition: opacity .3s var(--bz-out); }
 .bz-sheet-wrap[data-open='true'] .bz-sheet { transform: none; visibility: visible; transition: transform .5s var(--bz-emph); }
 .bz-sheet-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 22px 22px 18px 32px; border-bottom: 1px solid var(--bz-line); }
-.bz-sheet-top h2 { font-size: 21px; font-weight: 497; letter-spacing: -.02em; margin: 6px 0 0; }
+.bz-sheet-top h2 { font-size: 21px; font-weight: 497; letter-spacing: -.02em; margin: 0 0 6px; }
 .bz-sheet-x { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--bz-line); background: #fff; color: var(--bz-ink); display: grid; place-items: center; cursor: pointer; transition: background-color .15s var(--bz-out), transform .09s var(--bz-out); }
 @media (hover: hover) { .bz-sheet-x:hover { background-color: var(--bz-room); } }
 .bz-sheet-x:active { transform: scale(.97); }

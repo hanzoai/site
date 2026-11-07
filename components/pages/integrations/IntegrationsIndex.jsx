@@ -36,9 +36,8 @@ const PauseIcon = ({ held }) => (held
   : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>);
 
 /* ---------- the hub ---------- */
-function Hub({ cards, base }) {
+function Hub({ cards, base, held, setHeld }) {
   const [hot, setHot] = useState(null);
-  const [held, setHeld] = useState(false);
   const n = cards.length;
   return (
     <div className={'xii-hub' + (hot || held ? ' held' : '')} style={{ '--n': n }}>
@@ -58,6 +57,19 @@ function Hub({ cards, base }) {
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+/* ---------- the sticky local band: the page's name, the hub in miniature (19 dots, paused with the hub), the ask (quiet) ---------- */
+function Local({ n, label, ask, held }) {
+  return (
+    <div className="xii-local">
+      <div className="pf-wrap xii-local-in">
+        <span className={'xii-mini' + (held ? ' held' : '')} aria-hidden="true">{Array.from({ length: n }, (_, i) => <i key={i} style={{ '--a': (i / n) * 360 + 'deg' }} />)}</span>
+        <span className="pf-mono xii-local-t">{label}</span>
+        <A to={ask.href} className="pf-btn xii-local-a" data-cta="integrations.sticky">{ask.label}</A>
+      </div>
     </div>
   );
 }
@@ -184,6 +196,7 @@ function Catalogue({ groups, label }) {
 
 export default function IntegrationsIndex({ doc }) {
   const cards = doc.groups.flatMap((g) => g.cards);
+  const [held, setHeld] = useState(false);
   return (
     <main className="xin xii pf-r">
       <section className="xii-hero" aria-labelledby="xin-h1">
@@ -198,11 +211,13 @@ export default function IntegrationsIndex({ doc }) {
             </div>
           </div>
           <div className="xii-hero-b">
-            <Hub cards={cards} base={doc.base} />
+            <Hub cards={cards} base={doc.base} held={held} setHeld={setHeld} />
           </div>
         </div>
       </section>
 
+      <div className="xii-after">
+      <Local n={cards.length} label={doc.label || 'Integrations'} ask={doc.actions[0]} held={held} />
       <section className="pf-sec tight xii-start" aria-label="Starter">
         <div className="pf-wrap">
           <Starter samples={doc.samples} base={doc.base} />
@@ -210,6 +225,7 @@ export default function IntegrationsIndex({ doc }) {
       </section>
 
       <Catalogue groups={doc.groups} label={doc.label || 'Integrations'} />
+      </div>
 
       {doc.paste && (
         <SceneWipe className="xii-paste" label={doc.paste.kicker}>

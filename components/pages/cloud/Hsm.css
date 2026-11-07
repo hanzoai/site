@@ -30,7 +30,7 @@
 .hs-hero { padding: clamp(96px, 7.4vw, 116px) 0 clamp(80px, 8vw, 120px); }
 .hs-hero-grid { align-items: center; min-height: min(70svh, 640px); }
 .hs-hero-copy { grid-column: 1 / span 5; }
-.hs-h1 { margin: 0 0 28px; font-size: clamp(64px, 8.4vw, 128px); }
+.hs-h1 { margin: 0 0 24px; }
 .hs-lede { margin-bottom: 36px; max-width: 44ch; }
 .hs-hero-obj { grid-column: 6 / -1; height: clamp(420px, 38vw, 560px); }
 .hs-hero-obj > div { height: 100%; }
@@ -76,7 +76,6 @@
   .hm-labels li { left: calc(50% + var(--s) * .5); max-width: 130px; font-size: 12px; gap: 6px; }
   .hm-labels li i { width: 16px; }
   .hs-hero-grid { min-height: 0; }
-  .hs-h1 { font-size: 72px; }
   .hs-hero-obj { height: 420px; }
   .hs-sign .hm { --s: 170px; }
   .hs-io { font-size: 12px; padding: 10px 12px; }
@@ -89,3 +88,7 @@
   .hs-pick-p { grid-template-columns: minmax(0, 1fr); gap: 12px; }
   .hs-pick-p > div { min-height: 0; padding: 24px; }
 }
+
+/* the live object's pause control */
+.hs-pause { top: 16px; right: 16px; }
+.hs-hero-obj .lp-host { height: 100%; }

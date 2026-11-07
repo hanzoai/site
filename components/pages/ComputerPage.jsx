@@ -18,6 +18,7 @@ import Stage from '../v2/AppStage';
 import Scenes from '../v2/AppScenes';
 import '../v2/AppType.css';
 import './ComputerPage.css';
+import { play } from '../../lib/sound';
 
 const EASE = [0.16, 1, 0.3, 1];
 const SLIDES = [
@@ -235,7 +236,11 @@ const CHECKS = [
 function Preflight() {
   const [done, setDone] = useState([]);
   const all = done.length === CHECKS.length;
-  const flip = (i) => setDone((d) => (d.includes(i) ? d.filter((x) => x !== i) : [...d, i]));
+  const flip = (i) => {
+    const n = done.includes(i) ? done.filter((x) => x !== i) : [...done, i];
+    setDone(n);
+    if (n.length === CHECKS.length) play('done'); // all three warnings checked
+  };
   return (
     <section className="av-sec cp-pre" aria-labelledby="cp-pre-h">
       <div className="av-wrap av-grid">
@@ -258,7 +263,7 @@ function Preflight() {
             const on = done.includes(i);
             return (
               <li key={t}>
-                <button type="button" role="checkbox" aria-checked={on} className={'cp-check' + (on ? ' on' : '')} onClick={() => flip(i)}>
+                <button type="button" role="checkbox" data-sound="tick" aria-checked={on} className={'cp-check' + (on ? ' on' : '')} onClick={() => flip(i)}>
                   <span className="cp-check-n x-mono av-num">{String(i + 1).padStart(2, '0')}</span>
                   <span className="cp-check-t"><b>{t}</b><span>{d}</span></span>
                   <span className="cp-box" aria-hidden="true">
@@ -326,7 +331,7 @@ function Ship() {
 
 export default function ComputerPage() {
   return (
-    <main className="av cp" data-ask="off" style={{ '--ac': '#0a0a0a' }}>
+    <main className="av cp" style={{ '--ac': '#0a0a0a' }}>
       <Hero />
       <Scenes label="How it sees and acts" items={LENSES} tone={['#ffffff', '#f5f5f5', '#ffffff']} className="cp-sc" />
       <Preflight />

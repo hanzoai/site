@@ -3,7 +3,7 @@
 Page file: `components/pages/Gen.jsx` · gallery: `docs/gallery/gen/` · metric id: `api_key_created`
 
 Open copy questions for James: none new. The header ask label ("Try Hanzo" while the page's ask is "Get API key") is a shared change, filed in `docs/requests/apps1.md` item 1.
-Shared changes requested (`docs/requests/apps1.md`): 1 header ask label per page; 2 a desktop-off mode for the ask bar (this page sets `data-ask="off"` until then); 3 `Band` with an `id` prop (this page closes on its own ask row with `<Cta id>`).
+Shared changes requested (`docs/requests/apps1.md`): only the `Band` `id` prop is still open (this page closes on its own ask row with `<Cta id>`); the header ask and the ask bar landed with the shared system.
 Forks this page deleted: the native `<select>` agent picker (now Previous/Next buttons), the page-local tabs (now kit `Tabs`/`TabPanel`), the page-local FAQ (now kit `Faq`, multi-open, `#q-slug`), the raw `.x-btn` hero links (now `<Cta>` and text links), `Magnetic`, every label above a heading (h1's included), the scrambled-letter flip.
 
 ## 1. Strategy and conversion
@@ -39,7 +39,7 @@ Done here: the h1 is plain server HTML (no mask holding it back on a slow machin
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: `<Cta id="gen.hero" thumb>` and `<Cta id="gen.band">`; secondaries carry `gen.*` ids. The floating ask bar is off (`data-ask="off"`, MASTER 3.3); the header's solid carries the ask while apps1.md item 1 is open. Every Copy copies the shown command; `$` is `user-select: none` and not copied.
+Done here: `<Cta id="gen.hero" thumb>` and `<Cta id="gen.band">`; secondaries carry `gen.*` ids. The header carries the solid "Try Hanzo"; there is no floating bar on desktop, and on phones the slim shared bar carries this page's own `data-thumb` ask.md item 1 is open. Every Copy copies the shown command; `$` is `user-select: none` and not copied.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -80,9 +80,9 @@ Done here: keys, switches, stepper, pause and links press at scale .97/.98 or tr
 - [x] At least 3 kinds of movement; scroll-linked is half or less
 - [x] Something moves without input; every control answers
 - [x] Reduced motion shows the final state; no `setInterval`
-- [x] Sound only on the listed moments, through the one kit (n/a: the shared kit has not landed)
+- [x] Sound only on the listed moments, through the one kit
 
-Done here: signature board (idle and time: each tile turns over once, 90 + 150 ms, no scrambled letters), the rails' beacons (state), the black room opening from a rounded card (the one scroll-linked effect), switches at 300 ms ease (no springs). variety.py: 2 counted techniques, 0 Rise. The board walks the 23 once at 2.2 s each, then rests.
+Done here: signature board (idle and time: each tile turns over once, 90 + 150 ms, no scrambled letters), the rails' beacons (state), the black room opening from a rounded card (the one scroll-linked effect), switches at 300 ms ease (no springs). variety.py: 2 counted techniques, 0 Rise. The board walks the 23 once at 2.2 s each, then rests. The board's walk ends on the kit's faint 'done' chime (`play('done')`); switches, keys and tabs tick through the kit's `[role=switch]`, `[aria-pressed]` and `[role=tab]` rules.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set (n/a: no media)

@@ -9,6 +9,8 @@ Critic for Wave 2 groups 11–14, `/models/*` and `/cloud/*`. Measured on main a
 - Reviews pushed between 15:00 and 15:08 (/sms-opt-in, /zen, /enso, /koma, /startups, /kai, /iro) were walked on `25b197c`, before this fix, and capped some pages at 6 for the pill. They are being re-walked on `648b798` and re-scored; the pill is not held against any page from that build on.
 - From `648b798`: if my walk still sees anything fixed over content (a bar, a label, a panel), the page fails MASTER 3.2 rule 6 and is capped at 6.
 
+- **New shared side-effect (request for the shared owner):** the header's "Try Hanzo" is now solid at every width, so every page whose hero has its own solid ask shows **two solid fills on the first screen** (MASTER 3.1 rule 3: "One solid fill per viewport"). On /enso and /zen both say "Try Hanzo"; on /koma, /iro and /oto it is "Try Hanzo" beside "Request access". MASTER 3.2 rule 6 wants the page's own ask, in Hanzo's words, in the header. Asked for: let a page name its header ask (or outline the header button while a page solid is on screen). Not held against pages.
+
 ## 2. 18-part cards (MASTER section 6)
 
 MASTER section 6 asks for `docs/coverage/<page>.md` copied from `_TEMPLATE.md`: 18 `## N.` headings, each with a filled `Done here:` line. Pages without one are capped at 7 ("Cap: part card"). At 15:00 on `25b197c`:
