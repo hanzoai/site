@@ -369,6 +369,18 @@ function Mods() {
   );
 }
 
+/* The close: one line, one ask (ink on paper; the orgs are the page's one dark room). */
+function Close() {
+  return (
+    <section className="a2-sec xsd-close" aria-label="API reference">
+      <div className="a2-wrap xsd-close-in">
+        <p className="a2-display xsd-close-h" aria-hidden="true">SDKs for every language</p>
+        <div className="a2-acts"><A to="https://docs.hanzo.ai/docs/openapi/" className="x-btn solid" data-cta="sdks.close">API reference</A><More to="https://docs.hanzo.ai/docs/sdks">SDKs docs →</More></div>
+      </div>
+    </section>
+  );
+}
+
 export default function Sdks() {
   return (
     <main className="a2 xsd">
@@ -379,6 +391,7 @@ export default function Sdks() {
       <Orgs />
       <Flagship />
       <Mods />
+      <Close />
     </main>
   );
 }

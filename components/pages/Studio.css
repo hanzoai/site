@@ -243,3 +243,7 @@
 .xst-make button.s[aria-checked='true'], .xst-frame-rig { color: #fff; }
 .xst-film, .xst-get { --acc: #f5f5f7; }
 .xst-get .x-btn { background: transparent; color: #fff; border-color: rgba(255, 255, 255, .3); }
+@media (max-width: 900px) {
+  .xst-h1 { font-size: clamp(31px, 9vw, 36px) !important; line-height: 1.04; }
+  .xst-h1 .a2-ln, .xst-h1 .a2-ln-in { display: inline; overflow: visible; } /* flows into four lines on a phone */
+}

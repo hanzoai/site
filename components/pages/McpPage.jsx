@@ -143,8 +143,7 @@ function Parts() {
           {PARTS.map(([t, d], i) => (
             <li key={t} className="mcp-sheet" style={{ '--i': i }}>
               <div className="mcp-sheet-copy">
-                <span className="a2-kick">{String(i + 1).padStart(2, '0')} / 03</span>
-                <h2 className="a2-headline">{t}</h2>
+                <h2 className="a2-headline">{t}<span className="mcp-sheet-n x-mono">{String(i + 1).padStart(2, '0')} / 03</span></h2>
                 <p className="a2-body">{d}</p>
               </div>
               <div className="mcp-sheet-art" aria-hidden="true"><PartArt i={i} /></div>
@@ -269,6 +268,10 @@ const hl = (l) => {
   return out;
 };
 
+/* the config split in two: a .mcp.json that copies as valid JSON, and the shell lines that copy as shell */
+const JSON_BLOCK = CONFIG.split('\n').slice(1, 9).join('\n');
+const SHELL = ['npm i -g hanzo', 'hanzo mcp              # stdio; the binary downloads on first run', 'hanzo mcp -t sse       # or over HTTP'];
+
 function Config() {
   return (
     <section className="a2-sec a2-dark mcp-cfg" data-room="dark" aria-labelledby="mcp-cfg-h">
@@ -279,9 +282,19 @@ function Config() {
           <p className="a2-body">Use the --package= form for local stdio, or point any MCP client directly at https://api.hanzo.ai/v1/mcp over streamable HTTP.</p>
           <A to={ALL} className="mcp-ref">All MCP Tools Reference <span aria-hidden="true">→</span></A>
         </div>
-        <div className="mcp-code">
-          <div className="mcp-code-bar"><span className="x-mono">json</span><Copy text={CONFIG} /></div>
-          <pre><code>{CONFIG.split('\n').map((l, i) => <span key={i} className="mcp-ln">{l ? hl(l) : ' '}{'\n'}</span>)}</code></pre>
+        <div className="mcp-codes">
+          <div className="mcp-code">
+            <div className="mcp-code-bar"><span className="x-mono">.mcp.json</span><Copy text={JSON_BLOCK} /></div>
+            <p className="mcp-code-c x-mono">// .mcp.json — add Hanzo MCP to any MCP client</p>
+            <pre><code>{JSON_BLOCK.split('\n').map((l, i) => <span key={i} className="mcp-ln">{hl(l)}{'\n'}</span>)}</code></pre>
+          </div>
+          <div className="mcp-code">
+            <div className="mcp-code-bar"><span className="x-mono">bash</span><Copy text={SHELL.map((l) => l.split('#')[0].trim()).join('\n')} /></div>
+            <p className="mcp-code-c x-mono">// Or install the whole native stack once and run it yourself:</p>
+            <pre><code>{SHELL.map((l, i) => <span key={i} className="mcp-ln">{l.includes('#') ? <>{l.slice(0, l.indexOf('#'))}<span className="c">{l.slice(l.indexOf('#'))}</span></> : l}{'\n'}</span>)}</code></pre>
+          </div>
+          {/* the block exactly as Hanzo writes it, for search and screen readers */}
+          <pre className="x-sr">{CONFIG}</pre>
         </div>
       </div>
     </section>
