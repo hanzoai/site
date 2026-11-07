@@ -1,5 +1,6 @@
 'use client';
-/* Hanzo IDE. V2: 8/10 Stage hero (the editor arrives huge and settles into place as you scroll, memories surfacing in its gutter), the workbench exploding off its Rust engine, three pinned chapters, one dark room, detail tucked into an accordion.
+/* Hanzo IDE.
+   V2: 8/10 Stage hero (the editor arrives huge and settles into place as you scroll, memories surfacing in its gutter), the workbench exploding off its Rust engine, three pinned chapters, one dark room, detail tucked into an accordion.
    Signature: an editor that remembers. The hero object is the workbench itself: it starts huge and settles as you
    scroll (Stage), while a cursor walks the code and memories surface in the gutter beside the lines they belong to,
    the impact radius of a change glows through the file and the agent panel runs Hanzo's example session (live).

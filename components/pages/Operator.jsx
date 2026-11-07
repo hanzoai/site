@@ -1,5 +1,6 @@
 'use client';
-/* Hanzo Operator. V2: 8/10 a dark control room as the hero where the cluster drifts and the operator puts it back (drag a resource yourself), thirty objects collapsing into one declaration, the six points on a scroll-driven horizontal track.
+/* Hanzo Operator.
+   V2: 8/10 a dark control room as the hero where the cluster drifts and the operator puts it back (drag a resource yourself), thirty objects collapsing into one declaration, the six points on a scroll-driven horizontal track.
    Signature: drift, reverted, said out loud. The hero is a live cluster board: ten Kinds in their desired places, a
    sweep crossing them on a loop. Between sweeps something drifts out of place; on the next sweep the operator springs
    it back and the log says what it did (created, reverted, or already in sync). You can drag any resource out of place

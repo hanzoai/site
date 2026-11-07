@@ -1,5 +1,6 @@
 'use client';
-/* Studio. V2: 8/10 the cutting room as the one dark room (a self-playing, scrubbable timeline), then a scrubbed camera move for the three pillars, the capabilities as a render graph, and the six creative models on a film strip whose frames open into their pages.
+/* Studio.
+   V2: 8/10 the cutting room as the one dark room (a self-playing, scrubbable timeline), then a scrubbed camera move for the three pillars, the capabilities as a render graph, and the six creative models on a film strip whose frames open into their pages.
    Signature: the camera moves with your scroll. After the cutting room, a 2.39:1 frame pins on a white stage; each
    stretch of scroll performs one of Hanzo's camera moves on a still (Dolly In, Crane Rise, 360° Orbit) while the
    pillar it belongs to comes in as a subtitle. The hero is the product itself: a monitor and a multi-track timeline

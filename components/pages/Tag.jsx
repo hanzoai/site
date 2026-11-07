@@ -1,5 +1,6 @@
 'use client';
-/* Hanzo Tag (governance view of the same product as /slack). V2: 8/10 the mention as a map that spreads from one @Hanzo across the channels into canvases, diffs and the merged PR, set big beside the moment it opened; governance as the one dark room; the rest chaptered in the v2 grammar with a pink accent from the fixed button.
+/* Hanzo Tag (governance view of the same product as /slack).
+   V2: 8/10 the mention as a map that spreads from one @Hanzo across the channels into canvases, diffs and the merged PR, set big beside the moment it opened; governance as the one dark room; the rest chaptered in the v2 grammar with a pink accent from the fixed button.
    Signature: Mention map: one @Hanzo at the centre, rings spreading out across a field of channels, then branching into
    Canvas, Diff, Preview and the merged PR #418; click any node to read that moment of the thread.
    Beyond: "Will Hanzo see this?": pick where a message lives (a channel with @Hanzo added or not, tagged or not,
