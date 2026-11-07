@@ -1,37 +1,39 @@
 # /blog — James-eye review
 
-Verdict: 7/10
-First complaint: "On my phone the posting chart stops at July. October, the month the list is actually showing, is cut off the side and nothing tells me to swipe."
+Verdict: 8/10
+First complaint: "The Kai post is everywhere: it's in the slideshow, it's a picture tile, it's in the list. Same picture twice too. Show me each thing once."
 
-Walked 2026-11-07 16:51 UTC, HEAD f95f77b1, at 1470x801 and 375x812, plus 320x812 (first screen at 0.2/1/3/6 s, reload, wheel-scrolled the whole page in 160px notches, hovered and pressed the ask, cover tabs, pause, trio cards, rows, month bars, both "All 24" controls; tapped tabs and bars on phone; reduced motion; JS off; taste.py and parity.py).
+Walked 2026-11-07 16:55 UTC, HEAD a0eac38c, at 1470x801 and 375x812 (isMobile, hasTouch). Ran Playwright: first screen at 0.2/1/3/6 s with pixel diffs, a reload, a 200px-step scroll walk with 0.7 s dwell, hovers on 14 controls, clicks/taps on hero tabs, month bars and "All 24". Also checked reduced motion, JS off and 320px width. Ran `taste.py` on the four page files (OK) and `parity.py /blog` (OK, text 95/95, links 29/29).
 
 ## What works
-- The first screen is alive with no input. The cover story auto-advances (01 → 02 in about 7 s) with a timer line under the active tab. A black curtain wipes the plate, the headline cuts up into its line, and the Sigil contour plate drifts. Hovering a tab jumps straight to that story. Pause stops it (aria-pressed true, icon becomes play) and resumes correctly.
-- Scale rhythm: the h1 is 52px, the cover headline 32px and the tab titles small. The trio is one big film card with two smaller ones, not 3 equal boxes. "24" is the one big figure in Contents.
-- Real objects in every section: the contour plate, three Hanzo model films in the trio, the monthly publishing strip (bars grow in, then a silver sweep runs across them on idle), and the month-grouped index.
-- The controls answer. Clicking a month bar swaps the list with a slide (Jun → June's 3 posts). "All 24" opens every month (Oct to Feb, 24 rows). On row hover the title nudges and the dotted leader draws. On the ask, hover lightens the fill (#0a0a0a → #2c2c2e) and press scales to 0.98, so it doesn't just fade.
-- One ask: the header shows outlined "Try Hanzo" while the hero's solid "Read the latest" is on screen, then swaps to a solid "Read the latest" once you scroll. The close is the page's own "Every post".
-- No hue, no gradient text, no pill above the h1 (the "BLOG" mono label sits beside the lede, not over the h1). taste.py OK on 4 files; parity 95/95 text, 29/29 links.
-- Reduced motion shows the final state (h1, cover 01, bars at height, no curtain). JS off is fully legible: the hero, cover 01 and all 24 rows show, and the dead controls are hidden.
-- No console errors or page errors from this page at any size. No horizontal page scroll at 375 or 320.
+- The first screen sells at once. "News & Guides." (52px) has a quiet lede and ask on the right. Below it, a featured-post deck runs on its own: a contour line drawing drifts in a black card, a progress hairline fills under "01", and the deck advances through six posts, with a pause control. Pixel change was 2.9% from 0.2 to 1 s (h1 cut-in plus drift). On phone the idle change was 28% between 6 and 7.5 s, which is the deck advancing. The page is never dead.
+- Each section has a real object: the self-running deck, then a 1-large and 2-small media trio of Hanzo art, then Contents with a 64px "24" and a monthly bar histogram, then the month ledger, then the black Band.
+- The histogram is the Beyond: clicking a month bar swaps the ledger to that month, and "All 24" expands to all eight months. Each control answered at both sizes.
+- Scale has rhythm: the 52px h1, 32px feature titles, the 64px figure and 17px rows each lead their own screen.
+- Hover answers: the primary darkens (no fade), deck tabs go from grey to ink, ledger rows slide the title and ink the tag, and the media tiles respond. No hover moved the layout.
+- On scroll, the sticky header ask changes to "Read the latest" (desktop). There is only one solid fill on screen at a time.
+- No console errors or page errors at either size. The only warnings were Canvas2D readback and font-preload notices. No red dev badge appeared.
+- No horizontal scroll at 1470, 375 or 320 (scrollWidth equals the viewport).
+- Reduced motion shows the final state: 0 running animations, the h1 and deck fully set, no progress fill. With JS off, all 24 posts are listed and readable.
 
 ## The 11 answers
-1. Yes, it sells in 5 s ("News & Guides." plus a live cover story), and the plate and timer move within 1 s. The h1 cut-in leaves the masthead empty for the first ~0.5 s, while the cover block is already painted.
-2. The top half works: the hero gives way to the trio films, which give way to the strip. Contents is a document by design (a long index), but the default shows only October, so it stays short until you ask.
-3. Yes: plate, films, chart, index.
-4. One ask in Hanzo's words in the sticky header, and nothing of the page's floats over content (the cookie bar is shared). Rhythm is good. One slip: when "All 24" in the strip is active it turns solid black, so it and the header's solid "Read the latest" make 2 solid fills in one viewport.
-5. Yes, everything answers. The trio card moves about 17px between scroll-in and hover (scroll parallax settling), which is a drift, not a jump.
-6. No overlaps on desktop. On phone the publishing strip is a hidden-scrollbar rail: at 375 it shows Feb to Aug and clips Sep and Oct (scrollWidth 444 vs 343). At 320 it shows Feb to Jul only. The newest months are the ones off screen, with only a 2px sliver as a cue. No font swap or h1 shift was seen.
-7. An editorial magazine cover (osply / grubogrubo restraint) with an Apple-style timed carousel. The curtain wipe and the line cut-in are present and authored, not fade-ups.
-8. Yes. The cover-story carousel with its contour plate and the publishing strip are its own; no home-hero trick is reused.
-9. Mostly covered. States, no-JS, reduced motion, keyboard (tabs pick on focus), aria-live counts and the closing link are all present. I did not check the coverage card (not read, per brief).
-10. No banned tells seen.
-11. The copy is untouched (parity 0 missing).
+1. Yes. The h1, lede, ask and a live featured deck all fit the first screen, and motion starts inside 1 s (cut-in plus contour drift, then auto-advance).
+2. Mostly one-in-one-out: deck, then trio, then Contents, then the ledger, then the Band. The ledger shows one month by default, so it does not read as a document.
+3. Yes: line-art canvas, Hanzo media tiles, histogram plus figure, ledger rows, and the Band.
+4. One solid ask per viewport ("Read the latest"), and it moves into the sticky header on desktop. On phone the header keeps a solid "Try Hanzo" and the hero ask is outlined, so the page's own ask never gets the fill on phone. Scale rhythm is good.
+5. Yes on desktop, no jumps. On phone, taps on tabs and bars respond.
+6. No real overlaps. The flagged intersections are the stacked, inactive deck slides (opacity 0). The phone tab rail scrolls sideways inside itself, as designed. There was no font swap. The cookie card covering the bottom is shared chrome.
+7. It feels like osply.co or hamol.studio editorial: asymmetric 8/5 head, numbered `01 / 06` deck, and a ledger with mono dates. The reference's restrained micro-motion is present. No Morph card-open was observed from the trio.
+8. Yes. The hero medium is a self-advancing featured deck plus a histogram index, unlike other Story pages.
+9. Not audited part by part. Visible evidence for parts 1–12 and 17 is present: one h1, one `<main>`, JS-off legible, a pause control, `data-cta` on hero and band.
+10. None seen. One borderline item: the "BLOG" mono label sits inline before the lede, top right. That is beside the h1, not above it, so I did not count it.
+11. Parity is OK (95/95 text, 29/29 links).
 
-Shared (not counted): the header's "Try Hanzo" is clipped off the right edge at 320px (shared header). The cookie bar covers the lower screen on phone (shared). Font preload "not used" warnings (shared layout). During the walk a hot-reload parse error appeared from `components/pages/Brand.jsx:147` (another page, being edited concurrently).
+Shared (not counted): the cookie card is about 400px tall at 375x812, over the 220px rule, and covers the deck caption and the Band ask. The header "Try Hanzo" clipping at 320 is also shared chrome.
 
 ## Fixes (in order)
-1. Phone strip (`.xbl-strip` in `@media (max-width: 899px)`, BlogIndex.css ~line 166): make all 9 months fit at 375 and 320 (narrower bars or gap, or drop `overflow-x:auto`). Failing that, start the rail scrolled to the newest month and give it a visible edge fade, so October is never off screen by default.
-2. Keep one solid per viewport: `.xbl-allbtn.on` should not be a black fill while the header ask is solid. Use an ink outline or underline for its active state, as the bars do with their own ink.
-3. Merge the two "All 24" controls (the strip pill and the `.xbl-more` button under the list): they do the same thing within one screen of each other.
-4. Tighten the empty band between the cover tab rail and the trio (about 240px at 1470), so the hero hands over to the films rather than to a blank screen during the scroll.
+1. Stop the repeats. Kai 1 appears in deck slide 03, as a trio tile with the same diamond art, and in the ledger. Give the trio posts that are not in the deck, or drop the duplicated art, so each image appears once on the page.
+2. Phone ask: the hero "Read the latest" is outlined, and the solid fill sits on the header "Try Hanzo". Make the page's own ask carry the fill on phone, as it does on desktop, where the header swaps to "Read the latest".
+3. Phone hero: the pause button sits alone on its own row, and there is about 150px of dead white between the deck rail and the media trio, on both sizes. Put the pause control on the rail's row and tighten the gap, so the trio peeks in sooner.
+4. The month bars, "All 24" and the deck tabs all report `aria-pressed="false"`, so the current filter or month has no pressed or selected state. Mark the active one, visually and with ARIA.
+5. With JS off, every histogram bar renders at full height, which makes the chart wrong. Set the bar heights in server CSS.
