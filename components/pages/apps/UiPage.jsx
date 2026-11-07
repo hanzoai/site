@@ -1,34 +1,38 @@
 'use client';
-/* UI, v2. V2: 8/10 Stage board (the component board and its token panel arrive huge and settle), six pinned chapters each with its own specimen, the init room in the dark, violet accent
+/* Persona: front-end developers building React products. Goal: add @hanzo/ui to a project. CTA: "GitHub" → github.com/hanzoai/ui. Metric: install_copy.
+   UI, v2. V2: 8/10 Stage board (the component board and its token panel arrive huge and settle), six pinned chapters each with its own specimen, the init room in the dark, violet accent
    Signature: the component board that uses itself. Buttons, a field, a panel and a table sit on a board; the
    DropdownMenu and the Dialog (the two real components) open on their own with a focus ring walking the keyboard path,
    and the tokens under everything retune now and then, so the whole board changes at once.
    Beyond: "Retune the tokens". Pick an accent, drag the radius and the density: every component on the board moves
    together because every value is a token, which is Hanzo's own claim made touchable.
    Motion budget: signature = the self-using board; supporting = Stage (Settle), Chapters (PinChapters), magnetic
-   primary. Accent: violet. One dark room: "From init to UI in 60 seconds". Every word and link is Hanzo's. */
+   primary. Colour: none (0 UI hues); the token demo retunes between greys. Pause buttons on the board and the chapter
+   specimens. One dark room: "From init to UI in 60 seconds". Every word and link is Hanzo's. */
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../../ui';
-import { A } from '../../kit';
+import { A, Img } from '../../kit';
 import { Paste, Code, useLive, useEvery } from '../cloud/Frame';
 import LineMask from '../../v2/x-gauss/LineMask';
 import Settle from '../../v2/Settle';
 import PinChapters from '../../v2/x-gauss/PinChapters';
+import NoJs from '../../v2/x-gauss/NoJs';
+import { usePause } from '../../v2/x-gauss/Pause';
 import '../../v2/Scale.css';
 import './UiPage.css';
 
 const GH = 'https://github.com/hanzoai/ui';
-const ACCENTS = [['ink', '#0a0a0a'], ['blue', '#0a58ca'], ['green', '#1a7f37'], ['violet', '#6e3fd8']];
+const ACCENTS = [['ink', '#0a0a0b'], ['graphite', '#3a3a3c'], ['steel', '#5d5e63']];
 const SCRIPT = ['menu', 'idle', 'dialog', 'idle', 'retune', 'idle'];
 
-function Board({ tok, setTok, mine, setMine }) {
+function Board({ tok, setTok, mine, setMine, paused }) {
   const [ref, live] = useLive(0.3);
   const [k, setK] = useState(0);
   const [menu, setMenu] = useState(false);
   const [dlg, setDlg] = useState(false);
   const [focus, setFocus] = useState(0);
-  useEvery(1500, live && !mine, () => {
+  useEvery(1500, live && !mine && !paused, () => {
     const n = (k + 1) % SCRIPT.length; setK(n);
     const s = SCRIPT[n];
     setMenu(s === 'menu'); setDlg(s === 'dialog');
@@ -52,11 +56,9 @@ function Board({ tok, setTok, mine, setMine }) {
       <label className={'ui-field' + (focus === 2 && !mine ? ' ui-ring' : '')}><span>Field</span><input placeholder="@hanzo/ui" onFocus={() => setMine(true)} /></label>
       <div className="ui-panel">
         <p className="ui-pk">Panel</p>
-        <table className="ui-table">
-          <tbody>
-            {[['chat.hanzo.ai', 'in production'], ['platform.hanzo.ai', 'in production'], ['every Hanzo dashboard', 'in production']].map(([a, b], i) => <tr key={a} className={focus === 3 && i === 0 && !mine ? 'ui-ring' : ''}><td>{a}</td><td><i />{b}</td></tr>)}
-          </tbody>
-        </table>
+        <ul className="ui-table">
+          {[['chat.hanzo.ai', 'in production'], ['platform.hanzo.ai', 'in production'], ['every Hanzo dashboard', 'in production']].map(([a, b], i) => <li key={a} className={focus === 3 && i === 0 && !mine ? 'ui-ring' : ''}><span>{a}</span><span><i />{b}</span></li>)}
+        </ul>
       </div>
       <AnimatePresence>
         {dlg && (
@@ -88,24 +90,26 @@ function Tokens({ tok, setTok, setMine }) {
 }
 
 function Hero() {
-  const [tok, setTok] = useState({ a: 3, r: 14, d: 1 });
+  const [tok, setTok] = useState({ a: 0, r: 14, d: 1 });
   const [mine, setMine] = useState(false);
+  const [paused, pauseBtn] = usePause({ right: 12, top: 12 });
   return (
     <section className="ui-hero" aria-labelledby="ui-h1" data-morph-target>
       <div className="w2-wrap">
         <div className="ui-top">
           <div>
-            <motion.p className="ui-kick" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}><img src="/models/enso.webp" alt="" />React Component Library</motion.p>
             <LineMask as="h1" id="ui-h1" now className="w2-display ui-h1" lines={['Hanzo UI']} />
+            <p className="ui-kick"><Img src="/models/enso.webp" alt="" w={24} h={24} />React Component Library</p>
           </div>
           <motion.div className="ui-top-r" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
             <p className="w2-lede ui-lede">The React components powering Hanzo apps</p>
-            <Magnetic strength={0.25}><A to={GH} className="w2-cta acc" data-thumb="GitHub">GitHub <i aria-hidden="true">↗</i></A></Magnetic>
+            <Magnetic strength={0.25}><A to={GH} className="w2-cta" data-thumb="GitHub" data-cta="ui.hero">GitHub <i aria-hidden="true">↗</i></A></Magnetic>
           </motion.div>
         </div>
-        <Settle from={1.08} lift={70}>
+        <Settle from={1.04} lift={30}>
           <div className="ui-stage">
-            <Board tok={tok} setTok={setTok} mine={mine} setMine={setMine} />
+            {pauseBtn}
+            <Board tok={tok} setTok={setTok} mine={mine} setMine={setMine} paused={paused} />
             <Tokens tok={tok} setTok={setTok} setMine={setMine} />
           </div>
         </Settle>
@@ -179,15 +183,17 @@ function Prod() {
 
 function Props() {
   const [ref, live] = useLive(0.05);
+  const [paused, pauseBtn] = usePause({ right: 0, top: -60 });
   return (
     <div ref={ref}>
       <PinChapters id="ui-props" label="Components your design team will sign off on" className="ui-pin"
         chapters={PROPS.map(([t, d], i) => ({ k: i === 0 ? 'Components your design team will sign off on' : `${String(i + 1).padStart(2, '0')} / 06`, t, b: <p>{d}</p> }))}
         visual={(at) => (
           <div className="ui-vis">
+            {pauseBtn}
             {[Overlays, Keys, Tokens2, Everywhere, Atomic, Prod].map((V, i) => (
               <motion.div key={i} className="ui-vis-i" initial={false} animate={{ opacity: at === i ? 1 : 0, scale: at === i ? 1 : 0.97 }} transition={{ duration: 0.55, ease: EASE }} aria-hidden={at !== i}>
-                <V on={live && at === i} />
+                <V on={live && !paused && at === i} />
               </motion.div>
             ))}
             <p className="ui-vis-n x-mono" aria-hidden="true">{String(at + 1).padStart(2, '0')} / 06</p>
@@ -241,7 +247,7 @@ function Stop() {
           <div className="ui-stop-r">
             <p className="w2-lede">Hanzo UI gives you the components — you focus on what makes your product different.</p>
             <div className="ui-stop-acts">
-              <A to={GH} className="w2-cta acc">View on GitHub</A>
+              <A to={GH} className="w2-cta" data-cta="ui.close">View on GitHub</A>
               <span className="ui-pnpm x-mono">pnpm add @hanzo/ui <Copy text="pnpm add @hanzo/ui" /></span>
             </div>
           </div>
@@ -251,7 +257,7 @@ function Stop() {
           <div className="ui-get-meta">
             <span className="ui-chip"><span>License:</span> MIT</span>
             <A to={GH} className="ui-chip">hanzoai/ui<em>8 stars</em></A>
-            <A to="https://platform.hanzo.ai/deploy" className="w2-cta">Deploy to Cloud</A>
+            <A to="https://platform.hanzo.ai/deploy" className="w2-ghost">Deploy to Cloud</A>
           </div>
         </div>
       </div>
@@ -262,6 +268,7 @@ function Stop() {
 export default function UiPage() {
   return (
     <main className="uip w2">
+      <NoJs />
       <Hero />
       <Props />
       <Init />

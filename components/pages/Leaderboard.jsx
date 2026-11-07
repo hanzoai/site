@@ -150,6 +150,7 @@ function Hero() {
         <div className="xlb-hero-top">
           <div className="xlb-hero-h">
             <MaskLines as="h1" id="xlb-h1" className="pf-display m" lines={['Climb the ranks.', 'Earn AI credits.']} amount={0.1} />
+            <p className="pf-kick xlb-cap">Leaderboard</p>
           </div>
           <div className="xlb-hero-side">
             <p className="xlb-lede">The live Hanzo leaderboard across bug bounties, open-source pull requests, and global token volume. Verified contributions earn AI credits and automatic rank updates.</p>

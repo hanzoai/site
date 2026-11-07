@@ -1,18 +1,27 @@
 'use client';
 /* A legal document (/legal/<doc>, 11 of them, one template), as a calm, precise reading room (Utility archetype).
-   Stage: the document's name at display size, its lede and dates; the hero object is the document's cover, a sheet
-   with its own contour field (seeded from the document's name and counts), its size (sections, minutes to read) and
-   every section as a numbered index you can jump from, settling into place as you scroll. Then the reading room: a
-   sticky contents rail beside 19px prose at 64 characters a line, each section opened by a big number plate that takes
-   the document's accent when you reach it. The other documents close the page as cards that open into their page.
+   Persona: enterprise buyer, counsel and any user checking what they agreed to (PLAN-COMPONENTS 1.1, 2.5).
+   Goal: find the clause you came for, and trust it is the current text (effective date and version up front).
+   CTA: none to sell (PLAN-COMPONENTS 2.4: no thumb bar on legal); the action is reading and finding. Metric: one
+   contact click (the documents' own contact addresses).
+   Stage: the document's name at display size beside its lede and dates; the hero object is the document's cover, a
+   sheet with its own contour field (seeded from the document's name and counts) and every section as a numbered
+   index. The cover reads itself: it turns through its clauses by itself, showing each one's number huge and its first
+   sentence, and a hover or focus on any index row shows that clause instead. Then the reading room: a sticky contents
+   rail beside 19px prose at 64 characters a line, each section opened by a big number plate that turns ink when you
+   reach it. The other documents close the page as cards that open into their page.
    Signature: the reading rail. The contents marker springs to the section you are in while the line fills with your
    progress, and the percentage read counts beside it.
    Beyond: find in this document. Type a word and the contents show how often each section says it, the matches light
    up in the text, and sections without it dim, so you can go straight to the clause you came for.
-   Motion: signature (layout marker + scroll-linked line) · stage settle (scroll scale) · kinetic title · sigil field.
-   V2: 8/10 display-size stage with the document's cover as the settling hero object (contour, size, numbered index), 19px reading measure with number plates, one accent per document, sibling documents as cards that open */
+   Motion, not only scroll: idle (the cover turns through its clauses, its contour drifts), pointer (index rows preview
+   their clause, sibling rail drags with inertia), state (marker springs, find lights and dims), time (the cover's
+   timing bar), scroll (rail line and percentage). 0 UI hues: ink, greys, white.
+   Ledger: deletes the "Legal" kicker over the title, the invented "sections" and "min read" figures, the accent colour,
+   and the find feature's invented sentences (numbers now, names from content/ui-strings.json).
+   V2: 8/10 display title beside its lede and dates, a cover that reads its own clauses (hover previews any), 0-hue ink reading room with number plates, register-named find, sibling documents that open */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useMotionValueEvent, useScroll } from 'motion/react';
+import { motion, useMotionValueEvent, useScroll, useReducedMotion } from 'motion/react';
 import Sigil from '../Sigil';
 import { A } from '../kit';
 import { Nodes, CopyLink, split } from './DocNodes';
@@ -20,6 +29,7 @@ import { useArrival } from './doorway';
 import FamLines from '../v2/FamLines';
 import FamStage from '../v2/FamStage';
 import FamNext from '../v2/FamNext';
+import { ui } from '../v2/famUi';
 import './LegalDoc.css';
 import './LegalRoom.css';
 
@@ -77,14 +87,17 @@ function Rail({ toc, active, art }) {
     <aside className="xlg-rail xlg2-rail">
       <details open ref={det} className="xlg-det">
         <summary onClick={(e) => { if (matchMedia('(min-width: 901px)').matches) e.preventDefault(); }}>
-          <h2>Contents</h2>
+          <h2>{ui('contents')}</h2>
           <span className="xlg-pct x-mono" ref={pct} aria-hidden="true">0%</span>
         </summary>
         {/* inline: the CSS build cannot parse ::highlight() yet */}
-        <style>{'::highlight(xlg-find){background:color-mix(in srgb, var(--acc) 26%, transparent)}'}</style>
+        <style>{'::highlight(xlg-find){background:rgba(0,0,0,.14)}'}</style>
         <div className="xlg-find">
-          <input type="search" value={q} onChange={(e) => { setQ(e.target.value); setHits(find(art, e.target.value)); }} placeholder="Find in this document" aria-label="Find in this document" />
-          <p className="x-mono" aria-live="polite">{hits ? (total ? `${total} in ${where} of ${toc.length} sections` : 'Not in this document') : ''}</p>
+          <label className="xlg2-find-f">
+            <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M12.5 12.5 17 17" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
+            <input type="search" value={q} onChange={(e) => { setQ(e.target.value); setHits(find(art, e.target.value)); }} aria-label={ui('find')} />
+          </label>
+          <p className="x-mono xlg2-find-r" aria-live="polite">{hits ? (total ? <><b>{total}</b><span aria-hidden="true"> · {where}/{toc.length}</span><span className="x-sr"> · {where} {ui('of')} {toc.length}</span></> : ui('not_found')) : ''}</p>
         </div>
         <div className={'xlg-track' + (hits ? ' finding' : '')}>
           <span className="xlg-line" aria-hidden="true"><motion.i style={{ scaleY: scrollYProgress }} /></span>
@@ -123,30 +136,48 @@ function Section({ s, i, on }) {
   );
 }
 
-/* how long the document is, from its own words (about 230 words a minute) */
-const words = (nodes) => nodes.reduce((k, n) => k + (typeof n === 'string' ? n.split(/\s+/).filter(Boolean).length : words(n.c || [])), 0);
+/* a clause's first sentence, Hanzo's own words, for the cover's preview */
+const plain = (nodes) => nodes.map((n) => (typeof n === 'string' ? n : n.t === 'h3' || n.t === 'table' ? ' ' : plain(n.c || []) + ' ')).join('');
+const firstSentence = (nodes) => { const t = plain(nodes).replace(/\s+/g, ' ').trim(); const m = /^(.{40,220}?[.;:])(\s|$)/.exec(t); return m ? m[1] : t.slice(0, 200) + (t.length > 200 ? '…' : ''); };
 
-/* the cover: the document as an object, its contour, its size and its contents */
+/* the cover: the document as an object. Its contour, and a plate that turns through its clauses by itself (number
+   huge, first sentence); hover or focus on an index row shows that clause and holds it */
 function Cover({ doc }) {
-  const total = doc.sections.reduce((k, s) => k + words(s.nodes) + (s.title ? s.title.split(/\s+/).length : 0), 0);
-  const mins = Math.max(1, Math.round(total / 230));
+  const calm = useReducedMotion();
+  const secs = doc.toc.map((t, k) => { const s = doc.sections.find((x) => x.id === t.id); return { ...t, k, first: s ? firstSentence(s.nodes) : '' }; });
+  const [at, setAt] = useState(0);
+  const [held, setHeld] = useState(false);
+  const box = useRef(null);
+  useEffect(() => {
+    if (calm || held || secs.length < 2) return;
+    let seen = true;
+    const io = new IntersectionObserver(([e]) => { seen = e.isIntersecting; });
+    box.current && io.observe(box.current);
+    const t = setInterval(() => { if (seen && !document.hidden) setAt((k) => (k + 1) % secs.length); }, 3400);
+    return () => { clearInterval(t); io.disconnect(); };
+  }, [calm, held, secs.length]);
+  const cur = secs[at] || secs[0];
+  const pick = (k) => { setAt(k); setHeld(true); };
   return (
-    <div className="xlg2-cover v2f-obj">
-      <div className="xlg2-cover-l">
+    <div ref={box} className="xlg2-cover v2f-obj" onPointerLeave={() => setHeld(false)}>
+      <div className="xlg2-cover-l" aria-hidden="true">
         <Sigil seed={'/legal/' + doc.slug} data={[doc.toc.length, doc.sections.length, doc.others.length]} className="xlg2-sigil" />
-        <dl className="xlg2-size">
-          <div><dt>sections</dt><dd className="v2f-num">{doc.toc.length}</dd></div>
-          <div><dt>min read</dt><dd className="v2f-num">{mins}</dd></div>
-        </dl>
+        {cur && (
+          <div className="xlg2-read" key={cur.id}>
+            <span className="xlg2-read-n v2f-num">{String(cur.k + 1).padStart(2, '0')}</span>
+            <p className="xlg2-read-t">{cur.first}</p>
+            {!calm && !held && secs.length > 1 && <i className="xlg2-read-bar" />}
+          </div>
+        )}
       </div>
       <nav className="xlg2-ix" aria-label={doc.title}>
         <ol>
-          {doc.toc.map((t, k) => {
+          {secs.map((t) => {
             const [num, text] = split(t.label);
             return (
               <li key={t.id}>
-                <a href={'#' + t.id}>
-                  <span className="xlg2-ix-n x-mono" aria-hidden="true">{String(k + 1).padStart(2, '0')}</span>
+                <a href={'#' + t.id} className={t.k === at ? 'on' : undefined} onPointerEnter={(e) => e.pointerType === 'mouse' && pick(t.k)} onFocus={() => pick(t.k)}>
+                  <span className="xlg2-ix-n x-mono" aria-hidden="true">{String(t.k + 1).padStart(2, '0')}</span>
                   <span className="xlg2-ix-t">{num ? <><span className="x-sr">{num} </span>{text}</> : t.label}</span>
                 </a>
               </li>
@@ -158,7 +189,7 @@ function Cover({ doc }) {
   );
 }
 
-export default function LegalDoc({ doc, acc }) {
+export default function LegalDoc({ doc, peek = {} }) {
   useArrival();
   const art = useRef(null);
   const [active, setActive] = useState(doc.toc[0] && doc.toc[0].id);
@@ -173,14 +204,16 @@ export default function LegalDoc({ doc, acc }) {
   const size = doc.title.length <= 14 ? '' : doc.title.length <= 26 ? ' mid' : ' small';
   let n = 0;
   return (
-    <main className="v2f xlg xlg-doc xlg2" style={{ '--acc': acc }}>
+    <main className="v2f xlg xlg-doc xlg2">
       <section className="xlg2-stage" aria-labelledby="xlg-h1">
-        <div className="v2f-wrap">
-          <p className="v2f-kick xlg2-kick"><A to="/legal">{doc.kicker}</A></p>
+        <div className="v2f-wrap v2f-grid xlg2-top">
           <FamLines as="h1" id="xlg-h1" className={'v2f-display xlg2-h1' + size} text={doc.title} data-morph-target />
-          <div className="v2f-grid xlg2-intro">
+          <div className="xlg2-side">
             <p className="v2f-lede xlg2-lede">{doc.lede}</p>
-            {doc.meta.length > 0 && <div className="xlg-meta xlg2-meta"><Nodes nodes={doc.meta} /></div>}
+            <div className="xlg-meta xlg2-meta">
+              {doc.meta.length > 0 && <Nodes nodes={doc.meta} />}
+              <p className="xlg2-up"><A to="/legal" className="v2f-link">{doc.kicker}</A></p>
+            </div>
           </div>
         </div>
         <div className="v2f-wrap xlg2-stage-o">
@@ -195,8 +228,8 @@ export default function LegalDoc({ doc, acc }) {
       </div>
       <section className="xlg2-more v2f-sec tight">
         <div className="v2f-wrap">
-          <p className="v2f-kick xlg2-kick"><A to="/legal">Legal &amp; Trust Center</A></p>
-          <FamNext label="Legal & Trust Center" items={doc.others.map((o) => ({ href: '/legal/' + o.slug, title: o.title, seed: '/legal/' + o.slug }))} />
+          <h2 className="v2f-head xlg2-more-h"><A to="/legal" className="v2f-link">Legal &amp; Trust Center</A></h2>
+          <FamNext label="Legal & Trust Center" items={[...doc.others.filter((o) => o.slug > doc.slug), ...doc.others.filter((o) => o.slug < doc.slug)].map((o) => ({ href: '/legal/' + o.slug, title: o.title, seed: '/legal/' + o.slug, preview: peek[o.slug] }))} />
         </div>
       </section>
     </main>

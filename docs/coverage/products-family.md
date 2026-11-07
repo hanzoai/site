@@ -1,0 +1,26 @@
+# /products/* coverage (PLAN-COMPONENTS areas 2.1–2.18)
+
+Template: `components/pages/ProductPage.jsx` + `ProductPage.css`, data `components/pages/productsData.js`, route `app/products/[slug]/page.jsx`. Seven members (company, agents, models, memory, identity, machines, record). Checked: `/products/agents`, `/products/memory` (also `/products/record`). Gallery: `docs/gallery/products/`.
+
+1. **Strategy and conversion.** Persona: developer (and a founder wiring agents). Goal: the first call to this layer. Metric: `signup_start`, then `api_key_created`. One solid ask in Hanzo's words ("Try Hanzo") in the hero (`data-thumb`, `data-cta="products.hero"`, magnetic) and again at the close (`products.close`). The product's own API link ("Agents API", "Graph API"…) is outlined.
+2. **Information architecture and navigation.** Hanzo's header and footer unchanged. Order: product (stage), its paragraph, its API, its measurements (memory only), the seven Hanzo OS layers, docs and the rest of the site. Every layer is a real `<a href>` to its page.
+3. **First impression and page narrative.** At 1470×801 the name, line, ask and the console (request typing, answer pane) are all on the first screen; at 375×812 the console starts under the ask. The title rises out of its masks on load and the console starts typing within a second. Then one idea per screen: the lit statement, the API spec sheet, the figures, the stack. No eyebrow over any headline: "Hanzo OS" is now the stack section's own headline.
+4. **Conversion system.** The site ask bar carries "Try Hanzo" after the hero, named after the product (`data-ask-name`); on phones the thumb bar does the same. One filled button per screen.
+5. **Trust and proof.** The proof is the working request itself (Hanzo's own "Try it", copyable) and the API table. `/products/memory` puts its measured figures up as hero numbers taken from Hanzo's sentences, each linking to its benchmark.
+6. **Content presentation (copy untouched).** Parity: agents 60/60 text, 21/21 links; memory 59/59, 19/19; record 53/53, 20/20. The API reads as a spec sheet (method, path, what it does). Invented labels removed ("operations", "Replay"): counts stand beside Hanzo's own words ("API", the API lede).
+7. **Visual design system.** Ink, greys and white only. Methods are told apart by shape (a read is an outline, a write a fill), not hue; code is set in white and grey steps. Display 128/56 for the name, CANON radii (32 hero object, 16 cards, 6 tags), hairlines, one dark object (the console) and no dark room.
+8. **UI component library.** Kit `A`, `More`, `Copy`, `Magnetic`; v2 `FamLines`, `FamStage`. The replay control is icon-only with its name from `content/ui-strings.json` (`replay`).
+9. **Motion and interaction.**
+   - Time: the request types itself, then each operation lands and the count settles; it replays on its own while on screen.
+   - State and pointer: point at (or tap) an operation in the console and its line from the API table slides in under the answer; the replay arrow turns on hover; press is .98 or 1px everywhere.
+   - Pointer: the ask leans to the pointer (magnetic); a layer row reveals its operation count on hover or focus.
+   - Scroll: the console settles (Stage), the statement lights word by word, spec rows light as they cross the middle. Scroll is under half of the page's motion.
+10. **Media.** Hanzo has no film or photograph for these pages; the product UI (console, API table) and the product's own contour (Sigil seeded `/products/<slug>` from its own counts) are the visuals.
+11. **Mobile and responsive.** 375px: title, line, two asks, then the console; the console bar keeps 44px Copy and replay; the API becomes stacked rows; the stack shows each layer's count without hover. Sideways swipe turns to the previous or next product (site Phone layer, tested agents → company and agents → record). No sideways scroll.
+12. **Accessibility.** One h1. The console's answer pane is `aria-hidden` (the same operations are in the API table); the code is focusable. Replay has an accessible name; Copy confirms. Reduced motion: no typing, everything shown at once, no Stage zoom.
+13. **Performance and engineering.** Typing writes text nodes by ref (no state per character), one rAF while typing, timers stop off screen. Transform and opacity only.
+14. **SEO and machine files.** Metadata and JSON-LD unchanged. With JS off: the request, the statement (lit) and every API row (not dimmed) are in the server HTML at full strength.
+15. **Catalogue and product pages.** The seven layers are the related rail (6 siblings plus the current one marked), each title the Morph source into the next page's h1 (`data-morph-target`). One tab stop per row.
+16. **Developer experience.** Copy equals the displayed request. The API table lists method, path and what it does for every operation.
+17. **States and resilience.** The data is static (captured from Hanzo's page), so there is no loading or error state; reduced motion and JS off show the final state.
+18. **Measurement and handover.** `data-cta="products.hero"` and `products.close` on the two solid asks; no analytics wired yet. Ledger (deleted): per-product accent colours, the green live dot, syntax hues, the kicker over the h1, the coloured hover stripe, the "operations" and "Replay" labels, the swipe block on the code.

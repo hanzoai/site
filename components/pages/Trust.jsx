@@ -41,15 +41,16 @@ const pad = (i) => String(i + 1).padStart(2, '0');
 function Locker() {
   const [at, setAt] = useState(-1); // -1: every drawer shut, as the page arrives
   const [mine, setMine] = useState(false);
+  const [under, setUnder] = useState(false); // the pointer is on the locker: it waits under the hand
   const calm = useReducedMotion();
   const ref = useRef(null);
   const live = useInView(ref, { amount: 0.3 });
   useEffect(() => {
     if (calm) { setAt((v) => (v < 0 ? 0 : v)); return; }
-    if (mine || !live) return;
+    if (mine || !live || (under && at >= 0)) return;
     const t = setTimeout(() => setAt((v) => (v + 1) % 6), at < 0 ? 650 : 3400);
     return () => clearTimeout(t);
-  }, [at, mine, calm, live]);
+  }, [at, mine, calm, live, under]);
   const pick = (i) => { setMine(true); setAt(i); };
   const keys = (e) => {
     const k = { ArrowDown: 1, ArrowUp: -1 }[e.key];
@@ -60,7 +61,7 @@ function Locker() {
     document.getElementById('xtr-dr-' + n)?.focus();
   };
   return (
-    <div className="xtr-locker" ref={ref}>
+    <div className="xtr-locker" ref={ref} onPointerEnter={(e) => e.pointerType === 'mouse' && setUnder(true)} onPointerLeave={() => setUnder(false)}>
       <div className="xtr-cab-w">
         <p className="xtr-locker-h">
           <span>What a review gets</span>

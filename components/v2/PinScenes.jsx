@@ -54,7 +54,7 @@ export default function PinScenes({ chapters, visual, label, className = '', fli
 
   if (!wide) {
     return (
-      <section id={id} className={'pf-pin-flat ' + className} aria-label={label} data-room={dark ? 'dark' : undefined}>
+      <section ref={ref} id={id} className={'pf-pin-flat ' + className} aria-label={label} data-room={dark ? 'dark' : undefined}>
         <div className="pf-wrap">
           {chapters.map((c, i) => (
             <article key={i} className="pf-pin-flat-c">

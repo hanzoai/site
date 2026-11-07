@@ -119,7 +119,7 @@ def main():
         r = subprocess.run([sys.executable, str(HZ / "scripts" / "taste.py"), *styled], capture_output=True, text=True)
         if r.returncode:
             print("\n".join(l for l in r.stdout.splitlines() if l.startswith("TASTE FAIL")))
-            print("unique: James's taste rules broken above - see docs/JAMES.md (0 UI hues; no label above a headline).")
+            print("unique: James's taste rules broken above - see docs/JAMES.md (only Hanzo's live palette; run python3 scripts/taste.py --fix <files>).")
             return 1
     return 0
 

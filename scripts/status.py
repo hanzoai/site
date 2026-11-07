@@ -13,6 +13,8 @@ BASE = "http://localhost:4180"
 INDEX = json.loads((HZ / "content/pages.json").read_text())
 spec = importlib.util.spec_from_file_location("variety", HZ / "scripts/variety.py")
 variety = importlib.util.module_from_spec(spec); spec.loader.exec_module(variety)
+tspec = importlib.util.spec_from_file_location("taste", HZ / "scripts/taste.py")
+taste = importlib.util.module_from_spec(tspec); tspec.loader.exec_module(taste)
 MEDIA = (".jpg", ".jpeg", ".png", ".webp", ".gif", ".mp4", ".webm")
 
 # owner: route or "/fam/*" -> chat label, parsed from the numbered task lines in CLOUD.md
@@ -36,7 +38,7 @@ def row(key, route, page, members=0):
     score = float(v2.group(1)) if v2 else None
     note = re.sub(r"\s*\*/.*", "", v2.group(2)).strip() if v2 else ""
     used = variety.scan(comp)
-    var_ok = used.get("fade-up (Rise)", 0) <= variety.MAX_RISE and len(used) <= variety.MAX_TECH
+    var_ok = used.get("fade-up (Rise)", 0) <= variety.MAX_RISE and len(used) <= variety.MAX_TECH and not taste.check(comp)
     name = "home" if route == "/" else key.strip("/").replace("/*", "")
     gdir = HZ / "docs/gallery" / name
     media = sorted(p for p in gdir.rglob("*") if p.suffix.lower() in MEDIA) if gdir.is_dir() else []
