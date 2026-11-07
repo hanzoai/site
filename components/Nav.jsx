@@ -10,34 +10,66 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { NAV, MENUS } from '../lib/nav';
+import { LOGIN } from '../lib/header';
+import Sigil from './Sigil';
 
 const EASE = [0.16, 1, 0.3, 1];
 const isLocal = (h) => h.startsWith('/');
 
-function Item({ l, i, onGo }) {
+function Item({ l, i, onGo, onPeek }) {
   const cls = 'x-nav-a' + (l.big ? ' big' : '');
   const body = <>{l.label}{l.ext && <span aria-hidden="true"> ↗</span>}</>;
+  const peek = onPeek ? { onMouseEnter: () => onPeek(l), onFocus: () => onPeek(l) } : {};
   return (
     <motion.li initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease: EASE, delay: 0.04 + i * 0.018 }}>
       {isLocal(l.href)
-        ? <Link href={l.href} className={cls} onClick={onGo}>{body}</Link>
-        : <a href={l.href} className={cls} onClick={onGo} {...(l.ext ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>{body}</a>}
+        ? <Link href={l.href} className={cls} onClick={onGo} {...peek}>{body}</Link>
+        : <a href={l.href} className={cls} onClick={onGo} {...peek} {...(l.ext ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>{body}</a>}
     </motion.li>
   );
 }
 
-function Columns({ name, onGo }) {
+function Columns({ name, onGo, onPeek }) {
   let n = 0;
   return NAV[name].map((c) => (
     <div className="x-nav-col" key={c.head}>
       <p className="x-nav-h">{c.head}</p>
-      <ul>{c.links.map((l) => <Item key={l.label + l.href} l={l} i={n++} onGo={onGo} />)}</ul>
+      <ul>{c.links.map((l) => <Item key={l.label + l.href} l={l} i={n++} onGo={onGo} onPeek={onPeek} />)}</ul>
     </div>
   ));
 }
 
+/* The menu's stage: a preview of the link under the pointer or focus. Its living Sigil (seeded by the page's address),
+   and the page's own title and description from Hanzo's index; another site shows its address. Decorative for
+   assistive tech: the link itself carries the meaning. Wide screens only. */
+let INDEX = null;
+function Stage({ l }) {
+  const [, force] = useState(0);
+  useEffect(() => { if (!INDEX) import('../lib/search.json').then((m) => { INDEX = new Map(m.default.map(([p, t, d]) => [p, [t, d]])); force((x) => x + 1); }); }, []);
+  if (!l) return null;
+  const local = isLocal(l.href);
+  const path = local ? l.href.split(/[?#]/)[0].replace(/\/$/, '') || '/' : null;
+  const [t, raw] = (local && INDEX?.get(path)) || [];
+  // the index keeps the first ~120 characters of Hanzo's description: end on a whole word with an ellipsis
+  const d = raw && raw.length >= 115 ? raw.slice(0, raw.lastIndexOf(' ')).replace(/[,;:.]$/, '') + '…' : raw;
+  const where = local ? 'hanzo.ai' + path : l.href.replace(/^https?:\/\//, '').replace(/\/$/, '');
+  return (
+    <aside className="x-nav-stage" aria-hidden="true">
+      <Sigil seed={l.href} data={[l.label.length, (t || '').length]} className="x-nav-sigil" />
+      <AnimatePresence mode="popLayout" initial={false}>
+        <motion.div key={l.href} className="x-nav-stage-t" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.3, ease: EASE }}>
+          <b>{l.label}</b>
+          {d && <p>{d}</p>}
+          <span>{where}</span>
+        </motion.div>
+      </AnimatePresence>
+    </aside>
+  );
+}
+
 export default function Nav({ headerRef }) {
   const [open, setOpen] = useState(null);
+  const [peek, setPeek] = useState(null);
   const [dir, setDir] = useState(0);
   const [sheet, setSheet] = useState(false);
   const [acc, setAcc] = useState(null);
@@ -55,6 +87,7 @@ export default function Nav({ headerRef }) {
   const close = useCallback(() => { clearTimeout(timer.current); timer.current = 0; setOpen(null); setSheet(false); }, []);
 
   useEffect(close, [path, close]); // a new page closes every menu
+  useEffect(() => { if (open) setPeek(NAV[open][0].links[0]); }, [open]); // the stage starts on the menu's first link
 
   // wire Hanzo's own header buttons. Hover intent is decided by WHERE the pointer is, not by enter/leave events:
   // while a menu is open it stays open as long as the pointer is over the header, the panel, or the corridor between
@@ -143,8 +176,19 @@ export default function Nav({ headerRef }) {
     if (!sheet) return;
     window.__lenis?.stop();
     document.documentElement.classList.add('x-lock');
-    return () => { window.__lenis?.start(); document.documentElement.classList.remove('x-lock'); };
+    const esc = (e) => { if (e.key === 'Escape') { setSheet(false); btns.current.Company?.focus(); } };
+    addEventListener('keydown', esc);
+    const t = setTimeout(() => document.querySelector('.x-sheet-x')?.focus(), 60);
+    return () => { clearTimeout(t); removeEventListener('keydown', esc); window.__lenis?.start(); document.documentElement.classList.remove('x-lock'); };
   }, [sheet]);
+  // Tab stays inside the open sheet
+  const sheetKey = (e) => {
+    if (e.key !== 'Tab') return;
+    const f = [...e.currentTarget.querySelectorAll('a[href], button:not([disabled])')];
+    if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); }
+    else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { e.preventDefault(); f[0].focus(); }
+  };
+  const search = () => { setSheet(false); setTimeout(() => dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, ctrlKey: true })), 80); };
 
   return (
     <>
@@ -176,9 +220,10 @@ export default function Nav({ headerRef }) {
                   initial="i" animate="a" exit="o"
                   transition={{ duration: 0.4, ease: EASE }}
                 >
-                  <Columns name={open} onGo={close} />
+                  <Columns name={open} onGo={close} onPeek={setPeek} />
                 </motion.div>
               </AnimatePresence>
+              <Stage l={peek} />
             </motion.div>
           </>
         )}
@@ -189,11 +234,20 @@ export default function Nav({ headerRef }) {
           <motion.nav
             className="x-sheet"
             aria-label="Menu"
+            role="dialog"
+            aria-modal="true"
+            onKeyDown={sheetKey}
             initial={{ clipPath: 'circle(0% at 24px 30px)' }}
             animate={{ clipPath: 'circle(150% at 24px 30px)' }}
             exit={{ clipPath: 'circle(0% at 24px 30px)', transition: { duration: 0.45, ease: [0.7, 0, 0.84, 0] } }}
             transition={{ duration: 0.7, ease: EASE }}
           >
+            <div className="x-sheet-top">
+              <Link href="/" className="x-sheet-home" onClick={close} aria-label="Hanzo AI home">Hanzo AI</Link>
+              <button type="button" className="x-sheet-s" onClick={search} aria-label="Search Hanzo or ask AI">
+                <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.7" /><path d="m13.2 13.2 3.6 3.6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></svg>
+              </button>
+            </div>
             <button type="button" className="x-sheet-x" onClick={close} aria-label="Close menu">✕</button>
             <ul className="x-sheet-list">
               {MENUS.map((m, i) => (
@@ -214,6 +268,13 @@ export default function Nav({ headerRef }) {
                 <Link href="/pricing" className="x-sheet-b" onClick={close}>Pricing</Link>
               </motion.li>
             </ul>
+            {/* pinned under the thumb: Hanzo's own Log in choices and its ask, in the header's words */}
+            <motion.div className="x-sheet-foot" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.4 }}>
+              <div className="x-sheet-login">
+                {LOGIN.map((l) => <a key={l.label} href={l.href} onClick={close}><b>{l.label}</b><span>{l.sub}</span></a>)}
+              </div>
+              <a href="https://hanzo.ai/signup" className="x-btn solid lg x-sheet-ask" onClick={close}>Try Hanzo</a>
+            </motion.div>
           </motion.nav>
         )}
       </AnimatePresence>
