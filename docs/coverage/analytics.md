@@ -15,7 +15,7 @@ Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line
 - [x] No dead or self-looping button; ~~prices from `lib/plans.js`~~ n/a: no prices on this page
 - [x] Open copy questions for James listed, none decided
 
-Done here: "Try Hanzo" → /login is the page's ask (`analytics.hero`, `data-thumb`). Above 700px it is now the first screen's one solid fill (48px, page-scoped CSS on `[data-cta="analytics.hero"]` with `--btn-solid-bg/-ink/-hover`; measured rgb(10,10,10), hover rgb(44,44,46)); while it shows, the header's "Try Hanzo" is an outline, and the header goes solid once it scrolls away. On phones the header's "Try Hanzo" is always solid, so the hero's stays a 48px outline there (one solid per view at both sizes). Again after the script (`analytics.script`, quiet); "Deploy to Cloud" is the close's one solid (`analytics.close`). Request Demo, Read the docs and View on GitHub are text-link `Cta`s.
+Done here: "Try Hanzo" → /login is the page's ask (`analytics.hero`, `data-thumb`). Above 700px it is now the first screen's one solid fill (48px, page-scoped CSS on `[data-cta="analytics.hero"]` with `--btn-solid-bg/-ink/-hover`; measured rgb(10,10,10), hover #262626 from the deck ramp); while it shows, the header's "Try Hanzo" is an outline, and the header goes solid once it scrolls away. On phones the header's "Try Hanzo" is always solid, so the hero's stays a 48px outline there (one solid per view at both sizes). Again after the script (`analytics.script`, quiet) with "Request Demo" as its link: the one ask pair there; "A script, then an API" is now a text disclosure under a hairline, not a third pill. "Deploy to Cloud" is the close's one solid (`analytics.close`). In the sheets one quiet button leads and the rest are text links (API sheet: View Documentation quiet, API Reference and Example Projects links; Open Source sheet: View Docs quiet, View Repository and GitHub Repo links).
 
 ## 2. Information architecture and navigation
 - [x] One `<main>`; the layout's skip link reaches its `#main` mark
@@ -33,7 +33,7 @@ Done here: Parity links 13/13, including the re-homed `/cdn-cgi/l/email-protecti
 - [x] Ends in proof strip (security spec), closing block, footer
 - [x] ~~Card-to-page links use Morph~~ n/a: the report cards open in place (`KeynoteOpen`), no card leaves the page
 
-Done here: At first paint, by CSS with no script: the title cuts in, the activity line draws (1.4 s from 0.35 s), the three KPIs settle by line mask at 0.5 s and the realtime dot rings. With JS off the audit finds no hidden copy (only the kit's JS-only chapter rail numbers). Order: hero, reports, three pinned chapters, commerce, graphite AI room, script, security spec, community, close. The hero dashboard now sits inside the grid (x 629–1327 at 1470 with its 1.06 settle, right edge on the gutter, no bleed off-screen). Section padding is page-scoped to 48–88px (hero bottom 56–88, reports top 32–56, chapter head top 0), so the 250–350px white gaps are gone and the page is ~850px shorter at 1470 (12,274 → ~11,400).
+Done here: Analytics' own hero, not the cloud side template: KeynoteStage `look="split"` with "Hanzo Analytics" on one line across the left (h1 y 223–276 at 1470×801, baseline ~33%), the lede (17px) and the ask pair on the right, and the dashboard a full-width stage below (x 113–1357 at its 1.08 start, settling to the grid as you scroll): KPIs as a column on the left, the activity line in the middle, the realtime feed on the right. No traffic-light dots or window bar; the demo's pause sits in the board's own top strip beside "Hanzo Analytics Dashboard · example" and the mono "Web analytics you host yourself". "The reports" peeks 56px at the fold (y 745). At first paint the copy, asks and stage are present (they cut in by position only from 0 s, never from transparent; the KPIs settle within 0.38 s). Order: hero, reports, three pinned chapters, commerce, graphite AI room, script, security spec, community, close. Section padding is page-scoped to 48–88px; page height 12,274 → 10,973 at 1470 and 16,348 → 14,593 at 375.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn` or hand-made `kn-btn` ask
@@ -75,7 +75,7 @@ Done here: taste OK (2 checked). Replaced every off-deck grey (#fbfbfd #dcdce1 #
 - [x] ~~Inputs 16px or larger~~ n/a: no input; no bare `:hover` (all inside `@media (hover: hover)`)
 - [x] Forks this page deleted: listed above
 
-Done here: Question chips fill #f5f5f5 with an ink border and the arrow steps 4px; report cards lift 4px, turn their hairline ink, spin the plus and start their own picture (Realtime rows wipe in, the Journeys path draws, funnel bars fill, events wipe, attribution blocks grow); every link ask ("Request Demo", "Read how reports work", "Read the docs"…) draws an underline from the left and moves its arrow 5px (measured background-size 0 → 100%); security spec rows take a #fafafa fill, feature rows #f5f5f5, the audit card lifts and its page tilts; the repo card lifts with an ink border and its arrow turns. Resource rows, Apply and the chart also answer; press at .97–.98, focus `2px solid var(--focus)`. Apply keeps its width and gains a tick. No `title=` on the page.
+Done here: Question chips fill #f5f5f5 with an ink border and the arrow steps 4px; report cards lift 4px, turn their hairline ink, spin the plus and start their own picture (Realtime rows wipe in, the Journeys path draws, funnel bars fill, events wipe, attribution blocks grow); every link ask ("Request Demo", "Read how reports work", "Read the docs"…) draws an underline from the left and moves its arrow 5px (measured background-size 0 → 100%); security spec rows take a #fafafa fill inside the gutter (x 159–1311, words inset 16px), each of the seven features is a real `role="switch"` button (`aria-checked`, the thumb slides, a press scales .98 and plays the shared "tick"; checked once in Playwright: true → false), feature rows fill #f5f5f5, the audit card lifts and its page tilts; the repo card lifts with an ink border and its arrow turns. Resource rows, Apply and the chart also answer; press at .97–.98, focus `2px solid var(--focus)`. Apply keeps its width and gains a tick. No `title=` on the page.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -92,7 +92,7 @@ Done here: `variety.py` OK (pathLength only in the page file; 0 Rise). Kinds: id
 - [x] ~~Budgets, alt~~ n/a: no image
 - [x] ~~No dimmed photo~~ n/a: no photo
 
-Done here: Every section's object is drawn UI, all SVG or CSS: dashboard, report pictures, funnel/cohort/revenue scenes, commerce board, AI panel, code, and now the security features as a settings panel (seven switches that turn on in sequence when seen), "Continual internal audits / Report on request." as a document card, and "Powered by Community" led by a repository card (a 26-week contribution grid that fills in week by week, linking to github.com/hanzoai/insights). The Attribution card's "referrer" block has a 92px floor, so the word is no longer clipped.
+Done here: Every section's object is drawn UI, all SVG or CSS: dashboard, report pictures, funnel/cohort/revenue scenes, commerce board, AI panel, code, and now the security features as a settings panel (seven real switches that turn on in sequence when seen and toggle on press), "Continual internal audits / Report on request." as a document card, and "Powered by Community" led by a repository card (a 26-week contribution grid that fills in week by week, linking to github.com/hanzoai/insights). The Attribution card's "referrer" block has a 92px floor, so the word is no longer clipped. The Open Source sheet's "M+", "K+" and "—" (Hanzo prints no number in them) are set at 26px, never figure size.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -100,7 +100,7 @@ Done here: Every section's object is drawn UI, all SVG or CSS: dashboard, report
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: Audit: 320 sideways none; sweep desk/phone sideways none; phone targets under 44px none (the link `Cta`s were 21px, now 44px). At 375 the ask ends near y≈340; the funnel's "Step 4" no longer wraps (icon hidden on phones, the hatch carries it).
+Done here: Audit: 320 sideways none; sweep desk/phone sideways none; phone targets under 44px none (the link `Cta`s were 21px, now 44px). At 375 the ask ends near y≈290; the funnel's "Step 4" no longer wraps (icon hidden on phones, the hatch carries it). Below 900px the five report cards are one snap rail (`scroll-snap-type: x proximity`, cards 82% wide so the next peeks) and the question chips one swipeable row, so Reports is 801px tall at 375 (was 2,542). In an opened report on a phone the picture starts under the close button, so no referrer is covered.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -109,7 +109,7 @@ Done here: Audit: 320 sideways none; sweep desk/phone sideways none; phone targe
 - [x] One h1; no heading skips; names start with visible text
 - [x] Keyboard reaches every control
 
-Done here: On #f5f5f5 (community, retention, card art) muted text is #525252; on white #525252/#737373; in the graphite room #fafafa, white 78%, #a3a3a3. The realtime loop runs only while seen and stops on the Stage's pause; the dark room's ring plays 3 times and stops. Headings 1 then 2/3 with no skips.
+Done here: On #f5f5f5 (community, retention, card art) muted text is #525252; on white #525252/#737373; in the graphite room #fafafa, white 78%, #a3a3a3. The realtime loop runs only while seen and stops on the board's own pause (a 36px button with a 44px hit area in the dashboard's top strip, `aria-pressed`; it also holds every CSS loop in the board); the dark room's ring plays 3 times and stops. Headings 1 then 2/3 with no skips.
 
 ## 13. Performance and engineering
 - [x] h1 and LCP element in server HTML
@@ -155,6 +155,6 @@ Done here: No fetch on the page; film and sweep show 0 console errors at desk an
 - [x] `data-cta` on every primary; events only through the kit `Cta` (`hz-event`)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: 8/10 …` in the page file's top comment
-- [x] Review read: `docs/review/analytics.md` (7/10, 7 Nov 16:37); its fixes are done in round 2
+- [x] Review read: `docs/review/analytics.md` (round 2 critic, 7.5/10); its fixes are done in round 3
 
-Done here: Primary `analytics.hero` with `data-thumb`; gallery `docs/gallery/analytics/` (desktop.mp4, desktop.jpg, phone-1..3.jpg, plus round 2 `desktop-r2.jpg`, `phone-r2.jpg`). Own score 8/10; the critic's verdict decides.
+Done here: Primary `analytics.hero` with `data-thumb`; gallery `docs/gallery/analytics/` (desktop.mp4, desktop.jpg, phone-1..3.jpg, plus round 2 `desktop-r2.jpg`, `phone-r2.jpg` and round 3 `desktop-r3.jpg`, `phone-r3.jpg`). Own score 8/10; the critic's verdict decides.
