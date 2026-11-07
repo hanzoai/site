@@ -336,7 +336,7 @@ function Ten() {
               <Slide n={6} />
               {on.wm && <span className="dr-wm" aria-hidden="true">{Array.from({ length: 14 }).map((_, k) => <b key={k}>{me}</b>)}</span>}
             </div>
-            <AnimatePresence>
+            <AnimatePresence initial={false}>
               {gates.map((k, i) => <Gate key={k} k={k} i={i} mail={me} go={() => setPast((p) => [...p, k])} />)}
             </AnimatePresence>
           </div>
