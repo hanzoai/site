@@ -286,6 +286,7 @@ function Reel() {
   });
   return (
     <section className="xst-reel" ref={ref} aria-label="Three pillars">
+      <noscript><style>{'.xst-reel{height:auto!important;padding:96px 0}.xst-reel-stick{position:static!important;height:auto!important;display:block!important}.xst-subs{gap:36px}.xst-subs li{grid-area:auto!important;opacity:1!important;transform:none!important}'}</style></noscript>
       <div className="xst-reel-stick">
         <div className="a2-wrap">
           <div className="xst-frame">

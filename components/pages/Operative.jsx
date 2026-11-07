@@ -133,6 +133,7 @@ function Inside() {
   };
   return (
     <section className="xov-inside" ref={ref} aria-labelledby="xov-in">
+      <noscript><style>{'.xov-list li p{height:auto!important;padding-bottom:16px!important}.xov-list button{color:var(--ink)!important}'}</style></noscript>
       <div className="xov-inside-stick">
         <div className="a2-wrap a2-grid xov-inside-grid">
           <div className="xov-inside-copy">

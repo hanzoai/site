@@ -260,9 +260,11 @@ function Setup() {
   const ref = useRef(null);
   const live = useInView(ref, { amount: 0.2 });
   const calm = useReducedMotion();
-  const [k, setK] = useState(0);
+  const [k, setK] = useState(9); // the HTML shows the finished exchange; the browser replays it from the start
+  const began = useRef(false);
   useEffect(() => {
     if (!live || calm) return;
+    if (!began.current) { began.current = true; setK(0); }
     const t = setInterval(() => setK((v) => (v >= 9 ? 0 : v + 1)), 1300);
     return () => clearInterval(t);
   }, [live, calm]);

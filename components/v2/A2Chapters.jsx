@@ -6,7 +6,8 @@
    Desktop: the section is one screen per chapter. A sticky stage pins the text on one side and the picture on the other;
    as you scroll, one chapter comes in as the last goes out and visual(i, true) redraws for the active chapter. The small
    numbered index jumps to a chapter (keyboard too). Phones: a plain vertical story, each chapter with its own picture,
-   visual(k, false). Reduced motion: the same states, no slide. Every chapter's words stay in the HTML. */
+   visual(k, false). Reduced motion: the same states, no slide. Every chapter's words stay in the HTML, and with
+   JavaScript off a <noscript> rule lays the chapters out as that phone story. */
 import { useRef, useState } from 'react';
 import { useScroll, useMotionValueEvent } from 'motion/react';
 
@@ -26,6 +27,8 @@ export default function A2Chapters({ items, visual, flip, dark, label, className
     if (window.__lenis) window.__lenis.scrollTo(y, { duration: 1.1 }); else window.scrollTo({ top: y, behavior: 'smooth' });
   };
   return (
+    <>
+    <noscript><style>{'.a2-ch{height:auto!important;padding:120px 0 40px}.a2-ch-stick{position:static!important;height:auto!important;display:block!important}.a2-ch-nav,.a2-ch>.a2-ch-stick .a2-ch-vis{display:none!important}.a2-ch-items{gap:88px}.a2-ch-item{grid-area:auto!important;opacity:1!important;transform:none!important}.a2-ch-pv{display:block!important;margin-bottom:32px}'}</style></noscript>
     <section ref={ref} className={'a2-ch' + (flip ? ' flip' : '') + (dark ? ' a2-dark' : '') + ' ' + className} style={{ '--n': items.length }} aria-label={label} {...(dark ? { 'data-room': 'dark' } : {})}>
       <div className="a2-ch-stick">
         <div className="a2-wrap a2-ch-grid">
@@ -51,5 +54,6 @@ export default function A2Chapters({ items, visual, flip, dark, label, className
         </div>
       </div>
     </section>
+    </>
   );
 }
