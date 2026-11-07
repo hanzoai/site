@@ -119,7 +119,7 @@ function Hero({ doc, chains, all, onChain, alsoRun }) {
       <div className="bz-wrap">
         <h1 id="bci-h1" className="bci-h1 bz-lines now" data-morph-target>
           <span className="bz-line"><span style={{ '--i': 0 }}>{t1}</span></span>
-          {tr.map((t, k) => <span key={k} className="bz-line soft"><span style={{ '--i': k + 1 }}>{t}</span></span>)}
+          {tr.map((t, k) => <Fragment key={k}>{' '}<span className="bz-line soft"><span style={{ '--i': k + 1 }}>{t}</span></span></Fragment>)}
         </h1>
         {doc.chip && <p className="bci-cap x-mono">{doc.chip}</p>}
         <div className="bci-ask">
@@ -198,7 +198,7 @@ function Pieces({ b, all, chain, onSeen }) {
             </div>
           )}
         </header>
-        <ol className="bci-index" ref={list} onPointerLeave={() => setPoint(-1)}>
+        <ol className={'bci-index' + (more ? ' all' : '')} ref={list} onPointerLeave={() => setPoint(-1)}>
           {b.cards.map((c2, j) => {
             const q = find(c2.href);
             const has = q && chain && names(q.chains, chain);
@@ -217,7 +217,7 @@ function Pieces({ b, all, chain, onSeen }) {
         </ol>
         {b.cards.length > FIRST && (
           <button type="button" className="bci-all" aria-expanded={more} onClick={() => setMore(!more)}>
-            <span>{more ? 'Show the first ' + FIRST : `Show all ${b.cards.length} pieces`}</span><i aria-hidden="true" />
+            <span>{more ? 'Show fewer' : `Show all ${b.cards.length} pieces`}</span><i aria-hidden="true" />
           </button>
         )}
       </div>
@@ -366,7 +366,7 @@ function Matrix({ b, all }) {
         ))}</p>
         <p className="bci-read x-mono" aria-live={mine ? 'polite' : 'off'}>{read}</p>
         <div className="bci-mx" data-swipe-own onPointerLeave={() => setHot(null)} style={{ '--cols': cols.length }}>
-          {hot && <style>{`${r >= 0 ? `.bci-mx .x-table tbody tr:nth-child(${r + 1}) > *, ` : ''}.bci-mx .x-table tr > :nth-child(${c + 2}) { background-color: #f5f5f5; } ${r >= 0 ? `.bci-mx .x-table tbody tr:nth-child(${r + 1}) > :nth-child(${c + 2}) { background-color: #d4d4d4; }` : ''} .bci-mx .x-table thead th:nth-child(${c + 2}) .bci-vh { color: #0a0a0a; font-weight: 606; }`}</style>}
+          {hot && <style>{`${r >= 0 ? `.bci-mx .x-table tbody tr:nth-child(${r + 1}) > *, ` : ''}.bci-mx .x-table tr > :nth-child(${c + 2}) { background-color: #f5f5f5; } ${r >= 0 ? `.bci-mx .x-table tbody tr:nth-child(${r + 1}) > :nth-child(${c + 2}) { background-color: #d4d4d4; }` : ''} .bci-mx .x-table thead th:nth-child(${c + 2}) .bci-vh { color: #0a0a0a; }`}</style>}
           <DataTable
             caption="Products × chains"
             cols={[{ key: 'p', label: 'Product' }, ...cols.map(([x], j) => ({ key: 'c' + j, label: <span className="bci-vh">{x}</span> })), { key: 'n', label: 'chains', num: true }]}

@@ -191,7 +191,7 @@
 
 /* entrances: the markup's own state is the final one; [data-ent=wait] (set after mount, out of view) holds the start
    state, [data-ent=go] runs each section's own keyframes once */
-.am2-ul { position: relative; display: inline-block; }
+.am2-ul, .am2 .l2-ln > .am2-ul { position: relative; display: inline-block; }
 .am2-ul::after { content: ''; position: absolute; left: 0; right: 0; bottom: .06em; height: .065em; background: currentColor; transform-origin: 0 50%; }
 .e-sweep[data-ent='wait'] .am2-ul::after { transform: scaleX(0); }
 .e-sweep[data-ent='go'] .am2-ul::after { animation: am2-sweep .6s var(--ease) .15s both; }
