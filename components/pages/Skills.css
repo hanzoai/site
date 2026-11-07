@@ -319,6 +319,7 @@ html:not(.js) .xsk-get-done :is(.xsk-gd-out i, .xsk-gd-ok) { transform: none; op
   .xsk-scene.on .xsk-gw-v::after { content: ''; position: absolute; left: -1px; top: 0; width: 4px; height: 8px; border-radius: 2px; background: var(--ink); animation: xsk-drip 1.8s var(--e-io) 1.8s infinite; }
   .xsk-gw-v { position: relative; }
   :is(.xsk-scene.on, .xsk-trade) :is(.xsk-sc-five, .xsk-five) b i:first-child { transform-origin: 0 50%; animation: xsk-read 2.5s var(--e-io) infinite; animation-delay: calc(var(--k) * .5s + 1.5s); }
+  :is(.xsk-scene.on, .xsk-pt-vis.on) .xsk-sc-row i, :is(.xsk-scene.on, .xsk-pt-vis.on) .xsk-sc-drop i:first-of-type { transform-origin: 0 50%; animation: xsk-read 2.8s var(--e-io) 2s infinite; }
   .xsk-scene.on .xsk-zoom-ln .k:nth-child(3)::after { animation: xsk-hl 3.2s var(--e-io) 2.2s infinite; }
 }
 @keyframes xsk-blink { 50% { opacity: 0; } }
