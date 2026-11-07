@@ -229,7 +229,9 @@ const tokPos = (t) => (Math.log2(Math.max(256, t)) - LO) / (HI - LO);
 const posTok = (p) => Math.round(Math.pow(2, LO + p * (HI - LO)));
 const usd = (x) => '$' + (x < 0.01 ? x.toFixed(5) : x.toFixed(3));
 
-// a ruler's thumb position as one fixed string, the same on the server and in the browser (no hydration drift)
+// a ruler's thumb position as one fixed string, the same on the server and in the browser (no hydration drift).
+// The range inputs carry suppressHydrationWarning: a screenshot taken before hydration writes an inline caret-color on
+// every input, and that one attribute is all React would otherwise flag (the inputs themselves render no style).
 const run = (p) => ({ transform: `translateX(${(Math.round(p * 10000) / 100).toFixed(2)}%)` });
 
 function Checker({ s, mine, setMine, price }) {
@@ -251,7 +253,7 @@ function Checker({ s, mine, setMine, price }) {
             <span className="kg-mk" style={{ left: tokPos(TRAINED) * 100 + '%' }}>1,024</span>
             <span className="kg-mk" style={{ left: tokPos(MAXSTATE) * 100 + '%' }}>32,768</span>
             <span className="kg-run" style={run(tokPos(tok))}><i /></span>
-            <input type="range" min="0" max="1000" value={Math.round(tokPos(tok) * 1000)} onChange={(e) => set(1, posTok(+e.target.value / 1000))} aria-label="State tokens" />
+            <input type="range" min="0" max="1000" value={Math.round(tokPos(tok) * 1000)} onChange={(e) => set(1, posTok(+e.target.value / 1000))} aria-label="State tokens" suppressHydrationWarning />
           </span>
         </label>
         <label className="kg-ruler">
@@ -260,7 +262,7 @@ function Checker({ s, mine, setMine, price }) {
             <i className="kg-zone z3" style={{ left: (MAXQ / 101) * 100 + '%' }} />
             <span className="kg-mk" style={{ left: (MAXQ / 101) * 100 + '%' }}>100</span>
             <span className="kg-run" style={run(q / 101)}><i /></span>
-            <input type="range" min="1" max="101" value={q} onChange={(e) => set(2, +e.target.value)} aria-label="Questions" />
+            <input type="range" min="1" max="101" value={q} onChange={(e) => set(2, +e.target.value)} aria-label="Questions" suppressHydrationWarning />
           </span>
         </label>
         <div className="kg-verdict" data-bad={r.code !== 200 ? '' : undefined}>

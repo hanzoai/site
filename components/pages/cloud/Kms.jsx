@@ -50,11 +50,10 @@ function Versions({ v, dir }) {
             custom={dir}
             variants={{
               in: (d) => ({ y: d > 0 ? -ROW : ROW * 3, opacity: 0 }),
-              at: { y: i * ROW, opacity: 1 - i * 0.3 },
               out: (d) => ({ y: d > 0 ? ROW * 3 : -ROW, opacity: 0 }),
             }}
             initial="in"
-            animate="at"
+            animate={{ y: i * ROW, opacity: 1 - i * 0.3 }}
             exit="out"
             transition={{ duration: 0.4, ease: EASE }}
           >
@@ -159,7 +158,7 @@ function Seal() {
         </div>
         <div className="km-seal-box v2-obj">
           <label className="km-seal-k" htmlFor="km-in">value</label>
-          <input id="km-in" value={val} onChange={(e) => setVal(e.target.value)} maxLength={200} spellCheck={false} autoComplete="off" />
+          <input id="km-in" value={val} onChange={(e) => setVal(e.target.value)} maxLength={200} spellCheck={false} autoComplete="off" suppressHydrationWarning />
           <div className="km-seal-chain" aria-hidden="true">
             <span className="off">Argon2id</span><i /><span>HKDF-SHA256</span><i /><span>AES-256-GCM</span>
           </div>
@@ -232,13 +231,14 @@ function Roll({ to }) {
 
 function Rule({ i, t, d, on, onAt }) {
   const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.35 }); // phones: the rule's picture draws when it is reached
   useEffect(() => {
     const io = new IntersectionObserver(([e]) => e.isIntersecting && onAt(i), { rootMargin: '-45% 0px -45% 0px' });
     io.observe(ref.current);
     return () => io.disconnect();
   }, [i, onAt]);
   return (
-    <li ref={ref} className={'km-rule' + (on ? ' on' : '')} onPointerEnter={(e) => e.pointerType === 'mouse' && onAt(i)}>
+    <li ref={ref} className={'km-rule' + (on ? ' on' : '') + (seen ? ' seen' : '')} onPointerEnter={(e) => e.pointerType === 'mouse' && onAt(i)}>
       <span className="km-rule-n">{String(i + 1).padStart(2, '0')}</span>
       <h3 className="v2-headline">{t}</h3>
       <p className="v2-body">{d}</p>
@@ -249,6 +249,7 @@ function Rule({ i, t, d, on, onAt }) {
 
 function Holds() {
   const [at, setAt] = useState(0);
+  const [lap, setLap] = useState(0); // the panel redraws its rule each time the hairline finishes crossing
   const onAt = useCallback((i) => setAt(i), []);
   return (
     <section className="v2-sec km-holds">
@@ -261,9 +262,10 @@ function Holds() {
               <p className="km-panel-h">DATABASE_PASSWORD <span>production</span></p>
               <AnimatePresence mode="popLayout" initial={false}>
                 <motion.div key={at} className="km-panel-b" initial={{ clipPath: 'inset(0% 0% 100% 0%)' }} animate={{ clipPath: 'inset(0% 0% 0% 0%)' }} exit={{ clipPath: 'inset(100% 0% 0% 0%)' }} transition={{ duration: 0.4, ease: EASE }}>
-                  <Scene i={at} />
+                  <Scene key={lap} i={at} />
                 </motion.div>
               </AnimatePresence>
+              <i key={'run' + at} className="km-panel-run" onAnimationIteration={() => setLap((n) => n + 1)} />
             </div>
             <p className="km-num" aria-hidden="true"><Roll to={at + 1} /><span className="km-num-of">/ 06</span></p>
           </div>

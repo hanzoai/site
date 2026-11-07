@@ -86,10 +86,14 @@ html:not(.js) .km .v2-in { animation: none; opacity: 1; transform: none; }
 .km-pin { position: sticky; top: 96px; }
 .km-holds-h { max-width: 16ch; }
 .km-holds-lede { max-width: 36ch; margin-top: 14px; }
-.km-panel { position: relative; margin-top: 28px; height: 300px; border-radius: 24px; background: var(--km-paper); box-shadow: var(--km-hair); overflow: hidden; }
+.km-panel { position: relative; margin-top: 28px; height: 324px; border-radius: 24px; background: var(--km-paper); box-shadow: var(--km-hair); overflow: hidden; }
 .km-panel-h { margin: 0; padding: 18px 24px; border-bottom: 1px solid var(--line); font: 600 14px/1 var(--mono); color: var(--km-ink); }
 .km-panel-h span { margin-left: 8px; padding: 4px 8px; border-radius: 6px; background: var(--km-quiet); font-weight: 500; font-size: 12px; color: var(--km-body); }
 .km-panel-b { padding: 24px; }
+/* the one idle mover here: a hairline crosses the panel's foot, then the rule redraws */
+.km-panel-run { position: absolute; left: 24px; right: 24px; bottom: 18px; height: 1px; background: var(--km-ink); transform-origin: left; transform: scaleX(0); animation: km-run 4.8s linear infinite; }
+@keyframes km-run { to { transform: scaleX(1); } }
+.js .km-rule:not(.seen) .km-rule-pic :is(.km-sc-l, .km-sc-chain span, .km-sc-chips span) { animation-play-state: paused; }
 .km-num { display: flex; align-items: center; gap: 8px; margin: 18px 0 0; font: 500 13px/1 var(--mono); letter-spacing: .12em; color: var(--km-body); font-variant-numeric: tabular-nums; }
 .km-roll { position: relative; display: inline-flex; overflow: hidden; height: 1.2em; align-items: center; color: var(--km-ink); }
 .km-roll > span { display: inline-block; }
@@ -134,7 +138,8 @@ html:not(.js) .km .v2-in { animation: none; opacity: 1; transform: none; }
 
 /* the dark room: a card inside the gutters that opens to full width */
 .km-disk { padding: clamp(120px, 14vw, 200px) 0; color: var(--km-black-ink); }
-.km-disk .x-arrow { color: var(--km-black-ink); min-height: 44px; }
+.km-disk .x-arrow { color: rgba(255, 255, 255, .78); min-height: 44px; transition: color .15s var(--km-move), transform 90ms var(--km-move); }
+@media (hover: hover) { .km-disk .x-arrow:hover { color: var(--km-black-ink); } }
 .km-figs { list-style: none; margin: 0 0 clamp(80px, 9vw, 140px); padding: 0; display: grid; grid-template-columns: 5fr 7fr; column-gap: clamp(32px, 4vw, 72px); }
 .km-figs li { grid-column: 2; display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 18px 0; border-top: 1px solid var(--km-line-dark); }
 .km-figs li.big { grid-column: 1; grid-row: 1 / 4; flex-direction: column; justify-content: flex-end; align-items: flex-start; border-top: 0; padding: 0; }
@@ -156,6 +161,7 @@ html:not(.js) .km .v2-in { animation: none; opacity: 1; transform: none; }
 .km-proj-c { grid-column: 1 / span 7; }
 .km-proj-t { grid-column: 9 / -1; }
 .km-proj-t .km-cap { margin-top: 14px; }
+@media (hover: hover) { .km .cf-con.light .cf-con-title:hover { color: var(--km-ink); text-decoration: underline; text-underline-offset: 3px; } }
 
 @media (max-width: 900px) {
   .km { --km-gut: 16px; }
