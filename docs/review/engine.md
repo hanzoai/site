@@ -1,4 +1,6 @@
 # /engine — James-eye review
+
+Ready: 8 Nov, held up next to /api and /agents (no score). The terminal now streams Hanzo's own sentence token by token above the fold, chapters vary (02 and 05 panel left, 04's quant grid takes eight columns and grows then settles), one panel fully leaves before the next arrives, phone silicon cards stack and the grid fits, chapter numbers preview their title on hover, and the close types the command you wrote. taste/unique/parity OK (text 29/29, links 2/2); 0 console errors, no overflow/overlap at 1470x801 and 375x812. Shared, not this page: the phone header ask lives in components/Ask.jsx (the phone thumb bar carries View on GitHub).
 7 Nov, critic pass on `claude/modest-rosalind-d8d1e2` (dev server :4182). Walked moving at 1470x801 and 375x812 (phone: isMobile, hasTouch) with Playwright: frames at 0, 1 and 3 s with no input, wheel scrolls one screen at a time with a 1.5 s dwell, a finer 400 px walk through the pinned chapters, hover and press on every control in `main` on desktop, tap-size audit on phone. I measured CLS, horizontal overflow, fixed elements and console output.
 
 Verdict: 7/10

@@ -14,7 +14,8 @@
    and the one line to run is written for you to copy, with Hanzo's sentence on what it does.
    Every word, figure and link is Hanzo's; the scenes are drawn, not measured, and show no numbers. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { createPortal } from 'react-dom';
+import { motion, AnimatePresence, useInView, useMotionValue, useTransform } from 'motion/react';
 import { EASE, Copy, useCalm } from '../../ui';
 import { Field } from '../../kit';
 import { useLive, useSteps, useFrame } from './Frame';
@@ -39,12 +40,14 @@ function useStepOf(p, n, on) {
   return k;
 }
 
-/* run: a prompt, and tokens arriving */
+/* run: a prompt, and Hanzo's own sentence arriving token by token (CSS from first paint, so it moves before script).
+   Alternate tokens carry a faint fill so the boundaries the model emits are visible. */
+const TOKS = ['One', ' binary', ',', ' three', ' verbs', '.', ' Chat', ' with', ' a', ' model', ',', ' put', ' it', ' behind', ' an', ' HTTP', ' API', ',', ' or', ' measure', ' it', ' —', ' the', ' thing', ' you', ' bench', 'marked', ' is', ' the', ' thing', ' you', ' sh', 'ipped', '.'];
 function Run() {
   return (
     <div className="en-run">
-      <p className="en-p"><span>&gt;</span> <i className="en-cursor" /></p>
-      <div className="en-toks">{Array.from({ length: 72 }).map((_, i) => <i key={i} style={{ animationDelay: 0.2 + i * 0.04 + 's', width: 18 + ((i * 37) % 34) + 'px' }} />)}</div>
+      <p className="en-p"><span>&gt;</span> run, serve, bench<i className="en-cursor" /></p>
+      <p className="en-toks">{TOKS.map((t, i) => <span key={i} style={{ animationDelay: 0.35 + i * 0.07 + 's' }}>{t}</span>)}</p>
     </div>
   );
 }
@@ -99,7 +102,7 @@ function Term() {
         <div className="en-out" aria-hidden="true">
           <AnimatePresence mode="wait" initial={false}>
             <motion.div key={at} className="en-pane" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8, transition: { duration: 0.18 } }} transition={{ duration: 0.4, ease: EASE }}>
-              {at === 0 ? <Run /> : at === 1 ? <div className="en-serve"><Lanes live={live} /><div className="en-util"><span>card</span><i><b /></i><em>busy</em></div></div> : <Bench />}
+              {at === 0 ? <Run /> : at === 1 ? <div className="en-serve"><div className="en-lanes-w"><p className="en-sc-k">continuous batching</p><Lanes live={live} /></div><div className="en-util"><span>card</span><i><b /></i><em>busy</em></div></div> : <Bench />}
             </motion.div>
           </AnimatePresence>
         </div>
@@ -167,6 +170,8 @@ const W = Array.from({ length: 16 * 10 }, (_, i) => (Math.sin(i * 12.9898) * 437
 function QuantScene({ p, on }) {
   const b = BITS[useStepOf(p, BITS.length, on)];
   const steps = Math.min(2 ** b, 24);
+  const still = useMotionValue(1);
+  const grow = useTransform(p || still, [0, 0.22, 0.78, 1], [0.9, 1, 1, 0.94]);
   return (
     <div className="kn-obj en-sc en-sc-q">
       <div className="en-q-top">
@@ -175,12 +180,12 @@ function QuantScene({ p, on }) {
           <em>GGUF from 2 to 8 bits</em>
         </p>
       </div>
-      <div className="en-q-grid" aria-hidden="true">
+      <motion.div className="en-q-grid" aria-hidden="true" style={p ? { scale: grow } : undefined}>
         {W.map((w, i) => {
           const q = Math.round(w * (steps - 1)) / (steps - 1);
           return <i key={i} style={{ opacity: 0.12 + q * 0.88 }} />;
         })}
-      </div>
+      </motion.div>
       <ul className="en-q-fmt">{['GPTQ', 'AWQ', 'HQQ', 'FP8', 'bitsandbytes'].map((f) => <li key={f}>{f}</li>)}</ul>
     </div>
   );
@@ -223,13 +228,18 @@ const SAY = {
 };
 
 /* Beyond: write the command. The verb, the model, and whether you want the UI. */
-function Write() {
+function useCommand() {
   const [verb, setVerb] = useState('serve');
   const [model, setModel] = useState('');
   const [ui, setUi] = useState(true);
   const m = model.trim().replace(/\s+/g, '') || '<model>';
   const plain = verb === 'serve' && !ui;
   const cmd = `hanzo engine ${verb} ${m}${plain ? ' --no-ui' : ''}`;
+  return { verb, setVerb, model, setModel, ui, setUi, plain, cmd };
+}
+
+function Write({ c }) {
+  const { verb, setVerb, model, setModel, ui, setUi, plain, cmd } = c;
   return (
     <section className="kn-sec en-write">
       <div className="kn-wrap kn-grid en-write-g">
@@ -251,7 +261,54 @@ function Write() {
   );
 }
 
+/* Hover or focus a chapter number and its title previews under the rail (desktop, pinned layout only). */
+function RailTip({ host }) {
+  const [rail, setRail] = useState(null);
+  const [tip, setTip] = useState(null);
+  useEffect(() => {
+    const nav = host.current?.querySelector('.knc-rail');
+    if (!nav) return;
+    setRail(nav);
+    const bs = [...nav.querySelectorAll('button')];
+    const show = (e) => { const i = bs.indexOf(e.currentTarget); setTip({ i, x: e.currentTarget.offsetLeft }); };
+    const hide = () => setTip(null);
+    bs.forEach((b) => { b.addEventListener('pointerenter', show); b.addEventListener('focus', show); b.addEventListener('pointerleave', hide); b.addEventListener('blur', hide); });
+    return () => bs.forEach((b) => { b.removeEventListener('pointerenter', show); b.removeEventListener('focus', show); b.removeEventListener('pointerleave', hide); b.removeEventListener('blur', hide); });
+  }, [host]);
+  if (!rail) return null;
+  return createPortal(
+    <span className={'en-tip' + (tip ? ' on' : '')} aria-hidden="true" style={{ '--x': (tip ? tip.x : 0) + 'px' }}>{tip ? DECK[tip.i][0] : ''}</span>,
+    rail,
+  );
+}
+
+/* The close's payoff: the command you wrote above types itself in once, when the close arrives. */
+function Typed({ cmd }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount: 0.6, once: true });
+  const calm = useCalm();
+  const [n, setN] = useState(0);
+  const full = '$ ' + cmd;
+  useEffect(() => {
+    if (!seen) return;
+    if (calm) { setN(full.length); return; }
+    setN(0);
+    let i = 0;
+    const t = setInterval(() => { i += 1; setN(i); if (i >= full.length) clearInterval(t); }, 42);
+    return () => clearInterval(t);
+  }, [seen, calm, full]);
+  const done = n >= full.length;
+  return (
+    <p className={'en-typed' + (done ? ' done' : '')} ref={ref}>
+      <span className="en-typed-sr">{full}</span>
+      <code aria-hidden="true"><b>{full.slice(0, Math.min(2, n))}</b>{full.slice(2, Math.max(2, n))}<i /></code>
+    </p>
+  );
+}
+
 export default function Engine() {
+  const c = useCommand();
+  const host = useRef(null);
   return (
     <main className="kn en">
       <KeynoteStage
@@ -266,16 +323,19 @@ export default function Engine() {
         <Term />
       </KeynoteStage>
 
+      <div ref={host} className="en-ch-host">
       <KeynoteChapters
         className="en-ch"
         head={<KeynoteLines className="kn-headline en-ch-h" lines={['One process,', 'laptop to GPU cluster']} />}
         items={DECK.map(([t, d]) => ({ title: t, body: <p>{d}</p> }))}
         visual={(i, on, p) => { const S = SCENES[i]; return <S on={on} p={p} />; }}
-        swap="wipe"
+        swap="fade"
         count
       />
+      <RailTip host={host} />
+      </div>
 
-      <Write />
+      <Write c={c} />
 
       <KeynoteClose
         name="Engine"
@@ -283,7 +343,9 @@ export default function Engine() {
         lead="Get started with Hanzo Engine"
         prompt="Read https://hanzo.ai/skill.md and use Hanzo Engine in my project. Start with: hanzo engine serve <model>"
         cta="engine.close"
-      />
+      >
+        <Typed cmd={c.cmd} />
+      </KeynoteClose>
     </main>
   );
 }
