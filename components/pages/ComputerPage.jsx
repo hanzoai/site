@@ -115,7 +115,7 @@ function Machine() {
   const key = (e, i) => {
     const n = { ArrowRight: 1, ArrowLeft: -1 }[e.key]; if (!n) return;
     const j = (i + n + SLIDES.length) % SLIDES.length; pick(j);
-    e.currentTarget.parentElement.parentElement.children[j]?.querySelector('button')?.focus();
+    e.currentTarget.closest('ol')?.children[j]?.querySelector('button')?.focus();
   };
   return (
     <div className="cp-obj" ref={box}>
@@ -127,23 +127,21 @@ function Machine() {
               : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /><rect x="9.4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /></svg>}
           </button>
           <span className="cp-cap-k">If a person can click it, so can this</span>
-          <span className="cp-count x-mono av-num">{String(at + 1).padStart(2, '0')} / 06</span>
+          {/* six numbered modes beside the desktop; each tab's name is the chapter it previews, read once below */}
+          <ol className="cp-tabs" role="tablist" aria-label="What it does">
+            {SLIDES.map(([t], i) => (
+              <li key={t}>
+                <button type="button" role="tab" aria-selected={i === at} aria-label={String(i + 1).padStart(2, '0') + ' ' + t} tabIndex={i === at ? 0 : -1} onClick={() => pick(i)} onKeyDown={(e) => key(e, i)}>
+                  {i === at && <motion.span layoutId="cp-tab" className="cp-tab-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
+                  <span className="x-mono av-num">{String(i + 1).padStart(2, '0')}</span>
+                  {i === at && !mine && !calm && <i key={'t' + at} className={'cp-tab-t' + (live ? '' : ' paused')} aria-hidden="true" />}
+                </button>
+              </li>
+            ))}
+          </ol>
         </div>
       </div>
       <Desktop at={at} live={live} />
-      <div className="cp-cap">
-        <ol className="cp-tabs" role="tablist" aria-label="What it does">
-          {SLIDES.map(([t], i) => (
-            <li key={t}>
-              <button type="button" role="tab" aria-selected={i === at} tabIndex={i === at ? 0 : -1} onClick={() => pick(i)} onKeyDown={(e) => key(e, i)}>
-                {i === at && <motion.span layoutId="cp-tab" className="cp-tab-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
-                <span>{t}</span>
-                {i === at && !mine && !calm && <i key={'t' + at} className={'cp-tab-t' + (live ? '' : ' paused')} aria-hidden="true" />}
-              </button>
-            </li>
-          ))}
-        </ol>
-      </div>
     </div>
   );
 }
