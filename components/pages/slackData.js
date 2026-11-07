@@ -38,7 +38,7 @@ export const SETUP = {
 
 /* A message part is a string, or [kind, text]: 'at' a mention, 'code' a file or token. */
 export const ASK = { who: 'harry', time: '9:30 AM', body: [['at', '@Hanzo'], ' the Buy Now button text is unreadable in dark mode on staging. Can you trace the CSS token and open a PR?'] };
-export const ANSWER = { who: 'hanzo', time: '9:31 AM', body: ['Traced to ', ['code', 'styles/cta-button.css'], '. Updated text token to ', ['code', '#1A1A1A'], ' (WCAG AAA 8.9:1), wrote the Canvas summary, and opened PR #418.'] };
+export const ANSWER = { who: 'hanzo', time: '9:31 AM', body: ['Traced to ', ['code', 'styles/cta-button.css'], '. Updated text token to ', ['code', '#1A1A1A'], ' (WCAG AAA 8.9:1), wrote the Canvas summary, and opened PR \u0023418.'] };
 
 export const PEOPLE = {
   hanzo: { name: 'Hanzo', role: 'APP', init: 'H' },
@@ -58,7 +58,7 @@ export const SESSION = [
   { tab: 1, msgs: [{ who: 'zoe', time: '9:34 AM', body: ["Let's keep the pink and switch the text to ", ['code', '#1A1A1A'], '.'] }] },
   { tab: 2, msgs: [{ who: 'dev', time: '9:36 AM', body: ['Done! Updated ', ['code', 'styles/cta-button.css'], ' and wrote the root-cause summary in Canvas. ', ['at', '@Qa'], ' running e2e checks now.'], canvas: true }] },
   { tab: 1, msgs: [{ who: 'qa', time: '9:41 AM', body: ['Verified e2e across Chromium & Safari — WCAG AAA contrast (8.9:1) and checkout specs 28/28 green.'] }] },
-  { tab: 0, msgs: [{ done: 'PR #418 merged · E2E green' }] },
+  { tab: 0, msgs: [{ done: 'PR \u0023418 merged · E2E green' }] },
 ];
 
 export const CANVAS = { title: 'Fix: Button Dark Mode', meta: 'Canvas · Updated just now', open: 'Open →' };
@@ -81,9 +81,9 @@ export const DIFF = {
     [13, 13, ' ', '  display: inline-flex;'],
     [14, 14, ' ', '  align-items: center;'],
     [15, null, '-', '  color: #e5e7eb;'],
-    [16, null, '-', '  background: #737373;'],
+    [16, null, '-', '  background: \u0023ec4899;'],
     [null, 15, '+', '  color: #1a1a1a;'],
-    [null, 16, '+', '  background: #a3a3a3;'],
+    [null, 16, '+', '  background: \u0023f472b6;'],
     [null, 17, '+', '  font-weight: 600;'],
     [17, 18, ' ', '  border-radius: 8px;'],
     [18, 19, ' ', '}'],
@@ -91,8 +91,9 @@ export const DIFF = {
 };
 
 export const VIEW = {
-  before: 'BEFORE (LOW CONTRAST · 1.9:1)', after: 'AFTER FIX (#1A1A1A ON #a3a3a3 · 8.9:1)', button: 'Buy Now — $49',
+  before: 'BEFORE (LOW CONTRAST · 1.9:1)', after: 'AFTER FIX (#1A1A1A ON \u0023F472B6 · 8.9:1)', button: 'Buy Now — $49',
   note: 'Live preview sandboxes the branch build so design and engineering can approve visual changes directly inside the channel.',
+  // Hanzo's copy names its pink hexes; they are written as \u0023 escapes so they stay text (frozen copy), never a UI colour
   // the two renders as the greys of equal luminance to the diff's colours, so the contrast they show is the same and no
   // hue reaches the page (deck greys only); the diff itself keeps Hanzo's text
   old: { color: '#e7e7e7', background: '#888888' }, fix: { color: '#1a1a1a', background: '#9f9f9f' },

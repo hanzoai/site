@@ -29,7 +29,7 @@ import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/rea
 import { A, More } from '../kit';
 import MaskLines from '../v2/MaskLines';
 import SceneWipe from '../v2/SceneWipe';
-import DetailSheet from '../v2/DetailSheet';
+import DetailSheet from '../v2/x-pascal/DetailSheet'; // the coherent <dialog> build: main's v2/DetailSheet.jsx is the older div build against dialog-only CSS (docs/requests/trust.md)
 import '../v2/ProofScale.css';
 import '../v2/ProofRhythm.css';
 import './Trust.css';
