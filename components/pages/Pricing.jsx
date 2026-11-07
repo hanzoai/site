@@ -1,6 +1,6 @@
 'use client';
 /* Pricing, v2 (VISION archetype E, Utility: calm, precise and fast, with one delight; PLAN-COMPONENTS 5.2).
-   V2: 8/10 one plan panel that morphs between tabs and plans (one solid ask), the model art answering the plan picked, names that roll through a clipped slot like the odometer beside them; greys only
+   V2: 8/10 one plan panel that morphs between tabs and plans (one solid ask), the model art answering the plan picked, names that roll through a clipped slot like the odometer beside them; section entrances text-mask-film, grow-from-point, scroll-tilt, vertical-ticker, underline-sweep; greys only
    Persona: a builder or a team lead choosing a plan. Goal: know the price before you ask. CTA: "Try Hanzo" on the plan
    you pick (data-cta pricing.free / pricing.go / pricing.pro); metric: cta_click on those ids.
    Thesis: know the price before you ask.
@@ -24,7 +24,7 @@
 // Signature: one plan panel, many states: tabs and the plan rail morph a single panel (height, name, rolling price, Hanzo's lines) with no cut, and the Pro row walks its ladder
 // Beyond: the compare sheet: every personal plan's own lines side by side with what each inherits, opened out of the panel
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, MotionConfig, useInView } from 'motion/react';
+import { motion, AnimatePresence, MotionConfig, useInView, useScroll, useVelocity, useTransform, useSpring } from 'motion/react';
 import { EASE, useCalm } from '../ui';
 import { A, More, Cta, Tabs, Faq, DataTable, Band, Img } from '../kit';
 import Odometer from '../v2/Odometer';
@@ -240,13 +240,47 @@ function Seats({ s, set }) {
 }
 
 // Hanzo's own trust links, beside the asks (PLAN-COMPONENTS 2.4 "Pricing objections")
-const Trust = () => (
-  <div className="xpr-trust">
-    <More to="/security">How Hanzo is secured</More>
-    <More to="/trust">Trust center</More>
-    <More to="/privacy">Read the Privacy Policy</More>
-  </div>
-);
+// scroll-tilt: the row arrives leaning back and levels out, then leans on rotateX with the speed of the scroll
+function Trust() {
+  const calm = useCalm();
+  const [on, setOn] = useState(false); // after hydration and only when motion is welcome
+  useEffect(() => setOn(!calm), [calm]);
+  const { scrollY } = useScroll();
+  const tilt = useSpring(useTransform(useVelocity(scrollY), [-2600, 0, 2600], [-9, 0, 9], { clamp: true }), { stiffness: 170, damping: 26 });
+  return (
+    <motion.div className="xpr-trust-w" style={on ? { rotateX: tilt, transformPerspective: 900 } : undefined}>
+      <div className="xpr-trust" data-enter="scroll-tilt">
+        <More to="/security">How Hanzo is secured</More>
+        <More to="/trust">Trust center</More>
+        <More to="/privacy">Read the Privacy Policy</More>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ---------- section entrances (MOTION-MAP /pricing: text-mask-film, grow-from-point, scroll-tilt, vertical-ticker,
+   underline-sweep), page-local. The first two are on the first screen, so they play from the first paint in CSS (no
+   wait on hydration); the rest are marked once with data-in by one observer when a quarter of them (or of the screen)
+   is in view, and Pricing.css plays them. Start states live under html.js and prefers-reduced-motion: no-preference,
+   so the server markup is final and JS off or reduced motion show everything at rest. ---------- */
+function useEnter(root) {
+  useEffect(() => {
+    const band = root.current?.querySelector('.x-band');
+    if (band && !band.dataset.enter) band.dataset.enter = 'underline-sweep'; // the kit Band, swept page-locally
+    const els = [...(root.current?.querySelectorAll('[data-enter]:not([data-enter="text-mask-film"]):not([data-enter="grow-from-point"])') || [])];
+    if (typeof IntersectionObserver === 'undefined') { els.forEach((el) => { el.dataset.in = ''; }); return; }
+    const timers = [];
+    const io = new IntersectionObserver((es) => es.forEach((e) => {
+      if (!e.isIntersecting || (e.intersectionRatio < 0.25 && e.intersectionRect.height < innerHeight * 0.25)) return;
+      const el = e.target;
+      el.dataset.in = '';
+      io.unobserve(el);
+      timers.push(setTimeout(() => { el.dataset.done = ''; }, 2200));
+    }), { threshold: [0, 0.1, 0.25, 0.5] });
+    els.forEach((el) => io.observe(el));
+    return () => { io.disconnect(); timers.forEach(clearTimeout); };
+  }, [root]);
+}
 
 /* ---------- the signature: ONE plan panel. The rail picks a plan, the tabs pick a set; the panel never remounts ---------- */
 function PlanPanel({ tab, at, setAt, s, set, open, hand, live }) {
@@ -273,7 +307,7 @@ function PlanPanel({ tab, at, setAt, s, set, open, hand, live }) {
   };
   const note = p.alt ? <A to={p.alt[1]} className="xpr-alt">{p.alt[0]}</A> : lines(p.note).map((n) => <span key={n} className="xpr-line">{n}</span>);
   return (
-    <div className="xpr-morph" role="tabpanel" id={'xpr-plans-panel-' + tab} aria-labelledby={'xpr-plans-tab-' + tab} data-set={tab} onPointerEnter={hand} onFocusCapture={hand}>
+    <div className="xpr-morph" data-enter="grow-from-point" role="tabpanel" id={'xpr-plans-panel-' + tab} aria-labelledby={'xpr-plans-tab-' + tab} data-set={tab} onPointerEnter={hand} onFocusCapture={hand}>
       <MotionCfg calm={calm}>
         <div className="xpr-rail" role="radiogroup" aria-label={TABS[tab]} onKeyDown={keys}>
           <AnimatePresence mode="popLayout" initial={false}>
@@ -620,6 +654,8 @@ function Art({ lit }) {
 const TABS = ['Personal', 'Team', 'API'];
 
 export default function Pricing() {
+  const root = useRef(null);
+  useEnter(root);
   const [tab, setTab] = useState(0);
   const [ats, setAts] = useState([0, 0, 0]); // the plan picked in each set (the lowest by default: Free, Team, Pay as you go)
   const at = ats[tab];
@@ -663,10 +699,10 @@ export default function Pricing() {
   const open = useCallback((e, col) => { setLit(col); setSrc(e.currentTarget.closest('.xpr-morph') || e.currentTarget); }, []);
   const close = useCallback(() => setSrc(null), []);
   return (
-    <main className="xpr">
+    <main ref={root} className="xpr">
       <section className="xpr-hero" aria-labelledby="xpr-h1">
         <div className="xpr-w xpr-hero-g">
-          <h1 id="xpr-h1" className="xpr-h1"><span className="xpr-cut"><span>Pricing</span></span></h1>
+          <h1 id="xpr-h1" className="xpr-h1" data-enter="text-mask-film"><span className="xpr-cut"><span>Pricing</span></span></h1>
           <p className="xpr-lede">Start free, every model on one bill.</p>
           <Art lit={artOn} />
         </div>
@@ -687,7 +723,7 @@ export default function Pricing() {
       <section className="xpr-faq" aria-labelledby="xpr-faq-h">
         <div className="xpr-w xpr-split">
           <header className="xpr-stick"><h2 id="xpr-faq-h" className="xpr-h">Frequently Asked Questions</h2></header>
-          <div>
+          <div data-enter="vertical-ticker">
             <Faq items={QA.slice(0, 3)} first={0} multi />
             <details className="xpr-faq-more">
               <summary><span>Read more</span><span className="xpr-faq-n" aria-hidden="true">+ {QA.length - 3}</span></summary>
