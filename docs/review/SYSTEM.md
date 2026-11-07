@@ -82,21 +82,18 @@ const [i, setI] = useState(0);
 - Give the heading your own `font-size` and `line-height`; the mask clips at the line box.
 - `play="load"` is for heroes; the default plays once in view.
 
-## 5. The ask: one solid button on screen
+## 5. The ask: the header carries it (MASTER 3.2 rule 6)
 
-- **The ask bar** (`components/Ask.jsx`, mounted for you) arrives once the hero has gone by, on every page at every width:
-  - **Desktop:** a small bar at the bottom centre with the Hanzo mark, the page name (tap it to go back to the top), search and the ask.
-  - **Phones (900px and under):** a full-width bar under the thumb.
-  - It replaces the old phone thumb bar and reads the same attributes.
-- **One solid button on screen at any moment.** The header's "Try Hanzo" is an outline whenever any solid button of the page (`.x-btn.solid`, `[data-thumb]`, `.x-band`) is on screen, or the bar is showing; otherwise it is solid. The bar also steps aside while a page solid is in view.
-- **`data-thumb` on your hero's main button** (or `<Cta thumb>`). The bar then carries your words and href, for example `<Go to="/contact-sales" solid data-thumb="Talk to sales">Talk to sales</Go>`. Without it, the bar carries the header's "Try Hanzo". A `data-thumb` on a `display: contents` wrapper works too.
-- **Optional attributes:**
-  - `data-ask-name="Hanzo Dev"`: the page name in the bar. The default is the first part of the `<title>`.
-  - `data-ask-note="No card needed"`: a 12px risk line beside the button on desktop. Use Hanzo's words only.
-  - `data-ask-hide` on a section whose bottom edge the bar must not cover.
-  - `data-ask="off"` on `<main>` for a page with no ask (the 404 and error pages use it).
-  - `data-dock` on your own fixed bottom bar.
-- **It also yields to** the footer, the closing `.x-band`, menus, search, sheets, the cookie note and the phone keyboard.
+- **The one solid ask is Hanzo's own "Try Hanzo" in the sticky header, at every width.** It stays solid; it never outlines or fades.
+- **Nothing floats over content on desktop.** The bottom pill bar is gone.
+- **Phones (700px and under):** a slim, quiet (not solid) bar carries your page's own ask once your hero's button has gone by. It shows only when all of these hold:
+  - your page marks its ask with `data-thumb`, and its words differ from "Try Hanzo";
+  - the page is at rest, not mid-scroll;
+  - no text, picture, control or card sits under it;
+  - your own ask, or any button with the same words, is not on screen;
+  - the footer, the closing `.x-band`, `[data-ask-hide]`, menus, sheets, the cookie note and the keyboard are not in the way.
+- **What you do:** put `data-thumb` on your hero's main button, or use `<Cta thumb>`. Use `data-ask="off"` on `<main>` for none, and `data-dock` on your own fixed bottom bar.
+- **Your own solid buttons:** keep one per view. The header's is always there, so make secondary asks text links.
 
 ## 6. Header and menus
 
@@ -115,19 +112,33 @@ const [i, setI] = useState(0);
 - **No overlay blurs the page.** One backdrop blur per page, the header's. The menu scrim and the search backdrop are now a plain tint.
 - **The header does not hide on scroll.** Over 40 page stickies assume a 60px header at `top: 60px`, and hiding it would open gaps above all of them.
 
-## 7. Page transitions (card to page)
+## 7. Page transitions (card to page, the synchronized.studio move)
 
-`components/Morph.jsx` is already on:
+`components/Morph.jsx` is already on, and it never waits on the network before moving.
 
-- Every in-site click is a ~600ms View Transition.
-- A big link (160×90 or larger), or anything marked `data-morph` inside a link, flies into the next page's `[data-morph-target]`. Without a target, it flies into the first section.
-- Small links turn the page while the header stays put.
-- Opt out with `data-no-morph`.
-- Pages are fetched on hover and on the first touch.
-- **Back and Forward** turn the page the other way and keep the scroll the browser restores.
-- **The screen is never held more than 700ms.** A slow page simply cuts over when it is ready.
-- **After every navigation, focus lands on the new page's `<main> h1`** (no ring, no scroll), so screen readers hear where they are. Keep one h1 per page inside `<main>`.
-- Reduced motion, new-tab clicks and browsers without View Transitions navigate instantly.
+- **Opening a card:** a big link (160×90 or larger), or anything marked `data-morph` inside a link, grows at once into a full-screen stage. The stage carries the card's picture (img, video, canvas or large SVG), its colour (its largest painted surface) and its title.
+- **Landing:** the next page loads under the stage. Once it has painted, the stage settles into the next page's `[data-morph-target]`, or its first section, and dissolves. Each step takes about 600ms.
+- **Help it land well:** put `data-morph-target` on your hero, and keep your hero's title the same words as the card's title.
+- **Small links and Back/Forward:** the page dims at once and the next one fades in. This is opacity only, so pinned and fixed parts never jump. The header never moves.
+- **Opting out and fallbacks:**
+  - `data-no-morph` opts out.
+  - `[data-card]` (the WebGL opener's cards) keep their own transition.
+  - Reduced motion and new-tab clicks navigate instantly.
+- **Prefetch:** pages are fetched on hover and on the first touch.
+- **Focus:** after every navigation, focus lands on the new page's `<main> h1` (no ring, no scroll). Keep one h1 per page inside `<main>`.
+- **Measured:** /careers, /customers and /blog at 1470×801 and 375×812. Open takes about 0.7s and land about 0.7s, with no skips.
+
+## 7b. Sound (JAMES rule 10)
+
+`lib/sound.js` and `components/Sound.jsx` are mounted for you.
+
+- **Six synthesized sounds at about -24 dB:** whoosh (a card opens), tap (a solid ask), tick (tabs, toggles, switches, FAQ), chime (a copy that really happened), pop (⌘K) and done (a demo finishing).
+- **When they play:** never before the first click or key, and never on hover, scroll or load. One plays at a time.
+- **Mute:** a toggle in the header (and in the phone menu sheet) mutes them, and the choice is remembered.
+- **Your page:**
+  - Call `play('done')` from `lib/sound.js` when your self-running demo finishes.
+  - Put `data-sound="tick"` on a control to give it a sound, or `data-sound=""` to silence one.
+  - Do not add your own audio.
 
 ## 8. Fonts: no visible swap
 
@@ -225,6 +236,8 @@ export default function Page() { return <><JsonLd route="/your/path" /><YourPage
 
 ## 11b. JS off: every word legible (PLAN 2.3, P1)
 
+- **Never put `<noscript>` in a client component.** It cannot hydrate, and it puts Next's red error badge on your page. Use `<NoJs css="…" />` from `components/NoJs.jsx` instead. It writes the same CSS as a plain `<style>` scoped under `html:not(.js)`, so it applies only when JavaScript is off. The v2 kit (PinScenes, DetailSheet, MaskLines, the A2 and Fam kits) already uses it.
+
 - **Inline entrance states are cleared for you.** With JS off, a `<noscript>` rule clears every entrance state written inline into the server HTML: Motion's `initial={{ opacity: 0, y }}`, clip-paths and `visibility: hidden`.
 - **States your own CSS hides are yours to fix.** This covers chapter text shown one at a time, captions waiting for a scroll, and `opacity: 0` set in a class. Scope them to JS: `html.js` is set before first paint whenever JS runs. Write `.js .my-step:not(.on) { opacity: 0 }`, not `.my-step:not(.on) { opacity: 0 }`.
 - **Reviews count these.** On /api, /compare, /metrics and the home chapters, 8 to 16 text blocks are still invisible with JS off for this reason.
@@ -257,6 +270,8 @@ export default function Page() { return <><JsonLd route="/your/path" /><YourPage
 - **The 1.5s DOM pollers** in the shell became one observer.
 - **Logo marquee** (home): it now has a pause button (icon only, named Pause or Play) and stands still under reduced motion.
 - **Phone keyboard:** the viewport uses `interactive-widget=resizes-content`, so the keyboard never covers the field being typed in.
+- **No cursor label.** The cursor-following "Open" label is gone (MASTER 3.3: nothing floats over content). Your `data-cursor` attributes do nothing now.
+- **No desktop ask bar.** The header's solid "Try Hanzo" carries the ask (section 5).
 - **Lenis:** mouse and trackpad only, loaded after first paint. `window.__lenis` can be undefined for the first moments and on touch; `lib/scroll.js` handles both.
 
 ## Known breaks on main, owned by their page chats
@@ -275,4 +290,4 @@ export default function Page() { return <><JsonLd route="/your/path" /><YourPage
 ## Requests to the shared system
 
 Write each request as one line: the page, what you need, and why.
-- **Every page (Proof chat, 7 Nov): in-site clicks freeze about 4s and the card-to-page morph never plays.** In `components/Morph.jsx`, the View Transition's update callback resolves through `requestAnimationFrame(() => ok())` (lines ~34 and ~71). Chromium runs no animation frames while a transition holds rendering, so the promise only settles at its own ~4s timeout (measured: 4,069ms with rAF, 81ms with `setTimeout(ok, 16)`). Fix: resolve with `setTimeout(ok, 16)` in both places. With that simulated, the /integrations and /open-source cards land in their destination headlines.
+- **Resolved (Morph rebuilt, section 7).** No View Transition waits on the next page any more, so nothing freezes. Original report: **Every page (Proof chat, 7 Nov): in-site clicks freeze about 4s and the card-to-page morph never plays.** In `components/Morph.jsx`, the View Transition's update callback resolves through `requestAnimationFrame(() => ok())` (lines ~34 and ~71). Chromium runs no animation frames while a transition holds rendering, so the promise only settles at its own ~4s timeout (measured: 4,069ms with rAF, 81ms with `setTimeout(ok, 16)`). Fix: resolve with `setTimeout(ok, 16)` in both places. With that simulated, the /integrations and /open-source cards land in their destination headlines.
