@@ -122,6 +122,8 @@ html.js .xst-submit.later { display: none; }
 .xst-f label, .xst-set legend { font-size: 15px; font-weight: 500; }
 .xst-f label span, .xst-set legend span { font-weight: 400; color: var(--soft); }
 .xst-f label i { font-style: normal; color: var(--faint); }
+.xst-f .xst-lt, .xst-set .xst-lt { font-weight: inherit; color: inherit; }
+.xst-uses .xst-u-t, .xst-byo-t .xst-u-t { display: block; font-size: inherit; font-weight: 500; color: var(--ink); }
 .xst-f input, .xst-f select, .xst-f textarea { width: 100%; box-sizing: border-box; min-height: 60px; padding: 16px 20px; border-radius: 16px; border: 1px solid rgba(0, 0, 0, .14); background: #fff; font: 400 17px/1.4 var(--sans); color: var(--ink); outline: none; transition: border-color .2s, box-shadow .2s; }
 .xst-f textarea { resize: vertical; }
 .xst-f input:focus-visible, .xst-f select:focus-visible, .xst-f textarea:focus-visible { border-color: var(--xp-accent); box-shadow: 0 0 0 4px rgba(115, 115, 115, .14); }
@@ -242,3 +244,10 @@ html.js .xst-submit.later { display: none; }
   .xst-match .xst-track::after { content: ''; position: absolute; left: 0; bottom: 0; width: 30%; height: 2px; background: rgba(255, 255, 255, .35); animation: xst-scan 3.2s cubic-bezier(.4, 0, .2, 1) infinite; }
 }
 @keyframes xst-scan { from { transform: translateX(-100%); } to { transform: translateX(340%); } }
+
+/* Hanzo's hero picture (Zen, /models/zen.webp) restored at the head of the credits card, bleeding to its edges */
+.xst-art { justify-self: stretch; display: block; margin: calc(-1 * clamp(28px, 3.2vw, 48px)) calc(-1 * clamp(28px, 3.2vw, 48px)) 6px; aspect-ratio: 16 / 8; overflow: hidden; background: #f5f5f5; }
+.xst-art img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; transform: scale(1.04); transition: transform 1.2s cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) { .xst-fig:hover .xst-art img { transform: scale(1.08); } }
+@media (max-width: 899px) { .xst-art { margin: -16px -20px 4px; aspect-ratio: 16 / 6; } }
+@media (prefers-reduced-motion: reduce) { .xst-art img { transition: none; } }

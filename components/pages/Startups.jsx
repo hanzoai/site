@@ -87,12 +87,13 @@ function Hero() {
           <motion.div initial={{ y: 16 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.4 }}>
             <p className="xp-lede xst-lede">Everyone starts free. Venture-backed teams get up to $150,000 in credits.</p>
             <div className="xst-acts">
-              <a href="#apply" className="xp-cta" data-thumb="Apply for credits" data-cta="startups.hero" onClick={() => setTimeout(() => document.getElementById('company')?.focus({ preventScroll: true }), 700)}>Apply for credits<i aria-hidden="true">↓</i></a>
+              <a href="#apply" className="xp-cta" data-thumb="Apply for credits" data-cta="startups.hero" onClick={() => setTimeout(() => document.getElementById('company')?.focus({ preventScroll: true }), 700)}><span>Apply for credits</span><i aria-hidden="true">↓</i></a>
               <A to="https://platform.hanzo.ai" className="xp-ghost">Start building free</A>
             </div>
           </motion.div>
         </div>
         <motion.div className="xst-fig" ref={tilt} onPointerMove={lean} onPointerLeave={rest} style={{ rotateX: rx, rotateY: ry, transformPerspective: 900 }} initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.3 }}>
+          <span className="xst-art"><img src="/models/zen.webp" alt="" width="1200" height="1500" decoding="async" /></span>
           <span className="xst-fig-k x-mono" aria-hidden="true">Up to</span>
           <Board />
           <span className="xst-fig-u x-mono" aria-hidden="true">in credits</span>
@@ -132,7 +133,7 @@ function Ladder() {
             </li>
           ))}
         </ol>
-        <p className="xst-ts xp-lede"><b>Techstars founders:</b> Hanzo is a Techstars company. We offer perks tailored to each portfolio brand — mention your batch when you apply and we will match it.</p>
+        <p className="xst-ts xp-lede"><b><span>Techstars founders:</span></b> Hanzo is a Techstars company. We offer perks tailored to each portfolio brand — mention your batch when you apply and we will match it.</p>
       </div>
     </section>
   );
@@ -189,7 +190,7 @@ function Match({ c }) {
 function Field({ id, label, opt, req, err, children }) {
   return (
     <div className="xst-f">
-      <label htmlFor={id}>{label}{opt && <span> {opt}</span>}{req && <i aria-hidden="true"> *</i>}</label>
+      <label htmlFor={id}><span className="xst-lt">{label}</span>{opt && <span> {opt}</span>}{req && <i aria-hidden="true"> *</i>}</label>
       {children}
       {err && <p className="xst-err-i" id={id + '-e'} role="alert">{err}</p>}
     </div>
@@ -211,11 +212,11 @@ function Choice({ id, label, req, hint, opts, value, set, err }) {
   const cur = opts.findIndex((o) => o[0] === value);
   return (
     <fieldset className="xst-set xst-choice">
-      <legend id={id + '-l'}>{label}{req && <i aria-hidden="true"> *</i>} <span className="xst-hint" aria-hidden={!!value}>{value ? '' : hint}</span></legend>
+      <legend id={id + '-l'}><span className="xst-lt">{label}</span>{req && <i aria-hidden="true"> *</i>} <span className="xst-hint" aria-hidden={!!value}>{value ? '' : hint}</span></legend>
       <div className="xst-chips" role="radiogroup" aria-labelledby={id + '-l'} aria-required={req || undefined} aria-invalid={err ? true : undefined} aria-describedby={err ? id + '-e' : undefined} ref={box} id={id}>
         {opts.map(([v, l], i) => (
           <button key={v} type="button" role="radio" aria-checked={value === v} tabIndex={(cur < 0 ? i === 0 : i === cur) ? 0 : -1} onClick={() => set(v)} onKeyDown={(e) => key(e, i)}>
-            <i aria-hidden="true" className="xst-dot" />{l}
+            <i aria-hidden="true" className="xst-dot" /><span>{l}</span>
           </button>
         ))}
       </div>
@@ -319,7 +320,7 @@ function Apply() {
                   <div className="xst-chips">
                     {Object.keys(TIER1).map((n) => (
                       <button key={n} type="button" aria-pressed={c.tier1Investors.includes(n)} onClick={() => flip('tier1Investors', n)}>
-                        <i aria-hidden="true"><svg viewBox="0 0 24 24" width="10" height="10"><path d="M5 13l4 4L19 7" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg></i>{n}
+                        <i aria-hidden="true"><svg viewBox="0 0 24 24" width="10" height="10"><path d="M5 13l4 4L19 7" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg></i><span>{n}</span>
                       </button>
                     ))}
                   </div>
@@ -332,12 +333,12 @@ function Apply() {
                 <div className={'xst-step' + (step === 2 ? ' on' : '')}>
                 <Field id="building" err={fe('building')} label="What are you building?" req><textarea id="building" name="building" {...inv('building')} required rows={4} value={c.building} onChange={on} placeholder="Describe your product, who it is for, and where you are today..." /></Field>
                 <fieldset className="xst-set">
-                  <legend>How will you use Hanzo?</legend>
+                  <legend><span className="xst-lt">How will you use Hanzo?</span></legend>
                   <div className="xst-uses">
                     {USES.map(([id, l, d]) => (
                       <button key={id} type="button" aria-pressed={c.useCases.includes(id)} onClick={() => flip('useCases', id)}>
                         <i aria-hidden="true"><svg viewBox="0 0 24 24" width="10" height="10"><path d="M5 13l4 4L19 7" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg></i>
-                        <span><b>{l}</b><span>{d}</span></span>
+                        <span><span className="xst-u-t">{l}</span><span>{d}</span></span>
                       </button>
                     ))}
                   </div>
@@ -345,7 +346,7 @@ function Apply() {
                 <Field id="infraSpend" label="Current infra / compute spend per month" opt="(optional)"><input id="infraSpend" name="infraSpend" type="text" value={c.infraSpend} onChange={on} placeholder="$3,000 / mo" /></Field>
                 <button type="button" className="xst-byo-t" aria-pressed={c.byoCompute} onClick={() => setC({ ...c, byoCompute: !c.byoCompute })}>
                   <i aria-hidden="true"><svg viewBox="0 0 24 24" width="12" height="12"><path d="M5 13l4 4L19 7" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg></i>
-                  <span><b>I want to bring my own compute</b><span>Connect your own GPUs or machines and run on hardware you already own.</span></span>
+                  <span><span className="xst-u-t">I want to bring my own compute</span><span>Connect your own GPUs or machines and run on hardware you already own.</span></span>
                 </button>
                 <AnimatePresence initial={false}>
                   {c.byoCompute && (

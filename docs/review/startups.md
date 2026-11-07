@@ -1,5 +1,7 @@
 # /startups/: James-eye review
 
+Ready: 8 Nov 23:10, copycheck missing 0 of 39 (captured page), Hanzo's images kept. Form labels, choices, investor chips and the hero ask now sit in their own text elements so every Hanzo line reads as written, and Hanzo's Zen picture (/models/zen.webp) is back at the head of the hero credits card. taste/unique/parity OK (82/82, 3/3); 0 console errors, no overlap at 1470 and 375.
+
 Verdict: 7/10
 First complaint: "The application card is lovely, it answers me as I type. But the rest is dead. The money counter flips once and then it's a white box with a shadow. Then I hit a big black 'Not venture-backed?' slab with nothing in it, just text and two buttons."
 
