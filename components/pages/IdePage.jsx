@@ -1,6 +1,12 @@
 'use client';
+// Persona: a developer choosing an AI editor.
+// Goal: open the IDE.
+// CTA: Open the IDE (ide.hero; the close repeats it in the Band).
+// Metric: cta_click ide.hero
+// Signature: an editor that remembers: real code, memories surfacing in its gutter, the editor settling as you scroll.
+// Beyond: Tell it something: file one thing about your project in a memory and watch it fade and come back.
 /* Hanzo IDE.
-   V2: 8/10 real code in a live editor that starts under the buttons and settles as you scroll, memories surfacing in its gutter from the first second; the workbench exploding off its Rust engine, three pinned chapters, one dark room, a start script that types itself, related apps as cards that open into their pages. Greys only.
+   V2: 8/10 the deck scale (h1 52, sections 26, one statement that grows while it is the moment); real code in a live editor with a pause control, memories surfacing in its gutter from the first second; the workbench exploding off its Rust engine, three pinned chapters, one dark room that opens from a rounded card, a start script that types itself, kit Cta and Band, related apps that open into their pages. Greys only.
    Persona: a developer choosing an AI editor. Goal: open the IDE. CTA: Open the IDE (ide.hero, sticky in the ask bar).
    Metric: cta_click on ide.hero and ide.close (data-cta; the event layer is the conductor's).
    Signature: an editor that remembers. The hero object is the workbench itself: it starts huge and settles as you
@@ -15,11 +21,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useMotionValue, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { Copy, Mark } from '../ui';
-import { A, Go } from '../kit';
+import { A, Cta, Band } from '../kit';
 import A2Lines from '../v2/A2Lines';
 import A2Paste from '../v2/A2Paste';
 import A2Chapters from '../v2/A2Chapters';
 import useNarrow from '../v2/A2Narrow';
+import A2Pause from '../v2/A2Pause';
+import A2Room from '../v2/A2Room';
+import A2Grow from '../v2/A2Grow';
+import { MOVE } from '../v2/A2Motion';
 import '../v2/A2.css';
 import './IdePage.css';
 
@@ -50,19 +60,22 @@ function Editor() {
   const seen = useInView(ref, { amount: 0.01 }); // it starts the moment any of it is on screen, so the hero is alive at once
   const calm = useReducedMotion();
   const [t, setT] = useState(99); // the finished picture is in the HTML; the browser replays it
+  const [paused, setPaused] = useState(false);
   useEffect(() => {
+    if (paused) return;
     if (!seen || calm) { setT(99); return; }
     let alive = true, h = 0;
     const end = LAST + 6;
     const tick = (v) => { if (!alive) return; setT(v); h = setTimeout(() => tick(v >= end ? 0 : v + 1), v >= end ? 4200 : 520); };
     tick(0);
     return () => { alive = false; clearTimeout(h); };
-  }, [seen, calm]);
+  }, [seen, calm, paused]);
   const cursor = Math.min(t, LAST);
   const hit = t >= LAST + 1 && t < 99 ? true : t === 99;
   return (
-    <div className="ide-win" ref={ref}>
+    <div className={'ide-win' + (paused ? ' a2-paused' : '')} ref={ref}>
       <div className="ide-bar">
+        <A2Pause paused={paused} onChange={setPaused} label="Pause" className="ide-pause" />
         <span className="ide-dots" aria-hidden="true"><i /><i /><i /></span>
         <span className="ide-title"><b>IDE</b> — Hanzo</span>
       </div>
@@ -84,7 +97,7 @@ function Editor() {
           </ol>
           <ul className="ide-mems">
             {MEMS.map(([line, kind, what]) => (
-              <motion.li key={kind} className={'ide-mem k-' + kind} style={{ top: line * 28 + 'px' }} initial={false} animate={t >= line + 1 ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0, x: 16, scale: 0.94 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} tabIndex={0}>
+              <motion.li key={kind} className={'ide-mem k-' + kind} style={{ top: line * 28 + 'px' }} initial={false} animate={t >= line + 1 ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0, x: 16, scale: 0.94 }} transition={MOVE} tabIndex={0}>
                 <span className="ide-mem-k x-mono">{kind}</span>
                 <span className="ide-mem-w">{what}</span>
               </motion.li>
@@ -145,10 +158,10 @@ function Stage() {
       <div className="ide-stick">
         <motion.div className="a2-wrap ide-copy" style={{ opacity: fade, y: lift }} ref={copy}>
           <p className="a2-kick"><b>Hanzo IDE</b> · Developers</p>
-          <A2Lines as="h1" id="ide-h1" className="a2-display m ide-h1" lines={['An IDE that remembers', 'your codebase']} now />
+          <A2Lines as="h1" id="ide-h1" className="a2-display ide-h1" lines={['An IDE that remembers', 'your codebase']} now />
           <div className="ide-copy-row">
             <p className="a2-lede">The editor you already know, on a Rust engine that is ours. The agent keeps a memory of your project across sessions, reads the call graph before it changes a line, and runs every tool in a sandbox.</p>
-            <div className="a2-acts"><A to={IDE} className="x-btn solid" data-thumb="Open the IDE" data-cta="ide.hero">Open the IDE</A><Go to={GH}>View on GitHub</Go></div>
+            <div className="a2-acts"><Cta to={IDE} id="ide.hero" thumb>Open the IDE</Cta><Cta to={GH} kind="link">View on GitHub</Cta></div>
           </div>
         </motion.div>
         <motion.div className="ide-obj" style={{ scale, y }} ref={obj}>
@@ -190,7 +203,7 @@ function Engine() {
       <div className="a2-wrap a2-grid">
         <div className="ide-engine-copy">
           <p className="a2-kick">What is Hanzo IDE</p>
-          <A2Lines id="ide-engine-h" className="a2-display s" lines={['The workbench you know,', 'on an engine', 'that is ours']} />
+          <A2Grow to={1.55}><A2Lines id="ide-engine-h" className="a2-display s" lines={['The workbench you know,', 'on an engine', 'that is ours']} /></A2Grow>
           <p className="a2-body">The editor surface, the extension model and the keybindings are the ones you use today. Everything under them is Rust: the agent loop, the memory, the indexing, the sandbox.</p>
         </div>
         <div className="ide-engine-vis"><Planes /></div>
@@ -266,14 +279,14 @@ function Teach() {
         <div className="a2-grid ide-teach-top">
           <div className="ide-teach-l">
             <p className="a2-kick">It remembers</p>
-            <A2Lines id="ide-teach-h" className="a2-display s" lines={['Tell it', 'something']} />
+            <h2 id="ide-teach-h" className="a2-headline">It remembers</h2>
           </div>
           <form className="ide-teach-f" onSubmit={add}>
-            <input value={text} onChange={(e) => setText(e.target.value)} maxLength={120} placeholder="One thing about your project" aria-label="One thing about your project" />
+            <input value={text} onChange={(e) => setText(e.target.value)} maxLength={120} aria-label="One thing about your project" />
             <div role="radiogroup" aria-label="Kind of memory">
               {MEMS.map(([, k, d], i) => <button key={k} type="button" role="radio" aria-checked={kind === i} onClick={() => setKind(i)}>{d}</button>)}
             </div>
-            <button type="submit" className="x-btn solid" disabled={!text.trim()}>Remember it</button>
+            <button type="submit" className="ide-add" disabled={!text.trim()} aria-label="Remember it"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg></button>
           </form>
         </div>
         <div className="ide-teach-g">
@@ -284,9 +297,9 @@ function Teach() {
                 <p className="ide-teach-k"><span className="x-mono">{k}</span> {d}</p>
                 {list.length ? (
                   <ul>{list.map((m) => (
-                    <li key={m.id + ':' + m.n}><span>{m.t}</span><button type="button" onClick={() => recall(m.id)}>Recall</button></li>
+                    <li key={m.id + ':' + m.n}><span>{m.t}</span><button type="button" onClick={() => recall(m.id)} aria-label="Recall"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.5 8a4.5 4.5 0 1 0 1.3-3.2M3.5 2.8v2.5H6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></button></li>
                   ))}</ul>
-                ) : <p className="ide-teach-none">Nothing yet.</p>}
+                ) : <p className="ide-teach-none" aria-label="Nothing yet.">—</p>}
               </div>
             );
           })}
@@ -321,10 +334,11 @@ function Tiers() {
 
 function Caps() {
   const [open, setOpen] = useState(0);
+  const [paused, setPaused] = useState(false);
   return (
-    <section className="a2-sec a2-dark ide-dark" data-room="dark" aria-labelledby="ide-caps-h">
+    <A2Room className="a2-sec ide-dark" aria-labelledby="ide-caps-h">
       <div className="a2-wrap a2-grid">
-        <div className="ide-caps-vis"><div className="ide-tiers-box"><Tiers /></div></div>
+        <div className="ide-caps-vis"><div className={'ide-tiers-box' + (paused ? ' a2-paused' : '')}><A2Pause paused={paused} onChange={setPaused} label="Pause" className="ide-tiers-pause" /><Tiers /></div></div>
         <div className="ide-caps-copy">
           <p className="a2-kick">Capabilities</p>
           <A2Lines id="ide-caps-h" className="a2-headline" lines={['What the window carries']} />
@@ -338,7 +352,7 @@ function Caps() {
           </ul>
         </div>
       </div>
-    </section>
+    </A2Room>
   );
 }
 
@@ -380,24 +394,19 @@ function Start() {
 
 function End() {
   return (
-    <section className="a2-sec ide-end" aria-labelledby="ide-end-h">
+    <section className="a2-sec ide-end" aria-label="Get IDE">
       <div className="a2-wrap">
-        <div className="a2-grid ide-end-in">
-          <div className="ide-end-copy">
-            <A2Lines id="ide-end-h" className="a2-display s" lines={['Open the IDE.', 'It already knows', 'the way around.']} />
-            <p className="a2-lede">Your project, its call graph, and what the agent learned last week, in one window.</p>
-            <div className="a2-acts"><A to={IDE} className="x-btn solid" data-cta="ide.close">Open the IDE</A><Go to={GH}>GitHub</Go><Go to="https://platform.hanzo.ai">Hanzo Cloud</Go></div>
-          </div>
+        <div className="ide-end-in">
           <div className="ide-get">
             <span className="ide-get-i"><Mark size={22} /></span>
-            <h2>Get IDE</h2>
-            <Go to="https://platform.hanzo.ai/deploy">Deploy to Cloud</Go>
+            <h2 className="a2-headline">Get IDE</h2>
+            <div className="ide-get-acts"><Cta to="https://platform.hanzo.ai/deploy" kind="quiet">Deploy to Cloud</Cta><Cta to={GH} kind="link">GitHub</Cta><Cta to="https://platform.hanzo.ai" kind="link">Hanzo Cloud</Cta></div>
           </div>
-        </div>
-        <div className="ide-rel">
-          <p className="a2-kick show">Related capabilities</p>
-          {/* big cards: Morph flies the one you click into the next page's hero (synchronized.studio) */}
-          <div>{[['CLI', '/cli', '$ hanzo'], ['Playground', '/playground', '> _'], ['Desktop', '/desktop', '⌘']].map(([t, to, g]) => <A key={t} to={to} className="ide-rel-a"><span className="ide-rel-g x-mono" aria-hidden="true">{g}</span><b data-morph="">{t}</b><span className="ide-rel-i" aria-hidden="true">→</span></A>)}</div>
+          <div className="ide-rel">
+            <p className="a2-kick show">Related capabilities</p>
+            {/* big cards: Morph flies the one you click into the next page's hero (synchronized.studio) */}
+            <div>{[['CLI', '/cli', '$ hanzo'], ['Playground', '/playground', '> _'], ['Desktop', '/desktop', '⌘']].map(([t, to, g]) => <A key={t} to={to} className="ide-rel-a"><span className="ide-rel-g x-mono" aria-hidden="true">{g}</span><b data-morph="">{t}</b><span className="ide-rel-i" aria-hidden="true">→</span></A>)}</div>
+          </div>
         </div>
       </div>
     </section>
@@ -415,6 +424,7 @@ export default function IdePage() {
       <Caps />
       <Start />
       <End />
+      <Band title="Open the IDE. It already knows the way around." lede="Your project, its call graph, and what the agent learned last week, in one window." action="Open the IDE" to={IDE} />
     </main>
   );
 }
