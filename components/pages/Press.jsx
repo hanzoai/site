@@ -1,30 +1,29 @@
 'use client';
-/* /press. V2: 8/10 (v3 pass, JAMES.md): no hues and no eyebrows. A masthead-size kinetic headline with its one ask beside
-   the press kit dealing its three plates once; the plates as a still asymmetric spread; the boilerplate set like a
-   magazine standfirst with the facts as big figures; the news as an index of huge headlines with a card that follows the
-   pointer; press contact as the one black room; brand and partner assets, channels, and the
-   leadership with their portraits.
-   Persona: a journalist or analyst (PLAN 1.1 "Investor and press") writing about Hanzo, on diligence.
+/* /press. V2: 8/10 Story on the Hanzo deck (the review's fixes). The headline and its one ask sit beside a stack of the
+   three press-kit plates; scroll and the stack itself fans out into the kit (one object, one pinned stage, never shown
+   twice). Hanzo's boilerplate is read word by word, the four facts settle once, the news reads as an editorial index with
+   a card beside the row you point at, press contact is the one black room where the email cuts in with its copy button
+   beside it, then brand assets with the partners as one still row, the channels as a hairline list, and the leadership.
+   Persona: a journalist or analyst writing about Hanzo (MASTER: investors and press).
    Goal: leave with the kit, the facts and the right person to email.
    CTA: "Contact Press Team" (mailto:press@hanzo.ai) in the hero and the shared sticky ask bar (data-thumb), data-cta
    press.hero; "Request Executive Bios" (press.bios) closes the page; metric: one contact click.
-   Signature: the belief line (MASTER 4.4 Story). Hanzo's boilerplate is read word by word: each word turns from
-   faint to ink as it scrolls through the screen, and the four facts below it settle into place once.
-   Supporting (3): masked headline cut-in, once, after the curtain; the kit's plates dealing themselves to the front once;
-   the news index, whose other headlines step back while a card with the story's date and summary rides beside the
-   row you point at (300ms ease-out, never over a headline; on phones the summary sits under its headline). State: the download draws a tick.
-   Beyond: the boilerplate copies in one press, and the press email copies beside the dark room's address, so a writer
+   Signature: the belief line (MASTER 4.4 Story). Hanzo's boilerplate is read word by word: each word turns from faint to
+   ink as it scrolls through the screen, and the four facts below it settle into place once.
+   Supporting (3): masked headline cut-in, once; the kit stack fanning out into the three kit plates as you scroll
+   (pinned stage); the news index, whose other headlines step back while a card with the story's date and summary sits
+   beside the row (300ms ease-out). State: copy and download draw a tick. Arrival: the lede and asks rise once (1 fade-up).
+   Beyond: the boilerplate copies in one press, and the press email copies beside itself in the black room, so a writer
    leaves with both without retyping. Every word and link is Hanzo's.
-   Deletes: the magenta accent; the kickers over the h1 ("Press & Media"), over "Meet our team" ("Leadership") and over
-   the email and address; the "/blog →" text in the news card; the visible "Copy boilerplate" label (icon + aria-label);
-   the endless plate loop; raw <img> (kit Img); opacity:0 arrival states; the contact room's Sigil (third Sigil room among
-   the company pages); springs; the greyscale filter on the portraits; hover transforms outside the deck's list. */
-import { useEffect, useRef, useState } from 'react';
+   Deletes: the second copy of the kit plates (the stack becomes the spread), the 3×3 channel tiles and their icon
+   circles, the six partner boxes, the page tokens that overrode deck.css's greys, the hidden-only "Press & Media" and
+   "Leadership" (now captions under their headings), springs, filters on photos. */
+import { useLayoutEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { Copy, Mark } from '../ui';
 import { A, Img } from '../kit';
+import Sigil from '../Sigil';
 import MaskLines from './company/MaskLines';
-import useArrived from './company/useArrived';
 import '../v2/vc-type.css';
 import './company/deck.css';
 import './Press.css';
@@ -34,32 +33,37 @@ const KIT = '/press/hanzo-press-kit.zip';
 const MAIL = 'mailto:press@hanzo.ai';
 const PLATES = [['Logo - Dark Background', 'White logo for use on dark backgrounds', 'SVG, PNG', 'dark'], ['Logo - Light Background', 'Black logo for use on light backgrounds', 'SVG, PNG', 'light'], ['Icon Only', 'Standalone icon without wordmark', 'SVG, PNG, ICO', 'icon']];
 const ARROW = <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+const DOWN = <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 2.5v8M4.5 7.5 8 11l3.5-3.5M3 13.5h10" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+// JS off: every word visible and in place, the pinned stage laid out flat, no empty pointer card
+const NOJS = { __html: '<style>.xpe-w{opacity:1!important}.xpe-fig span,.xpe-mail-i{transform:none!important}.xpe-kp,.xpe-hk-in{transform:none!important}.xpe-kitc-t,.xpe-hero-c{opacity:1!important}.xpe-hk{height:auto!important}.xpe-hk-st{position:static!important;height:auto!important}.xpe-card{display:none!important}.xpe-ts2{display:block!important}</style>' };
 
-function Plate({ kind, big }) {
-  return (
-    <span className={'xpe-plate ' + kind} aria-hidden="true">
-      <Mark size={kind === 'icon' ? (big ? 120 : 72) : big ? 64 : 40} />
-      {kind !== 'icon' && <b>Hanzo</b>}
-    </span>
-  );
-}
-
-/* a Hanzo picture that steps aside for its fallback when it cannot load (PLAN 2.17) */
+/* A Hanzo picture that steps aside for its fallback when it cannot load (MASTER part 17). */
 function Pic({ fallback = null, ...p }) {
   const [bad, setBad] = useState(false);
   const ref = useRef(null);
-  useEffect(() => { const i = ref.current; if (i && i.complete && !i.naturalWidth) setBad(true); }, []);
+  useLayoutEffect(() => { const i = ref.current; if (i && i.complete && !i.naturalWidth) setBad(true); }, []);
   if (bad) return fallback;
   return <Img ref={ref} {...p} onError={() => setBad(true)} />;
+}
+
+/* ui Copy plus a polite status line, so a screen reader hears "Copied" (MASTER part 8). */
+function CopyIt({ text, label, className }) {
+  const [msg, setMsg] = useState('');
+  return (
+    <span className="xpe-copy" onClickCapture={() => { setMsg('Copied'); setTimeout(() => setMsg(''), 1600); }}>
+      <Copy text={text} label={label} className={className} />
+      <span className="x-sr" role="status">{msg}</span>
+    </span>
+  );
 }
 
 function Download({ className, children, ...rest }) {
   const [got, setGot] = useState(false);
   return (
-    <motion.a href={KIT} download className={className} {...rest} onClick={() => { setGot(true); setTimeout(() => setGot(false), 2200); }} whileTap={{ scale: 0.98 }}>
+    <motion.a href={KIT} download className={className} {...rest} onClick={() => { setGot(true); setTimeout(() => setGot(false), 2200); }} whileTap={{ scale: 0.97 }}>
       <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
         {got
-          ? <motion.path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.35 }} />
+          ? <motion.path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.3 }} />
           : <path d="M8 2.5v8M4.5 7.5 8 11l3.5-3.5M3 13.5h10" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />}
       </svg>
       {children}
@@ -67,66 +71,92 @@ function Download({ className, children, ...rest }) {
   );
 }
 
-function Hero() {
-  const [top, setTop] = useState(0);
-  const [steps, setSteps] = useState(0);
-  const calm = useReducedMotion();
-  const ok = useArrived(); // nothing deals behind the arrival curtain
-  const ref = useRef(null);
-  const live = useInView(ref, { amount: 0.3 });
-  useEffect(() => {
-    if (calm || !ok || !live || steps >= 3) return; // deals the three plates once, then rests with the dark plate in front
-    const t = setTimeout(() => { setTop((v) => (v + 1) % 3); setSteps((s) => s + 1); }, 2400);
-    return () => clearTimeout(t);
-  }, [top, steps, calm, ok, live]);
+function Plate({ kind }) {
   return (
-    <section className="xpe-hero vc-scene" ref={ref} aria-label="Press & Media" data-ask-name="Press & Media">
-      <div className="vc-grid xpe-hero-g">
-        <div className="xpe-hero-c">
-          <MaskLines as="h1" id="xpe-h1" now delay={0.05} lines={['Press', 'Resources.']} className="vc-display xpe-h1" />
-          <div className="xpe-hero-f xpe-in">
-            <p className="vc-lede">Press kit, brand assets, and who to email — for anyone writing about Hanzo AI, Inc.</p>
-            <div className="xpe-acts">
-              <a href={MAIL} className="xpe-cta" data-thumb="Contact Press Team" data-cta="press.hero">Contact Press Team</a>
-              <Download className="xpe-cta q" data-cta="press.kit">Download Press Kit</Download>
-            </div>
-          </div>
-        </div>
-        <div className="xpe-fan xpe-in2">
-          <div className="xpe-fan-s">
-            {PLATES.map(([t, , , kind], i) => {
-              const k = (i - top + 3) % 3;
-              return (
-                <motion.a key={kind} href={KIT} download className="xpe-fan-c" aria-label={'Download Press Kit: ' + t} tabIndex={k === 0 ? 0 : -1}
-                  initial={false} animate={{ x: k * 30, y: k * -34, rotate: [-4, 2, 7][k], scale: 1 - k * 0.07, zIndex: 3 - k, opacity: 1 - k * 0.12 }}
-                  transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}>
-                  <Plate kind={kind} big />
-                  <span className="xpe-fan-l">{t}</span>
-                </motion.a>
-              );
-            })}
-          </div>
-          <p className="xpe-zip"><span className="vc-num">hanzo-press-kit.zip</span><span>SVG · PNG</span></p>
-        </div>
-      </div>
-    </section>
+    <span className={'xpe-plate ' + kind} aria-hidden="true">
+      <Mark size={kind === 'icon' ? 88 : 52} />
+      {kind !== 'icon' && <b>Hanzo</b>}
+    </span>
   );
 }
 
-function Kit() {
+const clamp = (v) => Math.max(0, Math.min(1, v));
+const io = (t) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2); // ease-in-out along the scroll
+const STACK = [[0, 0, -4], [30, -34, 2], [60, -68, 7]]; // the hero stack: offset x, y and turn of each plate
+
+/* One kit plate. In the hero it sits in the stack; as the stage scrolls it travels to its own place in the spread. */
+function KitPlate({ i, t, p, m, tick }) {
+  const g = (v) => io(clamp((v - 0.12) / 0.6));
+  const x = useTransform([p, tick], ([v]) => (m.current ? m.current[i].x * (1 - g(v)) : 0));
+  const y = useTransform([p, tick], ([v]) => (m.current ? m.current[i].y * (1 - g(v)) : 0));
+  const s = useTransform([p, tick], ([v]) => (m.current ? 1 + (m.current[i].s - 1) * (1 - g(v)) : 1));
+  const r = useTransform([p, tick], ([v]) => (m.current ? STACK[i][2] * (1 - g(v)) : 0));
+  const o = useTransform([p, tick], ([v]) => (m.current ? clamp((v - 0.62) / 0.16) : 1));
+  const [title, desc, fmt, kind] = t;
   return (
-    <section className="xpe-kit" aria-label="Press kit">
-      <ul className="vc-grid xpe-plates">
-        {PLATES.map(([t, d, f, kind]) => (
-          <li key={kind} className={'xpe-kitc-w ' + kind}>
-            <a href={KIT} download className="xpe-kitc">
-              <Plate kind={kind} big={kind === 'dark'} />
-              <span className="xpe-kitc-t"><h3 className="vc-title">{t}</h3><span>{d}</span></span>
-              <span className="xpe-fmt">{f.split(', ').map((x) => <i key={x}>{x}</i>)}<span className="x-sr">{f}</span></span>
-            </a>
-          </li>
-        ))}
-      </ul>
+    <li className={'xpe-kitc-w ' + kind} style={{ zIndex: 3 - i }}>
+      <motion.a href={KIT} download className="xpe-kp" aria-label={'Download Press Kit: ' + title} style={{ x, y, scale: s, rotate: r }}>
+        <Plate kind={kind} />
+        <span className="xpe-fmt">{fmt.split(', ').map((f) => <i key={f}>{f}</i>)}<span className="x-sr">{fmt}</span></span>
+      </motion.a>
+      <motion.span className="xpe-kitc-t" style={{ opacity: o }}><h3 className="vc-title">{title}</h3><span>{desc}</span></motion.span>
+    </li>
+  );
+}
+
+/* The hero and the kit are one pinned stage: the headline leaves as the stack fans out into the three plates. */
+function HeroKit() {
+  const ref = useRef(null), inner = useRef(null), text = useRef(null), list = useRef(null);
+  const m = useRef(null);
+  const lift = useRef(0);
+  const tick = useMotionValue(0);
+  const calm = useReducedMotion();
+  useLayoutEffect(() => {
+    const measure = () => {
+      const el = inner.current, tx = text.current, ul = list.current;
+      if (!el || !tx || !ul || innerWidth < 900 || calm) { m.current = null; lift.current = 0; tick.set(tick.get() + 1); return; }
+      const W = el.offsetWidth;
+      const cx = W * 0.78, cy = tx.offsetTop + tx.offsetHeight * 0.55; // the stack sits right of the headline
+      m.current = [...ul.children].map((li, i) => {
+        const a = li.firstChild; // the plate
+        const px = ul.offsetLeft + li.offsetLeft + a.offsetLeft + a.offsetWidth / 2;
+        const py = ul.offsetTop + li.offsetTop + a.offsetTop + a.offsetHeight / 2;
+        const s = 400 / a.offsetWidth;
+        return { x: cx - px + STACK[i][0], y: cy - py + STACK[i][1], s };
+      });
+      lift.current = ul.offsetTop - 120; // the spread ends near the top of the stage
+      tick.set(tick.get() + 1);
+    };
+    measure();
+    addEventListener('resize', measure);
+    return () => removeEventListener('resize', measure);
+  }, [calm, tick]);
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
+  const up = useTransform([p, tick], ([v]) => (m.current ? -lift.current * io(clamp(v / 0.72)) : 0));
+  const fade = useTransform([p, tick], ([v]) => (m.current ? 1 - clamp(v / 0.3) : 1));
+  return (
+    <section className="xpe-hk" ref={ref} aria-labelledby="xpe-h1">
+      <div className="xpe-hk-st">
+        <motion.div className="vc-grid xpe-hk-in" ref={inner} style={{ y: up }}>
+          <motion.div className="xpe-hero-c" ref={text} style={{ opacity: fade }}>
+            <div className="xpe-hero-h" data-ask-name="Press & Media">
+              <MaskLines as="h1" id="xpe-h1" now delay={0.05} lines={['Press', 'Resources.']} className="vc-display xpe-h1" />
+              <p className="vc-kick xpe-cap">Press &amp; Media</p>
+            </div>
+            <div className="xpe-hero-f xpe-in">
+              <p className="vc-lede">Press kit, brand assets, and who to email — for anyone writing about Hanzo AI, Inc.</p>
+              <div className="xpe-acts">
+                <a href={MAIL} className="xpe-cta" data-thumb="Contact Press Team" data-cta="press.hero">Contact Press Team</a>
+                <Download className="xpe-cta q" data-cta="press.kit">Download Press Kit</Download>
+              </div>
+            </div>
+          </motion.div>
+          <ul className="xpe-plates" ref={list} aria-label="Press kit">
+            {PLATES.map((t, i) => <KitPlate key={t[3]} i={i} t={t} p={p} m={m} tick={tick} />)}
+          </ul>
+          <p className="xpe-zip"><span className="vc-num">hanzo-press-kit.zip</span><span>SVG · PNG</span></p>
+        </motion.div>
+      </div>
     </section>
   );
 }
@@ -135,7 +165,6 @@ const BOILER = 'Hanzo AI, Inc. is an AI technology company building the infrastr
 const FACTS = [['2016', 'Founded'], ['San Francisco, CA', 'Headquarters'], ['Hanzo AI, Inc.', 'Entity'], ['Techstars ’17', 'Backing']];
 
 /* The signature: the belief line, read word by word as it scrolls through the screen. */
-const NOJS_W = { __html: '<style>.xpe-w{opacity:1!important}.xpe-fig span{transform:none!important}</style>' };
 function Word({ p, a, b, children }) {
   const o = useTransform(p, [a, b], [0.16, 1]);
   return <motion.span className="xpe-w" style={{ opacity: o }}>{children} </motion.span>;
@@ -164,9 +193,8 @@ function About() {
       <div className="vc-grid xpe-about-g">
         <div className="xpe-about-h">
           <MaskLines id="xpe-about-h" lines={['About Hanzo', 'AI, Inc.']} className="vc-headline" />
-          <Copy text={BOILER} label="Copy boilerplate" className="xpe-icon" />
+          <CopyIt text={BOILER} label="Copy boilerplate" className="xpe-icon" />
         </div>
-        <noscript dangerouslySetInnerHTML={NOJS_W} />
         <Belief text={BOILER} />
         <dl className="xpe-facts">
           {FACTS.map(([v, k]) => <Fact key={k} v={v} k={k} />)}
@@ -185,30 +213,33 @@ const NEWS = [
   ['February 27, 2026', 'Complete AI Pricing Breakdown: Models, Cloud, GPU, and Audio', 'Every Hanzo rate in one place — gateway, cloud, GPU, and audio.'],
 ];
 
-/* The news index: big headlines; a card with the story's date and summary rides beside the row (300ms ease-out). */
+/* The news index: big headlines; a card with the story's date and summary sits beside the row, never over its words. */
 function News() {
   const box = useRef(null);
   const [at, setAt] = useState(-1);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  // the card rides beside the row being pointed at, in the empty right of the index, never over a headline
   const place = (row) => {
     const r = box.current.getBoundingClientRect(), q = row.getBoundingClientRect();
+    const tt = row.querySelector('.xpe-tt'), rg = document.createRange();
+    rg.selectNodeContents(tt);
+    const edge = Math.max(...[...rg.getClientRects()].map((c) => c.right)); // the headline's real right edge
     const t = { duration: 0.3, ease: [0, 0, 0.2, 1] };
-    animate(x, r.width - 340 - 72, t);
+    animate(x, Math.min(r.width - 340, edge - r.left + 32), t);
     animate(y, q.top - r.top + 16, t);
   };
+  const on = (e, i) => { place(e.currentTarget); setAt(i); };
   return (
     <section className="vc-sec xpe-news" aria-labelledby="xpe-news-h">
       <div className="vc-grid xpe-news-g">
-        <MaskLines id="xpe-news-h" lines={['Recent News']} className="vc-display s" />
+        <MaskLines id="xpe-news-h" lines={['Recent News']} className="vc-headline" />
         <p className="vc-lede xpe-news-l">Latest press releases and company announcements.</p>
       </div>
       <div className="vc-wrap xpe-news-w" ref={box} onPointerLeave={() => setAt(-1)}>
         <ol className={'xpe-feed' + (at >= 0 ? ' pointing' : '')}>
           {NEWS.map(([d, t, s], i) => (
             <li key={t} className={i === at ? 'on' : ''}>
-              <A to="/blog" className="xpe-item" onPointerEnter={(e) => { if (e.pointerType === 'mouse') { place(e.currentTarget); setAt(i); } }} onFocus={() => setAt(i)} onBlur={() => setAt(-1)}>
+              <A to="/blog" className="xpe-item" onPointerEnter={(e) => { if (e.pointerType === 'mouse') on(e, i); }} onFocus={(e) => on(e, i)} onBlur={() => setAt(-1)}>
                 <span className="xpe-no vc-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
                 <span className="xpe-ts vc-num">{d}</span>
                 <span className="xpe-tt">{t}</span>
@@ -219,11 +250,10 @@ function News() {
           ))}
         </ol>
         <motion.div className="xpe-card" aria-hidden="true" style={{ x, y }} initial={false}
-          animate={at >= 0 ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.92 }} transition={{ duration: 0.25, ease: EASE }}>
+          animate={at >= 0 ? { opacity: 1 } : { opacity: 0 }} transition={{ duration: 0.2, ease: EASE }}>
           {at >= 0 && <>
             <span className="vc-kick vc-num">{NEWS[at][0]}</span>
             <span className="xpe-card-s">{NEWS[at][2]}</span>
-            <span className="xpe-card-g">{ARROW}</span>
           </>}
         </motion.div>
       </div>
@@ -231,7 +261,10 @@ function News() {
   );
 }
 
+/* The black room: the email cuts in by line mask, its copy button beside it, its label under it. */
 function Contact() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.5 });
   return (
     <section className="xpe-contact" data-room="dark" aria-labelledby="xpe-contact-h">
       <div className="vc-grid xpe-contact-g">
@@ -239,13 +272,13 @@ function Contact() {
           <h2 id="xpe-contact-h" className="vc-headline">Press Contact</h2>
           <p className="vc-lede">Get in touch with our media relations team.</p>
         </div>
-        <div className="xpe-contact-m">
-          <a href={MAIL} className="xpe-mail" data-cta="press.mail">press@hanzo.ai</a>
-          <div className="xpe-mail-r">
-            <h3 className="vc-kick">Media Inquiries</h3>
-            <Copy text="press@hanzo.ai" label="Copy" className="xpe-icon dk" />
-            <p className="xpe-tel vc-num">+1 (424) 335-0550</p>
+        <div className="xpe-contact-m" ref={ref}>
+          <div className="xpe-mail-row">
+            <a href={MAIL} className="xpe-mail" data-cta="press.mail"><span className={'xpe-mail-i' + (seen ? ' in' : '')}>press@hanzo.ai</span></a>
+            <CopyIt text="press@hanzo.ai" label="Copy" className="xpe-icon dk" />
           </div>
+          <h3 className="vc-kick">Media Inquiries</h3>
+          <p className="xpe-tel vc-num">+1 (424) 335-0550</p>
         </div>
         <div className="xpe-contact-a">
           <address>Hanzo AI, Inc.<br />1 Ferry Building<br />San Francisco, CA 94105<br />United States</address>
@@ -275,9 +308,9 @@ function BrandAssets() {
         <ul className="xpe-partners">
           {PARTNERS.map(([n, f, l]) => (
             <li key={n}>
-              <span className="xpe-p-img"><Pic src={f} alt={n} w={120} h={30} fallback={<span className="xpe-p-alt" aria-hidden="true"><Mark size={22} /></span>} /></span>
+              <span className="xpe-p-img"><Pic src={f} alt={n} w={140} h={32} fallback={<span className="xpe-p-alt" aria-hidden="true">{n}</span>} /></span>
               <b>{n}</b>
-              <a href={f} download>{l}<svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M8 2.5v8M4.5 7.5 8 11l3.5-3.5M3 13.5h10" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></a>
+              <a href={f} download>{l}{DOWN}</a>
             </li>
           ))}
         </ul>
@@ -310,10 +343,13 @@ const LEADS = [['/authors/antje-worring-portrait.jpg', 'Antje Worring'], ['/auth
 
 function Team() {
   return (
-    <section className="xpe-team" aria-label="Leadership">
+    <section className="xpe-team" aria-labelledby="xpe-team-h">
       <div className="vc-grid xpe-team-g">
         <div className="xpe-team-c">
-          <MaskLines id="xpe-team-h" lines={['Meet our team']} className="vc-display m" />
+          <div>
+            <MaskLines id="xpe-team-h" lines={['Meet our team']} className="vc-headline" />
+            <p className="vc-kick xpe-cap">Leadership</p>
+          </div>
           <p className="vc-lede">For executive bios and headshots, visit our team page or contact our press team.</p>
           <div className="xpe-acts">
             <a href={MAIL} className="xpe-cta" data-thumb="Contact Press Team" data-cta="press.bios">Request Executive Bios</a>
@@ -323,7 +359,7 @@ function Team() {
         <ul className="xpe-faces">
           {LEADS.map(([src, n], i) => (
             <li key={n} className={'f' + i}>
-              <span className="xpe-face-f" aria-hidden="true"><Mark size={40} /></span>
+              <span className="xpe-face-f" aria-hidden="true"><Sigil seed={src} data={[n.length, i + 1]} /></span>
               <Pic src={src} alt={n} w={600} h={750} fallback={<span className="x-sr">{n}</span>} />
             </li>
           ))}
@@ -336,8 +372,8 @@ function Team() {
 export default function Press() {
   return (
     <main className="vc xpe" style={{ '--acc': '#0a0a0a' }}>
-      <Hero />
-      <Kit />
+      <noscript dangerouslySetInnerHTML={NOJS} />
+      <HeroKit />
       <About />
       <News />
       <Contact />
