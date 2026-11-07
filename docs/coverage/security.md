@@ -156,6 +156,6 @@ Done here: Static Hanzo copy with no live fetch, so nothing loads or fails; the 
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/<page>.md` verdict 8 or more
+- [x] Review read: `docs/review/security.md` (7/10); marked Ready in slice D, 7 Nov, after re-checking every fix: tab 06 keeps the Koma plate dark and lifted above the stack, the band ask presses to .98, the three place labels sit on one line at 375, the audit link aligns with its text, and the hero h1 now cuts in on CSS from first paint (no hydration wait).
 
 Done here: `data-cta="security.hero"` and `"security.band"`; the page fires nothing itself. V2 line present. `docs/review/security.md` read (7/10 on the walk before this build); its fixes are in: the chosen plate now rises above the stack on every tab (z-index), the rack grows to its moment as its units power on, the place stack moves at full size on desktop, the band ask presses to .98, the phone place labels stay on one line, and reduced motion no longer mismatches on hydration (page-local `proof/MaskLines` and `proof/SceneWipe`).

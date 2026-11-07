@@ -19,7 +19,7 @@
    black room's entry (the one scroll-linked move).
    Conflict noted on the card: MASTER §4.2 also lists DPA, subprocessors and security.txt for /security; on hanzo.ai those
    live on /trust, and the split is not ours to merge, so /security links /trust for them and adds no copy.
-   V2: 8/10 calm honest-status rebuild in ink: status pass in the hero, the controls as a selectable document with the worksheet, quiet proof, one black room ending on the same ask. */
+   V2: 8/10 calm honest-status rebuild in ink: status pass in the hero, the controls as a selectable document with the worksheet, quiet proof, one black room ending on the same ask. Slice D: the h1 cuts in on CSS from first paint; plate lift, rack, place move and band press verified. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { Copy } from '../ui';
@@ -94,7 +94,8 @@ function Hero({ pick }) {
     <section className="xsc-hero" aria-labelledby="xsc-h1">
       <div className="pf-wrap xsc-hero-g">
         <div className="xsc-hero-c">
-          <MaskLines as="h1" id="xsc-h1" className="pf-display" lines={['What protects', 'your data,', 'and how.']} />
+          {/* the h1 cuts in on CSS from first paint, so it never waits for hydration (same mask and easing as MaskLines) */}
+          <h1 id="xsc-h1" className="pf-display">{['What protects', 'your data,', 'and how.'].map((l, i) => <span key={l} className="pf-mask-l"><span className="pf-mask-in xsc-cut" style={{ '--d': i * 60 + 'ms' }}>{l}</span>{i < 2 ? ' ' : null}</span>)}</h1>
           <p className="pf-kick xsc-cap">Security Architecture</p>
           <p className="pf-lede">Clear security mechanisms: which key encrypts your data, where tenancy boundaries are enforced, and how every request is verified.</p>
           <div className="xsc-acts">
