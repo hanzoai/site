@@ -2,6 +2,7 @@
 /* Operative.
    V2: 8/10 a live desktop worked by four hands as the hero, the container exploding into its six layers as you scroll, one docker run that types itself, four providers with one variable, one dark room for the loop.
    Persona: a developer trying computer use safely. Goal: run the container. CTA: Get Started (operative.hero).
+   Metric: cta_click on operative.hero and operative.close (data-cta; the event layer is the conductor's).
    Signature: the container comes apart. Pinned on screen, the image is a stack of six slabs pressed into one box;
    as you scroll the box explodes upward layer by layer (scrubbed, transform only), and each layer lights with what
    it is (Xvfb · X11, the ports, the objective, bash · edit, the allowlist, API · Bedrock · Vertex) while its words
