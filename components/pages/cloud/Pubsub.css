@@ -5,7 +5,7 @@
 
 /* hero: the black room. Name, line and one ask left (5), bottom-aligned; the bus right (8), drawn top to bottom */
 .ps-hero { background: #000; min-height: calc(100svh - 60px); display: flex; align-items: center; }
-.ps-hero-in { display: grid; grid-template-columns: 5fr 8fr; gap: 32px clamp(32px, 5vw, 72px); align-items: end; padding: clamp(40px, 7svh, 72px) 0; }
+.ps-hero-in { display: grid; grid-template-columns: 5fr 8fr; gap: 32px clamp(32px, 5vw, 72px); align-items: center; padding: clamp(40px, 7svh, 72px) 0; }
 .ps-hero-title { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; padding-bottom: 8px; }
 .ps-h1 { color: #fafafa; }
 .ps-tag { color: rgba(255, 255, 255, .78); max-width: 22ch; }
@@ -55,14 +55,58 @@
 .ps-one i { width: 20px; height: 20px; border-radius: 6px; background: #262626; transition: background-color .3s cubic-bezier(.4, 0, .2, 1); }
 .ps-one i.on { background: #fafafa; }
 
-/* the inspector (the chapters' object): outlined, never raised */
+/* the chapters' object is the hero's bus itself, pinned on a black card; each chapter changes what it does */
+.ps-cbus { padding: 8px 24px 24px; border-radius: 20px; background: #000; color: #fafafa; }
+.ps-cbus .ps-bar { margin-bottom: 16px; }
+.ps-cbus-k { margin-left: auto; font: 500 13px/1 var(--mono); color: #a3a3a3; white-space: nowrap; }
+.ps-cbus .ps-wire { height: 40px; }
+.ps-cbus .ps-wire.fan { height: 56px; }
+.ps-cbus .ps-msg b, .ps-cbus .ps-sub b { transition: opacity .3s cubic-bezier(.4, 0, .2, 1); }
+/* streams: aged-out sequences are dashed and empty; the consumer reads from its start (ringed) onward */
+.ps-seqs span.old { background: transparent; color: #525252; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14); }
+.ps-seqs span.rd { background: #404040; color: #fafafa; }
+.ps-seqs span.rd.from { box-shadow: inset 0 0 0 2px #fafafa; }
+/* accounts: the wall drops between account a and account b */
+.ps-subs.walled { position: relative; }
+.ps-subs.walled .ps-sub.wall { border: 1px dashed rgba(255, 255, 255, .3); background: transparent; }
+.ps-subs.walled .ps-sub.wall span { text-decoration: line-through; }
+.ps-subs.walled::after { content: ''; position: absolute; top: -10px; bottom: -10px; left: calc(66.6% - 5px); width: 2px; background: #fafafa; }
+@media (max-width: 899px) {
+  .ps-cbus { padding: 4px 12px 12px; border-radius: 16px; }
+  .ps-cbus-k { display: none; }
+  .ps-cbus .ps-bar { height: 40px; margin-bottom: 8px; }
+  .ps-cbus .ps-pub, .ps-cbus .ps-pub + .ps-wire { display: none; }
+  .ps-cbus .ps-k { margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ps-cbus .ps-seqs span { height: 36px; }
+  .ps-cbus .ps-wire.fan { height: 32px; }
+  .ps-cbus .ps-subs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .ps-cbus .ps-sub { height: 60px; gap: 6px; min-width: 0; padding: 0 8px; }
+  .ps-cbus .ps-sub b { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ps-cbus .ps-sub span { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+}
+
+/* the inspector (the chapters' earlier object, kept for reference): outlined, never raised */
 .ps-ins { position: relative; background: #fff; border-radius: 24px; border: 1px solid var(--line); overflow: hidden; }
 .ps-ipause { top: 10px; right: 12px; }
 .ps-ins-h { display: flex; align-items: center; gap: 14px; height: 64px; padding: 0 72px 0 24px; border-bottom: 1px solid var(--line); }
 .ps-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ink); flex: none; }
 .ps-ins-h code { font: 500 17px/1 var(--mono); color: var(--ink); white-space: nowrap; }
 .ps-port { margin-left: auto; font: 500 13px/1 var(--mono); color: var(--muted); }
-.ps-ins-b { padding: 28px 24px; min-height: 380px; }
+.ps-ins-b { padding: 28px 24px; min-height: 280px; }
+/* the hero's bus, carried down: the inspector is the same black object with the same toolbar line, not a white box */
+.ps-ins { --ink: #fafafa; --muted: #a3a3a3; --line: rgba(255, 255, 255, .1); --fill: #171717; background: #000; color: #fafafa; border: 0; border-radius: 20px; }
+.ps-ins .ps-chips span.on, .ps-ins .ps-tape span.cur, .ps-ins .ps-req.on, .ps-ins .ps-insts span.on, .ps-ins .ps-blob.whole { color: #0a0a0a; }
+.ps-ins .ps-blob.whole span { color: #525252; }
+.ps-ins .ps-tape span.read { background: #404040; }
+.ps-ins .ps-tape span.cur { background: #fafafa; }
+.ps-ins .ps-ov button.on, .ps-ins .ps-kv p.hot { background: #171717; }
+@media (hover: hover) { .ps-ins .ps-ov button:hover { background: #262626; } }
+.ps-ins .ps-hist i { box-shadow: inset 0 0 0 1.5px #404040; }
+.ps-ins .ps-insts span, .ps-ins .ps-chunks i { border-color: rgba(255, 255, 255, .22); }
+.ps-ins .ps-insts span.on { border-color: #fafafa; }
+.ps-ins .ps-chunks i.on { border-color: transparent; }
+.ps-ins .ps-acc-c.on { border-color: #fafafa; }
+.ps-ins :focus-visible { outline-color: #fafafa; }
 .ps-p { display: flex; flex-direction: column; gap: 20px; }
 /* intro: every capability on one server, each row opens its chapter */
 .ps-ov { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
@@ -149,7 +193,7 @@
 
 /* the quiet room: the heading left (5), the prompt right (8), bottom-aligned; then the 4222 spec */
 .ps-room { --wipe: #f5f5f5; padding: clamp(72px, 11vw, 188px) 0; }
-.ps-room-top { display: grid; grid-template-columns: 5fr 8fr; gap: clamp(32px, 5vw, 72px); align-items: end; margin-bottom: clamp(56px, 7vw, 112px); }
+.ps-room-top { display: grid; grid-template-columns: 5fr 8fr; gap: clamp(32px, 5vw, 72px); align-items: start; margin-bottom: clamp(56px, 7vw, 112px); }
 .ps-room-top .lx-headline { max-width: 10ch; }
 .ps .lx-paste .cf-paste-t { font-size: 21px; }
 .ps-spec .lx-spec-v { font-family: var(--sans); font-size: 44px; letter-spacing: -.03em; }
@@ -171,7 +215,7 @@
 .ps-walk-l { display: flex; flex-direction: column; align-items: flex-start; gap: 24px; }
 .ps-walk h2 { max-width: 12ch; }
 .ps-walk .lx-lede { color: var(--ink); }
-.ps .lx-close { padding-top: clamp(72px, 9vw, 150px); }
+.ps .lx-close { padding-top: clamp(44px, 5vw, 72px); }
 /* text links answer a press too (the kit's lx-text has a hover but no press) */
 .ps .lx-text, .ps .lx-close-repo { transition: text-decoration-color .15s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); }
 .ps .lx-text:active, .ps .lx-close-repo:active { transform: scale(.97); transition-duration: .09s; }
@@ -188,12 +232,15 @@
   .ps-msg { padding: 0 16px; }
   .ps-msg span { display: none; }
   .ps-wire { height: 28px; }
-  .ps-wire.fan { height: 28px; }
-  .ps-wire.fan path:not(:nth-of-type(2)):not(:nth-of-type(5)) { display: none; }
+  .ps-wire.fan { height: 48px; }
   .ps-seqs { padding: 6px; gap: 4px; border-radius: 16px; }
   .ps-seqs span { height: 44px; border-radius: 10px; }
-  .ps-subs { grid-template-columns: minmax(0, 1fr); gap: 6px; }
-  .ps-sub { flex-direction: row; justify-content: space-between; align-items: center; height: 48px; }
+  /* the fan-out stays a fan on phones: three subscribers side by side under three wires */
+  .ps-subs { grid-template-columns: 1fr 1fr 1.15fr; gap: 6px; }
+  .ps-sub { gap: 8px; height: 72px; padding: 0 10px; border-radius: 12px; }
+  .ps-sub b { font-size: 13px; }
+  .ps-one { gap: 4px; }
+  .ps-one i { width: 14px; height: 14px; border-radius: 4px; }
   .ps-ins { border-radius: 16px; }
   /* the inspector keeps one height on phones, so a chapter's words never move when the panel changes */
   .ps .lx-pin[data-live] .ps-ins { height: 35svh; }

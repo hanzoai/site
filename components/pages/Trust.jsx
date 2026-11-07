@@ -16,20 +16,22 @@
    Beyond: "Find a control". Type what your questionnaire asks (PKCE, SCIM, argon2id, HKDF): the answers appear in
    place under each group as you type, each opening the drawer that holds it; the count says how many of Hanzo's
    controls match, and nothing matching is met with Hanzo's own line: if a control you need is not on this page, ask.
-   Motion (deck ease-emphasis, no springs): signature (drawers slide out, idle) + MaskLines headline cut-in (arrival) +
-   answers appearing as you type (state; sheets rise) + the black room's entry (the one scroll-linked move).
+   Motion (deck ease-emphasis, no springs): signature (drawers slide out, idle) + line-mask headline cut-in (arrival) +
+   the "today" statement inking in word by word (scroll) + "Where we stand" as a pinned stage, one stance in focus at a
+   time with a scrubbed progress rail (scroll; an accordion on phones) + "Find a control" typing one example itself
+   once on arrival, then answers appearing as you type (time, state; sheets rise) + the black room's entry (scroll).
+   Lines and Room are this page's hydration-safe builds of v2/MaskLines and v2/SceneWipe: those read the reduced-motion
+   preference during render, so the server and client HTML differed (docs/requests/trust.md). Same motion, same values.
    Scale has rhythm (ProofRhythm): h1 52, headings 26, figures 64; one big thing per screen (the cabinet, the papers, the
-   statement, the live count, the facts heading, the closing line at 84).
+   statement, the live count, the stance stage, the closing line at 84).
    Conflict noted on the card: MASTER §3.1 keeps centred heads for the closing section, but the hero is a centred
    statement at the coordinator's request after the critic found /trust sharing /leaderboard's frame (JAMES.md 8,
    neighbouring pages differ).
-   V2: 8/10 calm proof on the deck: a 52px centred statement over the self-opening evidence cabinet, papers that open into their pages, five control groups as evidence sheets with answer-as-you-type, one ask in the hero and the closing band. */
+   V2: 8/10 calm proof with something to look at on every screen: the self-opening evidence cabinet, papers that open into their pages, a statement that inks in as you read, a pinned stance stage (an accordion on phones), a search that shows itself working, one ask. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform, useMotionTemplate, useMotionValueEvent } from 'motion/react';
 import { A, More } from '../kit';
-import MaskLines from '../v2/MaskLines';
-import SceneWipe from '../v2/SceneWipe';
-import DetailSheet from '../v2/DetailSheet';
+import DetailSheet from '../v2/x-pascal/DetailSheet'; // the coherent <dialog> build: main's v2/DetailSheet.jsx is the older div build against dialog-only CSS (docs/requests/trust.md)
 import '../v2/ProofScale.css';
 import '../v2/ProofRhythm.css';
 import './Trust.css';
@@ -45,6 +47,61 @@ const REVIEW = [
   ['A framework scoped to your engagement', 'Tell us what your process runs on and what your reviewer needs to see. We scope the work with you as part of the enterprise agreement rather than pointing at a checkmark.'],
 ];
 const pad = (i) => String(i + 1).padStart(2, '0');
+
+/* client-only facts, read after mount so the first client render equals the server HTML (no hydration mismatch) */
+function useMedia(q, before) {
+  const [on, setOn] = useState(before);
+  useEffect(() => { const m = matchMedia(q); const f = () => setOn(m.matches); f(); m.addEventListener('change', f); return () => m.removeEventListener('change', f); }, [q]);
+  return on;
+}
+const useCalm = () => useMedia('(prefers-reduced-motion: reduce)', false); // CSS shows the final state before this lands
+const WIDE = '(min-width: 900px)';
+
+/* a heading whose lines rise out of their own masks once reached (v2/MaskLines' motion: 105% to 0, 700 ms, 60 ms apart) */
+function Lines({ as = 'h2', lines, className = '', id, amount = 0.4 }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount });
+  const calm = useCalm();
+  const [ready, setReady] = useState(true); // a first visit waits for the arrival curtain to lift, or no one sees the cut-in
+  useEffect(() => {
+    if (!document.documentElement.classList.contains('x-arriving')) return;
+    setReady(false);
+    const go = () => setReady(true);
+    addEventListener('hz-arrived', go, { once: true });
+    const t = setTimeout(go, 4000);
+    return () => { removeEventListener('hz-arrived', go); clearTimeout(t); };
+  }, []);
+  const Tag = motion[as] || motion.h2;
+  const up = calm || (seen && ready);
+  return (
+    <Tag ref={ref} id={id} className={className}>
+      {lines.map((l, i) => (
+        <span key={i} className="pf-mask-l">
+          <motion.span className="pf-mask-in" initial={{ y: '105%' }} animate={{ y: up ? '0%' : '105%' }} transition={calm ? { duration: 0 } : { duration: 0.7, ease: EMPH, delay: i * 0.06 }}>{l}</motion.span>
+          {i < lines.length - 1 ? ' ' : null}
+        </span>
+      ))}
+    </Tag>
+  );
+}
+
+/* the one dark room: arrives as a rounded panel inside the gutters and opens to full bleed as you reach it (v2/SceneWipe's move) */
+function Room({ children, className = '', label }) {
+  const ref = useRef(null);
+  const calm = useCalm();
+  const wide = useMedia('(min-width: 901px)', true);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.1'] });
+  const side = useTransform(scrollYProgress, [0, 1], [5, 0]);
+  const top = useTransform(scrollYProgress, [0, 1], [56, 0]);
+  const round = useTransform(scrollYProgress, [0, 1], [40, 0]);
+  const clip = useMotionTemplate`inset(${top}px ${side}% 0px ${side}% round ${round}px ${round}px 0px 0px)`;
+  return (
+    <section ref={ref} className={'pf-wipe xtr-room ' + className} data-room="dark" aria-label={label}>
+      <motion.div aria-hidden="true" className="xtr-room-bg" style={{ clipPath: calm || !wide ? 'none' : clip }} />
+      {children}
+    </section>
+  );
+}
 
 /* ---------- signature: the evidence locker ---------- */
 function Locker() {
@@ -111,7 +168,7 @@ function Hero() {
     <section className="xtr-hero" aria-labelledby="xtr-h1">
       <div className="pf-wrap">
         <div className="xtr-hero-top">
-          <MaskLines as="h1" id="xtr-h1" className="pf-display" lines={['Security', 'you can read']} />
+          <Lines as="h1" id="xtr-h1" className="pf-display" lines={['Security', 'you can read']} />
           <p className="pf-kick xtr-cap">Trust</p>
           <p className="pf-lede">How you get in, what a credential reaches, what gets written down, and where the keys live — each one a mechanism you can point at in the source.</p>
           <A to="/contact-sales" className="pf-btn solid" data-thumb={ASK} data-cta="trust.hero">{ASK}</A>
@@ -128,7 +185,7 @@ function Docs() {
     <section className="pf-sec xtr-docs" aria-labelledby="xtr-docs-h">
       <div className="pf-wrap xtr-docs-g">
         <div className="xtr-docs-c">
-          <MaskLines id="xtr-docs-h" className="pf-head" lines={['What you can read,', 'and what you can ask for']} />
+          <Lines id="xtr-docs-h" className="pf-head" lines={['What you can read,', 'and what you can ask for']} />
           <p className="pf-body">The two documents a review opens first are published — read them now, no email. The other four we send on request: the questionnaire, the review session and the control detail come back the same week.</p>
         </div>
         <div className="xtr-papers">
@@ -147,13 +204,24 @@ function Docs() {
 }
 
 /* ---------- where we stand today: said plainly ---------- */
+const SAY = 'We run the controls those audits examine, and this page is the evidence — every mechanism below was read in the source before it was written here. Bring your questionnaire and we will answer it against the code rather than against a summary of it.'.split(' ');
+
+/* one word of the statement: it inks in as the reader's eye reaches it (opacity only, tied to scroll) */
+function Word({ p, i, children }) {
+  const a = i / SAY.length;
+  const o = useTransform(p, [a, Math.min(1, a + 6 / SAY.length)], [0.16, 1]);
+  return <><motion.span className="xtr-w" style={{ opacity: o }}>{children}</motion.span>{' '}</>;
+}
+
 function Stand() {
+  const say = useRef(null);
+  const { scrollYProgress } = useScroll({ target: say, offset: ['start 0.82', 'end 0.42'] });
   return (
     <section className="pf-sec xtr-stand" aria-labelledby="xtr-stand-h">
       <div className="pf-wrap xtr-stand-g">
-        <MaskLines id="xtr-stand-h" className="pf-head" lines={['Where we', 'stand today']} />
+        <Lines id="xtr-stand-h" className="pf-head" lines={['Where we', 'stand today']} />
         <div>
-          <p className="xtr-say">We run the controls those audits examine, and this page is the evidence — every mechanism below was read in the source before it was written here. Bring your questionnaire and we will answer it against the code rather than against a summary of it.</p>
+          <p className="xtr-say" ref={say}>{SAY.map((w, i) => <Word key={i} p={scrollYProgress} i={i}>{w}</Word>)}</p>
           <div className="xtr-stand-p">
             <p className="pf-body">On frameworks: we audit ourselves continually and send the report on request — ask and it comes back, no questionnaire first. If your review runs on a named framework, tell us which one and what your reviewer needs to see. We scope it with you as part of the engagement, at the speed of the engagement rather than a calendar.</p>
             <p className="pf-body">If a control you need is not on this page, ask. Where we have it we will show you the code, and where we do not you will get a straight answer the same day.</p>
@@ -240,21 +308,49 @@ function Group({ g, gi, k }) {
   );
 }
 
+/* the idle moment: once the search is 60% in view it types the placeholder's first example, lets the answer and the
+   count settle, then clears. It stops for good the moment the reader touches the field; reduced motion never runs it. */
+const DEMO = 'PKCE';
+function useDemo(box) {
+  const seen = useInView(box, { once: true, amount: 0.6 });
+  const calm = useCalm();
+  const [demo, setDemo] = useState('');
+  const [typing, setTyping] = useState(false);
+  const timers = useRef([]);
+  const done = useRef(false);
+  useEffect(() => {
+    if (!seen || calm || done.current) return;
+    done.current = true;
+    const at = (ms, f) => timers.current.push(setTimeout(f, ms));
+    let t = 400;
+    at(t, () => setTyping(true));
+    for (let i = 1; i <= DEMO.length; i++) { t += 150; at(t, () => setDemo(DEMO.slice(0, i))); }
+    t += 2400;
+    for (let i = DEMO.length - 1; i >= 0; i--) { t += 90; at(t, () => setDemo(DEMO.slice(0, i))); }
+    at(t + 90, () => setTyping(false));
+  }, [seen, calm]);
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
+  const stop = () => { done.current = true; timers.current.forEach(clearTimeout); setTyping(false); setDemo(''); };
+  return [demo, typing, stop];
+}
+
 function Controls() {
   const [q, setQ] = useState('');
-  const k = q.trim().toLowerCase();
+  const box = useRef(null);
+  const [demo, typing, stop] = useDemo(box);
+  const k = (q || demo).trim().toLowerCase();
   const n = k ? ALL.filter(has(k)).length : ALL.length;
   return (
     <section className="pf-sec xtr-ctl" id="controls" aria-labelledby="xtr-find-h">
       <div className="pf-wrap">
-        <div className="xtr-find">
+        <div className="xtr-find" ref={box}>
           <h2 className="xtr-find-l" id="xtr-find-h">Find a control</h2>
-          <div className="xtr-find-f">
+          <div className="xtr-find-f" data-typing={typing}>
             <svg viewBox="0 0 20 20" width="22" height="22" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.7" /><path d="M13 13l4 4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></svg>
-            <input id="xtr-q" type="search" aria-labelledby="xtr-find-h" className="xtr-find-i" value={q} placeholder="PKCE, SCIM, argon2id, HKDF…" autoComplete="off" spellCheck="false" onChange={(e) => setQ(e.target.value)} />
+            <input id="xtr-q" type="search" aria-labelledby="xtr-find-h" className="xtr-find-i" value={q || demo} placeholder="PKCE, SCIM, argon2id, HKDF…" autoComplete="off" spellCheck="false" onPointerDown={stop} onFocus={stop} onChange={(e) => { stop(); setQ(e.target.value); }} />
             {q && <button type="button" className="xtr-find-x" aria-label="Clear" onClick={() => setQ('')}><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></svg></button>}
           </div>
-          <p className="xtr-find-n pf-mono" aria-live="polite"><b>{n}</b> / {ALL.length}</p>
+          <p className="xtr-find-n pf-mono" aria-live={typing ? 'off' : 'polite'}><b>{n}</b> / {ALL.length}</p>
         </div>
         <AnimatePresence initial={false}>
           {k && !n && (
@@ -280,22 +376,74 @@ const FACTS = [
   ['Availability.', <>An uptime number is a contractual commitment, so ours lives in the agreement where it has consequences rather than on a marketing page where it does not. Ask for the number your agreement would carry and we will put it in writing.</>],
 ];
 
+/* one segment of the stage's progress rail: it fills as you scroll through its stance (transform only) */
+function Seg({ p, i }) {
+  const s = useTransform(p, [i / 4, (i + 1) / 4], [0, 1]);
+  return <i><motion.b style={{ scaleX: s }} /></i>;
+}
+
+/* "Where we stand" as a pinned stage (≥ 900px): the section holds still while you scroll through it, one stance in
+   focus on the stage at a time, its name lit in the list. On phones it is an accordion, one open at a time; the closed
+   bodies stay in the HTML as hidden="until-found", so find-in-page opens them. */
 function Facts() {
+  const ref = useRef(null);
+  const bodies = useRef([]);
+  const wide = useMedia(WIDE, false);
+  const calm = useCalm();
+  const [at, setAt] = useState(0); // the stance in focus on the stage
+  const [open, setOpen] = useState(0); // the open row on a phone
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
+  useMotionValueEvent(scrollYProgress, 'change', (v) => { if (wide) setAt(Math.min(3, Math.max(0, Math.floor(v * 4)))); });
+  useEffect(() => {
+    bodies.current.forEach((el, i) => {
+      if (!el) return;
+      if (!wide && open !== i) el.setAttribute('hidden', 'until-found'); else el.removeAttribute('hidden');
+      el.inert = wide && at !== i;
+    });
+  }, [wide, open, at]);
+  useEffect(() => {
+    const offs = bodies.current.map((el, i) => { const f = () => setOpen(i); el?.addEventListener('beforematch', f); return () => el?.removeEventListener('beforematch', f); });
+    return () => offs.forEach((f) => f());
+  }, []);
+  const go = (i) => {
+    if (!wide) { setOpen((o) => (o === i ? -1 : i)); return; }
+    setAt(i);
+    const el = ref.current;
+    const y = el.getBoundingClientRect().top + scrollY + (el.offsetHeight - innerHeight) * ((i + 0.5) / 4);
+    if (window.__lenis) window.__lenis.scrollTo(y, calm ? { immediate: true } : { duration: 0.5 });
+    else scrollTo({ top: y, behavior: calm ? 'auto' : 'smooth' });
+  };
   return (
-    <section className="pf-sec xtr-facts" aria-labelledby="xtr-facts-h">
-      <div className="pf-wrap xtr-facts-g">
-        <div className="xtr-facts-h">
-          <MaskLines id="xtr-facts-h" className="xtr-facts-t" lines={['Where we stand']} />
-          <p className="pf-lede">Everything a reviewer establishes in the first email, answered here instead.</p>
+    <section ref={ref} className="xtr-facts" aria-labelledby="xtr-facts-h">
+      <div className="xtr-pin">
+        <div className="pf-wrap xtr-facts-g">
+          <div className="xtr-facts-h">
+            <Lines id="xtr-facts-h" className="xtr-facts-t" lines={['Where we stand']} />
+            <p className="pf-lede">Everything a reviewer establishes in the first email, answered here instead.</p>
+          </div>
+          <div className="xtr-stage" aria-hidden="true">
+            <span className="xtr-stage-n pf-mono">{pad(at)} / 04</span>
+            <span className="xtr-segs">{FACTS.map((f, i) => <Seg key={i} p={scrollYProgress} i={i} />)}</span>
+          </div>
+          <dl className="xtr-fact-l">
+            {FACTS.map(([k, t], i) => (
+              <div key={k} className="xtr-fact" data-on={at === i} data-open={open === i}>
+                <dt>
+                  <button type="button" className="xtr-fact-b" aria-expanded={wide ? at === i : open === i} aria-controls={'xtr-fact-' + i} onClick={() => go(i)}>
+                    <span className="xtr-fact-n pf-mono">{pad(i)}</span>
+                    <span className="pf-title">{k}</span>
+                    <i className="xtr-fact-pm" aria-hidden="true" />
+                  </button>
+                </dt>
+                <dd id={'xtr-fact-' + i} ref={(el) => { bodies.current[i] = el; }}>
+                  <span className="xtr-fact-big pf-figure" aria-hidden="true">{pad(i)}</span>
+                  <b className="xtr-fact-k" aria-hidden="true">{k}</b>
+                  <span className="xtr-fact-in">{t}</span>
+                </dd>
+              </div>
+            ))}
+          </dl>
         </div>
-        <dl className="xtr-fact-l">
-          {FACTS.map(([k, t]) => (
-            <div key={k} className="xtr-fact">
-              <dt className="pf-title">{k}</dt>
-              <dd>{t}</dd>
-            </div>
-          ))}
-        </dl>
       </div>
     </section>
   );
@@ -304,7 +452,7 @@ function Facts() {
 /* ---------- the one dark room: the address, then the one ask ---------- */
 function Close() {
   return (
-    <SceneWipe className="xtr-dark" label="Found something">
+    <Room className="xtr-dark" label="Found something">
       <div className="pf-sec">
         <div className="pf-wrap xtr-found">
           <h2 className="pf-head">Found something</h2>
@@ -314,22 +462,23 @@ function Close() {
           </div>
         </div>
         <div className="pf-wrap xtr-band">
-          <MaskLines className="pf-moment" lines={['Bring us the', 'hard questions']} />
+          <Lines className="pf-moment" lines={['Bring us the', 'hard questions']} />
           <div className="xtr-band-r">
             <p className="pf-lede">Your questionnaire, your architecture review, your framework. We answer against the code, we move at the speed of your review, and you will always know which of those two you are getting.</p>
             <A to="/contact-sales" className="pf-btn solid xtr-light" data-cta="trust.band">{ASK}</A>
           </div>
         </div>
       </div>
-    </SceneWipe>
+    </Room>
   );
 }
 
 export default function Trust() {
   return (
     <main className="xtr pf-r">
-      {/* JS off: every drawer's contents stand stacked in the tray, and the dark room is simply there */}
-      <noscript dangerouslySetInnerHTML={{ __html: '<style>.xtr-tray-p{opacity:1!important;transform:none!important;grid-area:auto!important;pointer-events:auto!important;margin-top:28px}.pf-wipe>div[aria-hidden]{clip-path:none!important}.xtr-grp-h{flex-wrap:wrap}.xtr-grp-h .pf-sheet{order:3;flex:1 1 100%}</style>' }} />
+      {/* JS off: every drawer's contents stand stacked in the tray, headings and the statement stand in place, every
+          stance reads in a column, and the dark room is simply there */}
+      <noscript dangerouslySetInnerHTML={{ __html: '<style>.xtr-tray-p{opacity:1!important;transform:none!important;grid-area:auto!important;pointer-events:auto!important;margin-top:28px}.pf-mask-in{transform:none!important}.xtr-w{opacity:1!important}.pf-wipe>div[aria-hidden]{clip-path:none!important}.xtr-grp-h{flex-wrap:wrap}.xtr-grp-h .pf-sheet{order:3;flex:1 1 100%}.xtr-facts{height:auto!important}.xtr-pin{position:static!important;height:auto!important}.xtr-fact-l,.xtr-fact{display:block!important}.xtr-stage,.xtr-fact-big,.xtr-fact-k{display:none!important}.xtr-facts dd{opacity:1!important;transform:none!important;padding:10.5px 0 27px!important}</style>' }} />
       <Hero />
       <Docs />
       <Stand />

@@ -14,7 +14,7 @@ Forks this page deleted: the forked xp-cta button colours (now kit `Cta` sized b
 - [x] No dead or self-looping button; prices from `lib/plans.js`
 - [x] Open copy questions for James listed, none decided
 
-Done here: Header comment in `app/affiliate/page.jsx` names Persona, Goal, CTA, Metric `contact_click`, Signature, Beyond. One solid per screen: the kit `Cta` "Apply" (hero `affiliate.hero`, close `affiliate.close`); the header's Try Hanzo turns outline while it is on screen. No copy questions.
+Done here: Header comment in `app/affiliate/page.jsx` names Persona, Goal, CTA, Metric `contact_click`, Signature, Beyond. One solid per screen: the kit `Cta` "Apply" (hero `affiliate.hero`, close `affiliate.close`); the header's ask is outlined from the first paint (page CSS keyed on `main.xaf`) and turns solid only when the page sets `html[data-xaf-solid]`, i.e. while none of its own Apply buttons is on screen; measured one solid at 1, 2 and 3 s on cold loads at both sizes. No copy questions.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -32,7 +32,7 @@ Done here: One `<main>` from the layout's `#main`; links via `A`/`Cta`; /referra
 - [ ] Ends in proof strip, `Band`, footer
 - ~~Card-to-page links use Morph; title lands within 12px~~ n/a: no cards on this page.
 
-Done here: No label above the h1; "Refer customers to Hanzo" (52px) cuts in by CSS line mask from the first paint, then the link writes itself once within 1 s of being reached (CSS from an empty first frame, so nothing is wiped and retyped; JS off shows it whole). `PageHero` is not in the kit yet: the hero is page-local (headline, lede, one Cta). The page ends on its own light close (headline + Apply) then the footer; kit `Band` would be a second dark room back to back with the rule room. JS off: `NoJs` shows every final state.
+Done here: First screen at 1470×801: h1 (52px) top-left, lede and Apply top-right (8/5 split, top-aligned), then the whole link band (44px mono) with its Affiliates caption inside it. No label above the h1; "Refer customers to Hanzo" (52px) cuts in by CSS line mask from the first paint, then the link writes itself once from the first paint: typed by 0.8 s, `<code>` marked by 1.1 s (CSS, so nothing is wiped and retyped; JS off shows it whole). The link band hands straight into "How it works" (no bottom padding; the stage starts 96px under the caption), and the pin is 0.55 viewport per step (2563px for 4 steps). `PageHero` is not in the kit yet: the hero is page-local (headline, lede, one Cta). The page ends on its own light close (headline + Apply) then the footer; kit `Band` would be a second dark room back to back with the rule room. JS off: `NoJs` shows every final state.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -56,7 +56,7 @@ Done here: Only Hanzo's rule (first touch, one affiliate per org, never your own
 - ~~Tables, FAQ, tabs and code use the kit parts~~ n/a: no table or FAQ; tabs are kit `Tabs`; the endpoint is inline code with kit `Copy`.
 - [x] `python3 scripts/parity.py /affiliate`: 0 missing
 
-Done here: Parity 15/15 text. Type from MASTER: h1 52px, section headings 26px, the link 64px mono, body 16px; no text under 13px. Step titles are Hanzo's own step sentences.
+Done here: Parity 15/15 text. Type from MASTER: h1 52px, section headings 26px, the link 44px mono (26px on phones), body 16px; no text under 13px. Step titles are Hanzo's own step sentences.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
@@ -74,7 +74,7 @@ Done here: `taste.py` passes (greys only: `#0a0a0a`, `#525252`, `--hz-*`); nothi
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: the forked xp-cta button colours (now kit `Cta` sized by `.xp-cta`), the hand-rolled case tabs (now kit `Tabs`), the browser-window hero and its placeholder bars, every invented label. listed below
 
-Done here: Kit `Cta` states (hover fill, press .98, focus ring, busy on hand-off); kit `Tabs` with arrow keys; the rule panel has a visible focus ring; no browser-default controls.
+Done here: Kit `Cta` states (hover fill, press .98, focus ring, busy on hand-off); kit `Tabs` with arrow keys; the rule panel has a 2px light focus ring; the in-text hello@hanzo.ai and "referral" links thicken and drop their underline on hover; chapter dots have a 44px hit area; no browser-default controls.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -83,7 +83,7 @@ Done here: Kit `Cta` states (hover fill, press .98, focus ring, busy on hand-off
 - [x] Reduced motion shows the final state; no `setInterval`
 - ~~Sound only on the listed moments, through the one kit~~ n/a: the shared sound kit is not on main yet; nothing page-local plays sound.
 
-Done here: Signature: sticky chapters (scroll). Time: the link writes itself once. Pointer: the link tilts up to 2.5° and Apply reveals hello@hanzo.ai on hover. State: rule tabs glide; the chapter object changes. Idle: the rule diagrams draw themselves. Ease-emphasis, no springs; reduced motion shows final states.
+Done here: Signature: sticky chapters (scroll). Time: the link writes itself once. Pointer: the link tilts up to 2.5° and Apply reveals hello@hanzo.ai on hover or focus (on phones too, so no address sits idle under the ask). State: rule tabs glide; the chapter object changes. Idle: after the link is written its caret keeps a slow blink and the `<code>` mark re-runs every 5 s (CSS only; none under reduced motion); the rule diagrams draw themselves. Ease-emphasis, no springs; reduced motion shows final states.
 
 ## 10. Media
 - ~~`Film` and `Pic` only; sizes and posters set~~ n/a: no images or video; the objects are drawn (link, request, thread, diagrams).
@@ -148,12 +148,12 @@ Done here: The one endpoint `POST /v1/affiliate/apply` copies exactly as shown; 
 - ~~A failed submit keeps its values and shows no success~~ n/a: no form.
 - [x] A thrown island does not blank the page
 
-Done here: Static Hanzo copy; nothing to load or fail. With JS off every state is final and legible.
+Done here: Static Hanzo copy; nothing to load or fail. With JS off every state is final and legible; the four steps sit in a 2-column grid inside the 1152px container, the POST bar unclipped.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/affiliate.md` verdict 8 or more
+- [ ] Review read: `docs/review/affiliate.md` verdict 8 or more (7/10 capped; awaiting re-review)
 
-Done here: `data-cta` ids `affiliate.hero`, `affiliate.close` (the kit Cta fires `cta_click`); V2 line in the route header; conductor review `docs/review/affiliate.md` gave 8/10 (ready); re-checked after the MASTER scale change.
+Done here: `data-cta` ids `affiliate.hero`, `affiliate.close` (the kit Cta fires `cta_click`); V2 line in the page and route headers. Review read: `docs/review/affiliate.md` gave 7/10 (capped on the old card; page itself 8); its fixes are done: card in this 18-part format, h1 rests at 52px, and the link (hero object) sits whole in the first screen at 1470×801 (44px mono, top 430; proof `docs/gallery/affiliate/v3-desktop-first.jpg`). Round 4: one solid from first paint, idle beat every 5 s, the Affiliates caption inside the link band, JS-off diagram curves drawn.

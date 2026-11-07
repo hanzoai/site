@@ -12,6 +12,7 @@ import { Studio } from './Studio';
 import Creative, { Scene } from './Creative';
 import { box as frame, film } from '../../v2/Launch';
 import { useLoop, rng } from './live';
+import usePhoneAsk from '../usePhoneAsk';
 import './Iro.css';
 
 const ASPECTS = [['16:9', 16 / 9], ['1:1', 1], ['21:9', 21 / 9]];
@@ -130,6 +131,7 @@ const SQUARE = frame((W, H, wide) => {
 });
 
 export default function Iro() {
+  usePhoneAsk();
   return (
     <Creative
       slug="iro"

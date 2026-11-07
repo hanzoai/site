@@ -1,10 +1,10 @@
 # /legal/* coverage (MASTER.md part 2, the 18 parts)
 
-Page file: `components/pages/LegalDoc.jsx` (+ `LegalRoom.css`; `LegalDoc.css` stays shared with the /legal index; data `legalData.js`; route `app/legal/[slug]/page.jsx`, 11 members) · gallery: `docs/gallery/legal/` · metric id: one contact click (`data-cta="legal.contact"` on the documents' mailto links)
+Page file: `components/pages/LegalDoc.jsx` (+ `LegalRoom.css`; `LegalDoc.css` stays shared with the /legal index; data `legalData.js`; route `app/legal/[slug]/page.jsx`, 11 members) · gallery: `docs/gallery/legal/family-*` and `docs/gallery/legal-family/` · metric id: one contact click (`data-cta="legal.contact.<slug>"` on the documents' mailto links; cover index rows carry `legal.clause.<slug>`)
 
-Open copy questions for James: none decided here. Functional strings (all `needs_james` in `content/ui-strings.json`): contents, find, not_found, of, close.
+Open copy questions for James: none decided here. Functional strings from `content/ui-strings.json`: find, of, int_copy ("Copy"), c4_reset (the clear button); "Contents" and "Not in this document" (`needs_james`) are only accessible names until James approves them: the summary shows a list icon and the % read, an empty find shows "0".
 Shared changes requested: none. (Site-wide, for their owners: the 0–100 loading curtain on a direct link; the footer's native tooltip; the footer's privacy-choices icon colour.)
-Forks this page deleted: its own table wrapper (DocNodes' `xlg-tw` inside the reading room → kit `DataTable`), the invented "sections" / "min read" figures, the per-document accent, the "§n" numbers.
+Forks this page deleted: its own table wrapper (DocNodes' `xlg-tw` inside the reading room → kit `DataTable`), the invented "sections" / "min read" figures, the per-document accent, the "§n" numbers, the cover plate's remount and fade-up, the "…" on clipped clauses, the browser's search cancel cross, DocNodes' 28px fade-in copy link (a legal-local 44px `LCopy`), the rail marker's spring.
 
 ## 1. Strategy and conversion
 - [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
@@ -31,13 +31,13 @@ Done here: every heading keeps its id and a copy-link button; the cover index an
 - [x] Ends in the other documents (cards), footer
 - [x] Sibling titles carry `data-morph` into the next document's h1
 
-Done here: at 1470×801 the title (52px), dates, lede and the cover with its clause plate; at 375×812 the title, dates, lede and the top of the cover.
+Done here: at 1470×801 the title (63px for "Terms of Service"), dates, lede and the cover with its clause plate (numeral 44px, so the title leads); at 375×812 the title, dates, lede and the top of the cover.
 
 ## 4. Conversion system
 - [x] n/a `Cta`: no ask on legal
 - [x] n/a sticky ask (off by MASTER part 4)
-- [x] Copy-link buttons say "copied" only when the link was written (DocNodes `CopyLink`)
-- [x] `data-cta="legal.contact"` on the documents' own contact links
+- [x] Copy-link buttons show their check only when the clipboard write succeeded (`LCopy`); a blocked write leaves the link in the address bar
+- [x] `data-cta="legal.contact.<slug>"` on the documents' own contact links
 
 Done here: nothing to sell; the action is reading and finding.
 
@@ -55,34 +55,34 @@ Done here: only Hanzo's own section numbers ("1.") appear, on the cover, the ind
 - [x] Tables through `DataTable` (cells wrap; phones read one card per row); n/a FAQ, tabs, code
 - [x] `python3 scripts/parity.py /legal/terms /legal/subprocessors /legal/cookies /legal/dpa`: 0 missing
 
-Done here: tables span the reading column with no inner vertical scroll (wheel over a subprocessor table moves the page: 899px for 10 notches); all 7 columns show at 1470.
+Done here: tables span the reading column with no inner vertical scroll (wheel over a subprocessor table moves the page: 940px for 10 notches); all 7 columns show at 1470 (table 856px in an 856px column); under 900px each row is a card with its column names (Subprocessors, Cookies, Privacy).
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py components/pages/LegalDoc.jsx components/pages/LegalRoom.css`: OK
 - [x] Nothing above a headline
-- [x] Cover outlined (no shadow); tiles flat; sizes on the live scale (h1 52, heads 26, cover numeral 64, prose 16)
+- [x] Cover outlined (no shadow); tiles flat; sizes on the live scale (h1 63 for Terms, heads 26, cover numeral 44 / 40 phone, plates 32, prose 16)
 - [x] One icon set (search, copy link); no icon in a rounded box
 - [x] Differs from neighbours: the hero object is the document's own cover and index (benchmarks: a chart card; careers: a role card)
 
 Done here: no dark room: a calm utility page.
 
 ## 8. UI component library
-- [x] Rail links, index rows, find field and cards answer hover, press (translateY 1px / scale .97) and focus
-- [x] Focus ring visible on rail, index, find, copy links, cards
+- [x] Rail rows, index rows and the Contents summary press 1px; copy and clear buttons press .94; cards answer hover, press and focus
+- [x] Focus ring visible on rail, index, find, clear, copy links, cards
 - [x] n/a dialogs
-- [x] Find field 16px text, 44px tall, no browser clear button
+- [x] Find field 16px text, 44px tall, no browser cancel cross; an ink 44px clear button (Escape clears too)
 - [x] Forks deleted: listed above
 
-Done here: copy-link buttons are 44px; their confirmation stays on screen on phones.
+Done here: copy-link buttons are 44×44 on every pointer and always shown on touch; on hover they scale in (not only fade); the check rides in an ink disc to the button's left, inside the viewport at 375 (x 283–311).
 
 ## 9. Motion and interaction
-- [x] One signature (the reading rail: marker springs to your section, line fills), supporting: title cut-in, cover clause turn, sigil field; 0 fade-ups
+- [x] One signature (the reading rail: marker glides 300ms ease-emphasis to your section, line fills, the rail scrolls itself so your row rides a third down), supporting: title cut-in, cover clause mask turn, sigil field; 0 fade-ups
 - [x] Kinds: idle (cover turns, contour drifts), pointer (index rows preview their clause, rail drags), state (marker, find lights and dims), time (cover's timing bar), scroll (rail line, plates); scroll is under half
-- [x] Something moves without input; every control answers
-- [x] Reduced motion: cover holds still, no bar, no stage transform
-- [x] n/a sound
+- [x] Something moves without input; every control answers; a finger on the cover pauses the turning
+- [x] Reduced motion: cover settled from first paint (CSS), no bar, no stage transform, no hydration error
+- [x] Sound: a chime when a link is copied, through `lib/sound`
 
-Done here: the cover's clause changes in place (a swipe that starts on the card survives); `variety.py` OK.
+Done here: the cover's clause turns inside one stable node (old clause masks up and out, the next masks in from below; no remount, so a swipe that starts on the card survives); at 1470×801 the marker is inside the rail in all 25 Terms sections; `unique.py` OK.
 
 ## 10. Media
 - [x] n/a `Film`/`Pic`: Hanzo has no imagery for its legal documents
@@ -98,7 +98,7 @@ Done here: ≤7 canvases (cover contour plus at most 6 sibling contours drawn on
 - [x] Targets 44px or more (rail rows, copy links, find field, cards)
 - [x] n/a primary ask
 
-Done here: the phone shows the index once (in the rail's Contents); the sideways swipe turns to the next document (terms → acceptable-use).
+Done here: the phone shows the index once (the rail's Contents, a 48px summary with a chevron that turns when open, 14px labels); the first clause of Terms starts 1.2 screens down; no sideways scroll at 320 on Terms, Subprocessors, Cookies, Privacy.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured: prose ink #0a0a0a, muted #525252, inactive plates #737373 (4.7:1)
@@ -123,7 +123,7 @@ Done here: no network requests from the page.
 - [x] `<JsonLd route>` per document
 - [x] Every sibling card is a real `<a href>`
 
-Done here: print stylesheet: the document alone, no cover, rail or cards.
+Done here: titles and canonicals untouched in `app/legal/[slug]/page.jsx`.
 
 ## 15. Catalogue and product pages
 - [x] n/a model card
@@ -142,15 +142,15 @@ Done here: the six documents after this one (wrapping), each with its own lede o
 Done here: every heading has a stable id and a copy-link button.
 
 ## 17. States and resilience
-- [x] Find has an empty state from the register ("Not in this document")
+- [x] Find has an empty state: an ink "0", with "Not in this document" for screen readers
 - [x] No live data
 - [x] n/a submit
-- [x] Nothing to throw beyond the kit parts
+- [x] Print: header, footer, skip link, cookie note, cover, rail, find, copy links and siblings hidden; title, date and version on page 1; each heading kept with its first paragraph
 
-Done here: JS off shows the full document.
+Done here: JS off shows the full document; Terms prints to 10 A4 pages with its text from page 1.
 
 ## 18. Measurement and handover
-- [x] `data-cta` on the contact links (n/a `lib/track.js`: not on main)
+- [x] `data-cta="legal.contact.<slug>"` on the contact links (n/a `lib/track.js`: not on main)
 - [x] Nothing identifier-bearing
 - [x] `V2:` line in the file's top comment
 - [ ] Review read: `docs/review/legal-family.md` verdict 8 or more (the last walk scored 6; every numbered fix is addressed here; waiting on the re-walk)

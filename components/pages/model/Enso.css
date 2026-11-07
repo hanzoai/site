@@ -1,6 +1,20 @@
 /* Enso (eo-): the switchboard and the GPQA explorer */
 /* stage: the headline sits left of the ring */
 .eo-head { width: min(46%, 600px); }
+/* the × close: the kit hover (lighter glass, firmer rim) for every non-touch pointer, beside its quarter turn */
+@media (hover: hover), not all and (pointer: coarse) { .eo-head ~ .lv-close:hover { background: rgba(255, 255, 255, .3); border-color: rgba(255, 255, 255, .55); } }
+/* after the settle the film's pause leaves the page edge and rides the ring's lower right (desktop; the ring is
+   RING in Enso.jsx: centre 71% / 50% of the stage, radius min(39% of its height, 24% of its width)) */
+@media (min-width: 901px) {
+  html.js .lv:not([data-calm]):has(.eo-head) .lv-pin { container-type: size; }
+  html.js .lv:not([data-calm]) .eo-head ~ .lv-pause { translate: 0 0; transition: translate .5s var(--ease), border-color .2s, transform .12s; }
+  html.js .lv:not([data-calm]) .eo-head[data-on] ~ .lv-pause {
+    translate: calc(71cqw + .707 * min(39cqh, 24cqw) + 12px - (100cqw - 46px)) calc(50cqh + .707 * min(39cqh, 24cqw) + 12px - (100cqh - 46px));
+  }
+}
+/* Hanzo's model cards: the press shows (.98) on top of the pointer tilt, which owns the inline transform */
+.lv:has(.eo-head) .mc-card { transition: transform .3s cubic-bezier(.2, .8, .2, 1), scale .15s var(--ease); }
+.lv:has(.eo-head) .mc-card:active { scale: .98; transition-duration: .3s, .09s; }
 
 /* chapters: Enso's film, a little closer each tier, with the tier's card on it */
 .eo-art { position: absolute; inset: 0; overflow: hidden; background: #000; }
@@ -24,13 +38,33 @@
 .eo-meta b { font-weight: 497; color: var(--ink); }
 .eo-acts { display: flex; flex-wrap: wrap; gap: 4px 22px; }
 .eo-l { display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; font-weight: 500; color: var(--ink); text-decoration: none; text-underline-offset: 4px; }
-@media (hover: hover) { .eo-l:hover { text-decoration: underline; } }
+/* hovers apply wherever the pointer is not a finger (a mouse, a trackpad, a stylus), not only where (hover: hover) reports */
+@media (hover: hover), not all and (pointer: coarse) { .eo-l:hover { text-decoration: underline; } }
 .eo-l:active { transform: translateY(1px); }
+/* the tier rail answers a hover: the row steps in and its number darkens (transform only, no layout jump) */
+#eo-tiers .lv-ch-rail button { transition: color .15s cubic-bezier(0, 0, .2, 1), transform .3s var(--ease); }
+#eo-tiers .lv-ch-rail button .mb-tnum { transition: color .15s cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover), not all and (pointer: coarse) {
+  #eo-tiers .lv-ch-rail button:hover { color: var(--ink); transform: translateX(6px); }
+  #eo-tiers .lv-ch-rail button:hover .mb-tnum { color: var(--ink); }
+}
+#eo-tiers .lv-ch-rail button:active { transform: translateX(6px) scale(.97); transition-duration: .09s; }
+/* the tiers not being read keep their links out of reach once their words have faded (no stacked invisible links) */
+#eo-tiers[data-live] .lv-ch-t:not([data-on]) .eo-l { visibility: hidden; transform: scale(0); transition: visibility 0s .3s, transform 0s .3s; }
 
 /* the dark room */
-.eo-live .lv-h { max-width: 14ch; }
+.eo-live .lv-h { max-width: 22ch; color: #fafafa; }
+.eo-live .lv-p { color: #a3a3a3; }
+.eo-live .eo-spec-ring { color: #fafafa; }
 .eo-all { margin: 32px 4px 0; }
-.eo-all .x-arrow { color: #f5f5f5; }
+.eo-all .x-arrow { position: relative; color: #f5f5f5; }
+/* 44px tall targets on the small text links (a positioned ::after, no layout change) */
+.eo-all .x-arrow::after, .eo-head .x-arrow::after { content: ''; position: absolute; left: -4px; right: -4px; top: 50%; height: 44px; transform: translateY(-50%); }
+.eo-head .x-arrow { position: relative; }
+/* each lane carries its tier's prices, lit with the lane when a request lands */
+.eo-lane-p { grid-column: 1 / -1; margin: 4px 0 0; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, .08); font-size: 13px; color: #a3a3a3; }
+.eo-lane-p b { font-size: 17px; font-weight: 497; letter-spacing: -.01em; color: #f5f5f5; }
+.eo-lane-p span + b { margin-left: 12px; }
 
 .eo-board { display: grid; grid-template-columns: 250px 210px minmax(0, 1fr); grid-template-areas: 'in node lanes' 'send send send'; gap: 28px 40px; align-items: center; padding: 36px; }
 .eo-wires { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
@@ -70,9 +104,19 @@
 .eo-send { grid-area: send; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, .08); }
 .eo-all { margin: 28px 4px 0; }
 
-/* GPQA explorer */
-.eo-figs { --c: 3; }
-.eo-figs .x-stat:first-child .x-stat-v { color: var(--ink); }
+/* GPQA explorer: Enso Ultra's figure is the one big thing (8 of 13 columns); Enso and Enso Flash stack beside it at medium */
+.eo-figs.lv-stats { grid-template-columns: repeat(13, minmax(0, 1fr)); column-gap: 27px; }
+.eo-figs.lv-stats > .x-stat { grid-column: 9 / 14; padding: 24px 0 20px 27px; border-left: 1px solid rgba(0, 0, 0, .1); }
+.eo-figs.lv-stats > .x-stat:first-child { grid-column: 1 / 9; grid-row: 1 / 3; padding: 32px 0 8px; border-left: 0; justify-content: flex-end; }
+.eo-figs.lv-stats > .x-stat:nth-child(3) { border-top: 1px solid rgba(0, 0, 0, .1); }
+.eo-figs.lv-stats > .x-stat:first-child .x-stat-v { font-size: clamp(5rem, 9vw, 8.5rem); font-weight: 220; letter-spacing: -.05em; color: var(--ink); }
+.eo-figs.lv-stats > .x-stat:not(:first-child) .x-stat-v { font-size: 32px; font-weight: 400; letter-spacing: -.02em; color: var(--ink); }
+.eo-figs.lv-stats > .x-stat:not(:first-child) .x-stat-l { font-size: 15px; }
+/* the spec heading carries Enso's ring, breathing: a slow sway and swell, never a spin (stops with the page pause and reduced motion) */
+.eo-spec-h { display: flex; align-items: center; gap: 18px; }
+.eo-spec-ring { flex: none; width: 44px; height: 44px; color: var(--ink); animation: eo-breathe 5s cubic-bezier(.65, 0, .35, 1) infinite alternate; }
+@keyframes eo-breathe { from { transform: rotate(-14deg) scale(.88); } to { transform: rotate(14deg) scale(1); } }
+[data-mpaused] .eo-spec-ring, [data-mpaused] .eo-enso { animation-play-state: paused; }
 .eo-plotwrap { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 48px; align-items: start; margin-top: clamp(72px, 8vw, 120px); }
 .eo-plot { width: 100%; height: auto; overflow: visible; }
 .eo-grid { stroke: rgba(0, 0, 0, .07); }
@@ -98,19 +142,33 @@
 .eo-read-m b { font-size: 22px; font-weight: 497; letter-spacing: -.02em; }
 .eo-read-m span { font: 500 13px var(--mono); color: var(--soft); }
 .eo-read-s { margin: 10px 0 0; font-size: 13.5px; line-height: 1.5; color: var(--soft); min-height: 4.5em; }
-.eo-src { font-size: 14px; color: var(--ink); text-underline-offset: 3px; transition: color .2s; }
-@media (hover: hover) { .eo-src:hover { text-decoration: underline; } }
+.eo-src { position: relative; font-size: 14px; color: var(--ink); text-underline-offset: 3px; transition: color .2s; }
+/* a 44px target around the small source marks, centred on them */
+.eo-src::after { content: ''; position: absolute; left: 50%; top: 50%; width: 44px; height: 44px; transform: translate(-50%, -50%); }
+@media (hover: hover), not all and (pointer: coarse) { .eo-src:hover { text-decoration: underline; } }
 .eo-vs { list-style: none; margin: 18px 0 0; padding: 14px 0 0; border-top: 1px solid var(--line); display: grid; gap: 10px; }
 .eo-vs li { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center; font-size: 14px; }
 .eo-vs span { font: 500 13px var(--mono); color: var(--soft); }
 .eo-vs em { font: 500 13px/1 var(--mono); font-style: normal; letter-spacing: .06em; text-transform: uppercase; padding: 5px 7px; border-radius: 999px; background: #e9e9e9; color: var(--soft); transition: background .3s, color .3s; }
 .eo-vs em[data-yes] { background: var(--ink); color: #fff; }
-.eo-table { margin-top: clamp(56px, 6vw, 96px); }
-.eo-spec .x-table code { font: 500 13px var(--mono); padding: 3px 7px; border-radius: 6px; background: #f5f5f5; color: #525252; margin-left: 6px; }
-.eo-spec .x-table td { font-size: 17px; }
+/* every result in a drawer under the chart (closed: hidden="until-found"; #eo-results and find-in-page open it) */
+.eo-table { margin-top: clamp(40px, 4vw, 64px); border-top: 1px solid rgba(0, 0, 0, .1); border-bottom: 1px solid rgba(0, 0, 0, .1); }
+.eo-disc { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; min-height: 64px; padding: 0; border: 0; background: none; color: var(--ink); font: 497 19px/1.2 var(--sans); letter-spacing: -.01em; text-align: left; cursor: pointer; }
+.eo-disc-a { display: inline-flex; align-items: center; gap: 10px; font: 500 13px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: #525252; transition: color .15s cubic-bezier(0, 0, .2, 1); }
+.eo-disc-a svg { transition: transform .3s var(--ease); }
+.eo-disc:active { transform: translateY(1px); }
+@media (hover: hover), not all and (pointer: coarse) { .eo-disc:hover .eo-disc-a { color: var(--ink); } .eo-disc:hover .eo-disc-a svg { transform: rotate(90deg); } }
+.eo-table[data-open] .eo-disc-a svg { transform: rotate(45deg); }
+.eo-results { padding: 8px 0 32px; }
+html.js .eo-table:not([data-open]) .eo-results { content-visibility: hidden; padding: 0; } /* closed from first paint, before the drawer sets hidden="until-found" */
+html:not(.js) .eo-disc-a { display: none; }
+.js .eo-table[data-open] .eo-results { animation: eo-open .4s var(--ease) both; }
+@keyframes eo-open { from { opacity: 0; transform: translateY(-8px); } }
+.eo-gpqa.lv-sec { padding-bottom: clamp(48px, 5vw, 80px); }
+.lv:has(.eo-head) .eo-gpqa + .mc.lv-sec { padding-top: clamp(48px, 5vw, 80px); } /* no dead white band between the drawer and the cards */
 .eo-sort { display: flex; gap: 8px; margin-bottom: 14px; }
 .eo-sortb { min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--soft); font: 500 14px var(--sans); cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
-@media (hover: hover) { .eo-sortb:hover { border-color: rgba(0, 0, 0, .25); color: var(--ink); } }
+@media (hover: hover), not all and (pointer: coarse) { .eo-sortb:hover { border-color: rgba(0, 0, 0, .25); color: var(--ink); } }
 .eo-sortb:active { transform: scale(.98); }
 .eo-sortb[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: #fff; }
 .eo-table b { font-weight: 497; color: var(--ink); }
@@ -126,6 +184,14 @@
   .eo-lane { grid-template-columns: 1fr; padding: 16px; }
   .eo-last { grid-column: 1; grid-row: auto; }
   .eo-plotwrap { grid-template-columns: 1fr; gap: 24px; margin-top: 36px; }
+  .eo-figs.lv-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; }
+  .eo-figs.lv-stats > .x-stat { grid-column: auto; padding: 22px 0; border-left: 0; border-top: 1px solid rgba(0, 0, 0, .1); }
+  .eo-figs.lv-stats > .x-stat:first-child { grid-column: 1 / -1; grid-row: auto; padding: 28px 0 24px; border-top: 0; }
+  .eo-figs.lv-stats > .x-stat:nth-child(3) { padding-left: 20px; border-left: 1px solid rgba(0, 0, 0, .1); }
+  .eo-figs.lv-stats > .x-stat:first-child .x-stat-v { font-size: 72px; }
+  .eo-figs.lv-stats > .x-stat:not(:first-child) .x-stat-v { font-size: 26px; }
+  .eo-figs.lv-stats > .x-stat:not(:first-child) .x-stat-n { font-size: 14px; }
+  .eo-spec-ring { width: 34px; height: 34px; }
   .eo-read { position: static; }
   .eo-tick, .eo-axis { font-size: 40px; }
   .eo-axis { font-size: 34px; }
@@ -134,4 +200,4 @@
   .eo-dot circle:first-of-type { r: 13px; }
   .eo-dot.enso circle:first-of-type { r: 16px; }
 }
-@media (prefers-reduced-motion: reduce) { .eo-enso { animation: none; } .eo-lane[data-hit]::after { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .eo-enso, .eo-spec-ring { animation: none; } .eo-lane[data-hit]::after { animation: none; } }

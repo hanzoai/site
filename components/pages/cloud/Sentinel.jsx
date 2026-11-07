@@ -2,8 +2,9 @@
 /* Sentinel (v2, Cloud 4 chat). Archetype A, Launch: a side Stage hero with the issue view → one dark scene where the
    events collapse → five stacked sheets → Get Sentinel → closing band. Ink, greys and white only.
    Persona: an engineer whose frontend and services throw errors they can't reproduce. Goal: read the migration docs.
-   CTA: "Read the docs" (hero, ask bar, close; data-cta primary / close). Metric: cta_click:sentinel.primary.
-   V2: 8/10 the issue view as the hero, ten thousand events collapsing into one issue as you scroll, the facts as stacking sheets
+   CTA: "Read the docs" (hero, header ask, close; data-cta primary / close).
+   Metric: cta_click:sentinel.primary
+   V2: 8/10 the issue view as the hero; ten thousand events rain into one issue (the rain never crosses the words); facts as stacking sheets that alternate and play once, the alert router builds a rule by itself; the close shows the fix landing at a release
    Signature: ten thousand events become one issue. In a pinned dark room, exceptions rain down a canvas; as you scroll
    they are pulled into a single issue card and its count climbs with them (scrubbed; on phones it plays when seen).
    Beyond: "Route an alert". Choose what happened (new issue, regression, spike), where it goes and which tracker opens
@@ -32,18 +33,18 @@ function Issue() {
   const [ref, live, , paused, toggle] = useDemo(0.05);
   const calm = useCalm();
   const [n, setN] = useState(4211);
-  const [bars, setBars] = useState(() => Array.from({ length: 28 }, (_, i) => 0.18 + rnd(i + 3) * 0.5 + (i > 20 ? (i - 20) * 0.04 : 0)));
+  const [bars, setBars] = useState(() => Array.from({ length: 28 }, (_, i) => +(0.18 + rnd(i + 3) * 0.5 + (i > 20 ? (i - 20) * 0.04 : 0)).toFixed(3)));
   const [t, setT] = useState(0);
   useTick(140, live, () => { setN((v) => v + 1 + Math.floor(rnd(v) * 9)); setT((x) => x + 1); if (rnd(t) > 0.82) setBars((b) => [...b.slice(1), 0.3 + rnd(t + 9) * 0.65]); });
   const resolved = calm || Math.floor(t / 22) % 2 === 1;
   return (
-    <div className="l2-obj sn2-issue" ref={ref} aria-hidden="true">
+    <div className="l2-obj sn2-issue" ref={ref}>
       <PauseBtn paused={paused} onClick={toggle} />
-      <div className="sn2-top">
+      <div className="sn2-top" aria-hidden="true">
         <span className="sn2-dots"><i /><i /><i /></span>
         <span className="l2-mono sn2-host">sentry.hanzo.ai</span>
       </div>
-      <div className="sn2-body">
+      <div className="sn2-body" aria-hidden="true">
         <div className="sn2-head">
           <span className="sn2-tag l2-mono">TypeError</span>
           <span className="sn2-unres l2-mono">unresolved</span>
@@ -57,7 +58,8 @@ function Issue() {
         <div className="sn2-frame">
           <p className="sn2-k l2-mono">Top frame</p>
           <div className="sn2-code">
-            <AnimatePresence mode="wait" initial={false}>
+            <AnimatePresence initial={false}>
+              {/* crossfade, never a blank bar */}
               {resolved
                 ? <motion.code key="r" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.35, ease: EASE }}><b>checkout/cart.ts:42</b> · applyDiscount()</motion.code>
                 : <motion.code key="m" className="min" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.3 }}>main.3f9a.js:1:88213 · t.a()</motion.code>}
@@ -84,6 +86,7 @@ function Collapse() {
   const scene = useRef(null);
   const cv = useRef(null);
   const card = useRef(null);
+  const copy = useRef(null);
   const num = useRef(null);
   const [ref, live, , paused, toggle] = useDemo(0.15);
   const calm = useCalm();
@@ -99,7 +102,7 @@ function Collapse() {
     let raf = 0, t0 = performance.now(), last = -1;
     const draw = (now) => {
       const w = c.clientWidth, h = c.clientHeight, dpr = Math.min(2, devicePixelRatio || 1);
-      if (c.width !== Math.round(w * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
+      if (c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
       g.setTransform(dpr, 0, 0, dpr, 0, 0);
       g.clearRect(0, 0, w, h);
       const t = (now - t0) / 1000;
@@ -107,6 +110,9 @@ function Collapse() {
       const p = calm ? 1 : pin ? Math.min(1, scrollYProgress.get() * 1.25) : Math.min(1, ((t % 8) / 4.5));
       const cr = card.current.getBoundingClientRect(), r = c.getBoundingClientRect();
       const cx = cr.left - r.left, cy = cr.top - r.top;
+      // the rain never falls through the words: particles still in the air skip the copy's box
+      const tr = copy.current.getBoundingClientRect();
+      const ax = tr.left - r.left - 24, ay = tr.top - r.top - 24, bx = tr.right - r.left + 24, by = tr.bottom - r.top + 24;
       g.fillStyle = '#d4d4d4';
       for (let n = 0; n < P.length; n++) {
         const q = P[n];
@@ -116,6 +122,7 @@ function Collapse() {
         const rx = q.x * w, ry = ((q.y + t * q.v) % 1) * h * 1.1 - h * 0.05;
         const tx = cx + 18 + q.jx * (cr.width - 36), ty = cy + 18 + q.jy * (cr.height - 36);
         const x = rx + (tx - rx) * k, y = ry + (ty - ry) * k;
+        if (k < 0.5 && x > ax && x < bx && y > ay && y < by) continue;
         g.globalAlpha = (0.25 + q.v * 4) * (1 - k * 0.85);
         g.fillRect(x, y, 2.5, k > 0.02 ? 2.5 : 9);
       }
@@ -135,7 +142,7 @@ function Collapse() {
         <PauseBtn paused={paused} onClick={toggle} className="dk sn2-col-pause" />
         <canvas ref={cv} className="sn2-cv" aria-hidden="true" />
         <div className="l2-wrap sn2-col-in">
-          <div className="sn2-col-copy">
+          <div className="sn2-col-copy" ref={copy}>
             <h2 className="l2-head">Enough context to fix it without asking</h2>
             <h3 className="l2-title">One issue, not ten thousand events</h3>
             <p className="l2-ch-n">01 / 06</p>
@@ -162,6 +169,18 @@ function Route() {
   const [w, setW] = useState(1);
   const [d, setD] = useState(1);
   const [k, setK] = useState(2);
+  // once, when the router comes into view, it builds one rule by itself (a spike → PagerDuty → Jira, then back to a
+  // regression → Slack → GitHub) so the sentence visibly rewrites; any press stops it
+  const box = useRef(null);
+  const seen = useInView(box, { amount: 0.6, once: true });
+  const calm = useCalm();
+  const [mine, setMine] = useState(false);
+  useEffect(() => {
+    if (!seen || calm || mine) return;
+    const plan = [() => setW(2), () => setD(3), () => setK(0), () => setW(0), () => setD(1), () => setK(2)];
+    const ids = plan.map((f, i) => setTimeout(f, 500 + i * 900));
+    return () => ids.forEach(clearTimeout);
+  }, [seen, calm, mine]);
   const pick = (list, at, set, label) => (
     <div className="sn2-rt-row" role="group" aria-label={label}>
       <p className="l2-mono">{label}</p>
@@ -169,7 +188,7 @@ function Route() {
     </div>
   );
   return (
-    <div className="sn2-route">
+    <div className="sn2-route" ref={box} onPointerDown={() => setMine(true)} onKeyDown={() => setMine(true)}>
       {pick(WHAT.map((x) => x[0]), w, setW, 'when')}
       {pick(DEST, d, setD, 'route to')}
       {pick(TRACK, k, setK, 'opens a ticket in')}
@@ -241,13 +260,20 @@ function Sheets() {
   );
 }
 
-/* The close's object: the issue as it ends up, one issue for ten thousand events, its frame resolved. */
+/* The close's object: the payoff, not the card again. The issue's events over time: they climb, the fix ships at the
+   release marker, and the bars fall to nothing after it (drawn once when reached). Example data, like the hero's. */
+// rounded, so the server's and the browser's Math.sin agree to the last digit (no hydration mismatch)
+const AFTER = Array.from({ length: 28 }, (_, i) => (i < 19 ? +(0.25 + rnd(i + 40) * 0.55 + i * 0.015).toFixed(3) : i === 19 ? 0.12 : 0.02));
 function Resolved() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.5 });
   return (
-    <div className="sn2-end" aria-hidden="true">
+    <div className={'sn2-end' + (seen ? ' in' : '')} ref={ref} aria-hidden="true">
       <div className="sn2-head"><span className="sn2-tag l2-mono">TypeError</span><span className="sn2-unres l2-mono">1 issue</span></div>
-      <p className="sn2-msg">Cannot read properties of undefined</p>
-      <p className="sn2-end-n"><b className="l2-fig">10,000</b><span>events</span></p>
+      <div className="sn2-end-h">
+        {AFTER.map((h, i) => <i key={i} style={{ '--h': h, '--k': i }} />)}
+        <span className="sn2-end-mark l2-mono">release 6</span>
+      </div>
       <div className="sn2-code"><code><b>checkout/cart.ts:42</b> · applyDiscount()</code><span className="sn2-map l2-mono on">source map</span></div>
     </div>
   );
@@ -255,7 +281,7 @@ function Resolved() {
 
 export default function Sentinel() {
   return (
-    <main id="main" className="l2-page sn2" data-ask="off">
+    <main id="main" className="l2-page sn2">
       <StageHero look="side" kick="sentry.hanzo.ai" title="Hanzo Sentinel" sub="Error tracking and performance monitoring" acts={[['Read the docs', DOCS], ['View on GitHub', GH]]}>
         <Issue />
       </StageHero>

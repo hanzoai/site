@@ -2,7 +2,7 @@
 
 Page file: `components/pages/cloud/Authz.jsx` (+ `Authz.css`, page-local `ExampleConsole.jsx/.css`) · gallery: `docs/gallery/authz/` · metric id: `api_key_created` (developers; the click is `cta_click authz.hero`)
 
-Open copy questions for James: the demo's UI labels are ours, not Hanzo's ("caller", "location", "can", "grant", "target", "Replay", "Delegate it yourself", "your grant", "the agent's grant", "with an expiry", "edge", "token", "accepted", "rejected"); keep them or move them to `content/ui-strings.json`? The spec sheet's "1 rule" and "3" are counts of Hanzo's own "one question" and its three named algorithms (RSA, EC, ML-DSA-65), not new figures; keep? "4 stars" is the live page's static GitHub figure.
+Open copy questions for James: the demo's UI labels are ours, not Hanzo's ("caller", "location", "can", "grant", "target", "Replay", "Delegate it yourself", "your grant", "the agent's grant", "with an expiry", "edge", "token", "accepted", "rejected", and the statement drawing's "JWT", "one question", "can", "true"); keep them or move them to `content/ui-strings.json`? The spec sheet's "1 rule" and "3" are counts of Hanzo's own "one question" and its three named algorithms (RSA, EC, ML-DSA-65), not new figures; keep? "4 stars" is the live page's static GitHub figure.
 Shared changes requested (`docs/requests/authz.md`): none. Kit notes for the Cloud 1 owner: KeynoteStage's `cta` default is the bare id `hero` (pages must pass `<page>.hero`); KeynoteClose's CodeBlock caption is 12px sentence case; its text-link "Self-host" reads `--ink` inside the dark room and the kit link asks are 21px tall (this page sets them white and 44px locally).
 Forks this page deleted: Frame's `Console` (6 `title=` tooltips, a spring row, a `setInterval`) replaced by page-local `ExampleConsole` (visible labels, no tooltip, built once); the spring on the answer (now a line-mask cut-in); the spring on the delegation picker (now a 300 ms tween glide); the native checkbox (now a switch button); the phones' `setInterval` scene loop (now one pass, a step a second); the violet/grey accent `--ac` and every off-deck grey (#fbfbfd, #f5f5f7, #e3e3e8, #0b0b0c, #8e8e93, #3a3a3e, #f0f0f3); 8 box-shadows; the 112px/128px answers and the 44px statement.
 
@@ -15,7 +15,7 @@ Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line
 - [x] No dead or self-looping button; ~~prices from `lib/plans.js`~~ n/a: no prices
 - [x] Open copy questions for James listed, none decided
 
-Done here: "Read the docs" (docs.hanzo.ai/…/authz) is the hero's one solid (`data-cta="authz.hero"`, `data-thumb`), "View on GitHub" is a kit text link (`authz.hero-2`); the close's one solid is Hanzo's "Deploy to Cloud" (`authz.close`) with the "Self-host" link. The header's "Try Hanzo" is always solid (SYSTEM §5), so the page keeps one own solid per view. The first screen reads "Hanzo Authz / Fine-grained authorization" over a graph answering true or false.
+Done here: "Read the docs" (docs.hanzo.ai/…/authz) is the hero's one solid (`data-cta="authz.hero"`, `data-thumb`), "View on GitHub" is a kit text link (`authz.hero-2`); the close's one solid is Hanzo's "Deploy to Cloud" (`authz.close`) with the "Self-host" link. The header's "Try Hanzo" is always solid (SYSTEM §5), so the page keeps one own solid per view. The first screen reads "Hanzo Authz / Fine-grained authorization" over a graph answering true or false: at 1470×801 the title block now sits right under the header (page-local `.az .kns` padding 24px instead of the kit's 38svh drop) and the window starts at y≈277, so the decision panel's 64px answer rests at y≈502–579 and its three steps above the fold; at 375×812 a compact answer line (`.az-mini`: "true" at 44px beside "workspace member → acme/prod/web") sits at y≈500, above the caller pills.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -33,7 +33,7 @@ Done here: Every link goes through the kit's `A` or `Cta` (the console's sidebar
 - [x] Ends in proof strip, `Band`, footer (the close is Hanzo's own "Get Authz" dark room)
 - [x] ~~Card-to-page links use Morph~~ n/a: no card opens into a page; the related rows are plain links (Morph turns the page)
 
-Done here: With Next's JS blocked (`prehyd.cjs`), the request bar's fill (`az-fill`), the steps and the answer's line mask run in the server HTML at 250–1000 ms (screens differ by 171 and 480 samples). With JS off nothing is hidden (audit: 0 hidden text). Order: check (hero) → statement + six pinned rules → delegate it yourself (quiet room) → tech specs → related + console → Get Authz (dark).
+Done here: With Next's JS blocked (`prehyd.cjs`), the request bar's fill (`az-fill`), the steps and the answer's line mask run in the server HTML at 250–1000 ms (screens differ by 171 and 480 samples). With JS off nothing is hidden (audit: 0 hidden text). Order: check (hero) → statement (with its drawn token → one question → true line) + six pinned rules → delegate it yourself (quiet room) → tech specs → related + console → Get Authz (dark). Lower-half section pads cut page-locally (116/72px instead of the kit's 161px each side), so the rooms follow without 300px white gaps. Phones: the six rules are a snap swipe rail (scene first, then words and 01 / 06, the next card peeking), each card 706px, so the chapters take 1,430px instead of 5,183px (page 13,887 → 10,231px).
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -75,7 +75,7 @@ Done here: `taste.py` OK (4 files). Colours: #fff, #fafafa, #f5f5f5, #ededed, #e
 - [x] ~~Inputs 16px~~ n/a: no input; no bare `:hover` (all inside `@media (hover: hover)`)
 - [x] Forks this page deleted: listed above
 
-Done here: Callers, locations, request marks, Replay, the picker pills, the expiry switch (`role="switch"`), related rows and console rows all press to .97 in 90 ms, hover by border/fill/underline (never opacity) and focus with `2px solid var(--focus)`. The console's listbox moves by ↑ ↓ Home End. No `title=` attributes.
+Done here: Hovering a hero request mark fills its 44px target, thickens the mark and names that request in the bar ("workspace member → acme/prod/web" lifts in where "hanzoai/authz" was). Hovering a related row fills that product's entry in the example console's sidebar (IAM row → IAM entry) and darkens its line. Callers, locations, request marks, Replay, the picker pills, the expiry switch (`role="switch"`), related rows and console rows all press to .97 in 90 ms, hover by border/fill/underline (never opacity) and focus with `2px solid var(--focus)`. The console's listbox moves by ↑ ↓ Home End. No `title=` attributes.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -84,7 +84,7 @@ Done here: Callers, locations, request marks, Replay, the picker pills, the expi
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit (Cta tap via the shared kit; nothing page-made)
 
-Done here: `variety.py` OK (pathLength, layoutId; 0 `Rise`). Idle: the check asks itself every 4.6 s (gated on `live && !useStagePause()`; pause beside the asks). Time: the request fill, the expiry rings running down once. State: picking a caller/location, the picker glide (300 ms tween), the switch. Pointer: the magnetic ask, hovers. Arrival: line masks. Scroll (1 of 6): the pinned rules and the Stage settle. 0 springs, deck easing `[.4,0,.2,1]`/`[.16,1,.3,1]`; loops end at rest (lines run 3×, phone scenes one pass ≤ 4.5 s).
+Done here: `variety.py` OK (pathLength, layoutId, Count; 0 `Rise`). The spec's 1 and 3 count up once in Air 220 as their row arrives, and each spec row's hairline draws across as it scrolls in (CSS `animation-timeline: view()`, where supported). The statement's line draws once when seen (~1.4 s: hairline, question fills, hairline, "true" cuts in). Idle: the check asks itself every 4.6 s (gated on `live && !useStagePause()`; pause beside the asks). Time: the request fill, the expiry rings running down once. State: picking a caller/location, the picker glide (300 ms tween), the switch. Pointer: the magnetic ask, hovers. Arrival: line masks. Scroll (1 of 6): the pinned rules and the Stage settle. 0 springs, deck easing `[.4,0,.2,1]`/`[.16,1,.3,1]`; loops end at rest (lines run 3×, phone scenes one pass ≤ 4.5 s).
 
 ## 10. Media
 - [x] ~~`Film` and `Pic`~~ n/a: no photo or film; the objects are product UI (graph, scenes, console)
@@ -100,7 +100,7 @@ Done here: The page has no Hanzo image or film; every section's object is drawn 
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: `sweep.cjs authz`: no sideways scroll, no errors (desk + 375). `audit2.cjs`: 0 sideways at 320, 0 targets under 44px on phone. At 375 "Read the docs" sits at y≈190–234. The graph stacks to callers (2×2), locations, decision.
+Done here: `sweep.cjs authz`: no sideways scroll, no errors (desk + 375). `audit2.cjs`: 0 sideways at 320, 0 targets under 44px on phone. At 375 "Read the docs" sits at y≈190–234. The graph stacks to the compact answer line, callers (2×2), locations, decision. The rules are a horizontal snap rail (88% cards; overflow contained in the rail, page overflow 0).
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -149,12 +149,12 @@ Done here: The agent prompt is the kit `CodeBlock` inside KeynoteClose; `hanzo a
 - [x] ~~A failed submit~~ n/a: no form
 - [x] A thrown island does not blank the page (site error boundary)
 
-Done here: The page fetches nothing; paused, picked (Replay), reduced-motion and JS-off states each read as intended. Console errors: none (`film.cjs`, `sweep.cjs`).
+Done here: The page fetches nothing; paused, picked (Replay), reduced-motion and JS-off states each read as intended. Console errors: none (`errs.js /authz`, both sizes, 3 runs). The reviewer's intermittent hydration warning did not reproduce in single loads; the page's own first render reads no Date, random or window (the check starts at step 0, `useGeo` starts null and fills in a layout effect), so it is left to the shared-noise note (several browsers on the dev server at once).
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary; events only through the kit's `Cta` (`cta_click`)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: 8/10 …` in the page file's top comment
-- [ ] Review read: no `docs/review/authz.md` yet
+- [x] Review read: `docs/review/authz.md` (7.5/10) acted on: first screen, statement object, lower-half spacing and spec motion, related hover, phone rail, request-mark hover
 
-Done here: ids `authz.hero`, `authz.hero-2`, `authz.close`, `authz.close-self`; metric `api_key_created`. Gallery: `docs/gallery/authz/` (desktop.mp4, desktop.jpg, phone-1..3.jpg). Own score 8/10; the critic's verdict decides.
+Done here: ids `authz.hero`, `authz.hero-2`, `authz.close`, `authz.close-self`; metric `api_key_created`. Gallery: `docs/gallery/authz/` (desktop.mp4, desktop.jpg, phone-1..3.jpg, desktop-r2.jpg, phone-r2.jpg). Own score 8/10; the critic's verdict decides.

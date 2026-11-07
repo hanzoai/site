@@ -6,3 +6,4 @@
 4. `components/v2/Lines.jsx`: MASTER part 3 asks 700 ms per line with 60 ms between lines; the shared file runs 1.05 s. The Story pages pass `stagger={0.06}`.
 5. `components/Ask.jsx`: MASTER 3.2 rule 6 and the banned list: no floating pill bar over content on desktop. The Story pages carry `data-thumb` for the bar's label, but the bar itself is shared.
 6. `scripts/taste.py --fix` rewrote Hanzo copy on /about ("Merge pull request #299" became "#737373"): a commit message is copy, not a colour. Restored, and the source now writes it as `#299` so the fixer cannot match it; please make the fixer skip JS string content.
+7. Shared `FooterHTML`: on a cold load with motion on (1470 and 375), React logs a hydration mismatch on its `dangerouslySetInnerHTML` `<footer class="is_View …">` string (server and client strings differ), which raises the red "1 Issue" badge on /about. Not reproducible under reduced motion. Please make the server and client footer strings identical.

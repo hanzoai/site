@@ -20,9 +20,10 @@
 //   answer built from Hanzo's own lines.
 // Every word and link is Hanzo's; the field and the stream are drawn, not measured, and show no numbers.
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion } from 'motion/react';
+import { motion, useInView } from 'motion/react';
 import { A } from '../../kit';
-import KeynoteStage, { useStagePause } from '../../v2/KeynoteStage';
+import { useCalm } from '../../ui';
+import KeynoteStage, { useStagePause } from './SafeStage';
 import KeynoteOpen from '../../v2/KeynoteOpen';
 import KeynoteRoom from '../../v2/KeynoteRoom';
 import KeynoteClose from '../../v2/KeynoteClose';
@@ -44,7 +45,7 @@ const W = [38, 64, 22, 50, 30, 72, 44, 26, 58, 34, 66, 40, 24, 52, 46, 30];
 function Local() {
   const ref = useRef(null);
   const seen = useInView(ref, { amount: 0.25 });
-  const calm = useReducedMotion();
+  const calm = useCalm();
   const paused = useStagePause();
   const [round, setRound] = useState(0);
   // the stream plays by CSS from first paint; while seen and not paused it streams again every 7 s
@@ -182,7 +183,7 @@ function draw(s, cv, t, mode, calm) {
 function Field() {
   const ref = useRef(null);
   const seen = useInView(ref, { amount: 0.3 });
-  const calm = useReducedMotion();
+  const calm = useCalm();
   const [hold, setHold] = useState(false);
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);

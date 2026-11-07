@@ -58,7 +58,7 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
 .xcu-case-d { font-size: 17px; line-height: 1.5; color: rgba(255, 255, 255, .86); max-width: 40ch; }
 .xcu-go { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .5); color: #fff; transition: transform .35s var(--ease), background-color .3s, color .3s; }
 @media (hover: hover) { .xcu-case-a:hover .xcu-go { background: #fff; color: #0a0a0a; transform: translateX(4px); } }
-.xcu-case-a:active .xcu-go { transform: scale(.96); }
+.xcu-case-a:active .xcu-go { transform: scale(.97); }
 .xcu-tabs { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; margin-top: 20px; }
 .xcu-cs { margin: 0; font: 606 12px/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--mut); }
 .xcu-tabs .x-tab { height: 44px; padding: 0 20px; font-size: 15px; }
@@ -74,6 +74,7 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
 @media (hover: hover) { .xcu-years button:hover { color: var(--xi); } }
 .xcu-years button:active { transform: scale(.97); }
 .xcu-years button > .xcu-pill { position: absolute; inset: 0; border-radius: 999px; background: var(--sunk); }
+.xcu-strip { display: none; }
 .xcu-dots { display: inline-flex; gap: 4px; }
 .xcu-dots i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .55; }
 .xcu-index { grid-column: 1 / 9; grid-row: 2; align-self: start; list-style: none; margin: 0; padding: 0; border-bottom: 1px solid rgba(0, 0, 0, .1); }
@@ -108,6 +109,9 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
 .xcu-st-dots { display: flex; gap: 6px; padding: 0 32px 28px; }
 .xcu-st-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(0, 0, 0, .16); transition: background-color .3s, transform .3s var(--ease); }
 .xcu-st-dots i.on { background: var(--xi); transform: scale(1.35); }
+/* idle: the launch being read breathes in the stage's dot row while you read it (one slow mover in view) */
+.xcu-st-dots i.on::after { content: ''; display: block; width: 100%; height: 100%; border-radius: 50%; box-shadow: 0 0 0 1px var(--xi); animation: xcu-breathe 2.4s cubic-bezier(.4, 0, .2, 1) infinite; }
+@keyframes xcu-breathe { 0% { transform: scale(1); opacity: .6; } 100% { transform: scale(2.6); opacity: 0; } }
 
 /* 3. backed by builders: a calm row of names, as live shows them, no boxes */
 .xcu-back { padding-top: clamp(96px, 10vw, 160px); }
@@ -145,8 +149,14 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
   .xcu-years::-webkit-scrollbar { display: none; }
   .xcu-years button { flex: none; }
   .xcu-years button.here:not([aria-pressed='true'])::after { content: ''; position: absolute; left: 18px; right: 18px; bottom: 6px; height: 2px; border-radius: 2px; background: var(--xi); }
+  /* the phone scene: a slim strip under the rail carries the figure of the row being read, one in and one out */
+  .xcu-strip { display: flex; align-items: center; grid-column: 1 / -1; position: sticky; top: 121px; z-index: 10; margin: -24px calc(-1 * clamp(16px, 4vw, 32px)) 0; padding: 0 clamp(16px, 4vw, 32px); height: 64px; overflow: hidden; background: #fff; border-bottom: 1px solid rgba(0, 0, 0, .1); }
+  .xcu-strip-in { display: flex; align-items: baseline; gap: 12px; min-width: 0; }
+  .xcu-strip-in b { flex: none; font-size: 32px; font-weight: 220; letter-spacing: -.03em; line-height: 1; white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--xi); }
+  .xcu-strip-in span { min-width: 0; font-size: 14px; line-height: 1.3; color: var(--sec); }
+  .xcu-strip-in.nm b { font-size: 21px; font-weight: 497; letter-spacing: -.02em; }
   .xcu-every-g { row-gap: 24px; }
-  .xcu-every-g h2, .xcu-years, .xcu-index { grid-row: auto; }
+  .xcu-every-g h2, .xcu-years, .xcu-strip, .xcu-index { grid-row: auto; }
   .xcu-index { grid-column: 1 / -1; }
   .xcu-aside { display: none; }
   .xcu-row { grid-template-columns: 56px minmax(0, 1fr); row-gap: 16px; padding: 32px 0; }
@@ -171,5 +181,6 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
 @media (prefers-reduced-motion: reduce) {
   .xcu-in, .xcu-in2 { animation: none; }
   .xcu-line u.run { animation: none; transform: scaleX(1); }
+  .xcu-st-dots i.on::after { animation: none; opacity: 0; }
   .xcu-row-f dt, .xcu-row-f dd { transform: none !important; transition: none; }
 }

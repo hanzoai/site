@@ -1,20 +1,22 @@
 'use client';
 /* Hanzo Tag for Slack.
-   V2: 8/10 the code channel as an Apple-style pinned scene: your scroll plays the thread from @Hanzo to merged PR in one dark room, with the setup card, the promises and the details chaptered after it.
+   V2: 8/10 the hero now sells first (52px h1 at the 38% line, the window peeking), faces are drawn discs, the three rooms are one tile with three states, the promises light a window crop as you read, the platform is a runtime map, and the close has one solid ask.
    Persona: an engineering lead whose team lives in Slack. Goal: set up Hanzo Tag. CTA: Set up Hanzo Tag (slack.hero).
    Metric: cta_click on slack.hero and slack.close (data-cta; the event layer is the conductor's).
    Signature: scroll plays the thread. A white first screen with the headline hands over to the one dark room, where
    the Slack window pins and settles to full size; each stretch of scroll plays the next step of #bug-button-darkmode
    (1. Code trace … 6. Session complete) while the Code, View and Canvas artifacts follow the step. The step rail on
-   top jumps to any step. After it: the setup card connects in three steps and the first exchange plays; the three
-   rooms; the six features open in a sheet; the platform; questions; the close.
+   top jumps to any step. Phones pin a compact window under a 44px snap rail, and scroll plays it the same way.
+   After it: the promises light the matching part of a window crop as each is read; the setup card connects in three
+   steps and the first exchange plays; the three rooms as one tile that swaps; the six features open in a sheet; the
+   platform as one runtime with the product you point at drawn in ink; questions; the close.
    Beyond: Contrast slider: drag between the before (1.9:1) and after (8.9:1) Buy Now button, using only Hanzo's own
-   figures and colours (#e5e7eb/#ec4899 → #1a1a1a/#f472b6). Accent: aubergine, Slack's own sidebar.
+   figures; both colourways are drawn as greys of equal luminance, so no hue reaches the page.
    Every word, figure and link is Hanzo's (components/pages/slackData.js). */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
-import { A, Go, More } from '../kit';
-import A2Lines from '../v2/A2Lines';
+import { A, More } from '../kit';
+import A2Lines from './skills/Lines';
 import A2Paste from '../v2/A2Paste';
 import A2Faq from '../v2/A2Faq';
 import A2Sheet from '../v2/A2Sheet';
@@ -24,30 +26,47 @@ import '../v2/A2.css';
 import './Slack.css';
 
 const P = 'xsq';
+const EMPH = [0.16, 1, 0.3, 1];
+
+/* The server knows nothing of the visitor's motion setting or the clock, so anything that depends on them waits for
+   the first browser render (the server HTML and the first client render stay identical: no hydration mismatch). */
+function useMounted() {
+  const [m, setM] = useState(false);
+  useEffect(() => setM(true), []);
+  return m;
+}
+function useCalm() {
+  const calm = useReducedMotion();
+  return useMounted() && !!calm;
+}
 
 /* Beyond: the same button in both colourways, split by a handle you drag (it sweeps by itself until you do). */
 function Contrast({ live }) {
   const box = useRef(null);
   const knob = useRef(null);
+  const mounted = useMounted();
   const [mine, setMine] = useState(false);
   const set = (v) => { box.current?.style.setProperty('--cut', v + '%'); };
   useEffect(() => {
-    if (!live || mine) return;
+    if (!live || mine || !mounted) return;
     let raf = 0;
     const loop = (now) => { const v = 50 + Math.sin(now / 1000 * 0.8) * 34; set(v); if (knob.current) knob.current.value = String(Math.round(v)); raf = requestAnimationFrame(loop); };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-  }, [live, mine]);
+  }, [live, mine, mounted]);
   const btn = (c) => <span className={`${P}-buy`} style={c}>{VIEW.button}</span>;
   return (
     <div className={`${P}-view`}>
       <p className={`${P}-cmp-ks`}><span>{VIEW.before}</span><span>{VIEW.after}</span></p>
-      <div className={`${P}-cmp`} ref={box} style={{ '--cut': '50%' }}>
+      <div className={`${P}-cmp`} ref={box}>
         <div className={`${P}-cmp-half old`}>{btn(VIEW.old)}</div>
         <div className={`${P}-cmp-half fix`} aria-hidden="true">{btn(VIEW.fix)}</div>
         <i className={`${P}-cmp-line`} aria-hidden="true" />
-        <input ref={knob} type="range" min="0" max="100" defaultValue="50" className={`${P}-cmp-knob`} aria-label="Before and after the fix" aria-valuetext="Drag left for the fix, right for the original"
-          onInput={(e) => { setMine(true); set(e.currentTarget.value); }} />
+        {/* the range input is a browser control whose inline style the browser writes itself: it renders after mount */}
+        {mounted && (
+          <input ref={knob} type="range" min="0" max="100" defaultValue="50" className={`${P}-cmp-knob`} aria-label="Before and after the fix" aria-valuetext="Drag left for the fix, right for the original"
+            onInput={(e) => { setMine(true); set(e.currentTarget.value); }} />
+        )}
       </div>
       <p className={`${P}-view-note`}>{VIEW.note}</p>
     </div>
@@ -87,7 +106,7 @@ function Canvas() {
 /* The window, drawn at a given step. */
 function Window({ shown, live, tabHand, setTabHand, archived, setArchived }) {
   const list = useRef(null);
-  const calm = useReducedMotion();
+  const calm = useCalm();
   useEffect(() => { const el = list.current; if (el) el.scrollTo({ top: el.scrollHeight, behavior: calm ? 'auto' : 'smooth' }); }, [shown, calm]);
   const tab = tabHand ?? SESSION[shown].tab;
   const done = shown === 5;
@@ -155,7 +174,7 @@ function Window({ shown, live, tabHand, setTabHand, archived, setArchived }) {
           <div className={`${P}-tabs`} role="tablist" aria-label="Artifacts">
             {TABS.map((t, i) => (
               <button key={t} type="button" role="tab" aria-selected={tab === i} onClick={() => setTabHand(i)}>
-                {tab === i && <motion.span layoutId="xsq-tab" className={`${P}-tab-bg`} transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
+                {tab === i && <motion.span layoutId="xsq-tab" className={`${P}-tab-bg`} transition={{ duration: 0.3, ease: EMPH }} />}
                 <span>{t}</span>
               </button>
             ))}
@@ -169,11 +188,12 @@ function Window({ shown, live, tabHand, setTabHand, archived, setArchived }) {
   );
 }
 
-/* The signature: the one dark room pins the window; scroll plays the steps. Phones tap the rail instead. */
+/* The signature: the one dark room pins the window; scroll plays the steps (phones too, in a compact pinned window). */
 function Scene() {
   const ref = useRef(null);
+  const rail = useRef(null);
   const narrow = useNarrow();
-  const calm = useReducedMotion();
+  const calm = useCalm();
   const live = useInView(ref, { amount: 0.2 });
   const [at, setAt] = useState(0);
   const [tabHand, setTabHand] = useState(null);
@@ -181,15 +201,20 @@ function Scene() {
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   const scale = useTransform(p, (v) => (narrow || calm ? 1 : 0.9 + Math.min(1, v / 0.08) * 0.1));
   useMotionValueEvent(p, 'change', (v) => {
-    if (narrow) return;
     const k = Math.min(5, Math.max(0, Math.floor(((v - 0.06) / 0.94) * 6)));
     setAt((o) => { if (o !== k) { setTabHand(null); setArchived(false); } return k; });
   });
+  // the phone rail is a snap strip: the step being played slides into view in it
+  useEffect(() => {
+    const el = rail.current;
+    if (!narrow || !el) return;
+    const b = el.children[at];
+    if (b) el.scrollTo({ left: b.offsetLeft - 16, behavior: calm ? 'auto' : 'smooth' });
+  }, [at, narrow, calm]);
   const go = (i) => {
-    if (narrow) { setAt(i); setTabHand(null); return; }
     const el = ref.current;
     const y = el.getBoundingClientRect().top + scrollY + (el.offsetHeight - innerHeight) * (0.06 + ((i + 0.5) / 6) * 0.94);
-    window.__lenis ? window.__lenis.scrollTo(y, { duration: 1.1 }) : scrollTo({ top: y, behavior: 'smooth' });
+    window.__lenis ? window.__lenis.scrollTo(y, { duration: 1.1 }) : scrollTo({ top: y, behavior: calm ? 'auto' : 'smooth' });
   };
   const key = (e) => {
     const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
@@ -199,7 +224,7 @@ function Scene() {
     <section className={`a2-dark ${P}-scene`} data-room="dark" ref={ref} aria-label="A code channel, step by step">
       <div className={`${P}-stick`}>
         <div className="a2-wrap">
-          <div className={`${P}-rail`} role="tablist" aria-label="Session steps" onKeyDown={key}>
+          <div className={`${P}-rail`} role="tablist" aria-label="Session steps" onKeyDown={key} ref={rail}>
             {STEPS.map((s, i) => (
               <button key={s} type="button" role="tab" aria-selected={at === i} tabIndex={at === i ? 0 : -1} className={i < at ? 'past' : ''} onClick={() => go(i)}>
                 <span>{s}</span><i className={`${P}-rail-bar`}><b /></i>
@@ -221,13 +246,13 @@ function Hero() {
       <div className="a2-wrap a2-grid">
         <div className={`${P}-hero-l`}>
           <p className="a2-kick"><i className={`${P}-dot`} aria-hidden="true" />{HERO.kick}</p>
-          <A2Lines as="h1" id="xsq-h1" className={`a2-display s ${P}-h1`} lines={HERO.title} now />
+          <A2Lines as="h1" id="xsq-h1" className={`a2-display ${P}-h1`} lines={HERO.title} now />
         </div>
         <div className={`${P}-hero-r`}>
           <p className="a2-lede">{HERO.lede}</p>
           <div className="a2-acts">
             <A to={HERO.acts[0][1]} className="x-btn solid" data-thumb={HERO.acts[0][0]} data-cta="slack.hero">{HERO.acts[0][0]}</A>
-            <A to={HERO.acts[1][1]} className="x-btn">{HERO.acts[1][0]}</A>
+            <A to={HERO.acts[1][1]} className={`x-btn ${P}-quiet`}>{HERO.acts[1][0]}</A>
           </div>
           <p className={`${P}-docs`}><More to={HERO.acts[2][1]}>{HERO.acts[2][0]}</More></p>
         </div>
@@ -236,8 +261,42 @@ function Hero() {
   );
 }
 
-/* The four promises beside the code-channel headline; the safety line under them. */
+/* One promise: it lights its part of the window crop when it reaches the middle of the screen (or is pointed at). */
+function Point({ t, i, on, setOn }) {
+  const ref = useRef(null);
+  const mid = useInView(ref, { margin: '-42% 0px -42% 0px' });
+  useEffect(() => { if (mid) setOn(i); }, [mid, i, setOn]);
+  return (
+    <li ref={ref} className={on ? 'on' : ''} onPointerEnter={() => setOn(i)}>
+      <span className="x-mono">{String(i + 1).padStart(2, '0')}</span><p>{t}</p>
+    </li>
+  );
+}
+
+/* A crop of the same channel, light: each promise has its part, and the one being read is drawn in full. */
+function Crop({ on }) {
+  const r = (k) => `${P}-crop-r` + (on === k ? ' on' : '');
+  return (
+    <div className={`${P}-crop`} aria-hidden="true">
+      <p className={`${P}-crop-bar`}><i /><i /><i /><span>{SETUP.channel}</span></p>
+      <div className={r(0)}><Msg m={ASK} p={P} /></div>
+      <div className={r(1)}>
+        <p className={`${P}-crop-tabs`}>{TABS.map((t, k) => <span key={t} className={k === 0 ? 'on' : ''}>{t}</span>)}</p>
+        <p className={`${P}-chips`}>{SETUP.chips.map((c) => <span key={c}>{c}</span>)}</p>
+      </div>
+      <div className={r(2)}>
+        <p className={`${P}-crop-id`}><i>✓</i><span><b>{SETUP.steps[2][0]}</b><span>{SETUP.steps[2][1]}</span></span></p>
+      </div>
+      <div className={r(3)}>
+        <p className={`${P}-crop-log`}><b>{BUILT.items[5][0]}</b><span>{SETUP.retention}</span></p>
+      </div>
+    </div>
+  );
+}
+
+/* The four promises beside the code-channel headline and its window crop; the safety line under them. */
 function Notes() {
+  const [on, setOn] = useState(0);
   return (
     <section className={`a2-sec ${P}-notes`} aria-labelledby="xsq-notes-h">
       <div className="a2-wrap a2-grid">
@@ -245,9 +304,10 @@ function Notes() {
           <p className="a2-kick"><b>{CODE.kick}</b></p>
           <A2Lines id="xsq-notes-h" className="a2-headline" lines={[CODE.title]} />
           <p className="a2-body">{CODE.lede}</p>
+          <Crop on={on} />
         </div>
         <div className={`${P}-notes-l`}>
-          <ol className={`${P}-points`}>{HERO.points.map((t, i) => <li key={t}><span className="x-mono">{String(i + 1).padStart(2, '0')}</span><p>{t}</p></li>)}</ol>
+          <ol className={`${P}-points`}>{HERO.points.map((t, i) => <Point key={t} t={t} i={i} on={on === i} setOn={setOn} />)}</ol>
           <p className={`${P}-safe`}><i aria-hidden="true">✓</i><span>{HERO.safe}</span></p>
         </div>
       </div>
@@ -259,14 +319,16 @@ function Notes() {
 function Setup() {
   const ref = useRef(null);
   const live = useInView(ref, { amount: 0.2 });
-  const calm = useReducedMotion();
+  const calm = useCalm();
   const [k, setK] = useState(9); // the HTML shows the finished exchange; the browser replays it from the start
   const began = useRef(false);
   useEffect(() => {
     if (!live || calm) return;
     if (!began.current) { began.current = true; setK(0); }
-    const t = setInterval(() => setK((v) => (v >= 9 ? 0 : v + 1)), 1300);
-    return () => clearInterval(t);
+    let t = 0;
+    const tick = () => { setK((v) => (v >= 9 ? 0 : v + 1)); t = setTimeout(tick, 1300); };
+    t = setTimeout(tick, 1300);
+    return () => clearTimeout(t);
   }, [live, calm]);
   const s = calm ? 9 : k;
   return (
@@ -298,8 +360,37 @@ function Setup() {
   );
 }
 
-/* What it is: three rooms, and the six features one tap away. */
+/* The picture inside the rooms tile, one per room, drawn from the same channel. */
+function RoomArt({ k }) {
+  if (k === 0) return (
+    <div className={`${P}-ra chans`}>
+      {WINDOW.groups.map(([g, chans]) => (
+        <div key={g}>
+          <p className={`${P}-ra-g`}>{g}</p>
+          {chans.map((c) => <p key={c} className={`${P}-ra-c` + (c === 'bug-button-darkmode' ? ' on' : '')}><span># {c}</span>{c === 'bug-button-darkmode' && <em>{WINDOW.prReady}</em>}</p>)}
+        </div>
+      ))}
+      <p className={`${P}-ra-merged`}><i />{SESSION[5].msgs[0].done}</p>
+    </div>
+  );
+  if (k === 1) return (
+    <div className={`${P}-ra art`}>
+      <p className={`${P}-ra-cv`}><i /><span><b>{CANVAS.title}</b><span>{CANVAS.meta}</span></span></p>
+      <pre className={`${P}-ra-diff`}>{DIFF.lines.slice(3, 8).map(([, , s, t], i) => <span key={i} className={s === '+' ? 'add' : 'del'}>{s} {t}{'\n'}</span>)}</pre>
+    </div>
+  );
+  return (
+    <div className={`${P}-ra id`}>
+      <p className={`${P}-ra-tok`}>{[5, 9, 4, 12, 7, 10, 6].map((w, i) => <i key={i} style={{ '--w': w }} />)}</p>
+      <p className={`${P}-ra-v`}><i>✓</i>{SETUP.verified}</p>
+      <p className={`${P}-ra-role`}><b>{SETUP.steps[2][0]}</b><span>{SETUP.steps[2][1]}</span></p>
+    </div>
+  );
+}
+
+/* What it is: the three rooms as one tile that swaps, and the six features one tap away. */
 function What() {
+  const [i, setI] = useState(0);
   return (
     <section className={`a2-sec ${P}-what`} aria-labelledby="xsq-what-h">
       <div className="a2-wrap">
@@ -308,9 +399,23 @@ function What() {
           <A2Lines id="xsq-what-h" className="a2-display s" lines={[WHAT.title]} />
           <p className="a2-lede">{WHAT.lede}</p>
         </div>
-        <ol className={`${P}-rooms`}>
-          {WHAT.items.map(([n, t, d]) => <li key={n}><span className="a2-fig">{n}</span><h3 className="a2-title">{t}</h3><p>{d}</p></li>)}
-        </ol>
+        <div className={`${P}-rooms`}>
+          <div className={`${P}-rooms-l`} role="tablist" aria-label={WHAT.kick} aria-orientation="vertical">
+            {WHAT.items.map(([n, t], k) => (
+              <button key={n} type="button" role="tab" id={`${P}-rt-${k}`} aria-selected={i === k} aria-controls={`${P}-rp-${k}`} onClick={() => setI(k)} onPointerEnter={() => setI(k)}>
+                <span className="x-mono">{n}</span><span className="a2-title">{t}</span><i aria-hidden="true" />
+              </button>
+            ))}
+          </div>
+          <div className={`${P}-rooms-stage`}>
+            {WHAT.items.map(([n, , d], k) => (
+              <div key={n} id={`${P}-rp-${k}`} role="tabpanel" aria-labelledby={`${P}-rt-${k}`} aria-hidden={i !== k} inert={i !== k} className={`${P}-rooms-p` + (i === k ? ' on' : '')}>
+                <RoomArt k={k} />
+                <p>{d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
         <div className={`${P}-built`}>
           <div>
             <p className="a2-kick">{BUILT.kick}</p>
@@ -318,7 +423,7 @@ function What() {
           </div>
           <ul className={`${P}-built-l`}>{BUILT.items.map(([t]) => <li key={t}>{t}</li>)}</ul>
           <div className={`${P}-built-acts`}>
-            <A2Sheet label="How each one works" title={BUILT.title}>
+            <A2Sheet label="How each one works" title={BUILT.title} btnClass={`${P}-sheet-btn`}>
               <ul className={`${P}-runs`}>{BUILT.items.map(([t, d]) => <li key={t}><b>{t}</b><span>{d}</span></li>)}</ul>
               <p className={`${P}-runs-more`}><More to={BUILT.console[1]}>{BUILT.console[0]}</More></p>
             </A2Sheet>
@@ -329,8 +434,9 @@ function What() {
   );
 }
 
-/* One runtime, four places. */
+/* One runtime, four places: a line the signal runs along, a drop to each product, the one you point at in ink. */
 function Platform() {
+  const [i, setI] = useState(0);
   return (
     <section className={`a2-sec ${P}-plat`} aria-labelledby="xsq-plat-h">
       <div className="a2-wrap">
@@ -338,8 +444,17 @@ function Platform() {
           <p className="a2-kick">{PLATFORM.kick}</p>
           <h2 id="xsq-plat-h" className="a2-headline">{PLATFORM.title}</h2>
         </div>
+        <div className={`${P}-plat-map`} aria-hidden="true">
+          <i className={`${P}-plat-rail`}><b /></i>
+          {PLATFORM.items.map(([t], k) => <i key={t} className={`${P}-plat-drop` + (i === k ? ' on' : '')} style={{ '--k': k }} />)}
+        </div>
         <ol className={`${P}-plat-l`}>
-          {PLATFORM.items.map(([t, d], i) => <li key={t} className={i === 0 ? 'on' : ''}><h3>{t}</h3><p>{d}</p></li>)}
+          {PLATFORM.items.map(([t, d], k) => (
+            <li key={t} className={i === k ? 'on' : ''} onPointerEnter={() => setI(k)} onClick={() => setI(k)}>
+              <span className={`${P}-mark m${k}`} aria-hidden="true"><i /><i /><i /><i /></span>
+              <h3>{t}</h3><p>{d}</p>
+            </li>
+          ))}
         </ol>
         <div className={`${P}-runtime`}>
           <p>{PLATFORM.runtime}</p>
@@ -362,6 +477,7 @@ function Questions() {
   );
 }
 
+/* The close: one solid ask; the two Explore links and Deploy to Cloud are quiet text links. */
 function Close() {
   return (
     <section className={`a2-sec ${P}-close`} aria-labelledby="xsq-close-h">
@@ -370,15 +486,15 @@ function Close() {
           <p className="a2-kick">{CLOSE.title}</p>
           <h2 id="xsq-close-h" className="a2-display s">{CLOSE.lede}</h2>
           <p className="a2-lede">{CLOSE.note}</p>
-          <div className="a2-acts">
+          <div className={`a2-acts ${P}-close-acts`}>
             <A to={CLOSE.acts[0][1]} className="x-btn solid" data-cta="slack.close">{CLOSE.acts[0][0]}</A>
-            <A to={CLOSE.acts[1][1]} className="x-btn">{CLOSE.acts[1][0]}</A>
-            <A to={CLOSE.acts[2][1]} className="x-btn">{CLOSE.acts[2][0]}</A>
+            <More to={CLOSE.acts[1][1]}>{CLOSE.acts[1][0]}</More>
+            <More to={CLOSE.acts[2][1]}>{CLOSE.acts[2][0]}</More>
           </div>
         </div>
         <div className={`${P}-get`}>
           <h2>Get Hanzo Tag</h2>
-          <Go to="https://platform.hanzo.ai/deploy">Deploy to Cloud</Go>
+          <More to="https://platform.hanzo.ai/deploy">Deploy to Cloud</More>
         </div>
       </div>
     </section>

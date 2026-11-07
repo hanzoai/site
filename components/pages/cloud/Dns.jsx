@@ -18,10 +18,10 @@
    the lightest plan whose own list covers them becomes the ink tile while the plans that fall short step back.
    Every word and link is Hanzo's; names and addresses in the zone are documentation examples (example.com, 192.0.2.0/24). */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
-import { EASE } from '../../ui';
+import { motion, useInView, useMotionValue, useTransform } from 'motion/react';
+import { EASE, useCalm } from '../../ui';
 import { Cta, CodeBlock } from '../../kit';
-import KeynoteStage, { useStagePause } from '../../v2/KeynoteStage';
+import KeynoteStage, { useStagePause } from './SafeStage';
 import KeynoteChapters from '../../v2/KeynoteChapters';
 import KeynoteRoom from '../../v2/KeynoteRoom';
 import KeynoteClose from '../../v2/KeynoteClose';
@@ -34,7 +34,7 @@ const PROVIDERS = ['Cloudflare', 'Route53', 'CoreDNS', 'GoDaddy', 'DigitalOcean'
 function useSeen(amount = 0.25) {
   const ref = useRef(null);
   const seen = useInView(ref, { amount });
-  const calm = useReducedMotion();
+  const calm = useCalm();
   return [ref, seen && !calm, calm];
 }
 /* calls fn every ms while run is true: a chain of timeouts (no setInterval), the latest fn each time */
@@ -101,7 +101,7 @@ function Zone() {
    seen and rests on the last step (no loop) */
 function useStepOf(p, n, on) {
   const [k, setK] = useState(0);
-  const calm = useReducedMotion();
+  const calm = useCalm();
   useEffect(() => {
     if (!p) return;
     const f = (v) => setK(Math.min(n - 1, Math.max(0, Math.floor(v * n))));
@@ -121,7 +121,7 @@ function useStepOf(p, n, on) {
 /* 01: five providers round one API, lit one by one */
 function ProvidersScene({ p, on }) {
   const k = useStepOf(p, PROVIDERS.length, on);
-  const calm = useReducedMotion();
+  const calm = useCalm();
   return (
     <div className="kn-obj dn-sc dn-sc-prov">
       <div className="dn-ring">
@@ -198,7 +198,7 @@ function ApiScene({ p, on }) {
 
 /* 05: DNSSEC, the signing key turning on its rotation schedule (scrubbed by the scroll; on phones it turns once) */
 function DnssecScene({ p, on }) {
-  const calm = useReducedMotion();
+  const calm = useCalm();
   const zero = useMotionValue(0);
   const turn = useTransform(p || zero, [0, 1], [0, 300]);
   return (

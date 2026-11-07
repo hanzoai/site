@@ -1,7 +1,8 @@
 # Requests from /enterprise and /pricing (one line each)
 
-- Shared ask bar (`components/Ask.jsx`): on desktop it is a pill floating bottom-centre over page content, and on phones it covers the bottom of tiles and cards. MASTER 3.2 rule 6 and 3.3 ban anything floating over content. Asking the shared owner to dock it (or hide it on desktop and keep it slim on phones where it covers nothing). The pages set `data-thumb` correctly either way.
+- Logos: `public/logos/customers/*` and `public/logos/partners/*` do not exist, so every logo 404'd (12 console errors). /enterprise now renders the names in type and requests no logo (`LOGOS = false` in `Enterprise.jsx`). Asking the shared owner to vendor the six customer and six cloud logos into `public/logos/`; then flip `LOGOS` to true.
+- Header ask: on desktop the shared `Ask.jsx` already swaps the header's solid button to "Get Enterprise plan" once the hero ask has gone by (via `data-thumb`), and nothing floats. If the shared chat wants the quiet header ask to read "Get Enterprise plan" from the first screen too, that is a header change; not hacked here.
 - Kit `Band`: with JS off its headline renders blurred (the `Words` entrance is not cleared by the noscript rule). Seen on /enterprise and /pricing by the critic.
 - Kit `Film`: no pause control for loops over 5 s (MASTER parts 10 and 12). /enterprise adds a page-local 44px pause button on its Zen film until the kit has one.
 - `lib/cta.js`, `lib/plans.js`, `PageHero` and `tokens.css` are not merged yet; both pages carry page-local deck values and Hanzo's own labels until then.
-- The dev "1 Issue" badge shows on every page (/enterprise, /pricing, /about, /contact, /legal, /careers), so it is site-wide; the shared-system chat owns it. The two pages here render no console error of their own.
+- Resolved here: the "1 Issue" hydration error on /enterprise came from the page's own pause button (`useReducedMotion` differed between server and client). Fixed page-locally; no console error at 1470×801 or 375×812, with or without reduced motion.
