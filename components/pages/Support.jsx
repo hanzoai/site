@@ -155,11 +155,13 @@ export default function Support() {
             <MaskLines as="h1" id="xsp-h1" now delay={curtain ? 0.55 : 0.05} lines={['How can we help?']} className="vc-display xsp-h1" />
           </div>
 
-          <div className="xsp-main xsp-up" onPointerEnter={stop}>
+          {/* the page's ask lives on the whole search room (not on one pane that swaps), so the header keeps quiet while
+              the room is on screen however the answer changes */}
+          <div className="xsp-main xsp-up" onPointerEnter={stop} data-thumb="Open Help Center" data-href="https://hanzo.help">
             <form role="search" aria-label="Support" ref={form} className="xsp-search" onSubmit={(e) => { e.preventDefault(); if (hit || (mine && typed)) btn.current?.click(); }}>
               <label htmlFor="xsp-q" className="x-sr">How can we help?</label>
               <svg viewBox="0 0 20 20" width="24" height="24" aria-hidden="true"><circle cx="9" cy="9" r="6" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="m13.5 13.5 4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-              <input id="xsp-q" ref={input} type="search" autoComplete="off" spellCheck="false" enterKeyHint="go" placeholder={done && !mine ? DEMO : undefined}
+              <input id="xsp-q" ref={input} type="search" autoComplete="off" spellCheck="false" enterKeyHint="go" placeholder={DEMO}
                 onPointerDown={take} onFocus={take} onKeyDown={take}
                 onChange={(e) => { setMine(true); setDone(true); setQ(e.target.value); }} />
               {playing && (
@@ -185,7 +187,7 @@ export default function Support() {
                       <p className="xsp-answer-d"><Lit text={d.d} q={dq} /></p>
                       {mail && mine && typed && <p className="xsp-subj"><Mail /><span>“{subject}”</span></p>}
                       <div className="xsp-answer-a">
-                        <span className="xsp-go" data-cta={'support.answer.' + (i + 1)} {...(i === 0 ? { 'data-thumb': d.go } : {})} ref={on ? (el) => { btn.current = el?.querySelector('a'); } : undefined}>
+                        <span className="xsp-go" data-cta={'support.answer.' + (i + 1)} ref={on ? (el) => { btn.current = el?.querySelector('a'); } : undefined}>
                           <Go to={href} solid className="xsp-big">{mail && mine && typed ? 'Email support@hanzo.ai' : d.go}</Go>
                         </span>
                       </div>

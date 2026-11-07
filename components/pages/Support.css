@@ -82,8 +82,10 @@
 }
 /* the closing room's object: the six doors as one quiet row of destinations (hover fills, press .97) */
 .xsp-band-doors { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 28px; }
-.xsp-band-doors a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .16); color: #fafafa; font-size: 14px; text-decoration: none; transition: background-color .15s cubic-bezier(0, 0, .2, 1), border-color .15s cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
-@media (hover: hover) { .xsp-band-doors a:hover { background: rgba(255, 255, 255, .1); border-color: rgba(255, 255, 255, .4); } }
+.xsp-band-doors { gap: 0 4px !important; }
+.xsp-band-doors a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 10px; color: #a3a3a3; font-size: 14px; text-decoration: none; transition: color .15s cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
+.xsp-band-doors a + a::before { content: '·'; margin-right: 14px; color: rgba(255, 255, 255, .3); }
+@media (hover: hover) { .xsp-band-doors a:hover { color: #fafafa; text-decoration: underline; text-underline-offset: 4px; } }
 .xsp-band-doors a:active { transform: scale(.97); }
 /* deck rhythm: the h1 and the band's line rest at 52; the answer title is the medium thing */
 .xsp .xsp-h1 { font-size: clamp(40px, 5vw, 52px); }

@@ -100,12 +100,9 @@ function Story() {
     addEventListener('scroll', on, { passive: true });
     return () => removeEventListener('scroll', on);
   }, []);
-  // the hand-over is a visible rewind, one step every 140 ms (03 → 02 → 01), never a cut back to the blank page
-  useEffect(() => {
-    if (top || auto === 0) return;
-    const t = setTimeout(() => setAuto((v) => Math.max(0, v - 1)), 140);
-    return () => clearTimeout(t);
-  }, [top, auto]);
+  // the hand-over never goes backwards: the step the desk reached holds until the chapters catch up with it
+  const [held, setHeld] = useState(0);
+  useEffect(() => { if (!top) setHeld((h) => Math.max(h, auto)); else setHeld(0); }, [top, auto]);
   useEffect(() => {
     if (!(live && !paused && ch === 0 && top)) return;
     const t = setTimeout(() => setAuto((v) => (v + 1) % 5), 1900);
@@ -129,7 +126,7 @@ function Story() {
         chapters={[{ rail: false, node: hero }, ...STEPS.map(([t, d]) => ({ t, b: <p>{d}</p> }))]}
         visual={(at) => {
           if (at !== ch) setTimeout(() => setCh(at), 0);
-          const step = calm ? 4 : at === 0 || auto > 0 ? auto : at - 1;
+          const step = calm ? 4 : at === 0 ? (top ? auto : held) : Math.max(at - 1, held);
           return (
             <div className="sg-desk w2-object">
               <div className="sg-desk-bar"><p className="sg-desk-k x-mono">Document signing</p><span className="sg-pause">{pauseBtn}</span></div>

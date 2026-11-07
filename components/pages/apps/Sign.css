@@ -262,8 +262,10 @@ html.js .sg-lines.up i:nth-child(8) { animation-delay: 420ms; } html.js .sg-line
   .sg-pin .sg-desk .sg-f span { font-size: 12px !important; letter-spacing: .02em; }
   .sg-pin .sg-f.box .x-tick { display: none; }
 }
-.sg-f.box span { padding-left: 20px; white-space: nowrap; }
-.sg-f.box { overflow: hidden; }
+/* the checkbox field: its label alone, and the tick (once signed) in the field's top-right corner, clear of the word */
+.sg-f.box::before { content: none; }
+.sg-f.box span { padding-left: 0; }
+.sg-f.box .x-tick { left: auto !important; right: 6px !important; top: 6px !important; }
 .sg-tile { outline: 0; border: 0; }
 .sg-cards .w2-oc-card { border: 0; }
 .sg-oss a { display: inline-flex; align-items: center; min-height: 44px; }
