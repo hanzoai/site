@@ -19,7 +19,8 @@
    V2: 8/10 the black room is the hero: name, line and one ask left (5), the globe right (8) with the stream tray, the
    three subscribers and the ack switch under it (phones: queue group a full-width row, no state cut); then events.go
    walked once beside "Put it between your services"; the six facts passing beside one held drawing that draws the fact
-   at the middle (pubsub/PsFacts.jsx); the prompt and the 4222 spec in the quiet room; the close. */
+   at the middle (pubsub/PsFacts.jsx); the prompt and the 4222 spec in the quiet room; the close. Entrances
+   (pubsub/PsEnter.jsx): line-draw, cursor-trail, spring-snap, cover-slide, pixel-resolve. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { A } from '../../kit';
@@ -32,6 +33,7 @@ import NoJs from '../../NoJs';
 import LivePause, { usePause } from '../../v2/LivePause';
 import PsGlobe, { PLACES } from './pubsub/PsGlobe';
 import PsFacts from './pubsub/PsFacts';
+import { Outline, CursorTrail, CoverSlide, PixelResolve } from './pubsub/PsEnter';
 import './Pubsub.css';
 
 const GH = 'https://github.com/hanzoai/pubsub';
@@ -128,8 +130,9 @@ function Planet() {
       <div className="ps-tray">
         <p className="ps-k">stream EVENTS · events.&gt;</p>
         <div className="ps-seqs" onPointerLeave={() => setRp(null)}>
+          <Outline d={0.15} />
           {nums.map((n, i) => (
-            <span key={n} onPointerEnter={(e) => e.pointerType === 'mouse' && setRp(n)}
+            <span key={n} style={{ '--k': i }} onPointerEnter={(e) => e.pointerType === 'mouse' && setRp(n)}
               className={(i === 5 && t >= 1 ? 'new' : '') + (rp !== null && n >= rp ? ' rp' : '') + (n === rp ? ' from' : '')}>{n}</span>
           ))}
         </div>
@@ -137,9 +140,10 @@ function Planet() {
       <div className="ps-subs" aria-live="polite">
         {['analytics', 'audit'].map((s, i) => {
           const [c, l] = states[i];
-          return <div key={s} className={'ps-sub' + (t >= 2 ? ' got' : '') + (c ? ' ' + c : '')}><b>{s}</b><span>{l}</span></div>;
+          return <div key={s} className={'ps-sub' + (t >= 2 ? ' got' : '') + (c ? ' ' + c : '')} style={{ '--fd': 0.55 + i * 0.12 + 's' }}><Outline d={0.3 + i * 0.12} /><b>{s}</b><span>{l}</span></div>;
         })}
-        <div className={'ps-sub ps-grp' + (t >= 2 ? ' got' : '') + (qState[0] ? ' ' + qState[0] : '')}>
+        <div className={'ps-sub ps-grp' + (t >= 2 ? ' got' : '') + (qState[0] ? ' ' + qState[0] : '')} style={{ '--fd': '0.79s' }}>
+          <Outline d={0.54} />
           <b>queue group</b>
           <span className="ps-one">{[0, 1, 2].map((k) => <i key={k} className={t >= 2 && k === pick ? 'on' : ''} />)}</span>
         </div>
@@ -227,7 +231,7 @@ export default function Pubsub() {
         </div>
       </section>
 
-      <section className="lx-sec ps-walk">
+      <CursorTrail className="lx-sec ps-walk">
         <div className="lx-wrap ps-walk-in">
           <div className="ps-walk-l">
             <h2 className="lx-headline">Put it between your services</h2>
@@ -236,7 +240,7 @@ export default function Pubsub() {
           </div>
           <Walked />
         </div>
-      </section>
+      </CursorTrail>
 
       <section className="lx-sec ps-facts" aria-labelledby="ps-facts-h">
         <div className="lx-wrap">
@@ -244,7 +248,7 @@ export default function Pubsub() {
         </div>
       </section>
 
-      <section className="ps-room">
+      <CoverSlide className="ps-room">
         <div className="lx-wrap">
           <div className="ps-room-top">
             <h2 className="lx-headline">Publish and Subscribe</h2>
@@ -252,9 +256,11 @@ export default function Pubsub() {
           </div>
           <SpecDrawer className="ps-spec" rows={[{ v: '4222', l: 'Client port' }, { v: 'Replay', l: 'From any point' }, { v: 'Durable', l: 'Written to disk' }, { v: 'Replicas', l: 'Set per stream' }]} />
         </div>
-      </section>
+      </CoverSlide>
 
-      <LaunchClose name="PubSub" tag="Pub/sub messaging" seed="pubsub" data={[4222, 3, 1000000]} ask={['GitHub', GH]} cta="pubsub.close" repo={['hanzoai/pubsub', GH]} stars="4 stars" />
+      <PixelResolve>
+        <LaunchClose name="PubSub" tag="Pub/sub messaging" seed="pubsub" data={[4222, 3, 1000000]} ask={['GitHub', GH]} cta="pubsub.close" repo={['hanzoai/pubsub', GH]} stars="4 stars" />
+      </PixelResolve>
     </main>
   );
 }

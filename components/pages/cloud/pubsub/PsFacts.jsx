@@ -10,6 +10,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useCalm } from '../../../ui';
+import { useSnap } from './PsEnter';
 
 const EASE = [0.16, 1, 0.3, 1];
 const IO = [0.4, 0, 0.2, 1];
@@ -195,11 +196,13 @@ export default function PsFacts({ facts }) {
     return () => { io.disconnect(); up.disconnect(); };
   }, []);
   const on = hov ?? mid;
+  const root = useRef(null);
+  useSnap(root);
   return (
-    <div className="ps-facts-in">
+    <div className="ps-facts-in" ref={root}>
       <div className="ps-facts-l">
         <h2 id="ps-facts-h" className="lx-headline ps-facts-h">More than pub/sub</h2>
-        <div className="ps-figw" aria-hidden="true">
+        <div className="ps-figw" aria-hidden="true" data-snap="" data-from="l">
           <p className="ps-fign">{`${pad(on + 1)} / ${pad(facts.length)}`}</p>
           <AnimatePresence mode="wait" initial={false}>
             <motion.div key={on} className="ps-figin" initial={calm ? false : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8, transition: { duration: 0.15, ease: [0, 0, 0.2, 1] } }} transition={at(0, 0.3)}>
@@ -210,7 +213,7 @@ export default function PsFacts({ facts }) {
       </div>
       <ol className="ps-flist" onPointerLeave={() => setHov(null)}>
         {facts.map(([h, d], i) => (
-          <li key={h} data-i={i} ref={(el) => { items.current[i] = el; }} className={on === i ? 'on' : ''}
+          <li key={h} data-i={i} data-snap="" ref={(el) => { items.current[i] = el; }} className={on === i ? 'on' : ''}
             onPointerEnter={(e) => e.pointerType === 'mouse' && setHov(i)}>
             <div className="ps-figm" aria-hidden="true">
               {(calm || drawn.includes(i)) && <Drawing i={i} still={calm} n={i + 1} />}

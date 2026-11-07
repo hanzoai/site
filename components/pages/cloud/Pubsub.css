@@ -169,3 +169,44 @@
   .ps .x-copy, .ps .x-copy-t, .ps .cf-code-k, .ps .cf-paste-k, .ps .lx-close-facts, .ps .lx-close-mark { font-size: 14px; }
 }
 @media (max-width: 359px) { .ps-switch-b button { padding: 0 8px; font-size: 13px; } .ps-sub { padding: 0 8px; } }
+
+/* ---------- the five entrances (pubsub/PsEnter.jsx), each once; final state with JS off or reduced motion ---------- */
+/* 1. line-draw: the tray's and subscribers' outlines draw themselves on first paint, then the cells and cards fill */
+.ps-seqs, .ps-sub { position: relative; }
+.ps-ol { position: absolute; inset: -1px; width: calc(100% + 2px); height: calc(100% + 2px); overflow: visible; pointer-events: none; }
+.ps-ol rect { x: .5px; y: .5px; width: calc(100% - 1px); height: calc(100% - 1px); rx: 15px; fill: none; stroke: #fafafa; stroke-width: 1; stroke-dasharray: 1 1; opacity: 0; }
+.ps-sub .ps-ol rect { rx: 14px; }
+@media (prefers-reduced-motion: no-preference) {
+  .ps-ol rect { animation: ps-draw 1.1s cubic-bezier(.4, 0, .2, 1) var(--d, 0s) backwards; }
+  .ps-sub { animation: ps-fill .45s cubic-bezier(0, 0, .2, 1) var(--fd, .6s) backwards; }
+  .ps-seqs { animation: ps-fill .45s cubic-bezier(0, 0, .2, 1) .9s backwards; }
+  .ps-seqs > span { animation: ps-cell .3s cubic-bezier(0, 0, .2, 1) calc(.8s + var(--k, 0) * 60ms) backwards; }
+}
+@keyframes ps-draw { 0% { stroke-dashoffset: 1; opacity: 1; } 75% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+@keyframes ps-fill { from { background-color: transparent; border-color: transparent; } }
+@keyframes ps-cell { from { opacity: 0; transform: scale(.9); } }
+
+/* 2. cursor-trail: events.go is uncovered up to a crossing cursor and its trail; later a mouse leaves the same trail */
+.ps-trail { position: relative; overflow: clip; }
+.ps-trail[data-trail='armed'] .ps-walk-in { clip-path: inset(0 100% 0 0); }
+.ps-trail[data-trail='play'] .ps-walk-in { clip-path: inset(0 calc(100% - var(--tx, 0%)) 0 0); }
+.ps-trail-dots { position: absolute; inset: 0; pointer-events: none; }
+.ps-trail-dots i { position: absolute; left: -5px; top: -5px; width: 10px; height: 10px; border-radius: 50%; background: #0a0a0a; opacity: 0; will-change: transform; }
+
+/* 3. spring-snap: each fact snaps in from the right with a small overshoot; the held drawing from the left */
+[data-snap='armed'] { opacity: 0; transform: translateX(56px); }
+[data-snap='armed'][data-from='l'] { transform: translateX(-56px); }
+[data-snap='play'] { transition: transform .7s cubic-bezier(.34, 1.56, .64, 1), opacity .3s cubic-bezier(0, 0, .2, 1); }
+
+/* 4. cover-slide: the quiet room overlaps the facts' empty bottom padding and rides up over it */
+.ps-facts { padding-bottom: clamp(140px, 13vw, 200px); }
+.ps-cover { position: relative; z-index: 1; margin-top: -112px; border-radius: 32px 32px 0 0; }
+
+/* 5. pixel-resolve: coarse grey pixels over the close's art break into finer ones, then clear */
+.ps-px { position: relative; }
+.ps-px-veil { position: absolute; z-index: 2; border-radius: 20px; overflow: hidden; pointer-events: none; }
+.ps-px-l { position: absolute; inset: 0; display: grid; }
+.ps-px-l i { display: block; }
+.ps-px[data-px='play'] .ps-px-l i { animation: ps-pxo .22s cubic-bezier(0, 0, .2, 1) var(--t, 0s) forwards; }
+@keyframes ps-pxo { to { opacity: 0; } }
+@media (max-width: 899px) { .ps-cover { margin-top: -80px; border-radius: 24px 24px 0 0; } .ps-facts { padding-bottom: 120px; } }
