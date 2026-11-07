@@ -1,36 +1,38 @@
 # /beta — James-eye review
 
-Verdict: 7/10
-First complaint: "The top's mostly empty. A headline, a button and a big white gap on the right, and the actual products are cut in half by the fold. On a first visit the bottom half's blank for a second or two. On the phone I've got two black buttons fighting each other."
+Verdict: 8/10
+First complaint: "It's the same three pictures over and over. Kai, Enso and Zen in the strip, then Enso and Zen again in the cards, then Kai again at the bottom. Give each screen its own thing."
 
-Walked 2026-11-07 16:18 UTC, HEAD abcbf980, at 1470x801 and 375x812 (isMobile, hasTouch). What I did: first screen captured at 0.2/0.6/1/2/3/6 s on a first and a return visit, with pixel diffs; wheel-scrolled the whole page in 200px notches with dwell; hovered and pressed the hero ask and the rail tiles; opened and closed a pass card (Escape) and tapped one on the phone; toggled pause/play; reduced motion with a scroll-through; JS off; ran taste.py and parity.py.
+Walked 2026-11-07 16:29 UTC, HEAD 27ecbacd, at 1470x801 and 375x812 (isMobile, hasTouch). First visit and reload sampled at 0.2/1/3/6 s with pixel diffs; wheel-scrolled the whole page in 200px notches with a 0.7 s dwell; hovered and pressed Apply, the strip tiles, the pass cards and the Feedback band; opened and Esc-closed the pass sheet; toggled the strip pause; tapped on phone and swiped the rail; checked reduced motion and JS off; ran taste.py and parity.py.
 
 ## What works
-- The pass cards open into their page. Clicking Research access morphs the card into a full sheet (film, h3, lede, Apply), and Escape or the veil closes it cleanly. On the phone it becomes a full-height sheet. This is the synchronized.studio move, done properly.
-- The page is alive without input. The h1 cuts into its line, the Kai/Enso/Zen films loop on the rail, and the Dev/Studio sketches type and animate. The first screen keeps changing about 2% a frame-pair after 3 s and never goes dead. Pause works (aria-pressed flips, 0% change while paused).
-- Real objects in every section: the rail of 5 product tiles, the Beta/Research/Design bento (1 large and 2 stacked, not 3 equal boxes), and the black Feedback band with the Kai film. The band opens from an inset card to full width.
-- The hero ask answers: hover moves the fill from #0a0a0a to #2c2c2e, press scales to 0.98, and nothing fades. Rail tiles get a border, an arrow chip and an underlined name on hover.
-- On desktop the header ask goes outlined while the hero Apply is visible, then becomes "Apply" further down. That gives one solid fill per screen on desktop.
-- taste.py OK (no hue), parity 12/12 text and 4/4 links, no horizontal scroll at either size. Reduced motion lands in the final states (the cells are unclipped and the band text is visible). With JS off the page is legible.
+- The first screen sells at once: "Get there first." at 52px, lede with the five product links, one solid Apply, then a strip of five real objects: Kai, Enso and Zen films, plus live Dev and Studio sketches that write themselves.
+- Alive without input: the h1 cuts in, the tiles settle from staggered heights, the films loop and the Dev/Studio sketches type and play. Pixel change 28% (0.2 to 1 s), 11% (1 to 3 s), and still 2 to 4% after 6 s, so it never goes dead. Return visit behaves the same.
+- The pause control (44px, aria-label Pause/Play, aria-pressed) really freezes the strip: identical frames once paused.
+- Passes are one large card plus two stacked, not three equal boxes. Each "+" opens a full film sheet (native dialog, Esc closes, focus returns) with a large title and its own Apply. That is the synchronized.studio card-opens-into-a-page idea, done well.
+- Apply: hover darkens the fill (#0a0a0a to #2c2c2e, not a fade), press is scale .98. Strip tiles lift the film 12px, draw an ink hairline, underline the name and show an arrow chip; press is scale .97. Pass cards lift the image 16px and turn the "+" 90 degrees. The Feedback arrow moves 6px up and to the right. No layout shift anywhere.
+- The header swaps "Try Hanzo" for the page's "Apply" once the hero ask scrolls away (desktop).
+- Palette is monochrome; colour comes only from the films. taste.py OK; parity OK (text 12/12, links 4/4).
+- Reduced motion shows the final state: no running animations after 3 s, and the tiles sit level. JS off: everything is legible, including the strip, the passes and Apply.
+- No page console errors, no failed requests, no horizontal scroll (1470 and 375).
+
+Shared (not counted): the red "1 Issue" badge is the FooterHTML hydration mismatch (layout.jsx > FooterHTML > dangerouslySetInnerHTML). It reproduced on 4 of 4 desktop loads and 3 of 4 phone loads, and its diff points only at the shared footer.
 
 ## The 11 answers
-1. **Sells in 5 s / moves in 1 s:** The h1 cut-in starts within 1 s, and "Get there first. Early access to Dev, Studio, Kai, Enso and Zen. Apply" is clear. But at 1470x801 the right half of the hero is empty white, and the rail (the hero object) starts at y=501, so only its top half shows. On a cold first visit the rail area is still blank at 1 s (the tiles land between 1 and 3 s; desktop diff 16% to 2.8%, phone 41% to 4%). On a return visit they are there by 1 s. Partial.
-2. **One in, one out:** Mostly yes. There are 4 short screens with clip-path rises and the band opening. Two dead white gaps break the rhythm: about 250px between the rail and the bento, and about 200px before the band.
-3. **Real object per section:** Yes, for all 4.
-4. **One ask, sticky header, scale rhythm:** Desktop passes. **Phone fails.** The header keeps a solid black "Try Hanzo" while a full-width solid black "Apply" sits under the lede. That is two different asks and two solid fills in the first viewport, and the header never switches to Apply on the phone. Scale rhythm is fine: 52px h1, medium tiles, one large Beta card, a big "Feedback" only in the closing band.
-5. **Hover and press:** Yes on the ask, the tiles and the cards (the card opens). There are no layout jumps.
-6. **Overlaps / font swap / shift:** The h1 box is stable. Minor issue: on the Design partner card the "+" button sits on the right edge of the sketch panel, and the title "Design partner" is crammed 8px under that panel (desktop). On the phone the panel and the "+" crowd the card top. There are no overlaps of nav, hero or buttons.
-7. **Reference:** synchronized.studio (card into page) is clearly present. The Apple "one idea per screen" is weakened by the half-shown rail and the empty right column.
-8. **Different from neighbours:** Yes. Its own medium is the product rail, plus a bento that opens into sheets.
-9. **18 parts:** Not fully verifiable from a walk. The ask, the states (pause, sheet focus with autoFocus close, Escape), reduced motion, JS off and parity all hold. The JS-off film tiles show native video controls (0:00 bar), which counts as browser-default chrome in that state.
-10. **Banned tells:** None in the UI. There is no eyebrow above an h1 or h2 ("HANZO BETA" sits over the rail, not over a heading). There is no hue, no gradient text, no fading buttons and no 3 equal boxes. The phone's double solid ask is the nearest breach (rule: one solid fill and one ask).
-11. **Copy untouched:** Yes, parity is 12/12 and 4/4.
-
-Console: 0 page errors on repeat runs. One first-visit run showed a React hydration mismatch in the shared `FooterHTML` (the red "1 Issue" badge). It did not reproduce on 3 later runs or on /about/. It is shared, not this page's code, but the owner should know.
+1. Yes. The h1, Apply and five moving objects are all inside the first screen at both sizes, and motion starts within 1 s.
+2. Mostly one in, one out: hero strip, then passes, then the Feedback room, then the footer. The page is short and never reads as a document. At 1470x801, though, the Beta access card is 744px tall against a 741px viewport, so it can never be seen whole: its "+" and its Apply are never on screen together.
+3. Yes. Films and sketches in the strip, a film or sketch in every pass card, and the Kai film in the Feedback room.
+4. The one solid ask is Apply in Hanzo's words, and it moves into the desktop header after the hero. On phone the header keeps "Try Hanzo" all the way down (checked at y=0, 800 and 2000), so a phone visitor sees two different asks. Nothing floats over content apart from the shared cookie card. Scale has rhythm: a 52px h1, a 32px lead pass, 21px secondary passes, and a large Feedback link that closes the page.
+5. Yes. Every hover and press I tried answers with transform, line or fill, not opacity, and nothing jumps.
+6. No overlaps, font swap or layout shift at either size. (The full-card hit buttons cover their own card text by design; nothing is visibly covered.) Polish: on phone the rail rests at scrollLeft 16, so the first tile sits flush against the screen edge instead of on the 16px gutter.
+7. synchronized.studio (card into sheet) together with an Apple-style product strip. The sheet open and the tile lift are actually there.
+8. Its own hero medium: a staggered five-tile film-and-sketch strip under a split h1/lede/ask row, with the pass sheet as the signature. I did not walk the neighbouring pages in this run.
+9. The parts I could see are covered: one h1, one solid ask with data-cta="beta.hero", a pause control, a dialog, reduced motion, JS off, Feedback/Book a call as the closing band, then the footer. There is no proof strip, but /beta has no proof copy to show.
+10. No banned tells. "HANZO BETA" is a mono caption over the strip, not over a heading. There is no hue, no gradient text, no three equal boxes and no fading buttons.
+11. Copy is untouched (parity 12/12 text, 4/4 links).
 
 ## Fixes (in order)
-1. **Phone: one ask.** On /beta the header ask should read and act as "Apply" (or go outlined, as desktop does, while the hero Apply is on screen) so the 375x812 first screen has one solid fill and one ask, not "Try Hanzo" and "Apply" both in solid black.
-2. **First screen: pull the rail up and fill the stage.** At 1470x801 the 5 tiles should be fully in the first viewport, or the hero should give the right half to the rail. Today the right half is blank and the products are cut by the fold. Also make the rail's posters render with the HTML, so a first visit is not blank under the ask for 1 to 3 s.
-3. **Close the dead white gaps.** Remove the ~250px gap between the rail and the passes and the ~200px gap before the band, so one thing hands to the next.
-4. **Design partner card:** give the sketch panel room. Keep the "+" off its edge and put at least 17px between the panel and the title. Check the phone stack too.
-5. Minor: with JS off, hide the native controls on the rail and band films (poster only). Under reduced motion, stop the scroll-linked rail scale (it still reaches 1.027).
+1. Stop repeating the same three films. Enso appears in the strip, the Beta access pass and its sheet; Zen in the strip and Research access; Kai in the strip and the Feedback room. Give the passes and the Feedback room media of their own (for example the Studio/Dev sketch at large scale, or a different Hanzo still), so each screen has its own object.
+2. At 1470x801, cap the Beta access card so it fits under the header (at most about 100svh minus 60px minus the section gutter). Its "+" and its Apply should be visible together.
+3. Phone header: swap "Try Hanzo" for "Apply" once the hero Apply leaves view, the same way desktop does, so the page has one ask at every width.
+4. Phone rail: add `scroll-padding-inline: 16px` (or start it at scrollLeft 0) so the first tile rests on the gutter, not on the screen edge.
