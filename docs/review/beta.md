@@ -1,13 +1,18 @@
 # /beta — James-eye review
 
-Reviewed: main, page files at `bd4da31` (second review; the first, at `f45d4c2`, scored 5/10). Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
+Re-scored 7 Nov 14:47 under MASTER.md (card, scale, floating rules). Reviewed: main, page files at `bd4da31` (second review; the first, at `f45d4c2`, scored 5/10). Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
 
-Verdict: 8/10 — ready
+Verdict: 7/10 (capped; scale fails on the close)
 
 First complaint: "Much better: black and white, the films are on the first screen, one Apply. When I hover over Kai or Enso, though, nothing happens, and those tiles are the best thing on the page."
 
 ## What changed since the first review
 Fixed: no eyebrow over the h1 (the "Hanzo beta" label now sits with the film row), no magenta (grey deck only), one solid "Apply" from hero to close and sticky after the hero on both sizes, the Kai, Enso and Zen films play on the phone's first screen, the pass tiles are now Hanzo's films that open with a "+" instead of three equal "Apply" buttons, and the added words ("What are you after?", the three choices, "Pass", the sign-in line) are gone.
+
+
+**Cap: part card (MASTER section 6).** `docs/coverage/beta.md` is in the old format: 0 of 18 `Done here:` lines under `## N.` headings. Capped at 7 until it is re-copied from `docs/coverage/_TEMPLATE.md` with every claim true on the page. The shared desktop ask bar also floats over content (see `_shared.md`); not counted against this page.
+
+**Scale (MASTER 3.1, fail):** the closing screen is two 106px rows ("Feedback→", "Book a call↗") and nothing medium or small beside them on desktop (48px each on the phone): everything big at once. Fix: let one row be the big moment and set the other at 26–32px, or grow each row only on hover.
 
 ## The 11 answers
 1. **Sells in 5 seconds, moves within 1 second?** Yes on both sizes: "Get there first.", Hanzo's line, "Apply", and the five products in a row with Kai, Enso and Zen playing their films. A pause control sits beside the row.

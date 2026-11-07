@@ -9,7 +9,10 @@
    chapters whose request inspector changes with each rule.
    Beyond: "Forge one yourself" - build a request (a JWT, an opaque API key or nothing, plus whichever identity headers
    you want to fake) and see what the service behind the gate receives under Hanzo's two rules.
-   Accent: amber, from the gate. Every word and link is Hanzo's; header values are examples. */
+   Greys only (Hanzo's deck). Every word and link is Hanzo's; header values are examples.
+   Persona: a developer or platform engineer putting a service behind api.hanzo.ai.
+   Goal: see, in one request, that the token is checked once at the edge and identity is written, not trusted.
+   CTA: Read the docs (hero, the sticky ask bar and the close; one solid button per screen). */
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { A } from '../../kit';
@@ -160,8 +163,8 @@ function Forge() {
       <div className="v2-wrap">
         <div className="gw-forge-head v2-grid">
           <div className="gw-forge-hl">
-            <p className="v2-kick acc">Identity headers are written, not trusted</p>
             <h2 className="v2-display s">Forge one yourself</h2>
+            <p className="v2-kick acc gw-forge-cap">Identity headers are written, not trusted</p>
           </div>
           <div className="gw-forge-pick" role="radiogroup" aria-label="Credential">
             {CRED.map((c, i) => (
@@ -219,21 +222,17 @@ export default function Gateway() {
       <section className="gw-hero">
         <div className="v2-wrap v2-grid gw-hero-top">
           <div className="gw-hero-t">
-            <p className="v2-kick gw-kick">
-              <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 2v4M8 6 4 10M8 6l4 4M4 10v4M12 10v4" fill="none" stroke="currentColor" strokeWidth="1.3" /></svg>
-              api.hanzo.ai
-            </p>
             <Lines as="h1" className="v2-display gw-h1" lines={['Hanzo', 'Gateway']} data-morph-target="" />
           </div>
           <div className="gw-hero-r">
-            <motion.p className="v2-lede gw-sub" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>The trust boundary in front of the API</motion.p>
-            <div className="v2-acts">
-              <A to="https://docs.hanzo.ai/docs/projects/hanzoai/gateway" className="v2-btn solid">Read the docs</A>
+            <p className="v2-lede gw-sub v2-in" style={{ animationDelay: '.3s' }}>The trust boundary in front of the API</p>
+            <div className="v2-acts v2-in" style={{ animationDelay: '.42s' }}>
+              <A to="https://docs.hanzo.ai/docs/projects/hanzoai/gateway" className="v2-btn solid" data-thumb="Read the docs" data-cta="gateway-read-the-docs">Read the docs</A>
               <A to="https://github.com/hanzoai" className="v2-btn">View on GitHub</A>
             </div>
           </div>
         </div>
-        <Lift className="gw-lift" from={1.14} y={40} origin="50% 30%" offset={['start end', 'start 0.12']}>
+        <Lift className="gw-lift" from={1.08} y={24} origin="50% 30%" offset={['start end', 'start 0.4']}>
           <Lane />
         </Lift>
       </section>
@@ -247,12 +246,18 @@ export default function Gateway() {
 
       <PinChapters className="gw-ch" label="How Gateway decides" items={RULES} look="right" visual={(at) => <Inspector at={at} />} />
 
+      <ShipPrompt
+        name="Gateway"
+        api="/v1/gateway"
+        prompt="Read https://hanzo.ai/skill.md and use Hanzo Gateway in my project. Start with: hanzo gateway config get"
+        related={[['Gateway docs →', 'https://docs.hanzo.ai/docs/projects/hanzoai/gateway'], ['DNS', '/dns', 'Authoritative DNS + DNSSEC'], ['Service Mesh', '/cloud/service-mesh'], ['Nodes', '/cloud/nodes']]}
+      />
+
       <Forge />
 
       <section className="v2-sec gw-proj">
         <div className="v2-wrap v2-grid">
           <div className="gw-proj-t">
-            <p className="v2-kick acc">Example project</p>
             <p className="v2-title gw-proj-l">Example project. Every name in it is one you would give your own.</p>
           </div>
           <div className="gw-proj-c">
@@ -261,14 +266,7 @@ export default function Gateway() {
         </div>
       </section>
 
-      <ShipPrompt
-        name="Gateway"
-        api="/v1/gateway"
-        prompt="Read https://hanzo.ai/skill.md and use Hanzo Gateway in my project. Start with: hanzo gateway config get"
-        related={[['Gateway docs →', 'https://docs.hanzo.ai/docs/projects/hanzoai/gateway'], ['DNS', '/dns', 'Authoritative DNS + DNSSEC'], ['Service Mesh', '/cloud/service-mesh'], ['Nodes', '/cloud/nodes']]}
-      />
-
-      <GetIt name="Gateway" tag="API gateway" seed="gateway" data={[429, 6]} self="https://docs.hanzo.ai/docs/projects/hanzoai/gateway" />
+      <GetIt name="Gateway" tag="API gateway" seed="gateway" data={[429, 6]} self="https://docs.hanzo.ai/docs/projects/hanzoai/gateway" ask={['Read the docs', 'https://docs.hanzo.ai/docs/projects/hanzoai/gateway', 'gateway-read-the-docs']} />
     </main>
   );
 }

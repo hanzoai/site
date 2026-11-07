@@ -1,50 +1,51 @@
-/* v2 type for the Apps launch pages (VISION.md "The v2 system"). Owner: the Wave 1 Apps chat.
-   Display 128/96/80 → 56/48 on phones, weight 600, line height .92, tracking -.05em. Headline 56 → 36. Title 28.
-   Lede 24/21. Body 19/17 at 60–68ch. Kicker: Zen Mono 13, caps, .12em. */
+/* v2 type for the Apps launch pages (/chat, /dev, /agents). Owner: the Apps chat. MASTER.md 3.1 "Scale has rhythm":
+   resting sizes follow live hanzo.ai (h1 52px, section headings 26px, figures 64px); one big thing per screen, and a
+   thing grows past its resting size only while it is the moment. Weights: Book 497 for headings. Deck greys only. */
 .v2a-lines { margin: 0; text-wrap: balance; }
 .v2a-line { display: block; overflow: hidden; padding: .06em 0 .12em; margin: -.06em 0 -.12em; }
-.v2a-line-in { display: block; will-change: auto; }
-.v2a-line.soft { color: #6e6e73; }
+.v2a-line-in { display: block; }
+.v2a-line.soft { color: #737373; }
 
-.v2a-display { font-size: clamp(3rem, 7.2vw, 7rem); font-weight: 600; line-height: .94; letter-spacing: -.05em; color: var(--ink); }
-.v2a-display.md { font-size: clamp(3rem, 6.6vw, 6rem); }
-.v2a-display.sm { font-size: clamp(3rem, 5.6vw, 5rem); }
-.v2a-head { font-size: clamp(2.25rem, 3.9vw, 3.5rem); font-weight: 600; line-height: 1.02; letter-spacing: -.04em; color: var(--ink); }
-.v2a-title { font-size: clamp(1.4rem, 1.95vw, 1.75rem); font-weight: 600; line-height: 1.15; letter-spacing: -.03em; color: var(--ink); margin: 0; }
-.v2a-lede { font-size: clamp(1.3125rem, 1.65vw, 1.5rem); line-height: 1.42; letter-spacing: -.012em; color: var(--soft); margin: 0; max-width: 34ch; text-wrap: pretty; }
-.v2a-body { font-size: clamp(1.0625rem, 1.3vw, 1.1875rem); line-height: 1.55; color: var(--soft); margin: 0; max-width: 64ch; text-wrap: pretty; }
-.v2a-kick { margin: 0 0 22px; font: 500 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #6e6e73; }
-/* a section's own label, set BELOW its headline as a folio (JAMES.md: never an eyebrow above a headline) */
-.v2a-folio { display: flex; align-items: center; gap: 14px; margin: 28px 0 0; font: 500 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #6e6e73; }
-.v2a-folio::before { content: ''; width: 28px; height: 1px; background: currentColor; opacity: .6; }
-.room-dark .v2a-folio, [data-room='dark'] .v2a-folio { color: #a1a1a6; }
-.v2a-fig { font-family: var(--sans); font-feature-settings: 'tnum'; font-variant-numeric: tabular-nums; font-weight: 600; letter-spacing: -.055em; line-height: .86; }
+/* h1: 52px at rest (40px on phones) */
+.v2a-display { font-size: clamp(2.5rem, 3.6vw, 3.25rem); font-weight: 497; line-height: 1.04; letter-spacing: -.035em; color: #0a0a0a; }
+/* a heading that is the moment of its screen: 44px, or 32px */
+.v2a-display.md { font-size: clamp(2rem, 3vw, 2.75rem); }
+.v2a-display.sm { font-size: clamp(1.625rem, 2.2vw, 2rem); }
+/* section headings: 26px at rest */
+.v2a-head { font-size: 1.625rem; font-weight: 497; line-height: 1.18; letter-spacing: -.022em; color: #0a0a0a; }
+.v2a-title { font-size: 1.0625rem; font-weight: 497; line-height: 1.35; letter-spacing: -.01em; color: #0a0a0a; margin: 0; }
+.v2a-lede { font-size: clamp(1.1875rem, 1.45vw, 1.3125rem); line-height: 1.45; letter-spacing: -.01em; color: #525252; margin: 0; max-width: 40ch; text-wrap: pretty; }
+.v2a-body { font-size: 1rem; line-height: 1.6; color: #525252; margin: 0; max-width: 64ch; text-wrap: pretty; }
+.v2a-kick { margin: 0 0 16px; font: 500 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #737373; }
+/* a section's own label, set BELOW its heading as a caption (MASTER part 7: never above an h1 or h2) */
+.v2a-folio { display: flex; align-items: center; gap: 12px; margin: 18px 0 0; font: 500 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #737373; }
+.v2a-folio::before { content: ''; width: 24px; height: 1px; background: currentColor; opacity: .6; }
+[data-room='dark'] .v2a-folio { color: #a3a3a3; }
+.v2a-fig { font-family: var(--sans); font-feature-settings: 'tnum'; font-variant-numeric: tabular-nums; font-weight: 220; letter-spacing: -.04em; line-height: .9; }
 
-/* the v2 grid: 12 columns, 1440 max, 24px gutters */
-.v2a-wrap { width: min(100% - 64px, 1440px); margin-inline: auto; }
-.v2a-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; }
-.v2a-sec { padding: clamp(120px, 15vw, 240px) 0; position: relative; }
+/* the grid: 1152 container, golden gutter */
+.v2a-wrap { width: min(100% - 2 * clamp(16px, 4vw, 32px), 1280px); margin-inline: auto; }
+.v2a-grid { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); column-gap: 24px; }
+.v2a-sec { padding: clamp(72px, 11vw, 188px) 0; position: relative; }
 
-@media (max-width: 900px) {
-  .v2a-wrap { width: calc(100% - 32px); }
-  .v2a-display { font-size: clamp(2.9rem, 13.6vw, 3.5rem); }
-  .v2a-display.md, .v2a-display.sm { font-size: clamp(2.6rem, 12vw, 3rem); }
-  .v2a-head { font-size: clamp(2rem, 9.4vw, 2.25rem); }
+@media (max-width: 899px) {
+  .v2a-display { font-size: 2.5rem; }
+  .v2a-display.md { font-size: 2rem; }
+  .v2a-display.sm { font-size: 1.625rem; }
+  .v2a-head { font-size: 1.5rem; }
   .v2a-lede { font-size: 1.1875rem; }
   .v2a-grid { grid-template-columns: minmax(0, 1fr); }
   .v2a-grid > * { grid-column: 1 / -1 !important; }
-  .v2a-sec { padding: 120px 0; }
-  .v2a-kick { font-size: 13px; margin-bottom: 16px; }
-  .v2a-folio { margin-top: 20px; }
+  .v2a-folio { margin-top: 14px; }
 }
 
-/* AppDemo's control (components/v2/AppDemo.jsx): a 44px icon button, greys only */
-.v2a-demo-ctl { display: grid; place-items: center; flex: none; width: 44px; height: 44px; padding: 0; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .12); background: #fff; color: #1d1d1f; cursor: pointer; transition: background-color .2s, border-color .2s, transform .12s; }
-.v2a-demo-ctl:active { transform: scale(.94); }
-.v2a-demo-ctl:focus-visible { outline: 2px solid #1d1d1f; outline-offset: 2px; box-shadow: 0 0 0 4px #fff; }
-.v2a-demo-ctl.dark { background: rgba(255, 255, 255, .06); border-color: rgba(255, 255, 255, .16); color: #f5f5f7; }
-.v2a-demo-ctl.dark:focus-visible { outline-color: #f5f5f7; box-shadow: 0 0 0 4px #000; }
+/* AppDemo's control (components/v2/AppDemo.jsx): a 44px icon button */
+.v2a-demo-ctl { display: grid; place-items: center; flex: none; width: 44px; height: 44px; padding: 0; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .1); background: #fff; color: #0a0a0a; cursor: pointer; transition: background-color .15s cubic-bezier(0, 0, .2, 1), border-color .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(0, 0, .2, 1); }
+.v2a-demo-ctl:active { transform: scale(.97); }
+.v2a-demo-ctl:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 2px; box-shadow: 0 0 0 4px #fff; }
+.v2a-demo-ctl.dark { background: rgba(255, 255, 255, .06); border-color: rgba(255, 255, 255, .16); color: #fafafa; }
+.v2a-demo-ctl.dark:focus-visible { outline-color: #fafafa; box-shadow: 0 0 0 4px #000; }
 @media (hover: hover) {
-  .v2a-demo-ctl:hover { background: #f5f5f7; border-color: rgba(0, 0, 0, .28); }
-  .v2a-demo-ctl.dark:hover { background: rgba(255, 255, 255, .14); border-color: rgba(255, 255, 255, .34); }
+  .v2a-demo-ctl:hover { background: #f5f5f5; border-color: rgba(0, 0, 0, .3); }
+  .v2a-demo-ctl.dark:hover { background: rgba(255, 255, 255, .14); border-color: rgba(255, 255, 255, .3); }
 }

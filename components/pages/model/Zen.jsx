@@ -13,7 +13,7 @@ import Sigil from '../../Sigil';
 import { arrows } from './live';
 import Launch, { Lines, lerp, film } from '../../v2/Launch';
 import ModelCards from './ModelCards';
-import ModelFilm from '../../v2/ModelFilm';
+import ModelFilm, { usePaused } from '../../v2/ModelFilm';
 import Chapters from '../../v2/x-cray/Chapters';
 import './Zen.css';
 
@@ -44,6 +44,7 @@ function Console() {
   const box = useRef(null);
   const seen = useInView(box, { amount: 0.3 });
   const calm = useReducedMotion();
+  const paused = usePaused();
   const [n, setN] = useState(0);
   const [step, setStep] = useState(9); // the server shows a finished trace; the browser replays it
   const [mine, setMine] = useState(false);
@@ -52,10 +53,10 @@ function Console() {
   const done = step > len;
   useEffect(() => { if (!calm) setStep(0); }, []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
-    if (calm || (!seen && !mine)) return;
+    if (calm || paused || (!seen && !mine)) return;
     if (step <= len) { const t = setTimeout(() => setStep(step + 1), step === 0 ? 700 : 1500); return () => clearTimeout(t); }
     if (!mine) { const t = setTimeout(() => { setN((n + 1) % NEEDS.length); setStep(0); }, 3600); return () => clearTimeout(t); }
-  }, [step, seen, calm, n, mine, len]);
+  }, [paused, step, seen, calm, n, mine, len]);
   const pick = (i) => { setMine(true); setN(i); setStep(calm ? 9 : 0); };
   const cur = step >= 1 && step <= len ? need.steps[step - 1] : null;
   const lit = (ci, row) => {
@@ -173,7 +174,7 @@ export default function Zen() {
   return (
     <Launch
       slug="zen"
-      ask={{ label: 'Try Hanzo', to: '/login', id: 'zen-hero-try' }}
+      ask={{ label: 'Try Hanzo', to: '/login', id: 'zen.first' }}
       shape={ARCH}
       aim={(W, H, wide) => (wide ? null : [-0.24 * W, -0.21 * H])}
       headClass="ze-head"
@@ -182,8 +183,8 @@ export default function Zen() {
           <Lines id="ze-h" lines={['Open models.', 'Yours to run.']} />
           <p className="lv-lede">The open-weight family behind Hanzo. Download the weights, or call them on Hanzo Cloud.</p>
           <div className="lv-acts">
-            <Cta to="/login" id="zen-hero-try" thumb>Try Hanzo</Cta>
-            <Cta to="https://platform.hanzo.ai" kind="quiet" id="zen-hero-platform">API Platform</Cta>
+            <Cta to="/login" id="zen.hero" thumb>Try Hanzo</Cta>
+            <Cta to="https://platform.hanzo.ai" kind="quiet" id="zen.hero-platform">API Platform</Cta>
             <More to="https://github.com/zenlm">Docs on GitHub</More>
           </div>
           <p className="lv-crumb">Hanzo / Zen</p>
@@ -210,7 +211,7 @@ export default function Zen() {
           <ul className="ze-fam">
             {FAMILY.map(([to, name, line, data], i) => (
               <li key={to} className={i === 0 ? 'big' : ''}>
-                <A to={to} className="ze-fam-a" data-cursor="Open">
+                <A to={to} className="ze-fam-a">
                   <Sigil seed={to} data={data} className="ze-sig" />
                   <span className="ze-fam-n" data-morph>{name}</span>
                   <span className="ze-fam-d">{line}</span>

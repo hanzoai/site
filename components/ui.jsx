@@ -7,6 +7,7 @@
      copyText(str) → true only if the copy happened; useCalm() → true under reduced motion (live, follows changes).
    - Tokens: EASE and SPRING here, or the full set in lib/motion.js. */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { play } from '../lib/sound';
 import {
   motion, AnimatePresence, animate, useInView, useMotionValue, useMotionTemplate,
   useSpring, useTransform, useReducedMotion,
@@ -207,13 +208,14 @@ export function Arrow({ href, children, className = '' }) {
 /* Copies text and says so only when it truly did (clipboard API, then a select-and-copy fallback). Returns true/false.
    Use it for any copy button: copyText(cmd).then((ok) => ok && showTick()). Never confirm a copy that failed. */
 export async function copyText(text) {
-  try { await navigator.clipboard.writeText(text); return true; } catch { /* blocked or insecure: try the old way */ }
+  try { await navigator.clipboard.writeText(text); play('chime'); return true; } catch { /* blocked or insecure: try the old way */ }
   try {
     const ta = document.createElement('textarea');
     ta.value = text; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none';
     document.body.appendChild(ta); ta.select();
     const ok = document.execCommand('copy');
     ta.remove();
+    if (ok) play('chime');
     return ok;
   } catch { return false; }
 }

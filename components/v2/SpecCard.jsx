@@ -41,7 +41,7 @@ export default function SpecCard({ to, title, desc, tags = [], meta, slug, play 
       to={to}
       ref={tilt.ref}
       className={'sc-card' + (big ? ' big' : '') + (slug ? ' film' : '') + ' ' + className}
-      data-cursor="Open"
+      data-cursor=""
       {...(card ? { 'data-card': card } : {})}
       {...(label ? { 'aria-label': label } : {})}
       onPointerMove={tilt.onPointerMove}

@@ -1,33 +1,34 @@
 'use client';
 // Persona: a builder, founder or researcher deciding whether to trust Hanzo's stack, who wants to know how Hanzo thinks (arrives from About, Research, the footer or a shared link)
 // Goal: understand the premise and the five laws, then open the 64 patterns and read the ones that fit their system
-// CTA: Explore the 64 patterns -> #patterns (hero, sticky AskBar and thumb bar) · metric cta_click (data-cta="explore-patterns"); close: Explore Hanzo -> / (data-cta="explore-hanzo")
+// CTA: Explore the 64 patterns -> #patterns (hero, data-cta="philosophy.hero", data-thumb) · closing link: Explore Hanzo -> / (data-cta="philosophy.close")
+// Metric: cta_click on philosophy.close (Story: the page's own closing link), with philosophy.hero as the lead indicator
+// Signature: the belief statement reveals word by word as you scroll, ink rising out of grey (Story, MASTER §4.4).
+// Beyond: "Change a line". Press any line of the hero hexagram and it flips, yin to yang, becoming the hexagram that change makes — its number, name and trigrams read from Hanzo's own sixty-four.
 /* Philosophy: the Zen of Hanzo, told as a chapter book. Its idea is change itself, drawn in lines.
-   V2: 8/10 an editorial chapter book in ink only: the hexagram as a huge centred stage object that walks the sixty-four and changes at a press, the headline set across the foot of the first screen, the five laws pinned while one hexagram builds beside them, the 64 as a quiet index whose every pattern opens in a sheet, the belief statement filling in word by word, one ask that follows you; every word legible with JavaScript off.
-   The hero is a stage: one hexagram, huge and centred, that never holds still: it walks the sixty-four in King Wen
-   order, the lines that changed marked with a dot, and any line you press flips; its name and trigrams sit either side
-   of it, and "The Zen of Hanzo" runs across the foot of the screen (osply / hamol: editorial type as the floor). Then one idea per screen: the premise as a single sentence beside one
-   line that keeps opening and closing; the five laws as chapters that pin while a hexagram builds itself beside them, one
-   line per law, its last line never settling; the 64 patterns as a quiet index (by sequence, as the 8 x 8 matrix of
-   trigrams, or by lens) where every pattern opens into a sheet with its principle, practice and question and steps to its
-   neighbours; how we build; the stack; the questions, each beside its trigram; the belief statement filling in word by
-   word as you read; and the close in the one dark room, from one line to sixty-four conditions. Ink only: hierarchy is
-   alpha steps of black and white (JAMES.md 7).
-   Motion: signature, the changing line (the hexagram's lines flipping: hero, laws, the premise's one line, the close).
-   Supporting: line-masked headings, the scroll word reveal of the belief statement, the pattern sheet that opens.
-   Idle: the hero walk, the premise line, the laws' last line, the method ring stepping round until you point at a step. Pointer: press a line, tiles lift, the method hand
-   follows, stack rows fill. State: the view pill glides (layoutId), the sheet rises.
-   Signature: the five laws pin as chapters while one hexagram builds itself beside them, a line per law, and its last line never stops changing.
-   Beyond: "Change a line". Press any line of the hero hexagram and it flips, yin to yang, becoming the hexagram that change makes — its number, name and trigrams read from Hanzo's own sixty-four.
-   Every word is Hanzo's. */
+   V2: 8/10 a Story page on Hanzo's scale rhythm: the hexagram is the one big thing of the first screen (walking the sixty-four, changing at a press) over a 52px headline; the premise as the screen's moment; the five laws pinned beside one building hexagram; the 64 as a quiet index whose every pattern opens in a sheet; the belief statement revealed word by word; deck easing only, nothing floating, every word legible with JavaScript off.
+   One idea per screen, one big thing each: the hero hexagram (huge, centred, its name and trigrams either side, the
+   lines that changed marked with a dot, any line you press flips), the 52px headline, caption, ask and lede at its
+   foot; the premise sentence as the screen's moment beside one line that keeps opening and closing; the five laws as
+   chapters that pin while a hexagram builds beside them, a line per law, its last line never settling; the 64 as a
+   quiet index (sequence, 8 x 8 matrix, or by lens) where every pattern opens into a sheet with its principle, practice
+   and question; how we build, the method ring stepping round until you point; the stack; the questions, each beside
+   its trigram; the belief statement as the signature; the close in the one dark room, 1 → 2 → 8 → 64.
+   Motion: signature, the scroll word reveal. Supporting: line-masked headings, the pinned laws, the view pill gliding
+   (300 ms, ease-emphasis). Idle: the hero walk (with its pause control), the premise line, the laws' last line and one lap of the method ring, each ending at rest. Pointer: lines
+   part their strokes under the pointer (James's "strokes parting"), rows and tiles fill. State: the sheet rises.
+   The one dark room enters as a rounded card and opens to full width (MASTER §3.1 rooms). Deck timings only: 150 ms hover, 300 ms state, 400 ms fills, 800 ms line art; no springs, no overshoot.
+   Ink only: hierarchy is alpha steps of black and white. Every word is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { A, More } from '../kit';
 import MaskLines from '../v2/MaskLines';
 import PinScenes from '../v2/PinScenes';
-import AskBar from '../v2/AskBar';
+import SceneWipe from '../v2/SceneWipe';
+import LivePause, { usePause } from '../v2/LivePause';
 import '../v2/ProofScale.css';
+import '../v2/ProofRhythm.css';
 import '../v2/DetailSheet.css';
 import { GROUPS, HEX, LENSES } from './philosophyData';
 import './Philosophy.css';
@@ -61,11 +62,12 @@ function Hero() {
   const [hot, setHot] = useState([]);
   const [held, setHeld] = useState(0); // the time of the visitor's last change: the walk waits for them
   const [steps, setSteps] = useState(0);
+  const [paused, pause] = usePause();
   const calm = useReducedMotion();
   const ref = useRef(null);
   const live = useInView(ref, { amount: 0.3 });
   useEffect(() => {
-    if (calm || !live) return;
+    if (calm || !live || paused) return;
     const t = setTimeout(() => {
       if (Date.now() - held < 7000) { setHeld((h) => h - 1); return; }
       setI((v) => {
@@ -74,9 +76,9 @@ function Hero() {
         return n;
       });
       setSteps((s) => s + 1);
-    }, steps ? 2300 : 900); // the first change comes within a second of arriving
+    }, steps ? 1800 : 900); // the first change comes within a second of arriving; then one every 1.8 s (lines move for 0.8 s of it)
     return () => clearTimeout(t);
-  }, [i, calm, live, held, steps]);
+  }, [i, calm, live, held, steps, paused]);
   const press = (k) => {
     const ls = lines(HEX[i]).map((x, j) => (j === k ? 1 - x : x));
     setI(hexOf(ls));
@@ -89,6 +91,7 @@ function Hero() {
     <section className="xph-hero" ref={ref} aria-labelledby="xph-h1">
       <div className="pf-wrap xph-hero-g">
         <div className="xph-stage">
+          <LivePause paused={paused} onToggle={pause} className="xph-pause" />
           <div className="xph-flank l" aria-live={Date.now() - held < 7000 ? 'polite' : 'off'}>
             <span className="pf-mono xph-oracle-n">{h[0]} / 64</span>
             <b>{main}</b>
@@ -106,7 +109,7 @@ function Hero() {
           </div>
           <p className="pf-body xph-lede">The <em>I Ching</em> is a map of change. Its 64 hexagrams describe recurring conditions: creation, resistance, conflict, growth, decay, transformation, completion and renewal.</p>
           <div className="xph-acts">
-            <a href="#patterns" className="pf-btn solid" data-thumb="Explore the 64 patterns" data-cta="explore-patterns">Explore the 64 patterns</a>
+            <a href="#patterns" className="pf-btn solid" data-thumb="Explore the 64 patterns" data-cta="philosophy.hero">Explore the 64 patterns</a>
             <More to="https://cloud.hanzo.ai">Build with Hanzo</More>
           </div>
         </div>
@@ -121,7 +124,7 @@ function Premise() {
     <section className="pf-sec xph-premise">
       <div className="pf-wrap">
         <div className="pf-grid xph-premise-top">
-          <MaskLines as="p" className="pf-display s xph-big" lines={['No intelligent system', 'remains fixed.']} />
+          <MaskLines as="p" className="pf-moment xph-big" lines={['No intelligent system', 'remains fixed.']} />
           <div className="xph-one" aria-hidden="true"><span className="xph-hl yang xph-one-l"><i /><i /></span></div>
         </div>
         <div className="pf-grid xph-premise-g">
@@ -156,12 +159,13 @@ function LawStage({ at }) {
   const live = useInView(ref, { amount: 0.3 });
   const calm = useReducedMotion();
   const [flick, setFlick] = useState(BUILD[5]);
+  const [flips, setFlips] = useState(0);
   const done = at >= 4;
   useEffect(() => {
-    if (!done || calm || !live) return;
-    const t = setInterval(() => setFlick((v) => 1 - v), 1100);
-    return () => clearInterval(t);
-  }, [done, calm, live]);
+    if (!done || calm || !live || flips >= 6) return; // it changes six times, then rests as Before Completion
+    const t = setTimeout(() => { setFlick((v) => 1 - v); setFlips((n) => n + 1); }, 1100);
+    return () => clearTimeout(t);
+  }, [done, calm, live, flips]);
   const ls = [...BUILD.slice(0, 5), done ? flick : BUILD[5]];
   const drawn = at + 1 + (done ? 1 : 0);
   const [main, sub] = split(LAST[1]);
@@ -349,7 +353,7 @@ function Lenses() {
       <div className="xph-chips">
         {[null, ...names].map((n) => (
           <button key={n || 'all'} type="button" aria-pressed={lens === n} onClick={() => setLens(n)}>
-            {lens === n && <motion.span layoutId="xph-lens-pill" className="xph-pill" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />}
+            {lens === n && <motion.span layoutId="xph-lens-pill" className="xph-pill" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
             <span>{n || 'All lensed patterns'}</span>{n && <span className="pf-mono">{HEX.filter((h) => h[8] === n).length}</span>}
           </button>
         ))}
@@ -387,7 +391,7 @@ function Patterns() {
           <div className="xph-views" role="tablist" aria-label="View" onKeyDown={keys}>
             {VIEWS.map((v) => (
               <button key={v} type="button" role="tab" id={'tab-' + v.toLowerCase()} aria-selected={view === v} tabIndex={view === v ? 0 : -1} aria-controls={'panel-' + v.toLowerCase()} onClick={() => setView(v)}>
-                {view === v && <motion.span layoutId="xph-view-pill" className="xph-view-bg" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />}
+                {view === v && <motion.span layoutId="xph-view-pill" className="xph-view-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
                 <span>{v}</span>
               </button>
             ))}
@@ -410,14 +414,15 @@ const METHOD = [['Observe', 'Identify the actual condition of the system.'], ['S
 function Method() {
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false); // once the visitor points at a step, the cycle is theirs
+  const [lap, setLap] = useState(0);
   const calm = useReducedMotion();
   const ref = useRef(null);
-  const live = useInView(ref, { amount: 0.4 });
+  const live = useInView(ref, { amount: 0.2 });
   useEffect(() => {
-    if (mine || calm || !live) return;
-    const t = setTimeout(() => setAt((v) => (v + 1) % 8), 2600);
+    if (mine || calm || !live || lap >= 8) return; // one lap by itself, then it rests back on Observe
+    const t = setTimeout(() => { setAt((v) => (v + 1) % 8); setLap((n) => n + 1); }, 2400);
     return () => clearTimeout(t);
-  }, [at, mine, calm, live]);
+  }, [at, mine, calm, live, lap]);
   const take = (i) => { setMine(true); setAt(i); };
   return (
     <section className="pf-sec xph-method" ref={ref}>
@@ -520,7 +525,7 @@ function Whole() {
   return (
     <section className="pf-sec xph-whole" ref={ref}>
       <div className="pf-wrap">
-        <h2 className="pf-display s xph-whole-t">
+        <h2 className="pf-moment xph-whole-t">
           {calm ? WHOLE : words.map((w, i) => <Word key={i} p={scrollYProgress} a={i / words.length} b={(i + 1.6) / words.length}>{w}{i < words.length - 1 ? ' ' : ''}</Word>)}
         </h2>
       </div>
@@ -532,8 +537,8 @@ function Whole() {
 function Close() {
   const stanza = ['From one line, two forces.', 'From two forces, eight patterns.', 'From eight patterns, sixty-four conditions.', 'From small primitives, unbounded intelligence.'];
   return (
-    <section className="pf-sec xph-close" data-room="dark" aria-label="From one line to sixty-four conditions">
-      <div className="pf-wrap">
+    <SceneWipe className="xph-close" label="From one line to sixty-four conditions">
+      <div className="pf-sec"><div className="pf-wrap">
         <div className="xph-grow" aria-hidden="true">
           <div className="xph-g1"><span className="xph-hl yang xph-one-l"><i /><i /></span></div>
           <span className="xph-gto" />
@@ -545,18 +550,18 @@ function Close() {
         </div>
         <MaskLines as="h2" className="pf-head xph-stanza" lines={stanza} />
         <div className="xph-close-acts">
-          <A to="/" className="pf-btn solid" data-cta="explore-hanzo">Explore Hanzo</A>
+          <A to="/" className="pf-btn solid" data-cta="philosophy.close">Explore Hanzo</A>
           <More to="https://papers.hanzo.ai">Read the research</More>
           <More to="https://github.com/hanzoai">View the source</More>
         </div>
-      </div>
-    </section>
+      </div></div>
+    </SceneWipe>
   );
 }
 
 export default function Philosophy() {
   return (
-    <main className="xph">
+    <main id="main" className="xph pf-r">
       {/* JavaScript off: the word reveal is full ink, every view and all 64 patterns are laid out in the page, tiles show their principle */}
       <noscript dangerouslySetInnerHTML={{ __html: '<style>.xph-w{opacity:1!important}#panel-matrix,#panel-lenses,.xph-hint{display:block!important}#panel-matrix,#panel-lenses{margin-top:96px}.xph-mx-side{position:static!important}.xph-tile-s>span{grid-area:auto!important;opacity:1!important;transform:none!important}.xph-sheet{position:static!important;visibility:visible!important;pointer-events:auto!important;margin-top:96px}.xph-sheet .pf-sheet-scrim,.xph-sheet .xph-sheet-nav{display:none!important}.xph-sheet .pf-sheet-panel{position:static!important;transform:none!important;width:auto!important;box-shadow:none!important;border-radius:0!important;overflow:visible!important}.xph-sheet .pf-sheet-top{padding:0 0 20px!important}.xph-sheet .pf-sheet-body{overflow:visible!important;padding:0!important}.xph-sheet [hidden]{display:block!important;margin-top:56px}</style>' }} />
       <Hero />
@@ -568,7 +573,6 @@ export default function Philosophy() {
       <Change />
       <Whole />
       <Close />
-      <AskBar title="Philosophy" label="Explore the 64 patterns" to="/philosophy#patterns" cta="explore-patterns" />
     </main>
   );
 }

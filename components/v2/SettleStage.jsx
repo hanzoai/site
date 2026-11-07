@@ -9,7 +9,7 @@ import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react'
 import './LaunchType.css';
 import './SettleStage.css';
 
-export default function SettleStage({ children, from = 1.16, lift = 40, radius = 28, className = '', ...rest }) {
+export default function SettleStage({ children, from = 1.16, lift = 40, radius = 24, className = '', ...rest }) {
   const ref = useRef(null);
   const calm = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 18%'] });
@@ -20,7 +20,6 @@ export default function SettleStage({ children, from = 1.16, lift = 40, radius =
   return (
     <div ref={ref} className={'lx-settle ' + className} {...rest}>
       <motion.div className="lx-settle-in" style={calm ? undefined : { scale, y }}>
-        <i className="lx-settle-shade" aria-hidden="true" />
         <motion.div className="lx-settle-clip" style={calm ? { clipPath: `inset(0 round ${radius}px)` } : { clipPath: clip }}>{children}</motion.div>
       </motion.div>
     </div>

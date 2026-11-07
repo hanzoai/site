@@ -52,14 +52,14 @@ function Board() {
   const onDrift = (i) => { drifted.current.add(i); say([[KINDS[i][0] + ' edited by hand in the cluster', 'drift']]); };
   const sweep = (s) => {
     const lines = [];
-    if (s === 1) lines.push(['sweep 1', 'created']);
+    if (s === 1) lines.push(['sweep', 'created']);
     else {
       KINDS.forEach((kd, i) => {
         const off = Math.abs(xs[i].get()) + Math.abs(ys[i].get()) > 2;
         if (off || drifted.current.has(i)) { lines.push([kd[0], 'reverted']); animate(xs[i], 0, SPRING); animate(ys[i], 0, SPRING); }
       });
       drifted.current.clear();
-      lines.push(['sweep ' + s + ' · the rest', 'already in sync']);
+      lines.push(['sweep · the rest', 'already in sync']);
     }
     say(lines);
   };
@@ -77,7 +77,7 @@ function Board() {
   }, [seen, calm]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <div className="xop-board" ref={ref}>
-      <div className="xop-board-top x-mono"><span><i className="xop-live" />cluster</span><span>sweep {Math.max(n, 1)}</span></div>
+      <div className="xop-board-top x-mono"><span><i className="xop-live" />cluster</span><span>sweep</span></div>
       <div className="xop-grid">
         {KINDS.map(([k, sub], i) => <Tile key={k} k={k} sub={sub} i={i} mv={{ x: xs[i], y: ys[i] }} onDrift={onDrift} />)}
         <span className="xop-sweep" key={lit} aria-hidden="true" />

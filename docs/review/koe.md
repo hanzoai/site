@@ -1,31 +1,38 @@
 # /koe — James-eye review
 
-Reviewed: main, page files at `dbe4459` (Koe is built on the shared creative-model template, `components/pages/model/Creative.jsx`, with its own voice capsule and waveform). Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
+Reviewed: main at `1417fde` and later (re-walked 14:43–14:48 on the build after the Zen-names fix `1417fde` and the palette recolour `4b53974`), under MASTER.md. Built on the shared creative-model template `components/pages/model/Creative.jsx`. Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
 
-Verdict: 7/10
+Verdict: 7/10 (capped; page itself scores 7)
 
-First complaint: "Black and white, finally, and the voice film is lovely on my laptop. But on my phone the film freezes in its capsule, there's a big empty gap under it, and on both there's no button until I scroll."
+First complaint: "On my laptop it's lovely now. On my phone the voice capsule just stops once it lands, so the first thing I see is frozen."
+
+**Cap: part card (MASTER section 6).** `docs/coverage/koe.md` is in the old format: 0 of 18 `Done here:` lines under `## N.` headings. Capped at 7 until it is re-copied from `docs/coverage/_TEMPLATE.md` with every claim true on the page. The shared desktop ask bar floats over content (site-wide, see `_shared.md`); not counted against this page.
+
+**Scale (MASTER 3.1):** passes. The name rests at 176px over the film as the one hero moment (well past live hanzo.ai's 52px, but alone on its screen); each capability screen holds one 56px title, a medium lede and a small mono list. (My counter saw four 56px titles at once; they are the stacked chapter titles, and only one shows at a time.)
+
+## What changed since the first review
+Fixed at 14:25 (`1417fde`) and 14:29 (palette): "Request access" now sits on the first screen under the lede, the chapter films play on the phone, the type floor was raised, and no UI hue is left (colour lives only in Hanzo's film).
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Desktop: yes for motion, Hanzo's Koe film (white voice ribbons) plays full-bleed under "Koe" and "Voice synthesis and speech understanding."; no ask on the first screen. Phone: after the film settles into its capsule, the capsule is still (0% change) and a large white gap sits between it and "Performance in every word.".
-2. **One in, one out?** Yes on desktop: the film settles into the capsule beside "Performance in every word.", then "What Koe does", then the signature "One word, four performances." (the waveform re-performs "Hanzo" per preset), then fields and the try-it close.
-3. **A real object in every section?** Yes: film, capsule, waveform with phonemes, field cards.
-4. **One ask, sticky after the hero?** After the hero, yes: "Request access" (Hanzo's honest label for a research preview) solid with "Try it in Design" as the second, then the shared ask bar. Not on the first screen.
-5. **Every hover and press answers?** Not reliably measured: the walk's hover pass ran while the hero buttons were still hidden under the film.
-6. **Overlap, font swap, layout shift?** None visible; layout shift 0 and 0.004.
-7. **Which reference, and is its motion there?** synchronized.studio (card opens into this page, with a close) and apple.com chapters. Both there.
-8. **Different from its neighbours?** Yes: the waveform-and-phonemes signature is Koe's own.
-9. **All 18 parts covered?** See below.
-10. **Banned tells?** None measured: no UI hue, nothing above the h1 (the "Voice · Koe 1" line sits directly over the second headline as a small label, borderline).
-11. **Copy untouched?** Yes: parity 58/58 text, 4/4 links.
+1. **Sells in 5 seconds, moves within 1 second?** Desktop yes: the white voice ribbons play under "Koe" with "Request access" on the first screen. **Phone: once the film settles into its capsule the first screen is still** (0% change over 4 s).
+2. **One in, one out?** Yes: the film settles into its shape, capabilities pin one at a time (01–04) with the film beside them, then the signature, fields, related models and the try-it close.
+3. **A real object in every section?** Yes: film, capability film card, the waveform with phonemes, field cards, model cards.
+4. **One ask, sticky after the hero?** Yes: "Request access" in the hero (solid, light on the dark film), the shared ask bar after it, and the close; `data-cta` on the primaries.
+5. **Every hover and press answers?** The hero ask and close (×) answer; model cards lift. Not every field card was exercised.
+6. **Overlap, font swap, layout shift?** None on the page; layout shift 0 on both sizes.
+7. **Which reference, and is its motion there?** synchronized.studio (the card opens into this page, with a close) and apple.com pinned chapters. Both there.
+8. **Different from its neighbours?** In film and signature, yes; layout is the shared creative template.
+9. **All 18 parts covered?** Card in the old format (cap above).
+10. **Banned tells?** None measured.
+11. **Copy untouched?** Yes (parity clean on the first review; words unchanged since).
 
-## Missing from the 18 parts (PLAN-COMPONENTS 2.1–2.18, measured)
-- **2.1 / 2.4:** no ask on the first screen; 0 `data-cta`.
-- **2.11 Mobile:** the capsule film does not play after it settles; empty gap under it.
-- **2.6 Type floor:** 10 labels under 13px (11px "VOICE" chip, 12px model ids).
-- **2.10 Media:** 13 of 14 images without width and height.
+## Missing from the 18 parts (PLAN-COMPONENTS / MASTER, measured)
+- **Part 6 type floor:** 10px mono labels ("IMAGE", "VIDEO", "FOLEY" on the related-model cards) sit below even the 11–12px mono exception.
+- **Part 10 media:** 6 raw `<video>` elements rather than the kit `Film`.
+- **Part 11 mobile:** the capsule film stops on the phone's first screen.
 
-## Fixes (in `Creative.jsx` where shared, so they reach all six creative models)
-1. Put "Request access" (solid) and "Try it in Design" (link) on the first screen under the lede.
-2. Phone: keep the film playing in the capsule, and close the gap so the headline follows it directly.
-3. Raise the chip and ids to 13px or more; give images width and height.
+## Fixes
+1. Re-copy the 18-part card into `_TEMPLATE.md` format with `Done here:` evidence (lifts the cap).
+2. Raise the related-model labels to 11–12px mono capitals (shared `Creative.jsx`).
+3. Play the films through the kit `Film`.
+4. Phone: keep the capsule film playing after it settles.

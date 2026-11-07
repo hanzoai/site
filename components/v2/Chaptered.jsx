@@ -13,7 +13,7 @@
    No kicker above a chapter title (JAMES.md bans eyebrows); the rail and the object's own counter carry the order.
    Needs components/v2/ProgramScale.css. */
 import { useRef, useState } from 'react';
-import { motion, useScroll, useMotionValueEvent, useSpring } from 'motion/react';
+import { motion, useScroll, useMotionValueEvent } from 'motion/react';
 import './Chaptered.css';
 
 const EASE = [0.16, 1, 0.3, 1];
@@ -23,7 +23,7 @@ export default function Chaptered({ chapters, stage, head, label, flip = false, 
   const n = chapters.length;
   const [at, setAt] = useState(0);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
-  const fill = useSpring(scrollYProgress, { stiffness: 300, damping: 30 });
+  const fill = scrollYProgress;
   useMotionValueEvent(scrollYProgress, 'change', (p) => {
     const i = Math.max(0, Math.min(n - 1, Math.floor(p * n * 0.9999)));
     if (i !== at) setAt(i);
@@ -44,8 +44,8 @@ export default function Chaptered({ chapters, stage, head, label, flip = false, 
             <div className="xpc-stack">
               {chapters.map((c, i) => (
                 <motion.article key={i} className={'xpc-ch' + (i === at ? ' on' : '')} onFocusCapture={() => { if (i !== at) go(i); }}
-                  initial={false} animate={i === at ? { opacity: 1, y: 0 } : { opacity: 0, y: i < at ? -28 : 36 }}
-                  transition={i === at ? { duration: 0.7, ease: EASE, delay: 0.08 } : { duration: 0.28, ease: [0.4, 0, 1, 1] }}>
+                  initial={false} animate={i === at ? { opacity: 1, y: 0 } : { opacity: 0, y: i < at ? -16 : 24 }}
+                  transition={i === at ? { duration: 0.4, ease: EASE, delay: 0.06 } : { duration: 0.15, ease: [0, 0, 0.2, 1] }}>
                   <h3 className={'xp-head xpc-t' + (statement ? ' st' : '')}>{c.title}</h3>
                   {c.body && <div className="xp-body xpc-b">{c.body}</div>}
                 </motion.article>

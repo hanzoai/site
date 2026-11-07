@@ -12,7 +12,7 @@
    alert router and stacked sheets (state, scroll). Labels sit under their headlines. Every word and link is
    Hanzo's; the error, its frames and its counts are made-up examples. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useScroll } from 'motion/react';
+import { motion, AnimatePresence, useScroll, useInView } from 'motion/react';
 import useCalm from '../../v2/useCalm';
 import { EASE } from '../../ui';
 import { useEvery } from './Frame';
@@ -108,9 +108,12 @@ function Collapse() {
       const p = calm ? 1 : pin ? Math.min(1, scrollYProgress.get() * 1.25) : Math.min(1, ((t % 8) / 4.5));
       const cr = card.current.getBoundingClientRect(), r = c.getBoundingClientRect();
       const cx = cr.left - r.left, cy = cr.top - r.top;
-      g.fillStyle = '#d1d1d6';
-      for (const q of P) {
-        const k = ease((p - q.d) / 0.5);
+      g.fillStyle = '#d4d4d4';
+      for (let n = 0; n < P.length; n++) {
+        const q = P[n];
+        // once everything has landed, one in twenty keeps falling into the issue: the room stays alive
+        const late = p >= 0.98 && n % 20 === 0;
+        const k = late ? ease(((t * 0.22 + q.x) % 1) * 1.4) : ease((p - q.d) / 0.5);
         const rx = q.x * w, ry = ((q.y + t * q.v) % 1) * h * 1.1 - h * 0.05;
         const tx = cx + 18 + q.jx * (cr.width - 36), ty = cy + 18 + q.jy * (cr.height - 36);
         const x = rx + (tx - rx) * k, y = ry + (ty - ry) * k;
@@ -187,18 +190,18 @@ function Pic({ i }) {
   );
   if (i === 2) return (
     <div className="sn2-rel">
-      <div className="sn2-rel-bars">{[96, 97, 95, 97, 71, 96].map((v, k) => <i key={k} className={v < 90 ? 'bad' : ''} style={{ height: v + '%' }}><span className="l2-mono">release {k + 1}</span></i>)}</div>
-      <p className="sn2-cron l2-mono"><span>cron</span>{Array.from({ length: 14 }).map((_, k) => <i key={k} className={k === 10 ? 'miss' : ''} />)}</p>
+      <div className="sn2-rel-bars">{[96, 97, 95, 97, 71, 96].map((v, k) => <i key={k} className={v < 90 ? 'bad' : ''} style={{ height: v + '%', '--k': k }}><span className="l2-mono">release {k + 1}</span></i>)}</div>
+      <p className="sn2-cron l2-mono"><span>cron</span>{Array.from({ length: 14 }).map((_, k) => <i key={k} className={k === 10 ? 'miss' : ''} style={{ '--k': k }} />)}</p>
     </div>
   );
   if (i === 3) return (
-    <ul className="sn2-acc">{['account 1', 'account 2', 'account 3', 'account 4'].map((a, k) => <li key={a}><i style={{ background: ['#0a0a0a', '#3a3a3c', '#6e6e73', '#a1a1a6'][k] }} />{a}<em className="l2-mono">{k % 2 ? 'staging' : 'production'}</em></li>)}</ul>
+    <ul className="sn2-acc">{['account 1', 'account 2', 'account 3', 'account 4'].map((a, k) => <li key={a} style={{ '--k': k }}><i style={{ background: ['#0a0a0a', '#404040', '#737373', '#a3a3a3'][k] }} />{a}<em className="l2-mono">{k % 2 ? 'staging' : 'production'}</em></li>)}</ul>
   );
   if (i === 4) return <Route />;
   return (
     <div className="sn2-fork">
       <p className="a">Sentry</p>
-      <svg viewBox="0 0 200 120" aria-hidden="true"><path d="M20 20 V100 M20 60 C 20 90, 80 90, 160 90" fill="none" stroke="currentColor" strokeWidth="2" /><circle cx="20" cy="20" r="6" /><circle cx="160" cy="90" r="7" className="me" /></svg>
+      <svg viewBox="0 0 200 120" aria-hidden="true"><path d="M20 20 V100" fill="none" stroke="currentColor" strokeWidth="2" /><path className="sn2-fork-line" d="M20 60 C 20 90, 80 90, 160 90" fill="none" stroke="currentColor" strokeWidth="2.5" pathLength="1" /><circle cx="20" cy="20" r="6" /><circle cx="160" cy="90" r="7" className="me" /></svg>
       <p className="b">Sentinel</p>
       <p className="l2-mono sn2-fsl">Functional Source License · attribution kept current</p>
     </div>
@@ -214,22 +217,40 @@ const FACTS = [
 ];
 
 /* Facts 02–06 as sheets that stack: each one slides up and rests a little below the last. */
+function Sheet({ i, t, d }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.55 });
+  return (
+    <article ref={ref} className={'sn2-sheet' + (seen ? ' in' : '')} style={{ '--i': i }}>
+      <div className="sn2-sheet-copy">
+        <h3 className="l2-head">{t}</h3>
+        <p className="l2-ch-n">{String(i + 2).padStart(2, '0')} / 06</p>
+        <p className="l2-body">{d}</p>
+      </div>
+      <div className="sn2-pic" aria-hidden={i === 3 ? undefined : true}><Pic i={i + 1} /></div>
+    </article>
+  );
+}
+
 function Sheets() {
   return (
     <section className="sn2-sheets">
       <div className="l2-wrap">
-        {FACTS.map(([t, d], i) => (
-          <article key={t} className="sn2-sheet" style={{ '--i': i }}>
-            <div className="sn2-sheet-copy">
-              <h3 className="l2-head">{t}</h3>
-              <p className="l2-ch-n">{String(i + 2).padStart(2, '0')} / 06</p>
-              <p className="l2-body">{d}</p>
-            </div>
-            <div className="sn2-pic" aria-hidden={i === 3 ? undefined : true}><Pic i={i + 1} /></div>
-          </article>
-        ))}
+        {FACTS.map(([t, d], i) => <Sheet key={t} i={i} t={t} d={d} />)}
       </div>
     </section>
+  );
+}
+
+/* The close's object: the issue as it ends up, one issue for ten thousand events, its frame resolved. */
+function Resolved() {
+  return (
+    <div className="sn2-end" aria-hidden="true">
+      <div className="sn2-head"><span className="sn2-tag l2-mono">TypeError</span><span className="sn2-unres l2-mono">1 issue</span></div>
+      <p className="sn2-msg">Cannot read properties of undefined</p>
+      <p className="sn2-end-n"><b className="l2-fig">10,000</b><span>events</span></p>
+      <div className="sn2-code"><code><b>checkout/cart.ts:42</b> · applyDiscount()</code><span className="sn2-map l2-mono on">source map</span></div>
+    </div>
   );
 }
 
@@ -241,7 +262,7 @@ export default function Sentinel() {
       </StageHero>
       <Collapse />
       <Sheets />
-      <Finale name="Sentinel" head="Get started with Hanzo Sentinel" ask={['Read the docs', DOCS]} links={[['View on GitHub', GH]]} prompt="Read https://hanzo.ai/skill.md and use Hanzo Sentinel in my project." tag="Error tracking" license="BSL-1.1" />
+      <Finale name="Sentinel" head="Get started with Hanzo Sentinel" ask={['Read the docs', DOCS]} links={[['View on GitHub', GH]]} object={<Resolved />} prompt="Read https://hanzo.ai/skill.md and use Hanzo Sentinel in my project." tag="Error tracking" license="BSL-1.1" />
     </main>
   );
 }

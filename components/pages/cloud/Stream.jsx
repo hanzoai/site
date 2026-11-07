@@ -80,6 +80,12 @@ function Ruler() {
   const [span, setSpan] = useState(3000);
   const [at, setAt] = useState(0);
   const { scrollYProgress: p } = useScroll({ target: sec, offset: ['start start', 'end end'] });
+  const head = (
+    <div className="st2-rul-h">
+      <h2 className="l2-display m">Your clients, our store</h2>
+      <p className="l2-mono st2-range">01 / 06 — 06 / 06</p>
+    </div>
+  );
   const x = useTransform(p, (v) => -Math.min(1, Math.max(0, (v - 0.04) / 0.92)) * span);
   useMotionValueEvent(p, 'change', (v) => {
     const el = track.current;
@@ -89,11 +95,9 @@ function Ruler() {
   return (
     <section ref={sec} className={'st2-rul' + (pin ? ' pin' : '')} style={pin ? { height: '480svh' } : undefined}>
       <div className="st2-rul-stick">
+        {!pin && head}
         <motion.div ref={track} className="st2-track" style={pin ? { x } : undefined} data-swipe-own>
-          <div className="st2-rul-h">
-            <h2 className="l2-display m">Your clients, our store</h2>
-            <p className="l2-mono st2-range">01 / 06 — 06 / 06</p>
-          </div>
+          {pin && head}
           {FACTS.map(([t, d], i) => (
             <article key={t} className={'st2-rec' + (pin && at > i ? ' read' : '')}>
               <p className="st2-big l2-fig" aria-hidden="true">{String(i + 1).padStart(4, '0')}</p>
@@ -173,6 +177,21 @@ function OneLine() {
   );
 }
 
+/* The close's object: one partition still running, the consumer's committed offset riding it. */
+function MiniTape() {
+  const [ref, live, , paused, toggle] = useDemo(0.2);
+  return (
+    <div className="st2-mini" ref={ref}>
+      <PauseBtn paused={paused} onClick={toggle} />
+      <p className="st2-mini-k l2-mono" aria-hidden="true"><span>partition 0</span><b>stream.hanzo.ai:9092</b></p>
+      <div className={'st2-mini-lane' + (live ? '' : ' still')} aria-hidden="true">
+        <div className="st2-strip">{[0, 1].map((c) => <div key={c} className="st2-run">{Array.from({ length: 12 }).map((_, i) => <i key={i}><b className="l2-mono">{1290 + i}</b></i>)}</div>)}</div>
+        <span className="st2-mark l2-mono">my-service · committed offset</span>
+      </div>
+    </div>
+  );
+}
+
 export default function Stream() {
   return (
     <main className="l2-page st2">
@@ -186,6 +205,7 @@ export default function Stream() {
         head="Point the bootstrap server at it"
         lede="The clients stay as they are. The cluster underneath them goes away."
         ask={['View on GitHub', GHS]}
+        object={<MiniTape />}
         prompt="Read https://hanzo.ai/skill.md and use Hanzo Stream in my project."
         tag="Event stream"
         repo={['hanzoai/stream', GHS]}

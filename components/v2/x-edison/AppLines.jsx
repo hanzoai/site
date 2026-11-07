@@ -23,7 +23,7 @@ export default function Lines({ lines, as = 'h2', className = '', now = false, d
             style={{ display: 'block' }}
             initial={calm ? false : { y: '108%' }}
             animate={go ? { y: '0%' } : undefined}
-            transition={{ duration: 1.05, ease: EASE, delay: delay + i * 0.09 }}
+            transition={{ duration: 0.7, ease: EASE, delay: delay + i * 0.06 }}
           >
             {l}{i < lines.length - 1 ? ' ' : ''}
           </motion.span>

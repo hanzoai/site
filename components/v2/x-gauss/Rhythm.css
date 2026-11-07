@@ -1,0 +1,37 @@
+/* Rhythm: scale with rhythm (MASTER 3.1, James 7 Nov). One big thing per screen, the rest medium and small.
+   Resting sizes follow live hanzo.ai: h1 52px, section headings 26px, figures 64px, h3 17px, lede 21px, body 16px.
+   A thing grows past that only while it is the moment (see Grow.jsx), then settles back.
+   Usage: import '../v2/x-gauss/Rhythm.css' and add the class "gx" to the page's <main className="... w2">.
+   Scoped to .gx so other pages that use Scale.css are untouched. Owned by the Business 2 chat. */
+.gx { --gx-pad: clamp(72px, 11vw, 188px); --gx-h1: 52px; --gx-h2: 26px; --gx-fig: 64px; --gx-lede: 21px; }
+
+/* section rhythm: golden steps, never one height three times in a row (pages vary .tight) */
+.gx .w2-sec { padding: var(--gx-pad) 0 !important; }
+.gx .w2-sec.tight { padding: clamp(72px, 8vw, 116px) 0 !important; }
+
+/* the h1 rests at 52px; the hero object is the big thing */
+.gx h1 { font-size: var(--gx-h1) !important; line-height: 1.05 !important; letter-spacing: -.03em !important; font-weight: 500 !important; max-width: 20ch; }
+
+/* section headings rest at 26px, statements one step up */
+.gx h2:not(.gx-stay) { font-size: var(--gx-h2) !important; line-height: 1.18 !important; letter-spacing: -.02em !important; font-weight: 500 !important; max-width: 30ch; }
+.gx .gx-say { font-size: 32px !important; line-height: 1.2 !important; letter-spacing: -.022em !important; font-weight: 500 !important; max-width: 32ch; }
+.gx h3, .gx .w2-title { font-size: 17px !important; line-height: 1.3 !important; letter-spacing: -.01em !important; font-weight: 500 !important; }
+.gx .w2-lede { font-size: var(--gx-lede) !important; line-height: 1.4; }
+.gx .w2-body { font-size: 16px !important; line-height: 1.6; }
+
+/* figures rest at 64px */
+.gx .gx-fig { font-size: var(--gx-fig) !important; line-height: 1 !important; letter-spacing: -.03em !important; font-weight: 300 !important; font-variant-numeric: tabular-nums; }
+.gx .gx-mid { font-size: 26px !important; line-height: 1.15 !important; letter-spacing: -.02em !important; }
+
+@media (max-width: 899px) {
+  .gx { --gx-h1: 40px; --gx-h2: 24px; --gx-fig: 44px; --gx-lede: 20px; }
+  .gx .gx-say { font-size: 26px !important; }
+  .gx .gx-mid { font-size: 22px !important; }
+}
+
+/* every control answers: the pause inverts on hover (not just a lighter fill) */
+@media (hover: hover) {
+  .gx .w2-pause:hover { background: #0a0a0a !important; color: #fff !important; }
+  .gx .w2-dark .w2-pause:hover, .gx [data-room='dark'] .w2-pause:hover { background: #fafafa !important; color: #0a0a0a !important; }
+  .gx .w2-pin-rail button:hover { color: var(--ink, #0a0a0a); }
+}
