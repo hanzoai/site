@@ -343,8 +343,8 @@ const worker = new Worker("emails", async (job) => {
 export default function Mq() {
   const steps = FACTS.map(([t, d]) => ({ t, d }));
   return (
-    <main className="lx mq" data-ask-name="Hanzo MQ">
-      <section className="mq-hero" data-morph-target>
+    <main className="lx mq">
+      <section className="mq-hero" data-morph-target data-ask-name="Hanzo MQ">
         <div className="lx-wrap mq-hero-c">
           <LineMask as="h1" className="lx-display mq-h1" lines={['Hanzo MQ']} />
           <div className="mq-lead">

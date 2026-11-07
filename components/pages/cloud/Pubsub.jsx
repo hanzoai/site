@@ -346,8 +346,8 @@ export default function Pubsub() {
   const [from, setFrom] = useState(0);
   const steps = FACTS.map(([t, d], i) => ({ t, d, extra: i === 0 ? <StartSwitch from={from} setFrom={setFrom} /> : i === 1 ? <AckSwitch ack={ack} setAck={setAck} /> : null }));
   return (
-    <main className="lx ps" data-ask-name="Hanzo PubSub">
-      <section className="ps-hero lx-dark" data-room="dark" data-morph-target>
+    <main className="lx ps">
+      <section className="ps-hero lx-dark" data-room="dark" data-morph-target data-ask-name="Hanzo PubSub">
         <div className="lx-wrap ps-hero-in">
           <div className="ps-hero-title">
             <LineMask as="h1" className="lx-display ps-h1" lines={['Hanzo PubSub']} />

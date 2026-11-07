@@ -187,8 +187,8 @@ const REL = [['Projects', '/cloud/projects', 'The deploy unit'], ['Environments'
 
 export default function Registry() {
   return (
-    <main className="lx rg" data-ask-name="Hanzo Registry">
-      <section className="rg-hero" data-morph-target>
+    <main className="lx rg">
+      <section className="rg-hero" data-morph-target data-ask-name="Hanzo Registry">
         <div className="lx-wrap rg-hero-grid">
           <SettleStage from={1.06} className="rg-stage"><Push /></SettleStage>
           <div className="rg-hero-copy">

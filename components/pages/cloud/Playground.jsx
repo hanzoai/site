@@ -267,8 +267,8 @@ const REL = [['CLI', '/cli'], ['Desktop', '/desktop'], ['API Keys', '/cloud/api-
 
 export default function Playground() {
   return (
-    <main className="lx pg" data-ask-name="Try a model, then ship it">
-      <section className="pg-hero" data-morph-target>
+    <main className="lx pg">
+      <section className="pg-hero" data-morph-target data-ask-name="Try a model, then ship it">
         <div className="lx-wrap pg-hero-grid">
           <div className="pg-hero-copy">
             <LineMask as="h1" className="lx-display s pg-h1" lines={['Try a model,', 'then ship it']} />

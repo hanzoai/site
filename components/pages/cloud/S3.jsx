@@ -156,7 +156,7 @@ const FIG = [[10, 'data shards'], [4, 'parity shards'], [4, 'can be lost, and it
 
 export default function S3() {
   return (
-    <main className="lx s3" data-ask-name="Hanzo Object Storage">
+    <main className="lx s3">
       <section className="s3-hero" data-morph-target data-ask-name="Hanzo Object Storage">
         <div className="lx-wrap">
           <Kept />
