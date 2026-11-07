@@ -238,3 +238,12 @@
 .xov-hands button.on i { background: #fff; }
 .xov-hold[aria-pressed='true'], .xov-paused { color: #000; }
 .xov-get .x-btn.solid { background: #fff; color: #000; border-color: #fff; }
+
+/* the control page in Hanzo's words, not placeholder bars */
+.xov-win-body { gap: 12px; }
+.xov-win-h { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -.02em; color: var(--ink); }
+.xov-win-p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--soft); }
+.xov-typed { width: auto !important; height: auto; max-width: 0; overflow: hidden; background: none !important; color: var(--ink); font-size: 14px; white-space: nowrap; transition: max-width 1.4s steps(9); }
+.xov-desk.h3 .xov-typed { max-width: 9ch; }
+.xov-read span { font-size: 13px; font-weight: 500; }
+@media (max-width: 900px) { .xov-win-p { display: none; } }
