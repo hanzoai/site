@@ -106,7 +106,7 @@
 .sg-plan h3 { margin: 0; font-size: 21px; font-weight: 600; letter-spacing: -.02em; }
 .sg-price { display: flex; align-items: baseline; gap: 4px; margin: 20px 0 12px; }
 .sg-price b { font-size: clamp(48px, 4.4vw, 64px); line-height: 1; }
-.sg-price span { font-size: 15px; color: var(--soft); }
+.sg-price > span { font-size: 15px; color: var(--soft); }
 .sg-price .sg-word { font-weight: 600; letter-spacing: -.045em; }
 .sg-plan-d { margin: 0 0 24px; min-height: 3em; font-size: 15.5px; line-height: 1.5; color: var(--soft); }
 .sg-plan-a { align-self: flex-start; height: 48px !important; font-size: 15px !important; padding: 0 22px !important; }
@@ -247,9 +247,21 @@ html.js .sg-lines.up i:nth-child(8) { animation-delay: 420ms; } html.js .sg-line
 
 /* plans: the prices flip in once when reached; resting at 44px so no four big figures shout at once */
 .sg-price b { font-size: 44px; }
-.sg-flap span { background: none !important; padding: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
+.sg-flap { gap: 0 !important; font: inherit; letter-spacing: inherit; }
+.sg-flap span { min-width: 0 !important; font: inherit; color: inherit; background: none !important; padding: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
 @media (hover: hover) { .sg-run button:not([aria-pressed='true']):hover { color: var(--ink); background: rgba(255, 255, 255, .6); } }
 .sg-run button:active { transform: scale(.97); }
+/* the pad's ghost signature: drawn once in faint ink when the pad is reached */
+.sg-pad-c { position: relative; }
+.sg-pad-ghost { position: absolute; left: 50%; top: 50%; width: min(52%, 420px); height: auto; transform: translate(-50%, -50%); pointer-events: none; }
+.sg-pad-ghost path { fill: none; stroke: #a3a3a3; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.sg-pad-ghost.in path { stroke-dashoffset: 0; transition: stroke-dashoffset 2.2s cubic-bezier(.45, 0, .2, 1) .4s; }
+@media (prefers-reduced-motion: reduce) { .sg-pad-ghost path { stroke-dashoffset: 0; } }
+/* no dead bands around the pad and after the pinned story */
+.sg.gx .sg-try { padding-bottom: clamp(40px, 5vw, 72px) !important; }
+.sg.gx .sg-cost { padding-bottom: clamp(56px, 6vw, 96px) !important; }
+.sg-pad-hint.under { top: auto; bottom: 18px; translate: -50% 0; font-size: 13px; }
+@media (min-width: 900px) { .sg .sg-parts { margin-top: -88px; } }
 /* the fork line under Built on Open Source */
 .sg-fork { margin-top: 40px; }
 .sg-fork svg { display: block; width: 100%; height: auto; overflow: visible; }

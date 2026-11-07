@@ -227,6 +227,8 @@ function Pad() {
   const last = useRef(null);
   const [ink, setInk] = useState(false);
   const [done, setDone] = useState(null);
+  const padRef = useRef(null);
+  const padSeen = useInView(padRef, { once: true, amount: 0.6 });
   const pt = (e) => { const r = cv.current.getBoundingClientRect(); return [(e.clientX - r.left) * (cv.current.width / r.width), (e.clientY - r.top) * (cv.current.height / r.height)]; };
   const down = (e) => { if (done) return; cv.current.setPointerCapture(e.pointerId); last.current = pt(e); };
   const move = (e) => {
@@ -256,11 +258,13 @@ function Pad() {
           <LineMask as="h2" className="w2-display s sg-try-h" lines={['Each signer gets a link and signs in their browser.']} />
           <p className="w2-lede">Nobody installs anything and nobody prints anything.</p>
         </div>
-        <div className={'sg-pad w2-object' + (done ? ' done' : '')}>
+        <div ref={padRef} className={'sg-pad w2-object' + (done ? ' done' : '')}>
           <p className="sg-pad-k"><span>signature</span><span className="x-mono">{done ? 'signed' : ink ? 'ready to sign' : 'draw here'}</span></p>
           <div className="sg-pad-c">
             <canvas ref={cv} width="1200" height="320" tabIndex={0} onPointerDown={down} onPointerMove={move} onPointerUp={upE} onPointerCancel={upE} onKeyDown={key} aria-label="Signature pad: draw with your mouse, pen or finger" />
-            {!ink && !done && <span className="sg-pad-hint" aria-hidden="true">Sign here</span>}
+            {!ink && !done && <span className={'sg-pad-hint' + (padSeen ? ' under' : '')} aria-hidden="true">Sign here</span>}
+            {/* a ghost signature writes itself once when the pad is reached, then waits; your first stroke clears it */}
+            {!ink && !done && <svg className={'sg-pad-ghost' + (padSeen ? ' in' : '')} viewBox="0 0 160 60" aria-hidden="true"><path d={INK} pathLength="1" /></svg>}
           </div>
           <div className="sg-pad-foot" role="status">
             <AnimatePresence mode="wait" initial={false}>
