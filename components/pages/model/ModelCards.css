@@ -18,7 +18,7 @@
 .mc-arr { display: inline-block; transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
 .mc-d { margin-top: 8px; max-width: 150px; font-size: 13px; line-height: 18px; color: rgba(255, 255, 255, .8); }
 .mc-tags { position: absolute; left: 21px; right: 21px; bottom: 21px; display: flex; flex-wrap: wrap; gap: 8px; }
-.mc-pill { display: inline-block; padding: 4px 10px; border: 1px solid rgba(255, 255, 255, .2); border-radius: 999px; font: 400 10px/14px var(--mono); letter-spacing: .8px; text-transform: uppercase; color: rgba(255, 255, 255, .8); }
+.mc-pill { display: inline-block; padding: 4px 10px; border: 1px solid rgba(255, 255, 255, .2); border-radius: 999px; font: 606 11px/14px var(--mono); letter-spacing: .8px; text-transform: uppercase; color: rgba(255, 255, 255, .8); }
 .mc-flag { margin-bottom: 22px; }
 .mc-cell.big .mc-t { font-size: 44px; letter-spacing: -.88px; line-height: 48px; }
 .mc-cell.big .mc-d { margin-top: 18px; max-width: 160px; }

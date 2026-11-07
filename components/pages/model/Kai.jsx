@@ -267,8 +267,8 @@ export default function Kai() {
           <Lines id="ka-h" lines={['Kai.', 'Made for decisions.']} />
           <p className="lv-lede">The decision model family from Hanzo. Explore each version, its capabilities and the evidence behind it.</p>
           <div className="lv-acts">
-            <Cta to="https://platform.hanzo.ai/decisions" id="kai.hero" thumb>Open Decisions</Cta>
-            <Cta to="#models" kind="quiet" id="kai.hero-models">Explore models</Cta>
+            <Cta kind="quiet" to="https://platform.hanzo.ai/decisions" id="kai.hero" thumb>Open Decisions</Cta>
+            <Cta to="#models" kind="link" id="kai.hero-models">Explore models</Cta>
             <More to="https://github.com/hanzoai/kai">Docs on GitHub</More>
           </div>
           <p className="lv-crumb">Hanzo / Kai</p>

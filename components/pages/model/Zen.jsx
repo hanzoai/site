@@ -183,8 +183,8 @@ export default function Zen() {
           <Lines id="ze-h" lines={['Open models.', 'Yours to run.']} />
           <p className="lv-lede">The open-weight family behind Hanzo. Download the weights, or call them on Hanzo Cloud.</p>
           <div className="lv-acts">
-            <Cta to="/login" id="zen.hero" thumb>Try Hanzo</Cta>
-            <Cta to="https://platform.hanzo.ai" kind="quiet" id="zen.hero-platform">API Platform</Cta>
+            <Cta kind="quiet" to="/login" id="zen.hero" thumb>Try Hanzo</Cta>
+            <Cta to="https://platform.hanzo.ai" kind="link" id="zen.hero-platform">API Platform</Cta>
             <More to="https://github.com/zenlm">Docs on GitHub</More>
           </div>
           <p className="lv-crumb">Hanzo / Zen</p>

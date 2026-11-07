@@ -19,6 +19,8 @@
      the headline beside the settled film carries the same ask, so one solid button shows at a time.
    - Colour: none of our own (JAMES.md 7, 0 UI hues). The film is Hanzo's own, never filtered or dimmed; the only
      dimming is the gradient under the name. --ac / --ac-ink stay as neutral ink tokens for the page files.
+   - One solid fill: Hanzo's sticky header carries the solid "Try Hanzo" (MASTER 3.2 rule 6), so the page's own asks
+     are quiet (outline) and their seconds are links. The phone bar (Ask.jsx) carries the page's own ask where it covers nothing.
    - One pause (the shared FilmPause, bottom right of the stage) stops every film and self-running demo on the page.
    - Close runs the film back into the card it opened from. Reduced motion and JS off share one calm layout: the full
      film with the name and the ask, then the headline, lede and actions below it, nothing pinned or hidden. */
@@ -158,7 +160,7 @@ export default function Launch({ slug, shape, aim, over, head, headClass = '', l
             </h1>
             <p className="lv-name-d" data-on={ready ? '' : undefined}>{m.desc}</p>
             <p className="x-mtags static lv-name-t" data-on={ready ? '' : undefined}>{m.tags.map((x) => <span key={x}>{x}</span>)}</p>
-            {ask && <p className="lv-name-ask" data-on={ready ? '' : undefined}><Cta to={ask.to} id={ask.id}>{ask.label}</Cta></p>}
+            {ask && <p className="lv-name-ask" data-on={ready ? '' : undefined}><Cta to={ask.to} kind="quiet" id={ask.id}>{ask.label}</Cta></p>}
           </motion.div>
           {over && size && <div className="lv-over" data-on={on ? '' : undefined} aria-hidden="true">{over(size.W, size.H, size.wide)}</div>}
           <div className={'lv-head ' + headClass} data-on={on ? '' : undefined}>{head}</div>

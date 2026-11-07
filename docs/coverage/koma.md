@@ -39,7 +39,7 @@ Done here: Koma's own film plays full-bleed under the h1 cut-in within the first
 - [x] Copy button copies exactly the displayed text; failure never says Copied (n/a: no copy button on this page)
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: the hero ask is `<Cta thumb>`, so the shared ask bar carries "Request access" after the hero. `data-cta` ids: `koma.first` (first screen), `koma.hero` (headline), `koma.preview` (preview).
+Done here: the header carries the one solid "Try Hanzo"; the page's own asks are outlined (`<Cta kind="quiet" thumb>`), and on phones the shared bar carries "Request access" after the hero. `data-cta` ids: `koma.first` (first screen), `koma.hero` (headline), `koma.preview` (preview).
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -55,7 +55,7 @@ Done here: Hanzo's own research-preview note (samples publish only after blind r
 - [x] Tables, FAQ, tabs and code use the kit parts
 - [x] `python3 scripts/parity.py /koma`: 0 missing
 
-Done here: parity text 56/56, links 4/4. Section headings rest at 26px, the settled headline at 44px, body 16px, ledes 20px. Mono captions are 12-13px; Hanzo's model-card pills are 10px per SPEC. Tables: n/a: no table on this page. Headings use `text-wrap: balance`.
+Done here: parity text 56/56, links 4/4. Section headings rest at 26px, the settled headline at 44px, body 16px, ledes 20px. Mono captions are 12-13px; Hanzo's model-card pills are 11px mono capitals (SPEC 10px, raised one step at the critics' ask). Tables: n/a: no table on this page. Headings use `text-wrap: balance`.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens (deck values only; `tokens.css` not on main)
@@ -131,7 +131,7 @@ Done here: `metadata` in `app/koma/page.jsx` is unchanged, and `<JsonLd route="/
 - [ ] n/a: every maker and model page linked in the DOM (that is `/models`)
 - [x] One price figure everywhere
 
-Done here: `ModelCards.jsx` copies SPEC: grid 2fr + 4×1fr at 1131px, rows 220px, gap 12, #000 cards, radius 20, title 22/500 (Enso 44), 10px mono pills, the film over its poster with a 0.6s crossfade, and a pointer tilt of 3° that settles flat. This page's card is marked. Each card opens through the WebGL opener.
+Done here: `ModelCards.jsx` copies SPEC: grid 2fr + 4×1fr at 1131px, rows 220px, gap 12, #000 cards, radius 20, title 22/500 (Enso 44), 11px mono pills (SPEC 10px), the film over its poster with a 0.6s crossfade, and a pointer tilt of 3° that settles flat. This page's card is marked. Each card opens through the WebGL opener.
 
 ## 16. Developer experience
 - [ ] One `CodeBlock`; copy equals display (or n/a: no code on the page)

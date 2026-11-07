@@ -5,9 +5,9 @@
 .cr-scene .cr-studio { max-width: 1040px; margin-inline: auto; }
 
 /* capabilities: a title card, then the pinned chapters on the model's own film */
-.cr-caps-t { padding-bottom: clamp(24px, 4vw, 56px); }
-.cr-caps-sh { margin-bottom: 0; }
-.cr-caps-h { font-size: 26px; letter-spacing: -.02em; line-height: 1.2; }
+.cr-caps-h { font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.2; color: #0a0a0a; }
+.lv-ch-top > .cr-caps-side { margin: 6px 0 0; }
+.cr-caps:not([data-live]) .lv-ch-top { margin: 0 0 8px; }
 .cr-art { position: absolute; inset: 0; overflow: hidden; background: #000; }
 .cr-art img, .cr-art video { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; transform: translate(var(--x), var(--y)) scale(var(--z)); }
 .cr-art > .cr-g { position: absolute; left: 24px; bottom: 24px; width: 40px; height: 40px; background: rgba(255, 255, 255, .14); }
@@ -48,7 +48,7 @@
 .cr-mc-film.on { opacity: 1; }
 .cr-mc-t { position: absolute; left: 21px; right: 21px; top: 21px; font-size: 22px; font-weight: 500; letter-spacing: -.44px; line-height: 28px; }
 .cr-mc-d { position: absolute; left: 21px; right: 21px; top: 57px; font-size: 13px; line-height: 18px; color: rgba(255, 255, 255, .8); }
-.cr-mc-pill { position: absolute; left: 21px; bottom: 21px; padding: 4px 10px; border: 1px solid rgba(255, 255, 255, .2); border-radius: 999px; font: 400 10px/14px var(--mono); letter-spacing: .8px; text-transform: uppercase; color: rgba(255, 255, 255, .8); }
+.cr-mc-pill { position: absolute; left: 21px; bottom: 21px; padding: 4px 10px; border: 1px solid rgba(255, 255, 255, .2); border-radius: 999px; font: 606 11px/14px var(--mono); letter-spacing: .8px; text-transform: uppercase; color: rgba(255, 255, 255, .8); }
 
 @media (max-width: 1100px) and (min-width: 901px) { .cr-map-grid { grid-template-columns: repeat(3, 1fr); } }
 
