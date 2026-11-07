@@ -18,10 +18,11 @@
 // Metric: post opens (data-cta="blog.*")
 // Signature: a magazine cover that turns itself: the headline wipes and a silver curtain crosses the art plate as it changes
 // Beyond: the publishing strip: a bar per month counted from Hanzo's own post dates that narrows the contents to a month
-// V2: 8/10 round 3: phone cover grid fixed (the index no longer forces a second column), one solid ask (masthead now outlined), the trio tilts and has a heading, the contents count counts up and settles on arrival, the strip's bars carry an idle silver sweep, rows arrive with their leaders drawing
+// V2: 8/10 round 4: JS off shows one cover story (NoJs, no <noscript>); one solid per screen (masthead "Read the latest" solid on desktop where the header quiets, outlined on phones beside the header's solid); the on-site trio plays Hanzo's own films (Zen, Enso, Kai) so four real visuals show with the cover; the contents show one month at a time, the bars swap it in and out, All 24 opens all; the count sits under Contents; trio tilt, count-up, idle bar sweep and row arrival kept
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion } from 'motion/react';
-import { A, Cta, Img } from '../kit';
+import { AnimatePresence, motion, useInView, useReducedMotion } from 'motion/react';
+import { A, Cta, Film, Img } from '../kit';
+import NoJs from '../NoJs';
 import Sigil from '../Sigil';
 import StoryClose from './StoryClose';
 import StoryPause from './StoryPause';
@@ -62,7 +63,8 @@ const POSTS = [
   ['pricing', 'February 27, 2026', 'Hanzo Pricing Deep Dive: Every Model, Every Plan, Every Comparison', 'The comprehensive breakdown of Hanzo pricing across AI models, cloud compute, GPU access, and tools — with head-to-head comparisons against every major competitor.', '2026-02-27-pricing-deep-dive/'],
 ].map(([tag, date, title, desc, path]) => ({ tag, date, title, desc, to: B + path, month: date.split(' ')[0] }));
 const COVER = POSTS.slice(0, 6);
-const HERE = [['The Next Frontier Will Be Synthesis', '/blog/synthesis'], ['A New Pareto Frontier', '/blog/pareto-frontier'], ['Kai 1: Decisions, Not Completions', '/blog/kai-decision-models']];
+/* each on-site post shows Hanzo's own film for the first model it is about (as its /blog/<slug> plate and keep-reading cards do) */
+const HERE = [['The Next Frontier Will Be Synthesis', '/blog/synthesis', 'zen'], ['A New Pareto Frontier', '/blog/pareto-frontier', 'enso'], ['Kai 1: Decisions, Not Completions', '/blog/kai-decision-models', 'kai']];
 const MONTHS = ['February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October'];
 const pad = (n) => String(n).padStart(2, '0');
 const HOLD = 6.5;
@@ -160,7 +162,7 @@ function Hero() {
           <motion.div className="xbl-mast-r" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.45 }}>
             <p className="v2s-lede"><span className="v2s-label xbl-runin">Blog</span> Product launches, architecture deep dives, and how-to guides from the team building the AI workforce platform.</p>
             <div className="v2s-acts">
-              <Cta to={POSTS[0].to} id="blog.hero" kind="ghost" thumb>Read the latest</Cta>
+              <Cta to={POSTS[0].to} id="blog.hero" thumb>Read the latest</Cta>
               <Cta to="https://hanzo.blog" kind="link">hanzo.blog</Cta>
             </div>
           </motion.div>
@@ -188,10 +190,10 @@ function Here() {
       <div className="v2s-wrap">
         <h2 id="xbl-here-h" className="xbl-sr">Posts on hanzo.ai</h2>
         <ul className="xbl-here-g">
-          {HERE.map(([t, to], i) => (
+          {HERE.map(([t, to, film], i) => (
             <motion.li key={to} className={i ? 'small' : 'big'} initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.9, ease: EASE, delay: i * 0.12 }}>
               <A to={to} className="xbl-here-a" onPointerMove={tilt} onPointerLeave={untilt}>
-                <span className="xbl-here-art">{to.includes('kai') ? <Img src="/models/kai.webp" w={1200} h={1500} className="xbl-here-img" /> : <Sigil seed={to} />}</span>
+                <span className="xbl-here-art"><Film src={`/models/${film}.webm`} poster={`/models/${film}.webp`} w={1200} h={1500} className="xbl-here-img" aria-hidden="true" /></span>
                 <span className={'xbl-here-t ' + (i ? 'v2s-title' : 'v2s-headline')}><span data-morph>{t}</span> <Arr /></span>
               </A>
             </motion.li>
@@ -256,14 +258,16 @@ function Contents() {
         <div className="v2s-head xbl-c-head" ref={head}>
           <h2 id="xbl-c-h" className="v2s-display xbl-c-h">Contents</h2>
           <p className="v2s-cap">Every post</p>
+          <Count key={m || 'all'} n={m ? (months.find(([k]) => k === m) || [0, 0])[1] : POSTS.length} label={m ? m + ' 2026' : ''} go={headSeen} from={m ? null : 0} />
           <div className="v2s-side xbl-c-strip">
-            <Count key={m || 'all'} n={m ? (months.find(([k]) => k === m) || [0, 0])[1] : POSTS.length} label={m ? m + ' 2026' : ''} go={headSeen} from={m ? null : 0} />
             <Strip m={m} setM={choose} months={months} top={top} all={all} />
           </div>
         </div>
         <div className="xbl-toc" ref={top0}>
+          {/* one month at a time: the newest first; a bar brings its month in as the last one leaves; All 24 opens every month */}
+          <AnimatePresence mode="wait" initial={false}>
           {shown.map(([k, list], gi) => (
-            <motion.section key={k} hidden={!m && !all && gi > 1 ? true : undefined} className="xbl-month" initial={m ? { opacity: 0, y: 12 } : false} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE }} aria-label={`${k} 2026`}>
+            <motion.section key={(m || 'all') + k} hidden={!m && !all && gi > 0 ? true : undefined} className="xbl-month" initial={m ? { opacity: 0, x: 40 } : false} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40, transition: { duration: 0.22, ease: [0.7, 0, 0.84, 0] } }} transition={{ duration: 0.55, ease: EASE }} aria-label={`${k} 2026`}>
               <div className="xbl-month-h" aria-hidden="true">
                 <b>{k}</b>
                 <span className="v2s-num">2026 · {pad(list.length)}</span>
@@ -283,6 +287,7 @@ function Contents() {
               </ol>
             </motion.section>
           ))}
+          </AnimatePresence>
           {!m && !all && <button type="button" className="xbl-more" onClick={() => setAll(true)} aria-expanded="false">All {POSTS.length} <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.5 6 8 10.5 12.5 6" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg></button>}
         </div>
       </div>
@@ -294,7 +299,7 @@ export default function BlogIndex() {
   return (
     <main id="main" className="xbl v2s">
       {/* JavaScript off: the masthead and the first cover story show at rest */}
-      <noscript><style>{'.xbl .v2-line>span,.xbl-mast-r,.xbl-story.on *,.xbl-here li,.xbl-li{transform:none!important;opacity:1!important;clip-path:none!important}'}</style></noscript>
+      <NoJs css={'.xbl .v2-line>span,.xbl-mast-r,.xbl-story.on *,.xbl-here li,.xbl-li{transform:none!important;opacity:1!important;clip-path:none!important} .xbl-story:not(.on){visibility:hidden!important} .xbl-curtain{display:none} .xbl-month[hidden]{display:grid!important} .xbl-more,.xbl-allbtn,.xst-pause{display:none!important}'} />
       <Hero />
       <Here />
       <Contents />

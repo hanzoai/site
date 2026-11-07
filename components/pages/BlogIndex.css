@@ -52,7 +52,14 @@
 .xbl-here-g .big .xbl-here-t { font-size: 26px; }
 
 /* 3. contents and the publishing strip (Beyond) */
-.xbl-c-head { align-items: end; grid-template-rows: 1fr auto; }
+.xbl-c-head { align-items: end; grid-template-rows: 1fr auto auto; }
+.xbl-c-head > .xbl-count { grid-column: 1 / 9; grid-row: 3; margin-top: 27px; }
+.xbl-c-head > .xbl-c-strip { grid-row: 1 / 4; }
+.xbl-here { padding-top: clamp(28px, 3vw, 44px); }
+.xbl-here-art { background: #0a0a0a !important; }
+.xbl-mast-r .x-arrow { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; text-decoration-color: rgba(10, 10, 10, .25); transition: text-decoration-color .2s var(--ease); }
+.xbl-mast-r .x-arrow svg { transition: transform .25s var(--ease); }
+@media (hover: hover) { .xbl-mast-r .x-arrow:hover { text-decoration-color: currentColor; } .xbl-mast-r .x-arrow:hover svg { transform: translateX(4px); } }
 .xbl-c-head > .xbl-c-h { align-self: end; }
 .xbl-c-head > .v2s-cap { align-self: start; }
 .xbl-contents { padding-top: clamp(44px, 5vw, 72px); }
@@ -115,6 +122,9 @@
   .xbl-mast-l, .xbl-mast-r { grid-column: 1; }
   .xbl-h1 { white-space: normal; }
   .xbl-mast-r .v2s-btn { min-height: 48px; }
+  /* phones keep the header's solid "Try Hanzo", so the masthead ask is the outline beside it (one solid per screen) */
+  .xbl-mast-r .x-btn.solid { background: #fff; color: #0a0a0a; border: 1px solid rgba(0, 0, 0, .18); }
+  .xbl-mast-r .x-btn.solid:active { transform: scale(.98); }
   .xbl-cover { grid-template-columns: minmax(0, 1fr); }
   .xbl-cover-l, .xbl-plate { grid-column: 1; }
   .xbl-plate { grid-row: 1; min-height: 0; height: auto; width: 100%; aspect-ratio: 4 / 3; }

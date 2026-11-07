@@ -13,7 +13,7 @@ Forks this page deleted: the page's own buttons and text links (now kit `Cta`); 
 - [x] No dead or self-looping button
 - [x] Open copy questions listed, none decided
 
-Done here: one solid on the page body: "Every post" (hanzo.blog) in the Band; "Read the latest" (the newest post) is outlined in the masthead and solid only in the sticky header; "hanzo.blog" and "Read the docs" are text links.
+Done here: one solid per screen: on desktop "Read the latest" (the newest post, `data-cta="blog.hero"`) is the solid in the masthead while the header's "Try Hanzo" goes outlined, then the header carries it solid; on phones the header's "Try Hanzo" stays solid and the masthead ask is outlined; "Every post" (hanzo.blog) is the Band's solid; "hanzo.blog" (underline, arrow nudges on hover) and "Read the docs" are text links.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`
@@ -31,7 +31,7 @@ Done here: parity links 29/29; the three on-site posts open into their pages by 
 - [x] Ends in Band, footer
 - [x] Morph on the on-site cards
 
-Done here: the masthead (52px), the cover story with its plate (the one big thing) and the six-headline index all fit 1470×801; then the on-site posts, the contents (two latest months, then "All 24"), the Band.
+Done here: the masthead (52px), the cover story with its plate (the one big thing) and the six-headline index all fit 1470×801; then the on-site posts, the contents (the newest month; the bars bring in one month at a time; "All 24" opens all), the Band.
 
 ## 4. Conversion system
 - [x] kit `Cta` only; no raw `.x-btn`
@@ -90,7 +90,7 @@ Done here: signature = the self-turning cover (silver curtain on the timer's tur
 - [x] Decorative art `aria-hidden`
 - [x] No dimmed photo
 
-Done here: Hanzo's Kai art on the two Kai cover stories and on the on-site Kai card; one contour field per post title, paused off screen.
+Done here: Hanzo's Kai art on the two Kai cover stories; the three on-site cards play Hanzo's own films (kit `Film`: Zen for Synthesis, Enso for Pareto Frontier, Kai for Kai 1; the first model each post is about, as its post plate does), so the cover plus three films show four real visuals; contour fields on the other cover stories, paused off screen.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass
@@ -141,7 +141,7 @@ Done here: n/a: no code on the page.
 - [x] n/a: no submit
 - [x] Reduced motion and JS off designed
 
-Done here: reduced motion: no turning, no curtain, bars at rest; JS off: masthead and first cover story visible.
+Done here: reduced motion: no turning, no curtain, bars at rest, films show posters; JS off (shared `NoJs`, no `<noscript>`): masthead and only the first cover story visible (the other five hidden), every month of the contents open, controls that need JS hidden.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on primaries; no analytics wired yet
@@ -149,4 +149,4 @@ Done here: reduced motion: no turning, no curtain, bars at rest; JS off: masthea
 - [x] `V2:` line in the page file
 - [ ] Review read: `docs/review/blog.md` verdict 6/10, fixes pushed, re-review pending
 
-Done here: `docs/review/blog.md` (6/10 at 9afbb4b); round 3 fixed the phone cover grid (round 2 had left the index on columns 2/-1, which broke the 375 cover), made the masthead ask outlined, gave the trio a heading, tilt and arrival, added the count-up moment, the idle bar sweep and row arrival, aligned Contents with its caption and closed the gaps. Proof: `docs/gallery/blog/v3-*`.
+Done here: `docs/review/blog.md` (6/10 at 9afbb4b); round 3 fixed the phone cover grid (round 2 had left the index on columns 2/-1, which broke the 375 cover), made the masthead ask outlined, gave the trio a heading, tilt and arrival, added the count-up moment, the idle bar sweep and row arrival, aligned Contents with its caption and closed the gaps. Proof: `docs/gallery/blog/v3-*`. Round 4 (review 7/10): JS-off cover fixed, one solid per screen, films on the trio, contents one month at a time (newest first; a bar swaps its month in as the last leaves; All 24 opens all), the count moved under Contents to fill the empty column, less air between the cover and the trio.
