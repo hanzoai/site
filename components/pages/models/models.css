@@ -412,6 +412,7 @@
   .xmf-maker-n { margin-top: 40px; align-items: flex-start; text-align: left; }
   .xmf-maker-n b { font-size: 120px; }
   .xmf-maker-n > span { font-size: 14px; }
+  .xmf-maker-top { position: relative; justify-content: space-between; margin-top: 32px; }
   .xmf-term { margin-top: 24px; border-radius: 22px; }
   .xmf-term pre { padding: 18px; font-size: 13px; }
   .xmf-prov .xmf-among .xmf-plot { aspect-ratio: 4 / 5; }
@@ -455,10 +456,12 @@
 }
 
 /* one pause (ModelFilm's FilmPause) stops every loop on the page: the Sigils, the field's light, the rings */
-.xmf-maker-pause { position: absolute; right: 0; top: 0; }
+.xmf-maker-top { position: absolute; right: 0; top: 0; display: flex; align-items: center; gap: 16px; }
+.xmf-maker-top .xmf-crumbs { margin: 0; }
 .xmf-maker-g { position: relative; }
 [data-mpaused] .xmf-sweep, [data-mpaused] .xmf-dot.me::after, [data-mpaused] .xmf-field.on .xmf-dot b { animation-play-state: paused; }
 
 /* Hanzo's model cards (SpecCard) in the rail and on the shelf */
 .xmf-rail > li, .xmf-grid > li { min-width: 0; }
 .xmf-rail .sc-card { min-height: 240px; }
+@media (max-width: 900px) { .xmf-maker-top { position: relative; justify-content: space-between; margin-top: 36px; } }

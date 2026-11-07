@@ -48,9 +48,6 @@ export default function ProviderShelf({ doc }) {
         <div className="x-wrap xmf-launch-in">
           <div className="xmf-maker-g">
             <div className="xmf-launch-t">
-              <motion.nav className="xmf-crumbs" aria-label="Breadcrumb" {...up(0)}>
-                <span><A to="/models">Models</A></span><span><span className="x-mono" aria-current="page">{doc.name}</span></span>
-              </motion.nav>
               <h1 id="xmf-h1" className={'xmf-name ' + (doc.h1.length <= 24 ? 'm' : 'l')} data-morph-target>
                 <span className="x-line"><motion.span className="x-line-in" initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.08 }}>{doc.h1}</motion.span></span>
               </h1>
@@ -60,7 +57,12 @@ export default function ProviderShelf({ doc }) {
               </motion.div>
             </div>
             {/* the maker's count is the hero figure */}
-            <FilmPause className="xmf-maker-pause" />
+            <div className="xmf-maker-top">
+              <nav className="xmf-crumbs" aria-label="Breadcrumb">
+                <span><A to="/models">Models</A></span><span><span className="x-mono" aria-current="page">{doc.name}</span></span>
+              </nav>
+              <FilmPause />
+            </div>
             <motion.p className="xmf-maker-n" {...up(0.2)}>
               <b>{Number.isFinite(n) ? <MaskFig>{n}</MaskFig> : null}</b>
               <span className="x-mono">{Number.isFinite(n) ? word : doc.count}</span>
