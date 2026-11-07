@@ -134,20 +134,49 @@
 .bl2-is-s.past span, .bl2-is-s.now span { color: var(--ink); }
 .bl2-is-s.now span { font-weight: 606; }
 
-/* the close: the machine in one line, settling */
+/* the close: one object, this period's invoice landing once (a paper card in the black room) */
 .bl2-fin.l2-band { padding-top: clamp(64px, 7vw, 104px); }
 .bl2-fin .l2-band-copy { display: none; }
-.bl2-fin .l2-band-obj { grid-column: 1 / -1; }
-.bl2-st { display: grid; grid-template-columns: minmax(0, 1fr) 40px minmax(0, 1.3fr) 40px minmax(0, 1fr); align-items: stretch; color: #f5f5f5; }
-.bl2-st-c { display: flex; flex-direction: column; justify-content: space-between; gap: 18px; min-height: 132px; padding: 20px 22px; border-radius: 20px; background: #141414; border: 1px solid rgba(255, 255, 255, .1); }
-.bl2-st-c > span { font-size: 13px; color: #a3a3a3; }
-.bl2-st-ev { font-size: 21px; font-weight: 500; }
-.bl2-st-m > b { font-size: 56px; font-weight: 220; line-height: 1; }
-.bl2-st-m em { display: block; height: 6px; border-radius: 3px; background: #262626; overflow: hidden; }
-.bl2-st-m em b { display: block; height: 100%; background: #f5f5f5; transform-origin: 0 50%; transition: transform .3s var(--ease); }
-.bl2-st .bl2-chip { align-self: flex-start; background: #262626; color: #d4d4d4; }
-.bl2-st .bl2-chip.issued { background: #f5f5f5; color: #0a0a0a; }
-.bl2-st-ar { align-self: center; justify-self: center; width: 22px; height: 2px; background: rgba(255, 255, 255, .24); }
+.bl2-fin .l2-band-obj { grid-column: 4 / span 6; }
+.bl2-fin .l2-band-get { margin-top: clamp(48px, 5vw, 72px); }
+.bl2-cl { --ac: #0a0a0a; --hair: rgba(0, 0, 0, .1); --soft: #525252; --muted: #737373; --faint: #737373; color: var(--ink); padding: clamp(22px, 2.6vw, 34px); }
+.bl2-cl .bl2-doc-h b { font-size: 26px; }
+.bl2-cl .bl2-doc-lines { margin-top: 6px; }
+.bl2-cl .bl2-doc-lines li { padding: 16px 0; }
+.bl2-cl .bl2-doc-lines span { font-size: 17px; }
+.bl2-cl .bl2-doc-lines b { font-size: 14px; }
+.bl2-cl .bl2-doc-f { min-height: 80px; }
+
+/* stacked chapters: only the part of the invoice that changes */
+.bl2-part { padding: 4px 22px; }
+.bl2-part .bl2-doc-lines { margin: 0; }
+.bl2-part .bl2-doc-lines li { border-bottom: 0; }
+.bl2-part .bl2-doc-h { padding: 18px 0 14px; }
+.bl2-part .bl2-doc-h b { font-size: 21px; }
+
+/* history rows answer the pointer themselves */
+@media (hover: hover) { .bl2-log li { cursor: default; } .bl2-log li:hover { background: rgba(115, 115, 115, .2); } }
+
+/* rooms: trimmed tops, and the dark rooms enter as a rounded card inside the gutters that opens to full width as it is reached */
+.bl2-hist.l2-sec { padding-top: clamp(64px, 6vw, 96px); }
+.bl2-start.l2-sec { padding-top: clamp(64px, 6vw, 96px); }
+.bl2-hist-l .l2-head { margin-top: 0; }
+@keyframes bl2-open { from { clip-path: inset(0 clamp(16px, 4vw, 32px) round 28px); } to { clip-path: inset(0 0 round 0); } }
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .bl2-hist, .bl2-fin.l2-band { animation: bl2-open linear both; animation-timeline: view(); animation-range: entry 0% entry 70%; }
+  }
+}
+
+/* the chapter rail answers hover: the segment thickens and darkens, the number lifts in */
+@media (hover: hover) {
+  .bl2 .l2-rail button:hover i { transform: scaleY(2); background: #737373; }
+  .bl2 .l2-rail button:hover span { color: var(--ink); }
+}
+
+/* the code pane scrolls sideways instead of breaking a token */
+.bl2-start-r .cf-code pre { white-space: pre; word-break: normal; overflow-x: auto; }
+.bl2-start-r .cf-code pre:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; border-radius: 6px; }
 
 /* hero, desktop: the h1 leads top-left with its caption and ask under it, the line beside it, so the machine rises
    into the first screen with its meter in the middle of what you see */
@@ -160,6 +189,8 @@
   .bl2 .l2-stage-obj { padding-top: clamp(24px, 3.5svh, 40px); }
   .bl2-zone { min-height: 0; height: clamp(340px, calc(100svh - 372px), 480px); }
   .bl2-inv { overflow: hidden; }
+  /* the hero pin's tail is empty once the machine has risen: the chapters' head comes up into it */
+  .bl2 .l2-stage + .l2-pin { margin-top: -240px; }
   /* the console sheet opens below the site header, so its title and close button are always in reach */
   body:has(main.bl2) .l2-sheet { top: 72px; }
 }
@@ -183,10 +214,9 @@
   .bl2-doc-f { flex-direction: column; align-items: flex-start; justify-content: center; gap: 14px; min-height: 120px; }
   .bl2-stamp { margin: 0 0 0 4px; }
   .bl2-mf-slots { gap: 3px; }
-  .bl2-st { grid-template-columns: minmax(0, 1fr); row-gap: 10px; }
-  .bl2-st-ar { width: 2px; height: 14px; }
-  .bl2-st-c { min-height: 0; }
-  .bl2-mf-k, .bl2-is-k, .bl2-mf-f, .bl2-st-c > span { font-size: 14px; }
+  .bl2-fin .l2-band-obj { grid-column: auto; }
+  .bl2 .l2-stage-obj { padding-inline: 16px; }
+  .bl2-mf-k, .bl2-is-k, .bl2-mf-f { font-size: 14px; }
   .bl2-num { min-height: 140px; font-size: 64px; }
   .bl2-doc { padding: 22px; }
   .bl2-doc-src span.m { margin-left: 0; }
