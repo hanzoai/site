@@ -1,18 +1,18 @@
 'use client';
-/* Home hero, v2 (Stage), to PLAN-COMPONENTS 5.1. One idea: smarter, faster, open, pick all three.
-   Read order: the headline, then the actions (sign-up group, the one-line install, two text links), then the app.
-   The live desktop app sits huge under the words, already typing a request in a new chat; as you scroll the words leave
-   and the app settles to its place while the phone slides out from behind it, answering what the app was asked.
+/* Home hero, v2, to PLAN-COMPONENTS 5.1 and the model-card spec (one screen tall, so the cards arrive with the first
+   scroll). Read order: the headline, then the actions (the sign-up group, the one-line install, two text links), then
+   the live app beside them: a new chat whose prompt types itself, sends and is answered, while the phone, right and
+   behind the app, shows the build and every agent running on Hanzo.
    Motion by kind (JAMES.md 9): time (the prompt types, sends, answers; the install line types once; the roster steps),
-   arrival (the headline cuts into its lines, the app rises), pointer (the app leans a little toward a fine pointer),
-   scroll (the stage settles). Pause stops every timed part (WCAG 2.2.2); reduced motion shows the settled picture.
+   arrival (the headline cuts into its lines, the app rises, the phone slides out from behind it at 600 ms), pointer
+   (the app leans a little toward a fine pointer), scroll (the app lifts 24 px and steps back as the cards rise).
+   Pause stops every timed part (WCAG 2.2.2); reduced motion shows the finished demo, still.
    The one solid ask is the header's "Try Hanzo" (and the site's ask bar after the hero), so every button here is quiet.
    Every demo part is in the server HTML (search, screen readers, JS off); the demo only reveals them. */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { motion, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useSpring } from 'motion/react';
+import { motion, useInView, useReducedMotion, useScroll, useSpring, useTransform } from 'motion/react';
 import { EASE, Mark, fine } from './ui';
 import C from '../content';
-import Stage from './v2/Stage';
 import Lines from './v2/Lines';
 
 const PROMPT = 'Build maxpower: every AI I use in one place, and faster at coding.';
@@ -21,11 +21,8 @@ const ROSTER = [['Hanzo Dev', 'Zen6', 139], ['Claude Code', 'Zen6', 142], ['Code
 const ICON = Object.fromEntries(C.agents.map((a) => [a.name, a.icon]));
 const LOG = ['Wrote app/agents.tsx', 'Wrote lib/keys.ts', 'Ran pnpm test', '└ pass'];
 
-// the composition, drawn at one size and scaled as one: the desktop app, the phone right and behind it
-const W = 1310, H = 760, WIN = 960;
-const clamp = (v) => Math.max(0, Math.min(1, v));
-const io = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-const span = (v, a, b) => clamp((v - a) / (b - a));
+// the composition, drawn at one size and scaled as one: the desktop app (680 × 460), the phone right and behind it
+const W = 946, H = 596, SENT_Y = 262;
 
 function Caret() { return <span className="x-caret" aria-hidden="true" />; }
 
@@ -155,72 +152,40 @@ function Install({ cmdEl }) {
   );
 }
 
-/* The scene: the words, then the devices. While pinned, scroll drives the settle (transform and opacity only). */
-function Scene({ p, pinned, demo }) {
+/* The hero, one screen tall so the model cards arrive with the first scroll (docs/refs/hanzo-model-cards/SPEC.md):
+   the headline across the top, the actions on the left, the live app and the phone on the right. The composition is
+   drawn at one size and scaled as one (layout untouched, text crisp); on phones it is the phone alone, in flow. */
+function Scene({ demo, host }) {
   const { phase, tab, setTab, user, log, typed, promptEl, cmdEl, run, paused, setPaused, calm } = demo;
-  const copy = useRef(null);
-  const geo = useRef(null);
-  const [ready, setReady] = useState(false);
-  const [gone, setGone] = useState(false);
-  const [flowK, setFlowK] = useState(0);
-  const v = {
-    ox: useMotionValue(0), oy: useMotionValue(0), os: useMotionValue(1),
-    cy: useMotionValue(0), co: useMotionValue(1), px: useMotionValue(0),
-  };
+  const col = useRef(null);
+  const [k, setK] = useState(null); // null until measured; 0 on phones (the phone alone, in flow)
   // pointer: the app leans toward a fine pointer, on springs; it rests when the pointer leaves
   const rx = useSpring(0, { stiffness: 120, damping: 20 });
   const ry = useSpring(0, { stiffness: 120, damping: 20 });
   const lean = (e) => {
-    if (!pinned || !fine(e)) return;
+    if (!k || !fine(e)) return;
     ry.set(((e.clientX / innerWidth) - 0.5) * 5);
     rx.set(-((e.clientY / innerHeight) - 0.5) * 3.5);
   };
-  // where the app starts (huge, under the words) and where it settles (the composition, centred under the header)
-  const measure = () => {
-    const vw = innerWidth, vh = innerHeight;
-    const c = copy.current.getBoundingClientRect();
-    const k = Math.min((vw - 48) / W, (vh - 60 - 56) / H, 1.2);
-    const s0 = Math.max(k * 1.25, (vw * 0.94) / WIN);
-    const y0 = Math.max(c.height + 28, vh * 0.62);
-    geo.current = { k, s0, x0: (vw - WIN * s0) / 2, y0, x1: (vw - W * k) / 2, y1: 60 + (vh - 60 - H * k) / 2, vh };
-    setFlowK(Math.min(1, (Math.min(vw, 1440) - 48) / W));
-  };
-  const apply = () => {
-    const g = geo.current;
-    if (!g) return;
-    const t = p.get();
-    const e = io(span(t, 0, 0.72));
-    v.os.set(g.s0 + (g.k - g.s0) * e);
-    v.ox.set(g.x0 + (g.x1 - g.x0) * e);
-    v.oy.set(g.y0 + (g.y1 - g.y0) * e);
-    v.cy.set(-t * g.vh * 0.45);
-    v.co.set(1 - span(t, 0.02, 0.32));
-    v.px.set(-(1 - io(span(t, 0.36, 0.84))) * 380); // the phone waits behind the app, then slides out to its place
-    const g2 = t > 0.3;
-    setGone((x) => (x === g2 ? x : g2));
-  };
-  useMotionValueEvent(p, 'change', apply);
+  // scroll: as the model cards rise, the app lifts 24 px and steps back (brief 5.1)
+  const { scrollYProgress: p } = useScroll({ target: host, offset: ['start start', 'end start'] });
+  const ly = useTransform(p, [0.25, 1], [0, -24]);
+  const lo = useTransform(p, [0.25, 1], [1, 0.5]);
   useLayoutEffect(() => {
-    if (pinned === null) return;
-    const f = () => { measure(); apply(); };
+    const el = col.current;
+    const wide = matchMedia('(min-width: 900px)');
+    const f = () => setK(wide.matches ? Math.min(0.86, el.clientWidth / W) : 0);
+    const ro = new ResizeObserver(f);
+    ro.observe(el);
+    wide.addEventListener('change', f);
     f();
-    setReady(true);
-    addEventListener('resize', f);
-    return () => removeEventListener('resize', f);
-  }, [pinned]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const desk = pinned === false && flowK > 0.6; // reduced motion on a wide screen: the settled picture, still
-  const objStyle = pinned ? { x: v.ox, y: v.oy, scale: v.os } : desk ? { scale: flowK } : undefined;
+    return () => { ro.disconnect(); wide.removeEventListener('change', f); };
+  }, []);
+  const scaled = k > 0;
 
   return (
     <div className="hv-scene" onPointerMove={lean} onPointerLeave={() => { rx.set(0); ry.set(0); }}>
-      {/* WCAG 2.2.2: the moving demo can be paused, and this control comes first */}
-      <button type="button" className="hv-pause" aria-label="Pause" aria-pressed={paused} onClick={() => setPaused((x) => !x)} hidden={calm || undefined}>
-        <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
-          {paused ? <path d="M5 3.5v9l7.5-4.5z" fill="currentColor" /> : <><rect x="4" y="3.5" width="2.6" height="9" rx=".8" fill="currentColor" /><rect x="9.4" y="3.5" width="2.6" height="9" rx=".8" fill="currentColor" /></>}
-        </svg>
-      </button>
-      <motion.div className="hv-copy v2-wrap" ref={copy} style={pinned ? { y: v.cy, opacity: v.co } : undefined} inert={pinned && gone ? true : undefined}>
+      <div className="hv-copy v2-wrap">
         <Lines as="h1" id="home-title" className="hv-h1" now delay={0.05} stagger={0.1} lines={[
           <span className="hv-h1-a" key="a">Smarter, Faster, Open Source.</span>,
           <span className="hv-h1-b" key="b">Pick all three.</span>,
@@ -228,12 +193,6 @@ function Scene({ p, pinned, demo }) {
         <div className="hv-sub">
           <div className="hv-sub-l">
             <p className="hv-lede">Frontier intelligence over <b>200×</b> faster and <b>400×</b> cheaper. Every model behind one key.</p>
-            <div className="hv-links">
-              <a href="/blog/pareto-frontier" className="hv-tlink" data-cta="home.hero.pareto">A New Pareto Frontier <Arr /></a>
-              <a href="/beta" className="hv-tlink" data-cta="home.hero.beta">Apply for Beta Access or Start Free <Arr /></a>
-            </div>
-          </div>
-          <div className="hv-sub-r">
             <div className="hv-auth-row">
               <a href="https://hanzo.ai/signup" className="hv-auth-b" data-cta="home.hero.google"><Google />Continue with Google</a>
               <a href="https://hanzo.ai/signup" className="hv-auth-b" data-cta="home.hero.github"><GitHub />Continue with GitHub</a>
@@ -242,92 +201,104 @@ function Scene({ p, pinned, demo }) {
             </div>
             <p className="hv-terms">By continuing, you agree to Hanzo&apos;s <a href="https://hanzo.ai/terms">Terms</a> and <a href="https://hanzo.ai/privacy">Privacy Policy</a>.</p>
             <Install cmdEl={cmdEl} />
+            <div className="hv-links">
+              <a href="/blog/pareto-frontier" className="hv-tlink" data-cta="home.hero.pareto">A New Pareto Frontier <Arr /></a>
+              <a href="/beta" className="hv-tlink" data-cta="home.hero.beta">Apply for Beta Access or Start Free <Arr /></a>
+            </div>
           </div>
-        </div>
-      </motion.div>
 
-      <div className={'hv-obj-wrap' + (desk ? ' desk' : '')} style={desk ? { height: H * flowK, width: W * flowK } : undefined}>
-        <motion.div className="hv-obj" data-ready={ready || undefined} style={objStyle}>
-          <div className="hv-arrive">
-            <motion.div className="hv-tilt" style={pinned ? { rotateX: rx, rotateY: ry } : undefined}>
-              {/* the phone, right and behind the app: Hanzo's app answers what the desktop was asked */}
-              <motion.div className="hv-phone" style={pinned ? { x: v.px } : undefined}>
-                <div className="x-phone">
-                  <div className="x-phone-scr">
-                    <div className="x-status"><b>9:41</b><span className="x-island" /><span>●●●</span></div>
-                    <div className="x-tabs" role="tablist" aria-label="Phone app">
-                      {['chat', 'dev'].map((t) => (
-                        <button key={t} type="button" role="tab" aria-selected={tab === t} aria-controls={'phone-' + t} onClick={() => { user.current = true; setTab(t); }}>
-                          {tab === t && <span className="x-tab-bg" />}
-                          <span>{t === 'chat' ? 'Chat' : 'Dev'}</span>
-                        </button>
-                      ))}
-                    </div>
-                    <div className="x-phone-body">
-                      <div className="x-pane" id="phone-chat" role="tabpanel" data-on={tab === 'chat'} inert={tab !== 'chat'}>
-                        <Bubble me on={phase >= 1}>{PROMPT}</Bubble>
-                        <AppCard on={phase >= 2} />
-                      </div>
-                      <div className="x-pane right" id="phone-dev" role="tabpanel" data-on={tab === 'dev'} inert={tab !== 'dev'}>
-                        <Bubble me>Show me the build</Bubble>
-                        <div className="x-log x-mono">
-                          {LOG.map((l, i) => (
-                            <motion.div key={l} initial={false} animate={i < log ? { opacity: 1, x: 0 } : { opacity: 0, x: -6 }} transition={{ duration: 0.35, ease: EASE }} className={i === 3 ? 'ok' : ''}>{i < 3 ? '• ' : ''}{l}</motion.div>
-                          ))}
-                        </div>
-                        <Roster on={phase >= 4} run={run} />
-                      </div>
-                    </div>
-                    <a className="x-phone-dl" href="/download">Download App</a>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* the desktop app: a new chat, its prompt typing itself, then the answer and the build */}
-              <div className="hv-win">
-                <div className="hv-win-bar">
-                  <i /><i /><i />
-                  <a className="hv-url" href="/chat">hanzo.ai/chat <span>›</span></a>
-                  <a className="hv-openapp" href="/chat">Open App ›</a>
-                </div>
-                <div className="hv-win-body">
-                  <aside className="hv-side">
-                    <div className="hv-side-h"><b>Hanzo AI</b><span>⌕</span></div>
-                    <div className="hv-side-new">+ New chat</div>
-                    <small>Recents</small>
-                    <div className="hv-side-i on">maxpower</div>
-                    <div className="hv-side-i">Launch plan</div>
-                    <div className="hv-side-i">Weekly report</div>
-                    <Account />
-                  </aside>
-                  <div className="hv-chat" data-sent={phase >= 1}>
-                    <motion.span className="hv-hello" initial={false} animate={phase >= 1 ? { opacity: 0, scale: 0.9 } : { opacity: 1, scale: 1 }} transition={{ duration: 0.4, ease: EASE }} aria-hidden="true"><Mark size={30} /></motion.span>
-                    <div className="hv-log">
-                      <Bubble me on={phase >= 1}>{PROMPT}</Bubble>
-                      <AppCard on={phase >= 2} />
-                      <div className="hv-build" aria-hidden="true">
-                        <Bubble me on={phase >= 3}>Show me the build</Bubble>
-                        <div className="x-log x-mono">
-                          {LOG.map((l, i) => (
-                            <motion.div key={l} initial={false} animate={i < log ? { opacity: 1, x: 0 } : { opacity: 0, x: -6 }} transition={{ duration: 0.35, ease: EASE }} className={i === 3 ? 'ok' : ''}>{i < 3 ? '• ' : ''}{l}</motion.div>
-                          ))}
+          <div className="hv-obj-col" ref={col}>
+            {/* WCAG 2.2.2: the moving demo can be paused, and this control comes before it */}
+            <button type="button" className="hv-pause" aria-label="Pause" aria-pressed={paused} onClick={() => setPaused((x) => !x)} hidden={calm || undefined}>
+              <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+                {paused ? <path d="M5 3.5v9l7.5-4.5z" fill="currentColor" /> : <><rect x="4" y="3.5" width="2.6" height="9" rx=".8" fill="currentColor" /><rect x="9.4" y="3.5" width="2.6" height="9" rx=".8" fill="currentColor" /></>}
+              </svg>
+            </button>
+            <motion.div className="hv-obj-wrap" style={scaled ? { height: H * k, width: W * k, y: ly, opacity: lo } : undefined}>
+              <div className="hv-obj" data-ready={k !== null ? '' : undefined} style={scaled ? { transform: `scale(${k})` } : undefined}>
+                <div className="hv-arrive">
+                  <motion.div className="hv-tilt" style={scaled ? { rotateX: rx, rotateY: ry } : undefined}>
+                    {/* the phone, right and behind the app: Hanzo's app answers what the desktop was asked */}
+                    <div className="hv-phone">
+                      <div className="x-phone">
+                        <div className="x-phone-scr">
+                          <div className="x-status"><b>9:41</b><span className="x-island" /><span>●●●</span></div>
+                          <div className="x-tabs" role="tablist" aria-label="Phone app">
+                            {['chat', 'dev'].map((t) => (
+                              <button key={t} type="button" role="tab" aria-selected={tab === t} aria-controls={'phone-' + t} onClick={() => { user.current = true; setTab(t); }}>
+                                {tab === t && <span className="x-tab-bg" />}
+                                <span>{t === 'chat' ? 'Chat' : 'Dev'}</span>
+                              </button>
+                            ))}
+                          </div>
+                          <div className="x-phone-body">
+                            <div className="x-pane" id="phone-chat" role="tabpanel" data-on={tab === 'chat'} inert={tab !== 'chat'}>
+                              <Bubble me on={phase >= 1}>{PROMPT}</Bubble>
+                              <AppCard on={phase >= 2} />
+                            </div>
+                            <div className="x-pane right" id="phone-dev" role="tabpanel" data-on={tab === 'dev'} inert={tab !== 'dev'}>
+                              <Bubble me>Show me the build</Bubble>
+                              <div className="x-log x-mono">
+                                {LOG.map((l, i) => (
+                                  <motion.div key={l} initial={false} animate={i < log ? { opacity: 1, x: 0 } : { opacity: 0, x: -6 }} transition={{ duration: 0.35, ease: EASE }} className={i === 3 ? 'ok' : ''}>{i < 3 ? '• ' : ''}{l}</motion.div>
+                                ))}
+                              </div>
+                              <Roster on={phase >= 4} run={run} />
+                            </div>
+                          </div>
+                          <a className="x-phone-dl" href="/download">Download App</a>
                         </div>
                       </div>
                     </div>
-                    <motion.div className="hv-input" initial={false} animate={{ y: phase >= 1 ? 384 : 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
-                      <span className="hv-plus">+</span>
-                      <span className="hv-input-t">
-                        <em hidden={phase < 1}>Ask Hanzo</em>
-                        <span hidden={phase >= 1}><span ref={promptEl} /><Caret /></span>
-                      </span>
-                      <motion.span className="hv-send" animate={{ scale: typed === PROMPT.length && phase === 0 ? [1, 1.18, 1] : 1 }} transition={{ duration: 0.4 }}>↑</motion.span>
-                    </motion.div>
-                  </div>
+
+                    {/* the desktop app: a new chat, its prompt typing itself, then the answer and the build */}
+                    <div className="hv-win">
+                      <div className="hv-win-bar">
+                        <i /><i /><i />
+                        <a className="hv-url" href="/chat">hanzo.ai/chat <span>›</span></a>
+                        <a className="hv-openapp" href="/chat">Open App ›</a>
+                      </div>
+                      <div className="hv-win-body">
+                        <aside className="hv-side">
+                          <div className="hv-side-h"><b>Hanzo AI</b><span>⌕</span></div>
+                          <div className="hv-side-new">+ New chat</div>
+                          <small>Recents</small>
+                          <div className="hv-side-i on">maxpower</div>
+                          <div className="hv-side-i">Launch plan</div>
+                          <div className="hv-side-i">Weekly report</div>
+                          <Account />
+                        </aside>
+                        <div className="hv-chat" data-sent={phase >= 1}>
+                          <motion.span className="hv-hello" initial={false} animate={phase >= 1 ? { opacity: 0, scale: 0.9 } : { opacity: 1, scale: 1 }} transition={{ duration: 0.4, ease: EASE }} aria-hidden="true"><Mark size={26} /></motion.span>
+                          <div className="hv-log">
+                            <Bubble me on={phase >= 1}>{PROMPT}</Bubble>
+                            <AppCard on={phase >= 2} />
+                            <div className="hv-build" aria-hidden="true">
+                              <Bubble me on={phase >= 3}>Show me the build</Bubble>
+                              <div className="x-log x-mono">
+                                {LOG.map((l, i) => (
+                                  <motion.div key={l} initial={false} animate={i < log ? { opacity: 1, x: 0 } : { opacity: 0, x: -6 }} transition={{ duration: 0.35, ease: EASE }} className={i === 3 ? 'ok' : ''}>{i < 3 ? '• ' : ''}{l}</motion.div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                          <motion.div className="hv-input" initial={false} animate={{ y: phase >= 1 ? SENT_Y : 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+                            <span className="hv-plus">+</span>
+                            <span className="hv-input-t">
+                              <em hidden={phase < 1}>Ask Hanzo</em>
+                              <span hidden={phase >= 1}><span ref={promptEl} /><Caret /></span>
+                            </span>
+                            <motion.span className="hv-send" animate={{ scale: typed === PROMPT.length && phase === 0 ? [1, 1.18, 1] : 1 }} transition={{ duration: 0.4 }}>↑</motion.span>
+                          </motion.div>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
                 </div>
               </div>
             </motion.div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
@@ -385,9 +356,7 @@ export default function Hero() {
   const demo = { phase, tab, setTab, user, log, typed, promptEl, cmdEl, run: inView && !paused, paused, setPaused, calm };
   return (
     <section className="hv-hero" ref={host} aria-labelledby="home-title" data-paused={paused || undefined}>
-      <Stage length={1.15} className="hv-stage">
-        {(p, pinned) => <Scene p={p} pinned={pinned} demo={demo} />}
-      </Stage>
+      <Scene demo={demo} host={host} />
     </section>
   );
 }
