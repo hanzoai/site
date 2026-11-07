@@ -129,3 +129,4 @@
   .ts-w b { font-size: 40px; }
   .ts-ed-bar span, .ts-src span, .ts-dst span, .ts-dst em, .ts-ok, .ts-w em, .ts-ev > p, .ts-v-k, .ts-v-row.h { font-size: 14px; }
 }
+@media (max-width: 900px) { .ts-name { font-size: 14px; } .ts-ed pre { font-size: 14px !important; } }

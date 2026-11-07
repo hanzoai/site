@@ -107,3 +107,4 @@
   .xga-frame { min-height: 0 !important; }
   .xga-cap .x-mono, .xga-d, .xga-plaque span, .xga-label dl, .xga-org { font-size: 14px; }
 }
+@media (max-width: 900px) { .xga-term-bar span, .xga-kick { font-size: 14px; } }

@@ -40,8 +40,8 @@
 .lgi-chips button { display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 22px; border: 1px solid rgba(0, 0, 0, .1); border-radius: 999px; background: #fff; color: var(--ink); font: 600 clamp(16px, 1.3vw, 19px)/1 var(--sans); letter-spacing: -.015em; cursor: pointer; transition: background .3s var(--ease), color .3s, border-color .3s; }
 .lgi-chips button .x-mono { font-size: 13px; font-weight: 500; color: var(--faint); }
 .lgi-chips button:hover { border-color: var(--ink); }
-.lgi-chips button[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: #fff; }
-.lgi-chips button[aria-pressed='true'] .x-mono { color: #a1a1a6; }
+.lgi-chips button[aria-pressed='true'] { background: #fff; border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); color: var(--ink); }
+.lgi-chips button[aria-pressed='true'] .x-mono { color: var(--ink); }
 .lgi-cards { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .lgi-cards > li { display: flex; }
 .lgi-card { position: relative; display: flex; flex-direction: column; gap: 14px; width: 100%; min-height: 300px; padding: 28px 28px 32px; border-radius: 16px; background: var(--card); color: var(--ink); text-decoration: none; transition: background .3s var(--ease), transform .45s var(--ease); }
