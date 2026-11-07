@@ -238,3 +238,6 @@
   .wd2-k, .wd2-drift, .wd2-mon header, .wd2-rp-track span, .wd2-ev span, .wd2-lc p.spike { font-size: 14px; }
   .wd2-lat em { font-size: 13px; }
 }
+/* Hanzo's Koe art (live: the black card behind the six capabilities), kept under the heading (COPY-RULE.md rule 5) */
+.wd2-cnt-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.art-card.wd2-art { margin: 0; width: clamp(84px, 6.4vw, 104px); border-radius: 14px; }

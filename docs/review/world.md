@@ -1,6 +1,6 @@
 # /world — James-eye review
 
-Ready: 7 Nov 23:40, held up next to /api and /affiliate. The run-3 fixes had landed (Eval rows thin with baseline ticks, latency lanes keyed P50/P95/P99, Multi-Cloud's "One unified view" an outline not a slab and chips sized to their text, outgoing monitor hidden at once, monitor counter hidden while pinned, phone drawings centred, reduced-motion hero inside its stage, the drift line always present in grey); this pass hands the header ask over on desktop (`data-ask="off"` removed: "Open World Monitor" in the header after the hero). taste/unique/parity OK (31/31, 4/4); 0 console errors, no overlap at 1470 and 375; CLS 0.0016 / 0.0000. Shared: the phone header keeps a solid "Try Hanzo".
+Ready: 8 Nov 23:27, copycheck missing 0 of 23 (captured page), Hanzo's images kept. Hanzo's Koe art was missing; it now sits beside the 01 / 06 counter in the pinned room (the rail of six still fits at 801). taste/unique/parity OK (31/31); 0 console errors, no overlap at 1470 and 375.
 
 Verdict: 7/10
 First complaint: "The globe's lovely and the room finally moves one thing at a time. But look at Eval Dashboards: it's a grey brick and a black brick. Latency is three grey bars with no labels. And Multi-Cloud has a big black slab that looks like a button. It reads unfinished, not premium."
