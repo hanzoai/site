@@ -35,7 +35,7 @@ const rest = (e) => { e.currentTarget.style.setProperty('--rx', '0deg'); e.curre
 /* a list arrives as one when it is reached: its items rise 16px in a 60 ms stagger (MASTER part 9, list-level entrance) */
 function useArrive() {
   const ref = useRef(null);
-  const seen = useInView(ref, { once: true, amount: 0.2 });
+  const seen = useInView(ref, { once: true, margin: '0px 0px -12% 0px' });
   return { ref, 'data-arrive': seen ? 'in' : '' };
 }
 
