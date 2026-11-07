@@ -47,14 +47,14 @@
   --lh-display: 1.02; --lh-h2: 1.07; --lh-lede: 1.33; --lh-body: 1.47;
 
   /* space and shape */
-  --gutter: clamp(24px, 3.45vw, 72px); --air: clamp(120px, 15vw, 240px); --hit: 44px; --row: 56px;
-  --r-card: 28px; --r-ctl: 999px; --r-sm: 12px;
+  --side: clamp(24px, 3.45vw, 72px); --air: clamp(120px, 15vw, 240px); --hit: 44px; --row: 56px;
+  --x-radius-card: 28px; --x-radius-pill: 999px; --x-radius-sm: 12px;
   --shadow-1: 0 1px 2px rgba(0, 0, 0, .05), 0 0 0 1px rgba(0, 0, 0, .04);
   --shadow-2: 0 24px 48px -28px rgba(0, 0, 0, .28);
   --shadow-pop: 0 40px 100px -30px rgba(0, 0, 0, .35);
 
   /* layers */
-  --z-ask: 70; --z-sheet: 985; --z-skip: 2147483001;
+  --x-z-ask: 70; --x-z-sheet: 985; --x-z-skip: 2147483001;
 }
 [data-room=dark] {
   --room-bg: #0a0a0b; --room-surface: #141416; --room-raised: #1c1c1e;
@@ -79,14 +79,14 @@
 header[data-x-dark='true'] { --focus: #f5f5f7; }
 
 /* ---------- skip link: the first tab stop ---------- */
-.x-skip { position: fixed; left: 12px; top: 10px; z-index: var(--z-skip); padding: 12px 18px; border-radius: var(--r-ctl); background: var(--hz-950); color: #fff; font: 500 14px/1 var(--sans); text-decoration: none; transform: translateY(-160%); transition: transform var(--dur-hover) var(--ease-calm); }
+.x-skip { position: fixed; left: 12px; top: 10px; z-index: var(--x-z-skip); padding: 12px 18px; border-radius: var(--x-radius-pill); background: var(--hz-950); color: #fff; font: 500 14px/1 var(--sans); text-decoration: none; transform: translateY(-160%); transition: transform var(--dur-hover) var(--ease-calm); }
 .x-skip:focus, .x-skip:focus-visible { transform: none; outline: 2px solid #fff; outline-offset: 2px; box-shadow: 0 0 0 5px var(--hz-950); }
 main:focus, .x-main-mark:focus { outline: none; }
 .x-main-mark { height: 0; scroll-margin-top: 72px; }
 
 /* ---------- buttons (.x-btn, Btn, Go) ---------- */
 .x-btn { position: relative; transition: background-color var(--dur-hover) var(--ease-soft), border-color var(--dur-hover) var(--ease-soft), color var(--dur-hover) var(--ease-soft), transform var(--dur-press) var(--ease-out-expo), box-shadow var(--dur-hover) var(--ease-soft); -webkit-tap-highlight-color: transparent; }
-.x-btn:not(.solid):hover { background-color: var(--hz-50); border-color: rgba(0, 0, 0, .16); }
+.x-btn:not(.solid):hover { box-shadow: inset 0 0 0 100vmax rgba(128, 128, 128, .1); } /* a grey veil darkens light buttons and lifts dark ones, whatever colours a page gave them */
 .x-btn.solid { background-color: var(--btn-solid-bg); border-color: var(--btn-solid-bg); color: var(--btn-solid-ink); }
 .x-btn.solid:hover { background-color: var(--btn-solid-hover); border-color: var(--btn-solid-hover); }
 .x-btn:active { transform: scale(.98); transition-duration: 0s; }
@@ -103,7 +103,7 @@ main:focus, .x-main-mark:focus { outline: none; }
 
 /* round icon buttons, copy chips, the arrow link */
 .x-round, .x-copy, .x-replay { transition: background-color var(--dur-hover) var(--ease-soft), border-color var(--dur-hover) var(--ease-soft), color var(--dur-hover) var(--ease-soft), transform var(--dur-press) var(--ease-out-expo); }
-.x-round:hover, .x-copy:hover { background-color: var(--hz-50); }
+.x-round:hover, .x-copy:hover { box-shadow: inset 0 0 0 100vmax rgba(128, 128, 128, .1); }
 .x-round:active, .x-copy:active, .x-replay:active { transform: scale(.94); transition-duration: 0s; }
 .x-round:disabled, .x-round[aria-disabled='true'] { opacity: .4; cursor: not-allowed; transform: none; }
 .x-arrow { transition: transform var(--dur-press) var(--ease-out-expo); }
@@ -119,7 +119,7 @@ main:focus, .x-main-mark:focus { outline: none; }
 
 /* ---------- cards ---------- */
 /* .x-card on any <a>, <button> or <article>: hairline, lift on hover, give on press, ring when chosen */
-.x-card { position: relative; display: block; border-radius: var(--r-card); background: var(--room-surface); border: 1px solid var(--room-line); color: var(--room-ink); text-decoration: none; transition: transform .25s var(--ease-out-expo), border-color var(--dur-hover) var(--ease-soft), box-shadow .25s var(--ease-out-expo), background-color var(--dur-hover) var(--ease-soft); -webkit-tap-highlight-color: transparent; }
+.x-card { position: relative; display: block; border-radius: var(--x-radius-card); background: var(--room-surface); border: 1px solid var(--room-line); color: var(--room-ink); text-decoration: none; transition: transform .25s var(--ease-out-expo), border-color var(--dur-hover) var(--ease-soft), box-shadow .25s var(--ease-out-expo), background-color var(--dur-hover) var(--ease-soft); -webkit-tap-highlight-color: transparent; }
 .x-card:is(a, button) { cursor: pointer; }
 .x-card:is(button) { font: inherit; text-align: inherit; width: 100%; }
 @media (hover: hover) and (pointer: fine) {
@@ -134,9 +134,9 @@ main:focus, .x-main-mark:focus { outline: none; }
 .x-card.inv { background: var(--room-ink); color: var(--room-bg); border-color: var(--room-ink); } /* the one odd tile (Von Restorff): inverted, never coloured */
 
 /* ---------- tabs (kit <Tabs>) ---------- */
-.x-tablist { position: relative; display: inline-flex; gap: 2px; padding: 4px; border-radius: var(--r-ctl); background: var(--room-fill); max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.x-tablist { position: relative; display: inline-flex; gap: 2px; padding: 4px; border-radius: var(--x-radius-pill); background: var(--room-fill); max-width: 100%; overflow-x: auto; scrollbar-width: none; }
 .x-tablist::-webkit-scrollbar { display: none; }
-.x-tab { position: relative; flex: none; height: 36px; padding: 0 16px; border: 0; border-radius: var(--r-ctl); background: none; color: var(--room-soft); font: 500 14px/1 var(--sans); cursor: pointer; white-space: nowrap; transition: color var(--dur-hover) var(--ease-soft), transform var(--dur-press) var(--ease-out-expo); -webkit-tap-highlight-color: transparent; }
+.x-tab { position: relative; flex: none; height: 36px; padding: 0 16px; border: 0; border-radius: var(--x-radius-pill); background: none; color: var(--room-soft); font: 500 14px/1 var(--sans); cursor: pointer; white-space: nowrap; transition: color var(--dur-hover) var(--ease-soft), transform var(--dur-press) var(--ease-out-expo); -webkit-tap-highlight-color: transparent; }
 .x-tab:hover { color: var(--room-ink); }
 .x-tab:active { transform: scale(.97); transition-duration: 0s; }
 .x-tab[aria-selected='true'] { color: var(--room-ink); }
@@ -150,7 +150,7 @@ main:focus, .x-main-mark:focus { outline: none; }
 [role=tabpanel]:focus-visible { outline-offset: 8px; border-radius: 16px; }
 
 /* ---------- sheets (kit <Sheet>) ---------- */
-.x-sheet2-wrap { position: fixed; inset: 0; z-index: var(--z-sheet); display: flex; justify-content: flex-end; }
+.x-sheet2-wrap { position: fixed; inset: 0; z-index: var(--x-z-sheet); display: flex; justify-content: flex-end; }
 .x-sheet2-scrim { position: absolute; inset: 0; background: rgba(10, 10, 11, .42); }
 .x-sheet2 { position: relative; width: min(560px, 100%); height: 100%; display: flex; flex-direction: column; background: var(--room-bg); color: var(--room-ink); box-shadow: -40px 0 100px -40px rgba(0, 0, 0, .4); overscroll-behavior: contain; }
 .x-sheet2.wide { width: min(880px, 100%); }
@@ -191,7 +191,7 @@ main:focus, .x-main-mark:focus { outline: none; }
 .x-skel::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, var(--room-fill-strong), transparent); transform: translateX(-100%); animation: x-shimmer 1.4s var(--ease-soft) infinite; }
 .x-skel-line { height: 1em; margin: .35em 0; border-radius: 6px; }
 @keyframes x-shimmer { to { transform: translateX(100%); } }
-.x-state { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: clamp(28px, 4vw, 48px); border-radius: var(--r-card); border: 1px dashed var(--room-line-strong); color: var(--room-ink); }
+.x-state { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: clamp(28px, 4vw, 48px); border-radius: var(--x-radius-card); border: 1px dashed var(--room-line-strong); color: var(--room-ink); }
 .x-state.center { align-items: center; text-align: center; }
 .x-state-t { margin: 0; font-size: 19px; font-weight: 560; letter-spacing: -.015em; }
 .x-state-d { margin: 0; max-width: 52ch; font-size: 15px; line-height: 1.5; color: var(--room-soft); }
@@ -227,7 +227,7 @@ html[data-ask=on] header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
 html[data-ask=on] header[data-slot=masthead] a[href='https://hanzo.ai/signup']:hover { background-color: var(--hover, rgba(0, 0, 0, .05)); }
 
 /* ---------- the ask bar (components/Ask.jsx): one solid ask, after the hero, on every page and width ---------- */
-.x-ask { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom)); z-index: var(--z-ask); display: flex; align-items: center; gap: 6px; padding: 6px 6px 6px 18px; border-radius: var(--r-ctl); background: var(--room-raised); color: var(--room-ink); border: 1px solid var(--room-line); box-shadow: 0 18px 50px -18px rgba(0, 0, 0, .35), 0 2px 6px rgba(0, 0, 0, .06); translate: -50% 0; max-width: calc(100vw - 32px); }
+.x-ask { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom)); z-index: var(--x-z-ask); display: flex; align-items: center; gap: 6px; padding: 6px 6px 6px 18px; border-radius: var(--x-radius-pill); background: var(--room-raised); color: var(--room-ink); border: 1px solid var(--room-line); box-shadow: 0 18px 50px -18px rgba(0, 0, 0, .35), 0 2px 6px rgba(0, 0, 0, .06); translate: -50% 0; max-width: calc(100vw - 32px); }
 .x-ask[data-tone=dark] { --room-raised: #1c1c1e; --room-ink: #f5f5f7; --room-soft: #a1a1a6; --room-line: rgba(255, 255, 255, .14); --room-fill-strong: rgba(255, 255, 255, .12); --btn-solid-bg: #f5f5f7; --btn-solid-ink: #0a0a0b; --btn-solid-hover: #fff; --focus: #f5f5f7; box-shadow: 0 18px 50px -18px rgba(0, 0, 0, .7), 0 0 0 1px rgba(255, 255, 255, .04); }
 .x-ask-name { border: 0; background: none; color: inherit; cursor: pointer; padding: 0; display: flex; align-items: center; gap: 9px; margin-right: 10px; font: 560 14px/1 var(--sans); letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 30ch; }
 .x-ask-name svg { flex: none; transition: transform .35s var(--ease-out-expo); }
@@ -236,7 +236,7 @@ html[data-ask=on] header[data-slot=masthead] a[href='https://hanzo.ai/signup']:h
 .x-ask-s { flex: none; width: 40px; height: 40px; border-radius: 50%; border: 0; background: none; color: var(--room-soft); display: grid; place-items: center; cursor: pointer; transition: background-color var(--dur-hover), color var(--dur-hover), transform var(--dur-press) var(--ease-out-expo); }
 .x-ask-s:hover { background: var(--room-fill-strong); color: var(--room-ink); }
 .x-ask-s:active { transform: scale(.92); }
-.x-ask-a { flex: none; display: inline-flex; align-items: center; gap: 10px; height: 40px; padding: 0 16px 0 20px; border-radius: var(--r-ctl); background: var(--btn-solid-bg); color: var(--btn-solid-ink); font: 560 14.5px/1 var(--sans); text-decoration: none; white-space: nowrap; transition: background-color var(--dur-hover) var(--ease-soft), transform var(--dur-press) var(--ease-out-expo); }
+.x-ask-a { flex: none; display: inline-flex; align-items: center; gap: 10px; height: 40px; padding: 0 16px 0 20px; border-radius: var(--x-radius-pill); background: var(--btn-solid-bg); color: var(--btn-solid-ink); font: 560 14.5px/1 var(--sans); text-decoration: none; white-space: nowrap; transition: background-color var(--dur-hover) var(--ease-soft), transform var(--dur-press) var(--ease-out-expo); }
 .x-ask-a:hover { background: var(--btn-solid-hover); }
 .x-ask-a:active { transform: scale(.98); transition-duration: 0s; }
 .x-ask-a i { font-style: normal; display: inline-block; transition: transform .35s var(--ease-out-expo); }
