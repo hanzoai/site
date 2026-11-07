@@ -1,13 +1,18 @@
 # /agents/* (template) — James-eye review
 
-Reviewed: main, page files at `fca5513` (third review; earlier: 5/10 at `dd80650`, 7/10 at `c0b5968`). Members walked: `/agents/crew` and `/agents/sdk`, moving, at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
+Re-scored 7 Nov 14:47 under MASTER.md (card, scale, floating rules). Reviewed: main, page files at `fca5513` (third review; earlier: 5/10 at `dd80650`, 7/10 at `c0b5968`). Members walked: `/agents/crew` and `/agents/sdk`, moving, at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
 
-Verdict: 8/10 — ready
+Verdict: 7/10 (capped; page itself scores 8)
 
 First complaint: "This is right now. One small thing: on my phone, once I scroll past the top, the black button at the top says 'Try Hanzo', not 'Launch a bot'."
 
 ## What changed since the last review
 Fixed: "Launch a bot" now answers on hover (the fill lightens) and on press (scale), the SDK console sits inside the grid with no cut corner, the phone no longer stacks a bar on top of the close's own button, and the SDK "parts" section and both closes now carry an object.
+
+
+**Cap: part card (MASTER section 6).** `docs/coverage/agents-family.md` is in the old format: 0 of 18 `Done here:` lines under `## N.` headings. Capped at 7 until it is re-copied from `docs/coverage/_TEMPLATE.md` with every claim true on the page. The shared desktop ask bar also floats over content (see `_shared.md`); not counted against this page.
+
+**Scale (MASTER 3.1):** the desktop first screen of /agents/crew holds three big things at once: the 115px h1, chapter two's 56px "People and agents. One workspace." already in view, and the ring's 50px agent name. Small text around them keeps it from failing outright; let the chapter-two headline arrive only as the h1 leaves.
 
 ## The 11 answers
 1. **Sells in 5 seconds, moves within 1 second?** Yes on both sizes: the crew ring passes the turn (Maya → Nora → Vi) and the SDK console runs a real request ("Add rate limiting to the payments API." → "Read 14 files…" → "Wrote gateway/limit.go…").
