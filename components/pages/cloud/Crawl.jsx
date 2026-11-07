@@ -385,7 +385,7 @@ function Plans() {
               <h3 className="cr-plan-n">{n}</h3>
               <p className="cr-plan-p kn-fig">{pr}{pr.startsWith('$') && <span>mo</span>}</p>
               <ul>{pts.map((x) => <li key={x}>{x}</li>)}</ul>
-              <Cta to={to} kind="quiet" id={'crawl.plan-' + n.toLowerCase()} className="cr-plan-go">{cta}</Cta>
+              <Cta to={to} kind="link" id={'crawl.plan-' + n.toLowerCase()} className="cr-plan-go">{cta}</Cta>
             </div>
           ))}
         </div>
