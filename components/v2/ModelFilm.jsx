@@ -9,7 +9,9 @@
    Usage:
      <ModelFilm slug="enso" play={lit === 'enso'} className="my-film" />   fills its box (object-fit: cover)
      <FilmPause />                                                          once per page, by the first moving film
-     const paused = usePaused();                                            in any self-running loop on the page */
+     const paused = usePaused();                                            in any self-running loop on the page
+     <Sigil still={paused} … />                                             a drifting field stops with it
+     [data-mpaused] .my-loop { animation-play-state: paused; }              and so do CSS loops */
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { useReducedMotion } from 'motion/react';
 import { media } from '../../lib/models';
@@ -23,7 +25,11 @@ const wake = () => { while (playing.size < MAX && queue.length) queue.shift()();
 let paused = false;
 const subs = new Set();
 const sub = (f) => { subs.add(f); return () => subs.delete(f); };
-const setPaused = (v) => { paused = v; subs.forEach((f) => f()); };
+const setPaused = (v) => {
+  paused = v;
+  document.documentElement.toggleAttribute('data-mpaused', v); // CSS loops on the page stop too ([data-mpaused] …)
+  subs.forEach((f) => f());
+};
 export const usePaused = () => useSyncExternalStore(sub, () => paused, () => false);
 
 export default function ModelFilm({ slug, play = true, className = '', label }) {
