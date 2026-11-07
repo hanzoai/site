@@ -2,6 +2,7 @@
 /* Hanzo MCP.
    V2: 8/10 code-first launch: a live tool-call stream beside the headline, Hanzo's figures as heroes, the runtime as sheets that stack, six tool domains on a drag rail that open into their page, one dark room for the config.
    Persona: a developer wiring tools into an agent client. Goal: add Hanzo MCP to their client. CTA: Browse 260+ tools (mcp.hero).
+   Metric: cta_click on mcp.hero and mcp.close (data-cta; the event layer is the conductor's).
    Signature: cards that open. The six tool domains sit on a rail you drag (or swipe); click one and the card itself
    grows into a full sheet (a shared-element morph, synchronized.studio) holding every tool name that domain carries.
    Around it: the hero's live tool-call stream (Hanzo's tools firing with latency bars; the only figures are Hanzo's,
