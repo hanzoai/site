@@ -6,7 +6,8 @@
      <KeynoteSpec title="Tech specs" rows={[['Licence', <p>Apache-2.0</p>], ['Runs on', <Fig n="3" u="backends" />]]}
                   more={{ label: 'See the full spec', title: 'Everything it does', body: <…/> }} />
    - rows: [label, node]. Use <Fig n u /> for a hero figure (only Hanzo's own numbers).
-   - more: optional; its body is always in the HTML (inert until opened). Esc, the backdrop and Close shut it. */
+   - more: optional; its body is always in the HTML (inert until opened). Esc, the backdrop and Close shut it.
+   - kick: a small label set under the headline (never above it). */
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { EASE } from '../ui';
@@ -44,7 +45,7 @@ export function KeynoteSheet({ label, title, children, className = '' }) {
       </button>
       <div className={'kfs-sheet-root ' + className} data-open={open ? '' : undefined}>
         <div className="kfs-back" onClick={shut} aria-hidden="true" />
-        <div className="kfs-sheet" role="dialog" aria-modal="true" aria-label={title} inert={!open} data-lenis-prevent="">
+        <div className="kfs-sheet" role="dialog" aria-modal={open ? 'true' : undefined} aria-hidden={open ? undefined : 'true'} aria-label={title} inert={!open} data-lenis-prevent="">
           <div className="kfs-grip" aria-hidden="true" />
           <div className="kfs-sheet-h">
             <p className="kn-title">{title}</p>
@@ -64,8 +65,8 @@ export default function KeynoteSpec({ kick, title = 'Tech specs', rows, more, as
     <section className={'kn-sec kfs ' + className}>
       <div className="kn-wrap">
         <div className="kfs-h">
-          {kick && <p className="kn-kick ac">{kick}</p>}
           <KeynoteLines className="kn-headline" lines={title} />
+          {kick && <p className="kn-kick">{kick}</p>}
           {aside}
         </div>
         <dl className="kfs-rows">
