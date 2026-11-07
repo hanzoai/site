@@ -2,13 +2,13 @@
 // Signature: The request is the hero: a big API console types each endpoint's path after https://api.hanzo.ai and streams back what it returns, the model that serves it playing beside, then settles into the page as you scroll
 // Beyond: Same host, same key: pick any endpoint and only the path wipes in; the host and the bearer header never change, which is the page's own claim (no second base URL) made visible, and it copies as curl
 /* Hanzo API, v2 (Archetype F, developer: the request is the hero).
-   V2: 8/10 round 2 (MASTER): headline at 52px beside the live console in the first screen; console walks once, pauses, never moves the page; no labels over headlines; one ask at hero and close; real lines in chapters; kit media; no springs
+   V2: 8/10 round 3: h1 rises by CSS from first paint and the console waits for it; base URL fits 375; Next folded into the Band as two text rows; header carries the ask via thumb; console link stays in its sentence
    Persona: a developer who has used the OpenAI API and wants every Hanzo capability behind one key.
    Metric: api_key_created (data-cta api-hero-key, api-close-key).
    Goal: see that one base URL and one key reach every endpoint, then get a key.
-   CTA: "Get an API key, free" (hero, sticky ask bar, closing row); "OpenAPI Reference" as the quiet second.
+   CTA: "Get an API key, free" (hero, desktop header via thumb, phone slim bar, the Band); "OpenAPI Reference" as the quiet second.
    Motion: signature = the live console (path types, answer streams, model film plays). Supporting: pinned chapters
-   with clip wipes (components/v2/AppScenes; the dark room opens the same way), line-masked headline, tab pill (layoutId).
+   with clip wipes (components/v2/AppScenes; the dark room opens the same way), line-masked headline (CSS, first paint), tab pill (layoutId).
    Colour: greys only (Hanzo's deck); colour arrives only through the model films. Every word is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
@@ -56,6 +56,7 @@ function Console() {
   const path = useRef(null);
   const desc = useRef(null);
   const [done, setDone] = useState(true);
+  const first = useRef(true); // the first walk waits for the h1 to land (the words lead)
   const live = seen && !calm && !held;
   useEffect(() => {
     const [, p, d] = HERO[at];
@@ -63,8 +64,6 @@ function Console() {
     let alive = true, t = 0, i = 0, w = 0;
     const words = d.split(' ');
     setDone(false);
-    path.current.textContent = '';
-    desc.current.textContent = '';
     const typeP = () => {
       if (!alive) return;
       if (i <= p.length) { path.current.textContent = p.slice(0, i++); t = setTimeout(typeP, 30); return; }
@@ -75,7 +74,11 @@ function Console() {
       if (!alive) return;
       if (w <= words.length) { desc.current.textContent = words.slice(0, w++).join(' '); t = setTimeout(stream, 34); }
     };
-    t = setTimeout(typeP, 240);
+    // the first walk holds the server-painted request until the h1 has landed, then types
+    const hold = first.current, clear = () => { path.current.textContent = ''; desc.current.textContent = ''; };
+    first.current = false;
+    if (!hold) clear();
+    t = setTimeout(() => { if (!alive) return; if (hold) clear(); typeP(); }, hold ? 1000 : 240);
     return () => { alive = false; clearTimeout(t); };
   }, [at, live]);
   // the walk runs once through all eight, then rests on the first (MASTER: demos end at rest)
@@ -145,7 +148,11 @@ function Hero() {
     <section className="api-hero" aria-labelledby="api-h1">
       <div className="av-wrap av-grid api-top">
         <div className="api-top-l">
-          <Lines as="h1" id="api-h1" className="av-display api-h1" lines={['One API for', 'models, agents', 'and tools']} now delay={0.05} />
+          <h1 id="api-h1" className="av-display api-h1">
+            {['One API for', 'models, agents', 'and tools'].map((l, i, a) => (
+              <span key={l} className="api-h1-ln"><span style={{ '--i': i }}>{l}{i < a.length - 1 ? ' ' : ''}</span></span>
+            ))}
+          </h1>
           <p className="av-lede">Every Hanzo capability answers under one base URL, behind one key.</p>
           <div className="av-acts api-acts">
             <Magnetic strength={0.25}><Cta to="https://platform.hanzo.ai/api-keys" kind="solid" size="lg" id="api-hero-key" thumb>Get an API key, free</Cta></Magnetic>
@@ -307,7 +314,7 @@ function Base() {
       <div className="av-wrap">
         <h2 className="av-head api-base-h">Base URL</h2>
         <div className="api-big">
-          <span className="x-mono api-big-url">https://api.hanzo.ai<span className="av-ac">/v1</span></span>
+          <span className="x-mono api-big-url">https://api.hanzo.ai<wbr /><span className="av-ac">/v1</span></span>
           <Copy text="https://api.hanzo.ai/v1" />
         </div>
         <div className="av-grid api-base-g">
@@ -378,27 +385,32 @@ function Table() {
   );
 }
 
-/* ---------- next: two doors ---------- */
+/* ---------- the Band: the ask once more, with the two next doors folded under it as text rows ---------- */
+const NEXT = [['API reference', 'Every endpoint, parameter and response shape.', DOCS], ['Getting started', 'An empty project to a first call that works.', 'https://docs.hanzo.ai/docs/quickstart']];
 function Next() {
   return (
     <section className="av-sec tight api-next">
       <div className="av-wrap">
-        <h2 className="av-head api-next-h">Next</h2>
-        <div className="api-next-row">
-          {[['API reference', 'Every endpoint, parameter and response shape.', DOCS], ['Getting started', 'An empty project to a first call that works.', 'https://docs.hanzo.ai/docs/quickstart']].map(([t, d, to]) => (
-            <A key={t} to={to} className="api-next-a">
-              <span className="av-head api-next-t">{t}</span>
-              <span className="av-body">{d}</span>
-              <span className="api-next-go" aria-hidden="true"><svg viewBox="0 0 16 16" width="24" height="24"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
-            </A>
-          ))}
-        </div>
         <div className="api-close">
           <p className="av-display s api-close-t">Every Hanzo capability answers under one base URL, behind one key.</p>
           <div className="av-acts">
             <Magnetic strength={0.25}><Cta to="https://platform.hanzo.ai/api-keys" kind="solid" size="lg" id="api-close-key">Get an API key, free</Cta></Magnetic>
             <A to={DOCS} className="x-arrow api-ref" data-cta="api-close-ref">OpenAPI Reference ↗</A>
           </div>
+        </div>
+        <div className="api-next-g">
+          <h2 className="api-next-h">Next</h2>
+          <ul className="api-next-rows">
+            {NEXT.map(([t, d, to]) => (
+              <li key={t}>
+                <A to={to} className="api-next-a" data-cta={'api-next-' + t.split(' ')[0].toLowerCase()}>
+                  <span className="api-next-t">{t}</span>
+                  <span className="api-next-d">{d}</span>
+                  <span className="api-next-go" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
+                </A>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>
