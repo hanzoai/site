@@ -1,15 +1,15 @@
 # deepmind.google/models/gemini: SPEC
 
-Filmed 7 Nov 2026 (the Gemini 4 model page). Films: `desktop.mp4` (1470×801, shown at 980 wide) and `phone.mp4` (375×812). Frames: `frames/`. Method: `../INDEX.md`. The page's films come from `storage.googleapis.com`, which is blocked here, so every video shows black or its poster. The hero is a still image, so it is filmed as it really is.
+Filmed 7 Nov 2026 (the Gemini 4 model page). Films: `desktop.mp4` (1470×801, shown at 980 wide) and `phone.mp4` (375×812). Frames: `frames/`. Method: `../INDEX.md`. The hero object is an `abc-canvas` element (a canvas scene loaded from Google's canvas bundle, state "idle"). WebGL is off, so only its poster image shows and the hero did not run. The page's films come from `storage.googleapis.com`; 5 requests there were blocked, and the films show black or their poster.
 
 **Why it is in James's family:** it tells a model as a story in a plain order: the name alone, one sentence and a film, the news, the proof table, real voices, safety, then where to try it. The h1 is just "Gemini 4" at 98 px with nothing above it. Proof is quiet: one table, with the model's own column lit and the methodology linked under it.
 
-**Honest verdict:** a story-order and proof-table reference, not a motion reference. With no input nothing moves (0% of pixels), the only scroll effect is one sticky card, and hover is a 4% tint. Benchmarks are a table, not hero figures. Take the hero-figure scale from anthropic.com.
+**Honest verdict:** a story-order and proof-table reference, not a motion reference. Filmed without WebGL nothing moves (0% of pixels), the only scroll effect is one sticky card, and hover is a 4% tint. Benchmarks are a table, not hero figures. Take the hero-figure scale from anthropic.com.
 
 ## Frames
 | Frame | What it shows |
 |---|---|
-| `desk-01/02/03` | Arrival: "Gemini 4" centred on a blue cloud image scattered with tiny "4" glyphs; two glass asks top right. Nothing changes between frames. The three hero asks (y 717) sit under the cookie bar (top 703) at 1470×801 |
+| `desk-01/02/03` | Arrival: "Gemini 4" centred on the canvas poster (a blue cloud scattered with tiny "4" glyphs); two glass asks top right. Nothing changes between frames (canvas off). The three hero asks (y 717) sit under the cookie bar (top 703) at 1470×801 |
 | `desk-04` | The foot of the statement film (black: video host blocked) with round mute and pause controls, then "Announcements": a big featured post left, a list with thumbnails right |
 | `desk-05` | The featured post and its crystal image hold still while the right-hand list scrolls past it |
 | `desk-06` | The benchmark table: the Gemini 4 Carbon column filled blue with blue rules each side; the best rival score in a row is grey (87.2%); "Methodology" link under it |
@@ -26,7 +26,8 @@ The cookie text looks selected (blue) in some frames: that is the walk's text se
 | Move | Value | Source |
 |---|---|---|
 | Arrival | none on the h1 (`animation: none`); the attribution caption fades in, opacity **300 ms ease**; a film fades in **200 ms ease** as its poster fades out **300 ms ease** | measured (getAnimations) |
-| Ambient (no input, 2.4 s) | **0.0%** of pixels change: desktop first screen, desktop mid page and phone first screen | measured (frame difference) |
+| Ambient (no input, 2.4 s) | **0.0%** of pixels change: desktop first screen, desktop mid page and phone first screen (hero canvas not running: WebGL off) | measured (frame difference) |
+| Hero canvas | `abc-canvas` custom element with light and dark posters, `data-hydration="client:idle"`, `data-poster-mode="eager"`; what it draws live was not seen | from code (DOM) |
 | Header steps aside | on scroll down: translateY(calc(−100% − 15px)), **200 ms ease** (desktop at y 400, phone at y 380); on scroll up it returns and a blur backing fades in, opacity **200 ms ease** | measured |
 | Progressive-blur header backing | 80 px tall, 5 stacked layers at **blur 4, 6, 10, 18, 34 px**, each masked to its own band (the heaviest blur at the very top) | measured (probe) |
 | Sticky featured post | the featured card (624×737) stays put for **880 px** of scroll (y 1980 to 2860) while 9 list posts pass; desktop only (phone: not sticky) | measured (scroll walk + probe) |
@@ -49,7 +50,7 @@ The cookie text looks selected (blue) in some frames: that is the walk's text se
 | Statement under hero | 42/43.7 px, weight 450, −0.98 px (−0.023 em), 848 wide | 28/29.7 px |
 | Section heads | 32/33.9 px, weight 500 ("Announcements", "Performance", "Showcase") | n/a |
 | Featured post / list titles | 42/43.7 px / 28/30.2 px | 28 px / 24 px |
-| Body, links | 17.5/25.4 px, weight 400; text links 14.5 px / 450 in `#45474d` | same |
+| Body, links | 17.5/25.4 px, weight 400; text links 14.5 px / 450 in `#45474d` | text links same; body n/a |
 | Gutter | 87 px | 28 px |
 | Header | 65 px, fixed, transparent; hides on scroll down | 65 px, fixed |
 | Hero asks | three equal glass pills, 48 tall (155, 235, 251 wide), fully round, white at 18% + blur(6px) + 1 px ring `rgba(33,34,38,0.12)`, 17.5 px / 450 | stacked, centred |
@@ -68,7 +69,7 @@ The cookie text looks selected (blue) in some frames: that is the walk's text se
 ## Gaps (do not copy)
 - **Three equal asks in the hero** ("Try in Gemini", "…AI Studio", "…Antigravity"), and at 1470×801 they sit under the cookie bar. James: one ask, never 3 equal buttons.
 - **The header hides on scroll down**, so no ask stays on screen after the hero. James wants it sticky at every width.
-- **A dead first screen:** a still image, 0% ambient change, no arrival on the h1.
+- **No arrival on the h1,** and until the canvas runs (or with WebGL off) the first screen is a still poster with 0% change.
 - **Hover and press are a 4% / 6% tint with no transform.** Too faint to answer a tap; add translateY(1px) or scale 0.98.
 - **Icon tiles with a sentence under each** ("Get started", 4 in a row; safety cards with paragraphs): James's "icon boxes in a row" and "explaining sentences under every tile".
 - **One blue tone everywhere** (key art, thumbnails, safety cards, table): colour from a gradient wash, not from real output. Hanzo has no brand hue.
