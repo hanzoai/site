@@ -63,7 +63,7 @@ function Streamed({ run, big }) {
   return (
     <div className={'se2-rag' + (big ? ' big' : '')}>
       <p className="se2-rag-q">{RAG_Q}</p>
-      <p className="se2-rag-a"><span ref={out}>{RAG_A}</span>{!done && <i className="se2-caret sm" aria-hidden="true" />}</p>
+      <p className="se2-rag-a"><span className="se2-ghost" aria-hidden="true">{RAG_A}</span><span className="se2-live"><span ref={out}>{RAG_A}</span>{!done && <i className="se2-caret sm" aria-hidden="true" />}</span></p>
       <div className={'se2-srcs' + (done ? ' on' : '')}>{SRC.map((x, i) => <span key={x} className="l2-mono">[{i + 1}] {x}</span>)}</div>
     </div>
   );
@@ -139,6 +139,18 @@ const WAYS = [
 const DOTS = Array.from({ length: 46 }, (_, i) => { const a = Math.sin(i * 12.9898) * 43758.5453, b = Math.sin(i * 78.233) * 12543.1; return [Math.round(60 + (a - Math.floor(a)) * 880) / 10, Math.round(80 + (b - Math.floor(b)) * 840) / 10]; });
 const NEAR = [[60, 30, 'Running containers in production'], [70, 52, 'Deploy to Kubernetes'], [44, 58, 'Scaling a service']];
 
+/* Chapter 01's word: "Kubernets" as typed, then the missing "e" drops in and is underlined (once, when seen). */
+function FixWord({ run }) {
+  const [fixed, setFixed] = useState(true);
+  useEffect(() => {
+    if (!run) return;
+    setFixed(false);
+    const t = setTimeout(() => setFixed(true), 1100);
+    return () => clearTimeout(t);
+  }, [run]);
+  return <p className="se2-w0-q">Kubern<mark className={fixed ? 'on' : ''}>e</mark>tes</p>;
+}
+
 /* One chapter's picture, for the chapter reached. */
 function Way({ at }) {
   const calm = useCalm();
@@ -152,13 +164,13 @@ function Way({ at }) {
         <motion.div key={at} className="se2-way-in" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16, transition: { duration: 0.2 } }} transition={{ duration: 0.55, ease: EASE }}>
           {at === 0 && (
             <div className="se2-w0">
-              <p className="se2-w0-q">Kubern<mark>e</mark>tes</p>
+              <FixWord run={!calm && seen} />
               <div className="se2-w0-f l2-mono"><span>docs</span><span className="on">last quarter</span></div>
               <ol>{TEXT.map((r, i) => <li key={r}><span className="l2-mono">{i + 1}</span>{r}{i === 0 && <em className="se2-fixc l2-mono">typo fixed</em>}</li>)}</ol>
             </div>
           )}
           {at === 1 && (
-            <div className="se2-w1">
+            <div className={'se2-w1' + (seen || calm ? ' go' : '')}>
               <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">{NEAR.map(([x, y], i) => <line key={i} x1="58" y1="46" x2={x} y2={y} style={{ animationDelay: 0.2 + i * 0.12 + 's' }} />)}</svg>
               {DOTS.map(([x, y], i) => <i key={i} style={{ left: x + '%', top: y + '%' }} />)}
               {NEAR.map(([x, y], i) => <i key={'n' + i} className="near" style={{ left: x + '%', top: y + '%' }} />)}
@@ -247,9 +259,10 @@ const FW = ['Hanzo Docs', 'Fumadocs', 'Nextra', 'Docusaurus', 'REST API'];
 
 /* Frameworks: pick one and the bar shows where its docs come from (native, or the REST API for everything else). */
 function Frameworks() {
-  const [at, setAt] = useState(0);
+  const [ref, live] = useDemo(0.5);
+  const [at, setAt] = useSteps(FW.length, 2600, live);
   return (
-    <section className="l2-sec tight se2-fw">
+    <section className="l2-sec tight se2-fw" ref={ref}>
       <div className="l2-wrap l2-grid">
         <div className="se2-fw-h">
           <h2 className="l2-head">Works with any docs framework</h2>
@@ -289,6 +302,19 @@ function Pricing() {
   const [p, setP] = useState(3);
   const [d, setD] = useState(2);
   const pr = useRef(null), dr = useRef(null);
+  const box = useRef(null);
+  const seen = useInView(box, { amount: 0.6, once: true });
+  const calm = useCalm();
+  const touched = useRef(false);
+  useEffect(() => {
+    if (!seen || calm || touched.current) return;
+    // roll from the smallest setting up to the default (5 projects, 10k docs): Build lights as the limits are reached
+    let i = 0, t = 0;
+    const steps = [[0, 0], [1, 0], [1, 1], [2, 1], [2, 2], [3, 2]];
+    const go = () => { if (touched.current) return; const [a, b] = steps[i]; setP(a); setD(b); i++; if (i < steps.length) t = setTimeout(go, 260); };
+    t = setTimeout(go, 200);
+    return () => clearTimeout(t);
+  }, [seen, calm]);
   useEffect(() => { fillOf(pr.current, p, PROJ.length); fillOf(dr.current, d, DOCN.length); }, [p, d]);
   const proj = PROJ[p], docs = DOCN[d];
   const fit = PLANS.findIndex(([, , , , , [mp, md]]) => proj <= mp && docs <= md);
@@ -298,7 +324,7 @@ function Pricing() {
         <div className="se2-price-h">
           <h2 className="l2-head">Pricing</h2>
           <p className="l2-body">Pay for hosted search, vector, and AI. Self-host Meilisearch free forever.</p>
-          <div className="se2-fit" role="group" aria-label="Which plan fits">
+          <div className="se2-fit" role="group" aria-label="Which plan fits" ref={box} onPointerDown={() => { touched.current = true; }} onKeyDown={() => { touched.current = true; }}>
             <p className="l2-kick">Which plan fits</p>
             <label><span>Projects</span><b className="l2-mono">{proj}</b><input ref={pr} className="l2-range" type="range" min="0" max={PROJ.length - 1} value={p} onChange={(e) => setP(+e.target.value)} aria-valuetext={proj + ' projects'} /></label>
             <label><span>Docs per project</span><b className="l2-mono">{k(docs)}</b><input ref={dr} className="l2-range" type="range" min="0" max={DOCN.length - 1} value={d} onChange={(e) => setD(+e.target.value)} aria-valuetext={k(docs) + ' docs per project'} /></label>
