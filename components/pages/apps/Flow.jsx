@@ -314,9 +314,10 @@ const Term = ({ copy }) => (
 );
 
 const FACTS = [
-  { id: 'py', f: 'Python', t: 'Every component', d: 'A component is a Python class. Edit it in the browser and the change is live on the next run — no rebuild, no plugin format, no waiting for someone to add the parameter you need.', x: <div className="fl-pylib" aria-hidden="true">{['Models', 'vector stores', 'document loaders', 'text splitters', 'output parsers', 'memory', 'retrievers', 'toolkits'].map((t) => <span key={t}><b>{t}</b><em className="x-mono">Python class</em></span>)}</div> },
-  { id: 'rest', f: 'REST', t: 'Or JSON, or MCP', d: 'As a REST endpoint, as JSON your Python app loads directly, or as an MCP server — after which the flow is a tool your coding agent can call.', x: <Ways /> },
-  { id: 'port', f: ':7860', t: 'On your machine', d: 'uv pip install hanzoflow, then uv run hanzoflow run. It opens on 127.0.0.1:7860. Docker works too.', x: <Term /> },
+  // the opened cards show their own object only; the sentences they would repeat are already on the page above
+  { id: 'py', f: 'Python', t: 'Every component', x: <div className="fl-pylib-w"><div className="fl-pylib" aria-hidden="true">{['Models', 'vector stores', 'document loaders', 'text splitters', 'output parsers', 'memory', 'retrievers', 'toolkits'].map((t) => <span key={t}><b>{t}</b></span>)}</div><p className="fl-pylib-k x-mono">Python class</p></div> },
+  { id: 'rest', f: 'REST', t: 'Or JSON, or MCP', x: <Ways /> },
+  { id: 'port', f: ':7860', t: 'On your machine', x: <Term /> },
   { id: 'mit', f: 'MIT', t: 'Self-hosted' },
 ];
 

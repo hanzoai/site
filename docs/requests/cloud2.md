@@ -58,6 +58,9 @@ Invented strings inside shared components (not this group's files):
 - Missing route: `/aup` (Hanzo's "usage policy" link on /help/privacy/model-training, kept as Hanzo's href) returns 404 on this
   server and lands on `/`. Asked for: the `/aup` page or a redirect owned by the legal/routes chat.
 
+- `components/v2/KeynoteRoom` (used by `KeynoteClose`): renders a clip-path on the server and none on a reduced-motion client, a
+  hydration mismatch on every page that uses it under reduced motion (owner: Cloud 1 chat). /functions now uses a page-local copy.
+
 ## 2. Header ask (shared chrome)
 Critics of /functions, /gui, /guard, /gateway and /flow asked for one solid fill on the phone's first screen: the header's
 "Try Hanzo" stays solid beside each page's own hero ask. Same ask as `docs/review/_shared.md` section 1: let a page name its

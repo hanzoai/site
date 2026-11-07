@@ -6,7 +6,14 @@
 // CTA: "Download Extension" (github.com/hanzoai/extension/releases/latest): the hero's one solid with data-thumb, repeated by the closing band
 // Metric: extension_download (data-cta extension-download, extension-download-end)
 /* Hanzo Extension (Launch: the side panel leads).
-   V2: 8/10 round 5 (critic round 3, 6/10 fixes): the path runs down a left rail up to 599px (no colliding labels); the
+   V2: 8/10 round 6 (critic round 4, 7/10 fixes): the phone hero's film pane is true size (160px) and framed on all sides
+   with the browser switcher above it in the first screen; the window no longer repeats the h1 (its tab says "Hanzo", no
+   title/lede inside); the switcher's dot follows your pick; Hanzo's "Browser extension" sits as a caption under the lede;
+   "Get started" is one quiet hairline strip (both headings, the proof line and two text links; no icon tile); the
+   chapters sit on one room tone with flat tiles, and "Read a page as text" has its three rows before the wipe lands;
+   every browser row is the same text-link ask with its size, yours marked by a dot and weight; hero links draw their
+   underline; file names end in an ellipsis; slide titles are not headings, chapter heads 21px under the 26px h2s.
+   Round 5 (critic round 3, 6/10 fixes): the path runs down a left rail up to 599px (no colliding labels); the
    headlines are a page-local CSS line mask and the window stack renders its final slots from the server, so a
    reduced-motion load hydrates clean and "How it works" always shows; the hub keeps its full height on phones; your
    browser's build row is an ink-outlined ask (the header holds the one solid); only Hanzo's words (stops named as its

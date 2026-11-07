@@ -1,6 +1,7 @@
 /* ---------- flow v2 (fl-), on the Business grammar in components/v2/Biz.css ---------- */
 /* greys and ink only (JAMES.md 7): the run is ink on the white canvas and white in the dark playground */
-.fl { --btn-solid-hover: #262626; --dots: radial-gradient(circle, rgba(0, 0, 0, .15) 1.1px, transparent 1.5px) 0 0 / 24px 24px; }
+/* the site-wide --soft/--faint/--card are Apple greys; on this page they take the deck's ramp */
+.fl { --soft: #525252; --faint: #737373; --card: #f5f5f5; --btn-solid-hover: #262626; --dots: radial-gradient(circle, rgba(0, 0, 0, .15) 1.1px, transparent 1.5px) 0 0 / 24px 24px; }
 
 /* the first screen: the canvas itself */
 .fl-hero { position: relative; height: clamp(700px, calc(100svh - 60px), 960px); background: var(--dots), #fafafa; overflow: clip; }
@@ -50,10 +51,12 @@ button.fl-node:active { scale: .97; }
 .fl-node, .fl-node b, .fl-node-o { overflow-wrap: normal; word-break: normal; hyphens: none; }
 /* received and returned share one box, so swapping them never changes the card's size */
 .fl-node-o { display: grid; padding-top: 10px; border-top: 1px solid var(--line); font-size: 13px; line-height: 1.35; color: var(--faint); }
-.fl-node-o > span { grid-area: 1 / 1; transition: opacity .3s cubic-bezier(0, 0, .2, 1), transform .3s cubic-bezier(0, 0, .2, 1); }
+/* one leaves before the other arrives (out 150ms, then in 150ms), so the two lines never share the slot for a frame */
+.fl-node-o > span { grid-area: 1 / 1; transition: opacity .15s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); }
 .fl-node-o .fl-io-o { opacity: 0; transform: translateY(4px); }
+.fl-node-o:not(.is-out) .fl-io-r { transition-delay: .15s; }
 .fl-node-o.is-out .fl-io-r { opacity: 0; transform: translateY(-4px); }
-.fl-node-o.is-out .fl-io-o { opacity: 1; transform: none; }
+.fl-node-o.is-out .fl-io-o { opacity: 1; transform: none; transition-delay: .15s; }
 .fl-node-o em { font-style: normal; color: #737373; }
 .fl-node.done .fl-node-o { color: var(--ink); }
 .fl-node.done .fl-node-o em { color: var(--ink); font-weight: 606; }
@@ -66,8 +69,8 @@ button.fl-node:active { scale: .97; }
   .fl-hero button.fl-node:hover { border-color: var(--ink); translate: -50% calc(-50% - 3px); box-shadow: 0 0 0 4px rgba(0, 0, 0, .06); }
   .fl-hero button.fl-node:hover .fl-node-o { color: var(--ink); }
   .fl-hero button.fl-node:hover .fl-node-o em { color: var(--ink); font-weight: 606; }
-  .fl-hero button.fl-node:hover .fl-node-o:not(.is-out) .fl-io-r, .fl-hero button.fl-node:hover .fl-node-o.is-out .fl-io-o { opacity: 0; transform: translateY(-4px); }
-  .fl-hero button.fl-node:hover .fl-node-o:not(.is-out) .fl-io-o, .fl-hero button.fl-node:hover .fl-node-o.is-out .fl-io-r { opacity: 1; transform: none; }
+  .fl-hero button.fl-node:hover .fl-node-o:not(.is-out) .fl-io-r, .fl-hero button.fl-node:hover .fl-node-o.is-out .fl-io-o { opacity: 0; transform: translateY(-4px); transition-delay: 0s; }
+  .fl-hero button.fl-node:hover .fl-node-o:not(.is-out) .fl-io-o, .fl-hero button.fl-node:hover .fl-node-o.is-out .fl-io-r { opacity: 1; transform: none; transition-delay: .15s; }
 }
 .fl-hero button.fl-node { transition: border-color .3s, box-shadow .3s, translate .3s cubic-bezier(.16, 1, .3, 1), opacity .4s, scale .4s cubic-bezier(.16, 1, .3, 1); }
 /* compact nodes: the pinned build-up and the phone's mini-graph draw only the index and the name, so they read as
@@ -185,7 +188,9 @@ button.fl-node:active { scale: .97; }
 .fl-pylib span { display: inline-flex; flex-direction: column; gap: 4px; padding: 12px 14px; border-radius: 12px; background: #ffffff; border: 1px solid var(--line); }
 .fl-pylib b { display: block; font-size: 15px; font-weight: 497; }
 .fl-pylib b::first-letter { text-transform: uppercase; }
-.fl-pylib em { font-style: normal; font-size: 12px; color: var(--soft); }
+.fl-pylib-w { display: flex; flex-direction: column; gap: 14px; }
+.fl-pylib-k { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 13px; color: var(--soft); }
+.fl-pylib-k::before { content: ''; width: 24px; border-top: 1.6px solid var(--ink); }
 .fl-ways-src { flex: none; display: grid; place-items: center; height: 56px; padding: 0 18px; border-radius: 12px; background: var(--ink); color: #ffffff; font-size: 15px; }
 .fl-board { height: min(46svh, 420px); border-radius: 28px; border: 1px solid var(--line); background: var(--dots), #fafafa; --nw: 176px; }
 .fl-ch-insp { width: 100%; padding: 18px 24px; border-radius: 24px; }
@@ -256,7 +261,9 @@ button.fl-node:active { scale: .97; }
 .fl-pg-steps button span { font-size: 13px; color: #737373; }
 /* every tab reserves two lines, so a long name never makes its tab taller than the rest */
 .fl-pg-steps button b { display: block; min-height: 2.4em; font-weight: 497; line-height: 1.2; max-width: 100%; text-wrap: balance; overflow-wrap: normal; hyphens: none; }
-.fl-pg-steps button.done:not(.on) span { color: #d4d4d4; }
+/* a step already taken reads clearly: white on graphite, never grey on grey */
+.fl-pg-steps button.done:not(.on) { background: #262626; color: #fafafa; }
+.fl-pg-steps button.done:not(.on) span { color: #fafafa; }
 .fl-facts-sec { padding-bottom: clamp(56px, 6vw, 96px); }
 .fl-pg-steps button::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: #f5f5f5; transform: scaleX(0); transform-origin: 0 50%; transition: transform .4s var(--ease); }
 .fl-pg-steps button.done::after { transform: none; }
@@ -371,7 +378,8 @@ button.fl-node:active { scale: .97; }
 .fl-band-run li.run { border-color: var(--ink); color: var(--ink); }
 .fl-band-run li.done { background: var(--ink); border-color: var(--ink); color: #ffffff; }
 .fl-band-in { display: flex; flex-direction: column; align-items: center; gap: 32px; }
-.fl-band-in h2 { max-width: 20ch; margin: 0 auto; }
+/* the lede said again at the close rests at the deck's 26–32px step, not bigger than the hero said it */
+.fl-band-in h2, .fl-band-in h2.bz-display.md { max-width: 24ch; margin: 0 auto; font-size: clamp(26px, 2.4vw, 32px); line-height: 1.15; letter-spacing: -.02em; }
 .fl-band-in .bz-acts { justify-content: center; gap: 8px 28px; }
 .fl-term { grid-column: 7 / span 6; border-radius: 28px; background: #0a0a0a; color: #f5f5f5; border: 1px solid #000000; box-shadow: none; overflow: hidden; }
 .fl-term-bar { display: flex; align-items: center; gap: 14px; height: 56px; padding: 0 12px 0 20px; border-bottom: 1px solid rgba(255, 255, 255, .08); }
@@ -410,7 +418,7 @@ button.fl-node:active { scale: .97; }
   .fl-copy { max-width: none; }
   .fl-copy { gap: 18px; }
   .fl-intro { gap: 20px; }
-  .fl-hold { left: 75%; top: calc(71% + 58px); }
+  .fl-hold { left: 75%; top: calc(71% + 74px); }
   /* the chapter boards on a phone: one compact object under the header, the chapter's words swapping beneath it */
   .flp-board.compact { height: 236px; }
   .compact .flp { padding: 16px; }

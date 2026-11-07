@@ -229,12 +229,13 @@ function GpuScene({ p, on }) {
 
 /* chapter 05: four triggers, one handler; the lines draw in full (900 ms) each time the chapter arrives */
 function TriggerScene({ on }) {
+  const calm = useReducedMotion(); // reduced motion: the lines stand joined at once (after mount, so hydration matches)
   return (
     <div className="kn-obj fn-sc fn-sc-tr">
       <ul className="fn-tr-l">{TRIGGERS.map((t) => <li key={t}>{t}</li>)}</ul>
       <svg className="fn-tr-lines" viewBox="0 0 400 200" preserveAspectRatio="none" aria-hidden="true">
         {TRIGGERS.map((t, i) => (
-          <motion.path key={t} d={`M${50 + i * 100} 0 C ${50 + i * 100} 110, 200 90, 200 200`} initial={{ pathLength: 0 }} animate={{ pathLength: on ? 1 : 0 }} transition={{ duration: 0.9, ease: EMPH, delay: i * 0.06 }} />
+          <motion.path key={t} d={`M${50 + i * 100} 0 C ${50 + i * 100} 110, 200 90, 200 200`} initial={{ pathLength: 0 }} animate={{ pathLength: on || calm ? 1 : 0 }} transition={calm ? { duration: 0 } : { duration: 0.9, ease: EMPH, delay: i * 0.06 }} />
         ))}
       </svg>
       <div className="fn-tr-h"><b>handler.js</b><span>the same handler</span></div>
