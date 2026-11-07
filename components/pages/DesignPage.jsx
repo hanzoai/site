@@ -11,8 +11,8 @@
    pinned chapters (components/v2/AppScenes), line-masked headline, sheets that stack as you scroll. Accent: magenta.
    The music app is live: its spectrum dances to 124 BPM and the four synth pads play. Every word is Hanzo's; the brief is yours. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { Copy, Mark } from '../ui';
+import { motion, AnimatePresence, useInView, useScroll, useTransform } from 'motion/react';
+import { Copy, Mark, useCalm } from '../ui';
 import { A, More, Cta, Img, Film } from '../kit';
 import { useOpener } from '../Opener';
 import Lines from '../v2/x-edison/AppLines';
@@ -253,7 +253,7 @@ function Hero() {
   const [at, setAtS] = useState(0);
   const [mine, setMine] = useState(false);
   const [paused, setPaused] = useState(false);
-  const calm = useReducedMotion();
+  const calm = useCalm();
   const box = useRef(null);
   const seen = useInView(box, { amount: 0.3 });
   const live = seen && !calm && !paused;
@@ -457,7 +457,7 @@ function Model({ n }) {
 
 function Studio() {
   const ref = useRef(null);
-  const calm = useReducedMotion();
+  const calm = useCalm();
   // a black room arrives as a rounded card inside the gutters and opens to the full width as it is reached
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.2'] });
   const clip = useTransform(scrollYProgress, [0, 1], ['inset(0% 3% 0% 3% round 24px)', 'inset(0% 0% 0% 0% round 0px)']);
@@ -515,7 +515,7 @@ function Repo() {
 
 function Band() {
   const ref = useRef(null);
-  const calm = useReducedMotion();
+  const calm = useCalm();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.2'] });
   const clip = useTransform(scrollYProgress, [0, 1], ['inset(0% 3% 0% 3% round 24px)', 'inset(0% 0% 0% 0% round 0px)']);
   return (

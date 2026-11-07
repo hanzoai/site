@@ -1,126 +1,37 @@
 # /blog — James-eye review
 
-Verdict: 6/10
-First complaint: "I press pause on the cover and nothing happens; it just keeps turning. On my phone the picture runs off the edge of the screen. And below the cover it goes quiet: three grey squiggles and a list."
+Verdict: 7/10
+First complaint: "On my phone the posting chart stops at July. October, the month the list is actually showing, is cut off the side and nothing tells me to swipe."
 
-Walked 7 Nov at `9afbb4b` (`components/pages/BlogIndex.jsx`, `BlogIndex.css`, `story.css`, `StoryPause.jsx`, `StoryClose.jsx`). Working files are in the `critic2/` scratch folder.
-- **Desktop film:** 1470×801, 88 s (`vid-blog/blog.webm`, sheets `sheets/blog-01…11.jpg`).
-  - 15 s untouched on the cover.
-  - Swept the pointer over the plate.
-  - Hovered all six index headlines and let the pointer leave.
-  - Pressed the cover's pause and waited 8 s.
-  - Hovered the masthead ask and the cover headline, then the three on-site cards.
-  - Hovered all nine month bars, clicked February, then July, then "All 24".
-  - Walked the full contents, hovering rows, then hovered the Band ask.
-- **Phone:** 375×812 (isMobile, hasTouch), 11 screens (`sheets/blog-phone-01…02.png`, `blog-p-first.png`, `blog-p-strip.png`).
-- **Also checked:** reduced motion, JS off, console, the heading outline, and an on-site card's Morph into /blog/synthesis.
+Walked 2026-11-07 16:51 UTC, HEAD f95f77b1, at 1470x801 and 375x812, plus 320x812 (first screen at 0.2/1/3/6 s, reload, wheel-scrolled the whole page in 160px notches, hovered and pressed the ask, cover tabs, pause, trio cards, rows, month bars, both "All 24" controls; tapped tabs and bars on phone; reduced motion; JS off; taste.py and parity.py).
 
 ## What works
-- **The first screen is a real front page and it turns by itself.**
-  - The masthead h1 (52px) is cut in.
-  - The cover holds 6.5 s, then the headline wipes and a brushed-silver curtain crosses the plate (frames 7.0–7.5 s), 0 → 1 → 2 untouched.
-  - The index's hairline times the current story.
-  - Kai posts show Hanzo's own Kai art, and the other posts draw a contour field from their title.
-  - Feels like a hamol or osply magazine front. One idea, well staged.
-- **A hand answers at once.** Hovering an index headline cuts straight to its story with no curtain, holds while the pointer is in, and resumes when it leaves.
-- **The publishing strip works as the Beyond.**
-  - The bars rise once on arrival.
-  - February closes the contents to "February 2026: 9", and July to 4.
-  - "All 24" restores eight months and shows its pressed (ink) state.
-  - A month click scrolls the list into view. Rows slide 8px on hover.
-- **Clean numbers.**
-  - 0 hues.
-  - Parity 95/95 text and 29/29 links.
-  - CLS 0.0002 (header).
-  - Reduced motion: 7 of 7 screens still, the curtain off, the timer frozen.
-  - JS off shows the masthead and first story.
-  - No sideways document scroll at 375.
-  - The on-site card's title lands at x=159 on /blog/synthesis (Morph runs).
+- The first screen is alive with no input. The cover story auto-advances (01 → 02 in about 7 s) with a timer line under the active tab. A black curtain wipes the plate, the headline cuts up into its line, and the Sigil contour plate drifts. Hovering a tab jumps straight to that story. Pause stops it (aria-pressed true, icon becomes play) and resumes correctly.
+- Scale rhythm: the h1 is 52px, the cover headline 32px and the tab titles small. The trio is one big film card with two smaller ones, not 3 equal boxes. "24" is the one big figure in Contents.
+- Real objects in every section: the contour plate, three Hanzo model films in the trio, the monthly publishing strip (bars grow in, then a silver sweep runs across them on idle), and the month-grouped index.
+- The controls answer. Clicking a month bar swaps the list with a slide (Jun → June's 3 posts). "All 24" opens every month (Oct to Feb, 24 rows). On row hover the title nudges and the dotted leader draws. On the ask, hover lightens the fill (#0a0a0a → #2c2c2e) and press scales to 0.98, so it doesn't just fade.
+- One ask: the header shows outlined "Try Hanzo" while the hero's solid "Read the latest" is on screen, then swaps to a solid "Read the latest" once you scroll. The close is the page's own "Every post".
+- No hue, no gradient text, no pill above the h1 (the "BLOG" mono label sits beside the lede, not over the h1). taste.py OK on 4 files; parity 95/95 text, 29/29 links.
+- Reduced motion shows the final state (h1, cover 01, bars at height, no curtain). JS off is fully legible: the hero, cover 01 and all 24 rows show, and the dead controls are hidden.
+- No console errors or page errors from this page at any size. No horizontal page scroll at 375 or 320.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Yes: the curtain and h1 move by 0.5 s.
-   - The phone first screen holds the h1, lede, ask and the plate, but the plate is broken (answer 6).
-2. **One in, one out, or a document?** The cover is one-in-one-out. Below it the page goes still:
-   - three static contour cards;
-   - a heading with a bar strip;
-   - a contents list that, after "All 24", is about 4 screens of rows with 2–3 line summaries, where nothing moves without a hover.
-3. **A real visual object in every section?** The cover plate, yes. The others are thin:
-   - The on-site trio is three faint grey contour fields, 72% opacity on #f5f5f5 (`blog-d-here.png`), with no heading. "Kai 1: Decisions, Not Completions" gets a Sigil there, though the cover shows the Kai art for that same post.
-   - The strip is the Contents object.
-4. **One ask in the sticky header, nothing floating; scale rhythm?**
-   - **Asks.** Two different solids: "Read the latest" in the masthead and "Every post" in the Band.
-   - **Scale is flat.** The biggest type is the 52px h1 and the 32px cover headline. Nothing grows or settles: no figure, no moment.
-5. **Every hover and press answers?** Mostly. The index cuts, rows slide, cards brighten and scale 1.03, bars darken, and buttons press.
-   - **But the cover's pause does nothing with a mouse.**
-     - `.xbl-index` (`grid-column: 1 / -1`, later in the DOM) lies over the 44px pause. `elementFromPoint` at the button's centre returns `OL.xbl-index`.
-     - A click left `aria-pressed="false"`, and the cover turned 0 → 1 during the 8 s "pause".
-     - Enter on the focused button does pause (true, held 8 s).
-6. **Overlaps, font swap, layout shift?** No font swap or shift. Desktop is clean. The phone fails twice:
-   - **The cover plate is 455px wide in a 343px column** (16 → 471). It is clipped at the screen edge with no right corners (`blog-p-first.png`).
-     - Cause: the desktop `height: clamp(260px, 42vh, 360px)` plus the phone `aspect-ratio: 4/3` sets the width from the height.
-   - **The sticky "All 24" pill (286–359px) sits on the July and August bars (256–348px)** and hides "Aug" (`blog-p-strip.png`).
-7. **Which reference, is its motion there?**
-   - hamol or osply editorial: the cover with its timer and curtain is there.
-   - synchronized.studio card-open: the on-site cards Morph, but on a cold load there was about 2 s of white before the title flew (dev compile; re-check on a warm build).
-8. **Different from its neighbours?**
-   - The cover is its own.
-   - But the masthead is /about's layout: h1 on the left 8 columns, lede and ask bottom-aligned on the right.
-   - The close is the same StoryClose band as /about and /history.
-9. **The 18 parts?** See below.
-10. **Banned tells?**
-    - Borderline: the 12px mono "BLOG" run-in sits at the top right, 90px above the h1's line, so it reads first, like a kicker.
-    - Otherwise none.
-11. **Copy untouched?** Yes: parity is clean.
-    - The cover shows the date twice, in the meta row ("OCTOBER 26, 2026") and as the first words of the summary ("October 26, 2026. Buyers…"). The meta date is the page's addition.
+1. Yes, it sells in 5 s ("News & Guides." plus a live cover story), and the plate and timer move within 1 s. The h1 cut-in leaves the masthead empty for the first ~0.5 s, while the cover block is already painted.
+2. The top half works: the hero gives way to the trio films, which give way to the strip. Contents is a document by design (a long index), but the default shows only October, so it stays short until you ask.
+3. Yes: plate, films, chart, index.
+4. One ask in Hanzo's words in the sticky header, and nothing of the page's floats over content (the cookie bar is shared). Rhythm is good. One slip: when "All 24" in the strip is active it turns solid black, so it and the header's solid "Read the latest" make 2 solid fills in one viewport.
+5. Yes, everything answers. The trio card moves about 17px between scroll-in and hover (scroll parallax settling), which is a drift, not a jump.
+6. No overlaps on desktop. On phone the publishing strip is a hidden-scrollbar rail: at 375 it shows Feb to Aug and clips Sep and Oct (scrollWidth 444 vs 343). At 320 it shows Feb to Jul only. The newest months are the ones off screen, with only a 2px sliver as a cue. No font swap or h1 shift was seen.
+7. An editorial magazine cover (osply / grubogrubo restraint) with an Apple-style timed carousel. The curtain wipe and the line cut-in are present and authored, not fade-ups.
+8. Yes. The cover-story carousel with its contour plate and the publishing strip are its own; no home-hero trick is reused.
+9. Mostly covered. States, no-JS, reduced motion, keyboard (tabs pick on focus), aria-live counts and the closing link are all present. I did not check the coverage card (not read, per brief).
+10. No banned tells seen.
+11. The copy is untouched (parity 0 missing).
 
-## Missing from the 18 parts
-- **1 Strategy:** two solid labels.
-- **3 First impression:**
-  - No 56px peek.
-  - Nothing below the fold moves untouched except the bars rising once.
-  - No scale moment.
-- **6 Content:**
-  - The "Contents" h2 is pushed to column 3 (`.xbl-c-head > .xbl-c-h { grid-column: 3 / 8 }`) while its caption "EVERY POST" stays at column 1, so the head and caption do not align (`blog-d-contents.png`).
-  - The meta date repeats the summary's date.
-- **8 Components:** the pause control is unclickable with a mouse.
-- **10 Media:** the Kai post on the on-site trio does not use its Kai art.
-- **11 Mobile:**
-  - The plate overflows by 112px.
-  - The strip pill covers the bars.
-  - The cover headline links are 343×32 targets.
-- **12 Accessibility:**
-  - The heading outline is H1 → H3 ×6 (the cover headlines) → H2, so a level is skipped.
-  - The on-site trio has no heading.
-  - `.xbl-h1 { white-space: nowrap }` at desktop (part 12 bans nowrap on the h1).
-  - Under reduced motion the index keeps a 61px empty indent for the hidden pause.
-- **18 Coverage card:** it claims "no overlap at 375" and a working pause.
+Shared (not counted): the header's "Try Hanzo" is clipped off the right edge at 320px (shared header). The cookie bar covers the lower screen on phone (shared). Font preload "not used" warnings (shared layout). During the walk a hot-reload parse error appeared from `components/pages/Brand.jsx:147` (another page, being edited concurrently).
 
 ## Fixes (in order)
-1. **Make the pause clickable.**
-   - Either `.xbl-cover > .xst-pause { position: relative; z-index: 1; }`, or start the index at column 2 (`.xbl-index { grid-column: 2 / -1; padding-left: 0; }`) with the pause in its own 44px column.
-   - Check that `elementFromPoint` returns the button, a click sets `aria-pressed="true"`, and the cover holds 8 s.
-   - Under reduced motion drop the 61px indent.
-2. **Fit the phone plate.** Inside `@media (max-width: 900px)` set `.xbl-plate { height: auto; width: 100%; aspect-ratio: 4 / 3; }`. Check that the plate is 343px wide with all four corners at 375 and 320.
-3. **Free the phone strip.**
-   - Remove `position: sticky` from `.xbl-allbtn` at 900px and below.
-   - Set the pill on its own row under the bars (or give the scroller `padding-right: 96px`), so no bar or label is covered.
-4. **Give the page a second moment.** Use only facts already on the page:
-   - When a month is pressed, that month's count grows from the bar to a 64px Air figure beside the strip, then settles.
-   - The on-site Kai card uses `/models/kai.webp` (the cover's own ART map) instead of a Sigil.
-   - The trio gets a hover tilt to 2.5° (fine pointers only) so the second screen answers the hand.
-5. **Align the Contents head and close the gap.**
-   - Drop the `grid-column: 3 / 8` override so "Contents" sits above "EVERY POST".
-   - Bring `.xbl-toc` margin-top from 128px to 44–72px.
-6. **Fix the outline.**
-   - Render the cover headlines as h2 (`motion.h2`, or the `as` prop) and give the on-site trio a visually hidden h2 from the register.
-   - Remove `white-space: nowrap` from `.xbl-h1`.
-   - Give the cover headline links `min-height: 44px` on the phone.
-7. **One date, one solid.**
-   - Drop the `<time>` from the cover's meta row (keep the tag), since the summary already opens with the date.
-   - Consider making "Read the latest" quiet (outline) so the Band's "Every post" is the one solid ask on a Story page.
-8. **Correct `docs/coverage/blog.md`** (pause, 375 overlap, heading levels).
-
-**Shared chrome (not scored):**
-- On the phone the bottom ask bar ("Read the latest") rises over the on-site cards.
-- The bar never showed on desktop here.
-- A cold dev load logged "[Turbopack HMR] Expected module to match pattern: lib/search.json" (shared search module).
+1. Phone strip (`.xbl-strip` in `@media (max-width: 899px)`, BlogIndex.css ~line 166): make all 9 months fit at 375 and 320 (narrower bars or gap, or drop `overflow-x:auto`). Failing that, start the rail scrolled to the newest month and give it a visible edge fade, so October is never off screen by default.
+2. Keep one solid per viewport: `.xbl-allbtn.on` should not be a black fill while the header ask is solid. Use an ink outline or underline for its active state, as the bars do with their own ink.
+3. Merge the two "All 24" controls (the strip pill and the `.xbl-more` button under the list): they do the same thing within one screen of each other.
+4. Tighten the empty band between the cover tab rail and the trio (about 240px at 1470), so the hero hands over to the films rather than to a blank screen during the scroll.

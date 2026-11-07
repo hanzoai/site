@@ -21,7 +21,7 @@
 
 /* ---------- hero: a desk of title pages across the first screen, the headline over them lower left ---------- */
 .xrs-hero { position: relative; height: calc(100svh - 60px); min-height: 640px; display: flex; align-items: flex-end; overflow: hidden; }
-.xrs-desk { position: absolute; inset: 12px 24px 0; }
+.xrs-desk { position: absolute; top: 24px; bottom: 120px; left: calc(41% + 12px); right: 24px; }
 .xrs-desk-s { --w: clamp(160px, 17vw, 270px); position: absolute; left: var(--x); top: var(--y); width: var(--w); }
 .xrs-desk-b { display: block; width: 100%; aspect-ratio: 380 / 520; padding: 0; border: 0; background: none; cursor: pointer; transform: rotate(var(--r)); transition: transform .5s cubic-bezier(.4, 0, .2, 1); }
 .xrs-desk-p, .xrs-desk-ghost { display: block; width: 100%; height: 100%; overflow: hidden; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .1); transition: box-shadow .4s cubic-bezier(.4, 0, .2, 1); }
@@ -29,7 +29,7 @@
 .xrs-desk-s[data-on='true'] .xrs-desk-b { transform: translate3d(0, -24px, 0) rotate(0deg); }
 .xrs-desk-s[data-on='true'] .xrs-desk-p { box-shadow: 0 24px 60px -16px rgba(0, 0, 0, .18); }
 .xrs-desk-b:active { transform: translate3d(0, -24px, 0) rotate(0deg) scale(.97); }
-@media (hover: hover) { .xrs-desk-s:hover { z-index: 25 !important; } .xrs-desk-s:hover .xrs-desk-b { transform: translate3d(0, -24px, 0) rotate(0deg); } .xrs-desk-s:hover .xrs-desk-p { box-shadow: 0 24px 60px -16px rgba(0, 0, 0, .18); } }
+/* the pointer owns the desk through data-on (one lifted sheet at a time), so there is no separate CSS hover lift */
 .xrs-desk-b:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px; border-radius: 8px; }
 .xrs-desk .xrs-sheet { padding: clamp(14px, 1.5vw, 24px); }
 .xrs-desk .xrs-sheet-top { justify-content: flex-end; font-size: 12px; padding-bottom: 8px; white-space: nowrap; }
@@ -41,13 +41,14 @@
 .xrs-desk .xrs-lines { gap: 6px; }
 .xrs-desk .xrs-lines i { height: 4px; }
 .xrs-hero-g { position: relative; z-index: 30; width: min(100% - 48px, 1392px); align-items: end; padding-bottom: clamp(24px, 4vh, 48px); pointer-events: none; }
-.xrs-hero-c { grid-column: 1 / 9; pointer-events: auto; }
+.xrs-hero-c { grid-column: 1 / 6; pointer-events: auto; }
+.xrs-hero-row { grid-template-columns: minmax(0, 1fr) !important; }
 .xrs-h1 { margin: 0; }
 .xrs-hero-row { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px 32px; align-items: baseline; margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--ink); max-width: 760px; background: linear-gradient(#fff, #fff) padding-box; }
 .xrs-hero-row .xrs-cap-h { margin: 0; }
 .xrs-lede { max-width: 34ch; }
 .xrs-acts { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-top: 12px; }
-.xrs-deal { grid-column: 9 / 13; justify-self: end; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 16px; width: min(380px, 100%); pointer-events: auto; }
+.xrs-deal { grid-column: 7 / 13; justify-self: end; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 16px; width: min(380px, 100%); pointer-events: auto; }
 .xrs-deal-b { display: flex; gap: 8px; }
 .xrs-deal button { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; transition: border-color 150ms cubic-bezier(0, 0, .2, 1), background-color 150ms cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
 @media (hover: hover) { .xrs-deal button:hover { border-color: rgba(0, 0, 0, .3); background: #f5f5f5; } }
@@ -59,10 +60,23 @@
 .xrs-cap[hidden] { display: none; }
 .xrs-cap .pf-mono { font-size: 13px; color: var(--ink); letter-spacing: .06em; }
 .xrs-cap b { font-size: 16px; font-weight: 560; line-height: 1.25; letter-spacing: -.01em; }
-.xrs-cap small { font-size: 14px; line-height: 1.4; color: #525252; }
+.xrs-cap small { display: none; }
+.xrs-cap { grid-template-columns: auto minmax(0, 1fr); align-items: baseline; gap: 12px; }
+.xrs-cap b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* ---------- at a glance ---------- */
 .xrs-glance { border-top: 1px solid var(--line); }
+.xrs-glance.pf-sec { padding-block: clamp(56px, 6vw, 96px); }
+.xrs-when button.xrs-when-gap { margin-left: 14px; }
+.xrs-when button.xrs-when-gap::before { content: ''; position: absolute; left: -11px; top: 22px; bottom: 30px; border-left: 1px dashed #a3a3a3; }
+/* the month you are reading, in the rail */
+.xrs-now { position: relative; height: 1.2em; margin: 27px 0 0; overflow: hidden; font-size: 26px; line-height: 1.2; letter-spacing: -.01em; color: var(--ink); font-variant-numeric: tabular-nums; }
+.xrs-now span { position: absolute; left: 0; top: 0; }
+.xrs-all { display: inline-flex; align-items: center; gap: 10.5px; min-height: 48px; margin-top: 17px; padding: 0 20px; border: 1px solid rgba(0, 0, 0, .18); border-radius: 999px; background: #fff; font: 500 15px/1 var(--sans); color: var(--ink); cursor: pointer; transition: background-color 150ms cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
+.xrs-all .pf-mono { font-size: 13px; color: #525252; }
+.xrs-all:active { transform: scale(.97); }
+.xrs-all:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+@media (hover: hover) { .xrs-all:hover { background: #f5f5f5; transform: translate3d(0, -1px, 0); } }
 .xrs-glance-g { align-items: end; row-gap: 72px; }
 .xrs-tally { grid-column: 1 / 8; display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); grid-template-rows: auto auto; gap: 0 32px; margin: 0; }
 .xrs-tally-b { grid-row: 1 / 3; }
@@ -180,24 +194,32 @@
 
 @media (max-width: 900px) {
   .xrs-hero { height: auto; min-height: 0; flex-direction: column; align-items: stretch; }
-  .xrs-desk { position: relative; inset: auto; height: 340px; margin: 8px 16px 0; }
-  .xrs-desk-s { --w: 33vw; }
-  .xrs-desk-s:nth-child(1) { --x: 34% !important; --y: 1% !important; }
-  .xrs-desk-s:nth-child(2) { --x: 63% !important; --y: 7% !important; }
-  .xrs-desk-s:nth-child(3) { --x: 3% !important; --y: 6% !important; }
-  .xrs-desk-s:nth-child(4) { --x: 63% !important; --y: 50% !important; }
-  .xrs-desk-s:nth-child(5) { --x: 4% !important; --y: 50% !important; }
-  .xrs-desk-s:nth-child(6) { --x: 34% !important; --y: 45% !important; }
+  .xrs-desk { position: relative; inset: auto; height: 250px; margin: 16px 16px 0; }
+  /* the caption takes the full width; pause and the arrows sit on their own row under it */
+  .xrs-deal { grid-template-columns: minmax(0, 1fr); gap: 12px; margin-top: 24px !important; }
+  .xrs-deal-b { justify-content: flex-start; }
+  .xrs-cap { grid-template-columns: auto minmax(0, 1fr); }
+  /* filtering never collapses the page under you */
+  .xrs-list { min-height: 60svh; }
+  .xrs-desk-s { --w: 46vw; }
+  .xrs-desk-s:nth-child(n + 4) { display: none; }
+  .xrs-desk-s:nth-child(1) { --x: 26% !important; --y: 8% !important; --r: -2deg !important; }
+  .xrs-desk-s:nth-child(2) { --x: 46% !important; --y: 14% !important; --r: 5deg !important; }
+  .xrs-desk-s:nth-child(3) { --x: 0% !important; --y: 14% !important; --r: -5deg !important; }
   .xrs-desk .xrs-sheet { padding: 10px; }
-  .xrs-desk .xrs-sheet-top, .xrs-desk .xrs-sheet-s, .xrs-desk .xrs-sheet-by, .xrs-desk .xrs-lines { display: none; }
-  .xrs-desk .xrs-sheet-t { margin-top: 0; font-size: 13px; }
+  .xrs-desk .xrs-sheet-top, .xrs-desk .xrs-sheet-s, .xrs-desk .xrs-sheet-by { display: none; }
+  .xrs-desk .xrs-sheet { padding: 14px; }
+  .xrs-desk .xrs-sheet-t { margin-top: 0; font-size: 15px; }
+  .xrs-desk .xrs-lines { margin-top: auto; }
   .xrs-desk .xrs-sheet.hip .xrs-sheet-t { font-size: 18px; }
-  .xrs-hero-g { width: min(100% - 32px, 1392px); margin-top: -64px; padding-bottom: 40px; }
+  .xrs-hero-g { width: min(100% - 32px, 1392px); margin-top: 24px; padding-bottom: 40px; }
   .xrs-hero-c, .xrs-deal { grid-column: 1 / -1; }
   .xrs-hero-row { grid-template-columns: minmax(0, 1fr); gap: 12px; }
   .xrs-acts .pf-btn { flex: 1 1 100%; }
   .xrs-deal { justify-self: stretch; width: 100%; margin-top: 32px; }
   .xrs-cap { text-align: left; }
+  .xrs-cap b { white-space: normal; }
+  .xrs-now { display: none; }
   .xrs-cap .pf-mono, .xrs-cap small { font-size: 14px; }
   .xrs-tally { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .xrs-tally div { flex-direction: row-reverse; justify-content: space-between; align-items: baseline; padding: 16px 0 12px; border-top-color: var(--line); }

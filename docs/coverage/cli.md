@@ -3,7 +3,7 @@
 Page file: `components/pages/CliPage.jsx` · gallery: `docs/gallery/cli/` · metric id: `api_key_created`
 
 Open copy questions for James: the CLI docs link (MASTER part 1 lists it): the live page sends both "Install from hanzo.sh" and "Install the CLI" to `https://docs.hanzo.ai/docs/cli`, kept as is. The hero says "Open source (MIT)" while the repo card says "License: Apache-2.0"; both are live strings, kept.
-Shared changes requested (`docs/requests/apps1.md`): only the `Band` `id` prop is still open (this page closes on its own ask row with `<Cta id>`); the header ask and the ask bar landed with the shared system.
+Shared changes requested (`docs/requests/cli.md`): the header ask label ("Install from hanzo.sh" on /cli via `lib/cta.js`; the header is shared chrome and still says "Try Hanzo"); the reduced-motion hydration mismatch and JS-off mask in shared `v2/x-edison/AppLines` (replaced here by page-local `cli/Cut.jsx`); the `Band` `id` prop.
 Forks this page deleted: the lime `.cli-go` button and the ghost `.x-btn` "View on GitHub" (now `<Cta>` solid and `<Cta kind="link">`); the second ending (the "Get CLI" card's solid "Deploy to Cloud" is a text link above the one Band); the 4 kickers over headlines; the tilted v1 terminal (`useTilt`); `Magnetic`; the hidden `<i data-thumb>`.
 
 ## 1. Strategy and conversion
@@ -13,7 +13,7 @@ Forks this page deleted: the lime `.cli-go` button and the ghost `.x-btn` "View 
 - [x] No dead or self-looping button; prices from `lib/plans.js` (n/a: no prices on this page)
 - [x] Open copy questions for James listed, none decided
 
-Done here: Top of `CliPage.jsx` carries Persona/Goal/CTA/Metric/Signature/Beyond. One solid ("Install from hanzo.sh") in the hero and the same label as the closing band's one solid; check.mjs counts 1 solid on the first screen at 1470×801 and 375×812. `lib/cta.js` does not exist yet, so the label is Hanzo's live hero label.
+Done here: Top of `CliPage.jsx` carries Persona/Goal/CTA/Metric/Signature/Beyond. Playwright counts 2 solids on the page, both "Install from hanzo.sh": the hero one is pure white on the black room (computed rgb(255,255,255) on ink text, was #f5f5f7) and the band one is ink on white; everything else ("View on GitHub", "Open in the console", "Deploy to Cloud", "Install the CLI", "Read the docs") is a 44px `<Cta kind="link">` text link with the kit arrow. `lib/cta.js` does not exist yet, so the label is Hanzo's live hero label.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -31,7 +31,7 @@ Done here: every link is `A` or `<Cta>` (which renders `A`); parity links 10/10;
 - [x] Ends in proof strip, `Band`, footer
 - [x] Card-to-page links use Morph; title lands within 12px (n/a: no cards open into pages here; in-site links morph through the shell)
 
-Done here: the session starts typing at 350 ms (check.mjs: 101 changes in the first second). Nothing sits above the h1 (the old kicker now titles the terminal bar), and the h1 is plain server HTML, so it paints first. JS off: 0 invisible text blocks (every hidden state is scoped `.js`). Order: dark terminal, paste line, tree window, struck-command list, swipe rail, script builder, repo card, white closing band. `PageHero` is not in the kit yet; the hero is page-local.
+Done here: the h1 is server HTML and cuts in by CSS line mask on first paint (700 ms ease-emphasis, 60 ms between lines); the session waits for `document.fonts.ready` (1.2 s cap) and at least 900 ms after navigation before its first keystroke, so the h1 is always painted first. With JS on, the session rows are masked from first paint (`.js .cli-sess:not(.live)`), so the session only grows. Sampling every 100 ms finds 0 resets: visible characters go 0 → 2 at 1.1 s → 34 at 3.8 s on desktop. JS off and reduced motion keep the server's final frame; under reduced motion all 4 rows are at opacity 1 and 0 animations run after 3.5 s. "Hanzo CLI · Developers" left the bar above the h1 and is now a caption in the status line below it; Playwright finds 0 labels directly above any h1/h2. JS off: every heading, paragraph and claim visible (only collapsed tree folders are `hidden`, by design). Order: dark terminal, paste line, tree window, three claim windows, swipe rail, script builder, "Get CLI" repo card and related links, then the one white closing Band "Install once. It comes with you." with the hero's verb as its one solid. The ending runs on: 145px from the related links to the band's first line at 1470 (89px at 375), was about 300px; 44px from the last place row to the footer (27px at 375), was about 170px. `PageHero` is not in the kit yet; the hero is page-local.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -39,7 +39,7 @@ Done here: the session starts typing at 350 ms (check.mjs: 101 changes in the fi
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: `<Cta id="cli.hero" thumb>` and `<Cta id="cli.band">`. The header carries the solid "Try Hanzo"; there is no floating bar on desktop, and on phones the slim shared bar carries this page's own `data-thumb` ask.md item 1 lands. Every Copy copies the shown command; the `$` is `user-select: none` and not in the copied text (`Copy` uses `copyText`).
+Done here: `<Cta id="cli.hero" thumb>` and `<Cta id="cli.band">`. Header, as the round-2 critic measured it: on desktop the shared header swaps to the solid "Install from hanzo.sh" once the hero ask leaves view and goes quiet while the band's solid is on screen, so one fill shows at a time; on phone the header still says "Try Hanzo" (shared chrome; the phone label is requested in `docs/requests/cli.md`). No floating bar (removed site-wide, d2b5ab8c), and none was added. Every Copy copies the shown command; the `$` is `user-select: none` and not in the copied text (`Copy` uses `copyText`).
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -64,7 +64,7 @@ Done here: parity text 82/82, links 10/10. Phone rules lift every label to 14px.
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: taste OK; check.mjs finds 0 labels over headlines. Rest sizes on the deck scale (h1 52/40, h2 26 or 32/44 for the one statement); greys only (`--soft #525252`, `--faint #737373` on white). The only first screen in the Apps group that is the product's own black room.
+Done here: taste OK (3 files). The tree window is outlined only (1px hairline); its large floating shadow is gone. The capability rail cards are sized to their content (bottom padding is 9–17% of the card at 1470, was about 40% empty). Playwright finds 0 labels directly above any heading at 1470 and 375 (the bar's "Hanzo CLI · Developers" moved below the h1). Rest sizes on the deck scale (h1 52/40, h2 26 or 32/44 for the one statement); greys only (`--soft #525252`, `--faint #737373` on white). The only first screen in the Apps group that is the product's own black room.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
@@ -82,7 +82,7 @@ Done here: tree rows, add toggles, rail arrows, pause/replay, repo links press a
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit
 
-Done here: signature typed session (time), tree selection glide (state, layoutId at 300 ms ease, no spring), added script block clip wipe (state), line-mask headlines (arrival); variety.py: 2 techniques, 0 Rise. Nothing is scroll-linked. The session runs once and rests on its final frame; reduced motion shows that frame. The session's end plays the kit's faint 'done' chime (`play('done')` from `lib/sound.js`); tree rows tick (`data-sound="tick"`); toggles and the pause tick through the kit's own `[aria-pressed]` rule.
+Done here: signature typed session (time), tree selection glide (state, layoutId at 300 ms ease, no spring), added script block clip wipe (state), line-mask headlines (arrival); variety.py OK. Added this round: the three claims ("A coding session, metered" and the rest) are each a small terminal window whose command types in by a stepped clip when the row arrives, the missing `hanzo api` verb is struck by a drawn line after it, and a caret blinks there; resting carets also blink at the end of the hero session, the agent prompt and the script, so those screens are alive at rest. Round 2: one continuous mover per viewport. The band's four "$ hanzo" rows share one caret that steps down the places every 2.4 s (the focused row turns ink). Each claim window's caret blinks twice while typing, then rests. The agent-prompt caret is gone. The white half gets an authored arrival: the script window's blocks wipe in one after another (90 ms apart) while its line count rolls up from 0 to 16 (rAF, tabular numerals, the true value in the HTML and in a polite live region), and it rolls from the old count to the new one on every add or remove. Nothing is scroll-linked. The session runs once and rests on its final frame; reduced motion shows that frame. The session's end plays the kit's faint 'done' chime (`play('done')` from `lib/sound.js`); tree rows tick (`data-sound="tick"`); toggles and the pause tick through the kit's own `[aria-pressed]` rule.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set (n/a: no images or films)
@@ -98,7 +98,7 @@ Done here: the page has no images or films; every visual is the CLI's own text U
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: check.mjs phone: 0 small tap targets, CLS 0.000. The tree print pane is fixed at 300px and the tree at 380px with its own scroll, and typed lines keep an invisible full-text ghost, so opening a folder or typing never moves the page (the review's 0.42 shift). Phone order: h1, session, lede, the one solid (y about 555 at 375×812).
+Done here: Playwright at 375×812: 0 targets under 44px (terminal tabs 44px at every width). Layout shift: the round-2 critic measured 0.036 on phone from the tree tour collapsing `auth` and opening `share`. Fixed: every folder now starts open (fixed row slots), and the tour only moves the selection and scrolls the tree's own pane; the print pane is top-anchored. Re-measured with a PerformanceObserver over 16 s of unattended tour plus a full scroll: 0.0016 during the tour and 0.0017 total at 375×812; 0.0023 and 0.0039 at 1470×801. The tree print pane is fixed at 300px and the tree at 380px with its own scroll, and typed lines keep an invisible full-text ghost, so opening a folder or typing never moves the page (the review's 0.42 shift). Phone order: h1, session, lede, the one solid (y about 555 at 375×812).
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -147,7 +147,7 @@ Done here: every command copies exactly what is shown (no `$`); the hero termina
 - [x] A failed submit keeps its values and shows no success (n/a: no form)
 - [x] A thrown island does not blank the page
 
-Done here: the page fetches nothing; with JS off every word shows (check.mjs: 0 hidden); console errors: none.
+Done here: the page fetches nothing; with JS off every heading and paragraph shows (Playwright, JS disabled); console errors: none at 1470×801, 375×812 and 375×812 with reduced motion (the reduced-motion hydration error from shared AppLines is gone since the switch to page-local `cli/Cut.jsx`).
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary; events only through `lib/track.js`
@@ -155,4 +155,4 @@ Done here: the page fetches nothing; with JS off every word shows (check.mjs: 0 
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [x] Review read: `docs/review/cli.md` verdict 8 or more
 
-Done here: `data-cta="cli.hero"`, `cli.band`, plus `cli.*` on every secondary; `<Cta>` sends `cta_click`. Review read (7/10): all five fixes done in order (no green, one hero solid, one ending, fixed heights and 44px targets, no kickers); self-score 8/10 pending the critic's re-walk.
+Done here: `data-cta="cli.hero"`, `cli.band`, plus `cli.*` on every secondary; `<Cta>` sends `cta_click`. Round-2 review read (7/10 at e88d5f71): fix 1 hero flash done (rows masked from first paint, 0 resets); fix 2 phone tree reflow done (CLS 0.0017 at 375); fix 3 ending done (one stepping caret, gaps 145/44px); fix 4 rail cards tightened; fix 5 tree outline only; fix 6 script arrival with rolling line count; card parts 4 and 11 corrected. Earlier review (6/10 at 4b53974): fix 1 hierarchy done (white hero solid, text links, "Deploy to Cloud" a link); fix 2 header ask requested in `docs/requests/cli.md` (shared chrome), floating pill already gone; fix 3 one ending done (Get CLI and related links above the one Band); fix 4 fixed heights and 44px targets done (phone CLS 0.000); fix 5 no label above a heading; fix 6 this card. Self-score 8/10 pending the critic's re-walk.

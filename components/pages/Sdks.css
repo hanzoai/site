@@ -183,7 +183,7 @@
 .xsd-head .a2-lede { margin-top: 28px; max-width: 52ch; }
 .xsd-head.dark .a2-kick { color: var(--acc); }
 .xsd-half { border-radius: var(--r-hero); padding: clamp(32px, 4vw, 56px); min-height: 380px; }
-.xsd-half h2 { font-size: clamp(36px, 3.9vw, 56px); font-weight: 600; }
+.xsd-half h2 { font-size: clamp(26px, 2.4vw, 32px); font-weight: 497; letter-spacing: -.02em; }
 .xsd-half p { font-size: 17px; }
 .xsd-half.dark { background: var(--acc); }
 .xsd-half.dark p { color: rgba(255, 255, 255, .85); }
@@ -232,6 +232,15 @@
 .xsd-pre { min-height: 470px; }
 @media (max-width: 900px) {
   .xsd-code-first, .xsd-words { grid-row: auto; }
-  .xsd-words { order: -1; }
   .xsd-pre { min-height: 0; }
+  /* phone: h1, lede and ask, then the console moving right under them; the two dialect notes follow it */
+  .xsd-first { display: flex; flex-direction: column; row-gap: 0; }
+  .xsd-words { display: contents; }
+  .xsd-words > * { order: 0; }
+  .xsd-code-first { order: 1; margin-top: 28px; }
+  .xsd-words > .xsd-ex, .xsd-words > .xsd-dias { order: 2; }
 }
+/* the accent became ink (0 UI hues), so text set on an accent fill reads light: the AI + Agents half, the lead
+   library card and the picker's chosen language */
+.xsd-half.dark, .xsd-half.dark h2, .xsd-half.dark h3, .xsd-lib.lead, .xsd-lib.lead h3, .xsd-lib.lead h2 { color: #fafafa; }
+.xsd-pick-l button[aria-selected='true'] { color: #fafafa; }

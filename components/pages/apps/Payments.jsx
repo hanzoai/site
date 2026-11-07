@@ -164,10 +164,10 @@ function Hero() {
       </div>
       <div className="bz-wrap bz-grid pay-hero-grid">
         <p className="bz-lede pay-lede">One integration, and the processor becomes a routing decision.</p>
-        <BizStage from={1.04} over={720} lift={0} className="pay-stage"><div className="pay-rise"><Phone at={at} live={live && !paused} big held={paused} onHold={calm ? null : () => setPaused(!paused)} /></div></BizStage>
+        <BizStage from={1} over={720} lift={0} className="pay-stage"><div className="pay-rise"><Phone at={at} live={live && !paused} big held={paused} onHold={calm ? null : () => setPaused(!paused)} /></div></BizStage>
         <div className="pay-side">
           <div className="pay-acts">
-            <Cta kind="quiet" to="/login" id="payments.hero" thumb>Try Hanzo</Cta>
+            <Cta to="/login" id="payments.hero" thumb>Try Hanzo</Cta>
             <Cta kind="link" to={API} id="payments.apis">Explore APIs</Cta>
           </div>
           <Tracker at={at} pick={(i) => { setAt(i); setHeld(true); }} run={live && !held && !paused} />
@@ -284,8 +284,11 @@ const FEATS = [
 ];
 
 function Checkout() {
+  const [ref, live] = useLive(0.4);
+  const [lit, setLit] = useState(false); // the methods light one by one the first time the list is reached, then stay
+  useEffect(() => { if (live) setLit(true); }, [live]);
   return (
-    <section className="bz-sec pay-co" aria-labelledby="pay-co-h">
+    <section className="bz-sec pay-co" aria-labelledby="pay-co-h" ref={ref}>
       <div className="bz-wrap">
         <div className="bz-grid pay-co-top">
           <h2 id="pay-co-h" className="bz-headline">Customizable Checkout Experiences</h2>
@@ -299,7 +302,7 @@ function Checkout() {
           </div>
         </div>
         <h3 className="bz-kick pay-co-k">Global Payment Methods</h3>
-        <ul className="pay-co-methods">{METHODS.map((t) => <li key={t}>{t}</li>)}</ul>
+        <ul className={'pay-co-methods' + (lit ? ' lit' : '')}>{METHODS.map((t, i) => <li key={t} style={{ '--i': i }}>{t}</li>)}</ul>
         <ul className="bz-grid pay-co-lines">
           {['Cards, wallets, bank debits, buy-now-pay-later and crypto', 'Local methods handled by whichever processor supports them best', 'The method someone expects to see, in the country they are in'].map((t, i) => <li key={t}><span className="x-mono">{two(i + 1)}</span>{t}</li>)}
         </ul>
@@ -400,8 +403,11 @@ const CASES = [
 ];
 
 function Cases() {
+  const [ref, live] = useLive(0.3);
+  const [lit, setLit] = useState(false); // the four cases deal in as one list the first time they are reached
+  useEffect(() => { if (live) setLit(true); }, [live]);
   return (
-    <section className="bz-sec pay-cases" aria-labelledby="pay-cases-h">
+    <section className={'bz-sec pay-cases' + (lit ? ' lit' : '')} aria-labelledby="pay-cases-h" ref={ref}>
       <div className="bz-wrap">
         <div className="bz-grid pay-cases-top">
           <h2 id="pay-cases-h" className="bz-headline">When a switch earns its place</h2>
@@ -466,7 +472,7 @@ function End() {
         <BizLines id="pay-one" className="bz-display md" lines={['Put one payment', 'through it']} />
         <div className="bz-grid pay-end-row">
           <p className="bz-lede">Point it at the processor you already use, send a live payment, and add the second one when you want to see the difference. Nothing has to move on day one.</p>
-          <div className="pay-end-go"><Cta kind="quiet" to="/login" id="payments.close">Try Hanzo</Cta></div>
+          <div className="pay-end-go"><Cta to="/login" id="payments.close">Try Hanzo</Cta></div>
         </div>
         <A to="/contact-sales" className="pay-row"><span>Contact Sales</span><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A>
       </div>
