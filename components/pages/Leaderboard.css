@@ -187,7 +187,7 @@
 @media (hover: hover) { .xlb-tok-in input:hover::-webkit-slider-thumb { box-shadow: 0 0 0 2px var(--k-ink); } }
 .xlb-tok-in input:active::-webkit-slider-thumb { transform: scale(.97); }
 .xlb-tok-in input:focus-visible { outline: 2px solid var(--k-ink); outline-offset: 2px; border-radius: 8px; }
-.xlb-calc-out { display: flex; flex-direction: column; justify-content: flex-end; gap: 12px; padding: 40px; background: var(--k-white); color: var(--k-body); font-size: 17px; }
+.xlb-calc-out { display: flex; flex-direction: column; justify-content: flex-end; gap: 12px; margin: 8px; padding: 32px; border-radius: 16px; background: var(--k-white); color: var(--k-body); font-size: 17px; }
 .xlb-calc-out p { margin: 0; }
 .xlb-calc-out b { color: var(--k-ink); font-weight: 606; }
 .xlb-total { display: flex; align-items: flex-end; gap: 12px; margin-bottom: 8px; }
@@ -289,7 +289,7 @@
   .xlb-calc-row { font-size: 16px; }
   .xlb-calc-row:has(.xlb-per) { flex-wrap: wrap; padding: 14px 0; }
   .xlb-per button { min-height: 44px; }
-  .xlb-calc-out { padding: 27px 20px; font-size: 16px; }
+  .xlb-calc-out { margin: 0 8px 8px; padding: 24px 16px; font-size: 16px; }
   .xlb-close { padding: 96px 0; }
 }
 @keyframes xlb-row-in { from { transform: translate3d(0, 16px, 0); opacity: 0; } to { transform: none; opacity: 1; } }

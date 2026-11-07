@@ -37,10 +37,11 @@ import '../../v2/v2scale.css';
 import './Ingress.css';
 
 const EASE = [0.16, 1, 0.3, 1];
+// every label on the board is Hanzo's own words from this page: its hostname, its files, its middleware
 const ROUTES = [
-  ['api.example.com', '/', 'api', ['rate limiting', 'retry']],
-  ['example.com', '/docs', 'static', ['compression']],
-  ['shop.example.com', '/', 'shop', ['circuit breaking']],
+  ['skill.md', ['rate limiting', 'retry']],
+  ['docs/index.html', ['compression']],
+  ['pricing.html', ['circuit breaking']],
 ];
 
 /* The routing board: host and path, middleware, backends; a failing backend, a new certificate, a recovery. */
@@ -53,19 +54,19 @@ function Board() {
   const phase = Math.floor(tick / 5) % 4; // 0 normal, 1 a backend fails, 2 new hostname gets a certificate, 3 recovered
   const req = tick % 3;
   const down = phase === 1 || phase === 2;
-  const cert = phase >= 2 || calm;
+  const cert = phase !== 1 || calm; // opens on the issued certificate; only the middle of the loop waits for one
   return (
     <div className="lp-host">
     <LivePause paused={paused} onToggle={togglePause} className="ig-pause" />
     <div className="ig-board" ref={ref} aria-hidden="true">
       <p className="ig-board-t"><i />hanzoai/ingress</p>
       <div className="ig-col">
-        <p className="ig-k">host · path</p>
-        {ROUTES.map(([h, p], i) => (
-          <div key={h} className={'ig-host' + (req === i ? ' hit' : '')}>
+        <p className="ig-k">hostname</p>
+        {ROUTES.map(([p], i) => (
+          <div key={p} className={'ig-host' + (req === i ? ' hit' : '')}>
             <span className={'ig-lock' + (i === 2 && !cert ? ' wait' : '')}><svg viewBox="0 0 16 16" width="14" height="14"><rect x="3" y="7" width="10" height="7" rx="1.5" /><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" /></svg></span>
-            <b>{h}</b><em>{p}</em>
-            {i === 2 && <span className={'ig-cert' + (cert ? ' on' : '')}>{cert ? "Let's Encrypt" : 'certificate…'}</span>}
+            <em>hanzo.ai/</em><b>{p}</b>
+            {i === 2 && <span className={'ig-cert' + (cert ? ' on' : '')}>Let's Encrypt</span>}
           </div>
         ))}
       </div>
@@ -73,17 +74,17 @@ function Board() {
         <p className="ig-k">middleware</p>
         <AnimatePresence mode="wait" initial={false}>
           <motion.div key={req} className="ig-chain" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.3, ease: EASE }}>
-            {ROUTES[req][3].map((m) => <span key={m}>{m}</span>)}
+            {ROUTES[req][1].map((m) => <span key={m}>{m}</span>)}
           </motion.div>
         </AnimatePresence>
         <div className="ig-wire"><motion.i key={tick} initial={{ x: '-20%', opacity: 0 }} animate={{ x: '520%', opacity: [0, 1, 1, 0] }} transition={{ duration: 0.9, ease: 'linear' }} /></div>
       </div>
       <div className="ig-col">
-        <p className="ig-k">backends</p>
-        <div className={'ig-svc' + (req === 0 ? ' hit' : '')}><b>api</b><span className="ig-pods"><i /><i className={down ? 'down' : ''} /><i /></span></div>
-        <div className={'ig-svc' + (req === 1 ? ' hit' : '')}><b>static</b><span className="ig-disk">from disk · no pod</span></div>
-        <div className={'ig-svc' + (req === 2 ? ' hit' : '')}><b>shop</b><span className="ig-pods"><i /><i /></span></div>
-        <p className={'ig-note' + (down ? ' down' : '')}>{down ? 'health check failed · out of rotation' : phase === 3 ? 'recovered · back in rotation' : 'no reload, no dropped connection'}</p>
+        <p className="ig-k">backend</p>
+        <div className={'ig-svc' + (req === 0 ? ' hit' : '')}><span className="ig-pods"><i /><i className={down ? 'down' : ''} /><i /></span></div>
+        <div className={'ig-svc' + (req === 1 ? ' hit' : '')}><b>static</b><span className="ig-disk">from disk</span></div>
+        <div className={'ig-svc' + (req === 2 ? ' hit' : '')}><span className="ig-pods"><i /><i /></span></div>
+        <p className={'ig-note' + (down ? ' down' : '')}>{down ? 'out of rotation' : phase === 3 ? 'put back when it recovers' : 'no reload, no dropped connection'}</p>
       </div>
     </div>
     </div>
@@ -117,9 +118,11 @@ function useMedia(q) {
 const useNarrow = () => useMedia('(max-width: 900px)');
 const useCalm = () => useMedia('(prefers-reduced-motion: reduce)');
 
-/* The pinned wipe, read from the page: [ref, reach] where reach is the last scene fully wiped in (each drawing plays
-   once when its scene arrives), and, when the scroll stops mid-wipe, the stage settles to the nearest whole scene so
-   two scenes never rest half-drawn over each other. Desktop only; phones stack the scenes. */
+/* The pinned wipe, read from the page (it never moves the scroll): [ref, reach] where reach is the last scene whose
+   wipe has begun, so each drawing starts playing as its scene starts to rise, never into an empty card. It also hands
+   the text over cleanly: each scene gets --out (the outgoing text and drawing fade out over the first 30% of the next
+   wipe) and data-t (its own text cuts in by line mask once its wipe passes 50%), so two headings never stack.
+   Desktop only; phones and reduced motion stack the scenes and show everything. */
 const REST = 0.62; // WipeScenes finishes each wipe at 62% of its scene's span
 function useWipe(n, off) {
   const ref = useRef(null);
@@ -128,34 +131,32 @@ function useWipe(n, off) {
     const el = ref.current;
     if (off || !el) return;
     const span = 1 / (n - 1);
-    let raf = 0, idle = 0, down = false;
-    const geo = () => { const r = el.getBoundingClientRect(); const L = el.offsetHeight - innerHeight; return { r, L, v: -r.top / L }; };
+    let raf = 0;
+    el.setAttribute('data-wipe', '');
     const look = () => {
       raf = 0;
-      const { r, v } = geo();
-      let j = r.top < innerHeight * 0.15 ? 0 : -1;
-      if (v > 0) j = Math.min(n - 1, Math.floor(v / span + (1 - REST) + 0.08)); // plays as its wipe is ~87% in
+      const r = el.getBoundingClientRect();
+      const L = el.offsetHeight - innerHeight;
+      const v = L > 0 ? -r.top / L : 0;
+      const kin = (i) => (i <= 0 ? 1 : i >= n ? 0 : Math.min(1, Math.max(0, (v - (i - 1) * span) / (span * REST))));
+      let j = r.top < innerHeight * 0.6 ? 0 : -1; // the first drawing plays as the stage comes up into view
+      el.querySelectorAll('.ig-scene').forEach((sc, i) => {
+        const a = kin(i);
+        if (i > 0 && a > 0.02) j = Math.max(j, i);
+        sc.setAttribute('data-t', a >= 0.5 ? '1' : '0');
+        sc.style.setProperty('--out', Math.max(0, 1 - kin(i + 1) / 0.3).toFixed(3));
+      });
       if (j >= 0) setReach((x) => Math.max(x, j));
     };
-    const settle = () => {
-      if (down) return;
-      const { r, L, v } = geo();
-      if (v <= 0 || v >= 1 || L <= 0) return;
-      const j = Math.floor(v / span), t = v / span - j;
-      if (t >= REST) return; // resting on a whole scene
-      const top = scrollY + r.top;
-      const y = t < REST / 2 ? Math.floor(top + j * span * L) - 1 : Math.ceil(top + (j + REST) * span * L) + 1;
-      if (Math.abs(y - scrollY) < 4) return;
-      if (window.__lenis) window.__lenis.scrollTo(y, { duration: 0.6, easing: (x) => 1 - Math.pow(1 - x, 3) });
-      else scrollTo({ top: y, behavior: 'smooth' });
-    };
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(look); clearTimeout(idle); idle = setTimeout(settle, 180); };
-    const press = () => { down = true; }, lift = () => { down = false; onScroll(); };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(look); };
     addEventListener('scroll', onScroll, { passive: true });
-    addEventListener('pointerdown', press, { passive: true });
-    addEventListener('pointerup', lift, { passive: true });
+    addEventListener('resize', onScroll, { passive: true });
     look();
-    return () => { removeEventListener('scroll', onScroll); removeEventListener('pointerdown', press); removeEventListener('pointerup', lift); cancelAnimationFrame(raf); clearTimeout(idle); };
+    return () => {
+      removeEventListener('scroll', onScroll); removeEventListener('resize', onScroll); cancelAnimationFrame(raf);
+      el.removeAttribute('data-wipe');
+      el.querySelectorAll('.ig-scene').forEach((sc) => { sc.removeAttribute('data-t'); sc.style.removeProperty('--out'); });
+    };
   }, [n, off]);
   return [ref, reach];
 }
@@ -173,6 +174,7 @@ function Draw({ k, on }) {
   );
   if (k === 'cert') return (
     <div className={c('ig-d ig-d-cert')}>
+      <p className="h"><span>hanzo.ai</span></p>
       <svg viewBox="0 0 48 48" width="64" height="64" aria-hidden="true"><path className="sh" pathLength="1" d="M16 21v-5a8 8 0 0 1 16 0v5" fill="none" stroke="currentColor" strokeWidth="3.5" /><rect x="10" y="21" width="28" height="21" rx="5" fill="currentColor" /></svg>
       <p className="t">Let's Encrypt</p>
       <p className="r">provisioning and renewal</p>
@@ -242,17 +244,16 @@ function Pipeline() {
     <motion.section ref={room} className="ig-pipe v2-dark" data-room="dark" style={{ clipPath: clip }}>
       <div className="v2-wrap v2-grid">
         <div className="ig-pipe-l">
-          <h2 className="v2-display s">Chain your own pipeline</h2>
-          <p className="v2-lede">Name one in an annotation, or chain several into a named pipeline and name that.</p>
+          <h2 className="v2-headline ig-pipe-h">Name one in an annotation, or chain several into a named pipeline and name that.</h2>
           <div className="ig-pipe-pick" role="group" aria-label="Middleware">
             {MW.map((m) => <button key={m} type="button" data-sound="tick" aria-pressed={chain.includes(m)} onClick={() => toggle(m)}>{m}</button>)}
           </div>
         </div>
         <div className="ig-pipe-run" ref={run}>
-          <p className={'ig-pipe-end' + (at === -1 ? ' lit' : '')}>request</p>
+          <p className={'ig-pipe-end' + (at === -1 ? ' lit' : '')}>hanzo.ai</p>
           <Reorder.Group as="ol" axis="y" values={chain} onReorder={setChain} className="ig-pipe-chain" data-swipe-own="">
             {chain.map((m, i) => (
-              <Reorder.Item as="li" key={m} value={m} className={at === i ? 'lit' : ''} data-cursor="Drag" onDragEnd={() => play('tick')} whileDrag={{ scale: 1.03, boxShadow: '0 18px 40px -18px rgba(0,0,0,.6)' }} transition={{ duration: 0.3, ease: EASE }}>
+              <Reorder.Item as="li" key={m} value={m} className={at === i ? 'lit' : ''} onDragEnd={() => play('tick')} whileDrag={{ scale: 1.03, boxShadow: '0 18px 40px -18px rgba(0,0,0,.6)' }} transition={{ duration: 0.3, ease: EASE }}>
                 <span className="ig-pipe-n">{String(i + 1).padStart(2, '0')}</span>{m}
                 <span className="ig-pipe-mv">
                   <button type="button" data-sound="tick" aria-label={'Move ' + m + ' up'} disabled={i === 0} onClick={() => move(i, -1)}>↑</button>
@@ -261,7 +262,7 @@ function Pipeline() {
               </Reorder.Item>
             ))}
           </Reorder.Group>
-          {chain.length === 0 && <p className="ig-pipe-none">No middleware: straight to the backend.</p>}
+          {chain.length === 0 && <p className="ig-pipe-none" aria-hidden="true">—</p>}
           <p className={'ig-pipe-end' + (at >= chain.length ? ' lit' : '')}>backend</p>
           <span className={'ig-pipe-walk' + (at >= -1 ? ' on' : '')} style={{ transform: `translateY(${y}px)` }} aria-hidden="true" />
         </div>
@@ -292,7 +293,7 @@ export default function Ingress() {
         </Lift>
       </section>
 
-      <div ref={wipe}>
+      <div ref={wipe} className="ig-wipe">
         <WipeScenes
           className="ig-ws"
           label="What happens at the edge"

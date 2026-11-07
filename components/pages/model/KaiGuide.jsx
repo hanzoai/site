@@ -115,7 +115,13 @@ const RESP = `{
   "latency_ms": …
 }`;
 
-/* the first screen: the request types and the response streams, once (typing into text nodes via refs), then rests */
+const RLINES = RESP.split('\n');
+// the lines the session rests on: usage (output_tokens 0) and the answers block, lit in this order once it settles
+const KEY = RLINES.map((l, i) => (i >= 4 && i <= 9 ? i - 4 : undefined));
+
+/* the first screen: the request types and the response streams, once (typing into text nodes via refs), then rests on
+   the answer: the request dims, the response scrolls so its usage and answers lines sit mid-window, and those lines
+   light one by one (no values added: the guide's own shape, its … kept) */
 function Session() {
   const box = useRef(null), req = useRef(null), res = useRef(null), scr = useRef(null), say = useRef(null);
   const seen = useInView(box, { amount: 0.4 });
@@ -124,10 +130,17 @@ function Session() {
   const [phase, setPhase] = useState('idle'); // idle (empty, waiting) | run | done
   const [run, setRun] = useState(0);
   const at = useRef({ i: 0, j: 0 });
-  const lines = RESP.split('\n');
   const show = (p, s) => { box.current.dataset.phase = p; say.current.textContent = s; };
+  // the rest: centre the usage-to-answers block in the window (smoothly when the run ends, at once under reduced motion)
+  const settle = (smooth) => {
+    const sc = scr.current, ks = res.current.querySelectorAll('[data-k]');
+    if (!ks.length) return;
+    const top = sc.getBoundingClientRect().top - sc.scrollTop;
+    const a = ks[0].getBoundingClientRect().top - top, z = ks[ks.length - 1].getBoundingClientRect().bottom - top;
+    sc.scrollTo({ top: Math.max(0, (a + z) / 2 - sc.clientHeight / 2), behavior: smooth ? 'smooth' : 'auto' });
+  };
   useEffect(() => {
-    if (calm) { req.current.textContent = CURL; res.current.textContent = RESP; show('done', '200 · output_tokens 0'); setPhase('done'); return; }
+    if (calm) { req.current.textContent = CURL; [...res.current.children].forEach((l) => { l.dataset.in = ''; }); show('done', '200 · output_tokens 0'); setPhase('done'); return; }
     if (!seen || hold || phase === 'done') return;
     const r = req.current, o = res.current, sc = scr.current, p = at.current;
     let t;
@@ -139,14 +152,20 @@ function Session() {
     };
     const stream = () => {
       if (!p.j) show('stream', '200 · streaming');
-      o.textContent = lines.slice(0, ++p.j).join('\n'); pin();
-      if (p.j < lines.length) t = setTimeout(stream, 75); else { show('done', '200 · output_tokens 0'); setPhase('done'); }
+      o.children[p.j++].dataset.in = ''; pin();
+      if (p.j < RLINES.length) t = setTimeout(stream, 75);
+      else { show('done', '200 · output_tokens 0'); setPhase('done'); }
     };
-    if (phase === 'idle') { r.textContent = ''; o.textContent = ''; sc.scrollTop = 0; setPhase('run'); }
+    if (phase === 'idle') { r.textContent = ''; [...o.children].forEach((l) => { delete l.dataset.in; }); sc.scrollTop = 0; setPhase('run'); }
     show(p.i < CURL.length ? 'type' : 'stream', p.i < CURL.length ? 'typing' : '200 · streaming');
     t = setTimeout(p.i < CURL.length ? step : stream, p.i || p.j ? 0 : 450);
     return () => clearTimeout(t);
   }, [seen, calm, hold, phase, run]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (phase !== 'done') return;
+    const t = setTimeout(() => settle(!calm), calm ? 0 : 300);
+    return () => clearTimeout(t);
+  }, [phase, calm]); // eslint-disable-line react-hooks/exhaustive-deps
   const replay = () => { at.current = { i: 0, j: 0 }; setHold(false); setPhase('idle'); setRun((x) => x + 1); };
   const label = phase === 'done' ? 'Replay' : hold ? 'Play' : 'Pause';
   return (
@@ -165,7 +184,7 @@ function Session() {
       </div>
       <div className="kg-sess-scr" ref={scr} tabIndex={0} data-lenis-prevent aria-label="curl request and the shape of its response">
         <pre className="kg-sess-req"><span className="kg-ps" aria-hidden="true">$ </span><code ref={req}>{CURL}</code></pre>
-        <pre className="kg-sess-res"><code ref={res}>{RESP}</code></pre>
+        <pre className="kg-sess-res"><code ref={res}>{RLINES.map((l, i) => <span key={i} className="kg-rl" data-k={KEY[i]} style={KEY[i] !== undefined ? { '--k': KEY[i] } : undefined}>{l}{'\n'}</span>)}</code></pre>
       </div>
     </figure>
   );
@@ -204,21 +223,68 @@ function Types() {
 }
 
 /* the hero already typed the curl request, so the code opens on Python (curl stays one tab away) */
+/* the shape of one call, drawn from the request's own names: each question goes in under its name and its answer comes
+   back under the same name, typed. Pointing at a row lights its line (a figure, aria-hidden: the code beside it says it) */
+const SHAPE = [['department', 'choice'], ['urgency', 'score'], ['churn_risk', 'noul']];
+function Shape() {
+  return (
+    <div className="kg-shape" aria-hidden="true">
+      <span className="kg-shape-h">questions</span><span /><span className="kg-shape-h">answers</span>
+      {SHAPE.map(([n, t]) => (
+        <div key={n} className="kg-shape-r">
+          <code>{n}</code>
+          <span className="kg-shape-w"><i /><em>{t}</em></span>
+          <code>{n}</code>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* the language is shared by the hash (#curl, #python, #typescript) and remembered on this device; each block opens
+   capped at 12 lines over a fade, with Show all under it (the whole text is in the HTML and Copy copies all of it) */
+const LANG = CODES.map(([l]) => l.toLowerCase());
+const CAP = 12;
 function CallIt() {
   const [k, setK] = useState(1);
+  const [all, setAll] = useState([false, false, false]);
   const box = useRef(null);
   // the kit CodeBlock marks itself a dark room; here it sits on a white tile, so it is marked light before the header
   // starts watching for dark rooms (layout effects run first), else the header turns dark over light code
   // (docs/requests/kai-guide.md asks for a room prop on CodeBlock)
   useLayoutEffect(() => { box.current?.querySelectorAll('.x-codeblock[data-room]').forEach((el) => el.setAttribute('data-room', 'light')); }, []);
+  useEffect(() => {
+    const read = () => {
+      let i = LANG.indexOf(location.hash.slice(1));
+      if (i < 0) { try { i = LANG.indexOf(localStorage.getItem('kg-lang')); } catch { i = -1; } }
+      if (i >= 0) setK(i);
+    };
+    read(); addEventListener('hashchange', read);
+    return () => removeEventListener('hashchange', read);
+  }, []);
+  const choose = (i) => {
+    setK(i);
+    try { localStorage.setItem('kg-lang', LANG[i]); } catch { /* storage off: the choice lasts this visit */ }
+    history.replaceState(history.state, '', '#' + LANG[i]);
+  };
+  const more = (i) => {
+    setAll((a) => a.map((v, j) => v || j === i));
+    requestAnimationFrame(() => box.current?.querySelector(`#kg-lang-panel-${i} pre`)?.focus({ preventScroll: true }));
+  };
   return (
     <div className="kg-code" ref={box}>
-      <Tabs id="kg-lang" label="Language" tabs={CODES.map(([l]) => l)} value={k} onChange={setK} />
-      {CODES.map(([l, c], i) => (
-        <TabPanel key={l} id="kg-lang" i={i} value={k} className="kg-code-p">
-          <CodeBlock code={c} label={l} />
-        </TabPanel>
-      ))}
+      <Tabs id="kg-lang" label="Language" tabs={CODES.map(([l]) => l)} value={k} onChange={choose} />
+      {CODES.map(([l, c], i) => {
+        const long = c.split('\n').length > CAP;
+        return (
+          <TabPanel key={l} id="kg-lang" i={i} value={k} className="kg-code-p">
+            <div className="kg-cap" data-cap={(long && !all[i]) || undefined} style={{ '--cap': CAP }}>
+              <CodeBlock code={c} label={l} />
+              {long && !all[i] && <button type="button" className="kg-more" aria-controls={`kg-lang-panel-${i}`} aria-expanded="false" onClick={() => more(i)}><span>Show all</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></button>}
+            </div>
+          </TabPanel>
+        );
+      })}
     </div>
   );
 }
@@ -299,38 +365,66 @@ const LIMITS = [
   ['Price', <>$0.021 per million input tokens; output is free. Jev costs $0.042.</>],
 ];
 
+/* the limits one at a time: only the open row shows its sentence; the other four fold to their mono label, their text
+   kept in the HTML (hidden="until-found", so find-in-page and #limit-<name> open it). On desktop the open row follows
+   the checker as it walks Hanzo's cases; a click on a row opens it and loads its case, so the two move together. The
+   list keeps the height of its tallest open state, so nothing below it moves while rows open and fold. */
+const slug = (k) => 'limit-' + k.toLowerCase();
 function Limits() {
-  const box = useRef(null);
+  const box = useRef(null), list = useRef(null);
   const seen = useInView(box, { amount: 0.3 });
   const calm = useReducedMotion();
   const [s, setS] = useState(1);
   const [n, setN] = useState(0); // steps played: the checker walks Hanzo's cases once, then rests on the extrapolated one
   const [mine, setMine] = useState(null); // [model, tokens, questions] once the visitor takes over
   const [row, setRow] = useState(null);
+  const [open, setOpen] = useState(SCENE_ROW[1]);
   useEffect(() => {
     if (!seen || mine || calm || n >= WALK.length) return;
     const t = setTimeout(() => { setS(WALK[n]); setN(n + 1); }, 2600);
     return () => clearTimeout(t);
   }, [seen, mine, calm, n]);
   const lit = row !== null ? row : mine ? null : SCENE_ROW[s];
-  const pick = (i) => { setRow(i); setMine([...SCENES[ROW_SCENE[i]]]); };
+  // desktop: the open row follows the checker's walk (on a phone the checker sits below, so only a tap opens a row)
+  useEffect(() => { if (lit !== null && matchMedia('(min-width: 900px)').matches) setOpen(lit); }, [lit]);
+  const pick = (i) => { setOpen(i); setRow(i); setMine([...SCENES[ROW_SCENE[i]]]); };
+  useEffect(() => {
+    const dl = list.current;
+    const dds = [...dl.querySelectorAll('dd')];
+    // find-in-page or a #limit-<name> link reveals a folded sentence: open that row with it
+    const found = dds.map((d, i) => { const f = () => pick(i); d.addEventListener('beforematch', f); return f; });
+    const hash = () => { const i = LIMITS.findIndex(([k]) => '#' + slug(k) === location.hash); if (i >= 0) pick(i); };
+    hash(); addEventListener('hashchange', hash);
+    // reserve the tallest open state (desktop, where the list sits beside the sticky checker)
+    const fit = () => {
+      dl.style.minHeight = '';
+      if (!matchMedia('(min-width: 900px)').matches) return;
+      const was = dds.map((d) => d.getAttribute('hidden'));
+      let max = 0;
+      dds.forEach((_, i) => { dds.forEach((d, j) => (j === i ? d.removeAttribute('hidden') : d.setAttribute('hidden', 'until-found'))); max = Math.max(max, dl.offsetHeight); });
+      dds.forEach((d, i) => (was[i] === null ? d.removeAttribute('hidden') : d.setAttribute('hidden', was[i])));
+      dl.style.minHeight = max + 'px';
+    };
+    fit(); document.fonts?.ready.then(fit); addEventListener('resize', fit);
+    return () => { dds.forEach((d, i) => d.removeEventListener('beforematch', found[i])); removeEventListener('hashchange', hash); removeEventListener('resize', fit); };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <section className="kg-limits kg-sec" ref={box} aria-labelledby="kg-l">
       <div className="kg-wrap kg-limits-g">
         <div className="kg-limits-t">
           <h2 id="kg-l" className="kg-h2">What a request may hold</h2>
           <p className="kg-kick kg-sub">Limits</p>
-          <dl className="kg-dl">
+          <dl className="kg-dl" ref={list}>
             {LIMITS.map(([k, v], i) => (
-              <div key={k} data-on={lit === i || undefined}>
-                <dt><button type="button" aria-pressed={row === i} onClick={() => pick(i)}><span>{k}</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></button></dt>
-                <dd>{v}</dd>
+              <div key={k} id={slug(k)} data-on={open === i || undefined}>
+                <dt><button type="button" aria-expanded={open === i} aria-controls={slug(k) + '-d'} onClick={() => pick(i)}><span>{k}</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></button></dt>
+                <dd id={slug(k) + '-d'} hidden={open === i ? undefined : 'until-found'}>{v}</dd>
               </div>
             ))}
           </dl>
         </div>
         <div className="kg-limits-c">
-          <Checker s={s} mine={mine} price={lit === 4} setMine={(n) => { setRow(null); setMine(n); }} />
+          <Checker s={s} mine={mine} price={open === 4} setMine={(n) => { setRow(null); setMine(n); }} />
         </div>
       </div>
     </section>
@@ -456,7 +550,7 @@ export default function KaiGuide() {
   return (
     <main className="kg">
       <section className="kg-hero" aria-labelledby="kg-h">
-        <noscript><style>{'.kg-h1 .x-line-in,.kg-verdict b{transform:none!important;opacity:1!important}.kg-sess-btn,.kg-rx-btn{display:none!important}.kg-code [role=tabpanel]{display:block!important}.kg-code [role=tablist]{display:none!important}'}</style></noscript>
+        <noscript><style>{'.kg-h1 .x-line-in,.kg-verdict b{transform:none!important;opacity:1!important}.kg-sess-btn,.kg-rx-btn{display:none!important}.kg-code [role=tabpanel]{display:block!important}.kg-code [role=tablist]{display:none!important}.kg-more{display:none!important}.kg-dl dd[hidden]{display:block!important;content-visibility:visible!important}'}</style></noscript>
         <div className="kg-wrap kg-hero-g">
           <div className="kg-hero-t">
             <h1 id="kg-h" className="kg-h1">
@@ -483,6 +577,7 @@ export default function KaiGuide() {
             <h2 id="kg-c" className="kg-h2">One request, three questions</h2>
             <p className="kg-kick kg-sub">Call it</p>
             <p className="kg-lede-s">Every response also carries id, model, usage (output_tokens is 0), routing (the checkpoint that answered: kai-1.3 for the model id kai), state_hash and latency_ms.</p>
+            <Shape />
           </div>
           <CallIt />
         </div>

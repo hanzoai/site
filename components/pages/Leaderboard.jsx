@@ -1,7 +1,7 @@
 'use client';
 // Persona: a developer or bug hunter who uses Hanzo and wants credits for contributing (arrives from /bounty, GitHub or the header)
 // Goal: see how ranks are earned and start on an open bounty
-// CTA: Open bounties -> /bounty (hero, the shared sticky ask, closing Band) · data-cta leaderboard.hero / leaderboard.band
+// CTA: Open bounties -> /bounty (hero, the shared sticky ask, the page-local close) · data-cta leaderboard.hero / leaderboard.band
 // Metric: cta_click on leaderboard.hero (a researcher-or-builder metric: a GitHub or bounty click)
 // Signature: every total is a sum that adds itself up: the podium's tape re-adds each hunter's score, then the four ways to earn pin as chapters while a receipt builds a total line by line.
 // Beyond: your points, worked out with the page's own rules (+50 a bug, +100 to +500 a merged pull request, +20 a referral, +1 per 100K tokens), and where your tokens would sit on the global board.
@@ -9,15 +9,17 @@
    1. A podium as the hero object: the three hunters stand in silver and grey, the lit one in ink; the tape beside it adds the lit
       hunter's total by itself (bounty points, plus one point per 100,000 tokens: 450 + 1,060 = 1,510).
    2. The contributors as an editorial list with huge ranks; the recent rewards open in a sheet.
-   3. The one dark room opens from a rounded panel (SceneWipe): the token board, with its scale switch.
+   3. The first dark room opens from a rounded panel (SceneWipe): the token board, Linear first, with its scale switch.
    4. How to earn, as four pinned chapters: each rule adds its line to a receipt and the total rolls on.
    5. The Beyond: your points, worked out, and where your tokens would sit on the board.
-   Colour: none of its own (JAMES.md): ink, greys and silvers; the lit hunter is the one ink block.
-   Motion: idle (the podium lights each hunter in turn and its tape adds up), pointer (rows fill on hover, steps lift),
-   state (scale pill, sheet, rolling totals) and scroll (pinned receipt, dark-room wipe, bars drawing, headline masks).
+   6. The close: the second dark room, opened the same way, the h1's words cut in at 52px and the one ask.
+   Colour: none of its own (JAMES.md): the deck ramp only, named once at the top of Leaderboard.css; the lit hunter is the one ink block.
+   Motion: idle (the podium lights each hunter in turn and its tape adds up; the lists read themselves; the calculator
+   climbs the board once), pointer (rows fill on hover, steps lift), state (scale pill, sheet, rolling totals) and scroll
+   (pinned receipt, dark-room wipes, bars drawing, headline masks).
    One ask, Hanzo's "Open bounties": in the hero, sticky after it (AskBar on desktop, the thumb bar on phones), at the close.
    Every name and figure is Hanzo's.
-   V2: 8/10 podium hero with a self-adding tape and a pause control, ranks, wiped dark token room, earn rules as pinned chapters building a receipt, calculator, closing Band; MASTER scale rhythm (52/26/64, one 84px moment per screen), greys only, deck easing. */
+   V2: 8/10 round 2: range input hydration-safe (fill on the label, suppressHydrationWarning); receipt prints Hanzo's own card titles and points (50/150/170/171), the +$20 PR tag kept (it is on Hanzo's card); deck greys as page tokens, 497/606 weights, deck durations, flat bars; podium and tape total in the first screen at 1470x801 and the lit block within 660px on phone; board Linear first and collapsed to three rows on phone; one receipt after the chapters on phone; calculator result on paper, idle climb; page-local close with line-mask h2 at 52px and data-cta leaderboard.band; hovers answer (chip fill, stepper fill, reader yields to the pointer). */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE } from '../ui';
@@ -391,6 +393,17 @@ function Calc() {
   const [refs, setRefs] = useState(0);
   const [k, setK] = useState(3);
   const tokens = TOKS[k];
+  // an idle demo that runs once and ends at rest: when the calculator is reached untouched, the tokens step up the
+  // board to @hanzo's own 106,039,884 (#1), the total rolling with each step; any touch or key hands it over
+  const box = useRef(null);
+  const met = useInView(box, { once: true, amount: 0.5 });
+  const calm = useReducedMotion();
+  const [mine, setMine] = useState(false);
+  useEffect(() => {
+    if (!met || mine || calm || k >= 9) return;
+    const t = setTimeout(() => setK((v) => Math.min(9, v + 1)), k === 3 ? 700 : 500);
+    return () => clearTimeout(t);
+  }, [met, mine, calm, k]);
   const pts = bugs * 50 + prs * per + refs * 20 + fromTokens(tokens);
   // credits per card tag, as Hanzo prints them: bug +$20 (up to), merged pull request +$20, referral +$5
   const credits = bugs * 20 + prs * 20 + refs * 5;
@@ -402,7 +415,7 @@ function Calc() {
         <div className="xlb-calc-head">
           <h2 id="xlb-calc-h" className="pf-head">Your points, worked out</h2>
         </div>
-        <div className="xlb-calc pf-obj">
+        <div className="xlb-calc pf-obj" ref={box} onPointerDownCapture={() => setMine(true)} onKeyDownCapture={() => setMine(true)}>
           <div className="xlb-calc-in">
             <Step label="Verified bug reports" v={bugs} set={setBugs} />
             <Step label="Merged bounty pull requests" v={prs} set={setPrs} />

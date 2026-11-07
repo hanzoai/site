@@ -6,7 +6,7 @@
 // Signature: cards that open. Every organization is a numbered card (01 / 37) that opens into its own /oss page, title first (Morph); in the hero every cluster of light is one of them, named under the pointer and opened by a press.
 // Beyond: "Contribute in your language". Pick a language: the featured repositories written in it across Hanzo, Lux and Zoo, and its share of each ecosystem's repositories, from Hanzo's own language shares.
 /* Open source. Its idea is the scale of it, made literal: a catalogue of 2,247 repositories you can open.
-   V2: 8/10 Catalogue on the MASTER rhythm: the sky of every repository pulls back on arrival with 1,733 as the one big figure, ecosystem tabs re-light a commit-year dashboard, numbered org cards open their pages, a signed charter, one ask; greys, deck timings, nothing floating.
+   V2: 8/10 Round 2: the list rise (xos-in) now lands on opacity 1, so Totals with its count-up, all six charter articles and the Contribute repositories show at both sizes; hero lede white 78% on black; hero 1,733 rests at 64px so the h1 is the one big thing; one ask per screen (the local band drops its GitHub button on desktop, the band carries data-thumb); "Built on" gains a monochrome mark row of Hanzo's twelve glyphs that lights the credit under the pointer, two credits a row on phone; touch hint hidden, secondary links and the sheet trigger answer hover with a fill, closing ask hovers #262626; tighter seams between paper sections.
    Supporting: the sky drifting and twinkling by itself (idle), the ecosystem and galaxy tabs whose pill glides while
    the year of commits re-lights cell by cell (state), and the charter signed with a drawn line (arrival).
    Every figure is Hanzo's, as its build read GitHub and its forge. */
@@ -475,7 +475,7 @@ function Built() {
         </ul>
         <ul className="xos-tiles" {...arrive} onPointerLeave={() => setHot(-1)} onBlur={() => setHot(-1)}>
           {BUILT.map(([ic, name, repo, who, site, what, lic], i) => (
-            <li key={name} className="xos-tile" style={{ '--k': i % 4 + Math.floor(i / 4) }} onPointerMove={lean} onPointerLeave={rest} onPointerEnter={() => setHot(i)} onFocus={() => setHot(i)}>
+            <li key={name} className="xos-tile" style={{ '--k': i % 4 + Math.floor(i / 4) }} onPointerMove={lean} onPointerLeave={rest} onPointerEnter={(e) => e.pointerType === 'mouse' && setHot(i)} onFocus={() => setHot(i)}>
               <span className="xos-tile-i pf-mono" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
               <span className="xos-tile-lic pf-mono">{lic}</span>
               <A to={repo} className="xos-tile-n">{name}</A>

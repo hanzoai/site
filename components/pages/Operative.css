@@ -81,6 +81,8 @@
 .xov-inside-grid { align-items: center; padding-top: 40px; }
 /* the scene's last screen already leaves room below it: the next block starts close, no dead band */
 .xov .xov-run { padding-top: clamp(24px, 3vw, 48px); }
+.xov .xov-ways { padding-top: clamp(24px, 3vw, 40px); }
+@media (hover: hover) { .xov .a2-pause:hover { border-color: var(--ink); transform: scale(1.04); } .xov .a2-pause:active { transform: scale(.97); } .xov .xov-act .a2-pause:hover { border-color: rgba(255, 255, 255, .4); } }
 .xov-inside-copy { grid-column: 1 / span 5; }
 .xov-inside-copy .a2-headline { margin: 0 0 28px; }
 .xov-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
@@ -90,13 +92,14 @@
 .xov-list button b { font-weight: inherit; transition: transform .3s var(--a2-ease); }
 .xov-list button:active { transform: scale(.98); }
 .xov-list li.on button { color: var(--ink); }
-@media (hover: hover) { .xov-list button:hover { color: var(--ink); } .xov-list button:hover b { transform: translateX(4px); } }
+@media (hover: hover) { .xov-list button:hover { color: var(--ink); box-shadow: inset 0 -1px 0 var(--ink); } .xov-list button:hover b { transform: translateX(4px); } }
 /* one fixed slot for the open layer's words: rows never change height */
 .xov-slot { display: grid; margin-top: 20px; }
 .xov-slot p { grid-area: 1 / 1; margin: 0; max-width: 62ch; font-size: 16px; line-height: 1.55; color: var(--g600); text-wrap: pretty; opacity: 0; transform: translateY(10px); clip-path: inset(0 0 100% 0); transition: opacity .15s var(--e-out), transform .4s var(--a2-ease), clip-path .4s var(--a2-ease); }
 .xov-slot p.on { opacity: 1; transform: none; clip-path: inset(0 0 0 0); transition-delay: .08s; }
 .xov-oss { margin: 24px 0 0; font-size: 15px; color: var(--g600); }
-.xov-oss a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.xov-oss a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; border-radius: 4px; transition: background-color .15s var(--e-out), box-shadow .15s var(--e-out); }
+@media (hover: hover) { .xov-oss a:hover, .xov-note a:hover { background-color: var(--g200); box-shadow: 0 0 0 3px var(--g200); } }
 
 .xov-stack { --sh: 150px; --gap: 58px; --push: 40px; --lift: 30px; --open: 40deg; grid-column: 7 / span 6; position: relative; height: min(640px, 76vh); perspective: 1800px; }
 .xov-slab, .xov-base { position: absolute; left: 8%; right: 8%; top: 59%; height: var(--sh); border-radius: 24px; transform-origin: 50% 50%; }
@@ -307,6 +310,10 @@
   .xov-seg { display: flex; width: 100%; }
   .xov-seg button { flex: 1; padding: 0 12px; font-size: 15px; }
   .xov-cmd { padding: 18px; font-size: 14px; }
+  /* three fixed lines on a phone (docker run / the one variable / the image), so switching never changes its height */
+  .xov-env { display: flex; width: max-content; margin: 4px 0; }
+  .xov-env span { white-space: nowrap; }
+  .xov-same { display: block; white-space: nowrap; }
   .xov-way { grid-template-columns: minmax(0, 1fr); gap: 24px; padding: 24px; }
   .xov-way-k { font-size: 21px; }
   .xov-loop li { font-size: 26px; }

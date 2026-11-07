@@ -66,7 +66,7 @@ function Desk({ at, peek }) {
   const g = AIM[peek ?? at];
   return (
     <div className={'xov-desk h' + at + (peek != null && peek !== at ? ' pk' + peek : '')} aria-hidden="true">
-      <div className="xov-desk-bar"><i /><i /><i /><span className="x-mono">Xvfb :1</span><span className="x-mono xov-desk-r">localhost:8501</span></div>
+      <div className="xov-desk-bar"><i /><i /><i /><span className="x-mono">Xvfb</span><span className="x-mono xov-desk-r">localhost:8501</span></div>
       <div className="xov-desk-in">
         <Img className="xov-wall" src="/models/iro.webp" alt="" w={1200} h={1500} sizes="(max-width: 900px) 100vw, 1152px" priority />
         <div className="xov-win">
@@ -75,7 +75,7 @@ function Desk({ at, peek }) {
             <p className="xov-win-h">Say what you want</p>
             <p className="xov-win-p">Type an objective and it plans, acts, looks at the result, and goes again.</p>
             <div className="xov-field"><span className="xov-typed x-mono">objective</span><b /></div>
-            <div className="xov-win-btn">OK</div>
+            <div className="xov-win-btn" />
           </div>
         </div>
         <div className="xov-scan" />
