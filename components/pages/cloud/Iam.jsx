@@ -245,8 +245,9 @@ function FactRail() {
 function Room({ children }) {
   const ref = useRef(null);
   const enter = useEnter();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.3'] });
-  const clip = useTransform(scrollYProgress, (p) => { const g = (24 * (1 - Math.min(1, Math.max(0, p)))).toFixed(1); return `inset(0px ${g}px round ${g}px)`; });
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.5'] });
+  // the inset stays inside the text gutter (16px of 24 on desktop, 8px of 16 on phones), so no word is ever cut by the card edge
+  const clip = useTransform(scrollYProgress, (p) => { const k = (1 - Math.min(1, Math.max(0, p))).toFixed(3); return `inset(0px calc(var(--ia-m) * ${k}) round calc(var(--ia-m) * ${k} * 1.5))`; });
   return <motion.section id="ia-refresh" ref={(el) => { ref.current = el; enter(el); }} className="ia-room v2-dark" data-room="dark" data-entrance="accordion" style={{ clipPath: clip }}>{children}</motion.section>;
 }
 const fold = (ms) => ({ '--ia-fd': ms + 'ms' });

@@ -161,7 +161,7 @@ html:not(.js) .ia .ia-pause { display: none; }
 }
 
 /* the dark room: enters as a rounded card inside the gutters and opens to full width (clip-path, from the scroll) */
-.ia-room { position: relative; z-index: 1; padding: clamp(72px, 8vw, 116px) 0; scroll-margin-top: 64px; }
+.ia-room { --ia-m: 16px; position: relative; z-index: 1; padding: clamp(72px, 8vw, 116px) 0; scroll-margin-top: 64px; }
 .ia-fam-grid { align-items: center; row-gap: 32px; }
 .ia-fam-copy { grid-column: 1 / span 5; align-self: start; padding-top: 8px; }
 .ia-fam-copy .v2-headline { margin: 0 0 16px; color: #fafafa; }
@@ -247,7 +247,7 @@ button.ia-tok:disabled { cursor: default; }
   .ia .sp-rel-a span { flex-basis: 100%; order: 3; }
   .ia-rel-to { display: none; }
   .ia .sp-rel-a svg { margin-left: auto; }
-  .ia-room { padding: 72px 0; }
+  .ia-room { --ia-m: 8px; padding: 72px 0; }
   .ia-fam-box { padding: 68px 16px 24px; }
   .ia-fam-track { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .ia-fam-track li:nth-child(5) .ia-fam-seg { display: none; }
