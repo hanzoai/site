@@ -231,3 +231,9 @@ html:not(.js) .eo-disc-a { display: none; }
   .eo-dot.enso circle:first-of-type { r: 16px; }
 }
 @media (prefers-reduced-motion: reduce) { .eo-enso { animation: none; } .eo-lane[data-hit]::after { animation: none; } }
+
+/* GA item 17: the way to buy, its own line under the hero's actions, and the Band's second line (white on the black room) */
+.eo-buy { margin: 6px 0 0; }
+.eo-go { min-height: 44px; }
+.eo-orbit .x-band .eo-go { color: rgba(255, 255, 255, .78); transition: color .2s; }
+@media (hover: hover) { .eo-orbit .x-band .eo-go:hover { color: #fff; } }

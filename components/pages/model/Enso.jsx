@@ -156,7 +156,7 @@ function Form() {
 
 /* GA item 17: the way to buy. Enso ships in every plan; Go ($8/month, "access to every model", /pricing) goes straight to its card checkout. */
 const GO = '/pay/confirm/card?plan=go&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat';
-const Plan = ({ slot }) => <Cta to={GO} kind="link" id={'enso.go-' + slot}>Every model through Enso, Go is $8/month</Cta>;
+const Plan = ({ slot }) => <Cta to={GO} kind="link" id={'enso.go-' + slot} className="eo-go">Every model through Enso, Go is $8/month</Cta>;
 
 const TIERS = [
   { name: 'Enso Flash', code: 'enso', inp: '$0.33', out: '$1.65', ctx: true, axis: 0, why: 'at volume', wb: 'https://platform.hanzo.ai/workbench?model=enso', desc: 'For chat, extraction, classification and simple agent steps at volume.' },
@@ -540,9 +540,9 @@ export default function Enso() {
           <div className="lv-acts">
             <Cta kind="quiet" to="/login" id="enso.hero" thumb>Try Hanzo</Cta>
             <Cta to="https://platform.hanzo.ai" kind="link" id="enso.hero-platform">API Platform</Cta>
-            <Plan slot="hero" />
             <More to="https://github.com/hanzoai/enso">Docs on GitHub</More>
           </div>
+          <p className="eo-buy"><Plan slot="hero" /></p>
           <p className="lv-crumb">Hanzo / Enso</p>
         </>
       }
