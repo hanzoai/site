@@ -12,6 +12,10 @@
    Supporting: six pinned chapters whose pictures rise in from below (providers round one API, a query fanned out in
    parallel, the CLI lit a step at a time, the API in a pipeline, the DNSSEC key turning, CoreDNS with Hanzo plugins),
    and packets crossing the control plane in the graphite room (with its own pause).
+   Use cases: each row carries a small live picture of a scene the page already draws (the CLI writing records, the
+   providers round one API, many zones).
+   Entrances (docs/MOTION-MAP.md, arrive.js arms them below the fold): domino (the use-case rows), swing-door (What do
+   you need?), drop-in (the plans), invert-flash ("Get DNS").
    Motion kinds: idle (the zone cycle, packets), time (the command typing, the path walk), state (needs light a plan),
    arrival (title cut-in), scroll (the chapters, the Stage settle, the room opening).
    Beyond: "What do you need?" - press the needs you have (unlimited zones, DNSSEC, role-based access, Edge DNS...) and
@@ -23,8 +27,8 @@ import { EASE, useCalm } from '../../ui';
 import { Cta, CodeBlock } from '../../kit';
 import KeynoteStage, { useStagePause } from './SafeStage';
 import KeynoteChapters from '../../v2/KeynoteChapters';
-import KeynoteRoom from '../../v2/KeynoteRoom';
-import KeynoteClose from '../../v2/KeynoteClose';
+import KeynoteClose, { Room as KeynoteRoom } from './SafeClose';
+import { useArrivals } from './arrive';
 import KeynoteLines from '../../v2/KeynoteLines';
 import './Dns.css';
 
@@ -76,6 +80,8 @@ function Zone() {
           {ZONE.map(([n, t, v]) => <p key={n} className="dn-rr"><span className="g"> </span><b>{n}</b><em>{t}</em><span>{v}</span></p>)}
           {RECS.slice(0, r).map(([n, t, v]) => <p key={n} className="dn-rr"><span className="g"> </span><b>{n}</b><em>{t}</em><span>{v}</span></p>)}
           <p key={'add' + r} className={'dn-rr add' + (s >= 1 ? ' in' : '')}><span className="g">+</span><b>{name}</b><em>{type}</em><span>{val}</span></p>
+          {/* the rows still to come keep their place, so the file never grows and nothing below it moves */}
+          {RECS.slice(r + 1).map(([n]) => <p key={'r' + n} className="dn-rr dn-rr-wait"><span className="g"> </span><b>{n}</b></p>)}
         </div>
         <div className="dn-path" aria-hidden="true">
           <div className="dn-nodes">
@@ -291,6 +297,44 @@ const USES = [
   ['Domain Portfolio Management', 'Manage hundreds of domains across multiple registrars and DNS providers from one unified interface.'],
 ];
 
+/* each use case is a scene the page already draws, small: the CLI writing records, the providers round one API, many
+   zones lighting a few at a time. They play while the row is seen (reduced motion: their last frame). */
+function UseArt({ k, on }) {
+  if (k === 0) return (
+    <span className="dn-ua dn-ua-cli" data-on={on ? '' : undefined}>
+      <span className="dn-ua-cmd"><b>$</b><i /></span>
+      {[0, 1, 2].map((j) => <span key={j} className="dn-ua-rr" style={{ '--j': j }}><b>+</b><i /><i /></span>)}
+    </span>
+  );
+  if (k === 1) return (
+    <span className="dn-ua dn-ua-ring" data-on={on ? '' : undefined}>
+      <svg viewBox="0 0 168 104">
+        {[[30, 22], [138, 22], [84, 92]].map(([x, y], j) => <line key={j} x1="84" y1="52" x2={x} y2={y} style={{ '--j': j }} />)}
+      </svg>
+      {[[30, 22], [138, 22], [84, 92]].map(([x, y], j) => <i key={j} style={{ left: x / 1.68 + '%', top: y / 1.04 + '%', '--j': j }} />)}
+      <b />
+    </span>
+  );
+  return (
+    <span className="dn-ua dn-ua-zones" data-on={on ? '' : undefined}>
+      {Array.from({ length: 24 }, (_, j) => <i key={j} style={{ '--j': (j * 7) % 24 }} />)}
+    </span>
+  );
+}
+function Use({ i, t, d }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount: 0.6 });
+  const calm = useCalm();
+  return (
+    <li ref={ref} style={{ '--k': i }}>
+      <span className="kn-fig">{String(i + 1).padStart(2, '0')}</span>
+      <h3 className="dn-h3">{t}</h3>
+      <p>{d}</p>
+      <UseArt k={i} on={seen && !calm} />
+    </li>
+  );
+}
+
 /* ---------- pricing, with Beyond: what do you need? ---------- */
 const PLANS = [
   ['Starter', 'Usage-based pricing for getting started', ['Up to 5 zones', '2 DNS providers', 'CLI and API access', 'Volume-based query pricing'], 'Talk to us', false, false],
@@ -316,7 +360,7 @@ function Pricing() {
             <KeynoteLines className="kn-headline" lines={['Start free.', 'Scale as you grow.']} />
             <p className="kn-kick">Pricing</p>
           </div>
-          <div className="dn-fit">
+          <div className="dn-fit" data-enter="swing">
             <p className="dn-fit-h">What do you need?</p>
             <div className="dn-fit-chips" role="group" aria-label="What do you need?">
               {NEEDS.map(([t], i) => <button key={t} type="button" data-sound="tick" aria-pressed={need.includes(i)} onClick={() => pick(i)}>{t}</button>)}
@@ -324,7 +368,7 @@ function Pricing() {
             <p className="dn-fit-a" aria-live="polite">{need.length ? <><Down /><b>{PLANS[fit][0]}</b></> : null}</p>
           </div>
         </div>
-        <div className={'dn-plans' + (need.length ? ' picking' : '')}>
+        <div className={'dn-plans' + (need.length ? ' picking' : '')} data-enter="drop">
           {PLANS.map(([n, d, pts, cta, pop, month], i) => (
             <div key={n} className={'dn-plan' + (i === ink ? ' ink' : '') + (need.length && i < fit ? ' short' : '')}>
               <div className="dn-plan-top">
@@ -344,8 +388,10 @@ function Pricing() {
 }
 
 export default function Dns() {
+  const root = useRef(null);
+  useArrivals(root);
   return (
-    <main className="kn dn">
+    <main className="kn dn" ref={root}>
       <KeynoteStage
         look="side"
         kick="Programmable DNS Infrastructure"
@@ -381,8 +427,8 @@ export default function Dns() {
             <KeynoteLines className="kn-headline" lines="From startups to enterprise, Hanzo DNS scales with your infrastructure" />
             <p className="kn-kick">Use Cases</p>
           </div>
-          <ol className="dn-uses-l">
-            {USES.map(([t, d], i) => <li key={t}><span className="kn-fig">{String(i + 1).padStart(2, '0')}</span><h3 className="dn-h3">{t}</h3><p>{d}</p></li>)}
+          <ol className="dn-uses-l" data-enter="domino">
+            {USES.map(([t, d], i) => <Use key={t} i={i} t={t} d={d} />)}
           </ol>
         </div>
       </section>
@@ -391,6 +437,7 @@ export default function Dns() {
 
       <KeynoteClose
         light
+        enter="flash"
         className="dn-close"
         name="DNS"
         tag="DNS as code"

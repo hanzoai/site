@@ -300,3 +300,93 @@
   .dn-rr.add, .dn-ans, .dn-node, .dn-rail i, .dn-layer, .dn-pipe li, .dn-merge::before, .dn-merge .dn-rr, .dn-par-l i b, .dn-plan, .dn-pv, .dn-sc-cli .x-codeblock-l { transition: none !important; }
   .dn-node.now > i::after, .dn-wire b, .dn-dial.spin .dn-key { animation: none; }
 }
+
+/* ---------- round 2 (8 Nov) ---------- */
+/* the zone keeps its height: rows still to come hold their place, unseen */
+.dn-rr-wait > * { visibility: hidden; }
+.dn-rr-wait { outline: 1px dashed rgba(255, 255, 255, .12); outline-offset: -3px; border-radius: 8px; }
+/* the first screen sits inside the 1470 grid (the shared side stage bleeds the object to the edge) */
+@media (min-width: 900px) {
+  .dn > .kns.side .kns-obj-wrap { margin-right: 0; }
+  .dn > .kns { padding-bottom: clamp(44px, 5vw, 72px); }
+}
+/* less dead white between the sections after the room */
+.dn .kn-sec { padding-top: clamp(56px, 7vw, 116px); padding-bottom: clamp(56px, 7vw, 116px); }
+.dn .dn-price { padding-top: 0; }
+
+/* use cases: each row has its own small live picture */
+.dn-uses-l li { grid-template-columns: 64px minmax(0, 1fr) 168px; align-items: start; transition: background-color .3s var(--e-out); }
+.dn-uses-l li > .dn-ua { grid-column: 3; grid-row: 1 / span 2; align-self: center; }
+.dn-uses-l li > h3, .dn-uses-l li > p { grid-column: 2; }
+@media (hover: hover) { .dn-uses-l li:hover .dn-ua { transform: translateY(-3px); } .dn-uses-l li:hover > span.kn-fig { color: var(--ink); } }
+.dn-ua { position: relative; display: block; width: 168px; height: 104px; border-radius: 16px; background: var(--dn-f); overflow: hidden; transition: transform .4s var(--e-move); }
+/* 01: the CLI writes three records */
+.dn-ua-cli { display: flex; flex-direction: column; gap: 8px; padding: 14px 16px; background: #0a0a0a; }
+.dn-ua-cmd { display: flex; align-items: center; gap: 8px; }
+.dn-ua-cmd b { font: 497 13px/1 var(--mono); color: rgba(255, 255, 255, .55); }
+.dn-ua-cmd i { height: 6px; width: 70%; border-radius: 3px; background: #fafafa; transform-origin: 0 50%; }
+.dn-ua-rr { display: flex; align-items: center; gap: 6px; padding: 3px 6px; border-radius: 6px; background: rgba(255, 255, 255, .1); }
+.dn-ua-rr b { font: 606 12px/1 var(--mono); color: #fafafa; }
+.dn-ua-rr i { height: 4px; border-radius: 2px; background: rgba(255, 255, 255, .55); }
+.dn-ua-rr i:nth-of-type(1) { width: 30%; } .dn-ua-rr i:nth-of-type(2) { width: 46%; }
+.dn-ua-cli[data-on] .dn-ua-cmd i { animation: dn-ua-type 4.8s steps(12, end) infinite; }
+.dn-ua-cli[data-on] .dn-ua-rr { animation: dn-ua-land 4.8s var(--e-in) infinite; animation-delay: calc(var(--j) * .25s); }
+@keyframes dn-ua-type { 0% { transform: scaleX(0); } 20%, 100% { transform: none; } }
+@keyframes dn-ua-land { 0%, 22% { clip-path: inset(0 100% 0 0); } 34%, 92% { clip-path: inset(0); } 100% { clip-path: inset(0 0 0 100%); } }
+/* 02: three providers round one API, lit in turn */
+.dn-ua-ring svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.dn-ua-ring line { stroke: #d4d4d4; stroke-width: 2; }
+.dn-ua-ring > i { position: absolute; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; background: #fff; border: 2px solid var(--ink); }
+.dn-ua-ring > b { position: absolute; left: 50%; top: 50%; width: 40px; height: 24px; margin: -12px 0 0 -20px; border-radius: 8px; background: var(--ink); }
+.dn-ua-ring[data-on] line { animation: dn-ua-line 3s linear infinite; animation-delay: calc(var(--j) * 1s); }
+.dn-ua-ring[data-on] > i { animation: dn-ua-dot 3s linear infinite; animation-delay: calc(var(--j) * 1s); }
+@keyframes dn-ua-line { 0%, 33% { stroke: var(--ink); } 34%, 100% { stroke: #d4d4d4; } }
+@keyframes dn-ua-dot { 0%, 33% { background: var(--ink); } 34%, 100% { background: #fff; } }
+/* 03: many zones, a few lit at a time */
+.dn-ua-zones { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 5px; padding: 14px; align-content: center; }
+.dn-ua-zones i { aspect-ratio: 1; border-radius: 4px; background: #d4d4d4; }
+.dn-ua-zones[data-on] i { animation: dn-ua-zone 4.8s var(--e-move) infinite; animation-delay: calc(var(--j) * .2s); }
+@keyframes dn-ua-zone { 0%, 12% { background: var(--ink); } 20%, 100% { background: #d4d4d4; } }
+
+/* pricing rhythm: the ink plan's figure is the big one, the others step down to medium (transform, so no box moves) */
+.dn-plan-p { transform-origin: 0 100%; transition: transform .4s var(--e-move); }
+.dn-plan.ink .dn-plan-p { transform: scale(1.375); }
+.dn-plan:not(.ink) .dn-plan-p { transform: scale(.66); }
+/* the close: Deploy to Cloud as an outline, so the header's ask is the one solid */
+.dn-close .knx-go.x-btn.solid { background: transparent; border-color: var(--ink); color: var(--ink); }
+@media (hover: hover) { .dn-close .knx-go.x-btn.solid:hover { background: var(--ink); color: #fff; } }
+/* Edge DNS: the layers still to come wait as dashed slots, so the picture is never an empty box */
+.js .dn-layer:not(.on) { opacity: 1; transform: none; background: transparent; border: 1.5px dashed #a3a3a3; color: transparent; }
+
+/* entrances (arrive.js: data-arm below the fold, data-in on arrival; JS off and reduced motion: the final state) */
+/* domino: the use-case rows tip into place one after another from a hinge at their foot */
+.dn-uses-l[data-enter] { perspective: 1200px; }
+.dn-uses-l[data-arm]:not([data-in]) li { transform: rotateX(-80deg); opacity: 0; }
+.dn-uses-l[data-in] li { transform-origin: 50% 100%; animation: dn-domino .7s cubic-bezier(.3, 1.4, .5, 1) both; animation-delay: calc(var(--k) * .16s); }
+@keyframes dn-domino { from { transform: rotateX(-80deg); opacity: 0; } 30% { opacity: 1; } to { transform: none; opacity: 1; } }
+/* swing-door: "What do you need?" swings in on its left hinge */
+.dn-fit[data-enter] { transform-origin: 0 50%; }
+.dn-price-h { perspective: 1400px; }
+.dn-fit[data-arm]:not([data-in]) { transform: rotateY(70deg); opacity: 0; }
+.dn-fit[data-in] { animation: dn-swing .9s cubic-bezier(.16, 1, .3, 1) both; }
+@keyframes dn-swing { from { transform: rotateY(70deg); opacity: 0; } 40% { opacity: 1; } to { transform: none; opacity: 1; } }
+/* drop-in: the four plans fall from above and settle with a small bounce */
+.dn-plans[data-arm]:not([data-in]) .dn-plan { transform: translateY(-90px); opacity: 0; }
+.dn-plans[data-in] .dn-plan { animation: dn-drop .8s both; }
+.dn-plans[data-in] .dn-plan:nth-child(2) { animation-delay: .08s; } .dn-plans[data-in] .dn-plan:nth-child(3) { animation-delay: .16s; } .dn-plans[data-in] .dn-plan:nth-child(4) { animation-delay: .24s; }
+@keyframes dn-drop { 0% { transform: translateY(-90px); opacity: 0; animation-timing-function: cubic-bezier(.5, 0, .9, .4); } 55% { transform: translateY(0); opacity: 1; animation-timing-function: cubic-bezier(.2, .8, .4, 1); } 75% { transform: translateY(-8px); } 100% { transform: none; opacity: 1; } }
+/* invert-flash: "Get DNS" arrives as a black/white inversion, then holds */
+.dn-close .knx-in[data-arm]:not([data-in]) { opacity: 0; }
+.dn-close .knx-in[data-in] { animation: dn-flash .7s steps(1, end) both; }
+@keyframes dn-flash { 0% { opacity: 1; filter: invert(1); } 14% { filter: none; } 28% { filter: invert(1); } 42%, 100% { opacity: 1; filter: none; } }
+
+@media (max-width: 899px) {
+  .dn-uses-l li { grid-template-columns: 44px minmax(0, 1fr); }
+  .dn-uses-l li > .dn-ua { grid-column: 2; grid-row: auto; margin-top: 8px; width: min(100%, 240px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dn .kns-in, .dn .kns-obj-in, .dn .knl-t, .dn-ua *, .dn-ua { animation: none !important; }
+  .dn-plan-p, .dn-ua { transition: none !important; }
+}
+/* phones: the answer keeps the height of its longest (two-line) form, so a shorter answer never pulls the page up */
+@media (max-width: 899px) { .dn-ans { min-height: 88px; align-content: flex-start; } }
