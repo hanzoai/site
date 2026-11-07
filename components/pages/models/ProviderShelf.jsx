@@ -11,6 +11,7 @@ import { motion, LayoutGroup } from 'motion/react';
 import { EASE, Copy, Count } from '../../ui';
 import { A } from '../../kit';
 import Sigil from '../../Sigil';
+import { FilmPause, usePaused } from '../../v2/ModelFilm';
 import { Field, useCatalog, rateFrom, money } from './parts';
 import './models.css';
 
@@ -34,12 +35,13 @@ export default function ProviderShelf({ doc }) {
   const tokens = cards.map((c) => c.tokens).filter(Boolean);
   const outs = cards.map((c) => c.rate && c.rate.out).filter((v) => v != null);
   const plotted = cards.filter((c) => c.tokens && c.rate).length;
+  const paused = usePaused();
   const anim = cards.length <= 60; // re-flow by layout only where it stays smooth
   return (
     <main className="xmf xmf-prov">
       <section className="xmf-launch xmf-maker" aria-labelledby="xmf-h1">
         <div className="xmf-art" aria-hidden="true">
-          <Sigil seed={doc.route} data={[n, Math.max(0, ...tokens), outs.length ? Math.min(...outs) : 0, outs.length ? Math.max(...outs) : 0]} className="xmf-sigil" />
+          <Sigil seed={doc.route} data={[n, Math.max(0, ...tokens), outs.length ? Math.min(...outs) : 0, outs.length ? Math.max(...outs) : 0]} className="xmf-sigil" still={paused} />
         </div>
         <div className="x-wrap xmf-launch-in">
           <div className="xmf-maker-g">
@@ -56,6 +58,7 @@ export default function ProviderShelf({ doc }) {
               </motion.div>
             </div>
             {/* the maker's count is the hero figure */}
+            <FilmPause className="xmf-maker-pause" />
             <motion.p className="xmf-maker-n" {...up(0.2)}>
               <b>{Number.isFinite(n) ? <Count to={n} /> : null}</b>
               <span className="x-mono">{Number.isFinite(n) ? word : doc.count}</span>
@@ -132,7 +135,7 @@ export default function ProviderShelf({ doc }) {
 
       {doc.band && (
         <section className="xmf-end">
-          <Sigil seed={doc.route + '#end'} data={[n, cards.length]} className="xmf-end-sigil" />
+          <Sigil seed={doc.route + '#end'} data={[n, cards.length]} className="xmf-end-sigil" still={paused} />
           <div className="x-wrap">
             <div className="xmf-band">
               <h2>{doc.band.title}</h2>
