@@ -74,7 +74,7 @@ Done here: `taste.py` passes (greys only); nothing above a headline; tiles 24 ra
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: the forked `x-btn solid` Apply buttons (now kit `Cta`), the portal div sheet with a hand-made focus loop (now a native `<dialog>`), raw `<video>` (now kit `Film`), the floating `data-cursor` label, hover lifts and image zooms. listed below
 
-Done here: Kit `Cta` states; pass tiles answer hover (art drifts up 16px, "+" turns), press .97 in 90ms, focus ring; the opened pass is a native `<dialog>` via `showModal()`: focus goes to Close, Esc, the scrim, Close and Back close it, focus returns to the pass.
+Done here: Kit `Cta` states; the five product tiles answer hover (Kai, Enso, Zen: the film steps up 12px; Dev rewrites its diff and Studio runs its cut again; the hairline turns from faint to grey; the ↗ joins the name), press .97 in 90ms, focus ring; pass tiles answer hover (art drifts up 16px, "+" turns), press .97 in 90ms, focus ring; the opened pass is a native `<dialog>` via `showModal()`: focus goes to Close, Esc, the scrim, Close and Back close it, focus returns to the pass.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -83,7 +83,7 @@ Done here: Kit `Cta` states; pass tiles answer hover (art drifts up 16px, "+" tu
 - [x] Reduced motion shows the final state; no `setInterval`
 - ~~Sound only on the listed moments, through the one kit~~ n/a: the shared sound kit is not on main yet; nothing page-local plays sound.
 
-Done here: Signature: the pass grows into its sheet (layout morph, 0.6s standard ease). Time: the films play; Dev and Studio sketches come alive. Pointer: art drift on tiles and passes. Scroll: the passes clip in once (0.5s, 60ms apart); the close lines cut in from their mask (0.7s, 60ms). No springs; reduced motion shows final states.
+Done here: Signature: the pass grows into its sheet (layout morph, 0.6s standard ease). Time: the films play; Dev and Studio sketches come alive. Pointer: art drift on tiles and passes; Dev and Studio replay their sketch on hover. Scroll: the passes clip in once (0.5s, 60ms apart); the close lines cut in from their mask (0.7s, 60ms). No springs; reduced motion shows final states.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set
@@ -156,4 +156,4 @@ Done here: Static Hanzo copy; a film that fails leaves its poster; the sheet is 
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [x] Review read: `docs/review/beta.md` verdict 8 or more
 
-Done here: `data-cta` ids `beta.hero`, `beta.a`, `beta.b`, `beta.c` (kit Cta fires `cta_click`); V2 line in the route header; conductor review `docs/review/beta.md` 7/10 capped on the card format and the close scale, both fixed here.
+Done here: `data-cta` ids `beta.hero`, `beta.a`, `beta.b`, `beta.c` (kit Cta fires `cta_click`); V2 line in the route header; conductor review `docs/review/beta.md` 7/10 capped on the card format and the close scale (both fixed: 18-part card, close 52/26), product tiles without hover (fixed: drift, replay, hairline, press) and raw `<video>` (fixed: kit `Film`).

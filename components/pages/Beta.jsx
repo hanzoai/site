@@ -2,7 +2,7 @@
 /* Hanzo beta. Its idea is getting there first: the products in early access, and three ways in.
    Persona: a builder or researcher who wants Hanzo's releases early. Goal: apply. CTA: "Apply" (/beta/apply, Hanzo's
    Beta access link). Metric: signup_start (an apply click).
-   V2: 8/10 grey deck: "Get there first." with one Apply, then the five products in early access in their own screen (Kai, Enso and Zen as films, Dev and Studio as windows that come alive; a pause control stops all of them), settling into one row; the three passes wipe in one by one, carry Hanzo's own media and open into a full sheet that holds focus; one solid Apply, sticky after the hero; a dark close with Kai's film behind Feedback and Book a call, cutting in.
+   V2: 8/10 (v3: every product tile answers hover: films step up, Dev rewrites its diff, Studio runs its cut again, hairline strengthens, the arrow joins the name; press .97) grey deck: "Get there first." with one Apply, then the five products in early access in their own screen (Kai, Enso and Zen as films, Dev and Studio as windows that come alive; a pause control stops all of them), settling into one row; the three passes wipe in one by one, carry Hanzo's own media and open into a full sheet that holds focus; one solid Apply, sticky after the hero; a dark close with Kai's film behind Feedback and Book a call, cutting in.
    Signature: open: each pass is a tile that grows into a full sheet with a shared-element morph (synchronized.studio),
    its picture and words carried across, the one Apply inside.
    Beyond: the five products in early access are their own tiles, each opening into its page.
@@ -27,35 +27,39 @@ const TILES = [PRODUCTS[2], PRODUCTS[3], PRODUCTS[4], PRODUCTS[0], PRODUCTS[1]];
 
 /* Dev and Studio have no film: their windows are drawn, and they come alive when seen (Dev's lines write in, a diff
    lands; Studio's playhead runs across the clips), once per view; the pause stops them; reduced motion shows the end. */
-function Sketch({ kind, paused }) {
+function Sketch({ kind, paused, beat = 0 }) {
   const ref = useRef(null);
   const seen = useInView(ref, { amount: 0.4 });
   const run = seen && !paused;
   if (kind === 'Dev') return (
     <span ref={ref} className={'xbt-sk dev' + (run ? ' run' : '')}>
-      {[62, 40, 74, 28, 55, 70, 34].map((w, i) => <i key={i} className={i === 3 ? 'add' : i === 4 ? 'del' : ''} style={{ width: w + '%', '--i': i }} />)}
+      {[62, 40, 74, 28, 55, 70, 34].map((w, i) => <i key={beat + '-' + i} className={i === 3 ? 'add' : i === 4 ? 'del' : ''} style={{ width: w + '%', '--i': i }} />)}
     </span>
   );
   return (
     <span ref={ref} className={'xbt-sk studio' + (run ? ' run' : '')}>
-      {[[8, 40], [30, 62], [4, 30], [44, 50]].map(([l, w], i) => <i key={i} style={{ marginLeft: l + '%', width: w + '%', '--i': i }} />)}
-      <b />
+      {[[8, 40], [30, 62], [4, 30], [44, 50]].map(([l, w], i) => <i key={beat + '-' + i} style={{ marginLeft: l + '%', width: w + '%', '--i': i }} />)}
+      <b key={beat} />
     </span>
   );
 }
 
 const DROP = [0, 140, 60, 190, 90]; // where each tile starts below the row it settles into
 
+/* Hover tells you what the product is: a film steps up out of its frame; Dev's window writes its diff again and
+   Studio's playhead runs the cut again (the sketch is re-keyed so its animation replays). */
 function Tile({ p, i, n, to, film, paused }) {
   const y = useTransform(p, [0, 1], [DROP[i], 0]);
+  const [beat, setBeat] = useState(0);
+  const replay = (e) => { if (!film && e.pointerType === 'mouse') setBeat((b) => b + 1); };
   return (
     <motion.li style={{ y }}>
       <motion.div initial={{ opacity: 0, y: 80 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.25 + i * 0.06 }}>
-        <A to={to} className={'xbt-tile' + (film ? ' film' : '')} aria-label={n}>
+        <A to={to} className={'xbt-tile' + (film ? ' film' : '')} aria-label={n} onPointerEnter={replay} onFocus={() => !film && setBeat((b) => b + 1)}>
           {film ? (paused
             ? <Img src={`/models/${film}.webp`} w={1200} h={1500} alt="" className="xbt-film" />
             : <Film src={`/models/${film}.webm`} poster={`/models/${film}.webp`} w={1200} h={1500} className="xbt-film" data-morph />)
-            : <Sketch kind={n} paused={paused} />}
+            : <Sketch kind={n} paused={paused} beat={beat} />}
           <span className="xbt-tile-n">{n}</span>
         </A>
       </motion.div>

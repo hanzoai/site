@@ -15,15 +15,19 @@
 .xbt-pause:active { transform: scale(.94); }
 .xbt-pause:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 .xbt-tiles { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1.25fr 1.15fr 1fr .95fr 1fr; gap: 16px; transform-origin: 50% 0; }
-.xbt-tile { position: relative; display: block; height: clamp(380px, 56svh, 600px); border-radius: 24px; overflow: hidden; text-decoration: none; background: var(--hz-50); isolation: isolate; transition: transform .45s var(--xp-ease); }
-.xbt-tile.film { background: #000; border-color: #000; }
+.xbt-tile { position: relative; display: block; height: clamp(380px, 56svh, 600px); border-radius: 24px; overflow: hidden; text-decoration: none; background: var(--hz-50); isolation: isolate; transition: transform .45s var(--xp-ease), outline-color .2s; }
+.xbt-tile.film { background: #000; }
 .xbt-film { position: absolute; inset: -12px 0 0 0; width: 100%; height: calc(100% + 12px); object-fit: cover; transition: transform .5s var(--xp-ease); }
-@media (hover: hover) { .xbt-tile:hover .xbt-film { transform: translateY(-12px); } .xbt-tile:hover .xbt-tile-n { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; } }
+/* the hairline: faint at rest, ink on hover (the kit .x-card's stronger line, drawn inset so the film is not cut) */
+.xbt-tile { outline: 1px solid rgba(10, 10, 11, .06); outline-offset: -1px; }
+.xbt-tile.film { outline-color: rgba(255, 255, 255, .08); }
+.xbt-sk { transition: transform .5s var(--xp-ease); }
+@media (hover: hover) { .xbt-tile:hover { outline-color: var(--hz-400); } .xbt-tile.film:hover { outline-color: rgba(255, 255, 255, .4); } .xbt-tile:hover .xbt-sk { transform: translateY(-12px); } .xbt-tile:hover .xbt-film { transform: translateY(-12px); } .xbt-tile:hover .xbt-tile-n { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; } }
 .xbt-tile:active { transform: scale(.97); transition-duration: 90ms; }
 .xbt-tile.film::before { content: ''; position: absolute; inset: auto 0 0 0; height: 40%; background: linear-gradient(transparent, rgba(0, 0, 0, .55)); z-index: 1; pointer-events: none; }
 .xbt-tile-n { position: absolute; left: 24px; bottom: 22px; z-index: 2; font: 497 21px/1 var(--sans); letter-spacing: -.015em; color: #0a0a0a; }
 .xbt-tile.film .xbt-tile-n { color: #f5f5f7; }
-.xbt-tile::after { content: '↗'; position: absolute; right: 22px; top: 20px; z-index: 2; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: #fff; color: var(--hz-950); font: 500 16px/1 var(--sans); opacity: 0; transform: scale(.8); transition: opacity .3s var(--xp-ease), transform .3s var(--xp-ease); }
+.xbt-tile::after { content: '↗'; position: absolute; right: 18px; bottom: 12px; z-index: 2; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: #fff; color: var(--hz-950); font: 500 16px/1 var(--sans); opacity: 0; transform: scale(.8); transition: opacity .3s var(--xp-ease), transform .3s var(--xp-ease); }
 @media (hover: hover) { .xbt-tile:hover::after { opacity: 1; transform: none; } }
 .xbt-tile:focus-visible::after { opacity: 1; transform: none; }
 .xbt-tile:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
