@@ -5,24 +5,20 @@ Page files:
 - `components/pages/models/ProviderShelf.jsx`: the 73 maker shelves, `/models/<maker>`.
 - Shared: `parts.jsx`, `models.css`, `rates.js`, `NoScript.jsx`.
 
-Members checked: `/models/anthropic/claude-opus-5.5`, `/models/hanzo/kai` (plus `/models/hanzo/zen6`, `/models/anthropic`, `/models/openai`) · gallery: `docs/gallery/models/` · metric id: `api_key_created`
+Members checked: `/models/anthropic/claude-opus-5.5`, `/models/hanzo/kai`, `/models/anthropic` (plus `/models/hanzo/enso`, `/models/hanzo/zen6`, `/models/google`, `/models/openai`) · gallery: `docs/gallery/models/family-*` and `docs/gallery/models-family/` · metric id: `api_key_created`
 
 Open copy questions for James:
-- `/models/enso` still renders Hanzo's captured research report. It was already missing 39 texts on main and needs its own room.
+- `/models/enso` still renders Hanzo's captured research report and needs its own room.
 - 4.7's benchmark table: Hanzo's model pages print no benchmarks, so none is added.
+- Hanzo's "More from <maker>" and shelf cards link some models hanzo.ai has but this rebuild does not (Claude Fable 5, 5.1, the batch variants). They open hanzo.ai in a new tab and say so. Keep, or drop them?
+- Ask labels drift within a page in Hanzo's own words: "Get API key" (hero) and "Get an API key" (close); "Get decisions" on Kai. Which one per page?
 
-Shared changes requested (`docs/requests/models.md`): kit `Film` with `play` and a budget, one `ModelCard`, `DataTable`, `CodeBlock`, `lib/cta.js`/`lib/track.js`.
+Shared changes requested (`docs/requests/models.md`): kit `Film` with `play` and a budget, one `ModelCard`, `DataTable`, `Copy` with `role="status"`, kit `A` keeping `#section` links on the page, `lib/cta.js`/`lib/track.js`.
 
 Forks this template deleted:
-- The white sibling card (now Hanzo's black card).
-- The split-flap figures.
-- The auto-rotating quick start.
-- The "No published rate" string.
-- The invented section headings.
-- The kicker over the h1.
-- The coloured syntax palette.
-- The browser-default range control.
-- Every spring.
+- The white sibling card, the split-flap figures, the auto-rotating quick start, the "No published rate" string, the invented section headings, the kicker over the h1, the coloured syntax palette, the browser-default range control, every spring.
+- The maker shelf's three-equal card grid (now 72px rows).
+- The duplicate "More from Hanzo" h2 on Kai (the family row is a caption).
 
 ## 1. Strategy and conversion
 - [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond (both files)
@@ -31,119 +27,115 @@ Forks this template deleted:
 - [x] No dead button ~~`lib/plans.js`~~ n/a: no plans
 - [x] Open copy questions listed
 
-Done here:
-- Hero: Hanzo's CTA pair (solid "Get API key" with `data-thumb` and `data-cta="model.hero"`, outlined "Try in Chat").
-- The sticky local nav's ask turns solid only after the hero ask leaves view, so there is one solid at a time.
+Done here: Hero: Hanzo's CTA pair (solid with `data-thumb`, `data-cta="model.hero"`, plus a text link). A `#quickstart` ask (Kai's "Get decisions") stays on the page instead of opening a new tab. The local nav's ask turns solid only after the hero ask leaves view.
 
 ## 2. Information architecture and navigation
 - [x] One `<main>`; skip link (site)
 - [x] Every link through `A`; every card a real link
-- [x] Breadcrumb at depth 2+ from Hanzo's crumbs, inside the hero object so nothing sits over the h1; the maker shelf's is beside its count
+- [x] Breadcrumb at depth 2+ from Hanzo's crumbs, inside the hero object; the maker shelf's beside its count
 - [x] Link parity: 0 removed
 
-Done here: Parity is 0 missing on all 470 model pages (run on every one) and on 72 of 73 makers (`/models/enso` is the known exception, unchanged from main).
+Done here: Parity 0 missing on Opus (106/106, 10/10), Kai (209/209, 9/9), Anthropic (56/56, 28/28) and a 43-page sample across makers after this round.
 
 ## 3. First impression and page narrative
-- [x] Sells in 5 s, and something moves within 1 s: the name cuts in, the figures rise and the Sigil drifts
+- [x] Sells in 5 s, and something moves within 1 s: the name cuts in, the figures rise (done by about 0.8 s) and the Sigil drifts or the film plays
 - [x] ~~`PageHero`~~ n/a: not in the kit · nothing above the h1
 - [x] JS off legible (`NoScript.jsx`)
-- [x] One idea per screen: hero, spec, quick start (the black room), "More from <maker>", close
+- [x] One idea per screen: hero, spec (with its drawn rates), quick start (the black room), "More from <maker>", close
 - [x] Ends in Hanzo's own close ("Use <model> via Hanzo AI"), then the footer
-- [x] Arrives by Morph: catalogue and sibling card names (`data-morph`) land as the h1 (`data-morph-target`)
+- [x] Arrives by Morph from catalogue and sibling cards; no card leaves the site without saying so
 
-Done here: The order follows MASTER 4.7. The sticky local nav uses the page's own section names: "Specifications", "Quick start", "More from <maker>".
+Done here: The sibling rail holds only models that have a page here (Hanzo's own "More from" picks first, then the maker's nearest by context and output rate, 6 at most). Hanzo's other "More from" cards follow as one-line rows; those without a page here show ↗, `target="_blank" rel="noopener noreferrer"` and a hidden "(opens in a new tab)", with no Morph promise.
 
 ## 4. Conversion system
-- [x] `<Cta>` only: hero pair (solid with `thumb`, plus a text link), the local nav (quiet, then solid once the hero ask is gone), the close (solid plus link) and the maker hero and close
-- [x] Sticky ask: the local nav carries the hero's label (`data-thumb`), and the site Ask steps aside for it
-- [x] Copy equals the display (model ID, code)
+- [x] `<Cta>` only: hero pair, the local nav (quiet, then solid), the close and the maker hero and close
+- [x] Sticky ask: the local nav carries the hero's label (`data-thumb`); no shared Ask pill floats over any member (checked on Opus, Kai and Anthropic: the only fixed elements are the header and the cookie notice)
+- [x] Copy equals the display (model ID, code, guest cURL)
 - [x] `data-cta` on every primary (`model.hero`, `model.local`, `model.band`, `maker.hero`, `maker.band`)
 
-Done here: One ask label per page: Hanzo's first action, used in the hero, the local nav and the phone bar.
+Done here: Copy and "Copy model ID" are 44px with an ink label on white (white 78% on graphite and black); a page-level `role="status"` region says "Copied" only when the copy happened.
 
 ## 5. Trust and proof
 - [x] No logo, seal or invented number
-- [x] Figures trace to Hanzo: the spec value, the shelf card's short context ("33K") and the printed rates, with `rates.js` as fallback
+- [x] Figures trace to Hanzo: spec values, the shelf card's short context ("33K"), printed rates, `rates.js` as fallback
 - [x] ~~Marquees~~ n/a
 - [x] ~~Forms~~ n/a
 
-Done here: No count-up or flap anywhere. The figures rise into their line (MaskFig), so no number Hanzo did not print ever shows.
+Done here: Kai's Limits object draws two numbers from Hanzo's own spec line, "32,768 tokens (YaRN; trained: 1,024)": 32 cells, the first (the trained length) in ink.
 
 ## 6. Content presentation (copy untouched)
 - [x] 13px floor (mono captions 12px; `SPEC.md` pills 10px)
 - [x] Measures and balance
-- [x] Quick start uses kit `Tabs` + `CodeBlock` (copy equals display, the language persists); the spec is a `dl` (label and value pairs, not a table)
+- [x] Quick start uses kit `Tabs` + `CodeBlock`; the spec is a `dl`
 - [x] Parity 0 missing
 
-Done here: Long spec sets (Kai) show 2 groups, and the rest open with an icon button (`hidden` in the HTML until then).
+Done here: A long spec (more than six facts, e.g. Kai) reads in MASTER 4.7's four groups, Identity, Limits, Price, Modalities, under Hanzo's own heading ("Shipping today"); further groups ("In development") fold behind an icon button and stay in the HTML.
 
 ## 7. Visual design system
 - [x] `taste.py` passes; deck neutrals scoped on `.xmf`
-- [x] Nothing above a headline: no eyebrows; Hanzo's labels sit in the hero object
-- [x] Radii 16/20/24, flat objects with no shadow
+- [x] Nothing above a headline
+- [x] Radii 12/16/20/24, flat objects with no shadow
 - [x] No icon boxes
-- [x] Differs from neighbours: a launch layout with the model's own Sigil, not a film grid
+- [x] Differs from neighbours: a launch layout with the model's own Sigil or film, not a film grid
 
-Done here: The name is 52px (44 or 32 for long names), the three figures 64px (the largest), section headings 26px and the close 44px, on the deck's 8/5 split.
+Done here: The model name is 52px (44 or 32 for long names); the maker h1 is 52px (40px on phones) so its 64px count is the one big thing; figures 64px; section headings 26px, Kai's "Limits" included; the close 44px.
 
 ## 8. UI component library
-- [x] Hover, press (.97 at 90 ms), focus-visible (2px ink plus white halo) on every control; disabled on empty picks
+- [x] Hover, press (.97/.995 at 90 ms), focus-visible (2px ink) on every control
 - [x] Focus ring on a Tab crawl
 - [x] ~~Dialogs~~ n/a
-- [x] Sliders are drawn (track, fill and thumb, with focus and press) instead of the browser default
+- [x] Drawn sliders (track, fill, thumb, focus, press)
 - [x] Forks deleted: listed above
 
-Done here: Bill rows, sibling picks, code tabs and the shelf re-flow all ease at 300 ms (no springs).
+Done here: Shelf rows answer hover with a #f5f5f5 fill, the name easing 4px and the description replacing the rate; keyboard focus shows the same description.
 
 ## 9. Motion and interaction
 - [x] Signature: the Morph arrival. Supporting: the Sigil field, the sibling field's light, the layoutId pills. 0 fade-ups.
 - [x] Kinds of movement:
-  - **Arrival:** the name and figures.
-  - **Idle:** the Sigil and the field's light.
-  - **Pointer:** the Sigil leans; dots tell rates; the card tilt.
-  - **State:** bill sliders, picks, tabs, spec fold.
-  - **Scroll:** only the Sigil object easing up.
+  - **Arrival:** the name, the figures, the spec's rate bars and Kai's reach cells drawing in.
+  - **Idle:** the Sigil or the model's film, the field's light, the current dot's ring.
+  - **Pointer:** the Sigil leans; dots tell rates; card tilt; rows reveal their description.
+  - **State:** bill sliders, picks, tabs, spec fold, shelf sort and filter.
+  - **Scroll:** the hero object easing up.
 - [x] Moves untouched; every control answers
 - [x] Reduced motion final; no `setInterval`
-- [x] Sound through the kit (tabs and picks tick, the open whooshes, Copy chimes)
+- [x] Sound through the kit
 
-Done here: `variety.py` OK on ModelSheet and ProviderShelf.
+Done here: No motion was removed; the shelf's tilt on full-width rows is replaced by the row fill, the name's ease and the description reveal.
 
 ## 10. Media
-- [x] ~~`Film`/`Pic`~~ n/a: model pages have no film of their own; the Sigil is the designed image (MASTER part 7)
-- [x] One `FilmPause` (44px, `aria-pressed`) stops the Sigils and the field's CSS loops
-- [x] Two canvases per page (hero object, close)
+- [x] Hanzo's own models (Enso, Kai, Koma, Zen pages) show the model's film over its poster as the 4:5 hero object; other makers keep the Sigil
+- [x] One `FilmPause` (44px, `aria-pressed`) stops the film, the Sigils and the field's CSS loops
+- [x] At most two canvases per page
 - [x] No dimmed image
 
-Done here: The Sigil is seeded from the route and the model's own numbers (context, in, out), so no two of the 470 pages share a picture.
+Done here: `/models/hanzo/kai` plays `kai.webm` over `kai.webp` in the hero object, its breadcrumb in white 78%.
 
 ## 11. Mobile and responsive
-- [x] 375×812 and 1470×801 with no overlap
-- [x] No horizontal scroll (`phone.mjs` OK on 4 members)
+- [x] 375×812 and 1470×801 with no overlap; no horizontal scroll at 375 or 320
 - [x] 44px targets; tap paths
 - [x] Ask above the fold at 375×667
 
 Done here:
-- Phone order: name, lede, CTA pair, then the Sigil object (breadcrumb and ID) and the three figures in a row.
-- The local nav keeps the name and the ask.
-- The field turns 4:5 and the rails scroll-snap.
+- The maker shelf on phones is 72px rows (name and rate, one pill); its contour field starts below the CTA pair, so no line crosses the lede.
+- The sibling field keeps every dot inside the plot (log context, padded 18% each side, clamped 5–95%) and labels the current model.
 
 ## 12. Accessibility (WCAG 2.2 AA)
-- [x] Deck contrast: #0a0a0a, #525252 or #737373 on white; #fafafa or #a3a3a3 on black
-- [x] Pause control for the moving Sigils and loops
+- [x] Deck contrast
+- [x] Pause control for the moving Sigils, film and loops
 - [x] ~~Forms~~ n/a
-- [x] One h1, h2 per section, h3 in the spec
-- [x] Keyboard: field dots, sliders, tabs, picks, Copy
+- [x] One h1; h2 per section; the family row is a caption, not a second "More from" h2
+- [x] Keyboard: field dots, sliders, tabs, picks, Copy, rows
 
-Done here: The figures are a `dl` named with the full price. Sliders announce "N million tokens a month". Gap: no axe run.
+Done here: Field dots of models with a page are links; the others are `role="img"` points with the same label, focusable, so nothing sends a keyboard user off the site. Gap: no axe run.
 
 ## 13. Performance and engineering
-- [x] h1 and figures in server HTML (the figures carry Hanzo's real values)
-- [x] Transform and opacity only; two canvases
-- [x] Catalogue fetched only when a rate is missing
+- [x] h1 and figures in server HTML
+- [x] Transform and opacity only
+- [x] api.hanzo.ai is asked only when a rate is in neither the page nor `rates.js`
 - [x] Heavy jobs in the cloud only
 
-Done here: `motion.mjs` on the model page shows layout shift 0.000 and 0 still screens.
+Done here: No hydration mismatch on Opus, Kai, Anthropic, Enso or Google members (Playwright, 1470 and 375): the field's positions are rounded so the server's and the browser's maths print the same style.
 
 ## 14. SEO and machine files
 - [x] Titles and descriptions unchanged
@@ -151,17 +143,15 @@ Done here: `motion.mjs` on the model page shows layout shift 0.000 and 0 still s
 - [x] JsonLd unchanged
 - [x] Cards are links
 
-Done here: The breadcrumb is visible on every model page and every maker shelf.
+Done here: The breadcrumb is visible on every model page and maker shelf.
 
 ## 15. Catalogue and product pages
-- [x] Sibling and shelf cards are `SPEC.md` cards (`SpecCard`)
-- [x] Every card opens by Morph
+- [x] Sibling cards are `SPEC.md` cards (`SpecCard`, description on hover or focus)
+- [x] Every rail card opens by Morph (rail = pages of this site only)
 - [x] Every maker and model page is linked from /models (544/544)
-- [x] One price everywhere (`rates.js`; `money()` rounds under $1 to 3 places, else 2, as Hanzo's /models prints)
+- [x] One price everywhere (`money()`: under $1 to 3 places, else 2)
 
-Done here:
-- Model header: name, lede, three numbers (largest), the CTA pair and a mono id pill with Copy.
-- A rate Hanzo hasn't printed shows "—", never "…".
+Done here: The spec sheet sits right under the hero with its object, the model's in and out rates drawn to one scale; the bill comparer uses Hanzo's short context ("33K") for the model.
 
 ## 16. Developer experience
 - [x] Copy equals the display; the model id is in every sample
@@ -169,15 +159,15 @@ Done here:
 - [x] ~~Terminal~~ n/a · the maker's guest cURL is static with Copy
 - [x] No hand-typed version
 
-Done here: The quick start no longer rotates. The chosen language persists across model pages (`localStorage` in try/catch).
+Done here: The chosen quick-start language persists across model pages (`localStorage` in try/catch).
 
 ## 17. States and resilience
 - [x] A missing rate is an em dash; spec groups fold
-- [x] Blocked live data leaves a complete page, from Hanzo's printed list
+- [x] Blocked live data leaves a complete page
 - [x] ~~Failed submit~~ n/a
 - [x] The Sigil failing leaves the page
 
-Done here: JS off: `NoScript.jsx`. Reduced motion: no drift, final states.
+Done here: JS off: `NoScript.jsx`. Reduced motion: no drift, final states, bars and cells drawn.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary ~~`lib/track.js`~~ not on main
@@ -185,4 +175,4 @@ Done here: JS off: `NoScript.jsx`. Reduced motion: no drift, final states.
 - [x] `V2:` line in `ModelSheet.jsx`
 - [ ] Review: waiting for a fresh critic (`docs/review/models-family.md`)
 
-Done here: Gallery is in `docs/gallery/models/` (refresh pending after this round).
+Done here: Proof in `docs/gallery/models/family-*` and `docs/gallery/models-family/`.
