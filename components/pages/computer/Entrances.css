@@ -1,0 +1,40 @@
+/* /computer's five entrances (see ./Entrances.jsx). Each marks its moving parts with a data attribute and an index
+   (--e); data-ce="wait" holds the start, data-ce="go" plays it once. Transform, opacity and clip-path only. */
+.ce-conveyor, .ce-venetian, .ce-deal { overflow-x: clip; }
+
+/* 1. conveyor: on the belt from the right, the parts a beat apart, easing to a stop */
+.js .ce-conveyor [data-belt] { animation: ce-belt 1.1s cubic-bezier(.16, 1, .3, 1) calc(.2s + var(--e, 0) * .14s) both; }
+@keyframes ce-belt { from { opacity: 0; transform: translateX(min(56vw, 720px)); } 30% { opacity: 1; } to { opacity: 1; transform: none; } }
+
+/* 2. squash-land: a short drop, a squash on the floor, a stretch back up, still */
+.ce-squash[data-ce='wait'] [data-land] { opacity: 0; transform: translateY(-56px); }
+.ce-squash[data-ce='go'] [data-land] { transform-origin: 50% 100%; animation: ce-squash .9s cubic-bezier(.16, 1, .3, 1) calc(var(--e, 0) * .14s) both; }
+@keyframes ce-squash {
+  0% { opacity: 0; transform: translateY(-56px) scale(.98, 1.04); animation-timing-function: cubic-bezier(.5, 0, 1, 1); }
+  38% { opacity: 1; transform: translateY(0) scale(1.04, .93); animation-timing-function: cubic-bezier(.16, 1, .3, 1); }
+  62% { transform: translateY(-6px) scale(.99, 1.02); }
+  100% { opacity: 1; transform: none; }
+}
+
+/* 3. venetian-type: every line of type from the side opposite the last */
+.ce-venetian[data-ce='wait'] [data-line] { opacity: 0; }
+.ce-venetian[data-ce='go'] [data-line] { animation: ce-ven-l .8s cubic-bezier(.16, 1, .3, 1) calc(var(--e, 0) * .09s) both; }
+.ce-venetian[data-ce='go'] [data-line='r'] { animation-name: ce-ven-r; }
+@keyframes ce-ven-l { from { opacity: 0; transform: translateX(-64px); } to { opacity: 1; transform: none; } }
+@keyframes ce-ven-r { from { opacity: 0; transform: translateX(64px); } to { opacity: 1; transform: none; } }
+
+/* 4. diagonal-wipe: a triangle from the top-left corner grows until its edge has crossed the whole block */
+.ce-wipe[data-ce='wait'] [data-wipe] { clip-path: polygon(0 0, 0 0, 0 0); }
+.ce-wipe[data-ce='go'] [data-wipe] { animation: ce-wipe 1s cubic-bezier(.16, 1, .3, 1) calc(var(--e, 0) * .12s) backwards; }
+@keyframes ce-wipe { from { clip-path: polygon(0 0, 0 0, 0 0); } to { clip-path: polygon(0 0, 200% 0, 0 200%); } }
+
+/* 5. card-deal: from one deck under the block, each piece flies to its place, turning as it lands */
+.ce-deal[data-ce='wait'] [data-deal] { opacity: 0; }
+.ce-deal[data-ce='go'] [data-deal] { animation: ce-deal .9s cubic-bezier(.16, 1, .3, 1) calc(var(--e, 0) * .13s) both; }
+.ce-deal[data-ce='go'] [data-deal='r'] { animation-name: ce-deal-r; }
+@keyframes ce-deal { from { opacity: 0; transform: translateY(140px) rotate(-7deg) scale(.86); } 40% { opacity: 1; } to { opacity: 1; transform: none; } }
+@keyframes ce-deal-r { from { opacity: 0; transform: translateY(140px) rotate(7deg) scale(.86); } 40% { opacity: 1; } to { opacity: 1; transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .js .ce-conveyor [data-belt], .ce-squash [data-land], .ce-venetian [data-line], .ce-wipe [data-wipe], .ce-deal [data-deal] { animation: none !important; opacity: 1 !important; transform: none !important; clip-path: none !important; }
+}

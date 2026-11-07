@@ -1,0 +1,57 @@
+/* Console's section entrances (Entrances.jsx). Every start state hangs off a class an effect adds; without it the
+   sections are in their final state. Arrivals ease cubic-bezier(.16,1,.3,1); spring-snap overshoots by design. */
+
+/* 1 sticky-stack */
+.en-stack .cs-cv-head { position: sticky; top: 88px; z-index: 0; transform-origin: 50% 0; will-change: transform, opacity; }
+.en-stack .cs-cv-card { position: relative; z-index: 1; transform-origin: 50% 0; will-change: transform; }
+
+/* 3 vertical-ticker: the heading's one-line window, the reel above it */
+.cs-tk { position: relative; overflow: clip; font-size: 26px; line-height: 1.18; }
+.cs-tk-in { position: relative; }
+.cs-tk-reel { position: absolute; left: 0; bottom: 100%; margin: 0; padding: 0; list-style: none; font-weight: 497; letter-spacing: -.02em; color: #a3a3a3; visibility: hidden; }
+.cs-tk-reel li { height: 1.18em; white-space: nowrap; }
+.tk-pre .cs-tk-reel { visibility: visible; }
+.tk-pre .cs-tk-in { transform: translateY(7.08em); }
+.tk-pre .cs-find-top .bz-body, .tk-pre .cs-find-obj { opacity: 0; transform: translateY(64px); }
+.tk-go .cs-tk-in { animation: cs-tick 1.2s both; }
+.tk-go .cs-find-top .bz-body { animation: cs-ride .9s cubic-bezier(.16, 1, .3, 1) .5s both; }
+.tk-go .cs-find-obj { animation: cs-ride 1s cubic-bezier(.16, 1, .3, 1) .62s both; }
+@keyframes cs-tick {
+  0% { transform: translateY(7.08em); animation-timing-function: cubic-bezier(.4, 0, .2, 1); }
+  14% { transform: translateY(5.9em); animation-timing-function: cubic-bezier(.4, 0, .2, 1); }
+  28% { transform: translateY(4.72em); animation-timing-function: cubic-bezier(.4, 0, .2, 1); }
+  42% { transform: translateY(3.54em); animation-timing-function: cubic-bezier(.4, 0, .2, 1); }
+  56% { transform: translateY(2.36em); animation-timing-function: cubic-bezier(.4, 0, .2, 1); }
+  70% { transform: translateY(1.18em); animation-timing-function: cubic-bezier(.16, 1, .3, 1); }
+  100% { transform: none; }
+}
+@keyframes cs-ride { from { opacity: 0; transform: translateY(64px); } to { opacity: 1; transform: none; } }
+
+/* 4 spring-snap: main from the left, related from the right, the prompt from the left again */
+.cs-get { overflow-x: clip; }
+.sn-pre .cs-get-main, .sn-pre .cs-get-paste { opacity: 0; transform: translateX(-160px); }
+.sn-pre .cs-rel { opacity: 0; transform: translateX(160px); }
+.sn-go .cs-get-main { animation: cs-snap-l .9s both; }
+.sn-go .cs-rel { animation: cs-snap-r .9s .12s both; }
+.sn-go .cs-get-paste { animation: cs-snap-l .9s .24s both; }
+@keyframes cs-snap-l {
+  0% { opacity: 0; transform: translateX(-160px); animation-timing-function: cubic-bezier(.3, 0, .2, 1); }
+  45% { opacity: 1; transform: translateX(18px); animation-timing-function: cubic-bezier(.4, 0, .4, 1); }
+  70% { transform: translateX(-7px); }
+  86% { transform: translateX(2px); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes cs-snap-r {
+  0% { opacity: 0; transform: translateX(160px); animation-timing-function: cubic-bezier(.3, 0, .2, 1); }
+  45% { opacity: 1; transform: translateX(-18px); animation-timing-function: cubic-bezier(.4, 0, .4, 1); }
+  70% { transform: translateX(7px); }
+  86% { transform: translateX(-2px); }
+  100% { opacity: 1; transform: none; }
+}
+
+/* 5 velocity-skew */
+.cs-end .bz-wrap { transform-origin: 50% 50%; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tk-go .cs-tk-in, .tk-go .cs-find-top .bz-body, .tk-go .cs-find-obj, .sn-go .cs-get-main, .sn-go .cs-rel, .sn-go .cs-get-paste { animation: none; }
+}
