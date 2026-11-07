@@ -100,7 +100,7 @@ Done here: Every picture is Hanzo's own model art from `/models/`, shown without
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here (re-measured 8 Nov): check.mjs at 1470×801 and 375×812: 0 errors, no horizontal scroll, 0 overlaps. Hero frame morph is now a clip-path on a fixed box, so six auto-cycles on phone measure CLS 0.0000 (desktop 0.0024, the shared header). On phones the text comes first and the window follows; the brief no longer drifts (no element past the 16px gutter) and the capability sheets reach full opacity.
+Done here: (re-measured 8 Nov) check.mjs at 1470×801 and 375×812: 0 errors, no horizontal scroll, 0 overlaps. Hero frame morph is now a clip-path on a fixed box, so six auto-cycles on phone measure CLS 0.0000 (desktop 0.0024, the shared header). On phones the text comes first and the window follows; the brief no longer drifts (no element past the 16px gutter) and the capability sheets reach full opacity.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better (#0a0a0a / #525252 on white; #fafafa and white 78% on black)
