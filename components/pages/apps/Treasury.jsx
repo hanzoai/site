@@ -46,11 +46,11 @@ const N = CODE.length;
 const fmt = (v) => v.toLocaleString('en-US');
 
 /* Three streams out of one source, widths in proportion to the split (with a floor so 5% still reads). */
-function Streams({ shown, done }) {
+function Streams({ shown, done, still }) {
   const y = [70, 200, 300];
   const w = [104, 16, 16];
   return (
-    <div className="ts-flow" aria-hidden="true">
+    <div className={'ts-flow' + (still ? ' still' : '')} aria-hidden="true">
       <div className="ts-src"><span className="x-mono">@users:001</span><b className="x-mono">10,000</b></div>
       <svg viewBox="0 0 400 360" preserveAspectRatio="none">
         {DEST.map((_, i) => {
@@ -108,7 +108,7 @@ function Hero() {
                   ))}
                 </code></pre>
               </div>
-              <Streams shown={shown} done={k >= N} />
+              <Streams shown={shown} done={k >= N} still={paused || !live} />
             </div>
           </Settle>
         </div>
