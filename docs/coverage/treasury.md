@@ -28,7 +28,7 @@ Done here: parity links 3/3 (docs, GitHub, platform deploy).
 - [x] h1 line-mask cut-in (CSS, painted by the server), one lede, one primary, one object; nothing above the h1
 - [x] JS off: legible; no `opacity:0` on the LCP element
 - [x] One idea per 100svh; heights vary (dark hero, pinned chapters, short close)
-- [x] Ends on the close's one ask and the Get card, then the footer
+- [x] Ends on the close's heading beside the finished split (a small graphite card whose bar draws in its three parts; hover or focus a row to light its part), one ask and the Get card, then the footer
 - [x] n/a Morph
 
 Done here: the server paints the split finished and balanced; it holds, then re-writes from the source line so a destination is named within 0.8 s (no empty box). Gate: JS-off hidden 0.
@@ -82,7 +82,7 @@ Done here: wallet buttons invert on hover, the `hanzoai` chip 44px inverts on ho
 - [x] Reduced motion: the split rests finished, the coin and log rest; no springs
 - [x] n/a sound (shared kit)
 
-Done here: `variety.py` OK. The coin travels by transform only (500ms in-out); nothing below the wallet moves (log height fixed to 4 rows).
+Done here: `variety.py` OK (magnetic, pathLength). Chapters 01–03 read their rows in turn while in view (one lit every 1.3 s, background only, stops off screen, under pause and reduced motion). Hero stage settles from 1.015 so its edges stay inside the gutters at 1470. The coin travels by transform only (500ms in-out); nothing below the wallet moves (log height fixed to 4 rows).
 
 ## 10. Media
 - [x] n/a: no Hanzo media on the live page; objects are drawn UI
@@ -152,7 +152,7 @@ Done here: look.cjs at both widths: errors none.
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary
 - [x] Nothing identifier-bearing
-- [x] `V2:` line in `app/treasury/page.jsx`
+- [x] `V2:` line in `components/pages/apps/Treasury.jsx`
 - [ ] Review read: verdict 8 or more (re-review pending after this rework)
 
-Done here: previous review 6/10; all seven numbered fixes addressed in this push.
+Done here: previous review 6/10; its fixes addressed (no un-write on load, phone stacking, wallet fixed height, outlined wallet controls, chapter 04 is the wallet, live chapter rows, the split carried into the close, inset hero stage).

@@ -82,3 +82,34 @@
   .tl2-win { overflow-x: auto; }
   .tl2-k, .tl2-sig li, .tl2-sub, .tl2-mem p, .tl2-out span, .tl2-strip span, .tl2-tabs span, .tl2-g p, .tl2-yc-bar { font-size: 14px; }
 }
+
+/* chapter arrival: a span runs the strip to the lit stage, the lit lines write in, a caret blinks at the end (5 s) */
+.tl2-strip { position: relative; padding-bottom: 18px; }
+.tl2-track { position: absolute; left: 0; right: 0; bottom: 4px; height: 1px; background: var(--hair); overflow: visible; pointer-events: none; }
+.tl2-run { position: absolute; left: 0; top: 0; width: 100%; height: 1px; }
+.tl2-run b { position: absolute; left: -4px; top: -4px; width: 9px; height: 9px; border-radius: 50%; background: var(--ink); }
+.tl2-w { display: inline; }
+.tl2-caret { display: inline-block; width: .55em; height: 1.1em; margin-left: 2px; vertical-align: -.2em; background: #f5f5f5; animation: tl2-blink 1s steps(1) 5; animation-fill-mode: forwards; }
+@keyframes tl2-blink { 50% { opacity: 0; } }
+/* the code window keeps the config's 20-line height, so builder.yaml never re-centres the stage */
+.tl2-ed:not(.cp) .tl2-code { min-height: calc(20 * 1.6em + 32px); box-sizing: border-box; }
+/* hero: the signal under the pointer is the one coming in */
+.tl2-sig li { transition: background .25s var(--ease), color .25s var(--ease); }
+.tl2-sig li.on { background: var(--ink); color: #fff; }
+.tl2-sig li.trace:not(.on) { background: #f5f5f5; color: #404040; }
+/* Your config: a hover that shows on an "on" toggle too */
+@media (hover: hover) {
+  .tl2-g button:hover { background: #f5f5f5; }
+  .tl2-g button:hover i { transform: translateX(2px); }
+}
+.tl2-g button i { transition: transform .15s var(--ease), background .15s, border-color .15s; }
+@media (max-width: 900px) {
+  .tl2 .x-copy { font-size: 14px; }
+  .tl2 .l2-band-get .x-cta, .tl2 .l2-get-meta a:last-child { min-height: 44px; display: inline-flex; align-items: center; }
+}
+.tl2-run.flow b { background: #737373; }
+.tl2-kr { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; }
+.tl2-kr .tl2-key { margin: 0; }
+.tl2 .tl2-kr .l2-pause.tl2-kp { position: static; flex: none; }
+@media (hover: hover) { .tl2 .tl2-yc-bar .x-copy:hover { background: rgba(255, 255, 255, .16); border-color: rgba(255, 255, 255, .3); } .tl2-g button:hover { border-color: var(--ink); background: #ededed; } }
+@media (max-width: 900px) { .tl2-out { height: 152px; } }

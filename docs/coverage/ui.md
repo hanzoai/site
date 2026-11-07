@@ -4,7 +4,7 @@ Page file: `components/pages/apps/UiPage.jsx` (+ `UiPage.css`) · gallery: `docs
 
 Open copy questions for James: board demo labels not in `content/ui-strings.json` ("Field", "Panel", "Options ▾", "@hanzo/design tokens", "--radius", "--density", the accent names graphite/steel/silver).
 Shared changes requested (`docs/requests/ui.md`): none. Noted: no skip link in shared chrome; `tokens.css` not merged.
-Forks this page deleted: the two browser range inputs (now `components/v2/x-gauss/Slider.jsx`), the shared `Code` block in the dark room (it rendered one tab and copied shell and JSX together; now a page terminal whose Copy copies the two shell commands), the floating hero and chapter pauses, the ink accent that made "Ship it" a second black pill, every spring, the "violet" comments.
+Forks this page deleted: the two browser range inputs (now `components/v2/x-gauss/Slider.jsx`), the shared `Code` block in the dark room (it rendered one tab and copied shell and JSX together; now a page terminal whose Copy copies the two shell commands), the floating hero and chapter pauses, the ink accent that made "Ship it" a second black pill, every spring, the "violet" comments, the shared PinChapters (vertical label, number rail, grey box of drawn specimens; now one real board the chapters act on), the "React Component Library" pill with the Enso picture (now a mono caption under the h1, same words).
 
 ## 1. Strategy and conversion
 - [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
@@ -27,7 +27,7 @@ Done here: parity links 2/2.
 - [x] Sells in 5 s; the board opens its menu and dialog by itself within 1.5 s
 - [x] h1 CSS cut-in painted by the server; "React Component Library" sits under the h1
 - [x] JS off legible
-- [x] Board hero → six pinned chapters → dark init room → paste and close
+- [x] Board hero → six chapters acting on one real sticky board → dark init room → paste and close
 - [x] Ends on one ask ("View on GitHub", `data-thumb`), then footer
 - [x] n/a Morph
 
@@ -76,8 +76,8 @@ Done here: gate hues [].
 Done here: sliders are drawn (`role="slider"`, arrows, Page keys, Home/End, drag) with a hover ring.
 
 ## 9. Motion and interaction
-- [x] Signature (the board that uses itself), supporting: Settle, PinChapters, magnetic; 0 fade-ups
-- [x] Idle (board, chapter specimens), time (the init room types once), state (dialog, menu, tokens), pointer (sliders, magnetic), arrival (h1)
+- [x] Signature (the board that uses itself), supporting: Settle, the chapter board (sticky; the chapter in the middle of the screen drives it), magnetic; 0 fade-ups
+- [x] Idle (board, the chapter board: menu/dialog with class tags, focus walk, token retune, chat/console/cloud swap, stylesheet fill, production rows), time (the init room types once), state (dialog, menu, tokens), pointer (sliders, magnetic), arrival (h1)
 - [x] Moves without input; every control answers
 - [x] Reduced motion: the init room shows its full text; no springs
 - [x] n/a sound (shared kit)
@@ -85,12 +85,12 @@ Done here: sliders are drawn (`role="slider"`, arrows, Page keys, Home/End, drag
 Done here: `variety.py` OK; "Ship it" renders in the Hello() card when `return <Button>` is typed.
 
 ## 10. Media
-- [x] Kit `Img` only (mark beside the kicker)
+- [x] n/a images: the Enso picture beside the kicker is gone (it tied the library to a model it isn't)
 - [x] n/a video
-- [x] Sized
+- [x] n/a sizes
 - [x] n/a photos
 
-Done here: one decorative `Img`.
+Done here: no media; the page's objects are the live component boards and the terminal.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -98,11 +98,11 @@ Done here: one decorative `Img`.
 - [x] Targets 44px+
 - [x] Primary above the fold at 375×667
 
-Done here: the chapter rail title wraps on phone; the pause sits under the chapter visual, off every heading.
+Done here: on phone the chapters are a swipe rail (scroll-snap, 16% peek) under the board, which is not sticky, so no heading slides under it; the chapter pause sits in the section's head row beside its h2, off every heading.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast: "Hello()" #525252 on #f5f5f7; terminal comments #a3a3a3 on #0f0f0f
-- [x] Pause in the token panel bar, the terminal bar and under the chapter visual
+- [x] Pause in the token panel bar, the terminal bar and the chapter section's head row; the chapter board is `inert` and `aria-hidden` (the words are in the list)
 - [x] Field labelled
 - [x] One h1; h2 order
 - [x] Keyboard reaches every control; the terminal is a focusable labelled region
@@ -111,7 +111,7 @@ Done here: dialog focus is trapped and returned.
 
 ## 13. Performance and engineering
 - [x] h1 in server HTML
-- [x] One small image
+- [x] No images
 - [x] No poller, no third party
 - [x] Nothing heavy on James's laptop
 

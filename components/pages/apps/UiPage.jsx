@@ -12,11 +12,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../../ui';
-import { A, Img } from '../../kit';
+import { A } from '../../kit';
 import { Paste, useLive, useEvery } from '../cloud/Frame';
 import LineMask from '../../v2/x-gauss/LineMask';
 import Settle from '../../v2/Settle';
-import PinChapters from '../../v2/x-gauss/PinChapters';
 import NoJs from '../../v2/x-gauss/NoJs';
 import { usePause } from '../../v2/x-gauss/Pause';
 import Slider from '../../v2/x-gauss/Slider';
@@ -129,7 +128,7 @@ function Hero() {
         <div className="ui-top">
           <div>
             <LineMask as="h1" id="ui-h1" now className="w2-display ui-h1" lines={['Hanzo UI']} />
-            <p className="ui-kick"><Img src="/models/enso.webp" alt="" w={24} h={24} />React Component Library</p>
+            <p className="ui-kick x-mono">React Component Library</p>
           </div>
           <motion.div className="ui-top-r" initial={{ y: 14 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
             <p className="w2-lede ui-lede">The React components powering Hanzo apps</p>
@@ -156,81 +155,110 @@ const PROPS = [
   ['Production Tested', 'Powers chat.hanzo.ai, platform.hanzo.ai, and every Hanzo dashboard. If it ships in our products, it ships in your code.'],
 ];
 
-/* Six specimens, one per chapter. */
-function Overlays() {
+/* The chapters act on one real board (the same object, changing), not on drawings of it. Desktop: the board sticks
+   on the left while the six chapters scroll past on the right; the chapter in the middle of the screen drives it.
+   Phone: the board sits on top and the chapters are a swipe rail under it (scroll-snap, 16% peek). */
+const SHOW_TOK = [{ r: 14, a: 0, n: 'graphite' }, { r: 4, a: 1, n: 'steel' }, { r: 22, a: 2, n: 'silver' }];
+const APPS = ['chat', 'console', 'cloud'];
+
+function ShowBoard({ at, run }) {
+  const [t, setT] = useState(0);
+  useEffect(() => setT(0), [at]);
+  useEvery(at === 1 ? 700 : 1400, run, () => setT((v) => v + 1));
+  const tok = at === 2 ? SHOW_TOK[t % 3] : SHOW_TOK[0];
+  const app = at === 3 ? APPS[t % 3] : APPS[0];
+  const ring = at === 1 ? t % 4 : -1;
+  const menu = at === 0 && t % 2 === 0;
+  const dlg = at === 0 && t % 2 === 1;
+  const cells = at === 4 ? Math.min(18, 6 + t * 4) : 0;
+  const style = { '--ua': ACCENTS[tok.a][1], '--ur': tok.r + 'px' };
+  const R = (i) => (ring === i ? ' ui-ring' : '');
   return (
-    <div className="ui-sp ov" aria-hidden="true">
-      <div className="ui-sp-real"><span className="x-mono">&lt;Dialog /&gt;</span><div className="ui-sp-dlg"><b>Dialog</b><i /><i /><em /></div></div>
-      <div className="ui-sp-real"><span className="x-mono">&lt;DropdownMenu /&gt;</span><ul className="ui-sp-menu"><li>button</li><li className="on">dialog</li><li>dropdown-menu</li></ul></div>
-      <div className="ui-sp-css x-mono">{['.button', '.panel', '.field', '.table'].map((c) => <span key={c}>{c}</span>)}</div>
-    </div>
-  );
-}
-function Keys({ on }) {
-  const [f, setF] = useState(0);
-  useEvery(700, on, () => setF((v) => (v + 1) % 4));
-  return (
-    <div className="ui-sp keys" aria-hidden="true">
-      <div className="ui-sp-row">{['Ship it', 'Options ▾', 'Field', 'Close'].map((t, i) => <span key={t} className={'ui-sp-b' + (f === i ? ' ring' : '')}>{t}</span>)}</div>
-      <div className="ui-sp-kbd x-mono"><b>Tab</b><span>aria-* · role · focus</span></div>
-    </div>
-  );
-}
-function Tokens2() {
-  return (
-    <div className="ui-sp tok" aria-hidden="true">
-      {[['a colour', 'c'], ['a size', 's'], ['a radius', 'r']].map(([n, k]) => <div key={n} className={'ui-sp-t ' + k}><i /><span className="x-mono">{n}</span></div>)}
-      <p className="x-mono">@hanzo/design</p>
-    </div>
-  );
-}
-function Everywhere({ on }) {
-  const [v, setV] = useState(0);
-  useEvery(1400, on, () => setV((x) => (x + 1) % 2));
-  return (
-    <div className="ui-sp pkg" aria-hidden="true">
-      <p className="ui-sp-cmd x-mono">pnpm add @hanzo/ui</p>
-      <div className="ui-sp-apps">{['chat', 'console', 'cloud'].map((a) => <motion.div key={a} className="ui-sp-app" animate={{ y: v ? -10 : 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}><span className="x-mono">{a}</span><i /><i /></motion.div>)}</div>
-    </div>
-  );
-}
-function Atomic() {
-  return (
-    <div className="ui-sp atom" aria-hidden="true">
-      <div className="ui-sp-gone x-mono">{['styled-components', 'emotion', 'CSS-in-JS'].map((x) => <s key={x}>{x}</s>)}</div>
-      <div className="ui-sp-sheet"><span className="x-mono">one atomic stylesheet</span><div>{Array.from({ length: 18 }).map((_, i) => <i key={i} />)}</div><em className="x-mono">generated at build</em></div>
-    </div>
-  );
-}
-function Prod() {
-  return (
-    <div className="ui-sp prod" aria-hidden="true">
-      {['chat.hanzo.ai', 'platform.hanzo.ai', 'every Hanzo dashboard'].map((a) => <p key={a}><span>{a}</span><b className="x-mono"><i />in production</b></p>)}
+    <div className={'uc-board c' + at} style={style} inert aria-hidden="true">
+      <div className="uc-bar"><i /><i /><i />
+        <span className="uc-app x-mono"><AnimatePresence mode="popLayout" initial={false}><motion.b key={app} initial={{ y: 14, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -14, opacity: 0 }} transition={{ duration: 0.3, ease: EASE }}>{app}</motion.b></AnimatePresence></span>
+      </div>
+      <div className="uc-body">
+        <div className="ui-row">
+          <span className={'ui-b solid' + R(0)}>Ship it<em className="uc-tag x-mono">.button</em></span>
+          <span className={'ui-b' + R(1)}>Options ▾<em className="uc-tag x-mono">&lt;DropdownMenu /&gt;</em></span>
+          <AnimatePresence>{menu && (
+            <motion.ul className="ui-menu" initial={{ opacity: 0, y: -6, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -4, transition: { duration: 0.12 } }} transition={{ duration: 0.22, ease: EASE }}>
+              {['button', 'dialog', 'dropdown-menu'].map((x, i) => <li key={x} className={i === 1 ? 'on' : ''}>{x}</li>)}
+            </motion.ul>)}
+          </AnimatePresence>
+        </div>
+        <div className={'uc-field' + R(2)}><span>Field</span><i>@hanzo/ui</i><em className="uc-tag x-mono">.field</em></div>
+        <div className="ui-panel"><p className="ui-pk">Panel<em className="uc-tag x-mono">.panel · .table</em></p>
+          <ul className="ui-table">
+            {['chat.hanzo.ai', 'platform.hanzo.ai', 'every Hanzo dashboard'].map((a, i) => <li key={a} className={(ring === 3 && i === 0 ? 'ui-ring' : '') + (at === 5 && t % 3 === i ? ' uc-hot' : '')}><span>{a}</span><span className="ui-live"><i />in production</span></li>)}
+          </ul>
+        </div>
+        <AnimatePresence>{dlg && (
+          <motion.div className="ui-scrim" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
+            <motion.div className="ui-dialog" initial={{ opacity: 0, y: 14, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.3, ease: EASE }}>
+              <b>Dialog</b><em className="uc-tag on x-mono">&lt;Dialog /&gt;</em>
+              <p>Focus management, keyboard behaviour and placement that CSS cannot.</p>
+              <div className="ui-row"><span className="ui-b solid">Close</span></div>
+            </motion.div>
+          </motion.div>)}
+        </AnimatePresence>
+      </div>
+      <div className="uc-foot x-mono">
+        <div className="uc-foot-in">
+          {[
+            <span key={0}>&lt;Dialog /&gt; · &lt;DropdownMenu /&gt; · .button .panel .field .table</span>,
+            <span key={1}><kbd>Tab</kbd> aria-* · role · focus</span>,
+            <span key={2}>--radius {tok.r}px · {tok.n} · @hanzo/design</span>,
+            <span key={3}>pnpm add @hanzo/ui → {app}</span>,
+            <span key={4} className="uc-sheet"><s>styled-components</s><s>emotion</s><s>CSS-in-JS</s><b>{Array.from({ length: 18 }).map((_, i) => <i key={i} className={i < cells ? 'on' : ''} />)}</b></span>,
+            <span key={5}>chat.hanzo.ai · platform.hanzo.ai · every Hanzo dashboard</span>,
+          ].map((n, i) => <motion.div key={i} className="uc-foot-i" initial={false} animate={{ opacity: at === i ? 1 : 0, y: at === i ? 0 : 8 }} transition={{ duration: 0.3, ease: EASE }}>{n}</motion.div>)}
+        </div>
+        <span className="uc-n">{String(at + 1).padStart(2, '0')} / 06</span>
+      </div>
     </div>
   );
 }
 
 function Props() {
   const [ref, live] = useLive(0.05);
-  const [paused, pauseBtn] = usePause({ right: 0, bottom: 0, top: 'auto' });
+  const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
+  const [at, setAt] = useState(0);
+  const arts = useRef([]), rail = useRef(null);
+  useEffect(() => {
+    const mq = matchMedia('(max-width: 899px)');
+    if (mq.matches) return undefined;
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(+e.target.dataset.i); }), { rootMargin: '-48% 0px -48% 0px' });
+    arts.current.forEach((el) => el && io.observe(el));
+    return () => io.disconnect();
+  }, []);
+  const onRail = () => {
+    const r = rail.current; const w = r?.firstElementChild?.offsetWidth;
+    if (r && w && matchMedia('(max-width: 899px)').matches) setAt(Math.max(0, Math.min(5, Math.round(r.scrollLeft / (w + 12)))));
+  };
+  const go = (i) => { const el = arts.current[i]; if (!el) return; if (matchMedia('(max-width: 899px)').matches) rail.current?.scrollTo({ left: el.offsetLeft - rail.current.offsetLeft, behavior: 'smooth' }); else el.scrollIntoView({ block: 'center', behavior: 'smooth' }); };
   return (
-    <div ref={ref}>
-      <PinChapters id="ui-props" label="Components your design team will sign off on" className="ui-pin"
-        title="Components your design team will sign off on"
-        chapters={PROPS.map(([t, d]) => ({ t, b: <p>{d}</p> }))}
-        visual={(at) => (
-          <div className={'ui-vis' + (paused ? ' paused' : '')}>
-            {pauseBtn}
-            {[Overlays, Keys, Tokens2, Everywhere, Atomic, Prod].map((V, i) => (
-              <motion.div key={i} className="ui-vis-i" initial={false} animate={{ opacity: at === i ? 1 : 0, scale: at === i ? 1 : 0.97 }} transition={{ duration: 0.55, ease: EASE }} aria-hidden={at !== i}>
-                <V on={live && !paused && at === i} />
-              </motion.div>
+    <section className="uc" ref={ref} aria-labelledby="uc-h">
+      <div className="w2-wrap">
+        <div className="uc-head">
+          <h2 id="uc-h" className="w2-title uc-h">Components your design team will sign off on</h2>
+          <span className="ui-pause">{pauseBtn}</span>
+        </div>
+        <div className="uc-grid">
+          <div className="uc-stage"><ShowBoard at={at} run={live && !paused} /></div>
+          <ol className="uc-list" ref={rail} onScroll={onRail}>
+            {PROPS.map(([t, d], i) => (
+              <li key={t} ref={(el) => { arts.current[i] = el; }} data-i={i} className={'uc-ch' + (at === i ? ' on' : '')}>
+                <button type="button" className="uc-n2 x-mono" onClick={() => go(i)} aria-current={at === i ? 'step' : undefined}>{String(i + 1).padStart(2, '0')}</button>
+                <h3 className="uc-t">{t}</h3>
+                <p>{d}</p>
+              </li>
             ))}
-            <p className="ui-vis-n x-mono" aria-hidden="true">{String(at + 1).padStart(2, '0')} / 06</p>
-            <p className="x-sr">01 / 06</p>
-          </div>
-        )} />
-    </div>
+          </ol>
+        </div>
+      </div>
+    </section>
   );
 }
 

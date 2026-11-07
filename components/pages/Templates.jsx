@@ -40,6 +40,27 @@ const ALL = [
 const KINDS = ['All', 'Business', 'E-commerce', 'Hospitality', 'Portfolio', 'SaaS', 'Web3'];
 const pad = (v) => String(v).padStart(2, '0');
 
+/* A preview: Hanzo's own screenshot over a drawn page in greys (its name, nav, hero and blocks). If the screenshot
+   fails to load, the drawn page stays, so a missing preview still reads as that site, never a broken image. */
+function Ghost({ title, kind }) {
+  return (
+    <span className="xtp-ghost" data-k={kind} aria-hidden="true">
+      <span className="xtp-ghost-nav"><b>{title}</b><i /><i /><i /></span>
+      <span className="xtp-ghost-hero"><span className="x-mono">{kind}</span><strong>{title}</strong><i /><i /><em /></span>
+      <span className="xtp-ghost-row"><i /><i /><i /><i /></span>
+    </span>
+  );
+}
+function Shot({ slug, title, kind, priority, alt }) {
+  const ref = useRef(null);
+  const [bad, setBad] = useState(false);
+  useEffect(() => { const i = ref.current; if (i && i.complete && !i.naturalWidth) setBad(true); }, []);
+  return (<>
+    <Ghost title={title} kind={kind} />
+    <Img ref={ref} src={`https://hanzo.ai/templates/${slug}.webp`} alt={alt} w={1280} h={800} draggable={false} priority={priority} className={bad ? 'xtp-bad' : ''} onError={() => setBad(true)} />
+  </>);
+}
+
 const D = 'https://docs.hanzo.ai/docs/';
 // the agent strip, as hanzo.ai lists it: [name, docs, works as an MCP client]
 const AGENTS = [
@@ -56,7 +77,6 @@ function Strip() {
   const rows = AGENTS.filter(([n]) => n.toLowerCase().includes(q.trim().toLowerCase()));
   return (
     <div className="xtp-strip">
-      <p className="xtp-strip-k x-mono">Drop into any agent</p>
       <div className="xtp-strip-l">
         {AGENTS.slice(0, 5).map(([n, h]) => <a key={n} href={D + h} target="_blank" rel="noreferrer">{n}</a>)}
         <button type="button" aria-expanded={open} aria-controls="xtp-all" onClick={() => setOpen(!open)}>+{AGENTS.length - 5} more</button>
@@ -100,8 +120,7 @@ function Card({ t, d, onPrev, onNext, calm, narrow }) {
         <span className="xtp-kind x-mono">{kind}</span>
       </div>
       <A to={'/chat?template=' + encodeURIComponent(slug)} className="xtp-shot" tabIndex={front ? 0 : -1} draggable={false}>
-        <span className="xtp-shot-name" aria-hidden="true">{title}</span>
-        <Img src={`https://hanzo.ai/templates/${slug}.webp`} alt={`${title} template preview`} w={1280} h={800} draggable={false} priority={front} />
+        <Shot slug={slug} title={title} kind={kind} priority={front} alt={`${title} template preview`} />
       </A>
       <div className="xtp-foot">
         <div><h3>{title}</h3><p>{what}</p></div>
@@ -159,6 +178,8 @@ function Deck({ kind, setKind, at, setAt, list, front }) {
 
 function Commands({ t }) {
   const [slug, title] = t;
+  const term = useRef(null);
+  const seen = useInView(term, { amount: 0.5 }); // the commands type themselves again each time the room comes into view
   const lines = [
     ['hanzo login', 'register or sign in'],
     ['hanzo template list', 'pick a starter'],
@@ -169,12 +190,11 @@ function Commands({ t }) {
     <section className="w2-sec xtp-cmd w2-dark" data-room="dark" aria-labelledby="xtp-cmd-h">
       <div className="w2-wrap xtp-cmd-in">
         <div>
-          <h2 id="xtp-cmd-h" className="w2-display s xtp-cmd-h">Open one. Edit it in Hanzo.</h2>
-          <p className="xtp-cmd-k x-mono">Setup</p>
+          <h2 id="xtp-cmd-h" className="w2-display s xtp-cmd-h">Drop into any agent</h2>
           <div className="xtp-setup2"><SetupMenu inline up /></div>
           <Strip />
         </div>
-        <div className="xtp-term">
+        <div className="xtp-term" ref={term}>
           <div className="xtp-term-top">
             <span className="xtp-lights" aria-hidden="true"><i /><i /><i /></span>
             <AnimatePresence mode="wait" initial={false}>
@@ -183,7 +203,7 @@ function Commands({ t }) {
             <Copy text={lines.map((l) => l[0]).join('\n')} />
           </div>
           <AnimatePresence mode="wait" initial={false}>
-            <motion.pre key={slug} className="xtp-pre" initial="h" animate="s" exit={{ opacity: 0, transition: { duration: 0.15 } }} variants={{ s: { transition: { staggerChildren: 0.08 } } }}>
+            <motion.pre key={slug + (seen ? '.on' : '')} className="xtp-pre" initial="h" animate="s" exit={{ opacity: 0, transition: { duration: 0.15 } }} variants={{ s: { transition: { staggerChildren: 0.08 } } }}>
               {lines.map(([c, note]) => (
                 <motion.span key={c} className="xtp-l" variants={{ h: { opacity: 0, x: -8 }, s: { opacity: 1, x: 0, transition: { duration: 0.35, ease: EASE } } }}>
                   <span className="xtp-ps" aria-hidden="true">$ </span>{c}{note && <span className="xtp-note">  # {note}</span>}{'\n'}
@@ -199,15 +219,20 @@ function Commands({ t }) {
 }
 
 /* The shelf: all twelve as tiles; each opens into a sheet with its preview, what it is, and its commands. */
-function Shelf() {
+function Shelf({ cur }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.15 });
+  const calm = useReducedMotion();
+  const [armed, setArmed] = useState(false); // the wall deals in only once JS runs; JS off and reduced motion show it whole
+  useEffect(() => { if (!calm) setArmed(true); }, [calm]);
   return (
-    <section className="w2-sec tight xtp-shelf" aria-labelledby="xtp-shelf-h">
+    <section ref={ref} className={'w2-sec tight xtp-shelf' + (armed ? ' arm' : '') + (seen ? ' in' : '')} aria-labelledby="xtp-shelf-h">
       <div className="w2-wrap">
         <h2 id="xtp-shelf-h" className="x-sr">Templates</h2>
         <p className="xtp-shelf-k w2-kicker">All <span className="x-mono">{pad(ALL.length)}</span></p>
         <OpenCards cols={4} className="xtp-tiles" items={ALL.map(([slug, title, kind, what]) => ({
           id: 'xtp-' + slug, k: kind, t: title,
-          art: <span className="xtp-tile-img"><Img src={`https://hanzo.ai/templates/${slug}.webp`} alt="" w={1280} h={800} /><span className="x-mono">{slug}.hanzo.app</span></span>,
+          art: <span className={'xtp-tile-img' + (slug === cur ? ' on' : '')}><Shot slug={slug} title={title} kind={kind} alt="" /><span className="x-mono">{slug}.hanzo.app</span></span>,
           body: (<>
             <p>{what}</p>
             <p><A to={'/chat?template=' + encodeURIComponent(slug)} className="w2-cta" data-cta="templates.sheet">Edit in Hanzo <i aria-hidden="true">→</i></A></p>
@@ -246,7 +271,7 @@ export default function Templates() {
           </Settle>
         </div>
       </section>
-      <Shelf />
+      <Shelf cur={front[0]} />
       <Commands t={front} />
       <section className="w2-sec tight xtp-band" aria-label="Edit in Hanzo">
         <div className="w2-wrap xtp-band-in">

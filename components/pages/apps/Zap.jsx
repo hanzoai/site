@@ -12,7 +12,7 @@
    typing (the terminal). No springs. Colour: none (0 UI hues): the pointer and the walked text are white and silver in the
    dark room. Pause buttons sit in each object's own bar or control row. One dark room: the hero. Every word and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
-import { motion } from 'motion/react';
+import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../../ui';
 import { A, Img } from '../../kit';
 import { useLive, useEvery, useSteps } from '../cloud/Frame';
@@ -143,18 +143,52 @@ const WHY = [
   ['Three implementations, one wire', 'Go, Rust and TypeScript, held wire-compatible against a single schema file. The schema is the contract, and an incompatible change bumps its identifier rather than hoping nobody notices.'],
 ];
 
-/* Each reason is a packet: a sixteen-byte header, filled a little more on every packet. */
-const Hdr = ({ n }) => <span className="zp-hdr" aria-hidden="true">{Array.from({ length: 16 }).map((_, b) => <i key={b} className={b < 2 + n ? 'f' : ''} />)}</span>;
+/* Each reason is a packet: a sixteen-byte header, filled a little more on every packet; the packet that lands fills it all. */
+const Hdr = ({ n }) => <span className="zp-hdr" aria-hidden="true">{Array.from({ length: 16 }).map((_, b) => <i key={b} className={b < 2 + n ? 'f' : ''} style={{ '--b': b }} />)}</span>;
 
+/* Why bother is a pinned stage on wide screens: the eight packets ride past on one wire as you scroll, one lands at a
+   time (its header fills) and the caption counts 01 / 08. Phones and reduced motion get a swipe rail with a peek. */
 function Why() {
+  const sec = useRef(null), track = useRef(null);
+  const calm = useReducedMotion();
+  const [span, setSpan] = useState(0);
+  const [on, setOn] = useState(0);
+  useEffect(() => {
+    const m = () => {
+      const t = track.current; if (!t) return;
+      const ul = t.querySelector('ul');
+      setSpan(!calm && innerWidth >= 900 && ul ? Math.max(0, ul.scrollWidth - t.clientWidth) : 0);
+    };
+    m(); addEventListener('resize', m);
+    return () => removeEventListener('resize', m);
+  }, [calm]);
+  const { scrollYProgress } = useScroll({ target: sec, offset: ['start start', 'end end'] });
+  const x = useTransform(scrollYProgress, [0, 1], [0, -span]);
+  useMotionValueEvent(scrollYProgress, 'change', (v) => { if (span) setOn(Math.min(WHY.length - 1, Math.max(0, Math.round(v * (WHY.length - 1))))); });
+  useEffect(() => {
+    // on the rail (phone), the packet nearest the left edge is the one that has landed
+    const t = track.current; if (!t || span) return;
+    const ul = t.querySelector('ul');
+    const f = () => { const li = ul.children; let best = 0, d = 1e9; for (let i = 0; i < li.length; i++) { const k = Math.abs(li[i].getBoundingClientRect().left - ul.getBoundingClientRect().left); if (k < d) { d = k; best = i; } } setOn(best); };
+    ul.addEventListener('scroll', f, { passive: true });
+    return () => ul.removeEventListener('scroll', f);
+  }, [span]);
+  useEffect(() => { track.current?.querySelectorAll('.zp-packets > li').forEach((li, i) => li.classList.toggle('on', i === on)); }, [on]);
   return (
-    <section className="w2-sec zp-why">
-      <div className="w2-wrap">
-        <div className="zp-split">
-          <LineMask as="h2" className="w2-display s" lines={['Why bother']} />
-          <p className="w2-lede">JSON over HTTP is fine until a hundred agents are calling the same tools. Then the cost is the copies, and the fix is to stop making them.</p>
+    <section ref={sec} className={'zp-why' + (span ? ' pinned' : '')} style={span ? { height: `calc(100svh + ${span}px)` } : undefined}>
+      <div className="zp-why-stick">
+        <div className="w2-wrap">
+          <div className="zp-split">
+            <LineMask as="h2" className="w2-display s" lines={['Why bother']} />
+            <p className="w2-lede">JSON over HTTP is fine until a hundred agents are calling the same tools. Then the cost is the copies, and the fix is to stop making them.</p>
+          </div>
+          <div className="zp-why-track" ref={track}>
+            <motion.div style={span ? { x } : undefined}>
+              <OpenCards cols={4} className="zp-packets" items={WHY.map(([t, d], i) => ({ id: 'zp-' + i, k: String(i + 1).padStart(2, '0'), t, art: <Hdr n={i} />, body: <p>{d}</p> }))} />
+            </motion.div>
+          </div>
+          <p className="zp-why-at x-mono" aria-hidden="true"><b>{String(on + 1).padStart(2, '0')}</b> / 08<i style={{ '--p': (on + 1) / WHY.length }} /></p>
         </div>
-        <OpenCards cols={4} className="zp-packets" items={WHY.map(([t, d], i) => ({ id: 'zp-' + i, k: String(i + 1).padStart(2, '0'), t, art: <Hdr n={i} />, body: <p>{d}</p> }))} />
       </div>
     </section>
   );
@@ -163,8 +197,8 @@ function Why() {
 const TERM = `# Connect 12 MCP servers → 1 ZAP endpoint
 $ zapd serve --port 9999
 $ zapd add mcp --name github --url stdio://gh-mcp
-$ zapd add mcp --name slack --url http://localhost:8080
-$ zapd add mcp --name db --url zap+unix:///tmp/postgres.sock
+$ zapd add mcp --name slack  --url http://localhost:8080
+$ zapd add mcp --name db     --url zap+unix:///tmp/postgres.sock
 # Agents connect once: zap://localhost:9999`;
 
 const ASCII = `┌─────────────────────────────────────────────────────────────────┐
@@ -203,7 +237,7 @@ function Running() {
   useEffect(() => { if (live) setK(0); }, [live]);
   useEvery(600, live, () => setK((v) => (v >= lines.length + 4 ? 0 : v + 1)));
   return (
-    <section className="w2-sec zp-run" ref={ref}>
+    <section className="w2-sec tight zp-run" ref={ref}>
       <div className="w2-wrap zp-run-grid">
         <div className="zp-run-copy">
           <LineMask as="h2" className="w2-headline" lines={['Four lines and it is running']} />
@@ -212,7 +246,7 @@ function Running() {
         </div>
         <div className="zp-term">
           <div className="zp-term-bar"><i /><i /><i /><span className="x-mono">Terminal</span><Copy text={lines.filter((l) => l.startsWith('$')).map((l) => l.slice(2)).join('\n')} /><span className="zp-pause">{pauseBtn}</span></div>
-          <pre className="x-mono">{lines.map((l, i) => <span key={i} className={(l.startsWith('#') ? 'c' : '') + (i < k ? ' in' : '')}>{l}{'\n'}</span>)}</pre>
+          <pre className="x-mono">{lines.map((l, i) => <span key={i} className={(l.startsWith('#') ? 'c' : '') + (i < k ? ' in' : '') + (i === k - 1 ? ' last' : '')}>{l.startsWith('$ ') ? <><span className="zp-ps">$ </span>{l.slice(2)}</> : l}{'\n'}</span>)}</pre>
         </div>
       </div>
     </section>
@@ -274,6 +308,13 @@ function Fleet() {
   );
 }
 
+/* the diagram's wires draw themselves in the first time they are seen, agents to gateway, then gateway to servers */
+const Wires = ({ d, at = 0 }) => (
+  <svg className="zp-dia-l" viewBox="0 0 100 32" preserveAspectRatio="none" aria-hidden="true">
+    {d.map((p) => <motion.path key={p} d={p} initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true, amount: 0.6 }} transition={{ duration: 0.9, ease: [0.4, 0, 0.2, 1], delay: at }} />)}
+  </svg>
+);
+
 /* Hanzo's gateway diagram, drawn: the same words as the ASCII (kept in the HTML, hidden, for the record). */
 function Diagram() {
   return (
@@ -282,13 +323,13 @@ function Diagram() {
         <p className="x-mono">Agent Swarm</p>
         <div className="zp-dia-row">{['Agent 1', 'Agent 2', 'Agent 3', 'Agent N'].map((a) => <span key={a} className="x-mono">{a}</span>)}<em aria-hidden="true">...</em></div>
       </div>
-      <svg className="zp-dia-l" viewBox="0 0 100 32" preserveAspectRatio="none" aria-hidden="true"><path d="M12.5 0 V16 H87.5 V0 M37.5 0 V16 M62.5 0 V16 M50 16 V32" /></svg>
+      <Wires d={['M12.5 0 V16 H50', 'M87.5 0 V16 H50', 'M37.5 0 V16', 'M62.5 0 V16', 'M50 16 V32']} />
       <div className="zp-dia-gw">
         <b>ZAP Gateway</b>
         <span className="x-mono">zap://localhost:9999</span>
         <ul>{['Schema Federation', 'Request Routing', 'Capability Control'].map((t) => <li key={t}>{t}</li>)}</ul>
       </div>
-      <svg className="zp-dia-l" viewBox="0 0 100 32" preserveAspectRatio="none" aria-hidden="true"><path d="M50 0 V16 M16.7 16 H83.3 M16.7 16 V32 M50 16 V32 M83.3 16 V32" /></svg>
+      <Wires d={['M50 0 V16', 'M50 16 H16.7 V32', 'M50 16 H83.3 V32', 'M50 16 V32']} at={0.5} />
       <div className="zp-dia-row srv">{[['MCP Srv', 'GitHub'], ['ZAP Srv', 'Native'], ['MCP Srv', 'Slack']].map(([a, b]) => <span key={b}><b className="x-mono">{a}</b>{b}</span>)}<em aria-hidden="true">...</em></div>
       <pre className="x-mono" hidden>{ASCII}</pre>
     </figure>
@@ -297,7 +338,7 @@ function Diagram() {
 
 function Built() {
   return (
-    <section className="w2-sec zp-built">
+    <section className="w2-sec tight zp-built">
       <div className="w2-wrap">
         <div className="zp-split">
           <LineMask as="h2" className="w2-headline" lines={['How it is put together']} />
@@ -305,7 +346,7 @@ function Built() {
         </div>
         <ul className="zp-stats">
           {[['N:1', 'Every agent, one address'], ['1:M', 'One schema over every backend'], ['0', 'Copies of the same tool server']].map(([k, d]) => (
-            <li key={d}><b className="w2-fig">{k}</b><span>{d}</span></li>
+            <li key={d}><LineMask as="p" className="w2-fig zp-fig" lines={[k]} /><span>{d}</span></li>
           ))}
         </ul>
         <div className="zp-built-grid">
@@ -319,7 +360,7 @@ function Built() {
 
 function Point() {
   return (
-    <section className="w2-sec zp-point">
+    <section className="w2-sec tight zp-point">
       <div className="w2-wrap">
         <div className="zp-point-grid">
           <div className="zp-point-copy">
@@ -333,25 +374,44 @@ function Point() {
             <p>What ZAP saves depends on your workload, your payload size and your topology. The claim here is about mechanism, not about a number: a reader that walks the buffer in place does no parsing and no allocation, and shared backends run one process where per-agent sidecars run many. Measure it on your own traffic — we have not published a benchmark and will not quote one we cannot show you.</p>
           </div>
         </div>
-        <div className="zp-proto">
-          <h2 className="w2-title">Read the protocol</h2>
-          <div className="zp-acts"><A to="https://docs.hanzo.ai/docs/zap" className="zp-tlink">Read the docs</A><A to="https://github.com/hanzoai" className="zp-tlink">View on GitHub</A></div>
-        </div>
-        <div className="zp-get">
-          <div>
-            <h2 className="w2-headline">Get ZAP</h2>
-            <p className="zp-get-tag">Zero-copy application protocol</p>
-            <p className="zp-addr x-mono" aria-hidden="true">zap://localhost:9999<i /></p>
-          </div>
-          <div className="zp-get-meta">
-            <span className="zp-chip2"><span>License:</span> Apache-2.0</span>
-            <A to="https://github.com/hanzoai" className="zp-chip2">hanzoai</A>
-            <A to="https://platform.hanzo.ai/deploy" className="zp-tlink">Deploy to Cloud</A>
-            <A to="https://docs.hanzo.ai/docs/zap" className="zp-tlink">Self-host</A>
-          </div>
-        </div>
+        <Band />
       </div>
     </section>
+  );
+}
+
+const host = (u) => u.replace(/^https?:\/\//, '').replace(/\/$/, '');
+const Row = ({ to, children }) => <A to={to} className="zp-row"><span>{children}</span><em className="x-mono">{host(to)}</em><i aria-hidden="true">→</i></A>;
+
+/* The close: one black band holds the protocol and the way to get it, as quiet rows; the only solid stays above. The
+   address types itself in when the band arrives and its cursor keeps time while it is on screen. */
+function Band() {
+  const [ref, live] = useLive(0.4);
+  const [seen, setSeen] = useState(false);
+  useEffect(() => { if (live) setSeen(true); }, [live]);
+  return (
+    <div className={'zp-band w2-dark' + (seen ? ' seen' : '') + (live ? ' live' : '')} data-room="dark" ref={ref}>
+      <div className="zp-band-proto">
+        <h2 className="w2-title">Read the protocol</h2>
+        <div className="zp-rows">
+          <Row to="https://docs.hanzo.ai/docs/zap">Read the docs</Row>
+          <Row to="https://github.com/hanzoai">View on GitHub</Row>
+        </div>
+      </div>
+      <div className="zp-band-get">
+        <LineMask as="h2" className="w2-headline" lines={['Get ZAP']} />
+        <p className="zp-get-tag">Zero-copy application protocol</p>
+        <p className="zp-addr x-mono" aria-hidden="true"><span>zap://localhost:9999</span><i /></p>
+        <div className="zp-get-meta">
+          <span className="zp-chip2"><span>License:</span> Apache-2.0</span>
+          <A to="https://github.com/hanzoai" className="zp-chip2">hanzoai</A>
+        </div>
+        <div className="zp-rows">
+          <Row to="https://platform.hanzo.ai/deploy">Deploy to Cloud</Row>
+          <Row to="https://docs.hanzo.ai/docs/zap">Self-host</Row>
+        </div>
+      </div>
+    </div>
   );
 }
 

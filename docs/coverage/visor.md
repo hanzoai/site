@@ -4,7 +4,7 @@ Page file: `components/pages/cloud/Visor.jsx` · gallery: `docs/gallery/visor/` 
 
 Open copy questions for James: "Fewer" (`c4_fewer`); "More" (`c4_more_machines`); "Machines" (`c4_machines`); "Launch" (`c4_launch`). Each is in `content/ui-strings.json` as needs_james; until approved the control is icon-only or the name is for screen readers only.
 Shared changes requested (`docs/requests/visor.md`): none.
-Forks this page deleted: the shared-element dialog that froze half open (kit Sheet now), the blinking "ready" lights, the "Name a fleet" label over the heading.
+Forks this page deleted: the shared-element dialog that froze half open (kit Sheet now), the blinking "ready" lights, the "Name a fleet" label over the heading, the row of three equal tiles (now 01 wide, 02|03, 04|05, 06 wide).
 
 Measured on the dev server at 1470×801, 375×667 and 320×640 with `audit.cjs` (Playwright), JS on and off.
 
@@ -60,13 +60,13 @@ Done here: No partner logos; product names appear as text only. Parity holds eve
 Done here: Small text: 0 runs under 13px on desktop, 0 under 14px on the phone (mono capitals excepted). Sizes follow the deck: h1 52px (40 phone), section heads 26px, h3 17px, lede 20px, body 15px, figures 64px Air, growing only in their moment. Lede 44ch, body 66ch, headings balanced. Code: the agent prompt in the band. Parity: 0 missing.
 
 ## 7. Visual design system
-- [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
+- [x] `python3 scripts/taste.py <files>` passes; every literal value is a deck value
 - [x] No label, tag, badge or pill above a headline
 - [x] Radii, shadows and sizes from tokens; never box plus shadow
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: `taste.py` OK on the page JSX and CSS and the Cloud 4 shared files; only the deck neutrals and `#e4e4e7`. Captions sit under headings. Radii 6, 8, 12, 16, 20, 24 (28 on the search composer only); objects are outlined with a hairline and carry no shadow. Icons are one inline 16px stroke set. /sentinel uses the same side look the other way round.
+Done here: `taste.py` OK on the page JSX and CSS; only the deck neutrals (the CSS writes them as literal deck hex values, not `var()` tokens). The tile pictures draw ink on `#fafafa` chips, so no word is white on white. Captions sit under headings. Radii 6, 8, 12, 16, 20, 24 (28 on the search composer only); objects are outlined with a hairline and carry no shadow. Icons are one inline 16px stroke set. /sentinel uses the same side look the other way round.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
@@ -84,7 +84,7 @@ Done here: Hover sits under `@media (hover: hover)` and changes fill or border o
 - [x] Reduced motion shows the final state; no `setInterval`
 - [ ] Sound only on the listed moments, through the one kit (n/a: the page plays no sound of its own; the kit owns it)
 
-Done here: Signature: every tile opens into its card (kit Sheet). Supporting: launch sequence (time), tile press and sheet rise (state), inventory re-flow (state). `scripts/variety.py` OK. Kinds: idle (the hero object), time, state, pointer, with scroll only in the pinned scene. Timers are timeout chains (`useTick`), no `setInterval`. Reduced motion (`useCalm`) renders the settled frame. No springs: every transition is 300 ms ease-emphasis or shorter.
+Done here: Signature: every tile opens into its card (kit Sheet). Supporting: launch sequence (time, pausable), each tile's picture playing once as it arrives and again on hover (bars price, machines name themselves, the pool fills, "quote" cuts in by line mask, SSH is picked, audit rows land), the naming tool's batch naming itself 01, 02, 03 on arrival (time), a blinking console caret (the one idle mover in the tile room), inventory re-flow (state). `scripts/variety.py` OK. Kinds: idle (the hero object), time, state, pointer, with scroll only in the pinned scene. Timers are timeout chains (`useTick`), no `setInterval`. Reduced motion (`useCalm`) renders the settled frame. No springs: every transition is 300 ms ease-emphasis or shorter.
 
 ## 10. Media
 - [ ] `Film` and `Pic` only; sizes and posters set (n/a: no photo or video)
@@ -92,7 +92,7 @@ Done here: Signature: every tile opens into its card (kit Sheet). Supporting: la
 - [ ] Budgets met; nothing missing; alt on every image (n/a: 0 images, 0 without alt)
 - [ ] No dimmed or filtered photo; 4+ real visuals together where the page has them (n/a: no photos)
 
-Done here: 0 videos. The moving objects are drawn in HTML and SVG; each loop over 5 s carries a 44px pause button (0 on the page): the hero fleet.
+Done here: 0 videos. The moving objects are drawn in HTML and SVG; the one loop over 5 s (the hero fleet, about 9 s) carries the shared 44px `PauseBtn` (`aria-pressed`) in the request card's top-right corner, clear of its text.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -100,7 +100,7 @@ Done here: 0 videos. The moving objects are drawn in HTML and SVG; each loop ove
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: Overflow 0px at 375 and 0px at 320. 0 controls under 44px at 375 after scrolling the whole page. The primary ask's bottom edge sits at 388px on a 667px screen. Pinned scenes stack below 900px; every hover state also answers a tap.
+Done here: Overflow 0px at 375 and 0px at 320. Under 900px all three providers show as compact rows, so the AWS pick still happens on the phone. 0 controls under 44px at 375 after scrolling the whole page. The primary ask's bottom edge sits at 388px on a 667px screen. Pinned scenes stack below 900px; every hover state also answers a tap.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -117,7 +117,7 @@ Done here: Lowest measured text contrast 6.67:1 (0 runs flagged). Headings 12222
 - [x] No poller; no third-party request before consent
 - [x] Nothing heavy run on James's laptop
 
-Done here: `curl /visor/` returns the h1 in the HTML. Demos run only while on screen (`useInView`) and stop when paused or off screen. No fetch, poller or third-party script on the page. 0 console errors at both widths (0 desktop, 0 phone).
+Done here: `curl /visor/` returns the h1 in the HTML. Layout shift 0.003 desktop, 0.000 phone (`scripts/motion.mjs`): the hero inventory reserves five rows and new machines land below the pool and cluster, so nothing moves. Demos run only while on screen (`useInView`) and stop when paused or off screen. No fetch, poller or third-party script on the page. 0 console errors at both widths (0 desktop, 0 phone).
 
 ## 14. SEO and machine files
 - [x] Title and description match live (or are listed for James)

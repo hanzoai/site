@@ -10,12 +10,13 @@
    it lights the same stage.
    Beyond: "Your config". Choose the signals, the protocols and the processors and the collector config writes itself,
    ready to copy, from the parts Hanzo names (OTLP over gRPC and HTTP, batching, a memory ceiling, OTLP out).
-   Motion: pinned chapters (signature, scroll) + the hero's running collector (idle, with Pause) + the config builder
-   (state) + the stage settle (scroll). Every word and link is Hanzo's;
+   Motion: pinned chapters (signature, scroll) + the hero's running collector (idle, with Pause; hover a signal and only
+   that kind flows in) + each chapter's arrival (a span runs the strip to the lit stage and keeps running it until Pause,
+   the lit lines write in, a caret blinks 5 times) + the config builder (state) + the stage settle (scroll). Every word and link is Hanzo's;
    the config is a standard OpenTelemetry collector config with placeholders, not a Hanzo default. */
-import { useMemo, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { EASE, Copy } from '../../ui';
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { motion, AnimatePresence, useInView } from 'motion/react';
+import { EASE, Copy, useCalm } from '../../ui';
 import { useDemo, PauseBtn, useTick } from '../../v2/x-hamilton/Demo';
 import StageHero from '../../v2/StageHero';
 import PinScenes from '../../v2/x-hamilton/PinScenes';
@@ -36,9 +37,14 @@ export function tick(s) {
   return { t, held, out, mem, refused: full };
 }
 
+// one Pause for the page's self-running parts: the hero collector and the span that keeps running the chapter strip
+const Hold = createContext([false, () => {}]);
+
 /* Stage object: spans in one at a time, out in batches, under a memory ceiling. */
 function Pipe() {
-  const [ref, live, , paused, toggle] = useDemo(0.05);
+  const [ref, seen] = useDemo(0.05);
+  const [paused, toggle] = useContext(Hold);
+  const live = seen && !paused;
   const [s, setS] = useState({ t: 0, held: 3, out: [{ id: -1, n: 6 }, { id: -2, n: 6 }], mem: 0.5, refused: false });
   const [only, setOnly] = useState(-1); // pointer: hover a signal and only that kind comes in
   useTick(420, live, () => setS(tick));
@@ -103,12 +109,27 @@ function Config({ at, compact }) {
   const stop = Math.max(0, STAGES.findIndex(([, f]) => f.includes(at)));
   const dest = at === 4 ? STAGES.length - 1 : stop;
   const lastOn = file.reduce((k, [, f], i) => (f === at ? i : k), -1);
+  const calm = useCalm();
+  const [up, setUp] = useState(false);
+  useEffect(() => setUp(true), []);
+  const go = up && !calm; // server HTML, JS off and reduced motion: the final frame, nothing hidden
+  const [held] = useContext(Hold);
+  const box = useRef(null);
+  const seen = useInView(box, { amount: 0.3 });
+  const flow = go && seen && !held; // after the arrival, a span keeps running the strip to the lit stage (idle), until Pause
+  const strip = useRef(null);
+  const [to, setTo] = useState(`${((dest + 0.5) / STAGES.length) * 100}%`);
+  useEffect(() => { // park the span under the lit stage itself (the pills wrap and differ in width)
+    const el = strip.current, pill = el && el.querySelectorAll(':scope > span')[dest];
+    if (pill) setTo(`${((pill.offsetLeft + pill.offsetWidth / 2) / el.offsetWidth) * 100}%`);
+  }, [dest]);
   let n = 0;
   return (
-    <motion.div className={'tl2-ed' + (compact ? ' cp' : '')} key={at} initial="a" whileInView="b" viewport={{ once: !!compact, amount: 0.4 }}>
-      <div className="tl2-strip">
+    <motion.div ref={box} className={'tl2-ed' + (compact ? ' cp' : '')} key={at} initial={go ? 'a' : false} whileInView="b" viewport={{ once: !!compact, amount: 0.4 }}>
+      <div className="tl2-strip" ref={strip}>
         {STAGES.map(([t, f], i) => <span key={t} className={'l2-mono' + (f.includes(at) || at === 4 ? ' on' : '')}>{t}</span>)}
-        <motion.i className="tl2-run" variants={{ a: { left: '0%' }, b: { left: `${((dest + 0.5) / STAGES.length) * 100}%` } }} transition={{ duration: 1.2, ease: [0.4, 0, 0.2, 1] }} />
+        <div className="tl2-track" aria-hidden="true"><motion.div className="tl2-run" variants={{ a: { x: '0%' }, b: { x: to } }} transition={{ duration: 1.2, ease: [0.4, 0, 0.2, 1] }}><b /></motion.div>
+          <motion.div className="tl2-run flow" initial={{ opacity: 0 }} animate={flow ? { x: ['0%', '0%', to, to], opacity: [0, 1, 1, 0] } : { opacity: 0 }} transition={flow ? { duration: 2.2, times: [0, 0.1, 0.8, 1], ease: [0.4, 0, 0.2, 1], repeat: Infinity, repeatDelay: 0.8, delay: 1.6 } : { duration: 0.3 }}><b /></motion.div></div>
       </div>
       <div className="tl2-win">
         <div className="tl2-tabs l2-mono"><span className={at !== 4 ? 'on' : ''}>config.yaml</span><span className={at === 4 ? 'on' : ''}>builder.yaml</span></div>
@@ -125,6 +146,12 @@ function Config({ at, compact }) {
       </div>
     </motion.div>
   );
+}
+
+/* the chapter's own Pause (the visual beside it is decorative), the same switch as the hero's */
+function ChapterKey({ k }) {
+  const [held, toggle] = useContext(Hold);
+  return <div className="tl2-kr"><p className="tl2-key l2-mono">{k}:</p><PauseBtn paused={held} onClick={toggle} className="tl2-kp" /></div>;
 }
 
 const SIG = ['traces', 'metrics', 'logs'];
@@ -166,13 +193,17 @@ function YourConfig() {
 }
 
 export default function Telemetry() {
+  const [held, setHeld] = useState(false);
+  const hold = useMemo(() => [held, () => setHeld((h) => !h)], [held]);
   return (
+    <Hold.Provider value={hold}>
     <main id="main" className="l2-page tl2" data-ask="off">
       <StageHero look="split" kick="telemetry.hanzo.ai" title="Hanzo Telemetry" sub="The collector that sits between your app and wherever the data goes" acts={[['View on GitHub', GH]]}>
         <Pipe />
       </StageHero>
-      <PinScenes flip head="One hop you control" items={FACTS.map(([t, d, k]) => [t, d, <p key="k" className="tl2-key l2-mono">{k}:</p>])} visual={(at, p) => <Config at={at} compact={!p} />} />
+      <PinScenes flip head="One hop you control" items={FACTS.map(([t, d, k]) => [t, d, <ChapterKey key="k" k={k} />])} visual={(at, p) => <Config at={at} compact={!p} />} />
       <Finale name="Telemetry" head="Put it in front of your backend" ask={['View on GitHub', GH]} object={<YourConfig />} prompt="Read https://hanzo.ai/skill.md and use Hanzo Telemetry in my project." tag="OpenTelemetry ingest" />
     </main>
+    </Hold.Provider>
   );
 }
