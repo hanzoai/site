@@ -11,11 +11,12 @@ Page files: `components/pages/Careers.jsx`, `CareersBoard.css`, `app/careers/pag
    - Order: promise, how the team works, the roles, internships and grants, the close.
    - Every role is a real `<a href>` to `/careers/<slug>`; the direct-link anchors (`#<role id>`) are kept.
 3. **First impression and page narrative.**
-   - At 1470×801 the h1 (4 masked lines, 92px, line height .94), the lede and the one solid ask sit above the fold. The ask's bottom is at about 680px.
-   - The live object is the hiring card, which slides its four steps through a mask by itself within a second.
+   - At 1470×801 the h1 (4 masked lines, about 91px, line height .94), the lede and the one solid ask sit above the fold. The ask's bottom is at about 760–774px, under 801.
+   - The live object is the hiring card, which slides its four steps through a mask by itself once the curtain has lifted and its top is on screen (so the phone's first screen is alive too). Its bar fills only while its timer runs.
    - After that: a headline screen; the four perks pinned (one in as the last goes out); the deck of role sheets; the 7/5 internships; one dark close.
 4. **Conversion system.**
    - One solid per viewport: the hero ask; the sheets' "Apply for this role" is outlined (the sheet itself is the click); Academic keeps one solid, with "Apply for Credit Grant" outlined; the close has one solid.
+   - The in-page solids ("Submit Open Application", "Apply for Research Internship", "Browse Open Positions") carry `data-thumb`, so the site Ask bar steps aside while they are on screen. Two solids never meet.
    - The header's "Try Hanzo" turns outline while the Ask bar shows (site layer).
 5. **Trust and proof.** "2,137+ open repositories" is a giant figure, traced to Hanzo's careers copy. No other figures. Nothing invented.
 6. **Content presentation (copy untouched).**
@@ -31,7 +32,7 @@ Page files: `components/pages/Careers.jsx`, `CareersBoard.css`, `app/careers/pag
    - One dark room (the close); the hiring card is a dark object, not a room.
 8. **UI component library.**
    - Kit `A`; the company `MaskLines` and `PinScenes` (page-local, `components/pages/company/`); `Sigil`.
-   - The team filter is a pill that glides (layoutId). Skill chips are real toggle buttons (`aria-pressed`).
+   - The team filter's ink pill glides between teams (layoutId), and the deck answers a filter by sliding out and back in (AnimatePresence) rather than cutting. Skill chips are real toggle buttons (`aria-pressed`).
    - No native `title=` tooltips and no browser-default controls.
 9. **Motion and interaction.** Signature: the role sheets stack as you scroll.
    - Arrival: the h1 lines cut in once.
@@ -49,7 +50,7 @@ Page files: `components/pages/Careers.jsx`, `CareersBoard.css`, `app/careers/pag
 12. **Accessibility.**
     - Real buttons with `aria-pressed`; a `role=status` count with a spoken label; a focus ring in ink with a white halo.
     - The copy confirmation is announced (`role=status`) and never claims a copy that failed.
-    - Reduced motion: final states, the deck unstuck, no running bars. JS off: the h1 and every heading are legible (`noscript` rule in the company MaskLines).
+    - Reduced motion: final states, the deck unstuck, no running bars. JS off: every heading, perk and button is legible (checked: 0 hidden). This uses `noscript` rules in the company MaskLines and PinScenes (the perks stack) and on the hero.
 13. **Performance and engineering.**
     - Transform, opacity and clip-path only. Sigil pauses off screen.
     - The hiring card's timer runs only in view and stops when you take it.
@@ -57,7 +58,9 @@ Page files: `components/pages/Careers.jsx`, `CareersBoard.css`, `app/careers/pag
 14. **SEO and machine files.** Metadata and JSON-LD unchanged. One h1 in server HTML; all role text, perks and steps are in the HTML.
 15. **Catalogue and product pages.** The roles are the catalogue:
     - a filter by team re-flows the deck;
-    - each sheet opens into its page, and its title carries `data-morph` and flies into the role page's h1, which carries `data-morph-target` on the role template.
+    - each sheet opens into its page. Its rectangle grows to fill the screen in the sheet's own grey, the role page arrives, and the cover wipes away (page-local `doorway.js`).
+    - The site Morph (title flying into the role h1) is skipped with `data-no-morph`: `components/Morph.jsx` times out today, because it resolves the transition inside `requestAnimationFrame`. That is reported to its owner.
+    - The role page's blue kicker and button belong to the `/careers/*` template (Families A).
 16. **Developer experience.** Not applicable.
 17. **States and resilience.**
     - Filters with no match leave the open-application sheet.

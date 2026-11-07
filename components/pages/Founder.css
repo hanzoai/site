@@ -1,5 +1,4 @@
-/* ---------- founder program (v2) ---------- */
-.xfo { --xp-accent: #737373; }
+/* ---------- founder program (v2, grey deck) ---------- */
 .xfo-link { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font: 500 17px/1 var(--sans); color: var(--ink); text-decoration: none; }
 .xfo-link::after { content: '→'; color: var(--xp-accent); transition: transform .3s var(--xp-ease); }
 .xfo-link:hover::after { transform: translateX(4px); }
@@ -18,14 +17,14 @@
 .xfo-diff span { display: grid; grid-template-columns: 18px 1fr; align-items: center; gap: 8px; height: 18px; }
 .xfo-diff b { font: 500 14px/1 var(--mono); color: var(--faint); }
 .xfo-diff i { height: 8px; border-radius: 4px; background: rgba(0, 0, 0, .12); }
-.xfo-diff .add i { background: #737373; opacity: .55; } .xfo-diff .add b { color: #737373; }
-.xfo-diff .del i { background: #404040; opacity: .4; } .xfo-diff .del b { color: #404040; }
+.xfo-diff .add i { background: var(--hz-700); } .xfo-diff .add b { color: var(--hz-950); }
+.xfo-diff .del i { background: var(--hz-200); } .xfo-diff .del b { color: var(--hz-500); }
 .xfo-pr-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.xfo-badge { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 18px 0 14px; border-radius: 999px; background: #737373; color: #fff; font: 560 16px/1 var(--sans); }
-.xfo-badge.merged { background: var(--xp-accent); }
-.xfo-btn { display: grid; place-items: center; min-width: 120px; height: 48px; padding: 0 20px; border-radius: 14px; background: #737373; color: #fff; font: 560 16px/1 var(--sans); transition: transform .2s var(--xp-ease), background .3s; }
+.xfo-badge { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 18px 0 14px; border-radius: 999px; background: #fff; border: 1.5px solid var(--hz-950); color: var(--hz-950); font: 560 16px/1 var(--sans); }
+.xfo-badge.merged { background: var(--hz-950); color: #fff; }
+.xfo-btn { display: grid; place-items: center; min-width: 120px; height: 48px; padding: 0 20px; border-radius: 14px; background: var(--hz-950); color: #fff; font: 560 16px/1 var(--sans); transition: transform .2s var(--xp-ease), background .3s; }
 .xfo-btn.press { transform: scale(.94); }
-.xfo-btn.done { background: var(--card); color: var(--xp-accent); }
+.xfo-btn.done { background: var(--hz-50); color: var(--hz-950); }
 
 /* the scrubbed scene */
 .xfo-scene { position: relative; height: 320svh; }
@@ -38,12 +37,12 @@
 .xfo-none { margin-top: 40px; max-width: 34ch; }
 .xfo-lv { grid-column: 7 / span 6; list-style: none; margin: 0; padding: 0; display: grid; gap: 20px; }
 .xfo-lv-c { position: relative; display: grid; gap: 12px; padding: clamp(28px, 3vw, 44px); border-radius: 28px; border: 1px solid var(--line); background: #fff; transition: border-color .5s var(--xp-ease), box-shadow .5s var(--xp-ease); }
-.xfo-lv-c.on { border-color: rgba(115, 115, 115, .45); box-shadow: 0 40px 80px -50px rgba(115, 115, 115, .55); }
+.xfo-lv-c.on { border-color: var(--hz-950); box-shadow: 0 40px 80px -50px rgba(0, 0, 0, .45); }
 .xfo-lv-k { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); transition: color .4s; }
 .xfo-lv-c.on .xfo-lv-k { color: var(--xp-accent); }
 .xfo-lv-n { font-size: clamp(2rem, 3.4vw, 3rem); }
 .xfo-pour { height: 10px; margin-top: 8px; border-radius: 5px; background: var(--card); overflow: hidden; }
-.xfo-pour i { display: block; height: 100%; border-radius: 5px; background: linear-gradient(90deg, #737373, var(--xp-accent)); transform-origin: 0 50%; }
+.xfo-pour i { display: block; height: 100%; border-radius: 5px; background: var(--hz-950); transform-origin: 0 50%; }
 .xfo-lv-e { display: flex; align-items: center; gap: 10px; margin: 4px 0 0; font: 560 clamp(1.125rem, 1.5vw, 1.375rem)/1.3 var(--sans); letter-spacing: -.015em; color: var(--faint); transition: color .4s; }
 .xfo-lv-e span { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid currentColor; font-size: 13px; }
 .xfo-lv-c.on .xfo-lv-e { color: var(--ink); }
@@ -78,9 +77,9 @@
 .xfo-open li a { display: grid; grid-template-columns: 1fr 20px; gap: 6px 12px; padding: 18px 0; border-bottom: 1px solid rgba(255, 255, 255, .1); color: #f5f5f7; text-decoration: none; }
 .xfo-open li a span { grid-column: 1; font-size: 13px; color: #a1a1a6; }
 .xfo-open li a b { grid-column: 1; font: 500 17px/1.35 var(--sans); }
-.xfo-open li a i { grid-column: 2; grid-row: 1 / span 2; align-self: center; font-style: normal; color: #737373; transition: transform .3s var(--xp-ease); }
+.xfo-open li a i { grid-column: 2; grid-row: 1 / span 2; align-self: center; font-style: normal; color: var(--hz-300); transition: transform .3s var(--xp-ease); }
 .xfo-open li a:hover i { transform: translate(3px, -3px); }
-.xfo-open li a:focus-visible { outline: 2px solid #737373; outline-offset: 2px; }
+.xfo-open li a:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .xfo-say { margin: 0; font-size: 17px; color: #a1a1a6; }
 .xfo-say.reading { animation: xfo-sh 1.4s var(--xp-ease) infinite alternate; }
 @keyframes xfo-sh { from { opacity: .45; } to { opacity: 1; } }
@@ -94,7 +93,7 @@
 .xfo-form label { display: grid; gap: 10px; font: 500 15px/1.2 var(--sans); color: var(--ink); }
 .xfo-form label.wide, .xfo-form label:first-child { grid-column: 1 / -1; }
 .xfo-form input { height: 64px; padding: 0 20px; border-radius: 16px; border: 1px solid rgba(0, 0, 0, .14); background: #fff; font: 400 18px/1 var(--sans); color: var(--ink); outline: none; transition: border-color .2s var(--xp-ease), box-shadow .2s var(--xp-ease); }
-.xfo-form input:focus { border-color: var(--xp-accent); box-shadow: 0 0 0 4px rgba(115, 115, 115, .14); }
+.xfo-form input:focus { border-color: var(--hz-950); box-shadow: 0 0 0 4px rgba(10, 10, 11, .08); }
 .xfo-refused { grid-column: 1 / -1; margin: 0; font-size: 16px; color: var(--ink); }
 .xfo-refused a { color: var(--ink); font-weight: 500; }
 .xfo-send { grid-column: 1 / -1; justify-self: start; margin-top: 8px; }
@@ -125,3 +124,8 @@
   .xfo-send { width: 100%; }
   .xfo-orgs li { font-size: 2.75rem; }
 }
+
+.xfo-pr-k { flex: none; font: 560 14px/1 var(--sans); color: var(--hz-950); padding-right: 10px; border-right: 1px solid var(--line); }
+.xfo-lv-h { margin-bottom: 8px; }
+.xfo-mine-h { grid-column: 1 / span 5; display: grid; place-items: center; width: 88px; height: 88px; border-radius: 28px; background: var(--hz-950); color: #fff; }
+.xfo-mine-h svg { width: 36px; height: 36px; }

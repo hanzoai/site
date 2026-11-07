@@ -58,8 +58,8 @@ function Wake() {
     <div className="xsk-wake" ref={ref} aria-hidden="true">
       <div className="xsk-file">
         <div className="xsk-file-top x-mono"><span>hanzo.md</span><span>markdown</span></div>
-        <pre className="xsk-fm x-mono"><span className="d">---</span>{'\n'}<span className="k">name:</span> <i style={{ width: '9ch' }} />{'\n'}<span className="k">description:</span> <i style={{ width: '18ch' }} />{'\n'}<span className="d">---</span></pre>
-        <div className="xsk-prose">{[92, 84, 96, 60, 0, 88, 72, 90, 40].map((v, i) => (v ? <i key={i} style={{ width: v + '%' }} /> : <br key={i} />))}</div>
+        <pre className="xsk-fm x-mono"><span className="d">---</span>{'\n'}<span className="k">name:</span> hanzo{'\n'}<span className="k">description:</span> Development knowledge your coding agent loads only when it needs it{'\n'}<span className="d">---</span></pre>
+        <div className="xsk-prose"><b># A skill is a markdown file</b><span>Frontmatter carries a name and a description. Below it is prose, code, and links to related skills.</span></div>
         <div className="xsk-links x-mono">{['discover-database', 'discover-zig'].map((l) => <span key={l}>→ {l}</span>)}</div>
       </div>
       <div className="xsk-agent">

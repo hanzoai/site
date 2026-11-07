@@ -80,3 +80,8 @@
 @media (prefers-reduced-motion: reduce) {
   .v2s-btn, .v2s-btn svg, .v2s-link svg { transition: none; }
 }
+
+/* the closing Band (StoryClose): the kit's dark room, the Story button scale */
+.xst-close .v2s-btn.solid { min-height: 52px; padding: 0 30px; background: #f5f5f7; color: #0a0a0b; border-color: #f5f5f7; }
+@media (hover: hover) { .xst-close .v2s-btn.solid:hover { background: #fff; border-color: #fff; } }
+.xst-close .x-band-note a { display: inline-flex; align-items: center; min-height: 44px; text-underline-offset: 5px; }

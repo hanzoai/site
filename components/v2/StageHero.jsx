@@ -47,7 +47,7 @@ export default function StageHero({ kick, title, sub, lede, acts = [], look = 'r
   const clip = useMotionTemplate`${inset}`;
   const copyY = useTransform(p, [0, 0.8], ['0svh', look === 'rise' || look === 'split' ? '-22svh' : '-4svh']);
   // opacity as a function, not a range: Motion would hand a range to a scroll-linked WAAPI animation, which forgets its clamp
-  const [o0, o1] = look === 'rise' || look === 'split' ? [0.15, 0.6] : [0.25, 0.8], oEnd = look === 'side' ? 0.16 : 0;
+  const [o0, o1] = look === 'rise' || look === 'split' ? [0.15, 0.6] : [0.25, 0.8], oEnd = look === 'side' ? 1 : 0; // side: the copy stays whole beside the object
   const copyO = useTransform(p, (v) => 1 - (1 - oEnd) * Math.min(1, Math.max(0, (v - o0) / (o1 - o0))));
   const cueO = useTransform(p, (v) => Math.max(0, 1 - v / 0.12));
   const copyPE = useTransform(copyO, (v) => (v < 0.2 ? 'none' : 'auto'));

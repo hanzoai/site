@@ -13,14 +13,15 @@
 import { useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { EASE, Copy } from '../../ui';
-import { A, Flap } from '../../kit';
+import { A } from '../../kit';
+import MaskFig from '../../v2/MaskFig';
 import Sigil from '../../Sigil';
 import { FilmPause, usePaused } from '../../v2/ModelFilm';
+import SpecCard from '../../v2/SpecCard';
 import { Field, Bill, Codes, Loose, useCatalog, rateFrom, rateText, money } from './parts';
 import './models.css';
 
 const up = (d) => ({ initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
-const short = (t) => (t >= 1e6 ? +(t / 1e6).toFixed(1) + 'M' : Math.round(t / 1000) + 'K');
 const size = (name) => (name.length <= 14 ? 's' : name.length <= 24 ? 'm' : 'l');
 const FOLD = 2; // spec groups shown before the rest opens
 const DASH = '—'; // a value Hanzo has not printed yet (PLAN-COMPONENTS 0.6: never "…")
@@ -57,8 +58,9 @@ export default function ModelSheet({ doc }) {
   const groups = doc.facts;
   const [all, setAll] = useState(false);
   const first = doc.actions[0];
-  // the hero figure is the short form ("1M", "33K"); a long printed value ("32,768 tokens (YaRN…)") stays whole in the spec sheet
-  const ctxFig = doc.ctx && doc.ctx.length <= 6 ? doc.ctx : doc.tokens ? short(doc.tokens) : null;
+  // the hero figure is Hanzo's short form ("1M", "33K": the spec value, else the shelf card's); a sentence-long value
+  // ("32,768 tokens (YaRN…)") stays whole in the spec sheet. Never a number Hanzo did not print.
+  const ctxFig = doc.ctx && doc.ctx.length <= 6 ? doc.ctx : doc.cardCtx;
   const ctxLabel = doc.ctx ? (doc.facts.flatMap((g) => g.facts).find((f) => f.value === doc.ctx) || {}).label : null;
   const hero = useRef(null);
   const paused = usePaused();
@@ -70,11 +72,6 @@ export default function ModelSheet({ doc }) {
       <section className="xmf-launch" ref={hero} aria-labelledby="xmf-h1">
         <div className="x-wrap xmf-launch-g">
           <div className="xmf-launch-t">
-            <motion.nav className="xmf-crumbs" aria-label="Breadcrumb" {...up(0)}>
-              {doc.crumbs.map((c, i) => (
-                <span key={i}>{c.href ? <A to={c.href}>{c.label}</A> : <span className="x-mono" aria-current="page">{c.label}</span>}</span>
-              ))}
-            </motion.nav>
             <h1 id="xmf-h1" className={'xmf-name ' + size(doc.name)} data-morph-target>
               <span className="x-line"><motion.span className="x-line-in" initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.08 }}>{doc.name}</motion.span></span>
             </h1>
@@ -88,27 +85,35 @@ export default function ModelSheet({ doc }) {
                 {doc.links.map((l) => <li key={l.href}><A to={l.href} className="x-arrow">{l.label}</A></li>)}
               </motion.ul>
             )}
-            {/* the three numbers, largest on the screen: what a launch page leads with */}
-            <motion.dl className="xmf-figs" {...up(0.55)} aria-label={price}>
-              <div className="xmf-fig ctx">
-                <dt>{ctxLabel || 'Context Window'}</dt>
-                <dd><b>{ctxFig ? <Flap value={ctxFig} /> : DASH}</b></dd>
-              </div>
-              <div className="xmf-fig">
-                <dt>In</dt>
-                <dd><b className="x-mono">{rate ? money(rate.in) : DASH}</b><span>per million tokens</span></dd>
-              </div>
-              <div className="xmf-fig">
-                <dt>Out</dt>
-                <dd><b className="x-mono">{rate ? money(rate.out) : DASH}</b><span>per million tokens</span></dd>
-              </div>
-            </motion.dl>
           </div>
-          {/* the hero object: the model's own contour field at 4:5, its maker label and its ID to copy */}
+          {/* the three numbers, largest on the screen: what a launch page leads with (each rises once into its line) */}
+          <dl className="xmf-figs" aria-label={price}>
+            <div className="xmf-fig ctx">
+              <dt>{ctxLabel || 'Context Window'}</dt>
+              <dd><b>{ctxFig ? <MaskFig delay={0.5}>{ctxFig}</MaskFig> : (doc.ctx || DASH)}</b></dd>
+            </div>
+            <div className="xmf-fig">
+              <dt>In</dt>
+              <dd><b className="x-mono"><MaskFig delay={0.58}>{rate ? money(rate.in) : DASH}</MaskFig></b><span>per million tokens</span></dd>
+            </div>
+            <div className="xmf-fig">
+              <dt>Out</dt>
+              <dd><b className="x-mono"><MaskFig delay={0.66}>{rate ? money(rate.out) : DASH}</MaskFig></b><span>per million tokens</span></dd>
+            </div>
+          </dl>
+          {/* the hero object: the model's own contour field at 4:5, where it sits in the catalogue (the breadcrumb, so
+              nothing labels the headline from above), its maker label and its ID to copy */}
           <motion.figure className="xmf-obj" style={{ y: artY }} initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.1, ease: EASE, delay: 0.15 }}>
             <Sigil seed={doc.route} data={[doc.tokens, rate && rate.in, rate && rate.out].filter((v) => v != null)} className="xmf-obj-sigil" still={paused} />
-            <FilmPause className="xmf-obj-pause" />
-            {doc.label && <p className="xmf-obj-l x-mono">{doc.label}</p>}
+            <div className="xmf-obj-top">
+              <nav className="xmf-crumbs" aria-label="Breadcrumb">
+                {doc.crumbs.map((c, i) => (
+                  <span key={i}>{c.href ? <A to={c.href}>{c.label}</A> : <span className="x-mono" aria-current="page">{c.label}</span>}</span>
+                ))}
+              </nav>
+              <FilmPause className="xmf-obj-pause" />
+            </div>
+            {doc.label && <p className="x-mono xmf-obj-l">{doc.label}</p>}
             <figcaption className="xmf-obj-id">
               <span className="x-mono">Model ID</span>
               <code className="x-mono">{idParts(doc.id)}</code>
@@ -178,11 +183,7 @@ export default function ModelSheet({ doc }) {
                   const sib = sibs.find((x) => x.href === c.href);
                   return (
                     <li key={c.href}>
-                      <A to={c.href} className="xmf-card" data-cursor="Open">
-                        <span className="xmf-card-t"><b data-morph>{c.name}</b>{c.ctx && <i className="x-mono">{c.ctx}</i>}</span>
-                        <span className="xmf-card-d">{c.desc}</span>
-                        <span className="xmf-card-f x-mono">{sib && sib.rate ? `${money(sib.rate.in)} → ${money(sib.rate.out)}` : ' '}</span>
-                      </A>
+                      <SpecCard to={c.href} title={c.name} desc={c.desc} tags={c.ctx ? [c.ctx] : []} meta={sib && sib.rate ? <b>{`${money(sib.rate.in)} → ${money(sib.rate.out)}`}</b> : null} />
                     </li>
                   );
                 })}
