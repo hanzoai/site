@@ -62,6 +62,21 @@ function useWalk(n, box, ms) {
   return { at, run, done, paused, toggle, hold: { onPointerEnter: () => setHeld(true), onPointerLeave: () => setHeld(false) } };
 }
 
+/* The wall never shows one picture more than twice, and never on two tiles in a row: a tile whose own model film is
+   already used twice (or was just used) takes the next of Hanzo's nine model films. */
+const FILMS = ['kai', 'enso', 'iro', 'koe', 'koma', 'mori', 'oto', 'uta', 'zen'];
+function spread(list) {
+  const used = {};
+  let prev = null;
+  return list.map((f0) => {
+    const ok = (x) => x && (used[x] || 0) < 2 && x !== prev;
+    const f = ok(f0) ? f0 : FILMS.find(ok);
+    used[f] = (used[f] || 0) + 1;
+    prev = f;
+    return f;
+  });
+}
+
 function Tile({ it, d, w, k, n }) {
   const router = useRouter();
   const [hot, setHot] = useState(false);
@@ -176,7 +191,7 @@ export default function SolutionsIndex({ doc, data }) {
           </div>
           <ul className="xso-grid">
             <AnimatePresence initial={false}>
-              {shown.map((it, i) => <Tile key={it.href} it={it} d={data[it.slug] || {}} w={span(i, shown.length)} k={i} n={shown.length} />)}
+              {(() => { const films = spread(shown.map((it) => (data[it.slug] || {}).film)); return shown.map((it, i) => <Tile key={it.href} it={it} d={{ ...(data[it.slug] || {}), film: films[i] }} w={span(i, shown.length)} k={i} n={shown.length} />); })()}
             </AnimatePresence>
           </ul>
         </div>

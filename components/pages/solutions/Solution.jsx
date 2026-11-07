@@ -70,10 +70,14 @@ export function useReel(n, box, ms = 5200) {
 }
 
 /* each job's own framing of the film (where it looks, how close) and its own moment of it */
+/* job 01 is the solution's own model film (as on hanzo.ai); jobs 02–05 and the closing band each take another of
+   Hanzo's nine model films, so the page never shows one picture twice in a row */
+const FILMS = ['kai', 'enso', 'iro', 'koe', 'koma', 'mori', 'oto', 'uta', 'zen'];
+const otherFilm = (own, k) => { const rest = FILMS.filter((f) => f !== own); return rest[(FILMS.indexOf(own) + k * 2 + rest.length) % rest.length]; };
 // [where it looks, how close, mirrored, turned]: five framings that read as five different shots of one film
 const FRAMES = [['50% 50%', 1.06, 1, 0], ['40% 35%', 1.9, -1, 0], ['62% 62%', 1.4, 1, 0], ['45% 70%', 2.5, -1, 0], ['58% 40%', 1.6, 1, 0], ['50% 55%', 2.1, -1, 0]];
-function Shot({ slug, k, n, on }) {
-  const [p, s, f, r] = FRAMES[k % FRAMES.length];
+function Shot({ slug, k, n, on, plain }) {
+  const [p, s, f, r] = plain ? ['50% 50%', 1.04, k % 2 ? -1 : 1, 0] : FRAMES[k % FRAMES.length];
   return (
     <div className="xs2-shot" aria-hidden="true" style={{ '--p': p, '--s': s, '--f': f, '--r': r + 'deg' }}>
       {slug && <Film slug={slug} play={on} at={n > 1 ? k / n : 0} />}
@@ -105,7 +109,7 @@ function Stories({ reel, n }) {
       <span className="xs2-film-scrim" aria-hidden="true" />
       <div className="v2f-wrap xs2-film-in" aria-hidden="true">
         <div className="xs2-film-top">
-          <span className="xs2-film-l x-mono"><span>{reel.label}</span><span>{pad(1)} / {pad(n)}</span></span>
+          <span className="xs2-film-l x-mono"><span>{reel.label}</span></span>
         </div>
         {reel.names.length > 0 && <div className="xs2-film-job"><span className="xs2-names plain">{reel.names.join(' · ')}</span></div>}
       </div>
@@ -157,13 +161,13 @@ function Strip({ reel, n }) {
       <div className="xs2-strip-pin">
         <div className="v2f-wrap xs2-strip-h">
           <div className="xs2-story xs2-story-ink" aria-hidden="true">{reel.steps.map((s, i) => <i key={s.title} className={i < at ? 'done' : i === at ? 'cur' : ''} />)}</div>
-          <span className="v2f-kick">{reel.label}</span>
+          <span className="v2f-kick xs2-strip-c"><span>{reel.label}</span> <span className="x-mono">{pad(at + 1)} / {pad(n)}</span></span>
         </div>
         <div className="xs2-strip-v" ref={rail} data-swipe-own={wide ? undefined : ''}>
           <motion.ol ref={track} className="xs2-track" style={wide ? { x } : undefined}>
             {reel.steps.map((s, k) => (
               <li key={s.title} className="xs2-panel" data-on={k === at ? '' : undefined}>
-                <Shot slug={reel.slug} k={k} n={n} on={k === at} />
+                <Shot slug={k ? otherFilm(reel.slug, k) : reel.slug} plain={k > 0} k={k} n={n} on={k === at} />
                 <div className="xs2-panel-t">
                   <h2 className="v2f-head">{s.title}</h2>
                   {s.text && <p className="v2f-body">{s.text}</p>}
@@ -337,7 +341,7 @@ export default function Solution({ doc, data }) {
 
       {doc.band && (
         <section className="xs2-band" data-room="dark" data-ask-hide>
-          <Film slug={reel && reel.slug} className="xs2-band-film" />
+          <Film slug={reel && otherFilm(reel.slug, 5)} className="xs2-band-film" />
           <div className="v2f-wrap v2f-grid xs2-band-g">
             <h2 className="v2f-display small xs2-band-h">{doc.band.title}</h2>
             <div className="xs2-band-r">
