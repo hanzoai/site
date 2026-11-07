@@ -1,16 +1,20 @@
 'use client';
-// Signature: One button that knows your OS sits at the centre of a four-quadrant dial, and every other build fans out of it onto the orbit, grouped by product; point at one and a ray runs from your button to it with its file and size
+// Signature: One button that knows your OS sits at the centre of a four-quadrant dial, and every other build fans out of it onto the orbit, grouped by product; point at one and a ray runs from your button to it while the centre reads its file and size
 // Beyond: Your kit: the page already guessed your system and browser; confirm them and your editor, and it lists exactly your files, one per product, each with its own size and link (no Desktop on Windows, as Hanzo ships it)
-/* Download Hanzo, v2 (Archetype E, utility: calm, precise, fast, one delight).
-   V2: 8/10 a precise dial (one OS-aware button, sixteen builds fanned out by product, a ray to the one you point at); the four products are cards that open into their own pages (desktop, CLI, extension: the card's picture flies into that page's hero); your kit is the one dark room
-   Motion: signature = the fan-out from the button (CSS, plays once) and the ray. Supporting: magnetic main button,
-   segmented pickers that slide, line-masked headline (components/v2/AppLines). Accent: amber.
-   Every word, size and link is Hanzo's. */
+// Persona: someone who already chose Hanzo and wants the right file for their machine, fast
+// Goal: get the build for this system in one click, or any other build in two
+// CTA: "Download for <your system>": the hero's one solid with data-thumb, repeated by the closing band
+// Metric: build_download (data-cta download-main, download-main-end)
+/* Download Hanzo (Utility: calm, precise, fast; one delight, the fan-out).
+   V2: 8/10 round 2: deck scale (h1 52); no labels over headlines; h1, lede, the one ask and the whole dial fit 1470×801; the centre reads the build you point at instead of a floating tooltip; product cards show Hanzo's own lines instead of placeholder bars; one solid per screen, one closing band; no springs, no glow loop; the black room opens from a card; JS-off legible; 44px phone targets
+   Motion: the one delight = the fan-out from the button (CSS, plays once) and the ray. Supporting: segmented pickers
+   that glide (layoutId), magnetic ask, line-masked headline (components/v2/x-edison/AppLines).
+   Greys only. Every word, size and link is Hanzo's. */
 import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
-import { Copy, Magnetic } from '../ui';
-import { A, Go } from '../kit';
-import Lines from '../v2/AppLines';
+import { Copy, Magnetic, Mark } from '../ui';
+import { A, Cta, Img } from '../kit';
+import Lines from '../v2/x-edison/AppLines';
 import '../v2/AppType.css';
 import './DownloadPage.css';
 
@@ -59,7 +63,7 @@ const PRODUCTS = [
   },
 ];
 const FILE = (p) => p.split('/').pop();
-const SPRING = { type: 'spring', stiffness: 300, damping: 30 };
+const GLIDE = { duration: 0.3, ease: [0.16, 1, 0.3, 1] };
 
 /* Which build is yours. Desktop ships for macOS and Linux; on Windows the one native build is the CLI. */
 function useSystem() {
@@ -90,7 +94,7 @@ const Down = ({ s = 16 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-
 
 /* ---------- the dial: the one button, and every other build fanned out around it by product ---------- */
 // the arc each product's builds sit on (degrees, clockwise from 3 o'clock): Desktop top-left, CLI top-right, extension
-// bottom-right, editors bottom-left; spaced so no two chips touch at 1440 px whichever build is the main one
+// bottom-right, editors bottom-left; spaced so no two chips touch in the 1152 px container whichever build is the main one
 const ARC = [[182, 249], [271, 358], [17, 74], [103, 163]];
 const RX = 44, RY = 41;
 const r2 = (n) => Math.round(n * 100) / 100; // rounded: server and browser print the same style
@@ -110,6 +114,7 @@ function Dial({ os }) {
     });
   });
   const main = PRODUCTS[mp].builds[mb];
+  const shown = hot || { p: PRODUCTS[mp], b: main };
   return (
     <div className={'dl-dial' + (out ? ' out' : '')}>
       <svg className="dl-orbit" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
@@ -117,35 +122,33 @@ function Dial({ os }) {
         <path d="M50 4v92M3 50h94" className="dl-axis" />
         {hot && <line key={hot.x + '-' + hot.y} x1="50" y1="50" x2={hot.x} y2={hot.y} className="dl-ray" />}
       </svg>
+      <div className="dl-core">
+        <Magnetic strength={0.18}>
+          <Cta to={GH + main[2]} id="download-main" thumb size="lg" className="dl-main"><Down s={22} /><span>Download for {label}</span></Cta>
+        </Magnetic>
+        <p className="dl-read x-mono">
+          <span className="dl-read-a"><span>{shown.p === PRODUCTS[0] && !hot ? 'Desktop' : shown.p.name}</span>{hot && <> · <span>{shown.b[0]}</span></>} · <span>{shown.p.v}</span> · <span>{shown.b[1]}</span></span>
+          <span className="dl-read-f">{FILE(shown.b[2])}</span>
+        </p>
+        <div className="dl-main-l">
+          <A to="#builds" data-cta="download-every-build">Every build</A>
+          <A to="/chat" data-cta="download-browser">Or open Hanzo in your browser</A>
+        </div>
+      </div>
       {PRODUCTS.map((p, pi) => (
         <div key={p.k} className={'dl-grp q' + pi + ' k-' + p.k}>
           <p className="dl-grp-k"><span className="dl-grp-i"><Glyph k={p.k} /></span><b>{p.name}</b> <span className="x-mono">{p.v}</span></p>
           <ul>
             {groups[pi].map(({ b, i, x, y }) => (
               <li key={b[0]} className="dl-chip" style={{ left: x + '%', top: y + '%', '--dx': r2(50 - x) + 'cqw', '--dy': r2(50 - y) + 'cqh', '--i': i }}>
-                <a href={GH + b[2]} onPointerEnter={() => setHot({ x, y })} onPointerLeave={() => setHot(null)} onFocus={() => setHot({ x, y })} onBlur={() => setHot(null)}>
+                <a href={GH + b[2]} aria-label={p.name + ', ' + b[0] + ', ' + p.v + ', ' + b[1]} onPointerEnter={() => setHot({ x, y, p, b })} onPointerLeave={() => setHot(null)} onFocus={() => setHot({ x, y, p, b })} onBlur={() => setHot(null)}>
                   <span className="dl-chip-i"><Glyph k={p.k} /></span><span className="dl-chip-t">{b[0]}</span>
-                  <span className="dl-tip"><b>{p.name} · {b[0]}</b><span className="x-mono">{FILE(b[2])}</span><span className="x-mono">{p.v} · {b[1]}</span></span>
                 </a>
               </li>
             ))}
           </ul>
         </div>
       ))}
-      <div className="dl-core">
-        <Magnetic strength={0.18}>
-          <a href={GH + main[2]} className="dl-main">
-            <Down s={22} />
-            <span>Download for {label}</span>
-          </a>
-        </Magnetic>
-        <i hidden data-thumb={'Download for ' + label} data-href={GH + main[2]} />
-        <p className="dl-main-s x-mono"><span>{mp === 0 ? 'Desktop' : PRODUCTS[mp].name}</span> · <span>{PRODUCTS[mp].v}</span> · <span>{main[1]}</span></p>
-        <div className="dl-main-l">
-          <A to="#builds">Every build</A>
-          <A to="/chat">Or open Hanzo in your browser</A>
-        </div>
-      </div>
     </div>
   );
 }
@@ -155,10 +158,7 @@ function Hero({ os }) {
     <section className="dl-hero" aria-labelledby="dl-h1">
       <div className="av-wrap">
         <div className="av-grid dl-top">
-          <div className="dl-top-l">
-            <p className="av-kick"><b>Download</b></p>
-            <Lines as="h1" id="dl-h1" className="av-display m" lines={['Download Hanzo']} now delay={0.05} />
-          </div>
+          <Lines as="h1" id="dl-h1" className="av-display dl-top-l" lines={['Download Hanzo']} now delay={0.05} />
           <p className="av-lede dl-top-r">The desktop app, the CLI, and the extension for your browser and editor. One account signs in to all of them.</p>
         </div>
         <Dial os={os} />
@@ -171,10 +171,10 @@ function Hero({ os }) {
 function Art({ k }) {
   if (k === 'desk') return (
     <div className="dl-m dl-m-win" aria-hidden="true">
-      <span className="dl-mw-bar"><i /><i /><i /><b /></span>
+      <span className="dl-mw-bar"><i /><i /><i /><span className="dl-mw-t"><b>Desktop</b> — Hanzo</span></span>
       <span className="dl-mw-body">
-        <span className="dl-mw-side"><b /><b /><b /><b /><b /></span>
-        <span className="dl-mw-chat"><b className="you" /><b className="ai" /><b className="ai" /><b className="ai s" /><b className="you s" /><b className="ai" /><b className="ai s" /><b className="cmp"><i /></b></span>
+        <span className="dl-mw-side x-mono"><span>gateway</span><span className="on">limit.go</span><span>payments</span></span>
+        <span className="dl-mw-chat"><span className="you">Add rate limiting to the payments API.</span><span className="ai"><Mark size={10} />Read 14 files.</span><span className="ai"><Mark size={10} />Tests pass.</span></span>
       </span>
     </div>
   );
@@ -182,20 +182,24 @@ function Art({ k }) {
     <div className="dl-m dl-m-term x-mono" aria-hidden="true">
       <span className="dl-mt-bar"><i /><i /><i /></span>
       <span className="dl-mt-l"><em>$</em> curl -fsSL hanzo.sh | sh</span>
-      <span className="dl-mt-l dim"><b /><b className="s" /></span>
+      <span className="dl-mt-l"><em>$</em> npm i -g hanzo</span>
       <span className="dl-mt-l"><em>$</em> hanzo<i className="dl-mt-c" /></span>
     </div>
   );
   if (k === 'ext') return (
     <div className="dl-m dl-m-stack" aria-hidden="true">
       <span className="dl-ms b2" /><span className="dl-ms b1" />
-      <span className="dl-ms b0"><span className="dl-ms-bar"><i /><b /></span><span className="dl-ms-page"><b /><b /><b className="s" /></span><span className="dl-ms-panel"><i /><b /><b /><b className="s" /><em /><b /><b className="s" /></span></span>
+      <span className="dl-ms b0">
+        <span className="dl-ms-bar"><i /><span className="dl-ms-url x-mono">hanzo.ai/extension</span></span>
+        <span className="dl-ms-page"><Img src="/models/uta.webp" w={1200} h={1500} alt="" /></span>
+        <span className="dl-ms-panel"><span className="dl-ms-h"><Mark size={10} />Hanzo Extension</span><span className="dl-ms-p">It uses your session</span></span>
+      </span>
     </div>
   );
   return (
     <div className="dl-m dl-m-ed" aria-hidden="true">
-      <span className="dl-me-tabs"><b /><b className="on" /></span>
-      <span className="dl-me-code"><b style={{ width: '42%' }} /><b style={{ width: '64%', marginLeft: 18 }} /><b style={{ width: '52%', marginLeft: 18 }} /><b className="ghost" style={{ width: '58%', marginLeft: 36 }} /><b className="ghost" style={{ width: '34%', marginLeft: 36 }} /><b style={{ width: '20%', marginLeft: 18 }} /></span>
+      <span className="dl-me-tabs x-mono"><span className="on">VS Code</span><span>Cursor</span><span>JetBrains</span></span>
+      <span className="dl-me-list"><span><Mark size={10} />Completions</span><span><Mark size={10} />chat</span><span><Mark size={10} />agentic edits</span></span>
     </div>
   );
 }
@@ -206,7 +210,7 @@ function Card({ p, os, br }) {
     <>
       <span className="dl-vis" data-morph=""><Art k={p.k} /></span>
       <span className="dl-card-h">
-        <span className="av-title">{p.name}</span>
+        <h3 className="av-title">{p.name}</h3>
         <span className="dl-v x-mono">{p.v}</span>
         {p.to && <span className="dl-open" aria-hidden="true"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M4.5 11.5 11.5 4.5M5.5 4.5h6v6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></span>}
       </span>
@@ -214,7 +218,7 @@ function Card({ p, os, br }) {
   );
   return (
     <article className={'dl-card k-' + p.k}>
-      {p.to ? <A to={p.to} className="dl-card-a" data-cursor="Open" aria-label={p.name + ' ' + p.v}>{head}</A> : <div className="dl-card-a">{head}</div>}
+      {p.to ? <A to={p.to} className="dl-card-a" data-cta={'download-open-' + p.k}>{head}</A> : <div className="dl-card-a">{head}</div>}
       <p className="dl-card-d">{p.d}</p>
       {p.k === 'cli' && (
         <div className="dl-cmds">
@@ -235,7 +239,7 @@ function Card({ p, os, br }) {
           </li>
         ))}
       </ul>
-      {p.k === 'cli' && <p className="dl-all"><A to="https://github.com/hanzoai/cli/releases/latest">All builds and checksums →</A></p>}
+      {p.k === 'cli' && <p className="dl-all"><A to="https://github.com/hanzoai/cli/releases/latest" data-cta="download-cli-all">All builds and checksums →</A></p>}
     </article>
   );
 }
@@ -245,7 +249,7 @@ function Builds({ os, br }) {
     <section className="av-sec dl-builds" id="builds">
       <div className="av-wrap">
         <div className="av-grid dl-b-top">
-          <h2 className="av-display s dl-b-h">Every build</h2>
+          <h2 className="av-head dl-b-h">Every build</h2>
         </div>
         <div className="dl-bento">{PRODUCTS.map((p) => <Card key={p.k} p={p} os={os} br={br} />)}</div>
       </div>
@@ -265,7 +269,7 @@ function Pick({ label, list, at, set, id }) {
       <div role="radiogroup" aria-label={label}>
         {list.map((t, i) => (
           <button key={t} type="button" role="radio" aria-checked={at === i} onClick={() => set(i)}>
-            {at === i && <motion.span layoutId={id} className="dl-q-bg" transition={SPRING} />}
+            {at === i && <motion.span layoutId={id} className="dl-q-bg" transition={GLIDE} />}
             <span>{t}</span>
           </button>
         ))}
@@ -291,7 +295,6 @@ function Kit({ os, br }) {
     <section className="av-sec av-dark dl-kit" data-room="dark" aria-labelledby="dl-kit-h">
       <div className="av-wrap av-grid">
         <div className="dl-kit-l">
-          <p className="av-kick">Your kit</p>
           <Lines as="h2" id="dl-kit-h" className="av-display s" lines={['Just your files']} />
           <Pick label="System" list={SYSTEMS.map((s) => s[0])} at={sys} set={setSys} id="dl-sys" />
           <Pick label="Browser" list={PRODUCTS[2].builds.map((x) => x[0])} at={b} set={setB} id="dl-br" />
@@ -318,12 +321,17 @@ function Kit({ os, br }) {
   );
 }
 
-function End() {
+/* ---------- the one closing band: the hero's ask again ---------- */
+function End({ os }) {
+  const [label, mp, mb] = MAIN[os];
   return (
-    <section className="av-sec tight dl-end">
-      <div className="av-wrap av-grid">
-        <p className="av-display s dl-end-t">One account signs in to all of them.</p>
-        <div className="dl-end-a"><Go to="/chat" solid>Or open Hanzo in your browser</Go></div>
+    <section className="x-band dl-band" aria-labelledby="dl-end-h">
+      <div className="av-wrap dl-band-in">
+        <h2 id="dl-end-h" className="av-display m dl-end-t">One account signs in to all of them.</h2>
+        <div className="dl-band-acts">
+          <Cta to={GH + PRODUCTS[mp].builds[mb][2]} id="download-main-end" size="lg">Download for {label}</Cta>
+          <Cta to="/chat" id="download-browser-end" kind="link">Or open Hanzo in your browser</Cta>
+        </div>
       </div>
     </section>
   );
@@ -332,11 +340,11 @@ function End() {
 export default function DownloadPage() {
   const { os, br } = useSystem();
   return (
-    <main className="av dl" style={{ '--ac': '#a3a3a3' }}>
+    <main className="av dl" data-ask="off" data-cursor="" style={{ '--ac': '#a3a3a3' }}>
       <Hero os={os} />
       <Builds os={os} br={br} />
       <Kit os={os} br={br} />
-      <End />
+      <End os={os} />
     </main>
   );
 }
