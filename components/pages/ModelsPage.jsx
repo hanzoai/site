@@ -106,16 +106,17 @@ function Stage() {
   const near = useTransform(p, (v) => clamp((0.56 - scaleAt(v)) / 0.16));
   const far = useTransform(p, (v) => clamp((0.48 - scaleAt(v)) / 0.12));
   const [settled, setSettled] = useState(false);
+  const [shown, setShown] = useState(false);
   const [lit, setLit] = useState(4);
   const [held, setHeld] = useState(false);
-  useMotionValueEvent(p, 'change', (v) => setSettled(v > 0.7));
-  const live = !wide || settled;
-  // once the wall has settled, the light moves through the nine films by itself; a hovered film keeps it
+  useMotionValueEvent(p, 'change', (v) => { setSettled(v > 0.7); setShown(scaleAt(v) < 0.5); });
+  // once the wall has settled, the light moves through the nine films by itself; a hovered film keeps it.
+  // On phones the wall is a rail: whichever film is on screen plays.
   useEffect(() => {
-    if (calm || held || !live) return;
+    if (calm || held || !wide || !settled) return;
     const t = setInterval(() => setLit((i) => (i + 1) % WALL.length), 2800);
     return () => clearInterval(t);
-  }, [calm, held, live]);
+  }, [calm, held, wide, settled]);
   const at = wide && !settled ? 4 : lit;
   return (
     <section className="xmo-stage" ref={ref} aria-labelledby="xmo-h1">
@@ -133,7 +134,7 @@ function Stage() {
             </motion.div>
           </div>
           <div className="xmo-area">
-            <motion.ul className="xmo-wall" style={{ scale: s }} initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.15 }} data-swipe-own>
+            <motion.ul className={'xmo-wall' + (shown ? ' shown' : '')} style={{ scale: s }} initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.15 }} data-swipe-own>
               {WALL.map((slug, i) => {
                 const m = bySlug[slug];
                 const ring = i === 4 ? null : i % 2 ? near : far; // edges arrive first, corners after
@@ -150,7 +151,7 @@ function Stage() {
                       onFocus={() => { setLit(i); setHeld(true); }}
                       onBlur={() => setHeld(false)}
                     >
-                      <Film slug={slug} play={at === i} />
+                      <Film slug={slug} play={!wide || at === i} />
                       <span className="xmo-tile-shade" aria-hidden="true" />
                       <span className="xmo-tile-t" aria-hidden="true">
                         {m.kicker && <em>{m.kicker}</em>}

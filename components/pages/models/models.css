@@ -375,3 +375,8 @@
   .xmf-term pre { padding: 18px; font-size: 13px; }
   .xmf-prov .xmf-among .xmf-plot { aspect-ratio: 4 / 5; }
 }
+
+/* hover answers on the model page's controls */
+.xmf-pick button:hover { color: var(--ink); }
+.xmf-tabs button:hover { color: #f5f5f7; }
+.xmf-more-h .x-arrow:hover, .xmf-key:hover { text-decoration: underline; text-underline-offset: 5px; text-decoration-thickness: 1px; }
