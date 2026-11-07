@@ -2,24 +2,23 @@
 /* Referrals.
    Persona: a builder already on Hanzo who wants to bring a friend or teammate. Goal: get their referral link.
    CTA: "Get your link" (/signup?next=/referral; data-cta referral.hero, referral.close; thumb). Metric: signup_start.
-   Signature: the counts in motion: Referred → Pending → Qualified run past at display size, the word nearest the middle
-   lit in ink, over a small rail of the link; the rails speed up as you scroll (a marquee that answers the scroll) and
-   have a pause control.
-   Beyond: the four steps as one object that happens: Share fans the link out every way, Signs up locks one account to
-   it, Qualifies swings the first metered spend, Moves up lifts you through the waitlist. It runs once, then rests; pick
-   any step to replay it.
+   Signature: one referral's journey. A pinned screen where a single builder leaves your link (shown once) and travels
+   Referred → Pending → Qualified as you scroll: one word at display size at a time, cut in by line mask, the rider
+   on its track below. On phones (no pin under 900px) the same journey plays once by itself when it is reached.
+   Beyond: the four steps as one continuous strip under their four sentences: the link fans out, one account locks to
+   it, the needle swings, the bar rises. It runs once, then rests; pick any step to replay its drawing.
    Supporting (3): the line-masked h1 (arrival); hanzo.ai's own signed-out card with one builder riding in, once, from
    the link through the three counts (time); the dark room opening from a rounded card to full width, with what each
    referral pays drawn as two tracks (scroll, idle).
-   One thing in, one out: the card is the link and its counts; the rails are the counts moving; the stage is the steps;
-   the dark room is the one difference (pays nothing, paid on spend); the close is the sign-in line and the ask.
-   Scale: the h1 at 52 is the first screen's one big thing; the counts rail 84 over the link at 17; step titles 21;
-   the dark room's two sentences 44; the close 26.
-   V2: 8/10 each section shows one facet once (card, counts rail, stepping stage, two pay tracks, the close); only
-   Hanzo's words; the dark room opens from a card; one ask in one wording at every width; deck greys only.
+   One thing in, one out: the card is the link and its counts; the journey is one referral moving; the strip is the
+   steps; the dark room is the one difference; the close is the card at rest beside the sign-in line and the ask.
+   Scale: the h1 at 52 is the first screen's one big thing; the journey's one word at 112 over a 17px link pill;
+   step titles 17; the dark room's two sentences 44; the close 26 beside a small card.
+   V2: 8/10 the journey is one referral at a time, not a tiled marquee; the steps are one strip, not a list and a box;
+   the close ends on the card you get; the dark room never crops its text on phones; one solid ask at a time.
    Every word is Hanzo's; no figure is shown that Hanzo does not show. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
 import { A, Cta } from '../kit';
 import LineReveal from '../v2/LineReveal';
 import '../v2/ProgramScale.css';
@@ -36,8 +35,19 @@ const STEPS = [
   ['Each one moves you up the beta waitlist.', 'up'],
 ];
 
+function useWide() {
+  const [wide, setWide] = useState(true);
+  useEffect(() => {
+    const mq = matchMedia('(min-width: 900px)');
+    const on = () => setWide(mq.matches);
+    on(); mq.addEventListener('change', on);
+    return () => mq.removeEventListener('change', on);
+  }, []);
+  return wide;
+}
+
 /* Phones: Hanzo's header carries this page's ask in the same words, as it does on desktop (components/Ask.jsx does it
-   above 700px; see docs/requests/referral.md). Quiet while the hero's ask is on screen, then "Get your link". */
+   above 700px; see docs/requests/referral.md). */
 function usePhoneHeaderAsk() {
   useEffect(() => {
     const mq = matchMedia('(max-width: 700px)');
@@ -52,17 +62,25 @@ function usePhoneHeaderAsk() {
     const start = () => {
       undo();
       const own = document.querySelector('main [data-cta="referral.hero"]');
+      const close = document.querySelector('main [data-cta="referral.close"]');
       if (!mq.matches || !own) return;
       btn = document.querySelector('header[data-slot=masthead] a[data-x-ask], header[data-slot=masthead] a[href="https://hanzo.ai/signup"]');
       if (!btn) return;
       text = btn.dataset.xAsk || btn.textContent; link = btn.dataset.xHref || btn.getAttribute('href');
       const label = own.getAttribute('data-thumb'), href = own.getAttribute('href');
-      io = new IntersectionObserver(([e]) => {
+      const vis = new Map();
+      // the hero's ask on screen: quiet "Try Hanzo"; past it: solid "Get your link"; the closing ask on screen: quiet
+      // "Get your link" (one solid fill at a time, as Ask.jsx does on desktop)
+      io = new IntersectionObserver((list) => {
         if (!btn) return;
-        if (e.isIntersecting) { H.dataset.ask = 'quiet'; btn.textContent = text; btn.setAttribute('href', link); btn.removeAttribute('data-ask-hide'); btn.removeAttribute('data-cta'); }
-        else { delete H.dataset.ask; btn.textContent = label; btn.setAttribute('href', href); btn.setAttribute('data-ask-hide', ''); btn.setAttribute('data-cta', 'header-ask'); }
+        list.forEach((e) => vis.set(e.target, e.isIntersecting));
+        const hero = vis.get(own), end = close && vis.get(close);
+        if (hero) { H.dataset.ask = 'quiet'; btn.textContent = text; btn.setAttribute('href', link); btn.removeAttribute('data-ask-hide'); btn.removeAttribute('data-cta'); return; }
+        btn.textContent = label; btn.setAttribute('href', href); btn.setAttribute('data-ask-hide', ''); btn.setAttribute('data-cta', 'header-ask');
+        if (end) H.dataset.ask = 'quiet'; else delete H.dataset.ask;
       }, { rootMargin: '-60px 0px 0px 0px' });
       io.observe(own);
+      if (close) io.observe(close);
     };
     const t = setTimeout(start, 300);
     mq.addEventListener('change', start);
@@ -70,9 +88,10 @@ function usePhoneHeaderAsk() {
   }, []);
 }
 
-/* hanzo.ai's own signed-out card. One builder rides in from the link, once, and lands in each count in turn. */
-function Card({ onCopy }) {
-  const calm = useReducedMotion();
+/* hanzo.ai's own signed-out card. One builder rides in from the link, once, and lands in each count in turn.
+   `rest`: already landed (the close); `small`: the close's size. */
+function Card({ onCopy, rest, small }) {
+  const calm = useReducedMotion() || rest;
   const [at, setAt] = useState(calm ? 3 : -1);
   const [nudge, setNudge] = useState(0);
   useEffect(() => {
@@ -81,12 +100,12 @@ function Card({ onCopy }) {
     return () => t.forEach(clearTimeout);
   }, [calm]);
   return (
-    <div className="xrf-win xp-obj" data-slot="referral">
+    <div className={'xrf-win xp-obj' + (small ? ' small' : '')} data-slot={small ? undefined : 'referral'}>
       <div className="xrf-win-top"><i /><i /><i /><span className="x-mono">Your referral link</span></div>
       <div className="xrf-win-in">
         <div className={'xrf-link' + (at >= 0 ? ' sent' : '') + (nudge % 2 ? ' nudge' : nudge ? ' nudge2' : '')}>
           <span className="x-mono xrf-url">hanzo.ai/?ref=…</span>
-          <button type="button" className="xrf-copy" aria-disabled="true" aria-label="Copy link" aria-describedby="xrf-signin" data-sound="tick" onClick={() => { setNudge((n) => n + 1); onCopy(); }}>
+          <button type="button" className="xrf-copy" aria-disabled="true" aria-label="Copy link" aria-describedby="xrf-signin" data-sound="tick" onClick={() => { setNudge((n) => n + 1); onCopy?.(); }}>
             <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="5" y="5" width="8.5" height="8.5" rx="2" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M10.5 3.2V3a.8.8 0 0 0-.8-.8H3a.8.8 0 0 0-.8.8v6.7c0 .44.36.8.8.8h.2" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>
             Copy
           </button>
@@ -97,8 +116,8 @@ function Card({ onCopy }) {
             <div key={c} className={'xrf-count' + (at === i + 1 || (at === 3 && i === 2) ? ' lit' : '') + (at > i + 1 ? ' past' : '')}><span className="x-mono">—</span><span>{c}</span></div>
           ))}
         </div>
-        <i className="xrf-flow" aria-hidden="true">{[0, 1, 2, 3, 4].map((k) => <b key={k} style={{ '--k': k }} />)}</i>
-        <p className="xrf-q">An account qualifies with its first metered spend.</p>
+        {!small && <i className="xrf-flow" aria-hidden="true">{[0, 1, 2, 3, 4].map((k) => <b key={k} style={{ '--k': k }} />)}</i>}
+        {!small && <p className="xrf-q">An account qualifies with its first metered spend.</p>}
       </div>
     </div>
   );
@@ -126,64 +145,56 @@ function Hero() {
   );
 }
 
-/* One rail. Runs by itself (rAF), faster while you scroll, pauses with the section's control, stops off screen, and
-   freezes under reduced motion. `lit` marks the word nearest the middle of the screen. */
-function Run({ dir = 1, speed = 40, paused, lit, children }) {
-  const run = useRef(null);
+/* One referral's journey: the link once, one builder, one word big at a time. Pinned and scrubbed on wide screens;
+   on phones it plays once by itself when reached; reduced motion shows it landed. */
+function Journey() {
+  const box = useRef(null);
+  const wide = useWide();
   const calm = useReducedMotion();
+  const seen = useInView(box, { once: true, amount: 0.5 });
+  const { scrollYProgress } = useScroll({ target: box, offset: ['start start', 'end end'] });
+  const [i, setI] = useState(calm ? 2 : 0);
+  const [t, setT] = useState(calm ? 1 : 0);
+  useMotionValueEvent(scrollYProgress, 'change', (p) => {
+    if (!wide || calm) return;
+    const k = Math.min(1, Math.max(0, (p - 0.08) / 0.8));
+    setT(k); setI(Math.round(k * 2));
+  });
   useEffect(() => {
-    const el = run.current; if (!el || calm) return;
-    let x = 0, last = performance.now(), boost = 0, lastY = scrollY, vis = true, raf = 0, prev = null;
-    const io = new IntersectionObserver(([e]) => { vis = e.isIntersecting; });
-    io.observe(el);
-    const onScroll = () => { boost = Math.min(boost + Math.abs(scrollY - lastY) * 0.9, 900); lastY = scrollY; };
-    addEventListener('scroll', onScroll, { passive: true });
-    const tick = (t) => {
-      const dt = Math.min(t - last, 64) / 1000; last = t;
-      if (vis && !paused.current) {
-        const half = el.scrollWidth / 2;
-        x = (x + (speed + boost) * dt) % half;
-        el.style.transform = `translate3d(${dir > 0 ? -x : x - half}px,0,0)`;
-        if (lit) {
-          const mid = innerWidth / 2; let best = null, d = 1e9;
-          for (const c of el.children) { const r = c.getBoundingClientRect(); const k = Math.abs(r.left + r.width / 2 - mid); if (k < d) { d = k; best = c; } }
-          if (best !== prev) { prev?.removeAttribute('data-lit'); best?.setAttribute('data-lit', ''); prev = best; }
-        }
-      }
-      boost *= 0.92;
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => { cancelAnimationFrame(raf); io.disconnect(); removeEventListener('scroll', onScroll); };
-  }, [calm, dir, speed, lit, paused]);
-  return <div className="xrf-run" ref={run}>{children}</div>;
-}
-
-/* The counts, moving: one big rail of Referred → Pending → Qualified over a small rail of the link. */
-function Rails() {
-  const [off, setOff] = useState(false);
-  const paused = useRef(false);
-  paused.current = off;
-  const counts = Array.from({ length: 8 }, () => COUNTS).flat();
+    if (wide || calm || !seen) return;
+    const ts = [[0, 0], [1100, 0.5], [2400, 1]].map(([ms, k], n) => setTimeout(() => { setI(n); setT(k); }, ms + 300));
+    return () => ts.forEach(clearTimeout);
+  }, [wide, calm, seen]);
   return (
-    <section className="xrf-rails" aria-label="Referred, Pending, Qualified" data-off={off ? '' : undefined}>
-      <div className="xp-wrap xrf-rails-bar">
-        <button type="button" className="xrf-pause" aria-pressed={off} aria-label={off ? 'Play' : 'Pause'} data-sound="tick" onClick={() => setOff((v) => !v)}>
-          <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">{off ? <path d="M5 3.5v9l7-4.5z" fill="currentColor" /> : <path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />}</svg>
-        </button>
+    <section className="xrf-jour" ref={box} aria-label="Referred, Pending, Qualified">
+      <div className="xrf-jour-pin">
+        <div className="xp-wrap xrf-jour-in">
+          <div className="xrf-jour-word" aria-hidden="true">
+            <AnimatePresence initial={false}>
+              <motion.span key={i} className="xrf-jour-w" initial={{ y: '105%' }} animate={{ y: 0 }} exit={{ y: '-105%' }} transition={{ duration: 0.7, ease: EASE }}>{COUNTS[i]}</motion.span>
+            </AnimatePresence>
+          </div>
+          <div className="xrf-jour-track" aria-hidden="true">
+            <span className="x-mono xrf-jour-pill">hanzo.ai/?ref=…</span>
+            <div className="xrf-jour-line">
+              <i className="xrf-jour-fill" style={{ transform: `scaleX(${t})` }} />
+              {COUNTS.map((c, n) => <b key={c} className={'xrf-jour-stop' + (t >= n / 2 - 0.01 ? ' on' : '')} style={{ left: `${n * 50}%` }} />)}
+              <em className="xrf-jour-rider" style={{ left: `${t * 100}%` }} />
+            </div>
+          </div>
+          <span className="xp-count xrf-jour-of">{String(i + 1).padStart(2, '0')} / 03</span>
+        </div>
       </div>
-      <div className="xrf-rail lg" aria-hidden="true"><Run dir={1} speed={46} paused={paused} lit>{counts.map((c, k) => <span key={k} className="xrf-rw">{c}<i aria-hidden="true">→</i></span>)}</Run></div>
-      <div className="xrf-rail sm" aria-hidden="true"><Run dir={-1} speed={28} paused={paused}>{Array.from({ length: 12 }, (_, k) => <span key={k} className="xrf-rl x-mono">hanzo.ai/?ref=…</span>)}</Run></div>
     </section>
   );
 }
 
-/* The four steps as one object that happens. Wordless drawings: the step's own sentence sits beside it. */
+/* The four steps' drawings, wordless; each sentence sits above its own. */
 function Scene({ k }) {
   const draw = (d = 0) => ({ initial: { pathLength: 0 }, animate: { pathLength: 1 }, transition: { duration: 0.8, ease: EASE, delay: d } });
   return (
     <svg viewBox="0 0 400 280" className="xrf-scene" aria-hidden="true">
-      {k === 'share' && <g key="share">
+      {k === 'share' && <g>
         <rect x="30" y="122" width="132" height="36" rx="18" className="xrf-s-pill" />
         <text x="96" y="146" textAnchor="middle" className="xrf-s-mono">?ref=…</text>
         {Array.from({ length: 9 }, (_, i) => { const y = 24 + i * 29; return <g key={i}>
@@ -191,18 +202,17 @@ function Scene({ k }) {
           <motion.circle cx="336" cy={y} r="6" className="xrf-s-dot" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: 0.3, ease: EASE, delay: 0.5 + 0.07 * i }} />
         </g>; })}
       </g>}
-      {k === 'lock' && <g key="lock">
-        <rect x="30" y="122" width="132" height="36" rx="18" className="xrf-s-pill" />
-        <text x="96" y="146" textAnchor="middle" className="xrf-s-mono">?ref=…</text>
+      {k === 'lock' && <g>
+        <motion.path d="M20 140H288" className="xrf-s-line thick" {...draw(0.3)} />
         <motion.g initial={{ x: 80 }} animate={{ x: 0 }} transition={{ duration: 0.9, ease: EASE }}>
           <circle cx="318" cy="140" r="30" className="xrf-s-ink" />
           <circle cx="318" cy="132" r="9" className="xrf-s-hole" />
           <path d="M302 160a16 12 0 0 1 32 0" className="xrf-s-hole" />
         </motion.g>
-        <motion.path d="M162 140H288" className="xrf-s-line thick" {...draw(0.6)} />
-        <motion.path d="M214 140v-10a11 11 0 0 1 22 0v10M208 138h34v20h-34z" className="xrf-s-line lockd" {...draw(1.1)} />
+        <rect x="134" y="118" width="44" height="40" rx="6" className="xrf-s-paper" />
+        <motion.path d="M145 130v-8a11 11 0 0 1 22 0v8M139 130h34v24h-34z" className="xrf-s-line" {...draw(0.9)} />
       </g>}
-      {k === 'meter' && <g key="meter">
+      {k === 'meter' && <g>
         <path d="M80 220a120 120 0 0 1 240 0" className="xrf-s-track" />
         <motion.path d="M80 220a120 120 0 0 1 240 0" className="xrf-s-line thick" {...draw(0)} />
         {[0, 1, 2, 3, 4, 5, 6].map((i) => { const a = Math.PI - (i / 6) * Math.PI; return <path key={i} d={`M${200 + Math.cos(a) * 104} ${220 - Math.sin(a) * 104}L${200 + Math.cos(a) * 92} ${220 - Math.sin(a) * 92}`} className="xrf-s-tick" />; })}
@@ -211,7 +221,7 @@ function Scene({ k }) {
         </motion.g>
         <circle cx="200" cy="220" r="8" className="xrf-s-ink" />
       </g>}
-      {k === 'up' && <g key="up">
+      {k === 'up' && <g>
         {[0, 1, 2, 3, 4, 5].map((i) => <rect key={i} x="90" y={28 + i * 40} width="220" height="28" rx="14" className="xrf-s-bar" />)}
         <motion.rect x="90" width="220" height="28" rx="14" className="xrf-s-ink" initial={{ y: 228 }} animate={{ y: 68 }} transition={{ duration: 1.4, ease: EASE, delay: 0.3 }} />
         <motion.path d="M340 220V80M330 92l10-12 10 12" className="xrf-s-line" {...draw(0.3)} />
@@ -220,48 +230,50 @@ function Scene({ k }) {
   );
 }
 
+/* One step: its sentence over its drawing. On phones (stacked, no strip) each drawing plays when it is reached. */
+function Step({ n, t, k, i, run, wide, onPick, onSeen }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.6 });
+  useEffect(() => { if (seen && !wide) onSeen(); }, [seen, wide]); // eslint-disable-line react-hooks/exhaustive-deps
+  return (
+    <li className={'xrf-st' + (n <= i ? ' on' : '') + (n === i ? ' now' : '')}>
+      <button type="button" className="xrf-step" aria-pressed={n === i} data-sound="tick" onClick={() => onPick(n)}>
+        <span className="xrf-n x-mono">{String(n + 1).padStart(2, '0')}</span>
+        <span className="xrf-st-t">{t}</span>
+      </button>
+      <div className="xrf-st-art" ref={ref}>
+        {n <= i ? <Scene key={run} k={k} /> : <svg viewBox="0 0 400 280" className="xrf-scene" aria-hidden="true"><path d="M20 140H380" className="xrf-s-wait" /></svg>}
+      </div>
+    </li>
+  );
+}
+
+/* The four steps as one strip: four sentences in a row, each over its drawing, one hairline running through all four.
+   The strip draws itself step by step once it is reached, then rests; press a step to replay its drawing. */
 function How() {
   const ref = useRef(null);
-  const seen = useInView(ref, { once: true, amount: 0.45 });
+  const seen = useInView(ref, { once: true, amount: 0.35 });
   const calm = useReducedMotion();
-  const [i, setI] = useState(calm ? 3 : 0);
+  const [i, setI] = useState(calm ? 3 : -1);
   const [auto, setAuto] = useState(!calm);
+  const [runs, setRuns] = useState([0, 0, 0, 0]);
+  const wide = useWide();
   useEffect(() => {
-    if (!seen || !auto || calm) return;
+    if (!seen || !auto || calm || !wide) return;
     if (i >= STEPS.length - 1) { setAuto(false); return; }
-    const t = setTimeout(() => setI((v) => v + 1), 2600);
+    const t = setTimeout(() => setI((v) => v + 1), i < 0 ? 200 : 2200);
     return () => clearTimeout(t);
   }, [seen, auto, i, calm]);
-  const pick = (n, e) => {
-    setAuto(false); setI(n);
-    if (e) e.currentTarget.closest('ol').querySelectorAll('[role=tab]')[n].focus();
-  };
+  const pick = (n) => { setAuto(false); setI((v) => Math.max(v, n)); setRuns((r) => r.map((x, j) => (j === n ? x + 1 : x))); };
   return (
     <section className="xp-sec xrf-how" aria-labelledby="xrf-how-h">
-      <div className="xp-wrap xp-grid">
-        <div className="xrf-how-l">
-          <h2 id="xrf-how-h" className="xp-head">How it works</h2>
-          <ol className="xrf-steps" role="tablist" aria-label="How it works" aria-orientation="vertical">
-            {STEPS.map(([t, k], n) => (
-              <li key={k} role="presentation">
-                <button type="button" role="tab" id={'xrf-t-' + k} aria-selected={n === i} aria-controls="xrf-stage" tabIndex={n === i ? 0 : -1} data-sound="tick"
-                  className={'xrf-step' + (n === i ? ' on' : '') + (n < i ? ' done' : '')} onClick={() => pick(n)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); pick((n + 1) % 4, e); }
-                    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); pick((n + 3) % 4, e); }
-                  }}>
-                  <span className="xrf-n x-mono">{String(n + 1).padStart(2, '0')}</span>
-                  <span className="xp-title">{t}</span>
-                  <i className="xrf-bar" aria-hidden="true" data-run={n === i && auto && seen ? '' : undefined} />
-                </button>
-              </li>
-            ))}
-          </ol>
-        </div>
-        <div className="xrf-stage" id="xrf-stage" role="tabpanel" aria-labelledby={'xrf-t-' + STEPS[i][1]} ref={ref}>
-          {seen ? <Scene key={i} k={STEPS[i][1]} /> : <svg viewBox="0 0 400 280" className="xrf-scene" aria-hidden="true" />}
-          <span className="xp-count xrf-of">{String(i + 1).padStart(2, '0')} / 04</span>
-        </div>
+      <div className="xp-wrap">
+        <h2 id="xrf-how-h" className="xp-head">How it works</h2>
+        <ol className="xrf-strip" ref={ref}>
+          {STEPS.map(([t, k], n) => (
+            <Step key={k} n={n} t={t} k={k} i={i} run={runs[n]} wide={wide} onPick={pick} onSeen={() => setI((v) => Math.max(v, n))} />
+          ))}
+        </ol>
       </div>
     </section>
   );
@@ -269,12 +281,14 @@ function How() {
 
 /* The one difference, as the dark room: Hanzo's two sentences, each over its own track. Builders ride both; the
    referral track never fills, the affiliate track fills with what they spend. The room enters as a rounded card inside
-   the gutters and opens to full width as it is reached. */
+   the gutters and opens to full width as it is reached (on phones from an 8px inset, inside the text's own margin). */
 function Which() {
   const box = useRef(null);
   const calm = useReducedMotion();
+  const wide = useWide();
   const { scrollYProgress } = useScroll({ target: box, offset: ['start end', 'start 0.25'] });
-  const g = useTransform(scrollYProgress, [0, 1], calm ? ['0px', '0px'] : ['32px', '0px']);
+  const g0 = calm ? '0px' : wide ? '32px' : '8px';
+  const g = useTransform(scrollYProgress, [0, 1], [g0, '0px']);
   const r = useTransform(scrollYProgress, [0, 1], calm ? ['0px', '0px'] : ['24px', '0px']);
   const clip = useTransform([g, r], ([a, b]) => `inset(0 ${a} round ${b})`);
   const seen = useInView(box, { once: true, amount: 0.35 });
@@ -290,23 +304,25 @@ function Which() {
             <div className="xrf-track a"><i className="xrf-fill" />{[0, 1, 2].map((k) => <b key={k} style={{ '--k': k }} />)}<em /></div>
             <div className="xrf-track b"><i className="xrf-fill" />{[0, 1, 2].map((k) => <b key={k} style={{ '--k': k }} />)}<em /></div>
           </div>
-          <A to="/affiliate" className="xrf-more">Affiliates</A>
         </div>
       </motion.div>
     </section>
   );
 }
 
-/* The close: the sign-in line from hanzo.ai's card, and the one ask again. */
+/* The closing band: the card you get, at rest, beside the sign-in line from hanzo.ai's card and the one ask again. */
 function Close() {
   return (
     <section className="xp-sec xrf-close" aria-labelledby="xrf-signin">
-      <div className="xp-wrap xrf-close-in">
-        <p id="xrf-signin" className="xp-head xrf-signin" role="heading" aria-level="2">Sign in and your link, and everyone it brings, is here.</p>
-        <div className="xrf-acts">
-          <Cta to={SIGNUP} id="referral.close" className="xp-cta">Get your link</Cta>
-          <Cta to={LOGIN} kind="link" id="referral.close-signin">Sign in</Cta>
+      <div className="xp-wrap xp-grid xrf-close-in">
+        <div className="xrf-close-l">
+          <p id="xrf-signin" className="xp-head xrf-signin" role="heading" aria-level="2">Sign in and your link, and everyone it brings, is here.</p>
+          <div className="xrf-acts">
+            <Cta to={SIGNUP} id="referral.close" className="xp-cta">Get your link</Cta>
+            <Cta to={LOGIN} kind="link" id="referral.close-signin">Sign in</Cta>
+          </div>
         </div>
+        <div className="xrf-close-r"><Card rest small /></div>
       </div>
     </section>
   );
@@ -317,7 +333,7 @@ export default function Referral() {
   return (
     <main className="xp xrf">
       <Hero />
-      <Rails />
+      <Journey />
       <How />
       <Which />
       <Close />
