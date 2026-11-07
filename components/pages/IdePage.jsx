@@ -282,7 +282,7 @@ function Teach() {
             <h2 id="ide-teach-h" className="a2-headline">It remembers</h2>
           </div>
           <form className="ide-teach-f" onSubmit={add}>
-            <input value={text} onChange={(e) => setText(e.target.value)} maxLength={120} aria-label="One thing about your project" />
+            <input value={text} onChange={(e) => setText(e.target.value)} maxLength={120} aria-label="One thing about your project" placeholder="One thing about your project" />
             <div role="radiogroup" aria-label="Kind of memory">
               {MEMS.map(([, k, d], i) => <button key={k} type="button" role="radio" aria-checked={kind === i} onClick={() => setKind(i)}>{d}</button>)}
             </div>
