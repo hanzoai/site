@@ -80,9 +80,9 @@ Done here: hover added to the key "Try Hanzo", the finder chips, the directory f
 - [x] Kinds: idle (deck turning, stream, contours), time (the product's own code types in), pointer (magnetic ask, hold on hover, drag rail), state (finder, console tabs, legend lighting marks); scroll only on the exchange's pinned deck
 - [x] Moves untouched; every control answers
 - [x] Reduced motion: 0 running animations after 3.5 s; no `setInterval` (timeouts)
-- [x] n/a sound (shared kit not merged)
+- [x] Sound: `play('done')` when the hero deck or the exchange console finishes its one round, and when the code finishes typing; the kit plays the rest
 
-Done here: no springs (directory re-flow and open 300 ms ease-emphasis), deck changes 300–500 ms; the exchange's pin is 25svh a card.
+Done here: no springs (directory re-flow and open 300 ms ease-emphasis), deck changes 300–500 ms; the exchange's pin is 25svh a card. The hero deck and the console run one round (MASTER 4.1: a demo runs once, then settles), then rest on their first card.
 
 ## 10. Media
 - [x] n/a `Film`/`Pic`: Hanzo has no photographs or film for these products
