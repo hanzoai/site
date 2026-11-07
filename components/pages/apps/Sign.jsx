@@ -90,7 +90,7 @@ function Hero() {
           <div>
             <LineMask as="h1" id="sg-h1" now className="w2-display sg-h1" lines={['Hanzo Sign']} />
           </div>
-          <motion.div className="sg-hero-r" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
+          <motion.div className="sg-hero-r" initial={{ y: 14 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
             <p className="w2-lede sg-lede">Upload a PDF, drop the fields where people need to sign, and send it.</p>
             <div className="sg-acts">
               <Magnetic strength={0.25}><A to="/login" className="w2-cta" data-thumb="Try Hanzo" data-cta="sign.hero">Try Hanzo <i aria-hidden="true">→</i></A></Magnetic>
@@ -120,8 +120,8 @@ function Hero() {
 /* The five steps as chapters; the page beside them is the same page, at that step. */
 function Steps() {
   return (
-    <PinChapters id="sg-steps" label="A document, signed" className="sg-pin"
-      chapters={STEPS.map(([t, d], i) => ({ k: `A document, signed · ${String(i + 1).padStart(2, '0')}`, t, b: <p>{d}</p> }))}
+    <PinChapters id="sg-steps" label="A document, signed" title="A document, signed" className="sg-pin"
+      chapters={STEPS.map(([t, d]) => ({ t, b: <p>{d}</p> }))}
       visual={(at) => (
         <div className="sg-pin-vis">
           <Page at={at} />

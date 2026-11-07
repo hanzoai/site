@@ -111,7 +111,7 @@ function Hero() {
           <div>
             <LineMask as="h1" id="rk-h1" now className="w2-display s rk-h1" lines={['One risk plane for accounts,', 'payments and agents']} />
           </div>
-          <motion.div className="rk-hero-act" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE, delay: 0.45 }}>
+          <motion.div className="rk-hero-act" initial={{ y: 12 }} animate={{ y: 0 }} transition={{ duration: 0.8, ease: EASE, delay: 0.45 }}>
             <Magnetic strength={0.25}><A to="/contact-sales" className="w2-cta" data-thumb="Talk to us" data-cta="risk.hero">Talk to us <i aria-hidden="true">→</i></A></Magnetic>
           </motion.div>
         </div>
@@ -250,7 +250,7 @@ function Chapters() {
   const [paused, pauseBtn] = usePause();
   const chapters = [
     {
-      k: '/v1/aml · live', t: 'Available now: the compliance face',
+      t: 'Available now: the compliance face',
       b: (<>
         <p>Anti-money-laundering monitoring is a different job from stopping fraud, and it is the half that is live. It is one face of the same engine, not a separate product.</p>
         <Detail label="The six capabilities" title="Available now: the compliance face" kicker="/v1/aml" wide>
@@ -259,7 +259,7 @@ function Chapters() {
       </>),
     },
     {
-      k: '/v1/risk · being built', t: 'The customer lifecycle',
+      t: 'The customer lifecycle',
       b: (<>
         <p>In development. Loss does not arrive at one moment, so the plane will not watch one moment. Same call, same record, same model at each stage — the stage is a field.</p>
         <Detail label="The three stages" title="The customer lifecycle" kicker="In development">
@@ -268,7 +268,7 @@ function Chapters() {
       </>),
     },
     {
-      k: '/v1/risk · being built', t: 'Agents are not bots',
+      t: 'Agents are not bots',
       b: (<>
         <p>In development. This is the argument for building the decide plane here rather than buying one, not a description of something running today.</p>
         <Detail label="Why the facts decide" title="Agents are not bots" kicker="In development">

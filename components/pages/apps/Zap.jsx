@@ -95,7 +95,7 @@ function Hero() {
             <LineMask as="h1" id="zp-h1" now className="w2-display zp-h1" lines={['ZAP']} />
             <p className="zp-kick x-mono"><Img src="/models/enso.webp" alt="" w={26} h={26} />Zero-Copy Agent Protocol</p>
           </div>
-          <motion.div className="zp-top-r" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
+          <motion.div className="zp-top-r" initial={{ y: 14 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
             <p className="zp-lede">The wire format is the data structure</p>
             <div className="zp-acts">
               <Magnetic strength={0.25}><A to="https://zap-proto.dev/docs/quick-start" className="w2-cta" data-thumb="Read the docs" data-cta="zap.hero">Read the docs <i aria-hidden="true">→</i></A></Magnetic>

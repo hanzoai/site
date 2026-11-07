@@ -124,7 +124,7 @@ export default function LegalIndex({ d }) {
           <div className="lgi-hero-copy">
             <LineMask as="h1" id="lgi-h1" now className="w2-display lgi-h1" lines={d.title.split(' & ').map((t, i, a) => (i < a.length - 1 ? t + ' &' : t))} />
             <p className="lgi-kick x-mono">{d.kicker}</p>
-            <motion.p className="w2-lede lgi-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>{d.lede}</motion.p>
+            <motion.p className="w2-lede lgi-lede" initial={{ y: 14 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>{d.lede}</motion.p>
           </div>
           <Settle from={1.08} lift={50}><Stack docs={docs} /></Settle>
         </div>
