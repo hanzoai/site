@@ -228,7 +228,7 @@ main.mcp .x-copy { height: 44px; padding: 0 16px; }
 @media (max-width: 900px) {
   /* phone hero, its own composition: the h1 at the deck's phone size in four lines, Hanzo's caption, then the live
      stream (three rows, so the product is on screen inside 660px), then the lede and the asks */
-  .mcp-hero { padding-top: 92px; }
+  .mcp-hero { padding-top: 80px; }
   .mcp-h1-d { display: none; }
   .mcp-h1-p { display: block; }
   .mcp-h1 { font-size: 40px !important; line-height: 1.04; }
@@ -238,7 +238,7 @@ main.mcp .x-copy { height: 44px; padding: 0 16px; }
   .mcp-hero-copy > .mcp-h1 { order: 1; }
   .mcp-hero-copy > .mcp-cap { order: 2; margin-top: 14px; }
   .mcp-hero-obj { order: 3; margin-top: 20px; }
-  .mcp-hero-copy > .mcp-lede { order: 4; margin: 24px 0 24px; }
+  .mcp-hero-copy > .mcp-lede { order: 4; margin: 20px 0 20px; }
   .mcp-hero-copy > .a2-acts { order: 5; }
   .mcp-stream-top { height: 44px; }
   .mcp-pause { top: 0; }
@@ -272,6 +272,10 @@ main.mcp .x-copy { height: 44px; padding: 0 16px; }
   .mcp-close-copy, .mcp-repo { grid-column: 1 / -1; }
   .mcp-cfg { padding-top: 72px; }
   .mcp-sh-rows li { padding-left: 10px; }
+}
+/* below 375 the four lines keep their breaks: the size follows the width (about 33px at 320) */
+@media (max-width: 374px) {
+  .mcp-h1 { font-size: calc((100vw - 32px) / 8.7) !important; }
 }
 @media (max-width: 360px) {
   .mcp-art.a0 { padding: 16px 12px; gap: 6px; }

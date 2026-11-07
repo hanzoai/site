@@ -8,12 +8,15 @@
    Beyond: the studio map (Creative.jsx): every creative model serving your field, in its own words and colour.
    Persona: creative studio (researcher audience). Goal: request research access. CTA: Request access
    (/research-access?models=koe). Metric: contact_sales_submit.
-   V2: 8/10 phone pill keeps speaking at rest (film breathes, playhead sweeps, 28-bar level meter; ~15% change, one Pause stops all), pill starts under the close and ends 28px above the headline, close inverts on hover */
+   Body: KoeCreative.jsx (Koe's page-local copy of Creative.jsx) with KoePanels.jsx, so each chapter and "Where Koe
+   fits" draws its own booth-derived picture and Koe's wave film shows only on the stage, the map card and the model card.
+   V2: 8/10 own picture per chapter (contour, two-lane clone, visemes, watermark chain) and fits; one steady solid ask (hero solid, header outlined while it shows); h1 stays visible after the settle; every hover answers; gaps closed; phone tabs one row, pause docked on the pill, ask clear of the cookie card */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useReducedMotion } from 'motion/react';
 import { Studio } from './Studio';
 import { Scene } from './Creative';
 import KoeCreative from './KoeCreative';
+import { usePaused } from '../../v2/ModelFilm';
 import { box as frame, focus } from '../../v2/Launch';
 import { useLoop, fit, rng, arrows } from './live';
 import './Koe.css';
@@ -51,6 +54,7 @@ function Booth() {
   const stage = useRef(null), cv = useRef(null), sEl = useRef(null), csEl = useRef(null), cells = useRef([]), letters = useRef([]);
   const [pi, setPi] = useState(0);
   const [play, setPlay] = useState(true);
+  const pagePaused = usePaused(); // the stage's one Pause holds the booth too
   const S = useRef({ t: 1.9, hold: 0, k: -2 });
   const amps = useMemo(() => PRESETS.map((p, i) => shape(p, 11 + i)), []);
 
@@ -72,7 +76,7 @@ function Booth() {
     const c = cv.current, s = S.current;
     if (!c) return;
     if (still) s.t = LEN;
-    else if (play) {
+    else if (play && !pagePaused) {
       if (s.t < LEN) s.t = Math.min(LEN, s.t + dt);
       else if ((s.hold += dt) > 1.1) { s.t = 0; s.hold = 0; }
     }

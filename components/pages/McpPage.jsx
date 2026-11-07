@@ -6,7 +6,7 @@
 // Signature: cards that open: six tool domains on a drag rail, each card growing into the sheet that lists its tools.
 // Beyond: each opened domain lists the tool names Hanzo gives for it, so you see what an agent gets before you install; the config copies as valid JSON.
 /* Hanzo MCP.
-   V2: 8/10 ink only (silver tool bars, the live call in white, grey sheets); captions under headlines, not over them; .mcp.json and bash in two CodeBlocks, each with its own Copy; phone h1 in 3 lines with the ask inside 812; one solid in a light close beside the repo card, where the one command types itself; 44px phone targets.
+   V2: 8/10 ink only; captions under headlines; .mcp.json copies as JSON and bash copies one command per row (notes shown, never copied, so it runs in zsh); phone is its own composition (h1 40px in 4 lines, the live stream inside 660px, the ask inside 812); one mover per screen (top sheet only, the rail's centre card only); domain cards lift and preview more tools on hover; 44px Copy everywhere.
    Signature: cards that open. The six tool domains sit on a rail you drag (or swipe); click one and the card itself
    grows into a full sheet (a shared-element morph, synchronized.studio) holding every tool name that domain carries.
    Around it: the hero's live tool-call stream (Hanzo's tools firing with latency bars; the only figures are Hanzo's,
