@@ -78,6 +78,8 @@
 .cr-plan { transition: box-shadow .35s var(--ease), border-color .25s, transform .4s var(--ease); }
 .cr-plan.fit { box-shadow: 0 0 0 2px var(--ink), 0 18px 40px -24px rgba(0, 0, 0, .35); }
 
+@media (max-width: 900px) {
+
   .cr-stage { grid-template-columns: minmax(0, 1fr); padding: 10px; border-radius: 22px; }
   .cr-graph { min-height: 380px; }
   /* phone: the graph is dots and lines; the pane beside it names the page in hand */
