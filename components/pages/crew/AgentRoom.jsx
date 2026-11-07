@@ -60,10 +60,10 @@ function useBaton(n, ms, box, calm) {
   const [held, setHeld] = useState(false);
   useEffect(() => { // one full round each time it comes into view, then it rests where it started
     if (!live || held || n < 2 || calm) return;
-    let k = 0, id = 0;
-    const step = () => { setAt((a) => (a + 1) % n); k += 1; if (k >= n) clearInterval(id); };
-    const first = setTimeout(() => { step(); id = setInterval(step, ms); }, 650); // something moves within the first second
-    return () => { clearTimeout(first); clearInterval(id); };
+    let k = 0, t = 0;
+    const step = () => { setAt((a) => (a + 1) % n); k += 1; if (k < n) t = setTimeout(step, ms); }; // one round, then rest
+    t = setTimeout(step, 650); // something moves within the first second
+    return () => clearTimeout(t);
   }, [live, held, n, ms, calm]);
   return { at, take: (i) => { setAt(i); setHeld(true); }, free: () => setHeld(false) };
 }

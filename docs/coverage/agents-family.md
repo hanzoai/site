@@ -1,20 +1,155 @@
-# Coverage: /agents/* family template (/agents/crew, /agents/sdk) — components/pages/crew/AgentRoom.jsx
+# /agents/* coverage (MASTER.md part 2, the 18 parts)
 
-- **2.1 Strategy and conversion:** Persona, Goal, CTA and metric id are in the file header (SDK: install_copy; Crew: signup_start). There is one solid ask per screen in Hanzo's words ("Read the docs", "Launch a bot"), repeated from hero to close. It does not read `lib/cta.js` (not on this branch yet).
-- **2.2 Information architecture and navigation:** Hanzo's header and footer are unchanged. Crew links back to /agents ("Or build your own."). The SDK console nav keeps its links to /models, /agents, /engine and /cloud/*. Swiping between siblings is not wired.
-- **2.3 First impression and page narrative:** The first screen is a display h1 plus a live object that moves within a second (the ring's turn passing, or the console conversation, which also starts on the phone's first screen). Section labels sit under their headlines, never above. Every section holds an object: the ring, the console, stacked sheets, the parts' Sigil, the code, the Bots room, the install terminal (SDK close) and the crew's own faces (Crew close). On desktop a pinned stage hands chapter one to chapter two while the object settles. The chapters follow, one idea per screen.
-- **2.4 Conversion system:** One solid magnetic primary per screen, with an arrow that nudges on hover, a press scale of .98, and `data-thumb` for the phone bar. Secondary actions are text links with an arrow, and the primary is repeated at the close. Gaps: no `data-cta` attributes and no risk-reducer line (the page has no such Hanzo text).
-- **2.5 Trust and proof:** SDK: Apache-2.0 licence chip, GitHub org and repo links, and the console's "Example project" caption kept. Crew: the "sample names" caption is kept. No figures were added.
-- **2.6 Content presentation (copy untouched):** Parity is 0 missing: crew text 31/31 and links 12/12; SDK text 94/94 and links 13/13 (the server copy's "/home" console link sits on the window title). The page label moved from above the h1 to below it.
-- **2.7 Visual design system:** Greys only, with no brand hues (v3); colour comes only from Hanzo's portraits and screenshots. v2 type scale, 28px radius on hero objects and 16px on fields and cards, hairlines, one dark room per member (Crew: Bots room; SDK: code). Values sit in the page CSS because `tokens.css` does not exist yet.
-- **2.8 UI component library:** Uses the kit's `A`, `Copy` and `Magnetic`, and `Sigil`. The ring, console, stacked sheets and spec sheet are template parts. Gaps: it uses `.x-btn` and a raw `<pre>` because `PageHero`, `Band` and `CodeBlock` are not in the kit yet.
-- **2.9 Motion and interaction:** Every link, button, tab, Copy, ring seat and face answers hover with a transform (lift, nudge or scale) and press with scale .96–.98 or 1px down; checked by script (all 27 SDK and 25 Crew controls change on hover). Idle: the turn passes one full round each time the ring is seen, and the console plays once per view, then rests. Pointer: hovering or focusing a seat takes the turn, and the primary is magnetic. State: sliding ink on the install switch and on the console turn. Scroll: the pinned stage and the Bots room settling into place. No loops are left (no blinking caret or pulsing dot). Reduced motion shows final states with no pin.
-- **2.10 Media:** Agent portraits and both Bots room screenshots (light and dark toggle) load by Hanzo's own paths. Gap: hanzo.ai is blocked in the cloud sandbox, so the films show letter monograms and a Bots room sketch drawn from the screenshot's own alt text. Not served through a kit `Pic` and no AVIF pipeline.
-- **2.11 Mobile and responsive:** On phones nothing pins: the parts stack as headline, object, then chapter two. No hydration error on an iPhone profile, first or repeat visit (checked). The ring is resized and the console nav scrolls sideways, with targets of 44px or more. No sideways scroll at 375×812 (checked); 320 not checked.
-- **2.12 Accessibility (WCAG 2.2 AA):** Real links and buttons, an install radiogroup with arrow keys, an `aria-live` hub and find result, the hidden stage panel made `inert`, visible focus. Gap: no axe run and no contrast audit.
-- **2.13 Performance and engineering:** Only transform and opacity animate; the SDK console starts at scale 1.03 so it stays inside its six columns at 1440 and 1470 (checked). The scroll fades use function transforms so they stay in step with Lenis, and the timers stop off screen (`useInView`). Gap: LCP, CLS and INP not measured (no `budgets.json` yet).
-- **2.14 SEO and machine files (mirror live, add nothing new):** Title and description come from `content/pages.json`, with `JsonLd` per route and static params over the members. Nothing was added.
-- **2.15 Catalogue and product pages:** A family template: each member is read from its own captured page (`agentsData.js`), and the Sigil is seeded by route and the page's own numbers. Gap: the /agents index (another chat's page) does not yet open its cards into these pages.
-- **2.16 Developer experience:** SDK: the pip or cargo install line with copy, the full code sample with copy, docs and GitHub links. Crew: not applicable.
-- **2.17 States and resilience:** Reduced motion shows final states. With JS off, a `<noscript>` style in the h1 shows everything that starts hidden (line masks, ledes, code lines, the hub's name) and unpins the stage; checked by screenshot at 1470×801 and 375×812. "Find an agent" shows "—" when nothing matches. A failed picture falls back to a letter or the room sketch. No page-specific error boundary.
-- **2.18 Measurement and handover:** Gap: no analytics events wired (no `data-cta`, no section_view). Proof films and phone stills are in `docs/gallery/agents/`, and the `V2:` line is in the file header.
+Page file: `components/pages/crew/AgentRoom.jsx` (+ `AgentRoom.css`, `agentsData.js`, `app/agents/[slug]/page.jsx`) · gallery: `docs/gallery/agents/` · metric ids: `install_copy` (agents-sdk), `signup_start` (agents-crew). Members checked: `/agents/crew`, `/agents/sdk`.
+
+Open copy questions for James: none (the ask labels are the pages' own: "Launch a bot", "Read the docs").
+Shared changes requested (`docs/requests/<page>.md`): none filed. Noted: the shared desktop ask bar floats at the bottom centre over content (MASTER §3.2 rule 6 bans floating pills on desktop); it is the shared chat's to change.
+Forks this page deleted: the hand-made buttons (now kit `Cta`), the hand-made `<pre>` code block (now kit `CodeBlock`), the raw search `<input>` (now kit `Field`), the hand-written h1 line mask (now `Lines`), `Magnetic` and every spring.
+
+## 1. Strategy and conversion
+- [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
+- [x] One solid fill per viewport; label and href are the page's own (n/a for `lib/cta.js`: not on this branch)
+- [x] One h1; the page is clear in 5 seconds
+- [x] No dead or self-looping button; n/a prices: none on these pages
+- [x] Open copy questions for James listed, none decided
+
+Done here: Crew serves `signup_start` with "Launch a bot", SDK serves `install_copy` with "Read the docs" (both data-thumb + `data-cta`); the walk at 1470×801 and 375×812 counts exactly 1 solid button in the first view.
+
+## 2. Information architecture and navigation
+- [x] One `<main>`; the shared shell's skip link reaches it
+- [x] Every link through `A` or the kit `Cta`; agents on the ring and at the close are real links to `/chat?agent=…`
+- [x] n/a breadcrumb: Hanzo's live page has none and the nav carries no parent label for it
+- [x] Link parity: 0 removed, 0 unexpected
+
+Done here: parity links 12/12 (crew) and 13/13 (SDK); the server copy's "/home" console link is kept on the console's title bar.
+
+## 3. First impression and page narrative
+- [x] Sells in 5 s; something moves within 1 s without input (the ring's first turn at 650 ms; the console's first turn at 600 ms)
+- [x] Hero by the shared `Lines` cut-in (`PageHero` is not in the kit yet); nothing above the h1
+- [x] JS off: legible (stage unpins because the pin is scoped to `.js`; checked by screenshot); h1 never at opacity 0
+- [x] One idea per 100svh: stage (chapter one hands to chapter two), room / sheets, spec, code, close
+- [x] Ends in the close's object (crew faces / install terminal), then the footer (no `Band`: the live page has no band copy)
+- [x] n/a card-to-page Morph: no card here leads to a page with a hero image
+
+Done here: crew first screen: 52px h1, ring passing the turn, "Launch a bot"; SDK: h1, console typing its first turn, "Read the docs".
+
+## 4. Conversion system
+- [x] `<Cta>` only for solids; secondary actions are text links with a chevron
+- [x] Sticky ask: the shared bar carries "Launch a bot" / "Read the docs" (data-thumb) once the hero ask leaves view
+- [x] Copy buttons are the kit's (`Copy`, `CodeBlock`): copy exactly the displayed text
+- [x] `data-cta` (`agents-crew.hero|room|close`, `agents-sdk.hero|code|close`) and `data-thumb` on the hero primary
+
+Done here: the repeated asks carry `data-ask-hide` on their own row, so the bar steps aside and never lands on them (walked on a phone with wheel scrolling: bar shows "Launch a bot", header outlined).
+
+## 5. Trust and proof
+- [x] No logo, no seal, no invented number
+- [x] Figures are Hanzo's ("260+ tools", "117 Cloud services", "100 req/min") inside their own sentences
+- [x] n/a marquees: none
+- [x] n/a submit: no form
+
+Done here: the Bots room's sketch is drawn only from the screenshot's own alt text ("Weekly outreach, Expense report, Support digest, each done").
+
+## 6. Content presentation (copy untouched)
+- [x] No text under 13px except 12px Zen Mono capitals (kickers, counters, table-free labels)
+- [x] Headings 12–18ch with `text-wrap: balance`; body 64ch
+- [x] Code uses the kit `CodeBlock`; the search uses the kit `Field`; n/a tables, FAQ
+- [x] `parity.py`: crew 31/31, SDK 94/94
+
+Done here: deck sizes only: 52 (h1, 40 on phones), 44 (close), 32 (hub name), 26 (sections), 21 (lede), 17, 16, 14, 13, 12.
+
+## 7. Visual design system
+- [x] `taste.py` passes; colours are page-local custom properties holding deck values (no `tokens.css` on the branch yet)
+- [x] No label above a headline: every kicker sits under its heading
+- [x] Radii 24 tiles, 20 art, 6 chips, full buttons; no tile has both an outline and a shadow (no shadows at all)
+- [x] n/a icon set: no icons beyond the kit chevron
+- [x] Differs from neighbours: ring / console heroes, not the /agents index's stack
+
+Done here: one black room (crew Bots room) or one graphite room (SDK code), each entering as a rounded card that opens to full width.
+
+## 8. UI component library
+- [x] Every control has hover (fill or underline, chevron nudge, inside `@media (hover:hover)`), press (scale .97 / 1px), focus-visible
+- [x] Focus ring visible: seats outline 6px, kit controls use the shared ring
+- [x] n/a dialogs: none
+- [x] The search field is the kit's 16px `Field`
+- [x] Forks deleted: listed above
+
+Done here: a script hovered all 25 crew and 27 SDK controls at 1440×900; every one changes on hover.
+
+## 9. Motion and interaction
+- [x] Signature (who has the turn) + 3: pinned stage scrub, ink that slides (layoutId, tweened), room clip opening; `variety.py` OK (4)
+- [x] Kinds: idle (ring round, console), state (ink, hub swap), pointer (seat takes the turn), arrival (cut-in), scroll (stage, room): scroll is under half
+- [x] Moves untouched; every control answers
+- [x] Reduced motion: no pin, demos show their final state; no `setInterval` (timeout chains that end)
+- [x] n/a sound: the shared sound kit is not on the branch
+
+Done here: no springs anywhere (deck tweens: 400 ms ease-in-out baton, 400 ms ease-emphasis ink and entrances, 1.1 s room opening).
+
+## 10. Media
+- [x] Faces and the Bots room screenshots by Hanzo's paths as backgrounds over a letter / sketch fallback (n/a `Film`, `Pic`: no video; no raw `<img>`)
+- [x] n/a videos
+- [x] Alt: the screenshot carries its own alt via `role="img"`; faces are decorative
+- [x] No dimmed photo
+
+Done here: images 404 in the cloud sandbox (hanzo.ai blocked), so the films show the letter monograms and the room sketch; on localhost the dev proxy loads Hanzo's pictures.
+
+## 11. Mobile and responsive
+- [x] 375×812 and 1470×801 pass with no overlap (walked)
+- [x] No horizontal scroll at 375 (320 not measured)
+- [x] Targets 44px or more (seats 54px, nav 44px, Copy 44px)
+- [ ] Primary ask above the fold at 375×667: crew yes (y≈330), SDK yes (y≈340)
+
+Done here: under 900px the stage stacks (h1, object, chapter two), the console nav scrolls sideways, the room shot crops at true size (4:5).
+
+## 12. Accessibility (WCAG 2.2 AA)
+- [x] Text #0a0a0a / #525252 / #737373 on white; on black #fafafa / white 78% / 55%
+- [x] n/a pause control: both demos run once and rest (no loop)
+- [x] Field labelled by the kit
+- [x] One h1; h2 per section; h3 in sheets
+- [x] Keyboard: install switch is a radiogroup with arrow keys; hidden stage panel is `inert`
+
+Done here: hub and find result announce through `aria-live="polite"`; axe not run.
+
+## 13. Performance and engineering
+- [x] h1 in server HTML
+- [x] Only transform, opacity and clip-path animate; scroll fades use function transforms
+- [x] No poller; timers stop off screen (`useInView`)
+- [x] Nothing heavy run on James's laptop (films made in the cloud)
+
+Done here: JS/CSS budgets not measured (no build run here).
+
+## 14. SEO and machine files
+- [x] Title and description from `content/pages.json`
+- [x] Canonical: shared metadata helper (not changed here)
+- [x] `<JsonLd route>` per member
+- [x] Agents and faces are real links
+
+Done here: `generateStaticParams` over the two members; `dynamicParams = false`.
+
+## 15. Catalogue and product pages
+- [x] n/a: not a catalogue or model page
+
+Done here: n/a: launch-type family (MASTER §4.1).
+
+## 16. Developer experience
+- [x] One `CodeBlock` for the SDK sample; copy equals display
+- [x] n/a config blocks
+- [x] The console plays once and ends on its final frame
+- [x] No hand-typed version
+
+Done here: install line (pip / cargo) copies exactly the line shown.
+
+## 17. States and resilience
+- [x] Picture failure: letters and the room sketch; JS off: legible; reduced motion: final state
+- [x] Blocked data: n/a live data; hanzo.ai blocked leaves a complete page
+- [x] n/a forms
+- [x] Find with no match shows "—"
+
+Done here: no console errors at 1470×801 and 375×812 (other than the sandbox's blocked pictures).
+
+## 18. Measurement and handover
+- [x] `data-cta` on every primary (kit `Cta` sends `cta_click`)
+- [x] Nothing identifier-bearing before consent
+- [x] `V2:` line in the page file's top comment
+- [x] Review read: `docs/review/agents-family.md` (8/10 at `fca5513`)
+
+Done here: films and phone stills in `docs/gallery/agents/`.

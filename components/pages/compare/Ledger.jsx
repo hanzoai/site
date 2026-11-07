@@ -63,13 +63,15 @@ function Race({ row, cols, stamp }) {
   const live = useInView(box, { amount: 0.3 });
   const vals = row.cells.map((c) => num(c.t));
   const max = Math.max(...vals.filter((v) => v !== null), 1);
-  const [at, setAt] = useState(-1); // the router being read; -1 before the race lands
+  const [at, setAt] = useState(-1); // the router being read; -1 before the race lands and after its one pass
   const [held, setHeld] = useState(false);
   useEffect(() => {
     if (!live || held || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    let id = 0;
-    const t = setTimeout(() => { setAt((a) => (a < 0 ? 0 : a)); id = setInterval(() => setAt((a) => (a + 1) % vals.length), 2600); }, at < 0 ? 2300 : 600);
-    return () => { clearTimeout(t); clearInterval(id); };
+    // one reading pass over the routers after the race lands, then it rests with every figure in ink
+    let k = 0, t = 0;
+    const step = () => { setAt(k < vals.length ? k : -1); k += 1; if (k <= vals.length) t = setTimeout(step, 2400); };
+    t = setTimeout(step, 2300);
+    return () => clearTimeout(t);
   }, [live, held, vals.length]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <figure className="xvs-race" ref={box} data-reading={at >= 0 || undefined} onMouseLeave={() => setHeld(false)}>
