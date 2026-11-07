@@ -6,12 +6,12 @@
 // CTA: "Download Extension" (github.com/hanzoai/extension/releases/latest): the hero's one solid with data-thumb, repeated by the closing band
 // Metric: extension_download (data-cta extension-download, extension-download-end)
 /* Hanzo Extension (Launch: the side panel leads).
-   V2: 8/10 round 2: deck scale (h1 52); no labels over headlines; h1, lede, the one ask and the whole stack fit 1470×801 and 375×812 and the panel walks at once, with a pause; one solid and one closing band; the windows show Hanzo's own page and words instead of placeholder bars (kit Img); points change without overlapping; no springs, no cursor labels; the black room opens from a card; JS-off legible; 44px targets
+   V2: 8/10 round 4 (critic round 2, 6/10 fixes): the browser frame lives in the hero only (with a 2.5° pointer tilt; Firefox now draws its own chrome) and its panel text never reaches the 01–05 steps at 1470, 375 or 320; "Read a page as text" types the page's words out on graphite; the browser list's aside is one rolling size figure with hairline size bars, your browser's row is the one filled ask and the others are links that show their size on hover; each use has its own object (the page ringed with its console, three logins unlocking, the request's own hops as a trace, a form stopping where it got stuck), no placeholder bars; the zip list shows once; six distinct hop captions with passed/current/ahead dots; 26px section heads; the download's pressed state clears in 300 ms; dead gaps closed
    Motion: signature = the stack and its panel (a step loop that stops off screen). Supporting: pinned chapters with
    wipes (components/v2/AppScenes), the request travelling the path, line-masked headlines.
    Greys only; every word and link is Hanzo's; the pages inside the windows are Hanzo's own pictures. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion } from 'motion/react';
+import { motion, animate, useInView, useMotionValue, useReducedMotion } from 'motion/react';
 import { Mark } from '../ui';
 import { A, Cta, Img } from '../kit';
 import { play } from '../../lib/sound';
@@ -55,6 +55,19 @@ function useBrowser() {
   return b;
 }
 
+/* the download leaves for GitHub: a short pressed state (300 ms), cleared again when the visitor comes back to this tab */
+function useBrief() {
+  const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    const clear = () => setBusy(false);
+    addEventListener('pageshow', clear);
+    document.addEventListener('visibilitychange', clear);
+    return () => { removeEventListener('pageshow', clear); document.removeEventListener('visibilitychange', clear); };
+  }, []);
+  useEffect(() => { if (!busy) return; const t = setTimeout(() => setBusy(false), 300); return () => clearTimeout(t); }, [busy]);
+  return { 'aria-busy': busy || undefined, onClick: () => setBusy(true) };
+}
+
 /* ---------- the hero: three windows, yours in front, the panel over its page ---------- */
 const WINS = [['chrome', 'Chrome'], ['firefox', 'Firefox'], ['safari', 'Safari']];
 const SLOTS = [ // front, back left, back right
@@ -86,7 +99,7 @@ function Chrome({ k, open, toggle, front }) {
         <span className="xe-tab"><Mark size={10} /><span>Hanzo Extension</span></span>
         <span className="xe-tab dim"><span>Hanzo Chat</span></span>
       </div>
-      <div className="xe-tool">{nav}{url}<span className="xe-puz" aria-hidden="true" />{ext}</div>
+      <div className="xe-tool">{nav}{k === 'firefox' && <span className="xe-shield" aria-hidden="true" />}{url}<span className="xe-puz" aria-hidden="true" />{ext}</div>
     </div>
   );
 }
@@ -119,6 +132,15 @@ function Stack({ mineWin }) {
   const pick = (i) => { setAt(i); setOpen(true); setMine(true); };
   const deal = (k) => { setFront(k); setMine(true); };
   const moving = open && !mine && !held && seen && !calm;
+  // a 2.5° tilt toward a fine pointer (mouse or pen), flat again on leave; none on touch or under reduced motion
+  const rx = useMotionValue(0), ry = useMotionValue(0);
+  const tilt = (e) => {
+    if (calm || e.pointerType === 'touch') return;
+    const r = e.currentTarget.getBoundingClientRect();
+    ry.set(((e.clientX - r.left) / r.width - 0.5) * 5);
+    rx.set(-((e.clientY - r.top) / r.height - 0.5) * 5);
+  };
+  const flat = () => { animate(rx, 0, GLIDE); animate(ry, 0, GLIDE); };
   return (
     <div className="xe-stage">
       <div className="xe-deal">
@@ -137,12 +159,13 @@ function Stack({ mineWin }) {
           ))}
         </div>
       </div>
+      <motion.div className="xe-tilt" style={{ rotateX: rx, rotateY: ry, transformPerspective: 1400 }} onPointerMove={tilt} onPointerLeave={flat}>
       <div className={'xe-stack f-' + front} ref={box} data-morph-target="">
         {WINS.map(([k], wi) => {
           const slot = SLOTS[order.indexOf(k)];
           const isFront = k === front;
           return (
-            <motion.div key={k} className={'xe-win w-' + k + (isFront ? ' front' : '')} initial={calm ? false : { x: '0%', y: '6%', rotate: 0, scale: 0.94, opacity: 0 }}
+            <motion.div key={k} className={'xe-win w-' + k + (isFront ? ' front' : '')} initial={calm ? false : { x: '0%', y: '6%', rotate: 0, scale: 0.94 }}
               animate={{ ...slot, opacity: 1 }} transition={{ ...DEAL, opacity: { duration: 0.4 } }} style={{ zIndex: slot.zIndex }} aria-hidden={!isFront}>
               <Chrome k={k} open={open} front={isFront} toggle={() => { setOpen(!open); setMine(true); }} />
               <div className="xe-view">
@@ -183,11 +206,13 @@ function Stack({ mineWin }) {
           </motion.aside>
         </div>
       </div>
+      </motion.div>
     </div>
   );
 }
 
 function Hero({ mineWin }) {
+  const brief = useBrief();
   return (
     <section className="xe-hero" aria-labelledby="xe-h1">
       <div className="av-wrap av-grid xe-hero-g">
@@ -195,7 +220,7 @@ function Hero({ mineWin }) {
           <Lines as="h1" id="xe-h1" className="av-display xe-h1" lines={['Hanzo Extension']} now delay={0.05} />
           <p className="av-lede">Your browser, as a tool an agent can use.</p>
           <div className="xe-acts">
-            <Cta to={REL} id="extension-download" thumb size="lg">Download Extension</Cta>
+            <Cta to={REL} id="extension-download" thumb size="lg" {...brief}>Download Extension</Cta>
             <div className="xe-links">
               <Cta to={DOCS} id="extension-availability" kind="link">Availability</Cta>
               <Cta to="https://chat.hanzo.ai" id="extension-chat" kind="link">Use Hanzo Chat</Cta>
@@ -211,7 +236,11 @@ function Hero({ mineWin }) {
 /* ---------- the black room: a request travels from the fabric to a tab ---------- */
 const HOPS = ['A tab', 'Extension', 'Native messaging host', 'Unix socket', 'Local Hanzo daemon', 'The fabric'];
 
+// one sentence per stop, each its own (Hanzo's words, split where one sentence covers two stops)
+const [NMH, PORT] = POINTS[1][1].split(/(?<=socket\.) /);
+const HOP_SAY = [POINTS[4][1], POINTS[0][1], NMH, PORT, POINTS[2][1], 'The extension registers as a provider on the local fabric. Whatever can reach the fabric can then reach a tab.'];
 function How() {
+  const [hot, setHot] = useState(3);
   return (
     <section className="av-sec av-dark xe-how" data-room="dark" aria-labelledby="xe-how-h">
       <div className="av-wrap">
@@ -221,13 +250,16 @@ function How() {
         </div>
         <ol className="xe-path" aria-label="From a tab to the fabric">
           {HOPS.map((h, i) => (
-            <li key={h} style={{ '--i': i }} className={i === 0 ? 'end tab' : i === HOPS.length - 1 ? 'end fab' : ''}>
-              <span className="x-mono av-num">{String(i + 1).padStart(2, '0')}</span>
-              <b>{h}</b>
+            <li key={h} style={{ '--i': i }} className={(i === 0 ? 'end tab' : i === HOPS.length - 1 ? 'end fab' : '') + (i === hot ? ' hot' : i < hot ? ' past' : ' ahead')}>
+              <button type="button" aria-pressed={i === hot} onPointerEnter={(e) => e.pointerType === 'mouse' && setHot(i)} onFocus={() => setHot(i)} onClick={() => { setHot(i); play('tick'); }}>
+                <span className="x-mono av-num">{String(i + 1).padStart(2, '0')}</span>
+                <b>{h}</b>
+              </button>
             </li>
           ))}
           <span className="xe-track" aria-hidden="true"><span className="xe-run"><i /></span></span>
         </ol>
+        <p className="xe-hop-say" aria-live="polite"><span className="x-mono av-num">{String(hot + 1).padStart(2, '0')}</span><span key={hot}>{HOP_SAY[hot]}</span></p>
       </div>
     </section>
   );
@@ -236,12 +268,14 @@ function How() {
 /* ---------- three pinned chapters ---------- */
 function Tools({ on }) {
   const sats = ['documents', 'tickets', 'design files', 'mail', 'calendars', 'A tab'];
+  const [hot, setHot] = useState(-1);
   return (
-    <div className={'xe-vis xe-tools' + (on ? ' on' : '')} aria-hidden="true">
+    <div className={'xe-vis xe-tools' + (on ? ' on' : '') + (hot >= 0 ? ' has-hot' : '')} aria-hidden="true" onPointerLeave={(e) => e.pointerType === 'mouse' && setHot(-1)}>
       <span className="xe-hub"><Mark size={22} /></span>
       {sats.map((s, i) => (
-        <span key={s} className={'xe-sat' + (s === 'A tab' ? ' tab' : '')} style={{ '--a': i * 60 - 90 + 'deg', '--i': i }}>
-          <i className="xe-spoke" /><b>{s}</b>
+        <span key={s} className={'xe-sat' + (s === 'A tab' ? ' tab' : '') + (i === hot ? ' hot' : '')} style={{ '--a': i * 60 - 90 + 'deg', '--i': i }}>
+          <i className="xe-spoke">{i === hot && <em key={'r' + i} className="xe-pulse" />}</i>
+          <b onPointerEnter={(e) => e.pointerType === 'mouse' && setHot(i)} onClick={() => setHot(i)}>{s}</b>
         </span>
       ))}
     </div>
@@ -256,24 +290,28 @@ const Glyph = ({ k }) => (
   </svg>
 );
 
+/* what the extension hands back, read out as text: the page's own words, then what it registered, then where it went */
+const READ = [
+  ['page content', ['Hanzo Extension', 'Your browser, as a tool an agent can use.']],
+  ['console messages', ['Connected means registered']],
+  ['network requests', ['hanzo.ai/extension']],
+];
 function Text({ on }) {
   return (
     <div className={'xe-vis xe-text' + (on ? ' on' : '')} aria-hidden="true">
-      <div className="xe-mini">
-        <span className="xe-mini-bar"><i /><i /><i /><span className="x-mono">hanzo.ai/extension</span></span>
-        <Img src="/models/iro.webp" w={1200} h={1500} alt="" />
-        <span className="xe-mini-t"><b>Hanzo Extension</b><span>Your browser, as a tool an agent can use.</span></span>
-      </div>
-      <span className="xe-arrow" />
       <ul className="xe-outs">
-        {['page content', 'console messages', 'network requests'].map((l, i) => (
-          <li key={l} style={{ '--i': i }}><span className="xe-outs-i"><Glyph k={i} /></span><em>{l}</em></li>
+        {READ.map(([l, lines], i) => (
+          <li key={l} style={{ '--i': i }}>
+            <span className="xe-outs-h"><span className="xe-outs-i"><Glyph k={i} /></span><em>{l}</em></span>
+            <span className="xe-outs-v x-mono">{lines.map((t, j) => <span key={t} className="xe-type" style={{ '--n': t.length, '--d': (0.5 + i * 0.9 + j * 0.45).toFixed(2) + 's' }}>{t}</span>)}</span>
+          </li>
         ))}
       </ul>
     </div>
   );
 }
 
+const SIZE = { chrome: '976 KB', firefox: '956 KB', safari: '310 KB', edge: null, other: '310 KB' };
 function Build({ on }) {
   return (
     <div className={'xe-vis xe-build' + (on ? ' on' : '')} aria-hidden="true">
@@ -281,7 +319,7 @@ function Build({ on }) {
       <svg className="xe-fork" viewBox="0 0 600 72" preserveAspectRatio="none"><path d="M300 0 100 72M300 0v72M300 0l200 72" /></svg>
       <ul className="xe-zips">
         {['chrome', 'firefox', 'safari'].map((b, i) => (
-          <li key={b} className="x-mono" style={{ '--i': i }}>{`hanzo-ai-${b}-v1.9.31.zip`}</li>
+          <li key={b} style={{ '--i': i }}><span className="xe-zip-i" /><span className="x-mono">{`hanzo-ai-${b}-v1.9.31.zip`}</span><em className="x-mono">{SIZE[b]}</em></li>
         ))}
       </ul>
     </div>
@@ -304,22 +342,47 @@ const BUILDS = [
 ];
 const NAME = { chrome: 'Chrome', firefox: 'Firefox', edge: 'Edge', other: null };
 
+/* the build you are pointing at, as one figure: its name and its size, rolling in when it changes; under it the three
+   builds' sizes as hairline bars, the one you point at in ink (Edge has no size of its own on the page, so it shows none) */
+const BAR = ['chrome', 'firefox', 'safari'];
+function Peek({ k }) {
+  const name = BUILDS.find((b) => b[0] === k)[1];
+  const lit = k === 'edge' ? 'chrome' : k === 'other' ? 'safari' : k;
+  return (
+    <div className="xe-peek" aria-hidden="true">
+      <span className="xe-peek-n" key={'n' + k}>{name}</span>
+      <span className="xe-peek-f av-num" key={'f' + k}>{SIZE[k] || 'v1.9.31'}</span>
+      <span className="xe-peek-bars">
+        {BAR.map((b) => <span key={b} className={b === lit ? 'on' : ''} style={{ '--xw': parseInt(SIZE[b], 10) / 976 }}><i /><em className="x-mono">{SIZE[b]}</em></span>)}
+      </span>
+    </div>
+  );
+}
+
 function Builds({ mine }) {
   const order = mine ? [...BUILDS].sort((a, b) => (b[0] === mine) - (a[0] === mine)) : BUILDS;
+  const [hot, setHot] = useState(null);
+  const lead = mine || 'chrome'; // the one filled ask: your browser's build (Chrome when it cannot tell)
+  const show = hot || lead;
+  const brief = useBrief();
   return (
     <section className="av-sec xe-builds" id="browsers">
       <div className="av-wrap av-grid">
         <div className="xe-builds-l">
           <h2 className="av-head">Built for every major browser</h2>
           <p className="av-body">Direct extension builds available for Chrome, Firefox, Safari, and Edge. Install in seconds to bring Hanzo agents into your everyday browsing.</p>
+          <Peek k={show} />
         </div>
         <ul className="xe-rows">
           {order.map(([k, t, d, cta]) => (
-            <motion.li key={k} layout transition={DEAL} className={k === mine ? 'yours' : ''}>
+            <motion.li key={k} layout transition={DEAL} className={(k === mine ? 'yours' : '') + (k === show ? ' hot' : '')}
+              onPointerEnter={(e) => e.pointerType === 'mouse' && setHot(k)} onFocus={() => setHot(k)} onClick={() => setHot(k)}>
               <h3 className="av-title">{t}</h3>
               <p>{d}</p>
               {k === mine && <span className="xe-yours x-mono">{NAME[k] ? `You are on ${NAME[k]}` : 'Your browser'}</span>}
-              <Cta to={REL} id={'extension-build-' + k} kind="quiet">{cta}</Cta>
+              {k === lead
+                ? <Cta to={REL} id={'extension-build-' + k} {...brief}>{cta}</Cta>
+                : <span className="xe-row-a"><Cta to={REL} id={'extension-build-' + k} kind="link">{cta}</Cta>{SIZE[k] && <em className="xe-row-sz x-mono">{SIZE[k]}</em>}</span>}
             </motion.li>
           ))}
         </ul>
@@ -335,6 +398,38 @@ const USES = [
   ['Debug the request, not the guess', 'Network requests and console messages come back as data. When a page misbehaves, the agent can read what the browser saw.'],
   ['The long boring form', 'Multi-step flows that exist only in a UI and have no API behind them. It fills them in and tells you where it got stuck.'],
 ];
+
+/* what the agent sees, per use: a page and its console, a dashboard behind a sign-in, the requests, a form filling in */
+const T = (t, d, cls = '') => <span className={'xe-type ' + cls} style={{ '--n': t.length, '--d': d + 's' }}>{t}</span>;
+function UseRender({ i }) {
+  return (
+    <div className={'xe-ur u' + i} aria-hidden="true">
+      {/* 01: the page it just changed, ringed as it looks, and what came back from the console */}
+      {i === 0 && <div className="xe-ur-check">
+        <div className="xe-ur-page"><Img src="/models/koma.webp" w={1200} h={1500} alt="" /><span><b>Hanzo Extension</b><span>Your browser, as a tool an agent can use.</span></span><i className="xe-ur-ring" /></div>
+        <div className="xe-ur-log x-mono"><em>console messages</em>{T('page content', 0.9)}{T('console messages', 1.3)}</div>
+      </div>}
+      {/* 02: the three places a login guards, unlocking one by one in the session you already have */}
+      {i === 1 && <ul className="xe-ur-locks">
+        {['An internal dashboard', 'a vendor console', 'an admin panel'].map((t, n) => (
+          <li key={t} style={{ '--i': n }}><span className="xe-ur-lock" /><b>{t}</b></li>
+        ))}
+      </ul>}
+      {/* 03: the request's own path, hop by hop, as data the agent can read */}
+      {i === 2 && <ol className="xe-ur-trace x-mono">
+        <em>network requests</em>
+        {HOPS.slice(0, 5).map((h, n) => <li key={h} style={{ '--i': n, '--xw': [0.18, 0.32, 0.54, 0.7, 1][n] }}><span>{h}</span><i /></li>)}
+      </ol>}
+      {/* 04: a multi-step flow filled in, and the step where it got stuck */}
+      {i === 3 && <div className="xe-ur-form">
+        <span className="xe-ur-step x-mono">{['01', '02', '03'].map((n, k) => <i key={n} style={{ '--i': k }}>{n}</i>)}</span>
+        <span className="xe-ur-f">{T('Multi-step flows', 0.4)}</span>
+        <span className="xe-ur-f">{T('exist only in a UI', 1.2)}</span>
+        <span className="xe-ur-f stuck"><b className="xe-ur-caret" /><em className="x-mono">where it got stuck</em></span>
+      </div>}
+    </div>
+  );
+}
 
 function Uses() {
   const [at, setAt] = useState(0);
@@ -357,7 +452,7 @@ function Uses() {
             {USES.map(([t], i) => (
               <button key={t} ref={(el) => { tabs.current[i] = el; }} type="button" role="tab" id={'xe-u' + i} aria-controls={'xe-up' + i} aria-selected={i === at} tabIndex={i === at ? 0 : -1} onClick={() => setAt(i)}>
                 {i === at && <motion.span layoutId="xe-tab" className="xe-tab-bg" transition={GLIDE} />}
-                <span className="xe-fav" aria-hidden="true" /><span className="xe-tt">{t}</span>
+                <span className="xe-fav x-mono" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><span className="xe-tt">{t}</span>
               </button>
             ))}
           </div>
@@ -365,8 +460,9 @@ function Uses() {
             {USES.map(([t, d], i) => (
               <div key={t} id={'xe-up' + i} role="tabpanel" aria-labelledby={'xe-u' + i} className={'xe-use' + (i === at ? ' on' : '')} hidden={i !== at}>
                 <span className="x-mono av-num xe-use-n">{String(i + 1).padStart(2, '0')}</span>
-                <h3 className="av-head">{t}</h3>
+                <h3 className="x-sr">{t}</h3>
                 <p className="av-lede">{d}</p>
+                <UseRender i={i} />
               </div>
             ))}
           </div>
@@ -418,13 +514,14 @@ function Get() {
 
 /* ---------- the one closing band: the hero's ask again ---------- */
 function End() {
+  const brief = useBrief();
   return (
     <section className="x-band xe-band" aria-labelledby="xe-end-h">
       <div className="av-wrap xe-band-in">
         <Lines as="h2" id="xe-end-h" className="av-display m" lines={['Get the Hanzo', 'Extension']} />
         <p className="av-lede">Available for Chrome, Firefox, Safari, and Edge. Or use Hanzo Chat directly in any browser.</p>
         <div className="xe-band-acts">
-          <Cta to={REL} id="extension-download-end" size="lg">Download Extension</Cta>
+          <Cta to={REL} id="extension-download-end" size="lg" {...brief}>Download Extension</Cta>
           <Cta to="/chat" id="extension-chat-end" kind="link">Open Hanzo Chat</Cta>
         </div>
       </div>
