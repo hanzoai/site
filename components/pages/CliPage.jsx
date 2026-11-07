@@ -107,7 +107,7 @@ function Hero() {
           </button>
         </div>
         <div className="cli-body">
-          <Lines as="h1" id="cli-h1" className="av-display cli-h1" lines={['An AI engineer', 'in your terminal']} now delay={0.1} />
+          <h1 id="cli-h1" className="av-display cli-h1"><span>An AI engineer</span> <span>in your terminal</span></h1>
           <p className="av-lede cli-lede">Type <code>hanzo</code> in a repo and you get a coding session. Type <code>hanzo</code> and a noun and you get the rest of the cloud — identity, usage, billing, clusters, machines, networks — typed straight from the API&apos;s own document.</p>
           <Session onDone={setDone} paused={paused} runKey={runKey} />
           <div className="cli-acts">
@@ -491,7 +491,7 @@ function Band() {
 
 export default function CliPage() {
   return (
-    <main className="av cli" style={{ '--ac': '#a3a3a3' }} data-ask-name="Hanzo CLI">
+    <main className="av cli" style={{ '--ac': '#a3a3a3' }} data-ask="off">
       <Hero />
       <Paste />
       <What />

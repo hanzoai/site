@@ -35,6 +35,7 @@
 
 .cli-body { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); grid-template-rows: auto 1fr auto; column-gap: 24px; row-gap: 36px; padding: clamp(36px, 4.2vw, 68px) clamp(24px, 4.4vw, 72px) clamp(28px, 3vw, 48px); }
 .cli-h1 { grid-column: 1 / span 7; grid-row: 1; margin: 0; color: #fafafa; max-width: 12ch; }
+.cli-h1 > span { display: block; }
 .cli-lede { grid-column: 8 / -1; grid-row: 1; align-self: end; color: rgba(255, 255, 255, .78); max-width: 40ch; font-size: 17px; line-height: 1.55; }
 .cli-lede code { padding: 1px 7px; border-radius: 7px; background: #262626; color: #f5f5f5; }
 .cli-sess { grid-column: 1 / span 8; grid-row: 2; align-self: end; }
