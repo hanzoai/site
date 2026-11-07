@@ -1,8 +1,8 @@
 'use client';
 /* How to use Kai (/kai/guide). Page type: Developer (MASTER 4.6): a typewriter terminal as the hero, Copy beside the key ask.
-   Chapters: the session; the three question types as a spec sheet; the code in three languages (kit Tabs + CodeBlock);
-   the limits beside a request checker; the recipes in the one black room; the move from Jev as a diff, the benchmark
-   as the proof figures; the key ask again.
+   Chapters: the session; the three question types as a spec sheet; the code in three languages on a Quiet room (kit
+   Tabs + CodeBlock, opening on Python); the limits beside a light request checker; the recipes as a stage in the one
+   black room; the move from Jev as a light diff; the benchmark as the proof strip; a closing band in the page's words.
    Signature: the session runs itself, once. The guide's own curl request types into a terminal, then the response
    streams back in its documented shape (id, model, routing, usage with output_tokens 0, an answer per question,
    state_hash, latency_ms) with no values made up, then it rests. Text goes into one text node through a ref; the
@@ -11,7 +11,7 @@
    Beyond: the request checker. Pick a limit and the checker loads that case (101 questions, a 3,982-token state, a
    state past 32,768, kai-1.4); drag the rulers to check your own request and see its input price at $0.021 per million
    tokens beside Jev's $0.042. Its verdict box always holds the tallest answer, so nothing below it moves.
-   V2: 8.5/10 Deck rework (MASTER): 52/26 px rest sizes, eased tweens only, kit Tabs/CodeBlock/Cta, terminal under the h1 on phones and empty until it types, reserved boxes (no layout shift), one-shot demos that rest. */
+   V2: 8.5/10 Review round 2: two dark surfaces only (hero terminal, recipes room), code/checker/diff now light; code opens on Python so the curl shows once; recipes as a self-advancing stage with pause; glyphs loop in turn, row hover fill; Price lights the cost line; rulers SSR-stable (no hydration badge); proof strip + Quiet closing band; hero tightened to 38%, noscript out of the h1. */
 // Persona: Developer wiring Kai decisions into a pipeline (MASTER 1: developers).
 // Goal: copy the request, then get a key and send a first POST /v1/decisions.
 // CTA: Get an API key (Cta solid, data-cta kai-guide.hero, data-thumb), repeated at the close (kai-guide.close).
