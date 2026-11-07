@@ -122,6 +122,9 @@
 .js .dk-win:not(.s6) .dk-log-tab span { opacity: 0; transform: translateY(6px); }
 .js .dk-win:not(.s7) .dk-test { opacity: 0; transform: translateY(16px); }
 .js .dk-win:not(.s6) .dk-ln { opacity: 0; transform: translateX(-8px); }
+.js .dk-win:not(.s6) .dk-code { opacity: 0; transform: translateY(10px); } /* no empty file box before the file is written */
+.dk-code { transition: opacity .15s var(--dk-out), transform .15s var(--dk-out); }
+.dk-win.s6 .dk-code { transition: opacity .3s var(--dk-out), transform .4s var(--dk-in); }
 .js .dk-win:not(.s8) .dk-test-out { opacity: 0; }
 .js .dk-win:not(.s7) .dk-ai2 { opacity: 0; transform: translateY(16px); }
 .js .dk-win:not(.s8) .dk-pass { opacity: 0; }
@@ -310,7 +313,16 @@ html:not(.js) .dk-every .av-sh-body { padding: 8px 0 0; overflow: visible; }
   .dk-oslist button:hover .dk-ol-n { color: #0a0a0a; transform: translateX(8px); }
   .dk-oslist button:hover .dk-ol-go { transform: translateY(-3px); }
   .dk-rel-a:hover, .dk-gh:hover { box-shadow: 0 0 0 1px #0a0a0a; }
+  .dk-tabs a:not(.on):hover { background: rgba(255, 255, 255, .7); }
+  .dk-term-hold:hover { color: #fafafa; background: rgba(255, 255, 255, .08); }
+  .dk-term-pick button:not([aria-pressed='true']):hover { color: #fafafa; border-color: rgba(255, 255, 255, .42); }
+  .dk-notes button:hover i { background: rgba(255, 255, 255, .08); border-radius: 50%; }
+  .dk-radio button[aria-checked='true']:hover { background: #fff; }
 }
+.dk-tabs a { transition: background-color .15s var(--dk-out), color .15s var(--dk-out), transform .09s var(--dk-out); }
+.dk-tabs a:active { transform: scale(.97); }
+.dk-term-hold { flex: none; }
+.dk-notes button i { transition: background-color .15s var(--dk-out); }
 
 @media (prefers-reduced-motion: reduce) {
   .dk *, .dk *::before, .dk *::after { animation: none !important; transition: none !important; }
