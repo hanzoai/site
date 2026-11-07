@@ -28,6 +28,8 @@ function Stage() {
   const ke = useTransform(k, (v) => v * (2 - v)); // eased out; ZenSeven.css turns it into translate and scale
   return (
     <section className="z7-stage" ref={box} aria-labelledby="z7-h">
+      {/* JS off: the title, the settled 7 and the lineage stations are simply shown (common gate item 5) */}
+      <noscript><style>{'.z7-art{--k:0!important}.z7-stage{height:auto!important}.z7-h .x-line-in{transform:none!important}.z7-rail li{opacity:1!important;transform:none!important}.z7-path path{stroke-dasharray:none!important;stroke-dashoffset:0!important}'}</style></noscript>
       <div className="z7-pin">
         <motion.div className="z7-art" aria-hidden="true" style={{ '--k': ke }}>
           {/* three layers on white: the black 7, the field over it, white with a 7-shaped hole on top (so no box edge shows) */}
