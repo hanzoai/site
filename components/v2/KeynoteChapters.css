@@ -9,13 +9,13 @@
 .knc-a:first-child { border-top: 0; }
 .knc.right .knc-a { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
 .knc.right .knc-t { order: 2; }
-.knc-t { display: flex; flex-direction: column; gap: 22px; }
+.knc-t { display: flex; flex-direction: column; gap: 17px; }
 .knc-h { max-width: 14ch; }
 .knc-body { display: flex; flex-direction: column; gap: 16px; }
-.knc-body p { margin: 0; font-size: clamp(17px, 1.32vw, 19px); line-height: 1.58; color: var(--soft); max-width: 44ch; text-wrap: pretty; }
+.knc-body p { margin: 0; font-size: 16px; line-height: 1.6; color: var(--body); max-width: 44ch; text-wrap: pretty; }
 /* the chapter's number and label sit under its words, never above the headline */
 .knc-foot { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; margin: 0; }
-.knc-count { margin: 0; font: 500 13px/1 var(--mono); color: var(--soft); letter-spacing: .08em; }
+.knc-count { margin: 0; font: 606 12px/1.3 var(--mono); color: var(--quiet); letter-spacing: .14em; }
 .knc-v { position: relative; height: min(70svh, 700px); }
 .knc-v > * { width: 100%; height: 100%; }
 
@@ -37,7 +37,7 @@
 /* the chapter rail: numbers you can click, a hairline that fills with the scroll (pinned layout only) */
 .knc-rail { display: none; }
 
-@media (min-width: 901px) {
+@media (min-width: 900px) {
   .js .knc-run { height: calc(var(--n) * var(--tall, 100svh)); }
   .js .knc-pin { position: sticky; top: 0; height: 100svh; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
   .js .knc .knc-g { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--kn-g); align-items: center; min-height: min(72svh, 720px); }
@@ -62,18 +62,16 @@
   .knc-rail button:active { transform: scale(.96); }
   .knc-rail button:focus-visible { outline: 2px solid var(--focus, var(--ink)); outline-offset: 2px; border-radius: 8px; }
 }
-@media (min-width: 901px) and (hover: hover) {
+@media (min-width: 900px) and (hover: hover) {
   .knc-rail button:hover { color: var(--ink); }
   .knc-rail button:hover::after { transform: scaleX(.5); }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 899px) {
   .knc-head { padding: 96px 0 24px; }
   .knc-a, .knc.right .knc-a { display: block; padding: 56px 0; }
   .knc-a:first-child { padding-top: 16px; }
   .knc-v { height: auto; aspect-ratio: 4 / 3.4; margin-top: 32px; }
-  .knc-body p { font-size: 17px; }
-  .knc-count { font-size: 14px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .knc-t, .knc-t[data-on], .knc-v, .knc-v[data-on] { transition: none !important; }

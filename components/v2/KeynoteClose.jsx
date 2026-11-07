@@ -11,7 +11,7 @@
    - children: anything else Hanzo's page has in its closing (links, notes), shown under the actions.
    - lead: Hanzo's line, set under "Get X" (never above it). cta: the data-cta id of "Deploy to Cloud". */
 import { Copy, Magnetic } from '../ui';
-import { A } from '../kit';
+import { A, Cta } from '../kit';
 import KeynoteRoom from './KeynoteRoom';
 import KeynoteLines from './KeynoteLines';
 import './Keynote.css';
@@ -32,8 +32,8 @@ function Body({ name, tag, lead, prompt, api, cta = 'close', license = 'Apache-2
             {repo && <A to={repo[1]} className="knx-chip"><Gh />{repo[0]}{stars && <em>{stars}</em>}</A>}
           </div>
           <div className="kn-acts knx-acts">
-            {deploy && <Magnetic strength={0.2}><A to={deploy} className={'kn-btn solid knx-go' + (light ? '' : ' inv')} data-cta={cta}>Deploy to Cloud</A></Magnetic>}
-            {self && <A to={self} className="kn-btn knx-self">Self-host</A>}
+            {deploy && <Magnetic strength={0.2}><Cta to={deploy} id={cta} className="knx-go">Deploy to Cloud</Cta></Magnetic>}
+            {self && <Cta to={self} kind="quiet" id={cta + '-self'} className="knx-self">Self-host</Cta>}
           </div>
           {children}
         </div>

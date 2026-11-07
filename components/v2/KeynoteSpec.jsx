@@ -71,7 +71,7 @@ export default function KeynoteSpec({ kick, title = 'Tech specs', rows, more, as
         </div>
         <dl className="kfs-rows">
           {rows.map(([k, v], i) => (
-            <motion.div key={k} className="kfs-row kn-grid" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, amount: 0.4 }} transition={{ duration: 0.7, ease: EASE, delay: Math.min(i, 4) * 0.04 }}>
+            <motion.div key={k} className="kfs-row kn-grid" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, amount: 0.4 }} transition={{ duration: 0.4, ease: EASE, delay: Math.min(i, 4) * 0.06 }}>
               <dt className="kn-kick">{k}</dt>
               <dd>{v}</dd>
             </motion.div>
