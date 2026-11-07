@@ -198,7 +198,7 @@ function Hero() {
       <Sky paused={held} />
       <div className="pf-wrap xos-hero-c">
         <div className="xos-hero-a">
-          <h1 id="xos-h1" className="pf-display xos-h1">Building in the<br />open.</h1>
+          <h1 id="xos-h1" className="pf-display xos-h1"><span className="xos-ln"><span>Building in the</span></span><br /><span className="xos-ln"><span>open.</span></span></h1>
           <p className="xos-cap">Open Source First</p>
           <p className="pf-lede xos-lede">We publish what we build, fix the bugs we find upstream instead of patching them in private, and pay the projects we depend on. The commitments below are specific enough to hold us to.</p>
           <div className="xos-acts">
@@ -459,7 +459,8 @@ const BUILT = [
 const PINNED = '(min-width: 900px) and (prefers-reduced-motion: no-preference)';
 const goTo = (y) => (window.__lenis ? window.__lenis.scrollTo(y, { immediate: true }) : window.scrollTo(0, y));
 
-/* the object: Hanzo's own twelve glyphs as one mark row; it marks the panel in view and the credit under the pointer */
+/* the object: Hanzo's own twelve glyphs as one mark row, drawn in ink (text presentation where the glyph has one, a flat
+   silhouette where it has not); the glyph itself stays readable as text. It marks the panel in view and the credit under the pointer */
 function Built() {
   const sec = useRef(null), stage = useRef(null), track = useRef(null);
   const [hot, setHot] = useState(-1);
@@ -512,15 +513,16 @@ function Built() {
             <h2 id="xos-built-h" className="pf-head">What Hanzo is built on</h2>
             <p className="pf-body">The projects our platform actually runs on, each with its licence and the people who maintain it.</p>
           </div>
-          <ul className={'xos-marks' + (hot >= 0 ? ' has-hot' : '')} aria-hidden="true">
+          <ul className={'xos-marks' + (hot >= 0 ? ' has-hot' : '')}>
             {BUILT.map(([ic, name], i) => (
-              <li key={name} className={(hot === i ? 'on' : '') + (cur === i ? ' cur' : '')} onClick={() => show(i, true)}><span>{ic}</span></li>
+              <li key={name} className={(hot === i ? 'on' : '') + (cur === i ? ' cur' : '')} onClick={() => show(i, true)}
+                onPointerEnter={(e) => e.pointerType === 'mouse' && setHot(i)} onPointerLeave={() => setHot(-1)}><span className="x-sr">{ic}</span><span aria-hidden="true">{ic.replace('\uFE0F', '\uFE0E')}</span></li>
             ))}
           </ul>
         </div>
         <ul className="xos-tiles xos-track" ref={track} onFocus={focus} onPointerLeave={() => setHot(-1)} onBlur={() => setHot(-1)}>
           {BUILT.map(([ic, name, repo, who, site, what, lic], i) => (
-            <li key={name} className="xos-tile" onPointerMove={lean} onPointerLeave={rest} onPointerEnter={(e) => e.pointerType === 'mouse' && setHot(i)} onFocus={() => setHot(i)}>
+            <li key={name} className={'xos-tile' + (hot === i ? ' hot' : '')} onPointerMove={lean} onPointerLeave={rest} onPointerEnter={(e) => e.pointerType === 'mouse' && setHot(i)} onFocus={() => setHot(i)}>
               <span className="xos-tile-lic pf-mono">{lic}</span>
               <A to={repo} className="xos-tile-n">{name}</A>
               <span className="xos-tile-d">{what}</span>
@@ -544,7 +546,7 @@ const CHARTER = [
 ];
 function Charter() {
   const end = useRef(null);
-  const signed = useInView(end, { once: true, amount: 1 });
+  const signed = useInView(end, { once: true, amount: 0.6 });
   return (
     <section className="pf-sec xos-charter" aria-labelledby="xos-ch-h">
       <div className="pf-wrap pf-grid">
@@ -565,10 +567,10 @@ function Charter() {
             <svg viewBox="0 0 320 90" width="320" height="90">
               <motion.path d="M10 62c18-30 34-44 44-40 9 4-8 40-2 44 6 4 22-36 34-34 10 2-4 30 4 32 9 2 20-26 30-24 8 2-2 22 6 22 10 0 18-18 30-18 9 0 4 16 14 16 14 0 34-20 52-22 16-2 40 6 84 4"
                 fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"
-                initial={{ pathLength: 0 }} animate={{ pathLength: signed ? 1 : 0 }} transition={{ duration: 2.2, ease: [0.65, 0, 0.35, 1] }} />
+                initial={{ pathLength: 0 }} animate={{ pathLength: signed ? 1 : 0 }} transition={{ duration: 1.1, ease: [0.65, 0, 0.35, 1] }} />
             </svg>
             <span className="xos-sign-l" />
-            <span className="xos-sign-m"><svg viewBox="0 0 67 67" width="18" height="18" fill="currentColor"><path d="M22.21 67V44.6369H0V67H22.21Z" /><path d="M66.7038 22.3184H22.2534L0.0878906 44.6367H44.4634L66.7038 22.3184Z" /><path d="M22.21 0H0V22.3184H22.21V0Z" /><path d="M66.7198 0H44.5098V22.3184H66.7198V0Z" /><path d="M66.7198 44.6369H44.5098V67H66.7198V44.6369Z" /></svg></span>
+            <span className="xos-sign-m"><svg viewBox="0 0 67 67" width="24" height="24" fill="currentColor"><path d="M22.21 67V44.6369H0V67H22.21Z" /><path d="M66.7038 22.3184H22.2534L0.0878906 44.6367H44.4634L66.7038 22.3184Z" /><path d="M22.21 0H0V22.3184H22.21V0Z" /><path d="M66.7198 0H44.5098V22.3184H66.7198V0Z" /><path d="M66.7198 44.6369H44.5098V67H66.7198V44.6369Z" /></svg></span>
           </div>
         </div>
       </div>
@@ -590,13 +592,8 @@ function Contribute() {
     <Ripple className="pf-sec xos-con" aria-labelledby="xos-con-h">
       <div className="pf-wrap pf-grid">
         <div className="xos-con-a">
-          <h2 id="xos-con-h" className="pf-display">Contribute</h2>
-          <p className="xos-cap">Join the Community</p>
+          <h2 id="xos-con-h" className="pf-head">Contribute</h2>
           <p className="pf-lede">We welcome contributions of all kinds: code, documentation, bug reports and feature requests.</p>
-          <div className="xos-con-acts">
-            <A to="https://github.com/hanzoai" className="pf-btn solid" data-cta="open-source.band" data-thumb="Start Contributing">Start Contributing</A>
-          </div>
-          <p className="xos-con-note"><More to="https://discord.gg/XthHQQj">Join Discord</More><More to="/founder">Founder Program</More></p>
         </div>
         <div className="xos-con-b">
           <div className="xos-langchips" role="radiogroup" aria-label="Language">
@@ -624,6 +621,31 @@ function Contribute() {
   );
 }
 
+/* the close: one centred black room in Hanzo's words, the one ask and its two quiet neighbours */
+function Close() {
+  const ref = useRef(null);
+  const [st, setSt] = useState('rest'); // the server and reduced motion show it at rest; below the fold it waits, then plays
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches || el.getBoundingClientRect().top < innerHeight * 0.9) return;
+    setSt('wait');
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setSt('in'); io.disconnect(); } }, { threshold: 0.4 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <section className="xos-close" data-room="dark" data-e={st} ref={ref} aria-labelledby="xos-close-h">
+      <div className="pf-wrap">
+        <h2 id="xos-close-h" className="pf-display xos-close-h"><span className="xos-ln"><span>Join the Community</span></span></h2>
+        <div className="xos-close-acts">
+          <A to="https://github.com/hanzoai" className="pf-btn xos-btn-l" data-cta="open-source.band">Start Contributing</A>
+        </div>
+        <p className="xos-con-note"><More to="https://discord.gg/XthHQQj">Join Discord</More><More to="/founder">Founder Program</More></p>
+      </div>
+    </section>
+  );
+}
+
 /* JS off: the tabs cannot switch, so every ecosystem and galaxy panel shows, one after another; the gallery cannot be
    driven by scroll, so it is the native sideways rail it is on phones */
 const NOSCRIPT = '<style>.xos-panel[hidden],.xos-opanel[hidden]{display:block!important;margin-top:64px}.xos-eco,.xos-chips{display:none!important}'
@@ -644,6 +666,7 @@ export default function OpenSource() {
         <Charter />
         <Contribute />
       </div>
+      <Close />
     </main>
   );
 }

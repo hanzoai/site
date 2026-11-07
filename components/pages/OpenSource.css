@@ -30,7 +30,7 @@
 .xos-hero-c { position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: space-between; gap: 27px; padding: 144px 0 27px; pointer-events: none; }
 .xos-hero-c a, .xos-hero-c button { pointer-events: auto; }
 /* the hero room is 100svh tall but starts under the 60px header: the figures rest above the fold, not on it */
-@media (min-width: 900px) { .xos-hero-c { padding-bottom: calc(60px + 44px); } }
+@media (min-width: 900px) { .xos-hero-c { padding-bottom: calc(60px + 44px); } .xos-pause { bottom: calc(60px + 44px); } } /* the pause rests on the figures' line, above the fold */
 .xos-hero-a { max-width: 640px; }
 .xos-hero .xos-cap { color: rgba(255, 255, 255, .55); }
 .xos-h1 { color: #fafafa; }
@@ -364,4 +364,57 @@
   .xos-langs li, .xos-dash-c li, .xos-panel, .xos-lrepos li { animation: none !important; }
   .xos-heat-g i, .xos-lbar i, .xos-ocard, .xos-tile { transition: none; }
   .xos-dash-dot::after { animation: none; }
+}
+
+/* arrival: the h1 lines cut up out of their masks, then the caption, lede, asks and figures follow (CSS, so it plays
+   from the server HTML before hydration and the headline is always first) */
+.xos-ln { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: .1em; margin-bottom: -.1em; }
+.xos-ln > span { display: inline-block; }
+.xos-h1 .xos-ln > span { animation: xos-cut 700ms var(--e-emph) both; }
+.xos-h1 .xos-ln + br + .xos-ln > span { animation-delay: 60ms; }
+.xos-hero .xos-cap, .xos-hero .xos-lede, .xos-hero .xos-acts, .xos-hero-b { animation: xos-rise 600ms var(--e-emph) both; }
+.xos-hero .xos-cap { animation-delay: 160ms; }
+.xos-hero .xos-lede { animation-delay: 220ms; }
+.xos-hero .xos-acts { animation-delay: 280ms; }
+.xos-hero-b { animation-delay: 360ms; }
+@keyframes xos-cut { from { transform: translate3d(0, 105%, 0); } }
+@keyframes xos-rise { from { opacity: 0; transform: translate3d(0, 14px, 0); } }
+
+/* the close: one centred black room, the one ask in white, two quiet links */
+.xos-close { background: #000000; color: #fafafa; padding: clamp(104px, 12vw, 168px) 0; text-align: center; }
+.xos-close-h { margin: 0; color: #fafafa; }
+.xos-close-acts { display: flex; justify-content: center; margin-top: 36px; }
+.xos-close .xos-btn-l { min-height: 52px; padding: 0 30px; font-size: 16px; transition: background-color 150ms var(--e-out), transform 90ms var(--e-out); }
+@media (hover: hover) { .xos-close .xos-btn-l:hover { background: #d4d4d4; border-color: #d4d4d4; } .xos-close .x-arrow:hover { background: rgba(255, 255, 255, .14); } }
+.xos-close .xos-btn-l:active { transform: scale(.98); }
+.xos-close .xos-con-note { justify-content: center; margin-top: 20px; }
+.xos-close .x-arrow { color: #fafafa; }
+.xos-close[data-e='wait'] .xos-ln > span { transform: translate3d(0, 105%, 0); }
+.xos-close[data-e='wait'] .xos-close-acts, .xos-close[data-e='wait'] .xos-con-note { opacity: 0; transform: translate3d(0, 14px, 0); }
+.xos-close[data-e='in'] .xos-ln > span { animation: xos-cut 700ms var(--e-emph) both; }
+.xos-close[data-e='in'] .xos-close-acts { animation: xos-rise 600ms var(--e-emph) 160ms both; }
+.xos-close[data-e='in'] .xos-con-note { animation: xos-rise 600ms var(--e-emph) 240ms both; }
+
+/* Hanzo's twelve glyphs drawn in ink, one flat silhouette each (no colour, no filter); the hovered one stays ink */
+.xos-marks span[aria-hidden] { color: transparent !important; text-shadow: 0 0 0 #0a0a0a; font-variant-emoji: text; }
+.xos-tile .xos-tile-lic { transition: background-color 150ms var(--e-out), color 150ms var(--e-out); }
+.xos-tile.hot { background: #ededed; }
+.xos-tile.hot .xos-tile-lic { background: #0a0a0a; color: #fafafa; }
+
+/* an organization card answers with its own figure: the repositories bar thickens and refills to its share */
+.xos-oc-bar { transform-origin: 50% 100%; transition: transform 300ms var(--e-emph); }
+.xos-oc-f { transition: color 150ms var(--e-out); }
+@media (hover: hover) {
+  .xos-ocard:hover .xos-oc-bar { transform: scaleY(3); }
+  .xos-ocard:hover .xos-oc-bar i { animation: xos-fill 700ms var(--e-emph); }
+  .xos-ocard:hover .xos-oc-f { color: #0a0a0a; }
+}
+@keyframes xos-fill { from { transform: scaleX(0); } }
+
+@media (max-width: 899px) {
+  /* phone: one ask; the sticky local band (and its second GitHub button) stays a desktop part */
+  .xos-local { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .xos-h1 .xos-ln > span, .xos-hero .xos-cap, .xos-hero .xos-lede, .xos-hero .xos-acts, .xos-hero-b, .xos-oc-bar i { animation: none !important; }
 }

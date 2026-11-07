@@ -31,15 +31,15 @@ Done here: parity 139/139 links. Org cards are `<a href="/oss/<login>">`; the he
 - [x] Ends in proof strip, `Band`, footer
 - [x] Card-to-page links use Morph; title lands within 12px
 
-Done here: the h1 "Building in the open." cuts in by line mask; the sky pulls back from inside Hanzo to all three galaxies within 3 s of arrival with no input; "Open Source First" is a caption under the h1. JS off: 248 text blocks, 0 invisible; every tab panel shows. Order: sky → What we publish → Total → Every organization → Built on → Charter → Contribute (the band). Round 2: the list rise `xos-in` now has an end state (`to { opacity: 1 }`), so Totals, all six charter articles and the Contribute repository list are visible at both sizes (probe: every `.xos-arts > li`, `.xos-total-n > li`, `.xos-lrepos > li` at opacity 1, 1470 and 375); seams between paper sections tightened to 116 + 72px. Org card title morphs into `/oss/hanzoskill`'s h1 (`data-morph` → `data-morph-target`; filmed in `docs/gallery/open-source/click-through.jpg`, with the Morph fix above).
+Done here: 8 Nov: the h1's two lines cut up out of their masks (CSS, 700 ms, 60 ms apart, from the server HTML), then the caption, lede, asks and figures rise 160–360 ms after, so the headline always reads first; the page now ends Contribute → a centred black close room ("Join the Community" by line mask, "Start Contributing", Join Discord, Founder Program) → footer. Earlier: the h1 "Building in the open." cuts in by line mask; the sky pulls back from inside Hanzo to all three galaxies within 3 s of arrival with no input; "Open Source First" is a caption under the h1. JS off: 248 text blocks, 0 invisible; every tab panel shows. Order: sky → What we publish → Total → Every organization → Built on → Charter → Contribute (the band). Round 2: the list rise `xos-in` now has an end state (`to { opacity: 1 }`), so Totals, all six charter articles and the Contribute repository list are visible at both sizes (probe: every `.xos-arts > li`, `.xos-total-n > li`, `.xos-lrepos > li` at opacity 1, 1470 and 375); seams between paper sections tightened to 116 + 72px. Org card title morphs into `/oss/hanzoskill`'s h1 (`data-morph` → `data-morph-target`; filmed in `docs/gallery/open-source/click-through.jpg`, with the Morph fix above).
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn` — `.pf-btn` kit class until `<Cta>` merges
-- [x] Sticky ask in header and bar after the hero, same label — on desktop Hanzo's header carries "View on GitHub" and the in-page band keeps only the name and the live read (no duplicate button); on phone the band keeps the quiet "View on GitHub"
+- [x] Sticky ask in header and bar after the hero, same label — on desktop Hanzo's header carries "View on GitHub" and the in-page band keeps only the name and the live read (no duplicate button); on phone the local band is not shown (one ask per screen; the phone header following the page ask is requested)
 - [x] Copy button copies exactly the displayed text — n/a: no copy button on this page
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: `data-cta="open-source.hero"` with `data-thumb="View on GitHub"`; `data-cta="open-source.band"` with `data-thumb="Start Contributing"` (the hero's comes first, so the header keeps it). `.xos-local-a` is `display:none` from 900px up.
+Done here: `data-cta="open-source.hero"` with `data-thumb="View on GitHub"`; `data-cta="open-source.band"` on the close room's "Start Contributing". `.xos-local-a` is `display:none` from 900px up.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -73,7 +73,7 @@ Done here: `taste.py` OK. Rhythm on `ProofRhythm.css`: h1 52, section headings 2
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: listed below
 
-Done here: tabs, chips, cards, text links and the pause button press at `scale(.97)` in 90 ms; "Star Our Repos", "Join Discord", "Founder Program" and the "Read more" sheet triggers answer hover with a pill fill (`#f2f2f2`, white 14% on black); the closing ask hovers to `#262626`; pointing at a "Built on" credit lights its mark in the row; hovers sit inside `@media (hover: hover)`; focus is a 2px ink ring with a white halo (white with black on the hero). Deleted: the floating ask bar, cursor labels, outlined second button.
+Done here: tabs, chips, cards, text links and the pause button press at `scale(.97)` in 90 ms; "Star Our Repos", "Join Discord", "Founder Program" and the "Read more" sheet triggers answer hover with a pill fill (`#f2f2f2`, white 14% on black); the closing ask hovers to `#262626`; pointing at a "Built on" credit lights its mark in the row, and pointing at a mark lights its credit (fill #ededed, licence chip inverts to ink); an organization card's hover thickens its repositories bar 3x and refills it to its share, and its commits line darkens; hovers sit inside `@media (hover: hover)`; focus is a 2px ink ring with a white halo (white with black on the hero). Deleted: the floating ask bar, cursor labels, outlined second button.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -82,7 +82,7 @@ Done here: tabs, chips, cards, text links and the pause button press at `scale(.
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit — n/a: the sound kit is not merged; nothing plays
 
-Done here: signature the card that opens (Morph). Supporting: the sky (idle: drift and twinkle; arrival: the pull-back), the tab pill gliding at 300 ms ease-emphasis while the heat map re-lights (state), the charter's drawn signature (arrival). Scroll-linked: only the line masks. No springs; hovers 150 ms ease-out, presses 90 ms, arrivals 400–500 ms ease-emphasis. Cards lean up to 2.5° (fine pointers only).
+Done here: signature the card that opens (Morph). Supporting: the sky (idle: drift and twinkle; arrival: the pull-back), the tab pill gliding at 300 ms ease-emphasis while the heat map re-lights (state), the charter's drawn signature (arrival: 1.1 s once the signature line is 60% in view, the Hanzo mark beside it at 24px). The twelve Built-on glyphs are drawn in ink (text presentation where the glyph has one, a flat silhouette otherwise), no colour and no filter; each glyph stays in the page as text. Scroll-linked: only the line masks. No springs; hovers 150 ms ease-out, presses 90 ms, arrivals 400–500 ms ease-emphasis. Cards lean up to 2.5° (fine pointers only).
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set — n/a: the page has no images or film
