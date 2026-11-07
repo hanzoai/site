@@ -15,13 +15,15 @@
    hiring card, the second solid button in Academic, solid "Apply" on every sheet.
    The role pages (/careers/<slug>) keep Careers.css; this index has its own CareersBoard.css. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { useRouter } from 'next/navigation';
 import { A } from '../kit';
 import Sigil from '../Sigil';
 import MaskLines from './careers/MaskLines'; // careers' own variant; main's v2/MaskLines differs
 import PinScenes from './company/PinScenes';
 import useArrived from './company/useArrived';
-import { useArrival } from './doorway';
+import { openDoor, useArrival } from './doorway';
+import { href as hrefOf } from '../../lib/route';
 import '../v2/vc-type.css';
 import './CareersBoard.css';
 
@@ -34,7 +36,7 @@ function Hire({ how }) {
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
   const box = useRef(null);
-  const seen = useInView(box, { amount: 0.5 });
+  const seen = useInView(box, { amount: 0.15 });
   const calm = useReducedMotion();
   const n = how.steps.length;
   useEffect(() => {
@@ -53,7 +55,6 @@ function Hire({ how }) {
           <motion.div key={t} className="xcb-hire-s" initial={false} aria-hidden={i !== at}
             animate={{ y: i === at ? '0%' : i < at ? '-104%' : '104%' }}
             transition={{ duration: 0.8, ease: EASE }}>
-            <span className="xcb-hire-i vc-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
             <b>{t}</b>
             <p>{d}</p>
           </motion.div>
@@ -63,7 +64,7 @@ function Hire({ how }) {
         {how.steps.map(([t], i) => (
           <li key={t}>
             <button type="button" aria-pressed={i === at} onClick={() => { setMine(true); setAt(i); }}>
-              <i>{i < at && <u className="done" />}{i === at && <u key={at + (mine ? 'm' : '')} className={mine || calm ? 'done' : 'run'} />}</i>
+              <i>{i < at && <u className="done" />}{i === at && <u key={at + (mine ? 'm' : '')} className={mine || calm ? 'done' : seen ? 'run' : 'wait'} />}</i>
               <span>{t}</span>
             </button>
           </li>
@@ -104,22 +105,27 @@ function Marked({ text, know }) {
 }
 
 /* One role, one sheet. It sticks a little lower than the one before, and settles back as later sheets cover it. */
+/* The sheet opens into its page: its rectangle grows to fill the screen in the sheet's own grey, the role page
+   arrives, and the cover wipes away (doorway.js). The site Morph is skipped here (data-no-morph): it times out today. */
+const open = (e, to, router) => openDoor(e, hrefOf(to), router, '#f5f5f7');
+
 function Sheet({ r, i, n, know, progress }) {
+  const router = useRouter();
   const [where, kind, team] = r.chips;
   const miss = know.length > 0 && !know.some((k) => asks(r, k));
   const scale = useTransform(progress, [i / n, 1], [1, 1 - (n - 1 - i) * 0.028]);
   return (
     <li id={r.id} className={'xcb-sheet' + (miss ? ' miss' : '')} style={{ '--i': i }}>
       <motion.div className="xcb-sheet-in" style={{ scale }}>
-        <A to={r.href} className="xcb-sheet-a">
+        <A to={r.href} className="xcb-sheet-a" data-no-morph onClick={(e) => open(e, r.href, router)}>
           <span className="xcb-sheet-no vc-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-          <span className="xcb-sheet-t" data-morph>{r.title}</span>
+          <span className="xcb-sheet-t">{r.title}</span>
           <span className="xcb-sheet-tags"><span>{team}</span><span>{where}</span><span>{kind}</span></span>
           <span className="xcb-sheet-d"><Marked text={r.desc} know={know} /></span>
         </A>
         <div className="xcb-sheet-act">
-          <A to={r.acts[0].href} className="x-btn xcb-big" data-cta={'careers.role.' + r.id}>{r.acts[0].text}</A>
-          <A to={r.acts[1].href} className="x-arrow xcb-tap"><span>{r.acts[1].text}</span>{ARROW}</A>
+          <A to={r.acts[0].href} className="x-btn xcb-big" data-no-morph data-cta={'careers.role.' + r.id} onClick={(e) => open(e, r.acts[0].href, router)}>{r.acts[0].text}</A>
+          <A to={r.acts[1].href} className="x-arrow xcb-tap" data-no-morph onClick={(e) => open(e, r.acts[1].href, router)}><span>{r.acts[1].text}</span>{ARROW}</A>
           <CopyDirect id={r.id} title={r.title} />
         </div>
       </motion.div>
@@ -128,6 +134,7 @@ function Sheet({ r, i, n, know, progress }) {
 }
 
 function Deck({ roles, know, dont, dontA }) {
+  const router = useRouter();
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   const n = roles.length + 1;
@@ -138,7 +145,7 @@ function Deck({ roles, know, dont, dontA }) {
         <div className="xcb-sheet-in">
           <span className="xcb-sheet-sig" aria-hidden="true"><Sigil seed="careers/open" data={[n]} /></span>
           <p className="xcb-sheet-t">{dont}</p>
-          <div className="xcb-sheet-act"><A to={dontA.href} className="x-btn solid xcb-big" data-morph data-cta="careers.open">{dontA.text}</A></div>
+          <div className="xcb-sheet-act"><A to={dontA.href} className="x-btn solid xcb-big" data-no-morph data-thumb={dontA.text} data-cta="careers.open" onClick={(e) => open(e, dontA.href, router)}>{dontA.text}</A></div>
         </div>
       </li>
     </ul>
@@ -201,7 +208,7 @@ export default function Careers({ d }) {
         <PinScenes label={d.perks.title} scenes={d.perks.items.map(([t, p], i) => ({
           key: t,
           title: <h3 className="vc-headline">{t}</h3>,
-          body: <p className="vc-body">{p}</p>,
+          body: <p className="vc-lede">{p}</p>,
           visual: <PerkArt i={i} t={t} p={p} />,
         }))} />
       </section>
@@ -239,7 +246,11 @@ export default function Careers({ d }) {
           </div>
         </div>
         <div className="vc-wrap">
-          <Deck key={team || 'all'} roles={shown} know={know} dont={d.pos.dont} dontA={d.pos.dontA} />
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div key={team || 'all'} initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }} transition={{ duration: 0.36, ease: EASE }}>
+              <Deck roles={shown} know={know} dont={d.pos.dont} dontA={d.pos.dontA} />
+            </motion.div>
+          </AnimatePresence>
         </div>
       </section>
 
@@ -252,18 +263,12 @@ export default function Careers({ d }) {
           {[intA, intB].map((l, k) => (
             <article key={l.title} className={'xcb-panel ' + (k ? 'b' : 'a')}>
               {k === 0 && <span className="xcb-panel-sig" aria-hidden="true"><Sigil seed={'careers/' + l.title} data={[l.desc.length]} /></span>}
-              <ul className="xcb-panel-p">
-                {l.perks.map((p) => {
-                  const m = fig(p);
-                  return m
-                    ? <li key={p} className="xcb-fig"><b className="vc-num">{m[1]}</b><span>{m[2]}</span></li>
-                    : <li key={p}>{p}</li>;
-                })}
-              </ul>
+              {l.perks.filter(fig).map((p) => { const m = fig(p); return <p key={p} className="xcb-fig"><b className="vc-num">{m[1]}</b><span>{m[2]}</span></p>; })}
               <h3 className="vc-title">{l.title}</h3>
+              <ul className="xcb-panel-p">{l.perks.filter((p) => !fig(p)).map((p) => <li key={p}>{p}</li>)}</ul>
               <p className="vc-body">{l.desc}</p>
               <div className="xcb-panel-a">
-                <A to={l.acts[0].href} className={'x-btn xcb-big' + (k ? '' : ' solid')} data-cta={'careers.' + (k ? 'grant' : 'intern')}>{l.acts[0].text}</A>
+                <A to={l.acts[0].href} className={'x-btn xcb-big' + (k ? '' : ' solid')} data-cta={'careers.' + (k ? 'grant' : 'intern')} {...(k ? {} : { 'data-thumb': l.acts[0].text })}>{l.acts[0].text}</A>
                 <A to={l.acts[1].href} className="x-arrow xcb-tap"><span>{l.acts[1].text}</span>{ARROW}</A>
               </div>
             </article>
@@ -277,7 +282,7 @@ export default function Careers({ d }) {
             <MaskLines id="xcb-close-h" lines={[d.close.title]} className="vc-display m" />
             <p className="vc-lede">{d.close.lede}</p>
             <div className="xcb-acts">
-              <a className="x-btn solid xcb-big" href={d.close.acts[0].href} data-cta="careers.close">{d.close.acts[0].text}</a>
+              <a className="x-btn solid xcb-big" href={d.close.acts[0].href} data-cta="careers.close" data-thumb={d.close.acts[0].text}>{d.close.acts[0].text}</a>
               <a className="xcb-mail" href={d.close.acts[1].href}>{d.close.acts[1].text}</a>
             </div>
           </div>

@@ -226,8 +226,8 @@ export default function Node() {
   const [drive, setDrive] = useState('up');
   const steps = WHY.map(([t, d], i) => ({ t, d, extra: i === 4 ? <Drive drive={drive} setDrive={setDrive} /> : null }));
   return (
-    <main className="lx nd" data-ask-name="Hanzo Node">
-      <section className="nd-hero" data-morph-target>
+    <main className="lx nd">
+      <section className="nd-hero" data-morph-target data-ask-name="Hanzo Node">
         <div className="lx-wrap nd-hero-grid">
           <Lean><SettleStage from={1.05} lift={30} className="nd-stage"><Machine /></SettleStage></Lean>
           <div className="nd-hero-copy">

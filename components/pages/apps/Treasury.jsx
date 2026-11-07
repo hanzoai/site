@@ -85,7 +85,7 @@ function Hero() {
           <div>
             <LineMask as="h1" id="ts-h1" now className="w2-display ts-h1" lines={['Hanzo Treasury']} />
           </div>
-          <motion.div className="ts-top-r" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
+          <motion.div className="ts-top-r" initial={{ y: 14 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
             <p className="w2-lede ts-lede">A double-entry ledger for money moving inside your product</p>
             <div className="ts-acts">
               <Magnetic strength={0.25}><A to={DOCS} className="w2-cta" data-thumb="Read the docs" data-cta="treasury.hero">Read the docs <i aria-hidden="true">→</i></A></Magnetic>
@@ -181,7 +181,8 @@ function Parts() {
   return (
     <div ref={ref}>
       <PinChapters id="ts-parts" label="What it is made of" className="ts-pin"
-        chapters={PARTS.map(([t, d], i) => ({ k: i === 0 ? 'What it is made of' : `Part ${String(i + 1).padStart(2, '0')}`, t, b: <p>{d}</p> }))}
+        title="What it is made of"
+        chapters={PARTS.map(([t, d]) => ({ t, b: <p>{d}</p> }))}
         visual={(at) => (
           <div className="ts-vis">
             {pauseBtn}

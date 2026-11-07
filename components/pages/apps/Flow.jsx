@@ -20,7 +20,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Copy } from '../../ui';
 import { EASE_OUT_EXPO, DUR } from '../../../lib/motion';
 import { A, Go, More } from '../../kit';
-import { Paste, useLive } from '../cloud/Frame';
+import { useLive } from '../cloud/Frame';
+import BizPaste from '../../v2/BizPaste';
 import BizLines from '../../v2/BizLines';
 import BizChapters from '../../v2/BizChapters';
 import BizOpen from '../../v2/BizOpen';
@@ -362,7 +363,7 @@ function GetFlow() {
           <div className="fl-chips"><span className="fl-chip"><span>License:</span> Apache-2.0</span><A to={GH} className="fl-chip"><Gh />hanzoai</A></div>
           <div className="fl-get-links"><More to={DEPLOY}>Deploy to Cloud</More><More to={DOCS}>Documentation</More></div>
         </div>
-        <Paste name="Flow" prompt="Read https://hanzo.ai/skill.md and use Hanzo Flow in my project. Start with: hanzo flow workflows list" className="fl-paste" />
+        <BizPaste name="Flow" prompt="Read https://hanzo.ai/skill.md and use Hanzo Flow in my project. Start with: hanzo flow workflows list" className="fl-paste" />
       </div>
     </section>
   );

@@ -14,7 +14,7 @@ Page file: `components/pages/cloud/Mq.jsx` · route: `app/mq/page.jsx` · galler
    - Idle: the conveyor (tickets glide lane to lane on one layoutId FLIP, progress lines run, the limiter fills, QueueEvents prints) and the inspector's panels; each has a pause. Timeouts only, stopped off screen.
    - Pointer: a job under the cursor shows its priority, attempt and lane in the conveyor's toolbar; tickets answer hover with an ink edge; the close's ask leans to the pointer.
    - State: the inspector's tab underline morphs (layoutId); Retry puts the failed job back and Undo returns it.
-   - Arrival: the line-masked title, the timed wipe into the dark room, "10K" counting up once.
+   - Arrival: the line-masked title, the timed wipe into the dark room, "10K" cutting in once (the real figure; it never counts through numbers that are not Hanzo's).
    - Scroll (under half): the stage settle and the pinned chapters.
 10. **Media.** The page has no Hanzo images or film. Its objects are product UI: the conveyor, the job inspector, worker.ts, the close's Sigil.
 11. **Mobile and responsive.** At 390×664 the lanes stack (three waiting, two done shown), the inspector fits a 37svh window so every chapter's words clear the thumb bar (pinchk: 7/7 ok), panels drop a row or a line on phones. Text 14px or more, targets 44px or more, no sideways scroll at 320.

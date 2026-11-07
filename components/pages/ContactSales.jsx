@@ -35,6 +35,8 @@ const STEPS = [
   { name: 'need', label: 'What do you want to build?', type: 'area', req: false },
 ];
 const INCLUDES = ['Run Hanzo in your cloud, on your servers or fully offline', 'Dedicated compute, and your own models trained and hosted', 'Unlimited members, single sign-on, roles and an audit log', 'An uptime guarantee and security review in your contract', '24/7 engineering support and hands-on onboarding'];
+// JS off: every question, size and inclusion readable in order; the step controls (which need JS) step aside (PLAN 2.3)
+const NOJS = { __html: '<style>.xcs-stage{display:flex;flex-direction:column;gap:40px;min-height:0!important}.xcs-step{position:relative!important;opacity:1!important;transform:none!important}.xcs-top,.xcs-acts{display:none!important}.xcs-in,.xcs-up{animation:none!important}</style>' };
 const okEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 const two = (n) => String(n).padStart(2, '0');
 
@@ -47,6 +49,8 @@ const Bang = () => <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="
 function Form({ v, setV, at, setAt, tick, need }) {
   const [bad, setBad] = useState(-1); // the step whose answer is missing or not an email
   const [state, setState] = useState('idle'); // idle | sending | sent | failed
+  const [hyd, setHyd] = useState(false);
+  useEffect(() => setHyd(true), []);
   const refs = useRef({});
   const first = useRef(true);
   useEffect(() => {
@@ -116,6 +120,7 @@ function Form({ v, setV, at, setAt, tick, need }) {
   const last = at === STEPS.length - 1;
   return (
     <div className="xcs-card vc-obj" id="xcs-form" data-thumb="Talk to sales" data-href="#xcs-form">
+      <noscript dangerouslySetInnerHTML={NOJS} />
       {state === 'sent' ? (
         <motion.div className="xcs-sent" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE }} role="status">
           <span className="xcs-sent-i"><Check s={28} /></span>
@@ -132,7 +137,7 @@ function Form({ v, setV, at, setAt, tick, need }) {
               <motion.div key={s.name} className={'xcs-step' + (i === at ? ' on' : '') + (bad === i ? ' bad' : '')} initial={false}
                 animate={i === at ? { opacity: 1, y: 0 } : { opacity: 0, y: i < at ? -36 : 36 }}
                 transition={{ duration: i === at ? 0.52 : 0.22, ease: EASE, delay: i === at ? 0.1 : 0 }}
-                aria-hidden={i !== at} inert={i !== at}>
+                {...(hyd && i !== at ? { 'aria-hidden': true, inert: true } : {})}>
                 <label htmlFor={'xcs-' + s.name} id={'xcs-l-' + s.name}>
                   <span className="xcs-q">{s.label}</span>
                   {s.type === 'size' && <span className="xcs-choose">Choose</span>}

@@ -18,7 +18,8 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { A, Go, More } from '../../kit';
 import { SPRING } from '../../../lib/motion';
-import { Paste, Code, useLive } from '../cloud/Frame';
+import { Code, useLive } from '../cloud/Frame';
+import BizPaste from '../../v2/BizPaste';
 import BizStage from '../../v2/BizStage';
 import BizChapters from '../../v2/BizChapters';
 import BizOpen from '../../v2/BizOpen';
@@ -267,7 +268,7 @@ function GetGui() {
             <A to={GH} className="gu-chip"><Gh />hanzoai/gui<em>4 stars</em></A>
           </div>
         </div>
-        <Paste name="GUI" prompt="Read https://hanzo.ai/skill.md and use Hanzo GUI in my project." className="gu-paste" />
+        <BizPaste name="GUI" prompt="Read https://hanzo.ai/skill.md and use Hanzo GUI in my project." className="gu-paste" />
       </div>
     </section>
   );
