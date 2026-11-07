@@ -230,6 +230,39 @@ function FirstRequest() {
   );
 }
 
+
+/* ---------- every model in the catalog: Hanzo's own model films, together ---------- */
+const MODELS = [['Zen', 'zen'], ['Enso', 'enso'], ['Kai', 'kai'], ['Iro', 'iro'], ['Koma', 'koma'], ['Koe', 'koe'], ['Mori', 'mori'], ['Oto', 'oto'], ['Uta', 'uta']];
+
+function Wall() {
+  const [ref, live, calm] = useLive(0.3);
+  const [paused, pause] = usePause();
+  const [at, setAt] = useState(0);
+  const [hand, setHand] = useState(false);
+  useEffect(() => {
+    if (!live || paused || hand || calm) return;
+    const t = setTimeout(() => setAt((a) => (a + 1) % MODELS.length), 3600);
+    return () => clearTimeout(t);
+  }, [live, paused, hand, calm, at]);
+  return (
+    <div className="pg-wall" ref={ref} onPointerLeave={() => setHand(false)}>
+      <LivePause dark paused={paused} onToggle={pause} className="pg-wall-pause" />
+      <ul className="pg-wall-grid">
+        {MODELS.map(([n, m], i) => (
+          <li key={m}>
+            <A to={'/' + m} className={'pg-tile' + (i === at ? ' on' : '')} data-cursor="Open"
+              onPointerEnter={(e) => { if (e.pointerType === 'mouse') { setHand(true); setAt(i); } }} onFocus={() => setAt(i)}>
+              <Img src={`/models/${m}.webp`} alt="" w={1200} h={1500} className="pg-tile-img" data-morph />
+              {i === at && live && !calm && !paused && <Film src={`/models/${m}.webm`} poster={`/models/${m}.webp`} w={1200} h={1500} className="pg-tile-film" />}
+              <span className="pg-tile-n">{n}</span>
+            </A>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 const REL = [['CLI', '/cli'], ['Desktop', '/desktop'], ['API Keys', '/cloud/api-keys']];
 
 export default function Playground() {
@@ -252,7 +285,10 @@ export default function Playground() {
       <FirstRequest />
 
       <ClipWipe dark className="pg-paste">
-        <div className="lx-wrap"><Paste dark name="Playground" api="/v1/chat/completions" prompt="Read https://hanzo.ai/skill.md and use Hanzo Playground in my project." /></div>
+        <div className="lx-wrap pg-paste-grid">
+          <Paste dark name="Playground" api="/v1/chat/completions" prompt="Read https://hanzo.ai/skill.md and use Hanzo Playground in my project." className="lx-paste" />
+          <Wall />
+        </div>
       </ClipWipe>
 
       <RelatedCards className="pg-rel" items={REL} />
