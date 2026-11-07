@@ -39,7 +39,7 @@ Done here: On load the name cuts in (700 ms, ease-emphasis) over the playing Zen
 - [x] Copy button copies exactly the displayed text; failure never says Copied (n/a: no copy button)
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: `data-cta` values are `zen6max.hero` (with `data-thumb="Talk to sales"`), `zen6max.hero.gpus` and `zen6max.close`. While the film is under the ask (desktop) the solid reads light; once the card has cleared it, the ask reads ink. It is never two solids at once.
+Done here: `data-cta` values are `zen6max.hero` (with `data-thumb="Talk to sales"`), `zen6max.hero.gpus` and `zen6max.close`. While the film is under the ask (desktop) the solid reads light; once the card has cleared it, the ask reads ink. It is never two solids at once. The close has `data-ask-hide`, so the shared bar makes room beside the close's own ask.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number

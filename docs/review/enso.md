@@ -1,35 +1,34 @@
 # /enso — James-eye review
 
-Reviewed: main at `1417fde` and later (third walk, 14:43, after the Zen-names fix and the palette recolour), under MASTER.md. Earlier: 7/10 at `d3752c2` and at `d37d413`. Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
+Reviewed: main at `25b197c` (page files at `f68c8e5`), 7 Nov 15:01 UTC, under MASTER.md. Earlier: 7/10 at `d3752c2`, `d37d413` and `1417fde`. Built on the shared model-launch template (`components/pages/model/`). Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
 
-Verdict: 7/10 (capped; page itself scores 8)
+Verdict: 6/10 (the pill floats over the chart; three big figures at once)
 
-First complaint: "Now it asks me on the first screen and the circle keeps moving on my phone. On my phone the three benchmark percentages all shout at once, though."
+First complaint: "That little bar at the bottom sits right on top of the chart. And the three percentages all shout at the same size."
 
-**Cap: part card (MASTER section 6).** `docs/coverage/enso.md` is in the old format: 0 of 18 `Done here:` lines under `## N.` headings. Capped at 7 until it is re-copied from `docs/coverage/_TEMPLATE.md` with every claim true on the page. The shared desktop ask bar floats over content (site-wide, see `_shared.md`); not counted against this page.
+**Card:** `docs/coverage/enso.md` is now in MASTER format, 18/18 `Done here:` lines. The claims I could measure hold: CLS 0.0003 at 1470 and 0.0004 at 375, the h1 in server HTML, 0 hidden blocks with JavaScript off, nothing running under reduced motion, the Pause at the stage foot.
 
-**Scale (MASTER 3.1):** mostly passes: the 176px name over the film is the one hero moment, the tiers each have one title, and the dark room's "The right intelligence. Every time." reveals word by word as the one big statement on its screen. On the phone, the GPQA screen shows three 68px figures side by side (98.0%, 96.5%, 95.5%): three big things at once. Let Enso's figure be the big one and set the other two at medium.
+**Floats over content (MASTER 3.2 rule 6, fail, cap 6):** at 1470×801 the shared pill ("Hanzo Enso · search · Try Hanzo") sits over the page from the GPQA screen to the tiers (screens 8–15 of my walk), over the Pareto chart's lower points. Part 4's card line says the shared ask bar carries "Try Hanzo" after the hero: true, and that is the problem. Turn it off on this page (`data-ask="off"` on `<main>`) and let the header carry the ask.
+
+**Scale (MASTER 3.1):** the stage passes ("Enso" 112px alone over the film, then the 44px headline). The GPQA screen sets three 64px figures side by side (98.0%, 96.5%, 95.5%) on desktop and stacks them on the phone: three big things at once. Let Enso Ultra's figure lead and set the other two at medium.
 
 ## What changed since the last review
-Fixed: "Try Hanzo" (solid) and "API Platform" now sit on the first screen, the phone's circle film keeps playing (2% change at rest), and the 11px chips were raised.
+Now on the MASTER card. The name rests at 112px (was 176px) and the headline settles at 44px. The phone keeps "Try Hanzo" on the first screen.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Yes on both sizes.
-2. **One in, one out?** Yes: ring settles, three tiers pin one per screen, live router room, GPQA figures, Pareto chart, close.
+1. **Sells in 5 seconds, moves within 1 second?** Yes on both sizes: the ring film, "Enso" and "Try Hanzo" on the first screen, settling into "The right intelligence. Every time."
+2. **One in, one out?** Yes: stage, tiers, live router room, GPQA figures, Pareto chart, table, close.
 3. **A real object in every section?** Yes.
-4. **One ask, sticky after the hero?** Yes: "Try Hanzo" in the hero, the ask bar and the close; three `data-cta` tags.
-5. **Every hover and press answers?** The hero ask answers; router controls respond.
-6. **Overlap, font swap, layout shift?** None on the page; layout shift 0.0001 and 0.0003.
+4. **One ask, sticky after the hero?** Through the floating pill on desktop (fail above); the header's "Try Hanzo" stays an outline.
+5. **Every hover and press answers?** "Try Hanzo" and Pause answer. The × close presses but shows no hover change.
+6. **Overlap, font swap, layout shift?** The pill over the chart (above). Layout shift 0.0003 and 0.0004.
 7. **Which reference, and is its motion there?** synchronized.studio (card opens into the page) and the anthropic launch (GPQA as hero figures). Both there.
-8. **Different from its neighbours?** Yes.
-9. **All 18 parts covered?** Card in the old format (cap above).
-10. **Banned tells?** None.
-11. **Copy untouched?** Yes.
-
-## Missing from the 18 parts (MASTER, measured)
-- **Part 10 media:** 5 raw `<video>` elements, not the kit `Film`; no pause control on the looping films (Part 12).
+8. **Different from its neighbours?** Yes: router room and GPQA tour are its own.
+9. **All 18 parts covered?** Card 18/18; Part 4 fails MASTER 3.2 rule 6 as written.
+10. **Banned tells?** A floating pill over content.
+11. **Copy untouched?** Card states parity 72/72 text, 11/11 links; not contradicted.
 
 ## Fixes
-1. Re-copy the 18-part card into the template with `Done here:` evidence (lifts the cap).
-2. Phone GPQA row: one big figure (Enso), the others medium.
-3. Films through the kit `Film`, with a pause control.
+1. `data-ask="off"` on this page's `<main>` (or the shared header-only mode once it lands); "Try Hanzo" solid in the sticky header after the hero.
+2. GPQA row: one big figure (Enso Ultra 98.0%), the other two at medium.
+3. Give the × close the kit hover.

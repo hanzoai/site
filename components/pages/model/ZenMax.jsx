@@ -260,7 +260,7 @@ function Spec({ k, setK }) {
 
 function Close() {
   return (
-    <section className="zx-close">
+    <section className="zx-close" data-ask-hide>
       <div className="zx-w zx-close-g">
         <div className="zx-close-art" aria-hidden="true"><Sigil seed="zen6-max" data={[9216, 5760, 2304, 1440, 31]} className="zx-sig" /></div>
         <div className="zx-close-t">

@@ -1,22 +1,159 @@
-# /bounty coverage (PLAN-COMPONENTS areas 2.1–2.18)
+# /bounty coverage (MASTER.md part 2, the 18 parts)
 
-Page file: `components/pages/Bounty.jsx` · gallery: `docs/gallery/bounty/`
+Page file: `components/pages/Bounty.jsx` · gallery: `docs/gallery/bounty/` · metric id: `github_click`
 
-1. **Strategy and conversion.** One ask in Hanzo's words, "Every open bounty" (GitHub search of Hanzo's bounty issues): the one solid button in the hero (`data-thumb`, `data-cta="bounty.hero"`), then the sticky ask bar at every width. "Leaderboard" and "How to contribute" are text links with an arrow.
-2. **Information architecture.** Header and footer untouched. Hero with the live window, rewards (the four ways, countable), standings and recent awards, the token race (dark room), how a bounty is taken, propose a bounty.
-3. **First impression.** No label above the h1 ("Bounties & Rewards" is the window's own label). "Take an issue. Ship the fix." cuts in; the GitHub window pulses and its open bounties arrive within 1s.
-4. **Conversion system.** `data-thumb`, `data-cta`, one solid per screen.
-5. **Trust and proof.** Every figure is Hanzo's (rates, standings, token volumes, 217 organizations). The race uses a log line with only Hanzo's own marks (100K, 1M).
-6. **Content (copy untouched).** Parity 102/102, links 5/5. Every chip is as Hanzo shows it (the merged pull request tile carries "+$20 AI credits"; only the first award row carries the credits). The old "Where would you rank?" drawer and its sentences are gone; the count lives on the tiles with Hanzo's labels only.
-7. **Visual design.** Grey deck, 0 UI hues; GitHub's green and purple replaced by ink and shape cues (filled dot = merged, ring = open). One dark room (the race).
-8. **UI components.** System `.x-btn` and arrow links; steppers are real buttons with aria-labels and an `output` with `aria-live`.
-9. **Motion.** Signature: the scrubbed race (scroll), with @hanzo's 106,039,884 counting along with it. The tile figures count up once on entry. Time/idle: live GitHub issues arrive, the window pulses, the tiles count through Hanzo's examples until you take over. Pointer: tiles lift, a hovered race lane brightens while the others dim, issues fill, links and steppers press. State: the total marker springs along the standings. Arrival: line-mask headline.
-10. **Media.** Product-style objects: the GitHub window, the huge figures, the race, the timeline.
-11. **Mobile.** Tiles stack with their stepper under the text; the race lanes become two-line rows; ≥44px targets; no sideways scroll.
-12. **Accessibility.** Steppers labelled by the tile's own name; live outputs; reduced motion stops the demo count and shows the race at its end.
-13. **Performance.** Transform-only bars; GitHub fetched once; loops stop off screen.
-14. **SEO.** All text server-rendered; `NoJs` not needed beyond defaults (no hidden text in the hero window's reading state: Hanzo's "Asking GitHub for the open bounties.").
-15. **Catalogue.** Does not apply.
-16. **Developer experience.** Links to the repositories, CONTRIBUTING and the GitHub bounty search are kept.
-17. **States.** The live window keeps one fixed height in every state, so the headline never moves when GitHub answers: reading (skeleton + Hanzo's "Asking GitHub for the open bounties."), ready (the list, then Hanzo's "Every open bounty"), none (Hanzo's "Propose a bounty" link), unreachable (Hanzo's "Every open bounty" link). No sentences of ours.
-18. **Measurement.** `data-cta="bounty.hero"`. Ledger: deleted the rank drawer and its invented sentences, the GitHub hues, and the forked button styles.
+Open copy questions for James: none (Hanzo's words and live GitHub data only).
+Shared changes requested (`docs/requests/<page>.md`): none.
+Forks this page deleted: forked `x-btn solid` / `x-btn xp-ghost` buttons (now kit `Cta`), tile hover lifts with shadows, the stepper's box-plus-shadow, oversized 10rem/8rem/6rem figures.
+
+
+## 1. Strategy and conversion
+- [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
+- [x] One solid fill per viewport; label and href from `lib/cta.js`
+- [x] One h1; the page is clear in 5 seconds
+- [x] No dead or self-looping button; prices from `lib/plans.js`
+- [x] Open copy questions for James listed, none decided
+
+Done here: Header comment in `app/bounty/page.jsx` names Persona, Goal, CTA, Metric `github_click`, Signature, Beyond. One solid per screen: kit `Cta` "Every open bounty" (`bounty.hero`), repeated by the shared ask bar after the hero; the header's Try Hanzo turns outline. No copy questions.
+
+## 2. Information architecture and navigation
+- [x] One `<main id="main">`; skip link reaches it
+- [x] Every link through `A`, `Go`, `More` or `href()`; every card a real link
+- ~~Breadcrumb at depth 2 or more~~ n/a: depth 1 page.
+- [x] Link parity: 0 removed, 0 unexpected
+
+Done here: One `<main>` from the layout; links via `A`/`Cta`; GitHub issues open in a new tab; parity links 5/5.
+
+## 3. First impression and page narrative
+- [x] Sells in 5 s; something moves within 1 s without input
+- [ ] `PageHero`; nothing above the h1
+- [x] JS off: legible; no `opacity:0` on the LCP element
+- [x] One idea per 100svh; no 3 same-height sections in a row
+- [ ] Ends in proof strip, `Band`, footer
+- ~~Card-to-page links use Morph; title lands within 12px~~ n/a: no cards that open pages; issue rows link out to GitHub.
+
+Done here: No label above the h1. "Take an issue. / Ship the fix." (52px) cuts in by CSS line mask; the live GitHub window arrives row by row within 1 s and its dot pulses. `PageHero` is not in the kit yet (hero page-local). The page ends on the take timeline and propose card, then the footer; no kit `Band` yet because the dark room (the race) sits just before it (left open). JS off: `NoJs` shows every final state.
+
+## 4. Conversion system
+- [x] `<Cta>` only; no raw `.x-btn`
+- [x] Sticky ask in header and bar after the hero, same label
+- ~~Copy button copies exactly the displayed text; failure never says Copied~~ n/a: no copy control.
+- [x] `data-cta` and `data-thumb` on every primary
+
+Done here: Kit `Cta` only (no raw `.x-btn` in the page file); `data-cta` and `data-thumb` on the hero ask; empty and unreachable states hand off with quiet kit `Cta`s.
+
+## 5. Trust and proof
+- [x] No logo without documented permission; no seal; no invented number
+- [x] Every figure traces to Hanzo's copy; qualifier beside the number
+- ~~Marquees pause, freeze under reduced motion, hide duplicates~~ n/a: no marquee.
+- ~~Privacy link and owner line beside every submit~~ n/a: no form; the ask leaves for GitHub.
+
+Done here: Every figure is Hanzo's own (points per way, standings, token counts, 217 organizations); qualifiers sit beside each number; no logos or seals.
+
+## 6. Content presentation (copy untouched)
+- [x] No text under 13px (14px phone) except mono capitals
+- [x] Measures held; no orphan word in a heading
+- ~~Tables, FAQ, tabs and code use the kit parts~~ n/a: no table, FAQ, tabs or code; the standings are an ordered list Hanzo wrote.
+- [x] `python3 scripts/parity.py /bounty`: 0 missing
+
+Done here: Parity 102/102 text. Type from MASTER: h1 52px, section heads 26px, tile figures 64px (first and last) and 44px (middle), totals and standings 44px, names 21px, body 16–17px, mono meta 13px.
+
+## 7. Visual design system
+- [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
+- [x] No label, tag, badge or pill above a headline
+- [x] Radii, shadows and sizes from tokens; never box plus shadow
+- [x] One icon set; no icon in a rounded box
+- [x] Differs from neighbours in hero medium and room order
+
+Done here: `taste.py` passes (greys only); nothing above a headline; objects outlined, radius 24, no box plus shadow; one dark room (the race). Differs from /beta (films) and /affiliate (link as type): its hero object is the live GitHub window.
+
+## 8. UI component library
+- [x] Every control has hover, press, focus-visible, disabled, loading
+- [x] Focus ring visible on every stop of a Tab crawl
+- ~~Dialogs are native, trap focus and return it~~ n/a: no dialog.
+- [x] Inputs 16px or larger; no bare `:hover`
+- [x] Forks this page deleted: forked `x-btn solid` / `x-btn xp-ghost` buttons (now kit `Cta`), tile hover lifts with shadows, the stepper's box-plus-shadow, oversized 10rem/8rem/6rem figures. listed below
+
+Done here: Kit `Cta` states; steppers have hover, press .97 in 90ms, focus ring and disabled at zero; issue rows, race lanes and tiles answer hover (fill, dim-the-rest, hairline darkens and the figure drifts 12px).
+
+## 9. Motion and interaction
+- [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
+- [x] At least 3 kinds of movement; scroll-linked is half or less
+- [x] Something moves without input; every control answers
+- [x] Reduced motion shows the final state; no `setInterval`
+- ~~Sound only on the listed moments, through the one kit~~ n/a: the shared sound kit is not on main yet; nothing page-local plays sound.
+
+Done here: Signature: the race scrubbed by scroll, @hanzo's figure counting with it and growing 52→84px only while it runs. Time: the live window's pulse; the tiles count through Hanzo's examples until you touch a stepper. State: the marker glides to your total; the take timeline inks in step by step. Arrival: line-mask headline. Ease-emphasis, no springs; reduced motion shows final states.
+
+## 10. Media
+- ~~`Film` and `Pic` only; sizes and posters set~~ n/a: no images or video; the objects are the live window, tiles, race and timeline.
+- ~~At most 2 videos playing; pause button on loops over 5 s~~ n/a: no video.
+- ~~Budgets met; nothing missing; alt on every image~~ n/a: no images.
+- ~~No dimmed or filtered photo; 4+ real visuals together where the page has them~~ n/a: no photos.
+
+Done here: No raster media; the objects are DOM (live GitHub window, tiles, race, timeline).
+
+## 11. Mobile and responsive
+- [x] 375×812 and 1470×801 pass with no overlap
+- [x] No horizontal scroll at 320
+- [x] Every target 44px or more; every hover has a tap path
+- [x] Primary ask above the fold at 375×667
+
+Done here: 375×812: hero ask full width above the fold, window below; tiles stack with steppers under the words; race lanes stack; no horizontal scroll at 320; targets 44px+.
+
+## 12. Accessibility (WCAG 2.2 AA)
+- [x] Contrast measured, text at 4.5:1 or better
+- [x] Pause control on every moving item
+- ~~Forms labelled; first error focused~~ n/a: no form; the steppers are labelled buttons with a live output.
+- [x] One h1; no heading skips; names start with visible text
+- [x] Keyboard reaches every control
+
+Done here: Greys at 4.5:1+ on white and on the dark room; one h1, h2s in order, h3 per tile; steppers labelled with live output; the window's reading state is a status region.
+
+## 13. Performance and engineering
+- [x] h1 and LCP element in server HTML
+- [x] JS and CSS inside budget; every image and video sized
+- [x] No poller; no third-party request before consent
+- [x] Nothing heavy run on James's laptop
+
+Done here: h1 in server HTML; one GitHub search request, no poller; motion is transform and opacity; loops stop off screen and under reduced motion.
+
+## 14. SEO and machine files
+- [x] Title and description match live (or are listed for James)
+- [x] Canonical equals og:url equals the live URL
+- [x] `<JsonLd route>` parses; no broken URL
+- [x] Every card is a real link
+
+Done here: Title and description unchanged; `<JsonLd route="/bounty" />` renders canonical and og tags.
+
+## 15. Catalogue and product pages
+- ~~Model card matches `SPEC.md` (or n/a: not a catalogue or model page)~~ n/a: not a catalogue or model page.
+- ~~Every card opens by Morph~~ n/a: not a catalogue.
+- ~~Every maker and model page linked in the DOM~~ n/a: not a catalogue.
+- ~~One price figure everywhere~~ n/a: no prices.
+
+Done here: n/a: not a catalogue or model page.
+
+## 16. Developer experience
+- ~~One `CodeBlock`; copy equals display (or n/a: no code on the page)~~ n/a: no code on the page.
+- ~~Config blocks parse on their own~~ n/a: no config.
+- ~~Terminal pauses and ends on a static frame~~ n/a: no terminal.
+- ~~No hand-typed version number~~ n/a: no version numbers.
+
+Done here: n/a: no code on the page.
+
+## 17. States and resilience
+- [x] Loading, empty, error and offline states designed
+- [x] Blocked live data leaves a complete page, no console errors
+- ~~A failed submit keeps its values and shows no success~~ n/a: no form.
+- [x] A thrown island does not blank the page
+
+Done here: The live window has reading (ghost rows), empty ("Propose a bounty"), and unreachable (hand-off to GitHub) states in Hanzo's words; a blocked request leaves the full page with no console errors.
+
+## 18. Measurement and handover
+- [x] `data-cta` on every primary; events only through `lib/track.js`
+- [x] Nothing identifier-bearing before consent; no field value in a payload
+- [x] `V2: <score>/10 <one line>` in the page file's top comment
+- [x] Review read: `docs/review/bounty.md` verdict 8 or more
+
+Done here: `data-cta` ids `bounty.hero`, `bounty.retry`, `bounty.propose` (kit Cta fires `cta_click`); V2 line in the route header; conductor review `docs/review/bounty.md` (6/10 at `c2fa6e5`): eyebrow, greens and purple, press state, idle move and the two text sections all fixed.
