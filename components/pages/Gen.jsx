@@ -17,6 +17,7 @@ import { A, Cta, Tabs, TabPanel, Faq } from '../kit';
 import { play } from '../../lib/sound';
 import Lines from '../v2/x-edison/AppLines';
 import '../v2/AppType.css';
+import usePhoneAsk from './usePhoneAsk';
 import './Gen.css';
 
 const KEYS = 'https://platform.hanzo.ai/keys';
@@ -331,6 +332,8 @@ function Rails({ at, pick }) {
               </li>
             ))}
           </ol>
+          {/* phones: the command rides with the switches, so a flip answers where you are */}
+          <p className="xgn-rail-cmd x-mono" aria-hidden="true">{gen}</p>
           <div className="xgn-code">
             <div className="xgn-code-top"><span className="x-mono">bash</span></div>
             <Lns lines={[
@@ -478,6 +481,7 @@ function Source() {
 }
 
 export default function Gen() {
+  usePhoneAsk();
   const [at, setAtState] = useState(1);
   const [mine, setMine] = useState(false);
   const setAt = (i, byHand) => { setAtState(i); if (byHand) setMine(true); };
