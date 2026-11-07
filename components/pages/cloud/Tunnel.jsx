@@ -41,6 +41,7 @@ function Hero() {
   useEffect(() => {
     if (calm) { if (cmd.current) cmd.current.textContent = CMD; setDone(true); return; }
     if (!live || done) return;
+    if (cmd.current) cmd.current.textContent = ''; // the server text is the full command (JS off); the browser types it
     let i = 0;
     let t = 0;
     const step = () => { i++; if (cmd.current) cmd.current.textContent = CMD.slice(0, i); t = i >= CMD.length ? setTimeout(() => setDone(true), 350) : setTimeout(step, 85); };
@@ -70,7 +71,7 @@ function Hero() {
       <motion.div className="tn2-term" initial={{ y: 40 }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.25 }}>
         <PauseBtn paused={hold} onClick={() => setHold((v) => !v)} className="dk tn2-term-pause" />
         <div className="l2-wrap" aria-hidden="true">
-          <p className="tn2-cmd l2-mono"><span className="tn2-ps">$</span> <span ref={cmd} /><i className={'tn2-caret' + (done ? ' off' : '')} /></p>
+          <p className="tn2-cmd l2-mono"><span className="tn2-ps">$</span> <span ref={cmd} suppressHydrationWarning>{CMD}</span><i className={'tn2-caret' + (done ? ' off' : '')} /></p>
           <p className={'tn2-share l2-mono' + (done ? ' on' : '')}><span>→ sharing 3000</span><span className="tn2-hits">{hits > 0 && <span key={hits} className="tn2-hit">GET / · 127.0.0.1:3000</span>}</span></p>
           <p className={'tn2-url' + (done ? ' on' : '')}><span className="tn2-lock" />wispyfox7421<b>.share.hanzo.ai</b><em className="l2-mono">→ localhost:3000</em></p>
         </div>
@@ -210,7 +211,10 @@ function Facts() {
   return (
     <section className="l2-sec tn2-facts">
       <div className="l2-wrap l2-grid">
-        <h2 className="l2-display m tn2-facts-h">For the things that need a real URL</h2>
+        <div className="tn2-facts-l">
+          <h2 className="l2-display m tn2-facts-h">For the things that need a real URL</h2>
+          <p className="tn2-facts-at" aria-hidden="true"><span key={at}>{String(at + 1).padStart(2, '0')}<small> / 06</small></span></p>
+        </div>
         <ol className="tn2-list" ref={list}>
           {[1, 2, 3, 5].map((i) => (
             <li key={i} data-i={i} className={at === i ? 'on' : undefined}>
@@ -243,7 +247,9 @@ function Facts() {
 /* Fact 04's object: the published terminal behind its gate. The shackle shuts when the fact is read. */
 function Gate() {
   const [ref, live, calm] = useLive(0.8);
-  const shut = live || calm;
+  // first render matches the server (open); the shackle shuts after mount, so reduced motion never mismatches
+  const [shut, setShut] = useState(false);
+  useEffect(() => { if (live || calm) setShut(true); }, [live, calm]);
   return (
     <div className={'tn2-gate' + (shut ? ' shut' : '')} ref={ref} aria-hidden="true">
       <p className="tn2-gate-k l2-mono"><span>$</span> hanzo link</p>
@@ -279,7 +285,7 @@ function Name() {
         <label><span>target</span><input value={target} onChange={mine(setTarget)} placeholder="3000" spellCheck="false" autoComplete="off" /></label>
       </div>
       <p className="tn2-name-cmd l2-mono" aria-live="polite">$ hanzo share {n ? `--name ${n} ` : ''}{t || '3000'}</p>
-      <p className="tn2-name-url">https://<b>{n || 'wispyfox7421'}</b><wbr />.share.hanzo.ai</p>
+      <p className="tn2-name-url">https://<b>{n || 'wispyfox7421'}</b><wbr /><span className="tn2-name-d">.share.hanzo.ai</span></p>
       <p className="tn2-name-note">{n ? 'Yours to reuse.' : 'A random token by default.'} {kind ? `Target: ${kind}.` : t ? 'A port, a host:port, or a full URL.' : ''}</p>
     </div>
   );
@@ -333,7 +339,7 @@ function Shared() {
   }, [live, calm, end]);
   return (
     <div className={'tn2-end' + (end ? ' off' : '')} ref={ref} aria-hidden="true">
-      <p className="tn2-end-k l2-mono"><span>$</span> hanzo share 3000<em className="tn2-end-x">terminal closed</em></p>
+      <p className="tn2-end-k l2-mono"><span className="tn2-end-c"><span>$</span> hanzo share 3000</span><em className="tn2-end-x">terminal closed</em></p>
       <p className="tn2-end-u"><i />wispyfox7421<b>.share.hanzo.ai</b></p>
       <p className="tn2-end-t l2-mono"><span>{end ? 'stopped answering' : '→ localhost:3000'}</span><span>127.0.0.1:3000</span></p>
     </div>
@@ -342,7 +348,7 @@ function Shared() {
 
 export default function Tunnel() {
   return (
-    <main id="main" className="l2-page tn2" data-ask="off">
+    <main id="main" className="l2-page tn2">
       <NoJs css=".tn2-url,.tn2-share{opacity:1!important;transform:none!important}.tn2-cap-i{position:relative!important;opacity:1!important;transform:none!important}.tn2-cap{min-height:0!important}" />
       <Hero />
       <Scene />

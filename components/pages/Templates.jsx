@@ -8,7 +8,7 @@
    the dark with the commands for the template in front; a closing band with the one ask. Deck greys only.
    Motion budget: signature = the riffling deck (drag); supporting = Settle, Open (wall sheets), magnetic. No springs. */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
+import { motion, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../ui';
 import { A, Img } from '../kit';
 import SetupMenu from '../SetupMenu';
@@ -56,7 +56,9 @@ function Shot({ slug, title, kind, priority, alt }) {
   useEffect(() => { const i = ref.current; if (i && i.complete && !i.naturalWidth) setBad(true); }, []);
   return (<>
     <Ghost title={title} kind={kind} />
-    <Img ref={ref} src={`https://hanzo.ai/templates/${slug}.webp`} alt={alt} w={1280} h={800} draggable={false} priority={priority} className={bad ? 'xtp-bad' : ''} onError={() => setBad(true)} />
+    {/* data-t feeds the image's own ::before, which only paints when the image is broken: a blocked preview shows a
+        drawn page with the template's name from the first paint, with or without JS, never a broken-image icon */}
+    <Img ref={ref} src={`https://hanzo.ai/templates/${slug}.webp`} alt={alt} data-t={title} w={1280} h={800} draggable={false} priority={priority} className={bad ? 'xtp-bad' : ''} onError={() => setBad(true)} />
   </>);
 }
 
@@ -77,13 +79,13 @@ function Strip() {
   return (
     <div className="xtp-strip">
       <div className="xtp-strip-l">
-        {AGENTS.slice(0, 5).map(([n, h]) => <a key={n} href={D + h} target="_blank" rel="noreferrer">{n}</a>)}
+        {AGENTS.slice(0, 5).map(([n, h]) => <A key={n} to={D + h}>{n}<span className="x-sr"> (opens in a new tab)</span></A>)}
         <button type="button" aria-expanded={open} aria-controls="xtp-all" onClick={() => setOpen(!open)}>+{AGENTS.length - 5} more</button>
       </div>
       <div id="xtp-all" className="xtp-all" hidden={!open}>
         <input type="text" placeholder="Filter agents..." aria-label="Filter agents" value={q} onChange={(e) => setQ(e.target.value)} autoComplete="off" spellCheck={false} />
         <ul>
-          {rows.map(([n, h, mcp]) => <li key={n}><a href={D + h} target="_blank" rel="noreferrer"><b>{n}</b>{mcp ? <span>MCP client</span> : null}</a></li>)}
+          {rows.map(([n, h, mcp]) => <li key={n}><A to={D + h}><b>{n}</b>{mcp ? <span>MCP client</span> : null}<i className="x-sr"> (opens in a new tab)</i></A></li>)}
         </ul>
         {!rows.length && <p className="xtp-none">No agents match.</p>}
       </div>
@@ -158,6 +160,8 @@ function Deck({ kind, setKind, at, setAt, list, front, wall }) {
           const d = i < 0 ? 9 : i - at;
           return <div key={t[0]} hidden={i < 0} className="xtp-slot"><Card t={t} d={d} onNext={() => go(at + 1)} onPrev={() => go(at - 1)} calm={calm} narrow={narrow} /></div>;
         })}
+        {/* wide screens: the pause sits inside the deck, in the empty corner the fanned windows leave top left */}
+        {!narrow && <span className="xtp-pause in">{pauseBtn}</span>}
       </div>
       <div className="xtp-nav">
         <p className="xtp-front"><span className="x-mono">{front[2]}</span><b>{front[1]}</b></p>
@@ -169,10 +173,26 @@ function Deck({ kind, setKind, at, setAt, list, front, wall }) {
           ))}
         </div>
         <button type="button" className="xtp-arrow" aria-label="Next template" onClick={() => go(at + 1)}>→</button>
-        <span className="xtp-pause">{pauseBtn}</span>
+        {narrow && <span className="xtp-pause">{pauseBtn}</span>}
       </div>
     </div>
   );
+}
+
+/* The commands type themselves character by character (32 ms a key, one rAF loop) each time the room comes into view
+   or the deck changes template. Every character is in the HTML from the server: the untyped rest is drawn in
+   transparent ink, so the block never changes size, JS off and reduced motion show the finished block. */
+function useTyped(total, key, seen) {
+  const calm = useReducedMotion();
+  const [n, setN] = useState(total);
+  useEffect(() => {
+    if (calm || !seen) { setN(total); return; }
+    let raf, t0;
+    const step = (t) => { t0 ??= t; const k = Math.min(total, Math.floor((t - t0) / 32)); setN(k); if (k < total) raf = requestAnimationFrame(step); };
+    setN(0); raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [key, seen, total, calm]);
+  return n;
 }
 
 function Commands({ t }) {
@@ -181,6 +201,9 @@ function Commands({ t }) {
   const seen = useInView(term, { amount: 0.5 }); // the commands type themselves again each time the room comes into view
   // the commands only: Copy gives exactly what the block shows (the "$ " prompt is drawn, not selectable)
   const lines = [['hanzo login'], ['hanzo template list'], [`hanzo template get ${slug}`], ['hanzo dev']];
+  const total = lines.reduce((s, [c]) => s + c.length, 0);
+  const n = useTyped(total, slug, seen);
+  let left = n; // characters still to show, line by line; a line starts once the one before it is done
   return (
     <section className="w2-sec xtp-cmd w2-dark" data-room="dark" aria-labelledby="xtp-cmd-h">
       <div className="w2-wrap xtp-cmd-in">
@@ -192,21 +215,23 @@ function Commands({ t }) {
         <div className="xtp-term" ref={term}>
           <div className="xtp-term-top">
             <span className="xtp-lights" aria-hidden="true"><i /><i /><i /></span>
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.span key={slug} className="x-mono" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.3 }}>{title}</motion.span>
-            </AnimatePresence>
+            <span key={slug} className="x-mono xtp-term-t">{title}</span>
             <Copy text={lines.map((l) => l[0]).join('\n')} />
           </div>
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.pre key={slug + (seen ? '.on' : '')} className="xtp-pre" initial="h" animate="s" exit={{ opacity: 0, transition: { duration: 0.15 } }} variants={{ s: { transition: { staggerChildren: 0.08 } } }}>
-              {lines.map(([c]) => (
-                <motion.span key={c} className="xtp-l" variants={{ h: { opacity: 0, x: -8 }, s: { opacity: 1, x: 0, transition: { duration: 0.35, ease: EASE } } }}>
-                  <span className="xtp-ps" aria-hidden="true">$ </span>{c}{'\n'}
-                </motion.span>
-              ))}
-              <span className="xtp-caret" aria-hidden="true" />
-            </motion.pre>
-          </AnimatePresence>
+          <pre className="xtp-pre">
+            {lines.map(([c]) => {
+              const k = Math.max(0, Math.min(c.length, left));
+              const typing = left >= 0 && k < c.length; // the line the caret is on
+              const wait = left < 0; // a line not reached yet: its prompt waits too
+              left -= c.length;
+              return (
+                <span key={c} className="xtp-l" data-wait={wait ? '' : undefined}>
+                  <span className="xtp-ps" aria-hidden="true">$ </span>{c.slice(0, k)}{typing && <span className="xtp-caret" aria-hidden="true" />}<span className="xtp-rest">{c.slice(k)}</span>{'\n'}
+                </span>
+              );
+            })}
+            {n >= total && <span className="xtp-caret" aria-hidden="true" />}
+          </pre>
         </div>
       </div>
     </section>
@@ -222,8 +247,9 @@ function Shelf({ cur, onSeen }) {
   const calm = useReducedMotion();
   const [armed, setArmed] = useState(false); // the wall deals in only once JS runs; JS off and reduced motion show it whole
   useEffect(() => { if (!calm) setArmed(true); }, [calm]);
+  // while the wall is in view every preview drifts down its own page, out of step with its neighbours (CSS, paused off screen)
   return (
-    <section ref={ref} className={'w2-sec tight xtp-shelf' + (armed ? ' arm' : '') + (seen ? ' in' : '')} aria-labelledby="xtp-shelf-h">
+    <section ref={ref} className={'w2-sec tight xtp-shelf' + (armed ? ' arm' : '') + (seen ? ' in' : '') + (here ? ' here' : '')} aria-labelledby="xtp-shelf-h">
       <div className="w2-wrap">
         <h2 id="xtp-shelf-h" className="x-sr">Templates</h2>
         <p className="xtp-shelf-k w2-kicker">All <span className="x-mono">{pad(ALL.length)}</span></p>
@@ -251,7 +277,7 @@ export default function Templates() {
     <main id="main" className="xtp w2 gx">
       <NoJs />
       <section className="xtp-hero" aria-labelledby="xtp-h1" data-morph-target>
-        <div className="w2-wrap">
+        <div className="w2-wrap xtp-hero-g">
           <div className="xtp-top">
             <div>
               <LineMask as="h1" id="xtp-h1" now className="w2-display xtp-h1" lines={['Start from', 'a product.']} />
@@ -273,6 +299,11 @@ export default function Templates() {
       <Commands t={front} />
       <section className="w2-sec tight xtp-band" aria-label="Edit in Hanzo">
         <div className="w2-wrap xtp-band-in">
+          {/* the close carries the window in front, small: the thing the ask opens */}
+          <A to={'/chat?template=' + encodeURIComponent(front[0])} className="xtp-band-win" tabIndex={-1} aria-hidden="true">
+            <span className="xtp-bar"><span className="xtp-lights"><i /><i /><i /></span><span className="xtp-url x-mono"><span>{front[0]}</span>.hanzo.app</span></span>
+            <span className="xtp-tile-img"><Shot slug={front[0]} title={front[1]} kind={front[2]} alt="" /></span>
+          </A>
           <p className="xtp-band-t">{front[1]} <span className="x-mono">{front[0]}.hanzo.app</span></p>
           <Magnetic strength={0.25}><A to={'/chat?template=' + encodeURIComponent(front[0])} className="w2-cta" data-thumb="Edit in Hanzo" data-cta="templates.close">Edit in Hanzo <i aria-hidden="true">→</i></A></Magnetic>
         </div>

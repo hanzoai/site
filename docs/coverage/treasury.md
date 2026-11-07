@@ -3,7 +3,7 @@
 Page file: `components/pages/apps/Treasury.jsx` (+ `Treasury.css`) · gallery: `docs/gallery/treasury/` · metric id: `api_key_created` (docs hand-off)
 
 Open copy questions for James: the wallet's four controls are icons with aria-labels ("Take at checkout", "Delivered: pay the seller", "Release the hold", "Reset"); visible labels would need `content/ui-strings.json`.
-Shared changes requested (`docs/requests/treasury.md`): none. Noted for shared owners: no skip link in shared chrome; `useEvery` uses `setInterval`; `tokens.css` not merged (page CSS uses deck values as literals).
+Shared changes requested (`docs/requests/treasury.md`): the phone header ask and ask bar; `Settle` and `PinChapters` reading reduced motion during render; PinChapters' phone pin over text. Noted for shared owners: no skip link in shared chrome; `useEvery` uses `setInterval`; `tokens.css` not merged (page CSS uses deck values as literals).
 Forks this page deleted: the separate Hold section (its h2 and lede were cut and spliced from Hanzo's sentences), the static `.ts-say` statement screen (now the chapters' lead), the solid "Take at checkout" button, the floating hero pause, the gold comment and duplicate `.ts-ed`/`.ts-flow`/`pre` rules, every spring.
 
 ## 1. Strategy and conversion
@@ -13,7 +13,7 @@ Forks this page deleted: the separate Hold section (its h2 and lede were cut and
 - [x] No dead or self-looping button; n/a prices
 - [x] Open copy questions for James listed, none decided
 
-Done here: gate: 1 h1, max 1 solid per desktop viewport ("Read the docs" at y 0). Wallet buttons are outlined icons; the close's ask carries `data-thumb` so the bar steps aside.
+Done here: gate: 1 h1, max 1 solid per viewport at both widths. Desktop: the page's "Read the docs" is solid while the header is quiet, then the header carries it. Phones: the shared header keeps a solid "Try Hanzo", so the page's own "Read the docs" (hero and close) is outlined under 900px. Wallet buttons are outlined icons; the close's ask carries `data-thumb` so the bar steps aside.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; n/a skip link (shared chrome)
@@ -35,7 +35,7 @@ Done here: the server paints the split finished and balanced; it holds, then re-
 
 ## 4. Conversion system
 - [x] Kit `A` + `.w2-cta`; no raw `.x-btn`
-- [x] Sticky ask: header, bar after the hero, same label "Read the docs"
+- [x] Sticky ask: desktop header carries "Read the docs" after the hero; phones: the shared header keeps "Try Hanzo" and no bar shows (requested in `docs/requests/treasury.md`)
 - [x] n/a copy button
 - [x] `data-cta` and `data-thumb` on every primary
 
@@ -50,12 +50,12 @@ Done here: `treasury.hero` and `treasury.close`, both `data-thumb="Read the docs
 Done here: figures come only from the 90% / 5% / remaining split of USD/2 10000; posting lines use only Hanzo's account names.
 
 ## 6. Content presentation (copy untouched)
-- [x] No text under 13px (14px phone); mono capitals 12px only
+- [x] No text under 13px on desktop, 14px on phone; mono capitals 11–12px only (the editor's "Treasury Operations" name)
 - [x] Measures held; headings balanced
 - [x] n/a tables (chapter rows are drawings, aria-hidden); n/a FAQ/tabs
 - [x] `python3 scripts/parity.py /treasury`: 0 missing
 
-Done here: parity `text 57/57 links 3/3`; gate small375 []. Editor comments raised to #a3a3a3 on #0f0f0f (≥7:1).
+Done here: parity `text 57/57 links 3/3`; measured at 375×812 over the whole page: 0 lowercase text runs under 14px (split.num, the close's figcaption and "event →" raised to 14px). Editor comments raised to #a3a3a3 on #0f0f0f (≥7:1).
 
 ## 7. Visual design system
 - [x] `taste.py` passes (0 hues)
@@ -76,7 +76,7 @@ Done here: gate hues []; deck values (#0a0a0a, #171717, #262626, #a3a3a3, #f2f2f
 Done here: wallet buttons invert on hover, the `hanzoai` chip 44px inverts on hover, the pause inverts.
 
 ## 9. Motion and interaction
-- [x] Signature (the split writes itself), 3 supporting (Settle, PinChapters, magnetic), 0 fade-ups
+- [x] Signature (the split writes itself), supporting: the Stage settle, PinChapters (desktop), the close's 10,000 counted once at figure size (64–84px), plus the magnetic ask as a pointer response; `variety.py` passes; 0 fade-ups
 - [x] Idle (split, flow events), time (typing), state (wallet), pointer (magnetic), scroll (pin)
 - [x] Something moves without input; every control answers
 - [x] Reduced motion: the split rests finished, the coin and log rest; no springs
@@ -98,7 +98,7 @@ Done here: n/a, the page has no images or films.
 - [x] Targets 44px or more
 - [x] Primary above the fold at 375×667
 
-Done here: on phone the streams stack as rows (no SVG), the balanced line sits under them (not over an account), the wallet stacks vertically with the coin sliding down the rows, and the pause lives in the editor bar.
+Done here: on phone the streams come first (inside the first screen) and stack as rows; the emit ring stays inside its panel. Under 900px the chapters are stacked by the page itself: each chapter's heading and words, then its own card, nothing pinned over text; the wallet (04) has a full screen of its own (`min-height: 100svh`) and stays playable. The Balances card keeps the account column on phone. The pin mounts only at 900px and up.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured (comments #a3a3a3 on #0f0f0f, body #525252 on white)
@@ -147,7 +147,7 @@ Done here: n/a copy button; the code is a display of Hanzo's example.
 - [x] n/a submit
 - [x] Reset returns the wallet to its start
 
-Done here: Playwright walk at 1470x801 and 375x812 (7 Nov): 0 console errors, no horizontal scroll; the hero stage ends at y 684 inside 801.
+Done here: Playwright walk at 1470x801 and 375x812 (7 Nov, round 2): 0 console errors in 6 cold loads, 4 of them with reduced motion on (the hero settle is page-local and reads reduced motion after mount; the pin mounts after hydration), no horizontal scroll; CLS 0.0004 desktop, 0 phone.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary
@@ -155,4 +155,4 @@ Done here: Playwright walk at 1470x801 and 375x812 (7 Nov): 0 console errors, no
 - [x] `V2:` line in `components/pages/apps/Treasury.jsx`
 - [ ] Review read: verdict 8 or more (re-review pending after this rework)
 
-Done here: previous review 6/10; its fixes addressed (no un-write on load, phone stacking, wallet fixed height, outlined wallet controls, chapter 04 is the wallet, live chapter rows, the split carried into the close, inset hero stage).
+Done here: round-2 review 6/10 (phone chapters, Balances, coverage claims, reduced-motion hydration, ring, figure moment, desktop gap, held tile, postings as arrows) addressed; earlier review fixes (no un-write on load, phone stacking, wallet fixed height, outlined wallet controls, chapter 04 is the wallet, live chapter rows, the split carried into the close, inset hero stage).
