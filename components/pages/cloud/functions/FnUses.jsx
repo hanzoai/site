@@ -28,7 +28,7 @@ const range = (n) => Array.from({ length: n }, (_, i) => i);
 function ApiObj() {
   return (
     <div className="fn-uo fn-uo-api" aria-hidden="true">
-      <div className="fn-uo-col"><span className="fn-uo-pill a">REST</span><span className="fn-uo-pill b">GraphQL</span></div>
+      <div className="fn-uo-col"><span className="fn-uo-pill a" data-t="REST">REST</span><span className="fn-uo-pill b" data-t="GraphQL">GraphQL</span></div>
       <div className="fn-uo-lane"><i className="fn-uo-dot" /><i className="fn-uo-dot back" /></div>
       <div className="fn-uo-box"><span>authentication</span><span>validation</span></div>
       <div className="fn-uo-lane"><i className="fn-uo-dot late" /></div>
@@ -51,11 +51,11 @@ function StreamObj() {
 function GpuObj() {
   return (
     <div className="fn-uo fn-uo-gpu" aria-hidden="true">
-      <div className="fn-uo-col"><span className="fn-uo-pill a">Image</span><span className="fn-uo-pill b">text</span></div>
+      <div className="fn-uo-col"><span className="fn-uo-pill a" data-t="Image">Image</span><span className="fn-uo-pill b" data-t="text">text</span></div>
       <div className="fn-uo-lane"><i className="fn-uo-dot" /><i className="fn-uo-dot late" /></div>
       <div className="fn-uo-chip"><div className="fn-uo-cells">{range(16).map((i) => <i key={i} style={{ '--j': (i % 4) + Math.floor(i / 4) }} />)}</div><span>GPU acceleration</span></div>
       <div className="fn-uo-lane"><i className="fn-uo-dot late" /></div>
-      <span className="fn-uo-pill ink">classification</span>
+      <span className="fn-uo-pill ink" data-t="classification">classification</span>
     </div>
   );
 }

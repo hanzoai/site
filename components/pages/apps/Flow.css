@@ -106,8 +106,9 @@ button.fl-node:active { scale: .97; }
 
 /* beyond: the playground, the one dark room */
 .fl-play { background: #171717; color: #fafafa; }
-.fl-play-top { display: flex; flex-direction: column; gap: 22px; margin-bottom: clamp(48px, 5vw, 72px); }
-.fl-play .bz-display { color: #ffffff; }
+.bz-sec.fl-play { padding-top: clamp(72px, 7vw, 116px); }
+.fl-play-top { display: flex; flex-direction: column; gap: 22px; margin-bottom: clamp(32px, 3.5vw, 48px); }
+.fl-play .bz-display, .fl-play .bz-headline { color: #ffffff; }
 .fl-pg { border-radius: 28px; background: #0f0f0f; border: 1px solid rgba(255, 255, 255, .1); box-shadow: none; overflow: hidden; }
 .fl-pg-bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; height: 56px; padding: 0 24px; border-bottom: 1px solid rgba(255, 255, 255, .08); font-size: 13px; color: #737373; }
 .fl-pg-bar > span:first-child { display: inline-flex; align-items: center; gap: 10px; }
@@ -285,6 +286,8 @@ button.fl-node:active { scale: .97; }
   .fl-hero-insp { left: 16px; right: 16px; top: auto; bottom: 28px; width: auto; }
   .fl-g { --nw: 142px; }
   .fl-hero .fl-g { --nw: min(142px, calc(50vw - 40px)); }
+  .fl-g.fl-minibd { --nw: calc((100vw - 2 * clamp(16px, 4vw, 32px)) / 3 - 12px); }
+  .bz-sec.fl-play { padding-top: 72px; }
   .fl-node { left: var(--px); top: var(--py); padding: 10px 12px 11px; gap: 7px; border-radius: 16px; }
   .fl-node-h { gap: 8px; }
   .fl-node-h b { font-size: 14px; }
@@ -305,8 +308,8 @@ button.fl-node:active { scale: .97; }
   .flc-mini { display: block; padding: 0 clamp(16px, 4vw, 32px); background: #ffffff; }
   /* one pinned scene: the panel holds still (opaque, so nothing scrolls behind it), the mini-graph builds at its top and
      the chapter under it swaps, one in and one out, as you scroll the run. With scripts off the chapters just stack. */
-  html.js .flc-run { height: calc(var(--n) * 56svh + 100svh - var(--x-top, 60px)); }
-  html.js .flc-pin { position: sticky; top: var(--x-top, 60px); z-index: 1; height: calc(100svh - var(--x-top, 60px)); overflow: hidden; background: #ffffff; }
+  html.js .flc-run { height: calc(var(--n) * 56svh + 72svh); }
+  html.js .flc-pin { position: sticky; top: var(--x-top, 60px); z-index: 1; overflow: hidden; background: #ffffff; }
   html.js .flc-list { display: grid; }
   html.js .flc-i { grid-area: 1 / 1; padding-top: 20px; opacity: 0; transform: translateY(16px); pointer-events: none; transition: opacity .4s var(--bz-inout), transform .5s var(--bz-emph); }
   html.js .flc .flc-i:not(.on), html.js .flc.live .flc-i:not(.on) { opacity: 0; transform: translateY(16px); }

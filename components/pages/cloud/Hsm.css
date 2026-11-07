@@ -45,6 +45,22 @@
 .hs-call { position: absolute; left: 0; right: 0; bottom: 28px; margin: 0; display: flex; justify-content: center; align-items: baseline; gap: 10px; font: 500 15px/1 var(--mono); color: var(--soft); }
 .hs-call span { color: var(--faint); }
 .hs-call b { color: var(--ink); font-weight: 600; display: inline-block; }
+/* a fine pointer tilts the module (2.5° at most); --tx/--ty are set on .hs-sign by the pointer */
+.hs-sign .hm { transform: perspective(1400px) rotateX(var(--ty, 0deg)) rotateY(var(--tx, 0deg)); transition: transform .3s cubic-bezier(0, 0, .2, 1); }
+/* the signing pulse: a bead travels from the bytes chip into the module, the key plate answers, and it leaves as the
+   signature, once per module (it restarts with each one); it starts within the first second */
+.hs-pulse { position: absolute; left: 0; top: 0; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 999px; background: var(--ink); box-shadow: 0 0 0 4px rgba(10, 10, 10, .12); opacity: 0; pointer-events: none; z-index: 30; }
+.hs-sign.live .hs-pulse { animation: hs-pulse 2.4s cubic-bezier(.4, 0, .2, 1) .15s both; }
+.hs-sign { container-type: size; }
+@keyframes hs-pulse {
+  0% { opacity: 0; transform: translate(22cqw, 36cqh) scale(.6); }
+  8% { opacity: 1; }
+  40% { opacity: 1; transform: translate(50cqw, 50cqh) scale(1); }
+  50% { opacity: 1; transform: translate(50cqw, 50cqh) scale(2.2); }
+  58% { transform: translate(50cqw, 50cqh) scale(1); }
+  92% { opacity: 1; }
+  100% { opacity: 0; transform: translate(78cqw, 60cqh) scale(.6); }
+}
 
 /* chapters: the black room. The "01 / 06" counter is a caption under the words (nothing sits above a heading), and the
    room's name sits in one caption row beside the dots. */
@@ -65,17 +81,27 @@
 .hs-ch .pc-dots button { position: relative; }
 .hs-ch .pc-dots button[aria-current] i { background: var(--glow); }
 /* each dot names its step on hover, in the chapter's own title */
-.hs-ch .pc-dots button::after { content: attr(aria-label); position: absolute; left: 50%; bottom: calc(100% + 6px); width: max-content; max-width: 220px; padding: 6px 10px; border-radius: 8px; background: #262626; color: #fafafa; font: 500 12px/1.3 var(--sans); text-align: left; opacity: 0; transform: translate(-50%, 4px); transition: opacity .15s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); pointer-events: none; z-index: 2; }
+/* the name drops below the dot row (into empty space), never over the "0N / 06" caption above it */
+.hs-ch .pc-dots button::after { content: attr(aria-label); position: absolute; left: 0; top: calc(100% + 8px); width: max-content; max-width: 240px; padding: 6px 10px; border-radius: 8px; background: #262626; color: #fafafa; font: 500 12px/1.3 var(--sans); text-align: left; opacity: 0; transform: translateY(-4px); transition: opacity .15s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); pointer-events: none; z-index: 2; }
+.hs-ch .pc-dots button { transition: background-color .15s cubic-bezier(0, 0, .2, 1), box-shadow .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(.4, 0, .2, 1); }
+.hs-ch .pc-dots button:active { transform: scale(.94); }
 @media (hover: hover) {
-  .hs-ch .pc-dots button:hover i { background: rgba(255, 255, 255, .78); transform: scale(1.75); }
-  .hs-ch .pc-dots button:hover::after { opacity: 1; transform: translate(-50%, 0); }
+  .hs-ch .pc-dots button:hover { background: rgba(255, 255, 255, .06); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .3); }
+  .hs-ch .pc-dots button:hover i { background: #fafafa; transform: scale(1.9); }
+  .hs-ch .pc-dots button:hover::after { opacity: 1; transform: none; }
 }
-.hs-ch .pc-dots button:focus-visible::after { opacity: 1; transform: translate(-50%, 0); }
+.hs-ch .pc-dots button:focus-visible::after { opacity: 1; transform: none; }
 .hs-exp { position: relative; height: 100%; }
 .hs-exp .hm { transform: translateX(-10%); }
 
-/* paste and ship, then pick your module: one quiet stretch, no white band between them */
+/* paste and ship, then pick your module: one quiet stretch, no white band between them; both heads rest at 26px with a
+   step under them (only the stage and the close grow past it) */
 .hs .sp.v2-sec { padding-bottom: 0; }
+.hs .sp-h { margin: 0 0 17px; font-size: 26px; line-height: 1.15; }
+.hs .hs-pick-hl .v2-display { margin: 0; font-size: 26px; line-height: 1.15; letter-spacing: -.02em; }
+.hs .gi-h { margin: 0 0 17px; }
+.hs .gi-lead { margin: 0 0 10.5px; }
+.hs .gi-tag { margin: 0 0 17px; }
 .hs .sp .x-copy { min-width: 84px; height: 36px; justify-content: center; }
 @media (hover: hover) { .hs .sp .x-copy:hover { background: rgba(255, 255, 255, .16); color: #fff; box-shadow: none; } }
 .hs .sp .x-codeblock pre { white-space: pre-wrap; overflow-wrap: anywhere; }
@@ -84,7 +110,7 @@
 /* pick your module */
 .hs-pick-head { align-items: end; margin-bottom: 44px; row-gap: 24px; }
 .hs-pick-hl { grid-column: 1 / span 7; }
-.hs-pick-f { grid-column: 9 / -1; padding-bottom: 8px; }
+.hs-pick-f { grid-column: 9 / -1; margin: 0; padding-bottom: 2px; }
 .hs-pick-tabs { display: flex; gap: 4px; padding: 5px; border-radius: 999px; background: #f5f5f5; width: max-content; max-width: 100%; box-sizing: border-box; }
 .hs-pick-tabs button { position: relative; flex: none; min-height: 48px; padding: 0 22px; border: 0; border-radius: 999px; background: none; font: 500 16px/1 var(--sans); color: var(--soft); cursor: pointer; white-space: nowrap; transition: color .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(.4, 0, .2, 1); }
 .hs-pick-tabs button:active { transform: scale(.97); }
@@ -100,6 +126,16 @@
 .hs-pick-obj { position: relative; height: 300px; }
 .hs-pick-obj .hm { --s: 150px; }
 .hs-pick-obj .hm-name { font-size: 14px; }
+/* the picker draws the module as line art (the hero's is solid silver, the stage's is dark): hollow plates, the layer
+   that answers for this module filled in ink */
+.hs-pick-obj .hm-plate { background: transparent; border: 1px solid rgba(0, 0, 0, .22); box-shadow: none; }
+.hs-pick-obj .hm-boundary { border: 1.5px dashed rgba(0, 0, 0, .3); }
+.hs-pick-obj .hm-key { background: transparent; }
+.hs-pick-obj .hm-core i { background: #0a0a0a; box-shadow: none; opacity: .18; }
+.hs-pick-obj .hm-plate.lit { background: #0a0a0a; border-color: #0a0a0a; box-shadow: 0 24px 40px -24px rgba(0, 0, 0, .35); }
+.hs-pick-obj .hm-plate.lit .hm-name { color: #fafafa; }
+.hs-pick-obj .hm-key.lit .hm-core i { background: #fafafa; opacity: 1; }
+.hs-pick-obj .hm-boundary.lit { background: rgba(10, 10, 10, .06); border-color: #0a0a0a; box-shadow: none; }
 .hs-pick-key { margin: 0; }
 .hs-pick-name { margin: 0 0 17px; font-size: 26px; font-weight: 497; line-height: 1.15; letter-spacing: -.02em; color: var(--ink); }
 .hs-pick-key dt, .hs-pick-rows dt { margin-bottom: 10px; font: 500 12px/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #525252; }
@@ -129,13 +165,26 @@
   .hs-io { font-size: 12px; padding: 10px 12px; }
   .hs-io.in { left: 4%; top: 18%; transform: none; }
   .hs-io.out { right: 4%; top: auto; bottom: 74px; transform: none; }
-  .hs-exp .hm { transform: translateX(-18%); }
-  .hs-ch .pc-vis { height: 48svh; }
-  .hs-ch .pc-copy { display: block; }
+  /* phone: the stage stays one stage. The exploded module sticks under the header (a short band) and changes with the
+     chapter crossing the middle of the screen; the words scroll beneath it, the one being read at full strength. No
+     per-chapter copy of the drawing, so no black gaps between chapters. */
+  .hs-exp .hm { transform: translateX(-26%); }
+  .hs-ch .pc-in { display: flex; flex-direction: column; }
+  .hs-ch .pc-vis { display: block; order: 0; position: sticky; top: var(--x-top, 56px); z-index: 2; height: 34svh; min-height: 230px; margin: 0 -16px; background: #000; box-shadow: 0 1px 0 rgba(255, 255, 255, .1); }
+  .hs-ch .pc-copy { order: 1; display: block; }
   .hs-ch .pc-copy > .hs-ch-k { display: none; }
+  .hs-ch .pc-vis-m { display: none; }
+  .hs-ch .pc-art, .js .hs-ch .pc-art { padding: 44px 0 52px; min-height: 42svh; box-sizing: border-box; border-top-color: rgba(255, 255, 255, .1); transition: opacity .3s cubic-bezier(0, 0, .2, 1); }
+  .js .hs-ch .pc-art:not([data-on]) { opacity: .38; }
+  .hs-ch .pc-art:first-child { padding-top: 32px; }
+  .hs-ch .pc-art:last-child { padding-bottom: 72px; }
+  .hs-ch .hm { --s: 112px; --gk: .5; }
+  .hs-ch .hm-labels li { width: 118px; max-width: 118px; left: calc(50% + var(--s) * .55); font-size: 11px; line-height: 1.25; }
+  .hs-ch .hm-labels li i { width: 12px; }
   /* the tabs: one rail that scrolls sideways and snaps, the next tab peeking at the edge */
   .hs-pick-tabs { width: auto; margin-inline: calc(var(--gutter, 16px) * -1); padding: 5px var(--gutter, 16px); border-radius: 0; background: none; overflow-x: auto; scroll-snap-type: x proximity; scroll-padding-inline: 16px; scrollbar-width: none; }
   .hs-pick-tabs::-webkit-scrollbar { display: none; }
+  .hs-pick-tabs { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 44px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 44px), transparent); }
   .hs-pick-tabs button { min-height: 44px; padding: 0 16px; font-size: 15px; scroll-snap-align: start; background: #f5f5f5; }
   .hs-pick-p { grid-template-columns: minmax(0, 1fr); border-radius: 20px; }
   .hs-pick-main { grid-template-columns: minmax(0, 1fr); padding: 0 20px 20px; gap: 0; }
@@ -149,6 +198,10 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .hs-ch .pc-dots button::after { transition: none; }
+  .hs-settle { transform: none !important; }
+  .hs-sign .hm { transform: none; transition: none; }
+  .hs-pulse { display: none; }
+  .js .hs-ch .pc-art:not([data-on]) { opacity: 1; }
 }
 
 /* the live object's pause control */

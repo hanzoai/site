@@ -100,7 +100,7 @@
 .iv-o-split:not([data-s='0']) .iv-o-rule { transform: none; }
 
 /* sign one, forge one: the dark room */
-.iv-forge { padding: clamp(72px, 8vw, 116px) 0 clamp(72px, 11vw, 188px); }
+.iv-forge { padding: clamp(72px, 8vw, 116px) 0; }
 .iv-forge .v2-kick.acc { color: #a3a3a3; }
 .iv-forge-h { margin-bottom: 44px; }
 .iv-forge-cap { margin-top: 17px; }
@@ -164,7 +164,8 @@
   .iv-vn { font-size: 32px; }
   .iv-how { margin: 10px 0 14px; }
   .iv-say-p { font-size: 26px; }
-  .iv-sheet { display: block; top: calc(68px + var(--k) * 10px); min-height: 0; margin-bottom: 12svh; padding: 24px; }
+  /* each sheet is one screen tall, so the next one always covers the last (one in, one out) */
+  .iv-sheet { display: block; top: calc(68px + var(--k) * 10px); min-height: calc(100svh - 96px); margin-bottom: 12svh; padding: 24px; }
   .iv-sheet-r { margin-top: 20px; }
   .iv-o { padding: 20px; }
   .iv-o-n { font-size: 64px; }

@@ -353,7 +353,7 @@ function Peek({ k }) {
       <span className="xe-peek-n" key={'n' + k}>{name}</span>
       <span className="xe-peek-f av-num" key={'f' + k}>{SIZE[k] || 'v1.9.31'}</span>
       <span className="xe-peek-bars">
-        {BAR.map((b) => <span key={b} className={b === lit ? 'on' : ''} style={{ '--w': parseInt(SIZE[b], 10) / 976 }}><i /><em className="x-mono">{SIZE[b]}</em></span>)}
+        {BAR.map((b) => <span key={b} className={b === lit ? 'on' : ''} style={{ '--xw': parseInt(SIZE[b], 10) / 976 }}><i /><em className="x-mono">{SIZE[b]}</em></span>)}
       </span>
     </div>
   );
@@ -418,7 +418,7 @@ function UseRender({ i }) {
       {/* 03: the request's own path, hop by hop, as data the agent can read */}
       {i === 2 && <ol className="xe-ur-trace x-mono">
         <em>network requests</em>
-        {HOPS.slice(0, 5).map((h, n) => <li key={h} style={{ '--i': n, '--w': [0.18, 0.32, 0.54, 0.7, 1][n] }}><span>{h}</span><i /></li>)}
+        {HOPS.slice(0, 5).map((h, n) => <li key={h} style={{ '--i': n, '--xw': [0.18, 0.32, 0.54, 0.7, 1][n] }}><span>{h}</span><i /></li>)}
       </ol>}
       {/* 04: a multi-step flow filled in, and the step where it got stuck */}
       {i === 3 && <div className="xe-ur-form">
