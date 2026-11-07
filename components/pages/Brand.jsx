@@ -1,6 +1,8 @@
 'use client';
 /* /brand. Story page (treated so; MASTER 4), Hanzo's deck only.
-   V2: 8/10 A brand book that is a drawing, in Hanzo's own black, white and greys. The hero is the mark's
+   V2: 8/10 (7 Nov re-walk: colour-room h3s visible again on black, the contrast board swaps White to Black and back
+   once in view with a gliding pill, compass ticks arrive after their circle, CSS colours on deck tokens.)
+   A brand book that is a drawing, in Hanzo's own black, white and greys. The hero is the mark's
    construction drawn full-bleed across the stage (not a card): once the curtain lifts, the guides draw, the five
    pieces land, the mark opens once to show its build, and then it stays alive: its pieces lean toward the pointer
    anywhere in the hero, and the compass turns slowly (pause control). The principles are a pinned scene, one line
@@ -36,7 +38,7 @@ const EASE = [0.16, 1, 0.3, 1];
 const LAND = { duration: 0.8, ease: EASE };
 const SOFT = { duration: 0.3, ease: EASE };
 // JS off: the hero's lede, asks and the drawing show in place (PLAN 2.3)
-const NOJS = { __html: '<style>.xbr-hero-f,.xbr-piece,.xbr-dr{opacity:1!important;transform:none!important}.xbr-g{stroke-dasharray:none!important;stroke-dashoffset:0!important}.xbr-grays .xbr-sw{transform:none!important}</style>' };
+const NOJS = { __html: '<style>.xbr-hero-f,.xbr-piece,.xbr-dr{opacity:1!important;transform:none!important}.xbr-g{stroke-dasharray:none!important;stroke-dashoffset:0!important}.xbr-ticks{opacity:1!important}.xbr-grays .xbr-sw{transform:none!important}</style>' };
 
 const PIECES = ['M22.21 67V44.6369H0V67H22.21Z', 'M66.7038 22.3184H22.2534L0.0878906 44.6367H44.4634L66.7038 22.3184Z', 'M22.21 0H0V22.3184H22.21V0Z', 'M66.7198 0H44.5098V22.3184H66.7198V0Z', 'M66.7198 44.6369H44.5098V67H66.7198V44.6369Z'];
 const FROM = [[-18, 22], [0, 0], [-18, -22], [18, -22], [18, 22]];
@@ -81,7 +83,7 @@ function Drawing({ mx, my }) {
   const g = [0, 22.3, 44.6, 67];
   const draw = (k) => ({ initial: { pathLength: 0 }, animate: go ? { pathLength: 1 } : undefined, transition: { duration: 1.1, ease: EASE, delay: k } });
   return (
-    <div className="xbr-dr" ref={ref}>
+    <div className={'xbr-dr' + (go ? ' on' : '')} ref={ref}>
       <svg viewBox="-60 -60 187 187" aria-hidden="true">
         {g.map((v, i) => (
           <g key={v}>
@@ -92,11 +94,11 @@ function Drawing({ mx, my }) {
         <motion.g className="xbr-compass" style={{ rotate: turn, originX: '33.4px', originY: '33.5px', transformBox: 'view-box' }}>
           <motion.circle cx="33.4" cy="33.5" r="47.3" className="xbr-g c" {...draw(0.35)} />
           <motion.line x1="-30" y1="97" x2="97" y2="-30" className="xbr-g c" {...draw(0.5)} />
-          {Array.from({ length: 24 }, (_, i) => {
+          <g className="xbr-ticks">{Array.from({ length: 24 }, (_, i) => {
             const a = (i / 24) * Math.PI * 2, r1 = 47.3, r2 = i % 6 ? 45.3 : 43.3;
             const f = (v) => Math.round(v * 100) / 100; // rounded: server and browser maths then print the same numbers
             return <line key={i} x1={f(33.4 + Math.cos(a) * r1)} y1={f(33.5 + Math.sin(a) * r1)} x2={f(33.4 + Math.cos(a) * r2)} y2={f(33.5 + Math.sin(a) * r2)} className="xbr-tick" />;
-          })}
+          })}</g>
         </motion.g>
         {PIECES.map((d, i) => <Piece key={i} d={d} i={i} go={go} open={open} mx={mx} my={my} />)}
       </svg>
@@ -224,12 +226,25 @@ function Verdict({ r }) {
   );
 }
 
+/* One thing in as another goes out: when the board is well in view, Hanzo Black slides in under the six grays, every
+   verdict flips with it, then Hanzo White comes back and the switch is yours. Once; a touch stops it; calm skips it. */
 function Reads() {
   const [bg, setBg] = useState('#FFFFFF');
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount: 0.6, once: true });
+  const calm = useReducedMotion();
+  const mine = useRef(false);
+  useEffect(() => {
+    if (!seen || calm || mine.current) return;
+    const a = setTimeout(() => { if (!mine.current) setBg('#0A0A0B'); }, 900);
+    const b = setTimeout(() => { if (!mine.current) setBg('#FFFFFF'); }, 3600);
+    return () => { clearTimeout(a); clearTimeout(b); };
+  }, [seen, calm]);
+  const pick = (h) => { mine.current = true; setBg(h); };
   return (
-    <div className="xbr-reads" role="group" aria-label="Gray Scale on Hanzo White or Hanzo Black">
+    <div className="xbr-reads" ref={ref} role="group" aria-label="Gray Scale on Hanzo White or Hanzo Black">
       <div className="xbr-seg" role="group" aria-label="Background">
-        {[['Hanzo White', '#FFFFFF'], ['Hanzo Black', '#0A0A0B']].map(([n, h]) => <button key={h} type="button" aria-pressed={bg === h} onClick={() => setBg(h)}>{n}</button>)}
+        {[['Hanzo White', '#FFFFFF'], ['Hanzo Black', '#0A0A0B']].map(([n, h]) => <button key={h} type="button" aria-pressed={bg === h} onClick={() => pick(h)}>{bg === h && <motion.span layoutId="xbr-seg-pill" className="xbr-seg-pill" transition={SOFT} aria-hidden="true" />}<span>{n}</span></button>)}
       </div>
       <ul style={{ '--bg': bg }} className={bg === '#FFFFFF' ? 'lt' : 'dk'}>
         {GRAYS.map(([n, h]) => (
@@ -337,7 +352,7 @@ function Components() {
         </div>
         <div className="xbr-bench c">
           <h3 className="vc-title">Badges</h3>
-          <div className="xbr-badges"><span className="xbr-badge brand">Brand Badge</span><span className="xbr-badge">Default Badge</span><span className="xbr-badge ok"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="currentColor" /><path d="M5 8.3l2 2 4-4.3" fill="none" stroke="#ffffff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>Success Badge</span></div>
+          <div className="xbr-badges"><span className="xbr-badge brand">Brand Badge</span><span className="xbr-badge">Default Badge</span><span className="xbr-badge ok"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="currentColor" /><path d="M5 8.3l2 2 4-4.3" fill="none" stroke="var(--b-white)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>Success Badge</span></div>
         </div>
       </div>
     </section>
@@ -375,7 +390,7 @@ function Assets() {
 
 export default function Brand() {
   return (
-    <main className="vc xbr" style={{ '--acc': '#1d1d1f' }}>
+    <main className="vc xbr" style={{ '--acc': 'var(--ink)' }}>
       <Hero />
       <Principles />
       <Colour />
