@@ -127,7 +127,7 @@ function Catalogue({ groups, paused, setPaused }) {
   // the reading lamp: while the index is on screen, it lights one row at a time (its address shows, its arrow turns
   // ink), once through the list, the way the pile deals its sheets. It hides while a pointer is over the list (the
   // hover takes over), the shared pause stops it, and keyboard focus in the list puts it out for good.
-  const [box, seen] = useLive(0.25);
+  const [box, seen] = useLive(0.1);
   const [lit, setLit] = useState(-1);
   const [done, setDone] = useState(false);
   const stop = () => { if (!done) { setDone(true); setLit(-1); } };
@@ -141,7 +141,7 @@ function Catalogue({ groups, paused, setPaused }) {
   }, []);
   const all = groups.flatMap((g) => g.items.map((it) => ({ ...it, g })));
   const showing = all.filter((x) => on === 'all' || x.g.id === on).map((x) => x.href);
-  useEvery(1800, seen && !paused && !done, () => setLit((k) => { if (k + 1 >= showing.length) { setDone(true); return -1; } return k + 1; }));
+  useEvery(1300, seen && !paused && !done, () => setLit((k) => { if (k + 1 >= showing.length) { setDone(true); return -1; } return k + 1; }));
   const litHref = lit >= 0 ? showing[lit] : null;
   // #agreements, #policies … pick their chip
   useEffect(() => {
