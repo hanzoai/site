@@ -1,19 +1,25 @@
 'use client';
-/* ZAP. The wire is the object.
+/* ZAP, v2. V2: 8/10 the wire is the Stage (pointer versus parser arrives huge in the dark room and settles), four hero figures, eight packets that open into sheets, a typed terminal, the sidecar counter as a full-width object, electric-cyan accent
+   The wire is the object.
    Signature: pointer versus parser. The message lies in the buffer as it arrived (a sixteen-byte header, then a struct, a
    list, text and bytes on eight-byte boundaries); a reader asks for a field and the pointer jumps straight to its offset,
    while the same message as JSON text is walked character by character to get there. Choose the field yourself.
    Beyond: sidecars or one daemon. Set how many agents you run and count the tool-server processes each topology starts
    for the three servers of the example: one beside every agent, or one zapd in front of them. Structure only, no timings,
-   because Hanzo publishes none. Every word and link is Hanzo's. */
+   because Hanzo publishes none.
+   Motion budget: signature = the pointer and the walking parser; supporting = Stage (Settle), Open (packets as sheets),
+   typing (the terminal). Accent: electric cyan. One dark room: the hero. Every word and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
-import { EASE, Rise, Copy } from '../../ui';
+import { EASE, Copy, Magnetic } from '../../ui';
 import { A } from '../../kit';
-import { Get, useLive, useEvery, useSteps } from '../cloud/Frame';
+import { useLive, useEvery, useSteps } from '../cloud/Frame';
+import LineMask from '../../v2/LineMask';
+import Settle from '../../v2/Settle';
+import { OpenCards } from '../../v2/OpenSheet';
+import '../../v2/Scale.css';
 import './Zap.css';
 
-const up = (d) => ({ initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
 // the example message: field, its offset in the buffer (bytes, 8-aligned after the 16-byte header), its length in words
 const FIELDS = [['struct', 16, 2], ['list', 32, 3], ['text', 56, 2], ['bytes', 72, 2]];
 const JSON_TXT = '{"struct":{"a":1,"b":2},"list":[1,2,3],"text":"hello","bytes":"aGk="}';
@@ -70,36 +76,38 @@ function Wire({ pick, auto, live }) {
 }
 
 function Hero() {
-  const [ref, live] = useLive(0.3);
+  const [ref, live] = useLive(0.25);
   const [pick, setPick] = useState(2);
   const [mine, setMine] = useState(false);
   const [at, choose] = useSteps(4, 3600, live);
   useEvery(2800, live && !mine, () => setPick((p) => (p + 1) % FIELDS.length));
   return (
-    <section className="zp-hero" data-room="dark" ref={ref} aria-labelledby="zp-h1">
-      <div className="x-wrap">
+    <section className="zp-hero w2-dark" data-room="dark" aria-labelledby="zp-h1" data-morph-target>
+      <div className="w2-wrap">
         <div className="zp-top">
           <div>
-            <motion.p className="zp-kick x-mono" {...up(0)}><img src="/models/enso.webp" alt="" />Zero-Copy Agent Protocol</motion.p>
-            <h1 id="zp-h1" className="zp-h1"><span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.05 }}>ZAP</motion.span></span></h1>
+            <motion.p className="zp-kick x-mono" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}><img src="/models/enso.webp" alt="" />Zero-Copy Agent Protocol</motion.p>
+            <LineMask as="h1" id="zp-h1" now className="w2-display zp-h1" lines={['ZAP']} />
           </div>
-          <div>
-            <motion.p className="zp-lede" {...up(0.3)}>The wire format is the data structure</motion.p>
-            <motion.div className="zp-acts" {...up(0.42)}>
-              <motion.span className="x-go" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}><A to="https://zap-proto.dev/docs/quick-start" className="x-btn solid" data-thumb>Read the docs</A></motion.span>
-              <A to="https://github.com/zap-proto/papers" className="x-btn">Read the Papers</A>
-              <A to="https://github.com/zap-proto/spec" className="x-btn">GitHub</A>
-            </motion.div>
-          </div>
-        </div>
-        <motion.div className="zp-stage" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.25 }}>
-          <Wire pick={pick} live={live} auto={(
-            <div className="zp-pick" role="radiogroup" aria-label="Read a field">
-              <span className="x-mono">Read a field</span>
-              {FIELDS.map(([t], i) => <button key={t} type="button" role="radio" aria-checked={pick === i} onClick={() => { setMine(true); setPick(i); }} className="x-mono">{t}</button>)}
+          <motion.div className="zp-top-r" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
+            <p className="zp-lede">The wire format is the data structure</p>
+            <div className="zp-acts">
+              <Magnetic strength={0.25}><A to="https://zap-proto.dev/docs/quick-start" className="w2-cta" data-thumb="Read the docs">Read the docs <i aria-hidden="true">→</i></A></Magnetic>
+              <A to="https://github.com/zap-proto/papers" className="w2-ghost">Read the Papers</A>
+              <A to="https://github.com/zap-proto/spec" className="w2-ghost">GitHub</A>
             </div>
-          )} />
-        </motion.div>
+          </motion.div>
+        </div>
+        <div ref={ref}>
+          <Settle from={1.06} lift={70}>
+            <Wire pick={pick} live={live} auto={(
+              <div className="zp-pick" role="radiogroup" aria-label="Read a field">
+                <span className="x-mono">Read a field</span>
+                {FIELDS.map(([t], i) => <button key={t} type="button" role="radio" aria-checked={pick === i} onClick={() => { setMine(true); setPick(i); }} className="x-mono">{t}</button>)}
+              </div>
+            )} />
+          </Settle>
+        </div>
         <ol className="zp-points">
           {POINTS.map(([t, d], i) => (
             <li key={t} className={at === i ? 'on' : ''}>
@@ -125,23 +133,18 @@ const WHY = [
   ['Three implementations, one wire', 'Go, Rust and TypeScript, held wire-compatible against a single schema file. The schema is the contract, and an incompatible change bumps its identifier rather than hoping nobody notices.'],
 ];
 
+/* Each reason is a packet: a sixteen-byte header, filled a little more on every packet. */
+const Hdr = ({ n }) => <span className="zp-hdr" aria-hidden="true">{Array.from({ length: 16 }).map((_, b) => <i key={b} className={b < 2 + n ? 'f' : ''} />)}</span>;
+
 function Why() {
   return (
-    <section className="x-sec zp-why">
-      <div className="x-wrap">
-        <header className="zp-h">
-          <h2>Why bother</h2>
-          <p>JSON over HTTP is fine until a hundred agents are calling the same tools. Then the cost is the copies, and the fix is to stop making them.</p>
-        </header>
-        <ol className="zp-packets">
-          {WHY.map(([t, d], i) => (
-            <li key={t} style={{ '--p': i }}>
-              <span className="zp-hdr" aria-hidden="true">{Array.from({ length: 16 }).map((_, b) => <i key={b} className={b < 2 + i ? 'f' : ''} style={{ '--b': b }} />)}</span>
-              <h3>{t}</h3>
-              <p>{d}</p>
-            </li>
-          ))}
-        </ol>
+    <section className="w2-sec zp-why">
+      <div className="w2-wrap">
+        <div className="zp-split">
+          <h2 className="w2-display s">Why bother</h2>
+          <p className="w2-lede">JSON over HTTP is fine until a hundred agents are calling the same tools. Then the cost is the copies, and the fix is to stop making them.</p>
+        </div>
+        <OpenCards cols={4} className="zp-packets" items={WHY.map(([t, d], i) => ({ id: 'zp-' + i, k: String(i + 1).padStart(2, '0'), t, art: <Hdr n={i} />, body: <p>{d}</p> }))} />
       </div>
     </section>
   );
@@ -188,17 +191,17 @@ function Running() {
   useEffect(() => { if (live) setK(0); }, [live]);
   useEvery(600, live, () => setK((v) => (v >= lines.length + 4 ? 0 : v + 1)));
   return (
-    <section className="x-sec zp-run" ref={ref}>
-      <div className="x-wrap zp-run-grid">
-        <div>
-          <h2>Four lines and it is running</h2>
-          <p>One daemon in front of the servers you already have. Agents hold a single connection to it.</p>
-          <p className="zp-zapd"><code>zapd</code> presents the tools and resources of every backend as one schema, whether the backend speaks MCP or ZAP.</p>
+    <section className="w2-sec zp-run" ref={ref}>
+      <div className="w2-wrap zp-run-grid">
+        <div className="zp-run-copy">
+          <h2 className="w2-headline">Four lines and it is running</h2>
+          <p className="w2-body">One daemon in front of the servers you already have. Agents hold a single connection to it.</p>
+          <p className="w2-body zp-zapd"><code>zapd</code> presents the tools and resources of every backend as one schema, whether the backend speaks MCP or ZAP.</p>
         </div>
-        <Rise className="zp-term">
+        <div className="zp-term">
           <div className="zp-term-bar"><i /><i /><i /><span className="x-mono">Terminal</span><Copy text={lines.filter((l) => l.startsWith('$')).map((l) => l.slice(2)).join('\n')} /></div>
           <pre className="x-mono">{lines.map((l, i) => <span key={i} className={(l.startsWith('#') ? 'c' : '') + (i < k ? ' in' : '')}>{l}{'\n'}</span>)}</pre>
-        </Rise>
+        </div>
       </div>
     </section>
   );
@@ -217,21 +220,23 @@ function Fleet() {
   const side = n * SERVERS.length;
   const box = (k, cls) => Array.from({ length: k }).map((_, i) => <i key={i} className={cls} style={{ '--s': i % 3 }} />);
   return (
-    <div className="zp-fleet" ref={ref}>
+    <div className="zp-fleet w2-object" ref={ref}>
       <label className="zp-fleet-k">
         <span>Agents you run</span>
-        <b className="x-mono">{n}</b>
+        <b className="w2-fig">{n}</b>
         <input type="range" min="1" max="100" value={n} aria-label="Agents you run" onChange={(e) => { setMine(true); setN(+e.target.value); }} />
       </label>
-      <div className="zp-topo">
-        <p className="zp-topo-k">An MCP server beside every agent</p>
-        <div className="zp-procs" aria-hidden="true">{box(Math.min(side, 300), 'p')}</div>
-        <p className="zp-topo-n x-mono"><b>{side}</b> tool-server processes · {n - 1} more of each</p>
-      </div>
-      <div className="zp-topo one">
-        <p className="zp-topo-k">One zapd in front, servers shared</p>
-        <div className="zp-procs" aria-hidden="true">{box(SERVERS.length, 'p')}<i className="d" /></div>
-        <p className="zp-topo-n x-mono"><b>{SERVERS.length}</b> tool-server processes and zapd · none repeated</p>
+      <div className="zp-topos">
+        <div className="zp-topo">
+          <p className="zp-topo-k">An MCP server beside every agent</p>
+          <div className="zp-procs" aria-hidden="true">{box(Math.min(side, 300), 'p')}</div>
+          <p className="zp-topo-n x-mono"><b>{side}</b> tool-server processes · {n - 1} more of each</p>
+        </div>
+        <div className="zp-topo one">
+          <p className="zp-topo-k">One zapd in front, servers shared</p>
+          <div className="zp-procs" aria-hidden="true">{box(SERVERS.length, 'p')}<i className="d" /></div>
+          <p className="zp-topo-n x-mono"><b>{SERVERS.length}</b> tool-server processes and zapd · none repeated</p>
+        </div>
       </div>
     </div>
   );
@@ -239,22 +244,20 @@ function Fleet() {
 
 function Built() {
   return (
-    <section className="x-sec zp-built">
-      <div className="x-wrap">
-        <header className="zp-h">
-          <h2>How it is put together</h2>
-          <p>Many agents on one side, many tool servers on the other, one address in the middle.</p>
-        </header>
+    <section className="w2-sec zp-built">
+      <div className="w2-wrap">
+        <div className="zp-split">
+          <h2 className="w2-headline">How it is put together</h2>
+          <p className="w2-lede">Many agents on one side, many tool servers on the other, one address in the middle.</p>
+        </div>
+        <ul className="zp-stats">
+          {[['N:1', 'Every agent, one address'], ['1:M', 'One schema over every backend'], ['0', 'Copies of the same tool server']].map(([k, d]) => (
+            <li key={d}><b className="w2-fig">{k}</b><span>{d}</span></li>
+          ))}
+        </ul>
         <div className="zp-built-grid">
-          <Rise className="zp-ascii"><pre className="x-mono">{ASCII}</pre></Rise>
-          <div className="zp-side">
-          <ul className="zp-stats">
-            {[['N:1', 'Every agent, one address'], ['1:M', 'One schema over every backend'], ['0', 'Copies of the same tool server']].map(([k, d], i) => (
-              <li key={d}><b className="x-mono">{k}</b><span>{d}</span></li>
-            ))}
-          </ul>
+          <div className="zp-ascii"><pre className="x-mono">{ASCII}</pre></div>
           <Fleet />
-          </div>
         </div>
       </div>
     </section>
@@ -263,22 +266,37 @@ function Built() {
 
 function Point() {
   return (
-    <section className="x-sec zp-point">
-      <div className="x-wrap zp-point-grid">
-        <div>
-          <p className="zp-chip x-mono"><span>Go</span> · <span>Rust</span> · <span>TypeScript</span></p>
-          <h2>Point one agent at it</h2>
-          <p>Start the daemon, add the MCP servers you already run, change one address in your agent.</p>
-          <p className="zp-strong">Nothing else about your setup has to move.</p>
-          <div className="zp-acts"><A to="https://zap-proto.dev/docs" className="x-btn solid">Read the docs</A><A to="https://github.com/zap-proto/spec" className="x-btn">View on GitHub</A></div>
+    <section className="w2-sec zp-point">
+      <div className="w2-wrap">
+        <div className="zp-point-grid">
+          <div className="zp-point-copy">
+            <p className="zp-chip x-mono"><span>Go</span> · <span>Rust</span> · <span>TypeScript</span></p>
+            <h2 className="w2-display s">Point one agent at it</h2>
+            <p className="w2-lede">Start the daemon, add the MCP servers you already run, change one address in your agent.</p>
+            <p className="w2-lede zp-strong">Nothing else about your setup has to move.</p>
+            <div className="zp-acts"><A to="https://zap-proto.dev/docs" className="w2-cta acc">Read the docs</A><A to="https://github.com/zap-proto/spec" className="w2-ghost">View on GitHub</A></div>
+          </div>
+          <div className="zp-note">
+            <p>What ZAP saves depends on your workload, your payload size and your topology. The claim here is about mechanism, not about a number: a reader that walks the buffer in place does no parsing and no allocation, and shared backends run one process where per-agent sidecars run many. Measure it on your own traffic — we have not published a benchmark and will not quote one we cannot show you.</p>
+          </div>
         </div>
-        <div className="zp-note">
-          <p>What ZAP saves depends on your workload, your payload size and your topology. The claim here is about mechanism, not about a number: a reader that walks the buffer in place does no parsing and no allocation, and shared backends run one process where per-agent sidecars run many. Measure it on your own traffic — we have not published a benchmark and will not quote one we cannot show you.</p>
+        <div className="zp-proto">
+          <h2 className="w2-title">Read the protocol</h2>
+          <div className="zp-acts"><A to="https://docs.hanzo.ai/docs/zap" className="w2-ghost">Read the docs</A><A to="https://github.com/hanzoai" className="w2-ghost">View on GitHub</A></div>
         </div>
-      </div>
-      <div className="x-wrap zp-proto">
-        <h2>Read the protocol</h2>
-        <div className="zp-acts"><A to="https://docs.hanzo.ai/docs/zap" className="x-btn">Read the docs</A><A to="https://github.com/hanzoai" className="x-btn">View on GitHub</A></div>
+        <div className="zp-get">
+          <div>
+            <h2 className="w2-headline">Get ZAP</h2>
+            <p className="zp-get-tag">Zero-copy application protocol</p>
+            <p className="zp-addr x-mono" aria-hidden="true">zap://localhost:9999<i /></p>
+          </div>
+          <div className="zp-get-meta">
+            <span className="zp-chip2"><span>License:</span> Apache-2.0</span>
+            <A to="https://github.com/hanzoai" className="zp-chip2">hanzoai</A>
+            <A to="https://platform.hanzo.ai/deploy" className="w2-cta">Deploy to Cloud</A>
+            <A to="https://docs.hanzo.ai/docs/zap" className="w2-ghost">Self-host</A>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -286,13 +304,12 @@ function Point() {
 
 export default function Zap() {
   return (
-    <main className="zp">
+    <main className="zp w2">
       <Hero />
       <Why />
       <Running />
       <Built />
       <Point />
-      <Get name="ZAP" tag="Zero-copy application protocol" self="https://docs.hanzo.ai/docs/zap"><p className="zp-addr x-mono" aria-hidden="true">zap://localhost:9999<i /></p></Get>
     </main>
   );
 }
