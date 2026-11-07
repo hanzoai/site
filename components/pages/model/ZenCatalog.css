@@ -108,7 +108,7 @@
 .zc-fa-cents { display: grid; grid-template-columns: repeat(10, 1fr); grid-template-rows: repeat(10, 1fr); gap: 4px; aspect-ratio: 1; height: 100%; right: auto; }
 .zc-fa-cents i { border-radius: 3px; border: 1px solid var(--track); }
 .zc-fa-cents i[data-z] { position: relative; border-color: var(--ink); background: var(--ink); }
-.zc-fa-cents i[data-z]::after { content: ''; position: absolute; inset: -6px; border-radius: 6px; border: 1px solid var(--ink); animation: zc-breathe 2.4s var(--eio) .8s infinite; }
+.zc-fa-cents i[data-z]::after { content: ''; position: absolute; inset: -3px; border-radius: 6px; border: 1px solid var(--ink); animation: zc-breathe 2.4s var(--eio) .8s infinite; }
 @keyframes zc-breathe { 0%, 100% { opacity: 0; transform: scale(.7); } 50% { opacity: 1; transform: none; } }
 /* MoE + Dense: the five Zen5 sizes, total against active per token, on one shared scale */
 .zc-fa-size { display: grid; align-content: space-evenly; gap: 21px; }
@@ -222,7 +222,7 @@
 /* no dead bands: Quick Start hands straight to the figures, and the Zen5 heading rises 40px over the figures' tail */
 .zc-quick { padding-bottom: 44px; }
 .zc-shelf { position: relative; z-index: 1; margin-top: -40px; padding-top: 72px; }
-.zc-end { position: relative; margin-top: -40px; overflow: hidden; isolation: isolate; text-align: center; }
+.zc-end { position: relative; margin-top: -40px; padding-top: clamp(72px, 8vw, 120px); overflow: hidden; isolation: isolate; text-align: center; }
 /* the close's object: a fine context ruler (minor tick per 128K, major per 1M) drifting slowly along the bottom edge */
 .zc-end-rule { position: absolute; left: 0; right: 0; bottom: 44px; height: 44px; z-index: -1; overflow: hidden; pointer-events: none; -webkit-mask-image: linear-gradient(90deg, transparent, #000 20%, #000 80%, transparent); mask-image: linear-gradient(90deg, transparent, #000 20%, #000 80%, transparent); }
 .zc-end-rule span { position: absolute; left: 0; top: 0; bottom: 0; width: 200%; border-bottom: 1px solid var(--track); background: repeating-linear-gradient(90deg, var(--track) 0 1px, transparent 1px 160px) 0 0 / 100% 100% no-repeat, repeating-linear-gradient(90deg, var(--track) 0 1px, transparent 1px 20px) 0 100% / 100% 14px no-repeat; animation: zc-drift 32s var(--eio) infinite alternate; }
@@ -257,9 +257,9 @@
   .zc-term-copy .x-copy-t { font-size: 14px; }
   .zc-code { padding: 21px 17px; }
   /* phone figures: rhythm, not five huge numbers; the lead figure at 64px, the other four two by two at 32px */
-  .zc-figs-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 27px 17px; padding: 27px 0 44px; }
+  .zc-figs-list { grid-template-columns: minmax(0, 1fr) auto; gap: 27px 27px; padding: 27px 0 44px; }
   .zc-fig:first-child { grid-column: 1 / -1; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
-  .zc-fig dd { font-size: 32px; font-weight: 400; white-space: normal; overflow-wrap: anywhere; }
+  .zc-fig dd { font-size: 32px; font-weight: 400; white-space: normal; }
   .zc-fig:first-child dd { font-size: 64px; font-weight: 220; }
   .zc-fig-in { gap: 6px; }
   .zc-shelf { padding-top: 44px; margin-top: 0; }

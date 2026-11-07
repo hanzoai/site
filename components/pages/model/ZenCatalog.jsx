@@ -4,15 +4,18 @@
    from a rounded card to full width as you scroll; a 28svh band above the type on phone), the name at rest size (52px)
    beside Hanzo's lede and the key ask; Quick Start, where the model line retypes itself (zen6, zen6-flash, zen5-coder,
    the names in Hanzo's own comment), held in state so code, pressed name and copy always match; the five figures pinned
-   over 200svh, each redrawing the stage's field from its own number as it cuts in at 112px Air; the Zen5 shelf of model
-   cards built to docs/refs/hanzo-model-cards/SPEC.md (hover shows the model's size bars); the per-token sheet (row
-   hover fills #f5f5f5 and lights its bars); a calm close whose field rises under the sheet.
+   over 200svh, each cutting in at 112px Air over a drawing of its own number as data (18 marks, the Zen5 contexts on a
+   2M ruler, one cent of a dollar, the Zen5 sizes, 7 capsules), which grows in and then idles; on phone a 64px lead
+   figure over a 2-column grid at 32px; the Zen5 shelf of model cards on the SPEC grid (385px repeat(4,192px), rows
+   220px, the leader spanning both rows) built to docs/refs/hanzo-model-cards/SPEC.md (hover draws the model's size bars
+   to scale); the per-token sheet (row hover fills #f5f5f5 and lights its bars); a calm close over a drifting context
+   ruler (the hero field is the only field outside the cards).
    Signature: the sort race. Pick Hanzo's order, size or context, or a tier, and the Zen5 model cards re-flow (the leader
    takes the tall card) while the sheet below re-orders with them. Every card opens into its own model page (Morph).
    Beyond: the per-token sheet. Each Zen5 row draws total parameters against the parameters that work per token on one
    shared scale (35B with 3B active, 230B with 10B active, 284B with 37B active, from Hanzo's rows), plus context on a
    log scale; the row opens to Hanzo's own paragraph.
-   V2: 8/10 review fixes: typed name in state (copy = display), own Zen5 field hero opening to full width, phone object band, 200svh figures with a per-figure field, empty tiers hidden, size-bar hovers. */
+   V2: 8/10 review fixes: card size bars drawn to scale (--zc-w), figures drawn as their own data instead of a repeated field, phone figures in rhythm (64 + 2x32), SPEC model grid, no dead bands (40px overlap), #ededed pill hover. */
 // Persona: Developer choosing a Zen model to call (MASTER 1: developers).
 // Goal: pick a Zen5 model, open its page, then get a key.
 // CTA: Get API key (Cta solid, data-cta zen-models.hero, data-thumb); close: Get Started (zen-models.close).
@@ -198,7 +201,7 @@ function FigArt({ i }) {
       ))}
     </div>
   );
-  return <div className="zc-fa zc-fa-7">{Array.from({ length: 7 }, (_, k) => <motion.i key={k} style={{ '--k': k }} {...grow(k, 'scale', 0.06)} />)}</div>;
+  return <div className="zc-fa zc-fa-7">{Array.from({ length: 7 }, (_, k) => <motion.i key={k} style={{ '--k': k }} {...grow(k, 'scaleY', 0.06)} />)}</div>;
 }
 
 /* five figures, one per screen: the scene pins; the old figure leaves before the new one cuts in through its mask,

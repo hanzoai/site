@@ -7,7 +7,7 @@
 @media (hover: hover) { .wd2 .l2-stage [data-cta='primary']:hover { background: #e4e4e7; border-color: #e4e4e7; } }
 
 /* Stage object: the planet and its panel */
-.wd2-world { position: relative; height: min(600px, 72svh); }
+.wd2-world { position: relative; height: min(590px, 70svh); }
 .wd2-globe { position: absolute; left: 50%; top: 0; height: 100%; aspect-ratio: 1; transform: translateX(-50%); }
 .wd2-globe-in { position: absolute; inset: 0; transform-origin: 50% 40%; }
 .wd2-globe canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -67,12 +67,15 @@
 .pinned .wd2-lc i { height: 14px; border-radius: 7px; }
 .pinned .wd2-lc p.spike { margin-top: 4px; font-size: 15px; gap: 12px; }
 .pinned .wd2-lc p.spike i { width: 12px; height: 12px; }
-.pinned .wd2-ev p { grid-template-columns: 40px 1fr auto; gap: 16px; margin-bottom: 32px; }
+.pinned .wd2-ev p { grid-template-columns: 40px 1fr auto; gap: 16px; margin-bottom: 40px; }
+.pinned .wd2-ev p:last-child { margin-bottom: 0; }
 .pinned .wd2-ev span, .pinned .wd2-ev em { font-size: 17px; }
-.pinned .wd2-ev i { height: clamp(64px, 10svh, 88px); border-radius: 14px; }
-.pinned .wd2-mc { gap: 14px; }
-.pinned .wd2-mc li { font-size: 21px; padding: 16px 22px; border-radius: 14px; }
-.pinned .wd2-mc li.one { margin-top: 14px; padding-block: 22px; }
+.pinned .wd2-ev i { height: clamp(64px, 12svh, 104px); border-radius: 14px; }
+/* the five sources sit three over two, the one view across the foot */
+.pinned .wd2-mc { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; }
+.pinned .wd2-mc li { grid-column: span 2; font-size: 21px; padding: 22px 24px; border-radius: 14px; text-align: center; }
+.pinned .wd2-mc li:nth-child(4), .pinned .wd2-mc li:nth-child(5) { grid-column: span 3; }
+.pinned .wd2-mc li.one { grid-column: 1 / -1; margin-top: 14px; padding-block: 28px; }
 .pinned .wd2-replay { padding: 28px; }
 .pinned .wd2-rp-track span { min-height: 96px; font-size: 15px; }
 .pinned .wd2-rp-now span { font-size: 26px; }
@@ -103,7 +106,8 @@
 .wd2-topo svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 .wd2-topo line { stroke: rgba(255, 255, 255, .14); stroke-width: 1.5; vector-effect: non-scaling-stroke; transition: stroke .3s var(--eo); }
 .wd2-topo line.on { stroke: #fafafa; stroke-width: 2.5; }
-.wd2-node { position: absolute; transform: translate(-50%, -50%); padding: 8px 10px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .14); background: #171717; color: #a3a3a3; font-size: 13px; white-space: nowrap; cursor: default; }
+.wd2-topo svg g { transform-box: view-box; transform-origin: 0 0; }
+.wd2-node { position: absolute; left: var(--x); top: var(--y); transform: translate(-50%, -50%); padding: 8px 10px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .14); background: #171717; color: #a3a3a3; font-size: 13px; white-space: nowrap; cursor: default; }
 .wd2-node.m { cursor: pointer; color: #fafafa; min-width: 44px; min-height: 44px; display: grid; place-items: center; }
 .wd2-node.on { background: #fafafa; border-color: #fafafa; color: #000; font-weight: 606; }
 @media (hover: hover) { .wd2-node.m:hover { border-color: rgba(255, 255, 255, .5); } }
@@ -197,7 +201,11 @@
   .wd2-grid::-webkit-scrollbar { display: none; }
   .wd2-mon.c0, .wd2-mon.c1, .wd2-mon.c2, .wd2-mon.c3, .wd2-mon.c4, .wd2-mon.c5 { grid-column: auto; }
   .wd2-mon { padding: 22px; scroll-snap-align: start; }
-  .wd2-topo { height: 220px; }
+  /* on a phone card the route runs top to bottom (edge at the top, GPU at the foot), so no two nodes collide */
+  .wd2-topo { height: 320px; }
+  .wd2-topo svg g { transform: matrix(0, 1, 1, 0, 0, 0); }
+  .wd2-node { left: var(--y); top: var(--x); }
+  .js .wd2-mon:not(.on) .wd2-topo svg { clip-path: inset(0 0 100% 0); }
   .wd2-node { font-size: 13px; padding: 6px 8px; }
   .wd2-rp-track { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .wd2-replay { padding: 18px; }
