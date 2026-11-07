@@ -1,6 +1,5 @@
 # /treasury: James-eye review (round 3)
 
-Ready: 7 Nov 22:30, held up next to /api and /affiliate (James's new bar, no score). Rebuilt since round 3: no pin, the calculator re-plans the page, the wallet plays itself, each carousel card runs its own ledger, real arrows, count-up never blinks; this pass keeps account names whole in the cards and makes the editor pause invert on hover. taste/unique/parity OK (57/57, 3/3); 0 console errors in 6 cold loads (2 reduced motion), no overlap at 1470 and 375; motion.mjs 0 still screens at 1470. Shared, not this page: phone header 'Try Hanzo' and thumb bar.
 
 Verdict: 6/10
 First complaint: "On my laptop the middle of the page just stops. The top is lovely, the money pours out, but then I scroll into the five chapters and nothing moves. The flow never ticks, the wallet sits there until I click it, and the postings have little black blobs where the arrows should be. On the phone the same bits are alive, so somebody's broken the desktop."

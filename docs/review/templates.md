@@ -1,6 +1,5 @@
 # /templates: James-eye review
 
-Ready: 7 Nov 22:55, held up next to /api and /affiliate. Walked again on the rebuilt page: h1 left with the browser-window deck owning the right (not /gallery's frame), back windows print no asks, blocked previews paint the drawn page with JS off (no broken icon), single setup outline, the twelve now ride a sideways gallery with a rolling count row, the terminal types, phone deck controls on one row with one solid in the first screen. taste/unique/parity OK (96/96, 45/45); 0 console errors besides hanzo.ai preview images blocked in this sandbox; no overlap at 1470 and 375 (the only hits are visually hidden "opens in a new tab" labels).
 
 Verdict: 7/10
 First complaint: "That's the same layout as Gallery: big title on the left, button on the right, a grey box with a pause button. Then I scroll and get the same twelve sites again as a wall. And the windows at the back of the deck all print their 'Edit in Hanzo' buttons on top of each other on the right."

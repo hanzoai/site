@@ -1,6 +1,5 @@
 # /ui: James-eye review (fourth walk)
 
-Ready: 7 Nov 22:45, held up next to /api and /affiliate (James's new bar, no score). Rebuilt since this walk: magnet-grid after the hero, no keyboard trap, page-local Stage (0 reduced-motion errors), Ship it ships, six chapter cards each with their own board, ends on the band; this pass pulls the h1 up so the board fits the first screen and gives Hello()'s button a fixed outlined slot. taste/unique/parity OK (59/59, 2/2); 0 console errors in 6 cold loads (2 reduced motion), no overlap at 1470 and 375; motion.mjs 0 still screens at 1470 (phone stills are its own Pause taps). Shared, not this page: phone header 'Try Hanzo' and thumb bar.
 
 Reviewed: `main` @ `c7106d43`. The page's own last change is `788a0b2a`. Files: `components/pages/apps/UiPage.jsx`, `UiPage.css`, shared `components/v2/Settle.jsx` and `components/v2/x-gauss/*`.
 

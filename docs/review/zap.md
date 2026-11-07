@@ -1,6 +1,5 @@
 # /zap: James-eye review (re-review)
 
-Ready: 7 Nov 22:55, held up next to /api and /affiliate (James's new bar, no score). Rebuilt since this walk: calculator second, no pinned rail (no keyboard scroll trap), page-local Settle (0 reduced-motion errors), fixed-height terminal; this pass puts the 0 at figure size beside N:1 and 1:M, lands the eight packets in turn by themselves, resumes the hero points and field reader 8 s after a tap, keeps whole tokens in the phone terminal, trims the gap after the packets. taste/unique/parity OK (71/71, 7/7); 0 console errors in 6 cold loads (2 reduced motion), no overlap at 1470 and 375; motion.mjs 0 still screens at 1470. Shared, not this page: phone header 'Try Hanzo' and thumb bar.
 
 Reviewed: the zap files as of `33b0215e` "wip(zap): fixes in progress" (`Zap.jsx` and `Zap.css` clean in the working tree).
 Walked 7 Nov, 16:10 to 16:50 UTC, on the dev server (`localhost:4180/zap/`), moving, at 1470×801 and 375×812 (touch).

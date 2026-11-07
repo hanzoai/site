@@ -1,5 +1,4 @@
 # /tag — James-eye review
-Ready: 7 Nov 22:46, held up next to /api and /affiliate. Phone What-row art no longer collapses into a sliver, the in-focus objects (PR pill, diff, WIMSE token, Built ring) pulse at rest so no screen is still; earlier round already landed the fixed-height thread drawer, tighter sections, Built strip, FAQ in its own quiet section and drawn platform frames. taste/unique/parity OK (168/168, 10/10); 0 console errors, no overlap at 1470 and 375.
 
 Verdict: 7/10
 First complaint: "The map's lovely, but why is there a big empty black box under it, then a gap of nothing? And further down it's the same list on the left with a box on the right, twice in a row, then a dark room where everything's shouting at the same size. Tighten it up. It still feels long."

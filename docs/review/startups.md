@@ -1,6 +1,5 @@
 # /startups/: James-eye review
 
-Ready: 7 Nov 22:46, held up next to /api and /affiliate. The close enters as a rounded card that opens full width with the free track as its object, the hero card is outline-only and leans to the pointer, errors sit under their field with aria-invalid and network failures get Hanzo's sentence, phone strip no longer clipped, visible chip hover. taste/unique/parity OK (82/82, 3/3); 0 console errors, no overlap at 1470 and 375.
 Verdict: 7/10
 First complaint: "The application card is lovely, it answers me as I type. But the rest is dead. The money counter flips once and then it's a white box with a shadow. Then I hit a big black 'Not venture-backed?' slab with nothing in it, just text and two buttons."
 

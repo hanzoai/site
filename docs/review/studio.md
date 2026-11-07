@@ -1,5 +1,4 @@
 # /studio — James-eye review
-Ready: 7 Nov 22:33, held up next to /api and /affiliate. Phone desk restacked (monitor, inspector, specs), all six film frames fit at 1470 and the lit one is always in view, the capability ring cuts on long jumps, Studio or Design shows its question with quiet answers, the close card holds the reel's last still, and See plans, from $8/month (to /pricing) sits beside Launch studio.hanzo.ai. taste/unique/parity OK (87/87, 16/16); 0 console errors, no overlap at 1470 and 375.
 
 Verdict: 7/10
 First complaint: "The top is a whole editing suite at once: five rigs, six model chips, a prompt, six library tiles, four tracks, and then a list of specs under it in a big black empty space. It's the overload again. Then further down there's a row of pills with nothing telling me what they're for, and the film strip runs off the edge with the playing frame somewhere I can't see."

@@ -1,6 +1,5 @@
 # /stream/: James-eye review
 
-Ready: 7 Nov 22:40, held up next to /api and /affiliate. Hero h1 ~130px clear of the lanes, labels on a solid edge, INVALID_RECORD in its own slot, clients as one caption line; phone pill gone (offset docks in the rail heading), the record on stage consumes its strip at rest; API names are buttons that fill the checker; the close has its own object (the consumer group's four committed offsets). taste/unique/parity OK (75/75, 2/2); 0 console errors, no overlap at 1470 and 375.
 Verdict: 6/10
 First complaint: "The opening's nice, the lanes ticking, but they're crashing straight into the title, there's an error label sitting on top of the numbers, and on my phone that little 'committed offset' pill floats over the text the whole way down. Then it's six grey boxes of paragraphs and nothing moves."
 
