@@ -11,16 +11,19 @@
            'side' (title and lede on 5 columns, the object on 7 bleeding to the right edge).
    - from: the object's starting scale (1.1–1.25). Phones use a gentler start automatically. Do not use motion
      layoutId/layout animations inside the object (the scroll scale breaks layout projection); use CSS state.
-   - acts: [label, to]; the first is the page's one ask (solid, magnetic, data-thumb for the sticky ask bar, data-cta).
+   - acts: [label, to]; the first is the page's one ask (the kit's solid <Cta>, magnetic, data-thumb for the sticky ask
+     bar, data-cta = cta); the rest are quiet <Cta>s.
    - kick: Hanzo's small label. It is never set above the h1 (a banned tell); it sits under the actions with meta.
-   - pause: true gives the object Hanzo's pause control (WCAG 2.2.2). Read it in the demo with useStagePause() and run
-     JS loops only while !paused; CSS loops inside the object pause by themselves.
+   - pause: true gives the demo its pause control (WCAG 2.2.2), in the flow beside the meta line (first in the DOM,
+     never over the product). Read it with useStagePause() and run JS loops only while !paused; CSS loops inside the
+     object hold their frame by themselves.
+   Scale rhythm: the h1 rests at 52px (40px on phones); the product object is the one big thing and settles as you scroll.
    Everything on the first screen arrives by CSS at first paint, without waiting for the page's script; with JS off it
    simply stands in place. Reduced motion: the object is in place. */
 import { createContext, useContext, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react';
 import { Magnetic } from '../ui';
-import { A } from '../kit';
+import { Cta } from '../kit';
 import KeynoteLines from './KeynoteLines';
 import { useWide } from './KeynoteChapters';
 import './Keynote.css';
@@ -50,14 +53,23 @@ export default function KeynoteStage({ kick, title, lede, acts = [], meta, look 
           {acts.length > 0 && (
             <div className="kn-acts kns-acts kns-in" style={{ '--d': '.42s' }}>
               {acts.map(([t, to], i) => i === 0
-                ? <Magnetic key={t} strength={0.22}><A to={to} className="kn-btn solid" data-thumb={t} data-cta={cta}>{t}</A></Magnetic>
-                : <A key={t} to={to} className="kn-btn">{t}</A>)}
+                ? <Magnetic key={t} strength={0.22}><Cta to={to} id={cta} thumb size="md">{t}</Cta></Magnetic>
+                : <Cta key={t} to={to} kind="quiet" id={cta + '-' + (i + 1)}>{t}</Cta>)}
             </div>
           )}
-          {(kick || meta) && (
+          {(kick || meta || pause) && (
             <div className="kns-meta kns-in" style={{ '--d': '.54s' }}>
-              {kick && <p className="kn-kick kns-k">{kick}</p>}
-              {meta}
+              {pause && (
+                <button type="button" className="kn-pause kns-pause" aria-pressed={paused} aria-label="Pause" onClick={() => setPaused((v) => !v)}>
+                  {paused
+                    ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4.5 3v10l8.5-5z" fill="currentColor" /></svg>
+                    : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /><rect x="9.4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /></svg>}
+                </button>
+              )}
+              <div className="kns-meta-t">
+                {kick && <p className="kn-kick kns-k">{kick}</p>}
+                {meta}
+              </div>
             </div>
           )}
         </div>
@@ -67,13 +79,6 @@ export default function KeynoteStage({ kick, title, lede, acts = [], meta, look 
               <Paused.Provider value={paused}>{children}</Paused.Provider>
             </motion.div>
           </div>
-          {pause && (
-            <button type="button" className="kn-pause kns-pause" aria-pressed={paused} aria-label={paused ? 'Play the demo' : 'Pause the demo'} onClick={() => setPaused((v) => !v)}>
-              {paused
-                ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4.5 3v10l8.5-5z" fill="currentColor" /></svg>
-                : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /><rect x="9.4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /></svg>}
-            </button>
-          )}
         </div>
       </div>
     </section>

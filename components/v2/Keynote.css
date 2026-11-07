@@ -1,63 +1,79 @@
-/* Keynote: the v2 type, space and colour tokens for Apple-grade launch pages (docs/VISION.md, "The v2 system").
+/* Keynote: type, space and colour for Hanzo launch pages, on Hanzo's brand deck (docs/MASTER.md section 3).
    Owned by the Cloud 1 chat. Imported by every components/v2/Keynote*.jsx, so a page that uses one piece has them all.
-   How to use: put className="kn" on the page's <main>. The UI has no hues (docs/JAMES.md rule 7): --ac is a deck grey,
-   and colour only ever arrives through Hanzo's own media. Use the classes below instead of inventing sizes: at most
-   three sizes per screen. Never put a .kn-kick label directly above a headline (James's banned tell); put it under.
-   Hover rules live inside @media (hover: hover); every press answers with a .98 scale. */
-.kn { --ac: #737373; --ac-text: var(--ac); --ac-ink: #fff; --kn-r: 28px; --kn-rc: 16px; --kn-g: 24px; --kn-shadow: 0 1px 0 rgba(0, 0, 0, .04), 0 40px 80px -40px rgba(0, 0, 0, .22); background: #fff; color: var(--ink); overflow-x: clip; }
-.kn-wrap { width: min(100% - 48px, 1440px); margin-inline: auto; }
+   How to use: put className="kn" on the page's <main>. No hues: only the deck's neutral ramp (taste.py checks it).
+   Inside .kn the site's --soft, --faint and --line resolve to deck values that pass 4.5:1 on white.
+   Scale has rhythm (James, 7 Nov): resting sizes follow live hanzo.ai (h1 52px, section headings 26px, figures 64px);
+   one big thing per screen (usually the product object), the rest medium and small. Something grows past its resting
+   size only while it is the moment. Never put a .kn-kick label directly above a headline; set it under, as a caption.
+   Hover rules live inside @media (hover: hover); every press answers with a .97 scale in 90 ms. */
+.kn {
+  --ink: #0a0a0a; --soft: #525252; --faint: #737373; --line: rgba(0, 0, 0, .1);
+  --body: #525252; --quiet: #737373; --hair: rgba(0, 0, 0, .1);
+  --ac: #737373; --ac-text: #525252; --ac-ink: #fff;
+  --kn-r: 24px; --kn-rc: 16px; --kn-g: clamp(16px, 4vw, 32px); --kn-shadow: none;
+  --e-out: cubic-bezier(0, 0, .2, 1); --e-move: cubic-bezier(.4, 0, .2, 1); --e-in: cubic-bezier(.16, 1, .3, 1);
+  background: #fff; color: var(--ink); overflow-x: clip;
+}
+.kn [data-room='dark'], .kn .kn-obj.ink { --soft: #a3a3a3; --faint: rgba(255, 255, 255, .55); --line: rgba(255, 255, 255, .1); --body: #a3a3a3; --quiet: rgba(255, 255, 255, .55); --hair: rgba(255, 255, 255, .1); }
+.kn-wrap { width: min(100% - 2 * var(--kn-g), 1152px); margin-inline: auto; }
 .kn-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--kn-g); }
-.kn-sec { padding: clamp(120px, 15vw, 240px) 0; position: relative; }
+.kn-sec { padding: clamp(72px, 11vw, 188px) 0; position: relative; }
 
-.kn-display { margin: 0; font-size: clamp(56px, 8.9vw, 128px); font-weight: 600; line-height: .92; letter-spacing: -.05em; text-wrap: balance; }
-.kn-display.md { font-size: clamp(48px, 6.7vw, 96px); }
-.kn-display.sm { font-size: clamp(48px, 5.6vw, 80px); }
-.kn-headline { margin: 0; font-size: clamp(36px, 3.9vw, 56px); font-weight: 600; line-height: 1.02; letter-spacing: -.04em; max-width: 16ch; text-wrap: balance; }
-.kn-title { margin: 0; font-size: clamp(22px, 1.95vw, 28px); font-weight: 600; line-height: 1.15; letter-spacing: -.025em; text-wrap: balance; }
-.kn-lede { margin: 0; font-size: clamp(19px, 1.67vw, 24px); line-height: 1.4; letter-spacing: -.012em; color: var(--soft); max-width: 36ch; text-wrap: pretty; }
-.kn-body { margin: 0; font-size: clamp(17px, 1.32vw, 19px); line-height: 1.58; color: var(--soft); max-width: 64ch; text-wrap: pretty; }
-.kn-body b, .kn-lede b { color: var(--ink); font-weight: 600; }
-.kn-kick { margin: 0; font: 500 13px/1.2 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--soft); }
+/* type: Book 497 for every heading, Air 220 for the largest figures */
+.kn-display { margin: 0; font-size: 52px; font-weight: 497; line-height: 1.02; letter-spacing: -.035em; text-wrap: balance; }
+.kn-display.md { font-size: 44px; }
+.kn-display.sm { font-size: 32px; }
+.kn-headline { margin: 0; font-size: 26px; font-weight: 497; line-height: 1.15; letter-spacing: -.02em; max-width: 22ch; text-wrap: balance; }
+.kn-title { margin: 0; font-size: 21px; font-weight: 497; line-height: 1.2; letter-spacing: -.015em; text-wrap: balance; }
+.kn-lede { margin: 0; font-size: 21px; line-height: 1.4; letter-spacing: -.01em; color: var(--body); max-width: 44ch; text-wrap: pretty; }
+.kn-body { margin: 0; font-size: 16px; line-height: 1.6; color: var(--body); max-width: 66ch; text-wrap: pretty; }
+.kn-body b, .kn-lede b { color: var(--ink); font-weight: 606; }
+.kn-kick { margin: 0; font: 606 12px/1.3 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--quiet); }
 .kn-kick.ac { color: var(--ac-text); }
-.kn-fig { font-feature-settings: 'tnum'; font-variant-numeric: tabular-nums; letter-spacing: -.04em; }
+.kn-fig { font-feature-settings: 'tnum'; font-variant-numeric: tabular-nums; }
+.kn-figure { font-size: 64px; font-weight: 220; line-height: 1; letter-spacing: -.04em; font-feature-settings: 'tnum'; font-variant-numeric: tabular-nums; }
 .kn-ac { color: var(--ac-text); }
 .kn-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
-.kn-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 24px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--ink); font: 500 16px/1 var(--sans); text-decoration: none; white-space: nowrap; cursor: pointer; transition: border-color .2s, background-color .2s, transform .1s var(--ease); }
+
+/* page-local buttons (pages should prefer the kit's <Cta>; this matches its look for the few page-local controls) */
+.kn-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 24px; border-radius: 999px; border: 1px solid var(--hair); background: #fff; color: var(--ink); font: 497 16px/1 var(--sans); text-decoration: none; white-space: nowrap; cursor: pointer; transition: border-color .15s var(--e-out), background-color .15s var(--e-out), transform .15s var(--e-out); }
 .kn-btn.solid { background: var(--ink); border-color: var(--ink); color: #fff; }
 @media (hover: hover) {
-  .kn-btn:hover { border-color: rgba(0, 0, 0, .28); background-color: #f5f5f5; }
+  .kn-btn:hover { border-color: rgba(0, 0, 0, .3); background-color: #f5f5f5; }
   .kn-btn.solid:hover { background-color: #262626; }
 }
-.kn-btn:active { transform: scale(.98); }
+.kn-btn:active { transform: scale(.97); transition-duration: 90ms; }
 .kn-btn:focus-visible { outline: 2px solid var(--focus, var(--ink)); outline-offset: 3px; }
-.kn-hair { height: 1px; background: var(--line); border: 0; margin: 0; }
+.kn-hair { height: 1px; background: var(--hair); border: 0; margin: 0; }
 
-/* a hero object: crisp product UI, 28px radius, soft long shadow, no glass */
-.kn-obj { border-radius: var(--kn-r); background: #fff; border: 1px solid rgba(0, 0, 0, .08); box-shadow: var(--kn-shadow); overflow: hidden; }
-.kn-obj.ink { background: #0b0b0c; border-color: rgba(255, 255, 255, .08); color: #f5f5f7; }
+/* a hero object: crisp product UI. Outlined (paper) or filled (black), never both, and no shadow: only floating
+   things (menus, dialogs, the ask bar) take a shadow. */
+.kn-obj { border-radius: var(--kn-r); background: #fff; border: 1px solid var(--hair); overflow: hidden; }
+.kn-obj.ink { background: #0a0a0a; border-color: transparent; color: #fafafa; }
 
-@media (max-width: 900px) {
-  .kn-wrap { width: min(100% - 32px, 1440px); }
-  .kn-grid { column-gap: 16px; }
-  .kn-sec { padding: 120px 0; }
-  .kn-display { font-size: clamp(48px, 14vw, 56px); }
-  .kn-display.md, .kn-display.sm { font-size: 48px; }
-  .kn-headline { font-size: 36px; }
-  .kn-kick { font-size: 14px; }
-  .kn-btn { min-height: 48px; }
+@media (max-width: 899px) {
+  .kn-sec { padding: 72px 0; }
+  .kn-display { font-size: 40px; }
+  .kn-display.md { font-size: 32px; }
+  .kn-display.sm { font-size: 26px; }
+  .kn-lede { font-size: 20px; }
+  .kn-figure { font-size: 52px; }
+  .kn-kick { font-size: 12px; }
 }
 
-/* KeynoteLines: CSS only, so a hero title cuts in at first paint; JS off (no html.js) shows every line in place */
+/* KeynoteLines: CSS only, so a hero title cuts in at first paint (translateY 105% to 0, 700 ms, 60 ms apart);
+   JS off (no html.js) shows every line in place */
 .knl-in { display: block; }
-.knl-row { display: block; overflow: hidden; padding: .02em 0 .1em; margin: -.02em 0 -.1em; }
+.knl-row { display: block; overflow: hidden; padding: .02em 0 .12em; margin: -.02em 0 -.12em; }
 .knl-t { display: inline-block; }
-.js .knl:not(.in):not(.load) .knl-t { transform: translate3d(0, 108%, 0); }
-.js .knl.in .knl-t { transition: transform 1.05s var(--ease) calc(var(--knl-d, 0s) + var(--i, 0) * 90ms); }
-.js .knl.load .knl-t { animation: knl-up 1.05s var(--ease) both; animation-delay: calc(var(--knl-d, 0s) + var(--i, 0) * 90ms); }
-@keyframes knl-up { from { transform: translate3d(0, 108%, 0); } to { transform: none; } }
+.js .knl:not(.in):not(.load) .knl-t { transform: translate3d(0, 105%, 0); }
+.js .knl.in .knl-t { transition: transform .7s var(--e-in) calc(var(--knl-d, 0s) + var(--i, 0) * 60ms); }
+.js .knl.load .knl-t { animation: knl-up .7s var(--e-in) both; animation-delay: calc(var(--knl-d, 0s) + var(--i, 0) * 60ms); }
+@keyframes knl-up { from { transform: translate3d(0, 105%, 0); } to { transform: none; } }
 
-/* the pause control every self-running hero demo carries (WCAG 2.2.2) */
-.kn-pause { position: absolute; z-index: 3; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .1); background: #fff; color: var(--ink); display: grid; place-items: center; cursor: pointer; box-shadow: 0 6px 16px -8px rgba(0, 0, 0, .3); transition: transform .1s var(--ease), background-color .2s; }
+/* the pause control every self-running demo carries (WCAG 2.2.2): in the flow, first in the DOM, never over content */
+.kn-pause { position: relative; flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--hair); background: #fff; color: var(--ink); display: inline-grid; place-items: center; cursor: pointer; transition: background-color .15s var(--e-out), transform .15s var(--e-out); }
 @media (hover: hover) { .kn-pause:hover { background-color: #f5f5f5; } }
-.kn-pause:active { transform: scale(.94); }
+.kn-pause:active { transform: scale(.97); transition-duration: 90ms; }
+.kn-pause[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: #fff; }
 .kn-pause:focus-visible { outline: 2px solid var(--focus, var(--ink)); outline-offset: 3px; }

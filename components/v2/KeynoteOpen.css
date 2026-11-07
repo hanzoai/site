@@ -1,31 +1,30 @@
 /* KeynoteOpen (Cloud 1 chat): see KeynoteOpen.jsx */
 .kno-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr)); gap: var(--kn-g, 24px); }
 .kno-grid > li { display: flex; }
-.kno-card { position: relative; flex: 1; display: flex; flex-direction: column; text-align: left; gap: 0; padding: 0; border: 1px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; overflow: hidden; font: inherit; transition: box-shadow .4s var(--ease), border-color .3s; }
-.kno-card:active { scale: .98; }
+.kno-card { position: relative; flex: 1; display: flex; flex-direction: column; text-align: left; gap: 0; padding: 0; border: 1px solid var(--hair); background: #fff; color: var(--ink); cursor: pointer; overflow: hidden; font: inherit; transition: border-color .15s var(--e-out), scale .15s var(--e-out); }
+.kno-card:active { scale: .97; transition-duration: 90ms; }
 .kno-card:focus-visible { outline: 2px solid var(--focus, var(--ink)); outline-offset: 3px; }
-.kno-art { position: relative; aspect-ratio: 4 / 3; background: #f5f5f7; overflow: hidden; }
+.kno-art { position: relative; aspect-ratio: 4 / 3; background: #f5f5f5; overflow: hidden; }
 .kno-art > * { width: 100%; height: 100%; }
 .kno-art > * { transition: transform .8s var(--ease); }
 @media (hover: hover) {
-  .kno-card:hover { border-color: rgba(0, 0, 0, .18); box-shadow: 0 30px 60px -36px rgba(0, 0, 0, .28); }
+  .kno-card:hover { border-color: rgba(0, 0, 0, .3); }
   .kno-card:hover .kno-art > * { transform: scale(1.03); }
   }
 .kno-txt { display: flex; flex-direction: column; gap: 10px; padding: 24px 24px 28px; }
-.kno-t { font-size: clamp(20px, 1.6vw, 24px); }
+.kno-t { font-size: 21px; }
 .kno-sub { font-size: 16px; line-height: 1.5; color: var(--soft); }
 .kno-k { margin-top: 4px; }
-.kno-plus { position: absolute; right: 16px; bottom: 16px; width: 36px; height: 36px; border-radius: 50%; background: var(--ink); color: #fff; display: grid; place-items: center; transition: transform .35s var(--ease); }
+.kno-plus { position: absolute; right: 16px; bottom: 16px; width: 32px; height: 32px; border-radius: 50%; background: var(--ink); color: #fff; display: grid; place-items: center; transition: transform .3s var(--e-move); }
 
 .kno-layer { position: fixed; inset: 0; z-index: 950; display: grid; place-items: center; padding: clamp(16px, 4vw, 56px); }
-.kno-back { position: absolute; inset: 0; background: rgba(10, 10, 10, .36); }
-.kno-full { position: relative; width: min(100%, 1080px); max-height: calc(100svh - 64px); overflow: auto; overscroll-behavior: contain; background: #fff; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); box-shadow: 0 50px 120px -40px rgba(0, 0, 0, .5); }
+.kno-back { position: absolute; inset: 0; background: rgba(0, 0, 0, .3); }
+.kno-full { position: relative; width: min(100%, 1080px); max-height: calc(100svh - 64px); overflow: auto; overscroll-behavior: contain; background: #fff; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); box-shadow: 0 24px 60px -16px rgba(0, 0, 0, .18); }
 .kno-art.big { aspect-ratio: auto; min-height: 100%; }
 .kno-full-b { display: flex; flex-direction: column; gap: 20px; padding: clamp(28px, 4vw, 56px); }
-.kno-full-b .kn-headline { font-size: clamp(32px, 3.2vw, 48px); }
-.kno-full-b .kn-lede { font-size: clamp(18px, 1.5vw, 21px); }
+.kno-full-b .kn-headline { font-size: 32px; }
 .kno-body { display: flex; flex-direction: column; gap: 14px; }
-.kno-body p, .kno-body li { margin: 0; font-size: 17px; line-height: 1.6; color: var(--soft); }
+.kno-body p, .kno-body li { margin: 0; font-size: 16px; line-height: 1.6; color: var(--body); }
 .kno-body ul { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; }
 .kno-cta { align-self: flex-start; margin-top: 8px; }
 .kno-x { position: absolute; top: 16px; right: 16px; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--ink); display: grid; place-items: center; cursor: pointer; z-index: 2; }

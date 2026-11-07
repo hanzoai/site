@@ -21,8 +21,8 @@ import { scrollToY } from '../../lib/scroll';
 import './Keynote.css';
 import './KeynoteChapters.css';
 
-/* true on screens wider than 900 px (the server renders the wide layout) */
-export function useWide(q = '(min-width: 901px)') {
+/* true on screens 900 px and wider (the server renders the wide layout) */
+export function useWide(q = '(min-width: 900px)') {
   const [w, setW] = useState(true);
   useEffect(() => {
     const m = matchMedia(q);
