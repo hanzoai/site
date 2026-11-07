@@ -17,11 +17,13 @@
 .fn .fn-go:active { transform: scale(.97); transition-duration: 90ms; }
 .fn-hero-meta { display: flex; align-items: center; gap: 12px; margin-top: 17px; }
 .fn-hero-mt { display: flex; flex-direction: column; gap: 4px; font: 500 13px/1.45 var(--mono); color: #737373; letter-spacing: .02em; }
-.fn-hero-o { grid-column: 6 / -1; margin-right: calc((100vw - min(100vw - 2 * var(--kn-g), 1152px)) / -2); }
-.fn-hero-o .fn-life { border-radius: 24px 0 0 24px; }
-/* the fill bleeds to the screen's edge on purpose; its content keeps to the container, so nothing sits near the edge */
-@media (min-width: 900px) { .fn-hero-o .fn-life { padding-right: calc(clamp(24px, 2.6vw, 36px) + (100vw - min(100vw - 2 * var(--kn-g), 1152px)) / 2); } }
-.fn-hero-oi { transform-origin: 0 50%; }
+/* the object ends inside the container with its full radius (no cut edge at the screen's side) */
+.fn-hero-o { grid-column: 6 / -1; min-width: 0; }
+.fn-hero-o .fn-life { border-radius: 24px; }
+.fn-hero-oi { transform-origin: 50% 50%; }
+/* the docs link answers more than colour: its arrow travels and the words underline */
+@media (hover: hover) { .fn-hero-acts .x-arrow:hover svg { transform: translateX(4px); } }
+.fn-hero-acts .x-arrow:active { transform: translateY(1px); }
 .js .fn-hero-in { animation: fn-in .5s var(--e-in) both; animation-delay: var(--d, 0s); }
 .js .fn-hero-o { animation: fn-rise .9s var(--e-in) .18s both; }
 @keyframes fn-in { from { opacity: 0; transform: translate3d(0, 16px, 0); } to { opacity: 1; transform: none; } }
@@ -39,11 +41,16 @@
 .fn-col-k { margin: 0 0 12px; font: 606 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #737373; }
 .fn-trigs { grid-area: trig; position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: 17px; }
 .fn-trigs .fn-col-k { margin: 0; }
-.fn-trigs ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
-.fn-trigs li { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 10px; border-radius: 999px; background: #fff; font: 400 13px/1.1 var(--mono); color: #525252; white-space: nowrap; transition: color .3s var(--e-out), background-color .3s var(--e-out), transform .4s var(--e-move); }
-.fn-trigs li i { flex: none; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid #737373; transition: background-color .3s var(--e-out), border-color .3s var(--e-out); }
-.fn-trigs li.on { color: #fafafa; background: #0a0a0a; transform: translateY(-3px); }
-.fn-trigs li.on i { background: #fafafa; border-color: #fafafa; }
+.fn-trig-b { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+/* the triggers are buttons: pick the one that fires (pressed again, the hero goes back to taking turns) */
+.fn-trig-b button { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 10px; border: 0; border-radius: 999px; background: #fff; font: 400 13px/1.1 var(--mono); color: #525252; white-space: nowrap; cursor: pointer; transition: color .3s var(--e-out), background-color .3s var(--e-out), transform .4s var(--e-move); }
+.fn-trig-b button i { flex: none; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid #737373; transition: background-color .3s var(--e-out), border-color .3s var(--e-out); }
+.fn-trig-b button.on { color: #fafafa; background: #0a0a0a; transform: translateY(-3px); }
+.fn-trig-b button.on i { background: #fafafa; border-color: #fafafa; }
+.fn-trig-b button[aria-pressed='true'] { outline: 1.5px solid #0a0a0a; outline-offset: 3px; }
+.fn-trig-b button:active { transform: scale(.97); transition-duration: 90ms; }
+.fn-trig-b button:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 3px; }
+@media (hover: hover) { .fn-trig-b button:not(.on):hover { color: #0a0a0a; background: #fafafa; } .fn-trig-b button:not(.on):hover i { border-color: #0a0a0a; } }
 /* calls travel down from the trigger row into the file */
 .fn-calls { position: absolute; left: calc(31% - 0px); bottom: -27px; width: 1px; height: 27px; background: rgba(0, 0, 0, .14); }
 .fn-calls i { position: absolute; left: -3.5px; top: 0; width: 8px; height: 8px; border-radius: 50%; background: #0a0a0a; opacity: 0; }
@@ -78,10 +85,11 @@
 .fn-count { margin: 0; display: flex; align-items: center; gap: 10px; font: 497 17px/1.2 var(--sans); color: #0a0a0a; }
 .fn-count i { flex: none; width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid #0a0a0a; background: #0a0a0a; transition: background-color .3s var(--e-out); }
 .fn-count[data-zero] i { background: transparent; }
-.fn-count[data-zero] span { color: #525252; }
+/* the words are Hanzo's state at rest; while replicas run they fade back and the filled dot carries the state */
+.fn-count span { color: #525252; text-decoration: line-through; text-decoration-thickness: 1px; transition: color .3s var(--e-out); }
+.fn-count[data-zero] span { color: #0a0a0a; text-decoration: none; }
 .fn-nodes { display: grid; gap: 8px; }
-.fn-node { display: grid; grid-template-columns: 52px minmax(0, 1fr); align-items: center; gap: 8px; padding: 10px 12px; border-radius: 12px; background: #fff; }
-.fn-node > span { font: 400 13px/1 var(--mono); color: #737373; }
+.fn-node { display: block; padding: 10px 12px; border-radius: 12px; background: #fff; }
 .fn-slots { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; }
 .fn-slots i { aspect-ratio: 1; border-radius: 6px; border: 1.5px solid #d4d4d4; transform: scale(.7); transition: transform .3s var(--e-in), background-color .15s var(--e-out), border-color .15s var(--e-out); }
 .fn-slots i.on { background: #0a0a0a; border-color: #0a0a0a; transform: none; }
@@ -112,7 +120,10 @@
 .kn-obj.ink .fn-sc-k { color: #a3a3a3; }
 
 .fn-rts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.fn-rt { display: flex; flex-direction: column; justify-content: space-between; gap: 17px; min-height: 120px; padding: 24px; border-radius: 16px; background: #f5f5f5; transition: background-color .4s var(--e-move), color .4s var(--e-move), transform .5s var(--e-move); }
+.fn-rt { display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; gap: 17px; min-height: 120px; padding: 24px; border: 0; border-radius: 16px; background: #f5f5f5; color: #0a0a0a; font: inherit; text-align: left; cursor: pointer; transition: background-color .4s var(--e-move), color .4s var(--e-move), transform .5s var(--e-move); }
+.fn-rt:active { transform: scale(.97); transition-duration: 90ms; }
+.fn-rt:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 3px; }
+@media (hover: hover) { .fn-rt:not(.on):hover { background: #e4e4e7; } }
 .fn-rt b { font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1; }
 .fn-rt span { font: 400 14px/1.3 var(--mono); color: #525252; transition: color .4s var(--e-move); }
 .fn-rt.box { grid-column: 1 / -1; min-height: 0; flex-direction: row; align-items: baseline; background: transparent; border: 1.5px dashed rgba(0, 0, 0, .2); }
@@ -123,14 +134,14 @@
 .fn-pool { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 10px; }
 .fn-pool i { aspect-ratio: 1 / 1.35; border-radius: 12px; border: 1.5px solid rgba(255, 255, 255, .3); transition: background-color .3s var(--e-out), transform .5s var(--e-move); }
 .fn-pool i.hit { background: #fafafa; border-color: #fafafa; transform: translateY(-6px); }
-.fn-req { position: relative; height: 44px; border-radius: 999px; background: rgba(255, 255, 255, .06); overflow: hidden; }
+/* the request: its word stays put at the rail's start; the dot travels the rail (sized to the rail, never past it) */
+.fn-req { position: relative; height: 44px; border-radius: 999px; background: rgba(255, 255, 255, .06); overflow: hidden; container-type: inline-size; }
 .fn-req-dot, .fn-req-l { position: absolute; top: 50%; }
 .fn-req-dot { left: 8px; width: 28px; height: 28px; margin-top: -14px; border-radius: 50%; background: #fafafa; transition: transform .9s var(--e-move), opacity .3s var(--e-out); }
-.fn-req-l { left: 48px; transform: translateY(-50%); font: 400 14px/1 var(--mono); color: rgba(255, 255, 255, .78); transition: transform .9s var(--e-move), opacity .3s var(--e-out); }
-.fn-sc-warm[data-k='0'] .fn-req-dot { transform: translateX(min(40vw, 480px)); }
-.fn-sc-warm[data-k='0'] .fn-req-l { transform: translate(min(40vw, 480px), -50%); }
-.fn-sc-warm[data-k='1'] .fn-req-dot { transform: translateX(min(20vw, 240px)); }
-.fn-sc-warm[data-k='1'] .fn-req-l { transform: translate(min(20vw, 240px), -50%); }
+.fn-req-l { left: 48px; transform: translateY(-50%); font: 400 14px/1 var(--mono); color: rgba(255, 255, 255, .78); white-space: nowrap; transition: opacity .3s var(--e-out); }
+.fn-sc-warm[data-k='0'] .fn-req-dot { transform: translateX(calc(100cqw - 44px)); }
+.fn-sc-warm[data-k='1'] .fn-req-dot { transform: translateX(calc(50cqw - 22px)); }
+.fn-sc-warm[data-k='0'] .fn-req-l, .fn-sc-warm[data-k='1'] .fn-req-l { opacity: .55; }
 .fn-sc-warm[data-k='2'] .fn-req-dot, .fn-sc-warm[data-k='3'] .fn-req-dot { opacity: .3; }
 .fn-zero { margin: 8px 0 0; display: flex; align-items: center; gap: 17px; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, .1); }
 .fn-zero-i { flex: none; display: flex; gap: 6px; }
@@ -152,7 +163,15 @@
 .fn-cl-f { margin: 0; display: flex; align-items: center; gap: 10px; font: 400 14px/1.3 var(--mono); color: #525252; }
 .fn-cl-f i { width: 12px; height: 12px; border-radius: 6px; background: #0a0a0a; }
 
-.fn-want { align-self: flex-start; display: flex; align-items: center; gap: 14px; padding: 14px 20px 14px 14px; border-radius: 16px; border: 1.5px dashed #0a0a0a; font: 400 14px/1 var(--mono); color: #0a0a0a; }
+.fn-want { align-self: flex-start; display: flex; align-items: center; gap: 14px; min-height: 44px; padding: 14px 20px 14px 14px; border-radius: 16px; border: 1.5px dashed #0a0a0a; background: transparent; font: 400 14px/1 var(--mono); color: #0a0a0a; cursor: pointer; transition: background-color .15s var(--e-out), transform .15s var(--e-out); }
+.fn-want[aria-pressed='true'] { border-style: solid; }
+.fn-want:active { transform: scale(.97); transition-duration: 90ms; }
+.fn-want:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 3px; }
+@media (hover: hover) { .fn-want:hover { background: #f5f5f5; } }
+/* the plain nodes are shapes (two quiet bars), only the GPU node carries Hanzo's words */
+.fn-gnode-s { display: flex; flex-direction: column; gap: 6px; }
+.fn-gnode-s i { display: block; height: 8px; border-radius: 4px; background: #d4d4d4; width: 64%; }
+.fn-gnode-s i + i { width: 40%; }
 .fn-pod { display: block; width: 40px; height: 40px; border-radius: 12px; background: #0a0a0a; transition: opacity .4s var(--e-out), transform .5s var(--e-in); }
 .fn-gnodes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .fn-gnode { display: flex; flex-direction: column; gap: 14px; min-height: 220px; padding: 17px; border-radius: 16px; background: #f5f5f5; outline: 1.5px solid transparent; outline-offset: 4px; transition: outline-color .4s var(--e-out); }
@@ -168,7 +187,7 @@
 .fn-sc-tr { justify-content: center; gap: 0; }
 .fn-sc-tr .fn-tr-l { margin-bottom: -1px; }
 .fn-tr-l { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
-.fn-tr-l li { padding: 14px 10px; border-radius: 12px; background: #f5f5f5; text-align: center; font: 400 14px/1.2 var(--mono); color: #0a0a0a; }
+.fn-tr-l li { padding: 14px 6px; border-radius: 12px; background: #f5f5f5; text-align: center; font: 400 13px/1.2 var(--mono); color: #0a0a0a; white-space: nowrap; }
 .fn-tr-lines { width: 100%; height: clamp(160px, 26svh, 280px); overflow: visible; }
 .fn-tr-lines path { fill: none; stroke: #0a0a0a; stroke-width: 1.5; vector-effect: non-scaling-stroke; }
 .fn-tr-h { align-self: center; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 24px 44px; border-radius: 16px; background: #0a0a0a; color: #fafafa; }
@@ -176,12 +195,17 @@
 .fn-tr-h span { font-size: 14px; color: #a3a3a3; }
 
 .fn-modes { display: flex; gap: 6px; }
-.fn-modes span { padding: 10px 16px; border-radius: 999px; border: 1px solid var(--hair); font: 400 14px/1 var(--mono); color: #525252; transition: background-color .3s var(--e-out), color .3s var(--e-out), border-color .3s var(--e-out); }
-.fn-modes span.on { background: #0a0a0a; border-color: #0a0a0a; color: #fafafa; }
+.fn-modes button { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--hair); background: transparent; font: 400 14px/1 var(--mono); color: #525252; cursor: pointer; transition: background-color .3s var(--e-out), color .3s var(--e-out), border-color .3s var(--e-out), transform .15s var(--e-out); }
+.fn-modes button.on { background: #0a0a0a; border-color: #0a0a0a; color: #fafafa; }
+.fn-modes button:active { transform: scale(.97); transition-duration: 90ms; }
+.fn-modes button:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 2px; }
+@media (hover: hover) { .fn-modes button:not(.on):hover { border-color: #0a0a0a; color: #0a0a0a; } }
 .fn-vers { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.fn-ver { display: flex; flex-direction: column; gap: 44px; padding: 24px; border-radius: 16px; background: #f5f5f5; transition: background-color .5s var(--e-move), color .5s var(--e-move); }
-.fn-ver b { font-size: 44px; font-weight: 220; letter-spacing: -.04em; line-height: .9; }
-.fn-ver i { height: 6px; border-radius: 999px; background: currentColor; opacity: .2; }
+/* each version is a shape: a few lines of a function, no invented name */
+.fn-ver { display: flex; flex-direction: column; gap: 10px; padding: 24px; border-radius: 16px; background: #f5f5f5; transition: background-color .5s var(--e-move), color .5s var(--e-move); }
+.fn-ver i { height: 8px; border-radius: 999px; background: currentColor; opacity: .25; width: 72%; }
+.fn-ver i:nth-child(2) { width: 52%; }
+.fn-ver i:nth-child(3) { width: 84%; }
 .fn-sc-ver:not([data-k='2']) .fn-ver.a, .fn-sc-ver[data-k='2'] .fn-ver.b { background: #0a0a0a; color: #fafafa; }
 .fn-traffic { position: relative; height: 56px; border-radius: 12px; background: #0a0a0a; overflow: hidden; }
 .fn-traffic i { position: absolute; inset: 0; }

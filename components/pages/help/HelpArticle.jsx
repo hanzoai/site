@@ -288,18 +288,17 @@ function Mini({ kind, setting, w }) {
 function Docs({ s }) {
   const rows = [];
   s.blocks.forEach((b) => (b.inl || []).forEach((k, j, all) => {
-    if (typeof k === 'string' || !k.a || /^#/.test(k.a)) return;
+    // the documents only: the protected address stays as Hanzo's page has it, in the text
+    if (typeof k === 'string' || !k.a || k.cf || /^(#|mailto:)/.test(k.a)) return;
     const after = typeof all[j + 1] === 'string' ? all[j + 1].match(/^\s*(\([^)]*\))/) : null;
-    rows.push({ t: k.t, to: k.cf ? k.a : k.a, sec: after ? after[1] : null, mail: /^mailto:/.test(k.a) || !!k.cf });
+    rows.push({ t: k.t, to: k.a, sec: after ? after[1] : null });
   }));
   if (!rows.length) return null;
   return (
     <ul className="xhp-docs" aria-hidden="true">
       {rows.map((r, i) => (
         <li key={r.t} className="xhp-page" style={{ '--i': i }}>
-          {r.mail
-            ? <a href={r.to} tabIndex={-1}><span>{r.t}</span>{r.sec && <span className="x-mono">{r.sec}</span>}<Arrow /></a>
-            : <A to={r.to} tabIndex={-1}><span>{r.t}</span>{r.sec && <span className="x-mono">{r.sec}</span>}<Arrow /></A>}
+          <A to={r.to} tabIndex={-1}><span>{r.t}</span>{r.sec && <span className="x-mono">{r.sec}</span>}<Arrow /></A>
         </li>
       ))}
     </ul>

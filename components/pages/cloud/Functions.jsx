@@ -21,7 +21,7 @@
 //   between versions, and the function you described is read back in Hanzo's own lines.
 // Every word and link is Hanzo's; the scenes are drawn, not measured.
 import { createContext, Fragment, useContext, useEffect, useRef, useState } from 'react';
-import { motion, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
+import { motion, useInView, useReducedMotion } from 'motion/react';
 import { Magnetic } from '../../ui';
 import { A, Cta } from '../../kit';
 import KeynoteChapters from '../../v2/KeynoteChapters';

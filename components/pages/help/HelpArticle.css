@@ -92,7 +92,7 @@
 .xhp-pause:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
 .xhp-pause[aria-pressed='true'] { background: var(--tile-2); }
 .xhp-seg { display: inline-flex; gap: 2px; padding: 4px; border-radius: 999px; background: var(--tile-2); max-width: 100%; }
-.xhp-seg button { min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: none; color: var(--muted); font: 500 14px/1 var(--sans); cursor: pointer; white-space: nowrap; transition: background-color var(--d-fast) var(--e-out), color var(--d-fast) var(--e-out), transform var(--d-fast) var(--e-out); }
+.xhp-seg button { min-height: 40px; padding: 0 12px; border: 0; border-radius: 999px; background: none; color: var(--muted); font: 500 14px/1 var(--sans); cursor: pointer; white-space: nowrap; transition: background-color var(--d-fast) var(--e-out), color var(--d-fast) var(--e-out), transform var(--d-fast) var(--e-out); }
 .xhp-seg button[aria-checked='true'] { background: #fff; color: var(--ink); }
 .xhp-seg button:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
 .xhp-stage { position: relative; height: clamp(240px, min(24vw, 32svh), 320px); overflow: hidden; touch-action: pan-y; }
@@ -128,7 +128,7 @@
 .xhp-row-t { font-weight: 500; line-height: 1.3; }
 /* 01's scene: the setting itself, its row lit */
 .xhp-row { border-radius: 6px; transition: background-color var(--d-base) var(--e-out); }
-.xhp-row[data-on] { background: var(--tile); box-shadow: -8px 0 0 var(--tile), 8px 0 0 var(--tile); }
+.xhp-row[data-on] { background: var(--tile); box-shadow: -8px 0 0 var(--tile), 8px 0 0 var(--tile); border-color: transparent; }
 .xhp-skel { display: flex; justify-content: space-between; gap: 17px; }
 .xhp-skel i:first-child { width: 58%; } .xhp-skel i:last-child { width: 18%; }
 .xhp-sw { flex: none; position: relative; display: inline-block; width: 44px; height: 26px; padding: 0; border: 0; border-radius: 999px; background: var(--track); cursor: pointer; transition: background-color var(--d-base) var(--e-out); }
@@ -198,12 +198,16 @@
 .xhp-mini-pane { flex-direction: column; gap: 10px; padding: 12px 14px; border-radius: 16px; background: #fff; box-shadow: 0 0 0 1px var(--hair); font-size: 13px; color: var(--ink); }
 .xhp-mini-pane .xhp-row { flex-direction: row; }
 .xhp-mini-pane .xhp-sw { cursor: default; }
-/* 05 on a phone: three pages that lay themselves down once the section arrives */
-.xhp-pages { display: none; width: 100%; max-width: 240px; height: auto; margin: 0 0 4px; }
+/* 05 on a phone: the two documents as named rows; each lays down its hairline in turn once the section arrives */
+.xhp-docs { display: none; list-style: none; margin: 0 0 4px; padding: 0; }
+.xhp-docs li { position: relative; }
+.xhp-docs li::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: rgba(0, 0, 0, .14); transform: scaleX(0); transform-origin: left; transition: transform 900ms var(--e-io) calc(200ms + var(--i, 0) * 120ms); }
+.xhp-docs a { display: grid; grid-template-columns: auto 1fr 16px; align-items: center; gap: 10px; min-height: 52px; color: var(--ink); font-size: 16px; font-weight: 500; text-decoration: none; }
+.xhp-docs .x-mono { font-size: 12px; font-weight: 500; color: var(--muted); }
+.xhp-docs svg { transition: transform var(--d-base) var(--e-em); }
 .xhp-page { opacity: 0; transform: translateY(12px); transition: opacity var(--d-slow) var(--e-em), transform var(--d-slow) var(--e-em); transition-delay: calc(var(--i, 0) * 90ms); }
-.xhp-page rect, .xhp-page path { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 900ms var(--e-io); transition-delay: calc(200ms + var(--i, 0) * 90ms); }
 .xhp-sec[data-seen] .xhp-page { opacity: 1; transform: none; }
-.xhp-sec[data-seen] .xhp-page rect, .xhp-sec[data-seen] .xhp-page path { stroke-dashoffset: 0; }
+.xhp-sec[data-seen] .xhp-docs li::after { transform: scaleX(1); }
 
 @media (hover: hover) {
   .xhp-toc a:hover { background: var(--tile); }
@@ -221,6 +225,10 @@
   .xhp-flow li button:hover { color: var(--ink); background: #fff; }
   .xhp-seg button:hover:not([aria-checked='true']) { color: var(--ink); background: rgba(0, 0, 0, .05); }
   .xhp-pause:hover { background: var(--tile-2); }
+  /* the switch under the picture answers the pointer: its track darkens one step */
+  .xhp-try-b:hover .xhp-sw { background: #a3a3a3; }
+  .xhp-try-b:hover .xhp-sw[data-on] { background: #262626; }
+  .xhp-docs a:hover svg { transform: translateX(4px); }
 }
 @media (max-width: 1199px) and (min-width: 900px) {
   .xhp-flows { grid-template-columns: minmax(0, 1fr); }
@@ -231,12 +239,15 @@
   /* the question, then the live panel, then the index and the document */
   .xhp-hero { display: contents; }
   .xhp-hero > *, .xhp-aside, .xhp-doc { grid-column: 1; grid-row: auto; }
-  .xhp-crumb { order: 0; } .xhp-h1 { order: 1; } .xhp-lede { order: 2; } .xhp-aside { order: 3; } .xhp-kick { order: 4; } .xhp-toc { order: 5; } .xhp-doc { order: 6; }
+  /* the topic line stays with the lede it belongs to, never stranded between the demo and the index */
+  .xhp-crumb { order: 0; } .xhp-h1 { order: 1; } .xhp-lede { order: 2; } .xhp-kick { order: 3; } .xhp-aside { order: 4; } .xhp-toc { order: 5; } .xhp-doc { order: 6; }
   .xhp-crumb ol { font-size: 13px; }
-  .xhp-crumb li[aria-current] span { padding: 0 0 6px; }
+  /* the h1 says the title right below, so the phone breadcrumb ends on the topic, with no trailing slash */
+  .xhp-crumb li[aria-current] { display: none; }
+  .xhp-crumb li:nth-last-child(2)::after { content: none; }
   .xhp-crumb li:not(:first-child) { min-height: 32px; } /* only the link needs the 44px target */
-  .xhp-aside { position: relative; top: auto; margin-top: 17px; max-height: none; overflow: visible; }
-  .xhp-kick { margin-top: 27px; }
+  .xhp-aside { position: relative; top: auto; margin-top: 27px; max-height: none; overflow: visible; }
+  .xhp-kick { margin-top: 10px; }
   /* the two platforms' steps: their headings become tabs, one list at a time */
   /* the longer platform takes the room it needs, the shorter one its own width, so neither label wraps */
   .xhp-flows { grid-template-columns: minmax(0, 1fr) auto !important; gap: 0 6px; padding: 6px; border-radius: 16px; background: var(--tile); }
@@ -256,21 +267,32 @@
   .xhp-mini-pane { display: flex; height: auto; }
   .xhp-end .xhp-h2 { font-size: 26px; }
   .xhp-end .xhp-p { font-size: 17px; }
-  .xhp-ul.leads { margin-inline: 0; }
-  .xhp-ul.leads li { padding-inline: 0; }
+  /* phone: the rows' hairlines and their fill share one edge (the text column) */
+  .xhp-ul.leads { margin-inline: 0; max-width: none; background-position: 0 100%; background-size: 100% 1px; }
+  .xhp-ul.leads li { padding-inline: 0; border-radius: 0; background-position: 0 0; background-size: 100% 1px; }
+  .xhp-ul.leads li::after { left: 0; right: 0; }
   .xhp-h1 { margin-top: 10px; font-size: 32px; line-height: 1.05; }
   .xhp-lede { font-size: 17px; margin-top: 17px; }
   .xhp-toc { margin-top: 44px; }
   .xhp-panel { border-radius: 20px; }
   .xhp-seg { display: flex; flex: 1; min-width: 0; }
-  /* both tabs fit on one line: each takes its own width and the longer label gets the rest (never shortened) */
-  .xhp-seg button { flex: 1 1 auto; min-width: 0; min-height: 44px; padding: 0 10px; font-size: 13px; white-space: nowrap; }
-  /* the demo card stays near 60% of the screen: a shorter stage, and the switch's answer takes only the lines it needs */
-  .xhp-stage { height: 184px; }
+  /* both tabs fit on one line in Hanzo's full words: each takes its own width, tighter type and padding (never shortened) */
+  .xhp-seg button { flex: 1 1 auto; min-width: 0; min-height: 44px; padding: 0 8px; font-size: 13px; letter-spacing: -.01em; white-space: nowrap; }
+  /* the pause control sits in the stage's free corner (still first in the DOM), so the tabs have the bar's whole width */
+  .xhp-panel { position: relative; }
+  .xhp-pause { position: absolute; z-index: 6; left: 10px; top: 72px; background: var(--tile); }
+  .xhp-panel-bar { padding: 10px; }
+  /* the demo card stays near 60% of the screen; the handset is tall enough that its switch always shows whole */
+  .xhp-stage { height: 204px; }
+  .xhp-screen[data-device='phone'] .xhp-set-h { padding: 8px 10px; font-size: 13px; }
+  .xhp-screen[data-device='phone'] .xhp-pane { padding: 8px 10px; gap: 6px; }
+  .xhp-screen[data-device='phone'] .xhp-row { gap: 6px; padding: 6px 0; }
+  .xhp-screen[data-device='phone'] .xhp-row-t { font-size: 12px; line-height: 1.25; }
+  .xhp-screen[data-device='phone'] .xhp-pane-h { font-size: 13px; }
   .xhp-cap { min-height: 0; padding: 6px 14px; }
   .xhp-try { padding: 6px 14px 12px; }
   .xhp-means { min-height: 4.5em; margin-top: 2px; }
-  .xhp-pages { display: block; }
+  .xhp-docs { display: block; }
   .xhp-mini-what .xhp-row { margin-inline: 8px; }
   .xhp-set { grid-template-columns: 40% 1fr; }
   .xhp-sec { padding-top: 56px; }
@@ -281,10 +303,12 @@
 }
 @media (max-width: 359px) {
   .xhp-cap-t { min-height: 4.35em; } /* the narrowest phones: a step can take three lines */
-  /* the narrowest phones: the platform tabs take their own row under the pause control, so neither label wraps */
-  .xhp-panel-bar { flex-wrap: wrap; }
-  .xhp-seg { flex-basis: 100%; order: 2; }
-  .xhp-stage { height: 168px; }
+  /* the narrowest phones: pause still sits in the stage corner, the tabs keep one row in Hanzo's full words */
+  .xhp-panel-bar { padding: 8px; }
+  .xhp-seg { padding: 3px; }
+  .xhp-seg button { padding: 0 6px; font-size: 11.5px; letter-spacing: -.02em; }
+  .xhp-pause { top: 66px; left: 8px; }
+  .xhp-stage { height: 196px; }
   .xhp-flow-tab { padding: 8px 8px; font-size: 12.5px; letter-spacing: -.01em; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -293,6 +317,6 @@
   .xhp-ul li::after { transform: none; }
   .xhp-cap-t, .xhp-means-on, .xhp-means ul, .xhp-after, .xhp-h1-in { animation: none; }
   .xhp-page { opacity: 1; transform: none; transition: none; }
-  .xhp-page rect, .xhp-page path { stroke-dashoffset: 0; transition: none; }
+  .xhp-docs li::after { transform: none; transition: none; }
   .xhp-toc-go, .xhp-toc a { transition: none; }
 }

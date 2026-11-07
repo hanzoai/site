@@ -35,36 +35,34 @@ const EASE = [0.16, 1, 0.3, 1];
 /* what each detector is called, in Hanzo's own words (the second fact's sentence); the brackets of a marker are drawn
    by CSS, so every word on the page is Hanzo's */
 const NAME = { CARD: 'card numbers', EMAIL: 'emails', SSN: 'Social security numbers', PHONE: 'phone numbers', IP: 'IP addresses', API_KEY: 'provider API keys' };
-/* the request and the reply are drawn, not written: grey word shapes (length in ch), with the pasted secrets as
-   darker shapes that turn into typed markers once they are read, and the injection attempt as a run of shapes that
-   gets underlined. No invented sentence, no made-up card number. */
-const REQ = [6, 4, { k: 'CARD' }, 3, 5, 7, 2, { k: 'EMAIL' }, { inj: [6, 3, 8, 5] }];
-const REP = [5, 3, 4, { k: 'API_KEY' }, 2, 5, 4, { k: 'IP' }];
+/* the request and the reply hold data, not sentences: data-shaped values (a standard test card number, an address at
+   example.com, a test-key-shaped string, the documentation IP) that turn into Hanzo's typed markers once read, and the
+   injection shown by Hanzo's own name for its first shape, underlined once it is scored. No invented prose. */
+const REQ = [{ k: 'CARD', v: '4111 1111 1111 1111' }, { k: 'EMAIL', v: 'jane@example.com' }, { inj: 'Overriding the instructions' }];
+const REP = [{ k: 'API_KEY', v: 'sk-test-51Hx9Qb2aZ' }, { k: 'IP', v: '192.0.2.1' }];
 const Arrow = ({ back }) => <svg className="gd-arr" viewBox="0 0 16 10" width="16" height="10" aria-hidden="true"><path d={back ? 'M15 5H2M5.5 1.5 2 5l3.5 3.5' : 'M1 5h13M10.5 1.5 14 5l-3.5 3.5'} fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
-/* a line of shapes that appear one by one (n of them so far); once read, the secret shapes become markers */
-function Shapes({ seq, n, read }) {
-  let c = 0;
-  const shape = (l, key, cls = '') => (c++ < n ? <i key={key} className={'gd-w ' + cls} style={{ '--l': l }} /> : null);
+/* a line typed character by character (n of them so far); once read, the values become Hanzo's typed markers */
+function Typed({ seq, n, read }) {
+  let left = n;
   return seq.map((x, i) => {
-    if (typeof x === 'number') return shape(x, i);
-    if (x.k) {
-      if (!read) return shape(NAME[x.k].length * 0.62, i, 'sec');
-      return <motion.span key={i} className="gd-mk" initial={{ opacity: 0, scale: 0.8, y: 4 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 0.3, ease: EASE }}>{NAME[x.k]}</motion.span>;
-    }
-    const run = x.inj.map((l, j) => shape(l, i + '-' + j)).filter(Boolean);
-    return run.length ? <span key={i} className={'gd-injr' + (read ? ' on' : '')}>{run}</span> : null;
+    if (x.k && read) return <motion.span key={i} className="gd-mk" initial={{ opacity: 0, scale: 0.8, y: 4 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 0.3, ease: EASE }}>{NAME[x.k]}</motion.span>;
+    const full = x.k ? x.v : x.inj;
+    if (left <= 0) return null;
+    const t = full.slice(0, left); left -= full.length;
+    return <span key={i} className={x.k ? 'gd-tv sec' : 'gd-tv gd-injr' + (read ? ' on' : '')}>{t}</span>;
   });
 }
-const count = (seq) => seq.reduce((s, x) => s + (typeof x === 'number' || x.k ? 1 : x.inj.length), 0);
+const count = (seq) => seq.reduce((s, x) => s + (x.k ? x.v : x.inj).length, 0);
 
-/* The composer: the request is drawn shape by shape, then read (secrets become markers, the injection gets its
-   confidence); the reply comes back and is read too. 0 drawing req, 1 req read, 2 drawing reply, 3 reply read, 4 hold */
+/* The composer: the request types, then is read (values become markers, the injection gets its confidence); the
+   reply comes back and is read too. 0 typing req, 1 req read, 2 typing reply, 3 reply read, 4 hold. It starts on the
+   finished frame (4) so the server HTML and a JS-off visit show the whole exchange; once seen, it plays from the top. */
 function Composer() {
   const [ref, seen, calm] = useLive(0.3);
   const [paused, togglePause] = usePause();
   const live = seen && !paused;
-  const [st, setSt] = useState(0);
+  const [st, setSt] = useState(4);
   const [n, setN] = useState(0);
   const [loop, setLoop] = useState(0);
   useEffect(() => { if (calm) setSt(4); }, [calm]);
@@ -72,10 +70,10 @@ function Composer() {
     if (!live) return;
     if (st === 0 || st === 2) {
       const total = count(st === 0 ? REQ : REP);
-      const t = setTimeout(() => { if (n >= total) { setSt(st + 1); setN(0); } else setN(n + 1); }, n >= total ? 300 : 120);
+      const t = setTimeout(() => { if (n >= total) { setSt(st + 1); setN(0); } else setN(n + 1); }, n >= total ? 300 : 38);
       return () => clearTimeout(t);
     }
-    const t = setTimeout(() => { if (st === 4) { setLoop((l) => l + 1); setSt(0); } else setSt(st + 1); }, st === 1 ? 2200 : st === 3 ? 1600 : 2600);
+    const t = setTimeout(() => { if (st === 4) { setLoop((l) => l + 1); setSt(0); } else setSt(st + 1); }, st === 1 ? 2200 : st === 3 ? 1600 : loop ? 2600 : 900);
     return () => clearTimeout(t);
   }, [st, n, live]);
   const read1 = st >= 1;
@@ -88,7 +86,7 @@ function Composer() {
       <div className="gd-comp-bar"><span className={'gd-dot' + (read1 ? ' on' : '')} /><span>hanzoai/guard</span><span className={'gd-dot r' + (read2 ? ' on' : '')} /></div>
       <div className="gd-msg me">
         <p className="gd-who">request <Arrow /> model</p>
-        <p className="gd-body" key={'q' + loop}><Shapes seq={REQ} n={st === 0 ? n : all} read={read1} />{!read1 && <i className="gd-caret" />}</p>
+        <p className="gd-body" key={'q' + loop}><Typed seq={REQ} n={st === 0 ? n : all} read={read1} />{!read1 && <i className="gd-caret" />}</p>
       </div>
       <div className="gd-conf">
         <span>confidence</span>
@@ -97,7 +95,7 @@ function Composer() {
       </div>
       <div className={'gd-msg it' + (st >= 2 ? ' on' : '')}>
         <p className="gd-who">reply <Arrow back /> model</p>
-        <p className="gd-body" key={'r' + loop}>{st >= 2 ? <><Shapes seq={REP} n={st === 2 ? n : all} read={read2} />{!read2 && <i className="gd-caret" />}</> : <span className="gd-wait">…</span>}</p>
+        <p className="gd-body" key={'r' + loop}>{st >= 2 ? <><Typed seq={REP} n={st === 2 ? n : all} read={read2} />{!read2 && <i className="gd-caret" />}</> : <span className="gd-wait">…</span>}</p>
       </div>
     </div>
     </div>
@@ -169,19 +167,17 @@ const STYLES = [(m) => `[${m}]`, (m) => `<${m}>`, (m) => '█'.repeat(Math.max(4
 
 /* Beyond: paste your own, with the dials. Runs in this page; nothing you type is sent. Every label is Hanzo's: the
    detectors by their names in the second fact, the field as "request" to "model", the reset as the site's "Reset". */
+const SAMPLE = '4111 1111 1111 1111\njane@example.com\n192.0.2.1';
 function Yours() {
-  const [text, setText] = useState('');
+  const [text, setText] = useState(SAMPLE);
   const [on, setOn] = useState(() => Object.fromEntries(KINDS.map((k) => [k, true])));
   const [sty, setSty] = useState(0);
   const { parts, found, inject } = useMemo(() => redact(text), [text]);
   const shown = parts.map(([t, m]) => (m && on[m] ? [t, m] : [t, null]));
   const kinds = Object.entries(found).filter(([m]) => on[m]);
   return (
-    <section className="v2-sec gd-yours" aria-labelledby="gd-yours-h">
-      <div className="v2-wrap v2-grid">
-        <div className="gd-yours-h">
-          <h2 id="gd-yours-h" className="v2-headline">Each becomes a typed marker</h2>
-        </div>
+    <section className="v2-sec gd-yours" aria-labelledby="gd-ft1">
+      <div className="v2-wrap">
         <div className="gd-ed v2-obj">
           <div className="gd-ed-in">
             <label className="gd-ed-k" htmlFor="gd-in">request <Arrow /> model</label>
@@ -205,7 +201,7 @@ function Yours() {
             <p className="gd-ed-f" aria-live="polite">
               {kinds.map(([m, c]) => <span key={m}><b>{c}</b> {NAME[m]}</span>)}
               {inject && <span className="gd-ed-inj">Overriding the instructions</span>}
-              {text && <button type="button" className="gd-ed-x" onClick={() => setText('')}>Reset</button>}
+              {text !== SAMPLE && <button type="button" className="gd-ed-x" onClick={() => setText(SAMPLE)}>Reset</button>}
             </p>
           </div>
         </div>
@@ -261,7 +257,7 @@ function Passes() {
             {FACTS.map(([t, d], i) => (
               <article key={t} id={'gd-f' + i} className="gd-f" data-on={i === at || undefined} data-past={i < at || undefined}>
                 <div className="gd-f-h">
-                  <h3 className="gd-f-t"><span>{t}</span></h3>
+                  <h3 className="gd-f-t" id={'gd-ft' + i}><span>{t}</span></h3>
                   <p className="gd-f-n x-mono">{pad(i + 1)} / {pad(n)}</p>
                 </div>
                 <p className="v2-body gd-f-d" id={'gd-fd' + i} data-open={open[i] || undefined}>{d}</p>
