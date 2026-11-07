@@ -1,29 +1,39 @@
 'use client';
-/* Integrations. Its idea is the hub: every tool Hanzo has a guide for orbits Hanzo's one base URL, turning slowly by
-   itself; press any of them and it opens its guide. Below, the same tools in their families, a three-language
-   starter that swaps by itself, and the agent prompt to paste.
-   Signature: the orbit. Nineteen badges circle https://api.hanzo.ai/v1 (counter-rotated so they stay upright),
-   hovering one pauses the ring and names it, a press opens its guide.
-   Beyond: "Find your tool": type a tool, a language or a family and the shelves narrow as you type. */
-import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion } from 'motion/react';
-import { EASE, Copy } from '../../ui';
+/* Integrations. Its idea is the hub: one base URL, and every tool Hanzo has a guide for already speaks to it.
+   V2: 8/10 Rebuilt as a catalogue that opens: hub hero, the starter as a big live editor, 19 tool cards in family chips that re-flow, each card opening into its guide, the agent prompt in the one dark room.
+   Signature: cards that open. Nineteen big tool cards, filtered by family chips that re-flow the grid; press one and its
+   title flies into the guide's headline (Morph navigation, data-morph on the title), the synchronized.studio move.
+   Supporting: the hub in the hero (the 19 badges circling https://api.hanzo.ai/v1, holding still and naming the tool
+   under your hand), the starter editor that switches Python, TypeScript and Go on its own, and the dark room arriving
+   as a widening panel (SceneWipe).
+   Beyond: "Find your tool": type a tool, a language or a family; the chips' counts and the grid narrow as you type.
+   Every word, link and line of code is Hanzo's (hanzo.ai/integrations). */
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
+import { Copy } from '../../ui';
 import { A } from '../../kit';
 import { Loose } from '../models/parts';
-import './integrations.css';
+import SceneWipe from '../../v2/SceneWipe';
+import '../../v2/ProofScale.css';
+import './IntegrationsIndex.css';
 
-const up = (d) => ({ initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
+const EASE = [0.16, 1, 0.3, 1];
 
-function Orbit({ cards, base }) {
+/* ---------- the hub ---------- */
+function Hub({ cards, base }) {
   const [hot, setHot] = useState(null);
   const n = cards.length;
   return (
-    <div className={'xin-orbit' + (hot ? ' held' : '')} style={{ '--n': n }}>
-      <div className="xin-orbit-c"><span className="x-mono">{base.replace(/^https:\/\//, '')}</span><b>{hot ? hot.name : `${n} guides`}</b></div>
-      <ul className="xin-ring" aria-label="Every integration">
+    <div className={'xii-hub' + (hot ? ' held' : '')} style={{ '--n': n }}>
+      <div className="xii-hub-c" aria-live="polite">
+        <span className="pf-mono xii-hub-u">{base.replace(/^https:\/\//, '')}</span>
+        <b>{hot ? hot.name : `${n} guides`}</b>
+        <span className="pf-mono xii-hub-t">{hot ? hot.tag : 'one base URL'}</span>
+      </div>
+      <ul className="xii-ring" aria-label="Every integration">
         {cards.map((c, i) => (
           <li key={c.href} style={{ '--a': (i / n) * 360 + 'deg' }}>
-            <A to={c.href} className="xin-sat" aria-label={c.name} data-cursor={c.name} onPointerEnter={() => setHot(c)} onPointerLeave={() => setHot(null)} onFocus={() => setHot(c)} onBlur={() => setHot(null)}>
+            <A to={c.href} className="xii-sat" aria-label={c.name} data-cursor={c.name} onPointerEnter={() => setHot(c)} onPointerLeave={() => setHot(null)} onFocus={() => setHot(c)} onBlur={() => setHot(null)}>
               <span aria-hidden="true">{c.emoji}</span>
             </A>
           </li>
@@ -33,6 +43,7 @@ function Orbit({ cards, base }) {
   );
 }
 
+/* ---------- the starter: code as the hero object ---------- */
 function Starter({ samples, base }) {
   const [on, setOn] = useState(0);
   const touched = useRef(false);
@@ -41,108 +52,158 @@ function Starter({ samples, base }) {
   const calm = useReducedMotion();
   useEffect(() => {
     if (!seen || calm || touched.current) return;
-    const t = setInterval(() => { if (!touched.current) setOn((v) => (v + 1) % samples.length); }, 4800);
+    const t = setInterval(() => { if (!touched.current) setOn((v) => (v + 1) % samples.length); }, 4200);
     return () => clearInterval(t);
   }, [seen, calm, samples.length]);
   const pick = (i) => { touched.current = true; setOn(i); };
+  const keys = (e) => {
+    const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+    if (!d) return;
+    e.preventDefault();
+    const j = (on + d + samples.length) % samples.length;
+    pick(j);
+    box.current.querySelectorAll('[role=tab]')[j].focus();
+  };
   return (
-    <div className="xin-win" ref={box}>
-      <div className="xin-win-h"><i aria-hidden="true" /><i aria-hidden="true" /><i aria-hidden="true" /><span className="x-mono">{base}</span></div>
-      <div className="xin-win-tabs" role="tablist" aria-label="Language" onKeyDown={(e) => { const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0; if (d) { e.preventDefault(); const j = (on + d + samples.length) % samples.length; pick(j); box.current.querySelectorAll('[role=tab]')[j].focus(); } }}>
-        {samples.map((s, i) => (
-          <button key={s.lang} type="button" role="tab" id={'xin-s-' + i} aria-selected={on === i} aria-controls={'xin-sp-' + i} tabIndex={on === i ? 0 : -1} onClick={() => pick(i)}>
-            {on === i && <motion.span layoutId="xin-win-tab" className="xin-win-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
-            <span>{s.lang}</span>
-          </button>
-        ))}
+    <div className="xii-win pf-obj" ref={box}>
+      <div className="xii-win-h">
+        <span className="xii-dots" aria-hidden="true"><i /><i /><i /></span>
+        <div className="xii-tabs" role="tablist" aria-label="Language" onKeyDown={keys}>
+          {samples.map((s, i) => (
+            <button key={s.lang} type="button" role="tab" id={'xii-s-' + i} aria-selected={on === i} aria-controls={'xii-sp-' + i} tabIndex={on === i ? 0 : -1} onClick={() => pick(i)}>
+              <span>{s.lang}</span>
+              {on === i && !touched.current && !calm && <i className="xii-tab-t" aria-hidden="true" key={'t' + on} />}
+            </button>
+          ))}
+        </div>
         <Copy text={samples[on].text} />
       </div>
-      {samples.map((s, i) => (
-        <div key={s.lang} role="tabpanel" id={'xin-sp-' + i} aria-labelledby={'xin-s-' + i} hidden={on !== i}>
-          <pre tabIndex={0}><code>{s.lines.map((l, j) => (
-            <motion.span key={j + ':' + on} className={'xin-ln' + (/hanzo/i.test(l.map((x) => x[1]).join('')) ? ' hz' : '')} initial={on === i ? { opacity: 0, x: -6 } : false} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.35, ease: EASE, delay: j * 0.04 }}>
-              {l.length ? l.map(([k, x], n) => <span key={n} className={'c-' + k}>{x}</span>) : ' '}{'\n'}
-            </motion.span>
-          ))}</code></pre>
-        </div>
-      ))}
+      <div className="xii-win-b">
+        {samples.map((s, i) => (
+          <div key={s.lang} role="tabpanel" id={'xii-sp-' + i} aria-labelledby={'xii-s-' + i} hidden={on !== i}>
+            <pre tabIndex={0} className="xii-code"><code>{s.lines.map((l, j) => {
+              const hz = /hanzo/i.test(l.map((x) => x[1]).join(''));
+              return (
+                <span key={j + ':' + on} className={'xii-ln' + (hz ? ' hz' : '')} style={{ '--j': j }}>
+                  <span className="xii-no" aria-hidden="true">{j + 1}</span>
+                  {l.length ? l.map(([k, x], m) => <span key={m} className={'c-' + k}>{x}</span>) : ' '}{'\n'}
+                </span>
+              );
+            })}</code></pre>
+          </div>
+        ))}
+      </div>
+      <div className="xii-win-f pf-mono"><span>{base}</span><span>{samples[on].lang}</span></div>
     </div>
   );
 }
 
-export default function IntegrationsIndex({ doc }) {
+/* ---------- the catalogue: chips that re-flow, cards that open ---------- */
+function Catalogue({ groups }) {
+  const [fam, setFam] = useState('All');
   const [q, setQ] = useState('');
-  const cards = doc.groups.flatMap((g) => g.cards);
   const t = q.trim().toLowerCase();
-  const fit = (c) => !t || (c.name + ' ' + c.desc + ' ' + c.tag).toLowerCase().includes(t);
-  const any = cards.some(fit);
+  const cards = useMemo(() => groups.flatMap((g) => g.cards.map((c) => ({ ...c, fam: g.title }))), [groups]);
+  const hit = (c) => !t || (c.name + ' ' + c.desc + ' ' + c.tag + ' ' + c.fam).toLowerCase().includes(t);
+  const shown = cards.filter((c) => (fam === 'All' || c.fam === fam) && hit(c));
+  const fams = [['All', cards.filter(hit).length], ...groups.map((g) => [g.title, g.cards.filter((c) => hit({ ...c, fam: g.title })).length])];
+  const calm = useReducedMotion();
+  const keys = (e) => {
+    const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+    if (!d) return;
+    const i = (fams.findIndex(([f]) => f === fam) + d + fams.length) % fams.length;
+    setFam(fams[i][0]);
+    document.getElementById('xii-f-' + i)?.focus();
+  };
   return (
-    <main className="xin xin-index">
-      <section className="xin-hero xin-hero-i" aria-labelledby="xin-h1">
-        <div className="x-wrap xin-hero-g">
-          <div>
-            {doc.label && <motion.p className="xin-badge" {...up(0)}><span className="x-mono">{doc.label}</span></motion.p>}
-            <h1 id="xin-h1" className="xin-h1" data-morph-target>
-              <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.06 }}>{doc.title}</motion.span></span>
-            </h1>
-            <motion.p className="xin-lede" {...up(0.28)}><Loose nodes={doc.lede} /></motion.p>
-            <motion.div className="xin-acts" {...up(0.4)}>
-              {doc.actions.map((a, i) => <A key={a.label} to={a.href} className={'x-btn' + (i ? '' : ' solid')} {...(i ? {} : { 'data-thumb': '' })}>{a.label}</A>)}
-            </motion.div>
-          </div>
-          <motion.div initial={{ opacity: 0, scale: 0.94, rotate: -8 }} animate={{ opacity: 1, scale: 1, rotate: 0 }} transition={{ duration: 1.4, ease: EASE, delay: 0.1 }}>
-            <Orbit cards={cards} base={doc.base} />
-          </motion.div>
-        </div>
-      </section>
-
-      <section className="xin-start">
-        <div className="x-wrap"><Starter samples={doc.samples} base={doc.base} /></div>
-      </section>
-
-      <section className="x-sec xin-shelves" id="all">
-        <div className="x-wrap">
-          <label className="xin-find">
-            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="M10.5 10.5 14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+    <section className="pf-sec xii-cat" id="all" aria-labelledby="xii-cat-h">
+      <div className="pf-wrap">
+        <div className="xii-cat-top">
+          <h2 className="pf-display s" id="xii-cat-h">{fam === 'All' ? `${cards.length} guides` : fam}</h2>
+          <label className="xii-find">
+            <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="M10.5 10.5 14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
             <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Find your tool" aria-label="Find your tool" />
           </label>
-          {!any && <p className="xin-none" role="status">Nothing matches “{q}”.</p>}
-          {doc.groups.map((g) => {
-            const shown = g.cards.filter(fit);
-            return (
-              <div className="xin-shelf" key={g.title} hidden={!shown.length}>
-                <h2>{g.title}<span className="x-mono">{shown.length}</span></h2>
-                <ul>
-                  {g.cards.map((c, i) => (
-                    <motion.li key={c.href} hidden={!fit(c)} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.6, ease: EASE, delay: (i % 4) * 0.05 }}>
-                      <A to={c.href} className="xin-card">
-                        <span className="xin-card-e" aria-hidden="true">{c.emoji}</span>
-                        <b data-morph>{c.name}</b>
-                        <span className="xin-card-d">{c.desc}</span>
-                        <span className="xin-card-t x-mono">{c.tag}</span>
-                      </A>
-                    </motion.li>
-                  ))}
-                </ul>
-              </div>
-            );
-          })}
+        </div>
+        <div className="xii-chips" role="tablist" aria-label="Family" onKeyDown={keys}>
+          {fams.map(([f, k], i) => (
+            <button key={f} id={'xii-f-' + i} type="button" role="tab" aria-selected={fam === f} tabIndex={fam === f ? 0 : -1} onClick={() => setFam(f)} disabled={!k && fam !== f}>
+              {fam === f && <motion.span layoutId="xii-chip" className="xii-chip-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
+              <span>{f}</span><span className="pf-mono">{k}</span>
+            </button>
+          ))}
+        </div>
+        {!shown.length && <p className="xii-none" role="status">Nothing matches “{q}”.</p>}
+        <ul className="xii-grid" aria-live="polite">
+          <AnimatePresence initial={false} mode="popLayout">
+            {cards.map((c, i) => {
+              const on = shown.includes(c);
+              if (!on && !calm) return null;
+              return (
+                <motion.li key={c.href} layout={!calm} hidden={!on} initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.94, transition: { duration: 0.2 } }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+                  <A to={c.href} className="xii-card" data-cursor="Open">
+                    <span className="xii-card-e" aria-hidden="true">{c.emoji}</span>
+                    <span className="xii-card-fam pf-mono">{c.fam}</span>
+                    <b className="xii-card-n" data-morph>{c.name}</b>
+                    <span className="xii-card-d">{c.desc}</span>
+                    <span className="xii-card-f">
+                      <span className="pf-mono">{c.tag}</span>
+                      <span className="xii-card-go" aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
+                    </span>
+                  </A>
+                </motion.li>
+              );
+            })}
+          </AnimatePresence>
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+export default function IntegrationsIndex({ doc }) {
+  const cards = doc.groups.flatMap((g) => g.cards);
+  return (
+    <main className="xin xii">
+      <section className="xii-hero" aria-labelledby="xin-h1">
+        <div className="pf-wrap pf-grid xii-hero-g">
+          <div className="xii-hero-a">
+            {doc.label && <p className="pf-kick xii-in" style={{ '--i': 0 }}>{doc.label}</p>}
+            <h1 id="xin-h1" className="pf-display xii-h1 xii-in" style={{ '--i': 1 }} data-morph-target>{doc.title}</h1>
+            <p className="pf-lede xii-lede xii-in" style={{ '--i': 2 }}><Loose nodes={doc.lede} /></p>
+            <div className="xii-acts xii-in" style={{ '--i': 3 }}>
+              {doc.actions.map((a, i) => <A key={a.label} to={a.href} className={'pf-btn' + (i ? '' : ' solid')} {...(i ? {} : { 'data-thumb': '' })}>{a.label}</A>)}
+            </div>
+          </div>
+          <div className="xii-hero-b">
+            <Hub cards={cards} base={doc.base} />
+          </div>
         </div>
       </section>
 
+      <section className="pf-sec tight xii-start" aria-label="Starter">
+        <div className="pf-wrap">
+          <Starter samples={doc.samples} base={doc.base} />
+        </div>
+      </section>
+
+      <Catalogue groups={doc.groups} />
+
       {doc.paste && (
-        <section className="x-sec xin-paste" data-room="dark">
-          <div className="x-wrap xin-paste-g">
-            <div>
-              <p className="x-kick">{doc.paste.kicker}</p>
-              <p className="xin-paste-l">{doc.paste.lede}</p>
-            </div>
-            <div className="xin-prompt">
-              <div className="xin-prompt-h"><span className="x-mono">{doc.paste.label}</span><Copy text={doc.paste.code} label="Copy the agent prompt" /></div>
-              <pre tabIndex={0}><code>{doc.paste.code}</code></pre>
+        <SceneWipe className="xii-paste" label={doc.paste.kicker}>
+          <div className="pf-sec">
+            <div className="pf-wrap pf-grid">
+              <div className="xii-paste-a">
+                <p className="pf-kick">{doc.paste.kicker}</p>
+                <p className="pf-head xii-paste-l">{doc.paste.lede}</p>
+              </div>
+              <div className="xii-prompt">
+                <div className="xii-prompt-h"><span className="pf-mono">{doc.paste.label}</span><Copy text={doc.paste.code} label="Copy the agent prompt" /></div>
+                <pre tabIndex={0}><code><span className="xii-caret" aria-hidden="true">›</span>{doc.paste.code}</code></pre>
+              </div>
             </div>
           </div>
-        </section>
+        </SceneWipe>
       )}
     </main>
   );
