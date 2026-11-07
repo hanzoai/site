@@ -12,6 +12,8 @@ import { motion, useScroll, useMotionValueEvent } from 'motion/react';
 import './PinScenes.css';
 
 const EASE = [0.16, 1, 0.3, 1];
+// JS off: every scene shows, stacked like the phone layout (PLAN-COMPONENTS 2.3 "JS off legible")
+const NOJS = { __html: '<style>.vc-pin{height:auto!important}.vc-pin-sticky{position:static!important;height:auto!important;display:block!important}.vc-pin-stage{display:block!important}.vc-pin-rail{display:none!important}.vc-pin-scene{display:flex!important;flex-direction:column;gap:28px;padding:56px 0}.vc-pin-t,.vc-pin-v{opacity:1!important;transform:none!important;clip-path:none!important}.vc-pin-t{padding-left:0!important}</style>' };
 
 export default function PinScenes({ scenes, label, flip = false, className = '' }) {
   const ref = useRef(null);
@@ -24,11 +26,11 @@ export default function PinScenes({ scenes, label, flip = false, className = '' 
   });
   return (
     <section ref={ref} className={'vc-pin' + (flip ? ' flip' : '') + ' ' + className} style={{ '--n': n }} aria-label={label}>
+      <noscript dangerouslySetInnerHTML={NOJS} />
       <div className="vc-pin-sticky">
         <div className="vc-pin-stage vc-wrap">
           <div className="vc-pin-rail" aria-hidden="true">
             <motion.i style={{ scaleY: scrollYProgress }} />
-            <span className="vc-kick vc-num">{String(at + 1).padStart(2, '0')} / {String(n).padStart(2, '0')}</span>
           </div>
           {scenes.map((s, i) => {
             const st = i === at ? 'on' : i < at ? 'past' : 'next';

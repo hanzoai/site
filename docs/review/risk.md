@@ -1,115 +1,171 @@
 # /risk: James-eye review
 
-Verdict: 5/10
-First complaint: "Red, green and yellow again. I said greys, silvers, blacks and whites, with colour only from our own media. There's a little red 'RISK' label stuck on top of the headline, then a green box next to a yellow box, and by the dark section it's three columns of grey text. The dial is the one good idea, and on my screen I only see the top half of it."
+Verdict: 6/10
+First complaint: "The dial's the one thing I'd stop for, and I still can't see what it decides. The score and 'summon a person' are under the fold on my laptop and cut in half on my phone. Then after the three chapters it's a document again: three columns of grey paragraphs in the black room, four boxes numbered 01 to 04, and the top plan is a black box with no name on it. And it opens exactly like Sign and Treasury."
 
-Reviewed: branch `claude/youthful-gauss-hiiqm9` @ `64b588a` (since merged to main; main's copy differs only in two import paths). Files hash: `58b18b9dab06`
-Walked 7 Nov 13:49–13:54 UTC on the dev server, moving, at 1470×801 and 375×812 (videos, frame sheets and a frame-difference motion log kept by the critic; the site loader was skipped).
+Reviewed: branch `claude/youthful-gauss-hiiqm9` @ `303ba52` (/risk last changed in `572a1c3`, "risk: JAMES.md pass"; on origin/main, not yet on local main). Files hash: `2e15e8f4ab8e` (Risk.jsx + Risk.css + app/risk/page.jsx).
+Walked 7 Nov 14:12–14:27 UTC on the dev server, moving, at 1470×801 and 375×812 (touch emulation), plus 320 wide, JS off and reduced motion. The critic kept frame bursts (8 frames 150ms apart from navigation), screen-by-screen sheets, a fine-pointer hover and press log, a layout-shift log and a solid-button count every half screen. The cookie note was skipped; hover was measured with a fine pointer forced on, because headless reports `hover: none`.
 Proof: `img/risk.jpg` (desktop first screen | phone first screen).
+Note: uncommitted edits to Risk.jsx, Risk.css and the shared OpenSheet appeared in the working tree at 14:28:46 UTC, after this walk ended. They change the hero grid, the Settle values and the score roll. They are not reviewed here; the hash above is the committed `572a1c3` state that was walked.
+
+Since the last review (5/10 at `64b588a`), these landed: all red, green and amber is gone, the "● RISK" eyebrow is gone (Hanzo's "Risk" now sits inside the dial), every self-running demo has a pause button, JS-off is legible, `data-cta` is on both asks, the score roll no longer sticks, the chapter numbers now scroll smoothly instead of jumping, and the coverage file exists. These did not land: the decision on the first screen, the invisible "Pro", the reading in the back half, and hover on the stage tabs, stops and chapter numbers.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Half. The words are clear: "One risk plane for accounts, payments and agents" (80px, line height 0.92) and one black "Talk to us". The dial is a real object, but at 1470×801 only its top half is on screen (the pink arc, "the line" and the needle). The score and the action ("72 / summon a person"), which are the point, sit below the fold. Phone is the same: the gauge is on the first screen, but "SCORE / ACTION" are cut at the bottom edge. The headline cuts in by line mask (h1 lands at 731ms on desktop, 633ms on phone). Apart from that, the first second after paint changes 1 of 25 frames on desktop and 2 of 25 on phone. The needle's first swing comes about 2s in; after that it keeps deciding by itself every 2.2s. The file header promises the dial "arrives huge and settles". On film it fades in at about its final size (a 1.1 scale).
-2. **One in, one out, or a document?** Mixed. The hero and the three pinned chapters work: one visual swaps per chapter (alert→case file, the lifecycle track, the four fact toggles) while the text holds. After that the page turns into a document:
-   - four equal boxes with red numerals;
-   - a dark room with three columns of long grey paragraphs (about 330 words);
-   - "Rules, lists and suppression" as three text rows;
-   - two text cards ("How it connects");
-   - a plans ladder;
-   - "What this is not" as three more paragraphs.
+1. **Sells in 5 seconds, moves within 1 second?** Half.
+   - **Words:** clear. The h1 "One risk plane for accounts, payments and agents" is 80px with an 85px line step (1.06, just over JAMES's 1.05). There is one black "Talk to us" on the right.
+   - **Motion:** yes. The lines cut in by mask (rising at about 1.2s, settled by 1.5s from navigation), the ask arrives at about 1.7s, and the needle swings from straight up to its score. After that the dial keeps deciding by itself every 2.2s (34 "allow" → 53 "summon a person" → 57 within 5s).
+   - **The payoff is below the fold:** at load, Settle (`from={1.08} lift={40}`) pushes the dial card to both screen edges (x 0 to 1470), so you see the top of the arc, "the line" and the stage switch. The score and action sit at y 948–1076, 150–275px below the fold. On phone the score sits at 767–855 of 812, so "SCORE 34" is cut in half.
+   - **Squint test:** three ink masses of equal weight compete on the first screen: "Talk to us", the selected "payment" tab, and (when the dial is hot) the "summon a person" chip, which stretches into a 530px black bar.
+2. **One in, one out, or a document?** The hero and the three pinned chapters (`#rk-how`, 2,964px) work: the words hold while one visual swaps per chapter (case file, lifecycle track, fact toggles). The rest is a document:
+   - The statement, then "Where this is today", say the same idea twice (two faces at two stages). That is 1,600px of text (y 1211–2837) with one decorative grid.
+   - Four equal boxes numbered 01–04.
+   - A dark room with three equal columns of grey paragraphs (about 330 words).
+   - "Rules, lists and suppression": three text rows.
+   - "How it connects": two text cards.
+   - "What this is not": three paragraphs.
 
-   The page is 13,247px on desktop (16.5 screens) and 17,674px on phone (22 screens). James: "An overload of information."
-3. **A real object in every section?** Hero: yes, the dial. Chapters: yes, and each one runs by itself. Platforms: yes, the "declare" chips pulse, small but real. The dark room has a small `POST /v1/event` strip with red dots streaming, then text. The rest have none:
-   - the statement and "Where this is today" are text in a green box and a yellow box, with a decorative block grid;
-   - "What it decides on" is big numerals in boxes, which is type, not a thing;
-   - Rules, How it connects and What this is not.
-
-   The film stops at "Rules, lists and suppression" on desktop and at "Plans" on phone. The plans ladder and the close are judged from measurements and source.
-4. **One ask, sticky after the hero?** Half. The verb is consistent, which is better than its neighbours: "Talk to us" is in the hero, in the phone bottom bar and in the close. But on desktop nothing of the page's own follows you after the hero; only the global header's "Try Hanzo" does. On phone the header's solid "Try Hanzo" and the bar's solid "Talk to us" show together on every screen from s2 on. The close's "Talk to us" is a red-filled card.
-5. **Every hover and press answers?** No.
-   - **Hero "Talk to us":** drifts toward the pointer (magnetic; the walker logs it as JUMP) but has no press state.
-   - **Reason rows:** answer well, with a border change, a press of 0.98 and a cursor that reads "Neutral". That label is the one hover detail on the page that tells you something.
-   - **Chapter numbers 01/02/03:** no hover, and a click jumps the page 550–1,270px (2600→3150, 3897→4440, 5339→4066).
-   - **"The six capabilities +", "The three stages +" and the "Signup and onboarding" stop:** no hover and no press. On phone, tapping "The three stages +" showed no visible change.
-   - **Fact toggles:** no hover, and "metered usage" has no press either.
-   - **Cards 01–03:** lift 4px and press. Good.
-6. **Overlap, font swap, layout shift?** No font swap: one h1 box entry at each width. CLS is 0 on desktop and 0.001 on phone, and there is no horizontal scroll at 375 or 320. But the hero object glitches. After two quick taps on the reasons, the readout drew "57" over "46" and "summon a person" over "allow" for about 4s (d-sheet-10 last row through d-sheet-11 row 2). The `popLayout` roll leaves the exiting value stuck. On phone, "post-purchase" runs past the edge of its pill in the stage switch, and each chapter swap shows two visuals through each other for about 1s.
+   The page is 13,273px on desktop (16.6 screens) and 17,838px on phone (22 screens).
+3. **A real object in every section?** No.
+   - **Have one:**
+     - Hero: the dial.
+     - Chapters: the alert-to-case file with the five-year clock, the stage track, and the four fact toggles routing a caller.
+     - Platforms: the "declare" stack (plays once).
+     - Plans: the rising ladder.
+     - Close: the Sigil contour map.
+   - **Have none:**
+     - The statement.
+     - "Where this is today": two text cards and a 24-cell grid with 9 cells filled, which implies "about 37% built", a figure Hanzo never gives.
+     - "What it decides on": the numerals 01–04 are index type, not a thing.
+     - "How it connects".
+   - **Dark room:** its `POST /v1/event` strip streams 14 dots once over 4s and then sits dead above the three text columns.
+4. **One ask, sticky after the hero?** Mostly.
+   - **What works:** "Talk to us" sits in the hero (`data-thumb`, `data-cta="risk.hero"`). The shared ask bar carries "Talk to us" from about 1,200px on desktop and 1,624px on phone through to the close. The header's "Try Hanzo" goes outline while the bar shows, so the count is one solid per half screen.
+   - **The gap:** the hero is 1,151px tall on desktop and 1,264px on phone, because the dial is huge. So from a scroll of about 400px to 1,200px (desktop) and 400px to 1,600px (phone), the only solid on screen is the header's "Try Hanzo", a different verb.
+   - **The close:** the page's own "Talk to us" is an outlined card (`.rk-next-a.first`), and there is no Band that repeats the ask.
+5. **Every hover and press answers?** Not yet.
+   - **Answer well:**
+     - The hero ask: fill #0a0a0b → #2c2c2e, the arrow moves 3px, press 0.98, and a magnetic drift of about 7px.
+     - The reason rows: the border goes to ink, press 0.99, and a line-through when set to neutral, so the score visibly drops (for example 27 → 57).
+     - The 01–04 cards: lift 4px and the plus turns.
+     - The detail "+" buttons: the plus turns.
+     - The Next cards: a fill shift, the arrow moves 4px and press 0.98.
+   - **Dead:**
+     - The stage tabs (`.rk-stage button`): no hover, only the global press.
+     - The lifecycle stops (`.rk-stop`): no hover.
+     - The chapter numbers (`.w2-pin-rail button`): no hover.
+     - The pause buttons: rgba(255,255,255,.92) → #fff on a white card, which is invisible.
+   - **Keyboard:** the stage `role="tablist"` ignores ArrowRight (focus stays on "signup").
+6. **Overlap, font swap, layout shift?** No font swap, a steady h1 box, and no horizontal scroll at 320 or 375. CLS is 0.0003 on desktop and 0.005 on phone, from each "allow" ↔ "summon a person" swap shifting `.rk-score` and `.rk-action` by 0.0017. But:
+   - **Pause covers text:**
+     - Chapter 1, at both widths: the pause button covers "alert → case". The button is at 1386–1430 × 123–167 and the label at 1304–1405 × 148–170.
+     - Chapter 3, phone: it covers the end of "a registration in your organization".
+     - Chapter 2, desktop: it floats about 85px above the track card in empty white.
+   - **"post-purchase" overflows** its pill by 16px at 375: the text runs 246–356 in a 240–340 pill. This was flagged last time and is still there.
+   - **Phone h1 leading is uneven:** the line steps are 40, 47 and 40px, because the extra mask padding sits between the two LineMask lines.
+   - **Reduced motion breaks the hero** at both widths. The h1 lines stay at `translateY(108%)`, so there is no headline at all. The dial stays at `scale(1.08)`, running x −33 to 1503 at 1470 wide with its pause button half off screen. Cause: a hydration mismatch in the shared `LineMask` and `Settle`, where the server writes the first frame and the client's `useReducedMotion()` branch never clears it.
 7. **Which reference, and is its motion there?**
-   - **apple.com product page:** yes. The product is the hero, and the pinned chapters change one panel each.
-   - **motion.dev patterns:** yes (spring needle, rolling figures, rising sheets). The motion mix is the best in this batch, and scroll-linked effects are the minority:
-     - idle: the dial, case file, track, toggles, event stream and declare chips;
-     - pointer: the magnetic ask and the "Neutral" cursor;
-     - state: the stage tabs and sheets;
+   - **apple.com product page:** yes. The product is the hero, the Stage settles on scroll, and the pinned chapters change one panel each.
+   - **motion.dev:** yes. A spring needle, rolling figures, toggles with springs, and sheets morphing out of their card.
+   - **The motion mix is right:**
+     - idle: the dial, case file, track, lanes, a dot ping, the stream and the declare stack;
+     - pointer: the magnetic ask, card lift and the Sigil;
+     - state: tabs, toggles and sheets;
+     - scroll: Settle and the pinned chapters;
      - arrival: the line mask.
-   - **synchronized.studio:** absent. The cards open into sheets, not into their page.
-   - **anthropic launch:** the score could be a hero figure, but it sits below the fold.
-8. **Different from its neighbours?** Partly. Its CLOUD.md group is Business 2 (/risk /sign /tabs /treasury …).
-   - **What is its own:** the hero medium (a gauge) and the signature: set a reason back to neutral and watch the score drop, which is Hanzo's own "attributable by construction". No other walked page has these.
-   - **What is the kit:** /sign (same branch) and /ledger share its first screen: a mono eyebrow, the title left, the button right and a product strip on the fold. It shares the numbered pinned 01/02/03 chapters of /ledger and /metrics, one dark room and a closing block.
-   - **Colour:** the same colour-per-page scheme (/sign blue, /ledger emerald, /metrics orange, /risk red), which is exactly the "one accent per page" JAMES.md rule 7 replaced. James: "It's not just a template."
-9. **All 18 parts covered?** No; see below. `docs/coverage/risk.md` is missing.
-10. **Banned tells?** Yes:
-    - **Red UI hue as the page accent** (`--acc: #e5484d`, declared "signal-red accent"). It colours the eyebrow, the line, the arc, the reason bars, "summon a person", the 01–04 numerals, the chapter kickers and dots, the "+" buttons, the stream dots, the "declare" chips and the close's filled "Talk to us" card. Desktop measures 24 text, 80 background and 27 border hits. JAMES.md rule 7: the UI has 0 hues.
-    - **Green:** "allow" in #1a7f37, the green-tinted "compliance face" box with a pulsing green dot, and the green "/v1/aml" pill. Green accents are a reject.
-    - **Yellow and orange:** the cream "decide plane" box with an amber block grid, the amber "/v1/risk" pill and every "In development." label (41 background and 2 text hits). That is colour from boxes, not from Hanzo's media.
-    - **Eyebrows:** "● RISK" sits 28px above the h1, and kickers sit over the headlines ("STATUS", "/V1/AML · LIVE", "/V1/RISK · BEING BUILT").
-    - **Dead hover** on the detail buttons, stage stops, chapter numbers and toggles.
+
+     Scroll is well under half.
+   - **synchronized.studio:** no. Cards open into modal sheets, not into a page.
+   - **Anthropic launch:** no hero figure. That is honest, since Hanzo prints none, but the live score could be that figure and it sits below the fold.
+8. **Different from its neighbours?** Partly.
+   - **Its own:** the gauge, and "attribution by hand" (set a reason to neutral and the score drops by its weight).
+   - **The kit:** the first screen grammar is the same as /sign, /treasury and /zap: title left, ask right, a framed stage card starting at about y 400 with a mono caps label in its top-left corner ("RISK", "DOCUMENT SIGNING", "ZAP · the buffer that arrived") and a round pause top right. Then come numbered pinned chapters, OpenCards and one dark room. /risk and /sign are both white heroes. James: "It's not just a template."
+9. **All 18 parts covered?** No; see below. `docs/coverage/risk.md` now exists, but two of its claims fail on the walk: "Reduced motion shows the final dial" (the h1 vanishes) and "No figure on this page is a customer result" (true, but the unlabelled 9-of-24 grid reads as progress).
+10. **Banned tells?** Mostly clean now.
+    - **Clean:**
+      - 0 UI hues on the page. The only hue measured is the shared footer's blue privacy-choices icon, rgb(0,114,206).
+      - No eyebrow over the h1.
+      - No green.
+      - No fade on hover.
+    - **Remaining:**
+      - **A kicker above the headline in every sheet:** "/V1/AML", "IN DEVELOPMENT" and "01" sit above the sheet title (shared OpenSheet, fed by this page's `kicker` props and `k` values).
+      - **Equal boxes in a row:** 4 equal cards in "What it decides on", and 3 equal text columns in the dark room.
+      - **Walls of text:** see answer 2.
+      - **Dead hover** on 4 controls.
 11. **Copy untouched?** Yes. Parity 114/114 text and 7/7 links.
-    - The 25 added strings are demo data and labels lifted from Hanzo's own sentences ("several customers acting as one", "rule fired / with its citation", "money plane reads it", "1 of 4 facts").
-    - "Illustration." is added in front of Hanzo's own "No figure on this page is a customer result."
-    - The dial's numbers (72, 57, 27, the +38/+19/+15 weights, the line at 50) are invented weights. They are labelled as an illustration, so they read as demo data, not claims, but the numeric-diff gate will flag them.
-    - "reasons · tap one to set it back to neutral" and the sheet labels ("The six capabilities", "The three stages", "Why the facts decide") are UI strings outside `content/ui-strings.json`.
+    - **Added UI strings:** "Illustration.", "reasons · tap one to set it back to neutral", "the line", "allow", "score", "action" and "N of 4 facts". None of them is in a register; `content/ui-strings.json` does not exist.
+    - **Invented numbers:** the dial weights (+38/+19/+15, +34/+21/+12, +30/+16/+11) and the line at 50. They are labelled, but only by a 13px #6e6e73 caption under the reasons.
 
 ## Missing from the 18 parts (PLAN-COMPONENTS §2.1–2.18, measured)
 - **2.1 Strategy / 4 Common gate:**
-  - No `Persona:`, `Goal:`, `CTA:` or metric id in the page header.
-  - Two solid buttons per viewport on phone (header "Try Hanzo" + bar "Talk to us").
+  - `Persona:`, `Goal:`, `CTA:` and the metric are now in the Risk.jsx header.
+  - `app/risk/page.jsx` lines 1–3, Risk.jsx line 3 and Risk.css line 1 still describe a "signal-red accent", which is stale and misleading.
+  - There is no Ledger entry (gate line 8: what the page deleted).
 - **2.3 First impression:**
-  - With JS off the h1 shows, but 34 text runs are hidden, including the hero's "Talk to us", the stage switch and the dial (fails a P1 row).
   - The score and action are below the fold at both widths.
+  - Reduced motion hides the h1 (P1 row "server-rendered text", gate line 5).
   - The page hand-writes `function Hero()` instead of using `PageHero`.
-  - There is no Band at the end (`bandAtEnd` false).
-  - Cards open into sheets, not into their page (Morph row).
-- **2.4 Conversion:** 0 `data-cta`. No sticky page ask on desktop after the hero.
-- **2.5 Proof:** the proof Hanzo does print is buried in a sheet and in paragraphs, and none of it is staged: twenty typology rules, the five-year clock, the OFAC / UK OFSI / EU / UN lists, the public source. The biggest numbers on the page are the invented dial weights.
+  - There is no closing Band.
+  - Cards open into sheets, not their page.
+- **2.4 Conversion:** the page's ask is off screen for about one screen after the hero at each width; the solid there reads "Try Hanzo". The close's "Talk to us" is outlined.
+- **2.5 Proof:** what Hanzo does print is still unstaged: twenty typology rules, the five-year clock, the OFAC / UK OFSI / EU / UN lists and the public source. Meanwhile the biggest numbers on the page are the invented dial weights and the implied 9/24 progress grid.
 - **2.6 Content:**
-  - 4 runs at 13px on phone ("Risk", "signup", "payment", "post-purchase"), under the 14px floor.
-  - The dark room's three long paragraphs and the three "What this is not" paragraphs have no disclosure, though the chapters already use sheets.
-  - "post-purchase" overflows its pill at 375.
-- **2.7 Visual system:** red, green and yellow/orange break the 0-hue override. Status colour here is a whole tinted box, not "colour with a shape or text cue".
+  - **Under 14px on phone:** "Risk" (13px), "signup", "payment" and "post-purchase" (13px, set at Risk.css line 201), and the chapter meta lines (13px, `.w2-pin-meta` in the shared PinChapters.css).
+  - **No disclosure** for the dark room's ~330 words, the three Rules rows or the three "What this is not" paragraphs, though the chapters already use sheets.
+  - **Overflow:** "post-purchase" runs past its pill at 375.
+- **2.7 Visual system:**
+  - **Literal hex** in Risk.css: #ececf0, #c7c7cc, #8e8e93, #d1d1d6, #a1a1a6, #0e0e10 and #0a0a0b.
+  - **14 radii:** 3, 4, 6, 8, 10, 12, 14, 16, 20, 22, 24, 28, 50% and pill. CANON is 6/10/16/24/32/pill.
+  - **"Pro" is invisible:** the ladder's black card has a 1.0:1 title and number, because `h3` and `.rk-ladder-n` compute to rgb(10,10,10) on rgb(10,10,10).
+  - **The `/v1/aml` chip** in the live card stops at 60ch (`.rk-face p { max-width: 60ch }` also hits `.rk-face-k`), so it sits mid-card while `/v1/risk` sits at the right edge.
 - **2.8 Components:**
-  - 13 bare `:hover` rules (Risk.css and Frame.css).
-  - 4 `.x-btn` rules in the shared Frame.css.
-  - The hero ask, the detail buttons, the stage stops and one toggle have no press.
-  - Four kinds of control have no hover.
+  - 3 bare `:hover` rules in Risk.css (lines 187, 189, 193) and 3 in the shared OpenSheet.css.
+  - No hover on the stage tabs, stops, chapter numbers or pause buttons.
+  - The tablist has no arrow keys and no tabpanel.
 - **2.9 Motion:**
-  - 2 `setInterval` timers in Frame.jsx (`useEvery` drives the dial, case file and lanes).
-  - None of the self-running demos has a pause control (2.12, WCAG 2.2.2).
-  - The score roll can stick with two values drawn over each other.
-  - Chapter numbers jump the page.
-  - Reduced motion settles.
-- **2.12 Accessibility:** contrast failures:
-  - the plan name "Pro" measures 1.0:1 (black on the ladder's black top bar), so the top tier's name is invisible;
-  - "Risk" 3.9:1;
-  - "/v1/aml · live" and "/v1/risk · being built" 3.9:1;
-  - the close's white-on-red "Talk to us" 3.9:1 and its "Tell us which stage is costing you…" 3.2:1.
-- **Coverage:** `docs/coverage/risk.md` is missing at the walked commit, on the branch and on main.
-- Passing: one h1, one main, no horizontal scroll at 320, no raw img/video/table, 0 `title=` tooltips, 0 tiny targets, reduced motion settles, CLS ≈ 0, h1 box steady, one verb ("Talk to us") in the hero, phone bar and close, parity 114/114 and 7/7.
+  - 3 `setInterval` loops via the shared `useEvery` (dial, case file, lanes).
+  - Reduced motion leaves the hero mid-entrance (see answer 6).
+- **2.11 Mobile:** the pause buttons cover chapter text at 375, and the phone h1 has a 47px step between 40px steps.
+- **2.12 Accessibility:**
+  - `.rk-out` and `.rk-lane-box` are `aria-live="polite"` while idle timers rewrite them every 2.2s and 1.5s, so a screen reader is read a new score every 2 seconds for as long as the hero is on screen.
+  - "Pro" is 1.0:1.
+- **2.17 States:** a hydration mismatch is logged on every reduced-motion load (Next shows "1 Issue").
+- **Passing:**
+  - one h1 and one main;
+  - no horizontal scroll at 320 or 375;
+  - no raw img, video or table;
+  - CLS ≈ 0 and a steady h1 box;
+  - JS off is legible (only the aria-hidden chapter demos hide);
+  - one verb, "Talk to us", carried by the shared bar;
+  - `data-thumb` and two `data-cta`;
+  - sheets trap focus, Esc closes them and focus returns to the card;
+  - parity 114/114 and 7/7.
 
 ## Fixes (in order)
-1. **Take the colour out.** Set `--acc` to ink.
-   - The dial: dark grey for the arc past the line, ink for the needle and "the line", mid grey for the reason bars.
-   - The verdict: "summon a person" as an inverted ink chip and "allow" in plain ink, so weight and shape carry it.
-   - The two status boxes: the same neutral card, with a filled versus a hollow dot as the cue. Drop the pulsing green and the amber grid.
-   - Everything else: grey or ink for "In development.", the 01–04 numerals, the stream dots, the "declare" chips and the close's "Talk to us" card.
-2. **Delete the "● RISK" eyebrow above the h1**, and the "STATUS", "/V1/AML · LIVE" and "/V1/RISK · BEING BUILT" kickers above the headlines. The endpoint already shows in each visual's toolbar (`/v1/aml`, "same call · same record…").
-3. **Fix the three bugs.**
-   - Roll the score and action with `mode="wait"` (or one element whose text rolls), so two values never draw on top of each other.
-   - Give the ladder's "Pro" the bar's light ink.
-   - Render the hero "Talk to us" and the dial visible in the server HTML: animate from visible, never from `opacity: 0`.
-4. **Put the decision on the first screen.** At 1470×801, cut the hero's top padding and the title gap, or set the dial beside the title, so the needle, "72" and "summon a person" are all visible. On phone, show the title, "Talk to us", then the gauge with its score, all inside 812px.
-5. **Every control answers, and the ask follows.**
-   - Give the hero ask, "+" detail buttons, stage stops, chapter numbers and toggles a non-opacity hover inside `@media (hover:hover)` and a press of scale 0.98.
-   - Make a chapter-number click scroll smoothly to its chapter instead of jumping.
-   - Carry "Talk to us" in a sticky bar after the hero on desktop.
-   - Put `data-cta` on every "Talk to us".
-6. **Thin the reading.** Keep "Your data, your model", its lede and the `POST /v1/event` stream in the dark room. Move the three long paragraphs into a sheet titled "Your data, your model", the way the chapters already open theirs, and do the same for the three "What this is not" paragraphs.
+1. **Put the decision on the first screen.** At 1470×801 the needle, the score and the action must all be visible without scrolling:
+   - Cut `.rk-hero` top padding and `.rk-hero-top` margin.
+   - Start Settle at 1 with no lift (or a lift that keeps the card inside the screen).
+   - Move `.rk-out` (score + action) beside the gauge instead of under it.
+
+   On phone, put the score and action above the gauge, so title, "Talk to us", "53 · summon a person" and the arc fit in 812px. Let the "summon a person" chip hug its text (`align-self: flex-start`) instead of becoming a 530px bar.
+2. **Make reduced motion show the final hero.** The shared `LineMask` and `Settle` must render the same markup on server and client, and leave reduced motion to `MotionConfig`; request this from the Business 2 owner. Until then, Risk.css can carry `@media (prefers-reduced-motion: reduce) { .rk .x-line-in, .rk .w2-settle { transform: none !important } }`.
+3. **Fix the visible bugs.**
+   - Give the Pro card's `h3` and `.rk-ladder-n` #f5f5f7.
+   - Move each pause button inside its own visual's top-right corner (or align `.rk-vis` items to the top), so it never covers "alert → case", the first fact row, or floats over empty space.
+   - Fit "post-purchase" in its pill at 375 (pills sized to content, or less padding; keep 14px).
+   - Even out the phone h1 line steps.
+   - Let the `/v1/aml` chip reach the card's right edge.
+4. **Turn the back half from a document into objects.** Copy stays in the DOM; only presentation changes.
+   - Dark room: keep the headline, lede and a running `POST /v1/event` stream (loop while in view, with pause) as the object, and put the three ~110-word paragraphs behind one sheet, as the chapters already do.
+   - "What it decides on": replace the 01–04 numerals with a live object per card (for example the dial's reason rows for that subject), or break the four equal boxes into one large plus three.
+   - Fold "Where this is today" into the statement's two pills, so the two-faces idea is said once.
+   - Drop the 9-of-24 grid.
+5. **Every control answers, and nothing chatters.**
+   - Add a non-opacity hover in `@media (hover:hover)` to `.rk-stage button`, `.rk-stop`, `.w2-pin-rail button` and `.w2-pause`.
+   - Give the stage tablist arrow, Home and End keys.
+   - Wrap the three bare `.rk-next-a:hover` rules.
+   - Announce score changes only after a visitor acts: drop `aria-live` while the idle loop runs.
+6. **Give /risk its own first screen.** The gauge is the strongest hero medium in Business 2, so let it be the stage itself: an unframed, full-width arc with the h1 inside or over it, rather than the same framed card with a corner label and a pause that /sign, /treasury and /zap use. Also:
+   - Make the close's "Talk to us" the one solid on its screen.
+   - Register the new UI strings ("Illustration.", "reasons · tap one…", "the line", "allow", "N of 4 facts").
+   - Raise the phone 13px text to 14px.
+   - Delete the stale "signal-red accent" comments.

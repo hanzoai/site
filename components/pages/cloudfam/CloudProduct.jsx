@@ -57,7 +57,7 @@ function Console({ doc }) {
   const w = doc.window;
   const box = useRef(null);
   const typed = useRef(null);
-  const seen = useInView(box, { amount: 0.3 });
+  const seen = useInView(box, { amount: 0.12 }); // starts on the first screen, phones included, within a second
   const calm = useReducedMotion();
   const kind = w.rows.length ? 'rows' : w.turns.length ? 'turns' : 'lines';
   const count = w.rows.length || w.turns.length || w.lines.length;
@@ -78,7 +78,7 @@ function Console({ doc }) {
     (async () => {
       setPhase('typing');
       if (kind !== 'rows') setAt(0);
-      await wait(500);
+      await wait(250);
       if (typed.current && prompt && !(await typing(typed.current, prompt, 44, () => alive))) return;
       if (!alive) return;
       typedOnce.current = true;

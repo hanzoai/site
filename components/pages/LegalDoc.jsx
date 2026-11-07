@@ -2,12 +2,12 @@
 /* A legal document (/legal/<doc>, 11 of them, one template), as a calm, precise reading room (Utility archetype).
    Persona: enterprise buyer, counsel and any user checking what they agreed to (PLAN-COMPONENTS 1.1, 2.5).
    Goal: find the clause you came for, and trust it is the current text (effective date and version up front).
-   CTA: none to sell (PLAN-COMPONENTS 2.4: no thumb bar on legal); the action is reading and finding. Metric: one
-   contact click (the documents' own contact addresses).
+   CTA: none to sell (PLAN-COMPONENTS 2.4: no thumb bar on legal, so the site's ask bar is off: data-ask="off"); the
+   action is reading and finding. Metric: one contact click (the documents' own contact addresses).
    Stage: the document's name at display size beside its lede and dates; the hero object is the document's cover, a
    sheet with its own contour field (seeded from the document's name and counts) and every section as a numbered
-   index. The cover reads itself: it turns through its clauses by itself, showing each one's number huge and its first
-   sentence, and a hover or focus on any index row shows that clause instead. Then the reading room: a sticky contents
+   index. The cover reads itself: it turns through its clauses by itself, showing Hanzo's own number for it huge (or its
+   title, where Hanzo numbers none) and its first sentence, and a hover or focus on any index row shows that clause instead. Then the reading room: a sticky contents
    rail beside 19px prose at 64 characters a line, each section opened by a big number plate that turns ink when you
    reach it. The other documents close the page as cards that open into their page.
    Signature: the reading rail. The contents marker springs to the section you are in while the line fills with your
@@ -144,7 +144,8 @@ const firstSentence = (nodes) => { const t = plain(nodes).replace(/\s+/g, ' ').t
    huge, first sentence); hover or focus on an index row shows that clause and holds it */
 function Cover({ doc }) {
   const calm = useReducedMotion();
-  const secs = doc.toc.map((t, k) => { const s = doc.sections.find((x) => x.id === t.id); return { ...t, k, first: s ? firstSentence(s.nodes) : '' }; });
+  // only Hanzo's own section numbers are shown ("1."), never a count of ours
+  const secs = doc.toc.map((t, k) => { const s = doc.sections.find((x) => x.id === t.id); const [num, text] = split(t.label); return { ...t, k, num, text, first: s ? firstSentence(s.nodes) : '' }; });
   const [at, setAt] = useState(0);
   const [held, setHeld] = useState(false);
   const box = useRef(null);
@@ -164,7 +165,7 @@ function Cover({ doc }) {
         <Sigil seed={'/legal/' + doc.slug} data={[doc.toc.length, doc.sections.length, doc.others.length]} className="xlg2-sigil" />
         {cur && (
           <div className="xlg2-read" key={cur.id}>
-            <span className="xlg2-read-n v2f-num">{String(cur.k + 1).padStart(2, '0')}</span>
+            {cur.num ? <span className="xlg2-read-n v2f-num">{cur.num}</span> : <span className="xlg2-read-h">{cur.text}</span>}
             <p className="xlg2-read-t">{cur.first}</p>
             {!calm && !held && secs.length > 1 && <i className="xlg2-read-bar" />}
           </div>
@@ -177,7 +178,7 @@ function Cover({ doc }) {
             return (
               <li key={t.id}>
                 <a href={'#' + t.id} className={t.k === at ? 'on' : undefined} onPointerEnter={(e) => e.pointerType === 'mouse' && pick(t.k)} onFocus={() => pick(t.k)}>
-                  <span className="xlg2-ix-n x-mono" aria-hidden="true">{String(t.k + 1).padStart(2, '0')}</span>
+                  <span className="xlg2-ix-n x-mono" aria-hidden="true">{num || '·'}</span>
                   <span className="xlg2-ix-t">{num ? <><span className="x-sr">{num} </span>{text}</> : t.label}</span>
                 </a>
               </li>
@@ -204,7 +205,7 @@ export default function LegalDoc({ doc, peek = {} }) {
   const size = doc.title.length <= 14 ? '' : doc.title.length <= 26 ? ' mid' : ' small';
   let n = 0;
   return (
-    <main className="v2f xlg xlg-doc xlg2">
+    <main className="v2f xlg xlg-doc xlg2" data-ask="off">
       <section className="xlg2-stage" aria-labelledby="xlg-h1">
         <div className="v2f-wrap v2f-grid xlg2-top">
           <FamLines as="h1" id="xlg-h1" className={'v2f-display xlg2-h1' + size} text={doc.title} data-morph-target />
