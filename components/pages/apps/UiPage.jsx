@@ -20,6 +20,7 @@ import PinChapters from '../../v2/x-gauss/PinChapters';
 import NoJs from '../../v2/x-gauss/NoJs';
 import { usePause } from '../../v2/x-gauss/Pause';
 import '../../v2/Scale.css';
+import '../../v2/x-gauss/Rhythm.css';
 import './UiPage.css';
 
 const GH = 'https://github.com/hanzoai/ui';
@@ -63,7 +64,7 @@ function Board({ tok, setTok, mine, setMine, paused }) {
       <AnimatePresence>
         {dlg && (
           <motion.div className="ui-scrim" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} onClick={() => setDlg(false)}>
-            <motion.div className="ui-dialog" role="dialog" aria-label="Dialog" initial={{ opacity: 0, y: 14, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8, scale: 0.98 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} onClick={(e) => e.stopPropagation()}>
+            <motion.div className="ui-dialog" role="dialog" aria-label="Dialog" initial={{ opacity: 0, y: 14, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8, scale: 0.98 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} onClick={(e) => e.stopPropagation()}>
               <b>Dialog</b>
               <p>Focus management, keyboard behaviour and placement that CSS cannot.</p>
               <div className="ui-row"><button type="button" className="ui-b solid" onClick={() => setDlg(false)}>Close</button></div>
@@ -161,7 +162,7 @@ function Everywhere({ on }) {
   return (
     <div className="ui-sp pkg" aria-hidden="true">
       <p className="ui-sp-cmd x-mono">pnpm add @hanzo/ui</p>
-      <div className="ui-sp-apps">{['chat', 'console', 'cloud'].map((a) => <motion.div key={a} className="ui-sp-app" animate={{ y: v ? -10 : 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}><span className="x-mono">{a}</span><i /><i /></motion.div>)}</div>
+      <div className="ui-sp-apps">{['chat', 'console', 'cloud'].map((a) => <motion.div key={a} className="ui-sp-app" animate={{ y: v ? -10 : 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}><span className="x-mono">{a}</span><i /><i /></motion.div>)}</div>
     </div>
   );
 }
@@ -268,7 +269,7 @@ function Stop() {
 
 export default function UiPage() {
   return (
-    <main className="uip w2">
+    <main id="main" className="uip w2 gx">
       <NoJs />
       <Hero />
       <Props />

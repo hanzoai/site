@@ -1,7 +1,7 @@
 'use client';
 /* RelatedCards: "Related capabilities" as cards that open into their page (synchronized.studio, NEXT-LEVEL Morph). Each
    card's picture is the destination's own Sigil (drawn still, from its slug), its title is the morph source, and the
-   whole card is one link: one tab stop, real <a href>. Hover lifts the card 4px and nudges the arrow; press is .98.
+   whole card is one link: one tab stop, real <a href>. Hover deepens the fill and drifts the art (no lift, no cursor label); press is .97.
    Usage: <RelatedCards items={[['Logs', '/cloud/logs', 'Search every line']]} title="Related capabilities" />
    items: Hanzo's own [label, href, line]. Owned by Cloud 3. */
 import Sigil from '../Sigil';
@@ -21,7 +21,7 @@ export default function RelatedCards({ items, title = 'Related capabilities', cl
         <ul className="lx-rel-grid" data-n={items.length}>
           {items.map(([t, to, d]) => (
             <li key={t}>
-              <A to={to} className="lx-rel-card" data-cursor="Open">
+              <A to={to} className="lx-rel-card" data-cursor="">
                 <span className="lx-rel-art" aria-hidden="true"><Sigil seed={slug(to)} still className="lx-rel-sigil" /></span>
                 <span className="lx-rel-t" data-morph>{t}</span>
                 {d && <span className="lx-rel-d">{d}</span>}

@@ -21,6 +21,7 @@ import PinChapters from '../../v2/x-gauss/PinChapters';
 import NoJs from '../../v2/x-gauss/NoJs';
 import { usePause } from '../../v2/x-gauss/Pause';
 import '../../v2/Scale.css';
+import '../../v2/x-gauss/Rhythm.css';
 import './Treasury.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/cli/treasury';
@@ -229,7 +230,7 @@ function Hold() {
     <div className={'ts-w ' + k}>
       <span>{label}</span>
       <AnimatePresence mode="popLayout" initial={false}>
-        <motion.b key={v[k]} className="w2-fig" initial={{ y: '60%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-60%', opacity: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>{fmt(v[k])}</motion.b>
+        <motion.b key={v[k]} className="w2-fig" initial={{ y: '60%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-60%', opacity: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>{fmt(v[k])}</motion.b>
       </AnimatePresence>
       <em>{sub}</em>
     </div>
@@ -295,7 +296,7 @@ function First() {
 
 export default function Treasury() {
   return (
-    <main className="ts w2">
+    <main id="main" className="ts w2 gx">
       <NoJs />
       <Hero />
       <Lede />

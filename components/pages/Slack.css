@@ -317,3 +317,7 @@
   .xsq-h1 { font-size: clamp(31px, 9vw, 36px) !important; line-height: 1.04; }
   .xsq-h1 .a2-ln, .xsq-h1 .a2-ln-in { display: inline; overflow: visible; } /* flows into four lines on a phone */
 }
+@media (max-width: 900px) {
+  .xsq-who { display: none; } /* the channel name reads in full on a phone; the members are in the thread itself */
+  .xsq-th-h > p { flex: 1; }
+}

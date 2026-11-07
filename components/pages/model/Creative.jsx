@@ -126,7 +126,7 @@ function Map({ slug }) {
           {FIELDS.map(([name], i) => (
             <button key={name} type="button" role="tab" id={'cr-f' + i} aria-controls="cr-fields" aria-selected={i === f} className="cr-tab" onClick={() => { setF(i); setMine(true); }}>
               {name}
-              {i === f && <motion.span layoutId="cr-tab-ink" className="cr-tab-ink" transition={{ type: 'spring', stiffness: 380, damping: 32 }} />}
+              {i === f && <motion.span layoutId="cr-tab-ink" className="cr-tab-ink" transition={{ duration: 0.3, ease: EASE }} />}
             </button>
           ))}
         </div>

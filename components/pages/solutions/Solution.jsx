@@ -8,13 +8,16 @@
    media) as the hero object, playing its jobs like stories (a bar fills per job, the job's title rises over the film,
    hover holds it), settling into place as you scroll.
    Signature: the jobs as a scroll-scrubbed build-up. Each job is one chapter: its words pin on the left while the film
-   re-frames on the right, one shot wiping in as the last goes out, the story bar filling one segment per job.
+   re-frames on the right, one shot wiping in as the last goes out, the story bar filling one segment per job; the
+   film plays in the job in view (on a phone, in the shot crossing the middle of the screen). The page then ends soon:
+   the last job opens "What it runs on" and "Security and compliance" as sheets (every word kept), then the sibling
+   rail with the overlap finder over this member's own contour, then the closing room.
    Beyond: the overlap finder. Pick another team or industry and see which products the two share and which each adds,
    so a buyer with more than one team sees what one account covers.
    Motion: idle (the film and its stories) · pointer (magnetic ask, hover holds the stories, drag rail of siblings) ·
-   state (overlap pills glide, products re-flow) · scroll (stage settle, the chapters). Each member's own contour
-   (Sigil seeded with its slug) sits under its trust statement; siblings carry theirs.
-   V2: 8/10 film beside the headline on the first screen playing its jobs as stories, no eyebrows, ink only, magnetic ask, member contour, overlap as shared-first object, siblings that drag and open into their page. */
+   state (overlap pills glide, products re-flow, sheets rise) · scroll (stage settle, the chapters). Each member's own
+   contour (Sigil seeded with its slug) sits behind its overlap finder; siblings carry theirs.
+   V2: 8/10 film beside the headline playing its jobs as stories, each job's film playing in view (phones too), the tail folded into two sheets from the last job, ink only, no eyebrows, magnetic ask, member contour behind the overlap finder, siblings that drag and open. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { A, Img, Film as Clip } from '../../kit';
@@ -26,6 +29,7 @@ import FamLines from '../../v2/FamLines';
 import FamStage from '../../v2/FamStage';
 import FamChapters from '../../v2/FamChapters';
 import FamNext from '../../v2/FamNext';
+import FamDrawer from '../../v2/FamDrawer';
 import '../../v2/fam.css';
 import './solutions.css';
 import './Solution.css';
@@ -33,13 +37,14 @@ import './Solution.css';
 const pad = (n) => String(n).padStart(2, '0');
 const ARROW = <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
-/* a model's film (Hanzo's own media): the still at once, the clip only while on screen (kit Img + Film rules) */
-export function Film({ slug, className = '', priority = false }) {
+/* a model's film (Hanzo's own media): the still at once, the clip only while on screen (kit Img + Film rules);
+   play={false} keeps just the still (a job's shot that is not the one in view) */
+export function Film({ slug, className = '', priority = false, play = true }) {
   if (!slug) return <span className={'xsl-film ' + className} aria-hidden="true" />;
   return (
     <span className={'xsl-film ' + className} aria-hidden="true">
       <Img src={media(slug, 'webp')} w={1200} h={1500} priority={priority} />
-      <Clip key={slug} src={media(slug, 'webm')} poster={media(slug, 'webp')} w={1200} h={1500} onPlaying={(e) => e.currentTarget.classList.add('on')} />
+      {play && <Clip key={slug} src={media(slug, 'webm')} poster={media(slug, 'webp')} w={1200} h={1500} onPlaying={(e) => e.currentTarget.classList.add('on')} />}
     </span>
   );
 }
@@ -59,13 +64,27 @@ export function useReel(n, box, ms = 5200) {
   return { at, setAt, run, hold: { onPointerEnter: () => setHeld(true), onPointerLeave: () => setHeld(false), onFocus: () => setHeld(true), onBlur: () => setHeld(false) } };
 }
 
-/* one job's shot: the film's still, framed anew for each job, with the story bar over it */
+/* one job's shot: the film, framed anew for each job, with the story bar over it. It plays only for the job in view:
+   on desktop the pinned chapter on screen (on), on a phone the shot crossing the middle of the screen, so the stacked
+   chapters move too. At most two clips play on any screen (PLAN-COMPONENTS 2.10). */
 const FRAMES = [['50% 50%', 1.08], ['12% 18%', 1.85], ['88% 72%', 1.6], ['30% 92%', 2.1], ['78% 14%', 1.7], ['50% 62%', 2.4]];
-function Shot({ slug, k, n, label }) {
+function Shot({ slug, k, n, label, on }) {
   const [p, s] = FRAMES[k % FRAMES.length];
+  const box = useRef(null);
+  const [mid, setMid] = useState(false);
+  const [phone, setPhone] = useState(false);
+  useEffect(() => {
+    const mq = matchMedia('(max-width: 900px)');
+    const set = () => setPhone(mq.matches);
+    set();
+    mq.addEventListener('change', set);
+    const io = new IntersectionObserver(([e]) => setMid(e.isIntersecting), { rootMargin: '-30% 0px -30% 0px' });
+    box.current && io.observe(box.current);
+    return () => { mq.removeEventListener('change', set); io.disconnect(); };
+  }, []);
   return (
-    <div className="xs2-shot" aria-hidden="true" style={{ '--p': p, '--s': s }}>
-      {slug && <Img src={media(slug, 'webp')} w={1200} h={1500} />}
+    <div ref={box} className="xs2-shot" aria-hidden="true" style={{ '--p': p, '--s': s }}>
+      {slug && <Film slug={slug} play={phone ? mid : !!on} />}
       <span className="xs2-shot-scrim" />
       <div className="xs2-shot-top">
         <div className="xs2-shot-bar">{Array.from({ length: n }, (_, i) => <i key={i} className={i < k ? 'done' : i === k ? 'cur' : ''} />)}</div>
@@ -76,7 +95,7 @@ function Shot({ slug, k, n, label }) {
   );
 }
 
-function Overlap({ here, me, sibs, data }) {
+function Overlap({ here, me, sibs, data, seed, sig }) {
   const [pick, setPick] = useState(sibs[0] ? sibs[0].href : null);
   const other = sibs.find((s) => s.href === pick);
   const theirs = other ? (data[other.href.split('/').pop()] || {}).products || [] : [];
@@ -85,6 +104,7 @@ function Overlap({ here, me, sibs, data }) {
   const only = theirs.filter((p) => !here.includes(p));
   return (
     <div className="xsl-ovl xs2-ovl">
+      {seed && <Sigil seed={seed} data={sig} className="xs2-ovl-sig" />}
       <div className="xsl-ovl-pick" role="group" aria-label={me} data-swipe-own>
         {sibs.map((s) => (
           <button key={s.href} type="button" aria-pressed={s.href === pick} onClick={() => setPick(s.href)}>
@@ -100,6 +120,45 @@ function Overlap({ here, me, sibs, data }) {
           <div className="xsl-col"><h3>{other.label}</h3><ul>{only.map((p) => <motion.li layout key={p}>{p}</motion.li>)}</ul><A to={other.href} className="x-arrow xsl-ovl-go">{other.label}</A></div>
         </div>
       )}
+    </div>
+  );
+}
+
+/* what it runs on, inside its sheet: the products on one account, each a link */
+function Runs({ runs }) {
+  return (
+    <div className="xs2-sheet">
+      {runs.lede && <p className="v2f-lede">{runs.lede}</p>}
+      <ol className="xs2-stack xs2-stack-s">
+        {runs.items.map((p, i) => (
+          <li key={p.href}>
+            <A to={p.href} className="xs2-row">
+              <span className="xs2-row-n x-mono">{pad(i + 1)}</span>
+              <b data-morph>{p.name}</b>
+              <span className="xs2-row-t">{p.text}</span>
+              <i aria-hidden="true">{ARROW}</i>
+            </A>
+          </li>
+        ))}
+      </ol>
+      <div className="xs2-links">{runs.links.map((l) => <A key={l.href} to={l.href} className="x-arrow"><span>{l.label}</span>{ARROW}</A>)}</div>
+    </div>
+  );
+}
+
+/* security and compliance, inside its sheet: a calm list of proof */
+function Proof({ sec }) {
+  return (
+    <div className="xs2-sheet">
+      <ul className="xs2-proof">
+        {sec.items.map((x, i) => (
+          <li key={x.title}>
+            <span className="xs2-proof-n v2f-num" aria-hidden="true">{pad(i + 1)}</span>
+            <div><h3 className="v2f-title">{x.title}</h3><p className="v2f-body">{x.text}</p></div>
+          </li>
+        ))}
+      </ul>
+      <div className="xs2-links">{sec.links.map((l) => <A key={l.href} to={l.href} className="x-arrow"><span>{l.label}</span>{ARROW}</A>)}</div>
     </div>
   );
 }
@@ -142,6 +201,9 @@ export default function Solution({ doc, data }) {
   const otherLinks = doc.more ? doc.more.links.filter((l) => !doc.sibs.some((s) => s.href === l.href)) : [];
   const here = doc.runs ? doc.runs.items.map((x) => x.name) : [];
   const me = reel ? reel.label : doc.title;
+  const [job, setJob] = useState(0);
+  // the tail ends sooner: what it runs on and security open as sheets from the last job (every word kept)
+  const sheets = !!reel && n > 0;
   const cards = doc.sibs.map((s) => {
     const l = doc.more.links.find((x) => x.href === s.href);
     return { href: s.href, title: s.title, preview: s.first, meta: l ? l.label : s.label, seed: '/solutions/' + s.slug, data: s.n };
@@ -172,6 +234,7 @@ export default function Solution({ doc, data }) {
           id="xs2-jobs"
           className="xs2-jobs"
           label={reel.label}
+          onStep={setJob}
           items={reel.steps.map((s, k) => ({
             key: s.title,
             name: s.title,
@@ -179,9 +242,15 @@ export default function Solution({ doc, data }) {
               <div className="xs2-ch-t">
                 <h2 className="v2f-head">{s.title}</h2>
                 {s.text && <p className="v2f-body">{s.text}</p>}
+                {k === n - 1 && sheets && (doc.runs || doc.security) && (
+                  <div className="xs2-sheets">
+                    {doc.runs && <FamDrawer title={doc.runs.title} preview={doc.runs.title + ' · ' + doc.runs.lede}><Runs runs={doc.runs} /></FamDrawer>}
+                    {doc.security && <FamDrawer title={doc.security.title} preview={doc.security.title + ' · ' + doc.security.items.map((x) => x.title).join(' · ')}><Proof sec={doc.security} /></FamDrawer>}
+                  </div>
+                )}
               </div>
             ),
-            visual: <Shot slug={reel.slug} k={k} n={n} label={reel.label} />,
+            visual: <Shot slug={reel.slug} k={k} n={n} label={reel.label} on={k === job} />,
           }))}
         />
       )}
@@ -205,7 +274,7 @@ export default function Solution({ doc, data }) {
         </section>
       )}
 
-      {doc.runs && (
+      {doc.runs && !sheets && (
         <section className="v2f-sec xs2-runs" aria-labelledby="xs2-runs-h">
           <div className="v2f-wrap v2f-grid">
             <header className="xs2-side">
@@ -229,7 +298,7 @@ export default function Solution({ doc, data }) {
         </section>
       )}
 
-      {doc.security && (
+      {doc.security && !sheets && (
         <section className="v2f-sec xs2-trust" aria-labelledby="xs2-trust-h">
           <div className="v2f-wrap v2f-grid">
             <header className="xs2-trust-h">
@@ -261,7 +330,7 @@ export default function Solution({ doc, data }) {
               <div className="xs2-links">{otherLinks.map((l) => <A key={l.href} to={l.href} className="x-arrow"><span>{l.label}</span>{ARROW}</A>)}</div>
             </header>
             <FamNext items={cards} label={doc.more.title} />
-            {sibLinks.length > 0 && here.length > 0 && <Overlap here={here} me={me} sibs={sibLinks} data={data} />}
+            {sibLinks.length > 0 && here.length > 0 && <Overlap here={here} me={me} sibs={sibLinks} data={data} seed={'/solutions/' + doc.slug} sig={[n, here.length]} />}
           </div>
         </section>
       )}

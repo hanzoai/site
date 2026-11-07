@@ -393,7 +393,8 @@ function End() {
 
 export default function Flow() {
   return (
-    <main className="bz fl" data-ask-name="Hanzo Flow">
+    <main className="bz fl">
+      <span data-ask-name="Hanzo Flow" hidden />
       <Hero />
       <Chapters />
       <Playground />

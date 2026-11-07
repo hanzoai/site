@@ -166,3 +166,7 @@
   .xcp-mark i { animation: none; transform: scaleX(1); }
   .xcp-card-img img, .xcp-card-go, .xcp-diff-c, .xcp-diff-c i, .xcp-tally-r li > i b, .xcp-v, .xcp-t-row, .xcp-chips button { transition: none; }
 }
+
+/* the Yes tally swaps whole counts in place (never counts through numbers that are not the table's) */
+.xcp-fig { display: inline-grid; overflow: hidden; vertical-align: bottom; }
+.xcp-fig > span { grid-area: 1 / 1; }

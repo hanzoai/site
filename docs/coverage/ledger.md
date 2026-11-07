@@ -1,6 +1,6 @@
 # /ledger coverage (PLAN-COMPONENTS areas 2.1–2.18)
 
-Page file: `components/pages/apps/Ledger.jsx` · gallery: `docs/gallery/ledger/` · review answered: `docs/review/ledger.md` (5/10 at 981cd30)
+Page file: `components/pages/apps/Ledger.jsx` · gallery: `docs/gallery/ledger/` · reviews answered: `docs/review/ledger.md` (5/10 at 981cd30, 6/10 at 069c088)
 
 1. **Strategy and conversion.** Persona, Goal and CTA are in the page header. One ask, Hanzo's "Read the docs": solid in the hero, the site's sticky ask bar after the hero, the phone thumb bar (`data-thumb`) and again as the close's only solid button. "GitHub", "View on GitHub" and "Deploy to Cloud" are text links.
 2. **Information architecture and navigation.** Hanzo's header and footer are unchanged. Order: what it is and the live book, then why a cent cannot go missing (three chapters), what the API gives you, splitting it yourself, and getting it.
@@ -12,15 +12,15 @@ Page file: `components/pages/apps/Ledger.jsx` · gallery: `docs/gallery/ledger/`
 8. **UI component library.** Kit `A` and `More`, v2 `BizLines`, `BizStage`, `BizChapters`, `BizSheet` and the site's ask bar (`components/Ask.jsx`), and Frame's `Paste` and `Code`. The slider, tabs, pause button and chips are all styled; nothing uses browser defaults.
 9. **Motion and interaction.**
    - Idle: the book posts by itself and pauses on its button.
-   - Pointer: the pause and chips lift, the Deploy arrow nudges, the slider thumb grows.
+   - Pointer: hovering a journal row lights the accounts it touched, and hovering an account lights its postings. The pause lifts, the Deploy arrow nudges and the slider thumb grows. Hover rules apply only on pointers that hover.
    - State: the capability pill glides (layoutId), the sheet rises, balances roll on a spring.
    - Scroll: the book settles (Stage) and the chapters pin.
 10. **Media.** The page has no Hanzo images or film. The hero objects are product UI: the book, the posting, the chain, the retry, the capability objects and the splitter.
 11. **Mobile and responsive.** At 375px:
    - the hero stacks as title, line, ask, book, then the rest of the paragraph;
-   - the chapters pin their stage on top;
-   - the tabs are full width;
-   - text is 14px or larger and targets are 44px or larger;
+   - nothing pins under 900px: each chapter carries its own scene above its words (kit `BizChapters`, stacked);
+   - the capability tabs are full width;
+   - text is 14px or larger (labels and the code pane included) and targets are 44px or larger;
    - there is no sideways scroll.
 12. **Accessibility.**
    - One h1.

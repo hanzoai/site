@@ -18,7 +18,7 @@
    that opens into its card, the sort pill gliding, tiles re-flowing as you filter; arrival, the name's masked rise;
    scroll, the ledger settling and the counted chapters swapping.
    Colour: none of our own (JAMES.md 7): ink, greys and white; the organizations differ by their contour and figures.
-   V2: 8/10 v3: name and ledger side by side so the ledger is whole on the first screen at 1470×801 and 375×812, no labels above headings, 0 hues (white-on-black ledger, silver waveforms), icon controls with registered names, Hanzo's own words on every card, siblings with their own line on hover. */
+   V2: 8/10 v4: the ledger leads with the strongest true figure (never a zero), its digits rise into place, and an org with no commits shows its own repositories as a slow ticker, so the first screen moves within 1 s for every member. v3: name and ledger side by side so the ledger is whole on the first screen at 1470×801 and 375×812, no labels above headings, 0 hues (white-on-black ledger, silver waveforms), icon controls with registered names, Hanzo's own words on every card, siblings with their own line on hover. */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, LayoutGroup, useReducedMotion } from 'motion/react';
 import { Copy, Magnetic } from '../../ui';
@@ -138,24 +138,37 @@ function Card({ r, onClose }) {
   );
 }
 
-/* the hero object: the organization's ledger */
+/* the hero object: the organization's ledger. Its lead is its strongest true figure, never a zero (this year's
+   commits, then its public repositories, then the forge's count); zeros stay in the small row. The lead's digits rise
+   into place (Hanzo's own figure throughout, never a count passing through other numbers). Something is always
+   alive on arrival: the year's waveform and its playhead where the organization has commits, otherwise its own
+   repositories passing as a slow ticker; the contour drifts behind both. */
 function Ledger({ doc }) {
   const key = doc.key;
-  // the hero figure: this year's commits when there are any, else the first figure that is not zero
-  const order = [...key].sort((a, b) => (/^commits/.test(b.label) ? 1 : 0) - (/^commits/.test(a.label) ? 1 : 0));
-  const lead = order.find((f) => f.n > 0) || order[0];
+  const forge = doc.counts.flatMap((c) => c.figures).filter((f) => !key.includes(f));
+  const pick = (re, list) => list.find((f) => re.test(f.label) && f.n > 0);
+  const lead = pick(/^commits/, key) || pick(/^public repositories/, key) || pick(/^repositories/, forge) || [...key].sort((a, b) => b.n - a.n)[0];
   const rest = key.filter((f) => f !== lead);
   const when = doc.counts[0] && doc.counts[0].notes[0] ? doc.counts[0].notes[0].replace(/^.*read from /, '') : '';
+  const names = doc.repos ? doc.repos.items.slice(0, 14).map((r) => r.name) : [];
   if (!lead) return null;
   return (
     <div className="xos-ledger">
       <Sigil seed={doc.route} data={key.map((f) => f.n)} className="xos-sigil" />
       <p className="xos-ledger-h x-mono"><span>{doc.org}</span><span>{when}</span></p>
       <div className="xos-lead">
-        <b className="v2f-num" style={{ '--ch': lead.value.length }}>{lead.value}</b>
+        <b className="v2f-num xos-dgs" style={{ '--ch': lead.value.length }} aria-label={lead.value}>
+          {[...lead.value].map((c, i) => <span key={i} className="xos-dg" aria-hidden="true"><span style={{ '--i': i }}>{c}</span></span>)}
+        </b>
         <span className="xos-lead-l">{lead.label.replace(/,.*$/, '')}</span>
       </div>
-      <Wave bars={doc.spark} className="xos-ledger-w" play />
+      {doc.spark && doc.spark.some((v) => v > 0)
+        ? <Wave bars={doc.spark} className="xos-ledger-w" play />
+        : names.length > 0 && (
+          <div className="xos-tick" aria-hidden="true" style={{ '--n': names.length }}>
+            <div className="xos-tick-r">{[0, 1].map((k) => <span key={k}>{names.map((n) => <i key={n}>{n}</i>)}</span>)}</div>
+          </div>
+        )}
       <dl className="xos-ledger-r">
         {rest.map((f) => (
           <div key={f.label}>

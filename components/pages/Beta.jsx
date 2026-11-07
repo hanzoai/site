@@ -138,11 +138,11 @@ function Sheet({ i, close }) {
   return createPortal(
     <div ref={wrap} className="xbt-sheet-wrap xp" role="dialog" aria-modal="true" aria-labelledby="xbt-sheet-t">
       <motion.div className="xbt-veil" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }} onClick={() => history.back()} />
-      <motion.div layoutId={'xbt-pass-' + k} className={'xbt-sheet' + (film ? ' dark' : '')} data-room={film ? 'dark' : undefined} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+      <motion.div layoutId={'xbt-pass-' + k} className={'xbt-sheet' + (film ? ' dark' : '')} data-room={film ? 'dark' : undefined} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
         <button ref={shut} type="button" className="xbt-close" onClick={() => history.back()} aria-label="Close">
           <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
         </button>
-        <motion.div layoutId={'xbt-m-' + k} className="xbt-sheet-m" transition={{ type: 'spring', stiffness: 300, damping: 30 }}><Media film={film} /></motion.div>
+        <motion.div layoutId={'xbt-m-' + k} className="xbt-sheet-m" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}><Media film={film} /></motion.div>
         <motion.div className="xbt-sheet-in" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0, transition: { delay: 0.2, duration: 0.6, ease: EASE } }} exit={{ opacity: 0, transition: { duration: 0.12 } }}>
           <h3 id="xbt-sheet-t" className="xp-display md">{t}</h3>
           <p className="xp-lede">{d}</p>
@@ -165,8 +165,8 @@ function Passes({ paused }) {
         <ul className="xbt-grid">
           {PASSES.map(([k, t, d, to, film], i) => (
             <motion.li key={k} className={'xbt-cell c' + i} initial={{ clipPath: 'inset(18% 0 0 0 round 28px)', y: 40 }} whileInView={{ clipPath: 'inset(0% 0 0 0 round 28px)', y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.9, ease: EASE, delay: i * 0.12 }}>
-              <motion.article layoutId={'xbt-pass-' + k} className={'xbt-pass' + (film ? ' dark' : '')} data-room={film ? 'dark' : undefined} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
-                <motion.div layoutId={'xbt-m-' + k} className="xbt-pass-m" transition={{ type: 'spring', stiffness: 300, damping: 30 }}><Media film={film} paused={paused} /></motion.div>
+              <motion.article layoutId={'xbt-pass-' + k} className={'xbt-pass' + (film ? ' dark' : '')} data-room={film ? 'dark' : undefined} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
+                <motion.div layoutId={'xbt-m-' + k} className="xbt-pass-m" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}><Media film={film} paused={paused} /></motion.div>
                 <button type="button" className="xbt-hit" onClick={(e) => show(i, e.currentTarget)} aria-haspopup="dialog" aria-label={t} data-cursor="Open" />
                 <div className="xbt-pass-b">
                   <h2 className="xp-title xbt-t">{t}</h2>

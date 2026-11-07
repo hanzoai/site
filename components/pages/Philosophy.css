@@ -254,19 +254,28 @@ button.xph-hl:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px
 
 @media (max-width: 900px) {
   .xph-cap { font-size: 14px; margin-top: 16px; }
-  .xph-hero { height: auto; min-height: 0; padding-top: 28px; }
-  .xph-stage { grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 20px; }
-  .xph-oracle-hx { --w: min(200px, 54vw) !important; order: -1; }
+  .xph-hero { height: auto; min-height: 0; padding-top: 16px; }
+  .xph-stage { grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 10px; }
+  .xph-oracle-hx { --w: min(150px, 40vw) !important; order: -1; }
+  /* Hanzo's touch rule (layered !important) makes every button 44px tall, which turned the bars into blocks: each
+     button stays a 44px tap pad, the bar is drawn at its own thickness in the middle, and the pads overlap so the
+     lines keep the hexagram's spacing */
+  .xph-oracle-hx { gap: 0; }
+  .xph-oracle-hx .xph-hl { margin: -9px 0; }
+  .xph-oracle-hx .xph-hl i { top: 50%; bottom: auto; height: calc(var(--w) * .1); margin-top: calc(var(--w) * -.05); }
+  .xph-oracle-hx .xph-hl.hot::after { top: 50%; }
   .xph-flank.l, .xph-flank.r { justify-items: center; text-align: center; }
   .xph-flank { gap: 6px; }
   .xph-flank.r span { font-size: 15px; }
   .xph-oracle-n { font-size: 14px; }
-  .xph-h1 { margin-top: 28px; font-size: clamp(52px, 15.4vw, 76px); white-space: normal; }
+  .xph-h1 { margin-top: 12px; font-size: clamp(48px, 14vw, 72px); white-space: normal; }
   .xph-h1 .pf-mask-l { display: block; }
   .xph-h1 .pf-mask-l + .pf-mask-l { margin-left: 0; }
   .xph-hero-a, .xph-lede, .xph-acts { grid-column: 1 / -1; }
   .xph-lede { margin-top: 16px; font-size: 16px; }
-  .xph-acts { justify-content: flex-start; margin-top: 24px; }
+  .xph-acts { justify-content: flex-start; margin-top: 20px; order: 2; }
+  .xph-hero-a { order: 1; }
+  .xph-lede { order: 3; margin-top: 24px; }
   .xph-acts .pf-btn { flex: 1 1 100%; }
   .xph-big { grid-column: 1 / -1; max-width: none; font-size: clamp(38px, 11vw, 52px); }
   .xph-one { grid-column: 1 / -1; justify-items: start; margin-top: 48px; --w: min(240px, 64vw); }

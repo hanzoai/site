@@ -2,12 +2,12 @@
 // Persona: an engineer or CTO weighing running the open-source stack themselves against buying Hanzo (arrives from /compare's "Buy it, or run it", pricing or search)
 // Goal: see what running it yourself costs, line by line, and what that bill leaves out
 // CTA: Try Hanzo -> https://hanzo.ai/signup (hero, sticky AskBar and thumb bar, close) · metric cta_click (data-cta="try-hanzo")
-// Signature: a receipt that feeds out of a slot under the headline — a tall slip prints the open-source stacks line by line and rolls its total digit by digit; every line is a switch, so strike a stack out or put it back and the bill re-adds itself.
+// Signature: a receipt that feeds out of a slot under the headline — a tall slip prints the open-source stacks line by line and shows its whole total; every line is a switch, so strike a stack out or put it back and the bill re-adds itself.
 // Beyond: "The same image, more than once" — the receipt notices when your selection runs one image in several stacks (postgres:16-alpine sits under four of them) and adds up what those copies reserve, from the same compose figures, beside Hanzo's own line on upgrades.
 /* Comparison: buy it, or run it. Its idea is the bill.
    1. First screen: "Buy it, or run it" centred and cut into its lines (Hanzo's "Comparison" sits under it as a
       caption), the one ask, and beneath it a slot the receipt feeds out of: a tall centred slip that prints the eleven
-      stacks line by line once the page has arrived, its total rolling digit by digit to $225.57/mo.
+      stacks line by line once the page has arrived, its total standing at $225.57/mo.
    2. Every line of the slip is a switch: strike a stack out and the bill re-adds itself; put it back. Each stack's
       images, vCPU and GB wait in a sheet. Phones keep the total under the thumb as they scroll the slip.
    3. The one dark room wipes in: the part that is not a line item, one duty per screen, each printed on a second
@@ -60,26 +60,21 @@ const DUTIES = [
 ];
 const Arrow = ({ s = 15 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
-/* The rolling total: every digit is a strip that rolls to its new place, the right-hand digits settling first.
-   The figure itself is in the text for readers and search; the strips are drawn for the eye. */
+/* The total: when the bill changes, the old figure leaves upward and the new one arrives from below. Only whole,
+   real figures are ever shown (never digits rolling through numbers that are not Hanzo's). */
 function Odo({ cents, className = '' }) {
   const s = usd(cents);
-  const chars = s.split('');
+  const fig = s.slice(0, -3), unit = s.slice(-3);
   return (
     <span className={'xcm-odo ' + className}>
       <span className="x-sr">{s}</span>
       <span className="xcm-odo-v" aria-hidden="true">
-        {chars.map((ch, i) => {
-          const k = chars.length - i; // keyed from the right, so cents stay put while dollars grow
-          if (!/\d/.test(ch)) return <span key={'c' + k} className="xcm-odo-c">{ch}</span>;
-          return (
-            <span key={'d' + k} className="xcm-odo-d">
-              <span style={{ transform: `translate3d(0, ${-ch * 10}%, 0)`, transitionDelay: `${Math.min(k, 8) * 0.035}s` }}>
-                {'0123456789'.split('').map((d) => <i key={d}>{d}</i>)}
-              </span>
-            </span>
-          );
-        })}
+        <span className="xcm-odo-m">
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.span key={fig} className="xcm-odo-s" initial={{ y: '85%', opacity: 0 }} animate={{ y: '0%', opacity: 1 }} exit={{ y: '-85%', opacity: 0, transition: { duration: 0.2 } }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>{fig}</motion.span>
+          </AnimatePresence>
+        </span>
+        <span className="xcm-odo-c">{unit}</span>
       </span>
     </span>
   );
@@ -130,7 +125,8 @@ function Bill() {
   const act = STACKS.map((s, i) => ({ ...s, i })).filter((s) => on[s.i]);
   const lines = act.filter((s) => s.i < printed);
   const done = printed >= STACKS.length;
-  const cents = lines.reduce((a, s) => a + s.c, 0);
+  // the bill's figure is the whole selection from the first frame: the slip prints its lines, the total never counts up
+  const cents = act.reduce((a, s) => a + s.c, 0);
   const all = on.every(Boolean);
   // Beyond: images the selection runs more than once, and what the copies reserve together
   const twice = Object.entries(act.flatMap((s) => s.imgs).reduce((a, [, img, c, g]) => { const x = (a[img] ||= { k: 0, c: 0, g: 0 }); x.k += 1; x.c += c; x.g += g; return a; }, {})).filter(([, x]) => x.k > 1);

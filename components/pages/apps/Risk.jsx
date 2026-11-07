@@ -23,6 +23,7 @@ import NoJs from '../../v2/x-gauss/NoJs';
 import { usePause } from '../../v2/x-gauss/Pause';
 import Sigil from '../../Sigil';
 import '../../v2/Scale.css';
+import '../../v2/x-gauss/Rhythm.css';
 import './Risk.css';
 
 // illustrative weights for the dial (not measured, not a customer result)
@@ -67,7 +68,7 @@ function Dial() {
             <path d="M110 16 A 96 96 0 0 1 206 112" className="rk-arc hot" />
             <line x1="110" y1="6" x2="110" y2="28" className="rk-tick" />
           </svg>
-          <motion.i className="rk-needle" animate={{ rotate: rot }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} />
+          <motion.i className="rk-needle" animate={{ rotate: rot }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />
           <span className="rk-hub" />
           <span className="rk-l0 x-mono">0</span><span className="rk-lline x-mono">the line</span><span className="rk-l1 x-mono">100</span>
         </div>
@@ -91,7 +92,7 @@ function Dial() {
             <li key={STAGES[st][0] + t}>
               <button type="button" aria-pressed={off[i]} onClick={() => flip(i)} className={off[i] ? 'off' : ''} data-cursor="Neutral">
                 <span>{t}</span>
-                <motion.i style={{ originX: 0 }} animate={{ scaleX: off[i] ? 0 : w / 40 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} />
+                <motion.i style={{ originX: 0 }} animate={{ scaleX: off[i] ? 0 : w / 40 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />
                 <b className="x-mono">{off[i] ? `−${w}` : `+${w}`}</b>
               </button>
             </li>
@@ -200,7 +201,7 @@ function Track({ on }) {
   return (
     <div className="rk-track w2-object">
       <p className="rk-track-call x-mono" aria-hidden="true">same call · same record · same model · <b>stage: '{STAGES[at][0]}'</b></p>
-      <div className="rk-track-line" aria-hidden="true"><motion.i animate={{ scaleX: (at + 1) / 3 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} /></div>
+      <div className="rk-track-line" aria-hidden="true"><motion.i animate={{ scaleX: (at + 1) / 3 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} /></div>
       <div className="rk-stops">
         {LIFE.map(([t], i) => (
           <button key={t} type="button" className={'rk-stop' + (at === i ? ' on' : '')} aria-pressed={at === i} onClick={() => choose(i)}>
@@ -233,7 +234,7 @@ function Lanes({ on }) {
       <div className="rk-lane-box" aria-live={mine ? 'polite' : 'off'}>
         <div className={'rk-lane' + (lane === 'agent' ? ' on' : '')}><b>agent policy</b><span>all four facts carried</span></div>
         <div className={'rk-lane' + (lane === 'anon' ? ' on anon' : '')}><b>anonymous lane</b><span>declares nothing, authenticates as nobody · bounded</span></div>
-        <motion.i className="rk-caller" animate={{ y: lane === 'agent' ? 0 : lane === 'anon' ? 80 : 40, opacity: lane === 'mid' ? 0.4 : 1 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} aria-hidden="true" />
+        <motion.i className="rk-caller" animate={{ y: lane === 'agent' ? 0 : lane === 'anon' ? 80 : 40, opacity: lane === 'mid' ? 0.4 : 1 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} aria-hidden="true" />
         <p className="rk-lane-n x-mono">{count} of 4 facts</p>
       </div>
     </div>
@@ -440,7 +441,7 @@ function Not() {
 
 export default function Risk() {
   return (
-    <main className="rk w2">
+    <main id="main" className="rk w2 gx">
       <NoJs />
       <Hero />
       <Faces />

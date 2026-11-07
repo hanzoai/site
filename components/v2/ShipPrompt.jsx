@@ -15,7 +15,6 @@ export default function ShipPrompt({ name, prompt, api, related, relatedTitle = 
     <section className={`sp v2-sec ${flip ? 'sp-flip' : ''} ${className}`}>
       <div className="v2-wrap v2-grid sp-grid">
         <div className="sp-copy">
-          <p className="v2-kick acc">Agent prompt</p>
           <h2 className="v2-headline sp-h">Paste and ship</h2>
           <p className="v2-body sp-d">Paste this into any agent. It reads the skill manifest and calls {name} from there.</p>
           {children}
@@ -23,6 +22,7 @@ export default function ShipPrompt({ name, prompt, api, related, relatedTitle = 
         <div className="sp-card v2-obj">
           <div className="sp-bar">
             <span className="sp-dots" aria-hidden="true"><i /><i /><i /></span>
+            <span className="sp-k">Agent prompt</span>
             {api && <span className="sp-api"><i>api</i>{api}</span>}
             <Copy text={prompt} className="sp-copybtn" />
           </div>

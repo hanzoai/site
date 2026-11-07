@@ -20,6 +20,7 @@ import Settle from '../v2/Settle';
 import NoJs from '../v2/x-gauss/NoJs';
 import { usePause } from '../v2/x-gauss/Pause';
 import '../v2/Scale.css';
+import '../v2/x-gauss/Rhythm.css';
 import './LegalIndex.css';
 
 const LADDER = [['service-only', 'by default'], ['private improvement'], ['research and training'], ['public commons']];
@@ -44,7 +45,7 @@ function Stack({ docs }) {
         return (
           <motion.div key={it.href} className="lgi-sheet" aria-hidden="true" initial={false}
             animate={{ x: k * 24, y: k * -20, rotate: k * 2 - 2, scale: 1 - k * 0.04, opacity: back ? 0 : 1, zIndex: 20 - order[i] }}
-            transition={order[i] === docs.length - 1 ? { duration: 0.7, ease: EASE } : { type: 'spring', stiffness: 300, damping: 30 }}>
+            transition={order[i] === docs.length - 1 ? { duration: 0.7, ease: EASE } : { duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
             <span className="lgi-sheet-u x-mono">hanzo.ai{it.href}</span>
             <b>{it.title}</b>
             <span className="lgi-sheet-p">{lineOf(it)}</span>
@@ -94,7 +95,7 @@ function Catalogue({ groups }) {
         <motion.ul className="lgi-cards" layout>
           <AnimatePresence initial={false}>
             {all.filter((it) => on === 'all' || it.g.id === on).map((it, i) => (
-              <motion.li key={it.href} layout initial={{ y: 24 }} whileInView={{ y: 0 }} viewport={{ once: true, amount: 0.4 }} exit={{ opacity: 0, transition: { duration: 0.15 } }} transition={{ type: 'spring', stiffness: 300, damping: 30, delay: (i % 4) * 0.04 }}>
+              <motion.li key={it.href} layout initial={{ y: 24 }} whileInView={{ y: 0 }} viewport={{ once: true, amount: 0.4 }} exit={{ opacity: 0, transition: { duration: 0.15 } }} transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1], delay: (i % 4) * 0.06 }}>
                 <Card it={it} group={it.g.title} />
               </motion.li>
             ))}
@@ -128,7 +129,7 @@ export default function LegalIndex({ d }) {
   const other = d.rest.filter((g) => g !== how && g !== contact);
   const mail = contact && contact.nodes.find((n) => n.t === 'ul');
   return (
-    <main className="lgi w2" data-ask="off">
+    <main id="main" className="lgi w2 gx" data-ask="off">
       <NoJs />
       <section className="lgi-hero" aria-labelledby="lgi-h1" data-morph-target>
         <div className="w2-wrap lgi-hero-g">

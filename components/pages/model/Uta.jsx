@@ -129,7 +129,7 @@ function Roll() {
             </li>
           ))}
         </ul>
-        <div className="ut-roll" data-cursor="Add note">
+        <div className="ut-roll">
           <canvas ref={cv} role="img" aria-label="Piano roll in D minor at 96 BPM; tap to add or remove a melody note" onPointerDown={tap} />
         </div>
       </div>
