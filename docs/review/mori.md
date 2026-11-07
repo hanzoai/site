@@ -3,7 +3,10 @@
 Verdict: 7/10
 First complaint: "It's the same wireframe mountain over and over. The hero, the cube, all four chapters, the fits picture, the card. Too many repeats. Then I press 'shaded' and the shape has a tear down it."
 
-Walked at 1470×801 and 375×812, moving, with the cookie card shown and then dismissed: arrival, idle waits, a half-screen scroll walk with stillness checks, hover and press on every control type, the viewport's mode chips, drag, and the close X. Console: 0 errors or warnings at both sizes. CLS 0.0015 on desktop (from the shared header, 0.0002 per shift) and 0 on phone. No horizontal scroll at 375. `parity.py /mori`: OK, text 52/52, links 4/4. `taste.py` on the Mori and Creative files: OK. `scripts/motion.mjs /mori` never got past the shared browser lock while I was reviewing, so these findings come from my own Playwright walk. Proof: `img/mori-shaded-tear.jpg` (the signature viewport in shaded mode) and `img/mori-walk.jpg` (the desktop walk, one frame every 722px).
+Walked at 1470×801 and 375×812, moving, with the cookie card shown and then dismissed: arrival, idle waits, a half-screen scroll walk with stillness checks, hover and press on every control type, the viewport's mode chips, drag, and the close X. Console: 0 errors or warnings at both sizes. CLS 0.0015 on desktop (from the shared header, 0.0002 per shift) and 0 on phone. No horizontal scroll at 375. `parity.py /mori`: OK, text 52/52, links 4/4. `taste.py` on the Mori and Creative files: OK. `scripts/motion.mjs /mori` finished late:
+- **Desktop:** 0 still screens, layout shift 0.001, and 14 dead hovers. These are the pinned chapter-rail items, the film's Pause, and the asks while the pinned film covers them; the rail items do go ink on hover when they are not active.
+- **Phone:** 1 still screen (y=131, as the hero settles into the cube) and 0 dead controls.
+- **Dev overlay:** a parse error in `components/pages/Newsletter.jsx`. That is another page's file, and this page's console was clean. Proof: `img/mori-shaded-tear.jpg` (the signature viewport in shaded mode) and `img/mori-walk.jpg` (the desktop walk, one frame every 722px).
 
 ## The 11 answers
 
