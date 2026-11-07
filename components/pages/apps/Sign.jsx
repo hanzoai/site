@@ -1,6 +1,6 @@
 'use client';
 /* Persona: teams that send contracts (ops, sales, HR) and developers who embed signing. Goal: start signing. CTA: "Try Hanzo" → /login. Metric: signup_start.
-   Sign. V2: 8/10 no pinned chapters: the desk beside the title signs the contract by itself and the five steps sit under it as one row you can pick from; every moment of the signing lands like a stamp; five sections, five different entrances; greys only
+   Sign. V2: 8/10 no pinned chapters: the desk beside the title signs the contract by itself and the five steps sit under it as one row you can pick from; every moment of the signing lands like a stamp; five sections, five different entrances; greys only; slice D: the part tiles preview their first sentence on hover, two to a row on phones, the plans ride a sideways rail on phones (the toggle brings its plans into view), the close's five rows sit as a two-column ledger so it fits one screen
    Signature: stamp. A PDF page sits on a desk beside the title and goes through Hanzo's five steps by itself; each
    thing that arrives on the paper lands with weight (a short drop, a squash onto the page, a settle): the six fields,
    the signature (the ink writes, then the field takes the pen's press), the checkbox tick, and the certificate,
@@ -240,7 +240,8 @@ function Parts() {
             <Langs />
           </div>
         </div>
-        <OpenCards cols={4} className="sg-cards" items={PARTS.map(([t, d], i) => ({ id: 'sg-' + i, k: String(i + 1).padStart(2, '0'), t, body: <p>{d}</p> }))} />
+        {/* hover (pointer devices): the part's first sentence previews where the number sat, so the hover says what opens */}
+        <OpenCards cols={4} className="sg-cards" items={PARTS.map(([t, d], i) => ({ id: 'sg-' + i, k: String(i + 1).padStart(2, '0'), t, d: <span aria-hidden="true">{d.split(/(?<=\.) /)[0]}</span>, body: <p>{d}</p> }))} />
       </div>
     </section>
   );
@@ -334,6 +335,13 @@ function Cost() {
   const plansRef = useRef(null);
   const seen = useInView(plansRef, { once: true, amount: 0.4 }); // the prices flip in once, the first time they are reached
   const wrapRef = useEnter(dissolve);
+  // on phones the plans are a sideways rail: the toggle brings the plans it means into view
+  const toPlan = (k) => {
+    const rail = plansRef.current;
+    if (!rail || rail.scrollWidth <= rail.clientWidth + 1) return;
+    const card = rail.children[k];
+    rail.scrollTo({ left: card.offsetLeft - rail.firstElementChild.offsetLeft, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  };
   return (
     <section className="w2-sec sg-cost">
       {/* the noise the section dissolves in from (entrance 4): grey fractal noise, thresholded into an alpha mask */}
@@ -354,7 +362,7 @@ function Cost() {
             <p className="w2-lede">Run it yourself and pay nothing but your own hosting. Pay us and we run it, on the same code.</p>
             <div className="sg-run" role="group" aria-label="Who runs it">
               {['Run it yourself', 'We run it'].map((t, i) => (
-                <button key={t} type="button" aria-pressed={run === i} onClick={() => setRun(i)}><span>{t}</span></button>
+                <button key={t} type="button" aria-pressed={run === i} onClick={() => { setRun(i); toPlan(i === 0 ? 0 : 1); }}><span>{t}</span></button>
               ))}
             </div>
           </div>
