@@ -2,16 +2,18 @@
 // Signature: every total is a sum that adds itself up: the podium's tape re-adds each hunter's score, then the four ways to earn pin as chapters while a receipt builds a total line by line.
 // Beyond: your points, worked out with the page's own rules (+50 a bug, +100 to +500 a merged pull request, +20 a referral, +1 per 100K tokens), and where your tokens would sit on the global board.
 /* Leaderboard. Hanzo's own board, as it reads today, told one idea per screen.
-   1. A podium as the hero object: the three hunters stand in gold, ink and grey; the tape beside it adds the lit
+   1. A podium as the hero object: the three hunters stand in silver and grey, the lit one in ink; the tape beside it adds the lit
       hunter's total by itself (bounty points, plus one point per 100,000 tokens: 450 + 1,060 = 1,510).
    2. The contributors as an editorial list with huge ranks; the recent rewards open in a sheet.
    3. The one dark room opens from a rounded panel (SceneWipe): the token board, with its scale switch.
    4. How to earn, as four pinned chapters: each rule adds its line to a receipt and the total rolls on.
    5. The Beyond: your points, worked out, and where your tokens would sit on the board.
-   Accent: Hanzo gold #f5b301, only on the leader's block, the bars' tips and the receipt's total rule.
-   Motion: signature (the self-adding sum: hero tape + pinned receipt) + line-masked headline + dark-room wipe + bar springs.
+   Colour: none of its own (JAMES.md): ink, greys and silvers; the lit hunter is the one ink block.
+   Motion: idle (the podium lights each hunter in turn and its tape adds up), pointer (rows fill on hover, steps lift),
+   state (scale pill, sheet, rolling totals) and scroll (pinned receipt, dark-room wipe, bars drawing, headline masks).
+   One ask, Hanzo's "Open bounties": in the hero, sticky after it (AskBar on desktop, the thumb bar on phones), at the close.
    Every name and figure is Hanzo's.
-   V2: 8/10 podium hero with a self-adding tape, editorial contributor ranks, wiped dark token room, earn rules as pinned chapters building a receipt, a calculator with a rolling total. */
+   V2: 8/10 podium hero with a self-adding tape, editorial ranks, wiped dark token room, earn rules as pinned chapters building a receipt, calculator with a rolling total; greys only, one sticky ask. */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE } from '../ui';
@@ -20,6 +22,7 @@ import MaskLines from '../v2/MaskLines';
 import PinScenes from '../v2/PinScenes';
 import DetailSheet from '../v2/DetailSheet';
 import SceneWipe from '../v2/SceneWipe';
+import AskBar from '../v2/AskBar';
 import '../v2/ProofScale.css';
 import './Leaderboard.css';
 
@@ -143,14 +146,13 @@ function Hero() {
       <div className="pf-wrap">
         <div className="xlb-hero-top">
           <div className="xlb-hero-h">
-            <p className="pf-kick">Leaderboard</p>
             <MaskLines as="h1" id="xlb-h1" className="pf-display m" lines={['Climb the ranks.', 'Earn AI credits.']} amount={0.1} />
           </div>
           <div className="xlb-hero-side">
             <p className="xlb-lede">The live Hanzo leaderboard across bug bounties, open-source pull requests, and global token volume. Verified contributions earn AI credits and automatic rank updates.</p>
             <div className="xlb-acts">
               <span data-thumb="Open bounties" data-href="/bounty"><A to="/bounty" className="pf-btn solid">Open bounties</A></span>
-              <A to={ISSUES} className="pf-btn">GitHub issues</A>
+              <More to={ISSUES}>GitHub issues</More>
             </div>
           </div>
         </div>
@@ -167,10 +169,9 @@ function Contributors() {
     <section className="pf-sec xlb-con" aria-labelledby="xlb-con-h">
       <div className="pf-wrap pf-grid">
         <header className="xlb-con-head">
-          <p className="pf-kick">Bounties</p>
           <h2 id="xlb-con-h" className="pf-head">Bug bounty &amp; contributor leaderboard</h2>
           <p className="pf-body">Ranked by verified bug reports (+50 pts), merged bounty pull requests (+100 to +500 pts), and token volume (+1 pt per 100K tokens).</p>
-          <DetailSheet label="Recent verified bug reports & rewards" kicker="Bounties" title="Recent verified bug reports & rewards">
+          <DetailSheet label="Recent verified bug reports & rewards" title="Recent verified bug reports & rewards">
             <ul className="xlb-wire">
               {REPORTS.map(([ref, gain, what]) => (
                 <li key={ref}>
@@ -211,7 +212,6 @@ function Tokens() {
       <div className="pf-wrap">
         <div className="xlb-tok-head">
           <div>
-            <p className="pf-kick">Tokens</p>
             <h2 id="xlb-tok-h" className="pf-head">Global token volume leaderboard</h2>
             <p className="pf-body">Top 10 active organizations across 217 organizations on Hanzo Cloud by total tokens processed.</p>
           </div>
@@ -272,7 +272,6 @@ function Earn() {
   return (
     <section className="xlb-earn" aria-labelledby="xlb-earn-h">
       <div className="pf-wrap xlb-earn-intro">
-        <p className="pf-kick">Earn</p>
         <MaskLines as="h2" id="xlb-earn-h" className="pf-display s" lines={['How to earn points', '& AI credits']} />
         <p className="pf-lede">Every verified bug report and merged pull request triggers an automatic email notification with your updated points, AI credits, and leaderboard rank.</p>
       </div>
@@ -324,7 +323,6 @@ function Calc() {
     <section className="pf-sec xlb-calc-s" aria-labelledby="xlb-calc-h">
       <div className="pf-wrap">
         <div className="xlb-calc-head">
-          <p className="pf-kick">Beyond the board</p>
           <h2 id="xlb-calc-h" className="pf-head">Your points, worked out</h2>
         </div>
         <div className="xlb-calc pf-obj">
@@ -350,7 +348,10 @@ function Calc() {
             <p>{place ? <>Your tokens would sit at <b>#{place}</b> on the global board.</> : <>Below #10 on the global board ({n(ORGS[9][3])} tokens).</>}</p>
           </div>
         </div>
-        <div className="xlb-end"><More to="/bounty">Browse open bounties</More></div>
+        <div className="xlb-end">
+          <A to="/bounty" className="pf-btn solid">Open bounties</A>
+          <More to="/bounty">Browse open bounties</More>
+        </div>
       </div>
     </section>
   );
@@ -364,6 +365,7 @@ export default function Leaderboard() {
       <Tokens />
       <Earn />
       <Calc />
+      <AskBar title="Leaderboard" label="Open bounties" to="/bounty" />
     </main>
   );
 }
