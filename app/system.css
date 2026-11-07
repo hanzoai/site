@@ -216,6 +216,24 @@ main:focus, .x-main-mark:focus { outline: none; }
 .x-state.error { border-style: solid; }
 .x-state .x-state-mark { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--room-fill-strong); color: var(--room-soft); }
 
+/* ---------- Cta sizes ---------- */
+.x-btn.lg { height: 52px; padding: 0 28px; font-size: 16px; }
+
+/* ---------- CodeBlock ---------- */
+.x-codeblock { margin: 0; border-radius: 16px; background: #0a0a0b; color: #e8e8ed; border: 1px solid rgba(255, 255, 255, .08); overflow: hidden; }
+.x-codeblock-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 6px 8px 6px 16px; border-bottom: 1px solid rgba(255, 255, 255, .08); font: 500 12px/1 var(--mono); color: #a1a1a6; }
+.x-codeblock .x-copy { background: rgba(255, 255, 255, .06); border-color: rgba(255, 255, 255, .12); color: #d2d2d7; height: 32px; }
+.x-codeblock pre { margin: 0; padding: 16px; overflow: auto; overscroll-behavior: contain; font: 400 13.5px/1.65 var(--mono); tab-size: 2; white-space: pre; }
+.x-codeblock pre:focus-visible { outline-offset: -3px; }
+.x-codeblock-l.c { color: #86868b; }
+.x-codeblock-p { color: #6e6e73; user-select: none; -webkit-user-select: none; }
+
+/* ---------- Stat ---------- */
+.x-stat { display: flex; flex-direction: column; gap: 8px; }
+.x-stat-v { display: inline-block; font-size: var(--fs-figure); font-weight: 600; letter-spacing: -.03em; line-height: 1; font-feature-settings: 'tnum'; font-variant-numeric: tabular-nums; color: var(--room-ink); }
+.x-stat-l { font-size: 15px; color: var(--room-soft); }
+.x-stat-n { font-size: 12.5px; color: var(--room-faint); }
+
 /* ---------- forms (Hanzo's own fields, not browser defaults) ---------- */
 .x-field { display: flex; flex-direction: column; gap: 8px; }
 .x-field > label, .x-field-l { font-size: 13px; font-weight: 500; color: var(--room-soft); }
