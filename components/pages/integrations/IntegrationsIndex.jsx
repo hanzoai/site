@@ -15,7 +15,7 @@ import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/rea
 import { Copy } from '../../ui';
 import { A, More } from '../../kit';
 import { Loose } from '../models/parts';
-import { monoOf } from './intParts';
+import Logo from './logos';
 import SceneWipe from './Wipe';
 import MaskLines from './Mask';
 import '../../v2/ProofScale.css';
@@ -53,7 +53,7 @@ function Hub({ cards, base, held, setHeld }) {
         {cards.map((c, i) => (
           <li key={c.href} style={{ '--a': (i / n) * 360 + 'deg' }}>
             <A to={c.href} className="xii-sat" aria-label={c.name} onPointerEnter={() => setHot(c)} onPointerLeave={() => setHot(null)} onFocus={() => setHot(c)} onBlur={() => setHot(null)}>
-              <span aria-hidden="true">{monoOf(c.name)}</span>
+              <Logo slug={c.slug} name={c.name} />
             </A>
           </li>
         ))}
@@ -179,11 +179,12 @@ function Catalogue({ groups, label }) {
             {cards.map((c, i) => {
               const on = shown.includes(c);
               if (!on && !calm) return null;
-              const wide = fam === 'All' && !t && (i === 0 || cards[i - 1].fam !== c.fam); // each family's first guide
+              // each family's first guide is wide when the family has three or more (rows then fill in reading order)
+              const wide = fam === 'All' && !t && (i === 0 || cards[i - 1].fam !== c.fam) && cards.filter((x) => x.fam === c.fam).length >= 3;
               return (
                 <motion.li key={c.href} layout={!calm} hidden={!on} className={wide ? 'wide' : undefined} initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.15, ease: [0, 0, 0.2, 1] } }} transition={PILL}>
                   <A to={c.href} className="xii-card" onPointerMove={lean} onPointerLeave={rest}>
-                    <span className="xii-card-e" aria-hidden="true">{monoOf(c.name)}</span>
+                    <span className="xii-card-e" aria-hidden="true"><Logo slug={c.slug} name={c.name} /></span>
                     <span className="xii-card-fam pf-mono" aria-hidden="true">{String(cards.indexOf(c) + 1).padStart(2, '0')} / {cards.length}</span>
                     <b className="xii-card-n" data-morph>{c.name}</b>
                     <span className="xii-card-d">{c.desc}</span>

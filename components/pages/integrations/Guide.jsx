@@ -30,7 +30,8 @@ import FamStage from '../../v2/FamStage';
 import FamChapters from '../../v2/FamChapters';
 import FamNext from '../../v2/FamNext';
 import { ui } from '../../v2/famUi';
-import { Editor, CodeCard, Only, monoOf } from './intParts';
+import { Editor, CodeCard, Only } from './intParts';
+import Logo from './logos';
 import './guide.css';
 
 const FACES = { Infrastructure: 'term', 'Platforms & Editors': 'ide', Languages: 'mirror' };
@@ -68,12 +69,6 @@ export default function Guide({ doc, emojis }) {
         <p className="xig-ch-n x-mono" aria-hidden="true"><b>{String(k + 1).padStart(2, '0')}</b> / {String(rest.length).padStart(2, '0')}</p>
         <h2 className="v2f-head">{s.title}</h2>
         {s.lang && <p className="xig-ch-l x-mono">{s.lang}</p>}
-        <div className="xig-ch-route" aria-hidden="true">
-          <i className="xig-ch-req" />
-          <span className="xig-node">{name}</span>
-          <span className="xig-node hub x-mono">{doc.base.replace(/^https:\/\//, '')}</span>
-          {ends[0] && <span className="xig-node end x-mono">{ends[Math.min(k, ends.length - 1)]}</span>}
-        </div>
         {s.code && <div className="xig-ch-acts"><Only only={only} setOnly={setOnly} code={s.code} /></div>}
       </div>
     ),
@@ -130,7 +125,7 @@ export default function Guide({ doc, emojis }) {
       <section className="v2f-sec tight xig-credit">
         <div className="v2f-wrap v2f-grid xig-credit-g">
           <div className="xig-credit-l">
-            <span className="xig-credit-e" aria-hidden="true"><Sigil seed={doc.route + '#credit'} data={seedData} className="xig-credit-s" still /><b>{monoOf(name)}</b></span>
+            <span className="xig-credit-e" aria-hidden="true"><Sigil seed={doc.route + '#credit'} data={seedData} className="xig-credit-s" still /><b><Logo slug={doc.slug} name={name} /></b></span>
             <div>
               {doc.created && <p className="xig-by"><Loose nodes={doc.created} /></p>}
               {doc.license && <p className="xig-lic"><Loose nodes={doc.license} /></p>}
