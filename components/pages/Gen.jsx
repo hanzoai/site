@@ -424,27 +424,30 @@ function Read() {
           <Lines as="h2" id="xgn-read-h" className="av-head xgn-read-l" lines={['The harness, the agent, the CLI.']} />
           <p className="av-body xgn-read-r">Where to get Gen, what it runs, and the same harness in the CLI.</p>
         </div>
-        <div className="xgn-cols">
-          {READ.map(([h, items]) => (
-            <div key={h}>
-              <h3 className="xgn-col-h">{h}</h3>
-              <ul className="xgn-links">
-                {items.map(([to, t, d]) => {
-                  const inner = <><span><b>{t}</b>{d && <span className={to === '#install' ? 'x-mono' : ''}>{d}</span>}</span><i aria-hidden="true">→</i></>;
-                  return <li key={t}>{to.startsWith('#') ? <a href={to} className="xgn-link">{inner}</a> : <A to={to} className="xgn-link">{inner}</A>}</li>;
-                })}
-              </ul>
-            </div>
-          ))}
-        </div>
-        <div className="av-grid xgn-paste">
-          <div className="xgn-paste-l">
-            <p className="av-title">Paste and ship</p>
-            <p className="av-body">Paste this into any agent. It reads the skill manifest and calls Gen from there.</p>
+        {/* one screen: the links (two columns, compact rows) beside the one object, the prompt to paste */}
+        <div className="av-grid xgn-read-g">
+          <div className="xgn-cols">
+            {READ.map(([h, items]) => (
+              <div key={h}>
+                <h3 className="xgn-col-h">{h}</h3>
+                <ul className="xgn-links">
+                  {items.map(([to, t, d]) => {
+                    const inner = <><span><b>{t}</b>{d && <span className={to === '#install' ? 'x-mono' : ''}>{d}</span>}</span><i aria-hidden="true">→</i></>;
+                    return <li key={t}>{to.startsWith('#') ? <a href={to} className="xgn-link">{inner}</a> : <A to={to} className="xgn-link">{inner}</A>}</li>;
+                  })}
+                </ul>
+              </div>
+            ))}
           </div>
-          <div className="xgn-prompt">
-            <pre className="x-mono">{PASTE}</pre>
-            <div className="xgn-prompt-f"><span className="xgn-prompt-k x-mono">Agent prompt</span><Copy text={PASTE} label="Copy the agent prompt" /></div>
+          <div className="xgn-paste">
+            <div className="xgn-paste-l">
+              <p className="av-title">Paste and ship</p>
+              <p className="av-body">Paste this into any agent. It reads the skill manifest and calls Gen from there.</p>
+            </div>
+            <div className="xgn-prompt">
+              <pre className="x-mono">{PASTE}<span className="xgn-cur" aria-hidden="true" /></pre>
+              <div className="xgn-prompt-f"><span className="xgn-prompt-k x-mono">Agent prompt</span><Copy text={PASTE} label="Copy the agent prompt" /></div>
+            </div>
           </div>
         </div>
       </div>
