@@ -1,5 +1,7 @@
 'use client';
-/* Gallery. Its idea is a gallery wall, hung salon style.
+/* Gallery, v2. V2: 8/10 the salon wall as the Stage (six living frames arrive huge and settle under a giant title, a spotlight walking them), frames that open into a viewer, three moves as big steps, a typed prompt, one dark closing room, amber accent
+   Motion budget: signature = the walking spotlight on the wall; supporting = Stage (Settle), Open (frame to viewer morph), typing.
+   Gallery. Its idea is a gallery wall, hung salon style.
    Signature: the first screen is the wall. The title, the wall label and six frames hang at different sizes, each
    frame holding its own living contour picture; a spotlight walks from frame to frame by itself, the counter
    following it, and a click steps you up to the frame (it opens large, with the next and the previous beside it).
@@ -8,9 +10,12 @@
    Every word is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
-import { EASE, Rise, Copy } from '../ui';
-import { A, Go, More, SecHead, Band } from '../kit';
+import { EASE, Copy, Magnetic } from '../ui';
+import { A } from '../kit';
 import Sigil from '../Sigil';
+import LineMask from '../v2/LineMask';
+import Settle from '../v2/Settle';
+import '../v2/Scale.css';
 import './Gallery.css';
 
 const FRAMES = [
@@ -54,7 +59,7 @@ function Viewer({ at, setAt, close }) {
           <div className="xga-view-nav">
             <button type="button" className="x-round" onClick={() => setAt((v) => (v + 5) % 6)} aria-label="Previous template">‹</button>
             <button type="button" className="x-round" onClick={() => setAt((v) => (v + 1) % 6)} aria-label="Next template">›</button>
-            <button type="button" ref={x} className="x-btn xga-view-x" onClick={close}>Close</button>
+            <button type="button" ref={x} className="w2-ghost xga-view-x" onClick={close}>Close</button>
           </div>
         </div>
       </motion.div>
@@ -81,29 +86,34 @@ function Wall() {
   }, [open]);
   const close = () => { const i = open; setOpen(-1); setTimeout(() => document.getElementById('xga-f' + i)?.focus(), 50); };
   return (
-    <section className="xga-wall-sec" ref={box} aria-labelledby="xga-h1">
-      <div className="x-wrap">
-        <div className="xga-wall">
-          <motion.div className="xga-title" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: EASE }}>
-            <p className="x-kick">gallery.hanzo.ai</p>
-            <h1 id="xga-h1" className="xga-h1">Gallery</h1>
-            <p className="xga-lede">Curated template showcase for Hanzo products</p>
+    <section className="xga-wall-sec" ref={box} aria-labelledby="xga-h1" data-morph-target>
+      <div className="w2-wrap">
+        <div className="xga-top">
+          <div>
+            <motion.p className="w2-kicker acc xga-kick" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>gallery.hanzo.ai</motion.p>
+            <LineMask as="h1" id="xga-h1" now className="w2-display xga-h1" lines={['Gallery']} />
+          </div>
+          <motion.div className="xga-top-r" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
+            <p className="w2-lede xga-lede">Curated template showcase for Hanzo products</p>
             <div className="xga-acts">
-              <Go to="https://gallery.hanzo.ai" solid>Browse the Gallery</Go>
-              <Go to="https://docs.hanzo.ai/docs/studio">Documentation</Go>
+              <Magnetic strength={0.25}><A to="https://gallery.hanzo.ai" className="w2-cta acc" data-thumb="Browse the Gallery">Browse the Gallery <i aria-hidden="true">↗</i></A></Magnetic>
+              <A to="https://docs.hanzo.ai/docs/studio" className="w2-ghost">Documentation</A>
             </div>
           </motion.div>
-          <motion.aside className="xga-label" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: EASE, delay: 0.15 }} aria-label="Get Gallery">
+        </div>
+        <Settle from={1.06} lift={70}>
+        <div className="xga-wall">
+          <aside className="xga-label" aria-label="Get Gallery">
             <h2>Get Gallery</h2>
             <p>Image + video gallery</p>
             <dl><dt>License:</dt><dd>Apache-2.0</dd></dl>
             <a href="https://github.com/hanzoai" target="_blank" rel="noopener noreferrer" className="xga-org">hanzoai</a>
-            <Go to="https://platform.hanzo.ai/deploy">Deploy to Cloud</Go>
-          </motion.aside>
-          <motion.div className="xga-plaque" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.3 }}>
+            <A to="https://platform.hanzo.ai/deploy" className="w2-cta xga-deploy">Deploy to Cloud</A>
+          </aside>
+          <div className="xga-plaque">
             <h2>Start from a Working App</h2>
             <span className="x-mono" aria-live="polite">{pad(lit + 1)} / 06</span>
-          </motion.div>
+          </div>
           {FRAMES.map(([t, d], i) => (
             <motion.button
               key={t}
@@ -128,6 +138,7 @@ function Wall() {
             </motion.button>
           ))}
         </div>
+        </Settle>
       </div>
       <AnimatePresence>{open >= 0 && <Viewer at={open} setAt={setOpen} close={close} />}</AnimatePresence>
     </section>
@@ -151,13 +162,16 @@ function Paste() {
     return () => { live = false; if (el.current) el.current.textContent = PROMPT; };
   }, [seen, calm]);
   return (
-    <section className="x-sec xga-paste">
-      <div className="x-wrap xga-paste-in">
-        <SecHead title="Paste and ship" lede="Paste this into any agent. It reads the skill manifest and calls Gallery from there." />
-        <Rise className="xga-term" ref={box}>
+    <section className="w2-sec xga-paste">
+      <div className="w2-wrap xga-paste-in">
+        <div className="xga-paste-h">
+          <h2 className="w2-headline">Paste and ship</h2>
+          <p className="w2-lede">Paste this into any agent. It reads the skill manifest and calls Gallery from there.</p>
+        </div>
+        <div className="xga-term" ref={box}>
           <div className="xga-term-bar"><span className="x-mono">Agent prompt</span><Copy text={PROMPT} /></div>
           <p className="xga-term-t x-mono"><span ref={el}>{PROMPT}</span><b className={'xga-caret' + (typing ? ' on' : '')} aria-hidden="true" /></p>
-        </Rise>
+        </div>
       </div>
     </section>
   );
@@ -171,16 +185,16 @@ const MOVES = [
 
 function Moves() {
   return (
-    <section className="x-sec xga-moves">
-      <div className="x-wrap">
+    <section className="w2-sec xga-moves">
+      <div className="w2-wrap">
         <ol className="xga-moves-l">
           {MOVES.map(([t, d, cta, to], i) => (
-            <Rise as="li" key={t} delay={i * 0.1} y={20}>
-              <span className="xga-move-n x-mono">{pad(i + 1)}</span>
-              <h3>{t}</h3>
-              <p>{d}</p>
-              <More to={to}>{cta}</More>
-            </Rise>
+            <li key={t}>
+              <span className="xga-move-n w2-fig">{pad(i + 1)}</span>
+              <h3 className="w2-headline">{t}</h3>
+              <p className="w2-body">{d}</p>
+              <A to={to} className="xga-move-a">{cta} <i aria-hidden="true">→</i></A>
+            </li>
           ))}
         </ol>
       </div>
@@ -190,11 +204,19 @@ function Moves() {
 
 export default function Gallery() {
   return (
-    <main className="xga">
+    <main className="xga w2">
       <Wall />
       <Moves />
       <Paste />
-      <Band title="Skip the Boilerplate" lede="Ship your idea, not your scaffolding." action="Browse the Gallery" to="https://gallery.hanzo.ai" note={<p className="x-band-note"><A to="https://github.com/hanzo-apps/gallery">View on GitHub</A></p>} />
+      <section className="w2-sec xga-band w2-dark" data-room="dark">
+        <div className="w2-wrap xga-band-in">
+          <h2 className="w2-display">Skip the Boilerplate</h2>
+          <div className="xga-band-r">
+            <p className="w2-lede">Ship your idea, not your scaffolding.</p>
+            <div className="xga-acts"><A to="https://gallery.hanzo.ai" className="w2-cta acc">Browse the Gallery <i aria-hidden="true">↗</i></A><A to="https://github.com/hanzo-apps/gallery" className="w2-ghost">View on GitHub</A></div>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }
