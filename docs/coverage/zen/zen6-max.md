@@ -31,7 +31,7 @@ Done here: One `<main className="zx">` after the layout's `#main` mark. Links go
 - [ ] Ends in proof strip, `Band`, footer (n/a: Hanzo's page has no proof strip; the close is its own section, not the kit `Band`, because `Band` uses blur word reveals and springs that the deck bans)
 - [x] Card-to-page links use Morph; title lands within 12px (the h1 is the `data-morph-target`)
 
-Done here: On load the name cuts in (700 ms, ease-emphasis) over the playing Zen film, with Hanzo's lede and "Talk to sales" on the first screen. On scroll the film's left edge wipes off the words first (clip-path, `--k` 1 to .8), then the card settles beside them in 8 of 13 columns, so film and words never share pixels after the wipe (checked at scroll 20, 60, 110, 160, 240 and 400 at 1470×801). The name is the 112px moment only while the film fills the screen, then settles to 52px. The stage is 140svh, so the settle ends as the promises arrive, and the rack panel rises 40px beside its head. Every section has an object: film, router drawing, rack, sheet figures, Sigil. With JS off, a noscript rule settles the stage and shows the poster, the full router drawing, every step and the drawer.
+Done here: On load the name cuts in (700 ms, ease-emphasis) over the playing Zen film, with Hanzo's lede and "Talk to sales" on the first screen. On scroll the film's left edge wipes off the words first (clip-path, `--k` 1 to .8), then the card settles beside them in 8 of 13 columns, so film and words never share pixels after the wipe (checked at scroll 20, 40, 80, 120 and 400 at 1470×801). No blend mode: a white aria-hidden twin of the name, lede, link and crumb sits over the ink copy, clipped to the film's visible box, so every letter is flat ink or flat white and the split sits on the film's edge. The settled card is 62svh tall with its bottom on the crumb's baseline (9svh up), so card and words share one baseline with no empty block under the card. The name is the 112px moment only while the film fills the screen, then settles to 52px. The stage is 140svh, so the settle ends as the promises arrive, and the rack panel rises 40px beside its head. Every section has an object: film, router drawing, rack, sheet figures, Sigil. With JS off, a noscript rule settles the stage and shows the poster, the full router drawing, every step and the drawer.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -98,7 +98,7 @@ Done here: There is one kit `Film` (`/models/zen.webm`, 248 KB, under the 500 KB
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: Under 900px nothing pins: the router drawing sits above the promises and the rack above its steps; the planning buttons wrap whole (no clipped "Isolated…") and drive the rack. scrollWidth is 375 at 375 and no element of `main` reaches past 375 (servers slide 16px inside their own slots on phones). The ask-bar sweep found 0 overlaps with page buttons at 375×812 and at 1470×801. The phone ask sits at about 340px from the top.
+Done here: Under 900px the router drawing is sticky under the header (34svh) while the promise rows scroll under it, so each row changes it at mid-screen. The full rack with its switches sits above the steps, and each planning step carries its own compact rack set to its plan (Qualification with the bracket, Isolated with the pools, Redundant with the twin rack) plus its total, built as it reaches the screen (MASTER 4.1: a pinned scene becomes static panels); the planning buttons wrap whole and scroll to their step. "Run it on your own GPUs" and the crumb "Zen" are 44px tall on phones (height only). scrollWidth is 375 at 375 and no element of `main` reaches past 375 (servers slide 16px inside their own slots on phones). The ask-bar sweep found 0 overlaps with page buttons at 375×812 and at 1470×801. The phone ask sits at about 340px from the top.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -131,7 +131,7 @@ Done here: `app/zen/zen6-max/page.jsx` keeps Hanzo's title and description from 
 - [x] Every maker and model page linked in the DOM (n/a: not a catalogue)
 - [x] One price figure everywhere (n/a: no prices)
 
-Done here: This is a model page with a spec sheet rather than prices. The B300/B200 rows are one `DataTable`, and each total appears once in the sheet and once in the rack. In the sheet only the picked server's total rests at 64px; the other rests at half size and grows in (scale, 500 ms ease-emphasis) when its column is picked.
+Done here: This is a model page with a spec sheet rather than prices. The B300/B200 rows are one `DataTable`, and each total appears once in the sheet and once in the rack. In the sheet both totals hold at half size until the figures pass 60% of the screen, then the picked one grows to 64px (scale, 500 ms ease-emphasis), so it arrives rather than repeating the rack's figure; the other grows in when its column is picked.
 
 ## 16. Developer experience
 - [x] One `CodeBlock`; copy equals display (n/a: no code on the page)
@@ -147,7 +147,7 @@ Done here: n/a: no code, install command or terminal on this page.
 - [x] A failed submit keeps its values and shows no success (n/a: no form)
 - [ ] A thrown island does not blank the page (shared: error boundaries around Sigil belong to the shell)
 
-Done here: The page fetches nothing at run time. With JS off it is complete: settled stage, poster, rack, steps and open drawer. There are no console errors with JS on at 1470×801 or 375×812 (4 fresh loads at each size, no hydration warning). `Count` renders its final figure in the server HTML, and the Sigil is seeded.
+Done here: The page fetches nothing at run time. With JS off it is complete: settled stage, poster, rack, steps and open drawer. There are no console errors with JS on at 1470×801 or 375×812 (5 fresh loads at each size, with and without reduced motion, no hydration warning). `--k` renders as a plain `1` on the server and the first client paint and is written to the pin only after mount; `data-over` seeds `true` on both. `Count` renders its final figure in the server HTML, and the Sigil is seeded.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary; events only through `lib/track.js` (the kit `Cta` sends `cta_click`; `lib/track.js` is not built yet)
@@ -155,4 +155,4 @@ Done here: The page fetches nothing at run time. With JS off it is complete: set
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/<page>.md` verdict 8 or more (the last review, zen-family 7/10, asked for the lede and ask on the first screen: done here)
 
-Done here: `V2: 8/10` is in ZenMax.jsx. The 7 Nov zen6-max review (6/10) fixes 1, 2, 3, 5, 6, 7 and 8 are done in the page; fix 4 (header ask on phones) is filed in `docs/requests/zen6-max.md`. The zen-family review fixes are done: lede and ask on the first screen, 13px floor, kit `Film` with a pause, and `data-cta`. Proof in `docs/gallery/zen/zen6-max/` was refilmed after this rework.
+Done here: `V2: 8/10` is in ZenMax.jsx. The second 7 Nov review (7/10) fixes 1–8 are done in the page: sticky phone router, a compact rack per phone step, the card on the crumb baseline, the close rising 40px into the sheet's room (72px step, Sigil at black 55% on #e4e4e7), 44px phone targets, the clipped white twin instead of the difference blend, the arriving sheet figure, and a hydration-stable `--k`. The first 7 Nov zen6-max review (6/10) fixes 1, 2, 3, 5, 6, 7 and 8 are done in the page; fix 4 (header ask on phones) is filed in `docs/requests/zen6-max.md`. The zen-family review fixes are done: lede and ask on the first screen, 13px floor, kit `Film` with a pause, and `data-cta`. Proof in `docs/gallery/zen/zen6-max/` was refilmed after this rework.

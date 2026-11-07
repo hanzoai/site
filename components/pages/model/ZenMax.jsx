@@ -1,13 +1,15 @@
 'use client';
 /* Zen 6 Max (/zen/zen6-max): a model launch read like a product film, one idea per screen (docs/MASTER.md).
    The first screen sells on its own: the name, Hanzo's lede and "Talk to sales" over the playing Zen film. The film's
-   left edge then wipes off the words, and the film settles into its card (8 of 13 columns) beside them, so card and
-   words never share pixels; the name settles from 112px to its resting 52px. The pause rides the card's corner.
-   Then the promises beside a router drawing that changes per promise, the rack chapters (pinned on a desktop, stacked
-   on a phone), the B300/B200 sheet whose picked total grows, the close.
+   left edge then wipes off the words (a white twin of the words clipped to the film, so each letter is flat ink or flat
+   white), and the film settles into its card (8 of 13 columns, its bottom on the crumb's baseline) beside them; the
+   name settles from 112px to its resting 52px. The pause rides the card's corner.
+   Then the promises beside a router drawing that changes per promise (it rides under the header on a phone), the rack
+   chapters (pinned on a desktop; on a phone each step carries its own compact rack), the B300/B200 sheet whose picked
+   total grows in once the sheet is in view, the close rising into the sheet's room.
    Not only scroll: the name cuts in on load, the film plays (with a pause control), the count runs, the rack answers its
    switches, the router answers the row under the pointer, the drawer opens, the field in the close bends to the pointer.
-V2: 8/10 film wipes off the words then settles beside them; router drawing per promise; shorter stage; rack panel overlaps its head; picked total grows; hover answers
+V2: 8/10 film wipes off flat ink/white words, card on the crumb baseline; phone: sticky router, a rack per step; sheet figure arrives; close overlaps the sheet
 */
 // Persona: enterprise buyer running Zen 6 Max on its own GPUs
 // Goal: understand what a rack for Zen 6 Max is made of, then reach sales
