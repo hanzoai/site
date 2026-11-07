@@ -14,7 +14,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { EASE, Copy } from '../../ui';
-import { A } from '../../kit';
+import { A, Cta } from '../../kit';
 import MaskFig from '../../v2/MaskFig';
 import Sigil from '../../Sigil';
 import { FilmPause, usePaused } from '../../v2/ModelFilm';
@@ -87,8 +87,8 @@ export default function ModelSheet({ doc }) {
             </h1>
             {doc.lede && <motion.p className="xmf-lede" {...up(0.3)}>{doc.lede}</motion.p>}
             <motion.div className="xmf-acts" {...up(0.42)}>
-              {first && <A to={first.href} className="x-btn solid xmf-btn" data-thumb="" data-cta="model.hero">{first.label}</A>}
-              {doc.actions.slice(1).map((a) => <A key={a.label} to={a.href} className="x-btn xmf-btn">{a.label}</A>)}
+              {first && <Cta to={first.href} id="model.hero" thumb>{first.label}</Cta>}
+              {doc.actions.slice(1).map((a) => <Cta key={a.label} to={a.href} kind="link" id="model.hero.2">{a.label}</Cta>)}
             </motion.div>
             {doc.links.length > 0 && (
               <motion.ul className="xmf-links" {...up(0.5)}>
@@ -142,7 +142,7 @@ export default function ModelSheet({ doc }) {
             {doc.quick && <a href="#quickstart">{doc.quick.title}</a>}
             {(doc.more || (rate && plotted > 1)) && <a href="#more">{moreTitle}</a>}
           </span>
-          {first && <A to={first.href} className={'x-btn' + (past ? ' solid' : '')} data-thumb="" data-cta="model.local">{first.label}</A>}
+          {first && <Cta to={first.href} kind={past ? 'solid' : 'quiet'} size="sm" id="model.local">{first.label}</Cta>}
         </div>
       </nav>
 
@@ -225,7 +225,7 @@ export default function ModelSheet({ doc }) {
               {doc.band.lede && <p>{doc.band.lede}</p>}
               {doc.band.nodes && <Loose nodes={doc.band.nodes.filter((n) => !(n && n.t === 'h2'))} />}
               <div className="xmf-acts">
-                {doc.band.actions.map((a, i) => <A key={a.label} to={a.href} className={'x-btn xmf-btn' + (i ? '' : ' solid')} {...(i ? {} : { 'data-cta': 'model.band' })}>{a.label}</A>)}
+                {doc.band.actions.map((a, i) => <Cta key={a.label} to={a.href} kind={i ? 'link' : 'solid'} id={i ? 'model.band.2' : 'model.band'}>{a.label}</Cta>)}
               </div>
             </div>
           </div>

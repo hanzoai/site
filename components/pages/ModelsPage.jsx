@@ -17,8 +17,8 @@
    No UI hue: greys, black and white; colour arrives only through the films. Every word, id, rate and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
-import { EASE, Copy } from '../ui';
-import { A } from '../kit';
+import { EASE } from '../ui';
+import { A, Cta, Tabs, TabPanel, CodeBlock } from '../kit';
 import { useOpener } from '../Opener';
 import Sigil from '../Sigil';
 import ModelFilm, { FilmPause, usePaused } from '../v2/ModelFilm';
@@ -37,7 +37,6 @@ const Lk = ({ to, children, className = '', ...r }) => {
     ? <a href={to} className={'xmo-lk ' + className} {...r}>{inner}</a>
     : <A to={to} className={'xmo-lk ' + className} {...r}>{inner}</A>;
 };
-const Btn = ({ to, children, solid, ...r }) => <A to={to} className={'x-btn xmo-btn' + (solid ? ' solid' : '')} {...r}>{children}</A>;
 
 /* Opens a flagship's own page with the lifted-picture transition; its close button flies back to this card. */
 function useOpen() {
@@ -136,7 +135,7 @@ function Stage() {
               Proprietary and open weight models for text, decisions, video, image, and more — one account, one API key.
             </motion.p>
             <motion.div className="xmo-acts" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.3 }}>
-              <Btn to={go} solid data-thumb="" data-cta="models.hero">Get API key</Btn>
+              <Cta to={go} id="models.hero" thumb>Get API key</Cta>
               <Lk to="#families" className="quiet">Every model</Lk>
             </motion.div>
           </div>
@@ -569,8 +568,8 @@ function Try() {
           <p className="xmo-lede sm">Test any model directly on the gateway. Switch models by changing one string.</p>
           <p className="xmo-body">Sign in to chat with Enso, Zen, or any model on the endpoint. Pick a model, start a thread, billed to your account and kept private.</p>
           <div className="xmo-acts">
-            <Btn to="https://platform.hanzo.ai/api-keys" solid data-cta="models.try">Get free API key</Btn>
-            <Btn to="/chat">Open Hanzo Chat</Btn>
+            <Cta to="https://platform.hanzo.ai/api-keys" id="models.try">Get free API key</Cta>
+            <Cta to="/chat" kind="link" id="models.try.chat">Open Hanzo Chat</Cta>
           </div>
         </header>
         <div className="xmo-req" ref={box}>
@@ -608,8 +607,8 @@ function Try() {
           <div className="xmo-compose" aria-disabled="true">
             <span className="xmo-effort">High</span>
             <span className="xmo-gate">
-              <A to="/chat" className="x-btn sm">Log in</A>
-              <A to="https://platform.hanzo.ai/api-keys" className="x-btn sm">Sign up for free</A>
+              <Cta to="/chat" kind="quiet" size="sm" id="models.try.login">Log in</Cta>
+              <Cta to="https://platform.hanzo.ai/api-keys" kind="quiet" size="sm" id="models.try.signup">Sign up for free</Cta>
             </span>
             <span className="xmo-send" aria-hidden="true">↑</span>
           </div>
@@ -678,8 +677,6 @@ func main() {
 	fmt.Println(resp.Choices[0].Message.Content)
 }`],
 ];
-/* Strings pick up a colour; everything else stays plain. */
-const hl = (code) => code.split(/("[^"\n]*"|'[^'\n]*')/).map((s, i) => (i % 2 ? <span key={i} className="s">{s}</span> : s));
 
 function First() {
   const [k, setK] = useState(0);
@@ -695,21 +692,11 @@ function First() {
           </div>
         </header>
         <div className="xmo-code">
-          <div className="xmo-code-top">
-            <div className="xmo-tabs" role="tablist" aria-label="Language" onKeyDown={arrows(CODE.length, setK)}>
-              {CODE.map(([t], i) => (
-                <button key={t} type="button" role="tab" id={'xmo-tab-' + i} aria-controls={'xmo-sample-' + i} aria-selected={k === i} tabIndex={k === i ? 0 : -1} onClick={() => setK(i)}>
-                  {k === i && <motion.span layoutId="xmo-lang" className="xmo-tab-bg" transition={SPRING} />}
-                  <span>{t}</span>
-                </button>
-              ))}
-            </div>
-            <Copy text={CODE[k][1]} />
-          </div>
+          <Tabs id="xmo-lang" tabs={CODE.map(([t]) => t)} value={k} onChange={setK} label="Language" />
           {CODE.map(([t, c], i) => (
-            <div key={t} id={'xmo-sample-' + i} role="tabpanel" aria-labelledby={'xmo-tab-' + i} hidden={k !== i} className="xmo-pane">
-              <pre tabIndex={0}><code>{hl(c)}</code></pre>
-            </div>
+            <TabPanel key={t} id="xmo-lang" i={i} value={k} className="xmo-pane">
+              <CodeBlock code={c} label={t} />
+            </TabPanel>
           ))}
         </div>
       </div>
