@@ -312,3 +312,19 @@ html:not(.js) .zc-hold { display: none; }
   .zc-end-rule span, .zc-seg button::before { animation: none; transition: none; }
   .zc-fa i, .zc-fa i::after, .zc-fa-head, .zc-mc-film, .zc-frame .x-arrow[href="#zen5"] svg { animation: none; transition: none; }
 }
+/* the chosen pick still answers the pointer (its ink lifts a step), and the lede's link thickens */
+@media (hover: hover) {
+  .zc-picks button[aria-pressed='true']:hover { background: #262626; border-color: #262626; color: #fff; }
+  .zc-lede a:hover { text-decoration-thickness: 2px; }
+}
+/* phone: the sheet is a long column of rows, so a hairline draws across each row in turn (one at a time, 7.5 s round)
+   and the screen is never still; the rows themselves do not move */
+@media (max-width: 899px) and (prefers-reduced-motion: no-preference) {
+  .zc-rows > li { position: relative; }
+  .zc-rows > li::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: var(--ink); transform: scaleX(0); transform-origin: 0 50%; pointer-events: none; animation: zc-line 7.5s var(--e) infinite; }
+  .zc-rows > li:nth-child(2)::after { animation-delay: 1.5s; }
+  .zc-rows > li:nth-child(3)::after { animation-delay: 3s; }
+  .zc-rows > li:nth-child(4)::after { animation-delay: 4.5s; }
+  .zc-rows > li:nth-child(5)::after { animation-delay: 6s; }
+}
+@keyframes zc-line { 0% { transform: scaleX(0); opacity: 1; } 16% { transform: scaleX(1); opacity: 1; } 22%, 100% { transform: scaleX(1); opacity: 0; } }

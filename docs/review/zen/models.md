@@ -1,5 +1,7 @@
 # /zen/models — James-eye review
 
+Ready: 7 Nov 22:58, held up next to /api and /affiliate. Walked the rebuilt catalogue: the shelf cards carry Hanzo's Zen film and still on the SPEC grid (385px + 4×192px, 220px rows, #000, 20px radius, 22/44px titles, 10px mono pills, 3° tilt), so the Morph lands on the picture you clicked; the figure drawings sit capped under the 112px figure; no white bands. New this pass: one solid ask per screen on phones too (the page calls `usePhoneAsk`, so the header outlines while "Get API key" or "Get Started" shows), the phone sheet is no longer a still screen (a hairline draws across each row in turn), and the chosen model pick and the lede's link answer hover. taste/unique/parity OK (89/89, 5/5); 0 console errors, no overlap at 1470 and 375 (the overlap probe's hit inside the pinned figures is the hidden figures' font-box slivers, clipped; frames are clean); no still screen above the footer.
+
 Verdict: 7/10
 First complaint: "Where are the models? It's the same contour lines on the hero and on all five cards, then I click one and land on a sphere film I never saw on the catalogue. And the numbers section is a giant number with a giant drawing under it on every screen. That's two big things at once, not one."
 

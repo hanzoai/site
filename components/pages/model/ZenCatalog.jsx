@@ -29,6 +29,7 @@ import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useMot
 import { Copy } from '../../ui';
 import { A, Cta, Film, Img } from '../../kit';
 import Sigil from '../../Sigil';
+import usePhoneAsk from '../usePhoneAsk'; // one solid ask per screen at every width (the phone header outlines while "Get API key" shows)
 import './ZenCatalog.css';
 
 // the deck's motion tokens (MASTER 3.1), in seconds; one emphasis curve; no springs
@@ -399,6 +400,7 @@ function Shelf() {
 }
 
 export default function ZenCatalog() {
+  usePhoneAsk();
   return (
     <main className="zc">
       <Stage />
