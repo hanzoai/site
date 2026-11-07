@@ -3,7 +3,16 @@
 James's 8 GB laptop could not run the chats, so the remaining work runs in the cloud. A local conductor chat merges each finished branch into James's copy, and he watches it on localhost:4180.
 
 ## Shared rules (every cloud chat)
-- **Read `docs/VISION.md` first.** It is James's expanded brief and outranks everything else: Apple-grade, chaptered, his references visible, v2 type, space and motion, scored 8/10 or better.
+- **The law, in order:**
+  1. `docs/JAMES.md`: his standards and the James-eye review.
+  2. `docs/BRIEF-v3.md`: goal, audiences, CTA logic, psychology, page types, UI system, motion library, references, budgets, done list.
+  3. `docs/PLAN-COMPONENTS.md`: all 18 parts of a website and every element in them, which every page must cover. It lands soon; pull main.
+  4. `docs/VISION.md` and `docs/DESIGN.md`.
+
+  Copy is frozen.
+- **Reviews decide "ready", not your own score.** Cloud James-eye critics walk every pushed page and write `docs/review/<page>.md`, with `Verdict: N/10` and the first complaint. After every `git pull`, read the reviews of your pages and fix anything under 8 **before** starting a new page.
+- **Coverage.** Each page you finish gets `docs/coverage/<page>.md`: the 18 parts, one line each, saying what you did for that part on this page (or why it does not apply).
+- **Read `docs/VISION.md` too.** It is James's expanded brief and outranks everything else: Apple-grade, chaptered, his references visible, v2 type, space and motion, scored 8/10 or better.
 - **Setup.** Run `npm ci`, then `npm run dev` (port 4180) in the background.
 - **The law.** Follow `docs/DESIGN.md`:
   - Nothing is lost: `python3 scripts/parity.py /<path>` shows 0 missing.
@@ -15,6 +24,7 @@ James's 8 GB laptop could not run the chats, so the remaining work runs in the c
 - **Style.** Hanzo's way: the smallest change that fully works, reuse the kit (`components/ui.jsx`, `components/kit.jsx`), and review your own work before calling it done. Act as James: never ask him questions, and make the decisions yourself.
 - **Ownership.** Other cloud chats work on other files at the same time on their own branches, so touch only the files you own. Never edit `app/globals.css`, `lib/route.js`, `docs/PAGES.md`, `components/ui.jsx`, `components/kit.jsx` or another chat's pages. Report any shared change you need instead.
 - **Safety.** Never submit real forms or send real chat messages to Hanzo's live API; intercept requests, as `scripts/forms.mjs` does. No deploys.
+- **Shared `components/v2/` files: reuse, never re-create.** Before adding one, run `git pull --rebase origin main` and check whether it already exists. If it does, use it as it is. If it lacks something, build that piece page-local (`components/pages/<your page>/...`). Only add a brand-new v2 file if the name is free, and pull right before pushing it. Two chats creating the same file caused the first merge conflict (7 Nov 13:45).
 - **Push after every page, not at the end.** James watches the site build live on his localhost: the conductor merges every pushed commit about every 10 minutes. Commit and push each page as soon as it works.
 - **Mark it done.** When a page meets VISION.md, add this line to the top comment of its page file: `V2: <score>/10 <one line on what changed>`. The status board reads that line; a page without it counts as not done.
 - **Finish.** Commit, push your branch, and open a draft PR titled `Hanzo: <your task>`. The PR body gives one line per page: what changed, the evidence (200, parity, unique) and what is unverified. James reads that list to know what to look at.

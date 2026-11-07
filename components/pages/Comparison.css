@@ -71,6 +71,7 @@
 .xcm-twice p + p { margin-top: 6px; }
 .xcm-twice p.xcm-twice-d { display: block; font: 400 13.5px/1.5 var(--sans); color: var(--soft); }
 
+@media (max-width: 900px) {
   .xcm-h1 { font-size: clamp(3.2rem, 18vw, 5rem); }
   .xcm-build { grid-template-columns: minmax(0, 1fr); }
   .xcm-receipt { position: static; order: -1; }

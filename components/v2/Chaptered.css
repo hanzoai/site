@@ -1,0 +1,39 @@
+/* Chaptered (components/v2/Chaptered.jsx): sticky chapters on desktop, a vertical story on phones. */
+.xpc { --pinned: 1; position: relative; height: calc(var(--n) * var(--per) * 100svh + 100svh); }
+.xpc-pin { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; overflow: clip; }
+.xpc-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 24px clamp(40px, 6vw, 112px); align-items: center; }
+.xpc.flip .xpc-words { order: 2; }
+.xpc-words { position: relative; display: grid; grid-template-columns: 1fr 28px; column-gap: 24px; align-content: center; }
+.xpc-head { grid-column: 1 / -1; margin-bottom: clamp(28px, 3.4vw, 48px); }
+.xpc-stack { grid-column: 1; display: grid; }
+.xpc-ch { grid-area: 1 / 1; align-self: start; pointer-events: none; }
+.xpc-ch.on { pointer-events: auto; }
+.xpc-k { margin-bottom: 18px; color: var(--xp-accent); }
+.xpc-t { max-width: 14ch; }
+.xpc-b { margin-top: 24px; max-width: 40ch; }
+.xpc-b p { margin: 0; }
+.xpc-b p + p { margin-top: 14px; }
+.xpc-rail { position: relative; grid-column: 2; display: grid; align-content: center; justify-items: center; gap: 22px; }
+.xpc-track { position: absolute; top: 6px; bottom: 6px; left: 50%; width: 2px; margin-left: -1px; background: var(--line); border-radius: 2px; overflow: hidden; }
+.xpc-track i { position: absolute; inset: 0; background: var(--xp-accent); transform-origin: 50% 0; }
+.xpc-rail button { position: relative; width: 28px; height: 28px; border: 0; padding: 0; background: transparent; cursor: pointer; display: grid; place-items: center; }
+.xpc-rail button::before { content: ''; width: 10px; height: 10px; border-radius: 50%; background: #fff; border: 2px solid rgba(0, 0, 0, .18); transition: border-color .3s var(--xp-ease), transform .3s var(--xp-ease); }
+.xpc-rail button.on::before { border-color: var(--xp-accent); }
+.xpc-rail button[aria-current]::before { transform: scale(1.35); background: var(--xp-accent); }
+.xpc-rail button:focus-visible { outline: 2px solid var(--xp-accent); outline-offset: 2px; border-radius: 50%; }
+.xpc-stage { position: relative; height: min(76svh, 720px); }
+.xpc-stage-in { position: absolute; inset: 0; }
+.xpc-story { display: none; }
+.xp-dark.xpc .xpc-rail button::before { background: #0a0a0a; border-color: rgba(255, 255, 255, .25); }
+.xp-dark.xpc .xpc-track { background: rgba(255, 255, 255, .12); }
+
+@media (max-width: 900px) {
+  .xpc { --pinned: 0; height: auto; padding: 112px 0; }
+  .xpc-pin { display: none; }
+  .xpc-story { display: grid; gap: 88px; }
+  .xpc-story .xpc-head { margin-bottom: -40px; }
+  .xpc-sch { display: grid; gap: 0; }
+  .xpc-sstage { position: relative; height: 380px; margin-bottom: 32px; }
+  .xpc-sch .xp-kick { margin-bottom: 14px; color: var(--xp-accent); }
+  .xpc-sch .xpc-b { margin-top: 14px; }
+}

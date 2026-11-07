@@ -2,7 +2,7 @@
 """Writes docs/status.html: one row per design (top-level pages + family templates) with its v2 state,
 so James can see what is ready to hand over without opening 800+ pages.
 
-Ready = page file has `V2: <score>/10` with score >= 8, passes scripts/variety.py, and has proof in docs/gallery/<name>/.
+Ready = a James-eye critic verdict (docs/review/<name>.md) of 8+, passes scripts/variety.py, and proof in docs/gallery/<name>/.
 Owner and group come from docs/CLOUD.md. Run: python3 scripts/status.py && open docs/status.html
 """
 import html, importlib.util, json, re, time
@@ -40,7 +40,13 @@ def row(key, route, page, members=0):
     name = "home" if route == "/" else key.strip("/").replace("/*", "")
     gdir = HZ / "docs/gallery" / name
     media = sorted(p for p in gdir.rglob("*") if p.suffix.lower() in MEDIA) if gdir.is_dir() else []
-    state = ("ready" if score is not None and score >= 8 and var_ok and media else
+    rv = HZ / "docs/review" / f"{name}.md"
+    rtext = rv.read_text(errors="ignore") if rv.is_file() else ""
+    rm = re.search(r"Verdict:\s*(\d+(?:\.\d+)?)\s*/\s*10", rtext)
+    review = float(rm.group(1)) if rm else None
+    complaint = (re.search(r"(?:First complaint|Complaint):\s*(.+)", rtext) or [None, ""])[1]
+    if review is not None: score, note = review, f"critic: {complaint}" if complaint else note  # the critic's verdict outranks the chat's own
+    state = ("ready" if review is not None and review >= 8 and var_ok and media else
              "v2" if score is not None else "todo")
     title = (INDEX.get(route) or {}).get("title", route).split(" — ")[0]
     return dict(key=key, route=route, title=title, members=members, score=score, note=note, var_ok=var_ok,
@@ -62,7 +68,7 @@ for page in sorted((HZ / "app").rglob("page.jsx")):
 count = {s: sum(r["state"] == s for r in rows) for s in ("ready", "v2", "todo")}
 assert sum(count.values()) == len(rows) and len(rows) > 100
 urls = len(INDEX)  # every hanzo.ai page captured in content/pages.json
-LABEL = {"ready": "Ready to hand over", "v2": "v2 done, needs proof or ≥8", "todo": "Not v2 yet"}
+LABEL = {"ready": "Ready to hand over", "v2": "v2 built, awaiting review or under 8", "todo": "Not v2 yet"}
 
 def tr(r):
     media = "".join(f'<video src="{m}" muted loop autoplay playsinline></video>' if m.endswith((".mp4", ".webm"))
