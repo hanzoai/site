@@ -45,6 +45,7 @@
 .x-next:hover .mb-next-film { opacity: 1; transform: scale(1.03); }
 
 @media (max-width: 900px) {
+  .mb-specs dd + dd { font-size: 14px; }
   .mb-specs { grid-template-columns: 1fr; }
   .mb-specs > div { border-left: 0; border-top: 1px solid rgba(255, 255, 255, .08); padding: 16px 18px; }
   .mb-specs > div:first-child { border-top: 0; }

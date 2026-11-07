@@ -268,10 +268,14 @@ textarea.x-input2 { height: auto; min-height: 120px; padding: 14px 16px; resize:
 .x-ratio > img, .x-ratio > video, .x-ratio > picture > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .x-media { display: block; max-width: 100%; height: auto; background: var(--room-fill); }
 
-/* ---------- Hanzo's header: its ask is the one solid ask at every width (MASTER 3.2 rule 6); it never fades ---------- */
-header[data-slot=masthead] a[href='https://hanzo.ai/signup'] { transition: background-color var(--dur-hover) var(--ease-soft), color var(--dur-hover) var(--ease-soft), box-shadow var(--dur-hover) var(--ease-soft), transform var(--dur-press) var(--ease-out-expo); }
-@media (hover: hover) { header[data-slot=masthead] a[href='https://hanzo.ai/signup']:hover { opacity: 1 !important; background-color: color-mix(in srgb, var(--foreground) 84%, var(--background)); } }
-header[data-slot=masthead] a[href='https://hanzo.ai/signup']:active, header[data-slot=masthead] :is(button, a):active { transform: scale(.97); }
+/* ---------- Hanzo's header: its ask is the one solid ask at every width (MASTER 3.2 rule 6); it never fades.
+   On desktop it carries the page's own ask after the hero (components/Ask.jsx), and is an outline only while the
+   hero's own solid ask is on screen. ---------- */
+header[data-slot=masthead] a[data-x-ask], header[data-slot=masthead] a[href='https://hanzo.ai/signup'] { transition: background-color var(--dur-hover) var(--ease-soft), color var(--dur-hover) var(--ease-soft), box-shadow var(--dur-hover) var(--ease-soft), transform var(--dur-press) var(--ease-out-expo); }
+html[data-ask=quiet] header[data-slot=masthead] a[data-x-ask] { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
+header[data-slot=masthead] a[data-x-ask] { max-width: 240px; overflow: hidden; text-overflow: ellipsis; }
+@media (hover: hover) { header[data-slot=masthead] a[data-x-ask]:hover, header[data-slot=masthead] a[href='https://hanzo.ai/signup']:hover { opacity: 1 !important; background-color: color-mix(in srgb, var(--foreground) 84%, var(--background)); } }
+header[data-slot=masthead] a[data-x-ask]:active, header[data-slot=masthead] :is(button, a):active { transform: scale(.97); }
 
 /* ---------- header menus: the stage (a preview of the link under the pointer) and the phone sheet ---------- */
 .x-nav-panel { display: flex; align-items: stretch; background: #fff; } /* opaque: nothing of the page shows through */

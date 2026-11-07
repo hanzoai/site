@@ -1,23 +1,27 @@
 'use client';
-/* Billing (v2, Cloud 4 chat). Archetype A/E: an editorial split Stage with the meter running → the three objects as
-   chapters while one invoice builds itself → the history room → get started → close. Accent: ledger green.
-   V2: 8/10 the meter running under a split hero, one invoice that assembles itself line by line as you scroll the three objects, a bill's history that lights by capability
+/* Billing (v2, Cloud 4 chat). Archetype A, Launch: an editorial split Stage with the meter running → the three objects as
+   pinned chapters while one invoice builds itself → the history room → get started → Get Billing and related.
+   Persona: a developer charging for usage. Goal: read the docs and send a first meter event.
+   CTA: "Read the docs" (hero, ask bar, get started; data-cta primary / start). Metric: cta_click:billing.primary.
+   V2: 8/10 the meter running under a split hero, one invoice that assembles itself line by line as you scroll the three objects, a bill's history that lights by capability; greys only, one ask per screen
    Signature: the invoice builds as you scroll. Three pinned chapters (plans and prices, meters, invoices) assemble a single
    invoice: the subscription line arrives from its price, the metered line counts up with your scroll as events land on
    the meter, tax is calculated on the invoice, and the preview turns into an issued stamp at the end.
-   Beyond: "Change a price, not a customer". Publish a new price and watch subscribers already on the old one stay where
-   they are while new sign-ups take the new one: Hanzo's plan/price split, made visible.
-   Motion: scroll-built invoice (signature) + the hero's running meter + capability highlight in the history + magnetic
-   primary. Every word, figure and link is Hanzo's; customer and meter names are the examples Hanzo's own code uses. */
+   Beyond: publish a new price and watch subscribers already on the old one stay where they are while new sign-ups take
+   the new one: Hanzo's plan and price split, made visible.
+   Motion: scroll-built invoice (signature, scroll) + the hero's running meter (time, pausable) + capability highlight in
+   the history (pointer, state). Every word, figure and link is Hanzo's; customer and meter names are the examples
+   Hanzo's own code uses. */
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence, useMotionValueEvent, useMotionValue } from 'motion/react';
 import { EASE } from '../../ui';
-import { A, More } from '../../kit';
-import { Code, Console, useLive, useEvery } from '../cloud/Frame';
+import { Cta } from '../../kit';
+import { Code, Console, useLive } from '../cloud/Frame';
 import StageHero from '../../v2/StageHero';
 import PinScenes from '../../v2/x-hamilton/PinScenes';
 import Finale, { Prompt } from '../../v2/Finale';
 import Drawer from '../../v2/Drawer';
+import { useDemo, PauseBtn, useTick } from '../../v2/x-hamilton/Demo';
 import './Billing.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/cli/billing';
@@ -32,13 +36,13 @@ const LINES = [
 
 /* Stage object: events → meter → invoice, one period after another, only while seen. */
 function Machine() {
-  const [ref, live, calm] = useLive(0.25);
+  const [ref, live, calm, paused, toggle] = useDemo(0.25);
   const [n, setN] = useState(7);
   const [ev, setEv] = useState(7);
   const [phase, setPhase] = useState('run');
   const [period, setPeriod] = useState(1);
   useEffect(() => { if (calm) { setN(PERIOD); setPhase('issued'); } }, [calm]);
-  useEvery(430, live && phase === 'run', () => { setEv((e) => e + 1); setN((c) => c + 1); });
+  useTick(430, live && phase === 'run', () => { setEv((e) => e + 1); setN((c) => c + 1); });
   useEffect(() => { if (phase === 'run' && n >= PERIOD) setPhase('read'); }, [n, phase]);
   useEffect(() => {
     if (!live || phase === 'run') return;
@@ -49,6 +53,7 @@ function Machine() {
   const status = phase === 'run' ? 'Draft' : phase === 'read' ? 'Preview' : 'Issued';
   return (
     <div className="l2-obj bl2-mach" ref={ref} data-phase={phase}>
+      <PauseBtn paused={paused} onClick={toggle} />
       <div className="bl2-zone bl2-ev">
         <p className="bl2-zk l2-mono"><span>billing.usage.record</span><b>{ev}</b></p>
         <ul aria-hidden="true">
@@ -79,11 +84,10 @@ function Machine() {
           </AnimatePresence>
         </div>
         <ul className="bl2-lines">
-          {LINES.map(([k, v, tip], i) => (
-            <li key={k} tabIndex={0} className={i === 1 && phase === 'read' ? 'hot' : ''}>
+          {LINES.map(([k, v], i) => (
+            <li key={k} className={i === 1 && phase === 'read' ? 'hot' : ''}>
               <span className="bl2-lk">{k}</span>
               <span className="bl2-lv l2-mono">{v || (phase === 'run' ? <span className="bl2-wait">metering…</span> : <motion.span key={period} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, ease: EASE }}>× {n}</motion.span>)}</span>
-              <span className="bl2-tip" role="tooltip">{tip}</span>
             </li>
           ))}
         </ul>
@@ -101,10 +105,9 @@ function Prices() {
   const [mine, setMine] = useState(false);
   const publish = () => { setPrices((p) => Math.min(3, p + 1)); setMine(true); };
   const reset = () => { setPrices(1); setSubs([0, 0, 0, 0]); setMine(true); };
-  useEvery(1300, live && mine && subs.length < 11, () => setSubs((s) => [...s, prices - 1]));
+  useTick(1300, live && mine && subs.length < 11, () => setSubs((s) => [...s, prices - 1]));
   return (
     <div className="bl2-pv" ref={ref}>
-      <p className="l2-kick ac">Change a price, not a customer</p>
       <div className="bl2-pv-plan"><span className="l2-mono">Plan</span><b>api</b></div>
       <ul className="bl2-pv-rows">
         {Array.from({ length: prices }).map((_, v) => (
@@ -116,8 +119,8 @@ function Prices() {
         ))}
       </ul>
       <div className="bl2-pv-acts">
-        <button type="button" className="x-btn sm solid" onClick={publish} disabled={prices >= 3}>Publish a new price</button>
-        <button type="button" className="x-btn sm" onClick={reset}>Reset</button>
+        <button type="button" className="bl2-ib" onClick={publish} disabled={prices >= 3} aria-label="Publish a new price"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg></button>
+        <button type="button" className="bl2-ib" onClick={reset} aria-label="Reset"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.5-3.55M3 2.5v2.5h2.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
       </div>
     </div>
   );
@@ -175,8 +178,8 @@ function History() {
     <section className="l2-sec l2-dark bl2-hist" data-room="dark">
       <div className="l2-wrap l2-grid">
         <div className="bl2-hist-l">
-          <p className="l2-kick">Capabilities</p>
           <h2 className="l2-head">What the endpoint gives you</h2>
+          <p className="l2-stage-kick l2-mono bl2-cap-k">Capabilities</p>
           <ul className="bl2-caps">
             {CAPS.map(([t, d], i) => (
               <li key={t} className={pick === i ? 'on' : ''}>
@@ -226,13 +229,12 @@ function Start() {
     <section className="l2-sec bl2-start">
       <div className="l2-wrap l2-grid">
         <div className="bl2-start-l">
-          <p className="l2-kick ac">Get started</p>
-          <h2 className="l2-display m">Report the use, then charge for it</h2>
-          <div className="bl2-links"><More to={DOCS}>Read the docs</More><More to={GH}>View on GitHub</More></div>
+          <h2 className="l2-head">Report the use, then charge for it</h2>
+          <p className="l2-stage-kick l2-mono bl2-cap-k">Get started</p>
           <div className="bl2-first">
             <h3 className="l2-title">Send your first meter event</h3>
             <p className="l2-body">Report what someone used, and let the invoice read the meter at the end of the period.</p>
-            <div className="l2-acts"><A to={DOCS} className="x-btn solid">Read the docs</A><A to={GH} className="x-btn">View on GitHub</A></div>
+            <div className="l2-acts"><Cta to={DOCS} id="start" size="lg">Read the docs</Cta><Cta to={GH} kind="link" id="start-github">View on GitHub</Cta></div>
           </div>
           <Drawer label="Open the example console" title="Billing console">
             <Console name="Billing" api="/v1/billing" light side={[['Billing', '/billing'], ['Metrics', '/metrics'], ['Dashboards', '/dashboards'], ['O11y', '/o11y'], ['AI Metrics', '/cloud/ai-metrics'], ['Plans & Pricing', '/cloud/plans'], ['Sessions', '/cloud/sessions'], ['Annotation Queues', '/cloud/annotation-queues']]} />
@@ -250,7 +252,7 @@ function Start() {
 
 export default function Billing() {
   return (
-    <main className="l2-page bl2" style={{ '--ac': '#737373' }}>
+    <main id="main" className="l2-page bl2">
       <StageHero look="split" kick="Billing & Metering" title="Hanzo Billing" sub="Subscriptions, usage, invoices. Charge a fixed price, charge for what someone used, or charge for both on the same invoice. Plans, prices, meters, coupons and credits are separate objects, so a pricing change is a new price rather than a migration — and your servers never hold a card number to do any of it." acts={[['Read the docs', DOCS], ['GitHub', GH]]}>
         <Machine />
       </StageHero>

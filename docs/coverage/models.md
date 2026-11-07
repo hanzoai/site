@@ -8,7 +8,7 @@ Open copy questions for James:
 Shared changes requested (`docs/requests/models.md`):
 - Kit `Film` needs a `play` prop and a two-film page budget (until then, `components/v2/ModelFilm.jsx`).
 - One `ModelCard` for every context. The flagship grid in `components/pages/model/ModelCards.jsx` and my `components/v2/SpecCard.jsx` carry the same `SPEC.md` values.
-- `DataTable` and `CodeBlock` are not in the kit yet.
+- Kit `DataTable` with filter, fold and bar options, so the price list can move onto it.
 
 Forks this page deleted:
 - The compare tray.
@@ -53,12 +53,12 @@ Done here:
 - Then come the pinned black room, Enso vs Zen, Kai's figures, the catalogue, every model priced, Try, the first request and Related.
 
 ## 4. Conversion system
-- [ ] ~~`<Cta>` only~~ not in the kit yet; `.x-btn` with deck press and hover states
-- [x] Sticky ask in the header and the site Ask bar after the hero, with the hero's label (via `data-thumb`)
+- [x] `<Cta>` only: hero "Get API key" (solid, `thumb`), Try "Get free API key" (solid) and "Open Hanzo Chat" (link), composer "Log in"/"Sign up for free" (quiet sm). No raw `.x-btn` left in the page file.
+- [x] Sticky ask: Hanzo's "Try Hanzo" in the header (shared system); on phones the slim bar carries "Get API key" once the hero's has gone (`thumb`)
 - [x] Copy button copies exactly the displayed code (kit `Copy`)
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: `data-cta` is `models.hero` and `models.try`. The site Ask reads the hero's `data-thumb`, so the bar says "Get API key".
+Done here: `data-cta` comes from `Cta id`: `models.hero`, `models.try`, `models.try.chat`, `models.try.login` and `models.try.signup`. Secondary asks are text links, so the only solids are the header's and the page's own, one per view.
 
 ## 5. Trust and proof
 - [x] No logo, no seal, no invented number
@@ -71,7 +71,7 @@ Done here: 11 suites, 84.4% against 76.6% and 100.0% against 44.2% are Hanzo's K
 ## 6. Content presentation (copy untouched)
 - [x] No text under 13px except mono capitals (Zen Mono captions 12px, card pills 10px per `SPEC.md`)
 - [x] Measures held; headings balanced
-- [ ] ~~Tables, FAQ, tabs and code use the kit parts~~ the price table and code are page-local until `DataTable`/`CodeBlock` land; tabs are APG
+- [x] Code uses kit `Tabs` + `CodeBlock` ("Your first request"); the price list stays a page table because it filters, folds and draws bars (kit `DataTable` has none of these; request filed)
 - [x] `parity.py /models`: 0 missing
 
 Done here: text 305/305 and links 58/58 (also `/models/stealth`). The price list folds to 10 rows with the rest `hidden` in the HTML. On phones it becomes 72px rows.

@@ -406,7 +406,7 @@ function Next() {
 
 export default function ApiPage() {
   return (
-    <main className="av api" data-ask="off">
+    <main className="av api">
       <Hero />
       <Paste />
       <Fits />

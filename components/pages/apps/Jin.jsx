@@ -1,7 +1,8 @@
 'use client';
 /* Jin (v2, archetype D "Story": an editorial research paper after osply.co / hamol.studio / grubogrubo.com; greys and
    ink only, JAMES.md 7).
-   Persona: an ML researcher or engineer curious about self-supervised vision (metric docs_click)
+   Persona: an ML researcher or engineer curious about self-supervised vision
+   Metric: docs_click (a GitHub or docs click)
    Goal: see the saccade idea work in one figure, then open the docs
    CTA: Read the docs -> https://docs.hanzo.ai (hero, the site's sticky ask bar at every width, close; data-thumb, data-cta)
    Signature: Figure 1, a saccade that checks itself, beside the title on the first screen. The image jitters, the
@@ -12,22 +13,23 @@
    your shift live, the losses answer, and when you let go the image springs back and draws the round trip it closes.
    Motion: Figure 1 (idle, signature) + headlines cut into their line (arrival, scroll) + the drag with springs
    (pointer) + Table 1 in a sheet (state). Every word and link is Hanzo's.
-V2: 8/10 a paper, not a launch: the title beside a live Figure 1 on the first screen at both sizes, the byline and one ask under the title, six numbered sections with big margin numerals and drawn figures under a running head, one dark plate to make the saccade yourself, Table 1 and the agent prompt in a sheet, greys only, one ask everywhere
+V2: 8/10 deck scale (h1 52, headings 26, numerals 64), Figure 1 beside the title at both sizes, six numbered sections with drawn figures under a running head, the drag plate; deck greys, outlined frames, tweens not springs, kit Cta/Img/DataTable/BizPaste, nothing floating
 */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useMotionValue, useTransform, useSpring, animate } from 'motion/react';
-import { A, More } from '../../kit';
-import { Paste, useLive } from '../cloud/Frame';
-import BizAsk from '../../v2/BizAsk';
+import { motion, useMotionValue, useTransform, animate } from 'motion/react';
+import { A, More, Cta, Img, DataTable } from '../../kit';
+import { useLive } from '../cloud/Frame';
+import BizPaste from '../../v2/BizPaste';
 import BizLines from '../../v2/BizLines';
 import BizSheet from '../../v2/BizSheet';
-import { SPRING as SP } from '../../../lib/motion';
 import './Jin.css';
 
 const DOCS = 'https://docs.hanzo.ai';
 const GH = 'https://github.com/hanzoai';
 const IMG = '/models/zen.webp';
-const SPRING = SP.sheet;
+// deck motion (MASTER §3.1): ease-in-out for things that move and stay, ease-out to follow, no springs
+const MOVE = { duration: 0.5, ease: [0.4, 0, 0.2, 1] };
+const FOLLOW = { duration: 0.3, ease: [0, 0, 0.2, 1] };
 const two = (n) => String(n).padStart(2, '0');
 // a shift of the image (in % of its frame) moves its embedding through a fixed linear map: an illustration of a learned one
 const cl = (v) => Math.max(-44, Math.min(44, v));
@@ -61,7 +63,7 @@ function Losses({ v, dark }) {
       {['Huber', 'cycle-consistency', 'VICReg'].map((t, i) => (
         <div key={t} className={top === i ? 'on' : ''}>
           <span className="x-mono">{t}</span>
-          <span className="jn-track"><motion.i initial={false} animate={{ scaleX: v[i] }} transition={SPRING} /></span>
+          <span className="jn-track"><motion.i initial={false} animate={{ scaleX: v[i] }} transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }} /></span>
         </div>
       ))}
     </div>
@@ -92,9 +94,9 @@ function Figure1() {
     if (!live) return;
     const [sx, sy] = SHIFTS[k % 4];
     const ts = [
-      [600, () => { setPh(1); animate(ix, sx, SPRING); animate(iy, sy, SPRING); }],
+      [600, () => { setPh(1); animate(ix, sx, MOVE); animate(iy, sy, MOVE); }],
       [1500, () => setPh(2)],
-      [2900, () => { setPh(3); animate(ix, 0, SPRING); animate(iy, 0, SPRING); }],
+      [2900, () => { setPh(3); animate(ix, 0, MOVE); animate(iy, 0, MOVE); }],
       [3800, () => setPh(4)],
       [5300, () => { setPh(0); setK((v) => v + 1); }],
     ].map(([t, f]) => setTimeout(f, t));
@@ -104,12 +106,12 @@ function Figure1() {
   const [tx, ty] = emb(sx, sy);
   const guess = [tx + MISS[k % 4][0], ty + MISS[k % 4][1]];
   return (
-    <figure className="jn-f1" ref={ref} data-cursor="Watch">
+    <figure className="jn-f1" ref={ref}>
       <div className="jn-f1-row">
         <div className="jn-pane">
           <p className="jn-pk x-mono"><b>a</b> input</p>
           <div className="jn-frame" aria-hidden="true">
-            <motion.span className="jn-img" style={{ x: useTransform(ix, pct), y: useTransform(iy, pct) }}><img src={IMG} alt="" draggable={false} /></motion.span>
+            <motion.span className="jn-img" style={{ x: useTransform(ix, pct), y: useTransform(iy, pct) }}><Img src={IMG} alt="" w={1200} h={1500} priority draggable={false} /></motion.span>
             <i className="jn-patches" />
             <i className="jn-was" />
           </div>
@@ -144,10 +146,10 @@ function Hero() {
     <section className="jn-hero" aria-labelledby="jn-h1">
       <div className="bz-wrap bz-grid jn-hero-grid">
         <div className="jn-hero-copy">
-          <BizLines as="h1" id="jn-h1" className="bz-display jn-title" lines={['Research on', 'learning', 'without labels']} now delay={0.05} />
+          <BizLines as="h1" id="jn-h1" className="bz-display" lines={['Research on', 'learning', 'without labels']} now delay={0.05} />
           <p className="jn-byline"><span className="x-mono jn-name">Jin</span><span className="x-mono">hanzoai/jin</span></p>
           <div className="jn-acts">
-            <BizAsk to={DOCS} thumb="Read the docs">Read the docs</BizAsk>
+            <Cta to={DOCS} id="jin.hero" thumb>Read the docs</Cta>
             <More to={GH}>View on GitHub</More>
           </div>
         </div>
@@ -305,7 +307,9 @@ function Yours() {
   const W = useRef(400);
   const e = useTransform([ix, iy], ([x, y]) => emb((x / W.current) * 140, (y / W.current) * 140));
   const exn = useTransform(e, (v) => v[0]), eyn = useTransform(e, (v) => v[1]);
-  const pxn = useSpring(exn, { stiffness: 90, damping: 18 }), pyn = useSpring(eyn, { stiffness: 90, damping: 18 });
+  // the predictor's guess follows the embedding a beat behind (a tween each time it moves; no spring)
+  const pxn = useMotionValue(0), pyn = useMotionValue(0);
+  useEffect(() => { const a = exn.on('change', (v) => animate(pxn, v, FOLLOW)); const b = eyn.on('change', (v) => animate(pyn, v, FOLLOW)); return () => { a(); b(); }; }, [exn, eyn, pxn, pyn]);
   const [state, setState] = useState('rest');
   const [v, setV] = useState([0.12, 0.1, 0.46]);
   const [trail, setTrail] = useState({ out: [], back: [] });
@@ -336,14 +340,14 @@ function Yours() {
     ev.preventDefault();
     start();
     const s = W.current * 0.1;
-    animate(ix, d[0] * s, SPRING); animate(iy, d[1] * s, { ...SPRING, onComplete: () => setTimeout(() => { end(); animate(ix, 0, SPRING); animate(iy, 0, SPRING); }, 500) });
+    animate(ix, d[0] * s, MOVE); animate(iy, d[1] * s, { ...MOVE, onComplete: () => setTimeout(() => { end(); animate(ix, 0, MOVE); animate(iy, 0, MOVE); }, 500) });
   };
   const line = (pts) => pts.map(([x, y]) => `${x},${y}`).join(' ');
   return (
     <section className="bz-sec jn-try" data-room="dark" aria-labelledby="jn-try-h">
       <div className="bz-wrap bz-grid">
         <header className="jn-try-head">
-          <BizLines id="jn-try-h" className="bz-display sm" lines={['Make the', 'saccade', 'yourself']} />
+          <BizLines id="jn-try-h" className="bz-headline" lines={['Make the saccade yourself']} />
           <p className="jn-try-k x-mono">Figure 8</p>
           <p className="bz-body">Drag the image. The predictor guesses where its embedding goes; let go, and the image shifts back and has to land where it started.</p>
           <p className="jn-state x-mono" aria-live="polite">{{ rest: 'drag the image', out: 'shift the image · predict how its embedding moves', back: 'shift back', landed: 'lands where it started' }[state]}</p>
@@ -354,10 +358,10 @@ function Yours() {
               <p className="jn-pk x-mono"><b>a</b> input</p>
               <div className="jn-frame big" ref={box}>
                 <motion.span
-                  className="jn-img grab" style={{ x: ix, y: iy }} drag dragConstraints={box} dragElastic={0.12} dragSnapToOrigin
-                  dragTransition={{ bounceStiffness: 300, bounceDamping: 30 }} onDragStart={start} onDragEnd={end}
-                  tabIndex={0} role="img" aria-label="An image you can drag; arrow keys shift it too" onKeyDown={nudge} data-cursor="Drag"
-                ><img src={IMG} alt="" draggable={false} /></motion.span>
+                  className="jn-img grab" style={{ x: ix, y: iy }} drag dragConstraints={box} dragElastic={0.12} dragMomentum={false}
+                  onDragStart={start} onDragEnd={() => { end(); animate(ix, 0, MOVE); animate(iy, 0, MOVE); }}
+                  tabIndex={0} role="img" aria-label="An image you can drag; arrow keys shift it too" onKeyDown={nudge}
+                ><Img src={IMG} alt="" w={1200} h={1500} draggable={false} /></motion.span>
                 <i className="jn-patches" />
                 <i className="jn-was" />
               </div>
@@ -391,19 +395,16 @@ function End() {
     <section className="bz-sec jn-end" aria-labelledby="jn-end-h">
       <div className="bz-wrap">
         <div className="jn-end-top">
-          <BizLines id="jn-end-h" className="bz-display" lines={['Read the code']} />
-          <BizAsk to={DOCS} className="jn-end-go" thumb="Read the docs">Read the docs</BizAsk>
+          <BizLines id="jn-end-h" className="bz-display md" lines={['Read the code']} />
+          <Cta to={DOCS} id="jin.close" size="lg" thumb>Read the docs</Cta>
         </div>
         <ul className="jn-rows">
           <li><A to={GH} className="jn-row"><b>View on GitHub</b><span className="x-mono"><Gh />hanzoai</span><Arrow /></A></li>
           <li><A to="https://platform.hanzo.ai/deploy" className="jn-row"><b>Get Jin</b><span>Multimodal foundation model <i className="x-mono">License: Apache-2.0</i></span><em>Deploy to Cloud</em><Arrow /></A></li>
           <li className="jn-row-sheet">
             <BizSheet label="See Table 1" kick="Table 1" title="What is in the repository" className="jn-sheet">
-              <table className="jn-table">
-                <caption className="x-mono">Table 1</caption>
-                <tbody>{TABLE.map(([a, b]) => <tr key={a}><th className="x-mono">{a}</th><td>{b}</td></tr>)}</tbody>
-              </table>
-              <Paste name="Jin" prompt="Read https://hanzo.ai/skill.md and use Hanzo Jin in my project." className="jn-paste" />
+              <DataTable className="jn-table" caption="Table 1" cols={[{ key: 'a', label: '' }, { key: 'b', label: '' }]} rows={TABLE.map(([a, b]) => ({ a, b }))} />
+              <BizPaste name="Jin" prompt="Read https://hanzo.ai/skill.md and use Hanzo Jin in my project." className="jn-paste" />
             </BizSheet>
           </li>
         </ul>

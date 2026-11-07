@@ -340,7 +340,7 @@ function End({ os }) {
 export default function DownloadPage() {
   const { os, br } = useSystem();
   return (
-    <main className="av dl" data-ask="off" data-cursor="" style={{ '--ac': '#a3a3a3' }}>
+    <main className="av dl" style={{ '--ac': '#a3a3a3' }}>
       <Hero os={os} />
       <Builds os={os} br={br} />
       <Kit os={os} br={br} />

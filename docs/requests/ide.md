@@ -7,3 +7,7 @@ UI strings for `content/ui-strings.json` (James's approval). Until approved, eac
 - `One thing about your project` (the memory input's name)
 
 Shared kit parts this page waits for, then swaps in: `Terminal` (the start script that types itself is page-owned until then), `PageHero`.
+
+For the kit owner (`components/kit.jsx`, not mine to edit):
+- `Band` renders its button through `Go`, which carries no `data-cta` and sends no `cta_click`. Please give `Band` an `id` prop passed to a `Cta` (or `data-cta` on the link), so a page's closing ask is measured like its hero ask.
+- The shared ask bar (`components/v2/AskBar.jsx`) floats over content on desktop (it covered the figure in /kata's dark room at 1470×801). MASTER.md part 3 now says no floating pill bar on desktop; on phones a slim bar only where it covers nothing.

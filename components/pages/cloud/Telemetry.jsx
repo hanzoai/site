@@ -16,8 +16,7 @@
 import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { EASE, Copy } from '../../ui';
-import { useEvery } from './Frame';
-import { useDemo, PauseBtn } from '../../v2/x-hamilton/Demo';
+import { useDemo, PauseBtn, useTick } from '../../v2/x-hamilton/Demo';
 import StageHero from '../../v2/StageHero';
 import PinScenes from '../../v2/x-hamilton/PinScenes';
 import Finale from '../../v2/Finale';
@@ -41,7 +40,7 @@ export function tick(s) {
 function Pipe() {
   const [ref, live, , paused, toggle] = useDemo(0.05);
   const [s, setS] = useState({ t: 0, held: 3, out: [{ id: -1, n: 6 }, { id: -2, n: 6 }], mem: 0.5, refused: false });
-  useEvery(420, live, () => setS(tick));
+  useTick(420, live, () => setS(tick));
   return (
     <div className="l2-obj tl2-pipe" ref={ref}>
       <PauseBtn paused={paused} onClick={toggle} />
@@ -155,7 +154,7 @@ function YourConfig() {
 
 export default function Telemetry() {
   return (
-    <main className="l2-page tl2">
+    <main id="main" className="l2-page tl2">
       <StageHero look="split" kick="telemetry.hanzo.ai" title="Hanzo Telemetry" sub="The collector that sits between your app and wherever the data goes" acts={[['View on GitHub', GH]]}>
         <Pipe />
       </StageHero>

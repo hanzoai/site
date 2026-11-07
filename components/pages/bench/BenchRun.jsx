@@ -32,6 +32,7 @@ import { EASE } from '../../ui';
 import { A, Cta, DataTable, CodeBlock } from '../../kit';
 import { Magnetic } from '../../ui';
 import { ui } from '../../v2/famUi';
+import { play } from '../../../lib/sound';
 import { Nodes } from '../DocNodes';
 import Sigil from '../../Sigil';
 import FamLines from '../../v2/FamLines';
@@ -70,7 +71,7 @@ function makeWalk() {
       id = setInterval(() => {
         if (document.hidden || Date.now() < hold) return;
         i = (i + 1) % n; left -= 1;
-        if (left <= 0) { i = 0; stop(); } else emit();
+        if (left <= 0) { i = 0; stop(); play('done'); } else emit(); // the demo ends at rest, with the kit's quiet 'done'
       }, 1900);
       return () => clearInterval(id);
     },

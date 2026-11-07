@@ -18,10 +18,9 @@ V2: 8/10 deck scale (h1 52, headings 26, one figure big per screen), the live bo
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { EASE } from '../../ui';
-import { A, More } from '../../kit';
+import { A, More, Cta } from '../../kit';
 import { Code, useLive } from '../cloud/Frame';
 import BizPaste from '../../v2/BizPaste';
-import BizAsk from '../../v2/BizAsk';
 import BizLines from '../../v2/BizLines';
 import BizStage from '../../v2/BizStage';
 import BizChapters from '../../v2/BizChapters';
@@ -142,8 +141,8 @@ function Hero() {
         <BizLines as="h1" id="ld-h1" className="bz-display ld-h1" lines={['Hanzo', 'Ledger']} now delay={0.05} />
         <p className="ld-copy"><span className="bz-lede ld-one">A double-entry ledger you post to over HTTP.</span> <span className="bz-body ld-more">Money here only ever moves: a posting names a source account, a destination account, an amount and an asset. There is no way to write a debit without its credit, because a one-sided entry is not something the API can express.</span></p>
         <div className="bz-acts ld-acts">
-          <BizAsk to={DOCS} thumb="Read the docs" cta="ledger.hero">Read the docs</BizAsk>
-          <More to={GH}>GitHub</More>
+          <Cta to={DOCS} id="ledger.hero" thumb>Read the docs</Cta>
+          <Cta to={GH} kind="link" id="ledger.github">GitHub</Cta>
         </div>
         <BizStage from={1.03} over={560} lift={40} className="ld-stage"><Book /></BizStage>
       </div>
@@ -357,7 +356,7 @@ function End() {
         <div className="ld-end-say">
           <BizLines id="ld-start-h" className="bz-display md" lines={['Get started', 'with Ledger']} />
           <p className="bz-lede">Post your first transaction over HTTP, or describe the whole split once in Numscript and let the ledger do the arithmetic.</p>
-          <div className="bz-acts"><BizAsk to={DOCS} cta="ledger.close">Read the docs</BizAsk></div>
+          <div className="bz-acts"><Cta to={DOCS} id="ledger.close">Read the docs</Cta></div>
         </div>
         <div className="ld-receipt bz-obj">
           <h2 className="bz-title">Get Ledger</h2>

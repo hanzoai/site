@@ -121,15 +121,16 @@ function Booth() {
 // the film closes into a tall capsule on the left (a horizontal one on phones); the headline sits right of it
 const CAPSULE = frame((W, H, wide) => {
   if (wide) { const w = Math.min(W * 0.2, H * 0.4), h = H * 0.84; return { l: W * 0.26 - w / 2, t: (H - h) / 2, w, h, r: w / 2 }; }
-  const h = H * 0.3; return { l: 20, t: H * 0.07, w: W - 40, h, r: h / 2 };
+  const h = H * 0.36; return { l: 20, t: H * 0.07, w: W - 40, h, r: h / 2 };
 });
 
 export default function Koe() {
   return (
     <Creative
       slug="koe"
+      subject={[0.68, 0.45]}
       shape={CAPSULE}
-      aim={(W, H, wide) => (wide ? focus(0.66, 0.45, W * 0.26, H * 0.5, 1.25) : focus(0.68, 0.45, W / 2, H * 0.22, 1.35, [20, H * 0.07, W - 20, H * 0.37]))(W, H)}
+      aim={(W, H, wide) => (wide ? focus(0.66, 0.45, W * 0.26, H * 0.5, 1.25) : focus(0.68, 0.45, W / 2, H * 0.22, 1.35, [20, H * 0.07, W - 20, H * 0.43]))(W, H)}
       headClass="ko-v2"
       first="chapters"
       demo={

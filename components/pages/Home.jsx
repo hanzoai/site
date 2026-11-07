@@ -31,18 +31,6 @@ import C from '../../content';
 import '../v2/system.css';
 import './Home.css';
 
-/* Nothing floats over content (MASTER 3.3): the site's contextual cursor stays silent on this page. It reads
-   data-cursor from the element under the pointer, so every link, card and rail here carries an empty one. */
-function useQuietCursor() {
-  useEffect(() => {
-    const mark = () => document.querySelectorAll('main.hv a, main.hv [data-card], main.hv [data-morph], main.hv .x-rail, main.hv [role=slider]').forEach((el) => { if (!el.hasAttribute('data-cursor')) el.setAttribute('data-cursor', ''); });
-    mark();
-    const mo = new MutationObserver(mark);
-    mo.observe(document.querySelector('main.hv'), { childList: true, subtree: true });
-    return () => mo.disconnect();
-  }, []);
-}
-
 /* The proof walls (PLAN-COMPONENTS 2.5): still, ordered rows of Hanzo's own logo files, grey until you point at one,
    which then shows its own colour and its name. If a logo file cannot load, its name stands in for it. */
 function Wall({ items, label, cta }) {
@@ -73,7 +61,6 @@ function Wall({ items, label, cta }) {
 }
 
 export default function Home() {
-  useQuietCursor();
   return (
     <main className="hv" data-ask="off">
       <A to="/beta" className="x-ann">
