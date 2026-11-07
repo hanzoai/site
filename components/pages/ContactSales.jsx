@@ -1,14 +1,17 @@
 'use client';
-/* /contact-sales. V2: 8/10 Utility, in ink and greys only: a huge kinetic "Talk to sales" beside one question at a
-   time, set big, on a card set into a slow grey contour field that redraws with each answer you give; your answers
-   gather as chips; what Enterprise includes as five giant numerals you add to your enquiry; the launches Hanzo built
-   as a slow logo rail with a pause; a closing Band with the same one ask.
+/* /contact-sales. V2: 7/10 Utility, in ink and greys only: a huge kinetic "Talk to sales" beside one question at a
+   time, set big, on a card set into a slow grey contour field that redraws with each answer you give; the conversation
+   plays itself once before anyone types; your answers gather as chips; what Enterprise includes as five giant numerals
+   whose rows press and add on a tap; the launches Hanzo built as a slow logo rail with a pause; a closing Band whose
+   one "Talk to sales" glides back to the card, then the footer.
    Persona: an enterprise buyer weighing data residency and vendor consolidation.
    Goal: send a qualified enquiry. CTA: "Talk to sales" (the form; data-cta contact-sales.submit). Metric: contact_sales_submit.
    Signature: the enquiry is a conversation. One question per screen of the card, set large; Enter (or the arrow) moves
    on, the answer slides away up and the next question rises, a progress line glides along, and the contour field
-   around the card redraws for every answer. It is still one real form in the page and sends exactly what hanzo.ai
-   sends (POST https://api.hanzo.ai/v1/marketing/leads, the shape in content/forms.json).
+   around the card redraws for every answer. Before anyone types it plays once from Hanzo's field labels ("Full name"
+   types in, lifts away, "Work email" rises, a chip lands, rest, back to the empty form). It is still one real form in
+   the page and sends exactly what hanzo.ai sends (POST https://api.hanzo.ai/v1/marketing/leads, the shape in
+   content/forms.json). Motion is ease-emphasis cubic-bezier(.16,1,.3,1) at 300ms; no springs in this file.
    Supporting (3): masked kinetic headline, once; the contour field answering the form (Sigil); the logo rail.
    Beyond: the five things Enterprise includes can be added to your enquiry, from the last question's five numerals
    or straight from the giant numerals below. They are kept apart from your own words and joined into the note only

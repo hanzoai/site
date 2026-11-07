@@ -314,7 +314,7 @@ function Includes() {
         <div className="xe-tiles">
           <article className="xe-tile t-infra">
             <div className="xe-tile-walls" aria-hidden="true">
-              {PLACES.map((pl, i) => <span key={pl[0]} style={{ inset: `${i * 10}% ${i * 8}%` }}><em>{pl[0]}</em></span>)}
+              {PLACES.map((pl, i) => <span key={pl[0]} style={{ inset: `${i * 10}% ${i * 8}%`, '--i': i }}><em>{pl[0]}</em></span>)}
               <b />
             </div>
             <h3>Your infrastructure</h3>
@@ -377,9 +377,13 @@ function Roll({ k, children }) {
 
 function Prefill() {
   const [k, setK] = useState(1);
+  const [hot, setHot] = useState(false); // the figures rest small and grow while a size is being picked
+  const timer = useRef(0);
+  useEffect(() => () => clearTimeout(timer.current), []);
+  const pick = (i) => { setK(i); setHot(true); clearTimeout(timer.current); timer.current = setTimeout(() => setHot(false), 1600); };
   const [, t, r] = PREFILL[k];
   return (
-    <div className="xe-pf">
+    <div className={'xe-pf' + (hot ? ' hot' : '')}>
       <div className="xe-pf-read">
         <p className="xe-k">Zen 6 on one DGX Spark, as Hanzo measured it</p>
         <div className="xe-pf-figs" aria-live="polite">
@@ -389,7 +393,7 @@ function Prefill() {
       </div>
       <div className="xe-pf-chart" role="radiogroup" aria-label="Prompt">
         {PREFILL.map(([s, , rate], i) => (
-          <button key={s} type="button" role="radio" aria-checked={k === i} onClick={() => setK(i)} onPointerEnter={(e) => e.pointerType === 'mouse' && setK(i)} data-cursor="">
+          <button key={s} type="button" role="radio" aria-checked={k === i} onClick={() => pick(i)} onPointerEnter={(e) => e.pointerType === 'mouse' && pick(i)} data-cursor="">
             <span className="xe-pf-s">{s}</span>
             <i className="xe-pf-bar"><b style={{ transform: `scaleX(${rate / TOP})` }} /></i>
             <span className="xe-pf-v x-mono">{rate.toLocaleString('en-US')}</span>
@@ -497,20 +501,14 @@ const PROOF = [
   ['250,000', 'email signups', 'Bellabeat', 'Preorders', '/customers#bellabeat', '/logos/customers/bellabeat.svg'],
 ];
 
-// a cloud's logo, or its name set in type if the logo cannot load
+// The logo files are not in public/ yet (requested in docs/requests/enterprise.md), so nothing hot-links or 404s:
+// a cloud is its name set in type, and a customer row carries its name. Once the files are vendored, set LOGOS true.
+const LOGOS = false;
 function CloudMark({ name, src }) {
-  const ref = useRef(null);
-  const [bad, setBad] = useState(false);
-  useEffect(() => { const i = ref.current; if (i && i.complete && !i.naturalWidth) setBad(true); }, []);
-  return bad ? <span className="xe-cloudname">{name}</span> : <Img ref={ref} src={src} alt={name} w={132} h={32} onError={() => setBad(true)} />;
+  return LOGOS ? <Img src={src} alt={name} w={132} h={32} /> : <span className="xe-cloudname">{name}</span>;
 }
-
-// a logo that hides itself if it cannot load (the name beside it carries on)
 function Mark({ src }) {
-  const ref = useRef(null);
-  const [bad, setBad] = useState(false);
-  useEffect(() => { const i = ref.current; if (i && i.complete && !i.naturalWidth) setBad(true); }, []);
-  return bad ? null : <Img ref={ref} src={src} alt="" w={96} h={20} onError={() => setBad(true)} />;
+  return LOGOS ? <Img src={src} alt="" w={96} h={20} /> : null;
 }
 
 function Proof() {
@@ -564,7 +562,19 @@ const PANEL = [
   ['Roles and second factors', ['organization', 'workspace', 'project', 'authenticator app', 'SMS', 'email']],
 ];
 
+// the row each item lights: single sign-on shows a sign-in arriving, the audit log writes a new row while you read it
+const SECROW = [LOG[0], null, null, LOG[7]];
 function SecPanel({ at }) {
+  const calm = useReducedMotion();
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    if (at !== 2 || calm) return;
+    let t = setTimeout(function tick() { setN((v) => v + 1); t = setTimeout(tick, 1800); }, 500);
+    return () => clearTimeout(t);
+  }, [at, calm]);
+  const row = (r, key) => (
+    <span className="xe-panel-r" key={key}><span>{r[0]}</span><span>{r[1]}</span><code>{r[2]}</code><b className={'xe-st s' + r[3][0]}>{r[3]}</b></span>
+  );
   return (
     <div className="xe-panel" aria-hidden="true">
       <div className="xe-panel-bar"><i /><i /><i /><span>Hanzo Enterprise · Your company</span></div>
@@ -573,6 +583,8 @@ function SecPanel({ at }) {
           <li key={t} className={i === at ? 'on' : undefined}>
             <span className="xe-panel-t"><b />{t}</span>
             <span className="xe-panel-c">{chips.map((c) => <em key={c}>{c}</em>)}</span>
+            {i === 2 ? <span className="xe-panel-log">{row(LOG[mod(n, LOG.length)], 'r' + n)}</span>
+              : SECROW[i] ? <span className="xe-panel-log">{row(SECROW[i], 'r')}</span> : null}
           </li>
         ))}
       </ul>
@@ -681,15 +693,10 @@ function Questions() {
 }
 
 // The hero ships in place in the server HTML (h1 lines and lede visible, nothing translated out). Once React has
-// hydrated, a class plays the line-mask cut-in; on a slow first load (past 1.2 s) the words simply stay where they are.
-let played = false;
+// hydrated, a class plays the line-mask cut-in, so a slow load never shows a blank hero.
 export default function Enterprise() {
   const [cut, setCut] = useState(false);
-  useEffect(() => {
-    const late = !played && performance.now() > 1200;
-    played = true;
-    if (!late) setCut(true);
-  }, []);
+  useEffect(() => setCut(true), []);
   return (
     <main className={'xe' + (cut ? ' xe-cut' : '')}>
       <Boundary />

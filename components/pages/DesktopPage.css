@@ -20,7 +20,7 @@
 .dk-os-n { position: relative; }
 .dk-mine { position: relative; display: inline-block; width: 6px; height: 6px; margin-left: 8px; border-radius: 50%; background: #0a0a0a; }
 .dk-note { flex-basis: 100%; margin: 0; font-size: 14px; color: #737373; text-align: center; }
-.dk-note a { display: inline-flex; align-items: center; min-height: 44px; color: #0a0a0a; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.dk-note a { display: inline-flex; align-items: center; min-height: 44px; color: #404040; transition: color .15s var(--dk-out); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
 
 /* the window: outlined, 2:1, every part has a fixed box so nothing moves while it builds */
 .dk-win { position: relative; aspect-ratio: 2 / 1; display: grid; grid-template-rows: 48px minmax(0, 1fr); border-radius: 24px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .1); overflow: hidden; font-family: var(--sans); }
@@ -179,6 +179,8 @@
 .dk-chip { display: inline-flex; align-items: center; height: 30px; padding: 0 14px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .12); font: 500 14px/1 var(--sans); }
 .dk-chip.ac { transition: background .3s var(--dk-move), color .3s var(--dk-move), box-shadow .3s var(--dk-move); }
 .dk-new.on .dk-chip.ac, html:not(.js) .dk-chip.ac { background: #0a0a0a; color: #fff; box-shadow: 0 0 0 1px #0a0a0a; transition-delay: 1.5s; }
+.dk-job-caret { margin-left: 3px; }
+.dk-new.on .dk-job-caret { animation: dk-blink 1s steps(1) 1.2s infinite; }
 .dk-new.on .dk-wipe .dk-ink-t { animation: dk-wipe .9s var(--dk-in) .3s forwards; }
 .js .dk-new .f2 .dk-chip { transform: scale(.97); }
 .dk-new.on .f2 .dk-chip { animation: dk-pop .3s var(--dk-in) 1.2s forwards; }
@@ -314,7 +316,8 @@
 .dk-rel > div { display: flex; flex-wrap: wrap; gap: 8px; }
 .dk-rel-a { display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border-radius: 999px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .12); color: #0a0a0a; text-decoration: none; font: 500 15px/1 var(--sans); transition: transform .09s var(--dk-out); }
 .dk-rel-a:active, .dk-gh:active { transform: scale(.97); }
-.dk-docs { display: inline-flex; align-items: center; min-height: 44px; margin-left: auto; font: 500 15px/1 var(--sans); color: #0a0a0a; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.dk-docs { display: inline-flex; align-items: center; min-height: 44px; margin-left: auto; font: 500 15px/1 var(--sans); color: #404040; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; transition: color .15s var(--dk-out), transform .09s var(--dk-out); }
+.dk-docs:active, .dk-note a:active { transform: translateY(1px); }
 .dk-get { grid-column: 9 / -1; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: clamp(24px, 3vw, 32px); border-radius: 24px; background: #f2f2f2; }
 .dk-get-i { display: grid; place-items: center; width: 52px; height: 52px; margin-bottom: 17px; border-radius: 12px; background: #0a0a0a; color: #fff; }
 .dk-get-d { margin: 0; font-size: 16px; color: #525252; }
@@ -332,7 +335,12 @@
 .dk .dk-band .x-btn.solid { background: #0a0a0a; color: #fff; border-color: #0a0a0a; }
 
 /* JS off: every word shows. The notes stay open and the spec sheet sits inline under its section (its button needs JS) */
+html:not(.js) .dk .av-ln > span { transform: none !important; }
 html:not(.js) .dk-notes p { display: block; }
+html:not(.js) .dk-where .w0 { opacity: 0; }
+html:not(.js) .dk-per .a1 .dk-seg-th { transform: translateX(100%); }
+html:not(.js) .dk-per .a1 .dk-seg span:nth-of-type(1) { color: #737373; }
+html:not(.js) .dk-per .a1 .dk-seg span:nth-of-type(2) { color: #0a0a0a; }
 html:not(.js) .dk-every .av-sh-btn { display: none; }
 html:not(.js) .dk-every .av-sh { position: static; visibility: visible; }
 html:not(.js) .dk-every .av-sh-back, html:not(.js) .dk-every .av-sh-x { display: none; }
@@ -343,7 +351,7 @@ html:not(.js) .dk-every .av-sh-body { padding: 8px 0 0; overflow: visible; }
 @media (hover: hover) {
   .dk-os button:hover, .dk-pause:hover { color: #0a0a0a; }
   .dk-tabs a:hover { color: #0a0a0a; }
-  .dk-note a:hover, .dk-docs:hover { text-decoration-thickness: 2px; }
+  .dk-note a:hover, .dk-docs:hover { color: #0a0a0a; text-decoration-thickness: 2px; }
   .dk-open a:hover { box-shadow: 0 0 0 1px #0a0a0a; }
   .dk-radio button:not([aria-checked='true']):hover { color: #fafafa; }
   .dk-net:hover { border-color: rgba(255, 255, 255, .4); }

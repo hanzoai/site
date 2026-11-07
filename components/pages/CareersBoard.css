@@ -136,6 +136,14 @@
 .xcb-mail { display: inline-flex; align-items: center; min-height: 44px; font: 500 17px/1 var(--mono); color: #fafafa; text-decoration: underline; text-decoration-color: rgba(255, 255, 255, .4); text-underline-offset: 6px; transition: text-decoration-color .2s; }
 .xcb-mail:hover { text-decoration-color: #fff; }
 
+/* laptop-height desktops (1470×801): a tighter hero so the next section's headline peeks above the fold */
+@media (min-width: 901px) and (max-height: 900px) {
+  .xcb-hero.vc-scene { min-height: calc(100svh - 150px); padding: 28px 0 0; }
+  .xcb .xcb-h1 { font-size: clamp(52px, 5.2vw, 76px); }
+  .xcb-hero-c, .xcb-hero-f { gap: 22px; }
+  .xcb-hire { min-height: 470px; }
+  .xcb-perks { padding-top: 16px; }
+}
 @media (max-width: 900px) {
   .xcb-hero { padding: 96px 0 32px; min-height: 0; }
   .xcb-hero-c { gap: 22px; }
@@ -146,18 +154,18 @@
   .xcb-hire-n { gap: 8px; }
   .xcb-hire-n button { font-size: 14px; }
   .xcb-perks-hd { margin-bottom: 0; }
-  .xcb-perk-v { position: relative; top: 0; aspect-ratio: 16 / 10; margin-bottom: 8px; }
-  .xcb-perk-big { font-size: 120px; }
-  .xcb-perk-l li { grid-template-columns: 40px minmax(0, 1fr); padding: 28px 0; }
-  .xcb-filter, .xcb-know { flex-wrap: nowrap; overflow-x: auto; margin-inline: -20px; padding: 2px 20px; scrollbar-width: none; }
-  .xcb-filter::-webkit-scrollbar, .xcb-know::-webkit-scrollbar { display: none; }
-  .xcb-filter button, .xcb-know button { flex: none; height: 44px; }
-  .xcb-know-i { flex: none; }
+  /* the perk tile stays in view above the list (sticky under the header), so a tap's answer is always on screen */
+  .xcb-perk-v { position: sticky; top: 64px; z-index: 1; aspect-ratio: auto; height: 132px; margin: 24px 0 8px; box-shadow: 0 0 0 12px #fff; }
+  .xcb-perk-big { font-size: 88px; }
+  .xcb-perk-l li { grid-template-columns: 40px minmax(0, 1fr); padding: 28px 0; scroll-margin-top: 220px; }
+  .xcb-tools { padding-top: 16px; gap: 4px; }
+  .xcb-know { margin-right: -20px; }
   .xcb-deck { padding-top: 48px; }
   .xcb-sheet { top: calc(72px + var(--i) * 10px); margin-bottom: 8svh; }
   .xcb-sheet-in { min-height: 0; padding: 26px; gap: 24px; border-radius: 24px; }
-  .xcb-sheet-a { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'title' 'tags' 'desc'; row-gap: 16px; }
-  .xcb-sheet-no { position: absolute; top: 18px; right: 22px; font-size: 64px; color: #ededed; }
+  /* the numeral takes its own row at the top right, so no title ever runs over it (320 to 900) */
+  .xcb-sheet-a { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'no' 'title' 'tags' 'desc'; row-gap: 16px; }
+  .xcb-sheet-no { justify-self: end; margin: -10px -6px -6px 0; font-size: 56px; color: #ededed; }
   .xcb-sheet-t { position: relative; font-size: clamp(26px, 7.6vw, 30px); overflow-wrap: normal; word-break: keep-all; hyphens: manual; }
   .xcb-sheet-d { font-size: 17px; }
   .xcb-sheet-sig { inset: 30% 0 0 20%; }

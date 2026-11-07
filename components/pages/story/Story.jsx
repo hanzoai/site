@@ -46,11 +46,23 @@ const marked = (text, m) => {
 /* a picture (kit Img, its box reserved) over its own caption plate: if the file cannot load, the plate is what shows
    (quiet: the caption already sits under the frame, so the plate stays plain) */
 const BOX = { hero: [1920, 1080], scene: [1200, 1500], tile: [1200, 1500], shot: [1600, 1000], next: [1600, 900] };
-function Pic({ img, className = '', priority, style, n, box = 'tile', quiet }) {
+function Pic({ img, className = '', priority, style, n, box = 'tile', quiet, art, live = true }) {
   const [w, h] = BOX[box];
+  const ref = useRef(null);
+  const [bad, setBad] = useState(false);
+  const calm = useCalm();
+  // `art`: when the picture cannot load, the plate carries a slow contour seeded by the picture's own path (MASTER part
+  // 10, media failure falls back to an aspect-ratio box with Sigil); it pauses off screen and stands still for reduced motion
+  useEffect(() => {
+    const i = art && ref.current && ref.current.querySelector('img');
+    if (!i) return;
+    const fail = () => setBad(true);
+    if (i.complete && !i.naturalWidth) fail(); else i.addEventListener('error', fail, { once: true });
+    return () => i.removeEventListener('error', fail);
+  }, [art]);
   return (
-    <span className={'xst-pic ' + className} data-plate>
-      <span className="xst-plate" aria-hidden="true">{n && <b className="x-mono">{n}</b>}{!quiet && <span>{img.alt}</span>}</span>
+    <span className={'xst-pic ' + className} data-plate ref={ref}>
+      <span className="xst-plate" aria-hidden="true">{bad && <Sigil seed={img.src} className="xst-pic-sigil" still={calm || !live} />}{n && <b className="x-mono">{n}</b>}{!quiet && <span>{img.alt}</span>}</span>
       <motion.span className="xst-pic-in" style={style}><Img src={img.src} alt={img.alt} w={w} h={h} priority={priority} /></motion.span>
     </span>
   );
@@ -161,7 +173,7 @@ function Figures({ doc, mark, onPress }) {
 }
 
 /* one chapter: a full scene that wipes up over the one before it, then lifts its words away as the next arrives */
-function Scene({ s, i, n, p, mark, calm, last }) {
+function Scene({ s, i, n, p, mark, calm, last, live }) {
   const t = (v) => v * (n - 1);
   const enter = (v) => (i ? c01((t(v) - (i - 0.8)) / 0.55) : 1);
   const leave = (v) => c01((t(v) - (i + 0.2)) / 0.55);
@@ -177,7 +189,7 @@ function Scene({ s, i, n, p, mark, calm, last }) {
           <p className="xst-t">{marked(s.text, mark)}</p>
           <p className="xst-n x-mono" aria-hidden="true">{s.n} / {last}</p>
         </motion.div>
-        {s.img && <Pic img={s.img} className="xst-scene-pic" n={s.n} style={calm ? undefined : { scale: push }} box="scene" />}
+        {s.img && <Pic img={s.img} className="xst-scene-pic" n={s.n} style={calm ? undefined : { scale: push }} box="scene" art live={live} />}
       </div>
     </motion.article>
   );
@@ -187,13 +199,13 @@ function Chapters({ how, mark, box }) {
   const n = how.steps.length;
   const { scrollYProgress: p } = useScroll({ target: box, offset: ['start start', 'end end'] });
   const calm = useCalm();
-  const [, setAt] = useState(0);
+  const [at, setAt] = useState(0); // the chapter on stage: only its contour drifts (one mover in view)
   useMotionValueEvent(p, 'change', (v) => setAt(Math.max(0, Math.min(n - 1, Math.floor(v * (n - 1) + 0.45)))));
   const last = how.steps[n - 1].n;
   return (
     <div className="xst-scenes" ref={box} style={{ '--n': n }}>
       <div className="xst-stage">
-        {how.steps.map((s, i) => <Scene key={s.n} s={s} i={i} n={n} p={p} mark={mark} calm={calm} last={last} />)}
+        {how.steps.map((s, i) => <Scene key={s.n} s={s} i={i} n={n} p={p} mark={mark} calm={calm} last={last} live={i === at} />)}
       </div>
     </div>
   );
@@ -205,7 +217,7 @@ function Wall({ g }) {
       {g.imgs.map((p, i) => (
         <li key={p.src} className="xst-tile" style={{ '--i': i }}>
           <figure>
-            <Pic img={p} quiet />
+            <Pic img={p} quiet art={i < 3} />
             <figcaption>{p.alt}</figcaption>
           </figure>
         </li>
@@ -261,7 +273,7 @@ export default function Story({ doc, next }) {
               <h2 id="xst-rep-h" className="xst-h2">{doc.report.h2}</h2>
               <p className="xst-t">{marked(doc.report.text, mark)}</p>
             </div>
-            <figure className="xst-shot"><Pic img={doc.report.img} box="shot" /></figure>
+            <figure className="xst-shot"><Pic img={doc.report.img} box="shot" art /></figure>
           </div>
         </section>
       )}

@@ -23,6 +23,8 @@
 .xst-plate { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 17px; padding: clamp(17px, 2.4vw, 27px); color: var(--plate-ink); font-size: 21px; font-weight: 497; letter-spacing: -.015em; line-height: 1.25; text-wrap: balance; }
 .xst-plate > span { margin-top: auto; max-width: 22ch; }
 .xst-plate b { font-size: 12px; font-weight: 500; letter-spacing: .14em; }
+.xst-plate > b, .xst-plate > span { position: relative; }
+.xst-pic-sigil { position: absolute; inset: 0; width: 100%; height: 100%; color: rgba(0, 0, 0, .3); }
 
 /* 1. the stage: a black room that enters as a rounded card inside the gutters and opens to full width */
 .xst-hero { position: relative; height: calc(100svh - var(--x-top, 60px) - 56px); min-height: 560px; color: #fafafa; background: #fff; overflow: hidden; }
@@ -33,7 +35,7 @@
 .xst-hero .xst-plate > span { margin-top: 0; max-width: 28ch; text-align: right; }
 .xst-scrim { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0, 0, 0, .55) 0%, rgba(0, 0, 0, 0) 62%); pointer-events: none; }
 .xst-sigil { position: absolute; right: 0; top: 0; width: min(64vw, 980px); height: 100%; color: rgba(255, 255, 255, .45); }
-.xst-hero[data-bare] .xst-sigil { width: 100%; color: rgba(255, 255, 255, .55); }
+.xst-hero[data-bare] .xst-sigil { color: rgba(255, 255, 255, .55); } /* same box either way: a width change here shifted layout (CLS .29) */
 .xst-hero-in { position: relative; z-index: 1; height: 100%; width: min(100% - 2 * var(--gutter), 1152px); margin-inline: auto; }
 .xst-crumb { position: absolute; top: 17px; left: 0; }
 .xst-crumb ol { list-style: none; display: flex; align-items: center; gap: 10px; margin: 0; padding: 0; font-size: 14px; color: rgba(255, 255, 255, .55); }

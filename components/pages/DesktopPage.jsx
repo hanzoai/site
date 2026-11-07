@@ -15,7 +15,7 @@ import { motion, useInView, useReducedMotion } from 'motion/react';
 import { Copy, Mark, Magnetic } from '../ui';
 import { A, Cta } from '../kit';
 import { play } from '../../lib/sound';
-import Lines from '../v2/x-edison/AppLines';
+import Lines from './desktop/Lines';
 import Scenes from '../v2/AppScenes';
 import Sheet from '../v2/AppSheet';
 import '../v2/AppType.css';
@@ -211,7 +211,7 @@ function Scaffold({ on }) {
     <div className={'dk-vis dk-new' + (on ? ' on' : '')} aria-hidden="true">
       <div className="dk-pane">
         <div className="dk-new-h"><span className="dk-pane-h"><span className="dk-ico"><Mark size={13} /></span><b>Desktop</b></span><span className="dk-run"><i />Running</span></div>
-        <div className="dk-fld f1"><em className="x-mono">job</em><span className="dk-val"><Ink className="dk-wipe">{MSGS[0][1]}</Ink></span></div>
+        <div className="dk-fld f1"><em className="x-mono">job</em><span className="dk-val"><Ink className="dk-wipe">{MSGS[0][1]}</Ink><i className="dk-caret dk-job-caret" /></span></div>
         <div className="dk-fld f2"><em className="x-mono">tools</em><span className="dk-val"><span className="dk-chip">MCP</span></span></div>
         <div className="dk-fld f3"><em className="x-mono">model</em><span className="dk-val"><span className="dk-chip ac">Local model</span></span></div>
       </div>

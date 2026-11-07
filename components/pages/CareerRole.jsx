@@ -38,7 +38,7 @@ import FamChapters from '../v2/FamChapters';
 import FamNext from '../v2/FamNext';
 import FamGrow from '../v2/FamGrow';
 import { ui } from '../v2/famUi';
-import { useArrival } from './doorway';
+import { useSheetLanding } from './careers/door';
 import '../v2/fam.css';
 import './CareerRole.css';
 
@@ -127,8 +127,23 @@ function Steps({ f, role }) {
   );
 }
 
+/* the contents' counts fill once on arrival (0 up to the chapter's count, staggered), then rest at the true value;
+   the server HTML and reduced motion carry the true value */
+function Count({ n, i }) {
+  const [v, setV] = useState(n);
+  useEffect(() => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let k = 0, t;
+    setV(0);
+    const step = () => { k += 1; setV(Math.min(n, k)); if (k < n) t = setTimeout(step, 150); };
+    t = setTimeout(step, 700 + i * 120);
+    return () => clearTimeout(t);
+  }, [n, i]);
+  return <em className="x-mono" aria-hidden="true" data-fill={v === n ? '' : undefined}>{v}</em>;
+}
+
 export default function CareerRole({ role, no, peers = [] }) {
-  useArrival();
+  useSheetLanding();
   const chapters = role.blocks.filter((b) => !b.cards.length);
   const why = role.blocks.find((b) => b.cards.length);
   const total = chapters.reduce((k, b) => k + b.items.length, 0);
@@ -252,7 +267,7 @@ export default function CareerRole({ role, no, peers = [] }) {
                   <li key={t}>
                     <a href={i < chapters.length ? '#xcj-ch-' + i : i === toc.length - 1 ? '#apply' : '#xcj-why'} onClick={tocAt(i)}>
                       <span className="x-mono">{nn(i + 1)}</span><b>{t}</b>
-                      {i < chapters.length && chapters[i].items.length > 0 && <em className="x-mono" aria-hidden="true">{chapters[i].items.length}</em>}
+                      {i < chapters.length && chapters[i].items.length > 0 && <Count n={chapters[i].items.length} i={i} />}
                     </a>
                   </li>
                 ))}
