@@ -286,6 +286,19 @@ function Name() {
 }
 
 function One() {
+  // the command types itself once when the block is reached (the full text is in the HTML for no-JS), then a caret waits
+  const [ref, live, calm] = useLive(0.6);
+  const [n, setN] = useState(CMD.length);
+  const ran = useRef(false);
+  useEffect(() => {
+    if (!live || calm || ran.current) return;
+    ran.current = true;
+    let i = 0, t = 0;
+    const step = () => { setN(i); if (i++ < CMD.length) t = setTimeout(step, i === 1 ? 300 : 80); };
+    step();
+    return () => clearTimeout(t);
+  }, [live, calm]);
+  const end = n >= CMD.length;
   return (
     <section className="l2-sec tn2-one">
       <div className="l2-wrap l2-grid">
@@ -296,10 +309,10 @@ function One() {
         </div>
         <div className="tn2-one-r">
           {/* the Copy takes the command only: the "$" and the two output lines are shown, never copied */}
-          <div className="cf-code">
+          <div className="cf-code" ref={ref}>
             <div className="cf-code-bar"><i /><i /><i /><span className="cf-code-k">terminal</span><Copy text={CMD} /></div>
-            <div className="cf-code-body" tabIndex={0} role="region" aria-label="Tunnel terminal">
-              <pre><code><span className="cf-ln"><span className="tn2-ps-c" aria-hidden="true">$ </span>{CMD}{'\n'}</span><span className="cf-ln tn2-out">{'→ sharing 3000\n'}</span><span className="cf-ln tn2-out">{URL_ + ' → localhost:3000'}</span></code></pre>
+            <div className="cf-code-body tn2-one-code" tabIndex={0} role="region" aria-label="Tunnel terminal">
+              <pre><code><span className="cf-ln"><span className="tn2-ps-c" aria-hidden="true">$ </span>{CMD.slice(0, n)}{!end && <i className="tn2-caret" aria-hidden="true" />}{'\n'}</span><span className={'cf-ln tn2-out' + (end ? '' : ' wait')}>{'→ sharing 3000\n'}</span><span className={'cf-ln tn2-out' + (end ? '' : ' wait')}>{URL_ + ' → localhost:3000'}</span><i className={'tn2-caret tn2-wait' + (end ? '' : ' hold')} aria-hidden="true" /></code></pre>
             </div>
           </div>
         </div>

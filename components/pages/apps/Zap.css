@@ -225,7 +225,9 @@ a.zp-chip2:active { transform: scale(.98); }
 .zp-hero { padding-bottom: clamp(64px, 6vw, 96px); }
 .zp-why { position: relative; padding: clamp(88px, 9vw, 136px) 0; }
 .zp-why.pinned { padding: 0; }
-.zp-why.pinned .zp-why-stick { position: sticky; top: 0; height: 100svh; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+.zp-why.pinned .zp-why-stick { position: sticky; top: 0; height: 100svh; display: flex; flex-direction: column; justify-content: center; padding-top: 56px; overflow: hidden; }
+.zp-packets .zp-hdr { width: calc(100% - 52px); }
+.w2-sheet .zp-hdr { width: calc(100% - 52px); }
 .zp-why .zp-split { margin-bottom: clamp(32px, 3.6vw, 56px); }
 .zp-why-track { position: relative; }
 .zp-why.pinned .zp-why-track { overflow: visible; }

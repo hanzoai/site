@@ -168,7 +168,12 @@
 
 /* one command: the prompt is shown, never copied */
 .tn2-ps-c { color: #737373; user-select: none; }
-.tn2-out { color: #a3a3a3; }
+.tn2-out { color: #a3a3a3; transition: opacity .3s var(--ease); }
+.tn2-out.wait { opacity: 0; }
+.tn2-one-code .tn2-caret { width: .6em; height: 1.1em; }
+.tn2-one-code .tn2-wait { display: block; margin-top: 6px; }
+.tn2-one-code .tn2-wait.hold { visibility: hidden; }
+@media (hover: hover) { .tn2-name input:hover:not(:focus) { border-color: rgba(10, 10, 10, .4); background: #fff; } }
 
 /* the close: one solid at a time, so the band's ask is an outline here (the header carries the solid) */
 .tn2-fin .x-btn.solid[data-cta='close'] { background: transparent; color: #fafafa; border-color: rgba(255, 255, 255, .4); }

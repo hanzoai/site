@@ -130,7 +130,7 @@ function Card({ t, d, onPrev, onNext, calm, narrow }) {
   );
 }
 
-function Deck({ kind, setKind, at, setAt, list, front }) {
+function Deck({ kind, setKind, at, setAt, list, front, wall }) {
   const [mine, setMine] = useState(false);
   const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
   const calm = useReducedMotion();
@@ -140,10 +140,10 @@ function Deck({ kind, setKind, at, setAt, list, front }) {
   useEffect(() => { const m = matchMedia('(max-width: 899px)'); const f = () => setNarrow(m.matches); f(); m.addEventListener('change', f); return () => m.removeEventListener('change', f); }, []);
   const go = (k) => { setMine(true); setAt((k + list.length) % list.length); };
   useEffect(() => {
-    if (mine || calm || !seen || paused || list.length < 2) return;
+    if (mine || calm || !(seen || wall) || paused || list.length < 2) return; // it keeps dealing while the wall is in view, so the ring walks the wall
     const t = setTimeout(() => setAt((v) => (v + 1) % list.length), 3600);
     return () => clearTimeout(t);
-  }, [at, mine, calm, seen, paused, list.length, setAt]);
+  }, [at, mine, calm, seen, wall, paused, list.length, setAt]);
   return (
     <div className={'xtp-deckwrap' + (paused ? ' paused' : '')} ref={ref}>
       <div className="xtp-kinds" role="group" aria-label="Kind of template">
@@ -219,9 +219,11 @@ function Commands({ t }) {
 }
 
 /* The shelf: all twelve as tiles; each opens into a sheet with its preview, what it is, and its commands. */
-function Shelf({ cur }) {
+function Shelf({ cur, onSeen }) {
   const ref = useRef(null);
   const seen = useInView(ref, { once: true, amount: 0.15 });
+  const here = useInView(ref, { amount: 0.25 });
+  useEffect(() => { onSeen(here); }, [here, onSeen]);
   const calm = useReducedMotion();
   const [armed, setArmed] = useState(false); // the wall deals in only once JS runs; JS off and reduced motion show it whole
   useEffect(() => { if (!calm) setArmed(true); }, [calm]);
@@ -247,6 +249,7 @@ function Shelf({ cur }) {
 export default function Templates() {
   const [kind, setKind] = useState('All');
   const [at, setAt] = useState(0);
+  const [wall, setWall] = useState(false);
   const list = useMemo(() => (kind === 'All' ? ALL : ALL.filter((t) => t[2] === kind)), [kind]);
   const front = list[Math.min(at, list.length - 1)];
   return (
@@ -266,12 +269,12 @@ export default function Templates() {
           </div>
           <Settle from={1.02} lift={0}>
             <div className="xtp-stage">
-              <Deck kind={kind} setKind={setKind} at={Math.min(at, list.length - 1)} setAt={setAt} list={list} front={front} />
+              <Deck kind={kind} setKind={setKind} at={Math.min(at, list.length - 1)} setAt={setAt} list={list} front={front} wall={wall} />
             </div>
           </Settle>
         </div>
       </section>
-      <Shelf cur={front[0]} />
+      <Shelf cur={front[0]} onSeen={setWall} />
       <Commands t={front} />
       <section className="w2-sec tight xtp-band" aria-label="Edit in Hanzo">
         <div className="w2-wrap xtp-band-in">
