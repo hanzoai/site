@@ -30,17 +30,6 @@
 .lgi-hero-copy { display: flex; flex-direction: column; gap: 24px; padding-top: clamp(40px, 6vh, 72px); }
 .lgi-lede { color: var(--lgi-ink); max-width: 30ch; }
 
-/* e1 ripple: three rings spread from the hero's centre at first paint, and its parts arrive outward behind them */
-.lgi-hero { position: relative; }
-.lgi-rings { position: absolute; left: 50%; top: 50%; width: 0; height: 0; pointer-events: none; }
-.lgi-rings i { position: absolute; left: -60vmax; top: -60vmax; width: 120vmax; height: 120vmax; border-radius: 50%; border: 1px solid var(--lgi-line-strong); opacity: 0; transform: scale(0); }
-html.js .lgi-rings i { animation: lgi-ring 1.7s cubic-bezier(.2, .6, .3, 1) both; animation-delay: calc(var(--k, 0) * 160ms); }
-.lgi-rings i:nth-child(2) { --k: 1; }
-.lgi-rings i:nth-child(3) { --k: 2; }
-@keyframes lgi-ring { 0% { opacity: 0; transform: scale(0); } 12% { opacity: 1; } 100% { opacity: 0; transform: scale(1); } }
-html.js .lgi-rip-a { animation: lgi-rip .9s var(--ease) both; animation-delay: calc(120ms + var(--r, 0) * 110ms); }
-@keyframes lgi-rip { from { opacity: 0; transform: scale(.965); filter: blur(2px); } }
-
 /* the stack of paper (raised by shadow only, no outline) */
 .lgi-stack { position: relative; height: clamp(380px, 34vw, 480px); }
 .lgi-pile { position: absolute; inset: 0; }
@@ -63,13 +52,6 @@ html.js .lgi-rip-a { animation: lgi-rip .9s var(--ease) both; animation-delay: c
 .lgi-status blockquote, .lgi-prose blockquote { margin: 0; padding: 0; border: 0; }
 .lgi-status p { margin: 0; font-size: 16px; line-height: 1.6; color: var(--lgi-soft); }
 .lgi-status p > strong:first-child { display: table; margin: 0 0 14px; padding: 6px 10px; border: 1.5px solid var(--lgi-ink); border-radius: 6px; font: 606 13px/1.3 var(--mono); color: var(--lgi-ink); transform: rotate(-3deg); }
-/* e2 grid-wave: paper tiles over the intro lift away in a wave from the cursor */
-.lgi-intro-g { position: relative; }
-.lgi-grid { position: absolute; inset: -24px -16px; z-index: 2; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); grid-template-rows: repeat(5, minmax(0, 1fr)); pointer-events: none; }
-html:not(.js) .lgi-grid, .lgi-intro[data-done] .lgi-grid { display: none; }
-.lgi-grid i { background: var(--lgi-paper); }
-.lgi-intro[data-in] .lgi-grid i { box-shadow: inset 0 0 0 .5px var(--lgi-line); }
-.lgi-intro[data-in] .lgi-grid i { opacity: 0; transform: translateY(-14px) scale(.86); transition: opacity .45s cubic-bezier(0, 0, .2, 1) var(--d, 0ms), transform .6s var(--ease) var(--d, 0ms); }
 .lgi-prose p { margin: 0 0 14px; font-size: 16px; line-height: 1.6; color: var(--lgi-soft); }
 .lgi-prose p:last-child { margin-bottom: 0; }
 .lgi-prose strong { color: var(--lgi-ink); font-weight: 606; }
@@ -92,51 +74,26 @@ html:not(.js) .lgi-grid, .lgi-intro[data-done] .lgi-grid { display: none; }
 .lgi-cards > li { display: block; }
 .lgi-dash { color: var(--lgi-faint); }
 .lgi-card-k { font-size: 12px; letter-spacing: .04em; color: var(--lgi-soft); }
-.lgi-card-t { font-size: 21px; font-weight: 497; line-height: 1.2; letter-spacing: -.02em; text-wrap: balance; transition: translate .45s var(--ease); }
+.lgi-card-t { font-size: 21px; font-weight: 497; line-height: 1.2; letter-spacing: -.02em; text-wrap: balance; }
 .lgi-card-d { margin: 0; max-width: 56ch; font-size: 15px; line-height: 1.55; color: var(--lgi-soft); text-wrap: pretty; }
 .lgi-card-d code { padding: 1px 6px; border-radius: 6px; background: var(--lgi-paper); font: 400 .9em var(--mono); color: var(--lgi-ink); }
 
-/* the signature: a row opens in place into Hanzo's line for the document and its address */
-.lgi-row { position: relative; border-bottom: 1px solid var(--lgi-line); transition: background .3s cubic-bezier(0, 0, .2, 1); }
-.lgi-row.open { background: var(--lgi-quiet); }
-.lgi-row-h { display: flex; align-items: center; gap: 12px; padding-right: 12px; }
-.lgi-row-b { flex: 1; min-width: 0; display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 8fr) 20px; align-items: center; gap: 24px; min-height: 76px; padding: 14px 4px 14px 12px; border: 0; background: none; color: var(--lgi-ink); font: inherit; text-align: left; cursor: pointer; transition: transform .09s; }
-.lgi-row-b:active { transform: translateY(1px); }
-.lgi-row-b:focus-visible { outline: 2px solid var(--lgi-ink); outline-offset: -2px; border-radius: 4px; }
-.lgi-row.open .lgi-card-t { translate: 6px 0; }
-/* plus that turns into a minus */
-.lgi-row-x { position: relative; width: 20px; height: 20px; }
-.lgi-row-x i { position: absolute; left: 3px; right: 3px; top: 9.25px; height: 1.5px; border-radius: 1px; background: currentColor; transition: transform .4s var(--ease); }
-.lgi-row-x i:last-child { transform: rotate(90deg); }
-.lgi-row.open .lgi-row-x i:last-child { transform: rotate(0deg); }
-.lgi-card-go { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--lgi-quiet); color: var(--lgi-ink); transition: background .3s, color .3s, transform .45s var(--ease); }
-.lgi-row.open .lgi-card-go { background: var(--lgi-ink); color: var(--lgi-paper); }
+/* the index: kind, title (the link) with Hanzo's line under it, and an arrow; the whole row answers the title's link */
+.lgi-list { position: relative; }
+.lgi-row { position: relative; display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 8fr) 44px; align-items: start; gap: 24px; padding: 20px 12px; border-bottom: 1px solid var(--lgi-line); transition: background .3s cubic-bezier(0, 0, .2, 1); }
+.lgi-row .lgi-card-k { padding-top: 6px; }
+.lgi-row-m { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.lgi-row .lgi-card-t { color: var(--lgi-ink); text-decoration: none; justify-self: start; }
+.lgi-row .lgi-card-t::after { content: ''; position: absolute; inset: 0; }
+.lgi-row .lgi-card-d a { position: relative; z-index: 1; }
+.lgi-row .lgi-card-t:focus-visible { outline: none; }
+.lgi-row:has(.lgi-card-t:focus-visible) { outline: 2px solid var(--lgi-ink); outline-offset: -2px; border-radius: 4px; }
+.lgi-row:active { transform: translateY(1px); }
+.lgi-card-go { align-self: center; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--lgi-quiet); color: var(--lgi-ink); transition: background .3s, color .3s, transform .45s var(--ease); }
 @media (hover: hover) {
-  .lgi-row:not(.open):hover { background: var(--lgi-quiet); }
+  .lgi-row:hover { background: var(--lgi-quiet); }
   .lgi-row:hover .lgi-card-go { background: var(--lgi-ink); color: var(--lgi-paper); transform: translateX(3px); }
 }
-.lgi-card-go:active { transform: translateX(3px) scale(.96); }
-/* the panel: 0fr to 1fr, so the rows below slide down rather than jump */
-.lgi-row-p { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .45s var(--ease); }
-.lgi-row.open .lgi-row-p { grid-template-rows: 1fr; }
-.lgi-row-pi { min-height: 0; overflow: hidden; display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 8fr); column-gap: 24px; padding: 0 72px 0 12px; }
-.lgi-row-pi > * { grid-column: 2; opacity: 0; translate: 0 6px; transition: opacity .2s cubic-bezier(0, 0, .2, 1), translate .2s cubic-bezier(0, 0, .2, 1), background-size .35s var(--ease); }
-.lgi-row.open .lgi-row-pi > * { opacity: 1; translate: 0 0; transition-duration: .35s, .45s; transition-delay: .08s; }
-.lgi-row-pi > .lgi-row-go { transition-delay: 0s; }
-.lgi-row.open .lgi-row-pi > .lgi-row-go { transition-delay: .14s; }
-.lgi-row-go { justify-self: start; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin: 6px 0 14px; color: var(--lgi-ink); font-size: 13px; text-decoration: none; background: linear-gradient(var(--lgi-ink), var(--lgi-ink)) 0 calc(100% - 10px) / 0 1px no-repeat; }
-.lgi-row-go svg { transition: transform .35s var(--ease); }
-@media (hover: hover) { .lgi-row-go:hover { background-size: calc(100% - 24px) 1px; } .lgi-row-go:hover svg { transform: translateX(3px); } }
-.lgi-row-go:active { transform: translateY(1px); }
-.lgi-row-go:focus-visible { outline: 2px solid var(--lgi-ink); outline-offset: 2px; border-radius: 4px; }
-
-/* e3 cursor-trail: a string of ink dots runs down the list and lays each row as it passes */
-.lgi-list { position: relative; }
-.lgi-trail { position: absolute; left: 0; top: 0; z-index: 3; pointer-events: none; opacity: 0; transition: opacity .35s; }
-.lgi-cat[data-trail] .lgi-trail { opacity: 1; }
-.lgi-trail i { position: absolute; left: -4px; top: -4px; width: 8px; height: 8px; border-radius: 50%; background: var(--lgi-ink); transform: translate(var(--x, 0), var(--y, 0)) scale(calc(1 - var(--i) * .13)); transition: transform calc(160ms + var(--i) * 55ms) cubic-bezier(.2, .7, .3, 1); }
-html.js .lgi-cat:not([data-done]) .lgi-cards > li { opacity: 0; transform: translateY(12px); transition: opacity .4s cubic-bezier(0, 0, .2, 1), transform .55s var(--ease); }
-html.js .lgi-cat:not([data-done]) .lgi-cards > li[data-t] { opacity: 1; transform: none; }
 
 /* how these fit together */
 .lgi-how { background: var(--lgi-quiet); }
@@ -158,8 +115,6 @@ html.js .lgi-cat:not([data-done]) .lgi-cards > li[data-t] { opacity: 1; transfor
 @keyframes lgi-type { from { opacity: 0; transform: translateY(6px); } }
 .lgi-env b { font-size: 21px; }
 .lgi-env .lgi-stamp { white-space: nowrap; font-size: 11px; }
-/* e5 ink-spread: the room is held as a dot until it reaches the screen, then the blot spreads (LegalIndex.jsx) */
-html.js .lgi-contact:not([data-in]) .lgi-contact-g { clip-path: circle(0 at 20% 60%); }
 .lgi-mail { list-style: none; margin: 0; padding: 0; }
 .lgi-mail li { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: baseline; gap: 16px; padding: 22px 0; border-top: 1px solid var(--lgi-line); }
 .lgi-mail li:last-child { border-bottom: 1px solid var(--lgi-line); }
@@ -190,17 +145,12 @@ html.js .lgi-contact:not([data-in]) .lgi-contact-g { clip-path: circle(0 at 20% 
   .lgi-chips-r { flex-wrap: nowrap; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
   .lgi-chips-r::-webkit-scrollbar { display: none; }
   .lgi-chips-r button { scroll-snap-align: start; padding: 0 14px; font-size: 15px; }
-  /* rows: kind over title, the plus at the end; the panel runs the full width */
-  .lgi-row-h { gap: 8px; padding-right: 8px; }
-  .lgi-row-b { grid-template-columns: minmax(0, 1fr) 20px; grid-template-rows: auto auto; gap: 4px 12px; min-height: 72px; padding: 14px 0 14px 4px; }
-  .lgi-card-k { grid-column: 1; grid-row: 1; }
-  .lgi-card-t { grid-column: 1; grid-row: 2; font-size: 19px; }
-  .lgi-row-x { grid-column: 2; grid-row: 1 / span 2; }
-  .lgi-row.open .lgi-card-t { translate: 0 0; }
-  .lgi-row-pi { grid-template-columns: minmax(0, 1fr); padding: 0 16px 0 4px; }
-  .lgi-row-pi > * { grid-column: 1; }
-  .lgi-row-go { max-width: 100%; overflow-wrap: anywhere; }
-  .lgi-grid { inset: -16px -12px; }
+  /* rows: kind over title over Hanzo's line, the arrow at the end */
+  .lgi-row { grid-template-columns: minmax(0, 1fr) 44px; gap: 6px 12px; padding: 16px 4px; }
+  .lgi-row .lgi-card-k { grid-column: 1; padding-top: 0; }
+  .lgi-row-m { grid-column: 1; }
+  .lgi-card-go { grid-column: 2; grid-row: 1 / span 2; }
+  .lgi-card-t { font-size: 19px; }
   .lgi-ladder { grid-template-columns: repeat(2, minmax(0, 1fr)); height: auto; }
   .lgi-ladder li { height: auto; min-height: 132px; }
   .lgi-contact-l { gap: 24px; }
@@ -210,22 +160,16 @@ html.js .lgi-contact:not([data-in]) .lgi-contact-g { clip-path: circle(0 at 20% 
 }
 @media (prefers-reduced-motion: reduce) {
   /* settled at first paint: the rows and the ladder sit in their final place */
-  .lgi-cards > li, .lgi-ladder li { transform: none !important; opacity: 1 !important; }
-  .lgi-env .lgi-sheet-u, .lgi-rip-a { animation: none !important; }
-  .lgi-rings, .lgi-grid, .lgi-trail { display: none !important; }
-  .lgi-contact-g { clip-path: none !important; }
-  .lgi-status, .lgi-chips-r button, .lgi-mail a, .lgi-row-p, .lgi-row-pi > *, .lgi-card-t { transition: none !important; }
+  .lgi-env .lgi-sheet-u { animation: none !important; }
+  .lgi-status, .lgi-chips-r button, .lgi-mail a, .lgi-row, .lgi-card-go, .lgi-card-t { transition: none !important; }
 }
 
 @media print {
-  .lgi-pin, .lgi-stack, .lgi-chips, .w2-pause, .lgi-card-go, .lgi-row-x, .lgi-rings, .lgi-grid, .lgi-trail, .lgi-env { display: none !important; }
+  .lgi-pin, .lgi-stack, .lgi-chips, .w2-pause, .lgi-card-go, .lgi-env { display: none !important; }
   body:has(.lgi) .x-skip, body:has(.lgi) a[href="#main"], body:has(.lgi) header:not(main header), body:has(.lgi) footer:not(main footer), body:has(.lgi) .x-cookie { display: none !important; }
   .lgi-group[hidden] { display: block !important; }
   .lgi-row { break-inside: avoid; background: none !important; }
-  .lgi-row-p { grid-template-rows: 1fr !important; }
-  .lgi-row-pi > * { opacity: 1 !important; translate: none !important; }
-  .lgi-row-b { min-height: 0; padding: 8px 0; }
-  .lgi-contact-g { clip-path: none !important; }
+  .lgi-row { padding: 8px 0; }
   .lgi-hero-g, .lgi-intro-g, .lgi-how-g, .lgi-contact-g { display: block !important; }
   .lgi-hero, .lgi-hero-copy { padding: 0 0 12pt; }
   .lgi-h1 { font-size: 30pt; }
@@ -233,7 +177,6 @@ html.js .lgi-contact:not([data-in]) .lgi-contact-g { clip-path: circle(0 at 20% 
   .lgi-status { box-shadow: none; transform: none; padding: 0; margin-top: 12pt; }
   .lgi-card-t { font-size: 13pt; }
   .lgi-card-d, .lgi-prose p { font-size: 10.5pt; }
-  .lgi-cards > li, .lgi-ladder li { transform: none !important; }
   .lgi .w2-sec { padding: 12pt 0 !important; }
   .lgi-how { background: none; }
   .lgi-mail a { font-size: 13pt; }

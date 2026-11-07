@@ -3,7 +3,7 @@
 .xlg2 { --xlg-top: 104px; }
 
 /* stage: the title beside its lede and dates; the cover on the first screen */
-.xlg2-stage { position: relative; padding: clamp(24px, 3vw, 48px) 0 clamp(96px, 10vw, 160px); overflow: clip; }
+.xlg2-stage { position: relative; padding: clamp(24px, 3vw, 48px) 0 clamp(56px, 6vw, 96px); overflow: clip; }
 .xlg2-top { align-items: end; row-gap: 28px; }
 .xlg2-head { grid-column: 1 / span 7; display: flex; flex-direction: column; gap: 20px; }
 .xlg2-h1 { max-width: 18ch; }
@@ -17,7 +17,7 @@
 
 /* the cover: the document as an object that reads its own clauses */
 .xlg2-cover { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); overflow: hidden; }
-.xlg2-cover-l { position: relative; display: flex; flex-direction: column; justify-content: flex-start; min-height: 400px; padding: 32px; background: #f5f5f5; color: var(--ink); border-right: 1px solid var(--hair); overflow: hidden; }
+.xlg2-cover-l { position: relative; display: flex; flex-direction: column; justify-content: flex-start; min-height: 220px; padding: 32px; background: #f5f5f5; color: var(--ink); border-right: 1px solid var(--hair); overflow: hidden; }
 .xlg2-sigil { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .16; }
 .xlg2-read { position: relative; display: flex; flex-direction: column; gap: 14px; animation: xlg2-in var(--reveal) var(--out) both; }
 @keyframes xlg2-in { from { opacity: 0; transform: translateY(14px); } }
@@ -109,8 +109,9 @@
 .xlg2 .xlg-tip { font-size: 13px; }
 
 @media (max-width: 900px) {
-  /* the rail's Contents is the index on phones: the cover keeps its clause plate only */
-  .xlg2-ix { display: none; }
+  /* the rail's Contents is the index on phones, so the cover (a pointer preview) steps aside: title, dates, lede, Contents */
+  .xlg2-stage-o { display: none; }
+  .xlg2-stage { padding-bottom: 40px; }
   .xlg2-cover-l { border-bottom: 0; }
   .xlg2-rail { -webkit-mask-image: none; mask-image: none; padding: 14px 16px; }
   .xlg2 .xlg-track a, .xlg2 .xlg-det summary h2, .xlg2 .xlg-pct { font-size: 15px; }
@@ -158,10 +159,11 @@
   .xlg2-n { font-size: 26px; }
 }
 
-/* the Contents summary: an icon (its name is the accessible name until James approves the word), the % read, and a
+/* the Contents summary: an icon and the word (live hanzo.ai shows "Contents" over its list), the % read, and a
    chevron that turns with the open state on phones */
 .xlg2 .xlg-det summary { align-items: center; }
-.xlg2 .xlg-det summary .xlg2-sum-h { display: inline-flex; align-items: center; color: var(--ink); font-size: 14px; }
+.xlg2 .xlg-det summary .xlg2-sum-h { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); font-size: 14px; }
+.xlg2-sum-t { font: 500 15px/1.2 var(--sans); letter-spacing: -.005em; text-transform: none; }
 .xlg2-chev { display: none; color: var(--ink); transition: transform var(--ui, .3s) var(--out, ease); }
 @media (max-width: 900px) {
   .xlg2 .xlg-det summary { min-height: 48px; padding: 0 4px; cursor: pointer; gap: 12px; justify-content: flex-start; border-radius: 12px; }

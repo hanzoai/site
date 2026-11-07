@@ -31,7 +31,7 @@ Done here: parity links 16/16; `#agreements`, `#policies`, `#notices-and-registe
 - [x] Ends on the contact rows, then footer (Utility: no band)
 - [x] Rows open in place (Hanzo's line for the document and its address); the arrow and the address open the document page (`data-morph` title → the document's h1)
 
-Done here: five rooms, five entrances (MOTION-MAP `/legal`): hero ripple at first paint, intro grid-wave from the cursor, index cursor-trail laying each row, How scramble-decode, contact ink-spread. JS off: every word legible, nothing held, no pause button.
+Done here: 8 Nov (COPY-RULE rule 4): the five room entrances are gone, every room is in place at first paint, so the index reads like Hanzo's own. JS off: every word legible, nothing held, no pause button.
 
 ## 4. Conversion system
 - [x] n/a `<Cta>`: no ask on legal pages
@@ -73,16 +73,16 @@ Done here: gate hues [].
 - [x] No bare `:hover`
 - [x] Forks deleted: listed above
 
-Done here: rows fill on hover, the plus turns into a minus when a row opens, the arrow fills ink and moves 3px; the panel opens 0fr→1fr (450ms) so rows below slide rather than jump; the sticky chip bar is opaque and draws its hairline only while stuck.
+Done here: rows fill on hover and the arrow fills ink and moves 3px; a press moves the row 1px; the whole row answers its title link; the sticky chip bar is opaque and draws its hairline only while stuck.
 
 ## 9. Motion and interaction
-- [x] Signature rows-open (MOTION-MAP): a resting mouse opens the row under it (real moves only), tap/Enter/Space toggles, arrow keys walk the rows, the first row stands open; the dealing pile is kept as the hero object
-- [x] Idle (pile deals every 2.6s), pointer (rows open under a resting mouse, grid-wave and trail start at the cursor, the contact sheet shows the address you point at), state (chips re-deal rows 150ms/30ms stagger, rows open), arrival (five entrances), scroll (only the entrance triggers)
+- [x] Signature: the dealing pile (hero object, pausable); 8 Nov: the index shows every document with Hanzo's line for it at once, as live does (rows-open panels removed for clarity, COPY-RULE rule 4)
+- [x] Idle (pile deals every 2.6s), pointer (rows tint and their arrow moves, the contact sheet shows the address you point at), state (chips re-deal rows 150ms/30ms stagger), arrival (the pile deals from first paint); no scroll-held entrances
 - [x] Moves without input; every control answers
-- [x] Reduced motion: the pile cuts (no travel); rings, tiles, trail and ink are off; rows, ladder and contact sit in their final place; panels open without travel
+- [x] Reduced motion: the pile cuts (no travel); rows, ladder and contact sit in their final place; no transitions
 - [x] Sound: a tick on a chip, through `lib/sound`
 
-Done here: the deal is two-phase: the top sheet travels out on top to x −55%, −8° (450ms ease-emphasis, z 40), then tucks under and the next sheet comes forward 200ms later; probe 8 Nov: hover opened row 3, Policies chip showed 5 rows, ArrowDown+Enter opened the DPA row.
+Done here: the deal is two-phase: the top sheet travels out on top to x −55%, −8° (450ms ease-emphasis, z 40), then tucks under and the next sheet comes forward 200ms later; Policies chip shows 5 rows.
 
 ## 10. Media
 - [x] n/a: no media on the live page

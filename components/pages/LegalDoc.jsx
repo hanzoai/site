@@ -14,7 +14,9 @@
    progress, and the percentage read counts beside it.
    Beyond: find in this document. Type a word and the contents show how often each section says it, the matches light
    up in the text, and sections without it dim, so you can go straight to the clause you came for.
-   Motion, not only scroll: idle (the cover masks through its clauses, its contour drifts), pointer (index rows preview
+   8 Nov (COPY-RULE rule 4, simple pages stay simple): the cover no longer turns by itself or zooms in on scroll, the
+   title holds its size, phones go straight from the title to Contents, and the Contents rail shows its word.
+   Motion, not only scroll: idle (the cover's contour drifts), pointer (index rows preview
    their clause, sibling rail drags with inertia), state (marker glides, find lights and dims), time (the cover's
    timing bar), scroll (rail line and percentage). 0 UI hues: ink, greys, white.
    Ledger: deletes the "Legal" kicker over the title, the invented "sections" and "min read" figures, the accent colour,
@@ -28,7 +30,6 @@ import { Nodes, Node, split } from './DocNodes';
 import { play } from '../../lib/sound';
 import { useArrival } from './doorway';
 import FamLines from '../v2/FamLines';
-import FamStage from '../v2/FamStage';
 import FamNext from '../v2/FamNext';
 import { ui } from '../v2/famUi';
 import './LegalDoc.css';
@@ -124,7 +125,7 @@ function Rail({ toc, active, art }) {
         <summary onClick={(e) => { if (matchMedia('(min-width: 901px)').matches) e.preventDefault(); }}>
           <h2 className="xlg2-sum-h">
             <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M3 5h2M3 10h2M3 15h2M8 5h9M8 10h9M8 15h6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
-            <span className="x-sr">{ui('contents')}</span>
+            <span className="xlg2-sum-t">{ui('contents')}</span>
           </h2>
           <span className="xlg-pct x-mono" ref={pct} aria-hidden="true">0%</span>
           <svg className="xlg2-chev" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -185,7 +186,8 @@ function Table({ n, caption }) {
 /* a section's nodes, with its tables through DataTable */
 const Prose = ({ nodes, caption }) => nodes.map((n, i) => {
   if (isEl(n) && n.t === 'table') return <Table key={i} n={n} caption={caption} />;
-  if (isEl(n) && n.t === 'h3') { const id = n.a && n.a.id; return <h3 key={i} id={id} className="xlg-hd"><Nodes nodes={n.c} />{id && <LCopy id={id} />}</h3>; }
+  // the heading's words sit in one span (one leaf, Hanzo's line whole) beside its copy link
+  if (isEl(n) && n.t === 'h3') { const id = n.a && n.a.id; return <h3 key={i} id={id} className="xlg-hd"><span className="xlg2-h3t">{n.c.every((k) => !isEl(k)) ? n.c.join('') : <Nodes nodes={n.c} />}</span>{id && <LCopy id={id} />}</h3>; }
   return <Node key={i} n={n} />;
 });
 
@@ -218,8 +220,8 @@ const firstSentence = (nodes) => {
   return out.length <= 200 ? out : '';
 };
 
-/* the cover: the document as an object. Its contour, and a plate that turns through its clauses by itself (number
-   huge, first sentence); hover or focus on an index row shows that clause and holds it */
+/* the cover: the document as an object. Its contour, and a plate showing a clause (Hanzo's number, first sentence);
+   hover or focus on an index row shows that clause and holds it */
 function Cover({ doc }) {
   // reduced motion is read after hydration, so the server's HTML and the first client render agree (the CSS already
   // holds the plate still under reduced motion before that)
@@ -228,17 +230,9 @@ function Cover({ doc }) {
   useEffect(() => setCalm(!!rm), [rm]);
   // only Hanzo's own section numbers are shown ("1."), never a count of ours
   const secs = doc.toc.map((t, k) => { const s = doc.sections.find((x) => x.id === t.id); const [num, text] = split(t.label); return { ...t, k, num, text, first: s ? firstSentence(s.nodes) : '' }; });
+  // the plate shows the first clause and turns only when you point at (or tab to) another index row: no timer, so
+  // nothing moves on its own beside the text you are reading
   const [at, setAt] = useState(0);
-  const [held, setHeld] = useState(false);
-  const box = useRef(null);
-  useEffect(() => {
-    if (calm || held || secs.length < 2) return;
-    let seen = true;
-    const io = new IntersectionObserver(([e]) => { seen = e.isIntersecting; });
-    box.current && io.observe(box.current);
-    const t = setInterval(() => { if (seen && !document.hidden) setAt((k) => (k + 1) % secs.length); }, 3400);
-    return () => { clearInterval(t); io.disconnect(); };
-  }, [calm, held, secs.length]);
   // the plate turns inside one stable node: the old clause masks up and out, then the next masks in from below
   // (no remount, so a swipe that starts on the card survives the turn)
   const [shown, setShown] = useState(0);
@@ -262,20 +256,15 @@ function Cover({ doc }) {
     o.cancel();
   }, [shown]);
   const cur = secs[shown] || secs[0];
-  const pick = (k) => { setAt(k); setHeld(true); };
-  // a finger on the cover pauses the turning (and it picks up again a while after)
-  const rest = useRef(0);
-  const touch = () => { setHeld(true); clearTimeout(rest.current); rest.current = setTimeout(() => setHeld(false), 8000); };
-  useEffect(() => () => clearTimeout(rest.current), []);
+  const pick = (k) => setAt(k);
   return (
-    <div ref={box} className="xlg2-cover v2f-obj" onPointerLeave={(e) => e.pointerType === 'mouse' && setHeld(false)} onTouchStart={touch}>
+    <div className="xlg2-cover v2f-obj">
       <div className="xlg2-cover-l" aria-hidden="true">
         <Sigil seed={'/legal/' + doc.slug} data={[doc.toc.length, doc.sections.length, doc.others.length]} className="xlg2-sigil" />
         {cur && (
           <div className="xlg2-read" ref={read}>
             {cur.num ? <span className="xlg2-read-n v2f-num">{cur.num}</span> : <span className="xlg2-read-h">{cur.text}</span>}
             <p className="xlg2-read-t">{cur.num ? cur.first || cur.text : cur.first}</p>
-            {!calm && !held && secs.length > 1 && <i key={at} className="xlg2-read-bar" />}
           </div>
         )}
       </div>
@@ -325,7 +314,7 @@ export default function LegalDoc({ doc, peek = {} }) {
       <section className="xlg2-stage" aria-labelledby="xlg-h1">
         <div className="v2f-wrap v2f-grid xlg2-top">
           <div className="xlg2-head">
-            <FamLines as="h1" id="xlg-h1" className={'v2f-display xlg2-h1' + size} text={doc.title} data-morph-target />
+            <FamLines as="h1" id="xlg-h1" className={'v2f-display xlg2-h1' + size} text={doc.title} settle={false} data-morph-target />
             <div className="xlg-meta xlg2-meta">
               {doc.meta.length > 0 && <Nodes nodes={doc.meta} />}
               <p className="xlg2-up"><A to="/legal" className="v2f-link">{doc.kicker}</A></p>
@@ -336,7 +325,7 @@ export default function LegalDoc({ doc, peek = {} }) {
           </div>
         </div>
         <div className="v2f-wrap xlg2-stage-o">
-          <FamStage from={1.08} span={520}><Cover doc={doc} /></FamStage>
+          <Cover doc={doc} />
         </div>
       </section>
       <div className="v2f-wrap xlg-body xlg2-body">
