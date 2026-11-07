@@ -57,7 +57,7 @@ function Card() {
         </div>
         <p className="xrf-q">An account qualifies with its first metered spend.</p>
         <AnimatePresence mode="popLayout">
-          <motion.p key={nudge} className={'xrf-signin' + (nudge ? ' on' : '')} initial={nudge ? { x: -6 } : false} animate={{ x: 0 }} transition={{ type: 'spring', stiffness: 700, damping: 12 }} aria-live="polite">Sign in and your link, and everyone it brings, is here.</motion.p>
+          <motion.p key={nudge} className={'xrf-signin' + (nudge ? ' on' : '')} initial={nudge ? { x: -6 } : false} animate={{ x: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} aria-live="polite">Sign in and your link, and everyone it brings, is here.</motion.p>
         </AnimatePresence>
       </div>
     </div>

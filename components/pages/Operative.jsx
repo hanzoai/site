@@ -32,9 +32,11 @@ function useLive(ref, amount = 0.2) {
 function useSteps(n, ms, live) {
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
+  const first = useRef(true);
   useEffect(() => {
     if (!live || mine) return;
-    const t = setTimeout(() => setAt((v) => (v + 1) % n), ms);
+    const t = setTimeout(() => setAt((v) => (v + 1) % n), first.current ? 700 : ms); // the first move comes within a second
+    first.current = false;
     return () => clearTimeout(t);
   }, [at, live, mine, n, ms]);
   return [at, (i) => { setAt(i); setMine(true); }];
@@ -283,8 +285,7 @@ function Ways() {
           {WAYS.map((v, i) => (
             <div key={v.k} className={'xov-card' + (at === i ? ' on' : '')}>
               <button type="button" className="xov-card-h" aria-pressed={at === i} onClick={() => choose(i)}>
-                {v.rec && <span className="xov-rec">Recommended</span>}
-                <b>{v.k}</b>
+                <b>{v.k}{v.rec && <span className="xov-rec">Recommended</span>}</b>
                 <span>by {v.by}</span>
               </button>
               <ul>{v.pts.map((p) => <li key={p}>{p}</li>)}</ul>

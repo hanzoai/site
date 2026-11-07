@@ -1,0 +1,5 @@
+# Requests from the Zen-names pages (/enso /iro /kai /koe /koma /mori /oto /uta /zen)
+
+- **components/Ask.jsx (shared ask bar):** on desktop the pill ("Hanzo Enso · search · Try Hanzo") floats at the bottom centre over the page's content once the hero has gone by. MASTER.md 3.2 rule 6 and 3.3 now ban "a floating pill bar over content on desktop". On these nine pages it sits over the chapter text, the router room and the model cards. Asked for: on desktop, keep the ask in the sticky header only (outline while a page solid is on screen, solid after); keep the slim phone bar where it does not cover content. Each page already marks its hero ask with `data-thumb`.
+- **Sound kit (MASTER part 9):** these pages have the moments it lists (a model card opening, the primary ask, tabs and presets, copy success, a demo finishing). They will call the kit once it lands; nothing page-local was added.
+- **`lib/cta.js`, `lib/track.js`, `tokens.css`:** not on main yet. The pages use Hanzo's own labels with `data-cta="<page>.<slot>"` (kit `Cta` dispatches `cta_click`) and deck values in page CSS. They will switch over when these land.

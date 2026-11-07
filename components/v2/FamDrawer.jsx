@@ -10,9 +10,13 @@
    - Escape, the scrim and the close button shut it, and focus returns to the trigger. */
 import { useEffect, useId, useRef, useState } from 'react';
 import { ui } from './famUi';
+import NoJs from '../NoJs';
 
 /* with scripts off the detail simply shows in place (PLAN-COMPONENTS 2.3: JS off is legible) */
 const NOJS = '.v2f-sheet{position:static!important;visibility:visible!important;pointer-events:auto!important}.v2f-sheet-scrim,.v2f-sheet-x,.v2f-spec-btn{display:none!important}.v2f-sheet-p{position:static!important;transform:none!important;width:auto!important;max-height:none!important;box-shadow:none!important;border:1px solid rgba(0,0,0,.08)}';
+
+/* a preview never stops mid-word: whole words up to about 90 characters, then an ellipsis */
+const cut = (t) => { const s = String(t).replace(/\s+/g, ' ').trim(); if (s.length <= 96) return s; const i = s.lastIndexOf(' ', 90); return s.slice(0, i > 40 ? i : 90).replace(/[,;:.]$/, '') + ' …'; };
 
 export default function FamDrawer({ preview, title, children, className = '', label }) {
   const [open, setOpen] = useState(false);
@@ -39,9 +43,9 @@ export default function FamDrawer({ preview, title, children, className = '', la
   }, [open]);
   return (
     <>
-      <noscript><style>{NOJS}</style></noscript>
+      <NoJs css={NOJS} />
       <button ref={btn} type="button" className={'v2f-spec-btn ' + className} aria-haspopup="dialog" aria-expanded={open} aria-controls={id} aria-label={(label || ui('more')) + (title ? ': ' + title : '')} onClick={() => setOpen(true)}>
-        <i aria-hidden="true">+</i>{preview && <span aria-hidden="true">{preview}</span>}
+        <i aria-hidden="true">+</i>{preview && <span aria-hidden="true">{cut(preview)}</span>}
       </button>
       <div id={id} className="v2f-sheet" data-open={open ? '' : undefined} inert={live && !open} data-swipe-own>
         <button type="button" className="v2f-sheet-scrim" tabIndex={-1} aria-hidden="true" onClick={() => setOpen(false)} />

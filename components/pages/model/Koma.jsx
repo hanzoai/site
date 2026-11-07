@@ -102,7 +102,7 @@ function Monitor() {
           aria-valuemin={0}
           aria-valuemax={LEN}
           aria-valuenow={6}
-          data-cursor="Drag"
+         
           onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); S.current.drag = true; vid.current.pause(); seek(fromX(e)); }}
           onPointerMove={(e) => { if (S.current.drag) seek(fromX(e)); }}
           onPointerUp={() => { S.current.drag = false; }}

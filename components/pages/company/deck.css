@@ -1,0 +1,26 @@
+/* Hanzo's deck values for the Company pages (MASTER.md 3.1, from @hanzo/design): the type scale, greys and curves.
+   Usage: import './company/deck.css' (or '../company/deck.css') AFTER '../v2/vc-type.css' in a page; it re-tunes the
+   vc- classes inside .vc to the deck (headings Book 497, h1 clamp(52px, 7vw, 84px) at 1.02 and -0.035em, section
+   heading clamp(36px, 5.3vw, 64px), lead clamp(17px, 1.5vw, 21px), body 17px, Zen Mono labels 12px +0.14em).
+   Page CSS may set a heading smaller, never larger than the deck. Page-local kit of the Wave 2 Company chat. */
+.vc {
+  --ink: #0a0a0a; --ink2: #525252; --muted: #737373; --quiet: #f5f5f5; --card: #f2f2f2; --tile: #ededed;
+  --line: rgba(0, 0, 0, .1); --float: 0 24px 60px -16px rgba(0, 0, 0, .18);
+  --e-out: cubic-bezier(0, 0, .2, 1); --e-io: cubic-bezier(.4, 0, .2, 1); --e-em: cubic-bezier(.16, 1, .3, 1);
+  --d-press: 90ms; --d-fast: 150ms; --d-base: 300ms; --d-slow: 400ms; --d-slower: 500ms;
+  color: var(--ink);
+}
+.vc .vc-display { font-weight: 497; font-size: clamp(52px, 7vw, 84px); line-height: 1.02; letter-spacing: -.035em; color: var(--ink); }
+.vc .vc-display.m, .vc .vc-display.s { font-size: clamp(40px, 6.6vw, 84px); }
+.vc .vc-headline { font-weight: 497; font-size: clamp(36px, 5.3vw, 64px); line-height: 1.02; letter-spacing: -.035em; color: var(--ink); }
+.vc .vc-title { font-weight: 497; font-size: clamp(21px, 2vw, 26px); line-height: 1.15; letter-spacing: -.02em; color: var(--ink); }
+.vc .vc-lede { font-size: clamp(17px, 1.5vw, 21px); line-height: 1.45; letter-spacing: 0; color: var(--ink2); max-width: 44ch; }
+.vc .vc-body { font-size: 17px; line-height: 1.55; color: var(--ink2); max-width: 68ch; }
+.vc .vc-kick { font: 606 12px/1.2 var(--mono); letter-spacing: .14em; color: var(--ink2); }
+.vc .vc-num { font-variant-numeric: tabular-nums; }
+@media (max-width: 899px) {
+  .vc .vc-display { font-size: clamp(40px, 11vw, 52px); line-height: 1.02; }
+  .vc .vc-display.m, .vc .vc-display.s { font-size: clamp(36px, 10vw, 48px); }
+  .vc .vc-headline { font-size: clamp(32px, 9vw, 40px); }
+  .vc .vc-lede { font-size: 17px; }
+}

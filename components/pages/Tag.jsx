@@ -228,9 +228,9 @@ function Setup() {
     <section className={`a2-sec ${P}-setup`} ref={ref}>
       <div className="a2-wrap">
         <div className={`${P}-setup-h`}>
-          <p className={`${P}-setup-t`}>{SETUP.title}</p>
           <h2 className="a2-display s">{SETUP.name}</h2>
           <p className={`${P}-setup-s`}>{SETUP.sub}</p>
+          <p className={`${P}-setup-t`}>{SETUP.title}</p>
         </div>
         <div className={`${P}-wire`} style={{ '--n': Math.min(n, 3) }}>
           <i className={`${P}-wire-l`} aria-hidden="true"><b /></i>

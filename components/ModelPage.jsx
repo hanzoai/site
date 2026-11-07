@@ -29,6 +29,8 @@ export default function ModelPage({ slug, html, children }) {
   const y = useTransform(p, [0, 1], ['0%', '18%']);
   const textY = useTransform(p, [0, 1], [0, -80]);
   const fade = useTransform(p, [0, 0.7], [1, 0]);
+  // scale has rhythm: the name is the moment on arrival and shrinks back as the page takes over
+  const shrink = useTransform(p, [0, 0.8], [1, 0.62]);
   const clipPath = useTransform(p, [0, 0.9], ['inset(0% 0% 0% 0% round 0px)', 'inset(5% 4% 20% 4% round 28px)']);
   const i = MODELS.findIndex((x) => x.slug === slug);
   const next = MODELS[(i + 1) % MODELS.length];
@@ -50,12 +52,12 @@ export default function ModelPage({ slug, html, children }) {
           <ModelFilm slug={slug} />
         </motion.div>
         <motion.div className="x-mhero-copy x-wrap" style={{ y: textY, opacity: fade }}>
-          <motion.p className="x-mindex" {...rise(0.12)}><span>{String(i + 1).padStart(2, '0')}</span>{` / ${String(MODELS.length).padStart(2, '0')}`}</motion.p>
-          {m.kicker && <motion.p className="x-mkick" {...rise(0.15)}>{m.kicker}</motion.p>}
-          <h1 id="mh" className="x-mhero-name">
-            <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={ready ? { y: 0 } : {}} transition={{ duration: 1.1, ease: EASE, delay: 0.1 }}>{m.name}</motion.span></span>
-          </h1>
+          <motion.h1 id="mh" className="x-mhero-name" style={{ scale: shrink }}>
+            <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={ready ? { y: 0 } : {}} transition={{ duration: 0.7, ease: EASE, delay: 0.1 }}>{m.name}</motion.span></span>
+          </motion.h1>
           <motion.p className="x-mhero-desc" {...rise(0.3)}>{m.desc}</motion.p>
+          {/* Hanzo's kicker and the index among the nine sit under the name, never over it */}
+          <motion.p className="x-mindex" {...rise(0.35)}>{m.kicker && <b>{m.kicker} · </b>}<span>{String(i + 1).padStart(2, '0')}</span>{` / ${String(MODELS.length).padStart(2, '0')}`}</motion.p>
           <motion.p className="x-mtags static" {...rise(0.4)}>{m.tags.map((t) => <span key={t}>{t}</span>)}</motion.p>
         </motion.div>
         <motion.a
@@ -71,7 +73,7 @@ export default function ModelPage({ slug, html, children }) {
         <motion.span className="x-scrollcue" {...rise(0.7)} aria-hidden="true">Scroll</motion.span>
       </section>
       <div className="x-model-body">{children || <Ported html={html} />}</div>
-      <a href={'/' + next.slug} className="x-next" data-card={next.slug} data-cursor="Open" onClick={(e) => opener.open(e, { el: e.currentTarget, src: media(next.slug, 'webp'), href: '/' + next.slug, key: next.slug })}>
+      <a href={'/' + next.slug} className="x-next" data-card={next.slug} onClick={(e) => opener.open(e, { el: e.currentTarget, src: media(next.slug, 'webp'), href: '/' + next.slug, key: next.slug })}>
         <Img src={media(next.slug, 'webp')} alt="" w={1200} h={1500} />
         <ModelFilm slug={next.slug} className="mb-next-film" />
         <span className="x-next-k">Next model</span>

@@ -294,7 +294,8 @@ function End() {
 
 export default function Gui() {
   return (
-    <main className="bz gu" data-ask-name="Hanzo GUI">
+    <main className="bz gu">
+      <span data-ask-name="Hanzo GUI" hidden />
       <Hero />
       <Chapters />
       <Editor />

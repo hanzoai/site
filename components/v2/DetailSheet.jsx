@@ -15,6 +15,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import './ProofScale.css';
 import './DetailSheet.css';
+import NoJs from '../NoJs';
 
 export default function DetailSheet({ label, kicker, title, children, ghost = false, className = '', wide = false, onOpen }) {
   const [open, setOpen] = useState(false);
@@ -59,7 +60,7 @@ export default function DetailSheet({ label, kicker, title, children, ghost = fa
   return (
     <>
       {/* JS off: no sheet to open, so the detail reads inline where the button would be */}
-      <noscript dangerouslySetInnerHTML={{ __html: '<style>.pf-sheet{position:static!important;visibility:visible!important;pointer-events:auto!important;margin:24px 0}.pf-sheet-scrim,.pf-sheet-x,.pf-plus[aria-haspopup]{display:none!important}.pf-sheet-panel{position:static!important;transform:none!important;width:auto!important;box-shadow:none!important;border:1px solid rgba(0,0,0,.08)}</style>' }} />
+      <NoJs css={'<style>.pf-sheet{position:static!important;visibility:visible!important;pointer-events:auto!important;margin:24px 0}.pf-sheet-scrim,.pf-sheet-x,.pf-plus[aria-haspopup]{display:none!important}.pf-sheet-panel{position:static!important;transform:none!important;width:auto!important;box-shadow:none!important;border:1px solid rgba(0,0,0,.08)}</style>'} />
       <button ref={btn} type="button" className={'pf-plus' + (ghost ? ' ghost' : '') + (className ? ' ' + className : '')} aria-haspopup="dialog" aria-expanded={open} onClick={() => { setOpen(true); onOpen?.(); }}>
         <i aria-hidden="true">
           <svg viewBox="0 0 16 16" width="14" height="14"><path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>

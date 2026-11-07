@@ -128,7 +128,7 @@ function Canvas() {
         <ul className="am2-dock">
           {DOCK.map((t) => (
             <li key={t}>
-              <motion.button type="button" className={flow.includes(t) ? 'in' : ''} drag dragSnapToOrigin dragElastic={0.6} dragTransition={{ bounceStiffness: 300, bounceDamping: 30 }} whileDrag={{ scale: 1.15, zIndex: 20 }} whileTap={{ scale: 0.95 }} onDragEnd={(e, info) => dropped(t, info)} onClick={() => { setMine(true); add(t); }} aria-label={'Drop ' + t + ' onto the canvas'} data-cursor="Drag">
+              <motion.button type="button" className={flow.includes(t) ? 'in' : ''} drag dragSnapToOrigin dragElastic={0.6} whileDrag={{ scale: 1.15, zIndex: 20 }} whileTap={{ scale: 0.95 }} onDragEnd={(e, info) => dropped(t, info)} onClick={() => { setMine(true); add(t); }} aria-label={'Drop ' + t + ' onto the canvas'}>
                 <span className="am2-em" aria-hidden="true">{BY[t][0]}</span><span className="am2-dn">{t}</span>
               </motion.button>
             </li>
@@ -140,7 +140,7 @@ function Canvas() {
         <ol className="am2-flow">
           <AnimatePresence initial={false} mode="popLayout">
             {flow.map((t, i) => (
-              <motion.li key={t} layout initial={{ opacity: 0, y: 80, scale: 0.8 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.2 } }} transition={{ type: 'spring', stiffness: 300, damping: 24 }}>
+              <motion.li key={t} layout initial={{ opacity: 0, y: 80, scale: 0.8 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.2 } }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
                 {i > 0 && <motion.i className="am2-wire" initial={{ scaleY: 0 }} animate={{ scaleY: 1 }} transition={{ duration: 0.5, ease: EASE, delay: 0.2 }} aria-hidden="true" />}
                 <a href={'#' + slug(t)} className="am2-node">
                   <span className="am2-em" aria-hidden="true">{BY[t][0]}</span>
@@ -202,7 +202,7 @@ function Catalog() {
         <div className="am2-chips" role="group" aria-label="Category" data-swipe-own>
           {CATS.map((c) => (
             <button key={c} type="button" aria-pressed={cat === c} onClick={() => setCat(c)}>
-              {cat === c && <motion.span layoutId="am2-chip" className="am2-chip-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
+              {cat === c && <motion.span layoutId="am2-chip" className="am2-chip-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
               <span>{c}</span><em className="l2-mono" aria-hidden="true">{count(c)}</em>
             </button>
           ))}
@@ -219,7 +219,7 @@ function Catalog() {
           {APPS.map(([e, t, c, pop]) => {
             const on = (cat === 'All' || c === cat) && (!s || t.toLowerCase().includes(s));
             return (
-              <motion.li key={t} layout={on ? 'position' : false} transition={{ type: 'spring', stiffness: 300, damping: 30 }} id={slug(t)} className="am2-card" hidden={!on}>
+              <motion.li key={t} layout={on ? 'position' : false} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} id={slug(t)} className="am2-card" hidden={!on}>
                 <span className="am2-em" aria-hidden="true">{e}</span>
                 <h3>{t}</h3>
                 {pop ? <span className="am2-pop l2-mono">Popular</span> : null}

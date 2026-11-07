@@ -4,7 +4,8 @@
      that gives it its canonical link, share card (Open Graph, X) and schema.org data.
    - Styles load in this order: Hanzo's hanzo.css, globals.css, system.css (tokens and states), then the page's own CSS,
      so a page rule always wins.
-   - Layers mounted once here: arrival, progress, morph (page transitions), the ask bar, the phone layer, the cursor. */
+   - Layers mounted once here: arrival, progress, morph (page transitions), the phone ask, the sound kit, the phone
+     layer. No cursor label: nothing floats over content (MASTER 3.3). */
 import './globals.css';
 import './system.css';
 import { Smooth, Progress, Header, Footer } from '../components/Chrome';
@@ -13,7 +14,7 @@ import { OpenerProvider } from '../components/Opener';
 import Morph from '../components/Morph';
 import Phone from '../components/Phone';
 import Ask from '../components/Ask';
-import Cursor from '../components/Cursor';
+import Sound from '../components/Sound';
 import { ARRIVE } from '../components/arrival';
 
 export const metadata = {
@@ -54,7 +55,7 @@ export default function RootLayout({ children }) {
             <Morph />
             <Phone />
             <Ask />
-            <Cursor />
+            <Sound />
             <div className="x-page">
               <HeaderHTML />
               <Header />

@@ -1,26 +1,31 @@
 # /referral — James-eye review
 
-Reviewed: main, page files at `3a5cb5f`. Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
+Reviewed: main, page files at `4b53974` (re-walked after the site-wide palette recolour of 14:29; first review at `3a5cb5f`, 5/10). Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
 
 Note (7 Nov 14:12): a hydration error seen in the first walks came from the shared shell and is gone on main; it is not counted against this page. Text is now legible with JavaScript off (shared fix at 14:05, re-checked).
 
-Verdict: 5/10
+Verdict: 5/10 (scale fails; no card)
 
-First complaint: "Lime green. I said no green, ever. And 'How it works' is four little icons in boxes in a row, the exact thing that makes a site look AI-made."
+What changed: the palette recolour took the lime out (0 UI hues measured). Nothing else on the page changed: the eyebrow, the icon boxes and the fading Copy are still there.
+
+First complaint: "That second screen is just giant words, LinkedIn, Facebook, Reddit, all the same huge size, nothing small anywhere. And there's still a label on top of the headline."
+
+**Cap: part card (MASTER section 6).** There is no `docs/coverage/referral.md`. Capped at 7 until the card is copied from `docs/coverage/_TEMPLATE.md` with 18 `Done here:` lines true on the page. The shared desktop ask bar floats over content (site-wide, see `_shared.md`); not counted against this page.
+
+**Scale (MASTER 3.1, fail):** the rails screen holds about 25 words at 128px ("LinkedIn", "Facebook", "Bluesky", "Reddit", "Hacker News" …) and nothing medium or small: everything big at once (52px on the phone, same effect). Fix: one rail at display size that grows as it passes the centre, the other at 26–32px, or one big word at a time.
 
 ## The 11 answers
 1. **Sells in 5 seconds, moves within 1 second?** It reads: "Bring a builder to Hanzo." and Hanzo's line, "Get your link", beside hanzo.ai's own referral card. But the card is small and nearly still: after arrival the first screen changes by 0.2% (a few dots moving in the counts). It does not feel alive.
 2. **One in, one out?** Partly. The display-size rails ("Referred → Pending → Qualified", the ways to share) run past in opposite directions, which is a good moment. "How it works" is a row of four boxes. The dark room compares referral and affiliate side by side.
 3. **A real object in every section?** Hero card and rails, yes. "How it works" is icons and sentences.
 4. **One ask, sticky after the hero?** Yes on desktop: a floating pill carries "Get your link" after the hero and the header's "Try Hanzo" turns outlined. On the phone the header's solid "Try Hanzo" shows beside the pill.
-5. **Every hover and press answers?** "Get your link" and "Sign in" answer on hover. **"Copy" only fades on hover** (a banned tell); it does press.
+5. **Every hover and press answers?** "Get your link" answers on hover; "Sign in" does not. **"Copy" only fades on hover** (a banned tell); it does press.
 6. **Overlap, font swap, layout shift?** None; layout shift 0.
 7. **Which reference, and is its motion there?** grubogrubo (big type rails, playful) and a product-card hero. The rails are there; the card is too small to carry the first screen.
 8. **Different from its neighbours?** Yes: the rails are its own.
 9. **All 18 parts covered?** See below. No `docs/coverage/referral.md`.
 10. **Banned tells?** Yes:
-    - Eyebrow above the h1 ("• REFERRALS", lime dot, mono caps).
-    - **Green UI** (lime): dot, count bars, arrows, step icons, the affiliate border. JAMES.md bans green accents outright.
+    - Eyebrow above the h1 ("• REFERRALS", now a grey dot, mono caps).
     - Icon boxes in a row ("How it works": four icons in rounded boxes with a sentence each).
     - A button that fades on hover ("Copy").
 11. **Copy untouched?** Yes as measured: parity 20/20 text, 3/3 links.
@@ -31,7 +36,7 @@ First complaint: "Lime green. I said no green, ever. And 'How it works' is four 
 
 ## Fixes
 1. Remove "• REFERRALS" from above the h1.
-2. Take the lime out of everything: dot, bars, arrows, icons, borders in ink and greys.
+2. Give the rails rhythm: one big moment, the rest medium and small (see Scale).
 3. Replace the four icon boxes with one object (for example the referral card itself stepping through Share → Signs up → Qualifies → Moves up), so the steps happen rather than sit in boxes.
 4. Make the hero card larger and let one builder visibly land in it, once, so the first screen moves.
 5. Give "Copy" a real hover (not opacity) and the copy confirmation from the brief.
