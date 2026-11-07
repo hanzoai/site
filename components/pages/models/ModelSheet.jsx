@@ -10,7 +10,7 @@
    Motion mix: arrival (the name cuts in, split-flap context), idle (the Sigil drifts; the field's light sweeps),
    pointer (the Sigil leans to the cursor; dots answer with their rates), state (bill sliders, sibling picks, code
    tabs), scroll (the Sigil eases up as you leave the first screen). Readable with animations and JavaScript off. */
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { EASE, Copy } from '../../ui';
 import { A } from '../../kit';
@@ -64,6 +64,15 @@ export default function ModelSheet({ doc }) {
   const ctxLabel = doc.ctx ? (doc.facts.flatMap((g) => g.facts).find((f) => f.value === doc.ctx) || {}).label : null;
   const hero = useRef(null);
   const paused = usePaused();
+  // the local nav's ask turns solid only once the hero's own ask has left the screen (one solid fill at a time)
+  const [past, setPast] = useState(false);
+  useEffect(() => {
+    const el = hero.current && hero.current.querySelector('[data-cta="model.hero"]');
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => setPast(!e.isIntersecting && e.boundingClientRect.top < 0));
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
   const { scrollYProgress: hp } = useScroll({ target: hero, offset: ['start start', 'end start'] });
   const artY = useTransform(hp, [0, 1], ['0%', '18%']);
   const moreTitle = (doc.more && doc.more.title) || doc.provider.name;
@@ -122,6 +131,19 @@ export default function ModelSheet({ doc }) {
           </motion.figure>
         </div>
       </section>
+
+      {/* the sticky local nav: the page's own section names and its ask (MASTER.md 4.7) */}
+      <nav className="xmf-local" aria-label={doc.name}>
+        <div className="x-wrap xmf-local-in">
+          <span className="xmf-local-n">{doc.name}</span>
+          <span className="xmf-local-l">
+            {groups.length > 0 && <a href="#specs">{groups[0].title || 'Specifications'}</a>}
+            {doc.quick && <a href="#quickstart">{doc.quick.title}</a>}
+            {(doc.more || (rate && plotted > 1)) && <a href="#more">{moreTitle}</a>}
+          </span>
+          {first && <A to={first.href} className={'x-btn' + (past ? ' solid' : '')} data-thumb="" data-cta="model.local">{first.label}</A>}
+        </div>
+      </nav>
 
       {doc.family && (
         <nav className="xmf-fam" aria-label={doc.family.title}>
