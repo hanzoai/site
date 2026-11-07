@@ -487,7 +487,11 @@
   .xtg-chans-g { grid-template-columns: minmax(0, 1fr); }
   .xtg-pr { padding: 12px; }
   .xtg-pr-l { font-size: 12.5px; }
-  .xtg-pr-l li { grid-template-columns: 22px 22px minmax(0, 1fr); padding-right: 8px; }
+  .xtg-pr-l li { grid-template-columns: 26px 26px minmax(0, 1fr); padding-right: 8px; }
+  .xtg-pr-l li > span { padding-right: 6px; white-space: nowrap; }
+  .xtg-rows li .xtg-art p { max-width: none; font-size: 14px; color: var(--ink); }
+  .xtg-rows li .xtg-art p.xtg-art-v { color: #fff; font-size: 12.5px; }
+  .xtg-rows li .xtg-art p.xtg-msg-t { color: var(--soft); }
   .xtg-pr-c em { margin-left: 0; }
   .xtg-quad { grid-template-columns: minmax(0, 1fr); }
   .xtg-quad li { margin: 0; padding: 16px 0; border-bottom: 1px solid var(--line); }

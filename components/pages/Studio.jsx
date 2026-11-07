@@ -1,6 +1,6 @@
 'use client';
 /* Studio.
-   V2: 8/10 the cutting room as the one dark room (a self-playing, scrubbable timeline), then a scrubbed camera move for the three pillars, the capabilities as a render graph, and the six creative models on a film strip whose frames open into their pages.
+   V2: 8/10 hero recomposed (52px h1 at 38%, monitor and first timeline row on the first screen, ask row inline on phone), the six explainer boxes became one wired node graph with a single detail pane, specs a hairline list, REC moved under "Get Studio", "Open Studio" drops into the monitor instead of reloading the page, 26px section heads, deck greys and timings, hovers that say something (timecodes, arrow, chip fills), reduced-motion film hydration fixed.
    Persona: a director or a VFX team. Goal: launch Studio. CTA: Launch studio.hanzo.ai (studio.hero).
    Metric: cta_click on studio.hero and studio.close (data-cta; the event layer is the conductor's).
    Signature: the camera moves with your scroll. After the cutting room, a 2.39:1 frame pins on a white stage; each
@@ -9,7 +9,7 @@
    that play by themselves, every camera move running on a real still, the playhead yours the moment you grab it.
    The six creative models sit on a film strip; each frame opens into its model page (the WebGL opener).
    Beyond: "Studio or Design?": say what you are making and Hanzo's own sentence on each sends you to /design or
-   studio.hanzo.ai. Accent: tungsten, the tally light. Every word, figure and link is Hanzo's; the pairing of stills
+   studio.hanzo.ai. No accent: deck greys only; the tally light is silver (#d4d4d4). Every word, figure and link is Hanzo's; the pairing of stills
    to camera moves is a demo, not a claim. */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useMotionValueEvent } from 'motion/react';
@@ -109,7 +109,7 @@ function Cinema() {
           <span className="xst-ret" ref={ret} aria-hidden="true"><i /><i /><i /><i /></span>
           <div className="xst-hud tl">
             <AnimatePresence mode="popLayout" initial={false}>
-              <motion.b key={s.rig} initial={{ y: 14, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -14, opacity: 0 }} transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}>{s.rig}</motion.b>
+              <motion.b key={s.rig} initial={{ y: 14, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -14, opacity: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>{s.rig}</motion.b>
             </AnimatePresence>
             <span>Shot {pad(shot + 1)} · {s.title}</span>
           </div>
@@ -363,6 +363,7 @@ function Graph() {
   };
   return (
     <section className="a2-sec xst-graph" ref={ref} aria-labelledby="xst-graph-h">
+      <noscript><style>{'.xst-pane-st{gap:28px}.xst-pane-c,.xst-ans-c{grid-area:auto!important;opacity:1!important;transform:none!important;clip-path:none!important}'}</style></noscript>
       <div className="a2-wrap">
         <div className="xst-gh">
           <p className="a2-kick">Capabilities</p>
@@ -491,7 +492,7 @@ function Chair() {
 
 export default function Studio() {
   return (
-    <main className="a2 xst">
+    <main className="a2 xst" id="main">
       <Hero />
       <A2Paste name="Studio" text="Read https://hanzo.ai/skill.md and use Hanzo Studio in my project." />
       <What />

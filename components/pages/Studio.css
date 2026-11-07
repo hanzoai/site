@@ -207,6 +207,7 @@
 .xst-canvas > .xst-node:nth-child(2)::before, .xst-canvas > .xst-node:nth-child(3)::before, .xst-canvas > .xst-node:nth-child(7)::after { display: none; }
 .xst-node.on::before, .xst-node.on::after, .xst-node.done::before, .xst-node.done::after { border-color: #0a0a0a; }
 .xst-node:active { transform: translateY(-50%) scale(.98); transition-duration: .09s; }
+.xst-node:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 4px; box-shadow: 0 0 0 4px #fff; }
 @media (hover: hover) { .xst-node:hover { transform: translateY(calc(-50% - 3px)); } }
 .xst-node-ring { position: absolute; inset: 0; border-radius: inherit; box-shadow: 0 0 0 1.5px #0a0a0a, 0 24px 60px -16px rgba(0, 0, 0, .18); pointer-events: none; }
 .xst-node-k { display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--faint); }
@@ -276,6 +277,8 @@
   .xst-rec, .xst-caret, .xst-kick i, .xst-mark i { animation: none; }
   .xst-subs li, .xst-ans-c, .xst-node, .xst-pane-c, .xst-wires path, .xst-pane-k b, .xst-models button::before, .xst-make button::before { transition: none; }
 }
+
+@media (pointer: coarse) { .xst-rigs button, .xst-models button { height: 44px; } }
 
 /* between a laptop and a tablet the graph takes the full width and the pane sits under it */
 @media (max-width: 1199px) {

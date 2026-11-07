@@ -84,7 +84,7 @@
 .xsk .a2-paste-box .x-copy { height: 44px; }
 .xsk-pt-vis { display: none; }
 @media (min-width: 901px) {
-  .xsk-pt { opacity: .4; transition: opacity .4s var(--e-out); }
+  .xsk-pt { opacity: .5; transition: opacity .4s var(--e-out); }
   .xsk-pt.on { opacity: 1; }
 }
 .xsk-stage { min-width: 0; }
@@ -159,8 +159,8 @@
   .xsk-steps button:hover { border-color: rgba(255, 255, 255, .4); color: #fafafa; }
   .xsk-steps button[aria-pressed='true']:hover { color: #000; border-color: #fafafa; }
 }
-.xsk-files { grid-column: 7 / span 6; display: grid; gap: 10px; }
-.xsk-f { position: relative; margin-left: calc(var(--i) * 16%); width: 62%; display: grid; gap: 10px; padding: 20px 22px; border-radius: 20px; background: #171717; border: 1px solid rgba(255, 255, 255, .08); transform: translateY(12px); transition: transform .5s var(--e-em); }
+.xsk-files { grid-column: 7 / span 6; display: grid; gap: 16px; }
+.xsk-f { position: relative; margin-left: calc(var(--i) * 16%); width: 62%; display: grid; gap: 10px; padding: 20px 22px; border-radius: 20px; background: #171717; border: 1px solid rgba(255, 255, 255, .08); transform: translateY(8px); transition: transform .5s var(--e-em); }
 .xsk-f::after { content: ''; position: absolute; inset: -1px; border-radius: inherit; border: 1px solid rgba(255, 255, 255, .4); opacity: 0; transition: opacity .3s var(--e-out); pointer-events: none; }
 .xsk-f > * { opacity: .25; transition: opacity .3s var(--e-out); }
 .xsk-f.on, .xsk-f.peek { transform: none; }

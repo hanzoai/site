@@ -5,7 +5,10 @@
 
 /* the header's ask carries this page's 44-character ask after the hero: let it size to its words on this page only
    (the shared rule caps it at 240px with an ellipsis; the fix for every page is filed in docs/requests/trust.md) */
-html:has(main.xtr) header[data-slot=masthead] a[data-x-ask] { max-width: none; white-space: nowrap; }
+@media (min-width: 1400px) { html:has(main.xtr) header[data-slot=masthead] a[data-x-ask] { max-width: none; white-space: nowrap; } }
+@media (min-width: 701px) and (max-width: 1399px) { /* no room for one line: the whole label on two, inside the 60px bar */
+  html:has(main.xtr) header[data-slot=masthead] a[data-x-ask] { max-width: 200px; height: auto; min-height: 34px; padding-block: 4px; white-space: normal; text-overflow: clip; text-align: center; line-height: 15px; }
+}
 
 /* hero: a centred statement over the cabinet */
 .xtr-hero { padding: clamp(72px, 7vw, 116px) 0 clamp(44px, 4vw, 72px); }
