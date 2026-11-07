@@ -90,7 +90,7 @@ export default function KeynoteChapters({ items, visual, swap = 'wipe', side = '
             <nav className="knc-rail" aria-label="Chapters">
               <span className="knc-track" aria-hidden="true"><motion.i style={{ scaleX: fill }} /></span>
               {items.map((it, i) => (
-                <button key={i} type="button" aria-current={at === i ? 'step' : undefined} onClick={() => go(i)} aria-label={`Chapter ${i + 1}: ${typeof it.title === 'string' ? it.title : ''}`}>
+                <button key={i} type="button" data-sound="tick" aria-current={at === i ? 'step' : undefined} onClick={() => go(i)} aria-label={`Chapter ${i + 1}: ${typeof it.title === 'string' ? it.title : ''}`}>
                   <span className="kn-fig">{pad(i + 1)}</span>
                 </button>
               ))}
