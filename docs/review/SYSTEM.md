@@ -84,7 +84,10 @@ const [i, setI] = useState(0);
 
 ## 5. The ask: the header carries it (MASTER 3.2 rule 6)
 
-- **The one solid ask is Hanzo's own "Try Hanzo" in the sticky header, at every width.** It stays solid; it never outlines or fades.
+- **The one solid ask lives in the sticky header, at every width.** It never fades.
+  - **Desktop (above 700px), the Apple local-nav move:** if your page marks its ask with `data-thumb`, the header's button carries your ask's words and link once your hero's button has scrolled away (`data-cta="header-ask"`). While your hero's own solid ask is on screen, the header's button is an outline, so one solid shows at a time.
+  - **Pages without `data-thumb`** keep Hanzo's solid "Try Hanzo".
+  - **Phones** keep "Try Hanzo" in the header, because there is no room for longer words.
 - **Nothing floats over content on desktop.** The bottom pill bar is gone.
 - **Phones (700px and under):** a slim, quiet (not solid) bar carries your page's own ask once your hero's button has gone by. It shows only when all of these hold:
   - your page marks its ask with `data-thumb`, and its words differ from "Try Hanzo";
