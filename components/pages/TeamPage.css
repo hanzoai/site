@@ -464,3 +464,39 @@
   .xtm-chap-s * { opacity: 1 !important; transform: none !important; }
   .xtm-board[data-phase='drift'] .xtm-cur > * { animation: none; }
 }
+
+/* the handoff row at mid-screen: a relay runs from the person to the agent along the line, and the row inks */
+.xtm-hand i { position: relative; width: 44px; overflow: visible; }
+.xtm-hand i::after { content: ''; position: absolute; left: 0; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--ink, #0a0a0a); opacity: 0; }
+.xtm-tog-l li.on .xtm-hand i::after { animation: xtm-relay 1.6s cubic-bezier(.4, 0, .2, 1) infinite; }
+@keyframes xtm-relay { 0% { transform: translateX(-4px); opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { transform: translateX(40px); opacity: 0; } }
+.xtm-tog-l li { transition: opacity .3s cubic-bezier(0, 0, .2, 1); }
+@media (min-width: 900px) { .xtm-tog-l:has(li.on) li:not(.on) { opacity: .55; } }
+@media (prefers-reduced-motion: reduce) { .xtm-tog-l li.on .xtm-hand i::after { animation: none; } }
+/* each chapter's picture is alive while it is the one on stage: a reply being typed in the channel, the agents
+   answering in turn, the org rail switching between the two workspaces */
+@keyframes xtm-type { 0%, 15% { transform: scaleX(.15); } 70%, 100% { transform: scaleX(1); } }
+.xtm-chap-s[data-st='on'] .xtm-v.chan .xtm-v-thread > b:last-child { transform-origin: 0 50%; animation: xtm-type 2.4s cubic-bezier(.4, 0, .2, 1) infinite alternate; }
+@keyframes xtm-ans { 0%, 100% { box-shadow: 0 0 0 0 rgba(10, 10, 10, 0); } 10%, 22% { box-shadow: 0 0 0 2px #0a0a0a; } 32% { box-shadow: 0 0 0 0 rgba(10, 10, 10, 0); } }
+.xtm-chap-s[data-st='on'] .xtm-v.mates li { border-radius: 14px; animation: xtm-ans 7s cubic-bezier(.4, 0, .2, 1) infinite; }
+.xtm-chap-s[data-st='on'] .xtm-v.mates li:nth-child(2) { animation-delay: 1s; } .xtm-chap-s[data-st='on'] .xtm-v.mates li:nth-child(3) { animation-delay: 2s; }
+.xtm-chap-s[data-st='on'] .xtm-v.mates li:nth-child(4) { animation-delay: 3s; } .xtm-chap-s[data-st='on'] .xtm-v.mates li:nth-child(5) { animation-delay: 4s; }
+.xtm-chap-s[data-st='on'] .xtm-v.mates li:nth-child(6) { animation-delay: 5s; } .xtm-chap-s[data-st='on'] .xtm-v.mates li:nth-child(7) { animation-delay: 6s; }
+@keyframes xtm-org { 0%, 45% { transform: none; } 50%, 95% { transform: translateY(var(--d, 48px)); } 100% { transform: none; } }
+.xtm-v-rail { position: relative; }
+.xtm-chap-s[data-st='on'] .xtm-v.orgs .xtm-v-orgs > div { transition: opacity .3s; }
+.xtm-chap-s[data-st='on'] .xtm-v.orgs .xtm-v-orgs > div:not(.on) { animation: xtm-orgfade 6s cubic-bezier(.4, 0, .2, 1) infinite; }
+@keyframes xtm-orgfade { 0%, 45% { opacity: .45; } 50%, 95% { opacity: 1; } 100% { opacity: .45; } }
+.xtm-chap-s[data-st='on'] .xtm-v.orgs .xtm-v-orgs > div.on { animation: xtm-orgfade2 6s cubic-bezier(.4, 0, .2, 1) infinite; }
+@keyframes xtm-orgfade2 { 0%, 45% { opacity: 1; } 50%, 95% { opacity: .45; } 100% { opacity: 1; } }
+/* the calendar's meeting moves to its next slot and back, the board card walks to Done: the rooms are in use */
+@keyframes xtm-slot { 0%, 40% { transform: none; } 50%, 90% { transform: translateX(100%); } 100% { transform: none; } }
+.xtm-rooms .xtm-pic.cal .blk.a { animation: xtm-slot 8s cubic-bezier(.4, 0, .2, 1) infinite; }
+@media (prefers-reduced-motion: reduce) { .xtm-chap-s .xtm-v *, .xtm-rooms .xtm-pic * { animation: none !important; } }
+/* deck rhythm: one big thing per screen (h1 and display heads 52, section heads 32, figures 64) */
+.xtm .xtm-h1 { font-size: clamp(40px, 5vw, 52px); }
+.xtm .vc-display, .xtm .vc-display.s, .xtm .vc-display.m { font-size: clamp(36px, 4.4vw, 52px); }
+.xtm .xtm-panel .vc-display.s { font-size: clamp(26px, 2.6vw, 32px); }
+.xtm .vc-headline { font-size: clamp(26px, 2.6vw, 32px); }
+.xtm .xtm-v-n { font-size: clamp(56px, 6vw, 72px); color: rgba(0, 0, 0, .1); }
+.xtm .xtm-portrait::before { font-size: 64px; }
