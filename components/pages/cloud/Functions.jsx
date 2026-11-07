@@ -1,6 +1,6 @@
 'use client';
 // Functions.
-// V2: 8/10 round 3 (critic 7/10): the use cases are one at a time on a pinned stage, each with its own live drawing from its own words, and each tile opens into its own full-screen sheet (grows out of the tile, Back/Esc/Close reverse it; points behind the open, in the HTML); phone chapters are a swipe rail (drawing first, one in one out); the phone composer keeps its card above compact choice rails; chapter titles rest at 26px and "Get Functions" at 52px; hovers say something (rail numbers show their chapter, related rows show their path, composer choices preview their effect on the card); hero stage content inset to the container while its fill bleeds; the invented "Choose at least one trigger." line is gone; the close ends without dead black.
+// V2: 8/10 round 3 (critic 7/10): the use cases are one at a time on a pinned stage, each with its own live drawing from its own words, and each tile opens into its own full-screen sheet (grows out of the tile, Back/Esc/Close reverse it; points behind the open, in the HTML); phone chapters are a swipe rail (drawing first, one in one out); the phone composer keeps its card above compact choice rails; chapter titles rest at 26px and "Get Functions" at 52px; hovers say something (rail numbers show their chapter, related rows show their path, composer choices preview their effect on the card); hero stage content inset to the container while its fill bleeds; every visible word is Hanzo's (the composer's invented heading, kicker, "One version" and composed read-back lines are gone: it reads back Hanzo's own whole sentences; states are shapes, not invented words); the close ends without dead black.
 // Persona: Developer who runs Kubernetes and wants functions on it.
 // Goal: try Hanzo Functions (sign in, then deploy).
 // CTA: "Try Hanzo" → /login (solid: data-cta functions.hero with data-thumb for the ask bar); "View Documentation" →
@@ -281,13 +281,14 @@ function Compose() {
           <fieldset><legend>Runtime</legend><Radios id="fn-rt" label="Runtime" items={RUNTIMES} value={rtC} onChange={(i) => { setRt(i); setPeek(null); }} onPeek={(i) => setPeek(i == null ? null : { k: 'rt', i })} /></fieldset>
           <fieldset><legend>Triggers</legend><div className="fn-row">{TRIGGERS.map((t, i) => <button key={t} type="button" aria-pressed={trC[i]} onClick={() => { setTr((v) => v.map((x, j) => (j === i ? !x : x))); setPeek(null); }} {...hover('tr', i)}><Tick /><span>{t}</span></button>)}</div></fieldset>
           <fieldset><legend>GPU</legend><div className="fn-row"><button type="button" aria-pressed={gpuC} onClick={() => { setGpu(!gpuC); setPeek(null); }} {...hover('gpu', 0)}><Tick /><span>NVIDIA GPU</span></button></div></fieldset>
-          <fieldset><legend>Versions</legend><Radios id="fn-mv" label="Versions" items={MOVES} value={mvC} onChange={(i) => { setMv(i); setPeek(null); }} onPeek={(i) => setPeek(i == null ? null : { k: 'mv', i })} /></fieldset>
+          <fieldset><legend>Versions</legend><div className="fn-row">{MOVES.map((t, i) => <button key={t} type="button" aria-pressed={mvC === i} onClick={() => { setMv((v) => (v === i ? -1 : i)); setPeek(null); }} {...hover('mv', i)}><Tick /><span>{t}</span></button>)}</div></fieldset>
         </div>
         <div className="fn-card" data-peek={peek ? '' : undefined}>
           <div className="fn-card-h">
-            <b>handler</b>
-            <span>{rt === 4 ? 'Your container' : RUNTIMES[rt]}</span>
+            <b>handler.js</b>
+            <span>{RUNTIMES[rt]}</span>
             {gpu && <span className="gpu">NVIDIA GPU</span>}
+            {mv >= 0 && <span className="gpu">{MOVES[mv]}</span>}
           </div>
           <div className="fn-card-t">{TRIGGERS.map((t, i) => <span key={t} className={tr[i] ? 'on' : ''}>{t}</span>)}</div>
           <ol className="fn-card-l" aria-live={peek ? 'off' : 'polite'}>{lines.map((l) => <li key={l}><span className="fn-m"><span>{l}</span></span></li>)}</ol>
@@ -376,13 +377,17 @@ function Joined() {
 const FACTS = ['Python, Go, Node.js, Rust', 'Helm', 'NVIDIA GPU', 'Blue/green', '/v1/function'];
 
 export default function Functions() {
+  // the chapter rail's numbers preview their chapter: each gets its own title (Hanzo's words) as a tip, after mount
+  useEffect(() => {
+    document.querySelectorAll('.fn-ch .knc-rail button').forEach((b, i) => { if (GETS[i]) b.setAttribute('data-tip', GETS[i][0]); });
+  }, []);
   return (
     <main className="kn fn">
       <Hero />
 
       <KeynoteChapters
         className="fn-ch"
-        head={<div className="fn-ch-head"><div className="fn-ch-hw"><KeynoteLines className="kn-headline fn-ch-h" lines="A handler file, a trigger, and the cluster you already run" /><p className="kn-kick">What you get</p></div><Joined /></div>}
+        head={<div className="fn-ch-head"><div className="fn-ch-hw"><KeynoteLines id="fn-ch-h" className="kn-headline fn-ch-h" lines="A handler file, a trigger, and the cluster you already run" /><p className="kn-kick">What you get</p></div><Joined /></div>}
         items={GETS.map(([t, d]) => ({ title: t, body: <p>{d}</p> }))}
         visual={(i, on, p) => { const S = SCENES[i]; return <S on={on} p={p} />; }}
         side="right"

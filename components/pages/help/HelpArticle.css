@@ -281,10 +281,17 @@
 }
 @media (max-width: 359px) {
   .xhp-cap-t { min-height: 4.35em; } /* the narrowest phones: a step can take three lines */
+  /* the narrowest phones: the platform tabs take their own row under the pause control, so neither label wraps */
+  .xhp-panel-bar { flex-wrap: wrap; }
+  .xhp-seg { flex-basis: 100%; order: 2; }
+  .xhp-flow-tab { padding: 8px 8px; font-size: 12.5px; letter-spacing: -.01em; }
 }
 @media (prefers-reduced-motion: reduce) {
   .xhp-hand { display: none; }
   .xhp-menu, .xhp-set, .xhp-pane, .xhp-pane > *, .xhp-sw, .xhp-sw i, .xhp-ul li::after { transition: none !important; }
   .xhp-ul li::after { transform: none; }
-  .xhp-cap-t, .xhp-means-on, .xhp-means ul, .xhp-after { animation: none; }
+  .xhp-cap-t, .xhp-means-on, .xhp-means ul, .xhp-after, .xhp-h1-in { animation: none; }
+  .xhp-page { opacity: 1; transform: none; transition: none; }
+  .xhp-page rect, .xhp-page path { stroke-dashoffset: 0; transition: none; }
+  .xhp-toc-go, .xhp-toc a { transition: none; }
 }

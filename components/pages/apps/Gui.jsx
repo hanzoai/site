@@ -16,13 +16,12 @@
 V2: 8/10 round 3: the pinned title is centred on the grid and releases with the stage (one grid cell, no crossing); the lit chapter title grows 26→32px and settles; colours swap in 150ms so the ink ($accent) state never goes grey-on-grey; hero captions on one baseline; gaps under the rail and the dark room closed; a platform card opens into a full-screen page of that platform (its device large with its live props, the name at 52px) and Esc, Close or Back return it. Round 2: hydration-safe hero settle; hero devices and labels inside 801px; each platform card its own screen (iOS sheet, Android list, Web form, Desktop split) that tilts and shows its tokens, opening into a live one; the dark room is one large window the chips restyle; chapters grow in as their step arrives and count 01–05; mock buttons answer; no clipping; Deploy to Cloud sits beside the ask. Round 1: a centred 52px title over four live device frames in step (the one big thing) with a Pause; five sticky chapters explain the one component across four platforms; the graphite room is the token editor with a real typecheck; platform cards open into their device; one ask; deck colours, radii and scale, outlined frames, no springs
    Every word and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
-import { A, More, Cta } from '../../kit';
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
+import { A, Cta } from '../../kit';
 import BizLines from '../../v2/BizLines';
 import { EASE_OUT_EXPO } from '../../../lib/motion';
 import { Code, useLive } from '../cloud/Frame';
 import BizPaste from '../../v2/BizPaste';
-import BizChapters from '../../v2/BizChapters';
 import BizOpen from '../../v2/BizOpen';
 import './Gui.css';
 
@@ -53,20 +52,33 @@ function Settle({ children, className = '' }) {
   return <div className={'gu-settle-o ' + className}><motion.div className="gu-settle" style={{ scale, y }}>{children}</motion.div></div>;
 }
 
-/* Hanzo's Welcome component: a YStack with a Text and a Button. parts outlines the primitives it is made of. */
-function Welcome({ v, parts }) {
+/* Hanzo's Welcome component: a YStack with a Text and a Button. parts outlines the primitives it is made of;
+   delay lets the four frames take a new state one after another (a wave across the platforms). */
+function Welcome({ v, parts, delay = 0 }) {
   const dark = v.bg === '$accent';
   const r = ROUND[v.rounded];
+  const tr = delay ? { ...SHAPE, delay, backgroundColor: { ...INK, delay }, color: { ...INK, delay } } : SHAPE;
   return (
-    <motion.div layout className={'gu-w' + (parts ? ' parts' : '')} data-part="YStack" style={{ '--pad': SPACE[v.p] }} initial={false} animate={{ borderRadius: r, backgroundColor: BG[v.bg] }} transition={SHAPE}>
-      <motion.span layout="position" className="gu-t" data-part="Text" initial={false} animate={{ color: dark ? '#f5f5f5' : '#0a0a0a' }} transition={SHAPE}>Hello, Hanzo</motion.span>
-      <motion.span layout="position" className="gu-b" data-part="Button" initial={false} animate={{ backgroundColor: dark ? '#f5f5f5' : '#0a0a0a', color: dark ? '#0a0a0a' : '#ffffff', borderRadius: r * 0.6 }} transition={SHAPE}>Get started</motion.span>
+    <motion.div layout className={'gu-w' + (parts ? ' parts' : '')} data-part="YStack" style={{ '--pad': SPACE[v.p] }} initial={false} animate={{ borderRadius: r, backgroundColor: BG[v.bg] }} transition={tr}>
+      <motion.span layout="position" className="gu-t" data-part="Text" initial={false} animate={{ color: dark ? '#f5f5f5' : '#0a0a0a' }} transition={tr}>Hello, Hanzo</motion.span>
+      <motion.span layout="position" className="gu-b" data-part="Button" initial={false} animate={{ backgroundColor: dark ? '#f5f5f5' : '#0a0a0a', color: dark ? '#0a0a0a' : '#ffffff', borderRadius: r * 0.6 }} transition={tr}>Get started</motion.span>
     </motion.div>
   );
 }
 
+/* The same component once the compiler has been through it: the props it was given, flattened to one rule. */
+function Flat({ v }) {
+  return (
+    <div className="gu-flat x-mono" aria-hidden="true">
+      <span className="gu-flat-t">{'<YStack'}</span>
+      {['p', 'bg', 'rounded'].map((k) => <span key={k}>{k}="{v[k]}"</span>)}
+      <span className="gu-flat-t">{'/>'}</span>
+    </div>
+  );
+}
+
 /* One device frame, drawn the way its platform draws it. */
-function Dev({ k, v, parts, tag, children }) {
+function Dev({ k, v, parts, tag, flat, delay, children }) {
   return (
     <div className="gu-dev"><div className={'gu-frame gu-' + k}>
       {k === 'ios' && <><i className="gu-island" aria-hidden="true" /><span className="gu-sb x-mono" aria-hidden="true">9:41</span></>}
@@ -74,20 +86,20 @@ function Dev({ k, v, parts, tag, children }) {
       {(k === 'web' || k === 'desk') && (
         <div className="gu-bar" aria-hidden="true"><span className="gu-lights"><i /><i /><i /></span>{k === 'web' ? <span className="gu-url" /> : <span className="gu-wt">Welcome</span>}</div>
       )}
-      <div className="gu-scr">{children || <Welcome v={v} parts={parts} />}</div>
+      <div className={'gu-scr' + (flat ? ' flat' : '')}>{children || (flat ? <Flat v={v} /> : <Welcome v={v} parts={parts} delay={delay} />)}</div>
       {tag && <span className="gu-tag x-mono">{tag}</span>}
     </div></div>
   );
 }
 
-/* The four, in step. */
-function Four({ v, parts, tags, cls = '', names = true }) {
+/* The four, in step. step (-1 the opening, 0 to 4 the chapters) picks the state the one object is in. */
+function Four({ v, step = -1, cls = '' }) {
   return (
-    <div className={'gu-four ' + cls}>
-      {PLAT.map(([t, s, k]) => (
+    <div className={'gu-four ' + cls} data-step={step}>
+      {PLAT.map(([t, s, k], i) => (
         <figure key={k} className={'gu-fig gu-fig-' + k}>
-          <Dev k={k} v={v} parts={parts} tag={tags ? s : null} />
-          {names && <figcaption><b>{t}</b><span>{s}</span></figcaption>}
+          <Dev k={k} v={v} parts={step === 3} flat={step === 2} tag={step === 0 || step === 2 ? s : null} delay={step === 4 ? i * 0.09 : 0} />
+          <figcaption><b>{t}</b><span>{s}</span></figcaption>
         </figure>
       ))}
     </div>
@@ -107,7 +119,7 @@ function Bar({ v, hold, setHold }) {
         ))}
         <span className="gu-code-t">{'/>'}</span>
       </p>
-      {setHold && <button type="button" className="gu-hold" onClick={() => setHold(!hold)} aria-pressed={hold} aria-label={hold ? 'Play the props' : 'Pause the props'}><PauseIco on={hold} /></button>}
+      {setHold && <button type="button" className="gu-hold" onClick={() => setHold(!hold)} aria-pressed={hold} aria-label="Pause"><PauseIco on={hold} /></button>}
     </div>
   );
 }
@@ -123,28 +135,34 @@ function useCycle(on, ms = 2600) {
   return PRESETS[i];
 }
 
+/* The one ask leans toward a fine pointer (22px at most, ease-emphasis, no spring); touch and reduced motion stay put. */
+function Pull({ children }) {
+  const ref = useRef(null);
+  const move = (e) => {
+    const el = ref.current;
+    if (!el || e.pointerType !== 'mouse' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const r = el.getBoundingClientRect();
+    const c = (n) => Math.max(-22, Math.min(22, n * 0.3));
+    el.style.translate = `${c(e.clientX - r.left - r.width / 2).toFixed(1)}px ${c(e.clientY - r.top - r.height / 2).toFixed(1)}px`;
+  };
+  return <span ref={ref} className="gu-pull" onPointerMove={move} onPointerLeave={() => { if (ref.current) ref.current.style.translate = ''; }}>{children}</span>;
+}
+
 function Hero() {
-  const [ref, live] = useLive(0.2);
-  const [hold, setHold] = useState(false);
-  const v = useCycle(live && !hold);
   return (
-    <section ref={ref} className="gu-hero" aria-labelledby="gu-h1">
+    <section className="gu-hero" aria-labelledby="gu-h1">
       <div className="bz-wrap gu-top">
         <BizLines as="h1" id="gu-h1" className="bz-display gu-h1" lines={['Hanzo GUI', 'One UI kit. Every platform.']} now />
         <p className="gu-pkg x-mono">@hanzo/gui — Cross-Platform UI Kit</p>
         <div className="bz-acts gu-acts">
-          <Cta to={GH} id="gui.hero" thumb>View on GitHub</Cta>
+          <Pull><Cta to={GH} id="gui.hero" thumb>View on GitHub</Cta></Pull>
         </div>
       </div>
-      <Settle className="bz-wrap gu-stage">
-        <Bar v={v} hold={hold} setHold={setHold} />
-        <Four v={v} cls="gu-hero-four" />
-      </Settle>
     </section>
   );
 }
 
-/* Chapters: the four pinned, one idea about the one component per chapter. */
+/* The five chapters (the sixth, the shorthands, is the dark room): one idea about the one component each. */
 const PROPS = [
   ['One codebase, every platform', 'Write your UI once. Render it natively on iOS, Android, web, and desktop. Same components, same props, same behavior.'],
   ['Design tokens, not CSS', 'Colour, spacing, typography and motion are tokens in one place. Brand is resolved from the hostname it is served on, so the same build wears the right name on every domain without a fork.'],
@@ -153,29 +171,49 @@ const PROPS = [
   ['Animated by Default', 'Spring-driven animations on every prop. No extra library, no boilerplate — just declare the target state and ship.'],
   ['The shorthands are the API', 'p, px, bg, items, justify, rounded — the short style props are what the config accepts, and every token behind them is typed. A value that has drifted out of the design system fails the typecheck rather than the review.'],
 ];
-const LABEL = ['iOS · Android · Web · Desktop', 'p $6 · bg $color2 · rounded $8', 'Native · Native · Atomic CSS · macOS · Win · Linux', 'YStack · Text · Button', 'p · bg · rounded'];
+const PRIMS_USED = ['YStack', 'Text', 'Button'];
 
-function ChStage({ at }) {
-  const [ref, live] = useLive(0.3);
-  const spin = useCycle(live && at === 4, 1700);
-  const v = at === 1 ? PRESETS[1] : at === 4 ? spin : PRESETS[0];
+/* The run: the hero's four frames ARE the pinned stage. Before the pin they cycle the props under the title (the
+   opening); once pinned, each of the five chapters puts the one object in its own state:
+   01 one codebase: the four, tagged with what each renders to, wired to the one source above them;
+   02 tokens: the brand flips to the $accent token on every platform at once;
+   03 compile-time CSS: each screen collapses to the flat rule the compiler emits;
+   04 primitives: the card comes apart into YStack, Text and Button, the kit's primitives listed under it;
+   05 animated: the props change by themselves, the new state rolling across the four in a wave.
+   Phones keep the same stage pinned (two frames) and swap only the words. With JS off nothing pins and every chapter reads. */
+function Run() {
+  const box = useRef(null);
+  const [step, setStep] = useState(-1);
+  const [hold, setHold] = useState(false);
+  const [seen, live] = useLive(0.15);
+  const { scrollYProgress } = useScroll({ target: box, offset: ['start start', 'end end'] });
+  useMotionValueEvent(scrollYProgress, 'change', (p) => setStep(p <= 0.002 ? -1 : Math.min(4, Math.floor((p / 0.94) * 5))));
+  const intro = useCycle(live && !hold && step === -1);
+  const wave = useCycle(live && !hold && step === 4, 1500);
+  const v = step === -1 ? intro : step === 4 ? wave : step === 1 ? PRESETS[2] : PRESETS[0];
+  const lit = Math.max(step, 0);
   return (
-    <div ref={ref} className="gu-ch-stage">
-      <motion.div key={at} className="gu-ch-grow" initial={{ scale: 0.9, opacity: 0.6 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}>
-        <Four v={v} parts={at === 3} tags={at === 2} names={false} cls="gu-ch-four" />
-      </motion.div>
-      <p className="gu-ch-cap x-mono"><b>{String(at + 1).padStart(2, '0')} / {String(PROPS.length).padStart(2, '0')}</b>{LABEL[at]}</p>
-    </div>
-  );
-}
-
-function Chapters() {
-  return (
-    <BizChapters label="Build it once. Ship it everywhere." className="gu-ch" items={PROPS.slice(0, 5).map(([t, d]) => ({ t, d }))} stage={(at) => <ChStage at={at} />}>
-      <header className="bz-wrap gu-ch-head">
-        <h2 className="bz-headline">Build it once. Ship it everywhere.</h2>
-      </header>
-    </BizChapters>
+    <section ref={box} className="gu-run" aria-labelledby="gu-run-h" data-step={step}>
+      <div ref={seen} className="gu-run-pin">
+        <Settle className="bz-wrap gu-stage">
+          <Bar v={v} hold={hold} setHold={step === -1 || step === 4 ? setHold : null} />
+          <Four v={v} step={step} cls="gu-hero-four" />
+          <ul className="gu-prims x-mono" aria-hidden="true">{PRIMS.map((t) => <li key={t} className={PRIMS_USED.includes(t) ? 'on' : ''}>{t}</li>)}</ul>
+        </Settle>
+        <div className="bz-wrap gu-run-copy">
+          <h2 id="gu-run-h" className="bz-headline gu-run-h">Build it once. Ship it everywhere.</h2>
+          <ol className="gu-run-list">
+            {PROPS.slice(0, 5).map(([t, d], i) => (
+              <li key={t} className={'gu-run-i' + (lit === i ? ' on' : '')} aria-current={lit === i && step >= 0 ? 'step' : undefined}>
+                <h3 className="gu-run-t">{t}</h3>
+                <p className="bz-body">{d}</p>
+                <p className="gu-run-n x-mono">{`${String(i + 1).padStart(2, '0')} / ${String(PROPS.length).padStart(2, '0')}`}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -199,8 +237,8 @@ function Editor() {
           <p className="gu-ed-k x-mono"><span>{'<YStack'}</span><span className="gu-ed-n">06 / 06</span></p>
           {['p', 'bg', 'rounded'].map((k) => (
             <div key={k} className="gu-prop">
-              <label className="x-mono" htmlFor={'gu-in-' + k}>{k}=</label>
-              <div className="gu-opts" role="radiogroup" aria-label={k + ' token'}>
+              <label className="x-mono" id={'gu-lb-' + k} htmlFor={'gu-in-' + k}>{k}=</label>
+              <div className="gu-opts" role="radiogroup" aria-labelledby={'gu-lb-' + k}>
                 {Object.keys(TOK[k]).map((o) => (
                   <button key={o} type="button" role="radio" aria-checked={v[k] === o && !(draft[k] && !OK(k, draft[k]))} onClick={() => set(k, o)} className="x-mono">{o}</button>
                 ))}
@@ -209,9 +247,10 @@ function Editor() {
             </div>
           ))}
           <p className="gu-ed-k x-mono">{'/>'}</p>
+          {/* the typecheck, by shape: a tick while every value is a token; a cross and the drifted value once one is not */}
           <p className={'gu-tc x-mono' + (bad.length ? ' bad' : '')} aria-live="polite">
             <i aria-hidden="true">{bad.length ? '✕' : '✓'}</i>
-            {bad.length ? `typecheck: ${bad.map(([k, val]) => `${k}="${val}"`).join(', ')} is not a token` : 'typecheck: every value is a token'}
+            {bad.length > 0 && <s>{bad.map(([k, val]) => `${k}="${val}"`).join(' ')}</s>}
           </p>
         </div>
         <figure className="gu-api-one"><Dev k="web" v={v} /></figure>
@@ -238,6 +277,9 @@ export function Welcome() {
 /* Each platform's own screen, built only from the kit's words: iOS a sheet rising, Android a list of the primitives,
    Web a form, Desktop a split pane. `live` (in the opened panel) cycles the tokens so the screen keeps answering. */
 const PRIMS = ['Stack', 'XStack', 'YStack', 'Text', 'Button', 'Sheet', 'Dialog'];
+/* which chapter's words each opened platform carries: native for the phones, the primitives for the Android list,
+   compile-time CSS for the web, tokens for the desktop's split pane */
+const PANEL = { ios: 0, android: 3, web: 2, desk: 1 };
 function PlatScreen({ k, v }) {
   if (k === 'ios') return (
     <Dev k="ios" v={v}>
@@ -318,18 +360,17 @@ function Ship() {
         </div>
       </div>
       <div className="bz-wrap">
-        <BizOpen label="Every platform" className="gu-plats" cardClass="gu-plat" items={PLAT.map(([t, s, k]) => ({
+        <BizOpen className="gu-plats" cardClass="gu-plat" items={PLAT.map(([t, s, k]) => ({
           id: k,
-          label: t,
           className: 'gu-plat-' + k,
-          card: <><Tilt><PlatScreen k={k} v={PRESETS[0]} /></Tilt><span className="gu-plat-t"><b>{t}</b><span>{s}</span><span className="gu-plat-tok x-mono" aria-hidden="true">p="$4" bg="$background" rounded="$4"</span></span></>,
+          card: <><Tilt><PlatScreen k={k} v={PRESETS[0]} /></Tilt><span className="gu-plat-t"><b>{t}</b><span>{s}</span></span></>,
           panel: (
             <div className="gu-pp">
               <PlatLive k={k} />
               <div className="gu-pp-copy">
                 <h3 className="bz-headline">{t}</h3>
                 <p className="gu-pp-s x-mono">{s}</p>
-                <p className="bz-body">{PROPS[0][1]}</p>
+                <p className="bz-body">{PROPS[PANEL[k]][1]}</p>
               </div>
             </div>
           ),
@@ -351,7 +392,7 @@ function GetGui() {
           <p className="bz-lede">React UI library</p>
           <div className="gu-chips">
             <span className="gu-chip"><span>License:</span> Apache-2.0</span>
-            <A to={GH} className="gu-chip"><Gh />hanzoai/gui<em>4 stars</em></A>
+            <A to={GH} className="gu-chip"><Gh />hanzoai/gui<em className="gu-stars">4 stars</em></A>
           </div>
         </div>
         <BizPaste name="GUI" prompt="Read https://hanzo.ai/skill.md and use Hanzo GUI in my project." className="gu-paste" />
@@ -382,7 +423,7 @@ export default function Gui() {
     <main className="bz gu">
       <span data-ask-name="Hanzo GUI" hidden />
       <Hero />
-      <Chapters />
+      <Run />
       <Editor />
       <Ship />
       <GetGui />

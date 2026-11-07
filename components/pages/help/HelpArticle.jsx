@@ -25,7 +25,7 @@ import './HelpArticle.css';
 
 const GLIDE = { duration: 0.5, ease: EASE }; // the hand travels on the deck's ease-emphasis: no spring, no overshoot
 // with scripts off, the question and lede show at once and the hand (which needs scripts to walk) is hidden
-const NOJS = '.xhp .x-line-in,.xhp-lede{transform:none!important;opacity:1!important}.xhp-hand{display:none!important}.xhp-flow ol{display:block!important}.xhp-ul li::after{transform:none!important}';
+const NOJS = '.xhp .x-line-in,.xhp-lede{transform:none!important;opacity:1!important}.xhp-hand{display:none!important}.xhp-flow ol{display:block!important}.xhp-ul li::after{transform:none!important}.xhp-page{opacity:1!important;transform:none!important}.xhp-page *{stroke-dashoffset:0!important}';
 const say = (inl) => inl.map((x) => (typeof x === 'string' ? x : x.b || x.t)).join('').replace(/\s+/g, ' ').trim();
 
 /* an address Hanzo's page protects: its own link stays in the HTML, and in the browser it becomes a direct mailto */

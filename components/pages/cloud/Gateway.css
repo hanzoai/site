@@ -218,3 +218,7 @@
 /* the console's hover tips are hidden, not merely transparent, until they show */
 .gw .cf-tip { visibility: hidden; }
 .gw .cf-con-ico:hover .cf-tip, .gw .cf-con-ico:focus-visible .cf-tip { visibility: visible; }
+/* glyphs set apart from Hanzo's words (a tick, an ellipsis for a forged value, a path glob, an arrow) */
+.gw .gw-tk { font-style: normal; }
+/* the shared console's checkout-web line ("A build is running…") is not in Hanzo's Gateway copy: not shown on this page */
+.gw .cf-cap > p:nth-child(2) { display: none; }
