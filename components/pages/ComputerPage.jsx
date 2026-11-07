@@ -11,8 +11,8 @@
    settle, pinned chapters with clip wipes (components/v2/AppScenes), line-masked headline. Accent: violet, from the
    agent's marks. The desktop's windows are drawn as shapes, not invented software. Every word and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { Copy, Magnetic, Lines } from '../ui';
+import { motion, AnimatePresence, useInView, useScroll, useTransform } from 'motion/react';
+import { Copy, Magnetic, Lines, useCalm } from '../ui';
 import { A, Cta, Img } from '../kit';
 import Stage from '../v2/AppStage';
 import Scenes from '../v2/AppScenes';
@@ -34,12 +34,12 @@ const PATHS = [
   [[30, 30], [72, 52], [40, 66]],
   [[22, 30], [22, 30], [43, 74]],
   [[13, 22], [24, 44], [43, 74]],
-  [[58, 44], [70, 57], [43, 74]],
+  [[58, 44], [75, 58.3], [43, 74]],
   [[50, 58], [50, 58], [50, 58]],
   [[60, 50], [90, 3.5], [90, 3.5]],
 ];
 const ROWS = [0, 1, 2, 3, 4];
-const MARKS = [[9, 27.5], [37, 73], [56, 40], [68, 52.5], [80, 65], [45.5, 89.5]];
+const MARKS = [[9, 27.5], [37, 73], [54.2, 39.8], [75, 58.3], [82.2, 70.5], [45.5, 89.5]];
 const DWELL = 4800;
 
 /* ---------- the signature: the desktop the agent works ---------- */
@@ -50,16 +50,30 @@ function Desktop({ at, live, small }) {
       <Img className="cp-wall" src="/models/mori.webp" alt="" w={1600} h={900} priority />
       <div className="cp-menu"><i /><span /><span /><span /><span className="cp-menu-mic"><span className="cp-bars">{Array.from({ length: 7 }, (_, i) => <i key={i} style={{ '--i': i }} />)}</span></span><b className="cp-you">you</b></div>
       <div className="cp-win a">
-        <div className="cp-wbar"><i /><i /><i /></div>
+        <div className="cp-wbar"><i /><i /><i /><b className="cp-url" /></div>
       </div>
       <span className="cp-el cp-title" style={{ left: '9%', top: '19.6%', width: '42%' }}>The vendor portal that exports one CSV at a time.</span>
       <span className="cp-el cp-field" style={{ left: '9%', top: '26%', width: '34%' }}><b /></span>
+      {/* one CSV at a time: each row's export fills, then ticks, then the next row starts */}
       {ROWS.map((r) => (
-        <span key={r} className="cp-el cp-row" style={{ top: 35 + r * 6.6 + '%' }}><em>CSV</em><i /><i /></span>
+        <span key={r} className="cp-el cp-row" style={{ top: 35 + r * 6.6 + '%', '--r': r, '--cpw': [72, 54, 88, 61, 79][r] + '%' }}>
+          <em>CSV</em><i className="cp-row-n"><s /></i><i className="cp-row-p"><s /></i><span className="cp-dl"><svg viewBox="0 0 16 16"><path d="M4 8.5l2.6 2.6L12 5.5" /></svg></span>
+        </span>
       ))}
-      <span className="cp-el cp-btn" style={{ left: '37%', top: '71%' }} />
-      <div className="cp-win b"><div className="cp-wbar"><i /><i /><i /><span>The desktop tool from 2009.</span></div></div>
-      {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((c) => <span key={c} className="cp-el cp-cell" style={{ left: 55 + (c % 3) * 12 + '%', top: 38 + Math.floor(c / 3) * 12.5 + '%' }} />)}
+      <span className="cp-el cp-btn" style={{ left: '37%', top: '71%' }}><b /></span>
+      {/* the desktop tool from 2009: menu, toolbar, a tree and a table, a status bar */}
+      <div className="cp-win b">
+        <div className="cp-wbar"><i /><i /><i /><span>The desktop tool from 2009.</span></div>
+        <div className="cp-old-menu">{[9, 7, 8, 6, 9].map((w, i) => <i key={i} style={{ width: w + '%' }} />)}</div>
+        <div className="cp-old-tools">{[0, 1, 2, 3, 4, 5].map((t) => <i key={t} />)}<span /></div>
+        <div className="cp-old-body">
+          <div className="cp-old-tree">{[0, 1, 1, 0, 1, 1, 1, 0].map((d, i) => <i key={i} style={{ marginLeft: d * 14 + '%', width: [62, 48, 56, 70, 44, 58, 50, 66][i] + '%' }} />)}</div>
+          <div className="cp-old-table">
+            {Array.from({ length: 24 }, (_, c) => <i key={c} className={c < 4 ? 'h' : ''} style={{ '--cpw':[70, 46, 58, 34, 82, 50, 64, 40][c % 8] + '%' }} />)}
+          </div>
+        </div>
+        <div className="cp-old-status"><i /><i /></div>
+      </div>
       <div className="cp-dock">{[0, 1, 2, 3, 4, 5].map((d) => <i key={d} />)}</div>
 
       {/* one layer per mode */}
@@ -91,7 +105,7 @@ function Machine() {
   const [paused, setPaused] = useState(false);
   const box = useRef(null);
   const seen = useInView(box, { amount: 0.3 });
-  const calm = useReducedMotion();
+  const calm = useCalm();
   const live = seen && !calm && !paused;
   const pick = (i) => { setAtS(i); setMine(true); };
   useEffect(() => {
@@ -106,7 +120,6 @@ function Machine() {
   };
   return (
     <div className="cp-obj" ref={box}>
-      <Desktop at={at} live={live} />
       <div className="cp-cap">
         <div className="cp-cap-top">
           <button type="button" className="cp-pause" aria-pressed={paused} aria-label={paused ? 'Play' : 'Pause'} onClick={() => setPaused((p) => !p)}>
@@ -117,6 +130,9 @@ function Machine() {
           <span className="cp-cap-k">If a person can click it, so can this</span>
           <span className="cp-count x-mono av-num">{String(at + 1).padStart(2, '0')} / 06</span>
         </div>
+      </div>
+      <Desktop at={at} live={live} />
+      <div className="cp-cap">
         <ol className="cp-tabs" role="tablist" aria-label="What it does">
           {SLIDES.map(([t], i) => (
             <li key={t}>
@@ -284,7 +300,7 @@ const PASTE = 'Read https://hanzo.ai/skill.md and use Hanzo Computer in my proje
 
 function Band() {
   const ref = useRef(null);
-  const calm = useReducedMotion();
+  const calm = useCalm();
   // the second black room arrives as a rounded card inside the gutters and opens to the full width as it is reached
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.2'] });
   const clip = useTransform(scrollYProgress, [0, 1], ['inset(0% 3% 0% 3% round 24px)', 'inset(0% 0% 0% 0% round 0px)']);

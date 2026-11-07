@@ -24,8 +24,9 @@
 //   Only Hanzo's numbers ever show: the slider has three stops and nothing in between.
 // Every word, price and link is Hanzo's; example.com and its pages are an example.
 import { useEffect, useRef, useState } from 'react';
-import { motion, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, animate, useInView, useMotionValue, useMotionValueEvent, useScroll, useTransform } from 'motion/react';
 import { A, Cta } from '../../kit';
+import { useCalm } from '../../ui';
 import { scrollToY } from '../../../lib/scroll';
 import KeynoteStage, { useStagePause } from '../../v2/KeynoteStage';
 import KeynoteSpec, { Fig } from '../../v2/KeynoteSpec';
@@ -74,7 +75,7 @@ function Wire({ big }) {
 function Reader() {
   const ref = useRef(null);
   const seen = useInView(ref, { amount: 0.25 });
-  const calm = useReducedMotion();
+  const calm = useCalm();
   const paused = useStagePause();
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
@@ -190,7 +191,7 @@ function Scene() {
   const run = useRef(null);
   const box = useRef(null);
   const wide = useWide();
-  const calm = useReducedMotion();
+  const calm = useCalm();
   const p = useMotionValue(0);
   const p6 = useTransform(p, (v) => v * 6);
   const [beat, setBeat] = useState(0);
@@ -355,7 +356,7 @@ const REL = [['Chat', '/cloud/chat', 'Conversational AI'], ['Bot', '/bot', 'Mult
 function Desk() {
   const ref = useRef(null);
   const seen = useInView(ref, { amount: 0.5, once: true });
-  const calm = useReducedMotion();
+  const calm = useCalm();
   const [done, setDone] = useState(false);
   // the session runs once when it is first seen: the step reads the project, then the gateway lands on staging
   useEffect(() => {

@@ -18,8 +18,9 @@
    line on who connects that way.
    Every word and link is Hanzo's; the example table's cells carry no values. */
 import { useEffect, useRef, useState } from 'react';
-import { useScroll, useMotionValueEvent, useInView, useReducedMotion } from 'motion/react';
+import { useScroll, useMotionValueEvent, useInView } from 'motion/react';
 import { useLive } from './Frame';
+import { useCalm } from '../../ui';
 import { scrollToY } from '../../../lib/scroll';
 import KeynoteStage, { useStagePause } from '../../v2/KeynoteStage';
 import KeynoteChapters, { useWide } from '../../v2/KeynoteChapters';
@@ -87,7 +88,7 @@ function Query() {
    itself while seen, then rests (a step a second at most, so it ends inside 5 s) */
 function useStepOf(p, n, on) {
   const [k, setK] = useState(0);
-  const calm = useReducedMotion();
+  const calm = useCalm();
   useEffect(() => {
     if (!p) return;
     const f = (v) => setK(Math.min(n - 1, Math.max(0, Math.floor(v * n))));
@@ -227,7 +228,7 @@ function Explode() {
   const run = useRef(null);
   const obj = useRef(null);
   const wide = useWide();
-  const calm = useReducedMotion();
+  const calm = useCalm();
   const seen = useInView(run, { amount: 0.2 });
   const [st, setSt] = useState(0);
   const [hand, setHand] = useState(false);
