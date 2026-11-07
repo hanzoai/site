@@ -23,7 +23,7 @@ Done here: `// Persona:` to `// Beyond:` head `components/pages/cloud/Insights.j
 - ~~Breadcrumb at depth 2 or more~~ n/a: a depth-1 page
 - [x] Link parity: 0 removed, 0 unexpected
 
-Done here: Parity 67/67 text and 4/4 links; Hanzo's header and footer are untouched; every link goes through `A`/`Cta` (`lib/route.js`).
+Done here: Parity 67/67 text and 4/4 links; Hanzo's header and footer are untouched; every link goes through `A`/`Cta` (`lib/route.js`). Rounds 3-4: the separate finder block is gone; its ten tool names are the tour panels' own sub-nav, so the page draws each view once.
 
 ## 3. First impression and page narrative
 - [x] Sells in 5 s; something moves within 1 s without input
@@ -33,7 +33,7 @@ Done here: Parity 67/67 text and 4/4 links; Hanzo's header and footer are untouc
 - [x] Ends in one close in Hanzo's words ("Get Insights" with the ask), then the footer
 - [x] The h1 is the `data-morph-target`, so cards elsewhere open into it
 
-Done here: The first screen is the name, Hanzo's line, the ask, and one live object: the new-dashboard flag rolled out to a percentage, then a cohort, then one account across a field of 120 people (20×6 on desktop, 12×10 on phone) who light up and send events, until the kill switch turns it off with no deploy. Measured at 1470×801 in round 2: the h1 is top-aligned with its bottom at 302px (38% of 801), the object runs from 100 to 595 so it ends inside the first screen, and "Ship it, then find out" peeks at 735. The h1 (52px, 40px on phones) cuts in by CSS line mask at first paint; a headless JS-off pass found 0 hidden text blocks.
+Done here: The first screen is the name, Hanzo's line, the ask, and one live object: the new-dashboard flag rolled out to a percentage, then a cohort, then one account across a field of 120 people (20×6 on desktop, 12×10 on phone) who light up and send events, until the kill switch turns it off with no deploy. Measured at 1470×801 in round 2: the h1 is top-aligned with its bottom at 302px (38% of 801), the object runs from 100 to 595 so it ends inside the first screen, and "Ship it, then find out" peeks at 735. The h1 (52px, 40px on phones) cuts in by CSS line mask at first paint; a headless JS-off pass found 0 hidden text blocks. Rounds 3-4: the hero field lights in its stagger at 150 ms and the first event lands at 300 ms; "one account" grows to one big dot (scale 2.6), the page's one scale moment; the dark room sits on the section token (clamp 72-188px), no empty black above and below the code.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn` in the page
@@ -66,7 +66,7 @@ Done here: Parity 67/67 text and 4/4 links. The tool finder uses only Hanzo's to
 - ~~One icon set~~ n/a: no icons beyond the kit's
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: Greys from Hanzo's deck only: the page defines the deck ramp once as tokens on `.in` and every rule uses them. The Apple greys (`#fbfbfd`, `#e3e3e6`, `#f5f5f7`, `#161617`, `#1d1d1f`, `#f2f2f5`), the dot glow and the "Accent: violet" note are gone. A computed-colour sweep of `<main>` finds no grey off the ramp; the kit's `CodeBlock` and the button hover are mapped page-locally and requested. One dark room (the code and the app it flips).
+Done here: Greys from Hanzo's deck only: the page defines the deck ramp once as tokens on `.in` and every rule uses them. The Apple greys (`#fbfbfd`, `#e3e3e6`, `#f5f5f7`, `#161617`, `#1d1d1f`, `#f2f2f5`), the dot glow and the "Accent: violet" note are gone. A computed-colour sweep of `<main>` finds no grey off the ramp; the kit's `CodeBlock` and the button hover are mapped page-locally and requested. One dark room (the code and the app it flips). Rounds 3-4: one surface in the hero card (no inner white cards), the tour window is outlined, not raised, the selected tab is marked by its ink underline (no lift shadow), radii on deck values.
 
 ## 8. UI component library
 - [x] Every control has hover (inside `@media (hover:hover)`), press .97, focus-visible, disabled
@@ -75,7 +75,7 @@ Done here: Greys from Hanzo's deck only: the page defines the deck ramp once as 
 - [x] Inputs 16px or larger; no bare `:hover` in the page CSS
 - [x] Forks this page deleted: listed above
 
-Done here: Kit `Cta`, `CodeBlock`, `Copy` and Cloud 3's `LivePause`. Hovers tell you something: hovering a rollout mode lights a ghost of the dots it would reach (29 for "a cohort") without committing; the kill switch's knob leans 3px toward the other state and the track darkens, with a .97 press; a tour tab's number steps to ink and a hairline draws under its title.
+Done here: Kit `Cta`, `CodeBlock`, `Copy` and Cloud 3's `LivePause`. Hovers tell you something: hovering a rollout mode lights a ghost of the dots it would reach (29 for "a cohort") without committing; the kill switch's knob leans 3px toward the other state and the track darkens, with a .97 press; a tour tab's number steps to ink and a hairline draws under its title. Round 4: a pointer resting on the tour window holds the tab (so its words can be read) while the panel's own views keep cycling every 2.6 s, and a pointer on the tool names holds the view; tour tabs preview their panel on hover and tick; the mode labels invert as the pill passes (mix-blend difference).
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups (`variety.py` OK)
@@ -84,7 +84,7 @@ Done here: Kit `Cta`, `CodeBlock`, `Copy` and Cloud 3's `LivePause`. Hovers tell
 - [x] Reduced motion shows the final state; no `setInterval` in the page (timers are `setTimeout` chains)
 - [x] Sound only on the listed moments, through the one kit (`lib/sound.js`, wired by `components/Sound.jsx`): the ask taps, tabs, radios and pause toggles tick (radios carry `data-sound="tick"`), copy chimes; the demos loop while seen and never finish, so no done chime
 
-Done here: Signature: a flag you roll out by hand. Idle: the rollout steps through its three ways and the kill switch; the window tours its tabs; the app flips with the flag. State: rollout radios and the kill switch; the tab pill glides; the finder's drawing and sentence swap per tool. Round 2 kept every move and added the mode-hover ghost. Scroll: none beyond the headline cut-in. No springs: every move is ease-emphasis at 300 ms.
+Done here: Signature: a flag you roll out by hand. Idle: the rollout steps through its three ways and the kill switch; the window tours its tabs; the app flips with the flag. State: rollout radios and the kill switch; the tab pill glides; the finder's drawing and sentence swap per tool. Round 2 kept every move and added the mode-hover ghost. Scroll: none beyond the headline cut-in. No springs: every move is ease-emphasis at 300 ms. Rounds 3-4: each panel is a product view built from page words (event stream and SQL, flag rows and kill switch, a replay whose cursor travels its path, a heatmap, an experiment wired flag-to-metric with A/B bars, funnel / retention / paths, a rage-click spike over a stack trace, an LLM cost waterfall), each drawing itself in when its tab opens.
 
 ## 10. Media
 - ~~`Film` and `Pic` only~~ n/a: no photo or film on Hanzo's page
@@ -100,7 +100,7 @@ Done here: Product objects are drawn in HTML and CSS from Hanzo's words. The clo
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: At 375 the name, line and ask come first, then the rollout. The window's tabs become a swipe row, and the six panels share one grid cell, so the window holds at 736px while it tours (it used to swing between 651 and 761). The finder's ten tools become a proximity snap rail with a peek, with the answer directly under it. The code and the app stack. Nothing floats over text.
+Done here: At 375 the name, line and ask come first, then the rollout. The window's tabs become a swipe row, and the six panels share one grid cell, so the window holds at 736px while it tours (it used to swing between 651 and 761). The finder's ten tools become a proximity snap rail with a peek, with the answer directly under it. The code and the app stack. Nothing floats over text. Round 4: check.mjs at 375 and 1470: errors 0, covered 0, wide 0; the phone tab rail keeps the active tab fully in view as the tour moves; "Deploy to Cloud" measured 44px tall at 375.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast: #0a0a0a and #525252 on white and #f5f5f5, #a3a3a3 and white on black
@@ -157,4 +157,4 @@ Done here: A headless JS-off pass shows every word; reduced motion stops each de
 - [x] `V2: 8/10` line in the page file's top comment
 - [x] Review read: `docs/review/insights.md` (6/10); fixes 1 to 8 done in round 2, and fix 9 (shared header) is requested
 
-Done here: `insights.hero` and `insights.close` on the asks. Gallery: `docs/gallery/insights/` (desktop film, phone stills, and round 2 frames `round2-desktop.jpg`, `round2-phone.jpg` and `round2-finder.jpg`).
+Done here: `insights.hero` and `insights.close` on the asks. Gallery: `docs/gallery/insights/` (desktop film, phone stills, and round 2 frames `round2-desktop.jpg`, `round2-phone.jpg` and `round2-finder.jpg`). Round 4: review round 2 (7/10) fixes 1 to 7 and 9 done (rounds 3 and 4); 8 is shared chrome, filed in `docs/requests/insights.md`. Proof `docs/gallery/insights/round4-*.jpg`.

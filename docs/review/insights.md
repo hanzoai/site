@@ -1,4 +1,5 @@
 # /insights — James-eye review
+Ready: 2026-11-07 the finder folded into the tour (each view drawn once, built from page words and drawing in per tab); one surface in the hero, outlined window, deck radii; the field lights at 150 ms and one account grows to one big dot; dark room on the section token; tab hovers preview and tick, phone rail keeps the tab in view, mode labels invert mid-glide; a resting pointer holds the tab but the panel keeps cycling.
 
 Verdict: 7/10
 First complaint: "It's the same trick three times in a row: click a pill, a grey drawing swaps. The flag pills, then six tabs, then ten more pills showing the same drawings and the same sentences again. It's boxes inside boxes, and half the black room is empty."

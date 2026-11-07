@@ -6,7 +6,8 @@
 // Signature: a flag you roll out by hand: a field of people lights as the flag climbs, the kill switch drops it.
 // Beyond: each tour panel is the tool itself, with Hanzo's tool names as its own sub-nav; pick one and its view switches and its clause of Hanzo's sentence inks.
 /* Insights (v2, archetype A Launch).
-   V2: 8/10 Round 3: the finder is folded into the tour (no second pill-and-drawing block; every drawing is drawn once):
+   Round 4: a resting pointer holds the tour's tab but not its panel (the views keep cycling), so the window never goes still under a mouse.
+   Round 3: the finder is folded into the tour (no second pill-and-drawing block; every drawing is drawn once):
    each panel is a product view built from page words (event stream and SQL editor, flag rollout rows and kill switch,
    a replay whose cursor travels its path once and a heatmap, an experiment wired flag-to-metric with A/B bars, funnel /
    retention / paths, a rage-click spike over a stack trace and an LLM cost waterfall), each drawing itself in when its
@@ -310,6 +311,7 @@ function Tour() {
   const [sub, setSub] = useState(0);
   const [peek, setPeek] = useState(-1);
   const [mine, setMine] = useState(false);
+  const [onNav, setOnNav] = useState(false); // a pointer on a panel's own tool names holds its view too
   const rail = useRef(null);
   const go = (i) => { setAt(i); setSub(0); };
   useEffect(() => {
@@ -317,13 +319,14 @@ function Tour() {
     const t = setTimeout(() => go((at + 1) % LOG.length), 5200);
     return () => clearTimeout(t);
   }, [at, touring, mine]);
-  // inside a toured panel the sub-tools step through too, so each tool shows every view it has
+  // inside a toured panel the sub-tools step through too, so each tool shows every view it has. A resting pointer
+  // holds the tab (so its words can be read) but not the panel: its views keep cycling, so the window never goes dead.
   useEffect(() => {
     const n = LOG[at][3].length;
-    if (!touring || mine || sub >= n - 1) return;
-    const t = setTimeout(() => setSub((s) => s + 1), Math.round(5200 / n));
+    if (!live || mine || onNav || n < 2 || (!hold && sub >= n - 1)) return;
+    const t = setTimeout(() => setSub((s) => (s + 1) % n), hold ? 2600 : Math.round(5200 / n));
     return () => clearTimeout(t);
-  }, [at, sub, touring, mine]);
+  }, [at, sub, live, hold, mine, onNav]);
   // on the phone rail, keep the active tab fully in view as the tour moves (the rail scrolls, never the page)
   useEffect(() => {
     const r = rail.current;
@@ -362,7 +365,7 @@ function Tour() {
                 return (
                   <div key={t} id={'in-p' + i} role="tabpanel" aria-labelledby={'in-t' + i} aria-hidden={!on} inert={!on} className={'in-panel' + (on ? ' on' : '')}>
                     <div className="in-ui">
-                      <div className="in-ui-nav" role="group" aria-label={t}>
+                      <div className="in-ui-nav" role="group" aria-label={t} onPointerEnter={(e) => fine(e) && setOnNav(true)} onPointerLeave={() => setOnNav(false)}>
                         {tools.map(([name], j) => (
                           <button key={name} type="button" data-sound="tick" aria-pressed={v === j}
                             onPointerEnter={(e) => { if (fine(e) && i === at) setSub(j); }}
