@@ -83,7 +83,6 @@ export function Field({ points, here, label = 'Models by context window and outp
               aria-current={me ? 'page' : undefined}
               onPointerEnter={() => setHot(d.href)} onPointerLeave={() => setHot(null)}
               onFocus={() => setHot(d.href)} onBlur={() => setHot(null)}
-              data-cursor={me ? 'Here' : 'Open'}
             >
               <b aria-hidden="true" />
             </A>

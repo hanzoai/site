@@ -13,7 +13,7 @@ import Sigil from '../../Sigil';
 import { arrows } from './live';
 import Launch, { Lines, poly, dense, film } from '../../v2/Launch';
 import ModelCards from './ModelCards';
-import ModelFilm from '../../v2/ModelFilm';
+import ModelFilm, { usePaused } from '../../v2/ModelFilm';
 import Chapters from '../../v2/x-cray/Chapters';
 import './Kai.css';
 
@@ -144,6 +144,7 @@ function Tree() {
   const box = useRef(null), typed = useRef(null);
   const seen = useInView(box, { amount: 0.3 });
   const calm = useReducedMotion();
+  const paused = usePaused();
   const [c, setC] = useState(0);
   const [step, setStep] = useState(99); // 0 typing; 1.. one per question; the server renders the resolved tree
   const [mine, setMine] = useState(false);
@@ -154,7 +155,7 @@ function Tree() {
   useEffect(() => { if (calm && typed.current) typed.current.textContent = cs.state; }, [calm, cs.state]); // React never rewrites the typed node
   // type the state into a text node, then resolve one question at a time, hold, move to the next case
   useEffect(() => {
-    if (calm || (!seen && !mine)) return;
+    if (calm || paused || (!seen && !mine)) return;
     let t;
     if (step === 0) {
       const el = typed.current, s = cs.state;
@@ -165,7 +166,7 @@ function Tree() {
     }
     if (step <= total) { t = setTimeout(() => setStep(step + 1), 1300); return () => clearTimeout(t); }
     if (!mine) { t = setTimeout(() => { setC((c + 1) % CASES.length); setStep(0); }, 3400); return () => clearTimeout(t); }
-  }, [step, seen, calm, c, mine, total, cs.state]);
+  }, [paused, step, seen, calm, c, mine, total, cs.state]);
 
   const pick = (i) => { setMine(true); setC(i); setStep(calm ? 99 : 0); };
 
@@ -257,7 +258,7 @@ export default function Kai() {
   return (
     <Launch
       slug="kai"
-      ask={{ label: 'Open Decisions', to: 'https://platform.hanzo.ai/decisions', id: 'kai-hero-decisions' }}
+      ask={{ label: 'Open Decisions', to: 'https://platform.hanzo.ai/decisions', id: 'kai.first' }}
       shape={DIAMOND}
       aim={(W, H, wide) => (wide ? null : [-0.16 * W, -0.2 * H])}
       headClass="ka-head"
@@ -266,8 +267,8 @@ export default function Kai() {
           <Lines id="ka-h" lines={['Kai.', 'Made for decisions.']} />
           <p className="lv-lede">The decision model family from Hanzo. Explore each version, its capabilities and the evidence behind it.</p>
           <div className="lv-acts">
-            <Cta to="https://platform.hanzo.ai/decisions" id="kai-hero-decisions" thumb>Open Decisions</Cta>
-            <Cta to="#models" kind="quiet" id="kai-hero-models">Explore models</Cta>
+            <Cta to="https://platform.hanzo.ai/decisions" id="kai.hero" thumb>Open Decisions</Cta>
+            <Cta to="#models" kind="quiet" id="kai.hero-models">Explore models</Cta>
             <More to="https://github.com/hanzoai/kai">Docs on GitHub</More>
           </div>
           <p className="lv-crumb">Hanzo / Kai</p>

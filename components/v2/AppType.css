@@ -1,59 +1,60 @@
-/* v2 type, space and grid for the Apps 1 pages (/api /bot /chrome /cli /computer /design /desktop /download /extension /gen).
-   Owned by the Apps 1 chat. Usage: import '../v2/AppType.css' once in a page, put className="av" on its <main> and set its
-   one accent there (style={{ '--ac': '#…' }}). Classes are prefixed av- so they never collide with other chats' v2 files.
-   Scale from docs/VISION.md: Display 128/96/80 (phone 56/48), Headline 56/36, Title 28, Lede 24/21, Body 19/17, Kicker 13. */
-.av { --ac: #737373; --ac-soft: color-mix(in srgb, var(--ac) 12%, #fff); --r-hero: 28px; --r-card: 16px; --gut: 24px;
-  --av-ease: cubic-bezier(.16, 1, .3, 1); background: #fff; color: var(--ink); overflow-x: clip; }
-.av-wrap { width: min(100% - 48px, 1392px); margin-inline: auto; }
+/* Type, space and grid for the Apps 1 pages (/api /bot /chrome /cli /computer /design /desktop /download /extension /gen).
+   Owned by the Apps 1 chat; only these ten pages import it. Usage: import '../v2/AppType.css' once in a page and put
+   className="av" on its <main>. Classes are prefixed av- so they never collide with other chats' files.
+   Values from docs/MASTER.md section 3 (Hanzo's deck): scale has rhythm, with resting sizes like live hanzo.ai (h1 52px,
+   section headings 26px, figures 64px); a thing grows past that only while it is the moment. Book 497 for headings.
+   Container 1152px, golden space steps, greys only, outline or raise (never both). */
+.av { --ac: #525252; --ac-soft: #f5f5f5; --r-hero: 24px; --r-card: 16px; --gut: 24px;
+  --av-ease: cubic-bezier(.16, 1, .3, 1); background: #fff; color: #0a0a0a; overflow-x: clip; }
+.av-wrap { width: min(100% - 2 * clamp(16px, 4vw, 32px), 1152px); margin-inline: auto; }
 .av-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gut); }
-.av-sec { padding: clamp(120px, 16vw, 240px) 0; position: relative; }
-.av-sec.tight { padding: clamp(96px, 10vw, 160px) 0; }
+.av-sec { padding: clamp(72px, 11vw, 188px) 0; position: relative; }
+.av-sec.tight { padding: clamp(72px, 7vw, 116px) 0; }
 
-.av-display { margin: 0; font-size: clamp(56px, 8.9vw, 128px); font-weight: 600; line-height: .92; letter-spacing: -.05em; text-wrap: balance; }
-.av-display.m { font-size: clamp(48px, 6.7vw, 96px); }
-.av-display.s { font-size: clamp(44px, 5.6vw, 80px); }
-.av-head { margin: 0; font-size: clamp(36px, 3.9vw, 56px); font-weight: 600; line-height: 1.02; letter-spacing: -.04em; max-width: 16ch; text-wrap: balance; }
-.av-title { margin: 0; font-size: clamp(22px, 1.95vw, 28px); font-weight: 600; line-height: 1.15; letter-spacing: -.022em; text-wrap: balance; }
-.av-lede { margin: 0; font-size: clamp(21px, 1.67vw, 24px); line-height: 1.4; letter-spacing: -.012em; color: var(--soft); max-width: 36ch; text-wrap: pretty; }
-.av-body { margin: 0; font-size: clamp(17px, 1.32vw, 19px); line-height: 1.6; color: var(--soft); max-width: 64ch; text-wrap: pretty; }
-.av-kick { margin: 0; font: 500 13px/1.2 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
-.av-kick b { color: var(--ac); font-weight: 500; }
+/* the h1 rests at 52px; .m (44) and .s (32) are for the one statement that is the moment on its screen */
+.av-display { margin: 0; font-size: 52px; font-weight: 497; line-height: 1.04; letter-spacing: -.035em; text-wrap: balance; }
+.av-display.m { font-size: 44px; }
+.av-display.s { font-size: 32px; line-height: 1.1; letter-spacing: -.028em; }
+.av-head { margin: 0; font-size: 26px; font-weight: 497; line-height: 1.18; letter-spacing: -.02em; max-width: 18ch; text-wrap: balance; }
+.av-title { margin: 0; font-size: 21px; font-weight: 497; line-height: 1.25; letter-spacing: -.015em; text-wrap: balance; }
+.av-lede { margin: 0; font-size: 21px; line-height: 1.45; letter-spacing: -.01em; color: #525252; max-width: 44ch; text-wrap: pretty; }
+.av-body { margin: 0; font-size: 16px; line-height: 1.6; color: #525252; max-width: 66ch; text-wrap: pretty; }
+.av-kick { margin: 0; font: 600 12px/1.3 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #737373; }
+.av-kick b { color: #0a0a0a; font-weight: 600; }
 .av-num { font-feature-settings: 'tnum'; font-variant-numeric: tabular-nums; }
+.av-fig { font: 220 64px/1 var(--sans); letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
 .av-ac { color: var(--ac); }
 
-/* buttons: a solid pill in ink and a quiet one; 48 px targets */
-.av-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+/* buttons: 48 px */
+.av-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
 .av .av-acts .x-btn { height: 48px; padding: 0 24px; font-size: 16px; }
+.av .av-acts .x-arrow { min-height: 44px; }
 
 /* a spec sheet: hairline rows, label left, value right */
-.av-spec { margin: 0; display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); border-top: 1px solid var(--line); }
-.av-spec dt, .av-spec dd { margin: 0; padding: 22px 0; border-bottom: 1px solid var(--line); }
-.av-spec dt { font: 500 13px/1.5 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--faint); padding-right: 24px; }
-.av-spec dd { font-size: 17px; line-height: 1.55; color: var(--ink); }
+.av-spec { margin: 0; display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); border-top: 1px solid rgba(0, 0, 0, .1); }
+.av-spec dt, .av-spec dd { margin: 0; padding: 17px 0; border-bottom: 1px solid rgba(0, 0, 0, .1); }
+.av-spec dt { font: 600 12px/1.5 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #737373; padding-right: 24px; }
+.av-spec dd { font-size: 16px; line-height: 1.55; color: #0a0a0a; }
 
-/* a hero object: big, crisp, 28 px radius, a hairline and a long soft shadow */
-.av-obj { border-radius: var(--r-hero); background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .06), 0 30px 80px -30px rgba(0, 0, 0, .28), 0 60px 120px -60px rgba(0, 0, 0, .18); overflow: hidden; }
-.av-card { border-radius: var(--r-card); background: var(--card); }
+/* a product object: outlined, not raised (only what floats takes a shadow) */
+.av-obj { border-radius: var(--r-hero); background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .1); overflow: hidden; }
+.av-card { border-radius: var(--r-card); background: #f2f2f2; }
 
-/* the dark room (at most one per page) */
-.av-dark { background: #000; color: #f5f5f7; }
-.av-dark .av-body, .av-dark .av-lede { color: #a1a1a6; }
-.av-dark .av-kick { color: #86868b; }
+/* the black room (at most two per page, never back to back) */
+.av-dark { background: #000; color: #fafafa; }
+.av-dark .av-body, .av-dark .av-lede { color: rgba(255, 255, 255, .78); }
+.av-dark .av-kick { color: rgba(255, 255, 255, .55); }
 
-@media (max-width: 900px) {
-  .av-wrap { width: min(100% - 32px, 1392px); }
-  .av-grid { grid-template-columns: minmax(0, 1fr); row-gap: 32px; }
+@media (max-width: 899px) {
+  .av-grid { grid-template-columns: minmax(0, 1fr); row-gap: 27px; }
   .av-grid > * { grid-column: 1 / -1 !important; }
-  .av-sec { padding: 120px 0; }
-  .av-sec.tight { padding: 88px 0; }
-  .av-display { font-size: clamp(44px, 13.5vw, 56px); }
-  .av-display.m, .av-display.s { font-size: clamp(40px, 12vw, 48px); }
-  .av-head { font-size: clamp(32px, 9.4vw, 36px); }
-  .av-lede { font-size: 19px; }
-  .av-body { font-size: 17px; }
-  .av-kick { font-size: 13px; }
+  .av-display { font-size: 40px; }
+  .av-display.m { font-size: 32px; }
+  .av-display.s { font-size: 26px; }
+  .av-head { font-size: 26px; }
+  .av-lede { font-size: 17px; }
+  .av-body { font-size: 16px; }
   .av-spec { grid-template-columns: minmax(0, 1fr); }
-  .av-spec dt { padding: 20px 0 4px; border-bottom: 0; }
-  .av-spec dd { padding: 0 0 20px; font-size: 16px; }
-  .av .av-acts .x-btn { height: 52px; }
+  .av-spec dt { padding: 17px 0 4px; border-bottom: 0; }
+  .av-spec dd { padding: 0 0 17px; }
 }

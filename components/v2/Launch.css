@@ -15,8 +15,6 @@
 .lv-film { position: absolute; inset: 0; background: #000; overflow: hidden; }
 .lv-film-in { position: absolute; inset: 0; transform-origin: 50% 50%; }
 .lv-film-in img, .lv-film-in video { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; background: #000; }
-.lv-film-v { opacity: 0; transition: opacity .6s ease; }
-.lv-film-v.on { opacity: 1; }
 .lv-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0, 0, 0, .4), transparent 36%, transparent 55%, rgba(0, 0, 0, .6)); pointer-events: none; }
 .lv-name { position: absolute; left: 0; right: 0; bottom: 0; padding-bottom: clamp(40px, 8vh, 96px); color: #f5f5f7; pointer-events: none; }
 .lv-name .lv-name-h { margin: 0; color: #fff; font-size: clamp(3.5rem, 8vw, 7rem); font-weight: 497; letter-spacing: -.045em; line-height: .95; }
@@ -31,9 +29,7 @@
 .lv-name-ask .x-btn.solid { background: #fafafa; border-color: #fafafa; color: #0a0a0a; }
 @media (hover: hover) { .lv-name-ask .x-btn.solid:hover { background: #ffffff; border-color: #ffffff; } }
 .lv-close { top: 20px; }
-.lv-cue { position: absolute; right: 32px; bottom: 32px; color: rgba(255, 255, 255, .7); pointer-events: none; }
-.lv-cue i { display: block; width: 1px; height: 36px; background: currentColor; transform-origin: 50% 0; animation: lv-cue 2.2s var(--ease2) infinite; }
-@keyframes lv-cue { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); transform-origin: 50% 0; } 51% { transform-origin: 50% 100%; } 100% { transform: scaleY(0); transform-origin: 50% 100%; } }
+.lv-pause { position: absolute; right: 24px; bottom: 24px; z-index: 3; }
 
 /* an optional drawing over the settled film */
 .lv-over { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .4s ease-out; }
@@ -136,7 +132,7 @@
   .lv-pin { position: relative; top: 0; height: 100%; min-height: 0; }
   .lv-name { padding-bottom: 48px; }
   .lv-name .lv-name-h { font-size: clamp(2.75rem, 14vw, 3.25rem); }
-  .lv-cue { display: none; }
+  .lv-pause { right: 16px; bottom: 16px; }
   .lv-head { top: auto; bottom: 28px; left: 20px; right: 20px; width: auto; transform: none; }
   .lv-lines { font-size: 32px; }
   .lv-lede { margin-top: 10.5px; font-size: 16px; }
@@ -161,6 +157,5 @@
   .lv-ch-b { margin-top: 10.5px; font-size: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .lv-cue i { animation: none; }
   .js .lv-head > *, .js .lv-ln > span, .js .lv-name-d, .js .lv-name-t, .js .lv-name-ask { transition: none; opacity: 1; transform: none; }
 }
