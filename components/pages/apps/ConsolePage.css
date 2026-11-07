@@ -327,8 +327,31 @@
 @keyframes cs-org { 0%, 38% { transform: none; } 50%, 88% { transform: translateY(56px); } 100% { transform: none; } }
 @media (prefers-reduced-motion: reduce) { .cs-lean { transform: none; } .cs-end-org.on .cs-end-pill { animation: none; } }
 
+/* the palette's preview is the target panel alone, larger, with no window chrome (not a third copy of the window) */
+.cs-find-shell .cs-bar, .cs-find-shell .cs-foot, .cs-find-shell .cs-rail, .cs-find-shell .cs-nav { display: none; }
+.cs-find-shell .cs-win { border: 0; box-shadow: none; border-radius: 20px; }
+.cs-find-shell .cs-body, .cs-find-shell .cs-win.md .cs-body { grid-template-columns: minmax(0, 1fr); height: 532px; }
+.cs-find-shell .cs-win.md .cs-main { padding: 26px 28px; }
+/* the hero window: no dead pane under short views */
+.cs-win:not(.md) .cs-body { height: 540px; }
+/* no white void after the hero */
+.cs .cs-ch { padding-top: clamp(72px, 8vw, 116px); }
+@media (hover: hover) { .cs-rel a:hover { background: var(--bz-room); } }
+.cs-rel a { padding-left: 4px; padding-right: 4px; transition: background-color .15s cubic-bezier(0, 0, .2, 1); }
+
 @media (max-width: 900px) {
   .cs-end .bz-wrap { grid-template-columns: minmax(0, 1fr); row-gap: 44px; }
+  .cs-find-shell .cs-body, .cs-find-shell .cs-win.md .cs-body { height: auto; }
+  .cs-find-shell .cs-main { overflow: visible; }
+  .cs-win:not(.md) .cs-body { height: 404px; }
+  /* phone chapters: the stage's own heading is the chapter's title already */
+  .cs-ch .cs-win.md .cs-head h3 { display: none; }
+  /* phone keys card: key and scope on the left (the scope may wrap), the state under them, the button right */
+  .cs-win.md .cs-key, .cs-key { grid-template-columns: minmax(0, 1fr) auto; }
+  .cs-win.md .cs-key .cs-tag, .cs-key .cs-tag { grid-column: 1; grid-row: 3; justify-self: start; }
+  .cs-win.md .cs-key-l, .cs-key-l { grid-column: 1; grid-row: 1 / span 2; }
+  .cs-win.md .cs-key-b, .cs-key-b { grid-column: 2; grid-row: 1 / span 3; align-self: center; }
+  .cs-key-l span { white-space: normal; }
   .cs-facts > :first-child, .cs-facts > :last-child { grid-column: auto; grid-row: auto; }
   .cs-fact-peek { display: none; }
 }
