@@ -163,7 +163,7 @@ export function Bill({ self, others }) {
         {other && row(other, b, false)}
       </div>
       {priced.length > 0 && (
-        <div className="xmf-pick" role="group" aria-label="Compare with" data-swipe-own>
+        <div className="xmf-pick" role="group" aria-label="Compare with" data-swipe-own data-cursor="">
           {priced.map((p) => (
             <button key={p.href} type="button" aria-pressed={p.href === pick} onClick={() => setPick(p.href)}>
               {p.href === pick && <motion.span layoutId="xmf-pick" className="xmf-pick-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
