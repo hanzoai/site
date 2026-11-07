@@ -226,7 +226,7 @@ export default function Templates() {
               <LineMask as="h1" id="xtp-h1" now className="w2-display xtp-h1" lines={['Start from', 'a product.']} />
               <p className="xtp-kick x-mono">Templates</p>
             </div>
-            <motion.div className="xtp-top-r" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
+            <motion.div className="xtp-top-r" initial={{ y: 14 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
               <p className="w2-lede xtp-lede">Open one. Edit it in Hanzo.</p>
               <div className="xtp-front" aria-live="polite">
                 <AnimatePresence mode="wait" initial={false}>

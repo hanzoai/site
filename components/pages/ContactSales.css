@@ -12,6 +12,7 @@
 /* arrivals in CSS, so JS off still shows every word */
 .xcs-in { animation: xcs-in .9s var(--ease) .5s both; }
 .xcs-up { animation: xcs-up 1.2s var(--ease) .2s both; }
+html.x-arriving .xcs-in, html.x-arriving .xcs-up { animation-play-state: paused; }
 @keyframes xcs-in { from { opacity: 0; } }
 @keyframes xcs-up { from { opacity: 0; transform: translateY(48px); } }
 

@@ -11,7 +11,7 @@
    Hanzo Cloud, your cloud, your servers, air-gapped - and the camera travels in one wall per chapter while the words for
    each place come in as the last go out (the apple.com sticky chapter). Phones, reduced motion and JS off get the same
    story by tap or as a list, without the pin.
-   Supporting: results on a split-flap board, the GPU detail opening as a sheet out of its card, and the clouds Hanzo
+   Supporting: results rising out of their own masks (never a number that is not Hanzo's), the GPU detail opening as a sheet out of its card, and the clouds Hanzo
    deploys on as a slow wall in motion. Everything else sits still and reads.
    Beyond: the prefill instrument. Pick a prompt size and read the prefill time and rate Hanzo measured for Zen 6 on one
    DGX Spark, against every other size on one bar chart.
@@ -24,7 +24,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useCallback } from 'react';
 import { motion, AnimatePresence, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { EASE } from '../ui';
-import { A, More, Flap, Cta, Faq, Film, Img, DataTable, Band } from '../kit';
+import { A, More, Cta, Faq, Film, Img, DataTable, Band } from '../kit';
 import LogoWall from '../v2/LogoWall';
 import Drawer from '../v2/x-cannon/Drawer';
 import './Enterprise.css';
@@ -95,8 +95,9 @@ function Workspace({ at }) {
   const [n, setN] = useState(7);
   useEffect(() => {
     if (!seen || calm) return;
-    const t = setInterval(() => setN((v) => v + 1), 2300);
-    return () => clearInterval(t);
+    let t = 0;
+    const first = setTimeout(() => { setN((v) => v + 1); t = setInterval(() => setN((v) => v + 1), 2300); }, 900);
+    return () => { clearTimeout(first); clearInterval(t); };
   }, [seen, calm]);
   const rows = Array.from({ length: 8 }, (_, k) => ({ id: n - k, r: LOG[mod(n - k, LOG.length)] }));
   return (
@@ -253,9 +254,9 @@ function Boundary() {
         </motion.div>
 
         <motion.div className="xe-ch" style={{ opacity: chO, y: chY }}>
-          <p className="xe-k">Deployment</p>
           <h2 className="xe-h">Run it where your data lives.</h2>
           <p className="xe-b xe-soft">One platform, four places to run it. Choose one, or start in our cloud and move when you are ready.</p>
+          <p className="xe-k xe-tag">Deployment</p>
           <div className="xe-steps" role="group" aria-label="Where it runs">
             {PLACES.map((pl, i) => <Step key={pl[0]} p={p} i={i} on={at === i} label={pl[0]} go={go} />)}
           </div>
@@ -264,9 +265,9 @@ function Boundary() {
             <Glyph at={at} className="xe-caps-g" />
             {PLACES.map((pl, i) => (
               <div key={pl[0]} className={'xe-cap' + (i === at ? ' on' : i < at ? ' gone' : '')} aria-hidden={i !== at}>
-                <p className="xe-cap-n"><span>Where it runs</span><span className="x-mono">{String(i + 1).padStart(2, '0')} / 04</span></p>
                 <h3>{pl[0]}</h3>
                 <p><b>{pl[1]}.</b> {pl[2]}</p>
+                <p className="xe-cap-n"><span>Where it runs</span><span className="x-mono">{String(i + 1).padStart(2, '0')} / 04</span></p>
               </div>
             ))}
           </div>
@@ -282,9 +283,9 @@ function Includes() {
     <section className="xe-sec xe-inc" aria-labelledby="xe-inc-h">
       <div className="xe-w">
         <header className="xe-head">
-          <p className="xe-k">What you get</p>
           <h2 id="xe-inc-h" className="xe-h">What Enterprise includes.</h2>
           <p className="xe-l xe-soft">Your own infrastructure, dedicated compute, and engineering support around the clock.</p>
+          <p className="xe-k xe-tag">What you get</p>
         </header>
         <div className="xe-tiles">
           <article className="xe-tile t-infra">
@@ -395,9 +396,9 @@ function Gpus() {
     <section className="xe-sec xe-gpu" aria-labelledby="xe-gpu-h">
       <div className="xe-w">
         <header className="xe-head">
-          <p className="xe-k">Your own GPUs</p>
           <h2 id="xe-gpu-h" className="xe-h">Run the models on machines you own.</h2>
           <p className="xe-l xe-soft">Zen 6 runs on one DGX Spark. Zen 6 Max wants a rack of Blackwell servers. What we measured, and what a rack is made of.</p>
+          <p className="xe-k xe-tag">Your own GPUs</p>
         </header>
         <Prefill />
         <p className="xe-note">A cold prompt of about that many tokens on a quiet box, measured Sep 20, 2026: NVIDIA DGX Spark (GB10), 121 GiB unified memory, shared with the benchmark&apos;s other jobs; zen6, NVFP4 with FP8 attention, weights 21.6 GiB (serve-spark-zen6.sh).</p>
@@ -408,8 +409,8 @@ function Gpus() {
         </div>
         <button type="button" className="xe-rackcard" onClick={open} aria-haspopup="dialog" data-cursor="Open">
           <span className="xe-rackcard-t">
-            <span className="xe-k">Zen 6 Max</span>
             <span className="xe-rackcard-say">We recommend at least four 8-GPU NVIDIA Blackwell servers, B300 or B200, for Zen 6 Max on your own premises.</span>
+            <span className="xe-k xe-tag">Zen 6 Max</span>
           </span>
           <span className="xe-rackcard-figs">
             <span><b>9,216 GB</b><small>DGX B300</small></span>
@@ -451,6 +452,16 @@ function Gpus() {
 }
 
 /* ---------- proof, on a split-flap board ---------- */
+// a figure that rises out of its own mask once, showing only Hanzo's own value at every frame
+function Fig({ value, className = '' }) {
+  return (
+    // the frame is watched (the moving figure starts clipped, so it can never be "seen" itself)
+    <motion.span className={'xe-fig ' + className} initial="h" whileInView="s" viewport={{ once: true, amount: 0.6 }}>
+      <motion.span variants={{ h: { y: '105%' }, s: { y: '0%', transition: { duration: 0.9, ease: EASE } } }}>{value}</motion.span>
+    </motion.span>
+  );
+}
+
 const PROOF = [
   ['$8.4M', 'in bikes sold in 30 days', 'Damon Motorcycles', 'CES launch and preorders', '/customers/damon-motorcycles', '/logos/customers/damon-motorcycles.svg'],
   ['$7M+', 'raised in preorders', 'KANOA', 'Crowdfunding and preorders', '/customers/kanoa', '/logos/customers/kanoa.png'],
@@ -473,12 +484,12 @@ function Proof() {
     <section className="xe-sec xe-proof" aria-labelledby="xe-proof-h">
       <div className="xe-w xe-g">
         <header className="xe-head xe-proof-head">
-          <p className="xe-k">Proof</p>
           <h2 id="xe-proof-h" className="xe-h">Results on the record.</h2>
           <p className="xe-b xe-soft">Our models&apos; scores come from research runs anyone can open. Customer results come from the case studies of launches Hanzo ran.</p>
+          <p className="xe-k xe-tag">Proof</p>
         </header>
         <A to="/benchmarks#decision-suite" className="xe-hero-fig">
-          <Flap value="16 of 16" />
+          <Fig value="16 of 16" className="big" />
           <span className="xe-what">Decision Suite tasks won · Kai vs Jev</span>
           <span className="xe-soft">Every task of the suite, its row linking its runs and how to re-run it.</span>
           <span className="xe-go">See the runs →</span>
@@ -489,7 +500,7 @@ function Proof() {
           {PROOF.map(([fig, what, who, how, to, logo]) => (
             <li key={who}>
               <A to={to} className="xe-res">
-                <Flap value={fig} />
+                <Fig value={fig} />
                 <span className="xe-what">{what}</span>
                 <span className="xe-who"><Mark src={logo} /><b>{who}</b><span className="xe-dot">·</span><span>{how}</span></span>
               </A>
@@ -515,9 +526,9 @@ function Security() {
     <section className="xe-sec xe-secu" aria-labelledby="xe-sec-h">
       <div className="xe-w xe-g">
         <header className="xe-head xe-stick">
-          <p className="xe-k">Security</p>
           <h2 id="xe-sec-h" className="xe-h">Ready for your security review.</h2>
           <p className="xe-b xe-soft">A security review is part of every Enterprise contract. We answer your questionnaire against the code, and the engineers who wrote it walk your reviewers through it.</p>
+          <p className="xe-k xe-tag">Security</p>
           <div className="xe-links"><More to="/security">How Hanzo is secured</More><More to="/trust">Trust center</More></div>
         </header>
         <ul className="xe-proofs">
@@ -542,9 +553,9 @@ function Partners() {
     <section className="xe-sec xe-part" aria-labelledby="xe-part-h">
       <div className="xe-w">
         <header className="xe-head">
-          <p className="xe-k">Partners</p>
           <h2 id="xe-part-h" className="xe-h">Work with Hanzo.</h2>
           <p className="xe-l xe-soft">Refer customers, resell Hanzo under your own brand, or have Hanzo’s agency build it with you.</p>
+          <p className="xe-k xe-tag">Partners</p>
         </header>
         <div className="xe-offers">
           <A to="/contact-sales" className="xe-offer big">

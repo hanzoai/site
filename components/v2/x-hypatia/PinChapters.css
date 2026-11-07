@@ -27,7 +27,7 @@
 .pc-dots button:hover i { background: rgba(0, 0, 0, .4); }
 .pc-dots button:focus-visible { outline: 2px solid var(--acc); outline-offset: -4px; }
 
-.pc-dark { background: #000; color: #f5f5f7; --soft: #a1a1a6; }
+.pc-dark { background: #000; color: #f5f5f7; --soft: #a3a3a3; }
 .pc-dark .pc-dots i { background: rgba(255, 255, 255, .22); }
 
 @media (max-width: 900px) {

@@ -6,7 +6,7 @@ Persona: an enterprise buyer weighing data residency and vendor consolidation. G
 
 1. **Strategy and conversion.** One ask: the form. Its solid control is the round arrow on each step, then "Talk to sales" on the last step. The three other routes (cal.com, enterprise@hanzo.ai, Get Hanzo Team) are quiet rows of text links, and "Talk to AI Buying Specialist →" is an underlined link. There is one solid per viewport.
 2. **Information architecture and navigation.** Hanzo's header and footer are unchanged. Order: the enquiry (hero), what Enterprise includes, the launches Hanzo built. All 17 hrefs are Hanzo's.
-3. **First impression and page narrative.** The h1 "Talk to / sales" cuts in by line. The card rises over a slow grey contour field, and the first question is already set large.
+3. **First impression and page narrative.** After the site's arrival curtain lifts (company `MaskLines` and the CSS arrivals are held while `html.x-arriving`), the h1 "Talk to / sales" cuts in by line. The card rises over a slow grey contour field, and the first question is already set large.
    - At 1470×801 the h1, the lede and the card's arrow are above the fold (arrow at y≈605).
    - At 375×812 the order is h1, lede, card, then the routes below; the arrow sits at about y≈700.
 4. **Conversion system.**
@@ -49,7 +49,7 @@ Persona: an enterprise buyer weighing data residency and vendor consolidation. G
    - Motion is transform and opacity only.
    - One Sigil on screen; the rail is CSS only and pauses on hover.
    - The fake blinking caret is deleted.
-14. **SEO and machine files.** Metadata and JSON-LD are unchanged. Every question, size and inclusion is in the server HTML. With JS off, the h1 shows through the noscript rule and the rest arrives by CSS.
+14. **SEO and machine files.** Metadata and JSON-LD are unchanged. Every question, size and inclusion is in the server HTML, with no `inert` or `aria-hidden` until the page hydrates. With JS off (checked: 0 hidden texts, 0 inert), a noscript rule stacks all five questions in order and hides the step controls, which need JS; the routes (cal.com, enterprise@hanzo.ai, Get Hanzo Team) stay as the way in.
 15. **Catalogue and product pages.** Does not apply.
 16. **Developer experience.** Does not apply.
 17. **States and resilience.** idle, sending (a ring in the button with `aria-busy`), sent and failed.
