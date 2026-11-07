@@ -48,6 +48,7 @@ function Clock() { return <svg viewBox="0 0 16 16" width="15" height="15" aria-h
 function Bars() { return <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M3 13V8M6.3 13V4M9.7 13V7M13 13V2.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>; }
 function Grid() { return <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z" fill="none" stroke="currentColor" strokeWidth="1.3" /></svg>; }
 function Out() { return <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M5.5 3.5h7v7M12.5 3.5 4 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>; }
+function Arrow() { return <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>; }
 const SORTS = [['listed', 'oss_sort_pushed', Clock], ['stars', 'oss_sort_stars', Star], ['commits', 'oss_sort_commits', Bars]];
 
 /* a year of commits, month by month: bars that rise once; a playhead reads them where the page wants life */
@@ -316,7 +317,7 @@ export default function OrgPage({ doc }) {
             {doc.label && <p className="v2f-kick xos-meta-l">{doc.label}</p>}
             <div className="xos-acts">
               {gh && <Magnetic strength={0.2}><A to={gh.href} className="v2f-btn solid" data-thumb="" data-cta="oss.hero">{gh.label}<Out /></A></Magnetic>}
-              {forge && <A to={forge.href} className="x-arrow xos-link"><span>{forge.label}</span></A>}
+              {forge && <A to={forge.href} className="x-arrow xos-link"><span>{forge.label}</span><Arrow /></A>}
             </div>
           </div>
         </div>
@@ -463,7 +464,7 @@ export default function OrgPage({ doc }) {
         // card title that cannot land on a differently sized headline)
         <section className="xos-near" aria-label={every ? every.label : doc.name} data-no-morph>
           <div className="v2f-wrap">
-            {every && <p className="xos-near-h"><A to={every.href} className="x-arrow"><span>{every.label}</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A></p>}
+            {every && <p className="xos-near-h"><A to={every.href} className="x-arrow"><span>{every.label}</span><Arrow /></A></p>}
             <FamNext items={near} label={every ? every.label : doc.name} />
           </div>
         </section>

@@ -93,7 +93,8 @@
 .xsd-inst { color: #fff !important; }
 
 /* the flagship library */
-.xsd-ai-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 14px; }
+.xsd-ai-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 14px; }
+.xsd-lib.lead { grid-row: span 2; } /* the flagship leads; Node and Rust stack beside it, never three in a row */
 .xsd-lib { display: grid; gap: 14px; align-content: start; padding: 24px; border-radius: 26px; background: var(--card); transition: transform .3s var(--ease); }
 @media (hover: hover) { .xsd-lib:hover { transform: translateY(-4px); } }
 .xsd-lib.lead { background: var(--ink); color: #f5f5f7; }
@@ -127,6 +128,7 @@
 
 @media (max-width: 900px) {
   .xsd-grid, .xsd-paste-in, .xsd-two-in, .xsd-pick, .xsd-ai-grid { grid-template-columns: 1fr; }
+  .xsd-lib.lead { grid-row: auto; }
   .xsd-h1 { font-size: clamp(2.6rem, 12.5vw, 4rem); }
   .xsd-con-top { padding: 10px; }
   .xsd-dia button, .xsd-langs button { height: 44px; }
@@ -239,7 +241,7 @@
   .xsd-code-first .xsd-con, .xsd-code-first .xsd-pre { min-width: 0; max-width: 100%; }
   .xsd-pre { overflow-x: auto; }
   .xsd-con-top { flex-wrap: wrap; row-gap: 8px; }
-  .xsd-mod { min-height: 44px; display: inline-flex; align-items: center; }
+  .xsd-mod, .xsd .x-arrow, .xsd-pkg-a { min-height: 44px; display: inline-flex; align-items: center; }
   .xsd-langs { flex-wrap: wrap; row-gap: 4px; }
   .xsd-langs button { padding: 0 10px; }
   .xsd-words { display: contents; }

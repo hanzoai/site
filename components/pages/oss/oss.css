@@ -66,8 +66,15 @@ html.js .xos-list:not([data-in]) > li { animation-play-state: paused; }
 .xos-ghr-r .xos-zero { margin-top: 10px; }
 .xos-stats div.nil dd { font-size: 16px; font-weight: 400; color: var(--muted); }
 .xos-tick:hover .xos-tick-r { animation-play-state: paused; }
-@media (hover: hover) { .xos-link:hover span { text-decoration: underline; text-underline-offset: 4px; } }
-.xos-link span { transition: opacity 150ms var(--ease-o); }
+/* the two text links ("On Hanzo Forge", "Every organization"): a faint rule that draws in on hover, the arrow nudges */
+.xos .x-arrow { color: var(--ink); text-decoration: none; }
+.xos .x-arrow > span { position: relative; }
+.xos .x-arrow > span::before, .xos .x-arrow > span::after { content: ''; position: absolute; left: 0; right: 0; bottom: -3px; height: 1px; background: currentColor; pointer-events: none; }
+.xos .x-arrow > span::before { opacity: .2; }
+.xos .x-arrow > span::after { transform: scaleX(0); transform-origin: 0 50%; transition: transform .4s var(--out); }
+.xos .x-arrow svg { margin-left: 6px; transition: transform .4s var(--out); }
+@media (hover: hover) { .xos .x-arrow:hover > span::after { transform: scaleX(1); } .xos .x-arrow:hover svg { transform: translateX(6px); } }
+.xos .x-arrow:focus-visible > span::after { transform: scaleX(1); }
 .xos-row-figs { grid-column: 7 / span 6; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gut); }
 .xos-row-figs div { display: flex; flex-direction: column; gap: 4px; min-width: 0; padding-top: 10px; border-top: 1px solid var(--hair); }
 .xos-row-figs dd { margin: 0; font-size: 32px; color: var(--ink); }
@@ -250,5 +257,5 @@ html.js .xos-list:not([data-in]) > li { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) {
   .xos-dg > span, .xos-tick-r, .xos-wave i, .xos-spin, .xos-list > li { animation: none; }
   .xos-wave b, .xos-wave.play b { display: none !important; }
-  .xos-row, .xos-src-bg { transition: none; }
+  .xos-row, .xos-src-bg, .xos .x-arrow > span::after, .xos .x-arrow svg { transition: none; }
 }
