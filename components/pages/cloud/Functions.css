@@ -13,7 +13,7 @@
 .fn-hero-acts .x-arrow { min-height: 44px; }
 .fn .fn-go { height: 48px; padding: 0 27px; font-size: 16px; transition: background-color .15s var(--e-out), transform .15s var(--e-out); }
 .fn .fn-go::after { content: ''; width: 14px; height: 14px; margin-left: 2px; background: currentColor; clip-path: polygon(0 44%, 66% 44%, 40% 18%, 50% 8%, 100% 50%, 50% 92%, 40% 82%, 66% 56%, 0 56%); transition: transform .3s var(--e-in); }
-@media (hover: hover) { .fn .fn-go:hover { background: #262626; border-color: #262626; } .fn .fn-go:hover::after { transform: translateX(4px); } }
+@media (hover: hover) { .fn .fn-go:hover::after { transform: translateX(4px); } }
 .fn .fn-go:active { transform: scale(.97); transition-duration: 90ms; }
 .fn-hero-meta { display: flex; align-items: center; gap: 12px; margin-top: 17px; }
 .fn-hero-mt { display: flex; flex-direction: column; gap: 4px; font: 500 13px/1.45 var(--mono); color: #737373; letter-spacing: .02em; }
@@ -25,6 +25,7 @@
 @media (hover: hover) { .fn-hero-acts .x-arrow:hover svg { transform: translateX(4px); } }
 .fn-hero-acts .x-arrow:active { transform: translateY(1px); }
 .js .fn-hero-in { animation: fn-in .5s var(--e-in) both; animation-delay: var(--d, 0s); }
+.js .fn-hero-o { animation: fn-rise .9s var(--e-in) .18s both; }
 @keyframes fn-in { from { opacity: 0; transform: translate3d(0, 16px, 0); } to { opacity: 1; transform: none; } }
 @keyframes fn-rise { from { opacity: 0; transform: translate3d(24px, 0, 0); } to { opacity: 1; transform: none; } }
 /* the object settles from 1.04 to rest over the first 420px of scroll (a CSS scroll timeline; static where unsupported) */
@@ -87,10 +88,7 @@
 /* the words are Hanzo's state at rest; while replicas run they fade back and the filled dot carries the state */
 .fn-count span { color: #525252; text-decoration: line-through; text-decoration-thickness: 1px; transition: color .3s var(--e-out); }
 .fn-count[data-zero] span { color: #0a0a0a; text-decoration: none; }
-.fn-nodes { display: grid; gap: 8px; transform-origin: 50% 0; transition: transform .9s var(--e-in); }
-.fn-life[data-burst] .fn-nodes { transform: scale(1.06); }
-.fn-life[data-burst] .fn-file em.on i { animation: fn-pulse .9s var(--e-out) infinite; }
-@keyframes fn-pulse { 0% { box-shadow: 0 0 0 0 rgba(250, 250, 250, .7); } 100% { box-shadow: 0 0 0 7px rgba(250, 250, 250, 0); } }
+.fn-nodes { display: grid; gap: 8px; }
 .fn-node { display: block; padding: 10px 12px; border-radius: 12px; background: #fff; }
 .fn-slots { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; }
 .fn-slots i { aspect-ratio: 1; border-radius: 6px; border: 1.5px solid #d4d4d4; transform: scale(.7); transition: transform .3s var(--e-in), background-color .15s var(--e-out), border-color .15s var(--e-out); }
@@ -128,9 +126,9 @@
 .fn-rt:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 3px; }
 @media (hover: hover) { .fn-rt:not(.on):hover { background: #e4e4e7; } }
 .fn-rt b { font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1; }
-.fn-rt span { font: 400 14px/1.3 var(--mono); white-space: nowrap; color: #525252; transition: color .4s var(--e-move); }
+.fn-rt span { font: 400 14px/1.3 var(--mono); color: #525252; transition: color .4s var(--e-move); }
 .fn-rt.box { grid-column: 1 / -1; min-height: 0; flex-direction: row; align-items: baseline; background: transparent; border: 1.5px dashed rgba(0, 0, 0, .2); }
-.fn-rt.on { background: #0a0a0a; color: #fafafa; }
+.fn-rt.on { background: #0a0a0a; color: #fafafa; transform: translateY(-6px); }
 .fn-rt.on span { color: rgba(255, 255, 255, .78); }
 .fn-rt.box.on { border-color: #0a0a0a; }
 
@@ -172,16 +170,16 @@
 .fn-want:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 3px; }
 @media (hover: hover) { .fn-want:hover { background: #f5f5f5; } }
 /* the plain nodes are shapes (two quiet bars), only the GPU node carries Hanzo's words */
+.fn-gnode-s { display: flex; flex-direction: column; gap: 6px; }
+.fn-gnode-s i { display: block; height: 8px; border-radius: 4px; background: #d4d4d4; width: 64%; }
+.fn-gnode-s i + i { width: 40%; }
 .fn-pod { display: block; width: 40px; height: 40px; border-radius: 12px; background: #0a0a0a; transition: opacity .4s var(--e-out), transform .5s var(--e-in); }
 .fn-gnodes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .fn-gnode { display: flex; flex-direction: column; gap: 14px; min-height: 220px; padding: 17px; border-radius: 16px; background: #f5f5f5; outline: 1.5px solid transparent; outline-offset: 4px; transition: outline-color .4s var(--e-out); }
 .fn-gnode > span { font-size: 17px; font-weight: 497; letter-spacing: -.01em; }
-.fn-gslots { position: relative; flex: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-content: end; gap: 6px; }
-.fn-gslots > i { aspect-ratio: 1; border-radius: 6px; border: 1.5px solid #d4d4d4; transform: scale(.8); }
-.fn-gslots > i.on { background: #0a0a0a; border-color: #0a0a0a; transform: none; }
-.fn-gnode.gpu .fn-gslots > i { border-color: rgba(255, 255, 255, .3); }
-.fn-gslots .fn-pod.in { position: absolute; left: 50%; top: 50%; margin: -28px 0 0 -28px; }
+.fn-gnode > div { flex: 1; display: grid; place-items: center; border-radius: 12px; border: 1px dashed rgba(0, 0, 0, .14); }
 .fn-gnode.gpu { background: #0a0a0a; color: #fafafa; }
+.fn-gnode.gpu > div { border-color: rgba(255, 255, 255, .2); }
 .fn-gnode .fn-pod.in { width: 56px; height: 56px; background: #fafafa; opacity: 0; transform: translateY(-48px) scale(.4); }
 .fn-sc-gpu[data-k='1'] .fn-gnode.gpu { outline-color: #0a0a0a; }
 .fn-sc-gpu[data-k='2'] .fn-gnode .fn-pod.in { opacity: 1; transform: none; }
@@ -205,19 +203,16 @@
 @media (hover: hover) { .fn-modes button:not(.on):hover { border-color: #0a0a0a; color: #0a0a0a; } }
 .fn-vers { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 /* each version is a shape: a few lines of a function, no invented name */
-.fn-ver { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; padding: 17px; border-radius: 16px; background: #f5f5f5; transition: background-color .5s var(--e-move); }
-/* each version is its pods: filled while it takes traffic, hollow when it takes none */
-.fn-ver i { aspect-ratio: 1; border-radius: 6px; border: 1.5px solid #d4d4d4; transition: background-color .4s var(--e-out), border-color .4s var(--e-out); transition-delay: calc(var(--j) * 40ms); }
-.fn-ver.a i { background: #0a0a0a; border-color: #0a0a0a; }
-.fn-sc-ver[data-k='1'] .fn-ver.b i:first-child { background: #737373; border-color: #737373; }
-.fn-sc-ver[data-k='2'] .fn-ver.a i { background: transparent; border-color: #d4d4d4; }
-.fn-sc-ver[data-k='2'] .fn-ver.b i { background: #0a0a0a; border-color: #0a0a0a; }
-.fn-traffic { display: flex; gap: 4px; height: 56px; }
-.fn-traffic i { flex: 1 1 0; min-width: 0; border-radius: 12px; background: #0a0a0a; transition: flex-grow .9s var(--e-move), background-color .4s var(--e-out); }
-.fn-traffic i.b { flex: 0 0 0; background: #737373; }
-.fn-sc-ver[data-k='1'] .fn-traffic i.b { flex: .14 1 0; }
-.fn-sc-ver[data-k='2'] .fn-traffic i.a { flex: 0 0 0; }
-.fn-sc-ver[data-k='2'] .fn-traffic i.b { flex: 1 1 0; background: #0a0a0a; }
+.fn-ver { display: flex; flex-direction: column; gap: 10px; padding: 24px; border-radius: 16px; background: #f5f5f5; transition: background-color .5s var(--e-move), color .5s var(--e-move); }
+.fn-ver i { height: 8px; border-radius: 999px; background: currentColor; opacity: .25; width: 72%; }
+.fn-ver i:nth-child(2) { width: 52%; }
+.fn-ver i:nth-child(3) { width: 84%; }
+.fn-sc-ver:not([data-k='2']) .fn-ver.a, .fn-sc-ver[data-k='2'] .fn-ver.b { background: #0a0a0a; color: #fafafa; }
+.fn-traffic { position: relative; height: 56px; border-radius: 12px; background: #0a0a0a; overflow: hidden; }
+.fn-traffic i { position: absolute; inset: 0; }
+.fn-traffic i.b { background: #d4d4d4; transform-origin: 100% 50%; transform: scaleX(0); transition: transform .9s var(--e-move); }
+.fn-sc-ver[data-k='1'] .fn-traffic i.b { transform: scaleX(.12); }
+.fn-sc-ver[data-k='2'] .fn-traffic i.b { transform: scaleX(1); }
 
 /* ---------- common use cases: see functions/FnUses ---------- */
 /* the close's buttons on deck values (the shared room draws them in Apple greys) */
@@ -230,8 +225,6 @@
 /* the close on the deck's scale: "Get Functions" rests at the h1 size (the closing moment), the room ends without dead black */
 .fn .knx-h { font-size: 52px; letter-spacing: -.03em; }
 .fn .knx { padding-bottom: clamp(72px, 7vw, 116px); }
-
-.fn .knx-code pre { overscroll-behavior: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
 
 /* related, on the graphite close: name with Hanzo's line under it, the path drawing in on hover */
 .fn-rel { margin-top: 10px; }
@@ -271,14 +264,22 @@
   .fn-join-n { padding: 8px 10px; font-size: 14px; }
   .fn-join { gap: 4px; }
   .fn-join svg { min-width: 8px; }
+  /* phones: the six chapters become a swipe rail, one card per chapter with its drawing first (one in, one out) */
+  /* the rail spans the screen: it starts on the 16px gutter and runs out to the right edge, the next card peeking */
+  .fn-ch .knc-g { display: flex; align-items: flex-start; gap: 12px; width: 100%; margin: 0; padding: 0 var(--kn-g) 17px; overflow-x: auto; scroll-snap-type: x proximity; scroll-padding-inline: var(--kn-g); scrollbar-width: none; overscroll-behavior-x: contain; }
+  .fn-ch .knc-g::-webkit-scrollbar { display: none; }
+  .fn-ch .knc-g::after { content: ''; flex: 0 0 1px; }
+  .fn-ch .knc-a, .fn-ch.knc.right .knc-a { flex: 0 0 82%; min-width: 0; display: flex; flex-direction: column; gap: 17px; padding: 0; border: 0; scroll-snap-align: start; }
+  .fn-ch .knc-h, .fn-ch .knc-body p { overflow-wrap: normal; hyphens: none; }
+  .fn-ch .knc-a:first-child { padding-top: 0; }
   /* every card's drawing has the same fixed height, so a scene stepping never moves the page below it */
-  .fn-ch .knc-v { aspect-ratio: auto; height: 320px; margin: 0; }
+  .fn-ch .knc-v { order: -1; aspect-ratio: auto; height: 320px; margin: 0; }
   .fn-ch .knc-v > .fn-sc { height: 100%; min-height: 0; overflow: hidden; }
   .fn-ch .knc-t { gap: 10px; }
   .fn-ch .knc-body p { font-size: 15px; line-height: 1.55; }
   .fn-ch .knc-h { font-size: 21px; }
   .fn-col-k { margin-bottom: 10px; }
-  .fn-code pre { padding: 14px; font-size: 11.5px; overflow-x: auto; }
+  .fn-code pre { padding: 14px; white-space: pre-wrap; overflow-wrap: anywhere; }
   .fn-warm { font-size: 14px; }
 
   .fn .knc-count { font-size: 14px; }
@@ -312,7 +313,7 @@
   .fn-calls i, .js .fn-ln, .js .fn-ln::after, .js .fn-hero-oi, .js .fn-hero-in, .js .fn-hero-o { animation: none !important; }
   .fn-rel-p { transition: none !important; }
   .js .fn-ln::after { display: none; }
-  .fn-rt, .fn-pool i, .fn-nodes, .fn-ver i, .fn-traffic i, .fn-req-dot, .fn-req-l, .fn-slots i, .fn-pod, .fn-traffic i.b, .fn-ver, .fn-gnode { transition: none !important; }
+  .fn-rt, .fn-pool i, .fn-req-dot, .fn-req-l, .fn-slots i, .fn-pod, .fn-traffic i.b, .fn-ver, .fn-gnode { transition: none !important; }
 }
 /* the narrowest phones: the three nouns wrap rather than run off the edge */
-@media (max-width: 359px) { .fn-join-n { padding: 6px 7px; font-size: 12px; } .fn-trig-b { grid-template-columns: minmax(0, 1fr); } .fn-trig-b button { font-size: 12px; } }
+@media (max-width: 359px) { .fn-join { flex-wrap: wrap; row-gap: 8px; } .fn-join svg { flex: 0 0 17px; } }

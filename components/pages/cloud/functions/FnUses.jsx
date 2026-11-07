@@ -1,6 +1,8 @@
 'use client';
-/* Functions' "Common Use Cases" (page-local to /functions): four tiles, two by two, no pinned stage (the chapters above
-   already pin). Each tile is a small live drawing made only from that case's own words (REST and
+/* Functions' "Common Use Cases" (page-local to /functions): one case at a time on a pinned stage, never a stack of text.
+   - Left: the heading, Hanzo's line, and the four cases as a numbered list; the one in front is ink. Hovering a case
+     (fine pointers) previews it on the stage; pressing one scrolls the stage to it.
+   - Right: the case in front as one flat tile: a small live drawing made only from that case's own words (REST and
      GraphQL through authentication and validation; a webhook stream through transformation and enrichment; image and
      text through GPU acceleration to classification; a schedule sweeping its jobs), its numeral, title and line.
    - The tile opens into its own page: a full-screen sheet grows out of the tile (600 ms, ease-in-out, transform only),
@@ -10,6 +12,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useReducedMotion } from 'motion/react';
 import KeynoteLines from '../../../v2/KeynoteLines';
+import { scrollToY } from '../../../../lib/scroll';
 import './FnUses.css';
 
 export const USES = [
@@ -83,18 +86,38 @@ export default function FnUses({ children }) {
   const from = useRef(null);
   const openRef = useRef(-1);
   const calm = useReducedMotion();
+  const [at, setAt] = useState(0);
+  const [peek, setPeek] = useState(null);
   const [live, setLive] = useState(false);
   const [open, setOpen] = useState(-1);
+  const [mounted, setMounted] = useState(false);
   const n = USES.length;
+  useEffect(() => setMounted(true), []);
 
-  // the drawings loop only while the section is on screen
+  // which case is in front: how far the page has scrolled through the stage's run (a passive listener, no timer)
   useEffect(() => {
     const el = run.current;
-    if (!el || typeof IntersectionObserver === 'undefined') return;
-    const io = new IntersectionObserver(([e]) => setLive(e.isIntersecting));
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
+    if (!el) return;
+    const f = () => {
+      const r = el.getBoundingClientRect();
+      setLive(r.top < innerHeight && r.bottom > 0);
+      const span = r.height - innerHeight;
+      if (span <= 0) return;
+      setAt(Math.floor(Math.min(0.9999, Math.max(0, -r.top / span)) * n));
+    };
+    f();
+    addEventListener('scroll', f, { passive: true });
+    addEventListener('resize', f);
+    return () => { removeEventListener('scroll', f); removeEventListener('resize', f); };
+  }, [n]);
+
+  const shown = peek ?? at;
+  const go = (i) => {
+    const el = run.current;
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + scrollY;
+    scrollToY(top + ((el.offsetHeight - innerHeight) * (i + 0.5)) / n, { duration: 1.1, immediate: !!calm });
+  };
 
   // the card opens into its page: the sheet grows out of the card's own rectangle, then its words fade in
   const show = (i) => {
@@ -148,6 +171,8 @@ export default function FnUses({ children }) {
     const j = (openRef.current + k + n) % n;
     openRef.current = j;
     setOpen(j);
+    setAt(j);
+    go(j);
   };
 
   const O = open >= 0 ? OBJS[open] : null;
@@ -161,13 +186,24 @@ export default function FnUses({ children }) {
                 <KeynoteLines id="fn-uses-h" className="kn-headline" lines="Common Use Cases" />
                 <p className="kn-lede">Hanzo Functions powers a wide range of serverless applications</p>
               </div>
+              <ol className="fn-uc-list">
+                {USES.map(([t], i) => (
+                  <li key={t}>
+                    <button type="button" data-sound="tick" aria-current={shown === i ? 'step' : undefined} onClick={() => go(i)}
+                      onPointerEnter={(e) => e.pointerType === 'mouse' && setPeek(i)} onPointerLeave={() => setPeek(null)}>
+                      <span className="fn-uc-ln">{pad(i + 1)}</span><span className="fn-uc-lt">{t}</span>
+                    </button>
+                  </li>
+                ))}
+              </ol>
             </div>
-            <div className="fn-uc-r" data-enter="tile-flip">
+            <div className="fn-uc-r">
               {USES.map(([t, d, pts], i) => {
                 const Obj = OBJS[i];
                 return (
                   <article key={t} ref={(el) => { cards.current[i] = el; }} className="fn-uc-card"
-                    data-on="">
+                    data-on={shown === i ? '' : undefined} data-pos={i < shown ? 'past' : i > shown ? 'next' : 'now'}
+                    inert={mounted && shown !== i ? true : undefined}>
                     <div className="fn-uc-obj"><Obj /></div>
                     <div className="fn-uc-t">
                       <span className="fn-uc-n kn-fig" aria-hidden="true">{pad(i + 1)}</span>
