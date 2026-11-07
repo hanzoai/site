@@ -47,6 +47,10 @@ Invented strings inside shared components (not this group's files):
 - `components/v2/x-hypatia/PinChapters.jsx`: builds the screen-reader label "<heading>: go to" for its dots; ": go to" is not a
   registered UI string.
 
+- `components/v2/BizOpen` (opened-card dialog): its accessible name comes from a label the caller passes ("Open iOS" on /gui),
+  which is not a registered UI string. /gui stopped passing it, so the dialog now has no name. Asked for: name the dialog with
+  `aria-labelledby` pointing at the card's own heading, or register "Open" in `content/ui-strings.json`.
+
 ## 2. Header ask (shared chrome)
 Critics of /functions, /gui, /guard, /gateway and /flow asked for one solid fill on the phone's first screen: the header's
 "Try Hanzo" stays solid beside each page's own hero ask. Same ask as `docs/review/_shared.md` section 1: let a page name its
