@@ -1,9 +1,10 @@
 /* ---------- visor v2 (vs2-) ---------- */
 
 /* Stage object: the fleet console */
-.vs2-fleet { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; padding: 10px; background: #f5f5f5; }
+.vs2-fleet { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; padding: 10px; background: #f5f5f5; }
 .vs2-req, .vs2-cat, .vs2-dry { grid-column: 1 / -1; }
-.vs2-req { padding: 22px 24px; border-radius: 20px; background: #0a0a0a; color: #f5f5f5; }
+.vs2-pause.l2-pause { top: 20px; right: 20px; }
+.vs2-req { padding: 22px 64px 22px 24px; border-radius: 20px; background: #0a0a0a; color: #f5f5f5; }
 .vs2-k { margin: 0 0 12px; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
 .vs2-req .vs2-k { color: #a3a3a3; }
 .vs2-cmd { margin: 0; font-size: 26px; font-weight: 500; letter-spacing: -.02em; }
@@ -16,10 +17,15 @@
 .vs2-prov span { font-size: 14px; color: var(--soft); }
 .vs2-prov em { font-size: 12px; font-style: normal; color: var(--ac); }
 .vs2-dry { height: 38px; display: flex; align-items: center; padding: 0 16px; font-size: 13px; color: var(--faint); }
-.vs2-dry span { opacity: 0; transform: translateY(6px); transition: opacity .35s, transform .5s var(--ease); }
+.vs2-dry span { opacity: .3; transform: translateY(4px); transition: opacity .35s, transform .5s var(--ease); }
 .vs2-dry span.on { opacity: 1; transform: none; color: var(--ac); }
 .vs2-inv { grid-column: 1 / -1; padding: 20px; border-radius: 20px; background: #fff; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 0 16px; }
 .vs2-inv .vs2-k { grid-column: 1 / -1; }
+.vs2-fleet .vs2-inv ul { min-height: 190px; gap: 5px; } /* five rows reserved: adding machines never moves the console */
+.vs2-inv ul li { height: 34px; }
+.vs2-req { padding-top: 18px; padding-bottom: 18px; }
+.vs2-inv { padding: 16px 20px; }
+.vs2-prov { padding: 14px 16px; }
 .vs2-inv ul, .vs2-inv2 ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
 .vs2-inv li, .vs2-inv2 li { display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 14px; border-radius: 12px; background: #f5f5f5; }
 .vs2-inv li i, .vs2-inv2 li i { width: 10px; height: 10px; border-radius: 3px; }
@@ -33,13 +39,14 @@ i.k { background: #d4d4d4; }
 .vs2-con p { display: flex; gap: 2px; margin: 0; padding: 8px 8px 0; font-size: 12px; }
 .vs2-con p span { padding: 6px 10px; border-radius: 8px 8px 0 0; background: #171717; color: #a3a3a3; }
 .vs2-con p span:first-child { color: #a3a3a3; }
+.vs2-con.on p span:first-child { background: #262626; color: #fafafa; }
 .vs2-con code { display: block; height: 96px; padding: 12px; background: #171717; font-size: 14px; }
 .vs2-audit { grid-column: 2; margin: 8px 0 0; font-size: 12px; color: var(--faint); opacity: 0; transition: opacity .4s; }
 .vs2-audit.on { opacity: 1; }
 
 /* signature: tiles that open into their card (the one dark room) */
 .vs2-tiles-h { max-width: 22ch; }
-.vs2-grid { list-style: none; margin: clamp(40px, 5vw, 64px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.vs2-grid { list-style: none; margin: clamp(40px, 5vw, 64px) 0 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
 .vs2-grid li:nth-child(1), .vs2-grid li:nth-child(6) { grid-column: span 2; }
 .vs2-tile { position: relative; width: 100%; height: clamp(260px, 26vw, 320px); display: flex; flex-direction: column; align-items: flex-start; padding: 24px; border: 0; border-radius: 24px; background: #171717; color: #fafafa; text-align: left; cursor: pointer; overflow: hidden; transition: background .3s var(--ease), transform 90ms var(--ease); }
 @media (hover: hover) { .vs2-tile:hover { background: #262626; } .vs2-tile:hover .vs2-plus { background: #fafafa; color: #000; } }
@@ -60,27 +67,54 @@ html:not(.js) .vs2-ns { display: grid; gap: 12px; margin-top: 32px; }
 .vs2-p0 span { display: grid; grid-template-columns: 110px repeat(3, 1fr); align-items: center; gap: 6px; }
 .vs2-p0 b { font-size: 16px; font-weight: 606; }
 .vs2-p0 i { height: 12px; border-radius: 6px; background: rgba(255, 255, 255, .12); }
-.vs2-p0 i.g { background: var(--ac); }
+.vs2-p0 i.g { background: #fafafa; }
 .vs2-p1 { display: flex; flex-wrap: wrap; gap: 8px; }
 .vs2-p1 span { padding: 10px 14px; border-radius: 12px; font-size: 16px; }
 .vs2-p1 .vol { background: rgba(255, 255, 255, .1); }
 .vs2-p1 .img { background: rgba(255, 255, 255, .06); border: 1px dashed rgba(255, 255, 255, .3); }
-.vs2-p1 .vm { background: var(--ac); color: #fff; }
+.vs2-p1 .vm { background: #fafafa; color: #0a0a0a; }
 .vs2-p2 { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%; }
 .vs2-p2 span { grid-column: span 3; padding: 10px 14px; border-radius: 12px; font-size: 16px; }
 .vs2-p2 .k8s { background: rgba(255, 255, 255, .12); }
 .vs2-p2 .pool { background: #f5f5f5; color: #000; }
-.vs2-p2 i { height: 36px; border-radius: 10px; background: var(--ac); opacity: .85; }
+.vs2-p2 i { height: 36px; border-radius: 10px; background: #d4d4d4; }
 .vs2-p3 p { margin: 0; font-size: 14px; color: #a3a3a3; }
-.vs2-p3 b { display: block; margin: 6px 0; font-size: 64px; font-weight: 220; color: #a3a3a3; }
+.vs2-mask { display: block; overflow: hidden; margin: 6px 0; }
+.vs2-p3 b { display: block; margin: 0; font-size: 64px; font-weight: 220; color: #a3a3a3; }
 .vs2-p4 p { display: flex; gap: 4px; margin: 0 0 10px; }
 .vs2-p4 span { padding: 8px 12px; border-radius: 10px; font-size: 14px; background: rgba(255, 255, 255, .08); color: #a3a3a3; }
-.vs2-p4 span.on { background: var(--ac); color: #fff; }
+.vs2-p4 span.on { background: #fafafa; color: #0a0a0a; }
 .vs2-p4 code { display: block; height: 80px; padding: 12px; border-radius: 12px; background: rgba(255, 255, 255, .06); font-size: 14px; color: #f5f5f5; }
 .vs2-p5 { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; width: 100%; }
 .vs2-p5 li { display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 12px; border-radius: 10px; background: rgba(255, 255, 255, .07); font-size: 14px; }
-.vs2-p5 li i { width: 8px; height: 8px; border-radius: 50%; background: var(--ac); }
+.vs2-p5 li i { width: 8px; height: 8px; border-radius: 50%; background: #fafafa; }
 .vs2-p5 li span { margin-left: auto; color: #a3a3a3; }
+
+/* each tile's picture plays once as the tile arrives (li[data-on]); JS off and before arrival nothing is hidden,
+   reduced motion lands on the final frame through the global rule. The console caret keeps blinking (one idle mover). */
+@keyframes vs2-bar { from { transform: scaleX(0); } to { transform: none; } }
+@keyframes vs2-pop { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes vs2-cut { from { transform: translateY(105%); } to { transform: none; } }
+@keyframes vs2-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+.vs2-p0 i { transform-origin: 0 50%; }
+li[data-on] .vs2-p0 i { animation: vs2-bar .7s var(--ease) var(--d, 0ms) both; }
+li[data-on] .vs2-p1 .vm, li[data-on] .vs2-p2 i, li[data-on] .vs2-p4 span, li[data-on] .vs2-p5 li { animation: vs2-pop .5s cubic-bezier(.16, 1, .3, 1) calc(var(--d, 0ms) + 200ms) both; }
+li[data-on] .vs2-p3 b { animation: vs2-cut .7s cubic-bezier(.16, 1, .3, 1) .25s both; }
+@media (prefers-reduced-motion: no-preference) {
+  html.js .vs2-grid li:not([data-on]) .vs2-p0 i { transform: scaleX(0); }
+  html.js .vs2-grid li:not([data-on]) :is(.vs2-p1 .vm, .vs2-p2 i, .vs2-p4 span, .vs2-p5 li) { opacity: 0; }
+  html.js .vs2-grid li:not([data-on]) .vs2-p3 b { transform: translateY(105%); }
+}
+/* hover tells you what the tile does: its picture plays again (same frames, a second keyframe name restarts it) */
+@keyframes vs2-bar2 { from { transform: scaleX(0); } to { transform: none; } }
+@keyframes vs2-pop2 { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes vs2-cut2 { from { transform: translateY(105%); } to { transform: none; } }
+@media (hover: hover) {
+  li[data-on] .vs2-tile:hover .vs2-p0 i { animation-name: vs2-bar2; }
+  li[data-on] .vs2-tile:hover :is(.vs2-p1 .vm, .vs2-p2 i, .vs2-p4 span, .vs2-p5 li) { animation-name: vs2-pop2; animation-delay: var(--d, 0ms); }
+  li[data-on] .vs2-tile:hover .vs2-p3 b { animation-name: vs2-cut2; animation-delay: 0s; }
+}
+.vs2-caret { font-style: normal; animation: vs2-blink 1.1s steps(1) infinite; }
 
 /* beyond: name a fleet */
 .vs2-name-l { grid-column: 1 / span 5; }
@@ -94,12 +128,12 @@ html:not(.js) .vs2-ns { display: grid; gap: 12px; margin-top: 32px; }
 .vs2-count button { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--hair); background: #fff; color: var(--ink); cursor: pointer; transition: transform 90ms var(--ease), border-color .2s, background .2s; }
 .vs2-count button:active { transform: scale(.97); }
 .vs2-count button:focus-visible, .vs2-dryt button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-@media (hover: hover) { .vs2-count button:hover { border-color: var(--ink); background: #f5f5f5; } .vs2-dryt button:hover { color: var(--ink); } }
+@media (hover: hover) { .vs2-count button:hover { border-color: var(--ink); background: #f5f5f5; } .vs2-dryt button:hover { color: var(--ink); background: rgba(255, 255, 255, .55); } }
 .vs2-count b { min-width: 2ch; text-align: center; font-size: 44px; }
 .vs2-dryt { display: flex; gap: 4px; padding: 4px; border-radius: 14px; background: #ededed; align-self: flex-start; }
-.vs2-dryt button { min-height: 44px; padding: 0 20px; border: 0; border-radius: 11px; background: none; font: 606 14px/1 var(--mono); color: var(--soft); cursor: pointer; transition: color .2s, transform 90ms var(--ease); }
+.vs2-dryt button { min-height: 44px; padding: 0 20px; border: 0; border-radius: 11px; background: transparent; font: 606 14px/1 var(--mono); color: var(--soft); cursor: pointer; transition: color .2s, background-color .2s, transform 90ms var(--ease); }
 .vs2-dryt button:active { transform: scale(.97); }
-.vs2-dryt button[aria-pressed='true'] { background: #fff; color: var(--ac); box-shadow: 0 1px 2px rgba(0, 0, 0, .1); }
+.vs2-dryt button[aria-pressed='true'] { background: #fff; color: var(--ac); }
 .vs2-name-r { grid-column: 7 / span 6; align-self: center; }
 .vs2-inv2 { padding: 26px; border-radius: 24px; background: #f5f5f5; }
 .vs2-inv2 .vs2-k b { color: var(--ac); }
@@ -112,7 +146,11 @@ html:not(.js) .vs2-ns { display: grid; gap: 12px; margin-top: 32px; }
 @media (max-width: 900px) {
   .vs2-fleet { grid-template-columns: minmax(0, 1fr); }
   .vs2-cat { grid-template-columns: minmax(0, 1fr); }
-  .vs2-prov:nth-child(n + 2) { display: none; }
+  .vs2-cat { gap: 6px; }
+  .vs2-prov { flex-direction: row; align-items: center; justify-content: space-between; min-height: 48px; padding: 10px 16px; border-radius: 14px; }
+  .vs2-prov span { display: none; }
+  .vs2-pause.l2-pause { top: 16px; right: 16px; }
+  .vs2-req { padding: 20px 64px 20px 20px; }
   .vs2-inv { grid-template-columns: minmax(0, 1fr); gap: 12px; }
   .vs2-audit { grid-column: 1; }
   .vs2-grid { grid-template-columns: minmax(0, 1fr); }
@@ -121,5 +159,6 @@ html:not(.js) .vs2-ns { display: grid; gap: 12px; margin-top: 32px; }
   .vs2-sheet .vs2-cp { min-height: 180px; padding: 18px; }
   .vs2-name-l, .vs2-name-r { grid-column: auto; }
   .vs2-name-r { margin-top: 48px; }
-  .vs2-k, .vs2-prov em, .vs2-dry, .vs2-inv li span, .vs2-inv2 li span, .vs2-con p, .vs2-audit, .vs2-n, .vs2-p4 span, .vs2-p5 li, .vs2-p3 p { font-size: 14px; }
+  .vs2-k, .vs2-prov em, .vs2-dry, .vs2-inv li span, .vs2-inv2 li span, .vs2-con p, .vs2-audit, .vs2-n, .vs2-p4 span, .vs2-p5 li, .vs2-p3 p, .vs2-form label span, .vs2-count > span { font-size: 14px; }
 }
+@media (max-width: 900px) { .vs2-cmd { font-size: 21px; line-height: 1.3; } }

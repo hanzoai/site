@@ -8,10 +8,13 @@
    Beyond: "Take it to your DAW". Download MIDI writes the roll as you left it, your notes included, into a Standard
    MIDI File at the same 96 BPM, one channel per stem, so the sketch opens in any music app. Nothing leaves the page. */
 import { useEffect, useRef, useState } from 'react';
-import { Film } from '../../kit';
+import { useReducedMotion } from 'motion/react';
+import { Film, Img, Cta, More, A } from '../../kit';
+import { Magnetic } from '../../ui';
+import ModelFilm from '../../v2/ModelFilm';
 import { Studio } from './Studio';
 import Creative, { Scene } from './Creative';
-import { lerp, film, focus } from '../../v2/Launch';
+import { lerp, film, focus, Lines } from '../../v2/Launch';
 import { useLoop, fit, audio, tone, burst, hush, arrows } from './live';
 import { midi } from './Uta.midi.mjs';
 import './Uta.css';
@@ -42,6 +45,8 @@ function Roll() {
   const [solo, setSolo] = useState(-1);
   const [sound, setSound] = useState(false);
   const [play, setPlay] = useState(true);
+  const calm = useReducedMotion();
+  useEffect(() => { if (calm) setPlay(false); }, [calm]); // reduced motion: the roll rests, and says so
   const live = useRef({});
   live.current = { pre, solo, sound };
   useEffect(() => hush, []);
@@ -112,7 +117,7 @@ function Roll() {
       </div>
       <div className="ut-status">
         <b className="mb-tnum">96 BPM</b><b>D MINOR</b>
-        <span className="mb-mono mb-live">STREAMING ACTIVE</span>
+        <span className="mb-mono mb-live ut-live" data-off={play ? undefined : ''} aria-hidden={play ? undefined : 'true'}>STREAMING ACTIVE</span>
         <span className="ut-tc mb-tnum"><span>01:</span><span ref={sec}>30</span>.<span ref={cs}>10</span> <span className="ut-of">/ 03:45.00</span></span>
         <button type="button" className="mb-chip" aria-pressed={play} onClick={() => setPlay(!play)}>{play ? 'Pause' : 'Play'}</button>
         <button type="button" className="mb-chip" onClick={save}>Download MIDI</button>
@@ -166,9 +171,64 @@ const STEMS = (t, W, H, wide) => {
   return `polygon(${pts.map(([x, y]) => `${x.toFixed(1)}px ${y.toFixed(1)}px`).join(',')})`;
 };
 
+// each capability chapter gets its own picture of Uta's film: the whole fan (01), the film under a moving playhead
+// with its cuts (02, cue scoring), the film split into four stems (03, stem separation), the film over a D-minor
+// keyboard lighting the roll's scale (04, theory controls). No words of ours; all aria-hidden pictures.
+const KEYS = [38, 45, 50, 53, 57, 62, 64, 65, 67, 69, 70, 72, 74];
+function capArt(i, on, base) {
+  return (
+    <div className={'cr-art ut-art ut-art-' + i} style={base} data-on={on ? '' : undefined} aria-hidden="true">
+      <Img src={film('uta', 'webp')} w={1200} h={1500} />
+      <ModelFilm slug="uta" play={on} />
+      {i === 1 && <span className="ut-cue-l"><i /><i /><i /><b /></span>}
+      {i === 3 && <span className="ut-keys">{KEYS.map((m, k) => <i key={m} style={{ '--k': k }} />)}</span>}
+    </div>
+  );
+}
+
+// the closing band, page-local: the kit Band's words, its headline cut in by line mask (the kit Band's word reveal
+// blurs, which MASTER part 9 bans); final with JS off. Its two links are 44px and alike.
+function Close() {
+  return (
+    <section className="x-band ut-band" data-room="dark" aria-label="Uta">
+      <div className="x-wrap">
+        <Lines reveal lines={['Try Uta on your own work']} />
+        <p>Samples of Uta&apos;s own output publish only after blind review, so the pictures here are illustrations. A studio can apply now to test it in its own pipeline.</p>
+        <div className="x-band-act">
+          <Magnetic><Cta to="/research-access?models=uta" id="uta.band" thumb>Request access</Cta></Magnetic>
+          <p className="cr-band-note ut-band-note"><More to="/models">Every model</More><A to="/beta/research">Research preview</A></p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// phone: the stage holds the film full-bleed with the name, lede and ask until the visitor scrolls (or 6 s pass),
+// then settles into the stems, eased; desktop is untouched (its settle follows the scroll already)
+function useHold() {
+  useEffect(() => {
+    const el = document.documentElement;
+    if (innerWidth > 900 || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const pin = document.querySelector('.lv-stage[data-hero="uta"] .lv-pin');
+    if (!pin) return;
+    const { width: W, height: H } = pin.getBoundingClientRect();
+    el.style.setProperty('--ut-hold', STEMS(0, W, H, false));
+    el.dataset.utHold = '';
+    const go = () => { delete el.dataset.utHold; removeEventListener('scroll', on); clearTimeout(t); };
+    const on = () => { if (scrollY > 8) go(); };
+    const t = setTimeout(go, 6000);
+    addEventListener('scroll', on, { passive: true });
+    return () => { go(); el.style.removeProperty('--ut-hold'); };
+  }, []);
+}
+
 export default function Uta() {
+  useHold();
   return (
     <Creative
+      capArt={capArt}
+      map={false}
+      band={<Close />}
       slug="uta"
       shape={STEMS}
       pos="50% 88%"

@@ -1,6 +1,6 @@
 'use client';
 /* Persona: developers building marketplaces, wallets and payouts inside their product. Goal: post a first transaction. CTA: "Read the docs" → docs.hanzo.ai/docs/cli/treasury. Metric: api_key_created (docs handoff).
-   Treasury. V2: 7/10 the dark-room split writes itself from a finished, balanced state; five pinned chapters each drawing its part of the ledger, the fourth a wallet whose 10,000 travels from buyer to hold to seller; greys only
+   Treasury. V2: 6/10 the dark-room split writes itself from a finished, balanced state; five pinned chapters whose rows are read in turn, the fourth a wallet whose 10,000 travels from buyer to hold to seller; the close carries the finished split; greys only
    Signature: the split that writes itself, in a dark room. Hanzo's split.num is written line by line and, as each
    destination is named, its stream of money pours out of @users:001 into its account: 90%, 5%, and the remaining,
    which Numscript works out. When the three meet the amount, the split is marked balanced, then it runs again.
@@ -12,7 +12,7 @@
    editor bar and under the chapter visual. One dark room: the hero. Scale rhythm via Rhythm.css. Every word and link is Hanzo's; the only figures are
    the split's own. */
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { EASE, Magnetic } from '../../ui';
 import { A } from '../../kit';
 import { useLive, useEvery } from '../cloud/Frame';
@@ -46,11 +46,11 @@ const N = CODE.length;
 const fmt = (v) => v.toLocaleString('en-US');
 
 /* Three streams out of one source, widths in proportion to the split (with a floor so 5% still reads). */
-function Streams({ shown, done }) {
+function Streams({ shown, done, still }) {
   const y = [70, 200, 300];
   const w = [104, 16, 16];
   return (
-    <div className="ts-flow" aria-hidden="true">
+    <div className={'ts-flow' + (still ? ' still' : '')} aria-hidden="true">
       <div className="ts-src"><span className="x-mono">@users:001</span><b className="x-mono">10,000</b></div>
       <svg viewBox="0 0 400 360" preserveAspectRatio="none">
         {DEST.map((_, i) => {
@@ -67,7 +67,8 @@ function Streams({ shown, done }) {
           </li>
         ))}
       </ul>
-      <AnimatePresence>{done && <motion.p className="ts-ok x-mono" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.4, ease: EASE }}>9,000 + 500 + 500 = 10,000 · balanced</motion.p>}</AnimatePresence>
+      {/* always in the layout, so the balanced line never pushes anything as the split re-writes */}
+      <motion.p className="ts-ok x-mono" initial={false} animate={{ opacity: done ? 1 : 0, y: done ? 0 : 8 }} transition={{ duration: 0.4, ease: EASE }}>9,000 + 500 + 500 = 10,000 · balanced</motion.p>
     </div>
   );
 }
@@ -97,7 +98,7 @@ function Hero() {
           </motion.div>
         </div>
         <div ref={ref}>
-          <Settle from={1.03} lift={12}>
+          <Settle from={1.015} lift={12}>
             <div className="ts-stage">
               <div className="ts-ed">
                 <div className="ts-ed-bar"><i /><i /><i /><span className="x-mono">split.num</span><b className="ts-name x-mono">Treasury Operations</b><span className="ts-pause">{pauseBtn}</span></div>
@@ -107,7 +108,7 @@ function Hero() {
                   ))}
                 </code></pre>
               </div>
-              <Streams shown={shown} done={k >= N} />
+              <Streams shown={shown} done={k >= N} still={paused || !live} />
             </div>
           </Settle>
         </div>
@@ -124,33 +125,42 @@ const PARTS = [
   ['Flows and webhooks', 'Longer sequences — capture, split, pay out, retry — run as orchestrated flows, and every change of financial state is delivered as an event you can subscribe to.'],
 ];
 
-/* Chapter visuals: the same ledger, drawn for each part. Only the split's own figures appear. */
-function Postings() {
+/* Chapter visuals: the same ledger, drawn for each part. Only the split's own figures appear. While a chapter is in
+   view its rows are read in turn, one lit at a time, so the card is never a still table. */
+function useRow(on, n, ms = 1300) {
+  const [r, setR] = useState(0);
+  useEvery(ms, on, () => setR((v) => (v + 1) % n));
+  return r;
+}
+function Postings({ on }) {
+  const r = useRow(on, 3);
   return (
     <div className="ts-v" aria-hidden="true">
       <p className="ts-v-k x-mono"><span>transaction</span><span>USD/2</span></p>
       <div className="ts-v-row h x-mono"><span>source</span><span>destination</span><span>amount</span></div>
-      {DEST.map(([a, , v]) => <div key={a} className="ts-v-row x-mono"><span>@users:001</span><span>{a}</span><b>{fmt(v)}</b></div>)}
+      {DEST.map(([a, , v], i) => <div key={a} className={'ts-v-row x-mono' + (r === i ? ' hot' : '')}><span>@users:001</span><span>{a}</span><b>{fmt(v)}</b></div>)}
       <div className="ts-v-sum x-mono"><span>balanced</span><b>10,000 = 10,000</b></div>
     </div>
   );
 }
-function Recon() {
+function Recon({ on }) {
+  const r = useRow(on, 3);
   return (
     <div className="ts-v" aria-hidden="true">
       <p className="ts-v-k x-mono"><span>ledger</span><span>provider</span></p>
       {['@merchants:042', '@fees:processing', '@platform:revenue'].map((a, i) => (
-        <div key={a} className={'ts-v-row two x-mono' + (i === 1 ? ' brk' : '')}><span>{a}</span><span>{i === 1 ? 'disagrees' : 'agrees'}</span><i>{i === 1 ? '!' : '✓'}</i></div>
+        <div key={a} className={'ts-v-row two x-mono' + (i === 1 ? ' brk' : '') + (r === i ? ' hot' : '')}><span>{a}</span><span>{i === 1 ? 'disagrees' : 'agrees'}</span><i>{i === 1 ? '!' : '✓'}</i></div>
       ))}
       <div className="ts-v-sum x-mono"><span>output</span><b>the breaks</b></div>
     </div>
   );
 }
-function Balances() {
+function Balances({ on }) {
+  const r = useRow(on, 3);
   return (
     <div className="ts-v" aria-hidden="true">
       <p className="ts-v-k x-mono"><span>accounts</span><span>per currency</span></p>
-      {DEST.map(([a, , v]) => <div key={a} className="ts-v-row x-mono"><span>{a}</span><span>USD/2</span><b>{fmt(v)}</b></div>)}
+      {DEST.map(([a, , v], i) => <div key={a} className={'ts-v-row x-mono' + (r === i ? ' hot' : '')}><span>{a}</span><span>USD/2</span><b>{fmt(v)}</b></div>)}
       <div className="ts-v-sum x-mono"><span>settles against</span><b>per deployment</b></div>
     </div>
   );
@@ -207,7 +217,7 @@ function Flow({ on }) {
 function Parts() {
   const [ref, live] = useLive(0.05);
   const [paused, pauseBtn] = usePause({ right: 0, bottom: 0, top: 'auto' });
-  const lead = { rail: false, node: <p className="gx-say ts-say-p">A ledger, a language for writing transactions, and the machinery around them.</p> };
+  const lead = { rail: false, node: <LineMask as="p" className="gx-say ts-say-p" lines={['A ledger, a language for writing', 'transactions, and the machinery', 'around them.']} /> };
   return (
     <div ref={ref}>
       <PinChapters id="ts-parts" label="What it is made of" className="ts-pin"
@@ -230,11 +240,40 @@ function Parts() {
   );
 }
 
+/* The close carries the hero's split, small and finished: one bar drawn in its three parts as it arrives. Hover or focus
+   a row and its part of the bar lights up. Only the split's own figures. */
+function Split() {
+  const [hot, setHot] = useState(-1);
+  const x = [0, 360, 380];
+  const w = [360, 20, 20];
+  return (
+    <figure className="ts-split" aria-label="split.num">
+      <svg viewBox="0 0 400 12" preserveAspectRatio="none" aria-hidden="true">
+        {DEST.map((_, i) => (
+          <motion.path key={i} d={`M${x[i] + (i ? 1 : 0)} 6 H${x[i] + w[i] - 1}`} strokeWidth="12" className={hot === -1 || hot === i ? 'on' : ''}
+            initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true, amount: 0.6 }} transition={{ duration: 0.9, ease: EASE, delay: 0.2 + i * 0.3 }} />
+        ))}
+      </svg>
+      <ul>
+        {DEST.map(([a, p, v], i) => (
+          <li key={a} tabIndex={0} className={hot === i ? 'hot' : ''} onPointerEnter={() => setHot(i)} onPointerLeave={() => setHot(-1)} onFocus={() => setHot(i)} onBlur={() => setHot(-1)}>
+            <span className="x-mono">{a}</span><em className="x-mono">{p}</em><b className="x-mono">{fmt(v)}</b>
+          </li>
+        ))}
+      </ul>
+      <figcaption className="x-mono"><span>@users:001</span><b>9,000 + 500 + 500 = 10,000 · balanced</b></figcaption>
+    </figure>
+  );
+}
+
 function First() {
   return (
     <section className="w2-sec ts-first">
       <div className="w2-wrap">
-        <h2 className="w2-display m ts-first-h">Post your first transaction</h2>
+        <div className="ts-first-top">
+          <h2 className="w2-display m ts-first-h">Post your first transaction</h2>
+          <Split />
+        </div>
         <div className="ts-first-row">
           <div className="ts-first-acts"><A to={DOCS} className="w2-cta" data-thumb="Read the docs" data-cta="treasury.close">Read the docs <i aria-hidden="true">→</i></A><A to={GH} className="w2-ghost">View on GitHub</A></div>
           <div className="ts-get">
