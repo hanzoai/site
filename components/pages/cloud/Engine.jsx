@@ -14,11 +14,11 @@
    and the one line to run is written for you to copy, with Hanzo's sentence on what it does.
    Every word, figure and link is Hanzo's; the scenes are drawn, not measured, and show no numbers. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
-import { EASE, Copy } from '../../ui';
+import { motion, AnimatePresence } from 'motion/react';
+import { EASE, Copy, useCalm } from '../../ui';
 import { Field } from '../../kit';
 import { useLive, useSteps, useFrame } from './Frame';
-import KeynoteStage, { useStagePause } from '../../v2/KeynoteStage';
+import KeynoteStage, { useStagePause } from './SafeStage';
 import KeynoteChapters from '../../v2/KeynoteChapters';
 import KeynoteClose from '../../v2/KeynoteClose';
 import KeynoteLines from '../../v2/KeynoteLines';
@@ -29,7 +29,7 @@ const VERBS = ['run', 'serve', 'bench'];
 /* which of n steps a chapter is on: from the scroll through it on desktop (p), or by itself while seen on phones */
 function useStepOf(p, n, on) {
   const [k, setK] = useState(0);
-  const calm = useReducedMotion();
+  const calm = useCalm();
   useEffect(() => {
     if (p) { const f = (v) => setK(Math.min(n - 1, Math.max(0, Math.floor(v * n)))); f(p.get()); return p.on('change', f); }
     if (!on || calm) return;

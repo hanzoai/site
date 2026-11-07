@@ -1,0 +1,3 @@
+# /api: requests to the shared system
+
+- **Phone header label (Chrome/Nav, SYSTEM §5).** /api marks its ask with `<Cta thumb>`; on desktop the header now reads "Get an API key, free" once the hero ask leaves (verified 7 Nov). On phones (700px and under) the header keeps "Try Hanzo" by system rule, which the 7 Nov review still flags. Request: let the phone header button carry the page's `data-thumb` words when they fit (e.g. up to ~20 characters, or an opt-in `data-ask-short` label), so the one solid in the header is the page's own ask at every width. Page-local workaround: none needed; the slim quiet bar already carries the ask on phones.

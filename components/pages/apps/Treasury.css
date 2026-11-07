@@ -3,7 +3,7 @@
 .ts-stage, .ts-vis { position: relative; }
 
 /* hero */
-.ts-hero { padding: clamp(88px, 7vw, 104px) 0 clamp(72px, 8vw, 116px); overflow: hidden; }
+.ts-hero { padding: clamp(44px, 3.4vw, 52px) 0 clamp(72px, 8vw, 116px); overflow: hidden; }
 .ts-top { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 5fr); gap: 24px clamp(32px, 5vw, 72px); align-items: end; margin-bottom: clamp(24px, 2.4vw, 32px); }
 .ts-h1 { white-space: nowrap; }
 .ts-top-r { display: flex; flex-direction: column; gap: 24px; padding-bottom: 6px; }
@@ -19,7 +19,7 @@
 .ts-name { margin-left: auto; font-size: 12px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: #a3a3a3; }
 .ts-pause { display: grid; place-items: center; width: 44px; height: 44px; margin-left: 4px; }
 .ts-pause .w2-pause { background: #171717; color: #fafafa; box-shadow: none; }
-.ts-ed pre { margin: 0; padding: 22px 24px 26px; font-size: 14px; line-height: 1.75; white-space: pre-wrap; }
+.ts-ed pre { margin: 0; padding: 18px 24px 20px; font-size: 14px; line-height: 1.65; white-space: pre-wrap; }
 .ts-l { display: inline; color: #e5e5e5; opacity: .14; transition: opacity .3s cubic-bezier(.4, 0, .2, 1); }
 .ts-l.in { opacity: 1; }
 .ts-l.c { color: #a3a3a3; }
@@ -29,6 +29,10 @@
 .ts-flow { position: relative; min-height: 380px; border-radius: 24px; background: #0a0a0a; border: 1px solid rgba(255, 255, 255, .06); padding: 24px; overflow: hidden; }
 .ts-src { position: absolute; left: 24px; top: 50%; translate: 0 -50%; z-index: 2; display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; border-radius: 16px; background: #f5f5f5; color: #0a0a0a; }
 .ts-src span { font-size: 13px; color: #525252; }
+/* idle: the source keeps sending, a ring leaves @users:001 every 2.4 s (transform and opacity only) */
+.ts-src::after { content: ''; position: absolute; inset: 0; border-radius: inherit; border: 1px solid rgba(255, 255, 255, .55); pointer-events: none; animation: ts-emit 2.4s cubic-bezier(0, 0, .2, 1) infinite; }
+.ts-flow.still .ts-src::after { animation-play-state: paused; opacity: 0; }
+@keyframes ts-emit { from { transform: scale(1); opacity: .9; } to { transform: scale(1.22, 1.5); opacity: 0; } }
 .ts-src b { font-size: 21px; font-weight: 500; letter-spacing: -.02em; }
 .ts-flow svg { position: absolute; left: 140px; top: 10px; width: calc(100% - 340px); height: calc(100% - 20px); overflow: visible; }
 .ts-flow path { fill: none; stroke-linecap: butt; }
@@ -49,6 +53,11 @@
 .ts-v { width: 100%; padding: clamp(24px, 3vw, 40px); border-radius: 24px; background: #fff; box-shadow: 0 24px 60px -16px rgba(0, 0, 0, .18); }
 .ts-v-k { display: flex; justify-content: space-between; margin: 0 0 20px; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #737373; }
 .ts-v-row, .ts-v-row.two { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr) 8ch; align-items: center; gap: 12px; padding: 16px 0; border-top: 1px solid rgba(0, 0, 0, .1); font-size: 16px; }
+.ts-v-row:not(.h) { margin: 0 -12px; padding-left: 12px; padding-right: 12px; transition: background .4s cubic-bezier(.4, 0, .2, 1); }
+.ts-v-row.hot { position: relative; background: #f5f5f5; }
+/* the row being read: a hairline draws under it for as long as it is read (1.3 s), then the next row takes it */
+.ts-v-row.hot::after { content: ''; position: absolute; left: 12px; right: 12px; bottom: -1px; height: 1px; background: #0a0a0a; transform-origin: 0 50%; animation: ts-read 1.3s linear both; }
+@keyframes ts-read { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 .ts-v-row.h { color: #737373; font-size: 13px; padding: 10px 0; }
 .ts-v-row > :last-child { justify-self: end; }
 .ts-v-row b { font-weight: 400; font-size: 21px; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
@@ -57,6 +66,13 @@
 .ts-v-row.brk i { background: #0a0a0a; color: #fff; }
 .ts-v-sum { display: flex; justify-content: space-between; align-items: baseline; margin-top: 4px; padding: 18px 20px; border-radius: 16px; background: #f2f2f2; font-size: 14px; color: #525252; }
 .ts-v-sum b { font-weight: 500; font-size: 17px; color: #0a0a0a; }
+/* postings are arrows between accounts: the arrow of the row being read draws out toward its destination */
+.ts-v-row.post > span:nth-child(2) { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.ts-arr { position: relative; flex: none; width: 28px; height: 1px; background: #a3a3a3; transform-origin: 0 50%; transition: transform .5s cubic-bezier(.16, 1, .3, 1), background .3s; }
+.ts-arr::after { content: ''; position: absolute; right: 0; top: -3px; width: 7px; height: 7px; border-top: 1px solid currentColor; border-right: 1px solid currentColor; color: inherit; transform: rotate(45deg); }
+.ts-v-row.post .ts-arr { color: #a3a3a3; }
+.ts-v-row.post.hot .ts-arr { background: #0a0a0a; color: #0a0a0a; animation: ts-draw .7s cubic-bezier(.16, 1, .3, 1) both; }
+@keyframes ts-draw { from { transform: scaleX(.2); } to { transform: scaleX(1); } }
 .ts-v-flow { list-style: none; margin: 0; padding: 0 0 0 18px; border-left: 2px solid rgba(0, 0, 0, .1); display: grid; gap: 4px; }
 .ts-v-flow li { position: relative; display: flex; align-items: center; gap: 14px; min-height: 60px; font-size: 21px; color: #737373; transition: color .3s; }
 .ts-v-flow li i { position: absolute; left: -26px; width: 14px; height: 14px; border-radius: 50%; background: #fff; border: 2px solid #d4d4d4; transition: background .3s, border-color .3s; }
@@ -67,7 +83,7 @@
 /* chapter 04: the wallet, the money travels */
 .ts-track { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding-top: 64px; }
 .ts-spot { display: flex; align-items: flex-end; min-height: 56px; padding: 12px; border-radius: 12px; background: #f2f2f2; transition: background .3s cubic-bezier(.4, 0, .2, 1); }
-.ts-spot.held { background: repeating-linear-gradient(135deg, #f5f5f5 0 10px, #ededed 10px 20px); }
+.ts-spot.held { background: #f5f5f5; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .14); }
 .ts-spot span { min-width: 0; font-size: 13px; color: #525252; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ts-spot.on span { color: #0a0a0a; }
 .ts-coin { position: absolute; top: 0; left: 0; display: grid; place-items: center; width: calc((100% - 16px) / 3); height: 52px; border-radius: 12px; background: #0a0a0a; color: #fafafa; font-size: 21px; font-weight: 500; letter-spacing: -.02em; font-variant-numeric: tabular-nums; transform: translateX(calc(var(--at) * (100% + 8px))); transition: transform .5s cubic-bezier(.4, 0, .2, 1); }
@@ -80,6 +96,35 @@
 .ts-b[disabled] { color: #a3a3a3; border-color: rgba(0, 0, 0, .06); cursor: default; }
 .ts-b:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 2px; }
 
+/* close: the finished split beside the heading, one ask, the get-card beside it */
+.ts-first-top { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: 24px clamp(32px, 5vw, 72px); align-items: end; }
+.ts-first-h { margin: 0; }
+.ts-split { margin: 0; padding: 24px 28px; border-radius: 24px; background: #0a0a0a; color: #fafafa; }
+.ts-total { margin: 0 0 18px; font-size: clamp(64px, 6vw, 84px); font-weight: 220; line-height: 1; letter-spacing: -.04em; color: #fafafa; font-variant-numeric: tabular-nums; min-width: 6ch; }
+/* the close follows the pin closely: no second screen of white */
+.gx .w2-sec.ts-first { padding-top: clamp(44px, 4vw, 72px) !important; }
+
+/* phones and the server render: chapters stacked, each its words then its own card */
+.ts-stack { padding: clamp(72px, 10vw, 116px) 0 24px; }
+.ts-stack-top { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; }
+.ts-stack-pause { flex: none; }
+.ts-stack-l.paused * { animation-play-state: paused !important; }
+.ts-sc { display: grid; gap: 16px; padding: 56px 0 24px; border-top: 1px solid rgba(0, 0, 0, .1); margin-top: 40px; }
+.ts-sc h2 { margin: 0; }
+.ts-sc-b { margin: 0; max-width: 62ch; font-size: 17px; line-height: 1.6; color: #525252; }
+.ts-sc .ts-v { margin-top: 8px; }
+.ts-sc-w { min-height: 100svh; align-content: center; }
+.ts-split svg { display: block; width: 100%; height: 12px; overflow: visible; }
+.ts-split path { fill: none; stroke: #404040; stroke-linecap: butt; transition: stroke .3s cubic-bezier(0, 0, .2, 1); }
+.ts-split path:nth-child(1).on { stroke: #fafafa; } .ts-split path:nth-child(2).on { stroke: #a3a3a3; } .ts-split path:nth-child(3).on { stroke: #737373; }
+.ts-split ul { list-style: none; margin: 16px 0 0; padding: 0; }
+.ts-split li { min-height: 44px; display: grid; grid-template-columns: minmax(0, 1fr) 10ch 8ch; align-items: baseline; gap: 12px; padding: 10px 8px; margin: 0 -8px; border-radius: 8px; border-top: 1px solid rgba(255, 255, 255, .1); font-size: 14px; color: #a3a3a3; transition: background .15s cubic-bezier(0, 0, .2, 1), color .15s; }
+.ts-split li em { font-style: normal; font-size: 13px; }
+.ts-split li b { justify-self: end; font-weight: 500; font-size: 17px; color: #fafafa; font-variant-numeric: tabular-nums; }
+.ts-split li.hot { background: rgba(255, 255, 255, .08); color: #fafafa; }
+.ts-split li:focus-visible { outline: 2px solid #fafafa; outline-offset: 2px; }
+.ts-split figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 12px; margin-top: 12px; font-size: 13px; color: #a3a3a3; }
+.ts-split figcaption b { font-weight: 500; color: #fafafa; }
 /* close: one ask, the get-card beside it */
 .ts-first-row { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: 24px clamp(32px, 5vw, 72px); align-items: end; margin-top: clamp(28px, 3vw, 44px); }
 .ts-first-acts { display: flex; flex-wrap: wrap; gap: 12px; }
@@ -92,20 +137,40 @@
 a.ts-chip:active { transform: scale(.97); }
 
 @media (hover: hover) {
+  .ts-pause .w2-pause:hover { background: #262626; }
   .ts-b:hover:not([disabled]) { background: #0a0a0a; color: #fff; }
   a.ts-chip:hover { background: #0a0a0a; color: #fff; }
 }
 
 @media (max-width: 899px) {
   .ts-hero { padding-top: 96px; }
-  .ts-top, .ts-stage, .ts-first-row { grid-template-columns: minmax(0, 1fr); }
+  .ts-top, .ts-stage, .ts-first-row, .ts-first-top { grid-template-columns: minmax(0, 1fr); }
   .ts-h1 { white-space: normal; }
   .ts-ed pre { font-size: 14px; padding: 16px 16px 18px; }
-  .ts-ed-bar > span.x-mono, .ts-name { font-size: 14px; }
-  .ts-name { letter-spacing: .06em; }
+  .ts-ed-bar i { display: none; }
+  .ts-ed-bar > span.x-mono { margin-left: 0; }
+  .ts-ed-bar > span.x-mono { font-size: 14px; white-space: nowrap; }
+  .ts-name { font-size: 11px; white-space: nowrap; letter-spacing: .08em; }
+  /* one solid per phone screen: the shared header keeps its solid ask here, so the page's own asks are outlined */
+  .ts-acts .w2-cta { background: transparent; color: #fafafa; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .55); }
+  .ts-first-acts .w2-cta { background: transparent; color: #0a0a0a; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .3); }
+  .ts-split figcaption, .ts-v-flow em { font-size: 14px; }
+  /* the emit ring stays inside the full-width source card's panel */
+  .ts-src::after { animation-name: ts-emit-p; }
+  .ts-flow { gap: 10px; order: -1; } /* the money streams come first on a phone, inside the first screen; the code follows */
+  .ts-ed pre { max-height: none; }
+  .ts-sc .ts-v-row.bal > span:first-child { display: block; }
+  .ts-sc .ts-v-row.bal > span:nth-child(2), .ts-v .ts-v-row.bal > span:nth-child(2) { display: none; }
+  .ts-v-row.bal { grid-template-columns: minmax(0, 1fr) 8ch; }
+  .ts-v-row.bal > span:first-child { display: block; overflow: hidden; text-overflow: ellipsis; }
+  .ts-v-row.post > span:nth-child(2) { gap: 8px; }
+  .ts-arr { width: 18px; }
+  .ts-split { padding: 20px 18px; }
+  .ts-split li { grid-template-columns: minmax(0, 1fr) auto; }
+  .ts-split li em { display: none; }
   .ts-flow { min-height: 0; padding: 16px; display: grid; gap: 12px; }
   .ts-flow svg { display: none; }
-  .ts-src { position: static; translate: none; flex-direction: row; justify-content: space-between; align-items: baseline; }
+  .ts-src { position: relative; left: auto; top: auto; translate: none; flex-direction: row; justify-content: space-between; align-items: baseline; }
   .ts-dst { position: static; width: auto; display: grid; gap: 8px; }
   .ts-dst li { position: static; translate: none; top: auto !important; }
   .ts-ok { position: static; justify-self: start; font-size: 14px; }
@@ -123,4 +188,7 @@ a.ts-chip:active { transform: scale(.97); }
   .ts-log { height: calc(4 * 40px); }
   .ts-log li { height: 40px; }
 }
-@media (prefers-reduced-motion: reduce) { .ts-coin { transition: none; } .ts-log li { animation: none; } }
+@keyframes ts-emit-p { from { transform: scale(1); opacity: .9; } to { transform: scale(1.03, 1.18); opacity: 0; } }
+@media (hover: hover) and (max-width: 899px) { .ts-acts .w2-cta:hover { background: rgba(255, 255, 255, .1); } .ts-first-acts .w2-cta:hover { background: #f2f2f2; } }
+@media (prefers-reduced-motion: reduce) { .ts-arr { animation: none !important; transition: none; } }
+@media (prefers-reduced-motion: reduce) { .ts-coin, .ts-v-row { transition: none; } .ts-log li, .ts-v-row.hot::after { animation: none; } .ts-src::after { display: none; } }

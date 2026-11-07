@@ -1,21 +1,21 @@
 # /mcp coverage (MASTER.md part 2, the 18 parts)
 
-Page file: `components/pages/McpPage.jsx` (+ `.css`) · gallery: `docs/gallery/mcp/` · metric id: `cta_click mcp.hero`
+Page file: `components/pages/McpPage.jsx` (+ `McpPage.css`) · gallery: `docs/gallery/mcp/` · metric id: `cta_click mcp.hero` (and `mcp.close`)
 
 Open copy questions for James: none.
-Shared changes requested (`docs/requests/mcp.md`): data-cta on the kit Band; the desktop ask bar floating over content; the PageHero kit part.
-Forks this page deleted: the hand-written hero and close buttons (now kit Cta and Band), the hand-built code panels (now kit CodeBlock), the orange tool stream and its coloured shadow, the 196px figures, the sheet outlines and shadows, the numbers above card titles, the drag cursor label, springs, setInterval.
+Shared changes requested (`docs/requests/mcp.md`): none new (the kit Copy now only says Copied when the clipboard write succeeds; the PageHero kit part is still not used here).
+Forks this page deleted: the hand-written hero and close buttons (now kit Cta), the kit Band at the close (replaced by a page-local light close so the close holds one solid and a real object), the hand-built code panels (now kit CodeBlock), the orange tool stream and coloured bars, the 196px figures, sheet outlines and shadows, numbers above card titles, the drag cursor label, springs, setInterval, the stream's layout-animated rows (now transform-only).
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
 
 ## 1. Strategy and conversion
 - [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
-- [ ] One solid fill per viewport; label and href from `lib/cta.js`
+- [x] One solid fill per viewport; label and href from `lib/cta.js`
 - [x] One h1; the page is clear in 5 seconds
 - ~~No dead or self-looping button; prices from `lib/plans.js`~~ n/a: no prices on this page
 - [x] Open copy questions for James listed, none decided
 
-Done here: Header lines Persona/Goal/CTA/Metric/Signature/Beyond in McpPage.jsx; one solid: kit Cta "Browse 260+ tools" (mcp.hero, thumb), then quiet "Read the docs" and a link to GitHub; the Band closes on "Browse All Tools". `lib/cta.js` does not exist yet; labels and hrefs are Hanzo's.
+Done here: Top of McpPage.jsx has Persona/Goal/CTA/Metric/Signature/Beyond and a V2 line. One solid per screen: hero "Browse 260+ tools" (header "Try Hanzo" is an outline while it shows, by the system's data-ask=quiet on desktop and page-locally on phones); after the hero the sticky header carries "Browse 260+ tools"; the close has one solid "Browse All Tools" (marked as the hero ask's twin, so the header goes quiet there) and "Deploy to Cloud" is an outline. Labels and hrefs are Hanzo's (no lib/cta.js exists).
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -23,7 +23,7 @@ Done here: Header lines Persona/Goal/CTA/Metric/Signature/Beyond in McpPage.jsx;
 - ~~Breadcrumb at depth 2 or more~~ n/a: depth 1
 - [x] Link parity: 0 removed, 0 unexpected
 
-Done here: One <main> inside the layout's #main marker; links via kit A and Cta; parity links 5/5; depth 1.
+Done here: One <main class="a2 mcp"> inside the layout; every link through kit A or Cta; parity links 5/5. The domain cards are buttons that open a sheet (dialog), each sheet links to All MCP Tools Reference.
 
 ## 3. First impression and page narrative
 - [x] Sells in 5 s; something moves within 1 s without input
@@ -33,7 +33,7 @@ Done here: One <main> inside the layout's #main marker; links via kit A and Cta;
 - [x] Ends in proof strip, `Band`, footer
 - [x] Card-to-page links use Morph; title lands within 12px
 
-Done here: h1 52px in three lines cut in by line mask; the tool stream moves within 1 s (alive: moving). JS off: 0 of 74 text blocks hidden. Ends: Get MCP card, kit Band, footer. The six domain cards open into sheets by a shared-element morph.
+Done here: Nothing above the h1 (Hanzo's "Hanzo MCP · 260+ tools · 117 cloud services" sits under it as a grey mono caption); the tool-call stream runs from the first second. Hand-built hero, not PageHero. Order: hero, three figures, stacked runtime sheets, paste, domain rail, dark config room, light close, footer; the close replaces Band with the same words plus the repo card. Domain cards open by shared-element morph (layoutId).
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -41,7 +41,7 @@ Done here: h1 52px in three lines cut in by line mask; the tool stream moves wit
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: Kit Cta only (no raw .x-btn); the ask bar carries "Browse 260+ tools" via data-thumb; both CodeBlocks copy exactly what they show (the JSON parses alone).
+Done here: Kit Cta only. Hero: data-cta="mcp.hero" data-thumb="Browse 260+ tools"; close: data-cta="mcp.close" data-thumb="Browse 260+ tools". Desktop: no floating pill; the header's solid carries "Browse 260+ tools" after the hero (Ask.jsx). Phones: the quiet bottom bar carries it when it covers nothing. Both CodeBlocks copy exactly what they show (checked in Playwright: the .mcp.json copy passes JSON.parse).
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -49,7 +49,7 @@ Done here: Kit Cta only (no raw .x-btn); the ask bar carries "Browse 260+ tools"
 - ~~Marquees pause, freeze under reduced motion, hide duplicates~~ n/a: no marquee
 - ~~Privacy link and owner line beside every submit~~ n/a: no form on this page
 
-Done here: Only Hanzo's figures: 38, 1,538, 260+, 2ms, 6.4ms, Apache-2.0 and 8 stars, as the page prints them; no logos or seals.
+Done here: Only Hanzo's figures: 38, 1,538, 260+, 117, 34, 2ms, 6.4ms, Apache-2.0, 8 stars; each with its own words beside it. No logos or seals.
 
 ## 6. Content presentation (copy untouched)
 - [x] No text under 13px (14px phone) except mono capitals
@@ -57,25 +57,25 @@ Done here: Only Hanzo's figures: 38, 1,538, 260+, 2ms, 6.4ms, Apache-2.0 and 8 s
 - [x] Tables, FAQ, tabs and code use the kit parts
 - [x] `python3 scripts/parity.py /mcp`: 0 missing
 
-Done here: Deck sizes: h1 52 (32 on phones), section headings 26, card titles 17, lede 21, body 16, figures 64 at rest growing to 1.45x while they cross the screen; 13px floor. Parity 72/72 text, 5/5 links. Code in kit CodeBlock.
+Done here: h1 52px (27.75px at 375, 24px at 320: 3 lines at each), section headings 26, lede 21, figures 64 growing 1.45x while they cross; mono captions 11.5px capitals. Parity: text 72/72, links 5/5. Code in kit CodeBlock (labels ".mcp.json" and "bash").
 
 ## 7. Visual design system
-- [ ] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
+- [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
 - [x] No label, tag, badge or pill above a headline
 - [x] Radii, shadows and sizes from tokens; never box plus shadow
-- [ ] One icon set; no icon in a rounded box
+- [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: taste.py passes (greys only); brows check 0 labels above a headline; tiles 24, cards 16, sheets flat fills with no outline or shadow; only the open sheet (a dialog) takes a shadow. Literal greys still to move onto tokens.
+Done here: taste.py OK on both files; zero hue: primary, "1,538" and the "+" in ink/grey, tool bars one silver (#737373) at different lengths with the live call in white, sheets #f5f5f5/#ededed/#e5e5e5. Captions ("Tool domains", "Get started", the hero line) sit under their headlines; "01 / 03" sits beside the sheet title. Greys are literal values from the brand-deck ramp (taste.py accepts them). Only the open sheet (a dialog) has a shadow.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
 - [x] Focus ring visible on every stop of a Tab crawl
 - [ ] Dialogs are native, trap focus and return it
 - [x] Inputs 16px or larger; no bare `:hover`
-- [x] Forks this page deleted: the hand-written hero and close buttons (now kit Cta and Band), the hand-built code panels (now kit CodeBlock), the orange tool stream and its coloured shadow, the 196px figures, the sheet outlines and shadows, the numbers above card titles, the drag cursor label, springs, setInterval. listed below
+- [x] Forks this page deleted: listed below
 
-Done here: Cards press to .98, close to .96; focus ring from the system; hovers only inside (hover: hover). The open sheet is a role=dialog div (not native <dialog>, because the card morphs into it): Escape closes, Tab stays inside, focus returns to the card.
+Done here: Cards press to .98, the sheet close to .96, pause buttons grow 1.06 on hover, the repo link gets a grey fill, Copy brightens on dark; all hovers inside (hover: hover). The open sheet is a role=dialog div (not native <dialog>, because the card morphs into it): Escape closes, Tab stays inside, focus returns to the card (checked). Forks: see the line above part 1.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -84,23 +84,23 @@ Done here: Cards press to .98, close to .96; focus ring from the system; hovers 
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit
 
-Done here: Signature: cards that open (state, layoutId morph, 400 ms ease-emphasis); supporting: the tool stream (time), stacked sheets and growing figures (scroll), the drag rail (pointer); variety.py OK; reduced motion stops every loop; timeouts only.
+Done here: Signature: the domain card morphs into its sheet (layoutId, 400ms ease-emphasis). Supporting: the live tool stream (time, 900ms timeouts, transform-only rows), the drag rail with fling (pointer) whose cards call one tool chip at a time (idle), stacked sheets and growing figures (scroll), and the close's terminal typing `npx -y hanzo mcp` once and resting on a static frame. Reduced motion stops every loop and shows the typed command whole. Sound comes only from the shared kit.
 
 ## 10. Media
-- ~~`Film` and `Pic` only; sizes and posters set~~ n/a: no images or films: the stream, sheets and cards are drawn in the DOM
+- ~~`Film` and `Pic` only; sizes and posters set~~ n/a: no images or films, every visual is drawn in the DOM
 - ~~At most 2 videos playing; pause button on loops over 5 s~~ n/a: no video
 - ~~Budgets met; nothing missing; alt on every image~~ n/a: no images
 - ~~No dimmed or filtered photo; 4+ real visuals together where the page has them~~ n/a: Hanzo has no MCP media
 
-Done here: No media; every visual is drawn with Hanzo's tool names.
+Done here: No media; the stream, sheets, rail and terminal are drawn with Hanzo's tool names.
 
 ## 11. Mobile and responsive
-- [ ] 375×812 and 1470×801 pass with no overlap
+- [x] 375×812 and 1470×801 pass with no overlap
 - [x] No horizontal scroll at 320
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: 375x812: 0 overlaps; 1470x801: the only overlaps are the stacked sheets, opaque by design (each covers the last; only its padding shows); 320 scrollWidth 320; ask bottom at 558px on 375x667; 44px targets.
+Done here: 375x812: h1 3 lines, "Browse 260+ tools" bottom at 555px (inside 667 and 812). 320: scrollWidth 320, h1 3 lines. Phone audit of main a/button finds 0 targets under 44px (CodeBlock Copy raised to 44px page-locally; links 44px min-height). 1470x801: the stacked sheets overlap by design (each covers the last).
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -109,7 +109,7 @@ Done here: 375x812: 0 overlaps; 1470x801: the only overlaps are the stacked shee
 - [x] One h1; no heading skips; names start with visible text
 - [x] Keyboard reaches every control
 
-Done here: Text #0a0a0a/#525252 on white and #a3a3a3 or lighter on black; pause controls on the tool stream and on the sheets' loops; one h1, h2 sections, h3 cards; every card is a button with its title as name.
+Done here: Text #0a0a0a/#525252/#737373 on white and #a3a3a3 or lighter on black. Pause buttons on the tool stream, the runtime sheets' loops and the domain rail's chips; the caret blinks 4 times and stops. One h1, h2 sections, h3 cards; every card is a button named by its title.
 
 ## 13. Performance and engineering
 - [x] h1 and LCP element in server HTML
@@ -117,7 +117,7 @@ Done here: Text #0a0a0a/#525252 on white and #a3a3a3 or lighter on black; pause 
 - [x] No poller; no third-party request before consent
 - [x] Nothing heavy run on James's laptop
 
-Done here: h1 and stream in server HTML; transform, opacity and clip-path only; the stream stops off screen and when paused; budgets not yet measured.
+Done here: h1 and the stream's first 9 rows are in server HTML; transform and opacity only; the stream stops off screen and when paused; layout shift 0.0002 to 0.001 measured. Bundle budgets not measured.
 
 ## 14. SEO and machine files
 - [x] Title and description match live (or are listed for James)
@@ -125,7 +125,7 @@ Done here: h1 and stream in server HTML; transform, opacity and clip-path only; 
 - [x] `<JsonLd route>` parses; no broken URL
 - [x] Every card is a real link
 
-Done here: app/mcp metadata unchanged; JsonLd route=/mcp; Hanzo's exact config block kept in the HTML for search.
+Done here: app/mcp/page.jsx metadata unchanged; JsonLd route=/mcp; Hanzo's full config block, comments included, kept in the HTML (visually hidden) for search.
 
 ## 15. Catalogue and product pages
 - ~~Model card matches `SPEC.md` (or n/a: not a catalogue or model page)~~ n/a: not a catalogue or model page
@@ -133,7 +133,7 @@ Done here: app/mcp metadata unchanged; JsonLd route=/mcp; Hanzo's exact config b
 - ~~Every maker and model page linked in the DOM~~ n/a: not a catalogue
 - ~~One price figure everywhere~~ n/a: no prices
 
-Done here: Not a catalogue; the domain cards open in place by morph.
+Done here: Not a catalogue; the six domain cards open in place by morph.
 
 ## 16. Developer experience
 - [x] One `CodeBlock`; copy equals display (or n/a: no code on the page)
@@ -141,7 +141,7 @@ Done here: Not a catalogue; the domain cards open in place by morph.
 - [x] Terminal pauses and ends on a static frame
 - [x] No hand-typed version number
 
-Done here: Two kit CodeBlocks: .mcp.json (valid JSON on its own) and the shell lines; copy equals display; no version numbers.
+Done here: Two kit CodeBlocks, each with its own Copy: ".mcp.json" (pure JSON, JSON.parse of the copied text passes in Playwright) and "bash" (npm i -g hanzo / hanzo mcp / hanzo mcp -t sse). Hanzo's two comment lines sit above each block as captions. The close's terminal types once and rests on "hanzo mcp · stdio". No version numbers.
 
 ## 17. States and resilience
 - [x] Loading, empty, error and offline states designed
@@ -149,7 +149,7 @@ Done here: Two kit CodeBlocks: .mcp.json (valid JSON on its own) and the shell l
 - ~~A failed submit keeps its values and shows no success~~ n/a: no submit
 - [ ] A thrown island does not blank the page
 
-Done here: No live data, so nothing loads or fails; closing the sheet restores the rail and focus.
+Done here: No live data, so nothing loads or fails; 0 console errors at 1470x801, 375x812 and 320; closing the sheet restores the rail and focus.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary; events only through `lib/track.js`
@@ -157,4 +157,4 @@ Done here: No live data, so nothing loads or fails; closing the sheet restores t
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/mcp.md` verdict 8 or more
 
-Done here: data-cta on mcp.hero; the kit Band's button has no data-cta yet (requested); Cta sends cta_click through the system event; V2 line in the header; last review 6/10 was on an older build (complaints fixed).
+Done here: data-cta on mcp.hero, mcp.close, mcp.close-deploy, mcp.close-selfhost, mcp.close-github, mcp.close-platform; Cta fires cta_click through the system event. V2 line in the header. Last review 6/10 (7 Nov) was on the older build; each of its five fixes is addressed, awaiting a new critic walk.

@@ -40,6 +40,7 @@ def row(key, route, page, members=0):
     used = variety.scan(comp)
     var_ok = used.get("fade-up (Rise)", 0) <= variety.MAX_RISE and len(used) <= variety.MAX_TECH and not taste.check(comp)
     name = "home" if route == "/" else key.strip("/").replace("/*", "")
+    if key.endswith("/*"): name += "-family"  # a family template's review, card and proof are <name>-family, never its index page's
     gdir = HZ / "docs/gallery" / name
     media = sorted(p for p in gdir.rglob("*") if p.suffix.lower() in MEDIA) if gdir.is_dir() else []
     rv = HZ / "docs/review" / f"{name}.md"

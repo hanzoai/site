@@ -1,0 +1,1978 @@
+{
+ "signatures": {
+  "drag-canvas": {
+   "name": "Drag to explore",
+   "what": "An infinite canvas the visitor pans with the pointer (or a finger); the product's parts are laid out on it."
+  },
+  "zoom-map": {
+   "name": "Zoom into the system",
+   "what": "Scroll zooms from the whole system down into one part, which then fills the screen and explains itself."
+  },
+  "h-gallery": {
+   "name": "Sideways gallery",
+   "what": "Vertical scroll drives a horizontal track of panels; the page moves sideways for one stretch, then releases."
+  },
+  "spotlight": {
+   "name": "Spotlight",
+   "what": "A dark section the cursor lights up; what is under the light reveals detail (touch: tap to place the light)."
+  },
+  "compare": {
+   "name": "Before / after slider",
+   "what": "A divider the visitor drags across two states: without Hanzo and with it, old and new."
+  },
+  "card-stack": {
+   "name": "Card stack",
+   "what": "A stack of cards flicked or dragged away one at a time; each card is one idea."
+  },
+  "terminal": {
+   "name": "Live terminal",
+   "what": "A terminal types the real commands and streams real output; the visitor can pick the next command."
+  },
+  "object-3d": {
+   "name": "Turn the object",
+   "what": "One 3D object (or 2.5D layered render) the visitor drags to rotate; parts label themselves as they face front."
+  },
+  "film-scrub": {
+   "name": "Scrub the film",
+   "what": "Scroll scrubs a film or image sequence frame by frame, forwards and back."
+  },
+  "race": {
+   "name": "Live race",
+   "what": "Bars, lanes or counters race against each other in real time, at the real ratios."
+  },
+  "graph": {
+   "name": "Living graph",
+   "what": "Nodes and links that settle like a physics graph; hovering a node lights its paths and names them."
+  },
+  "split": {
+   "name": "Split screen",
+   "what": "One side holds still while the other scrolls and changes it (the old pinned-chapters scene: rationed)."
+  },
+  "decode": {
+   "name": "Decode",
+   "what": "Headlines and figures resolve out of scrambled characters as they arrive; hovering re-scrambles them."
+  },
+  "magnet-grid": {
+   "name": "Magnetic grid",
+   "what": "A field of tiles or dots that bends toward the cursor and ripples when clicked."
+  },
+  "timeline": {
+   "name": "Drag the timeline",
+   "what": "A timeline the visitor drags or scrubs; the page's content changes with the year or step."
+  },
+  "rows-open": {
+   "name": "Rows that open",
+   "what": "A tight list whose rows expand in place on hover or tap into a full detail panel."
+  },
+  "live-chat": {
+   "name": "Live conversation",
+   "what": "The product answers in real time on screen, with a choice of questions to ask it."
+  },
+  "flip-board": {
+   "name": "Flip board",
+   "what": "Departure-board tiles flip through values (statuses, prices, regions) as data changes."
+  },
+  "ribbons": {
+   "name": "Velocity ribbons",
+   "what": "Bands of words or logos whose speed and direction follow the scroll and lean with it."
+  },
+  "peel": {
+   "name": "Peel the layers",
+   "what": "The product's stack lifts apart into floating layers in 3D, then closes again."
+  },
+  "word-light": {
+   "name": "Words light up",
+   "what": "A long statement lights word by word as it is read (story pages)."
+  },
+  "stamp": {
+   "name": "Stamp",
+   "what": "Elements land with weight: a short drop, a squash and a settle, like stamping a document."
+  },
+  "globe": {
+   "name": "Globe",
+   "what": "A turning globe with live points and arcs between regions; drag to spin it."
+  },
+  "particles": {
+   "name": "Particles form it",
+   "what": "A cloud of dots assembles into the product's shape or mark and scatters at the cursor."
+  },
+  "morph-panel": {
+   "name": "One panel, many states",
+   "what": "A single panel that morphs smoothly between states as tabs or steps change, never cutting."
+  },
+  "waveform": {
+   "name": "Waveform",
+   "what": "A live audio waveform that plays, scrubs and reacts to the pointer (voice and audio pages)."
+  },
+  "calculator": {
+   "name": "Live calculator",
+   "what": "Sliders and inputs that reprice or re-plan everything on the page instantly."
+  },
+  "one-question": {
+   "name": "One question at a time",
+   "what": "A form that asks one thing per screen, sliding to the next, with the answer summarised as it builds."
+  },
+  "keep": {
+   "name": "Keep as is",
+   "what": "James approved this page's motion (7 Nov). Do not change it."
+  }
+ },
+ "entrances": {
+  "split-merge": "two halves slide in from left and right and merge into one",
+  "curtain-rise": "rises from below behind a clip, like a curtain",
+  "drop-in": "falls in from above and settles with a small bounce",
+  "iris": "a circular clip opens from the centre",
+  "diagonal-wipe": "a diagonal clip sweeps across",
+  "letter-cascade": "letters fall into place one by one",
+  "word-shuffle": "words arrive out of order and swap into place",
+  "grow-from-point": "grows from the point the visitor last clicked or the cursor",
+  "fold-out": "unfolds like paper (rotateX from a hinge)",
+  "card-deal": "items are dealt from a deck onto their places",
+  "slot-roll": "text rolls vertically into place like a slot machine",
+  "typewriter": "types itself out with a caret",
+  "rack-focus": "comes into focus from a blur, like a camera pulling focus",
+  "pixel-resolve": "resolves from coarse pixels to sharp",
+  "tile-flip": "a grid of tiles flips in to form it",
+  "blinds": "venetian-blind strips open",
+  "zoom-through": "flies in from far behind the screen",
+  "swing-door": "swings in on a vertical hinge (rotateY)",
+  "spring-snap": "snaps in from the side and overshoots on a spring",
+  "magnet-gather": "scattered pieces are pulled together into it",
+  "explode-gather": "starts as fragments and collapses into the whole",
+  "ink-spread": "an organic ink-blot mask spreads to reveal it",
+  "line-draw": "its outlines draw themselves, then it fills",
+  "count-roll": "its numbers count and roll into their values",
+  "stack-drop": "layers drop and stack onto each other",
+  "depth-parallax": "layers at different depths move at different speeds",
+  "conveyor": "rides in on a horizontal conveyor",
+  "shutter": "bars close from top and bottom, then open on it",
+  "glitch-in": "a short monochrome glitch, then it holds still",
+  "ripple": "a ripple spreads from the centre and leaves it behind",
+  "domino": "items tip into place one after another like dominoes",
+  "accordion": "unfolds section by section like an accordion",
+  "page-curl": "the previous surface curls away at the corner to show it",
+  "pendulum": "swings in and settles like a pendulum",
+  "orbit-in": "items orbit into their places on a curve",
+  "squash-land": "lands with a squash and stretch",
+  "focus-pull-scroll": "the background blurs and the subject sharpens as it scrolls in",
+  "invert-flash": "a black/white inversion flash, then normal",
+  "grid-wave": "a grid ripples in by distance from the cursor",
+  "scroll-tilt": "tilts on rotateX with scroll speed and levels out",
+  "sticky-stack": "cards stack at the top as you scroll past them",
+  "snap-sections": "sections snap one screen at a time",
+  "side-carousel": "a horizontal snapping carousel",
+  "text-mask-film": "a film plays through the letters of a headline",
+  "opposite-drift": "left and right halves drift in opposite directions with scroll",
+  "shrink-to-card": "the section shrinks into a card as you leave it",
+  "cover-slide": "the next section slides up over the previous one",
+  "pull-back": "starts zoomed right in and pulls back to reveal the whole",
+  "tilt-3d-hover": "tilts in 3D toward the pointer",
+  "cursor-trail": "a trail follows the cursor across it",
+  "velocity-skew": "skews with scroll speed and straightens when still",
+  "inertia-drag": "can be dragged and thrown with inertia",
+  "scramble": "characters scramble and decode into it",
+  "underline-sweep": "underlines sweep under key words in sequence",
+  "stretch-scroll": "stretches vertically with scroll and relaxes",
+  "noise-dissolve": "dissolves in from grain/noise",
+  "cursor-lens": "a circular lens follows the cursor and magnifies",
+  "vertical-ticker": "rides a vertical ticker into place",
+  "spiral-in": "spirals in from the edge to its place",
+  "venetian-type": "each line of type slides in from alternating sides"
+ },
+ "pages": [
+  {
+   "key": "/",
+   "title": "/",
+   "signature": "keep",
+   "entrances": []
+  },
+  {
+   "key": "/enso",
+   "title": "Hanzo Enso",
+   "signature": "particles",
+   "entrances": [
+    "fold-out",
+    "cursor-lens",
+    "ink-spread",
+    "word-shuffle",
+    "orbit-in"
+   ]
+  },
+  {
+   "key": "/iro",
+   "title": "Iro",
+   "signature": "compare",
+   "entrances": [
+    "velocity-skew",
+    "explode-gather",
+    "depth-parallax",
+    "rack-focus",
+    "accordion"
+   ]
+  },
+  {
+   "key": "/kai",
+   "title": "Hanzo Kai",
+   "signature": "live-chat",
+   "entrances": [
+    "zoom-through",
+    "snap-sections",
+    "cover-slide",
+    "blinds",
+    "split-merge"
+   ]
+  },
+  {
+   "key": "/koe",
+   "title": "Koe",
+   "signature": "waveform",
+   "entrances": [
+    "typewriter",
+    "slot-roll",
+    "pendulum",
+    "inertia-drag",
+    "noise-dissolve"
+   ]
+  },
+  {
+   "key": "/koma",
+   "title": "Koma",
+   "signature": "film-scrub",
+   "entrances": [
+    "drop-in",
+    "domino",
+    "opposite-drift",
+    "curtain-rise",
+    "magnet-gather"
+   ]
+  },
+  {
+   "key": "/models",
+   "title": "Models",
+   "signature": "race",
+   "entrances": [
+    "pull-back",
+    "text-mask-film",
+    "vertical-ticker",
+    "spring-snap",
+    "tile-flip"
+   ]
+  },
+  {
+   "key": "/mori",
+   "title": "Mori",
+   "signature": "particles",
+   "entrances": [
+    "shrink-to-card",
+    "side-carousel",
+    "pixel-resolve",
+    "card-deal",
+    "scramble"
+   ]
+  },
+  {
+   "key": "/oto",
+   "title": "Oto",
+   "signature": "waveform",
+   "entrances": [
+    "sticky-stack",
+    "stack-drop",
+    "grid-wave",
+    "cursor-trail",
+    "conveyor"
+   ]
+  },
+  {
+   "key": "/uta",
+   "title": "Uta",
+   "signature": "film-scrub",
+   "entrances": [
+    "page-curl",
+    "iris",
+    "scroll-tilt",
+    "count-roll",
+    "spiral-in"
+   ]
+  },
+  {
+   "key": "/zen",
+   "title": "The Zen family",
+   "signature": "particles",
+   "entrances": [
+    "diagonal-wipe",
+    "letter-cascade",
+    "tilt-3d-hover",
+    "glitch-in",
+    "focus-pull-scroll"
+   ]
+  },
+  {
+   "key": "/agents",
+   "title": "Hanzo for agents: free to start, pay as you go",
+   "signature": "live-chat",
+   "entrances": [
+    "squash-land",
+    "ripple",
+    "venetian-type",
+    "grow-from-point",
+    "stretch-scroll"
+   ]
+  },
+  {
+   "key": "/api",
+   "title": "One API for models, agents and tools",
+   "signature": "terminal",
+   "entrances": [
+    "line-draw",
+    "underline-sweep",
+    "invert-flash",
+    "shutter",
+    "swing-door"
+   ]
+  },
+  {
+   "key": "/bot",
+   "title": "Hanzo Bot",
+   "signature": "live-chat",
+   "entrances": [
+    "tile-flip",
+    "ripple",
+    "grid-wave",
+    "fold-out",
+    "grow-from-point"
+   ]
+  },
+  {
+   "key": "/chat",
+   "title": "Hanzo Chat",
+   "signature": "card-stack",
+   "entrances": [
+    "glitch-in",
+    "tilt-3d-hover",
+    "line-draw",
+    "underline-sweep",
+    "scramble"
+   ]
+  },
+  {
+   "key": "/chrome",
+   "title": "Hanzo in Chrome",
+   "signature": "terminal",
+   "entrances": [
+    "rack-focus",
+    "scroll-tilt",
+    "orbit-in",
+    "cover-slide",
+    "pull-back"
+   ]
+  },
+  {
+   "key": "/cli",
+   "title": "A senior engineer in your shell",
+   "signature": "compare",
+   "entrances": [
+    "noise-dissolve",
+    "shutter",
+    "side-carousel",
+    "curtain-rise",
+    "cursor-trail"
+   ]
+  },
+  {
+   "key": "/computer",
+   "title": "Hanzo Computer",
+   "signature": "terminal",
+   "entrances": [
+    "conveyor",
+    "squash-land",
+    "venetian-type",
+    "diagonal-wipe",
+    "card-deal"
+   ]
+  },
+  {
+   "key": "/console",
+   "title": "Hanzo Console",
+   "signature": "drag-canvas",
+   "entrances": [
+    "sticky-stack",
+    "depth-parallax",
+    "vertical-ticker",
+    "spring-snap",
+    "velocity-skew"
+   ]
+  },
+  {
+   "key": "/design",
+   "title": "Hanzo Design",
+   "signature": "compare",
+   "entrances": [
+    "drop-in",
+    "explode-gather",
+    "opposite-drift",
+    "word-shuffle",
+    "count-roll"
+   ]
+  },
+  {
+   "key": "/desktop",
+   "title": "Hanzo Desktop",
+   "signature": "terminal",
+   "entrances": [
+    "swing-door",
+    "domino",
+    "inertia-drag",
+    "shrink-to-card",
+    "page-curl"
+   ]
+  },
+  {
+   "key": "/dev",
+   "title": "Hanzo Dev",
+   "signature": "compare",
+   "entrances": [
+    "stack-drop",
+    "letter-cascade",
+    "pendulum",
+    "slot-roll",
+    "zoom-through"
+   ]
+  },
+  {
+   "key": "/download",
+   "title": "Download Hanzo",
+   "signature": "terminal",
+   "entrances": [
+    "accordion",
+    "invert-flash",
+    "text-mask-film",
+    "ink-spread",
+    "spiral-in"
+   ]
+  },
+  {
+   "key": "/extension",
+   "title": "Hanzo Extension",
+   "signature": "compare",
+   "entrances": [
+    "iris",
+    "pixel-resolve",
+    "split-merge",
+    "stretch-scroll",
+    "cursor-lens"
+   ]
+  },
+  {
+   "key": "/gen",
+   "title": "Hanzo Gen",
+   "signature": "film-scrub",
+   "entrances": [
+    "magnet-gather",
+    "focus-pull-scroll",
+    "snap-sections",
+    "typewriter",
+    "blinds"
+   ]
+  },
+  {
+   "key": "/gui",
+   "title": "Hanzo GUI",
+   "signature": "compare",
+   "entrances": [
+    "split-merge",
+    "velocity-skew",
+    "domino",
+    "cursor-lens",
+    "grow-from-point"
+   ]
+  },
+  {
+   "key": "/ide",
+   "title": "An IDE that remembers your codebase",
+   "signature": "terminal",
+   "entrances": [
+    "venetian-type",
+    "spring-snap",
+    "blinds",
+    "rack-focus",
+    "tilt-3d-hover"
+   ]
+  },
+  {
+   "key": "/identity",
+   "title": "Hanzo Identity",
+   "signature": "spotlight",
+   "entrances": [
+    "line-draw",
+    "ink-spread",
+    "typewriter",
+    "stretch-scroll",
+    "conveyor"
+   ]
+  },
+  {
+   "key": "/kata",
+   "title": "Hanzo Kata",
+   "signature": "terminal",
+   "entrances": [
+    "drop-in",
+    "shutter",
+    "vertical-ticker",
+    "focus-pull-scroll",
+    "shrink-to-card"
+   ]
+  },
+  {
+   "key": "/mcp",
+   "title": "Hanzo MCP",
+   "signature": "compare",
+   "entrances": [
+    "diagonal-wipe",
+    "cursor-trail",
+    "count-roll",
+    "side-carousel",
+    "curtain-rise"
+   ]
+  },
+  {
+   "key": "/operative",
+   "title": "Hanzo Operative",
+   "signature": "live-chat",
+   "entrances": [
+    "iris",
+    "accordion",
+    "zoom-through",
+    "sticky-stack",
+    "orbit-in"
+   ]
+  },
+  {
+   "key": "/operator",
+   "title": "Hanzo Operator",
+   "signature": "card-stack",
+   "entrances": [
+    "magnet-gather",
+    "depth-parallax",
+    "grid-wave",
+    "explode-gather",
+    "card-deal"
+   ]
+  },
+  {
+   "key": "/playground",
+   "title": "Playground",
+   "signature": "drag-canvas",
+   "entrances": [
+    "glitch-in",
+    "tile-flip",
+    "cover-slide",
+    "scramble",
+    "swing-door"
+   ]
+  },
+  {
+   "key": "/sdks",
+   "title": "SDKs for every language",
+   "signature": "peel",
+   "entrances": [
+    "scroll-tilt",
+    "fold-out",
+    "inertia-drag",
+    "pendulum",
+    "invert-flash"
+   ]
+  },
+  {
+   "key": "/skills",
+   "title": "Skills",
+   "signature": "drag-canvas",
+   "entrances": [
+    "pull-back",
+    "text-mask-film",
+    "word-shuffle",
+    "stack-drop",
+    "squash-land"
+   ]
+  },
+  {
+   "key": "/slack",
+   "title": "Hanzo Tag for Slack",
+   "signature": "live-chat",
+   "entrances": [
+    "pixel-resolve",
+    "page-curl",
+    "ripple",
+    "letter-cascade",
+    "underline-sweep"
+   ]
+  },
+  {
+   "key": "/studio",
+   "title": "Hanzo Studio",
+   "signature": "film-scrub",
+   "entrances": [
+    "opposite-drift",
+    "spiral-in",
+    "slot-roll",
+    "snap-sections",
+    "noise-dissolve"
+   ]
+  },
+  {
+   "key": "/tag",
+   "title": "Hanzo Tag",
+   "signature": "drag-canvas",
+   "entrances": [
+    "letter-cascade",
+    "blinds",
+    "drop-in",
+    "cover-slide",
+    "domino"
+   ]
+  },
+  {
+   "key": "/templates",
+   "title": "Start from a product",
+   "signature": "h-gallery",
+   "entrances": [
+    "velocity-skew",
+    "fold-out",
+    "count-roll",
+    "explode-gather",
+    "shutter"
+   ]
+  },
+  {
+   "key": "/ui",
+   "title": "Hanzo UI",
+   "signature": "magnet-grid",
+   "entrances": [
+    "accordion",
+    "page-curl",
+    "magnet-gather",
+    "cursor-trail",
+    "zoom-through"
+   ]
+  },
+  {
+   "key": "/analytics",
+   "title": "Hanzo Analytics",
+   "signature": "flip-board",
+   "entrances": [
+    "focus-pull-scroll",
+    "ripple",
+    "noise-dissolve",
+    "stretch-scroll",
+    "card-deal"
+   ]
+  },
+  {
+   "key": "/authz",
+   "title": "Hanzo Authz",
+   "signature": "spotlight",
+   "entrances": [
+    "curtain-rise",
+    "vertical-ticker",
+    "slot-roll",
+    "inertia-drag",
+    "spiral-in"
+   ]
+  },
+  {
+   "key": "/auto",
+   "title": "Workflow automation in one binary",
+   "signature": "drag-canvas",
+   "entrances": [
+    "word-shuffle",
+    "rack-focus",
+    "scroll-tilt",
+    "iris",
+    "stack-drop"
+   ]
+  },
+  {
+   "key": "/automations",
+   "title": "The apps a workflow can reach",
+   "signature": "h-gallery",
+   "entrances": [
+    "underline-sweep",
+    "spring-snap",
+    "side-carousel",
+    "squash-land",
+    "grow-from-point"
+   ]
+  },
+  {
+   "key": "/base",
+   "title": "The backend in one file",
+   "signature": "zoom-map",
+   "entrances": [
+    "split-merge",
+    "snap-sections",
+    "tile-flip",
+    "pull-back",
+    "venetian-type"
+   ]
+  },
+  {
+   "key": "/benchmarks",
+   "title": "Hanzo",
+   "signature": "race",
+   "entrances": [
+    "sticky-stack",
+    "glitch-in",
+    "swing-door",
+    "line-draw",
+    "conveyor"
+   ]
+  },
+  {
+   "key": "/billing",
+   "title": "Hanzo Billing",
+   "signature": "calculator",
+   "entrances": [
+    "pixel-resolve",
+    "orbit-in",
+    "invert-flash",
+    "shrink-to-card",
+    "depth-parallax"
+   ]
+  },
+  {
+   "key": "/blockchain",
+   "title": "One API key, every chain. And an agent that can use it.",
+   "signature": "drag-canvas",
+   "entrances": [
+    "opposite-drift",
+    "scramble",
+    "grid-wave",
+    "text-mask-film",
+    "cursor-lens"
+   ]
+  },
+  {
+   "key": "/blog",
+   "title": "Blog",
+   "signature": "word-light",
+   "entrances": [
+    "ink-spread",
+    "typewriter",
+    "pendulum",
+    "tilt-3d-hover",
+    "diagonal-wipe"
+   ]
+  },
+  {
+   "key": "/captable",
+   "title": "Hanzo Cap Table - Equity Management Platform",
+   "signature": "calculator",
+   "entrances": [
+    "pull-back",
+    "zoom-through",
+    "inertia-drag",
+    "split-merge",
+    "count-roll"
+   ]
+  },
+  {
+   "key": "/commerce",
+   "title": "Hanzo Commerce - Headless Commerce API",
+   "signature": "flip-board",
+   "entrances": [
+    "scroll-tilt",
+    "word-shuffle",
+    "ripple",
+    "cover-slide",
+    "vertical-ticker"
+   ]
+  },
+  {
+   "key": "/compare",
+   "title": "How we compare, row by row, with the source on every row",
+   "signature": "race",
+   "entrances": [
+    "stretch-scroll",
+    "typewriter",
+    "venetian-type",
+    "opposite-drift",
+    "letter-cascade"
+   ]
+  },
+  {
+   "key": "/comparison",
+   "title": "What it costs to run it yourself",
+   "signature": "rows-open",
+   "entrances": [
+    "accordion",
+    "sticky-stack",
+    "noise-dissolve",
+    "side-carousel",
+    "fold-out"
+   ]
+  },
+  {
+   "key": "/crawl",
+   "title": "Hanzo Crawl - AI-Ready Web Crawler",
+   "signature": "flip-board",
+   "entrances": [
+    "tile-flip",
+    "slot-roll",
+    "grow-from-point",
+    "pendulum",
+    "shrink-to-card"
+   ]
+  },
+  {
+   "key": "/dashboards",
+   "title": "Hanzo Dashboards",
+   "signature": "spotlight",
+   "entrances": [
+    "diagonal-wipe",
+    "curtain-rise",
+    "explode-gather",
+    "stack-drop",
+    "cursor-lens"
+   ]
+  },
+  {
+   "key": "/dataroom",
+   "title": "Hanzo Dataroom - Secure Document Sharing & Analytics",
+   "signature": "drag-canvas",
+   "entrances": [
+    "text-mask-film",
+    "iris",
+    "focus-pull-scroll",
+    "page-curl",
+    "ink-spread"
+   ]
+  },
+  {
+   "key": "/datastore",
+   "title": "Hanzo Datastore",
+   "signature": "zoom-map",
+   "entrances": [
+    "spiral-in",
+    "shutter",
+    "snap-sections",
+    "squash-land",
+    "rack-focus"
+   ]
+  },
+  {
+   "key": "/dns",
+   "title": "Hanzo DNS",
+   "signature": "globe",
+   "entrances": [
+    "swing-door",
+    "invert-flash",
+    "drop-in",
+    "domino",
+    "depth-parallax"
+   ]
+  },
+  {
+   "key": "/edge",
+   "title": "Hanzo Edge",
+   "signature": "graph",
+   "entrances": [
+    "velocity-skew",
+    "blinds",
+    "card-deal",
+    "glitch-in",
+    "cursor-trail"
+   ]
+  },
+  {
+   "key": "/engine",
+   "title": "Hanzo Engine",
+   "signature": "zoom-map",
+   "entrances": [
+    "line-draw",
+    "scramble",
+    "magnet-gather",
+    "conveyor",
+    "orbit-in"
+   ]
+  },
+  {
+   "key": "/features",
+   "title": "Features",
+   "signature": "h-gallery",
+   "entrances": [
+    "pixel-resolve",
+    "grid-wave",
+    "tilt-3d-hover",
+    "underline-sweep",
+    "spring-snap"
+   ]
+  },
+  {
+   "key": "/flow",
+   "title": "Hanzo Flow",
+   "signature": "rows-open",
+   "entrances": [
+    "cursor-trail",
+    "card-deal",
+    "drop-in",
+    "glitch-in",
+    "diagonal-wipe"
+   ]
+  },
+  {
+   "key": "/functions",
+   "title": "Hanzo Functions",
+   "signature": "peel",
+   "entrances": [
+    "conveyor",
+    "split-merge",
+    "spring-snap",
+    "tile-flip",
+    "grow-from-point"
+   ]
+  },
+  {
+   "key": "/gallery",
+   "title": "Gallery",
+   "signature": "film-scrub",
+   "entrances": [
+    "velocity-skew",
+    "scramble",
+    "text-mask-film",
+    "underline-sweep",
+    "line-draw"
+   ]
+  },
+  {
+   "key": "/gateway",
+   "title": "Hanzo Gateway",
+   "signature": "globe",
+   "entrances": [
+    "page-curl",
+    "rack-focus",
+    "tilt-3d-hover",
+    "scroll-tilt",
+    "slot-roll"
+   ]
+  },
+  {
+   "key": "/guard",
+   "title": "Guard",
+   "signature": "spotlight",
+   "entrances": [
+    "zoom-through",
+    "stack-drop",
+    "vertical-ticker",
+    "letter-cascade",
+    "ink-spread"
+   ]
+  },
+  {
+   "key": "/help/privacy/model-training",
+   "title": "How do I change my model improvement setting?",
+   "signature": "h-gallery",
+   "entrances": [
+    "cover-slide",
+    "depth-parallax",
+    "word-shuffle",
+    "blinds",
+    "shrink-to-card"
+   ]
+  },
+  {
+   "key": "/hsm",
+   "title": "Hanzo HSM",
+   "signature": "spotlight",
+   "entrances": [
+    "swing-door",
+    "pull-back",
+    "venetian-type",
+    "sticky-stack",
+    "domino"
+   ]
+  },
+  {
+   "key": "/iam",
+   "title": "Hanzo IAM",
+   "signature": "decode",
+   "entrances": [
+    "shutter",
+    "accordion",
+    "noise-dissolve",
+    "spiral-in",
+    "magnet-gather"
+   ]
+  },
+  {
+   "key": "/idv",
+   "title": "Hanzo IDV",
+   "signature": "spotlight",
+   "entrances": [
+    "ripple",
+    "focus-pull-scroll",
+    "invert-flash",
+    "grid-wave",
+    "iris"
+   ]
+  },
+  {
+   "key": "/ingress",
+   "title": "Hanzo Ingress",
+   "signature": "globe",
+   "entrances": [
+    "side-carousel",
+    "stretch-scroll",
+    "inertia-drag",
+    "count-roll",
+    "curtain-rise"
+   ]
+  },
+  {
+   "key": "/insights",
+   "title": "Hanzo Insights",
+   "signature": "flip-board",
+   "entrances": [
+    "pendulum",
+    "fold-out",
+    "snap-sections",
+    "opposite-drift",
+    "squash-land"
+   ]
+  },
+  {
+   "key": "/integrations",
+   "title": "Integrations",
+   "signature": "h-gallery",
+   "entrances": [
+    "explode-gather",
+    "pixel-resolve",
+    "orbit-in",
+    "typewriter",
+    "cursor-lens"
+   ]
+  },
+  {
+   "key": "/jin",
+   "title": "Jin",
+   "signature": "rows-open",
+   "entrances": [
+    "squash-land",
+    "curtain-rise",
+    "pull-back",
+    "venetian-type",
+    "domino"
+   ]
+  },
+  {
+   "key": "/kai/guide",
+   "title": "How to use Kai, Hanzo\u2019s decision model",
+   "signature": "live-chat",
+   "entrances": [
+    "ripple",
+    "drop-in",
+    "tilt-3d-hover",
+    "line-draw",
+    "cover-slide"
+   ]
+  },
+  {
+   "key": "/kms",
+   "title": "Hanzo KMS",
+   "signature": "spotlight",
+   "entrances": [
+    "magnet-gather",
+    "blinds",
+    "pendulum",
+    "grid-wave",
+    "stretch-scroll"
+   ]
+  },
+  {
+   "key": "/leaderboard",
+   "title": "Leaderboard",
+   "signature": "race",
+   "entrances": [
+    "card-deal",
+    "rack-focus",
+    "focus-pull-scroll",
+    "orbit-in",
+    "letter-cascade"
+   ]
+  },
+  {
+   "key": "/learn",
+   "title": "Learn Hanzo",
+   "signature": "word-light",
+   "entrances": [
+    "tile-flip",
+    "fold-out",
+    "opposite-drift",
+    "spiral-in",
+    "depth-parallax"
+   ]
+  },
+  {
+   "key": "/ledger",
+   "title": "Hanzo Ledger",
+   "signature": "calculator",
+   "entrances": [
+    "stack-drop",
+    "velocity-skew",
+    "spring-snap",
+    "word-shuffle",
+    "inertia-drag"
+   ]
+  },
+  {
+   "key": "/machines",
+   "title": "Hanzo Machines",
+   "signature": "zoom-map",
+   "entrances": [
+    "glitch-in",
+    "diagonal-wipe",
+    "snap-sections",
+    "page-curl",
+    "noise-dissolve"
+   ]
+  },
+  {
+   "key": "/metrics",
+   "title": "Hanzo Metrics",
+   "signature": "flip-board",
+   "entrances": [
+    "scroll-tilt",
+    "swing-door",
+    "accordion",
+    "shutter",
+    "slot-roll"
+   ]
+  },
+  {
+   "key": "/mq",
+   "title": "Hanzo MQ",
+   "signature": "globe",
+   "entrances": [
+    "shrink-to-card",
+    "iris",
+    "scramble",
+    "count-roll",
+    "cursor-lens"
+   ]
+  },
+  {
+   "key": "/network",
+   "title": "Hanzo Network",
+   "signature": "graph",
+   "entrances": [
+    "split-merge",
+    "grow-from-point",
+    "typewriter",
+    "zoom-through",
+    "invert-flash"
+   ]
+  },
+  {
+   "key": "/node",
+   "title": "Hanzo Node",
+   "signature": "zoom-map",
+   "entrances": [
+    "vertical-ticker",
+    "conveyor",
+    "underline-sweep",
+    "text-mask-film",
+    "side-carousel"
+   ]
+  },
+  {
+   "key": "/o11y",
+   "title": "Hanzo O11y",
+   "signature": "flip-board",
+   "entrances": [
+    "ink-spread",
+    "explode-gather",
+    "pixel-resolve",
+    "sticky-stack",
+    "cursor-trail"
+   ]
+  },
+  {
+   "key": "/open-source",
+   "title": "Open Source",
+   "signature": "h-gallery",
+   "entrances": [
+    "snap-sections",
+    "magnet-gather",
+    "scroll-tilt",
+    "letter-cascade",
+    "ripple"
+   ]
+  },
+  {
+   "key": "/payments",
+   "title": "Hanzo Payments",
+   "signature": "calculator",
+   "entrances": [
+    "stretch-scroll",
+    "curtain-rise",
+    "word-shuffle",
+    "side-carousel",
+    "stack-drop"
+   ]
+  },
+  {
+   "key": "/platform",
+   "title": "Hanzo Platform",
+   "signature": "zoom-map",
+   "entrances": [
+    "inertia-drag",
+    "count-roll",
+    "spiral-in",
+    "underline-sweep",
+    "explode-gather"
+   ]
+  },
+  {
+   "key": "/pubsub",
+   "title": "Hanzo PubSub",
+   "signature": "globe",
+   "entrances": [
+    "line-draw",
+    "cursor-trail",
+    "spring-snap",
+    "cover-slide",
+    "pixel-resolve"
+   ]
+  },
+  {
+   "key": "/realtime",
+   "title": "Instant data sync across all clients",
+   "signature": "graph",
+   "entrances": [
+    "card-deal",
+    "tile-flip",
+    "shrink-to-card",
+    "vertical-ticker",
+    "venetian-type"
+   ]
+  },
+  {
+   "key": "/registry",
+   "title": "Hanzo Registry",
+   "signature": "zoom-map",
+   "entrances": [
+    "tilt-3d-hover",
+    "pendulum",
+    "opposite-drift",
+    "fold-out",
+    "invert-flash"
+   ]
+  },
+  {
+   "key": "/research",
+   "title": "Work we publish",
+   "signature": "word-light",
+   "entrances": [
+    "split-merge",
+    "focus-pull-scroll",
+    "scramble",
+    "domino",
+    "diagonal-wipe"
+   ]
+  },
+  {
+   "key": "/risk",
+   "title": "Hanzo Risk",
+   "signature": "decode",
+   "entrances": [
+    "orbit-in",
+    "ink-spread",
+    "squash-land",
+    "velocity-skew",
+    "depth-parallax"
+   ]
+  },
+  {
+   "key": "/s3",
+   "title": "Hanzo S3",
+   "signature": "peel",
+   "entrances": [
+    "text-mask-film",
+    "iris",
+    "shutter",
+    "cursor-lens",
+    "grid-wave"
+   ]
+  },
+  {
+   "key": "/search",
+   "title": "Hanzo Search",
+   "signature": "flip-board",
+   "entrances": [
+    "blinds",
+    "sticky-stack",
+    "zoom-through",
+    "pull-back",
+    "grow-from-point"
+   ]
+  },
+  {
+   "key": "/sentinel",
+   "title": "Hanzo Sentinel",
+   "signature": "decode",
+   "entrances": [
+    "typewriter",
+    "conveyor",
+    "glitch-in",
+    "page-curl",
+    "slot-roll"
+   ]
+  },
+  {
+   "key": "/sign",
+   "title": "Hanzo Sign",
+   "signature": "stamp",
+   "entrances": [
+    "swing-door",
+    "drop-in",
+    "rack-focus",
+    "noise-dissolve",
+    "accordion"
+   ]
+  },
+  {
+   "key": "/solutions",
+   "title": "Solutions for every team and industry",
+   "signature": "h-gallery",
+   "entrances": [
+    "sticky-stack",
+    "invert-flash",
+    "pull-back",
+    "venetian-type",
+    "split-merge"
+   ]
+  },
+  {
+   "key": "/stream",
+   "title": "Hanzo Stream",
+   "signature": "globe",
+   "entrances": [
+    "opposite-drift",
+    "spring-snap",
+    "depth-parallax",
+    "snap-sections",
+    "cover-slide"
+   ]
+  },
+  {
+   "key": "/tabs",
+   "title": "Keep tabs on your agents",
+   "signature": "calculator",
+   "entrances": [
+    "squash-land",
+    "fold-out",
+    "typewriter",
+    "vertical-ticker",
+    "inertia-drag"
+   ]
+  },
+  {
+   "key": "/telemetry",
+   "title": "Hanzo Telemetry",
+   "signature": "graph",
+   "entrances": [
+    "domino",
+    "ink-spread",
+    "text-mask-film",
+    "magnet-gather",
+    "shutter"
+   ]
+  },
+  {
+   "key": "/treasury",
+   "title": "Hanzo Treasury",
+   "signature": "calculator",
+   "entrances": [
+    "accordion",
+    "iris",
+    "scramble",
+    "side-carousel",
+    "pixel-resolve"
+   ]
+  },
+  {
+   "key": "/tunnel",
+   "title": "Hanzo Tunnel",
+   "signature": "peel",
+   "entrances": [
+    "noise-dissolve",
+    "explode-gather",
+    "count-roll",
+    "spiral-in",
+    "glitch-in"
+   ]
+  },
+  {
+   "key": "/visor",
+   "title": "Hanzo Visor",
+   "signature": "graph",
+   "entrances": [
+    "diagonal-wipe",
+    "orbit-in",
+    "underline-sweep",
+    "word-shuffle",
+    "curtain-rise"
+   ]
+  },
+  {
+   "key": "/world",
+   "title": "Hanzo World",
+   "signature": "globe",
+   "entrances": [
+    "blinds",
+    "ripple",
+    "stretch-scroll",
+    "scroll-tilt",
+    "grow-from-point"
+   ]
+  },
+  {
+   "key": "/zap",
+   "title": "Hanzo ZAP",
+   "signature": "calculator",
+   "entrances": [
+    "velocity-skew",
+    "page-curl",
+    "cursor-trail",
+    "drop-in",
+    "pendulum"
+   ]
+  },
+  {
+   "key": "/zen/7",
+   "title": "Zen 7 Frontier Foundation",
+   "signature": "particles",
+   "entrances": [
+    "shrink-to-card",
+    "letter-cascade",
+    "card-deal",
+    "focus-pull-scroll",
+    "stack-drop"
+   ]
+  },
+  {
+   "key": "/zen/models",
+   "title": "The complete Zen API catalog",
+   "signature": "object-3d",
+   "entrances": [
+    "cursor-lens",
+    "grid-wave",
+    "tile-flip",
+    "swing-door",
+    "zoom-through"
+   ]
+  },
+  {
+   "key": "/zen/zen6-max",
+   "title": "Zen 6 Max",
+   "signature": "particles",
+   "entrances": [
+    "tilt-3d-hover",
+    "slot-roll",
+    "rack-focus",
+    "conveyor",
+    "line-draw"
+   ]
+  },
+  {
+   "key": "/affiliate",
+   "title": "Affiliates",
+   "signature": "one-question",
+   "entrances": [
+    "depth-parallax",
+    "focus-pull-scroll",
+    "iris",
+    "noise-dissolve",
+    "glitch-in"
+   ]
+  },
+  {
+   "key": "/beta",
+   "title": "Get there first",
+   "signature": "stamp",
+   "entrances": [
+    "ripple",
+    "venetian-type",
+    "zoom-through",
+    "orbit-in",
+    "page-curl"
+   ]
+  },
+  {
+   "key": "/bounty",
+   "title": "Bounties",
+   "signature": "one-question",
+   "entrances": [
+    "conveyor",
+    "fold-out",
+    "domino",
+    "blinds",
+    "typewriter"
+   ]
+  },
+  {
+   "key": "/buying-specialist",
+   "title": "AI Buying Specialist",
+   "signature": "stamp",
+   "entrances": [
+    "count-roll",
+    "rack-focus",
+    "swing-door",
+    "tile-flip",
+    "split-merge"
+   ]
+  },
+  {
+   "key": "/enterprise",
+   "title": "Enterprise AI",
+   "signature": "rows-open",
+   "entrances": [
+    "scramble",
+    "snap-sections",
+    "inertia-drag",
+    "diagonal-wipe",
+    "line-draw"
+   ]
+  },
+  {
+   "key": "/grants",
+   "title": "Open Source & Research Credit Grants",
+   "signature": "stamp",
+   "entrances": [
+    "grid-wave",
+    "stack-drop",
+    "pixel-resolve",
+    "cover-slide",
+    "shrink-to-card"
+   ]
+  },
+  {
+   "key": "/pricing",
+   "title": "Pricing",
+   "signature": "morph-panel",
+   "entrances": [
+    "text-mask-film",
+    "grow-from-point",
+    "scroll-tilt",
+    "vertical-ticker",
+    "underline-sweep"
+   ]
+  },
+  {
+   "key": "/referral",
+   "title": "Bring a builder to Hanzo",
+   "signature": "one-question",
+   "entrances": [
+    "slot-roll",
+    "word-shuffle",
+    "cursor-lens",
+    "card-deal",
+    "sticky-stack"
+   ]
+  },
+  {
+   "key": "/sms-opt-in",
+   "title": "Get Hanzo text messages",
+   "signature": "stamp",
+   "entrances": [
+    "explode-gather",
+    "shutter",
+    "velocity-skew",
+    "spring-snap",
+    "side-carousel"
+   ]
+  },
+  {
+   "key": "/startups",
+   "title": "The Hanzo Startup Program",
+   "signature": "morph-panel",
+   "entrances": [
+    "pendulum",
+    "tilt-3d-hover",
+    "invert-flash",
+    "drop-in",
+    "opposite-drift"
+   ]
+  },
+  {
+   "key": "/about",
+   "title": "Chasing the Pareto Frontier of AI",
+   "signature": "word-light",
+   "entrances": [
+    "ink-spread",
+    "magnet-gather",
+    "squash-land",
+    "letter-cascade",
+    "accordion"
+   ]
+  },
+  {
+   "key": "/brand",
+   "title": "Hanzo Brand Guidelines.",
+   "signature": "magnet-grid",
+   "entrances": [
+    "pull-back",
+    "cursor-trail",
+    "spiral-in",
+    "curtain-rise",
+    "stretch-scroll"
+   ]
+  },
+  {
+   "key": "/careers",
+   "title": "Compilers, cryptography, and the cloud they run on",
+   "signature": "word-light",
+   "entrances": [
+    "line-draw",
+    "swing-door",
+    "iris",
+    "count-roll",
+    "sticky-stack"
+   ]
+  },
+  {
+   "key": "/contact",
+   "title": "Contact",
+   "signature": "one-question",
+   "entrances": [
+    "tile-flip",
+    "focus-pull-scroll",
+    "tilt-3d-hover",
+    "spring-snap",
+    "vertical-ticker"
+   ]
+  },
+  {
+   "key": "/contact-sales",
+   "title": "Talk to sales",
+   "signature": "stamp",
+   "entrances": [
+    "pendulum",
+    "accordion",
+    "grow-from-point",
+    "letter-cascade",
+    "text-mask-film"
+   ]
+  },
+  {
+   "key": "/customers",
+   "title": "Products Hanzo built and launched",
+   "signature": "word-light",
+   "entrances": [
+    "cursor-lens",
+    "underline-sweep",
+    "curtain-rise",
+    "magnet-gather",
+    "rack-focus"
+   ]
+  },
+  {
+   "key": "/founder",
+   "title": "Founder Program",
+   "signature": "one-question",
+   "entrances": [
+    "opposite-drift",
+    "blinds",
+    "spiral-in",
+    "diagonal-wipe",
+    "word-shuffle"
+   ]
+  },
+  {
+   "key": "/history",
+   "title": "History & Track Record",
+   "signature": "word-light",
+   "entrances": [
+    "domino",
+    "cover-slide",
+    "page-curl",
+    "explode-gather",
+    "split-merge"
+   ]
+  },
+  {
+   "key": "/investors",
+   "title": "Hanzo Investor Relations",
+   "signature": "timeline",
+   "entrances": [
+    "drop-in",
+    "snap-sections",
+    "glitch-in",
+    "zoom-through",
+    "inertia-drag"
+   ]
+  },
+  {
+   "key": "/legal",
+   "title": "Legal & Trust Center",
+   "signature": "rows-open",
+   "entrances": [
+    "ripple",
+    "grid-wave",
+    "cursor-trail",
+    "scramble",
+    "ink-spread"
+   ]
+  },
+  {
+   "key": "/newsletter",
+   "title": "Subscribe to Hanzo AI Newsletter & Developer Updates",
+   "signature": "one-question",
+   "entrances": [
+    "stretch-scroll",
+    "shrink-to-card",
+    "noise-dissolve",
+    "card-deal",
+    "pixel-resolve"
+   ]
+  },
+  {
+   "key": "/philosophy",
+   "title": "The Zen of Hanzo",
+   "signature": "timeline",
+   "entrances": [
+    "typewriter",
+    "venetian-type",
+    "fold-out",
+    "invert-flash",
+    "side-carousel"
+   ]
+  },
+  {
+   "key": "/press",
+   "title": "Press Resources.",
+   "signature": "magnet-grid",
+   "entrances": [
+    "conveyor",
+    "pull-back",
+    "velocity-skew",
+    "orbit-in",
+    "stack-drop"
+   ]
+  },
+  {
+   "key": "/security",
+   "title": "What protects your data, and how.",
+   "signature": "decode",
+   "entrances": [
+    "shutter",
+    "depth-parallax",
+    "squash-land",
+    "scroll-tilt",
+    "slot-roll"
+   ]
+  },
+  {
+   "key": "/support",
+   "title": "Support",
+   "signature": "one-question",
+   "entrances": [
+    "card-deal",
+    "cursor-lens",
+    "fold-out",
+    "tile-flip",
+    "tilt-3d-hover"
+   ]
+  },
+  {
+   "key": "/team",
+   "title": "Hanzo Team",
+   "signature": "timeline",
+   "entrances": [
+    "spiral-in",
+    "side-carousel",
+    "cursor-trail",
+    "split-merge",
+    "cover-slide"
+   ]
+  },
+  {
+   "key": "/trust",
+   "title": "Security you can read",
+   "signature": "decode",
+   "entrances": [
+    "line-draw",
+    "conveyor",
+    "text-mask-film",
+    "scroll-tilt",
+    "velocity-skew"
+   ]
+  },
+  {
+   "key": "/agents/*",
+   "title": "The agents in every workspace",
+   "signature": "split",
+   "entrances": [
+    "curtain-rise",
+    "spring-snap",
+    "invert-flash",
+    "inertia-drag",
+    "count-roll"
+   ]
+  },
+  {
+   "key": "/benchmarks/*",
+   "title": "CronQuestions benchmark",
+   "signature": "race",
+   "entrances": [
+    "venetian-type",
+    "pull-back",
+    "blinds",
+    "glitch-in",
+    "slot-roll"
+   ]
+  },
+  {
+   "key": "/blockchain/*",
+   "title": "Bundler API",
+   "signature": "rows-open",
+   "entrances": [
+    "accordion",
+    "stretch-scroll",
+    "scramble",
+    "grow-from-point",
+    "diagonal-wipe"
+   ]
+  },
+  {
+   "key": "/blog/*",
+   "title": "Kai 1: Decisions, Not Completions",
+   "signature": "timeline",
+   "entrances": [
+    "pendulum",
+    "typewriter",
+    "grid-wave",
+    "page-curl",
+    "underline-sweep"
+   ]
+  },
+  {
+   "key": "/careers/*",
+   "title": "Academic & PhD Research Intern (AI Research & Systems)",
+   "signature": "magnet-grid",
+   "entrances": [
+    "drop-in",
+    "shrink-to-card",
+    "magnet-gather",
+    "stack-drop",
+    "rack-focus"
+   ]
+  },
+  {
+   "key": "/cloud/*",
+   "title": "AI Metrics",
+   "signature": "rows-open",
+   "entrances": [
+    "swing-door",
+    "opposite-drift",
+    "letter-cascade",
+    "iris",
+    "squash-land"
+   ]
+  },
+  {
+   "key": "/compare/*",
+   "title": "Enso vs OpenRouter, Portkey, LiteLLM",
+   "signature": "race",
+   "entrances": [
+    "pixel-resolve",
+    "ripple",
+    "sticky-stack",
+    "orbit-in",
+    "noise-dissolve"
+   ]
+  },
+  {
+   "key": "/customers/*",
+   "title": "Damon Motorcycles \u00b7 $8.4M in bikes sold in 30 days",
+   "signature": "timeline",
+   "entrances": [
+    "snap-sections",
+    "domino",
+    "word-shuffle",
+    "focus-pull-scroll",
+    "vertical-ticker"
+   ]
+  },
+  {
+   "key": "/integrations/*",
+   "title": "Use Hanzo AI with Anthropic SDK",
+   "signature": "graph",
+   "entrances": [
+    "shutter",
+    "zoom-through",
+    "explode-gather",
+    "depth-parallax",
+    "ink-spread"
+   ]
+  },
+  {
+   "key": "/legal/*",
+   "title": "Acceptable Use Policy",
+   "signature": "morph-panel",
+   "entrances": [
+    "vertical-ticker",
+    "spiral-in",
+    "domino",
+    "underline-sweep",
+    "snap-sections"
+   ]
+  },
+  {
+   "key": "/models/*",
+   "title": "Aion Labs Models via Hanzo AI",
+   "signature": "race",
+   "entrances": [
+    "letter-cascade",
+    "tilt-3d-hover",
+    "pull-back",
+    "card-deal",
+    "tile-flip"
+   ]
+  },
+  {
+   "key": "/oss/*",
+   "title": "Crowdstart",
+   "signature": "graph",
+   "entrances": [
+    "opposite-drift",
+    "scramble",
+    "explode-gather",
+    "magnet-gather",
+    "rack-focus"
+   ]
+  },
+  {
+   "key": "/products/*",
+   "title": "Agents: Workers the company keeps: a model, instructions, tools and a budget",
+   "signature": "morph-panel",
+   "entrances": [
+    "stretch-scroll",
+    "cursor-trail",
+    "cover-slide",
+    "count-roll",
+    "word-shuffle"
+   ]
+  },
+  {
+   "key": "/solutions/*",
+   "title": "Hanzo for AI agents",
+   "signature": "ribbons",
+   "entrances": [
+    "cursor-lens",
+    "page-curl",
+    "sticky-stack",
+    "venetian-type",
+    "ripple"
+   ]
+  }
+ ]
+}

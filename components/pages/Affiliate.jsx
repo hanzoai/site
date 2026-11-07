@@ -2,7 +2,7 @@
 /* Affiliates. Its idea is the link that remembers who sent it.
    Persona: a partner who refers organizations to Hanzo. Goal: apply. CTA: "Apply" (mailto hello@hanzo.ai, Hanzo's own
    subject line). Metric: contact_click (no dedicated id in MASTER section 1 for affiliate applications).
-   V2: 8/10 grey deck: the affiliate link itself, at display size in its own screen, writes itself once and rests with its code marked (it leans to the pointer); the four steps are sticky chapters told in Hanzo's own sentences with one object changing beside them (a swipe rail on phones); the dark room is Hanzo's three rules as the headline, each drawn as a diagram that runs itself; one Apply, sticky from the end of the hero.
+   V2: 8/10 grey deck: h1 52px top-left, the affiliate link (44px mono, the hero object) written by 1 s with an idle caret and code re-mark; one solid from the first paint; no gap before the steps, a shorter pin; writes itself once and rests with its code marked (it leans to the pointer); the four steps are sticky chapters told in Hanzo's own sentences with one object changing beside them (a swipe rail on phones); the dark room is Hanzo's three rules as the headline, each drawn as a diagram that runs itself; one Apply, sticky from the end of the hero.
    Signature: sticky chapters: Hanzo's four step sentences pin on the left while one object on the right turns from the
    apply request into the reply, the code and link, and an org landing on the link.
    Beyond: the rule, drawn: first touch, one affiliate per org, never your own, each as a small diagram that plays
@@ -29,11 +29,11 @@ function Link() {
   const box = useRef(null);
   const seen = useInView(box, { once: true, amount: 0.4 });
   const tilt = useTilt(2.5, 'rgba(255,255,255,0)');
-  // the link writes itself once (CSS, from an empty first frame, so nothing is wiped and retyped); it waits until it is seen
+  // the link writes itself once (CSS from the first paint, so nothing is wiped and retyped and it is whole by about 1 s)
   return (
     <section className="xaf-link" aria-label={LINK}>
-      <noscript><style>{'.xaf-lnk-t,.xaf-lnk-code{animation:none!important}.xaf-caret{display:none}'}</style></noscript>
-      <div className="xp-wrap" ref={box}>
+      <noscript><style>{'.xaf-lnk-t,.xaf-lnk-code{animation:none!important}.xaf-caret{display:none}.xaf .xpc-story{width:min(100% - 2 * clamp(16px, 4vw, 32px),1152px)!important}@media (min-width:901px){.xaf .xpc-rail-p{grid-template-columns:repeat(2,minmax(0,1fr))!important}}.xaf-ln{opacity:1!important;stroke-dasharray:none!important;stroke-dashoffset:0!important}.xaf-ln.dash{stroke-dasharray:.005 .025!important}'}</style></noscript>
+      <div className="xp-wrap xaf-band" ref={box}>
         <motion.div className={'xaf-link-in' + (seen ? ' on' : '')} style={{ rotateX: tilt.rx, rotateY: tilt.ry, transformPerspective: 1600 }} {...tilt.on} aria-hidden="true">
           <span className="xaf-lnk"><span className="xaf-lnk-t">{LINK.slice(0, 22)}</span><b className="xaf-caret" /></span>
           <span className="xaf-lnk-code">&lt;code&gt;</span>
@@ -44,7 +44,26 @@ function Link() {
   );
 }
 
+/* One solid at a time, from the first paint: Affiliate.css draws the header's ask outlined on this route unless
+   <html> carries data-xaf-solid. After mount this hook sets that flag only while none of the page's own solid Apply
+   buttons is on screen, so the header's ask is solid exactly when the page's is not (at every width). */
+function useQuietHeader() {
+  useEffect(() => {
+    const H = document.documentElement;
+    const asks = [...document.querySelectorAll('.xaf [data-cta^="affiliate."]')];
+    if (!asks.length || typeof IntersectionObserver === 'undefined') return;
+    const vis = new Set();
+    const io = new IntersectionObserver((es) => {
+      es.forEach((e) => (e.isIntersecting ? vis.add(e.target) : vis.delete(e.target)));
+      if (vis.size) delete H.dataset.xafSolid; else H.dataset.xafSolid = '';
+    });
+    asks.forEach((a) => io.observe(a));
+    return () => { io.disconnect(); delete H.dataset.xafSolid; };
+  }, []);
+}
+
 function Hero() {
+  useQuietHeader();
   return (
     <section className="xaf-hero" aria-labelledby="xaf-h1">
       <div className="xp-wrap">
@@ -110,7 +129,7 @@ function How() {
     { title: <>Once approved you have a code and a link, <code className="xaf-code-in">{LINK}</code>.</> },
     { title: 'An org that signs up through the link is attributed to you: first touch, one affiliate per org, never your own.' },
   ];
-  return <Chaptered label="How it works" statement head={<h2 className="xp-head xaf-how-h">How it works</h2>} chapters={chapters} stage={(i, still) => <Stage at={i} still={still} />} />;
+  return <Chaptered label="How it works" statement head={<h2 className="xp-head xaf-how-h">How it works</h2>} chapters={chapters} per={0.55} stage={(i, still) => <Stage at={i} still={still} />} />;
 }
 
 /* The rule, drawn: each of Hanzo's three rules as a diagram with no words but the link. They play themselves. */

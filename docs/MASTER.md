@@ -333,6 +333,8 @@ Source: `original/brand-deck.html` and `hanzo.css`, from `@hanzo/design` (commit
 
 Seven types. Each lists its screens in order, one job and one real object per screen. Hanzo's copy supplies the words; a section the live page lacks is not added. Pick one signature plus at most 3 supporting techniques, check `docs/PAGES.md`, and never reuse a taken signature. Families differ by their own data and Sigil seed.
 
+> **Overridden 7 Nov by `docs/MOTION-MAP.md` (James: "don't have every page following the same process").** Each page's signature interaction comes from the motion map, not from the options below. Screen lists in section 4 are a menu of what a page may contain, never a fixed order; pinned chapter scenes only where the map says `split`.
+
 Signature options by type: Launch (a card opens into its page, a live demo that runs itself, a scrubbed build-up); System (a map you zoom into, one shape becoming the next); Catalogue (a card opens into its page); Story (scroll word reveal); Utility (none, or a small delight such as a rolling price); Developer (a typewriter terminal); Model (the Morph arrival). Supporting techniques come from: line-mask cut-in, pinned scene, typewriter, count-up, gliding tab pill, numbered `01 / 37` caption, row hover fill, timeline scrub, language tabs, copy confirmation.
 
 ### 4.1 Launch (home, `/chat`, `/dev`, `/agents`, cloud products)

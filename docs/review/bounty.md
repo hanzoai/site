@@ -1,35 +1,38 @@
 # /bounty — James-eye review
 
-Reviewed: main, page files at `c2fa6e5`. Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped). The desktop film was lost to a second tab the walk opened; desktop is judged from the dwell screenshots and the motion log.
+Verdict: 8/10
+First complaint: "On my phone the button up top still says Try Hanzo, and the live bounty list is under the fold, so the first screen is just words and a black button."
 
-Note (7 Nov 14:12): a hydration error seen in the first walks came from the shared shell and is gone on main; it is not counted against this page. Text is now legible with JavaScript off (shared fix at 14:05, re-checked).
+Walked 2026-11-07 16:45 UTC, HEAD 10953462, at 1470x801 and 375x812 (isMobile, touch). First screen captured at 0.2/1/3/6 s plus a reload; scrolled the whole page in 400px wheel notches (300px on phone) with about 1 s dwell; hovered and pressed every link, stepper, issue row and the awards rail; reduced motion and JS off checked; console, page errors and failed requests collected. Live GitHub answered in this run (the count went 9 to 10), so the snapshot-to-live swap was seen as well.
 
-Verdict: 6/10
-
-First complaint: "Green tags, green dots, a purple dot, and a green label sitting on the headline. Hanzo is black and white. And once the list loads, the first screen just sits there."
+## What works
+- The hero object is a live "Open bounties" card that runs by itself: rows cycle in with a highlighted current row within about 1 s (the 1 s to 3 s frame diff is about 10% on desktop), real issue titles, repo#number and "starter" tags. The count updates when GitHub answers, and nothing jumps.
+- Rewards are four cards in a 2x2 grid of unequal widths (not 3 equal boxes). The figures count up (+49 rolls to +50), and each card has a stepper. Together they drive a black result strip ("240 – 640 PTS", "+$65 AI credits") with a rank rail (#3/#2/#1). That is a real "Beyond" aid built from the page's own numbers, and every −/+ press changed it.
+- The standings are big Air figures (1,510 / 192 / 252) on hairline rows. The "Recent verified bug reports & awards" rail is a stacked card whose 3 tabs switch it (aria-pressed moves correctly).
+- The dark token leaderboard counts 0 up to 106,039,884 as it is reached, and the neutral bars draw in. It is the one black room, entered at the right moment.
+- "How a bounty is taken" is a pinned stage: the issue card stays, the three steps tick on in turn, and the header turns ink on the last step. One thing changes while the rest holds.
+- The closing band repeats the h1 and the one ask, centred, as the brief says.
+- On desktop the header ask swaps to "Every open bounty" once the hero ask leaves, so there is one solid fill per viewport. Primary press is scale 0.98; hover darkens the fill and is not an opacity fade. Issue rows fill #f2f2f2 on hover.
+- No console errors, no page errors, no hydration warning from page files, no horizontal scroll at either size. taste.py OK (2 files). parity: text 102/102, links 5/5.
+- Reduced motion shows final values (106,039,884, all steps ticked). With JS off the page is fully legible: the snapshot list, all 3 awards stacked and the steps listed.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** It sells: "Take an issue. Ship the fix." beside a real list of Hanzo's open GitHub bounties is the right object. Something moves in the first second (headline cut-in, the list arriving), then the first screen goes still (0.04% change over 4 s on desktop, 0.14% on phone). On the phone the list starts below the buttons.
-2. **One in, one out?** Partly. The rewards tiles and the dark token race (bars race out as you scroll) are good scenes. "Recent verified bug reports & awards" and "How a bounty is taken" read as a document: a list of sentences, then a timeline of sentences.
-3. **A real object in every section?** Hero (live list), podium with "How #1 adds up", token race: yes. The awards list and the propose-a-bounty card are text only.
-4. **One ask, sticky after the hero?** Yes on desktop: a floating bar with "Every open bounty" follows you, and the header's "Try Hanzo" turns outlined after the hero. That is the right pattern. On the phone, header "Try Hanzo" stays solid beside the bottom bar.
-5. **Every hover and press answers?** Hovers answer on the ask and the text links. No press state on "Every open bounty" or "Leaderboard".
-6. **Overlap, font swap, layout shift?** No overlap, no sideways scroll. Layout shift 0.022 on desktop, 0 on phone.
-7. **Which reference, and is its motion there?** anthropic.com launch (a hero figure, "1,510 pts", with how it adds up) and the scrubbed token race. Both are there.
-8. **Different from its neighbours?** Yes: live GitHub list, podium, race.
-9. **All 18 parts covered?** See below. No `docs/coverage/bounty.md`.
-10. **Banned tells?** Yes:
-    - Eyebrow above the h1 ("• BOUNTIES & REWARDS", green dot, mono caps).
-    - **Green** UI: issue dots, "starter" chips, "+50 pts · +$20 AI credits" lines, the arrows on text links, the live dot. Purple on the "Merged" step. JAMES.md allows 0 UI hues and bans green outright.
-11. **Copy untouched?** Yes: parity 102/102 text, 5/5 links. The issue titles and "starter" labels are live GitHub data.
+1. Desktop: yes. The h1, lede and ask read at once, and the live list is moving by 1 s. Phone: the h1 and ask sell, but the live card starts at about y 510 and the shared cookie sheet covers it, so the moving thing is barely on screen.
+2. Mostly one-in-one-out: count-ups and draws on entry, a pinned steps stage, and a rail. The standings list and the h2-left/lede-right head repeated on each section edge toward a document in places.
+3. Yes: live issue list, reward cards with calculator, standings figures, awards rail, bar leaderboard, steps stage, band.
+4. One ask ("Every open bounty") in Hanzo's words. On desktop it moves into the sticky header. On phone the header keeps "Try Hanzo" (solid once scrolled), so the phone has two asks. Nothing page-owned floats over content. Scale has rhythm: 52px h1, 64px-class figures one per screen, 26px h2, small mono.
+5. Yes. Every stepper, rail tab, row and link answered, and the primary pressed to 0.98. No jumps seen.
+6. No overlap, font swap or layout shift seen at 1470x801 or 375x812. One small wrap: on phone the card's status dot sits on its own line above "Bounties & Rewards".
+7. Apple product page (pinned scrubbed steps, figures as heroes) plus the calm of chatgpt enterprise in the standings. The pin and the count-ups are really there.
+8. Yes. The hero medium is a live issue feed, and the signature is the reward calculator plus the pinned "take an issue" stage. Nothing here matches the home, pricing or developer heroes.
+9. Largely covered (states: snapshot fallback, live, reduced motion, no-JS; a11y aria-pressed; mobile stacks). No gap was visible in the walk.
+10. None seen. No hue (taste OK), no gradient text, no eyebrow above an h1 or h2 (the mono label sits inside the card header), no 3 equal boxes, no fade-on-hover. The leaderboard bars use a grey-to-white neutral sheen, which is not a hue.
+11. Untouched (parity 102/102, 5/5).
 
-## Missing from the 18 parts (PLAN-COMPONENTS 2.1–2.18, measured)
-- **2.6 Content:** 10 pieces of text at 13px on the page (request counts, meta).
-- **2.4 / 2.18:** 0 `data-cta`; no press states.
+Shared (not counted): the cookie consent sheet covers the bottom of every first screen (on phone about 40% of the viewport). The header's frosted fade band. The font preload warnings.
 
-## Fixes
-1. Remove "• BOUNTIES & REWARDS" from above the h1.
-2. Take every green and purple out: dots, chips, points, arrows and the timeline go to ink and greys (weight or a filled ink dot can say "open" / "merged").
-3. Give the first screen one quiet idle move after it loads (for example the newest bounty arriving at the top, once).
-4. Turn the awards list and the "How a bounty is taken" steps into one object each (a pinned step that changes, or the PR itself), so they stop reading as paragraphs.
-5. Add a press state (scale 0.98 or 1px down) to "Every open bounty".
+## Fixes (in order)
+1. Phone: make the sticky header ask "Every open bounty" once the hero ask scrolls away, as on desktop. Right now the phone shows "Try Hanzo" solid next to the page's own ask.
+2. Phone: move the live "Open bounties" card higher, or shorten the lede and ask block, so at least two cycling rows are on the first screen at 375x812.
+3. Phone: keep the status dot inline with the "Bounties & Rewards" label in the card header (it wraps onto its own line).
+4. Optional polish: the stretch between the result strip and "Top bug hunters & contributors" is about 350px of empty paper on desktop. Let the standings figures count up or rise as they arrive, so that screen has an entry moment.

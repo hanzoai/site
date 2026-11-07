@@ -1,4 +1,4 @@
-/* ---------- /legal index v2 (lgi-): sepia, calm; no dark room ---------- */
+/* ---------- /legal index (lgi-): ink and greys, calm; no dark room ---------- */
 .lgi { --acc: #0a0a0a; --acc-ink: #fff; }
 .lgi-kick { margin: -8px 0 0; font-size: 14px; letter-spacing: .12em; text-transform: uppercase; color: var(--soft); }
 .lgi-stack > .w2-pause { z-index: 20; }
@@ -27,13 +27,13 @@
 .lgi-big a, .lgi-prose a { color: var(--ink); text-underline-offset: 4px; }
 .lgi-status { position: relative; display: flex; gap: 14px; padding: 28px; border-radius: 28px; background: var(--card); }
 .lgi-status blockquote, .lgi-prose blockquote { margin: 0; padding: 0; }
-.lgi-status-dot { flex: none; width: 10px; height: 10px; margin-top: 8px; border-radius: 50%; background: var(--acc); box-shadow: 0 0 0 0 rgba(10, 10, 11, .35); animation: lgi-ping 2.4s ease-out 2; }
-@keyframes lgi-ping { to { box-shadow: 0 0 0 12px rgba(10, 10, 11, 0); } }
+.lgi-status-dot { flex: none; width: 10px; height: 10px; margin-top: 8px; border-radius: 50%; background: var(--acc); box-shadow: 0 0 0 0 rgba(10, 10, 10, .35); animation: lgi-ping 2.4s ease-out 2; }
+@keyframes lgi-ping { to { box-shadow: 0 0 0 12px rgba(10, 10, 10, 0); } }
 .lgi-prose p { margin: 0 0 14px; font-size: clamp(16px, 1.2vw, 18px); line-height: 1.62; color: var(--soft); }
 .lgi-prose p:last-child { margin-bottom: 0; }
 .lgi-prose strong { color: var(--ink); font-weight: 600; }
 
-/* catalogue: chips, cards that re-flow and open */
+/* catalogue: chips over a ruled index; every row opens its document */
 .lgi-cat { padding-top: clamp(64px, 7vw, 112px); }
 .lgi-chips { position: sticky; top: 60px; z-index: 5; display: flex; flex-wrap: wrap; gap: 8px; margin: 0 -8px clamp(16px, 2vw, 24px); padding: 12px 8px; background: rgba(255, 255, 255, .96); }
 .lgi-chips button { display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 22px; border: 1px solid rgba(0, 0, 0, .1); border-radius: 999px; background: #fff; color: var(--ink); font: 600 clamp(16px, 1.3vw, 19px)/1 var(--sans); letter-spacing: -.015em; cursor: pointer; transition: background .3s var(--ease), color .3s, border-color .3s; }
@@ -73,8 +73,8 @@
 .lgi-mail li { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: baseline; gap: 16px; padding: 28px 0; border-top: 1px solid var(--line); }
 .lgi-mail li:last-child { border-bottom: 1px solid var(--line); }
 .lgi-mail li > span { font-size: 16px; color: var(--soft); }
-.lgi-mail a { display: inline-flex; align-items: center; min-height: 44px; font-size: clamp(22px, 2.2vw, 32px); font-weight: 600; letter-spacing: -.03em; color: var(--ink); text-decoration: none; background: linear-gradient(var(--acc), var(--acc)) 0 100% / 0 2px no-repeat; transition: background-size .45s var(--ease); }
-@media (hover: hover) { .lgi-mail a:hover { background-size: 100% 2px; } }
+.lgi-mail a { display: inline-flex; align-items: center; min-height: 44px; font-size: clamp(22px, 2.2vw, 32px); font-weight: 600; letter-spacing: -.03em; color: var(--ink); text-decoration: none; background: linear-gradient(var(--acc), var(--acc)) 0 100% / 0 2px no-repeat; transition: background-size .45s var(--ease), translate .3s var(--ease); }
+@media (hover: hover) { .lgi-mail a:hover { background-size: 100% 2px; translate: 4px 0; } }
 .lgi-mail a:active { transform: translateY(1px); }
 
 @media (max-width: 900px) {
@@ -96,24 +96,56 @@
   .lgi-mail li { grid-template-columns: minmax(0, 1fr); gap: 6px; padding: 20px 0; }
   .lgi-sheet-u, .lgi-sheet-s, .lgi-card-k, .lgi-step-n, .lgi-chips button .x-mono { font-size: 14px; }
 }
-@media (prefers-reduced-motion: reduce) { .lgi-status-dot { animation: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .lgi-status-dot { animation: none; }
+  /* settled at first paint: the pile's stage, the rows and the ladder sit in their final place */
+  .lgi-settle, .lgi-cards > li, .lgi-ladder li { transform: none !important; }
+}
 
-/* v2.3: the pile stays inside its sheets; the pause sits under the pile; opaque chip bar; print */
+/* the pile stays inside its sheets; the pause sits on the pile's own corner, clear of every sheet; opaque chip bar; print */
 .lgi-pile { position: absolute; inset: 0; }
 .lgi-sheet { overflow: hidden; }
 .lgi-sheet-s { white-space: normal !important; max-width: 100%; }
-.lgi-pause { position: absolute; left: 0; bottom: -8px; display: grid; place-items: center; width: 44px; height: 44px; z-index: 50; }
+.lgi-pause { position: absolute; right: 24px; top: -24px; display: grid; place-items: center; width: 44px; height: 44px; z-index: 50; }
 .lgi-pause .w2-pause { background: #f2f2f2; color: #0a0a0a; box-shadow: none; }
 .lgi-big p { font-size: 32px !important; font-weight: 500; line-height: 1.2 !important; letter-spacing: -.022em !important; }
-.lgi-chips { background: #fff !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; border-bottom: 1px solid rgba(0, 0, 0, .1); }
+.lgi-chips { background: #fff !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; border-bottom: 1px solid transparent; transition: border-color .3s var(--ease); }
+.lgi-chips[data-stuck] { border-bottom-color: rgba(0, 0, 0, .1); }
+.lgi-pin { display: block; height: 0; }
 .lgi-group[hidden] { display: none; }
+/* the reading lamp: the lit row looks like a hovered one (fill, address, ink arrow); a pointer over the list takes over */
+.lgi-card.lit { background: var(--card); }
+.lgi-card.lit .lgi-card-u { opacity: 1; transform: none; }
+.lgi-card.lit .lgi-card-go { background: #0a0a0a; color: #fff; transform: translateX(3px); }
+@media (hover: hover) {
+  .lgi-cards:hover .lgi-card.lit:not(:hover) { background: none; }
+  .lgi-cards:hover .lgi-card.lit:not(:hover) .lgi-card-u { opacity: 0; transform: translateY(4px); }
+  .lgi-cards:hover .lgi-card.lit:not(:hover) .lgi-card-go { background: var(--card); color: inherit; transform: none; }
+}
+.lgi-chips-p { display: grid; place-items: center; margin-left: auto; align-self: center; }
+.lgi-chips .lgi-chips-p .w2-pause, .lgi-chips .lgi-chips-p .w2-pause[aria-pressed='true'] { flex: none; width: 44px; height: 44px; min-height: 44px; padding: 0; border: 0; background: #f2f2f2; color: #0a0a0a; box-shadow: none; }
+@media (hover: hover) { .lgi-chips .lgi-chips-p .w2-pause:hover { background: #0a0a0a; color: #fff; } }
 @media (max-width: 899px) {
   .lgi-big p { font-size: 26px !important; }
   .lgi-card-k { display: none !important; }
   .lgi-sheet-s { font-size: 14px !important; }
+  /* phone: the pause sits just under the pile, never on a sheet */
+  .lgi-pause { right: auto; left: 0; top: calc(100% + 8px); }
+  .lgi-hero { padding-bottom: 120px; }
 }
 @media print {
-  .lgi-stack, .lgi-chips, .w2-pause, .lgi-card-go, .lgi-card-u { display: none !important; }
+  .lgi-pin, .lgi-stack, .lgi-chips, .w2-pause, .lgi-card-go, .lgi-card-u { display: none !important; }
+  body:has(.lgi) .x-skip, body:has(.lgi) a[href="#main"], body:has(.lgi) header:not(main header), body:has(.lgi) footer:not(main footer), body:has(.lgi) .x-cookie { display: none !important; }
+  .lgi-cat { padding-top: 0 !important; }
+  .lgi-cards { border-top: 0; }
+  .lgi-hero { padding: 0 0 16pt; }
+  .lgi-h1 { font-size: 36pt; }
+  .lgi-big p { font-size: 16pt !important; }
+  .lgi-card-t { font-size: 14pt; }
+  .lgi-card-d, .lgi-prose p { font-size: 11pt; }
+  .lgi-cards > li, .lgi-settle, .lgi-ladder li { transform: none !important; }
+  .w2-sec { padding: 16pt 0 !important; }
+  .lgi-how { background: none; }
   .lgi-group[hidden] { display: block !important; }
   .lgi-card { display: block; padding: 8px 0; break-inside: avoid; }
   .lgi-hero-g, .lgi-intro-g, .lgi-how-g, .lgi-contact-g { display: block !important; }

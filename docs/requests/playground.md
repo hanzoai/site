@@ -1,0 +1,6 @@
+# /playground: shared changes requested (Cloud 3, 7 Nov)
+
+1. `content/ui-strings.json` (gate 4): register the hero window's labels: "Run ·", "Model", "Tokens in", "Tokens out", "Time", "Cost", "Playground", and the kind names come from the lede ("Chat", "Completions", "Decisions", "Embeddings", "Image", "Video", "Audio", "Vision"). Also the scene's pane captions "One request" and "The Python client".
+2. `components/v2/LaunchClose.jsx` owner: "Deploy to Cloud" (`.lx-text`) has no hover beyond the underline and no press. /playground adds both page-locally (`.pg .lx-close-acts .lx-text`: lean 3px and a 2px underline on hover, translateY 1px on press); please move it into `LaunchClose.css` so every launch page gets it.
+3. `components/v2/LaunchClose.css`: the facts row ("License: Apache-2.0", "hanzoai") is 13px Zen Mono in sentence case on phones, under the 14px phone floor. /playground lifts it to 14px under 900px page-locally.
+4. Probe note for `scripts/motion.mjs` owners: with the site's `scroll-behavior: smooth`, the phone walk's 12 quick `scrollBy` calls advance only about 75px per "screen" on every page, so its phone screens 2–8 re-measure the hero. Set `scroll-behavior: auto` on the root before walking.

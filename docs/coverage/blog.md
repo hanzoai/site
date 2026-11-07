@@ -13,7 +13,7 @@ Forks this page deleted: the page's own buttons and text links (now kit `Cta`); 
 - [x] No dead or self-looping button
 - [x] Open copy questions listed, none decided
 
-Done here: "Read the latest" (solid, the newest post) in the masthead; the closing link "Every post" (hanzo.blog) in the Band; "hanzo.blog" and "Read the docs" are text links.
+Done here: one solid per screen: on desktop "Read the latest" (the newest post, `data-cta="blog.hero"`) is the solid in the masthead while the header's "Try Hanzo" goes outlined, then the header carries it solid; on phones the header's "Try Hanzo" stays solid and the masthead ask is outlined; "Every post" (hanzo.blog) is the Band's solid; "hanzo.blog" (underline, arrow nudges on hover) and "Read the docs" are text links.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`
@@ -31,7 +31,7 @@ Done here: parity links 29/29; the three on-site posts open into their pages by 
 - [x] Ends in Band, footer
 - [x] Morph on the on-site cards
 
-Done here: the masthead (52px), the cover story with its plate (the one big thing) and the six-headline index all fit 1470×801; then the on-site posts, the contents (two latest months, then "All 24"), the Band.
+Done here: the masthead (52px), the cover story with its plate (the one big thing) and the six-headline index all fit 1470×801; then the on-site posts, the contents (the newest month; the bars bring in one month at a time; "All 24" opens all), the Band.
 
 ## 4. Conversion system
 - [x] kit `Cta` only; no raw `.x-btn`
@@ -82,7 +82,7 @@ Done here: index buttons `aria-pressed`; strip bars are buttons with spoken coun
 - [x] Reduced motion final states; no `setInterval`
 - [x] n/a: sound is the shared kit's
 
-Done here: signature = the self-turning cover (silver curtain on the timer's turn only); its pause button has its own column and works by click (tested: the cover held for 8 s); choosing a month makes the post count grow to 1.75× and settle at 64px.
+Done here: signature = the self-turning cover (silver curtain on the timer's turn only); its pause button has its own column and works by mouse click (tested 7 Nov: elementFromPoint hits the button, `aria-pressed="true"`, the cover held 8 s). Below the cover: the on-site trio rises in on arrival and its art tilts up to 2.5° toward a fine pointer; the post count counts up 0 → 24 at 1.75× when the contents are reached and settles at 64px (and grows again on a month press); an idle silver light runs across the strip's bars every 8 s; each contents row slides in on arrival while its dotted leader draws to the date.
 
 ## 10. Media
 - [x] kit `Img` for the Kai art; Sigil fields elsewhere
@@ -90,7 +90,7 @@ Done here: signature = the self-turning cover (silver curtain on the timer's tur
 - [x] Decorative art `aria-hidden`
 - [x] No dimmed photo
 
-Done here: Hanzo's Kai art on the two Kai cover stories; one contour field per post title, paused off screen.
+Done here: Hanzo's Kai art on the two Kai cover stories; the three on-site cards play Hanzo's own films (kit `Film`: Zen for Synthesis, Enso for Pareto Frontier, Kai for Kai 1; the first model each post is about, as its post plate does), so the cover plus three films show four real visuals; contour fields on the other cover stories, paused off screen.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass
@@ -98,7 +98,7 @@ Done here: Hanzo's Kai art on the two Kai cover stories; one contour field per p
 - [x] 44px strip bars (the strip scrolls sideways), 44px links
 - [x] Ask above the fold at 375×667
 
-Done here: plate above the story, index as a swipe rail, month headers stick under the header and clear the first row; tags follow summaries on phone.
+Done here: plate above the story (343px wide with four corners at 375, aspect 4:3), then the story, the pause, and the index as a swipe rail (the index sits in the single column; it no longer forces a second one); the "All 24" pill sits on its own row under the bars; cover headline links are at least 44px tall; month headers stick under the header; tags follow summaries on phone.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast: #0a0a0a, #525252 on white; white 78% in the Band
@@ -107,7 +107,7 @@ Done here: plate above the story, index as a swipe rail, month headers stick und
 - [x] One h1; months are labelled sections
 - [x] Keyboard: index, strip, All 24, pause
 
-Done here: the carousel is `aria-roledescription="carousel"`, inactive stories `inert` and `aria-hidden`.
+Done here: the carousel is `aria-roledescription="carousel"`, inactive stories `inert` and `aria-hidden`; outline H1 → H2 (cover stories) → H2 "Posts on hanzo.ai" (visually hidden, on the trio) → H2 Contents → H2 Band, no skipped level; no nowrap on the h1; under reduced motion the pause is hidden and the index takes the full row (no indent).
 
 ## 13. Performance and engineering
 - [x] h1 in server HTML
@@ -141,7 +141,7 @@ Done here: n/a: no code on the page.
 - [x] n/a: no submit
 - [x] Reduced motion and JS off designed
 
-Done here: reduced motion: no turning, no curtain, bars at rest; JS off: masthead and first cover story visible.
+Done here: reduced motion: no turning, no curtain, bars at rest, films show posters; JS off (shared `NoJs`, no `<noscript>`): masthead and only the first cover story visible (the other five hidden), every month of the contents open, controls that need JS hidden.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on primaries; no analytics wired yet
@@ -149,4 +149,4 @@ Done here: reduced motion: no turning, no curtain, bars at rest; JS off: masthea
 - [x] `V2:` line in the page file
 - [ ] Review read: `docs/review/blog.md` verdict 6/10, fixes pushed, re-review pending
 
-Done here: `docs/review/blog.md` (critic round 2: 6/10); its five fixes pushed (pause, phone plate and strip, a figure moment and Kai art below the fold, Contents aligned, cover headlines are h2).
+Done here: `docs/review/blog.md` (6/10 at 9afbb4b); round 3 fixed the phone cover grid (round 2 had left the index on columns 2/-1, which broke the 375 cover), made the masthead ask outlined, gave the trio a heading, tilt and arrival, added the count-up moment, the idle bar sweep and row arrival, aligned Contents with its caption and closed the gaps. Proof: `docs/gallery/blog/v3-*`. Round 4 (review 7/10): JS-off cover fixed, one solid per screen, films on the trio, contents one month at a time (newest first; a bar swaps its month in as the last leaves; All 24 opens all), the count moved under Contents to fill the empty column, less air between the cover and the trio. Round 5 (review 7/10): phone strip scrolls inside the 343/288px column with a peek and "All 24" at the left under it (Oct and All tapped at 375 and 320); the masthead h1, lede and ask arrive by CSS from the first paint; the cover's contour plate is a server-drawn SVG frame until the canvas takes over (also the JS-off picture); the header's ask is outlined from the first paint on desktop while the page's own solid is on screen (no Try Hanzo / Read the latest flip); card art clipped to its 20px radius while it scales; the big card runs the full height of the two small ones; AnimatePresence in popLayout (no console warning).

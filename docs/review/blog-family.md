@@ -1,33 +1,37 @@
 # /blog/* (template) — James-eye review
 
-Reviewed: main, page files at `e341b54`. Members walked: `/blog/pareto-frontier` and `/blog/kai-decision-models`, moving, at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
+Verdict: 7/10
+First complaint: "On my phone I'm reading and there's the header, a bar under it, and then a button floating over the text at the bottom. The header says Try Hanzo, the floating one says Hanzo Gen. Which one do you want me to press? One ask."
 
-Note (7 Nov 14:12): a hydration error seen in the first walks came from the shared shell and is gone on main; it is not counted against this page.
+Walked 2026-11-07 16:43 UTC, HEAD 10953462, at 1470x801 and 375x812 (isMobile, touch). I walked /blog/pareto-frontier/ and /blog/kai-decision-models/ in full and glanced at /blog/synthesis/. For each I took first-screen frames at 0.2, 1, 3 and 6 s and a reload, scrolled the whole page in 200px (desktop) and 160 to 180px (phone) steps with screenshots, and hovered and pressed the hero ask, Back link, next-post cards, chart chips and dots, chapter rail, Copy and the TypeScript/Python tabs. On phone I opened the chapter sheet. I also ran reduced motion, JS off, CLS while scrolling, taste.py (OK) and parity.py (pareto 77/77 text, 8/8 links; kai 110/110, 4/4).
 
-Verdict: 6/10
-
-First complaint: "I open the post and it's a big title on a white page, and then nothing. The picture and the good stuff only start when I scroll."
+## What works
+- The first screen sells. The title sits at rest size (52px desktop, 40px phone), with the lede and one solid ask, and the post's own Hanzo film plays beside it. The film is in motion from the first frame. On phone the h1, lede, ask and film top (y 528) all fit inside 812px.
+- The hero film card grows into a full-bleed black stage (Gen / Enso / Kai on pareto, four hero figures on Kai), then hands over to a calm 768px reading column. That gives the page a big, then medium, then small rhythm.
+- Every chapter has a real object. The pareto GPQA chart draws its frontier line and **walks the dots by itself when idle**: the readout changed from Fable 5.1 to GLM 5.3 with no input. Hovering or pressing a chip or dot pins it. The page also has the 01/02/03 step track, 0.27 ms / $0.021 count-ups, the install terminal, Kai's code tabs (TypeScript to Python swaps and holds the pressed state) and the 32,768 bar.
+- Next-post cards open into their page. The title morphs to the destination h1, which lands at y 345, and Back restores the scroll position. Card hover scales the picture 1.04.
+- The hero ask answers on hover (#0a0a0a to #2c2c2e) and press (scale 0.98) with no jump. Copy puts the exact displayed text on the clipboard. Clicking the rail scrolls to the chapter. The phone chapter bar opens its sheet (aria-expanded true).
+- On desktop the header ask swaps to the post's own ask ("Hanzo Gen" / "How to use Kai") once the hero ask leaves view, and the header button goes quiet while the hero ask is visible.
+- CLS while scrolling is 0.0001 to 0.0004 on all three posts at both sizes, and the h1 box never moves. There is no horizontal scroll at 375. I found no page errors and no hue in main. Reduced motion shows the final state: the stage is static and the Band words are visible. JS off is fully legible.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** The title cuts in by line mask within the first second. After that the **desktop first screen is completely still** (0% change over 4 s on both members): display title, the lede on the right, a mono byline. The plate with Hanzo's film (the Enso ring, Kai's strands) is below the fold. On the phone the plate peeks at the bottom and moves a little.
-2. **One in, one out?** Yes once you scroll: the plate grows from a card to full bleed, then each chapter opens with its number while the reading rail on the left hands "01 / 04" to "02 / 04" and counts "3 min left" down to "Finished". That rail is the best idea on the page.
-3. **A real object in every section?** Plate and code blocks, yes. The chapters are paragraphs beside the rail; for an article that is fair.
-4. **One ask, sticky after the hero?** Yes on desktop: a floating pill carries the post's own ask ("Hanzo Gen", "How to use Kai") after the hero. On the phone the same pill sits beside the header's solid "Try Hanzo", so two solid buttons show.
-5. **Every hover and press answers?** The back link and the next-post rows answer. The commit says press states were added; they were not caught on the rows tested.
-6. **Overlap, font swap, layout shift?** No overlap; layout shift 0.03 or less.
-7. **Which reference, and is its motion there?** osply / hamol editorial: the display title, 8/4 split and reading rail are there. The synchronized.studio card-opens-into-page is at the end (next posts).
-8. **Different from its neighbours?** Yes. Each post has its own film on the plate.
-9. **All 18 parts covered?** See below. `docs/coverage/blog-family.md` exists.
-10. **Banned tells?** No eyebrow over the h1 any more (fixed). Code blocks use pink, mint and lavender tokens, which is the only colour on the page not from Hanzo's media; minor, but JAMES.md says 0 UI hues.
-11. **Copy untouched?** Yes: parity 77/77 and 110/110 text, 8/8 and 4/4 links.
+1. Yes. Something moves within 1 s: the title cut-in and the Enso/Kai film (synthesis has a drawing canvas). It sells in 5 s.
+2. Mostly one-in-one-out. The hero hands to the stage, the stage to the column, each chapter's object to the next. The reading column is document-like by nature, but each chapter swaps its object.
+3. Yes on pareto and Kai. Every chapter carries a chart, step track, figures, terminal, code or bar.
+4. Desktop: yes, one ask in Hanzo's words in the sticky header. Phone: no. The header keeps a solid "Try Hanzo" while the shared rising bar shows "Hanzo Gen" over the text, under a 56px chapter bar, so there are three chrome layers and two asks. Scale has rhythm: big stage, medium column, small meta.
+5. Yes. Every hover and press I tried changed something other than opacity, with no jumps.
+6. No overlaps from the page itself. The cookie sheet and the dev "1 Issue" badge cover content, but both are shared chrome. I saw no font swap and CLS is about 0.
+7. It feels like an anthropic.com model launch crossed with an Apple pinned stage, and the synchronized.studio card-to-page morph is really there. The motion is present, not just implied.
+8. Partly. Across the family each post has its own film and its own chapter object, but pareto and Kai share an identical skeleton: split hero, black stage, rail plus column, two next cards, Band. That is acceptable for a template, but the posts read as one page with different media.
+9. Mostly covered: skip link, one main, one h1, data-cta on every primary, closing links, Band, Morph, JS off, reduced motion, budgets. Two gaps: the depth-2 page has a "Back to Blog" link where part 2 asks for a breadcrumb, and that link sits directly above the h1 (part 3 says nothing sits above the h1).
+10. One: on /blog/synthesis the "AI for AI" chapter is a 3-up grid of equal tiles (Zen / Enso / Kai films, then Gen / MCP / IAM and KMS), each with an explaining sentence underneath. That is "3 equal boxes in a row" twice. Pareto and Kai have none. No gradients, no pill above the h1, buttons do not fade.
+11. Yes. Parity is OK on both posts and taste.py is OK.
 
-## Missing from the 18 parts (PLAN-COMPONENTS 2.1–2.18, measured)
-- **2.3 First impression:** the hero object (the plate) is below the fold on desktop; the first screen does not move after arrival.
-- **2.10 Media:** the plate's film is one raw `<video>`, not through a shared film part; no pause control.
-- **2.4:** 0 `data-cta`.
+Shared (not counted): the intermittent `FooterHTML` hydration mismatch (diff is only in the footer `__html`); the cookie sheet covering the lower screen; the dev "1 Issue" badge; the shared `x-ask` rising bar.
 
-## Fixes
-1. Bring the plate into the first screen on desktop: let its top edge (with the film already playing) sit inside 801px under the title, the way the phone already peeks it.
-2. On the phone, make the post's ask the only solid button (outline or swap the header's "Try Hanzo").
-3. Set code in greys (weight and alpha for tokens) or confirm with James that syntax colour is allowed.
-4. Add a press state to the next-post rows and the back link.
+## Fixes (in order)
+1. Phone, one ask. While the post is being read, the header's solid "Try Hanzo" and the floating "Hanzo Gen" bar must not show together. Either put the post's ask in the header on phone (as desktop already does), or keep the header quiet whenever the rising bar is up. Consider folding the ask into the 56px chapter bar so nothing floats over the text.
+2. /blog/synthesis "AI for AI": break the 3-across equal grid. Make one large film with the other parts as a smaller list or rail, or use an asymmetric 2+1 layout. Keep every word.
+3. Move the "Back to Blog" link off the h1. Make it a proper breadcrumb ("Blog / <post>") in the meta line or under the header, so nothing sits directly above the title.
+4. Give pareto and Kai different stage moves so neighbouring posts do not read as the same page. For example, a scrubbed figure count on Kai instead of the same black stage block, and keep the products stage on pareto.
+5. Small polish: on phone the header button flashes solid to outline during the first second. Set its quiet state from first paint when the hero ask is in view.

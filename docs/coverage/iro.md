@@ -115,7 +115,7 @@ Done here: body text is #525252 on white and #a3a3a3 or better on black. The `Fi
 - [x] No poller; no third-party request before consent
 - [x] Nothing heavy run on James's laptop
 
-Done here: the h1 and the priority poster (`Img priority`, 1200×1500) are in server HTML. Only transform, opacity and clip-path animate; the demo loop runs only on screen (`useLoop`) and stops with its own Pause or the page pause. CLS measured 0.000 at 1470 and at 375 during a scroll of the page.
+Done here: the h1 and the priority poster (`Img priority`, 1200×1500) are in server HTML. Only transform, opacity and clip-path animate; the demo loop runs only on screen (`useLoop`) and stops with its own Pause or the page pause. CLS measured on a full scroll walk (7 Nov, round 4): 0.0015 at 1470 and 0.000 at 375 (an earlier critic walk measured 0.029 on the phone before the shared ask fix). "Every model" and "Research preview" in the close are 25px-tall text links from the shared Creative template (`Creative.jsx`, not this page's file); reported to its owner.
 
 ## 14. SEO and machine files
 - [x] Title and description match live (or are listed for James)
