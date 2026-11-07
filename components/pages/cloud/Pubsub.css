@@ -169,5 +169,3 @@
   .ps-room-top { grid-template-columns: minmax(0, 1fr); margin-bottom: 64px; }
   .ps-spec .lx-spec-row:not(:first-child) .lx-spec-v { font-size: 30px; }
 }
-/* the events.go sheet lives inside this room: while it is open, lift the room above the header (ClipWipe isolates its children) */
-.ps-room:has(.lx-sheet[data-open]) { z-index: 1000; }

@@ -84,7 +84,8 @@
 .mt-row.hot .c-value b { background: var(--acc); }
 .mt-tab[data-step='0'] .c-kind { color: var(--ink); }
 
-/* Label check (chapter three) */
+/* Label check (chapter three): beside the words on desktop, inside the table on phones */
+.mt-tab-lab { display: none; }
 .mt-lab { margin-top: 28px; display: grid; gap: 18px; }
 .mt-lab-c { display: flex; gap: 8px; flex-wrap: wrap; }
 .mt-lab-c button { height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: #fff; font: 500 14px/1 var(--mono); color: var(--soft); cursor: pointer; transition: background-color .25s, color .25s, border-color .25s; }
@@ -134,7 +135,10 @@
   .mt-row .c-kind, .mt-row .c-model, .mt-row .c-route { display: none; }
   .mt-row.head { height: 34px; }
   .mt-grid .mt-row:nth-child(n + 5) { display: none; }
-  .mt-lab { margin-top: 14px; gap: 10px; }
+  .mt-lab.in-copy { display: none; }
+  .mt-tab[data-step='2'] .mt-grid { display: none; }
+  .mt-tab[data-step='2'] .mt-tab-lab { display: block; padding: 14px 16px 16px; }
+  .mt-lab { margin-top: 0; gap: 12px; }
   .mt-lab-c button { height: 44px; padding: 0 12px; font-size: 14px; }
   .mt-lab-r div { padding-top: 6px; }
   .mt-lab-r dt, .mt-lab-r dd { font-size: 14px; }

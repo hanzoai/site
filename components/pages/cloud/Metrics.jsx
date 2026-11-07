@@ -91,7 +91,7 @@ const ROWS = [
 const TAGS = ['per-model', 'per-route', 'per-tenant'];
 const COL = { 'per-model': 'model', 'per-route': 'route', 'per-tenant': 'tenant' };
 
-function Table({ step, on }) {
+function Table({ step, on, lab }) {
   const [ref, live] = useLive(0.3);
   const [alt, setAlt] = useState(false);
   useEvery(2200, live && step === 1, () => setAlt((a) => !a));
@@ -133,15 +133,16 @@ function Table({ step, on }) {
           );
         })}
       </div>
+      <div className="mt-tab-lab">{lab}</div>
     </div>
   );
 }
 
-function LabelCheck({ on, setOn }) {
+function LabelCheck({ on, setOn, where = '' }) {
   const picked = TAGS.filter((_, i) => on[i]);
   const f = picked.length ? picked.map((l) => l.slice(4) + 's').join(' × ') : 'one';
   return (
-    <div className="mt-lab">
+    <div className={'mt-lab ' + where}>
       <div className="mt-lab-c" role="group" aria-label="Labels to add">
         {TAGS.map((l, i) => <button key={l} type="button" aria-pressed={on[i]} onClick={() => setOn(on.map((v, j) => (j === i ? !v : v)))}>{l}</button>)}
       </div>
@@ -166,7 +167,7 @@ const SIDE = [['Metrics', '/metrics'], ['Logs', '/cloud/logs'], ['Dashboards', '
 
 export default function Metrics() {
   const [on, setOn] = useState([true, false, false]);
-  const steps = POINTS.map(([t, d], i) => ({ t, d, extra: i === 2 ? <LabelCheck on={on} setOn={setOn} /> : null }));
+  const steps = POINTS.map(([t, d], i) => ({ t, d, extra: i === 2 ? <LabelCheck on={on} setOn={setOn} where="in-copy" /> : null }));
   return (
     <main className="lx mt">
       <section className="mt-hero" data-morph-target>
@@ -190,7 +191,7 @@ export default function Metrics() {
         </div>
       </section>
 
-      <PinnedChapters label="What a metric is here" steps={steps} per={78} visual={(at) => <Table step={at} on={on} />} />
+      <PinnedChapters label="What a metric is here" steps={steps} per={78} visual={(at) => <Table step={at} on={on} lab={<LabelCheck on={on} setOn={setOn} where="in-table" />} />} />
 
       <ClipWipe dark className="mt-send">
         <div className="lx-wrap mt-send-grid">

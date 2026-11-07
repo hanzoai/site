@@ -1,4 +1,6 @@
-.lx-wipe { position: relative; isolation: isolate; background: transparent !important; }
-.lx-wipe-bg { position: absolute; inset: 0; z-index: -1; background: var(--wipe, #0a0a0a); }
+.lx-wipe { position: relative; background: transparent !important; }
+/* bg and content are both positioned with z-index auto: they paint in order, the room's content on top, and neither
+   makes a stacking context, so fixed sheets inside still rise above the header */
+.lx-wipe-bg { position: absolute; inset: 0; background: var(--wipe, #0a0a0a); }
 .lx-wipe:not(.lx-dark) .lx-wipe-bg { background: var(--wipe, var(--card)); }
 .lx-wipe-in { position: relative; }
