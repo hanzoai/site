@@ -103,14 +103,16 @@ export default function SmsOptIn() {
     e.preventDefault();
     if (!ready) return;
     setState('submitting'); setFailed(false);
-    let ok = false;
+    let ok = false, why = 'Request failed';
     try {
       const r = await fetch('https://api.hanzo.ai/v1/notify/consent', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone, consent: true, channel: 'sms', source: 'hanzo.ai/sms-opt-in', consentText: CONSENT }) });
       ok = r.ok;
+      if (!ok) why = `Request failed (${r.status})`;
     } catch { /* not sent */ }
-    // the consent is a record: only a 2xx shows "You're opted in"; otherwise the number stays and the field is marked
+    // the consent is a record: only a 2xx shows "You're opted in"; otherwise the number stays, the field is marked and
+    // the reason shows in words beside the submit (the same wording as Hanzo's own application forms)
     if (ok) setState('done');
-    else { setState('idle'); setFailed(true); setTimeout(() => document.querySelector('.xsm-form [name="phone"]')?.focus(), 0); }
+    else { setState('idle'); setFailed(why); setTimeout(() => document.querySelector('.xsm-form [name="phone"]')?.focus(), 0); }
   };
   return (
     <main className="xp xsm">
@@ -147,6 +149,7 @@ export default function SmsOptIn() {
                     <span className="xsm-consent">{PARTS.map(([k, t]) => <span key={t} className={k && lit === k ? 'lit' : ''}>{t}</span>)}</span>
                   </label>
                   <Cta type="submit" id="sms-opt-in.submit" busy={state === 'submitting'} disabled={!ready} className="xp-cta xsm-go">Yes, sign me up!</Cta>
+                  {failed && <p className="xsm-err" role="alert">{failed}</p>}
                   <p className="xsm-fine">By submitting, you agree to our <A to="/legal/terms" className="xsm-link">Terms of Service</A> and <A to="/legal/privacy" className="xsm-link">Privacy Policy</A>. We never sell or share your mobile number with third parties for marketing.</p>
                 </motion.form>
               )}

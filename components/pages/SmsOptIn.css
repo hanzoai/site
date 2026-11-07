@@ -73,8 +73,8 @@
 
 @media (max-width: 900px) {
   .xsm-hero { padding: 32px 0 88px; }
-  .xsm-grid { grid-template-columns: 1fr; grid-template-areas: 'words' 'side' 'card'; }
-  .xsm-side { position: relative; top: 0; margin-top: 36px; max-height: 420px; overflow: hidden; -webkit-mask-image: linear-gradient(#000 78%, transparent); mask-image: linear-gradient(#000 78%, transparent); }
+  .xsm-grid { grid-template-columns: 1fr; grid-template-areas: 'words' 'card' 'side'; }
+  .xsm-side { position: relative; top: 0; margin-top: 40px; max-height: 420px; overflow: hidden; -webkit-mask-image: linear-gradient(#000 78%, transparent); mask-image: linear-gradient(#000 78%, transparent); }
   .xsm-phone { width: 280px; }
   .xsm-card { margin-top: 24px; }
   .xsm-bar, .xsm-to span, .xsm-from, .xsm-msgs li, .xsm-keys span { font-size: 14px; }
@@ -85,6 +85,10 @@
   .xsm-big-keys span { height: 56px; font-size: 16px; }
   .xsm-big-keys .xp-lede { grid-column: 1 / -1; margin-left: 0; }
 }
+/* no dead white between the form and the dark room */
+.xsm-hero { padding-bottom: clamp(64px, 7vw, 112px); }
+/* a refused send says why, in words, beside the submit (the number stays in the field) */
+.xsm-err { margin: -8px 0 0; padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(0, 0, 0, .14); background: #f5f5f5; font-size: 14px; color: #404040; }
 /* the phone's live clock */
 .xsm-colon { font-style: normal; transition: opacity .15s cubic-bezier(0, 0, .2, 1); }
 .xsm-colon.off { opacity: .3; }
