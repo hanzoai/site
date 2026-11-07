@@ -143,13 +143,13 @@ function Board({ at, still }) {
           {b.kind === 'tiles' && <div className="gd-tiles">{b.items.map(([t, s], j) => <motion.p key={t} variants={it(j)}><b>[{t}]</b>{s && <span>{s} ✓</span>}</motion.p>)}</div>}
           {b.kind === 'lanes' && (
             <>
-              {b.items.map(([t, d], j) => <motion.div key={t} className="gd-lane" variants={it(j)}><b>{t}</b><span>{d}</span><i>Guard</i></motion.div>)}
+              {b.items.map(([t, d], j) => <motion.div key={t} className="gd-lane" variants={it(j)}><b>{t}</b><s /><i>Guard</i><s /><span>{d}</span></motion.div>)}
               <motion.p className="gd-b-off" variants={it(3)}><i />{b.foot}</motion.p>
             </>
           )}
           {b.kind === 'dials' && <ul>{b.items.map((t, j) => <motion.li key={t} variants={it(j)}><span>{t}</span><i className={j === 4 ? 'bucket' : 'sw'} /></motion.li>)}</ul>}
           {b.kind === 'log' && b.items.map(([t, ok], j) => <motion.p key={t} className={'gd-logl' + (ok ? ' ok' : ' no')} variants={it(j)}><b>{ok ? '✓' : '×'}</b>{t}</motion.p>)}
-          {b.kind === 'modes' && <div className="gd-modes">{b.items.map(([t, d], j) => <motion.div key={t} variants={it(j)}><b>{t}</b><span>{d}</span></motion.div>)}</div>}
+          {b.kind === 'modes' && <div className="gd-modes">{b.items.map(([t, d], j) => <motion.div key={t} className={j ? 'gd-mode' : 'gd-mode lead'} variants={it(j)}><b>{t}</b><span>{d}</span></motion.div>)}</div>}
         </motion.div>
       </AnimatePresence>
     </div>
@@ -264,6 +264,10 @@ function Passes() {
 function HeroObject({ children }) {
   const ref = useRef(null);
   const calm = useReducedMotion();
+  // the server cannot know the visitor's motion setting: render the same style on the server and the first client
+  // pass, and only drop the scroll scale once mounted (so reduced-motion loads hydrate without a mismatch)
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   const [tilt, setTilt] = useState(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.35', 'end start'] });
   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.94]);
@@ -275,7 +279,7 @@ function HeroObject({ children }) {
   };
   return (
     <div ref={ref} className="v2-wrap gd-lift" onPointerMove={move} onPointerLeave={() => setTilt(null)}>
-      <motion.div style={calm ? undefined : { scale, transformOrigin: '50% 0%' }}>
+      <motion.div style={mounted && calm ? undefined : { scale, transformOrigin: '50% 0%' }}>
         <div className="gd-tilt" style={tilt ? { transform: `perspective(1400px) rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)` } : undefined}>{children}</div>
       </motion.div>
     </div>

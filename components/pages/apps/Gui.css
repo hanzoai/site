@@ -27,7 +27,7 @@
 
 /* the four */
 .gu-four { display: grid; gap: 24px; align-items: center; }
-.gu-hero-four { grid-template-columns: .42fr .42fr 1fr 1fr; max-width: min(1180px, calc((100svh - 520px) * 3.55)); margin: 0 auto; }
+.gu-hero-four { grid-template-columns: .42fr .42fr 1fr 1fr; max-width: min(1180px, calc((100svh - 520px) * 3.55)); margin: 0 auto; align-items: end; } /* one baseline for the four captions */
 .gu-fig { margin: 0; min-width: 0; }
 .gu-fig figcaption { display: flex; flex-direction: column; gap: 3px; margin-top: 18px; text-align: center; }
 .gu-fig figcaption b { font-size: 17px; font-weight: 606; letter-spacing: -.01em; }
@@ -75,9 +75,15 @@
 .gu-ch { padding-top: clamp(44px, 5vw, 72px); }
 .gu-ch-head { position: relative; z-index: 1; margin-bottom: 27px; }
 @media (min-width: 901px) {
-  /* the heading rides the pinned stage, top left, for the whole pin */
-  .gu-ch-head { position: sticky; top: 84px; height: 0; margin: 0; }
+  /* the heading rides the pinned stage, top left, for the whole pin: a full-height sticky layer (taking no space) whose
+     bottom meets the section's bottom exactly when the stage's does, so the two release together and never cross */
+  .gu-ch { padding-bottom: 0; }
+  .gu-ch-head { position: sticky; top: 0; z-index: 2; height: 100svh; margin: 0 auto -100svh; padding-top: 92px; pointer-events: none; }
+  .gu-ch-head h2 { pointer-events: auto; }
   .gu-ch .bz-ch-stage { padding-top: 150px; }
+  /* the lit chapter is the moment: its title grows to 32px while it is read, then settles back to 26px */
+  .gu-ch .bz-ch-i .bz-headline { transform-origin: 0 100%; transition: transform .5s cubic-bezier(.16, 1, .3, 1); }
+  .gu-ch.live:not(.stacked) .bz-ch-i.on .bz-headline { transform: scale(1.23); }
 }
 .gu-ch-grow { transform-origin: 50% 50%; }
 .gu-ch-head .bz-display { max-width: 12ch; }
@@ -96,7 +102,7 @@
 .gu-ch .bz-ch-meta > span:last-child { visibility: hidden; }
 
 /* beyond: the shorthands are the API (the one dark room) */
-.gu-api { background: #171717; color: #fafafa; }
+.gu-api { background: #171717; color: #fafafa; padding-bottom: clamp(72px, 7vw, 104px); }
 .gu-api-top { align-items: end; margin-bottom: clamp(56px, 6vw, 88px); }
 .gu-api-top h2 { grid-column: 1 / span 7; color: #ffffff; }
 .gu-api-top .bz-body { grid-column: 9 / span 4; color: #a3a3a3; }
@@ -144,15 +150,23 @@
 .gu-plat-t { display: flex; flex-direction: column; gap: 4px; padding-right: 52px; }
 .gu-plat-t b { font-size: 21px; font-weight: 606; letter-spacing: -.02em; }
 .gu-plat-t span { font-size: 16px; color: var(--soft); }
-.gu-pp { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: 48px; align-items: center; }
-.gu-pp-dev { display: grid; place-items: center; padding: 32px; border-radius: 24px; background: var(--card); }
-.gu-pp-ios .gu-dev, .gu-pp-android .gu-dev { width: min(240px, 100%); }
+/* the opened card: it grows to the whole screen and reads as that platform's own page (device large on the left,
+   its live props above it, the name at page size on the right); Esc, Close or Back send it back into its card */
+.gu .bz-open-layer { padding: 12px; }
+.gu .bz-open-panel { width: 100%; height: calc(100svh - 24px); max-height: none; }
+.gu .bz-open-scroll { flex: 1; display: grid; align-items: center; padding: clamp(28px, 4vw, 64px); }
+.gu-pp { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(32px, 5vw, 72px); align-items: center; }
+.gu-pp-dev { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: min(62svh, 560px); padding: 32px; border-radius: 24px; background: var(--card); }
+.gu-pp-dev .gu-code { margin-bottom: 24px; }
+.gu-pp-ios .gu-dev, .gu-pp-android .gu-dev { width: min(260px, 100%); }
 .gu-pp-web .gu-dev, .gu-pp-desk .gu-dev { width: 100%; }
 .gu-pp-copy { display: flex; flex-direction: column; gap: 16px; padding-right: 32px; }
+.gu-pp-copy .bz-headline { font-size: 52px; font-weight: 497; letter-spacing: -.03em; line-height: 1.04; }
 .gu-pp-s { margin: 0; font-size: 16px; color: var(--soft); }
 
 /* get */
-.gu-get { padding-bottom: 0; }
+.gu-ship { padding-bottom: clamp(44px, 5vw, 72px); }
+.gu-get { padding-top: clamp(44px, 5vw, 72px); padding-bottom: 0; }
 .gu-get .bz-grid { align-items: start; }
 .gu-get-main { grid-column: 1 / span 5; display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
 .gu-chips { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -225,9 +239,13 @@ a.gu-chip:active { transform: scale(.97); }
   .gu-plat-t b { font-size: 17px; }
   .gu-plat-t span { font-size: 14px; }
   .gu-plat-dev .gu-b { font-size: 14px; }
+  .gu .bz-open-layer { padding: 0; }
+  .gu .bz-open-panel { height: auto; max-height: 94svh; }
+  .gu .bz-open-scroll { padding: 64px 20px 32px; }
   .gu-pp { grid-template-columns: minmax(0, 1fr); gap: 24px; }
-  .gu-pp-dev { padding: 20px; }
+  .gu-pp-dev { min-height: 0; padding: 20px; }
   .gu-pp-copy { padding-right: 0; }
+  .gu-pp-copy .bz-headline { font-size: 32px; }
 
   .gu-get-main, .gu-paste { grid-column: 1 / -1; }
   .gu-paste { margin-top: 56px; }

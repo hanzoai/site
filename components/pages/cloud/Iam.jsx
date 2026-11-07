@@ -139,7 +139,7 @@ function Fact({ f: [t, d, big], i }) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const io = new IntersectionObserver(([e]) => setOn(e.isIntersecting), { rootMargin: '0px -38% 0px -38%' });
+    const io = new IntersectionObserver(([e]) => setOn(e.isIntersecting), { rootMargin: '0px -49.5% 0px -49.5%' });
     io.observe(el);
     return () => io.disconnect();
   }, []);

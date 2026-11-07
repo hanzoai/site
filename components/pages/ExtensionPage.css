@@ -64,9 +64,9 @@
 @keyframes xe-probe { 0%, 10% { opacity: 0; } 30%, 62% { opacity: .9; } 84%, 100% { opacity: 0; } }
 
 /* the side panel, over the front window's page (the extension's own panel) */
-.xe-pclip { position: absolute; z-index: 5; right: 8%; top: calc(9% + 82px); bottom: 6%; width: 39%; overflow: hidden; border-radius: 0 0 16px 0; pointer-events: none; }
+.xe-pclip { position: absolute; z-index: 5; right: 8%; top: calc(9% + 82px); bottom: 6%; width: 42%; overflow: hidden; border-radius: 0 0 16px 0; pointer-events: none; }
 .xe-stack.f-safari .xe-pclip { top: calc(9% + 52px); }
-.xe-panel { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 12px; padding: 18px 20px 12px; background: #fff; box-shadow: -1px 0 0 rgba(0, 0, 0, .1); pointer-events: auto; }
+.xe-panel { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 10px; padding: 16px 20px 10px; background: #fff; box-shadow: -1px 0 0 rgba(0, 0, 0, .1); pointer-events: auto; }
 .xe-p-top { display: flex; align-items: center; gap: 10px; font: 600 14px/1 var(--sans); color: #0a0a0a; }
 .xe-p-dot { width: 22px; height: 22px; border-radius: 7px; background: #0a0a0a; box-shadow: inset 0 0 0 6px #0a0a0a, inset 0 0 0 8px #fff; }
 .xe-p-n { margin-left: auto; font-size: 13px; font-weight: 500; color: #525252; }
@@ -79,8 +79,9 @@
 .js .xe-card.on { transition: opacity .3s var(--xe-out) .15s, transform .4s var(--xe-in) .15s; }
 html:not(.js) .xe-cards { overflow-y: auto; }
 html:not(.js) .xe-card { margin-bottom: 17px; }
-.xe-card-t { margin: 10px 0 0; font-size: 21px; font-weight: 497; line-height: 1.2; letter-spacing: -.015em; text-wrap: balance; }
-.xe-card p { margin: 0; font-size: 14px; line-height: 1.55; color: #525252; }
+.xe-card-t { margin: 6px 0 0; font-size: 17px; font-weight: 497; line-height: 1.2; letter-spacing: -.015em; text-wrap: balance; }
+.xe-card p { margin: 0; font-size: 14px; line-height: 1.5; color: #525252; }
+.js .xe-card:not(.on) { pointer-events: none; }
 .xe-steps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
 .xe-steps button { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 7px; min-height: 44px; padding: 0; border: 0; background: none; cursor: pointer; color: #737373; font-size: 13px; transition: transform .09s var(--xe-out); }
 .xe-steps button[aria-selected='true'] { color: #0a0a0a; }
@@ -143,7 +144,18 @@ html:not(.js) .xe-card { margin-bottom: 17px; }
   transform: translate(-50%, -50%) rotate(var(--a)) translateX(var(--r)) rotate(calc(var(--a) * -1)); }
 .xe-sat.tab b { background: #0a0a0a; color: #fff; box-shadow: none; }
 
-.xe-text { grid-template-columns: minmax(0, 1fr) 44px minmax(0, 1fr); gap: 17px; padding: clamp(24px, 3vw, 44px); }
+.xe-text { padding: clamp(24px, 3vw, 44px); background: #171717; box-shadow: none; }
+.xe-text .xe-outs { max-width: 520px; }
+.xe-text .xe-outs li { flex-direction: column; align-items: stretch; gap: 10px; min-height: 0; padding: 17px 0; border-radius: 0; background: none; border-top: 1px solid rgba(255, 255, 255, .1); }
+.xe-outs-h { display: flex; align-items: center; gap: 10px; }
+.xe-text .xe-outs-i { color: rgba(255, 255, 255, .55); }
+.xe-text .xe-outs em { font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: rgba(255, 255, 255, .55); }
+.xe-outs-v { display: flex; flex-direction: column; gap: 6px; padding-left: 26px; font-size: 14px; line-height: 1.5; color: #fafafa; }
+.xe-outs-v .xe-type + .xe-type { color: rgba(255, 255, 255, .78); }
+.xe-type { display: block; width: max-content; max-width: 100%; white-space: nowrap; overflow: hidden; }
+.js .xe-type { clip-path: inset(0 100% 0 0); }
+.xe-text.on .xe-type { animation: xe-typed calc(var(--n) * 28ms) steps(var(--n)) var(--d) forwards; }
+@keyframes xe-typed { to { clip-path: inset(0 0 0 0); } }
 .xe-mini { display: flex; flex-direction: column; border-radius: 12px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .1); overflow: hidden; }
 .xe-mini-bar { display: flex; align-items: center; gap: 6px; height: 30px; padding: 0 10px; background: #f5f5f5; border-bottom: 1px solid rgba(0, 0, 0, .08); }
 .xe-mini-bar i { width: 8px; height: 8px; border-radius: 50%; background: #d4d4d4; }
@@ -248,7 +260,7 @@ html:not(.js) .xe-card { margin-bottom: 17px; }
   .xe-hero-l { gap: 12px; }
   .xe-acts { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 4px 20px; margin-top: 6px; }
   .xe-links { gap: 0 20px; }
-  .xe-stack { aspect-ratio: 3 / 4; }
+  .xe-stack { aspect-ratio: 3 / 4.3; }
   .xe-win { left: 4%; width: 90%; top: 7%; height: 88%; }
   .xe-strip { height: 32px; padding: 0 10px; }
   .xe-strip .xe-dots, .xe-tab.dim { display: none; }
@@ -267,13 +279,21 @@ html:not(.js) .xe-card { margin-bottom: 17px; }
   .xe-page img { flex: none; height: 26%; }
   .xe-page-t b { font-size: 14px; } .xe-page-t span { display: none; }
   .xe-probe { left: 6px; top: 30px; width: calc(100% - 12px); height: calc(26% + 12px); }
-  .xe-pclip { left: 4%; right: 6%; width: auto; top: 46%; bottom: 5%; border-radius: 0 0 16px 16px; }
-  .xe-stack.f-safari .xe-pclip { top: 46%; }
+  .xe-pclip { left: 4%; right: 6%; width: auto; top: 40%; bottom: 5%; border-radius: 0 0 16px 16px; }
+  .xe-stack.f-safari .xe-pclip { top: 40%; }
+  .xe-page img { height: 20%; }
+  .xe-probe { height: calc(20% + 12px); }
   .xe-panel { padding: 14px 14px 8px; gap: 8px; box-shadow: 0 -1px 0 rgba(0, 0, 0, .1); }
   .xe-p-n, .xe-avail, .xe-steps button { font-size: 14px; }
   .xe-avail { display: none; }
-  .xe-card-t { font-size: 17px; margin-top: 6px; }
+  .xe-card-t { font-size: 17px; margin-top: 4px; }
   .xe-card p { font-size: 14px; line-height: 1.45; }
+  .xe-steps button { gap: 5px; }
+}
+@media (max-width: 359px) {
+  .xe-stack { aspect-ratio: 3 / 5; }
+  .xe-pclip, .xe-stack.f-safari .xe-pclip { top: 36%; }
+  .xe-page img { height: 16%; }
   .xe-deal { margin-top: 17px; }
   .xe-deal-tabs button { padding: 0 14px; }
   .xe-path { grid-template-columns: minmax(0, 1fr); row-gap: 0; margin-top: 44px; padding-left: 28px; }

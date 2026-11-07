@@ -29,6 +29,10 @@ import './Gui.css';
 const GH = 'https://github.com/hanzoai/gui';
 const DEPLOY = 'https://platform.hanzo.ai/deploy';
 const SPR = { duration: 0.4, ease: [0.4, 0, 0.2, 1] }; // deck: no springs; the frames move and stay (ease-in-out, slow)
+// colours swap fast (150 ms, ease-out) while shape and padding take the slow 400 ms, so "Hello, Hanzo" never sits
+// grey on grey halfway between the light and the $accent (ink) state
+const INK = { duration: 0.15, ease: [0, 0, 0.2, 1] };
+const SHAPE = { ...SPR, backgroundColor: INK, color: INK };
 const ARRIVE = { duration: 0.3, ease: EASE_OUT_EXPO };
 
 /* the tokens the shorthands accept */
@@ -54,9 +58,9 @@ function Welcome({ v, parts }) {
   const dark = v.bg === '$accent';
   const r = ROUND[v.rounded];
   return (
-    <motion.div layout className={'gu-w' + (parts ? ' parts' : '')} data-part="YStack" style={{ '--pad': SPACE[v.p] }} initial={false} animate={{ borderRadius: r, backgroundColor: BG[v.bg] }} transition={SPR}>
-      <motion.span layout="position" className="gu-t" data-part="Text" initial={false} animate={{ color: dark ? '#f5f5f5' : '#0a0a0a' }} transition={SPR}>Hello, Hanzo</motion.span>
-      <motion.span layout="position" className="gu-b" data-part="Button" initial={false} animate={{ backgroundColor: dark ? '#f5f5f5' : '#0a0a0a', color: dark ? '#0a0a0a' : '#ffffff', borderRadius: r * 0.6 }} transition={SPR}>Get started</motion.span>
+    <motion.div layout className={'gu-w' + (parts ? ' parts' : '')} data-part="YStack" style={{ '--pad': SPACE[v.p] }} initial={false} animate={{ borderRadius: r, backgroundColor: BG[v.bg] }} transition={SHAPE}>
+      <motion.span layout="position" className="gu-t" data-part="Text" initial={false} animate={{ color: dark ? '#f5f5f5' : '#0a0a0a' }} transition={SHAPE}>Hello, Hanzo</motion.span>
+      <motion.span layout="position" className="gu-b" data-part="Button" initial={false} animate={{ backgroundColor: dark ? '#f5f5f5' : '#0a0a0a', color: dark ? '#0a0a0a' : '#ffffff', borderRadius: r * 0.6 }} transition={SHAPE}>Get started</motion.span>
     </motion.div>
   );
 }
@@ -257,10 +261,31 @@ function PlatScreen({ k, v }) {
     </Dev>
   );
 }
+/* The opened card reads as that platform's own page: its device large, the props it renders right now above it. */
 function PlatLive({ k }) {
   const [ref, live] = useLive(0.3);
   const v = useCycle(live, 2200);
-  return <div ref={ref} className={'gu-pp-dev gu-pp-' + k}><PlatScreen k={k} v={v} /></div>;
+  return <div ref={ref} className={'gu-pp-dev gu-pp-' + k}><Bar v={v} /><PlatScreen k={k} v={v} /></div>;
+}
+
+/* Back closes an opened platform the way Esc does: opening pushes one history entry; Back pops it and presses Close;
+   closing any other way takes that entry back off, so the page's own history stays as it was. */
+function useBackCloses(ref) {
+  useEffect(() => {
+    const box = ref.current;
+    if (!box) return;
+    let ours = false;
+    const layer = () => box.querySelector('.bz-open-layer');
+    const pop = () => { if (!ours) return; ours = false; layer()?.querySelector('.bz-open-x')?.click(); };
+    const mo = new MutationObserver(() => {
+      const open = !!layer();
+      if (open && !ours) { ours = true; history.pushState({ guOpen: 1 }, ''); }
+      else if (!open && ours) { ours = false; if (history.state?.guOpen) history.back(); }
+    });
+    mo.observe(box, { childList: true, subtree: true });
+    addEventListener('popstate', pop);
+    return () => { mo.disconnect(); removeEventListener('popstate', pop); };
+  }, [ref]);
 }
 
 /* A card's device tilts toward the pointer (2.5° at most, fine pointers only, flat on leave). */
@@ -279,8 +304,10 @@ function Tilt({ children }) {
 
 /* Drop it in: the install and the code, and the four platforms as cards that open into their device. */
 function Ship() {
+  const box = useRef(null);
+  useBackCloses(box);
   return (
-    <section className="bz-sec gu-ship" aria-labelledby="gu-ship-h">
+    <section ref={box} className="bz-sec gu-ship" aria-labelledby="gu-ship-h">
       <div className="bz-wrap bz-grid gu-ship-top">
         <div className="gu-ship-copy">
           <h2 id="gu-ship-h" className="bz-headline">Drop it in. Start shipping.</h2>
