@@ -1,150 +1,184 @@
-# / (home) coverage (PLAN-COMPONENTS areas 2.1–2.18, gate §4, brief §5.1)
+# / coverage (MASTER.md part 2, the 18 parts)
 
-Page file: `components/pages/Home.jsx`. Sections: `components/Hero.jsx`, `Models.jsx`, `Platform.jsx`, `Agents.jsx`, `Race.jsx`, `Cheaper.jsx`, `Pareto.jsx`, `Open.jsx`, `Pricing.jsx`. Styles: `components/pages/Home.css`. v2 pieces owned by Home: `components/v2/system.css`, `Lines.jsx`, `Stage.jsx`, `Chapters.jsx`. Gallery: `docs/gallery/home/`.
+Page file: `components/pages/Home.jsx` (sections: `components/Hero.jsx`, `Models.jsx`, `Platform.jsx`, `Agents.jsx`, `Race.jsx`, `Cheaper.jsx`, `Pareto.jsx`, `Open.jsx`, `Pricing.jsx`; styles `components/pages/Home.css`; v2 pieces owned by Home: `components/v2/Lines.jsx`, `Chapters.jsx`, `Stage.jsx`, `system.css`) · gallery: `docs/gallery/home/` · metric id: `api_key_created`
 
-## Brief 5.1, line by line
-- **Thesis** "One key reaches every model, for less": the h1, the lede and the argument room (speed, cost, frontier) carry it.
-- **Order:**
-  1. Hero.
-  2. Models and Platform.
-  3. Agents.
-  4. Race, Cheaper and Pareto, consecutive and in one dark room.
-  5. Open source.
-  6. Trusted (still wall).
-  7. Pricing.
-  8. Backed by (still wall).
-  9. Band.
-- **Hero composition:**
-  - Read order is the h1, then the actions, then the app.
-  - The desktop app is the focal object. It starts huge under the words and settles centred, true-size and then scaled.
-  - The phone sits right of the app and behind it. It slides out from behind the app as the stage settles. On phones and with reduced motion it arrives after 600 ms instead.
-  - The terminal is docked as a one-line install strip under the actions.
-  - The roster shows 6 rows at 14px or larger in design pixels (phone zoom 1.5).
-  - Nothing in the stage is under 12px at 1470×801. One light, from top left (long soft shadows).
-- **CTA:**
-  - The one solid ask is Hanzo's "Try Hanzo" (header, then the site ask bar after the hero, then the band).
-  - Google, GitHub and email are all outlined, so the first screen has exactly one solid fill (the header).
-  - "Install CLI" is a text link.
-  - The beta ribbon and "A New Pareto Frontier" are text links under the lede.
-  - "Open App" and "Download App" are quiet links inside the product renders.
-- **Scroll choreography:**
-  - The stage settles, then the model grid rises.
-  - The argument room opens like a door, holds speed, cost and frontier as one argument, then closes like a door back to white.
-- **Signature:** a model card opens into its page (WebGL opener). Product names open into their pages (Morph `data-morph`).
-- **Removed:**
-  - The two scroll-velocity marquees, now still walls.
-  - The pill and badge above the h1.
-  - The sign-in panel's solid button.
-  - The counter.
+Open copy questions for James:
+- The conductor's note lists "Open Hanzo" and "Read docs" in the hero. Those are live hanzo.ai's signed-in hero. The captured live home (`content/live/index.json`) is signed out and carries "Continue with Google", "Continue with GitHub" and "Continue with email", so the hero keeps those until a signed-in swap exists (PLAN-COMPONENTS 1.2, a cookie the app already sets).
+- "Backed by" names ship only with documented permission (PLAN-COMPONENTS 1.3 #3). They are kept as live has them until James decides.
 
-## The 18 areas
-1. **Strategy and conversion.**
-   - `Persona:`, `Goal:`, `CTA:` and `Metric:` (api_key_created) head the page file.
-   - One solid ask per viewport: the header at the top, the site ask bar after the hero (the header turns to outline while the bar shows), and the band at the end.
-   - Every primary and secondary carries `data-cta="home.<slot>"`.
-2. **Information architecture and navigation.**
-   - Hanzo's header and footer are unchanged.
-   - The spine (Beyond) at the right edge is a numbered chapter index written from the page's own headings. It jumps to any chapter and marks where you are. It is hidden at 1100px and below, and on touch.
-3. **First impression and page narrative.**
-   - One h1 in the server HTML. Its lines cut in from a mask within the first second, and the install line starts typing at 0.9 s.
-   - One idea per screen after that: the stage, tiles, pinned chapters, the agent wall and console, the dark room, figures, the walls, pricing and the band.
-4. **Conversion system.**
-   - Hero auth is one quiet group with the same href.
-   - Install: Copy puts exactly `curl -fsSL https://hanzo.sh | sh` on the clipboard (the `$` is `user-select: none`). If the clipboard is blocked, it selects the command instead of claiming "Copied".
-   - Pricing buttons are quiet and aligned on one line (subgrid).
-   - Dev, Max, Ultra, Enterprise and Volume have no Hanzo destination, so their buttons are hidden, not looped to /pricing (1.3 #4).
-5. **Trust and proof.**
-   - Every figure is Hanzo's: 3.02×, 9.6×, 14.2×, 530×, the GPQA chart, 805,254 and the tiles. Each keeps its qualifier and source line next to it ("up to", the 95% interval, the p50 note, the Epoch and Moonshot links).
-   - Trusted and Backed are still, ordered walls. Logos are grey until pointed at, then they show their own colour and name. If a logo file cannot load, its name stands in.
-6. **Content presentation (copy untouched).**
-   - Parity is 570/570 text and 132/132 links.
-   - Detail sits behind clicks: the console tabs, the agent script disclosure, pricing tabs, the multiplier and billing choices, and chart tooltips.
-   - No label sits above any heading. Mono labels are captions under their figure ("3.02×" → "faster on the same coding tasks" → "HANZO DEV VS CLAUDE CODE").
-7. **Visual design system.**
-   - v2 type scale (`components/v2/system.css`): display 128/80, headline 56, title 28, lede 24, body 19, mono captions 13.
-   - Shared tokens from `app/system.css` (room tokens in the dark room).
-   - **0 UI hues:** ink, greys and silvers only. Colour arrives only through Hanzo's media: the model films, logos, and the product screens' own markup.
-   - Radius 28 on hero objects and 16 on cards, hairlines, long soft shadows.
-   - One dark middle room (the argument) and a dark closing band.
-8. **UI component library.**
-   - Kit `A`, `More`, `Tabs`/`TabPanel` (console and pricing), `Img`/`Film` (model tiles) and `Band`.
-   - v2 `Lines`, `Stage` and `Chapters`.
-   - Custom controls are styled (radio groups with arrow keys, the range slider). No browser-default controls or tooltips.
-   - No raw `.x-btn`.
-9. **Motion and interaction.** Scroll is under half of the motion:
-   - **Time:** the hero prompt types, sends and answers; the install line types; the roster steps and its speeds and bill tick; the race runs at true speed once (Replay runs it again).
-   - **Pointer:**
-     - The app leans toward a fine pointer, on springs.
-     - The agent wall swells like a dock.
-     - Tiles play their film and show their tags.
-     - Logos colour in and lift.
-     - The budget line drags, and chart discs give a reading.
-     - The calendar swells like a lens.
-     - The repo rail is thrown with inertia.
-   - **State:** kit tabs glide (layoutId), the multiplier and billing pills glide, prices roll (under 300 ms, no blur), the console switches, the script disclosure opens.
-   - **Arrival:** headlines cut into their lines, and the app rises.
-   - **Scroll:** the stage settles, the chapters wipe, the room's doors open and close.
-   - Easing is (.16,1,.3,1). Springs are 300/30.
-10. **Media.**
-    - Model pictures use kit `Img` (Enso has priority). Films use kit `Film`.
-    - **At most two films ever play** (Enso, plus the tile you point at or focus).
-    - A pause control comes before them.
-    - Reduced motion and Data Saver keep the posters.
-11. **Mobile and responsive.**
-    - At 375 the read order is the h1, the lede, the sign-up group, then the live phone (peeking at 375×667), then the links and the install line.
-    - Pinned scenes become stacked chapters below 900px.
-    - The type floor is 14px, targets are at least 44px, and there is no sideways scroll at 320, 375 or 1470.
-12. **Accessibility.**
-    - Pause controls come first for the hero demo and the films (WCAG 2.2.2), icon-only with the register's "Pause" as aria-label and `aria-pressed`.
-    - Kit tabs follow the APG pattern (arrows, Home and End). Pricing choices are radio groups with arrow keys.
-    - Inactive chapters are `inert`.
-    - Muted text is #6e6e73 (5:1) on white. `--faint` appears only in the dark room.
-    - Reduced motion shows the settled stage, every chapter stacked, open doors and final figures.
-13. **Performance and engineering.**
-    - Transform, opacity and clip-path only.
-    - One timer for the roster (it rests off screen and when paused). The demo waits while the hero is unseen or paused.
-    - No idle loops elsewhere.
-    - The canvas field from v1 is gone.
-    - Films play two at a time at most.
-14. **SEO and machine files.** Metadata and JSON-LD are unchanged (`app/page.jsx`). Every word is in the server HTML, including inactive tabs, every chapter and every pricing panel.
-15. **Catalogue and product pages.** Model tiles open into `/<model>` (WebGL opener, `data-card`). Product names open into `/download`, `/dev`, `/design`, `/api`, `/cli`, `/mcp`, `/agent`, `/bot` and `/team` (`data-morph`). A click on a product screen does the same.
-16. **Developer experience.** The install line has an exact copy, and the console tabs offer the CLI or the agent's own sign-up script (four steps, typed, copy per step or whole).
-17. **States and resilience.**
-    - **JS off:** every word is legible. The hero is in plain flow with the phone as its object, every chapter is shown, the doors are open and the band reads clearly (`@media (scripting: none)`).
-    - **Logos blocked:** names stand in.
-    - **Clipboard blocked:** the command is selected and nothing says "Copied".
-    - No console errors.
-18. **Measurement and handover.**
-    - `data-cta="home.*"` sits on every action.
-    - The site ask bar emits `cta_click`. No analytics SDK is on the page (2.18 pending).
-    - Filmed and scored in the cloud. Gallery: `docs/gallery/home/`.
+Shared changes requested (`docs/requests/home.md`): none needed. The site ask bar is turned off for this page with `data-ask="off"`, and the cursor label is silenced with `data-cursor=""`. Both are documented options of the shared layers.
 
-## Gate §4
-1. Persona, Goal, CTA and metric: yes.
-2. One h1: yes. Band: yes. Kit parts for media, tabs and buttons: yes. There is no `PageHero` in the kit yet, so the page's own `Hero.jsx` is the hero.
-3. Tokens: v2 plus `app/system.css`. One filled primary per viewport: yes (with one exception below). `data-cta` on actions: yes. `data-thumb`: not set, so the site ask carries the header's "Try Hanzo", which is the page's ask.
-4. Copy parity 570/570, link parity 132/132. No new UI strings except aria-labels from the register ("Pause").
-5. Reduced motion shows final states, and JS off is legible.
-6. No horizontal scroll at 320. 1470×801 and 375×812 pass the overlap check. No Lighthouse run in this cloud box.
-7. Contact sheet and film are in `docs/gallery/home/`. Review is in `docs/review/home.md`.
-8. Ledger (what this page deleted):
-   - Two scroll-velocity `Marquee`s.
-   - The v1 halftone canvas.
-   - The 3D-tilted three-device hero and its terminal window.
-   - The pill and badge above the h1.
-   - The solid sign-in button.
-   - The coverflow.
-   - Tablists without panels (pricing and console).
-   - `.x-btn` in pricing.
-   - The calendar's idle sweep.
-   - Blur in the price roll.
-   - Per-card `whileInView` entrances.
-   - Nine simultaneous film autoplays.
-   - The false "Copied" on the hero install.
+Forks this page deleted:
+- Two scroll-velocity `Marquee` strips (now still logo walls).
+- The coverflow carousel.
+- Tablists without panels (pricing and console now use kit `Tabs`).
+- `.x-btn` in pricing.
+- The calendar's idle sweep.
+- Blur in the price roll.
+- Per-card `whileInView` entrances.
+- The edge "spine" index (it floated over content).
+- The springs in pricing, cost, chart and calendar.
 
-## Known gaps (not this page's to fix)
-- The closing `Band` (kit) is solid by default. On the home its button is an outline that fills on hover, because the header's "Try Hanzo" turns solid again while the band hides the ask bar. A kit option for a quiet band button would remove this override.
-- The kit `Copy` (console) still shows its tick when the clipboard is blocked. That needs a kit change.
-- Partner and customer logos, and the images inside the Design, Bot and Team screens, load from hanzo.ai. They are blank where hanzo.ai is unreachable (this cloud box) until the media mirror lands (2.10).
-- Brief 5.1 asks for a phone about 0.45× the app's width. It is 0.37× (354 px against 960), large enough for 14px roster rows without towering over the app.
-- PLAN 6.3 keeps pinned chapters as a staged test. JAMES.md (which wins on taste) asks for pinned stages, so the product chapters pin on desktop and stack on phones and for reduced motion.
+## 1. Strategy and conversion
+- [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
+- [x] One solid fill per viewport; label and href from `lib/cta.js`: the header's "Try Hanzo". The hero keeps live's solid "Continue with email" (the hero is live's own, kept exactly).
+- [x] One h1; the page is clear in 5 seconds
+- [x] No dead or self-looping button: pricing buttons with no destination (Dev, Max, Ultra, Enterprise, Volume) are hidden, not looped
+- [x] Open copy questions for James listed, none decided
+
+Done here: Persona, Goal, CTA, Metric, Signature and Beyond head `Home.jsx`. "Try Hanzo" is the one sticky ask, in the header at every width. One `<h1>` ("Smarter, Faster, Open Source. Pick all three.") is in the server HTML.
+
+## 2. Information architecture and navigation
+- [x] One `<main>`; the site skip link reaches it
+- [x] Every link through `A` or a real `<a href>`; every card a real link
+- [ ] n/a: breadcrumb (depth 1)
+- [x] Link parity: 0 removed, 0 unexpected
+
+Done here: Parity shows 132/132 links. Model cards link to `/<model>`, product names to their pages, and repos and logos to their sources.
+
+## 3. First impression and page narrative
+- [x] Sells in 5 s; something moves within 1 s without input: the install command and the prompt type themselves, and the headline lines rise
+- [x] Nothing above the h1 except live's own "A New Pareto Frontier" pill (the hero exception in MASTER 3.3). `PageHero` is not used: the hero is live hanzo.ai's own (MASTER 3.1).
+- [x] JS off: legible. Every chapter is shown, the doors are open, and the band is sharp (`@media (scripting: none)`).
+- [x] One idea per screen. The model cards start within one viewport of the headline at every desktop size from 1024 to 1470 (measured 616–689 px).
+- [x] Ends in the Backed-by wall, then `Band`, then the footer
+- [x] Model cards open into their page with the WebGL opener; product names carry `data-morph`
+
+Done here: The order is hero, model cards, platform chapters, agents, one dark room (speed, cost, frontier), open source, Trusted by, pricing, Backed by, then Band (MASTER 4.1).
+
+## 4. Conversion system
+- [x] No raw `.x-btn` in home sections (kit `Band` and `More` only). `<Cta>` is not in the kit yet.
+- [x] Sticky ask in the header at every width. The floating bar is off here because nothing may float over content (MASTER 3.2 rule 6).
+- [x] The hero's copy buttons are live's own. The console's kit `Copy` copies exactly the displayed command.
+- [x] `data-cta="home.*"` on every action
+
+Done here: The header's "Try Hanzo" is the one solid ask after the hero. Pricing buttons are quiet outlines aligned on one line (subgrid).
+
+## 5. Trust and proof
+- [x] No seal; no invented number
+- [x] Every figure traces to Hanzo's copy, with its qualifier beside it ("up to", the 95% interval, the p50 note, and the Epoch and Moonshot sources)
+- [x] No marquees: Trusted by and Backed by are still, ordered walls, and a logo's name stands in if its file fails
+- [ ] n/a: no form submit on this page
+
+Done here: Parity shows 570/570 texts. The figures are Hanzo's: 3.02×, 9.6×, 14.2×, 530×, the GPQA chart and 805,254.
+
+## 6. Content presentation (copy untouched)
+- [x] No text under 13px (14px phone) except mono capitals and the spec'd model-card pills and descriptions (`SPEC.md`: 10px pill, 13px description)
+- [x] Headings balanced, one line each at 26px
+- [x] Tabs use the kit (`Tabs`/`TabPanel`); the pricing choices are radio groups with arrow keys
+- [x] `python3 scripts/parity.py /`: 0 missing
+
+Done here:
+- Section headings rest at 26px and sublines at 16px.
+- Figures rest at 64px in Zen Air; plan prices are 44px; captions are 12–13px Zen Mono capitals.
+- Each screen has one big thing.
+
+## 7. Visual design system
+- [x] `python3 scripts/taste.py` passes on every home file
+- [x] No label above a headline: chapter counters and figure labels sit under their titles
+- [x] Deck greys only (#525252 muted, #a3a3a3 on black, #fafafa on black); radii 20 (cards), 16 and full (pills and buttons)
+- [x] One icon style (inline strokes); agent marks are logos
+- [x] Differs from neighbours: live's hero, SPEC cards, one dark room for the argument
+
+Done here: There are two black rooms, never back to back: the argument (speed, cost, frontier) and the closing band. The argument room enters as a rounded card inside the gutters and opens to full width as it is reached.
+
+## 8. UI component library
+- [x] Every control has hover (inside `@media (hover: hover)`), press (scale .98 or 1px down), and a focus-visible ring
+- [x] The focus ring is visible on every stop (the shared ring, plus the ink outline on the model cards)
+- [ ] n/a: no dialogs on this page
+- [x] No bare `:hover` in `Home.css`
+- [x] Forks this page deleted: listed above
+
+Done here: Kit `Tabs` (console, pricing), `Img`/`Film` (model cards), `Band`, `More`, `Copy`.
+
+## 9. Motion and interaction
+- [x] One signature (a model card opens into its page). Supporting techniques: line-mask cut-in, pinned scene (platform chapters), count-up. No fade-ups.
+- [x] Kinds of movement:
+  - **Time:** the hero demo; the race at true speed.
+  - **Pointer:** card tilt (±2.7°); the budget line; the calendar lens; the rail.
+  - **State:** tab pills, rolling prices, Replay.
+  - **Arrival:** the headline cut-in.
+  - **Scroll:** chapters, the doors, and figures that grow and settle.
+- [x] Something moves untouched (the hero demo, the films); every control answers
+- [x] Reduced motion shows the final state. `setInterval` remains only inside live's hero port (`Hero.jsx`, kept exactly) and the agent sign-up typing.
+- [ ] n/a: sound is a shared layer
+
+Done here: No springs (MASTER 3.1). Tweens use ease-emphasis (.16,1,.3,1) at 300–700 ms. Figures grow only while they are the moment, then settle at 64px.
+
+## 10. Media
+- [x] `Film` and `Img` (kit) on the model cards; sizes and posters set
+- [x] The model films loop while in view, exactly as `SPEC.md` asks (its exception to "at most 2 playing"). One pause button beside the subline stops them all.
+- [x] Alt text on every logo; product renders are `aria-hidden` with text equivalents in the DOM
+- [x] Nine real model films and posters together; never dimmed or filtered (`SPEC.md`)
+
+Done here: Model media is `/models/<slug>.webp|webm`. Logos and the images inside three product screens load from hanzo.ai; when they fail, names stand in.
+
+## 11. Mobile and responsive
+- [x] No overlap at 375×812, 390×844, 414×896, 600×800, 768×1024, 800×600, 820×1180, 900×700, 1024×768, 1100×800, 1200×800, 1280×800, 1366×768, 1440×900 or 1470×801 (scripted box check)
+- [x] No horizontal scroll at 320, 375 or 1470
+- [x] Targets 44px or more; hover detail has a tap path
+- [x] The primary ask (the sign-up group) is above the fold at 375×667
+
+Done here: Pinned chapters stack below 900px, model cards go to 2 and 4 columns, and the hero follows live's own phone layout.
+
+## 12. Accessibility (WCAG 2.2 AA)
+- [x] Muted text #525252 on white (7.8:1); on black #a3a3a3 and white 78%
+- [x] Pause control on the model films; the hero demo rests when off screen (live's port)
+- [ ] n/a: no forms
+- [x] One h1, then h2s per section and h3s in pricing
+- [x] Keyboard reaches every control (kit tabs follow APG; the budget line is a slider with arrow keys)
+
+Done here: Inactive chapters are `inert`. Every panel is in the HTML.
+
+## 13. Performance and engineering
+- [x] h1 and LCP (the hero headline) in server HTML
+- [x] Every image and video sized (`Img`/`Film` w and h)
+- [x] No new poller; no third-party request
+- [x] Nothing run on James's laptop (cloud only)
+
+Done here: Animation is transform, opacity and clip-path only. CLS is 0.001 on phone and 0.02 on desktop (measured).
+
+## 14. SEO and machine files
+- [x] Title and description unchanged (`app/page.jsx`)
+- [ ] n/a: canonical is a shared layout concern
+- [x] `<JsonLd route="/">` unchanged
+- [x] Every card is a real link
+
+Done here: Every word, including inactive tabs and every chapter, is in the server HTML.
+
+## 15. Catalogue and product pages
+- [x] Model card matches `SPEC.md`:
+  - Grid 2fr plus 4×1fr, rows 220 and gap 12.
+  - #000 at radius 20, with the title at 22px (Enso 44px).
+  - Mono pills.
+  - The webm plays over the webp.
+  - Tilt at perspective 900 with a .3s ease.
+- [x] Every card opens into its page (WebGL opener)
+- [ ] n/a: not the catalogue
+- [ ] n/a: no prices repeated across contexts
+
+Done here: The section heading is 26px, as on live. "Explore model pricing →" and "View full model catalog →" sit under the grid, left and right.
+
+## 16. Developer experience
+- [x] Copy equals the displayed command (live's terminal; the console's kit `Copy`)
+- [ ] n/a: no config blocks
+- [x] The agent sign-up script ends on a static step and stops on user input
+- [x] No hand-typed version number added
+
+Done here: The console tabs (Hanzo.Start, Hanzo.Agents) hold every command and the four-step script in the HTML.
+
+## 17. States and resilience
+- [x] Logos blocked: names stand in. Images blocked in product screens: the frames stay.
+- [x] Blocked hanzo.ai assets leave a complete page with no console errors (measured)
+- [ ] n/a: no submit
+- [x] JS off: the page is legible
+
+Done here: The `scripting: none` rules keep every word visible.
+
+## 18. Measurement and handover
+- [x] `data-cta="home.*"` on every action
+- [x] Nothing identifier-bearing
+- [ ] `V2: <score>/10`: pending the critic
+- [ ] Review read: pending `docs/review/home.md`
+
+Done here: Proof is in `docs/gallery/home/`. The critic verdict is pending.

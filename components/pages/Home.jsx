@@ -1,21 +1,21 @@
 'use client';
 // Persona: developer evaluating Hanzo (first visit); enterprise buyers and founders pass through to /enterprise and /pricing
-// Goal: understand "one key reaches every model, for less" in 5 s, then start (PLAN-COMPONENTS 1, brief 5.1)
-// CTA: "Try Hanzo" → https://hanzo.ai/signup (header, the site ask bar after the hero, pricing, closing band); every
-//      hero button is quiet so exactly one solid ask is on screen
+// Goal: understand "one key reaches every model, for less" in 5 s, then start (MASTER 4.1)
+// CTA: "Try Hanzo" → https://hanzo.ai/signup, the sticky header's solid ask at every width (the floating ask bar is off
+//      here: nothing floats over content); the hero keeps live hanzo.ai's own sign-up group
 // Metric: api_key_created (leading: signup_start via data-cta="home.*", install_copy)
-// Signature: Stage and Open. The live desktop app sits huge under "Pick all three." and settles as you scroll while
-//   the phone slides out from behind it (Hero.jsx); every model tile lifts off and opens into its page (Models.jsx),
-//   and every product name opens into its page (Platform.jsx).
-// Beyond: the spine, a quiet chapter index at the right edge written from the page's own headings.
-/* Home, v2 (the bar-setter, docs/VISION.md, JAMES.md, PLAN-COMPONENTS 5.1). Chaptered: one idea per screen, the
-   product as the hero, every card opens. Motion by kind: time (the hero demo types, sends and answers; the install
-   line types; the roster steps), pointer (the app leans, the agent wall swells, tiles play their film and show their
-   tags), state (console tabs and pricing tabs glide, prices roll, the race replays), arrival (headlines cut into
-   their lines), scroll (the stage settles, the product chapters wipe, the argument room opens like a door).
-   Rhythm: stage → model tiles → pinned chapters → agent wall + console → the one dark room (speed, cost, frontier as
-   one argument) → figures + calendar + rail → logo wall → calm pricing → backers → closing band.
-   Colour: none in the UI (JAMES.md 7); only Hanzo's own media brings colour. */
+// Signature: a model card opens into its page (SPEC.md cards, WebGL opener), after live hanzo.ai's own hero, kept exactly.
+// Beyond: the question-count control on Enso's cost: say how many GPQA Diamond questions and every lane reprices from
+//   Hanzo's own per-1,000 rates.
+/* Home, v2 (MASTER 3.1, 4.1). The hero is live hanzo.ai's own; every section after it is chaptered, one idea per screen,
+   with scale that has rhythm: headings rest at 26px, sublines at 16px, figures at 64px in Zen Air, and a figure grows
+   only while it is the moment (the race running, a claim crossing the screen, the year's commits arriving), then
+   settles. Motion by kind: time (the hero demo types, sends, answers; the race runs at true speed; counts run once),
+   pointer (model cards tilt, the budget line drags, the calendar lens, the repo rail), state (console and pricing
+   tabs glide, prices roll, Replay), arrival (headlines cut into their lines), scroll (the product chapters wipe, the
+   argument room opens and closes like a door, figures grow and settle).
+   Order (MASTER 4.1): hero → model cards → platform chapters → agents → one dark room (speed, cost, frontier) → open
+   source → Trusted by → pricing → Backed by → closing band. Colour: none in the UI; only Hanzo's own media. */
 import { useEffect, useRef, useState } from 'react';
 import { A, Band, Img } from '../kit';
 import Hero from '../Hero';
