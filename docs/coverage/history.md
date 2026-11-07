@@ -4,7 +4,7 @@ Page file: `components/pages/History.jsx` (+ `History.css`, `historyData.js`, `s
 
 Open copy questions for James: none decided. Years beside customer figures appear only where Hanzo's own year copy has them.
 Shared changes requested (`docs/requests/about.md`, shared by the Story pages): kit Band word blur; v2/Lines timing; the floating ask bar.
-Forks this page deleted: the badge above the h1; kickers above headlines, the pill above each year title and the tag above each metric (now captions after them); the gold accent; the odometer digits and the split-flap board (no invented digits); three equal hero buttons; the separate dark FDE room and back-link section (now in `StoryClose`); raw `<img>`/`<video>` on the plates.
+Forks this page deleted: the page's own buttons and text links (now kit `Cta`); the drag cursor label; the metric printed twice on picture-less plates (now a Sigil); the year cut reused for "Your year" (now the year's plate); the phone swipe rail of years (stacked again); the clippings' outline (shadow only); the badge above the h1; kickers above headlines, the pill above each year title and the tag above each metric (now captions after them); the gold accent; the odometer digits and the split-flap board (no invented digits); three equal hero buttons; the separate dark FDE room and back-link section (now in `StoryClose`); raw `<img>`/`<video>` on the plates.
 
 ## 1. Strategy and conversion
 - [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
@@ -13,7 +13,7 @@ Forks this page deleted: the badge above the h1; kickers above headlines, the pi
 - [x] No dead or self-looping button (the hero ask scrolls to the year-by-year scene)
 - [x] Open copy questions listed, none decided
 
-Done here: "Explore Our History" (solid) in the hero; the closing link "Talk to Hanzo FDE" is the page's one action (Story type), carried by `data-thumb` and `data-cta="history.band"`.
+Done here: "Explore Our History" is a text link in the hero (it scrolls to the scene, so it is not the page's ask); the closing link "Talk to Hanzo FDE" is the page's one action (Story type), carried by `data-thumb` and `data-cta="history.band"`.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`
@@ -31,10 +31,10 @@ Done here: parity links 42/42; the 13-year rail jumps to any year; "Return to Ab
 - [x] Ends in proof (clippings above), Band, footer
 - [x] Morph on "Return to About Hanzo"
 
-Done here: h1 52px with lede and ask under it; beside it the hero's one big thing, a 160px Air year running 2014→2026 while the four eras' bars fill; then clippings, the pinned year scene, Your year, principles, the FDE Band.
+Done here: h1 52px with lede and links under it; beside it the hero's one big thing, a 112px Air year running 2014→2026 while the four eras' bars fill; then clippings, the pinned year scene, Your year, principles, the FDE Band.
 
 ## 4. Conversion system
-- [x] Page-owned `v2s-btn` until kit `Cta`; no raw `.x-btn`
+- [x] kit `Cta` only; no raw `.x-btn`
 - [x] Sticky ask: the shared bar carries "Talk to Hanzo FDE"
 - [x] n/a: no copy button
 - [x] `data-cta` and `data-thumb` on the primary
@@ -52,7 +52,7 @@ Done here: TechCrunch, Crunchbase News, Nasdaq, Startland News and hanzo.blog so
 ## 6. Content presentation (copy untouched)
 - [x] No text under 13px except 12px mono capitals
 - [x] Measures held; headings `balance`
-- [x] n/a: no tables, FAQ, tabs or code
+- [x] Disclosure: each year's remaining lines in an inline `<details>` (in the HTML; its (+) is named "Read more" from the register)
 - [x] `parity.py /history`: 0 missing
 
 Done here: parity 214/214 text, 42/42 links; one year on screen at a time, all 13 in the HTML.
@@ -82,7 +82,7 @@ Done here: rail buttons carry `aria-current`; the pause control is a 44px `aria-
 - [x] Reduced motion final states; no `setInterval`
 - [x] n/a: sound is the shared kit's
 
-Done here: signature = the scrub, the old year clearing (280 ms ease-in) before the new one rises (700 ms ease-emphasis, 300 ms later), so no frame shows two years.
+Done here: signature = the scrub; the old year leaves in 180 ms and the new one rises 100 ms later, so the stage is never blank at normal scroll speed and never shows two years at rest.
 
 ## 10. Media
 - [x] kit `Img` and `Film` for plates; sizes set
@@ -90,7 +90,7 @@ Done here: signature = the scrub, the old year clearing (280 ms ease-in) before 
 - [x] Alt: decorative plates `alt=""`, the year's figure stands in
 - [x] No dimmed photo
 
-Done here: customer photos and logos from Hanzo's case studies; with hanzo.ai blocked each plate shows its own figure.
+Done here: customer photos and logos from Hanzo's case studies; a year without a picture, or whose picture fails, gets a contour field seeded by its year (the figure is never printed twice).
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass
@@ -98,7 +98,7 @@ Done here: customer photos and logos from Hanzo's case studies; with hanzo.ai bl
 - [x] 44px links; every hover has a tap path
 - [x] Ask above the fold at 375×667
 
-Done here: phone stacks the hero, swipes the clippings and the 13 years (one per card, next peeking); page 10,032px tall at 375 (was 21,889).
+Done here: phone stacks the hero, swipes the clippings, and stacks the 13 years (as the brief asks), each short: title, badge, figure, first line, links, and the rest behind its (+).
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast: #0a0a0a, #525252 on white; #a3a3a3 and white 78% in the Band
@@ -147,6 +147,6 @@ Done here: with JS off a `noscript` rule stacks the 13 years; reduced motion hol
 - [x] `data-cta` on primaries; no analytics wired yet
 - [x] Nothing identifier-bearing
 - [x] `V2:` line in the page file
-- [x] n/a: no `docs/review/history.md` yet (critic round 1: 6/10, every complaint fixed; re-review pending)
+- [ ] Review read: `docs/review/history.md` verdict 7/10, fixes pushed, re-review pending
 
-Done here: `V2: 6/10` from round 1; year overlap, split-flap digits, eyebrows, hero object, ask bar overlap and phone length all fixed.
+Done here: `docs/review/history.md` (critic round 2: 7/10); all six fixes pushed.
