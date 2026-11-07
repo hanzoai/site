@@ -30,14 +30,14 @@ Done here: links are `A`, `More` and the kit `Cta`; parity links 7/7; the ten no
 - [x] `PageHero`; nothing above the h1 (kit equivalent: BizLines h1 + the rail until `PageHero` merges)
 - [x] JS off: legible; no `opacity:0` on the LCP element
 - [x] One idea per 100svh; no 3 same-height sections in a row
-- [x] Ends in proof strip, `Band`, footer (the close: one 44px sentence, the ask, a full-width "View on GitHub" row)
+- [x] Ends in proof strip, `Band`, footer (the close: one 44px sentence, the ask, a full-width "View on GitHub" row, then the footer about 72px below it)
 - [ ] Card-to-page links use Morph; title lands within 12px (n/a: noun cards open panels in place)
 
-Done here: the rail is the first screen's one big thing and the order starts riding within 1 s; the h1 cuts in by CSS line mask (h1 first in the DOM; the rail is ordered above it on desktop by CSS only). The audit finds 0 inline `opacity:0` runs; the order card sits at 109px at 1470×801 and 471px at 375×812 (189px inside 660px).
+Done here: at 1470×801 the h1 sits at y 267–321 (bottom at 40% of the screen) with the lede beside it at y 194–253, and the full-bleed rail (y 365–725) sits under them, as on the phone (h1 132–174). The order's first move is at 700ms on first view (then every 3.2s), so the t≈1.1s shot already shows stop 02. The journey no longer repeats the hero's cards: each stop is a line drawing that draws itself as its pane lands, with its endpoint rows arriving one by one. Section gaps after the processor switch are about 88px at 1470 (were 160–250px).
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
-- [x] Sticky ask in header and bar after the hero, same label (the header carries the site's ask; the phone bar reads the hero's `data-thumb` "Read the docs")
+- [x] Sticky ask in header after the hero, same label (desktop header swaps to "Read the docs" after the hero; on the phone the header keeps "Try Hanzo" and no bottom bar was seen in the walk, which is shared chrome, not this page's code)
 - [x] Copy button copies exactly the displayed text; failure never says Copied (n/a: no copy button)
 - [x] `data-cta` and `data-thumb` on every primary
 
@@ -75,7 +75,7 @@ Done here: taste OK; colours are `--bz-*` tokens plus #000000, #fafafa, #a3a3a3,
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: listed below
 
-Done here: stops, pause, suggestion chips, Clear, processor pills, index rows, ways and chips have a hover fill inside `@media (hover: hover)`, press .97 and a 2px focus ring; the processor switch is a radiogroup with arrow keys; the find input is 44px (32px phone) with a label.
+Done here: stops, pause, suggestion chips, Clear, processor pills, index rows, spec rows and chips have a hover fill inside `@media (hover: hover)`, press .97/.98 and a 2px focus ring; the four ways rows fill on hover, nudge their link 4px and press to .98; "View on GitHub" fills, nudges its arrow and presses 1px; "API Platform" underlines and steps its arrow 4px on hover; the ways rows' descriptions all start at x 355 and every hairline runs 159–821; the processor switch is a radiogroup with arrow keys; the find input is 44px (32px phone) with a label.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -84,7 +84,7 @@ Done here: stops, pause, suggestion chips, Clear, processor pills, index rows, w
 - [x] Reduced motion shows the final state; no `setInterval`
 - [ ] Sound only on the listed moments, through the one kit (n/a: no sound of its own)
 
-Done here: signature (the order rides the rail, idle) + the scroll-driven journey (scroll) + BizOpen (state) + line-mask headings; the processor pill glides (state, 300ms ease-emphasis) and the endpoints answer as you type (time). The rider moves with a 500ms ease-in-out tween, no springs; reduced motion lays the journey out still; the rail uses setTimeout only.
+Done here: signature (the order rides the rail, idle, first move at 700ms) + the scroll-driven journey (scroll) whose stop drawings draw in with `pathLength` dashes + BizOpen (state) + line-mask headings; the processor pill glides (state, 300ms ease-emphasis), the endpoints answer as you type (time), and the spec sheet opens one row at a time and lights its part of the install drawing (state). `variety.py`: 3 techniques (layoutId, useScroll, pathLength). The rider and the tick move with a 500ms ease-in-out tween, no springs; reduced motion lays the journey out still and drops the draw-in; the rail uses setTimeout only.
 
 ## 10. Media
 - [ ] `Film` and `Pic` only; sizes and posters set (n/a: one decorative `<img>`, Hanzo's zen.webp with width and height)
@@ -92,7 +92,7 @@ Done here: signature (the order rides the rail, idle) + the scroll-driven journe
 - [x] Budgets met; nothing missing; alt on every image
 - [x] No dimmed or filtered photo; 4+ real visuals together where the page has them (n/a: one image)
 
-Done here: `/models/zen.webp` with `alt=""` and fixed 104×104; the shape tiles are line drawings; the art drifts 12px on hover with a fine pointer only (James's art drift).
+Done here: `/models/zen.webp` with `alt=""` and fixed 104×104, shown once (on the rail's order card only); the five journey stops, the four shape tiles and the install drawing beside the spec sheet are line drawings; the tile art drifts 12px on hover with a fine pointer only (James's art drift).
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -100,7 +100,7 @@ Done here: `/models/zen.webp` with `alt=""` and fixed 104×104; the shape tiles 
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: film at 375×812 width 375/375; the hero stacks title, line, ask, then the rail (card centred, stops as numbered dots); the journey becomes five stacked steps; the ask sits at about 340px.
+Done here: 375×812 overflow 0; the hero stacks title, line, ask, then the rail (card full width, stops as numbered dots) and the tick under the card walks to the active dot (centre within 1px of it); the journey becomes five stacked steps; endpoint paths break only after "/" (`<wbr>`), so "/order/{id}/capture" never splits inside a word; the ask sits at about 330px.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -109,7 +109,7 @@ Done here: film at 375×812 width 375/375; the hero stacks title, line, ask, the
 - [x] One h1; no heading skips; names start with visible text
 - [x] Keyboard reaches every control
 
-Done here: text is #0a0a0a or #525252 on white and room fills, #737373 only on white, #a3a3a3 and white 55% only on black; stops and chips use `aria-pressed`, the switch `role="radio"` with `aria-checked`.
+Done here: text is #0a0a0a or #525252 on white and room fills, #737373 only on white, #a3a3a3 and white 55% only on black; stops and chips use `aria-pressed`, the switch `role="radio"` with `aria-checked`, the spec rows are buttons with `aria-expanded`/`aria-controls` (every answer stays in the HTML, collapsed). Noun panels name an endpoint's group once where a run of it starts, not on every row.
 
 ## 13. Performance and engineering
 - [x] h1 and LCP element in server HTML
@@ -155,6 +155,6 @@ Done here: the finder's no-match state dims the group and shows an em dash; Clea
 - [x] `data-cta` on every primary; events only through `lib/track.js` (kit `Cta` dispatches `cta_click`)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/commerce.md` verdict 8 or more (no review written yet)
+- [ ] Review read: `docs/review/commerce.md` verdict 7/10, every listed fix addressed in round 2; awaiting a fresh review
 
-Done here: `data-cta="commerce.hero"`, `"commerce.platform"`, `"commerce.close"`; gallery `desktop.mp4`, `desktop-hero.jpg`, `phone-1..3.jpg` filmed at 1470×801 and 375×812, no console errors.
+Done here: `data-cta="commerce.hero"`, `"commerce.platform"`, `"commerce.close"`; gallery `desktop.mp4`, `desktop-hero.jpg`, `phone-1..3.jpg`, plus round 2 `desktop-r2.jpg` and `phone-r2.jpg` at 1470×801 and 375×812; errs.js 0 errors, overflow 0 at both sizes.
