@@ -6,22 +6,22 @@
 .xnl-art { grid-column: 8 / span 5; }
 .xnl-lede { margin-top: 32px; }
 .xnl-formwrap { margin-top: 40px; max-width: 600px; }
-.xnl-form { display: flex; gap: 8px; padding: 8px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); background: #fff; box-shadow: 0 30px 60px -40px rgba(0, 0, 0, .35); transition: border-color .25s, box-shadow .25s; }
-.xnl-form:focus-within { border-color: var(--xp-accent); box-shadow: 0 0 0 5px rgba(82, 82, 82, .12), 0 30px 60px -40px rgba(0, 0, 0, .35); }
-.xnl-form input { flex: 1; min-width: 0; height: 60px; padding: 0 22px; border: 0; border-radius: 999px; background: transparent; font: 400 19px/1 var(--sans); color: var(--ink); outline: none; }
+.xnl-form { display: flex; gap: 4px; padding: 4px; border-radius: 28px; border: 1px solid rgba(0, 0, 0, .14); background: #fff; transition: border-color .15s, box-shadow .15s; }
+@media (hover: hover) { .xnl-form:hover { border-color: var(--hz-400); } }
+.xnl-form:focus-within { border-color: #0a0a0a; box-shadow: 0 0 0 1px #0a0a0a; }
+.xnl-form input { flex: 1; min-width: 0; height: 48px; padding: 0 20px; border: 0; border-radius: 24px; background: transparent; font: 400 17px/1 var(--sans); color: var(--ink); outline: none; }
 .xnl-form input::placeholder { color: var(--faint); }
-.xnl-form .xp-cta { height: 60px; }
-.xnl-form .xp-cta:disabled { opacity: .55; cursor: progress; }
-.xnl-form input[aria-invalid='true'] { color: #404040; }
+.xnl-form .xp-cta { height: 48px; }
+.xnl-form:has(input[aria-invalid='true']) { border-style: dashed; border-color: #0a0a0a; }
 .xnl-err { margin: 12px 0 0 22px; font-size: 15px; color: #404040; }
 .xnl-terms { margin: 16px 0 0 22px; max-width: 54ch; font-size: 14px; line-height: 1.55; color: var(--faint); }
 .xnl-link { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--xp-accent); }
-.xnl-sent { display: flex; gap: 14px; align-items: flex-start; margin: 40px 0 0; max-width: 48ch; padding: 22px 24px; border-radius: 20px; background: var(--card); font-size: 18px; line-height: 1.5; }
+.xnl-sent { display: flex; gap: 14px; align-items: flex-start; margin: 40px 0 0; max-width: 48ch; padding: 22px 24px; border-radius: 16px; background: var(--card); font-size: 17px; line-height: 1.5; outline: none; }
 .xnl-sent .x-tick { flex: none; margin-top: 2px; stroke: var(--xp-accent); }
 
 /* the paper issue and its envelope */
 .xnl-stage { position: relative; display: grid; place-items: center; min-height: 620px; perspective: 1400px; }
-.xnl-paper { position: relative; width: min(100%, 480px); aspect-ratio: 4 / 5; padding: 32px; border-radius: 8px; background: #fff; border: 1px solid var(--line); box-shadow: 0 50px 90px -50px rgba(0, 0, 0, .4), 0 2px 6px rgba(0, 0, 0, .05); transform-origin: 50% 100%; }
+.xnl-paper { position: relative; width: min(100%, 480px); aspect-ratio: 4 / 5; padding: 32px; border-radius: 8px; background: #fff; border: 1px solid var(--line); transform-origin: 50% 100%; }
 .xnl-mast { position: relative; height: 38%; margin: -32px -32px 28px; border-radius: 6px 6px 0 0; overflow: hidden; background: var(--ink); color: rgba(255, 255, 255, .7); }
 .xnl-sigil { position: absolute; inset: 0; width: 100%; height: 100%; }
 .xnl-brand { position: absolute; left: 22px; bottom: 18px; display: flex; align-items: center; gap: 8px; color: #fff; font-size: 22px; font-weight: 560; letter-spacing: -.03em; }
@@ -30,14 +30,12 @@
 .xnl-lines li { position: relative; padding-left: 30px; font-size: 18px; line-height: 1.4; font-weight: 500; letter-spacing: -.01em; counter-increment: l; }
 .xnl-lines li::before { content: counter(l, decimal-leading-zero); position: absolute; left: 0; top: 2px; font: 500 13px/1.4 var(--mono); color: var(--faint); }
 .xnl-lines li span { position: relative; display: block; }
-/* each line is set like type: a white sheet slides off it, then it holds, then the page resets */
-.xnl-lines li span::after { content: ''; position: absolute; inset: -2px -4px; background: #fff; transform-origin: 100% 50%; animation: xnl-set 9s var(--xp-ease) infinite; animation-delay: calc(.6s + var(--i) * 1.1s); }
-.xnl-lines li::after { content: ''; position: absolute; left: 26px; bottom: -4px; width: 2px; height: 1.2em; background: var(--ink); opacity: 0; animation: xnl-caret 9s steps(1) infinite; animation-delay: calc(.6s + var(--i) * 1.1s); }
-@keyframes xnl-set { 0% { transform: scaleX(1); } 12% { transform: scaleX(0); } 88% { transform: scaleX(0); } 96%, 100% { transform: scaleX(1); } }
-@keyframes xnl-caret { 0%, 12% { opacity: 1; } 12.1%, 100% { opacity: 0; } }
+/* each line is set like type, once: a white sheet slides off it, then the page rests */
+.xnl-lines li span::after { content: ''; position: absolute; inset: -2px -4px; background: #fff; transform-origin: 100% 50%; animation: xnl-set .5s var(--xp-ease) both; animation-delay: calc(.6s + var(--i) * .4s); }
+@keyframes xnl-set { from { transform: scaleX(1); } to { transform: scaleX(0); } }
 .xnl-rule { display: block; height: 7px; margin-top: 22px; border-radius: 4px; background: var(--card); }
 .xnl-rule.short { width: 62%; margin-top: 10px; }
-.xnl-env { position: relative; width: min(100%, 500px); aspect-ratio: 16 / 10; border-radius: 10px; background: var(--card); border: 1px solid var(--line); box-shadow: 0 50px 90px -50px rgba(0, 0, 0, .4); transform-style: preserve-3d; }
+.xnl-env { position: relative; width: min(100%, 500px); aspect-ratio: 16 / 10; border-radius: 12px; background: var(--card); border: 1px solid var(--line); transform-style: preserve-3d; }
 .xnl-flap { position: absolute; inset: 0 0 auto; height: 58%; background: #ececef; clip-path: polygon(0 0, 100% 0, 50% 100%); transform-origin: 50% 0; border-radius: 10px 10px 0 0; }
 .xnl-stamp { position: absolute; top: 16px; right: 16px; display: grid; place-items: center; width: 44px; height: 52px; border: 1.5px dashed rgba(0, 0, 0, .25); border-radius: 4px; background: #fff; }
 .xnl-to { position: absolute; left: 28px; bottom: 54px; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
@@ -49,36 +47,36 @@
 /* what each issue carries: three statements whose weight swells as they cross the middle */
 .xnl-inside { overflow: hidden; }
 .xnl-sts { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(72px, 10vw, 160px); }
-.xnl-st { width: min(100% - 48px, 1440px); margin-inline: auto; display: grid; grid-template-columns: 80px 1fr; gap: 24px; align-items: baseline; }
+.xnl-st { width: min(100% - 2 * clamp(16px, 4vw, 32px), 1152px); margin-inline: auto; display: grid; grid-template-columns: 56px 1fr; gap: 24px; align-items: baseline; }
 .xnl-st.s1 { padding-left: 8%; } .xnl-st.s2 { padding-left: 16%; }
-.xnl-st-n { font-size: 14px; color: var(--xp-accent); }
-.xnl-st-t { margin: 0; max-width: 18ch; font-size: clamp(2.75rem, 6vw, 5.5rem); font-weight: 400; line-height: 1; letter-spacing: -.045em; color: var(--ink); text-wrap: balance; }
+.xnl-st-n { font-size: 13px; color: var(--hz-500); }
+.xnl-st-t { margin: 0; max-width: 20ch; font-size: 64px; font-weight: 400; line-height: 1.02; letter-spacing: -.035em; color: var(--ink); text-wrap: balance; transform-origin: 0 50%; }
 
 /* the double opt-in: the dark room */
-.xnl-steps { position: relative; list-style: none; margin: clamp(56px, 6vw, 96px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; }
+.xnl-steps { position: relative; list-style: none; margin: clamp(48px, 5vw, 80px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
 .xnl-steps::before { content: ''; position: absolute; left: 0; right: 0; top: 21px; height: 1px; background: rgba(255, 255, 255, .16); }
-.xnl-steps li { grid-column: span 4; position: relative; display: grid; gap: 12px; padding-top: 72px; }
-.xnl-n { position: absolute; top: 0; left: 0; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #0a0a0a; border: 1px solid rgba(255, 255, 255, .3); font-size: 14px; color: #f5f5f7; }
-.xnl-steps li:first-child .xnl-n { background: var(--xp-accent); border-color: var(--xp-accent); }
-.xnl-steps b { font: 600 clamp(2rem, 3.4vw, 3rem)/1 var(--sans); letter-spacing: -.045em; color: #f5f5f7; }
-.xnl-steps span:not(.xnl-n) { max-width: 30ch; font-size: clamp(1.0625rem, 1.32vw, 1.1875rem); line-height: 1.5; color: #a1a1a6; }
+.xnl-steps li { position: relative; display: grid; gap: 12px; padding-top: 72px; }
+.xnl-n { position: absolute; top: 0; left: 0; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #0a0a0a; border: 1px solid rgba(255, 255, 255, .3); font-size: 13px; color: #fafafa; }
+.xnl-steps li:first-child .xnl-n { background: #fafafa; border-color: #fafafa; color: #0a0a0a; }
+.xnl-steps b { font: 497 21px/1.25 var(--sans); letter-spacing: -.015em; color: #fafafa; }
 .xnl-home { margin-top: clamp(64px, 7vw, 112px); display: flex; align-items: center; gap: 16px; }
 .xnl-mark { display: grid; place-items: center; width: 60px; height: 60px; border-radius: 50%; color: #a1a1a6; border: 1px solid rgba(255, 255, 255, .2); transition: color .2s, border-color .2s; }
-.xnl-mark:hover { color: #fff; border-color: #fff; }
+@media (hover: hover) { .xnl-mark:hover { color: #fff; border-color: #fff; } }
+.xnl-mark:active { transform: scale(.97); }
+.xnl-mark:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 
-[data-off] .xnl-lines li span::after, [data-off] .xnl-lines li::after { animation-play-state: paused; }
-@media (prefers-reduced-motion: reduce) { .xnl-lines li span::after, .xnl-lines li::after { animation: none; transform: scaleX(0); } }
+@media (prefers-reduced-motion: reduce) { .xnl-lines li span::after { animation: none; transform: scaleX(0); } }
 @media (max-width: 900px) {
   .xnl-hero { padding: 32px 0 72px; }
   .xnl-form { flex-direction: column; border-radius: 24px; }
-  .xnl-form input { height: 56px; text-align: center; }
+  .xnl-form input { height: 52px; text-align: center; }
   .xnl-form .xp-cta { width: 100%; }
   .xnl-terms, .xnl-err { margin-left: 4px; }
   .xnl-stage { min-height: 440px; }
   .xnl-st { width: calc(100% - 32px); grid-template-columns: 1fr; gap: 12px; }
   .xnl-st.s1, .xnl-st.s2 { padding-left: 0; }
-  .xnl-st-t { font-size: 2.5rem; transform: none !important; }
-  .xnl-steps { grid-template-columns: 1fr; gap: 40px; }
+  .xnl-st-t { font-size: 32px; transform: none !important; }
+  .xnl-steps { grid-template-columns: 1fr 1fr; gap: 32px 16px; }
   .xnl-steps::before { display: none; }
   .xnl-steps li { grid-column: 1; padding-top: 60px; }
   .xnl-home .xp-cta { flex: 1; }
