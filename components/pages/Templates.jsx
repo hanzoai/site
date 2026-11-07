@@ -82,7 +82,7 @@ function Strip() {
   return (
     <div className="xtp-strip">
       <div className="xtp-strip-l">
-        {AGENTS.slice(0, 5).map(([n, h]) => <A key={n} to={D + h}>{n}<span className="x-sr"> (opens in a new tab)</span></A>)}
+        {AGENTS.slice(0, 5).map(([n, h]) => <A key={n} to={D + h}><span>{n}</span><span className="x-sr"> (opens in a new tab)</span></A>)}
         <button type="button" aria-expanded={open} aria-controls="xtp-all" onClick={() => setOpen(!open)}>+{AGENTS.length - 5} more</button>
       </div>
       <div id="xtp-all" className="xtp-all" hidden={!open}>
@@ -128,7 +128,7 @@ function Card({ t, d, onPrev, onNext, calm, narrow }) {
       </A>
       <div className="xtp-foot">
         <div><h3>{title}</h3><p>{what}</p></div>
-        <A to={'/chat?template=' + encodeURIComponent(slug)} className="xtp-edit" tabIndex={front ? 0 : -1} data-cta="templates.card">Edit in Hanzo <span aria-hidden="true">→</span></A>
+        <A to={'/chat?template=' + encodeURIComponent(slug)} className="xtp-edit" tabIndex={front ? 0 : -1} data-cta="templates.card"><span>Edit in Hanzo</span> <span aria-hidden="true">→</span></A>
       </div>
     </motion.article>
   );
@@ -261,7 +261,7 @@ function Shelf({ cur, onSeen }) {
           art: <span className={'xtp-tile-img' + (slug === cur ? ' on' : '')}><Shot slug={slug} title={title} kind={kind} alt="" /><span className="x-mono">{slug}.hanzo.app</span></span>,
           body: (<>
             <p>{what}</p>
-            <p><A to={'/chat?template=' + encodeURIComponent(slug)} className="w2-cta" data-cta="templates.sheet">Edit in Hanzo <i aria-hidden="true">→</i></A></p>
+            <p><A to={'/chat?template=' + encodeURIComponent(slug)} className="w2-cta" data-cta="templates.sheet"><span>Edit in Hanzo</span> <i aria-hidden="true">→</i></A></p>
             <p className="xtp-sheet-cmd x-mono">hanzo template get {slug}</p>
           </>),
         }))} />
@@ -314,7 +314,7 @@ export default function Templates() {
             </div>
             <motion.div className="xtp-top-r" initial={{ y: 14 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
               <p className="w2-lede xtp-lede">Open one. Edit it in Hanzo.</p>
-              <Magnetic strength={0.25}><A to={'/chat?template=' + encodeURIComponent(front[0])} className="w2-cta" data-thumb="Edit in Hanzo" data-cta="templates.hero">Edit in Hanzo <i aria-hidden="true">→</i></A></Magnetic>
+              <Magnetic strength={0.25}><A to={'/chat?template=' + encodeURIComponent(front[0])} className="w2-cta" data-thumb="Edit in Hanzo" data-cta="templates.hero"><span>Edit in Hanzo</span> <i aria-hidden="true">→</i></A></Magnetic>
             </motion.div>
           </div>
           <VelocitySkew className="xtp-stage">
@@ -342,7 +342,7 @@ function Band({ front }) {
             <span className="xtp-tile-img"><Shot slug={front[0]} title={front[1]} kind={front[2]} alt="" /></span>
           </A>
           <p className="xtp-band-t">{front[1]} <span className="x-mono">{front[0]}.hanzo.app</span></p>
-          <Magnetic strength={0.25}><A to={'/chat?template=' + encodeURIComponent(front[0])} className="w2-cta" data-thumb="Edit in Hanzo" data-cta="templates.close">Edit in Hanzo <i aria-hidden="true">→</i></A></Magnetic>
+          <Magnetic strength={0.25}><A to={'/chat?template=' + encodeURIComponent(front[0])} className="w2-cta" data-thumb="Edit in Hanzo" data-cta="templates.close"><span>Edit in Hanzo</span> <i aria-hidden="true">→</i></A></Magnetic>
         </div>
       </section>
   );

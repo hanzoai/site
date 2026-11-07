@@ -107,7 +107,7 @@ export default function SetupMenu({ up = false, inline = false, ...rest }) {
           {none && <p className="x-menu-none">No agent matches</p>}
           <div className="x-menu-foot">
             {SETUP_FOOT.map(([l, h], i) => (
-              <a key={l} href={h} target="_blank" rel="noopener noreferrer" style={{ '--i': SETUP.length + i }} onClick={() => setOpen(false)}>{l}<span aria-hidden="true"> ↗</span></a>
+              <a key={l} href={h} target="_blank" rel="noopener noreferrer" style={{ '--i': SETUP.length + i }} onClick={() => setOpen(false)}><span>{l}</span><span aria-hidden="true"> ↗</span></a>
             ))}
           </div>
         </div>

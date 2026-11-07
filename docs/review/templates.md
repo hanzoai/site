@@ -1,4 +1,5 @@
 # /templates: James-eye review
+Ready: 8 Nov 00:35, copycheck missing 0 of 52 (rendered capture) and 1 of 7 on the pre-JS capture: "Reading the templates from api.hanzo.ai" is Hanzo's loading line, gone once its grid loads (ours ships the twelve templates in the page, so it never loads). Hanzo's images kept (1 of 1). Edit in Hanzo, the agent strip names and the setup menu's four guide links now read as Hanzo's own lines. taste/unique/parity OK (96/96, 45/45); no overlap at 1470 and 375; the only console errors are the template previews from hanzo.ai, blocked in this sandbox.
 
 
 Verdict: 7/10
