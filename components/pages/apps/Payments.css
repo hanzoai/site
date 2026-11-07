@@ -145,13 +145,24 @@
 .pay-co-top { align-items: end; }
 .pay-co-top .bz-headline { grid-column: 1 / span 7; }
 .pay-co-side { grid-column: 8 / span 5; display: flex; flex-direction: column; align-items: flex-start; gap: 24px; }
-.pay-co-k { margin: clamp(56px, 6vw, 88px) 0 20px; }
+/* the methods (left, 7 columns) and Hanzo's three lines (right, 5) share one row, so neither column is empty */
+.pay-co-body { margin-top: clamp(56px, 6vw, 88px); align-items: end; }
+.pay-co-l { grid-column: 1 / span 7; }
+.pay-co-k { margin: 0 0 20px; }
 .pay-co-methods { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: baseline; font-size: 44px; font-weight: 497; line-height: 1.2; letter-spacing: -.03em; }
 .pay-co-methods li { white-space: nowrap; }
-.pay-co-methods li:not(:last-child)::after { content: '/'; margin: 0 .24em 0 .2em; font-weight: 220; color: var(--bz-track); }
-.pay-co-lines { list-style: none; margin: 44px 0 0; padding: 0; }
-.pay-co-lines li { grid-column: 6 / span 7; display: flex; gap: 14px; padding: 14px 0; border-top: 1px solid var(--bz-line); font-size: 16px; line-height: 1.5; color: var(--bz-muted); }
-.pay-co-lines li span { font-size: 13px; color: var(--bz-ink); padding-top: 3px; }
+.pay-co-methods li:not(:last-child)::after { content: '/'; display: inline-block; margin: 0 .24em 0 .2em; font-weight: 220; color: var(--bz-track); }
+.pay-co-lines { grid-column: 8 / span 5; list-style: none; margin: 0; padding: 0; }
+.pay-co-lines li { display: flex; gap: 14px; padding: 14px 0; border-top: 1px solid var(--bz-line); font-size: 16px; line-height: 1.5; color: var(--bz-muted); transition: color .2s var(--bz-out), border-color .2s var(--bz-out); }
+.pay-co-lines li:last-child { border-bottom: 1px solid var(--bz-line); }
+.pay-co-lines li span { font-size: 13px; color: var(--bz-ink); padding-top: 3px; transition: color .2s var(--bz-out); }
+.pay-co-lines li.on { color: var(--bz-ink); border-top-color: var(--bz-ink); }
+.pay-co-lines li.off, .pay-co-lines li.off span { color: var(--bz-track); }
+/* while a group of methods is pointed at, the other group steps back to grey */
+@media (hover: hover) { .pay-co-body[data-kind] .pay-co-methods.lit li:not(.on) { color: var(--bz-track); } }
+/* the three lines arrive after the methods have lit, one at a time */
+html.js .pay-co-lines li { opacity: 0; transform: translate3d(0, 10px, 0); transition: opacity .5s var(--bz-emph), transform .5s var(--bz-emph), color .2s var(--bz-out), border-color .2s var(--bz-out); transition-delay: calc(1000ms + var(--i) * 120ms), calc(1000ms + var(--i) * 120ms), 0s, 0s; }
+html.js .pay-co-body:has(.pay-co-methods.lit) .pay-co-lines li { opacity: 1; transform: none; }
 
 /* tax: two cards that open */
 .pay-tax-open { grid-column: 1 / span 7; grid-row: 1; grid-template-columns: 1fr 1fr; list-style: none; margin: 0; padding: 0; }
@@ -159,6 +170,18 @@
 .pay-glyph { margin-bottom: auto; color: var(--bz-ink); }
 .pay-glyph.bz-fig { font-size: 64px; }
 .pay-glyph.shield svg { display: block; width: 64px; height: auto; }
+.pay-tc-li { display: flex; flex-direction: column; gap: 8px; margin: 24px 0 8px; text-align: left; }
+.pay-tc-li > span { display: flex; align-items: center; gap: 10px; font-size: 15px; line-height: 1.4; color: var(--bz-ink); }
+.pay-tc-li svg { flex: none; color: var(--bz-ink); }
+.pay-vg { display: inline-block; }
+/* arrival (JS on; JS off and reduced motion show the settled state) */
+html.js .pay-tax .pay-tick { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset .6s var(--bz-emph) .55s; }
+html.js .pay-tax.in .pay-tick { stroke-dashoffset: 0; }
+html.js .pay-tax-open .pay-vg { clip-path: inset(0 0 100% 0); transform: translate3d(0, .3em, 0); transition: clip-path .6s var(--bz-emph), transform .6s var(--bz-emph); }
+html.js .pay-tax-open .pay-vg + br + .pay-vg { transition-delay: .18s; }
+html.js .pay-tax.in .pay-tax-open .pay-vg { clip-path: inset(0 0 -10% 0); transform: none; }
+html.js .pay-tc-li > span { opacity: 0; transform: translate3d(0, 8px, 0); transition: opacity .45s var(--bz-emph), transform .45s var(--bz-emph); transition-delay: calc(700ms + var(--i) * 110ms); }
+html.js .pay-tax.in .pay-tc-li > span { opacity: 1; transform: none; }
 .pay-tc-t { display: block; }
 .pay-tc-d { display: block; padding-right: 52px; font-size: 16px; line-height: 1.5; color: var(--bz-muted); }
 .pay-tax-copy { grid-column: 9 / span 4; grid-row: 1; align-self: center; display: flex; flex-direction: column; gap: 20px; }
@@ -303,9 +326,11 @@ a.pay-chip:active { transform: scale(.97); }
 
   .pay-co-top .bz-headline, .pay-co-side { grid-column: 1 / -1; }
   .pay-co-side { margin-top: 20px; }
-  .pay-co-k { margin: 56px 0 16px; }
+  .pay-co-body { margin-top: 56px; }
+  .pay-co-l, .pay-co-lines { grid-column: 1 / -1; }
+  .pay-co-k { margin: 0 0 16px; }
   .pay-co-methods { font-size: 26px; }
-  .pay-co-lines { display: flex; flex-direction: column; margin-top: 28px; }
+  .pay-co-lines { margin-top: 28px; }
 
   .pay-tax-copy { grid-column: 1 / -1; grid-row: 1; }
   .pay-tax-open { grid-column: 1 / -1; grid-row: 2; grid-template-columns: 1fr; margin-top: 44px; }
@@ -359,7 +384,8 @@ html.js .pay-co-methods.lit li { color: var(--bz-ink); }
 .pay-co-methods li { text-decoration: underline; text-decoration-color: transparent; text-decoration-thickness: 2px; text-underline-offset: 8px; }
 @media (hover: hover) { .pay-co-methods.lit li { transition: color .15s var(--bz-out), text-decoration-color .15s var(--bz-out); transition-delay: 0s; } .pay-co-methods.lit li:hover { color: var(--bz-ink); text-decoration-color: var(--bz-ink); } }
 /* fewer dead bands between the back-half sections */
-.pay-tax.bz-sec, .pay-cases.bz-sec, .pay-more.bz-sec { padding-top: clamp(48px, 6vw, 96px); }
+.pay-co.bz-sec, .pay-tax.bz-sec, .pay-cases.bz-sec, .pay-more.bz-sec { padding-top: clamp(48px, 6vw, 96px); }
+.pay-co.bz-sec { padding-bottom: clamp(48px, 6vw, 96px); }
 /* the four cases deal in as one list */
 html.js .pay-cases .pay-case { opacity: 0; transform: translate3d(0, 24px, 0); transition: opacity .5s var(--bz-emph), transform .5s var(--bz-emph); }
 html.js .pay-cases .pay-case.c1 { transition-delay: 60ms; } html.js .pay-cases .pay-case.c2 { transition-delay: 120ms; } html.js .pay-cases .pay-case.c3 { transition-delay: 180ms; }
@@ -427,7 +453,7 @@ html.js .pay-cases.lit .pay-case { opacity: 1; transform: none; }
   .pay-move-key { gap: 8px 18px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  html.js .pay-co-methods li, html.js .pay-cases .pay-case { transition: none; }
+  html.js .pay-co-methods li, html.js .pay-cases .pay-case, html.js .pay-co-lines li, html.js .pay-tax .pay-tick, html.js .pay-tax-open .pay-vg, html.js .pay-tc-li > span { transition: none; }
   .pay-cat, .pay-lede, .pay-side, .pay-acts, .pay-rise { animation: none; }
   .pay-move-dots i::after, .pay-move-figs b { transition: none; }
 }

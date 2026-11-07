@@ -13,7 +13,7 @@
    `succeeded`), self-running with its own pause (WCAG 2.2.2); a tap on a step holds it.
    Motion: the calculator (input), the checkout (idle) + cards that open (state, BizOpen). No pinned chapters: what
    sat behind the one integration is now a plain row list. Tweens only, deck timings. Every word and link is Hanzo's.
-V2: 8/10 on the deck: h1 52, headings 26, figures 64 (84 only while dragged); one phone runs the checkout on the first screen at both sizes, the calculator is the one black room right under it, lists open as sheets and cards, one ask
+V2: 8/10 on the deck: h1 52, headings 26, figures 64; one phone runs the checkout on the first screen at both sizes, the calculator is the one black room under it; slice D: methods beside Hanzo's three lines (a method lights its line), tax cards draw their tick and cut VAT/GST in on arrival with their three lines at rest, tighter bands
 */
 // Signature: a live calculator, "Move a percentage first": amount, payments, the split and the soft-decline share reprice every figure on the page at once, from Hanzo's own figures and the visitor's inputs.
 import { useEffect, useRef, useState } from 'react';
@@ -268,8 +268,14 @@ const FEATS = [
   ['Fully Customizable', 'Customize every aspect of the checkout experience to match your brand identity.'],
 ];
 
+/* which of Hanzo's lines a method belongs to: cards and wallets are line 01; iDEAL, Bancontact and SOFORT are the local
+   methods of lines 02 and 03. Pointing at a method lights its line, so the list says what it is rather than being a wall. */
+const KIND = [0, 0, 0, 0, 0, 0, 1, 1, 1];
+const CO_LINES = ['Cards, wallets, bank debits, buy-now-pay-later and crypto', 'Local methods handled by whichever processor supports them best', 'The method someone expects to see, in the country they are in'];
+
 function Checkout() {
   const [ref, live] = useLive(0.4);
+  const [kind, setKind] = useState(-1);
   const [lit, setLit] = useState(false); // the methods light one by one the first time the list is reached, then stay
   useEffect(() => { if (live) setLit(true); }, [live]);
   return (
@@ -286,25 +292,35 @@ function Checkout() {
             </BizSheet>
           </div>
         </div>
-        <h3 className="bz-kick pay-co-k">Global Payment Methods</h3>
-        <ul className={'pay-co-methods' + (lit ? ' lit' : '')}>{METHODS.map((t, i) => <li key={t} style={{ '--i': i }}>{t}</li>)}</ul>
-        <ul className="bz-grid pay-co-lines">
-          {['Cards, wallets, bank debits, buy-now-pay-later and crypto', 'Local methods handled by whichever processor supports them best', 'The method someone expects to see, in the country they are in'].map((t, i) => <li key={t}><span className="x-mono">{two(i + 1)}</span>{t}</li>)}
-        </ul>
+        <div className="bz-grid pay-co-body" data-kind={kind < 0 ? undefined : kind}>
+          <div className="pay-co-l">
+            <h3 className="bz-kick pay-co-k">Global Payment Methods</h3>
+            <ul className={'pay-co-methods' + (lit ? ' lit' : '')} onPointerLeave={() => setKind(-1)}>
+              {METHODS.map((t, i) => <li key={t} style={{ '--i': i }} className={kind >= 0 && KIND[i] === kind ? 'on' : ''} onPointerEnter={() => setKind(KIND[i])}>{t}</li>)}
+            </ul>
+          </div>
+          <ul className="pay-co-lines">
+            {CO_LINES.map((t, i) => <li key={t} className={kind < 0 ? '' : (i === 0 ? kind === 0 : kind === 1) ? 'on' : 'off'} style={{ '--i': i }}><span className="x-mono">{two(i + 1)}</span>{t}</li>)}
+          </ul>
+        </div>
       </div>
     </section>
   );
 }
 
-const Shield = () => <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6 10 14v16c0 14 9.5 24 22 28 12.5-4 22-14 22-28V14z" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinejoin="round" /><path d="M22 32l7 7 13-14" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+const Shield = () => <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6 10 14v16c0 14 9.5 24 22 28 12.5-4 22-14 22-28V14z" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinejoin="round" /><path className="pay-tick" pathLength="1" d="M22 32l7 7 13-14" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const TAX = [
-  ['tax', 'Automated Tax Management', 'Automatically handle VAT, GST, and regional taxes (including sales tax).', ['Real-time tax rate calculation', 'Tax exemption handling', 'Automated tax reporting'], <span className="pay-glyph bz-fig" key="g">VAT<br />GST</span>],
+  ['tax', 'Automated Tax Management', 'Automatically handle VAT, GST, and regional taxes (including sales tax).', ['Real-time tax rate calculation', 'Tax exemption handling', 'Automated tax reporting'], <span className="pay-glyph bz-fig" key="g"><span className="pay-vg">VAT</span><br /><span className="pay-vg">GST</span></span>],
   ['fraud', 'Fraud Protection', 'Automatic fraud detection and prevention built-in to protect your business.', ['Machine learning fraud detection', 'Adaptive risk rules', 'Chargeback protection'], <span className="pay-glyph shield" key="g"><Shield /></span>],
 ];
 
+/* on arrival, once: VAT then GST cut in, the shield's tick draws, and each card's three lines tick in under it */
 function Tax() {
+  const [ref, live] = useLive(0.35);
+  const [inn, setInn] = useState(false);
+  useEffect(() => { if (live) setInn(true); }, [live]);
   return (
-    <section className="bz-sec pay-tax" aria-labelledby="pay-tax-h">
+    <section className={'bz-sec pay-tax' + (inn ? ' in' : '')} aria-labelledby="pay-tax-h" ref={ref}>
       <div className="bz-wrap bz-grid">
         <BizOpen
           label="Automatic Global Tax Compliance"
@@ -312,7 +328,7 @@ function Tax() {
           items={TAX.map(([id, t, d, li, g]) => ({
             id,
             label: t,
-            card: <>{g}<span className="pay-tc-t bz-title">{t}</span><span className="pay-tc-d">{d}</span></>,
+            card: <>{g}<span className="pay-tc-li" aria-hidden="true">{li.map((x, i) => <span key={x} style={{ '--i': i }}><Check />{x}</span>)}</span><span className="pay-tc-t bz-title">{t}</span><span className="pay-tc-d">{d}</span></>,
             panel: (
               <div className="pay-panel">
                 <div className="pay-panel-g">{g}</div>

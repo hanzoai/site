@@ -75,7 +75,7 @@ Done here: taste OK; the CSS uses only `--bz-*` tokens plus #000000, #fafafa, #a
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: listed below
 
-Done here: pause, tracker steps, chips, "Roll back at once", rows and sheet buttons have a hover fill inside `@media (hover: hover)`, press scale .97 and a 2px focus ring; "Roll back at once" disables at 0%; the split's range input has a 2px white focus ring on the black room. The checkout's nine methods light one by one on arrival and the four cases deal in as one list, so the back half answers before it is touched. Every `:hover` rule sits inside a hover media query. Deleted forks are listed at the top.
+Done here: pause, tracker steps, chips, "Roll back at once", rows and sheet buttons have a hover fill inside `@media (hover: hover)`, press scale .97 and a 2px focus ring; "Roll back at once" disables at 0%; the split's range input has a 2px white focus ring on the black room. The checkout's nine methods light one by one on arrival and the four cases deal in as one list, so the back half answers before it is touched. Every `:hover` rule sits inside a hover media query. Deleted forks are listed at the top. Slice D, 7 Nov: pointing at a method lights the line it belongs to (cards and wallets → 01; iDEAL, Bancontact, SOFORT → 02 and 03) and greys the other group; "Explore APIs" and "API Reference" underline and nudge their arrow 4px on hover (measured with a Playwright hover probe).
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -100,7 +100,7 @@ Done here: the merchant image is `/models/enso.webp` with `alt=""` (decorative) 
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: film at 375×812 width 375/375, 0 targets under 44px; the ask sits at about 320px on a 375 phone. The calculator's fields are 56px tall and its sliders 44–88px; under 900px the fields sit two to a row and the step rows stack number-left.
+Done here: film at 375×812 width 375/375, 0 targets under 44px; the ask sits at about 320px on a 375 phone. The calculator's fields are 56px tall and its sliders 44–88px; under 900px the fields sit two to a row and the step rows stack number-left. Slice D, 7 Nov: the step-04 rows measured under reduced motion: 'succeeded' and 'adyen' sit inside their rows at 1470 (row 609–861, chips 626–728 and 626–680), 375 (row 62–313) and 320 (row 34–286); check.mjs finds no text sticking out at 1470×801 or 375×812.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -157,4 +157,4 @@ Done here: no live data; the checkout shows every state it narrates (method, vau
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/payments.md` verdict 8 or more (no review written yet)
 
-Done here: `data-cta="payments.hero"` and `"payments.close"`; no tracking code of the page's own. Gallery: `desktop.mp4`, `desktop-hero.jpg`, `phone-1..3.jpg`, filmed at 1470×801 and 375×812 with no console errors.
+Done here: `data-cta="payments.hero"` and `"payments.close"`; no tracking code of the page's own. Gallery: `desktop.mp4`, `desktop-hero.jpg`, `phone-1..3.jpg`, filmed at 1470×801 and 375×812 with no console errors. Slice D, 7 Nov: check.mjs at 1470×801 and 375×812: 0 console errors, no Next issue badge, scrollWidth 1470/1470 and 375/375; `desktop-hero.jpg`, `desktop-checkout.jpg`, `phone-1..3.jpg` refreshed from those runs.
