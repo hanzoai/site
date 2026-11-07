@@ -10,6 +10,8 @@ const ent = (s) => s.replace(/&amp;/g, '&').replace(/&#x27;|&#39;/g, "'").replac
 export const SLUGS = () => Object.keys(JSON.parse(fs.readFileSync(path.join(ROOT, 'content', 'pages.json'), 'utf8')))
   .filter((p) => /^\/customers\/[^/]+$/.test(p)).map((p) => p.split('/')[2]);
 export const meta = (slug) => metaOf('/customers/' + slug);
+// one accent per story, chosen to sit with the launch's own pictures (the Hypersport's red; KANOA's sea-and-sport teal)
+const TONE = { 'damon-motorcycles': '#d23f26', kanoa: '#0f7f86' };
 
 export function story(slug) {
   const rel = 'customers/' + slug;
@@ -25,7 +27,7 @@ export function story(slug) {
   const figures = [];
   for (let i = 0; i + 1 < rest.length; i += 2) figures.push({ value: rest[i], label: rest[i + 1] });
   const [year, kind] = line.split(' · ');
-  const doc = { slug, route: '/' + rel, back: { label: clean(textOf(back)), href: back.a.href }, year, kind, name: clean(textOf(find(header, tag('h1')))), lede, cover: img(header), figures, report: null, how: null, gallery: null, links: [] };
+  const doc = { slug, route: '/' + rel, tone: TONE[slug] || '#0a0a0a', back: { label: clean(textOf(back)), href: back.a.href }, year, kind, name: clean(textOf(find(header, tag('h1')))), lede, cover: img(header), figures, report: null, how: null, gallery: null, links: [] };
   for (const s of findAll(root, tag('section'))) {
     const h2 = clean(textOf(find(s, tag('h2'))));
     const ol = find(s, tag('ol'));
@@ -42,4 +44,13 @@ export function story(slug) {
     f.from = i >= 0 ? { step: i } : doc.report && (doc.report.text.includes(f.value) || doc.report.img.alt.includes(f.value)) ? { report: true } : lede.includes(f.value) ? { lede: true } : pdf ? { pdf: pdf.href } : null;
   });
   return doc;
+}
+
+/* the next story, for the card that opens into it at the end of the page (its own name, picture and first figure) */
+export function sibling(slug) {
+  const all = SLUGS();
+  const s = all[(all.indexOf(slug) + 1) % all.length];
+  if (!s || s === slug) return null;
+  const d = story(s);
+  return { slug: s, href: d.route, name: d.name, year: d.year, kind: d.kind, cover: d.cover, tone: d.tone, figure: d.figures[0] || null };
 }
