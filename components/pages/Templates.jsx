@@ -56,7 +56,9 @@ function Shot({ slug, title, kind, priority, alt }) {
   useEffect(() => { const i = ref.current; if (i && i.complete && !i.naturalWidth) setBad(true); }, []);
   return (<>
     <Ghost title={title} kind={kind} />
-    <Img ref={ref} src={`https://hanzo.ai/templates/${slug}.webp`} alt={alt} w={1280} h={800} draggable={false} priority={priority} className={bad ? 'xtp-bad' : ''} onError={() => setBad(true)} />
+    {/* data-t feeds the image's own ::before, which only paints when the image is broken: a blocked preview shows a
+        drawn page with the template's name from the first paint, with or without JS, never a broken-image icon */}
+    <Img ref={ref} src={`https://hanzo.ai/templates/${slug}.webp`} alt={alt} data-t={title} w={1280} h={800} draggable={false} priority={priority} className={bad ? 'xtp-bad' : ''} onError={() => setBad(true)} />
   </>);
 }
 
@@ -77,13 +79,13 @@ function Strip() {
   return (
     <div className="xtp-strip">
       <div className="xtp-strip-l">
-        {AGENTS.slice(0, 5).map(([n, h]) => <a key={n} href={D + h} target="_blank" rel="noreferrer">{n}</a>)}
+        {AGENTS.slice(0, 5).map(([n, h]) => <A key={n} to={D + h}>{n}<span className="x-sr"> (opens in a new tab)</span></A>)}
         <button type="button" aria-expanded={open} aria-controls="xtp-all" onClick={() => setOpen(!open)}>+{AGENTS.length - 5} more</button>
       </div>
       <div id="xtp-all" className="xtp-all" hidden={!open}>
         <input type="text" placeholder="Filter agents..." aria-label="Filter agents" value={q} onChange={(e) => setQ(e.target.value)} autoComplete="off" spellCheck={false} />
         <ul>
-          {rows.map(([n, h, mcp]) => <li key={n}><a href={D + h} target="_blank" rel="noreferrer"><b>{n}</b>{mcp ? <span>MCP client</span> : null}</a></li>)}
+          {rows.map(([n, h, mcp]) => <li key={n}><A to={D + h}><b>{n}</b>{mcp ? <span>MCP client</span> : null}<i className="x-sr"> (opens in a new tab)</i></A></li>)}
         </ul>
         {!rows.length && <p className="xtp-none">No agents match.</p>}
       </div>
@@ -158,6 +160,8 @@ function Deck({ kind, setKind, at, setAt, list, front, wall }) {
           const d = i < 0 ? 9 : i - at;
           return <div key={t[0]} hidden={i < 0} className="xtp-slot"><Card t={t} d={d} onNext={() => go(at + 1)} onPrev={() => go(at - 1)} calm={calm} narrow={narrow} /></div>;
         })}
+        {/* wide screens: the pause sits inside the deck, in the empty corner the fanned windows leave top left */}
+        {!narrow && <span className="xtp-pause in">{pauseBtn}</span>}
       </div>
       <div className="xtp-nav">
         <p className="xtp-front"><span className="x-mono">{front[2]}</span><b>{front[1]}</b></p>
@@ -169,10 +173,26 @@ function Deck({ kind, setKind, at, setAt, list, front, wall }) {
           ))}
         </div>
         <button type="button" className="xtp-arrow" aria-label="Next template" onClick={() => go(at + 1)}>→</button>
-        <span className="xtp-pause">{pauseBtn}</span>
+        {narrow && <span className="xtp-pause">{pauseBtn}</span>}
       </div>
     </div>
   );
+}
+
+/* The commands type themselves character by character (32 ms a key, one rAF loop) each time the room comes into view
+   or the deck changes template. Every character is in the HTML from the server: the untyped rest is drawn in
+   transparent ink, so the block never changes size, JS off and reduced motion show the finished block. */
+function useTyped(total, key, seen) {
+  const calm = useReducedMotion();
+  const [n, setN] = useState(total);
+  useEffect(() => {
+    if (calm || !seen) { setN(total); return; }
+    let raf, t0;
+    const step = (t) => { t0 ??= t; const k = Math.min(total, Math.floor((t - t0) / 32)); setN(k); if (k < total) raf = requestAnimationFrame(step); };
+    setN(0); raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [key, seen, total, calm]);
+  return n;
 }
 
 function Commands({ t }) {
@@ -181,6 +201,9 @@ function Commands({ t }) {
   const seen = useInView(term, { amount: 0.5 }); // the commands type themselves again each time the room comes into view
   // the commands only: Copy gives exactly what the block shows (the "$ " prompt is drawn, not selectable)
   const lines = [['hanzo login'], ['hanzo template list'], [`hanzo template get ${slug}`], ['hanzo dev']];
+  const total = lines.reduce((s, [c]) => s + c.length, 0);
+  const n = useTyped(total, slug, seen);
+  let left = n; // characters still to show, line by line
   return (
     <section className="w2-sec xtp-cmd w2-dark" data-room="dark" aria-labelledby="xtp-cmd-h">
       <div className="w2-wrap xtp-cmd-in">
