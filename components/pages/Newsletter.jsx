@@ -1,14 +1,19 @@
 'use client';
 // Signature: the issue writes itself on paper, then folds into an envelope addressed to you.
 // Beyond: the double opt-in drawn before you commit: subscribe, confirm the link, then the first issue; nothing in between.
-/* The Hanzo newsletter. Beside the form a paper issue sets its three lines by itself, over a masthead drawn by the
-   page's own Sigil. Subscribe and the sheet folds into an envelope with your address on it. The form sends exactly
-   what hanzo.ai sends: POST https://api.hanzo.ai/v1/marketing/subscribe {email, source, locale}. */
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { EASE, Mark, Rise } from '../ui';
-import { A, SecHead, Tick } from '../kit';
+/* The Hanzo newsletter.
+   V2: 8/10 rebuilt: the name at full display size with one big email field under it, the paper issue tilted beside it as the hero object; what each issue carries as three statements whose weight swells as each one crosses the middle of the screen; the double opt-in as the dark room.
+   Motion: the paper setting its lines and folding into an envelope (signature) + line-masked type + variable-weight
+   statements scrubbed by scroll (the page's one weight moment) + a drawn tick when it is sent.
+   Accent: postmark red. The form sends exactly what hanzo.ai sends: POST https://api.hanzo.ai/v1/marketing/subscribe
+   {email, source, locale}. */
+import { useRef, useState } from 'react';
+import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
+import { EASE, Mark } from '../ui';
+import { A, Tick } from '../kit';
 import Sigil from '../Sigil';
+import LineReveal from '../v2/LineReveal';
+import '../v2/ProgramScale.css';
 import './Newsletter.css';
 
 const LINES = ['New models and what they measured, the day they ship', 'What changed in the API, the CLI and Hanzo Dev', 'Engineering notes from the people who built it'];
@@ -33,7 +38,7 @@ function Issue({ sent, email }) {
     <div className="xnl-stage" aria-hidden="true">
       <AnimatePresence mode="wait" initial={false}>
         {!sent ? (
-          <motion.div key="paper" className="xnl-paper" initial={{ opacity: 0, y: 30, rotate: -2 }} animate={{ opacity: 1, y: 0, rotate: -2 }} exit={{ opacity: 0, y: 60, scaleY: 0.4, rotate: 0, transition: { duration: 0.45, ease: [0.76, 0, 0.24, 1] } }} transition={{ duration: 1, ease: EASE, delay: 0.25 }}>
+          <motion.div key="paper" className="xnl-paper" initial={{ opacity: 0, y: 80, rotate: -6 }} animate={{ opacity: 1, y: 0, rotate: -3 }} exit={{ opacity: 0, y: 60, scaleY: 0.4, rotate: 0, transition: { duration: 0.45, ease: [0.76, 0, 0.24, 1] } }} transition={{ duration: 1.2, ease: EASE, delay: 0.3 }}>
             <div className="xnl-mast">
               <Sigil seed="newsletter" data={[2, 1]} className="xnl-sigil" />
               <span className="xnl-brand"><Mark size={14} /> Hanzo</span>
@@ -45,7 +50,7 @@ function Issue({ sent, email }) {
             <i className="xnl-rule" /><i className="xnl-rule short" />
           </motion.div>
         ) : (
-          <motion.div key="env" className="xnl-env" initial={{ opacity: 0, y: -40, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ type: 'spring', stiffness: 200, damping: 22 }}>
+          <motion.div key="env" className="xnl-env" initial={{ opacity: 0, y: -40, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
             <motion.i className="xnl-flap" initial={{ rotateX: 180 }} animate={{ rotateX: 0 }} transition={{ duration: 0.7, ease: EASE, delay: 0.25 }} />
             <span className="xnl-stamp"><Mark size={18} /></span>
             <span className="xnl-to x-mono">To</span>
@@ -78,7 +83,7 @@ function Form({ email, setEmail, state, setState }) {
     <div className="xnl-formwrap" id="subscribe" data-thumb="Subscribe" data-href="#subscribe">
       <form onSubmit={submit} noValidate aria-label="Subscribe to the newsletter" className="xnl-form">
         <input id="newsletter-email" type="email" name="email" autoComplete="email" inputMode="email" placeholder="you@example.com" aria-label="Email address" aria-invalid={!!err} aria-describedby={err ? 'newsletter-wrong' : 'newsletter-terms'} value={email} onChange={(e) => setEmail(e.target.value)} />
-        <motion.button type="submit" className="x-btn solid" disabled={state === 'busy'} whileTap={{ scale: 0.97 }}>{state === 'busy' ? 'Subscribing…' : 'Subscribe'}</motion.button>
+        <button type="submit" className="xp-cta" disabled={state === 'busy'}>{state === 'busy' ? 'Subscribing…' : 'Subscribe'}</button>
       </form>
       <AnimatePresence>{err && <motion.p id="newsletter-wrong" className="xnl-err" role="alert" initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>{err}</motion.p>}</AnimatePresence>
       <p id="newsletter-terms" className="xnl-terms">{LEDE} We email a link to confirm first, and every issue has a one-click unsubscribe. <A to="/legal/privacy" className="xnl-link">Privacy</A>.</p>
@@ -92,41 +97,60 @@ const PATH = [
   ['Read', 'Once or twice a month. Every issue has a one-click unsubscribe.'],
 ];
 
+/* One statement of what an issue carries: its weight swells as it crosses the middle of the screen. */
+function Statement({ text, i }) {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
+  const wght = useTransform(scrollYProgress, [0.15, 0.5, 0.85], [280, 680, 280]);
+  const fontVariationSettings = useTransform(wght, (w) => `'wght' ${Math.round(w)}`);
+  const x = useTransform(scrollYProgress, [0, 1], [i % 2 ? -40 : 40, i % 2 ? 40 : -40]);
+  return (
+    <li ref={ref} className={'xnl-st s' + i}>
+      <span className="xnl-st-n x-mono">{String(i + 1).padStart(2, '0')}</span>
+      <motion.p className="xnl-st-t" style={{ fontVariationSettings, x }}>{text}</motion.p>
+    </li>
+  );
+}
+
 export default function Newsletter() {
   const [email, setEmail] = useState('');
   const [state, setState] = useState('idle');
-  const line = (t, d) => <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: d }}>{t}</motion.span></span>;
   return (
-    <main className="xnl">
+    <main className="xp xnl">
       <section className="xnl-hero" aria-labelledby="xnl-h1">
-        <div className="x-wrap xnl-grid">
+        <div className="xp-wrap xp-grid">
           <div className="xnl-copy">
-            <motion.p className="x-kick" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: EASE }}>Newsletter</motion.p>
-            <h1 id="xnl-h1" className="xnl-h1">{line('The Hanzo', 0.05)}{line('newsletter', 0.16)}</h1>
-            <motion.p className="xnl-lede" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>{LEDE}</motion.p>
-            <motion.ul className="xnl-list" initial="h" animate="s" variants={{ s: { transition: { staggerChildren: 0.06, delayChildren: 0.45 } } }}>
-              {LINES.map((l) => <motion.li key={l} variants={{ h: { opacity: 0, x: -10 }, s: { opacity: 1, x: 0, transition: { duration: 0.6, ease: EASE } } }}><Tick size={18} />{l}</motion.li>)}
-            </motion.ul>
-            <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.6 }}>
+            <p className="xp-kick">Newsletter</p>
+            <LineReveal as="h1" id="xnl-h1" className="xp-display" lines={['The Hanzo', 'newsletter']} />
+            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.4 }}>
+              <p className="xp-lede xnl-lede">{LEDE}</p>
               <Form email={email} setEmail={setEmail} state={state} setState={setState} />
             </motion.div>
           </div>
-          <Issue sent={state === 'sent'} email={email.trim()} />
+          <div className="xnl-art"><Issue sent={state === 'sent'} email={email.trim()} /></div>
         </div>
       </section>
-      <section className="x-sec xnl-path" aria-labelledby="xnl-path-h">
-        <div className="x-wrap">
-          <SecHead kicker="Three steps" title="We email a link to confirm first." id="xnl-path-h" />
+      <section className="xp-sec xnl-inside" aria-label="In every issue">
+        <ol className="xnl-sts">
+          {LINES.map((l, i) => <Statement key={l} text={l} i={i} />)}
+        </ol>
+      </section>
+      <section className="xp-sec xp-dark xnl-path" data-room="dark" aria-labelledby="xnl-path-h">
+        <div className="xp-wrap">
+          <p className="xp-kick">Three steps</p>
+          <LineReveal onView id="xnl-path-h" className="xp-display sm" lines={['We email a link', 'to confirm first.']} />
           <ol className="xnl-steps">
-            <i className="xnl-track" aria-hidden="true"><b /></i>
             {PATH.map(([t, d], i) => (
-              <Rise as="li" key={t} delay={i * 0.08}>
+              <li key={t}>
                 <span className="xnl-n x-mono">{String(i + 1).padStart(2, '0')}</span>
                 <b>{t}</b><span>{d}</span>
-              </Rise>
+              </li>
             ))}
           </ol>
-          <Rise className="xnl-home"><A to="/" className="xnl-mark" aria-label="Hanzo"><Mark size={22} /></A></Rise>
+          <div className="xnl-home">
+            <a href="#subscribe" className="xp-cta">Subscribe<i aria-hidden="true">↑</i></a>
+            <A to="/" className="xnl-mark" aria-label="Hanzo"><Mark size={22} /></A>
+          </div>
         </div>
       </section>
     </main>
