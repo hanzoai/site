@@ -538,7 +538,7 @@ const Acts = ({ list, slug }) => (
 );
 
 /* JS off: every line of every session shown, the genesis line at full weight (PLAN-COMPONENTS 2.3 and 2.17) */
-const NOJS = '.xcf-turns li,.xcf-lines li,.xcf-tlines li{opacity:1!important;transform:none!important}.xcf-motto-t span{font-weight:497!important}.xcf-mask>span{animation:none!important}.xcf-obj{opacity:1!important;clip-path:none!important}.x-band .x-word,.x-band p,.x-band-act{opacity:1!important;transform:none!important;filter:none!important}';
+const NOJS = '.xcf-turns li,.xcf-lines li,.xcf-tlines li{opacity:1!important;transform:none!important}.xcf-motto-t span{font-weight:497!important}.xcf-mask>span{animation:none!important}.xcf-ch{opacity:1!important}.x-band .x-word,.x-band p,.x-band-act{opacity:1!important;transform:none!important;filter:none!important}';
 
 /* the name rests at 52 to 64px (MASTER 3.1): a short name arrives at 64 and settles to 52 as the stage settles */
 function Name({ name, small }) {

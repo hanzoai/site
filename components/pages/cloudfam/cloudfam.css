@@ -63,6 +63,7 @@
 .xcf-crumb { display: flex; flex-wrap: wrap; align-items: center; margin-top: 10px; font: 400 14px/1 var(--sans); color: var(--k-body); }
 .xcf-crumb a { display: inline-flex; align-items: center; min-height: 44px; color: var(--k-ink); }
 .xcf-crumb i { font-style: normal; margin: 0 10px; color: var(--k-dim); }
+.xcf-head-r > .xcf-chip { margin-top: 14px; }
 .xcf-stage-w { position: relative; }
 .xcf-stage { max-width: 1152px; margin: 0 auto; }
 
@@ -95,6 +96,7 @@
 .xcf-sib:focus-visible svg, .xcf-sib.pk svg { opacity: 1; transform: none; }
 @media (hover: hover) { .xcf-sib:hover { color: var(--k-ink); background: var(--k-on); } .xcf-sib:hover svg { opacity: 1; transform: none; } .xcf-sib:hover span { transform: translateX(3px); } }
 .xcf-sib.on { color: var(--k-on); background: rgba(255, 255, 255, .1); box-shadow: inset 2px 0 0 var(--k-on); }
+@media (hover: hover) { .xcf-sib.on:hover { background: rgba(255, 255, 255, .18); } .xcf-sib.on:hover span { transform: translateX(3px); } }
 .xcf-main { position: relative; display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 20px 27px; align-items: start; padding: 24px; min-width: 0; }
 .xcf-out, .xcf-ex { min-width: 0; }
 

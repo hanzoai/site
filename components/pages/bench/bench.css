@@ -464,6 +464,8 @@ html.js .xbr-facts-s:not([data-seen]) .xbr-facts dt, html.js .xbr-facts-s:not([d
 .xbr-dt { max-width: 100%; }
 .xbr-ch-v .xbr-dt { flex: 1; max-height: 100%; overflow: auto; }
 .xbr-code { margin: 0; }
+/* a one-line command scrolls sideways only: a wheel over it still scrolls the page */
+.xbr-code pre { overscroll-behavior-y: auto; overflow-y: hidden; }
 .xbr-band-solid.x-btn.solid { background: #fafafa; color: #000; border-color: #fafafa; }
 @media (hover: hover) { .xbr-band-solid.x-btn.solid:hover { background: #fff; border-color: #fff; } }
 .xbr-band-link.x-arrow { color: #fafafa; min-height: 44px; }

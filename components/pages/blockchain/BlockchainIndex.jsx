@@ -37,11 +37,30 @@ const PauseI = ({ held }) => (held
   : <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 1.5h2v9H3zM7 1.5h2v9H7z" fill="currentColor" /></svg>);
 const Arrow = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
+/* an object that walks itself once while it is on screen (one beat at a time), and steps aside for 3 s whenever
+   the visitor points at it or touches it; reduced motion: it never walks */
+function useWalk(ref, n, beat) {
+  const seen = useInView(ref, { amount: 0.25 });
+  const calm = useReducedMotion();
+  const [step, setStep] = useState(-1);
+  const [held, setHeld] = useState(false);
+  const tm = useRef(0);
+  useEffect(() => {
+    if (!seen || held || calm || step >= n) return;
+    const t = setTimeout(() => setStep(step + 1), step < 0 ? 400 : beat);
+    return () => clearTimeout(t);
+  }, [seen, held, calm, step, n, beat]);
+  useEffect(() => () => clearTimeout(tm.current), []);
+  const touch = () => { setHeld(true); clearTimeout(tm.current); tm.current = setTimeout(() => setHeld(false), 3000); };
+  return [held || step < 0 || step >= n ? -1 : step, touch, held];
+}
+
 /* The signature: chain: and a reel of every network Hanzo lists; the product pages that name it light up (quietly).
    Pointing at a product tells you how many chains its page names. */
-function Reel({ chains, all, onChain }) {
+function Reel({ chains, all, onChain, alsoRun }) {
   const box = useRef(null);
-  const seen = useInView(box, { amount: 0.3 });
+  const inView = useInView(box, { amount: 0.3 });
+  const seen = inView || alsoRun; // the pieces below follow the same chain, so it keeps turning while they are on screen
   const calm = useReducedMotion();
   const [held, setHeld] = useState(false);
   const [i, setI] = useState(0);
@@ -73,7 +92,10 @@ function Reel({ chains, all, onChain }) {
       </div>
       <div className="bci-reel-bar">
         <span className="bci-reel-n x-mono" aria-hidden="true"><b>{two(at + 1)}</b> / {two(n)}</span>
-        <span className="bci-track" aria-hidden="true"><i style={{ transform: `scaleX(${(at + 1) / n})` }} /></span>
+        <span className="bci-track" aria-hidden="true">
+          <i style={{ transform: `scaleX(${(at + 1) / n})` }} />
+          <b key={i} className={'bci-tick' + (held || calm ? ' held' : '')} style={{ left: `${((at + 1) / n) * 100}%`, width: `${100 / n}%` }} />
+        </span>
         <span className="bci-lit x-mono" aria-hidden="true">
           {hp ? <span key={hp.slug} className="bci-lit-h">{hp.name} · <b>{hp.chains.length}</b> chains on its page</span> : <><b>{lit.length}</b> / {all.length} product pages name it</>}
         </span>
@@ -90,7 +112,7 @@ function Reel({ chains, all, onChain }) {
   );
 }
 
-function Hero({ doc, chains, all, onChain }) {
+function Hero({ doc, chains, all, onChain, alsoRun }) {
   const [t1, ...tr] = doc.title;
   return (
     <section className="bci-hero" aria-labelledby="bci-h1">
@@ -107,7 +129,7 @@ function Hero({ doc, chains, all, onChain }) {
           </div>
           <p className="bci-note">{doc.note}</p>
         </div>
-        <Reel chains={chains} all={all} onChain={onChain} />
+        <Reel chains={chains} all={all} onChain={onChain} alsoRun={alsoRun} />
       </div>
     </section>
   );
@@ -134,12 +156,15 @@ function Intro({ doc }) {
    row at the middle of the screen, or the one under the pointer or focus): its number, name, line and the chains
    its page names, with the reel's last chain marked. Each name morphs into its page's hero when you open it. */
 const FIRST = 8;
-function Pieces({ b, all, chain }) {
+function Pieces({ b, all, chain, onSeen }) {
   const find = (h) => all.find((p) => bare(p.href) === bare(h));
   const [more, setMore] = useState(false);
   const [at, setAt] = useState(0);
   const [point, setPoint] = useState(-1);
   const list = useRef(null);
+  const sec = useRef(null);
+  const seen = useInView(sec);
+  useEffect(() => { onSeen && onSeen(seen); }, [seen]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     const el = list.current;
     if (!el) return;
@@ -151,7 +176,7 @@ function Pieces({ b, all, chain }) {
   const c = b.cards[k];
   const p = c && find(c.href);
   return (
-    <section className="bz-sec bci-pieces" aria-labelledby="bci-pieces-h">
+    <section className="bz-sec bci-pieces" aria-labelledby="bci-pieces-h" ref={sec}>
       <div className="bz-wrap bz-grid">
         <header className="bci-ph">
           <BizLines id="bci-pieces-h" className="bz-headline" lines={[b.title]} />
@@ -160,7 +185,7 @@ function Pieces({ b, all, chain }) {
           {c && (
             <div className="bci-stage" aria-hidden="true">
               <div className="bci-stage-in" key={k}>
-                <p className="bci-stage-n x-mono"><b>{two(k + 1)}</b> / {two(b.cards.length)}</p>
+                <p className="bci-stage-n x-mono"><span><b>{two(k + 1)}</b> / {two(b.cards.length)}</span>{chain && <span className="bci-stage-k">chain: <b key={chain}>{chain}</b></span>}</p>
                 <p className="bci-stage-t">{c.name}</p>
                 <p className="bci-stage-d">{c.text}</p>
                 {p ? (
@@ -205,9 +230,14 @@ function Pieces({ b, all, chain }) {
 function Groups({ b }) {
   const [open, setOpen] = useState(0);
   const [peek, setPeek] = useState(-1);
-  const shown = peek >= 0 ? peek : open;
+  const sec = useRef(null);
+  const [walk, touch] = useWalk(sec, b.groups.length, 1300); // the map walks its nine tiles once by itself
+  const lit = peek >= 0 ? peek : walk;
+  const shown = lit >= 0 ? lit : open;
+  const take = (k) => { touch(); setPeek(k); };
+  const setMine = () => touch();
   return (
-    <section className="bz-sec bci-groups" aria-labelledby="bci-groups-h">
+    <section className="bz-sec bci-groups" aria-labelledby="bci-groups-h" ref={sec}>
       <div className="bz-wrap bz-grid">
         <header className="bci-gh">
           <BizLines id="bci-groups-h" className="bz-headline" lines={[b.title]} />
@@ -215,7 +245,7 @@ function Groups({ b }) {
           <div className="bci-map" aria-hidden="true" onPointerLeave={() => setPeek(-1)}>
             <div className="bci-map-g">
               {b.groups.map((g, k) => (
-                <button key={g.title} type="button" tabIndex={-1} className={(k === open ? 'on' : '') + (k === peek ? ' peek' : '')} onPointerEnter={() => setPeek(k)} onClick={() => setOpen(k)}>
+                <button key={g.title} type="button" tabIndex={-1} className={(k === open ? 'on' : '') + (k === lit ? ' peek' : '')} onPointerEnter={() => take(k)} onClick={() => { setMine(true); setOpen(k); }}>
                   <span className="x-mono">{two(k + 1)}</span>
                 </button>
               ))}
@@ -225,8 +255,8 @@ function Groups({ b }) {
         </header>
         <ul className="bci-glist">
           {b.groups.map((g, k) => (
-            <li key={g.title} className={open === k ? 'on' : ''}>
-              <button type="button" aria-expanded={open === k} aria-controls={'bci-g' + k} onClick={() => setOpen(open === k ? -1 : k)} onPointerEnter={() => setPeek(k)} onPointerLeave={() => setPeek(-1)}>
+            <li key={g.title} className={open === k ? 'on' : lit === k ? 'lit' : ''}>
+              <button type="button" aria-expanded={open === k} aria-controls={'bci-g' + k} onClick={() => { setMine(true); setOpen(open === k ? -1 : k); }} onPointerEnter={() => take(k)} onPointerLeave={() => setPeek(-1)}>
                 <span className="x-mono">{two(k + 1)}</span>
                 <b>{g.title}</b>
                 <i aria-hidden="true" />
@@ -258,10 +288,10 @@ function Streamed({ code, label }) {
     let k = 0;
     step.current = () => {
       if (st.current !== 'run') return;
-      if (k >= lines.length) { el.classList.remove('bci-streaming'); st.current = 'done'; setState('done'); play('done'); return; }
+      if (k >= lines.length) { el.classList.remove('bci-streaming'); el.classList.add('bci-streamed'); st.current = 'done'; setState('done'); play('done'); return; }
       lines[k].classList.add('on');
       k++;
-      tm.current = setTimeout(step.current, lines[k - 1].textContent.trim() ? 90 : 30);
+      tm.current = setTimeout(step.current, lines[k - 1].textContent.trim() ? 230 : 60);
     };
     const io = new IntersectionObserver(([e]) => {
       if (!e.isIntersecting) return;
@@ -311,7 +341,13 @@ function Matrix({ b, all }) {
     all.forEach((p) => p.chains.forEach((x) => { c[x] = (c[x] || 0) + 1; }));
     return Object.keys(c).sort((x, y) => c[y] - c[x]).map((x) => [x, c[x]]);
   }, [all]);
-  const [hot, setHot] = useState(null);
+  const [hot0, setHot0] = useState(null);
+  // until you point at it, the crosshair walks the matrix by itself (one cell a beat, each product once, then rests)
+  const sec = useRef(null);
+  const [step, touch, mine] = useWalk(sec, all.length, 1400);
+  const walk = step >= 0 ? [step, all[step].chains.length ? Math.max(0, cols.findIndex(([x]) => x === all[step].chains[step % all[step].chains.length])) : 0] : null;
+  const hot = hot0 || walk;
+  const setHot = (v) => { if (v) touch(); setHot0(v); };
   const [r, c] = hot || [-1, -1];
   const down = (j) => `${cols[j][1]} ${cols[j][1] === 1 ? 'product' : 'products'} down`;
   const read = !hot ? 'Point at a cell, or tap one'
@@ -319,7 +355,7 @@ function Matrix({ b, all }) {
     : `${all[r].name} × ${cols[c][0]}: ${all[r].chains.includes(cols[c][0]) ? 'named on its page' : 'not named on its page'} · ${all[r].chains.length} chains across · ${down(c)}`;
   const colOf = (x) => cols.findIndex(([y]) => y === x || y.startsWith(x + ' '));
   return (
-    <section className="bz-sec bci-mx-sec" aria-labelledby="bci-chains-h">
+    <section className="bz-sec bci-mx-sec" aria-labelledby="bci-chains-h" ref={sec}>
       <div className="bz-wrap">
         <div className="bci-mx-head">
           <BizLines id="bci-chains-h" className="bz-headline" lines={[b.title]} />
@@ -328,7 +364,7 @@ function Matrix({ b, all }) {
         <p className="bci-run" onPointerLeave={() => setHot(null)}>{b.chains.map((x, k) => (
           <Fragment key={x}><span className={c >= 0 && colOf(x) === c ? 'on' : ''} onPointerEnter={() => { const j = colOf(x); if (j >= 0) setHot([-1, j]); }}>{x}</span>{k < b.chains.length - 1 && <i aria-hidden="true"> · </i>}</Fragment>
         ))}</p>
-        <p className="bci-read x-mono" aria-live="polite">{read}</p>
+        <p className="bci-read x-mono" aria-live={mine ? 'polite' : 'off'}>{read}</p>
         <div className="bci-mx" data-swipe-own onPointerLeave={() => setHot(null)} style={{ '--cols': cols.length }}>
           {hot && <style>{`${r >= 0 ? `.bci-mx .x-table tbody tr:nth-child(${r + 1}) > *, ` : ''}.bci-mx .x-table tr > :nth-child(${c + 2}) { background-color: #f5f5f5; } ${r >= 0 ? `.bci-mx .x-table tbody tr:nth-child(${r + 1}) > :nth-child(${c + 2}) { background-color: #d4d4d4; }` : ''} .bci-mx .x-table thead th:nth-child(${c + 2}) .bci-vh { color: #0a0a0a; font-weight: 606; }`}</style>}
           <DataTable
@@ -381,12 +417,13 @@ export default function BlockchainIndex({ doc, all }) {
   const chains = chainsBlock ? chainsBlock.chains : ['Ethereum'];
   const pieces = find('pieces'), groups = find('groups'), agent = find('agent'), last = find('band');
   const [chain, setChain] = useState(chains[0]);
+  const [piecesSeen, setPiecesSeen] = useState(false);
   return (
     <main className="bz bci">
       <span data-ask-name="Hanzo Blockchain" hidden />
-      <Hero doc={doc} chains={chains} all={all} onChain={setChain} />
+      <Hero doc={doc} chains={chains} all={all} onChain={setChain} alsoRun={piecesSeen} />
       <Intro doc={doc} />
-      {pieces && <Pieces b={pieces} all={all} chain={chain} />}
+      {pieces && <Pieces b={pieces} all={all} chain={chain} onSeen={setPiecesSeen} />}
       {groups && <Groups b={groups} />}
       {agent && <Agent b={agent} />}
       {chainsBlock && <Matrix b={chainsBlock} all={all} />}
