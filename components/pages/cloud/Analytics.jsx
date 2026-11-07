@@ -19,17 +19,14 @@
    Beyond: "Ask it as a question". Pick the question you actually have (who is on the site right now, where the drop
    is, whether anyone came back...) and the report card that answers it opens; each question is the report's own words.
    Every word, figure and link is Hanzo's; pages and referrers in the realtime list are examples (as the dashboard says). */
-import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useTransform } from 'motion/react';
 import { EASE } from '../../ui';
 import { A, Cta, CodeBlock, Tabs, TabPanel } from '../../kit';
 import KeynoteStage from '../../v2/KeynoteStage';
 import KeynoteOpen from '../../v2/KeynoteOpen';
-import KeynoteChapters from '../../v2/KeynoteChapters';
-import KeynoteRoom from '../../v2/KeynoteRoom';
-import KeynoteSpec, { KeynoteSheet } from '../../v2/KeynoteSpec';
+import { KeynoteSheet } from '../../v2/KeynoteSpec';
 import KeynoteClose from '../../v2/KeynoteClose';
-import KeynoteLines from '../../v2/KeynoteLines';
 import './Analytics.css';
 
 const mod = (a, n) => ((a % n) + n) % n;
@@ -40,6 +37,17 @@ function useSeen(amount = 0.25) {
   const seen = useInView(ref, { amount });
   const calm = useReducedMotion();
   return [ref, seen && !calm];
+}
+/* a section's entrance: the section stands in its final state in the HTML; under .js it waits in its start state
+   (Analytics.css, per entrance) until it first comes into view, then data-en plays its one entrance (CSS, < 0.9 s) */
+function useEnter(amount = 0.18) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount });
+  return [ref, seen ? '' : undefined];
+}
+function En({ className, children, ...rest }) {
+  const [ref, on] = useEnter();
+  return <section ref={ref} data-en={on} className={className} {...rest}>{children}</section>;
 }
 /* calls fn every ms while run is true: a chain of timeouts (no setInterval), the latest fn each time */
 function useTick(ms, run, fn) {
@@ -63,33 +71,101 @@ const pt = (h, i) => [(i / 23) * 100, 100 - h];
 /* the board's own live switch (the demo's pause lives in the board's top strip, not under the ask) */
 const Paused = createContext(false);
 
-/* the realtime list: a new visit slides in on top, the rest move down a row (transform only, no layout animation) */
-function Realtime({ live }) {
+/* ---------- the signature: the flip board ----------
+   One split-flap tile. When its character changes, the upper flap falls and the lower one rises, stepping through the
+   few characters before the new one, like a departure board. The characters are drawn from data attributes (CSS
+   content), so the page's text stays the real words, held once in a screen-reader span beside the tiles.
+   kick: a number; when it goes up the tile does one flap onto the character it already shows (an arrival, never
+   another value). */
+const CS = ' abcdefghijklmnopqrstuvwxyz0123456789/.-,$%+';
+function route(a, b, calm) {
+  const ia = CS.indexOf(a), ib = CS.indexOf(b);
+  if (calm || ia < 0 || ib < 0) return [b];
+  const n = CS.length, dist = (ib - ia + n) % n;
+  const out = [];
+  for (let k = Math.max(1, dist - 4); k <= dist; k++) out.push(CS[(ia + k) % n]);
+  return out.length ? out : [b];
+}
+function Flap({ ch, d = 0, kick = 0 }) {
+  const calm = useReducedMotion();
+  const [s, setS] = useState({ cur: ch, prev: ch, n: 0 });
+  const shown = useRef(ch);
+  useEffect(() => {
+    if (ch === shown.current) return;
+    const path = route(shown.current, ch, calm);
+    let i = 0;
+    let t = 0;
+    const go = () => {
+      const c = path[i++];
+      setS((v) => ({ cur: c, prev: v.cur, n: v.n + 1 }));
+      shown.current = c;
+      if (i < path.length) t = setTimeout(go, 75);
+    };
+    t = setTimeout(go, d);
+    return () => clearTimeout(t);
+  }, [ch, d, calm]);
+  useEffect(() => {
+    if (!kick || calm) return;
+    const t = setTimeout(() => setS((v) => ({ cur: v.cur, prev: v.cur, n: v.n + 1 })), d);
+    return () => clearTimeout(t);
+  }, [kick, d, calm]);
+  const { cur, prev, n } = s;
+  return (
+    <span className={'fl' + (cur === ' ' ? ' sp' : '') + (cur === ',' || cur === '.' ? ' nar' : '')}>
+      <i className="fl-h fl-t" data-c={cur} />
+      <i className="fl-h fl-b" data-c={n ? prev : cur} />
+      {n > 0 && <i key={'a' + n} className="fl-h fl-ft" data-c={prev} />}
+      {n > 0 && <i key={'b' + n} className="fl-h fl-fb" data-c={cur} />}
+    </span>
+  );
+}
+/* a word or figure as tiles: the real text for readers, the tiles for the eye */
+function FlapText({ text, w = text.length, d = 0, step = 22, kick = 0, className = '' }) {
+  const s = text.padEnd(w, ' ').slice(0, w);
+  return (
+    <span className={'fl-w ' + className}>
+      <span className="x-sr">{text}</span>
+      <span className="fl-row" aria-hidden="true">{[...s].map((c, i) => <Flap key={i} ch={c} d={d + i * step} kick={kick} />)}</span>
+    </span>
+  );
+}
+/* the realtime board: each visit lands on the top row and every row flips down one (the rows never move, the tiles
+   do). Hover a row to hold it while you read it; tap or press it to pin it (aria-pressed). Pause stops the board. */
+const ROWS = 5;
+function FlipBoard({ live }) {
   const [k, setK] = useState(0);
-  const ul = useRef(null);
+  const [hover, setHover] = useState(-1);
+  const [pin, setPin] = useState({});
   const paused = useContext(Paused);
   useTick(2400, live && !paused, () => setK((v) => v + 1));
-  useLayoutEffect(() => {
-    const el = ul.current;
-    if (!el || !k) return;
-    const h = el.children[1] ? el.children[1].offsetTop - el.children[0].offsetTop : 0;
-    el.style.transition = 'none';
-    el.style.transform = `translate3d(0, ${-h}px, 0)`;
-    el.getBoundingClientRect();
-    el.style.transition = 'transform .5s cubic-bezier(.4, 0, .2, 1)';
-    el.style.transform = 'translate3d(0, 0, 0)';
-  }, [k]);
+  const rowAt = (j) => VISITS[mod(j - k, VISITS.length)];
+  const [frozen, setFrozen] = useState({});
+  const hold = (j, on) => setFrozen((f) => { const n = { ...f }; if (on) n[j] = n[j] || rowAt(j); else delete n[j]; return n; });
   return (
-    <div className="an-rt" aria-hidden="true">
+    <div className="an-fb-board">
       <p className="an-rt-h"><i />Realtime</p>
-      <div className="an-rt-win">
-        <ul ref={ul}>
-          {[0, 1, 2, 3, 4].map((j) => {
-            const [page, ref] = VISITS[mod(j - k, VISITS.length)];
-            return <li key={k - j} className={j === 0 && k ? 'new' : ''}><b>{page}</b><span>{ref}</span></li>;
-          })}
-        </ul>
-      </div>
+      <ul className="an-fb-rows">
+        {Array.from({ length: ROWS }, (_, j) => {
+          const held = !!pin[j] || hover === j;
+          const [page, ref] = held && frozen[j] ? frozen[j] : rowAt(j);
+          return (
+            <li key={j}>
+              <button
+                type="button"
+                className={'an-fb-row' + (held ? ' held' : '')}
+                aria-pressed={!!pin[j]}
+                onPointerEnter={(e) => { if (e.pointerType === 'mouse') { hold(j, true); setHover(j); } }}
+                onPointerLeave={(e) => { if (e.pointerType === 'mouse') { setHover(-1); if (!pin[j]) hold(j, false); } }}
+                onClick={() => { const on = !pin[j]; hold(j, on || hover === j); setPin((p) => ({ ...p, [j]: on })); }}
+              >
+                <i className="an-fb-dot" aria-hidden="true" />
+                <FlapText text={page} w={12} d={j * 90} />
+                <FlapText text={ref} w={10} d={j * 90 + 140} className="an-fb-ref" />
+              </button>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }
@@ -158,6 +234,9 @@ function Activity() {
 function Board() {
   const [ref, live] = useSeen(0.25);
   const [paused, setPaused] = useState(false);
+  /* the KPI tiles flap once onto Hanzo's figures as the board opens (one flap each, never another number) */
+  const [kick, setKick] = useState(0);
+  useEffect(() => { const t = setTimeout(() => setKick(1), 120); return () => clearTimeout(t); }, []);
   return (
     <div className="kn-obj an-board" ref={ref} data-paused={paused ? '' : undefined}>
       <div className="an-bar">
@@ -174,14 +253,14 @@ function Board() {
         {KPIS.map(([t, v, ch], i) => (
           <div key={t} className="an-kpi">
             <p>{t}</p>
-            <b className="kn-fig an-m"><span style={{ '--an-i': i }}>{v}</span></b>
+            <b className="an-kfig"><FlapText text={v} d={i * 120} step={45} kick={kick} className="lt" /></b>
             <span>{ch}</span>
           </div>
         ))}
       </div>
       <div className="an-main">
+        <FlipBoard live={live} />
         <Activity />
-        <Realtime live={live} />
       </div>
       </Paused.Provider>
     </div>
@@ -247,12 +326,13 @@ function Reports() {
   const [q, setQ] = useState(-1);
   const ask = REPORTS.flatMap((r, i) => r.ask.map((t) => [t, i]));
   const open = (k, i) => { setQ(k); grid.current?.querySelectorAll('.kno-card')[i]?.click(); };
+  const [en, on] = useEnter(0.12);
   return (
-    <section className="kn-sec an-rep">
+    <section ref={en} data-en={on} className="kn-sec an-rep en-focus">
       <div className="kn-wrap">
         <div className="kn-grid an-rep-h">
           <div className="an-rep-ht">
-            <KeynoteLines className="kn-headline" lines="The reports" />
+            <h2 className="kn-headline">The reports</h2>
             <p className="kn-lede">Each one answers a question you would otherwise export a CSV to answer.</p>
           </div>
           <div className="an-ask">
@@ -394,6 +474,64 @@ const VISIT = [
   ['Whether they return', 'Retention by the week someone arrived. Growth that comes only from new visitors looks identical to growth that lasts, until you look at this.', 'Retention and journeys'],
   ['What it was worth', 'Send the order value with the event and revenue shows up beside the traffic that produced it, split by channel and campaign.', 'Revenue and attribution'],
 ];
+/* "From a visit to a number" as one quick section (no pinned stage): three cards side by side, each picture building
+   itself once when the row is seen. Entrance: noise-dissolve. */
+function Visit() {
+  const [en, on] = useEnter(0.15);
+  const calm = useReducedMotion();
+  return (
+    <section ref={en} data-en={on} className="kn-sec an-visit en-noise">
+      <div className="kn-wrap">
+        <div className="an-ch-head">
+          <h2 className="kn-headline">{'From a visit '}<br />to a number</h2>
+          <div className="an-ch-r">
+            <p className="kn-lede">A pageview is not worth much on its own. It gets interesting once it is joined to the step someone stopped at, the campaign that sent them and the money that followed.</p>
+            <Cta to="https://docs.hanzo.ai/docs/projects/hanzoai/insights" kind="link" id="analytics.reports-docs">Read how reports work</Cta>
+          </div>
+        </div>
+        <ol className="an-visit-g">
+          {VISIT.map(([t, d, tag], i) => {
+            const S = SCENES[i];
+            return (
+              <li key={t}>
+                <div className="an-visit-pic"><S on={on !== undefined || !!calm} /></div>
+                <h3 className="kn-title">{t}</h3>
+                <p className="an-visit-d">{d}</p>
+                <p className="kn-kick">{tag}</p>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
+/* "Add the script", moved up to follow the reports (the action before the explanation). Entrance: ripple. */
+function AddScript() {
+  const [en, on] = useEnter(0.15);
+  return (
+    <section ref={en} data-en={on} className="kn-sec an-add en-ripple">
+      <div className="kn-wrap kn-grid an-add-g">
+        <div className="an-add-t">
+          <h2 className="kn-headline">Add the script</h2>
+          <p className="kn-lede">One tag on the page and the dashboard fills in on its own. Host it yourself or let us run it — the software is the same either way.</p>
+          <ol className="an-add-l">
+            {[['One tag', 'Paste it into the head of your site. Pageviews start arriving before you have decided what to name anything.'], ['Your data stays yours', 'The events live in your own Postgres, MySQL or MariaDB. Nothing is sampled, and nothing is held back from an export.'], ['Open source, MIT', 'Run it on a small server for as long as you like. The hosted version is the same code with the operations taken care of.']].map(([t, d], i) => <li key={t}><span className="kn-fig">{String(i + 1).padStart(2, '0')}</span><div><b>{t}</b><p>{d}</p></div></li>)}
+          </ol>
+          <div className="kn-acts">
+            <Cta to="/login" kind="quiet" id="analytics.script">Try Hanzo</Cta>
+            <Cta to="/contact-sales" kind="link" id="analytics.script-2">Request Demo</Cta>
+          </div>
+          <p className="an-nocard">No credit card required.</p>
+          {/* the API is a text disclosure under the ask pair, so the pair is the only ask here */}
+          <div className="an-disc"><KeynoteSheet label="A script, then an API" title="A script, then an API"><ApiSheet /></KeynoteSheet></div>
+        </div>
+        <div className="an-add-o"><Script /></div>
+      </div>
+    </section>
+  );
+}
 
 /* ---------- if you sell something: the commerce board ---------- */
 function Commerce() {
@@ -403,8 +541,8 @@ function Commerce() {
     <div className="kn-obj an-shop" ref={ref} data-in={seen ? '' : undefined}>
       <div className="an-shop-h"><p>Commerce Dashboard</p><em>example</em></div>
       <div className="an-shop-k">
-        <div><p>Sales Performance</p><b className="kn-fig an-m"><span>4.78%</span></b><span>+0.6%</span></div>
-        <div><p>Avg. Order Value</p><b className="kn-fig an-m"><span style={{ '--an-i': 1 }}>$87.32</span></b><span>+2.4%</span></div>
+        <div><p>Sales Performance</p><b className="an-kfig"><FlapText text="4.78%" step={50} kick={seen ? 1 : 0} className="lt lg" /></b><span>+0.6%</span></div>
+        <div><p>Avg. Order Value</p><b className="an-kfig"><FlapText text="$87.32" d={150} step={50} kick={seen ? 1 : 0} className="lt lg" /></b><span>+2.4%</span></div>
       </div>
       <p className="kn-kick an-shop-s">Product Recommendations</p>
       <ul>
@@ -626,41 +764,28 @@ export default function Analytics() {
 
       <Reports />
 
-      <KeynoteChapters
-        className="an-ch"
-        head={(
-          <div className="an-ch-head">
-            <KeynoteLines className="kn-headline" lines={['From a visit', 'to a number']} />
-            <div className="an-ch-r">
-              <p className="kn-lede">A pageview is not worth much on its own. It gets interesting once it is joined to the step someone stopped at, the campaign that sent them and the money that followed.</p>
-              <Cta to="https://docs.hanzo.ai/docs/projects/hanzoai/insights" kind="link" id="analytics.reports-docs">Read how reports work</Cta>
-            </div>
-          </div>
-        )}
-        items={VISIT.map(([t, d, tag]) => ({ kick: tag, title: t, body: <p>{d}</p> }))}
-        visual={(i, on, p) => { const S = SCENES[i]; return <S on={on} p={p} />; }}
-        swap="scale"
-        side="left"
-        count
-      />
+      <AddScript />
 
-      <section className="kn-sec an-sell">
+      <Visit />
+
+      <En className="kn-sec an-sell en-stretch">
         <div className="kn-wrap kn-grid an-sell-g">
           <div className="an-sell-obj"><Commerce /></div>
           <div className="an-sell-t">
-            <KeynoteLines className="kn-headline" lines="If you sell something" />
+            <h2 className="kn-headline">If you sell something</h2>
             <p className="kn-lede">Revenue is a report here, not an integration you buy on top.</p>
             <ol className="an-sell-l">
               {[['Revenue beside the traffic', 'Send an amount and a currency with the event and it lands in the same reports as everything else. Totals, order values and the sessions behind them.'], ['Which campaign paid for itself', 'Attribution splits revenue across the channels and campaigns that touched the session, so spend can be argued with numbers rather than instinct.'], ['The checkout, step by step', 'Cart to payment as a funnel, with the abandonment rate per step. Add a goal for the one step you would defend in a meeting.']].map(([t, d]) => <li key={t}><h3 className="an-h3">{t}</h3><p>{d}</p></li>)}
             </ol>
           </div>
         </div>
-      </section>
+      </En>
 
-      <KeynoteRoom className="kn-sec an-ai">
+      {/* the one graphite room: it simply is dark (no scrubbed opening); its cards are dealt onto the table */}
+      <En className="kn-sec an-ai en-deal" data-room="dark">
         <div className="kn-wrap kn-grid an-ai-g">
           <div className="an-ai-t">
-            <KeynoteLines className="kn-headline" lines={['AI-Powered', 'Observability', '& Monitoring']} />
+            <h2 className="kn-headline">{'AI-Powered '}<br />{'Observability '}<br />&amp; Monitoring</h2>
             <p className="kn-lede">Proactively identify issues and opportunities with AI-powered insights and monitoring.</p>
             <ul className="an-ai-l">
               {[['Real-time anomaly detection', 'Automatically identify unusual patterns and potential issues before they impact your business.'], ['Predictive alerts and proactive monitoring', 'Get alerted about potential problems before they occur with AI-powered predictive monitoring.'], ['Deep integration with Hanzo Cloud and Base', 'Connect your analytics with your entire infrastructure for comprehensive visibility.']].map(([t, d]) => <li key={t}><b>{t}</b><span>{d}</span></li>)}
@@ -668,46 +793,32 @@ export default function Analytics() {
           </div>
           <div className="an-ai-o"><AiPanel /></div>
         </div>
-      </KeynoteRoom>
+      </En>
 
-      <section className="kn-sec an-add">
-        <div className="kn-wrap kn-grid an-add-g">
-          <div className="an-add-t">
-            <KeynoteLines className="kn-headline" lines="Add the script" />
-            <p className="kn-lede">One tag on the page and the dashboard fills in on its own. Host it yourself or let us run it — the software is the same either way.</p>
-            <ol className="an-add-l">
-              {[['One tag', 'Paste it into the head of your site. Pageviews start arriving before you have decided what to name anything.'], ['Your data stays yours', 'The events live in your own Postgres, MySQL or MariaDB. Nothing is sampled, and nothing is held back from an export.'], ['Open source, MIT', 'Run it on a small server for as long as you like. The hosted version is the same code with the operations taken care of.']].map(([t, d], i) => <li key={t}><span className="kn-fig">{String(i + 1).padStart(2, '0')}</span><div><b>{t}</b><p>{d}</p></div></li>)}
-            </ol>
-            <div className="kn-acts">
-              <Cta to="/login" kind="quiet" id="analytics.script">Try Hanzo</Cta>
-              <Cta to="/contact-sales" kind="link" id="analytics.script-2">Request Demo</Cta>
-            </div>
-            <p className="an-nocard">No credit card required.</p>
-            {/* the API is a text disclosure under the ask pair, so the pair is the only ask here */}
-            <div className="an-disc"><KeynoteSheet label="A script, then an API" title="A script, then an API"><ApiSheet /></KeynoteSheet></div>
+      {/* the spec, page-local: plain rows that stand (no fade-in), the panel and the audit card as its objects */}
+      <section className="kn-sec kfs an-spec">
+        <div className="kn-wrap">
+          <div className="kfs-h">
+            <h2 className="kn-headline">Enterprise-Grade Security &amp; Compliance</h2>
+            <p className="kn-kick">Hanzo Analytics</p>
+            <p className="kn-lede">Secure by design, ensuring your data meets stringent compliance standards.</p>
           </div>
-          <div className="an-add-o"><Script /></div>
+          <dl className="kfs-rows">
+            {[
+              ['Security Features', <SecPanel />],
+              ['Security and assurance', <AuditDoc />],
+              ['Data protection', <p>EU data handling, deletion, and export on request.</p>],
+              ['Privacy by design', <p>Collected because it is used, not because it can be.</p>],
+              ['Data Privacy Commitment', <div className="an-commit"><p>Hanzo Analytics collects what a report uses and nothing else. You choose where the data lives, how long it is kept, and who on your team can read it, and you can export or delete it on request.</p><A to="/legal/privacy" className="an-more">Read our privacy policy →</A></div>],
+            ].map(([k, v]) => <div key={k} className="kfs-row kn-grid"><dt className="kn-kick">{k}</dt><dd>{v}</dd></div>)}
+          </dl>
         </div>
       </section>
-
-      <KeynoteSpec
-        className="an-spec"
-        kick="Hanzo Analytics"
-        title="Enterprise-Grade Security & Compliance"
-        aside={<p className="kn-lede">Secure by design, ensuring your data meets stringent compliance standards.</p>}
-        rows={[
-          ['Security Features', <SecPanel />],
-          ['Security and assurance', <AuditDoc />],
-          ['Data protection', <p>EU data handling, deletion, and export on request.</p>],
-          ['Privacy by design', <p>Collected because it is used, not because it can be.</p>],
-          ['Data Privacy Commitment', <div className="an-commit"><p>Hanzo Analytics collects what a report uses and nothing else. You choose where the data lives, how long it is kept, and who on your team can read it, and you can export or delete it on request.</p><A to="/legal/privacy" className="an-more">Read our privacy policy →</A></div>],
-        ]}
-      />
 
       <section className="kn-sec an-com">
         <div className="kn-wrap kn-grid an-com-g">
           <div className="an-com-t">
-            <KeynoteLines className="kn-headline" lines={['Powered by Community,', 'Improved by Collaboration']} />
+            <h2 className="kn-headline">Powered by Community, Improved by Collaboration</h2>
             <p className="kn-lede">Join thousands of developers building the future of analytics together.</p>
             <Repo />
             <KeynoteSheet label="Open Source at Our Core" title="Open Source at Our Core">

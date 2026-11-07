@@ -1,24 +1,22 @@
 'use client';
-// Signature: One Chrome window, full width, inspector-led: Hanzo's side agent works the active checkout tab step by step while a DevTools drawer follows it live (the DOM node it reads, the console error, the policy check, the network trace), then the patch lands in your code channel's tab
+// Signature: terminal (Live terminal): the side panel's CDP session as a terminal on the second screen; it types the agent's own steps as commands and streams what Chrome DevTools Protocol returns (the clicked button and network trace, the DOM node and console error, the site-policy check) while the matching chapter shows beside it, and the visitor picks the next command; above it the full-width Chrome window runs the same checkout debug once and rests
+// Entrances: 1 rack-focus = the terminal section, 2 scroll-tilt = the black room (policy tester), 3 orbit-in = the capability rows and render, 4 cover-slide = the connected surfaces (handoff rail), 5 pull-back = the closing room
 // Beyond: A site-policy tester: type any address and see whether Hanzo's example allowlist lets the agent in, wildcards matched as you type, with the part each * stands for marked in the address
 // Persona: an engineering lead who lives in Chrome, and the admin who has to say which sites an agent may touch.
 // Goal: add the extension, then set the organization's site policy.
 // CTA: Add to Chrome (chromewebstore.google.com): hero solid + the one closing ask row; Configure Org Policies and every other link are text links.
 // Metric: signup_start (install hand-off to the Chrome Web Store)
 /* Hanzo in Chrome (Archetype: Launch, then System governance).
-   V2: 8/10 round 3: the icon-tile bento is now hairline capability rows that show a small product render on hover/focus/tap; the allowlist and password-manager lines are said once (in the black room); the four surface columns became a handoff rail (Chrome → Team → Slack → Bot) that walks on scroll or hover with one card for the product it rests on; the Firefox box and the deploy bar are one hairline block with pills that reveal their path; the window tilts up to 1.6° under a fine pointer and its ask field always fits; the phone window is cropped to about one screen; the close ends on a resting "Allowed" frame
-   Motion: signature = the agent run in the window (steps, inspector panes, the channel tab). Supporting: Stage settle,
-   pinned chapters with clip wipes (components/v2/AppScenes), the black room opening to full width (scroll-linked clip),
-   the handoff rail walking with the scroll, and the window's pointer tilt (fine pointers only).
+   V2: 8/10 signature `terminal`: the pinned 01/02/03 chapter scene is replaced by a live CDP terminal that types and streams the page's own example and lets the visitor pick the next command, with the three chapters beside it; no scroll-scrubbed motion left (Stage settle, black-room clip opening and the scroll-walked rail are gone: the rail now walks on time); one reveal style (the closing line only); new order hero → terminal → black room → capabilities → surfaces → paste → close; round-3 fixes kept (phone side panel CLS 0, working policy pill in the window)
+   Motion: signature = the live terminal (typing, streamed output, pick the next command). Supporting: the agent run in
+   the window (steps, inspector panes, the channel tab), the window's pointer tilt (fine pointers only), the handoff rail
+   walking by itself once in view, the policy pill (layoutId), and the closing line's cut-in (the page's one reveal).
    Colour: Hanzo's deck greys only. Every word is Hanzo's, including the example checkout, its policy and the agent's steps. */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
+import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Copy, useTilt } from '../ui';
 import { A, Cta } from '../kit';
 import { play } from '../../lib/sound';
-import Lines from '../v2/x-edison/AppLines';
-import Stage from '../v2/AppStage';
-import Scenes from '../v2/AppScenes';
 import '../v2/AppType.css';
 import './ChromePage.css';
 
@@ -78,6 +76,7 @@ function Window() {
   const [paused, setPaused] = useState(false);
   const [runKey, setRunKey] = useState(0);
   const [ran, setRan] = useState(-1);
+  const [pol, setPol] = useState('list'); // the policy card's own toggle, like the black room's
   const box = useRef(null);
   const seen = useInView(box, { amount: 0.15 });
   const calm = useReducedMotion();
@@ -116,12 +115,12 @@ function Window() {
         <div className="xch-split">
           <div className="xch-left">
             <div className="xch-page">
+              <h3>Acme Pro Enterprise Checkout</h3>
+              <p className="xch-sub">15 seats · Annual billing · Zero data retention enabled</p>
               <div className="xch-page-top">
                 <p className="xch-tag x-mono">ACTIVE TAB · STAGING.ACME.INC</p>
                 <p className="xch-overlay"><i />Agent overlay active</p>
               </div>
-              <h3>Acme Pro Enterprise Checkout</h3>
-              <p className="xch-sub">15 seats · Annual billing · Zero data retention enabled</p>
               <div className="xch-row">
                 <div className={'xch-target' + (n >= 1 ? ' on' : '') + (n === 0 ? ' scan' : '')}>
                   <span className="xch-sel x-mono">button.cta-button [data-testid=&quot;submit-order&quot;]</span>
@@ -131,8 +130,13 @@ function Window() {
                 </div>
                 <div className={'xch-policy' + (n === 1 ? ' check' : '') + (n >= 2 ? ' ok' : '')}>
                   <b>Organization Site Policy</b>
-                  <span className="xch-seg x-mono"><span className="on">Allowlist</span><span>Allow all sites</span></span>
-                  <p className="x-mono">Allowed: *.acme.inc, github.com/acme/* · Password managers: Blocked</p>
+                  <span className="xch-seg x-mono" role="radiogroup" aria-label="Organization Site Policy">
+                    {[['list', 'Allowlist'], ['all', 'Allow all sites']].map(([k, l]) => (
+                      <button key={k} type="button" role="radio" aria-checked={pol === k} className={pol === k ? 'on' : ''} onClick={() => setPol(k)} data-sound="tick">{l}</button>
+                    ))}
+                  </span>
+                  <p className="x-mono xch-pol-line" data-on={pol === 'list' ? '' : undefined}>Allowed: *.acme.inc, github.com/acme/* · Password managers: Blocked</p>
+                  <p className="x-mono xch-pol-line" data-on={pol === 'all' ? '' : undefined} aria-hidden={pol !== 'all'}>Allow all sites · Password managers: Blocked</p>
                 </div>
               </div>
             </div>
@@ -159,6 +163,18 @@ function Window() {
                 );
               })}
             </ol>
+            {/* phones: the latest step's detail lives in one fixed slot, so the step rows never change height */}
+            <div className="xch-slot" aria-hidden="true">
+              {(() => {
+                const k = n === 0 ? 0 : Math.min(n, STEPS.length) - 1;
+                return (
+                  <div key={n} className="xch-slot-in">
+                    <span className="x-mono xch-arg">{STEPS[k][1]}</span>
+                    {n > 0 && <span className="xch-slot-res">{STEPS[k][2]}</span>}
+                  </div>
+                );
+              })()}
+            </div>
             <div className="xch-ask">Ask Hanzo to test a flow or extract page data...</div>
           </aside>
         </div>
@@ -184,16 +200,24 @@ function Hero() {
         </div>
       </div>
       <div className="av-wrap">
-        <Stage className="xch-stage" data-morph-target="">
+        <div className="xch-stage" data-morph-target="">
           <Window />
-        </Stage>
-        <p className="xch-caption x-mono">Hanzo in Chrome · Browser Agent &amp; Enterprise Governance</p>
-        <div className="av-grid xch-facts">
-          <p className="av-title xch-gov">Governed by your organization: admins control site allowlists, blocklists, and password-manager boundaries from one console.</p>
-          <ol>
-            {FACTS.map((t, i) => <li key={t}><span className="xch-fn x-mono av-num">{String(i + 1).padStart(2, '0')}</span><span>{t}</span></li>)}
-          </ol>
         </div>
+        <p className="xch-caption x-mono">Hanzo in Chrome · Browser Agent &amp; Enterprise Governance</p>
+      </div>
+    </section>
+  );
+}
+
+// the four facts, after the terminal (so the signature arrives on the second screen), leading into the black room
+function Facts() {
+  return (
+    <section className="xch-facts-sec" aria-label="Governed by your organization">
+      <div className="av-wrap av-grid xch-facts">
+        <p className="av-title xch-gov">Governed by your organization: admins control site allowlists, blocklists, and password-manager boundaries from one console.</p>
+        <ol>
+          {FACTS.map((t, i) => <li key={t}><span className="xch-fn x-mono av-num">{String(i + 1).padStart(2, '0')}</span><span>{t}</span></li>)}
+        </ol>
       </div>
     </section>
   );
@@ -222,67 +246,118 @@ function Paste() {
   );
 }
 
-/* ---------- act one: agent work, three pinned chapters with their own live UI ---------- */
-function Tabs({ on }) {
-  return (
-    <div className={'xch-vis xch-v1' + (on ? ' on' : '')} aria-hidden="true">
-      <div className="xch-mini">
-        <div className="xch-mini-tabs">{['CRMs', 'issue trackers', 'docs', 'internal dashboards'].map((t, i) => <span key={t} className={'t' + i}>{t}</span>)}</div>
-        <div className="xch-mini-body">
-          {['Navigates pages', 'fills forms', 'clicks controls', 'extracts structured data'].map((t, i) => (
-            <div key={t} className="xch-act" style={{ '--i': i }}><span className="x-mono">{String(i + 1).padStart(2, '0')}</span><span>{t}</span><i className="xch-act-ok"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" /></svg></i></div>
-          ))}
-        </div>
-      </div>
-      <p className="xch-mini-k x-mono">using your existing session</p>
-    </div>
-  );
-}
-
-function Bridge({ on }) {
-  return (
-    <div className={'xch-vis xch-v2' + (on ? ' on' : '')} aria-hidden="true">
-      <div className="xch-src">{['live DOM styles', 'console logs', 'network timings'].map((t, i) => <span key={t} style={{ '--i': i }}>{t}</span>)}</div>
-      <div className="xch-mcp"><i /><span className="x-mono">MCP</span><i /></div>
-      <div className="xch-dst">{['Hanzo Dev', 'VS Code', 'JetBrains', 'Code Channels'].map((t, i) => <span key={t} style={{ '--i': i }}>{t}</span>)}</div>
-    </div>
-  );
-}
-
-function Admin({ on }) {
-  return (
-    <div className={'xch-vis xch-v3' + (on ? ' on' : '')} aria-hidden="true">
-      <div className="xch-admin">
-        <p className="xch-admin-k x-mono">Organization owners</p>
-        {[['toggle extension access', 'on'], ['block password manager interaction', 'block'], ['enforce domain allowlists or blocklists', 'on']].map(([t, s], i) => (
-          <div key={t} className={'xch-tog ' + s} style={{ '--i': i }}><span>{t}</span><i><b /></i></div>
-        ))}
-        <p className="xch-admin-f x-mono">across every seat</p>
-      </div>
-    </div>
-  );
-}
-
+/* ---------- the signature: the side panel's CDP session as a live terminal ----------
+   The window above shows the run; here the same session is a terminal. It types each command (one of the agent's own
+   steps), then streams what Chrome DevTools Protocol hands back: the page's own example output. It plays the three
+   commands once, then rests; the visitor picks the next command at any time (mouse, touch or keyboard). Beside it,
+   the chapter that command proves (Hanzo's three "What it is" chapters, word for word). Each command replaces the
+   log (top-down, fixed height), so nothing above a new line ever moves. */
 const WHAT = [
-  { title: 'Acts in your live tabs', body: <p className="av-body">Navigates pages, fills forms, clicks controls, and extracts structured data from any web application you are already signed into.</p>, visual: (on) => <Tabs on={on} /> },
-  { title: 'Bridges browser to IDE & CLI', body: <p className="av-body">Streams live DOM styles, console logs, and network timings straight to Hanzo Dev, VS Code, JetBrains, and Code Channels over MCP.</p>, visual: (on) => <Bridge on={on} /> },
-  { title: 'Zero-trust admin controls', body: <p className="av-body">Organization owners toggle extension access, block password manager interaction, and enforce domain allowlists or blocklists across every seat.</p>, visual: (on) => <Admin on={on} /> },
+  { title: 'Acts in your live tabs', body: 'Navigates pages, fills forms, clicks controls, and extracts structured data from any web application you are already signed into.' },
+  { title: 'Bridges browser to IDE & CLI', body: 'Streams live DOM styles, console logs, and network timings straight to Hanzo Dev, VS Code, JetBrains, and Code Channels over MCP.' },
+  { title: 'Zero-trust admin controls', body: 'Organization owners toggle extension access, block password manager interaction, and enforce domain allowlists or blocklists across every seat.' },
+];
+// [command, [[tag, text, kind]]]: tags are the real CDP domains the side panel uses; texts are the page's own example
+const CMDS = [
+  ['Click element & capture network trace', [
+    ['Input.dispatchMouseEvent', 'button[data-testid="submit-order"]'],
+    ['ok', 'Navigates pages'], ['ok', 'fills forms'], ['ok', 'clicks controls'], ['ok', 'extracts structured data'],
+    ['Network.responseReceived', 'POST /api/v1/orders → 200 OK (84ms)'],
+    ['Page.captureScreenshot', 'Screenshot attached to #bug-button-darkmode', 'hi'],
+  ]],
+  ['Read active tab DOM & accessibility tree', [
+    ['DOM.getDocument', '<button class="cta-button" data-testid="submit-order">'],
+    ['CSS.getComputedStyle', 'contrast drop on .cta-button'],
+    ['Runtime.exceptionThrown', 'Detected 1 uncaught TypeError in CheckoutForm.tsx:142', 'err'],
+    ['MCP', 'Hanzo Dev · VS Code · JetBrains · Code Channels', 'hi'],
+  ]],
+  ['Verify organization site policy', [
+    ['policy', '*.acme.inc · Allowed · Password manager blocked'],
+    ['ok', 'toggle extension access'], ['ok', 'block password manager interaction'], ['ok', 'enforce domain allowlists or blocklists'],
+    ['policy', 'Enterprise Chrome policy verified: DOM write allowed on staging.acme.inc', 'hi'],
+  ]],
 ];
 
-function What() {
+function Terminal() {
+  const box = useRef(null);
+  const seen = useInView(box, { amount: 0.35 });
+  const calm = useReducedMotion();
+  const [at, setAt] = useState(0); // the command on screen
+  const [shown, setShown] = useState(CMDS[0][1].length); // server and reduced motion: the first command's full output
+  const [typing, setTyping] = useState(-1); // characters of the command typed so far (-1: typed in full)
+  const [auto, setAuto] = useState(true); // plays the three once, until the visitor picks
+  const [busy, setBusy] = useState(false);
+  const timers = useRef([]);
+  const started = useRef(false);
+  const stop = () => { timers.current.forEach(clearTimeout); timers.current = []; };
+  const run = (i, chain) => {
+    stop();
+    setAt(i);
+    if (calm) { setTyping(-1); setShown(CMDS[i][1].length); setBusy(false); return; }
+    const cmd = CMDS[i][0];
+    let t = 0;
+    const at_ = (ms, fn) => timers.current.push(setTimeout(fn, (t += ms)));
+    setBusy(true); setShown(0); setTyping(0);
+    for (let k = 1; k <= cmd.length; k++) at_(k === 1 ? 160 : 22, () => setTyping(k));
+    at_(240, () => setTyping(-1));
+    CMDS[i][1].forEach((_, k) => at_(k === 0 ? 260 : 300, () => setShown(k + 1)));
+    at_(0, () => { setBusy(false); if (i === CMDS.length - 1) play('done'); });
+    if (chain && i < CMDS.length - 1) at_(2600, () => run(i + 1, true));
+    else if (chain) at_(0, () => setAuto(false));
+  };
+  useEffect(() => {
+    if (!seen || started.current || calm) return;
+    started.current = true;
+    run(0, true);
+  }, [seen, calm]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => stop, []);
+  const pick = (i) => { setAuto(false); run(i, false); };
+  const ctl = () => { if (auto && busy) { setAuto(false); stop(); setTyping(-1); setShown(CMDS[at][1].length); setBusy(false); } else { setAuto(true); run(0, true); } };
+  const cmd = CMDS[at][0];
+  const typed = typing < 0 ? cmd : cmd.slice(0, typing);
   return (
-    <>
-      <section className="av-sec xch-what" aria-labelledby="xch-what-h">
-        <div className="av-wrap av-grid">
-          <Lines as="h2" id="xch-what-h" className="av-display s xch-what-l" lines={['Real-time browser intelligence', 'under enterprise control']} />
-          <div className="xch-what-r">
-            <p className="av-lede">Stop copying and pasting screenshots, stack traces, and table rows between tabs.</p>
-            <p className="xch-cap-k x-mono">What it is</p>
+    <section className="av-sec xch-term-sec" aria-labelledby="xch-what-h" ref={box} data-enter="rack-focus">
+      <div className="av-wrap av-grid">
+        <div className="xch-term-l">
+          <h2 id="xch-what-h" className="av-display s">Real-time browser intelligence under enterprise control</h2>
+          <p className="av-lede">Stop copying and pasting screenshots, stack traces, and table rows between tabs.</p>
+          <p className="xch-cap-k x-mono">What it is</p>
+          <div className="xch-chap">
+            {WHAT.map((w, i) => (
+              <div key={w.title} className="xch-chap-i" data-on={i === at ? '' : undefined} aria-hidden={i !== at}>
+                <p className="xch-chap-n x-mono av-num">{String(i + 1).padStart(2, '0')} / 03</p>
+                <h3 className="av-head">{w.title}</h3>
+                <p className="av-body">{w.body}</p>
+              </div>
+            ))}
           </div>
         </div>
-      </section>
-      <Scenes label="What it is" items={WHAT} flip tone={['#fff', '#f5f5f5', '#fff']} />
-    </>
+        <div className="xch-term" role="group" aria-label="Hanzo in Chrome, CDP session">
+          <div className="xch-term-bar">
+            <span className="xch-lights" aria-hidden="true"><i /><i /><i /></span>
+            <span className="xch-term-t x-mono"><i aria-hidden="true" />CDP attached · staging.acme.inc/checkout</span>
+            <button type="button" className="xch-term-ctl" onClick={ctl} aria-label={auto && busy ? 'Pause' : 'Replay'}>{auto && busy ? <IconPause /> : <IconReplay />}</button>
+          </div>
+          <div className="xch-term-log x-mono" aria-live="polite">
+            <p className="xch-term-cmd"><span className="xch-term-ps" aria-hidden="true">›</span><span>{typed}</span>{typing >= 0 && <i className="xch-caret" aria-hidden="true" />}</p>
+            {CMDS[at][1].slice(0, shown).map(([tag, text, kind]) => (
+              <p key={at + tag + text} className={'xch-term-out' + (kind ? ' ' + kind : '')}>
+                <span className="xch-term-tag">{tag === 'ok' ? '✓' : tag}</span><span>{text}</span>
+              </p>
+            ))}
+            {!busy && typing < 0 && shown >= CMDS[at][1].length && <p className="xch-term-cmd rest" aria-hidden="true"><span className="xch-term-ps">›</span><i className="xch-caret" /></p>}
+          </div>
+          <div className="xch-term-pick" role="group" aria-label="Pick the next command">
+            <p className="xch-term-pk x-mono" aria-hidden="true">next command</p>
+            {CMDS.map(([c], i) => (
+              <button key={c} type="button" className={'x-mono' + (i === at ? ' on' : '')} aria-pressed={i === at} onClick={() => pick(i)} data-sound="tick">
+                <span aria-hidden="true">›</span>{c}<i aria-hidden="true">↵</i>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -342,10 +417,10 @@ function Caps() {
   const pick = (i) => () => setOn(i);
   const hover = (i) => (e) => { if (e.pointerType === 'mouse') setOn(i); };
   return (
-    <section className="av-sec xch-caps-sec" aria-labelledby="xch-caps-h">
+    <section className="av-sec xch-caps-sec" aria-labelledby="xch-caps-h" data-enter="orbit-in">
       <div className="av-wrap">
         <div className="av-grid xch-caps-top">
-          <Lines as="h2" id="xch-caps-h" className="av-head xch-caps-l" lines={['Built for engineering, design, and operations']} />
+          <h2 id="xch-caps-h" className="av-head xch-caps-l">Built for engineering, design, and operations</h2>
           <div className="xch-caps-r">
             <p className="xch-cap-k x-mono">Capabilities</p>
             <Cta to="/extension" kind="link" id="chrome.caps-extension">Explore all browser extension features</Cta>
@@ -410,15 +485,11 @@ function Policy() {
   const [mode, setMode] = useState('list');
   const [v, setV] = useState(TRY[0]);
   const res = useMemo(() => allowed(v, mode), [v, mode]);
-  const ref = useRef(null);
-  const calm = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.2'] });
-  const clip = useTransform(scrollYProgress, [0, 1], ['inset(0% 3% 0% 3% round 24px)', 'inset(0% 0% 0% 0% round 0px)']);
   return (
-    <motion.section ref={ref} className="av-sec xch-pol av-dark" data-room="dark" aria-labelledby="xch-pol-h" style={calm ? undefined : { clipPath: clip }}>
+    <section className="av-sec xch-pol av-dark" data-room="dark" aria-labelledby="xch-pol-h" data-enter="scroll-tilt">
       <div className="av-wrap av-grid">
         <div className="xch-pol-l">
-          <Lines as="h2" id="xch-pol-h" className="av-head" lines={['Wildcard site allowlists & blocklists']} />
+          <h2 id="xch-pol-h" className="av-head">Wildcard site allowlists &amp; blocklists</h2>
           <p className="av-body">Configure Allow All Sites with sensitive exclusions or Block All Sites with approved internal domains in Organization Settings.</p>
           <div className="xch-pm">
             <IconLock />
@@ -444,13 +515,14 @@ function Policy() {
             })}
             <li className="x-mono pm"><i aria-hidden="true" />Password managers: Blocked</li>
           </ul>
+          {/* pick or type an address; the verdict sits right under the field, so the answer is always in view */}
+          <div className="xch-try">{TRY.map((t) => <button key={t} type="button" className={'x-mono' + (v === t ? ' on' : '')} onClick={() => setV(t)} data-sound="tick">{t}</button>)}</div>
           <label className="xch-field">
             <span className="x-sr">An address to test</span>
             <span className="xch-https x-mono" aria-hidden="true">https://</span>
             <input value={v} onChange={(e) => setV(e.target.value)} spellCheck="false" autoComplete="off" className="x-mono" />
           </label>
           <p className="xch-mirror x-mono" aria-hidden="true"><Marked v={v} res={mode === 'list' ? res : null} /></p>
-          <div className="xch-try">{TRY.map((t) => <button key={t} type="button" className={'x-mono' + (v === t ? ' on' : '')} onClick={() => setV(t)} data-sound="tick">{t}</button>)}</div>
           <div className="xch-verdict" aria-live="polite">
             <AnimatePresence mode="wait" initial={false}>
               {res && (
@@ -463,7 +535,7 @@ function Policy() {
           </div>
         </div>
       </div>
-    </motion.section>
+    </section>
   );
 }
 
@@ -510,17 +582,23 @@ function Surfaces() {
   const rail = useRef(null);
   const [auto, setAuto] = useState(0);
   const [pick, setPick] = useState(-1);
-  // the handoff walks Chrome → Team → Slack → Bot as the strip passes up the screen; pointing at a product jumps to it
-  const { scrollYProgress } = useScroll({ target: rail, offset: ['start 0.85', 'end 0.35'] });
-  useMotionValueEvent(scrollYProgress, 'change', (p) => setAuto(Math.max(0, Math.min(3, Math.floor(p * 4)))));
+  // the handoff walks Chrome → Team → Slack → Bot by itself once the strip is in view (time, not scroll), then rests on
+  // Bot; pointing at, focusing or tapping a product jumps to it
+  const seen = useInView(rail, { amount: 0.4, once: true });
+  const calm = useReducedMotion();
+  useEffect(() => {
+    if (!seen || calm || auto >= 3) return;
+    const t = setTimeout(() => setAuto((a) => a + 1), 1800);
+    return () => clearTimeout(t);
+  }, [seen, calm, auto]);
   const on = pick >= 0 ? pick : auto;
   const choose = (i) => () => setPick(i);
   const hover = (i) => (e) => { if (e.pointerType === 'mouse') setPick(i); };
   return (
-    <section className="av-sec xch-surf" aria-labelledby="xch-surf-h">
+    <section className="av-sec xch-surf" aria-labelledby="xch-surf-h" data-enter="cover-slide">
       <div className="av-wrap">
         <div className="av-grid xch-surf-top">
-          <Lines as="h2" id="xch-surf-h" className="av-head xch-surf-l" lines={['One agent family across browser, Slack, workspace, and cloud']} />
+          <h2 id="xch-surf-h" className="av-head xch-surf-l">One agent family across browser, Slack, workspace, and cloud</h2>
           <div className="xch-surf-r">
             <p className="xch-cap-k x-mono">Connected surfaces</p>
             <Cta to="/slack" kind="link" id="chrome.surf-slack">See Hanzo Tag for Slack</Cta>
@@ -558,15 +636,14 @@ function Surfaces() {
               <h3 className="av-title">Looking for Firefox, Safari, or local IDE DevTools bridges?</h3>
               <p className="av-body">Hanzo Extension supports Chrome, Brave, Edge, Firefox, and Safari with native WebSocket &amp; ZAP binary protocol bridges into VS Code and JetBrains.</p>
             </div>
-            <div className="xch-more-links">
-              {[['/extension', 'All Browser Extensions', 'extension'], ['/slack', 'Hanzo Tag for Slack', 'slack'], ['/tag', 'Hanzo Tag Governance', 'tag'], ['/bot', 'Hanzo Bot', 'bot']].map(([to, l, k]) => (
-                <A key={to} to={to} className="xch-pill" data-cta={'chrome.more-' + k}><span>{l}</span><span className="xch-pill-to x-mono" aria-hidden="true">{to}</span></A>
-              ))}
+            <div className="xch-next-r">
+              <div className="xch-more-links">
+                {[['/extension', 'All Browser Extensions', 'extension'], ['/slack', 'Hanzo Tag for Slack', 'slack'], ['/tag', 'Hanzo Tag Governance', 'tag'], ['/bot', 'Hanzo Bot', 'bot']].map(([to, l, k]) => (
+                  <A key={to} to={to} className="xch-pill" data-cta={'chrome.more-' + k}><span>{l}</span><span className="xch-pill-to x-mono" aria-hidden="true">{to}</span></A>
+                ))}
+              </div>
+              <p className="xch-get-line"><span>Get Hanzo in Chrome</span><span aria-hidden="true">·</span><Cta to="https://platform.hanzo.ai/deploy" kind="link" id="chrome.get-deploy">Deploy to Cloud</Cta></p>
             </div>
-          </div>
-          <div className="xch-next-row get">
-            <h3 className="av-title">Get Hanzo in Chrome</h3>
-            <Cta to="https://platform.hanzo.ai/deploy" kind="link" id="chrome.get-deploy">Deploy to Cloud</Cta>
           </div>
         </div>
       </div>
@@ -577,10 +654,10 @@ function Surfaces() {
 /* ---------- the one ending: a quiet room with the ask ---------- */
 function Close() {
   return (
-    <section className="x-band xch-close" aria-labelledby="xch-close-h">
-      <div className="av-wrap av-grid">
+    <section className="x-band xch-close" aria-labelledby="xch-close-h" data-enter="pull-back">
+      <div className="av-wrap av-grid xch-close-in">
         <div className="xch-close-l">
-          <Lines as="h2" id="xch-close-h" className="av-display m" lines={['Put Hanzo in every tab', 'your team works in.']} />
+          <h2 id="xch-close-h" className="av-display m"><span>Put Hanzo in every tab</span> <span>your team works in.</span></h2>
           {/* the page ends on its product: the tester's verdict, resting in a small Chrome frame */}
           <div className="xch-rest" aria-hidden="true">
             <div className="xch-rest-bar x-mono"><span className="xch-lights"><i /><i /><i /></span><span className="xch-rest-url">staging.acme.inc/checkout</span><span className="xch-rest-cdp"><i />CDP attached</span></div>
@@ -603,15 +680,43 @@ function Close() {
   );
 }
 
+/* ---------- the five entrances: each main section arrives its own way, once, when it first comes into view ----------
+   The final state is the server HTML; the start state applies only under html.js until `data-in` is set, and never under
+   reduced motion (CSS). scroll-tilt also leans the black room with the scroll's speed (max 5°) and levels out. */
+function useEntrances() {
+  useEffect(() => {
+    const els = [...document.querySelectorAll('.xch [data-enter]')];
+    if (!('IntersectionObserver' in window)) { els.forEach((el) => { el.dataset.in = ''; }); return undefined; }
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.dataset.in = ''; io.unobserve(e.target); } }), { threshold: 0.12 });
+    els.forEach((el) => io.observe(el));
+    const room = document.querySelector('.xch [data-enter="scroll-tilt"] > .av-wrap');
+    let last = scrollY, lastT = performance.now(), rest = 0;
+    const onScroll = () => {
+      if (!room || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const r = room.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > innerHeight) { last = scrollY; return; }
+      const now = performance.now();
+      const v = (scrollY - last) / Math.max(16, now - lastT); // px per ms
+      last = scrollY; lastT = now;
+      room.style.setProperty('--lean', Math.max(-5, Math.min(5, v * 4)).toFixed(2) + 'deg');
+      clearTimeout(rest); rest = setTimeout(() => room.style.setProperty('--lean', '0deg'), 120);
+    };
+    addEventListener('scroll', onScroll, { passive: true });
+    return () => { io.disconnect(); removeEventListener('scroll', onScroll); clearTimeout(rest); };
+  }, []);
+}
+
 export default function ChromePage() {
+  useEntrances();
   return (
     <main className="av xch" style={{ '--ac': '#737373' }}>
       <Hero />
-      <Paste />
-      <What />
-      <Caps />
+      <Terminal />
+      <Facts />
       <Policy />
+      <Caps />
       <Surfaces />
+      <Paste />
       <Close />
     </main>
   );

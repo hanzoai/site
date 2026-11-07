@@ -4,22 +4,27 @@
    Goal: follow one order through its five stops and the endpoints it calls, then open the docs
    CTA: Read the docs -> https://docs.hanzo.ai/docs/cli/commerce (solid kit Cta in the hero, with thumb, and the close; the header carries the site's ask; data-cta commerce.hero / commerce.close)
    Metric: docs_click
-   Signature: an order, start to end, riding a full-bleed rail across the first screen. One order card travels five
-   stops by itself (product and variant, cart, authorize, capture, refund or return), changes shape at each and shows
-   the real endpoint it calls there. It pauses on its own button (WCAG 2.2.2), a tap on a stop sends it there, and it
-   stops off screen.
+   Signature: MOTION-MAP `flip-board`, an orders board on the second screen. Four orders sit at different stops (product
+   and variant, cart, authorize, capture, refund or return); every 2.4s one moves on and its status ("variant", "cart",
+   "held", "captured", "return") and real endpoint flip tile by tile like a departure board. Tap or press Enter on a
+   row to move that order yourself; the processor tile at the top re-flips when "Who takes the money" switches it;
+   under the board the stop the last order reached explains itself with its endpoints. Pause button (WCAG 2.2.2),
+   stops off screen, reduced motion: no auto-run, tiles change at once, rows still work.
    Beyond: "Find an endpoint". Type what you want to do (refund, cart, affiliate…) and every group's matching endpoints
    answer at once, in five columns, instead of hunting tab by tab. Built only from Hanzo's own endpoint list.
-   Motion: the order on the rail (idle, signature; first move at 700ms) + the journey as a sticky horizontal scene that
-   the scroll drives, each stop a line drawing that draws itself as its pane lands (scroll, svg line draw) + the ten
-   nouns as a type index of cards that open into their endpoints (state, BizOpen) + headlines cut into their line; the
-   processor switch glides (state), the endpoints answer as you type (time), the spec sheet opens a row at a time and
-   lights its part of the install drawing (state). Tweens only.
+   Motion: the flip board (time + input, signature) + the order riding the hero rail (idle; first move at 700ms) + the
+   ten nouns as a type index of cards that open into their endpoints (state, BizOpen) + the h1 cut into its line (the
+   only reveal); the processor switch glides (state), the endpoints answer as you type (time), the spec sheet opens a
+   row at a time and lights its part of the install drawing (state). No pinned or scroll-scrubbed scene. Tweens only.
+   Entrances (./commerce/Entrances.js, once each, in the map's order): scroll-tilt = the board, word-shuffle = Who takes
+   the money, ripple = the black finder, cover-slide = What it keeps track of, vertical-ticker = What you are running.
    Every word and link is Hanzo's; each endpoint list sits inside an open card or a sheet.
-V2: 8/10 r2: h1 and lede up to 40% above the rail and the order moves at 700ms; the journey draws each stop instead of repeating the cards; spec sheet opens beside a lit drawing; tick follows the stop; gaps closed; ways rows aligned with press states
+V2: 8/10 flip-board: an orders board whose statuses and endpoints flip tile by tile (auto, tap, processor switch) replaces the pinned journey; five entrances; sections reordered
 */
 import { cloneElement, useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
+import Flap from './commerce/Flap';
+import { useEnter } from './commerce/Entrances';
 import { EASE_OUT_EXPO as EASE } from '../../../lib/motion';
 import { A, More, Cta } from '../../kit';
 import { useLive } from '../cloud/Frame';
@@ -235,7 +240,7 @@ function Hero() {
   );
 }
 
-/* The same journey as a scene the scroll drives: the text pins, the five stops pass sideways. Phones: steps. */
+/* Each stop's endpoints, shown under the board for the stop the last order reached. */
 const STOP_EP = [
   ['/product/{id}', '/variant/{id}', '/store/{id}/variant/{key}'],
   ['/cart/{id}', '/cart/{id}/set', '/cart/{id}/discard'],
@@ -244,78 +249,59 @@ const STOP_EP = [
   ['/order/{id}/refund', '/return/{id}', '/return'],
 ];
 
-/* What the journey shows that the hero does not: a line drawing of each stop, drawn as its pane lands, and the
-   stop's endpoint rows arriving under it. The order card itself lives only on the rail. */
-const STOP_ART = [
-  [<rect key="a" x="26" y="22" width="92" height="106" rx="12" />, <circle key="b" cx="72" cy="64" r="20" className="f" />, <path key="c" d="M44 104h56M44 116h36" />, <path key="d" d="M118 42h22M118 75h22M118 108h22" />, <rect key="e" x="140" y="30" width="74" height="24" rx="8" />, <rect key="f" x="140" y="63" width="74" height="24" rx="8" className="f" />, <rect key="g" x="140" y="96" width="74" height="24" rx="8" />],
-  [<path key="a" d="M28 34h24l20 70h104l18-50H62" />, <path key="b" d="M80 74h104" />, <circle key="c" cx="92" cy="122" r="8" />, <circle key="d" cx="168" cy="122" r="8" />, <rect key="e" x="104" y="20" width="56" height="34" rx="8" className="f" />],
-  [<rect key="a" x="24" y="30" width="136" height="86" rx="12" />, <path key="b" d="M24 56h136M42 94h40" />, <rect key="c" x="146" y="70" width="62" height="52" rx="10" className="f" />, <path key="d" d="M158 70V58a19 19 0 0 1 38 0v12" />],
-  [<path key="a" d="M114 44l48-22 48 22v58l-48 22-48-22z M114 44l48 22 48-22 M162 66v58" />, <path key="b" d="M24 56h64M40 76h56M24 96h64" />, <circle key="c" cx="162" cy="66" r="5" className="f" />],
-  [<path key="a" d="M128 44l44-20 44 20v54l-44 20-44-20z M128 44l44 20 44-20 M172 64v54" />, <path key="b" d="M112 112H64a30 30 0 0 1 0-60h40" />, <path key="c" d="M92 38l14 14-14 14" />, <rect key="d" x="24" y="98" width="42" height="28" rx="8" className="f" />],
-];
-const Draw = ({ i }) => (
-  <svg className="cm-draw" viewBox="0 0 240 150" aria-hidden="true">
-    {STOP_ART[i].map((el, k) => cloneElement(el, { pathLength: 1, style: { '--k': k } }))}
-  </svg>
-);
+/* The signature, MOTION-MAP `flip-board`: an orders board. Four orders sit at different stops; every 2.4s one of
+   them moves on and its status and endpoint flip, tile by tile, like a departure board. Tap a row to move that order
+   yourself. The processor at the top re-flips when "Who takes the money" switches it. Under the board, the stop the
+   last order reached explains itself with its endpoints. Flips are page-local (./commerce/Flap). */
+const STATUS = ['variant', 'cart', 'held', 'captured', 'return'];
+const Arrow = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
-function Journey() {
-  const ref = useRef(null);
-  const calm = useReducedMotion();
-  const [flat, setFlat] = useState(false);
-  const [ready, setReady] = useState(false);
-  const [at, setAt] = useState(0);
-  const [seen, setSeen] = useState(0);
+function Board({ proc }) {
+  const [ref, live, calm] = useLive(0.3);
+  const tilt = useEnter('tilt');
+  const [rows, setRows] = useState([0, 1, 2, 3]);
+  const [last, setLast] = useState(2);
+  const [paused, setPaused] = useState(false);
+  const [held, setHeld] = useState(false);
+  const move = (r) => { setRows((o) => o.map((s, j) => (j === r ? (s + 1) % 5 : s))); setLast(r); };
   useEffect(() => {
-    const m = matchMedia('(max-width: 900px)');
-    const f = () => setFlat(m.matches);
-    f();
-    setReady(true);
-    m.addEventListener('change', f);
-    return () => m.removeEventListener('change', f);
-  }, []);
-  const still = flat || calm;
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
-  const x = useTransform(scrollYProgress, [0.06, 0.94], ['0%', '-80%']);
-  const fill = useTransform(scrollYProgress, [0.06, 0.94], [0, 1]);
-  useMotionValueEvent(scrollYProgress, 'change', (v) => {
-    const a = Math.max(0, Math.min(4, Math.round(((v - 0.06) / 0.88) * 4)));
-    setAt(a);
-    setSeen((s) => Math.max(s, a));
-  });
+    if (!live || paused) return;
+    const t = setTimeout(() => { if (held) setHeld(false); else move((last + 1) % 4); }, held ? 6000 : 2400);
+    return () => clearTimeout(t);
+  }, [live, paused, held, last, rows]);
+  const cur = rows[last];
   return (
-    <section ref={ref} className={'cm-jr' + (still ? ' still' : '')} aria-labelledby="cm-jr-h">
-      <div className="cm-jr-pin">
-        <div className="bz-wrap bz-grid cm-jr-grid">
-          <div className="cm-jr-text">
-            <h2 id="cm-jr-h" className="bz-headline">An order, start to end</h2>
-            <div className="cm-jr-now" aria-hidden={still ? true : undefined}>
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div key={at} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10, transition: { duration: 0.15 } }} transition={{ duration: 0.45, ease: EASE }}>
-                  <p className="bz-fig cm-jr-n">{two(at + 1)}</p>
-                  <p className="bz-title">{STOPS[at][0]}</p>
-                  <p className="bz-body">{STOPS[at][1]}</p>
-                </motion.div>
-              </AnimatePresence>
-              <div className="cm-jr-bar"><motion.i style={{ scaleX: fill }} /></div>
+    <section ref={ref} className="bz-sec cm-bd-sec" aria-labelledby="cm-jr-h">
+      <div className="bz-wrap cm-bd-wrap" ref={tilt}>
+        <div className="cm-bd-top">
+          <h2 id="cm-jr-h" className="bz-headline">An order, start to end</h2>
+          <div className="cm-bd-k">
+            <p className="cm-proc"><span className="x-mono">processor</span><Flap text={proc} len={9} calm={calm} /></p>
+            {!calm && <button type="button" className="cm-pause" onClick={() => setPaused(!paused)} aria-pressed={paused} aria-label={paused ? 'Play' : 'Pause'}><PauseIcon on={paused} /></button>}
+          </div>
+        </div>
+        <div className="cm-board">
+          {rows.map((s, r) => (
+            <button key={r} type="button" className={'cm-bd-row' + (last === r ? ' on' : '')} onClick={() => { move(r); setHeld(true); }}>
+              <span className="cm-bd-t"><span className="x-mono">{two(s + 1)} / 05</span><b>{STOPS[s][0]}</b></span>
+              <Flap text={STATUS[s]} len={8} calm={calm} className="cm-bd-st" />
+              <Flap text={STOPS[s][2]} len={19} calm={calm} className="cm-bd-ep" />
+              <span className="cm-bd-go"><Arrow /></span>
+            </button>
+          ))}
+        </div>
+        <div className="cm-bd-detail">
+          {STOPS.map(([t, d], i) => (
+            <div key={t} className="cm-bd-d" hidden={i !== cur}>
+              <div className="cm-bd-dl">
+                <p className="bz-fig cm-jr-n">{two(i + 1)}</p>
+                <div><p className="bz-title">{t}</p><p className="bz-body">{d}</p></div>
+              </div>
+              <ul className="cm-pane-ep">
+                {eps(STOP_EP[i]).map(([, p, desc]) => <li key={p}><code><P p={p} /></code><span>{desc}</span></li>)}
+              </ul>
             </div>
-          </div>
-          <div className="cm-jr-view">
-            <motion.ol className="cm-jr-strip" style={still ? undefined : { x }}>
-              {STOPS.map(([t, d], i) => (
-                <li key={t} className={'cm-jr-p' + (at === i ? ' on' : '') + (ready && !still && i > seen ? ' ahead' : '')}>
-                  <div className="cm-pane">
-                    <p className="cm-pane-top"><span className="x-mono">{two(i + 1)} / 05</span><b>{t}</b></p>
-                    <p className="cm-pane-d">{d}</p>
-                    <div className="cm-pane-o"><Draw i={i} /></div>
-                    <ul className="cm-pane-ep">
-                      {eps(STOP_EP[i]).map(([, p, desc], k) => <li key={p} style={{ '--k': k }}><code><P p={p} /></code><span>{desc}</span></li>)}
-                    </ul>
-                  </div>
-                </li>
-              ))}
-            </motion.ol>
-          </div>
+          ))}
         </div>
       </div>
     </section>
@@ -348,10 +334,10 @@ function Nouns() {
   const over = (e) => { const li = e.target.closest?.('li'); if (li?.parentNode?.classList.contains('cm-index')) setPv([...li.parentNode.children].indexOf(li)); };
   const [t, d, p] = NOUNS[pv];
   return (
-    <section className="bz-sec cm-nouns" aria-labelledby="cm-nouns-h">
+    <section ref={useEnter('cover')} className="bz-sec cm-nouns" aria-labelledby="cm-nouns-h">
       <div className="bz-wrap bz-grid">
         <div className="cm-nouns-l">
-          <BizLines id="cm-nouns-h" className="bz-headline" lines={['What it keeps track of']} />
+          <h2 id="cm-nouns-h" className="bz-headline">What it keeps track of</h2>
           <p className="bz-body">The nouns a shop is made of, each one addressable and none of them assuming what your site looks like.</p>
           <div className="cm-pv" aria-hidden="true">
             <AnimatePresence mode="wait" initial={false}>
@@ -403,10 +389,10 @@ function Find() {
   const res = GROUPS.map((g) => [g, s ? EP[g].filter(([p, d]) => (p + ' ' + d).toLowerCase().includes(s)) : EP[g]]);
   const n = res.reduce((a, [, l]) => a + l.length, 0);
   return (
-    <section className="bz-sec cm-find" data-room="dark" aria-labelledby="cm-find-h">
+    <section ref={useEnter('ripple')} className="bz-sec cm-find" data-room="dark" aria-labelledby="cm-find-h">
       <div className="bz-wrap">
         <div className="bz-grid cm-find-top">
-          <BizLines id="cm-find-h" className="bz-headline" lines={['The endpoints']} />
+          <h2 id="cm-find-h" className="bz-headline">The endpoints</h2>
           <p className="bz-body">Grouped by what they are about. Every one of them is scoped to your organisation by the token you call with, so multi-tenancy is not something you implement on top.</p>
         </div>
         <div className="cm-q">
@@ -450,8 +436,7 @@ const INTEG = [
 ];
 
 /* The processor is a setting: switch it, and the checkout call underneath does not change. */
-function Money() {
-  const [pick, setPick] = useState(0);
+function Money({ pick, setPick }) {
   const g = INTEG[0][1];
   const key = (e) => {
     const d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
@@ -462,10 +447,11 @@ function Money() {
     e.currentTarget.querySelectorAll('button')[n]?.focus();
   };
   return (
-    <section className="bz-sec cm-money" aria-labelledby="cm-money-h">
+    <section ref={useEnter('shuffle')} className="bz-sec cm-money" aria-labelledby="cm-money-h">
       <div className="bz-wrap bz-grid">
         <div className="cm-money-l">
-          <h2 id="cm-money-h" className="bz-headline">Who takes the money</h2>
+          {/* word-shuffle: each word starts where another one ends up, then swaps into place */}
+          <h2 id="cm-money-h" className="bz-headline cm-shuf">{[['Who', 2], ['takes', 3], ['the', 0], ['money', 1]].map(([w, to], i) => <span key={w} style={{ '--dx': (to - i) * 2.6 + 'em', '--i': i }}>{w}{i < 3 ? ' ' : ''}</span>)}</h2>
           <p className="bz-body">The processor is a setting, not an architecture. Each one gets its own webhook endpoint, so adding a second — or leaving the first — is a change here rather than a change in your checkout.</p>
         </div>
         <div className="cm-set bz-obj">
@@ -556,7 +542,7 @@ const RUN_ART = [
 function Running() {
   const [open, setOpen] = useState(0);
   return (
-    <section className="bz-sec cm-run" aria-labelledby="cm-run-h">
+    <section ref={useEnter('ticker')} className="bz-sec cm-run" aria-labelledby="cm-run-h">
       <div className="bz-wrap bz-grid">
         <div className="cm-run-h">
           <h2 id="cm-run-h" className="bz-headline">What you are running</h2>
@@ -615,7 +601,7 @@ function End() {
   return (
     <section className="bz-sec cm-end" aria-labelledby="cm-end-h">
       <div className="bz-wrap">
-        <BizLines id="cm-end-h" className="bz-display md" lines={['Create a product,', 'then sell it']} />
+        <h2 id="cm-end-h" className="bz-display md">Create a product,<br /> then sell it</h2>
         <div className="bz-grid cm-end-row">
           <p className="bz-lede">The whole thing runs from one container. Point your front end at it and take an order.</p>
           <div className="cm-end-go"><Cta to={DOCS} id="commerce.close">Read the docs</Cta></div>
@@ -626,17 +612,20 @@ function End() {
   );
 }
 
+/* Order: the hero's rail, then the board (the signature) with the processor switch right under it, so switching
+   re-flips the board a scroll above; then the black finder, the nouns, the spec sheet, the shapes, the ways, the close. */
 export default function Commerce() {
+  const [pick, setPick] = useState(0);
   return (
     <main className="bz cm">
       <span data-ask-name="Hanzo Commerce" hidden />
       <Hero />
-      <Journey />
-      <Nouns />
+      <Board proc={INTEG[0][1][pick]} />
+      <Money pick={pick} setPick={setPick} />
       <Find />
-      <Money />
-      <Shapes />
+      <Nouns />
       <Running />
+      <Shapes />
       <Ways />
       <End />
     </main>

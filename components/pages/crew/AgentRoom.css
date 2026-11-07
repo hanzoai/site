@@ -27,14 +27,13 @@
 .xag-cap { font: 400 13px/1.4 var(--mono); color: var(--quiet); margin: 17px 0 0; }
 .xag-head .xag-lede { margin-top: 17px; }
 
-/* arrival, in CSS so it runs from the first paint: the server HTML is set and readable (JS off, or before hydration);
-   only with html.js does the headline start under its mask and cut in, and the lede follow it up */
+/* the page's one reveal: the h1 cuts into its line on arrival (CSS from first paint, only under html.js; the server
+   HTML has it set). No other heading, lede or section fades or rises in */
 @media (prefers-reduced-motion: no-preference) {
   .js .xag-cut { animation: xag-cut 1.1s var(--e-in) .08s both; }
-  .js .xag-after { animation: xag-after .9s var(--e-in) var(--d, .35s) both; }
 }
 @keyframes xag-cut { from { transform: translateY(110%); } to { transform: none; } }
-@keyframes xag-after { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.xag { --btn-solid-hover: #262626; } /* the deck's hover for the solid ask (dark rooms set their own) */
 
 /* actions: one solid ask (the kit Cta), the rest text links whose chevron nudges */
 .xag-acts { display: flex; flex-wrap: wrap; gap: 10px 17px; margin-top: 27px; align-items: center; }
@@ -46,26 +45,33 @@
 @media (hover: hover) { .xag-tl:hover svg { transform: translateX(3px); } .xag-tl:hover span { text-decoration: underline; text-underline-offset: 3px; } }
 .xag-tl:active { transform: translateY(1px); transition: transform var(--t-press); }
 
-/* ---------- the stage: on wide screens with JS, chapter one hands over to chapter two on one pinned screen ---------- */
-.xag-stage { position: relative; }
-.xag-stage-g { padding: 128px 0 72px; row-gap: 44px; align-items: center; }
-.xag-one { grid-column: 1 / span 5; grid-row: 1; }
-.xag-two { grid-column: 1 / span 5; grid-row: 2; }
-.xag-obj { grid-column: 6 / span 8; grid-row: 1 / span 2; position: relative; display: grid; place-items: center; transform-origin: 50% 75%; }
-@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
-  .js .xag-stage { height: 230svh; }
-  .js .xag-pin { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; overflow: clip; }
-  .js .xag-stage-g { padding: 60px 0 0; row-gap: 0; }
-  .js .xag-one, .js .xag-two, .js .xag-obj { grid-row: 1; align-self: center; }
-  .js .xag-two { opacity: 0; }
-  /* the object's start pose (big and low), the same one Motion's scroll scrub begins from, so hydration moves nothing */
-  .js .xag-obj { transform: translateY(var(--low, 0%)) scale(var(--from, 1)); }
-  /* the stage's last screen keeps air under the ring; the black room rises into it instead of waiting below */
-  .js .xag-stage + .xag-room { margin-top: -9svh; }
-}
+/* ---------- the signature: split screen. The object holds still (sticky) in the right eight columns; the steps scroll in
+   the left five and each one, as its middle crosses the screen's middle, changes the object. Inactive steps rest at
+   the quiet grey so the one in charge reads; a column of pips beside the object counts the steps ---------- */
+.xag-split { position: relative; }
+.xag-split-g { padding: 0 0 12svh; align-items: start; }
+.xag-step { grid-column: 1 / span 5; min-height: 78svh; display: flex; flex-direction: column; justify-content: center; padding: 44px 0; transition: opacity var(--t-slow) var(--e-move); }
+.xag-step-0 { min-height: 100svh; padding-top: 112px; }
+.xag-still { grid-column: 6 / span 8; grid-row: 1 / span 20; position: sticky; top: 0; height: 100svh; display: grid; place-items: center; padding-top: 60px; }
+.xag-still-i { position: relative; display: grid; place-items: center; width: 100%; }
+.js .xag-step:not([data-on]) { opacity: .28; }
+.js .xag-step:not([data-on]):focus-within { opacity: 1; }
+.xag-pips { position: absolute; right: -6px; top: 50%; transform: translateY(-50%); list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; z-index: 2; }
+.xag-pips li { width: 3px; height: 14px; border-radius: 2px; background: var(--track); transition: background-color var(--t-base) var(--e-out), height var(--t-base) var(--e-move); }
+.xag-pips li[data-on] { background: var(--ink); height: 28px; }
 .xag-art { position: absolute; inset: -12% -10%; color: var(--quiet); opacity: .4; pointer-events: none; z-index: 0; }
 .xag-sigil { width: 100%; height: 100%; display: block; }
-.xag-obj > :not(.xag-art) { position: relative; z-index: 1; }
+.xag-still-i > :not(.xag-art) { position: relative; z-index: 1; }
+/* SDK: the still side has two views, the console and the install terminal, crossing over as the step changes */
+.xag-views { display: grid; width: min(100%, 620px); }
+.xag-view { grid-area: 1 / 1; align-self: center; transition: opacity var(--t-slow) var(--e-move), transform var(--t-slow) var(--e-move); }
+.xag-views[data-view='con'] .xag-view-term, .xag-views[data-view='term'] .xag-view-con { opacity: 0; transform: translateY(16px) scale(.98); pointer-events: none; }
+.xag-view-term .xag-term { margin: 0; }
+.xag-pil-h { margin-bottom: 44px; }
+.xag-pil { display: grid; grid-template-columns: auto 1fr; column-gap: 27px; row-gap: 10px; align-items: baseline; }
+.xag-pil .xag-sheet-n { grid-row: 1 / span 2; font: 220 64px/1 var(--mono); letter-spacing: -.04em; color: var(--ink); font-variant-numeric: tabular-nums; }
+.xag-pil .xag-h3 { margin: 0; }
+.xag-pil .xag-body { grid-column: 2; }
 
 /* ---------- Crew: ten seats on a ring, the turn passing round ---------- */
 .xag-ring { --R: clamp(160px, 15vw, 214px); --s: clamp(60px, 5.4vw, 76px); position: relative; width: calc(var(--R) * 2 + var(--s)); aspect-ratio: 1; }
@@ -74,12 +80,10 @@
 .xag-face { --fs: 100%; position: relative; display: grid; place-items: center; align-content: center; width: var(--fs); height: var(--fs); border-radius: 50%; overflow: hidden; flex: none; background: var(--tile-2); color: var(--ink); box-shadow: 0 0 0 3px #fff; transition: transform var(--t-slow) var(--e-move), box-shadow var(--t-fast) var(--e-out), background-color var(--t-base) var(--e-out), color var(--t-base) var(--e-out); }
 .xag-face[data-tone='b'] { background: #e5e5e5; }
 .xag-face b { font-size: 26px; font-weight: 497; line-height: 1; letter-spacing: -.02em; }
-.xag-face small { font: 500 9px/1 var(--mono); letter-spacing: .08em; color: var(--quiet); margin-top: 3px; transition: color var(--t-base) var(--e-out); }
 .xag-face-m { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1; opacity: .28; transition: opacity var(--t-base) var(--e-out); }
 .xag-face-dot { fill: currentColor; stroke: none; }
 .xag-face i { position: absolute; inset: 0; background-size: cover; background-position: center; }
 .xag-seat[data-on] .xag-face { transform: scale(1.12); background: var(--ink); color: #fff; box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--ink); }
-.xag-seat[data-on] .xag-face small { color: var(--on-black-3); }
 .xag-seat[data-on] .xag-face-m { opacity: .5; }
 @media (hover: hover) { .xag-seat:hover .xag-face { box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--ink); } }
 .xag-seat:active .xag-face { transform: scale(.97); transition-duration: var(--t-press); }
@@ -105,9 +109,9 @@
 .xag-find-n { display: flex; align-items: center; gap: 10px; min-height: 44px; margin-top: 6px; font-size: 16px; font-weight: 606; }
 .xag-find-n .xag-face { --fs: 28px; box-shadow: none; }
 .xag-find-n .xag-face b { font-size: 13px; }
-.xag-find-n .xag-face small, .xag-sk .xag-face small { display: none; }
 .xag-find-n em { font-style: normal; font-weight: 400; color: var(--muted); }
 .xag-find-n kbd { margin-left: auto; font: 500 12px/1 var(--mono); padding: 5px 8px; border-radius: 6px; background: var(--tile); color: var(--muted); }
+
 
 /* the Bots room: the crew's one black room */
 .xag-room { background: var(--black); color: var(--on-black); }
@@ -129,54 +133,54 @@
 .xag-night { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 44px; height: 44px; padding: 0 12px; border: 0; border-radius: 999px; background: transparent; color: inherit; font: 606 13px/1 var(--sans); cursor: pointer; transition: background-color var(--t-fast) var(--e-out); }
 @media (hover: hover) { .xag-night:hover { background: var(--on-black-line); } .xag-shot:not([data-night]) .xag-night:hover { background: var(--line); } }
 .xag-night:active { transform: scale(.97); transition: transform var(--t-press); }
-.xag-shot-i { position: relative; aspect-ratio: 2304 / 1440; overflow: hidden; }
+/* the window takes the screenshot's shape only once Hanzo's picture has loaded ([data-pic]); until then it is exactly as
+   tall as the room drawn from the picture's own description, so there is no empty pane */
+.xag-shot-i { position: relative; overflow: hidden; }
+.xag-shot-i[data-pic] { aspect-ratio: 2304 / 1440; }
 .xag-shot-p { position: absolute; inset: 0; background-size: cover; background-position: top center; }
-/* the room drawn from its own description, shown until the picture arrives (or if it cannot) */
-.xag-sk { position: absolute; inset: 0; display: grid; grid-template-columns: 22% 1fr; font-size: 14px; color: var(--on-black); }
-.xag-sk aside { display: flex; flex-direction: column; gap: 4px; padding: 4% 3%; border-right: 1px solid var(--on-black-line); }
-.xag-sk aside span { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; color: var(--on-black-3); }
-.xag-sk aside span[data-on] { background: var(--on-black-line); color: var(--on-black); }
-.xag-sk .xag-face { --fs: 22px; box-shadow: none; }
-.xag-sk .xag-face b { font-size: 11px; }
-.xag-shot[data-night] .xag-sk .xag-face { background: #404040; color: var(--on-black); }
-.xag-shot[data-night] .xag-sk .xag-face[data-tone='b'] { background: #262626; }
-.xag-sk-m { padding: 4% 6%; display: flex; flex-direction: column; }
-.xag-sk-h { display: flex; align-items: center; gap: 12px; margin: 0 0 5%; font-size: 26px; font-weight: 497; }
-.xag-sk-h .xag-face { --fs: 34px; box-shadow: none; }
-.xag-sk-h .xag-face b { font-size: 15px; }
-.xag-sk-h .xag-face small { display: none; }
-.xag-sk ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-.xag-sk li { display: flex; justify-content: space-between; align-items: center; padding: 14px 17px; border-radius: 12px; background: var(--on-black-line); }
-.xag-sk li em { font-style: normal; font-size: 12px; color: var(--on-black-3); letter-spacing: .14em; text-transform: uppercase; }
-.xag-sk-box { margin: auto 0 0; padding: 17px; border-radius: 12px; border: 1px solid var(--on-black-line); color: var(--on-black-3); }
-.xag-sk-box::before { content: '→ '; }
+.xag-shot-i:not([data-pic]) .xag-shot-p { display: none; }
+/* the room: each state has its own ink ramp. Dark: #fafafa / white 78% / 55% on graphite. Light: #0a0a0a / #525252 on white */
+.xag-sk { --sk-ink: var(--on-black); --sk-2: var(--on-black-2); --sk-3: var(--on-black-3); --sk-fill: var(--on-black-line); --sk-line: var(--on-black-line);
+  position: relative; display: grid; grid-template-columns: 22% 1fr; font-size: 14px; color: var(--sk-ink); }
+.xag-shot-i[data-pic] .xag-sk { position: absolute; inset: 0; }
 .xag-shot:not([data-night]) .xag-shot-i { background: #fff; }
-.xag-shot:not([data-night]) .xag-sk { color: var(--ink); }
-.xag-shot:not([data-night]) .xag-sk aside { border-color: var(--line); }
-.xag-shot:not([data-night]) .xag-sk aside span[data-on], .xag-shot:not([data-night]) .xag-sk li { background: var(--tile); color: var(--ink); }
+.xag-shot:not([data-night]) .xag-sk { --sk-ink: #0a0a0a; --sk-2: #525252; --sk-3: #525252; --sk-fill: #f5f5f5; --sk-line: rgba(0, 0, 0, .1); }
+.xag-sk aside { display: flex; flex-direction: column; gap: 2px; padding: 20px 12px; border-right: 1px solid var(--sk-line); }
+.xag-sk aside span { display: flex; align-items: center; gap: 10px; min-height: 36px; padding: 0 12px; border-radius: 8px; color: var(--sk-2); transition: background-color var(--t-base) var(--e-out), color var(--t-base) var(--e-out); }
+.xag-sk aside span[data-on] { background: var(--sk-fill); color: var(--sk-ink); font-weight: 606; }
+.xag-sk-dot { flex: none; width: 6px; height: 6px; border-radius: 50%; border: 1px solid currentColor; opacity: .7; }
+.xag-sk aside span[data-on] .xag-sk-dot { background: currentColor; opacity: 1; }
+.xag-sk-m { padding: 28px 44px 32px; display: flex; flex-direction: column; }
+.xag-sk-h { margin: 0 0 27px; }
+.xag-sk-h p { margin: 0; font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.15; color: var(--sk-ink); }
+.xag-sk-h span { display: block; margin-top: 4px; font-size: 14px; color: var(--sk-2); }
+.xag-sk ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.xag-sk li { display: flex; justify-content: space-between; align-items: center; padding: 14px 17px; border-radius: 12px; background: var(--sk-fill); color: var(--sk-ink); }
+.xag-sk li em { font-style: normal; font-size: 12px; color: var(--sk-3); letter-spacing: .14em; text-transform: uppercase; }
+.xag-sk-box { margin: 27px 0 0; padding: 17px; border-radius: 12px; border: 1px solid var(--sk-line); color: var(--sk-2); }
+.xag-sk-box::before { content: '→ '; }
 
-/* close: "Or build your own." and the crew's own faces, each a door to its chat */
-.xag-build-a { display: flex; align-items: center; justify-content: space-between; gap: 27px; padding: 27px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); text-decoration: none; color: var(--ink); }
-.xag-build-t { font-size: 44px; font-weight: 497; line-height: 1.05; letter-spacing: -.03em; }
+/* "Or build your own.": one big row, the crew's size rolling up at its start */
+.xag-build-a { display: flex; align-items: center; gap: 27px; padding: 27px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); text-decoration: none; color: var(--ink); }
+.xag-build-n { flex: none; font: 220 64px/1 var(--mono); letter-spacing: -.04em; font-variant-numeric: tabular-nums; color: var(--quiet); }
+.xag-build-t { flex: 1; font-size: 44px; font-weight: 497; line-height: 1.05; letter-spacing: -.03em; }
 .xag-build-a svg { width: 44px; height: auto; flex: none; transition: transform var(--t-fast) var(--e-out); }
-@media (hover: hover) { .xag-build-a:hover svg { transform: translateX(6px); } }
+@media (hover: hover) { .xag-build-a:hover svg { transform: translateX(6px); } .xag-build-a:hover .xag-build-n { color: var(--ink); } }
 .xag-build-a:active { transform: translateY(1px); }
-.xag-build-g { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 27px; margin-top: 44px; }
-.xag-build-g .xag-acts { margin: 0; }
-.xag-mates { list-style: none; margin: 0; padding: 0 0 28px; display: flex; }
-.xag-mates li + li { margin-left: -12px; }
-.xag-mate { position: relative; display: block; width: 64px; height: 64px; text-decoration: none; color: var(--ink); transition: transform var(--t-base) var(--e-move); }
-@media (hover: hover) {
-  .xag-mate:hover { z-index: 2; transform: translateY(-6px); }
-  .xag-mate:hover .xag-face { background: var(--ink); color: #fff; box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--ink); }
-  .xag-mate:hover .xag-face small { color: var(--on-black-3); }
-  .xag-mate:hover .xag-mate-n { opacity: 1; }
-}
-.xag-mate:focus-visible { outline: none; z-index: 2; }
-.xag-mate:focus-visible .xag-face { box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--ink); }
-.xag-mate:focus-visible .xag-mate-n { opacity: 1; }
-.xag-mate:active .xag-face { transform: scale(.97); transition-duration: var(--t-press); }
-.xag-mate-n { position: absolute; left: 50%; top: calc(100% + 6px); transform: translateX(-50%); font-size: 13px; font-weight: 606; white-space: nowrap; opacity: 0; transition: opacity var(--t-fast) var(--e-out); pointer-events: none; }
+
+/* the roll call (the split's last step): the crew in type, hairline rows; the row in charge is ink, the rest grey */
+.xag-mates { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.xag-mates li { border-bottom: 1px solid var(--line); }
+.xag-mate { display: grid; grid-template-columns: 1fr; gap: 2px; padding: 14px 0; min-height: 44px; text-decoration: none; color: var(--quiet); transition: color var(--t-base) var(--e-out); }
+.xag-mate-n { display: inline-flex; align-items: center; gap: 10px; font-size: 21px; font-weight: 497; letter-spacing: -.01em; line-height: 1.2; }
+.xag-mate-n svg { opacity: 0; transform: translateX(-4px); transition: opacity var(--t-fast) var(--e-out), transform var(--t-fast) var(--e-out); }
+.xag-mate-r { font-size: 14px; line-height: 1.4; color: var(--quiet); }
+.xag-mates li[data-on] .xag-mate { color: var(--ink); }
+.xag-mates li[data-on] .xag-mate-r { color: var(--muted); }
+.xag-mates li[data-on] .xag-mate-n svg { opacity: 1; transform: none; }
+@media (hover: hover) { .xag-mate:hover { color: var(--ink); } .xag-mate:hover .xag-mate-n svg { opacity: 1; transform: translateX(3px); } }
+.xag-mate:active { transform: translateY(1px); }
+.xag-mate:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 6px; }
 
 /* ---------- SDK: the console, real product UI on a white tile with a hairline ---------- */
 .xag-con { margin: 0; width: min(100%, 620px); }
@@ -237,25 +241,28 @@ a.xag-win-t:active { transform: translateY(1px); }
 .xag-thru .x-mono { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--quiet); margin-right: 6px; }
 .xag-thru-c { padding: 6px 10px; border-radius: 6px; background: var(--tile); font-size: 13px; }
 
-/* pillars: sheets that stack, each one figure and one idea */
-.xag-sheets { background: var(--tile); }
-.xag-sheets-h { grid-column: 1 / span 5; align-self: start; position: sticky; top: 116px; }
-.xag-sheets-l { grid-column: 6 / span 8; list-style: none; margin: 0; padding: 0; display: grid; gap: 17px; }
-/* each sheet's top strip (its figure and title) stays in view when the next one covers it */
-.xag-sheets-l li { position: sticky; top: calc(116px + var(--i) * 108px); min-height: 48svh; display: grid; grid-template-rows: auto 1fr; gap: 27px; padding: 28px 44px 44px; border-radius: 24px; background: #fff; box-shadow: 0 -1px 0 var(--line); }
-.xag-sheet-top { display: flex; align-items: baseline; gap: 27px; min-height: 64px; }
-.xag-sheet-top .xag-h3 { margin: 0; }
-.xag-sheets-l .xag-body { align-self: end; }
-.xag-sheet-n { flex: none; font: 220 64px/1 var(--mono); letter-spacing: -.04em; color: var(--ink); font-variant-numeric: tabular-nums; }
-
-/* parts: a spec sheet beside the SDK's Sigil */
-.xag-spec-h { grid-column: 1 / span 5; align-self: start; position: sticky; top: 116px; }
-.xag-spec-art { margin-top: 44px; aspect-ratio: 1; max-width: 360px; border-radius: 24px; background: var(--tile); color: var(--quiet); overflow: hidden; }
-.xag-spec-l { grid-column: 6 / span 8; margin: 0; display: grid; grid-template-columns: 1fr 1fr; column-gap: 44px; }
-.xag-spec-l > div { padding: 27px 0 44px; border-top: 1px solid var(--line); }
-.xag-spec-l dt { display: flex; align-items: baseline; gap: 12px; font-size: 17px; font-weight: 606; line-height: 1.3; margin: 0 0 10px; }
-.xag-spec-l dt .x-mono { font-size: 12px; font-weight: 500; color: var(--quiet); letter-spacing: .14em; }
-.xag-spec-l dd { margin: 0; font-size: 16px; }
+/* parts: one open at a time beside the contour, which is redrawn for the open part */
+.xag-spec-h { grid-column: 1 / span 5; align-self: start; }
+.xag-spec-art { position: relative; margin-top: 44px; aspect-ratio: 1; max-width: 360px; border-radius: 24px; background: var(--tile); color: var(--quiet); overflow: hidden; touch-action: pan-y; cursor: grab; }
+.xag-spec-art:active { cursor: grabbing; }
+.xag-spec-tag { position: absolute; left: 20px; bottom: 18px; font-size: 12px; letter-spacing: .14em; color: var(--muted); }
+.xag-spec-l { grid-column: 6 / span 8; list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.xag-spec-l > li { border-bottom: 1px solid var(--line); }
+.xag-spec-t { margin: 0; }
+.xag-spec-t button { display: grid; grid-template-columns: 44px 1fr 16px; align-items: baseline; width: 100%; min-height: 64px; padding: 20px 0; border: 0; background: none; text-align: left; color: var(--quiet); font: 606 17px/1.3 var(--sans); cursor: pointer; transition: color var(--t-base) var(--e-out); }
+.xag-spec-t .x-mono { font-size: 12px; font-weight: 500; letter-spacing: .14em; }
+.xag-spec-t i { width: 12px; height: 12px; align-self: center; position: relative; }
+.xag-spec-t i::before, .xag-spec-t i::after { content: ''; position: absolute; left: 0; top: 5px; width: 12px; height: 1.5px; background: currentColor; transition: transform var(--t-base) var(--e-move); }
+.xag-spec-t i::after { transform: rotate(90deg); }
+.xag-spec-l li[data-open] .xag-spec-t button { color: var(--ink); }
+.xag-spec-l li[data-open] .xag-spec-t i::after { transform: rotate(0deg); }
+@media (hover: hover) { .xag-spec-t button:hover { color: var(--ink); } }
+.xag-spec-t button:active { transform: translateY(1px); }
+.xag-spec-t button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 6px; }
+.xag-spec-p { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--t-slow) var(--e-move); }
+.xag-spec-p > div { overflow: hidden; }
+.xag-spec-p .xag-body { padding: 0 0 27px 44px; }
+.xag-spec-l li[data-open] .xag-spec-p, html:not(.js) .xag-spec-p { grid-template-rows: 1fr; }
 
 /* code: the SDK's graphite room, the kit's CodeBlock as its object */
 .xag-code { background: var(--graphite); color: var(--on-black); }
@@ -269,9 +276,37 @@ a.xag-win-t:active { transform: translateY(1px); }
 /* close */
 .xag-close-t { font-size: 44px; font-weight: 497; line-height: 1.05; letter-spacing: -.03em; margin: 0; max-width: 16ch; text-wrap: balance; }
 .xag-close-g { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); column-gap: 27px; align-items: end; margin-top: 27px; }
-.xag-close-l { grid-column: 1 / span 5; }
+.xag-close-l { grid-column: 1 / span 8; }
 .xag-close-l .xag-lede { margin: 0; }
-.xag-term { grid-column: 6 / span 8; margin: 0; border-radius: 24px; background: var(--graphite); overflow: hidden; }
+.xag-term { margin: 0; border-radius: 24px; background: var(--graphite); overflow: hidden; color: var(--on-black); }
+.xag-roll { display: inline-flex; }
+.xag-roll > span[aria-hidden] { display: inline-flex; }
+.xag-roll b { display: inline-block; height: 1.15em; overflow: hidden; font-weight: inherit; }
+.xag-roll b > span { display: flex; flex-direction: column; transform: translateY(calc(var(--d) * -1.15em)); transition: transform .9s var(--e-in) calc(var(--k) * 80ms); }
+.xag-roll b i { display: block; height: 1.15em; line-height: 1.15em; font-style: normal; }
+.xag-roll em { font-style: normal; }
+
+/* ---------- entrances: the final state is the default; the start pose only under html.js until [data-in] ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  /* spring-snap: snaps in from the left, overshoots, settles */
+  .js [data-ent='spring-snap']:not([data-in]) { transform: translateX(-72px); opacity: 0; }
+  .js [data-ent='spring-snap'][data-in] { animation: xag-spring .72s cubic-bezier(.2, .9, .3, 1) both; }
+  /* invert-flash: arrives as its own negative for a beat, then normal */
+  .js [data-ent='invert-flash'][data-in] { animation: xag-invert .62s steps(1, end) both, xag-invert-fade .62s var(--e-out) both; }
+  /* inertia-drag: thrown in from the right, decelerating as if let go; then it can be grabbed and thrown again */
+  .js [data-ent='inertia-drag']:not([data-in]) { transform: translateX(160px); opacity: 0; }
+  .js [data-ent='inertia-drag'][data-in] { animation: xag-throw .85s cubic-bezier(.05, .7, .1, 1) both; }
+  /* count-roll: the digits sit at 0 until the section arrives, then roll up to their value */
+  .js [data-ent='count-roll']:not([data-in]) .xag-roll b > span { transform: none; }
+}
+@keyframes xag-spring { 0% { transform: translateX(-72px); opacity: 0; } 55% { transform: translateX(10px); opacity: 1; } 78% { transform: translateX(-4px); } 100% { transform: none; opacity: 1; } }
+@keyframes xag-invert { 0% { filter: invert(1); } 40% { filter: invert(0); } 100% { filter: none; } }
+@keyframes xag-invert-fade { from { opacity: .4; } to { opacity: 1; } }
+@keyframes xag-throw { 0% { transform: translateX(160px); opacity: 0; } 30% { opacity: 1; } 100% { transform: none; opacity: 1; } }
+[data-ent='invert-flash'] { background: inherit; }
+.xag-step [data-ent='invert-flash'] { background: #fff; }
+.xag-throw { touch-action: pan-y; cursor: grab; }
+.xag-throw:active { cursor: grabbing; }
 .xag-pre-bar { display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 17px; border-bottom: 1px solid var(--on-black-line); color: var(--on-black-3); }
 .xag-term .xag-inst { margin: 0; width: 100%; border-radius: 0; padding: 22px 17px 27px; background: transparent; }
 .xag-term .xag-inst-c { font-size: 16px; flex: 1 1 auto; }
@@ -288,17 +323,29 @@ a.xag-chip:active { transform: translateY(1px); }
 
 @media (max-width: 899px) {
   .xag-wrap { grid-template-columns: minmax(0, 1fr); }
-  .xag-wrap > *, .xag-one, .xag-two, .xag-obj, .xag-room-h > div, .xag-room-r, .xag-close-l, .xag-term, .xag-code-h, .xag-pre,
-  .xag-sheets-h, .xag-sheets-l, .xag-spec-h, .xag-spec-l { grid-column: 1 / -1 !important; }
+  .xag-wrap > *, .xag-step, .xag-still, .xag-room-h > div, .xag-room-r, .xag-close-l, .xag-code-h, .xag-pre,
+  .xag-spec-h, .xag-spec-l { grid-column: 1 / -1 !important; }
   .xag-first { height: 56svh; } /* on a phone the hero ask leaves view about here: the bar takes over from it */
-  .xag-stage-g { padding: 96px 0 44px; row-gap: 44px; }
-  .xag-one { grid-row: 1; } .xag-obj { grid-row: 2; } .xag-two { grid-row: 3; }
+  /* the split on a phone: the headline reads first; then the object sticks under the header (a white band, 46svh)
+     while the other steps scroll up beneath it and change it */
+  .xag-split-g { padding-bottom: 8svh; }
+  .xag-step-0 { grid-row: 1; min-height: 0; padding: 96px 0 27px; }
+  .xag-still { grid-row: 2; position: sticky; top: 56px; height: 46svh; padding: 0; z-index: 3; background: #fff; border-bottom: 1px solid var(--line); }
+  .xag-still-i { height: 100%; overflow: hidden; }
+  .xag-step { min-height: 64svh; padding: 27px 0; justify-content: flex-start; }
+  .xag-pips { right: 0; gap: 6px; }
+  .xag-pips li { height: 10px; } .xag-pips li[data-on] { height: 20px; }
+  .xag-split[data-kind='sdk'] .xag-views { width: 140%; transform: scale(.714); transform-origin: top center; align-self: start; margin-top: 10px; }
   .xag-h1 { font-size: 40px; }
   .xag-lede { font-size: 17px; margin-top: 17px; }
-  .xag-ring { --R: 124px; --s: 54px; }
-  .xag-baton i { height: calc(var(--R) - var(--s) - 52px); }
-  .xag-hub { width: 140px; }
-  .xag-hub b { font-size: 26px; }
+  .xag-ring { --R: 104px; --s: 46px; }
+  .xag-face b { font-size: 18px; }
+  .xag-baton i { height: calc(var(--R) - var(--s) - 44px); }
+  .xag-hub { width: 132px; }
+  .xag-hub b { font-size: 21px; }
+  .xag-hub span { font-size: 13px; min-height: 2.6em; }
+  .xag-pil .xag-sheet-n { font-size: 44px; }
+  .xag-mate-n { font-size: 17px; }
   .xag-con { width: 100%; }
   .xag-win-g { grid-template-columns: 1fr; }
   .xag-win-nav { flex-direction: row; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 8px; }
@@ -309,36 +356,21 @@ a.xag-chip:active { transform: translateY(1px); }
   .xag-inst-c { white-space: normal; flex: 1 1 100%; padding: 6px; }
   .xag-room-h, .xag-close-g { grid-template-columns: 1fr; row-gap: 17px; }
   .xag-shot { border-radius: 20px; }
-  .xag-shot-i { aspect-ratio: 4 / 5; }
+  .xag-shot-i[data-pic] { aspect-ratio: 4 / 5; }
   .xag-shot-p { background-position: top left; background-size: auto 100%; }
   .xag-sk { grid-template-columns: 1fr; }
   .xag-sk aside { display: none; }
   .xag-sk-m { padding: 20px 16px; }
   .xag-url { font-size: 12px; }
   .xag-night-t { display: none; }
-  .xag-sheets-h, .xag-spec-h { position: static; margin-bottom: 44px; }
-  .xag-sheets-l li { position: relative; top: auto; min-height: 0; padding: 27px; }
-  .xag-sheet-top { gap: 17px; min-height: 0; align-items: center; }
-  .xag-sheet-n { font-size: 44px; }
-  /* the six parts become a rail of tiles you swipe, the next one peeking, under the SDK's contour */
-  .xag-spec-l { display: flex; gap: 12px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gut); margin-inline: calc(var(--gut) * -1); padding: 0 var(--gut) 6px; scrollbar-width: none; }
-  .xag-spec-l::-webkit-scrollbar { display: none; }
-  .xag-spec-l > div { flex: 0 0 82%; scroll-snap-align: start; padding: 24px; border-top: 0; border-radius: 24px; background: var(--tile); }
   .xag-spec-h { margin-bottom: 27px; }
   .xag-spec-art { max-width: none; aspect-ratio: 16 / 9; margin-top: 27px; }
+  .xag-spec-p .xag-body { padding-left: 0; }
   .xag-code-h { margin-bottom: 27px; position: static; }
   .xag-close-t, .xag-build-t { font-size: 32px; }
+  .xag-build-a { gap: 17px; }
+  .xag-build-n { font-size: 32px; }
   .xag-build-a svg { width: 32px; }
-  /* ten faces on one line inside the gutters at 375: 10 x 40 - 9 x 8 = 328 of 343 */
-  .xag-build-g { margin-top: 27px; }
-  .xag-mates { flex-wrap: nowrap; max-width: 100%; }
-  .xag-mate { width: 40px; height: 40px; }
-  .xag-mates li + li { margin-left: -8px; }
-  .xag-mate .xag-face { box-shadow: 0 0 0 2px #fff; }
-  .xag-mate .xag-face b { font-size: 16px; }
-  .xag-mate .xag-face small { display: none; }
-  .xag-seat .xag-face b { font-size: 21px; }
-  .xag-seat .xag-face small { font-size: 8px; margin-top: 2px; }
   .xag-get { margin-top: 72px; }
 }
 
