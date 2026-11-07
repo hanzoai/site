@@ -4,7 +4,7 @@ Page file: `components/pages/cloud/Registry.jsx` (+ `Registry.css`) · route: `a
 
 Open copy questions for James: "View Source" and "View on GitHub" both point at the `github.com/hanzoai` org page, not a registry repo (Hanzo's links, kept as they are).
 Shared changes requested (`docs/requests/<page>.md`): none.
-Forks this page deleted: the page CSS that forced the header's "Try Hanzo" to an outline; the second white "repository window" in the chapters (now the layer stack) and its six grey row lists (handshake, repos, artifacts, tags, people); the switch label that repeated the dark room's h2; the swap row that repeated the hero lede; the forever-looping push; the spring knob; a drop shadow on a non-floating row; off-deck greys (#a1a1a6, #6e6e73, #0b0b0c and seven more).
+Forks this page deleted: the page CSS that forced the header's "Try Hanzo" to an outline; the second white "repository window" in the chapters (now the layer stack) and its six grey row lists (handshake, repos, artifacts, tags, people); the switch label that repeated the dark room's h2; the swap row that repeated the hero lede; the forever-looping push; the spring knob; a drop shadow on a non-floating row; the shared `LaunchConsole` (generic services, Builds caption) for a page-local registry console with the same words and links; the shared `RelatedCards` grey Sigil boxes for page-local cards drawn as layer stacks; the separate "Get started" strip and the Paste block, now folded into the close; off-deck greys (#a1a1a6, #6e6e73, #0b0b0c and seven more).
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
 
@@ -23,7 +23,7 @@ Done here: "View Source" is the hero's one solid (`data-cta="registry.hero"`); t
 - [x] n/a breadcrumb: depth 1
 - [x] Link parity: 0 removed, 0 unexpected
 
-Done here: `python3 scripts/parity.py /registry`: links 12/12. Order (breaks the shared cloud order on purpose): push → dark room "Delete the dockerconfigjson secret", straight off the lede's last words → "Built on Hanzo IAM" pinned stack (per 46svh, about 3.2 screens of scroll) → console + prompt → get started + related → close.
+Done here: `python3 scripts/parity.py /registry`: links 12/12. Order (breaks the shared cloud order on purpose): push → dark room "Delete the dockerconfigjson secret", straight off the lede's last words → "Built on Hanzo IAM" pinned stack (per 46svh, about 3.2 screens of scroll) → the registry console (acme's repositories, each opening into its layers and tags) → related capabilities drawn as stacks → one close that carries "Get started with Registry", View on GitHub and the agent prompt (the page ends once).
 
 ## 3. First impression and page narrative
 - [x] Sells in 5 s; something moves within 1 s without input
@@ -31,7 +31,7 @@ Done here: `python3 scripts/parity.py /registry`: links 12/12. Order (breaks the
 - [x] JS off: legible; the h1 is not hidden
 - [x] One idea per 100svh; heights vary (hero, 7-screen pin, dark room, console, rows, close)
 - [x] Ends in close (`LaunchClose`), footer
-- [x] n/a Morph: related cards are the shared `RelatedCards` links
+- [x] Related card titles carry `data-morph` (the site's Morph opens them into their page)
 
 Done here: The push starts at first paint (docker push → 401 naming IAM → token → signature → layers → v1.2.3 + cosign signature) inside one outlined window, then rests on the signed image with a blinking prompt; on phone the registry is a strip above the terminal so the image lands on screen while it is pushed.
 
@@ -75,7 +75,7 @@ Done here: taste OK on both files. The chapters' object is one big inked stack o
 - [x] No bare `:hover` (all inside `@media (hover: hover)`)
 - [x] Forks this page deleted: listed above
 
-Done here: Quickstart fills white on hover and presses .97; About IAM, the console title, "Deploy to Cloud" and "hanzoai" thicken their underline and press .97; Replay turns its arrow; the switch knob leans 4px; pause and replay are 44px.
+Done here: Quickstart fills white on hover and presses .97; About IAM, the console title, "Deploy to Cloud" and "hanzoai" thicken their underline and press .97; Replay turns its arrow; the switch knob leans 4px; pause and replay are 44px. Console rows select on hover, click or Enter (the image panel restacks its layers); sidebar icons show their name on hover and focus; "Open in the console" fills ink. Related cards play their drawing on hover or focus (layers spread, the project frame tightens, the staging stack lifts, source lines become layers) and press .97.
 
 ## 9. Motion and interaction
 - [x] One signature (the push that asks IAM first), supporting: line mask, pinned scene, wipe
@@ -100,7 +100,7 @@ Done here: Objects are the terminal/registry window, the layer stack, the consol
 - [x] Targets 44px or more; tapping a push step holds it (tap again to release)
 - [x] Primary ask above the fold at 375×667
 
-Done here: Phone: the registry strip sits above the terminal; the pinned window shows the stack plus one short caption per chapter inside 40svh; related titles 21px so "Environments" no longer breaks.
+Done here: Phone: the terminal (cause) comes first, then acme/api where v1.2.3 and its signature land (effect); the console's image panel drops under its list; related cards become rows with a small drawing; the pinned window shows the stack plus one short caption per chapter inside 40svh; related titles 21px so "Environments" no longer breaks.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast 4.5:1 or better (#525252 lede on white, #a3a3a3 on black)
