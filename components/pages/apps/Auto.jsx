@@ -1,20 +1,21 @@
 'use client';
-/* Auto (v2, Cloud 4 chat). Archetype A, Launch: the page opens on the editor itself → six properties as an index that
-   opens one at a time, each with its own small live object → four figures in the one dark room, pinned while they cut in →
-   the connectors as a workflow you re-route → Get Auto → one closing band.
+/* Auto (v2, Cloud 4 chat). Archetype A, Launch: the page opens on the race itself, two tracks running edge to edge under a
+   left-hand title stack → six properties as an index whose open row shows its own small live object beside its title →
+   four figures in the one dark room, pinned while each word takes its moment → the connectors as a workflow you re-route →
+   Get Auto → one closing band.
    Persona: a developer who wants workflows that survive a restart. Goal: open Auto.
    CTA: "Open Auto" (hero, ask bar, close; data-cta primary / close). Metric: cta_click:auto.primary.
-   V2: 8/10 the hero race splits within 2 s (pod rescheduled on the first run: record holds step 3, goroutine drops to step 1, a hairline marker instead of a scrim); each property opens on its own live object (record ticks, /v1/pieces streaming, one run with two triggers, the SSE event log, draft vs published, IAM then KMS); the figures room pins and cuts each word in on scroll while the container draws; connectors are quiet rows feeding a drawn chain; the editor tilts under a fine pointer
-   Signature: a run that survives the restart. The first screen is a React-Flow-style canvas; the same flow runs twice, once
-   kept as a record and once held in a goroutine. On the first run (and every other run after) the pod is rescheduled: the
-   record resumes at the step it wrote down, the goroutine starts over from the trigger and finishes last.
+   V2: 8/10 round 3: no window frame; the two runs are full-bleed tracks with the restart control in the race's own strip on the first screen; the hero entrance is CSS on .js so server and client HTML match; the figures room is a 150svh pin where the word in its moment grows to 120px and the container outline closes before the pin ends; the open index row sets its live object beside its title and closed rows are 60px
+   Signature: a run that survives the restart. The first screen is the same flow running twice on two tracks, once kept as
+   a record and once held in a goroutine. On the first run (and every other run after) the pod is rescheduled: the record
+   resumes at the step it wrote down, the goroutine starts over from the trigger and finishes last.
    Beyond: restart the pod yourself, at any moment, and watch which run keeps its place (Hanzo's own claim: a run is a
    record, not a goroutine).
-   Motion: the running canvas (signature, time, pausable) + pointer tilt on the editor (useSpring) + the pinned figures
+   Motion: the running tracks (signature, time, pausable) + pointer lean on the tracks (useSpring) + the pinned figures
    scrubbed by scroll (useScroll) + drawn wires in the connector chain and the container (pathLength). The index line grows
    as it opens (state). Every word and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'motion/react';
+import { motion, AnimatePresence, useScroll, useSpring, useMotionValueEvent } from 'motion/react';
 import { EASE, useCalm } from '../../ui';
 import { Cta } from '../../kit';
 import Finale from '../../v2/Finale';
@@ -24,7 +25,6 @@ import './Auto.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/cli/auto';
 const OPEN = 'https://auto.hanzo.ai';
-const up = (d) => ({ initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.7, ease: EASE, delay: d } });
 const NODES = ['trigger', 'GitHub', 'Postgres', 'Slack', 'done'];
 const N = NODES.length;
 
@@ -38,48 +38,50 @@ function Glyph({ s }) {
   );
 }
 
-/* One lane of the flow on the canvas. */
+/* One track of the flow, running edge to edge. */
 function Lane({ label, at, kind, lost }) {
   const cur = Math.min(at, N - 1);
   return (
     <div className={'au2-lane ' + kind + (lost ? ' lost' : '')}>
-      <p className="au2-lane-k"><b>{label}</b><span className="l2-mono">step {Math.min(at + 1, N)} / {N}<em> · {at >= N ? 'done' : NODES[cur]}</em></span></p>
-      <div className="au2-nodes">
-        <i className="au2-track" aria-hidden="true"><b style={{ transform: `scaleX(${cur / (N - 1)})` }} /></i>
-        {NODES.map((n, i) => {
-          const s = i < at ? 'done' : i === at ? 'now' : 'wait';
-          return (
-            <div key={n} className={'au2-node ' + s}>
-              <span className="au2-h l" /><Glyph s={s} /><span className="au2-nl">{n}</span><span className="au2-h r" />
-              {i < N - 1 && <i className="au2-edge"><b style={{ transform: `scaleX(${i < at ? 1 : 0})` }} /></i>}
-            </div>
-          );
-        })}
+      <div className="l2-wrap">
+        <p className="au2-lane-k"><b>{label}</b><span className="l2-mono">step {Math.min(at + 1, N)} / {N}<em> · {at >= N ? 'done' : NODES[cur]}</em></span></p>
+        <div className="au2-nodes">
+          <i className="au2-track" aria-hidden="true"><b style={{ transform: `scaleX(${cur / (N - 1)})` }} /></i>
+          {NODES.map((n, i) => {
+            const s = i < at ? 'done' : i === at ? 'now' : 'wait';
+            return (
+              <div key={n} className={'au2-node ' + s}>
+                <span className="au2-h l" /><Glyph s={s} /><span className="au2-nl">{n}</span><span className="au2-h r" />
+                {i < N - 1 && <i className="au2-edge"><b style={{ transform: `scaleX(${i < at ? 1 : 0})` }} /></i>}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
 }
 
-/* Pointer tilt for the editor, fine pointers only (up to 2.5°). */
+/* Pointer lean for the tracks, fine pointers only (up to 1.5°); applied only after mount so the server HTML is plain. */
 function useLean() {
   const rx = useSpring(0, { stiffness: 140, damping: 22 });
   const ry = useSpring(0, { stiffness: 140, damping: 22 });
-  const fine = useRef(false);
-  useEffect(() => { fine.current = matchMedia('(pointer: fine) and (prefers-reduced-motion: no-preference)').matches; }, []);
+  const [fine, setFine] = useState(false);
+  useEffect(() => { setFine(matchMedia('(pointer: fine) and (prefers-reduced-motion: no-preference)').matches); }, []);
+  if (!fine) return {};
   const onPointerMove = (e) => {
-    if (!fine.current) return;
     const r = e.currentTarget.getBoundingClientRect();
-    ry.set(((e.clientX - r.left) / r.width - 0.5) * 5);
-    rx.set((0.5 - (e.clientY - r.top) / r.height) * 3);
+    ry.set(((e.clientX - r.left) / r.width - 0.5) * 3);
+    rx.set((0.5 - (e.clientY - r.top) / r.height) * 2);
   };
   const onPointerLeave = () => { rx.set(0); ry.set(0); };
-  return { style: { rotateX: rx, rotateY: ry, transformPerspective: 1600 }, onPointerMove, onPointerLeave };
+  return { style: { rotateX: rx, rotateY: ry, transformPerspective: 1800 }, onPointerMove, onPointerLeave };
 }
 
-/* The canvas: both runs step together; on the first run (then every other run) the pod is rescheduled at step 3. */
+/* The race: both runs step together; on the first run (then every other run) the pod is rescheduled at step 3. */
 function Run() {
   const [ref, live, calm, paused, toggle] = useDemo(0.25);
-  const tilt = useLean();
+  const lean = useLean();
   const [rec, setRec] = useState(1);
   const [go, setGo] = useState(1);
   const [crash, setCrash] = useState(false);
@@ -107,51 +109,46 @@ function Run() {
   const G = calm ? 0 : go;
   const cut = calm || crash;
   return (
-    <motion.div className="au2-ed" ref={ref} {...tilt}>
-      <div className="au2-bar">
-        <span className="au2-dots" aria-hidden="true"><i /><i /><i /></span>
-        <span className="l2-mono">React Flow · SSE</span>
-        <span className="au2-pub l2-mono"><i />published</span>
-        <PauseBtn paused={paused} onClick={toggle} />
-      </div>
-      <div className="au2-canvas">
-        <Lane label="A run kept as a record" at={R} kind="rec" />
-        <div className={'au2-mark' + (cut ? ' on' : '')}>
-          <i className="au2-mark-l" aria-hidden="true" />
-          <b className="l2-mono">pod rescheduled</b>
-          <span className="l2-mono">record: resumes at step {(calm ? 2 : saved) + 1} · goroutine: starts over</span>
-        </div>
-        <Lane label="A run held in a goroutine" at={G} kind="go" lost={crash} />
-      </div>
-      <div className="au2-foot">
+    <div className="au2-race au2-in" style={{ '--d': '.12s' }} ref={ref}>
+      <div className="l2-wrap au2-ctl">
         <button type="button" className={'au2-restart' + (crash ? ' busy' : '')} onClick={() => { setMine(loops); restart(); }} aria-disabled={crash || undefined} aria-label="Restart the pod">
           <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.5-3.55M13 2.5v2.5h-2.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </button>
-        <span className="l2-mono">Step state is written down as it goes.</span>
+        <span className="au2-ctl-t l2-mono">Step state is written down as it goes.</span>
+        <span className="au2-ctl-k l2-mono">React Flow · SSE</span>
+        <span className="au2-pub l2-mono"><i />published</span>
+        <PauseBtn paused={paused} onClick={toggle} />
       </div>
-    </motion.div>
+      <motion.div className="au2-lanes" {...lean}>
+        <Lane label="A run kept as a record" at={R} kind="rec" />
+        <div className={'au2-mark' + (cut ? ' on' : '')}>
+          <i className="au2-mark-l" aria-hidden="true" />
+          <div className="l2-wrap">
+            <b className="l2-mono">pod rescheduled</b>
+            <span className="l2-mono">record: resumes at step {(calm ? 2 : saved) + 1} · goroutine: starts over</span>
+          </div>
+        </div>
+        <Lane label="A run held in a goroutine" at={G} kind="go" lost={crash} />
+      </motion.div>
+    </div>
   );
 }
 
 function Hero() {
   return (
     <section className="au2-hero" aria-labelledby="au2-h1">
-      <div className="l2-wrap">
-        <div className="au2-top">
-          <div className="au2-name">
-            <h1 id="au2-h1" className="l2-display"><span className="l2-ln"><motion.span initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 0.7, ease: EASE, delay: 0.06 }}>Hanzo Auto</motion.span></span></h1>
-            <motion.p className="l2-stage-kick l2-mono" {...up(0.16)}>auto.hanzo.ai</motion.p>
-            <motion.p className="l2-lede" {...up(0.22)}>Workflow automation in one binary</motion.p>
-          </div>
-          <motion.div className="l2-acts" {...up(0.3)}>
+      <div className="l2-wrap au2-top">
+        <h1 id="au2-h1" className="l2-display"><span className="l2-ln"><span className="au2-cut-in">Hanzo Auto</span></span></h1>
+        <p className="l2-stage-kick l2-mono au2-in" style={{ '--d': '.16s' }}>auto.hanzo.ai</p>
+        <div className="au2-sub au2-in" style={{ '--d': '.24s' }}>
+          <p className="l2-lede">Workflow automation in one binary</p>
+          <div className="l2-acts">
             <Cta to={OPEN} id="primary" size="lg" thumb data-thumb="Open Auto">Open Auto</Cta>
             <Cta to={DOCS} kind="link" id="docs">Documentation</Cta>
-          </motion.div>
+          </div>
         </div>
-        <motion.div className="au2-stage" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE }}>
-          <Run />
-        </motion.div>
       </div>
+      <Run />
     </section>
   );
 }
@@ -165,7 +162,7 @@ const PROPS = [
   ['Connections, not pasted keys', "A connection is a named credential the flow refers to. It is encrypted at rest through Hanzo KMS, and who may touch it is Hanzo IAM's answer, not a second login here."],
 ];
 
-/* The six properties as an index: each line rests small; the open one grows and runs its own small live object. */
+/* The six properties as an index: closed lines rest small; the open one grows, and its live object sits beside its title. */
 function Index() {
   const [open, setOpen] = useState(0);
   const [ref, live, calm, paused, toggle] = useDemo(0.2);
@@ -176,14 +173,16 @@ function Index() {
         <ol className="au2-list" ref={ref}>
           {PROPS.map(([t, d], i) => (
             <li key={t} className={open === i ? 'open' : ''}>
-              <button type="button" className="au2-row" aria-expanded={open === i} onClick={() => setOpen(open === i ? -1 : i)}>
-                <span className="l2-ch-n">{String(i + 1).padStart(2, '0')} / 06</span>
-                <span className="au2-t">{t}</span>
-                <svg className="au2-x" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-              </button>
-              <div className="au2-d" inert={open !== i}>
-                <div className="au2-d-in">
-                  <p className="l2-body">{d}</p>
+              <div className="au2-li-l">
+                <button type="button" className="au2-row" aria-expanded={open === i} onClick={() => setOpen(open === i ? -1 : i)}>
+                  <span className="l2-ch-n">{String(i + 1).padStart(2, '0')} / 06</span>
+                  <span className="au2-t">{t}</span>
+                  <svg className="au2-x" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+                </button>
+                <div className="au2-d" inert={open !== i}><div><p className="l2-body">{d}</p></div></div>
+              </div>
+              <div className="au2-d au2-d-r" inert={open !== i}>
+                <div>
                   <div className="au2-mini">
                     {open === i && <PauseBtn paused={paused} onClick={toggle} />}
                     <div aria-hidden="true"><Mini i={i} run={live && open === i} calm={calm} /></div>
@@ -246,45 +245,72 @@ function Pieces() {
 }
 
 const FIGS = [['Go', 'One process'], ['SQLite', 'Per replica'], ['/v1', 'Flows and runs'], ['Apache', 'Self-hosted']];
+const SLOT = 0.15; // each word's stretch of the pin
 
-/* one figure: its word cuts up into its line as the pinned room scrolls past its stretch */
-function Fig({ p, i, on, k, d }) {
-  const y = useTransform(p, [0.08 + i * 0.11, 0.24 + i * 0.11], ['105%', '0%']);
-  const o = useTransform(p, [0.08 + i * 0.11, 0.24 + i * 0.11], [0.3, 1]);
+/* one figure: its word cuts up into its line once the pin reaches its stretch (a timed cut, so a resting frame is never
+   half-cut), and it is the big one while its stretch lasts */
+function Fig({ i, act, reach, k, d }) {
   return (
-    <li>
-      <b className="l2-ln"><motion.span style={on ? { y } : undefined}>{k}</motion.span></b>
-      <motion.span className="l2-mono" style={on ? { opacity: o } : undefined}>{d}</motion.span>
+    <li className={(act === i ? 'on' : '') + (reach >= i ? ' in' : '')}>
+      <b className="l2-ln"><span>{k}</span></b>
+      <span className="l2-mono">{d}</span>
     </li>
   );
 }
 
-/* The one dark room: pinned while the four words cut in, then the container that holds them draws its outline. */
+/* the container outline, drawn in real pixels so the stroke closes cleanly at any size; once begun it always finishes */
+function Box({ drawn, on }) {
+  const ref = useRef(null);
+  const [sz, setSz] = useState([300, 100]);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setSz([Math.round(el.offsetWidth), Math.round(el.offsetHeight)]));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  const [w, h] = sz;
+  return (
+    <div className="au2-box" aria-hidden="true">
+      <div className="au2-ctr" ref={ref}>
+        <svg className="au2-ctr-line" viewBox={`0 0 ${w} ${h}`} width={w} height={h}>
+          <motion.rect x="0.75" y="0.75" width={w - 1.5} height={h - 1.5} rx="24" fill="none" stroke="currentColor" strokeWidth="1.5" animate={on ? { pathLength: drawn ? 1 : 0 } : undefined} transition={{ duration: 0.9, ease: EASE }} />
+        </svg>
+        <span className="l2-mono">container</span>
+        <div className="au2-ctr-in">
+          <b>auto</b>
+          <motion.i className="au2-port l2-mono" animate={on ? { opacity: drawn ? 1 : 0 } : undefined} transition={{ duration: 0.4, delay: drawn ? 0.6 : 0 }}>:port</motion.i>
+          <motion.em className="l2-mono" animate={on ? { opacity: drawn ? 1 : 0 } : undefined} transition={{ duration: 0.4, delay: drawn ? 0.75 : 0 }}>state.sqlite</motion.em>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* The one dark room: pinned while each word takes its moment, then the container that holds them closes its outline. */
 function Figures() {
   const ref = useRef(null);
   const calm = useCalm();
   const [on, setOn] = useState(false);
+  const [act, setAct] = useState(-1);
+  const [reach, setReach] = useState(-1);
+  const [drawn, setDrawn] = useState(false);
   useEffect(() => setOn(!calm), [calm]);
-  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start 0.7', 'end end'] });
-  const draw = useTransform(p, [0.58, 0.82], [0, 1]);
-  const chips = useTransform(p, [0.74, 0.88], [0, 1]);
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start 0.6', 'end end'] });
+  useMotionValueEvent(p, 'change', (v) => {
+    const i = v < 0.02 ? -1 : Math.min(3, Math.floor((v - 0.02) / SLOT));
+    setAct(v > 0.62 ? -1 : i);
+    setReach((r) => Math.max(r, i));
+    if (v > 0.5) setDrawn(true);
+  });
   return (
     <section ref={ref} className={'l2-dark au2-figs' + (on ? ' pin' : '')} data-room="dark">
       <div className="au2-figs-pin">
         <div className="l2-wrap">
-          <ul>
-            {FIGS.map(([k, d], i) => <Fig key={k} p={p} i={i} on={on} k={k} d={d} />)}
+          <ul className={on && act >= 0 ? 'has-on' : ''}>
+            {FIGS.map(([k, d], i) => <Fig key={k} i={i} act={on ? act : -1} reach={on ? reach : 3} k={k} d={d} />)}
           </ul>
-          <div className="au2-box" aria-hidden="true">
-            <div className="au2-ctr">
-              <svg className="au2-ctr-line" preserveAspectRatio="none" viewBox="0 0 100 100">
-                <motion.rect x="0.5" y="0.5" width="99" height="99" rx="12" fill="none" stroke="currentColor" strokeWidth="1.5" vectorEffect="non-scaling-stroke" style={on ? { pathLength: draw } : undefined} />
-              </svg>
-              <span className="l2-mono">container</span><b>auto</b>
-              <motion.i className="au2-port l2-mono" style={on ? { opacity: chips } : undefined}>:port</motion.i>
-              <motion.em className="l2-mono" style={on ? { opacity: chips } : undefined}>state.sqlite</motion.em>
-            </div>
-          </div>
+          <Box drawn={drawn} on={on} />
         </div>
       </div>
     </section>
