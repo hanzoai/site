@@ -1,22 +1,24 @@
 'use client';
-/* Payments (v2, archetype A "Launch"; greys and ink only, JAMES.md 7).
-   Persona: a developer or payments lead tied to one processor, who wants to route, retry and switch without a rewrite (metric signup_click)
+/* Payments (v2, archetype A "Launch"; Hanzo's deck only: greys and ink, MASTER §3).
+   Persona: a developer or payments lead tied to one processor, who wants to route, retry and switch without a rewrite
    Goal: watch one checkout settle through the routing and the cascade, then start with Hanzo
-   CTA: Try Hanzo -> /login (hero, the site's sticky ask bar at every width, close; data-thumb, data-cta)
-   Signature: a checkout settling on one huge phone under the centred title. A method is picked, the number becomes a
-   vault token, the rule picks a processor, the first one soft-declines and the cascade settles it on the backup,
-   ending on `succeeded` from the connector Hanzo's own code names. It runs by itself while on screen, pauses on its own
-   button (WCAG 2.2.2), and a tap on a step holds it.
+   CTA: Try Hanzo -> /login (hero, the site's ask bar via data-thumb, close; data-cta payments.hero / payments.close)
+   Metric: signup_start
+   Signature: a checkout settling on one phone under the centred title. A method is picked, the number becomes a vault
+   token, the rule picks a processor, the first one soft-declines and the cascade settles it on the backup, ending on
+   `succeeded` from the connector Hanzo's own code names. It runs by itself while on screen, pauses on its own button
+   (WCAG 2.2.2), and a tap on a step holds it.
    Beyond: "Move a percentage first". Drag how much traffic goes to a second processor: a hundred payments re-route
-   between the two, the shares read out huge, and "Roll back at once" sends it all home. Built only from Hanzo's use cases.
+   between the two, the shares read out at 64px and grow to 84px while the hand is on the split, and "Roll back at
+   once" sends it all home. Built only from Hanzo's use cases.
    Motion: the checkout (idle, signature) + Stage (the phone rises and settles; scroll) + sticky chapters with the route
-   (scroll) + cards that open (state, BizOpen); the split answers the hand (drag).
+   (scroll) + cards that open (state, BizOpen); the split answers the hand (pointer). Tweens only, deck timings.
    Every word and link is Hanzo's.
-V2: 8/10 one huge phone running the checkout on the first screen at both sizes, greys only, four sticky chapters pin the phone beside its route, the traffic split is the dark room, lists open as sheets and cards, one ask everywhere
+V2: 8/10 on the deck: h1 52, headings 26, figures 64 (84 only while dragged); one phone runs the checkout on the first screen at both sizes, four chapters pin it beside its route, the split is the one black room, lists open as sheets and cards, one ask
 */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
-import { EASE_OUT_EXPO as EASE, SPRING } from '../../../lib/motion';
+import { EASE_OUT_EXPO as EASE } from '../../../lib/motion';
 import { A, More } from '../../kit';
 import { Code, useLive } from '../cloud/Frame';
 import BizStage from '../../v2/BizStage';
@@ -72,13 +74,13 @@ function Screen({ at, live }) {
               <b className="x-mono">{['••••', '••••', '••••', '••••'].map((g, i) => <motion.span key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 + i * 0.14, duration: 0.2 }}>{g}</motion.span>)}</b>
             </motion.p>
             <motion.i className="pay-down" initial={{ scaleY: 0 }} animate={{ scaleY: 1 }} transition={{ duration: 0.6, ease: EASE, delay: 0.75 }} />
-            <motion.p className="pay-tok x-mono" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ ...SPRING.toggle, delay: 1.25 }}><Lock />vault token</motion.p>
+            <motion.p className="pay-tok x-mono" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, ease: EASE, delay: 1.25 }}><Lock />vault token</motion.p>
           </div>
         )}
         {at === 2 && (
           <div className="pay-rule">
             {['cost', 'success rate', 'latency'].map((t, i) => (
-              <motion.p key={t} {...inn(0.1 + i * 0.1)} className={i === 1 ? 'pick' : ''}><span>{t}</span>{i === 1 && <motion.b initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ ...SPRING.toggle, delay: 0.85 }}>rule</motion.b>}</motion.p>
+              <motion.p key={t} {...inn(0.1 + i * 0.1)} className={i === 1 ? 'pick' : ''}><span>{t}</span>{i === 1 && <motion.b initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, ease: EASE, delay: 0.85 }}>rule</motion.b>}</motion.p>
             ))}
             <motion.p className="pay-pick x-mono" {...inn(1.25)}>→ most likely to approve</motion.p>
           </div>
@@ -109,7 +111,7 @@ function Phone({ at, live, big, held, onHold }) {
     return () => clearTimeout(t);
   }, [at, calm]);
   return (
-    <div className={'pay-phone' + (big ? ' big' : '')} data-cursor="Watch">
+    <div className={'pay-phone' + (big ? ' big' : '')}>
       <div className="pay-phone-in">
         <i className="pay-island" aria-hidden="true" />
         {onHold && <button type="button" className="pay-pause" onClick={onHold} aria-pressed={held} aria-label={held ? 'Play' : 'Pause'}><PauseIcon on={held} /></button>}
@@ -166,7 +168,7 @@ function Hero() {
         <BizStage from={1.04} over={720} lift={0} className="pay-stage"><div className="pay-rise"><Phone at={at} live={live && !paused} big held={paused} onHold={calm ? null : () => setPaused(!paused)} /></div></BizStage>
         <div className="pay-side">
           <div className="pay-acts">
-            <BizAsk to="/login" thumb="Try Hanzo">Try Hanzo</BizAsk>
+            <BizAsk to="/login" thumb="Try Hanzo" cta="payments.hero">Try Hanzo</BizAsk>
             <More to={API}>Explore APIs</More>
           </div>
           <Tracker at={at} pick={(i) => { setAt(i); setHeld(true); }} run={live && !held && !paused} />
@@ -287,7 +289,7 @@ function Checkout() {
     <section className="bz-sec pay-co" aria-labelledby="pay-co-h">
       <div className="bz-wrap">
         <div className="bz-grid pay-co-top">
-          <h2 id="pay-co-h" className="bz-display sm">Customizable Checkout Experiences</h2>
+          <h2 id="pay-co-h" className="bz-headline">Customizable Checkout Experiences</h2>
           <div className="pay-co-side">
             <p className="bz-body">Create beautiful, high-converting checkout flows that drive revenue growth and customer satisfaction.</p>
             <BizSheet label="See the checkout" kick="Checkout" title="Customizable Checkout Experiences">
@@ -355,6 +357,7 @@ const RANK = (() => {
 
 function Move() {
   const [pct, setPct] = useState(20);
+  const [act, setAct] = useState(false);
   const prev = useRef(20);
   const from = prev.current;
   useEffect(() => { prev.current = pct; }, [pct]);
@@ -363,11 +366,11 @@ function Move() {
       <div className="bz-wrap">
         <div className="bz-grid pay-move-top">
           <div className="pay-move-h">
-            <h2 id="pay-move-h" className="bz-display md">Move a percentage first</h2>
+            <h2 id="pay-move-h" className="bz-headline">Move a percentage first</h2>
           </div>
           <p className="bz-body pay-move-b">The reason nobody switches is the rewrite. When the integration is here, moving is a routing change, and you can move a percentage first.</p>
         </div>
-        <div className="pay-move-obj">
+        <div className={'pay-move-obj' + (act ? ' act' : '')}>
           <p className="pay-move-k x-mono">One traffic, two routes</p>
           <div className="pay-move-figs" aria-live="polite">
             <p className="b"><span>second processor</span><b className="bz-fig">{pct}%</b></p>
@@ -375,13 +378,13 @@ function Move() {
           </div>
           <label className="pay-move-bar">
             <span className="bz-kick">Split by percentage</span>
-            <input type="range" min="0" max="100" step="5" value={pct} onChange={(e) => setPct(+e.target.value)} style={{ '--f': pct / 100 }} aria-valuetext={pct + '% to the second processor'} />
+            <input type="range" min="0" max="100" step="5" value={pct} onChange={(e) => setPct(+e.target.value)} onPointerDown={() => setAct(true)} onPointerUp={() => setAct(false)} onPointerCancel={() => setAct(false)} onBlur={() => setAct(false)} style={{ '--f': pct / 100 }} aria-valuetext={pct + '% to the second processor'} />
           </label>
           <div className="pay-move-dots" aria-hidden="true">
             {RANK.map((r, i) => <i key={i} className={r < pct ? 'b' : ''} style={{ '--d': Math.min(600, Math.abs(r - from) * 14) + 'ms' }} />)}
           </div>
           <div className="pay-move-acts">
-            <button type="button" className="x-btn pay-back" onClick={() => setPct(0)} disabled={pct === 0}>Roll back at once</button>
+            <button type="button" className="pay-back" onClick={() => setPct(0)} disabled={pct === 0}>Roll back at once</button>
             <p className="pay-move-key x-mono"><i className="b" />second processor<i />current processor</p>
           </div>
         </div>
@@ -402,7 +405,7 @@ function Cases() {
     <section className="bz-sec pay-cases" aria-labelledby="pay-cases-h">
       <div className="bz-wrap">
         <div className="bz-grid pay-cases-top">
-          <h2 id="pay-cases-h" className="bz-display sm">When a switch earns its place</h2>
+          <h2 id="pay-cases-h" className="bz-headline">When a switch earns its place</h2>
           <p className="bz-lede">One processor and one country does not need one. These four do.</p>
         </div>
         <BizOpen
@@ -415,7 +418,7 @@ function Cases() {
             card: <><span className="pay-case-n bz-fig">{two(i + 1)}</span><span className="pay-case-t bz-title">{t}</span><span className="pay-case-f x-mono">{f.join(' · ')}</span></>,
             panel: (
               <div className="pay-cp">
-                <h3 className="bz-display sm">{t}</h3>
+                <h3 className="bz-headline">{t}</h3>
                 <p className="pay-cp-k x-mono">{two(i + 1)} / 04</p>
                 <p className="bz-lede">{d}</p>
                 <h4 className="pay-cp-h">Key Features</h4>
@@ -464,7 +467,7 @@ function End() {
         <BizLines id="pay-one" className="bz-display md" lines={['Put one payment', 'through it']} />
         <div className="bz-grid pay-end-row">
           <p className="bz-lede">Point it at the processor you already use, send a live payment, and add the second one when you want to see the difference. Nothing has to move on day one.</p>
-          <div className="pay-end-go"><BizAsk to="/login">Try Hanzo</BizAsk></div>
+          <div className="pay-end-go"><BizAsk to="/login" cta="payments.close">Try Hanzo</BizAsk></div>
         </div>
         <A to="/contact-sales" className="pay-row"><span>Contact Sales</span><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A>
       </div>
@@ -480,7 +483,7 @@ export default function Payments() {
       <BizChapters label="A payment, routed" className="pay-ch" items={STEPS.map(([t, d], i) => ({ t, d, x: CH[i] }))} stage={(at) => <ChStage at={at} />}>
         <header className="bz-wrap bz-grid pay-ch-head">
           <div className="pay-ch-h">
-            <h2 className="bz-display md">What sits behind the one integration</h2>
+            <h2 className="bz-headline">What sits behind the one integration</h2>
           </div>
           <p className="bz-body"><span className="pay-cat x-mono">Unified Payments Suite</span>Each processor has its own API, its own idea of an error, and its own webhook format. This normalises all three, so your code sees one shape whichever of them took the payment.</p>
         </header>
