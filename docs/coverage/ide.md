@@ -157,4 +157,4 @@ Done here: The memory demo has an empty state (an em dash named Nothing yet.); n
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/ide.md` verdict 8 or more
 
-Done here: data-cta on ide.hero and in the Band; Cta sends cta_click through the system event; V2 line in the header; last review 5/10 was on an older build (every complaint fixed).
+Done here: data-cta on ide.hero; the kit Band's button has no data-cta yet (requested); Cta sends cta_click through the system event; V2 line in the header; last review 5/10 was on an older build (every complaint fixed).
