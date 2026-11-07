@@ -115,7 +115,7 @@ Done here: body text is #525252 on white and #a3a3a3 or better on black. The `Fi
 - [x] No poller; no third-party request before consent
 - [x] Nothing heavy run on James's laptop
 
-Done here: the h1 and the priority poster (`Img priority`, 1200×1500) are in server HTML. Only transform, opacity and clip-path animate; the demo loop runs only on screen (`useLoop`) and stops with its own Pause or the page pause. CLS measured with a PerformanceObserver over a full scroll: 0.0010 at 1470 and 0.0000 at 375.
+Done here: the h1 and the priority poster (`Img priority`, 1200×1500) are in server HTML. Only transform, opacity and clip-path animate; the demo loop runs only on screen (`useLoop`) and stops with its own Pause or the page pause. CLS measured with a PerformanceObserver over a full scroll: 0.0010–0.0015 at 1470 (the shared header's label swap) and 0.0000 at 375; 0 console errors at both.
 
 ## 14. SEO and machine files
 - [x] Title and description match live (or are listed for James)
