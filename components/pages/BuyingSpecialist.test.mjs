@@ -8,6 +8,8 @@ assert.equal(written('Looking for dedicated VPC & HIPAA', 'there').quote.seats, 
 assert.equal(written('Compare Team vs Enterprise', 'there').quote.plan, 'Enterprise'); // "enterprise" is checked first, as on hanzo.ai
 assert.equal(written('Explain Standard vs Premium seats', 'there').quote, undefined);
 assert.equal(written('We are 900 people', 'x').quote.seats, 500);
+// Enterprise is billed annually only: one rate, no monthly rate, no "SAVE n%" claim
+assert.deepEqual(written('Compare Team vs Enterprise', 'x').quote, { plan: 'Enterprise', seats: 20, monthlyTotal: null, annualTotal: 4800, savings: null, checkoutUrl: '/enterprise/start' });
 assert.match(written('hello', 'Ada').content, /^Great to meet you, Ada!/);
 assert.equal(P.std / 12, 20);
 console.log('buying specialist answers ok');

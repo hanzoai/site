@@ -1,130 +1,156 @@
-# /zap: James-eye review
+# /zap: James-eye review (re-review)
 
-Verdict: 6/10
-First complaint: "The top is good. The little pointer jumps while the JSON crawls along, and I get it straight away. Then I scroll and it goes dead: half a screen of nothing, eight grey boxes that all look the same with nothing in them, a text diagram whose lines don't even meet, and a pile of buttons at the bottom. It's a document again. As you scroll, one thing should come in and one go out."
+Reviewed: the zap files as of `33b0215e` "wip(zap): fixes in progress" (`Zap.jsx` and `Zap.css` clean in the working tree).
+Walked 7 Nov, 16:10 to 16:50 UTC, on the dev server (`localhost:4180/zap/`), moving, at 1470×801 and 375×812 (touch).
+- **How:** Playwright Chromium (`hover: hover` true on desktop). The walk scrolled in 0.6-screen steps with eased scrolling, then dwelled 2 s on each screen with a frame-difference count.
+- **Also checked:** first-second frames, a layout-shift `PerformanceObserver` with sources, the h1 box per frame, and hover and press probes on every control type. Then the sheet with Tab and Esc, Copy against the clipboard, the slider by keys and drag, and a Tab crawl of `<main>`.
+- **Settings and sizes:** reduced motion at both widths, JavaScript off at both widths, 320px and 375×667.
+- **Gates:** `parity.py` and `taste.py`.
 
-Reviewed: branch `claude/youthful-gauss-hiiqm9` @ `8ab6fa7`. The zap files are as of `cabe6e2`, which merged `b744202` "zap: JAMES.md pass" with main's 14:30 fixes (no fade on the hero asks, 14px phone floor for the label and counters). Files hash: `5a8ffb064192`.
-Walked 7 Nov 14:05–14:40 UTC on the dev server, moving, at 1470×801 and 375×812 (touch). The walk used screencasts, 150 ms frame bursts per screen, a frame-difference motion log, a layout-shift observer, hover and press probes, the sheet and keyboard, JS off, and 320px. The cookie note was skipped. The headless browser reports `hover: none`, so rules inside `@media (hover: hover)` were read from the CSS rather than seen.
-Proof: `img/zap.jpg` (desktop first screen | phone first screen).
+Proof: `/tmp/claude-0/-home-user-hanzo-site/9061de80-a992-5492-8b0b-675a346f197b/scratchpad/zap-critic/out/` (`d-s*.png`, `p-s*.png`, `tab-*.png`, `rm-d.png`, `issue-*.png`, `walk/probe/interact` JSON).
+
+Verdict: 7/10
+First complaint: "It's alive now and the top sells it. The cards slide past one at a time, the terminal types, the diagram draws itself. But that terminal jumps every few seconds and shoves everything under it. On my phone there are two black buttons fighting, 'Try Hanzo' up top and 'Read the docs' in the page, and the terminal chops words in half: 'end / point', 's / tdio'. It's the little things that stop it feeling premium."
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Mostly yes, and the hero is the page's best part.
-   - **Desktop:** "ZAP" sits at 220px with a 0.8 line height (it reads like a logo), "The wire format is the data structure" sits beside it, and below them is one solid "Read the docs" with two outlines. The wire is on the first screen: the buffer lane and the first line of the JSON lane. The pointer jumps and the JSON highlight walks by itself, starting 120 ms after mount. The "Read a field" chooser is below the fold.
-   - **Phone:** the title, label, lede and three buttons, then the top of the buffer from y≈640. The JSON lane, which is the half that tells the story, is below the fold.
-   - **Risk:** the h1's line-mask rise waits for hydration, and the server HTML holds the line at `translateY(108%)`. On the dev server, "ZAP" was missing from the first screen for 1.3 s on phone and about 4 s on desktop after the HTML arrived.
-2. **One in, one out, or a document?** A document after the hero.
-   - The only scroll-linked move is the wire's Settle (scale 1.04 to 1, 30px). No h2 cuts in, nothing pins, and nothing hands over.
-   - The sections sit 440px apart at 1470 (`.w2-sec` 220px top and bottom). The screens at y≈2160, y≈2880 and y≈4330 are each more than half empty white or grey.
-3. **A real object in every section?**
-   - **Hero:** yes, the wire.
-   - **Why bother:** eight 344×280 grey tiles. Each holds a 10px "header bits" strip and a title, so about 75% of each tile is empty. Their 01–08 numbers are invisible (see 10).
-   - **Running:** yes, the typing terminal.
-   - **Built:** yes. N:1 / 1:M / 0 at 136px, the ASCII diagram and the fleet counter. But the diagram renders broken: its right edges land at three different x positions (about 585, 595 and 605px inside the box), the Gateway and server boxes don't close, and it sits left in a black panel with about 30% empty on the right.
-   - **Point / Read the protocol / Get ZAP:** no object. There is a grey box of text, then chips and outlines. The cursor blinks 4 times and stops.
-4. **One ask, sticky after the hero?** Mostly. "Read the docs" (`data-thumb`, `data-cta="zap.hero"`) is solid in the hero and rides in the ask bar from y≈1440 at both widths. It breaks at the close:
-   - **Desktop y≈4330:** the bar and the close's solid "Read the docs" are both on screen.
-   - **Desktop y≈5050:** the bar yields, the header's "Try Hanzo" turns solid black, and the close's solid "Read the docs" is still on screen.
-   - **Phone y≈5850:** the close's solid and the bar's solid "Read the docs" sit 280px apart.
-   - The close button has no `data-thumb`, so the bar never steps aside.
-   - "Read the docs" goes to three different addresses on the page (quick-start, /docs, docs.hanzo.ai/docs/zap) and "View on GitHub" to two. That is Hanzo's copy, but the ending then stacks 7 actions in 1.5 screens.
-5. **Every hover and press answers, with no jumps?** Mostly.
-   - **What answers:** press is scale .98 on the asks, outlines, pause and field chips, and .92 on Copy. Packets lift 4px and their "+" turns. The hero ask is magnetic, and its arrow nudges 3px. Figures brighten. The slider re-counts. No layout jumps.
-   - **`a.zp-chip2` "hanzoai":** no hover and no press.
-   - **Hero ask in the dark room:** its hover fill goes from #f5f5f7 to #fff, which you can't see.
-   - **Packet hover:** it turns the ink header bits to #6e6e73, which reads as dimming.
-   - **Fleet slider:** a native `<input type=range>` with only `accent-color` (see 10).
-6. **Overlap, font swap, layout shift?**
-   - **Layout shift:** CLS 0.0135 on desktop (two unattributed shifts while scrolling) and 0.0127 on phone (one at 7.3 s). Both are under the 0.02 budget but not zero.
-   - **Font:** the h1 box is steady.
-   - **Overlap:** none on load. In passing, the ask bar sits over packet titles 06–07 at desktop y≈1440 and over the terminal's first lines at phone y≈2920.
-   - **Load flip:** at both widths the header's "Try Hanzo" paints solid black, then flips to outline once the page hydrates (about 1.7 s on phone).
-7. **Which reference, and is its motion there?**
-   - **synchronized.studio:** the packets open into sheets with a shared-element morph. That works at both widths, rising from the bottom on phone.
-   - **anthropic launch:** half there. N:1 / 1:M / 0 are true hero figures, but the four hero points are 36px text that steps every 3.6 s.
-   - **apple.com product page:** not there. Nothing pins, and the screens don't hold one idea at a time.
-8. **Different from its neighbours?** Only partly. It has its own object (the wire) and its own Beyond (sidecars versus one daemon). But the first screen is /treasury's composition: a dark room, a giant title on the left, the lede and pills on the right, and a dark product panel on the fold. /ui, /sign and /tabs use the same title-left, lede-right, object-below frame.
-9. **All 18 parts covered?** No; see below. `docs/coverage/zap.md` exists, but it claims "one solid per viewport" and "sheets trap focus", and both are false.
-10. **Banned tells?** No UI hue was measured in `<main>` at either width, there is no gradient, no green, and no eyebrow above the h1 ("Zero-Copy Agent Protocol" now sits under it). Still:
-    - **Browser-default control:** the fleet's `<input type=range>` is the native Chrome track and thumb in ink. This is on JAMES.md's reject list.
-    - **Equal boxes:** the eight equal, mostly empty grey tiles are the "equal boxes in a row" look.
-    - **Low-contrast dark text:** the unwalked JSON is #48484f on #0c0c0e, about 2.2:1, and the untyped terminal lines sit at opacity .18, about 1.6:1. Both are states, but they read as low-contrast dark text.
-    - **Kicker over the sheet title:** each sheet puts a mono "06" above its title. This comes from the shared `OpenSheet`.
-    - **Invisible packet numbers:** the 01–08 numbers are `#f5f5f7` on `#f2f2f2`, because `.zp { --acc: #f5f5f7 }` sets the dark room's accent for the whole page.
-11. **Copy untouched?** Mostly. Parity is 71/71 text and 7/7 links. But:
-    - The terminal collapses Hanzo's aligned spacing: `--name slack  --url` and `--name db     --url` become single spaces.
-    - About 10 new demo labels are not in `content/ui-strings.json`: "Read a field", "ZAP · the buffer that arrived", "pointer + offset", "JSON · the same message as text", "characters walked", "Agents you run", "An MCP server beside every agent", "One zapd in front, servers shared", "tool-server processes · N more of each", "…and zapd · none repeated". They paraphrase Hanzo's own sentences and make no new claim.
-    - With "struct" chosen, the label reads "1 characters walked".
 
-## Missing from the 18 parts (PLAN-COMPONENTS §2.1–2.18, measured)
-- **2.1 Strategy / §4 common gate:**
-  - What passes: `Persona:`, `Goal:`, `CTA:` and the metric are in the header.
-  - Two solids share a viewport at the close (both widths; see answer 4).
-  - No `PageHero` or `Band`.
-  - The header comments in `app/zap/page.jsx`, `Zap.jsx` (V2 line) and `Zap.css` line 1 still say "electric-cyan accent".
-- **2.3 First impression and narrative:**
-  - The h1 waits for hydration (see answer 1).
-  - The page doesn't end on a Band that repeats the hero ask. It ends on a grey "Get ZAP" box with 2 chips and 2 outlines, after a "Read the protocol" row of 2 more outlines.
-  - Three desktop screens are more than half empty.
-- **2.4 Conversion:** the close's solid lacks `data-thumb`, so the bar doubles it.
-- **2.6 Content:**
-  - The ASCII diagram is 9px on phone. It is readable text, not aria-hidden, and well under the 14px floor.
-  - On desktop, the 12–12.5px lane labels, "Read a field", "Terminal" and "Copy" are under the 13px micro step.
-  - The packet numbers can't be seen.
-- **2.7 Visual system:**
-  - 42 literal hex values (18 distinct) in `Zap.css` (#0c0c0e, #1c1c20, #2c2c32, #48484f, #a1a1a6…) and ad-hoc durations (.45s, .6s, .35s, .25s).
-  - The page-wide `--acc` override (see answer 10).
-  - The ASCII box-drawing glyphs don't hold a monospaced grid in Zen Mono.
-- **2.8 Components:**
-  - The native range input.
-  - Three bare `:hover` rules (`.zp-pick button:hover`, `.zp-points button:hover b`, `.zp-packets .w2-oc-card:hover .zp-hdr i.f`).
-  - The `zp-chip2` link has no states.
-  - The "Read a field" `radiogroup` has no arrow keys or roving tabindex: each radio is its own tab stop.
-- **2.9 Motion:**
-  - Three `setInterval` loops (`useEvery` for the field cycle, the terminal and the fleet).
-  - The JSON walker's `setTimeout` chain ignores reduced motion for its single walk.
-  - Scroll motion is only the 4% Settle. Idle, pointer, state and time moves are present, and that part is good.
-- **2.10 Media:** no Hanzo media beyond the 26px Enso mark. The product UI carries the page, which is acceptable here.
-- **2.11 Mobile:**
-  - The "hanzoai" chip is 40px tall (the plan asks for 44).
-  - The 9px ASCII.
-  - No horizontal scroll at 320 or 375.
-- **2.12 Accessibility:**
-  - Sheets do not trap focus. Tab from the sheet's close button goes straight to the footer's "Ask Hanzo anything". Esc does return focus to the card.
-  - With JS off, the pointer sits over "header" while "text" is the chosen field.
-- **2.16 Developer experience:** Copy strips "$ " instead of making it `user-select: none`, and the displayed block no longer matches Hanzo's spacing.
-- **2.18 Handover:** the coverage file overstates two rows (see answer 9).
+1. **Does it sell in 5 seconds and move within 1 second?** Yes.
+   - **Desktop:** "ZAP" sits at 52px with "Zero-Copy Agent Protocol" under it, and the lede and one solid "Read the docs" sit on the right. The wire panel fills the fold.
+   - **Motion on load:** 9 of 11 frames changed in the first 1.1 s. The JSON highlight starts walking at 120 ms, and the pointer jumps every 2.8 s.
+   - **The h1:** it is in the server HTML (`data-lm="play"`, a CSS rise), lands by 1.1 s on desktop and 1.4 s on phone, and its box never moves. With JS off it sits at rest (`transform` none).
+   - **Phone:** title, lede, ask and the top of the buffer fit inside 812. The ask's bottom is at 415px at 375×667.
+   - **Weak spot:** "GitHub" wraps alone onto its own line under "Read the Papers".
+2. **One thing in, one out, or a document?** Mostly one in, one out now.
+   - **"Why bother" is a pinned stage:** the eight packets ride one wire, one lands at a time (its header fills), and the 01 / 08 counter follows the scroll.
+   - **Every section moves without input:** the terminal types, N:1 / 1:M / 0 cut in, the diagram's wires draw, the agent counter grows, and the band types its address. 13 of 15 desktop screens changed while I dwelled without input.
+   - **Where it drifts back to a document:** the "Point one agent at it" screen (a text column and a grey paragraph box) and roughly 180px of empty white above and below the pinned stage.
+3. **A real visual object in every section?** Yes.
+   - **Hero:** the wire, which is the best object on the page.
+   - **Why bother:** packets whose sixteen header bytes fill. Each tile is still about 60% empty grey between the bits and the title.
+   - **Running:** the typed terminal.
+   - **Built:** the figures, a drawn gateway diagram whose lines meet, and the sidecar counter with a drawn slider.
+   - **Close:** a black band with an address that types itself.
+   - **Weak spots:** the fleet's sidecar area is a fixed 108px box that sits mostly empty below about 8 agents. The diagram's "…" marks float outside their boxes (on phone, below the black panel).
+4. **One ask in the sticky header, nothing floating, and scale with rhythm?**
+   - **Desktop:** yes. The header ask becomes "Read the docs" once the hero ask leaves view. It turns to an outline while the close's solid is on screen, then solid again. Nothing floats over content.
+   - **Phone:** no.
+     - The header keeps "Try Hanzo" as a **solid black** pill on white, so the first screen has two solids (it and the hero's "Read the docs"). The close screen (y≈4380) has two as well.
+     - Once the hero ask leaves view, a bottom bar says "Read the docs" while the header still says "Try Hanzo", so the phone shows two different asks.
+     - With JS off, the desktop header is also solid black "Try Hanzo" beside the hero solid.
+   - **Scale:** acceptable but flat. h1 52px, h2 26px, figures 64px, all at rest. The only growth is the wire's 3% Settle and the landed packet's 12px lift. Nothing becomes the one big moment and then shrinks back.
+5. **Does every hover and press answer, with no jumps?** Mostly.
+   - **What answers:**
+     - The asks, field chips and text links press at .98.
+     - The hero ask is magnetic, and its arrow nudges 3px.
+     - The text links' underline turns solid.
+     - A packet lifts 4px and fills all sixteen bits.
+     - The band rows tint and their arrows slide 4px.
+     - `a.zp-chip2` inverts and is now 44px.
+     - The slider knob grows to 1.12.
+   - **What does not:**
+     - The hero ask's hover fill goes from `#f5f5f7` to `#fff`, which can't be seen; only the arrow tells you.
+     - The slider has no press: the hover `scale(1.12)` overrides `:active scale(.92)`, so dragging looks the same as hovering.
+   - **Jumps:** the terminal jumps (see 6).
+6. **Overlap, font swap, layout shift?**
+   - **Layout shift fails the budget.** CLS was 0.0209 on desktop and 0.0427 on phone (the budget is 0.02).
+     - **Source:** the terminal. `.zp-term pre span.last::after` puts the block cursor after the line's `\n`, so on the last line it opens an extra row. The terminal measures 302↔332px on desktop and 375↔399px on phone.
+     - **Effect:** every loop (about 6 s), "How it is put together" below is pushed down and back. On desktop the copy column beside it re-centres too (the observer attributed it to `DIV.zp-run-copy` and `SECTION.zp-built`).
+     - **Side effect:** the cursor sits at the start of the next line instead of at the end of the typed one.
+   - **Font:** no swap. Zen and Zen Mono are loaded, and the h1 box is constant.
+   - **Overlap:** none at either size. There is no horizontal scroll at 320, and the phone bar does not cover a focused control.
+7. **Which reference, and is its motion there?**
+   - **apple.com:** now partly there. The pinned "Why bother" stage is a real scrubbed scene with a counter.
+   - **synchronized.studio:** the card-to-sheet open works at both widths (the sheet rises on phone), Esc returns focus, and Tab stays inside.
+   - **anthropic launch:** half there. N:1 / 1:M / 0 are cut-in figures, but the four hero points are 21px text stepping every 3.6 s.
+   - **motion.dev patterns:** typing, magnetic, the line mask and the scroll scrub are all present (`variety.py` OK).
+8. **Different from its neighbours?** Yes in object and signature: a byte buffer against a JSON line, sidecars against one daemon. It is no in frame. The hero is still the house "title left, lede and ask right, dark product panel on the fold" composition shared with /treasury, /ui and /tabs.
+9. **Are all 18 parts covered?** No (see below). `docs/coverage/zap.md` also states things the page does not do:
+   - "One solid fill per viewport" is false at 375 and with JS off (header pill).
+   - "Phone text 14px+" is false: the active buffer label renders at 11px lowercase mono.
+   - "Reduced motion rests" is true for motion, but reduced motion also raises a red Next issue badge (see 10).
+   - "Pause in each object's own bar" does not cover the infinite packet read-sweep or the band and terminal cursors.
+   - A false claim caps the verdict at 7.
+10. **Any banned tells?**
+    - **Clear:** no UI hue, gradient, green, emoji or Inter, and no eyebrow over the h1 (the kicker sits under it). Sheets put the "02" under the title.
+    - **Red error badge under reduced motion (both widths):** "A tree hydrated but some attributes… didn't match". It comes from `components/v2/Settle.jsx:30`, called at `Zap.jsx:111`: the server renders `transform: translateY(12px) scale(1.03)` and the calm client renders `none`. DONE.md's "no red error badge, no console errors" fails for every reduced-motion visitor.
+    - **Off-deck colours:** about 30 literal greys sit outside Hanzo's ramp (`#86868b`, `#a1a1a6`, `#f5f5f7`, `#6e6e73`, `#48484f`, `#1c1c20`, `#2c2c32`, `#c7c7cc`, `#d1d1d6`, `#e3e3e8`, `#0c0c0e`, `#0b0b0c`). Many are dead, overridden later in the file, but they are still in the file. `taste.py` passes, but MASTER part 7 says no literal hex in page CSS.
+    - **A zero at figure size:** the "0" in N:1 / 1:M / 0 is set at 64px (MASTER part 5: "A zero never gets hero size").
+    - **Low-contrast states:** the unwalked JSON is `#48484f` on `#0c0c0e`, about 2.2:1. It is a state, but it reads as dim dark text.
+11. **Is the copy untouched?** Yes.
+    - `parity.py /zap`: text 71/71, links 7/7.
+    - The terminal now keeps Hanzo's aligned spacing (`slack  --url`, `db     --url`), and Copy puts exactly the four `zapd` lines on the clipboard. "1 character walked" is fixed.
+    - The demo labels are still not in `content/ui-strings.json` ("Read a field", "ZAP · the buffer that arrived", "Agents you run"…). The card lists them honestly as open copy questions.
+
+## Missing from the 18 parts (measured)
+
+- **Part 1 (one solid):** two solids in the phone first screen and at the phone close. The cause is the shared header pill, but the page's gate claim is false.
+- **Part 3:**
+  - The close band ends with about 116px of white before the footer (MASTER: "then the footer with no gap").
+  - About 180px of dead white above and below the pinned stage.
+- **Part 4 (sticky ask):** on phone the header ask ("Try Hanzo") and the bar ("Read the docs") disagree.
+- **Part 6:**
+  - The active buffer label is 11px on phone.
+  - The lane labels, "Read a field", "Terminal", "Copy" and "MCP Srv" are 12 to 12.5px on desktop, under the 13px step.
+  - The terminal's `word-break: break-all` splits tokens on phone.
+- **Part 7:**
+  - Literal off-ramp hex (see 10).
+  - Ad-hoc durations (.45s, .6s, .35s, .25s, .9s).
+  - The diagram's "…" marks escape their boxes.
+- **Part 8:**
+  - The slider has no pressed state.
+  - The hero ask's hover is invisible.
+  - The `.zp-pick` chips are 40px on desktop.
+  - Sheets are a `div`, not a native `<dialog>` (focus is trapped and returned, so this is a shared-kit note).
+- **Part 9:**
+  - Three `setInterval` loops (`useEvery`).
+  - The infinite packet read-sweep and the cursors have no pause.
+- **Part 10:** no Hanzo media beyond the 26px Enso, which is acceptable for a protocol page.
+- **Part 12, keyboard through the pinned rail (desktop):**
+  - Tabbing past packet 04 scrolls the `overflow: hidden` sticky box sideways: "Why bother" and half the lede slide off the left edge.
+  - Packets 04 and 07 are focused half off-screen, with the ring clipped.
+  - The 01 / 08 counter stays at 01.
+  - The rest of the crawl was clean: 28 stops in `<main>`, every one with a visible ring, the field radios on arrow keys with a roving tabindex, and the slider taking Home, End and the arrow keys.
+- **Part 13:** CLS over budget at both widths (terminal; see 6).
+- **Part 17:** a console error and red badge under reduced motion. Normal runs had 0 console errors from this page (the one compile error seen was in `Treasury.jsx`, another chat's file).
+- **Part 18:** coverage overstates four rows (see 9).
 - **Passing:**
-  - One h1, one main.
-  - JS off is legible at both widths (desktop 0 hidden runs; phone hides only the decorative buffer labels).
-  - No raw img, video or table; kit `Img` and `A`.
-  - Pause buttons (44px) on the wire, the terminal and the fleet.
-  - Sheets open at both widths and return focus.
-  - 0 UI hues.
+  - The header comment, one h1 and one main.
+  - The h1 is in the server HTML and JS off is legible (desktop: 0 hidden runs; phone: only the decorative inactive buffer labels).
+  - `data-cta` and `data-thumb` are on both primaries, and the header steps aside at the close on desktop.
+  - Copy matches the display.
+  - Phone targets are all 44px or more, with no horizontal scroll at 320.
+  - Reduced motion shows final states (`getAnimations()` is empty, the terminal is fully shown, the rail is unpinned).
+  - Kit `A` and `Img` only, and 0 UI hues.
 
 ## Fixes (in order)
-1. **Make the middle a story, not a document.**
-   - Cut the 440px gaps; use `.w2-sec.tight`, or nearer 120–160px between objects.
-   - Give each section an arrival:
-     - "Why bother", "Four lines…", "How it is put together" and "Point one agent at it" cut in with `LineMask` like the h1.
-     - Pin the terminal beside its copy while its four lines type.
-     - Cut in or count up N:1 / 1:M / 0 as they arrive.
-   - One thing in, one out, per screen.
-2. **Rebuild the packets as objects, and fix their numbers.**
-   - Scope `--acc: #f5f5f7` to `.zp-hero` so 01–08 render ink.
-   - Let the 16-byte header be the tile: full width and tall, the bits filling as each packet lands, and filling the rest on hover instead of turning grey.
-   - Or run the eight as one rail, so they stop reading as two rows of four equal empty boxes.
-3. **Draw the diagram properly.** Render the same words ("Agent Swarm", "ZAP Gateway", "zap://localhost:9999", the three bullets, the MCP and ZAP servers) as an SVG or HTML diagram whose lines meet, centred in its panel, or give the `<pre>` a font with true monospaced box-drawing. On phone, no 9px text: stack the boxes or let it scroll sideways at 14px.
-4. **One solid at the end.**
-   - Put `data-thumb="Read the docs"` on the close's solid so the bar steps aside, and keep the header outline while it's on screen.
-   - Make "Read the protocol" and the Get ZAP actions one quiet text row.
-   - End on a Band that repeats the hero ask.
-   - Give `a.zp-chip2` a hover and a .98 press, and make it 44px on phone.
-5. **Replace the native slider.** Use a designed track, ideally the process boxes themselves, with an ink thumb, hover and press, 44px, and arrow-key steps.
-6. **Make the hero headline paint without waiting for JS.** Drive the "ZAP" rise from CSS on first paint (the `LineMask` in `x-gauss` belongs to the same chat), so the first screen never shows an empty left half. Ask the shared system to start the header dark (and its ask outlined) when the first section is `data-room="dark"`, so a white bar doesn't box the dark room and "Try Hanzo" doesn't flip at load.
-7. **Fix the sheet.** `OpenSheet` is owned by the Business 2 chat. Trap Tab inside it, and move the "06" kicker below or beside the title.
-8. **Copy hygiene.**
-   - Restore the terminal's original spacing.
-   - Register the demo labels in `content/ui-strings.json`, or cut them to what the object needs.
-   - Fix "1 characters walked".
-   - Delete the stale "electric-cyan" comments.
-   - Correct the two false rows in `docs/coverage/zap.md`.
+
+1. **Stop the terminal jump.**
+   - Put the block cursor before the line break. Render `{'\n'}` outside the span, or draw the cursor as a positioned element inside the line.
+   - Or give the `pre` a fixed height for all six lines plus the cursor row.
+   - Target: CLS under 0.02 at both widths, and the cursor sitting at the end of the typed line.
+2. **Kill the reduced-motion hydration error.** `Settle` reads `useReducedMotion()` during render, so the server and a calm client disagree. Render the same style on both and apply calm after mount (or in CSS under `prefers-reduced-motion`). Settle is shared (`components/v2/Settle.jsx`), so either fix it there with its owner or stop using it in this hero. No red badge with reduced motion on.
+3. **One ask on the phone.**
+   - Ask the shared header owner to make the phone header ask quiet (outline) and carry the page's thumb label ("Read the docs"), as it already does on desktop.
+   - Until then, note it on the card instead of claiming "one solid per viewport".
+   - Keep "Read the Papers" and "GitHub" on one line at 375 (smaller gap or a tighter row) so GitHub doesn't sit alone.
+4. **Make the pinned rail keyboard-safe.**
+   - On `focusin` inside `.zp-packets`, scroll the window to the progress that puts that packet in view (the inverse of the scrub), and reset `.zp-why-stick` `scrollLeft` to 0.
+   - Or make the stick `overflow: clip` so focus can't scroll it sideways.
+   - The counter must follow focus.
+5. **Phone terminal:** use `overflow-wrap: anywhere` on whole tokens, or let the `pre` scroll sideways at 14px with a labelled scroll region. Never split `endpoint`, `stdio` or `http` mid-word.
+6. **Clean the palette.** Delete the dead early rules and replace every literal with deck tokens:
+   - `#86868b` and `#a1a1a6` → `#a3a3a3` or `#737373`
+   - `#f5f5f7` → `#fafafa`
+   - `#1c1c20` and `#2c2c32` → `#171717` or `#262626`
+   - `#c7c7cc` and `#e3e3e8` → `#e4e4e4`
+   - `#48484f` → a ramp value at 3:1 or better
+7. **Small craft.**
+   - Give the hero ask a visible hover (fill to `#e4e4e4`, or the arrow plus a 1px lift).
+   - Let `:active` win over hover on the slider knob.
+   - Make the `.zp-pick` chips 44px on desktop.
+   - Bring the 11 to 12.5px labels to 13px (14px on phone) or set them as 11 to 12px capitals.
+   - Shrink the empty sidecar box to fit its rows, or let it grow with the count.
+   - Anchor the diagram's "…" inside their rows.
+   - Close the gap between the band and the footer.
+8. **Give the page one scale moment.** For example, let N:1 / 1:M / 0 arrive at hero size and settle to 64px, or let the landed packet's header grow as it lands. Then James's "some start big and shrink" is there. Ask James whether the "0" may stay at figure size (MASTER part 5).
+9. **Correct `docs/coverage/zap.md`.** Fix the four rows in answer 9, and register the demo labels in `content/ui-strings.json` once James answers the copy questions.

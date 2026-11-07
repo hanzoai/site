@@ -3,7 +3,7 @@
 Page file: `components/pages/cloud/World.jsx` · gallery: `docs/gallery/world/` · metric id: `cta_click:world.primary`
 
 Open copy questions for James: none: every visible word is Hanzo's. Each is in `content/ui-strings.json` as needs_james; until approved the control is icon-only or the name is for screen readers only.
-Shared changes requested (`docs/requests/world.md`): none.
+Shared changes requested (`docs/requests/world.md`): StageHero's phone pin keeps its sticky `top` offset (worked around in World.css); the footer hydration mismatch the critic logged.
 Forks this page deleted: the blue arcs and cyan accent (greys now), the blinking monitor lights, the centred hero shared with /search.
 
 Measured on the dev server at 1470×801, 375×667 and 320×640 with `audit.cjs` (Playwright), JS on and off.
@@ -33,7 +33,7 @@ Done here: `<main id="main" data-ask="off">`; the layout's "Skip to content" tar
 - [x] Ends in proof strip, `Band`, footer
 - [ ] Card-to-page links use Morph; title lands within 12px (n/a: no card on this page opens another page)
 
-Done here: Hero is side (copy at left, the globe at right), dark; the object is a turning globe with requests arcing to the GPUs that served them, and latency by model ticking, so the globe turning from paint moves within the first second. `PageHero` is not merged; the existing equivalent (`StageHero` or the page's own hero with the same line-mask cut-in, 700 ms ease-emphasis) is used, and the mono caption sits under the h1. JS off: h1 "Hanzo World" at opacity 1, 0 hidden headings or paragraphs. Rooms: hero (dark) → the control room of six monitors (light) → closing band (dark). The live page has no proof strip, so it ends on the band and the footer.
+Done here: Hero is side (copy at left, the globe at right), dark; the object is a turning globe with requests arcing to the GPUs that served them, and latency by model ticking, so the globe turning from paint moves within the first second. `PageHero` is not merged; the existing equivalent (`StageHero` or the page's own hero with the same line-mask cut-in, 700 ms ease-emphasis) is used, and the mono caption sits under the h1. JS off: h1 "Hanzo World" at opacity 1, 0 hidden headings or paragraphs. Rooms: hero (dark) → the control room of six monitors (light) → closing band (dark). One in, one out: on desktop the globe shrinks to .9, rises 24px and slows its spin as the hero leaves, then the room pins (about 3 screens of scroll) with one large monitor on air at a time beside the heading, a rolling 64px "0n" figure and a numbered rail of six; scroll swaps the monitor (rise and clip in, the old one rising out) and the room hands straight to the band with no white gap. Phones and reduced motion stack the six (7/5, 12, 5/7, 12 on a wide screen, never three equal boxes). The live page has no proof strip, so it ends on the band and the footer.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -57,7 +57,7 @@ Done here: No partner logos; product names appear as text only. Parity holds eve
 - [x] Tables, FAQ, tabs and code use the kit parts
 - [x] `python3 scripts/parity.py /world`: 0 missing
 
-Done here: Small text: 0 runs under 13px on desktop, 0 under 14px on the phone (mono capitals excepted). Sizes follow the deck: h1 52px (40 phone), section heads 26px, h3 17px, lede 20px, body 15px, figures 64px Air, growing only in their moment. Lede 44ch, body 66ch, headings balanced. Code: the agent prompt in the band. Parity: 0 missing.
+Done here: Small text: 0 runs under 13px on desktop, 0 under 14px on the phone (mono capitals excepted). Sizes follow the deck: h1 52px (40 phone), section heads 26px, h3 17px (21px only on the monitor on air), lede 20px, body 15px, the on-air figure 64px Air, growing only in their moment. Replay step labels wrap to two lines instead of ellipsis (0 truncated labels at 1470 and 375; the only clipped node is the screen-reader name of the range). Lede 44ch, body 66ch, headings balanced. Code: the agent prompt in the band. Parity: 0 missing.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
@@ -75,7 +75,7 @@ Done here: `taste.py` OK on the page JSX and CSS and the Cloud 4 shared files; o
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: listed below
 
-Done here: Hover sits under `@media (hover: hover)` and changes fill or border only; press is scale .97 in 90 ms; focus-visible draws a 2px ink or white ring; disabled controls drop to 40%. Nothing on the page loads data, so no loading state. Dialogs: none. Inputs: the replay range input (labelled "Forensic Replay"). Forks deleted: see the top of this card.
+Done here: Hover sits under `@media (hover: hover)`: the hero ask turns brand silver `#e4e4e7` and leans toward a fine pointer (at most 8px, from 22px out); a monitor draws a hairline across its header; a rail stop inks and its title steps 6px right. Press is scale .97 to .98 in 90 ms; focus-visible draws a 2px ink or white ring; disabled controls drop to 40%. Nothing on the page loads data, so no loading state. Dialogs: none. Inputs: the replay range input (labelled "Forensic Replay"). Forks deleted: see the top of this card.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -84,7 +84,7 @@ Done here: Hover sits under `@media (hover: hover)` and changes fill or border o
 - [x] Reduced motion shows the final state; no `setInterval`
 - [ ] Sound only on the listed moments, through the one kit (n/a: the page plays no sound of its own; the kit owns it)
 
-Done here: Signature: every model, everywhere, live (canvas globe). Supporting: latency bars ticking (time), topology trace on hover or press (pointer), replay scrub (state). `scripts/variety.py` OK. Kinds: idle (the hero object), time, state, pointer, with scroll only in the pinned scene. Timers are timeout chains (`useTick`), no `setInterval`. Reduced motion (`useCalm`) renders the settled frame. No springs: every transition is 300 ms ease-emphasis or shorter.
+Done here: Signature: every model, everywhere, live (canvas globe). Supporting: latency bars ticking (time), the pinned control room (`useScroll`, the only counted technique: scroll picks the monitor on air), topology trace on hover or press (pointer), replay scrub (state), magnetic hero ask (pointer). Each monitor plays one moment as it comes on air (desktop) or scrolls in (phone, once): its h3 cuts in by line mask; topology nodes appear 60 ms apart and the paths draw edge to GPU; latency bars grow 60 ms apart and the cost-spike dot blinks; the drift line draws in 900 ms and the alert dot lands and blinks; v2 fills and "pinned" slides in; the five clouds gather and "One unified view" wipes in; the replay steps rise in. Transform, opacity and clip-path only; deck curves (0,0,.2,1 / .4,0,.2,1 / .16,1,.3,1) and 90 to 500 ms, 900 ms for line draws. `scripts/variety.py` OK (0 fade-ups). Kinds: idle, time, state, pointer; scroll is the pin and the hero exit only. Timers are timeout chains (`useTick`), no `setInterval`. Reduced motion: stacked room, every drawing whole, `getAnimations()` 0 after 3 s at both sizes. No springs.
 
 ## 10. Media
 - [ ] `Film` and `Pic` only; sizes and posters set (n/a: no photo or video)
@@ -100,7 +100,7 @@ Done here: 0 videos. The moving objects are drawn in HTML, SVG and one canvas; e
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: Overflow 0px at 375 and 0px at 320. 0 controls under 44px at 375 after scrolling the whole page. The primary ask's bottom edge sits at 388px on a 667px screen. Pinned scenes stack below 900px; every hover state also answers a tap.
+Done here: Overflow 0px at 375 (scrollWidth 375 after a full walk). 0 controls under 44px at 375 or 1470. Phone hero: the globe sits at 64% width to the right, partly off-canvas behind the ask, and the latency panel starts 40px under it, so the h1, ask, globe and panel header are all inside the first 660px; the pause button lives in the panel's header row, off the art. The pinned room stacks below 900px, each monitor playing its moment once as it scrolls in; every hover state also answers a tap.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -109,7 +109,7 @@ Done here: Overflow 0px at 375 and 0px at 320. 0 controls under 44px at 375 afte
 - [x] One h1; no heading skips; names start with visible text
 - [x] Keyboard reaches every control
 
-Done here: Lowest measured text contrast 7.11:1 (0 runs flagged). Headings 1233333322 with 0 skips. Pause controls: the hero globe and panel (one pause for both). Every input has a label or a register name; nothing validates, so there is no error to focus. Controls are native buttons, links and inputs.
+Done here: Lowest measured text contrast 7.11:1 (0 runs flagged). Headings 1233333322 with 0 skips. Pause controls: the hero globe and panel (one pause for both, first in the object's DOM, in the panel header). Every input has a label or a register name; nothing validates, so there is no error to focus. Controls are native buttons, links and inputs. In the pinned room the monitors off air are `inert`, and the rail's six buttons (`aria-current="step"`) jump to any monitor, so the keyboard reaches all six.
 
 ## 13. Performance and engineering
 - [x] h1 and LCP element in server HTML
@@ -117,7 +117,7 @@ Done here: Lowest measured text contrast 7.11:1 (0 runs flagged). Headings 12333
 - [x] No poller; no third-party request before consent
 - [x] Nothing heavy run on James's laptop
 
-Done here: `curl /world/` returns the h1 in the HTML. Demos run only while on screen (`useInView`) and stop when paused or off screen. No fetch, poller or third-party script on the page. 0 console errors at both widths (0 desktop, 0 phone).
+Done here: `curl /world/` returns the h1 in the HTML. Demos run only while on screen (`useInView`) and stop when paused or off screen. No fetch, poller or third-party script on the page. 0 console errors at both widths, with and without reduced motion; the Replay range renders after mount (a still track of the same size in the server HTML), which removes the hydration mismatch on its style.
 
 ## 14. SEO and machine files
 - [x] Title and description match live (or are listed for James)
@@ -157,4 +157,4 @@ Done here: Every word is in the server HTML and every demo is local, so a blocke
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/world.md` verdict 8 or more
 
-Done here: `data-cta` on every primary (kit `Cta`); the page imports no analytics itself. `V2:` line present in `components/pages/cloud/World.jsx`. Last critic verdict on file: none yet (walked an earlier version); this version waits for the next walk.
+Done here: `data-cta` on every primary (kit `Cta`); the page imports no analytics itself. `V2:` line present in `components/pages/cloud/World.jsx`. Last critic verdict on file: 6/10 (`docs/review/world.md`, the static six-tile room); fixes 1 to 7 and 9 are in, 8 in part (the globe exits; the panel does not dock into the room); this version waits for the next walk.

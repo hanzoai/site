@@ -1,6 +1,6 @@
 'use client';
 /* Analytics.
-   V2: 8/10 Launch page on the deck: a 52px title beside Hanzo's example dashboard (the one big thing, its line drawing and its figures settling by CSS from first paint, the realtime list ticking, pausable); five reports as a bento of cards that open into their own picture; "From a visit to a number" as three pinned chapters built by the scroll; the commerce board; the AI panel in the one graphite room; the script as a kit CodeBlock; a quiet close.
+   V2: 8/10 Round 2: the hero's "Try Hanzo" is the first screen's solid (desktop), the dashboard fits the grid, section gaps cut to 48–88px, report cards lift and play their picture on hover, chips and link asks answer, security drawn as a settings panel and an audit document, community led by a repo card whose contribution grid fills in, "referrer" no longer clipped.
    Persona: Developer who runs sites (and the team lead choosing an analytics tool).
    Goal: start Hanzo Analytics (try it, or ask for a demo).
    CTA: "Try Hanzo" → /login (data-cta analytics.hero, data-thumb for the ask bar; again as analytics.script after the
@@ -533,8 +533,53 @@ function ApiSheet() {
   );
 }
 
+/* ---------- security: the features as a settings panel, the audit as a document ---------- */
+const FEATS = ['End-to-end encryption', 'Data residency controls', 'Custom data retention policies', 'Role-based access control', 'Regular security audits', 'Privacy-focused data collection', 'Automated compliance monitoring'];
+function SecPanel() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.3 });
+  return (
+    <ul ref={ref} className="kn-obj an-feats" data-in={seen ? '' : undefined}>
+      {FEATS.map((f, i) => <li key={f} style={{ '--an-i': i }}><span>{f}</span><i className="an-sw" aria-hidden="true" /></li>)}
+    </ul>
+  );
+}
+function AuditDoc() {
+  return (
+    <div className="an-doc">
+      <div className="an-doc-pg" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M7 3h7l4 4v14H7z M14 3v4h4 M10 12h5 M10 15.5h5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round" /></svg>
+        <span /><span /><span /><span />
+      </div>
+      <p><b>Continual internal audits</b> Report on request.</p>
+    </div>
+  );
+}
+
+/* ---------- community: the repository as an object (a contribution grid that fills in), then the resources ---------- */
+const CW = 26;
+const contrib = (c, r) => { const v = (c * 7 + r * 13 + c * r) % 11; return v < 3 ? 0 : v < 6 ? 1 : v < 9 ? 2 : 3; };
+function Repo() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.4 });
+  return (
+    <A to="https://github.com/hanzoai/insights" className="kn-obj an-repo">
+      <span className="an-repo-h">
+        <svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.06-.49.06-.49.8.06 1.23.83 1.23.83.72 1.23 1.88.87 2.34.67.07-.52.28-.87.51-1.07-1.78-.2-3.65-.89-3.65-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z" /></svg>
+        <b>Open source, MIT</b>
+        <Arrow />
+      </span>
+      <span ref={ref} className="an-repo-g" aria-hidden="true" data-in={seen ? '' : undefined}>
+        {Array.from({ length: CW }, (_, c) => (
+          <span key={c} style={{ '--an-c': c }}>{Array.from({ length: 7 }, (_, r) => <i key={r} data-l={contrib(c, r)} />)}</span>
+        ))}
+      </span>
+    </A>
+  );
+}
+
 /* ---------- community and resources ---------- */
-const RES = [['Documentation', 'Comprehensive guides and API references', 'https://docs.hanzo.ai/docs/analytics'], ['Community Forum', 'Join discussions with developers and AI experts', 'https://discord.gg/XthHQQj'], ['Examples', 'Sample projects showcasing Hanzo Analytics', 'https://github.com/hanzoai/insights'], ['Support', 'Get help from our team and community', '/support']];
+const RES =[['Documentation', 'Comprehensive guides and API references', 'https://docs.hanzo.ai/docs/analytics'], ['Community Forum', 'Join discussions with developers and AI experts', 'https://discord.gg/XthHQQj'], ['Examples', 'Sample projects showcasing Hanzo Analytics', 'https://github.com/hanzoai/insights'], ['Support', 'Get help from our team and community', '/support']];
 
 export default function Analytics() {
   return (
@@ -622,8 +667,8 @@ export default function Analytics() {
         title="Enterprise-Grade Security & Compliance"
         aside={<p className="kn-lede">Secure by design, ensuring your data meets stringent compliance standards.</p>}
         rows={[
-          ['Security Features', <ul className="an-feats">{['End-to-end encryption', 'Data residency controls', 'Custom data retention policies', 'Role-based access control', 'Regular security audits', 'Privacy-focused data collection', 'Automated compliance monitoring'].map((f) => <li key={f}><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>{f}</li>)}</ul>],
-          ['Security and assurance', <p><b>Continual internal audits</b> Report on request.</p>],
+          ['Security Features', <SecPanel />],
+          ['Security and assurance', <AuditDoc />],
           ['Data protection', <p>EU data handling, deletion, and export on request.</p>],
           ['Privacy by design', <p>Collected because it is used, not because it can be.</p>],
           ['Data Privacy Commitment', <div className="an-commit"><p>Hanzo Analytics collects what a report uses and nothing else. You choose where the data lives, how long it is kept, and who on your team can read it, and you can export or delete it on request.</p><A to="/legal/privacy" className="an-more">Read our privacy policy →</A></div>],
@@ -635,6 +680,7 @@ export default function Analytics() {
           <div className="an-com-t">
             <KeynoteLines className="kn-headline" lines={['Powered by Community,', 'Improved by Collaboration']} />
             <p className="kn-lede">Join thousands of developers building the future of analytics together.</p>
+            <Repo />
             <KeynoteSheet label="Open Source at Our Core" title="Open Source at Our Core">
               <div className="an-oss">
                 <p className="kn-lede">Hanzo Analytics is fully open-source, fostering innovation and collaboration among thousands of global developers.</p>

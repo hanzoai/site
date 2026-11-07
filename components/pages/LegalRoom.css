@@ -21,9 +21,9 @@
 .xlg2-sigil { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .16; }
 .xlg2-read { position: relative; display: flex; flex-direction: column; gap: 14px; animation: xlg2-in var(--reveal) var(--out) both; }
 @keyframes xlg2-in { from { opacity: 0; transform: translateY(14px); } }
-.xlg2-read-n { font-size: 64px; color: var(--ink); }
+.xlg2-read-n { font-size: 44px; line-height: 1; color: var(--ink); }
 .xlg2-read-h { font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.2; max-width: 18ch; }
-.xlg2-read-t { margin: 0; max-width: 40ch; font-size: 16px; line-height: 1.5; color: var(--soft); display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.xlg2-read-t { margin: 0; max-width: 40ch; min-height: 1.5em; font-size: 16px; line-height: 1.5; color: var(--soft); text-wrap: pretty; }
 .xlg2-read-bar { display: block; height: 2px; width: 100%; border-radius: 2px; background: rgba(0, 0, 0, .1); overflow: hidden; position: relative; }
 .xlg2-read-bar::after { content: ''; position: absolute; inset: 0; background: var(--ink); transform-origin: 0 50%; animation: xlg2-bar 3.4s linear both; }
 @keyframes xlg2-bar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
@@ -59,7 +59,7 @@
 .xlg2-n { grid-column: 1 / -1; display: block; font-size: 32px; font-weight: 220; color: #737373; transition: color var(--reveal) var(--ease-o); }
 .xlg2-sec[data-on] .xlg2-n { color: var(--ink); }
 .xlg2-t { min-width: 0; }
-.xlg2-h2 .xlg-cl { align-self: center; }
+.xlg2-h2 .xlg-cl, .xlg2-h2 .xlg2-cl { align-self: center; }
 .xlg2-prose { font-size: 16px; line-height: 1.7; color: #0a0a0a; }
 .xlg2-prose > :not(.xlg-tw):not(.x-table-wrap) { max-width: 768px; }
 .xlg2-prose h3 { font-size: 17px; font-weight: 497; letter-spacing: -.01em; margin-top: 2em; }
@@ -71,7 +71,7 @@
 .xlg2-prose code, .xlg2 .xlg-tw code { font-size: max(13px, .86em); }
 .xlg2 .xlg-tw table, .xlg2 .xlg-tw td { font-size: 15px; }
 @media (max-width: 900px) { .xlg2-prose code, .xlg2 .xlg-tw code { font-size: 14px; } }
-.xlg2 .xlg-tw tbody tr:hover, .xlg2 .xlg-tw tbody tr:focus-within { background: #f5f5f7; }
+.xlg2 .xlg-tw tbody tr:hover, .xlg2 .xlg-tw tbody tr:focus-within { background: #f5f5f5; }
 .xlg2 .xlg-tw tbody tr:hover td:first-child { box-shadow: none; }
 
 /* the other documents */
@@ -87,9 +87,11 @@
   .xlg2-stage-o { margin-top: 28px; }
   .xlg2-cover { grid-template-columns: 1fr; }
   .xlg2-cover-l { min-height: 240px; padding: 22px; border-right: 0; border-bottom: 1px solid var(--hair); }
-  .xlg2-read-n { font-size: 52px; }
+  .xlg2-read-n { font-size: 40px; }
   .xlg2-read-h { font-size: 24px; }
-  .xlg2-read-t { font-size: 16px; -webkit-line-clamp: 3; }
+  .xlg2-read-t { font-size: 16px; }
+  /* a fixed plate on phones, so a longer clause never moves the page */
+  .xlg2-cover-l { height: 300px; min-height: 0; }
   .xlg2-ix { padding: 8px 20px 20px; }
   .xlg2-ix ol { columns: 1; }
   .xlg2-ix a { font-size: 16px; }
@@ -142,6 +144,8 @@
 .xlg2 .xlg2-dt th, .xlg2 .xlg2-dt td { white-space: normal; min-width: 104px; vertical-align: top; }
 .xlg2 .xlg2-dt caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .xlg2 .xlg2-dt code { font-size: max(13px, .86em); }
+/* a short placeholder like "[confirm]" never breaks before its bracket */
+@media (min-width: 901px) { .xlg2 .xlg2-dt td code { overflow-wrap: normal; word-break: normal; } .xlg2 .xlg2-dt th, .xlg2 .xlg2-dt td { min-width: 0; padding-inline: 12px; } }
 @media (max-width: 900px) {
   .xlg2 .xlg2-dt[data-cards] { overflow: visible; border: 0; }
   .xlg2 .xlg2-dt[data-cards] table, .xlg2 .xlg2-dt[data-cards] tbody, .xlg2 .xlg2-dt[data-cards] tr, .xlg2 .xlg2-dt[data-cards] th, .xlg2 .xlg2-dt[data-cards] td { display: block; width: 100%; position: static; }
@@ -152,4 +156,70 @@
   .xlg2 .xlg2-dt[data-cards] [data-col]::before { content: attr(data-col); display: block; font: 606 12px/1.3 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
   .xlg2-h2 { font-size: 24px; }
   .xlg2-n { font-size: 26px; }
+}
+
+/* the Contents summary: an icon (its name is the accessible name until James approves the word), the % read, and a
+   chevron that turns with the open state on phones */
+.xlg2 .xlg-det summary { align-items: center; }
+.xlg2 .xlg-det summary .xlg2-sum-h { display: inline-flex; align-items: center; color: var(--ink); font-size: 14px; }
+.xlg2-chev { display: none; color: var(--ink); transition: transform var(--ui, .3s) var(--out, ease); }
+@media (max-width: 900px) {
+  .xlg2 .xlg-det summary { min-height: 48px; padding: 0 4px; cursor: pointer; gap: 12px; justify-content: flex-start; border-radius: 12px; }
+  .xlg2 .xlg-det summary .xlg-pct { margin-left: auto; font-size: 14px; }
+  .xlg2-chev { display: block; margin-left: auto; }
+  .xlg2 .xlg-det summary .xlg-pct { display: inline; }
+  .xlg2 .xlg-det summary .xlg-pct + .xlg2-chev { margin-left: 0; }
+  .xlg2 .xlg-det[open] .xlg2-chev { transform: rotate(180deg); }
+  .xlg2 .xlg-det summary:active { transform: translateY(1px); }
+  .xlg2 .xlg-det:not([open]) summary { padding-bottom: 0; }
+  .xlg2 .xlg-det[open] summary { margin-bottom: 8px; }
+}
+
+/* find: no browser-default cancel cross; an ink 44px clear button of our own */
+.xlg2-find-row { display: flex; align-items: center; gap: 8px; }
+.xlg2-find-row .xlg2-find-f { flex: 1; min-width: 0; }
+.xlg2-find-f input::-webkit-search-decoration, .xlg2-find-f input::-webkit-search-results-button { -webkit-appearance: none; }
+.xlg2-clear { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: var(--ink); color: #fff; cursor: pointer; animation: xlg2-pop .28s var(--out, ease) both; transition: transform .12s var(--out, ease), background .2s; }
+.xlg2-clear:active { transform: scale(.94); }
+@media (hover: hover) { .xlg2-clear:hover { background: #262626; } }
+.xlg2-clear:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+@keyframes xlg2-pop { from { transform: scale(.6); opacity: 0; } }
+.xlg2-find-r b[aria-hidden] { color: var(--ink); }
+
+/* the copy link (LCopy): 44px, it scales up into view with the heading's hover (not only a fade); the check rides in
+   an ink disc to its left, so on a phone it never leaves the screen */
+.xlg2-cl { position: relative; flex: none; align-self: center; display: inline-grid; place-items: center; width: 44px; height: 44px; margin-left: 2px; border: 0; border-radius: 50%; background: none; color: var(--muted); cursor: pointer; opacity: 0; transform: scale(.72) translateX(-4px); transition: opacity .25s var(--out, ease), transform .3s var(--out, ease), background .25s, color .25s; vertical-align: middle; }
+.xlg-hd:hover .xlg2-cl, .xlg2-cl:focus-visible, .xlg2-cl[data-ok] { opacity: 1; transform: none; }
+@media (hover: hover) { .xlg2-cl:hover { background: #f2f2f2; color: var(--ink); } }
+.xlg2-cl:active { transform: scale(.94); }
+.xlg2-cl:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+@media (hover: none), (pointer: coarse) { .xlg2-cl { opacity: 1; transform: none; color: #737373; } }
+.xlg2-cl-ok { position: absolute; right: calc(100% + 4px); top: 50%; display: grid; place-items: center; width: 28px; height: 28px; margin-top: -14px; border-radius: 50%; background: var(--ink); color: #fff; opacity: 0; transform: scale(.5); transition: opacity .2s, transform .35s var(--out, ease); pointer-events: none; }
+.xlg2-cl[data-ok] .xlg2-cl-ok { opacity: 1; transform: none; }
+.xlg2-prose h3.xlg-hd { display: flex; align-items: center; gap: 4px; }
+
+/* reduced motion: the cover is settled at first paint (FamStage only settles after hydration, so this holds it before) */
+@media (prefers-reduced-motion: reduce) {
+  .xlg2-stage-o > * { transform: none !important; }
+  .xlg2-read-bar { display: none; }
+  .xlg2-cl, .xlg2-cl-ok, .xlg2-clear { transition: none; animation: none; }
+}
+
+/* print: the document only (header, footer, skip link, cover, rail, find, copy links and siblings hidden), the date
+   and version on page 1, each heading kept with its first paragraph */
+@media print {
+  body:has(.xlg2) .x-skip, body:has(.xlg2) a[href="#main"], body:has(.xlg2) header:not(main header), body:has(.xlg2) footer:not(main footer), body:has(.xlg2) .x-cookie, .xlg2-cl, .xlg2-clear, .xlg2-stage-o { display: none !important; }
+  body:has(.xlg2) main.xlg2 { padding-top: 0 !important; margin-top: 0 !important; }
+  .xlg2-stage { padding-top: 0 !important; }
+  .xlg2 { --xlg-top: 0; }
+  .xlg2-top { display: block; }
+  .xlg2-head, .xlg2-side { display: block; }
+  .xlg2-lede { font-size: 12pt; max-width: none; margin: 8pt 0 0; }
+  .xlg2-meta { font-size: 10pt; color: #000; }
+  .xlg2-art { max-width: none; }
+  .xlg2-prose > :not(.xlg-tw):not(.x-table-wrap) { max-width: none; }
+  .xlg2-prose p, .xlg2-prose li { orphans: 3; widows: 3; }
+  .xlg2-h2, .xlg2-prose h3 { break-after: avoid; page-break-after: avoid; }
+  .xlg2 .xlg2-dt { overflow: visible; }
+  .xlg2 .xlg2-dt th, .xlg2 .xlg2-dt td { font-size: 9pt; min-width: 0; }
 }

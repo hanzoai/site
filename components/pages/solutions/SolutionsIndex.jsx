@@ -25,7 +25,7 @@ import { Loose } from '../models/parts';
 import { media } from '../../../lib/models';
 import MaskLines from '../company/MaskLines';
 import useArrived from '../company/useArrived';
-import { openTile } from './openTile';
+import { openTile, prefetchTile } from './openTile';
 import '../../v2/vc-type.css';
 import '../company/deck.css';
 import './solutions.css';
@@ -62,18 +62,43 @@ function useWalk(n, box, ms) {
   return { at, run, done, paused, toggle, hold: { onPointerEnter: () => setHeld(true), onPointerLeave: () => setHeld(false) } };
 }
 
+/* The wall never shows one picture more than twice, and never on two tiles in a row: a tile whose own model film is
+   already used twice (or was just used) takes the next of Hanzo's nine model films. */
+const FILMS = ['kai', 'enso', 'iro', 'koe', 'koma', 'mori', 'oto', 'uta', 'zen'];
+function spread(list) {
+  const used = {};
+  let prev = null;
+  return list.map((f0) => {
+    const ok = (x) => x && (used[x] || 0) < 2 && x !== prev;
+    const f = ok(f0) ? f0 : FILMS.find(ok);
+    used[f] = (used[f] || 0) + 1;
+    prev = f;
+    return f;
+  });
+}
+
 function Tile({ it, d, w, k, n }) {
   const router = useRouter();
   const [hot, setHot] = useState(false);
-  const on = (e) => { if (e.pointerType === 'mouse' && !matchMedia('(prefers-reduced-motion: reduce)').matches) setHot(true); };
+  const on = (e) => { prefetchTile(it.href, router); if (e.pointerType === 'mouse' && !matchMedia('(prefers-reduced-motion: reduce)').matches) setHot(true); };
+  // the wall wakes without a pointer: the one tile crossing the middle of the screen plays its film and shows its
+  // jobs (one at a time, so at most this and a hovered tile play); phones get the same
+  const li = useRef(null);
+  const [mid, setMid] = useState(false);
+  useEffect(() => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const io = new IntersectionObserver(([x]) => { setMid(x.isIntersecting); if (x.isIntersecting) prefetchTile(it.href, router); }, { rootMargin: '-49% -44% -49% -44%' });
+    io.observe(li.current);
+    return () => io.disconnect();
+  }, [it.href, router]);
   return (
-    <motion.li layout="position" className={'xso-tile w' + w}
+    <motion.li ref={li} layout="position" className={'xso-tile w' + w + (mid ? ' mid' : '')} style={{ '--k': k }}
       initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.22 } }}
       transition={{ layout: { duration: 0.3, ease: EASE }, duration: 0.3, ease: EASE }}>
-      <A to={it.href} className="xso-tile-a" data-no-morph onClick={(e) => openTile(e, it.href, router)} onPointerEnter={on} onPointerLeave={() => setHot(false)}>
+      <A to={it.href} className="xso-tile-a" data-no-morph onClick={(e) => openTile(e, it.href, router)} onPointerEnter={on} onTouchStart={() => prefetchTile(it.href, router)} onPointerLeave={(e) => { if (e.pointerType === 'mouse') setHot(false); }}>
         <span className="xso-tile-m" aria-hidden="true">
           {d.film && <Img src={media(d.film, 'webp')} alt="" w={1200} h={1500} />}
-          {d.film && hot && <Film src={media(d.film, 'webm')} w={1200} h={1500} className="xso-tile-v" />}
+          {d.film && (hot || mid) && <Film src={media(d.film, 'webm')} w={1200} h={1500} className="xso-tile-v" />}
         </span>
         <span className="xso-tile-no vc-num" aria-hidden="true">{pad(k + 1)} / {pad(n)}</span>
         <span className="xso-tile-go" aria-hidden="true">
@@ -141,7 +166,7 @@ export default function SolutionsIndex({ doc, data }) {
                   );
                 })}
               </div>
-              <button type="button" className="xso-pause" onClick={r.toggle} aria-label={r.run ? 'Pause' : 'Play'}>
+              <button type="button" className="xso-pause" onClick={r.toggle} aria-pressed={!r.run} aria-label={r.run ? 'Pause' : 'Play'}>
                 {r.run
                   ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
                   : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.2v9.6L12.6 8z" fill="currentColor" /></svg>}
@@ -165,15 +190,15 @@ export default function SolutionsIndex({ doc, data }) {
             ))}
           </div>
           <ul className="xso-grid">
-            <AnimatePresence mode="popLayout" initial={false}>
-              {shown.map((it, i) => <Tile key={it.href} it={it} d={data[it.slug] || {}} w={span(i, shown.length)} k={i} n={shown.length} />)}
+            <AnimatePresence initial={false}>
+              {(() => { const films = spread(shown.map((it) => (data[it.slug] || {}).film)); return shown.map((it, i) => <Tile key={it.href} it={it} d={{ ...(data[it.slug] || {}), film: films[i] }} w={span(i, shown.length)} k={i} n={shown.length} />); })()}
             </AnimatePresence>
           </ul>
         </div>
       </section>
 
       {doc.reserved && (
-        <section className="xso-res" data-room="dark" aria-labelledby="xso-res-h">
+        <section className="xso-res" data-room="dark" data-ask-hide aria-labelledby="xso-res-h">
           <span className="xso-res-film" aria-hidden="true">
             <Img src={media((data.reserved || {}).film || 'enso', 'webp')} alt="" w={1200} h={1500} />
             <Film src={media((data.reserved || {}).film || 'enso', 'webm')} w={1200} h={1500} />

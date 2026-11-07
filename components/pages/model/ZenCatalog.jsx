@@ -1,16 +1,21 @@
 'use client';
 /* The Zen API catalog (/zen/models). Page type: Catalogue (MASTER 4.3): open a card.
-   Chapters: the Zen film as the stage, the name at rest size (52px) beside Hanzo's lede and the key ask; Quick Start,
-   where the model line retypes itself (zen6, zen6-flash, zen5-coder, the names in Hanzo's own comment) and stops while
-   you hover or focus it; the five figures, one per screen, pinned while you scroll (the moment grows to 112px Air, then
-   the next one cuts in); the Zen5 shelf of model cards built to docs/refs/hanzo-model-cards/SPEC.md; the per-token sheet;
-   a calm close.
+   Chapters: the Zen5 field as the stage (a contour field drawn from the five Zen5 sizes, in a black room that opens
+   from a rounded card to full width as you scroll; a 28svh band above the type on phone), the name at rest size (52px)
+   beside Hanzo's lede and the key ask; Quick Start, where the model line retypes itself (zen6, zen6-flash, zen5-coder,
+   the names in Hanzo's own comment), held in state so code, pressed name and copy always match; the five figures pinned
+   over 200svh, each cutting in at 112px Air over a drawing of its own number as data (18 marks, the Zen5 contexts on a
+   2M ruler, one cent of a dollar, the Zen5 sizes, 7 capsules), which grows in and then idles; on phone a 64px lead
+   figure over a 2-column grid at 32px; the Zen5 shelf of model cards on the SPEC grid (385px repeat(4,192px), rows
+   220px, the leader spanning both rows) built to docs/refs/hanzo-model-cards/SPEC.md (hover draws the model's size bars
+   to scale); the per-token sheet (row hover fills #f5f5f5 and lights its bars); a calm close over a drifting context
+   ruler (the hero field is the only field outside the cards).
    Signature: the sort race. Pick Hanzo's order, size or context, or a tier, and the Zen5 model cards re-flow (the leader
    takes the tall card) while the sheet below re-orders with them. Every card opens into its own model page (Morph).
    Beyond: the per-token sheet. Each Zen5 row draws total parameters against the parameters that work per token on one
    shared scale (35B with 3B active, 230B with 10B active, 284B with 37B active, from Hanzo's rows), plus context on a
    log scale; the row opens to Hanzo's own paragraph.
-   V2: 8.5/10 MASTER rework: SPEC model cards (black, 20px, Sigil art, 3° tilt), deck sizes (52/26/112 Air), eased tweens only, 1152/13-col, film hero with the ask, sheet with inline detail. */
+   V2: 8/10 review fixes: card size bars drawn to scale (--zc-w), figures drawn as their own data instead of a repeated field, phone figures in rhythm (64 + 2x32), SPEC model grid, no dead bands (40px overlap), #ededed pill hover. */
 // Persona: Developer choosing a Zen model to call (MASTER 1: developers).
 // Goal: pick a Zen5 model, open its page, then get a key.
 // CTA: Get API key (Cta solid, data-cta zen-models.hero, data-thumb); close: Get Started (zen-models.close).
@@ -20,7 +25,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useMotionValueEvent } from 'motion/react';
 import { Copy } from '../../ui';
-import { A, Cta, Film } from '../../kit';
+import { A, Cta } from '../../kit';
 import Sigil from '../../Sigil';
 import './ZenCatalog.css';
 
@@ -66,23 +71,23 @@ function useStage() {
   return on;
 }
 
+/* the stage: this page's own object, the Zen5 field (a Sigil seeded by the five Zen5 rows, total and active sizes),
+   drifting and leaning toward the pointer on black; the black room enters as a rounded card inside the gutters and
+   opens to full width as you scroll it away (clip-path only) */
+const ZEN5 = ROWS.flatMap((r) => [r.tot, r.act || r.tot]);
 function Stage() {
-  const box = useRef(null);
-  const [held, setHeld] = useState(false); // the visitor paused the film
-  useEffect(() => {
-    const v = box.current?.querySelector('video');
-    if (!v) return;
-    const keep = () => { if (held) v.pause(); };
-    if (held) v.pause(); else if (v.currentSrc && !matchMedia('(prefers-reduced-motion: reduce)').matches) v.play?.().catch(() => {});
-    v.addEventListener('play', keep);
-    return () => v.removeEventListener('play', keep);
-  }, [held]);
+  const box = useRef(null), frame = useRef(null);
+  const calm = useReducedMotion();
+  const [held, setHeld] = useState(false); // the visitor paused the field
+  const { scrollYProgress } = useScroll({ target: box, offset: ['start start', 'end start'] });
+  useMotionValueEvent(scrollYProgress, 'change', (v) => {
+    if (!calm && frame.current) frame.current.style.setProperty('--open', Math.min(1, Math.max(0, v * 2.4)).toFixed(3));
+  });
   return (
-    <section className="zc-stage" aria-labelledby="zc-h">
-      <div className="zc-wrap">
-        <div className="zc-frame" data-room="dark" data-morph-target>
-          <div className="zc-filmbox" ref={box}>
-            <Film src="/models/zen.webm" poster="/models/zen.webp" w={1200} h={1500} className="zc-film" />
+    <section className="zc-stage" aria-labelledby="zc-h" ref={box}>
+      <div className="zc-frame" data-room="dark" data-morph-target ref={frame}>
+          <div className="zc-filmbox">
+            <Sigil seed="/zen/models/zen5" data={ZEN5} still={held} className="zc-film" />
             <button type="button" className="zc-hold" aria-pressed={held} aria-label={held ? 'Play' : 'Pause'} onClick={() => setHeld((x) => !x)}>
               {held
                 ? <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M5 3.5v9l7.5-4.5z" fill="currentColor" /></svg>
@@ -103,34 +108,42 @@ function Stage() {
               <Cta to="/pricing" kind="link" id="zen-models.hero-pricing">Full Pricing</Cta>
             </div>
           </div>
-        </div>
       </div>
     </section>
   );
 }
 
-/* the model line retypes itself while on screen (a typing loop on one text node); it stops while you hover or focus
-   the block, and a press on a name switches to it */
+/* the model line retypes itself while on screen (a typing loop held in React state, so the code, the pressed name
+   and the copied text are always the same string); a new cycle never starts while you hover or focus the block, a
+   cycle already running finishes its name, and a press on a name switches to it */
 function Quick() {
-  const box = useRef(null), slot = useRef(null);
+  const box = useRef(null), timer = useRef(0), now = useRef(NAMES[0]);
   const seen = useInView(box, { amount: 0.4 });
   const calm = useReducedMotion();
-  const [m, setM] = useState(0);
+  const [m, setM] = useState(0); // the last name fully typed
+  const [typed, setTyped] = useState(NAMES[0]); // exactly what the code shows
   const [pick, setPick] = useState(null); // once the visitor picks a name, the loop stops on it
   const [still, setStill] = useState(false); // hover or focus inside: hold
+  const put = (s) => { now.current = s; setTyped(s); };
+  const go = (toI) => {
+    clearTimeout(timer.current);
+    const to = NAMES[toI];
+    const erase = () => { const s = now.current; if (s.length) { put(s.slice(0, -1)); timer.current = setTimeout(erase, 40); } else timer.current = setTimeout(type, 140); };
+    const type = () => { const s = to.slice(0, now.current.length + 1); put(s); if (s.length < to.length) timer.current = setTimeout(type, 64); else { timer.current = 0; setM(toI); } };
+    erase();
+  };
+  useEffect(() => () => clearTimeout(timer.current), []);
   useEffect(() => {
-    const el = slot.current;
-    if (calm) { if (pick !== null && pick !== m) { el.textContent = NAMES[pick]; setM(pick); } return; }
-    if ((!seen || still) && pick === null) return;
-    const toI = pick !== null ? pick : (m + 1) % NAMES.length;
-    if (toI === m) return;
-    let i = 0, t;
-    const from = NAMES[m], to = NAMES[toI];
-    const erase = () => { el.textContent = from.slice(0, from.length - ++i); if (i < from.length) t = setTimeout(erase, 40); else { i = 0; t = setTimeout(type, 140); } };
-    const type = () => { el.textContent = to.slice(0, ++i); if (i < to.length) t = setTimeout(type, 64); else setM(toI); };
-    t = setTimeout(erase, pick !== null ? 0 : 2400);
-    return () => { clearTimeout(t); el.textContent = from; };
-  }, [seen, calm, m, pick, still]);
+    if (calm || pick !== null || !seen || still || timer.current) return;
+    const t = setTimeout(() => go((m + 1) % NAMES.length), 2400);
+    return () => clearTimeout(t);
+  }, [seen, calm, m, pick, still]); // eslint-disable-line react-hooks/exhaustive-deps
+  const choose = (i) => {
+    setPick(i);
+    if (calm) { clearTimeout(timer.current); timer.current = 0; put(NAMES[i]); setM(i); }
+    else if (now.current !== NAMES[i] || timer.current) go(i);
+  };
+  const on = pick !== null ? pick : m;
   const [pre, post] = code('\u0000').split('\u0000');
   const hold = { onPointerEnter: () => setStill(true), onPointerLeave: () => setStill(false), onFocus: () => setStill(true), onBlur: () => setStill(false) };
   return (
@@ -141,19 +154,58 @@ function Quick() {
           <p className="zc-lede-d">Drop-in OpenAI-compatible API. Switch models with one line.</p>
           <div className="zc-picks" role="group" aria-label="model=">
             <span className="zc-mono" aria-hidden="true">model=</span>
-            {NAMES.map((n, i) => <button key={n} type="button" aria-pressed={m === i} onClick={() => setPick(i)}>{n}</button>)}
+            {NAMES.map((n, i) => <button key={n} type="button" aria-pressed={on === i} onClick={() => choose(i)}>{n}</button>)}
           </div>
         </div>
         <figure className="zc-term">
-          <div className="zc-term-bar"><b>python</b><span className="zc-term-copy"><Copy text={code(NAMES[m])} /></span></div>
-          <pre className="zc-code" tabIndex={0} data-lenis-prevent><code>{pre}<span className="zc-slot"><span ref={slot}>zen6</span><i aria-hidden="true" /></span>{post}</code></pre>
+          <div className="zc-term-bar"><b>python</b><span className="zc-term-copy"><Copy text={code(typed)} /></span></div>
+          <pre className="zc-code" tabIndex={0} data-lenis-prevent><code>{pre}<span className="zc-slot"><span>{typed}</span><i aria-hidden="true" /></span>{post}</code></pre>
         </figure>
       </div>
     </section>
   );
 }
 
-/* five figures, one per screen: the scene pins; the old figure leaves before the new one cuts in through its mask */
+/* each figure draws its own number as data, under the figure, growing in as the figure cuts in and then idling:
+   18 marks for the models (the five Zen5 in ink, the wave runs through them), the Zen5 contexts on a 2M ruler (a
+   playhead sweeps it), one cent of a 100-cell dollar, the five Zen5 sizes (total against active per token), and
+   seven rings for the modalities */
+const BY_CTX = [...ROWS].sort((a, b) => b.ck - a.ck || b.tot - a.tot);
+const grow = (k, prop = 'scaleX', step = 0.04) => ({
+  initial: { [prop]: 0 }, animate: { [prop]: 1 }, transition: { duration: T.slower, ease: EMPH, delay: T.fast + k * step },
+});
+function FigArt({ i }) {
+  if (i === 0) return (
+    <div className="zc-fa zc-fa-18">{Array.from({ length: 18 }, (_, k) => <motion.i key={k} data-z={k < 5 || undefined} style={{ '--k': k }} {...grow(k, 'scaleY', 0.025)} />)}</div>
+  );
+  if (i === 1) return (
+    <div className="zc-fa zc-fa-ctx">
+      <span className="zc-fa-axis"><span className="zc-fa-ticks" /><b className="zc-mono">2M</b></span>
+      {BY_CTX.map((r, k) => (
+        <span key={r.slug} className="zc-fa-row"><span className="zc-mono">{r.ctx}</span><span className="zc-fa-track"><motion.i style={{ width: (r.ck / 2048) * 100 + '%' }} {...grow(k)} /></span></span>
+      ))}
+      <span className="zc-fa-head" />
+    </div>
+  );
+  if (i === 2) return (
+    <div className="zc-fa zc-fa-cents">{Array.from({ length: 100 }, (_, k) => <motion.i key={k} data-z={k === 0 || undefined} {...grow(k % 10 + Math.floor(k / 10), 'scale', 0.03)} />)}</div>
+  );
+  if (i === 3) return (
+    <div className="zc-fa zc-fa-size">
+      {ROWS.map((r, k) => (
+        <span key={r.slug} className="zc-fa-srow" style={{ '--k': k }}>
+          <span className="zc-fa-n">{r.n}</span>
+          <span className="zc-fa-track"><motion.i className="zc-fa-tot" style={{ width: (r.tot / MAXP) * 100 + '%' }} {...grow(k)} />{r.act && <motion.i className="zc-fa-act" style={{ width: Math.max(1.2, (r.act / MAXP) * 100) + '%' }} {...grow(k + 4)} />}</span>
+          <span className="zc-mono">{r.big}</span>
+        </span>
+      ))}
+    </div>
+  );
+  return <div className="zc-fa zc-fa-7">{Array.from({ length: 7 }, (_, k) => <motion.i key={k} style={{ '--k': k }} {...grow(k, 'scaleY', 0.06)} />)}</div>;
+}
+
+/* five figures, one per screen: the scene pins; the old figure leaves before the new one cuts in through its mask,
+   and its drawing crossfades to the new figure's drawing */
 function Figures() {
   const ref = useRef(null);
   const on = useStage();
@@ -167,6 +219,7 @@ function Figures() {
           <ol className="zc-figs-idx" aria-hidden="true">
             {FIGS.map(([, l], i) => <li key={l} data-on={!on || i === at || undefined}><span className="zc-mono">{String(i + 1).padStart(2, '0')} / 05</span>{l}</li>)}
           </ol>
+          <div className="zc-figs-r">
           <dl className="zc-figs-list">
             {FIGS.map(([v, l], i) => (
               <div key={l} className="zc-fig" data-on={!on || i === at || undefined}>
@@ -179,6 +232,18 @@ function Figures() {
               </div>
             ))}
           </dl>
+          {on && (
+            <div className="zc-figs-art" aria-hidden="true">
+              <AnimatePresence initial={false}>
+                <motion.div key={at} className="zc-figs-draw"
+                  initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { duration: T.slower, ease: EMPH } }}
+                  exit={{ opacity: 0, transition: { duration: T.base, ease: EXIT } }}>
+                  <FigArt i={at} />
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          )}
+          </div>
         </div>
       </div>
     </section>
@@ -205,6 +270,11 @@ function ModelCard({ r, big }) {
         <span className="zc-mc-t">{r.n} <span aria-hidden="true">→</span></span>
         <span className="zc-mc-d">{r.big}{r.small ? ' ' + r.small : ''} · {r.ctx}</span>
         <span className="zc-mc-tag">{r.tier}</span>
+        <span className="zc-mc-sz" aria-hidden="true">
+          {/* the page's own --zc-w: the shared --w is a registered length, which would void scaleX() */}
+          <span className="zc-mc-bar"><i className="zc-mc-tot" style={{ '--zc-w': Math.max(0.015, r.tot / MAXP).toFixed(3) }} />{r.act && <i className="zc-mc-act" style={{ '--zc-w': Math.max(0.012, r.act / MAXP).toFixed(3) }} />}</span>
+          <span className="zc-mc-bar"><i className="zc-mc-ctx" style={{ '--zc-w': ctxW(r.ck).toFixed(3) }} /></span>
+        </span>
       </A>
     </motion.li>
   );
@@ -239,6 +309,16 @@ function Shelf() {
   const [sort, setSort] = useState('hanzo');
   const [tier, setTier] = useState('all');
   const [open, setOpen] = useState(null);
+  const ctl = useRef(null);
+  // a rail that runs past the screen edge gets data-over: a right-edge peek (CSS) says there is more to swipe
+  useEffect(() => {
+    const segs = [...(ctl.current?.querySelectorAll('.zc-seg') || [])];
+    const fit = () => segs.forEach((s) => { const pad = s.hasAttribute('data-over') ? 48 : 0; s.toggleAttribute('data-over', s.scrollWidth - pad > s.clientWidth + 1); });
+    fit();
+    const ro = new ResizeObserver(fit);
+    segs.forEach((s) => ro.observe(s));
+    return () => ro.disconnect();
+  }, []);
   const count = (t) => ROWS.filter((r) => r.tier === t).length;
   const shown = (sort === 'hanzo' ? ROWS : [...ROWS].sort(sort === 'size' ? (a, b) => b.tot - a.tot : (a, b) => b.ck - a.ck || b.tot - a.tot))
     .filter((r) => tier === 'all' || r.tier === tier);
@@ -252,14 +332,15 @@ function Shelf() {
             <p className="zc-lede-d">Agentic frontier models trained on 10B+ tokens of real-world tool use and multi-step reasoning.</p>
           </div>
         </div>
-        <div className="zc-ctl">
+        <div className="zc-ctl" ref={ctl}>
           <div className="zc-seg" role="group" aria-label="Tier">
             <button type="button" aria-pressed={tier === 'all'} onClick={() => setTier('all')}>{tier === 'all' && <motion.i layoutId="zc-tier-ink" className="zc-ink" transition={GLIDE} />}<span>All</span><small>{ROWS.length}</small></button>
-            {TIERS.map((t) => (
-              <button key={t} type="button" aria-pressed={tier === t} disabled={!count(t)} data-t={t.replace(' ', '-')} onClick={() => setTier(t)}>
+            {/* a tier with no Zen5 model is not offered as a button; its name stays in the page as hidden text */}
+            {TIERS.map((t) => count(t) ? (
+              <button key={t} type="button" aria-pressed={tier === t} data-t={t.replace(' ', '-')} onClick={() => setTier(t)}>
                 {tier === t && <motion.i layoutId="zc-tier-ink" className="zc-ink" transition={GLIDE} />}<span>{t}</span><small>{count(t)}</small>
               </button>
-            ))}
+            ) : <span key={t} className="zc-vh">{t}</span>)}
           </div>
           <div className="zc-seg" role="group" aria-label="Order">
             {SORTS.map(([k, l]) => (
@@ -299,7 +380,8 @@ export default function ZenCatalog() {
       <Figures />
       <Shelf />
       <section className="zc-end zc-sec" aria-labelledby="zc-b">
-        <Sigil seed="zen/models" data={[18, 2, 0.01, 7, 284, 37]} className="zc-sig" />
+        {/* the close's object: the figures' context ruler again, drifting slowly under the ask (no second field) */}
+        <div className="zc-end-rule" aria-hidden="true"><span /></div>
         <div className="zc-wrap zc-end-in">
           <h2 id="zc-b" className="zc-end-h">Ready to build with Zen?</h2>
           <p className="zc-lede-d">All 18 Zen models available via OpenAI-compatible API. Start building today.</p>

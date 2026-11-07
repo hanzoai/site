@@ -5,14 +5,20 @@
 .az-obj { display: flex; flex-direction: column; }
 .az-bar { display: flex; align-items: center; gap: 8px; min-height: 60px; padding: 0 clamp(24px, 6vw, 88px); border-bottom: 1px solid var(--hair); }
 .az-bar > i { width: 10px; height: 10px; border-radius: 50%; background: #e4e4e7; }
-.az-bar-t { margin-left: 12px; font: 497 14px/1 var(--mono); color: var(--body); }
+.az-bar-t { margin-left: 12px; min-width: 0; display: inline-grid; overflow: hidden; font: 497 14px/1.2 var(--mono); color: var(--body); }
+/* a hovered request mark names itself here: the label lifts out, the request (caller → location) lifts in */
+.az-bar-n, .az-bar-p { grid-area: 1 / 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: opacity .2s var(--e-out), transform .3s var(--e-move); }
+.az-bar-p { opacity: 0; transform: translate3d(0, 10px, 0); color: var(--ink); }
+.az-bar-t.peek .az-bar-n { opacity: 0; transform: translate3d(0, -10px, 0); }
+.az-bar-t.peek .az-bar-p { opacity: 1; transform: none; }
 .az-bar-c { margin-left: 16px; display: inline-flex; gap: .6em; padding: 10px 16px; border-radius: 999px; background: #f5f5f5; font: 497 14px/1 var(--mono); color: var(--ink); }
 .az-bar-c b { color: #525252; font-weight: 497; user-select: none; }
 
 /* the requests that arrive by themselves; the one in front fills with the time to the next (CSS, so it moves at first paint) */
 .az-reqs { margin-left: auto; display: flex; align-items: center; }
 .az-reqs button { width: 44px; height: 44px; border: 0; padding: 0; background: none; cursor: pointer; display: grid; place-items: center; border-radius: 8px; transition: transform .15s var(--e-out); }
-.az-reqs button i { position: relative; width: 26px; height: 4px; border-radius: 999px; background: #e4e4e7; overflow: hidden; }
+.az-reqs button { transition: transform .15s var(--e-out), background-color .2s var(--e-out); }
+.az-reqs button i { position: relative; width: 26px; height: 4px; border-radius: 999px; background: #e4e4e7; overflow: hidden; transition: background-color .2s var(--e-out), transform .3s var(--e-move); }
 .az-reqs button i::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: var(--ink); transform: scaleX(0); transform-origin: 0 50%; }
 .az-reqs button[aria-pressed='true'] i::after { transform: none; }
 .js .az-bar:not(.held) .az-reqs button[aria-pressed='true'] i::after { animation: az-fill 4.6s linear both; }
@@ -75,17 +81,54 @@
 
 @media (hover: hover) {
   .az-who-b:not(.on):hover, .az-loc:not(.lit):hover { border-color: #a3a3a3; color: var(--ink); }
-  .az-reqs button:hover i { background: #d4d4d4; }
+  .az-reqs button:hover { background: #f5f5f5; }
+  .az-reqs button:hover i { background: #a3a3a3; transform: scale(1.15, 1.75); }
   .az-resume:hover { background: #f5f5f5; }
 }
 .az-who-b:active, .az-loc:active, .az-resume:active { transform: scale(.97); transition-duration: 90ms; }
 .az-who-b:focus-visible, .az-loc:focus-visible, .az-resume:focus-visible { outline: 2px solid var(--focus, var(--ink)); outline-offset: 2px; }
+
+/* phones only: the answer and its question in one line at the top of the graph, so true or false is on the first screen */
+.az-mini { display: none; }
+
+/* first screen at 1470×801: the title block sits right under the header (the kit's 38svh drop left a white void), so
+   the window and its decision panel, with the answer at figure size, arrive inside the first screen */
+@media (min-width: 900px) {
+  .az .kns { padding-top: clamp(20px, calc(9svh - 48px), 56px); }
+  .az .kns-g { row-gap: 24px; }
+  .az .kns-r { gap: 12px; }
+  .az-graph { padding-top: clamp(24px, 2.2vw, 36px); padding-bottom: clamp(24px, 2.2vw, 36px); }
+  .az-col { gap: 14px; }
+  .az-dec { gap: 12px; padding: clamp(20px, 2vw, 28px); }
+  .az-steps { gap: 8px; }
+  .az-why { padding-top: 12px; }
+}
 
 /* the statement over the chapters: heading left, the rest of Hanzo's paragraph right, aligned to the bottom */
 .az-ch .knc-head { padding-top: clamp(44px, 6vw, 116px); padding-bottom: clamp(27px, 4vw, 72px); }
 .az-say { align-items: end; row-gap: 17px; }
 .az-say-h { grid-column: 1 / span 5; max-width: 20ch; }
 .az-say-p { grid-column: 7 / -1; }
+
+/* the statement's object: token → one question → true, drawn once as it is seen. The token is there; the first
+   hairline draws, the question fills in, the second hairline draws, then the answer cuts in by line mask. */
+.az-line { grid-column: 1 / -1; display: grid; grid-template-columns: auto minmax(44px, 1fr) minmax(0, 440px) minmax(44px, 1fr) auto; align-items: center; margin-top: clamp(27px, 3.4vw, 56px); }
+.az-line-n { display: flex; flex-direction: column; gap: 10px; }
+.az-line-k { font: 606 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #525252; }
+.az-line-n.tok { gap: 16px; min-width: 180px; padding: 22px 24px; border-radius: 16px; background: #0a0a0a; }
+.az-line-n.tok .az-line-k { color: #a3a3a3; }
+.az-line-n.q { gap: 8px; padding: 20px 24px; border-radius: 16px; border: 1px dashed #a3a3a3; background: transparent; transition: background-color .4s var(--e-move) .7s, border-color .4s var(--e-move) .7s; }
+.az-line-t { font-size: 16px; line-height: 1.4; color: #737373; transition: color .4s var(--e-move) .7s; }
+.az-line-t::before { content: '· '; color: #a3a3a3; }
+.az-line-n.a { min-width: 150px; padding-left: 20px; }
+.az-line-w { overflow: hidden; padding: .04em 0 .1em; font-size: 64px; font-weight: 220; line-height: 1; letter-spacing: -.04em; color: var(--ink); }
+.az-line-l { position: relative; height: 2px; background: #e4e4e7; overflow: hidden; }
+.az-line-l i { position: absolute; inset: 0; background: var(--ink); transform: scaleX(0); transform-origin: 0 50%; transition: transform .5s var(--e-move) var(--d, 0s); }
+.az-line[data-go] .az-line-l i, html:not(.js) .az-line-l i { transform: none; }
+.az-line[data-go] .az-line-n.q, html:not(.js) .az-line-n.q { background: #f5f5f5; border-color: transparent; }
+.az-line[data-go] .az-line-t, html:not(.js) .az-line-t { color: var(--ink); }
+.js .az-line .az-a-t { animation: none; transform: translate3d(0, 105%, 0); }
+.js .az-line[data-go] .az-a-t { animation: az-cut .45s var(--e-in) 1.25s both; }
 
 /* the kit's rail sits in the words' columns; with side 'right' the words are on 8-12 */
 .az-ch .knc-rail { grid-column: 8 / span 5; left: 0; right: auto; }
@@ -234,6 +277,36 @@
 .az-fam-r { grid-column: 7 / -1; display: flex; flex-direction: column; gap: 14px; }
 .az-note { margin: 0; font-size: 14px; color: var(--quiet); }
 
+/* hovering a related row points the example console at that product: the console's sidebar entry for it fills
+   (the rows and the sidebar share an order: docs → Authz, IAM, KMS, Secrets) */
+.az-fam .exc-side > * { transition: background-color .2s var(--e-out), color .2s var(--e-out), transform .15s var(--e-out); }
+@media (hover: hover) {
+  .az-fam-g:has(.az-rel li:nth-child(1) .az-rel-a:hover) .exc-side > :nth-child(1),
+  .az-fam-g:has(.az-rel li:nth-child(2) .az-rel-a:hover) .exc-side > :nth-child(2),
+  .az-fam-g:has(.az-rel li:nth-child(3) .az-rel-a:hover) .exc-side > :nth-child(3),
+  .az-fam-g:has(.az-rel li:nth-child(4) .az-rel-a:hover) .exc-side > :nth-child(4) { background: var(--ink); color: #fff; transform: translate3d(4px, 0, 0); }
+  .az-rel-a:hover span { color: var(--ink); }
+}
+
+/* the spec sheet: the figures in Air 220 as the deck sets them (the kit's dd b rule made them 606) and counting
+   up once as their row arrives; each row's hairline draws across as the row scrolls in */
+.az .az-spec .kfs-fig b { font-weight: 220; }
+.az .az-spec .kfs-fig b span { font: inherit; color: inherit; }
+.az-spec .kfs-row { position: relative; border-bottom-color: transparent; }
+.az-spec .kfs-row::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: var(--line); transform-origin: 0 50%; }
+@supports (animation-timeline: view()) {
+  .js .az-spec .kfs-row::after { animation: az-hair linear both; animation-timeline: view(); animation-range: entry 0% cover 35%; }
+}
+@keyframes az-hair { from { transform: scaleX(0); } to { transform: none; } }
+
+/* the lower half reads as rooms, not a document: the kit's 161px section pads were leaving 300px of white between rooms */
+@media (min-width: 900px) {
+  .az .az-dg { padding: clamp(72px, 7vw, 116px) 0; }
+  .az .az-spec { padding: clamp(72px, 7vw, 116px) 0 clamp(44px, 4vw, 72px); }
+  .az .az-spec .kfs-h { margin-bottom: 44px; }
+  .az .az-fam { padding: clamp(44px, 4vw, 72px) 0 clamp(72px, 7vw, 116px); }
+}
+
 /* the close's text-link ask (kit Cta link) reads --ink, which the dark room does not flip: white on graphite here */
 .az .knx .x-arrow { color: #fafafa; }
 /* the kit's text-link asks get a 44px target (the link is 21px of text) */
@@ -257,10 +330,39 @@
   .az-dec { padding: 20px; gap: 12px; }
   .az-a { font-size: 52px; }
   .az-q b { font-size: 17px; }
+  .az-mini { display: flex; align-items: center; gap: 14px; margin: 0; padding: 10px 16px; border-radius: 16px; background: #f5f5f5; }
+  .az-mini-a { flex: none; min-width: 2.4em; overflow: hidden; padding: .04em 0 .1em; font-size: 44px; font-weight: 220; line-height: 1; letter-spacing: -.04em; color: var(--ink); }
+  .az-mini-q { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .az-mini-q b { font-size: 16px; font-weight: 497; line-height: 1.2; color: var(--ink); }
+  .az-mini-q span { font: 497 14px/1.3 var(--mono); color: #525252; overflow-wrap: anywhere; }
+  .az-mini-q span::before { content: '→ '; }
 
   .az-ch .knc-head { padding-top: 44px; padding-bottom: 0; }
   .az-say-h, .az-say-p { grid-column: 1 / -1; }
-  .az-ch .knc-v { aspect-ratio: auto; height: auto; min-height: 340px; }
+  .az-line { grid-template-columns: minmax(0, 1fr); justify-items: start; margin: 10px 0 24px; }
+  .az-line-n.tok { min-width: 0; width: 160px; padding: 16px 18px; }
+  .az-line-n.q { padding: 16px 18px; }
+  .az-line-t { font-size: 14px; }
+  .az-line-l { width: 2px; height: 24px; margin-left: 28px; }
+  .az-line-l i { transform: scaleY(0); transform-origin: 50% 0; }
+  .az-line-w { font-size: 52px; }
+
+  /* the six rules are a swipe rail on phones: one chapter per screen (its scene first, at true size, then its words
+     and 01 / 06), the next one peeking in from the right, snapping card to card */
+  .az .knc.az-ch .knc-g { display: flex; gap: 12px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; width: 100%; margin-inline: 0; padding: 20px var(--kn-g) 8px; scroll-padding-inline: var(--kn-g); }
+  .az .knc.az-ch .knc-g::-webkit-scrollbar { display: none; }
+  .az .knc.az-ch .knc-a { flex: 0 0 88%; display: flex; flex-direction: column; gap: 20px; padding: 0; border-top: 0; scroll-snap-align: start; scroll-snap-stop: always; }
+  .az .knc.az-ch .knc-v { order: -1; flex: 1 0 auto; aspect-ratio: auto; height: auto; min-height: 0; margin-top: 0; }
+  .az .knc.az-ch .knc-v { display: flex; flex-direction: column; }
+  .az .knc.az-ch .knc-v > * { flex: 1 0 auto; height: auto; }
+  .az .knc.az-ch .knc-t { order: 0; gap: 12px; }
+  .az .knc.az-ch .knc-h { font-size: 21px; }
+  .az .knc.az-ch .knc-body p { font-size: 15px; line-height: 1.5; }
+  .az .knc.az-ch .az-sc { padding: 18px; gap: 14px; }
+  .az .knc.az-ch .az-rule { gap: 8px; }
+  .az .knc.az-ch .az-ar { gap: 8px; padding: 12px; }
+  .az .knc.az-ch .az-ar-p i { padding: 7px 9px; }
+  .az .knc.az-ch .knc-run { padding-bottom: 16px; }
   .az-sc { padding: 20px; gap: 17px; }
   .az-where { grid-template-columns: minmax(0, 1fr); gap: 20px; }
   .az-where-list { margin-right: 28px; }
@@ -305,4 +407,6 @@
 @media (prefers-reduced-motion: reduce) {
   .knc-v[data-on] .az-fl-l i, .knc-v[data-on] .az-exp circle.run { animation: none; }
   .az-fl-l i { transform: none; width: 100%; }
+  .js .az-spec .kfs-row::after { animation: none; }
+  .az-line-l i, .az-line-n.q, .az-line-t, .az-bar-n, .az-bar-p { transition: none; }
 }

@@ -1,6 +1,11 @@
 'use client';
 /* /brand. Story page (treated so; MASTER 4), Hanzo's deck only.
-   V2: 8/10 A brand book that is a drawing, in Hanzo's own black, white and greys. The hero is the mark's
+   V2: 8/10 (round 4: the hero is whole on the first frame (server SVG mark, visible lede, h1 cut-in from 0 ms), its
+   build and turn run after paint; the colour room is one desktop scene with the board beside the swatches. Round 3: no page hydration diff, h1 at 52 and section heads at 44 so the objects lead, gaps closed,
+   card and specimen hovers, the 02 panel quiet so two dark rooms. Round 2: six grays on phone, no reduced-motion hydration error, mark in the first phone screen, hovers on
+   gradients, scale rows and the ZIP row, no slack after Components. 7 Nov re-walk: colour-room h3s visible again on black, the contrast board swaps White to Black and back
+   once in view with a gliding pill, compass ticks arrive after their circle, CSS colours on deck tokens.)
+   A brand book that is a drawing, in Hanzo's own black, white and greys. The hero is the mark's
    construction drawn full-bleed across the stage (not a card): once the curtain lifts, the guides draw, the five
    pieces land, the mark opens once to show its build, and then it stays alive: its pieces lean toward the pointer
    anywhere in the hero, and the compass turns slowly (pause control). The principles are a pinned scene, one line
@@ -33,25 +38,23 @@ import './Brand.css';
 
 const EASE = [0.16, 1, 0.3, 1];
 // MASTER 3.1: no springs, no overshoot. Arrivals use ease-emphasis; things the hand moves settle in 300 ms.
-const LAND = { duration: 0.8, ease: EASE };
 const SOFT = { duration: 0.3, ease: EASE };
-// JS off: the hero's lede, asks and the drawing show in place (PLAN 2.3)
-const NOJS = { __html: '<style>.xbr-hero-f,.xbr-piece,.xbr-dr{opacity:1!important;transform:none!important}.xbr-g{stroke-dasharray:none!important;stroke-dashoffset:0!important}.xbr-grays .xbr-sw{transform:none!important}</style>' };
+const PART = { duration: 0.9, ease: [0.4, 0, 0.2, 1] }; // the build: things that move and stay (ease-in-out)
+// JS off: the hero is already whole in the server HTML; the grays sit in place and Pause (which needs JS) is hidden
+const NOJS = { __html: '<style>.xbr-grays .xbr-sw{transform:none!important}.xbr-pause{display:none!important}</style>' };
 
 const PIECES = ['M22.21 67V44.6369H0V67H22.21Z', 'M66.7038 22.3184H22.2534L0.0878906 44.6367H44.4634L66.7038 22.3184Z', 'M22.21 0H0V22.3184H22.21V0Z', 'M66.7198 0H44.5098V22.3184H66.7198V0Z', 'M66.7198 44.6369H44.5098V67H66.7198V44.6369Z'];
 const FROM = [[-18, 22], [0, 0], [-18, -22], [18, -22], [18, 22]];
-const DRIFT = [[-4, 4], [0, 0], [-4, -4], [4, -4], [4, 4]];
 const DEPTH = [3.2, 1.2, 3.2, 3.2, 3.2]; // how far each piece leans toward the pointer (the corner blocks lean most)
 
-/* One piece of the mark: it lands, opens with the others, and leans toward the pointer (300 ms, ease-emphasis). */
-function Piece({ d, i, go, open, mx, my }) {
-  const land = useMotionValue(1);
-  const op = useMotionValue(0);
-  useEffect(() => { if (go) { const c = animate(land, 0, { ...LAND, delay: 0.25 + i * 0.07 }); return () => c.stop(); } }, [go]); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { const c = animate(op, open ? 1 : 0, SOFT); return () => c.stop(); }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
-  const x = useTransform([land, op, mx], ([l, o, m]) => l * FROM[i][0] + o * DRIFT[i][0] + m * DEPTH[i]);
-  const y = useTransform([land, op, my], ([l, o, m]) => l * FROM[i][1] + o * DRIFT[i][1] + m * DEPTH[i]);
-  return <motion.path d={d} className="xbr-piece" style={{ x, y }} initial={{ opacity: 0 }} animate={go ? { opacity: 1 } : undefined} transition={{ duration: 0.4, delay: 0.25 + i * 0.07 }} />;
+/* One piece of the mark. It is whole in the server HTML (first frame). After paint it parts along its construction
+   lines to show the build and closes again (staggered), then leans toward the pointer (300 ms, ease-emphasis). */
+function Piece({ d, i, open, mx, my }) {
+  const part = useMotionValue(0);
+  useEffect(() => { const c = animate(part, open ? 1 : 0, { ...PART, delay: (open ? i : 4 - i) * 0.06 }); return () => c.stop(); }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
+  const x = useTransform([part, mx], ([o, m]) => o * FROM[i][0] * 0.6 + m * DEPTH[i]);
+  const y = useTransform([part, my], ([o, m]) => o * FROM[i][1] * 0.6 + m * DEPTH[i]);
+  return <motion.path d={d} className="xbr-piece" style={{ x, y }} />;
 }
 
 /* The construction, drawn full-bleed on the hero's stage. */
@@ -59,60 +62,59 @@ function Drawing({ mx, my }) {
   const ref = useRef(null);
   const live = useInView(ref, { amount: 0.3 });
   const calm = useReducedMotion();
+  // visibility never waits on anything; only the idle life waits for the curtain (if any) to lift
   const ok = useArrived();
-  const go = ok || calm;
+  const go = ok && !calm;
   const [open, setOpen] = useState(false);
   const once = useRef(false);
-  useEffect(() => { // once landed it opens to show its build one time, then closes and rests
-    if (calm || !go || !live || once.current) return;
+  useEffect(() => { // shown whole, it parts once along its guides to show its build, then closes and rests
+    if (!go || !live || once.current) return;
     once.current = true;
-    const a = setTimeout(() => setOpen(true), 1700);
-    const b = setTimeout(() => setOpen(false), 3300);
+    const a = setTimeout(() => setOpen(true), 700);
+    const b = setTimeout(() => setOpen(false), 2600);
     return () => { clearTimeout(a); clearTimeout(b); };
-  }, [calm, go, live]);
+  }, [go, live]);
   // the compass turns slowly (one turn a minute) while the hero is seen; Pause stops it (WCAG 2.2.2)
   const [spin, setSpin] = useState(true);
   const turn = useMotionValue(0);
   useEffect(() => {
-    if (calm || !go || !live || !spin) return;
+    if (!go || !live || !spin) return;
     const c = animate(turn, turn.get() + 360, { duration: 60, ease: 'linear', repeat: Infinity });
     return () => c.stop();
-  }, [calm, go, live, spin, turn]);
+  }, [go, live, spin, turn]);
   const g = [0, 22.3, 44.6, 67];
-  const draw = (k) => ({ initial: { pathLength: 0 }, animate: go ? { pathLength: 1 } : undefined, transition: { duration: 1.1, ease: EASE, delay: k } });
+  // guides, circle and mark are all in the server HTML: the first frame is the finished drawing
   return (
     <div className="xbr-dr" ref={ref}>
       <svg viewBox="-60 -60 187 187" aria-hidden="true">
         {g.map((v, i) => (
-          <g key={v}>
-            <motion.line x1={v} x2={v} y1="-200" y2="270" className="xbr-g" {...draw(0.05 + i * 0.06)} />
-            <motion.line y1={v} y2={v} x1="-260" x2="270" className="xbr-g" {...draw(0.1 + i * 0.06)} />
+          <g key={v} style={{ '--i': i }}>
+            <line x1={v} x2={v} y1="-200" y2="270" className="xbr-g" />
+            <line y1={v} y2={v} x1="-260" x2="270" className="xbr-g" />
           </g>
         ))}
         <motion.g className="xbr-compass" style={{ rotate: turn, originX: '33.4px', originY: '33.5px', transformBox: 'view-box' }}>
-          <motion.circle cx="33.4" cy="33.5" r="47.3" className="xbr-g c" {...draw(0.35)} />
-          <motion.line x1="-30" y1="97" x2="97" y2="-30" className="xbr-g c" {...draw(0.5)} />
-          {Array.from({ length: 24 }, (_, i) => {
+          <circle cx="33.4" cy="33.5" r="47.3" className="xbr-g c" />
+          <line x1="-30" y1="97" x2="97" y2="-30" className="xbr-g c" />
+          <g className="xbr-ticks">{Array.from({ length: 24 }, (_, i) => {
             const a = (i / 24) * Math.PI * 2, r1 = 47.3, r2 = i % 6 ? 45.3 : 43.3;
             const f = (v) => Math.round(v * 100) / 100; // rounded: server and browser maths then print the same numbers
             return <line key={i} x1={f(33.4 + Math.cos(a) * r1)} y1={f(33.5 + Math.sin(a) * r1)} x2={f(33.4 + Math.cos(a) * r2)} y2={f(33.5 + Math.sin(a) * r2)} className="xbr-tick" />;
-          })}
+          })}</g>
         </motion.g>
-        {PIECES.map((d, i) => <Piece key={i} d={d} i={i} go={go} open={open} mx={mx} my={my} />)}
+        {PIECES.map((d, i) => <Piece key={i} d={d} i={i} open={open} mx={mx} my={my} />)}
       </svg>
-      {!calm && (
-        <button type="button" className="xbr-pause" aria-label={spin ? 'Pause' : 'Replay'} aria-pressed={!spin} onClick={() => setSpin((v) => !v)}>
-          {spin
-            ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
-            : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.2v9.6L12.5 8z" fill="currentColor" /></svg>}
-        </button>
-      )}
+      {/* always rendered (same markup on server and client); CSS hides it under reduced motion, where nothing turns */}
+      <button type="button" className="xbr-pause" aria-label={spin ? 'Pause' : 'Replay'} aria-pressed={!spin} onClick={() => setSpin((v) => !v)}>
+        {spin
+          ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
+          : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.2v9.6L12.5 8z" fill="currentColor" /></svg>}
+      </button>
     </div>
   );
 }
 
 function Hero() {
-  const ok = useArrived();
   const calm = useReducedMotion();
   // the pointer anywhere in the hero pulls the pieces toward it (fine pointers only), settling in 300 ms (no spring)
   const mx = useMotionValue(0);
@@ -133,14 +135,16 @@ function Hero() {
       <Drawing mx={mx} my={my} />
       <div className="vc-grid xbr-hero-g">
         <div className="xbr-hero-c">
-          <MaskLines as="h1" id="xbr-h1" now lines={['Hanzo Brand', 'Guidelines.']} className="vc-display" />
-          <motion.div className="xbr-hero-f" initial={{ opacity: 0, y: 12 }} animate={ok ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 0.52, ease: EASE, delay: 0.45 }}>
+          {/* CSS cut-in from first paint at 0.1 s (MaskLines' base 0.5 s minus 0.4) */}
+          <MaskLines as="h1" id="xbr-h1" now delay={-0.4} stagger={0.06} lines={['Hanzo Brand', 'Guidelines.']} className="vc-display" />
+          {/* visible in the server HTML: a transform-only CSS rise, never an opacity gate */}
+          <div className="xbr-hero-f">
             <p className="vc-lede">How to build interfaces that look like the rest of Hanzo across our platform and products.</p>
             <div className="xbr-acts">
               <Cta to="/brand#assets" className="xbr-big" id="brand.hero" thumb>Download Assets</Cta>
               <Cta to="/press" kind="quiet" className="xbr-big" id="brand.press">Press Kit</Cta>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>
@@ -155,6 +159,7 @@ const Numeral = ({ i }) => (
   <div className={'xbr-num n' + i}>
     {i === 2 && <span className="xbr-num-grid" aria-hidden="true">{Array.from({ length: 16 }, (_, k) => <MarkSvg key={k} s={26} />)}</span>}
     {i === 0 && <span className="xbr-num-mark" aria-hidden="true"><MarkSvg s={30} /></span>}
+    {i === 1 && <span className="xbr-num-glow" aria-hidden="true" />}
     <span className="xbr-num-n vc-num"><b>{String(i + 1).padStart(2, '0')}</b> / 03</span>
   </div>
 );
@@ -191,11 +196,13 @@ const CopyIcon = ({ ok }) => (ok
   ? <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><motion.path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.3 }} /></svg>
   : <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><rect x="5" y="5" width="8.5" height="8.5" rx="2" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M10.5 3.2V3a.8.8 0 0 0-.8-.8H3a.8.8 0 0 0-.8.8v6.7c0 .44.36.8.8.8h.2" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>);
 
-function Swatch({ name, hex, big, dark, i = 0, fan }) {
+// The fan is triggered by the strip (the parent), not each swatch: a swatch tucked behind its neighbour inside the
+// clipped strip can never be 70% visible itself. Below 900px the CSS shows the six in place (no fan).
+function Swatch({ name, hex, big, dark, i = 0, fan, open, sel }) {
   const [ok, go] = useCopy(hex);
-  const enter = fan ? { initial: { x: `${-i * 100}%` }, whileInView: { x: '0%' }, viewport: { once: true, amount: 0.7 }, transition: { duration: 0.8, ease: EASE, delay: 0.1 + (5 - i) * 0.04 } } : {};
+  const enter = fan ? { initial: { x: `${-i * 100}%` }, animate: open ? { x: '0%' } : undefined, transition: { duration: 0.8, ease: EASE, delay: 0.1 + (5 - i) * 0.04 } } : {};
   return (
-    <motion.button type="button" className={'xbr-sw' + (big ? ' big' : '') + (dark ? ' dk' : '')} style={{ '--c': hex, zIndex: fan ? 6 - i : undefined }} onClick={go} whileTap={{ scale: 0.97 }} transition={{ duration: 0.09 }} aria-label={`${name} ${hex}`} aria-pressed={ok} {...enter}>
+    <motion.button type="button" className={'xbr-sw' + (big ? ' big' : '') + (dark ? ' dk' : '') + (sel ? ' sel' : '')} style={{ '--c': hex, zIndex: fan ? 6 - i : undefined }} onClick={go} whileTap={{ scale: 0.97 }} transition={{ duration: 0.09 }} aria-label={`${name} ${hex}`} aria-pressed={ok} {...enter}>
       <span className="xbr-sw-t"><b>{name}</b><span className="vc-num">{hex}</span></span>
       <span className="xbr-ok" aria-hidden="true"><CopyIcon ok={ok} /></span>
     </motion.button>
@@ -224,12 +231,24 @@ function Verdict({ r }) {
   );
 }
 
-function Reads() {
-  const [bg, setBg] = useState('#FFFFFF');
+/* One thing in as another goes out: when the board is well in view, Hanzo Black slides in under the six grays, every
+   verdict flips with it, then Hanzo White comes back and the switch is yours. Once; a touch stops it; calm skips it. */
+function Reads({ bg, setBg }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount: 0.6, once: true });
+  const calm = useReducedMotion();
+  const mine = useRef(false);
+  useEffect(() => {
+    if (!seen || calm || mine.current) return;
+    const a = setTimeout(() => { if (!mine.current) setBg('#0A0A0B'); }, 900);
+    const b = setTimeout(() => { if (!mine.current) setBg('#FFFFFF'); }, 3600);
+    return () => { clearTimeout(a); clearTimeout(b); };
+  }, [seen, calm]);
+  const pick = (h) => { mine.current = true; setBg(h); };
   return (
-    <div className="xbr-reads" role="group" aria-label="Gray Scale on Hanzo White or Hanzo Black">
+    <div className="xbr-reads" ref={ref} role="group" aria-label="Gray Scale on Hanzo White or Hanzo Black">
       <div className="xbr-seg" role="group" aria-label="Background">
-        {[['Hanzo White', '#FFFFFF'], ['Hanzo Black', '#0A0A0B']].map(([n, h]) => <button key={h} type="button" aria-pressed={bg === h} onClick={() => setBg(h)}>{n}</button>)}
+        {[['Hanzo White', '#FFFFFF'], ['Hanzo Black', '#0A0A0B']].map(([n, h]) => <button key={h} type="button" aria-pressed={bg === h} onClick={() => pick(h)}>{bg === h && <motion.span layoutId="xbr-seg-pill" className="xbr-seg-pill" transition={SOFT} aria-hidden="true" />}<span>{n}</span></button>)}
       </div>
       <ul style={{ '--bg': bg }} className={bg === '#FFFFFF' ? 'lt' : 'dk'}>
         {GRAYS.map(([n, h]) => (
@@ -245,6 +264,10 @@ function Reads() {
 }
 
 function Colour() {
+  const strip = useRef(null);
+  const fanOpen = useInView(strip, { once: true, amount: 0.6 });
+  // one scene: the board's background is the scene's state, and the brand swatch it stands on is marked
+  const [bg, setBg] = useState('#FFFFFF');
   return (
     <section className="vc-sec xbr-col" data-room="dark" aria-labelledby="xbr-col-h">
       <div className="vc-grid xbr-col-g">
@@ -252,12 +275,14 @@ function Colour() {
           <MaskLines id="xbr-col-h" lines={['Color Palette']} className="vc-display m" />
           <p className="vc-lede">Our colors are carefully selected to create a bold, modern aesthetic.</p>
         </header>
-        <h3 className="vc-title xbr-sub">Brand Colors</h3>
-        <div className="xbr-brand"><Swatch name="Hanzo Black" hex="#0A0A0B" big dark /><Swatch name="Hanzo White" hex="#FFFFFF" big /></div>
-        <h3 className="vc-title xbr-sub">Gray Scale</h3>
-        <div className="xbr-grays">{GRAYS.map(([n, h], i) => <Swatch key={n} name={n} hex={h} dark={h !== '#A3A3A3'} i={i} fan />)}</div>
-        <Reads />
-        <h3 className="vc-title xbr-sub">Gradients</h3>
+        <div className="xbr-col-l">
+          <h3 className="vc-title xbr-sub">Brand Colors</h3>
+          <div className="xbr-brand"><Swatch name="Hanzo Black" hex="#0A0A0B" big dark sel={bg === '#0A0A0B'} /><Swatch name="Hanzo White" hex="#FFFFFF" big sel={bg === '#FFFFFF'} /></div>
+          <h3 className="vc-title xbr-sub">Gray Scale</h3>
+          <div className="xbr-grays" ref={strip}>{GRAYS.map(([n, h], i) => <Swatch key={n} name={n} hex={h} dark={h !== '#A3A3A3'} i={i} fan open={fanOpen} />)}</div>
+        </div>
+        <Reads bg={bg} setBg={setBg} />
+        <h3 className="vc-title xbr-sub xbr-grads-h">Gradients</h3>
         <div className="xbr-grads">{GRADS.map(([n, k, bg]) => <div key={n} className="xbr-grad"><span style={{ background: bg }} /><b>{n}</b><small>{k}</small></div>)}</div>
       </div>
     </section>
@@ -276,7 +301,14 @@ function Type() {
   const live = useInView(spec, { amount: 0.6 }); // the specimen itself, well on screen: the sweep is seen whole
   const fw = useTransform(w, (v) => Math.round(v));
   const swept = useRef(false);
-  useEffect(() => w.on('change', (v) => setVal(Math.round(v))), [w]);
+  // The track fill (--p) is never a React style: the CSS rests it at 560's 57.5% in the server HTML, and after mount
+  // the weight writes it straight to the input, so nothing the sweep changes can differ from the server markup.
+  const range = useRef(null);
+  useEffect(() => w.on('change', (v) => {
+    const r = Math.round(v);
+    setVal(r);
+    if (range.current) range.current.style.setProperty('--p', ((r - 100) / 8) + '%');
+  }), [w]);
   useEffect(() => {
     if (mine || calm || !live || swept.current) return;
     swept.current = true; // one sweep (under 5 s, WCAG 2.2.2), then it rests at 560 and the slider is yours
@@ -293,8 +325,9 @@ function Type() {
         <div className="xbr-spec" ref={spec}>
           <motion.p className="xbr-spec-a" style={{ fontWeight: fw }} aria-hidden="true">Aa</motion.p>
           <div className="xbr-spec-c">
-            <input type="range" min={100} max={900} step={1} value={val} aria-label="Font weight"
-              onChange={(e) => { setMine(true); w.stop(); w.set(+e.target.value); }} style={{ '--p': ((val - 100) / 8) + '%' }} />
+            {/* suppressHydrationWarning: screenshot tools write an inline caret style onto inputs before hydration */}
+            <input ref={range} suppressHydrationWarning type="range" min={100} max={900} step={1} value={val} aria-label="Font weight"
+              onChange={(e) => { setMine(true); w.stop(); w.set(+e.target.value); }} />
           </div>
         </div>
         <ol className="xbr-scale">
@@ -337,7 +370,7 @@ function Components() {
         </div>
         <div className="xbr-bench c">
           <h3 className="vc-title">Badges</h3>
-          <div className="xbr-badges"><span className="xbr-badge brand">Brand Badge</span><span className="xbr-badge">Default Badge</span><span className="xbr-badge ok"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="currentColor" /><path d="M5 8.3l2 2 4-4.3" fill="none" stroke="#ffffff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>Success Badge</span></div>
+          <div className="xbr-badges"><span className="xbr-badge brand">Brand Badge</span><span className="xbr-badge">Default Badge</span><span className="xbr-badge ok"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="currentColor" /><path d="M5 8.3l2 2 4-4.3" fill="none" stroke="var(--b-white)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>Success Badge</span></div>
         </div>
       </div>
     </section>
@@ -375,7 +408,7 @@ function Assets() {
 
 export default function Brand() {
   return (
-    <main className="vc xbr" style={{ '--acc': '#1d1d1f' }}>
+    <main className="vc xbr" style={{ '--acc': 'var(--ink)' }}>
       <Hero />
       <Principles />
       <Colour />

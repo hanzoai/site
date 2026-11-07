@@ -47,17 +47,18 @@ function frame(i, subject, pos) {
   const dx = fx - 0.5, dy = fy * (1.25 / 0.75) - (0.25 / 0.75) * 2 * py - 0.5; // offset from the box centre (4:3 box, 4:5 film)
   return { '--z': z, '--x': clampPct(-dx * 100 * z, z).toFixed(1) + '%', '--y': clampPct(-dy * 100 * z, z).toFixed(1) + '%' };
 }
-function CapArt({ slug, i, on, subject, pos }) {
+function CapArt({ slug, i, on, subject, pos, glyph = true }) {
   return (
     <div className="cr-art" style={frame(i, subject, pos)}>
       <Img src={film(slug, 'webp')} w={1200} h={1500} />
       <ModelFilm slug={slug} play={on} />
-      <Glyph k={slug} i={i} />
+      {glyph && <Glyph k={slug} i={i} />}
     </div>
   );
 }
 
-function Caps({ slug, flip, subject, pos }) {
+// capArt (optional, per page): (i, on, base) => node, a chapter's own picture; base is the default film framing
+function Caps({ slug, flip, subject, pos, capArt }) {
   const d = C[slug];
   return (
     <Chapters
@@ -66,13 +67,13 @@ function Caps({ slug, flip, subject, pos }) {
       flip={flip}
       className="cr-caps"
       head={<><h2 id={'cr-caps-' + slug} className="cr-caps-h">What {d.name} does</h2><p className="lv-side cr-caps-side">Capabilities</p></>}
-      items={d.caps.map(([t, x], i) => ({ k: d.kind, rail: t, title: t, body: <p>{x}</p>, art: (on) => <CapArt slug={slug} i={i} on={on} subject={subject} pos={pos} /> }))}
+      items={d.caps.map(([t, x], i) => ({ k: d.kind, rail: t, title: t, body: <p>{x}</p>, art: (on) => (capArt ? capArt(i, on, frame(i, subject, pos)) : <CapArt slug={slug} i={i} on={on} subject={subject} pos={pos} />) }))}
     />
   );
 }
 
 // where it fits: the three rooms as a quiet list beside one picture of the model at work
-function Fits({ slug, flip, subject, pos }) {
+function Fits({ slug, flip, subject, pos, fitsArt }) {
   const d = C[slug];
   const box = useRef(null);
   const seen = useInView(box, { amount: 0.3 });
@@ -95,10 +96,12 @@ function Fits({ slug, flip, subject, pos }) {
             ))}
           </ol>
         </div>
-        <figure className="cr-fits-art" style={frame(1, subject, pos)}>
-          <Img src={film(slug, 'webp')} w={1200} h={1500} />
-          <ModelFilm slug={slug} play={seen} />
-        </figure>
+        {fitsArt ? fitsArt(seen) : (
+          <figure className="cr-fits-art" style={frame(1, subject, pos)}>
+            <Img src={film(slug, 'webp')} w={1200} h={1500} />
+            <ModelFilm slug={slug} play={seen} />
+          </figure>
+        )}
       </div>
     </section>
   );
@@ -200,23 +203,28 @@ export function Scene({ slug, dark, className = '', children }) {
 /* slug, shape, aim, over, pos: as Launch. subject: where the film's subject sits in its 4:5 frame (aims every
    framing). demo: the model's Scene. first: 'demo' puts the demo straight after the stage, else the chapters come
    first. flip: chapters picture-left; the fits picture on the left. The page ends on Hanzo's exact model cards and a
-   closing Band that carries the research preview in Hanzo's words and repeats the hero ask. */
-export default function Creative({ slug, shape, aim, over, pos, subject = [0.55, 0.5], headClass, demo, first = 'demo', flip }) {
+   closing Band that carries the research preview in Hanzo's words and repeats the hero ask.
+   Optional, per page (defaults keep every other member as it is): capArt(i, on, base) (each chapter's own picture),
+   fitsArt(seen) (replaces the fits picture), map={false} (no studio map), band (a page's own closing band),
+   first='tail' (the demo sits between the studio map and the model cards). */
+export default function Creative({ slug, shape, aim, over, pos, subject = [0.55, 0.5], headClass, demo, first = 'demo', flip, capArt, fitsArt, map = true, band }) {
   const d = C[slug];
-  const caps = <Caps slug={slug} flip={flip} subject={subject} pos={pos} />;
+  const caps = <Caps slug={slug} flip={flip} subject={subject} pos={pos} capArt={capArt} />;
+  const tail = first === 'tail';
   return (
     <Launch slug={slug} pos={pos} ask={{ label: 'Request access', to: '/research-access?models=' + slug, id: slug + '.first' }} shape={shape} aim={aim} over={over} headClass={'cr-head ' + (headClass || '')} head={<Head slug={slug} />}>
-      {first === 'demo' ? <>{demo}{caps}</> : <>{caps}{demo}</>}
-      <Fits slug={slug} flip={flip} subject={subject} pos={pos} />
-      <Map slug={slug} />
+      {first === 'demo' ? <>{demo}{caps}</> : tail ? caps : <>{caps}{demo}</>}
+      <Fits slug={slug} flip={flip} subject={subject} pos={pos} fitsArt={fitsArt} />
+      {map && <Map slug={slug} />}
+      {tail && demo}
       <ModelCards slug={slug} />
-      <Band
+      {band || <Band
         title={`Try ${d.name} on your own work`}
         lede={`Samples of ${d.name}'s own output publish only after blind review, so the pictures here are illustrations. A studio can apply now to test it in its own pipeline.`}
         action="Request access"
         to={'/research-access?models=' + slug}
         note={<p className="cr-band-note"><More to="/models">Every model</More><A to="/beta/research">Research preview</A></p>}
-      />
+      />}
     </Launch>
   );
 }

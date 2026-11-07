@@ -2,6 +2,8 @@
 // Persona: Developer comparing one lab's models. Goal: find the right model from this maker and open it. CTA: the hero's first action in Hanzo's words ("Get API Access"). Metric: api_key_created.
 /* A model maker's shelf in Hanzo's catalogue (73 makers, one template). The first screen leads with the maker's own
    count and a contour field seeded from its name and its models' numbers, beside the guest-key terminal.
+   The shelf is one list of 72px rows (name, rate, pills); a row's description arrives on hover or focus in place of
+   its rate, and is in the HTML throughout. Rows of models this site has no page for open hanzo.ai in a new tab (↗).
    Signature: the sibling field at full size: every model the maker has on Hanzo, placed by context window and output
    rate, a light sweeping across; each dot opens its model.
    Beyond: the shelf re-sorts by context window or by rate (and filters by modality), so the cheapest or the
@@ -14,14 +16,14 @@ import { A, Cta } from '../../kit';
 import Sigil from '../../Sigil';
 import { FilmPause, usePaused } from '../../v2/ModelFilm';
 import SpecCard from '../../v2/SpecCard';
-import { Field, useCatalog, rateFrom, money } from './parts';
+import { Field, CopyStatus, useCatalog, rateFrom, money, missing } from './parts';
 import './models.css';
 
 const up = (d) => ({ initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
 const SORTS = [['shelf', 'As listed'], ['ctx', 'Context window'], ['rate', 'Output rate']];
 
 export default function ProviderShelf({ doc }) {
-  const cat = useCatalog(doc.cards.some((c) => !c.rate));
+  const cat = useCatalog(doc.cards.some((c) => missing(c.id, c.rate)));
   const cards = doc.cards.map((c, i) => ({ ...c, n: i, rate: rateFrom(cat, c.id, c.rate) }));
   const [sort, setSort] = useState('shelf');
   const [mod, setMod] = useState('all');
@@ -41,6 +43,7 @@ export default function ProviderShelf({ doc }) {
   const anim = cards.length <= 60; // re-flow by layout only where it stays smooth
   return (
     <main className="xmf xmf-prov">
+      <CopyStatus />
       <section className="xmf-launch xmf-maker" aria-labelledby="xmf-h1">
         <div className="xmf-art" aria-hidden="true">
           <Sigil seed={doc.route} data={[n, Math.max(0, ...tokens), outs.length ? Math.min(...outs) : 0, outs.length ? Math.max(...outs) : 0]} className="xmf-sigil" still={paused} />
@@ -122,7 +125,7 @@ export default function ProviderShelf({ doc }) {
             <ul className="xmf-grid">
               {[...shown, ...cards.filter((c) => hidden.has(c.href))].map((c) => (
                 <motion.li key={c.href} layout={anim ? 'position' : false} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} hidden={hidden.has(c.href)}>
-                  <SpecCard to={c.href} title={c.name} desc={c.desc} tags={[...(c.ctx ? [c.ctx] : []), ...c.tags]} meta={c.rate ? <b>{`${money(c.rate.in)} → ${money(c.rate.out)}`}</b> : null} />
+                  <SpecCard className="xmf-row" to={c.href} title={c.name} desc={c.desc} tags={[...(c.ctx ? [c.ctx] : []), ...c.tags]} meta={c.rate ? <b>{`${money(c.rate.in)} → ${money(c.rate.out)}`}</b> : null} />
                 </motion.li>
               ))}
             </ul>

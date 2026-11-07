@@ -4,9 +4,10 @@ Page file: `components/pages/apps/Auto.jsx` · gallery: `docs/gallery/auto/` · 
 
 Open copy questions for James: "Restart the pod" (`c4_restart_pod`). Each is in `content/ui-strings.json` as needs_james; until approved the control is icon-only or the name is for screen readers only.
 Shared changes requested (`docs/requests/auto.md`): none.
-Forks this page deleted: the cursor-following preview card that floated over the list, the url pill with a photo above the h1, raw .x-btn asks and Magnetic wrapper, the shaking lane.
+Forks this page deleted: the cursor-following preview card that floated over the list, the url pill with a photo above the h1, raw .x-btn asks and Magnetic wrapper, the shaking lane, the full-scrim "pod rescheduled" overlay, the skeleton-bar and static-box minis, the single-letter connector glyphs.
+Page-local files: `components/pages/apps/auto/Minis.jsx` (the six live objects in the index).
 
-Measured on the dev server at 1470×801, 375×667 and 320×640 with `audit.cjs` (Playwright), JS on and off.
+Measured on the dev server at 1470×801 and 375×812 (Playwright, JS on and off), round 2 after the 6.5/10 review: `build-auto/walk.js`, `minis.js`, `check.js`.
 
 ## 1. Strategy and conversion
 - [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
@@ -33,7 +34,7 @@ Done here: `<main id="main" data-ask="off">`; the layout's "Skip to content" tar
 - [x] Ends in proof strip, `Band`, footer
 - [ ] Card-to-page links use Morph; title lands within 12px (n/a: no card on this page opens another page)
 
-Done here: Hero is its own hero: title at left, line and asks at right, the editor under them; the object is the flow editor: two runs step together and the pod is rescheduled every other run, so the runs stepping from 0.95 s moves within the first second. `PageHero` is not merged; the existing equivalent (`StageHero` or the page's own hero with the same line-mask cut-in, 700 ms ease-emphasis) is used, and the mono caption sits under the h1. JS off: h1 "Hanzo Auto" at opacity 1, 0 hidden headings or paragraphs. Rooms: hero (light) → the six properties index (light) → four figures (dark) → the connectors (light) → closing band (dark). The live page has no proof strip, so it ends on the band and the footer.
+Done here: Hero is its own hero: h1, the mono caption and the line stacked in the left column (h1 top 180px at 1470×801), the asks on one row at right, the editor under them; the object is the flow editor: two runs step every 700 ms and on the first run the pod is rescheduled at step 3, so by about 2.2 s the record lane reads "step 3 / 5" while the goroutine lane has dropped to "step 1 / 5" (measured at 2200 ms on both sizes); after that the record finishes first and the pod is rescheduled again every other run. `PageHero` is not merged; the existing equivalent (`StageHero` or the page's own hero with the same line-mask cut-in, 700 ms ease-emphasis) is used, and the mono caption sits under the h1. JS off: h1 "Hanzo Auto" at opacity 1, 0 hidden headings or paragraphs. Rooms: hero (light) → the six properties index, each open row running its own live object (light) → four figures, pinned while each word cuts in on scroll (dark) → the connectors as rows feeding a drawn chain (light) → closing band (dark). The live page has no proof strip, so it ends on the band and the footer.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -49,7 +50,7 @@ Done here: 0 `.x-btn` without `data-cta` in main; CTAs found: primary*, docs, cl
 - [ ] Marquees pause, freeze under reduced motion, hide duplicates (n/a: no marquee)
 - [ ] Privacy link and owner line beside every submit (n/a: nothing is submitted)
 
-Done here: No partner logos; product names appear as text only. Parity holds every printed figure. Demo values (counts, offsets, machine names) are labelled examples in the header comment and drawn as objects, not claims.
+Done here: No partner logos (no mirrored marks with permission exist in the repo), so the connector grid is quiet text rows with no stand-in glyphs; product names appear as text only. Parity holds every printed figure. Demo values (counts, offsets, machine names) are labelled examples in the header comment and drawn as objects, not claims.
 
 ## 6. Content presentation (copy untouched)
 - [x] No text under 13px (14px phone) except mono capitals
@@ -66,7 +67,7 @@ Done here: Small text: 0 runs under 13px on desktop, 0 under 14px on the phone (
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: `taste.py` OK on the page JSX and CSS and the Cloud 4 shared files; only the deck neutrals and `#e4e4e7`. Captions sit under headings. Radii 6, 8, 12, 16, 20, 24 (28 on the search composer only); objects are outlined with a hairline and carry no shadow. Icons are one inline 16px stroke set. /automations opens on a dock and canvas, not the editor.
+Done here: `taste.py` OK on the page JSX and CSS and the Cloud 4 shared files; only the deck neutrals and `#e4e4e7`. Captions sit under headings. Radii 8, 10, 12, 14, 20, 24; objects are outlined with a hairline and carry no shadow. Icons are one inline 16px stroke set (status ring, tick, plus, restart, arrow). /automations opens on a dock and canvas with connector tiles; /auto opens on the two-lane race, its connectors are rows (not tiles) and its middle is an index of live objects plus a pinned figures room.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
@@ -75,7 +76,7 @@ Done here: `taste.py` OK on the page JSX and CSS and the Cloud 4 shared files; o
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: listed below
 
-Done here: Hover sits under `@media (hover: hover)` and changes fill or border only; press is scale .97 in 90 ms; focus-visible draws a 2px ink or white ring; disabled controls drop to 40%. Nothing on the page loads data, so no loading state. Dialogs: none. Inputs: none. Forks deleted: see the top of this card.
+Done here: Hover sits under `@media (hover: hover)` and changes fill or border only: "Restart the pod" fills ink at full opacity (was 40%), "Documentation", "View on GitHub" and "Deploy to Cloud" get a grey fill page-locally (measured transparent → rgb(245,245,245)), connector rows fill #e4e4e7 and their plus turns, editor nodes take an ink border; press is scale .96-.98 in 90 ms; focus-visible draws a 2px ink or white ring. While the pod restarts the restart button is `aria-disabled` and its icon turns (busy) instead of fading. Nothing on the page loads data, so no loading state. Dialogs: none. Inputs: none. Forks deleted: see the top of this card.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -84,7 +85,7 @@ Done here: Hover sits under `@media (hover: hover)` and changes fill or border o
 - [x] Reduced motion shows the final state; no `setInterval`
 - [ ] Sound only on the listed moments, through the one kit (n/a: the page plays no sound of its own; the kit owns it)
 
-Done here: Signature: a run that survives the restart (live editor). Supporting: index line growing as it opens (state), connector path re-flow (state), restart on press (pointer). `scripts/variety.py` OK. Kinds: idle (the hero object), time, state, pointer, with scroll only in the pinned scene. Timers are timeout chains (`useTick`), no `setInterval`. Reduced motion (`useCalm`) renders the settled frame. No springs: every transition is 300 ms ease-emphasis or shorter.
+Done here: Signature: a run that survives the restart (live editor). Supporting techniques in `Auto.jsx` (variety.py counts 3): pointer lean on the editor (`useSpring`, up to 2.5°, fine pointers only), the figures room pinned for 210svh (190 on phone) and scrubbed by `useScroll` (each word cuts into its line, then the container outline draws), and `pathLength` wires in the connector chain and the container. Also: the index line grows as it opens and the open row runs its live object (time: record ticks, /v1/pieces streaming, one run from two triggers, the SSE event log, draft vs published, IAM then KMS), the chain re-flows on press (state). Kinds: idle and time (hero race, minis), pointer (lean, restart), state, scroll (only the pinned figures room). Timers are timeout chains (`useTick`), no `setInterval`. Reduced motion (`useCalm`) renders the settled frame: the race split at record step 4 / goroutine step 1 with the marker shown, each mini on its last frame, the figures unpinned and static.
 
 ## 10. Media
 - [ ] `Film` and `Pic` only; sizes and posters set (n/a: no photo or video)
@@ -92,7 +93,7 @@ Done here: Signature: a run that survives the restart (live editor). Supporting:
 - [ ] Budgets met; nothing missing; alt on every image (n/a: 0 images, 0 without alt)
 - [ ] No dimmed or filtered photo; 4+ real visuals together where the page has them (n/a: no photos)
 
-Done here: 0 videos. The moving objects are drawn in HTML and SVG; each loop over 5 s carries a 44px pause button (1 on the page): the hero editor.
+Done here: 0 videos. The moving objects are drawn in HTML and SVG; each loop over 5 s carries a 44px pause button (measured 44×44 at 1470 and 375): the hero editor's, and one in the open index row's live object (it pauses all six).
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -100,7 +101,7 @@ Done here: 0 videos. The moving objects are drawn in HTML and SVG; each loop ove
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: Overflow 0px at 375 and 0px at 320. 0 controls under 44px at 375 after scrolling the whole page. The primary ask's bottom edge sits at 361px on a 667px screen. Pinned scenes stack below 900px; every hover state also answers a tap.
+Done here: Overflow 0px at 375 and 0px at 320. 0 controls under 44px at 375 after scrolling the whole page. The primary ask's bottom edge sits at 357px on an 812px screen. On phones each hero lane is a row of five status dots on one track with the current step named ("step 3 / 5 · Postgres"), so both lanes and the marker fit one screen; the figures room still pins (four words 2×2 at 44px, "Apache" clears its column); every hover state also answers a tap.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -109,7 +110,7 @@ Done here: Overflow 0px at 375 and 0px at 320. 0 controls under 44px at 375 afte
 - [x] One h1; no heading skips; names start with visible text
 - [x] Keyboard reaches every control
 
-Done here: Lowest measured text contrast 1.41:1 (2 runs flagged; the flagged runs were mid-transition frames, rechecked at rest above 4.5:1). Headings 12222 with 0 skips. Pause controls: the hero editor. Every input has a label or a register name; nothing validates, so there is no error to focus. Controls are native buttons, links and inputs.
+Done here: Re-measured at rest after every 600px of scroll at 1470 and 375 (`check.js`): 0 text runs under 4.5:1 (the dark minis' secondary grey was raised from #737373 to #a3a3a3). Headings 12222 with 0 skips. Pause controls: the hero editor and the open index object. Every input has a label or a register name; nothing validates, so there is no error to focus. Controls are native buttons, links and inputs.
 
 ## 13. Performance and engineering
 - [x] h1 and LCP element in server HTML
@@ -117,7 +118,7 @@ Done here: Lowest measured text contrast 1.41:1 (2 runs flagged; the flagged run
 - [x] No poller; no third-party request before consent
 - [x] Nothing heavy run on James's laptop
 
-Done here: `curl /auto/` returns the h1 in the HTML. Demos run only while on screen (`useInView`) and stop when paused or off screen. No fetch, poller or third-party script on the page. 0 console errors at both widths (0 desktop, 0 phone).
+Done here: `curl /auto/` returns the h1 in the HTML. Demos run only while on screen (`useInView`) and stop when paused or off screen. No fetch, poller or third-party script on the page. 0 console errors at both widths (`errs.js`: 0 desktop, 0 phone, overflow 0). The intermittent hydration badge from the review was traced to the shared `FooterHTML` (its `__html` differs on a cold dev compile), not this page; `hyd.js /auto 3` shows 0 on repeat loads.
 
 ## 14. SEO and machine files
 - [x] Title and description match live (or are listed for James)
@@ -137,8 +138,8 @@ Done here: Not a model page. Cloud product anatomy: identity, the editor as cons
 
 ## 16. Developer experience
 - [x] One `CodeBlock`; copy equals display (or n/a: no code on the page)
-- [x] Config blocks parse on their own
-- [x] Terminal pauses and ends on a static frame
+- [ ] Config blocks parse on their own (n/a: no config block)
+- [ ] Terminal pauses and ends on a static frame (n/a: no terminal; the nearest thing, the GET /v1/pieces and SSE log objects, pause with the index pause button and settle on their last frame under reduced motion)
 - [x] No hand-typed version number
 
 Done here: Code: the agent prompt in the band. The agent prompt is one string shown and copied as is. No version numbers are typed into the page.
@@ -157,4 +158,4 @@ Done here: Every word is in the server HTML and every demo is local, so a blocke
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/auto.md` verdict 8 or more
 
-Done here: `data-cta` on every primary (kit `Cta`); the page imports no analytics itself. `V2:` line present in `components/pages/apps/Auto.jsx`. Last critic verdict on file: none yet (walked an earlier version); this version waits for the next walk.
+Done here: `data-cta` on every primary (kit `Cta`); the page imports no analytics itself. `V2:` line present in `components/pages/apps/Auto.jsx`. Last critic verdict on file: 6.5/10 (7 Nov); every fix in that review is addressed in this round, which waits for the next walk.

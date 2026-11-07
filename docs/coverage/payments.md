@@ -15,7 +15,7 @@ Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line
 - [x] No dead or self-looping button; prices from `lib/plans.js` (n/a: no prices on this page)
 - [x] Open copy questions for James listed, none decided
 
-Done here: the top comment carries Persona, Goal, CTA, `Metric: signup_start`, Signature and Beyond; "Try Hanzo" → /login: the header's "Try Hanzo" is the one solid fill (docs/review/SYSTEM.md §5), so the page's own hero and close asks with the same words are quiet (outlined) kit Ctas. `lib/cta.js` does not exist yet, so the label is Hanzo's own hero label, noted above.
+Done here: the top comment carries Persona, Goal, CTA, `Metric: signup_start`, Signature and Beyond; "Try Hanzo" → /login: the hero's own "Try Hanzo" is the solid kit `Cta` with `data-thumb` (the header drops to an outline while it shows on desktop; measured 1 solid fill on the first screen at 1470×801), and the close's "Try Hanzo" is solid too. `lib/cta.js` does not exist yet, so the label is Hanzo's own hero label, noted above.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it (the layout's main and skip link, untouched)
@@ -33,7 +33,7 @@ Done here: every link is `A`, `More` or the kit `Cta` (which wraps `A`); parity 
 - [x] Ends in proof strip, `Band`, footer (the close is one 44px sentence, the ask and a full-width Contact Sales row)
 - [ ] Card-to-page links use Morph; title lands within 12px (n/a: the cards open panels in place, they do not lead to pages)
 
-Done here: the h1 "Hanzo Payments" cuts in by CSS line mask (no JS), the caption sits under it; the phone starts its checkout within 1 s. The audit finds 0 inline `opacity:0` runs in the hero's server HTML; the phone's top sits at 258px at 1470×801 and 388px at 375×812 (272px of product inside 660px).
+Done here: the h1 "Hanzo Payments" cuts in by CSS line mask (no JS), the caption sits under it; the phone starts its checkout within 1 s. The audit finds 0 inline `opacity:0` runs in the hero's server HTML; the phone's top sits at 258px at 1470×801 and 388px at 375×812. The whole checkout lands on the first screen: the Pay → "succeeded" button sits at y 677–733 at 1470×801 (the device is 30.5em tall there) and at y 630–682 at 375×812 (on phones the button sits under the amount).
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -41,7 +41,7 @@ Done here: the h1 "Hanzo Payments" cuts in by CSS line mask (no JS), the caption
 - [x] Copy button copies exactly the displayed text; failure never says Copied (the kit `Code` copy)
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: hero `<Cta kind="quiet" to="/login" id="payments.hero" thumb>`, close `<Cta kind="quiet" id="payments.close">`, "Explore APIs" is `<Cta kind="link" id="payments.apis">`; the header carries the same "Try Hanzo" on desktop and the phone bar reads the hero's `data-thumb`. "Explore APIs", "API Reference", "Deploy to Cloud" and "Contact Sales" are text links.
+Done here: hero `<Cta to="/login" id="payments.hero" thumb>` (solid), close `<Cta id="payments.close">` (solid), "Explore APIs" is `<Cta kind="link" id="payments.apis">`; the header carries the same "Try Hanzo" on desktop and the phone bar reads the hero's `data-thumb`. "Explore APIs", "API Reference", "Deploy to Cloud" and "Contact Sales" are text links.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -75,7 +75,7 @@ Done here: taste OK; the CSS uses only `--bz-*` tokens plus #000000, #fafafa, #a
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: listed below
 
-Done here: pause, tracker steps, chips, "Roll back at once", rows and sheet buttons have a hover fill inside `@media (hover: hover)`, press scale .97 and a 2px focus ring; "Roll back at once" disables at 0%. 6 `:hover` rules, 0 outside a hover media query. Deleted forks are listed at the top.
+Done here: pause, tracker steps, chips, "Roll back at once", rows and sheet buttons have a hover fill inside `@media (hover: hover)`, press scale .97 and a 2px focus ring; "Roll back at once" disables at 0%; the split's range input has a 2px white focus ring on the black room. The checkout's nine methods light one by one on arrival and the four cases deal in as one list, so the back half answers before it is touched. Every `:hover` rule sits inside a hover media query. Deleted forks are listed at the top.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups

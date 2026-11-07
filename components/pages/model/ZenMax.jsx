@@ -1,12 +1,15 @@
 'use client';
 /* Zen 6 Max (/zen/zen6-max): a model launch read like a product film, one idea per screen (docs/MASTER.md).
-   The first screen sells on its own: the name, Hanzo's lede and "Talk to sales" over the playing Zen film. The film
-   then settles from full width into its card (8 of 13 columns) and the name settles from 112px to its resting 52px:
-   the name is the moment only while the film is.
-   Then the promises, the rack chapters (pinned on a desktop, stacked on a phone), the B300/B200 sheet, the close.
+   The first screen sells on its own: the name, Hanzo's lede and "Talk to sales" over the playing Zen film. The film's
+   left edge then wipes off the words (a white twin of the words clipped to the film, so each letter is flat ink or flat
+   white), and the film settles into its card (8 of 13 columns, its bottom on the crumb's baseline) beside them; the
+   name settles from 112px to its resting 52px. The pause rides the card's corner.
+   Then the promises beside a router drawing that changes per promise (it rides under the header on a phone), the rack
+   chapters (pinned on a desktop; on a phone each step carries its own compact rack), the B300/B200 sheet whose picked
+   total grows in once the sheet is in view, the close rising into the sheet's room.
    Not only scroll: the name cuts in on load, the film plays (with a pause control), the count runs, the rack answers its
-   switches, the drawer opens, the field in the close bends to the pointer.
-V2: 8/10 name, lede and ask on a full-width film that settles into its card; rack chapters; B300/B200 DataTable; deck sizes, 1152 container, no springs
+   switches, the router answers the row under the pointer, the drawer opens, the field in the close bends to the pointer.
+V2: 8/10 film wipes off flat ink/white words, card on the crumb baseline; phone: sticky router, a rack per step; sheet figure arrives; close overlaps the sheet
 */
 // Persona: enterprise buyer running Zen 6 Max on its own GPUs
 // Goal: understand what a rack for Zen 6 Max is made of, then reach sales
@@ -54,11 +57,15 @@ function Stage() {
   const [over, setOver] = useState(true);
   const [playing, setPlaying] = useState(false);
   const { scrollYProgress: p } = useScroll({ target: box, offset: ['start start', 'end end'] });
-  const k = useTransform(p, [0, 0.62], [1, 0], { clamp: true });
+  const k = useTransform(p, [0, 0.75], [1, 0], { clamp: true });
   const ke = useTransform(k, (v) => v * (2 - v)); // eased out
-  useMotionValueEvent(ke, 'change', (v) => setOver(v > 0.68)); // the card clears the button at about two thirds
+  // the film's left edge wipes off the words between --k 1 and .8 (ZenMax.css --edge); past about .91 it has cleared the ask.
+  // --k is written to the pin by hand after mount, so the server and the first client paint both carry the same --k: 1.
+  const put = (v) => pin.current?.style.setProperty('--k', v.toFixed(4));
+  useMotionValueEvent(ke, 'change', (v) => { put(v); setOver(v > 0.91); });
   useEffect(() => {
-    setOver(ke.get() > 0.68);
+    put(ke.get());
+    setOver(ke.get() > 0.91);
     const fit = () => {
       const c = card.current;
       if (!c || !c.offsetWidth) return;
@@ -83,16 +90,19 @@ function Stage() {
   return (
     <section className="zx-stage" ref={box} aria-labelledby="zx-h">
       {/* JS off: the stage settled, the poster for the film, every step and the drawer shown (gate item 5) */}
-      <noscript><style>{'.zx-stage-pin{--k:0!important}.zx-stage{height:auto!important}.zx-srv{opacity:1!important;transform:none!important}.zx-step{opacity:1!important}.zx-drawer-p[hidden]{display:block!important}.zx-pause{display:none}.zx-card .zx-film{display:none!important}.zx-card{background:#000 url(/models/zen.webp) center/cover}'}</style></noscript>
-      <motion.div className="zx-stage-pin" ref={pin} style={{ '--k': ke }}>
+      <noscript><style>{'.zx-stage-pin{--k:0!important}.zx-stage{height:auto!important}.zx-srv{opacity:1!important;transform:none!important}.zx-step{opacity:1!important}.zx-drawer-p[hidden]{display:block!important}.zx-pause{display:none}.zx-card .zx-film{display:none!important}.zx-card{background:#000 url(/models/zen.webp) center/cover}.zx-rt-fan,.zx-rt-tool{clip-path:none!important}.zx-rt-lit,.zx-rt-ctx{opacity:1!important}.zx-rt-lit,.zx-rt-fill{transform:none!important}'}</style></noscript>
+      <div className="zx-stage-pin" ref={pin} style={{ '--k': 1 }}>
         <div className="zx-card" ref={card}>
           <Film src={media('zen', 'webm')} poster={media('zen', 'webp')} w={1200} h={1500} className="zx-film" />
         </div>
-        <button type="button" className="zx-pause" aria-label="Pause" aria-pressed={!playing} onClick={toggle}>
-          {playing
-            ? <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-            : <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M5.5 3.5v9l7-4.5z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" /></svg>}
-        </button>
+        {/* the pause rides the film's visible corner at every --k (ZenMax.css .zx-pause-at) */}
+        <div className="zx-pause-at">
+          <button type="button" className="zx-pause" aria-label="Pause" aria-pressed={!playing} onClick={toggle}>
+            {playing
+              ? <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+              : <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M5.5 3.5v9l7-4.5z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" /></svg>}
+          </button>
+        </div>
         <div className="zx-w zx-stage-t">
           <div className="zx-stage-b">
             <h1 id="zx-h" className="zx-name zx-blend" data-morph-target><Cut load delay={0.1}>Zen 6 Max</Cut></h1>
@@ -104,37 +114,101 @@ function Stage() {
             <nav className="zx-crumb zx-blend"><ol><li><A to="/zen">Zen</A></li><li aria-current="page">Zen 6 Max</li></ol></nav>
           </div>
         </div>
-      </motion.div>
+        {/* the white twin of the words, clipped to the film's visible box (ZenMax.css .zx-onfilm): ink off the film, white
+            on it, the split exact at the film's edge and every letter one flat colour. Shapes only for readers (aria-hidden). */}
+        <div className="zx-onfilm" aria-hidden="true">
+          <div className="zx-w zx-stage-t">
+            <div className="zx-stage-b">
+              <div className="zx-name"><Cut load delay={0.1}>Zen 6 Max</Cut></div>
+              <p className="zx-sub">Zen 6 Max. Built for the hardest work: deep reasoning, long context, and code.</p>
+              <div className="zx-acts">
+                <span className="x-btn solid zx-ghost">Talk to sales</span>
+                <span className="x-arrow"><span>Run it on your own GPUs</span><svg viewBox="0 0 16 16" width="14" height="14"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
+              </div>
+              <div className="zx-crumb"><ol><li><span className="zx-crumb-a">Zen</span></li><li>Zen 6 Max</li></ol></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }
 
-/* the four promises: heading left, line right (5 and 8 of 13 columns); each heading cuts into its line on arrival */
+/* the router drawing beside the promises: one object, one change per promise, each step adds to the last.
+   01 One name: one node fans into the specialists. 02 Right-sized: a request runs down one line and lights its
+   configuration. 03 Long context: a long bar fills under it. 04 Tools and code: the lit configuration opens a terminal
+   line with a blinking caret. Shapes only, no words (aria-hidden); ZenMax.css moves it on transform, opacity and clip-path. */
+const LANES = [88, 144, 200, 256, 312];
+function Router({ at }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.4 });
+  return (
+    <div className="zx-rt" ref={ref} data-at={at} data-seen={seen || undefined} aria-hidden="true">
+      <svg className="zx-rt-l zx-rt-fan" viewBox="0 0 640 440">
+        {LANES.map((y) => <path key={y} className={y === 200 ? 'pick' : undefined} d={`M104 200 C 210 200, 210 ${y}, 316 ${y}`} />)}
+      </svg>
+      <svg className="zx-rt-l" viewBox="0 0 640 440">
+        <circle className="zx-rt-ring" cx="80" cy="200" r="34" />
+        <circle className="zx-rt-src" cx="80" cy="200" r="22" />
+        {LANES.map((y) => <rect key={y} className="zx-rt-node" x="316" y={y - 15} width="116" height="30" rx="15" />)}
+      </svg>
+      <svg className="zx-rt-l zx-rt-req" viewBox="0 0 640 440">
+        <rect className="zx-rt-lit" x="316" y="185" width="116" height="30" rx="15" />
+        <circle className="zx-rt-dot" cx="104" cy="200" r="6" />
+      </svg>
+      <svg className="zx-rt-l zx-rt-ctx" viewBox="0 0 640 440">
+        <rect className="zx-rt-track" x="58" y="374" width="524" height="10" rx="5" />
+        <rect className="zx-rt-fill" x="58" y="374" width="524" height="10" rx="5" />
+      </svg>
+      <svg className="zx-rt-l zx-rt-tool" viewBox="0 0 640 440">
+        <path className="zx-rt-wire" d="M432 200 H 470" />
+        <rect className="zx-rt-term" x="470" y="168" width="128" height="64" rx="12" />
+        <path className="zx-rt-chev" d="M488 192 l8 8 l-8 8" />
+        <rect className="zx-rt-code" x="506" y="198" width="44" height="4" rx="2" />
+        <rect className="zx-rt-caret" x="556" y="191" width="3" height="18" rx="1" />
+      </svg>
+    </div>
+  );
+}
+
+/* the four promises: the router drawing (8 of 13, pinned on a desktop) beside the rows (5 of 13); the row at mid-screen,
+   or the one under the pointer, sets the drawing. Each heading cuts into its line on arrival. */
 function Promises() {
+  const [at, setAt] = useState(0);
+  const rows = useRef([]);
+  useEffect(() => {
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(+e.target.dataset.i); }), { rootMargin: '-40% 0px -50% 0px' });
+    rows.current.forEach((r) => r && io.observe(r));
+    return () => io.disconnect();
+  }, []);
+  const peek = (i) => (e) => { if (e.pointerType === 'mouse') setAt(i); };
   return (
     <section className="zx-prom">
-      <ol className="zx-w zx-prom-l">
-        {FEATS.map(([t, x], i) => (
-          <li key={t}>
-            <h2><span className="zx-idx" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><Cut>{t}</Cut></h2>
-            <p>{x}</p>
-          </li>
-        ))}
-      </ol>
+      <div className="zx-w zx-prom-g">
+        <div className="zx-prom-art"><Router at={at} /></div>
+        <ol className="zx-prom-l">
+          {FEATS.map(([t, x], i) => (
+            <li key={t} data-i={i} ref={(el) => { rows.current[i] = el; }} data-on={at === i || undefined} onPointerEnter={peek(i)}>
+              <h2><span className="zx-idx" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><Cut>{t}</Cut></h2>
+              <p>{x}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
     </section>
   );
 }
 
 /* the rack: four servers of eight GPUs; pools tint the GPUs per specialist; redundancy fills a twin rack across a
    failure domain (its slots wait, ghosted, until then) */
-function Rack({ k, plan, q, on, calm }) {
+function Rack({ k, plan, q, on, calm, dx = 40 }) {
   const one = (twin) => {
     const go = on && (!twin || plan === 2);
     return (
       <div className={'zx-rack' + (twin ? ' twin' : '')} data-go={go || undefined}>
         {[0, 1, 2, 3].map((s) => (
           <div key={s} className="zx-slot">
-            <motion.div key={k} className="zx-srv" initial={{ x: 40, opacity: 0 }} animate={go ? { x: 0, opacity: 1 } : { x: 40, opacity: 0 }} transition={calm ? { duration: 0 } : { duration: 0.5, ease: EASE, delay: s * 0.06 }}>
+            <motion.div key={k} className="zx-srv" initial={{ x: dx, opacity: 0 }} animate={go ? { x: 0, opacity: 1 } : { x: dx, opacity: 0 }} transition={calm ? { duration: 0 } : { duration: 0.5, ease: EASE, delay: s * 0.06 }}>
               <span className="zx-srv-n">{DGX[k].name}</span>
               <span className="zx-gpus">
                 {Array.from({ length: 8 }, (_, g) => <i key={g} data-p={plan >= 1 ? Math.min(2, Math.floor((s * 8 + g) / 11)) : undefined} style={{ transitionDelay: (go && !calm ? 0.3 + s * 0.06 + g * 0.02 : 0) + 's' }} />)}
@@ -154,8 +228,22 @@ function Rack({ k, plan, q, on, calm }) {
   );
 }
 
+/* a phone's panel per step (MASTER 4.1: a pinned scene becomes static panels on a phone): the compact rack set to that
+   step's plan, and its total. It builds itself when it reaches the screen, as the desktop rack does per chapter. */
+function StepRack({ k, plan, calm }) {
+  const ref = useRef(null);
+  const on = useInView(ref, { once: true, amount: 0.5 });
+  return (
+    <div className="zx-panel zx-mini" ref={ref} aria-hidden="true">
+      <Rack k={k} plan={plan} q={plan === 0} on={on} calm={calm} dx={16} />
+      <p className="zx-mini-n"><span>{DGX[k].total.toLocaleString('en-US')} GB</span><span>{DGX[k].name}</span></p>
+    </div>
+  );
+}
+
 /* the chapters. Desktop: text steps past the pinned rack and the step at mid-screen sets its state. Phone: no pin
-   (MASTER part 11): the rack sits above its steps and the planning buttons set it. */
+   (MASTER part 11): the full rack with its switches sits above the steps, and each step carries its own compact rack set
+   to its plan; the planning buttons scroll to their step. */
 function Chapters({ k, setK }) {
   const [at, setAt] = useState(0);
   const [wide, setWide] = useState(true);
@@ -175,7 +263,7 @@ function Chapters({ k, setK }) {
   const go = (i) => {
     setAt(i + 1);
     const el = steps.current[i + 1];
-    if (!wide || !el) return;
+    if (!el) return;
     const quiet = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const y = el.getBoundingClientRect().top + scrollY - innerHeight / 2 + el.offsetHeight / 2;
     if (window.__lenis && !quiet) window.__lenis.scrollTo(y, { duration: 0.5 }); else scrollTo({ top: y, behavior: quiet ? 'auto' : 'smooth' });
@@ -197,6 +285,7 @@ function Chapters({ k, setK }) {
             <div key={t} className="zx-step" data-step={i + 1} ref={(el) => { steps.current[i + 1] = el; }} data-on={at === i + 1 || undefined}>
               <h3 className="zx-step-t">{t}</h3>
               <p className="zx-body">{x}</p>
+              <StepRack k={k} plan={i} calm={calm} />
             </div>
           ))}
         </div>
@@ -208,7 +297,7 @@ function Chapters({ k, setK }) {
               </div>
               <span className="zx-bar-n" aria-hidden="true">{String(at + 1).padStart(2, '0')} / 04</span>
             </div>
-            <Rack k={k} plan={plan} q={at === 1} on={on} calm={calm} />
+            <Rack k={k} plan={plan} q={at === 1} on={on} calm={calm} dx={wide ? 40 : 16} />
             <div className="zx-foot">
               <p className="zx-total"><Count key={k} to={DGX[k].total} suffix=" GB" duration={1.2} className="zx-num" /><span>{DGX[k].name}</span></p>
               <div className="zx-plan" role="group" aria-labelledby="zx-plan-l">
@@ -227,17 +316,22 @@ function Chapters({ k, setK }) {
    column switches the rack above and tints that column. */
 function Spec({ k, setK }) {
   const [open, setOpen] = useState(false);
+  const [peek, setPeek] = useState(-1); // the column under a mouse previews its figure (ZenMax.css tints its cells)
+  // the picked figure rests at half size until the sheet is well in view (its top past 60% of the screen), then grows in
+  const figs = useRef(null);
+  const seen = useInView(figs, { once: true, margin: '0px 0px -40% 0px' });
+  const hover = (i) => ({ onPointerEnter: (e) => { if (e.pointerType === 'mouse') setPeek(i); }, onPointerLeave: () => setPeek(-1) });
   const cols = [
     { key: 'row', label: '' },
-    ...DGX.map((d, i) => ({ key: 'd' + i, subject: k === i, label: <button type="button" className="zx-col" aria-pressed={k === i} onClick={() => setK(i)}>{d.name}</button> })),
+    ...DGX.map((d, i) => ({ key: 'd' + i, subject: k === i, label: <button type="button" className="zx-col" aria-pressed={k === i} onClick={() => setK(i)} {...hover(i)}>{d.name}</button> })),
   ];
   const rows = DGX[0].rows.map(([label], r) => ({ row: label, d0: DGX[0].rows[r][1], d1: DGX[1].rows[r][1] }));
   return (
     <section className="zx-spec">
       <div className="zx-w">
-        <div className="zx-figs" aria-hidden="true">
+        <div className="zx-figs" ref={figs} data-seen={seen || undefined} aria-hidden="true">
           <span />
-          {DGX.map((d, i) => <span key={d.name} className="zx-fig" data-on={k === i || undefined}>{d.total.toLocaleString('en-US')} GB</span>)}
+          {DGX.map((d, i) => <span key={d.name} className="zx-fig" data-on={k === i || undefined} data-peek={(peek === i && k !== i) || undefined}><span>{d.total.toLocaleString('en-US')} GB</span></span>)}
         </div>
         <DataTable caption={FOUR} cols={cols} rows={rows} className="zx-sheet" />
         <div className="zx-srcs">

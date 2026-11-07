@@ -82,7 +82,7 @@ Done here: the slider is drawn (`role="slider"`, arrows, Page keys, Home/End, dr
 - [x] Reduced motion rests; no springs
 - [x] n/a sound (shared kit)
 
-Done here: `variety.py` OK; packet headers fill the rest of their sixteen bytes on hover.
+Done here: `variety.py` OK; packet headers fill the rest of their sixteen bytes on hover. Idle while you wait: the active hero point's rule fills over its 3.6 s turn (it keeps stepping on the phone after the wire leaves view), and a pointer sweeps the landed packet's sixteen header bytes; both stop under reduced motion.
 
 ## 10. Media
 - [x] Kit `Img` only (the Enso mark beside the kicker)
@@ -152,7 +152,7 @@ Done here: look.cjs both widths errors none.
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary
 - [x] Nothing identifier-bearing
-- [x] `V2:` line in `app/zap/page.jsx`
+- [x] `V2:` line in the top comment of `components/pages/apps/Zap.jsx`
 - [ ] Review 8 or more (re-review pending)
 
 Done here: previous review 6/10; its eight fixes addressed.

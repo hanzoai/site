@@ -106,7 +106,7 @@
 .sg-plan h3 { margin: 0; font-size: 21px; font-weight: 600; letter-spacing: -.02em; }
 .sg-price { display: flex; align-items: baseline; gap: 4px; margin: 20px 0 12px; }
 .sg-price b { font-size: clamp(48px, 4.4vw, 64px); line-height: 1; }
-.sg-price span { font-size: 15px; color: var(--soft); }
+.sg-price > span { font-size: 15px; color: var(--soft); }
 .sg-price .sg-word { font-weight: 600; letter-spacing: -.045em; }
 .sg-plan-d { margin: 0 0 24px; min-height: 3em; font-size: 15.5px; line-height: 1.5; color: var(--soft); }
 .sg-plan-a { align-self: flex-start; height: 48px !important; font-size: 15px !important; padding: 0 22px !important; }
@@ -226,3 +226,66 @@ a.sg-chip:active { transform: scale(.97); }
   .sg-langs b.long { font-size: 24px !important; }
   .sg-pop { font-size: 14px; }
 }
+
+/* step 01 is visible: the PDF's lines load in, one after another, every time the desk starts over (moves inside 1 s) */
+@keyframes sg-up { from { transform: scaleX(0); } to { transform: none; } }
+html.js .sg-lines.up i { transform-origin: 0 50%; animation: sg-up .5s cubic-bezier(.16, 1, .3, 1) both; }
+html.js .sg-lines.up i:nth-child(2) { animation-delay: 60ms; } html.js .sg-lines.up i:nth-child(3) { animation-delay: 120ms; }
+html.js .sg-lines.up i:nth-child(4) { animation-delay: 180ms; } html.js .sg-lines.up i:nth-child(5) { animation-delay: 240ms; }
+html.js .sg-lines.up i:nth-child(6) { animation-delay: 300ms; } html.js .sg-lines.up i:nth-child(7) { animation-delay: 360ms; }
+html.js .sg-lines.up i:nth-child(8) { animation-delay: 420ms; } html.js .sg-lines.up i:nth-child(9) { animation-delay: 480ms; }
+@media (prefers-reduced-motion: reduce) { html.js .sg-lines.up i { animation: none; } }
+/* where two sections meet, one padding, not two (no 480px dead bands) */
+.sg.gx .w2-sec + .w2-sec { padding-top: clamp(40px, 5vw, 72px) !important; }
+.sg.gx .sg-parts { padding-top: clamp(40px, 5vw, 72px) !important; }
+
+/* the eight parts read as a compact index (number, name, +), not eight empty boxes; each opens its sheet */
+.sg-cards .w2-oc-card { min-height: 128px; justify-content: flex-end; padding: 22px 24px; }
+.sg-cards .w2-oc-t { font-size: 21px; padding-right: 44px; }
+.sg-cards .w2-oc-k { position: absolute; left: 24px; top: 22px; }
+@media (max-width: 899px) { .sg-cards .w2-oc-card { min-height: 104px; } .sg-cards .w2-oc-k { position: static; } }
+
+/* plans: the prices flip in once when reached; resting at 44px so no four big figures shout at once */
+.sg-price b { font-size: 44px; }
+.sg-flap { gap: 0 !important; font: inherit; letter-spacing: inherit; }
+.sg-flap span { min-width: 0 !important; font: inherit; color: inherit; background: none !important; padding: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
+@media (hover: hover) { .sg-run button:not([aria-pressed='true']):hover { color: var(--ink); background: rgba(255, 255, 255, .6); } }
+.sg-run button:active { transform: scale(.97); }
+/* the pad's ghost signature: drawn once in faint ink when the pad is reached */
+.sg-pad-c { position: relative; }
+.sg-pad-ghost { position: absolute; left: 50%; top: 50%; width: min(52%, 420px); height: auto; transform: translate(-50%, -50%); pointer-events: none; }
+.sg-pad-ghost path { fill: none; stroke: #a3a3a3; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.sg-pad-ghost.in path { stroke-dashoffset: 0; transition: stroke-dashoffset 2.2s cubic-bezier(.45, 0, .2, 1) .4s; }
+@media (prefers-reduced-motion: reduce) { .sg-pad-ghost path { stroke-dashoffset: 0; } }
+/* no dead bands around the pad and after the pinned story */
+.sg.gx .sg-try { padding-bottom: clamp(40px, 5vw, 72px) !important; }
+.sg.gx .sg-cost { padding-bottom: clamp(56px, 6vw, 96px) !important; }
+.sg-pad-hint.under { top: auto; bottom: 18px; translate: -50% 0; font-size: 13px; }
+@media (min-width: 900px) { .sg .sg-parts { margin-top: -88px; } }
+/* the fork line under Built on Open Source */
+.sg-fork { margin-top: 40px; }
+.sg-fork svg { display: block; width: 100%; height: auto; overflow: visible; }
+.sg-fork path { fill: none; stroke-width: 2; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.2s cubic-bezier(.4, 0, .2, 1); }
+.sg-fork .up { stroke: #a3a3a3; }
+.sg-fork .me { stroke: var(--ink); stroke-width: 2.5; transition-delay: .5s; }
+.sg-fork .dot { fill: #a3a3a3; }
+.sg-fork .node { fill: var(--ink); opacity: 0; transition: opacity .3s cubic-bezier(0, 0, .2, 1) 1.5s; }
+.sg-fork .node:not(.me-end) { transition-delay: .4s; }
+.sg-fork.in path { stroke-dashoffset: 0; }
+.sg-fork.in .node { opacity: 1; }
+.sg-fork p { display: flex; justify-content: space-between; margin: 10px 0 0; font-size: 13px; color: #525252; }
+html:not(.js) .sg-fork path { stroke-dashoffset: 0; } html:not(.js) .sg-fork .node { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .sg-fork path { stroke-dashoffset: 0; transition: none; } .sg-fork .node { opacity: 1; transition: none; } }
+/* signer chips never wrap their name */
+.sg-track p span, .sg-track b { white-space: nowrap; }
+.sg-track { min-width: max-content; }
+
+/* the close's ledger: one statement and one ask on the left, Hanzo's other lines as hairline rows on the right */
+.sg-first-links li.sg-get { display: grid; margin: 0; padding: 20px 0; border-top: 1px solid rgba(255, 255, 255, .12); }
+.sg-first-links .sg-get-meta { margin-top: 8px; }
+.sg-row-links { display: flex; flex-wrap: wrap; gap: 0 24px; color: #f5f5f7 !important; }
+.sg-first-links li { transition: background .15s cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) { .sg-first-links li:hover h3 { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; } }
+.sg-first-row { align-items: start; }
+.sg-first-main { position: sticky; top: 96px; }
+@media (max-width: 899px) { .sg-first-main { position: static; } }

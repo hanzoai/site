@@ -1,5 +1,8 @@
 /* With JavaScript off (crawlers, agents, readers who block scripts), every word on the models pages is still shown:
-   the entrance states motion writes into the server HTML are reset, and the pinned scenes lie flat. Server component. */
+   the entrance states motion writes into the server HTML are reset, and the pinned scenes lie flat. Written with the
+   shared <NoJs> (a plain <style> scoped under html:not(.js)), never a <noscript>, so nothing can fail to hydrate. */
+import NoJs from '../../NoJs';
+
 const CSS = `
 .xmo [style*="opacity:0"],.xmf [style*="opacity:0"]{opacity:1!important}
 .xmo .x-line-in,.xmf .x-line-in,.xmo [style*="translateY"],.xmf [style*="translateY"]{transform:none!important}
@@ -12,5 +15,5 @@ const CSS = `
 .xmo-bars i::after{transform:scaleX(var(--v))!important}.xmo-table tr[hidden]{display:table-row!important}
 `;
 export default function NoScript() {
-  return <noscript><style>{CSS}</style></noscript>;
+  return <NoJs css={CSS} />;
 }

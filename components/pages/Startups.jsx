@@ -2,14 +2,17 @@
 // Signature: the application answers back: a match card assembles beside the form as you fill it (your company, stage, what you will use, your compute).
 // Beyond: the track read-out: tick a tier-1 investor and the card moves you from starting free to the credits program, by the program's own rule.
 /* The Hanzo Startup Program.
-   V2: 8/10 rebuilt: the program's name at display size beside $150,000 on a split-flap board as the hero figure; the three parts as a ladder of tiles that rises to the credits; the Techstars note as a pull quote; the application with its live match card; the closing for teams that are not venture-backed as the dark room.
-   Motion: the match card assembling (signature) + the split-flap hero figure + line-masked type + the match ring
-   drawing as required fields fill.
-   Accent: sky. The application is hanzo.ai's own form, field for field, and it sends exactly what hanzo.ai sends:
+   Persona: a founder of an early, venture-backed team. Goal: apply for credits (or start free).
+   CTA: "Apply for credits" (hero, then the header's ask after the hero).
+   Metric: cta_click:startups.hero
+   V2: 8/10 the program's name with its Techstars caption beneath, beside $150,000 on a split-flap board that flips again while seen; the three parts as one ladder that climbs once, one rung big at a time; the application with pill choices (no browser selects) and its live match card; the not-venture-backed close as the dark room.
+   Motion: the match card assembling (signature) + the split-flap figure (idle) + the ladder climbing (time, pointer)
+   + line-masked type.
+   Ink and greys only. The application is hanzo.ai's own form, field for field, and it sends exactly what hanzo.ai sends:
    POST https://api.hanzo.ai/v1/form/public/hanzo.startups-apply/responses with the same answers, token and hidden
    source. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { A, Flap, Tick } from '../kit';
 import LineReveal from '../v2/LineReveal';
 import '../v2/ProgramScale.css';
@@ -42,24 +45,41 @@ function body(c, w) {
   };
 }
 
+/* The split-flap board settles on $150,000, and every few seconds while it is on screen it flips again, like a real
+   departures board (paused off screen and under reduced motion; the value in the HTML is always $150,000). */
+function Board() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount: 0.5 });
+  const calm = useReducedMotion();
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    if (!seen || calm) return;
+    const t = setTimeout(() => setN((v) => v + 1), 4200);
+    return () => clearTimeout(t);
+  }, [seen, calm, n]);
+  // after the first spin the board only re-clicks its own tiles (each flap drops and lands on the same character), so it
+  // never shows a figure other than $150,000
+  return <span ref={ref} className={'xst-board' + (n ? ' tick t' + (n % 2) : '')}><Flap value="$150,000" className="xst-flap" /></span>;
+}
+
 function Hero() {
   return (
     <section className="xst-hero" aria-labelledby="xst-h1">
       <div className="xp-wrap xp-grid">
         <div className="xst-words">
-          <p className="xp-kick">Techstars ’17 — built for founders</p>
           <LineReveal as="h1" id="xst-h1" className="xp-display md" lines={['The Hanzo', 'Startup Program']} />
+          <p className="xp-kick xst-cap">Techstars ’17 — built for founders</p>
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.4 }}>
             <p className="xp-lede xst-lede">Everyone starts free. Venture-backed teams get up to $150,000 in credits.</p>
             <div className="xst-acts">
-              <a href="#apply" className="xp-cta" data-thumb="Apply for credits">Apply for credits<i aria-hidden="true">↓</i></a>
+              <a href="#apply" className="xp-cta" data-thumb="Apply for credits" data-cta="startups.hero">Apply for credits<i aria-hidden="true">↓</i></a>
               <A to="https://platform.hanzo.ai" className="xp-ghost">Start building free</A>
             </div>
           </motion.div>
         </div>
         <motion.div className="xst-fig" initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.3 }}>
           <span className="xst-fig-k x-mono" aria-hidden="true">Up to</span>
-          <Flap value="$150,000" className="xst-flap" />
+          <Board />
           <span className="xst-fig-u x-mono" aria-hidden="true">in credits</span>
         </motion.div>
       </div>
@@ -67,19 +87,33 @@ function Hero() {
   );
 }
 
-/* The program as a ladder: three tiles that rise to the credits. */
+/* The program as one ladder you climb: three rungs in a column, one big at a time (the others rest at medium). It
+   climbs by itself once while in view (start free → bring your compute → the credits), then rests on the credits;
+   pointing at or focusing a rung takes it there. The credits rung carries the same split-flap figure as the hero. */
 function Ladder() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount: 0.45 });
+  const calm = useReducedMotion();
+  const [at, setAt] = useState(0);
+  const [mine, setMine] = useState(false);
+  useEffect(() => {
+    if (!seen || calm || mine || at >= PROGRAM.length - 1) return;
+    const t = setTimeout(() => setAt((v) => v + 1), 2400);
+    return () => clearTimeout(t);
+  }, [seen, calm, mine, at]);
+  const pick = (i) => { setMine(true); setAt(i); };
   return (
     <section className="xp-sec tight xst-prog" aria-labelledby="xst-prog-h">
       <div className="xp-wrap">
         <h2 id="xst-prog-h" className="xp-kick">The program</h2>
-        <ol className="xst-ladder">
+        <ol className="xst-ladder" ref={ref}>
           {PROGRAM.map(([t, d], i) => (
-            <motion.li key={t} className={'r' + i} initial={{ y: 80 + i * 40, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], delay: i * 0.1 }}>
+            <li key={t} className={'r' + i + (at === i ? ' on' : '') + (i < at ? ' past' : '')} tabIndex={0} onPointerEnter={() => pick(i)} onFocus={() => pick(i)} onClick={() => pick(i)}>
               <span className="xst-rung x-mono">{String(i + 1).padStart(2, '0')} / 03</span>
               <h3 className="xp-head">{t}</h3>
               <p className="xp-body">{d}</p>
-            </motion.li>
+              {i === 2 && <span className="xst-rung-fig" aria-hidden="true">{at === 2 ? <Flap value="$150,000" className="xst-flap sm" /> : <span className="xst-flap sm">$150,000</span>}</span>}
+            </li>
           ))}
         </ol>
         <p className="xst-ts xp-lede"><b>Techstars founders:</b> Hanzo is a Techstars company. We offer perks tailored to each portfolio brand — mention your batch when you apply and we will match it.</p>
@@ -91,11 +125,23 @@ function Ladder() {
 function Match({ c }) {
   const req = [c.company.trim(), c.contactName.trim(), okEmail(c.email), c.stage, c.building.trim()];
   const done = req.filter(Boolean).length;
-  const credits = c.tier1Investors.length > 0;
+  // until you touch the form, the card shows the program's rule by itself: the free track, then what tier-1 backing
+  // turns it into, every 3.6 s while the card is on screen (it stops for good at your first answer)
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount: 0.5 });
+  const calm = useReducedMotion();
+  const blank = c.company === '' && c.contactName === '' && c.email === '' && !c.stage && c.tier1Investors.length === 0 && c.useCases.length === 0 && !c.byoCompute;
+  const [flip, setFlip] = useState(false);
+  useEffect(() => {
+    if (!blank || !seen || calm) { setFlip(false); return; }
+    const t = setTimeout(() => setFlip((v) => !v), 3600);
+    return () => clearTimeout(t);
+  }, [blank, seen, calm, flip]);
+  const credits = c.tier1Investors.length > 0 || (blank && flip);
   const stage = STAGES.find((s) => s[0] === c.stage)?.[1];
   const tech = c.techstarsBatch.trim() || c.tier1Investors.includes('Techstars');
   return (
-    <aside className="xst-match" aria-label="Your match" aria-live="polite">
+    <aside className="xst-match" aria-label="Your match" aria-live={blank ? 'off' : 'polite'} ref={ref}>
       <div className="xst-match-top">
         <svg viewBox="0 0 36 36" width="40" height="40" aria-hidden="true"><circle cx="18" cy="18" r="15" fill="none" stroke="rgba(255,255,255,.14)" strokeWidth="3" /><motion.circle cx="18" cy="18" r="15" fill="none" stroke="#737373" strokeWidth="3" strokeLinecap="round" transform="rotate(-90 18 18)" initial={false} animate={{ pathLength: done / 5 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} /></svg>
         <div><b className="xst-co">{c.company.trim() || 'Company name'}</b><span className="x-mono">{done} / 5 · {stage || 'Select stage'}</span></div>
@@ -105,7 +151,7 @@ function Match({ c }) {
           <motion.div key={credits ? 'c' : 'f'} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35, ease: EASE }}>
             <span className="x-mono">{credits ? 'Backed by any of these?' : 'Everyone starts free.'}</span>
             <b>{credits ? 'Up to $150,000 in credits' : 'Start in minutes'}</b>
-            <p>{credits ? c.tier1Investors.join(' · ') : 'Creating an account is free.'}</p>
+            <p>{credits ? (c.tier1Investors.length ? c.tier1Investors.join(' · ') : 'Application required, and tier-1 VC backing is required for the credits program.') : 'Creating an account is free.'}</p>
           </motion.div>
         </AnimatePresence>
       </div>
@@ -127,6 +173,33 @@ function Field({ id, label, opt, req, children }) {
   );
 }
 
+/* One choice from a short list, as pills on the page instead of a browser menu: an APG radio group (arrow keys move
+   and choose, one tab stop), the same values the select sent. The hint is Hanzo's own placeholder, shown until chosen. */
+function Choice({ id, label, req, hint, opts, value, set }) {
+  const box = useRef(null);
+  const key = (e, i) => {
+    const d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
+    if (!d) return;
+    e.preventDefault();
+    const n = (i + d + opts.length) % opts.length;
+    set(opts[n][0]);
+    box.current?.querySelectorAll('[role=radio]')[n]?.focus();
+  };
+  const cur = opts.findIndex((o) => o[0] === value);
+  return (
+    <fieldset className="xst-set xst-choice">
+      <legend id={id + '-l'}>{label}{req && <i aria-hidden="true"> *</i>} <span className="xst-hint" aria-hidden={!!value}>{value ? '' : hint}</span></legend>
+      <div className="xst-chips" role="radiogroup" aria-labelledby={id + '-l'} aria-required={req || undefined} ref={box} id={id}>
+        {opts.map(([v, l], i) => (
+          <button key={v} type="button" role="radio" aria-checked={value === v} tabIndex={(cur < 0 ? i === 0 : i === cur) ? 0 : -1} onClick={() => set(v)} onKeyDown={(e) => key(e, i)}>
+            <i aria-hidden="true" className="xst-dot" />{l}
+          </button>
+        ))}
+      </div>
+    </fieldset>
+  );
+}
+
 function Apply() {
   const [c, setC] = useState(EMPTY);
   const w = useRef(null);
@@ -140,7 +213,12 @@ function Apply() {
   const submit = async (e) => {
     e.preventDefault();
     const m = !c.company.trim() ? 'Company name is required.' : !c.contactName.trim() ? 'Your name is required.' : !okEmail(c.email) ? 'A valid email is required.' : !c.stage ? 'Please select your company stage.' : !c.building.trim() ? 'Tell us what you are building.' : null;
-    if (m) return setErr(m);
+    if (m) {
+      // the first invalid field takes focus, so the message and the place to fix it are together
+      const id = !c.company.trim() ? 'company' : !c.contactName.trim() ? 'contactName' : !okEmail(c.email) ? 'email' : !c.stage ? 'stage' : 'building';
+      setTimeout(() => (document.querySelector(`#${id} [role=radio]`) || document.getElementById(id))?.focus(), 0);
+      return setErr(m);
+    }
     setBusy(true); setErr(null);
     try {
       if (!c.hp) { // a filled trap is a bot: it is thanked and nothing is sent
@@ -183,12 +261,7 @@ function Apply() {
                 </div>
                 <div className="xst-row">
                   <Field id="role" label="Your role"><input id="role" name="role" type="text" value={c.role} onChange={on} placeholder="Co-founder & CEO" autoComplete="organization-title" /></Field>
-                  <Field id="stage" label="Company stage" req>
-                    <select id="stage" name="stage" required value={c.stage} onChange={on}>
-                      <option value="" disabled>Select stage</option>
-                      {STAGES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
-                    </select>
-                  </Field>
+                  <Choice id="stage" label="Company stage" req hint="Select stage" opts={STAGES} value={c.stage} set={(v) => setC((p) => ({ ...p, stage: v }))} />
                 </div>
                 <Field id="investors" label="Who are your investors?" opt="(funds, angels)"><input id="investors" name="investors" type="text" value={c.investors} onChange={on} placeholder="e.g. Sequoia, plus a few angels" /></Field>
                 <fieldset className="xst-set">
@@ -231,12 +304,9 @@ function Apply() {
                 </AnimatePresence>
                 <div className="xst-row">
                   <Field id="techstarsBatch" label="Techstars affiliation" opt="(optional)"><input id="techstarsBatch" name="techstarsBatch" type="text" value={c.techstarsBatch} onChange={on} placeholder="Batch / program, e.g. NYC W17" /></Field>
-                  <Field id="heardVia" label="How did you hear about us?">
-                    <select id="heardVia" name="heardVia" value={c.heardVia} onChange={on}>
-                      <option value="">Select one</option>
-                      {Object.keys(HEARD).map((h) => <option key={h} value={h}>{h}</option>)}
-                    </select>
-                  </Field>
+                </div>
+                <div className="xst-row one">
+                  <Choice id="heardVia" label="How did you hear about us?" hint="Select one" opts={Object.keys(HEARD).map((h) => [h, h])} value={c.heardVia} set={(v) => setC((p) => ({ ...p, heardVia: p.heardVia === v ? '' : v }))} />
                 </div>
                 <div className="xst-trap" aria-hidden="true"><label htmlFor="hp">Do not fill this in</label><input id="hp" name="hp" type="text" tabIndex={-1} autoComplete="off" value={c.hp} onChange={on} /></div>
                 <AnimatePresence>{err && <motion.p className="xst-err" role="alert" initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>{err}</motion.p>}</AnimatePresence>
@@ -254,7 +324,7 @@ function Apply() {
 
 export default function Startups() {
   return (
-    <main className="xp xst">
+    <main id="main" className="xp xst">
       <Hero />
       <Ladder />
       <Apply />

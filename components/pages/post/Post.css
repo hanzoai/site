@@ -9,14 +9,26 @@
 .xbg-stage-in { display: flex; flex-direction: column; }
 .xbg-cover { order: -1; padding: 116px 0 44px; }
 .xbg-cover-t { display: flex; flex-direction: column; align-items: flex-start; }
-.xbg-back { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-bottom: 27px; color: var(--mute); text-decoration: none; font: 400 14px/1 var(--sans); transition: color 150ms cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
+.xbg-crumbs ol { display: flex; flex-wrap: wrap; align-items: center; gap: 0 10.5px; margin: 0; padding: 0; list-style: none; }
+.xbg-crumbs li { display: inline-flex; align-items: center; }
+.xbg-crumbs .xbg-chip::before { content: '/'; width: auto; height: auto; background: none; color: var(--mute); }
+.xbg-back { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--mute); text-decoration: none; font: inherit; transition: color 150ms cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
 .xbg-back svg { transition: transform 300ms cubic-bezier(.4, 0, .2, 1); }
 @media (hover: hover) { .xbg-back:hover { color: var(--ink2); } .xbg-back:hover svg { transform: translateX(-4px); } }
-.xbg-back:active { transform: scale(.97); }
+.xbg-back:active { transform: translateY(1px); transition-duration: 0s; }
 .xbg-h1 { margin: 0; max-width: 16ch; font-size: 52px; font-weight: 497; line-height: 1.04; letter-spacing: -.035em; text-wrap: balance; }
 .xbg-wm { display: inline-block; overflow: hidden; padding: .04em 0 .12em; margin: -.04em 0 -.12em; vertical-align: top; }
-.xbg-wi { display: inline-block; }
-.xbg-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6.5px 17px; margin: 17px 0 0; color: var(--mute); }
+.xbg-wi { display: inline-block; animation: xbg-rise 700ms cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(50ms + var(--i, 0) * 55ms); }
+@keyframes xbg-rise { from { transform: translateY(105%); } }
+/* the film (or its poster, before it plays) drifts from first paint, so the first second is never still */
+.xbg-plate-film { animation: xbg-drift 9s ease-in-out infinite alternate; }
+@keyframes xbg-drift { from { transform: scale(1.06) translate3d(1.5%, 1%, 0); } to { transform: scale(1) translate3d(0, 0, 0); } }
+@media (prefers-reduced-motion: reduce) { .xbg-wi, .xbg-plate-film, .xbg-gist * { animation: none !important; } }
+.xbg-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0 17px; margin: 6.5px 0 0; color: var(--mute); }
+/* one solid at a time from the first paint (the /affiliate pattern): the header's ask is outlined on a post until the
+   post's hook says none of its own asks is on screen (html[data-xbg-solid]) */
+html:has(main.xbg):not([data-xbg-solid]) header[data-slot=masthead] a[href="https://hanzo.ai/signup"],
+html:has(main.xbg):not([data-xbg-solid]) header[data-slot=masthead] a[data-x-ask] { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
 .xbg-chip { display: inline-flex; align-items: center; gap: 10.5px; color: var(--ink2); }
 .xbg-chip::before { content: ''; width: 17px; height: 1px; background: currentColor; }
 .xbg-lede { margin: 27px 0 0; max-width: 44ch; font-size: 21px; line-height: 1.4; color: var(--mute); text-wrap: pretty; }
@@ -61,6 +73,19 @@
   .js .xbg-cover-t { max-width: calc((var(--W) - 27px) * 5 / 13); pointer-events: auto; }
   .js .xbg-slot { display: block; position: absolute; top: var(--ct); bottom: var(--cb); left: var(--cl); right: var(--L); pointer-events: none; }
   .js .xbg-stage[data-gone='true'] .xbg-cover { visibility: hidden; }
+  /* a figures post (Kai) mirrors the scene: card on the left, title on the right, figures settle on the right */
+  .js .alt .xbg-stage .xbg-plate-in { clip-path: inset(var(--ct) var(--cl) var(--cb) var(--L) round 24px); }
+  .js .alt .xbg-slot { left: var(--L); right: var(--cl); }
+  .js .alt .xbg-cover-t { margin-left: auto; }
+  .js .alt .xbg-pause { right: auto; left: calc(var(--L) + 17px); }
+  .js .alt .xbg-plate-film { right: auto; left: 0; object-position: 40% 45%; -webkit-mask-image: linear-gradient(270deg, transparent 0, #000 30%); mask-image: linear-gradient(270deg, transparent 0, #000 30%); }
+  .js .alt .xbg-plate-f { align-self: flex-end; transform-origin: 100% 100%; }
+  .js .alt .xbg-plate-k { flex-direction: row-reverse; }
+}
+/* a figures post keeps its reading rail on the right of the column */
+@media (min-width: 1200px) {
+  .alt .xbg-room { grid-template-columns: minmax(0, 768px) minmax(0, 1fr); }
+  .alt .xbg-rail { order: 2; }
 }
 
 /* ---------- the room: the thread on the left, one 768px reading column on the right ---------- */
@@ -99,13 +124,44 @@
 .xbg-knots li[data-on] .xbg-knot::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; box-shadow: 0 0 0 1.5px var(--ink2); }
 .xbg-bar { display: none; }
 
-/* parts between hairlines; a part with a Hanzo film shows it */
-.xbg-parts { list-style: none; margin: 44px 0; padding: 0; display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); column-gap: 27px; row-gap: 44px; }
-.xbg-parts li { display: flex; flex-direction: column; gap: 10.5px; padding-top: 17px; border-top: 1px solid var(--ink2); }
+/* parts, asymmetric: the first leads large with its film playing; the rest are a list beside it, each with a small mark */
+.xbg-parts { list-style: none; margin: 44px 0; padding: 0; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: 44px; align-items: start; }
+.xbg-parts li { display: grid; grid-template-columns: 56px minmax(0, 1fr); grid-template-areas: 'm n' 'm r' 'm t'; column-gap: 17px; row-gap: 4px; grid-column: 2; padding: 17px 0; border-top: 1px solid var(--hair); }
+.xbg-parts li .xbg-name { grid-area: n; font-size: 21px; }
+.xbg-parts li .xbg-role { grid-area: r; }
+.xbg-parts li .xbg-note { grid-area: t; }
+.xbg-parts li.lead { grid-column: 1; grid-row: 1 / span var(--rest); display: flex; flex-direction: column; gap: 10.5px; padding-top: 17px; border-top: 1px solid var(--ink2); }
+.xbg-parts li.lead .xbg-name { font-size: 44px; font-weight: 220; letter-spacing: -.03em; }
+.xbg-part-mark { grid-area: m; position: relative; display: block; width: 56px; aspect-ratio: 4 / 5; border-radius: 10.5px; overflow: hidden; background: #000; color: rgba(255, 255, 255, .6); }
+.xbg-part-mark img, .xbg-part-mark .xbg-sigil { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .xbg-part-film { width: 100%; aspect-ratio: 4 / 5; height: auto; object-fit: cover; border-radius: 20px; background: #000; margin-bottom: 6.5px; }
 .xbg-name { font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.1; }
 .xbg-role { color: var(--mute); }
 .xbg-note { font-size: 14px; line-height: 1.5; color: var(--mute); text-wrap: pretty; }
+
+/* the gist: a text-only chapter's own figures or steps, drawn (Gist.jsx) */
+.xbg-gist { margin: 44px 0; }
+.xbg-gist .xbg-gist-s .x-stat-v { font-size: 64px; font-weight: 220; letter-spacing: -.03em; }
+.xbg-gist .x-stat-l { font: 606 12px/1.4 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--mute); }
+.xbg-gist.figs { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); column-gap: 27px; }
+.xbg-gist.figs .x-stat { padding-top: 17px; border-top: 1px solid var(--ink2); gap: 10.5px; }
+.xbg-gist.bars { display: flex; flex-direction: column; gap: 27px; }
+.xbg-gist-bar { display: grid; grid-template-columns: 188px minmax(0, 1fr); align-items: center; column-gap: 27px; }
+.xbg-gist-bar .x-stat-v { font-size: 44px; }
+.xbg-gist-track { position: relative; height: 10.5px; border-radius: 6px; background: var(--room-fill-strong); overflow: hidden; }
+.xbg-gist-track i { position: absolute; left: 0; top: 0; bottom: 0; min-width: 6px; border-radius: 6px; background: var(--ink2); transform: scaleX(0); transform-origin: left; transition: transform 1200ms cubic-bezier(.16, 1, .3, 1); }
+.xbg-gist[data-on='true'] .xbg-gist-track i { transform: scaleX(1); }
+html:not(.js) .xbg-gist-track i { transform: none; }
+.xbg-gist.steps { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); column-gap: 17px; position: relative; }
+.xbg-gist.steps::before { content: ''; position: absolute; left: 6px; right: 6px; top: 6px; height: 1px; background: var(--hair); }
+.xbg-gist.steps li { position: relative; display: flex; flex-direction: column; gap: 10.5px; color: var(--mute); animation: xbg-step calc(var(--n) * 1.6s) linear infinite; animation-delay: calc(var(--i) * 1.6s); animation-play-state: paused; }
+.xbg-gist.steps[data-on='true'] li { animation-play-state: running; }
+.xbg-gist-dot { width: 13px; height: 13px; border-radius: 50%; background: var(--room-bg); box-shadow: inset 0 0 0 1.5px currentColor; transition: background-color 300ms; }
+.xbg-gist.steps li .x-mono { font-size: 12px; letter-spacing: .14em; }
+.xbg-gist-t { font-size: 17px; line-height: 1.35; max-width: 18ch; }
+@keyframes xbg-step { 0%, 30% { color: var(--ink2); } 36%, 100% { color: var(--mute); } }
+.xbg-gist.steps li .xbg-gist-dot { animation: xbg-dot calc(var(--n) * 1.6s) linear infinite; animation-delay: inherit; animation-play-state: inherit; }
+@keyframes xbg-dot { 0%, 30% { background: var(--ink2); transform: scale(1.15); } 36%, 100% { background: var(--room-bg); transform: scale(1); } }
 
 /* code: kit CodeBlock (and kit Tabs above it) */
 .xbg-code { margin: 44px 0; display: flex; flex-direction: column; gap: 10.5px; align-items: flex-start; }
@@ -164,7 +220,8 @@
 .xbg-src ol { margin: 0; padding-left: 1.4em; display: grid; gap: 10.5px; font-size: 14px; line-height: 1.5; color: var(--mute); }
 .xbg-next { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 5fr); column-gap: 27px; row-gap: 44px; align-items: end; }
 .xbg-card { display: flex; flex-direction: column; gap: 10.5px; color: var(--ink2); text-decoration: none; transition: transform 90ms cubic-bezier(0, 0, .2, 1); }
-.xbg-card:active { transform: scale(.97); }
+.xbg-card:active { transform: scale(.98); transition-duration: 0s; }
+@media (hover: hover) { .xbg-card:hover .xbg-card-t { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; } }
 .xbg-card-art { position: relative; display: block; aspect-ratio: 4 / 3; margin-bottom: 6.5px; border-radius: 20px; overflow: hidden; background: #000; color: rgba(255, 255, 255, .45); }
 .xbg-next li.big .xbg-card-art { aspect-ratio: 16 / 10; }
 .xbg-card-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 75% 45%; transition: transform 500ms cubic-bezier(.4, 0, .2, 1); }
@@ -173,6 +230,7 @@
 .xbg-card-t { font-size: 21px; font-weight: 497; line-height: 1.25; letter-spacing: -.01em; max-width: 26ch; text-wrap: balance; }
 .xbg-card-k { display: flex; flex-wrap: wrap; gap: 6.5px 17px; color: var(--mute); }
 .xbg-card-r { color: var(--ink2); }
+.xbg .x-band h2 { text-wrap: balance; }
 .xbg-band-more { display: flex; flex-wrap: wrap; justify-content: center; gap: 10.5px 27px; }
 .xbg-band-more .x-arrow { color: #fafafa; }
 
@@ -182,6 +240,9 @@
   .xbg-rail { display: none; }
   .xbg-text { max-width: 768px; }
   .xbg-bar { display: block; position: sticky; top: 60px; z-index: 10; margin: 0 calc(-1 * var(--gut)) 44px; background: var(--room-bg); border-bottom: 1px solid var(--hair); }
+  .xbg-bar-row { display: flex; align-items: center; gap: 10.5px; padding-right: var(--gut); }
+  .xbg-bar-row .xbg-bar-b { flex: 1; min-width: 0; padding-right: 0; }
+  .xbg-bar-ask { display: none; flex: none; }
   .xbg-bar-b { display: grid; grid-template-columns: auto minmax(0, 1fr) auto 14px; align-items: center; gap: 10.5px; width: 100%; min-height: 56px; padding: 0 var(--gut); border: 0; background: none; text-align: left; color: var(--ink2); font: 400 14px/1.2 var(--sans); cursor: pointer; }
   .xbg-bar-b:active { transform: scale(.99); }
   .xbg-bar-n { font-size: 12px; color: var(--mute); letter-spacing: .14em; }
@@ -193,8 +254,7 @@
   .xbg-sheet { padding: 4px var(--gut) 17px; }
 }
 @media (max-width: 899px) {
-  .xbg-cover { padding: 96px 0 27px; }
-  .xbg-back { margin-bottom: 10.5px; }
+  .xbg-cover { padding: 68px 0 27px; }
   .xbg-h1 { font-size: 40px; line-height: 1.06; }
   .xbg-lede { margin-top: 17px; font-size: 17px; }
   .xbg-ask { margin-top: 17px; }
@@ -208,6 +268,12 @@
   .xbg-fig { font-size: 44px; }
   .xbg-stage.film .xbg-facts:not(.figs) li { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'f' 'r' 'n'; }
   .xbg-parts { grid-template-columns: minmax(0, 1fr); }
+  .xbg-parts li, .xbg-parts li.lead { grid-column: 1; grid-row: auto; }
+  .xbg-parts li.lead { margin-bottom: 17px; }
+  .xbg-gist .xbg-gist-s .x-stat-v { font-size: 44px; }
+  .xbg-gist-bar { grid-template-columns: 128px minmax(0, 1fr); column-gap: 17px; }
+  .xbg-gist-bar .x-stat-v { font-size: 32px; }
+  .xbg-gist-t { font-size: 14px; }
   .xbg-part-film { aspect-ratio: 16 / 10; }
   .xbg-life { grid-template-columns: minmax(0, 1fr); }
   .xbg-life figcaption { grid-column: 1; grid-row: 3; }
@@ -220,6 +286,13 @@
   .xbg-src, .xbg-next { grid-template-columns: minmax(0, 1fr); }
   .xbg-src ol { margin-top: 17px; }
 }
+/* phones: the post's ask rides in the chapter bar, inline, instead of a bar floating over the text */
+@media (max-width: 700px) {
+  .xbg-bar-ask { display: inline-flex; }
+  .xbg-bar-m { display: none; }
+  .xbg-sheet .xbg-sheet-m { display: flex; justify-content: space-between; margin: 10.5px 0 4px; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--mute); }
+}
+.xbg-sheet-m { display: none; }
 @media (max-width: 599px) {
   .xbg-facts.figs, .xbg-stage.film .xbg-facts.figs { grid-template-columns: minmax(0, 1fr); }
 }
