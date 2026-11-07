@@ -91,15 +91,24 @@ html:not(.js) .ia .ia-pause { display: none; }
 /* paused: the play control stays full ink, also under the pointer */
 .ia .ia-pause[aria-pressed='true'], .ia .ia-pause[aria-pressed='true']:hover { background: #0a0a0a; color: #fff; border-color: #0a0a0a; }
 
-/* the eight facts: pinned for about two and a half screens; the lit card and the counter follow the scroll, and the rail
-   starts on the first card at the left of the container and ends on the last at its right */
-.ia-fr { position: relative; height: 250svh; margin-bottom: -14svh; background: #fff; }
-.ia-fr-stage { position: sticky; top: 0; height: 100svh; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-start; gap: 28px; padding-top: clamp(64px, 9svh, 88px); box-sizing: border-box; }
-.ia-rail-h { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; }
-.ia-count { font-variant-numeric: tabular-nums; min-width: 7ch; text-align: right; color: #0a0a0a; }
-.ia-fr-view { overflow: visible; }
-.ia-fr-rail { --cw: clamp(300px, 24vw, 340px); list-style: none; margin: 0; display: flex; gap: 16px; width: max-content; padding: 0 max(24px, calc((100vw - 1440px) / 2)); }
-.ia-fr-rail > li { flex: none; }
+/* the eight facts: a native sideways snap rail (no pin, no scroll scrub). The card at the left edge is lit and the
+   counter reads it; Previous / Next step one card; the rail starts and ends inside the container's gutters */
+.ia-fr { position: relative; padding: clamp(72px, 8vw, 116px) 0 clamp(44px, 5vw, 72px); background: #fff; }
+.ia-fr-stage { display: flex; flex-direction: column; gap: 28px; }
+.ia-rail-h { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.ia-rail-h .v2-headline { margin: 0; }
+.ia-rail-nav { display: flex; align-items: center; gap: 8px; }
+.ia-count { margin: 0 8px 0 0; font-variant-numeric: tabular-nums; min-width: 7ch; text-align: right; color: #0a0a0a; }
+.ia-rail-b { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 99px; background: #f5f5f5; color: #0a0a0a; cursor: pointer; transition: background-color 150ms var(--ia-out), color 150ms var(--ia-out), transform 150ms var(--ia-out); }
+.ia-rail-b:active:not(:disabled) { transform: scale(.97); transition-duration: 90ms; }
+.ia-rail-b:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 2px; }
+.ia-rail-b:disabled { color: #a3a3a3; cursor: default; }
+@media (hover: hover) { .ia-rail-b:not(:disabled):hover { background: #0a0a0a; color: #fafafa; } }
+.ia-fr-view { --ia-g: max(24px, calc((100vw - 1440px) / 2)); overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; scroll-padding-inline: var(--ia-g); scrollbar-width: none; outline: none; }
+.ia-fr-view::-webkit-scrollbar { display: none; }
+.ia-fr-view:focus-visible { box-shadow: inset 0 0 0 2px #0a0a0a; }
+.ia-fr-rail { --cw: clamp(300px, 24vw, 340px); list-style: none; margin: 0; display: flex; column-gap: 16px; width: max-content; padding: 0 var(--ia-g) 8px; }
+.ia-fr-rail > li { flex: none; scroll-snap-align: start; }
 .ia-card { width: var(--cw); height: clamp(380px, 54svh, 480px); box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; gap: 20px; padding: clamp(24px, 2.2vw, 32px); border-radius: 24px; background: #f5f5f5; color: inherit; text-decoration: none; transform: scale(.94); transform-origin: 50% 100%; transition: transform 500ms var(--ia-em), background-color 150ms var(--ia-out); }
 .ia-card[data-on] { transform: none; }
 .ia-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
@@ -224,14 +233,11 @@ button.ia-tok:disabled { cursor: default; }
   .ia-st:last-child .ia-lab { left: auto; right: 0; transform: none; }
   .ia-st.now .ia-lab { opacity: 1; }
   .ia-pause { top: 14px; right: 14px; }
-  /* the facts: a snap rail with the next card peeking; the counter follows the swipe */
-  .ia-fr { height: auto; margin-bottom: 0; padding: 72px 0 24px; }
-  .ia-fr-stage { position: static; height: auto; overflow: visible; display: block; padding-top: 0; }
-  .ia-rail-h { padding-bottom: 20px; }
-  .ia-fr-view { overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; scroll-padding-inline: 16px; scrollbar-width: none; }
-  .ia-fr-view::-webkit-scrollbar { display: none; }
-  .ia-fr-rail { --cw: calc(100vw - 68px); gap: 12px; padding: 0 16px; transform: none !important; }
-  .ia-fr-rail > li { scroll-snap-align: start; }
+  /* the facts: the same snap rail, the next card peeking 40px; the counter follows the swipe */
+  .ia-fr { padding: 72px 0 24px; }
+  .ia-fr-stage { gap: 20px; }
+  .ia-fr-view { --ia-g: 16px; }
+  .ia-fr-rail { --cw: calc(100vw - 68px); column-gap: 12px; }
   .ia-card { height: auto; min-height: 380px; transform: none; }
   .ia-card-big { font-size: 32px; overflow-wrap: anywhere; }
   .ia-card[data-on] .ia-card-big span { transform: none; }
@@ -252,13 +258,7 @@ button.ia-tok:disabled { cursor: default; }
 @media (prefers-reduced-motion: reduce) {
   .ia-sign, .ia-recede { transform: none !important; }
   .ia-room { clip-path: none !important; }
-  .ia-fr { height: auto; margin-bottom: 0; padding: 72px 0; }
-  .ia-fr-stage { position: static; height: auto; overflow: visible; display: block; }
-  .ia-rail-h { padding-bottom: 24px; }
-  .ia-count { visibility: hidden; }
-  .ia-fr-view { overflow: visible; }
-  .ia-fr-rail { flex-wrap: wrap; width: auto; padding: 0 24px; max-width: 1488px; margin-inline: auto; transform: none !important; }
-  .ia-card, .ia-card[data-on] { transform: none; height: auto; min-height: 380px; }
+  .ia-card, .ia-card[data-on] { transform: none; }
   .ia-card-d { opacity: 1; transform: none; }
   /* only the current card's word and object in ink; the rest rest grey */
   .ia-card[data-on] .ia-card-big span { transform: none; }
@@ -266,7 +266,5 @@ button.ia-tok:disabled { cursor: default; }
   li.live .ia-tok i { animation: none; }
 }
 @media (prefers-reduced-motion: reduce) and (max-width: 900px) {
-  .ia-fr-rail { flex-direction: column; padding: 0 16px; }
-  .ia-card { width: 100%; }
   .ia .ia-st:last-child .ia-lab { opacity: 1; }
 }

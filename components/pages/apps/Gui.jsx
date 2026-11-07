@@ -12,11 +12,18 @@
    platforms follow; type a value that has drifted out of the design system and the typecheck fails instead of shipping.
    Not only scroll: the frames change by themselves (idle), the editor and the platform cards answer the hand (state);
    Stage and chapters are the scroll half.
-   Motion: the four frames in step (signature) + the run (the same four pinned, one state per chapter) + platform cards that open.
-V2: 8/10 round 6: phone hero keeps 44px before the stage and the pinned grid leads with the object (the heading and its 0N / 06 above the two frames, the chapter's paragraph under them), so the code bar and devices are on the first screen at 375 and start at 536 of 640 at 320; render tags hang under their frames (never over a card inside a window, measured at 1470, 375, 320); token names only $4 and $8 (Hanzo's own code), no "9:41" clock; the iOS card shows its sheet at rest; the picker's closing field shows the value the YStack takes; the opened Desktop's sidebar at 10–13px; opened cards carry only words about their platform (web: the atomic-CSS sentence; the rest name and sub-label); "Get GUI" and its prompt start on one line, the h2 first; the lit chip and the cards answer hover (the sub-label slides up for the woken props). Round 5: phone rail art sized to its box (never over a card's name, 375 and 320); the hero props first change at ~0.8 s; each stage step gets ~1.08 screens so a one-screen wheel lands on all five; on phones the words sit above the pinned frames so they leave first; card→sheet morph crossfades the flying card's content (no stretch); cards tilt and wake (their props take the next state) when pointed at or focused; phone stage h2 21 over h3 17, the lit step title grows and settles; the playground's typed value is an empty dashed slot in its chip row and the typecheck sits on the closing line; the phone terminal scrolls with an edge fade; hero ask hovers #262626 and presses 1px. Round 4: one object, many states. The hero's four frames ARE the pinned stage (no second device row): the opening cycles the props, then 01 wires the one source to the four with their render tags, 02 flips the brand token on all four, 03 collapses every screen to the flat rule, 04 takes the card apart into YStack/Text/Button with the kit's primitives under it, 05 rolls each new state across the four in a wave while the buttons press themselves. Phones keep the stage pinned and swap only the words; counters agree (01–05 / 06, the dark room 06 / 06); no invented words (token names only from the page's code scale, typecheck by shape, aria from ui-strings); each opened platform carries its own chapter's sentence; cards share one baseline and lift; the ask leans to the pointer; code scrolls instead of wrapping. Round 3: the pinned title is centred on the grid and releases with the stage (one grid cell, no crossing); the lit chapter title grows 26→32px and settles; colours swap in 150ms so the ink ($accent) state never goes grey-on-grey; hero captions on one baseline; gaps under the rail and the dark room closed; a platform card opens into a full-screen page of that platform (its device large with its live props, the name at 52px) and Esc, Close or Back return it. Round 2: hydration-safe hero settle; hero devices and labels inside 801px; each platform card its own screen (iOS sheet, Android list, Web form, Desktop split) that tilts and shows its tokens, opening into a live one; the dark room is one large window the chips restyle; chapters grow in as their step arrives and count 01–05; mock buttons answer; no clipping; Deploy to Cloud sits beside the ask. Round 1: a centred 52px title over four live device frames in step (the one big thing) with a Pause; five sticky chapters explain the one component across four platforms; the graphite room is the token editor with a real typecheck; platform cards open into their device; one ask; deck colours, radii and scale, outlined frames, no springs
+   Motion: the four frames in step (hero) + the compare slider (signature) + platform cards that open.
+// Motion map: signature compare; entrances split-merge, velocity-skew, domino, cursor-lens, grow-from-point
+   (docs/MOTION-MAP.md, 7 Nov: no pinned chapter scene on this page. The hero's four still cycle the props; the signature
+   is a divider the visitor drags across one window, Hanzo's source on one side and the platform it renders on the other;
+   the five chapters are plain rows, each with its own object. Entrances, in page order: the compare's two halves split
+   and merge; the chapter list leans with scroll speed; the editor's rows tip in like dominoes; a lens sweeps the
+   platform cards and then follows the pointer; the close grows from the last point clicked.)
+V2: 8/10 motion map: the pinned five-chapter stage is replaced by the compare signature (drag, touch, arrow keys; 50% under reduced motion) and five plain chapter rows with their own objects (render targets, the token flip, the flat rule, the primitives, the wave); five page-local entrances in the map's order, final state in the server HTML. Round 6: phone hero keeps 44px before the stage and the pinned grid leads with the object (the heading and its 0N / 06 above the two frames, the chapter's paragraph under them), so the code bar and devices are on the first screen at 375 and start at 536 of 640 at 320; render tags hang under their frames (never over a card inside a window, measured at 1470, 375, 320); token names only $4 and $8 (Hanzo's own code), no "9:41" clock; the iOS card shows its sheet at rest; the picker's closing field shows the value the YStack takes; the opened Desktop's sidebar at 10–13px; opened cards carry only words about their platform (web: the atomic-CSS sentence; the rest name and sub-label); "Get GUI" and its prompt start on one line, the h2 first; the lit chip and the cards answer hover (the sub-label slides up for the woken props). Round 5: phone rail art sized to its box (never over a card's name, 375 and 320); the hero props first change at ~0.8 s; each stage step gets ~1.08 screens so a one-screen wheel lands on all five; on phones the words sit above the pinned frames so they leave first; card→sheet morph crossfades the flying card's content (no stretch); cards tilt and wake (their props take the next state) when pointed at or focused; phone stage h2 21 over h3 17, the lit step title grows and settles; the playground's typed value is an empty dashed slot in its chip row and the typecheck sits on the closing line; the phone terminal scrolls with an edge fade; hero ask hovers #262626 and presses 1px. Round 4: one object, many states. The hero's four frames ARE the pinned stage (no second device row): the opening cycles the props, then 01 wires the one source to the four with their render tags, 02 flips the brand token on all four, 03 collapses every screen to the flat rule, 04 takes the card apart into YStack/Text/Button with the kit's primitives under it, 05 rolls each new state across the four in a wave while the buttons press themselves. Phones keep the stage pinned and swap only the words; counters agree (01–05 / 06, the dark room 06 / 06); no invented words (token names only from the page's code scale, typecheck by shape, aria from ui-strings); each opened platform carries its own chapter's sentence; cards share one baseline and lift; the ask leans to the pointer; code scrolls instead of wrapping. Round 3: the pinned title is centred on the grid and releases with the stage (one grid cell, no crossing); the lit chapter title grows 26→32px and settles; colours swap in 150ms so the ink ($accent) state never goes grey-on-grey; hero captions on one baseline; gaps under the rail and the dark room closed; a platform card opens into a full-screen page of that platform (its device large with its live props, the name at 52px) and Esc, Close or Back return it. Round 2: hydration-safe hero settle; hero devices and labels inside 801px; each platform card its own screen (iOS sheet, Android list, Web form, Desktop split) that tilts and shows its tokens, opening into a live one; the dark room is one large window the chips restyle; chapters grow in as their step arrives and count 01–05; mock buttons answer; no clipping; Deploy to Cloud sits beside the ask. Round 1: a centred 52px title over four live device frames in step (the one big thing) with a Pause; five sticky chapters explain the one component across four platforms; the graphite room is the token editor with a real typecheck; platform cards open into their device; one ask; deck colours, radii and scale, outlined frames, no springs
    Every word and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
+import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
+import { useEnter, useGrowFromPoint, useVelocitySkew, useLens } from './gui/GuiMotion';
 import { A, Cta } from '../../kit';
 import BizLines from '../../v2/BizLines';
 import { EASE_OUT_EXPO } from '../../../lib/motion';
@@ -153,7 +160,12 @@ function Pull({ children }) {
   return <span ref={ref} className="gu-pull" onPointerMove={move} onPointerLeave={() => { if (ref.current) ref.current.style.translate = ''; }}>{children}</span>;
 }
 
+/* The hero: the title, the one ask, and the four frames in step under the code bar, cycling the props by themselves
+   (the first change lands at ~0.8 s). Not pinned: the stage scrolls away with the hero. */
 function Hero() {
+  const [hold, setHold] = useState(false);
+  const [seen, live] = useLive(0.15);
+  const v = useCycle(live && !hold, 2600, PRESETS, 800);
   return (
     <section className="gu-hero" aria-labelledby="gu-h1">
       <div className="bz-wrap gu-top">
@@ -162,6 +174,12 @@ function Hero() {
         <div className="bz-acts gu-acts">
           <Pull><Cta to={GH} id="gui.hero" thumb>View on GitHub</Cta></Pull>
         </div>
+      </div>
+      <div ref={seen}>
+        <Settle className="bz-wrap gu-stage">
+          <Bar v={v} hold={hold} setHold={setHold} />
+          <Four v={v} cls="gu-hero-four" />
+        </Settle>
       </div>
     </section>
   );
@@ -178,46 +196,128 @@ const PROPS = [
 ];
 const PRIMS_USED = ['YStack', 'Text', 'Button'];
 
-/* The run: the hero's four frames ARE the pinned stage. Before the pin they cycle the props under the title (the
-   opening); once pinned, each of the five chapters puts the one object in its own state:
-   01 one codebase: the four, tagged with what each renders to, wired to the one source above them;
-   02 tokens: the brand flips to the ink token on every platform at once;
-   03 compile-time CSS: each screen collapses to the flat rule the compiler emits;
-   04 primitives: the card comes apart into YStack, Text and Button, the kit's primitives listed under it;
-   05 animated: the props change by themselves, the new state rolling across the four in a wave.
-   Phones keep the same stage pinned (two frames) and swap only the words. With JS off nothing pins and every chapter reads. */
-function Run() {
+/* The chapters keep their states, each as its own object beside its words:
+   01 one codebase: the four platforms and what each renders to; 02 tokens: the same card in the light and the ink token;
+   03 compile-time CSS: the flat rule the compiler emits; 04 primitives: the card in its parts, the kit's primitives under
+   it; 05 animated: the props change by themselves while it is on screen. */
+/* Hanzo's own Welcome source, quoted from the page's install block (CODE, below) */
+const SRC = [
+  ['k', 'export function Welcome() {'],
+  ['', '  return ('],
+  ['t', '    <YStack space="$4" padding="$4">'],
+  ['t', '      <Text size="$8">Hello, Hanzo</Text>'],
+  ['t', '      <Button>Get started</Button>'],
+  ['t', '    </YStack>'],
+  ['', '  )'],
+  ['k', '}'],
+];
+
+/* The signature (compare): one window, a divider the visitor drags across it. Left of the divider is the one source
+   Hanzo's code writes; right of it is what that source renders on a platform (the platform turns by itself while the
+   window is on screen: iOS, Android, Web, Desktop). Mouse and touch drag the divider anywhere in the window; the
+   handle is a slider (arrow keys 5%, Home/End). On arrival it glides once to show it moves; reduced motion rests at 50%. */
+function Compare() {
   const box = useRef(null);
-  const [step, setStep] = useState(-1);
-  const [hold, setHold] = useState(false);
-  const [seen, live] = useLive(0.15);
-  const { scrollYProgress } = useScroll({ target: box, offset: ['start start', 'end end'] });
-  useMotionValueEvent(scrollYProgress, 'change', (p) => setStep(p <= 0.002 ? -1 : Math.min(4, Math.floor((p / 0.94) * 5))));
-  const intro = useCycle(live && !hold && step === -1, 2600, PRESETS, 800); // the first change lands at ~0.8 s
-  const wave = useCycle(live && !hold && step === 4, 1500, WAVE);
-  const v = step === -1 ? intro : step === 4 ? wave : step === 1 ? PRESETS[2] : PRESETS[0];
-  const lit = Math.max(step, 0);
+  const wrap = useRef(null);
+  const [x, setX] = useState(50);
+  const [p, setP] = useState(0);
+  const touched = useRef(false);
+  const [seen, live] = useLive(0.3);
+  useEnter(wrap);
+  useEffect(() => {
+    if (!live) return;
+    const t = setTimeout(() => setP((n) => (n + 1) % PLAT.length), 2400);
+    return () => clearTimeout(t);
+  }, [live, p]);
+  // the one invitation: the divider glides 50 → 34 → 66 → 50 the first time the window is on screen
+  useEffect(() => {
+    if (!live || touched.current) return;
+    const steps = [34, 66, 50];
+    const ts = steps.map((s, i) => setTimeout(() => { if (!touched.current) setX(s); }, 900 + i * 700));
+    return () => ts.forEach(clearTimeout);
+  }, [live]);
+  const at = (clientX) => {
+    const b = box.current.getBoundingClientRect();
+    setX(Math.max(0, Math.min(100, ((clientX - b.left) / b.width) * 100)));
+  };
+  const down = (e) => {
+    touched.current = true;
+    box.current.dataset.dragging = '';
+    box.current.setPointerCapture?.(e.pointerId);
+    at(e.clientX);
+  };
+  const move = (e) => { if (box.current.dataset.dragging !== undefined) at(e.clientX); };
+  const up = () => { if (box.current) delete box.current.dataset.dragging; };
+  const key = (e) => {
+    const d = { ArrowLeft: -5, ArrowDown: -5, ArrowRight: 5, ArrowUp: 5 }[e.key];
+    if (d !== undefined) { e.preventDefault(); touched.current = true; setX((v) => Math.max(0, Math.min(100, v + d))); }
+    if (e.key === 'Home') { e.preventDefault(); touched.current = true; setX(0); }
+    if (e.key === 'End') { e.preventDefault(); touched.current = true; setX(100); }
+  };
+  const k = PLAT[p][2];
   return (
-    <section ref={box} className="gu-run" aria-labelledby="gu-run-h" data-step={step}>
-      <div ref={seen} className="gu-run-pin">
-        <Settle className="bz-wrap gu-stage">
-          <Bar v={v} hold={hold} setHold={setHold} off={step !== -1 && step !== 4} />
-          <Four v={v} step={step} cls="gu-hero-four" />
-          <ul className="gu-prims x-mono" aria-hidden="true">{PRIMS.map((t) => <li key={t} className={PRIMS_USED.includes(t) ? 'on' : ''}>{t}</li>)}</ul>
-        </Settle>
-        <div className="bz-wrap gu-run-copy">
-          <h2 id="gu-run-h" className="bz-headline gu-run-h">Build it once. Ship it everywhere.</h2>
-          <ol className="gu-run-list">
-            {PROPS.slice(0, 5).map(([t, d], i) => (
-              <li key={t} className={'gu-run-i' + (lit === i ? ' on' : '')} aria-current={lit === i && step >= 0 ? 'step' : undefined}>
-                <h3 className="gu-run-t">{t}</h3>
-                <p className="bz-body">{d}</p>
-                <p className="gu-run-n x-mono">{`${String(i + 1).padStart(2, '0')} / ${String(PROPS.length).padStart(2, '0')}`}</p>
-              </li>
-            ))}
-          </ol>
+    <div ref={wrap} className="bz-wrap gu-cmp-wrap" data-entrance="split-merge">
+      <div ref={(n) => { box.current = n; seen.current = n; }} className="gu-cmp" style={{ '--x': x + '%' }}
+        onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up}>
+        <div className="gu-cmp-b" aria-hidden="true">
+          <div className="gu-cmp-dev" data-k={k}><PlatScreen k={k} v={PRESETS[1]} /></div>
+          <p className="gu-cmp-plat x-mono">{PLAT.map(([n, , kk]) => <span key={kk} className={kk === k ? 'on' : ''}>{n}</span>)}</p>
+        </div>
+        <div className="gu-cmp-a" aria-hidden="true">
+          <pre className="x-mono">{SRC.map(([c, l], i) => <span key={i} className={c ? 'gu-src-' + c : ''}>{l + '\n'}</span>)}</pre>
+        </div>
+        <div className="gu-cmp-h" role="slider" tabIndex={0} aria-labelledby="gu-run-h" aria-valuemin={0} aria-valuemax={100}
+          aria-valuenow={Math.round(x)} onKeyDown={key}>
+          <i aria-hidden="true" />
         </div>
       </div>
+    </div>
+  );
+}
+
+/* Each chapter's own object: what the one component turns into for that idea. */
+function ChapterObj({ i, live }) {
+  const wave = useCycle(live, 1500, WAVE);
+  if (i === 0) return (
+    <ul className="gu-ch-targets">{PLAT.map(([t, s, k]) => <li key={k}><b>{t}</b><span className="x-mono">{s}</span></li>)}</ul>
+  );
+  if (i === 1) return <div className="gu-ch-pair"><Welcome v={PRESETS[0]} /><Welcome v={PRESETS[2]} /></div>;
+  if (i === 2) return <div className="gu-ch-flat"><Flat v={PRESETS[1]} /></div>;
+  if (i === 3) return (
+    <div className="gu-ch-parts"><Welcome v={PRESETS[0]} parts />
+      <ul className="gu-ch-prims x-mono">{PRIMS.map((p) => <li key={p} className={PRIMS_USED.includes(p) ? 'on' : ''}>{p}</li>)}</ul></div>
+  );
+  return <div className="gu-ch-wave"><Welcome v={wave} /></div>;
+}
+
+function Chapter({ i, t, d }) {
+  const [ref, live] = useLive(0.4);
+  return (
+    <li ref={ref} className="gu-ch" style={{ '--i': i }}>
+      <div className="gu-ch-copy">
+        <h3 className="gu-ch-t">{t}</h3>
+        <p className="bz-body">{d}</p>
+        <p className="gu-ch-n x-mono">{`${String(i + 1).padStart(2, '0')} / ${String(PROPS.length).padStart(2, '0')}`}</p>
+      </div>
+      <div className="gu-ch-obj"><ChapterObj i={i} live={live} /></div>
+    </li>
+  );
+}
+
+/* Build it once: the signature, then the five chapters as plain rows that lean with the scroll. */
+function Build() {
+  const list = useRef(null);
+  useEnter(list);
+  useVelocitySkew(list);
+  return (
+    <section className="bz-sec gu-build" aria-labelledby="gu-run-h">
+      <div className="bz-wrap gu-build-top">
+        <h2 id="gu-run-h" className="bz-headline">Build it once. Ship it everywhere.</h2>
+      </div>
+      <Compare />
+      <ol ref={list} className="bz-wrap gu-chs" data-entrance="velocity-skew">
+        {PROPS.slice(0, 5).map(([t, d], i) => <Chapter key={t} i={i} t={t} d={d} />)}
+      </ol>
     </section>
   );
 }
@@ -233,8 +333,10 @@ function Editor() {
   // a chip sets the token and clears anything typed: the field only ever holds what the visitor typed
   const pick = (k, val) => { setDraft((d) => ({ ...d, [k]: undefined })); setV((o) => ({ ...o, [k]: val })); };
   const bad = Object.entries(draft).filter(([k, val]) => !OK(k, val));
+  const room = useRef(null);
+  useEnter(room);
   return (
-    <section className="bz-sec gu-api" data-room="dark" aria-labelledby="gu-api-h">
+    <section ref={room} className="bz-sec gu-api" data-room="dark" aria-labelledby="gu-api-h" data-entrance="domino">
       <div className="bz-wrap bz-grid gu-api-top">
         <h2 id="gu-api-h" className="bz-headline">The shorthands are the API</h2>
         <p className="bz-body">{PROPS[5][1]}</p>
@@ -377,7 +479,10 @@ function CardDev({ k }) {
 /* Drop it in: the install and the code, and the four platforms as cards that open into their device. */
 function Ship() {
   const box = useRef(null);
+  const lens = useRef(null);
   useBackCloses(box);
+  useEnter(lens);
+  useLens(lens);
   return (
     <section ref={box} className="bz-sec gu-ship" aria-labelledby="gu-ship-h">
       <div className="bz-wrap bz-grid gu-ship-top">
@@ -389,7 +494,8 @@ function Ship() {
           <Code tabs={[{ k: 'terminal', code: CODE }]} light mark="pnpm add @hanzo/gui" />
         </div>
       </div>
-      <div className="bz-wrap">
+      <div ref={lens} className="bz-wrap gu-lens-wrap" data-entrance="cursor-lens">
+        <i className="gu-lens" aria-hidden="true" />
         <BizOpen className="gu-plats" cardClass="gu-plat" items={PLAT.map(([t, s, k]) => ({
           id: k,
           className: 'gu-plat-' + k,
@@ -436,8 +542,10 @@ const Arrow = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden=
 
 /* The close: one sentence at Display size, the one ask, one text row. */
 function End() {
+  const ref = useRef(null);
+  useGrowFromPoint(ref);
   return (
-    <section className="bz-sec gu-end" aria-labelledby="gu-end-h">
+    <section ref={ref} className="bz-sec gu-end" aria-labelledby="gu-end-h" data-entrance="grow-from-point">
       <div className="bz-wrap">
         <div className="gu-end-main">
           <h2 id="gu-end-h" className="bz-display md">The design system that ships your product</h2>
@@ -454,7 +562,7 @@ export default function Gui() {
     <main className="bz gu">
       <span data-ask-name="Hanzo GUI" hidden />
       <Hero />
-      <Run />
+      <Build />
       <Editor />
       <Ship />
       <GetGui />

@@ -3,10 +3,15 @@
 // Goal: watch both directions get read, then try it on their own text.
 // CTA: View on GitHub (guard.hero, guard.close).
 // Metric: cta_click guard.hero
-// Signature: both directions, live: a request types, its secrets become typed markers, the injection is scored, the reply is read too; below, one board with six states: the facts are its rows and light in turn as you scroll.
+// Signature: spotlight (MOTION-MAP): the black hero composer is lit by a light that follows the pointer (tap to place it, arrow keys to step it); under the light each typed marker shows the value it replaced, and the injection run and its confidence light up; with no pointer the light drifts from marker to marker.
+// Motion map: signature spotlight; entrances zoom-through, stack-drop, vertical-ticker, letter-cascade, ink-spread
 // Beyond: Paste your own with real dials: detectors on or off and the marker text, run in the page.
 /* Guard (v2, archetype A Launch).
-   V2: 8/10 round 6: the stage is one board with six states (the facts are its rows, they light in turn and the lit one grows; its panel fills the right; its words are a caption under the board), centred with the board at ~62% of the screen; the "each detector" and "marker text" dials are real and drive the playground both ways, the other settings are static marks; the second fact is one run of data read value by value into markers (no equal tiles); hero head left-set 5/13 beside the composer with a 56px peek; one solid per screen (hero, close); Copy keeps its width; phone titles always show with their card. Round 5: the hero console types data-shaped values (a test card number, an address at example.com, a test-key string, the documentation IP) that become Hanzo's typed markers, with the finished frame in the server HTML; the playground rests prefilled and redacted, its dials down the left column; detector chips are outlined toggles with a tick; reduced motion stacks the six facts beside their boards; panel 05 on its own surface with its tick landing; no invented heading; 44px targets; close hover fills with ink. Round 4: the stage's 26px title and numbered rail lead the left column (no navigation in the bottom of the screen), chapter titles 21px under it; each panel does one thing as it arrives (shapes light, the Luhn tick, a token through the gate and back, dials flip and the bucket drains, content struck while its hash is written, the proxy wires itself to CLI and MCP) on its own surface; phones get a sideways snap rail, one chapter per screen, panel first, words clamped behind Read more; the close's ask is quiet; touch-safe hovers; deck greys only; one ask.
+   V2: 8/10 round 7 (motion map): the spotlight is the signature, in the hero composer; the pinned six-state board scene
+   is gone (no split on this page): the six facts are two plain sections of rows (words beside their own board, each
+   board playing its arrival), and the main sections enter five different ways in the map's order (zoom-through,
+   stack-drop, vertical-ticker, letter-cascade, ink-spread), page-local, final state in the HTML under reduced motion.
+   Round 6: the stage is one board with six states (the facts are its rows, they light in turn and the lit one grows; its panel fills the right; its words are a caption under the board), centred with the board at ~62% of the screen; the "each detector" and "marker text" dials are real and drive the playground both ways, the other settings are static marks; the second fact is one run of data read value by value into markers (no equal tiles); hero head left-set 5/13 beside the composer with a 56px peek; one solid per screen (hero, close); Copy keeps its width; phone titles always show with their card. Round 5: the hero console types data-shaped values (a test card number, an address at example.com, a test-key string, the documentation IP) that become Hanzo's typed markers, with the finished frame in the server HTML; the playground rests prefilled and redacted, its dials down the left column; detector chips are outlined toggles with a tick; reduced motion stacks the six facts beside their boards; panel 05 on its own surface with its tick landing; no invented heading; 44px targets; close hover fills with ink. Round 4: the stage's 26px title and numbered rail lead the left column (no navigation in the bottom of the screen), chapter titles 21px under it; each panel does one thing as it arrives (shapes light, the Luhn tick, a token through the gate and back, dials flip and the bucket drains, content struck while its hash is written, the proxy wires itself to CLI and MCP) on its own surface; phones get a sideways snap rail, one chapter per screen, panel first, words clamped behind Read more; the close's ask is quiet; touch-safe hovers; deck greys only; one ask.
    Signature: both directions, live. In the composer a request types itself; as it is sent, the things people paste by
    accident turn into typed markers and the injection attempt gets a confidence (not a verdict) against the threshold;
    then the model's reply streams back and is read by the same detectors.
@@ -20,7 +25,7 @@
    Goal: watch both directions get read, then try it on their own text.
    CTA: View on GitHub (hero, the sticky ask bar and the close; one solid button per screen). */
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence, useScroll, useTransform, useReducedMotion } from 'motion/react';
 import { A, Cta } from '../../kit';
 import { useLive } from './Frame';
 import { redact } from './Guard.redact.mjs';
@@ -46,7 +51,7 @@ const Arrow = ({ back }) => <svg className="gd-arr" viewBox="0 0 16 10" width="1
 function Typed({ seq, n, read }) {
   let left = n;
   return seq.map((x, i) => {
-    if (x.k && read) return <motion.span key={i} className="gd-mk" initial={{ opacity: 0, scale: 0.8, y: 4 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 0.3, ease: EASE }}>{NAME[x.k]}</motion.span>;
+    if (x.k && read) return <motion.span key={i} className="gd-mk" initial={{ opacity: 0, scale: 0.8, y: 4 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 0.3, ease: EASE }}>{NAME[x.k]}<span className="gd-mk-v">{x.v}</span></motion.span>;
     const full = x.k ? x.v : x.inj;
     if (left <= 0) return null;
     const t = full.slice(0, left); left -= full.length;
@@ -79,10 +84,68 @@ function Composer() {
   const read1 = st >= 1;
   const read2 = st >= 3;
   const all = 99;
+  /* The spotlight (the page's signature). The composer sits under a dark veil with one round light in it. A mouse
+     moves the light, a tap places it, the arrow keys step it from marker to marker; left alone it drifts from one to
+     the next. What is under the light shows its detail: a marker shows the value it replaced (struck), the injection
+     run and its confidence light up. Reduced motion: no veil and every detail shows. */
+  const held = useRef(false);
+  const step = useRef(0);
+  const targets = () => (ref.current ? [...ref.current.querySelectorAll('.gd-mk, .gd-injr')] : []);
+  const lightAt = (x, y, drift) => {
+    const c = ref.current;
+    if (!c) return;
+    c.classList.toggle('drift', !!drift);
+    c.style.setProperty('--gd-sx', x + 'px');
+    c.style.setProperty('--gd-sy', y + 'px');
+    c.dataset.lx = x; c.dataset.ly = y;
+    light();
+  };
+  const light = () => {
+    const c = ref.current;
+    if (!c) return;
+    const r = c.getBoundingClientRect();
+    const x = +(c.dataset.lx ?? r.width * 0.3), y = +(c.dataset.ly ?? r.height * 0.4);
+    let inj = false;
+    targets().forEach((el) => {
+      const b = el.getBoundingClientRect();
+      const on = Math.hypot(b.left + b.width / 2 - r.left - x, b.top + b.height / 2 - r.top - y) < 150;
+      if (on) el.setAttribute('data-lit', ''); else el.removeAttribute('data-lit');
+      if (on && el.classList.contains('gd-injr')) inj = true;
+    });
+    const conf = c.querySelector('.gd-conf');
+    if (conf) { if (inj) conf.setAttribute('data-lit', ''); else conf.removeAttribute('data-lit'); }
+  };
+  const toTarget = (i, drift) => {
+    const t = targets(), c = ref.current;
+    if (!t.length || !c) return;
+    step.current = (i + t.length) % t.length;
+    const r = c.getBoundingClientRect(), b = t[step.current].getBoundingClientRect();
+    lightAt(b.left + b.width / 2 - r.left, b.top + b.height / 2 - r.top, drift);
+  };
+  useEffect(() => { light(); }); // markers remount as the request types: keep the lit state on whatever is under the light
+  useEffect(() => {
+    if (!live || calm) return;
+    let t;
+    const go = () => { if (!held.current) toTarget(step.current + 1, true); t = setTimeout(go, 2400); };
+    t = setTimeout(go, 1200);
+    return () => clearTimeout(t);
+  }, [live, calm]); // eslint-disable-line react-hooks/exhaustive-deps
+  const at = (e) => { const r = ref.current.getBoundingClientRect(); lightAt(e.clientX - r.left, e.clientY - r.top, false); };
+  const onMove = (e) => { if (calm || e.pointerType !== 'mouse') return; held.current = true; at(e); };
+  const onDown = (e) => { if (calm || e.pointerType === 'mouse') return; held.current = true; at(e); };
+  const onKey = (e) => {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft' && e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+    e.preventDefault(); held.current = true;
+    toTarget(step.current + (e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : -1), true);
+  };
   return (
     <div className="lp-host">
     <LivePause paused={paused} onToggle={togglePause} className="gd-pause" dark />
+    <div className="gd-spotk" tabIndex={0} role="group" aria-labelledby="gd-sub" onKeyDown={onKey}
+      onFocus={() => { held.current = true; toTarget(step.current, true); }} onBlur={() => { held.current = false; }}
+      onPointerMove={onMove} onPointerDown={onDown} onPointerLeave={(e) => { if (e.pointerType === 'mouse') held.current = false; }}>
     <div className="gd-comp" ref={ref} aria-hidden="true">
+      <i className="gd-spot" />
       <div className="gd-comp-bar"><span className={'gd-dot' + (read1 ? ' on' : '')} /><span>hanzoai/guard</span><span className={'gd-dot r' + (read2 ? ' on' : '')} /></div>
       <div className="gd-msg me">
         <p className="gd-who">request <Arrow /> model</p>
@@ -97,6 +160,7 @@ function Composer() {
         <p className="gd-who">reply <Arrow back /> model</p>
         <p className="gd-body" key={'r' + loop}>{st >= 2 ? <><Typed seq={REP} n={st === 2 ? n : all} read={read2} />{!read2 && <i className="gd-caret" />}</> : <span className="gd-wait">…</span>}</p>
       </div>
+    </div>
     </div>
     </div>
   );
@@ -192,8 +256,10 @@ function Yours() {
   const { parts, found, inject } = useMemo(() => redact(text), [text]);
   const shown = parts.map(([t, m]) => (m && on[m] ? [t, m] : [t, null]));
   const kinds = Object.entries(found).filter(([m]) => on[m]);
+  const sec = useRef(null);
+  useEnter(sec);
   return (
-    <section className="v2-sec gd-yours" aria-labelledby="gd-ft1">
+    <section ref={sec} className="v2-sec gd-yours" data-entrance="letter-cascade" aria-labelledby="gd-ft1">
       <div className="v2-wrap">
         <div className="gd-ed v2-obj">
           <div className="gd-ed-in">
@@ -203,7 +269,7 @@ function Yours() {
           <div className="gd-ed-dials">
             <div className="gd-chips" role="group" aria-label="each detector">
               {KINDS.map((k) => (
-                <button key={k} type="button" aria-pressed={on[k]} onClick={() => setOn((o) => ({ ...o, [k]: !o[k] }))}>{NAME[k]}</button>
+                <button key={k} type="button" aria-pressed={on[k]} onClick={() => setOn((o) => ({ ...o, [k]: !o[k] }))}><Cascade text={NAME[k]} from={KINDS.slice(0, KINDS.indexOf(k)).reduce((s, x) => s + NAME[x].length, 0)} /></button>
               ))}
             </div>
             <div className="gd-seg" role="radiogroup" aria-label="marker text">
@@ -229,57 +295,67 @@ function Yours() {
 
 const pad = (n) => String(n).padStart(2, '0');
 
-/* Guard's own pinned stage: the detector board on top, a numbered rail beside the section title (hover a number to
-   read its fact's title), and the fact under the board. Desktop pins; phones stack each fact over its own board. */
-function Passes() {
+/* Entrances (MOTION-MAP row /guard): each main section enters its own way, in the map's order. The resting state is
+   the server HTML; only once mounted, with motion allowed and the section still below the fold, is it "armed" into its
+   starting state, and it plays once when a quarter of it is on screen. JS off or reduced motion: never armed. */
+function useEnter(ref) {
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === 'undefined' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (el.getBoundingClientRect().top < innerHeight * 0.75) return; // already on screen: leave it at rest
+    el.setAttribute('data-arm', '');
+    let done;
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      el.setAttribute('data-in', '');
+      io.disconnect();
+      done = setTimeout(() => { el.removeAttribute('data-arm'); el.removeAttribute('data-in'); }, 2400);
+    }, { threshold: 0.25 });
+    io.observe(el);
+    return () => { io.disconnect(); clearTimeout(done); };
+  }, [ref]);
+}
+function Enter({ name, className = '', children }) {
   const ref = useRef(null);
-  const n = FACTS.length;
-  const [at, setAt] = useState(0);
+  useEnter(ref);
+  return <div ref={ref} className={className} data-entrance={name}>{children}</div>;
+}
+/* letter-cascade: a word's letters fall into place one by one (the text stays whole for screen readers) */
+function Cascade({ text, from = 0 }) {
+  return [...text].map((ch, i) => <span key={i} className="gd-lc" style={{ '--c': from + i }}>{ch}</span>);
+}
+
+/* The six facts, as two plain sections of rows: the words on the left (5/13), the fact's own board on the right (8/13),
+   which plays its arrival once it is on screen. Phones: the board first, then the words clamped behind Read more. */
+function Facts({ from, to, entrance, head }) {
+  const ref = useRef(null);
   const [open, setOpen] = useState({});
-  // phones: a panel plays its arrival once its card is mostly on screen in the sideways rail
+  useEnter(ref);
   useEffect(() => {
     const els = ref.current ? [...ref.current.querySelectorAll('.gd-f-vis')] : [];
     if (!els.length || typeof IntersectionObserver === 'undefined') return;
-    const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && e.target.classList.add('on')), { threshold: 0.6 });
+    const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && e.target.classList.add('on')), { threshold: 0.45 });
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, []);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
-  useMotionValueEvent(scrollYProgress, 'change', (p) => setAt(Math.max(0, Math.min(n - 1, Math.floor(p * n * 0.9999)))));
-  const go = (i) => {
-    const el = ref.current;
-    if (!el) return;
-    if (innerWidth <= 900 || matchMedia('(prefers-reduced-motion: reduce)').matches) return; // phones and the stacked reduced-motion page: every fact is already in view as a card
-    const y = el.getBoundingClientRect().top + scrollY + ((i + 0.5) / n) * (el.offsetHeight - innerHeight);
-    window.__lenis ? window.__lenis.scrollTo(y, { duration: 1.1 }) : scrollTo({ top: y, behavior: 'smooth' });
-  };
   return (
-    <section ref={ref} className="gd-ps" style={{ '--n': n }} aria-labelledby="gd-ps-h">
-      <div className="gd-ps-stage">
-        <div className="v2-wrap gd-ps-in">
-          <h2 id="gd-ps-h" className="v2-headline gd-ps-h">What it looks for</h2>
-          {/* one board, six states: the six facts are its rows and light in turn as you scroll (press one to go to it);
-              the lit row's own panel fills the board's right side, and its words sit under the board as a caption */}
-          <div className="gd-ps-panel">
-            <div className="gd-ps-facts">
-              {FACTS.map(([t, d], i) => (
-                <article key={t} id={'gd-f' + i} className="gd-f" data-on={i === at || undefined} data-past={i < at || undefined}>
-                  <h3 className="gd-f-t" id={'gd-ft' + i}>
-                    <button type="button" className="gd-f-go" aria-current={i === at ? 'step' : undefined} onClick={() => go(i)}><span className="gd-f-i x-mono" aria-hidden="true">{pad(i + 1)}</span><span className="gd-f-tt">{t}</span></button>
-                  </h3>
-                  <div className="gd-f-cap">
-                    <p className="gd-f-n x-mono">{pad(i + 1)} / {pad(n)}</p>
-                    <p className="v2-body gd-f-d" id={'gd-fd' + i} data-open={open[i] || undefined}>{d}</p>
-                    {!open[i] && <button type="button" className="gd-f-more" aria-expanded="false" aria-controls={'gd-fd' + i} onClick={() => setOpen((o) => ({ ...o, [i]: true }))}>Read more</button>}
-                  </div>
-                  <div className="gd-f-vis"><Board at={i} still /></div>
-                </article>
-              ))}
-            </div>
-            <div className="gd-ps-board"><Board at={at} /></div>
-          </div>
-          <div className="gd-ps-capspace" aria-hidden="true" />
-        </div>
+    <section ref={ref} className="gd-fs" data-entrance={entrance} aria-labelledby={head ? 'gd-ps-h' : 'gd-ft' + from}>
+      <div className="v2-wrap gd-fs-in">
+        {head && <h2 id="gd-ps-h" className="v2-headline gd-ps-h">What it looks for</h2>}
+        {FACTS.slice(from, to).map(([t, d], k) => {
+          const i = from + k;
+          return (
+            <article key={t} id={'gd-f' + i} className="gd-f" style={{ '--k': k }}>
+              <div className="gd-f-txt">
+                <h3 className="gd-f-t" id={'gd-ft' + i}>{t}</h3>
+                <p className="gd-f-n x-mono">{pad(i + 1)} / {pad(FACTS.length)}</p>
+                <p className="v2-body gd-f-d" id={'gd-fd' + i} data-open={open[i] || undefined}>{d}</p>
+                {!open[i] && <button type="button" className="gd-f-more" aria-expanded="false" aria-controls={'gd-fd' + i} onClick={() => setOpen((o) => ({ ...o, [i]: true }))}>Read more</button>}
+              </div>
+              <div className="gd-f-vis"><Board at={i} still /></div>
+            </article>
+          );
+        })}
       </div>
     </section>
   );
@@ -333,7 +409,7 @@ export default function Guard() {
         <div className="v2-wrap gd-hero-g">
           <div className="gd-hero-t">
             <Lines as="h1" className="v2-display gd-h1" lines={['Guard']} data-morph-target="" />
-            <p className="v2-lede gd-sub"><span className="v2-line"><span className="v2-cut" style={{ animationDelay: '.14s' }}>It reads what goes into a model, and what comes back</span></span></p>
+            <p className="v2-lede gd-sub" id="gd-sub"><span className="v2-line"><span className="v2-cut" style={{ animationDelay: '.14s' }}>It reads what goes into a model, and what comes back</span></span></p>
             <div className="v2-acts gd-acts"><Cta to="https://github.com/hanzoai" id="guard.hero" thumb className="gd-ask" aria-busy={busy || undefined} onClick={() => setBusy(true)}>View on GitHub</Cta></div>
           </div>
           <HeroObject>
@@ -342,13 +418,18 @@ export default function Guard() {
         </div>
       </section>
 
-      <Passes />
+      <Facts from={0} to={3} entrance="zoom-through" head />
+      <Facts from={3} to={6} entrance="stack-drop" />
 
-      <ShipPrompt name="Guard" prompt="Read https://hanzo.ai/skill.md and use Hanzo Guard in my project." flip className="gd-sp" />
+      <Enter name="vertical-ticker" className="gd-tk"><div className="gd-tk-in">
+        <ShipPrompt name="Guard" prompt="Read https://hanzo.ai/skill.md and use Hanzo Guard in my project." flip className="gd-sp" />
+      </div></Enter>
 
       <Yours />
 
-      <GetIt name="Guard" tag="AI guardrails" seed="guard" data={[6, 6]} lead="Get started with Guard" ask={['View on GitHub', 'https://github.com/hanzoai', 'guard.close']} className="gd-gi" />
+      <Enter name="ink-spread" className="gd-ink">
+        <GetIt name="Guard" tag="AI guardrails" seed="guard" data={[6, 6]} lead="Get started with Guard" ask={['View on GitHub', 'https://github.com/hanzoai', 'guard.close']} className="gd-gi" />
+      </Enter>
     </main>
     </Dials.Provider>
   );

@@ -60,40 +60,21 @@
 /* every wrap on this page sits in the one 1152px container and gutter (the shared wrap runs to 1440px) */
 .gd .v2-wrap { width: min(100% - 2 * clamp(16px, 4vw, 32px), 1152px); padding-inline: 0; }
 
-/* Guard's pinned stage: ONE board with six states. The six facts are the board's rows (5/13) and light in turn as
-   you scroll; the lit row's own panel fills the board's right side (8/13); the lit fact's words sit under the board
-   as a caption. The whole stage is centred in the screen and the board takes most of its height. */
-.gd-ps { position: relative; height: calc(var(--n) * 64svh + 100svh); margin-bottom: -16px; border-top: 1px solid var(--line); }
-.gd-ps + * { position: relative; }
-.gd-ps-stage { position: sticky; top: 0; height: 100svh; }
-.gd-ps-in { position: relative; height: 100%; box-sizing: border-box; padding: 76px 0 24px; display: flex; flex-direction: column; justify-content: center; gap: 20px; }
-.gd-ps-h { max-width: none; margin: 0; font-size: 26px; line-height: 1.15; color: var(--ink); letter-spacing: -.02em; }
-.gd-ps-panel { flex: none; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: 12px; height: max(420px, min(calc(100svh - 300px), 640px)); padding: 12px; box-sizing: border-box; border-radius: 28px; background: #f5f5f5; }
-.gd-ps-capspace { flex: none; height: 100px; }
-.gd-ps-facts { display: flex; flex-direction: column; min-height: 0; padding: 4px 8px; }
-.gd-f { flex: 1; display: flex; align-items: center; min-height: 0; border-bottom: 1px solid var(--line); }
-.gd-f:last-child { border-bottom: 0; }
-.gd-f-t { margin: 0; width: 100%; font: inherit; }
-.gd-f-go { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 44px; padding: 6px 10px; border: 0; border-radius: 12px; background: none; text-align: left; cursor: pointer; color: var(--faint); font: 497 17px/1.25 var(--sans); letter-spacing: -.01em; transition: color 300ms cubic-bezier(0, 0, .2, 1), background-color 150ms cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
-.gd-f-go::before { content: ''; flex: none; width: 8px; height: 8px; border-radius: 99px; box-shadow: inset 0 0 0 1.5px currentColor; transition: background-color 300ms cubic-bezier(0, 0, .2, 1), box-shadow 300ms cubic-bezier(0, 0, .2, 1); }
-.gd-f-i { flex: none; font-size: 12px; letter-spacing: .08em; }
-.gd-f-tt { display: block; min-width: 0; max-width: calc((100% - 52px) / 1.18); text-wrap: balance; transform-origin: left center; transition: transform 500ms cubic-bezier(.16, 1, .3, 1); } /* wraps at the width it can grow into */
-.gd-f[data-past] .gd-f-go { color: var(--soft); }
-.gd-f[data-on] .gd-f-go { color: var(--ink); }
-.gd-f[data-on] .gd-f-go::before { background: var(--ink); box-shadow: none; }
-.gd-f[data-on] .gd-f-tt { transform: scale(1.18); } /* the lit row is the one that grows, then settles as the next lights */
-.gd-f-go:active { transform: scale(.98); }
-.gd-f-go:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-@media (hover: hover) and (pointer: fine) { .gd-f-go:hover { background: #ededed; color: var(--ink); } }
-.gd-ps-board { min-width: 0; min-height: 0; }
-.gd-ps-board .gd-board { height: 100%; border-radius: 18px; }
-/* the lit fact's words: a caption under the board (all six stay in the page; only the lit one shows) */
-.gd-f-cap { position: absolute; left: 0; right: 0; bottom: 24px; display: grid; grid-template-columns: 72px minmax(0, 68ch); column-gap: 17px; align-items: start; opacity: 0; transform: translate3d(0, 10px, 0); pointer-events: none; transition: opacity 300ms cubic-bezier(.4, 0, .2, 1), transform 400ms cubic-bezier(.16, 1, .3, 1); }
-.gd-f[data-on] .gd-f-cap { opacity: 1; transform: none; pointer-events: auto; }
-.gd-f-d { margin: 0; font-size: 16px; line-height: 1.55; }
+/* The six facts, as two plain sections of rows (no pin on this page): each row is the fact's words (5/13) beside its
+   own board (8/13); the board plays its arrival once it is on screen. */
+.gd-fs { position: relative; padding: clamp(72px, 8vw, 116px) 0 0; }
+.gd-fs + .gd-fs { padding-top: 0; }
+.gd-ps-h { max-width: none; margin: 0 0 27px; font-size: 26px; line-height: 1.15; color: var(--ink); letter-spacing: -.02em; }
+.gd-f { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); column-gap: 44px; align-items: center; padding: 44px 0; border-top: 1px solid var(--line); }
+.gd-f-txt { min-width: 0; }
+.gd-f-t { margin: 0; max-width: 18ch; font: 497 21px/1.2 var(--sans); letter-spacing: -.015em; color: var(--ink); text-wrap: balance; }
+.gd-f-n { margin: 10px 0 0; font-size: 12px; letter-spacing: .12em; color: var(--faint); transition: color 300ms cubic-bezier(0, 0, .2, 1); }
+.gd-f-d { margin: 17px 0 0; font-size: 16px; line-height: 1.55; max-width: 62ch; }
 .gd-f-more { display: none; }
-.gd-f-n { margin: 3px 0 0; font-size: 12px; letter-spacing: .12em; color: var(--faint); }
-.gd-f-vis { display: none; }
+.gd-f-vis { min-width: 0; }
+.gd-f-vis .gd-board { height: auto; min-height: 340px; transition: transform 400ms cubic-bezier(.16, 1, .3, 1), background-color 300ms cubic-bezier(.4, 0, .2, 1); }
+/* a row answers the pointer: its counter inks and its board lifts a little */
+@media (hover: hover) and (pointer: fine) { .gd-f:hover .gd-f-n { color: var(--ink); } .gd-f:hover .gd-f-vis .gd-board { transform: translateY(-4px); } }
 .gd-board { height: 100%; display: flex; align-items: center; padding: clamp(24px, 3vw, 44px); box-sizing: border-box; background: #f5f5f5; border-radius: 24px; overflow: hidden; transition: background-color 300ms cubic-bezier(.4, 0, .2, 1), box-shadow 300ms cubic-bezier(.4, 0, .2, 1); }
 /* a surface per panel: quiet grey, muted tile, graphite, an outline on white, bare white, quiet grey with one ink card */
 .gd-board[data-k='redact'] { background: #fff; }
@@ -260,12 +241,8 @@
   .gd-body { font-size: 18px; min-height: 4.3em; }
   .gd-conf { grid-template-columns: 1fr auto; gap: 10px; padding: 12px 20px; }
   .gd-conf > span { grid-column: 1 / -1; }
-  .gd-ps { height: auto; margin-bottom: 0; }
-  .gd-ps-stage { position: static; height: auto; }
-  .gd-ps-in { display: block; height: auto; padding: 72px 0 0; }
-  .gd-ps-h { font-size: 26px; color: var(--ink); margin-bottom: 17px; }
-  .gd-ps-panel { display: block; height: auto; padding: 0; border-radius: 0; background: none; }
-  .gd-ps-capspace { display: none; }
+  .gd-fs { padding-top: 72px; }
+  .gd-ps-h { margin-bottom: 17px; }
   .gd-f-d { max-width: none; }
   .gd-lane { grid-template-columns: auto minmax(8px, 1fr) auto minmax(8px, 1fr) auto; gap: 8px; padding: 14px; }
   .gd-lane b { font-size: 16px; }
@@ -281,17 +258,8 @@
   .gd-mode span { white-space: nowrap; }
   .gd-mode.lead { grid-column: 1 / -1; grid-row: auto; padding: 18px; }
   .gd-mode.lead b { font-size: 26px; }
-  .gd-ps-board { display: none; }
-  /* phones: one chapter per screen on a sideways snap rail (the next card peeks 16%); the panel first, then the title
-     (shown with its card, never blank), its "0N / 06", and the words clamped to three lines behind Read more */
-  .gd-ps-facts { display: flex; flex-direction: row; gap: 12px; margin-inline: calc(-1 * clamp(16px, 4vw, 32px)); padding: 0 clamp(16px, 4vw, 32px) 4px; overflow-x: auto; scroll-snap-type: x proximity; scroll-padding-inline: clamp(16px, 4vw, 32px); scrollbar-width: none; overscroll-behavior-x: contain; }
-  .gd-ps-facts::-webkit-scrollbar { display: none; }
-  .gd-f { flex: 0 0 84%; display: flex; flex-direction: column; align-items: stretch; padding: 0; border: 0; scroll-snap-align: start; }
-  .gd-f-go, .gd-f[data-on] .gd-f-go, .gd-f[data-past] .gd-f-go { padding: 0; min-height: 0; color: var(--ink); font-size: 21px; cursor: default; pointer-events: none; }
-  .gd-f-go::before, .gd-f-i { display: none; }
-  .gd-f-tt { max-width: none; }
-  .gd-f[data-on] .gd-f-tt { transform: none; }
-  .gd-f-cap, .gd-f[data-on] .gd-f-cap { position: static; display: block; opacity: 1; transform: none; pointer-events: auto; }
+  /* phones: each fact is the board first, then its title, "0N / 06" and the words clamped to three lines behind Read more */
+  .gd-f { display: flex; flex-direction: column; align-items: stretch; padding: 27px 0 44px; }
   .gd-f-n { margin: 8px 0 0; }
   .gd-f-d { margin-top: 10px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
   .gd-f-d[data-open] { display: block; -webkit-line-clamp: none; overflow: visible; }
@@ -321,30 +289,60 @@
   .gd-sp pre, .gd-sp code { white-space: pre-wrap; word-break: break-word; }
   .gd-gi .gi-art { position: relative; right: auto; top: auto; width: 72%; margin: 27px auto 0; opacity: 1; }
 }
-/* reduced motion on desktop: nothing pins; the six facts stack in the flow, each beside its own board at rest */
-@media (prefers-reduced-motion: reduce) and (min-width: 901px) {
-  .gd-ps { height: auto; margin-bottom: 0; }
-  .gd-ps-stage { position: static; height: auto; }
-  .gd-ps-in { display: block; height: auto; padding: clamp(72px, 8vw, 116px) 0 0; }
-  .gd-ps-board, .gd-ps-capspace { display: none; }
-  .gd-ps-h { margin-bottom: 27px; }
-  .gd-ps-panel { display: block; height: auto; padding: 0; border-radius: 0; background: none; }
-  .gd-ps-facts { display: block; padding: 0; }
-  .gd-f { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); grid-template-rows: auto 1fr; column-gap: 44px; align-items: start; padding: 44px 0; border-bottom: 0; border-top: 1px solid var(--line); }
-  .gd-f > :not(.gd-f-vis) { grid-column: 1; }
-  .gd-f-go, .gd-f[data-on] .gd-f-go, .gd-f[data-past] .gd-f-go { padding: 0; color: var(--ink); font-size: 21px; cursor: default; pointer-events: none; }
-  .gd-f-go::before { display: none; }
-  .gd-f-tt { max-width: none; }
-  .gd-f[data-on] .gd-f-tt { transform: none; }
-  .gd-f-cap, .gd-f[data-on] .gd-f-cap { position: static; display: block; opacity: 1; transform: none; margin-top: 10px; }
-  .gd-f-vis { display: block; grid-column: 2; grid-row: 1 / span 2; }
-  .gd-f-vis .gd-board { height: auto; min-height: 320px; }
-}
 @media (prefers-reduced-motion: reduce) {
-  .gd-tilt { transform: none !important; }
-  .gd-f-cap, .gd-f-tt { transition: none !important; }
+  .gd-tilt, .gd-f-vis .gd-board { transform: none !important; }
   .gd-board *, .gd-board *::after, .gd-w { animation: none !important; }
 }
+
+/* THE SIGNATURE: a spotlight in the black composer. A dark veil with one round light (its centre in --gd-sx/--gd-sy,
+   set by the pointer, a tap, the arrow keys, or the idle drift); what is under the light shows its detail. */
+@property --gd-sx { syntax: '<length-percentage>'; inherits: true; initial-value: 30%; }
+@property --gd-sy { syntax: '<length-percentage>'; inherits: true; initial-value: 40%; }
+.gd-comp { position: relative; }
+.gd-comp.drift { transition: --gd-sx 900ms cubic-bezier(.4, 0, .2, 1), --gd-sy 900ms cubic-bezier(.4, 0, .2, 1); }
+.gd-spot { position: absolute; inset: 0; z-index: 2; pointer-events: none; background: radial-gradient(circle 210px at var(--gd-sx) var(--gd-sy), rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 42%, rgba(0, 0, 0, .6) 100%); }
+.gd-spotk { position: relative; border-radius: 28px; outline: none; cursor: crosshair; touch-action: manipulation; }
+.gd-spotk:focus-visible { box-shadow: 0 0 0 2px #fafafa, 0 0 0 4px #0a0a0a; }
+.gd-mk { position: relative; transition: background-color 300ms cubic-bezier(0, 0, .2, 1), color 300ms cubic-bezier(0, 0, .2, 1); }
+.gd-mk-v { position: absolute; left: 0; bottom: calc(100% + 6px); white-space: nowrap; font: 500 12px/1 var(--mono); color: #a3a3a3; text-decoration: line-through; opacity: 0; transform: translateY(4px); pointer-events: none; transition: opacity 300ms cubic-bezier(0, 0, .2, 1), transform 300ms cubic-bezier(.16, 1, .3, 1); }
+.gd-comp .gd-mk[data-lit] { background: rgba(250, 250, 250, .16); color: #fafafa; }
+.gd-comp .gd-mk[data-lit] .gd-mk-v { opacity: 1; transform: none; }
+.gd-comp .gd-injr[data-lit] { border-bottom-style: solid; border-color: #fafafa; }
+.gd-conf { transition: background-color 300ms cubic-bezier(0, 0, .2, 1), color 300ms cubic-bezier(0, 0, .2, 1); }
+.gd-conf[data-lit] { background: rgba(255, 255, 255, .08); color: #fafafa; }
+.gd-out .gd-mk-v { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .gd-spot { display: none; }
+  .gd-comp .gd-mk .gd-mk-v { opacity: 1; transform: none; }
+  .gd-spotk { cursor: auto; }
+}
+
+/* ENTRANCES (MOTION-MAP /guard, in order). A section is only "armed" by script once mounted, below the fold, with
+   motion allowed; it plays once when a quarter of it is on screen. The resting state is the HTML. */
+/* 1 zoom-through: the first facts fly in from far behind the screen */
+.gd-fs[data-entrance='zoom-through'][data-arm] > .gd-fs-in { transform: perspective(1200px) translate3d(0, 40px, -720px); opacity: 0; transition: transform 900ms cubic-bezier(.16, 1, .3, 1), opacity 500ms cubic-bezier(0, 0, .2, 1); transform-origin: 50% 30%; }
+.gd-fs[data-entrance='zoom-through'][data-arm][data-in] > .gd-fs-in { transform: none; opacity: 1; }
+/* 2 stack-drop: the next three rows drop from above and stack onto each other, one after another */
+.gd-fs[data-entrance='stack-drop'][data-arm] .gd-f { transform: translate3d(0, -64px, 0); opacity: 0; transition: transform 600ms cubic-bezier(.16, 1, .3, 1), opacity 300ms cubic-bezier(0, 0, .2, 1); transition-delay: calc(var(--k) * 180ms); }
+.gd-fs[data-entrance='stack-drop'][data-arm][data-in] .gd-f { transform: none; opacity: 1; }
+/* 3 vertical-ticker: the agent prompt rides up a vertical ticker into place, in ticks */
+.gd-tk { overflow: clip; overflow-clip-margin: 24px; }
+.gd-tk[data-arm] > .gd-tk-in { transform: translate3d(0, 100%, 0); }
+.gd-tk[data-arm][data-in] > .gd-tk-in { animation: gd-ticker 900ms both; }
+@keyframes gd-ticker {
+  0% { transform: translate3d(0, 100%, 0); animation-timing-function: cubic-bezier(.4, 0, .2, 1); }
+  30% { transform: translate3d(0, 64%, 0); animation-timing-function: cubic-bezier(.4, 0, .2, 1); }
+  58% { transform: translate3d(0, 30%, 0); animation-timing-function: cubic-bezier(.16, 1, .3, 1); }
+  100% { transform: none; }
+}
+/* 4 letter-cascade: the playground's detector names fall into place letter by letter */
+.gd-lc { display: inline-block; white-space: pre; }
+.gd-yours[data-arm] .gd-lc { transform: translate3d(0, -.9em, 0); opacity: 0; transition: transform 400ms cubic-bezier(.16, 1, .3, 1), opacity 250ms cubic-bezier(0, 0, .2, 1); transition-delay: calc(var(--c) * 14ms); }
+.gd-yours[data-arm][data-in] .gd-lc { transform: none; opacity: 1; }
+/* 5 ink-spread: the close is revealed by an ink blot spreading from three points */
+@property --gd-ink { syntax: '<percentage>'; inherits: false; initial-value: 160%; }
+.gd-ink[data-arm] { --gd-ink: 0%; -webkit-mask-image: radial-gradient(circle at 28% 62%, #000 var(--gd-ink), transparent calc(var(--gd-ink) + 2%)), radial-gradient(circle at 64% 38%, #000 calc(var(--gd-ink) * .8), transparent calc(var(--gd-ink) * .8 + 2%)), radial-gradient(circle at 82% 78%, #000 calc(var(--gd-ink) * .6), transparent calc(var(--gd-ink) * .6 + 2%)); mask-image: radial-gradient(circle at 28% 62%, #000 var(--gd-ink), transparent calc(var(--gd-ink) + 2%)), radial-gradient(circle at 64% 38%, #000 calc(var(--gd-ink) * .8), transparent calc(var(--gd-ink) * .8 + 2%)), radial-gradient(circle at 82% 78%, #000 calc(var(--gd-ink) * .6), transparent calc(var(--gd-ink) * .6 + 2%)); transition: --gd-ink 1200ms cubic-bezier(.4, 0, .2, 1); }
+.gd-ink[data-arm][data-in] { --gd-ink: 160%; }
 
 /* the agent prompt's Copy answers: a fill and the icon lifts; press is .97 */
 .gd-sp .x-codeblock-h button { transition: background-color 150ms cubic-bezier(0, 0, .2, 1), color 150ms cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
@@ -356,7 +354,7 @@
 
 /* the live object's pause control */
 .gd-pause { top: auto; bottom: 16px; right: 16px; }
-.gd .gd-pause { width: 44px; height: 44px; }
+.gd .gd-pause { width: 44px; height: 44px; z-index: 3; }
 
 /* phones: no text under 14px except 11-12px mono capitals */
 @media (max-width: 900px) { .gd-ed-k, .gd-ed-k span, .gd-chips button, .gd-seg button { font-size: 14px; } }
