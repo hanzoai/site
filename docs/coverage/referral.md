@@ -2,157 +2,157 @@
 
 Page file: `components/pages/Referral.jsx` · gallery: `docs/gallery/referral/` · metric id: `signup_start`
 
-Open copy questions for James: none decided. The live page has no closing `Band` or proof strip, so none is added (no new sections or copy).
-Shared changes requested (`docs/requests/<page>.md`): none.
-Forks this page deleted: the hand-rolled `xp-cta`/`xp-ghost` anchors (now kit `Cta`), the four glyphs in rounded icon boxes (now one stepping object), the CSS-only rails (now one rAF rail with pause), the "Referrals" and "Referral or affiliate" kickers above headings (moved under them), every Apple grey (#6e6e73, #161617, #f5f5f7, #a1a1a6).
+Open copy questions for James: none decided. Only the 21 strings of `content/live/referral.json` appear; the invented channel names, row labels and the split affiliate sentence from the earlier build are gone.
+Shared changes requested (`docs/requests/<page>.md`): `docs/requests/referral.md` (Ask.jsx: on phones, quiet header while the hero ask shows, then the header carries the page's ask; done page-locally until then).
+Forks this page deleted: hand-rolled `xp-cta`/`xp-ghost` anchors (now kit `Cta`), the icon boxes (now one stepping object), the CSS rails (now one rAF rail with pause), the share-chip list and the channel-name rail, the definition-list dark room, every Apple grey.
 
 ## 1. Strategy and conversion
 - [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
 - [x] One solid fill per viewport; label and href are the live page's ("Get your link" → /signup?next=/referral)
 - [x] One h1; the page is clear in 5 seconds
-- [x] No dead or self-looping button; n/a prices: the page shows none
-- [x] Open copy questions for James listed, none decided
+- [x] No dead or self-looping button; n/a prices
+- [x] Open copy questions listed, none decided
 
-Done here: `Referral.jsx` top comment names Persona, Goal, CTA, metric `signup_start`, Signature and Beyond; server HTML has 1 `<h1>` ("Bring a builder to Hanzo."), and the hero has one solid (`Cta id="referral.hero"`) beside an outlined "Sign in".
+Done here: one `<h1>` in server HTML; at the top the header is an outline at both widths (measured `rgba(0,0,0,0)` background) beside the hero's solid "Get your link"; after the hero the header is solid "Get your link" (measured `rgb(10,10,10)`) at 1470 and 375.
 
 ## 2. Information architecture and navigation
-- [x] One `<main id="main">`; skip link reaches it (shared layout, `app/layout.jsx` line 62)
+- [x] One `<main id="main">`; skip link reaches it (`app/layout.jsx`)
 - [x] Every link through `A` or `Cta`
 - [x] n/a breadcrumb: depth 1
 - [x] Link parity: 0 removed, 0 unexpected
 
-Done here: `parity.py /referral` reports links 3/3; the signup, login and /affiliate links all go through `A` or `Cta` from `components/kit.jsx`.
+Done here: `parity.py /referral` → links 3/3 (/signup, /login, /affiliate).
 
 ## 3. First impression and page narrative
 - [x] Sells in 5 s; something moves within 1 s without input
-- [x] Line-masked h1 (`LineReveal`, 700 ms, 60 ms apart); nothing above the h1
+- [x] Line-masked h1; nothing above the h1
 - [x] JS off: legible; no `opacity:0` on the LCP element
-- [x] One idea per 100svh; heights vary (hero, a short rails band, steps, the dark room)
-- [x] n/a proof strip and `Band`: the live page has neither, and no section is added
+- [x] One idea per section, each shown once: the card (link and counts), the counts rail, the stepping stage, the one difference (two tracks), the close
+- [x] Ends on a close with the ask ("Get your link", Sign in), then the footer
 - [x] n/a Morph: no card opens a page
 
-Done here: the h1 cuts in by CSS from first paint; the card rises 24px (transform only) and one builder rides from the link into Referred, Pending and Qualified between 0.9 s and 5.1 s, then rests on Qualified; the "Referrals" caption now sits under the asks.
+Done here: the dark room enters as a rounded card inside 32px gutters and opens to full width by `clip-path` as it reaches 25% of the screen; the page ends on Hanzo's sign-in line with the one ask.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
-- [x] Sticky ask in header after the hero, same label (the header reads "Get your link" from `data-thumb` once the hero ask leaves view)
-- [x] n/a copy: the signed-out card's Copy is `aria-disabled` (there is no link until you sign in); pressing it points to the sign-in line and never says Copied
-- [x] `data-cta` and `data-thumb` on the primary
+- [x] Sticky ask in the header after the hero, same label, at both widths; no bottom bar (measured 0 `.x-ask`)
+- [x] n/a copy: signed-out Copy is `aria-disabled`; pressing it shakes the link and lights Sign in, never says Copied
+- [x] `data-cta` (`referral.hero`, `referral.close`) and `data-thumb` on the primary
 
-Done here: `Cta id="referral.hero" thumb`; the walk's frame at 900 px shows the header's solid "Get your link" while the hero ask is out of view.
+Done here: `usePhoneHeaderAsk` mirrors the desktop Ask.jsx move on phones (request filed).
 
 ## 5. Trust and proof
-- [x] No logo, no seal, no invented number (the counts show an em dash, as hanzo.ai does signed out)
-- [x] Every figure traces to Hanzo's copy (there are none to trace)
-- [x] Marquees pause (44px `aria-pressed` button first in the rails section), stop off screen, freeze under reduced motion, duplicates `aria-hidden`
-- [x] n/a Privacy link: no form on the page
+- [x] No logo, no seal, no invented number (counts show an em dash, as signed out on hanzo.ai)
+- [x] No figure to trace; the pay tracks carry no numbers
+- [x] Marquee pauses (44px `aria-pressed`), stops off screen, freezes under reduced motion, `aria-hidden`
+- [x] n/a Privacy: no form
 
-Done here: the three rails run from one rAF loop in `Run`, honour the pause button and `useReducedMotion()`, and are `aria-hidden`; the section's label carries their meaning.
+Done here: the rails carry only Hanzo's words (Referred, Pending, Qualified, `hanzo.ai/?ref=…`).
 
 ## 6. Content presentation (copy untouched)
 - [x] No text under 13px (14px phone) except mono capitals
-- [x] Measures held; headings balanced
-- [x] Steps are a keyboard tablist (↑ ↓ ← →); no table, FAQ or code here
+- [x] Headings balanced; the dark room's two sentences sit in two columns (5/7)
+- [x] Steps are a keyboard tablist; no table, FAQ or code
 - [x] `python3 scripts/parity.py /referral`: 0 missing
 
-Done here: parity `text 20/20 links 3/3`; body 14–17px, mono chips 13px, the scene's SVG labels 16px.
+Done here: parity `text 20/20 links 3/3`; no word on the page outside `content/live/referral.json`.
 
 ## 7. Visual design system
-- [x] `python3 scripts/taste.py` passes; deck greys only (#0a0a0a, #525252, #737373, #a3a3a3, #d4d4d4, #e5e5e5, #ededed, #f5f5f5, #171717, #262626)
-- [x] No label, tag, badge or pill above a headline
-- [x] Radii 12/16/20/24/full; flat tiles with no outline plus shadow
+- [x] `taste.py` passes; deck greys only
+- [x] No label above a headline ("Referrals" sits under the asks)
+- [x] Radii 16/20/24/full; flat tiles
 - [x] One icon set; no icon in a rounded box
-- [x] Differs from neighbours: /affiliate's hero is a link at display size, this one is the signed-out card plus three rails
+- [x] Differs from /affiliate (display link) and /bounty: the signed-out card, a counts rail and a stepping stage
 
-Done here: `taste.py components/pages/Referral.jsx components/pages/Referral.css` → OK; the dark room's sides are flat #171717 and #262626 with no border.
+Done here: `taste.py components/pages/Referral.jsx components/pages/Referral.css` → OK.
 
 ## 8. UI component library
-- [x] Every control has hover (inside `@media (hover:hover)`), press (.97 / translate), focus-visible
-- [x] Focus ring visible on every stop of a Tab crawl
-- [x] n/a dialogs: none
-- [x] n/a inputs: none
-- [x] Forks this page deleted: listed above
+- [x] Every control has hover (in `@media (hover:hover)`), press, focus-visible
+- [x] Focus ring on every Tab stop
+- [x] n/a dialogs
+- [x] n/a inputs
+- [x] Forks deleted: listed above
 
-Done here: Copy fills ink on hover and nudges its icon (no opacity fade); the pause button inverts; steps slide 6px and ink; dark-room rows fill white 5%; the "Affiliates" links move their underline or arrow.
+Done here: Copy and Pause fill ink; steps slide 6px; "Affiliates" links ink and underline; press .97 or 1px.
 
 ## 9. Motion and interaction
-- [x] One signature (the rails) and 3 supporting (line-mask h1, the card's landing builder, the steps' drawings); 0 fade-ups
-- [x] Kinds: idle (rails, way chips, flow dots), time (the builder landing once, the steps running once), pointer (hovers, scroll-boosted rails), state (step tabs), arrival (h1 cut-in); scroll-linked is only the rails' boost
-- [x] Something moves without input; every control answers (`motion.mjs`: 0 still screens; the one dead hover it found is fixed)
-- [x] Reduced motion shows the final state (card on Qualified, step 04, rails still); no `setInterval`
-- [x] Sound through the one kit: `data-sound="tick"` on the step tabs, pause and Copy
+- [x] One signature (the counts rail) plus 3 (line-mask h1, the card's landing builder, the dark room opening); 0 fade-ups; `variety.py` OK (4 techniques)
+- [x] Kinds: idle (rail, flow dots, pay tracks), time (builder lands once, steps run once), pointer (hovers, scroll-boosted rail), state (step tabs), arrival (h1, room opening); scroll-linked under half
+- [x] `motion.mjs`: 0 still screens at both widths, layout shift 0.000
+- [x] Reduced motion: final states (card on Qualified, step 04, affiliate track full); no `setInterval`
+- [x] Sound: `data-sound="tick"` on steps, pause and Copy
 
-Done here: `variety.py` OK; `motion.mjs /referral` desktop 0 still screens, layout shift 0.000; phone 0 still screens, 0 dead controls.
+Done here: `motion.mjs /referral` desktop 0 still, phone 0 still and 0 dead controls; the last desktop dead hover ("Affiliates") now changes colour and underline.
 
 ## 10. Media
-- [x] n/a `Film`/`Pic`: the page has no Hanzo photo or film; its objects are the card, the rails and drawn SVG
+- [x] n/a `Film`/`Pic`: no Hanzo photo or film on this page
 - [x] n/a videos
-- [x] Budgets met; no image to size
+- [x] No images to size
 - [x] n/a photos
 
-Done here: no media on the live page; every object is DOM or inline SVG (0 KB of images).
+Done here: every object is DOM or inline SVG.
 
 ## 11. Mobile and responsive
-- [x] 375×812 and 1470×801 pass with no overlap
-- [x] No horizontal scroll at 375 (scrollWidth − innerWidth = 0)
-- [x] Targets 44px or more (Copy 44, pause 44, step rows 64); hovers have tap paths
+- [x] 375×812 and 1470×801 pass with no overlap (flow dots run on their own track under the tiles)
+- [x] No horizontal scroll (0 at 375)
+- [x] Targets 44px or more
 - [x] Primary ask above the fold at 375×667 (y ≈ 315)
 
-Done here: on phones the rails are 52/21/14px, the steps' object sits above its four rows, and the asks run full width.
+Done here: phone stacks the stage above its steps and the two dark sentences one over the other, each over its own track.
 
 ## 12. Accessibility (WCAG 2.2 AA)
-- [x] Text contrast at 4.5:1 or better (the unlit rail words are #737373, 4.74:1)
-- [x] Pause control on the rails; the way chips and flow dots pause with it
+- [x] Text at 4.5:1 or better (unlit rail words #737373)
+- [x] Pause control on the rails
 - [x] n/a forms
-- [x] One h1; h2 "How it works", h2 dark room, h3 sides
-- [x] Keyboard reaches every control; steps use roving tabindex
+- [x] One h1; h2s for How it works, the dark room and the close
+- [x] Keyboard: roving tabindex on steps, arrows move
 
-Done here: the step list is `role="tablist"` with `aria-selected`/`aria-controls` to the stage panel; the pause button is `aria-pressed`.
+Done here: Copy is `aria-describedby` the sign-in line; the tracks are `aria-hidden` beside the sentences they draw.
 
 ## 13. Performance and engineering
 - [x] h1 and lede in server HTML
-- [x] No new dependency; one rAF per rail that stops off screen
+- [x] No new dependency; the rails' rAF stops off screen
 - [x] No poller; no third-party request
-- [x] Filming ran in the cloud only
+- [x] Filming in the cloud only
 
-Done here: `curl /referral/` returns 200 with the h1 in HTML; 0 console errors at 1470×801 and 375×812.
+Done here: 200 and 0 console errors at both sizes.
 
 ## 14. SEO and machine files
 - [x] Title and description from the live page
-- [x] Canonical from the shared metadata
-- [x] `<JsonLd route="/referral" />` renders (2 ld+json blocks)
-- [x] n/a cards: no cards
+- [x] Canonical from shared metadata
+- [x] `<JsonLd route="/referral" />` renders
+- [x] n/a cards
 
-Done here: `app/referral/page.jsx` keeps title "Bring a builder to Hanzo — Hanzo AI" and the live description.
+Done here: `app/referral/page.jsx` metadata unchanged.
 
 ## 15. Catalogue and product pages
 - [x] n/a: not a catalogue or model page
 - [x] n/a Morph
-- [x] n/a maker and model links
+- [x] n/a model links
 - [x] n/a prices
 
-Done here: n/a, a programs page with no model cards.
+Done here: n/a, a programs page.
 
 ## 16. Developer experience
-- [x] n/a: no code on the page
+- [x] n/a: no code
 - [x] n/a config
 - [x] n/a terminal
 - [x] n/a versions
 
-Done here: n/a, the only mono text is the link placeholder `hanzo.ai/?ref=…`.
+Done here: n/a, the only mono text is `hanzo.ai/?ref=…`.
 
 ## 17. States and resilience
-- [x] Signed-out state designed (Hanzo's own: em dash counts, disabled Copy, the sign-in line)
-- [x] No live data, so nothing can block the page
+- [x] Signed-out state designed (Hanzo's own)
+- [x] No live data
 - [x] n/a submit
-- [x] Islands are plain components; a failed rail leaves the words in place
+- [x] The header hook restores the header on unmount
 
-Done here: the card is hanzo.ai's signed-out referral card; pressing Copy flips the sign-in line to ink and nudges it, instead of pretending to copy.
+Done here: `usePhoneHeaderAsk` undoes its label, href and `data-ask` on route change.
 
 ## 18. Measurement and handover
-- [x] `data-cta` on the primary (`referral.hero`) and Sign in (`referral.signin`); events go through the kit's `hz-event`
-- [x] Nothing identifier-bearing before consent
-- [x] `V2:` line in the page file's top comment
-- [x] Review read: `docs/review/referral.md` (5/10) complaints addressed; the next verdict comes from the critic
+- [x] `data-cta` on every primary; events through the kit's `hz-event`
+- [x] Nothing before consent
+- [x] `V2:` line in the page file
+- [x] Review read: `docs/review/referral.md` (6.5/10) fix list answered point by point
 
-Done here: every complaint in the 5/10 review is answered on the page: the label above the h1, the everything-big rails, the icon boxes, the fading Copy, the near-still card, and the missing card.
+Done here: 1 repeats folded (one facet per section), 2 added words removed, 3 closing ask, 4 phone header ask, 5 dots off the tiles, 6 dark room opens from a card.

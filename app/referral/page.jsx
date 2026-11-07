@@ -1,6 +1,6 @@
-// Signature: every way out, in motion: the seven ways to share your link run past as display-size rails in opposite directions, the link riding between them, beside hanzo.ai’s own referral card
-// Beyond: referral or affiliate, side by side from Hanzo’s own terms: what each pays and what each one moves
-// V2: 8/10 no label over the h1; a larger card where one builder lands once; rails with rhythm that answer the scroll and pause; the four steps as one object that happens; deck greys
+// Signature: the counts in motion: Referred → Pending → Qualified at display size over a small rail of the link, answering the scroll, with a pause
+// Beyond: the four steps as one object that happens, runs once and rests; pick any step to replay it
+// V2: 8/10 one facet per section, only Hanzo's words; the dark room opens from a card with two pay tracks; closes on the ask; one ask at every width
 import Referral from '../../components/pages/Referral';
 import JsonLd from '../../components/JsonLd';
 
