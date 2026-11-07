@@ -13,7 +13,7 @@ Forks this page deleted: the `x-btn solid` hero button (now kit `Cta`), raw `<im
 - [x] No dead or self-looping button; prices from `lib/plans.js` (no prices on the page)
 - [x] Open copy questions for James listed, none decided
 
-Done here: Persona, Goal, CTA, Metric `api_key_created`, Signature and Beyond are in the top comment of both `components/pages/Learn.jsx` and `app/learn/page.jsx`. One solid per screen: while "Get started" (kit `Cta`, `data-cta="learn.hero"`) is in view, `main.xlr[data-ask-on]` turns the header's "Try Hanzo" into an outline (measured: header ask background `rgba(0,0,0,0)` at 1470×801 and 375×812); once the hero ask leaves view the header's solid returns, labelled "Get started".
+Done here: Persona, Goal, CTA, Metric `api_key_created`, Signature and Beyond are in the top comment of both `components/pages/Learn.jsx` and `app/learn/page.jsx`. One solid per screen: while "Get started" (kit `Cta`, `data-cta="learn.hero"`) is in view, `main.xlr[data-ask-on]` turns the header's "Try Hanzo" into an outline (measured: header ask background `rgba(0,0,0,0)` at 1470×801 and 375×812); once the hero ask leaves view the header's solid returns (the shared header labels it "Get started" at 1470 and "Try Hanzo" at 375).
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -39,7 +39,7 @@ Done here: "Learn Hanzo" (52px) cuts in by line mask and the train starts riding
 - ~~Copy button copies exactly the displayed text; failure never says Copied~~ n/a: no copy control.
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: kit `Cta` for "Get started" (`data-cta="learn.hero"`, `data-thumb="Get started"`, measured at 1470, 375 and 320) and "Hanzo University" (`data-cta="learn.university"`, kit link: arrow drifts and the label underlines on hover, scale .97 on press in 90 ms). After the hero, the sticky header carries "Get started" solid.
+Done here: kit `Cta` for "Get started" (`data-cta="learn.hero"`, `data-thumb="Get started"`, measured at 1470, 375 and 320) and "Hanzo University" (`data-cta="learn.university"`, kit link: arrow drifts and the label underlines on hover, scale .97 on press in 90 ms). After the hero, the sticky header carries the solid ask ("Get started" at 1470; the shared phone header keeps "Try Hanzo").
 
 ## 5. Trust and proof
 - ~~No logo without documented permission; no seal; no invented number~~ n/a: no logos, seals or claims. The 64px numerals are item counts (01–06, 01–05), not claims.
