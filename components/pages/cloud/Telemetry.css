@@ -63,6 +63,7 @@
 .tl2-g button:active { transform: scale(.98); }
 .tl2-g button { display: inline-flex; align-items: center; gap: 8px; }
 .tl2-g button i { display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid rgba(0, 0, 0, .25); font-size: 11px; font-style: normal; line-height: 1; }
+.tl2-g button[aria-pressed='false'] { border-color: rgba(0, 0, 0, .18); }
 .tl2-g button[aria-pressed='true'] { border-color: var(--ink); color: var(--ink); }
 .tl2-g button[aria-pressed='true'] i { background: var(--ink); border-color: var(--ink); color: #fff; }
 .tl2-yc-out { margin-top: 22px; border-radius: 18px; background: #0a0a0a; color: #f5f5f5; overflow: hidden; }
@@ -81,4 +82,86 @@
   .tl2-ln em { width: 24px; }
   .tl2-win { overflow-x: auto; }
   .tl2-k, .tl2-sig li, .tl2-sub, .tl2-mem p, .tl2-out span, .tl2-strip span, .tl2-tabs span, .tl2-g p, .tl2-yc-bar { font-size: 14px; }
+}
+
+/* chapter arrival: a span runs the strip to the lit stage, the lit lines write in, a caret blinks at the end (5 s) */
+.tl2-strip { position: relative; padding-bottom: 18px; }
+.tl2-track { position: absolute; left: 0; right: 0; bottom: 4px; height: 1px; background: var(--hair); overflow: visible; pointer-events: none; }
+.tl2-run { position: absolute; left: 0; top: 0; width: 100%; height: 1px; }
+.tl2-run b { position: absolute; left: -4px; top: -4px; width: 9px; height: 9px; border-radius: 50%; background: var(--ink); }
+.tl2-w { display: inline; }
+.tl2-caret { display: inline-block; width: .55em; height: 1.1em; margin-left: 2px; vertical-align: -.2em; background: #f5f5f5; animation: tl2-blink 1s steps(1) 5; animation-fill-mode: forwards; }
+@keyframes tl2-blink { 50% { opacity: 0; } }
+/* the code window keeps the config's 20-line height, so builder.yaml never re-centres the stage */
+.tl2-ed:not(.cp) .tl2-code { min-height: calc(20 * 1.6em + 32px); box-sizing: border-box; }
+/* hero: the signal under the pointer is the one coming in */
+.tl2-sig li { transition: background .12s var(--ease), color .12s var(--ease); }
+.tl2-sig li.on { background: var(--ink); color: #fff; }
+.tl2-sig li.trace:not(.on) { background: #f5f5f5; color: #404040; }
+/* Your config: a hover that shows on an "on" toggle too */
+@media (hover: hover) {
+  .tl2-g button:hover { background: #f5f5f5; }
+  .tl2-g button:hover i { transform: translateX(2px); }
+}
+.tl2-g button i { transition: transform .15s var(--ease), background .15s, border-color .15s; }
+@media (max-width: 900px) {
+  .tl2 .x-copy { font-size: 14px; }
+  .tl2 .l2-band-get .x-cta, .tl2 .l2-get-meta a:last-child { min-height: 44px; display: inline-flex; align-items: center; }
+}
+.tl2-run.flow b { background: #737373; }
+.tl2-kr { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; }
+.tl2-kr .tl2-key { margin: 0; }
+.tl2 .tl2-kr .l2-pause.tl2-kp { position: static; flex: none; }
+@media (hover: hover) { .tl2 .tl2-yc-bar .x-copy:hover { background: rgba(255, 255, 255, .16); border-color: rgba(255, 255, 255, .3); } .tl2-g button:hover { border-color: var(--ink); background: #ededed; } }
+@media (max-width: 900px) { .tl2-out { height: 152px; } }
+
+/* the close: the collector at rest beside "Your config", redrawn by the toggles; the closing line rides beside it */
+.tl2-rest { display: grid; grid-template-columns: 1fr 14px 1fr 14px 1fr; align-items: center; gap: 6px; margin: 4px 0 20px; font-size: 12px; }
+.tl2-rest-c { display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 12px; background: #fff; min-height: 112px; }
+.tl2-rest-c.core { background: var(--ink); color: #fafafa; }
+.tl2-rest-k { color: #525252; margin-bottom: 2px; }
+.tl2-rest-c.core .tl2-rest-k { color: #a3a3a3; }
+.tl2-rest-p { padding: 3px 6px; border-radius: 6px; background: #ededed; color: var(--ink); transition: opacity .3s var(--ease), transform .3s var(--ease); }
+.tl2-rest-c.core .tl2-rest-p { background: #262626; color: #fafafa; }
+.tl2-rest-p[data-off] { opacity: .3; transform: translateX(-4px); text-decoration: line-through; }
+.tl2-rest-a { height: 1px; background: #a3a3a3; }
+.tl2 .l2-band-h { font-size: 26px; }
+@media (min-width: 900px) {
+  .tl2 .l2-band-top { align-items: start; }
+  .tl2 .l2-band-copy { position: sticky; top: 38svh; }
+}
+
+/* round 2 (7 Nov critic) */
+/* the hero lane: the incoming and outgoing span share one cell on the dotted line, so nothing hops to a second row */
+.tl2-lane > * { grid-area: 1 / 1; }
+/* the chapter strip sits on white: unlit stages in body grey (#525252, 7.8:1) with a hairline; the lit stage is ink */
+.tl2-strip span { color: #525252; border-color: rgba(0, 0, 0, .12); }
+.tl2-strip span.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+/* the code window: unlit lines, line numbers and placeholders at #a3a3a3 on #0f0f0f (8.1:1) */
+.tl2-code, .tl2-ln em { color: #a3a3a3; }
+.tl2-ln b { color: #d4d4d4; }
+/* chapter 05: config.yaml dimmed under builder.yaml, so the window stays full */
+.tl2-ln.tl2-ghost { color: #737373; }
+.tl2-ln.tl2-ghost-h { margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255, 255, 255, .08); color: #a3a3a3; }
+/* the collector at rest: 13px desktop, 14px phone */
+.tl2-rest { font-size: 13px; }
+@media (max-width: 900px) { .tl2-rest { font-size: 14px; grid-template-columns: 1fr; } .tl2-rest-a { width: 1px; height: 14px; justify-self: center; } }
+@media (min-width: 901px) {
+  /* the hero holds a shorter time, and the chapters' head follows it closely: no half-blank screen */
+  .tl2 .l2-stage { height: 125svh; }
+  .tl2 .l2-pin-head { padding-top: 27px; }
+  /* the rail sits under the chapter copy (right), clear of the config window */
+  .tl2 .l2-pin.flip .l2-rail { left: auto; right: 0; }
+  /* the close: the config spans the band beside a narrower copy column, in two columns of its own */
+  .tl2 .l2-band-copy { grid-column: 1 / span 4; }
+  .tl2 .l2-band-obj { grid-column: 5 / span 8; }
+  .tl2 .tl2-yc { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 26px; align-items: start; }
+  .tl2 .tl2-yc > :not(.tl2-yc-out) { grid-column: 1; }
+  .tl2 .tl2-yc-out { grid-column: 2; grid-row: 1 / span 5; margin-top: 0; }
+  .tl2 .tl2-yc-out pre { max-height: 520px; }
+}
+/* phones: the header keeps Hanzo's solid "Try Hanzo", so the page's own "View on GitHub" is outlined (one solid) */
+@media (max-width: 700px) {
+  .tl2 .l2-stage .l2-acts .x-btn.solid { background: transparent; color: var(--ink); border-color: rgba(10, 10, 10, .3); }
+  .tl2 .l2-band .l2-band-acts .x-btn.solid { background: transparent; color: #fafafa; border-color: rgba(255, 255, 255, .4); }
 }

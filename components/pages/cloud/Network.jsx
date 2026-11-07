@@ -1,6 +1,6 @@
 'use client';
 /* Network, Cloud 3 launch page, round 3 to docs/MASTER.md (the only brief), answering the 7/10 review.
-   V2: 8/10 The fabric is the page: title, lede and ask on the left five columns, the live peer map on the right eight, its peers wearing Hanzo's own renders of the models they have loaded; a request walks to whoever has the model, once, and rests on the placement; the same fabric is the pinned chapters' object and each fact changes it (topology draws in, links thicken by the work, attested peers fill, the route and placement play, a machine joins, the work settles into one root); one black room for the two ends and the agent prompt; deck greys, flat surfaces, no springs.
+   V2: 8/10 After its run the hero keeps a quiet bead walking the resting route and the replay control is outlined, not solid; chapter four's tags never sit on a ring. The chapters' intro shows unlinked peers being discovered and each pinned chapter keeps an ink bead running its own links (no still chapter). The fabric is the page: title, lede and ask on the left five columns, the live peer map on the right eight, its peers wearing Hanzo's own renders of the models they have loaded; a request walks to whoever has the model, once, and rests on the placement; the same fabric is the pinned chapters' object and each fact changes it (topology draws in, links thicken by the work, attested peers fill, the route and placement play, a machine joins, the work settles into one root); one black room for the two ends and the agent prompt; deck greys, flat surfaces, no springs.
    Persona: Developer who needs compute (buys it on the fabric, then calls it with a key).
    Goal: buy compute on hanzo.network.
    CTA: "Buy Compute" → https://docs.hanzo.ai/docs/network (data-cta network.hero, network.close; the site's sticky ask
@@ -75,7 +75,7 @@ const MARK = { zen: [0.67, 0.48], kai: [0.65, 0.5], enso: [0.7, 0.37], koe: [0.6
 const Thumb = ({ m }) => <span className="nw-th" style={{ '--cx': MARK[m][0], '--cy': MARK[m][1] }}><Img src={`/models/${m}.webp`} w={1200} h={1500} alt="" /></span>;
 const Tag = ({ m, hit }) => <b className={'nw-tag' + (hit ? ' hit' : '')}><Thumb m={m} />{m}</b>;
 
-function Fabric({ at, arrived, calm, peek, setPeek }) {
+function Fabric({ at, arrived, calm, peek, setPeek, idle }) {
   const box = useRef(null);
   const { w, h } = useSize(box);
   const [model, path, placed] = ASKS[at];
@@ -110,6 +110,17 @@ function Fabric({ at, arrived, calm, peek, setPeek }) {
           initial={{ x: (PEERS[YOU][0] / 100) * w, y: (PEERS[YOU][1] / 100) * h, opacity: 0 }}
           animate={{ x: path.map((p) => (PEERS[p][0] / 100) * w), y: path.map((p) => (PEERS[p][1] / 100) * h), opacity: [1, 1, 0] }}
           transition={{ duration: HOP * (path.length - 1), ease: [0.4, 0, 0.2, 1], opacity: { duration: HOP * (path.length - 1) + 0.3, times: [0, 0.8, 1] } }}
+        />
+      )}
+      {/* at rest the screen is never still: a small bead keeps walking the resting route, quietly and forever
+          (the one mover here; stops while paused, pointed at or off screen; absent under reduced motion) */}
+      {idle && w > 0 && (
+        <motion.span
+          key={'idle' + at}
+          className="nw-packet idle"
+          initial={{ x: (PEERS[YOU][0] / 100) * w, y: (PEERS[YOU][1] / 100) * h, opacity: 0 }}
+          animate={{ x: path.map((p) => (PEERS[p][0] / 100) * w), y: path.map((p) => (PEERS[p][1] / 100) * h), opacity: [0, 1, 1, 0] }}
+          transition={{ duration: 2.4, ease: [0.4, 0, 0.2, 1], repeat: Infinity, repeatDelay: 1.2, delay: 0.8, opacity: { duration: 2.4, times: [0, 0.12, 0.85, 1], repeat: Infinity, repeatDelay: 1.2, delay: 0.8 } }}
         />
       )}
     </div>
@@ -192,7 +203,7 @@ function Hero() {
         <div className="nw-fab">
           <div className="nw-fab-win">
             <motion.div className="nw-map-wrap" style={calm ? undefined : { scale: zoom }}>
-              <Fabric at={at} arrived={arrived} calm={calm} peek={peek} setPeek={setPeek} />
+              <Fabric at={at} arrived={arrived} calm={calm} peek={peek} setPeek={setPeek} idle={(done || mine) && arrived && inView && !paused && !calm && peek === null} />
             </motion.div>
           </div>
           <Tool at={at} choose={choose} arrived={arrived} peek={peek} paused={paused || done || mine} pause={toggle} />
@@ -221,6 +232,17 @@ const JOIN = [16, 27]; // the machine that joins in chapter five, linked to peer
 const SETTLE = [3, 6, 10, 4]; // peers whose work settles into the block in chapter six
 const ROUTE = [9, 5, 3]; // kai, from you
 const ROOT = [70, 97];
+const P = (i) => PEERS[i];
+// the links each chapter's dash runs: 01 discovery from you, 02 the links carrying work, 03 trust reaching the attested,
+// 04 the route to kai, 05 the new machine to its two peers, 06 the work into the root
+const flows = (step) => [
+  [[P(9), P(5)], [P(9), P(6)], [P(9), P(8)], [P(9), P(10)]],
+  Object.keys(WORK).filter((k) => WORK[k] > 1).map((k) => k.split('-').map((n) => P(+n))),
+  [[P(5), P(3)], [P(3), P(0)], [P(3), P(4)], [P(6), P(10)]],
+  [[P(9), P(5)], [P(5), P(3)]],
+  [[JOIN, P(0)], [JOIN, P(5)]],
+  SETTLE.map((p) => [P(p), ROOT]),
+][step] || [];
 
 function Story({ step, intro, lend }) {
   const box = useRef(null);
@@ -238,6 +260,9 @@ function Story({ step, intro, lend }) {
               const wk = !intro && step === 1 ? WORK[key(a, b)] || 0 : 0;
               return <line key={key(a, b) + (draw ? 'd' : '')} x1={X(PEERS[a][0])} y1={Y(PEERS[a][1])} x2={X(PEERS[b][0])} y2={Y(PEERS[b][1])} pathLength="1" className={(draw ? 'draw ' : '') + (wk ? 'w' + wk : '') + (lit(a, b) ? ' on' : '')} style={draw ? { animationDelay: i * 40 + 'ms' } : undefined} />;
             })}
+            {/* the work keeps moving while you read: a short dash runs the links this chapter is about, again and again
+                (the one continuous mover on the screen; frozen under reduced motion) */}
+            {!intro && flows(step).map(([a, b], i) => <line key={'f' + step + '-' + a + '-' + b} x1={X(a[0])} y1={Y(a[1])} x2={X(b[0])} y2={Y(b[1])} pathLength="1" className="flow" style={{ animationDelay: (i * 0.35).toFixed(2) + 's' }} />)}
             {step === 4 && !intro && [0, 5].map((p) => <line key={'j' + p + lend} x1={X(JOIN[0])} y1={Y(JOIN[1])} x2={X(PEERS[p][0])} y2={Y(PEERS[p][1])} pathLength="1" className="draw join" />)}
             {step === 5 && !intro && SETTLE.map((p, i) => <line key={'s' + p} x1={X(PEERS[p][0])} y1={Y(PEERS[p][1])} x2={X(ROOT[0])} y2={Y(ROOT[1])} pathLength="1" className="draw settle" style={{ animationDelay: i * 90 + 'ms' }} />)}
           </svg>
@@ -251,7 +276,7 @@ function Story({ step, intro, lend }) {
           if (!intro && step === 5 && SETTLE.includes(i)) c.push('lit');
           if (x > 80) c.push('l');
           return (
-            <div key={i} className={c.join(' ')} style={{ left: x + '%', top: y + '%', '--i': i }}>
+            <div key={i} className={c.join(' ')} data-p={i} style={{ left: x + '%', top: y + '%', '--i': i }}>
               <i />
               <span className="nw-tags">
                 {i === YOU && <b className="nw-tag me">you</b>}

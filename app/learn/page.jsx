@@ -4,7 +4,7 @@
 // Metric: api_key_created
 // Signature: the docs as a transit map: a train rides the Start-here line once, by itself, and stops at each station, whose guide opens beneath it.
 // Beyond: the documentation drawn as a line you ride: each station opens its own guide in place, linked by its own name, before you leave the page
-// V2: 8/10 MASTER scale: 52px headline over the map, the train rides once and rests; what to try and go further folded into one index; the blog and the thinking together as the dark room; questions; kit Cta and Img; no pills, no lifts
+// V2: 8/10 after the map, three scenes with one big thing each (the 01–06 rail with 64px numerals that ink once, Hanzo University's Zen film, the 44px lead post with Kai's film in the dark room) and questions collapsed under a 64px question number; one solid per screen
 import Learn from '../../components/pages/Learn';
 import JsonLd from '../../components/JsonLd';
 

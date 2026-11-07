@@ -1,4 +1,4 @@
-// V2: the self-playing keyboard is the hero object (display above, ten keys in three clusters, sticky display on phone), three pinned product chapters lighting one feature at a time, a closing band with the one ask; no live AI call; deck greys only
+// V2: the self-playing keyboard is the hero object (display above, ten keys in three clusters, sticky display on phone); three product rooms with Hanzo's films (Chat split, Dev full-bleed black, Design wide film over two rows), each film moving to the open feature; a close with the three film cards and the one ask; no live AI call; deck greys only
 // Signature: Hanzo's ten features as keycaps on one keyboard that plays itself, each key lighting its feature on the display
 // Beyond: find the feature for a job: type what you need and the keys whose own descriptions say it light up
 import Features from '../../components/pages/Features';

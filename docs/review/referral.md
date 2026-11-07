@@ -1,42 +1,31 @@
-# /referral — James-eye review
+# /referral: James-eye review (independent critic, 7 Nov, second pass)
 
-Reviewed: main, page files at `4b53974` (re-walked after the site-wide palette recolour of 14:29; first review at `3a5cb5f`, 5/10). Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
+Verdict: 7/10
+First complaint: "It's the same three words over and over. Referred, Pending, Qualified in the card, then again massive and grey sliding past, with the link pill repeated a dozen times under it. That's filler, not a moment. And on my phone the black box cuts the headline off at the edges as it opens."
 
-Note (7 Nov 14:12): a hydration error seen in the first walks came from the shared shell and is gone on main; it is not counted against this page. Text is now legible with JavaScript off (shared fix at 14:05, re-checked).
-
-Verdict: 5/10 (scale fails; no card)
-
-What changed: the palette recolour took the lime out (0 UI hues measured). Nothing else on the page changed: the eyebrow, the icon boxes and the fading Copy are still there.
-
-First complaint: "That second screen is just giant words, LinkedIn, Facebook, Reddit, all the same huge size, nothing small anywhere. And there's still a label on top of the headline."
-
-**Cap: part card (MASTER section 6).** There is no `docs/coverage/referral.md`. Capped at 7 until the card is copied from `docs/coverage/_TEMPLATE.md` with 18 `Done here:` lines true on the page. The shared desktop ask bar floats over content (site-wide, see `_shared.md`); not counted against this page.
-
-**Scale (MASTER 3.1, fail):** the rails screen holds about 25 words at 128px ("LinkedIn", "Facebook", "Bluesky", "Reddit", "Hacker News" …) and nothing medium or small: everything big at once (52px on the phone, same effect). Fix: one rail at display size that grows as it passes the centre, the other at 26–32px, or one big word at a time.
+Walked moving at 1470x801 and 375x812 (cookie bar dismissed), screenshots ~1 s apart per screen, desktop hover emulation on, every control hovered and pressed, no form sent. Parity: `/referral: OK  text 20/20  links 3/3`. CLS 0.0004 desktop, 0.0002 phone. No horizontal scroll at 375 or 320. Proof: `img/referral-rails.jpg`, `img/referral-phone-clip.jpg`.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** It reads: "Bring a builder to Hanzo." and Hanzo's line, "Get your link", beside hanzo.ai's own referral card. But the card is small and nearly still: after arrival the first screen changes by 0.2% (a few dots moving in the counts). It does not feel alive.
-2. **One in, one out?** Partly. The display-size rails ("Referred → Pending → Qualified", the ways to share) run past in opposite directions, which is a good moment. "How it works" is a row of four boxes. The dark room compares referral and affiliate side by side.
-3. **A real object in every section?** Hero card and rails, yes. "How it works" is icons and sentences.
-4. **One ask, sticky after the hero?** Yes on desktop: a floating pill carries "Get your link" after the hero and the header's "Try Hanzo" turns outlined. On the phone the header's solid "Try Hanzo" shows beside the pill.
-5. **Every hover and press answers?** "Get your link" answers on hover; "Sign in" does not. **"Copy" only fades on hover** (a banned tell); it does press.
-6. **Overlap, font swap, layout shift?** None; layout shift 0.
-7. **Which reference, and is its motion there?** grubogrubo (big type rails, playful) and a product-card hero. The rails are there; the card is too small to carry the first screen.
-8. **Different from its neighbours?** Yes: the rails are its own.
-9. **All 18 parts covered?** See below. No `docs/coverage/referral.md`.
-10. **Banned tells?** Yes:
-    - Eyebrow above the h1 ("• REFERRALS", now a grey dot, mono caps).
-    - Icon boxes in a row ("How it works": four icons in rounded boxes with a sentence each).
-    - A button that fades on hover ("Copy").
-11. **Copy untouched?** Yes as measured: parity 20/20 text, 3/3 links.
 
-## Missing from the 18 parts (PLAN-COMPONENTS 2.1–2.18, measured)
-- **2.8 Button states:** "Copy" hover is opacity only.
-- **2.4:** two solid buttons after the hero on the phone; 0 `data-cta`.
+1. **Sells in 5 s; moves in 1 s?** Yes. h1 "Bring a builder / to Hanzo." cuts in by line, lede, one solid "Get your link", Sign in quiet, and hanzo.ai's signed-out card on the right. Within a second the card rises, a ring drops onto Referred, Pending, then Qualified (lands on Qualified at ~5 s) and dots ride the dashed track under the tiles. On phone the h1, lede, ask and the card's top fit the first screen.
+2. **One in, one out, or a document?** Mostly one in, one out: card, counts rail, steps stage, dark room, close. But the second screen (the rails) is not a new idea; it re-says the card's three labels at 84px. At 1470x801 the first screen ends on half-cut giant grey letters from that rail, which reads as clutter rather than a deliberate 56px peek.
+3. **A real object in every section?** Hero card: yes. Rails: type only (words plus 12 identical `hanzo.ai/?ref=…` pills). How it works: yes, four drawn scenes (fan-out, lock, meter needle, waitlist bar) that step on their own every 2.6 s and stop on 04. Dark room: two tracks with riders, the affiliate track filling. Close: nothing; a centred sentence and two buttons.
+4. **One ask in the sticky header; scale rhythm?** Desktop: header shows "Try Hanzo" (outlined) while the hero ask is on screen, then turns into a solid "Get your link" once it leaves, and goes quiet again when the closing ask is in view. Only one solid fill per viewport on desktop. Phone: same swap works (page-local hook), but at the dark-room/close boundary the header ask is a light solid on the dark header while the closing black "Get your link" is also on screen (two fills). Nothing floats over content. Scale: h1 52, rails 84, steps 21, dark room 44, close 26: rhythm exists, though the 84px rail is the biggest thing on the page and it is the least important.
+5. **Every hover and press answers, no jumps?** Yes. Primary: fill darkens, press scale .98. Sign in: border darkens plus inset tint, press .98. Copy (disabled while signed out): fills ink, icon nudges; pressing it shakes the link row and pulses Sign in, which is a good answer. Pause: fills ink; it really stops the rails (transform frozen) and resumes. Steps: title goes ink and slides 6px; picking one jumps the stage and stops auto-play. Affiliates link: underline opens; "Affiliates →" arrow slides 4px. No layout jump measured.
+6. **Overlap, font swap, layout shift?** No font swap, CLS ~0. **Defect at 375x812:** while the dark room opens, its clip-path insets 32px from each side but the heading sits on the 16px gutter, so "A referral pays nothing." and "Affiliates are paid on what their referrals spend." are visibly sliced at both edges until the room is fully open (`img/referral-phone-clip.jpg`). Desktop is fine because the text sits far inside the inset.
+7. **Which reference, and is its motion there?** A small apple.com feel (one idea per screen, product card as hero) and a motion.dev-style scroll-answering marquee. The rails do speed up with the scroll and decay. No reference move is strong enough to name the page by.
+8. **Different from neighbours?** Only partly. /affiliate also has "How it works" on the left with a grey rounded stage on the right captioned "02 / 04", then a dark room. The mechanics differ (tabs that auto-step here, sticky chapters there), but the two pages read as the same template in the middle third.
+9. **18 parts?** Header comment, one h1, `data-cta` and thumb on the primary, `Cta` kit, pause control first in the rails, reduced-motion final states, `html:not(.js)` fallbacks, APG tablist with arrow keys, sound only on tick controls. Gaps: the close is not a `Band`; no proof strip (none exists in Hanzo's copy, acceptable); the Copy button is a decoy while signed out (handled kindly, but it is a control that cannot do its job).
+10. **Banned tells?** No hue (only deck greys, white alphas on black). No label above a headline: "Referrals" is set below the asks as a caption. No gradient text, no Inter, no cursor glow. Watch item: the hero card's three count tiles are three equal boxes in a row (defensible as hanzo.ai's own card UI, not a feature row).
+11. **Copy untouched?** Yes, word for word against `content/live/referral.json`; 20/20 strings, 3/3 links. One duplication: "Affiliates" appears twice in the dark room (inline link in the sentence and a separate "Affiliates →" link below), so a Hanzo word is shown twice where live shows it once.
 
-## Fixes
-1. Remove "• REFERRALS" from above the h1.
-2. Give the rails rhythm: one big moment, the rest medium and small (see Scale).
-3. Replace the four icon boxes with one object (for example the referral card itself stepping through Share → Signs up → Qualifies → Moves up), so the steps happen rather than sit in boxes.
-4. Make the hero card larger and let one builder visibly land in it, once, so the first screen moves.
-5. Give "Copy" a real hover (not opacity) and the copy confirmation from the brief.
+Shared chrome (not counted against the page): the red "1 Issue" dev badge on every load is a hydration mismatch in the shared footer (`FooterHTML` `__html` differs server vs client); the h1 font stack begins with "Noto Kufi Arabic"; the shared primary hover goes to rgb(44,44,46), which is not a deck value (#262626 is); the header's resting ask reads "Try Hanzo" rather than this page's ask on desktop; the cookie card arrives late on phone (after ~2 s) and covers the hero card.
+
+## Fixes to reach 8
+
+1. **Turn the rails into a moment or cut them.** Either remove the 84px grey Referred → Pending → Qualified marquee and its 12 repeated link pills, or make it carry something the card does not: for example let the rail sit at 52px and have the lit word drive the hero card (the lit count tile changes as the word passes centre), so it is one object, not a repeat. Also stop the first screen at 1470x801 ending on half-cut grey letters: a clean 56px peek or move the rail below the fold.
+2. **Fix the phone clip in the dark room.** Under 899px either start the clip inset at 0 to 8px, or give `.xrf-which-in .xp-wrap` padding greater than the starting inset (for example 32px plus gutter) so no letter is cut while the room opens.
+3. **Give the close an object.** Put the hero card back, small, with the rider resting on Qualified and Copy, beside "Sign in and your link, and everyone it brings, is here." so the page ends on the thing you get, and make it the closing `Band`.
+4. **Separate it from /affiliate.** Drop the grey rounded stage with the "0N / 04" caption, or change the steps' form: for example one wide stage where the four scenes run as a single continuous strip (link fans out → one locks → needle swings → bar rises) under the four sentences in a row, so it no longer mirrors the affiliate page's left-list/right-box layout.
+5. **Show "Affiliates" once in the dark room.** Keep the inline link inside the sentence and remove the separate "Affiliates →" link (or keep the separate link and set the sentence's word as plain text).
+6. **Phone: one fill at the close.** When the closing "Get your link" is in view, return the header ask to its quiet state on phone too (desktop already does this).

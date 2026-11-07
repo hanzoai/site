@@ -1,0 +1,8 @@
+# /slack: requests to shared owners
+
+1. **Memoji mirror** (`public/memoji/`, media-mirror owner). `dev.svg` and `sci.svg` could not be fetched (hanzo.ai blocked from the build machine, proxy 403). `components/pages/slackData.js` now draws initial discs (D, Q, ZM, HB, H) and makes no request. Once the two files are mirrored, set `MEMOJI = true` in `slackData.js` and the faces draw over the discs (the discs stay as the fallback).
+2. **A2Lines hydration under reduced motion** (`components/v2/A2Lines.jsx`). It reads `useReducedMotion()` during the first render, so the server sends `translateY(105%)` and the client sends `none`. /slack now imports the page-local `components/pages/skills/Lines.jsx` (same props) as the coordinator asked. The shared component should get the same fix, so that every page can import it again.
+3. **Header ask on phone** (shared header). At 375 the header ask stays "Try Hanzo" and never takes the page's "Set up Hanzo Tag". On desktop it swaps correctly.
+4. **Two solid fills at the close** (shared header). After the hero, the sticky header shows a solid "Set up Hanzo Tag", and the close's solid "Connect Slack Workspace" shares the viewport with it. The page has only one solid fill of its own in each section. The header could go quiet while a page's own solid ask is in view.
+5. **Cookie card height on phone** (shared consent). It covers about a third of 375x812 over the scene, against MASTER's 220px.
+6. **Footer hydration mismatch** seen in the critic's log (shared footer). It did not reproduce in this pass (0 console errors on 6 loads), but it is noted here in case it comes back.

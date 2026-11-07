@@ -3,7 +3,7 @@
 Page file: `components/pages/model/ZenCatalog.jsx` (+ `ZenCatalog.css`) · gallery: `docs/gallery/zen/models/` · metric id: `api_key_created`
 
 Open copy questions for James: the shelf filter and sort labels ("All", "Hanzo's order", "By size", "By context") and the sheet legend ("total params", "active per token", "context") are control labels this page needs; they are not yet in `content/ui-strings.json`, so please approve or name them.
-Shared changes requested (`docs/requests/<page>.md`): none written. Two notes for the shared owners: the desktop ask bar is a floating pill over content (MASTER 3.2 rule 6); the footer's server HTML logs a hydration warning on load.
+Shared changes requested: `docs/requests/zen-models.md` (the phone header ask should follow the page's primary; the cold-load hydration note). Two notes for the shared owners: the desktop ask bar is a floating pill over content (MASTER 3.2 rule 6); the footer's server HTML logs a hydration warning on load.
 Forks this page deleted:
 - the bento cards with a paragraph and four spec rows (now `SPEC.md` model cards plus one sheet row each);
 - the per-card "+" detail;
@@ -20,7 +20,7 @@ Forks this page deleted:
 - [x] No dead or self-looping button; prices — n/a: no plan; "From $0.01/MTok" is Hanzo's line
 - [x] Open copy questions for James listed, none decided
 
-Done here: Header lines `// Persona:`, `// Goal:`, `// CTA:`, `// Metric: api_key_created`, `// Signature:`, `// Beyond:`. One solid "Get API key" in the hero (measured: 1 solid on the first screen at 1470×801 and 375×812) and one "Get Started" in the close. Tiers with no Zen5 model are disabled and struck through, never dead.
+Done here: Header lines `// Persona:`, `// Goal:`, `// CTA:`, `// Metric: api_key_created`, `// Signature:`, `// Beyond:`. One solid "Get API key" in the hero (measured: 1 solid on the first screen at 1470×801 and 375×812) and one "Get Started" in the close. Tiers with no Zen5 model (ultra max, pro max) are not offered as buttons; their names stay in the HTML as visually hidden text, so no control reads as broken. On phone the header still shows its own solid "Try Hanzo" (shared header; requested in `docs/requests/zen-models.md`).
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it (shared shell)
@@ -31,19 +31,19 @@ Done here: Header lines `// Persona:`, `// Goal:`, `// CTA:`, `// Metric: api_ke
 Done here: Parity links 5/5. Each Zen5 card is a real `<a>` to its existing model page (`/models/hanzo/zen5`, `-coder`, `-flash`, `-mini`, `-pro`).
 
 ## 3. First impression and page narrative
-- [x] Sells in 5 s; something moves within 1 s without input (the film plays; the h1 cuts in)
+- [x] Sells in 5 s; something moves within 1 s without input (the Zen5 field drifts; the h1 cuts in)
 - [x] `PageHero` (kit part not merged: page-local hero, h1 cut in by line mask 105%→0, 700 ms, ease-emphasis, 60 ms apart); nothing above the h1
 - [x] JS off: legible; no `opacity:0` on the LCP element
 - [x] One idea per 100svh; no 3 same-height sections in a row
 - [x] Ends in proof strip, `Band`, footer — the sheet is the proof, then a centred close in Hanzo's words
 - [x] Card-to-page links use Morph (`data-morph` on every card)
 
-Done here: The h1 sits at 198–321px at 1470×801 (baseline near 40%), and the next section peeks under the hero tile. JS-off render: 0 hidden text blocks (the `noscript` rule lifts the h1 masks; the sheet rows' paragraphs show).
+Done here: The hero object is this page's own Zen5 field (a Sigil seeded by the five Zen5 rows' total and active sizes), not the shared sphere film; the black room enters as a rounded 24px card inside the gutters and opens to full width as it is scrolled (clip-path from scroll, none under reduced motion). On phone the field is a 28svh band above the type. The h1 sits at 198–321px at 1470×801 (baseline near 40%). The figures pin over 200svh; each figure sits high (number at ~153–265px at 1470×801) over a drawing of its own number as data that fills the screen to 44px above the fold, crossfading 500/300 ms: 18 marks (the five Zen5 in ink), the Zen5 contexts on a linear 2M ruler, one filled cent of a 100-cell dollar, the five Zen5 sizes (total against active), and 7 capsules. No dead bands: Quick Start ends 44px above the figures (no hairline), the Zen5 heading starts 79px below the figures' end (the shelf overlaps them by 40px), and the close overlaps the sheet by 40px. JS-off render: 0 hidden text blocks (the `noscript` rule lifts the h1 masks; the sheet rows' paragraphs show).
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
 - [x] Sticky ask in header and bar after the hero, same label (shared ask bar fed by `data-thumb`)
-- [x] Copy button copies exactly the displayed text (Quick Start copies the model name shown)
+- [x] Copy button copies exactly the displayed text (Quick Start copies the model name shown; the typed name lives in React state, so code, pressed name and clipboard always match)
 - [x] `data-cta` and `data-thumb` on every primary
 
 Done here: `data-cta` ids: `zen-models.hero` (thumb), `zen-models.hero-explore`, `zen-models.hero-pricing`, `zen-models.card-<slug>`, `zen-models.close`, `zen-models.close-dev`, `zen-models.close-pricing`.
@@ -62,16 +62,16 @@ Done here: The figures are 18, 2M, $0.01/MTok, MoE + Dense and 7. The rows give 
 - [x] Tables, FAQ, tabs and code use the kit parts — the sheet is a list with inline disclosure; Quick Start keeps its own `<pre>` because the model name retypes inside it
 - [x] `python3 scripts/parity.py /zen/models`: 0 missing
 
-Done here: Rest sizes are h1 52px (44 on phone), section heads 26px, lede 21/17px, body 16px. The pinned figure is 112px Air (52 on phone), card titles are 22px (44 on the tall card), card lines 13px. Parity: text 89/89, links 5/5.
+Done here: Rest sizes are h1 52px (40 on phone), section heads 26px, lede 21/17px, body 16px. The pinned figure is 112px Air (52 on phone), card titles are 22px (44 on the tall card), card lines 13px. Parity: text 89/89, links 5/5.
 
 ## 7. Visual design system
 - [x] `taste.py` passes; deck values only, set once at the top of `ZenCatalog.css`
 - [x] No label, tag, badge or pill above a headline (the "Zen 6 and Zen 6 Flash…" line sits under the h1; "Zen5" sits beside its heading)
 - [x] Radii 24 (hero tile, terminal), 20 (model cards), 6 (chips), full (buttons, segments); no shadows
 - [x] One icon set; no icon in a rounded box
-- [x] Differs from neighbours: film tile plus a card grid, where `/zen/zen6-max` pins a rack and `/zen/7` raises a 7
+- [x] Differs from neighbours: its own Zen5 field hero (not the shared zen.webm) plus a card grid, where `/zen/zen6-max` pins a rack and `/zen/7` raises a 7
 
-Done here: taste.py passes on both files. The only colour is the Zen film. The cards are pure #000 with white type, per `SPEC.md`.
+Done here: taste.py passes on both files. The page has no hue at all now (the hero is a white-line field on black); the cards are pure #000 with white type, per `SPEC.md`.
 
 ## 8. UI component library
 - [x] Every control has hover (inside `@media (hover: hover)`), press (scale .97, 90 ms), focus-visible, disabled
@@ -80,7 +80,7 @@ Done here: taste.py passes on both files. The only colour is the Zen film. The c
 - [x] Inputs 16px — n/a: no input
 - [x] Forks this page deleted: listed above
 
-Done here: Film pause/play, the model-name chips, tier and order segments (gliding ink pill on a 300 ms tween), row disclosure buttons (44px, `aria-expanded`), and cards (tilt and focus ring).
+Done here: Field pause/play (hidden under reduced motion, where the field is already still), the model-name chips, tier and order segments (44px; hover grows an #ededed pill in under the label, 150/300 ms, previewing where the gliding ink lands; gliding ink pill on a 300 ms tween; on phone the tier rail snaps and shows a right-edge peek when it runs past the screen), row disclosure buttons (44px, `aria-expanded`), and cards (tilt, focus ring, and size bars on hover or focus).
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting, 0 fade-ups (`variety.py` OK: layoutId, useScroll, Sigil, typing)
@@ -91,20 +91,20 @@ Done here: Film pause/play, the model-name chips, tier and order segments (glidi
 
 Done here:
 - State: the sort and tier re-flow, with the leader taking the tall card.
-- Time: the model line retypes; it stops on hover or focus.
-- Idle: the film and the card Sigils drift.
-- Pointer: card tilt up to 3°, settling flat on leave.
+- Time: the model line retypes; no new cycle starts on hover or focus, and a running cycle finishes its name.
+- Idle: the hero's Zen5 field and the card Sigils drift; each figure drawing idles (a wave through the 18 marks, a playhead sweeping the 2M ruler, the cent breathing, the active bars pulsing, the 7 capsules filling in turn); the close's context ruler drifts (32 s, ease-in-out, alternate).
+- Pointer: card tilt up to 3° with the model's size bars drawing in to scale (500 ms ease-emphasis; measured on hover: Zen5 Coder total 47/166px, context 111/166; Zen5 Pro 166/166, active 22; Zen5 Flash 2/166, context 28); sheet rows fill #f5f5f5 and light their bars; the hero field leans toward the pointer; sort and tier pills grow an #ededed fill.
 - Arrival: the h1 cut-in.
-- Scroll: the pinned figures cut in through a mask, and the sheet bars draw.
+- Scroll: the hero room opens to full width, the pinned figures cut in through a mask while each figure's drawing grows in (scaleX/scaleY, 500 ms ease-emphasis, staggered), and the sheet bars draw.
 - No springs anywhere.
 
 ## 10. Media
-- [x] `Film` only; poster set (`zen.webp`); size given (1200×1500)
-- [x] At most 2 videos (one); pause button on the loop
-- [x] Budgets: zen.webm 251 KB; nothing missing
+- [x] `Film` only — n/a now: no video (the shared zen.webm was replaced by the page's own Sigil field per the review)
+- [x] At most 2 videos (none); pause button on the moving field
+- [x] Budgets: no media file; nothing missing
 - [x] No dimmed photo (a gradient sits only under the text)
 
-Done here: The film plays through the kit `Film` (only on screen, never under reduced motion or Data Saver). A 44px pause/play button (`aria-pressed`) sits at the tile's top right. The Zen5 models have no renders, so each card's art is its own Sigil (MASTER: "Model marks and Sigil are the designed image fallback").
+Done here: The hero is a Sigil canvas (only drawn while on screen, one still frame under reduced motion). A 44px pause/play button (`aria-pressed`) sits at the tile's top right and stills the field. The Zen5 models have no renders, so each card's art is its own Sigil (MASTER: "Model marks and Sigil are the designed image fallback").
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -112,7 +112,7 @@ Done here: The film plays through the kit `Film` (only on screen, never under re
 - [x] Every target 44px or more; tilt off on touch
 - [x] Primary ask above the fold at 375×667
 
-Done here: On phone, the hero tile stacks the type over the film (45svh), and "Get API key" sits at 567–611px at 375×667. The figures become a list, the cards stack at 220px each, and the sheet rows become name / params / bars / facts. scrollWidth equals the viewport at 320, 375 and 1470.
+Done here: On phone, the hero tile puts a 28svh band of the Zen5 field above the type, and "Get API key" sits at 616–660px at 375×667 (656–700px at 375×812). The figures become a 64px lead figure ("18", full width, ruled off) over a 2-column grid at 32px (2M | $0.01/MTok, MoE + Dense | 7), the cards stack at 220px each with their size bars always shown to scale (Zen5 Pro 144/19/144 of 144px, Zen5 Flash 2/2/24), and the sheet rows become name / params / bars / facts. scrollWidth equals the viewport at 320, 375 and 1470.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -129,7 +129,7 @@ Done here: Text pairs are #0a0a0a, #525252 and #737373 on white; #525252 on the 
 - [x] No poller (timeouts only, stopped off screen)
 - [x] Nothing heavy run on James's laptop
 
-Done here: Layout shift measured over a full scroll: 0 at 1470×801 and 375×812. Six Sigil canvases (five cards and the close), under the cap of 12. Gap: bundle size not measured in this pass.
+Done here: Layout shift measured over a full scroll: 0 at 1470×801 and 375×812. Six Sigil canvases on desktop (hero and five cards; the figures and the close are now DOM/CSS data drawings), under the cap of 12. Gap: bundle size not measured in this pass.
 
 ## 14. SEO and machine files
 - [x] Title and description match live (`app/zen/models/page.jsx`, unchanged)
@@ -145,7 +145,7 @@ Done here: Metadata and `JsonLd` are untouched; the five cards are `<a href="/mo
 - [ ] Every maker and model page linked — n/a here: this is the Zen catalog, not `/models`
 - [x] One price figure everywhere ("$0 / $0" for every Zen5 row)
 
-Done here: The grid is the SPEC grid adapted to five cards: the leader spans two 220px rows, then four 220px cards, gap 12px. Media is Sigil, because the Zen5 models have no `.webm`.
+Done here: The grid is the SPEC grid: `385px repeat(4, 192px)`, rows `220px 220px`, gap 12px, one 1201px band at 1470 (measured: lead 385×452 spanning column 1 and both rows; the other four two tracks wide, 396×220, two by two). Below 1280px the same tracks as `2fr repeat(4, 1fr)`; below 900px one column of 220px cards. The Pro tier (3) gives the lead plus two 804×220 cards. Non-lead titles stay 22px. Media is Sigil, because the Zen5 models have no `.webm`. The card size bars read the page's own `--zc-w` (the shared `--w` is a registered length, which voided `scaleX()`).
 
 ## 16. Developer experience
 - [x] Copy equals display (Quick Start copies the code with the model name on screen)
@@ -153,10 +153,10 @@ Done here: The grid is the SPEC grid adapted to five cards: the leader spans two
 - [x] The rotating line stops on hover and focus
 - [x] No hand-typed version number
 
-Done here: Quick Start is the second chapter, a graphite 24px tile. Tapping zen6, zen6-flash or zen5-coder retypes the line and stops on it.
+Done here: Quick Start is the second chapter, a graphite 24px tile. Tapping zen6, zen6-flash or zen5-coder retypes the line and stops on it. Sampled every 150 ms, the code, the pressed name and the clipboard match (the cleanup no longer writes the old name back).
 
 ## 17. States and resilience
-- [x] Loading, empty, error — the empty state is designed out: empty tiers are disabled and struck through
+- [x] Loading, empty, error — the empty state is designed out: tiers with no Zen5 model are not offered
 - [x] Blocked data — n/a: nothing fetched; 0 page errors
 - [x] Failed submit — n/a
 - [x] Thrown island — shared error boundary
@@ -167,6 +167,6 @@ Done here: JS-off and reduced motion show the h1, every figure (as a list), ever
 - [x] `data-cta` on every primary (Cta sends `cta_click` through the shared event)
 - [x] Nothing identifier-bearing before consent
 - [x] `V2:` line in the page file's top comment
-- [ ] Review read: `docs/review/zen-family.md` 7/10 before this rework; its /zen/models items are done (shelf no longer packed with small grey text, labels raised, figure handover a clean cut-in, `Film` with pause, `data-cta`); awaiting a new verdict
+- [ ] Review read: `docs/review/zen/models.md` 7/10 (second verdict); fixes 1–6 done here (bars to scale, figures as data and no closing field, phone figure rhythm, SPEC grid, dead bands trimmed, pill hover fill); the shared items (footer hydration, phone header ask, header glass, cookie card) stay with their owners; awaiting a new verdict
 
 Done here: Gallery: `docs/gallery/zen/models/` (desktop film plus 3 phone stills), re-filmed after this rework.
