@@ -18,7 +18,7 @@
 // Metric: post opens (data-cta="blog.*")
 // Signature: a magazine cover that turns itself: the headline wipes and a silver curtain crosses the art plate as it changes
 // Beyond: the publishing strip: a bar per month counted from Hanzo's own post dates that narrows the contents to a month
-// V2: 8/10 round 4: JS off shows one cover story (NoJs, no <noscript>); one solid per screen (masthead "Read the latest" solid on desktop where the header quiets, outlined on phones beside the header's solid); the on-site trio plays Hanzo's own films (Zen, Enso, Kai) so four real visuals show with the cover; the contents show one month at a time, the bars swap it in and out, All 24 opens all; the count sits under Contents; trio tilt, count-up, idle bar sweep and row arrival kept
+// V2: 8/10 round 5: masthead cuts in by CSS from first paint, the cover plate's first contour frame is server SVG (BlogIndexFrame), header outlined from first paint while the page's solid is on screen (no flip), phone strip scrolls inside the column with All 24 under it, card art clipped to its radius, big card fills the column, AnimatePresence popLayout. Round 4: JS off shows one cover story (NoJs, no <noscript>); one solid per screen (masthead "Read the latest" solid on desktop where the header quiets, outlined on phones beside the header's solid); the on-site trio plays Hanzo's own films (Zen, Enso, Kai) so four real visuals show with the cover; the contents show one month at a time, the bars swap it in and out, All 24 opens all; the count sits under Contents; trio tilt, count-up, idle bar sweep and row arrival kept
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useInView, useReducedMotion } from 'motion/react';
 import { A, Cta, Film, Img } from '../kit';
@@ -26,7 +26,7 @@ import NoJs from '../NoJs';
 import Sigil from '../Sigil';
 import StoryClose from './StoryClose';
 import StoryPause from './StoryPause';
-import Lines from '../v2/Lines';
+import Frame from './BlogIndexFrame';
 import '../v2/system.css';
 import './story.css';
 import './BlogIndex.css';
@@ -106,6 +106,9 @@ function Cover() {
   }, [at, run]);
   // the plate redraws behind the curtain, when it is fully closed
   useEffect(() => { if (calm || how.current === 'hand') { setArt(at); return; } const t = setTimeout(() => setArt(at), 480); return () => clearTimeout(t); }, [at, calm]);
+  // the server's static first frame of the plate stays until the living canvas has drawn its own (its effect runs first)
+  const [live, setLive] = useState(false);
+  useEffect(() => setLive(true), []);
   const pick = (i) => { how.current = 'hand'; setAt(i); setHold(true); };
   const hand = how.current === 'hand';
   const p = COVER[art];
@@ -132,6 +135,7 @@ function Cover() {
       </div>
       <a href={p.to} target="_blank" rel="noopener noreferrer" className="xbl-plate" tabIndex={-1} aria-hidden="true">
         {ART[p.tag.toLowerCase()] ? <Img key={p.to} src={ART[p.tag.toLowerCase()]} w={1200} h={1500} className="xbl-plate-img" /> : <Sigil seed={p.title} className="xbl-plate-art" />}
+        {!live && !ART[p.tag.toLowerCase()] && <Frame seed={p.title} className="xbl-plate-art" />}
         <span className="xbl-plate-k v2s-num">{pad(art + 1)} / {pad(COVER.length)}</span>
         {/* reduced motion: MotionConfig skips the move, so the curtain simply stays off the plate */}
         {!hand && <motion.i key={'c' + at} className="xbl-curtain" initial={{ x: '-101%' }} animate={{ x: ['-101%', '0%', '0%', '101%'] }} transition={{ duration: 1.15, times: [0, 0.4, 0.52, 1], ease: [0.76, 0, 0.24, 1] }} />}
@@ -151,21 +155,40 @@ function Cover() {
   );
 }
 
+/* One solid at a time from the first paint: BlogIndex.css outlines the header's ask on desktop unless <html> carries
+   data-xbl-solid; after mount this sets that flag only while none of the page's own solid asks is on screen. */
+function useQuietHeader() {
+  useEffect(() => {
+    const H = document.documentElement;
+    const asks = [...document.querySelectorAll('.xbl [data-cta^="blog."]')];
+    if (!asks.length || typeof IntersectionObserver === 'undefined') return;
+    const vis = new Set();
+    const io = new IntersectionObserver((es) => {
+      es.forEach((e) => (e.isIntersecting ? vis.add(e.target) : vis.delete(e.target)));
+      if (vis.size) delete H.dataset.xblSolid; else H.dataset.xblSolid = '';
+    });
+    asks.forEach((a) => io.observe(a));
+    return () => { io.disconnect(); delete H.dataset.xblSolid; };
+  }, []);
+}
+
 function Hero() {
+  useQuietHeader();
   return (
     <section className="xbl-hero" aria-labelledby="xbl-h1" data-ask-name="Blog" data-morph-target>
       <div className="v2s-wrap">
         <div className="xbl-mast">
           <div className="xbl-mast-l">
-            <Lines as="h1" id="xbl-h1" className="v2s-display xbl-h1" now delay={0.05} stagger={0.06} lines={['News & Guides.']} />
+            {/* cut in by CSS from the first paint (no wait for scripts) */}
+            <h1 id="xbl-h1" className="v2s-display xbl-h1"><span className="xbl-ln"><span>News &amp; Guides.</span></span></h1>
           </div>
-          <motion.div className="xbl-mast-r" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.45 }}>
+          <div className="xbl-mast-r">
             <p className="v2s-lede"><span className="v2s-label xbl-runin">Blog</span> Product launches, architecture deep dives, and how-to guides from the team building the AI workforce platform.</p>
             <div className="v2s-acts">
               <Cta to={POSTS[0].to} id="blog.hero" thumb>Read the latest</Cta>
               <Cta to="https://hanzo.blog" kind="link">hanzo.blog</Cta>
             </div>
-          </motion.div>
+          </div>
         </div>
         <Cover />
       </div>
@@ -265,7 +288,7 @@ function Contents() {
         </div>
         <div className="xbl-toc" ref={top0}>
           {/* one month at a time: the newest first; a bar brings its month in as the last one leaves; All 24 opens every month */}
-          <AnimatePresence mode="wait" initial={false}>
+          <AnimatePresence mode="popLayout" initial={false}>
           {shown.map(([k, list], gi) => (
             <motion.section key={(m || 'all') + k} hidden={!m && !all && gi > 0 ? true : undefined} className="xbl-month" initial={m ? { opacity: 0, x: 40 } : false} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40, transition: { duration: 0.22, ease: [0.7, 0, 0.84, 0] } }} transition={{ duration: 0.55, ease: EASE }} aria-label={`${k} 2026`}>
               <div className="xbl-month-h" aria-hidden="true">

@@ -1,8 +1,9 @@
 'use client';
 /* /contact. V2: 8/10 Utility, calm and exact, on Hanzo's deck: a two-line question beside a patch panel whose cable,
    once the headline has landed, sweeps the four sockets and plugs back into Sales (the one ask never moves), then
-   hangs and sways a little, leaning toward any jack you point at; "Visit" as the dark middle room beside a big live
-   San Francisco clock; the community as an index in three sizes (26px names, their mono addresses, the plate's big
+   hangs and sways a little, leaning toward any jack you point at; "Visit" as the dark middle room whose one big thing
+   is a live San Francisco clock ("Visit" 26px, the address 21px, the city 17px); type rests at live hanzo.ai sizes
+   (h1 52px, section headings 26px); the community as an index in three sizes (26px names, their mono addresses, the plate's big
    name) where only the row you are on grows, then settles; a closing Band.
    Persona: anyone with a question for Hanzo: a buyer, a developer, a customer who needs help, the press.
    Goal: reach the right people in one choice.
@@ -12,7 +13,7 @@
    cable alone sweeps the four sockets once and lands back on Sales; the Sales route and its button stay put until
    you choose. Phones keep the cable: a short wire from the chosen pill down into its route.
    Supporting (3): masked kinetic headline, once, after the curtain has cleared the top; the live clock; the
-   community plate following the row you reach.
+   community plate drawing on the contour of the row you reach.
    Beyond: San Francisco's local time on a live dial beside Hanzo's Ferry Building address, and one tap to copy
    hello@hanzo.ai, answered by a drawn tick and a visible "Copied" (role=status) only when the copy happened.
    Deletes: the blue accent; the eyebrows over the h1 and the address; the route counters and 01–04 jack numerals;
@@ -367,7 +368,8 @@ const NETS = [
    (26px), each over its own address in small mono (the link's own words, https:// dropped), and the plate's big name.
    Only the row you are on grows (scale 1.3, 400ms ease-emphasis) and settles back as you leave it. The plate follows
    the row you scroll to and the row you point at or focus; it redraws from that channel's own address with a short
-   cross-fade, its name rising in. On phones the plate rides at the top without its name (the row below already says it). */
+   draw-on: the new contour wipes in left to right over the last one behind a moving hairline (500ms ease-emphasis), its
+   name rising in. On phones the plate sits under the heading and scrolls away with it, without its name. */
 // the link's own address, https:// and www. dropped, breakable only after a slash
 const where = (u) => u.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '').split('/').flatMap((s, i) => (i ? [<wbr key={i} />, '/' + s] : [s]));
 function Community() {
@@ -385,24 +387,36 @@ function Community() {
     return () => io.disconnect();
   }, []);
   const [n, u] = NETS[on];
+  // the plate keeps the last row's contour underneath while the new one draws on over it, left to right
+  const [shown, setShown] = useState([0, -1]);
+  if (shown[0] !== on) setShown([on, shown[0]]);
+  const pu = shown[1] >= 0 ? NETS[shown[1]][1] : null;
+  const calm = useReducedMotion();
+  const fresh = hyd && !calm;
   return (
     <section className="xct-com" aria-labelledby="xct-com-h">
       <div className="vc-grid">
         <div className="xct-com-l">
           <MaskLines id="xct-com-h" lines={['Join the community']} className="vc-headline" />
           <div className="xct-plate-m"><div className="xct-plate" aria-hidden="true">
-            <motion.div key={u} className="xct-plate-s" initial={hyd ? { opacity: 0 } : false} animate={{ opacity: 1 }} transition={{ duration: 0.3, ease: EM }}>
+            {pu && pu !== u && (
+              <div key={'was-' + pu} className="xct-plate-s">
+                <Sigil seed={pu} data={[NETS[shown[1]][0].length, pu.length]} still />
+              </div>
+            )}
+            <motion.div key={u} className="xct-plate-s now" initial={fresh ? { clipPath: 'inset(0 100% 0 0)' } : false} animate={{ clipPath: 'inset(0 0% 0 0)' }} transition={{ duration: 0.5, ease: EM }}>
               <Sigil seed={u} data={[n.length, u.length]} />
             </motion.div>
+            {fresh && <motion.i key={'e' + u} className="xct-plate-e" initial={{ left: '0%', opacity: 1 }} animate={{ left: '100%', opacity: 0 }} transition={{ duration: 0.5, ease: EM }} />}
             <span className="xct-plate-w">
-              <motion.span key={n} className="xct-plate-n" initial={hyd ? { y: '100%' } : false} animate={{ y: 0 }} transition={{ duration: 0.3, ease: EM }}>{n}</motion.span>
+              <motion.span key={n} className="xct-plate-n" initial={fresh ? { y: '100%' } : false} animate={{ y: 0 }} transition={{ duration: 0.3, ease: EM }}>{n}</motion.span>
             </span>
           </div></div>
         </div>
         <ul className="xct-nets" onPointerLeave={() => { hover.current = false; }}>
           {NETS.map(([name, url], i) => (
             <li key={name} ref={(el) => { rows.current[i] = el; }} data-i={i}>
-              <A to={url} className={'xct-net' + (on === i ? ' on' : '')} data-cursor="Open" onPointerEnter={() => { hover.current = true; setOn(i); }} onFocus={() => setOn(i)}>
+              <A to={url} className={'xct-net' + (on === i ? ' on' : '')} onPointerEnter={() => { hover.current = true; setOn(i); }} onFocus={() => setOn(i)}>
                 <span className="xct-net-t"><span className="xct-net-n">{name}</span><span className="xct-net-u" aria-hidden="true">{where(url)}</span></span>
                 <svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </A>
@@ -435,7 +449,7 @@ export default function Contact() {
         <div className="vc-grid xct-visit-g">
           <div className="xct-visit-c">
             <MaskLines id="xct-visit-h" lines={['Visit']} className="vc-headline" />
-            <p className="vc-headline xct-addr">1 Ferry Building</p>
+            <p className="xct-addr">1 Ferry Building</p>
             <p className="vc-lede xct-city">San Francisco, CA 94105</p>
           </div>
           <Clock />

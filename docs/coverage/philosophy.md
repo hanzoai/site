@@ -75,7 +75,7 @@ Done here: Ink only; changing lines are marked by a dot, not a colour; the dark 
 - [x] n/a: no inputs
 - [x] Forks deleted: listed above
 
-Done here: Hovers fill or part the hexagram's strokes (James's "strokes parting", 2–6px); no lift or scale on hover; presses scale .97.
+Done here: Hovers fill or part the hexagram's strokes (James's "strokes parting", 2–6px); no lift or scale on hover; presses scale .97. The pattern sheet is a native `<dialog>` (`showModal()`): focus trapped, Esc and the backdrop close it, focus returns to the cell that opened it; checked headless: opening it leaves `scrollY` unchanged and the closed sheet draws nothing (0×0) at 1470 and 375.
 
 ## 9. Motion and interaction
 - [x] Signature scroll word reveal; supporting: line-mask headings, pinned laws, gliding view pill (300 ms ease-emphasis); 0 fade-ups
@@ -92,7 +92,7 @@ Done here: Deck timings only (150 ms hover, 300 ms state, 400 ms fills, 800 ms l
 - [x] n/a: no image
 - [x] n/a: no photo
 
-Done here: Every object is drawn in HTML and CSS (the hexagram is 6 rows of two halves), so nothing loads and nothing shifts.
+Done here: Every object is drawn in HTML and CSS (the hexagram is 6 rows of two halves), so nothing loads. The hero's changing name and trigram lines keep fixed two-line, full-width boxes, so the walk moves nothing: measured CLS over 15 s idle 0.005 at 375×812 (was 0.125) and 0.008 at 1470×801.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -100,7 +100,7 @@ Done here: Every object is drawn in HTML and CSS (the hexagram is 6 rows of two 
 - [x] Every target 44px or more; tiles and rows answer taps
 - [x] Primary ask above the fold at 375 (moved above the lede)
 
-Done here: Phone hero: a 150px hexagram whose lines sit in 44px tap pads, h1 at 40px, the ask before the lede; pinned laws stack as chapters.
+Done here: Phone hero: a 150px hexagram whose lines sit in 44px tap pads, h1 at 40px, the ask before the lede; pinned laws stack as chapters. Nothing overlaps at 375 (the old closed-sheet overlap is gone; scrollWidth 375). The patterns open on the Matrix view (one 8×8 object) instead of eight rows of tiles; tile titles wrap instead of colliding at 1470.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Text #0a0a0a / #525252 / #737373 on white, #525252 on #f5f5f5

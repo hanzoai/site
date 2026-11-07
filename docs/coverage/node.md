@@ -27,13 +27,13 @@ Done here: Every link is kit `A`. `parity.py /node`: 4/4 links; "About the Netwo
 
 ## 3. First impression and page narrative
 - [x] Sells in 5 s; something moves within 1 s without input
-- [x] `PageHero` (n/a for the component: not merged; the hero is the kit's `LineMask` h1, caption, lede, one ask and the live machine); nothing above the h1
+- [x] `PageHero` (n/a for the component: not merged; the hero is a line-masked h1 (page-local `Title`, cut after first paint), caption, lede, one ask and the live machine); nothing above the h1
 - [x] JS off: legible; no `opacity:0` on the LCP element
 - [x] One idea per 100svh; no 3 same-height sections in a row
 - [x] Ends in proof strip, `Band`, footer (`LaunchClose`: Sigil, "Get Node", the one ask, licence and repo)
 - [x] Card-to-page links use Morph; title lands within 12px
 
-Done here: The first screen is the machine on the left eight columns (it settles from 1.06 to its place) and the 52px title, "Decentralized AI Compute" as its caption, the lede and the ask on the right five. It starts within 0.7 s ("hanzo fabric up" → starting → joined → serving); `fs-audit.cjs` measures motion on both sizes and nothing above the h1. Rooms: hero, figures, pinned terminal (tall), quiet room, close.
+Done here: The first screen is the machine on the left eight columns (it settles from 1.06 to its place) and the 52px title, "Decentralized AI Compute" as its caption, the lede and the ask on the right five. It starts within 0.7 s ("hanzo fabric up" → starting → joined → serving); `fs-audit.cjs` measures motion on both sizes and nothing above the h1. Round 4: the h1 cuts in (105% → 0, 700 ms, ease-emphasis, 60 ms apart) once the page is mounted, with a CSS failsafe at 1.6 s; measured on a cold dev load it now plays from ~1.2 s to ~1.9 s, after first paint at ~0.7 s (it used to finish before first paint). The hero-to-"Why" band is ~120px (was ~300). Rooms: hero, figures, pinned terminal (48svh a chapter, about 3 screens, was 5.6), quiet room, close.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn` (the kit's 48px `lx-cta`; swapped when the deck `Cta` lands)
@@ -66,7 +66,7 @@ Done here: Parity 37/37 text, 4/4 links. Sizes: h1 52, caption 21, the figures 6
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: `taste.py` OK; values #0a0a0a, #525252, #737373, #a3a3a3, #d4d4d4, #e4e4e7, #ededed, #f2f2f2, #f5f5f5, #171717, #262626, #404040. The machine is a hairline stage with flat #f5f5f5 cells (16px inside the 24px stage); the terminal is flat graphite with no shadow. Neighbour /network is the map page (a peer graph in its hero and as its chapters' object) with a black room; /node opens on a product card left of the copy, shows its own side of the fabric as three transports drawn in ("hanzod ── peer 03"), not a map, and keeps the graphite terminal and a quiet room, with no black room.
+Done here: `taste.py` OK; values #0a0a0a, #525252, #737373, #a3a3a3, #d4d4d4, #e4e4e7, #ededed, #f2f2f2, #f5f5f5, #171717, #262626, #404040. The machine is a hairline stage with flat #f5f5f5 cells (16px inside the 24px stage); the terminal is flat graphite with no shadow. Neighbour /network is the map page (a peer graph in its hero and as its chapters' object) with a black room; /node opens on a product card left of the copy and shows one machine's own process (pid ── 48213, network ── hanzo.network, level ── 02 / 05, each rule drawn in as the row comes up; no peers, no map), and keeps the graphite terminal and a quiet room, with no black room.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading (n/a for disabled and loading: nothing is ever unavailable or fetched)
@@ -75,7 +75,7 @@ Done here: `taste.py` OK; values #0a0a0a, #525252, #737373, #a3a3a3, #d4d4d4, #e
 - [x] Inputs 16px or larger; no bare `:hover` (n/a for inputs: none; every hover is in `@media (hover:hover)`)
 - [x] Forks this page deleted: listed at the top
 
-Done here: The five level buttons (44px rows on desktop, 64px bars on phone), the drive bar (up / join / stop, `aria-pressed`), the pause and "See the levels" all fill or ink on hover and press at .97 for 90 ms; text links press 1px. The levels sheet mounts only while open, so the sticky ask never mistakes it for an overlay.
+Done here: The five level buttons (44px rows on desktop, 64px bars on phone), the drive bar (up / join / stop, `aria-pressed`), the pause and "See the levels" all fill or ink on hover and press at .97 for 90 ms; text links press 1px and on hover their stroke parts 3px and goes to ink; "Node docs →" nudges its arrow 6px. Copy swaps to the tick and "Copied" together (no ghost icon). The levels sheet mounts only while open, so the sticky ask never mistakes it for an overlay.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -84,7 +84,7 @@ Done here: The five level buttons (44px rows on desktop, 64px bars on phone), th
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit (n/a: the shared sound kit has not landed)
 
-Done here: Signature: the machine's own run (idle, the one mover on its screen): up, starting, joined, then four jobs lit and settled in about nine seconds (MASTER §4.1); it rests serving with three roots settled, and the toolbar's play replays it. Supporting: the tilt toward a fine pointer (2.5° at most, 300 ms ease-in-out), the terminal's lines staged in 60 ms apart (time), the stage settling from 1.06 (scroll). Also pointer (a level you point at takes a job), state (drive bar, levels sheet), arrival (title cut-in, the quiet room's wipe). `variety.py` OK with no technique counted (no springs, no layoutId); no `setInterval`. Scale rhythm: the stage starts big and settles, the figures are the next screen's one big thing, "Get Node" grows to 64.
+Done here: Signature: the machine's own run (idle, the one mover on its screen): up, starting, joined, then four jobs lit and settled in about nine seconds (MASTER §4.1); it rests serving with three roots settled, and the toolbar's play replays it. Supporting: the tilt toward a fine pointer (2.5° at most, 300 ms ease-in-out), each chapter's scripted 2.8 s beat on the terminal (time: the command keyed in, chips one by one, the five bars filling in turn, models / route / placement lit in sequence, declared struck then attested ringed and the trust bar filling, the node driving itself up → join → stop once before the visitor takes it, four roots appended to Lux), then a blinking prompt at rest, the stage settling from 1.06 (scroll). Also pointer (a level you point at takes a job), state (drive bar, levels sheet), arrival (title cut-in, the four figures rolling once and settling, the quiet room's wipe). The beats run on Frame's one `useFrame` scheduler only while the terminal is seen. `variety.py` OK; no `setInterval`. Walk: 0 still screens of 6 inside the stage on desktop. Scale rhythm: the stage starts big and settles, the figures are the next screen's one big thing, "Get Node" grows to 64.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set (n/a: Hanzo has no Node photo or film)
@@ -100,7 +100,7 @@ Done here: Objects are drawn product UI (the machine, the figures, the terminal,
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: Phone order: title, caption, lede, ask (y≈325), then the machine with the five levels as five 64px bars and the lit level named under them. The terminal sits in a 36svh window over its words and `pinchk.cjs` passes 6/6. Tilt is fine-pointer only; levels take a tap.
+Done here: Phone order: title, caption, lede, ask (y≈325), then the machine with the five levels as five 64px bars and the lit level named under them. Under 900px the pinned scene stacks (MASTER part 11): each chapter's title, count and words, then its own terminal at true height playing its beat as it comes into view (chapter five's drive bar sits above its terminal); no half-empty window. Tilt is fine-pointer only; levels take a tap.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -138,7 +138,7 @@ Done here: A cloud product on the shared anatomy: identity (title and caption), 
 ## 16. Developer experience
 - [x] One `CodeBlock`; copy equals display (the agent prompt copies exactly what it shows)
 - [x] Config blocks parse on their own (n/a: no config block)
-- [x] Terminal pauses and ends on a static frame (the hero machine pauses; the chapter terminal changes only with the chapter and is static)
+- [x] Terminal pauses and ends on a static frame (the hero machine pauses; each chapter's beat plays once in 2.8 s and ends on its final frame; reduced motion and JS off show that frame)
 - [x] No hand-typed version number
 
 Done here: `hanzo fabric up / join / stop` and the agent prompt are the code on the page; Copy writes the displayed string. No version numbers.

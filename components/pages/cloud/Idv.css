@@ -1,45 +1,50 @@
-/* IDV v2. Greys only (Hanzo's deck): ink, white, the neutral ramp. One dark room: Sign one, forge one. */
-.iv { --acc: #0a0a0a; --glow: #525252; }
-.iv .v2-dark, .iv [data-room='dark'] { --acc: #f5f5f5; --glow: #e5e5e5; }
+/* IDV v2. Greys only (Hanzo's deck): ink, white, the neutral ramp. One dark room: the forge. */
+.iv { --acc: #0a0a0a; --glow: #525252; --card: #f5f5f5; --focus: #0a0a0a; }
+.iv .v2-dark, .iv [data-room='dark'] { --acc: #f5f5f5; --glow: #e5e5e5; --card: #171717; --focus: #fafafa; color: #fafafa; }
+/* the shared dark-room buttons, on the deck's whites (no off-deck greys on this page) */
+.iv .v2-dark .v2-btn { color: #fafafa; }
+.iv .v2-dark .v2-btn.solid { background: #fafafa; color: #000; border-color: #fafafa; }
 
-/* hero: the name and the one ask on one row, the switchboard under it, inside the same container edges */
+/* hero: the name and the one ask on one row; under it Hanzo's intro (the lede) beside the switchboard */
 .iv-hero { padding: clamp(88px, 6.4vw, 104px) 0 clamp(40px, 5vw, 72px); }
 .iv-hero-t { align-items: end; row-gap: 24px; }
 .iv-h1 { grid-column: 1 / span 8; }
 .iv-hero-r { grid-column: 9 / -1; display: flex; justify-content: flex-end; align-items: flex-end; padding-bottom: 4px; }
-.iv-lift { margin-top: clamp(24px, 2.4vw, 36px); }
+.iv-hero-g { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: clamp(27px, 3.4vw, 44px); align-items: start; margin-top: clamp(27px, 2.6vw, 44px); }
+.iv-lift { position: sticky; top: 96px; }
 
-.iv-board { border-radius: 28px; background: #f5f5f5; padding: clamp(20px, 2.4vw, 32px); }
-.iv-vendors { display: flex; flex-wrap: wrap; gap: 4px; padding: 5px; border-radius: 999px; background: #fff; width: max-content; max-width: 100%; box-sizing: border-box; box-shadow: 0 0 0 1px rgba(0, 0, 0, .05); }
-.iv-vendors button { position: relative; flex: none; min-height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: none; font: 500 15px/1 var(--sans); color: var(--soft); cursor: pointer; transition: background-color 150ms cubic-bezier(0, 0, .2, 1), color 150ms cubic-bezier(0, 0, .2, 1), transform 150ms cubic-bezier(0, 0, .2, 1); }
+/* the lede: the first sentence in ink from the first paint, the rest inks in with the scroll; only the closing clause grows */
+.iv-lede { margin: 0; max-width: 44ch; font-weight: 400; font-size: 21px; line-height: 1.5; letter-spacing: -.01em; color: #0a0a0a; text-wrap: pretty; }
+.js .iv-lede span:not(.on):not(.iv-say-end) { opacity: clamp(.22, calc((var(--p) - var(--i)) * 12 + .22), 1); transition: opacity .2s linear; }
+.iv-say-end { display: inline-block; transform-origin: 0 50%; scale: calc(1 + .04 * max(0, 1 - abs(var(--p) - .92) * 8)); }
+
+.iv-board { border-radius: 28px; background: #f5f5f5; padding: clamp(20px, 2.2vw, 28px); will-change: transform; }
+.iv-vendors { display: flex; flex-wrap: wrap; gap: 4px; padding: 5px; margin-right: 52px; border-radius: 26px; background: #fff; width: max-content; max-width: calc(100% - 52px); box-sizing: border-box; box-shadow: 0 0 0 1px rgba(0, 0, 0, .05); }
+.iv-vendors button { position: relative; flex: none; min-height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: none; font: 500 15px/1 var(--sans); color: #525252; cursor: pointer; transition: background-color 150ms cubic-bezier(0, 0, .2, 1), color 150ms cubic-bezier(0, 0, .2, 1), transform 150ms cubic-bezier(0, 0, .2, 1); }
 .iv-vendors button:active { transform: scale(.97); transition-duration: 90ms; }
 .iv-vendors button[aria-selected='true'] { color: #fff; }
-.iv-vendors button:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
-.iv-v-bg { position: absolute; inset: 0; border-radius: 999px; background: var(--ink); }
+.iv-vendors button:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 2px; }
+.iv-v-bg { position: absolute; inset: 0; border-radius: 999px; background: #0a0a0a; }
 .iv-v-t { position: relative; }
-.iv-wire { display: grid; grid-template-columns: minmax(0, 5fr) minmax(40px, 2fr) minmax(0, 5fr); align-items: center; margin-top: clamp(16px, 1.6vw, 24px); min-height: clamp(240px, 20vw, 300px); }
+.iv-wire { display: grid; grid-template-columns: minmax(0, 5fr) minmax(32px, 1fr) minmax(0, 5fr); align-items: center; margin-top: clamp(16px, 1.6vw, 24px); min-height: clamp(240px, 19vw, 290px); }
 .iv-calls { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-.iv-calls li { display: flex; align-items: center; gap: 16px; min-height: 54px; padding: 0 22px; border-radius: 16px; background: #fff; font: 500 clamp(15px, 1.4vw, 20px)/1.2 var(--mono); letter-spacing: -.01em; }
+.iv-calls li { display: flex; align-items: center; gap: 14px; min-height: 52px; padding: 0 18px; border-radius: 16px; background: #fff; font: 500 clamp(14px, 1.15vw, 17px)/1.2 var(--mono); letter-spacing: -.01em; }
 .iv-calls span { color: #737373; font-size: 13px; }
 .iv-line { height: 2px; background: rgba(0, 0, 0, .08); position: relative; }
-.iv-line i { position: absolute; inset: 0; background: var(--acc); transform-origin: left; }
+.iv-line i { position: absolute; inset: 0; background: #0a0a0a; transform-origin: left; }
 .iv-vslot { height: 100%; }
-.iv-verdict { height: 100%; display: flex; flex-direction: column; justify-content: center; padding: clamp(24px, 2.6vw, 40px); border-radius: 24px; background: #fff; box-sizing: border-box; }
-.iv-vn { margin: 0; font: 497 clamp(32px, 3.4vw, 52px)/1 var(--sans); letter-spacing: -.045em; }
-.iv-how { margin: 14px 0 22px; font: 500 12px/1 var(--mono); color: #737373; text-transform: uppercase; letter-spacing: .14em; }
-.iv-says { margin: 0; font: 497 clamp(20px, 1.9vw, 26px)/1.2 var(--sans); letter-spacing: -.02em; }
-.iv-verdict.ok .iv-says { color: var(--acc); }
+.iv-verdict { height: 100%; display: flex; flex-direction: column; justify-content: center; padding: clamp(22px, 2.2vw, 32px); border-radius: 24px; background: #fff; box-sizing: border-box; }
+.iv-vn { margin: 0; font: 497 clamp(32px, 3vw, 44px)/1 var(--sans); letter-spacing: -.045em; }
+.iv-how { margin: 14px 0 20px; font: 500 12px/1 var(--mono); color: #737373; text-transform: uppercase; letter-spacing: .14em; }
+.iv-says { display: flex; align-items: center; gap: 10px; margin: 0; font: 497 clamp(17px, 1.6vw, 21px)/1.25 var(--sans); letter-spacing: -.015em; }
 .iv-verdict.poll .iv-says { color: #525252; }
-.iv-verdict.no .iv-says { color: #737373; text-decoration: line-through; text-decoration-thickness: 1px; }
-
-/* the statement, inked in with the scroll: section size at rest; only the closing clause grows while it is the moment */
-.iv-say { padding-bottom: clamp(44px, 6vw, 72px); }
-.iv-say-p { margin: 0; max-width: 40ch; font-weight: 497; font-size: 32px; line-height: 1.3; letter-spacing: -.025em; text-wrap: pretty; }
-.js .iv-say-p span span, .js .iv-say-p > span:not(.iv-say-end) { opacity: clamp(.16, calc((var(--p) - var(--i)) * 14 + .16), 1); transition: opacity .2s linear; }
-.iv-say-end { display: inline-block; transform-origin: 0 50%; scale: calc(1 + .05 * max(0, 1 - abs(var(--p) - .9) * 8)); }
+.iv-verdict.no .iv-says span { color: #737373; text-decoration: line-through; text-decoration-thickness: 1px; }
+.iv-tk { flex: none; }
+.iv-tk path { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 30; stroke-dashoffset: 0; animation: iv-draw 400ms cubic-bezier(.4, 0, .2, 1) both; }
+@keyframes iv-draw { from { stroke-dashoffset: 30; } }
 
 /* the six facts: sheets that stack; words under the heading (never covered), the object on the right */
-.iv-sheets { padding: 0 0 clamp(72px, 8vw, 116px); }
+.iv-sheets { padding: clamp(44px, 6vw, 72px) 0 clamp(17px, 2vw, 27px); }
 .iv-sheet { position: sticky; top: calc(84px + var(--k) * 16px); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; align-items: center; min-height: min(44svh, 400px); box-sizing: border-box; margin-bottom: 16svh; padding: clamp(32px, 3.6vw, 56px); border-radius: 28px; background: #f5f5f5; box-shadow: 0 -24px 48px -36px rgba(0, 0, 0, .18); }
 .iv-sheet:nth-child(even) { background: #f2f2f2; }
 .iv-sheet:last-child { margin-bottom: 0; }
@@ -51,8 +56,9 @@
 /* sheet objects: flat white tiles, hairlines, ink against hollow */
 .iv-o { margin: 0; padding: 27px; border-radius: 24px; background: #fff; }
 .iv-o-tag { margin: 0 0 17px; font: 500 12px/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #737373; }
-.iv-o-tick { margin: 17px 0 0; font: 497 17px/1.3 var(--sans); color: #a3a3a3; transition: color 300ms cubic-bezier(0, 0, .2, 1); }
+.iv-o-tick { display: flex; align-items: center; gap: 8px; margin: 17px 0 0; font: 497 17px/1.3 var(--sans); color: #a3a3a3; transition: color 300ms cubic-bezier(0, 0, .2, 1); }
 .iv-o-tick[data-on] { color: #0a0a0a; }
+.iv-o-tick:not([data-on]) .iv-tk { visibility: hidden; }
 
 .iv-o-row { display: flex; align-items: center; gap: 27px; }
 .iv-o-n { flex: none; min-width: 1ch; margin: 0; font: 220 84px/1 var(--sans); letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
@@ -99,29 +105,27 @@
 .iv-o-rule { display: block; background: rgba(0, 0, 0, .14); transform: scaleY(0); transform-origin: top; transition: transform 500ms cubic-bezier(.4, 0, .2, 1); }
 .iv-o-split:not([data-s='0']) .iv-o-rule { transform: none; }
 
-/* sign one, forge one: the dark room */
-.iv-forge { padding: clamp(72px, 8vw, 116px) 0; }
-.iv-forge .v2-kick.acc { color: #a3a3a3; }
-.iv-forge-h { margin-bottom: 44px; }
-.iv-forge-cap { margin-top: 17px; }
+/* the forge: the dark room. On a desk-size screen it pins and plays its four states as you scroll. */
+.iv-forge-pin { padding: clamp(72px, 8vw, 116px) 0; }
+.iv-forge-q { margin: 0 0 clamp(27px, 3vw, 44px); max-width: 30ch; font: 497 clamp(21px, 2.2vw, 32px)/1.25 var(--sans); letter-spacing: -.02em; color: #fafafa; text-wrap: balance; }
 .iv-forge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
-.iv-pane { padding: clamp(24px, 2.8vw, 40px); border-radius: 28px; background: #171717; }
+.iv-pane { padding: clamp(22px, 2.4vw, 32px); border-radius: 28px; background: #171717; }
 .iv-pane.in { background: #0f0f0f; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .1); }
-.iv-pane .v2-kick { margin-bottom: 24px; color: #a3a3a3; }
-.iv-l { display: block; margin: 18px 0 8px; font: 500 13px/1 var(--mono); color: #a3a3a3; }
-.iv-in { width: 100%; box-sizing: border-box; min-height: 48px; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, .14); background: #000; color: #f5f5f5; font: 400 16px/1.4 var(--mono); outline: none; resize: none; }
+.iv-pane .v2-kick { margin-bottom: 17px; color: #a3a3a3; }
+.iv-l { display: block; margin: 17px 0 8px; font: 500 13px/1 var(--mono); color: #a3a3a3; }
+.iv-in { width: 100%; box-sizing: border-box; min-height: 48px; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, .14); background: #000; color: #f5f5f5; font: 400 16px/1.4 var(--mono); outline: none; resize: none; transition: border-color 300ms cubic-bezier(0, 0, .2, 1), background-color 300ms cubic-bezier(0, 0, .2, 1); }
+.iv-in.bad { border-color: rgba(255, 255, 255, .55); background: rgba(255, 255, 255, .08); }
 .iv-in:focus-visible { border-color: rgba(255, 255, 255, .55); box-shadow: 0 0 0 2px #000, 0 0 0 4px #fff; }
 .iv-code { display: block; padding: 12px 14px; border-radius: 12px; background: rgba(255, 255, 255, .05); font: 400 15px/1.4 var(--mono); color: #f5f5f5; word-break: break-all; }
 .iv-code.sig { color: #e5e5e5; font-size: 13px; }
 .iv-code.bad { color: #a3a3a3; text-decoration: line-through; text-decoration-color: rgba(255, 255, 255, .55); }
 
-/* the three actions: one segmented control; Reset stays a quiet text button */
+/* the three actions: one segmented control of toggles (pressed = filled); Reset hands the room back to the scroll */
 .iv-seg { display: flex; flex-wrap: wrap; margin-top: 24px; border-radius: 16px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .2); overflow: hidden; }
 .iv-seg button { flex: 1 1 auto; min-height: 48px; padding: 0 16px; border: 0; border-left: 1px solid rgba(255, 255, 255, .14); background: transparent; color: #f5f5f5; font: 500 15px/1.2 var(--sans); cursor: pointer; transition: background-color 150ms cubic-bezier(0, 0, .2, 1), color 150ms cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
 .iv-seg button:first-child { border-left: 0; }
-.iv-seg button:active:not(:disabled) { transform: scale(.97); }
+.iv-seg button:active { transform: scale(.97); }
 .iv-seg button[aria-pressed='true'] { background: #f5f5f5; color: #000; }
-.iv-seg button:disabled { color: rgba(255, 255, 255, .3); cursor: not-allowed; }
 .iv-seg button:focus-visible { outline: 2px solid #fff; outline-offset: -4px; }
 
 /* the verdict sits right under the actions: filled with a tick when accepted, hollow with a cross when not */
@@ -129,31 +133,42 @@
 .iv-stamp.ok { background: #f5f5f5; color: #0a0a0a; }
 .iv-stamp.no { background: transparent; color: #e5e5e5; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .3); }
 .iv-stamp p { display: flex; align-items: center; gap: 12px; margin: 0; font: 497 17px/1.35 var(--sans); }
-.iv-mark { flex: none; }
-.iv-mark path { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 30; stroke-dashoffset: 0; animation: iv-draw 400ms cubic-bezier(.4, 0, .2, 1) both; }
-@keyframes iv-draw { from { stroke-dashoffset: 30; } }
 .iv-x { display: inline-flex; align-items: center; min-height: 44px; margin-top: 10px; padding: 0; border: 0; background: none; color: #a3a3a3; font: 500 14px/1 var(--sans); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; cursor: pointer; transition: color 150ms cubic-bezier(0, 0, .2, 1), text-underline-offset 150ms cubic-bezier(0, 0, .2, 1); }
+.iv-x:disabled { visibility: hidden; }
 .iv-x:focus-visible { outline: 2px solid #fff; outline-offset: 2px; border-radius: 4px; }
+.iv-forge-steps { display: flex; gap: 8px; list-style: none; margin: 24px 0 0; padding: 0; }
+.iv-forge-steps li { width: 28px; height: 2px; border-radius: 2px; background: rgba(255, 255, 255, .2); transition: background-color 300ms cubic-bezier(0, 0, .2, 1); }
+.iv-forge-steps li[data-on] { background: #fafafa; }
+
+@media (min-width: 900px) and (min-height: 700px) and (prefers-reduced-motion: no-preference) {
+  .iv-forge { height: 280svh; }
+  .iv-forge-pin { position: sticky; top: 0; box-sizing: border-box; min-height: 100svh; display: grid; align-content: center; padding: 72px 0 27px; }
+}
+
+/* the sheet stack releases straight into Paste and ship (no dead white between them) */
+.iv .iv-sheets + .sp { padding-top: clamp(27px, 3vw, 44px); }
 
 /* the close: the label and tag get room under "Get IDV" */
 .iv .gi-lead { margin-top: 17px; }
 .iv .gi-tag { margin-top: 10px; }
 
 @media (hover: hover) {
-  .iv-vendors button:hover:not([aria-selected='true']) { color: var(--ink); background: #ededed; }
-  .iv-seg button:hover:not(:disabled):not([aria-pressed='true']) { background: rgba(255, 255, 255, .08); }
+  .iv-vendors button:hover:not([aria-selected='true']) { color: #0a0a0a; background: #ededed; }
+  .iv-seg button:hover:not([aria-pressed='true']) { background: rgba(255, 255, 255, .08); }
   .iv-x:hover { color: #fafafa; text-underline-offset: 5px; }
 }
 
 @media (max-width: 900px) {
   .iv-hero { padding: 88px 0 32px; }
   .iv-hero-r { justify-content: flex-start; padding: 0; }
+  .iv-hero-g { grid-template-columns: minmax(0, 1fr); margin-top: 24px; gap: 24px; }
+  .iv-lift { position: relative; top: auto; }
+  .iv-lede { font-size: 17px; }
   .iv-board { padding: 14px; border-radius: 24px; }
-  /* the vendor tabs: one sideways rail that snaps, the next tab peeking */
-  .iv-vendors { flex-wrap: nowrap; width: auto; margin-right: 52px; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; }
-  .iv-vendors::-webkit-scrollbar { display: none; }
-  .iv-vendors button { padding: 0 14px; font-size: 14px; scroll-snap-align: start; }
-  /* the verdict first, then the line, then the four calls: the payoff on the first screen */
+  /* the vendor tabs wrap: every vendor stays visible and the pill sits on its own label */
+  .iv-vendors { width: auto; }
+  .iv-vendors button { padding: 0 14px; font-size: 14px; }
+  /* the verdict first, then the line, then the four calls */
   .iv-wire { grid-template-columns: minmax(0, 1fr); gap: 10px; min-height: 0; }
   .iv-vslot { order: -2; min-height: 150px; }
   .iv-line { order: -1; height: 20px; width: 2px; justify-self: center; }
@@ -163,7 +178,6 @@
   .iv-verdict { padding: 20px; }
   .iv-vn { font-size: 32px; }
   .iv-how { margin: 10px 0 14px; }
-  .iv-say-p { font-size: 26px; }
   /* each sheet is one screen tall, so the next one always covers the last (one in, one out) */
   .iv-sheet { display: block; top: calc(68px + var(--k) * 10px); min-height: calc(100svh - 96px); margin-bottom: 12svh; padding: 24px; }
   .iv-sheet-r { margin-top: 20px; }
@@ -176,6 +190,8 @@
   .iv-seg { flex-direction: column; }
   .iv-seg button { border-left: 0; border-top: 1px solid rgba(255, 255, 255, .14); }
   .iv-seg button:first-child { border-top: 0; }
+  /* the agent prompt wraps on a phone instead of running off the screen */
+  .iv .sp-code pre, .iv .sp-code code { white-space: pre-wrap; overflow-wrap: anywhere; }
 }
 
 /* the live object's pause control */
@@ -186,8 +202,8 @@
 
 /* reduced motion: every object shows its finished state and nothing moves */
 @media (prefers-reduced-motion: reduce) {
-  .iv-settle { transform: none !important; }
-  .js .iv-say-p span { opacity: 1 !important; }
+  .iv-settle, .iv-board { transform: none !important; }
+  .js .iv-lede span { opacity: 1 !important; }
   .iv-say-end { scale: none; }
-  .iv-o *, .iv-stamp, .iv-mark path { transition: none !important; animation: none !important; }
+  .iv-o *, .iv-stamp, .iv-tk path { transition: none !important; animation: none !important; }
 }

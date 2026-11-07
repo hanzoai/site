@@ -32,7 +32,7 @@ import '../../v2/v2scale.css';
 import './Hsm.css';
 
 const EASE = [0.16, 1, 0.3, 1];
-const MODULES = ['AWS KMS', 'Azure Key Vault', 'Google Cloud KMS', 'Zymbit · PKCS#11'];
+const MODULES = ['AWS KMS', 'Azure Key Vault', 'Google Cloud KMS', 'Zymbit'];
 const LAYERS = ['handle', 'boundary', 'key', 'firmware', 'module'];
 
 /* The hero object's settle, page-local: it paints at its final size (server and client agree, nothing snaps at load),
@@ -99,8 +99,8 @@ function Sign() {
       {/* the signing pulse: from "key id + bytes" through the module to "signature ✓", once per module, from the first second */}
       <i key={'p' + m} className="hs-pulse" />
       <AnimatePresence mode="popLayout">
-        <motion.p key={'in' + m} className="hs-io in" initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 30, transition: { duration: 0.3 } }} transition={{ duration: 0.8, ease: EASE }}>key id + bytes</motion.p>
-        <motion.p key={'out' + m} className="hs-io out" initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, transition: { duration: 0.2 } }} transition={{ duration: 0.8, ease: EASE, delay: 1.1 }}>signature ✓</motion.p>
+        <motion.p key={'in' + m} className="hs-io in" initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 30, transition: { duration: 0.3 } }} transition={{ duration: 0.8, ease: EASE }}>a key id and some bytes</motion.p>
+        <motion.p key={'out' + m} className="hs-io out" initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, transition: { duration: 0.2 } }} transition={{ duration: 0.8, ease: EASE, delay: 1.1 }}>a signature <i className="hs-tk">✓</i></motion.p>
       </AnimatePresence>
       <p className="hs-call">One interface <span>→</span> <AnimatePresence mode="wait" initial={false}><motion.b key={m} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }} transition={{ duration: 0.4, ease: EASE }}>{MODULES[m]}</motion.b></AnimatePresence></p>
     </div>
@@ -120,11 +120,11 @@ const FACTS = [
 /* Each fact opens the module its own way (gap), lights its layer and labels it in the fact's own words. */
 const SCENES = [
   { gap: 62, lit: [0, 2], labels: { 0: 'a handle', 2: 'the key' } },
-  { gap: 80, lit: [2], labels: { 0: 'key id + bytes → signature', 2: 'the private key' } },
-  { gap: 80, lit: [1], labels: { 1: 'encrypted password', 2: 'decrypted at boot' } },
-  { gap: 96, lit: [3], labels: { 0: 'in the process, without the firmware', 3: 'ML-DSA-65' } },
-  { gap: 96, lit: [2], labels: { 1: 'no share assembled', 2: 'attested shares' }, shares: true },
-  { gap: 70, lit: [4], labels: { 0: 'one Go interface', 4: 'the module you have' } },
+  { gap: 80, lit: [2], labels: { 0: 'a key id and some bytes', 2: 'the private key' } },
+  { gap: 80, lit: [1], labels: { 1: 'the password', 2: 'decrypts it at boot' } },
+  { gap: 96, lit: [3], labels: { 0: 'it runs in the process', 3: 'ML-DSA-65' } },
+  { gap: 96, lit: [2], labels: { 1: 'no share is ever assembled', 2: 'Shares are attested' }, shares: true },
+  { gap: 70, lit: [4], labels: { 0: 'One Go interface', 4: 'the module you already have' } },
 ];
 
 function Exploded({ at }) {
@@ -137,14 +137,15 @@ function Exploded({ at }) {
   );
 }
 
-const PQ = 'On a module with post-quantum firmware it runs inside the boundary like any other key; without one it runs in the process.';
-const CLOUD = ['Signing and unwrapping happen inside the module. Hanzo holds a handle, never the key.', 'Cloud key services cannot do this, and the interface says so rather than pretending.', PQ];
+// every line below is one of Hanzo's own sentences (or the exact part of one) from this page
+const PQ = 'ML-DSA-65 is available as a signing algorithm today.';
+const CLOUD = ['Hanzo holds a handle, never the key.', 'Cloud key services cannot do this, and the interface says so rather than pretending.', PQ];
 const PICK = [
   ['AWS KMS', ...CLOUD],
   ['Azure Key Vault', ...CLOUD],
   ['Google Cloud KMS', ...CLOUD],
-  ['Zymbit · PKCS#11', 'A Zymbit secure compute module over local PKCS#11. Hanzo holds a handle, never the key.', 'Some modules can run key generation and signing rounds internally, so no share is ever assembled anywhere. A share that arrives unattested is refused.', PQ],
-  ['In-memory signer', 'An in-memory signer for development.', 'Threshold signing, where the hardware can do it.', 'Without post-quantum firmware it runs in the process.'],
+  ['Zymbit', 'The private key is made inside the module and stays there.', 'Some modules can run key generation and signing rounds internally, so no share is ever assembled anywhere. A share that arrives unattested is refused.', PQ],
+  ['In-memory signer', 'An in-memory signer for development.', 'Threshold signing, where the hardware can do it', PQ],
 ];
 
 /* How each module draws in the picker (line art, the layer that answers lit): a cloud KMS keeps the key in the module and
@@ -167,11 +168,11 @@ function Pick() {
       <div className="v2-wrap">
         <div className="hs-pick-head v2-grid">
           <div className="hs-pick-hl">
-            <h2 className="v2-display s">Pick your module</h2>
+            <h2 className="v2-display s" id="hs-pick-h">Bring the module you already have</h2>
           </div>
           <p className="v2-lede hs-pick-f">One Go interface behind all of them, so which module you use is a line of configuration rather than a rewrite.</p>
         </div>
-        <div className="hs-pick-tabs" role="tablist" aria-label="Module">
+        <div className="hs-pick-tabs" role="tablist" aria-labelledby="hs-pick-h">
           {PICK.map(([m], i) => (
             <button key={m} type="button" role="tab" aria-selected={at === i} aria-controls="hs-pick-p" onClick={() => setAt(i)}>
               {at === i && <motion.span layoutId="hs-tab" className="hs-tab-bg" transition={{ duration: 0.3, ease: EASE }} />}

@@ -25,7 +25,9 @@
   --l0: calc(100vw - var(--gap) - var(--cw));
   --lk: calc(var(--l0) - var(--k) * (4vw + var(--l0)));
   --edge: calc(-4vw + clamp(0, (1 - var(--k)) * 5, 1) * (4vw + var(--l0)));
-  --top: calc(14svh + (60px - 14svh) * var(--k));
+  --t0: 29svh; --h0: 62svh; /* the resting card: its bottom edge on the crumb's baseline (9svh up), 62svh tall */
+  --top: calc(var(--t0) + (60px - var(--t0)) * var(--k));
+  --fl: max(var(--edge), var(--lk)); --fr: calc(var(--lk) + var(--cw) * var(--s)); --fb: calc(var(--top) + var(--h0) * var(--s)); /* the film's visible box */
   position: sticky; top: 0; height: 100svh; overflow: hidden; background: #fff; /* the white the name blends against */
 }
 @media (max-width: 1300px) { .zx-stage-pin { --s0: 2.05; } }
@@ -33,9 +35,9 @@
 @media (min-width: 1600px) { .zx-stage-pin { --s0: 2.55; } }
 @media (min-width: 1800px) { .zx-stage-pin { --s0: 2.95; } }
 .zx-card {
-  position: absolute; top: 14svh; right: var(--gap); width: var(--cw); height: 46svh; border-radius: 20px; overflow: hidden; background: #000;
+  position: absolute; top: var(--t0); right: var(--gap); width: var(--cw); height: var(--h0); border-radius: 20px; overflow: hidden; background: #000;
   transform-origin: 0 0;
-  transform: translate(calc((-4vw - (100vw - var(--gap) - var(--cw))) * var(--k)), calc((60px - 14svh) * var(--k))) scale(calc(1 + (var(--s0) - 1) * var(--k)));
+  transform: translate(calc((-4vw - (100vw - var(--gap) - var(--cw))) * var(--k)), calc((60px - var(--t0)) * var(--k))) scale(calc(1 + (var(--s0) - 1) * var(--k)));
   clip-path: inset(0 0 0 max(0px, (var(--edge) - var(--lk)) / var(--s)) round calc(20px / var(--s)));
 }
 .zx-card .zx-film { width: 100%; height: 100%; max-width: none; object-fit: cover; display: block; background: #000; }
@@ -43,7 +45,7 @@
 /* the pause sits 17px inside the visible film's bottom-right corner at every --k (the corner is clamped to the screen) */
 .zx-pause-at {
   position: absolute; z-index: 2; left: 0; top: 0; mix-blend-mode: difference;
-  transform: translate(calc(min(var(--lk) + var(--cw) * var(--s), 100vw) - 61px), calc(min(var(--top) + 46svh * var(--s), 100svh) - 61px));
+  transform: translate(calc(min(var(--fr), 100vw) - 61px), calc(min(var(--fb), 100svh) - 61px));
 }
 .zx-pause { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid currentColor; border-radius: 999px; background: transparent; color: #fff; cursor: pointer; transition: transform var(--zx-fast) var(--zx-out), background-color var(--zx-fast) var(--zx-out); }
 @media (hover: hover) { .zx-pause:hover { transform: scale(1.1); background-color: rgba(255, 255, 255, .1); } }
@@ -52,15 +54,28 @@
 .zx-stage-t { position: relative; height: 100%; box-sizing: border-box; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 0 9svh; pointer-events: none; }
 .zx-stage-t a, .zx-stage-t button { pointer-events: auto; }
 .zx-stage-b { max-width: calc(var(--c) * 5 / 13); }
-.zx-blend { color: #fff; mix-blend-mode: difference; }
+.zx-blend { color: var(--zx-ink); }
+/* the white twin of the words over the base copy, clipped to the film's visible box, so each letter is flat ink off the
+   film and flat white on it and the split sits exactly on the film's edge (no blend, no shaded letters) */
+.zx-onfilm {
+  position: absolute; inset: 0; pointer-events: none; color: #fff;
+  clip-path: inset(max(0px, var(--top)) max(0px, 100% - var(--fr)) max(0px, 100% - var(--fb)) max(0px, var(--fl)) round 20px);
+}
+.zx-onfilm .zx-stage-t { pointer-events: none; }
+.zx-onfilm .x-arrow { color: #fff; }
+.zx-ghost { visibility: hidden; }
+.zx-onfilm .zx-crumb-a { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; display: inline-flex; min-height: 24px; align-items: center; }
+/* the link's hover answers on both copies */
+@media (hover: hover) {
+  .zx-stage-pin:has(.zx-stage-t .x-arrow:hover) .zx-onfilm .x-arrow svg { transform: translateX(4px); }
+  .zx-stage-pin:has(.zx-stage-t .x-arrow:hover) .zx-onfilm .x-arrow span { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+}
 /* the name: laid out at 112px, the moment while the film fills the screen, then it settles to its resting 52px */
 .zx-name { margin: 0; width: max-content; max-width: calc(100vw - 2 * var(--zx-gut)); font-size: 112px; font-weight: 497; line-height: 1; letter-spacing: -.04em; transform-origin: 0 100%; transform: scale(calc(.4643 + .5357 * var(--k))); }
 .zx-name .x-line { padding: .04em 0 .08em; }
 .zx-sub { margin: 17px 0 0; max-width: 30ch; font-size: 21px; line-height: 1.38; text-wrap: pretty; }
-.zx-sub.zx-blend { color: #fff; } /* white on the film, ink once it settles (difference against white) */
 @media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
   .js .zx-acts[data-over] .x-btn.solid { background: #f5f5f5; border-color: #f5f5f5; color: #0a0a0a; }
-  .zx-acts .x-arrow { color: #fff; mix-blend-mode: difference; } /* the link reads on the film and on white */
 }
 /* on the film the ask inverts to ink with a white ring on hover, so the answer reads against the moving picture */
 @media (min-width: 900px) and (prefers-reduced-motion: no-preference) and (hover: hover) { .js .zx-acts[data-over] .x-btn.solid:hover { background: #0a0a0a; border-color: #fff; color: #fff; } }
@@ -156,6 +171,10 @@
 .zx-num { font-size: 64px; font-weight: 220; line-height: 1; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
 .zx-total > span:last-child { font: 606 12px/1.3 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: rgba(255, 255, 255, .55); }
 .zx-plan { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.zx-mini { display: none; }
+.zx-mini-n { display: flex; align-items: baseline; justify-content: space-between; gap: 10.5px; margin: 0; padding: 0 17px 17px; }
+.zx-mini-n > span:first-child { font-size: 32px; font-weight: 220; line-height: 1; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.zx-mini-n > span:last-child { font: 606 12px/1.3 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: rgba(255, 255, 255, .55); }
 .zx-plan-l { flex-basis: 100%; margin: 0 0 4px; font: 606 12px/1.3 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: rgba(255, 255, 255, .55); }
 
 /* Beyond: the sheet, on the quiet room; totals over their columns, the DataTable under them */
@@ -167,6 +186,8 @@
 .zx-fig > span { display: inline-block; transform-origin: 0 100%; transform: scale(.5); transition: transform var(--zx-slower) var(--zx-emph); }
 .zx-fig[data-on] { color: var(--zx-ink); }
 .zx-fig[data-on] > span { transform: none; }
+/* it arrives: the picked figure holds at half size until the sheet is well in view, then grows (500 ms, ease-emphasis) */
+@media (prefers-reduced-motion: no-preference) { .js .zx-figs:not([data-seen]) .zx-fig > span { transform: scale(.5); } }
 .zx-fig[data-peek] { color: var(--zx-muted); }
 .zx-fig[data-peek] > span { transform: scale(.75); }
 @media (hover: hover) and (pointer: fine) {
@@ -199,10 +220,11 @@
 @keyframes zx-in { from { opacity: 0; transform: translateY(16px); } }
 
 /* the close: art card 5 of 13, statement 8 of 13 */
-.zx-close { padding: var(--zx-pad) 0; }
+.zx-spec { padding-bottom: 72px; }
+.zx-close { position: relative; margin-top: -40px; padding: 0 0 var(--zx-pad); } /* one section step: the close's card rises 40px into the sheet's room */
 .zx-close-g { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: 27px; align-items: end; }
-.zx-close-art { position: relative; aspect-ratio: 4 / 5; border-radius: 20px; background: var(--zx-room); overflow: hidden; }
-.zx-sig { position: absolute; inset: 0; width: 100%; height: 100%; color: rgba(0, 0, 0, .3); }
+.zx-close-art { position: relative; aspect-ratio: 4 / 5; border-radius: 20px; background: #e4e4e7; overflow: hidden; }
+.zx-sig { position: absolute; inset: 0; width: 100%; height: 100%; color: rgba(0, 0, 0, .55); }
 .zx-close-t { padding: 0 0 4px 44px; }
 .zx-state { margin: 0; max-width: 32ch; font-size: 26px; font-weight: 497; line-height: 1.25; letter-spacing: -.02em; text-wrap: balance; }
 
@@ -215,19 +237,26 @@
   .zx-name { font-size: 44px; transform: none; }
   .zx-sub { font-size: 17px; }
   .zx-sub.zx-blend { color: var(--zx-muted); }
-  .zx-crumb ol { margin-top: 17px; }
+  .zx-onfilm { display: none; }
+  .zx-crumb ol { margin-top: 6px; }
+  .zx-crumb li { display: inline-flex; align-items: center; min-height: 44px; }
+  .zx-crumb a { min-height: 44px; } /* a whole thumb target, by height only */
+  .zx-acts .x-arrow { min-height: 44px; display: inline-flex; align-items: center; }
   .zx-card { position: relative; order: 2; top: auto; right: auto; width: calc(100% - 2 * var(--zx-gut)); height: auto; aspect-ratio: 4 / 5; max-height: 45svh; margin: 27px auto 0; transform: none; clip-path: none; }
   .zx-pause-at { top: auto; left: auto; bottom: 10.5px; right: calc(var(--zx-gut) + 10.5px); transform: none; }
   .zx-prom { padding: 72px 0; }
   .zx-prom-g { grid-template-columns: minmax(0, 1fr); gap: 17px; }
-  .zx-prom-art { position: static; }
-  .zx-rt { border-radius: 20px; }
-  .zx-prom-l li { min-height: 0; padding: 27px 0; }
+  /* the drawing rides under the header while the rows scroll beneath it, so each row changes it as it reaches mid-screen */
+  .zx-prom-art { position: sticky; top: 76px; z-index: 2; height: 34svh; padding-bottom: 10.5px; background: #fff; display: flex; justify-content: center; }
+  .zx-rt { border-radius: 20px; width: 100%; height: 100%; aspect-ratio: auto; }
+  .zx-prom-l li { min-height: 30svh; padding: 27px 0; }
+  .js .zx-prom-l li:not([data-on]) h2, .js .zx-prom-l li:not([data-on]) p { color: var(--zx-quiet); }
   .zx-prom-l p { margin-left: 0; }
   .zx-ch { grid-template-columns: minmax(0, 1fr); gap: 0; margin-top: 0; }
   .zx-pin { order: -1; position: static; margin-top: 0; }
   .zx-steps { padding: 17px 0 0; }
   .zx-step { min-height: 0; opacity: 1; padding: 27px 0 0; }
+  .zx-mini { display: block; margin-top: 17px; }
   .zx-panel { border-radius: 24px; }
   .zx-chip { min-height: 44px; padding: 0 12px; }
   .zx-racks { gap: 10.5px; padding: 17px 17px 10.5px; }

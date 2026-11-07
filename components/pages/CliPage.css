@@ -149,6 +149,8 @@
 .cli-three-c .cli-caret { opacity: 0; }
 .cli-three li.in .cli-caret { animation: cli-blink-out 1.05s steps(1) 2 both; } /* blinks while it types, then rests: one mover per viewport */
 @keyframes cli-blink-out { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+.cli-three li.in:not(:has(~ li.in)) .cli-caret { opacity: 1; animation: cli-blink 1.05s steps(1) infinite; } /* only the latest window keeps its prompt alive */
+.cli-help-k .cli-caret { height: 1em; vertical-align: -.12em; } /* the rail's one mover: the --help prompt waits */
 .js .cli-win-l { display: inline-block; clip-path: inset(0 100% 0 0); }
 .js .cli-three li.in .cli-win-l { clip-path: inset(0 0 0 0); transition: clip-path .9s steps(var(--n, 16)); }
 .js .cli-three-c s { text-decoration: none; }

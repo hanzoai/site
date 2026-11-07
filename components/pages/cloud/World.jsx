@@ -15,7 +15,7 @@
    (state) + a magnetic hero ask on fine pointers. Every word and link is Hanzo's; arcs, bars and the session are drawn
    examples, not measurements. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useMotionValueEvent } from 'motion/react';
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useMotionValueEvent, useInView } from 'motion/react';
 import { EASE, useCalm } from '../../ui';
 import { useFrame } from './Frame';
 import StageHero from '../../v2/StageHero';
@@ -129,7 +129,7 @@ function Hero() {
   useEffect(() => {
     const sec = ref.current && ref.current.closest('.l2-stage');
     if (!sec) return;
-    const m = () => { const top = sec.getBoundingClientRect().top + scrollY, end = top + sec.offsetHeight; box.current = { a: end - innerHeight, b: end - innerHeight * 0.25 }; };
+    const m = () => { const top = sec.getBoundingClientRect().top + scrollY, end = top + sec.offsetHeight; box.current = { a: Math.max(top, end - innerHeight * 1.4), b: end - innerHeight * 0.25 }; }; // the exit runs across the hero's last stretch, so it is seen
     m(); addEventListener('resize', m);
     return () => removeEventListener('resize', m);
   }, [ref]);
@@ -156,15 +156,19 @@ const CAPS = [
 const NODES = [['edge', 8, 50], ['gateway', 30, 50], ['agent', 52, 26], ['tool call', 52, 74], ['zen', 74, 36], ['kai', 74, 64], ['GPU', 93, 50]];
 const PATH = [[0, 1], [1, 2], [2, 4], [4, 6], [1, 3], [3, 5], [5, 6]];
 
-function Topology() {
+/* While on air, the traced route swaps between zen and kai every 2s until the visitor points at a node. */
+function Topology({ live }) {
   const [hot, setHot] = useState(4);
+  const [touched, setTouched] = useState(false);
+  useTick(2000, live && !touched, () => setHot((h) => (h === 4 ? 5 : 4)));
+  const pick = (i) => { setTouched(true); setHot(i); };
   const lit = (a, b) => (hot === 4 ? [[0, 1], [1, 2], [2, 4], [4, 6]] : [[0, 1], [1, 3], [3, 5], [5, 6]]).some(([x, y]) => x === a && y === b);
   return (
     <div className="wd2-topo">
-      <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">{PATH.map(([a, b]) => <line key={a + '-' + b} className={lit(a, b) ? 'on' : ''} x1={NODES[a][1]} y1={NODES[a][2]} x2={NODES[b][1]} y2={NODES[b][2]} />)}</svg>
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><g>{PATH.map(([a, b]) => <line key={a + '-' + b} className={lit(a, b) ? 'on' : ''} x1={NODES[a][1]} y1={NODES[a][2]} x2={NODES[b][1]} y2={NODES[b][2]} />)}</g></svg>
       {NODES.map(([t, x, y], i) => (i === 4 || i === 5
-        ? <button key={t} type="button" className={'wd2-node l2-mono m' + (i === hot ? ' on' : '')} style={{ left: x + '%', top: y + '%', '--d': i * 60 + 'ms' }} onClick={() => setHot(i)} onMouseEnter={() => setHot(i)} aria-pressed={i === hot}>{t}</button>
-        : <span key={t} className="wd2-node l2-mono" style={{ left: x + '%', top: y + '%', '--d': i * 60 + 'ms' }}>{t}</span>
+        ? <button key={t} type="button" className={'wd2-node l2-mono m' + (i === hot ? ' on' : '')} style={{ '--x': x + '%', '--y': y + '%', '--d': i * 60 + 'ms' }} onClick={() => pick(i)} onMouseEnter={() => pick(i)} aria-pressed={i === hot}>{t}</button>
+        : <span key={t} className="wd2-node l2-mono" style={{ '--x': x + '%', '--y': y + '%', '--d': i * 60 + 'ms' }}>{t}</span>
       ))}
     </div>
   );
@@ -172,11 +176,15 @@ function Topology() {
 
 const STEPS = ['prompt', 'tool call', 'IO', 'model output', 'tool call', 'model output'];
 
-/* Beyond: scrub a session the way Forensic Replay reconstructs one. */
-function Replay() {
+/* Beyond: scrub a session the way Forensic Replay reconstructs one. While on air it plays itself one step every 1.5s,
+   until the visitor takes the scrub. */
+function Replay({ live }) {
   const [at, setAt] = useState(2);
+  const [touched, setTouched] = useState(false);
   const [ready, setReady] = useState(false); // the range input renders after mount: the server paints a still track of the same size
   useEffect(() => setReady(true), []);
+  useTick(1500, live && !touched, () => setAt((a) => (a + 1) % STEPS.length));
+  const take = () => setTouched(true);
   const p = (at / (STEPS.length - 1)) * 100 + '%';
   return (
     <div className="wd2-replay">
@@ -184,7 +192,7 @@ function Replay() {
         {STEPS.map((k, i) => <span key={i} className={'l2-mono' + (i <= at ? ' done' : '') + (i === at ? ' now' : '')} style={{ '--d': 200 + i * 60 + 'ms' }}>{k}</span>)}
       </div>
       <label className="wd2-rp-scrub"><span className="x-sr">Forensic Replay</span>{ready
-        ? <input className="l2-range" type="range" min="0" max={STEPS.length - 1} value={at} onChange={(e) => setAt(+e.target.value)} style={{ '--p': p }} aria-valuetext={`${at + 1} / ${STEPS.length} ${STEPS[at]}`} />
+        ? <input className="l2-range" type="range" min="0" max={STEPS.length - 1} value={at} onChange={(e) => { take(); setAt(+e.target.value); }} onPointerDown={take} onKeyDown={take} onFocus={take} style={{ '--p': p }} aria-valuetext={`${at + 1} / ${STEPS.length} ${STEPS[at]}`} />
         : <span className="wd2-rp-still" aria-hidden="true"><i style={{ width: p }} /><b style={{ left: p }} /></span>}</label>
       <div className="wd2-rp-now" aria-live="polite">
         <AnimatePresence mode="wait" initial={false}>
@@ -197,13 +205,62 @@ function Replay() {
   );
 }
 
-function Pic({ i }) {
-  if (i === 0) return <Topology />;
-  if (i === 1) return <div className="wd2-lc">{MODELS.map((m, k) => <p key={m}><b className="l2-mono">{m}</b>{[0.34, 0.58, 0.82].map((w, j) => <i key={j} style={{ width: (w - k * 0.05) * 100 + '%', '--d': (k * 3 + j) * 60 + 'ms' }} className={'q' + j} />)}</p>)}<p className="spike l2-mono"><i />auto-anomaly · cost spike</p></div>;
-  if (i === 2) return <svg className="wd2-drift-c" viewBox="0 0 200 90" aria-hidden="true"><rect x="0" y="34" width="200" height="22" className="band" /><path d="M0 46 C 20 42, 40 50, 60 45 S 100 48, 120 44 S 150 42, 160 38 S 185 20, 200 12" className="ln" /><circle cx="186" cy="19" r="4" className="al" /></svg>;
-  if (i === 3) return <div className="wd2-ev">{['v1', 'v2'].map((v, k) => <p key={v} className={k ? 'b' : ''}><span className="l2-mono">{v}</span><i style={{ width: k ? '82%' : '68%' }} /><em className="l2-mono">{k ? 'pinned' : ''}</em></p>)}</div>;
-  if (i === 4) return <ul className="wd2-mc">{['Hanzo Cloud', 'AWS', 'GCP', 'Azure', 'self-hosted'].map((s, k) => <li key={s} style={{ '--x': GATHER[k][0] + 'px', '--y': GATHER[k][1] + 'px', '--d': k * 60 + 'ms' }}>{s}</li>)}<li className="one">One unified view</li></ul>;
-  return <Replay />;
+/* A beat counter for the monitor on air: counts every ms while live, back to 0 (the arrival pose) once it is not. */
+function useBeat(ms, live) {
+  const [n, setN] = useState(0);
+  useTick(ms, live, () => setN((v) => v + 1));
+  useEffect(() => { if (!live) setN(0); }, [live]);
+  return n;
+}
+
+/* Latency: while on air the P50/P95/P99 bars re-draw every 1.2s inside their own lanes (the order never changes),
+   and the cost-spike dot blinks when a P99 bar runs long. */
+function Latency({ live }) {
+  const n = useBeat(1200, live);
+  const at = (t, k, j) => (t ? 0.82 + rnd(t * 3 + k * 7 + j) * 0.18 : 1);
+  const w = (k, j) => at(n, k, j);
+  let hit = 0; // the latest beat on which a P99 bar ran long: the dot re-blinks when it changes
+  for (let t = n; t > 0 && !hit; t--) if (MODELS.some((m, k) => at(t, k, 2) > 0.95)) hit = t;
+  return (
+    <div className="wd2-lc">
+      {MODELS.map((m, k) => <p key={m}><b className="l2-mono">{m}</b>{[0.34, 0.58, 0.82].map((b, j) => <i key={j} style={{ width: (b - k * 0.05) * 100 + '%', '--d': (k * 3 + j) * 60 + 'ms' }} className={'q' + j}><u style={{ transform: `scaleX(${w(k, j)})` }} /></i>)}</p>)}
+      <p className="spike l2-mono"><i key={hit} className={hit ? 'again' : ''} />auto-anomaly · cost spike</p>
+    </div>
+  );
+}
+
+/* Drift: a hollow ink ring at the line's end; while on air it sends out a pulse every 1.5s. */
+function Drift({ live }) {
+  const n = useBeat(1500, live);
+  return (
+    <svg className="wd2-drift-c" viewBox="0 0 200 90" aria-hidden="true">
+      <rect x="0" y="34" width="200" height="22" className="band" />
+      <path d="M0 46 C 20 42, 40 50, 60 45 S 100 48, 120 44 S 150 42, 160 38 S 178 24, 188 16" className="ln" />
+      {n > 0 && <circle key={n} cx="188" cy="16" r="5" className="pu" />}
+      <circle cx="188" cy="16" r="5" className="al" />
+    </svg>
+  );
+}
+
+/* Eval: while on air the pinned v2 score nudges inside its own bar every 1.5s; v1 holds. */
+function Evals({ live }) {
+  const n = useBeat(1500, live);
+  return <div className="wd2-ev">{['v1', 'v2'].map((v, k) => <p key={v} className={k ? 'b' : ''}><span className="l2-mono">{v}</span><i style={{ width: k ? '82%' : '68%' }}><u style={k && n ? { transform: `scaleX(${0.95 + rnd(n) * 0.05})` } : undefined} /></i><em className="l2-mono">{k ? 'pinned' : ''}</em></p>)}</div>;
+}
+
+/* Multi-cloud: while on air each source lights its signal dot in turn, feeding the one view. */
+function Clouds({ live }) {
+  const n = useBeat(1200, live);
+  return <ul className="wd2-mc">{['Hanzo Cloud', 'AWS', 'GCP', 'Azure', 'self-hosted'].map((s, k) => <li key={s} className={n && (n - 1) % 5 === k ? 'sig' : ''} style={{ '--x': GATHER[k][0] + 'px', '--y': GATHER[k][1] + 'px', '--d': k * 60 + 'ms' }}>{s}</li>)}<li className="one">One unified view</li></ul>;
+}
+
+function Pic({ i, live }) {
+  if (i === 0) return <Topology live={live} />;
+  if (i === 1) return <Latency live={live} />;
+  if (i === 2) return <Drift live={live} />;
+  if (i === 3) return <Evals live={live} />;
+  if (i === 4) return <Clouds live={live} />;
+  return <Replay live={live} />;
 }
 const GATHER = [[-28, -22], [18, -30], [34, 12], [-16, 26], [26, 30]]; // where each signal starts before it gathers into one view
 
@@ -212,9 +269,18 @@ const GATHER = [[-28, -22], [18, -30], [34, 12], [-16, 26], [26, 30]]; // where 
    jumps there). Phones and reduced motion: the six stack, each playing its moment once as it scrolls in. */
 function Room() {
   const track = useRef(null);
+  const sec = useRef(null);
   const pinned = useMedia(PINNED);
   const calm = useCalm();
+  const near = useInView(sec, { amount: 0.15 });
   const [act, setAct] = useState(0);
+  // phones: the six sit on a sideways snap rail; the card in view is the one on air
+  const onRail = (e) => {
+    const el = e.currentTarget, c = el.firstElementChild;
+    if (!c) return;
+    const end = el.scrollLeft >= el.scrollWidth - el.clientWidth - 2;
+    setAct(end ? CAPS.length - 1 : Math.min(CAPS.length - 1, Math.round(el.scrollLeft / (c.offsetWidth + 12))));
+  };
   const [seen, setSeen] = useState(() => CAPS.map(() => false));
   const { scrollYProgress: p } = useScroll({ target: track, offset: ['start start', 'end end'] });
   useMotionValueEvent(p, 'change', (v) => { if (pinned) setAct(Math.min(CAPS.length - 1, Math.floor(v * CAPS.length))); });
@@ -232,27 +298,26 @@ function Room() {
     scrollTo({ top: top + len * ((i + 0.5) / CAPS.length), behavior: 'smooth' });
   };
   return (
-    <section className={'l2-sec wd2-room' + (pinned ? ' pinned' : '')}>
+    <section ref={sec} className={'l2-sec wd2-room' + (pinned ? ' pinned' : '')}>
       <div className="wd2-track" ref={track}>
         <div className="l2-wrap wd2-pin">
           <div className="wd2-side">
             <h2 className="l2-head wd2-room-h">See Every Model, Everywhere</h2>
-            {pinned && (
-              <p className="wd2-count" aria-hidden="true"><span className="wd2-roll"><span style={{ transform: `translateY(${-act * 100 / CAPS.length}%)` }}>{CAPS.map((c, i) => <b key={i} className="l2-fig">{String(i + 1).padStart(2, '0')}</b>)}</span></span><em className="l2-mono">/ 06</em></p>
-            )}
+            <p className="wd2-count" aria-hidden="true"><span className="wd2-roll"><span style={{ transform: `translateY(${-act * 100 / CAPS.length}%)` }}>{CAPS.map((c, i) => <b key={i} className="l2-fig">{String(i + 1).padStart(2, '0')}</b>)}</span></span><em className="l2-mono">/ 06</em></p>
             {pinned && (
               <nav className="wd2-rail" aria-label="See Every Model, Everywhere">
                 {CAPS.map(([t], i) => <RailItem key={t} i={i} t={t} p={p} on={i === act} onClick={() => go(i)} />)}
               </nav>
             )}
           </div>
-          <div className="wd2-grid">
+          <div className="wd2-grid" onScroll={pinned ? undefined : onRail}>
             {CAPS.map(([t, d], i) => {
               const on = pinned ? i === act : seen[i];
+              const live = on && i === act && near && !calm; // one idle beat, only on the monitor on air, only on screen
               return (
                 <article key={t} className={'wd2-mon c' + i + (on ? ' on' : '') + (pinned && i < act ? ' past' : '')} inert={pinned && !on ? true : undefined}>
                   <header><span className="l2-mono">{String(i + 1).padStart(2, '0')} / 06</span></header>
-                  <div className="wd2-pic"><Pic i={i} /></div>
+                  <div className="wd2-pic"><Pic i={i} live={live} /></div>
                   <div className="wd2-cap">
                     <h3 className="l2-title"><span className="wd2-ln"><span>{t}</span></span></h3>
                     <p className="l2-body">{d}</p>

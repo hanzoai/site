@@ -3,7 +3,7 @@
 Page file: `components/pages/cloud/Tunnel.jsx` · gallery: `docs/gallery/tunnel/` · metric id: `github_click` (MASTER §1, researchers: a GitHub click; fired as `cta_click` with `data-cta="tunnel.hero"`)
 
 Open copy questions for James: none; every visible word is Hanzo's. The scene's four labels ("café network", "nothing listening", "open internet", "stopped answering") and the request lines are lifted from Hanzo's own sentences and its example output.
-Shared changes requested (`docs/requests/tunnel.md`): the phone header should go quiet while the hero's "View Source" is on screen; Finale's close `data-cta` should take the page prefix.
+Shared changes requested (`docs/requests/tunnel.md`): Finale's close `data-cta` should take the page prefix.
 Forks this page deleted: the cloud `Code` block on "One command, one URL" (it copied the "$" and output lines; replaced by the same look with a Copy of the command only), the opacity fade on the hero's terminal band, two hero fade-ups, the `aria-pressed` mode buttons (now a radio group with a gliding pill and arrow keys).
 
 Measured on the dev server at 1470×801 and 375×812 with Playwright (JS on and off) and `node scripts/motion.mjs /tunnel`.
@@ -15,7 +15,7 @@ Measured on the dev server at 1470×801 and 375×812 with Playwright (JS on and 
 - [x] No dead or self-looping button; prices from `lib/plans.js`
 - [x] Open copy questions for James listed, none decided
 
-Done here: Persona: a developer who needs a public URL for something on their laptop. The one ask is Hanzo's "View Source" (`data-cta="tunnel.hero"`, `data-thumb`); the close's "View on GitHub" (same href) is outlined on this page so the page itself never shows two solids. On phones the shared header's "Try Hanzo" is still solid beside it (requested, not page-owned). h1 count 1. No prices printed.
+Done here: Persona: a developer who needs a public URL for something on their laptop. The one ask is Hanzo's "View Source" (`data-cta="tunnel.hero"`, `data-thumb`); the close's "View on GitHub" (same href) is outlined on this page so the page itself never shows two solids. The shared header goes quiet ("Try Hanzo" outlined) while the hero's "View Source" is in view, then turns solid as "View Source" once it leaves: measured with Playwright, exactly one solid fill on the first screen at 1470×801 and at 375×812. h1 count 1. No prices printed.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -23,7 +23,7 @@ Done here: Persona: a developer who needs a public URL for something on their la
 - [ ] Breadcrumb at depth 2 or more (n/a: /tunnel is depth 1)
 - [x] Link parity: 0 removed, 0 unexpected
 
-Done here: `<main id="main" data-ask="off">`; the layout's skip link targets `#main`. Every link is a kit `Cta` or `A`. `python3 scripts/parity.py /tunnel`: text 38/38, links 4/4.
+Done here: `<main id="main">` (the old `data-ask="off"` is gone, so the shared header takes the page's ask); the layout's skip link targets `#main`. Every link is a kit `Cta` or `A`. `python3 scripts/parity.py /tunnel`: text 38/38, links 4/4.
 
 ## 3. First impression and page narrative
 - [x] Sells in 5 s; something moves within 1 s without input
@@ -33,15 +33,15 @@ Done here: `<main id="main" data-ask="off">`; the layout's skip link targets `#m
 - [x] Ends in proof strip, `Band`, footer
 - [ ] Card-to-page links use Morph; title lands within 12px (n/a: no card on this page opens another page)
 
-Done here: The h1 cuts in by line mask, `hanzo share 3000` types itself and the URL lands at 64px; after that a request line ("GET / · 127.0.0.1:3000") rolls in every 2.6 s while the hero is seen (pausable), so the first screen never goes still. "hanzo share" is a mono caption under the h1. JS off (checked with JavaScript disabled): `.tn2-url`, `.tn2-share` and both scene captions compute opacity 1 via a `NoJs` rule. Rooms: hero (light + terminal band) → white gap → dark pinned scene → facts (light) → one command (quiet) → closing band (dark) → footer. The live page has no proof strip.
+Done here: The h1 cuts in by line mask, `hanzo share 3000` types itself and the URL lands at 64px; after that a request line ("GET / · 127.0.0.1:3000") rolls in every 2.6 s while the hero is seen (pausable), so the first screen never goes still. "hanzo share" is a mono caption under the h1. JS off (checked with JavaScript disabled): the hero command reads "$ hanzo share 3000" (server text; the browser clears and types it), and `.tn2-url`, `.tn2-share` and both scene captions compute opacity 1 via a `NoJs` rule. Rooms: hero (light + terminal band) → white gap → dark pinned scene → facts (light) → one command (quiet) → closing band (dark) → footer. The live page has no proof strip.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
-- [x] Sticky ask in header and bar after the hero, same label
+- [x] Sticky ask in header after the hero, same label (desktop and phone; the shared phone bar shows only where it covers nothing)
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: CTAs: `tunnel.hero` (solid, thumb), `tunnel.install-cli` (outline), `tunnel.pricing` (link), Finale's `close` (outlined on this page) and `deploy` (link). The desktop header carries the page's ask after the hero (shared). The one-command Copy writes `hanzo share 3000`, exactly the command text shown; the "$ " prompt is `user-select:none` and the output lines are display only. Kit `Copy` never says Copied on failure.
+Done here: CTAs: `tunnel.hero` (solid, thumb), `tunnel.install-cli` (outline), `tunnel.pricing` (link), Finale's `close` (outlined on this page) and `deploy` (link). The shared header carries "View Source" solid after the hero at both widths (checked at 1470 and 375). The one-command Copy writes `hanzo share 3000`, exactly the command text shown; the "$ " prompt is `user-select:none` and the output lines are display only. Kit `Copy` never says Copied on failure.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -57,7 +57,7 @@ Done here: No logos, no seals, no figures beyond Hanzo's own example URL and por
 - [x] Tables, FAQ, tabs and code use the kit parts
 - [x] `python3 scripts/parity.py /tunnel`: 0 missing
 
-Done here: Sizes: h1 52px (40 phone), URL 64px Air (26 phone), section heads 26px, fact titles 21px under their 26px head, body 15px; phone small text set to 14px. The builder URL breaks before ".share" (`<wbr>`, line-height 1.2). Code uses the kit `cf-code` look and kit `Copy`. Parity 38/38, 4/4.
+Done here: Sizes: h1 52px (40 phone), URL 64px Air (26 phone), section heads 26px, fact titles 21px under their 26px head, body 15px; phone small text set to 14px, the scene laptop's terminal included. The builder URL breaks before ".share" (`<wbr>`, line-height 1.2; on phones the domain keeps its own line at 21px). The close card keeps "$ hanzo share 3000" on one line, with "terminal closed" on its own line on phones. The facts' sticky head carries the fact being read as a 64px "02 / 06" figure. Code uses the kit `cf-code` look and kit `Copy`. Parity 38/38, 4/4.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
@@ -84,7 +84,7 @@ Done here: Hovers sit in `@media (hover: hover)`; the selected mode now answers 
 - [x] Reduced motion shows the final state; no `setInterval`
 - [ ] Sound only on the listed moments, through the one kit (n/a: the page plays no sound of its own; the kit owns it)
 
-Done here: Signature: the URL opens and closes (clip-path wipe, scrubbed on desktop, played by itself on phones with Pause). Supporting (`variety.py` OK): scroll scrub, clip reveal, gliding mode pill (layoutId). Two fade-ups (lede, ask). Kinds: arrival (h1 cut-in), time (hero typing, the room's laptop typing by time, request lines, the builder typing its placeholder once, the modes stepping once, the close's terminal shutting once), pointer (the open internet's light follows the pointer), state (modes, builder), scroll (the wipe only). Timers are `setTimeout` chains. Reduced motion renders the settled frame.
+Done here: Signature: the URL opens and closes (clip-path wipe, scrubbed on desktop, played by itself on phones with Pause). Supporting (`variety.py` OK): scroll scrub, clip reveal, gliding mode pill (layoutId). Two fade-ups (lede, ask). Kinds: arrival (h1 cut-in), time (hero typing, the room's laptop typing by time, request lines, the builder typing its placeholder once, the modes stepping once, the close's terminal shutting once), pointer (the open internet's light follows the pointer), state (modes, builder), scroll (the wipe only). The sticky facts figure changes by line mask as each fact is read (time and scroll). Carets blink four times and rest. Timers are `setTimeout` chains. Reduced motion renders the settled frame with 0 console errors (the gate's shut state is set after mount, so server and client match). Not done: the critic's ask to swap the "One command" typewriter for a line mask (kept: James's rule is to never remove existing motion).
 
 ## 10. Media
 - [ ] `Film` and `Pic` only; sizes and posters set (n/a: no photo or video)
@@ -109,7 +109,7 @@ Done here: The phone stage now stretches to the column (343×520 at 375; it was 
 - [x] One h1; no heading skips; names start with visible text
 - [x] Keyboard reaches every control
 
-Done here: Text on light rooms uses `#525252` or darker on `#f5f5f5` (the close card's grey runs were moved from `#737373` to `#525252`); on black, `#a3a3a3` or lighter. Two pause controls (hero band, scene). The builder's inputs are labelled (`--name`, `target`); nothing validates. Modes reachable by Tab and arrows.
+Done here: Text on light rooms uses `#525252` or darker on `#f5f5f5` (the close card's grey runs were moved from `#737373` to `#525252`); on black, `#a3a3a3` or lighter. Two pause controls (hero band, scene); the scene's Pause also stops the phone's retry dot, and the carets stop after four blinks. The builder's inputs are labelled (`--name`, `target`); nothing validates. Modes reachable by Tab and arrows.
 
 ## 13. Performance and engineering
 - [x] h1 and LCP element in server HTML
@@ -117,7 +117,7 @@ Done here: Text on light rooms uses `#525252` or darker on `#f5f5f5` (the close 
 - [x] No poller; no third-party request before consent
 - [x] Nothing heavy run on James's laptop
 
-Done here: The h1 and URL are in the server HTML. Every timer runs only while its part is on screen (`useInView`) and stops when paused or off screen. Packets animate `transform`, not `left`. No fetch or third party. 0 console errors from this page at either width (Playwright).
+Done here: The h1 and URL are in the server HTML. Every timer runs only while its part is on screen (`useInView`) and stops when paused or off screen. Packets animate `transform`, not `left`. No fetch or third party. 0 console errors at either width, with normal and reduced motion (Playwright, no early screenshots). The builder's URL and note reserve their two-line height and the one-command lines keep their boxes: CLS over a full scroll was 0.0071 at 1470 and 0.0048 at 375 (reduced motion 0.0010 and 0.0003).
 
 ## 14. SEO and machine files
 - [x] Title and description match live (or are listed for James)
@@ -154,7 +154,7 @@ Done here: Every word is in the server HTML and every demo is local, so a blocke
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
-- [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/tunnel.md` verdict 8 or more
+- [ ] `V2: <score>/10 <one line>` in the page file's top comment (added once a critic scores it)
+- [ ] Review read: `docs/review/tunnel.md` verdict 8 or more (last review: 7/10, fixes applied, re-walk pending)
 
-Done here: `data-cta` in `tunnel.<slot>` form on the page's own asks (kit `Cta` fires `cta_click`); the builder sends nothing. `V2:` line in `components/pages/cloud/Tunnel.jsx` carries the critic's verdict from `docs/review/tunnel.md`.
+Done here: `data-cta` in `tunnel.<slot>` form on the page's own asks (kit `Cta` fires `cta_click`); the builder sends nothing. The last review (7/10) was read and its fixes 1–4 and 6–9 applied; fix 5 is declined above (part 9). The `V2:` line goes into `components/pages/cloud/Tunnel.jsx` with the next critic's verdict.

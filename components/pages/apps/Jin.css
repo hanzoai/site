@@ -171,7 +171,7 @@
 .jn-try-k { margin: 0; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: #737373; }
 .jn-try-head .bz-body { color: #a3a3a3; }
 /* the status chip reserves two lines, so it never moves the heading above it */
-.jn-state { box-sizing: border-box; min-height: calc(2.8em + 24px); margin: 6px 0 0; padding: 12px 16px; border-radius: 12px; background: #f5f5f5; color: #0a0a0a; font-size: 14px; line-height: 1.4; }
+.jn-state { box-sizing: border-box; align-self: stretch; display: flex; align-items: center; min-height: calc(2.8em + 24px); margin: 6px 0 0; padding: 12px 16px; border-radius: 12px; background: #f5f5f5; color: #0a0a0a; font-size: 14px; line-height: 1.4; }
 .jn-try-obj { grid-column: 6 / span 7; display: flex; flex-direction: column; gap: 28px; }
 /* not Figure 1 again: the image is the small handle, the embedding space is the object, at 3:2 */
 .jn-try-row { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); align-items: end; gap: 20px; }

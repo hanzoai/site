@@ -99,7 +99,6 @@ function Console() {
               <span className="ze-row" data-l={lit(ci, 'open')}>Open weights</span>
             </p>
             <p className="ze-acts">
-              <A to="/login" className="ze-l">Try Hanzo</A>
               <A to={c.wb} className="ze-l">Open in Workbench</A>
               <A to="https://github.com/zenlm" className="ze-l">Docs on GitHub</A>
             </p>
@@ -119,7 +118,7 @@ const FAMILY = [
 // the film closes into an arch: a window onto Zen's sphere
 const ARCH = (t, W, H, wide) => {
   const w = wide ? Math.min(W * 0.32, H * 0.64) : Math.min(W * 0.62, H * 0.36);
-  const h = wide ? H * 0.82 : H * 0.44;
+  const h = wide ? H * 0.82 : H * (H < 740 ? 0.38 : 0.44); // short phones: leave the settled headline clear of the arch
   const l = wide ? W * 0.6 : (W - w) / 2, top = wide ? (H - h) / 2 : H * 0.05;
   const a = lerp(0, w / 2, t).toFixed(1), b = lerp(0, 16, t).toFixed(1);
   return `inset(${lerp(0, top, t).toFixed(1)}px ${lerp(0, W - l - w, t).toFixed(1)}px ${lerp(0, H - top - h, t).toFixed(1)}px ${lerp(0, l, t).toFixed(1)}px round ${a}px ${a}px ${b}px ${b}px)`;
@@ -134,7 +133,7 @@ function CardArt({ ci, open, z, on }) {
       <ModelFilm slug="zen" play={on} />
       {open ? (
         <div className="ze-open" aria-hidden="true">
-          {CARDS.map((k) => <p key={k.code}><code>{k.code}</code><span>{k.size}</span><em>Open weights</em></p>)}
+          {CARDS.map((k) => <p key={k.code}><code>{k.code}</code><span>{k.name}</span></p>)}
         </div>
       ) : (
         <div className="ze-mcard" aria-hidden="true">
@@ -150,16 +149,12 @@ function CardArt({ ci, open, z, on }) {
 const cardBody = (c) => (
   <>
     <p>{c.desc}</p>
-    <p className="ze-ch-specs"><span>{c.size}</span><span>{c.mods}</span><span>Open weights</span></p>
-    <p className="ze-ch-acts">
-      <A to="/login" className="ze-l">Try Hanzo</A>
-      <A to={c.wb} className="ze-l">Open in Workbench</A>
-      <A to="https://github.com/zenlm" className="ze-l">Docs on GitHub</A>
-    </p>
+    <p className="ze-ch-specs"><span>{c.mods}</span></p>
+    <p><More to={c.wb}>Open in Workbench</More></p>
   </>
 );
 const CHAPTERS = [
-  { k: 'Open weights', title: 'Open weights', art: (on) => <CardArt open z={1.1} on={on} />, body: <><p>Open weights: download the weights, or call them on Hanzo Cloud.</p><p><More to="https://github.com/zenlm">Docs on GitHub</More></p></> },
+  { k: 'Open weights', title: 'Open weights', art: (on) => <CardArt open z={1.1} on={on} />, body: <><p>Download the weights, or call them on Hanzo Cloud.</p><p><More to="https://github.com/zenlm">Docs on GitHub</More></p></> },
   { k: CARDS[0].name, title: CARDS[0].name, art: (on) => <CardArt ci={0} z={1.35} on={on} />, body: cardBody(CARDS[0]) },
   { k: CARDS[1].name, title: CARDS[1].name, art: (on) => <CardArt ci={1} z={1.7} on={on} />, body: cardBody(CARDS[1]) },
 ];
@@ -188,8 +183,8 @@ export default function Zen() {
       <section className="lv-sec ze-figs-sec" aria-label="Zen 6 Flash, Zen 6">
         <div className="x-wrap">
           <div className="lv-stats ze-figs">
-            <Stat value="5.95 GB" label={CARDS[0].name} note="Packed ternary, 5.95 GB" />
-            <Stat value="27.3B" label={CARDS[1].name} note="27.3B dense" />
+            <Stat value="5.95 GB" label={CARDS[0].name} />
+            <Stat value="27.3B" label={CARDS[1].name} />
             <Stat value="$2.28" label="in · per 1M tokens" note="$7.26 out" />
           </div>
         </div>

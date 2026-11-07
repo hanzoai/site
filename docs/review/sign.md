@@ -1,49 +1,56 @@
 # /sign/: James-eye review
 Verdict: 7/10
-First complaint: "The top is lovely, the document signs itself, but look at the little signer list: 'signer' on one line and '1' on the next, right on the first screen. And the step name is written twice, once on the left and once bigger on the right. Then after the signing bit it goes quiet and turns into a pricing page and a list of links."
+First complaint: "The top is lovely, the contract signs itself. But I scroll to the prices and they shrink: '$50' goes from a big number to a tiny spaced-out 'F r e e' and '$ 5 0' the moment it lands. That's the one number I came to see, and it looks broken."
 
-Walked 2026-11-07 ~16:30 UTC on the dev server at 1470x801 and 375x812, moving.
+Walked 2026-11-07 ~16:40 UTC on the dev server at 1470x801 and 375x812, moving.
 
 ## The 11 answers
-1. First screen and 1 s
-   - Sells in 5 s: h1 "Hanzo Sign" 52px at y342 (box steady over 1.6 s, CLS 0.003), one-line lede, solid Try Hanzo, and the document stage running. Frames 700 ms apart differ.
-   - The stage self-runs (02 -> 05 over ~7 s idle), but the first scroll into the pin snaps it back from 03/05 to 01/05 "Upload the PDF". Autoplay and scroll still fight over one scene.
-2. One in, one out
-   - Yes in the pinned 5-chapter scene (y0 to ~4100 desktop): one chapter in, one out, the document gains a signature, a tick, then a CERTIFICATE stamp.
-   - After it, stacked blocks. Desktop stops 10-13 (y6810 to y9534: plans, open source, closing room) are fully still; on phone stops 7-12 (about 6 screens) are still.
-3. A real object in every section
-   - Yes: signing stage, live recipient list (5 people, statuses change), 12-language ticker on black, a signature pad you can draw on (Sign stamps "Signed Nov 7, 2026, 4:29 PM"), the plan sheet.
-   - No: "Built on Open Source" is two paragraphs and two pills. The 8 feature tiles (344x128) are a number, a title and a +.
-4. One ask, nothing floating, scale rhythm
-   - Desktop: header ask outlined while the hero ask shows, solid after. Good. Nothing fixed over content (only the 2px progress bar).
-   - Phone first screen: header Try Hanzo and hero Try Hanzo are both solid black in 812px. Two solid fills.
-   - Rhythm fine at top (52/26/17), but each chapter title is shown twice: left h2 26px and the stage label ~30px, the bigger copy on the object.
-   - Plans: four 64px figures in a row (Free, $30, $50, Custom) mixing Zen and Zen Mono. Everything big at once for that screen.
-5. Hover and press
-   - Hero ask: hover fill #0a0a0b -> #2c2c2e, press 0.98. Docs, plan and repo buttons: border goes ink, press 0.98. Tiles lift 3.6px and open a sheet; Escape closes it.
-   - Pricing toggle: hover changes nothing; at rest neither option is pressed (both aria-pressed=false), so the pill shows no state until clicked.
-   - Closing-room links ("View Docs" row 674x44): hover no change, press 1px.
-6. Overlap, font swap, shift
-   - No console errors, no horizontal overflow at 375, no font swap seen.
-   - Signer chips wrap "signer / 1" to two lines at 1470 once the status reads "sent" or "signed" (d-00, d-06). Visible on the first screen.
-   - Phone targets under 44px: "Documenso" inline link 87x21, footer "Company" 30x44.
-7. Reference
-   - apple.com product page: the pinned stage with a 01-05 rail and one panel changing is really there. synchronized.studio card-to-page is not: tiles open a centred dialog.
-8. Neighbours
-   - Own medium (a document being signed, plus a pad you sign yourself). Distinct.
-9. 18 parts
-   - Not audited from source. Visible gaps: part 3 narrative after the pin, part 4 one solid fill on phone, part 11 targets, part 17 toggle default state.
-10. Banned tells
-   - "Most Popular" mono label sits directly above the "Business" plan title. Two labels on one stage ("A document, signed" rail plus "DOCUMENT SIGNING"); on phone they stack.
-   - Tile hover is a plain lift, not one of the allowed hover transforms.
-11. Copy
-   - parity.py /sign/: OK, text 106/106, links 9/9.
+1. **First screen, 1 s.**
+   - It sells: h1 52px "Hanzo Sign", lede and Try Hanzo + Documentation at h1 top 342px, with the Agreement.pdf desk on the right.
+   - Motion within 1 s with no input: the PDF lines load in between 300 ms and 1000 ms. By 3.6 s the desk is on step 03/05 (fields placed, signers "sent"), and a pause control is present.
+2. **One in, one out.**
+   - Desktop: the five chapters are one pinned stage (01 Upload, 02 Place, 03 Send, 04 Watch, 05 Keep the record). One h2 and one desk state per stop, so it reads as a story rather than a document.
+   - After the pin it slackens. There is ~170px of blank white before "What is in it" (d-07) and ~250px of empty grey under the signing pad (d-10).
+3. **A real object in every section.**
+   - Yes. The self-signing desk; a live recipient list (persons 1-5 ticking sent, opened, signed); the "Twelve languages" rotator (Spanish 03/12); a drawable signing pad (drawn, then Sign turns solid, then a "Signed Nov 7, 2026, 4:38 PM" stamp); price cards; the fork curve documenso to hanzoai.
+   - The 8 part tiles are text-only, but they open into sheets, so that is acceptable.
+4. **Ask and scale.**
+   - One solid fill per viewport on desktop: the header Try Hanzo is outlined while the hero ask is visible and turns solid once it leaves. Nothing floats over content, and no cursor label appears on the tiles (checked).
+   - Scale: h1 52, h2 26, h3 17, figures 44. There is rhythm, apart from the price bug in Fixes 1.
+   - Shared chrome: the phone header's always-solid Try Hanzo duplicates the hero solid at 375 (request filed, not this page's fault).
+5. **Hover and press.**
+   - Hero ask: hover changes background #0a0a0b to #2c2c2e, press scales 0.98. The Documentation outline goes ink and gains a 4% fill.
+   - Tiles: hover lifts 3.5px, press scales 0.999. Every tap answers and nothing jumps (the measured box delta is 1.7px, which is the press scale).
+   - Tile hover is only a lift (no preview or number), and the 3.5px lift is not on the allowed hover-transform list.
+6. **Overlaps, swaps, shift.**
+   - No overlaps at either size. No horizontal scroll at 375 (scrollWidth 375). The h1 box is stable.
+   - The lede and asks rise 13px on arrival (an entry transform, not CLS).
+   - Console: 0 errors on 4 of 4 cold loads, and no red badge on 4 of 4 cold loads. One "1 Issue" badge appeared in a single run during an aborted navigation to hanzo.ai and did not reproduce, so it is not counted.
+7. **Reference.** apple.com product page: a pinned scene where one panel changes and the product is the hero. The motion is really there (a self-running demo plus the scroll hand-off). It also has motion.dev-style state (the pad and the run toggle).
+8. **Different from neighbours.** It has its own hero medium (a PDF that signs itself, with an ink line draw) and its own signature. It does not reuse the home or launch tricks I know.
+9. **18 parts.**
+   - Present: one h1, `data-cta="sign.hero"`, 3 pause controls, sheets with Esc, a pad with a keyboard path, sound toggle in the header, and two black rooms that are not back to back.
+   - Phone: one tap target under 44px, the inline "Documenso" link at 87x21.
+10. **Banned tells.**
+    - `taste.py` OK; none of the hard bans.
+    - Borderline 1: "Most Popular" mono label sits above the Business h3 (not an h1 or h2, so allowed).
+    - Borderline 2: tiles carry both a fill and a 5% outline ("raise or outline, never both").
+    - Borderline 3: on phone, two mono labels are stacked ("A document, signed" over "DOCUMENT SIGNING").
+11. **Copy.** `parity.py /sign`: text 106/106, links 9/9.
 
 ## Fixes (in order)
-1. Hero stage craft: widen the signer chip so "signer 1" never wraps; drop the duplicate chapter title on the stage (keep "03 / 05" only) or the left h2, not both; let the pin start at the chapter autoplay is on instead of snapping to 01.
-2. Give the bottom half a moment: the plans' figures roll in once when reached (only the selected plan at 64px, others 44px), and "Built on Open Source" gets one object (the fork line documenso/documenso -> hanzoai/esign drawing in). Ends the 3-screen still stretch.
-3. Phone: header ask outlined while the hero ask is on screen (one solid fill).
-4. Pricing toggle: default to one state with the pill visible, hover answers.
-5. Closing room: compose it as one statement and one ask; the five headings and repeated docs/GitHub links read as a link dump.
-6. Feature tiles: a small live detail per tile or open into the content (Morph) rather than a modal; drop the "Most Popular" label above the plan title (make it a corner tag).
-7. 44px hit area on the "Documenso" inline link on phone.
+1. **The price flip shrinks the figures.**
+   - On desktop, once `.sg-plans` is 40% in view, `Flap` replaces the 44px price with 15px letter-spaced cells (`.x-flap.sg-flap`): "F r e e", "$ 3 0", "$ 5 0", "C u s t o m" (flap-d-1).
+   - The roll must land at the 44px figure size, tabular and not spaced, or drop the flap.
+   - Same check after the Run it yourself / We run it toggle.
+2. **Close the dead stretches after the pinned stage.**
+   - About 170px of empty white sits between the desk's last frame and "What is in it". About 250px of empty grey sits under the pad before "What it costs".
+   - Overlap the next object by about 40px, per MASTER part 3.
+3. **Signing pad dominates its screen while empty.**
+   - At 1356x362, an empty dashed box fills most of the screen until someone draws.
+   - Either give it a ghost signature that writes itself once at 60% in view, then clears on pointer down, or cap its width to the 8/5 grid so the section has a big, a medium and a small.
+4. **Polish.**
+   - Give the tile hover something that tells (the sheet's first line or the 01 number moving), not only a lift.
+   - Drop the 5% outline on the filled tiles.
+   - On phone, pick one of the two stacked mono labels above the desk.
+   - Give the Documenso inline link a 44px tap box.

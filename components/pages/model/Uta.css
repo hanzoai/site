@@ -44,10 +44,13 @@
   .ut-mon figcaption span { font-size: 13px; }
 }
 
-/* one solid fill per screen: the header ask goes quiet while a page ask is in view, so Uta's own asks are solid */
-.lv-stage[data-hero='uta'] .lv-name-ask .x-btn { background: #fafafa; border-color: #fafafa; color: #0a0a0a; }
-.cr-head.ut-v2 .lv-acts .x-btn { background: #0a0a0a; border-color: #0a0a0a; color: #fafafa; }
-@media (hover: hover) {
+/* one solid fill per screen: on desktop the header ask goes quiet while a page ask is in view, so Uta's own asks are
+   solid there; on phones the header keeps its solid "Try Hanzo", so the page's asks stay outlined */
+@media (min-width: 901px) {
+  .lv-stage[data-hero='uta'] .lv-name-ask .x-btn { background: #fafafa; border-color: #fafafa; color: #0a0a0a; }
+  .cr-head.ut-v2 .lv-acts .x-btn { background: #0a0a0a; border-color: #0a0a0a; color: #fafafa; }
+}
+@media (min-width: 901px) and (hover: hover) {
   .lv-stage[data-hero='uta'] .lv-name-ask .x-btn:hover { background: #e5e5e5; border-color: #e5e5e5; }
   .cr-head.ut-v2 .lv-acts .x-btn:hover { background: #262626; border-color: #262626; }
 }
@@ -70,6 +73,9 @@
   html[data-ut-hold] .lv-stage[data-hero='uta'] .lv-name[data-gone] .lv-name-ask { visibility: visible; }
   html[data-ut-hold] .lv-stage[data-hero='uta'] .lv-head { visibility: hidden; }
 }
+/* every control in the studio is a 44px target at every width */
+.ut-scene button, .ut-scene [role=tab], .ut-scene [role=radio] { min-height: 44px; }
+.ut-solo { min-width: 56px; }
 /* the roll at rest (paused or reduced motion) does not claim to stream */
 .ut-live[data-off] { visibility: hidden; }
 /* the chapters' own pictures */

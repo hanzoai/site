@@ -4,20 +4,21 @@
 // CTA: Try Hanzo (identity.hero, identity.mid, identity.close).
 // Metric: signup_start (cta_click identity.hero)
 // Signature: the card that never leaves: the first screen pins and three stages step in beside the same hosted card.
-// Beyond: Wear your name: the hosted card redrawn from your hostname, name and ways in.
+// Beyond: white-labelled by hostname: the hosted card redrawn from your hostname, your mark and the ways in, carried to the close.
 /* Identity (v2, archetype A Launch).
-   V2: 8/10 round 2: no counters above headings (a progress mark sits under the card); nine app marks light one by one and people join as glyphs; the bento is 8/5 rows with one line each and the rest opening on click; tiles tilt and play their drawing on hover; one sticky card on phones whose panel swaps with the stage in view; tabs a snap rail on phones; reduced motion shows the finished sign-in; Add sign-in is a rounded black card that opens to full width; one solid ask per screen, deck greys
+   V2: 8/10 round 3: every visible word is Hanzo's (no invented heads or labels; the white-label bullet whole); the first screen pins on phones too; each large-organization tab drives its own drawing; Add sign-in is a scene that shows what each step makes; tiles open their sentence over the drawing without reflowing the grid; 26px section heads in a 1152 container; the close carries your configured card and a quiet standards row
    Signature: the card that never leaves. The hosted hanzo.id sign-in card sits beside the title signing someone in by
-   itself (password, then a second factor). Scroll, and the first screen pins: the title steps out and the three stages
-   step in one at a time while the same card changes to show each one - the ways in, what the token carries, one
-   session lighting every app in the organization. On phones the same card sticks under the header and swaps with the
-   stage you are reading. A pointer light follows the mouse across the stage and the card leans toward it (2.5°).
+   itself (password, then a second factor). Scroll, and the first screen pins (on every width): the title steps out and
+   the three stages step in one at a time while the same card changes to show each one - the ways in, what the token
+   carries, one session lighting every app in the organization. A pointer light follows the mouse across the stage and
+   the card leans toward it (2.5°).
    Supporting: kinetic title lines; "What it does" as a bento of tiles, each with its own small drawing that plays on
-   arrival and on hover; the large-org detail in tabs (all of it in the HTML).
-   Beyond: "Wear your name" - type your hostname and your name, choose the ways in, and the hosted card redraws
-   white-labelled as yours. Nothing is saved or sent.
-   Greys only (Hanzo's deck). Every word and link is Hanzo's; the hostname is an example; the app marks are drawn
-   shapes, not anyone's logo.
+   arrival and on hover, the sentence opening over the drawing; the large-organization tabs, each driving a drawing
+   made from its own words; Add sign-in as a scene that lights each step and shows what it makes.
+   Beyond: white-labelled by hostname - type your hostname and your mark, choose the ways in, and the hosted card redraws
+   as yours; the close carries it. Nothing is saved or sent.
+   Greys only (Hanzo's deck). Every word and link is Hanzo's; state is shown by shape (tick, fill, outline); the app
+   marks are drawn shapes, not anyone's logo.
    CTA: Try Hanzo (hero, Add sign-in and the close; one solid button per screen, the others text links). */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'motion/react';
@@ -35,6 +36,9 @@ const STAGES = [
   ['What the token carries', 'Who signed in, which organizations they belong to, and the role they hold where they asked to act.'],
   ['One sign-in, every app', 'Sign in once and the session is good across every app in the organization, including ours.'],
 ];
+
+const TICK = <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+const ARROW = <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 /* nine drawn app marks (shapes, not logos) for "every app in the organization" */
 const MARKS = [
@@ -54,7 +58,7 @@ function SignCard({ at }) {
   const [ref, seen, calm] = useLive(0.3);
   const [paused, togglePause] = usePause();
   const live = seen && !paused;
-  const [t, setT] = useState(0); // hero loop: 0 password, 1 continue, 2 code, 3 signed in
+  const [t, setT] = useState(0); // hero loop: 0 password, 1 go, 2 code, 3 signed in
   // reduced motion: the finished sign-in, not the empty first frame
   useEffect(() => { if (calm) setT(3); }, [calm]);
   useEffect(() => {
@@ -76,12 +80,12 @@ function SignCard({ at }) {
               <div className="id-form">
                 <p className="id-t">Sign in</p>
                 <span className={'id-field' + (t === 0 ? ' typing' : '')}><em>password</em><b>{t === 0 ? '' : '••••••••••'}</b></span>
-                <span className={'id-go' + (t === 1 ? ' press' : '')}>Continue</span>
+                <span className={'id-go' + (t === 1 ? ' press' : '')}>{ARROW}</span>
                 <div className={'id-code' + (t >= 2 ? ' on' : '')}>
                   <p>second factor</p>
                   <div>{[0, 1, 2, 3, 4, 5].map((k) => <i key={k} style={{ transitionDelay: t >= 2 && !calm ? k * 0.18 + 's' : '0s' }} />)}</div>
                 </div>
-                <span className={'id-ok' + (t === 3 ? ' on' : '')}>✓ signed in</span>
+                <span className={'id-ok' + (t === 3 ? ' on' : '')}>{TICK}signed in</span>
               </div>
             )}
             {at === 1 && (
@@ -98,7 +102,7 @@ function SignCard({ at }) {
             {at === 2 && (
               <div className="id-token">
                 <p className="id-t">token</p>
-                {[['who', 'signed in'], ['organizations', 'they belong to'], ['role', 'where they act']].map(([k, v], i) => (
+                {[['who', 'signed in'], ['organizations', 'they belong to'], ['role', 'where they asked to act']].map(([k, v], i) => (
                   <motion.p key={k} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 + i * 0.18, duration: 0.5, ease: EASE }}><b>{k}</b><span>{v}</span></motion.p>
                 ))}
               </div>
@@ -112,7 +116,7 @@ function SignCard({ at }) {
                     </motion.i>
                   ))}
                 </div>
-                <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.4, duration: 0.4, ease: EASE }}>one session</motion.p>
+                <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.4, duration: 0.4, ease: EASE }}>every app in the organization</motion.p>
               </div>
             )}
           </motion.div>
@@ -125,7 +129,9 @@ function SignCard({ at }) {
 /* the card leans toward a fine pointer (2.5° at most) and a soft light follows it across the stage; touch: nothing */
 function lean(e) {
   if (e.pointerType !== 'mouse') return;
-  const el = e.currentTarget, r = el.getBoundingClientRect();
+  const el = e.currentTarget;
+  if (el.hasAttribute('data-open')) return; // an open tile holds still so its words are sharp
+  const r = el.getBoundingClientRect();
   const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
   el.style.setProperty('--sx', (x * 100).toFixed(1) + '%');
   el.style.setProperty('--sy', (y * 100).toFixed(1) + '%');
@@ -134,24 +140,13 @@ function lean(e) {
 }
 function unlean(e) { const s = e.currentTarget.style; s.setProperty('--ry', '0deg'); s.setProperty('--rx', '0deg'); }
 
-/* The first screen pins: the title, then the three stages, while the card stays. Phones: the card sticks and swaps. */
+/* The first screen pins on every width: the title, then the three stages, while the card stays. */
 function Pin() {
   const sec = useRef(null);
   const [at, setAt] = useState(0);
-  const [wide, setWide] = useState(true);
-  const arts = useRef([]);
   const { scrollYProgress } = useScroll({ target: sec, offset: ['start start', 'end end'] });
-  useEffect(() => { const m = matchMedia('(min-width: 901px)'); const f = () => setWide(m.matches); f(); m.addEventListener('change', f); return () => m.removeEventListener('change', f); }, []);
-  useMotionValueEvent(scrollYProgress, 'change', (p) => { if (wide) setAt(Math.max(0, Math.min(3, Math.floor(p * 4 * 0.9999)))); });
-  // phones: no pin; the one card sticks under the header and shows the stage that crosses the middle of the screen
-  useEffect(() => {
-    if (wide) return;
-    setAt(0);
-    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(+e.target.dataset.i); }), { rootMargin: '-58% 0px -38% 0px' });
-    arts.current.forEach((el) => el && io.observe(el));
-    return () => io.disconnect();
-  }, [wide]);
-  const layer = (i) => ({ ref: (el) => (arts.current[i] = el), 'data-i': i, 'data-on': at === i ? '' : undefined, 'data-past': at > i ? '' : undefined });
+  useMotionValueEvent(scrollYProgress, 'change', (p) => setAt(Math.max(0, Math.min(3, Math.floor(p * 4 * 0.9999)))));
+  const layer = (i) => ({ 'data-on': at === i ? '' : undefined, 'data-past': at > i ? '' : undefined });
   return (
     <section ref={sec} className="id-pin" aria-label="Hanzo Identity">
       <div className="id-pin-stage" onPointerMove={lean} onPointerLeave={unlean}>
@@ -206,7 +201,7 @@ function Glyph({ k }) {
   return <div className="id-g-log">{['write', 'write', 'write', 'write'].map((t, i) => <p key={i} style={{ '--k': i }}><i />{t}</p>)}<p className="no"><i />edit</p></div>;
 }
 
-/* a tile: its title and one line; the rest of Hanzo's paragraph opens on click (the words stay in the HTML) */
+/* a tile: its drawing and title at rest; the + opens Hanzo's sentence over the drawing, so the grid never moves */
 function Tile({ t, d, g, i }) {
   const [open, setOpen] = useState(false);
   const toggle = () => setOpen((o) => !o);
@@ -253,6 +248,52 @@ const LARGE = [
   ['Signing up your customers', 'An organization can hold its own customers as sub-organizations, so a business you serve manages its people without any of it reaching yours.', ['Sign in with Google or GitHub, or with any issuer you add', 'A consent screen the person has to pass before an app gets a token', 'Org admins manage their own members without platform access']],
   ['What you write', 'Almost nothing. Nobody should be hand-rolling OAuth in 2026, and with this you do not.', ['One SDK with an entry point per runtime — server, React, browser, Next.js, Passport', 'An OpenAPI 3.1 description generated from the handlers themselves', 'The sign-in page is hosted and already built — you send people to it']],
 ];
+const RUNTIMES = ['server', 'React', 'browser', 'Next.js', 'Passport'];
+
+/* each tab's drawing, made only from that tab's own words; it plays when the tab opens */
+function LargeArt({ i }) {
+  if (i === 0) return (
+    <div className="id-art id-art-region">
+      <span className="id-art-pin">your own region</span>
+      <div className="id-art-org">
+        <span className="id-art-k">organization</span>
+        <div className="id-art-bin"><b>One Go binary</b><span className="id-art-db"><i />embedded SQLite</span></div>
+        <span className="id-art-tok">token</span>
+      </div>
+      <div className="id-art-org ghost"><span className="id-art-k">organization</span></div>
+      <span className="id-art-foot">your own cluster</span>
+    </div>
+  );
+  if (i === 1) return (
+    <div className="id-art id-art-issuer">
+      <div className="id-art-node"><span className="id-art-k">your own issuer</span><b>the record</b></div>
+      <div className="id-art-wire"><i /><span>discovery URL</span></div>
+      <div className="id-art-node dark"><span className="id-art-k">Identity</span><b>the entry point</b></div>
+      <span className="id-art-foot">OpenID Connect</span>
+    </div>
+  );
+  if (i === 2) return (
+    <div className="id-art id-art-tree">
+      <div className="id-art-root">organization</div>
+      <div className="id-art-kids">
+        {[0, 1, 2].map((k) => (
+          <div key={k} className="id-art-sub" style={{ '--k': k }}>
+            <span>sub-organizations</span>
+            <div>{[0, 1, 2].map((p) => <i key={p} style={{ '--p': p }}>{PERSON}</i>)}</div>
+          </div>
+        ))}
+      </div>
+      <span className="id-art-gate">consent screen<em>{ARROW}</em>token</span>
+    </div>
+  );
+  return (
+    <div className="id-art id-art-sdk">
+      <b className="id-art-core">One SDK</b>
+      <div className="id-art-rt">{RUNTIMES.map((r, k) => <span key={r} style={{ '--k': k }}>{r}</span>)}</div>
+      <span className="id-art-foot">OpenAPI 3.1</span>
+    </div>
+  );
+}
 
 function Large() {
   const [at, setAt] = useState(0);
@@ -263,22 +304,25 @@ function Large() {
           <h2 className="v2-display s">Running it for a large organization</h2>
           <p className="v2-lede">The same service, wearing your name, on hardware you choose.</p>
         </div>
-        <div className="id-tabs" role="tablist" aria-label="Running it for a large organization">
-          {LARGE.map(([t], i) => (
-            <button key={t} type="button" role="tab" id={'id-t' + i} aria-selected={at === i} aria-controls={'id-p' + i} onClick={(e) => { setAt(i); e.currentTarget.scrollIntoView({ block: 'nearest', inline: 'nearest' }); }}>
-              {at === i && <motion.span layoutId="id-tab" className="id-tab-bg" transition={{ duration: 0.3, ease: EASE }} />}
-              <span className="id-tab-t">{t}</span>
-            </button>
-          ))}
+        <div className="id-tabs-rail">
+          <div className="id-tabs" role="tablist" aria-label="Running it for a large organization">
+            {LARGE.map(([t], i) => (
+              <button key={t} type="button" role="tab" id={'id-t' + i} aria-selected={at === i} aria-controls={'id-p' + i} onClick={(e) => { setAt(i); e.currentTarget.scrollIntoView({ block: 'nearest', inline: 'center' }); }}>
+                {at === i && <motion.span layoutId="id-tab" className="id-tab-bg" transition={{ duration: 0.3, ease: EASE }} />}
+                <span className="id-tab-t">{t}</span>
+              </button>
+            ))}
+          </div>
         </div>
         {LARGE.map(([t, d, pts], i) => (
           <div key={t} id={'id-p' + i} role="tabpanel" aria-labelledby={'id-t' + i} hidden={at !== i} className="id-panel">
+            <div className="id-panel-art" aria-hidden="true">{at === i && <LargeArt i={i} />}</div>
             <div className="id-panel-l">
-              <h3 className="v2-headline">{t}</h3>
+              <h3 className="v2-title">{t}</h3>
               <p className="v2-body">{d}</p>
+              <ul className="id-checks">{pts.map((p) => <li key={p}>{TICK}{p}</li>)}</ul>
               <p className="id-panel-n x-mono" aria-hidden="true"><span>{String(i + 1).padStart(2, '0')} / 04</span>{LARGE.map(([k], j) => <i key={k} data-on={j <= i || undefined} />)}</p>
             </div>
-            <ul className="id-checks">{pts.map((p) => <li key={p}><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>{p}</li>)}</ul>
           </div>
         ))}
       </div>
@@ -289,50 +333,118 @@ function Large() {
 const WAYS = ['password', 'passkey', 'Google', 'GitHub', 'second factor'];
 const HOST = /^(?=.{1,253}$)([a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/;
 
-/* Beyond: wear your name. The hosted card, white-labelled by hostname. Nothing is saved or sent. */
-function Wear() {
-  const [host, setHost] = useState('auth.example.com');
-  const [name, setName] = useState('Example');
-  const [on, setOn] = useState([true, true, true, false, true]);
+/* the hosted card, white-labelled: your hostname in the bar, your mark on the page, the ways in you chose */
+function Branded({ brand, small }) {
+  const { host, name, on } = brand;
   const h = host.trim().toLowerCase();
   const ok = HOST.test(h);
-  const who = name.trim() || 'Your company';
+  const who = name.trim();
   const has = (w) => on[WAYS.indexOf(w)];
+  const none = !on.slice(0, 4).some(Boolean);
+  return (
+    <div className={'id-card wear' + (small ? ' small' : '')} aria-hidden="true">
+      <p className={'id-url' + (ok ? '' : ' off')}><i />{ok ? h : ''}</p>
+      <div className="id-screen">
+        <div className="id-form">
+          <span className="id-brand"><span className="id-mark">{who ? who[0].toUpperCase() : ''}</span>{who}</span>
+          <p className="id-t">Sign in</p>
+          {has('password') && <span className="id-field"><em>password</em></span>}
+          {has('passkey') && <span className="id-btn dark">passkey</span>}
+          {(has('Google') || has('GitHub')) && (has('password') || has('passkey')) && <span className="id-or">or</span>}
+          {has('Google') && <span className="id-btn">Google</span>}
+          {has('GitHub') && <span className="id-btn">GitHub</span>}
+          {none && <span className="id-empty" />}
+          {has('second factor') && <span className="id-2fa">second factor</span>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* Beyond: white-labelled by hostname. The hosted card redrawn as yours. Nothing is saved or sent. */
+function Wear({ brand, set }) {
+  const ok = HOST.test(brand.host.trim().toLowerCase());
   return (
     <section className="v2-sec id-wear">
       <div className="v2-wrap v2-grid">
         <div className="id-wear-l">
-          <h2 className="v2-display s">Wear your name</h2>
-          <p className="v2-kick acc id-wear-cap">White-labelled by hostname</p>
-          <p className="v2-lede">Your mark on your domain, never ours.</p>
+          <h2 className="v2-display s">White-labelled by hostname — your mark on your domain, never ours</h2>
           <label className="id-wear-f">
-            <span>Hostname</span>
-            <input value={host} onChange={(e) => setHost(e.target.value)} spellCheck={false} autoComplete="off" inputMode="url" aria-invalid={!ok} aria-describedby="id-wear-e" maxLength={253} />
+            <span>hostname</span>
+            <input value={brand.host} onChange={(e) => set({ ...brand, host: e.target.value })} spellCheck={false} autoComplete="off" inputMode="url" aria-invalid={!ok} maxLength={253} />
           </label>
-          <p id="id-wear-e" className="id-wear-e" aria-live="polite">{ok ? '' : 'Type a hostname, like auth.example.com.'}</p>
           <label className="id-wear-f">
-            <span>Name</span>
-            <input value={name} onChange={(e) => setName(e.target.value)} autoComplete="off" maxLength={32} />
+            <span>your mark</span>
+            <input value={brand.name} onChange={(e) => set({ ...brand, name: e.target.value })} autoComplete="off" maxLength={32} />
           </label>
-          <div className="id-wear-ways" role="group" aria-label="Ways in">
-            {WAYS.map((w, i) => <button key={w} type="button" aria-pressed={on[i]} onClick={() => setOn((o) => o.map((v, k) => (k === i ? !v : v)))}>{w}</button>)}
+          <div className="id-wear-ways" role="group" aria-label={STAGES[0][1]}>
+            {WAYS.map((w, i) => <button key={w} type="button" aria-pressed={brand.on[i]} onClick={() => set({ ...brand, on: brand.on.map((v, k) => (k === i ? !v : v)) })}>{w}</button>)}
           </div>
         </div>
-        <div className="id-wear-r">
-          <div className="id-card wear" aria-label={'Preview of the sign-in page at ' + (ok ? h : 'your hostname')}>
-            <p className="id-url"><i />{ok ? h : 'your hostname'}</p>
-            <div className="id-screen">
-              <div className="id-form">
-                <span className="id-mark" aria-hidden="true">{who[0].toUpperCase()}</span>
-                <p className="id-t">Sign in to {who}</p>
-                {has('password') && <span className="id-field"><em>password</em></span>}
-                {has('passkey') && <span className="id-btn dark">passkey</span>}
-                {(has('Google') || has('GitHub')) && (has('password') || has('passkey')) && <span className="id-or">or</span>}
-                {has('Google') && <span className="id-btn">Google</span>}
-                {has('GitHub') && <span className="id-btn">GitHub</span>}
-                {has('second factor') && <span className="id-2fa">then a second factor</span>}
-                {!on.slice(0, 4).some(Boolean) && <span className="id-none">Choose at least one way in.</span>}
-              </div>
+        <div className="id-wear-r"><Branded brand={brand} /></div>
+      </div>
+    </section>
+  );
+}
+
+/* Add sign-in: a rounded black card that opens to full width; the three steps light in turn and show what each makes */
+const STEPS = ['Register the app', 'set the callback', 'install the SDK'];
+function Add() {
+  const room = useRef(null);
+  const [ref, seen, calm] = useLive(0.4);
+  const [step, setStep] = useState(0);
+  const [held, setHeld] = useState(false);
+  useEffect(() => {
+    const el = room.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { el.setAttribute('data-open', ''); io.disconnect(); } }, { threshold: 0.3 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  useTick(2400, seen && !held && !calm, () => setStep((s) => (s + 1) % 3));
+  return (
+    <section className="id-add" aria-labelledby="id-add-h">
+      <div className="id-add-room v2-dark" data-room="dark" ref={room}>
+        <div className="v2-wrap v2-grid">
+          <div className="id-add-l">
+            <h2 id="id-add-h" className="v2-display s">Add sign-in</h2>
+            <p className="v2-lede">Register the app, set the callback your framework already uses, install the SDK. That is the whole integration.</p>
+            <div className="v2-acts"><Cta to="/login" id="identity.mid">Try Hanzo</Cta><Cta to="https://docs.hanzo.ai/docs/openapi/iam" kind="link" id="identity.read-documentation">Read Documentation</Cta></div>
+          </div>
+          <div className="id-scene" ref={ref}>
+            <div className="id-steps" role="group" aria-label="Add sign-in">
+              {STEPS.map((s, i) => (
+                <button key={s} type="button" aria-pressed={step === i} data-past={step > i || undefined} onClick={() => { setStep(i); setHeld(true); }}>
+                  <span className="id-step-n">{step > i ? TICK : i + 1}</span>{s}
+                </button>
+              ))}
+            </div>
+            <div className="id-made" aria-hidden="true">
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div key={step} className="id-made-in" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }} transition={{ duration: 0.45, ease: EASE }}>
+                  {step === 0 && (
+                    <>
+                      <span className="id-made-k">client id</span>
+                      <span className="id-made-id">{Array.from({ length: 24 }, (_, k) => <i key={k} style={{ '--k': k }} />)}</span>
+                      <p>Every application registers under its own client id</p>
+                    </>
+                  )}
+                  {step === 1 && (
+                    <>
+                      <span className="id-made-k">authorize endpoint</span>
+                      <span className="id-made-flow"><b>authorize</b><em>{ARROW}</em><b className="lit">callback</b></span>
+                      <p>the callback your framework already uses</p>
+                    </>
+                  )}
+                  {step === 2 && (
+                    <>
+                      <span className="id-made-k">One SDK</span>
+                      <span className="id-made-rt">{RUNTIMES.map((r, k) => <i key={r} style={{ '--k': k }}>{r}</i>)}</span>
+                      <p>One SDK with an entry point per runtime</p>
+                    </>
+                  )}
+                </motion.div>
+              </AnimatePresence>
             </div>
           </div>
         </div>
@@ -341,46 +453,25 @@ function Wear() {
   );
 }
 
-/* Add sign-in: a rounded black card inside the gutters that opens to full width as it is reached */
-function Add() {
-  const room = useRef(null);
-  useEffect(() => {
-    const el = room.current;
-    if (!el) return;
-    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { el.setAttribute('data-open', ''); io.disconnect(); } }, { threshold: 0.3 });
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-  return (
-    <section className="id-add" aria-labelledby="id-add-h">
-      <div className="id-add-room v2-dark" data-room="dark" ref={room}>
-        <div className="v2-wrap v2-grid">
-          <div className="id-add-l">
-            <h2 id="id-add-h" className="v2-display m">Add sign-in</h2>
-            <p className="v2-lede">Register the app, set the callback your framework already uses, install the SDK. That is the whole integration.</p>
-            <div className="v2-acts"><Cta to="/login" id="identity.mid">Try Hanzo</Cta><Cta to="https://docs.hanzo.ai/docs/openapi/iam" kind="link" id="identity.read-documentation">Read Documentation</Cta></div>
-          </div>
-          <ol className="id-three" aria-hidden="true">
-            {['Register the app', 'set the callback', 'install the SDK'].map((s, i) => <li key={s} style={{ '--k': i }}><span>{i + 1}</span>{s}</li>)}
-          </ol>
-        </div>
-      </div>
-    </section>
-  );
-}
+const PROOF = ['OpenID Connect', 'SCIM 2.0', 'WebAuthn', 'GDPR'];
 
 export default function Identity() {
+  const [brand, setBrand] = useState({ host: 'hanzo.id', name: 'Hanzo', on: [true, true, true, false, true] });
   return (
     <main className="v2 id">
       <Pin />
       <Does />
       <Large />
-      <Wear />
+      <Wear brand={brand} set={setBrand} />
       <Add />
       <section className="id-end">
-        <div className="v2-wrap id-end-in">
-          <h2 className="v2-display">Get started with Identity</h2>
-          <div className="v2-acts"><Cta to="/login" id="identity.close">Try Hanzo</Cta><Cta to="https://docs.hanzo.ai/docs/projects/hanzoai/iam" kind="link" id="identity.read-the-docs">Read the docs</Cta><Cta to="https://github.com/hanzoai" kind="link" id="identity.view-on-github">View on GitHub</Cta></div>
+        <div className="v2-wrap v2-grid id-end-in">
+          <div className="id-end-l">
+            <h2 className="v2-display m">Get started with Identity</h2>
+            <div className="v2-acts"><Cta to="/login" id="identity.close">Try Hanzo</Cta><Cta to="https://docs.hanzo.ai/docs/projects/hanzoai/iam" kind="link" id="identity.read-the-docs">Read the docs</Cta><Cta to="https://github.com/hanzoai" kind="link" id="identity.view-on-github">View on GitHub</Cta></div>
+            <p className="id-proof x-mono">{PROOF.map((p) => <span key={p}>{p}</span>)}</p>
+          </div>
+          <div className="id-end-r"><Branded brand={brand} small /></div>
         </div>
       </section>
     </main>

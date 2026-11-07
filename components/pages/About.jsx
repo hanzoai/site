@@ -16,12 +16,13 @@
 // Metric: signup_start (data-cta="about.*")
 // Signature: six reasons Hanzo builds as tiles that open into their own sheet
 // Beyond: pick two? keep all four: the lede's four trade-offs as switches that never knock each other off
-// V2: 8/10 round 4: hero cut-in and frontier draw are CSS from first paint (no hydration wait, JS off identical); phone header quiet while the hero ask shows; dark-room quiet button legible with a hover; tighter section gaps; runtime cards lift on hover; reduced motion runs 0 animations
+// V2: 8/10 round 5: hero idles after the draw (head breathes, a reader walks the curve; CSS, paused off screen); founders are side-by-side plate cards that draw in; lede never shifts; tiles and every text link answer a hover; phone frontier under the h1
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
 import { Count } from '../ui';
 import { A, Cta, Img, Tabs, TabPanel } from '../kit';
 import StoryClose from './StoryClose';
+import StoryPause from './StoryPause';
 import Sigil from '../Sigil';
 import { useOpener } from '../Opener';
 import { href } from '../../lib/route';
@@ -67,9 +68,18 @@ function Frontier() {
     const y = Math.round(2014 + t * 12);
     setYr((v) => (v === y ? v : y));
   };
-  // draws once (about 4 s) and rests at the frontier: nothing on the page loops past 5 s (WCAG 2.2.2)
+  // after the draw it stays alive by CSS: the head breathes and a reader glides along the curve while no hand is on it.
+  // Off screen both pause (a class set on the element, never React state, so the server HTML is the same)
+  const wrap = useRef(null);
+  useEffect(() => {
+    const el = wrap.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => el.classList.toggle('off', !e.isIntersecting));
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
   return (
-    <div className={'xab-front-w' + (yr ? ' read' : '')} onPointerMove={move} onPointerLeave={() => setYr(null)}>
+    <div className={'xab-front-w' + (yr ? ' read' : '')} ref={wrap} onPointerMove={move} onPointerLeave={() => setYr(null)}>
       <svg className="xab-front-svg" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMax meet" role="img" aria-label="The Pareto frontier: intelligence, speed, deterministic safety and equitable cost, advancing together from 2014 to 2026">
         {[0.25, 0.5, 0.75, 1].map((v) => <line key={v} x1={0} x2={W} y1={Y(v)} y2={Y(v)} className="xab-grid" />)}
         <line x1={0} x2={W} y1={Y(0)} y2={Y(0)} className="xab-base" />
@@ -91,6 +101,11 @@ function Frontier() {
           <text x="10" y={PT + 8}>{yr}</text>
         </motion.g>
         <motion.circle className="xab-hand-dot" r="8" cx={cx} cy={cy} />
+        {/* idle: a reader walks the curve from 2014 to the frontier, slowly, until a hand takes over */}
+        <g className="xab-glide" style={{ offsetPath: `path('${FRONT}')` }} aria-hidden="true">
+          <line x1="0" x2="0" y1="-18" y2="18" />
+          <circle r="6" />
+        </g>
         {/* the head rides the curve on a CSS motion path, in step with the line's dash */}
         <g className="xab-ride" style={{ offsetPath: `path('${FRONT}')` }}>
           <circle r="26" className="xab-halo" />
@@ -128,8 +143,12 @@ const H1 = ['Chasing the', 'Pareto Frontier', 'of AI'];
 
 function Hero() {
   useOneSolidOnPhone();
+  // WCAG 2.2.2 (MASTER part 12): the hero's idle loops (the breathing head, the reader walking the curve) can be paused;
+  // the button is first in the hero, tucked into the plot's lower right corner, and hidden under reduced motion
+  const [paused, setPaused] = useState(false);
   return (
-    <section className="xab-hero" aria-labelledby="xab-h1" data-ask-name="About" data-morph-target>
+    <section className={'xab-hero' + (paused ? ' paused' : '')} aria-labelledby="xab-h1" data-ask-name="About" data-morph-target>
+      <StoryPause paused={paused} onToggle={() => setPaused((v) => !v)} className="xab-pause" />
       <div className="v2s-wrap xab-hero-top">
         {/* the h1 cuts in line by line from first paint (CSS, never waiting on hydration) */}
         <h1 id="xab-h1" className="v2s-display xab-h1">
@@ -375,10 +394,12 @@ function Founders({ portraits = [] }) {
         {FOUNDERS.map((p, i) => (
           <article key={p.name} className={'xab-person' + (i ? ' two' : '')}>
             <Portrait p={p} has={portraits.includes(p.img)} />
-            <h3 className="v2s-headline">{p.name}</h3>
-            <p className="xab-role">{p.role}</p>
-            <p className="v2s-body">{p.bio}</p>
-            <ul className="xab-socials">{p.links.map(([l, to]) => <li key={l}><A to={to}>{l} <span aria-hidden="true">↗</span></A></li>)}</ul>
+            <div className="xab-person-t">
+              <h3 className="v2s-headline">{p.name}</h3>
+              <p className="xab-role">{p.role}</p>
+              <p className="v2s-body">{p.bio}</p>
+              <ul className="xab-socials">{p.links.map(([l, to]) => <li key={l}><A to={to}>{l} <span aria-hidden="true">↗</span></A></li>)}</ul>
+            </div>
           </article>
         ))}
       </div>

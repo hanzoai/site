@@ -1,72 +1,31 @@
-# /network: James-eye review (independent critic, 7 Nov round 4)
+# /network: James-eye review (round 2, independent walk)
 
-Verdict: 7/10
-First complaint: "I watch the little dot hop round the map for ten seconds, then it just stops, and there's a big black play button sitting next to my Buy Compute. The top goes dead. And on my phone, in the models bit, a circle is sitting on top of the 'zen' label."
+Verdict: 8/10
+First complaint: "Once the map has done its run the black bit at the bottom just sits there. Two big dark boxes with nothing in them until I put my mouse on one."
 
-Walked on the dev server at 1470×801 (hover-capable Chromium) and 375×812 (touch), moving, with the cookie bar dismissed. I waited on every screen, hovered and pressed every control, and ran `scripts/motion.mjs /network` and `scripts/parity.py /network` (OK, 37/37 text, 5/5 links). Judged from `components/pages/cloud/Network.jsx`, `Network.css` and what renders, not from the builder's notes.
-
-Proof: `img/network-hero-rest.jpg` (desktop hero about 11 s after load: the demo has stopped, and the solid black play disc sits in the hero). `img/network-phone-ch4-overlap.jpg` (375×812, chapter 04: peer 04's circle covers the "zen" tag on peer 03, and the "kai" tag runs to the tile's edge).
+Walked moving at 1470x801 (wheel-scrolled, hover pointer enabled, video recorded) and at 375x812 (touch), cookie bar dismissed, frames 1 s apart on every screen. Layout shift total 0.0011 desktop / 0.0006 phone (nothing over 0.005). Console clean on two fresh loads. The one red "1 Issue" badge in the first walk came from a parse error in another chat's `components/pages/Press.jsx` while it was mid-edit, not from this page. `parity.py /network`: OK, text 37/37, links 5/5. `taste.py` on Network.jsx/.css: OK. Proof: `img/network-hero.jpg` (first screen at 1 s), `img/network-room-rest.jpg` (black room left alone: two still frames 1 s apart are pixel-identical).
 
 ## The 11 answers
-1. **Does it sell in 5 s and move within 1 s? Yes.**
-   - Desktop: the h1 (52px) cuts in. The lede and "Buy Compute" sit together on the left. On the right, the live peer map shows Hanzo's model renders as 32px crops, and a request walks from "you" within the first second.
-   - Phone: h1 at 40px, the lede, the ask at y 322, then the map.
-   - **But the hero runs once and then rests.** After about 10 s nothing on the first screen moves. `motion.mjs` reports desktop screen 1 as STILL, with 0 changes. The rest state also turns the pause control into a 44px solid black play disc, so the hero has a second solid fill beside "Buy Compute".
-2. **Does one thing come in as one goes out? Yes.**
-   - The pinned chapters keep one stage and change one fact at a time: the struck "region ▾", links thickening by the work, attested peers filling, the kai route and the uta placement, a machine joining, and the work settling into a Merkle root.
-   - The black room then holds the two ends, and the close holds "Get Network". It does not read as a document.
-3. **Does every section hold a real visual object? Yes.**
-   - The hero and the chapters each have a map.
-   - The black room has the strand and two graphite ends, with the prompt box under them.
-   - The close has the Sigil tile.
-   - Monotony risk: everything is grey dots and hairlines. The model crops and the black room are what break it up.
-4. **One ask, nothing floating, scale with rhythm? Yes on all three.**
-   - The header's ask turns from "Try Hanzo" (outlined) to a solid "Buy Compute" once the hero ask leaves the screen. It drops back to outlined while the close's solid is in view, so there is one solid fill per viewport (except the play disc, answer 1).
-   - Phone: a slim, outlined "Buy Compute" bar at the bottom that covers nothing.
-   - Scale: the h1 is 52, chapter titles 32, the black room heading 26, and "Get Network" grows as it arrives.
-5. **Does every hover and press answer? Mostly.**
-   - Pointing at a peer draws its route dashed and names what it has loaded ("you → peer 06 → peer 04 · enso loaded"). That is the right kind of hover: it tells you something.
-   - The model and lend pills fill #e4e4e7 on hover, press to .97 and slide on a 300 ms ease-emphasis.
-   - The two ends deepen #171717→#262626 and send a pulse down the strand in their direction.
-   - "Run a Node" and the docs link firm up their underline. The text links press 1px.
-   - Miss: hovering the rested play disc turns it #f2f2f2 while its glyph stays white, so the control vanishes under the pointer. The CSS is in shared `LivePause.css`, but it is this page's hero that shows it.
-   - `motion.mjs` also flags the shared chapter-index buttons, `Copy` and the ghost GitHub button as dead hovers.
-6. **Overlap, font swap or layout shift? One overlap. CLS is clean** (0.001 desktop, 0.0006 phone), and there is no font swap or horizontal scroll.
-   - **Overlap at 375×812, chapter 04:** peer 04's ring sits on peer 03's "zen" tag (see proof), and the "kai" tag runs to the tile's edge.
-   - At 1470 the same ring touches the bottom edge of the black "kai" tag.
-7. **Which reference, and is its motion there?**
-   - apple.com: the pinned stage where one panel changes per fact. It is there and done well.
-   - motion.dev patterns are present: the layoutId pill, the line-art draw-ins and the cut-in.
-   - synchronized.studio: there is no card-into-page flight on this page.
-8. **Different from its neighbours? Yes.**
-   - /network's hero object is the fabric, a peer map with model renders.
-   - /node keeps the terminal and the machine.
-   - The Cloud close and the agent prompt are the shared family system.
-9. **Are all 18 parts covered? Substantially.**
-   - Header comment, one h1, `data-cta` and `data-thumb` on the primary, `JsonLd`, metadata from `pages.json`.
-   - Kit parts only (`Img`, `A`, `Copy`).
-   - A reduced-motion path exists in the CSS and the JS.
-   - The pause control comes first in the toolbar, and there are 44px targets.
-   - The gaps are in answers 1, 5 and 6.
-10. **Any banned tells? None.**
-    - No hue beyond Hanzo's own renders, no green, no gradients, no springs.
-    - No eyebrow above a headline: "01 / 06", "call it" and "serve it" sit under their titles. "Compute Marketplace" heads the map's toolbar, not a heading.
-    - No floating panel, no buttons that fade on hover.
-11. **Is the copy untouched? Yes.**
-    - Parity 0 missing.
-    - The diagram's labels ("ask the fabric for", "nothing billed", "attested", "declared", "CI runner", "block reward", "Merkle root") come from Hanzo's own `/network` copy.
-    - The drawn hash "0xa96d…e4" and the peer numbers are illustration. Keep them visibly diagrammatic.
 
-**Shared chrome, not counted against the page:**
-- A hydration mismatch in the site footer (`FooterHTML` `__html` differs) intermittently puts the dev server's red "1 Issue" badge on the page.
-- During the walk, another chat's `Newsletter.jsx` parse error showed in the console.
-- On phone, the header's "Try Hanzo" is a solid fill beside the hero's solid "Buy Compute".
-- The `LivePause` hover bug (answer 5).
+1. **Sells in 5 s, moves in 1 s?** Yes. "Hanzo Network", the lede and Buy Compute sit on the left. On the right a live peer map wears Hanzo's model renders and starts routing "kai" from "you" straight away, so by 1 s a route is lit. The four asks run for about 10 s, then it rests on the uta placement, and a small bead keeps walking the route after that. The idle state is quiet but it is alive.
+2. **One in, one out?** Mostly. The pinned chapters do the Apple thing: one map, and each fact changes it (topology draws in, links thicken by the work, attested and declared peers, the kai route and the uta placement, a machine joins, the work settles into a Merkle root). The weak spots are the chapter intro, about 1.5 screens of "How the Network Works" beside a map of hollow circles with no links, and the black room, which stacks the strand, two ends, GitHub, Paste and ship, and docs into one long room.
+3. **A real object in every section?** Yes. The hero has the fabric map, the chapters the same map changing per fact, the black room the strand with you and zen, and the close the line-art card. The black room's object is the thinnest: a static strand, plus two dark tiles that are mostly empty space.
+4. **One ask, sticky, nothing floating; scale rhythm?** On the page, yes. There is one solid Buy Compute in the hero. The header takes "Buy Compute" solid once the hero leaves and goes back to outline while the close's solid ask is in view. Nothing floats over content on desktop. Scale has rhythm: h1 52px, chapter intro 44px, chapter heads about 32px, room head 26px, close 64px, with mono captions small. (Shared-chrome notes below.)
+5. **Every hover and press answers?** Yes, and some hovers tell you something. Pointing at a peer draws the dashed route the fabric would take to it, and the readout says "zen · kai loaded". The model picker slides its pill and reroutes. The lend toggle relabels the joining machine ("CI runner") and swaps the command, and Copy put exactly `hanzo runner` on the clipboard. The hero ask darkens (#0a0a0a to #262626) and presses to a scale of 0.978. The black-room ends lift their fill and fire a pulse along the strand, and press to 0.974. Nothing jumps.
+6. **Overlap, font swap, layout shift?** None found at either size. CLS is effectively 0, the h1 box is stable, and tags do not collide at 1470 or 375. On the phone the hero map hides most model tags, so the hero there shows only zen and kai. It is sparse, but it does not break.
+7. **Which reference, and is its motion there?** apple.com: one pinned stage where one panel changes per fact, with a progress tick row. That motion is really there and scrubbed. There is a touch of osply/hamol in the pointer route-preview.
+8. **Different from neighbours?** Yes. /node is a terminal plus a four-tile machine on the left with the copy on the right. /network is copy on the left and a live peer graph on the right. The signatures differ (an asked fabric versus a node booting).
+9. **18 parts?** On the visible surface: one h1, one solid fill, `data-cta` and `data-thumb` on both primaries, a pause control on the hero demo, reduced-motion paths in code, the copy button with confirmation, and the close Band before the footer. Nothing visibly missing for a launch page. (Coverage card not consulted, as instructed.)
+10. **Banned tells?** None. No hue (the only colour is Hanzo's own dark model renders), no label above an h1 or h2 ("04 / 06" and "Compute Marketplace" sit below their headings or in the toolbar), no gradient text, no glow, and no button fades on hover.
+11. **Copy untouched?** Parity 37/37 text, 5/5 links. The drawn map labels ("idle · nothing billed", "attested ✓", "region ▾", "0xa96d…e4") are diagram annotations, not copy, and they are marked as drawn in the source.
 
-## Fixes to reach 8
-1. **Keep the first screen alive after the demo rests.** Once the four asks finish, let one quiet idle mover keep running on the resting placement route. The chapters' small ink bead looping you → peer 06 → peer 07 at 2.4 s would do, with one mover only, paused by the same control and frozen under reduced motion. The demo still "ends at rest" as a story, but the screen is never STILL. Then rerun `motion.mjs`: desktop screen 1 should no longer report STILL.
-2. **Take the solid fill off the play disc.** In page CSS, override `.nw .nw-pause[aria-pressed='true']` to the quiet state (white with a #d4d4d4 ring and an ink glyph, as the pause looks). Give it a hover that keeps the glyph visible (#f2f2f2 fill, ink glyph). "Buy Compute" is then the only solid in the hero. File the invisible-glyph hover for `LivePause.css` in `docs/requests/network.md`.
-3. **Clear the chapter-04 collision at both sizes.** Peer 04's ring must not touch peer 03's tags:
-   - Nudge peer 04 in the chapters' map, or flip peer 03's tags to its left in step 3, as `.nw-sp[data-p='4']` already does for peer 4's own tags.
-   - At 375, hide peer 03's "zen" tag in step 3: only the kai hit matters there.
-   - Then check that the "kai" tag keeps 12px from the tile edge at 375.
+## Fixes that would lift it further (it already clears 8)
+1. **Black room at rest:** give the strand a slow idle pulse from you to zen while the room is in view, the same quiet bead the hero uses. Pause it on hover and under reduced motion. Right now the room is pixel-still unless pointed at.
+2. **The two ends:** the dark tiles are about 280px of empty fill. Shorten them to roughly half height, or let each tile carry its own tiny object (the key's first call, or the node joining), so they read as objects and not plain boxes.
+3. **Chapter intro:** shorten the hollow-circle intro so "Peers, not regions" arrives within about one screen of the hero.
+4. Small: in chapter five the lend readout repeats the sentence that sits just above it in the body. Consider showing only the command and Copy there.
+
+## Shared chrome (not counted against the page)
+- On first paint at desktop the header shows "Try Hanzo" **solid** next to the solid hero ask, so two fills show for about the first second, until the header tools hydrate and it turns to outline.
+- At 375 the header keeps "Try Hanzo" solid for the whole walk, while the bottom bar carries "Buy Compute". That makes two different asks, and the header one is not in the page's words.
+- When the header passes from the black room onto the white close, it stays black for a beat.

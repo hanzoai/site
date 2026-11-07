@@ -1,60 +1,67 @@
 # /ingress — James-eye review
 
 Verdict: 7/10
-First complaint: "The board up top is alive, then I scroll into a whole white screen with one heading on it, and after that six cards that just sit there. The certificate never arrives, the backend never drops. The middle of the page goes dead."
+First complaint: "I scroll down and the page pulls me back up on its own. And every new card turns up as an empty white box, then the headings run into each other while it wipes. It's fighting me, and that isn't premium."
 
-Walked 7 Nov 2026 on the dev server at 1470x801 and 375x812 (recorder walk: 14 desktop and 16 phone scroll stops with idle pairs, hovers, 10 clicks, video). Then my own probes: the board sampled every 500 ms, the wipe scenes stepped in 11 scroll positions, press and hover computed styles, the pipeline add/reorder and its request dot sampled every 180 ms, reduced motion, JS off, a 45-stop tab crawl, 375x667 fold, 320 overflow, `parity.py` and `taste.py`.
+Walked 2026-11-07 on the dev server at 1470x801 and 375x812. I used the recorder walk (14 desktop and 16 phone scroll stops, 14 hovers, 10 clicks), then my own probes: a 250 px wheel walk through the pinned stage, frame-by-frame captures of the hero board and of three scene arrivals every 150-250 ms, `scrollTo` and wheel tests of the stage's settle, press and hover styles on the hero ask, the solid fills on the first screen at both sizes, 375x667 and 320 widths, reduced motion (with `getAnimations()` read after 3.2 s) and JS off. The only console error was the known FooterHTML hydration mismatch, which also accounts for the dev "1 Issue" badge. I did not count it against the page.
 
-Frames: [hero at 1 s](ingress/d-hero-1000ms.jpg) · [the empty intro screen](ingress/d-empty-intro.jpg) · [two scenes colliding at a scroll stop](ingress/d-wipe-overlap-at-rest.jpg)
+Frames: `ingress/r2-wipe-collision-1470.jpg` (the scene 3 to scene 4 wipe mid-scroll: "compose by annotation / without a restart" read as one heading, and the chips are sliced), `ingress/r2-empty-stage-1470.jpg` (scene 3 just after arriving: the stage card is an empty white box), `ingress/r2-phone-two-solids-375.jpg` (phone first screen: a solid "Try Hanzo" in the header and a solid "View on GitHub" in the hero).
 
 ## What works
-- **The hero sells and moves.** "Hanzo Ingress" (52px/497) cuts in by line mask (frame 0 on phone shows the lines half-masked). `:80 :443` sits opposite in 64px Air 220, one ask (View on GitHub), and the routing board peeks inside the first screen. In the board a request lands each second (host → middleware → backend outline), and on a 20 s cycle a backend pod hollows out ("health check failed · out of rotation"), shop.example.com's "certificate…" turns into "Let's Encrypt", then "recovered · back in rotation". It is a real live object with a 44px pause control, and it stops under reduced motion (0 running animations at 3 s).
-- **The signature belongs to this page.** WipeScenes (clip-path scenes rising over each other, each with its own tint) is used by no other page (`grep`: Ingress only).
-- **The Beyond is good.** In "Chain your own pipeline" you press middleware to add it and move it with arrows or drag, and a dot walks the chain on every change. Verified: adding compression gives 4 rows, aria-pressed=true, "Move compression up" reorders, the dot travels 300px in about 1.3 s.
-- **It is clean.** Greys only (`taste.py` OK). `parity.py` gives text 29/29, links 2/2. CLS 0.003 desktop and 0.00004 phone. No horizontal overflow at 375 or 320. JS off shows every scene and the h1 at opacity 1. The phone primary's bottom sits at 446px in a 667px viewport. The primary presses to scale(.98).
+- **The hero object is real and alive.** It is a routing board (host and path, then middleware, then backends) that runs by itself. It ticks every 1 s: a request lights a host row and its backend, the middleware chips swap, a pulse runs down the wire, a backend drops out of rotation, and `shop.example.com` goes from "certificate…" to Let's Encrypt. Frames at 0, 1000 and 3000 ms all differ (idle diff 2802 bytes on screen 0). It has a pause control.
+- **The type has rhythm.** The h1 is 52 px/497, the `:80 / :443` figure is light and large on the right, and the lede is small. Section heads step 44 (edge), 26 (Paste and ship), 32 (pipeline), 44 (Get Ingress). Nothing shouts all at once.
+- **There is one pinned stage where one panel changes.** It is the most Apple thing on the page. Six facts sit on the left with a `01 / 06` count, and each scene draws once on the right: the sources list, the lock shackle closing on Let's Encrypt, a request passing the black chips, four pods with one hollow, file paths typing in, and 80 and 443 settling.
+- **The Beyond aid is real.** "Chain your own pipeline" sits in a black room that opens from a rounded card. The chips toggle, the arrows reorder, and a white request dot walks the chain on every change. Every chip and arrow responded to a click (10/10), and hovers changed style on 13 of 14 targets on desktop.
+- **The engineering is clean.** CLS is 0.0020 on desktop and 0.00005 on phone. Horizontal overflow is 0 at 1470, 375 and 320. Parity is 29/29 text and 2/2 links. `taste.py` passes. Reduced motion leaves 0 running animations after 3.2 s and stacks the scenes in their final frames. JS off shows the h1, lede, ask and board, because the cut-in is a CSS animation. The hero ask carries `data-cta="ingress.hero"` and `data-thumb`.
 
 ## The 11 answers
-1. **5 s and 1 s: yes.** Name, ports, lede and primary are all on the first screen, and the board's request highlight and wire pulse move within 1 s with no input. The phone h1 is 40px over 2 lines.
-2. **One in, one out: only partly; the middle is a document.** After the hero, desktop scroll stop 1 (y=681) is about 650px of white holding only the 44px "What happens at the edge" ([frame](ingress/d-empty-intro.jpg)). Then come 4,806px of pinned wipe in which every scene is a static card: idle change is 0 bytes at 6 of the 8 stops in the scene band (they hold still for 1.2 s). On phone the scenes stack (allowed) as text block then card, six times, with idle change 0 at stops 2–9 (about 4,000px with nothing moving).
-3. **Real object in every section: no.** The intro section has none. The six scene drawings are real but frozen diagrams of things that should happen: "Certificates it fetches itself" is a lock icon plus a word, "Routes change without a restart" is four squares with one hollow that never changes, and the middleware chips have a `--d` stagger index set in `Draw` that no CSS uses.
-4. **One ask, nothing floating, scale rhythm: mostly.** There is one page ask, View on GitHub. On desktop the header ask swaps from Try Hanzo to View on GitHub once the hero ask leaves (screen 1). Nothing of the page's floats over content. Rhythm is good in the hero (52 / 64 Air / 20) and inside each scene (26px heading against a 40–112px figure). Shared chrome: on phone the header keeps a solid black "Try Hanzo" beside the hero's solid "View on GitHub" (2 solid fills in one viewport) and never swaps. The cookie card is 203px tall at 375×812 and covers the board. Neither counts against the page.
-5. **Every hover and press answers: no.** The primary goes #0a0a0a → #2c2c2e on hover and scale .98 on press: good. In the dark room, pressed chips have no hover change and no chip has a press state (`transform: none` during mousedown). The ↑/↓ buttons have no hover. That is 6/14 desktop hovers dead (recorder). The pause and the chips play no sound tick, though they are toggles.
-6. **Overlap, font swap, layout shift: one overlap at rest.** No font swap (the h1 box holds) and CLS stays under 0.004. But the wipe is a pure scrub with no snap, so a scroll stop can leave two scenes half-drawn: at y=4086 and y=4767 (both a- and b-frames, so it does not resolve) "05 / 06" sits 35px above "06 / 06" and the "pricing.html" row lies across the 112px "80" ([frame](ingress/d-wipe-overlap-at-rest.jpg)).
-7. **Reference: apple.com product pages** (one idea per screen, pinned scenes). The pin is there, but Apple's scenes play inside the pin; here the wipe is the only motion. Nothing from synchronized.studio or osply/hamol-style pointer detail.
-8. **Different from neighbours: yes in the middle, no at the end.** Hero medium (port figures plus the live routing board) and the wipe are its own. The close (ShipPrompt then GetIt with the Sigil lines) is the same pair used on Gateway, Kms, Machines, Iam, Idv, Insights, Guard and Hsm.
-9. **18 parts: gaps.**
-   - Part 7: the scene cards are outlined and raised at once (`.ig-scene-r`: 1px ring plus a 40/80 drop shadow), and the page CSS uses literal non-deck hex (#f5f5f7, #161617, #2c2c2e).
-   - The black room (`.ig-pipe`) arrives full-bleed with a hard edge (border-radius 0), not as a rounded card that opens.
-   - On phone the board hides its whole middleware column (`.ig-col.mid { display:none }`), so the phone hero object loses the request path that is its story.
-   - The pipeline's walking dot is 6px with a glow, travels a fixed 300px (`--h` is never set) and lights no row as it passes.
-   - The "Get Ingress" band stacks h2, the mono caption and the tag with almost no space between them (shared GetIt).
-   - Tab crawl: 0 invisible stops and a 2px ring everywhere, but Copy is 32px tall (shared ShipPrompt).
-10. **Banned tells: none of the hard ones.** No hue, gradient text, Inter or kicker above an h1/h2 (the "01 / 06" numbered caption sits above an h3, which is allowed). Soft ones: a glow (`box-shadow: 0 0 12px`) on the walking dot, and outline-plus-shadow tiles.
-11. **Copy untouched: the live strings are all present.** The Beyond adds strings that are in neither `content/live/ingress.json` nor `content/ui-strings.json`: "Chain your own pipeline", "No middleware: straight to the backend.", "request", "backend", the board's "health check failed · out of rotation" and "recovered · back in rotation". It also repeats "Middleware you compose by annotation" as a caption under the new h2. List them on the card as copy questions, or source them from the register.
+1. **Sells in 5 s, moves in 1 s?** Yes. "Hanzo Ingress / The entry point of a Kubernetes cluster" plus the board reads as a product at a glance. The h1 cuts in by line mask and the board is ticking before 1000 ms. One weakness: the board opens on its least telling state, "certificate…" with an ellipsis that reads like truncated text. Let's Encrypt only lands after about 10 s.
+2. **One in, one out, or a document?** Mostly one in, one out. The pinned wipe swaps one fact at a time, and then the prompt, the pipeline and the band each take their own screen. Three things undercut it:
+   - **The stage takes the scroll away from you.** `useWipe().settle` in `components/pages/cloud/Ingress.jsx` (lines 140-151) scrolls the page 180 ms after you stop. `scrollTo(3500)` came to rest at 3318, 182 px back up. A 300 px wheel flick reached 2692, then the page carried itself on to 3013. In the recorder walk, three successive page-down steps all ended back at scrollY 2517.
+   - **The wipe's in-between frames collide.** The clip-path wipe shows both scenes in place at once. At y≈3200 the left column reads "Middleware you / compose by annotation / without a restart", and the scene 3 chips are cut in half (`r2-wipe-collision-1470.jpg`). At y≈1100, "already wrote" is cut through by the incoming grey panel, and scene 2's paragraph shows without its heading.
+   - **Every scene arrives as an empty white card** for 300-450 ms before its drawing starts (`r2-empty-stage-1470.jpg`, and the stage stills at t0). Below the hero board, about 300 px of blank white runs before "What happens at the edge".
+3. **A real object in every section?** Yes:
+   - hero: the board;
+   - six scenes: a drawing each (the lock is the weakest, an icon plus a word);
+   - Paste and ship: the agent-prompt block;
+   - pipeline: the reorderable chain;
+   - band: the drifting contour lines.
+4. **One ask, sticky, nothing floating, scale rhythm?**
+   - Desktop: yes. The header ask swaps from "Try Hanzo" to the page's own "View on GitHub" once you scroll, the header ask goes quiet while the hero ask is solid, and nothing covers content. The cookie card and the dev badge are shared chrome.
+   - Phone: no. At 1000 ms the header shows a solid "Try Hanzo" (#0a0a0a, 44 px) and the hero shows a solid "View on GitHub" (#0a0a0a, 44 px) on the same screen. The header never takes the page's ask on the phone. That is two solid fills and two different labels on the first screen.
+   - Scale: has rhythm (see above).
+5. **Every hover and press answers, no jumps?**
+   - Hovers changed on 13 of 14 desktop targets. The hero ask presses to `scale(0.98)`, but its hover only lightens the fill (#0a0a0a to rgb(44,44,46), a value off the deck ramp, from the shared `Cta`) and tells you nothing. Phone hovers are n/a, and every tap responded.
+   - **There is a jump inside the hero object.** Each tick, the middleware column re-centres as the chain goes from 2 chips to 1 to empty during the exit. The "MIDDLEWARE" label moves from y 185 to y 162 and back, about 23 px every second (probe hero frames 04 vs 09).
+   - In scene 3, the moving white dot rides over the chip lettering ("compre•sion", "redirec•s").
+6. **Overlap, font swap or layout shift?** There was no font swap and CLS was 0.002. The overlaps are the wipe collisions in answer 2, and on desktop they are visible on every scene change while you scroll. On phone the scenes stack and do not collide. In the phone pipeline, the request dot sits outside the row's left edge.
+7. **Which reference, and is its motion there?** apple.com product pages: a pinned stage where one panel changes, and the product as the hero. The pin and the one panel are there. Apple's smoothness is not: Apple scrubs continuously and never moves the page under you. This page snaps your scroll and shows half-wiped frames. There is a light touch of osply/hamol in the contour band.
+8. **Different from neighbours?** Partly. The hero recipe is shared with about 9 cloud siblings (Gateway, Guard, Hsm, Iam, Idv, Kms, Machines, Insights): `Lines` h1 left, a mono figure right, the lede and ask row, and a `Lift` board under it. The board object is Ingress's own. `WipeScenes` is used only here, and the pipeline room is unique. The closing `ShipPrompt` and `GetIt` are shared family parts. It is distinct enough in its object and signature, but not in its first-screen layout.
+9. **18 parts?** Seen:
+   - one `<main>` and one h1;
+   - `data-cta` and `data-thumb` on the primary;
+   - `data-morph-target` on the h1;
+   - parity 0 missing and taste passes;
+   - CLS under 0.02 and no overflow at 320;
+   - the ask above the fold at 375x667 (bottom at 446 px);
+   - reduced motion shows the final state, and JS off is legible;
+   - pause on the board;
+   - `data-sound="tick"` on the chips and arrows;
+   - a closing `Band` (Get Ingress) running into the footer.
+
+   Not seen: no proof strip, because Hanzo's copy has no figures beyond 80/443, which is fine. The phone fails the "one solid fill" rule (answer 4). The `01 / 06` captions sit above the h3s, which is allowed: they are not above an h1 or h2.
+10. **Banned tells?** No hue, no gradient text and no Inter. There is no eyebrow above an h1 or h2. "GET STARTED WITH HANZO INGRESS" is set below "Get Ingress" as a caption, which is allowed, but it is jammed against the heading with no space and reads as three lines crushed together. The lock scene is close to "an icon alone". The agent prompt is clipped at the right edge ("…hanzo ingress route"; scrollWidth 883 vs 818) with no fade or cue on desktop, and it is clipped far more on phone.
+11. **Copy untouched?** Yes. Parity is 29/29 text and 2/2 links. "certificate…" is a UI state label the page made up, not Hanzo copy. It reads as truncation.
 
 ## Fixes (in order)
-1. **Make the six scenes play, not sit.** Do this in `components/pages/cloud/Ingress.jsx` → `Draw`: each drawing runs once when its scene is fully wiped in (a `useInView` / progress threshold), then rests, and reduced motion shows the final frame:
-   - sources: the four sources slide into the `networking.k8s.io/v1 Ingress` row, then `default IngressClass` ticks on;
-   - cert: the lock shackle closes (the path animates), then "Let's Encrypt" and "wildcards included" arrive;
-   - mw: use the existing `--d` index for a 60 ms stagger and have a request dot pass through the black chips;
-   - live: the hollow pod empties, then refills ("put back when it recovers");
-   - files: the four paths type in one after another;
-   - ports: 80 and 443 settle in place.
-
-   This turns 4,800px of scroll-only motion into time-based motion and fixes answers 2 and 3.
-2. **Kill the empty intro screen.** Cut `.ig-intro` padding (`Ingress.css` line 42, `clamp(120px,14vw,200px)` top) and let the h2 sit over the first scene, or move "What happens at the edge" into the pinned stage as its first frame, so no 801px viewport holds only a heading.
-3. **Stop two scenes colliding at rest.** In `Ingress.jsx` / `Ingress.css`, either snap the pin per scene (`scroll-snap` on 6 invisible markers inside `.ig-ws`, or settle the progress to the nearest scene when scrolling stops), or keep the left text column out of the wipe: one pinned column whose kicker and h3 swap by line mask while only the right card wipes. Today the `ws-in` 6% y-offset leaves the old kicker visible above the new layer.
-4. **Give the phone board its middleware.** Replace `.ig-col.mid { display:none }` (line 107) with a compact one-row chain between hosts and backends (the current `ig-chain` spans at 13px, inline), so the phone hero shows host → middleware → backend.
-5. **Every tap answers in the dark room.** For `.ig-pipe-pick button` and `.ig-pipe-mv button`:
-   - inside `@media (hover:hover)`, a hover that changes more than opacity (border to white 40% and text to #fafafa for off chips, background #fafafa for on chips);
-   - `:active { transform: scale(.97) }` at 90 ms;
-   - make the walking dot light each row it passes (set `--h` from the measured chain height, or animate a row-highlight index) and drop its `0 0 12px` glow;
-   - call the shared sound kit's tick on chip toggle and reorder.
-6. **Use tokens only.** In `Ingress.css`, swap #f5f5f7 → #f5f5f5, #161617 → #171717, #2c2c2e → #262626, and drop the stale "Accent: blue" comment. On `.ig-scene-r` and `.ig-host`, keep the raise or the 1px outline, not both (tiles flat; only the moment's card floats).
-7. **Open the black room.** `.ig-pipe` should enter as a rounded card inside the gutters (radius 24–28) and open to full width as it is reached, per MASTER part 3.1.
-8. **Clear the copy.** List the Beyond's new strings on `docs/coverage/ingress.md` as copy questions, or pull them from `content/ui-strings.json`. Drop the duplicate "Middleware you compose by annotation" caption under "Chain your own pipeline".
-9. **Shared, request only (`docs/requests/ingress.md`):**
-   - the phone header should swap to the page ask and stop being a second solid fill;
-   - the cookie card should be 220px or less at 375×812 (it measures 203px but covers the hero board);
-   - ShipPrompt's Copy should be 44px;
-   - GetIt's h2/caption/tag spacing.
+1. **Stop moving the page under the user.** Remove the `settle()` auto-scroll in `useWipe` (`components/pages/cloud/Ingress.jsx` lines 140-152), or at most use CSS `scroll-snap-type: y proximity` on the scene spans. The fix for "two scenes resting half-drawn" is fix 2, not taking the scroll away.
+2. **Make the wipe read cleanly mid-scroll.** In `WipeScenes` (as used by `.ig-ws`), give the incoming scene's left column its own entrance: a line-mask cut-in of its h3 and a 16 px rise of the body as its wipe passes about 50%. Hold the outgoing text in place, and fade it out by 30% of the wipe. Then two headings never stack into one ("compose by annotation / without a restart"). Wipe the stage drawing and the text on the same edge so the chips are never sliced while the old heading is still readable.
+3. **No empty stage.** Start each scene's drawing as its wipe begins, not at about 87% in (`look()`: `+ (1 - REST) + 0.08`). Alternatively, render the drawing's first frame statically so the white card is never blank. Then let the drawing play as it finishes. Tighten the blank gap between the hero board and "What happens at the edge" (about 300 px of white at 1470).
+4. **Steady the hero board.** Give `.ig-col.mid .ig-chain` a fixed min-height of two chips and align it to the top, not the centre, so "MIDDLEWARE" stops jumping 23 px each tick (`Ingress.css`). Open the loop on a telling state: start at phase 3 or 0 with the Let's Encrypt label shown, and keep "certificate…" for the middle of the loop. Keep the request dot in scene 3 off the chip text: run it on a line below the chips, or under them in z-order.
+5. **Phone: one solid fill.** On phone, the header still shows a solid "Try Hanzo" while the hero "View on GitHub" is solid. Either let the header take the page's ask quietly at all widths, like desktop does (shared Header and `lib/cta.js`: file `docs/requests/ingress.md`), or confirm the header goes quiet while the hero ask is in view.
+6. **Closing band type.** In `GetIt` as used here, put space (17-27 px) between "Get Ingress" and its caption line, and between the caption and "K8s ingress + static plugin". Right now three sizes are stacked with no leading.
+7. **Agent prompt.** Wrap the prompt (`white-space: pre-wrap`) or add a right-edge fade and a scroll cue. Then the visitor sees the whole command they will copy, and on phone it is not cut off after "use H".
+8. **Small things.**
+   - Give the hero ask's hover something beyond a lighter fill: an arrow nudge, say, kept on the deck ramp (shared `Cta`; request it).
+   - Give the lock scene a second line of content from the copy, such as the hostname arriving with its certificate, so it is not an icon plus a word.
+   - Keep the phone pipeline's request dot inside the row.

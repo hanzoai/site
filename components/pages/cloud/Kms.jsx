@@ -22,10 +22,9 @@
    Greys only, from Hanzo's deck. Every word and link is Hanzo's. */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { Cta, CodeBlock } from '../../kit';
+import { A, Cta, CodeBlock } from '../../kit';
 import { Console, useLive } from './Frame';
 import { Lines, Lift } from '../../v2/LiftStage';
-import ShipPrompt from '../../v2/ShipPrompt';
 import GetIt from '../../v2/GetIt';
 import LivePause, { usePause } from '../../v2/LivePause';
 import '../../v2/v2scale.css';
@@ -319,6 +318,101 @@ function Disk() {
   );
 }
 
+/* The tail as one KMS screen: the example project's console on the left with the vault's own secret under it, the
+   agent prompt on the right, the related links as one hairline row under both. The secret strip follows the console:
+   hover, click or Enter on a project and the strip shows that service reading DATABASE_PASSWORD v4 (the same version
+   and fingerprint the vault rotated to); left alone it steps through the projects by pressing the console's own rows. */
+const SVC = ['gateway', 'payments-api', 'checkout-web', 'docs-site'];
+const SIDE = [['KMS', '/kms'], ['IAM', '/iam'], ['Authz', '/authz'], ['Secrets', '/cloud/secrets'], ['Audit', '/cloud/audit'], ['Zero Trust', '/cloud/zero-trust']];
+const RELATED = [['IAM', '/iam', 'OIDC identity & orgs'], ['Authz', '/authz', 'Fine-grained access'], ['Secrets', '/cloud/secrets', 'Store once, sync everywhere']];
+const PROMPT = 'Read https://hanzo.ai/skill.md and use Hanzo KMS in my project. Start with: hanzo kms secrets create';
+const arrow = <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+
+function Ship() {
+  const wrap = useRef(null);
+  const [ref, live, calm] = useLive(0.4);
+  const [paused, togglePause] = usePause();
+  const [at, setAt] = useState(0);
+  const [mine, setMine] = useState(false); // once the hand has chosen a project, the strip stops stepping
+  const [hold, setHold] = useState(false); // a mouse over the console holds the step
+  const run = live && !paused && !mine && !hold;
+  const follow = (e, chose) => {
+    const li = e.target.closest && e.target.closest('li[role="option"]');
+    if (!li || !wrap.current || !wrap.current.contains(li)) return;
+    const i = SVC.indexOf(li.querySelector('.cf-name')?.textContent);
+    if (i < 0) return;
+    setAt(i);
+    if (chose && e.nativeEvent.isTrusted) setMine(true);
+  };
+  useEffect(() => {
+    if (!run) return;
+    const id = setTimeout(() => {
+      const n = (at + 1) % SVC.length;
+      const rows = wrap.current ? wrap.current.querySelectorAll('li[role="option"]') : [];
+      if (rows[n]) rows[n].click(); // the console's own row takes the highlight (an untrusted click: no sound)
+      setAt(n);
+    }, 2600);
+    return () => clearTimeout(id);
+  }, [at, run]);
+  const svc = SVC[at];
+  const agent = svc === 'checkout-web';
+  return (
+    <section className="v2-sec km-ship">
+      <div className="v2-wrap km-ship-g">
+        <div className="km-ship-c" ref={ref}>
+          <div
+            ref={wrap}
+            className="km-ship-con"
+            onMouseOver={(e) => follow(e, false)}
+            onClick={(e) => follow(e, true)}
+            onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && follow(e, true)}
+            onPointerEnter={(e) => e.pointerType === 'mouse' && setHold(true)}
+            onPointerLeave={() => setHold(false)}
+          >
+            <Console light name="KMS" api="/v1/kms" cap="The service the session above is changing." side={SIDE} />
+          </div>
+          <div className="km-key">
+            <LivePause paused={paused} onToggle={togglePause} dark inline className="km-key-pause" />
+            <div className="km-key-in" aria-hidden="true">
+              <span className="km-key-name">DATABASE_PASSWORD<em>production</em></span>
+              <span className="km-key-v"><b>v4</b>{noise(10, 4)}</span>
+              <span className="km-key-read">
+                <i className={agent ? 'a' : ''} />
+                <span className="km-roll km-key-roll">
+                  <AnimatePresence mode="popLayout" initial={false}>
+                    <motion.span key={svc} initial={{ y: '105%' }} animate={{ y: '0%' }} exit={{ y: '-105%' }} transition={{ duration: 0.4, ease: EASE }}>
+                      read · {agent ? 'agent ' : ''}{svc}
+                    </motion.span>
+                  </AnimatePresence>
+                </span>
+              </span>
+              {!calm && <i key={'run' + at + (run ? 'r' : 'h')} className={'km-key-run' + (run ? '' : ' held')} />}
+            </div>
+          </div>
+          <div className="km-ship-cap">
+            <p className="v2-title">Example project. Every name in it is one you would give your own.</p>
+            <p className="v2-kick acc km-cap">Example project</p>
+          </div>
+        </div>
+        <div className="km-ship-p">
+          <h2 className="v2-headline km-ship-h">Paste and ship</h2>
+          <p className="v2-body">Paste this into any agent. It reads the skill manifest and calls KMS from there.</p>
+          <p className="km-api"><i>api</i>/v1/kms</p>
+          <CodeBlock code={PROMPT} label="Agent prompt" className="km-prompt" />
+        </div>
+        <nav className="km-rel" aria-label="Related capabilities">
+          <p className="v2-kick">Related capabilities</p>
+          <ul>
+            {RELATED.map(([t, to, d]) => (
+              <li key={t}><A to={to} className="km-rel-a"><b>{t}</b><span>{d}</span>{arrow}</A></li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+    </section>
+  );
+}
+
 export default function Kms() {
   return (
     <main className="v2 km">
@@ -344,22 +438,7 @@ export default function Kms() {
 
       <Disk />
 
-      <section className="v2-sec km-proj">
-        <div className="v2-wrap v2-grid">
-          <div className="km-proj-c"><Console light name="KMS" api="/v1/kms" cap="The service the session above is changing." side={[['KMS', '/kms'], ['IAM', '/iam'], ['Authz', '/authz'], ['Secrets', '/cloud/secrets'], ['Audit', '/cloud/audit'], ['Zero Trust', '/cloud/zero-trust']]} /></div>
-          <div className="km-proj-t">
-            <p className="v2-title">Example project. Every name in it is one you would give your own.</p>
-            <p className="v2-kick acc km-cap">Example project</p>
-          </div>
-        </div>
-      </section>
-
-      <ShipPrompt
-        name="KMS"
-        api="/v1/kms"
-        prompt="Read https://hanzo.ai/skill.md and use Hanzo KMS in my project. Start with: hanzo kms secrets create"
-        related={[['IAM', '/iam', 'OIDC identity & orgs'], ['Authz', '/authz', 'Fine-grained access'], ['Secrets', '/cloud/secrets', 'Store once, sync everywhere']]}
-      />
+      <Ship />
 
       <GetIt className="km-get" name="KMS" tag="Secrets + key management" seed="kms" data={[256, 3, 6]} repo={['hanzoai/kms', 'https://github.com/hanzoai/kms']} stars="3 stars" ask={['Open KMS', 'https://kms.hanzo.ai', 'kms.close']} />
     </main>

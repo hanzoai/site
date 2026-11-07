@@ -2,7 +2,7 @@
 
 Page file: `components/pages/cloud/Base.jsx` (+ `Base.css`, page-local `ExampleConsole.jsx/.css` shared with /authz) · gallery: `docs/gallery/base/` · metric id: `api_key_created` (developers; the click is `cta_click base.hero`)
 
-Open copy questions for James: the hero's primary is Hanzo's "Try Hanzo" (/login), the same words as the header's ask: on desktop the header outlines while the hero's solid is on screen (SYSTEM §5), but on phones the header keeps a solid "Try Hanzo" beside the hero's; keep Hanzo's order, or lead with "Read the docs"? The demo's UI labels are ours ("collection", "the moment it exists", "exists", "one stream", "declare", "it exists", "single Go binary", the step names); keep them or move them to `content/ui-strings.json`? "4 stars" is the live page's static GitHub figure. The hero lede is Hanzo's "Open source (MIT)…" line and Hanzo's hero paragraph ("Base is a single Go binary…") opens the next section: same words, new order.
+Open copy questions for James: the hero's primary is Hanzo's "Try Hanzo" (/login), the same words as the header's ask: on desktop the header outlines while the hero's solid is on screen (SYSTEM §5), and on phones the header keeps the solid "Try Hanzo" while the hero's is outlined; keep Hanzo's order, or lead with "Read the docs"? The demo's UI labels are ours ("collection", "the moment it exists", "exists", "one stream", "declare", "it exists", "single Go binary", the step names); keep them or move them to `content/ui-strings.json`? "4 stars" is the live page's static GitHub figure. The hero lede is Hanzo's "Open source (MIT)…" line and Hanzo's hero paragraph ("Base is a single Go binary…") opens the next section: same words, new order.
 Shared changes requested (`docs/requests/base.md`): none. Kit notes for the Cloud 1 owner: KeynoteClose's text-link "Self-host" reads `--ink` inside the dark room (ink on graphite) and the kit link asks are 21px tall; this page sets them white and 44px locally.
 Forks this page deleted: Frame's `Console` (4 `title=` tooltips, a spring row, a `setInterval`) replaced by page-local `ExampleConsole`; Frame's `useEvery` interval in the admin (now one `setTimeout` per record, paused with the Stage); the phones' endless `setInterval` build loop (now one pass, 900 ms a step); the hand-made `.kn-btn` asks in "Run the binary" (now kit `Cta`s, `base.run`, `base.run-2`); the fake tabs without panels (now a two-button view switch with `aria-pressed` and a steps nav with `aria-current`); the accent `--ac` and every off-deck grey (#fbfbfd, #e3e3e8, #f2f2f5, #e8e8ed, #f5f5f7, #8e8e93, #d1d1d6, #a1a1a6, #f0f0f3); 6 box-shadows; the 72px/40px clamp sizes.
 
@@ -15,7 +15,7 @@ Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line
 - [x] No dead or self-looping button; ~~prices from `lib/plans.js`~~ n/a: no prices
 - [x] Open copy questions for James listed, none decided
 
-Done here: The hero's one own solid is "Try Hanzo" → /login (`base.hero`, `data-thumb`); "Read the docs" and "View on GitHub" are kit text links. "Run the binary" has one solid ("Deploy on Hanzo Cloud", `base.run`) and a link ("GitHub"); the close has "Deploy to Cloud" (`base.close`) and the "Self-host" link. The first screen reads "An app backend in one file" beside the admin with records landing.
+Done here: The hero's one own solid is "Try Hanzo" → /login (`base.hero`, `data-thumb`): KeynoteStage draws it quiet, so Base.css fills it with `--btn-solid-bg/ink/hover` from 701px (computed rgb(10,10,10) on white at 1470), while the header's ask outlines; on phones the header keeps the solid and the hero's stays outlined. "Read the docs" and "View on GitHub" are kit text links. "Run the binary" has one solid ("Deploy on Hanzo Cloud", `base.run`) and a link ("GitHub"); the close has "Deploy to Cloud" (`base.close`) and the "Self-host" link. The first screen reads "An app backend in one file" beside the admin with records landing.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -33,7 +33,7 @@ Done here: Every link goes through the kit's `A` or `Cta`, the console's sidebar
 - [x] Ends in proof strip, `Band`, footer (the close is Hanzo's own "Get Base" dark room, related links inside it)
 - [x] ~~Card-to-page links use Morph~~ n/a: the capability cards open in place (KeynoteOpen's shared-element morph), they are not page links
 
-Done here: With Next's JS blocked (`prehyd.cjs`), the admin's newest row lands (`bs-land`) and the live dot beats in the server HTML (screens differ by 157 and 829 samples at 250–1000 ms). With JS off every tile stands built and every sentence of the pinned scene stacks (audit: 0 hidden text). Order: admin (hero) → one file (Hanzo's paragraph beside the binary) → declare a collection (pinned, quiet room) → what you get (six cards that open) → run the binary + console → Get Base (dark).
+Done here: With Next's JS blocked (`prehyd.cjs`), the admin's newest row lands (`bs-land`) and the live dot beats in the server HTML (screens differ by 157 and 829 samples at 250–1000 ms). With JS off every tile stands built and every sentence of the pinned scene stacks (audit: 0 hidden text). The stage sits higher (h1 at y 196–303 of 801, baseline ~36%). Section steps after the cards and before the dark room are ~150–190px. Order: admin (hero) → one file (Hanzo's paragraph beside the binary) → declare a collection (pinned, quiet room) → what you get (six cards that open) → run the binary + console → Get Base (dark).
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -66,7 +66,7 @@ Done here: Parity 70/70 text, 11/11 links. Sizes are deck only: h1 52 (40 phone)
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: `taste.py` (main's stricter 0.03 chroma) OK. Colours: #fff, #fafafa, #f5f5f5, #ededed, #e4e4e7, #d4d4d4, #a3a3a3, #737373, #525252, #262626, #0a0a0a, black 10%, white 14/78%. 0 box-shadows; radii 6/8/12/16/24/999. "What is Hanzo Base" now sits under "Declare a collection, get an API", "Capabilities" under "What you get", and each pillar's 01–03 under its words. Build state is a shape: hollow dashed slot, white tile, ink tile.
+Done here: `taste.py` (main's stricter 0.03 chroma) OK. Colours: #fff, #fafafa, #f5f5f5, #ededed, #e4e4e7, #d4d4d4, #a3a3a3, #737373, #525252, #262626, #0a0a0a, black 10%, white 14/78%. 0 box-shadows; radii 6/8/12/16/24/999. "What is Hanzo Base" now sits under "Declare a collection, get an API", "Capabilities" under "What you get", and each pillar's 01–03 under its words. Build state is a shape: a faint hairline sketch of the tile (its parts drawn at 22%), white tile, ink tile. The six capability cards are an uneven composition (4+2, 2+4, 3+3 of six columns), never three equal boxes in a row.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
@@ -75,7 +75,7 @@ Done here: `taste.py` (main's stricter 0.03 chroma) OK. Colours: #fff, #fafafa, 
 - [x] Inputs 16px or larger (the collection field is 17px); no bare `:hover`
 - [x] Forks this page deleted: listed above
 
-Done here: The view switch, steps, related links and console rows press to .97 in 90 ms, hover by fill or underline (never opacity) inside `@media (hover: hover)`, and focus with `2px solid var(--focus)`; the collection field shows the ring on its whole label. No `title=` attributes.
+Done here: The view switch, steps, related links and console rows press to .97 in 90 ms, hover by fill or underline (never opacity) inside `@media (hover: hover)`, and focus with `2px solid var(--focus)`; the collection field shows the ring on its whole label. Capability cards on hover lift 4px, the plus turns 90°, and each drawing acts out its idea (the stream's dots all fill, the files' page slides to its record, denied rules slide out, the tenant files spread, the arrow to /records grows). No `title=` attributes.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -100,7 +100,7 @@ Done here: Every section's object is product UI in HTML: the admin, the binary, 
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: `sweep.cjs base`: no sideways scroll, no errors (desk + 375). `audit2.cjs`: 0 sideways at 320, 0 targets under 44px on phone (the kit's link asks set to 44px here). At 375 "Try Hanzo" sits at y≈295–338. The build-up plays once on phones, tiles stacked.
+Done here: `sweep.cjs base`: no sideways scroll, no errors (desk + 375). `audit2.cjs`: 0 sideways at 320, 0 targets under 44px on phone (the kit's link asks set to 44px here). At 375 "Try Hanzo" sits at y≈295–338. On phones the build-up is one thing in, one out: each paragraph is followed by its own tile (CSS `display: contents` + `order`), and each tile builds as it comes into view (IntersectionObserver, threshold 0.6), then rests built. On desktop the pin sits at top 60px, under the glass header, and all five tiles fit the pinned screen (y≈122–738 at 801).
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -149,12 +149,12 @@ Done here: The agent prompt is the kit `CodeBlock` inside KeynoteClose; the reco
 - [x] ~~A failed submit~~ n/a: no form
 - [x] A thrown island does not blank the page (site error boundary)
 
-Done here: An empty collection field falls back to "posts" so the scene is never blank; paused, reduced-motion (all built) and JS-off states read as intended. Console errors: none.
+Done here: An empty collection field falls back to "posts" so the scene is never blank; paused, reduced-motion (all built) and JS-off states read as intended. Console errors: 0 at 1470 and 375 (`errs.js`). Base's own server/client differences are gone: the build-up reads reduced motion through `useCalm` (after mount), and the collection input carries `suppressHydrationWarning` (a screenshot tool's caret hiding writes its style before hydration). Two shared mismatches remain and are not this page's: KeynoteStage's object transform under reduced motion, and the footer shell's HTML when captured before hydration.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary; events only through the kit's `Cta` (`cta_click`)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: 8/10 …` in the page file's top comment
-- [ ] Review read: no `docs/review/base.md` yet
+- [x] Review read: `docs/review/base.md` (7/10), its fixes applied
 
-Done here: ids listed in part 4; metric `api_key_created`. Gallery: `docs/gallery/base/` (desktop.mp4, desktop.jpg, phone-1..3.jpg). Own score 8/10; the critic's verdict decides.
+Done here: ids listed in part 4; metric `api_key_created`. Gallery: `docs/gallery/base/` (desktop.mp4, desktop.jpg, phone-1..3.jpg, and after the review desktop-r2.jpg, phone-r2.jpg). Own score 8/10; the critic's verdict decides. Not fixed here: the console's example rows (gateway, payments-api…) are ExampleConsole's shared copy.

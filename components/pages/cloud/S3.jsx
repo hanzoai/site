@@ -53,6 +53,7 @@ function Kept() {
   const [cycle, setCycle] = useState(0);
   const [pick, setPick] = useState(null); // volumes taken dark by hand; null = the loop chooses
   const [hov, setHov] = useState(null); // the volume a fine pointer is on
+  const [no, setNo] = useState(null); // a fifth tap is refused: that tile nudges and the readout says four (the ten stay bright)
   useEffect(() => {
     if (calm) { setPhase(3); return; }
     // MASTER §4.1: it runs twice through (two different fours lost, about ten seconds), then rests reading; play replays
@@ -67,7 +68,8 @@ function Kept() {
   const lost = pick || auto;
   const toggle = (i) => {
     const next = new Set(pick || []);
-    if (next.has(i)) next.delete(i); else if (next.size < 4) next.add(i);
+    if (!next.has(i) && next.size >= 4) { setNo(i); setTimeout(() => setNo(null), 320); return; }
+    if (next.has(i)) next.delete(i); else next.add(i);
     setPick(next);
     setPhase(next.size ? 3 : 1);
   };
@@ -106,7 +108,7 @@ function Kept() {
             {Array.from({ length: N }).map((_, i) => {
               const gone = phase >= 2 && lost.has(i);
               return (
-                <button type="button" key={i} className={'s3-vol' + (gone ? ' gone' : '') + (i >= 10 ? ' par' : '') + (hov === i ? ' hov' : '')} aria-pressed={!!pick && pick.has(i)} aria-label={'Volume server ' + name(i)} disabled={!!pick && pick.size >= 4 && !pick.has(i)} onClick={() => toggle(i)}
+                <button type="button" key={i} className={'s3-vol' + (gone ? ' gone' : '') + (i >= 10 ? ' par' : '') + (hov === i ? ' hov' : '') + (no === i ? ' no' : '')} aria-pressed={!!pick && pick.has(i)} aria-label={'Volume server ' + name(i)} onClick={() => toggle(i)}
                   onPointerEnter={(e) => e.pointerType === 'mouse' && setHov(i)} onPointerLeave={() => setHov(null)}>
                   <span className="s3-vn" aria-hidden="true">{name(i)}</span>
                   <span className="s3-slot" aria-hidden="true">{phase >= 1 && !gone && <Shard i={i} />}</span>
@@ -153,7 +155,7 @@ function Roles({ step }) {
         {step === 1 && <p><span className="s3-kms">Hanzo KMS</span><i className="s3-arrow" /><b>server-side encryption</b><s>config file</s></p>}
         {step === 2 && (
           <div className="s3-cells">
-            {Array.from({ length: N }).map((_, i) => <i key={i} className={(i >= 10 ? 'p' : '') + (DEAD.has(i) ? ' x' : '')} />)}
+            {Array.from({ length: N }).map((_, i) => <i key={i} className={(i >= 10 ? 'p' : '') + (DEAD.has(i) ? ' x' : '')} style={DEAD.has(i) ? { '--k': [...DEAD].indexOf(i) } : undefined} />)}
             <b>✓ still reads</b>
           </div>
         )}
@@ -184,7 +186,7 @@ export default function S3() {
         </div>
       </section>
 
-      <PinnedChapters label="An object, kept" per={82} objH={38}
+      <PinnedChapters label="An object, kept" per={52} objH={38}
         intro={{ title: ['An object,', 'kept'] }}
         steps={FACTS.map(([t, d]) => ({ t, d }))}
         visual={(at) => <Roles step={at} />} />

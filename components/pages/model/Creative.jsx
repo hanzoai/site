@@ -73,7 +73,7 @@ function Caps({ slug, flip, subject, pos, capArt }) {
 }
 
 // where it fits: the three rooms as a quiet list beside one picture of the model at work
-function Fits({ slug, flip, subject, pos }) {
+function Fits({ slug, flip, subject, pos, fitsArt }) {
   const d = C[slug];
   const box = useRef(null);
   const seen = useInView(box, { amount: 0.3 });
@@ -96,10 +96,12 @@ function Fits({ slug, flip, subject, pos }) {
             ))}
           </ol>
         </div>
-        <figure className="cr-fits-art" style={frame(1, subject, pos)}>
-          <Img src={film(slug, 'webp')} w={1200} h={1500} />
-          <ModelFilm slug={slug} play={seen} />
-        </figure>
+        {fitsArt ? fitsArt(seen) : (
+          <figure className="cr-fits-art" style={frame(1, subject, pos)}>
+            <Img src={film(slug, 'webp')} w={1200} h={1500} />
+            <ModelFilm slug={slug} play={seen} />
+          </figure>
+        )}
       </div>
     </section>
   );
@@ -202,16 +204,19 @@ export function Scene({ slug, dark, className = '', children }) {
    framing). demo: the model's Scene. first: 'demo' puts the demo straight after the stage, else the chapters come
    first. flip: chapters picture-left; the fits picture on the left. The page ends on Hanzo's exact model cards and a
    closing Band that carries the research preview in Hanzo's words and repeats the hero ask.
-   Optional, per page (defaults keep every other member as it is): capArt (each chapter's own picture), map={false}
-   (no studio map, when the model grid below already shows the same cards), band (a page's own closing band). */
-export default function Creative({ slug, shape, aim, over, pos, subject = [0.55, 0.5], headClass, demo, first = 'demo', flip, capArt, map = true, band }) {
+   Optional, per page (defaults keep every other member as it is): capArt(i, on, base) (each chapter's own picture),
+   fitsArt(seen) (replaces the fits picture), map={false} (no studio map), band (a page's own closing band),
+   first='tail' (the demo sits between the studio map and the model cards). */
+export default function Creative({ slug, shape, aim, over, pos, subject = [0.55, 0.5], headClass, demo, first = 'demo', flip, capArt, fitsArt, map = true, band }) {
   const d = C[slug];
   const caps = <Caps slug={slug} flip={flip} subject={subject} pos={pos} capArt={capArt} />;
+  const tail = first === 'tail';
   return (
     <Launch slug={slug} pos={pos} ask={{ label: 'Request access', to: '/research-access?models=' + slug, id: slug + '.first' }} shape={shape} aim={aim} over={over} headClass={'cr-head ' + (headClass || '')} head={<Head slug={slug} />}>
-      {first === 'demo' ? <>{demo}{caps}</> : <>{caps}{demo}</>}
-      <Fits slug={slug} flip={flip} subject={subject} pos={pos} />
+      {first === 'demo' ? <>{demo}{caps}</> : tail ? caps : <>{caps}{demo}</>}
+      <Fits slug={slug} flip={flip} subject={subject} pos={pos} fitsArt={fitsArt} />
       {map && <Map slug={slug} />}
+      {tail && demo}
       <ModelCards slug={slug} />
       {band || <Band
         title={`Try ${d.name} on your own work`}

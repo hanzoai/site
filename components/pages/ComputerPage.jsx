@@ -14,7 +14,6 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useScroll, useTransform } from 'motion/react';
 import { Copy, Magnetic, Lines, useCalm } from '../ui';
 import { A, Cta, Img } from '../kit';
-import Stage from '../v2/AppStage';
 import Scenes from '../v2/AppScenes';
 import '../v2/AppType.css';
 import './ComputerPage.css';
@@ -149,6 +148,28 @@ function Machine() {
   );
 }
 
+/* The desktop arrives big and settles as you scroll (the same move as v2/AppStage), hydration-safe: the server and the
+   first client render carry no motion style at all; the scroll-linked scale starts after mount, and the arrival
+   is a CSS animation. Phones and reduced motion show it settled. */
+function Settle({ children, className, from = 1.08, lift = 60, ...rest }) {
+  const ref = useRef(null);
+  const calm = useCalm();
+  const [live, setLive] = useState(false);
+  useEffect(() => {
+    const fit = () => setLive(innerWidth > 900);
+    fit(); addEventListener('resize', fit);
+    return () => removeEventListener('resize', fit);
+  }, []);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'center center'] });
+  const scale = useTransform(scrollYProgress, [0.3, 1], [from, 1], { clamp: true });
+  const y = useTransform(scrollYProgress, [0.3, 1], [lift, 0], { clamp: true });
+  return (
+    <motion.div ref={ref} className={className + ' cp-settle'} style={live && !calm ? { scale, y, transformOrigin: '50% 0%' } : undefined} {...rest}>
+      {children}
+    </motion.div>
+  );
+}
+
 function Hero() {
   return (
     <section className="cp-hero av-dark" data-room="dark" aria-labelledby="cp-h1">
@@ -165,9 +186,9 @@ function Hero() {
           <span className="cp-dom x-mono">computer.hanzo.ai</span>
         </div>
       </div>
-      <Stage className="cp-stage" data-morph-target="">
+      <Settle className="cp-stage" data-morph-target="">
         <Machine />
-      </Stage>
+      </Settle>
     </section>
   );
 }
@@ -338,6 +359,11 @@ function Ship() {
             <div><dt>License:</dt><dd>Apache-2.0</dd></div>
             <div><dt>Source</dt><dd><A to="https://github.com/hanzoai/computer" className="cp-src">hanzoai/computer</A> <span className="x-mono">3 stars</span></dd></div>
           </dl>
+          {/* the first command, from the agent prompt above, waiting at a prompt */}
+          <div className="cp-term" aria-hidden="true">
+            <span className="cp-term-bar"><i /><i /><i /></span>
+            <code className="x-mono"><b>$</b>hanzo desktop<i className="cp-term-c" /></code>
+          </div>
           <Cta to="https://platform.hanzo.ai/deploy" kind="link" id="computer-deploy">Deploy to Cloud</Cta>
         </div>
       </div>

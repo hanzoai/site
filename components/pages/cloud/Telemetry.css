@@ -130,3 +130,38 @@
   .tl2 .l2-band-top { align-items: start; }
   .tl2 .l2-band-copy { position: sticky; top: 38svh; }
 }
+
+/* round 2 (7 Nov critic) */
+/* the hero lane: the incoming and outgoing span share one cell on the dotted line, so nothing hops to a second row */
+.tl2-lane > * { grid-area: 1 / 1; }
+/* the chapter strip sits on white: unlit stages in body grey (#525252, 7.8:1) with a hairline; the lit stage is ink */
+.tl2-strip span { color: #525252; border-color: rgba(0, 0, 0, .12); }
+.tl2-strip span.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+/* the code window: unlit lines, line numbers and placeholders at #a3a3a3 on #0f0f0f (8.1:1) */
+.tl2-code, .tl2-ln em { color: #a3a3a3; }
+.tl2-ln b { color: #d4d4d4; }
+/* chapter 05: config.yaml dimmed under builder.yaml, so the window stays full */
+.tl2-ln.tl2-ghost { color: #737373; }
+.tl2-ln.tl2-ghost-h { margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255, 255, 255, .08); color: #a3a3a3; }
+/* the collector at rest: 13px desktop, 14px phone */
+.tl2-rest { font-size: 13px; }
+@media (max-width: 900px) { .tl2-rest { font-size: 14px; grid-template-columns: 1fr; } .tl2-rest-a { width: 1px; height: 14px; justify-self: center; } }
+@media (min-width: 901px) {
+  /* the hero holds a shorter time, and the chapters' head follows it closely: no half-blank screen */
+  .tl2 .l2-stage { height: 125svh; }
+  .tl2 .l2-pin-head { padding-top: 27px; }
+  /* the rail sits under the chapter copy (right), clear of the config window */
+  .tl2 .l2-pin.flip .l2-rail { left: auto; right: 0; }
+  /* the close: the config spans the band beside a narrower copy column, in two columns of its own */
+  .tl2 .l2-band-copy { grid-column: 1 / span 4; }
+  .tl2 .l2-band-obj { grid-column: 5 / span 8; }
+  .tl2 .tl2-yc { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 26px; align-items: start; }
+  .tl2 .tl2-yc > :not(.tl2-yc-out) { grid-column: 1; }
+  .tl2 .tl2-yc-out { grid-column: 2; grid-row: 1 / span 5; margin-top: 0; }
+  .tl2 .tl2-yc-out pre { max-height: 520px; }
+}
+/* phones: the header keeps Hanzo's solid "Try Hanzo", so the page's own "View on GitHub" is outlined (one solid) */
+@media (max-width: 700px) {
+  .tl2 .l2-stage .l2-acts .x-btn.solid { background: transparent; color: var(--ink); border-color: rgba(10, 10, 10, .3); }
+  .tl2 .l2-band .l2-band-acts .x-btn.solid { background: transparent; color: #fafafa; border-color: rgba(255, 255, 255, .4); }
+}

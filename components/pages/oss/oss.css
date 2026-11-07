@@ -62,13 +62,19 @@ html.js .xos-list:not([data-in]) > li { animation-play-state: paused; }
 .xos-ghr { align-items: start; row-gap: 17px; padding: 27px 0 0; }
 .xos-ghr-l { grid-column: 1 / span 5; display: flex; flex-direction: column; gap: 6px; }
 .xos-note { margin: 0; font-size: 14px; line-height: 1.5; color: var(--soft); max-width: 52ch; }
+.xos-ghr-r { grid-column: 7 / span 6; min-width: 0; }
+.xos-ghr-r .xos-zero { margin-top: 10px; }
+.xos-stats div.nil dd { font-size: 16px; font-weight: 400; color: var(--muted); }
+.xos-tick:hover .xos-tick-r { animation-play-state: paused; }
+@media (hover: hover) { .xos-link:hover span { text-decoration: underline; text-underline-offset: 4px; } }
+.xos-link span { transition: opacity 150ms var(--ease-o); }
 .xos-row-figs { grid-column: 7 / span 6; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gut); }
 .xos-row-figs div { display: flex; flex-direction: column; gap: 4px; min-width: 0; padding-top: 10px; border-top: 1px solid var(--hair); }
 .xos-row-figs dd { margin: 0; font-size: 32px; color: var(--ink); }
 .xos-row-figs dt { font-size: 14px; color: var(--soft); }
 
 /* the forge's own figures, once, as hairline rows with their shares */
-.xos-fg { padding: clamp(72px, 9vw, 116px) 0; }
+.xos-fg { padding: clamp(44px, 5vw, 72px) 0; }
 .xos-fg-g { align-items: start; row-gap: 27px; }
 .xos-fg-l { grid-column: 1 / span 5; display: flex; flex-direction: column; gap: 10px; position: sticky; top: 104px; }
 .xos-fg-r { grid-column: 7 / span 6; min-width: 0; }
@@ -84,7 +90,7 @@ html.js .xos-list:not([data-in]) > li { animation-play-state: paused; }
 .xos-zero b { font-weight: 606; color: var(--soft); font-feature-settings: 'tnum'; }
 
 /* repositories: a numbered list; each row opens into its card */
-.xos-repos { padding: clamp(72px, 9vw, 116px) 0; border-top: 1px solid var(--hair); }
+.xos-repos { padding: clamp(56px, 6vw, 88px) 0; border-top: 1px solid var(--hair); }
 .xos-repos-h { align-items: end; row-gap: 17px; margin-bottom: 27px; }
 .xos-repos-h h2 { grid-column: 1 / span 6; }
 .xos-tools { grid-column: 7 / span 6; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: flex-end; }
@@ -232,6 +238,8 @@ html.js .xos-list:not([data-in]) > li { animation-play-state: paused; }
   .xos-stats dd { font-size: 32px; }
   .xos-seg button, .xos-src button { min-height: 44px; }
   .xos-clone-h { font-size: 14px; }
+  .xos-cmd code { white-space: normal; overflow-wrap: anywhere; }
+  .xos-ghr-r { grid-column: 1 / -1; }
 }
 @media (prefers-reduced-motion: reduce) {
   .xos-dg > span, .xos-tick-r, .xos-wave i, .xos-spin, .xos-list > li { animation: none; }

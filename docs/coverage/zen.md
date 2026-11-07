@@ -39,7 +39,7 @@ Done here: Zen's own film plays full-bleed under the h1 cut-in within the first 
 - [x] Copy button copies exactly the displayed text; failure never says Copied (n/a: no copy button on this page)
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: one solid "Try Hanzo" per screen: the first-screen ask (white fill on the film) and the settled headline's ask while the header ask is quiet, then the header once they leave view, then the closing band. On phones the shared bar carries "Try Hanzo" after the hero. `data-cta` ids: `zen.first` (first screen), `zen.hero` (headline), `zen.band` (close). The settled headline's links stay out of the tab order (`visibility: hidden`) until the headline shows.
+Done here: "Try Hanzo" appears 4 times: the header, the first-screen ask (white fill on the film), the settled headline and the closing band; the chapters and the trace cards no longer repeat it. On desktop the first-screen and headline asks are solid while the header is quiet; on phones the header stays solid, so the settled headline's ask is outlined (one solid per screen at 375×812 and 375×667). `data-cta` ids: `zen.first` (first screen; its `data-thumb` is set by the shared Launch, which has none: requested), `zen.hero` and `zen.band` (both with `data-thumb`). The settled headline's links stay out of the tab order (`visibility: hidden`) until the headline shows.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -73,7 +73,7 @@ Done here: `taste.py` passes on the page and shell files. Deck greys only (#0a0a
 - [x] Inputs 16px or larger; no bare `:hover` (no inputs; hovers sit in `@media (hover: hover)`)
 - [x] Forks this page deleted: listed above
 
-Done here: kit `Cta` gives hover, press (scale), focus and the leaving state. Chapter rail buttons press to scale .97. Model cards tilt on fine pointers and press to .98. Focus uses the shared ring.
+Done here: kit `Cta` gives hover, press (scale), focus and the leaving state. Chapters that are not showing hide their links (`visibility: hidden`), so a Tab crawl never lands on an invisible stop (0 focusable links in hidden chapters, measured). The dark room's link hover is scoped to the dark room, so no link turns white on white. Chapter rail buttons press to scale .97. Model cards tilt on fine pointers and press to .98. Focus uses the shared ring.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups

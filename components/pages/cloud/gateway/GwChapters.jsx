@@ -64,7 +64,7 @@ export default function GwChapters({ items, scene, label, className = '' }) {
                 </article>
               ))}
             </div>
-            <nav className="gwc-dots" aria-label={(label || 'Chapters') + ': go to'}>
+            <nav className="gwc-dots" aria-label={label}>
               {items.map(([t], i) => (
                 <button key={t} type="button" data-sound="tick" aria-label={t} aria-current={i === at ? 'step' : undefined} onClick={() => go(i)}>
                   <i />

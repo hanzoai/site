@@ -1,40 +1,41 @@
 # /solutions/* (template): James-eye review
 Verdict: 7/10
-First complaint: "It tells me the same five things twice. The hero flicks through them, then I scroll through the same five cards with the same picture five times. And the teams twice, back to back. That's a template showing, not one thing in, one out."
+First complaint: "It's the same picture over and over. Finance is the diamond film in the hero, five times in the cards and again at the bottom; Reserved is the ring seven times. The scroll moves, but nothing new comes in."
 
-Walked 2026-11-07 16:28 UTC on the dev server at 1470x801 and 375x812, moving. Members: /solutions/finance (full walk, hovers, presses, sheets, matrix) and /solutions/reserved (both sizes). Parity: finance 50/50 text, 19/19 links; reserved 50/50, 11/11.
+Walked 2026-11-07 16:47 UTC on the dev server at 1470x801 and 375x812, moving (run 2). Members: /solutions/finance (full walk, hovers, presses, sheets, team matrix, 4 cold loads) and /solutions/reserved (both sizes, hovers, 4 cold loads). Parity: finance 50/50 text, 19/19 links; reserved 50/50, 11/11.
 
 ## The 11 answers
 1. **First screen, 1 s.**
-   - Yes. h1 cuts in word by word (frames 0 and 700 ms differ, both members, both sizes); the hero film plays (finance diamond lattice, reserved light ring); h1, lede, Try Hanzo and Contact sales all above the fold at both sizes (phone h1 76-159px, art from 395px).
-   - The black film strip under the head (1470x441) auto-cycles 01/05 to 05/05 (about 5 s a slide) with **no pause control** in the DOM (finance; same on reserved).
+   - Yes, on both members at both sizes. The h1 cuts in word by word (150 ms frame shows words mid-rise, settled by 500 ms), and the hero film loops (6.0 s). h1 52px, bottom at 41% of 801. Phone: h1 bottom 159px, primary bottom 342px (finance) / 366px (reserved), art from ~395px.
+   - The hero strip shows "01 / 05" and it never changes (read every 2.5 s for 15 s, finance). It looks like a slide counter but nothing counts. The pause button (44x44) is there.
 2. **One in, one out?**
-   - Mostly. The pinned horizontal rail scrubs 5 cards across ~2,700px of scroll on desktop (6 of 11 stops on finance, 6 of 10 on reserved), one card in focus, the last one fading.
-   - But the rail repeats the hero: the same 5 headings the hero strip just cycled ("Reconcile against a ledger that balances" is hero caption 01 and rail card 01) over the **same film cropped 5 times** (finance all lattice, reserved all ring). Content shown twice, art shown six times.
-   - Finance: "More teams" (6 cards) is followed directly by the matrix whose tabs are the same 6 team names.
+   - Yes on desktop: the pinned rail scrubs one panel at a time across ~3,000px (y 600-3,600). Exactly one heading is in focus per 200px step, and the panel on either side is ghosted. This is the template's moment.
+   - But every panel uses the hero's film. Finance loads kai.webm/webp 10 times (hero, rail 01-05, band); reserved loads enso 11 times. Five steps, one picture.
+   - Finance: "More teams" (6 cards) sits directly above a matrix whose 6 tabs are the same 6 team names.
 3. **Real visual per section?**
-   - Hero film, rail films, 6 distinct team art cards (finance) and a capacity table (reserved, 3 rows, tabular, right-aligned): yes.
-   - Finance matrix: the "object" is a black box with a numeral and pills over faint circle lines on a canvas (1152x454); reads as a pill dump, not an object.
-   - About 200px of empty white above "More teams" on desktop (finance d-06).
+   - Hero film, rail films, 6 distinct team-art cards (finance: zen, koma, iro, enso, mori, kai) and the capacity table (reserved, 3 rows, tabular figures): yes.
+   - Finance matrix: once its count goes to zero (Finance x Engineering) it is two pill lists on faint drifting circles, and the Finance box is ~45% empty white. On reserved, the "What it runs on" pill sits alone in a mostly empty screen between the rail and Capacity.
 4. **One ask, scale.**
-   - Try Hanzo solid in the header and hero; band repeats it (3 placements, within rule). data-cta on all four asks. Nothing floats over content.
-   - Scale: h1 is **72px** at rest on desktop (rule: 52px resting); rail numerals 64px; H2s 26px, H3 13-21px. Rhythm is otherwise fine: one big thing per screen.
+   - Try Hanzo solid in the hero, Contact sales as a text link, both repeated in the black Band. Nothing floats over content on desktop. (Shared chrome: the phone header's always-solid "Try Hanzo" makes two solid fills on the first phone screen. That is a site-wide issue, not this template's.)
+   - Scale rhythm holds: one 52px h1, rail numerals 64px, 21px panel heads, 26px section heads, 12px mono captions.
 5. **Hover and press.**
-   - Primary: background #0a0a0a to #262626 on hover, scale 0.974 on press. Team card: art scales 1.05 and title underlines. Matrix tabs: gliding grey pill, count updates (Finance x Data 1, x Sales 2). Sheets ("What it runs on", "Security and compliance") rise from the right on desktop and from the bottom on phone, numbered rows with arrows. All answer, no jumps.
-   - Hero product pills (6, finance) look like buttons but are not links and do nothing.
+   - Primary: #0a0a0a to #262626 on hover, scale .97 on press. Pause: fill change and .97. Sheet triggers: .97 press, and the sheet rises with numbered rows. Team card: art scales 1.05 and the title underlines. Matrix: grey pill glides and the chips fly to their new places (frame at 150 ms shows chips mid-flight).
+   - Hover changes nothing on "Contact sales" or on the "What it runs on" / "Security and compliance" triggers (only a 1px press). Same on both members.
 6. **Overlap, font swap, shift.**
-   - No overlap or horizontal overflow at either size; h1 box identical across the first 900 ms; Zen confirmed as the rendered face.
-   - **Red "1 Issue" dev badge on a first visit** (no hz-arrived in storage): React hydration attribute mismatch, both members, both sizes. Return visits are clean. Fails DONE #3.
-7. **Reference.** apple.com product page (pinned scrubbed scene, one idea per screen) is there in the rail. synchronized.studio card-to-page from the team cards was not tested in this walk (hover only).
-8. **Different from neighbours?** Within the family, members differ only by film and one section (finance matrix vs reserved capacity table). Against /solutions index it has its own rail; acceptable for a family template.
-9. **18 parts.** Breadcrumb not visible; eyebrow "SOLUTIONS · TEAMS" sits below the asks as a caption (correct). Disclosure via sheet, kit-like tabs, Band and footer present. No pause control on the auto hero (part 12).
-10. **Banned tells.** None seen: no hue, no eyebrow above h1/h2, no gradient text, no fading buttons. Rail images are the same film repeated (repetition, not a banned tell).
+   - CLS 0.0002 on both members. No horizontal scroll at 375 or 320. No overlap at either size.
+   - Phone: the rail cards and their text sit at x=0 with no 16px gutter ("Reconcile against a ledger…" x=0, "A dedicated compute cluster" x=0) on both members.
+   - Phone hero product line is right-aligned and wraps with "Sign" (finance) or "Enterprise" (reserved) alone on the last line.
+   - Faint concentric rings drift behind the matrix tabs, crossing "Marketing" and "Operations".
+   - Console: 0 errors on 4 of 4 cold loads per member. A red "1 Issue" badge showed once in a 5th context and did not reproduce on 4 fresh cold loads, so it is not counted.
+7. **Reference.** apple.com (pinned scrubbed scene, one idea per screen) is clearly in the rail. synchronized.studio card-to-page was not exercised (team cards hover only).
+8. **Different from neighbours?** Within the family, members differ only in their film and one section (finance matrix, reserved capacity table). That is acceptable for a template, but the single film per member makes members read as recolours of one page.
+9. **18 parts.** The eyebrow "SOLUTIONS · TEAMS / RESERVED TIER" correctly sits below the asks as a caption. Sheet disclosure, kit tabs, DataTable-style capacity, Band and footer are all present. I did not see a breadcrumb at depth 2. Hero counter is vestigial.
+10. **Banned tells.** None: no hue, nothing above the h1/h2, no gradient text, and buttons do not fade. The repeated film is a "repeats" complaint, not a banned tell.
 11. **Copy.** Parity OK on both members.
 
 ## Fixes (in order)
-1. Kill the hydration mismatch so the first visit has no red badge (finance and reserved, both sizes).
-2. Stop saying it twice: make the hero strip one still-running film with a single caption (or no caption) and let the rail be where the five items arrive; give each rail card its own crop or frame of motion so 01-05 do not look identical.
-3. Add a 44px pause control first in the hero strip (it runs past 5 s), frozen under reduced motion.
-4. Finance: separate "More teams" from the team matrix (or fold the matrix into the cards) so six team names are not stacked twice; give the matrix a real object (e.g. the two product sets drawing into their overlap) rather than pills on faint circles.
-5. Bring the resting h1 to 52px (let it grow only as the moment), and close the ~200px dead white above "More teams".
-6. Make the hero product pills links to their product pages, or set them as plain captions so they stop looking pressable.
+1. Give each rail panel its own picture: a distinct frame or crop of motion per step (finance kai x5, reserved enso x5 today), and do not reuse the hero film in the Band. Then each step brings in something new.
+2. Make the hero counter true or remove it: either advance it with the rail below, or drop "01 / 05" so the strip is one running film.
+3. Phone: put the 16px gutter back on the rail (cards and copy start at x=0 on both members), and set the hero product line left-aligned so it does not end on one orphan word.
+4. Finance: stop stacking six team names twice ("More teams" cards, then matrix tabs). Fold one into the other, and when the overlap is zero give the matrix something to show instead of a half-empty white box. Keep the drifting rings clear of the tab labels.
+5. Give "Contact sales" and the sheet triggers a hover answer (arrow nudge, the + turning), not only a 1px press. Close the empty screen around the lone "What it runs on" pill on reserved.
