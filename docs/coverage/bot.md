@@ -33,7 +33,7 @@ Done here: parity reports links 21/21. The four plan buttons, docs links, GitHub
 - [x] Ends in proof strip, `Band`, footer (the proof is the repo meta "MIT · hanzoai/bot · 5 stars" just before the Band)
 - ~~Card-to-page links use Morph~~ n/a: the page's cards leave for docs and the app; the hero object carries `data-morph-target` for cards that open into /bot
 
-Done here: At 1470×801 the h1 (52px), lede, "Try Hanzo" and the live org chart share the first screen, and the packet runs from Zoe's message to @Dev within 1 s (check.mjs: changes 161, 8 animations). The walk is about 12 screens (12,037px tall at 801): hero → workflows line + four points → 5 pinned chapters → tools and channels → install → pricing and more bots → questions and repo → Band.
+Done here: At 1470×801 the h1 (52px), lede, "Try Hanzo" and the live org chart (top 84px, bottom 695px) share the first screen, and Dev's reply is in by 0.9 s (`docs/gallery/bot/v3-desktop-first-screen.jpg`, `v3-desktop.webm`). The walk is about 12 screens of content (11,657px with footer): hero → workflows line + four points → 5 pinned chapters → tools and channels → install (two commands, three steps, paste) → pricing (slider, then "Need more than one resident bot?" folded under it, the four inclusions as one row) → Get Bot / Deploy to Cloud, then Questions → the Band, which is the last thing in `<main>`. JS off: 674 text blocks, 0 hidden (closed drawers print in place under `html:not(.js)`).
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn` (exceptions: the four "Get <plan>" quiet buttons and the drawer's "Open Hanzo Bot / Team" pair keep Hanzo's own links as `A.x-btn`, outlined or inside a closed drawer)
@@ -66,7 +66,7 @@ Done here: Body 14–16px, lede 20px, mono labels 12px capitals. The ten workflo
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: taste.py OK; check.mjs finds 0 labels over headlines (Hanzo's former kickers now sit as 12px captions under their sections). The hero is a 4/8 headline-left, org-chart-right composition with one black room (the Band); /api is a console under an 8/4 head, /computer a black desktop, /design a workspace window.
+Done here: taste.py OK on Bot.jsx, Bot.css and Bot.data.js (the PR and run numbers in Hanzo's workflow copy are written `\x23418` etc. in the source so they no longer read as hex; the text renders unchanged). The drawer's "#channel · category / USE CASE nn" line now sits under each workflow's h3, and "Included with your plan" under the four inclusions; 0 labels over headlines (Hanzo's former kickers now sit as 12px captions under their sections). The hero is a 4/8 headline-left, org-chart-right composition with one black room (the Band); /api is a console under an 8/4 head, /computer a black desktop, /design a workspace window.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading (Cta from the kit; page controls press at scale .97, hovers inside `@media (hover: hover)`)
@@ -92,7 +92,7 @@ Done here: Idle (the org chart routes a packet through ten workflows; the sample
 - [x] Budgets met; nothing missing; alt on every image (connector logos carry the tool's name; memoji are decorative)
 - [x] No dimmed or filtered photo; 4+ real visuals together where the page has them (13 memoji in the chart, 10 logos per tool tab)
 
-Done here: Hanzo's memoji draw over a drawn face, so a blocked image never leaves a hole; the connector logos sit beside their names.
+Done here: Hanzo's memoji (`https://hanzo.ai/memoji/*.svg`, as /team uses) draw over a drawn face, so a blocked image never leaves a hole; the connector logos (`https://hanzo.ai/connectors/*.png`) sit beside their names. These files are not in this repo's `public/`, so the old relative paths 404'd on every deploy.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -149,7 +149,7 @@ Done here: Copy gives `npm install -g @hanzo/bot` and `hanzo-bot onboard --insta
 - ~~A failed submit keeps its values and shows no success~~ n/a: no form
 - [x] A thrown island does not blank the page
 
-Done here: With hanzo.ai assets blocked in this sandbox the page is complete; check.mjs reports no console errors besides the blocked-asset 500s it ignores.
+Done here: With hanzo.ai assets blocked in this sandbox the page is complete; a Playwright walk at both sizes reports 0 page errors and 0 console errors besides the blocked hanzo.ai image loads.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary; events only through `lib/track.js` (kit `Cta` sends `cta_click`)
@@ -157,4 +157,4 @@ Done here: With hanzo.ai assets blocked in this sandbox the page is complete; ch
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/bot.md` verdict 8 or more (round 1 verdict 6/10; every item in its Fixes list is addressed in round 2, awaiting the next review)
 
-Done here: `data-cta` ids: bot-hero-try, bot-hero-install, bot-hero-sales, bot-plan-pro/dev/max/ultra, bot-deploy, bot-band-try, bot-band-sales. The V2 line reads "8/10 round 2: …".
+Done here: `data-cta` ids: bot-hero-try, bot-hero-install, bot-hero-sales, bot-plan-pro/dev/max/ultra, bot-deploy, bot-band-try, bot-band-sales. The V2 line reads "8/10 round 3: …".

@@ -6,7 +6,7 @@
    Goal: see one mention turn into finished, verified work, then start a bot.
    CTA: "Try Hanzo" (hanzo.bot), the one solid button, in the hero, the ask bar and the closing Band.
    Metric: signup_start
-   V2: 8/10 round 2: headline left, the live org chart right and running in the first screen; one ask with text links; no labels over headlines; the panes hold Hanzo's own lines; workflows and questions open in drawers; about 12 screens ending on one Band
+   V2: 8/10 round 3: headline left, the live org chart right and running in the first screen; one ask with text links; no labels over headlines (drawer case labels now under their h3); "more bots" folded under the slider; Get Bot / Deploy to Cloud before the questions so the page ends on the Band; drawers print in place with JS off; memoji and logos from hanzo.ai
    Motion: signature = the live org chart (packets route person → bot → verifier, the thread fills beneath). Supporting:
    five pinned chapters with clip wipes (components/v2/AppScenes), line-masked headline, a magnetic ask. Greys only; colour
    comes from Hanzo's memoji and connector logos. Bot faces are Hanzo's memoji, with a drawn face beneath in case a picture
@@ -33,7 +33,7 @@ function Pic({ src, alt = '', className = '' }) {
 }
 
 /* A bot's face: Hanzo's memoji for that bot, over a little drawn screen with two eyes that shows if the picture can't load. */
-const memoji = (id) => `/memoji/${id === 'qa' ? 'sci' : id}.svg`;
+const memoji = (id) => `https://hanzo.ai/memoji/${id === 'qa' ? 'sci' : id}.svg`;
 function Face({ k = '', size, id }) {
   return <span className={'bt-face ' + k + (id ? ' has-id' : '')} style={size ? { '--s': size + 'px' } : undefined} aria-hidden="true"><i /><i />{id && <Pic src={memoji(id)} className="bt-face-img" />}</span>;
 }
@@ -225,8 +225,8 @@ function Hero() {
 function Case({ w }) {
   return (
     <article className="bt-case">
-      <p className="bt-case-k x-mono"><span>#{w.channel} · {w.category}</span><span>USE CASE {w.num}</span></p>
       <h3 className="bt-case-t">{w.title}</h3>
+      <p className="bt-case-k x-mono"><span>#{w.channel} · {w.category}</span><span>USE CASE {w.num}</span></p>
       <p className="bt-case-sum">{w.summary}</p>
       <div className="bt-thread">
         <div className="bt-line"><span className="bt-ini">{w.human.initials}</span><div><p className="bt-meta"><b>{w.human.name}</b> <span>{w.human.time}</span></p><p>{w.human.before}<b className="bt-at">{w.human.mention}</b>{w.human.after}</p></div></div>
@@ -470,7 +470,7 @@ function Tools() {
           </div>
           {TOOLS.map(([c, list], i) => (
             <ul key={c} id={'bt-tc' + i} role="tabpanel" aria-labelledby={'bt-tt' + i} className="bt-names" hidden={i !== cat}>
-              {list.map(([f, n]) => <li key={f}><span className="bt-logo"><Pic src={`/connectors/${f}.png`} alt={n} /></span><span>{n}</span><i aria-hidden="true">✓</i></li>)}
+              {list.map(([f, n]) => <li key={f}><span className="bt-logo"><Pic src={`https://hanzo.ai/connectors/${f}.png`} alt={n} /></span><span>{n}</span><i aria-hidden="true">✓</i></li>)}
             </ul>
           ))}
         </div>
@@ -569,6 +569,31 @@ function Pricing() {
             <input id="bt-n" data-sound="tick" type="range" min="1" max="10" step="1" value={n} onChange={(e) => setN(+e.target.value)} style={{ '--f': (n - 1) / 9 }} aria-valuetext={`${n} ${n === 1 ? 'bot' : 'bots'}: ${PLANS[k][0]}`} />
             <output htmlFor="bt-n" className="x-mono"><b>{n}</b> {n === 1 ? 'bot' : 'bots'} → <b>{PLANS[k][0]}</b>, {PLANS[k][1]} / month</output>
           </div>
+          <div className="bt-fleet-l" id="additional-bots">
+            <h3 className="av-title">Need more than one resident bot?</h3>
+            <p className="av-body">Each plan includes the resident cloud bots it lists. For more bots, choose a plan that includes more.</p>
+            <div className="bt-fleet-acts">
+              <More to="/pricing">See the plans</More>
+              <Sheet label="Why Hanzo Bot is built and priced this way" kick="Agent Architecture & Pricing Model" title="Why Hanzo Bot is built and priced this way">
+                <div className="bt-why" id="pricing-model">
+                  <p className="bt-why-lede">Designed around the real economics of autonomous resident agents: dedicated sandboxes, cost-efficient model tiering, and transparent, auditable memory.</p>
+                  {WHY.map(([k2, t, s, d]) => (
+                    <div key={k2} className="bt-why-i">
+                      <h3>{t}</h3>
+                      <p className="bt-why-k x-mono">{k2}</p>
+                      <p className="bt-why-s">{s}</p>
+                      <p>{d}</p>
+                    </div>
+                  ))}
+                  <div className="bt-own">
+                    <h3>Prefer running on your own machine? It’s 100% free.</h3>
+                    <p>Hanzo Bot is open source under the MIT license. You can run the exact same gateway, sandboxes, and skills on your own Mac or Linux machine with your own API keys at zero subscription cost.</p>
+                    <span className="bt-mit x-mono">MIT Open Source</span>
+                  </div>
+                </div>
+              </Sheet>
+            </div>
+          </div>
         </div>
         <ul className="bt-plans">
           {PLANS.map(([name, price, bots, lines, plan], i) => (
@@ -590,38 +615,13 @@ function Pricing() {
         </ul>
         <p className="bt-free">Every plan can run Hanzo Bot on your own Mac or Linux machine, 100% free and open source.</p>
       </div>
-      <div className="av-wrap av-grid bt-fleet" id="additional-bots">
-        <div className="bt-fleet-l">
-          <h3 className="av-title">Need more than one resident bot?</h3>
-          <p className="av-body">Each plan includes the resident cloud bots it lists. For more bots, choose a plan that includes more.</p>
-          <div className="bt-fleet-acts">
-            <More to="/pricing">See the plans</More>
-            <Sheet label="Why Hanzo Bot is built and priced this way" kick="Agent Architecture & Pricing Model" title="Why Hanzo Bot is built and priced this way">
-              <div className="bt-why" id="pricing-model">
-                <p className="bt-why-lede">Designed around the real economics of autonomous resident agents: dedicated sandboxes, cost-efficient model tiering, and transparent, auditable memory.</p>
-                {WHY.map(([k2, t, s, d]) => (
-                  <div key={k2} className="bt-why-i">
-                    <h3>{t}</h3>
-                    <p className="bt-why-k x-mono">{k2}</p>
-                    <p className="bt-why-s">{s}</p>
-                    <p>{d}</p>
-                  </div>
-                ))}
-                <div className="bt-own">
-                  <h3>Prefer running on your own machine? It’s 100% free.</h3>
-                  <p>Hanzo Bot is open source under the MIT license. You can run the exact same gateway, sandboxes, and skills on your own Mac or Linux machine with your own API keys at zero subscription cost.</p>
-                  <span className="bt-mit x-mono">MIT Open Source</span>
-                </div>
-              </div>
-            </Sheet>
-          </div>
-          <span className="x-mono bt-cap">Included with your plan</span>
-        </div>
+      <div className="av-wrap bt-fleet">
         <ul className="bt-feats">
           {FEATS.map(([t, d], i) => (
             <li key={t}><span className="bt-feat-f" aria-hidden="true">{CREW.slice(0, i + 1).map(([id]) => <Face key={id} size={24} id={id} />)}</span><h4>{t}</h4><p>{d}</p></li>
           ))}
         </ul>
+        <span className="x-mono bt-cap">Included with your plan</span>
       </div>
     </section>
   );
@@ -640,23 +640,23 @@ const QA = [
   ['How do model token costs work for bots?', 'Routine tasks (sorting inboxes, web scraping, scheduling, receipt parsing) execute on fast, cost-effective Enso and Sol 6.1 models at ~1/5th the token cost of frontier models, preserving 85-90% of your plan allowance. Higher tiers include Zen Ultra and Astra Ultra frontier models for complex multi-step reasoning.'],
 ];
 
-/* ---------- before the close: questions, the repo, related ---------- */
+/* ---------- before the close: the repo and Deploy to Cloud, then questions, then related ---------- */
 function More2() {
   return (
     <section className="av-sec tight bt-more2" id="faq">
       <div className="av-wrap av-grid">
+        <div className="bt-get">
+          <p className="av-title">Get Bot</p>
+          <p className="av-body">Connect your AI agents to every messaging channel</p>
+          <dl className="bt-meta2"><div><dt>License:</dt><dd>MIT</dd></div><div><dt>Source</dt><dd><A to="https://github.com/hanzoai/bot" className="bt-src">hanzoai/bot</A> <span className="x-mono">5 stars</span></dd></div></dl>
+          <Cta to="https://platform.hanzo.ai/deploy" kind="link" id="bot-deploy">Deploy to Cloud</Cta>
+        </div>
         <div className="bt-qa">
           <h2 className="av-head">Questions</h2>
           <p className="av-body">{QA.slice(0, 3).map(([q]) => q).join(' ')}</p>
           <Sheet trigger="bt-open" label="Read all ten answers" kick="FAQ" title="Questions">
             <Faq items={QA} />
           </Sheet>
-        </div>
-        <div className="bt-get">
-          <p className="av-title">Get Bot</p>
-          <p className="av-body">Connect your AI agents to every messaging channel</p>
-          <dl className="bt-meta2"><div><dt>License:</dt><dd>MIT</dd></div><div><dt>Source</dt><dd><A to="https://github.com/hanzoai/bot" className="bt-src">hanzoai/bot</A> <span className="x-mono">5 stars</span></dd></div></dl>
-          <Cta to="https://platform.hanzo.ai/deploy" kind="link" id="bot-deploy">Deploy to Cloud</Cta>
         </div>
         <div className="bt-rel">
           <p className="x-mono bt-cap">Related capabilities</p>
