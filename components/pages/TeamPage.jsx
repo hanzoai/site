@@ -31,7 +31,7 @@ const Arrow = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden=
 const Lk = ({ to, children, className = '' }) => <A to={to} className={'x-arrow ' + className}><span>{children}</span><Arrow /></A>;
 const ASK = ['Create your team', 'https://hanzo.team/start'];
 // Hanzo's memoji, drawn as a background over a grey disc with the person's own initial: if it can't load, the disc stands in
-const INI = { vi: 'Z', sci: 'Q', dev: 'D', des: 'D', doc: 'D', su: 'S', sal: 'S', opera: 'O', cyber: 'C', mark: 'M', fin: 'F', law: 'L' };
+const INI = { data: 'D', vi: 'Z', sci: 'Q', dev: 'D', des: 'D', doc: 'D', su: 'S', sal: 'S', opera: 'O', cyber: 'C', mark: 'M', fin: 'F', law: 'L' };
 const Face = ({ n, size = 28 }) => (
   <span className="xtm-face" style={{ width: size, height: size, '--img': `url(https://hanzo.ai/memoji/${n}.svg)` }} data-i={INI[n] || n[0].toUpperCase()} aria-hidden="true" />
 );
@@ -179,7 +179,7 @@ function Canvas({ ok }) {
               <>
                 <p>Fixed unhandled promise in PaySheet.tsx:84 and opened PR #{418}.</p>
                 <ul className="xtm-steps">
-                  {['Reproduced in WebKit mobile', 'Patched PaySheet.tsx:84', `Opened PR #${418} (+18 -4)`].map((s, i) => <li key={s} className={steps > i ? 'ok' : ''}><span aria-hidden="true">{steps > i ? '✓' : '○'}</span>{s}</li>)}
+                  {['Reproduced in WebKit mobile', 'Patched PaySheet.tsx:84', `Opened PR #${418} (+18 -4)`].map((s, i) => <li key={s} className={steps > i ? 'ok' : ''}><span aria-hidden="true">{steps > i ? '✓' : '○'}</span><span className="xtm-t">{s}</span></li>)}
                 </ul>
               </>
             ))}
@@ -475,8 +475,8 @@ function Rooms() {
 
 /* ---------- 5. ten workflows: the one dark room ---------- */
 const FLOWS = [
-  ['bugfix', 'Engineering', ['dev', 'sci']], ['security', 'Security', ['cyber']], ['launch', 'Launch', ['mark']], ['support', 'Support', ['su']],
-  ['ops', 'Ops', ['opera']], ['research', 'Research', ['sci']], ['deals', 'Sales', ['sal']], ['finance', 'Finance', ['fin']], ['legal', 'Legal', ['law']], ['growth', 'Growth', ['mark']],
+  ['bugfix', 'Engineering', ['dev', 'sci']], ['security', 'Security', ['cyber', 'dev']], ['launch', 'Launch', ['mark', 'des']], ['support', 'Support', ['su', 'doc']],
+  ['ops', 'Ops', ['opera', 'cyber']], ['research', 'Research', ['sci', 'data']], ['deals', 'Sales', ['sal', 'des']], ['finance', 'Finance', ['fin', 'data']], ['legal', 'Legal', ['law', 'cyber']], ['growth', 'Growth', ['mark', 'sci']],
 ];
 const MATE_OF = { security: ['cyber', 'Cyber', 'Security, audits'], launch: ['mark', 'Mark', 'Launch, growth'], support: ['su', 'Su', 'Triage, replies'], ops: ['opera', 'Opera', 'Deploys, infra'], growth: ['mark', 'Mark', 'Launch, growth'] };
 const STEPS4 = ['Reproduce Safari sheet lock in headless WebKit', 'Trace state lock to components/checkout/PaySheet.tsx:84', 'Patch finally handler & push branch fix/apple-pay-lock', 'Run 42 Playwright e2e checkout specs across iOS & desktop'];
@@ -498,9 +498,9 @@ function Bugfix() {
           <div className="xtm-m"><Face n="sci" size={32} /><div><p className="xtm-who"><b>Qa</b><span>Quality · 10:15 AM</span></p><p className="xtm-green x-mono">42/42 E2E GREEN</p><p>Verified e2e across iOS 18 Safari &amp; Chromium — 42/42 checkout specs green. Ready to merge.</p></div></div>
         </div>
         <div className="xtm-auto">
-          <p className="x-mono"><b>AUTOMATED WORKFLOW</b> <span>4 / 4 steps complete</span></p>
+          <p className="x-mono"><b><span className="xtm-t">AUTOMATED WORKFLOW</span></b> <span>4 / 4 steps complete</span></p>
           <ol>{STEPS4.map((s) => <li key={s}><Check />{s}</li>)}</ol>
-          <p className="x-mono xtm-tools"><b>TOOLS &amp; SANDBOXES USED</b></p>
+          <p className="x-mono xtm-tools"><b><span className="xtm-t">TOOLS &amp; SANDBOXES USED</span></b></p>
           <ul className="xtm-chips">{['GitHub', 'Playwright', 'Safari WebKit', 'CI Runner'].map((t) => <li key={t}>{t}</li>)}</ul>
         </div>
       </div>
@@ -535,6 +535,7 @@ function Flows() {
                 </button>
               ))}
             </div>
+            <p className="xtm-models" aria-hidden="true">{['enso', 'kai', 'zen', 'iro'].map((m) => <img key={m} src={`/models/${m}.webp`} alt="" width="26" height="26" loading="lazy" decoding="async" />)}</p>
           </div>
           <div className="xtm-panels">
             {FLOWS.map(([c, cat], i) => (
@@ -545,7 +546,7 @@ function Flows() {
                     <div className="xtm-case-h"><p className="x-mono xtm-crew"><span>#{c}</span></p></div>
                     <h3 className="vc-display s">{cat}</h3>
                     <p className="xtm-case-d xtm-mate">
-                      {(MATE_OF[c] ? [MATE_OF[c][0]] : FLOWS[i][2]).map((f) => <Face key={f} n={f} size={56} />)}
+                      {(MATE_OF[c] ? [MATE_OF[c][0]] : FLOWS[i][2].slice(0, 1)).map((f) => <Face key={f} n={f} size={56} />)}
                       {MATE_OF[c] && <><b>{MATE_OF[c][1]}</b><span>{MATE_OF[c][2]}</span></>}
                     </p>
                   </div>
@@ -580,6 +581,7 @@ function Channel() {
       <div className="vc-grid">
         <header className="xtm-code-h">
           <h2 id="xtm-code" className="vc-headline">Code channels where engineers, designers, and agents ship together.</h2>
+          <p className="x-mono xtm-kick">CODE CHANNELS &amp; ARTIFACTS</p>
         </header>
         <p className="vc-body xtm-code-l">Every code channel pairs the conversation with a live Artifacts pane — Canvas root-cause writeups, unified branch diffs, and interactive previews that update as your agents and teammates iterate.</p>
         <div className="xtm-steps6" role="tablist" aria-label="Steps of the session" onKeyDown={arrowKeys(6, (j) => setS(j + 1))}>
@@ -592,7 +594,7 @@ function Channel() {
       </div>
       <div className="vc-wrap">
         <div className="xtm-app">
-          <div className="xtm-app-bar"><i /><i /><i /><span className="x-mono">hanzo.team — Karma Style (karma.style) · #bug-button-darkmode</span><em className="x-mono">Session ready</em></div>
+          <div className="xtm-app-bar"><i /><i /><i /><span className="x-mono">hanzo.team — Karma Style (karma.style) · #bug-button-darkmode</span><em className="x-mono"><span className="xtm-t">Session ready</span></em></div>
           <div className="xtm-app-g">
             <aside className="xtm-side">
               <p className="xtm-ws"><b>Karma Style</b><span>karma.style</span></p>
@@ -607,16 +609,16 @@ function Channel() {
               <div className={'xtm-cm' + show(1)}>
                 <p className="xtm-who"><Face n="dev" size={24} /><b>Dev</b><span>9:31 AM</span></p>
                 <ul className="xtm-tool">
-                  <li><b>Thinking</b> Checking the best fix for dark mode.</li>
-                  <li><b>Searched Codebase</b> 3 results found in components/ui/ and styles/</li>
-                  <li><b>Read 2 files</b> <code>BuyNowButton.tsx</code> <code>styles.css</code></li>
+                  <li><b><span className="xtm-t">Thinking</span></b> <span className="xtm-t">Checking the best fix for dark mode.</span></li>
+                  <li><b><span className="xtm-t">Searched Codebase</span></b> <span className="xtm-t">3 results found in components/ui/ and styles/</span></li>
+                  <li><b><span className="xtm-t">Read 2 files</span></b> <code>BuyNowButton.tsx</code> <code>styles.css</code></li>
                   <li><b>Done</b></li>
                 </ul>
                 <p>Found the issue: text color is too light on dark backgrounds. What color should we use instead?</p>
               </div>
               <div className={'xtm-cm' + show(2)}>
                 <p className="xtm-who"><span className="xtm-av">HB</span><b>Harry Boone</b><span>9:32 AM</span></p>
-                <p><em>@Zoe Maxwell</em>, what color should we use?</p>
+                <p><em><span className="xtm-t">@Zoe Maxwell</span></em>, what color should we use?</p>
                 <p className="xtm-sys">Zoe Maxwell was added to #bug-button-darkmode by Harry Boone.</p>
               </div>
               <div className={'xtm-cm' + show(3)}>
@@ -626,7 +628,7 @@ function Channel() {
               <div className={'xtm-cm' + show(4)}>
                 <p className="xtm-who"><Face n="dev" size={24} /><b>Dev</b><span>9:36 AM</span></p>
                 <p>Done! Updated <code>styles/cta-button.css</code> and wrote the root-cause summary in Canvas. <em>@Qa</em> running e2e checks now.</p>
-                <p className="xtm-canvas"><b>Fix: Button Dark Mode</b><span>Canvas · Updated just now</span><a href="#xtm-diff">Open →</a></p>
+                <p className="xtm-canvas"><b><span className="xtm-t">Fix: Button Dark Mode</span></b><span>Canvas · Updated just now</span><a href="#xtm-diff">Open →</a></p>
               </div>
               <div className={'xtm-cm' + show(5)}>
                 <p className="xtm-who"><Face n="sci" size={24} /><b>Qa</b><span>9:41 AM</span></p>
@@ -643,7 +645,7 @@ function Channel() {
               <p className="xtm-stat x-mono">1 commit · 3 files changed · <b className="a">+32</b> <b className="d">-9</b></p>
               <div className="xtm-file x-mono"><span>styles/cta-button.css</span><em>Viewed</em></div>
               <ol className={'xtm-diff x-mono' + (s >= 3 ? ' hot' : '')}>
-                {DIFF.map(([a, b, k, t], i) => <li key={i} className={k}><span>{a}</span><span>{b}</span><code>{t}</code></li>)}
+                {DIFF.map(([a, b, k, t], i) => <li key={i} className={k}><span>{a}</span><span>{b}</span><code><span className="xtm-t">{t}</span></code></li>)}
               </ol>
             </div>
           </div>
