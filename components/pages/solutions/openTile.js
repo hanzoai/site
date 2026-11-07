@@ -33,7 +33,8 @@ export function openTile(e, href, router, tone = '#000') {
     Object.assign(t.style, { position: 'absolute', left: nr.left + 'px', top: nr.top + 'px', margin: '0', font: cs.font, letterSpacing: cs.letterSpacing, color: '#fafafa', whiteSpace: 'nowrap', transformOrigin: '0 0' });
     d.appendChild(t);
     // the name travels to where the page's h1 will sit (top left, below the header)
-    const k = Math.max(1, 52 / parseFloat(cs.fontSize));
+    // the name lands at the size of the destination's headline (72px on the solution pages, 40 on phones)
+    const k = Math.max(1, (innerWidth < 900 ? 40 : 72) / parseFloat(cs.fontSize));
     t.animate([{ transform: 'none' }, { transform: `translate(${Math.max(16, (innerWidth - 1152) / 2) - nr.left}px, ${150 - nr.top}px) scale(${k})` }], { duration: 500, easing: CURVE, fill: 'forwards' });
   }
   document.body.appendChild(d);
@@ -55,7 +56,7 @@ export function openTile(e, href, router, tone = '#000') {
   d.animate([{ clipPath: from }, { clipPath: 'inset(0px 0px 0px 0px round 0px)' }], { duration: 500, easing: CURVE, fill: 'forwards' }).finished.then(() => {
     const t0 = performance.now();
     const wait = () => {
-      if (location.pathname !== was) setTimeout(lift, 160); // the new page has committed; let it paint, then crossfade
+      if (location.pathname !== was) setTimeout(lift, 60); // the new page has committed; let it paint, then crossfade
       else if (performance.now() - t0 > 6000) lift(); // never hold the screen for good
       else requestAnimationFrame(wait);
     };
