@@ -275,6 +275,7 @@ const SERVERS = ['github', 'slack', 'db'];
 /* A drawn slider (no browser control): drag the track, or arrows / Page keys / Home / End. */
 function Slide({ n, set }) {
   const tr = useRef(null);
+  const [press, setPress] = useState(false); // pointer capture drops :active, so the press is a state
   const clamp = (v) => Math.max(1, Math.min(100, v));
   const at = (x) => { const r = tr.current.getBoundingClientRect(); return clamp(Math.round(1 + ((x - r.left) / r.width) * 99)); };
   const key = (e) => {
@@ -283,7 +284,9 @@ function Slide({ n, set }) {
   };
   return (
     <div ref={tr} className="zp-slide" role="slider" tabIndex={0} aria-label="Agents you run" aria-valuemin={1} aria-valuemax={100} aria-valuenow={n}
-      onPointerDown={(e) => { tr.current.setPointerCapture(e.pointerId); set(at(e.clientX)); }} onPointerMove={(e) => { if (e.buttons) set(at(e.clientX)); }} onKeyDown={key}
+      data-press={press ? '' : undefined}
+      onPointerDown={(e) => { tr.current.setPointerCapture(e.pointerId); setPress(true); set(at(e.clientX)); }} onPointerMove={(e) => { if (e.buttons) set(at(e.clientX)); }}
+      onPointerUp={() => setPress(false)} onPointerCancel={() => setPress(false)} onLostPointerCapture={() => setPress(false)} onKeyDown={key}
       style={{ '--v': (n - 1) / 99 }}>
       <i className="zp-slide-t"><em /></i><b className="zp-slide-k" />
     </div>

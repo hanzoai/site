@@ -321,15 +321,18 @@ html:not(.js) .zp-dia-l { clip-path: none; }
 /* the hero ask's hover can be seen: the white fill steps down to the brand silver */
 @media (hover: hover) { .zp-hero .w2-cta:hover { background: #e4e4e4; } }
 /* the slider's press wins over its hover */
-@media (hover: hover) { .zp-slide:active .zp-slide-k { transform: scale(.92); } }
+.zp-slide[data-press] .zp-slide-k, .zp-slide[data-press]:hover .zp-slide-k { transform: scale(.92); transition-duration: 90ms; }
+.zp-hero .w2-cta { background: #fafafa; }
 /* the zero is a fact, not a hero figure (MASTER part 5): it sits at medium beside the two figures */
 .zp-stats li.zero .zp-fig { font-size: 32px; line-height: 2; font-weight: 400; }
 /* the one scale moment: N:1 and 1:M arrive at hero size, hold a beat, then settle to figure size */
+.zp-stats li { padding-top: 64px; } /* room above the figures for the moment they are big, so nothing overlaps */
 .zp-stats li:not(.zero) .zp-fig { transform-origin: 0 100%; }
+.js .zp-stats:not(.seen) li:not(.zero) .zp-fig { transform: scale(1.75); }
 .zp-stats.seen li:not(.zero) .zp-fig { animation: zp-grow 1.6s cubic-bezier(.4, 0, .2, 1) both; }
 .zp-stats.seen li:nth-child(2) .zp-fig { animation-delay: .12s; }
 @keyframes zp-grow { 0%, 40% { transform: scale(1.75); } 100% { transform: scale(1); } }
-@media (prefers-reduced-motion: reduce) { .zp-stats.seen .zp-fig { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .zp-stats.seen .zp-fig { animation: none; } .js .zp-stats .zp-fig { transform: none !important; } }
 /* the sidecar box: squares sized to the count, so a small fleet fills its box instead of leaving it empty */
 .zp-topo:not(.one) .zp-procs { gap: 4px; }
 .zp-topo:not(.one) .zp-procs i { width: var(--sz, 10px); height: var(--sz, 10px); border-radius: 3px; }
