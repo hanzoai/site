@@ -32,7 +32,7 @@ function Visual({ i, n, p, pinned, item, onOpen }) {
   const scale = useTransform(q, (v) => { const t = Math.max(0, Math.min(1, (v - i - 0.4) / 0.6)); return 1 - t * 0.06; });
   const on = pinned !== false;
   return (
-    <motion.div className="v2-ch-vis" style={on ? { clipPath: clip, scale } : { clipPath: 'none', scale: 1 }} onClick={(e) => { if (!e.target.closest('a, button')) onOpen(); }} data-cursor="Open">
+    <motion.div className="v2-ch-vis" style={on ? { clipPath: clip, scale } : { clipPath: 'none', scale: 1 }} onClick={(e) => { if (!e.target.closest("a, button")) onOpen(); }} data-cursor="">
       {item.visual}
     </motion.div>
   );
