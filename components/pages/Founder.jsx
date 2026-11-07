@@ -18,6 +18,7 @@ import LineReveal, { NoJs } from '../v2/LineReveal';
 import { SEARCH, ORGS, useBounties, SAY } from './Bounty.github';
 import { claim, SUPPORT } from './Founder.claim';
 import '../v2/ProgramScale.css';
+import usePhoneAsk from './usePhoneAsk';
 import './Founder.css';
 
 const EASE = [0.16, 1, 0.3, 1];
@@ -283,6 +284,7 @@ const QA = [
 ];
 
 export default function Founder() {
+  usePhoneAsk();
   return (
     <main className="xp xfo">
       <NoJs />

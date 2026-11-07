@@ -31,6 +31,7 @@ import A2Room from '../v2/A2Room';
 import A2Grow from '../v2/A2Grow';
 import { MOVE } from '../v2/A2Motion';
 import '../v2/A2.css';
+import usePhoneAsk from './usePhoneAsk';
 import './IdePage.css';
 
 const IDE = 'https://ide.hanzo.ai';
@@ -416,6 +417,7 @@ function End() {
 }
 
 export default function IdePage() {
+  usePhoneAsk();
   return (
     <main className="a2 ide">
       <Stage />

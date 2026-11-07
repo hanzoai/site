@@ -11,12 +11,13 @@
    + the track chip gliding.
    0 UI hues. The form sends what hanzo.ai sends. Every word is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, AnimatePresence, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { A, Cta, Field, Tick } from '../kit';
 import Sigil from '../Sigil';
 import LineReveal, { NoJs } from '../v2/LineReveal';
 import { TRACKS, apply } from './Grants.apply';
 import '../v2/ProgramScale.css';
+import usePhoneAsk from './usePhoneAsk';
 import './Grants.css';
 
 const EASE = [0.16, 1, 0.3, 1];
@@ -122,28 +123,6 @@ const WAYS = [
 
 /* One sheet of the stack: it pins, and settles back while the next one slides over it. The list's own progress
    drives it (sheet i over i/n to (i+1)/n), since a pinned sheet's own progress stands still. */
-/* A figure that counts up once when it is first seen; the true value is in the HTML and stays under reduced motion. */
-function Count({ text }) {
-  const ref = useRef(null);
-  const seen = useInView(ref, { once: true, amount: 0.6 });
-  const calm = useReducedMotion();
-  const m = text.match(/^([\d,]+)(.*)$/);
-  const [v, setV] = useState(text);
-  useEffect(() => {
-    if (!m || !seen || calm) return;
-    const end = +m[1].replace(/,/g, ''), t0 = performance.now();
-    let raf = 0;
-    const step = (now) => {
-      const k = Math.min(1, (now - t0) / 1100), e = 1 - Math.pow(1 - k, 3);
-      setV(Math.round(end * e).toLocaleString('en-US') + m[2]);
-      if (k < 1) raf = requestAnimationFrame(step);
-    };
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [seen, calm]); // eslint-disable-line react-hooks/exhaustive-deps
-  return <span ref={ref} className="xgr-count" style={{ minWidth: text.length + 'ch' }}>{v}</span>;
-}
-
 /* Each way's own facts (its meta line, Hanzo's words) as the sheet's object: the first as a figure, the rest as chips. */
 function Facts({ meta }) {
   const [first, ...rest] = meta.split(' · ');
@@ -151,7 +130,7 @@ function Facts({ meta }) {
   return (
     <div className="xgr-facts">
       <p className="xgr-way-m x-mono x-sr">{meta}</p>
-      <span className={'xgr-fact-big' + (num ? ' num' : '')} aria-hidden="true">{num ? <><Count text={first.split(' ')[0]} /><small>{first.split(' ').slice(1).join(' ')}</small></> : first}</span>
+      <span className={'xgr-fact-big' + (num ? ' num' : '')} aria-hidden="true">{num ? <><span className="xgr-count">{first.split(' ')[0]}</span><small>{first.split(' ').slice(1).join(' ')}</small></> : first}</span>
       <span className="xgr-fact-chips" aria-hidden="true">{rest.map((r) => <em key={r}>{r}</em>)}</span>
     </div>
   );
@@ -308,6 +287,7 @@ function Apply({ track, setTrack }) {
 }
 
 export default function Grants() {
+  usePhoneAsk();
   const [track, setTrack] = useState('oss');
   return (
     <main className="xp xgr">

@@ -18,6 +18,7 @@ import Settle from '../v2/Settle';
 import NoJs from '../v2/x-gauss/NoJs';
 import '../v2/Scale.css';
 import '../v2/x-gauss/Rhythm.css';
+import usePhoneAsk from './usePhoneAsk';
 import './Gallery.css';
 
 const FRAMES = [
@@ -292,6 +293,7 @@ function Moves() {
 }
 
 export default function Gallery() {
+  usePhoneAsk();
   return (
     <main id="main" className="xga w2 gx">
       <NoJs />
