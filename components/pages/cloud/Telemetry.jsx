@@ -25,6 +25,7 @@ import Finale from '../../v2/Finale';
 import Graph from './telemetry/Graph';
 import { useEnter } from './telemetry/enter';
 import './Telemetry.css';
+import ArtCard from './ArtCard';
 
 const GH = 'https://github.com/hanzoai';
 const KINDS = ['trace', 'metric', 'log'];
@@ -212,7 +213,7 @@ function Facts({ at, onAt, wide }) {
   return (
     <section className={'l2-sec tl2-facts' + (wide ? ' side' : '')} ref={ref}>
       <div className="l2-wrap">
-        <FilmHead text="One hop you control" inn={inn} />
+        <div className="tl2-facts-top"><FilmHead text="One hop you control" inn={inn} /><ArtCard slug="iro" className="tl2-art" /></div>
         <div className="tl2-read">
           <ol className="tl2-fl" ref={list}>
             {FACTS.map(([t, d, k], i) => (

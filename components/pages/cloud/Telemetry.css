@@ -274,3 +274,8 @@
 .tl2-strip span.all { border-color: var(--ink); color: var(--ink); }
 .tl2-count { margin: 0 0 12px; font-size: 13px; color: #525252; font-variant-numeric: tabular-nums; }
 .tl2-cfg-t .tl2-count { display: block; margin: 6px 0 0; font-size: 14px; font-weight: 400; letter-spacing: 0; }
+/* Hanzo's Iro art (live: the black card behind the six facts), kept under the heading (COPY-RULE.md rule 5) */
+.tl2-facts-top { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+.tl2-facts-top > :first-child { margin-bottom: 0; }
+.art-card.tl2-art { flex: none; width: clamp(96px, 8vw, 128px); border-radius: 14px; margin-bottom: 24px; }
+@media (max-width: 760px) { .tl2-facts-top { flex-direction: column-reverse; align-items: flex-start; gap: 0; } .art-card.tl2-art { width: 104px; margin-bottom: 20px; } }
