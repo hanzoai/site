@@ -27,15 +27,15 @@ Done here: see the parity note above; page links 2/2.
 - [x] Sells in 5 s; a key presses within 2.1 s and the display changes
 - [x] h1 CSS cut-in painted by the server; "Platform Features" sits below the h1
 - [x] JS off: one feature shows on the display (no overlap)
-- [x] Hero keyboard → three pinned chapters → closing band
-- [x] Ends on the band with the one ask, then footer
-- [x] n/a Morph
+- [x] Hero keyboard → three product rooms (rows beside Hanzo's films, the second room flipped and on quiet grey) → closing band
+- [x] Ends on the band (three film cards and the one ask), then footer
+- [x] Each room's film card and heading open its product (/chat, /dev, /design); the card's title carries `data-morph`
 
 Done here: the display and the top row of keys sit on the first screen at 1470×801; on phone the display is sticky above the board, so a tapped key answers in view.
 
 ## 4. Conversion system
 - [x] Kit `A` + `.w2-cta`
-- [x] Sticky ask "Open Chat"
+- [x] Sticky ask "Open Chat" (desktop by the shared Ask; phones by the page-local `usePhoneAsk`: the header outlines while the page's ask shows and reads "Open Chat" after the hero, probed at 0/900/2000/4000px)
 - [x] n/a copy button
 - [x] `data-cta` and `data-thumb` on both primaries
 
@@ -76,21 +76,21 @@ Done here: gate hues []; the display's feature name rests at 26px.
 Done here: hovering a key with a mouse previews its feature on the display.
 
 ## 9. Motion and interaction
-- [x] Signature (self-playing keyboard), supporting: Settle, PinChapters, magnetic; 0 fade-ups
-- [x] Idle (keyboard, chapter rows), pointer (hover preview, magnetic), state (key press), arrival (h1 cut-in), scroll (pin)
+- [x] Signature (self-playing keyboard), supporting: Settle, rows that step and open, magnetic; 0 fade-ups
+- [x] Idle (keyboard, films, rows stepping), pointer (key and row hover, magnetic, film card lift), state (key press, row open), arrival (h1 cut-in), scroll (settle only)
 - [x] Moves without input; every control answers
 - [x] Reduced motion: the keyboard rests; no springs
 - [x] n/a sound (shared kit)
 
-Done here: in the chapters one feature row lights at a time and the visual answers that row (chip, checklist line, graph or store).
+Done here: in each product room one feature row opens at a time (stepping every 2.6 s while in view; hover, tap or focus takes over), and the film card's counter and progress bar answer it. The pinned chapters and their word mocks are gone.
 
 ## 10. Media
-- [x] Kit `Img` only (Enso mark)
-- [x] n/a video
+- [x] Hanzo's own model films through the shared `ModelFilm` (poster first, plays only in view, never under reduced motion)
+- [x] At most 2 playing (the ModelFilm budget); one page pause (`FilmPause`) in the first room stops films and rows
 - [x] Sized
 - [x] n/a photos
 
-Done here: one decorative `Img`.
+Done here: Enso (Hanzo Chat), Zen (Hanzo Dev) and Iro (Design & Cloud) films are the rooms' objects and the page's only colour; the close shows their three posters together.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -98,11 +98,11 @@ Done here: one decorative `Img`.
 - [x] Targets 44px+
 - [x] Primary above the fold at 375×667
 
-Done here: `.xft-hero` uses `overflow: clip` so the phone display can stick.
+Done here: `.xft-hero` uses `overflow: clip` so the phone display can stick; the product rooms stack on phones (film, then rows), nothing pins over text; qc crawl: 0 targets under 44px at 375 (headings are 44px links), scrollWidth 320 at 320.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast: display text #d4d4d4 / #a3a3a3 on #0a0a0a
-- [x] Pause in the display bar and under the chapter visual
+- [x] Pause in the display bar, and the page film pause in the first room's corner
 - [x] Finder labelled
 - [x] One h1; no skips
 - [x] Keyboard reaches every key; the display announces only keys the visitor presses
@@ -152,7 +152,7 @@ Done here: look.cjs both widths errors none.
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary
 - [x] Nothing identifier-bearing
-- [x] `V2:` line in `app/features/page.jsx`
+- [x] `V2:` line in the top comment of `components/pages/Features.jsx` (the file the status board reads)
 - [ ] Review 8 or more (re-review pending)
 
-Done here: previous review 5/10; its six fixes addressed.
+Done here: review 6/10 (7 Nov) read; round 3 answers it: rooms stack on phone, real Hanzo films, rooms open their products, phone ask, hero tightened (h1 52px, first key row above 801), display label wraps, rows drive the film, band has an object.

@@ -10,13 +10,14 @@
    Motion: stacked sheets (signature) + line-masked hero type + the timeline drawing across + ticks drawn on the ledger
    + the track chip gliding.
    0 UI hues. The form sends what hanzo.ai sends. Every word is Hanzo's. */
-import { useRef, useState } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { A, Cta, Field, Tick } from '../kit';
 import Sigil from '../Sigil';
 import LineReveal, { NoJs } from '../v2/LineReveal';
 import { TRACKS, apply } from './Grants.apply';
 import '../v2/ProgramScale.css';
+import usePhoneAsk from './usePhoneAsk';
 import './Grants.css';
 
 const EASE = [0.16, 1, 0.3, 1];
@@ -44,6 +45,7 @@ function Hero() {
           </motion.div>
         </div>
         <motion.div className="xgr-art" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.2 }}>
+          <svg className="xgr-static" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">{[40, 72, 104, 136, 168, 200, 232].map((r) => <ellipse key={r} cx="230" cy="210" rx={r * 1.15} ry={r * 0.85} fill="none" stroke="currentColor" strokeOpacity=".22" />)}</svg>
           <Sigil key={paused ? 'still' : 'live'} seed="grants" data={[2137, 122, 4]} className="xgr-sigil" still={paused} />
           <span className="xgr-art-k x-mono">Grants &amp; Research</span>
           <button type="button" className="xgr-pause" aria-pressed={paused} aria-label={paused ? 'Play' : 'Pause'} onClick={() => setPaused((v) => !v)}>
@@ -55,16 +57,23 @@ function Hero() {
   );
 }
 
-/* The four steps as one line that draws across once it is reached. */
+/* The four steps as one line your scroll draws across; each step lights as the line reaches it. */
 function How() {
+  const ref = useRef(null);
+  const calm = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 85%', 'end 45%'] });
+  const line = useTransform(scrollYProgress, (v) => (calm ? 1 : Math.min(1, Math.max(0, v))));
+  const [at, setAt] = useState(calm ? 3 : -1);
+  useMotionValueEvent(line, 'change', (v) => setAt(v < 0.02 ? -1 : Math.min(3, Math.floor(v * 4)))); // step i sits at i/4 of the line
+  useEffect(() => { if (calm) setAt(3); }, [calm]);
   return (
-    <section className="xp-sec tight xgr-how" aria-labelledby="xgr-how-h">
+    <section ref={ref} className="xp-sec tight xgr-how" aria-labelledby="xgr-how-h">
       <div className="xp-wrap">
         <h2 id="xgr-how-h" className="xp-head xgr-how-h">How grants work</h2>
-        <div className="xgr-line" aria-hidden="true"><motion.i initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true, amount: 1 }} transition={{ duration: 0.5, ease: EASE }} /></div>
+        <div className="xgr-line" aria-hidden="true"><motion.i style={{ scaleX: line }} /></div>
         <ol className="xgr-steps">
           {STEPS.map(([t, d], i) => (
-            <li key={t}>
+            <li key={t} className={at >= i ? 'on' : ''}>
               <span className="xgr-dot" aria-hidden="true" />
               <h3 className="xp-title">{t}</h3>
               <p className="xp-body">{d}</p>
@@ -86,7 +95,7 @@ const GETS = [
 
 function Gets() {
   return (
-    <section className="xp-sec xgr-gets" aria-labelledby="xgr-gets-h">
+    <section className="xp-sec tight xgr-gets" aria-labelledby="xgr-gets-h">
       <div className="xp-wrap xp-grid">
         <div className="xgr-gets-l">
           <h2 id="xgr-gets-h" className="xp-head">What Grant Recipients &amp; Interns Receive</h2>
@@ -114,25 +123,41 @@ const WAYS = [
 
 /* One sheet of the stack: it pins, and settles back while the next one slides over it. The list's own progress
    drives it (sheet i over i/n to (i+1)/n), since a pinned sheet's own progress stands still. */
+/* Each way's own facts (its meta line, Hanzo's words) as the sheet's object: the first as a figure, the rest as chips. */
+function Facts({ meta }) {
+  const [first, ...rest] = meta.split(' · ');
+  const num = /^[\d,]+/.test(first);
+  return (
+    <div className="xgr-facts">
+      <p className="xgr-way-m x-mono x-sr">{meta}</p>
+      <span className={'xgr-fact-big' + (num ? ' num' : '')} aria-hidden="true">{num ? <><span className="xgr-count">{first.split(' ')[0]}</span><small>{first.split(' ').slice(1).join(' ')}</small></> : first}</span>
+      <span className="xgr-fact-chips" aria-hidden="true">{rest.map((r) => <em key={r}>{r}</em>)}</span>
+    </div>
+  );
+}
+
 function Sheet({ way, i, n, pick, p }) {
   const [k, t, meta, d, cta, [more, to]] = way;
   const last = i === n - 1;
-  const scale = useTransform(p, [i / n, (i + 1) / n], [1, last ? 1 : 0.92], { clamp: true });
-  const dim = useTransform(p, [i / n, (i + 1) / n], [0, last ? 0 : 0.55], { clamp: true });
+  const calm = useReducedMotion();
+  const scale = useTransform(p, [i / n, (i + 1) / n], [1, last || calm ? 1 : 0.92], { clamp: true });
+  const dim = useTransform(p, [i / n, (i + 1) / n], [0, last || calm ? 0 : 0.55], { clamp: true });
   return (
     <li className="xgr-sheet-li" style={{ '--i': i }}>
-      <motion.article className={'xgr-sheet s' + i} data-room={i === 1 ? undefined : 'light'} style={{ scale }}>
-        <span className="xgr-sheet-n xp-fig" aria-hidden="true">{pad(i + 1)}</span>
+      <motion.article className={'xgr-sheet s' + i} data-room={i === 1 ? undefined : 'light'} style={calm ? undefined : { scale }}>
+        <div className="xgr-sheet-o">
+          <span className="xgr-sheet-n xp-fig" aria-hidden="true">{pad(i + 1)}</span>
+          <Facts meta={meta} />
+        </div>
         <div className="xgr-sheet-b">
           <h3 className="xp-display sm xgr-way-t">{t}</h3>
-          <p className="xgr-way-m x-mono">{meta}</p>
           <p className="xp-lede xgr-way-d">{d}</p>
           <div className="xgr-way-a">
             <Cta to="#apply" kind="quiet" id={'grants.' + k} onClick={() => pick(k)} className="xp-ghost">{cta}</Cta>
             <A to={to} className="xgr-link">{more}</A>
           </div>
         </div>
-        <motion.i className="xgr-sheet-dim" style={{ opacity: dim }} aria-hidden="true" />
+        {!calm && <motion.i className="xgr-sheet-dim" style={{ opacity: dim }} aria-hidden="true" />}
       </motion.article>
     </li>
   );
@@ -172,6 +197,12 @@ function Apply({ track, setTrack }) {
   const [done, setDone] = useState(false);
   const [err, setErr] = useState(null);
   const [bad, setBad] = useState({});
+  const [offline, setOffline] = useState(false);
+  useEffect(() => {
+    const f = () => setOffline(!navigator.onLine);
+    f(); addEventListener('online', f); addEventListener('offline', f);
+    return () => { removeEventListener('online', f); removeEventListener('offline', f); };
+  }, []);
   const form = useRef(null);
   const on = (k) => (e) => setF((o) => ({ ...o, [k]: e.target.value }));
   const role = TRACKS.find(([k]) => k === track)[2];
@@ -242,8 +273,11 @@ function Apply({ track, setTrack }) {
                 <Field key={k} className={'xgr-f ' + k} label={label} name={k} type="text" inputMode={type === 'email' ? 'email' : undefined} placeholder={ph} aria-required={req || undefined} aria-invalid={bad[k] ? 'true' : undefined} value={f[k]} onChange={on(k)} autoComplete={k === 'name' ? 'name' : k === 'email' ? 'email' : 'off'} />
               ))}
               <Field as="textarea" className="xgr-f summary" label="Research Proposal, OSS Contributions, or Internship Goals" name="summary" rows={4} aria-required="true" aria-invalid={bad.summary ? 'true' : undefined} placeholder="Describe the open-source repositories you contribute to, your PhD / academic research topic, and how you plan to use Hanzo API credits, GPU compute, and Hanzo Team." value={f.summary} onChange={on('summary')} />
-              {err && <p className="xgr-err" role="alert">{err.includes('grants@hanzo.ai') ? <>Your application did not reach us. Please try again, or email <a href="mailto:grants@hanzo.ai">grants@hanzo.ai</a>.</> : err}</p>}
-              <Cta type="submit" id="grants.apply" busy={busy} className="xp-cta xgr-send">Submit Grant Application</Cta>
+              {(err || offline) && <p className="xgr-err" role="alert">{offline || err.includes('grants@hanzo.ai') ? <>Your application did not reach us. Please try again, or email <a href="mailto:grants@hanzo.ai">grants@hanzo.ai</a>.</> : err}</p>}
+              <div className="xgr-send-row">
+                <Cta type="submit" id="grants.apply" busy={busy} disabled={offline} className="xp-cta xgr-send">Submit Grant Application</Cta>
+                <A to="https://hanzo.ai/privacy" className="xgr-priv">Privacy Policy</A>
+              </div>
             </motion.form>
           )}
         </AnimatePresence>
@@ -253,6 +287,7 @@ function Apply({ track, setTrack }) {
 }
 
 export default function Grants() {
+  usePhoneAsk();
   const [track, setTrack] = useState('oss');
   return (
     <main className="xp xgr">

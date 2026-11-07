@@ -1,37 +1,45 @@
 # /founder — James-eye review
+Verdict: 7/10
+First complaint: "When it loads, half the screen is empty for a second and then the pull request pops in, already drawn. And after the counter it's back to a list, some questions and a form just sitting there; on my phone there are still two black buttons at the top."
+(walked 7 Nov 2026, HEAD `9be4865c`, 1470×801 fine pointer and 375×812 touch; also 320×700, 375×667, reduced motion, JS off; api.hanzo.ai intercepted with a 500, no real claim sent)
 
-Reviewed: main, page files at `4350f66`. Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
-
-Note (7 Nov 14:12): a hydration error seen in the first walks came from the shared shell and is gone on main; it is not counted against this page. Text is now legible with JavaScript off (shared fix at 14:05, re-checked).
-
-Verdict: 6/10
-
-First complaint: "There's a label on the headline again, and it's purple bars and green buttons. The pull request merges, goes back to open, and merges again, forever. And the page ends on a list of questions, not on the thing I came to do."
+## What works
+- Round-3 fixes landed: the header no longer flickers on arrival (it reads "Try Hanzo" in every sample from 0.48 s to 3.9 s, then swaps to "Claim a merged pull request" only once the hero ask leaves, at scrollY ≈1400). "Privacy Policy" sits beside "Send the claim". The dark-room "Every open bounty" is now quiet: transparent, 1px white 30% border, white 8% fill on hover, arrow moves 4px. The org names light one by one when the room enters (`.xfo-repos.lit`, 0.22 s apart), and the left column rides sticky.
+- Hero reads in 5 s: 52px h1 cut in by line mask, 21px lede, one solid ask (`founder.hero`, `data-thumb`). The pull request goes Open, then the outlined Merge is pressed, then Merged with a ✓, once, and it stays merged.
+- The signature is real and scrubbed. Pinned 320svh scene: the count goes 0 (y 324–681), 1 (1038), 2 (1764), 3 (2122), scale 0.57 to 0.68 to 0.82 to 0.96 to 1. Level 1 pours at scrollY ≈1038 and Level 2 at ≈2122, and each card's outline inks when it lights.
+- Stepper: + + takes the level from "Founding Contributor" to "Founding Builder · Level 2 · A month of Pro, and Hanzo swag". Both tap and click work. Press is scale .98.
+- Claim: an empty submit focuses email and marks email, github and pull `aria-invalid`, and sends nothing. A 500 keeps every value and shows "Write to support@hanzo.ai with the address of the pull request.", with no success state.
+- CLS: desktop 0.0011 (all of it in the shared header's right cluster), phone 0. No horizontal scroll at 320 (scrollWidth 320). At 375×667 the phone ask sits at 373–421. No target under 44px at 375.
+- Reduced motion: Merged, count 3, both levels lit, the scene flat, `getAnimations()` holds only 2 finished cuts after 3 s. JS off: h1, lede, ask and PR all at opacity 1, 0 hidden elements.
+- Parity 37/37 text. `taste.py` OK on both files.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Yes. "Merge a pull request. Get Pro." beside a pull request that merges itself (Open → Merge → Merged) is clear and alive on desktop. But it loops: it resets to "Open" and merges again every few seconds. **Phone:** the pull request sits under the buttons and the first screen is still once it has played (0% change).
-2. **One in, one out?** Yes for the levels: a giant counter pins on the left while "Founding Contributor" and "Founding Builder" light up on the right as you scroll. After that it becomes a stack: the "Where do yours land?" stepper, the dark open-bounties room, the claim form, then the questions.
-3. **A real object in every section?** Hero, levels and open bounties: yes. The claim form and questions are plain.
-4. **One ask, sticky after the hero?** Yes on desktop: a floating pill carries "Claim a merged pull request" after the hero, and the header's "Try Hanzo" turns outlined. On the phone the pill and the header's solid "Try Hanzo" show together. The page does not end on the ask: it ends on the FAQ.
-5. **Every hover and press answers?** "Claim a merged pull request" answers on hover; no press. "Find an issue" does not change on hover. "Send the claim" stays a grey disabled pill until the field is filled, with no hint why.
-6. **Overlap, font swap, layout shift?** None; layout shift 0.
-7. **Which reference, and is its motion there?** apple.com pinned counter with panels changing beside it. Present.
-8. **Different from its neighbours?** Yes: the self-merging pull request and the merge counter are its own.
-9. **All 18 parts covered?** See below. No `docs/coverage/founder.md`.
-10. **Banned tells?** Yes:
-    - Eyebrow above the h1 ("• FOUNDER PROGRAM", purple dot, mono caps).
-    - UI hues: purple level bars, "Merged" pill and dots; **green** "Open" and "Merge" buttons; red and green diff bars. JAMES.md allows 0 UI hues and bans green outright (even when it imitates GitHub, it is UI here, not Hanzo media).
-    - "Endless loop" on the hero demo (brief: no looping decoration).
-11. **Copy untouched?** Mostly: parity 37/37 text. "Where do yours land?" is not in Hanzo's copy (a new headline).
+1. **5 s / 1 s:** the words sell in 5 s and the h1 cut-in moves inside 1 s. But the hero object is not there at arrival: frames at 0.48, 0.80 and 1.26 s show the right half of the first screen empty. The PR fades in at about 1.3–1.6 s because `.xfo-hero-obj` is SSR'd at `opacity:0` and waits for hydration. By then its diff bars have already drawn (the CSS `xfo-draw` runs from first paint, 0.38–1.9 s), so the round-3 "diff draws in" is mostly spent before anyone sees it. Merged lands at about 3.4 s on desktop and 2.4 s on phone. After that the first screen is frozen: idle frames 1 s apart are byte-identical at both sizes.
+2. **One in, one out:** yes through the pinned levels scene. After it, from y ≈2560, it is a stack: stepper, dark room, Questions, Claim. The orgs lighting and the bounty rows sliding in (x 24 to 0, 60 ms apart) give the dark room an entrance. The stepper, the FAQ and the claim still arrive as static blocks, and there are ~200px and ~240px white gaps between the scene and the stepper and between the FAQ and the claim (d-scroll-08, d-scroll-14).
+3. **Real object per section:** hero PR, count and level cards, live bounty list: yes. The stepper section has only a 44px level name and two rows. Questions and Claim have no object; the FAQ is acceptable as kit.
+4. **One ask / scale:** on desktop, yes: one solid per screen. In the dark room the header ask inverts to white, and the room's own ask is now outlined. On the phone, the header "Try Hanzo" stays solid the whole page (every scroll sample reads "EN/Try Hanzo"). The first screen therefore has 2 solids ("Try Hanzo", "Claim a merged pull request"), and so does the Claim screen. The shared request is filed (`docs/requests/founder.md`), unresolved. Scale rhythm is good: 52 / 21 / 16, count 64→112 only in the scene, then 44 / 26 / 17.
+5. **Hover and press:** the hero ask goes from rgb(10,10,10) to rgb(44,44,46) on hover with press .98. Find an issue underlines, its arrow moves 4px and it presses .98. The stepper fills on hover and presses .98. Bounty rows press .97. The FAQ underlines on hover. "Every open bounty" fills and moves its arrow. Send presses .98. Privacy goes from #525252 to ink. No jumps (≤1.5px from the press scale only). Invalid fields turn dashed but say nothing on submit: every `.x-field-msg` is empty. A browser message appears only after blur ("Please include an '@'…").
+6. **Overlap / font swap / shift:** none on the page. On one of three loads the Next dev overlay showed a red "1 Issue" (a hydration mismatch: `caret-color: transparent` on the four inputs, plus the shared FooterHTML). It did not reproduce on the next load of /founder, /grants or /bounty, and `caret-color` is not in the repo source. Logged, not charged to the page.
+7. **Reference:** an apple.com pinned scene with a growing figure and panels changing beside it. It is present, and its values were measured above.
+8. **Neighbours:** its own hero medium (a self-merging PR) and its own signature (the merge counter). It differs from /bounty (live list) and /grants.
+9. **18 parts:** the card is filled, but several claims are false or stale (below).
+10. **Banned tells:** none in the page. Note that the shared tokens the page uses are Apple greys, not the deck ramp: `--soft` #6e6e73 (the lede), `--hz-50` #f5f5f7 and `--hz-300` #a1a1a6 (stepper hover, computed rgb(245,245,247) / rgb(161,161,166)), and `.xfo-any` computes #a1a1a6 even though the page CSS says #a3a3a3 (overridden by the shared `.xp-lede`).
+11. **Copy:** untouched; parity 37/37.
 
-## Missing from the 18 parts (PLAN-COMPONENTS 2.1–2.18, measured)
-- **2.3 Page endings:** no closing band; the page ends on the FAQ.
-- **2.17 Submit states:** the disabled "Send the claim" has no visible reason.
-- **2.4:** 0 `data-cta`.
+## Card check (docs/coverage/founder.md)
+- FALSE: part 18 ticks "[x] Review read: `docs/review/founder.md` verdict 8 or more". The review it read was 7/10.
+- FALSE: part 7 ticks "no literal hex outside tokens". Founder.css still holds 23 literal colour values (#fff ×5, #fafafa, #a3a3a3 ×3, #525252, #0a0a0a and rgba(255,255,255,.1/.3/.55/.08), rgba(0,0,0,.12)). They are deck values now, but they are literals, and MASTER part 7 bans literals in page CSS.
+- STALE: part 9 says sound is "n/a: the shared sound kit is not on main yet". `components/Sound.jsx` is mounted, the header shows the mute toggle, and it already sounds `[data-cta]` and `.x-faq button` on this page. Tick it and say how the page is covered. The steppers are plain buttons, so they get no tick.
+- Inexact: part 3 says "merges once within 2 s". Measured: Merged at about 2.4 s on phone and 3.4 s on desktop, from navigation.
+- Inexact: part 2 says "One `<main>` from the layout". The `<main>` is the page's (`main.xp.xfo`, id ""), and `#main` is not on it.
+- TRUE: Privacy Policy beside the submit (part 5); `data-cta` founder.hero / founder.claim / founder.bounties with `data-thumb` on the primary; one h1 52px; count 64→112 only in the scene; phone counts 0, 1, 3 once; the list keeps 400px of room; a failed submit keeps values and shows no success; JS-off and reduced-motion states; no scroll at 320; parity 37/37; part 4 sticky ask honestly left unticked.
+- A false claim caps this verdict at 7.
 
-## Fixes
-1. Remove "• FOUNDER PROGRAM" from above the h1.
-2. Take the purple, green and red out of the UI: level bars, pills, buttons and diff bars in ink and greys (the diff can use weight or +/− marks).
-3. Let the hero pull request merge once and rest on "Merged".
-4. End the page on the ask: a closing band with "Claim a merged pull request" after the questions (or move the questions above the claim form).
-5. Drop "Where do yours land?" or use Hanzo's own wording for the stepper.
+## Fixes (in order)
+1. Hero object at first paint. In `Hero`, change the `motion.div.xfo-hero-obj` to `initial={{ y: 40 }}` (drop `opacity: 0`), or replace it with a CSS keyframe that starts on paint. Then delay the diff draw so the visitor sees it: keep `.xfo-diff i { animation: xfo-draw … }`, but start it 0.6 s after the card lands (for example, gate it with a `.xfo-pr.go` class set in `PullRequest`'s effect). Cut the merge wait from 1400 to about 900 ms so Merged lands near 2 s.
+2. Fix the card: untick part 18 (the last review was 7), correct part 7 to say the colour literals are deck values that are not yet tokens (or move them to tokens, see fix 3), tick part 9 sound with "shared Sound.jsx sounds founder.hero / founder.claim taps and FAQ ticks", and correct part 3 (merge time) and part 2 (`main` is the page's own and has no `id`).
+3. Literals in Founder.css: replace `#fff` with `var(--bg)`, `#0a0a0a` with `var(--ink)`, and the white-alpha `rgba` values with the room tokens (`--room-line` or the shared dark-room vars) or with custom properties declared once at the top of the page CSS. That way the part 7 tick is true.
+4. Words on invalid fields at submit, not only on blur. In `send`, when `!c.ok`, pass `error` to each bad `Field`: the browser's own `validationMessage` (`form.current.querySelector('[name=email]').validationMessage`), or an existing `content/ui-strings.json` string. That makes `.x-field-msg` say why, next to the dashed border.
+5. After-scene life. Let the stepper inherit the moment: when the section enters, have its `.xfo-mine-r b` cut in by line mask, the same treatment as the h1. Make the `−`/`+` presses bump the output with a 150 ms y-roll, like the scene's count (`AnimatePresence` on `output`). Tighten the white gaps: `.xfo-scene` padding-bottom or `.xfo-mine-s` top margin to about 72px, and `.xfo-claim` top padding to about 116px.
+6. Phone ask: chase the open shared request (`docs/requests/founder.md`, `components/Ask.jsx` owner) so the header ask goes quiet under 900px while `founder.hero` or `founder.claim` is in view. Until then the phone shows 2 solids on the first screen and on the claim screen.
+7. Shared token note for the system owner (do not edit here). `--soft` #6e6e73, `--faint` #86868b, `--card` #f5f5f7 and `--hz-50/300/400` are Apple greys, not the deck's #737373 / #a3a3a3 / #f5f5f5. On this page that is visible in the lede, the stepper hover and `.xfo-any`. Add it to the founder request so it is on record.
