@@ -1,0 +1,30 @@
+# Coverage: /chat — components/pages/ChatPage.jsx
+
+Persona: a consumer choosing a chat app. Goal: open Hanzo Chat. CTA: "Open Hanzo Chat" (`/login?next=%2Fchat`). Metric: `first_chat`. Brief: PLAN-COMPONENTS 5.7.
+
+- **2.1 Strategy and conversion:** Persona, Goal, CTA and metric are in the file header. There is one solid ask in Hanzo's words, "Open Hanzo Chat": in the hero, in the site's sticky ask bar after the hero (`data-thumb`, `data-ask-name="Hanzo Chat"`), and at the close. "Read the docs" is a text link everywhere. Both asks carry `data-cta` (`chat.hero`, `chat.close`). Not done: `lib/cta.js` does not exist yet.
+- **2.2 Information architecture and navigation:** Hanzo's header and footer are unchanged. Every model row in "Who answers what" is a real `<a href>` to that model's page. The close's big field takes you back up to the live window and focuses its composer.
+- **2.3 First impression and page narrative:** The first screen has the h1 (cut into its lines), the lede, the one ask and the live window at 100%. The window's conversation is streaming on screen within about 2 seconds at 1470×801. There is no eyebrow above the h1: the page's name "Hanzo Chat" moved into the window's own title bar. One idea per screen: hero, then the six tools pinned in the dark middle room, then the model spec sheet, then the dark close.
+- **2.4 Conversion system:** The signature is the handoff state. Pressing "Open Hanzo Chat" turns its arrow into a ring at once (`aria-busy`), then leaves. The public try-before-signup is parked (PLAN 7). Sending from the composer hands off the same way and sends nothing to `api.hanzo.ai`. The empty state for another conversation uses an outlined button, so only one solid button is on screen.
+- **2.5 Trust and proof:** No figures on this page and none added. The model lines come from `lib/models.js` (Hanzo's words).
+- **2.6 Content presentation (copy untouched):** Parity is 0 missing (text 37/37, links 2/2). The words I added on v2 that were not Hanzo's are gone: "routing" and "auto" state labels, the "Searching the web" and "Running code" captions, the short chapter labels and the "Enso" kicker. Chapter index buttons now use Hanzo's own chapter titles. The `01 / 06` counter sits below each chapter's text, not above its title.
+- **2.7 Visual design system:** Greys only: ink #1d1d1f, secondary #424245, muted #6e6e73, raised #f5f5f7, hairlines. Colour comes only from Hanzo's model artwork. The router's lit lane is ink with a white dot and ring (a shape cue, no hue). Hero objects have 28px radii, smaller cards 16 to 22px. Values are literals that match `app/system.css`, because `tokens.css` does not exist yet.
+- **2.8 UI component library:** Uses the kit's `A`, `Img`, `Copy` and `Magnetic`, plus `AppLines`, `AppChapters` and `AppDemo` (`components/v2`). Every button has hover (something besides opacity changes: background, arrow nudge, row shift) and press (scale .98 or translateY 1px). Gap: the kit has no `PageHero` or `Band` yet. The hero and the close are page parts, and the close is the Band equivalent.
+- **2.9 Motion and interaction:**
+  - Signature (time): the conversation types, Enso scans the lanes, Zen lights and the answer streams. It plays once and rests on its final frame, with Pause or Replay in the window's title bar (`AppDemo`).
+  - Arrival: the h1 cuts into its lines and the window rises once.
+  - State: the lane pill (layoutId), the chapter pill (layoutId), the handoff ring, and the roster's row shift.
+  - Pointer: a magnetic ask, rail and roster previews on hover or focus.
+  - Scroll: the pinned chapters only, so scroll is 1 of 5 kinds of motion. Each chapter's art plays a short scene when it comes in and rests on its last frame, with no endless loops.
+  - Reduced motion: the finished conversation is shown, nothing plays, and art shows its final frame.
+- **2.10 Media:** Hanzo's nine model images (`/models/*.webp`) with width and height set. The spec sheet uses the kit's `Img`. Gap: no AVIF or responsive sizes (the pipeline does not exist yet).
+- **2.11 Mobile and responsive:** At 375×812 the h1, lede, ask and the top of the live window fit the first screen. The window becomes a single column with rails you swipe, and chapters stack as copy then art, each playing when seen. Targets are 44px or more. No sideways scroll at 375 (checked); 320 not checked.
+- **2.12 Accessibility (WCAG 2.2 AA):** Real buttons and links, `aria-pressed` on the lane and Listen toggles, `aria-live` on the log and the peek line, and an icon Pause or Replay button (44px, `aria-pressed`) on the only auto-moving content. Focus is a 2px ink ring with a white halo. Text on white is #424245 or #6e6e73 (at least 5:1). Gap: no axe run.
+- **2.13 Performance and engineering:** Only transform, opacity and clip-path animate. Streaming writes to a text node through a ref. The demo clock stops off screen and while the tab is hidden, and the lane scan runs only while Enso decides. No scroll-linked transforms remain in the hero. Gap: LCP, CLS and INP not measured.
+- **2.14 SEO and machine files:** The title and description are unchanged, with `JsonLd` route `/chat`. Nothing was added.
+- **2.15 Catalogue and product pages:** Not a catalogue. The model rows open the model pages with the WebGL opener (the synchronized.studio card-to-page move).
+- **2.16 Developer experience:** Not applicable.
+- **2.17 States and resilience:** These states each look intentional: loading (Enso's dots while it decides), streaming, done, empty ("Ask anything") and another conversation selected. JS-off and reduced motion show the finished conversation in the server HTML. Nothing on the page calls a network API.
+- **2.18 Measurement and handover:** `data-cta` is set on both asks. No events are sent, because `lib/track.js` does not exist yet. Proof is in `docs/gallery/chat/`.
+
+**Ledger (what this page deleted):** the scroll-scaled stage, the public chat `fetch` to `api.hanzo.ai`, four infinite CSS loops (the hub spin, the caret blink, the wave and the switch), the blue accent, and all invented labels.
