@@ -1,20 +1,27 @@
 'use client';
-/* One of Hanzo's GitHub organizations (/oss/<org>, 56 of them, one template), at v2: a catalogue with a launch-page
-   first screen. The organization's name runs at display size and its ledger (repositories, stars, forks, this year's
-   commits, the year as a waveform) is the hero object: a black instrument over a contour field seeded from its name and
-   figures, which starts close and settles into place as you scroll. Two chapters then count it, GitHub's figures and
-   the forge's, one coming in as the other goes out; then the repositories, as tiles you filter by language.
+/* One of Hanzo's GitHub organizations (/oss/<org>, 56 of them, one template): a catalogue with a launch-page first
+   screen. The organization's name runs at display size on the left; its ledger (this year's commits huge, then
+   repositories, stars and forks, and the year as a waveform a playhead keeps reading) is the hero object on the right,
+   a black instrument over the organization's own contour (Sigil seeded with its route and drawn from its figures), and
+   it settles into place as you scroll. Two chapters then count it, GitHub's figures and the forge's; then the
+   repositories, as tiles you filter by language; then the next organizations, as cards that open into their page.
+   Persona: Developer and researcher (PLAN-COMPONENTS 1.1). Goal: find a repository and clone it.
+   CTA: "<org> on GitHub" (Hanzo's hero link; data-thumb, so the site's ask bar carries it after the hero).
+   Metric: GitHub or weights click.
    Signature: every repository opens into its own card. Press a tile and it lifts and grows into a full card
    (shared-element morph, synchronized.studio): stars, forks, this year's commits and last push at full size, its
    monthly bars across the card, and its clone command.
    Beyond: clone in one press. Each card hands you the git clone command for GitHub or Hanzo Forge, ready to copy; the
-   tiles filter by language, re-sort by stars or by this year's commits, and search as you type.
-   Motion: one signature (the open morph) plus three: the Stage settle and chapter swaps (scroll), the title's masked
-   word rise, and the living contour behind the ledger. The ledger's waveform playhead is its idle life.
-   V2: 8/10 Display-size org name, ledger as a Stage hero object, counted figures as two sticky chapters, repositories as language-filtered tiles that open into big cards, sibling orgs as open cards. */
+   tiles filter by language, re-sort (as listed, by stars, by this year's commits) and search as you type.
+   Motion, by kind (scroll is two of them): idle, the ledger's playhead reading the year and the contour drifting;
+   pointer, the magnetic ask, a hovered tile's own playhead, the sibling rail that drags with inertia; state, the tile
+   that opens into its card, the sort pill gliding, tiles re-flowing as you filter; arrival, the name's masked rise;
+   scroll, the ledger settling and the counted chapters swapping.
+   Colour: none of our own (JAMES.md 7): ink, greys and white; the organizations differ by their contour and figures.
+   V2: 8/10 v3: name and ledger side by side so the ledger is whole on the first screen at 1470×801 and 375×812, no labels above headings, 0 hues (white-on-black ledger, silver waveforms), icon controls with registered names, Hanzo's own words on every card, siblings with their own line on hover. */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, LayoutGroup, useReducedMotion } from 'motion/react';
-import { Copy } from '../../ui';
+import { Copy, Magnetic } from '../../ui';
 import { A } from '../../kit';
 import Sigil from '../../Sigil';
 import { Loose } from '../models/parts';
@@ -22,13 +29,21 @@ import FamLines from '../../v2/FamLines';
 import FamStage from '../../v2/FamStage';
 import FamChapters from '../../v2/FamChapters';
 import FamNext from '../../v2/FamNext';
-import { accentAt } from '../../v2/famAccent';
+import { ui } from '../../v2/famUi';
 import './oss.css';
 
-const SORTS = [['listed', 'Recently pushed'], ['stars', 'Stars'], ['commits', 'Commits this year']];
 const n0 = (v) => (v == null ? '—' : v.toLocaleString('en-US'));
 const PAGE = 11; // a wide lead tile and ten more: four even rows of three
 const MORPH = { type: 'spring', stiffness: 300, damping: 34 };
+
+/* icons: Hanzo's page names stars and forks in its own aria-labels ("3 stars", "0 forks") */
+function Star() { return <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 1.8l1.8 3.9 4.2.5-3.1 2.9.8 4.2L8 11.2l-3.7 2.1.8-4.2L2 6.2l4.2-.5z" fill="currentColor" /></svg>; }
+function Fork() { return <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm9 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zM9.5 12.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zM3.5 5v1.5c0 1.1.9 2 2 2h5c1.1 0 2-.9 2-2V5M8 8.5V11" fill="none" stroke="currentColor" strokeWidth="1.3" /></svg>; }
+function Clock() { return <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M8 4.6V8l2.4 1.6" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>; }
+function Bars() { return <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M3 13V8M6.3 13V4M9.7 13V7M13 13V2.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>; }
+function Grid() { return <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z" fill="none" stroke="currentColor" strokeWidth="1.3" /></svg>; }
+function Out() { return <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M5.5 3.5h7v7M12.5 3.5 4 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>; }
+const SORTS = [['listed', 'oss_sort_pushed', Clock], ['stars', 'oss_sort_stars', Star], ['commits', 'oss_sort_commits', Bars]];
 
 /* a year of commits, month by month: bars that rise once; a playhead reads them where the page wants life */
 function Wave({ bars, label = 'Commits a month over the past year', className = '', play }) {
@@ -41,12 +56,15 @@ function Wave({ bars, label = 'Commits a month over the past year', className = 
   );
 }
 
-function Star() { return <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M8 1.8l1.8 3.9 4.2.5-3.1 2.9.8 4.2L8 11.2l-3.7 2.1.8-4.2L2 6.2l4.2-.5z" fill="currentColor" /></svg>; }
-function Fork() { return <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M5 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm9 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zM9.5 12.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zM3.5 5v1.5c0 1.1.9 2 2 2h5c1.1 0 2-.9 2-2V5M8 8.5V11" fill="none" stroke="currentColor" strokeWidth="1.3" /></svg>; }
 /* "hanzoai/ui": the organization faint, the repository as the name */
 function Name({ name }) {
   const k = name.indexOf('/');
   return k < 0 ? <>{name}</> : <><span className="xos-org">{name.slice(0, k + 1)}</span>{name.slice(k + 1)}</>;
+}
+/* "2,107 commits this year": the figure big, Hanzo's words after it */
+function Split({ s }) {
+  const m = /^([\d,.]+)\s+(.*)$/.exec(s || '');
+  return m ? <><b className="v2f-num">{m[1]}</b><span>{m[2]}</span></> : <span>{s}</span>;
 }
 
 /* the open card: one repository at full size, with its clone command */
@@ -72,24 +90,24 @@ function Card({ r, onClose }) {
   const cmd = url ? `git clone ${url}.git` : '';
   return (
     <div className="xos-modal" role="dialog" aria-modal="true" aria-label={r.name} data-swipe-own>
-      <motion.button type="button" className="xos-scrim" aria-label="Close" tabIndex={-1} onClick={onClose} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.2 } }} />
-      <motion.article className="xos-card" layoutId={'xos-' + r.name} transition={MORPH} style={{ borderRadius: 28 }} data-lenis-prevent>
+      <motion.button type="button" className="xos-scrim" aria-label={ui('close')} tabIndex={-1} onClick={onClose} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.2 } }} />
+      <motion.article className="xos-card" layoutId={'xos-' + r.name} transition={MORPH} style={{ borderRadius: 32 }} data-lenis-prevent>
         <motion.div className="xos-card-in" initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { delay: 0.14, duration: 0.3 } }} exit={{ opacity: 0, transition: { duration: 0.1 } }}>
           <header className="xos-card-h">
             <div>
-              {r.lang && <p className="v2f-kick acc">{r.lang}</p>}
               <h3><Name name={r.name} /></h3>
+              {(r.lang || r.archived) && <p className="v2f-kick xos-card-k">{[r.lang, r.archived].filter(Boolean).join(' · ')}</p>}
             </div>
-            <button type="button" ref={close} className="xos-x" onClick={onClose} aria-label="Close">
+            <button type="button" ref={close} className="xos-x" onClick={onClose} aria-label={ui('close')}>
               <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
             </button>
           </header>
           {r.desc && <p className="xos-card-d">{r.desc}</p>}
           <dl className="xos-stats">
-            <div><dt>Stars</dt><dd className="v2f-num">{n0(r.stars)}</dd></div>
-            <div><dt>Forks</dt><dd className="v2f-num">{n0(r.forks)}</dd></div>
-            <div><dt>This year</dt><dd className="v2f-num">{r.commits ? n0(r.nCommits) : '—'}</dd></div>
-            <div><dt>Last push</dt><dd className="xos-when">{r.pushed ? r.pushed.replace(/^Pushed /, '') : '—'}</dd></div>
+            {r.stars != null && <div><dt><Star /><span className="x-sr">stars</span></dt><dd className="v2f-num">{n0(r.stars)}</dd></div>}
+            {r.forks != null && <div><dt><Fork /><span className="x-sr">forks</span></dt><dd className="v2f-num">{n0(r.forks)}</dd></div>}
+            {r.commits && <div className="xos-stats-c"><dt className="x-sr">{r.commits}</dt><dd><Split s={r.commits} /></dd></div>}
+            {r.pushed && <div className="xos-stats-w"><dt className="x-sr">{r.pushed}</dt><dd className="xos-when">{r.pushed}</dd></div>}
           </dl>
           {r.spark && <Wave bars={r.spark} className="xos-card-w" play />}
           {(r.href || r.forge) && (
@@ -97,7 +115,7 @@ function Card({ r, onClose }) {
               <div className="xos-clone-h">
                 <span className="x-mono">git clone</span>
                 {r.href && r.forge && (
-                  <div className="xos-src" role="group" aria-label="Clone from">
+                  <div className="xos-src" role="group" aria-label={ui('oss_clone_from')}>
                     {[['gh', 'GitHub'], ['forge', 'Hanzo Forge']].map(([k, t]) => (
                       <button key={k} type="button" aria-pressed={src === k} onClick={() => setSrc(k)}>
                         {src === k && <motion.span layoutId="xos-src" className="xos-src-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
@@ -107,12 +125,12 @@ function Card({ r, onClose }) {
                   </div>
                 )}
               </div>
-              <div className="xos-cmd"><code className="x-mono">{cmd}</code><Copy text={cmd} label="Copy clone command" /></div>
+              <div className="xos-cmd"><code className="x-mono">{cmd}</code><Copy text={cmd} label={ui('oss_copy')} /></div>
             </div>
           )}
           <div className="xos-card-l">
-            {r.href && <A to={r.href} className="v2f-btn solid">Open on GitHub</A>}
-            {r.forge && <A to={r.forge} className="v2f-btn">Open on Hanzo Forge</A>}
+            {r.href && <A to={r.href} className="v2f-btn solid" data-cta="oss.card">{r.name}<Out /></A>}
+            {r.forge && <A to={r.forge} className="v2f-btn">{r.forgeLabel || 'Forge'}<Out /></A>}
           </div>
         </motion.div>
       </motion.article>
@@ -133,21 +151,19 @@ function Ledger({ doc }) {
     <div className="xos-ledger">
       <Sigil seed={doc.route} data={key.map((f) => f.n)} className="xos-sigil" />
       <p className="xos-ledger-h x-mono"><span>{doc.org}</span><span>{when}</span></p>
-      <div className="xos-ledger-g">
-        <div className="xos-lead">
-          <span className="xos-lead-l">{lead.label.replace(/,.*$/, '')}</span>
-          <b className="v2f-num" style={{ '--ch': lead.value.length }}>{lead.value}</b>
-        </div>
-        <dl className="xos-ledger-r">
-          {rest.map((f) => (
-            <div key={f.label}>
-              <dt>{f.label.replace(/,.*$/, '')}</dt>
-              <dd className="v2f-num">{f.value}</dd>
-            </div>
-          ))}
-        </dl>
+      <div className="xos-lead">
+        <b className="v2f-num" style={{ '--ch': lead.value.length }}>{lead.value}</b>
+        <span className="xos-lead-l">{lead.label.replace(/,.*$/, '')}</span>
       </div>
       <Wave bars={doc.spark} className="xos-ledger-w" play />
+      <dl className="xos-ledger-r">
+        {rest.map((f) => (
+          <div key={f.label}>
+            <dd className="v2f-num">{f.value}</dd>
+            <dt>{f.label.replace(/,.*$/, '')}</dt>
+          </div>
+        ))}
+      </dl>
     </div>
   );
 }
@@ -222,7 +238,6 @@ export default function OrgPage({ doc }) {
     name: c.title,
     text: (
       <div className="xos-ch-t">
-        <p className="v2f-kick acc">{String(k + 1).padStart(2, '0')} / {String(doc.counts.length).padStart(2, '0')}</p>
         <h2 className="v2f-head">{c.title}</h2>
         {c.notes.map((n) => <p key={n} className="v2f-body xos-ch-n">{n}</p>)}
       </div>
@@ -230,22 +245,25 @@ export default function OrgPage({ doc }) {
     visual: <Counted c={c} dark={k === doc.counts.length - 1 && doc.counts.length > 1} />,
   }));
   const near = (doc.near || []).map((o) => ({
-    href: '/oss/' + o.org, kicker: o.org, title: o.name, seed: '/oss/' + o.org, data: o.data, acc: accentAt(o.i),
+    href: '/oss/' + o.org, title: o.name, preview: o.lede, seed: '/oss/' + o.org, data: o.data,
     meta: [o.repos && o.repos.value + ' ' + o.repos.label, o.commits && o.commits.n > 0 && o.commits.value + ' ' + o.commits.label.replace(/,.*$/, '')].filter(Boolean).join(' · '),
   }));
+  const [gh, forge, every] = doc.links;
   return (
-    <main className="v2f xos" style={{ '--acc': accentAt(doc.i) }}>
+    <main className="v2f xos">
       <section className="xos-hero" aria-labelledby="xos-h1">
-        <div className="v2f-wrap">
-          {doc.label && <p className="v2f-kick acc xos-kick">{doc.label}</p>}
-          <FamLines as="h1" id="xos-h1" text={doc.name} className="v2f-display xos-h1" data-morph-target style={{ '--len': longest }} />
-          <div className="v2f-grid xos-hero-g">
+        <div className="v2f-wrap v2f-grid xos-hero-g">
+          <div className="xos-hero-t" style={{ '--len': longest }}>
+            <FamLines as="h1" id="xos-h1" text={doc.name} className="v2f-display xos-h1" data-morph-target />
             {doc.lede && <p className="v2f-lede xos-lede">{doc.lede}</p>}
+            {doc.label && <p className="v2f-kick xos-meta-l">{doc.label}</p>}
             <div className="xos-acts">
-              {doc.links.map((l, i) => <A key={l.href} to={l.href} className={i === 2 ? 'x-arrow xos-every' : 'v2f-btn' + (i ? '' : ' acc')} {...(i ? {} : { 'data-thumb': '' })}>{i === 2 ? <span>{l.label}</span> : l.label}</A>)}
+              {gh && <Magnetic strength={0.2}><A to={gh.href} className="v2f-btn solid" data-thumb="" data-cta="oss.hero">{gh.label}<Out /></A></Magnetic>}
+              {forge && <A to={forge.href} className="x-arrow xos-link"><span>{forge.label}</span></A>}
+              {every && <A to={every.href} className="x-arrow xos-link"><span>{every.label}</span></A>}
             </div>
           </div>
-          <FamStage className="xos-stage" from={1.08}>
+          <FamStage className="xos-stage" from={1.05} span={480}>
             <Ledger doc={doc} />
           </FamStage>
         </div>
@@ -266,11 +284,11 @@ export default function OrgPage({ doc }) {
                   </label>
                 )}
                 {R.items.length > 1 && (
-                  <div className="xos-seg" role="group" aria-label="Sort">
-                    {SORTS.map(([k, l]) => (
-                      <button key={k} type="button" aria-pressed={sort === k} onClick={() => setSort(k)}>
+                  <div className="xos-seg" role="group" aria-label={ui('oss_sort')}>
+                    {SORTS.map(([k, l, Icon]) => (
+                      <button key={k} type="button" aria-pressed={sort === k} aria-label={ui(l)} onClick={() => setSort(k)}>
                         {sort === k && <motion.span layoutId="xos-seg" className="xos-seg-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
-                        <span>{l}</span>
+                        <span><Icon /></span>
                       </button>
                     ))}
                   </div>
@@ -278,9 +296,9 @@ export default function OrgPage({ doc }) {
               </div>
             </div>
             {langs.length > 1 && (
-              <div className="xos-chips" role="group" aria-label="Language" data-swipe-own>
+              <div className="xos-chips" role="group" aria-label={ui('oss_language')} data-swipe-own>
                 {['', ...langs].map((l) => (
-                  <button key={l || 'all'} type="button" aria-pressed={lang === l} onClick={() => setLang(l)}>{l || 'All'}</button>
+                  <button key={l || 'all'} type="button" aria-pressed={lang === l} aria-label={l ? undefined : ui('oss_all')} onClick={() => setLang(l)}>{l || <Grid />}</button>
                 ))}
               </div>
             )}
@@ -289,14 +307,6 @@ export default function OrgPage({ doc }) {
                 {[...vis, ...all.filter((r) => !hit.has(r.name))].map((r, k) => (
                   <motion.li key={r.name} layout={calm || all.length > 80 ? false : 'position'} transition={{ type: 'spring', stiffness: 300, damping: 32 }} hidden={!hit.has(r.name)} className={k === 0 && vis.length > 2 ? 'lead' : ''}>
                     <motion.div layoutId={'xos-' + r.name} className="xos-row" style={{ borderRadius: 16 }} transition={MORPH}>
-                      <div className="xos-row-t">
-                        {r.lang ? <span className="xos-lang">{r.lang}</span> : <span />}
-                        <span className="xos-meta">
-                          {r.stars != null && <span className="x-mono" aria-label={r.stars + ' stars'}><Star />{n0(r.stars)}</span>}
-                          {r.forks != null && <span className="x-mono" aria-label={r.forks + ' forks'}><Fork />{n0(r.forks)}</span>}
-                          {r.href && <A to={r.href} className="xos-gh" aria-label={r.name + ' on GitHub'}>↗</A>}
-                        </span>
-                      </div>
                       <button type="button" className="xos-open" onClick={() => setOpen(r.name)} aria-haspopup="dialog" data-cursor="Open">
                         <span className="xos-name"><Name name={r.name} /></span>
                       </button>
@@ -306,23 +316,42 @@ export default function OrgPage({ doc }) {
                         <span className="xos-row-s">
                           {r.commits && <span className="x-mono">{r.commits}</span>}
                           {r.pushed && <span>{r.pushed}</span>}
-                          {r.archived && <span className="xos-arch x-mono">{r.archived}</span>}
                         </span>
-                        {r.forge && <A to={r.forge} className="xos-forge">{r.forgeLabel || 'Forge'}</A>}
+                      </div>
+                      <div className="xos-row-t">
+                        <span className="xos-meta">
+                          {r.lang && <span className="xos-lang">{r.lang}</span>}
+                          {r.archived && <span className="xos-arch x-mono">{r.archived}</span>}
+                          {r.stars != null && <span className="x-mono" aria-label={r.stars + ' stars'}><Star />{n0(r.stars)}</span>}
+                          {r.forks != null && <span className="x-mono" aria-label={r.forks + ' forks'}><Fork />{n0(r.forks)}</span>}
+                        </span>
+                        <span className="xos-ends">
+                          {r.forge && <A to={r.forge} className="xos-forge">{r.forgeLabel || 'Forge'}</A>}
+                          {r.href && <A to={r.href} className="xos-gh" aria-label={r.name}><Out /></A>}
+                        </span>
                       </div>
                     </motion.div>
                   </motion.li>
                 ))}
               </ul>
-              {shown.length === 0 && <p className="xos-empty" role="status">No repository matches “{q}”.</p>}
+              {shown.length === 0 && (
+                <p className="xos-empty" role="status">
+                  <svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M10.5 10.5 14 14M4.6 4.6l4.8 4.8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>
+                  <span className="x-sr">{ui('oss_no_match')}</span><span aria-hidden="true">“{q}”</span>
+                </p>
+              )}
               <AnimatePresence>{cur && <Card key={cur.name} r={cur} onClose={() => setOpen(null)} />}</AnimatePresence>
             </LayoutGroup>
             {paged && shown.length > PAGE ? (
-              <p className="xos-more"><button type="button" className="v2f-btn" onClick={showAll}>{R.more || 'Show all ' + shown.length}</button></p>
+              <p className="xos-more">
+                {R.more
+                  ? <button type="button" className="v2f-btn" onClick={showAll}>{R.more}</button>
+                  : <button type="button" className="v2f-btn xos-plus" onClick={showAll} aria-label={ui('oss_show_all') + ' (' + shown.length + ')'}><i aria-hidden="true">+</i><span className="x-mono" aria-hidden="true">{shown.length - PAGE}</span></button>}
+              </p>
             ) : R.more && more.state !== 'done' && (
               more.state === 'failed'
-                ? <p className="xos-more"><A to={doc.links[0] ? doc.links[0].href : 'https://github.com/' + doc.org} className="v2f-btn">{R.more}</A></p>
-                : <p className="xos-more"><button type="button" className="v2f-btn" onClick={loadAll} disabled={more.state === 'loading'} aria-busy={more.state === 'loading'}>{more.state === 'loading' ? 'Reading GitHub…' : R.more}</button></p>
+                ? <p className="xos-more"><A to={gh ? gh.href : 'https://github.com/' + doc.org} className="v2f-btn">{R.more}</A></p>
+                : <p className="xos-more"><button type="button" className="v2f-btn" onClick={loadAll} disabled={more.state === 'loading'} aria-busy={more.state === 'loading'}>{more.state === 'loading' ? <><i className="xos-spin" aria-hidden="true" /><span className="x-sr">{ui('oss_loading')}</span></> : R.more}</button></p>
             )}
           </div>
         </section>
@@ -331,15 +360,25 @@ export default function OrgPage({ doc }) {
       {doc.extra.map((e, i) => <section className="v2f-sec" key={i}><div className="v2f-wrap"><Loose nodes={e.nodes} /></div></section>)}
 
       {near.length > 0 && (
-        <section className="v2f-sec tight xos-near" aria-label={doc.links[2] ? doc.links[2].label : 'Organizations'}>
+        <section className="v2f-sec tight xos-near" aria-label={every ? every.label : doc.name}>
           <div className="v2f-wrap">
-            <div className="xos-near-h">
-              {doc.links[2] && <A to={doc.links[2].href} className="x-arrow"><span>{doc.links[2].label}</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A>}
-            </div>
-            <FamNext items={near} label={doc.links[2] ? doc.links[2].label : 'Organizations'} />
+            <FamNext items={near} label={every ? every.label : doc.name} />
+            {every && <p className="xos-near-f"><A to={every.href} className="x-arrow"><span>{every.label}</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A></p>}
           </div>
         </section>
       )}
+
+      {/* the close: the organization's own contour, its name and line, and the one ask (the site's ask bar steps aside) */}
+      <section className="x-band xos-close" data-room="dark" aria-labelledby="xos-close-h">
+        <Sigil seed={doc.route + '#close'} data={doc.key.map((f) => f.n)} className="xos-close-s" />
+        <div className="v2f-wrap v2f-grid xos-close-g">
+          <FamLines as="h2" id="xos-close-h" play="view" text={doc.name} className="v2f-display small xos-close-h" />
+          <div className="xos-close-r">
+            {doc.lede && <p className="v2f-lede">{doc.lede}</p>}
+            {gh && <Magnetic strength={0.2}><A to={gh.href} className="v2f-btn xos-close-b" data-cta="oss.close">{gh.label}<Out /></A></Magnetic>}
+          </div>
+        </div>
+      </section>
     </main>
   );
 }

@@ -11,8 +11,13 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { ui } from './famUi';
 
+/* with scripts off the detail simply shows in place (PLAN-COMPONENTS 2.3: JS off is legible) */
+const NOJS = '.v2f-sheet{position:static!important;visibility:visible!important;pointer-events:auto!important}.v2f-sheet-scrim,.v2f-sheet-x,.v2f-spec-btn{display:none!important}.v2f-sheet-p{position:static!important;transform:none!important;width:auto!important;max-height:none!important;box-shadow:none!important;border:1px solid rgba(0,0,0,.08)}';
+
 export default function FamDrawer({ preview, title, children, className = '', label }) {
   const [open, setOpen] = useState(false);
+  const [live, setLive] = useState(false); // inert only once scripts run, so a no-JS reader can still use the links
+  useEffect(() => setLive(true), []);
   const btn = useRef(null);
   const close = useRef(null);
   const id = useId();
@@ -34,10 +39,11 @@ export default function FamDrawer({ preview, title, children, className = '', la
   }, [open]);
   return (
     <>
+      <noscript><style>{NOJS}</style></noscript>
       <button ref={btn} type="button" className={'v2f-spec-btn ' + className} aria-haspopup="dialog" aria-expanded={open} aria-controls={id} aria-label={(label || ui('more')) + (title ? ': ' + title : '')} onClick={() => setOpen(true)}>
         <i aria-hidden="true">+</i>{preview && <span aria-hidden="true">{preview}</span>}
       </button>
-      <div id={id} className="v2f-sheet" data-open={open ? '' : undefined} inert={!open} data-swipe-own>
+      <div id={id} className="v2f-sheet" data-open={open ? '' : undefined} inert={live && !open} data-swipe-own>
         <button type="button" className="v2f-sheet-scrim" tabIndex={-1} aria-hidden="true" onClick={() => setOpen(false)} />
         <div className="v2f-sheet-p" role="dialog" aria-modal="true" aria-label={title || ui('more')}>
           <header className="v2f-sheet-h">

@@ -80,7 +80,7 @@ function Hero() {
         <div className="xov-top-r">
           <p className="a2-lede">A container with a Linux desktop inside it, and a model driving that desktop by screenshot, mouse and keyboard.</p>
           <div className="a2-acts">
-            <a href="#get-started" className="x-btn solid" data-thumb="Get Started">Get Started</a>
+            <a href="#get-started" className="x-btn solid" data-thumb="Get Started" data-cta="operative.hero">Get Started</a>
             <Go to="https://docs.hanzo.ai">View Docs</Go>
           </div>
         </div>
@@ -353,14 +353,14 @@ function Watch() {
       <div className="a2-wrap a2-grid xov-end">
         <div className="xov-read-b">
           <h2 className="a2-title">Read before you run it</h2>
-          <div className="a2-acts"><Go to="https://docs.hanzo.ai" solid>Read the docs</Go><Go to="https://github.com/hanzoai">View on GitHub</Go></div>
+          <div className="a2-acts"><Go to="https://docs.hanzo.ai">Read the docs</Go><Go to="https://github.com/hanzoai">View on GitHub</Go></div>
         </div>
         <div className="xov-get">
           <h2>Get Operative</h2>
           <p>Computer-use harness</p>
           <p className="xov-get-meta x-mono"><span><span>License:</span> Apache-2.0</span><A to="https://github.com/hanzoai">hanzoai</A></p>
           <p className="xov-get-cmd x-mono" aria-hidden="true">{PULL}</p>
-          <Go to="https://platform.hanzo.ai/deploy" solid>Deploy to Cloud</Go>
+          <A to="https://platform.hanzo.ai/deploy" className="x-btn solid" data-cta="operative.close">Deploy to Cloud</A>
         </div>
       </div>
     </section>
@@ -369,7 +369,7 @@ function Watch() {
 
 export default function Operative() {
   return (
-    <main className="a2 xov" style={{ '--acc': '#2f6bff' }} data-acc-btn="">
+    <main className="a2 xov">
       <Hero />
       <Inside />
       <Run />

@@ -224,7 +224,7 @@ function Hero() {
         <div className={`${P}-hero-r`}>
           <p className="a2-lede">{HERO.lede}</p>
           <div className="a2-acts">
-            <A to={HERO.acts[0][1]} className="x-btn solid" data-thumb={HERO.acts[0][0]}>{HERO.acts[0][0]}</A>
+            <A to={HERO.acts[0][1]} className="x-btn solid" data-thumb={HERO.acts[0][0]} data-cta="slack.hero">{HERO.acts[0][0]}</A>
             <A to={HERO.acts[1][1]} className="x-btn">{HERO.acts[1][0]}</A>
           </div>
           <p className={`${P}-docs`}><More to={HERO.acts[2][1]}>{HERO.acts[2][0]}</More></p>
@@ -367,14 +367,14 @@ function Close() {
           <h2 id="xsq-close-h" className="a2-display s">{CLOSE.lede}</h2>
           <p className="a2-lede">{CLOSE.note}</p>
           <div className="a2-acts">
-            <A to={CLOSE.acts[0][1]} className="x-btn solid">{CLOSE.acts[0][0]}</A>
+            <A to={CLOSE.acts[0][1]} className="x-btn solid" data-cta="slack.close">{CLOSE.acts[0][0]}</A>
             <A to={CLOSE.acts[1][1]} className="x-btn">{CLOSE.acts[1][0]}</A>
             <A to={CLOSE.acts[2][1]} className="x-btn">{CLOSE.acts[2][0]}</A>
           </div>
         </div>
         <div className={`${P}-get`}>
           <h2>Get Hanzo Tag</h2>
-          <Go to="https://platform.hanzo.ai/deploy" solid>Deploy to Cloud</Go>
+          <Go to="https://platform.hanzo.ai/deploy">Deploy to Cloud</Go>
         </div>
       </div>
     </section>
@@ -383,7 +383,7 @@ function Close() {
 
 export default function Slack() {
   return (
-    <main className={`a2 ${P}`} style={{ '--acc': '#611f69' }} data-acc-btn="">
+    <main className={`a2 ${P}`}>
       <Hero />
       <Scene />
       <Notes />

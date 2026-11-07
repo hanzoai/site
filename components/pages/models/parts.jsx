@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Copy } from '../../ui';
 import { A } from '../../kit';
+import { SNAP } from './rates';
 
 export const money = (v) => (v == null ? '—' : v === 0 ? 'Free' : '$' + (v < 1 ? v.toFixed(3) : v.toFixed(2)));
 export const rateText = (r) => (r ? `${money(r.in)} in · ${money(r.out)} out, per million tokens` : '—');
@@ -28,7 +29,7 @@ export function useCatalog(need) {
   }, [need]);
   return map;
 }
-export const rateFrom = (cat, id, own) => own || (cat && (cat[id] || cat[id.replace(/^hanzo\//, '')])) || null;
+export const rateFrom = (cat, id, own) => own || (cat && (cat[id] || cat[id.replace(/^hanzo\//, '')])) || SNAP[id] || SNAP[id.replace(/^hanzo\//, '')] || null;
 
 /* ---------- signature: the sibling field ----------
    Every model from the same maker, placed by context window (across) and output rate (up). A light sweeps across it

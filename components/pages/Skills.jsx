@@ -85,7 +85,7 @@ function Hero() {
           <p className="a2-kick"><A to={GH} className="xsk-repo">hanzoai/skills</A></p>
           <A2Lines as="h1" id="xsk-h1" className="a2-display xsk-h1" lines={['Skills']} now />
           <p className="a2-lede">Development knowledge your coding agent loads <mark>only when it needs it</mark></p>
-          <div className="a2-acts"><span data-thumb="View on GitHub" data-href={GH} style={{ display: 'contents' }}><Go to={GH} solid>View on GitHub</Go></span></div>
+          <div className="a2-acts"><A to={GH} className="x-btn solid" data-thumb="View on GitHub" data-cta="skills.hero">View on GitHub</A></div>
         </div>
         <motion.div className="xsk-hero-obj" initial={{ opacity: 0, y: 40, rotate: 1.5 }} animate={{ opacity: 1, y: 0, rotate: 0 }} transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}>
           <Wake />
@@ -201,7 +201,7 @@ function Get() {
           <h2>Get Skills</h2>
           <p>Reusable agent skills</p>
           <p className="xsk-get-meta x-mono"><span><span>License:</span> Apache-2.0</span><A to={GH}>hanzoai</A></p>
-          <Go to="https://platform.hanzo.ai/deploy" solid>Deploy to Cloud</Go>
+          <A to="https://platform.hanzo.ai/deploy" className="x-btn solid" data-cta="skills.close">Deploy to Cloud</A>
         </div>
       </div>
     </section>
@@ -210,7 +210,7 @@ function Get() {
 
 export default function Skills() {
   return (
-    <main className="a2 xsk" style={{ '--acc': '#ffd60a' }}>
+    <main className="a2 xsk">
       <Hero />
       <Trade />
       <Essay />
