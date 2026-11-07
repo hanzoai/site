@@ -315,39 +315,42 @@ function Notes() {
   );
 }
 
-/* The setup card: three steps connect in turn, then the first exchange plays in the channel. */
+/* The setup card: three steps connect in turn beside the channel, then the first exchange plays there and stays.
+   Hanzo's own sentence for this ("Connect @Hanzo to your Slack workspace in three steps.") heads the close, where
+   the live page has it, so the card carries its own name as the section's label. The demo plays once: the ask is
+   already in the channel (so the dark box is never empty), the steps tick, Hanzo answers, and it ends at rest. */
 function Setup() {
   const ref = useRef(null);
-  const live = useInView(ref, { amount: 0.2 });
+  const live = useInView(ref, { amount: 0.6 });
   const calm = useCalm();
-  const [k, setK] = useState(9); // the HTML shows the finished exchange; the browser replays it from the start
-  const began = useRef(false);
+  const [k, setK] = useState(9); // the HTML shows the finished exchange; the browser plays it once from the ask
+  const pos = useRef(-1); // -1: not begun; it pauses while out of view and resumes where it was
   useEffect(() => {
-    if (!live || calm) return;
-    if (!began.current) { began.current = true; setK(0); }
-    let t = 0;
-    const tick = () => { setK((v) => (v >= 9 ? 0 : v + 1)); t = setTimeout(tick, 1300); };
-    t = setTimeout(tick, 1300);
-    return () => clearTimeout(t);
+    if (!live || calm || pos.current >= 9) return;
+    if (pos.current < 0) { pos.current = 0; setK(0); }
+    const id = setInterval(() => {
+      pos.current = Math.min(9, pos.current + 1);
+      setK(pos.current);
+      if (pos.current >= 9) clearInterval(id);
+    }, 1000);
+    return () => clearInterval(id);
   }, [live, calm]);
   const s = calm ? 9 : k;
   return (
     <section className={`a2-sec ${P}-setup`} ref={ref} aria-labelledby="xsq-setup-h">
-      <div className="a2-wrap a2-grid">
-        <div className={`${P}-setup-copy`}>
-          <A2Lines id="xsq-setup-h" className="a2-display s" lines={['Connect @Hanzo', 'in three steps']} />
-          <p className="a2-lede">{CLOSE.lede}</p>
-        </div>
+      <div className="a2-wrap">
         <div className={`${P}-card`}>
-          <p className={`${P}-card-t`}><span>{SETUP.title}</span><b className={s >= 3 ? 'on' : ''}><i aria-hidden="true" />{SETUP.verified}</b></p>
-          <div className={`${P}-card-h`}><Face who="hanzo" p={P} size={34} /><span><b>{SETUP.name}</b><span>{SETUP.sub}</span></span></div>
-          <ol className={`${P}-card-steps`}>
-            {SETUP.steps.map(([t, d], i) => <li key={t} className={s > i ? 'on' : ''}><i aria-hidden="true">{s > i ? '✓' : i + 1}</i><span><b>{t}</b><span>{d}</span></span></li>)}
-          </ol>
-          <p className={`${P}-card-m`}><span>{SETUP.model}</span><span>{SETUP.retention}</span></p>
+          <div className={`${P}-card-a`}>
+            <p className={`${P}-card-t`}><span>{SETUP.title}</span><b className={s >= 3 ? 'on' : ''}><i aria-hidden="true" />{SETUP.verified}</b></p>
+            <div className={`${P}-card-h`}><Face who="hanzo" p={P} size={34} /><span><b id="xsq-setup-h">{SETUP.name}</b><span>{SETUP.sub}</span></span></div>
+            <ol className={`${P}-card-steps`}>
+              {SETUP.steps.map(([t, d], i) => <li key={t} className={s > i ? 'on' : ''}><i aria-hidden="true">{s > i ? '✓' : i + 1}</i><span><b>{t}</b><span>{d}</span></span></li>)}
+            </ol>
+            <p className={`${P}-card-m`}><span>{SETUP.model}</span><span>{SETUP.retention}</span></p>
+          </div>
           <div className={`${P}-mini`}>
             <p className={`${P}-mini-h`}><b>{SETUP.channel}</b><span>{SETUP.artifacts}</span></p>
-            <div className={`${P}-mini-m` + (s >= 3 ? ' in' : '')}><Msg m={ASK} p={P} /></div>
+            <div className={`${P}-mini-m in`}><Msg m={ASK} p={P} /></div>
             <p className={`${P}-busy` + (s === 4 ? ' in' : '')} aria-hidden="true"><i /><i /><i /></p>
             <div className={`${P}-mini-m` + (s >= 5 ? ' in' : '')}>
               <Msg m={ANSWER} p={P} />
@@ -450,7 +453,7 @@ function Platform() {
         </div>
         <ol className={`${P}-plat-l`}>
           {PLATFORM.items.map(([t, d], k) => (
-            <li key={t} className={i === k ? 'on' : ''} onPointerEnter={() => setI(k)} onClick={() => setI(k)}>
+            <li key={t} className={i === k ? 'on' : ''} tabIndex={0} aria-current={i === k ? 'true' : undefined} onPointerEnter={() => setI(k)} onFocus={() => setI(k)} onClick={() => setI(k)}>
               <span className={`${P}-mark m${k}`} aria-hidden="true"><i /><i /><i /><i /></span>
               <h3>{t}</h3><p>{d}</p>
             </li>
@@ -470,7 +473,8 @@ function Questions() {
   return (
     <section className={`a2-sec ${P}-faq`} aria-labelledby="xsq-faq-h">
       <div className="a2-wrap a2-grid">
-        <div className={`${P}-faq-h`}><h2 id="xsq-faq-h" className="a2-display s">Questions</h2></div>
+        {/* Hanzo's page gives its questions no label of its own: the heading is for screen readers only */}
+        <h2 id="xsq-faq-h" className={`${P}-sr`}>Questions</h2>
         <div className={`${P}-faq-l`}><A2Faq items={FAQ} /></div>
       </div>
     </section>

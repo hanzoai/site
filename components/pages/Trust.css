@@ -181,7 +181,7 @@
   .xtr-fact dd { grid-column: 2; grid-row: 1 / -1; align-self: start; z-index: 1; display: flex; flex-direction: column; gap: 10.5px; padding: 64px 44px 44px; opacity: 0; transform: translate3d(0, 16px, 0); transition: opacity var(--b) var(--pf-emph), transform var(--b) var(--pf-emph); pointer-events: none; }
   .xtr-fact[data-on='true'] dd { opacity: 1; transform: none; pointer-events: auto; }
   /* the index starts small and grows as its stance takes the stage (64 → 84px, a transform), then rests */
-  .xtr .xtr-fact-big { margin-bottom: 6.5px; font-size: 84px; line-height: .9; transform: scale(.762); transform-origin: 0 100%; transition: transform var(--5, 500ms) var(--pf-emph) 90ms; }
+  .xtr .xtr-fact-big { margin-bottom: 6.5px; font-size: 84px; line-height: .9; transform: scale(.762); transform-origin: 0 100%; transition: transform 500ms var(--pf-emph) 90ms; }
   .xtr-fact[data-on='true'] .xtr-fact-big { transform: none; }
   .xtr-fact-in { max-width: 56ch; }
 }
@@ -204,28 +204,45 @@
 @media (hover: hover) { .pf-btn.xtr-light:hover { background: #fff; } }
 
 @media (max-width: 899px) {
-  .xtr-hero { padding: 44px 0 72px; }
-  .xtr-hero-top .pf-btn { width: 100%; height: auto; min-height: 52px; padding: 14px 20px; line-height: 1.25; }
+  .xtr-hero { padding: 44px 0 27px; }
+  /* the ask as an intended slab: one line where it fits, a balanced two-line block with a 16px radius where it does not */
+  .xtr .pf-btn.solid { width: 100%; height: auto; min-height: 56px; padding: 12px 16px; border-radius: 16px; font-size: 15px; line-height: 1.25; text-align: center; text-wrap: balance; }
   .xtr-docs-g, .xtr-stand-g, .xtr-facts-g, .xtr-found, .xtr-band { grid-template-columns: minmax(0, 1fr); row-gap: 27px; }
-  .xtr-locker { grid-template-columns: minmax(0, 1fr); border-radius: 16px; }
-  .xtr-cab-w { padding: 17px 30px 17px 10.5px; }
+  /* the cabinet: each drawer one row (number, title, its mark on the same line); the open drawer pulls 8px and its
+     contents ride directly under it (Locker() carries the tray there; the drawers below step down) */
+  .xtr-locker { display: block; padding-bottom: 17px; border-radius: 16px; }
+  .xtr-cab-w { padding: 17px 17px 0 10.5px; }
   .xtr-locker-h { font-size: 12px; letter-spacing: .1em; }
-  .xtr-drawer { grid-template-columns: 26px minmax(0, 1fr); grid-template-rows: auto auto; row-gap: 6.5px; min-height: 64px; padding: 10.5px 36px 10.5px 10.5px; font-size: 15px; }
-  .xtr-dr-n { font-size: 14px; grid-row: span 2; }
-  .xtr-dr-t { white-space: normal; }
-  .xtr-chip { justify-self: start; font-size: 14px; }
-  .xtr-tray { padding: 27px 17px; border-top: 1px solid var(--line); }
+  .xtr-drawer { z-index: 1; grid-template-columns: 20px minmax(0, 1fr) auto; column-gap: 8px; min-height: 56px; padding: 8px 28px 8px 12px; font-size: 15px; line-height: 1.25; }
+  .xtr-dr-n { font-size: 13px; }
+  .xtr-dr-t { white-space: normal; text-wrap: balance; }
+  .xtr-chip { height: 24px; padding: 0 6.5px; gap: 5px; font-size: 13px; }
+  .xtr-handle { right: 10px; width: 12px; }
+  .xtr-tray { margin: 6.5px 17px 0 10.5px; padding: 17px; border: 1px solid var(--line); border-radius: 12px; }
+  .xtr-tray-n, .xtr-tray-p > b { display: none; } /* the drawer right above already says which */
+  .xtr-tray-p { gap: 0; }
+  .xtr-tray-p p { font-size: 15px; line-height: 1.55; }
   .xtr-papers { grid-template-columns: minmax(0, 1fr); gap: 17px; padding: 0; }
-  .xtr-paper { min-height: 0; }
+  .xtr-paper { min-height: 0; gap: 10.5px; padding: 20px; }
+  .xtr-paper b { font-size: 21px; }
+  .xtr-paper-r { display: none; }
+  .xtr-paper-go { position: absolute; right: 13px; top: 13px; }
   .xtr-paper.p0, .xtr-paper.p1 { transform: none; }
   .xtr-say { font-size: 21px; }
-  .xtr-stand-p { grid-template-columns: minmax(0, 1fr); margin-top: 27px; }
+  /* the two follow-ups: a quieter measure beside a hairline, so the room is the inking statement first */
+  .xtr-stand-p { grid-template-columns: minmax(0, 1fr); gap: 13px; margin-top: 27px; padding: 0 0 0 17px; border-top: 0; border-left: 1px solid var(--line); }
+  .xtr-stand-p .pf-body { font-size: 15px; line-height: 1.55; }
+  .pf-r .pf-sec.xtr-stand { padding-top: 56px; padding-bottom: 56px; }
   .xtr-find { grid-template-columns: minmax(0, 1fr) auto; row-gap: 17px; }
   .xtr-find-f { grid-column: 1 / -1; grid-row: 2; }
   .xtr-find-n b { font-size: 44px; }
-  .xtr-grp { grid-template-columns: 40px minmax(0, 1fr); row-gap: 10.5px; padding: 27px 0; }
-  .xtr-grp-n { font-size: 14px; }
-  .xtr-dots { grid-column: 2; justify-content: flex-start; padding-top: 0; }
+  /* the controls: titles run the full width, the + at the row's right edge, the number left to the sheet */
+  .xtr-grp { grid-template-columns: minmax(0, 1fr); row-gap: 10.5px; padding: 20px 0; }
+  .xtr-grp-n { display: none; }
+  .xtr-grp-h { gap: 10.5px; }
+  .xtr-grp-t { order: 1; flex: 1; min-width: 0; }
+  .xtr-grp-h .pf-plus { order: 2; }
+  .xtr-dots { grid-column: 1; justify-content: flex-start; padding-top: 0; }
   .xtr-grp-t { font-size: 21px; }
   .xtr-grp-l, .xtr-ans { margin-left: 0; }
   .xtr-facts-t { font-size: 32px; }
@@ -234,7 +251,7 @@
   .xtr-found-p { font-size: 17px; }
   /* 44px tap heights on the arrow links (tray, the no-match note) */
   .xtr .x-arrow { display: inline-flex; align-items: center; min-height: 44px; }
-  .xtr-tray-p .x-arrow { padding-top: 0; margin-top: 6.5px; }
+  .xtr-tray-p .x-arrow { padding-top: 6.5px; margin-top: auto; }
   /* where we stand: an accordion, one stance open, a + that turns to × */
   .xtr-facts { padding: 72px 0; }
   .xtr-facts-h { margin-bottom: 27px; }
@@ -248,6 +265,7 @@
   .xtr-fact-pm::after { transform: rotate(90deg); }
   .xtr-fact[data-open='true'] .xtr-fact-pm { transform: rotate(45deg); }
   .xtr-fact dd { padding: 0 0 27px 44px; }
+  .xtr-fact dd[hidden] { padding-bottom: 0; } /* a closed row is just its 64px button */
   .xtr-fact-in { font-size: 16px; }
   .pf-plus.xtr-g-btn { min-width: 44px; justify-content: center; }
   .xtr-fact[data-open='true'] .xtr-fact-in { animation: xtr-open var(--b) var(--pf-emph) both; }

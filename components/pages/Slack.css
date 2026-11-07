@@ -43,7 +43,8 @@
 .xsq-win-st { display: inline-flex; align-items: center; gap: 8px; margin-left: auto; flex: none; padding: 6px 10px; border-radius: 999px; background: #1a1a1e; font: 500 12.5px/1 var(--mono); color: #d1d1d6; }
 .xsq-win-st i { width: 7px; height: 7px; border-radius: 50%; background: #b5b5b5; animation: xsq-pulse 1.4s var(--ease) infinite; }
 .xsq-win-st.ok i { background: #b6b6b6; animation: none; }
-.xsq-win-body { display: grid; grid-template-columns: 196px minmax(0, 1fr) minmax(0, 372px); height: 560px; }
+/* one row that may not grow past the body: the thread then scrolls inside it and the newest step stays in view */
+.xsq-win-body { display: grid; grid-template-columns: 196px minmax(0, 1fr) minmax(0, 372px); grid-template-rows: minmax(0, 1fr); height: 560px; }
 
 .xsq-side { padding: 16px 12px; background: var(--sq-side); border-right: 1px solid var(--sq-line); font-size: 14px; color: #a1a1a6; overflow: hidden; }
 .xsq-team { display: grid; gap: 4px; margin: 0 6px 16px; }
@@ -58,7 +59,7 @@
 .xsq-grp li em.ok { background: rgba(182, 182, 182, .16); color: #c4c4c4; }
 .xsq-sess.archived .xsq-grp li.on { opacity: .45; text-decoration: line-through; }
 
-.xsq-thread { display: flex; flex-direction: column; min-width: 0; border-right: 1px solid var(--sq-line); }
+.xsq-thread { display: flex; flex-direction: column; min-width: 0; min-height: 0; border-right: 1px solid var(--sq-line); }
 .xsq-th-h { display: flex; align-items: center; gap: 12px; height: 56px; padding: 0 16px; border-bottom: 1px solid var(--sq-line); }
 .xsq-th-h > p { display: flex; align-items: baseline; gap: 10px; min-width: 0; margin: 0; overflow: hidden; white-space: nowrap; }
 .xsq-th-h > p b { color: #f5f5f7; font-size: 15px; font-weight: 600; }
@@ -75,6 +76,7 @@
 
 /* messages arrive bottom-up, the newest always in view */
 .xsq-msgs { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 14px; padding: 16px 18px 18px; overflow: hidden; }
+.xsq-msgs > * { flex: none; }
 .xsq-msgs > .xsq-busy { flex: none; margin-left: 44px; }
 .xsq-swap { display: inline-grid; }
 .xsq-swap > span { grid-area: 1 / 1; }
@@ -185,7 +187,7 @@
 .xsq-notes-h .a2-headline { margin-bottom: 20px; }
 .xsq-notes-h .a2-body { font-size: 15px; }
 .xsq-points li { transition: opacity .3s cubic-bezier(.4, 0, .2, 1); }
-.xsq-points li:not(.on) { opacity: .56; }
+.xsq-points li:not(.on) { opacity: .5; }
 .xsq-points li > span { transition: color .3s cubic-bezier(.4, 0, .2, 1); }
 
 /* the crop: a light piece of the same channel; the part the promise you are reading talks about is drawn in full */
@@ -218,18 +220,20 @@
 .xsq-crop-log span { font: 500 12.5px/1.4 var(--mono); color: var(--soft); }
 .xsq-notes-l { grid-column: 7 / span 6; }
 .xsq-points { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
-.xsq-points li { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 12px; padding: 28px 0; border-bottom: 1px solid var(--line); }
+.xsq-points li { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 12px; padding: 22px 0; border-bottom: 1px solid var(--line); }
 .xsq-points li > span { font-size: 13px; color: var(--acc); padding-top: 6px; }
-.xsq-points li p { margin: 0; font-size: clamp(19px, 1.6vw, 23px); line-height: 1.45; letter-spacing: -.01em; color: var(--ink); }
+/* every promise is set at 21px and drawn at 17px (scale .81) while unlit; the one being read grows back to 21px by
+   transform alone, so its row never reflows and the text never overflows its column */
+.xsq-points li p { margin: 0; font-size: 21px; line-height: 1.45; letter-spacing: -.01em; color: var(--ink); transform-origin: 0 0; transform: scale(.81); transition: transform .4s cubic-bezier(.16, 1, .3, 1); }
+.xsq-points li.on p { transform: none; }
 .xsq-safe { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 14px; margin: 32px 0 0; padding: 22px; border-radius: var(--r-card); background: var(--card); font-size: 16px; line-height: 1.55; color: var(--soft); }
 .xsq-safe > i { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--acc); color: #fff; font-size: 12px; font-style: normal; }
 
 /* setup */
 .xsq-setup { background: #fafafa; }
-.xsq-setup .a2-grid { align-items: center; row-gap: 48px; }
-.xsq-setup-copy { grid-column: 1 / span 5; }
-.xsq-setup-copy .a2-lede { margin-top: 28px; }
-.xsq-setup .xsq-card { grid-column: 7 / span 6; border-radius: var(--r-hero); padding: 28px; }
+/* the card is the section: steps on the left, the channel they connect on the right, both on one screen */
+.xsq-setup .xsq-card { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 24px; align-items: stretch; border-radius: var(--r-hero); padding: 24px; }
+.xsq-card-a { min-width: 0; }
 /* setup */
 .xsq-setup { overflow: hidden; background: #fafafa; }
 .xsq-setup-grid { position: relative; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(32px, 5vw, 80px); align-items: center; }
@@ -252,7 +256,7 @@
 .xsq-card-steps b { font-size: 15px; font-weight: 600; }
 .xsq-card-steps li > span span { font: 400 12.5px/1.35 var(--mono); color: var(--soft); overflow-wrap: anywhere; }
 .xsq-card-m { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; margin: 14px 2px; font: 500 12.5px/1 var(--mono); color: var(--soft); }
-.xsq-mini { padding: 14px; border-radius: 16px; background: var(--sq-win); color: #f5f5f7; height: 286px; overflow: hidden; display: flex; flex-direction: column; gap: 12px; }
+.xsq-mini { padding: 14px; border-radius: 16px; background: var(--sq-win); color: #f5f5f7; min-height: 220px; overflow: hidden; display: flex; flex-direction: column; gap: 12px; }
 .xsq-mini-h { display: flex; justify-content: space-between; gap: 10px; margin: 0; font-size: 14px; }
 .xsq-mini-h span { font: 400 12px/1.3 var(--mono); color: #86868b; text-align: right; }
 .xsq-mini-m { opacity: 0; transform: translateY(10px); transition: opacity .5s var(--ease), transform .6s var(--ease); }
@@ -348,7 +352,9 @@
 .xsq-plat-drop.on::before { background: var(--ink); border-color: var(--ink); }
 .xsq-plat-drop.on::after { transform: scaleY(1); }
 .xsq-plat-l { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.xsq-plat-l li { padding: 8px 24px 8px 0; cursor: default; }
+.xsq-plat-l li { padding: 8px 24px 8px 0; border-radius: var(--r-card); cursor: pointer; outline: none; transition: transform .09s cubic-bezier(0, 0, .2, 1); }
+.xsq-plat-l li:active { transform: scale(.98); }
+.xsq-plat-l li:focus-visible { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--ink); }
 .xsq-plat-l li + li { padding-left: 24px; }
 .xsq-plat-l h3 { margin: 0 0 10px; font-size: 17px; font-weight: 580; letter-spacing: -.015em; color: var(--faint); transition: color .15s cubic-bezier(0, 0, .2, 1); }
 .xsq-plat-l li.on h3 { color: var(--ink); }
@@ -382,12 +388,14 @@
 .xsq-rt { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink); text-decoration: none; font-size: 15px; transition: border-color .2s, background .2s; }
 @media (hover: hover) { .xsq-rt:hover { border-color: rgba(0, 0, 0, .2); background: var(--card); } }
 
-/* questions + close */
-.xsq-faq, .xsq-close { padding-top: 72px; }
+/* questions + close; every section after the scene opens 72px under the one before it, so one object hands over to
+   the next instead of a page of white between them */
+.xsq-setup, .xsq-what, .xsq-plat, .xsq-faq, .xsq-close { padding-top: 72px; }
+.xsq-notes, .xsq-setup, .xsq-what { padding-bottom: clamp(72px, 7vw, 116px); }
 .xsq-plat, .xsq-faq { padding-bottom: clamp(72px, 7vw, 116px); }
 .xsq-faq .a2-grid { row-gap: 32px; align-items: start; }
-.xsq-faq-h { grid-column: 1 / span 4; }
-.xsq-faq-l { grid-column: 5 / span 8; }
+.xsq-faq-l { grid-column: 1 / span 8; }
+.xsq-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
 .xsq-close .a2-grid { align-items: end; row-gap: 48px; }
 .xsq-close-copy { grid-column: 1 / span 8; }
 .xsq-close-copy .a2-display { max-width: 18ch; }
@@ -435,8 +443,8 @@
   .xsq-tabs button { height: 40px; }
   .xsq-cmp { height: 120px; }
   .xsq-notes-h { position: static; }
-  .xsq-setup .xsq-card { padding: 18px; }
-  .xsq-mini { height: 320px; }
+  .xsq-setup .xsq-card { grid-template-columns: minmax(0, 1fr); gap: 18px; padding: 18px; }
+  .xsq-mini { min-height: 300px; }
   .xsq-rooms { grid-template-columns: minmax(0, 1fr); }
   .xsq-rooms-l button { min-height: 56px; padding: 10px 4px; }
   .xsq-rooms-l .a2-title { font-size: 17px; }

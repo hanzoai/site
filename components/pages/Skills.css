@@ -178,10 +178,11 @@
    (--o scrubs 0 to 1); pills and files share one bottom-aligned block. */
 .xsk-thread { padding: clamp(72px, 7vw, 104px) 0; clip-path: inset(0 calc((1 - var(--o, 1)) * var(--gut)) round calc((1 - var(--o, 1)) * 24px)); }
 .xsk-thread .a2-grid { align-items: end; row-gap: 40px; }
-.xsk-thread-copy { grid-column: 1 / span 5; padding-bottom: 4px; }
-.xsk-steps { display: flex; flex-wrap: wrap; gap: 8px; }
-.xsk-rail { position: relative; display: block; max-width: 340px; height: 2px; margin-top: 22px; border-radius: 2px; background: rgba(255, 255, 255, .14); overflow: hidden; }
-.xsk-rail::after { content: ''; position: absolute; inset: 0; background: #fafafa; transform-origin: 0 50%; transform: scaleX(var(--r, 1)); transition: transform .4s var(--e-io); }
+/* desktop: the three steps stand in a column, each level with its file, and a rail beside them fills as the thread is read */
+.xsk-thread-copy { grid-column: 1 / span 4; align-self: stretch; display: flex; gap: 24px; }
+.xsk-steps { order: 2; display: flex; flex-direction: column; justify-content: space-around; align-items: flex-start; gap: 8px; }
+.xsk-rail { position: relative; display: block; flex: none; width: 2px; margin: 40px 0; border-radius: 2px; background: rgba(255, 255, 255, .14); overflow: hidden; }
+.xsk-rail::after { content: ''; position: absolute; inset: 0; background: #fafafa; transform-origin: 50% 0; transform: scaleY(var(--r, 1)); transition: transform .4s var(--e-io); }
 .xsk-steps button { position: relative; isolation: isolate; height: 48px; padding: 0 20px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .16); background: none; color: #a3a3a3; font: 500 16px/1 var(--sans); cursor: pointer; transition: transform .09s var(--e-out); }
 .xsk-steps button::before { content: ''; position: absolute; inset: -1px; z-index: -1; border-radius: inherit; background: #fafafa; opacity: 0; transition: opacity .15s var(--e-out); }
 .xsk-steps button[aria-pressed='true'] { color: #000; border-color: #fafafa; }
@@ -192,7 +193,7 @@
   .xsk-steps button:hover { border-color: rgba(255, 255, 255, .4); color: #fafafa; }
   .xsk-steps button[aria-pressed='true']:hover { color: #000; border-color: #fafafa; }
 }
-.xsk-files { grid-column: 6 / span 7; display: grid; gap: 16px; }
+.xsk-files { grid-column: 5 / span 8; display: grid; gap: 16px; }
 .xsk-f { position: relative; margin-left: calc(var(--i) * 16%); width: 62%; display: grid; gap: 10px; padding: 20px 22px; border-radius: 20px; background: #171717; border: 1px solid rgba(255, 255, 255, .08); transform: translateY(8px); transition: transform .5s var(--e-em), opacity .3s var(--e-out); }
 .xsk-f::after { content: ''; position: absolute; inset: -1px; border-radius: inherit; border: 1px solid rgba(255, 255, 255, .4); opacity: 0; transition: opacity .3s var(--e-out); pointer-events: none; }
 .xsk-f > * { opacity: .25; transition: opacity .3s var(--e-out); }
@@ -275,10 +276,15 @@
   .xsk-pt-vis .xsk-lk-file { padding: 16px 18px; gap: 8px; }
   .xsk-pt-vis .xsk-lk-v { height: 24px; }
   .xsk-pt-vis .xsk-sc-new .xsk-agent { padding: 14px; }
+  .xsk-pt-vis .xsk-sc-new .xsk-shelf li { height: 32px; }
   .xsk-pt-vis .xsk-sc-new .xsk-shelf li:nth-child(n + 4):not(.xsk-sc-row) { display: none; }
   .xsk-pt-vis .xsk-sc-drop { width: 112px; padding: 12px; margin-bottom: -18px; }
   .xsk-thread { padding: 56px 0; }
   .xsk-thread .a2-grid { row-gap: 32px; }
+  .xsk-thread-copy { flex-direction: column; gap: 20px; }
+  .xsk-steps { order: 0; flex-direction: row; flex-wrap: wrap; justify-content: flex-start; }
+  .xsk-rail { order: 1; width: 100%; height: 2px; margin: 0; }
+  .xsk-rail::after { transform-origin: 0 50%; transform: scaleX(var(--r, 1)); }
   .xsk-f { width: 80%; margin-left: calc(var(--i) * 10%); padding: 18px; }
   .xsk-get-card { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'copy' 'shelf' 'ask'; padding: 28px 24px; gap: 24px; }
   .xsk-get-card h3 { font-size: 21px; }
