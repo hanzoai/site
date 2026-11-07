@@ -3,7 +3,7 @@
 Page file: `components/pages/ExtensionPage.jsx` (+ `ExtensionPage.css`, shared `components/v2/AppType.css`, `AppScenes`, `AppSheet`, `x-edison/AppLines`) · gallery: `docs/gallery/extension/` · metric id: `extension_download`
 
 Open copy questions for James: none decided. The hero now leads with "Download Extension" (Hanzo's own label from the page's closing section) as its one solid; the live hero's "Availability" and "Use Hanzo Chat" stay, as text links, with the same words and links.
-Shared changes requested: see `docs/requests/apps1.md` (header ask label per page, a desktop-off mode for the ask bar, a `Band` with `id`). Until then `<main data-ask="off">` and the page closes on its own band with `<Cta id>`.
+Shared changes requested: `docs/requests/apps1.md` (a `Band` with an `id` prop). The ask is settled by the shared system: the header's solid "Try Hanzo" carries it at every width, with no desktop bar, and the page's own `data-thumb` ask rides the slim phone bar. The page closes on its own band with `<Cta id>`.
 Forks this page deleted: the kicker over the h1 ("Browser extension", kept in "Browser extension + MCP bridge" and the spec drawer) and over "Mostly the work…" (now a caption under it); skeleton bars in the windows' page and tabs and in the "Read a page as text" picture (now Hanzo's own page title, line and model images through kit `Img`); raw `<img>`; the solid "Availability" and the solid row button (now text links and quiet buttons); the second ending ("Get Extension" card with a solid "Deploy to Cloud", now quiet above the band); spring transitions; overlapping point crossfades; cursor labels; shadows on objects.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -37,7 +37,7 @@ Done here: At 1470×801 the h1 (52px), lede, the one ask and the whole fanned st
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
-- [x] Sticky ask in header and bar after the hero, same label (the bar is off by request, see apps1.md)
+- [x] Sticky ask in header and bar after the hero (shared system: the header's solid "Try Hanzo" at every width, no desktop bar; on phones the slim quiet bar carries this page's `data-thumb` ask once the hero button leaves)
 - [x] Copy button copies exactly the displayed text; failure never says Copied (n/a: no copy button on this page)
 - [x] `data-cta` and `data-thumb` on every primary
 
