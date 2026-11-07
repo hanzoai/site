@@ -17,7 +17,7 @@
    Greys only: colour arrives through Hanzo's own model artwork. Every word is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
-import { EASE, Copy, Magnetic } from '../ui';
+import { EASE, Copy, Magnetic, Btn } from '../ui';
 import { A, Img } from '../kit';
 import { useOpener } from '../Opener';
 import { href } from '../../lib/route';
@@ -39,8 +39,9 @@ const ROUTED = MODELS.filter((m) => m.slug !== 'enso');
 const ENSO = MODELS[0];
 const pic = (slug) => `/models/${slug}.webp`;
 
-/* The one ask, with its handoff state: the press answers at once (a ring turns in place of the arrow), then it leaves. */
-function Open({ className = '', slot = 'hero', children = 'Open Hanzo Chat' }) {
+/* The one ask, with its handoff state: the press answers at once (the kit's ring turns in place of the label), then
+   it leaves for Hanzo Chat. */
+function Open({ className = '', slot = 'hero' }) {
   const [busy, setBusy] = useState(false);
   const go = (e) => {
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
@@ -50,12 +51,10 @@ function Open({ className = '', slot = 'hero', children = 'Open Hanzo Chat' }) {
   };
   return (
     <Magnetic strength={0.18}>
-      <A to={OPEN} className={'x-btn solid cht-open ' + className} onClick={go} aria-busy={busy || undefined} data-thumb="Open Hanzo Chat" data-cta={'chat.' + slot}>
-        <span>{children}</span>
-        <i className={'cht-open-i' + (busy ? ' busy' : '')} aria-hidden="true">
-          <svg viewBox="0 0 16 16" width="15" height="15"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
-        </i>
-      </A>
+      <Btn href={href(OPEN)} solid busy={busy} className={'cht-open ' + className} onClick={go} data-thumb="Open Hanzo Chat" data-cta={'chat.' + slot}>
+        <span>Open Hanzo Chat</span>
+        <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      </Btn>
     </Magnetic>
   );
 }
@@ -92,7 +91,7 @@ function Msg({ m, live }) {
   const who = MODELS.find((x) => x.slug === m.model) || ENSO;
   return (
     <motion.li className="cht-a" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: EASE }}>
-      <span className="cht-who"><img src={pic(who.slug)} alt="" width="18" height="18" />{who.name}</span>
+      <span className="cht-who"><Img src={pic(who.slug)} alt="" w={18} h={18} />{who.name}</span>
       {m.state === 'wait' && <span className="cht-dots" role="img" aria-label={ENSO.name}><i /><i /><i /></span>}
       {m.state === 'stream' && <p className="cht-text"><span ref={live} /><span className="cht-caret" aria-hidden="true" /></p>}
       {m.state === 'done' && <p className="cht-text">{m.text}</p>}
@@ -109,7 +108,7 @@ function Rail({ route, at }) {
   return (
     <aside className="cht-rail" aria-label={ENSO.desc}>
       <div className={'cht-hub' + (route.phase === 'scan' ? ' busy' : '')}>
-        <span className="cht-hub-o"><img src={pic('enso')} alt="" width="46" height="46" /></span>
+        <span className="cht-hub-o"><Img src={pic('enso')} alt="" w={46} h={46} /></span>
         <span><b>{ENSO.name}</b><span>{ENSO.desc}</span></span>
       </div>
       <ul className="cht-lanes" onPointerLeave={(e) => { if (e.pointerType === 'mouse') setPeek(null); }}>
@@ -120,7 +119,7 @@ function Rail({ route, at }) {
             <li key={m.slug} className={(lit ? 'lit' : '') + (scan ? ' scan' : '') + (peek === m.slug ? ' peek' : '')}>
               {(scan || lit) && <motion.span layoutId="cht-lane" className="cht-lane-bg" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />}
               <button type="button" className="cht-lane-b" aria-pressed={peek === m.slug} aria-controls="cht-peek" onPointerEnter={(e) => { if (e.pointerType === 'mouse') setPeek(m.slug); }} onFocus={() => setPeek(m.slug)} onClick={() => setPeek(m.slug)}>
-                <img src={pic(m.slug)} alt="" width="26" height="26" />
+                <Img src={pic(m.slug)} alt="" w={26} h={26} />
                 <b>{m.name}</b>
                 <span className="cht-tag">{m.tags[0]}</span>
                 <i className="cht-live" aria-hidden="true" />
@@ -144,6 +143,7 @@ function Window() {
   const [sel, setSel] = useState(0);
   const [busy, setBusy] = useState(false);
   const [find, setFind] = useState(null);
+  const [side, setSide] = useState(false); // desktop: the recents drawer, closed by default so the chat has the room
   const input = useRef(null);
   const live = useRef(null);
   const log = useRef(null);
@@ -199,15 +199,18 @@ function Window() {
   const list = RECENTS.map((t, i) => [t, i]).filter(([t]) => !find || t.toLowerCase().includes(find.toLowerCase()));
 
   return (
-    <div className="cht-win" ref={box} id="cht-try">
+    <div className={'cht-win' + (side ? ' side' : '')} ref={box} id="cht-try">
       <div className="cht-bar">
         <span className="cht-dots3" aria-hidden="true"><i /><i /><i /></span>
+        <button type="button" className="cht-side-t" aria-label="Recents" aria-expanded={side} aria-controls="cht-side" onClick={() => setSide(!side)}>
+          <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><rect x="1.8" y="2.8" width="12.4" height="10.4" rx="2.2" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M6 3v10" stroke="currentColor" strokeWidth="1.4" /></svg>
+        </button>
         <p className="cht-name">Hanzo Chat</p>
-        <span className="cht-model"><img src={pic('enso')} alt="" width="22" height="22" />Enso</span>
+        <span className="cht-model"><Img src={pic('enso')} alt="" w={22} h={22} />Enso</span>
         <DemoCtl demo={demo} className="cht-ctl" />
       </div>
       <div className="cht-body">
-        <nav className="cht-side" aria-label="Recents">
+        <nav className="cht-side" id="cht-side" aria-label="Recents">
           <button type="button" className="cht-new" onClick={fresh}><span aria-hidden="true">＋</span>New chat</button>
           {find === null
             ? <button type="button" className="cht-find" onClick={() => setFind('')}><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="m10.5 10.5 3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>Search</button>
@@ -247,21 +250,23 @@ function Window() {
   );
 }
 
-/* 1. Hero: the headline cuts into its lines, the one ask answers the press, and the window rises into place. */
+/* 1. Hero: the headline on the left cuts into its lines; on the right the whole window, at 100%, already talking. */
 function Hero() {
   return (
     <section className="cht-hero" aria-labelledby="cht-h1" data-morph-target data-ask-name="Hanzo Chat">
-      <div className="v2a-wrap cht-copy">
-        <AppLines as="h1" id="cht-h1" className="v2a-display cht-h1" lines={['Ask anything.', 'Enso picks the model.']} soft={[1]} />
-        <motion.p className="v2a-lede cht-lede" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE, delay: 0.3 }}>Hanzo Chat searches the web, runs code, reads your files and makes images, in one conversation.</motion.p>
-        <motion.div className="cht-acts" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE, delay: 0.4 }}>
-          <Open slot="hero" />
-          <Docs />
+      <div className="v2a-wrap cht-hero-in">
+        <div className="cht-copy">
+          <AppLines as="h1" id="cht-h1" className="v2a-display cht-h1" lines={['Ask anything.', 'Enso picks', 'the model.']} />
+          <motion.p className="v2a-lede cht-lede" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE, delay: 0.3 }}>Hanzo Chat searches the web, runs code, reads your files and makes images, in one conversation.</motion.p>
+          <motion.div className="cht-acts" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE, delay: 0.4 }}>
+            <Open slot="hero" />
+            <Docs />
+          </motion.div>
+        </div>
+        <motion.div className="cht-win-wrap" initial={{ opacity: 0, x: 48 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.15 }}>
+          <Window />
         </motion.div>
       </div>
-      <motion.div className="cht-win-wrap" initial={{ opacity: 0, y: 64 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.25 }}>
-        <Window />
-      </motion.div>
     </section>
   );
 }
@@ -285,16 +290,28 @@ const ICON = {
 };
 const Ico = ({ k, s = 17 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true">{ICON[k]}</svg>;
 
+// The scenes are the app itself, in Hanzo's own words: its recents, its conversation, its "Listen", and the code of
+// Hanzo Dev's sample session (an illustration, as on /dev).
+const RETRY = [
+  ['ctx', 'export async function retry(fn, tries = 3) {'],
+  ['del', '  for (let i = 1; i < tries; i++) {'],
+  ['add', '  for (let i = 0; i < tries; i++) {'],
+  ['ctx', '    try { return await fn(); } catch (e) { last = e; }'],
+  ['ctx', '  }'],
+];
+const GLOW = DEMO[1][1].split('\n\n')[1].split(': ');
+const Line = ({ c, s, j }) => <span className={'cht-ln ' + c} style={{ '--j': j }}><i>{c === 'del' ? '-' : c === 'add' ? '+' : ' '}</i>{s}</span>;
+
 function Art({ k }) {
   if (k === 'route') {
     return (
       <div className="cht-art cht-art-route">
-        <img className="cht-art-bg" src={pic('enso')} alt="" width="1200" height="1500" loading="lazy" />
+        <Img className="cht-art-bg" src={pic('enso')} alt="" w={1200} h={1500} />
         <div className="cht-menu">
-          <div className="cht-menu-h"><img src={pic('enso')} alt="" width="36" height="36" /><span><b>Enso</b><em>{ENSO.tags.join(' · ')}</em></span></div>
+          <div className="cht-menu-h"><Img src={pic('enso')} alt="" w={36} h={36} /><span><b>Enso</b><em>{ENSO.tags.join(' · ')}</em></span></div>
           <ul>
             <i className="cht-menu-hl" />
-            {ROUTED.map((m) => <li key={m.slug}><img src={pic(m.slug)} alt="" width="26" height="26" /><b>{m.name}</b><em className="x-mono">{m.tags[0]}</em></li>)}
+            {ROUTED.map((m) => <li key={m.slug}><Img src={pic(m.slug)} alt="" w={26} h={26} /><b>{m.name}</b><em className="x-mono">{m.tags[0]}</em></li>)}
           </ul>
         </div>
       </div>
@@ -302,14 +319,15 @@ function Art({ k }) {
   }
   if (k === 'search') {
     return (
-      <div className="cht-art cht-art-search">
-        <div className="cht-pane">
-          <div className="cht-src">{[0, 1, 2].map((j) => <span key={j} style={{ '--j': j }}><i><Ico k="search" s={13} /></i><b /><b /></span>)}</div>
-          <div className="cht-cell">
-            <span className="cht-cell-run">▶</span>
-            {[72, 46, 88, 58, 34].map((w, j) => <b key={j} style={{ '--w': w + '%', '--j': j }} />)}
-            <em />
+      <div className="cht-art cht-art-chat">
+        <div className="cht-mini">
+          <p className="cht-mini-q">{RECENTS[4]}</p>
+          <p className="cht-mini-who"><Img src={pic('zen')} alt="" w={18} h={18} />Zen</p>
+          <div className="cht-mini-code x-mono">
+            <span className="cht-mini-run"><i>▶</i>retry.ts</span>
+            {RETRY.filter(([c]) => c !== 'del').map(([c, s], j) => <Line key={j} c={c === 'add' ? 'ctx' : c} s={s} j={j} />)}
           </div>
+          <p className="cht-mini-ok"><span aria-hidden="true">✓</span>{RECENTS[4]}</p>
         </div>
       </div>
     );
@@ -317,30 +335,40 @@ function Art({ k }) {
   if (k === 'files') {
     return (
       <div className="cht-art cht-art-files">
-        <div className="cht-drop">
-          {['doc', 'sheet', 'pic'].map((c, j) => (
-            <span key={c} className={'cht-file ' + c} style={{ '--j': j }}><i /></span>
-          ))}
+        <div className="cht-attach">
+          <span className="cht-chip doc" style={{ '--j': 0 }}><i />{RECENTS[11]}</span>
+          <span className="cht-chip sheet" style={{ '--j': 1 }}><i />{RECENTS[2]}</span>
+          <span className="cht-chip pic" style={{ '--j': 2 }}><Img src={pic('iro')} alt="" w={40} h={50} /></span>
         </div>
-        <div className="cht-art-bar"><span className="cht-chips">{['doc', 'sheet', 'pic'].map((c, j) => <i key={c} className={c} style={{ '--j': j }} />)}</span>Ask anything<b><svg viewBox="0 0 16 16" width="14" height="14"><path d="M8 13V3M4 7l4-4 4 4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></b></div>
+        <div className="cht-art-bar"><span className="cht-art-ph">Ask anything</span><b><svg viewBox="0 0 16 16" width="14" height="14"><path d="M8 13V3M4 7l4-4 4 4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></b></div>
       </div>
     );
   }
   if (k === 'voice') {
     return (
       <div className="cht-art cht-art-voice">
-        <span className="cht-mic"><Ico k="voice" s={30} /></span>
-        <div className="cht-wave">{Array.from({ length: 36 }).map((_, j) => <i key={j} style={{ '--h': (0.18 + Math.abs(Math.sin(j * 1.7)) * 0.82).toFixed(2), '--j': j }} />)}</div>
-        <span className="cht-listen dark"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M3 6v4h2.5L9 13V3L5.5 6H3Z" fill="currentColor" /></svg>Listen</span>
+        <div className="cht-say">
+          <p className="cht-mini-who"><Img src={pic('zen')} alt="" w={18} h={18} />Zen</p>
+          <p className="cht-say-t">{DEMO[1][1].split('\n\n')[0]}</p>
+          <span className="cht-listen dark on"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M3 6v4h2.5L9 13V3L5.5 6H3Z" fill="currentColor" /></svg>Listen</span>
+          <div className="cht-wave">{Array.from({ length: 44 }).map((_, j) => <i key={j} style={{ '--h': (0.18 + Math.abs(Math.sin(j * 1.7)) * 0.82).toFixed(2), '--j': j }} />)}</div>
+        </div>
       </div>
     );
   }
   if (k === 'memory') {
     return (
       <div className="cht-art cht-art-memory">
-        <div className="cht-convo"><b /><b /><b className="pin"><Ico k="memory" s={14} /></b><b /></div>
+        <div className="cht-convo">
+          <p className="cht-convo-t">{RECENTS[0]}</p>
+          <p className="cht-convo-a">{GLOW[0]}: <mark>{GLOW[1]}</mark></p>
+        </div>
         <span className="cht-carry"><Ico k="memory" s={22} /></span>
-        <div className="cht-convo two"><b className="pin"><Ico k="memory" s={14} /></b><b /><b /></div>
+        <div className="cht-convo two">
+          <p className="cht-convo-t"><span aria-hidden="true">＋</span>New chat</p>
+          <p className="cht-convo-pin"><Ico k="memory" s={14} /><span>{GLOW[1]}</span></p>
+          <p className="cht-convo-ph">Ask anything</p>
+        </div>
       </div>
     );
   }
@@ -348,8 +376,8 @@ function Art({ k }) {
     <div className="cht-art cht-art-dev">
       <div className="cht-switch"><span>Chat</span><span>Dev</span><i /></div>
       <div className="cht-dev-pane">
-        <div className="chat"><b /><b /><b /></div>
-        <div className="code">{[38, 70, 56, 82, 30, 64].map((w, j) => <b key={j} style={{ width: w + '%', '--j': j }} />)}</div>
+        <div className="chat"><p className="cht-mini-q">{RECENTS[4]}</p></div>
+        <div className="code x-mono">{RETRY.map(([c, s], j) => <Line key={j} c={c} s={s} j={j} />)}</div>
       </div>
     </div>
   );
@@ -395,7 +423,7 @@ function Who() {
             {MODELS.map((x) => (
               <li key={x.slug} className={x.slug === k ? 'on' : ''}>
                 <A to={'/' + x.slug} className="cht-row" data-card={x.slug} onPointerEnter={(e) => { if (e.pointerType === 'mouse') setK(x.slug); }} onFocus={() => setK(x.slug)} onClick={(e) => go(e, x.slug)}>
-                  <img className="cht-row-pic" src={pic(x.slug)} alt="" width="44" height="44" loading="lazy" />
+                  <Img className="cht-row-pic" src={pic(x.slug)} alt="" w={44} h={44} />
                   <b className="cht-row-n">{x.name}</b>
                   <span className="cht-row-d">{x.desc}</span>
                   <span className="cht-row-t x-mono">{x.tags[0]}</span>
