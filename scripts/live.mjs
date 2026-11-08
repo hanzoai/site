@@ -16,6 +16,7 @@
 //    NODE_USE_ENV_PROXY=1 NODE_EXTRA_CA_CERTS=/root/.ccr/ca-bundle.crt.
 // 2. --pages [/path ...]: render hanzo.ai pages in headless Chrome and keep what a visitor sees (content/live/<path>.json
 //    { text, links }, parity.py's reference). A browser job: not on James's laptop unless he asks (docs/MASTER.md section 5).
+import { RUNS, MODELS, PRICES, readResearch, readModels } from '../lib/liveSources.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -149,27 +150,10 @@ async function figures() {
     return { source: HOME + ' (its built-in snapshot of https://api.hanzo.ai/v1/git/activity and GitHub)', script: from, fetched_at, read: snap.read, estate: { window: e.window, months: e.months, orgs: e.orgs, repos: e.repos, public: e.public, commits: e.commits, merges: e.merges, monthly: e.monthly }, calendar: { from: cal.from, to: cal.to, days, week: days.slice(-7).reduce((a, x) => a + x[1], 0) }, forge: snap.forge, groups };
   };
 
-  // the coding race, Kai's speed and Enso's cost, as hanzo.ai's home reads them (summary view, every run)
-  const RUNS = 'https://api.hanzo.ai/v1/research/runs?org=hanzo';
-  const research = async () => {
-    const one = async (q) => { const d = await get(`${RUNS}&${q}&view=summary&limit=200`); need(Array.isArray(d.data) && d.data.length > 0, q); return d.data; };
-    const [repair, latency, gpqa] = await Promise.all([
-      one('benchmark=coding.repair&category=all,vs-claude-code'),
-      one('benchmark=decision.latency&metric=p50ms'),
-      one('benchmark=enso.gpqa_diamond&category=all,vs-claude-code'),
-    ]);
-    return { source: RUNS + '&benchmark={coding.repair,decision.latency,enso.gpqa_diamond}&view=summary&limit=200', fetched_at, repair, latency, gpqa };
-  };
-
-  // per-million prices (Kai against the frontier LLMs) and the display names of the models on the GPQA chart
-  const MODELS = 'https://api.hanzo.ai/v1/models?id=anthropic/claude-fable-5.1,anthropic/claude-opus-5,anthropic/claude-sonnet-5.5,enso,enso-flash,enso-pro,enso-ultra,kai,openai/gpt-5.5,openai/gpt-6-astra,zen6,zen6-coder,zen6-flash';
-  const PRICES = 'https://api.hanzo.ai/v1/pricing/models?id=anthropic/claude-fable-5,anthropic/claude-fable-5.1,anthropic/claude-haiku-5.5,anthropic/claude-opus-4.8,anthropic/claude-opus-5.5,anthropic/claude-sonnet-5,anthropic/claude-sonnet-5.5,deepseek/deepseek-v4-pro,openai/gpt-4o,openai/gpt-5.5,openai/gpt-5.6-sol,openai/gpt-6-sol,moonshotai/kimi-k3,x-ai/grok-4.7,z-ai/glm-5.3,enso,enso-flash,enso-ultra,kai';
-  const models = async () => {
-    const [m, p] = await Promise.all([get(MODELS), get(PRICES)]);
-    need(Array.isArray(m.data) && m.data.some((x) => x.id === 'kai' && x.pricing?.input_per_million > 0), 'models with prices');
-    need(Array.isArray(p.models) && p.models.length > 0, 'pricing models');
-    return { source: MODELS + ' and ' + PRICES, fetched_at, models: m.data.map((x) => ({ id: x.id, name: x.name, pricing: x.pricing })), names: Object.fromEntries(p.models.map((x) => [x.id ?? x.name, x.fullName ?? x.name])) };
-  };
+  // the coding race, Kai's speed and Enso's cost, and the per-million prices and model names: the same sources hanzo.ai's
+  // home fetches when it opens (lib/liveSources.mjs, which the home page also reads at load)
+  const research = async () => ({ source: RUNS + '&benchmark={coding.repair,decision.latency,enso.gpqa_diamond}&view=summary&limit=200', fetched_at, ...(await readResearch(get)) });
+  const models = async () => ({ source: MODELS + ' and ' + PRICES, fetched_at, ...(await readModels(get)) });
 
   const run = async (name, job, say) => {
     const file = path.join(OUT, name);

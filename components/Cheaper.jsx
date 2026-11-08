@@ -2,18 +2,17 @@
 import { useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
 import { EASE, Head, Arrow } from './ui';
-import { GPQA, PRICES } from './home/figures';
+import useFigures from './home/useFigures';
 
-// hanzo.ai's own rows, worked out from the research runs and price list it reads (components/home/figures.js)
-const ENSO = GPQA.rows.map((r) => [r.who, r.acc, r.cost, r.hi]);
-const KAI = PRICES.rows;
-const TOP = Math.max(...ENSO.map((r) => r[2]));
+// hanzo.ai's own rows, worked out from the research runs and price list it reads (components/home/figures.js), read
+// again when the page opens (components/home/useFigures.js)
+const ensoRows = (GPQA) => GPQA.rows.map((r) => [r.who, r.acc, r.cost, r.hi]);
 const money = (v) => (v >= 1e6 ? '$' + (v / 1e6).toFixed(2) + 'M' : v >= 1000 ? '$' + Math.round(v).toLocaleString('en-US') : '$' + v.toFixed(2));
 const nice = (q) => { const p = 10 ** Math.floor(Math.log10(q)); return Math.round(q / p * 2) / 2 * p; };
 
 const bar = (i) => ({ h: { scaleX: 0 }, s: { scaleX: 1, transition: { type: 'spring', stiffness: 90, damping: 18, delay: 0.25 + i * 0.09 } } });
 
-function EnsoLane({ row, i, vol, dim, setDim }) {
+function EnsoLane({ row, i, vol, dim, setDim, TOP }) {
   const [who, acc, cost, hi] = row;
   const v = useTransform(vol, (q) => `${acc} · ${money(cost * q / 1000)}`);
   return (
@@ -26,6 +25,9 @@ function EnsoLane({ row, i, vol, dim, setDim }) {
 
 /* Hanzo's Enso comparison, with one control: how many questions. The rates are Hanzo's; only the count changes. */
 function EnsoCard() {
+  const { GPQA } = useFigures();
+  const ENSO = ensoRows(GPQA);
+  const TOP = Math.max(...ENSO.map((r) => r[2]));
   const [dim, setDim] = useState(null);
   const [exp, setExp] = useState(0); // 10^exp thousand questions
   const raw = useMotionValue(1000);
@@ -47,7 +49,7 @@ function EnsoCard() {
         />
       </label>
       <motion.div className="x-lanes" initial="h" whileInView="s" viewport={{ once: true, amount: 0.5 }}>
-        {ENSO.map((r, i) => <EnsoLane key={r[0]} row={r} i={i} vol={vol} dim={dim} setDim={setDim} />)}
+        {ENSO.map((r, i) => <EnsoLane key={r[0]} row={r} i={i} vol={vol} dim={dim} setDim={setDim} TOP={TOP} />)}
       </motion.div>
       <div className="x-race-end"><Arrow href="/enso">How Enso lowers the cost of an answer</Arrow></div>
     </div>
@@ -55,6 +57,8 @@ function EnsoCard() {
 }
 
 function KaiCard() {
+  const { PRICES } = useFigures();
+  const KAI = PRICES.rows;
   const [dim, setDim] = useState(null);
   const max = PRICES.max;
   return (

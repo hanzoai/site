@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
 import { EASE, Head, Arrow, Count, Rise } from './ui';
-import { CODING as K1, KAI as K2 } from './home/figures';
+import useFigures from './home/useFigures';
 
 /* One lane of a race at true speed: every bar grows at the same rate, so the faster one simply stops first. */
 function Lane({ t, max, who, ms, done, label, hi }) {
@@ -60,6 +60,7 @@ function RaceCard({ kicker, big, decimals, cap, note, title, lanes, extra, link 
 }
 
 export default function Race() {
+  const { CODING: K1, KAI: K2 } = useFigures();
   return (
     <section className="x-sec x-faster" data-room="dark" id="faster" aria-labelledby="faster-h">
       <div className="x-wrap">

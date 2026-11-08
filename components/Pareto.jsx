@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useInView } from 'motion/react';
 import { EASE, Head, Arrow, Rise } from './ui';
-import { GPQA } from './home/figures';
+import useFigures from './home/useFigures';
 
 // placed exactly where Hanzo's own chart places them (log cost across, accuracy up).
 // [name as Hanzo writes it, label on the chart, GPQA Diamond %, $ per 1,000 questions as Hanzo prints it, kind, reported by, date, source]
@@ -12,7 +12,7 @@ import { GPQA } from './home/figures';
 // scores reported by a lab or an independent evaluation are the ones hanzo.ai cites, with their sources.
 const short = (n) => n.replace(/^Claude /, '').replace(/ \d{4}$/, '');
 const c2 = (x) => (x >= 1 ? x.toFixed(2) : String(+x.toPrecision(3)));
-const D = [
+const pointsOf = (GPQA) => [
   ...GPQA.measured.filter((d) => d.accuracy >= 0.7).map((d) => [d.name, short(d.name), +(d.accuracy * 100).toFixed(1), c2(d.cost), 'm']),
   ['GLM 5.3', 'GLM 5.3', 90.9, '0.945', 'r', 'Epoch AI (independent)', '2026-08-14', 'https://epoch.ai/models/glm-5-3'],
   ['Grok 4.7', 'Grok 4.7', 92.7, '4.57', 'r', 'Epoch AI (independent)', '2026-09-21', 'https://epoch.ai/models/grok-4-7'],
@@ -41,6 +41,8 @@ const geo = (g) => ({
 });
 
 export default function Pareto() {
+  const { GPQA } = useFigures();
+  const D = useMemo(() => pointsOf(GPQA), [GPQA]);
   const box = useRef(null);
   const seen = useInView(box, { once: true, amount: 0.45 });
   const [hot, setHot] = useState(null);
@@ -67,7 +69,7 @@ export default function Pareto() {
   const pts = useMemo(() => D.map(([full, n, a, cs, k, who, date, src]) => {
     const c = parseFloat(cs);
     return { full, n, a, c, e: k === 'e', r: k === 'r', src, say: say(full, a.toFixed(1), cs, k, who, date, src), x: Math.round(lx(c) * 100) / 100, y: Math.round(ly(a) * 100) / 100 };
-  }).sort((p, q) => p.c - q.c), [lx, ly]);
+  }).sort((p, q) => p.c - q.c), [D, lx, ly]);
   const front = useMemo(() => { let best = -1; return pts.filter((p) => (p.a > best ? ((best = p.a), true) : false)); }, [pts]);
   const path = front.map((p, i) => (i ? 'L' : 'M') + p.x.toFixed(1) + ' ' + p.y.toFixed(1)).join(' ');
   const within = pts.filter((p) => p.x <= cap);

@@ -38,6 +38,8 @@ const before = Object.fromEntries(FILES.map((f) => [f, read(f)]));
 fs.mkdirSync(path.join(tmp, 'scripts'));
 fs.mkdirSync(path.join(tmp, 'content', 'live'), { recursive: true });
 fs.copyFileSync(path.join(ROOT, 'scripts', 'live.mjs'), path.join(tmp, 'scripts', 'live.mjs'));
+fs.mkdirSync(path.join(tmp, 'lib'));
+fs.copyFileSync(path.join(ROOT, 'lib', 'liveSources.mjs'), path.join(tmp, 'lib', 'liveSources.mjs')); // the sources live.mjs shares with the home page
 for (const f of FILES) fs.writeFileSync(path.join(tmp, 'content', 'live', f), before[f]);
 const g = JSON.parse(before['_git.json']);
 const activity = {

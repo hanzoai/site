@@ -1,8 +1,8 @@
 // Every figure on the home page's race, cost and frontier cards, worked out the way hanzo.ai's own home works them out,
 // from the same sources it reads (content/live/_research.json and _models.json, refreshed by scripts/live.mjs).
 // Nothing here is a figure; the formats are hanzo.ai's: "3.02×", "2.29 s", "1,120 ms", "$5.57 in · $27.83 out", "90.6%".
-import R from '../../content/live/_research.json';
-import M from '../../content/live/_models.json';
+import RS from '../../content/live/_research.json';
+import MS from '../../content/live/_models.json';
 
 const measure = (r, category, metric) => r?.measures?.find((m) => m.category === category && m.metric === metric) ?? null;
 const val = (r, category, metric) => measure(r, category, metric)?.value ?? null;
@@ -13,10 +13,9 @@ export const usd = (x) => (Number.isInteger(x) ? `$${x}` : x >= 1 ? `$${x.toFixe
 export const pct = (x) => `${(100 * x).toFixed(1)}%`;
 export const ms = (x) => (x < 10 ? x.toFixed(1) : Math.round(x).toLocaleString('en-US'));
 const sec = (x) => `${x.toFixed(2)} s`;
-const MODEL = Object.fromEntries(M.models.filter((m) => m.name).map((m) => [m.id, m.name]));
 
 /* Hanzo Dev against Claude Code on coding.repair: the newest Hanzo Dev run and the Claude Code run of its study */
-function coding() {
+function coding(R) {
   const ours = newest(R.repair.filter((r) => r.system === 'hanzo-dev'));
   const base = R.repair.find((r) => r.system === 'claude-code' && r.study === ours.study);
   const speed = measure(ours, 'vs-claude-code', 'speedup');
@@ -31,7 +30,8 @@ function coding() {
 }
 
 /* Kai against an LLM call on decision.latency: Claude Code's turn, Kai over the network, Kai served on one GPU */
-function kai() {
+function kai(R, M) {
+  const MODEL = Object.fromEntries(M.models.filter((m) => m.name).map((m) => [m.id, m.name]));
   const pick = (split, system, category) => {
     const run = newest(R.latency.filter((r) => r.split === split && r.system === system && measure(r, category, 'p50ms')));
     const m = measure(run, category, 'p50ms');
@@ -53,7 +53,7 @@ function kai() {
 }
 
 /* Kai's price per million tokens against the frontier LLMs hanzo.ai sets it beside */
-function prices() {
+function prices(M) {
   const P = (id, name) => { const m = M.models.find((x) => x.id === id); const i = m?.pricing?.input_per_million, o = m?.pricing?.output_per_million; return m && i > 0 && o >= 0 ? { id, name: name ?? m.name ?? id, input: i, output: o } : null; };
   const kaiP = P('kai', 'Kai');
   const field = ['anthropic/claude-opus-5', 'openai/gpt-5.5', 'anthropic/claude-fable-5.1', 'openai/gpt-6-astra'].map((id) => P(id)).filter(Boolean).sort((a, b) => b.input - a.input || b.output - a.output);
@@ -64,7 +64,7 @@ function prices() {
 /* GPQA Diamond: Enso's tiers on new questions (heldout) and on questions it has seen, beside every single model at its
    best run on the same 198 questions, each at the cost it filed per 1,000 */
 const TIER = { enso: 'Enso', 'enso-flash': 'Enso Flash', 'enso-pro': 'Enso Pro', 'enso-ultra': 'Enso Ultra', 'best-single': 'Best single model' };
-function gpqa() {
+function gpqa(R, M) {
   const held = R.gpqa.filter((r) => r.split === 'heldout');
   const ver = newest(held).id.split('-heldout-')[1]?.split('-')[0] ?? '';
   const tier = (s) => { const r = held.find((x) => x.system === s && x.id.includes(ver)); return r && { system: s, name: TIER[s], accuracy: val(r, 'all', 'accuracy'), per1k: val(r, 'all', 'usd_per_1k'), seen: val(R.gpqa.find((x) => x.id === `enso.gpqa_diamond-test-seen-${ver}-${s}`), 'all', 'accuracy') }; };
@@ -95,7 +95,7 @@ function gpqa() {
   };
 }
 
-export const CODING = coding();
-export const KAI = kai();
-export const PRICES = prices();
-export const GPQA = gpqa();
+// the four figure sets from one read of the sources: the build's snapshot here, a fresh read at page load in useFigures.js
+export const figuresOf = (R, M) => ({ CODING: coding(R), KAI: kai(R, M), PRICES: prices(M), GPQA: gpqa(R, M) });
+export const SNAPSHOT = figuresOf(RS, MS);
+export const { CODING, KAI, PRICES, GPQA } = SNAPSHOT;
