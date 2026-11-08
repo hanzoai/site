@@ -109,3 +109,41 @@ html:not(.js) .xnl-q:not(.on) { display: none; }
   html:has(main.xnl) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
   html:has(main.xnl) header[data-slot=masthead] a[href='https://hanzo.ai/signup']:active { transform: scale(.97); }
 }
+
+/* ---------- dark mode (docs/DARK-MODE.md): live hanzo.ai's dark, by role, in Hanzo's own tokens ----------
+   page --background; the ask's field on --secondary with a --border ring, as live's sign-up field; the paper issue and the
+   envelope on --muted with --border rings; text --foreground, --muted-foreground and --text-tertiary. The paper's black
+   masthead (Hanzo's sigil art) stays black in both modes. */
+html:not(.light) .xnl { --xp-accent: var(--muted-foreground); }
+html:not(.light) .xnl-hero { background: radial-gradient(60% 70% at 50% 0%, rgba(229, 229, 229, .09), transparent 70%); }
+html:not(.light) .xnl-list li { color: var(--foreground); }
+html:not(.light) .xnl-list li svg, html:not(.light) :is(.xnl-back, .xnl-answer) { color: var(--foreground); }
+@media (hover: hover) { html:not(.light) .xnl-list li:hover { background-color: var(--muted); } }
+html:not(.light) .xnl-form { background: var(--secondary); border-color: var(--border); }
+@media (hover: hover) { html:not(.light) .xnl-form:hover { border-color: var(--text-tertiary); } }
+html:not(.light) .xnl-form:focus-within { border-color: var(--foreground); box-shadow: 0 0 0 1px var(--foreground); }
+html:not(.light) .xnl-form:has(input[aria-invalid='true']) { border-color: var(--foreground); }
+html:not(.light) .xnl-check { background: var(--muted); border-color: transparent; }
+@media (hover: hover) { html:not(.light) .xnl-back:hover { background-color: var(--secondary); } }
+html:not(.light) .xnl-back:focus-visible { outline-color: var(--foreground); }
+html:not(.light) .xnl-sent { background: var(--muted); }
+html:not(.light) .xnl-err { color: var(--muted-foreground); }
+html:not(.light) .xnl-sum li { color: var(--text-tertiary); }
+html:not(.light) .xnl-sum li::before { background: var(--border-control); }
+html:not(.light) .xnl-sum li::after { background: var(--foreground); }
+html:not(.light) :is(.xnl-sum li.on, .xnl-sum li.done) { color: var(--foreground); }
+html:not(.light) .xnl-sum .x-tick { stroke: var(--foreground); }
+@media (hover: hover) { html:not(.light) .xnl-link:hover { text-decoration-color: var(--foreground); } }
+html:not(.light) .xnl-paper { background: var(--muted); border-color: var(--border); }
+html:not(.light) .xnl-lines li span::after { background: var(--muted); }
+html:not(.light) .xnl-bars li span i { background: var(--muted-foreground); }
+html:not(.light) .xnl-bars li span i + i { background: var(--secondary); }
+html:not(.light) .xnl-bars li.hot span i { background: var(--foreground); }
+html:not(.light) .xnl-bars li.hot span i + i { background: var(--text-tertiary); }
+html:not(.light) .xnl-paper-to { border-top-color: var(--border-control); }
+html:not(.light) .xnl-paper-to > span:first-child { color: var(--text-tertiary); }
+html:not(.light) .xnl-paper-to b { color: var(--foreground); }
+html:not(.light) .xnl-paper-stamp { border-color: var(--text-tertiary); color: var(--foreground); }
+html:not(.light) .xnl-env { background: var(--muted); border-color: var(--border); }
+html:not(.light) .xnl-flap { background: var(--secondary); }
+html:not(.light) .xnl-stamp { background: var(--background); border-color: var(--border-strong); }
