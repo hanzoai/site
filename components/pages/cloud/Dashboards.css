@@ -301,3 +301,6 @@ html:not(.light) .db .exc-open { border-color: var(--border); }
   html:not(.light) .db .exc-rows li:hover { background: var(--surface-card-quiet); }
   html:not(.light) .db .exc-open:hover { background: var(--primary); color: var(--primary-foreground); }
 }
+/* dark: the score bars are drawn in Hanzo's muted grey, not a white slab */
+html:not(.light) .db .db-ch-bars.score i { background: var(--muted-foreground); }
+html:not(.light) .db .db-ch-bars.score span:nth-child(4) i { background: repeating-linear-gradient(135deg, var(--muted-foreground) 0 2px, transparent 2px 7px); }
