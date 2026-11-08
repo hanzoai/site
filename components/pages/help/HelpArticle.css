@@ -393,3 +393,7 @@ html:not(.light) .xhp-after rect { fill: var(--secondary-hover); }
 html:not(.light) .xhp-after circle[r='10'] { fill: var(--foreground); }
 html:not(.light) .xhp-after circle[r='9'] { stroke: var(--foreground); fill: var(--x-raised); }
 html:not(.light) .xhp-after circle[r='9'][fill='#0a0a0a'] { fill: var(--foreground); }
+/* inside the drawn windows (Hanzo's card, the same grey as the panel) a lit row or a skeleton bar takes the next rung up,
+   and the platform switch's chosen pill sits one rung above its track */
+html:not(.light) .xhp-screen { --tile: var(--secondary); --tile-2: var(--secondary-hover); }
+html:not(.light) .xhp-seg button[aria-checked='true'], html:not(.light) .xhp[data-pre] .xhp-seg button[data-pf='mobile'] { background: var(--secondary-hover); }
