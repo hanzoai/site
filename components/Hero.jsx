@@ -85,7 +85,7 @@ function AppCard({ on = true }) {
   return (
     <motion.div className="x-appcard" initial={false} animate={on ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }} aria-hidden={on ? undefined : true} transition={{ duration: 0.6, ease: EASE }}>
       <span className="x-appicon"><Mark size={13} /></span>
-      <span><b>maxpower</b><small>Mobile + Duo app</small></span>
+      <span><b>maxpower</b><small><span>Mobile + Duo app</span></small></span>
       <span className="x-open">Open</span>
     </motion.div>
   );
@@ -117,7 +117,7 @@ function Roster({ on }) {
   const rows = (k) => ROSTER.map(([n, m, s]) => (
     <div className="x-ros" key={k + n} aria-hidden={k ? true : undefined}>
       <span className="x-ros-i" dangerouslySetInnerHTML={{ __html: ICON[n] || `<b>${n[0]}</b>` }} />
-      <span className="x-ros-n">{n}<small>{m}</small></span>
+      <span className="x-ros-n"><span>{n}</span><small>{m}</small></span>
       <span className="x-ros-s" data-tps={s}>{s}/s</span>
       <i className="x-ros-bar"><b style={{ width: (s / 171) * 100 + '%' }} /></i>
     </div>

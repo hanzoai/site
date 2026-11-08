@@ -6,11 +6,11 @@ import { EASE, Head, Arrow, Count } from './ui';
 import C from '../content';
 
 const TILES = [
-  ['Commits', 805254, 'In the past year', 'https://git.hanzo.ai/explore/repos', 0],
-  ['Merges', 81988, 'In the past year', 'https://git.hanzo.ai/explore/repos', 1],
-  ['Commits', 1265, 'In the past 7 days', 'https://git.hanzo.ai/explore/repos'],
-  ['123 organizations', 2247, 'Original repositories', 'https://github.com/hanzoai'],
-  ['GitHub stars', 6041, 'as GitHub counts them', 'https://github.com/hanzoai'],
+  ['Commits', 803822, 'In the past year', 'https://git.hanzo.ai/explore/repos', 0],
+  ['Merges', 81569, 'In the past year', 'https://git.hanzo.ai/explore/repos', 1],
+  ['Commits', 1697, 'In the past 7 days', 'https://git.hanzo.ai/explore/repos'],
+  ['123 organizations', 2248, 'Original repositories', 'https://github.com/hanzoai'],
+  ['GitHub stars', 6046, 'as GitHub counts them', 'https://github.com/hanzoai'],
   ['GitHub forks', 4579, 'as GitHub counts them', 'https://github.com/hanzoai'],
 ];
 const WAYS = [
@@ -62,7 +62,7 @@ function Calendar() {
         className={'x-cal-grid2' + (seen || calm ? ' on' : '')}
         role="img"
         tabIndex={0}
-        aria-label={`Commits a day over the past year across every repository, private ones counted: 805,254 in all. Use the arrow keys to read each day.`}
+        aria-label={`Commits a day over the past year across every repository, private ones counted: 803,822 in all. Use the arrow keys to read each day.`}
         onPointerMove={pick}
         onPointerLeave={() => setHot(null)}
         onKeyDown={key}
@@ -90,7 +90,7 @@ function Calendar() {
         </AnimatePresence>
       </div>
       <div className="x-cal-f">
-        <span aria-live="polite">{h ? `${h.label} · ${h.c.toLocaleString('en-US')} commits across ${h.r.toLocaleString('en-US')} repositories` : 'Commits a day, from Nov 7, 2025 to Nov 6, 2026'}</span>
+        <span aria-live="polite">{h ? `${h.label} · ${h.c.toLocaleString('en-US')} commits across ${h.r.toLocaleString('en-US')} repositories` : 'Commits a day, from Nov 8, 2025 to Nov 7, 2026'}</span>
         <span className="x-cal-key">Less <i className="l0" /><i className="l1" /><i className="l2" /><i className="l3" /><i className="l4" /> More</span>
       </div>
     </div>
@@ -141,9 +141,9 @@ function Rail() {
 function Way({ w }) {
   return (
     <motion.a href={w[3]} className="x-way" whileHover={{ y: -4 }} whileTap={{ scale: 0.985 }}>
-      <b>{w[0]}</b>
+      <b><span>{w[0]}</span></b>
       <span>{w[1]}</span>
-      <em>{w[2]} →</em>
+      <em><span>{w[2]} →</span></em>
     </motion.a>
   );
 }

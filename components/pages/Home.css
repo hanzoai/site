@@ -59,3 +59,9 @@ html:not(.js) .x-hero [style*='opacity'], html:not(.js) .x-hero .x-line-in { opa
 @media (max-width: 640px) {
   .xh-pause { top: 0; bottom: auto; }
 }
+
+/* Agents: the accelerated agent rotates as on hanzo.ai; every line sits in one cell, the current one shown */
+.xa-acc { display: grid; }
+.xa-acc > span { grid-area: 1 / 1; opacity: 0; transform: translateY(6px); transition: opacity .35s var(--ease), transform .35s var(--ease); }
+.xa-acc > span.on { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .xa-acc > span { transition: none; } }

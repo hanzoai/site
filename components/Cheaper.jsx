@@ -76,7 +76,7 @@ function KaiCard() {
       <motion.div className="x-lanes" initial="h" whileInView="s" viewport={{ once: true, amount: 0.5 }}>
         {KAI.map(([who, inp, out, hi], i) => (
           <div key={who} className={'x-lane' + (hi ? ' hi' : '') + (dim !== null && dim !== i ? ' dim' : '')} onPointerEnter={() => setDim(i)} onPointerLeave={() => setDim(null)}>
-            <div className="x-lane-h"><span>{who}</span><span className="x-mono x-lane-v"><b>${inp}</b> in · ${out} out</span></div>
+            <div className="x-lane-h"><span>{who}</span><span className="x-mono x-lane-v"><span>${inp} in · ${out} out</span></span></div>
             <i className="x-lane-track two">
               <motion.b style={{ width: `max(3px, ${(inp / max) * 100}%)` }} variants={bar(i)} />
               <motion.s style={{ width: (out / max) * 100 + '%' }} variants={bar(i + 0.5)} />
