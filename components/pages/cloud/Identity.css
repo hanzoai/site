@@ -110,7 +110,7 @@ html:not(.light) .v2.id { --ink: var(--foreground); --soft: var(--muted-foregrou
 .id-apps i { aspect-ratio: 1; display: grid; place-items: center; border-radius: 22px; }
 
 /* the pause control sits inside the card's title bar, centred on its line of text */
-.id .lx-pause.id-pause { top: -3px; right: 10px; z-index: 4; border-color: transparent; background: transparent; }
+.id .lx-pause.id-pause { top: -3px; right: 10px; z-index: 4; border-color: transparent; background: transparent; color: var(--ink); }
 @media (hover: hover) { .id .lx-pause.id-pause:hover { background: var(--id-f2); } }
 .id .lx-pause.id-pause[aria-pressed='true'] { background: var(--id-k); color: var(--x-on-ink); }
 .id-card .id-url { padding-right: 64px; }
