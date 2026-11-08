@@ -28,8 +28,9 @@ export function ShrinkCard({ children, className = '', ...rest }) {
   const scale = useTransform(scrollYProgress, [0, 0.75], [1, 0.86]);
   const radius = useTransform(scrollYProgress, [0, 0.35], [0, 32]);
   const fill = useTransform(scrollYProgress, [0, 0.25], ['rgba(245, 245, 245, 0)', 'rgba(245, 245, 245, 1)']);
+  const fillA = useTransform(scrollYProgress, [0, 0.25], [0, 1]); // dark mode draws its own grey at this strength (enter.css)
   return (
-    <motion.section ref={ref} className={'en-shrink ' + className} style={{ scale, borderRadius: radius, backgroundColor: fill }} {...rest}>
+    <motion.section ref={ref} className={'en-shrink ' + className} style={{ scale, borderRadius: radius, backgroundColor: fill, '--shrink-a': fillA }} {...rest}>
       {children}
     </motion.section>
   );
