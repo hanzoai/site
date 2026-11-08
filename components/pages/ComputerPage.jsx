@@ -382,7 +382,7 @@ export default function ComputerPage() {
   return (
     <main className="av cp" style={{ '--ac': '#0a0a0a' }}>
       <Hero />
-      <Scenes label="If a person can click it, so can this" items={LENSES} tone={['#ffffff', '#f5f5f5', '#ffffff']} className="cp-sc" />
+      <Scenes label="If a person can click it, so can this" items={LENSES} tone={['var(--bg)', 'light-dark(#f5f5f5, var(--x-fill))', 'var(--bg)']} className="cp-sc" />
       <Preflight />
       <Ship />
       <Band />
