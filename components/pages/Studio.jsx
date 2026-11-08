@@ -178,7 +178,9 @@ function Cinema() {
         </div>
         <A to="https://studio.hanzo.ai" className="xst-prompt" data-cursor="Open">
           <span className="xst-pm x-mono">{MODELS[model]}</span>
-          <span>Describe what to make</span>
+          {/* as on live: the empty prompt, then Hanzo's example prompt types itself in, holds, and clears (CSS loop, words always in the page) */}
+          <span className="xst-pa">Describe what to make</span>
+          <span className="xst-pb">A lantern-lit street after rain, painted</span>
           <i className="xst-caret" aria-hidden="true" />
         </A>
         <p className="xst-ik">Library</p>
