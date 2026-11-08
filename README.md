@@ -151,6 +151,9 @@ Wording and prices follow live hanzo.ai as captured on 8 Nov 2026 (`content/live
   Remove any you don't want; the rest of each page is unaffected.
 - **Commit total on the home calendar.** hanzo.ai's daily figures sum to 835,124 while its label says 805,254. This
   site keeps Hanzo's label.
+- **Dark-mode contrast is still being polished.** `node scripts/darkcheck.mjs` (8 Nov) listed 259 spots on 47 pages
+  where text reads under 3:1 in dark, many inside captured product screenshots and code samples; the full list is in
+  `docs/build-notes/dark-issues-8nov.json`. Light mode is unaffected.
 - **Not re-compared against live at handoff.** The final handoff build ran where hanzo.ai was not reachable, so
   `copycheck.mjs` was not re-run that day, and the snapshots above were used. If live has changed a line since 8 Nov,
   run `node scripts/copycheck.mjs <page>` and restore it: copy on live always wins.
