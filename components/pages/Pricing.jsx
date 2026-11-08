@@ -485,9 +485,9 @@ const cellOf = (r) => {
 function Models() {
   return (
     <div className="xpr-groups">
-      {GROUPS.map((g, gi) => (
-        // one family open at a time on arrival; the rest fold under their name (every row stays in the HTML)
-        <details key={g.h} className="xpr-group" open={gi === 0}>
+      {GROUPS.map((g) => (
+        // every family folds under its name (Enso is open in the room above; every row stays in the HTML)
+        <details key={g.h} className="xpr-group">
           <summary className="xpr-group-s"><h4>{g.h}</h4><span className="xpr-group-n" aria-hidden="true">{g.rows.length}</span><i aria-hidden="true" /></summary>
           <div className="xpr-group-h">
             <p>{g.d}</p>

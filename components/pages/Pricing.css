@@ -568,3 +568,10 @@ html:not(.js) .xpr-bills > li { display: grid !important; }
 .xpr.zf .xpr-cards.n2 .xpr-c-seats .xpr-seat-p { margin-top: 2px; font-size: 24px; }
 .xpr.zf .xpr-cards.n2 .xpr-c-acts .xpr-note { margin: 0; }
 .xpr.zf .xpr-cards.n2 .xpr-c-price { margin-top: 8px; } .xpr.zf .xpr-cards.n2 .xpr-c-acts { margin-top: 10px; } .xpr.zf .xpr-cards.n2 .xpr-c-inc { margin-top: 10px; padding-top: 10px; }
+/* API: the four ways we bill as a two-by-two of lifted tiles, so the section reads in one frame */
+@media (min-width: 901px) {
+  .xpr.zf .xpr-bills { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; border-top: 0; }
+  .xpr.zf .xpr-bills > li { grid-template-columns: 34px minmax(0, 1fr); padding: 20px 20px 22px; border: 1px solid var(--line); border-radius: 20px; background: var(--x-raised); box-shadow: var(--zf-shadow); }
+  .xpr.zf .xpr-bills p { margin-top: 10px; font-size: 14.5px; line-height: 1.5; }
+  .xpr.zf .xpr-api .xpr-ch { padding-block: clamp(40px, 7svh, 72px); }
+}
