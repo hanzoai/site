@@ -12,7 +12,9 @@ import './platform.css';
    dock of the nine products. Choosing one in the dock flies its window up out of the dock tile onto the stage (a Motion
    layoutId shared-element spring) while the previous window sinks back to its side slot. It plays by itself every 5 s
    (a thin line fills under the active dock item), holds while you point at or focus anything in the section and picks
-   up again 3 s after you leave. Reduced motion: no autoplay, crossfades only. Drag/swipe is an extra, never required. */
+   up again 3 s after you leave. Reduced motion: no autoplay, crossfades only. Drag/swipe is an extra, never required.
+   9 Nov (James): on wide screens with motion and WebGL the section is now the scroll-driven 3D journey that the models
+   had (home/journey/), with this dock as its index; this stage stays for phones, reduced motion and no WebGL. */
 
 const P = C.products;
 const N = P.length;
@@ -114,7 +116,7 @@ function Win({ i, d, W, narrow, calm, from, layoutId, scenes, play, onPick }) {
 }
 
 /* one dock item: a tile that grows as the pointer nears (macOS), its name, the autoplay line, a live preview on hover */
-function DockItem({ i, on, mx, fine, calm, narrow, fly, progress, playing, peek, setPeek, onPick, onKey, scenes }) {
+export function DockItem({ i, on, mx, fine, calm, narrow, fly, progress, playing, peek, setPeek, onPick, onKey, scenes }) {
   const p = P[i];
   const ref = useRef(null);
   const dist = useTransform(mx, (x) => {
@@ -198,7 +200,7 @@ function sample(root) {
   return score > 20 ? best : null;
 }
 
-export default function Platform() {
+function Stage({ pending, shell }) {
   const sec = useRef(null);
   const stage = useRef(null);
   const tabs = useRef(null);
@@ -269,7 +271,7 @@ export default function Platform() {
   };
   useEffect(() => () => clearTimeout(inside.current.t), []);
 
-  const playing = seen && !held && !calm && !hidden;
+  const playing = seen && !held && !calm && !hidden && !pending;
   useAnimationFrame((_, dt) => {
     if (!playing) return;
     const v = progress.get() + dt / (HOLD * 1000);
@@ -318,10 +320,12 @@ export default function Platform() {
       onFocus={() => hold('focus', true)}
       onBlur={(e) => { if (!sec.current.contains(e.relatedTarget)) hold('focus', false); }}
       onKeyDown={onSecKey}
+      data-pending={pending ? '' : undefined}
     >
       <div className="x-wrap">
-        <Head title="Hanzo is the AI-native company platform." lede="A vertically integrated agentic operating system for business — intelligence, applications, computer-use agents, developer tools, MCP, and cloud infrastructure designed together in one workspace." />
+        <Head title={TITLE} lede={LEDE} />
       </div>
+      {pending && <div className="xpj-shell" ref={shell} />}
       <motion.div
         className="xp-stage"
         ref={stage}
@@ -394,4 +398,29 @@ export default function Platform() {
       </div>
     </section>
   );
+}
+
+const TITLE = 'Hanzo is the AI-native company platform.';
+const LEDE = 'A vertically integrated agentic operating system for business — intelligence, applications, computer-use agents, developer tools, MCP, and cloud infrastructure designed together in one workspace.';
+
+/* Wide screens with motion and WebGL get the journey (home/journey/Journey.jsx, with three.js, imported only when the
+   section comes near). Phones, reduced motion and no WebGL keep the dock and stage above. Until then the server's markup
+   holds the journey's place at its full height (CSS decides: home/journey/journey.css), so nothing below it moves. */
+export default function Platform() {
+  const [view, setView] = useState(null); // null on the server and first paint (CSS picks), then 'stage' or the Journey module
+  const shell = useRef(null);
+  useEffect(() => {
+    const el = shell.current;
+    if (!el?.offsetParent) return setView('stage');
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      io.disconnect();
+      import('./journey/Journey').then(setView, () => setView('stage'));
+    }, { rootMargin: '100%' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  const Journey = view?.default;
+  if (Journey) return <Journey products={P} title={TITLE} lede={LEDE} onFail={setView} />;
+  return <Stage pending={!view} shell={shell} />;
 }

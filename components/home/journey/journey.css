@@ -1,0 +1,97 @@
+/* The products journey (components/home/journey/Journey.jsx) and how the section chooses it over the dock and stage.
+   Monochrome: graphite and silver on Hanzo's dark, inverted on light. Every colour reads Hanzo's tokens (--bg, --ink,
+   --soft, --faint, --line), which follow @hanzo/appearance's light and dark. */
+
+/* before the page has chosen: the dock and stage without JS, on phones and with reduced motion; the journey's full-height
+   place everywhere else, so nothing below it moves when it arrives */
+.xpj-shell { display: none; }
+@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+  html.js .x-platform[data-pending] .xpj-shell { display: block; }
+  html.js .x-platform[data-pending] .xp-stage, html.js .x-platform[data-pending] .xp-nav { display: none; }
+}
+
+.xpj, .xpj-shell { --xpj-gap: 80vh; /* --xpj-n, the number of products, is set by Journey.jsx; the shell uses the default */
+  position: relative; height: calc(100vh + (var(--xpj-n, 9) - 1) * var(--xpj-gap)); margin-top: clamp(8px, 2vw, 24px); }
+/* the stage pins, so the section must not clip (globals.css gives .x-platform overflow: hidden for the carousel) */
+.x-platform.xpj-sec { overflow: visible; }
+main > .x-platform.xpj-sec { padding-bottom: 0; }
+.xpj-stage {
+  --xpj-glow: rgba(255, 255, 255, .085); --xpj-dot: rgba(229, 229, 229, .16); --xpj-hair: rgba(255, 255, 255, .28);
+  position: sticky; top: 0; height: 100vh; overflow: hidden; color: var(--ink); isolation: isolate; background: var(--bg);
+}
+html.light .xpj-stage { --xpj-glow: rgba(10, 10, 10, .06); --xpj-dot: rgba(10, 10, 10, .09); --xpj-hair: rgba(10, 10, 10, .3); }
+
+/* Hanzo's halftone, heavier at the edges, and a soft horizon glow behind the slabs */
+.xpj-dots {
+  position: absolute; inset: 0; z-index: -2; pointer-events: none;
+  background-image: radial-gradient(circle at center, var(--xpj-dot) 1.15px, transparent 1.7px); background-size: 10px 10px;
+  -webkit-mask-image: radial-gradient(75% 70% at 66% 48%, transparent 30%, #000 100%); mask-image: radial-gradient(75% 70% at 66% 48%, transparent 30%, #000 100%);
+}
+.xpj-glow {
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(60% 26% at 64% 66%, var(--xpj-glow), transparent 70%),
+    radial-gradient(34% 34% at 66% 46%, var(--xpj-glow), transparent 75%),
+    linear-gradient(180deg, var(--bg) 0%, transparent 16%, transparent 84%, var(--bg) 100%);
+}
+.xpj-gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: pan-y; opacity: 0; transition: opacity 1.2s var(--ease); }
+.xpj[data-ready] .xpj-gl { opacity: 1; }
+.xpj-hit { position: absolute; left: 60%; top: 30%; width: 1px; height: 1px; pointer-events: none; }
+
+/* before three.js arrives: the product's own screen waits where its slab will appear */
+.xpj-poster {
+  position: absolute; left: 66%; top: 46%; width: min(40vw, 560px); aspect-ratio: 2 / 1; object-fit: cover; transform: translate(-50%, -50%) perspective(1200px) rotateY(-12deg);
+  border-radius: 14px; box-shadow: 0 0 0 1px var(--line), 0 40px 80px -40px rgba(0, 0, 0, .6);
+  pointer-events: none; transition: opacity .9s var(--ease); animation: xpj-in .9s var(--ease) both;
+}
+html.light .xpj-poster.dk, html:not(.light) .xpj-poster.lt { display: none; }
+.xpj[data-ready] .xpj-poster { opacity: 0; }
+
+/* the address, tied to the slab with a hairline */
+.xpj-wires { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.xpj-wires line { stroke: var(--xpj-hair); stroke-width: 1; animation: xpj-fade .8s .35s var(--ease) both; }
+.xpj:not([data-ready]) .xpj-wires, .xpj:not([data-ready]) .xpj-label { display: none; }
+.xpj-label {
+  position: absolute; left: 0; top: 0; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; will-change: transform; pointer-events: none;
+  font: 500 10.5px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--soft);
+  padding: 7px 10px; border: 1px solid var(--line); border-radius: 999px; background: color-mix(in srgb, var(--bg) 70%, transparent);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); animation: xpj-fade .7s .45s var(--ease) both;
+}
+.xpj-label i { width: 5px; height: 5px; border-radius: 50%; background: var(--ink); opacity: .7; }
+
+/* the left panel: number and address, name, links; all real text */
+.xpj-panel { position: absolute; inset: 0 0 120px; pointer-events: none; display: flex; align-items: center; }
+.xpj-list { list-style: none; margin: 0; padding: 0; display: grid; width: min(44%, 540px); }
+.xpj-list > li { grid-area: 1 / 1; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
+.xpj-list > li.on { pointer-events: auto; }
+.xpj-list > li > * { transition: opacity .55s var(--ease), transform .8s var(--ease), filter .6s var(--ease); }
+.xpj-list > li:not(.on) > * { opacity: 0; transform: translateY(34px); filter: blur(6px); transition-duration: .35s, .5s, .35s; }
+.xpj-list > li.past > * { transform: translateY(-34px); }
+.xpj-list > li.on > :nth-child(2) { transition-delay: .08s; }
+.xpj-list > li.on > :nth-child(3) { transition-delay: .18s; }
+.xpj-kick { display: flex; align-items: center; gap: 12px; font: 500 11.5px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--faint); }
+.xpj-num { color: var(--ink); }
+.xpj-num::after { content: ''; display: inline-block; width: 28px; height: 1px; margin-left: 12px; vertical-align: middle; background: currentColor; opacity: .5; }
+.xpj-addr { color: var(--soft); text-decoration: none; border-radius: 4px; }
+.xpj-addr:hover { color: var(--ink); }
+.xpj-addr:focus-visible, .xpj-acts a:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+.xpj-name { margin: 0; font-size: clamp(4.25rem, 8.6vw, 8.75rem); font-weight: 560; letter-spacing: -.055em; line-height: .9; color: var(--ink); }
+.xpj-acts { display: flex; flex-wrap: wrap; gap: 10px; }
+
+/* round the edge: the counter, the gesture hint, and the dock as the index */
+.xpj-count { position: absolute; right: 64px; bottom: 40px; display: flex; align-items: baseline; gap: 10px; font: 500 13px/1 var(--mono); letter-spacing: .1em; color: var(--faint); font-feature-settings: 'tnum'; }
+.xpj-count b { font-weight: 500; font-size: 28px; letter-spacing: -.02em; color: var(--ink); }
+.xpj-hint { position: absolute; left: 64px; bottom: 44px; display: flex; align-items: center; gap: 14px; color: var(--faint); }
+.xpj-hint svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.xpj-hint i { width: 3px; height: 3px; border-radius: 50%; background: currentColor; opacity: .6; }
+.xpj-wheel { animation: xpj-wheel 1.8s var(--ease) infinite; }
+.xpj-nav { position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%); display: flex; justify-content: center; max-width: calc(100% - 340px); }
+.xpj-nav .xp-dock { margin: 0; }
+@media (max-width: 1100px) { .xpj-count { right: 28px; } .xpj-hint { display: none; } .xpj-nav { max-width: calc(100% - 140px); } }
+
+@keyframes xpj-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes xpj-in { from { opacity: 0; transform: translate(-50%, -46%) perspective(1200px) rotateY(-12deg) scale(.96); } }
+@keyframes xpj-wheel { 0% { transform: translateY(0); opacity: 1; } 70% { transform: translateY(3px); opacity: 0; } 100% { opacity: 0; } }
+
+/* the page's own section index steps aside while the journey is on screen */
+html.xpj-pinned .xh-spine { opacity: 0; pointer-events: none; }
