@@ -153,9 +153,13 @@ Wording and prices follow live hanzo.ai as captured on 8 Nov 2026 (`content/live
   Remove any you don't want; the rest of each page is unaffected.
 - **Commit total on the home calendar.** hanzo.ai's daily figures sum to 835,124 while its label says 805,254. This
   site keeps Hanzo's label.
-- **Dark-mode contrast is still being polished.** `node scripts/darkcheck.mjs` (8 Nov) listed 259 spots on 47 pages
-  where text reads under 3:1 in dark, many inside captured product screenshots and code samples; the full list is in
-  `docs/build-notes/dark-issues-8nov.json`. Light mode is unaffected.
+- **Dark mode was fixed spot by spot, the Hanzo way.** `scripts/darkcheck.mjs` listed 233 unreadable spots on 47 pages
+  on 8 Nov (`docs/build-notes/dark-issues-8nov.json` has the earlier 259); each was fixed with Hanzo's token for its role,
+  in rules under `html:not(.light)` (commits titled "dark tokens: ..."). It now reports 0 of 152 pages. Light mode is
+  unchanged: 795 pages ship byte-identical CSS, and the 103 whose CSS changed show 0 computed-colour differences in
+  `scripts/lightcheck.mjs` at 1470px and 375px. The checker reads text only, so canvases and images were checked by eye
+  (the /enso particle ring was invisible in dark and now draws in `--foreground`). Pages outside
+  `scripts/copycheck-pages.txt` were not run through the checker.
 - **Not re-compared against live at handoff.** The final handoff build ran where hanzo.ai was not reachable, so
   `copycheck.mjs` was not re-run that day, and the snapshots above were used. If live has changed a line since 8 Nov,
   run `node scripts/copycheck.mjs <page>` and restore it: copy on live always wins.
