@@ -149,7 +149,7 @@ export default function ProviderShelf({ doc }) {
             <ul className="xmf-grid">
               {[...shown, ...cards.filter((c) => hidden.has(c.href))].map((c) => (
                 <motion.li key={c.href} layout={anim ? 'position' : false} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} hidden={hidden.has(c.href)}>
-                  <SpecCard className="xmf-row" to={c.href} title={c.name} desc={c.desc} tags={[...(c.ctx ? [c.ctx] : []), ...c.tags]} meta={c.rate ? <b>{`${money(c.rate.in)} → ${money(c.rate.out)}`}</b> : null} />
+                  <SpecCard className="xmf-row" to={c.href} title={c.name} desc={c.desc} tags={[...(c.ctx ? [c.ctx] : []), ...c.tags]} meta={<><span className="xmf-id">{c.mid || c.id}</span>{c.rate ? <b>{`${money(c.rate.in)} → ${money(c.rate.out)}`}</b> : null}</>} />
                 </motion.li>
               ))}
             </ul>

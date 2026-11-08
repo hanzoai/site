@@ -48,7 +48,9 @@ function cardOf(a) {
   const ctx = spans.find((s, i) => i > 0 && /^[\d.]+[KM]$/.test(s)) || null;
   const last = a.c.filter(isN).slice(-1)[0];
   const tags = last && last !== p && last.t === 'div' ? findAll(last, slot('text')).map((s) => clean(textOf(s))).filter(Boolean) : [];
-  return { href: a.a.href, name, ctx, desc: p ? clean(textOf(p)) : '', tags };
+  // hanzo.ai prints each card's model id in mono under its name (8 Nov); older captures have none
+  const mono = findAll(a, slot('text')).find((s) => s.t === 'span' && /\bfont_mono\b/.test((s.a && s.a.class) || '') && !/^[\d.]+[KM]$/.test(clean(textOf(s))));
+  return { href: a.a.href, name, ctx, desc: p ? clean(textOf(p)) : '', tags, ...(mono ? { mid: clean(textOf(mono)) } : {}) };
 }
 
 const providerCache = new Map();

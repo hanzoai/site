@@ -1160,8 +1160,8 @@
 "description": "Access 2 deepgram models via Hanzo's OpenAI-compatible API. Single API key, unified billing, and global low-latency routing."
 },
 "/models/deepseek": {
-"title": "DeepSeek Models via Hanzo AI — 18 models",
-"description": "Access 18 DeepSeek models via Hanzo's OpenAI-compatible API. Single API key, unified billing, and global low-latency routing."
+"title": "DeepSeek Models via Hanzo AI — 19 models",
+"description": "Access 19 DeepSeek models via Hanzo's OpenAI-compatible API. Single API key, unified billing, and global low-latency routing."
 },
 "/models/dots-studio": {
 "title": "dots-studio Models via Hanzo AI — 1 models",
@@ -1224,8 +1224,8 @@
 "description": "Access 3 kwaivgi models via Hanzo's OpenAI-compatible API. Single API key, unified billing, and global low-latency routing."
 },
 "/models/liquid": {
-"title": "Liquid AI Models via Hanzo AI — 3 models",
-"description": "Access 3 Liquid AI models via Hanzo's OpenAI-compatible API. Single API key, unified billing, and global low-latency routing."
+"title": "Liquid AI Models via Hanzo AI — 5 models",
+"description": "Access 5 Liquid AI models via Hanzo's OpenAI-compatible API. Single API key, unified billing, and global low-latency routing."
 },
 "/models/mancer": {
 "title": "Mancer Models via Hanzo AI — 1 models",
@@ -1236,16 +1236,16 @@
 "description": "Access 1 Meituan models via Hanzo's OpenAI-compatible API. Single API key, unified billing, and global low-latency routing."
 },
 "/models/meta": {
-"title": "Meta Models via Hanzo AI — 16 models",
-"description": "Access 16 Meta models via Hanzo's OpenAI-compatible API. Single API key, unified billing, and global low-latency routing."
+"title": "Meta Models via Hanzo AI — 17 models",
+"description": "Access 17 Meta models via Hanzo's OpenAI-compatible API. Single API key, unified billing, and global low-latency routing."
 },
 "/models/microsoft": {
 "title": "Microsoft Models via Hanzo AI — 5 models",
 "description": "Access 5 Microsoft models via Hanzo's OpenAI-compatible API. Single API key, unified billing, and global low-latency routing."
 },
 "/models/minimax": {
-"title": "Minimax Models via Hanzo AI — 10 models",
-"description": "Access 10 Minimax models via Hanzo's OpenAI-compatible API. Single API key, unified billing, and global low-latency routing."
+"title": "Minimax Models via Hanzo AI — 11 models",
+"description": "Access 11 Minimax models via Hanzo's OpenAI-compatible API. Single API key, unified billing, and global low-latency routing."
 },
 "/models/mistralai": {
 "title": "Mistral Models via Hanzo AI — 23 models",
@@ -1272,16 +1272,16 @@
 "description": "Access 1 Nous Research models via Hanzo's OpenAI-compatible API. Single API key, unified billing, and global low-latency routing."
 },
 "/models/nvidia": {
-"title": "NVIDIA Models via Hanzo AI — 12 models",
-"description": "Access 12 NVIDIA models via Hanzo's OpenAI-compatible API. Single API key, unified billing, and global low-latency routing."
+"title": "NVIDIA Models via Hanzo AI — 11 models",
+"description": "Access 11 NVIDIA models via Hanzo's OpenAI-compatible API. Single API key, unified billing, and global low-latency routing."
 },
 "/models/openai": {
 "title": "OpenAI Models via Hanzo AI — 81 models",
 "description": "Access 81 OpenAI models via Hanzo's OpenAI-compatible API. Single API key, unified billing, and global low-latency routing."
 },
 "/models/openrouter": {
-"title": "OpenRouter Models via Hanzo AI — 7 models",
-"description": "Access 7 OpenRouter models via Hanzo's OpenAI-compatible API. Single API key, unified billing, and global low-latency routing."
+"title": "OpenRouter Models via Hanzo AI — 3 models",
+"description": "Access 3 OpenRouter models via Hanzo's OpenAI-compatible API. Single API key, unified billing, and global low-latency routing."
 },
 "/models/particle-ai": {
 "title": "particle-ai Models via Hanzo AI — 1 models",
@@ -1300,8 +1300,8 @@
 "description": "Access 2 prism-ml models via Hanzo's OpenAI-compatible API. Single API key, unified billing, and global low-latency routing."
 },
 "/models/qwen": {
-"title": "Qwen Models via Hanzo AI — 44 models",
-"description": "Access 44 Qwen models via Hanzo's OpenAI-compatible API. Single API key, unified billing, and global low-latency routing."
+"title": "Qwen Models via Hanzo AI — 45 models",
+"description": "Access 45 Qwen models via Hanzo's OpenAI-compatible API. Single API key, unified billing, and global low-latency routing."
 },
 "/models/recursive": {
 "title": "recursive Models via Hanzo AI — 1 models",
@@ -1364,8 +1364,8 @@
 "description": "Access 3 TheDrummer models via Hanzo's OpenAI-compatible API. Single API key, unified billing, and global low-latency routing."
 },
 "/models/thinkingmachines": {
-"title": "Thinking Machines Models via Hanzo AI — 2 models",
-"description": "Access 2 Thinking Machines models via Hanzo's OpenAI-compatible API. Single API key, unified billing, and global low-latency routing."
+"title": "Thinking Machines Models via Hanzo AI — 3 models",
+"description": "Access 3 Thinking Machines models via Hanzo's OpenAI-compatible API. Single API key, unified billing, and global low-latency routing."
 },
 "/models/typesafe": {
 "title": "typesafe Models via Hanzo AI — 3 models",
