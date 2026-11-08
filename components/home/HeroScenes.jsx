@@ -125,7 +125,7 @@ export function Feed({ i, sc = -1 }) {
       {FEED.map((e, k) => (
         <div key={k} className={'xs-ev' + (k === a ? ' on a' : k === b ? ' on b' : '')} aria-hidden={k === a ? undefined : true}>
           <i aria-hidden="true">{WHO[e.who] ? WHO[e.who][0] : ''}</i>
-          <p><span className="xs-ev-t">{e.title}</span> {e.line && <span className="xs-ev-l">· {e.line}</span>}</p>
+          <p>{e.joins ? <span className="xs-ev-l">· {e.title}</span> : <><span className="xs-ev-t">{e.title}</span> {e.line && <span className="xs-ev-l">· {e.line}</span>}</>}</p>
           {e.act && <span className="xs-ev-act"><span className="xs-act-a">{e.act[0]}</span><span className="xs-act-b">{e.act[1]}</span></span>}
         </div>
       ))}

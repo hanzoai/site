@@ -60,7 +60,7 @@ Done here: The header's "Try Hanzo" is the one solid ask after the hero. Pricing
 - [x] No marquees: Trusted by and Backed by are still, ordered walls, and a logo's name stands in if its file fails
 - [ ] n/a: no form submit on this page
 
-Done here: Parity shows 570/570 texts. The figures are Hanzo's: 3.02×, 9.6×, 14.2×, 530×, the GPQA chart and 805,254.
+Done here: Parity shows 570/570 texts. The figures are Hanzo's: 3.02×, 9.6×, 14.2×, 530×, the GPQA chart and 805,254. (8 Nov) Every figure comes from the source hanzo.ai's home reads, refreshed by scripts/live.mjs before each build: open-source tiles, calendar and repository cards from hanzo.ai's own page snapshot (content/live/_oss.json); the coding race and Kai's speed from api.hanzo.ai research runs (_research.json); Kai's per-million prices and the GPQA names from /v1/models and /v1/pricing/models (_models.json); Enso's cost card and the frontier's single-model points worked out from the same runs (components/home/figures.js). Only the four lab/independent reported scores (GLM 5.3, Grok 4.7, Kimi K3, GPT-6 Sol) and the three comparison call times hanzo.ai itself fixes (1,120 / 3,180 / 3,840 ms) stay as Hanzo's constants.
 
 ## 6. Content presentation (copy untouched)
 - [x] No text under 13px (14px phone) except mono capitals and the spec'd model-card pills and descriptions (`SPEC.md`: 10px pill, 13px description)
