@@ -36,11 +36,14 @@ export default function MagnetGrid({ className = '', label }) {
         dots.push({ hx: x, hy: y, x, y, m: hit(x, y) });
       }
     };
+    // colours come from CSS so the field follows the page's mode (ink dots on light, light dots on #0d0d0d)
+    let inkC = '#0a0a0a', dotC = '#a3a3a3';
+    const tint = () => { const cs = getComputedStyle(box); inkC = cs.color; dotC = cs.caretColor; };
     const draw = () => {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, W, H);
       for (const d of dots) {
-        ctx.fillStyle = d.m ? '#0a0a0a' : '#a3a3a3';
+        ctx.fillStyle = d.m ? inkC : dotC;
         const s = d.m ? 2.6 : 1.4;
         const bulge = d.b || 0;
         ctx.beginPath(); ctx.arc(d.x, d.y, s + bulge, 0, 6.2832); ctx.fill();
@@ -74,7 +77,9 @@ export default function MagnetGrid({ className = '', label }) {
     const move = (e) => { [ptr.x, ptr.y] = at(e); ptr.on = true; last = performance.now(); kick(); };
     const leave = () => { ptr.on = false; kick(); };
     const down = (e) => { const [x, y] = at(e); rip.push({ x, y, t0: performance.now() }); if (rip.length > 4) rip.shift(); if (e.pointerType !== 'mouse') { ptr.x = x; ptr.y = y; ptr.on = true; last = performance.now(); setTimeout(leave, 500); } kick(); };
-    build(); draw();
+    tint(); build(); draw();
+    const mo = new MutationObserver(() => { tint(); draw(); }); // the page switched light/dark
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
     let arrived = false, idle = 0, idles = 0;
     const breathe = () => {
       idle = 0;
@@ -99,7 +104,7 @@ export default function MagnetGrid({ className = '', label }) {
       c.addEventListener('pointerleave', leave);
       c.addEventListener('pointerdown', down);
     }
-    return () => { clearTimeout(idle); io.disconnect(); ro.disconnect(); cancelAnimationFrame(raf); c.removeEventListener('pointermove', move); c.removeEventListener('pointerleave', leave); c.removeEventListener('pointerdown', down); };
+    return () => { mo.disconnect(); clearTimeout(idle); io.disconnect(); ro.disconnect(); cancelAnimationFrame(raf); c.removeEventListener('pointermove', move); c.removeEventListener('pointerleave', leave); c.removeEventListener('pointerdown', down); };
   }, []);
   return (
     <div ref={wrap} className={'xmg ' + className}>
