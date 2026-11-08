@@ -24,6 +24,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { Cta, Film, Img } from '../kit';
 import '../v2/ProgramScale.css';
 import './BetaApply.css';
+import './Frame.css';
 import { PLANS, checkoutAbs } from '../../lib/plans';
 
 /* hanzo.ai's own definitions, word for word */
@@ -87,8 +88,21 @@ function Bars({ done, total }) {
   );
 }
 
+/* The paid way past the line (Zack's GA list, 8 Nov): no waitlist, straight to the Go checkout. Words are Hanzo's own
+   ("Skip the wait, go paid" from /beta, "Go is $8/month, every model" from the home page); the price is lib/plans.js.
+   On the pass it is the fast lane at the foot of the ticket; on a phone (no pass) it sits under the progress bars. */
+function Paid({ program, where }) {
+  return (
+    <a href={checkoutAbs(PLANS.go.id, 'beta')} className={'xba-paid ' + where} data-cta={`beta.${program}.go-paid`}>
+      <span className="xba-paid-t">Skip the wait, go paid</span>
+      <span className="xba-paid-d">Go is ${PLANS.go.price}/month, every model</span>
+      <span className="xba-paid-i" aria-hidden="true"><ArrowR s={14} /></span>
+    </a>
+  );
+}
+
 /* The pass: the film, the pass's name and promise, and a line for every answer (a tap goes back to its question). */
-function Pass({ p, asks, got, at, go, open }) {
+function Pass({ p, program, asks, got, at, go, open }) {
   const lines = asks.map((a, i) => [a, i]).filter(([a]) => answered(a, got[a.id]));
   return (
     <aside className="xba-pass" data-room="dark" aria-label={p.name}>
@@ -115,6 +129,7 @@ function Pass({ p, asks, got, at, go, open }) {
           })}
         </AnimatePresence>
       </ol>
+      <Paid program={program} where="on-pass" />
     </aside>
   );
 }
@@ -241,9 +256,9 @@ function Apply({ program }) {
   const cut = { initial: { y: calm ? 0 : dir > 0 ? '104%' : '-104%' }, animate: { y: 0 }, transition: { duration: calm ? 0 : 0.5, ease: EASE } };
 
   return (
-    <main className={'xp xba ' + program}>
+    <main className={'xp xba zf ' + program}>
       <div className="xp-wrap xba-in">
-        <Pass p={p} asks={asks} got={got} at={step} open={!gate} go={(i) => { setGate(false); to(i); }} />
+        <Pass p={p} program={program} asks={asks} got={got} at={step} open={!gate} go={(i) => { setGate(false); to(i); }} />
         <section className="xba-form" aria-label="Apply to the Hanzo beta">
           {gate ? (
             <motion.div key="gate" className="xba-gate" {...slide}><Mount on={land} />
@@ -254,6 +269,7 @@ function Apply({ program }) {
                 <Cta to={`/login?next=${encodeURIComponent('/beta')}`} kind="quiet" id={`beta.${program}.login`}>Sign in</Cta>
                 <button type="button" className="xba-quiet" onClick={edit}>Edit answers</button>
               </div>
+              <Paid program={program} where="on-phone" />
             </motion.div>
           ) : (
             <>
@@ -263,6 +279,7 @@ function Apply({ program }) {
                   <span className="xba-top-p x-mono">{pct}%</span>
                 </div>
                 <Bars done={done} total={n} />
+                <Paid program={program} where="on-phone" />
               </div>
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div key={program + '-' + ask.id} className="xba-step" {...slide}><Mount on={land} />
@@ -303,8 +320,6 @@ function Apply({ program }) {
                     : <Cta kind="quiet" disabled={busy || !canSkip} onClick={() => (last ? enough && submit() : to(step + 1))} id={`beta.${program}.skip`}>Skip</Cta>}
                 </div>
               </div>
-              {/* the paid path, as on /beta: no waitlist, straight to the Go checkout (Zack's GA list, 8 Nov) */}
-              <p className="xba-paid"><a href={checkoutAbs(PLANS.go.id)} data-cta={`beta.${program}.go-paid`}>Skip the wait, go paid</a></p>
               <label className="xba-trap" aria-hidden="true">
                 <span>Leave this empty</span>
                 <input tabIndex={-1} autoComplete="off" name="website" value={trap} onChange={(e) => setTrap(e.target.value)} />

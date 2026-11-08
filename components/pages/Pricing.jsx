@@ -29,6 +29,7 @@ import { EASE, useCalm } from '../ui';
 import { A, More, Cta, Tabs, Faq, DataTable, Band, Img } from '../kit';
 import Odometer from '../v2/Odometer';
 import NoJs from '../NoJs';
+import './Frame.css';
 import './Pricing.css';
 import { PLANS, SEATS, checkout, teamCheckout } from '../../lib/plans';
 
@@ -294,6 +295,7 @@ function Card({ id, s, set, hand, i }) {
   return (
     <motion.article className={'xpr-card' + (p.rec ? ' rec' : '')} data-id={id} aria-labelledby={'xpr-c-' + id} style={{ '--i': i }}
       initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0, transition: { ...IN, delay: 0.06 * i } }} exit={{ opacity: 0, transition: { duration: 0.12 } }}>
+      {id === 'pro' && <span className="xpr-recd">Recommended</span>}
       <div className="xpr-c-top">
         <h2 className="xpr-c-name" id={'xpr-c-' + id}>{p.ladder ? <Swap k={p.name} roll>{p.name}</Swap> : p.name}</h2>
         {p.ladder && <Seg opts={PRO.map((q) => q.x)} val={s.x} set={(v) => { hand(); set.x(v); }} id="xpr-mult" label="Usage multiple" />}
@@ -483,9 +485,9 @@ const cellOf = (r) => {
 function Models() {
   return (
     <div className="xpr-groups">
-      {GROUPS.map((g, gi) => (
-        // one family open at a time on arrival; the rest fold under their name (every row stays in the HTML)
-        <details key={g.h} className="xpr-group" open={gi === 0}>
+      {GROUPS.map((g) => (
+        // every family folds under its name (Enso is open in the room above; every row stays in the HTML)
+        <details key={g.h} className="xpr-group">
           <summary className="xpr-group-s"><h4>{g.h}</h4><span className="xpr-group-n" aria-hidden="true">{g.rows.length}</span><i aria-hidden="true" /></summary>
           <div className="xpr-group-h">
             <p>{g.d}</p>
@@ -601,6 +603,79 @@ function ApiMore({ on }) {
   );
 }
 
+
+/* ---------- the ladder (Zack, 8 Nov: "easy to compare at a glance, Pro recommended, every plan straight to checkout"):
+   every personal plan side by side as a rising stair, each step with its price, Hanzo's three lines that differ (usage,
+   limits, Hanzo Bot) and its own checkout. The full line-by-line sheet opens under it. ---------- */
+function Ladder({ lit }) {
+  const diff = ROWS.slice(0, 3);
+  return (
+    <section className="zf-sec xpr-lad" aria-labelledby="xpr-lad-h">
+      <div className="xpr-w">
+        <header className="zf-head">
+          <h2 id="xpr-lad-h">Compare plans</h2>
+          <p>No commitment · Cancel anytime</p>
+        </header>
+        <ol className="xpr-lad-g zf-lift zf-tilt">
+          {COLS.map((c, i) => {
+            const rec = i === 2;
+            const paid = c.price.startsWith('$');
+            return (
+              <li key={c.name} className={'xpr-lad-c' + (rec ? ' rec' : '') + (i === lit ? ' lit' : '')} style={{ '--i': i }}>
+                <span className="xpr-lad-step" aria-hidden="true"><i /></span>
+                <div className="xpr-lad-top">
+                  <h3>{c.name}</h3>
+                  {rec && <span className="xpr-recd">Recommended</span>}
+                </div>
+                <p className="xpr-lad-p">{paid ? <><b>{c.price}</b><small>USD/month</small></> : <b className="word">{c.price}</b>}</p>
+                {diff.map(([k, v]) => <div key={k} className="xpr-lad-row"><span className="k">{k}</span><span className="v">{v[i] || <span className="xpr-dash" aria-label="Not included">—</span>}</span></div>)}
+                <Cta to={c.to} size="md" kind={rec ? 'solid' : 'outline'} id={'pricing.compare.' + c.name.toLowerCase()} className="xpr-lad-cta">Try Hanzo</Cta>
+              </li>
+            );
+          })}
+        </ol>
+        <details className="xpr-faq-more xpr-lad-more">
+          <summary><span>Read more</span><span className="xpr-faq-n" aria-hidden="true">+ {ROWS.length - 3}</span></summary>
+          <CompareSheet lit={lit} />
+        </details>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Enso, priced in the open: the dark room. Hanzo's own per-token rates for the four Enso models, one row
+   each, with the ask to start using it. ---------- */
+const per = (v) => { const m = clean(v).match(/^(\$[\d.]+)\s*(\/ MTok)$/); return m ? <><b>{m[1]}</b><small>{m[2]}</small></> : <b>{clean(v)}</b>; };
+function Enso() {
+  const g = GROUPS[0];
+  return (
+    <section className="zf-room xpr-enso" data-room="dark" aria-labelledby="xpr-enso-h">
+      <div className="xpr-w">
+        <header className="zf-head">
+          <h2 id="xpr-enso-h">{g.h}</h2>
+          <div className="xpr-enso-lede"><p>{g.d}</p><More to={g.link[1]}>{g.link[0]}</More></div>
+        </header>
+        <div className="xpr-enso-t" role="table" aria-label={g.h}>
+          <div className="xpr-enso-r xpr-enso-hd" role="row">
+            {MCOLS.map((c) => <span key={c.key} role="columnheader">{c.label}</span>)}
+            <span role="columnheader"><span className="x-sr">Start</span></span>
+          </div>
+          {g.rows.map((r, i) => (
+            <div key={r.name} className="xpr-enso-r zf-rise" role="row" style={{ '--i': i }}>
+              <span role="cell" className="xpr-enso-m">
+                <span className="xpr-nm"><b>{r.name}</b>{r.tags.map((t) => <em key={t}>{t}</em>)}</span>
+                {r.d && <span className="xpr-enso-d">{r.d}</span>}
+              </span>
+              {r.price.map((v, k) => <span key={k} role="cell" className={'xpr-enso-v' + (k < 2 ? ' big' : '')} data-k={MCOLS[k + 1].label}>{per(v)}</span>)}
+              <span role="cell" className="xpr-enso-go"><A to="/chat" className="xpr-use">{r.cta}</A></span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ---------- questions ---------- */
 const QA = [
   ['What is free?', 'Running your own private AI on your own machine, and the open Zen weights, free forever. Enso Auto on the Free plan, on a daily pool. Everything open source is yours to download and run.'],
@@ -648,7 +723,7 @@ function Halftone() {
       // the dots are the page's ink (.xpr-dots { color: var(--ink) }): dark dots on white, light dots on Hanzo's dark
       const m = getComputedStyle(c).color.match(/[\d.]+/g) || [10, 10, 10];
       g.fillStyle = `rgba(${m[0]}, ${m[1]}, ${m[2]}, ${small ? 0.2 : 0.28})`;
-      const step = r.width < 600 ? 7 : 8, cx = r.width * 0.5, cy = r.height * 0.34;
+      const step = r.width < 600 ? 7 : 8, cx = r.width * (small ? 0.5 : 0.4), cy = r.height * (small ? 0.2 : 0.3);
       for (let y = step / 2; y < r.height; y += step) {
         for (let x = step / 2; x < r.width; x += step) {
           // distance from the clear ellipse around the title, leaning heavier to the right and toward the bottom left
@@ -703,25 +778,24 @@ export default function Pricing() {
   }, []);
   const pick = (i) => { setTab(i); try { history.replaceState(null, '', '#' + TABS[i].toLowerCase()); } catch { /* the tab still changes */ } };
   return (
-    <main ref={root} className="xpr">
-      <section className="xpr-top" aria-labelledby="xpr-h1">
+    <main ref={root} className="xpr zf">
+      <section className="xpr-top zf-sec zf-plain" aria-labelledby="xpr-h1">
         <Halftone />
         <div className="xpr-w xpr-hero-g">
-          <h1 id="xpr-h1" className="xpr-h1" data-enter="text-mask-film"><span className="xpr-cut"><span>Pricing</span></span></h1>
-          <p className="xpr-lede">Start free, every model on one bill.</p>
+          <div className="xpr-hero-t">
+            <h1 id="xpr-h1" className="xpr-h1" data-enter="text-mask-film"><span className="xpr-cut"><span>Pricing</span></span></h1>
+            <p className="xpr-lede">Start free, every model on one bill.</p>
+          </div>
           <div className="xpr-tabs"><Tabs id="xpr-plans" label="Plans" tabs={TABS} value={tab} onChange={pick} size="lg" /></div>
         </div>
         <div className="xpr-w xpr-panels" ref={rail}>
           <Plans tab={tab} s={s} set={set} hand={hand} />
         </div>
       </section>
+      {tab === 0 && <Ladder lit={PRO.findIndex((q) => q.x === x) + 2} />}
+      <Enso />
       <div className="xpr-room">
         <div className="xpr-w">
-          {tab === 0 && (
-            <section className="xpr-compare" aria-label="Compare plans" >
-              <CompareSheet lit={PRO.findIndex((q) => q.x === x) + 2} />
-            </section>
-          )}
           <Trust />
           <Index />
           <ApiMore on={tab === 2} />
@@ -729,7 +803,7 @@ export default function Pricing() {
       </div>
       <NoJs css=".xpr-all{display:grid!important}.xpr-api{display:block!important}.xpr-dots{display:none}" />
 
-      <section className="xpr-faq" aria-labelledby="xpr-faq-h">
+      <section className="xpr-faq zf-sec" aria-labelledby="xpr-faq-h">
         <div className="xpr-w xpr-split">
           <header className="xpr-stick"><h2 id="xpr-faq-h" className="xpr-h">Frequently Asked Questions</h2></header>
           <div data-enter="vertical-ticker">

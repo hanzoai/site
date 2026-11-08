@@ -22,16 +22,19 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { useDemo, DemoCtl } from '../v2/AppDemo';
 import { EASE } from '../ui';
-import { A, Faq, Cta, Band, CodeBlock, Tabs, TabPanel } from '../kit';
+import { A, Faq, Cta, CodeBlock, Tabs, TabPanel } from '../kit';
 import AppLines from '../v2/AppLines';
 import { In, Cascade, Roll } from './dev/enter';
 import useCalm from '../v2/useCalm';
+import './Frame.css';
 import './DevPage.css';
 import { PLANS, checkout } from '../../lib/plans';
 
 const OPEN = '/login?next=%2Fdev';
 const DOCS = 'https://docs.hanzo.ai/docs/dev';
 const GO = checkout(PLANS.go.id, 'dev'); // Go is the cheapest plan with Hanzo Dev
+// the page's one priced ask, in the words and the price this page already uses (Go, lib/plans.js), straight to Go's checkout
+const PRICED = `Get Hanzo Dev, $${PLANS.go.price}/month`;
 // Hanzo's own links end in a text arrow (→), so the kit Cta link carries it as text and drops its drawn one
 // the arrow sits in the label's own text, as Hanzo prints it ("Getting started →"); bare: Hanzo prints no arrow ("Read the docs")
 const Lk = ({ to, children, id, bare }) => <Cta to={to} kind="link" id={id} className="xdv-lk">{bare ? children : children + ' →'}</Cta>;
@@ -181,7 +184,7 @@ function Session() {
 
 function Hero() {
   return (
-    <section className="xdv-hero" aria-labelledby="xdv-h1" data-morph-target data-ask-name="Hanzo Dev">
+    <section className="xdv-hero zf-sec" aria-labelledby="xdv-h1" data-morph-target data-ask-name="Hanzo Dev">
       <div className="v2a-wrap v2a-grid xdv-hero-top">
         <div className="xdv-hero-h">
           <AppLines as="h1" id="xdv-h1" className="v2a-display xdv-h1" lines={['Describe the change.', 'Dev ships it.']} />
@@ -190,7 +193,8 @@ function Hero() {
         <div className="xdv-hero-side xdv-arrive" style={{ '--d': '180ms' }}>
           <p className="xdv-lede">Hanzo Dev is a coding agent. It reads your repository, makes the change, runs the tests and shows you the diff — in your terminal, on the web, in the cloud and in Slack.</p>
           <div className="xdv-acts">
-            <Cta to={OPEN} id="dev.hero" thumb size="lg">Open Dev</Cta>
+            <Cta to={GO} id="dev.hero-go" thumb size="lg" className="xdv-priced">{PRICED}</Cta>
+            <Cta to={OPEN} id="dev.hero" kind="quiet" size="lg">Open Dev</Cta>
             <Lk to={DOCS} id="dev.docs" bare>Read the docs</Lk>
             <Lk to="https://github.com/hanzoai/dev" id="dev.github">Explore GitHub examples</Lk>
           </div>
@@ -258,13 +262,17 @@ function Race() {
     while (v < MAX) { await sleep(32); v = Math.min(MAX, v + 0.032); t.set(v); }
   }, { amount: 0.3 }); // a third of the board on screen (on a phone the two clocks stack, so the whole board never fits)
   return (
-    <section className="xdv-race" data-room="dark" ref={ref} aria-labelledby="xdv-race">
-      <div className="xdv-race-pin">
-        <div className="v2a-wrap">
-          <div className="v2a-grid xdv-race-top">
-            <h2 className="xdv-race-h" id="xdv-race"><span className="xdv-big v2a-fig">3.02×</span> <span className="xdv-race-t">faster on the same coding tasks.</span></h2>
-            <p className="xdv-race-l">Hanzo Dev and Claude Code were handed the same 44 coding tasks (single-fault repairs), one try each. Each clock replays that side's median time a task, at the speed it ran.</p>
-          </div>
+    // the dark room (Frame.css .zf-room): it opens like a curtain as you arrive, a beam sweeps down; the figure and its
+    // verdict stand on the left, the two clocks race one above the other on the right, all in one frame
+    <section className="xdv-race zf-room" data-room="dark" ref={ref} aria-labelledby="xdv-race">
+      <div className="v2a-wrap xdv-rx">
+        <div className="xdv-rx-l">
+          <h2 className="xdv-race-h" id="xdv-race"><span className="xdv-big v2a-fig">3.02×</span> <span className="xdv-race-t">faster on the same coding tasks.</span></h2>
+          <p className="xdv-race-l">Hanzo Dev and Claude Code were handed the same 44 coding tasks (single-fault repairs), one try each. Each clock replays that side's median time a task, at the speed it ran.</p>
+          <ul className="x-sr">{SIDES.map((s) => <li key={s.who}>{s.who}: {s.s.toFixed(2)} s median time a task, {s.calls} model calls a task</li>)}</ul>
+          <p className="xdv-verdict">3.02× faster over the 42 tasks both solved, 95% interval 2.06–4.36×.</p>
+        </div>
+        <div className="xdv-rx-r">
           {/* entrance 3 (pendulum): the two sides swing in from their top edge and settle */}
           <In kind="pendulum" className="xdv-split" boxRef={board}>
             {SIDES.map((s) => <Side key={s.who} t={t} side={s} />)}
@@ -274,11 +282,7 @@ function Race() {
             <Cta kind="quiet" onClick={demo.replay} id="dev.race" className="xdv-replay-btn">Replay race</Cta>
           </div>
         </div>
-      </div>
-      <div className="xdv-race-after"><div className="v2a-wrap">
-        <ul className="x-sr">{SIDES.map((s) => <li key={s.who}>{s.who}: {s.s.toFixed(2)} s median time a task, {s.calls} model calls a task</li>)}</ul>
-        <div className="v2a-grid xdv-verdict-row">
-          <p className="xdv-verdict">3.02× faster over the 42 tasks both solved, 95% interval 2.06–4.36×.</p>
+        <div className="xdv-rx-w">
           <div className="xdv-ways">
             <p className="xdv-ways-k">By how Hanzo Dev settled a task:</p>
             <ul>
@@ -296,7 +300,7 @@ function Race() {
             <Lk to="/benchmarks#coding-agent" id="dev.benchmarks">Every coding task and both runs</Lk>
           </div>
         </div>
-      </div></div>
+      </div>
     </section>
   );
 }
@@ -353,11 +357,11 @@ function Places() {
     animate(x, -Math.min(lim, Math.max(0, (at + d) * pitch)), EZ);
   };
   return (
-    <section className="v2a-sec xdv-places" aria-labelledby="xdv-pl-h">
-      <div className="v2a-wrap v2a-grid xdv-pl-head">
+    <section className="v2a-sec zf-sec xdv-places" aria-labelledby="xdv-pl-h">
+      <div className="v2a-wrap zf-head xdv-pl-head">
         <div className="xdv-pl-hl">
-          <h2 id="xdv-pl-h" className="v2a-head">Wherever the work is.</h2>
-          <p className="v2a-folio">One agent</p>
+          <p className="v2a-folio xdv-kick">One agent</p>
+          <h2 id="xdv-pl-h">Wherever the work is.</h2>
         </div>
         <div className="xdv-pl-hr">
           <p className="v2a-body">The same agent, the same models and the same account in every place it runs.</p>
@@ -365,6 +369,7 @@ function Places() {
           <div className="xdv-pl-ctl">
             <button type="button" aria-label="Previous place" onClick={() => step(-1)}>←</button>
             <button type="button" aria-label="Next place" onClick={() => step(1)}>→</button>
+            <span className="xdv-pl-more"><Lk to={OPEN} id="dev.web">Open Dev on the web</Lk></span>
           </div>
         </div>
       </div>
@@ -383,7 +388,6 @@ function Places() {
           ))}
         </motion.ul>
       </In>
-      <div className="v2a-wrap xdv-pl-more"><Lk to={OPEN} id="dev.web">Open Dev on the web</Lk></div>
     </section>
   );
 }
@@ -422,7 +426,7 @@ function Rows({ list, at, set, label }) {
 function Sheet({ n, kick, title, lede, links, children }) {
   return (
     // entrance 2 (letter-cascade): as each sheet arrives its title's letters fall into place one by one
-    <In as="article" kind="letter-cascade" amount={0.3} className={'xdv-sheet' + (n % 2 ? ' flip' : '')} style={{ '--k': n }}>
+    <In as="article" kind="letter-cascade" amount={0.3} className={'xdv-sheet zf-lift' + (n % 2 ? ' flip' : '')} style={{ '--k': n }}>
       <div className="xdv-sheet-in v2a-grid">
         <div className="xdv-sheet-l">
           <h3 className="v2a-head"><Cascade text={title} /></h3>
@@ -441,7 +445,8 @@ function How() {
   const [rung, setRung] = useState(0);
   const [flag, setFlag] = useState(0);
   return (
-    <section className="xdv-how" aria-label="How Dev works">
+    // the sheets stack: each holds its place under the header while the next slides up over it (one frame a sheet)
+    <section className="xdv-how zf-sec" aria-label="How Dev works">
       <div className="v2a-wrap xdv-stack">
         <Sheet n={0} kick="Models" title="Enso by default. Any model by name." lede="Dev starts on enso-auto through api.hanzo.ai, so every call is metered on your Hanzo account. Every model Hanzo serves is a flag or a /model away." links={<><Lk to="/enso" id="dev.enso">Enso</Lk><Lk to="/models" id="dev.models">Every model</Lk></>}>
           <div className="xdv-pick">
@@ -529,16 +534,16 @@ function Setup({ release }) {
   const tag = release || RELEASE;
   return (
     // entrance 4 (slot-roll): the heading's letters roll up into place like a slot machine
-    <In as="section" kind="slot-roll" amount={0.25} className="v2a-sec xdv-setup" id="install" aria-labelledby="xdv-in-h">
+    <In as="section" kind="slot-roll" amount={0.25} className="v2a-sec zf-sec xdv-setup" id="install" aria-labelledby="xdv-in-h">
       <div className="v2a-wrap">
-        <div className="v2a-grid xdv-in-head">
+        <div className="zf-head xdv-in-head">
           <div className="xdv-in-hl">
-            <h2 id="xdv-in-h" className="v2a-head"><Roll text="One line, three ways." /></h2>
-            <p className="v2a-folio">Install</p>
+            <p className="v2a-folio xdv-kick">Install</p>
+            <h2 id="xdv-in-h"><Roll text="One line, three ways." /></h2>
           </div>
           <p className="v2a-body xdv-in-hr">Linux, macOS and Windows. Dev updates itself the way it was installed.</p>
         </div>
-        <div className="v2a-grid xdv-in-body">
+        <div className="v2a-grid xdv-in-body zf-lift zf-dots">
           <div className="xdv-in-l">
             <Tabs id="xdv-way" tabs={WAYS.map(([w]) => w)} value={way} onChange={setWay} label="One line, three ways." size="lg" />
             {WAYS.map(([w, c, d], i) => (
@@ -577,11 +582,12 @@ const READ = [
 ];
 function Source() {
   return (
-    <section className="v2a-sec xdv-oss" aria-labelledby="xdv-oss-h">
-      <div className="v2a-wrap v2a-grid xdv-oss-top">
+    <>
+    <section className="v2a-sec zf-sec xdv-oss" aria-labelledby="xdv-oss-h">
+      <div className="v2a-wrap zf-head xdv-oss-top">
         <div className="xdv-oss-l">
-          <h2 id="xdv-oss-h" className="v2a-head">Read every line.</h2>
-          <p className="v2a-folio">Open source</p>
+          <p className="v2a-folio xdv-kick">Open source</p>
+          <h2 id="xdv-oss-h">Read every line.</h2>
         </div>
         <div className="xdv-oss-r">
           <p className="xdv-oss-p">Dev is Apache-2.0 on GitHub. Build it, change it, send a pull request — <A to="https://github.com/hanzoai/dev">hanzoai/dev</A>.</p>
@@ -591,17 +597,21 @@ function Source() {
       {/* the repository as an object: its name, licence and latest release, all words already on this page */}
       <div className="v2a-wrap">
         {/* entrance 5 (zoom-through): the repository flies in from far behind the screen */}
-        <In kind="zoom-through" amount={0.3} className="xdv-repo x-mono" aria-hidden="true">
+        <In kind="zoom-through" amount={0.3} className="xdv-repo zf-tilt x-mono" aria-hidden="true">
           <span className="xdv-repo-n"><i />hanzoai/dev</span>
           <span className="xdv-repo-t">Apache-2.0</span>
           <span className="xdv-repo-t">v0.7.7</span>
           <span className="xdv-repo-tree">{FILE.map((l, i) => <b key={i} style={{ '--i': i }}>{l || ' '}</b>)}</span>
         </In>
       </div>
+    </section>
+    <section className="v2a-sec zf-sec xdv-qa-sec" aria-labelledby="xdv-qa-h">
       <div className="v2a-wrap v2a-grid xdv-qa">
-        <div className="xdv-qa-l">
-          <h2 className="v2a-head">Questions &amp; Answers</h2>
-          <p className="v2a-folio">Questions</p>
+        <div className="xdv-qa-l zf-head zf-solo">
+          <div>
+            <p className="v2a-folio xdv-kick">Questions</p>
+            <h2 id="xdv-qa-h">Questions &amp; Answers</h2>
+          </div>
         </div>
         <Play className="xdv-qa-r">
           <Faq items={QA} multi />
@@ -628,6 +638,7 @@ function Source() {
         </Play>
       </div>
     </section>
+    </>
   );
 }
 
@@ -636,12 +647,32 @@ const PASTE = 'Read https://hanzo.ai/skill.md and use Hanzo Dev in my project. S
 function Paste() {
   return (
     <section className="v2a-sec xdv-paste" aria-labelledby="xdv-paste-h">
-      <div className="v2a-wrap v2a-grid xdv-paste-in">
-        <div className="xdv-paste-l">
-          <h2 className="v2a-head" id="xdv-paste-h">Paste this into any agent. It reads the skill manifest and calls Dev from there.</h2>
-          <p className="v2a-folio">Paste and ship</p>
+      <div className="v2a-wrap">
+        <div className="v2a-grid xdv-paste-in zf-lift zf-dots">
+          <div className="xdv-paste-l">
+            <p className="v2a-folio xdv-kick">Paste and ship</p>
+            <h2 className="v2a-head" id="xdv-paste-h">Paste this into any agent. It reads the skill manifest and calls Dev from there.</h2>
+          </div>
+          <Play className="xdv-paste-r"><CodeBlock code={PASTE} label="Agent prompt" /></Play>
         </div>
-        <Play className="xdv-paste-r"><CodeBlock code={PASTE} label="Agent prompt" /></Play>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- 8. the close: a lit stage, the page's one priced ask (Go's checkout) and the two quiet doors ---------- */
+function Close() {
+  return (
+    <section className="zf-sec zf-close xdv-close" aria-labelledby="xdv-close-h">
+      <div className="v2a-wrap">
+        <h2 id="xdv-close-h"><span>Describe the change.</span> <span>Dev ships it.</span></h2>
+        <div className="zf-acts">
+          <Cta to={GO} id="dev.close-go" size="lg" className="xdv-priced">{PRICED}</Cta>
+        </div>
+        <div className="xdv-close-n">
+          <Lk to={OPEN} id="dev.close-open">Open Dev</Lk>
+          <Lk to={DOCS} id="dev.close-docs" bare>Read the docs</Lk>
+        </div>
       </div>
     </section>
   );
@@ -649,7 +680,7 @@ function Paste() {
 
 export default function DevPage({ release }) {
   return (
-    <main className="xdv">
+    <main className="xdv zf">
       <Hero />
       {/* Hanzo's own order: the proof, where it runs, then how to install and sign in, before how it thinks */}
       <Race />
@@ -658,7 +689,7 @@ export default function DevPage({ release }) {
       <How />
       <Source />
       <Paste />
-      <Band title="Describe the change. Dev ships it." action={`Get Hanzo Dev, $${PLANS.go.price}/month`} to={GO} note={<><Lk to={OPEN} id="dev.close-open">Open Dev</Lk><Lk to={DOCS} id="dev.close-docs" bare>Read the docs</Lk></>} />
+      <Close />
     </main>
   );
 }
