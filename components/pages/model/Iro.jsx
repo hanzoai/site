@@ -29,6 +29,7 @@ function Canvas() {
   const [play, setPlay] = useState(true);
   const [done, setDone] = useState(false);
   const calm = useReducedMotion();
+  // the server paints Hanzo's own resting frame (hanzo.ai/iro renders STEP 38/50); the run starts once the picture is in
   const S = useRef({ levels: null, noise: null, seed: 7, step: 3, drawn: -1, t: 0, hold: 0, img: null });
 
   // build the working set for an aspect: the picture at five levels of detail, and a noise field
@@ -109,13 +110,13 @@ function Canvas() {
         </AnimatePresence>
         <p className="ir-tag ir-tl mb-mono">CANVAS: 2048 × 2048 · 16-BIT FLOAT</p>
         {/* Hanzo's own line, word for word, for readers and the copy check; the readout beside it counts the live step */}
-        <p className="ir-tag ir-bl mb-mono"><span className="x-sr" ref={lineEl}>FLOW-MATCHING CONVERGENCE: STEP 3/50 · CFG: 7.0</span><span aria-hidden="true">FLOW-MATCHING CONVERGENCE: STEP <span className="ir-n" ref={stepEl}>3</span>/50 <span className="ir-cfg">· CFG: 7.0</span></span></p>
+        <p className="ir-tag ir-bl mb-mono"><span className="x-sr" ref={lineEl}>FLOW-MATCHING CONVERGENCE: STEP 38/50 · CFG: 7.0</span><span aria-hidden="true">FLOW-MATCHING CONVERGENCE: STEP <span className="ir-n" ref={stepEl}>38</span>/50 <span className="ir-cfg">· CFG: 7.0</span></span></p>
       </div>
       <div className="ir-ctl">
         <button type="button" className="mb-chip ir-play" aria-pressed={play} onClick={() => { const s = S.current; if (s.step >= STEPS) { reseed(); s.step = 1; } setPlay(!play); }}>{play ? 'Pause' : 'Play'}</button>
         <label className="ir-range">
           <span className="x-sr">Step</span>
-          <input ref={range} type="range" min="1" max={STEPS} defaultValue="3" onInput={(e) => scrub(+e.target.value)} />
+          <input ref={range} type="range" min="1" max={STEPS} defaultValue="38" onInput={(e) => scrub(+e.target.value)} />
         </label>
         <button type="button" className="mb-chip" onClick={() => { reseed(); S.current.step = 1; setPlay(true); }}>New seed</button>
         <div className="mb-chips ir-asp" role="group" aria-label="Aspect">

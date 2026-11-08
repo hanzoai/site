@@ -55,7 +55,7 @@ function Booth() {
   const [pi, setPi] = useState(0);
   const [play, setPlay] = useState(true);
   const pagePaused = usePaused(); // the stage's one Pause holds the booth too
-  const S = useRef({ t: 1.9, hold: 0, k: -2 });
+  const S = useRef({ t: 4.3, hold: 0, k: -2 }); // Hanzo's own resting frame: hanzo.ai/koe renders 00:04.30
   const amps = useMemo(() => PRESETS.map((p, i) => shape(p, 11 + i)), []);
 
   const mark = (t) => {
@@ -106,10 +106,10 @@ function Booth() {
     <div className="ko-booth" ref={stage}>
       <div className="ko-top">
         <p className="mb-mono">FLOW-MATCHING ACOUSTIC STAGE · STREAMING PHONEMES</p>
-        <p className="ko-tc mb-tnum"><span className="x-sr" ref={lineEl}>00:01.90 / 00:05.00 · TTFT: 180ms</span><span aria-hidden="true"><span>00:0</span><span ref={sEl}>1</span>.<span ref={csEl}>90</span> <span className="ko-tc-of">/ 00:05.00 · TTFT: 180ms</span></span></p>
+        <p className="ko-tc mb-tnum"><span className="x-sr" ref={lineEl}>00:04.30 / 00:05.00 · TTFT: 180ms</span><span aria-hidden="true"><span>00:0</span><span ref={sEl}>4</span>.<span ref={csEl}>30</span> <span className="ko-tc-of">/ 00:05.00 · TTFT: 180ms</span></span></p>
         <button type="button" className="mb-chip" aria-pressed={play} onClick={() => setPlay(!play)}>{play ? 'Pause' : 'Play'}</button>
       </div>
-      <div className="ko-wave" role="slider" tabIndex={0} aria-label="Voice waveform: seek" aria-valuemin={0} aria-valuemax={LEN} aria-valuenow={1.9} onKeyDown={(e) => { const k = { ArrowRight: 0.25, ArrowLeft: -0.25 }[e.key]; if (k) { e.preventDefault(); S.current.t = Math.max(0, Math.min(LEN, S.current.t + k)); S.current.hold = 0; } }}>
+      <div className="ko-wave" role="slider" tabIndex={0} aria-label="Voice waveform: seek" aria-valuemin={0} aria-valuemax={LEN} aria-valuenow={4.3} onKeyDown={(e) => { const k = { ArrowRight: 0.25, ArrowLeft: -0.25 }[e.key]; if (k) { e.preventDefault(); S.current.t = Math.max(0, Math.min(LEN, S.current.t + k)); S.current.hold = 0; } }}>
         <canvas ref={cv} aria-hidden="true" onPointerDown={seek} />
       </div>
       <div className="ko-script">
