@@ -19,6 +19,7 @@ import { A, Cta, More, Faq, Film, Img } from '../kit';
 import { NoJs } from '../v2/LineReveal';
 import '../v2/ProgramScale.css';
 import './Learn.css';
+import HeroDither from './HeroDither';
 
 const EASE = [0.16, 1, 0.3, 1];
 const DOCS = 'https://docs.hanzo.ai/docs/';
@@ -123,6 +124,7 @@ const TILES = Array.from({ length: 40 }, (_, i) => ({ '--a': (i % 8) + Math.floo
 function Hero() {
   return (
     <section className="xlr-hero" aria-labelledby="xlr-h1">
+      <HeroDither />
       <div className="xp-wrap xlr-hero-wrap">
         <div className="xp-grid xlr-hero-top">
           <div className="xlr-hero-h">

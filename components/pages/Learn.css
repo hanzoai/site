@@ -317,6 +317,8 @@ html:not(.js) .xlr-tiles { display: none; }
 /* ---------- dark mode (docs/DARK-MODE.md): live hanzo.ai's dark, by role, in Hanzo's own tokens ----------
    page --background with live's hero glow; the map's panel and cards on --card / --secondary; hairlines --border;
    text --foreground, --muted-foreground and --text-tertiary. The dark room (.xlr-think, [data-room=dark]) stands as it is. */
+/* live's hero halftone (HeroDither, dark only) fills the hero */
+html:not(.light) .xlr-hero { position: relative; }
 html:not(.light) .xlr-hero { background: radial-gradient(60% 70% at 50% 0%, rgba(229, 229, 229, .09), transparent 70%); }
 html:not(.light) .xlr-line-tag, html:not(.light) .xlr-guide:hover i { color: var(--foreground); }
 html:not(.light) :is(.xlr-map-k, .xlr-guide i, .xlr-link svg, .xlr-say-k, .xlr-uni-a > i) { color: var(--muted-foreground); }
