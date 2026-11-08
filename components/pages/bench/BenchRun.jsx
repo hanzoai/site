@@ -34,6 +34,7 @@ import { Magnetic } from '../../ui';
 import { ui } from '../../v2/famUi';
 import { play } from '../../../lib/sound';
 import { Nodes } from '../DocNodes';
+import ListDay, { DAY } from './ListDay';
 import Sigil from '../../Sigil';
 import FamLines from '../../v2/FamLines';
 import FamStage from '../../v2/FamStage';
@@ -507,6 +508,8 @@ function Block({ b }) {
   if (b.t === 'p') {
     const els = n.c.filter((k) => k && typeof k === 'object');
     if (els.length === 1 && els[0].t === 'code' && !clean(n.c.filter((k) => typeof k === 'string').join(''))) return <Cmd text={clean(textOf(els[0]))} />;
+    const day = n.c.length === 1 && typeof n.c[0] === 'string' && n.c[0].match(DAY);
+    if (day) return <p className="xbr-p">{n.c[0].slice(0, day.index + day[1].length)}<ListDay />{n.c[0].slice(day.index + day[0].length)}</p>;
     return <p className="xbr-p"><Nodes nodes={n.c} /></p>;
   }
   if (b.t === 'h3') return <h3 className="xbr-h3"><Nodes nodes={n.c} /></h3>;

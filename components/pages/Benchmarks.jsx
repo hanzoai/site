@@ -19,6 +19,7 @@ import { EASE } from '../ui';
 import { A, More, Cta, DataTable, CodeBlock } from '../kit';
 import MaskLines from '../v2/MaskLines';
 import Sheet from './benchmarks/Sheet';
+import ListDay from './bench/ListDay';
 import NoJs from '../NoJs';
 import '../v2/ProofScale.css';
 import '../v2/ProofRhythm.css';
@@ -380,7 +381,7 @@ function Systems() {
           ))}
         </ol>
       </div>
-      <p className="xbm-note">Each system&apos;s frontier run, else its v1 run, else its fill run: the three put the same prompts to a model. A run cost is the input and output tokens the run records at the price list&apos;s rate for its own model id, the router&apos;s included, at list prices, Nov 7, 2026; a dash is a run that records no tokens, a model the list does not price, or a list that could not be read.</p>
+      <p className="xbm-note">Each system&apos;s frontier run, else its v1 run, else its fill run: the three put the same prompts to a model. A run cost is the input and output tokens the run records at the price list&apos;s rate for its own model id, the router&apos;s included, at list prices, <ListDay />; a dash is a run that records no tokens, a model the list does not price, or a list that could not be read.</p>
     </div>
   );
 }
@@ -398,7 +399,7 @@ function Enso() {
             <Sheet label="The 12 runs as a table" ghost kicker="GPQA Diamond · 12 runs" title="The frontier, one benchmark at a time" wide>
               <In>
                 <Table caption="The 12 runs as a table" head={['System', 'Accuracy', 'Run cost', 'Tag, date', 'Pareto']} rows={D.RUNS.map((r) => [r.sys, r.acc, r.cost, <>{r.tag} · {r.date}</>, r.pareto ? 'yes' : ''])} />
-                <p className="xbm-note">One benchmark at a time: the frontier is drawn only among runs of the same benchmark, never across two. Filled points are Pareto-efficient — no other run scores higher for less. Hanzo&apos;s router is the large point in the brightest ink, labelled in bold; the single models are grey. A run&apos;s cost is the input and output tokens it records on the whole question set at the price list&apos;s rate for its own model id, the router&apos;s included, at list prices, Nov 7, 2026. Hover or tab to a point for its record.</p>
+                <p className="xbm-note">One benchmark at a time: the frontier is drawn only among runs of the same benchmark, never across two. Filled points are Pareto-efficient — no other run scores higher for less. Hanzo&apos;s router is the large point in the brightest ink, labelled in bold; the single models are grey. A run&apos;s cost is the input and output tokens it records on the whole question set at the price list&apos;s rate for its own model id, the router&apos;s included, at list prices, <ListDay />. Hover or tab to a point for its record.</p>
               </In>
             </Sheet>
             <Sheet label="Every system on GPQA Diamond" ghost title="Every system on GPQA Diamond" wide>
