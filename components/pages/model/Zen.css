@@ -5,11 +5,11 @@
    page "Try Hanzo" is on screen. Then the page's own ask fills; otherwise it stays outlined and the header is the solid. */
 .lv-stage[data-hero='zen'] :is(.lv-name-ask, .lv-acts) .x-btn { transition: background-color .3s cubic-bezier(0, 0, .2, 1), color .3s cubic-bezier(0, 0, .2, 1), border-color .3s cubic-bezier(0, 0, .2, 1); }
 :root[data-ask='quiet'] .lv-stage[data-hero='zen'] .lv-name-ask .x-btn { background: #fafafa; border-color: #fafafa; color: #0a0a0a; }
-:root[data-ask='quiet'] .lv-stage[data-hero='zen'] .lv-acts .x-btn:not(.x-arrow) { background: #0a0a0a; border-color: #0a0a0a; color: #fafafa; }
+:root[data-ask='quiet'] .lv-stage[data-hero='zen'] .lv-acts .x-btn:not(.x-arrow) { background: var(--ink); border-color: var(--ink); color: light-dark(#fafafa, var(--primary-foreground)); }
 @media (hover: hover) {
   :root[data-ask='quiet'] .lv-stage[data-hero='zen'] .lv-name-ask .x-btn:hover { background: #e4e4e7; border-color: #e4e4e7; }
-  :root[data-ask='quiet'] .lv-stage[data-hero='zen'] .lv-acts .x-btn:not(.x-arrow):hover { background: #262626; border-color: #262626; }
-  .lv-stage[data-hero='zen'] .lv-acts .x-btn:not(.x-arrow):hover { border-color: #0a0a0a; }
+  :root[data-ask='quiet'] .lv-stage[data-hero='zen'] .lv-acts .x-btn:not(.x-arrow):hover { background: light-dark(#262626, var(--primary)); border-color: light-dark(#262626, var(--primary)); }
+  .lv-stage[data-hero='zen'] .lv-acts .x-btn:not(.x-arrow):hover { border-color: var(--ink); }
 }
 .ze-art-sig { background: #000; color: rgba(255, 255, 255, .5); }
 .ze-sigart { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -20,16 +20,16 @@
 .ze-swarm { padding-block: 44px 72px; }
 .ze-swarm-g { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 44px; align-items: center; }
 .ze-swarm-art { position: relative; aspect-ratio: 1; max-height: 640px; }
-.ze-swarm-cv { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: pan-y; cursor: crosshair; }
+.ze-swarm-cv { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: pan-y; cursor: crosshair; color: var(--ink); } /* the dots' ink */
 .ze-figs { --c: 1; }
-.ze-figs > .x-stat + .x-stat { padding-left: 0; border-left: 0; border-top: 1px solid rgba(0, 0, 0, .1); }
+.ze-figs > .x-stat + .x-stat { padding-left: 0; border-left: 0; border-top: 1px solid var(--x-e10); }
 
 /* the three parts (no pinned chapters): unequal columns, the picture above its words */
 .ze-parts-g { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1fr); gap: 27px; align-items: start; perspective: 1400px; }
 .ze-part { --rx: 0deg; --ry: 0deg; transform: rotateX(var(--rx)) rotateY(var(--ry)); transition: transform .4s cubic-bezier(0, 0, .2, 1); transform-style: preserve-3d; }
 .ze-part-art { position: relative; aspect-ratio: 4 / 5; border-radius: 20px; overflow: hidden; background: #000; }
 .ze-part h3 { margin: 22px 0 0; font-size: 26px; font-weight: 497; letter-spacing: -.02em; }
-.ze-part-b { margin-top: 10px; display: grid; gap: 10px; font-size: 16px; line-height: 1.5; color: #525252; }
+.ze-part-b { margin-top: 10px; display: grid; gap: 10px; font-size: 16px; line-height: 1.5; color: light-dark(#525252, var(--muted-foreground)); }
 .ze-part-b p { margin: 0; }
 .ze-part .ze-mcard, .ze-part .ze-open { left: 16px; right: 16px; bottom: 16px; width: auto; padding: 18px; }
 
@@ -64,7 +64,7 @@
 }
 .ze-art { position: absolute; inset: 0; overflow: hidden; background: #000; }
 .ze-art img, .ze-art video { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; transform: scale(var(--z)); }
-.ze-mcard, .ze-open { position: absolute; left: 32px; right: 32px; bottom: 32px; padding: 28px; border-radius: 16px; background: #fff; color: var(--ink); box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .7); }
+.ze-mcard, .ze-open { position: absolute; left: 32px; right: 32px; bottom: 32px; padding: 28px; border-radius: 16px; background: var(--x-raised); color: var(--ink); box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .7); }
 .ze-mcard { right: auto; width: min(380px, calc(100% - 64px)); }
 .ze-mcard p, .ze-open p { margin: 0; }
 .ze-mcard-h { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
@@ -136,10 +136,10 @@
 .ze-fam li.big .ze-fam-a { min-height: 560px; background: #000; color: #fff; }
 .ze-fam li.big .ze-fam-d { color: rgba(255, 255, 255, .82); }
 .ze-fam li.big .ze-sig { color: rgba(255, 255, 255, .4); }
-@media (hover: hover) { .ze-fam-a:hover { background: #ededed; } .ze-fam li.big .ze-fam-a:hover { background: #171717; } .ze-fam li.big .ze-fam-a:hover .ze-sig { color: rgba(255, 255, 255, .6); } }
+@media (hover: hover) { .ze-fam-a:hover { background: light-dark(#ededed, var(--secondary)); } .ze-fam li.big .ze-fam-a:hover { background: #171717; } .ze-fam li.big .ze-fam-a:hover .ze-sig { color: rgba(255, 255, 255, .6); } }
 .ze-sig { transition: color .4s var(--ease); }
 .ze-fam-a:active { transform: scale(.98); }
-.ze-sig { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; color: rgba(0, 0, 0, .28); }
+.ze-sig { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; color: light-dark(rgba(0, 0, 0, .28), var(--text-tertiary)); }
 .ze-fam-n { font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.15; }
 .ze-fam li.big .ze-fam-n { font-size: clamp(2.75rem, 4.4vw, 4rem); letter-spacing: -.035em; }
 .ze-fam-d { max-width: 34ch; font-size: 15px; line-height: 1.45; color: var(--soft); }
@@ -193,3 +193,19 @@
   .lv-stage[data-hero='zen'] .lv-pause { top: calc(43% - 58px); }
 }
 .ze-tabs .mb-chip[aria-selected='true']:hover { background: #fff; border-color: #fff; }
+
+/* the shared model-card shelf (ModelCards.css paints .mc white) takes the page colour here, so it follows into dark (docs/DARK-MODE.md) */
+.ze-e-focus > .mc { background: var(--bg); }
+
+/* Dark (docs/DARK-MODE.md): the shared Launch frame (v2/Launch.css) still paints its type in light-mode greys, so on
+   /zen the type outside the black rooms takes Hanzo's tokens in dark only (bright is untouched). */
+html:not(.light) .lv:has(> .lv-stage[data-hero='zen']) :is(.lv-lines, .lv-h, .lv-ch-h, .lv-stats .x-stat-v, .lv-stats .x-stat-l):not(.lv-room *) { color: var(--foreground); }
+html:not(.light) .lv:has(> .lv-stage[data-hero='zen']) :is(.lv-lines .lv-ln + .lv-ln, .lv-crumb, .lv-side, .lv-ch-rail button:not([aria-current])):not(.lv-room *) { color: var(--text-tertiary); }
+html:not(.light) .lv:has(> .lv-stage[data-hero='zen']) :is(.lv-lede, .lv-p, .lv-ch-b, .lv-stats .x-stat-n):not(.lv-room *) { color: var(--muted-foreground); }
+html:not(.light) .lv:has(> .lv-stage[data-hero='zen']) .lv-ch-rail::before { background: var(--border); }
+/* Hanzo's halftone dot field behind the hero in dark, as live hanzo.ai's dark heroes (dense at the sides, thinning to the
+   centre and top); the film covers it until it settles into the arch */
+html:not(.light) .lv-stage[data-hero='zen'] .lv-pin::before { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(circle, color-mix(in srgb, var(--foreground) 17%, transparent) 1.7px, transparent 2.2px) 0 0 / 10px 10px; -webkit-mask-image: linear-gradient(90deg, #000, transparent 30%, transparent 66%, #000), linear-gradient(180deg, rgba(0, 0, 0, .3), #000); -webkit-mask-composite: source-in; mask-image: linear-gradient(90deg, #000, transparent 30%, transparent 66%, #000), linear-gradient(180deg, rgba(0, 0, 0, .3), #000); mask-composite: intersect; }
+/* the closing band stays black in both modes; its solid ask is Hanzo's light primary pill there in dark (the shared
+   .x-band .x-btn.solid uses --x-fill, which turns dark) */
+html:not(.light) .ze-band .x-btn.solid { background: var(--primary); border-color: var(--primary); color: var(--primary-foreground); }
