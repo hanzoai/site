@@ -84,7 +84,7 @@ Done here: The skill row's ink pill glides between chips (Motion `layoutId`, 300
 - [x] Reduced motion: final state, deck unstuck, bars full, perk swap a cut, sheet open a cut; no hydration error (console clean, measured)
 - [x] Sound: kit `play('tick')` on a skill pick, `play('whoosh')` on a sheet open (lib/sound.js; plays only after first interaction, never on hover/scroll)
 
-Done here: Perks crossfade the Sigil field and numeral (300ms ease-emphasis, numeral moves 12px) instead of a one-frame swap. Film: see part 11.
+Done here: Perks crossfade the Sigil field and numeral (300ms ease-emphasis, numeral moves 12px) instead of a one-frame swap. Film: see part 11. The close's sticky-stack now holds: `.vc-sec` had been overriding `position: sticky` with `relative`, so the computed top (-443px at 1470, -1218px at 375) pushed Academic up and left a blank screen before the dark close; scoped as `.xcb .xce-under`, Academic holds its bottom on the screen while the close slides over it (8 Nov).
 
 ## 10. Media
 - n/a: `Film` and `Pic`: the careers copy carries no Hanzo images or films

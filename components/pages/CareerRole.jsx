@@ -114,7 +114,7 @@ function Steps({ f, role }) {
               <div className="xcj-fld wide xcj-file">
                 <span>{f.file.label}</span>
                 <input ref={file} type="file" aria-label={f.file.label} accept={f.file.accept} />
-                <small>{f.file.hint}</small>
+                <small><span>{f.file.hint}</span></small>
                 <label className="xcj-opt"><input type="checkbox" name="news" aria-label={f.check} /><span>{f.check}</span></label>
               </div>
             )}
@@ -236,7 +236,7 @@ export default function CareerRole({ role, no, peers = [] }) {
                   ? <svg viewBox="0 0 16 16" width="15" height="15"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   : <svg viewBox="0 0 16 16" width="15" height="15"><path d="M6.8 9.2a2.6 2.6 0 0 0 3.7 0l2-2a2.6 2.6 0 0 0-3.7-3.7l-.6.6M9.2 6.8a2.6 2.6 0 0 0-3.7 0l-2 2a2.6 2.6 0 0 0 3.7 3.7l.6-.6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>}
               </span>
-              {role.share}
+              <span>{role.share}</span>
               <span className="x-sr" role="status">{copied ? ui('copied') : ''}</span>
             </button>
           </div>
@@ -295,7 +295,7 @@ export default function CareerRole({ role, no, peers = [] }) {
               {why.cards.map(([t, d], i) => (
                 <li key={t}>
                   <span className="x-mono">{nn(i + 1)}</span>
-                  <b>{t}</b>
+                  <b><span>{t}</span></b>
                   <span>{d}</span>
                 </li>
               ))}

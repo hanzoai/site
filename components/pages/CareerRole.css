@@ -93,7 +93,7 @@ html.js .xcj-toc li::before, html.js .xcj-toc li:last-child::after { animation: 
 /* apply: the page's one dark room */
 .xcj-apply { position: relative; padding: clamp(120px, 15vw, 220px) 0; background: #0a0a0a; color: #f5f5f7; }
 .xcj-apply-l { grid-column: 1 / span 5; }
-.xcj-apply-l .v2f-display { margin-top: 0; color: #f5f5f7; }
+.xcj-apply-l .v2f-display, .xcj-apply-l .v2f-head { margin-top: 0; color: #fafafa; }
 .xcj-apply-i { margin: 24px 0 0; font-size: 20px; line-height: 1.45; color: #a1a1a6; max-width: 34ch; }
 .xcj-fit.dark { color: #6e6e73; }
 .xcj-fit.dark b { color: #fafafa; }

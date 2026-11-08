@@ -1,6 +1,7 @@
 # /bounty — James-eye review
 
 Verdict: 8/10
+Ready: 8 Nov, held at missing 0 under the real copy check (copycheck 0 of 83): issue refs, names, roles and handles read as whole lines; the open bounties come from GitHub (snapshot when it does not answer). 0 console errors (also under reduced motion), no overflow at 1470 and 375. Usable: Every open bounty, how a bounty is taken, the rewards and the leaderboard links.
 First complaint: "On my phone the button up top still says Try Hanzo, and the live bounty list is under the fold, so the first screen is just words and a black button."
 
 Walked 2026-11-07 16:45 UTC, HEAD 10953462, at 1470x801 and 375x812 (isMobile, touch). First screen captured at 0.2/1/3/6 s plus a reload; scrolled the whole page in 400px wheel notches (300px on phone) with about 1 s dwell; hovered and pressed every link, stepper, issue row and the awards rail; reduced motion and JS off checked; console, page errors and failed requests collected. Live GitHub answered in this run (the count went 9 to 10), so the snapshot-to-live swap was seen as well.

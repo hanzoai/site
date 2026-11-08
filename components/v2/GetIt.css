@@ -6,7 +6,7 @@
 .gi-h { color: var(--ink); }
 .gi-tag { margin-top: 24px; }
 .gi-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; }
-.gi-chip { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: #fff; font: 500 13px/1 var(--mono); color: var(--ink); text-decoration: none; }
+.gi-chip { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--x-raised); font: 500 13px/1 var(--mono); color: var(--ink); text-decoration: none; }
 .gi-chip > span { color: var(--faint); }
 .gi-chip em { font-style: normal; color: var(--soft); padding-left: 8px; border-left: 1px solid var(--line); }
 @media (hover: hover) { a.gi-chip:hover { border-color: var(--ink); } }

@@ -82,7 +82,7 @@ Done here: tree rows, add toggles, rail arrows, pause/replay, repo links press a
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit
 
-Done here: **Motion-map pass (James, 7 Nov; `docs/MOTION-MAP.md` wins over older MASTER limits where they clash).**
+Done here: **Motion-map pass (James, 7 Nov; `docs/MOTION-MAP.md` wins over older MASTER limits where they clash).** 8 Nov: the hero's status light breathes and a ring breathes from the slider handle until it is taken, so no screen is still at either width; the 200–350px white bands between slider, paste line, rail and get started are cut to 48–80px.
 - **Signature, `compare` (before / after slider):** `components/pages/cli/Compare.jsx`, in the second screen under "A resource tree, not a pile of flags". The left layer holds the CLI's own 19 commands as a pile of flags; the right layer holds the same commands as the resource tree. The divider moves by transform and the after layer is cut by clip-path, so nothing reflows.
   - Mouse: drag anywhere. Finger: drag the 48px handle, so vertical scrolling still works. Keyboard: the handle is `role="slider"` (arrows ±5, Home, End), named by the h2.
   - On arrival it sweeps once (50 → 78 → 24 → 50 over 2.5 s), then rests.

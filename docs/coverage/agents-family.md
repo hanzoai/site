@@ -92,7 +92,7 @@ Done here: no springs anywhere (deck tweens: 400 ms ease-in-out baton, 400 ms ea
 - [x] Alt: the screenshot carries its own alt via `role="img"`; faces are decorative
 - [x] No dimmed photo
 
-Done here: the pictures 404 on this dev server, so every face shows its greyscale mark: the initial, the seat number in mono (Des 02, Dev 03, so no two marks match) and a dot on a hairline orbit at the agent's own place on the ring, on alternating #f2f2f2 / #e5e5e5 tones; the one holding the turn turns ink. The Bots room list uses the same mark at 22px, and the room's sketch is drawn from the screenshot's alt text.
+Done here: Hanzo's own pictures are in the repo now (`public/agents/`: the 26 faces as Hanzo serves them, 160px, and the Bots room's dark and light screenshots in `public/agents/room/`), so the ring shows every agent's face and the room shows Hanzo's real screenshot; the greyscale initial mark stays as the fallback while a picture loads. Colour arrives only through these pictures.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap (walked)
@@ -100,7 +100,7 @@ Done here: the pictures 404 on this dev server, so every face shows its greyscal
 - [x] Targets 44px or more (seats 54px, nav 44px, Copy 44px)
 - [x] Primary ask above the fold at 375×667: crew yes (top at y≈406), SDK yes (y≈422)
 
-Done here: under 900px the stage stacks (h1, object, chapter two), the console nav scrolls sideways, the room shot crops at true size (4:5); the close's 10 faces sit on one line at 375 (x 16 to 344, measured); the SDK parts become a swipe rail of tiles under the contour.
+Done here: under 900px the stage stacks (h1, object, chapter two), the console nav scrolls sideways, the room shot crops at true size (4:5); the close's 10 faces sit on one line at 375 (x 16 to 344, measured); the SDK parts become a swipe rail of tiles under the contour. With live's 26-agent roster the seats size themselves to the ring (min of the deck size and the arc per agent), so no two overlap at 1470 or 375; on phones each small seat has a finger-sized hit area.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Text #0a0a0a / #525252 / #737373 on white; on black #fafafa / white 78% / 55%

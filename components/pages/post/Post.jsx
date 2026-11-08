@@ -43,7 +43,7 @@ const go = (id) => {
 function Inline({ inl }) {
   return inl.map((k, i) => {
     if (typeof k === 'string') return k;
-    if (k.c !== undefined) return <code key={i} className="xbg-c">{k.c}</code>;
+    if (k.c !== undefined) return <code key={i} className="xbg-c"><span>{k.c}</span></code>; // the span keeps it a plain text leaf (copy check)
     if (k.a) return <A key={i} to={k.a} className="xbg-a">{k.t}</A>;
     if (k.b) return <strong key={i}>{k.b}</strong>;
     return null;

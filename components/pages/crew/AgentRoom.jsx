@@ -31,7 +31,8 @@ import Sigil from '../../Sigil';
 import { href as route } from '../../../lib/route';
 import './AgentRoom.css';
 
-const ASSET = (p) => p; // Hanzo's own pictures, by their own paths (live dev fetches files this repo lacks from hanzo.ai)
+// Hanzo's own pictures, copied into public/agents/ (the faces keep their paths; the room's screenshots sit in agents/room/)
+const ASSET = (p) => (p && p.startsWith('/shots/') ? '/agents/room/' + p.slice(7) : p);
 const MOVE = [0.4, 0, 0.2, 1]; // the deck's ease-in-out, for things that move and stay (no springs)
 const INK = { duration: DUR.fade, ease: EASE };
 /* entrances (docs/MOTION-MAP.md rule 7): each main section arrives its own way, once, when it first comes into view.
@@ -328,7 +329,7 @@ function Room({ s, agents }) {
         <motion.figure className="xag-shot xag-throw" data-night={night || undefined} drag="x" dragConstraints={{ left: 0, right: 0 }} dragElastic={0.32} dragTransition={{ bounceStiffness: 260, bounceDamping: 22 }}>
           <div className="xag-shot-bar">
             <span className="xag-dots" aria-hidden="true"><i /><i /><i /></span>
-            <span className="xag-url x-mono"><i className="xag-live" aria-hidden="true" />{s.url}</span>
+            <span className="xag-url x-mono"><i className="xag-live" aria-hidden="true" /><span>{s.url}</span></span>
             <button type="button" className="xag-night" aria-pressed={night} onClick={() => setNight((v) => !v)}>
               <span aria-hidden="true">{night ? '☾' : '☀'}</span><span className="xag-night-t">{night ? 'Dark' : 'Light'}</span>
             </button>
@@ -395,14 +396,14 @@ function Console({ c, drive = null }) {
               <li key={i} data-who={t.who} data-seen={i < shown || undefined} data-on={i === shown - 1 || undefined}>
                 <button type="button" onClick={() => setShown(i + 1)}>
                   {i === shown - 1 && <motion.i layoutId="xag-hold" className="xag-hold" transition={INK} aria-hidden="true" />}
-                  <span className="xag-who x-mono" aria-hidden="true">{t.who === 'you' ? '›' : '◆'}</span>{t.text}
+                  <span className="xag-who x-mono" aria-hidden="true">{t.who === 'you' ? '›' : '◆'}</span><span className="xag-tt">{t.text}</span>
                 </button>
               </li>
             ))}
             <li className="xag-think" data-on={think || undefined} aria-hidden="true"><i /><i /><i /></li>
           </ol>
         </div>
-        <div className="xag-win-foot"><code className="x-mono">{c.endpoint}</code>{c.open && <A to={c.open.href} className="xag-open">{c.open.label} <i aria-hidden="true">↗</i></A>}</div>
+        <div className="xag-win-foot"><code className="x-mono">{c.endpoint}</code>{c.open && <A to={c.open.href} className="xag-open"><span>{c.open.label}</span> <i aria-hidden="true">↗</i></A>}</div>
       </div>
       <figcaption className="xag-cap x-mono">{c.caption}</figcaption>
     </figure>

@@ -17,23 +17,15 @@ async function text(url) {
     document.querySelectorAll('details').forEach((d) => (d.open = true));
     for (let y = 0; y < document.documentElement.scrollHeight; y += 700) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 120)); }
   });
-  await new Promise((r) => setTimeout(r, 800));
+  // hanzo.ai counts its figures up from zero (prices, ×-faster, commits per org): read once they have landed, not mid-count
+  await new Promise((r) => setTimeout(r, 6000));
   // textContent (not innerText) so hidden tabs, accordions and visually-hidden copy still count
-  const read = () => p.evaluate(() => {
+  const t = await p.evaluate(() => {
     const main = document.querySelector('main') || document.body;
     main.querySelectorAll('script,style,noscript,svg').forEach((n) => n.remove());
     return [...main.querySelectorAll('h1,h2,h3,h4,h5,p,li,dt,dd,td,th,button,a,span,div,label,figcaption,blockquote')]
       .filter((e) => !e.children.length).map((e) => e.textContent);
   });
-  // wait for count-ups to land: read again until two reads 700 ms apart agree (at most ~10 s), so a figure caught mid-count
-  // (hanzo.ai/open-source counts its commit and contributor figures up as they scroll in) is not reported as missing
-  let t = await read();
-  for (let i = 0; i < 14; i++) {
-    await new Promise((r) => setTimeout(r, 700));
-    const u = await read();
-    if (u.join('\n') === t.join('\n')) break;
-    t = u;
-  }
   await p.close();
   return t;
 }

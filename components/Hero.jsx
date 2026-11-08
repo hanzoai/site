@@ -1,9 +1,11 @@
 'use client';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion, useScroll, useSpring, useTransform } from 'motion/react';
-import { EASE, Count, fine, Mark } from './ui';
+import { EASE, Count, fine, Mark, copyText } from './ui';
+import A2Pause from './v2/A2Pause';
 import C from '../content';
 import SetupMenu from './SetupMenu';
+import { MORE, SceneLog, ShellLines, PhoneCells, Feed, Chips } from './home/HeroScenes';
 
 const PROMPT = 'Build maxpower: every AI I use in one place, and faster at coding.';
 const CMD = 'curl -fsSL https://hanzo.sh | sh';
@@ -17,7 +19,10 @@ function Dots({ host }) {
   useEffect(() => {
     const cv = ref.current, cx = cv.getContext('2d'), el = host.current;
     const G = 10, R = 170;
-    let W = 0, H = 0, cols = 0, rows = 0, base = null, raf = 0, px = -1e4, py = -1e4, energy = 0, vis = true;
+    let W = 0, H = 0, cols = 0, rows = 0, base = null, raf = 0, px = -1e4, py = -1e4, energy = 0, vis = true, ink = '';
+    // the dot colour is the page's ink (.x-dots { color: var(--ink) }) at 17%: it follows light and dark
+    const tone = () => { const m = getComputedStyle(cv).color.match(/[\d.]+/g) || [10, 10, 10]; ink = `rgba(${m[0]},${m[1]},${m[2]},.17)`; };
+    tone();
     const field = (x, y) => {
       const ex = Math.max(1 - x / (W * 0.3), (x - W * 0.66) / (W * 0.34), 0);
       const ey = Math.min(1, 0.3 + (y / H) * 0.95);
@@ -26,7 +31,7 @@ function Dots({ host }) {
     };
     const draw = () => {
       cx.clearRect(0, 0, W, H);
-      cx.fillStyle = 'rgba(10,10,10,.17)';
+      cx.fillStyle = ink; // the theme's ink at 17% (light: rgba(10,10,10,.17), as before; dark: Hanzo's #e5e5e5 dots)
       cx.beginPath();
       for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
         const x = i * G, y = j * G;
@@ -64,7 +69,10 @@ function Dots({ host }) {
     const ro = new ResizeObserver(size);
     ro.observe(el);
     el.addEventListener('pointermove', move);
-    return () => { io.disconnect(); ro.disconnect(); el.removeEventListener('pointermove', move); cancelAnimationFrame(raf); };
+    // the theme can change while the page is open (the device setting): redraw in the new ink
+    const mo = new MutationObserver(() => { tone(); if (base) draw(); });
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => { io.disconnect(); ro.disconnect(); mo.disconnect(); el.removeEventListener('pointermove', move); cancelAnimationFrame(raf); };
   }, [host]);
   return <canvas ref={ref} className="x-dots" aria-hidden="true" />;
 }
@@ -80,12 +88,14 @@ function Bubble({ children, me, on = true }) {
   );
 }
 
-function AppCard({ on = true }) {
+// hanzo.ai's two app cards: the desktop chat's now reads "App · desktop and mobile" with Preview (8 Nov); the phone's
+// still reads "Mobile + Duo app" with Open
+function AppCard({ on = true, phone = false }) {
   return (
     <motion.div className="x-appcard" initial={false} animate={on ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }} aria-hidden={on ? undefined : true} transition={{ duration: 0.6, ease: EASE }}>
       <span className="x-appicon"><Mark size={13} /></span>
-      <span><b>maxpower</b><small>Mobile + Duo app</small></span>
-      <span className="x-open">Open</span>
+      <span><b>maxpower</b><small><span>{phone ? 'Mobile + Duo app' : 'App · desktop and mobile'}</span></small></span>
+      <span className="x-open">{phone ? 'Open' : 'Preview'}</span>
     </motion.div>
   );
 }
@@ -116,7 +126,7 @@ function Roster({ on }) {
   const rows = (k) => ROSTER.map(([n, m, s]) => (
     <div className="x-ros" key={k + n} aria-hidden={k ? true : undefined}>
       <span className="x-ros-i" dangerouslySetInnerHTML={{ __html: ICON[n] || `<b>${n[0]}</b>` }} />
-      <span className="x-ros-n">{n}<small>{m}</small></span>
+      <span className="x-ros-n"><span>{n}</span><small>{m}</small></span>
       <span className="x-ros-s" data-tps={s}>{s}/s</span>
       <i className="x-ros-bar"><b style={{ width: (s / 171) * 100 + '%' }} /></i>
     </div>
@@ -168,6 +178,14 @@ export default function Hero() {
   const live = useRef(true);
   live.current = inView;
   const user = useRef(false);
+  // the demo can be stopped (WCAG 2.2.2): the loop holds, the roster rests
+  const [paused, setPaused] = useState(false);
+  const stop = useRef(false);
+  stop.current = paused;
+  // the terminal's Copy copies exactly the command it shows, and says so
+  const [copied, setCopied] = useState(false);
+  const copyT = useRef(0);
+  const copy = async () => { if (!(await copyText(CMD))) return; setCopied(true); clearTimeout(copyT.current); copyT.current = setTimeout(() => setCopied(false), 1600); };
 
   const [typed, setTypedState] = useState(0);
   const promptEl = useRef(null);
@@ -178,19 +196,34 @@ export default function Hero() {
   const [tab, setTab] = useState('chat');
   const [log, setLog] = useState(0);
   const [k, setK] = useState(1);
+  // after the opening, the rest of Hanzo's day plays: one scene every 6.5 s, the company log every 1.8 s
+  const [sc, setSc] = useState(-1);
+  const [side, setSide] = useState(true);
+  const [fd, setFd] = useState(0);
+  useEffect(() => {
+    if (calm) return;
+    const t = setInterval(() => { if (live.current && !stop.current) setFd((n) => n + 1); }, 1800);
+    return () => clearInterval(t);
+  }, [calm]);
+  useEffect(() => {
+    if (calm || phase < 4) return;
+    const t = setInterval(() => { if (live.current && !stop.current) setSc((n) => (n + 1) % MORE.length); }, 6500);
+    return () => clearInterval(t);
+  }, [calm, phase >= 4]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // the demo: the prompt types itself, sends, the phone answers, then shows the build and every agent running on Hanzo
   useEffect(() => {
     if (calm) { setTyped(PROMPT.length); setCmd(CMD.length); setPhase(4); setLog(4); return; }
     let dead = false;
-    const w = (ms) => new Promise((r) => setTimeout(r, ms));
-    const held = async () => { while (!dead && !live.current) await w(400); };
+    const nap = (ms) => new Promise((r) => setTimeout(r, ms));
+    const w = async (ms) => { await nap(ms); while (!dead && stop.current) await nap(300); };
+    const held = async () => { while (!dead && (!live.current || stop.current)) await nap(400); };
     (async () => {
       await w(1100);
       (async () => { for (let i = 0; i <= CMD.length && !dead; i++) { setCmd(i); await w(i < 4 ? 90 : 36); } })();
       while (!dead) {
         await held();
-        setPhase(0); setLog(0); setTyped(0);
+        setPhase(0); setLog(0); setTyped(0); setSc(-1);
         if (!user.current) setTab('chat');
         for (let i = 0; i <= PROMPT.length && !dead; i++) { setTyped(i); await w(PROMPT[i] === ' ' ? 55 : 26); }
         await w(500); if (dead) return;
@@ -203,7 +236,7 @@ export default function Hero() {
         for (let j = 1; j <= 4 && !dead; j++) { await w(430); setLog(j); }
         await w(500); if (dead) return;
         setPhase(4);
-        await w(9000);
+        await w(9000 + MORE.length * 6500);
       }
     })();
     return () => { dead = true; };
@@ -244,7 +277,7 @@ export default function Hero() {
   );
 
   return (
-    <section className="x-hero" ref={host} onPointerMove={onMove} onPointerLeave={() => { rx.set(0); ry.set(0); }} aria-labelledby="home-title">
+    <section className="x-hero" ref={host} data-off={paused ? '' : undefined} onPointerMove={onMove} onPointerLeave={() => { rx.set(0); ry.set(0); }} aria-labelledby="home-title">
       <Dots host={host} />
       <div className="x-wrap x-hero-grid">
         <motion.div className="x-hero-copy" style={{ y: copyY, opacity: copyO }}>
@@ -257,13 +290,13 @@ export default function Hero() {
             <span className="x-h1-a">{line('Smarter, Faster, Open Source.', 0.1)}</span>
             <span className="x-h1-b">{line('Pick all three.', 0.25)}</span>
           </h1>
-          <motion.p className="x-hero-lede" initial={{ opacity: 0, y: 16, filter: 'blur(8px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ duration: 1, ease: EASE, delay: 0.5 }}>
+          <motion.p className="x-hero-lede" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: EASE, delay: 0.5 }}>
             Frontier intelligence over <b><Count to={200} suffix="×" duration={1.8} delay={0.6} /></b> faster and <b><Count to={400} suffix="×" duration={2} delay={0.7} /></b> cheaper. Every model behind one key.
           </motion.p>
           <motion.div className="x-auth" initial="h" animate="s" variants={{ s: { transition: { staggerChildren: 0.07, delayChildren: 0.75 } } }}>
             <div className="x-auth-row">
               <motion.a variants={rise} href="https://hanzo.ai/signup" className="x-auth-b" whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }}>
-                <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="#4285F4" d="M22.6 12.3c0-.8-.1-1.5-.2-2.3H12v4.3h6a5.1 5.1 0 0 1-2.2 3.4v2.8h3.6c2.1-2 3.2-4.9 3.2-8.2z" /><path fill="#34A853" d="M12 23c3 0 5.5-1 7.4-2.7l-3.6-2.8c-1 .7-2.3 1.1-3.8 1.1-2.9 0-5.4-2-6.3-4.6H2v2.9A11 11 0 0 0 12 23z" /><path fill="#FBBC05" d="M5.7 14c-.2-.7-.4-1.3-.4-2s.1-1.4.4-2V7.1H2a11 11 0 0 0 0 9.8L5.7 14z" /><path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.2-3.2A11 11 0 0 0 2 7.1L5.7 10C6.6 7.4 9.1 5.4 12 5.4z" /></svg>
+                <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="currentColor" d="M22.6 12.3c0-.8-.1-1.5-.2-2.3H12v4.3h6a5.1 5.1 0 0 1-2.2 3.4v2.8h3.6c2.1-2 3.2-4.9 3.2-8.2z" /><path fill="currentColor" d="M12 23c3 0 5.5-1 7.4-2.7l-3.6-2.8c-1 .7-2.3 1.1-3.8 1.1-2.9 0-5.4-2-6.3-4.6H2v2.9A11 11 0 0 0 12 23z" /><path fill="currentColor" d="M5.7 14c-.2-.7-.4-1.3-.4-2s.1-1.4.4-2V7.1H2a11 11 0 0 0 0 9.8L5.7 14z" /><path fill="currentColor" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.2-3.2A11 11 0 0 0 2 7.1L5.7 10C6.6 7.4 9.1 5.4 12 5.4z" /></svg>
                 Continue with Google
               </motion.a>
               <motion.a variants={rise} href="https://hanzo.ai/signup" className="x-auth-b" whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }}>
@@ -276,16 +309,22 @@ export default function Hero() {
               <motion.a variants={rise} href="https://hanzo.ai/signup" className="x-auth-b solid" whileTap={{ scale: 0.97 }}>Continue with email</motion.a>
             </div>
             <motion.p variants={rise} className="x-terms">By continuing, you agree to Hanzo&apos;s <a href="https://hanzo.ai/terms">Terms</a> and <a href="https://hanzo.ai/privacy">Privacy Policy</a>.</motion.p>
+            <motion.p variants={rise} className="xh-go"><a href="/pay/confirm/card?plan=go&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat" data-cta="home.go">Go is $8/month</a></motion.p>
           </motion.div>
         </motion.div>
 
         <motion.div className="x-hero-stage" ref={fit} style={{ y: stageY, scale: stageS, height: `calc(var(--sh) * ${k})` }}>
+          <A2Pause paused={paused} onChange={setPaused} label={paused ? 'Play the demo' : 'Pause the demo'} className="xh-pause" />
           <div className="x-fit" style={{ transform: `scale(${k})` }}>
             <motion.div className="x-3d" style={{ rotateX: rx, rotateY: ry }}>
               {/* the desktop app */}
-              <motion.div className="x-win" initial={{ opacity: 0, z: -260, y: 40 }} animate={{ opacity: 1, z: 0, y: 0 }} transition={{ duration: 1.3, ease: EASE, delay: 0.15 }}>
+              <motion.div className={'x-win' + (side ? '' : ' xs-noside')} initial={{ opacity: 0, z: -260, y: 40 }} animate={{ opacity: 1, z: 0, y: 0 }} transition={{ duration: 1.3, ease: EASE, delay: 0.15 }}>
                 <div className="x-win-bar">
                   <i /><i /><i />
+                  <button type="button" className="xs-sidet" aria-expanded={side} aria-label={side ? 'Close sidebar' : 'Open sidebar'} onClick={() => setSide((v) => !v)}>
+                    <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><rect x="1.8" y="2.8" width="12.4" height="10.4" rx="2.2" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M6 3v10" stroke="currentColor" strokeWidth="1.4" /></svg>
+                    <span className="xs-tip"><span hidden={!side}>Close sidebar</span><span hidden={side}>Open sidebar</span></span>
+                  </button>
                   <a className="x-url" href="/chat">hanzo.ai/chat <span>›</span></a>
                   <a className="x-openapp" href="/chat">Open App ›</a>
                 </div>
@@ -299,11 +338,14 @@ export default function Hero() {
                     <div className="x-side-i">Weekly report</div>
                     <Account />
                   </aside>
-                  <div className="x-chat">
+                  <div className={'x-chat' + (sc >= 0 ? ' xs-on' : '')}>
                     <div className="x-chat-log">
                       <Bubble me on={phase >= 1}>{PROMPT}</Bubble>
+                      <Bubble on={phase >= 2}>Done. maxpower connects your agents, shares one key, and runs them side by side.</Bubble>
                       <AppCard on={phase >= 2} />
                     </div>
+                    <Chips at={sc} />
+                    <SceneLog at={sc} />
                     <div className="x-input">
                       <span className="x-plus">+</span>
                       <span className="x-input-t">
@@ -319,11 +361,13 @@ export default function Hero() {
               {/* the CLI */}
               <motion.div className="x-term" initial={{ opacity: 0, z: -120, y: 70 }} animate={{ opacity: 1, z: 70, y: 0 }} transition={{ duration: 1.3, ease: EASE, delay: 0.35 }}>
                 <div className="x-term-bar"><i /><i /><i /><span>install</span></div>
-                <div className="x-term-body x-mono">
-                  <span className="x-dim">$ </span><span ref={cmdEl} /><Caret />
+                <div className={'x-term-body x-mono' + (sc >= 0 && MORE[sc].shell ? ' xs-on' : '')}>
+                  <span className="xs-cmd"><span className="x-dim">$ </span><span ref={cmdEl} className="xh-cmd" data-cmd={CMD} /><Caret /></span>
+                  <ShellLines at={sc} />
                 </div>
                 <div className="x-term-f">
-                  <span className="x-term-copy">Copy</span>
+                  <button type="button" className="x-term-copy xh-copy" onClick={copy} data-cta="home.install_copy" data-on={copied || undefined}>{copied ? 'Copied' : 'Copy'}</button>
+                  <span className="xh-sr" role="status">{copied ? 'Copied' : ''}</span>
                   <a href="https://docs.hanzo.ai/docs/cli">Install CLI ↗</a>
                 </div>
               </motion.div>
@@ -343,9 +387,10 @@ export default function Hero() {
                   <div className="x-phone-body">
                     <div className="x-pane" id="phone-chat" role="tabpanel" data-on={tab === 'chat'} inert={tab !== 'chat'}>
                       <Bubble me on={phase >= 1}>{PROMPT}</Bubble>
-                      <AppCard on={phase >= 2} />
+                      <AppCard on={phase >= 2} phone />
                     </div>
-                    <div className="x-pane right" id="phone-dev" role="tabpanel" data-on={tab === 'dev'} inert={tab !== 'dev'}>
+                    <div className={'x-pane right' + (sc >= 0 && (MORE[sc].phone || MORE[sc].place === 'studio') ? ' xs-on' : '')} id="phone-dev" role="tabpanel" data-on={tab === 'dev'} inert={tab !== 'dev'}>
+                      <PhoneCells at={sc} />
                       <Bubble me>Show me the build</Bubble>
                       <div className="x-log x-mono">
                         {LOG.map((l, i) => (
@@ -360,6 +405,7 @@ export default function Hero() {
               </motion.div>
             </motion.div>
           </div>
+          <Feed i={fd} sc={sc} />
           <SetupMenu up initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 1.1 }} />
         </motion.div>
       </div>

@@ -223,7 +223,7 @@ function Here() {
             <li key={to} className={i ? 'small' : 'big'}>
               <A to={to} className="xbl-here-a" onPointerMove={tilt} onPointerLeave={untilt}>
                 <span className="xbl-here-art"><Film src={`/models/${film}.webm`} poster={`/models/${film}.webp`} w={1200} h={1500} className="xbl-here-img" aria-hidden="true" /></span>
-                <span className={'xbl-here-t ' + (i ? 'v2s-title' : 'v2s-headline')}><span data-morph><Typed text={t} /></span> <Arr /></span>
+                <span className={'xbl-here-t ' + (i ? 'v2s-title' : 'v2s-headline')}><span data-morph aria-hidden="true"><Typed text={t} /></span> <Arr /><span className="x-sr">{t + ' →'}</span></span>
               </A>
             </li>
           ))}
@@ -269,7 +269,7 @@ function Contents() {
     POSTS.forEach((p) => { const last = g[g.length - 1]; if (last && last[0] === p.month) last[1].push(p); else g.push([p.month, [p]]); });
     return g;
   }, []);
-  const [all, setAll] = useState(false);
+  const [all, setAll] = useState(true); // every post listed from the start, newest first, scannable like Hanzo's own; a bar narrows to a month
   const top0 = useRef(null);
   const head = useRef(null);
   const headSeen = useInView(head, { once: true, amount: 0.5 });
@@ -293,7 +293,7 @@ function Contents() {
           </div>
         </div>
         <div className="xbl-toc" ref={top0} data-enter="tilt">
-          {/* one month at a time: the newest first; a bar brings its month in as the last one leaves; All 24 opens every month */}
+          {/* every month listed, newest first (scannable); a bar narrows the list to its month, All 24 opens every month again */}
           <AnimatePresence mode="popLayout" initial={false}>
           {shown.map(([k, list], gi) => (
             <motion.section key={(m || 'all') + k} hidden={!m && !all && gi > 0 ? true : undefined} className="xbl-month" initial={m ? { opacity: 0, x: 40 } : false} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40, transition: { duration: 0.22, ease: [0.7, 0, 0.84, 0] } }} transition={{ duration: 0.55, ease: EASE }} aria-label={`${k} 2026`}>
@@ -307,7 +307,7 @@ function Contents() {
                     <a href={p.to} target="_blank" rel="noopener noreferrer" className="xbl-row">
                       <span className="xbl-row-k">{p.tag}</span>
                       <span className="xbl-row-main">
-                        <span className="xbl-row-line"><b>{p.title}</b><i aria-hidden="true" /><span className="xbl-row-d v2s-num">{p.date}</span></span>
+                        <span className="xbl-row-line"><b><span>{p.title}</span></b><i aria-hidden="true" /><span className="xbl-row-d v2s-num">{p.date}</span></span>
                         <span className="xbl-row-p">{p.desc}</span>
                       </span>
                     </a>

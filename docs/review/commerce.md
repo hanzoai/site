@@ -3,6 +3,7 @@
 Reviewed 2026-11-07 17:15, walked moving at 1470x801 and 375x812.
 
 Verdict: 7/10
+Ready: 8 Nov, copycheck missing 0 of 134 (hanzo.ai live), held up next to /api and /affiliate (James's new bar, no score). Every endpoint path is one run of text again (they were split by wbr tags and missed), spec, ways and close titles are real text runs, the close stands alone a full section below the ways, and the header goes quiet while the close's solid ask shows. Usable: the order rail, the endpoint finder with every group's full list, processors and docs links. taste/unique OK; 0 console errors, no overflow at 1470 and 375.
 
 First complaint: "You tell me the same five steps twice in a row: the little card runs along the rail, then I scroll and get the same five steps again as big panels that get chopped off in the middle of a word. And after the payment switch it goes back to being a document: rows of names, rows of links, two asks crammed into one screen."
 

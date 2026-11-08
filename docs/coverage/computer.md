@@ -84,7 +84,7 @@ Done here: The three checks are `role="checkbox"` buttons with `aria-checked`, a
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit (`lib/sound.js`; tabs, switches and pressed buttons tick through `components/Sound.jsx`)
 
-Done here: Idle (the cursor works the desktop through six modes), pointer (magnetic ask), state (tab pill at 300ms ease-emphasis, ticks drawing), time (the field fills after the click), arrival (h1 line cut-in), scroll (Stage settle, pinned lenses, the Band opening). No springs. Sound: `play('done')` when all three pre-flight warnings are checked; `data-sound="tick"` on the three checks.
+Done here: Idle (the cursor works the desktop through six modes), pointer (magnetic ask), state (tab pill at 300ms ease-emphasis, ticks drawing), time (the field fills after the click), arrival (h1 line cut-in), scroll (Stage settle, pinned lenses, the Band opening). No springs. Sound: `play('done')` when all three pre-flight warnings are checked; `data-sound="tick"` on the three checks. 8 Nov: a picked hero step holds for about 14 s, then the demo carries on by itself, so the hero is never left frozen.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set (kit `Img`, 1600×900, `priority` on the desktop wallpaper)

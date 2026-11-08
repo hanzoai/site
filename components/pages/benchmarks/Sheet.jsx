@@ -20,7 +20,8 @@ export default function Sheet({ label, kicker, title, children, ghost = false, w
   const x = useRef(null);
   const id = useId();
 
-  useEffect(() => setHost(document.body), []);
+  // the sheet lives inside <main> (fixed to the viewport all the same), so its words stay part of the page
+  useEffect(() => setHost(document.querySelector('main') || document.body), []);
   useEffect(() => {
     if (!open) return;
     const sx = scrollX, sy = scrollY;
