@@ -20,6 +20,10 @@ const pad = (n) => String(n).padStart(2, '0');
 /* one drawing; `still` renders its final frame with no animation */
 function Fig({ i, still }) {
   const ini = (o) => (still ? false : o);
+  // the one cell that fills (the consumer, the instance that answers): a class after mount, its colour from CSS so dark
+  // mode has its own; the fill's delay sits on the element
+  const [lit, setLit] = useState(false);
+  useEffect(() => { const t = requestAnimationFrame(() => setLit(true)); return () => cancelAnimationFrame(t); }, []);
   const M = motion;
   if (i === 0) {
     // streams: the newest written at the right, the oldest aged out at the left, a consumer reading along
@@ -64,7 +68,7 @@ function Fig({ i, still }) {
         <text x="56" y="113" textAnchor="middle">publish</text>
         <rect x="126" y="84" width="88" height="48" rx="12" className="f-cell" />
         <text x="170" y="113" textAnchor="middle">EVENTS</text>
-        <M.rect x="240" y="84" width="88" height="48" rx="12" initial={ini({ fill: '#ffffff' })} animate={{ fill: '#0a0a0a' }} transition={at(1.0, 0.3, IO)} className="f-sw" />
+        <rect x="240" y="84" width="88" height="48" rx="12" className={'f-sw' + (lit ? ' on' : '')} style={still ? { transition: 'none' } : { transitionDelay: '1s' }} />
         <M.text x="284" y="113" textAnchor="middle" initial={ini({ opacity: 1 })} animate={{ opacity: 0 }} transition={at(1.0, 0.3, IO)}>consumer</M.text>
         <M.text x="284" y="113" textAnchor="middle" className="t-inv" initial={ini({ opacity: 0 })} animate={{ opacity: 1 }} transition={at(1.0, 0.3, IO)}>consumer</M.text>
         <M.circle cy="108" r="6" className="f-ink" initial={ini({ cx: 100, opacity: 0 })} animate={{ cx: [100, 126, 214, 240], opacity: [0, 1, 1, 0] }} transition={{ delay: 0.2, duration: 0.9, ease: 'linear', times: [0, 0.3, 0.7, 1] }} />
@@ -116,7 +120,7 @@ function Fig({ i, still }) {
         {ys.map((y, k) => (
           <g key={k}>
             {k === 2
-              ? <M.rect x="244" y={y} width="84" height="40" rx="10" className="f-sw" initial={ini({ fill: '#ffffff' })} animate={{ fill: '#0a0a0a' }} transition={at(0.8, 0.3, IO)} />
+              ? <rect x="244" y={y} width="84" height="40" rx="10" className={'f-sw' + (lit ? ' on' : '')} style={still ? { transition: 'none' } : { transitionDelay: '.8s' }} />
               : <rect x="244" y={y} width="84" height="40" rx="10" className="f-cell" />}
             {k === 2
               ? <>

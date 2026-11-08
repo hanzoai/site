@@ -125,7 +125,7 @@ export function CoverSlide({ children, className = '', ...rest }) {
    sharp line art. The pixels are a veil laid over the art (measured, not inside the shared close), drawn only while
    it plays */
 const lum = (i, j, s) => { const x = Math.sin(i * 12.9898 + j * 78.233 + s) * 43758.5453; return x - Math.floor(x); };
-const GREYS = ['#f5f5f5', '#ededed', '#e5e5e5', '#d4d4d4', '#a3a3a3'];
+const GREYS = 5; // five grey levels, drawn by class (Pubsub.css) so dark mode has its own
 export function PixelResolve({ children, art = '.lx-close-art' }) {
   const [ref, st] = useArrive('0px 0px -25% 0px');
   const [box, setBox] = useState(null);
@@ -146,7 +146,7 @@ export function PixelResolve({ children, art = '.lx-close-art' }) {
       <span className="ps-px-l" style={{ gridTemplateColumns: `repeat(${n}, 1fr)`, gridTemplateRows: `repeat(${rows}, 1fr)` }}>
         {Array.from({ length: n * rows }, (_, k) => {
           const i = k % n, j = (k / n) | 0, v = lum(i, j, s);
-          return <i key={k} style={{ background: GREYS[(v * GREYS.length) | 0], '--t': (d0 + lum(j, i, s + 3) * 0.5).toFixed(2) + 's' }} />;
+          return <i key={k} className={'g' + ((v * GREYS) | 0)} style={{ '--t': (d0 + lum(j, i, s + 3) * 0.5).toFixed(2) + 's' }} />;
         })}
       </span>
     );
