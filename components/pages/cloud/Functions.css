@@ -4,6 +4,11 @@
    @media (hover: hover); presses scale to .97 in 90 ms. Hidden-until-written states are scoped to html.js, so with JS
    off every word stands. */
 
+/* dark (Hanzo's :not(.light)): Keynote.css pins .kn's greys to light values, so the page hands them back to Hanzo's
+   tokens; --fn-on is the word or mark on an ink fill. The warm-pool object (.kn-obj.ink) and the graphite close stay dark. */
+.fn { --fn-on: light-dark(#fafafa, var(--primary-foreground)); }
+html:not(.light) .fn { --ink: var(--foreground); --soft: var(--muted-foreground); --faint: var(--text-tertiary); --line: var(--border); --body: var(--muted-foreground); --quiet: var(--text-tertiary); --hair: var(--border); --ac: var(--muted-foreground); --ac-text: var(--muted-foreground); --ac-ink: var(--primary-foreground); background: var(--bg); }
+
 /* ---------- the hero: words on 5 columns, the life on 7 bleeding right (not /cloud/containers' title-over-window) ---------- */
 .fn-hero { position: relative; padding: clamp(32px, calc(30svh - 150px), 116px) 0 clamp(44px, 6vw, 72px); }
 .fn-hero-g { align-items: center; row-gap: 27px; min-height: min(calc(100svh - 160px), 700px); }
@@ -13,10 +18,10 @@
 .fn-hero-acts .x-arrow { min-height: 44px; }
 .fn .fn-go { height: 48px; padding: 0 27px; font-size: 16px; transition: background-color .15s var(--e-out), transform .15s var(--e-out); }
 .fn .fn-go::after { content: ''; width: 14px; height: 14px; margin-left: 2px; background: currentColor; clip-path: polygon(0 44%, 66% 44%, 40% 18%, 50% 8%, 100% 50%, 50% 92%, 40% 82%, 66% 56%, 0 56%); transition: transform .3s var(--e-in); }
-@media (hover: hover) { .fn .fn-go:hover { background: #000; border-color: #000; color: #fafafa; transform: translateY(1px); } .fn .fn-go:hover::after { transform: translateX(4px); } }
+@media (hover: hover) { .fn .fn-go:hover { background: light-dark(#000, var(--primary-hover)); border-color: light-dark(#000, var(--primary-hover)); color: var(--fn-on); transform: translateY(1px); } .fn .fn-go:hover::after { transform: translateX(4px); } }
 .fn .fn-go:active { transform: scale(.97); transition-duration: 90ms; }
 .fn-hero-meta { display: flex; align-items: center; gap: 12px; margin-top: 17px; }
-.fn-hero-mt { display: flex; flex-direction: column; gap: 4px; font: 500 13px/1.45 var(--mono); color: #737373; letter-spacing: .02em; }
+.fn-hero-mt { display: flex; flex-direction: column; gap: 4px; font: 500 13px/1.45 var(--mono); color: light-dark(#737373, var(--text-tertiary)); letter-spacing: .02em; }
 /* the object ends inside the container with its full radius (no cut edge at the screen's side) */
 .fn-hero-o { grid-column: 5 / -1; min-width: 0; }
 .fn-hero-o .fn-life { border-radius: 24px; }
@@ -36,70 +41,70 @@
 .fn-hero[data-paused] .fn-life *, .fn-hero[data-paused] .fn-life *::before, .fn-hero[data-paused] .fn-life *::after { animation-play-state: paused !important; }
 
 /* ---------- the hero object: a function's life, flat fills on the quiet room (no outline inside an outline) ---------- */
-.fn-life.kn-obj { border: 0; background: #f5f5f5; }
+.fn-life.kn-obj { border: 0; background: light-dark(#f5f5f5, var(--muted)); }
 .fn-life { position: relative; width: 100%; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 3fr); grid-template-areas: 'trig trig' 'code k8s'; column-gap: 17px; row-gap: 27px; padding: clamp(24px, 2.6vw, 36px); }
-.fn-col-k { margin: 0 0 12px; font: 606 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #737373; }
+.fn-col-k { margin: 0 0 12px; font: 606 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: light-dark(#737373, var(--text-tertiary)); }
 .fn-trigs { grid-area: trig; position: relative; display: grid; grid-template-columns: minmax(0, 1fr); row-gap: 10px; }
 .fn-trigs .fn-col-k { margin: 0; }
 .fn-trig-b { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
 /* the triggers are buttons: pick the one that fires (pressed again, the hero goes back to taking turns) */
-.fn-trig-b button { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 10px; border: 0; border-radius: 999px; background: #fff; font: 400 13px/1.1 var(--mono); color: #525252; white-space: nowrap; cursor: pointer; transition: color .3s var(--e-out), background-color .3s var(--e-out), transform .4s var(--e-move); }
-.fn-trig-b button i { flex: none; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid #737373; transition: background-color .3s var(--e-out), border-color .3s var(--e-out); }
-.fn-trig-b button.on { color: #fafafa; background: #0a0a0a; transform: translateY(-3px); }
-.fn-trig-b button.on i { background: #fafafa; border-color: #fafafa; }
-.fn-trig-b button[aria-pressed='true'] { outline: 1.5px solid #0a0a0a; outline-offset: 3px; }
+.fn-trig-b button { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 10px; border: 0; border-radius: 999px; background: light-dark(#fff, var(--secondary)); font: 400 13px/1.1 var(--mono); color: light-dark(#525252, var(--muted-foreground)); white-space: nowrap; cursor: pointer; transition: color .3s var(--e-out), background-color .3s var(--e-out), transform .4s var(--e-move); }
+.fn-trig-b button i { flex: none; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid light-dark(#737373, var(--text-tertiary)); transition: background-color .3s var(--e-out), border-color .3s var(--e-out); }
+.fn-trig-b button.on { color: var(--fn-on); background: var(--ink); transform: translateY(-3px); }
+.fn-trig-b button.on i { background: var(--fn-on); border-color: var(--fn-on); }
+.fn-trig-b button[aria-pressed='true'] { outline: 1.5px solid var(--ink); outline-offset: 3px; }
 .fn-trig-b button:active { transform: scale(.97); transition-duration: 90ms; }
-.fn-trig-b button:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 3px; }
-@media (hover: hover) { .fn-trig-b button.on:hover { background: #262626; } .fn-trig-b button:not(.on):hover { color: #0a0a0a; background: #fafafa; } .fn-trig-b button:not(.on):hover i { border-color: #0a0a0a; } }
+.fn-trig-b button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+@media (hover: hover) { .fn-trig-b button.on:hover { background: light-dark(#262626, var(--primary-hover)); } .fn-trig-b button:not(.on):hover { color: var(--ink); background: light-dark(#fafafa, var(--secondary-hover)); } .fn-trig-b button:not(.on):hover i { border-color: var(--ink); } }
 /* calls travel down from the trigger row into the file */
-.fn-calls { position: absolute; left: calc(31% - 0px); bottom: -27px; width: 1px; height: 27px; background: rgba(0, 0, 0, .14); }
-.fn-calls i { position: absolute; left: -3.5px; top: 0; width: 8px; height: 8px; border-radius: 50%; background: #0a0a0a; opacity: 0; }
+.fn-calls { position: absolute; left: calc(31% - 0px); bottom: -27px; width: 1px; height: 27px; background: light-dark(rgba(0, 0, 0, .14), var(--border-control)); }
+.fn-calls i { position: absolute; left: -3.5px; top: 0; width: 8px; height: 8px; border-radius: 50%; background: var(--ink); opacity: 0; }
 .fn-life[data-burst] .fn-calls i { animation: fn-call .9s linear infinite; }
 .fn-life[data-burst] .fn-calls i:nth-child(2) { animation-delay: .18s; }
 .fn-life[data-burst] .fn-calls i:nth-child(3) { animation-delay: .36s; }
 .fn-life[data-burst] .fn-calls i:nth-child(4) { animation-delay: .54s; }
 .fn-life[data-burst] .fn-calls i:nth-child(5) { animation-delay: .72s; }
 @keyframes fn-call { 0% { opacity: 0; transform: translateY(-6px); } 20% { opacity: 1; } 100% { opacity: 0; transform: translateY(27px); } }
-.fn-code { grid-area: code; display: flex; flex-direction: column; min-height: 0; min-width: 0; border-radius: 16px; background: #fff; overflow: hidden; }
+.fn-code { grid-area: code; display: flex; flex-direction: column; min-height: 0; min-width: 0; border-radius: 16px; background: light-dark(#fff, var(--secondary)); overflow: hidden; }
 .fn-file { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 0 17px; border-bottom: 1px solid var(--hair); }
 .fn-dots { display: flex; gap: 6px; }
-.fn-dots i { width: 10px; height: 10px; border-radius: 50%; background: #e5e5e5; }
-.fn-file b { font: 606 14px/1 var(--mono); color: #0a0a0a; }
-.fn-file em { margin-left: auto; padding: 6px 10px; border-radius: 999px; background: #f5f5f5; font: 400 13px/1 var(--mono); font-style: normal; color: #525252; transition: background-color .3s var(--e-out), color .3s var(--e-out); }
-.fn-file em.on { background: #0a0a0a; color: #fafafa; }
+.fn-dots i { width: 10px; height: 10px; border-radius: 50%; background: light-dark(#e5e5e5, var(--muted)); }
+.fn-file b { font: 606 14px/1 var(--mono); color: var(--ink); }
+.fn-file em { margin-left: auto; padding: 6px 10px; border-radius: 999px; background: light-dark(#f5f5f5, var(--muted)); font: 400 13px/1 var(--mono); font-style: normal; color: light-dark(#525252, var(--muted-foreground)); transition: background-color .3s var(--e-out), color .3s var(--e-out); }
+.fn-file em.on { background: var(--ink); color: var(--fn-on); }
 /* the file's state is a shape: a hollow dot while it is being written, a filled one and Hanzo's word once deployed */
 .fn-file em { display: inline-flex; align-items: center; gap: 8px; min-height: 26px; }
-.fn-file em i { flex: none; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid #737373; transition: background-color .3s var(--e-out), border-color .3s var(--e-out); }
-.fn-file em.on i { position: relative; background: #fafafa; border-color: #fafafa; }
-.fn-file em i::after { content: ''; position: absolute; inset: -1.5px; border-radius: 50%; border: 1.5px solid #fafafa; opacity: 0; }
+.fn-file em i { flex: none; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid light-dark(#737373, var(--text-tertiary)); transition: background-color .3s var(--e-out), border-color .3s var(--e-out); }
+.fn-file em.on i { position: relative; background: var(--fn-on); border-color: var(--fn-on); }
+.fn-file em i::after { content: ''; position: absolute; inset: -1.5px; border-radius: 50%; border: 1.5px solid var(--fn-on); opacity: 0; }
 .fn-life[data-burst] .fn-file em i::after { animation: fn-pulse 1.1s var(--e-out) infinite; }
 @keyframes fn-pulse { from { opacity: .9; transform: scale(1); } to { opacity: 0; transform: scale(2.6); } }
 .fn-nodes { transform-origin: 50% 40%; transition: transform .9s var(--e-in); }
 .fn-life[data-grow] .fn-nodes { transform: scale(1.05); transition-duration: .6s; }
-.fn-code pre { flex: 1; margin: 0; padding: 17px; font: 400 13.5px/1.65 var(--mono); color: #0a0a0a; white-space: pre; overflow: hidden; }
+.fn-code pre { flex: 1; margin: 0; padding: 17px; font: 400 13.5px/1.65 var(--mono); color: var(--ink); white-space: pre; overflow: hidden; }
 .js .fn-ln { animation: fn-ln .15s var(--e-out) both; animation-delay: calc(.3s + var(--i) * .38s); }
-.js .fn-ln::after { content: ''; display: inline-block; width: .55em; height: 1.1em; margin-left: 2px; vertical-align: -.2em; background: #0a0a0a; opacity: 0; animation: fn-cur .38s steps(1, end) both; animation-delay: calc(.3s + var(--i) * .38s); }
+.js .fn-ln::after { content: ''; display: inline-block; width: .55em; height: 1.1em; margin-left: 2px; vertical-align: -.2em; background: var(--ink); opacity: 0; animation: fn-cur .38s steps(1, end) both; animation-delay: calc(.3s + var(--i) * .38s); }
 @keyframes fn-ln { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fn-cur { 0% { opacity: 1; } 100% { opacity: 0; } }
-.fn-code .k { color: #525252; }
+.fn-code .k { color: light-dark(#525252, var(--muted-foreground)); }
 .fn-code .f { font-weight: 606; }
-.fn-code .c { color: #737373; }
+.fn-code .c { color: light-dark(#737373, var(--text-tertiary)); }
 .fn-k8s { grid-area: k8s; display: flex; flex-direction: column; justify-content: space-between; gap: 12px; min-width: 0; }
 .fn-k8s .fn-col-k { margin: 0; }
 /* state as a shape and a word: a filled ink dot while replicas run, a hollow one at zero */
-.fn-count { margin: 0; display: flex; align-items: center; gap: 10px; font: 497 17px/1.2 var(--sans); color: #0a0a0a; }
-.fn-count i { flex: none; width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid #0a0a0a; background: #0a0a0a; transition: background-color .3s var(--e-out); }
+.fn-count { margin: 0; display: flex; align-items: center; gap: 10px; font: 497 17px/1.2 var(--sans); color: var(--ink); }
+.fn-count i { flex: none; width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--ink); background: var(--ink); transition: background-color .3s var(--e-out); }
 .fn-count[data-zero] i { background: transparent; }
 /* the words are Hanzo's state at rest; while replicas run they fade back and the filled dot carries the state */
-.fn-count span { color: #525252; text-decoration: line-through; text-decoration-thickness: 1px; transition: color .3s var(--e-out); }
-.fn-count[data-zero] span { color: #0a0a0a; text-decoration: none; }
+.fn-count span { color: light-dark(#525252, var(--muted-foreground)); text-decoration: line-through; text-decoration-thickness: 1px; transition: color .3s var(--e-out); }
+.fn-count[data-zero] span { color: var(--ink); text-decoration: none; }
 .fn-nodes { display: grid; gap: 8px; }
-.fn-node { display: block; padding: 10px 12px; border-radius: 12px; background: #fff; }
+.fn-node { display: block; padding: 10px 12px; border-radius: 12px; background: light-dark(#fff, var(--secondary)); }
 .fn-slots { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; }
-.fn-slots i { aspect-ratio: 1; border-radius: 6px; border: 1.5px solid #d4d4d4; transform: scale(.7); transition: transform .3s var(--e-in), background-color .15s var(--e-out), border-color .15s var(--e-out); }
-.fn-slots i.on { background: #0a0a0a; border-color: #0a0a0a; transform: none; }
-.fn-warm { margin: 0; display: flex; align-items: center; gap: 8px; font: 400 13px/1 var(--mono); color: #525252; }
-.fn-warm i { width: 10px; height: 10px; border-radius: 999px; border: 1.5px dashed #0a0a0a; }
+.fn-slots i { aspect-ratio: 1; border-radius: 6px; border: 1.5px solid light-dark(#d4d4d4, var(--border-selected)); transform: scale(.7); transition: transform .3s var(--e-in), background-color .15s var(--e-out), border-color .15s var(--e-out); }
+.fn-slots i.on { background: var(--ink); border-color: var(--ink); transform: none; }
+.fn-warm { margin: 0; display: flex; align-items: center; gap: 8px; font: 400 13px/1 var(--mono); color: light-dark(#525252, var(--muted-foreground)); }
+.fn-warm i { width: 10px; height: 10px; border-radius: 999px; border: 1.5px dashed var(--ink); }
 
 /* ---------- chapters ---------- */
 .fn .knc-count { font-size: 13px; }
@@ -108,35 +113,35 @@
 .fn-ch-head { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--kn-g); align-items: end; row-gap: 27px; }
 .fn-ch-hw { grid-column: 1 / span 5; display: flex; flex-direction: column; gap: 10px; }
 .fn-join { grid-column: 7 / -1; display: flex; align-items: center; gap: 10px; padding-bottom: 6px; }
-.fn-join-n { flex: none; padding: 12px 16px; border-radius: 999px; background: #f5f5f5; font: 400 14px/1 var(--mono); color: #0a0a0a; }
-.fn-join-n.ink { background: #0a0a0a; color: #fafafa; }
+.fn-join-n { flex: none; padding: 12px 16px; border-radius: 999px; background: light-dark(#f5f5f5, var(--muted)); font: 400 14px/1 var(--mono); color: var(--ink); }
+.fn-join-n.ink { background: var(--ink); color: var(--fn-on); }
 .fn-join svg { flex: 1; min-width: 17px; height: 2px; overflow: visible; }
-.fn-join path { fill: none; stroke: #0a0a0a; stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.fn-join path { fill: none; stroke: var(--ink); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
 /* type order: chapter titles rest at 26px, never above the section headings */
 .fn-ch .knc-h { font-size: 26px; letter-spacing: -.02em; }
 /* hovering a chapter number tells you which chapter it is (its own title, set on the button after mount, as a tip) */
 @media (min-width: 900px) and (hover: hover) {
-  .fn-ch .knc-rail button[data-tip]::before { content: attr(data-tip); position: absolute; left: 0; bottom: calc(100% + 6px); padding: 8px 12px; border-radius: 8px; background: #0a0a0a; color: #fafafa; font: 400 13px/1.2 var(--sans); letter-spacing: 0; white-space: nowrap; opacity: 0; transform: translate3d(0, 4px, 0); pointer-events: none; transition: opacity .15s var(--e-out), transform .15s var(--e-out); z-index: 4; }
+  .fn-ch .knc-rail button[data-tip]::before { content: attr(data-tip); position: absolute; left: 0; bottom: calc(100% + 6px); padding: 8px 12px; border-radius: 8px; background: var(--ink); color: var(--fn-on); font: 400 13px/1.2 var(--sans); letter-spacing: 0; white-space: nowrap; opacity: 0; transform: translate3d(0, 4px, 0); pointer-events: none; transition: opacity .15s var(--e-out), transform .15s var(--e-out); z-index: 4; }
   .fn-ch .knc-rail button[data-tip]:hover::before, .fn-ch .knc-rail button[data-tip]:focus-visible::before { opacity: 1; transform: none; }
 }
 /* the kit's chapter rail sits under the words; with the words on the right its grid area has to follow them */
 .fn-ch.knc.right .knc-rail { grid-column: 8 / span 5; left: 0; right: auto; }
 .fn-sc { position: relative; height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 24px; padding: clamp(24px, 3.4vw, 44px); }
-.fn-sc-k { margin: 0; font: 606 12px/1.3 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #737373; }
+.fn-sc-k { margin: 0; font: 606 12px/1.3 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: light-dark(#737373, var(--text-tertiary)); }
 .kn-obj.ink .fn-sc-k { color: #a3a3a3; }
 
 .fn-rts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.fn-rt { display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; gap: 17px; min-height: 120px; padding: 24px; border: 0; border-radius: 16px; background: #f5f5f5; color: #0a0a0a; font: inherit; text-align: left; cursor: pointer; transition: background-color .4s var(--e-move), color .4s var(--e-move), transform .5s var(--e-move); }
+.fn-rt { display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; gap: 17px; min-height: 120px; padding: 24px; border: 0; border-radius: 16px; background: light-dark(#f5f5f5, var(--secondary)); color: var(--ink); font: inherit; text-align: left; cursor: pointer; transition: background-color .4s var(--e-move), color .4s var(--e-move), transform .5s var(--e-move); }
 .fn-rt:active { transform: scale(.97); transition-duration: 90ms; }
-.fn-rt:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 3px; }
-@media (hover: hover) { .fn-rt:not(.on):hover { background: #e4e4e7; } }
+.fn-rt:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+@media (hover: hover) { .fn-rt:not(.on):hover { background: light-dark(#e4e4e7, var(--secondary-hover)); } }
 .fn-rt b { font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1; }
-.fn-rt span { font: 400 14px/1.3 var(--mono); white-space: nowrap; color: #525252; transition: color .4s var(--e-move); }
-.fn-rt.box { grid-column: 1 / -1; min-height: 0; flex-direction: row; align-items: baseline; background: transparent; border: 1.5px dashed rgba(0, 0, 0, .2); }
-.fn-rt.on { background: #0a0a0a; color: #fafafa; }
-@media (hover: hover) { .fn-rt.on:hover { background: #262626; } }
-.fn-rt.on span { color: rgba(255, 255, 255, .78); }
-.fn-rt.box.on { border-color: #0a0a0a; }
+.fn-rt span { font: 400 14px/1.3 var(--mono); white-space: nowrap; color: light-dark(#525252, var(--muted-foreground)); transition: color .4s var(--e-move); }
+.fn-rt.box { grid-column: 1 / -1; min-height: 0; flex-direction: row; align-items: baseline; background: transparent; border: 1.5px dashed light-dark(rgba(0, 0, 0, .2), var(--border-focus)); }
+.fn-rt.on { background: var(--ink); color: var(--fn-on); }
+@media (hover: hover) { .fn-rt.on:hover { background: light-dark(#262626, var(--primary-hover)); } }
+.fn-rt.on span { color: light-dark(rgba(255, 255, 255, .78), var(--secondary)); }
+.fn-rt.box.on { border-color: var(--ink); }
 
 .fn-pool { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 10px; }
 .fn-pool i { aspect-ratio: 1 / 1.35; border-radius: 12px; border: 1.5px solid rgba(255, 255, 255, .3); transition: background-color .3s var(--e-out), transform .5s var(--e-move); }
@@ -157,69 +162,69 @@
 .fn-zero > span:last-child { font-size: 16px; line-height: 1.5; color: #a3a3a3; max-width: 34ch; transition: color .4s var(--e-out); }
 .fn-sc-warm[data-k='3'] .fn-zero > span:last-child { color: #fafafa; }
 
-.fn-cl-top { display: flex; align-items: center; gap: 12px; font: 400 14px/1 var(--mono); color: #525252; }
-.fn-helm { padding: 8px 12px; border-radius: 8px; background: #0a0a0a; color: #fafafa; }
+.fn-cl-top { display: flex; align-items: center; gap: 12px; font: 400 14px/1 var(--mono); color: light-dark(#525252, var(--muted-foreground)); }
+.fn-helm { padding: 8px 12px; border-radius: 8px; background: var(--ink); color: var(--fn-on); }
 .fn-tags { display: flex; flex-wrap: wrap; gap: 8px; }
-.fn-tags span { padding: 10px 14px; border-radius: 999px; border: 1px solid var(--hair); font: 400 14px/1 var(--mono); color: #525252; transition: background-color .3s var(--e-out), color .3s var(--e-out), border-color .3s var(--e-out); }
-.fn-tags span.on { background: #0a0a0a; border-color: #0a0a0a; color: #fafafa; }
-.fn-pools { display: grid; gap: 10px; padding: 16px; border-radius: 16px; background: #f5f5f5; }
-.fn-pool-r { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; padding: 10px; border-radius: 12px; background: #fff; outline: 1.5px dashed transparent; outline-offset: -1.5px; transition: outline-color .4s var(--e-out); }
-.fn-pool-r.lit { outline-color: #0a0a0a; }
-.fn-pool-r i { aspect-ratio: 1.5; border-radius: 6px; background: #e5e5e5; }
-.fn-pool-r i.fn { background: #0a0a0a; }
-.fn-cl-f { margin: 0; display: flex; align-items: center; gap: 10px; font: 400 14px/1.3 var(--mono); color: #525252; }
-.fn-cl-f i { width: 12px; height: 12px; border-radius: 6px; background: #0a0a0a; }
+.fn-tags span { padding: 10px 14px; border-radius: 999px; border: 1px solid var(--hair); font: 400 14px/1 var(--mono); color: light-dark(#525252, var(--muted-foreground)); transition: background-color .3s var(--e-out), color .3s var(--e-out), border-color .3s var(--e-out); }
+.fn-tags span.on { background: var(--ink); border-color: var(--ink); color: var(--fn-on); }
+.fn-pools { display: grid; gap: 10px; padding: 16px; border-radius: 16px; background: light-dark(#f5f5f5, var(--background)); }
+.fn-pool-r { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; padding: 10px; border-radius: 12px; background: light-dark(#fff, var(--secondary)); outline: 1.5px dashed transparent; outline-offset: -1.5px; transition: outline-color .4s var(--e-out); }
+.fn-pool-r.lit { outline-color: var(--ink); }
+.fn-pool-r i { aspect-ratio: 1.5; border-radius: 6px; background: light-dark(#e5e5e5, var(--muted)); }
+.fn-pool-r i.fn { background: var(--ink); }
+.fn-cl-f { margin: 0; display: flex; align-items: center; gap: 10px; font: 400 14px/1.3 var(--mono); color: light-dark(#525252, var(--muted-foreground)); }
+.fn-cl-f i { width: 12px; height: 12px; border-radius: 6px; background: var(--ink); }
 
-.fn-want { align-self: flex-start; display: flex; align-items: center; gap: 14px; min-height: 44px; padding: 14px 20px 14px 14px; border-radius: 16px; border: 1.5px dashed #0a0a0a; background: transparent; font: 400 14px/1 var(--mono); color: #0a0a0a; cursor: pointer; transition: background-color .15s var(--e-out), transform .15s var(--e-out); }
+.fn-want { align-self: flex-start; display: flex; align-items: center; gap: 14px; min-height: 44px; padding: 14px 20px 14px 14px; border-radius: 16px; border: 1.5px dashed var(--ink); background: transparent; font: 400 14px/1 var(--mono); color: var(--ink); cursor: pointer; transition: background-color .15s var(--e-out), transform .15s var(--e-out); }
 .fn-want[aria-pressed='true'] { border-style: solid; }
 .fn-want:active { transform: scale(.97); transition-duration: 90ms; }
-.fn-want:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 3px; }
-@media (hover: hover) { .fn-want:hover { background: #f5f5f5; } }
-.fn-pod { display: block; width: 40px; height: 40px; border-radius: 12px; background: #0a0a0a; transition: opacity .4s var(--e-out), transform .5s var(--e-in); }
+.fn-want:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+@media (hover: hover) { .fn-want:hover { background: light-dark(#f5f5f5, var(--secondary)); } }
+.fn-pod { display: block; width: 40px; height: 40px; border-radius: 12px; background: var(--ink); transition: opacity .4s var(--e-out), transform .5s var(--e-in); }
 /* the nodes hold pods the way the hero's cluster does: filled slots are work already running, hollow ones are free */
 .fn-gnodes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.fn-gnode { display: flex; flex-direction: column; gap: 17px; padding: 17px; border-radius: 16px; background: #f5f5f5; outline: 1.5px solid transparent; outline-offset: 4px; transition: outline-color .4s var(--e-out); }
+.fn-gnode { display: flex; flex-direction: column; gap: 17px; padding: 17px; border-radius: 16px; background: light-dark(#f5f5f5, var(--secondary)); outline: 1.5px solid transparent; outline-offset: 4px; transition: outline-color .4s var(--e-out); }
 .fn-gnode-k { min-height: 1.2em; font-size: 17px; font-weight: 497; letter-spacing: -.01em; }
 .fn-gslots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-.fn-gslots i { aspect-ratio: 1; border-radius: 10px; border: 1.5px solid #d4d4d4; transition: background-color .3s var(--e-out), border-color .3s var(--e-out), transform .5s var(--e-in), opacity .3s var(--e-out); }
-.fn-gslots i.on { background: #0a0a0a; border-color: #0a0a0a; }
-.fn-gnode.gpu { background: #0a0a0a; color: #fafafa; }
-.fn-gnode.gpu .fn-gslots i { border-color: rgba(255, 255, 255, .24); }
-.fn-gnode.gpu .fn-gslots i.in { background: transparent; border-color: rgba(255, 255, 255, .24); }
-.fn-sc-gpu[data-k='2'] .fn-gnode.gpu .fn-gslots i.in { background: #fafafa; border-color: #fafafa; animation: fn-land .6s var(--e-in); }
+.fn-gslots i { aspect-ratio: 1; border-radius: 10px; border: 1.5px solid light-dark(#d4d4d4, var(--border-selected)); transition: background-color .3s var(--e-out), border-color .3s var(--e-out), transform .5s var(--e-in), opacity .3s var(--e-out); }
+.fn-gslots i.on { background: var(--ink); border-color: var(--ink); }
+.fn-gnode.gpu { background: var(--ink); color: var(--fn-on); }
+.fn-gnode.gpu .fn-gslots i { border-color: light-dark(rgba(255, 255, 255, .24), var(--muted-foreground)); }
+.fn-gnode.gpu .fn-gslots i.in { background: transparent; border-color: light-dark(rgba(255, 255, 255, .24), var(--muted-foreground)); }
+.fn-sc-gpu[data-k='2'] .fn-gnode.gpu .fn-gslots i.in { background: var(--fn-on); border-color: var(--fn-on); animation: fn-land .6s var(--e-in); }
 @keyframes fn-land { from { transform: translate3d(0, -32px, 0) scale(.5); opacity: 0; } to { transform: none; opacity: 1; } }
-.fn-sc-gpu[data-k='1'] .fn-gnode.gpu { outline-color: #0a0a0a; }
+.fn-sc-gpu[data-k='1'] .fn-gnode.gpu { outline-color: var(--ink); }
 .fn-sc-gpu[data-k='2'] .fn-want .fn-pod { opacity: .15; transform: scale(.8); }
 
 .fn-sc-tr { justify-content: center; gap: 0; }
 .fn-sc-tr .fn-tr-l { margin-bottom: -1px; }
 .fn-tr-l { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
-.fn-tr-l li { padding: 14px 6px; border-radius: 12px; background: #f5f5f5; text-align: center; font: 400 13px/1.2 var(--mono); color: #0a0a0a; white-space: nowrap; }
+.fn-tr-l li { padding: 14px 6px; border-radius: 12px; background: light-dark(#f5f5f5, var(--secondary)); text-align: center; font: 400 13px/1.2 var(--mono); color: var(--ink); white-space: nowrap; }
 .fn-tr-lines { width: 100%; height: clamp(160px, 26svh, 280px); overflow: visible; }
-.fn-tr-lines path { fill: none; stroke: #0a0a0a; stroke-width: 1.4; stroke-linecap: round; }
-.fn-tr-h { position: relative; margin-top: -18px; align-self: center; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 24px 44px; border-radius: 16px; background: #0a0a0a; color: #fafafa; }
+.fn-tr-lines path { fill: none; stroke: var(--ink); stroke-width: 1.4; stroke-linecap: round; }
+.fn-tr-h { position: relative; margin-top: -18px; align-self: center; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 24px 44px; border-radius: 16px; background: var(--ink); color: var(--fn-on); }
 .fn-tr-h b { font: 606 21px/1 var(--mono); }
-.fn-tr-h span { font-size: 14px; color: #a3a3a3; }
+.fn-tr-h span { font-size: 14px; color: light-dark(#a3a3a3, var(--secondary-hover)); }
 
 .fn-modes { display: flex; gap: 6px; }
-.fn-modes button { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--hair); background: transparent; font: 400 14px/1 var(--mono); color: #525252; cursor: pointer; transition: background-color .3s var(--e-out), color .3s var(--e-out), border-color .3s var(--e-out), transform .15s var(--e-out); }
-.fn-modes button.on { background: #0a0a0a; border-color: #0a0a0a; color: #fafafa; }
+.fn-modes button { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--hair); background: transparent; font: 400 14px/1 var(--mono); color: light-dark(#525252, var(--muted-foreground)); cursor: pointer; transition: background-color .3s var(--e-out), color .3s var(--e-out), border-color .3s var(--e-out), transform .15s var(--e-out); }
+.fn-modes button.on { background: var(--ink); border-color: var(--ink); color: var(--fn-on); }
 .fn-modes button:active { transform: scale(.97); transition-duration: 90ms; }
-.fn-modes button:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 2px; }
-@media (hover: hover) { .fn-modes button:not(.on):hover { border-color: #0a0a0a; color: #0a0a0a; } }
+.fn-modes button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+@media (hover: hover) { .fn-modes button:not(.on):hover { border-color: var(--ink); color: var(--ink); } }
 .fn-vers { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 /* each version is a shape: its pods, filled for the share of traffic it carries (no invented name) */
-.fn-ver { padding: 24px; border-radius: 16px; background: #f5f5f5; transition: background-color .5s var(--e-move); }
+.fn-ver { padding: 24px; border-radius: 16px; background: light-dark(#f5f5f5, var(--secondary)); transition: background-color .5s var(--e-move); }
 .fn-ver-p { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-.fn-ver-p i { aspect-ratio: 1; border-radius: 10px; border: 1.5px solid #d4d4d4; transition: background-color .4s var(--e-out), border-color .4s var(--e-out); }
-.fn-ver-p i.on { background: #0a0a0a; border-color: #0a0a0a; }
-.fn-ver.on { background: #0a0a0a; }
-.fn-ver.on .fn-ver-p i { border-color: rgba(255, 255, 255, .24); }
-.fn-ver.on .fn-ver-p i.on { background: #fafafa; border-color: #fafafa; }
+.fn-ver-p i { aspect-ratio: 1; border-radius: 10px; border: 1.5px solid light-dark(#d4d4d4, var(--border-selected)); transition: background-color .4s var(--e-out), border-color .4s var(--e-out); }
+.fn-ver-p i.on { background: var(--ink); border-color: var(--ink); }
+.fn-ver.on { background: var(--ink); }
+.fn-ver.on .fn-ver-p i { border-color: light-dark(rgba(255, 255, 255, .24), var(--muted-foreground)); }
+.fn-ver.on .fn-ver-p i.on { background: var(--fn-on); border-color: var(--fn-on); }
 /* the traffic: two segments that share the bar, the next version's slice growing as you choose */
 .fn-traffic { display: flex; gap: 4px; height: 44px; }
 .fn-traffic i { flex: 0 0 0; flex-basis: 0; min-width: 0; border-radius: 10px; transition: flex-grow .9s var(--e-move); }
-.fn-traffic i { background: #0a0a0a; }
+.fn-traffic i { background: var(--ink); }
 
 /* ---------- common use cases: see functions/FnUses ---------- */
 /* the close's buttons on deck values (the shared room draws them in Apple greys) */
@@ -329,3 +334,9 @@
   .fn-join { gap: 3px; }
   .fn-join svg { min-width: 6px; }
 }
+
+/* dark: the filled marks (running pods, the next version's share, the GPU pod) draw in Hanzo's muted foreground, so a
+   cluster reads as data rather than a field of light tiles; a chosen version's card is Hanzo's primary fill with dark marks */
+html:not(.light) .fn-slots i.on, html:not(.light) .fn-gnode:not(.gpu) .fn-gslots i.on, html:not(.light) .fn-ver-p i.on { background: var(--muted-foreground); border-color: var(--muted-foreground); }
+html:not(.light) .fn-pool-r i.fn, html:not(.light) .fn-pod, html:not(.light) .fn-traffic i { background: var(--muted-foreground); }
+html:not(.light) .fn-ver.on { color: var(--primary-foreground); }
