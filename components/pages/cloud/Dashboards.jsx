@@ -380,6 +380,19 @@ function Figures() {
 const SIDE = [['Dashboards', '/dashboards'], ['Logs', '/cloud/logs'], ['Metrics', '/metrics'], ['O11y', '/o11y'], ['AI Metrics', '/cloud/ai-metrics'], ['Billing', '/billing'], ['Plans & Pricing', '/cloud/plans'], ['Sessions', '/cloud/sessions']];
 const Arrow = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
+/* The console caption as hanzo.ai prints it: its server page reads the limiter line, and once the page is live the
+   caption reads the session line. Both stay in the page text; one shows at a time (hydration-safe: same first paint). */
+function Cap() {
+  const [live, setLive] = useState(false);
+  useEffect(() => setLive(true), []);
+  return (
+    <>
+      <span hidden={live}>Every request enters here, so the limiter does too.</span>
+      <span hidden={!live}>The service the session above is changing.</span>
+    </>
+  );
+}
+
 export default function Dashboards() {
   const root = useRef(null);
   useArrivals(root);
@@ -411,7 +424,7 @@ export default function Dashboards() {
             <div className="kn-acts"><Cta to="https://github.com/hanzoai/dashboards" id="dashboards.start">View on GitHub</Cta></div>
           </div>
           <div className="db-start-o">
-            <Lens play={play}><ExampleConsole name="Dashboards" api="/v1/o11y/dashboards" side={SIDE} cap="The service the session above is changing." /></Lens>
+            <Lens play={play}><ExampleConsole name="Dashboards" api="/v1/o11y/dashboards" side={SIDE} cap={<Cap />} /></Lens>
             <p className="db-note">Example project. Every name in it is one you would give your own.</p>
           </div>
         </div>
