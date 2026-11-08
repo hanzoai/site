@@ -1,12 +1,11 @@
 /* IAM v2 (prefix ia-), Hanzo's deck: greys only. One dark room: the refresh family. Section heads rest at 26px. */
-.ia { --acc: var(--ink); --glow: var(--ia-6); --ia-em: cubic-bezier(.16, 1, .3, 1); --ia-out: cubic-bezier(0, 0, .2, 1); --ia-io: cubic-bezier(.4, 0, .2, 1); --btn-solid-hover: light-dark(#262626, #ccc);
-  /* the page's greys, each with its dark-mode partner (live hanzo.ai dark: fills #fafafa on #0a0a0a type, #171717 / #262626
-     surfaces, #a3a3a3 muted type); bright mode keeps the light value exactly */
-  --ia-k: light-dark(#0a0a0a, #fafafa); --ia-ko: light-dark(#fafafa, #0a0a0a); --ia-6: light-dark(#525252, #a3a3a3);
-  --ia-5: light-dark(#737373, #a3a3a3); --ia-4: light-dark(#a3a3a3, #737373); --ia-3: light-dark(#d4d4d4, #404040);
-  --ia-2: light-dark(#ededed, #262626); --ia-1: light-dark(#f5f5f5, #171717); }
+.ia { --acc: var(--ink); --glow: var(--ia-6); --ia-em: cubic-bezier(.16, 1, .3, 1); --ia-out: cubic-bezier(0, 0, .2, 1); --ia-io: cubic-bezier(.4, 0, .2, 1); --btn-solid-hover: light-dark(#262626, var(--primary-hover));
+  /* the page's greys, each with Hanzo's dark token as its partner (@hanzo/design); bright mode keeps the light value exactly */
+  --ia-k: light-dark(#0a0a0a, var(--primary)); --ia-ko: light-dark(#fafafa, var(--primary-foreground)); --ia-6: light-dark(#525252, var(--muted-foreground));
+  --ia-5: light-dark(#737373, var(--muted-foreground)); --ia-4: light-dark(#a3a3a3, var(--text-tertiary)); --ia-3: light-dark(#d4d4d4, var(--text-disabled));
+  --ia-2: light-dark(#ededed, var(--secondary)); --ia-1: light-dark(#f5f5f5, var(--muted)); }
 /* dark mode: the shared v2 scale pins its type tokens to bright values on .v2; give them Hanzo's dark ones on this page */
-html.dark .v2.ia { --ink: #e5e5e5; --soft: #a3a3a3; --faint: #a3a3a3; --line: rgba(255, 255, 255, .1); --card: #171717; }
+html:not(.light) .v2.ia { --ink: var(--foreground); --soft: var(--muted-foreground); --faint: var(--muted-foreground); --line: var(--border); }
 /* the shared Paste and ship tag sets #fafafa type on an ink fill; in dark the fill turns light, so the type follows */
 .ia .sp-api i { color: var(--ia-ko); }
 .ia .v2-dark, .ia [data-room='dark'] { --acc: #fafafa; --glow: #e5e5e5; }
@@ -25,7 +24,7 @@ html.dark .v2.ia { --ink: #e5e5e5; --soft: #a3a3a3; --faint: #a3a3a3; --line: rg
 @media (hover: hover) {
   .ia a.x-arrow:hover > span { background-size: 100% 1px; }
   .ia a.x-arrow:hover > svg { transform: translateX(4px); }
-  .ia .ia-pause:not([aria-pressed='true']):hover { box-shadow: 0 0 0 1.5px var(--ink); color: var(--ink); background: light-dark(#f2f2f2, #262626); }
+  .ia .ia-pause:not([aria-pressed='true']):hover { box-shadow: 0 0 0 1.5px var(--ink); color: var(--ink); background: light-dark(#f2f2f2, var(--secondary)); }
   .ia .gi-acts .x-btn.solid { transition: background-color 150ms var(--ia-out), transform 150ms var(--ia-out); }
   .ia .gi-acts .x-btn.solid:hover { background: var(--btn-solid-hover); transform: translateY(-1px); }
 }
