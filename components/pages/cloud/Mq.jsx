@@ -31,6 +31,7 @@ import SpecDrawer from '../../v2/SpecDrawer';
 import LaunchClose, { Arr } from '../../v2/LaunchClose';
 import LivePause, { usePause } from '../../v2/LivePause';
 import MqGlobe from './MqGlobe';
+import HeroDither from '../HeroDither';
 import { ShrinkToCard, Iris, Scramble, Scr, CountRoll, Roll, CursorLens, Lens } from './MqEntrances';
 import './Mq.css';
 
@@ -368,6 +369,7 @@ export default function Mq() {
     <main className="lx mq" data-cursor="">
       {/* 1 · shrink-to-card: the globe's quiet room becomes a card as you leave it */}
       <ShrinkToCard className="mq-hero" data-morph-target data-ask-name="Hanzo MQ">
+        <HeroDither />
         <div className="lx-wrap mq-top">
           <div className="mq-lead">
             <h1 className="lx-display mq-h1">Hanzo MQ</h1>
