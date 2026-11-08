@@ -71,7 +71,7 @@
 
 .xpl-art { position: absolute; top: 0; bottom: 0; right: 0; width: 52%; z-index: 1; }
 .xpl-iso { position: absolute; inset: 0; --iso-acc: var(--k-ink); }
-.xpl-jr[data-ph='0'] .xpl-iso .iso-plate { box-shadow: 0 0 0 1px rgba(0, 0, 0, .14) inset; }
+.xpl-jr[data-ph='0'] .xpl-iso .iso-plate { box-shadow: 0 0 0 1px light-dark(rgba(0, 0, 0, .14), var(--white-14)) inset; }
 .xpl-jr[data-ph='0'] .xpl-iso .iso-plate:first-child { box-shadow: 0 0 0 1.5px var(--k-ink) inset; }
 .xpl-jr[data-ph='0'] .xpl-iso .iso-plate:first-child .iso-n { color: var(--k-ink); }
 .xpl-jr[data-ph='1'] .xpl-iso { --iso-acc: var(--k-white); }
@@ -397,9 +397,9 @@
 
 /* anywhere: the control plane above three homes, the homes as rows */
 .xpl-any { padding: 27px; border-radius: 24px; background: var(--k-quiet); }
-.xpl-plane { display: flex; flex-direction: column; align-items: center; gap: 4px; width: fit-content; margin: 0 auto; padding: 14px 27px; border-radius: 16px; background: var(--k-ink); color: var(--k-on); text-align: center; }
+.xpl-plane { display: flex; flex-direction: column; align-items: center; gap: 4px; width: fit-content; margin: 0 auto; padding: 14px 27px; border-radius: 16px; background: var(--k-ink); color: light-dark(#fafafa, var(--primary-foreground)); text-align: center; }
 .xpl-plane b { font-size: 17px; font-weight: 497; }
-.xpl-plane span { font-size: 14px; line-height: 1.4; color: var(--k-on-4); }
+.xpl-plane span { font-size: 14px; line-height: 1.4; color: light-dark(#a3a3a3, var(--neutral-500)); }
 .xpl-wires { display: block; width: 100%; height: 90px; }
 .xpl-wires path { fill: none; stroke: var(--k-track); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
 .xpl-wire-dot { fill: var(--k-ink); animation: xpl-ride 2.7s var(--k-io) infinite; }
@@ -656,7 +656,7 @@
   .xpl-dir-h:hover { background: var(--k-white); }
   /* the chapter index previews its underline; the docker Copy and the endpoint rows answer the pointer */
   .xpl-pc .pc-idx button { transition: color var(--k-fast) var(--k-out), background-color var(--k-fast) var(--k-out); border-radius: 8px; }
-  .xpl-pc .pc-idx button:not(.on):hover { background: rgba(0, 0, 0, .04); }
+  .xpl-pc .pc-idx button:not(.on):hover { background: light-dark(rgba(0, 0, 0, .04), var(--white-06)); }
   .xpl-run .x-copy { transition: color var(--k-fast) var(--k-out), background-color var(--k-fast) var(--k-out), border-color var(--k-fast) var(--k-out); }
   .xpl-run .x-copy:hover { color: #fafafa; background: rgba(255, 255, 255, .12); border-color: rgba(255, 255, 255, .32); }
   .xpl-eps button:not(.on):hover { background: rgba(255, 255, 255, .06); }
@@ -724,3 +724,20 @@
 .xpl-pf span { font-size: 21px; font-weight: 220; letter-spacing: -.02em; color: var(--k-ink); }
 .xpl-foot { font-size: 13px; }
 @media (max-width: 899px) { .xpl-fact.big .xpl-fact-h { font-size: 44px; } .xpl-fact-h { font-size: 21px; } .xpl-pf span { font-size: 17px; } }
+
+/* ---------- dark mode (8 Nov): live hanzo.ai's dark palette. Every deck token keeps its exact light value and takes
+   Hanzo's dark one through light-dark(); it is set again on the v2 parts that carry their own deck (the stack, the
+   chapters, the sheet). The black rooms (map, console, terminal, commands) stay black in both modes. ---------- */
+.xpl, .xpl .iso, .xpl .pc, .xpl .v2s {
+  --k-white: light-dark(#ffffff, var(--muted)); --k-quiet: light-dark(#f5f5f5, var(--card)); --k-card: light-dark(#f2f2f2, var(--muted)); --k-muted: light-dark(#ededed, var(--secondary)); --k-silver: light-dark(#e4e4e7, var(--secondary)); --k-track: light-dark(#d4d4d4, var(--neutral-700));
+  --k-ink: light-dark(#0a0a0a, var(--foreground)); --k-body: light-dark(#525252, var(--muted-foreground)); --k-dim: light-dark(#737373, var(--muted-foreground)); --k-mid: light-dark(#404040, var(--text-secondary));
+  --k-line: light-dark(rgba(0, 0, 0, .1), var(--border));
+}
+.xpl { background: light-dark(#ffffff, var(--background)); }
+/* the stack in dark: live's smoked plates with a hairline edge, the lit group a step lighter */
+html:not(.light) .xpl .iso-plate { background: linear-gradient(var(--white-05) 1px, transparent 1px) 0 0 / 30px 30px, linear-gradient(90deg, var(--white-05) 1px, transparent 1px) 0 0 / 30px 30px, linear-gradient(135deg, var(--secondary), var(--muted)); }
+html:not(.light) .xpl .iso-plate.lit, html:not(.light) .xpl .iso-plate.match { background: linear-gradient(var(--white-08) 1px, transparent 1px) 0 0 / 30px 30px, linear-gradient(90deg, var(--white-08) 1px, transparent 1px) 0 0 / 30px 30px, linear-gradient(135deg, var(--neutral-700), var(--secondary)); }
+html:not(.light) .xpl .iso-n { color: var(--white-45); }
+html:not(.light) .xpl-jr[data-ph='1'] .xpl-iso { --iso-acc: var(--primary); }
+/* the black rooms lift off the dark page by a hairline, as live's panels do */
+html:not(.light) .xpl-win, html:not(.light) .xpl-term, html:not(.light) .xpl .x-codeblock { outline: 1px solid var(--border); outline-offset: -1px; }

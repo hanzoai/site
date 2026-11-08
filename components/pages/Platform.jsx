@@ -307,7 +307,7 @@ function Journey({ openLayer }) {
         </motion.div>
 
         <motion.div ref={art} className="xpl-art" style={pinned ? { opacity: artO } : undefined}>
-          <IsoStack items={ITEMS} explode={e} camX={camX} camY={camY} camScale={camS} tone="light" mark={mark} onPick={openLayer} onHot={onHot} className="xpl-iso" />
+          <IsoStack items={ITEMS} explode={e} camX={camX} camY={camY} camScale={camS} tone="paper" mark={mark} onPick={openLayer} onHot={onHot} className="xpl-iso" />
         </motion.div>
 
         <motion.ul className="xpl-chips" aria-label="What runs on it" style={pinned ? { opacity: chipsO } : undefined}>
