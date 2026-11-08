@@ -1,4 +1,6 @@
 # /stream/: James-eye review
+
+Ready: 8 Nov 23:27, copycheck missing 0 of 40 (captured page), Hanzo's images kept. The bootstrap server and the hanzoai/stream chip now read as their own lines, and Hanzo's Mori art (the black card behind the six facts on live) stands under 'Your clients, our store'. taste/unique/parity OK (75/75); 0 console errors, no overlap at 1470 and 375.
 Verdict: 6/10
 First complaint: "The opening's nice, the lanes ticking, but they're crashing straight into the title, there's an error label sitting on top of the numbers, and on my phone that little 'committed offset' pill floats over the text the whole way down. Then it's six grey boxes of paragraphs and nothing moves."
 

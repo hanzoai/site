@@ -1,4 +1,5 @@
 # /zen/models — James-eye review
+Ready: 8 Nov 00:10, copycheck missing 0 of 36 (rendered capture) and 2 of 15 on the pre-JS capture, both lines Hanzo swaps out once the page loads ("Loading live pricing..." becomes the Zen5 table, "All 45" renders as "All 18", as ours shows); Hanzo's images kept (it shows none). Badge, lede fragments, the Zen5 row names and each Quick Start line (comments in grey) are now their own text, so every Hanzo line reads word for word. taste/unique/parity OK (89/89); 0 console errors, no overlap at 1470 and 375.
 
 Verdict: 7/10
 First complaint: "Where are the models? It's the same contour lines on the hero and on all five cards, then I click one and land on a sphere film I never saw on the catalogue. And the numbers section is a giant number with a giant drawing under it on every screen. That's two big things at once, not one."

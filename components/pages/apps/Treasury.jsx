@@ -134,7 +134,7 @@ function Hero() {
           <motion.div className="ts-top-r" initial={{ y: 14 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
             <p className="w2-lede ts-lede">A double-entry ledger for money moving inside your product</p>
             <div className="ts-acts">
-              <Magnetic strength={0.25}><A to={DOCS} className="w2-cta" data-thumb="Read the docs" data-cta="treasury.hero">Read the docs <i aria-hidden="true">→</i></A></Magnetic>
+              <Magnetic strength={0.25}><A to={DOCS} className="w2-cta" data-thumb="Read the docs" data-cta="treasury.hero"><span>Read the docs</span> <i aria-hidden="true">→</i></A></Magnetic>
               <A to={GH} className="w2-ghost">GitHub</A>
             </div>
           </motion.div>
@@ -143,7 +143,7 @@ function Hero() {
           <Stage from={1.015} lift={12}>
             <div className="ts-stage">
               <div className="ts-ed">
-                <div className="ts-ed-bar"><i /><i /><i /><span className="x-mono">split.num</span><b className="ts-name x-mono">Treasury Operations</b><span className="ts-pause">{pauseBtn}</span></div>
+                <div className="ts-ed-bar"><i /><i /><i /><span className="x-mono">split.num</span><b className="ts-name x-mono"><span>Treasury Operations</span></b><span className="ts-pause">{pauseBtn}</span></div>
                 <pre className="x-mono"><code>
                   {CODE.map(([t, l], i) => (
                     <span key={i} className={'ts-l ' + (t === 'c' ? 'c' : '') + (i < k ? ' in' : '') + (t.startsWith('d') && i < k ? ' d' : '')}>{codeLine(t, l, c) || ' '}{'\n'}</span>
@@ -296,8 +296,8 @@ function WalletSection() {
 function SaySection() {
   const [ref, st] = useEnter(0.4);
   return (
-    <section ref={ref} className="ts-say" aria-label="What it is made of">
-      <div className="w2-wrap"><Scramble lines={SAY} className="gx-say ts-say-p" go={st} /></div>
+    <section ref={ref} className="ts-say" aria-labelledby="ts-say-h">
+      <div className="w2-wrap"><h2 id="ts-say-h" className="w2-headline ts-say-h">What it is made of</h2><Scramble lines={SAY} className="gx-say ts-say-p" go={st} /></div>
     </section>
   );
 }
@@ -408,7 +408,7 @@ function First() {
           <Split />
         </div>
         <div className="ts-first-row">
-          <div className="ts-first-acts"><A to={DOCS} className="w2-cta" data-thumb="Read the docs" data-cta="treasury.close">Read the docs <i aria-hidden="true">→</i></A><A to={GH} className="w2-ghost">View on GitHub</A></div>
+          <div className="ts-first-acts"><A to={DOCS} className="w2-cta" data-thumb="Read the docs" data-cta="treasury.close"><span>Read the docs</span> <i aria-hidden="true">→</i></A><A to={GH} className="w2-ghost">View on GitHub</A></div>
           <div className="ts-get">
             <div><h2 className="w2-title">Get Treasury</h2><p className="ts-get-tag">Treasury management</p></div>
             <div className="ts-get-meta">

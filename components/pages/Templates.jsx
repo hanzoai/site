@@ -24,22 +24,39 @@ import '../v2/Scale.css';
 import '../v2/x-gauss/Rhythm.css';
 import './Templates.css';
 
-// [slug, title, kind, what it is] — Hanzo's list (GET api.hanzo.ai/v1/templates, the ones with previews), by kind then title
+// [slug, title, kind, what it is] — Hanzo's list as live hanzo.ai/templates shows it (9 Nov update: 29 templates, in live's order)
 const ALL = [
-  ['drive', 'Drive', 'Business', 'Electric-vehicle marketing site — models, technology, news and ordering.'],
-  ['hygge', 'Hygge', 'E-commerce', 'Skincare storefront — category browsing, product pages and a slide-out cart.'],
-  ['savor', 'Savor', 'E-commerce', 'Food-delivery storefront — menu, favourites and cart over a restaurant home page.'],
-  ['oasis', 'Oasis', 'Hospitality', 'Resort site — accommodation, dining, spa, weddings and tour booking, in four languages.'],
-  ['kinetic', 'Kinetic', 'Portfolio', 'Creative portfolio driven by GSAP and smooth scroll — a project reel over case-study pages.'],
-  ['pixel', 'Pixel', 'Portfolio', 'Web-studio portfolio — work, expertise and a playground page.'],
-  ['portfolio', 'Portfolio', 'Portfolio', 'Personal developer portfolio — intro, about, projects and contact on one page.'],
-  ['prism', 'Prism', 'Portfolio', 'Creative-agency portfolio built on GSAP — one scroll through work, services and contact.'],
+  ['instrument', 'Instrument', 'Portfolio', 'Monospace portfolio website with interactive 3D project cards, command palette, live experimental lab (particles, spring physics, ASCII shaders), and procedural audio.'],
+  ['fernline', 'Fernline', 'AI/SaaS', 'Full-featured AI agent operations UI kit and observability console built on Next.js 16 and React 19, including both marketing pages and a multi-route operator console.'],
+  ['aerva', 'Aerva', 'AI/SaaS', 'Polished AI and SaaS landing page template built with React 19, Vite, and TypeScript featuring bento feature grids, interactive pricing toggles, and customer proof sections.'],
+  ['tensile', 'Tensile Studio', 'Portfolio', 'Architectural and editorial studio website theme built with Astro 5, TypeScript, and embedded Sanity v5 CMS studio with project case studies and journal publishing.'],
+  ['nova', 'Nova AI', 'AI/SaaS', 'Modular AI SaaS marketing template featuring 15 switchable hero, feature, pricing, and CTA variants with live WebGL shaders and interactive product demos.'],
+  ['minimal-ui', 'Minimal UI Kit', 'Component Library', 'Precision monospace component library and interactive documentation site with 40+ components across 8 visual variants and full design token inspection.'],
+  ['component-states', 'Component States', 'Component Library', 'Interactive UI component states reference matrix showcasing default, hover, focus, active, loading, error, and disabled states across core primitives.'],
+  ['lighthouse', 'Lighthouse Island', 'App', 'Playable cozy top-down island exploration web game with lighthouse beam physics, dynamic weather and day/night cycle, quests, and synthesized WebAudio soundtrack.'],
+  ['warp-tunnel', 'Warp Tunnel', '3D & Shaders', 'High-speed procedural tunnel ride built with Three.js Shading Language (TSL) on WebGPU with dynamic camera banking and bloom post-processing.'],
+  ['dotted-globe', 'Dotted Globe', '3D & Shaders', 'Interactive 3D particle globe rendering 31,723 world cities with instanced spatial indexing, population density scaling, and orbital telemetry controls.'],
+  ['tracking-3d', '3D Motion Tracking', '3D & Shaders', 'Signal-red 3D motion-tracking and computer-vision HUD overlay with real-time bounding-box telemetry, vector callouts, and spatial keypoint tracking.'],
+  ['line-illustrations', 'Line Illustrations', 'Component Library', 'Parametric technical SVG line illustrations playground with live geometric controls, animated stroke paths, and copy-ready React/SVG export.'],
+  ['holo', 'Holo Scene', '3D & Shaders', 'Interactive Three.js holographic instrument scene featuring custom Fresnel scanline shaders, 6 switchable 3D models, and real-time optical controls.'],
+  ['warp-shader', 'Warp Shader', '3D & Shaders', 'Domain-warped fractional Brownian motion (fBm) fluid shader written in Three.js TSL running natively on WebGPU with real-time parameter controls.'],
+  ['animated-rings', 'Animated Rings', '3D & Shaders', 'Procedural silver orbital ring sculpture in Three.js with physically based metallic reflections, nested gimbal kinematics, and studio environment lighting.'],
+  ['bestiary', 'Bestiary 3D', 'Component Library', 'Interactive 3D point-cloud specimen library featuring 8 biological and mythological forms with pointer-reactive physics, morph transitions, and React/ESM exports.'],
+  ['emptykit', 'Emptykit', 'Component Library', 'Comprehensive collection of 48 isometric 3D and vector SVG empty-state components for React and vanilla JS with live theme switching and interactive camera angles.'],
   ['studio', 'Studio', 'Portfolio', 'Digital-agency portfolio — expertise, projects and articles behind an animated wordmark.'],
+  ['oasis', 'Oasis', 'Hospitality', 'Resort site — accommodation, dining, spa, weddings and tour booking, in four languages.'],
   ['vault', 'Vault', 'Portfolio', 'Architecture-studio site — architecture, landscape and interior work with a studio profile.'],
+  ['drive', 'Drive', 'Business', 'Electric-vehicle marketing site — models, technology, news and ordering.'],
+  ['savor', 'Savor', 'E-commerce', 'Food-delivery storefront — menu, favourites and cart over a restaurant home page.'],
+  ['prism', 'Prism', 'Portfolio', 'Creative-agency portfolio built on GSAP — one scroll through work, services and contact.'],
+  ['kinetic', 'Kinetic', 'Portfolio', 'Creative portfolio driven by GSAP and smooth scroll — a project reel over case-study pages.'],
+  ['portfolio', 'Portfolio', 'Portfolio', 'Personal developer portfolio — intro, about, projects and contact on one page.'],
+  ['pixel', 'Pixel', 'Portfolio', 'Web-studio portfolio — work, expertise and a playground page.'],
+  ['hygge', 'Hygge', 'E-commerce', 'Skincare storefront — category browsing, product pages and a slide-out cart.'],
   ['solo', 'Solo', 'SaaS', 'Productivity-app landing page — tasks, lists and reminders with pricing and downloads.'],
   ['loop', 'Loop', 'Web3', 'Crypto-card product site — virtual card, NFT and metaverse pages with light and dark blog.'],
 ];
-const KINDS = ['All', 'Business', 'E-commerce', 'Hospitality', 'Portfolio', 'SaaS', 'Web3'];
+const KINDS = ['All', '3D & Shaders', 'AI/SaaS', 'App', 'Business', 'Component Library', 'E-commerce', 'Hospitality', 'Portfolio', 'SaaS', 'Web3'];
 const pad = (v) => String(v).padStart(2, '0');
 
 /* A preview: Hanzo's own screenshot over a drawn page in greys (its name, nav, hero and blocks). If the screenshot
@@ -82,7 +99,7 @@ function Strip() {
   return (
     <div className="xtp-strip">
       <div className="xtp-strip-l">
-        {AGENTS.slice(0, 5).map(([n, h]) => <A key={n} to={D + h}>{n}<span className="x-sr"> (opens in a new tab)</span></A>)}
+        {AGENTS.slice(0, 5).map(([n, h]) => <A key={n} to={D + h}><span>{n}</span><span className="x-sr"> (opens in a new tab)</span></A>)}
         <button type="button" aria-expanded={open} aria-controls="xtp-all" onClick={() => setOpen(!open)}>+{AGENTS.length - 5} more</button>
       </div>
       <div id="xtp-all" className="xtp-all" hidden={!open}>
@@ -128,7 +145,7 @@ function Card({ t, d, onPrev, onNext, calm, narrow }) {
       </A>
       <div className="xtp-foot">
         <div><h3>{title}</h3><p>{what}</p></div>
-        <A to={'/chat?template=' + encodeURIComponent(slug)} className="xtp-edit" tabIndex={front ? 0 : -1} data-cta="templates.card">Edit in Hanzo <span aria-hidden="true">→</span></A>
+        <A to={'/chat?template=' + encodeURIComponent(slug)} className="xtp-edit" tabIndex={front ? 0 : -1} data-cta="templates.card"><span>Edit in Hanzo</span> <span aria-hidden="true">→</span></A>
       </div>
     </motion.article>
   );
@@ -170,7 +187,7 @@ function Deck({ kind, setKind, at, setAt, list, front, wall }) {
         <p className="xtp-front"><span className="x-mono">{front[2]}</span><b>{front[1]}</b></p>
         <button type="button" className="xtp-arrow" aria-label="Previous template" onClick={() => go(at - 1)}>←</button>
         <span className="x-mono xtp-count" aria-live={mine ? 'polite' : 'off'}>{pad(at + 1)} / {pad(list.length)}</span>
-        <div className="xtp-dots">
+        <div className="xtp-dots" hidden={list.length > 12}>
           {list.map((t, i) => (
             <button key={t[0]} type="button" aria-label={t[1]} aria-current={i === at ? 'true' : undefined} onClick={() => go(i)}><i /></button>
           ))}
@@ -261,7 +278,7 @@ function Shelf({ cur, onSeen }) {
           art: <span className={'xtp-tile-img' + (slug === cur ? ' on' : '')}><Shot slug={slug} title={title} kind={kind} alt="" /><span className="x-mono">{slug}.hanzo.app</span></span>,
           body: (<>
             <p>{what}</p>
-            <p><A to={'/chat?template=' + encodeURIComponent(slug)} className="w2-cta" data-cta="templates.sheet">Edit in Hanzo <i aria-hidden="true">→</i></A></p>
+            <p><A to={'/chat?template=' + encodeURIComponent(slug)} className="w2-cta" data-cta="templates.sheet"><span>Edit in Hanzo</span> <i aria-hidden="true">→</i></A></p>
             <p className="xtp-sheet-cmd x-mono">hanzo template get {slug}</p>
           </>),
         }))} />
@@ -314,7 +331,7 @@ export default function Templates() {
             </div>
             <motion.div className="xtp-top-r" initial={{ y: 14 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
               <p className="w2-lede xtp-lede">Open one. Edit it in Hanzo.</p>
-              <Magnetic strength={0.25}><A to={'/chat?template=' + encodeURIComponent(front[0])} className="w2-cta" data-thumb="Edit in Hanzo" data-cta="templates.hero">Edit in Hanzo <i aria-hidden="true">→</i></A></Magnetic>
+              <Magnetic strength={0.25}><A to={'/chat?template=' + encodeURIComponent(front[0])} className="w2-cta" data-thumb="Edit in Hanzo" data-cta="templates.hero"><span>Edit in Hanzo</span> <i aria-hidden="true">→</i></A></Magnetic>
             </motion.div>
           </div>
           <VelocitySkew className="xtp-stage">
@@ -342,7 +359,7 @@ function Band({ front }) {
             <span className="xtp-tile-img"><Shot slug={front[0]} title={front[1]} kind={front[2]} alt="" /></span>
           </A>
           <p className="xtp-band-t">{front[1]} <span className="x-mono">{front[0]}.hanzo.app</span></p>
-          <Magnetic strength={0.25}><A to={'/chat?template=' + encodeURIComponent(front[0])} className="w2-cta" data-thumb="Edit in Hanzo" data-cta="templates.close">Edit in Hanzo <i aria-hidden="true">→</i></A></Magnetic>
+          <Magnetic strength={0.25}><A to={'/chat?template=' + encodeURIComponent(front[0])} className="w2-cta" data-thumb="Edit in Hanzo" data-cta="templates.close"><span>Edit in Hanzo</span> <i aria-hidden="true">→</i></A></Magnetic>
         </div>
       </section>
   );

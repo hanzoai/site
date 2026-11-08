@@ -21,7 +21,7 @@ import { motion, useInView } from 'motion/react';
 import { VSkew, Curl, Trail, Drop, Swing } from './zap/Enter';
 import { EASE, Copy, Magnetic } from '../../ui';
 import { A, Img } from '../../kit';
-import { useLive, useEvery, useSteps } from '../cloud/Frame';
+import { useLive, useEvery } from '../cloud/Frame';
 import LineMask from '../../v2/x-gauss/LineMask';
 import Settle from './zap/Settle'; // page-local: the shared v2/Settle mismatches on hydration under reduced motion
 import { OpenCards } from '../../v2/OpenSheet';
@@ -86,6 +86,19 @@ function Wire({ pick, auto, live }) {
   );
 }
 
+/* Steps that run while seen; a choice holds its step, then the walk takes over again after 8 s untouched, so the
+   points and the wire never stop for good after one tap (page-local; the shared useSteps holds forever). */
+function useStepsBack(n, ms, live, back = 8000) {
+  const [at, setAt] = useState(0);
+  const [mine, setMine] = useState(0);
+  useEffect(() => {
+    if (!live) return undefined;
+    const t = setTimeout(() => { if (mine) setMine(0); else setAt((v) => (v + 1) % n); }, mine ? back : ms);
+    return () => clearTimeout(t);
+  }, [at, live, mine, n, ms, back]);
+  return [at, (i) => { setAt(i); setMine((k) => k + 1); }, !!mine];
+}
+
 function Hero() {
   const [ref, live0] = useLive(0.25);
   const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
@@ -94,15 +107,17 @@ function Hero() {
   const [mine, setMine] = useState(false);
   // the four points keep stepping while they are seen, even once the wire has scrolled away (phone)
   const [ptsRef, ptsLive] = useLive(0.4);
-  const [at, choose, chosen] = useSteps(4, 3600, ptsLive && !paused);
+  const [at, choose, chosen] = useStepsBack(4, 3600, ptsLive && !paused);
   useEvery(2800, live && !mine, () => setPick((p) => (p + 1) % FIELDS.length));
+  // a chosen field holds for 8 s untouched, then the reader goes back to asking for fields by itself
+  useEffect(() => { if (!mine) return undefined; const t = setTimeout(() => setMine(false), 8000); return () => clearTimeout(t); }, [mine, pick]);
   return (
     <section className="zp-hero w2-dark" data-room="dark" aria-labelledby="zp-h1" data-morph-target>
       <div className="w2-wrap">
         <div className="zp-top">
           <div>
             <LineMask as="h1" id="zp-h1" now className="w2-display zp-h1" lines={['ZAP']} />
-            <p className="zp-kick x-mono"><Img src="/models/enso.webp" alt="" w={26} h={26} />Zero-Copy Agent Protocol</p>
+            <p className="zp-kick x-mono"><Img src="/models/enso.webp" alt="" w={26} h={26} /><span>Zero-Copy Agent Protocol</span></p>
           </div>
           <motion.div className="zp-top-r" initial={{ y: 14 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
             <p className="zp-lede">The wire format is the data structure</p>
@@ -130,7 +145,7 @@ function Hero() {
           {POINTS.map(([t, d], i) => (
             <li key={t} className={at === i ? 'on' : ''}>
               <button type="button" aria-pressed={at === i} onClick={() => choose(i)}>
-                <span className="x-mono">{String(i + 1).padStart(2, '0')} / 04</span><b>{t}</b><em>{d}</em>
+                <span className="x-mono">{String(i + 1).padStart(2, '0')} / 04</span><b><span>{t}</span></b><em><span>{d}</span></em>
               </button>
             </li>
           ))}
@@ -168,9 +183,15 @@ function Why() {
     return () => ul.removeEventListener('scroll', f);
   }, []);
   useEffect(() => { track.current?.querySelectorAll('.zp-packets > li').forEach((li, i) => li.classList.toggle('on', i === on)); }, [on]);
-  const pick = (e) => { const li = e.target.closest?.('.zp-packets > li'); if (!li) return; const i = [...li.parentElement.children].indexOf(li); if (i >= 0) setOn(i); };
+  const pick = (e) => { const li = e.target.closest?.('.zp-packets > li'); if (!li) return; const i = [...li.parentElement.children].indexOf(li); if (i >= 0) { setOn(i); setMine(true); } };
+  // on the grid (desktop) the packets land in turn by themselves while the grid is on screen, so it is never a still
+  // wall; pointing at, focusing or swiping to one hands it over (and the walk resumes after the pointer leaves)
+  const [wref, live] = useLive(0.35);
+  const [mine, setMine] = useState(false);
+  const grid = () => { const ul = track.current?.querySelector('ul'); return ul && ul.scrollWidth <= ul.clientWidth + 2; };
+  useEvery(1800, live && !mine, () => { if (grid()) setOn((v) => (v + 1) % WHY.length); });
   return (
-    <section className="zp-why">
+    <section className="zp-why" ref={wref} onPointerLeave={() => setMine(false)}>
       <Trail>
         <div className="w2-wrap">
           <div className="zp-split">
@@ -242,7 +263,7 @@ function Running() {
           <div className="zp-term-bar"><i /><i /><i /><span className="x-mono">Terminal</span><Copy text={lines.filter((l) => l.startsWith('$')).map((l) => l.slice(2)).join('\n')} /><span className="zp-pause">{pauseBtn}</span></div>
           {/* every line keeps its row (no wrapping, a fixed height), and the cursor sits at the end of the typed line:
               the line break lives outside the line's span, so the cursor never opens an extra row */}
-          <pre className="x-mono" tabIndex={0} role="region" aria-label="Terminal">{lines.map((l, i) => <Fragment key={i}><span className={(l.startsWith('#') ? 'c' : '') + (i < k ? ' in' : '') + (i === k - 1 ? ' last' : '')}>{l.startsWith('$ ') ? <><span className="zp-ps">$ </span>{l.slice(2)}</> : l}</span>{i < lines.length - 1 ? '\n' : ''}</Fragment>)}</pre>
+          <pre className="x-mono" tabIndex={0} role="region" aria-label="Terminal">{lines.map((l, i) => <Fragment key={i}><span className={(l.startsWith('#') ? 'c' : '') + (i < k ? ' in' : '') + (i === k - 1 ? ' last' : '') + (l.startsWith('$ ') ? ' cmd' : '')}>{l}</span>{i < lines.length - 1 ? <span className="zp-nl">{'\n'}</span> : ''}</Fragment>)}</pre>
         </div>
       </div>
       </Curl>
@@ -403,7 +424,7 @@ function Point() {
         <div className="zp-point-grid">
           <div className="zp-point-copy">
             <LineMask as="h2" className="w2-display s" lines={['Point one agent at it']} />
-            <p className="zp-chip x-mono"><span>Go</span> · <span>Rust</span> · <span>TypeScript</span></p>
+            <p className="zp-chip x-mono"><span>Go · Rust · TypeScript</span></p>
             <p className="w2-lede">Start the daemon, add the MCP servers you already run, change one address in your agent.</p>
             <p className="w2-lede zp-strong">Nothing else about your setup has to move.</p>
             <div className="zp-acts"><Magnetic strength={0.25}><A to="https://zap-proto.dev/docs" className="w2-cta" data-thumb="Read the docs" data-cta="zap.close">Read the docs <i aria-hidden="true">→</i></A></Magnetic><A to="https://github.com/zap-proto/spec" className="zp-tlink">View on GitHub</A></div>

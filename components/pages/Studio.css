@@ -134,6 +134,11 @@
 .xst-prompt { display: flex; align-items: center; gap: 10px; min-height: 46px; padding: 0 14px 0 8px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, .14); background: #000; color: var(--d-faint); font-size: 14px; text-decoration: none; }
 @media (hover: hover) { .xst-prompt:hover { border-color: rgba(255, 255, 255, .45); color: #d4d4d4; } }
 .xst-pm { padding: 6px 8px; border-radius: 8px; background: #262626; color: #fafafa; font-size: 12px; }
+.xst-pa, .xst-pb { flex: 0 1 auto; min-width: 0; overflow: hidden; white-space: nowrap; }
+.xst-pa { animation: xst-pa 11s infinite; }
+.xst-pb { max-width: 0; color: #fafafa; animation: xst-pb 11s infinite; }
+@keyframes xst-pa { 0%, 22% { max-width: 26ch; opacity: 1; } 23%, 93% { max-width: 0; opacity: 0; } 94%, 100% { max-width: 26ch; opacity: 1; } }
+@keyframes xst-pb { 0%, 23% { max-width: 0; animation-timing-function: steps(40, end); } 50%, 89% { max-width: 40ch; opacity: 1; } 91% { max-width: 40ch; opacity: 0; } 92%, 100% { max-width: 0; opacity: 0; } }
 .xst-caret { width: 2px; height: 16px; margin-left: -6px; background: #fafafa; animation: xst-blink 1.1s steps(1) infinite; }
 .xst-lib { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
 .xst-lib button { position: relative; display: block; width: 100%; aspect-ratio: 1.15; padding: 0; border-radius: 10px; border: 1px solid transparent; overflow: hidden; background: #171717; cursor: pointer; transition: transform .15s var(--x-out); }
@@ -156,17 +161,17 @@
 /* what + studio or design */
 /* tight to the paste strip above and the reel below: the copy and the card share one bottom line (8/5, bottom aligned) */
 .xst-what { padding: 56px 0 27px; }
-.xst-what .a2-grid { align-items: end; row-gap: 48px; }
+.xst-what .a2-grid { align-items: center; row-gap: 48px; }
 .xst-what-copy { grid-column: 1 / span 6; }
 .xst-what-copy .a2-headline { max-width: 18ch; margin-bottom: 28px; }
 .xst-what-copy a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; padding-block: 13px; }
 @media (hover: hover) { .xst-what-copy a:hover { text-decoration-thickness: 2px; } }
 .xst-which { grid-column: 8 / span 5; padding: 36px; border-radius: var(--r-hero); background: var(--card); }
 .xst-make { display: flex; flex-wrap: wrap; gap: 8px; }
-.xst-make button { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--ink); font: 500 14px/1 var(--sans); }
+.xst-make button { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--x-raised); color: var(--ink); font: 500 14px/1 var(--sans); }
 .xst-make button::before { background: var(--ink); }
-@media (hover: hover) { .xst-make button:hover { border-color: #0a0a0a; background: #f5f5f5; } }
-.xst-make button[aria-checked='true'] { color: #fff; border-color: var(--ink); }
+@media (hover: hover) { .xst-make button:hover { border-color: var(--ink); background: light-dark(#f5f5f5, var(--muted)); } }
+.xst-make button[aria-checked='true'] { color: var(--x-on-ink); border-color: var(--ink); }
 .xst-make button[aria-checked='true']::before { opacity: 1; }
 .xst-ans { display: grid; margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--line); }
 /* changeovers never blend two texts: the outgoing one leaves in 150 ms, the incoming one starts after it and its title
@@ -192,7 +197,7 @@
 .xst-frame img:nth-of-type(2) { object-position: 50% 36%; }
 .xst-frame img:nth-of-type(3) { object-position: 50% 44%; }
 .xst-frame::after { content: ''; position: absolute; inset: 0; background: linear-gradient(transparent 55%, rgba(0, 0, 0, .55)); pointer-events: none; }
-.xst-frame-rig { position: absolute; left: 24px; top: 20px; z-index: 2; padding: 6px 10px; border-radius: 8px; background: var(--acc); color: #fff; font-size: 13px; }
+.xst-frame-rig { position: absolute; left: 24px; top: 20px; z-index: 2; padding: 6px 10px; border-radius: 8px; background: var(--acc); color: var(--x-on-ink); font-size: 13px; }
 .xst-frame-n { position: absolute; right: 24px; top: 22px; z-index: 2; font-size: 13px; color: #fff; }
 .xst-subs { list-style: none; display: grid; margin: 36px 0 0; padding: 0; }
 .xst-subs li { grid-area: 1 / 1; display: grid; grid-template-columns: 64px minmax(0, 5fr) minmax(0, 7fr); gap: 24px; align-items: baseline; opacity: 0; transform: translateY(16px); transition: opacity .15s var(--x-out), transform .15s var(--x-out); }
@@ -204,34 +209,34 @@
 .xst-graph { padding: 72px 0 44px; }
 .xst-gh { margin-bottom: 44px; }
 .xst-gw { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); gap: 32px; align-items: stretch; }
-.xst-canvas { --pad: 32px; position: relative; height: 460px; border-radius: var(--r-hero); background-color: #f5f5f5; background-image: radial-gradient(rgba(0, 0, 0, .1) 1px, transparent 1.4px); background-size: 20px 20px; background-position: 10px 10px; }
+.xst-canvas { --pad: 32px; position: relative; height: 460px; border-radius: var(--r-hero); background-color: light-dark(#f5f5f5, var(--x-raised)); background-image: radial-gradient(light-dark(rgba(0, 0, 0, .1), var(--border)) 1px, transparent 1.4px); background-size: 20px 20px; background-position: 10px 10px; }
 .xst-wires { position: absolute; inset: var(--pad); width: calc(100% - 2 * var(--pad)); height: calc(100% - 2 * var(--pad)); overflow: visible; pointer-events: none; }
-.xst-wires path { fill: none; stroke: rgba(0, 0, 0, .16); stroke-width: 1.5; }
-.xst-wires path.lit { stroke: #0a0a0a; opacity: 0; transition: opacity .4s var(--x-io); }
+.xst-wires path { fill: none; stroke: light-dark(rgba(0, 0, 0, .16), var(--border-strong)); stroke-width: 1.5; }
+.xst-wires path.lit { stroke: var(--ink); opacity: 0; transition: opacity .4s var(--x-io); }
 .xst-wires path.lit.on { opacity: 1; }
 .xst-node {
   position: absolute; left: calc(var(--pad) + (100% - 2 * var(--pad)) * var(--x)); top: calc(var(--pad) + (100% - 2 * var(--pad)) * var(--y));
-  width: calc((100% - 2 * var(--pad)) * .22); display: grid; gap: 8px; padding: 12px 14px 14px; border: 0; border-radius: 16px; background: #fff; color: var(--ink);
+  width: calc((100% - 2 * var(--pad)) * .22); display: grid; gap: 8px; padding: 12px 14px 14px; border: 0; border-radius: 16px; background: var(--x-raised); color: var(--ink);
   font: inherit; text-align: left; cursor: pointer; transform: translateY(-50%); transition: transform .3s var(--x-em);
 }
-.xst-node::before, .xst-node::after { content: ''; position: absolute; top: 50%; width: 9px; height: 9px; margin-top: -4.5px; border-radius: 50%; background: #fff; border: 1.5px solid #a3a3a3; }
+.xst-node::before, .xst-node::after { content: ''; position: absolute; top: 50%; width: 9px; height: 9px; margin-top: -4.5px; border-radius: 50%; background: var(--x-raised); border: 1.5px solid light-dark(#a3a3a3, var(--text-tertiary)); }
 .xst-node::before { left: -5px; }
 .xst-node::after { right: -5px; }
 .xst-canvas > .xst-node:nth-child(2)::before, .xst-canvas > .xst-node:nth-child(3)::before, .xst-canvas > .xst-node:nth-child(7)::after { display: none; }
-.xst-node.on::before, .xst-node.on::after, .xst-node.done::before, .xst-node.done::after { border-color: #0a0a0a; }
+.xst-node.on::before, .xst-node.on::after, .xst-node.done::before, .xst-node.done::after { border-color: var(--ink); }
 .xst-node:active { transform: translateY(-50%) scale(.98); transition-duration: .09s; }
-.xst-node:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 4px; box-shadow: 0 0 0 4px #fff; }
+.xst-node:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; box-shadow: 0 0 0 4px var(--bg); }
 @media (hover: hover) { .xst-node:hover { transform: translateY(calc(-50% - 3px)); } }
-.xst-node-ring { position: absolute; inset: 0; border-radius: inherit; box-shadow: 0 0 0 1.5px #0a0a0a, 0 24px 60px -16px rgba(0, 0, 0, .18); pointer-events: none; }
+.xst-node-ring { position: absolute; inset: 0; border-radius: inherit; box-shadow: 0 0 0 1.5px var(--ink), 0 24px 60px -16px rgba(0, 0, 0, .18); pointer-events: none; }
 .xst-node-k { display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--faint); }
-.xst-node-k i { width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid #a3a3a3; }
-.xst-node.done .xst-node-k i, .xst-node.on .xst-node-k i { border-color: #0a0a0a; background: #0a0a0a; }
+.xst-node-k i { width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid light-dark(#a3a3a3, var(--text-tertiary)); }
+.xst-node.done .xst-node-k i, .xst-node.on .xst-node-k i { border-color: var(--ink); background: var(--ink); }
 .xst-node b { font-size: 14px; font-weight: 500; line-height: 1.3; letter-spacing: -.01em; text-wrap: balance; }
 .xst-node em { font-size: 12px; font-style: normal; color: var(--soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .xst-pane { display: flex; flex-direction: column; gap: 28px; padding-top: 20px; border-top: 1px solid var(--line); }
 .xst-pane-k { display: flex; align-items: center; gap: 16px; font-size: 12px; color: var(--faint); font-feature-settings: 'tnum'; }
-.xst-pane-k i { position: relative; flex: 1; height: 2px; border-radius: 1px; background: rgba(0, 0, 0, .1); overflow: hidden; }
-.xst-pane-k b { position: absolute; inset: 0; background: #0a0a0a; transform-origin: 0 50%; transition: transform .4s var(--x-io); }
+.xst-pane-k i { position: relative; flex: 1; height: 2px; border-radius: 1px; background: var(--x-e10); overflow: hidden; }
+.xst-pane-k b { position: absolute; inset: 0; background: var(--ink); transform-origin: 0 50%; transition: transform .4s var(--x-io); }
 .xst-pane-st { display: grid; }
 .xst-pane-c { grid-area: 1 / 1; display: grid; align-content: start; gap: 14px; opacity: 0; transform: translateY(16px); clip-path: inset(0 0 100% 0); transition: opacity .15s var(--x-out), transform .15s var(--x-out), clip-path .15s var(--x-out); }
 .xst-pane-c.on { opacity: 1; transform: none; clip-path: inset(0 0 0 0); transition: opacity .3s var(--x-out) .15s, transform .5s var(--x-em) .15s, clip-path .5s var(--x-em) .15s; }
@@ -293,6 +298,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .xst-rec, .xst-caret, .xst-kick i, .xst-mark i { animation: none; }
+  .xst-pa { display: none; } .xst-pb { animation: none; max-width: none; }
   .xst-subs li, .xst-m > span, .xst-ans-c, .xst-node, .xst-pane-c, .xst-wires path, .xst-pane-k b, .xst-models button::before, .xst-make button::before { transition: none; }
 }
 
@@ -316,7 +322,7 @@
   .xst-hero .a2-acts { flex-wrap: nowrap; gap: 20px; }
   .xst-hero .a2-acts .x-btn { padding: 0 20px; }
   .xst-hero .xst-ask::after, .xst-hero .xst-jump svg { display: none; }
-  .xst-desk { grid-template-columns: minmax(0, 1fr); }
+  .xst-desk { grid-template-columns: minmax(0, 1fr); grid-template-areas: "mon" "insp" "specs"; grid-template-rows: auto; row-gap: 14px; }
   .xst-mon { padding: 6px; border-radius: 16px; }
   .xst-view { aspect-ratio: 16 / 9; }
   .xst-hud { font-size: 13px; }
@@ -337,7 +343,8 @@
   .xst-rigs::-webkit-scrollbar { display: none; }
   .xst-rigs button { flex: none; height: 44px; border-color: rgba(255, 255, 255, .1); }
   .xst-models button { height: 44px; padding: 0 14px; font-size: 14px; }
-  .xst-prompt { min-height: 48px; }
+  .xst-prompt { min-height: 48px; gap: 8px; padding-right: 10px; }
+  .xst-pa, .xst-pb { font-size: 13px; }
   .xst-foot { grid-template-columns: minmax(0, 1fr); gap: 20px; margin-top: 32px; }
   .xst-specs li { grid-template-columns: 40px minmax(0, 1fr); font-size: 14px; }
   .xst-specs li .x-mono { font-size: 13px; }
@@ -347,7 +354,7 @@
      pillar's title passes under it (IntersectionObserver, no pin) */
   .xst-reel { height: auto; padding: 56px 0 32px; margin: 0; }
   .xst-reel-stick { position: static; height: auto; display: block; padding-top: 0; overflow: visible; }
-  .xst-frame-pin { position: sticky; top: 60px; z-index: 2; padding: 10px 0 14px; background: #fff; }
+  .xst-frame-pin { position: sticky; top: 60px; z-index: 2; padding: 10px 0 14px; background: var(--bg); }
   .xst-frame { aspect-ratio: 2.39 / 1; border-radius: 16px; }
   .xst-frame-rig { left: 12px; top: 10px; padding: 5px 8px; }
   .xst-frame-n { right: 14px; top: 13px; }
@@ -360,7 +367,7 @@
   .xst-gh { margin-bottom: 28px; }
   .xst-gw { gap: 20px; }
   .xst-canvas { --pad: 0px; height: auto; display: grid; gap: 8px; padding: 14px 14px 14px 30px; }
-  .xst-canvas::before { content: ''; position: absolute; left: 18px; top: 34px; bottom: 34px; width: 1.5px; background: rgba(0, 0, 0, .16); }
+  .xst-canvas::before { content: ''; position: absolute; left: 18px; top: 34px; bottom: 34px; width: 1.5px; background: light-dark(rgba(0, 0, 0, .16), var(--border-strong)); }
   .xst-wires { display: none; }
   .xst-node { position: relative; left: auto; top: auto; width: auto; min-height: 52px; display: flex; align-items: center; gap: 12px; padding: 10px 14px; transform: none; }
   .xst-node:active { transform: scale(.98); }
@@ -380,3 +387,41 @@
 .xst-film, .xst-get { --acc: #fafafa; }
 .xst-get .x-btn { background: transparent; color: #fff; border-color: rgba(255, 255, 255, .3); }
 @media (hover: hover) { .xst-get .x-btn:hover { border-color: rgba(255, 255, 255, .6); } }
+
+/* "Studio or Design?" reads as the card's own question (a caption over the chips, not over a heading) */
+.xst-which .xst-which-k { margin: 0 0 16px; }
+.xst-ans-c .x-arrow { min-height: 44px; font-weight: 560; }
+/* on wide screens the whole strip fits: six frames, none past the edge; the rail scrolls only below 1200px */
+@media (min-width: 1200px) {
+  .xst-film { justify-content: center; }
+  .xst-fr { width: calc((min(100vw, 1440px) - 48px - 60px - 15px) / 6); }
+  .xst-fr-t { padding: 40px 16px 16px; }
+  .xst-fr-t b { font-size: 22px; }
+  .xst-fr-t span { font-size: 13px; }
+}
+/* the close card holds the reel's last still under the tally, drifting like a held shot */
+.xst-get-shot { position: relative; display: block; width: 100%; aspect-ratio: 2.39 / 1; margin: 0 0 14px; border-radius: 12px; overflow: hidden; background: #000; }
+.xst-get-shot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 44%; transform: scale(1.12); }
+.xst-get-shot .xst-mark { position: absolute; left: 12px; top: 12px; margin: 0; color: #fff; }
+.xst-get-tc { position: absolute; right: 12px; top: 12px; font-size: 12px; color: #d4d4d4; }
+@media (prefers-reduced-motion: no-preference) {
+  .xst-get-shot img { animation: xst-hold 9s cubic-bezier(.4, 0, .2, 1) infinite alternate; }
+}
+@keyframes xst-hold { from { transform: scale(1.12) translate3d(2%, 0, 0); } to { transform: scale(1.22) translate3d(-3%, -2%, 0); } }
+
+/* dark (as live hanzo.ai draws it): the shared A2 kit's greys take Hanzo's dark tokens on this page, and the node canvas keeps a hairline edge */
+html:not(.light) .xst.a2 { --acc: var(--foreground); --acc-soft: var(--muted); --soft: var(--muted-foreground); --faint: var(--text-tertiary); --card: var(--x-raised); --line: var(--border); }
+html:not(.light) .xst-canvas { box-shadow: inset 0 0 0 1px var(--border); }
+
+/* Hanzo's dark hero texture, measured from live hanzo.ai dark (8 Nov): 7px dot grid, dots ~35% foreground, densest at the
+   left/right edges and toward the bottom, plus live's top glow radial-gradient(60% 70% at 50% 0%, foreground 9%, transparent 70%).
+   Dark only, so bright stays pixel-identical. Replace .a2.xst .xst-hero with the page's hero class. */
+html:not(.light) .a2.xst .xst-hero { position: relative; isolation: isolate; }
+html:not(.light) .a2.xst .xst-hero::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(circle, color-mix(in srgb, var(--foreground) 36%, transparent) 1.5px, transparent 2.1px) 0 0 / 7px 7px;
+  -webkit-mask-image: linear-gradient(90deg, #000, rgba(0,0,0,.15) 32%, rgba(0,0,0,.15) 64%, #000), linear-gradient(180deg, rgba(0,0,0,.25), #000 85%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, #000, rgba(0,0,0,.15) 32%, rgba(0,0,0,.15) 64%, #000), linear-gradient(180deg, rgba(0,0,0,.25), #000 85%);
+  mask-composite: intersect; }
+html:not(.light) .a2.xst .xst-hero::after { content: ''; position: absolute; inset: 0 0 auto; height: 640px; z-index: -1; pointer-events: none;
+  background: radial-gradient(60% 70% at 50% 0%, color-mix(in srgb, var(--foreground) 9%, transparent), transparent 70%); }

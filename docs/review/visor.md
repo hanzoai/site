@@ -1,5 +1,7 @@
 # /visor: James-eye review (round 3)
 
+Ready: 8 Nov 23:27, copycheck missing 0 of 22 (captured page), Hanzo's images kept. Hanzo's Kai art was missing; it now stands under the six tiles' heading in the dark room. taste/unique/parity OK (29/29); 0 console errors, no overlap at 1470 and 375.
+
 Walked 7 Nov 16:58–17:06 UTC on the dev server (page files last touched in `d970b219`, "visor wip"). I walked it moving at 1470×801 and at 375×812 (touch). I scrolled by wheel in 0.6-screen steps and dwelt 2.4 s untouched on every screen, comparing frames at 0, 0.5 and 2.4 s. I hovered and pressed every control in `main` and Tab-crawled the whole page with 0.9 s settles. I opened, stepped and closed the card Sheet with the keyboard, and drove the naming tool. A PerformanceObserver logged layout shift, and the h1 box was tracked every frame for 4 s. I also checked font loading, console errors, reduced motion at both widths, JS off at both widths, 320×640 and 375×667. I compared the hero with /search, /machines and /sentinel. `scripts/motion.mjs` could not be used here because it launches a hard-coded macOS Chrome path, so the walk is Playwright Chromium (scripts and frames are in the critic's scratchpad, `visor-critic3/`). Consent was pre-set so the cookie card did not cover frames.
 
 Verdict: 7/10

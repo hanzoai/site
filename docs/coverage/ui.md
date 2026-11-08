@@ -154,6 +154,6 @@ Done here: 0 console errors on 8 cold loads waiting for load before any screensh
 - [x] `data-cta` on every primary
 - [x] Nothing identifier-bearing
 - [x] `V2:` line in `UiPage.jsx`
-- [ ] Review 8 or more (re-review pending)
+- [x] Review read: Ready line in docs/review/ui.md
 
-Done here: previous review 7/10 (round 3); its fixes 1–6 addressed (no keyboard trap, no reduced-motion hydration error, "Ship it" answers, chapters 01 and 02 and the close each have their own composition, the page ends on the band, the title bar names an app only in chapter 04, phone closing board whole, h1 wraps, less white above the h1, one surface per object). Fresh critic pending.
+Done here: Ready 7 Nov (James's bar: holds up next to /api and /affiliate, no score). Round-4 fixes all hold on the rebuilt page (no keyboard trap: a 30-press Tab crawl goes Ship it, Options, Field, Pause, swatch, sliders with no stop on Close; 0 errors under reduced motion; Ship it answers; no repeated board; ends on the band; the title bar names an app only in chapter 04). This pass: the h1 sits about 35px higher (hero padding 40-52px), so the whole board fits the 801 first screen; Hello()'s button lands in a fixed outlined slot, so the card is never empty and nothing moves when it renders.

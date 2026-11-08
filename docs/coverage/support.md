@@ -121,9 +121,9 @@ Done here:
 
 Done here:
 - **Kinds of motion.**
-  - **Arrival:** the h1, the pill and card, then the list.
+  - **Arrival (7 Nov 22:40):** five entrances, one each: the h1's words dealt from a deck, the lede opened by a lens from the pointer, the help-finder folding out, the answer card flipping in as tiles, the Band levelling from a tilt. The lens now plays (its section, not its own clipped box, is watched).
   - **Time:** the typing demo, once.
-  - **State:** the list re-orders and the panes lift, with ease curves and no springs.
+  - **State:** the six ways stay in Hanzo's order under the pill and light up in place (best outlined, matches inked); the answer pane lifts; no springs.
   - **Pointer:** pointing at a row previews its door.
   - **Scroll:** none besides the Band's own reveal.
 - **Typing rules.**
@@ -145,7 +145,7 @@ Done here: The hero objects are product UI that works: the search pill, the answ
 - [x] Primary ask above the fold at 375×667
 
 Done here:
-- **Phone layout.** At 375 the order is h1, lede, pill, then the answer card, with "Open Help Center" in the first screen; the list follows in 64px rows.
+- **Phone layout.** At 375 the order is h1, lede, pill, the six ways in two columns (every name whole, 15px), then the answer card with "Open Help Center".
 - **Numeral overlap.** With the giant numerals removed, nothing can cross the titles.
 - **Width checks.** No sideways scroll at 320 or 375.
 

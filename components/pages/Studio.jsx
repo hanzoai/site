@@ -178,7 +178,9 @@ function Cinema() {
         </div>
         <A to="https://studio.hanzo.ai" className="xst-prompt" data-cursor="Open">
           <span className="xst-pm x-mono">{MODELS[model]}</span>
-          <span>Describe what to make</span>
+          {/* as on live: the empty prompt, then Hanzo's example prompt types itself in, holds, and clears (CSS loop, words always in the page) */}
+          <span className="xst-pa">Describe what to make</span>
+          <span className="xst-pb">A lantern-lit street after rain, painted</span>
           <i className="xst-caret" aria-hidden="true" />
         </A>
         <p className="xst-ik">Library</p>
@@ -188,7 +190,7 @@ function Cinema() {
             <li key={t}>
               <button type="button" aria-pressed={shot === k && SHOTS[k].title === t} className={MODELS[model] === NAME[m] ? 'mine' : ''} onClick={() => go(k)}>
                 <img src={`/models/${m}.webp`} alt={`${t}, made with ${NAME[m]}`} loading="lazy" />
-                <span><b>{NAME[m]}</b><em>{t}</em></span>
+                <span><b>{NAME[m]}</b><em><span>{t}</span></em></span>
               </button>
             </li>
           ))}
@@ -217,7 +219,7 @@ function Hero() {
       <div className="a2-wrap">
         <div className="a2-grid xst-top">
           <div className="xst-top-l">
-            <p className="a2-kick xst-kick"><i aria-hidden="true" />Hanzo Studio · AI Cinema & Production Engine</p>
+            <p className="a2-kick xst-kick"><i aria-hidden="true" /><span>Hanzo Studio · AI Cinema & Production Engine</span></p>
             <A2Lines as="h1" id="xst-h1" className="a2-display xst-h1" lines={['Direct AI cinema', 'with precision camera rigs', '& multi-shot timelines']} now />
           </div>
           <div className="xst-top-r">
@@ -256,14 +258,14 @@ function Which() {
   const side = MAKE[at][1];
   return (
     <div className="xst-which" ref={ref}>
-      <p className="a2-kick">Studio or Design?</p>
+      <p className="a2-kick show xst-which-k">Studio or Design?</p>
       <div className="xst-make" role="radiogroup" aria-label="What are you making?">
         {MAKE.map(([t, s], i) => <button key={t} type="button" role="radio" aria-checked={at === i} className={s ? 's' : 'd'} onClick={() => { setAt(i); setMine(true); }}>{t}</button>)}
       </div>
       <div className="xst-ans">
         {[
-          ['Hanzo Design', 'builds everyday visuals, decks, docs, and interactive apps inside your workspace.', <Go key="d" to="/design" solid>Open Hanzo Design</Go>],
-          ['Hanzo Studio', 'is a full cinema production suite built for directors, filmmakers, and VFX teams.', <Go key="s" to="https://studio.hanzo.ai" solid>Launch studio.hanzo.ai</Go>],
+          ['Hanzo Design', 'builds everyday visuals, decks, docs, and interactive apps inside your workspace.', <Go key="d" to="/design">Open Hanzo Design</Go>],
+          ['Hanzo Studio', 'is a full cinema production suite built for directors, filmmakers, and VFX teams.', <Go key="s" to="https://studio.hanzo.ai">Launch studio.hanzo.ai</Go>],
         ].map(([h, d, go], i) => (
           <div key={h} className={'xst-ans-c' + (side === i ? ' on' : '')} aria-hidden={side !== i} inert={side !== i}><b><span className="xst-m"><span>{h}</span></span></b><p>{d}</p>{go}</div>
         ))}
@@ -279,7 +281,7 @@ function What() {
         <div className="xst-what-copy">
           <p className="a2-kick">What is Hanzo Studio</p>
           <A2Lines id="xst-what-h" className="a2-headline" lines={['Production-grade AI film direction', 'and node-graph VFX']} />
-          <p className="a2-body">Where Hanzo Design (<A to="/design">/design</A>) builds everyday visuals, decks, docs, and interactive apps inside your workspace, Hanzo Studio (<A to="https://studio.hanzo.ai">studio.hanzo.ai</A>) is a full cinema production suite built for directors, filmmakers, and VFX teams.</p>
+          <p className="a2-body">Where Hanzo Design (/design) builds everyday visuals, decks, docs, and interactive apps inside your workspace, Hanzo Studio (studio.hanzo.ai) is a full cinema production suite built for directors, filmmakers, and VFX teams.</p>
         </div>
         <Which />
       </div>
@@ -401,6 +403,9 @@ function Graph() {
     return () => clearInterval(t);
   }, [live, calm, hov, mine]);
   const lit = hov >= 0 ? hov : at;
+  const prev = useRef(lit);
+  const jumpy = Math.abs(lit - prev.current) > 1; // a long jump (06 back to 01) cuts instead of flying across the wires
+  useEffect(() => { prev.current = lit; }, [lit]);
   const pick = (i) => { setAt(i); setHov(-1); setMine(true); };
   const key = (e, i) => {
     const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
@@ -430,7 +435,7 @@ function Graph() {
                 style={{ '--x': NODE[i][0] / 100, '--y': NODE[i][1] / 100 }}
                 onPointerEnter={(e) => e.pointerType === 'mouse' && setHov(i)} onClick={() => pick(i)} onKeyDown={(e) => key(e, i)}
               >
-                {i === lit && <motion.span layoutId="xst-node-ring" className="xst-node-ring" aria-hidden="true" transition={{ duration: calm ? 0 : 0.4, ease: [0.4, 0, 0.2, 1] }} />}
+                {i === lit && <motion.span layoutId="xst-node-ring" className="xst-node-ring" aria-hidden="true" transition={{ duration: calm || jumpy ? 0 : 0.4, ease: [0.4, 0, 0.2, 1] }} />}
                 <span className="xst-node-k x-mono"><span>{pad(i + 1)}</span><i aria-hidden="true" /></span>
                 <b>{h}</b>
                 <em className="x-mono">{tag}</em>
@@ -477,19 +482,21 @@ function Strip() {
   const [on, setOn] = useState(0);
   const [held, setHeld] = useState(false);
   const [ready, setReady] = useState(false); // the server cannot know reduced motion: films join after hydration
+  const rail = useRef(null);
   useEffect(() => setReady(true), []);
   useEffect(() => {
     if (!live || held || calm) return;
     const t = setInterval(() => setOn((v) => (v + 1) % BIN.length), 3200);
     return () => clearInterval(t);
   }, [live, held, calm]);
+  useEffect(() => { if (live && !held) follow(rail.current, boxes.current[on]?.closest('li'), !calm); }, [on, live, held, calm]); // the lit frame is always in view
   return (
     <section className="a2-sec xst-strip" ref={ref} aria-labelledby="xst-strip-h">
       <div className="a2-wrap a2-grid xst-strip-head">
         <A2Lines id="xst-strip-h" className="a2-display s xst-strip-h" lines={['Every creative model,', 'in one studio.']} />
         <p className="a2-lede">Video, image, 3D, sound, voice and music, each a node on the canvas. Open one to see what it makes.</p>
       </div>
-      <ul className="xst-film" onPointerEnter={(e) => e.pointerType === 'mouse' && setHeld(true)} onPointerLeave={() => setHeld(false)}>
+      <ul className="xst-film" ref={rail} onPointerEnter={(e) => e.pointerType === 'mouse' && setHeld(true)} onPointerLeave={() => setHeld(false)}>
         {BIN.map(([slug, d, kind], i) => (
           <li key={slug}>
             <a href={'/' + slug} className={'xst-fr' + (on === i ? ' on' : '')} data-card={slug} data-cursor="Open" onPointerEnter={(e) => e.pointerType === 'mouse' && setOn(i)} onFocus={() => setOn(i)}
@@ -518,6 +525,7 @@ function Chair() {
           {/* one solid ask and one text link; "Open Studio" (back up into the monitor) waits under the related list */}
           <div className="a2-acts">
             <Cta to="https://studio.hanzo.ai" id="studio.close" thumb className="xst-ask">Launch studio.hanzo.ai</Cta>
+            <More to="/pricing">See plans, from $8/month</More>
             <More to="/design">Open Hanzo Design</More>
           </div>
           <div className="xst-rel">
@@ -527,9 +535,9 @@ function Chair() {
           </div>
         </div>
         <div className="xst-get">
+          <span className="xst-get-shot" aria-hidden="true"><img src="/models/koe.webp" alt="" loading="lazy" /><span className="xst-mark"><i />REC</span><span className="xst-get-tc x-mono">00:16</span></span>
           <h2>Get Studio</h2>
           <p>Visual builder studio</p>
-          <span className="xst-mark" aria-hidden="true"><i />REC</span>
           <p className="xst-get-meta x-mono"><span><span>License:</span> GPL-3.0</span><A to="https://github.com/hanzoai">hanzoai</A></p>
           <More to="https://platform.hanzo.ai/deploy">Deploy to Cloud</More>
         </div>

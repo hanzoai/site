@@ -34,7 +34,7 @@ Done here: Every link goes through kit `A`/`More` (the close's `Go` became `More
 - [x] ~~Card-to-page links use Morph; title lands within 12px~~ n/a: no cards open into pages here
 
 Done here: The h1 cuts in by line mask and the pulsing dot and "Working" status move within 1 s; the window peeks into the first screen at 1470x801 and 375x812. Every section after the scene opens at 72px (Setup, What, Platform, Questions, Close; Notes, Setup and What close at 103px), so the white between moments fell from about 320px to about 175px. The page still uses its own hero markup until a shared `PageHero` lands (the kicker is visually hidden), and it ends on its own close, not on a `Band`.
-
+ 7 Nov (Ready pass): Built is a thread window whose six checkpoints fill as you scroll (the reached ones in ink, the current one grown); Platform is one rail whose pointed product grows into an ink node with only its sentence under the rail, walking by itself until you pick. The section gaps end at 44px and the scene is 460svh (400svh on phones), so no stretch of scroll is still.
 ## 4. Conversion system
 - [ ] `<Cta>` only; no raw `.x-btn`
 - [x] Sticky ask in header and bar after the hero, same label
@@ -85,7 +85,7 @@ Done here: Measured: the outlined secondary goes from white to `#f2f2f2` on hove
 - [x] ~~Sound only on the listed moments, through the one kit~~ n/a: no page sounds; the shared kit owns them
 
 Done here: `variety.py` passes with 3 techniques (useScroll, layoutId, rAF) and 0 Rise. The tab pill moved from a spring to a 300ms ease-emphasis tween. The setup demo (setTimeout, no setInterval) starts at 60% in view with the ask already in the channel, ticks the three steps, answers, and ends at rest after 9 s; it pauses out of view and never loops. On desktop the scene's thread now scrolls inside the window (grid row `minmax(0, 1fr)`), so at step 6 the merged PR (y 707-746) and Archive Channel sit inside the window (bottom 767) at 1470x801. New idle motion was added: a runtime signal and a WIMSE token draw. Under reduced motion there are 0 running animations after 3 s on desktop and phone.
-
+ 7 Nov: runtime pills, the canvas card and the avatars now give on press (scale .97 / .98); the platform map auto-walks every 3.2 s while in view and stops once you hover, tap or use the keys.
 ## 10. Media
 - [x] ~~`Film` and `Pic` only; sizes and posters set~~ n/a: no photos or films; every visual is drawn
 - [x] ~~At most 2 videos playing; pause button on loops over 5 s~~ n/a: no video
@@ -101,7 +101,7 @@ Done here: The memoji hotlinks (5 failed requests a load) were replaced with dra
 - [x] Primary ask above the fold at 375×667
 
 Done here: The phone now has its own scene: a compact window pinned under a 44px scroll-snap rail that slides to the current step, with only the current artifact under the thread. A target scan at 375 finds 0 targets under 44px, and scrollWidth equals the viewport at 320, 375 and 1470.
-
+ 7 Nov: on phones the platform products are a 2x2 grid of pills with the sentence below, and the thread window stacks under the heading.
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
 - [x] Pause control on every moving item

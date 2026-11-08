@@ -82,7 +82,7 @@ Done here: wallet buttons invert on hover, the `hanzoai` chip 44px inverts on ho
 - [x] Reduced motion: the split rests finished, the coin and log rest; no springs
 - [x] n/a sound (shared kit)
 
-Done here: `variety.py` OK (magnetic, pathLength). Chapters 01–03 read their rows in turn while in view (one lit every 1.3 s, background only, stops off screen, under pause and reduced motion). Hero stage settles from 1.015 so its edges stay inside the gutters at 1470. The coin travels by transform only (500ms in-out); nothing below the wallet moves (log height fixed to 4 rows). Idle while held: a ring leaves @users:001 every 2.4 s (transform and opacity, stops under pause, off screen and reduced motion), and the row being read draws a 1px hairline under it over 1.3 s; motion.mjs at 1470 reports 0 still screens. The chapters' lead statement cuts in by line mask (LineMask, 3 lines, same words). The hero's balanced line stays in the layout and only fades, so the re-writing split never pushes the page: CLS measured 0.0004 at 1470x801 and 0.0000 at 375x812 over a full scroll.
+Done here: `variety.py` OK (magnetic, pathLength). No pinned chapters any more: the calculator re-plans every figure on the page; the wallet plays itself in its own room (held, paid, back, every 2.4 s while on screen, stops when driven, under pause and reduced motion); each carousel card runs its own ledger while half on screen (rows read in turn every 1.3 s with a drawn hairline, the flow lights its four steps). Entrances: accordion (calculator), iris (wallet), scramble (statement), side-carousel (parts), pixel-resolve (close). motion.mjs at 1470 (7 Nov 22:20): 0 still screens of 6, layout shift 0.000. The coin travels by transform only; the log height is fixed, so nothing below the wallet moves.
 
 ## 10. Media
 - [x] n/a: no Hanzo media on the live page; objects are drawn UI
@@ -98,7 +98,7 @@ Done here: n/a, the page has no images or films.
 - [x] Targets 44px or more
 - [x] Primary above the fold at 375×667
 
-Done here: on phone the streams come first (inside the first screen) and stack as rows; the emit ring stays inside its panel. Under 900px the chapters are stacked by the page itself: each chapter's heading and words, then its own card, nothing pinned over text; the wallet (04) has a full screen of its own (`min-height: 100svh`) and stays playable. The Balances card keeps the account column on phone. The pin mounts only at 900px and up.
+Done here: on phone the streams come first (inside the first screen) and stack as rows. The calculator stacks its sliders over the posting card; the wallet keeps its own room; the parts are a swipe rail (86% cards, prev/next and a 01 / 04 counter). Account names never break mid-name: reconciliation and balances rows size the account column to its name (desktop), and the phone postings keep @platform:revenue whole (12px arrow, 7ch amount).
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured (comments #a3a3a3 on #0f0f0f, body #525252 on white)
@@ -147,12 +147,12 @@ Done here: n/a copy button; the code is a display of Hanzo's example.
 - [x] n/a submit
 - [x] Reset returns the wallet to its start
 
-Done here: Playwright walk at 1470x801 and 375x812 (7 Nov, round 2): 0 console errors in 6 cold loads, 4 of them with reduced motion on (the hero settle is page-local and reads reduced motion after mount; the pin mounts after hydration), no horizontal scroll; CLS 0.0004 desktop, 0 phone.
+Done here: Playwright walk at 1470x801 and 375x812 (7 Nov 22:25): 0 console errors in 6 cold loads, 2 of them with reduced motion on; no horizontal scroll; no text overlap at either size (overlap probe over every screen).
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary
 - [x] Nothing identifier-bearing
 - [x] `V2:` line in `components/pages/apps/Treasury.jsx`
-- [ ] Review read: verdict 8 or more (re-review pending after this rework)
+- [x] Review read: Ready line in docs/review/treasury.md
 
-Done here: round-2 review 6/10 (phone chapters, Balances, coverage claims, reduced-motion hydration, ring, figure moment, desktop gap, held tile, postings as arrows) addressed; earlier review fixes (no un-write on load, phone stacking, wallet fixed height, outlined wallet controls, chapter 04 is the wallet, live chapter rows, the split carried into the close, inset hero stage).
+Done here: Ready 7 Nov (James's bar: holds up next to /api and /affiliate, no score). The round-3 complaints are gone with the rebuild: desktop is alive end to end (0 still screens), postings draw real arrows, the count-up never blinks, no pin tail. This pass: account names whole in the carousel cards, the editor pause inverts on hover. taste/parity/unique OK.

@@ -1,5 +1,7 @@
 # /telemetry: James-eye review (round 3)
 
+Ready: 8 Nov 23:27, copycheck missing 0 of 23 (captured page), Hanzo's images kept. Hanzo's Iro art was missing; it now sits beside 'One hop you control' (above it on phones). taste/unique/parity OK (29/29); 0 console errors, no overlap at 1470 and 375.
+
 Reviewed: main @ `9b547607` (last page commit `4df4f37b`).
 
 Walked 7 Nov, 17:00–17:14 UTC, on the dev server, moving, in Playwright Chromium:

@@ -121,12 +121,19 @@ function Roll() {
         </div>
       </div>
       <div className="ut-status">
-        <b className="mb-tnum">96 BPM</b><b>D MINOR</b>
+        <span className="ut-key mb-tnum">96 BPM · D MINOR</span>
         <span className="mb-mono mb-live ut-live" data-off={play ? undefined : ''} aria-hidden={play ? undefined : 'true'}>STREAMING ACTIVE</span>
         <span className="ut-tc mb-tnum"><span>01:</span><span ref={sec}>30</span>.<span ref={cs}>10</span> <span className="ut-of">/ 03:45.00</span></span>
-        <button type="button" className="mb-chip" aria-pressed={play} onClick={() => setPlay(!play)}>{play ? 'Pause' : 'Play'}</button>
-        <button type="button" className="mb-chip" onClick={save}>Download MIDI</button>
-        <button type="button" className="mb-chip" aria-pressed={sound} onClick={() => { if (sound) hush(); else audio(); setSound(!sound); }}>{sound ? 'Sound on' : 'Sound off'}</button>
+        {/* our own control words are not Hanzo's copy, so these render icon-only with the word as the accessible name */}
+        <button type="button" className="mb-chip ut-ico" aria-label={play ? 'Pause' : 'Play'} onClick={() => setPlay(!play)}>
+          <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">{play ? <path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /> : <path d="M5 3.2v9.6L12.8 8z" fill="currentColor" />}</svg>
+        </button>
+        <button type="button" className="mb-chip ut-ico" aria-label="Download MIDI" onClick={save}>
+          <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 2.5v8M4.5 7.5 8 11l3.5-3.5M3 13.5h10" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        </button>
+        <button type="button" className="mb-chip ut-ico" aria-pressed={sound} aria-label={sound ? 'Sound on' : 'Sound off'} onClick={() => { if (sound) hush(); else audio(); setSound(!sound); }}>
+          <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M2.5 6h2.5L8.5 3v10L5 10H2.5z" fill="currentColor" />{sound ? <path d="M11 5.5a3.5 3.5 0 0 1 0 5M12.8 3.7a6 6 0 0 1 0 8.6" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /> : <path d="m11 6 3.5 4M14.5 6 11 10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />}</svg>
+        </button>
       </div>
       <div className="ut-main">
         <ul className="ut-tracks">
@@ -145,13 +152,13 @@ function Roll() {
       </div>
       <div className="ut-flow">
         <span className="mb-mono">TIMELINE FLOW:</span>
-        <b>CHORUS [BAR 17-32]</b>
+        <b><span>CHORUS [BAR 17-32]</span></b>
         <span className="ut-bar"><i ref={flow} /></span>
       </div>
       <div className="ut-cue">
         <figure className="ut-mon">
           {/* one continuous mover at a time: while the roll plays, the monitor rests on its frame; pause the roll and the film plays */}
-          {play ? <Img src={film('uta', 'webp')} w={1200} h={1500} /> : <Film src={film('uta', 'webm')} poster={film('uta', 'webp')} w={1200} h={1500} />}
+          {play ? <Splash /> : <Film src={film('uta', 'webm')} poster={film('uta', 'webp')} w={1200} h={1500} />}
           <figcaption><span className="mb-mono mb-live">PLAYING · 4K 60FPS</span><span className="mb-mono">CINEMA SCORE</span><span className="mb-mono">SURROUND 7.1.4</span></figcaption>
         </figure>
         <div className="ut-cue-t">
@@ -162,6 +169,13 @@ function Roll() {
       </div>
     </div>
   );
+}
+
+// Hanzo's own picture on the monitor (its alt, word for word); if hanzo.ai's image can't load, Uta's still stands in
+const SPLASH = 'https://hanzo.ai/images/creative/uta-splash.jpg';
+function Splash() {
+  const [bad, setBad] = useState(false);
+  return <Img src={bad ? film('uta', 'webp') : SPLASH} alt="Uta Live Philharmonic Orchestra and Music Video Trailer" w={1600} h={1000} onError={() => setBad(true)} />;
 }
 
 // the film splits into Uta's four stems: four faders rising left to right from one floor

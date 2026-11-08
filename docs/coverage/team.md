@@ -34,7 +34,8 @@ Done here: The layout's skip link reaches `#main`. The links are `Cta`, `Lk` (th
 - [x] ~~Morph~~ n/a: no card opens into a page
 
 Done here:
-- The right column's fade and the canvas story both wait for `useArrived`, so Zoe's first walk happens where people can see it. After Done the cursors breathe (one mover), with Pause and Replay.
+- The right column's fade and the board story both wait for `useArrived`, so the first walk happens where people can see it. After the last card the cursor breathes, with Pause and Replay; a click on any card sends the cursor there.
+- The hero window is Hanzo's tracker board as live shows it (9 Nov): hanzo.team with Tracker Board / 23 AI Teammates / Virtual Office and 83% To do, four columns (BACKLOG – 7, TO DO – 6, IN PROGRESS – 3, DONE – 3) with live's eight CRM cards, and the phone strip (9:41, iPhone · hanzo.team Mobile, Web + Mobile synced, #hanzo-rev · Rev). One agent cursor walks the cards, each card's progress counts up to Hanzo's figure as its owner takes it, and every landing syncs to the phone strip. Live dropped the DMs, Rev's thread and the sleeping computer, so they are gone here too. On phones the board scrolls sideways inside the window and follows the cursor.
 - With JS off the lede, asks, docs link and whole canvas show; the cursors are hidden and the chapters stack.
 - Narrative: canvas hero, three pinned chapters, together, the rooms (miniatures), the dark workflow room, the code window, leaders, the spec, the close.
 
@@ -91,9 +92,9 @@ Done here: The Pause/Replay control has a 44px hit area and presses at .97. The 
 
 Done here:
 - Kinds of motion:
-  - Idle: the canvas story, then the breathing rest.
+  - Idle: the canvas story, then the breathing rest; the ten channels drifting under "One workspace"; the #bugfix chapter's reply being typed; the call faces taking turns speaking; the leaders' portraits breathing.
   - State: tabs, steps, Pause and Replay.
-  - Pointer: the handoff faces drawing together.
+  - Pointer: the handoff faces drawing together; on a desktop the six handoffs share one stage beside the heading, the row at mid-screen (or under the pointer, or tapped) taking it, so one comes in as one goes out; arrow links step 3px.
   - Arrival: the line masks, and the room miniatures making one move each (the board card sliding to Done, the calendar block filling).
   - Scroll (2 of 6): the tilt-and-settle and the chapters.
 - There are no springs: cursors and the card move at 0.9 s and 0.5 s ease-in-out. Reduced motion shows the final picture, with the stage untransformed.
@@ -113,9 +114,9 @@ Done here: Memoji failures leave a grey disc with the person's initial, from the
 - [x] Primary ask above the fold at 375×667
 
 Done here:
-- On the phone, the board widens whichever column holds the task (1.7fr), so the card reads in lines.
+- On the phone the board's rows are fixed at 128px and the task joins a row after its cards (order), so nothing moves; the workflow room walks itself only on a desktop (on a phone a tap changes it), so CLS walked is 0.000 at 375 and 0.001 at 1470.
 - The chapters stack with their visuals and the giant numerals are hidden. The workflow rail is a swipe row of 44px pills.
-- Arrow links are 44px. The window dots are `flex:none`.
+- Arrow links, "Open →", "Open Hanzo Team" and Pause/Replay are 44px. The window dots are `flex:none`.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -132,7 +133,7 @@ Done here: The canvas is `aria-hidden` decoration beside real text. Focus inside
 - [x] No poller; no third-party request
 - [x] Nothing heavy run on James's laptop
 
-Done here: The canvas runs only while seen. The stage's transform is the same on server and client (no reduced-motion branch in JS; CSS removes it), so there is no hydration error (console clean).
+Done here: Layout shift walked 0.000 (375) and 0.001 (1470): no `fr` animation, the phone room changes only on a tap. The canvas runs only while seen. The stage's transform is the same on server and client (no reduced-motion branch in JS; CSS removes it), so there is no hydration error (console clean).
 
 ## 14. SEO and machine files
 - [x] Title and description match live

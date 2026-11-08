@@ -23,7 +23,7 @@ Done here: Persona is a team running models in production who wants one view of 
 - [ ] Breadcrumb at depth 2 or more (n/a: /world is depth 1)
 - [x] Link parity: 0 removed, 0 unexpected
 
-Done here: `<main id="main" data-ask="off">`; the layout's "Skip to content" targets `#main`. 6 links in main, all through `A` or `Cta`. `python3 scripts/parity.py /world` reports every live link present. No breadcrumb: the page sits at depth 1.
+Done here: `<main id="main">`; the layout's "Skip to content" targets `#main`. 6 links in main, all through `A` or `Cta`. `python3 scripts/parity.py /world` reports every live link present. No breadcrumb: the page sits at depth 1.
 
 ## 3. First impression and page narrative
 - [x] Sells in 5 s; something moves within 1 s without input
@@ -41,7 +41,7 @@ Done here: Hero is side (copy at left, the globe at right), dark; the object is 
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: 0 `.x-btn` without `data-cta` in main; CTAs found: primary*, primary-2, close*, close-documentation, deploy (* = solid). The header carries the sticky ask at every width; the page bar is off (`data-ask="off"`) because the critic's shared note (15:00) fails any pill seen over content. Copy is the kit `Copy`, which copies the prompt string it shows. 1 `data-thumb` in main.
+Done here: 0 `.x-btn` without `data-cta` in main; CTAs found: primary*, primary-2, close*, close-documentation, deploy (* = solid). The header carries the sticky ask at every width; the page bar is off (`data-ask="off"`) because the critic's shared note (15:00) fails any pill seen over content. Copy is the kit `Copy`, which copies the prompt string it shows. 1 `data-thumb` in main. `data-ask="off"` is gone: on desktop the header is quiet ("Try Hanzo" outlined) while the hero's "Open World Monitor" shows, then carries "Open World Monitor" solid; the phone header's solid "Try Hanzo" is the shared phone branch.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number

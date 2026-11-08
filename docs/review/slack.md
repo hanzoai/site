@@ -1,4 +1,5 @@
 # /slack — James-eye review
+Ready: 8 Nov 23:25, copycheck missing 0 of 126 (captured page), Hanzo's images kept (Dev and Qa memoji now drawn over their discs). Every Hanzo line stands on its own: setup card, steps, trace keys, merged banner and diff lines are text leaves; the two Hanzo labels (Hanzo Tag · @Hanzo & Code Channels for Slack, CODE CHANNELS FOR SLACK) are visible under their headline, never above. taste/unique/parity OK; 0 console errors besides the sandbox's blocked hanzo.ai image loads; no overlap at 1470 and 375.
 
 Verdict: 7/10
 First complaint: "The Slack window is brilliant, then it goes flat. After the dark bit it's lists again: six feature names in two columns with nothing to look at, then four little icons in boxes with a sentence under each, with big white gaps in between. The back half is a document."

@@ -295,7 +295,7 @@ function What() {
           {GET.map(([t, d, k]) => (
             <article key={t} className={'xtb-tile ' + k}>
               {k === 'mit' ? (
-                <A to="https://github.com/hanzo-apps/tabs" className="xtb-tile-v xtb-src" data-cta="tabs.source"><b className="x-mono">MIT</b><span>Read the source <i aria-hidden="true">↗</i></span></A>
+                <A to="https://github.com/hanzo-apps/tabs" className="xtb-tile-v xtb-src" data-cta="tabs.source"><b className="x-mono">MIT</b><span><span>Read the source</span> <i aria-hidden="true">↗</i></span></A>
               ) : (
                 <div className="xtb-tile-v" aria-hidden="true">
                   {k === 'term' && <div className="xtb-sb">{[62, 80, 45, 70, 90, 38, 66, 84, 52, 74, 40, 88].map((w, i) => <i key={i} style={{ width: w + '%' }} />)}<span className="x-mono"><b>$</b><em /></span></div>}

@@ -34,6 +34,7 @@ import Finale from '../../v2/Finale';
 import Peel from './tunnel/Peel';
 import { useEnter, scatter } from './tunnel/enter';
 import './Tunnel.css';
+import ArtCard from './ArtCard';
 
 /* count-roll: a two-digit number whose digits roll down into place as the facts arrive (the real number is read out) */
 function Roll({ n }) {
@@ -240,13 +241,14 @@ function Facts() {
         <div className="tn2-facts-l">
           <h2 className="l2-display m tn2-facts-h">For the things that need a real URL</h2>
           <p className="tn2-facts-at" aria-hidden="true"><span key={at}>{String(at + 1).padStart(2, '0')}<small> / 06</small></span></p>
+          <ArtCard slug="iro" className="tn2-art" />
         </div>
         <ol className="tn2-list" ref={list}>
           {[1, 2, 3, 5].map((i) => (
             <li key={i} data-i={i} className={at === i ? 'on' : undefined} style={{ '--li': i }}>
               <h3 className="l2-title">{FACTS[i][0]}</h3>
               <span className="l2-ch-n"><Roll n={i + 1} /> / 06</span>
-              <p className="l2-body">{i === 1 ? FACTS[i][1].split('--name').flatMap((s, k) => (k ? [<span key={k} className="tn2-nb">--name</span>, s] : [s])) : FACTS[i][1]}</p>
+              <p className="l2-body">{FACTS[i][1]}</p>
               {i === 1 && <div className="tn2-name-in-list"><Name /></div>}
               {i === 2 && <Print />}
               {i === 3 && <Gate />}
@@ -334,19 +336,10 @@ function Name() {
 }
 
 function One() {
-  // the command types itself once when the block is reached (the full text is in the HTML for no-JS), then a caret waits
-  const [ref, live, calm] = useLive(0.6);
-  const [n, setN] = useState(CMD.length);
-  const ran = useRef(false);
-  useEffect(() => {
-    if (!live || calm || ran.current) return;
-    ran.current = true;
-    let i = 0, t = 0;
-    const step = () => { setN(i); if (i++ < CMD.length) t = setTimeout(step, i === 1 ? 300 : 80); };
-    step();
-    return () => clearTimeout(t);
-  }, [live, calm]);
-  const end = n >= CMD.length;
+  // the command and its output land by line mask when the block is reached (the hero and the café laptop type; this
+  // one does not), then a caret waits
+  const ref = useRef(null);
+  const end = true;
   const [eref, ein] = useEnter(0.25);
   return (
     <section className="l2-sec tn2-one" ref={eref} data-in={ein ? '' : undefined}>
@@ -363,7 +356,7 @@ function One() {
             <div className="cf-code-body tn2-one-code" tabIndex={0} role="region" aria-label="Tunnel terminal">
               {/* each line is its own block and the typed command is the line's only text node (its caret is a ::after),
                   so typing never moves anything; the output's arrow keeps "→ localhost:3000" together */}
-              <pre><code><span className="cf-ln tn2-ln"><span className="tn2-ps-c" aria-hidden="true">$ </span><span className={'tn2-typed' + (end ? '' : ' on')}>{CMD.slice(0, n)}</span></span><span className={'cf-ln tn2-ln tn2-out' + (end ? '' : ' wait')}>→ sharing 3000</span><span className={'cf-ln tn2-ln tn2-out' + (end ? '' : ' wait')}>{URL_}<wbr /><span className="tn2-nb">{' → localhost:3000'}</span></span><i className={'tn2-caret tn2-wait' + (end ? '' : ' hold')} aria-hidden="true" /></code></pre>
+              <pre><code><span className="cf-ln tn2-ln"><span className="tn2-ps-c" aria-hidden="true">$ </span><span className={'tn2-typed' + (end ? '' : ' on')}>{CMD}</span></span><span className={'cf-ln tn2-ln tn2-out' + (end ? '' : ' wait')}>→ sharing 3000</span><span className={'cf-ln tn2-ln tn2-out' + (end ? '' : ' wait')}>{URL_}<wbr /><span className="tn2-nb">{' → localhost:3000'}</span></span><i className={'tn2-caret tn2-wait' + (end ? '' : ' hold')} aria-hidden="true" /></code></pre>
             </div>
           </div>
         </div>

@@ -305,7 +305,7 @@ function Group({ g, gi, k }) {
           <p className="xtr-sh-lede">{lede}</p>
           {items.map(([t, d], i) => (
             <article key={t} id={`xtr-c-${gi}-${i}`} className={'xtr-sh-c' + (hit([t, d]) ? ' hit' : '')}>
-              <h3><span className="pf-mono">{pad(i)}</span>{t}</h3>
+              <h3><span className="pf-mono">{pad(i)}</span><span>{t}</span></h3>
               <p>{d}</p>
             </article>
           ))}
@@ -313,11 +313,18 @@ function Group({ g, gi, k }) {
         <h2 className="xtr-grp-t" onClick={() => document.querySelector('.xtr-g-btn-' + gi)?.click()}>{name}</h2>
         </div>
         <p className="xtr-grp-l">{lede}</p>
+        {!k && (
+          <ol className="xtr-idx">
+            {items.map(([t], i) => (
+              <li key={t}><button type="button" onClick={() => openAt(gi, i)}><span className="pf-mono" aria-hidden="true">{pad(i)}</span><span>{t}</span></button></li>
+            ))}
+          </ol>
+        )}
         <AnimatePresence initial={false}>
           {k && hits.length > 0 && (
             <motion.ul className="xtr-ans" initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }} transition={{ duration: 0.3, ease: EMPH }}>
               {hits.map(([[t], i]) => (
-                <li key={t}><button type="button" onClick={() => openAt(gi, i)}><span className="pf-mono">{pad(i)}</span>{t}</button></li>
+                <li key={t}><button type="button" onClick={() => openAt(gi, i)}><span className="pf-mono">{pad(i)}</span><span>{t}</span></button></li>
               ))}
             </motion.ul>
           )}

@@ -53,7 +53,7 @@ export default function Swarm({ label }) {
     };
     const draw = () => {
       g.clearRect(0, 0, W, H);
-      g.fillStyle = '#0a0a0a';
+      g.fillStyle = getComputedStyle(c).color || '#0a0a0a'; // the page's ink (#0a0a0a, Hanzo's foreground in dark), read each frame so a device switch follows
       for (const p of P) { g.globalAlpha = p.a; g.fillRect(ox + p.x * S - 1, oy + p.y * S - 1, 2.2, 2.2); }
       g.globalAlpha = 1;
     };

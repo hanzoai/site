@@ -73,7 +73,7 @@ Done here: colour appears only inside Hanzo's film and its stills.
 - [x] n/a inputs
 - [x] Forks deleted: listed above
 
-Done here: hover added to the closing room's buttons (fill change), the overlap pills (fill) and side link (underline, 44px), the team cards (still drifts, title underlines).
+Done here: hover on every control is more than a hairline: the sheet pills fill and their plus turns, arrow links step 3px, the hero pause inverts, the band's light ask lifts, the overlap pills fill, the team cards' stills drift and press at .98.
 
 ## 9. Motion and interaction
 - [x] One signature (the horizontal strip) + 3 supporting (film stories, magnetic ask, overlap pill); 0 fade-ups
@@ -90,7 +90,7 @@ Done here: no springs (300–400 ms ease-emphasis); `variety.py` OK.
 - [x] Nothing missing; images decorative with the words as real text
 - [x] No dimmed photo; 6 sibling film stills together on desktop (JAMES.md 6)
 
-Done here: five jobs, five pictures: each job's shot has its own framing (object position and scale on the still and on the playing film, measured 50%/1.06, 14% 22%/1.7, 86% 70%/1.5, 30% 88%/1.9, 78% 16%/1.6) and starts at its own moment of the film.
+Done here: no picture twice on a page: the strip and the band take only films the hero and the team cards below do not show; a job with no film left takes the solution's own Sigil on black. Arriving from a card, the hero keeps the clicked film. Five jobs, five pictures: each job's shot has its own framing (object position and scale on the still and on the playing film, measured 50%/1.06, 14% 22%/1.7, 86% 70%/1.5, 30% 88%/1.9, 78% 16%/1.6) and starts at its own moment of the film.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap from this page
@@ -131,7 +131,7 @@ Done here: `solData.js` only adds each sibling's film slug.
 - [x] Hanzo's sibling links as up to 6 cards; the rest stay links ("All solutions")
 - [x] One price figure everywhere (reserved only)
 
-Done here: the overlap finder over this member's own contour; when two teams share nothing it shows the two columns only (no black zero box).
+Done here: the overlap finder over this member's own contour; when two teams share nothing the black strip stays and reads 0 with its label.
 
 ## 16. Developer experience
 - [x] n/a: no code on these pages
@@ -155,4 +155,4 @@ Done here: members without security, capacity or siblings simply have no sheet, 
 - [x] `V2:` line in the page file's top comment
 - [x] Review read: `docs/review/solutions-family.md` 6/10 at a4af13e; fixes in this commit
 
-Done here: (1) five jobs, five pictures (own framing and moment each); (2) the sheets now open above the header (their triggers sit outside the pinned strip); (3) one page-owned solid at the close, hover on its buttons and the overlap controls; (4) no empty "More solutions" on the reserved tier (heading and link in the close); (5) triggers show the section title whole; (6) no zero box in the overlap; own hero medium and layout (full-bleed film, horizontal strip, film-still teams).
+Done here: (7 Nov, 22:30) the sheet rises over the site header (no stacking context on the sheet row); a card's name travels to the h1's own box at 52px with its line breaks and the h1 skips its second cut-in, settled in about 0.8 s; the open lands on the destination film band, which is the film you clicked; no film shown twice on a page; overlap zero state; phone strip peeks 16%. Earlier: (1) five jobs, five pictures (own framing and moment each); (2) the sheets now open above the header (their triggers sit outside the pinned strip); (3) one page-owned solid at the close, hover on its buttons and the overlap controls; (4) no empty "More solutions" on the reserved tier (heading and link in the close); (5) triggers show the section title whole; (6) no zero box in the overlap; own hero medium and layout (full-bleed film, horizontal strip, film-still teams).

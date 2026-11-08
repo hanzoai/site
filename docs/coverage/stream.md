@@ -33,7 +33,7 @@ Done here: `<main id="main" data-ask="off">`; the layout's "Skip to content" tar
 - [x] Ends in proof strip, `Band`, footer
 - [ ] Card-to-page links use Morph; title lands within 12px (n/a: no card on this page opens another page)
 
-Done here: Hero is frame (the tape full-bleed behind the title, then clipped into a card); the object is a tape of records across four partitions, moving from arrival, with the committed-offset marker, so the record tape moves within the first second. `PageHero` is not merged; the existing equivalent (`StageHero` or the page's own hero with the same line-mask cut-in, 700 ms ease-emphasis) is used, and the mono caption sits under the h1. JS off: h1 "Hanzo Stream" at opacity 1, 0 hidden headings or paragraphs. Rooms: hero (dark) → the offset ruler (light, pinned on desktop, swipe rail on phones) → one line to change (light) → closing band (dark). The live page has no proof strip, so it ends on the band and the footer.
+Done here: Hero is frame (the tape full-bleed behind the title, then clipped into a card); the object is a tape of records across four partitions, moving from arrival, with the committed-offset marker, so the record tape moves within the first second. The h1 sits about 130px clear of the last lane at 1470×801; partition labels sit on a solid black edge and the refused batch's INVALID_RECORD stamp has its own slot at the lane's right end, so no digits collide. `PageHero` is not merged; the existing equivalent (`StageHero` or the page's own hero with the same line-mask cut-in, 700 ms ease-emphasis) is used, and the mono caption sits under the h1. JS off: h1 "Hanzo Stream" at opacity 1, 0 hidden headings or paragraphs. Rooms: hero (dark) → the offset ruler (light, pinned on desktop, swipe rail on phones) → one line to change (light) → closing band (dark). The live page has no proof strip, so it ends on the band and the footer.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -84,7 +84,7 @@ Done here: Hover sits under `@media (hover: hover)` and changes fill or border o
 - [x] Reduced motion shows the final state; no `setInterval`
 - [ ] Sound only on the listed moments, through the one kit (n/a: the page plays no sound of its own; the kit owns it)
 
-Done here: Signature: your scroll is the consumer (pinned sideways tape). Supporting: proximity snap (scroll), offset counter (time), the check that answers (state). `scripts/variety.py` OK. Kinds: idle (the hero object), time, state, pointer, with scroll only in the pinned scene. Timers are timeout chains (`useTick`), no `setInterval`. Reduced motion (`useCalm`) renders the settled frame. No springs: every transition is 300 ms ease-emphasis or shorter.
+Done here: Signature: your scroll is the consumer (pinned sideways tape). Supporting: proximity snap (scroll), offset counter (time), the check that answers (state; the twelve API names are buttons that fill it), the record on stage consuming its strip (idle), the consumer group in the close (idle, Pause). `scripts/variety.py` OK. Kinds: idle (the hero object), time, state, pointer, with scroll only in the pinned scene. Timers are timeout chains (`useTick`), no `setInterval`. Reduced motion (`useCalm`) renders the settled frame. No springs: every transition is 300 ms ease-emphasis or shorter.
 
 ## 10. Media
 - [ ] `Film` and `Pic` only; sizes and posters set (n/a: no photo or video)
@@ -92,7 +92,7 @@ Done here: Signature: your scroll is the consumer (pinned sideways tape). Suppor
 - [ ] Budgets met; nothing missing; alt on every image (n/a: 0 images, 0 without alt)
 - [ ] No dimmed or filtered photo; 4+ real visuals together where the page has them (n/a: no photos)
 
-Done here: 0 videos. The moving objects are drawn in HTML and SVG; each loop over 5 s carries a 44px pause button (2 on the page): the hero tape and the band's mini tape.
+Done here: 0 videos. The moving objects are drawn in HTML and SVG; each loop over 5 s carries a 44px pause button (2 on the page): the hero tape and the close's consumer group (four partitions, committed offsets climbing, one consumer dropping and coming back), its own object rather than the hero lane again.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -100,7 +100,7 @@ Done here: 0 videos. The moving objects are drawn in HTML and SVG; each loop ove
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: Overflow 0px at 375 and 0px at 320. 0 controls under 44px at 375 after scrolling the whole page. The primary ask's bottom edge sits at 694px on a 667px screen. Pinned scenes stack below 900px; every hover state also answers a tap.
+Done here: Overflow 0px at 375 and 0px at 320. 0 controls under 44px at 375 after scrolling the whole page. The primary ask's bottom edge sits at 694px on a 667px screen. Pinned scenes stack below 900px; every hover state also answers a tap. Phone: no fixed layer at all; the committed offset now sits in the rail heading, and the record on stage consumes its strip at rest and stands its offset up, so the stacked records move without input.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -109,7 +109,7 @@ Done here: Overflow 0px at 375 and 0px at 320. 0 controls under 44px at 375 afte
 - [x] One h1; no heading skips; names start with visible text
 - [x] Keyboard reaches every control
 
-Done here: Lowest measured text contrast 4.74:1 (0 runs flagged). Headings 12333333222 with 0 skips. Pause controls: the hero tape and the band's mini tape. Every input has a label or a register name; nothing validates, so there is no error to focus. Controls are native buttons, links and inputs.
+Done here: Lowest measured text contrast 4.74:1 (0 runs flagged). Headings 12333333222 with 0 skips. Pause controls: the hero tape and the close's consumer group. Every input has a label or a register name; nothing validates, so there is no error to focus. Controls are native buttons, links and inputs.
 
 ## 13. Performance and engineering
 - [x] h1 and LCP element in server HTML
@@ -157,4 +157,4 @@ Done here: Every word is in the server HTML and every demo is local, so a blocke
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/stream.md` verdict 8 or more
 
-Done here: `data-cta` on every primary (kit `Cta`); the page imports no analytics itself. `V2:` line present in `components/pages/cloud/Stream.jsx`. Last critic verdict on file: 6/10 (walked an earlier version); this version waits for the next walk.
+Done here: `data-cta` on every primary (kit `Cta`); the page imports no analytics itself. `V2:` line present in `components/pages/cloud/Stream.jsx`. Ready (7 Nov, D2 run): held up next to /api and /affiliate.

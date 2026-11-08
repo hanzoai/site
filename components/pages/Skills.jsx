@@ -103,6 +103,7 @@ function Wake() {
       <div className="xsk-agent">
         <div className="xsk-say x-mono"><span className="xsk-caret-k">›</span><span ref={typed}>{WAKE[w][0]}</span><b className="xsk-caret" /></div>
         <Shelf lit={phase >= 1 ? gate : null} />
+        <span className="xsk-kai"><img src="/models/kai.webp" alt="" width="1200" height="1500" decoding="async" /></span>
         <Tray pulled={phase >= 2} k={String(w)} />
       </div>
     </div>
@@ -145,7 +146,7 @@ function Hero() {
       <div className="a2-wrap a2-grid xsk-hero-grid">
         <div className="xsk-hero-copy">
           <motion.div className="xsk-h1-set" style={{ scale: settle }}><Lines as="h1" id="xsk-h1" className="a2-display xsk-h1" lines={['Skills']} now /></motion.div>
-          <p className="a2-lede">Development knowledge your coding agent loads <mark>only when it needs it</mark></p>
+          <Para className="a2-lede" parts={['Development knowledge your coding agent loads ', { h: 'only when it needs it' }]} />
           <div className="a2-acts"><A to={GH} className="x-btn solid xsk-ask" data-thumb="View on GitHub" data-cta="skills.hero">View on GitHub<Arw /></A></div>
           <p className="xsk-repo-cap x-mono"><A to={GH} className="xsk-repo">hanzoai/skills</A></p>
         </div>
@@ -181,20 +182,45 @@ function Trade() {
 /* The five points on the stage: the words scroll past on the left, one pinned panel on the right shows each one's object.
    The thread point (Hanzo's "Cross-referenced, not duplicated") lives in the dark room after the stage, told once. */
 const POINTS = [
-  ['A skill is a markdown file', <>Frontmatter carries a name and a description. Below it is prose, code, and links to related skills. <Hl>Nothing to compile, nothing to run</Hl> — you can read one before you trust it.</>],
-  ['Gateway skills do the finding', <>A gateway is a small skill whose whole job is to notice. Say Postgres and discover-database wakes up; say comptime and discover-zig does. <Hl>It pulls the specific files and gets out of the way.</Hl></>],
-  ['Install it in one line', <><code>{CMD}</code> adds the Hanzo skill to your agent, and <Hl>hanzoskills.com/llms.txt lists every other one as plain markdown.</Hl></>],
-  ['Written small on purpose', <>One topic per file, a few hundred lines each. <Hl>Five focused reads cost less than one monolithic guide</Hl>, and you get the five that matter instead of the one that covers everything badly.</>],
-  ['Add your own', <>Drop a markdown file in a category, give it a name and a description, and it joins discovery. <Hl>Your house conventions load the same way the public ones do.</Hl></>],
+  ['A skill is a markdown file', ['Frontmatter carries a name and a description. Below it is prose, code, and links to related skills. ', { h: 'Nothing to compile, nothing to run' }, ' — you can read one before you trust it.']],
+  ['Gateway skills do the finding', ['A gateway is a small skill whose whole job is to notice. Say Postgres and discover-database wakes up; say comptime and discover-zig does. ', { h: 'It pulls the specific files and gets out of the way.' }]],
+  ['Install it in one line', [{ c: CMD }, ' adds the Hanzo skill to your agent, and ', { h: 'hanzoskills.com/llms.txt lists every other one as plain markdown.' }]],
+  ['Written small on purpose', ['One topic per file, a few hundred lines each. ', { h: 'Five focused reads cost less than one monolithic guide' }, ', and you get the five that matter instead of the one that covers everything badly.']],
+  ['Add your own', ['Drop a markdown file in a category, give it a name and a description, and it joins discovery. ', { h: 'Your house conventions load the same way the public ones do.' }]],
 ];
 const NUM = [1, 2, 3, 4, 6]; // Hanzo numbers six points; 05 is the thread room
 const TOTAL = 6;
-const CROSS = ['Cross-referenced, not duplicated', <>Skills link to the skills next to them, so an agent following a thread from API design into rate limiting into Redis <Hl>reads three files and never the same paragraph twice.</Hl></>];
+const CROSS = ['Cross-referenced, not duplicated', ['Skills link to the skills next to them, so an agent following a thread from API design into rate limiting into Redis ', { h: 'reads three files and never the same paragraph twice.' }]];
 
-function Hl({ children }) {
-  const ref = useRef(null);
+/* Hanzo's sentences stay one unbroken run of text (James, 8 Nov: no wording changes, copycheck reads whole lines);
+   the highlight is drawn over the words with the CSS Custom Highlight API instead of wrapping them in elements.
+   It sweeps in left to right once the line is in view; browsers without the API show the words plain. */
+// the build's CSS parser does not know ::highlight() yet, so its three rules are added at runtime, once
+const HL_CSS = '::highlight(xsk-hl){background-color:light-dark(#e4e4e7, var(--border-strong));color:light-dark(#0a0a0a, var(--primary))}::highlight(xsk-hl-d){background-color:#404040;color:#fafafa}::highlight(xsk-code){background-color:light-dark(#f5f5f5, var(--secondary));color:light-dark(#0a0a0a, var(--foreground))}';
+const reg = (name) => { if (typeof CSS === 'undefined' || !CSS.highlights || typeof Highlight === 'undefined') return null; if (!document.getElementById('xsk-hl-css')) { const st = document.createElement('style'); st.id = 'xsk-hl-css'; st.textContent = HL_CSS; document.head.appendChild(st); } let h = CSS.highlights.get(name); if (!h) { h = new Highlight(); CSS.highlights.set(name, h); } return h; };
+function useHl(ref, marks, name, sweep = true) {
   const seen = useInView(ref, { once: true, amount: 0.5, margin: '0px 0px -15% 0px' });
-  return <mark ref={ref} className={cx('xsk-hl', seen && 'on')}>{children}</mark>;
+  const calm = useReducedMotion();
+  useEffect(() => {
+    const el = ref.current, h = reg(name);
+    if (!el || !h || !marks.length || (sweep && !seen)) return;
+    const texts = [...el.childNodes].filter((n) => n.nodeType === 3);
+    const rs = marks.map((m) => { const n = texts.find((t) => t.data.includes(m)); if (!n) return null; const a = n.data.indexOf(m); if (a < 0) return null; const r = new Range(); try { r.setStart(n, a); r.setEnd(n, sweep && !calm ? a : a + m.length); } catch { return null; } h.add(r); return [r, n, m]; }).filter(Boolean);
+    let raf = 0;
+    if (sweep && !calm) {
+      const t0 = performance.now(), ease = (x) => 1 - Math.pow(1 - x, 4);
+      const step = (t) => { const k = ease(Math.min(1, (t - t0) / 900)); rs.forEach(([r, n, m]) => { const a = n.data.indexOf(m); if (a < 0 || !n.isConnected) return; try { r.setStart(n, a); r.setEnd(n, a + Math.round(m.length * k)); } catch {} }); CSS.highlights.set(name, h); if (k < 1) raf = requestAnimationFrame(step); };
+      raf = requestAnimationFrame(step);
+    }
+    return () => { cancelAnimationFrame(raf); rs.forEach(([r]) => h.delete(r)); };
+  }, [seen, calm, name, sweep]); // eslint-disable-line react-hooks/exhaustive-deps
+}
+function Para({ parts, className, dark }) {
+  const ref = useRef(null);
+  const list = Array.isArray(parts) ? parts : [parts];
+  useHl(ref, list.filter((x) => x && x.h).map((x) => x.h), dark ? 'xsk-hl-d' : 'xsk-hl');
+  useHl(ref, list.filter((x) => x && x.c).map((x) => x.c), 'xsk-code', false);
+  return <p ref={ref} className={className}>{list.map((x) => (typeof x === 'string' ? x : x.h || x.c))}</p>;
 }
 
 /* 01 the frontmatter close up, 02 one gateway pulling its two named files, 03 the install, 04 the trade,
@@ -262,7 +288,7 @@ function Point({ i, t, d, on, onSeen }) {
       <div className="xsk-pt-copy">
         <h2 className="a2-headline" id={'xsk-pt-h' + i}>{t}</h2>
         <p className="a2-kick show xsk-cap">{pad(NUM[i])} / {pad(TOTAL)}</p>
-        <p className="a2-body">{d}</p>
+        <Para className="a2-body" parts={d} />
         {i === 2 && <div className="xsk-cmd"><code className="x-mono">{CMD}</code><Copy text={CMD} /></div>}
       </div>
       <div className={cx('xsk-pt-vis', near && 'on')} aria-hidden="true"><Scene k={i} /></div>
@@ -321,7 +347,7 @@ function Thread() {
         <div className="xsk-thread-copy">
           <Lines id="xsk-thread-h" className="a2-display m xsk-thread-h" lines={[CROSS[0]]} />
           <p className="a2-kick show xsk-cap">{pad(5)} / {pad(TOTAL)}</p>
-          <p className="a2-body xsk-thread-lede">{CROSS[1]}</p>
+          <Para className="a2-body xsk-thread-lede" parts={CROSS[1]} dark />
           <div className="xsk-thread-nav">
           <div className="xsk-steps" role="group" aria-labelledby="xsk-thread-h" onPointerLeave={() => setPeek(-1)}>
             {THREAD.map((t, i) => (

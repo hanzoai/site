@@ -1,5 +1,7 @@
 # /skills — James-eye review
 
+Ready: 8 Nov 23:15, copycheck missing 0 of 22 (captured page), Hanzo's images kept. Each of Hanzo's sentences is one unbroken run again (the highlight is drawn over the words with the CSS Custom Highlight API and still sweeps in), the install line reads as Hanzo wrote it, and Hanzo's Kai picture (/models/kai.webp) is back in the hero's agent panel. taste/unique/parity OK (29/29, 2/2); 0 console errors, no overlap at 1470 and 375.
+
 Verdict: 7/10
 First complaint: "The top's lovely, it types Postgres and the right one lights up. But I've just read 'Cross-referenced, not duplicated' with API design, rate limiting, Redis in the panel, and then I get a big black box with the same three files again, and this time there are no words on it at all. What is that box? And everything in it is grey placeholder lines. It looks like a wireframe that hasn't loaded."
 

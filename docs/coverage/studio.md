@@ -42,7 +42,7 @@ Done here: At 1470x801 the 52px h1 runs 140 to 306px (baseline at 38%), the moni
 - [x] `data-cta` and `data-thumb` on every primary
 
 Done here: Both primaries are `<Cta to="https://studio.hanzo.ai" id="studio.hero|studio.close" thumb>` (checked: `data-cta="studio.hero"`, `data-thumb="Launch studio.hanzo.ai"`), so they also fire `cta_click` and show the cross-origin pressed state. The "Open Hanzo Design" asks stay on the kit `Go`.
-
+ 7 Nov (Ready pass): the close keeps one solid ask (Launch studio.hanzo.ai) with "See plans, from $8/month" to /pricing beside it and Open Hanzo Design as a text link; the Studio or Design card's answers are quiet outline links, not a second solid.
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
 - [x] Every figure traces to Hanzo's copy; qualifier beside the number
@@ -85,7 +85,7 @@ Done here: Hover now tells you something: the hero/close ask slides its arrow 4p
 - [x] Sound only on the listed moments, through the one kit
 
 Done here: `variety.py`: OK with 3 techniques (useScroll reel = signature; rAF timeline; layoutId: the graph's active ring travels node to node in 400 ms ease-in-out). Kinds: idle (timeline, chip hop, render pass), pointer (scrub, opener warp, clip timecodes), state (rig tabs, graph tabs, pane clip-reveal), scroll (reel), arrival (h1 cut-in). The reel is 240svh (was 360): the frame grows from .92 to 1 over the first 15% of the pin, and each pillar's move is bigger and framed on its still's subject (Dolly 1.25 to 1.7 about the right edge, Crane ±12% at 1.32, Orbit a 23% pan with ±2.5° tilt; object-position picks the subject's band). Changeovers never blend two texts: reel captions, the graph pane and the Studio-or-Design answer take the outgoing item out in 150 ms and bring the incoming one in after a 150 ms delay, its title cutting in through a line mask (translateY 105% to 0, 500 ms ease-emphasis). On phones the reel frame is a sticky 2.39:1 strip under the header that swaps still, rig and `0n / 03` as each pillar's title crosses it (IntersectionObserver, no pin). Reduced motion: frame and stills hold their framed rest state, masks at rest, `getAnimations()` running = 0. Deck timings only (90/150/300/400/500 ms, three deck curves). Reduced motion: `getAnimations()` = 0 after 3 s at both sizes, the timeline holds a still at 60% of shot 1, the graph ring moves with duration 0. Sound comes from the shared kit on `[data-cta]`; the page adds none.
-
+ 7 Nov: the capability ring cuts (no flight) on any jump longer than one node; the film strip's lit frame is always brought into view as the timer moves it; the close card's still drifts like a held shot under the REC tally.
 ## 10. Media
 - [ ] `Film` and `Pic` only; sizes and posters set (still raw `<img>`/`<video>`; swap when the kit's Film/Pic suit the timeline stills)
 - [x] At most 2 videos playing; pause button on loops over 5 s (one strip film at a time; the timeline has Play/Pause)
@@ -101,7 +101,7 @@ Done here: 0 `<img>` without alt in `<main>`. The grayscale/brightness filter on
 - [x] Primary ask above the fold at 375×667
 
 Done here: scrollWidth 375 at 375 and 320 at 320. Playwright found 0 links/buttons under 44px at 375 and 320 (inline /design and studio.hanzo.ai padded to 45px, strip links and hanzoai to 44px; rigs and chips 44px under `pointer: coarse`). Phone ask row is inline (solid + text link) ending at 543px. The node graph stacks into one wired list on phones, tap opens a node's pane.
-
+ 7 Nov: the phone desk stacks monitor, inspector, then the three specs (the grid areas no longer squeeze the specs into a sliver); on wide screens all six film frames fit with none past the edge.
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
 - [x] Pause control on every moving item (the timeline has Play/Pause; the graph and chips stop on hover, focus or the first pick)

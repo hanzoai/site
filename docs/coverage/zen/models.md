@@ -20,7 +20,7 @@ Forks this page deleted:
 - [x] No dead or self-looping button; prices — n/a: no plan; "From $0.01/MTok" is Hanzo's line
 - [x] Open copy questions for James listed, none decided
 
-Done here: Header lines `// Persona:`, `// Goal:`, `// CTA:`, `// Metric: api_key_created`, `// Signature:`, `// Beyond:`. One solid "Get API key" in the hero (measured: 1 solid on the first screen at 1470×801 and 375×812) and one "Get Started" in the close. Tiers with no Zen5 model (ultra max, pro max) are not offered as buttons; their names stay in the HTML as visually hidden text, so no control reads as broken. On phone the header still shows its own solid "Try Hanzo" (shared header; requested in `docs/requests/zen-models.md`).
+Done here: Header lines `// Persona:`, `// Goal:`, `// CTA:`, `// Metric: api_key_created`, `// Signature:`, `// Beyond:`. One solid "Get API key" in the hero (measured: 1 solid on the first screen at 1470×801 and 375×812) and one "Get Started" in the close. Tiers with no Zen5 model (ultra max, pro max) are not offered as buttons; their names stay in the HTML as visually hidden text, so no control reads as broken. On phone the header still shows its own solid "Try Hanzo" (shared header; requested in `docs/requests/zen-models.md`). The page calls the shared page hook `usePhoneAsk` (no shared file edited), so on phones too the header's button is an outline while "Get API key" or "Get Started" is on screen and solid between them: one solid per screen at 375 and 1470 (walked 7 Nov).
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it (shared shell)
@@ -169,4 +169,4 @@ Done here: JS-off and reduced motion show the h1, every figure (as a list), ever
 - [x] `V2:` line in the page file's top comment
 - [ ] Review read: `docs/review/zen/models.md` 7/10 (third verdict); fixes 1–6 done here (Zen film and stills on the cards so the Morph hands over the same picture, figure drawings capped at 220px, top bands closed, phone 18-mark drawing and card rail, legend kept whole, Explore arrow drops and a JS-off still); no captions on the 7 capsules (Hanzo's copy names only 6 modalities); the shared items (footer hydration, phone header ask, header glass, cookie card) stay with their owners; awaiting a new verdict
 
-Done here: Gallery: `docs/gallery/zen/models/` (desktop film plus 3 phone stills), re-filmed after this rework.
+Done here: Gallery: `docs/gallery/zen/models/` (desktop hero, Quick Start, figures, shelf and sheet; four phone stills), walked 7 Nov.

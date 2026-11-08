@@ -49,7 +49,7 @@
 .zp-points li::before { content: ''; position: absolute; left: 0; right: 24px; top: -1px; height: 2px; background: var(--acc); transform: scaleX(0); transform-origin: 0 50%; transition: transform .6s var(--ease); }
 .zp-points li.on::before { transform: scaleX(1); }
 .zp-points button { display: grid; gap: 10px; width: 100%; height: 100%; padding: 24px 24px 8px 0; border: 0; background: none; color: inherit; text-align: left; font: inherit; cursor: pointer; }
-.zp-points span { font-size: 13px; color: #a3a3a3; }
+.zp-points button > span { font-size: 13px; color: #a3a3a3; }
 .zp-points b { font-size: clamp(24px, 2.4vw, 36px); font-weight: 600; letter-spacing: -.04em; line-height: 1.05; transition: color .3s; }
 .zp-points em { font-style: normal; font-size: 16px; color: #a3a3a3; }
 .zp-points li:not(.on) b { color: #737373; }
@@ -60,7 +60,7 @@
 .zp-packets .w2-oc-card { min-height: 280px; }
 .zp-packets .w2-oc-t { font-size: clamp(20px, 1.7vw, 25px); }
 .zp-hdr { display: grid; grid-template-columns: repeat(16, 1fr); gap: 3px; width: calc(100% - 44px); }
-.zp-hdr i { height: 10px; border-radius: 2px; background: #e4e4e4; }
+.zp-hdr i { height: 10px; border-radius: 2px; background: light-dark(#e4e4e4, var(--secondary)); }
 .zp-hdr i.f { background: var(--ink); }
 
 .w2-sheet .zp-hdr { width: 100%; }
@@ -69,7 +69,7 @@
 .zp-run { background: var(--card); }
 .zp-run-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 24px clamp(32px, 5vw, 96px); align-items: center; }
 .zp-run-copy { display: flex; flex-direction: column; gap: 20px; }
-.zp-zapd code { padding: 2px 8px; border-radius: 6px; background: #fff; font: 500 .92em var(--mono); color: var(--ink); }
+.zp-zapd code { padding: 2px 8px; border-radius: 6px; background: var(--x-raised); font: 500 .92em var(--mono); color: var(--ink); }
 .zp-term { border-radius: 28px; background: #0a0a0a; color: #e5e5e5; box-shadow: 0 30px 60px -36px rgba(0, 0, 0, .5); overflow: hidden; }
 .zp-term-bar { display: flex; align-items: center; gap: 7px; padding: 12px 14px; border-bottom: 1px solid rgba(255, 255, 255, .08); }
 .zp-term-bar > i { width: 11px; height: 11px; border-radius: 50%; background: #262626; }
@@ -99,10 +99,10 @@
 .zp-topo-k { margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -.01em; }
 .zp-procs { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 3px; min-height: 12px; }
 .zp-topo:not(.one) .zp-procs { height: 108px; overflow: hidden; }
-.zp-procs i { width: 10px; height: 10px; border-radius: 2px; background: #d4d4d4; animation: zp-in .45s var(--ease) both; }
+.zp-procs i { width: 10px; height: 10px; border-radius: 2px; background: light-dark(#d4d4d4, var(--secondary)); animation: zp-in .45s var(--ease) both; }
 .zp-procs i[style*='--s: 0'] { background: var(--ink); }
 .zp-procs i[style*='--s: 1'] { background: #737373; }
-.zp-topo.one .zp-procs i.d { width: 26px; background: #0a0a0a; box-shadow: 0 0 0 2px #fff, 0 0 0 3px #0a0a0a; }
+.zp-topo.one .zp-procs i.d { width: 26px; background: var(--ink); box-shadow: 0 0 0 2px var(--bg), 0 0 0 3px var(--ink); }
 @keyframes zp-in { from { opacity: 0; transform: scale(.3); } }
 .zp-topo-n { margin: 0; font-size: 14px; color: var(--soft); }
 .zp-topo-n b { font-size: 16px; color: var(--ink); }
@@ -112,10 +112,6 @@
 .zp-point-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 24px clamp(32px, 5vw, 96px); align-items: end; }
 .zp-point-copy { display: flex; flex-direction: column; gap: 20px; }
 .zp-chip { display: inline-flex; align-self: flex-start; gap: 6px; margin: 0; padding: 10px 14px; border-radius: 999px; background: var(--card); font-size: 13px; color: var(--faint); }
-.zp-chip span { animation: zp-lang 4.5s steps(1) 2; }
-.zp-chip span:nth-child(2) { animation-delay: 1.5s; }
-.zp-chip span:nth-child(3) { animation-delay: 3s; }
-@keyframes zp-lang { 0% { color: var(--ink); } 33.3% { color: var(--faint); } }
 .zp-strong { color: var(--ink) !important; font-weight: 600; }
 .zp-point .zp-acts { margin-top: 8px; }
 .zp-note { padding: 32px; border-radius: 28px; background: var(--card); }
@@ -126,13 +122,13 @@
 .zp-get-tag { margin: 10px 0 0; font-size: 18px; color: var(--soft); }
 .zp-get-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .zp-get-meta .w2-cta, .zp-get-meta .w2-ghost { height: 48px; font-size: 15px; padding: 0 20px; }
-.zp-chip2 { display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 14px; border-radius: 999px; background: #fff; color: var(--ink); font: 500 14px/1 var(--mono); text-decoration: none; }
+.zp-chip2 { display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 14px; border-radius: 999px; background: var(--x-raised); color: var(--ink); font: 500 14px/1 var(--mono); text-decoration: none; }
 .zp-chip2 span { color: var(--faint); }
 .zp-addr { display: inline-flex; align-items: center; gap: 4px; margin: 18px 0 0; font-size: 15px; color: var(--soft); }
-.zp-addr i { width: 8px; height: 1.1em; background: #0a0a0a; animation: zp-blink 1.1s steps(1) 4; }
+.zp-addr i { width: 8px; height: 1.1em; background: var(--ink); animation: zp-blink 1.1s steps(1) 4; }
 @keyframes zp-blink { 50% { opacity: 0; } }
 
-@media (prefers-reduced-motion: reduce) { .zp-chip span, .zp-addr i, .zp-procs i { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .zp-addr i, .zp-procs i { animation: none; } }
 
 @media (max-width: 900px) {
   .zp-hero { padding-top: 104px; }
@@ -157,7 +153,7 @@
   .zp-pick button { min-height: 44px; }
   .zp-lane-k, .zp-pick > span, .zp-term-bar > span, .zp-topo-n, .zp-chip { font-size: 14px; }
 }
-@media (max-width: 900px) { .zp-kick, .zp-points span { font-size: 14px; } }
+@media (max-width: 900px) { .zp-kick, .zp-points button > span { font-size: 14px; } }
 
 /* v2.3: rhythm, quiet links, object bars hold the pauses, a drawn gateway, a drawn slider */
 .zp-lede { font-size: 21px !important; font-weight: 500; line-height: 1.35; letter-spacing: -.01em; max-width: 22ch; color: #fafafa; }
@@ -168,14 +164,14 @@
 .zp-tlink:active { transform: scale(.98); }
 .zp-pause { display: grid; place-items: center; width: 44px; height: 44px; margin-left: auto; }
 .zp-pause .w2-pause { background: #171717; color: #fafafa; box-shadow: none; }
-.zp-fleet .zp-pause .w2-pause { background: #f2f2f2; color: #0a0a0a; }
+.zp-fleet .zp-pause .w2-pause { background: light-dark(#f2f2f2, var(--muted)); color: var(--ink); }
 .zp-term-bar { display: flex; align-items: center; gap: 8px; }
 .zp-term-bar .zp-pause { margin-left: 4px; }
 /* packets: the sixteen-byte header is the tile's object; hover fills the rest */
 .zp-hdr { width: 100%; gap: 4px; }
-.zp-hdr i { height: 28px; border-radius: 4px; background: #ededed; transition: background .3s cubic-bezier(.4, 0, .2, 1); }
-.zp-hdr i.f { background: #0a0a0a; }
-.zp-packets .w2-oc-k { color: #0a0a0a; }
+.zp-hdr i { height: 28px; border-radius: 4px; background: light-dark(#ededed, var(--muted)); transition: background .3s cubic-bezier(.4, 0, .2, 1); }
+.zp-hdr i.f { background: var(--ink); }
+.zp-packets .w2-oc-k { color: var(--ink); }
 /* the gateway, drawn */
 .zp-dia { display: grid; gap: 0; margin: 0; padding: clamp(20px, 2.4vw, 32px); border-radius: 24px; background: #0a0a0a; color: #fafafa; min-width: 0; }
 .zp-dia-swarm { padding: 14px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, .2); }
@@ -196,18 +192,18 @@
 /* the slider, drawn */
 .zp-fleet-k { grid-template-columns: 1fr auto auto; }
 .zp-slide { grid-column: 1 / -1; position: relative; height: 44px; cursor: pointer; touch-action: none; }
-.zp-slide-t { position: absolute; left: 0; right: 0; top: 50%; height: 6px; margin-top: -3px; border-radius: 3px; background: #e4e4e4; overflow: hidden; }
-.zp-slide-t em { position: absolute; inset: 0; background: #0a0a0a; transform-origin: 0 50%; transform: scaleX(var(--v)); }
-.zp-slide-k { position: absolute; top: 50%; left: calc(var(--v) * (100% - 28px)); width: 28px; height: 28px; margin-top: -14px; border-radius: 50%; background: #0a0a0a; box-shadow: 0 0 0 4px #fff; transition: transform .15s cubic-bezier(0, 0, .2, 1); }
+.zp-slide-t { position: absolute; left: 0; right: 0; top: 50%; height: 6px; margin-top: -3px; border-radius: 3px; background: light-dark(#e4e4e4, var(--secondary)); overflow: hidden; }
+.zp-slide-t em { position: absolute; inset: 0; background: var(--ink); transform-origin: 0 50%; transform: scaleX(var(--v)); }
+.zp-slide-k { position: absolute; top: 50%; left: calc(var(--v) * (100% - 28px)); width: 28px; height: 28px; margin-top: -14px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 4px var(--bg); transition: transform .15s cubic-bezier(0, 0, .2, 1); }
 .zp-slide:active .zp-slide-k { transform: scale(.92); }
-.zp-slide:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 4px; border-radius: 8px; }
+.zp-slide:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; border-radius: 8px; }
 .zp-chip2 { height: 44px; transition: background .15s cubic-bezier(0, 0, .2, 1), color .15s, transform .09s; }
 a.zp-chip2:active { transform: scale(.98); }
 @media (hover: hover) {
   .zp-tlink:hover { text-decoration-color: currentColor; }
-  .zp-packets .w2-oc-card:hover .zp-hdr i { background: #0a0a0a; }
+  .zp-packets .w2-oc-card:hover .zp-hdr i { background: var(--ink); }
   .zp-slide:hover .zp-slide-k { transform: scale(1.12); }
-  a.zp-chip2:hover { background: #0a0a0a; color: #fff; }
+  a.zp-chip2:hover { background: var(--ink); color: var(--x-on-ink); }
 }
 @media (max-width: 899px) {
   .zp-stats b, .zp-fleet-k b { font-size: 44px; }
@@ -223,7 +219,7 @@ a.zp-chip2:active { transform: scale(.98); }
 
 /* v2.4: the middle is a story. Tighter rhythm, a pinned packet wire, wires that draw, one black band to close */
 .zp-hero { padding-bottom: clamp(64px, 6vw, 96px); }
-.zp-why { position: relative; padding: clamp(88px, 9vw, 136px) 0; }
+.zp-why { position: relative; padding: clamp(88px, 9vw, 136px) 0 clamp(48px, 5vw, 72px); }
 .zp-why.pinned { padding: 0; }
 .zp-why.pinned .zp-why-stick { position: sticky; top: 0; height: 100svh; display: flex; flex-direction: column; justify-content: center; padding-top: 56px; overflow: hidden; }
 .zp-packets .zp-hdr { width: calc(100% - 52px); }
@@ -233,18 +229,19 @@ a.zp-chip2:active { transform: scale(.98); }
 .zp-why.pinned .zp-why-track { overflow: visible; }
 .zp-packets.w2-oc { display: flex; gap: 16px; width: max-content; }
 .zp-packets.w2-oc > li { flex: 0 0 auto; width: clamp(300px, 26vw, 380px); transition: transform .4s cubic-bezier(.4, 0, .2, 1); }
-.zp-packets .w2-oc-card { min-height: 300px; background: #f5f5f5; transition: background .3s cubic-bezier(0, 0, .2, 1); }
+.zp-packets .w2-oc-card { min-height: 300px; background: light-dark(#f5f5f5, var(--muted)); transition: background .3s cubic-bezier(0, 0, .2, 1); }
 .zp-packets > li:not(.on) { transform: translateY(12px); }
-.zp-packets > li.on .w2-oc-card { background: #ededed; }
-.zp-packets > li.on .zp-hdr i { background: #0a0a0a; transition-delay: calc(var(--b) * 30ms); }
-.zp-why-at { display: flex; align-items: center; gap: 6px; margin: clamp(24px, 2.6vw, 40px) 0 0; font-size: 13px; color: #737373; font-variant-numeric: tabular-nums; }
-.zp-why-at b { font-weight: 500; color: #0a0a0a; }
-.zp-why-at i { position: relative; flex: 0 0 160px; height: 1px; margin-left: 14px; background: #e4e4e4; overflow: hidden; }
-.zp-why-at i::after { content: ''; position: absolute; inset: 0; background: #0a0a0a; transform-origin: 0 50%; transform: scaleX(var(--p)); transition: transform .3s cubic-bezier(.4, 0, .2, 1); }
-.zp-ps { user-select: none; color: #737373; }
+.zp-packets > li.on .w2-oc-card { background: light-dark(#ededed, var(--muted)); }
+.zp-packets > li.on .zp-hdr i { background: var(--ink); transition-delay: calc(var(--b) * 30ms); }
+.zp-why-at { display: flex; align-items: center; gap: 6px; margin: clamp(24px, 2.6vw, 40px) 0 0; font-size: 13px; color: light-dark(#737373, var(--muted-foreground)); font-variant-numeric: tabular-nums; }
+.zp-why-at b { font-weight: 500; color: var(--ink); }
+.zp-why-at i { position: relative; flex: 0 0 160px; height: 1px; margin-left: 14px; background: light-dark(#e4e4e4, var(--secondary)); overflow: hidden; }
+.zp-why-at i::after { content: ''; position: absolute; inset: 0; background: var(--ink); transform-origin: 0 50%; transform: scaleX(var(--p)); transition: transform .3s cubic-bezier(.4, 0, .2, 1); }
+.zp-term pre > span.cmd { display: inline-block; }
+.zp-term pre > span.cmd::first-letter { color: #737373; } /* the $ prompt; the line stays one run of text, as Hanzo writes it */
 .zp-term pre span.last::after { content: ''; display: inline-block; width: .55em; height: 1.05em; margin-left: 2px; vertical-align: -.15em; background: #fafafa; animation: zp-blink 1.1s steps(1) infinite; }
 .zp-term pre span span { opacity: 1; }
-.zp-fig { margin: 0; font-size: 64px; font-weight: 300; line-height: .9; letter-spacing: -.03em; color: #0a0a0a; }
+.zp-fig { margin: 0; font-size: 64px; font-weight: 300; line-height: .9; letter-spacing: -.03em; color: var(--ink); }
 .zp-stats { margin-bottom: clamp(40px, 4vw, 64px); }
 /* the band */
 .zp-band { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: 40px clamp(32px, 5vw, 96px); margin-top: clamp(72px, 8vw, 116px); padding: clamp(32px, 4vw, 64px); border-radius: 24px; background: #000; color: #fafafa; }
@@ -255,7 +252,7 @@ a.zp-chip2:active { transform: scale(.98); }
 .zp-band .zp-addr { margin: 20px 0 20px; font-size: 16px; color: #fafafa; }
 .zp-addr span { display: inline-block; overflow: hidden; white-space: nowrap; }
 .zp-band.seen .zp-addr span { animation: zp-type 1.4s steps(20) both; }
-.zp-addr i { background: #fafafa; animation: none; }
+.zp-addr i { background: var(--x-sunk); animation: none; }
 .zp-band.live .zp-addr i { animation: zp-blink 1.1s steps(1) infinite; }
 @keyframes zp-type { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
 .zp-band .zp-get-meta { margin-bottom: 20px; }
@@ -278,7 +275,7 @@ a.zp-chip2:active { transform: scale(.98); }
 .zp-points.run li.on::before { transition: none; animation: zp-turn 3.6s linear both; }
 @keyframes zp-turn { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 .zp-hdr { position: relative; }
-.zp-packets > li.on .zp-hdr::after { content: ''; position: absolute; left: 0; bottom: -8px; width: calc(100% / 16); height: 2px; border-radius: 1px; background: #0a0a0a; animation: zp-read 2.4s cubic-bezier(.4, 0, .2, 1) .6s infinite; }
+.zp-packets > li.on .zp-hdr::after { content: ''; position: absolute; left: 0; bottom: -8px; width: calc(100% / 16); height: 2px; border-radius: 1px; background: var(--ink); animation: zp-read 2.4s cubic-bezier(.4, 0, .2, 1) .6s infinite; }
 @keyframes zp-read { 0% { transform: translateX(0); } 70%, 100% { transform: translateX(1500%); } }
 /* N:1 / 1:M / 0 are the section's figures: their cut-in lines keep the figure size (a shared span rule shrank them) */
 .zp-stats .zp-fig .lx-line, .zp-stats .zp-fig .lx-line > span { font-size: inherit; line-height: inherit; }
@@ -324,7 +321,7 @@ html:not(.js) .zp-dia-l { clip-path: none; }
 .zp-slide[data-press] .zp-slide-k, .zp-slide[data-press]:hover .zp-slide-k { transform: scale(.92); transition-duration: 90ms; }
 .zp-hero .w2-cta { background: #fafafa; }
 /* the zero is a fact, not a hero figure (MASTER part 5): it sits at medium beside the two figures */
-.zp-stats li.zero .zp-fig { font-size: 32px; line-height: 2; font-weight: 400; }
+.zp-stats li.zero .zp-fig { color: #525252; }
 /* the one scale moment: N:1 and 1:M arrive at hero size, hold a beat, then settle to figure size */
 .zp-stats li { padding-top: 64px; } /* room above the figures for the moment they are big, so nothing overlaps */
 .zp-stats li:not(.zero) .zp-fig { transform-origin: 0 100%; }
@@ -347,7 +344,7 @@ html:not(.js) .zp-dia-l { clip-path: none; }
 /* one solid per screen: on phones the shared header keeps its solid "Try Hanzo", so the page's own asks are outlined
    there (and on desktop with JS off, where the header cannot step aside) */
 @media (max-width: 899px) {
-  .zp .w2-cta { background: transparent; color: #0a0a0a; box-shadow: inset 0 0 0 1px rgba(10, 10, 10, .9); }
+  .zp .w2-cta { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px light-dark(rgba(10, 10, 10, .9), var(--foreground)); }
   .zp-hero .w2-cta { color: #fafafa; box-shadow: inset 0 0 0 1px rgba(250, 250, 250, .8); }
   .zp-word span { font-size: 14px; }
   .zp-lane-k, .zp-pick > span, .zp-term-bar > span, .zp-dia-row.srv b, .zp-term-bar .x-copy { font-size: 14px; }
@@ -356,7 +353,7 @@ html:not(.js) .zp-dia-l { clip-path: none; }
   .zp-why-at { font-size: 14px; }
   .zp-dia-row em { font-size: 14px; }
 }
-html:not(.js) .zp .w2-cta { background: transparent; color: #0a0a0a; box-shadow: inset 0 0 0 1px rgba(10, 10, 10, .9); }
+html:not(.js) .zp .w2-cta { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px light-dark(rgba(10, 10, 10, .9), var(--foreground)); }
 html:not(.js) .zp-hero .w2-cta { color: #fafafa; box-shadow: inset 0 0 0 1px rgba(250, 250, 250, .8); }
 
 /* ===== motion map (7 Nov): calculator signature + five entrances, no pinned stage ===== */
@@ -364,17 +361,17 @@ html:not(.js) .zp-hero .w2-cta { color: #fafafa; box-shadow: inset 0 0 0 1px rgb
 
 /* the calculator: server keys beside the agents slider; the diagram and the figures follow */
 .zp-srv { display: flex; flex-wrap: wrap; gap: 8px; }
-.zp-srv button { min-height: 44px; padding: 0 16px; border: 1px solid rgba(10, 10, 10, .2); border-radius: 999px; background: transparent; color: #737373; font-size: 14px; cursor: pointer; transition: background-color .15s cubic-bezier(0, 0, .2, 1), color .15s cubic-bezier(0, 0, .2, 1), border-color .15s cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
-.zp-srv button[aria-pressed='true'] { background: #0a0a0a; border-color: #0a0a0a; color: #fafafa; }
-@media (hover: hover) { .zp-srv button:hover { border-color: #0a0a0a; color: #0a0a0a; } .zp-srv button[aria-pressed='true']:hover { background: #262626; color: #fafafa; } }
+.zp-srv button { min-height: 44px; padding: 0 16px; border: 1px solid light-dark(rgba(10, 10, 10, .2), var(--border-focus)); border-radius: 999px; background: transparent; color: light-dark(#737373, var(--muted-foreground)); font-size: 14px; cursor: pointer; transition: background-color .15s cubic-bezier(0, 0, .2, 1), color .15s cubic-bezier(0, 0, .2, 1), border-color .15s cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
+.zp-srv button[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: light-dark(#fafafa, var(--primary-foreground)); }
+@media (hover: hover) { .zp-srv button:hover { border-color: var(--ink); color: var(--ink); } .zp-srv button[aria-pressed='true']:hover { background: light-dark(#262626, var(--primary-hover)); color: light-dark(#fafafa, var(--primary-foreground)); } }
 .zp-srv button:active { transform: scale(.97); }
-.zp-srv button:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 2px; }
+.zp-srv button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .zp-dia-n { display: inline-block; margin-left: 10px; padding: 2px 8px; border-radius: 6px; background: #fafafa; color: #0a0a0a; font-weight: 500; animation: zp-tick .3s cubic-bezier(.16, 1, .3, 1); }
 .zp-dia-row span { transition: background-color .3s cubic-bezier(0, 0, .2, 1), color .3s cubic-bezier(0, 0, .2, 1), opacity .3s cubic-bezier(0, 0, .2, 1); }
 .zp-dia-swarm .zp-dia-row span:not([data-on]) { color: #737373; }
 .zp-dia-swarm .zp-dia-row span[data-on] { background: #262626; }
 .zp-dia-row.srv span[data-off] { opacity: .35; }
-.zp-now { display: block; margin-top: 6px; font-style: normal; font-size: 14px; color: #0a0a0a; font-variant-numeric: tabular-nums; animation: zp-tick .3s cubic-bezier(.16, 1, .3, 1); }
+.zp-now { display: block; margin-top: 6px; font-style: normal; font-size: 14px; color: var(--ink); font-variant-numeric: tabular-nums; animation: zp-tick .3s cubic-bezier(.16, 1, .3, 1); }
 @keyframes zp-tick { from { opacity: 0; transform: translateY(-6px); } }
 
 /* Why bother, no longer pinned: a plain grid of the eight packets on wide screens (the phone keeps its swipe rail) */
@@ -392,8 +389,8 @@ html:not(.js) .zp-hero .w2-cta { color: #fafafa; box-shadow: inset 0 0 0 1px rgb
 /* 2 · page-curl (the terminal room): the white page above curls off from the bottom-left corner */
 .zp-e-curl { position: relative; }
 .zp-curl-page, .zp-curl-fold { display: none; position: absolute; inset: calc(-1 * clamp(56px, 6vw, 96px)) 0; pointer-events: none; z-index: 2; }
-.zp-curl-page { background: #fff; }
-.zp-curl-fold { background: linear-gradient(135deg, #e4e4e7, #fafafa 60%, #e9e9e9); }
+.zp-curl-page { background: var(--x-raised); }
+.zp-curl-fold { background: linear-gradient(135deg, light-dark(#e4e4e7, var(--secondary)), light-dark(#fafafa, var(--muted)) 60%, light-dark(#e9e9e9, var(--secondary))); }
 .zp-e-curl:is([data-e='armed'], [data-e='play']) :is(.zp-curl-page, .zp-curl-fold) { display: block; }
 .zp-e-curl[data-e='armed'] .zp-curl-page { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 100%); }
 .zp-e-curl[data-e='armed'] .zp-curl-fold { clip-path: polygon(0 100%, 0 100%, 0 100%); }
@@ -413,7 +410,7 @@ html:not(.js) .zp-hero .w2-cta { color: #fafafa; box-shadow: inset 0 0 0 1px rgb
 /* 3 · cursor-trail (why bother): the packets come in as the trail passes; the trail follows a fine pointer */
 .zp-e-trail { position: relative; }
 .zp-trail { position: absolute; inset: 0; pointer-events: none; z-index: 3; }
-.zp-trail i { position: absolute; left: -7px; top: -7px; width: 14px; height: 14px; border-radius: 50%; background: #0a0a0a; opacity: 0; will-change: transform; }
+.zp-trail i { position: absolute; left: -7px; top: -7px; width: 14px; height: 14px; border-radius: 50%; background: var(--ink); opacity: 0; will-change: transform; }
 .zp-e-trail[data-e='armed'] .zp-packets > li { opacity: 0; translate: 0 18px; }
 .zp-e-trail[data-e='play'] .zp-packets > li { animation: zp-trail-in .55s cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(var(--i, 0) * 110ms + 120ms); }
 @keyframes zp-trail-in { from { opacity: 0; translate: 0 18px; } }
@@ -445,3 +442,28 @@ html:not(.js) .zp-hero .w2-cta { color: #fafafa; box-shadow: inset 0 0 0 1px rgb
   :is(.zp-curl-page, .zp-curl-fold, .zp-trail) { display: none !important; }
   .zp-dia-n, .zp-now { animation: none; }
 }
+/* phone: the terminal wraps at spaces only (whole tokens, never mid-word), each wrapped line hangs under its prompt;
+   every line is already in the HTML (dim until typed), so the height never changes as it types */
+@media (max-width: 899px) {
+  .zp-term pre { white-space: pre-wrap; word-break: normal; overflow-wrap: normal; overflow-x: visible; height: auto; line-height: 1.6; }
+  .zp-term pre > span { display: block; padding-left: 2ch; text-indent: -2ch; }
+  .zp-term pre > span.zp-nl { display: none; }
+}
+
+/* dark mode (live hanzo.ai in dark): the black objects keep their black and take live's hairline; the shared .w2 greys
+   are light-only, so the page takes Hanzo's dark text tokens */
+html:not(.light) .zp { --soft: var(--muted-foreground); --faint: var(--text-tertiary); }
+html:not(.light) .zp-ascii, html:not(.light) .zp-dia { box-shadow: inset 0 0 0 1px var(--border); }
+/* the point section's primary becomes live's light pill in dark (the shared .w2-cta is black in both modes) */
+@media (min-width: 900px) { html.js:not(.light) .zp-point .w2-cta { background: var(--ink); color: var(--x-on-ink); } }
+@media (hover: hover) and (min-width: 900px) { html.js:not(.light) .zp-point .w2-cta:hover { background: var(--primary-hover); } }
+/* dark only: Hanzo's hero texture as live hanzo.ai draws it in dark (7px dot field densest at the edges and bottom, plus the top glow) */
+html:not(.light) .zp-hero { position: relative; isolation: isolate; }
+html:not(.light) .zp-hero::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(circle, color-mix(in srgb, var(--foreground) 36%, transparent) 1.5px, transparent 2.1px) 0 0 / 7px 7px;
+  -webkit-mask-image: linear-gradient(90deg, #000, rgba(0,0,0,.15) 32%, rgba(0,0,0,.15) 64%, #000), linear-gradient(180deg, rgba(0,0,0,.25), #000 85%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, #000, rgba(0,0,0,.15) 32%, rgba(0,0,0,.15) 64%, #000), linear-gradient(180deg, rgba(0,0,0,.25), #000 85%);
+  mask-composite: intersect; }
+html:not(.light) .zp-hero::after { content: ''; position: absolute; inset: 0 0 auto; height: 640px; z-index: -1; pointer-events: none;
+  background: radial-gradient(60% 70% at 50% 0%, color-mix(in srgb, var(--foreground) 9%, transparent), transparent 70%); }

@@ -1,4 +1,6 @@
 # /templates: James-eye review
+Ready: 9 Nov, live copycheck missing 0 of 75 after Hanzo's update. The list is live's 29 templates in live's order (17 new, among them Instrument, Fernline, Warp Tunnel and Emptykit) with its 11 kinds (new: 3D & Shaders, AI/SaaS, App, Component Library), every preview Hanzo shows. On wide screens the sideways shelf now runs as two rows (10 previews on screen, page 8,027px instead of 17,091px), past twelve the dot row gives way to the 01 / 29 count and arrows, and the arrows sit right so a long kind and name never meet them. taste, parity (96/96, 45/45) and unique OK; 0 console errors, no overlap at 1470 and 375.
+
 
 Verdict: 7/10
 First complaint: "That's the same layout as Gallery: big title on the left, button on the right, a grey box with a pause button. Then I scroll and get the same twelve sites again as a wall. And the windows at the back of the deck all print their 'Edit in Hanzo' buttons on top of each other on the right."

@@ -2,43 +2,43 @@
 
 /* Stage object: the collector, running */
 .tl2 .l2-stage-obj > * { width: min(100%, 1200px); }
-.tl2-pipe { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 5fr) minmax(0, 4fr); gap: 10px; padding: 10px; min-height: 420px; background: #f5f5f5; }
-.tl2-col { position: relative; display: flex; flex-direction: column; padding: 24px; border-radius: 20px; background: #fff; border: 1px solid var(--hair); }
+.tl2-pipe { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 5fr) minmax(0, 4fr); gap: 10px; padding: 10px; min-height: 420px; background: light-dark(#f5f5f5, var(--surface-2)); }
+.tl2-col { position: relative; display: flex; flex-direction: column; padding: 24px; border-radius: 20px; background: var(--x-raised); border: 1px solid var(--hair); }
 .tl2-col.core { background: #0a0a0a; color: #f5f5f5; border-color: #0a0a0a; }
-.tl2-k { margin: 0 0 18px; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #525252; }
+.tl2-k { margin: 0 0 18px; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: light-dark(#525252, var(--muted-foreground)); }
 .tl2-col.core .tl2-k { color: #a3a3a3; }
 .tl2-pipe .l2-pause { top: 22px; right: 22px; }
-.tl2-lane { position: relative; flex: 1; display: grid; place-items: center; min-height: 140px; background: repeating-linear-gradient(90deg, transparent 0 14px, rgba(0, 0, 0, .06) 14px 16px) center / 100% 2px no-repeat; }
+.tl2-lane { position: relative; flex: 1; display: grid; place-items: center; min-height: 140px; background: repeating-linear-gradient(90deg, transparent 0 14px, light-dark(rgba(0, 0, 0, .06), var(--glass)) 14px 16px) center / 100% 2px no-repeat; }
 .tl2-span { padding: 12px 16px; border-radius: 12px; font: 600 15px/1 var(--mono); }
-.tl2-span.trace { background: var(--ink); color: #fff; }
-.tl2-span.metric { background: #fff; color: var(--ink); border: 1.5px solid var(--ink); }
-.tl2-span.log { background: #e4e4e7; color: var(--ink); }
+.tl2-span.trace { background: var(--ink); color: var(--x-on-ink); }
+.tl2-span.metric { background: var(--x-raised); color: var(--ink); border: 1.5px solid var(--ink); }
+.tl2-span.log { background: light-dark(#e4e4e7, var(--secondary)); color: var(--ink); }
 .tl2-refuse { padding: 12px 16px; border-radius: 12px; border: 1.5px dashed var(--ink); color: var(--ink); font-size: 16px; font-weight: 606; }
 .tl2-sig { list-style: none; margin: 0; padding: 0; display: flex; gap: 6px; }
-.tl2-sig li { padding: 7px 10px; border-radius: 8px; font-size: 13px; background: #f5f5f5; color: #404040; }
-.tl2-sig li.trace { background: var(--ink); color: #fff; }
+.tl2-sig li { padding: 7px 10px; border-radius: 8px; font-size: 13px; background: light-dark(#f5f5f5, var(--surface-2)); color: light-dark(#404040, var(--text-secondary)); }
+.tl2-sig li.trace { background: var(--ink); color: var(--x-on-ink); }
 .tl2-batch { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.tl2-batch i { aspect-ratio: 1.7; border-radius: 10px; background: #262626; transition: background .25s; }
+.tl2-batch i { aspect-ratio: 1.7; border-radius: 8px; background: #262626; transition: background .25s; }
 .tl2-batch i.on { background: #f5f5f5; }
 .tl2-sub { margin: 12px 0 0; font-size: 13px; color: #a3a3a3; }
 .tl2-mem { margin-top: auto; padding-top: 22px; height: 64px; box-sizing: content-box; }
 .tl2-mem p { display: flex; justify-content: space-between; margin: 0 0 10px; font-size: 13px; color: #a3a3a3; }
 .tl2-mem p .c { color: #f5f5f5; }
-.tl2-mem i { position: relative; display: block; height: 14px; border-radius: 14px; background: #262626; }
-.tl2-mem b { position: absolute; inset: 0; border-radius: 14px; background: #f5f5f5; transform-origin: 0 50%; transition: transform .4s var(--ease), background .3s; }
+.tl2-mem i { position: relative; display: block; height: 14px; border-radius: 12px; background: #262626; }
+.tl2-mem b { position: absolute; inset: 0; border-radius: 12px; background: #f5f5f5; transform-origin: 0 50%; transition: transform .4s var(--ease), background .3s; }
 .tl2-mem b.hot { background: repeating-linear-gradient(135deg, #f5f5f5 0 6px, #737373 6px 12px); }
 .tl2-mem em { position: absolute; left: 92%; top: -7px; bottom: -7px; width: 2px; background: #f5f5f5; }
 .tl2-out { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; height: 304px; overflow: hidden; }
-.tl2-out li { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; border-radius: 14px; background: #f5f5f5; }
-.tl2-out li:first-child { background: #e4e4e7; }
+.tl2-out li { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; border-radius: 12px; background: light-dark(#f5f5f5, var(--surface-2)); }
+.tl2-out li:first-child { background: light-dark(#e4e4e7, var(--secondary)); }
 .tl2-out b { font-size: 17px; font-weight: 606; }
-.tl2-out span { font-size: 13px; color: #404040; }
+.tl2-out span { font-size: 13px; color: light-dark(#404040, var(--text-secondary)); }
 
 /* chapters: the config file (the one dark room) */
 .tl2-key { margin: 16px 0 0; font-size: 14px; color: var(--muted); }
 .tl2-ed { display: flex; flex-direction: column; gap: 14px; }
 .tl2-strip { display: flex; flex-wrap: wrap; gap: 6px; }
-.tl2-strip span { display: inline-flex; align-items: center; gap: 6px; padding: 9px 12px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .16); font-size: 13px; color: #a3a3a3; transition: background .4s var(--ease), color .4s, border-color .4s; }
+.tl2-strip span { display: inline-flex; align-items: center; gap: 6px; padding: 9px 12px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, .16); font-size: 13px; color: #a3a3a3; transition: background .4s var(--ease), color .4s, border-color .4s; }
 .tl2-strip span.on { background: #f5f5f5; border-color: #f5f5f5; color: #000; }
 .tl2-strip i { display: none; }
 .tl2-win { border-radius: 24px; background: #0f0f0f; border: 1px solid rgba(255, 255, 255, .12); overflow: hidden; }
@@ -49,24 +49,24 @@
 .tl2-ln { display: block; padding: 0 24px; white-space: pre; transition: color .35s, background .35s; }
 .tl2-ln em { display: inline-block; width: 34px; font-style: normal; color: #737373; }
 .tl2-ln b { font-weight: 400; color: #a3a3a3; }
-.tl2-ln.on { background: rgba(255, 255, 255, .08); color: #f5f5f5; box-shadow: inset 3px 0 0 #f5f5f5; }
+.tl2-ln.on { background: rgba(255, 255, 255, .08); color: #f5f5f5;  }
 .tl2-ln.on b { color: #fff; font-weight: 606; }
 
 /* Beyond: your config */
-.tl2-yc { padding: 26px; border-radius: 24px; background: #f5f5f5; color: var(--ink); }
-.tl2-yc .l2-kick { color: #404040; }
+.tl2-yc { padding: 26px; border-radius: 24px; background: light-dark(#f5f5f5, var(--surface-2)); color: var(--ink); }
+.tl2-yc .l2-kick { color: light-dark(#404040, var(--text-secondary)); }
 .tl2-g { margin-top: 18px; }
-.tl2-g p { margin: 0 0 8px; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #525252; }
+.tl2-g p { margin: 0 0 8px; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: light-dark(#525252, var(--muted-foreground)); }
 .tl2-g div { display: flex; flex-wrap: wrap; gap: 6px; }
-.tl2-g button { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--hair); background: #fff; color: #404040; font: 500 15px/1 var(--sans); cursor: pointer; transition: background .2s, color .2s, border-color .2s, transform .3s var(--ease); }
+.tl2-g button { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--hair); background: var(--x-raised); color: light-dark(#404040, var(--text-secondary)); font: 500 15px/1 var(--sans); cursor: pointer; transition: background .2s, color .2s, border-color .2s, transform .3s var(--ease); }
 @media (hover: hover) { .tl2-g button:hover { border-color: var(--ink); } }
 .tl2-g button:active { transform: scale(.98); }
 .tl2-g button { display: inline-flex; align-items: center; gap: 8px; }
-.tl2-g button i { display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid rgba(0, 0, 0, .25); font-size: 11px; font-style: normal; line-height: 1; }
-.tl2-g button[aria-pressed='false'] { border-color: rgba(0, 0, 0, .18); }
+.tl2-g button i { display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid light-dark(rgba(0, 0, 0, .25), var(--border-selected)); font-size: 11px; font-style: normal; line-height: 1; }
+.tl2-g button[aria-pressed='false'] { border-color: light-dark(rgba(0, 0, 0, .18), var(--border-focus)); }
 .tl2-g button[aria-pressed='true'] { border-color: var(--ink); color: var(--ink); }
-.tl2-g button[aria-pressed='true'] i { background: var(--ink); border-color: var(--ink); color: #fff; }
-.tl2-yc-out { margin-top: 22px; border-radius: 18px; background: #0a0a0a; color: #f5f5f5; overflow: hidden; }
+.tl2-g button[aria-pressed='true'] i { background: var(--ink); border-color: var(--ink); color: var(--x-on-ink); }
+.tl2-yc-out { margin-top: 22px; border-radius: 16px; background: #0a0a0a; color: #f5f5f5; overflow: hidden; }
 .tl2-yc-bar { display: flex; align-items: center; justify-content: space-between; padding: 8px 8px 8px 18px; border-bottom: 1px solid rgba(255, 255, 255, .08); font-size: 13px; color: #a3a3a3; }
 .tl2-yc-bar .x-copy { min-height: 44px; padding: 0 16px; background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .16); color: #f5f5f5; }
 .tl2-yc-out pre { margin: 0; padding: 16px 18px; max-height: 260px; overflow: auto; font: 400 14px/1.6 var(--mono); color: #d4d4d4; }
@@ -96,11 +96,11 @@
 .tl2-ed:not(.cp) .tl2-code { min-height: calc(20 * 1.6em + 32px); box-sizing: border-box; }
 /* hero: the signal under the pointer is the one coming in */
 .tl2-sig li { transition: background .12s var(--ease), color .12s var(--ease); }
-.tl2-sig li.on { background: var(--ink); color: #fff; }
-.tl2-sig li.trace:not(.on) { background: #f5f5f5; color: #404040; }
+.tl2-sig li.on { background: var(--ink); color: var(--x-on-ink); }
+.tl2-sig li.trace:not(.on) { background: light-dark(#f5f5f5, var(--surface-2)); color: light-dark(#404040, var(--text-secondary)); }
 /* Your config: a hover that shows on an "on" toggle too */
 @media (hover: hover) {
-  .tl2-g button:hover { background: #f5f5f5; }
+  .tl2-g button:hover { background: light-dark(#f5f5f5, var(--surface-2)); }
   .tl2-g button:hover i { transform: translateX(2px); }
 }
 .tl2-g button i { transition: transform .15s var(--ease), background .15s, border-color .15s; }
@@ -112,16 +112,16 @@
 .tl2-kr { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; }
 .tl2-kr .tl2-key { margin: 0; }
 .tl2 .tl2-kr .l2-pause.tl2-kp { position: static; flex: none; }
-@media (hover: hover) { .tl2 .tl2-yc-bar .x-copy:hover { background: rgba(255, 255, 255, .16); border-color: rgba(255, 255, 255, .3); } .tl2-g button:hover { border-color: var(--ink); background: #ededed; } }
+@media (hover: hover) { .tl2 .tl2-yc-bar .x-copy:hover { background: rgba(255, 255, 255, .16); border-color: rgba(255, 255, 255, .3); } .tl2-g button:hover { border-color: var(--ink); background: light-dark(#ededed, var(--secondary)); } }
 @media (max-width: 900px) { .tl2-out { height: 152px; } }
 
 /* the close: the collector at rest beside "Your config", redrawn by the toggles; the closing line rides beside it */
 .tl2-rest { display: grid; grid-template-columns: 1fr 14px 1fr 14px 1fr; align-items: center; gap: 6px; margin: 4px 0 20px; font-size: 12px; }
-.tl2-rest-c { display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 12px; background: #fff; min-height: 112px; }
-.tl2-rest-c.core { background: var(--ink); color: #fafafa; }
-.tl2-rest-k { color: #525252; margin-bottom: 2px; }
+.tl2-rest-c { display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 12px; background: var(--x-raised); min-height: 112px; }
+.tl2-rest-c.core { background: var(--ink); color: light-dark(#fafafa, var(--primary-foreground)); }
+.tl2-rest-k { color: light-dark(#525252, var(--muted-foreground)); margin-bottom: 2px; }
 .tl2-rest-c.core .tl2-rest-k { color: #a3a3a3; }
-.tl2-rest-p { padding: 3px 6px; border-radius: 6px; background: #ededed; color: var(--ink); transition: opacity .3s var(--ease), transform .3s var(--ease); }
+.tl2-rest-p { padding: 3px 6px; border-radius: 6px; background: light-dark(#ededed, var(--secondary)); color: var(--ink); transition: opacity .3s var(--ease), transform .3s var(--ease); }
 .tl2-rest-c.core .tl2-rest-p { background: #262626; color: #fafafa; }
 .tl2-rest-p[data-off] { opacity: .3; transform: translateX(-4px); text-decoration: line-through; }
 .tl2-rest-a { height: 1px; background: #a3a3a3; }
@@ -135,8 +135,8 @@
 /* the hero lane: the incoming and outgoing span share one cell on the dotted line, so nothing hops to a second row */
 .tl2-lane > * { grid-area: 1 / 1; }
 /* the chapter strip sits on white: unlit stages in body grey (#525252, 7.8:1) with a hairline; the lit stage is ink */
-.tl2-strip span { color: #525252; border-color: rgba(0, 0, 0, .12); }
-.tl2-strip span.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+.tl2-strip span { color: light-dark(#525252, var(--muted-foreground)); border-color: light-dark(rgba(0, 0, 0, .12), var(--border)); }
+.tl2-strip span.on { background: var(--ink); border-color: var(--ink); color: var(--x-on-ink); }
 /* the code window: unlit lines, line numbers and placeholders at #a3a3a3 on #0f0f0f (8.1:1) */
 .tl2-code, .tl2-ln em { color: #a3a3a3; }
 .tl2-ln b { color: #d4d4d4; }
@@ -202,20 +202,20 @@
 .tl2-fh[data-in] .tl2-fh-row { animation-play-state: running; }
 @keyframes tl2-film { from { transform: translateX(-128px); } to { transform: translateX(0); } }
 .tl2-fl { list-style: none; margin: 44px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 44px; }
-.tl2-fl li { display: grid; grid-template-columns: 44px minmax(0, 1fr); column-gap: 10px; padding: 27px 0; border-top: 1px solid rgba(0, 0, 0, .1); }
+.tl2-fl li { display: grid; grid-template-columns: 44px minmax(0, 1fr); column-gap: 10px; padding: 27px 0; border-top: 1px solid light-dark(rgba(0, 0, 0, .1), var(--border)); }
 .tl2-fl li > :not(.tl2-fl-n) { grid-column: 2; }
-.tl2-fl-n { grid-row: 1 / span 3; margin: 0; padding-top: 4px; font-size: 13px; color: #525252; }
+.tl2-fl-n { grid-row: 1 / span 3; margin: 0; padding-top: 4px; font-size: 13px; color: light-dark(#525252, var(--muted-foreground)); }
 .tl2-fl h3 { margin: 0; font-size: 21px; font-weight: 497; letter-spacing: -.01em; }
-.tl2-fl p { margin: 10px 0 0; font-size: 16px; line-height: 1.55; color: #525252; max-width: 60ch; text-wrap: pretty; }
-.tl2-fl .tl2-key { margin-top: 12px; font-size: 13px; color: #737373; }
+.tl2-fl p { margin: 10px 0 0; font-size: 16px; line-height: 1.55; color: light-dark(#525252, var(--muted-foreground)); max-width: 60ch; text-wrap: pretty; }
+.tl2-fl .tl2-key { margin-top: 12px; font-size: 13px; color: light-dark(#737373, var(--text-tertiary)); }
 
 /* 4. the config, read fact by fact, and magnet-gather: its lines are pulled together from scattered */
 .tl2-cfg { padding-top: 0; }
 .tl2-cfg-keys { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
-.tl2-cfg-keys button { min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); background: #fff; color: #525252; font-size: 14px; cursor: pointer; transition: background .2s cubic-bezier(0, 0, .2, 1), color .2s, border-color .2s, transform .15s cubic-bezier(0, 0, .2, 1); }
+.tl2-cfg-keys button { min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1px solid light-dark(rgba(0, 0, 0, .14), var(--border-control)); background: var(--x-raised); color: light-dark(#525252, var(--muted-foreground)); font-size: 14px; cursor: pointer; transition: background .2s cubic-bezier(0, 0, .2, 1), color .2s, border-color .2s, transform .15s cubic-bezier(0, 0, .2, 1); }
 @media (hover: hover) { .tl2-cfg-keys button:hover { border-color: var(--ink); color: var(--ink); } }
 .tl2-cfg-keys button:active { transform: scale(.97); }
-.tl2-cfg-keys button[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: #fff; }
+.tl2-cfg-keys button[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: var(--x-on-ink); }
 .tl2 .tl2-cfg-keys .l2-pause.tl2-cfg-pause { position: static; margin-left: auto; }
 .tl2-cfg-t { margin: 22px 0 14px; font-size: 26px; font-weight: 497; letter-spacing: -.02em; }
 .js .tl2-mg:not([data-in]) .tl2-ln { transform: translate(var(--dx), var(--dy)) rotate(var(--r)); opacity: 0; }
@@ -223,7 +223,7 @@
 
 /* 5. the close, and shutter: white bars close from the top and bottom, then open on the dark band */
 .tl2-shut { position: relative; }
-.tl2-shut-b { position: absolute; left: 0; right: 0; z-index: 5; height: 50%; background: #fff; pointer-events: none; transform: scaleY(0); }
+.tl2-shut-b { position: absolute; left: 0; right: 0; z-index: 5; height: 50%; background: var(--bg); pointer-events: none; transform: scaleY(0); }
 .tl2-shut-b.t { top: 0; transform-origin: 50% 0; }
 .tl2-shut-b.b { bottom: 0; transform-origin: 50% 100%; }
 .js .tl2-shut:not([data-in]) .tl2-shut-b { transform: scaleY(.6); }
@@ -248,6 +248,49 @@
 
 /* phones: the header keeps Hanzo's solid "Try Hanzo", so the page's own "View on GitHub" is outlined (one solid) */
 @media (max-width: 700px) {
-  .tl2 .l2-stage .l2-acts .x-btn.solid { background: transparent; color: var(--ink); border-color: rgba(10, 10, 10, .3); }
+  .tl2 .l2-stage .l2-acts .x-btn.solid { background: transparent; color: var(--ink); border-color: light-dark(rgba(10, 10, 10, .3), var(--border-selected)); }
   .tl2 .l2-band .l2-band-acts .x-btn.solid { background: transparent; color: #fafafa; border-color: rgba(255, 255, 255, .4); }
 }
+
+/* ---- run 4 (D2): the facts read beside their file (desktop) ---- */
+.tl2-facts.side .tl2-read { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: 56px; align-items: start; margin-top: 40px; }
+.tl2-facts.side .tl2-fl { grid-template-columns: minmax(0, 1fr); margin: 0; }
+.tl2-facts.side .tl2-fl li { min-height: 36svh; align-content: center; cursor: pointer; padding: 24px 0; }
+.tl2-facts.side .tl2-fl li h3, .tl2-facts.side .tl2-fl li p { transition: color .3s var(--ease); }
+.tl2-facts.side .tl2-fl li:not(.on) h3 { color: light-dark(#737373, var(--text-tertiary)); }
+.tl2-facts.side .tl2-fl li:not(.on) p { color: light-dark(#737373, var(--text-tertiary)); }
+.tl2-facts.side .tl2-fl li.on .tl2-fl-n { color: var(--ink); }
+.tl2-facts.side .tl2-fl li .tl2-fl-n { transition: color .3s var(--ease), transform .4s cubic-bezier(.16, 1, .3, 1); transform-origin: left top; }
+.tl2-facts.side .tl2-fl li.on .tl2-fl-n { transform: scale(1.6); }
+@media (hover: hover) { .tl2-facts.side .tl2-fl li:not(.on):hover h3 { color: var(--ink); } }
+.tl2-facts.side .tl2-fl li:active h3 { transform: translateY(1px); }
+.tl2-read-file { position: sticky; top: calc(var(--x-top, 60px) + 24px); }
+.tl2-read-file .tl2-code { font-size: 14px; }
+.tl2-read-file .tl2-ed:not(.cp) .tl2-code { min-height: calc(20 * 1.6em + 32px); }
+/* the hero's signals invite the hover */
+@media (hover: hover) and (pointer: fine) { .tl2-sig li { cursor: pointer; } }
+/* the close's config wraps instead of cutting words */
+.tl2-yc-out pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.tl2-strip span.all { border-color: var(--ink); color: var(--ink); }
+.tl2-count { margin: 0 0 12px; font-size: 13px; color: light-dark(#525252, var(--muted-foreground)); font-variant-numeric: tabular-nums; }
+.tl2-cfg-t .tl2-count { display: block; margin: 6px 0 0; font-size: 14px; font-weight: 400; letter-spacing: 0; }
+/* Hanzo's Iro art (live: the black card behind the six facts), kept under the heading (COPY-RULE.md rule 5) */
+.tl2-facts-top { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+.tl2-facts-top > :first-child { margin-bottom: 0; }
+.art-card.tl2-art { flex: none; width: clamp(96px, 8vw, 128px); border-radius: 14px; margin-bottom: 24px; }
+@media (max-width: 760px) { .tl2-facts-top { flex-direction: column-reverse; align-items: flex-start; gap: 0; } .art-card.tl2-art { width: 104px; margin-bottom: 20px; } }
+/* dark (docs/DARK-MODE.md): the shared l2 frame takes Hanzo's dark on this page; light-dark() keeps bright exactly as it was */
+.tl2.l2-page { background: var(--bg); --hair: light-dark(rgba(0, 0, 0, .1), var(--border)); --muted: light-dark(#525252, var(--muted-foreground)); --soft: light-dark(#525252, var(--muted-foreground)); }
+.tl2 .l2-obj:not(.tl2-pipe) { background: var(--x-raised); }
+html:not(.light) .tl2 .l2-pause:not(.dk) { background: var(--surface-overlay); }
+/* dark only: Hanzo's hero texture as measured on live hanzo.ai dark (7px dot grid, dots ~36% foreground, densest at the
+   side edges and toward the bottom, plus live's top glow); the pinned stage keeps its own sticky position */
+html:not(.light) .tl2 .l2-stage > .l2-stage-pin { isolation: isolate; }
+html:not(.light) .tl2 .l2-stage > .l2-stage-pin::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(circle, color-mix(in srgb, var(--foreground) 36%, transparent) 1.5px, transparent 2.1px) 0 0 / 7px 7px;
+  -webkit-mask-image: linear-gradient(90deg, #000, rgba(0, 0, 0, .15) 32%, rgba(0, 0, 0, .15) 64%, #000), linear-gradient(180deg, rgba(0, 0, 0, .25), #000 85%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, #000, rgba(0, 0, 0, .15) 32%, rgba(0, 0, 0, .15) 64%, #000), linear-gradient(180deg, rgba(0, 0, 0, .25), #000 85%);
+  mask-composite: intersect; }
+html:not(.light) .tl2 .l2-stage > .l2-stage-pin::after { content: ''; position: absolute; inset: 0 0 auto; height: 640px; z-index: -1; pointer-events: none;
+  background: radial-gradient(60% 70% at 50% 0%, color-mix(in srgb, var(--foreground) 9%, transparent), transparent 70%); }

@@ -46,55 +46,56 @@
 .ts-ok { position: absolute; left: 24px; bottom: 18px; margin: 0; padding: 8px 12px; border-radius: 999px; background: #fafafa; color: #0a0a0a; font-size: 13px; }
 
 /* chapters: the lede leads, then the ledger part by part */
+.ts-say-h { margin: 0 0 21px; color: light-dark(#737373, var(--muted-foreground)); }
 .ts-say-p { margin: 0; text-wrap: balance; }
 .ts-vis { display: grid; padding-bottom: 56px; }
 .ts-vis.paused * { animation-play-state: paused !important; }
 .ts-vis-i { grid-area: 1 / 1; display: flex; align-items: center; }
-.ts-v { width: 100%; padding: clamp(24px, 3vw, 40px); border-radius: 24px; background: #fff; box-shadow: 0 24px 60px -16px rgba(0, 0, 0, .18); }
-.ts-v-k { display: flex; justify-content: space-between; margin: 0 0 20px; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #737373; }
-.ts-v-row, .ts-v-row.two { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr) 8ch; align-items: center; gap: 12px; padding: 16px 0; border-top: 1px solid rgba(0, 0, 0, .1); font-size: 16px; }
+.ts-v { width: 100%; padding: clamp(24px, 3vw, 40px); border-radius: 24px; background: var(--x-raised); box-shadow: 0 24px 60px -16px rgba(0, 0, 0, .18); }
+.ts-v-k { display: flex; justify-content: space-between; margin: 0 0 20px; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: light-dark(#737373, var(--muted-foreground)); }
+.ts-v-row, .ts-v-row.two { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr) 8ch; align-items: center; gap: 12px; padding: 16px 0; border-top: 1px solid var(--x-e10); font-size: 16px; }
 .ts-v-row:not(.h) { margin: 0 -12px; padding-left: 12px; padding-right: 12px; transition: background .4s cubic-bezier(.4, 0, .2, 1); }
-.ts-v-row.hot { position: relative; background: #f5f5f5; }
+.ts-v-row.hot { position: relative; background: light-dark(#f5f5f5, var(--muted)); }
 /* the row being read: a hairline draws under it for as long as it is read (1.3 s), then the next row takes it */
-.ts-v-row.hot::after { content: ''; position: absolute; left: 12px; right: 12px; bottom: -1px; height: 1px; background: #0a0a0a; transform-origin: 0 50%; animation: ts-read 1.3s linear both; }
+.ts-v-row.hot::after { content: ''; position: absolute; left: 12px; right: 12px; bottom: -1px; height: 1px; background: var(--ink); transform-origin: 0 50%; animation: ts-read 1.3s linear both; }
 @keyframes ts-read { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-.ts-v-row.h { color: #737373; font-size: 13px; padding: 10px 0; }
+.ts-v-row.h { color: light-dark(#737373, var(--muted-foreground)); font-size: 13px; padding: 10px 0; }
 .ts-v-row > :last-child { justify-self: end; }
 .ts-v-row b { font-weight: 400; font-size: 21px; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
-.ts-v-row i:not(.ts-arr) { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #f2f2f2; font-style: normal; font-size: 14px; color: #525252; }
-.ts-v-row.brk span:nth-child(2) { color: #0a0a0a; font-weight: 600; }
-.ts-v-row.brk i:not(.ts-arr) { background: #0a0a0a; color: #fff; }
-.ts-v-sum { display: flex; justify-content: space-between; align-items: baseline; margin-top: 4px; padding: 18px 20px; border-radius: 16px; background: #f2f2f2; font-size: 14px; color: #525252; }
-.ts-v-sum b { font-weight: 500; font-size: 17px; color: #0a0a0a; }
+.ts-v-row i:not(.ts-arr) { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: light-dark(#f2f2f2, var(--muted)); font-style: normal; font-size: 14px; color: light-dark(#525252, var(--muted-foreground)); }
+.ts-v-row.brk span:nth-child(2) { color: var(--ink); font-weight: 600; }
+.ts-v-row.brk i:not(.ts-arr) { background: var(--ink); color: var(--x-on-ink); }
+.ts-v-sum { display: flex; justify-content: space-between; align-items: baseline; margin-top: 4px; padding: 18px 20px; border-radius: 16px; background: light-dark(#f2f2f2, var(--muted)); font-size: 14px; color: light-dark(#525252, var(--muted-foreground)); }
+.ts-v-sum b { font-weight: 500; font-size: 17px; color: var(--ink); }
 /* postings are arrows between accounts: the arrow of the row being read draws out toward its destination */
 .ts-v-row.post > span:nth-child(2) { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .ts-arr { position: relative; flex: none; width: 28px; height: 1px; background: #a3a3a3; transform-origin: 0 50%; transition: transform .5s cubic-bezier(.16, 1, .3, 1), background .3s; }
 .ts-arr::after { content: ''; position: absolute; right: 0; top: -3px; width: 7px; height: 7px; border-top: 1px solid currentColor; border-right: 1px solid currentColor; color: inherit; transform: rotate(45deg); }
 .ts-v-row.post .ts-arr { color: #a3a3a3; }
-.ts-v-row.post.hot .ts-arr { background: #0a0a0a; color: #0a0a0a; animation: ts-draw .7s cubic-bezier(.16, 1, .3, 1) both; }
+.ts-v-row.post.hot .ts-arr { background: var(--ink); color: var(--ink); animation: ts-draw .7s cubic-bezier(.16, 1, .3, 1) both; }
 @keyframes ts-draw { from { transform: scaleX(.2); } to { transform: scaleX(1); } }
-.ts-v-flow { list-style: none; margin: 0; padding: 0 0 0 18px; border-left: 2px solid rgba(0, 0, 0, .1); display: grid; gap: 4px; }
-.ts-v-flow li { position: relative; display: flex; align-items: center; gap: 14px; min-height: 60px; font-size: 21px; color: #737373; transition: color .3s; }
-.ts-v-flow li i { position: absolute; left: -26px; width: 14px; height: 14px; border-radius: 50%; background: #fff; border: 2px solid #d4d4d4; transition: background .3s, border-color .3s; }
-.ts-v-flow li.on { color: #0a0a0a; }
-.ts-v-flow li.on i { background: #0a0a0a; border-color: #0a0a0a; }
-.ts-v-flow em { margin-left: auto; padding: 6px 10px; border-radius: 8px; background: #0a0a0a; font-style: normal; font-size: 13px; color: #fff; }
+.ts-v-flow { list-style: none; margin: 0; padding: 0 0 0 18px; border-left: 2px solid var(--x-e10); display: grid; gap: 4px; }
+.ts-v-flow li { position: relative; display: flex; align-items: center; gap: 14px; min-height: 60px; font-size: 21px; color: light-dark(#737373, var(--muted-foreground)); transition: color .3s; }
+.ts-v-flow li i { position: absolute; left: -26px; width: 14px; height: 14px; border-radius: 50%; background: var(--x-raised); border: 2px solid light-dark(#d4d4d4, var(--border-control)); transition: background .3s, border-color .3s; }
+.ts-v-flow li.on { color: var(--ink); }
+.ts-v-flow li.on i { background: var(--ink); border-color: var(--ink); }
+.ts-v-flow em { margin-left: auto; padding: 6px 10px; border-radius: 8px; background: var(--ink); font-style: normal; font-size: 13px; color: var(--x-on-ink); }
 
 /* chapter 04: the wallet, the money travels */
 .ts-track { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding-top: 64px; }
-.ts-spot { display: flex; align-items: flex-end; min-height: 56px; padding: 12px; border-radius: 12px; background: #f2f2f2; transition: background .3s cubic-bezier(.4, 0, .2, 1); }
-.ts-spot.held { background: #f5f5f5; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .14); }
-.ts-spot span { min-width: 0; font-size: 13px; color: #525252; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.ts-spot.on span { color: #0a0a0a; }
-.ts-coin { position: absolute; top: 0; left: 0; display: grid; place-items: center; width: calc((100% - 16px) / 3); height: 52px; border-radius: 12px; background: #0a0a0a; color: #fafafa; font-size: 21px; font-weight: 500; letter-spacing: -.02em; font-variant-numeric: tabular-nums; transform: translateX(calc(var(--at) * (100% + 8px))); transition: transform .5s cubic-bezier(.4, 0, .2, 1); }
+.ts-spot { display: flex; align-items: flex-end; min-height: 56px; padding: 12px; border-radius: 12px; background: light-dark(#f2f2f2, var(--muted)); transition: background .3s cubic-bezier(.4, 0, .2, 1); }
+.ts-spot.held { background: light-dark(#f5f5f5, var(--muted)); box-shadow: inset 0 0 0 1px light-dark(rgba(0, 0, 0, .14), var(--border-control)); }
+.ts-spot span { min-width: 0; font-size: 13px; color: light-dark(#525252, var(--muted-foreground)); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ts-spot.on span { color: var(--ink); }
+.ts-coin { position: absolute; top: 0; left: 0; display: grid; place-items: center; width: calc((100% - 16px) / 3); height: 52px; border-radius: 12px; background: var(--ink); color: light-dark(#fafafa, var(--primary-foreground)); font-size: 21px; font-weight: 500; letter-spacing: -.02em; font-variant-numeric: tabular-nums; transform: translateX(calc(var(--at) * (100% + 8px))); transition: transform .5s cubic-bezier(.4, 0, .2, 1); }
 .ts-log { list-style: none; margin: 16px 0 0; padding: 0; height: calc(4 * 34px); }
-.ts-log li { display: flex; align-items: center; height: 34px; border-top: 1px solid rgba(0, 0, 0, .1); font-size: 13px; color: #525252; animation: ts-in .3s cubic-bezier(.16, 1, .3, 1) both; }
+.ts-log li { display: flex; align-items: center; height: 34px; border-top: 1px solid var(--x-e10); font-size: 13px; color: light-dark(#525252, var(--muted-foreground)); animation: ts-in .3s cubic-bezier(.16, 1, .3, 1) both; }
 @keyframes ts-in { from { opacity: 0; transform: translateX(-8px); } }
 .ts-hold-acts { display: flex; gap: 8px; margin-top: 12px; }
-.ts-b { display: grid; place-items: center; width: 48px; height: 48px; padding: 0; border: 1px solid rgba(0, 0, 0, .14); border-radius: 999px; background: #fff; color: #0a0a0a; cursor: pointer; transition: background .15s cubic-bezier(0, 0, .2, 1), color .15s, transform .09s; }
+.ts-b { display: grid; place-items: center; width: 48px; height: 48px; padding: 0; border: 1px solid light-dark(rgba(0, 0, 0, .14), var(--border-control)); border-radius: 999px; background: var(--x-raised); color: var(--ink); cursor: pointer; transition: background .15s cubic-bezier(0, 0, .2, 1), color .15s, transform .09s; }
 .ts-b:active:not([disabled]) { transform: scale(.97); }
-.ts-b[disabled] { color: #a3a3a3; border-color: rgba(0, 0, 0, .06); cursor: default; }
-.ts-b:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 2px; }
+.ts-b[disabled] { color: #a3a3a3; border-color: light-dark(rgba(0, 0, 0, .06), var(--border)); cursor: default; }
+.ts-b:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
 /* close: the finished split beside the heading, one ask, the get-card beside it */
 .ts-first-top { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: 24px clamp(32px, 5vw, 72px); align-items: end; }
@@ -109,9 +110,9 @@
 .ts-stack-top { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; }
 .ts-stack-pause { flex: none; }
 .ts-stack-l.paused * { animation-play-state: paused !important; }
-.ts-sc { display: grid; gap: 16px; padding: 56px 0 24px; border-top: 1px solid rgba(0, 0, 0, .1); margin-top: 40px; }
+.ts-sc { display: grid; gap: 16px; padding: 56px 0 24px; border-top: 1px solid var(--x-e10); margin-top: 40px; }
 .ts-sc h2 { margin: 0; }
-.ts-sc-b { margin: 0; max-width: 62ch; font-size: 17px; line-height: 1.6; color: #525252; }
+.ts-sc-b { margin: 0; max-width: 62ch; font-size: 17px; line-height: 1.6; color: light-dark(#525252, var(--muted-foreground)); }
 .ts-sc .ts-v { margin-top: 8px; }
 .ts-sc-w { min-height: 100svh; align-content: center; }
 .ts-split svg { display: block; width: 100%; height: 12px; overflow: visible; }
@@ -128,18 +129,18 @@
 /* close: one ask, the get-card beside it */
 .ts-first-row { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: 24px clamp(32px, 5vw, 72px); align-items: end; margin-top: clamp(28px, 3vw, 44px); }
 .ts-first-acts { display: flex; flex-wrap: wrap; gap: 12px; }
-.ts-get { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px; padding: 28px; border-radius: 24px; background: #f2f2f2; }
-.ts-get-tag { margin: 6px 0 0; font-size: 16px; color: #525252; }
+.ts-get { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px; padding: 28px; border-radius: 24px; background: light-dark(#f2f2f2, var(--muted)); }
+.ts-get-tag { margin: 6px 0 0; font-size: 16px; color: light-dark(#525252, var(--muted-foreground)); }
 .ts-get-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .ts-get-meta .w2-ghost { height: 44px; font-size: 15px; padding: 0 18px; }
-.ts-chip { display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 16px; border-radius: 999px; background: #fff; color: #0a0a0a; font: 500 14px/1 var(--mono); text-decoration: none; transition: background .15s cubic-bezier(0, 0, .2, 1), color .15s, transform .09s; }
-.ts-chip span { color: #737373; }
+.ts-chip { display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 16px; border-radius: 999px; background: var(--x-raised); color: var(--ink); font: 500 14px/1 var(--mono); text-decoration: none; transition: background .15s cubic-bezier(0, 0, .2, 1), color .15s, transform .09s; }
+.ts-chip span { color: light-dark(#737373, var(--muted-foreground)); }
 a.ts-chip:active { transform: scale(.97); }
 
 @media (hover: hover) {
-  .ts-pause .w2-pause:hover { background: #262626; }
-  .ts-b:hover:not([disabled]) { background: #0a0a0a; color: #fff; }
-  a.ts-chip:hover { background: #0a0a0a; color: #fff; }
+  .ts-pause .w2-pause:hover { background: #fafafa; color: #0a0a0a; }
+  .ts-b:hover:not([disabled]) { background: var(--ink); color: var(--x-on-ink); }
+  a.ts-chip:hover { background: var(--ink); color: var(--x-on-ink); }
 }
 
 @media (max-width: 899px) {
@@ -153,7 +154,7 @@ a.ts-chip:active { transform: scale(.97); }
   .ts-name { font-size: 11px; white-space: nowrap; letter-spacing: .08em; }
   /* one solid per phone screen: the shared header keeps its solid ask here, so the page's own asks are outlined */
   .ts-acts .w2-cta { background: transparent; color: #fafafa; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .55); }
-  .ts-first-acts .w2-cta { background: transparent; color: #0a0a0a; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .3); }
+  .ts-first-acts .w2-cta { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px light-dark(rgba(0, 0, 0, .3), var(--border-selected)); }
   .ts-split figcaption, .ts-v-flow em { font-size: 14px; }
   /* the emit ring stays inside the full-width source card's panel */
   .ts-src::after { animation-name: ts-emit-p; }
@@ -189,6 +190,27 @@ a.ts-chip:active { transform: scale(.97); }
   .ts-log li { height: 40px; }
 }
 @keyframes ts-emit-p { from { transform: scale(1); opacity: .9; } to { transform: scale(1.03, 1.18); opacity: 0; } }
-@media (hover: hover) and (max-width: 899px) { .ts-acts .w2-cta:hover { background: rgba(255, 255, 255, .1); } .ts-first-acts .w2-cta:hover { background: #f2f2f2; } }
+@media (hover: hover) and (max-width: 899px) { .ts-acts .w2-cta:hover { background: rgba(255, 255, 255, .1); } .ts-first-acts .w2-cta:hover { background: light-dark(#f2f2f2, var(--muted)); } }
 @media (prefers-reduced-motion: reduce) { .ts-arr { animation: none !important; transition: none; } }
 @media (prefers-reduced-motion: reduce) { .ts-coin, .ts-v-row { transition: none; } .ts-log li, .ts-v-row.hot::after { animation: none; } .ts-src::after { display: none; } }
+
+/* dark mode (as live hanzo.ai in dark): the hero room stays black and its primary stays Hanzo's light pill (the shared
+   w2-dark rule reads the page's fill token, which turns dark); cards on the page get live's white-10% hairline */
+@media (min-width: 900px) { .ts-hero.w2-dark .w2-cta, .ts-hero.w2-dark .w2-cta.acc { background: light-dark(#f5f5f7, var(--primary)); } }
+@media (hover: hover) and (min-width: 900px) { .ts-hero.w2-dark .w2-cta:hover { background: light-dark(#fff, var(--primary-hover)); } }
+html:not(.light) .ts-v { box-shadow: inset 0 0 0 1px var(--line); }
+html:not(.light) .ts-split, html:not(.light) .ts-get, html:not(.light) .ts-chip { box-shadow: inset 0 0 0 1px var(--line); }
+/* the close's primary turns into live's light pill in dark (the shared .w2-cta is black in both modes) */
+@media (min-width: 900px) { html:not(.light) .ts-first-acts .w2-cta { background: var(--ink); color: var(--x-on-ink); } }
+@media (hover: hover) and (min-width: 900px) { html:not(.light) .ts-first-acts .w2-cta:hover { background: var(--primary-hover); } }
+html:not(.light) .ts { --soft: var(--muted-foreground); --faint: var(--text-tertiary); } /* the shared .w2 greys are light-only */
+/* dark only: Hanzo's hero texture as live hanzo.ai draws it in dark (7px dot field densest at the edges and bottom, plus the top glow) */
+html:not(.light) .ts-hero { position: relative; isolation: isolate; }
+html:not(.light) .ts-hero::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(circle, color-mix(in srgb, var(--foreground) 36%, transparent) 1.5px, transparent 2.1px) 0 0 / 7px 7px;
+  -webkit-mask-image: linear-gradient(90deg, #000, rgba(0,0,0,.15) 32%, rgba(0,0,0,.15) 64%, #000), linear-gradient(180deg, rgba(0,0,0,.25), #000 85%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, #000, rgba(0,0,0,.15) 32%, rgba(0,0,0,.15) 64%, #000), linear-gradient(180deg, rgba(0,0,0,.25), #000 85%);
+  mask-composite: intersect; }
+html:not(.light) .ts-hero::after { content: ''; position: absolute; inset: 0 0 auto; height: 640px; z-index: -1; pointer-events: none;
+  background: radial-gradient(60% 70% at 50% 0%, color-mix(in srgb, var(--foreground) 9%, transparent), transparent 70%); }

@@ -28,6 +28,7 @@ import { Sheet, Cta } from '../../kit';
 import StageHero from '../../v2/StageHero';
 import Finale from '../../v2/Finale';
 import './Visor.css';
+import ArtCard from './ArtCard';
 
 const GH = 'https://github.com/hanzoai';
 const PROVIDERS = ['DigitalOcean', 'AWS', 'GCP'];
@@ -57,7 +58,7 @@ function Fleet() {
       <PauseBtn paused={paused} onClick={toggle} className="dk vs2-pause" />
       <div className="vs2-req" aria-hidden="true">
         <p className="vs2-k l2-mono">one API</p>
-        <p className="vs2-cmd">launch <b>3</b> × GPU instance · prefix <b>train</b></p>
+        <p className="vs2-cmd">launch <b>3</b> × GPU <span className="vs2-nw">instance ·</span> <span className="vs2-nw">prefix <b>train</b></span></p>
       </div>
       <div className="vs2-dry l2-mono" aria-hidden="true"><span className={t === 2 ? 'on' : ''}><Nw parts={DRY} /></span></div>
       <div className="vs2-cat" aria-hidden="true">
@@ -149,6 +150,8 @@ function Tiles() {
     <section className="l2-dark vs2-tiles" data-room="dark" ref={sec} data-in={seen ? '' : undefined}>
       <div className="l2-wrap">
         <h2 className="l2-head vs2-tiles-h"><Shuffle text="What you get for the price of one integration" /></h2>
+        <p className="vs2-range l2-mono">01 / 06 — 06 / 06</p>
+        <ArtCard slug="kai" className="vs2-art" />
         <ol className="vs2-grid">
           {FACTS.map(([t, d], i) => <Row key={t} t={t} d={d} i={i} onOpen={setOpen} />)}
         </ol>
@@ -267,7 +270,7 @@ export default function Visor() {
   const [count, setCount] = useState(3);
   const [dry, setDry] = useState(true);
   return (
-    <main id="main" className="l2-page vs2" data-ask="off">
+    <main id="main" className="l2-page vs2">
       <StageHero look="rise" className="vs2-hero" kick="hanzoai/visor" title="Hanzo Visor" sub="Machines from several clouds, through one API" acts={[['View on GitHub', GH]]} travel={{ s: [1.04, 1], y: ['1svh', '-10svh'] }}>
         <Fleet />
       </StageHero>

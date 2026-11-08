@@ -23,7 +23,7 @@ Done here: Persona is a platform engineer running machines on more than one clou
 - [ ] Breadcrumb at depth 2 or more (n/a: /visor is depth 1)
 - [x] Link parity: 0 removed, 0 unexpected
 
-Done here: `<main id="main" data-ask="off">`; the layout's "Skip to content" targets `#main`. 4 links in main, all through `A` or `Cta`. `python3 scripts/parity.py /visor` reports every live link present. No breadcrumb: the page sits at depth 1.
+Done here: `<main id="main">`; the layout's "Skip to content" targets `#main`. 4 links in main, all through `A` or `Cta`. `python3 scripts/parity.py /visor` reports every live link present. No breadcrumb: the page sits at depth 1.
 
 ## 3. First impression and page narrative
 - [x] Sells in 5 s; something moves within 1 s without input
@@ -41,7 +41,7 @@ Done here: Hero is `StageHero look="rise"` with page-local CSS: a left-set title
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: 0 `.x-btn` without `data-cta` in main; CTAs found: primary*, close*, deploy (* = solid). The sticky header carries the shared "Try Hanzo" at every width, not the page's "View on GitHub"; the page bar is off (`data-ask="off"`) because the critic's shared note (15:00) fails any pill seen over content. Copy is the kit `Copy`, which copies the prompt string it shows. 1 `data-thumb` in main.
+Done here: 0 `.x-btn` without `data-cta` in main; CTAs found: primary*, close*, deploy (* = solid). `data-ask="off"` is gone, so the shared header is quiet ("Try Hanzo" outlined) while the hero's solid "View on GitHub" is on screen and carries "View on GitHub" (solid) once it leaves: one solid per screen at 1470 and 375. Nothing floats over content. Copy is the kit `Copy`, which copies the prompt string it shows. 1 `data-thumb` in main.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number

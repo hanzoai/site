@@ -83,7 +83,7 @@ function Diff() {
         <tbody>
           {DIFF.lines.map(([a, b, s, t], i) => (
             <tr key={i} className={s === '+' ? 'add' : s === '-' ? 'del' : ''} style={{ '--i': i }}>
-              <td>{a ?? ''}</td><td>{b ?? ''}</td><td><span className={`${P}-sign`}>{s.trim()}</span>{t}</td>
+              <td>{a ?? ''}</td><td>{b ?? ''}</td><td><span className={`${P}-sign`}>{s.trim()}</span><span className={`${P}-t`}>{t}</span></td>
             </tr>
           ))}
         </tbody>
@@ -93,12 +93,11 @@ function Diff() {
 }
 
 function Canvas() {
-  const say = [['dev', SESSION[0].msgs[0].body], ['zoe', SESSION[2].msgs[0].body], ['qa', SESSION[4].msgs[0].body]];
   return (
     <div className={`${P}-cv`}>
       <p className={`${P}-cv-t`}>{CANVAS.title}</p>
-      <p className={`${P}-cv-m`}>{CANVAS.meta}</p>
-      <ol>{say.map(([w, b]) => <li key={w}><Face who={w} p={P} size={22} /><span><b>{PEOPLE[w].name}</b> <Parts body={b} p={P} /></span></li>)}</ol>
+      <p className={`${P}-cv-m`}>{CANVAS.kind}</p>
+      <dl className={`${P}-cv-d`}>{CANVAS.parts.map(([k, t]) => <div key={k}><dt className="x-mono">{k}</dt><dd>{t}</dd></div>)}</dl>
     </div>
   );
 }
@@ -245,7 +244,6 @@ function Hero() {
     <section className={`${P}-hero`} aria-labelledby="xsq-h1">
       <div className="a2-wrap a2-grid">
         <div className={`${P}-hero-l`}>
-          <p className="a2-kick"><i className={`${P}-dot`} aria-hidden="true" />{HERO.kick}</p>
           <A2Lines as="h1" id="xsq-h1" className={`a2-display ${P}-h1`} lines={HERO.title} now />
         </div>
         <div className={`${P}-hero-r`}>
@@ -255,6 +253,7 @@ function Hero() {
             <A to={HERO.acts[1][1]} className={`x-btn ${P}-quiet`}>{HERO.acts[1][0]}</A>
           </div>
           <p className={`${P}-docs`}><More to={HERO.acts[2][1]}>{HERO.acts[2][0]}</More></p>
+          <p className={`a2-kick show ${P}-kick`}>{HERO.kick}</p>
         </div>
       </div>
     </section>
@@ -301,9 +300,9 @@ function Notes() {
     <section className={`a2-sec ${P}-notes`} aria-labelledby="xsq-notes-h">
       <div className="a2-wrap a2-grid">
         <div className={`${P}-notes-h`}>
-          <p className="a2-kick"><b>{CODE.kick}</b></p>
           <A2Lines id="xsq-notes-h" className="a2-headline" lines={[CODE.title]} />
           <p className="a2-body">{CODE.lede}</p>
+          <p className={`a2-kick show ${P}-kick`}>{CODE.kick}</p>
           <Crop on={on} />
         </div>
         <div className={`${P}-notes-l`}>
@@ -343,10 +342,10 @@ function Setup() {
       <div className="a2-wrap">
         <div className={`${P}-card`}>
           <div className={`${P}-card-a`}>
-            <p className={`${P}-card-t`}><span>{SETUP.title}</span><b className={s >= 3 ? 'on' : ''}><i aria-hidden="true" />{SETUP.verified}</b></p>
-            <div className={`${P}-card-h`}><Face who="hanzo" p={P} size={34} /><span><b id="xsq-setup-h">{SETUP.name}</b><span>{SETUP.sub}</span></span></div>
+            <p className={`${P}-card-t`}><span>{SETUP.title}</span><b className={s >= 3 ? 'on' : ''}><i aria-hidden="true" /><span className={`${P}-t`}>{SETUP.verified}</span></b></p>
+            <div className={`${P}-card-h`}><Face who="hanzo" p={P} size={34} /><span><b id="xsq-setup-h"><span className={`${P}-t`}>{SETUP.name}</span></b><span>{SETUP.sub}</span></span></div>
             <ol className={`${P}-card-steps`}>
-              {SETUP.steps.map(([t, d], i) => <li key={t} className={s > i ? 'on' : ''}><i aria-hidden="true">{s > i ? '✓' : i + 1}</i><span><b>{t}</b><span>{d}</span></span></li>)}
+              {SETUP.steps.map(([t, d], i) => <li key={t} className={s > i ? 'on' : ''}><i aria-hidden="true">{s > i ? '✓' : i + 1}</i><span><b><span className={`${P}-t`}>{t}</span></b><span>{d}</span></span></li>)}
             </ol>
             <p className={`${P}-card-m`}><span>{SETUP.model}</span><span>{SETUP.retention}</span></p>
           </div>
@@ -470,13 +469,22 @@ function What() {
 function Platform() {
   const [i, setI] = useState(0);
   const tabs = useRef(null);
+  const box = useRef(null);
+  const seen = useInView(box, { amount: 0.5 });
+  const calm = useReducedMotion();
+  const [mine, setMine] = useState(false); // once the visitor picks, the map stops walking on its own
+  useEffect(() => {
+    if (!seen || calm || mine) return;
+    const t = setInterval(() => setI((v) => (v + 1) % PLATFORM.items.length), 3200);
+    return () => clearInterval(t);
+  }, [seen, calm, mine]);
   const key = (e) => {
     const n = PLATFORM.items.length;
     const k = { ArrowRight: i + 1, ArrowDown: i + 1, ArrowLeft: i - 1, ArrowUp: i - 1, Home: 0, End: n - 1 }[e.key];
     if (k === undefined) return;
     e.preventDefault();
     const j = (k + n) % n;
-    setI(j);
+    setI(j); setMine(true);
     tabs.current?.children[j]?.focus();
   };
   return (
@@ -486,12 +494,12 @@ function Platform() {
           <p className="a2-kick">{PLATFORM.kick}</p>
           <h2 id="xsq-plat-h" className="a2-headline">{PLATFORM.title}</h2>
         </div>
-        <div className={`${P}-plat-map`}>
+        <div className={`${P}-plat-map`} ref={box}>
           <i className={`${P}-plat-rail`} aria-hidden="true"><b /></i>
           <div className={`${P}-plat-stops`} role="tablist" aria-label={PLATFORM.kick} onKeyDown={key} ref={tabs}>
             {PLATFORM.items.map(([t], k) => (
               <button key={t} type="button" role="tab" id={`${P}-pt-${k}`} aria-selected={i === k} aria-controls={`${P}-pp-${k}`} tabIndex={i === k ? 0 : -1}
-                className={`${P}-plat-stop` + (i === k ? ' on' : '')} onPointerEnter={(e) => { if (e.pointerType === 'mouse') setI(k); }} onClick={() => setI(k)}>
+                className={`${P}-plat-stop` + (i === k ? ' on' : '')} onPointerEnter={(e) => { if (e.pointerType === 'mouse') { setI(k); setMine(true); } }} onClick={() => { setI(k); setMine(true); }}>
                 <i className={`${P}-plat-drop`} aria-hidden="true" />
                 <span className={`${P}-plat-name`}>{t}</span>
               </button>
