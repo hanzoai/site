@@ -19,12 +19,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { A, Cta, Band, Tick } from '../kit';
-import A2Lines from '../v2/A2Lines';
 import A2Paste from '../v2/A2Paste';
 import A2Chapters from '../v2/A2Chapters';
 import A2Faq from '../v2/A2Faq';
 import A2Pause from '../v2/A2Pause';
-import A2Room from '../v2/A2Room';
 import useNarrow from '../v2/A2Narrow';
 import { T, EMPH, MOVE } from '../v2/A2Motion';
 import '../v2/A2.css';
@@ -42,14 +40,16 @@ const DIFF = ['ctx', 'ctx', 'out', 'in', 'in', 'ctx']; // the diff's shape only:
 const WORDS = ['Test.', 'Repair.', 'Verify.'];
 const wordAt = (s) => (s <= 1 ? 0 : s <= 3 ? 1 : 2);
 
-/* One clock for the hero: 0 running, 1 one failing, 2 triage, 3 repair, 4 passing. Server and reduced motion show 4.
-   A chain of timeouts (no setInterval) that stops off screen and while paused. */
+/* One clock for the hero: 0 running, 1 one failing, 2 triage, 3 repair, 4 passing. The server paints step 0, so the
+   first frame you see is the first frame of the loop (nothing finished is shown and then wiped); reduced motion jumps
+   to the passing state, and with JS off CSS shows the whole session. A chain of timeouts (no setInterval) that stops
+   off screen and while paused. */
 function useLoop(ref, paused) {
-  const [step, setStep] = useState(4);
+  const [step, setStep] = useState(0);
   const [run, setRun] = useState(0);
   const seen = useInView(ref, { amount: 0.2 });
   const calm = useReducedMotion();
-  useEffect(() => { if (!calm) setStep(0); }, [calm]);
+  useEffect(() => { if (calm) setStep(4); }, [calm]);
   useEffect(() => {
     if (calm || !seen || paused) return;
     const t = setTimeout(() => (step < 4 ? setStep(step + 1) : (setStep(0), setRun((r) => r + 1))), step === 4 ? 3800 : step === 0 ? 1000 : 1900);
@@ -72,14 +72,14 @@ function Board({ step, run }) {
           const bad = i === 8;
           const state = step === 0 ? 'wait' : bad && !pass ? 'fail' : 'pass';
           return (
-            <motion.i key={i + '-' + run} className={state} initial={{ scale: 0.4, opacity: 0.3 }} animate={{ scale: step === 0 ? 0.55 : 1, opacity: step === 0 ? 0.35 : 1 }} transition={{ ...MOVE, delay: step === 1 ? i * 0.03 : 0 }}>
+            <motion.i key={i + '-' + run} className={state} style={{ '--k': i }} initial={{ scale: 0.4, opacity: 0.3 }} animate={{ scale: step === 0 ? 0.55 : 1, opacity: step === 0 ? 0.35 : 1 }} transition={{ ...MOVE, delay: step === 1 ? i * 0.03 : 0 }}>
               {bad && pass && <motion.b initial={{ scale: 0.6, opacity: 0.8 }} animate={{ scale: 2.8, opacity: 0 }} transition={{ duration: T.scene, ease: EMPH }} />}
             </motion.i>
           );
         })}
       </div>
       <div className="xkt-diff">
-        <span className="x-mono" style={{ opacity: step >= 3 ? 1 : 0.3 }}>auth/tokens.py</span>
+        <span className={'x-mono' + (step >= 3 ? ' on' : '')}>auth/tokens.py</span>
         <span className="xkt-bars">{DIFF.map((k, i) => <i key={i + '-' + run} className={k + (step >= 3 ? ' on' : '')} style={{ width: [72, 58, 64, 80, 46, 66][i] + '%', transitionDelay: step >= 3 ? 0.15 + i * 0.06 + 's' : '0s' }} />)}</span>
       </div>
     </div>
@@ -120,12 +120,13 @@ function Hero() {
         <h1 id="xkt-h1" className="a2-display xkt-h1">
           {WORDS.map((w, i) => (
             <span className="a2-ln" key={w}>
-              <motion.span className={'a2-ln-in xkt-w' + (i === lit ? ' on' : '')} initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: T.line, ease: EMPH, delay: 0.05 + i * T.stagger }}>{w}</motion.span>{' '}
+              {/* the line mask runs in CSS from the first paint, so the server paint and the client agree */}
+              <span className={'a2-ln-in xkt-w' + (i === lit ? ' on' : '')} style={{ '--i': i }}>{w}</span>{' '}
             </span>
           ))}
           <span className="xkt-auto">Autonomous loop.</span>
         </h1>
-        <p className="a2-kick"><b>Hanzo Kata</b> · Test repair</p>
+        <p className="a2-kick">Hanzo Kata · Test repair</p>
         <div className="a2-grid xkt-hero-grid">
           <div className="xkt-hero-copy">
             <p className="a2-lede">Kata keeps your tests green. It triages a failing CI run, finds the regression, writes the fix and runs the suite again before anything lands.</p>
@@ -135,15 +136,37 @@ function Hero() {
             </div>
             <p className="xkt-docs"><A to="https://docs.hanzo.ai/docs/coding" className="xkt-doc">Read the docs →</A></p>
           </div>
-          <motion.div className={'xkt-hero-obj' + (paused ? ' a2-paused' : '')} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: T.slower, ease: EMPH, delay: 0.15 }}>
+          <div className={'xkt-hero-obj' + (paused ? ' a2-paused' : '')}>
             <A2Pause paused={paused} onChange={setPaused} label="Pause" className="xkt-pause" />
             <Board step={step} run={run} />
             <Term step={step} run={run} replay={replay} />
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>
   );
+}
+
+/* Lines: the page's own line mask (the h1's 700 ms cut, 60 ms apart), in CSS so the server paint and the client agree
+   under every preference (the shared A2Lines branches on reduced motion while rendering, which fails hydration).
+   Reduced motion and JS off show the final lines. */
+function Lines({ lines, id, className = '' }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.3 });
+  return (
+    <h2 id={id} ref={ref} className={className + ' xkt-lines' + (seen ? ' go' : '')}>
+      {lines.map((l, i) => <span className="a2-ln" key={i}><span className="a2-ln-in" style={{ '--i': i }}>{l}</span>{i < lines.length - 1 ? ' ' : null}</span>)}
+    </h2>
+  );
+}
+
+/* Room: the dark room enters as a rounded card inside the gutters and opens to full width as it is reached (as the
+   shared A2Room), with no preference branch while rendering: phones and reduced motion open it in CSS. */
+function Room({ className = '', children, ...rest }) {
+  const ref = useRef(null);
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start end', 'start 0.25'] });
+  const clip = useTransform(p, (v) => { const k = 1 - Math.min(1, Math.max(0, v)); return `inset(0px ${Math.round(k * 32)}px round ${Math.round(k * 24)}px)`; });
+  return <motion.section ref={ref} className={'a2-dark ' + className} style={{ clipPath: clip }} {...rest}>{children}</motion.section>;
 }
 
 /* The loop: a dial pinned on screen; the four stations come in one by one as you scroll. */
@@ -163,7 +186,7 @@ function Dial({ at }) {
         <circle cx="50" cy="50" r="44" className="xkt-dial-arc" style={{ strokeDasharray: C, strokeDashoffset: C * (1 - (at + 1) / 4) }} />
       </svg>
       {STATIONS.map(([k], i) => (
-        <span key={k} className={'xkt-dial-st s' + i + (i <= at ? ' done' : '') + (i === at ? ' on' : '')}><i />{k.split(' · ')[1]}</span>
+        <span key={k} className={'xkt-dial-st s' + i + (i <= at ? ' done' : '') + (i === at ? ' on' : '')}><i /><em>{k.split(' · ')[1]}</em></span>
       ))}
       <div className="xkt-dial-c"><b className="a2-fig">{String(at + 1).padStart(2, '0')}</b><span className="x-mono">/ 04</span></div>
     </div>
@@ -176,7 +199,7 @@ function TheLoop() {
       <section className="a2-sec xkt-intro" aria-labelledby="xkt-loop-h">
         <div className="a2-wrap a2-grid">
           <p className="a2-kick">The loop</p>
-          <A2Lines id="xkt-loop-h" className="a2-headline xkt-intro-h" lines={['From a failing test', 'to a verified fix.']} />
+          <Lines id="xkt-loop-h" className="a2-headline xkt-intro-h" lines={['From a failing test', 'to a verified fix.']} />
           <p className="a2-lede xkt-intro-l">Kata never submits speculative code: Kai triages every failure, Enso writes the fix, and your own test suite decides whether it lands.</p>
         </div>
       </section>
@@ -190,8 +213,11 @@ function TheLoop() {
 const ease3 = (k) => k * k * (3 - 2 * k);
 function Wipe() {
   const ref = useRef(null);
-  const calm = useReducedMotion();
-  const narrow = useNarrow();
+  const calm0 = useReducedMotion();
+  const narrow0 = useNarrow();
+  const [ready, setReady] = useState(false); // the server and the first client paint agree; preferences apply after mount
+  useEffect(() => setReady(true), []);
+  const calm = ready && calm0, narrow = ready && narrow0;
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   const clip = useTransform(p, (v) => `circle(${calm ? 150 : Math.max(0, Math.min(1, (v - 0.22) / 0.42)) * 150}% at 50% 56%)`);
   const scale = useTransform(p, (v) => {
@@ -204,24 +230,24 @@ function Wipe() {
     return r;
   });
   return (
-    <A2Room className="xkt-room" room={null} aria-label="The suite turns">
+    <Room className="xkt-room" aria-label="The suite turns">
       <div className="xkt-wipe" ref={ref}>
         {/* the header is dark only while black is under it: until the white wipe passes the top of the screen */}
         <i className="xkt-wipe-dark" data-room="dark" aria-hidden="true" />
         <div className="xkt-wipe-stick">
           <div className="xkt-wipe-l fail" aria-hidden="true">
-            <p className="xkt-wipe-cmd x-mono">kata run --suite tests/unit</p>
+            <p className="xkt-wipe-cmd x-mono"><span>kata run --suite tests/unit</span><span className="xkt-wcur" /></p>
             <motion.p className="xkt-wipe-fig" style={{ scale }}>1 <span>failed</span></motion.p>
             <p className="xkt-wipe-cap x-mono">12 passed · 1 failed (test_token_expiry)</p>
           </div>
           <motion.div className="xkt-wipe-l pass" style={{ clipPath: clip }}>
-            <p className="xkt-wipe-cmd x-mono">kata repair --model enso-ultra</p>
+            <p className="xkt-wipe-cmd x-mono"><span>kata repair --model enso-ultra</span><span className="xkt-wcur" aria-hidden="true" /></p>
             <motion.p className="xkt-wipe-fig" style={{ scale }}>0 <span>failed</span></motion.p>
             <p className="xkt-wipe-cap x-mono">13 passed · 0 failed · 100% green verification</p>
           </motion.div>
         </div>
       </div>
-    </A2Room>
+    </Room>
   );
 }
 
@@ -245,22 +271,40 @@ function Lit({ text, word }) {
   return <span>{text.slice(0, i)}<mark>{word}</mark>{text.slice(i + word.length)}</span>;
 }
 
+/* Until you pick, the check runs itself: one group at a time, an option is tried and Hanzo's sentence lights it (a
+   ring on the chip, not a selection; the sentences are not announced). Your first pick stops it for good. A chain of
+   timeouts that waits while the panel is off screen; none under reduced motion. */
 function Fit() {
+  const ref = useRef(null);
   const [pick, setPick] = useState([null, null, null]);
-  const set = (g, o) => setPick((p) => p.map((v, k) => (k === g ? (v === o ? null : o) : v)));
+  const [touched, setTouched] = useState(false);
+  const [demo, setDemo] = useState(-1);
+  const seen = useInView(ref, { amount: 0, margin: '0px 0px 120px 0px' }); // it is already trying as it comes up the screen
+  const calm = useReducedMotion();
+  useEffect(() => {
+    if (touched || calm || !seen) return undefined;
+    const t = setTimeout(() => setDemo((d) => d + 1), demo < 0 ? 700 : 1600);
+    return () => clearTimeout(t);
+  }, [demo, touched, calm, seen]);
+  const set = (g, o) => { setTouched(true); setPick((p) => p.map((v, k) => (k === g ? (v === o ? null : o) : v))); };
+  const dg = demo % FIT.length; // the group being tried
+  const tried = (gi) => (!touched && demo >= 0 && gi === dg ? FIT[gi].opts[Math.floor(demo / FIT.length) % FIT[gi].opts.length] : null);
   return (
-    <div className="xkt-fit">
-      {FIT.map((g, gi) => (
-        <div className="xkt-fit-row" key={g.name}>
-          <div role="radiogroup" aria-label={g.name} className="xkt-chips">
-            {g.opts.map((o) => <button key={o} type="button" role="radio" aria-checked={pick[gi] === o} onClick={() => set(gi, o)}>{o}</button>)}
+    <div className={'xkt-fit' + (!touched && demo >= 0 ? ' demo' : '')} ref={ref}>
+      {FIT.map((g, gi) => {
+        const t = tried(gi), word = pick[gi] || t;
+        return (
+          <div className="xkt-fit-row" key={g.name}>
+            <div role="radiogroup" aria-label={g.name} className="xkt-chips">
+              {g.opts.map((o) => <button key={o} type="button" role="radio" aria-checked={pick[gi] === o} className={t === o ? 'tried' : undefined} onClick={() => set(gi, o)}>{o}</button>)}
+            </div>
+            <p className={'xkt-says' + (word ? ' on' : '')} aria-live={touched ? 'polite' : 'off'}>
+              <span className="xkt-says-t" aria-hidden="true">{word ? <Tick key={word} size={22} /> : null}</span>
+              <Lit text={g.says} word={word} />
+            </p>
           </div>
-          <p className={'xkt-says' + (pick[gi] ? ' on' : '')} aria-live="polite">
-            <span className="xkt-says-t" aria-hidden="true">{pick[gi] ? <Tick key={pick[gi]} size={22} /> : null}</span>
-            <Lit text={g.says} word={pick[gi]} />
-          </p>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -271,7 +315,7 @@ function Capabilities() {
       <div className="a2-wrap a2-grid">
         <div className="xkt-caps-head">
           <p className="a2-kick">Capabilities</p>
-          <A2Lines id="xkt-caps-h" className="a2-headline" lines={['Built for', 'the pipeline.']} />
+          <Lines id="xkt-caps-h" className="a2-headline" lines={['Built for', 'the pipeline.']} />
           <p className="a2-lede">Test repair, triage and the choice of model, in the CI you already run.</p>
         </div>
         <ul className="xkt-report">
@@ -303,21 +347,20 @@ function Read() {
           <h2 id="xkt-read-h" className="a2-headline">The agent, the loop, the documentation.</h2>
           <p className="a2-body">Explore the source code, recipes, and documentation.</p>
         </div>
-        <div className="xkt-cols">
-          {READ.map(([h, items]) => (
-            <div key={h} className="xkt-col">
-              <h3 className="xkt-col-h">{h}</h3>
-              <ul className="xkt-links">
-                {items.map(([to, t, d]) => (
-                  <li key={t}>
-                    {/* site pages open by Morph: the title you click becomes the next page's hero */}
-                    <A to={to} className="xkt-link"><span><b {...(to.startsWith('/') ? { 'data-morph': '' } : {})}>{t}</b>{d && <span>{d}</span>}</span><i aria-hidden="true">→</i></A>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
+        {/* one ruled list: the group is a caption on its first row; hover shows where the link goes */}
+        <ul className="xkt-rows">
+          {READ.flatMap(([h, items]) => items.map(([to, t, d], k) => (
+            <li key={t}>
+              <A to={to} className="xkt-row">
+                <span className="xkt-row-g x-mono">{k === 0 ? h : null}</span>
+                {/* site pages open by Morph: the title you click becomes the next page's hero */}
+                <span className="xkt-row-t"><b {...(to.startsWith('/') ? { 'data-morph': '' } : {})}><span>{t}</span></b>{d && <span>{d}</span>}</span>
+                <span className="xkt-row-to x-mono" aria-hidden="true">{to.startsWith('/') ? 'hanzo.ai' + to : to.replace('https://', '')}</span>
+                <i aria-hidden="true">→</i>
+              </A>
+            </li>
+          )))}
+        </ul>
       </div>
     </section>
   );
@@ -337,6 +380,8 @@ function Questions() {
         <div className="xkt-qa-head">
           <p className="a2-kick">Questions</p>
           <h2 id="xkt-qa-h" className="a2-headline">Questions &amp; Answers</h2>
+          {/* the one line the last answer gives you, as you would type it */}
+          <pre className="xkt-qa-term x-mono" aria-hidden="true"><span className="xkt-ps">$ </span>hanzo auth login{'\n'}<span className="xkt-ps">$ </span>export HANZO_API_KEY<span className="xkt-cur" /></pre>
         </div>
         <div className="xkt-qa-list"><A2Faq items={QA} /></div>
       </div>
@@ -344,8 +389,23 @@ function Questions() {
   );
 }
 
+/* The kit Band's button carries no data-cta yet (requested in docs/build-notes/requests/kata.md). Until it does, the page marks
+   it kata.band and sends the same cta_click a kit Cta sends, so the closing ask is measured and the header's ask turns
+   to an outline while the Band's solid ask is on screen (usePhoneAsk reads data-cta): one solid fill at a time. */
+function useBandAsk(id) {
+  useEffect(() => {
+    const a = document.querySelector('main.xkt .x-band a');
+    if (!a) return undefined;
+    a.setAttribute('data-cta', id);
+    const fire = () => dispatchEvent(new CustomEvent('hz-event', { detail: { name: 'cta_click', id, label: a.textContent.trim(), path: location.pathname } }));
+    a.addEventListener('click', fire);
+    return () => { a.removeEventListener('click', fire); a.removeAttribute('data-cta'); };
+  }, [id]);
+}
+
 export default function Kata() {
   usePhoneAsk();
+  useBandAsk('kata.band');
   return (
     <main className="a2 xkt">
       <Hero />

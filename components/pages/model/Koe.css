@@ -80,7 +80,7 @@ html[data-ko-ask] header[data-slot=masthead] :is(a[href='https://hanzo.ai/signup
 .ko-sh { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; margin-bottom: 40px; }
 .ko-fits { padding-top: 0; }
 .ko-map { padding-top: 0; }
-@media (min-width: 901px) { .ko-scene { padding-bottom: 116px; } .ko-fits { padding-bottom: 116px; } }
+@media (min-width: 901px) { .ko-scene { padding-bottom: 116px; } .ko-fits { padding-bottom: 116px; } .lv-sec.ko-map { padding-bottom: 58px; } .ko-map + .mc.lv-sec { padding-top: 58px; } }
 
 /* phones: the capsule keeps speaking after it settles (Meter in Koe.jsx) and the film breathes inside it */
 .ko-pill { position: absolute; overflow: hidden; pointer-events: none; }
@@ -119,3 +119,21 @@ html[data-ko-ask] header[data-slot=masthead] :is(a[href='https://hanzo.ai/signup
 }
 @keyframes ko-breathe { from { transform: scale(1); } to { transform: scale(1.1) translateY(-2%); } }
 @media (prefers-reduced-motion: reduce) { .lv:has(.ko-v2) .lv-film-in > * { animation: none !important; } }
+
+/* dark (docs/DARK-MODE.md): once the film settles, the page beside it is Hanzo's dark, so the name, the close and the
+   quiet hovers take Hanzo's tokens; bright mode reads none of this */
+html:not(.light) .ko-v2[data-on] ~ .lv-close { color: var(--foreground); background: var(--surface-overlay); border-color: var(--border-control); }
+@media (hover: hover) {
+  html:not(.light) .ko-v2[data-on] ~ .lv-close:hover { background: var(--primary); border-color: var(--primary); color: var(--primary-foreground); }
+  html:not(.light)[data-ko-ask] header[data-slot=masthead] :is(a[href='https://hanzo.ai/signup'], a[data-x-ask]):hover { background-color: var(--muted); box-shadow: inset 0 0 0 1px var(--border-selected); }
+  html:not(.light) .lv:has(.ko-v2) .lv-body .x-btn:not(.solid):hover { background: var(--muted); border-color: var(--border-strong); }
+  html:not(.light) .ko-v2 [data-cta='koe.hero-design']:hover { color: var(--text-primary); }
+}
+html:not(.light) .ko-v2[data-on] ~ .lv-close:active { background: var(--primary-hover); color: var(--primary-foreground); }
+html:not(.light) .lv:not([data-calm]):has(.ko-v2[data-on]) .lv-name[data-gone] .lv-name-h { color: var(--foreground); }
+
+/* dark: the shared Creative.css draws these two headings in #0a0a0a in both modes; on this page they take Hanzo's
+   foreground in dark until the shared file is converted */
+html:not(.light) .lv:has(> .lv-stage[data-hero=koe]) :is(.cr-caps-h, .cr-fits-list h3) { color: var(--foreground); }
+html:not(.light) .lv:has(> .lv-stage[data-hero=koe]) .cr-fit-x { color: var(--muted-foreground); }
+html:not(.light) .lv:has(> .lv-stage[data-hero=koe]) :is(.cr-fits-list, .cr-fits-list li) { border-color: var(--border); }

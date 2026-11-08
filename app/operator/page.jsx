@@ -1,5 +1,5 @@
-// Signature: drift, reverted, said out loud — a live cluster board where a Kind drifts and the next sweep puts it back, the log saying created, reverted or already in sync
-// Beyond: drift it yourself — drag a Kind out of place (or tap it on a phone) and the next sweep reverts it, with the log saying so
+// Signature: a card stack of Operator's six points — flick or drag the top card away (swipe on touch), one idea per card, the next rising from beneath
+// Beyond: the hero cluster board — drag a Kind out of place (or tap it on a phone) and the next sweep reverts it, with the log saying created, reverted or already in sync
 import Operator from '../../components/pages/Operator';
 import JsonLd from '../../components/JsonLd';
 import INDEX from '../../content/pages.json';

@@ -1,0 +1,89 @@
+/* The frame layer for Zack's pages (/pricing, /beta, /beta/apply, /chat, /dev, /about), 8 Nov.
+   The same language as the approved home page (components/home/wow.css): every section reads in one frame (at 1470 x 801
+   a section's heading and its content fit one screen once it is centred; on a phone the heading and the first card or
+   row show together), split headings, Hanzo's halftone lit from one corner, lifted surfaces, and one dark room per page
+   that opens like a curtain. Light, depth and drift are CSS alone (scroll-driven where the browser supports it), so the
+   pages ship no extra JavaScript. Colours are Hanzo's tokens (--ink, --soft, --card, --line, --bg, --x-raised ->
+   @hanzo/design in dark); the dark room is dark in both modes, as on the home page.
+   Opt in per element: main.zf, then .zf-sec on a section (corner with --hx/--hy, light with --lx/--ly), .zf-head for a
+   split heading, .zf-lift for a raised surface, .zf-room for the dark room, .zf-close for the closing ask. */
+
+.zf { --fr: min(680px, calc(100svh - 128px)); --zf-shadow: 0 40px 80px -56px rgba(0, 0, 0, .42), 0 2px 6px -2px rgba(0, 0, 0, .06);
+  --zf-shadow-hi: 0 50px 100px -60px rgba(0, 0, 0, .5), 0 2px 8px -2px rgba(0, 0, 0, .08); --zf-dot: color-mix(in srgb, var(--ink) 15%, transparent); }
+html.dark .zf { --zf-shadow: 0 0 0 1px var(--border), 0 40px 80px -50px rgba(0, 0, 0, .9); --zf-shadow-hi: 0 0 0 1px var(--border-control, var(--border)), 0 50px 100px -50px rgba(0, 0, 0, .95);
+  --zf-dot: color-mix(in srgb, var(--foreground) 22%, transparent); }
+
+/* ---------- a section is a frame ---------- */
+.zf .zf-sec { position: relative; isolation: isolate; padding-block: clamp(56px, 8.5svh, 104px); }
+.zf .zf-sec > * { position: relative; }
+.zf .zf-sec::before { content: ''; position: absolute; z-index: -1; inset: 0; pointer-events: none;
+  background: radial-gradient(circle, var(--zf-dot) 1px, transparent 1.5px) 0 0 / 12px 12px;
+  -webkit-mask-image: radial-gradient(40% 55% at var(--hx, 100%) var(--hy, 0%), #000, transparent 72%); mask-image: radial-gradient(40% 55% at var(--hx, 100%) var(--hy, 0%), #000, transparent 72%); opacity: .9; }
+.zf .zf-sec::after { content: ''; position: absolute; z-index: -1; inset: 0; pointer-events: none;
+  background: radial-gradient(42% 46% at var(--lx, 18%) var(--ly, 0%), color-mix(in srgb, var(--ink) 6%, transparent), transparent 70%); }
+html.dark .zf .zf-sec::after { background: radial-gradient(42% 46% at var(--lx, 18%) var(--ly, 0%), color-mix(in srgb, var(--foreground) 9%, transparent), transparent 70%); }
+.zf .zf-sec.zf-plain::before, .zf .zf-sec.zf-plain::after { display: none; }
+
+/* ---------- the split heading: title left with a hairline that draws itself, lede right on the same baseline row ---------- */
+.zf .zf-head { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: end; gap: 14px clamp(32px, 5vw, 80px); margin-bottom: clamp(22px, 3.2svh, 34px); text-align: left; }
+.zf .zf-head h2, .zf .zf-head .zf-h { position: relative; margin: 0; padding-top: 22px; font-size: clamp(2.1rem, 3.55vw, 3.45rem); line-height: 1; letter-spacing: -.042em; font-weight: 600; max-width: 15ch; color: var(--ink); text-wrap: balance; }
+.zf .zf-head h2::before, .zf .zf-head .zf-h::before { content: ''; position: absolute; left: 0; top: 0; width: 44px; height: 3px; border-radius: 3px; background: currentColor; transform-origin: 0 50%; }
+.zf .zf-head > p, .zf .zf-head .zf-lede { margin: 0 0 4px; font-size: clamp(.98rem, 1.12vw, 1.1rem); line-height: 1.5; max-width: 46ch; justify-self: end; color: var(--soft); }
+.zf .zf-head.zf-solo { grid-template-columns: 1fr; }
+.zf .zf-head.zf-solo > p { justify-self: start; }
+
+/* ---------- a lifted surface ---------- */
+.zf .zf-lift { background: var(--x-raised); border: 1px solid var(--line); border-radius: 24px; box-shadow: var(--zf-shadow); transition: box-shadow .5s var(--ease), transform .5s var(--ease); }
+@media (hover: hover) { .zf a.zf-lift:hover, .zf .zf-lift.zf-hover:hover { box-shadow: var(--zf-shadow-hi); } }
+/* a halftone that sits inside a surface, lit from its top right */
+.zf .zf-dots { position: relative; isolation: isolate; overflow: hidden; }
+.zf .zf-dots::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(circle, var(--zf-dot) 1px, transparent 1.5px) 0 0 / 10px 10px;
+  -webkit-mask-image: radial-gradient(70% 80% at var(--dx, 100%) var(--dy, 0%), #000, transparent 70%); mask-image: radial-gradient(70% 80% at var(--dx, 100%) var(--dy, 0%), #000, transparent 70%); opacity: .7; }
+
+/* ---------- the dark room: dark in both modes, opening like a curtain, a beam sweeping down ---------- */
+.zf .zf-room { position: relative; isolation: isolate; overflow: hidden; color: #f5f5f7; background: radial-gradient(90% 60% at 50% 0%, #202024, #121214 55%, #0c0c0d); --ink: #f5f5f7; --soft: #a1a1a6; --faint: #8e8e93; --line: rgba(255, 255, 255, .12); --x-raised: #161618; --card: #161618; --zf-dot: rgba(255, 255, 255, .22);
+  --zf-shadow: 0 0 0 1px rgba(255, 255, 255, .08), 0 40px 80px -50px rgba(0, 0, 0, .9); }
+.zf .zf-room::before { content: ''; position: absolute; z-index: -1; inset: 0; pointer-events: none; background: radial-gradient(circle, rgba(255, 255, 255, .22) 1px, transparent 1.5px) 0 0 / 12px 12px;
+  -webkit-mask-image: radial-gradient(60% 50% at 50% 0%, #000, transparent 75%); mask-image: radial-gradient(60% 50% at 50% 0%, #000, transparent 75%); }
+.zf .zf-room::after { content: ''; position: absolute; z-index: -1; inset: 0; pointer-events: none; transform-origin: 50% 0;
+  background: conic-gradient(from 180deg at 50% -10%, transparent 160deg, rgba(255, 255, 255, .09) 175deg, rgba(255, 255, 255, .14) 180deg, rgba(255, 255, 255, .09) 185deg, transparent 200deg); }
+.zf .zf-room .zf-head h2, .zf .zf-room .zf-head .zf-h { color: #f5f5f7; }
+.zf .zf-room .zf-head > p { color: #a1a1a6; }
+
+/* ---------- the closing ask: a lit stage with the page's last buttons ---------- */
+.zf .zf-close { position: relative; isolation: isolate; text-align: center; padding-block: clamp(72px, 12svh, 140px); }
+.zf .zf-close h2 { margin: 0 auto; max-width: 18ch; font-size: clamp(2.4rem, 5vw, 4.6rem); line-height: .98; letter-spacing: -.045em; font-weight: 600; text-wrap: balance; }
+.zf .zf-close p { margin: 18px auto 0; max-width: 52ch; color: var(--soft); font-size: clamp(1rem, 1.2vw, 1.15rem); line-height: 1.5; }
+.zf .zf-close .zf-acts { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 30px; }
+
+/* ---------- motion: scroll-driven, CSS only ---------- */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .zf .zf-sec::before { animation: zf-drift linear both; animation-timeline: view(); }
+    @keyframes zf-drift { from { background-position: 0 60px; opacity: .2; } 45% { opacity: .9; } to { background-position: 0 -60px; opacity: .3; } }
+    .zf .zf-head h2::before, .zf .zf-head .zf-h::before { animation: zf-rule linear both; animation-timeline: view(); animation-range: entry 20% cover 45%; }
+    @keyframes zf-rule { from { transform: scaleX(0); } }
+    .zf .zf-room { animation: zf-curtain linear both; animation-timeline: view(); animation-range: entry 0% cover 40%; }
+    @keyframes zf-curtain { from { clip-path: inset(0 5% round 56px); } to { clip-path: inset(0 0 round 0); } }
+    .zf .zf-room::after { animation: zf-beam linear both; animation-timeline: view(); }
+    @keyframes zf-beam { from { transform: rotate(-24deg); opacity: 0; } 40% { opacity: 1; } to { transform: rotate(24deg); opacity: .4; } }
+    .zf .zf-tilt { animation: zf-tilt linear both; animation-timeline: view(); animation-range: entry 0% cover 42%; transform-origin: 50% 100%; }
+    @keyframes zf-tilt { from { transform: perspective(1600px) rotateX(14deg) scale(.95); } }
+    .zf .zf-rise { animation: zf-rise linear both; animation-timeline: view(); animation-range: entry 0% cover 30%; }
+    @keyframes zf-rise { from { transform: translateY(48px); opacity: .25; } }
+  }
+}
+
+/* ---------- smaller screens ---------- */
+@media (max-width: 900px) {
+  .zf .zf-sec { padding-block: 56px; }
+  .zf .zf-head { grid-template-columns: 1fr; gap: 12px; margin-bottom: 22px; }
+  .zf .zf-head > p, .zf .zf-head .zf-lede { justify-self: start; margin: 0; }
+}
+@media (max-width: 640px) {
+  .zf .zf-sec { padding-block: 44px; }
+  .zf .zf-head h2, .zf .zf-head .zf-h { font-size: 2rem; padding-top: 16px; }
+  .zf .zf-head > p { font-size: .95rem; }
+  .zf .zf-room { clip-path: none !important; animation: none !important; }
+  .zf .zf-close { padding-block: 64px; }
+}

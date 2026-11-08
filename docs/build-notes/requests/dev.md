@@ -1,0 +1,10 @@
+# /dev, /platform, /integrations, /oss/*: shared chrome changes requested (7 Nov, Wave 1 Apps / families owner)
+
+Every critic walk of these five designs (dev, platform, integrations, integrations/*, oss/*) raised the same shared-chrome issues. They are outside these pages' files, so they are listed here for the shared owners.
+
+1. **Header ask hover fades** (`components/Nav.jsx` / `HeaderTools.jsx`, the header's "Try Hanzo" / page-ask button): hover only lowers opacity to 0.88, which is on JAMES.md's banned list ("buttons that fade on hover"). Fix: change the fill instead (outline → `#f5f5f5`; solid `#0a0a0a` → `#262626`), keep the 0.97 press.
+2. **Two solid fills on the phone's first screen** (`components/Ask.jsx`): on phones the header keeps a solid black "Try Hanzo" while the hero's own solid ask (e.g. "Open Dev", "Get API key — Free", "<org> on GitHub") is on screen. Desktop already swaps the header to an outline and the page's label while the hero ask is visible; phones should follow the same rule (MASTER part 4: one solid fill at a time).
+3. **Kit `Band` closing headline reveals with `blur(12px)` + opacity** (`components/kit.jsx`): MASTER part 9 asks for the line-mask cut-in (translateY 105% to 0, 700 ms, ease-emphasis, 60 ms a line), no opacity-and-blur reveal.
+4. **Header over a dark room** reads as a muddy grey bar on the integrations guides' black close; a true black glass (black 78%) would read cleaner.
+5. **Footer hydration warning** (the shared footer's `FooterHTML`, rendered with `dangerouslySetInnerHTML`): when a browser paints during hydration, React logs "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties" pointing at the footer, which shows Next's red "1 Issue" badge on every page. Plain headless loads stay clean, so it is timing-dependent; critics on /integrations/* and /oss/* both traced it there.
+6. **Hydration mismatch under reduced motion** in `components/v2/SceneWipe.jsx` and `components/v2/MaskLines.jsx` (they read `useReducedMotion()` during render). Fix: use `components/v2/useCalm.js`. Details in `docs/build-notes/requests/integrations.md` item 3.

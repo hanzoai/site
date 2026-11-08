@@ -1,4 +1,4 @@
-/* The scale (docs/MASTER.md section 3: resting h1 52px, section headings 26px, figures 64px, 48px buttons, 1152px
+/* The scale (docs/build-notes/MASTER.md section 3: resting h1 52px, section headings 26px, figures 64px, 48px buttons, 1152px
    container, golden spacing, flat objects) for the Programs pages, owned by the Wave 2 Programs chat.
    Usage: import '../v2/ProgramScale.css' in a page and put class "xp" on its <main>. Every class is prefixed xp- so it
    never collides with another chat's v2 styles. 0 UI hues (JAMES.md 7): --xp-accent is the room's ink, re-resolved in
@@ -40,8 +40,8 @@
 @media (hover: hover) { .xp-cta:hover i, .xp-ghost:hover i { transform: translateX(4px); } }
 
 /* hero objects and cards: 28px and 16px radii, hairlines, a soft long shadow, no blur */
-.xp-obj { border-radius: 24px; background: #fff; border: 1px solid rgba(0, 0, 0, .1); box-shadow: none; }
-.xp-card { border-radius: 24px; background: #f5f5f5; border: 0; }
+.xp-obj { border-radius: 24px; background: var(--x-raised); border: 1px solid var(--x-e10); box-shadow: none; }
+.xp-card { border-radius: 24px; background: light-dark(#f5f5f5, var(--muted)); border: 0; }
 
 @media (max-width: 900px) {
   .xp-wrap { width: calc(100% - 32px); }

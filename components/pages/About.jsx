@@ -1,5 +1,8 @@
 'use client';
-/* About, v3 (Story archetype, editorial). Ink, greys and silvers only (JAMES.md 7): colour comes from Hanzo's own model art.
+/* About, v4 (8 Nov, Zack's pages): the frame layer (Frame.css) over v3. Every section reads in one frame at 1470 x 801;
+   split headings, Hanzo's halftone lit from a corner per section, the open-source room as the page's dark room (it
+   opens like a curtain), the four runtimes as lit plates that tilt in, and a close on Try Hanzo and Book a call.
+   About, v3 (Story archetype, editorial). Ink, greys and silvers only (JAMES.md 7): colour comes from Hanzo's own model art.
    First screen: "Chasing the Pareto Frontier of AI" at display size, the lede tucked beside its short last line, and the
    frontier itself full-bleed underneath: it draws itself (time), Techstars '17 sits on it as a milestone, and a pointer
    over it reads the year under the hand (pointer).
@@ -13,7 +16,7 @@
    Every word, figure and link is Hanzo's (content/live/about.json). */
 // Persona: a buyer, founder or engineer checking who is behind Hanzo (arrives from the footer, /history or search)
 // Goal: believe the team and its record, then start building
-// CTA: Get Started (/pricing) in the hero and in the sticky ask ("Start Building" after the track record is a text link); the close is the careers ask
+// CTA: Get Started (/pricing) in the hero and in the sticky ask ("Start Building" after the track record is a text link); the page closes on Try Hanzo (/signup) and Book a call (cal.com/hanzo), Zack 8 Nov
 // Metric: signup_start (data-cta="about.*")
 // Signature: word-light on the pick-two belief (lit word by word as read), then six reasons Hanzo builds that open into their own sheet
 // Beyond: pick two? keep all four: the lede's four trade-offs as switches that never knock each other off
@@ -22,7 +25,6 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
 import { Count } from '../ui';
 import { A, Cta, Img, Tabs, TabPanel } from '../kit';
-import StoryClose from './StoryClose';
 import StoryPause from './StoryPause';
 import Sigil from '../Sigil';
 import { useOpener } from '../Opener';
@@ -33,6 +35,7 @@ import WordLight from './about/WordLight';
 import { useEntrances } from './about/enter';
 import '../v2/system.css';
 import './story.css';
+import './Frame.css';
 import './About.css';
 
 const Arr = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
@@ -149,17 +152,24 @@ function useOneSolidOnPhone() {
     const H = document.documentElement;
     const mq = matchMedia('(max-width: 700px)');
     const el = document.querySelector('main.xab [data-cta="about.hero"]');
+    // the close's solid "Try Hanzo": while it is on screen the header's ask is quiet at every width
+    const band = document.querySelector('main.xab .xab-close [data-cta="about.try"]');
     if (!el) return;
-    let mine = false, vis = false;
+    let mine = false, vis = false, inBand = false, t = 0;
     const apply = () => {
-      if (mq.matches && vis) { H.dataset.ask = 'quiet'; mine = true; }
+      if ((mq.matches && vis) || inBand) { H.dataset.ask = 'quiet'; mine = true; }
       else if (mine) { delete H.dataset.ask; mine = false; }
     };
     const io = new IntersectionObserver(([e]) => { vis = e.isIntersecting; apply(); });
     io.observe(el);
+    const bo = new IntersectionObserver(([e]) => { inBand = e.isIntersecting; apply(); });
+    if (band) bo.observe(band);
+    // the shell rewrites data-ask about 80 ms after the scroll settles on desktop; say it again after it while the band shows
+    const onScroll = () => { clearTimeout(t); if (inBand) t = setTimeout(apply, 160); };
+    addEventListener('scroll', onScroll, { passive: true });
     const timers = [300, 1400].map((ms) => setTimeout(apply, ms)); // after the shell's own first pass
     mq.addEventListener('change', apply);
-    return () => { io.disconnect(); timers.forEach(clearTimeout); mq.removeEventListener('change', apply); if (mine) delete H.dataset.ask; };
+    return () => { io.disconnect(); bo.disconnect(); clearTimeout(t); removeEventListener('scroll', onScroll); timers.forEach(clearTimeout); mq.removeEventListener('change', apply); if (mine) delete H.dataset.ask; };
   }, []);
 }
 
@@ -171,7 +181,7 @@ function Hero() {
   // the button is first in the hero, tucked into the plot's lower right corner, and hidden under reduced motion
   const [paused, setPaused] = useState(false);
   return (
-    <section className={'xab-hero' + (paused ? ' paused' : '')} aria-labelledby="xab-h1" data-ask-name="About" data-morph-target>
+    <section className={'zf-sec xab-hero' + (paused ? ' paused' : '')} aria-labelledby="xab-h1" data-ask-name="About" data-morph-target>
       <StoryPause paused={paused} onToggle={() => setPaused((v) => !v)} className="xab-pause" />
       <div className="v2s-wrap xab-hero-top">
         {/* the h1 cuts in line by line from first paint (CSS, never waiting on hydration) */}
@@ -334,14 +344,16 @@ function Why() {
   const step = (d) => setAt((a) => (a + d + PILLARS.length) % PILLARS.length);
   const [t, k, d, l, to] = PILLARS[at];
   return (
-    <section className="v2s-sec xab-why" id="why" aria-labelledby="xab-why-h">
+    <section className="v2s-sec zf-sec xab-why" id="why" aria-labelledby="xab-why-h">
       <div className="v2s-wrap">
-        <div className="v2s-head xab-why-head">
-          <h2 id="xab-why-h" className="v2s-headline xab-why-h">Moving the frontier without trading away safety, privacy, or ownership.</h2>
-          <p className="v2s-cap">Why We Build</p>
+        <div className="zf-head xab-why-head">
+          <div className="xab-hl">
+            <p className="v2s-cap">Why We Build</p>
+            <h2 id="xab-why-h" className="xab-why-h">Moving the frontier without trading away safety, privacy, or ownership.</h2>
+          </div>
+          {/* the signature: Hanzo's belief, lit word by word as it is read */}
+          <WordLight className="xab-why-l" text="Most AI platforms ask you to pick two: raw capability, low latency, affordable cost, or control over your data. Chasing the Pareto frontier means advancing every axis at once through better systems engineering and open research." />
         </div>
-        {/* the signature: Hanzo's belief, lit word by word as it is read */}
-        <WordLight className="xab-why-l" text="Most AI platforms ask you to pick two: raw capability, low latency, affordable cost, or control over your data. Chasing the Pareto frontier means advancing every axis at once through better systems engineering and open research." />
         <div className="xab-why-g" ref={grid} data-enter="ink-spread">
           <Figure on={on} peek={shown} />
           <Picks on={on} flip={flip} touched={touched} />
@@ -401,12 +413,16 @@ function Record() {
     return () => removeEventListener('scroll', pick);
   }, [seen]);
   return (
-    <section className="v2s-sec xab-rec" aria-labelledby="xab-rec-h" data-enter="magnet-gather">
+    <section className="v2s-sec zf-sec xab-rec" aria-labelledby="xab-rec-h" data-enter="magnet-gather">
       <div className="v2s-wrap">
-        <div className="v2s-head">
-          <h2 id="xab-rec-h" className="v2s-headline">Built with founders, scaled to public markets.</h2>
-          <p className="v2s-cap">Proven Track Record</p>
+        <div className="zf-head">
+          <div className="xab-hl">
+            <p className="v2s-cap">Proven Track Record</p>
+            <h2 id="xab-rec-h">Built with founders, scaled to public markets.</h2>
+          </div>
+          <p className="xab-rec-l">From SKULLY and open-source commerce through Techstars ’17 to Damon Motors and Triller listing on Nasdaq in 2024, Hanzo has engineered sovereign commerce and AI systems for hundreds of venture-backed companies. Read the complete 2014–2026 archive on our history page, or start building today.</p>
         </div>
+        <div className="xab-rec-stage zf-lift zf-dots">
         <dl className="xab-figs" ref={figs}>
           <div className={big === 0 ? 'big' : ''}><dt className="v2s-num"><Count to={100} suffix="+" duration={1.8} /></dt><dd>Startups built &amp; funded</dd></div>
           <div className={big === 1 ? 'big' : ''}><dt className="v2s-num">$1B+</dt><dd>Client revenue generated</dd></div>
@@ -415,9 +431,9 @@ function Record() {
         <ol className="xab-miles">
           {MILES.map(([y, t]) => <li key={y}><b className="v2s-num">{y}</b><span>{t}</span></li>)}
         </ol>
-        <div className="v2s-grid xab-rec-foot">
-          <p className="v2s-body v2s-c-1-7">From SKULLY and open-source commerce through Techstars ’17 to Damon Motors and Triller listing on Nasdaq in 2024, Hanzo has engineered sovereign commerce and AI systems for hundreds of venture-backed companies. Read the complete 2014–2026 archive on our history page, or start building today.</p>
-          <div className="v2s-acts v2s-c-8-12 xab-rec-acts">
+        </div>
+        <div className="xab-rec-foot">
+          <div className="v2s-acts xab-rec-acts">
             <TL to="/pricing">Start Building</TL>
             <TL to="/history">Read Our Full History</TL>
             <TL to="/customers">Customer Stories</TL>
@@ -456,10 +472,10 @@ function Portrait({ p, has }) {
 
 function Founders({ portraits = [] }) {
   return (
-    <section className="v2s-sec tight xab-people" aria-label="Founders" data-enter="squash-land">
+    <section className="v2s-sec tight zf-sec xab-people" aria-label="Founders" data-enter="squash-land">
       <div className="v2s-wrap xab-people-g">
         {FOUNDERS.map((p, i) => (
-          <article key={p.name} className={'xab-person' + (i ? ' two' : '')}>
+          <article key={p.name} className={'xab-person zf-lift zf-dots' + (i ? ' two' : '')}>
             <Portrait p={p} has={portraits.includes(p.img)} />
             <div className="xab-person-t">
               <h3 className="v2s-headline">{p.name}</h3>
@@ -477,13 +493,13 @@ function Founders({ portraits = [] }) {
 /* ---------- 5. the Zen of Hanzo: a pinned scene (AboutZen.jsx) ---------- */
 
 /* ---------- 6. the dark room: open source, deterministic safety, and the commits as they land ---------- */
-const COMMITS = [
-  ['hanzoai/ui', 'Merge pull request \u0023299 from hanzoai/fix/footer-signature-no-crop', 'b44e122', 'Nov 6, 06:04 UTC', 'https://github.com/hanzoai/ui/commit/b44e1221957bb7e96d3c82c509109bb98300c92a'],
-  ['hanzoai/desktop', 'chore(desktop): finalize 1.1.53 skin, guest/LSA integration, and UI primitive repairs', 'ddfcd04', 'Nov 6, 05:53 UTC', 'https://github.com/hanzoai/desktop/commit/ddfcd04565afa1b27a6480fd7fc2a9de0ec84e94'],
-  ['hanzoai/desktop', 'Update css', 'e749213', 'Nov 6, 05:39 UTC', 'https://github.com/hanzoai/desktop/commit/e7492134d79dc3c7c1def579a2305cba7c8092f5'],
-  ['hanzoai/desktop', "feat(desktop): hanzo.ai's app stack, macOS window controls, and the window's own skin", '421d4f2', 'Nov 6, 05:39 UTC', 'https://github.com/hanzoai/desktop/commit/421d4f233bd6516367293b496c6000c3a2219cde'],
-  ['hanzoai/ui', 'fix(footer): keep full Hanzo wordmark and punctuation visible at responsive widths', '72c079f', 'Nov 6, 05:20 UTC', 'https://github.com/hanzoai/ui/commit/72c079f77bf1683373a719f575f3541006c72457'],
-  ['hanzoai/homebrew-tap', 'hanzo 8.5.910', '098a650', 'Nov 6, 05:10 UTC', 'https://github.com/hanzoai/homebrew-tap/commit/098a650e94d36cbf48af446d647845ff90686929'],
+const COMMITS = [ // the six hanzo.ai/about shows (8 Nov), word for word
+  ['hanzoai/build', 'feat(customize): move Bots to its own left-sidebar section under Agents (v0.2.112)', '59d85b4', 'Nov 7, 08:12 UTC', 'https://github.com/hanzoai/build/commit/59d85b4ee9e194dee6f6f724f6ac1bae6b0115c1'],
+  ['hanzoai/app', 'Merge pull request \u002338 from hanzoai/bots', '87c232f', 'Nov 7, 08:03 UTC', 'https://github.com/hanzoai/app/commit/87c232fe181ca6d01cbf032d25e2c0c73da36c6d'],
+  ['hanzoai/personas', 'Merge pull request \u00232 from hanzoai/names-ed-mo', '9d67b12', 'Nov 7, 07:59 UTC', 'https://github.com/hanzoai/personas/commit/9d67b12ddd54b481b5ad411e89a137011862531f'],
+  ['hanzoai/personas', "personas 1.2.1: Ed, Mo and Art by the owner's names", '8a182bb', 'Nov 7, 07:58 UTC', 'https://github.com/hanzoai/personas/commit/8a182bb5c58efe34335f5c2ccab7494ed0ea2cd1'],
+  ['hanzoai/app', 'agents: the twelve leads are Team, the other 22 seats run 24/7 as Bots (0.3.41)', '7b01c57', 'Nov 7, 07:57 UTC', 'https://github.com/hanzoai/app/commit/7b01c57d1ec617efb318bf25a3152087dce032c5'],
+  ['hanzoai/app', 'Merge pull request \u002337 from hanzoai/seats', '3979848', 'Nov 7, 07:47 UTC', 'https://github.com/hanzoai/app/commit/3979848f8a8f82bae2dfef77f59ec18daba85a1e'],
 ];
 
 const PANES = [
@@ -500,7 +516,7 @@ function Log() {
     <div className={'xab-log' + (seen ? ' in' : '')} ref={ref}>
       <div className="xab-log-h">
         <h3 className="v2s-title">Proof of Work: Recent Commits by Our Core Team</h3>
-        <p><span className="xab-live" aria-hidden="true" />Public Activity <b>1700+ repositories</b> <A to="https://github.com/hanzoai">github.com/hanzoai</A></p>
+        <p><span className="xab-live" aria-hidden="true" /><span>Public Activity</span> <span className="xab-log-n">1700+ repositories</span> <A to="https://github.com/hanzoai">github.com/hanzoai</A></p>
       </div>
       <ul>
         {COMMITS.map(([repo, msg, sha, when, to], i) => (
@@ -508,7 +524,7 @@ function Log() {
             <span className="xab-repo">{repo}</span>
             <A to={to} className="xab-msg">{msg}</A>
             <code>{sha}</code>
-            <time>{when}</time>
+            <span className="xab-when">{when}</span>
           </li>
         ))}
       </ul>
@@ -523,12 +539,14 @@ function Log() {
 function Open() {
   const [pane, setPane] = useState(0); // one pane at a time: the open code, or the safety bounds
   return (
-    <section className="v2s-sec xab-open" data-room="dark" aria-labelledby="xab-open-h">
+    <section className="v2s-sec zf-room xab-open" data-room="dark" aria-labelledby="xab-open-h">
       <div className="v2s-wrap">
-        <div className="v2s-head">
-          <h2 id="xab-open-h" className="v2s-display xab-open-h">Verifiable code. <span className="xab-dim">Calibrated decisions.</span></h2>
-          <p className="v2s-cap">Open Source &amp; Deterministic Safety</p>
-          <p className="v2s-lede xab-open-l">Opaque black-box platforms ask you to trust what you cannot inspect. Hanzo pairs public source code and open specifications with calibrated decision bounds and full infrastructure sovereignty.</p>
+        <div className="zf-head">
+          <div className="xab-hl">
+            <p className="v2s-cap">Open Source &amp; Deterministic Safety</p>
+            <h2 id="xab-open-h" className="xab-open-h"><span>Verifiable code.</span> <span className="xab-dim">Calibrated decisions.</span></h2>
+          </div>
+          <p className="xab-open-l">Opaque black-box platforms ask you to trust what you cannot inspect. Hanzo pairs public source code and open specifications with calibrated decision bounds and full infrastructure sovereignty.</p>
         </div>
         <div className="xab-open-g" data-enter="accordion">
           <div className="xab-panes">
@@ -537,7 +555,7 @@ function Open() {
               <TabPanel key={t} id="xab-pane" i={i} value={pane} className="xab-pane">
                 <p className="xab-pk">{k}</p>
                 <p className="v2s-body">{d}</p>
-                <ul>{items.map(([b, s]) => <li key={b}><b>{b}</b> {s}</li>)}</ul>
+                <ul>{items.map(([b, s]) => <li key={b}><span className="xab-pane-k">{b}</span> <span>{s}</span></li>)}</ul>
                 <Link2 to={to}>{l}</Link2>
               </TabPanel>
             ))}
@@ -589,20 +607,28 @@ const PAPERS = [
 
 function Research() {
   return (
-    <section className="v2s-sec xab-research" aria-labelledby="xab-res-h">
+    <>
+    <section className="v2s-sec zf-sec xab-research" aria-labelledby="xab-res-h">
       <div className="v2s-wrap">
-        <div className="v2s-head side">
-          <h2 id="xab-res-h" className="v2s-headline">Original architectures, engines, and published research.</h2>
-          <p className="v2s-cap">Frontier Models &amp; Research</p>
-          <p className="v2s-lede xab-res-l">Rather than wrapping third-party endpoints, Hanzo designs decision models, semantic routers, bare-metal inference engines, and open research on verifiable agent safety.</p>
+        <div className="zf-head">
+          <div className="xab-hl">
+            <p className="v2s-cap">Frontier Models &amp; Research</p>
+            <h2 id="xab-res-h">Original architectures, engines, and published research.</h2>
+          </div>
+          <p className="xab-res-l">Rather than wrapping third-party endpoints, Hanzo designs decision models, semantic routers, bare-metal inference engines, and open research on verifiable agent safety.</p>
         </div>
         <div className="xab-row-h">
           <h3 className="v2s-kick">Models &amp; Runtimes</h3>
           <Link2 to="/models">View Model Catalog</Link2>
         </div>
-        <ul className="xab-rts">{RUNTIMES.map((m) => <Runtime key={m.name} m={m} />)}</ul>
-        <div className="xab-row-h xab-papers-h">
-          <h3 className="v2s-kick">Selected Papers &amp; Technical Writing</h3>
+        <ul className="xab-rts zf-tilt">{RUNTIMES.map((m) => <Runtime key={m.name} m={m} />)}</ul>
+      </div>
+    </section>
+    {/* the papers: a frame of their own, an editorial list after the four lit plates */}
+    <section className="v2s-sec zf-sec xab-papers-s" aria-labelledby="xab-pap-h">
+      <div className="v2s-wrap">
+        <div className="zf-head xab-papers-h">
+          <h3 id="xab-pap-h" className="zf-h">Selected Papers &amp; Technical Writing</h3>
           <div className="xab-row-links"><Link2 to="/research">Papers</Link2><Link2 to="/blog">Blog</Link2></div>
         </div>
         <ul className="xab-papers">
@@ -619,6 +645,7 @@ function Research() {
         </ul>
       </div>
     </section>
+    </>
   );
 }
 
@@ -635,18 +662,19 @@ const TRACKS = [[0.5, 1.5], [0.62, 1.1], [0.74, 2]].map(([a, q]) => trace((t) =>
 function Careers() {
   const [on, setOn] = useState(-1);
   return (
-    <>
-      <section className="v2s-sec tight xab-careers" aria-label="Careers at Hanzo">
-        <div className="v2s-wrap xab-car-g">
+    <section className="v2s-sec zf-sec xab-careers" aria-labelledby="xab-car-h">
+      <div className="v2s-wrap xab-car-g">
+        <div className="xab-car-t">
           <p className="v2s-label">Careers at Hanzo</p>
-          <ol className="xab-roles" onPointerLeave={() => setOn(-1)}>
-            {ROLES.map(([t, d], i) => (
-              <li key={t} className={on === i ? 'on' : ''} onPointerEnter={() => setOn(i)}>
-                <span className="v2s-num" aria-hidden="true">{pad(i + 1)}</span>
-                <div><h3 className="v2s-title">{t}</h3><p>{d}</p></div>
-              </li>
-            ))}
-          </ol>
+          <h2 id="xab-car-h" className="xab-car-h">Push the Pareto frontier with us.</h2>
+          <p className="xab-car-l">We hire systems programmers, AI safety researchers, and product engineers who care about open source, equitable access, privacy, and sovereign ownership. High autonomy, zero bureaucracy, and code that ships in public.</p>
+          <div className="xab-car-acts">
+            <Cta to="/careers" id="about.band" kind="quiet">Explore Open Roles</Cta>
+            <TL to="/team">Meet the Team</TL>
+            <TL to="/open-source">Browse Code on GitHub</TL>
+          </div>
+        </div>
+        <div className="xab-car-r">
           <div className={'xab-tracks' + (on >= 0 ? ' lit' : '')} aria-hidden="true">
             <svg viewBox={`${PL} ${PT} ${W - PL - PR} ${H - PT - PB}`} preserveAspectRatio="none">
               <line x1={0} x2={W} y1={Y(0)} y2={Y(0)} className="xab-base" />
@@ -655,24 +683,46 @@ function Careers() {
             </svg>
             <i className="xab-tracks-head" />
           </div>
+          <ol className="xab-roles" onPointerLeave={() => setOn(-1)}>
+            {ROLES.map(([t, d], i) => (
+              <li key={t} className={on === i ? 'on' : ''} onPointerEnter={() => setOn(i)}>
+                <span className="v2s-num" aria-hidden="true">{pad(i + 1)}</span>
+                <div><h3 className="v2s-title">{t}</h3><p>{d}</p></div>
+              </li>
+            ))}
+          </ol>
         </div>
-      </section>
-      <StoryClose
-        cta="about.band"
-        title="Push the Pareto frontier with us."
-        lede="We hire systems programmers, AI safety researchers, and product engineers who care about open source, equitable access, privacy, and sovereign ownership. High autonomy, zero bureaucracy, and code that ships in public."
-        action="Explore Open Roles"
-        to="/careers"
-        note={<p className="x-band-note xab-band-note"><A to="/team">Meet the Team</A><A to="/open-source">Browse Code on GitHub</A></p>}
-      />
-    </>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- 9. the close (Zack, 8 Nov): the frontier runs on to its head, and the page ends on Try Hanzo and Book a call ---------- */
+function Close() {
+  return (
+    <section className="zf-close xab-close" aria-label="Try Hanzo, Book a call">
+      <div className="v2s-wrap">
+        <div className="xab-close-stage zf-lift">
+          <svg className="xab-close-curve" viewBox={`${PL} ${PT} ${W - PL - PR} ${H - PT - PB}`} preserveAspectRatio="none" aria-hidden="true">
+            {[0.25, 0.5, 0.75].map((v) => <line key={v} x1={0} x2={W} y1={Y(v)} y2={Y(v)} className="xab-grid" />)}
+            {TRACKS.map((d, i) => <path key={i} d={d} className="xab-ghost" />)}
+            <path d={FRONT} className="xab-line" pathLength={1} />
+          </svg>
+          <i className="xab-close-head" aria-hidden="true" />
+          <div className="zf-acts xab-close-acts">
+            <Cta to="/signup" id="about.try" size="lg">Try Hanzo</Cta>
+            <Cta to="https://cal.com/hanzo" id="about.call" kind="quiet" size="lg">Book a call</Cta>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
 export default function About({ portraits = [] }) {
   useEntrances(); // the five section entrances (about/enter.js)
   return (
-    <main id="main" className="xab v2s">
+    <main id="main" className="xab v2s zf">
       {/* JavaScript off: the frontier shows drawn at rest (no film to stop part way), and the idle loops and their pause
           button (which needs JS) are off */}
       <noscript><style>{'.xab-line,.xab-ghost,.xab-ride,.xab-ts,.xab-axis,.xab-halo,.xab-glide{animation:none!important}.xab-glide,.xab-pause{display:none!important}'}</style></noscript>
@@ -684,6 +734,7 @@ export default function About({ portraits = [] }) {
       <Open />
       <Research />
       <Careers />
+      <Close />
     </main>
   );
 }

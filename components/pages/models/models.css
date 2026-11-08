@@ -75,7 +75,7 @@
 .xmf-gx i { bottom: 10px; left: 6px; }
 .xmf-gy i { left: 10px; top: -15px; }
 .xmf-sweep { position: absolute; inset: 0; pointer-events: none; animation: xmf-sweep 7s linear infinite; }
-.xmf-sweep i { position: absolute; left: 0; top: 0; bottom: 0; width: 120px; translate: -120px 0; background: linear-gradient(90deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, .03) 85%, rgba(0, 0, 0, .12) 100%); }
+.xmf-sweep i { position: absolute; left: 0; top: 0; bottom: 0; width: 120px; translate: -120px 0; background: linear-gradient(90deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, .045) 50%, rgba(0, 0, 0, 0)); }
 @keyframes xmf-sweep { from { transform: translateX(0); } to { transform: translateX(calc(100% + 120px)); } }
 .xmf-dot { position: absolute; width: 44px; height: 44px; margin: -22px 0 0 -22px; display: grid; place-items: center; border-radius: 50%; z-index: 1; }
 .xmf-dot b { width: 10px; height: 10px; border-radius: 50%; background: #0a0a0a; opacity: .5; transform: scale(0); transition: transform .7s cubic-bezier(.16, 1, .3, 1) calc(var(--i) * 28ms + .1s), opacity .25s; }
@@ -130,6 +130,7 @@
 .xmf-quick { background: #0a0a0a; color: #fafafa; }
 .xmf-quick-g { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr); gap: clamp(28px, 5vw, 80px); align-items: start; }
 .xmf-quick-id { margin: 18px 0 0; font-size: 14px; color: #a3a3a3; overflow-wrap: anywhere; }
+.xmf-quick-price { margin: 14px 0 0; max-width: 38ch; font-size: 15px; line-height: 1.5; color: #a3a3a3; }
 .xmf-code { min-width: 0; border-radius: var(--xmf-r); background: #171717; border: 1px solid rgba(255, 255, 255, .08); overflow: hidden; }
 .xmf-code-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 10px 10px 12px; border-bottom: 1px solid rgba(255, 255, 255, .08); }
 .xmf-tabs { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
@@ -392,9 +393,9 @@
 .xmf-maker-n > span { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
 .xmf-guest { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center; padding-top: 32px; border-top: 1px solid var(--ink); }
 .xmf-guest-h { grid-column: 1 / 5; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
-.xmf-guest-h b { font-size: 28px; font-weight: 600; letter-spacing: -.03em; line-height: 1.1; }
-.xmf-guest-h code { padding: 4px 10px; border-radius: 8px; background: var(--card); font-size: 14px; }
-.xmf-guest-h span { font-size: 15px; color: var(--soft); }
+.xmf-guest-h .xmf-guest-t { font-size: 28px; font-weight: 600; letter-spacing: -.03em; line-height: 1.1; }
+.xmf-guest-h .xmf-guest-k { padding: 4px 10px; border-radius: 8px; background: var(--card); font-size: 14px; }
+.xmf-guest-h > span:not(.xmf-guest-t):not(.xmf-guest-k) { font-size: 15px; color: var(--soft); }
 .xmf-guest-h p { margin: 10px 0 0; max-width: 34ch; font-size: 17px; line-height: 1.5; color: var(--soft); }
 .xmf-term { grid-column: 5 / 13; min-width: 0; border-radius: 28px; background: #0a0a0a; color: #e5e5e5; overflow: hidden; box-shadow: 0 50px 100px -60px rgba(0, 0, 0, .55); }
 .xmf-term-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px 14px 24px; border-bottom: 1px solid rgba(255, 255, 255, .08); }
@@ -463,7 +464,7 @@
 
 /* Hanzo's model cards (SpecCard) in the rail and on the shelf */
 .xmf-rail > li, .xmf-grid > li { min-width: 0; }
-.xmf-rail .sc-card { min-height: 240px; }
+.xmf-rail .sc-card { min-height: 220px; }
 @media (max-width: 900px) { .xmf-maker-top { position: relative; justify-content: space-between; margin-top: 36px; } }
 
 
@@ -482,7 +483,7 @@
 .xmf-fig dt, .xmf-obj-id > span, .xmf-obj-l, .xmf-k, .xmf-maker-n > span { font-size: 12px; letter-spacing: .14em; font-weight: 500; }
 .xmf-obj { background: #f5f5f5; box-shadow: none; border-radius: 24px; }
 .xmf-obj-id { box-shadow: none; border-radius: 16px; }
-.xmf-sh h2, .xmf-rel .xmf-more-h h2, .xmf-spec-h, .xmf-quick .xmf-sh h2, .xmf-guest-h b { font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.2; }
+.xmf-sh h2, .xmf-rel .xmf-more-h h2, .xmf-spec-h, .xmf-quick .xmf-sh h2, .xmf-guest-h .xmf-guest-t { font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.2; }
 .xmf-spec { padding: 27px 0; }
 .xmf-spec dt, .xmf-spec dd { font-size: 16px; }
 .xmf-bill-big b { font-size: 64px; font-weight: 300; letter-spacing: -.04em; }
@@ -606,12 +607,13 @@
 
 /* the rail: six siblings at most, all pages of this site */
 .xmf-rail.few { grid-auto-columns: minmax(280px, calc((100% - 28px) / 3)); }
-@media (hover: hover) and (min-width: 900px) { .xmf-rail .sc-card.hush { min-height: 176px; } }
 /* Hanzo's other "More from" cards: one line each, the description on hover or focus */
 .xmf-also { margin: 44px 0 0; padding: 0; list-style: none; border-top: 1px solid var(--ink); }
 .xmf-also li { border-bottom: 1px solid var(--line); }
 .xmf-also-a { position: relative; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr) 64px; align-items: center; gap: 0 24px; min-height: 72px; padding: 12px 16px; border-radius: 12px; color: var(--ink); text-decoration: none; transition: background-color .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(0, 0, .2, 1); }
 .xmf-also-a b { font-size: 17px; font-weight: 500; letter-spacing: -.01em; }
+/* the model id, as hanzo.ai prints it under the name */
+.xmf-also-id { grid-column: 1; grid-row: 2; margin-top: 2px; font-size: 12px; line-height: 16px; color: var(--soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .xmf-also-a b i { display: inline-block; margin-left: 8px; font-style: normal; transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
 .xmf-also-c { grid-column: 3; grid-row: 1; font-size: 13px; color: var(--soft); }
 .xmf-also-d { grid-column: 2; grid-row: 1; font-size: 13px; line-height: 18px; color: var(--soft); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0; transform: translateY(4px); transition: opacity .3s cubic-bezier(.16, 1, .3, 1), transform .3s cubic-bezier(.16, 1, .3, 1); }
@@ -643,6 +645,10 @@
 .xmf-row .sc-t { grid-column: 1; grid-row: 1; font-size: 17px; line-height: 24px; letter-spacing: -.01em; color: var(--ink); transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
 .xmf-row .sc-meta { grid-column: 2; grid-row: 1; margin: 0; font-size: 13px; color: var(--soft); transition: opacity .3s cubic-bezier(.16, 1, .3, 1); }
 .xmf-row .sc-meta b { color: var(--ink); }
+/* the model id (hanzo.ai prints it in mono under the name) sits under the name; the rate keeps the middle column */
+.xmf-row .sc-meta { display: contents; }
+.xmf-row .sc-meta .xmf-id { grid-column: 1; grid-row: 2; margin-top: 2px; font: 400 12px/16px var(--mono); color: var(--soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.xmf-row .sc-meta b { grid-column: 2; grid-row: 1; font: 400 13px/18px var(--mono); transition: opacity .3s cubic-bezier(.16, 1, .3, 1); }
 .xmf-row .sc-d { grid-column: 2; grid-row: 1; margin: 0; max-width: none; font-size: 13px; line-height: 18px; color: var(--soft); -webkit-line-clamp: 2; opacity: 0; transform: translateY(4px); transition: opacity .3s cubic-bezier(.16, 1, .3, 1), transform .3s cubic-bezier(.16, 1, .3, 1); }
 .xmf-row .sc-tags { grid-column: 3; grid-row: 1; flex-wrap: nowrap; justify-content: flex-end; }
 .xmf-row .sc-pill { border-color: rgba(0, 0, 0, .15); color: var(--soft); }
@@ -651,10 +657,10 @@
   .xmf-prov .sc-card.xmf-row:hover { background: #f5f5f5; }
   .xmf-row:hover .sc-t { transform: translateX(4px); }
   .xmf-row:hover .sc-d { opacity: 1; transform: none; }
-  .xmf-row:hover .sc-meta { opacity: 0; }
+  .xmf-row:hover .sc-meta b { opacity: 0; }
 }
 .xmf-row:focus-visible .sc-d { opacity: 1; transform: none; }
-.xmf-row:focus-visible .sc-meta { opacity: 0; }
+.xmf-row:focus-visible .sc-meta b { opacity: 0; }
 .xmf-prov .sc-card.xmf-row:active { transform: scale(.995) !important; }
 
 @media (max-width: 899px) {
@@ -671,7 +677,7 @@
   .xmf-also-c { grid-column: 2; }
   .xmf-prov .xmf-name.m, .xmf-prov .xmf-name.l { font-size: 40px; }
   .xmf-prov .sc-card.xmf-row { grid-template-columns: minmax(0, 1fr) auto; padding: 12px 0; border-radius: 0; }
-  .xmf-row .sc-meta { grid-column: 1; grid-row: 2; margin-top: 2px; }
+  .xmf-row .sc-meta b { grid-column: 1; grid-row: 3; margin-top: 2px; }
   .xmf-row .sc-d { display: none; }
   .xmf-row .sc-tags { grid-column: 2; grid-row: 1 / 3; }
   .xmf-row .sc-tags .sc-pill + .sc-pill { display: none; }
@@ -682,3 +688,85 @@
 @media (prefers-reduced-motion: reduce) {
   .xmf-rb-r i b, .xmf-reach-bar i, .xmf-row .sc-d, .xmf-row .sc-meta, .xmf-also-d { transition: none; }
 }
+
+/* 8 Nov: rows keep two pills on one line (a long modality never breaks inside its pill) */
+.xmf-row .sc-pill { white-space: nowrap; }
+.xmf-row .sc-tags .sc-pill:nth-child(n + 3) { display: none; }
+/* Hanzo's own shelf: its filmed models as Hanzo's black cards (SPEC: Enso spans both rows, 2fr 1fr 1fr) */
+.xmf-films { padding: 0; }
+.xmf-films ul { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 220px 220px; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.xmf-films li { min-width: 0; }
+.xmf-films li:first-child { grid-row: 1 / 3; }
+.xmf-films li:nth-child(4) { grid-column: 2 / 4; }
+.xmf-films .sc-card { height: 100%; }
+@media (max-width: 899px) {
+  .xmf-films ul { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-auto-rows: 220px; }
+  .xmf-films li:first-child { grid-row: span 2; }
+  .xmf-films li:nth-child(4) { grid-column: auto; }
+  /* the maker's contour field stays right of the guest key's words */
+  .xmf-maker .xmf-art { -webkit-mask-image: radial-gradient(ellipse 60% 55% at 80% 40%, #000 25%, transparent 75%); mask-image: radial-gradient(ellipse 60% 55% at 80% 40%, #000 25%, transparent 75%); }
+}
+
+/* ======================= dark (docs/DARK-MODE.md, 8 Nov): live hanzo.ai's own dark, mapped by role =======================
+   Hanzo's selector (html:not(.light)) and Hanzo's tokens only, so bright mode is untouched and no dark colour is ours.
+   The page's local tokens give way to the page's (Hanzo's) in dark: --muted here was a caption grey, so it takes
+   Hanzo's tertiary text. Hanzo's black model cards (SPEC), the films, the guest terminal and the quick start room stay
+   black in both modes. */
+html:not(.light) .xmf { --ink: inherit; --soft: inherit; --faint: inherit; --line: inherit; --card: inherit; --muted: var(--text-tertiary); --acc: var(--foreground); }
+/* the first screen carries Hanzo's hero glow */
+html:not(.light) .xmf-launch { background-image: radial-gradient(60% 70% at 50% 0%, color-mix(in srgb, var(--foreground) 9%, transparent), transparent 70%); }
+/* the contour fields draw in the page's ink */
+html:not(.light) .xmf-sigil, html:not(.light) .xmf-obj-sigil, html:not(.light) .xmf-end-sigil { color: var(--foreground); }
+/* the hero object, its model ID card and the bill: Hanzo's card surfaces and hairline */
+html:not(.light) .xmf-obj:not(.film) { background: var(--x-fill); box-shadow: inset 0 0 0 1px var(--border); }
+html:not(.light) .xmf-obj-id { background: var(--x-raised); box-shadow: 0 0 0 1px var(--border); }
+html:not(.light) .xmf-bill-r { background: var(--x-raised); }
+html:not(.light) .xmf-local { background: var(--bg); }
+/* the field */
+html:not(.light) .xmf-plot { background: var(--x-fill); }
+html:not(.light) .xmf-gx, html:not(.light) .xmf-gy { background: var(--glass); }
+html:not(.light) .xmf-sweep i { background: linear-gradient(90deg, transparent, var(--glass) 50%, transparent); }
+html:not(.light) .xmf-dot b { background: var(--foreground); }
+html:not(.light) .xmf-dot.me b { background: var(--foreground); box-shadow: 0 0 0 4px var(--x-fill), 0 0 0 5.5px var(--foreground); }
+html:not(.light) .xmf-dot.me::after { border-color: var(--foreground); }
+html:not(.light) .xmf-tip { background: var(--secondary); color: var(--secondary-foreground); box-shadow: 0 0 0 1px var(--border); }
+html:not(.light) .xmf-tip span { color: var(--muted-foreground); }
+html:not(.light) .xmf-me-l { background: var(--foreground); color: var(--primary-foreground); }
+/* the bill's bars and sliders */
+html:not(.light) .xmf-bar, html:not(.light) .xmf-bctx { background: var(--secondary); }
+html:not(.light) .xmf-bar i, html:not(.light) .xmf-brow.me .xmf-bar i { background: var(--foreground); }
+html:not(.light) .xmf-brow:not(.me) .xmf-bar i { background: var(--border-selected); }
+html:not(.light) .xmf-bctx i { background: var(--border-strong); }
+html:not(.light) .xmf-vol input::-webkit-slider-runnable-track { background: linear-gradient(var(--foreground), var(--foreground)) 0 / var(--f, 30%) 100% no-repeat, var(--secondary); }
+html:not(.light) .xmf-vol input::-moz-range-track { background: var(--secondary); }
+html:not(.light) .xmf-vol input::-moz-range-progress { background: var(--foreground); }
+html:not(.light) .xmf-vol input::-webkit-slider-thumb { background: var(--x-raised); box-shadow: 0 0 0 1.5px var(--foreground), 0 6px 14px -4px rgba(0, 0, 0, .35); }
+html:not(.light) .xmf-vol input::-moz-range-thumb { background: var(--x-raised); box-shadow: 0 0 0 1.5px var(--foreground), 0 6px 14px -4px rgba(0, 0, 0, .35); }
+html:not(.light) .xmf-vol input:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 2px var(--foreground), 0 0 0 5px var(--bg), 0 0 0 7px var(--foreground); }
+/* the drawn rates and Kai's reach */
+html:not(.light) .xmf-rb-r i { background: var(--secondary); }
+html:not(.light) .xmf-rb-r i::after { background-image: linear-gradient(90deg, transparent, color-mix(in srgb, var(--background) 55%, transparent), transparent); }
+html:not(.light) .xmf-reach { background: var(--x-fill); }
+html:not(.light) .xmf-reach-bar:not(.cells) { background: var(--popover); }
+html:not(.light) .xmf-reach-bar i.all, html:not(.light) .xmf-reach-bar.cells i { background: var(--border-strong); }
+html:not(.light) .xmf-reach-bar.cells i.tr { background: var(--foreground); }
+/* controls: Hanzo's secondary (card surface, control edge); a selected pill is the primary (light fill, dark text) */
+html:not(.light) .xmf .x-copy { background: var(--x-raised); border-color: var(--border-control); color: var(--foreground); }
+html:not(.light) .xmf .x-copy:hover, html:not(.light) .xmf .v2-mpause:hover { background-color: var(--secondary); }
+@media (hover: hover) { html:not(.light) .xmf .x-copy:hover, html:not(.light) .xmf-more-spec:hover { border-color: var(--ring); } }
+html:not(.light) .xmf-quick .x-copy, html:not(.light) .xmf-term .x-copy { background: transparent; border-color: rgba(255, 255, 255, .2); color: rgba(255, 255, 255, .78); }
+html:not(.light) .xmf-quick .x-copy:hover, html:not(.light) .xmf-term .x-copy:hover { background-color: rgba(255, 255, 255, .08); color: #fafafa; }
+html:not(.light) .xmf-more-spec { background: var(--x-raised); }
+html:not(.light) .xmf-fam a:hover { background: var(--secondary); }
+html:not(.light) .xmf-fam-here { color: var(--primary-foreground); }
+html:not(.light) .xmf-fam-here i { color: var(--primary-foreground) !important; }
+html:not(.light) .xmf-pick button:not([aria-pressed='true']):hover { background: var(--x-fill); }
+/* rows: the hover fill, the light band, the pills */
+html:not(.light) .xmf-also-a:hover, html:not(.light) .xmf-prov .sc-card.xmf-row:hover { background: var(--x-fill); }
+@media (max-width: 899px) { html:not(.light) .xmf-prov .sc-card.xmf-row:active { background: var(--x-fill); } }
+html:not(.light) .xmf-also::before { background: linear-gradient(transparent, var(--glass) 50%, transparent) 0 -240px / 100% 240px no-repeat; }
+html:not(.light) .xmf-prov .xmf-grid::before { background: linear-gradient(transparent, var(--glass) 50%, transparent) 0 -360px / 100% 360px no-repeat; }
+html:not(.light) .xmf-row .sc-pill { border-color: var(--border-control); }
+html:not(.light) .xmf :focus-visible { outline-color: var(--foreground); }
+html:not(.light) .xmf-quick :focus-visible { outline-color: #fafafa; }
+@media (prefers-reduced-motion: reduce) { html:not(.light) .xmf-rb-r i::after, html:not(.light) .xmf-also::before, html:not(.light) .xmf-prov .xmf-grid::before { background: none; } }

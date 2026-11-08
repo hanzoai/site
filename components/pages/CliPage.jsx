@@ -4,7 +4,7 @@
 // Beyond: Add to the script: the install script takes any of the binary's own commands (scan, share, status, link, auth show) as one press each, under Hanzo's own heading for it, and every block and the whole script copy as you built them
 // Persona: a developer deciding whether to put one more binary on their path.
 // Goal: install the CLI (the line is right there to copy) after seeing it work in a real session.
-// CTA: Install from hanzo.sh (docs.hanzo.ai/docs/cli): hero solid (data-thumb) + the closing band; everything else is a text link. On desktop the shared header swaps to the same ask after the hero; phone header label requested in docs/requests/cli.md.
+// CTA: Install from hanzo.sh (docs.hanzo.ai/docs/cli): hero solid (data-thumb) + the closing band; everything else is a text link. On desktop the shared header swaps to the same ask after the hero; phone header label requested in docs/build-notes/requests/cli.md.
 // Metric: api_key_created (developer: copy the install line, then sign in with hanzo auth login)
 /* Hanzo CLI (Archetype: Developer, terminal-first, code as the hero).
    V2: 8/10 motion-map pass: the signature is now the before / after slider (pile of flags vs resource tree) right after the hero; the five main sections each enter a different way (noise-dissolve, shutter, side-carousel, curtain-rise, cursor-trail), once, on scroll into view; the h2 line-mask cut-ins and the sticky builder column are gone; the typing hero terminal stays (approved). Round 4: the hero session is masked from first paint and only grows (0 resets); the tree starts fully open so the tour never reflows rows (phone CLS 0.0017); one caret steps down the band's places; the script window arrives block by block while its line count rolls up; rail cards fit their content; tree window outlined only; ending runs on (145/44 px). Round 3:the hero ask is the one pure-white solid on the black room (was the room's #f5f5f7 grey); the h1 cuts in on first paint and the session waits for fonts plus that cut-in before typing; "Hanzo CLI · Developers" moved from the bar above the h1 to the status line below it; the three claims are small terminal windows that type their command in (stepped clip) with the missing verb struck after; h2s use page-local cli/Cut (no reduced-motion hydration error, legible with JS off); resting carets keep the hero, prompt and script alive; 44 px tabs; every hover answers
@@ -117,7 +117,7 @@ function Hero() {
         </div>
         <div className="cli-body">
           <h1 id="cli-h1" className="av-display cli-h1"><span className="cli-m"><span>An AI engineer</span></span> <span className="cli-m"><span>in your terminal</span></span></h1>
-          <p className="av-lede cli-lede">Type <code>hanzo</code> in a repo and you get a coding session. Type <code>hanzo</code> and a noun and you get the rest of the cloud — identity, usage, billing, clusters, machines, networks — typed straight from the API&apos;s own document.</p>
+          <p className="av-lede cli-lede">Type hanzo in a repo and you get a coding session. Type hanzo and a noun and you get the rest of the cloud — identity, usage, billing, clusters, machines, networks — typed straight from the API&apos;s own document.</p>
           <Session onDone={setDone} paused={paused} runKey={runKey} />
           <div className="cli-acts">
             <div className="cli-acts-row">
@@ -309,7 +309,7 @@ function Claim({ c, t, d, i }) {
         <span className="cli-win-bar"><i /><i /><i /><b className="x-mono av-num">{String(i + 1).padStart(2, '0')}</b></span>
         <span className="cli-three-c x-mono"><span className="cli-win-l"><span>$ </span>{i === 2 ? <s>{c}</s> : c}</span><span className="cli-caret" /></span>
       </span>
-      <h3 className="av-title"><span className="cli-three-n x-mono av-num">{String(i + 1).padStart(2, '0')}</span>{t}</h3>
+      <h3 className="av-title"><span className="cli-three-n x-mono av-num">{String(i + 1).padStart(2, '0')}</span><span>{t}</span></h3>
       <p className="av-body">{d}</p>
     </li>
   );
@@ -325,7 +325,7 @@ function What() {
           <span className="cli-noise" aria-hidden="true" />
           <div className="cli-what-top">
             <Lines as="h2" id="cli-tree-h" className="av-display s cli-tree-h" lines={['A resource tree,', 'not a pile of flags']} />
-            <p className="av-lede cli-what-lede"><code>hanzo &lt;resource&gt; &lt;command&gt;</code>. The resources beyond the hand-written ones are generated from the OpenAPI documents, so the CLI can only ask for things the API has.</p>
+            <p className="av-lede cli-what-lede">hanzo &lt;resource&gt; &lt;command&gt;. The resources beyond the hand-written ones are generated from the OpenAPI documents, so the CLI can only ask for things the API has.</p>
           </div>
           <Compare tree={TREE} labelledBy="cli-tree-h" go={go} />
         </Enter>
@@ -380,7 +380,7 @@ function Caps() {
               <code><span aria-hidden="true">$ </span>{c}</code>
               <Copy text={c} label={'Copy ' + c} />
             </div>
-            <h3 className="av-title"><span className="cli-cap-n x-mono av-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>{t}</h3>
+            <h3 className="av-title"><span className="cli-cap-n x-mono av-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><span>{t}</span></h3>
             <p>{d}</p>
           </li>
         ))}

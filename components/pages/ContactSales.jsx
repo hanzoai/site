@@ -25,7 +25,7 @@
    the logos; raw <img>; the raw .x-btn submit; data-ask-hide on the rail; arrow keys that chose and advanced. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
-import { A, More, Band } from '../kit';
+import { A, More, Band, Img } from '../kit';
 import Sigil from '../Sigil';
 import MaskLines from './company/MaskLines';
 import { useEnter, useFilm, Letters } from './contact-sales/enter';
@@ -280,12 +280,15 @@ function Form({ v, setV, at, setAt, adds, toggle }) {
   );
 }
 
-/* the launches as a type rail: Hanzo's own customer names set as type, each a real link. The logo files
-   (/logos/customers/*) are not in this repo, so none is requested (docs/requests/contact-sales.md asks for a mirror). */
+/* the launches as a logo rail: Hanzo's own customer logos (public/logos/customers, as live shows them), each a real
+   link; a logo that cannot load steps aside for its name set as type */
 function Name({ l, ghost }) {
+  const [bad, setBad] = useState(false);
+  const ref = useRef(null);
+  useEffect(() => { const i = ref.current; if (i && i.complete && !i.naturalWidth) setBad(true); }, []);
   return (
     <A to={l.href} className="xcs-logo" {...(ghost ? { tabIndex: -1, 'aria-hidden': true } : {})}>
-      <span>{l.name}</span>
+      {bad ? <span>{l.name}</span> : <Img ref={ref} src={l.src} alt={ghost ? '' : l.name + ' logo'} w={160} h={40} onError={() => setBad(true)} />}
     </A>
   );
 }
@@ -327,7 +330,11 @@ function Rail() {
   return (
     <section className="xcs-logos" aria-labelledby="xcs-logos-h">
       <div className="vc-wrap xcs-logos-h">
-        <h2 id="xcs-logos-h" className="vc-title xcs-e xcs-e-cascade" ref={cascade}><Letters text="Products Hanzo built and launched" /></h2>
+        <h2 id="xcs-logos-h" className="vc-title xcs-e xcs-e-cascade" ref={cascade}>
+          {/* the heading's own words as one line; the falling letters are a picture of it that hands over once they land */}
+          <span className="xcs-cas-real">Products Hanzo built and launched</span>
+          <span className="xcs-cas-fx" aria-hidden="true"><Letters text="Products Hanzo built and launched" /></span>
+        </h2>
         <button type="button" className="xcs-round" aria-label={run ? 'Pause' : 'Play'} aria-pressed={!run} onClick={() => setRun(!run)}>
           {run
             ? <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
@@ -436,9 +443,9 @@ export default function ContactSales() {
           </div>
           <div className="xcs-more xcs-e xcs-e-accordion" ref={accordion}>
             <div className="xcs-routes">
-              <A to="https://cal.com/hanzo/30min" className="xcs-route"><span>Or book a 30-minute call</span><b aria-hidden="true"><Out /></b></A>
-              <a href="mailto:enterprise@hanzo.ai" className="xcs-route"><span>Prefer email?</span><b>enterprise@hanzo.ai</b></a>
-              <A to="https://hanzo.team/start" className="xcs-route"><span>Want it today?</span><b>Get Hanzo Team</b></A>
+              <A to="https://cal.com/hanzo/30min" className="xcs-route"><span className="xcs-rl">Or book a 30-minute call</span><span className="xcs-rv" aria-hidden="true"><Out /></span></A>
+              <a href="mailto:enterprise@hanzo.ai" className="xcs-route"><span className="xcs-rl">Prefer email?</span><span className="xcs-rv">enterprise@hanzo.ai</span></a>
+              <A to="https://hanzo.team/start" className="xcs-route"><span className="xcs-rl">Want it today?</span><span className="xcs-rv">Get Hanzo Team</span></A>
             </div>
             <p className="xcs-alt"><span>Want instant recommendations or team seat pricing?</span> <A to="/buying-specialist" className="xcs-ai">Talk to AI Buying Specialist →</A></p>
           </div>

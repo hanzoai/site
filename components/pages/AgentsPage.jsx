@@ -16,7 +16,7 @@
      6. Proof: figures already in the copy, counting once (enters by stretch-scroll). 7. The Band, with the five ticks.
    Deck greys; colour only through Koma's film. Every word and line of code is Hanzo's. */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView } from 'motion/react';
+import { motion, AnimatePresence, useInView, useScroll, useMotionValueEvent } from 'motion/react';
 import { useDemo } from '../v2/AppDemo';
 import { EASE, Copy, useCalm } from '../ui';
 import { More, Film, Cta, Band, Stat } from '../kit';
@@ -24,6 +24,7 @@ import { Enter, ven } from './agents-index/entrances';
 import LiveChat from './agents-index/LiveChat';
 import '../v2/AppLines.css';
 import './AgentsPage.css';
+import { PLANS } from '../../lib/plans';
 
 const INSTALL = "npm i -g hanzo              # any OS; or: curl -fsSL https://hanzo.sh | sh\nhanzo auth login            # a person approves once; headless agents use a key\nhanzo                       # a coding session in this repo (fetches the agent)\nhanzo mcp                   # the MCP server over stdio (fetched on first run)\nhanzo engine serve <model>  # local inference (fetched on first run)\n\n# Register the MCP server with nothing installed first:\nclaude mcp add --scope user hanzo -- npx -y hanzo mcp";
 const SCRIPT = "// No human required: sign up with a wallet, get a key, call the API, top up in USDC or USDT.\n// A first-seen wallet gets its own Hanzo account and organization, with a small free allowance to try it.\n// npm i @hanzo/ai viem   ·   node agent.ts   (Node 22.18+; set HANZO_WALLET_KEY to use your own wallet)\nimport { Hanzo } from '@hanzo/ai'\nimport { generatePrivateKey, privateKeyToAccount } from 'viem/accounts'\nimport { createHash, randomBytes } from 'node:crypto'\n\nconst ID = 'https://hanzo.id'\nconst API = 'https://api.hanzo.ai'\nconst CLIENT = 'hanzo-ai'\n\n// Your agent's own wallet, or a fresh one. The key never leaves this process.\nconst account = privateKeyToAccount((process.env.HANZO_WALLET_KEY as `0x${string}`) ?? generatePrivateKey())\n\n// 1. Sign up with a wallet: get a challenge, sign it, verify (POST /v1/iam/web3/verify), exchange for a token.\nconst nonce = await fetch(`${ID}/v1/iam/web3/nonce?chain=evm&address=${account.address}`).then((r) => r.json())\nconst message = [`${nonce.data.domain} wants you to sign in with your Ethereum account:`, account.address, '', ...(nonce.data.statement ? [nonce.data.statement, ''] : []), `URI: ${nonce.data.uri}`, `Version: ${nonce.data.version}`, `Nonce: ${nonce.data.nonce}`, `Issued At: ${nonce.data.issuedAt}`].join('\\n')\nconst signature = await account.signMessage({ message })\n\n// Verify the signed challenge: a first-seen wallet gets an account and an organization of its own.\nconst verifier = randomBytes(32).toString('base64url')\nconst challenge = createHash('sha256').update(verifier).digest('base64url')\nconst { data: code } = await fetch(`${ID}/v1/iam/web3/verify`, {\n  method: 'POST',\n  headers: { 'Content-Type': 'application/json' },\n  body: JSON.stringify({ clientId: CLIENT, chain: 'evm', scheme: 'secp256k1-eip191', address: account.address, message, signature, type: 'code', redirectUri: 'http://localhost:3000/callback', scope: 'openid profile email', codeChallenge: challenge, codeChallengeMethod: 'S256' }),\n}).then((r) => r.json())\n\nconst token = await fetch(`${ID}/v1/iam/oauth/token`, {\n  method: 'POST',\n  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },\n  body: new URLSearchParams({ grant_type: 'authorization_code', client_id: CLIENT, code, code_verifier: verifier, redirect_uri: 'http://localhost:3000/callback' }),\n}).then((r) => r.json())\n\n// 2. Get an API key (POST /v1/account/keys) that outlives the token. Shown once.\nconst hanzo = new Hanzo({ apiKey: token.access_token, baseURL: API })\nconst { key } = await hanzo.account.keys.create({ name: 'agent', type: 'secret' })\n\n// 3. Use AI (POST /v1/chat/completions) with the Hanzo SDK — OpenAI-compatible, one line.\nconst client = new Hanzo({ apiKey: key, baseURL: API })\nconst chat = await client.chat.completions.create({\n  model: 'zen-free',\n  messages: [{ role: 'user', content: 'Reply with the single word: ready' }],\n})\nconsole.log('chat', chat.choices[0]?.message?.content, 'free left today:', chat.headers?.get?.('x-ratelimit-remaining'))\n\n// Or make a Kai decision — typed, calibrated, zero output tokens.\nconst decision = await client.decisions.create({\n  model: 'kai',\n  state: { ticket: 'The export button throws a 500 error since this morning.' },\n  questions: { team: { type: 'choice', instructions: 'Which team should handle this ticket?', criteria: { billing: 'charges, invoices, refunds', tech: 'bugs, errors, outages', other: 'anything else' } } },\n})\nconsole.log('decision', decision.answers, 'input tokens:', decision.usage.input_tokens, 'latency:', decision.latency_ms + 'ms')\n\n// 4. Top up in USDC or Card (POST /v1/billing/crypto/deposit · GET /v1/billing/crypto/options · GET /v1/billing/tier).\nconst deposit = await client.billing.crypto.deposit({ chain: 'base', token: 'usdc', amountCents: 500 })\nconsole.log('send to', deposit.depositAddress, 'then poll', `${API}/v1/billing/crypto/deposit/${deposit.id}`)\n\nconsole.log('HANZO_API_KEY=' + key.slice(0, 12) + '…  (store the whole key; it is shown once)')";
@@ -257,12 +258,12 @@ function hl(line) {
   const out = [];
   let last = 0;
   line.replace(TOK, (m, c, s, k, n, i) => {
-    if (i > last) out.push(line.slice(last, i));
+    if (i > last) out.push(<span key={'p' + i}>{line.slice(last, i)}</span>); // plain runs are spans too (one text run each)
     out.push(<span key={i} className={c ? 'c' : s ? 's' : k ? 'k' : 'n'}>{m}</span>);
     last = i + m.length;
     return m;
   });
-  out.push(line.slice(last));
+  if (last < line.length) out.push(<span key="end">{line.slice(last)}</span>);
   return out;
 }
 
@@ -289,10 +290,38 @@ function Script() {
   }, [va, vb]);
 
   const jump = (i) => {
-    setView(i);
+    setView(i); setTyp({ j: 0, k: 0 });
     const c = code.current, row = rows.current[chunks[i][0]];
     if (c && row) c.scrollTo({ top: Math.max(0, row.offsetTop - 18), behavior: calm ? 'auto' : 'smooth' });
   };
+
+  // the scene follows the scroll (no pin): as the file passes, each step takes the stage in turn; a click holds a
+  // step until the scroll crosses into the next one
+  const ed = useRef(null);
+  const last = useRef(0);
+  const { scrollYProgress } = useScroll({ target: ed, offset: ['start 0.7', 'end 0.4'] });
+  useMotionValueEvent(scrollYProgress, 'change', (p) => {
+    const i = Math.max(0, Math.min(LAST, Math.floor(p * STEPS.length)));
+    if (i !== last.current) { last.current = i; jump(i); }
+  });
+
+  // the step's requests write themselves under the code, then its answer lands (the server HTML has them whole)
+  const seen = useInView(ed, { once: true, amount: 0.3 });
+  const [typ, setTyp] = useState({ j: 99, k: 0 });
+  useEffect(() => { if (!still()) setTyp({ j: 0, k: 0 }); }, []);
+  useEffect(() => {
+    if (!seen || calm) { if (calm) setTyp({ j: 99, k: 0 }); return; }
+    const calls = CALLS[view];
+    let j = 0, k = 0, t;
+    const tick = () => {
+      k += 3;
+      if (k >= split(calls[j])[1].length) { j += 1; k = 0; if (j >= calls.length) { setTyp({ j: 99, k: 0 }); return; } setTyp({ j, k }); t = setTimeout(tick, 160); return; }
+      setTyp({ j, k }); t = setTimeout(tick, 14);
+    };
+    t = setTimeout(tick, 220);
+    return () => clearTimeout(t);
+  }, [view, seen, calm]);
+  const typed = typ.j >= 99;
 
   // phones: the index is a row of pills; the chosen step slides into its view (the row scrolls, never the page)
   const index = useRef(null);
@@ -309,7 +338,7 @@ function Script() {
         <p className="v2a-lede agt-sc-lede agx-v" style={ven(1, 90)}>Every step is one request. This file makes them all, as it was run against production.</p>
         <p className="v2a-folio agx-v" style={ven(2, 90)}>Headless</p>
       </div>
-      <div className="v2a-wrap agt-ed">
+      <div className="v2a-wrap agt-ed" ref={ed}>
         <ol className="agt-index" ref={index} aria-label="The five steps in the script">
           {STEPS.map(([t], i) => (
             <li key={t} className={'agx-v' + (view === i ? ' on' : '')} style={ven(i + 3, 70)}>
@@ -342,9 +371,9 @@ function Script() {
           {/* each step's requests and its answer, stacked in one cell sized by the tallest */}
           <div className="agt-resp" id="agt-resp">
             {STEPS.map(([t, d], i) => (
-              <div key={t} className={'agt-resp-b' + (view === i ? ' on' : '')} aria-hidden={view !== i}>
+              <div key={t} className={'agt-resp-b' + (view === i ? ' on' : '') + (view !== i || typed ? ' ok' : '')} aria-hidden={view !== i}>
                 <div className="agt-out x-mono">
-                  {CALLS[i].map((c, j) => <Req key={j} c={c} />)}
+                  {CALLS[i].map((c, j) => <Req key={j} c={c} shown={view !== i || typed || j < typ.j ? undefined : j > typ.j ? 0 : typ.k} caret={view === i && !typed && j === typ.j} />)}
                 </div>
                 <p className="agt-resp-a">{d}</p>
               </div>
@@ -441,7 +470,7 @@ const PROOF = [
   { pre: '', v: '05 / 05', post: 'Every step is one request.' },
   { pre: 'Kai is', v: '$0.021', post: 'per million input tokens, and its output is free.' },
   { pre: 'A deposit address lasts', v: '24 hours', post: 'and is credited when the chain confirms' },
-  { pre: 'Plans for people start at', v: '$8', post: 'a month' },
+  { pre: 'Plans for people start at', v: '$' + PLANS.go.price, post: 'a month' },
 ];
 function Proof() {
   return (

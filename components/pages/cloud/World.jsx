@@ -24,6 +24,7 @@ import StageHero from '../../v2/StageHero';
 import Finale from '../../v2/Finale';
 import { useDemo, PauseBtn, useTick } from '../../v2/x-hamilton/Demo';
 import './World.css';
+import ArtCard from './ArtCard';
 
 // points on a sphere (golden spiral), drawn as a turning globe of dots
 const PTS = Array.from({ length: 900 }, (_, i) => {
@@ -307,7 +308,7 @@ function Room() {
         <div className="l2-wrap wd2-pin">
           <div className="wd2-side">
             <h2 className="l2-head wd2-room-h">See Every Model, Everywhere</h2>
-            <p className="wd2-count" aria-hidden="true"><span className="wd2-roll"><span style={{ transform: `translateY(${-act * 100 / CAPS.length}%)` }}>{CAPS.map((c, i) => <b key={i} className="l2-fig">{String(i + 1).padStart(2, '0')}</b>)}</span></span><em className="l2-mono">/ 06</em></p>
+            <div className="wd2-cnt-row"><p className="wd2-count" aria-hidden="true"><span className="wd2-roll"><span style={{ transform: `translateY(${-act * 100 / CAPS.length}%)` }}>{CAPS.map((c, i) => <b key={i} className="l2-fig">{String(i + 1).padStart(2, '0')}</b>)}</span></span><em className="l2-mono">/ 06</em></p><ArtCard slug="koe" className="wd2-art" /></div>
             {pinned && (
               <nav className="wd2-rail" aria-label="See Every Model, Everywhere">
                 {CAPS.map(([t], i) => <RailItem key={t} i={i} t={t} p={p} on={i === act} onClick={() => go(i)} />)}
@@ -371,7 +372,7 @@ function useMagnet() {
 export default function World() {
   useMagnet();
   return (
-    <main id="main" className="l2-page wd2" data-ask="off">
+    <main id="main" className="l2-page wd2">
       <StageHero look="side" dark kick="world.hanzo.ai" title="Hanzo World" sub="World Monitor — global AI-system observability" acts={[['Open World Monitor', 'https://world.hanzo.ai'], ['Documentation', 'https://docs.hanzo.ai/docs/cli/world']]}>
         <Hero />
       </StageHero>

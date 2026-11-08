@@ -10,7 +10,7 @@
    for the chosen platform, screens opening as it goes, the matching step lit in the text and a drawn tick when it saves.
    Beyond: try the choice. Flip the switch and the panel answers with what that choice means, in the article's own
    words: on, what Hanzo may use; off, what turning it off changes.
-   V2: 8/10 round 6 (critic 7): the walk starts at its step 01 on the server and on the first client paint (no finished state, no rewind); reduced motion shows the walk's last screen through CSS alone, so nothing flips at hydration; phones show "On mobile" from the first paint (both platforms are in the HTML and a media query picks one until a choice is made); screens slide in opaque at 300ms, never cross-fade; 04 has its own object (the four things the switch leaves alone, as a ledger beside the switch off) on the desktop panel and on phones; phones show the settings mock once (01 is the switch alone); presses scale to .98; the 320 tabs share one row; the lower card shows Hanzo's whole "When it is on… When it is off…" pair at a fixed height, so a step tap never moves the page; "More" lists its documents once. Round 5 (critic 7): the handset is tall enough that its switch shows whole when it flips; a pressed step lights that same step and stops autoplay; pressing a step in 02 puts the panel on the walk; one counter at a time; Hanzo's own tab labels; the phone breadcrumb ends on its topic; no box inside a box; the topic line sits under the lede. Round 4: one section counter, 01 its own scene, 04 lit row by row, panel stops above the close, contents rows answer, hairlines on the text edge, the question visible from first paint, no invented labels. Round 3: both switches agree, tabs fit at 320, bars inside both windows, a tap mark on touch, captions reserve two lines, phone 03/04 inline stages. Round 2: the panel follows the reading, the switch answers with the tick and saved line, panel capped to the viewport, 62ch column, real hovers, hairlines that draw in, a quiet closing room */
+   V2: 8 Nov round 7 (critic 7): the panel shows and the text says (no repeated pair, one switch per screen, phone 04 rows are the checklist, section label is its number), phone mock clipped in its bezel, demo switch hover and press, the close bottom-aligned. Round 6: the walk starts at its step 01 on the server and on the first client paint (no finished state, no rewind); reduced motion shows the walk's last screen through CSS alone, so nothing flips at hydration; phones show "On mobile" from the first paint (both platforms are in the HTML and a media query picks one until a choice is made); screens slide in opaque at 300ms, never cross-fade; 04 has its own object (the four things the switch leaves alone, as a ledger beside the switch off) on the desktop panel and on phones; phones show the settings mock once (01 is the switch alone); presses scale to .98; the 320 tabs share one row; the lower card shows Hanzo's whole "When it is on… When it is off…" pair at a fixed height, so a step tap never moves the page; "More" lists its documents once. Round 5 (critic 7): the handset is tall enough that its switch shows whole when it flips; a pressed step lights that same step and stops autoplay; pressing a step in 02 puts the panel on the walk; one counter at a time; Hanzo's own tab labels; the phone breadcrumb ends on its topic; no box inside a box; the topic line sits under the lede. Round 4: one section counter, 01 its own scene, 04 lit row by row, panel stops above the close, contents rows answer, hairlines on the text edge, the question visible from first paint, no invented labels. Round 3: both switches agree, tabs fit at 320, bars inside both windows, a tap mark on touch, captions reserve two lines, phone 03/04 inline stages. Round 2: the panel follows the reading, the switch answers with the tick and saved line, panel capped to the viewport, 62ch column, real hovers, hairlines that draw in, a quiet closing room */
 // Signature: the setting, walked: a live settings panel where a gliding cursor presses through the article's own steps, the matching step lit in the text
 // Beyond: try the choice: flip the switch and the panel answers with what that choice means, in the article's own words
 // Persona: a Hanzo Chat or Dev user deciding whether their chats and coding sessions may train Hanzo's models
@@ -20,7 +20,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { animate, motion, useInView, useMotionValue, useReducedMotion } from 'motion/react';
 import { EASE } from '../../ui';
-import { A, Tick } from '../../kit';
+import { A } from '../../kit';
 import './HelpArticle.css';
 
 const GLIDE = { duration: 0.5, ease: EASE }; // the hand travels on the deck's ease-emphasis: no spring, no overshoot
@@ -39,7 +39,7 @@ function Mail({ k }) {
 
 function Inline({ inl }) {
   return inl.map((k, i) => {
-    if (typeof k === 'string') return k;
+    if (typeof k === 'string') return <span key={i}>{k}</span>; // its own element, so each run of Hanzo's words stands as one line
     if (k.b) return <strong key={i}>{k.b}</strong>;
     if (k.cf) return <Mail key={i} k={k} />;
     if (k.a && /^(mailto:|#)/.test(k.a)) return <a key={i} href={k.a} className="xhp-a">{k.t}</a>;
@@ -228,7 +228,7 @@ function Ledger({ setting, leads, lit, mini }) {
   );
 }
 
-function Panel({ setting, w, doc, cur, leads, offLine }) {
+function Panel({ setting, w, doc, cur, leads }) {
   const calm = useReducedMotion();
   const walk = w.mode === 'walk';
   const si = doc.sections.findIndex((s) => s.id === cur);
@@ -236,6 +236,7 @@ function Panel({ setting, w, doc, cur, leads, offLine }) {
   const at = walk ? Math.max(stepsIdx, 0) : Math.max(si, 0);
   // until the page is live both platforms are drawn; a media query shows the right one
   const plats = w.pre ? [0, w.mi] : [w.plat];
+  const away = w.mode === 'what' || w.mode === 'still'; // 01's scene and 04's ledger draw their own switch: one at a time
   return (
     <div className="xhp-panel" role="group" aria-label={setting.name} data-rest={w.rest || undefined}>
       <div className="xhp-panel-bar">
@@ -279,24 +280,18 @@ function Panel({ setting, w, doc, cur, leads, offLine }) {
         })
         : (
           <div className="xhp-cap" aria-hidden="true">
-            <span className="xhp-cap-n x-mono">{pad(at + 1) + ' / ' + pad(doc.sections.length)}</span>
+            {/* a section: its contents number alone (x / 04 is kept for the walk's steps) */}
+            <span className="xhp-cap-n x-mono">{pad(at + 1)}</span>
             <span className="xhp-cap-t" key={'s-' + at}>{doc.sections[at].title}</span>
-            <span className="xhp-cap-dots">{Array.from({ length: w.flow.steps.length }, (_, i) => <i key={i} />)}</span>
           </div>
         )}
-      <div className="xhp-try">
-        <button type="button" role="switch" aria-checked={w.on} className="xhp-try-b" onClick={w.flip}>
+      {/* the switch and its name only: the text beside the panel says what each choice means (it is not said twice);
+          while 01's scene or 04's ledger shows its own switch, this one steps aside so one switch shows at a time */}
+      <div className="xhp-try" data-away={away || undefined}>
+        <button type="button" role="switch" aria-checked={w.on} className="xhp-try-b" onClick={w.flip} tabIndex={away ? -1 : undefined}>
           <span className="xhp-sw" data-on={w.on || undefined} aria-hidden="true"><i /></span>
           <span>{setting.name}</span>
         </button>
-        {/* Hanzo's whole pair, always there at one height (a step never moves the page); the half that holds now is in ink */}
-        <div className="xhp-means" aria-live="polite">
-          <p className="xhp-pair">
-            {setting.on && <span data-cur={w.on || undefined}>{setting.on}</span>}
-            {offLine && <>{' '}<span data-cur={!w.on || undefined}>{offLine}</span></>}
-          </p>
-          {setting.saved && <p className="xhp-saved" data-show={!w.on || undefined}><Tick key={w.saved} size={18} /><span>{setting.saved}</span></p>}
-        </div>
       </div>
     </div>
   );
@@ -347,6 +342,7 @@ function Section({ s, i, setting, w, still, after, what, end, leads }) {
             <li key={j} style={{ '--i': j }} data-row={lights ? j : undefined} data-on={(lights && w.mode === 'still' && w.lit === j) || undefined}
               onPointerEnter={lights ? (e) => e.pointerType === 'mouse' && w.light(j) : undefined} onPointerLeave={lights ? () => w.light(null) : undefined}>
               {it.lead && <strong className="xhp-lead">{it.lead}</strong>}<span><Inline inl={it.inl} /></span>
+              {lights && <svg className="xhp-row-tick" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>}
             </li>
           ))}
         </ul>,
@@ -356,7 +352,7 @@ function Section({ s, i, setting, w, still, after, what, end, leads }) {
   return (
     <section id={s.id} className={end ? 'xhp-sec xhp-end' : 'xhp-sec'} aria-labelledby={s.id + '-h'} tabIndex={-1}>
       <h2 id={s.id + '-h'} className="xhp-h2"><span className="xhp-sec-n x-mono" aria-hidden="true">{pad(i + 1)}</span>{s.title}</h2>
-      {w && (after || still || what) && <Mini kind={after ? 'after' : still ? 'still' : 'what'} setting={setting} w={w} leads={leads} />}
+      {w && after && <Mini kind="after" setting={setting} w={w} leads={leads} />}
       {out.map((x) => (x === 'cards' ? <div key="cards" className="xhp-flows">{cards}</div> : x))}
       {end && (
         <A to="/support" className="xhp-next">
@@ -402,7 +398,7 @@ function useModes(doc) {
   return { cur, mode, row, stillId, whatId, offId: off >= 0 ? doc.sections[off].id : null };
 }
 
-function Layout({ doc, w, aside, cur, stillId, offId, whatId, leads, offLine }) {
+function Layout({ doc, w, aside, cur, stillId, offId, whatId, leads }) {
   const body = doc.sections.length > 1 ? doc.sections.slice(0, -1) : doc.sections;
   const last = doc.sections.length > 1 ? doc.sections[doc.sections.length - 1] : null;
   return (
@@ -434,7 +430,7 @@ function Layout({ doc, w, aside, cur, stillId, offId, whatId, leads, offLine }) 
         </header>
 
         <aside className="xhp-aside" ref={aside}>
-          {w && <Panel setting={doc.setting} w={w} doc={doc} cur={cur} leads={leads} offLine={offLine} />}
+          {w && <Panel setting={doc.setting} w={w} doc={doc} cur={cur} leads={leads} />}
         </aside>
 
         <article className="xhp-doc">
@@ -463,10 +459,7 @@ function Walked({ doc }) {
   const stillSec = doc.sections.find((s) => s.id === stillId);
   const ul = stillSec && stillSec.blocks.find((b) => b.k === 'ul' && b.items.some((it) => it.lead));
   const leads = ul ? ul.items.map((it) => it.lead).filter(Boolean) : [];
-  // the second half of Hanzo's on/off pair, from the same sentence run as "When it is on…"
-  const first = doc.sections[0] && doc.sections[0].blocks.find((b) => b.k === 'p');
-  const offLine = first ? say(first.inl).split(/(?<=\.)\s+/).find((t) => /^When it is off/i.test(t)) || null : null;
-  return <Layout doc={doc} w={w} aside={aside} cur={cur} stillId={stillId} offId={offId} whatId={whatId} leads={leads} offLine={offLine} />;
+  return <Layout doc={doc} w={w} aside={aside} cur={cur} stillId={stillId} offId={offId} whatId={whatId} leads={leads} />;
 }
 
 function Plain({ doc }) {

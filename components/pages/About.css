@@ -211,7 +211,7 @@
 .xab-panes .x-tablist { justify-self: start; }
 .xab-open-g > .xab-log { grid-column: 6 / 13; margin-top: 0; }
 .xab-open-g .xab-log li { grid-template-columns: 128px minmax(0, 1fr) max-content; font-size: 13.5px; }
-.xab-log time { white-space: nowrap; }
+.xab-log time, .xab-log .xab-when { white-space: nowrap; }
 .xab-open-g .xab-log li code { display: none; }
 .xab-pane { display: grid; gap: 16px; align-content: start; }
 .xab-pane[hidden] { display: none; }
@@ -219,13 +219,13 @@
 .xab-pane ul { list-style: none; margin: 6px 0 4px; padding: 0; display: grid; gap: 12px; }
 .xab-pane li { font-size: 16px; line-height: 1.5; color: var(--soft); padding-left: 18px; position: relative; }
 .xab-pane li::before { content: ''; position: absolute; left: 0; top: .62em; width: 6px; height: 6px; border-radius: 50%; background: #d4d4d4; }
-.xab-pane li b { color: #f5f5f5; font-weight: 497; }
+.xab-pane li b, .xab-pane .xab-pane-k { color: #f5f5f5; font-weight: 497; }
 .xab-open .x-arrow { color: #fafafa; }
 .xab-log { margin-top: clamp(80px, 10vw, 144px); border-radius: 24px; background: #171717; box-shadow: 0 0 0 1px rgba(255, 255, 255, .08); overflow: hidden; }
 .xab-log-h { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px 24px; padding: 24px clamp(20px, 3vw, 36px); border-bottom: 1px solid var(--hair); }
 .xab-log-h .v2s-title { font-size: clamp(18px, 1.5vw, 22px); color: #f5f5f5; }
 .xab-log-h p { margin: 0; display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; font: 500 14px/1.3 var(--mono); color: var(--soft); }
-.xab-log-h b { color: #f5f5f5; font-weight: 500; }
+.xab-log-h b, .xab-log-h .xab-log-n { color: #f5f5f5; font-weight: 500; }
 .xab-log-h a { display: inline-flex; align-items: center; min-height: 44px; color: #d4d4d4; }
 .xab-live { width: 8px; height: 8px; border-radius: 50%; background: #f5f5f5; box-shadow: 0 0 0 0 rgba(255, 255, 255, .5); }
 @keyframes xab-live { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, .45); } 100% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); } }
@@ -237,7 +237,7 @@
 .xab-msg { display: inline-block; padding: 12px 0; margin: -12px 0; color: #f5f5f5; text-decoration: none; } /* a 44px target without moving the row */
 .xab-msg:hover { text-decoration: underline; text-underline-offset: 4px; }
 .xab-log code { font: inherit; color: var(--faint); }
-.xab-log time { text-align: right; color: var(--faint); }
+.xab-log time, .xab-log .xab-when { text-align: right; color: var(--faint); }
 /* the commits land oldest first, newest on top, once */
 .xab-log-f { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; padding: 22px clamp(20px, 3vw, 36px); border-top: 1px solid var(--hair); }
 .xab-log-f p { margin: 0; font-size: 15px; color: var(--soft); }
@@ -413,4 +413,246 @@
   .xab-halo, .xab-live, .xab-picks li.hint .xab-sw::before { animation: none; }
   .xab-fig-r { animation: none; }
   .xab-tile-t, .xab-tile-plus, .xab-zen-t, .xab-sw::after { transition: none; }
+}
+
+/* 8 Nov (Ready pass): one idea per beat in "Why we build". Desktop: the figure and its four switches share the screen;
+   the six principles come in after them as their own row. Phones: one switch per row; papers show two and the commit
+   log three (the rest stays in the page, behind "Papers →" and the dashboard link); the founder figures' stair is
+   shallower so the first figure arrives with its heading. */
+@media (min-width: 901px) {
+  .xab-fig { grid-column: 1 / 6; grid-row: 1; }
+  .xab-picks { grid-column: 7 / 13; grid-row: 1; }
+  .xab-tiles { grid-column: 1 / -1; grid-row: 2; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: clamp(56px, 9vh, 96px); }
+}
+.xab-figs > div:nth-child(1) { margin-top: clamp(40px, 4.5vw, 64px); }
+.xab-figs > div:nth-child(2) { margin-top: clamp(20px, 2.2vw, 32px); }
+@media (max-width: 900px) {
+  .xab-picks ul { grid-template-columns: minmax(0, 1fr); }
+  .xab-picks li, .xab-picks li:nth-child(even) { padding: 8px 0 10px; border-left: 0; }
+  .xab-papers li:nth-child(n + 3) { display: none; }
+  .xab-log li:nth-child(n + 4) { display: none; }
+}
+
+/* ---------- dark (docs/DARK-MODE.md): the page follows Hanzo's dark tokens; the dark room and the media stay as they are.
+   Light is untouched: every rule below is scoped to html:not(.light). ---------- */
+html:not(.light) .xab { --acc: var(--foreground); --ink: var(--foreground); --soft: var(--muted-foreground); --faint: var(--text-tertiary); --hair: var(--border); --tile: var(--muted); background: var(--bg); }
+html:not(.light) .xab-glide circle, html:not(.light) .xab-ts circle, html:not(.light) .xab-hand-dot { fill: var(--background); }
+html:not(.light) .xab-glide line, html:not(.light) .xab-hand line { stroke: var(--white-30); }
+html:not(.light) .xab-base, html:not(.light) .xab-tick line { stroke: var(--white-30); }
+html:not(.light) .xab-ghost { stroke: var(--border-strong); }
+html:not(.light) .xab-dia .xab-shape, html:not(.light) .xab-shape { fill: var(--glass); }
+html:not(.light) .xab-fig.all .xab-dia .xab-shape { fill: var(--white-14); }
+html:not(.light) .xab-sw { background: var(--border-control); }
+html:not(.light) .xab-sw::after { background: var(--x-knob); }
+html:not(.light) .xab-picks li.on .xab-sw::after { background: var(--primary-foreground); }
+html:not(.light) .xab-tile { background: var(--muted); }
+@media (hover: hover) { html:not(.light) .xab-tile:hover { background: var(--secondary); } }
+html:not(.light) .xab-tile.cue { background: var(--secondary); }
+html:not(.light) .xab-tile-plus { background: var(--x-raised); }
+html:not(.light) .xab-tile:hover .xab-tile-plus, html:not(.light) .xab-tile.cue .xab-tile-plus { color: var(--x-on-ink); }
+html:not(.light) .xab-ring { stroke: var(--border-control); }
+html:not(.light) .xab-pic, html:not(.light) .xab-rt.plain .xab-rt-media { background: var(--muted); }
+html:not(.light) .xab-pic-sigil, html:not(.light) .xab-rt.plain .xab-rt-sigil { color: var(--foreground); }
+html:not(.light) .xab-open { box-shadow: 0 0 0 1px var(--border); }
+html:not(.light) .xab-paper::before { background: var(--muted); }
+html:not(.light) .xab-track { stroke: var(--white-22); }
+html:not(.light) .xab-tracks.lit .xab-line { stroke: var(--white-22); }
+html:not(.light) .xab-wl.on .xab-wl-w { color: var(--text-disabled); }
+html:not(.light) .xab-wl.on .xab-wl-w.lit { color: var(--ink); }
+/* the Story kit's asks and pause on this page (story.css is shared with /history and /blog, so its dark lives here) */
+html:not(.light) .xab .v2s-btn { border-color: var(--border); background: var(--x-raised); }
+html:not(.light) .xab .v2s-btn.solid { background: var(--ink); color: var(--x-on-ink); border-color: var(--ink); }
+@media (hover: hover) { html:not(.light) .xab .v2s-btn:hover { border-color: var(--border-strong); } html:not(.light) .xab .v2s-btn.solid:hover { background: var(--primary-hover); } }
+html:not(.light) .xab .v2s-link, html:not(.light) .xab .v2s-tlink { text-decoration-color: var(--white-30); }
+html:not(.light) .xab :focus-visible { box-shadow: 0 0 0 5px var(--background); }
+html:not(.light) .xab .xst-pause { border-color: var(--border); background: var(--x-raised); color: var(--foreground); }
+@media (hover: hover) { html:not(.light) .xab .xst-pause:hover { border-color: var(--border-strong); } }
+
+/* ==========================================================================================================================
+   v4, 8 Nov (Zack's pages, the frame layer): every section reads in one frame at 1470 x 801, as the approved home page.
+   Frame.css carries the shared pieces (zf-sec halftone and light, zf-head split headings, zf-lift, zf-room, zf-close);
+   below is /about's own fitting. Colours: Hanzo's tokens; the dark room and the runtime plates are dark in both modes.
+   ========================================================================================================================== */
+.xab.zf { --v2-max: 1200px; }
+.xab.zf .v2s-sec.zf-sec { padding-block: clamp(56px, 8.5svh, 104px); }
+.xab.zf .xab-hl { display: grid; gap: 12px; align-content: end; }
+.xab.zf .xab-hl .v2s-cap, .xab.zf .xab-hl .v2s-label { order: -1; }
+.xab.zf .zf-head .v2s-cap { margin: 0; }
+
+/* each section's own lit corner */
+.xab.zf .xab-hero { --hx: 100%; --hy: 0%; --lx: 85%; --ly: 10%; }
+.xab.zf .xab-why { --hx: 0%; --hy: 100%; --lx: 70%; --ly: 0%; }
+.xab.zf .xab-rec { --hx: 100%; --hy: 60%; --lx: 10%; }
+.xab.zf .xab-people { --hx: 0%; --hy: 0%; --lx: 90%; --ly: 60%; }
+.xab.zf .xab-zen { --hx: 100%; --hy: 100%; --lx: 20%; }
+.xab.zf .xab-research { --hx: 50%; --hy: 0%; --lx: 50%; --ly: 40%; }
+.xab.zf .xab-papers-s { --hx: 0%; --hy: 50%; --lx: 100%; }
+.xab.zf .xab-careers { --hx: 100%; --hy: 0%; --lx: 0%; --ly: 100%; }
+
+/* 1. hero: display type at the home's scale, the frontier under it */
+.xab.zf .xab-hero.zf-sec { --h1: clamp(46px, 5.4vw, 84px); padding-block: clamp(36px, 6svh, 72px) 0; min-height: calc(100svh - 60px); overflow: hidden; }
+.xab.zf .xab-h1 { font-size: var(--h1); line-height: .98; letter-spacing: -.045em; font-weight: 600; }
+.xab.zf .xab-hero-side .v2s-lede { font-size: clamp(1rem, 1.2vw, 1.15rem); }
+
+/* 2. why we build: the heading and the lit statement share a row; the figure, the switches and the six principles below */
+.xab.zf .xab-why { padding-top: clamp(56px, 8.5svh, 104px); }
+.xab.zf .xab-why-h { max-width: 22ch; font-size: clamp(1.9rem, 2.55vw, 2.6rem); line-height: 1.04; }
+.xab.zf .xab-why-head { align-items: end; }
+.xab.zf .xab-why-l.xab-wl { margin: 0; font-size: clamp(1.05rem, 1.35vw, 1.3rem); line-height: 1.42; letter-spacing: -.01em; max-width: 44ch; justify-self: end; }
+@media (min-width: 901px) {
+  .xab.zf .xab-why-g { margin-top: 0; align-items: center; column-gap: clamp(20px, 2.4vw, 36px); }
+  .xab.zf .xab-fig { grid-column: 1 / 4; grid-row: 1; max-width: 300px; }
+  .xab.zf .xab-picks { grid-column: 4 / 8; grid-row: 1; }
+  .xab.zf .xab-tiles { grid-column: 8 / 13; grid-row: 1; grid-template-columns: 1fr; margin-top: 0; gap: 6px; }
+  .xab.zf .xab-picks li { padding: 2px 0 8px; }
+  .xab.zf .xab-picks button { min-height: 40px; }
+  .xab.zf .xab-picks button .v2s-title { font-size: 17px; }
+  .xab.zf .xab-picks li p { font-size: 13px; line-height: 1.4; }
+  .xab.zf .xab-picks li > .x-arrow { font-size: 13.5px; }
+  .xab.zf .xab-picks-sum { margin-top: 10px; }
+  .xab.zf .xab-picks-sum.all { font-size: 15px; }
+  .xab.zf .xab-tile { min-height: 52px; padding: 7px 10px 7px 14px; border-radius: 14px; }
+  .xab.zf .xab-tile-t b { font-size: 15.5px; }
+  .xab.zf .xab-tile-t span { font-size: 12.5px; }
+  .xab.zf .xab-tile-plus { width: 30px; height: 30px; }
+}
+.xab.zf .xab-tile { box-shadow: 0 1px 0 var(--line); }
+.xab.zf .xab-dia-l { font-size: 14px; }
+
+/* 3. track record: the paragraph rises to the heading's side; the figures and the milestones on one lifted stage */
+.xab.zf .xab-rec-l { margin: 0 0 4px; font-size: clamp(.98rem, 1.12vw, 1.08rem); line-height: 1.55; color: var(--soft); max-width: 50ch; justify-self: end; }
+.xab.zf .xab-rec-stage { --dx: 100%; --dy: 0%; padding: clamp(24px, 3vw, 40px) clamp(24px, 3vw, 44px) clamp(22px, 2.6vw, 34px); }
+.xab.zf .xab-figs { margin: 0; align-items: end; }
+.xab.zf .xab-figs > div, .xab.zf .xab-figs > div:nth-child(1), .xab.zf .xab-figs > div:nth-child(2) { margin-top: 0; padding-top: 0; border-top: 0; gap: 10px; }
+.xab.zf .xab-figs dt { font-size: clamp(56px, 6.4vw, 96px); font-weight: 220; line-height: .9; }
+.xab.zf .xab-figs > div.big dt { transform: scale(1.08); }
+.xab.zf .xab-miles { margin-top: clamp(28px, 4svh, 44px); }
+.xab.zf .xab-miles li { padding-top: 20px; gap: 6px; }
+.xab.zf .xab-miles span { font-size: 15px; }
+.xab.zf .xab-rec-foot { margin-top: 18px; }
+.xab.zf .xab-rec-acts { justify-content: flex-start; gap: 6px 28px; }
+
+/* 4. founders: two lifted cards, the portrait inside each */
+.xab.zf .xab-people.zf-sec { padding-block: clamp(40px, 6svh, 72px); }
+.xab.zf .xab-people-g { align-items: start; }
+.xab.zf .xab-person { --dx: 100%; --dy: 100%; padding: 16px; border-radius: 28px; grid-template-columns: clamp(160px, 14vw, 210px) minmax(0, 1fr); }
+.xab.zf .xab-person.two { margin-top: clamp(28px, 4svh, 48px); }
+.xab.zf .xab-person-t { padding: 10px 8px 4px 0; }
+.xab.zf .xab-pic { border-radius: 18px; }
+
+/* 5. the Zen of Hanzo */
+.xab.zf .xab-zen-h { font-size: clamp(2.1rem, 3.55vw, 3.45rem); }
+.xab.zf .xab-zen-l { grid-column: auto; grid-row: auto; justify-self: end; display: grid; gap: 10px; max-width: 40ch; padding-bottom: 4px; }
+.xab.zf .xab-zen-list { margin-top: 0; }
+.xab.zf .xab-zen-l .v2s-lede { margin: 0; color: var(--soft); }
+
+/* 6. the dark room: one frame, the panes beside the log */
+.xab.zf .xab-open.zf-room { padding-block: clamp(56px, 8svh, 96px); margin-inline: clamp(8px, 1vw, 16px); border-radius: clamp(24px, 3vw, 40px); }
+.xab.zf .xab-open-h { font-size: clamp(2.1rem, 3.55vw, 3.45rem); max-width: 17ch; }
+.xab.zf .xab-open .xab-dim { color: #8e8e93; }
+.xab.zf .xab-open-l { color: #a1a1a6; }
+.xab.zf .xab-open-g { margin-top: 0; row-gap: 24px; }
+.xab.zf .xab-panes { gap: 18px; }
+.xab.zf .xab-pane { gap: 12px; }
+.xab.zf .xab-pane .v2s-body { font-size: 15px; line-height: 1.5; }
+.xab.zf .xab-pane ul { gap: 8px; margin: 2px 0; }
+.xab.zf .xab-pane li { font-size: 14.5px; line-height: 1.45; }
+.xab.zf .xab-log { background: rgba(255, 255, 255, .04); box-shadow: 0 0 0 1px rgba(255, 255, 255, .1), 0 40px 80px -40px rgba(0, 0, 0, .9); -webkit-backdrop-filter: blur(6px); }
+.xab.zf .xab-log-h { padding: 16px clamp(18px, 2.4vw, 28px); }
+.xab.zf .xab-log-h p { font-size: 13px; }
+.xab.zf .xab-log-h a { min-height: 32px; }
+.xab.zf .xab-open-g .xab-log li { padding: 9px clamp(18px, 2.4vw, 28px); font-size: 13px; }
+.xab.zf .xab-log-f { padding: 14px clamp(18px, 2.4vw, 28px); }
+.xab.zf .xab-log-f p { font-size: 14px; }
+
+/* 7a. the runtimes: four lit plates, Hanzo's own model art filling each, the words over it */
+.xab.zf .xab-row-h { margin: 0 0 16px; }
+.xab.zf .xab-rts { gap: 14px; }
+.xab.zf .xab-rt { position: relative; display: block; height: clamp(360px, calc(var(--fr) - 250px), 440px); border-radius: 22px; overflow: hidden; isolation: isolate; color: #f5f5f7; background: #0a0a0a; box-shadow: var(--zf-shadow); }
+.xab.zf .xab-rt-media, .xab.zf .xab-rt.plain .xab-rt-media { position: absolute; inset: 0; aspect-ratio: auto; border-radius: 0; background: #0a0a0a; z-index: -1; }
+.xab.zf .xab-rt.plain .xab-rt-sigil { color: #f5f5f7; opacity: .5; }
+.xab.zf .xab-rt-media::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10, 10, 10, 0) 18%, rgba(10, 10, 10, .78) 58%, rgba(10, 10, 10, .94)); }
+.xab.zf .xab-rt-t { position: absolute; inset: auto 0 0 0; padding: 18px 20px 20px; gap: 6px; }
+.xab.zf .xab-rt .v2s-title { color: #f5f5f7; margin: 0; }
+.xab.zf .xab-rt-k { color: #a1a1a6; }
+.xab.zf .xab-rt-d { font-size: 13.5px; line-height: 1.45; color: #d1d1d6; }
+.xab.zf .xab-rt-g { color: #f5f5f7; font-size: 12px; }
+.xab.zf .xab-rt-go { color: #f5f5f7; font-size: 14px; }
+@media (hover: hover) { .xab.zf .xab-rt:hover .xab-rt-k { color: #f5f5f7; } .xab.zf .xab-rt:hover .xab-rt-media img { transform: scale(1.04); } }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) { .xab.zf .xab-rt:hover .xab-rt-media { transform: none; } .xab.zf .xab-rt:hover { box-shadow: var(--zf-shadow-hi); } }
+
+/* 7b. the papers: their own frame, an editorial list */
+.xab.zf .xab-papers-h { margin-top: 0; align-items: end; }
+.xab.zf .xab-papers-h .zf-h { max-width: 18ch; }
+.xab.zf .xab-papers-h .xab-row-links { justify-self: end; margin-bottom: 6px; }
+.xab.zf .xab-paper { padding: 22px 0; }
+
+/* 8. careers: the words and the ask on the left, the three tracks running to one head on the right */
+.xab.zf .xab-car-g { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); column-gap: clamp(32px, 5vw, 80px); align-items: center; }
+.xab.zf .xab-car-t { display: grid; gap: 16px; justify-items: start; }
+.xab.zf .xab-car-h { margin: 0; font-size: clamp(2.1rem, 3.55vw, 3.45rem); line-height: 1; letter-spacing: -.042em; font-weight: 600; max-width: 14ch; text-wrap: balance; color: var(--ink); }
+.xab.zf .xab-car-l { margin: 0; max-width: 48ch; font-size: clamp(.98rem, 1.12vw, 1.08rem); line-height: 1.55; color: var(--soft); }
+.xab.zf .xab-car-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px; margin-top: 6px; }
+.xab.zf .xab-car-r { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+.xab.zf .xab-car-r > .xab-tracks, .xab.zf .xab-car-r > .xab-roles { grid-column: 1; }
+.xab.zf .xab-car-r .xab-tracks { height: clamp(120px, 18svh, 170px); }
+.xab.zf .xab-roles { border-top: 1px solid var(--line); }
+.xab.zf .xab-roles li { padding: 16px 0; }
+.xab.zf .xab-roles p { font-size: 15px; max-width: 40ch; }
+
+/* 9. the close: a lifted stage, the frontier running up to its head, Try Hanzo and Book a call where it arrives */
+.xab.zf .xab-close { padding-block: clamp(40px, 7svh, 88px) clamp(56px, 10svh, 120px); }
+.xab.zf .xab-close-stage { position: relative; isolation: isolate; overflow: hidden; display: grid; place-items: center; min-height: clamp(280px, 40svh, 380px); padding: 40px 24px; border-radius: 32px; }
+.xab.zf .xab-close-stage::before { content: ''; position: absolute; inset: 0; z-index: -1; background: radial-gradient(circle, var(--zf-dot) 1px, transparent 1.5px) 0 0 / 12px 12px; -webkit-mask-image: radial-gradient(55% 70% at 50% 50%, #000, transparent 75%); mask-image: radial-gradient(55% 70% at 50% 50%, #000, transparent 75%); opacity: .7; }
+.xab.zf .xab-close-curve { position: absolute; inset: 14% 4% 10% 4%; width: 92%; height: 76%; z-index: -1; overflow: visible; }
+.xab.zf .xab-close-curve path, .xab.zf .xab-close-curve line { vector-effect: non-scaling-stroke; }
+.xab.zf .xab-close-curve .xab-line { stroke-dasharray: none; animation: none; }
+.xab.zf .xab-close-head { position: absolute; right: calc(4% - 9px); top: calc(14% - 9px); width: 18px; height: 18px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 10px color-mix(in srgb, var(--ink) 10%, transparent); }
+.xab.zf .xab-close-acts { margin-top: 0; padding: 14px; border-radius: 999px; background: color-mix(in srgb, var(--x-raised) 86%, transparent); box-shadow: var(--zf-shadow); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.xab.zf .xab-close-acts .x-btn { min-width: 168px; justify-content: center; }
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .xab.zf .xab-close-curve .xab-line { stroke-dasharray: 1; animation: xab-close-draw linear both; animation-timeline: view(); animation-range: entry 10% cover 50%; }
+    @keyframes xab-close-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+    .xab.zf .xab-close-head { animation: xab-close-pop linear both; animation-timeline: view(); animation-range: cover 40% cover 52%; }
+    @keyframes xab-close-pop { from { transform: scale(0); } }
+  }
+}
+
+/* ---------- v4: smaller screens ---------- */
+@media (max-width: 900px) {
+  .xab.zf .xab-hero.zf-sec { min-height: 0; padding-top: 24px; }
+  .xab.zf .xab-why-l.xab-wl { justify-self: start; font-size: 1.05rem; }
+  .xab.zf .xab-why-g { margin-top: 4px; }
+  .xab.zf .xab-rec-l, .xab.zf .xab-zen-l { justify-self: start; }
+  .xab.zf .xab-figs { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .xab.zf .xab-figs dt { font-size: clamp(30px, 9vw, 52px); }
+  .xab.zf .xab-figs dd { font-size: 10.5px; letter-spacing: .08em; }
+  .xab.zf .xab-figs > div.big dt { transform: none; }
+  .xab.zf .xab-person.two { margin-top: 0; }
+  .xab.zf .xab-person { grid-template-columns: 112px minmax(0, 1fr); padding: 12px; border-radius: 22px; }
+  .xab.zf .xab-pic { max-width: none; aspect-ratio: 4 / 5; }
+  .xab.zf .xab-person-t { padding: 4px 0 0; gap: 8px; }
+  .xab.zf .xab-person-t .v2s-body { font-size: 14px; }
+  .xab.zf .xab-rts { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .xab.zf .xab-rt { height: 250px; border-radius: 18px; }
+  .xab.zf .xab-rt-t { padding: 12px 12px 14px; gap: 4px; }
+  .xab.zf .xab-rt-k { font-size: 10.5px; }
+  .xab.zf .xab-rt-g { font-size: 11px; }
+  .xab.zf .xab-papers-h .xab-row-links { justify-self: start; margin: 0; }
+  .xab.zf .xab-car-g { grid-template-columns: minmax(0, 1fr); row-gap: 28px; }
+  .xab.zf .xab-car-r .xab-tracks { height: 110px; }
+  .xab.zf .xab-open-g { margin-top: 0; }
+}
+@media (max-width: 640px) {
+  .xab.zf .xab-hero.zf-sec { --h1: 44px; }
+  .xab.zf .xab-why-h { font-size: 1.8rem; }
+  .xab.zf .xab-open.zf-room { padding-block: 44px; margin-inline: 6px; border-radius: 24px; }
+  .xab.zf .xab-open-h { font-size: 2rem; }
+  .xab.zf .xab-close-stage { min-height: 300px; padding: 24px 12px; border-radius: 24px; }
+  .xab.zf .xab-close-acts { flex-direction: column; border-radius: 28px; padding: 12px; width: min(100%, 300px); }
+  .xab.zf .xab-close-acts .x-btn { width: 100%; }
+  .xab.zf .xab-close-curve { inset: 18% 6% 12% 6%; width: 88%; height: 70%; opacity: .6; }
+  .xab.zf .xab-close-head { right: calc(6% - 9px); top: calc(18% - 9px); }
+  .xab.zf .xab-car-h { font-size: 2rem; }
 }

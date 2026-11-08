@@ -13,24 +13,31 @@
         Chapter 01 is the routing moment (a question, Enso, the one model that answers), not the model list.
      3. Proof: the card of whoever answers. Point at a name and the card swaps; open the card and it lifts into
         that model's page. The model list is said once in full here (names), once live in the hero rail.
-     4. Close: the kit's Band.
+     4. Close: "Ask anything" as a real prompt (type, press Enter, land in Hanzo Chat), and the three personal plans
+        with their own checkouts (Go, Pro) beside it.
+   8 Nov (Zack's pages, the home page's bar): every section reads in one frame; Hanzo's halftone lit from one corner;
+   the six tools become the page's one dark room (a bento that opens like a curtain); a prompt to try it in the hero
+   and the close; working upgrade links (Go and Pro checkouts, the plan ids live hanzo.ai uses). Frame.css is shared.
    Every "Open Hanzo Chat" press shows its hand-off state (aria-busy, ~320 ms) before it leaves.
    Demo words: /chat's own recents and copy, and Hanzo's own black holes and aurora exchange and Dev session from
    hanzo.ai's home (content/live/index.json). Greys only: colour arrives through Hanzo's model artwork. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useTransform } from 'motion/react';
+import { motion } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../ui';
-import { A, Img, Cta, Band } from '../kit';
+import { A, Img, Cta } from '../kit';
 import { useOpener } from '../Opener';
 import { href } from '../../lib/route';
-import AppLines from '../v2/AppLines';
-import AppChapters from '../v2/AppChapters';
 import { useDemo } from '../v2/AppDemo';
 import { MODELS } from '../../lib/models';
+import '../v2/AppLines.css';
+import './Frame.css'; // the shared v2a type and wrap (it came in with AppLines before the grid replaced the chapters)
 import './ChatPage.css';
+import { PLANS, checkout } from '../../lib/plans';
 
 const OPEN = '/login?next=%2Fchat';
 const DOCS = 'https://docs.hanzo.ai/docs/chat';
+const GO = checkout(PLANS.go.id);
+const PRO = checkout(PLANS.pro.id);
 const RECENTS = ['Black holes and auroras', 'Email to the landlord', 'Investor update, shorter', 'Three days in Kyoto', 'Code that works, somehow', 'Support reply, API keys', 'Attention, simply', 'Sourdough starter', 'Three emails before lunch', 'Standup, for the absent', 'A fair refund', 'The fundraising deck', 'Interview notes', 'A toast for the team'];
 // Hanzo's own exchange (hanzo.ai home, content/live/index.json)
 const DEMO = [
@@ -51,18 +58,39 @@ const DIFF = [
 const DEV_TEST = 'pnpm test src/middleware/auth.test.ts';
 const DEV_OK = '14 passed (42ms)';
 
-const DONE = DEMO.flatMap(([q, a]) => [{ role: 'user', text: q }, { role: 'ai', text: a, model: 'zen', state: 'done' }]);
-const FIRST = [{ role: 'user', text: DEMO[0][0] }, { role: 'ai', state: 'wait', model: 'enso' }]; // the server's frame: the question has arrived
+// hanzo.ai/chat's own window conversation (live, 8 Nov), word for word: it is there from the first paint, as on live
+const CONVO = [
+  ['How do black holes form?', ['A star much heavier than the Sun burns through its fuel, and its core collapses under its own gravity.', 'When what is left is heavy enough, nothing can stop the collapse, and not even light escapes it.']],
+  ['And what makes the aurora?', ['Charged particles from the Sun reach the gas high above the poles.', 'The gas glows as they strike it: oxygen green and red, nitrogen blue and purple.']],
+];
+const DONE = CONVO.flatMap(([q, a]) => [{ role: 'user', text: q }, { role: 'ai', text: a, model: 'zen', state: 'done' }]);
 const ROUTED = MODELS.filter((m) => m.slug !== 'enso');
 const ENSO = MODELS[0];
 const ZEN = MODELS.find((m) => m.slug === 'zen');
 const pic = (slug) => `/models/${slug}.webp`;
 
-/* The one ask: the kit's Cta. The page holds each press for ~320 ms in its busy state before it leaves (Hand-off). */
-const Open = ({ slot = 'hero' }) => (
-  <Magnetic strength={0.18}><Cta to={OPEN} id={'chat.' + slot} thumb size="lg">Open Hanzo Chat</Cta></Magnetic>
-);
+/* The one ask is the kit's Cta inside the prompt. The page holds each press for ~320 ms in its busy state before it leaves (Hand-off). */
 const Docs = () => <Cta to={DOCS} kind="link" id="chat.docs">Read the docs</Cta>;
+const Plan = ({ slot }) => <Cta to={GO} kind="link" id={'chat.go-' + slot}>{`Go is $${PLANS.go.price}/month, every model`}</Cta>;
+
+/* The prompt: the page's way in. Type, press Enter (or the button) and it hands off to Hanzo Chat, as the window's own
+   composer does; nothing is sent from this page. The button is the page's one solid ask, "Open Hanzo Chat". */
+function Prompt({ slot, big }) {
+  const [busy, setBusy] = useState(false);
+  const go = (e) => {
+    e.preventDefault();
+    if (busy) return;
+    setBusy(true);
+    setTimeout(() => { window.location.href = href(OPEN); }, 280);
+  };
+  return (
+    <form className={'cht-prompt' + (big ? ' big' : '') + (busy ? ' busy' : '')} onSubmit={go}>
+      <span className="cht-prompt-o" aria-hidden="true"><Img src={pic('enso')} alt="" w={30} h={30} priority={slot === 'hero'} /></span>
+      <input type="text" placeholder="Ask anything" aria-label="Ask anything" maxLength={2000} enterKeyHint="go" autoComplete="off" />
+      <Magnetic strength={0.12}><Cta to={OPEN} id={'chat.' + slot} thumb size={big ? 'lg' : 'md'}>Open Hanzo Chat</Cta></Magnetic>
+    </form>
+  );
+}
 
 /* Hand-off (MASTER 2: a cross-origin hand-off shows a pressed state, aria-busy, 200 to 400 ms). Any plain press on a
    link to Hanzo Chat inside the page is held, shown busy, then followed. New-tab presses go straight through. */
@@ -101,16 +129,15 @@ function Listen({ text }) {
 }
 
 /* Messages arrive with a CSS rise, so the server's first frame paints at once. */
-function Msg({ m, live }) {
+function Msg({ m, think }) {
   if (m.role === 'user') return <li className="cht-q">{m.text}</li>;
   const who = MODELS.find((x) => x.slug === m.model) || ENSO;
   return (
     <li className="cht-a">
       <span className="cht-who"><Img src={pic(who.slug)} alt="" w={18} h={18} priority />{who.name}</span>
-      {m.state === 'wait' && <span className="cht-dots" role="img" aria-label={ENSO.name}><i /><i /><i /></span>}
-      {m.state === 'stream' && <p className="cht-text"><span ref={live} /><span className="cht-caret" aria-hidden="true" /></p>}
-      {m.state === 'done' && <p className="cht-text">{m.text}</p>}
-      {m.state === 'done' && <span className="cht-tools"><Copy text={m.text} /><Listen text={m.text} /></span>}
+      {think && <span className="cht-dots" role="img" aria-label={ENSO.name}><i /><i /><i /></span>}
+      {m.state === 'done' && m.text.map((t) => <p key={t} className="cht-text">{t}</p>)}
+      {m.state === 'done' && <span className="cht-tools"><Copy text={m.text.join('\n\n')} /><Listen text={m.text.join(' ')} /></span>}
     </li>
   );
 }
@@ -168,7 +195,8 @@ function Ctl({ demo }) {
 /* The window: Hanzo's own conversation plays once (about 7 s), then rests. Focus the composer and it is yours; send,
    and the press hands off to Hanzo Chat (nothing is sent from this page). */
 function Window() {
-  const [msgs, setMsgs] = useState(FIRST);
+  const [msgs, setMsgs] = useState(DONE);
+  const [think, setThink] = useState(-1); // the answer Enso is routing right now (its dots show; its words stay)
   const [route, setRoute] = useState({ phase: 'scan', pick: null });
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
@@ -177,33 +205,20 @@ function Window() {
   const [find, setFind] = useState(null);
   const [side, setSide] = useState(false); // desktop: the recents drawer, closed by default so the chat has the room
   const input = useRef(null);
-  const live = useRef(null);
   const log = useRef(null);
   const box = useRef(null);
 
   const scan = async (sleep, n) => { setRoute({ phase: 'scan', pick: null }); for (let s = 0; s < n; s++) { setAt(s % ROUTED.length); await sleep(125); } };
-  const stream = async (sleep, a) => {
-    setRoute({ phase: 'pick', pick: 'zen' });
-    setMsgs((m) => [...m.slice(0, -1), { role: 'ai', state: 'stream', model: 'zen', text: a }]);
-    await sleep(40);
-    for (let i = 0; i <= a.length; i += 2) { if (live.current) live.current.textContent = a.slice(0, i); await sleep(22); }
-    setMsgs((m) => [...m.slice(0, -1), { role: 'ai', state: 'done', model: 'zen', text: a }]);
-  };
+  // the conversation stays whole; Enso routes each answer in turn (its dots on that answer, the rail scanning), then Zen lights
   const demo = useDemo(box, async (sleep) => {
-    setMine(false); setSel(0);
+    setMine(false); setSel(0); setMsgs(DONE);
     if (input.current) input.current.value = '';
-    setMsgs(FIRST);
-    await scan(sleep, 9); // the question is already in: Enso decides at once
-    await stream(sleep, DEMO[0][1]);
-    await sleep(900);
-    const [q, a] = DEMO[1];
-    const el = input.current;
-    for (let i = 1; i <= q.length; i++) { if (el) el.value = q.slice(0, i); await sleep(34 + (i % 4) * 8); }
-    await sleep(260);
-    if (el) el.value = '';
-    setMsgs((m) => [...m, { role: 'user', text: q }, { role: 'ai', state: 'wait', model: 'enso' }]);
-    await scan(sleep, 8);
-    await stream(sleep, a);
+    for (let k = 0; k < CONVO.length; k++) {
+      setThink(2 * k + 1);
+      await scan(sleep, 9);
+      setThink(-1); setRoute({ phase: 'pick', pick: 'zen' });
+      await sleep(1600);
+    }
   }, { amount: 0.2 });
 
   // reduced motion: no script runs, so show the whole final conversation from its start
@@ -212,7 +227,7 @@ function Window() {
 
   const takeOver = () => {
     if (mine) return;
-    demo.stop(); setMine(true); setSel(-1);
+    demo.stop(); setMine(true); setSel(-1); setThink(-1);
     if (input.current) input.current.value = '';
     setMsgs([]); setRoute({ phase: 'idle', pick: null });
   };
@@ -223,11 +238,11 @@ function Window() {
     setTimeout(() => { window.location.href = href(OPEN); }, 280);
   };
   const open = (i) => {
-    demo.stop(); setSel(i);
+    demo.stop(); setSel(i); setThink(-1);
     if (i === 0) { setMine(false); setMsgs(DONE); setRoute({ phase: 'pick', pick: 'zen' }); }
     else { setMine(true); setMsgs([]); setRoute({ phase: 'idle', pick: null }); }
   };
-  const fresh = () => { demo.stop(); setMine(true); setSel(-1); setMsgs([]); setRoute({ phase: 'idle', pick: null }); input.current?.focus(); };
+  const fresh = () => { demo.stop(); setThink(-1); setMine(true); setSel(-1); setMsgs([]); setRoute({ phase: 'idle', pick: null }); input.current?.focus(); };
   const list = RECENTS.map((t, i) => [t, i]).filter(([t]) => !find || t.toLowerCase().includes(find.toLowerCase()));
 
   return (
@@ -266,7 +281,7 @@ function Window() {
             ) : msgs.length === 0 && mine ? (
               <div className="cht-empty"><p className="cht-empty-t">Ask anything</p></div>
             ) : (
-              <ul className="cht-msgs">{msgs.map((m, i) => <Msg key={i} m={m} live={live} />)}</ul>
+              <ul className="cht-msgs">{msgs.map((m, i) => <Msg key={i} m={m} think={think === i} />)}</ul>
             )}
           </div>
           <form className="cht-composer" onSubmit={send}>
@@ -286,7 +301,7 @@ function Window() {
 function Hero() {
   const lines = ['Ask anything.', 'Enso picks the model.'];
   return (
-    <section className="cht-hero" aria-labelledby="cht-h1" data-morph-target data-ask-name="Hanzo Chat">
+    <section className="cht-hero zf-sec" aria-labelledby="cht-h1" data-morph-target data-ask-name="Hanzo Chat">
       <div className="v2a-wrap cht-hero-in">
         <div className="cht-copy">
           <h1 className="v2a-lines v2a-display cht-h1" id="cht-h1">
@@ -295,8 +310,9 @@ function Hero() {
             ))}
           </h1>
           <p className="v2a-lede cht-lede cht-up" style={{ '--d': '.3s' }}>Hanzo Chat searches the web, runs code, reads your files and makes images, in one conversation.</p>
-          <div className="cht-acts cht-up" style={{ '--d': '.4s' }}>
-            <Open slot="hero" />
+          <div className="cht-up" style={{ '--d': '.4s' }}><Prompt slot="hero" /></div>
+          <div className="cht-acts cht-up" style={{ '--d': '.5s' }}>
+            <Plan slot="hero" />
             <Docs />
           </div>
         </div>
@@ -424,31 +440,55 @@ function Art({ k }) {
   );
 }
 
-/* The dark room's heading starts big, as the moment, and shrinks back to a section heading as the pinned scene
-   takes over (MASTER 3.1: some things start big and shrink as things happen). */
-function ToolsHead() {
+/* 2. What it does, as hanzo.ai/chat lays it out: one heading and six cards, three by two. Each card carries its own
+   small scene (the same art the tools had), which plays once as the card comes into view and again on hover or focus. */
+function Tool({ t, d, k, i }) {
   const ref = useRef(null);
-  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start 0.7', 'start 0.05'] });
-  const scale = useTransform(p, (v) => 1 - 0.62 * Math.min(1, Math.max(0, v)));
+  const [play, setPlay] = useState(0);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setPlay((n) => n || 1); io.disconnect(); } }, { threshold: 0.45 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  const again = () => setPlay((n) => n + 1);
+  // the scene is drawn at 560 × 400 and scaled to the card, so it reads the same at every width
+  const art = useRef(null);
+  useEffect(() => {
+    const el = art.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => el.style.setProperty('--k', String(Math.min(el.clientWidth / 560, el.clientHeight / 400))));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
   return (
-    <div className="v2a-wrap cht-ch-head" ref={ref}>
-      <motion.div className="cht-ch-hw" style={{ scale }}>
-        <AppLines as="h2" view className="cht-ch-h" lines={['A chat that does the work,', 'not just the talking']} soft={[1]} />
-      </motion.div>
-    </div>
+    <li className={'cht-tool zf-dots' + (i === 0 || i === 5 ? ' wide' : '')} ref={ref} style={{ '--i': i }} onPointerEnter={(e) => { if (e.pointerType === 'mouse') again(); }} onFocus={again} tabIndex={-1}>
+      <div ref={art} className="v2a-ch-art cht-tool-art" data-play={play ? '' : undefined} aria-hidden="true">
+        <div className="cht-tool-scale" key={play}><Art k={k} /></div>
+      </div>
+      <div className="cht-tool-b">
+        <span className="cht-tool-i"><Ico k={k} /></span>
+        <h3 className="cht-tool-t">{t}</h3>
+        <p className="cht-tool-d">{d}</p>
+      </div>
+    </li>
   );
 }
 
 function Tools() {
   return (
-    <AppChapters
-      className="cht-ch"
-      dark
-      id="cht-tools"
-      label="A chat that does the work, not just the talking"
-      head={<ToolsHead />}
-      items={TOOLS.map(([title, body, k]) => ({ key: k, title, body, icon: <Ico k={k} />, art: <Art k={k} /> }))}
-    />
+    <section className="zf-room cht-do" aria-labelledby="cht-tools-h">
+      <div className="v2a-wrap">
+        <div className="zf-head cht-do-head">
+          <h2 className="cht-tools-h" id="cht-tools-h">A chat that does the work, not just the talking</h2>
+          <p><Cta to={OPEN} kind="link" id="chat.tools">Open Hanzo Chat</Cta></p>
+        </div>
+        <ul className="cht-tools-g zf-tilt">
+          {TOOLS.map(([t, d, k], i) => <Tool key={k} t={t} d={d} k={k} i={i} />)}
+        </ul>
+      </div>
+    </section>
   );
 }
 
@@ -461,16 +501,16 @@ function Answers() {
   const m = MODELS.find((x) => x.slug === k) || ENSO;
   const go = (e) => { if (opener && frame.current) opener.open(e, { el: frame.current, src: pic(m.slug), href: '/' + m.slug, key: m.slug }); };
   return (
-    <section className="v2a-sec cht-who-sec" aria-labelledby="cht-who-h">
+    <section className="v2a-sec cht-who-sec zf-sec" aria-labelledby="cht-who-h">
       <div className="v2a-wrap v2a-grid cht-who-grid">
-        <div className="cht-who-l">
+        <div className="cht-who-l zf-rise">
           <A to={'/' + m.slug} className="cht-pic" ref={frame} data-card={m.slug} onClick={go}>
             {MODELS.map((x) => <Img key={x.slug} src={pic(x.slug)} alt="" w={1200} h={1500} className={x.slug === k ? 'on' : ''} />)}
             <span className="cht-pic-cap"><b>{m.name}</b><span className="x-mono">{m.tags.join(' · ')}</span><i aria-hidden="true">→</i></span>
           </A>
         </div>
         <div className="cht-who-r">
-          <h2 className="v2a-head cht-who-h" id="cht-who-h">{ENSO.desc}</h2>
+          <div className="zf-head zf-solo cht-who-head"><h2 className="cht-who-h" id="cht-who-h">{ENSO.desc}</h2></div>
           <ul className="cht-roster" onPointerLeave={(e) => { if (e.pointerType === 'mouse') setK('enso'); }}>
             {MODELS.map((x) => (
               <li key={x.slug} className={x.slug === k ? 'on' : ''}>
@@ -492,15 +532,57 @@ function Answers() {
   );
 }
 
-/* 4. The close: the kit's Band, in Hanzo's words, with the one ask. */
+/* 4. The close: "Ask anything" as a real prompt, then the three personal plans in Hanzo's words (hanzo.ai/pricing), each
+   with its own way in: Free opens an account, Go and Pro go straight to their checkouts (the plan ids hanzo.ai uses).
+   Pro stands lifted and inked, the one recommended. */
+const PLANS3 = [
+  { k: 'free', name: PLANS.free.name, d: 'Chat and build with Hanzo, free.', price: 'Free', unit: 'No card needed', to: '/signup' },
+  { k: 'go', name: PLANS.go.name, d: 'Your everyday AI development toolkit, with access to every model and more included usage.', price: '$' + PLANS.go.price, unit: 'USD/month', to: GO },
+  { k: 'pro', name: PLANS.pro.name, d: 'For serious builders running agents, shipping code, and needing substantially higher limits.', price: '$' + PLANS.pro.price, unit: 'USD/month', to: PRO },
+];
 function Close() {
-  return <Band title="Ask anything" action="Open Hanzo Chat" to={OPEN} note={<Docs />} />;
+  return (
+    <section className="cht-close zf-close" aria-labelledby="cht-close-h">
+      <div className="v2a-wrap">
+        <h2 id="cht-close-h">Ask anything</h2>
+        <div className="cht-close-p"><Prompt slot="close" big /></div>
+        <ul className="cht-plans">
+          {PLANS3.map((p) => (
+            <li key={p.k} className={'cht-plan zf-lift' + (p.k === 'pro' ? ' rec' : '')}>
+              <div className="cht-plan-h"><b>{p.name}</b><span className="cht-plan-p"><strong>{p.price}</strong>{p.unit}</span></div>
+              <p>{p.d}</p>
+              <Cta to={p.to} kind={p.k === 'pro' ? 'solid' : 'ghost'} size="sm" id={'chat.plan-' + p.k}>Try Hanzo</Cta>
+            </li>
+          ))}
+        </ul>
+        <div className="cht-close-l"><Docs /></div>
+      </div>
+    </section>
+  );
+}
+
+/* one solid fill per viewport: while the Band's own solid "Open Hanzo Chat" is on screen the header's ask goes quiet
+   (html[data-ask=quiet], the shell's own switch), said again after the shell's scroll pass */
+function useQuietAtBand() {
+  useEffect(() => {
+    const H = document.documentElement;
+    const band = document.querySelector('main.cht .cht-close');
+    if (!band) return;
+    let on = false, mine = false, t = 0;
+    const apply = () => { if (on) { H.dataset.ask = 'quiet'; mine = true; } else if (mine) { delete H.dataset.ask; mine = false; } };
+    const io = new IntersectionObserver(([e]) => { on = e.isIntersecting; apply(); }, { threshold: 0.35 });
+    io.observe(band);
+    const onScroll = () => { clearTimeout(t); if (on) t = setTimeout(apply, 160); };
+    addEventListener('scroll', onScroll, { passive: true });
+    return () => { io.disconnect(); clearTimeout(t); removeEventListener('scroll', onScroll); if (mine) delete H.dataset.ask; };
+  }, []);
 }
 
 export default function ChatPage() {
   const handoff = useHandoff();
+  useQuietAtBand();
   return (
-    <main className="cht" onClickCapture={handoff}>
+    <main className="cht zf" onClickCapture={handoff}>
       <Hero />
       <Tools />
       <Answers />

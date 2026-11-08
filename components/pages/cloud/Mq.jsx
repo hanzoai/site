@@ -1,5 +1,5 @@
 'use client';
-/* MQ, Cloud 3 launch page (docs/MASTER.md, the only brief).
+/* MQ, Cloud 3 launch page (docs/build-notes/MASTER.md, the only brief).
    Persona: Developer. Goal: try Hanzo MQ (read the source, then deploy it).
    CTA: "GitHub" → https://github.com/hanzoai (data-cta mq.hero, mq.close; data-thumb "GitHub", so the site's sticky ask
    carries the same words). Metric: github_click (MASTER §1 names a GitHub click as a metric; this page's live ask is
@@ -25,11 +25,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { A } from '../../kit';
-import { Paste, Code, useLive } from './Frame';
+import { Paste, useLive } from './Frame';
+import { Copy } from '../../ui';
 import SpecDrawer from '../../v2/SpecDrawer';
 import LaunchClose, { Arr } from '../../v2/LaunchClose';
 import LivePause, { usePause } from '../../v2/LivePause';
 import MqGlobe from './MqGlobe';
+import HeroDither from '../HeroDither';
 import { ShrinkToCard, Iris, Scramble, Scr, CountRoll, Roll, CursorLens, Lens } from './MqEntrances';
 import './Mq.css';
 
@@ -331,6 +333,32 @@ const worker = new Worker("emails", async (job) => {
   limiter: { max: 100, duration: 60_000 },
 })`;
 
+/* worker.ts, coloured the way hanzo.ai cuts it: keywords and strings picked out, the rest of each run left whole
+   (so "worker = new" and "job.data.userId" read as one stretch each, as live has them) */
+const KW = /\b(import|from|const|await|async)\b|(=>)/g;
+const isKw = (w) => /^(import|from|const|await|async|=>)$/.test(w);
+function tok(l) {
+  if (/^\s*\/\//.test(l)) return [<span key="c" className="c">{l}</span>];
+  const out = [];
+  l.split(/("[^"]*")/).forEach((p, i) => {
+    if (i % 2) return out.push(<span key={i} className="s">{p}</span>);
+    p.split(KW).filter(Boolean).forEach((w, j) => {
+      out.push(isKw(w) ? <span key={i + '.' + j} className="k">{w}</span> : <span key={i + '.' + j}>{w}</span>);
+    });
+  });
+  return out;
+}
+function WorkerCode({ className = '' }) {
+  return (
+    <div className={'cf-code ' + className}>
+      <div className="cf-code-bar"><i /><i /><i /><span className="cf-code-k">worker.ts</span><Copy text={CODE} /></div>
+      <div className="cf-code-body">
+        <pre><code>{CODE.split('\n').map((l, j) => <span key={j} className="cf-ln">{tok(l)}{'\n'}</span>)}</code></pre>
+      </div>
+    </div>
+  );
+}
+
 /* the globe's key: its shapes, named in the words this page already uses */
 const KEY = [['q', 'Queue'], ['w', 'Worker'], ['ok', 'completed'], ['back', 'backoff · exponential'], ['bad', 'failed set']];
 const pad = (i) => String(i).padStart(2, '0');
@@ -341,6 +369,7 @@ export default function Mq() {
     <main className="lx mq" data-cursor="">
       {/* 1 · shrink-to-card: the globe's quiet room becomes a card as you leave it */}
       <ShrinkToCard className="mq-hero" data-morph-target data-ask-name="Hanzo MQ">
+        <HeroDither />
         <div className="lx-wrap mq-top">
           <div className="mq-lead">
             <h1 className="lx-display mq-h1">Hanzo MQ</h1>
@@ -360,10 +389,10 @@ export default function Mq() {
       </Iris>
 
       {/* 3 · scramble: the heading and the six facts decode; a fact (or a tab) puts the inspector on it */}
-      <Scramble className="lx-sec mq-facts" aria-label="The queue is data, the workers are yours">
+      <Scramble className="lx-sec mq-facts">
         <div className="lx-wrap">
           <div className="mq-facts-top">
-            <h2 className="lx-headline mq-facts-h"><Scr>The queue is data,</Scr> <Scr>the workers are yours</Scr></h2>
+            <h2 className="lx-headline mq-facts-h"><span className="x-sr">The queue is data, the workers are yours</span><span aria-hidden="true"><Scr>The queue is data,</Scr> <Scr>the workers are yours</Scr></span></h2>
             <Inspector cur={sel} go={setSel} />
           </div>
           <ol className="mq-facts-list">
@@ -391,7 +420,7 @@ export default function Mq() {
               <p className="lx-lede mq-free">Free tier includes 10K jobs/month. No job size limits.</p>
             </div>
           </div>
-          <SpecDrawer className="mq-spec" rows={[{ v: 'Library', l: 'No broker to run' }, { v: 'Cron', l: '' }, { v: 'Retries', l: 'With backoff' }, { v: 'At-least-once', l: 'Delivery' }]} />
+          <SpecDrawer className="mq-spec" rows={[{ v: 'Library', l: 'No broker to run' }, { v: 'Cron', l: 'Scheduling' }, { v: 'Retries', l: 'With backoff' }, { v: 'At-least-once', l: 'Delivery' }]} />
         </div>
       </CountRoll>
 
@@ -403,7 +432,7 @@ export default function Mq() {
               <h2 className="lx-headline">Add a job here, run it there</h2>
               <Paste dark name="MQ" prompt="Read https://hanzo.ai/skill.md and use Hanzo MQ in my project. Start with: hanzo mq stream list" className="lx-paste" />
             </div>
-            <Lens play={play}><Code title="MQ" tabs={[{ k: 'worker.ts', code: CODE }]} className="mq-code" /></Lens>
+            <Lens play={play}><WorkerCode className="mq-code" /></Lens>
           </div>
         )}
       </CursorLens>

@@ -34,6 +34,7 @@ import { Magnetic } from '../../ui';
 import { ui } from '../../v2/famUi';
 import { play } from '../../../lib/sound';
 import { Nodes } from '../DocNodes';
+import ListDay, { DAY } from './ListDay';
 import Sigil from '../../Sigil';
 import FamLines from '../../v2/FamLines';
 import FamStage from '../../v2/FamStage';
@@ -507,6 +508,8 @@ function Block({ b }) {
   if (b.t === 'p') {
     const els = n.c.filter((k) => k && typeof k === 'object');
     if (els.length === 1 && els[0].t === 'code' && !clean(n.c.filter((k) => typeof k === 'string').join(''))) return <Cmd text={clean(textOf(els[0]))} />;
+    const day = n.c.length === 1 && typeof n.c[0] === 'string' && n.c[0].match(DAY);
+    if (day) return <p className="xbr-p">{n.c[0].slice(0, day.index + day[1].length)}<ListDay />{n.c[0].slice(day.index + day[0].length)}</p>;
     return <p className="xbr-p"><Nodes nodes={n.c} /></p>;
   }
   if (b.t === 'h3') return <h3 className="xbr-h3"><Nodes nodes={n.c} /></h3>;
@@ -738,10 +741,14 @@ export default function BenchRun({ doc, near = [], peek = {} }) {
   const ask = askOf(doc.tail);
 
   const pj = partsCol(c);
+  // a chapter with no table gets a real object, not a decorative field: the card's runs as nested squares, unless a
+  // chapter already draws them (the card's own table section, where no "x of y" column turns it into questions)
+  const isDup = (s) => { const t = splitSection(s).table; return !!(t && c && c.kind !== 'one' && c.kind !== 'trend' && c.title === s.title); };
+  const scaleAt = c && (c.kind === 'bars' || c.kind === 'versus') && !(pj < 0 && longs.some(isDup)) ? longs.findIndex((s) => !splitSection(s).table) : -1;
   const chapter = (s, k) => {
     const { lead: l, table, rest } = splitSection(s);
     // the card already reads this section's table: say its figures once there; the table itself goes in the sheet
-    const dup = !!(table && c && c.kind !== 'one' && c.kind !== 'trend' && c.title === s.title);
+    const dup = isDup(s);
     const sheet = dup ? s.blocks.filter((b) => b !== l) : rest;
     const heads = dup ? headsOf(table.n).join(' · ') : '';
     return {
@@ -757,7 +764,7 @@ export default function BenchRun({ doc, near = [], peek = {} }) {
       visual: dup ? (pj >= 0 ? <Parts c={c} walk={walk} j={pj} /> : <Scale c={c} walk={walk} />)
         : table ? (
           <div className="xbr-ch-v v2f-obj"><Table n={table.n} caption={s.title} /></div>
-        ) : (
+        ) : k === scaleAt ? <Scale c={c} walk={walk} /> : (
           // no table in this section: its own contour field (seeded from the section), so each figure is said once, on the card
           <div className={'xbr-ch-v xbr-ch-fig ' + TONES[k % TONES.length]}><Sigil seed={'bench/' + doc.slug + '/' + s.title} data={seedData} className="xbr-ch-sig" /></div>
         ),

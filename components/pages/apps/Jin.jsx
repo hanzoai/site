@@ -16,10 +16,11 @@
    whose plate draws each figure out and the next one in, with a point scrubbed along the round trip (scroll) + the
    drag (pointer) + legend letters lighting their part of the drawing (pointer) + Table 1 in a native dialog
    (state). Every word and link is Hanzo's.
-V2: 8/10 round 3 (review 7/10): chapters 1-6 are one pinned stage on desktop (texts scroll left; a plate pinned right draws each chapter's figure out and the next in, a hairline and a point on the round trip scrub with the scroll; stacked under 900px with figures alternating above and below and a one-line legend); chapter 3 breaks out at full width with numeral 112, chapter 5 at 84, nothing dwindles; Figure 8 plots the losses as a trace over your drags instead of repeating Figure 1's bars, its status is a mono caption on the black; legend letters and drawing parts light each other on hover; the counter switches as a chapter crosses the line; Table 1 is a native dialog; Figure 1 runs twice and rests, with replay; the phone header carries the page's ask after the hero
+Round 4: figures walk themselves through their lettered parts when left alone; Figure 8 makes one saccade by itself on arrival; its loss legend loses the base-CSS grey slabs.
+Round 3 (review 7/10): chapters 1-6 are one pinned stage on desktop (texts scroll left; a plate pinned right draws each chapter's figure out and the next in, a hairline and a point on the round trip scrub with the scroll; stacked under 900px with figures alternating above and below and a one-line legend); chapter 3 breaks out at full width with numeral 112, chapter 5 at 84, nothing dwindles; Figure 8 plots the losses as a trace over your drags instead of repeating Figure 1's bars, its status is a mono caption on the black; legend letters and drawing parts light each other on hover; the counter switches as a chapter crosses the line; Table 1 is a native dialog; Figure 1 runs twice and rests, with replay; the phone header carries the page's ask after the hero
 */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { motion, useMotionValue, useTransform, animate } from 'motion/react';
+import { motion, useMotionValue, useTransform, animate, useInView, useReducedMotion } from 'motion/react';
 import { A, More, Cta, Img, DataTable } from '../../kit';
 import { useLive } from '../cloud/Frame';
 import BizPaste from '../../v2/BizPaste';
@@ -376,10 +377,21 @@ function useDraw(staged, on) {
 function Fig({ i, keys, plate, staged, on }) {
   const [ref, st] = useDraw(plate && staged, on);
   const [hot, setHot] = useState(null);
+  // left alone, a drawn figure walks itself through its lettered parts (a, b, c...), one at a time, then rests whole
+  const [walk, setWalk] = useState(-1);
+  const seen = useInView(ref, { amount: 0.4 });
+  const calm = useReducedMotion();
+  const live = !calm && seen && (!plate || !staged || on) && hot === null && st.includes('drawn');
+  useEffect(() => {
+    if (!live) { setWalk(-1); return; }
+    const t = setTimeout(() => setWalk((w) => (w + 1 > keys.length ? -1 : w + 1)), walk === -1 ? 2400 : walk === keys.length ? 600 : 1600);
+    return () => clearTimeout(t);
+  }, [live, walk, keys.length]);
+  const lit = walk >= 0 && walk < keys.length ? 'abcd'[walk] : null;
   const over = (e) => { const g = e.target.closest?.('[data-k]'); setHot(g && g.dataset.k ? g.dataset.k : null); };
   return (
     <figure
-      ref={ref} data-fig={i} data-hot={hot || undefined}
+      ref={ref} data-fig={i} data-hot={hot || undefined} data-walk={lit || undefined}
       className={'jn-mfig' + (plate ? ' jn-pfig' + run(i) + (on ? ' on' : '') : '') + st}
       style={plate ? { '--o': 2 * i + (i % 2 ? 0 : 1) } : undefined}
       aria-hidden={plate && staged && !on ? 'true' : undefined}
@@ -391,7 +403,7 @@ function Fig({ i, keys, plate, staged, on }) {
         <ul>
           {keys.map((k, j) => {
             const c = 'abcd'[j];
-            return <li key={k} className={hot === c ? 'on' : ''} onPointerEnter={() => setHot(c)} onPointerLeave={() => setHot(null)} onClick={() => setHot(hot === c ? null : c)}><b className="x-mono">{c}</b>{k}</li>;
+            return <li key={k} className={hot === c ? 'on' : lit === c && !hot ? 'walk' : ''} onPointerEnter={() => setHot(c)} onPointerLeave={() => setHot(null)} onClick={() => setHot(hot === c ? null : c)}><b className="x-mono">{c}</b>{k}</li>;
           })}
         </ul>
       </figcaption>
@@ -532,11 +544,28 @@ function Yours() {
   const nudge = (ev) => {
     const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[ev.key];
     if (!d) return;
+    touched.current = true;
     ev.preventDefault();
     start();
     const s = W.current * 0.1;
     animate(ix, d[0] * s, MOVE); animate(iy, d[1] * s, { ...MOVE, onComplete: () => setTimeout(() => { end(); animate(ix, 0, MOVE); animate(iy, 0, MOVE); }, 500) });
   };
+  // arriving, the plate makes one saccade by itself (a short shift and back) so the read-out shows what a drag does;
+  // a hand that gets there first, or reduced motion, skips it
+  const touched = useRef(false);
+  const calm = useReducedMotion();
+  const shown = useInView(box, { once: true, amount: 0.6 });
+  useEffect(() => {
+    if (!shown || calm || touched.current) return;
+    let t2 = 0;
+    const t1 = setTimeout(() => {
+      if (touched.current) return;
+      start();
+      const s = W.current;
+      animate(ix, s * 0.14, MOVE); animate(iy, -s * 0.08, { ...MOVE, onComplete: () => { t2 = setTimeout(() => { if (touched.current) return; end(); animate(ix, 0, MOVE); animate(iy, 0, MOVE); }, 700); } });
+    }, 700);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [shown, calm]); // eslint-disable-line react-hooks/exhaustive-deps
   const line = (pts) => pts.map(([x, y]) => `${x},${y}`).join(' ');
   return (
     <section className="bz-sec jn-try" data-room="dark" aria-labelledby="jn-try-h">
@@ -554,7 +583,7 @@ function Yours() {
               <div className="jn-frame big" ref={box}>
                 <motion.span
                   className="jn-img grab" style={{ x: ix, y: iy }} drag dragConstraints={box} dragElastic={0.12} dragMomentum={false}
-                  onDragStart={start} onDragEnd={() => { end(); animate(ix, 0, MOVE); animate(iy, 0, MOVE); }}
+                  onPointerDown={() => { touched.current = true; }} onDragStart={start} onDragEnd={() => { end(); animate(ix, 0, MOVE); animate(iy, 0, MOVE); }}
                   tabIndex={0} role="img" aria-label="An image you can drag; arrow keys shift it too" onKeyDown={nudge}
                 ><Img src={IMG} alt="" w={1200} h={1500} draggable={false} /></motion.span>
                 <i className="jn-patches" />
@@ -645,7 +674,7 @@ function End() {
         </div>
         <ul className="jn-rows">
           <li><A to={GH} className="jn-row"><b>View on GitHub</b><span className="x-mono"><Gh />hanzoai</span><Arrow /></A></li>
-          <li><A to="https://platform.hanzo.ai/deploy" className="jn-row"><b>Get Jin</b><span>Multimodal foundation model <i className="x-mono">License: Apache-2.0</i></span><em>Deploy to Cloud</em><Arrow /></A></li>
+          <li><A to="https://platform.hanzo.ai/deploy" className="jn-row"><b>Get Jin</b><span><span>Multimodal foundation model</span> <i className="x-mono">License: Apache-2.0</i></span><em><span>Deploy to Cloud</span></em><Arrow /></A></li>
           <li className="jn-row-sheet">
             <Sheet label="See Table 1" kick="Table 1" title="What is in the repository">
               <DataTable className="jn-table" caption="Table 1" cols={[{ key: 'a', label: '' }, { key: 'b', label: '' }]} rows={TABLE.map(([a, b]) => ({ a, b }))} />
@@ -663,7 +692,7 @@ function End() {
    phones only, the same move: the header's button is an outline while either "Read the docs" is on screen, and once
    they are gone by it becomes the solid "Read the docs". The phone's bottom bar is then not needed (data-ask="off"),
    so one solid shows at a time. Desktop is left to the shared Ask; everything is put back on leaving. Filed in
-   docs/requests/jin.md. */
+   docs/build-notes/requests/jin.md. */
 function usePhoneAsk() {
   useEffect(() => {
     const mq = matchMedia('(max-width: 700px)');

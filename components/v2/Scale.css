@@ -23,7 +23,7 @@
 .w2-fig { font-family: var(--mono); font-feature-settings: 'tnum'; font-weight: 400; letter-spacing: -.04em; }
 
 /* material: hero objects 28px, cards 16px, hairlines, soft long shadows (no glass) */
-.w2-object { border-radius: 28px; background: #fff; box-shadow: var(--shadow); border: 1px solid rgba(0, 0, 0, .06); }
+.w2-object { border-radius: 28px; background: var(--x-raised); box-shadow: var(--shadow); border: 1px solid rgba(0, 0, 0, .06); }
 .w2-card { border-radius: 16px; background: var(--card); border: 1px solid rgba(0, 0, 0, .04); }
 .w2-rule { height: 1px; background: var(--line); border: 0; margin: 0; }
 
@@ -71,7 +71,7 @@
 /* pause control for a self-running demo (WCAG 2.2.2): icon only, 44px */
 .w2-pause { position: absolute; z-index: 4; display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .92); color: #0a0a0b; box-shadow: 0 0 0 1px rgba(0, 0, 0, .08), 0 6px 16px -8px rgba(0, 0, 0, .3); cursor: pointer; transition: transform var(--dur-press, .1s) var(--ease), background .2s; }
 .w2-pause:active { transform: scale(.94); }
-@media (hover: hover) { .w2-pause:hover { background: #fff; } }
+@media (hover: hover) { .w2-pause:hover { background: var(--x-raised); } }
 .w2-dark .w2-pause { background: rgba(28, 28, 30, .92); color: #f5f5f7; box-shadow: 0 0 0 1px rgba(255, 255, 255, .12); }
 
 /* a selected segment or filter is a white thumb on a grey track (never a second solid button) */

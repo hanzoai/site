@@ -1,5 +1,5 @@
 /* v2 family grammar (Families A: /benchmarks/* /oss/* /integrations/* /solutions/* /blockchain/* /legal/* /careers/*
-   /products/*). Every class is prefixed v2f- so it cannot collide with another chat's pages. Follows docs/MASTER.md:
+   /products/*). Every class is prefixed v2f- so it cannot collide with another chat's pages. Follows docs/build-notes/MASTER.md:
    - Colour: 0 hues (Hanzo's live palette): paper #fff, quiet #f5f5f5, ink #0a0a0a, muted #525252, border black 10%,
      graphite #171717 and black rooms. Colour arrives only through Hanzo's own media.
    - Scale has rhythm: resting sizes follow live hanzo.ai (h1 52, section headings 26, figures 64; lede 20, body 16,
@@ -15,7 +15,7 @@
   --press: 90ms; --ui: 150ms; --base: 300ms; --reveal: 400ms; --slower: 500ms; --scene: 800ms;
   --out: cubic-bezier(.16, 1, .3, 1); --inout: cubic-bezier(.4, 0, .2, 1); --ease-o: cubic-bezier(0, 0, .2, 1);
   --float: 0 24px 60px -16px rgba(0, 0, 0, .18); --shadow: none;
-  position: relative; background: #fff; color: var(--ink); }
+  position: relative; background: var(--x-raised); color: var(--ink); }
 .v2f-wrap { width: min(100% - 2 * var(--gut), var(--wrap2)); margin-inline: auto; }
 .v2f-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gut); }
 .v2f-sec { position: relative; padding: clamp(72px, 11vw, 188px) 0; }
@@ -45,7 +45,7 @@
 .v2f-fig { font-size: 64px; }
 
 /* material: outlined objects, flat quiet tiles, hairline rows; no box plus shadow */
-.v2f-obj { position: relative; border-radius: var(--r-hero); background: #fff; border: 1px solid var(--hair); box-shadow: none; }
+.v2f-obj { position: relative; border-radius: var(--r-hero); background: var(--x-raised); border: 1px solid var(--hair); box-shadow: none; }
 .v2f-card { position: relative; border-radius: var(--r-card); background: var(--card); }
 .v2f-hair { border: 0; border-top: 1px solid var(--hair); margin: 0; }
 
@@ -64,30 +64,30 @@
 
 /* buttons: one solid per screen (ink), the rest outlined or text links; press answers with scale .98, hover with a
    border and a nudged arrow, never a fade */
-.v2f-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 24px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); background: #fff; color: var(--ink); font: 606 16px/1 var(--sans); text-decoration: none; white-space: nowrap; cursor: pointer; touch-action: manipulation; transition: transform 150ms var(--ease-o), border-color var(--ui) var(--ease-o), background-color var(--ui) var(--ease-o); }
+.v2f-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 24px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); background: var(--x-raised); color: var(--ink); font: 606 16px/1 var(--sans); text-decoration: none; white-space: nowrap; cursor: pointer; touch-action: manipulation; transition: transform 150ms var(--ease-o), border-color var(--ui) var(--ease-o), background-color var(--ui) var(--ease-o); }
 @media (hover: hover) { .v2f-btn:hover { border-color: rgba(0, 0, 0, .4); } .v2f-btn.solid:hover, .v2f-btn.acc:hover { background: #262626; border-color: #262626; } }
 .v2f-btn:active { transform: scale(.97); transition-duration: var(--press); }
 .v2f-btn svg { transition: transform var(--ui) var(--out); }
 @media (hover: hover) { .v2f-btn:hover svg { transform: translateX(3px); } }
-.v2f-btn.solid { background: var(--ink); color: #fff; border-color: var(--ink); }
+.v2f-btn.solid { background: var(--ink); color: var(--x-on-ink); border-color: var(--ink); }
 .v2f-btn.acc { background: var(--acc); color: var(--acc-ink); border-color: var(--acc); }
 
 /* spec drawer (FamDrawer) */
-.v2f-spec-btn { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; max-width: 100%; padding: 6px 18px 6px 6px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); background: #fff; color: var(--ink); font: 400 15px/1.4 var(--sans); text-align: left; border-radius: 24px; cursor: pointer; touch-action: manipulation; transition: border-color var(--ui) var(--out), transform var(--press) var(--out); }
+.v2f-spec-btn { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; max-width: 100%; padding: 6px 18px 6px 6px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); background: var(--x-raised); color: var(--ink); font: 400 15px/1.4 var(--sans); text-align: left; border-radius: 24px; cursor: pointer; touch-action: manipulation; transition: border-color var(--ui) var(--out), transform var(--press) var(--out); }
 .v2f-spec-btn > span { min-width: 0; color: var(--soft); }
 @media (hover: hover) { .v2f-spec-btn:hover { border-color: rgba(0, 0, 0, .4); } .v2f-spec-btn:hover > span { color: var(--ink); } }
 .v2f-spec-btn:active { transform: scale(.97); }
-.v2f-spec-btn i { flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--ink); color: #fff; font: 400 20px/1 var(--sans); font-style: normal; transition: transform var(--reveal) var(--out); }
+.v2f-spec-btn i { flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--ink); color: var(--x-on-ink); font: 400 20px/1 var(--sans); font-style: normal; transition: transform var(--reveal) var(--out); }
 @media (hover: hover) { .v2f-spec-btn:hover i { transform: rotate(90deg); } }
 .v2f-sheet { position: fixed; inset: 0; z-index: 960; visibility: hidden; pointer-events: none; transition: visibility 0s .5s; }
 .v2f-sheet[data-open] { visibility: visible; pointer-events: auto; transition: none; }
 .v2f-sheet-scrim { position: absolute; inset: 0; border: 0; padding: 0; background: rgba(0, 0, 0, .32); opacity: 0; transition: opacity .4s var(--out); cursor: pointer; }
 .v2f-sheet[data-open] .v2f-sheet-scrim { opacity: 1; }
-.v2f-sheet-p { position: absolute; top: 12px; right: 12px; bottom: 12px; width: min(760px, calc(100vw - 24px)); display: flex; flex-direction: column; border-radius: var(--r-hero); background: #fff; box-shadow: var(--float); transform: translateX(calc(100% + 24px)); transition: transform var(--slower) var(--inout); }
+.v2f-sheet-p { position: absolute; top: 12px; right: 12px; bottom: 12px; width: min(760px, calc(100vw - 24px)); display: flex; flex-direction: column; border-radius: var(--r-hero); background: var(--x-raised); box-shadow: var(--float); transform: translateX(calc(100% + 24px)); transition: transform var(--slower) var(--inout); }
 .v2f-sheet[data-open] .v2f-sheet-p { transform: none; transition-timing-function: cubic-bezier(.16, 1, .3, 1); }
 .v2f-sheet-h { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 20px 16px 32px; border-bottom: 1px solid var(--hair); }
 .v2f-sheet-h h2 { margin: 0; font-size: 21px; font-weight: 497; letter-spacing: -.015em; }
-.v2f-sheet-x { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--hair); background: #fff; color: var(--ink); cursor: pointer; display: grid; place-items: center; }
+.v2f-sheet-x { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--hair); background: var(--x-raised); color: var(--ink); cursor: pointer; display: grid; place-items: center; }
 .v2f-sheet-b { flex: 1; overflow: auto; overscroll-behavior: contain; padding: 28px 32px 40px; }
 
 /* sticky chapters (FamChapters): one DOM; on desktop every text shares one cell and every picture another, so one

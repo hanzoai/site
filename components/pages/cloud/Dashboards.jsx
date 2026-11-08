@@ -11,6 +11,10 @@
    the last part the dashboard is whole; the words beside it change with each panel that lands.
    Supporting: the Stage hero (the saved query types itself line by line and its widget draws, cycling through four
    definitions while seen; a tab stops it), a marker drawn under the four words, and the closing graphite room.
+   Entrances (docs/MOTION-MAP.md, arrive.js arms them): diagonal-wipe (the hero object, from first paint), curtain-rise
+   (the board's heading), stack-drop (the monitor's three layers), explode-gather (the four words), cursor-lens (the
+   example console, a lens sweeps it once and then follows the pointer). Panel 1 is already landed when the board pins;
+   chapter 02 shows only its head, the Watch section says Monitors once. Phones keep one sticky board.
    Motion kinds: idle (the cycling query), time (typing), pointer (drag the alert line), state (tabs, widget/monitor),
    arrival (title cut-in, marks), scroll (the board build, the Stage settle, the room opening).
    Beyond: "Watch it instead". One saved query switched between widget and monitor: only its first word changes, and
@@ -21,9 +25,11 @@ import { motion, useInView, useMotionValueEvent, useScroll, useTransform } from 
 import { A, Cta } from '../../kit';
 import { useCalm } from '../../ui';
 import KeynoteStage, { useStagePause } from './SafeStage';
-import KeynoteClose from '../../v2/KeynoteClose';
+import KeynoteClose from './SafeClose';
 import KeynoteLines from '../../v2/KeynoteLines';
 import ExampleConsole from './ExampleConsole';
+import { CursorLens, Lens } from './MqEntrances';
+import { useArrivals } from './arrive';
 import { scrollToY } from '../../../lib/scroll';
 import './Dashboards.css';
 
@@ -113,6 +119,7 @@ function Saved() {
   const paused = useStagePause();
   const [at, choose] = useCycle(DEFS.length, 3800, live && !paused);
   const tabs = useRef([]);
+  const [peek, setPeek] = useState(-1); // a hovered tab shows a ghost of its picture behind the current one
   const [kind, sel, grp, pic] = DEFS[at];
   const key = (e, i) => {
     const n = DEFS.length;
@@ -129,7 +136,7 @@ function Saved() {
         <span className="db-hero-t">Dashboards</span>
         <div className="db-tabs" role="tablist" aria-label="Saved queries">
           {DEFS.map((d, i) => (
-            <button key={i} ref={(el) => { tabs.current[i] = el; }} type="button" role="tab" id={'db-tab-' + i} aria-controls="db-def" aria-selected={at === i} tabIndex={at === i ? 0 : -1} onClick={() => choose(i)} onKeyDown={(e) => key(e, i)}>{d[1]}</button>
+            <button key={i} ref={(el) => { tabs.current[i] = el; }} type="button" role="tab" id={'db-tab-' + i} aria-controls="db-def" aria-selected={at === i} tabIndex={at === i ? 0 : -1} onClick={() => choose(i)} onKeyDown={(e) => key(e, i)} onPointerEnter={(e) => e.pointerType === 'mouse' && setPeek(i)} onPointerLeave={() => setPeek(-1)}>{d[1]}</button>
           ))}
         </div>
       </div>
@@ -145,7 +152,10 @@ function Saved() {
         </div>
         <div className="db-w">
           <p className="db-w-h"><b>{sel}</b> by {grp}<span className={kind === 'widget' ? '' : 'on'}>{kind}</span></p>
-          <Chart key={at} kind={pic} className="db-w-c" />
+          <div className="db-w-c">
+            <Chart key={at} kind={pic} />
+            {peek >= 0 && peek !== at && <Chart key={'p' + peek} kind={DEFS[peek][3]} className="db-ghost" />}
+          </div>
         </div>
       </div>
     </div>
@@ -197,7 +207,8 @@ const PANELS = [
 ];
 
 function Fly({ p, k, on, calm, children }) {
-  const a = k * 0.15, b = a + 0.13;
+  // panel 1 is already in its slot when the run pins (never an empty board); the other five land through the run
+  const a = k ? 0.02 + (k - 1) * 0.17 : -1, b = k ? a + 0.13 : -0.5;
   const t = useTransform(p, [a, b], [0, 1], { clamp: true });
   const e = useTransform(t, (v) => 1 - Math.pow(1 - v, 3));
   const [fx, fy, fr] = FROM[k];
@@ -230,7 +241,7 @@ function Build() {
   };
   return (
     <section className="db-build">
-      <div className="kn-wrap kn-grid db-build-h">
+      <div className="kn-wrap kn-grid db-build-h" data-enter="curtain">
         <KeynoteLines className="kn-headline db-build-t" lines={['What a dashboard', 'is made of']} />
         <p className="kn-lede db-build-l">Widgets, monitors, saved views and score configs — all of them queries over one store.</p>
       </div>
@@ -241,7 +252,7 @@ function Build() {
               {PARTS.map(([t, d], i) => (
                 <article key={t} className="db-say-a" data-on={at === i ? '' : undefined} data-pos={at > i ? 'past' : at < i ? 'next' : 'now'}>
                   <h3 className="kn-headline">{t}</h3>
-                  <p className="db-d">{d}</p>
+                  {i !== 1 && <p className="db-d">{d}</p>}
                   <p className="db-n kn-fig">{pad(i + 1)} / 06</p>
                 </article>
               ))}
@@ -257,24 +268,35 @@ function Build() {
           </div>
         </div>
       </div>
-      <ol className="kn-wrap db-list db-narrow">
-        {PARTS.map(([t, d], i) => <PhonePart key={t} i={i} t={t} d={d} />)}
-      </ol>
+      <PhoneBuild />
     </section>
   );
 }
 
-/* phones: each part, then its panel landing as it is seen */
-function PhonePart({ i, t, d }) {
-  const ref = useRef(null);
-  const seen = useInView(ref, { once: true, amount: 0.35 });
-  const P = PANELS[i];
+/* phones: one sticky board; each part scrolls under it and lands its panel in its slot */
+function PhoneBuild() {
+  const [at, setAt] = useState(0);
   return (
-    <li ref={ref} className="db-li" data-in={seen ? '' : undefined}>
+    <div className="db-narrow db-mob">
+      <div className="kn-wrap db-board db-mob-board" aria-hidden="true">
+        {SLOTS.map((s, i) => <span key={i} className="db-slot" style={{ gridArea: s }} />)}
+        {PANELS.map((P, i) => <div key={i} className="db-panel db-mob-p" style={{ gridArea: SLOTS[i] }} data-in={i <= at ? '' : undefined} data-on={i === at ? '' : undefined}><P /></div>)}
+      </div>
+      <ol className="kn-wrap db-list">
+        {PARTS.map(([t, d], i) => <PhonePart key={t} i={i} t={t} d={i === 1 ? null : d} onSeen={setAt} />)}
+      </ol>
+    </div>
+  );
+}
+function PhonePart({ i, t, d, onSeen }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount: 0.6 });
+  useEffect(() => { if (seen) onSeen(i); }, [seen, i, onSeen]);
+  return (
+    <li ref={ref} className="db-li">
       <h3 className="kn-title">{t}</h3>
-      <p className="db-d">{d}</p>
+      {d && <p className="db-d">{d}</p>}
       <p className="db-n kn-fig">{pad(i + 1)} / 06</p>
-      <div className="db-panel db-li-p" aria-hidden="true"><P /></div>
     </li>
   );
 }
@@ -311,7 +333,7 @@ function Watch() {
             })}
           </div>
         </div>
-        <div className="kn-obj db-watch-o">
+        <div className="kn-obj db-watch-o" data-enter="stack">
           <div className="db-watch-top">
             <pre aria-label="Saved query"><em key={mon ? 'm' : 'w'}>{mon ? 'monitor' : 'widget'}</em>{'\n'}select   <b>error rate</b>{'\n'}group by <b>service</b>{'\n'}from     <b>traces</b></pre>
             <p className="db-ph"><b>error rate by service</b><span className={mon ? 'on' : ''}>{mon ? 'monitor' : 'widget'}</span></p>
@@ -345,7 +367,7 @@ function Figures() {
   const ref = useRef(null);
   const seen = useInView(ref, { once: true, amount: 0.4 });
   return (
-    <section className="db-figs-s">
+    <section className="db-figs-s" data-enter="explode">
       <ul ref={ref} className="kn-wrap db-figs" data-in={seen ? '' : undefined}>
         {[['Traces', 'The thing being queried'], ['Scores', 'Yours to define'], ['Monitors', 'Saved and watched'], ['SSO', 'IAM login']].map(([a, b], i) => (
           <li key={a} style={{ '--db-i': i }}><b><span>{a}</span><i aria-hidden="true" /></b><span className="db-figs-d">{b}</span></li>
@@ -358,9 +380,24 @@ function Figures() {
 const SIDE = [['Dashboards', '/dashboards'], ['Logs', '/cloud/logs'], ['Metrics', '/metrics'], ['O11y', '/o11y'], ['AI Metrics', '/cloud/ai-metrics'], ['Billing', '/billing'], ['Plans & Pricing', '/cloud/plans'], ['Sessions', '/cloud/sessions']];
 const Arrow = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
-export default function Dashboards() {
+/* The console caption as hanzo.ai prints it: its server page reads the limiter line, and once the page is live the
+   caption reads the session line. Both stay in the page text; one shows at a time (hydration-safe: same first paint). */
+function Cap() {
+  const [live, setLive] = useState(false);
+  useEffect(() => setLive(true), []);
   return (
-    <main className="kn db">
+    <>
+      <span hidden={live}>Every request enters here, so the limiter does too.</span>
+      <span hidden={!live}>The service the session above is changing.</span>
+    </>
+  );
+}
+
+export default function Dashboards() {
+  const root = useRef(null);
+  useArrivals(root);
+  return (
+    <main className="kn db" ref={root}>
       <KeynoteStage
         look="split"
         kick="Traces · observations · scores"
@@ -379,7 +416,7 @@ export default function Dashboards() {
 
       <Figures />
 
-      <section className="kn-sec db-start">
+      <CursorLens className="kn-sec db-start">{(play) => (
         <div className="kn-wrap kn-grid db-start-g">
           <div className="db-start-t">
             <KeynoteLines className="kn-headline" lines={['Start from', 'a trace']} />
@@ -387,11 +424,11 @@ export default function Dashboards() {
             <div className="kn-acts"><Cta to="https://github.com/hanzoai/dashboards" id="dashboards.start">View on GitHub</Cta></div>
           </div>
           <div className="db-start-o">
-            <ExampleConsole name="Dashboards" api="/v1/o11y/dashboards" side={SIDE} />
+            <Lens play={play}><ExampleConsole name="Dashboards" api="/v1/o11y/dashboards" side={SIDE} cap={<Cap />} /></Lens>
             <p className="db-note">Example project. Every name in it is one you would give your own.</p>
           </div>
         </div>
-      </section>
+      )}</CursorLens>
 
       <KeynoteClose
         className="db-close"

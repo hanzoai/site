@@ -4,7 +4,7 @@
 .xkt-hero { padding: clamp(104px, 13vh, 140px) 0 clamp(72px, 8vw, 120px); }
 .xkt-h1 { max-width: none; }
 .xkt-h1 .a2-ln { display: inline-block; margin-right: .2em; }
-.xkt-w { color: #d4d4d4; transition: color var(--a2-slow, .4s) var(--a2-ease); }
+.xkt-w { color: #737373; transition: color var(--a2-slow, .4s) var(--a2-ease); }
 .xkt-w.on { color: var(--ink); }
 .xkt-auto { display: inline-block; vertical-align: .6em; margin-left: .1em; font-size: 17px; font-weight: 497; letter-spacing: -.01em; color: #525252; }
 .xkt-hero-grid { margin-top: clamp(28px, 3vw, 44px); align-items: start; row-gap: 40px; }
@@ -29,7 +29,8 @@
 .xkt-dots i.fail { background: transparent; border: 2px solid var(--ink); }
 .xkt-dots i b { position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--ink); }
 .xkt-diff { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px; align-items: center; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }
-.xkt-diff .x-mono { font-size: 13px; color: #525252; transition: opacity .3s; }
+.xkt-diff .x-mono { font-size: 13px; color: #737373; transition: color .3s; }
+.xkt-diff .x-mono.on { color: var(--ink); }
 .xkt-bars { display: grid; gap: 5px; }
 .xkt-bars i { display: block; height: 6px; border-radius: 3px; background: #d4d4d4; transform: scaleX(0); transform-origin: 0 50%; transition: transform .5s var(--a2-ease); }
 .xkt-bars i.on { transform: none; }
@@ -62,21 +63,22 @@
 .xkt-dial svg { position: absolute; inset: 0; transform: rotate(-90deg); }
 .xkt-dial-track { fill: none; stroke: var(--line); stroke-width: 1.2; }
 .xkt-dial-arc { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; transition: stroke-dashoffset .5s var(--a2-ease); }
-.xkt-dial-st { position: absolute; display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 497; color: #737373; transition: color .3s; white-space: nowrap; }
-.xkt-dial-st i { width: 14px; height: 14px; border-radius: 50%; background: #fff; border: 2px solid #d4d4d4; transition: background .3s, border-color .3s, transform .3s var(--a2-ease); }
+.xkt-dial-st { position: absolute; width: 0; height: 0; font-size: 16px; font-weight: 497; color: #737373; transition: color .3s; }
+.xkt-dial-st i { position: absolute; left: -7px; top: -7px; width: 14px; height: 14px; border-radius: 50%; background: #fff; border: 2px solid #d4d4d4; transition: background .3s, border-color .3s, transform .3s var(--a2-ease); }
+.xkt-dial-st em { position: absolute; font-style: normal; white-space: nowrap; line-height: 1; }
 .xkt-dial-st.done { color: var(--ink); }
 .xkt-dial-st.done i { border-color: var(--ink); background: var(--ink); }
 .xkt-dial-st.on i { transform: scale(1.4); }
-.xkt-dial-st.s0 { left: 50%; top: 6%; translate: -7px -50%; }
-.xkt-dial-st.s1 { right: 6%; top: 50%; translate: 7px -50%; flex-direction: row-reverse; }
-.xkt-dial-st.s2 { left: 50%; bottom: 6%; translate: -7px 50%; }
-.xkt-dial-st.s3 { left: 6%; top: 50%; translate: -7px -50%; }
+.xkt-dial-st.s0 { left: 50%; top: 6%; } .xkt-dial-st.s0 em { top: 18px; translate: -50% 0; }
+.xkt-dial-st.s1 { left: 94%; top: 50%; } .xkt-dial-st.s1 em { right: 18px; translate: 0 -50%; }
+.xkt-dial-st.s2 { left: 50%; top: 94%; } .xkt-dial-st.s2 em { bottom: 18px; translate: -50% 0; }
+.xkt-dial-st.s3 { left: 6%; top: 50%; } .xkt-dial-st.s3 em { left: 18px; translate: 0 -50%; }
 .xkt-dial-c { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 6px; }
 .xkt-dial-c span { font-size: 14px; color: #737373; }
 
 /* the one dark room: 1 failed, then a white wipe to 0 failed; the figure is set at 192px and rests scaled to 64px */
 .xkt-room { margin: 0; }
-.xkt-wipe { position: relative; height: 240svh; }
+.xkt-wipe { position: relative; height: 200svh; }
 .xkt-wipe-dark { position: absolute; top: 0; left: 0; width: 1px; height: calc(53svh + 30px); pointer-events: none; }
 .xkt-wipe-stick { position: sticky; top: 0; height: 100svh; overflow: hidden; }
 .xkt-wipe-l { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 24px; padding: 24px; text-align: center; }
@@ -112,31 +114,42 @@
 .xkt-says .x-tick { stroke: var(--ink); }
 .xkt-says mark { background: none; color: var(--ink); font-weight: 497; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 4px; }
 
-/* read: three cards of links; site pages open by Morph */
-.xkt-read-head { max-width: 640px; margin-bottom: 48px; }
+/* read: one ruled list of the 9 links; the group is a mono caption on its first row; hover fills the row and shows
+   where the link goes. Site pages open by Morph */
+.xkt-read { padding-bottom: clamp(24px, 3vw, 48px); }
+.xkt-read-head { max-width: 640px; margin-bottom: 40px; }
 .xkt-read-head .a2-body { margin-top: 16px; color: #525252; }
-.xkt-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-.xkt-col { padding: 24px 24px 12px; border-radius: var(--r-card); background: var(--card); }
-.xkt-col-h { margin: 0 0 12px; font-size: 17px; font-weight: 497; letter-spacing: -.01em; }
-.xkt-links { list-style: none; margin: 0; padding: 0; }
-.xkt-links li + li { border-top: 1px solid var(--line); }
-.xkt-link { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; padding: 12px 0; color: var(--ink); text-decoration: none; }
-.xkt-link b { display: block; font-size: 16px; font-weight: 497; }
-.xkt-link span span { display: block; margin-top: 2px; font-size: 14px; color: #525252; }
-.xkt-link i { font-style: normal; color: #737373; transition: transform .3s var(--a2-ease), color .15s; }
-.xkt-link:active i { transform: translateX(2px); }
-@media (hover: hover) { .xkt-link:hover i { transform: translateX(5px); color: var(--ink); } }
+.xkt-rows { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.xkt-rows li { border-bottom: 1px solid var(--line); }
+.xkt-row { display: grid; grid-template-columns: 160px minmax(0, 1fr) auto 24px; gap: 24px; align-items: center; min-height: 64px; padding: 10px 16px; margin: 0 -16px; border-radius: 12px; color: var(--ink); text-decoration: none; transition: background .2s var(--a2-ease), transform .09s; }
+.xkt-row-g { font-size: 12px; letter-spacing: .04em; text-transform: uppercase; color: #737373; }
+.xkt-row-t { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
+.xkt-row-t b { font-size: 16px; font-weight: 497; }
+.xkt-row-t > span { font-size: 15px; color: #525252; }
+.xkt-row-to { font-size: 13px; color: #525252; opacity: 0; transform: translateX(-8px); transition: opacity .25s var(--a2-ease), transform .3s var(--a2-ease); }
+.xkt-row i { font-style: normal; color: #737373; transition: transform .3s var(--a2-ease), color .15s; }
+.xkt-row:active { transform: translateY(1px); }
+.xkt-row:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.xkt-row:focus-visible .xkt-row-to { opacity: 1; transform: none; }
+@media (hover: hover) {
+  .xkt-row:hover { background: #f5f5f5; }
+  .xkt-row:hover .xkt-row-to { opacity: 1; transform: none; }
+  .xkt-row:hover i { transform: translateX(5px); color: var(--ink); }
+}
 
 /* questions */
 .xkt-qa .a2-grid { row-gap: 32px; align-items: start; }
+.xkt-qa { padding-top: clamp(48px, 6vw, 88px); }
 .xkt-qa-head { grid-column: 1 / span 4; }
+.xkt-qa-term { margin: 28px 0 0; padding: 16px 20px; border-radius: var(--r-card); background: #0a0a0a; color: #a3a3a3; font-size: 14px; line-height: 1.8; white-space: pre-wrap; }
 .xkt-qa-list { grid-column: 6 / span 7; }
 
 @media (max-width: 900px) {
-  .xkt-hero { padding-top: 104px; }
+  .xkt-hero { padding-top: 88px; }
+  .xkt-docs { display: none; }
   .xkt-h1 .a2-ln { display: block; }
   .xkt-auto { display: block; margin: 12px 0 0; vertical-align: 0; font-size: 16px; }
-  .xkt-hero-grid { row-gap: 32px; }
+  .xkt-hero-grid { row-gap: 20px; }
   .xkt-board { padding: 18px 64px 18px 18px; }
   .xkt-figs { gap: 24px; }
   .xkt-fig b { font-size: 32px; }
@@ -151,9 +164,97 @@
   .xkt-wipe-fig { font-size: 84px; transform: none !important; }
   .xkt-caps-head { position: static; }
   .xkt-fit { padding: 20px; }
-  .xkt-cols { grid-template-columns: minmax(0, 1fr); }
+  .xkt-row { grid-template-columns: minmax(0, 1fr) 24px; gap: 4px 16px; padding: 12px 0; margin: 0; }
+  .xkt-row-g:empty, .xkt-row-to { display: none; }
+  .xkt-row-g { grid-column: 1 / -1; }
   .xkt-read-head { margin-bottom: 32px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .xkt *, .xkt *::before, .xkt *::after { animation: none !important; transition: none !important; }
 }
+
+/* round 9 (8 Nov): the arrival is the first frame of the loop. The h1 words cut in by CSS line mask from the first
+   paint (700 ms, 60 ms apart) and the hero object rises 24px without fading, so nothing is absent before hydration. */
+.xkt-h1 .xkt-w { animation: xkt-cut .7s cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(50ms + var(--i, 0) * 60ms); }
+@keyframes xkt-cut { from { transform: translateY(105%); } }
+.xkt-hero-obj { animation: xkt-rise .5s cubic-bezier(.16, 1, .3, 1) .15s both; }
+@keyframes xkt-rise { from { transform: translateY(24px); } }
+@media (prefers-reduced-motion: reduce) { .xkt-h1 .xkt-w, .xkt-hero-obj { animation: none; } }
+/* JS off: the whole session is shown, as the passing state would show it */
+html:not(.js) .xkt-ln > span { opacity: 1; transform: none; }
+/* phone first screen: 80px or more of the board inside 375×660 (its top measured at 572) */
+@media (max-width: 900px) { .xkt-hero { padding-top: 80px; } .xkt-hero-grid { margin-top: 20px; } }
+/* no void after the wipe: on desktop the capabilities rise over the empty lower third of the pinned white screen,
+   so "Built for the pipeline." comes in while "0 failed" is still settling (it never reaches the caption) */
+@media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+  .xkt-room { margin-bottom: -30svh; }
+  .xkt-caps { position: relative; z-index: 1; background: #fff; padding-top: clamp(48px, 5vw, 80px); }
+}
+/* idle motion beyond the hero (time, not scroll; CSS only, none under reduced motion):
+   the board's dots breathe while the suite runs, the failing one rings, the passing row sends a slow wave */
+.xkt-dots i.wait { animation: xkt-wait 1.2s ease-in-out calc(var(--k, 0) * 60ms) infinite; }
+@keyframes xkt-wait { 50% { box-shadow: 0 0 0 4px rgba(0, 0, 0, .08); } }
+.xkt-dots i.fail { animation: xkt-ring 1.6s cubic-bezier(.4, 0, .2, 1) infinite; }
+@keyframes xkt-ring { 0% { box-shadow: 0 0 0 0 rgba(0, 0, 0, .22); } 100% { box-shadow: 0 0 0 10px rgba(0, 0, 0, 0); } }
+.xkt-dots i.pass { animation: xkt-wave 2.6s ease-in-out calc(.9s + var(--k, 0) * 70ms) infinite; }
+@keyframes xkt-wave { 0%, 30%, 100% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); } 12% { box-shadow: 0 0 0 3px rgba(0, 0, 0, .12); } }
+/* the dial's station you are on rings softly */
+.xkt-dial-st.on i::after { content: ''; position: absolute; inset: -2px; border-radius: 50%; border: 1.5px solid var(--ink); animation: xkt-st 2s cubic-bezier(.4, 0, .2, 1) infinite; }
+@keyframes xkt-st { 0% { transform: scale(1); opacity: .5; } 100% { transform: scale(2.6); opacity: 0; } }
+/* the pinned command keeps its caret blinking */
+.xkt-wcur { display: inline-block; width: .55em; height: 1.1em; margin-left: .3em; vertical-align: -.2em; background: currentColor; animation: xkt-blink 1s steps(1) infinite; }
+/* the stack check tries itself: a ring on the chip being tried, its word lit in the sentence */
+.xkt-chips button.tried:not([aria-checked='true']) { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+@media (prefers-reduced-motion: reduce) { .xkt-dots i, .xkt-dial-st.on i::after, .xkt-wcur { animation: none !important; } .xkt-dial-st.on i::after { display: none; } }
+/* the dial's chapter index answers the pointer: the number inks and its bar darkens; press dips 1px */
+.xkt .a2-ch-nav button { transition: color .15s cubic-bezier(0, 0, .2, 1), transform 90ms; }
+@media (hover: hover) { .xkt .a2-ch-nav button:not([aria-current]):hover { color: var(--ink); } .xkt .a2-ch-nav button:not([aria-current]):hover::after { background: #a3a3a3; } }
+.xkt .a2-ch-nav button:active { transform: translateY(1px); }
+/* the questions answer the pointer: the words underline, the plus slides 4px toward them, the row presses 1px */
+.xkt-qa .a2-faq button i { transition: transform .15s cubic-bezier(0, 0, .2, 1); }
+.xkt-qa .a2-faq button { transition: color .15s cubic-bezier(0, 0, .2, 1), transform 90ms; }
+@media (hover: hover) { .xkt-qa .a2-faq button:hover > span { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px; } .xkt-qa .a2-faq button:hover i { transform: translateX(-4px); } }
+.xkt-qa .a2-faq button:active { transform: translateY(1px); }
+/* the page's own Lines (Kata.jsx): the line mask in CSS, so server and client agree; Room opens flat on phones and
+   under reduced motion (CSS, not a render branch) */
+html.js .xkt-lines:not(.go) .a2-ln-in { transform: translateY(105%); }
+.xkt-lines.go .a2-ln-in { animation: xkt-cut .7s cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(var(--i, 0) * 60ms); }
+@media (prefers-reduced-motion: reduce) { html.js .xkt-lines:not(.go) .a2-ln-in, .xkt-lines.go .a2-ln-in { transform: none; animation: none; } }
+@media (max-width: 899px), (prefers-reduced-motion: reduce) { .xkt-room { clip-path: none !important; } }
+
+/* dark mode (docs/DARK-MODE.md): Hanzo's own dark tokens only, as live hanzo.ai. The A2 room tokens (.a2 sets
+   --soft/--faint/--card/--line/--acc for bright mode only) take Hanzo's dark values here; the terminal and the failing
+   half of the wipe are black in both modes, and the passing half turns to the page, so the capabilities still rise
+   over it without a seam. */
+html:not(.light) .xkt { --acc: var(--primary); --acc-soft: var(--muted); --soft: var(--muted-foreground); --faint: var(--text-tertiary); --card: var(--muted); --line: var(--border); }
+html:not(.light) .xkt-w, html:not(.light) .xkt-diff .x-mono, html:not(.light) .xkt-dial-st, html:not(.light) .xkt-dial-c span, html:not(.light) .xkt-row-g, html:not(.light) .xkt-row i { color: var(--faint); }
+html:not(.light) .xkt-w.on, html:not(.light) .xkt-diff .x-mono.on, html:not(.light) .xkt-dial-st.done { color: var(--ink); }
+html:not(.light) .xkt-auto, html:not(.light) .xkt-fig span, html:not(.light) .xkt-report li > span > span, html:not(.light) .xkt-says, html:not(.light) .xkt-read-head .a2-body, html:not(.light) .xkt-row-t > span, html:not(.light) .xkt-row-to { color: var(--soft); }
+html:not(.light) .xkt-dots i, html:not(.light) .xkt-bars i { background: var(--border-strong); }
+html:not(.light) .xkt-dots i.pass, html:not(.light) .xkt-bars i.in { background: var(--ink); color: var(--x-on-ink); }
+html:not(.light) .xkt-dots i.fail { background: transparent; }
+html:not(.light) .xkt-bars i.out { background: var(--muted-foreground); }
+html:not(.light) .xkt-dial-st i { background: var(--x-raised); border-color: var(--border-strong); }
+html:not(.light) .xkt-dial-st.done i { border-color: var(--ink); background: var(--ink); }
+html:not(.light) .xkt-wipe-l.pass { background: var(--bg); color: var(--ink); }
+html:not(.light) .xkt-wipe-l.pass .xkt-wipe-cmd, html:not(.light) .xkt-wipe-l.pass .xkt-wipe-cap { color: var(--soft); }
+html:not(.light) .xkt-chips button { border-color: var(--border-control); background: var(--x-raised); }
+html:not(.light) .xkt-chips button[aria-checked='true'] { background: var(--ink); color: var(--x-on-ink); border-color: var(--ink); }
+html:not(.light) .xkt-chips button.tried:not([aria-checked='true']) { border-color: var(--ink); }
+@media (hover: hover) {
+  html:not(.light) .xkt-row:hover { background: var(--muted); }
+  html:not(.light) .xkt-row:hover i { color: var(--ink); }
+  html:not(.light) .xkt-chips button:not([aria-checked='true']):hover { border-color: var(--ink); }
+}
+@media (min-width: 901px) and (prefers-reduced-motion: no-preference) { html:not(.light) .xkt-caps { background: var(--bg); } }
+/* the board's idle rings: the same motion in white on the dark board */
+html:not(.light) .xkt-dots i.wait { animation-name: xkt-wait-d; }
+html:not(.light) .xkt-dots i.fail { animation-name: xkt-ring-d; }
+html:not(.light) .xkt-dots i.pass { animation-name: xkt-wave-d; }
+@keyframes xkt-wait-d { 50% { box-shadow: 0 0 0 4px var(--white-08); } }
+@keyframes xkt-ring-d { 0% { box-shadow: 0 0 0 0 var(--white-22); } 100% { box-shadow: 0 0 0 10px transparent; } }
+@keyframes xkt-wave-d { 0%, 30%, 100% { box-shadow: 0 0 0 0 transparent; } 12% { box-shadow: 0 0 0 3px var(--white-14); } }
+@media (prefers-reduced-motion: reduce) { html:not(.light) .xkt-dots i { animation: none !important; } }
+/* dark: live hanzo.ai's heroes carry a halftone dot field in dark, densest at the edges; light mode draws nothing here */
+html:not(.light) .xkt-hero { position: relative; isolation: isolate; }
+html:not(.light) .xkt-hero::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(circle, var(--white-20) 1px, transparent 1.6px) 0 0 / 5px 5px; -webkit-mask-image: radial-gradient(ellipse 75% 70% at 45% 45%, transparent 35%, #000 100%); mask-image: radial-gradient(ellipse 75% 70% at 45% 45%, transparent 35%, #000 100%); }

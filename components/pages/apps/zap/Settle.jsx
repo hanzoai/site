@@ -3,7 +3,7 @@
    the first screen scrolls away), but the server and the first client render are identical, so a reduced-motion
    visitor gets no hydration mismatch. Reduced motion is read after mount (and enforced in Zap.css under
    prefers-reduced-motion). The shared file renders `none` on a calm client and the server's transform on the server;
-   that bug is logged in docs/requests/zap.md. */
+   that bug is logged in docs/build-notes/requests/zap.md. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
 

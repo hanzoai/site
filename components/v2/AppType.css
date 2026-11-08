@@ -1,7 +1,7 @@
 /* Type, space and grid for the Apps 1 pages (/api /bot /chrome /cli /computer /design /desktop /download /extension /gen).
    Owned by the Apps 1 chat; only these ten pages import it. Usage: import '../v2/AppType.css' once in a page and put
    className="av" on its <main>. Classes are prefixed av- so they never collide with other chats' files.
-   Values from docs/MASTER.md section 3 (Hanzo's deck): scale has rhythm, with resting sizes like live hanzo.ai (h1 52px,
+   Values from docs/build-notes/MASTER.md section 3 (Hanzo's deck): scale has rhythm, with resting sizes like live hanzo.ai (h1 52px,
    section headings 26px, figures 64px); a thing grows past that only while it is the moment. Book 497 for headings.
    Container 1152px, golden space steps, greys only, outline or raise (never both). */
 .av { --ac: #525252; --ac-soft: #f5f5f5; --r-hero: 24px; --r-card: 16px; --gut: 24px;
@@ -37,7 +37,7 @@
 .av-spec dd { font-size: 16px; line-height: 1.55; color: #0a0a0a; }
 
 /* a product object: outlined, not raised (only what floats takes a shadow) */
-.av-obj { border-radius: var(--r-hero); background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .1); overflow: hidden; }
+.av-obj { border-radius: var(--r-hero); background: var(--x-raised); box-shadow: 0 0 0 1px rgba(0, 0, 0, .1); overflow: hidden; }
 .av-card { border-radius: var(--r-card); background: #f2f2f2; }
 
 /* the black room (at most two per page, never back to back) */

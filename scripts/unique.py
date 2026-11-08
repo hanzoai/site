@@ -111,7 +111,7 @@ def main():
         r = subprocess.run([sys.executable, str(HZ / "scripts" / "variety.py"), *touched], capture_output=True, text=True)
         if r.returncode:
             print("\n".join(l for l in r.stdout.splitlines() if l.startswith("FAIL")))
-            print("unique: motion overdone on the page(s) above - see docs/MASTER.md part 9 (Motion and interaction).")
+            print("unique: motion overdone on the page(s) above - see docs/build-notes/MASTER.md part 9 (Motion and interaction).")
             return 1
     # James's two most repeated complaints (UI hues, a label above the headline), on every page file touched since 7 Nov 06:00
     styled = [str(p) for p in (COMPONENTS / "pages").rglob("*") if p.suffix in (".jsx", ".css") and p.stat().st_mtime > 1794031200]

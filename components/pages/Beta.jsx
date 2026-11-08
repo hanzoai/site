@@ -21,10 +21,12 @@ import { motion, AnimatePresence, useInView } from 'motion/react';
 import { createPortal } from 'react-dom';
 import { A, Cta, Film, Img } from '../kit';
 import { NoJs } from '../v2/LineReveal';
+import { PLANS, checkoutAbs } from '../../lib/plans';
 import { useEnter, stamp } from './beta/enter';
 import '../v2/ProgramScale.css';
 import './Beta.css';
 import './beta/enter.css';
+import './Frame.css';
 
 const EASE = [0.16, 1, 0.3, 1];
 const PASSES = [
@@ -94,31 +96,14 @@ function useOneSolidOnPhone() {
   }, []);
 }
 
-/* The words: entrance `venetian-type`, each line from the side opposite the one before. */
-function Hero() {
+/* The opening frame: Hanzo's words over its lit halftone (entrance `venetian-type`, lines from alternating sides), then
+   the five products in early access as a film strip under them (entrance `ripple`, the row opening from its middle).
+   The heading, the ask, the way to a paid plan and all five tiles sit in the first screen. */
+function Hero({ paused, setPaused }) {
   useOneSolidOnPhone();
   return (
-    <section className="xbt-hero" aria-labelledby="xbt-h1" data-ask-name="Hanzo beta" data-enter="venetian">
+    <section className="zf-sec xbt-open" aria-labelledby="xbt-h1" data-ask-name="Hanzo beta">
       <div className="xp-wrap">
-        <h1 id="xbt-h1" className="xp-display xbt-h1"><span className="xbt-v">Get there first.</span></h1>
-        <div className="xbt-side">
-          <p className="xp-lede xbt-lede xbt-v">
-            Early access to {PRODUCTS.map(([n, to], i) => (
-              <span key={n}><A to={to} className="xbt-prod">{n}</A>{i < 3 ? ', ' : i === 3 ? ' and ' : '.'}</span>
-            ))}
-          </p>
-          <span className="xbt-v xbt-v-cta"><Cta to="/beta/apply" id="beta.hero" thumb className="xp-cta">Apply</Cta></span>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* The five products in early access, first on the page: entrance `ripple`, the row opening from its middle. */
-function Strip({ paused, setPaused }) {
-  return (
-    <section className="xbt-strip-s" aria-label="Early access to Dev, Studio, Kai, Enso and Zen.">
-      <div className="xp-wrap xbt-strip" data-enter="ripple">
         <div className="xbt-shelf">
           <span className="xbt-shelf-k">Hanzo beta</span>
           <button type="button" className="xbt-pause" aria-pressed={paused} aria-label={paused ? 'Play' : 'Pause'} onClick={() => setPaused((v) => !v)}>
@@ -126,6 +111,20 @@ function Strip({ paused, setPaused }) {
               : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>}
           </button>
         </div>
+        <div className="xbt-hero" data-enter="venetian">
+          <h1 id="xbt-h1" className="xp-display xbt-h1"><span className="xbt-v">Get there first.</span></h1>
+          <div className="xbt-side">
+            <p className="xp-lede xbt-lede xbt-v">
+              Early access to Dev, Studio, Kai, Enso and Zen.
+            </p>
+            <span className="xbt-v xbt-v-cta">
+              <Cta to="/beta/apply" id="beta.hero" thumb className="xp-cta">Apply</Cta>
+              <a href="#xbt-paid" className="xbt-golink" data-cta="beta.hero.go">Go is ${PLANS.go.price}/month</a>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div className="xp-wrap xbt-strip" data-enter="ripple" role="group" aria-label="Early access to Dev, Studio, Kai, Enso and Zen.">
         <ul className="xbt-tiles" data-swipe-own>
           {TILES.map(([n, to, film], i) => <Tile key={n} i={i} n={n} to={to} film={film} paused={paused} />)}
         </ul>
@@ -193,7 +192,7 @@ function Passes({ paused }) {
   };
   const close = useCallback(() => { setOpen(-1); setTimeout(() => opener.current?.focus({ preventScroll: true }), 650); }, []);
   return (
-    <section className="xp-sec xbt-passes" aria-label="Beta access, Research access, Design partner">
+    <section className="zf-sec xbt-passes" aria-label="Beta access, Research access, Design partner">
       <div className="xp-wrap">
         <ul className="xbt-grid">
           {PASSES.map(([k, t, d, to, film], i) => (
@@ -207,6 +206,7 @@ function Passes({ paused }) {
                   <A to={to} className="x-arrow xbt-stub"><span>Apply</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A>
                 </div>
                 <span className="xbt-mark" aria-hidden="true"><span>{t}</span></span>
+                <span className="xbt-key x-mono">{k.toUpperCase()}</span>
                 <span className="xbt-plus" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16"><path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg></span>
               </motion.article>
             </li>
@@ -218,19 +218,62 @@ function Passes({ paused }) {
   );
 }
 
-/* The close: Feedback and Book a call over Kai's own film. Entrance `page-curl`: the white page peels away from the
-   bottom corner to show the dark room; the film starts from its first frame once the room is on screen and plays once. */
+/* The way from the waitlist to a paid plan (Zack's GA list, 8 Nov): the Beta access pass on the left, the Go plan on
+   the right, joined by a line a light runs along. Apply keeps your place in line; Go's checkout skips it. Every word is
+   Hanzo's own (the beta passes, the home page's "Go is $8/month", /pricing's Go card); the price is lib/plans.js. */
+const GO_LINES = ['Every model, including Enso Ultra and Kai', 'Build apps with Hanzo Dev', 'Usage included on every model'];
+const Ck = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+function Paid() {
+  return (
+    <section id="xbt-paid" className="zf-sec xbt-paid" aria-labelledby="xbt-paid-h">
+      <div className="xp-wrap">
+        <div className="zf-head">
+          <h2 id="xbt-paid-h">Skip the wait, go paid.</h2>
+          <p>Free to start · Go is ${PLANS.go.price}/month, every model</p>
+        </div>
+        <div className="xbt-route zf-rise">
+          <div className="xbt-stop wait zf-lift">
+            <div className="xbt-stop-m" aria-hidden="true"><Img src="/models/enso.webp" w={1200} h={1500} alt="" /></div>
+            <span className="xbt-key x-mono">A</span>
+            <div className="xbt-stop-b">
+              <h3>Beta access</h3>
+              <p>New releases before they ship.</p>
+              <A to="/beta/apply" className="x-arrow xbt-stub" data-cta="beta.paid.apply"><span>Apply</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A>
+            </div>
+          </div>
+          <div className="xbt-wire" aria-hidden="true"><i /><b /></div>
+          <div className="xbt-stop go zf-lift zf-dots">
+            <div className="xbt-go-top">
+              <h3>{PLANS.go.name}</h3>
+              <p className="xbt-go-d">Your everyday AI development toolkit, with access to every model and more included usage.</p>
+            </div>
+            <p className="xbt-price"><b>${PLANS.go.price}</b><span>USD/month</span></p>
+            <ul className="xbt-go-l">{GO_LINES.map((t) => <li key={t}><Ck />{t}</li>)}</ul>
+            <div className="xbt-go-a">
+              <Cta to={checkoutAbs(PLANS.go.id, 'beta')} id="beta.paid.go" className="xp-cta">Try Hanzo</Cta>
+              <span className="xbt-go-n">No commitment · Cancel anytime</span>
+            </div>
+            <A to="/pricing" className="x-arrow xbt-all" data-cta="beta.paid.pricing"><span>Every plan, model rate and tool price</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* The close, the page's dark room: Feedback and Book a call over Kai's own film. The room opens like a curtain as it
+   arrives (Frame.css), a beam sweeping down; the film starts from its first frame once the room is on screen. */
 function Foot() {
   const ref = useRef(null);
   const seen = useInView(ref, { once: true, amount: 0.4 });
   return (
-    <section ref={ref} className="xp-sec xp-dark xbt-foot" data-room="dark" data-ask-hide aria-label="Feedback, Book a call" data-enter="curl">
+    <section ref={ref} className="zf-room xbt-foot" data-room="dark" data-ask-hide aria-label="Feedback, Book a call">
       <div className="xbt-foot-film" aria-hidden="true"><Film key={seen ? 'on' : 'off'} src="/models/kai.webm" poster="/models/kai.webp" w={1200} h={1500} loop={false} /></div>
       <div className="xp-wrap xbt-foot-in">
         <A to="/login?next=%2Fbeta" className="xbt-big">Feedback<span aria-hidden="true">→</span></A>
+        <A to="/pricing" className="xbt-big sm" data-cta="beta.go-paid">Skip the wait, go paid<span aria-hidden="true">→</span></A>
         <a className="xbt-big sm" href="https://cal.com/hanzo" target="_blank" rel="noopener noreferrer">Book a call<span aria-hidden="true">↗</span></a>
       </div>
-      <span className="xbt-curl" aria-hidden="true" />
     </section>
   );
 }
@@ -240,11 +283,11 @@ export default function Beta() {
   const root = useRef(null);
   useEnter(root);
   return (
-    <main className="xp xbt" ref={root}>
+    <main className="xp xbt zf" ref={root}>
       <NoJs />
-      <Strip paused={paused} setPaused={setPaused} />
-      <Hero />
+      <Hero paused={paused} setPaused={setPaused} />
       <Passes paused={paused} />
+      <Paid />
       <Foot />
     </main>
   );

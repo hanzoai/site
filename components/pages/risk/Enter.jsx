@@ -7,8 +7,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, animate, useReducedMotion, useScroll, useTransform, useVelocity, useSpring } from 'motion/react';
 
-/* arms a section that starts below the fold; calls go() once it is `amount` in view */
-function useArrive(amount, setStart, go) {
+/* arms a section that starts below the fold; calls go() once it is `amount` in view. `outer` watches the parent
+   instead: an element whose own clip-path hides it (the ink blot) never counts as intersecting in Chromium. */
+function useArrive(amount, setStart, go, outer = false) {
   const ref = useRef(null);
   const calm = useReducedMotion();
   useEffect(() => {
@@ -17,7 +18,7 @@ function useArrive(amount, setStart, go) {
     if (el.getBoundingClientRect().top < innerHeight * 0.9) return undefined; // already on screen: leave it be
     setStart(el);
     const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { io.disconnect(); go(el); } }, { threshold: amount });
-    io.observe(el);
+    io.observe(outer && el.parentElement ? el.parentElement : el);
     return () => io.disconnect();
   }, [calm]); // eslint-disable-line react-hooks/exhaustive-deps
   return ref;
@@ -49,9 +50,9 @@ const blot = (s) => 'polygon(' + Array.from({ length: 32 }, (_, i) => {
   return `${(32 + r * Math.cos(t)).toFixed(2)}% ${(46 + r * Math.sin(t) * 1.35).toFixed(2)}%`;
 }).join(', ') + ')';
 export function InkSpread({ children, className = '' }) {
-  const ref = useArrive(0.25, (el) => { el.style.clipPath = blot(0.5); }, (el) => {
-    animate(0, 1, { duration: 1.25, ease: [0.45, 0, 0.2, 1], onUpdate: (p) => { el.style.clipPath = blot(0.5 + p * 150); }, onComplete: () => { el.style.clipPath = ''; } });
-  });
+  const ref = useArrive(0.25, (el) => { el.style.clipPath = blot(0); }, (el) => {
+    animate(0, 1, { duration: 1.25, ease: [0.45, 0, 0.2, 1], onUpdate: (p) => { el.style.clipPath = blot(p * 150); }, onComplete: () => { el.style.clipPath = ''; } });
+  }, true);
   return <div ref={ref} className={'rk-en-ink ' + className}>{children}</div>;
 }
 

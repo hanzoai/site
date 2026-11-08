@@ -1,5 +1,5 @@
 'use client';
-/* Zen 6 Max (/zen/zen6-max): a model launch read one idea per screen (docs/MASTER.md), moving its own way
+/* Zen 6 Max (/zen/zen6-max): a model launch read one idea per screen (docs/build-notes/MASTER.md), moving its own way
    (docs/MOTION-MAP.md). No pinned scenes: five quick sections, each arriving differently.
    1 The first screen: the name cut in on load, Hanzo's lede, "Talk to sales", the crumb, beside the playing Zen film,
      whose card arrives tipped back in 3D and then tilts toward the pointer (pause on its corner).
@@ -25,6 +25,7 @@ import { motion, useInView } from 'motion/react';
 import { EASE, Count, useCalm } from '../../ui';
 import { A, More, Cta, Film, DataTable } from '../../kit';
 import Sigil from '../../Sigil';
+import useScheme from './scheme';
 import { media } from '../../../lib/models';
 import { arrows } from './live';
 import ParticleRack from './zenmax/ParticleRack';
@@ -133,7 +134,7 @@ function Deploy({ k, setK }) {
           </div>
           {PLAN.map(([t, x], i) => (
             <div key={t} className="zx-step" data-on={at === i + 1 || undefined} onPointerEnter={peek(i + 1)} onClick={() => pick(i + 1)}>
-              <Slot as="h3" className="zx-step-t" text={t} at={8 + i * 6} />
+              <Slot as="h3" className="zx-step-t" text={t + '.'} at={8 + i * 6} />
               <p className="zx-body">{x}</p>
             </div>
           ))}
@@ -269,12 +270,13 @@ function Promises() {
 
 /* 5 The close. Entrance line-draw: the art card's outline draws round, then the card fills and its field shows. */
 function Close() {
+  const scheme = useScheme(); // the field's ink follows the page: re-keyed so it redraws on a device switch
   const [ref, inn] = useIn(0.35);
   return (
     <section className="zx-close" ref={ref} data-in={inn} data-ask-hide>
       <div className="zx-w zx-close-g">
         <div className="zx-close-art" aria-hidden="true">
-          <div className="zx-close-fill"><Sigil seed="zen6-max" data={[9216, 5760, 2304, 1440, 31]} className="zx-sig" /></div>
+          <div className="zx-close-fill"><Sigil key={scheme} seed="zen6-max" data={[9216, 5760, 2304, 1440, 31]} className="zx-sig" /></div>
           <Outline />
         </div>
         <div className="zx-close-t">

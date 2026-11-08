@@ -17,6 +17,42 @@
   overflow-x: clip;
 }
 .xlb .pf-btn.solid:hover { background: var(--k-dark); border-color: var(--k-dark); }
+/* dark mode (docs/DARK-MODE.md): the same ramp, re-pointed by role at Hanzo's own dark tokens, as live hanzo.ai wears
+   them (page --background, surfaces --muted / --secondary, text --foreground and --muted-foreground, hairlines --border,
+   primary a light fill with dark type). The two black rooms ([data-room=dark]) keep the light ramp, so they stand as they are. */
+html:not(.light) .xlb {
+  --k-white: var(--background); --k-quiet: var(--muted); --k-muted: var(--secondary); --k-track: var(--secondary);
+  --k-dim: var(--text-tertiary); --k-body: var(--muted-foreground); --k-dark: var(--foreground); --k-ink: var(--foreground);
+  --k-on-ink: var(--primary-foreground); --k-primary: var(--primary);
+  --k-sheen: linear-gradient(160deg, var(--secondary) 0%, var(--muted) 100%);
+  --k-hair: var(--border); --k-hair-2: var(--border-control); --k-hair-3: var(--border-strong);
+  /* live's hero glow, as hanzo.ai draws it in dark */
+  --k-glow: radial-gradient(60% 70% at 50% 0%, rgba(229, 229, 229, .09), transparent 70%);
+}
+html:not(.light) .xlb [data-room='dark'] {
+  --k-white: #ffffff; --k-quiet: #f5f5f5; --k-muted: #ededed; --k-track: #d4d4d4; --k-dim: #737373; --k-body: #525252;
+  --k-dark: #262626; --k-ink: #0a0a0a; --k-hair: rgba(0, 0, 0, .1); --k-hair-2: rgba(0, 0, 0, .14); --k-hair-3: rgba(0, 0, 0, .3);
+  --ink: var(--k-ink); --soft: var(--k-body); --faint: var(--k-dim); --line: var(--k-hair); --card: var(--k-quiet);
+}
+/* live's hero halftone (HeroDither, dark only) fills the hero */
+html:not(.light) .xlb-hero { position: relative; }
+html:not(.light) .xlb-hero { background: var(--k-glow); }
+html:not(.light) .xlb .pf-lede, html:not(.light) .xlb .pf-body:not([data-room='dark'] *) { color: var(--k-body); }
+html:not(.light) .xlb .pf-kick { color: var(--k-dim); }
+/* live's primary button in dark is a white fill with dark type */
+html:not(.light) .xlb-hero .pf-btn.solid { background: var(--k-primary); border-color: var(--k-primary); }
+@media (hover: hover) { html:not(.light) .xlb-hero .pf-btn.solid:hover { background: var(--k-ink); border-color: var(--k-ink); } }
+html:not(.light) .xlb .pf-btn:not(.solid) { border-color: var(--k-hair); }
+html:not(.light) .xlb .pf-obj, html:not(.light) .xlb-tape, html:not(.light) .xlb-calc-out { box-shadow: inset 0 0 0 1px var(--k-hair); }
+html:not(.light) .xlb-tags span:first-child { color: var(--k-on-ink); }
+/* the lit podium block: live's selected row in dark is a raised #262626 surface with light type, not a light box */
+html:not(.light) .xlb-step[data-on='true'] .xlb-block { background: var(--secondary); box-shadow: inset 0 0 0 1px var(--border); }
+html:not(.light) .xlb-step[data-on='true'] .xlb-block b { color: var(--foreground); }
+html:not(.light) .xlb-stepper { background: var(--k-quiet); }
+html:not(.light) .xlb-stepper button { background: var(--k-muted); }
+@media (hover: hover) { html:not(.light) .xlb-stepper button:hover:not(:disabled) { color: var(--k-on-ink); } }
+html:not(.light) .xlb-tok-in input::-webkit-slider-thumb { background: var(--k-ink); }
+html:not(.light) .xlb-tok-in input::-moz-range-thumb { background: var(--k-ink); }
 .xlb .pf-plus.ghost i { background: var(--k-muted); }
 
 /* 1. hero: the headline, then the podium as the hero object, all in the first screen */
@@ -29,12 +65,12 @@
 
 .xlb-pod { padding: 17px 27px 27px; }
 .xlb-pod-top { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--k-hair); font-size: 17px; }
-.xlb-pod-top b { flex: 1; font-weight: 497; letter-spacing: -.01em; }
+.xlb-pod-top .xlb-pod-t { flex: 1; font-weight: 497; letter-spacing: -.01em; }
 .xlb-pause { flex: none; display: grid; place-items: center; width: 44px; height: 44px; margin: -6px 4px -6px -10px; border: 0; border-radius: 50%; background: none; color: var(--k-body); cursor: pointer; transition: background-color var(--k-fast) var(--k-out), transform var(--k-press) var(--k-out); }
 @media (hover: hover) { .xlb-pause:hover { background: var(--k-muted); color: var(--k-ink); } }
 .xlb-pause:active { transform: scale(.97); }
 .xlb-pause:focus-visible { outline: 2px solid var(--k-ink); outline-offset: 2px; }
-.xlb-pod-top span { font-size: 13px; color: var(--k-body); letter-spacing: .02em; }
+.xlb-pod-top .pf-mono { font-size: 13px; color: var(--k-body); letter-spacing: .02em; }
 .xlb-pod-body { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 27px; align-items: end; padding-top: 17px; }
 .xlb-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; align-items: end; }
 .xlb-step { display: flex; flex-direction: column; justify-content: flex-end; gap: 10px; min-height: 100%; padding: 0; border: 0; background: none; color: var(--k-ink); font: inherit; text-align: left; cursor: pointer; }
@@ -132,7 +168,7 @@
 .xlb-org { display: grid; grid-template-columns: 56px minmax(0, 4fr) minmax(0, 5fr) 170px; gap: 24px; align-items: center; padding: 17px 0; border-bottom: 1px solid var(--k-w8); }
 .xlb-org-r { font-size: 14px; color: var(--k-w55); }
 .xlb-org-m { display: grid; gap: 3px; min-width: 0; }
-.xlb-org-m b { font-size: 17px; font-weight: 606; color: var(--k-fg-dark); overflow-wrap: anywhere; }
+.xlb-org-m .xlb-org-n { font-size: 17px; font-weight: 606; color: var(--k-fg-dark); overflow-wrap: anywhere; }
 .xlb-org-m span { font-size: 14px; color: var(--k-on-black); }
 .xlb-org-m .xlb-req { color: var(--k-w55); font-size: 13px; }
 /* flat bars: the lead in the room's ink, the rest in the deck's text-on-black grey; a lit row turns its bar up a step */
@@ -155,7 +191,7 @@
 .xlb-way .pf-body { margin: 0; }
 /* focus-pull-scroll's background: an unlabeled field of ghost bars behind the section, under the subject */
 .xlb-fp { position: relative; isolation: isolate; }
-.xlb-fp-field { position: absolute; inset: 0 0 auto; height: 100%; z-index: -1; display: grid; align-content: space-around; pointer-events: none; }
+.xlb-fp-field { position: absolute; inset: 0 0 auto; height: 100%; z-index: -1; display: grid; align-content: space-around; pointer-events: none; opacity: 0; }
 .xlb-fp-field i { display: block; height: 10px; border-radius: 10px; background: var(--k-muted); width: 44%; justify-self: end; }
 .xlb-fp-field i:nth-child(odd) { justify-self: start; }
 .xlb-fp-field i:nth-child(3n) { width: 62%; }
@@ -199,13 +235,14 @@
 .xlb-stepper output { min-width: 40px; text-align: center; font-size: 17px; }
 .xlb-stepper output { min-width: 52px; }
 .xlb-calc-orgs { display: grid; padding: 17px 0 4px; }
-.xlb-calc-org { grid-area: 1 / 1; display: grid; gap: 6px; align-content: start; font-size: 16px; line-height: 1.45; color: var(--k-body); visibility: hidden; opacity: 0; transform: translate3d(0, 8px, 0); transition: opacity var(--k-base) var(--k-out), transform var(--k-base) var(--k-emph), visibility 0s var(--k-base); }
-.xlb-calc-org[data-on='true'] { visibility: visible; opacity: 1; transform: none; transition-delay: 0s; }
+.xlb-calc-org { grid-area: 1 / 1; display: grid; gap: 6px; align-content: start; font-size: 16px; line-height: 1.45; color: var(--k-body); visibility: hidden; opacity: 0; transform: translate3d(0, -6px, 0); transition: opacity 120ms var(--k-out), transform 120ms var(--k-out), visibility 0s 120ms; }
+/* the old org leaves first (120ms), then the new one rises in: the two never sit on top of each other */
+.xlb-calc-org[data-on='true'] { visibility: visible; opacity: 1; transform: none; transition: opacity var(--k-base) var(--k-out) 120ms, transform var(--k-base) var(--k-emph) 120ms, visibility 0s 0s; }
 .xlb-calc-org p { margin: 0; }
 .xlb-calc-org b { font-weight: 606; color: var(--k-ink); overflow-wrap: anywhere; }
 .xlb-calc-org span { color: var(--k-body); }
 .xlb-tok-in { flex-wrap: wrap; padding: 16px 0; }
-.xlb-tok-in span b { margin-left: 8px; font-weight: 606; }
+.xlb-tok-in span .xlb-tok-v { margin-left: 8px; font-weight: 606; }
 .xlb-tok-in input { flex: 1 1 100%; -webkit-appearance: none; appearance: none; height: 44px; margin: 0; background: transparent; cursor: pointer; }
 .xlb-tok-in input::-webkit-slider-runnable-track { height: 6px; border-radius: 6px; background: linear-gradient(90deg, var(--k-ink) var(--f, 0%), var(--k-track) var(--f, 0%)); }
 .xlb-tok-in input::-moz-range-track { height: 6px; border-radius: 6px; background: linear-gradient(90deg, var(--k-ink) var(--f, 0%), var(--k-track) var(--f, 0%)); }
@@ -241,10 +278,10 @@
   /* phones: a cropped podium, the three blocks and the lit hunter's total side by side in one band */
   .xlb-pod { padding: 4px 12px 12px; }
   .xlb-pod-top { flex-wrap: wrap; gap: 0 8px; padding-bottom: 8px; font-size: 14px; }
-  .xlb-pod-top b { font-size: 14px; }
+  .xlb-pod-top .xlb-pod-t { font-size: 14px; }
   /* phones crop the podium to its moment: the figures and the step names stay in the HTML (and in each step's
      accessible name) but are read, not shown; the tape names the lit hunter, and the token room repeats 217 and 140.1M */
-  .xlb-pod-top span, .xlb-step-t { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .xlb-pod-top .pf-mono, .xlb-step-t { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .xlb-step { position: relative; }
   .xlb-pause { margin: 0 0 -6px -8px; }
   .xlb-pod-body { grid-template-columns: minmax(0, 1fr); gap: 10px; padding-top: 10px; }
@@ -330,7 +367,8 @@
   html.js [data-ent='rack'][data-in='false'] > .pf-wrap { filter: blur(16px); opacity: .25; transform: scale(1.03); }
   /* 3. focus-pull-scroll: with the scroll (--fp 0 to 1, set by FocusPull), the field blurs and the subject sharpens */
   html.js .xlb-fp:not([data-in='true']) > .xlb-fp-subj { filter: blur(calc((1 - var(--fp, 0)) * 12px)); opacity: calc(.3 + var(--fp, 0) * .7); }
-  html.js .xlb-fp > .xlb-fp-field { filter: blur(calc(var(--fp, 0) * 8px)); opacity: calc(1 - var(--fp, 0) * .55); }
+  html.js .xlb-fp > .xlb-fp-field { filter: blur(calc(var(--fp, 0) * 8px)); opacity: calc(1 - var(--fp, 0)); }
+  html.js .xlb-fp[data-in='true'] > .xlb-fp-field { opacity: 0; visibility: hidden; }
   /* 4. orbit-in: the Beyond's parts swing in on an arc about a pivot far to their left, one after another */
   html.js [data-ent='orbit'] .xlb-orb { transform-origin: -40vw 50%; transition: transform 900ms var(--k-emph), opacity var(--k-slow) var(--k-out); transition-delay: calc(var(--o) * 90ms); }
   html.js [data-ent='orbit'][data-in='false'] .xlb-orb { opacity: 0; transform: rotate(12deg); }

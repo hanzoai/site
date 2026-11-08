@@ -27,8 +27,8 @@
    Kept: the book's film and its pointer read-back, the split sliding to 95 / 5 once when seen, the capability pill glide,
    every idle hairline, the hero's line-masked title and the Band opening to full width (now once when it is reached).
    Replaced: the pinned BizChapters scene (now three plain steps, each scene beside its words) and the BizStage scroll
-   settle (now the stack-drop). The Numscript copy no longer sticks, which also frees "See the request" from the sticky
-   column's stacking context, so the sheet opens over the header and the splitter.
+   settle (now the stack-drop). The Numscript copy rides beside the splitter (sticky on desktop); while its sheet is open
+   the column rises to z 1000 (Ledger.css), so the sheet and its scrim cover the header and the splitter.
 V2: 9/10 motion-map pass: one calculator reprices the book, steps, dark room and request; five distinct entrances in map order; no pinned scenes; the request sheet opens above everything
 */
 import { createContext, memo, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState, Fragment } from 'react';
@@ -41,6 +41,7 @@ import BizLines from '../../v2/BizLines';
 import BizSheet from '../../v2/BizSheet';
 import { useEntrance, useSkew, useShuffle } from './LedgerEnter';
 import './Ledger.css';
+import HeroDither from '../HeroDither';
 
 const DOCS = 'https://docs.hanzo.ai/docs/cli/books';
 const GH = 'https://github.com/hanzoai';
@@ -199,6 +200,7 @@ function Book() {
 function Hero() {
   return (
     <section className="ld-hero" aria-labelledby="ld-h1">
+      <HeroDither />
       <div className="bz-wrap ld-hero-grid">
         <BizLines as="h1" id="ld-h1" className="bz-display ld-h1" lines={['Hanzo', 'Ledger']} now delay={0.05} />
         <p className="ld-copy"><span className="bz-lede ld-one">A double-entry ledger you post to over HTTP.</span> <span className="bz-body ld-more">Money here only ever moves: a posting names a source account, a destination account, an amount and an asset. There is no way to write a debit without its credit, because a one-sided entry is not something the API can express.</span></p>
@@ -221,7 +223,7 @@ curl -X POST http://localhost:3068/v2/main/transactions \\
   -d '{
     "postings": [
       { "source": "users:001", "destination": "merchants:042", "amount": ${c.v}, "asset": "USD/2" },
-      { "source": "users:001", "destination": "platform:fees", "amount": ${c.f}, "asset": "USD/2" }
+      { "source": "users:001", "destination": "platform:fees", "amount": ${String(c.f).padStart(String(c.v).length + 1)}, "asset": "USD/2" }
     ],
     "metadata": { "order": "ord_42" }
   }'
@@ -233,8 +235,17 @@ curl -X POST http://localhost:3068/v2/main/transactions \\
 #     destination = { ${c.pct}% to @merchants:042
 #                    ${String(100 - c.pct).padStart(3)}% to @platform:fees }
 #   )`;
+/* The highlighter splits each line into coloured tokens, so the highlighted pane is presentation only: the request is
+   also in the page line by line, whole, in a visually hidden copy beside it (what a screen reader reads). */
 const SheetCode = memo(function SheetCode({ code }) {
-  return <Code tabs={[{ k: 'bash', code }]} light mark="Idempotency-Key: order_42_payout" />;
+  const ref = useRef(null);
+  useEffect(() => { ref.current?.querySelectorAll('.cf-code-body pre').forEach((p) => p.setAttribute('aria-hidden', 'true')); }, [code]);
+  return (
+    <div ref={ref}>
+      <Code tabs={[{ k: 'bash', code }]} light mark="Idempotency-Key: order_42_payout" />
+      <div className="x-sr">{code.split('\n').map((l, i) => <p key={i}>{l}</p>)}</div>
+    </div>
+  );
 });
 
 /* The signature: type an amount, drag the split; every figure on the page follows, and the two sides always balance. */
@@ -285,8 +296,7 @@ function Splitter() {
   );
 }
 
-/* Entrance 2, velocity-skew. The words no longer stick beside the splitter (no pinned scene, and no sticky stacking
-   context trapping the sheet under the header). */
+/* Entrance 2, velocity-skew. The words ride beside the splitter; the open sheet lifts their column above the header. */
 function Numscript() {
   const ref = useRef(null);
   useSkew(ref);
@@ -339,7 +349,7 @@ function Scene({ i }) {
           <span className="ld-chain-h x-mono">{k ? 'sha256 of tx ' + k : 'sha256'}</span>
         </div>
       ))}
-      <svg className="ld-back" viewBox="0 0 40 160" aria-hidden="true"><path d="M6 150 C 38 150, 38 84, 6 84" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M12 78 L5 84 L12 90" fill="none" stroke="currentColor" strokeWidth="1.6" /></svg>
+      <svg className="ld-back" viewBox="0 0 40 160" preserveAspectRatio="none" aria-hidden="true"><path d="M6 150 C 38 150, 38 84, 6 84" fill="none" stroke="currentColor" strokeWidth="1.6" vectorEffect="non-scaling-stroke" /><path d="M12 78 L5 84 L12 90" fill="none" stroke="currentColor" strokeWidth="1.6" vectorEffect="non-scaling-stroke" /></svg>
       <p className="ld-chain-n">a reversing transaction points back at the original</p>
     </>
   );

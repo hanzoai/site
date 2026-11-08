@@ -99,11 +99,11 @@ html.js .sg-f.box .x-tick { transform-origin: 50% 100%; animation: sg-stamp .4s 
 .sg-steps button.past::before { transform: scaleX(1); opacity: .25; }
 .sg-steps button[aria-pressed='true']::before { transform: scaleX(1); opacity: 1; }
 .sg-steps button .x-mono { font-size: 13px; }
-.sg-steps button b { font-size: 17px; font-weight: 497; color: #525252; transition: color .15s cubic-bezier(0, 0, .2, 1); }
+.sg-steps button .sg-step-t { font-size: 17px; font-weight: 497; color: #525252; transition: color .15s cubic-bezier(0, 0, .2, 1); }
 .sg-step-d { font-size: 14px; line-height: 1.5; }
 .sg-steps button[aria-pressed='true'] { color: #404040; }
-.sg-steps button[aria-pressed='true'] b { color: var(--ink); }
-@media (hover: hover) { .sg-steps button:hover b { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; } }
+.sg-steps button[aria-pressed='true'] .sg-step-t { color: var(--ink); }
+@media (hover: hover) { .sg-steps button:hover .sg-step-t { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; } }
 .sg-steps button:active { transform: translateY(1px); }
 .sg-steps button:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
 
@@ -131,7 +131,14 @@ html.js .sg-f.box .x-tick { transform-origin: 50% 100%; animation: sg-stamp .4s 
 /* the eight parts read as a compact index (number, name, +), not eight empty boxes; each opens its sheet */
 .sg-cards .w2-oc-card { min-height: 128px; justify-content: flex-end; padding: 22px 24px; border: 0; }
 .sg-cards .w2-oc-t { font-size: 21px; padding-right: 44px; }
-.sg-cards .w2-oc-k { position: absolute; left: 24px; top: 22px; }
+.sg-cards .w2-oc-k { position: absolute; left: 24px; top: 22px; transition: opacity .2s var(--ease), transform .3s var(--ease); }
+.sg-cards .w2-oc-d { display: none; }
+@media (hover: hover) and (min-width: 900px) {
+  .sg-cards .w2-oc-d { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; position: absolute; left: 24px; right: 64px; top: 20px; max-width: none; font-size: 14px; line-height: 1.4; color: var(--soft); opacity: 0; transform: translate3d(0, 6px, 0); transition: opacity .25s var(--ease), transform .35s var(--ease); pointer-events: none; }
+  .sg-cards .w2-oc-card:hover .w2-oc-d, .sg-cards .w2-oc-card:focus-visible .w2-oc-d { opacity: 1; transform: none; transition-delay: .05s; }
+  .sg-cards .w2-oc-card:hover .w2-oc-k, .sg-cards .w2-oc-card:focus-visible .w2-oc-k { opacity: 0; transform: translate3d(0, -6px, 0); }
+  .sg-cards .w2-oc-card { min-height: 152px; }
+}
 
 /* try: the pad, full width */
 .sg-try { background: var(--card); }
@@ -204,7 +211,7 @@ html:not(.js) .sg-fork path { stroke-dashoffset: 0; } html:not(.js) .sg-fork .no
 .sg-noise-def { position: absolute; width: 0; height: 0; overflow: hidden; }
 
 /* first: the dark room; one statement and one ask on the left, Hanzo's other lines as hairline rows on the right */
-.sg-first-row { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: 24px clamp(32px, 5vw, 96px); align-items: start; }
+.sg-first-row { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 24px clamp(32px, 5vw, 96px); align-items: start; }
 .sg-first-main { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; position: sticky; top: 96px; }
 .sg-first-main > * { margin: 0; }
 .sg-first-main .w2-cta { margin-top: 8px; }
@@ -214,6 +221,11 @@ html:not(.js) .sg-fork path { stroke-dashoffset: 0; } html:not(.js) .sg-fork .no
 .sg-first-links p { margin: 0; font-size: 16px; color: #a1a1a6; }
 @media (hover: hover) { .sg-first-links li:hover h3 { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; } }
 .sg-first-links .sg-get-meta { margin-top: 8px; }
+/* the five rows as a two-column ledger on wide screens, so the close fits one screen at 1470×801 */
+@media (min-width: 1100px) {
+  .sg-first-links { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 40px; align-items: start; }
+  .sg-first-links li.sg-get { grid-column: 1 / -1; }
+}
 .sg-get-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .sg-row-links { display: flex; flex-wrap: wrap; gap: 0 24px; color: #f5f5f7 !important; }
 .sg-tlink { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-weight: 600; text-decoration: none; color: inherit; }
@@ -286,12 +298,51 @@ html.js .sg-acc[data-in] .sg-first-main, html.js .sg-acc[data-in] .sg-first-link
   .sg-tile { grid-template-columns: minmax(0, 1fr); }
   .sg-langs b { font-size: 32px; }
   .sg-langs b.long { font-size: 24px; }
-  .sg-cards .w2-oc-card { min-height: 104px; }
+  .sg-cards.w2-oc { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 1fr; gap: 10px; }
+  .sg .sg-cards .w2-oc-card { padding: 18px; justify-content: space-between; }
   .sg-cards .w2-oc-k { position: static; }
+  .sg-cards .w2-oc-t { font-size: 17px; padding-right: 0; }
+  .sg-cards .w2-oc-plus { right: 12px; top: 12px; }
   .sg-pad canvas { aspect-ratio: 3 / 2; }
   .sg-pad-foot { flex-direction: column; align-items: stretch; }
-  .sg-plans { grid-template-columns: minmax(0, 1fr); }
+  /* the four plans ride a sideways rail on phones (snap per plan) instead of standing three screens tall */
+  .sg-plans { display: flex; gap: 12px; margin: 0 calc(-1 * 16px); padding: 4px 16px 8px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 16px; scrollbar-width: none; overscroll-behavior-x: contain; }
+  .sg-plans::-webkit-scrollbar { display: none; }
+  .sg-plan { flex: 0 0 84%; scroll-snap-align: start; padding: 26px 22px; }
+  .sg-plan.dim .sg-price b, .sg-plan.dim h3 { color: inherit; } /* on the rail the toggle moves you to the plans instead of greying the rest */
   .sg-first-main { position: static; }
   .sg-f span, .sg-page-h em, .sg-cert span, .sg-track b, .sg-five b, .sg-five em, .sg-langs span, .sg-pad-k, .sg-pop, .sg-desk-k { font-size: 14px; }
   .sg-desk .sg-f span { font-size: 12px; letter-spacing: .02em; }
 }
+
+/* ---------- dark (live hanzo.ai's dark palette, Hanzo's tokens only; bright mode untouched). The page and its kit
+   (v2/Scale.css .w2) fix --acc/--soft/--faint to light values, so their dark values are set here; the close
+   (.w2-dark) keeps its own room colours. Inner fills use our root-resolved tokens (--x-*), since Hanzo's stylesheet
+   redefines --card/--raised on inner elements. ---------- */
+html:not(.light) .sg { --acc: var(--foreground); --acc-ink: var(--primary-foreground); --acc-soft: var(--x-fill); --acc-line: var(--border-selected); --soft: var(--muted-foreground); --faint: var(--text-tertiary); --shadow: 0 0 0 1px var(--border); }
+html:not(.light) .sg .w2-dark { --acc: var(--primary); --acc-ink: var(--primary-foreground); --soft: var(--muted-foreground); --faint: var(--text-tertiary); }
+html:not(.light) .sg :is(.sg-page, .sg-track, .sg-five, .sg-plan.pop) { background: var(--x-raised); box-shadow: 0 0 0 1px var(--border); }
+html:not(.light) .sg .sg-lines i { background: var(--x-knob); }
+html:not(.light) .sg .sg-f path { stroke: var(--ink); }
+html:not(.light) .sg .sg-cert { background: var(--x-raised); }
+html:not(.light) .sg :is(.sg-track i, .sg-five i) { background: var(--x-knob); }
+html:not(.light) .sg .sg-track i.sent { background: var(--x-raised); box-shadow: inset 0 0 0 1.5px var(--soft); }
+html:not(.light) .sg :is(.sg-track i.opened, .sg-five i.opened) { background: var(--soft); }
+html:not(.light) .sg :is(.sg-track i.signed, .sg-five i.signed) { background: var(--acc); }
+html:not(.light) .sg :is(.sg-steps-t, .sg-steps button .sg-step-t, .sg-fork p) { color: var(--soft); }
+html:not(.light) .sg .sg-steps button { color: var(--faint); }
+html:not(.light) .sg .sg-steps button[aria-pressed='true'] { color: var(--soft); }
+html:not(.light) .sg .sg-steps button[aria-pressed='true'] .sg-step-t { color: var(--ink); }
+@media (hover: hover) { html:not(.light) .sg .sg-steps button:hover .sg-step-t { color: var(--ink); } }
+html:not(.light) .sg .sg-tile.acc { background: var(--x-knob); }
+html:not(.light) .sg .sg-tile.acc .w2-pause { background: var(--x-raised); }
+html:not(.light) .sg .sg-pad-acts .w2-ghost { border-color: var(--border-control); }
+html:not(.light) .sg .sg-pad-cert { color: var(--ink); }
+html:not(.light) .sg .sg-run { background: var(--x-fill); }
+html:not(.light) .sg .sg-run button[aria-pressed='true'] { color: var(--ink); background: var(--x-knob); box-shadow: none; }
+@media (hover: hover) { html:not(.light) .sg .sg-run button:not([aria-pressed='true']):hover { background: var(--glass-strong); } }
+html:not(.light) .sg .sg-plan.dim :is(.sg-price b, h3) { color: var(--faint); }
+/* the kit's buttons (v2/Scale.css) are fixed ink pills: in dark they are Hanzo's primary (light fill, dark text) */
+html:not(.light) .sg :is(.w2-cta, .w2-cta.acc, .w2-dark .w2-cta, .w2-dark .w2-cta.acc) { background: var(--primary); color: var(--primary-foreground); }
+html:not(.light) .sg .w2-ghost { border-color: var(--border-control); }
+@media (hover: hover) { html:not(.light) .sg :is(.w2-cta, .w2-dark .w2-cta):hover { background: var(--primary-hover); } html:not(.light) .sg .w2-ghost:hover { border-color: var(--border-selected); background: var(--glass); } }

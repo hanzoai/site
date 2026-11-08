@@ -1,0 +1,244 @@
+/* Home, 8 Nov ("wow" pass, James): every section reads in one frame. At 1470 x 801 a section's heading and all of its
+   content sit inside one screen the moment it is centred; on a phone the heading and the first card show together.
+   Rhythm instead of a stack of grids: split headings (title left, lede right), one lifted stage, one dark room that
+   opens like a curtain, an asymmetric chart, a bento for open source. Light, depth and halftone come from CSS alone
+   (scroll-driven where the browser supports it), so the page ships no extra JavaScript. Scoped to the home <main> (main:has(> .x-ann): only the home page opens with the announcement bar).
+   Colours are Hanzo's tokens (--ink, --soft, --card, --line, --bg... -> @hanzo/design in dark); the dark room stays dark. */
+
+main:has(> .x-ann) { --fr: min(680px, calc(100svh - 128px)); }
+
+/* ---------- every section: a frame, not a scroll ---------- */
+main:has(> .x-ann) > .x-sec { padding-block: clamp(56px, 8.5svh, 104px); isolation: isolate; }
+main:has(> .x-ann) > .x-sec > .x-wrap { position: relative; }
+
+/* the split heading: title on the left, its lede on the right, sharing one baseline row */
+main:has(> .x-ann) .x-sec .x-head:not(.center) { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: end; gap: 14px clamp(32px, 5vw, 80px); margin-bottom: clamp(22px, 3.2svh, 34px); }
+main:has(> .x-ann) .x-sec .x-head h2 { font-size: clamp(2.1rem, 3.55vw, 3.45rem); line-height: 1; letter-spacing: -.042em; max-width: 15ch; }
+main:has(> .x-ann) .x-sec .x-head p { margin: 0 0 4px; font-size: clamp(.98rem, 1.12vw, 1.1rem); line-height: 1.5; max-width: 46ch; justify-self: end; }
+main:has(> .x-ann) .x-row-links { margin-top: clamp(14px, 2.4svh, 24px); }
+
+/* a hairline that draws itself under each title as the section arrives (scroll-driven; static where unsupported) */
+main:has(> .x-ann) .x-sec .x-head:not(.center) h2 { position: relative; padding-top: 22px; }
+main:has(> .x-ann) .x-sec .x-head:not(.center) h2::before { content: ''; position: absolute; left: 0; top: 0; width: 44px; height: 3px; border-radius: 3px; background: var(--ink); transform-origin: 0 50%; }
+
+/* ---------- light, halftone and depth: each section has its own lit corner, drifting as you scroll ---------- */
+main:has(> .x-ann) > .x-sec::before { content: ''; position: absolute; z-index: -1; inset: 0; pointer-events: none;
+  background: radial-gradient(circle, color-mix(in srgb, var(--ink) 15%, transparent) 1px, transparent 1.5px) 0 0 / 12px 12px;
+  -webkit-mask-image: radial-gradient(40% 55% at var(--hx, 100%) var(--hy, 0%), #000, transparent 72%); mask-image: radial-gradient(40% 55% at var(--hx, 100%) var(--hy, 0%), #000, transparent 72%); opacity: .9; }
+main:has(> .x-ann) > .x-sec::after { content: ''; position: absolute; z-index: -1; inset: 0; pointer-events: none;
+  background: radial-gradient(42% 46% at var(--lx, 18%) var(--ly, 0%), color-mix(in srgb, var(--ink) 6%, transparent), transparent 70%); }
+main:has(> .x-ann) > .x-models { --hx: 100%; --hy: 8%; --lx: 12%; }
+main:has(> .x-ann) > .x-platform { --hx: 0%; --hy: 100%; --lx: 50%; --ly: 30%; }
+main:has(> .x-ann) > .x-agents { --hx: 100%; --hy: 100%; --lx: 85%; }
+main:has(> .x-ann) > .x-cheaper { --hx: 0%; --hy: 0%; --lx: 80%; }
+main:has(> .x-ann) > .x-pareto { --hx: 100%; --hy: 50%; --lx: 0%; --ly: 50%; }
+main:has(> .x-ann) > .x-oss { --hx: 0%; --hy: 40%; --lx: 100%; }
+main:has(> .x-ann) > .x-pricing::before, main:has(> .x-ann) > .x-pricing::after { display: none; }
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    main:has(> .x-ann) > .x-sec::before { animation: xw-drift linear both; animation-timeline: view(); }
+    @keyframes xw-drift { from { background-position: 0 60px; opacity: .2; } 45% { opacity: .9; } to { background-position: 0 -60px; opacity: .3; } }
+    main:has(> .x-ann) .x-sec .x-head:not(.center) h2::before { animation: xw-rule linear both; animation-timeline: view(); animation-range: entry 20% cover 45%; }
+    @keyframes xw-rule { from { transform: scaleX(0); } }
+  }
+}
+
+/* ---------- models: the bento, sized to the frame ---------- */
+main:has(> .x-ann) .x-models .x-mgrid { grid-template-rows: repeat(2, calc((var(--fr) - 210px) / 2)); gap: 12px; }
+main:has(> .x-ann) .x-models .x-mtilt { padding: 18px; }
+main:has(> .x-ann) .x-models .x-mcard:not(.big) .x-mdesc { font-size: 13px; }
+main:has(> .x-ann) .x-models .x-mbtn { box-shadow: 0 30px 60px -38px rgba(0, 0, 0, .55); transition: box-shadow .5s var(--ease); }
+main:has(> .x-ann) .x-models .x-mbtn:hover { box-shadow: 0 40px 70px -34px rgba(0, 0, 0, .6); }
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    main:has(> .x-ann) .x-models .x-mgrid { animation: xw-tilt linear both; animation-timeline: view(); animation-range: entry 0% cover 42%; transform-origin: 50% 100%; }
+    @keyframes xw-tilt { from { transform: perspective(1600px) rotateX(16deg) scale(.94); } }
+  }
+}
+
+/* ---------- platform: the dock and stage (components/home/platform.css), sized to the frame, under a light ---------- */
+main:has(> .x-ann) > .x-platform > .x-wrap:first-child { z-index: 2; }
+main:has(> .x-ann) .x-platform .xp-stage { height: calc(var(--fr) - 262px); margin-top: 0; }
+main:has(> .x-ann) .x-platform .xp-win { top: 4px; height: calc(100% - 8px); }
+main:has(> .x-ann) .x-platform .xp-glow { height: 120%; }
+main:has(> .x-ann) .x-platform .xp-nav { margin-top: 14px; }
+main:has(> .x-ann) > .x-platform::after { background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--card) 85%, transparent) 30%, color-mix(in srgb, var(--card) 85%, transparent) 70%, transparent); }
+
+/* ---------- agents: one row of every agent, two compact panels ---------- */
+main:has(> .x-ann) .x-agents .x-dock { grid-template-columns: repeat(26, minmax(0, 1fr)); gap: 8px 6px; margin: 0 0 clamp(14px, 2.4svh, 22px); padding: 10px 0 6px; }
+main:has(> .x-ann) .x-agents .x-ico { width: 38px; height: 38px; border-radius: 11px; }
+main:has(> .x-ann) .x-agents .x-ico svg, main:has(> .x-ann) .x-agents .x-ico img { width: 19px; height: 19px; }
+main:has(> .x-ann) .x-agents .x-panel { gap: 7px; padding: 18px 20px; border-radius: 22px; }
+main:has(> .x-ann) .x-agents .x-panel-h { margin-bottom: 0; }
+main:has(> .x-ann) .x-agents .x-panel-k { margin-top: 4px; font-size: 13px; }
+main:has(> .x-ann) .x-agents .x-cmd { height: 40px; font-size: 12.5px; border-radius: 12px; }
+main:has(> .x-ann) .x-agents .x-or.small { margin: -2px 0; }
+main:has(> .x-ann) .x-agents .x-steps { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin: 0; }
+main:has(> .x-ann) .x-agents .x-steps-line { display: none; }
+main:has(> .x-ann) .x-agents .x-steps li, main:has(> .x-ann) .x-agents .x-steps button, main:has(> .x-ann) .x-agents .x-step-t { min-width: 0; }
+main:has(> .x-ann) .x-agents .x-steps button { padding: 8px 10px; gap: 10px; }
+main:has(> .x-ann) .x-agents .x-step-n { width: 24px; height: 24px; }
+main:has(> .x-ann) .x-agents .x-step-t b { font-size: 13.5px; }
+main:has(> .x-ann) .x-agents .x-step-t span { font-size: 10.5px; }
+main:has(> .x-ann) .x-agents .x-script { margin-top: 2px; min-height: 40px; font-size: 12px; border-radius: 12px; }
+main:has(> .x-ann) .x-agents .x-code-t { height: 32px; }
+main:has(> .x-ann) .x-agents .x-panel-links { padding-top: 2px; }
+main:has(> .x-ann) .x-agents .x-panel { box-shadow: 0 24px 50px -40px rgba(0, 0, 0, .35); }
+
+/* ---------- faster: the dark room, which opens like a curtain as you arrive ---------- */
+main:has(> .x-ann) > .x-faster { --hx: 50%; --hy: 0%; }
+main:has(> .x-ann) > .x-faster::before { background: radial-gradient(circle, rgba(255, 255, 255, .22) 1px, transparent 1.5px) 0 0 / 12px 12px; -webkit-mask-image: radial-gradient(60% 50% at 50% 0%, #000, transparent 75%); mask-image: radial-gradient(60% 50% at 50% 0%, #000, transparent 75%); }
+main:has(> .x-ann) > .x-faster::after { background: conic-gradient(from 180deg at 50% -10%, transparent 160deg, rgba(255, 255, 255, .09) 175deg, rgba(255, 255, 255, .14) 180deg, rgba(255, 255, 255, .09) 185deg, transparent 200deg); }
+main:has(> .x-ann) .x-faster .x-head h2::before { background: #f5f5f7; }
+main:has(> .x-ann) .x-faster .x-race { padding: 18px 22px; }
+main:has(> .x-ann) .x-faster .x-race-cap { margin-top: 4px; }
+main:has(> .x-ann) .x-faster .x-race-big { margin-top: 2px; font-size: clamp(2.6rem, 3.9vw, 3.6rem); }
+main:has(> .x-ann) .x-faster .x-race-title { margin: 12px 0 6px; }
+main:has(> .x-ann) .x-faster .x-lanes { gap: 5px; }
+main:has(> .x-ann) .x-faster .x-lane-h { margin-bottom: 4px; }
+main:has(> .x-ann) .x-faster .x-facts { margin-top: 10px; padding-top: 10px; gap: 6px; }
+main:has(> .x-ann) .x-faster .x-race-end { padding-top: 12px; }
+main:has(> .x-ann) .x-faster .x-race-note { margin-top: 6px; }
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    main:has(> .x-ann) > .x-faster { animation: xw-curtain linear both; animation-timeline: view(); animation-range: entry 0% cover 40%; }
+    @keyframes xw-curtain { from { clip-path: inset(0 5% round 56px); } to { clip-path: inset(0 0 round 0); } }
+    main:has(> .x-ann) > .x-faster::after { animation: xw-beam linear both; animation-timeline: view(); }
+    @keyframes xw-beam { from { transform: rotate(-24deg); opacity: 0; } 40% { opacity: 1; } to { transform: rotate(24deg); opacity: .4; } }
+    main:has(> .x-ann) > .x-faster::after { transform-origin: 50% 0; }
+  }
+}
+
+/* ---------- cheaper: two bills, compact ---------- */
+main:has(> .x-ann) .x-cheaper .x-cost-big { margin-top: 6px; font-size: clamp(2rem, 3.1vw, 2.9rem); }
+main:has(> .x-ann) .x-cheaper .x-race-note { margin-top: 6px; }
+main:has(> .x-ann) .x-cheaper .x-vol { margin: 10px 0 8px; gap: 8px; }
+main:has(> .x-ann) .x-cheaper .x-lanes { gap: 7px; }
+main:has(> .x-ann) .x-cheaper .x-lane-h { margin-bottom: 4px; }
+main:has(> .x-ann) .x-cheaper .x-race-end { padding-top: 12px; }
+
+/* ---------- pareto: the chart takes the stage, its title stands beside it ---------- */
+main:has(> .x-ann) .x-pareto > .x-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.7fr); grid-template-rows: auto 1fr; align-content: center; column-gap: clamp(28px, 3.4vw, 52px); align-items: start; }
+main:has(> .x-ann) .x-pareto .x-head:not(.center) { display: block; grid-column: 1; grid-row: 1; margin: 0; }
+main:has(> .x-ann) .x-pareto .x-head h2 { font-size: clamp(2rem, 2.9vw, 2.9rem); }
+main:has(> .x-ann) .x-pareto .x-head p { margin: 18px 0 0; font-size: 15px; justify-self: auto; }
+main:has(> .x-ann) .x-pareto .x-plot { grid-column: 2; grid-row: 1 / span 2; padding: 18px 22px 16px; }
+main:has(> .x-ann) .x-pareto .x-plot-svg svg { max-height: calc(var(--fr) - 120px); }
+main:has(> .x-ann) .x-pareto .x-plot-hint { margin-top: 6px; }
+main:has(> .x-ann) .x-pareto .x-row-links { grid-column: 1; grid-row: 2; flex-direction: column; gap: 10px; margin-top: 26px; }
+main:has(> .x-ann) .x-pareto .x-plot { box-shadow: 0 40px 80px -60px rgba(0, 0, 0, .45); }
+
+/* ---------- open source: a bento (heading, calendar beside the figures, the repositories below) ---------- */
+main:has(> .x-ann) .x-oss > .x-wrap:first-child { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 12px; }
+main:has(> .x-ann) .x-oss .x-head { grid-column: 1 / -1; }
+main:has(> .x-ann) .x-oss .x-head h2 { max-width: 24ch; }
+main:has(> .x-ann) .x-oss .x-cal { grid-column: 1; grid-row: 2; margin: 0; padding: 16px 18px; }
+main:has(> .x-ann) .x-oss .x-cal-grid2 { gap: 2px; }
+main:has(> .x-ann) .x-oss .x-cal-f { margin-top: 8px; }
+main:has(> .x-ann) .x-oss .x-tiles { grid-column: 2; grid-row: 2; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+main:has(> .x-ann) .x-oss .x-tile { min-height: 0; padding: 10px 14px; gap: 3px; border-radius: 16px; }
+main:has(> .x-ann) .x-oss .x-tile-n { font-size: clamp(1.25rem, 1.7vw, 1.6rem); }
+main:has(> .x-ann) .x-oss .x-tile-spark { margin-top: 2px; }
+main:has(> .x-ann) .x-oss .x-tile-spark svg { max-height: 18px; }
+main:has(> .x-ann) .x-oss .x-rail-wrap { margin-top: 12px; }
+main:has(> .x-ann) .x-oss .x-rail { padding-bottom: 8px; }
+main:has(> .x-ann) .x-oss .x-rail-nav { margin-top: 2px; position: relative; z-index: 2; }
+main:has(> .x-ann) .x-oss > .x-wrap:last-child .x-row-links { margin-top: -38px; min-height: 44px; align-items: center; }
+
+/* the three ways in: a dark triptych band of its own after open source */
+main:has(> .x-ann) > .xw-ways { position: relative; padding-block: clamp(40px, 6svh, 72px); }
+main:has(> .x-ann) > .xw-ways .x-ways { margin-top: 0; }
+main:has(> .x-ann) > .xw-ways .x-way { min-height: 0; padding: 26px 26px 22px; isolation: isolate; box-shadow: 0 30px 60px -40px rgba(0, 0, 0, .6); }
+main:has(> .x-ann) > .xw-ways .x-way::before { content: ''; position: absolute; inset: 0; z-index: -1; background: radial-gradient(circle, rgba(255, 255, 255, .2) 1px, transparent 1.5px) 0 0 / 10px 10px; -webkit-mask-image: radial-gradient(70% 80% at 100% 0%, #000, transparent 70%); mask-image: radial-gradient(70% 80% at 100% 0%, #000, transparent 70%); opacity: .6; transition: opacity .5s var(--ease); }
+main:has(> .x-ann) > .xw-ways .x-way:hover::before { opacity: 1; }
+main:has(> .x-ann) > .xw-ways .x-row-links { margin-top: 20px; }
+
+/* ---------- pricing: the heading and its switch on one line ---------- */
+main:has(> .x-ann) .x-pricing { padding-block: clamp(48px, 7svh, 88px); }
+main:has(> .x-ann) .x-pricing > .x-wrap { display: grid; grid-template-columns: 1fr auto; align-items: center; row-gap: 0; padding: 26px 28px 20px; }
+main:has(> .x-ann) .x-pricing > .x-wrap > * { grid-column: 1 / -1; }
+main:has(> .x-ann) .x-pricing .x-head.center { grid-column: 1; text-align: left; margin: 0; }
+main:has(> .x-ann) .x-pricing .x-head h2 { margin: 0; font-size: 34px; }
+main:has(> .x-ann) .x-pricing > .x-wrap > .x-center { grid-column: 2; grid-row: 1; }
+main:has(> .x-ann) .x-pricing .x-plans { margin-top: 16px; }
+main:has(> .x-ann) .x-pricing .x-plan { padding: 18px 20px; gap: 8px; }
+main:has(> .x-ann) .x-pricing .x-plan-d { font-size: 13.5px; min-height: 0; }
+main:has(> .x-ann) .x-pricing .x-price { margin-top: 2px; }
+main:has(> .x-ann) .x-pricing .x-price b { font-size: 32px; }
+main:has(> .x-ann) .x-pricing .x-plan > .x-btn { height: 38px; margin-top: 0; }
+main:has(> .x-ann) .x-pricing .x-plan-l { margin-top: 2px; padding-top: 10px; }
+main:has(> .x-ann) .x-pricing .x-plan-l ul { gap: 6px; }
+main:has(> .x-ann) .x-pricing .x-plan-l li { font-size: 13px; }
+main:has(> .x-ann) .x-pricing .x-plan-l p { margin-bottom: 6px; font-size: 13px; }
+main:has(> .x-ann) .x-pricing .x-row-links { margin-top: 14px; }
+main:has(> .x-ann) .x-pricing > .x-wrap { box-shadow: 0 50px 100px -70px rgba(0, 0, 0, .4); }
+
+/* ---------- dark mode: light and lifted rooms (Hanzo's tokens; never one long black scroll) ---------- */
+html.dark main:has(> .x-ann) > .x-sec::before { background-image: radial-gradient(circle, color-mix(in srgb, var(--foreground) 22%, transparent) 1px, transparent 1.5px); }
+html.dark main:has(> .x-ann) > .x-sec::after { background: radial-gradient(42% 46% at var(--lx, 18%) var(--ly, 0%), color-mix(in srgb, var(--foreground) 9%, transparent), transparent 70%); }
+html.dark main:has(> .x-ann) > .x-platform::after { background: radial-gradient(60% 55% at 50% 55%, color-mix(in srgb, var(--foreground) 8%, transparent), transparent 70%); }
+html.dark main:has(> .x-ann) > .x-faster::before { background: radial-gradient(circle, rgba(255, 255, 255, .22) 1px, transparent 1.5px) 0 0 / 12px 12px; }
+html.dark main:has(> .x-ann) > .x-faster::after { background: conic-gradient(from 180deg at 50% -10%, transparent 160deg, rgba(255, 255, 255, .09) 175deg, rgba(255, 255, 255, .14) 180deg, rgba(255, 255, 255, .09) 185deg, transparent 200deg); }
+html.dark main:has(> .x-ann) > .xw-ways { background: radial-gradient(70% 80% at 50% 0%, color-mix(in srgb, var(--foreground) 7%, transparent), transparent 70%); }
+html.dark main:has(> .x-ann) > .xw-ways .x-way { background: var(--x-raised); border: 1px solid var(--line); }
+html.dark main:has(> .x-ann) .x-models .x-mbtn { box-shadow: 0 0 0 1px var(--border), 0 30px 60px -38px rgba(0, 0, 0, .9); }
+html.dark main:has(> .x-ann) .x-pareto .x-plot, html.dark main:has(> .x-ann) .x-agents .x-panel, html.dark main:has(> .x-ann) .x-pricing > .x-wrap { box-shadow: 0 0 0 1px var(--border), 0 40px 80px -50px rgba(0, 0, 0, .9); }
+
+/* ---------- smaller screens ---------- */
+@media (max-width: 1100px) {
+  main:has(> .x-ann) .x-agents .x-dock { grid-template-columns: repeat(13, minmax(0, 1fr)); }
+  main:has(> .x-ann) .x-oss > .x-wrap:first-child { grid-template-columns: 1fr; }
+  main:has(> .x-ann) .x-oss .x-cal, main:has(> .x-ann) .x-oss .x-tiles { grid-column: 1; grid-row: auto; }
+  main:has(> .x-ann) .x-pareto > .x-wrap { grid-template-columns: 1fr; }
+  main:has(> .x-ann) .x-pareto .x-head, main:has(> .x-ann) .x-pareto .x-plot, main:has(> .x-ann) .x-pareto .x-row-links { grid-column: 1; grid-row: auto; }
+  main:has(> .x-ann) .x-pareto .x-plot { margin-top: 22px; }
+  main:has(> .x-ann) .x-pareto .x-row-links { flex-direction: row; margin-top: 18px; }
+}
+@media (max-width: 900px) {
+  main:has(> .x-ann) > .x-sec { padding-block: 56px; }
+  main:has(> .x-ann) .x-sec .x-head:not(.center) { grid-template-columns: 1fr; gap: 12px; margin-bottom: 22px; }
+  main:has(> .x-ann) .x-sec .x-head p { justify-self: start; margin: 0; }
+  main:has(> .x-ann) .x-models .x-mgrid { grid-template-rows: auto; }
+  main:has(> .x-ann) .x-platform .xp-stage { height: 440px; }
+  main:has(> .x-ann) .x-platform .xp-win { height: calc(100% - 8px); }
+  main:has(> .x-ann) .x-agents .x-steps { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  main:has(> .x-ann) > .x-sec { padding-block: 44px; }
+  main:has(> .x-ann) .x-sec .x-head h2 { font-size: 2rem; padding-top: 16px; }
+  main:has(> .x-ann) .x-sec .x-head p { font-size: .95rem; }
+  main:has(> .x-ann) .x-models .x-mcard.big { height: 300px; }
+  main:has(> .x-ann) .x-models .x-mcard:not(.big) { height: 200px; }
+  main:has(> .x-ann) .x-platform .xp-stage { height: 430px; }
+  main:has(> .x-ann) .x-agents .x-dock { grid-template-columns: repeat(9, minmax(0, 1fr)); }
+  main:has(> .x-ann) .x-agents .x-ico { width: 34px; height: 34px; }
+  main:has(> .x-ann) .x-oss .x-tiles { grid-template-columns: 1fr 1fr; }
+  main:has(> .x-ann) .x-pricing > .x-wrap { grid-template-columns: 1fr; padding: 22px 14px 16px; }
+  main:has(> .x-ann) .x-pricing > .x-wrap > .x-center { grid-column: 1; grid-row: auto; justify-content: flex-start; margin-top: 12px; }
+  main:has(> .x-ann) > .x-faster { clip-path: none !important; animation: none !important; }
+}
+
+/* open source, tightened to the frame */
+main:has(> .x-ann) .x-oss .x-head:not(.center) { margin-bottom: 20px; }
+main:has(> .x-ann) .x-oss .x-rail { padding-top: 4px; }
+main:has(> .x-ann) .x-oss .x-rail-wrap { margin-top: 10px; }
+main:has(> .x-ann) .x-oss .x-repo > div { padding: 12px 14px !important; gap: 8px !important; }
+@media (max-width: 640px) { main:has(> .x-ann) .x-oss .x-head:not(.center) { margin-bottom: 16px; } }
+main:has(> .x-ann) .x-oss .x-tile { padding: 8px 12px; gap: 2px; }
+main:has(> .x-ann) .x-oss .x-tile-n { font-size: clamp(1.2rem, 1.55vw, 1.45rem); }
+@media (max-width: 640px) {
+  main:has(> .x-ann) .x-cheaper .x-cost, main:has(> .x-ann) .x-faster .x-race { padding: 16px; }
+  main:has(> .x-ann) .x-cheaper .x-vol { margin: 6px 0 4px; gap: 4px; }
+  main:has(> .x-ann) .x-pareto .x-plot { margin-top: 16px; padding: 12px; }
+  main:has(> .x-ann) .x-pareto .x-head p { margin-top: 12px; }
+}
+
+/* the announcement's arrow, drawn in CSS (the same path as before) */
+.x-ann::after { content: ''; flex: none; width: 14px; height: 14px; background: currentColor; transition: transform .35s var(--ease);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8h9M8.5 4.5 12 8l-3.5 3.5' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8h9M8.5 4.5 12 8l-3.5 3.5' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat; }
+@media (hover: hover) { .x-ann:hover::after { transform: translateX(3px); } }
+@media (prefers-reduced-motion: reduce) { .x-ann::after { transition: none; } }
+.xw-ways { padding-inline: max(24px, calc((100% - var(--wrap)) / 2)); }
+@media (max-width: 640px) { .xw-ways { padding-inline: 16px; } }

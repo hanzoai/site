@@ -21,7 +21,7 @@
    time with a scrubbed progress rail (scroll; an accordion on phones) + "Find a control" typing one example itself
    once on arrival, then answers appearing as you type (time, state; sheets rise) + the black room's entry (scroll).
    Lines and Room are this page's hydration-safe builds of v2/MaskLines and v2/SceneWipe: those read the reduced-motion
-   preference during render, so the server and client HTML differed (docs/requests/trust.md). Same motion, same values.
+   preference during render, so the server and client HTML differed (docs/build-notes/requests/trust.md). Same motion, same values.
    Scale has rhythm (ProofRhythm): h1 52, headings 26, figures 64; one big thing per screen (the cabinet, the papers, the
    statement, the live count, the stance stage, the closing line at 84).
    Conflict noted on the card: MASTER §3.1 keeps centred heads for the closing section, but the hero is a centred
@@ -31,7 +31,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform, useMotionTemplate, useMotionValueEvent } from 'motion/react';
 import { A, More } from '../kit';
-import DetailSheet from '../v2/x-pascal/DetailSheet'; // the coherent <dialog> build: main's v2/DetailSheet.jsx is the older div build against dialog-only CSS (docs/requests/trust.md)
+import DetailSheet from '../v2/x-pascal/DetailSheet'; // the coherent <dialog> build: main's v2/DetailSheet.jsx is the older div build against dialog-only CSS (docs/build-notes/requests/trust.md)
 import '../v2/ProofScale.css';
 import '../v2/ProofRhythm.css';
 import './Trust.css';
@@ -305,7 +305,7 @@ function Group({ g, gi, k }) {
           <p className="xtr-sh-lede">{lede}</p>
           {items.map(([t, d], i) => (
             <article key={t} id={`xtr-c-${gi}-${i}`} className={'xtr-sh-c' + (hit([t, d]) ? ' hit' : '')}>
-              <h3><span className="pf-mono">{pad(i)}</span>{t}</h3>
+              <h3><span className="pf-mono">{pad(i)}</span><span>{t}</span></h3>
               <p>{d}</p>
             </article>
           ))}
@@ -313,11 +313,18 @@ function Group({ g, gi, k }) {
         <h2 className="xtr-grp-t" onClick={() => document.querySelector('.xtr-g-btn-' + gi)?.click()}>{name}</h2>
         </div>
         <p className="xtr-grp-l">{lede}</p>
+        {!k && (
+          <ol className="xtr-idx">
+            {items.map(([t], i) => (
+              <li key={t}><button type="button" onClick={() => openAt(gi, i)}><span className="pf-mono" aria-hidden="true">{pad(i)}</span><span>{t}</span></button></li>
+            ))}
+          </ol>
+        )}
         <AnimatePresence initial={false}>
           {k && hits.length > 0 && (
             <motion.ul className="xtr-ans" initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }} transition={{ duration: 0.3, ease: EMPH }}>
               {hits.map(([[t], i]) => (
-                <li key={t}><button type="button" onClick={() => openAt(gi, i)}><span className="pf-mono">{pad(i)}</span>{t}</button></li>
+                <li key={t}><button type="button" onClick={() => openAt(gi, i)}><span className="pf-mono">{pad(i)}</span><span>{t}</span></button></li>
               ))}
             </motion.ul>
           )}

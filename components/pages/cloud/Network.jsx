@@ -1,5 +1,5 @@
 'use client';
-/* Network, Cloud 3 launch page, round 3 to docs/MASTER.md (the only brief), answering the 7/10 review.
+/* Network, Cloud 3 launch page, round 3 to docs/build-notes/MASTER.md (the only brief), answering the 7/10 review.
    V2: 8/10 After its run the hero keeps a quiet bead walking the resting route and the replay control is outlined, not solid; chapter four's tags never sit on a ring. The chapters' intro shows unlinked peers being discovered and each pinned chapter keeps an ink bead running its own links (no still chapter). The fabric is the page: title, lede and ask on the left five columns, the live peer map on the right eight, its peers wearing Hanzo's own renders of the models they have loaded; a request walks to whoever has the model, once, and rests on the placement; the same fabric is the pinned chapters' object and each fact changes it (topology draws in, links thicken by the work, attested peers fill, the route and placement play, a machine joins, the work settles into one root); one black room for the two ends and the agent prompt; deck greys, flat surfaces, no springs.
    Persona: Developer who needs compute (buys it on the fabric, then calls it with a key).
    Goal: buy compute on hanzo.network.
@@ -28,6 +28,7 @@ import { Paste } from './Frame';
 import '../../v2/LaunchType.css';
 import LaunchClose, { Arr } from '../../v2/LaunchClose';
 import LivePause, { usePause } from '../../v2/LivePause';
+import HeroDither from '../HeroDither';
 import { Enter, Typed, useEnter } from '../network/Enter';
 import './Network.css';
 
@@ -264,6 +265,7 @@ function Hero() {
   useEffect(() => scrollYProgress.on('change', (p) => setInView(p < 0.95)), [scrollYProgress]);
   return (
     <section className="nw-hero" ref={ref} data-morph-target data-ask-name="Hanzo Network">
+      <HeroDither />
       {/* entrance 1, split-merge: the words slide in from the left, the graph from the right, and meet */}
       <div className="lx-wrap nw-hero-grid nw-en nw-en-split" ref={enterRef} data-enter={st}>
         <div className="nw-hero-copy">
@@ -440,10 +442,10 @@ function Ends() {
       </div>
       <div className="nw-two">
         <A to="https://platform.hanzo.ai/api-keys" className="nw-end" data-cursor="" onPointerEnter={send('call')} onFocus={() => !calm && setFlow((f) => ({ way: 'call', n: f.n + 1 }))}>
-          <b>Get an API Key</b><span className="lx-kick">call it</span><Ar />
+          <span className="nw-end-t">Get an API Key</span><span className="lx-kick">call it</span><Ar />
         </A>
         <A to="/node" className="nw-end serve" data-cursor="" onPointerEnter={send('serve')} onFocus={() => !calm && setFlow((f) => ({ way: 'serve', n: f.n + 1 }))}>
-          <b data-morph data-cursor="">Provide Compute</b><span className="lx-kick">serve it</span><Ar />
+          <span className="nw-end-t" data-morph data-cursor="">Provide Compute</span><span className="lx-kick">serve it</span><Ar />
         </A>
       </div>
     </div>
@@ -474,7 +476,7 @@ function Facts({ lend, setLend }) {
           <ol className="nw-facts">
             {FACTS.map(([t, d], i) => (
               <li key={t} className={'nw-fact' + (i === step ? ' on' : '')} onPointerEnter={(e) => e.pointerType === 'mouse' && pick(i)}>
-                <h3 className="nw-fact-t"><button type="button" aria-pressed={i === step} onClick={() => pick(i)}><span className="nw-fact-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>{t}</button></h3>
+                <h3 className="nw-fact-t"><button type="button" aria-pressed={i === step} onClick={() => pick(i)}><span className="nw-fact-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><span>{t}</span></button></h3>
                 <p className="nw-fact-d">{d}</p>
                 {i === 4 && <Lend k={lend} setK={(k) => { setLend(k); pick(4); }} />}
               </li>

@@ -1,14 +1,21 @@
-/* /compare/<page> (prefix xvs-), on Hanzo's deck (docs/MASTER.md §3): monochrome, Zen 497 headings, sizes from
+/* /compare/<page> (prefix xvs-), on Hanzo's deck (docs/build-notes/MASTER.md §3): monochrome, Zen 497 headings, sizes from
    12 13 14 16 17 21 26 32 44 52 64; container 1152 on 13 columns split 5/8; section air clamp(72px, 11vw, 188px);
    radii 24 tiles, 6 chips, full buttons. One big thing per screen: the race, then the ledger, then the quote. */
 .xvs {
-  --ink: #0a0a0a; --muted: #525252; --quiet: #737373; --tile: #f5f5f5; --track: #d4d4d4; --line: rgba(0, 0, 0, .1);
+  --ink: #0a0a0a; --muted: #525252; --xvs-soft: #525252; --quiet: #737373; --tile: #f5f5f5; --track: #d4d4d4; --line: rgba(0, 0, 0, .1);
   --black: #000; --on-black: #fafafa; --on-black-2: rgba(255, 255, 255, .78); --on-black-3: rgba(255, 255, 255, .55); --on-black-line: rgba(255, 255, 255, .1);
   --e-out: cubic-bezier(0, 0, .2, 1); --e-move: cubic-bezier(.4, 0, .2, 1); --e-in: cubic-bezier(.16, 1, .3, 1);
   --t-press: 90ms; --t-fast: 150ms; --t-base: 300ms; --t-slow: 400ms;
   --gut: clamp(16px, 4vw, 32px); --air: clamp(72px, 11vw, 188px);
-  background: #fff; color: var(--ink);
+  background: var(--bg); color: var(--ink);
 }
+/* dark mode (docs/DARK-MODE.md): the page's ramp points at Hanzo's tokens (--muted is given back to Hanzo's fill, the
+   page's grey text reads --xvs-soft); the one black room keeps its bright-mode ramp, so it is the same in both modes */
+html:not(.light) .xvs {
+  --ink: var(--foreground); --muted: var(--x-fill); --xvs-soft: var(--muted-foreground); --quiet: var(--text-tertiary);
+  --tile: var(--x-fill); --track: var(--border-strong); --line: var(--border);
+}
+html:not(.light) .xvs [data-room='dark'] { --ink: #0a0a0a; --muted: #525252; --xvs-soft: #525252; --quiet: #737373; --tile: #f5f5f5; --track: #d4d4d4; --line: rgba(0, 0, 0, .1); }
 .xvs-wrap { width: min(100% - var(--gut) * 2, 1152px); margin-inline: auto; display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); column-gap: 27px; }
 .xvs-wrap > * { grid-column: 1 / -1; }
 .xvs-sec { padding: var(--air) 0; position: relative; }
@@ -17,7 +24,7 @@
 .xvs-h1 { font-size: 52px; font-weight: 497; line-height: 1; letter-spacing: -.03em; margin: 0; max-width: 15ch; text-wrap: balance; }
 .xvs-meta { margin: 14px 0 0; font: 500 12px/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--quiet); }
 .xvs-h2 { font-size: 26px; font-weight: 497; line-height: 1.15; letter-spacing: -.02em; margin: 0; max-width: 18ch; text-wrap: balance; color: var(--ink); }
-.xvs-lede { font-size: 21px; line-height: 1.4; color: var(--muted); margin: 27px 0 0; max-width: 40ch; text-wrap: pretty; }
+.xvs-lede { font-size: 21px; line-height: 1.4; color: var(--xvs-soft); margin: 27px 0 0; max-width: 40ch; text-wrap: pretty; }
 .xvs-body { font-size: 16px; line-height: 1.6; margin: 0; max-width: 64ch; text-wrap: pretty; }
 /* every two-part head: heading left (5 of 13), lead right (8 of 13), on one baseline */
 .xvs-split { align-items: end; row-gap: 17px; }
@@ -47,11 +54,19 @@
 .xvs-race[data-reading] .xvs-race-b i { background: var(--track); }
 .xvs-race[data-reading] li[data-on] .xvs-race-f, .xvs-race[data-reading] li[data-on] .xvs-race-n, .xvs-race[data-reading] li[data-on] .xvs-race-x { color: var(--ink); }
 .xvs-race[data-reading] li[data-on] .xvs-race-b i { background: var(--ink); }
+/* the router being read carries a small blinking read cursor after its name */
+.xvs-race li .xvs-race-n::after { content: ''; display: inline-block; width: 6px; height: .9em; margin-left: 6px; vertical-align: -1px; background: var(--ink); opacity: 0; }
+.xvs-race[data-reading] li[data-on] .xvs-race-n::after { animation: xvs-read 1s steps(1) infinite; }
+@keyframes xvs-read { 0% { opacity: 1; } 50% { opacity: 0; } }
 
 /* provenance stamps: the same three marks the page explains */
-.xvs-stamp { display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; font: 400 13px/1 var(--mono); font-style: normal; white-space: nowrap; background: var(--tile); color: var(--muted); }
+.xvs-stamp { display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; font: 400 13px/1 var(--mono); font-style: normal; white-space: nowrap; background: var(--tile); color: var(--xvs-soft); }
 .xvs-stamp::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
-.xvs-stamp[data-k='ours'] { background: var(--ink); color: #fff; }
+.xvs-stamp[data-k='ours'] { background: var(--ink); color: var(--x-on-ink); }
+/* our own measurement is live: its dot breathes (the vendors' claims stay still) */
+.xvs-stamp[data-k='ours']::before { animation: xvs-live 2.4s ease-in-out infinite; }
+@keyframes xvs-live { 50% { transform: scale(.55); opacity: .5; } }
+@media (prefers-reduced-motion: reduce) { .xvs-stamp::before { animation: none !important; } }
 .xvs-stamp[data-k='theirs'] { color: var(--ink); }
 .xvs-stamp[data-k='theirs']::before { background: transparent; box-shadow: inset 0 0 0 1.5px currentColor; }
 .xvs-stamp[data-k='none']::before { background: transparent; border: 1.5px dashed currentColor; width: 5px; height: 5px; }
@@ -59,17 +74,18 @@
 /* the ledger: the kit's Tabs and DataTable */
 .xvs-side { background: var(--tile); }
 .xvs-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 27px; margin: 44px 0 17px; }
-.xvs-ctl .x-tablist { background: #fff; }
+.xvs-ctl .x-tablist { background: var(--x-raised); }
 .xvs-diff { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 6px; border: 0; border-radius: 999px; background: none; font: 606 14px/1 var(--sans); color: var(--ink); cursor: pointer; transition: opacity var(--t-fast) var(--e-out); }
 .xvs-diff:disabled { opacity: .45; cursor: default; }
 .xvs-diff-k { position: relative; width: 40px; height: 24px; border-radius: 999px; background: var(--track); transition: background-color var(--t-base) var(--e-out); }
-.xvs-diff-k i { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: transform var(--t-base) var(--e-in); }
+.xvs-diff-k i { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: light-dark(#fff, var(--foreground)); transition: transform var(--t-base) var(--e-in); }
 .xvs-diff[aria-checked='true'] .xvs-diff-k { background: var(--ink); }
 .xvs-diff[aria-checked='true'] .xvs-diff-k i { transform: translateX(16px); }
-@media (hover: hover) { .xvs-diff:not(:disabled):hover .xvs-diff-k { background: #a3a3a3; } .xvs-diff[aria-checked='true']:not(:disabled):hover .xvs-diff-k { background: #262626; } }
+html:not(.light) .xvs-diff[aria-checked='true'] .xvs-diff-k i { background: var(--x-on-ink); }
+@media (hover: hover) { .xvs-diff:not(:disabled):hover .xvs-diff-k { background: light-dark(#a3a3a3, var(--border-selected)); } .xvs-diff[aria-checked='true']:not(:disabled):hover .xvs-diff-k { background: light-dark(#262626, var(--primary-hover)); } }
 .xvs-diff:not(:disabled):active .xvs-diff-k { transform: scale(.97); }
-.xvs-diff-n { font-size: 12px; color: var(--muted); padding: 5px 8px; border-radius: 6px; background: #fff; }
-.xvs-led .x-table-wrap { border-radius: 24px; background: #fff; }
+.xvs-diff-n { font-size: 12px; color: var(--xvs-soft); padding: 5px 8px; border-radius: 6px; background: var(--x-raised); }
+.xvs-led .x-table-wrap { border-radius: 24px; background: var(--x-raised); }
 .xvs-led .x-table { font-size: 16px; }
 .xvs-led .x-table caption { padding: 12px 17px 0; font-size: 13px; color: var(--quiet); }
 .xvs-led .x-table th, .xvs-led .x-table td { white-space: normal; vertical-align: top; padding: 20px 17px; min-width: 168px; }
@@ -83,7 +99,7 @@
 .xvs-led tbody tr:nth-child(4) { animation-delay: 180ms; } .xvs-led tbody tr:nth-child(5) { animation-delay: 240ms; }
 .xvs-led tbody tr:nth-child(6) { animation-delay: 300ms; } .xvs-led tbody tr:nth-child(7) { animation-delay: 360ms; }
 @keyframes xvs-in { from { opacity: 0; transform: translateY(16px); } }
-.xvs-cell { display: grid; grid-template-columns: 18px 1fr; column-gap: 10px; row-gap: 6px; color: var(--muted); line-height: 1.5; font-weight: 400; }
+.xvs-cell { display: grid; grid-template-columns: 18px 1fr; column-gap: 10px; row-gap: 6px; color: var(--xvs-soft); line-height: 1.5; font-weight: 400; }
 .xvs-said { grid-column: 2; }
 .xvs-said b { font-weight: 606; color: var(--ink); }
 .xvs-said-p { color: var(--ink); }
@@ -93,15 +109,15 @@
 .xvs-run:active { transform: translateY(1px); }
 .xvs-mark { grid-column: 1; grid-row: 1; width: 18px; height: 18px; margin-top: 2px; border-radius: 50%; position: relative; }
 .xvs-mark[data-v='yes'] { background: var(--ink); }
-.xvs-mark[data-v='yes']::after { content: ''; position: absolute; left: 6px; top: 3.5px; width: 4px; height: 8px; border: solid #fff; border-width: 0 1.8px 1.8px 0; transform: rotate(42deg); }
-.xvs-mark[data-v='no'] { box-shadow: inset 0 0 0 1.6px #a3a3a3; }
-.xvs-mark[data-v='no']::after { content: ''; position: absolute; left: 5px; right: 5px; top: 8.2px; height: 1.6px; background: #a3a3a3; }
-.xvs-mark[data-v='none'] { border: 1.6px dashed #a3a3a3; }
+.xvs-mark[data-v='yes']::after { content: ''; position: absolute; left: 6px; top: 3.5px; width: 4px; height: 8px; border: solid var(--x-on-ink); border-width: 0 1.8px 1.8px 0; transform: rotate(42deg); }
+.xvs-mark[data-v='no'] { box-shadow: inset 0 0 0 1.6px light-dark(#a3a3a3, var(--text-tertiary)); }
+.xvs-mark[data-v='no']::after { content: ''; position: absolute; left: 5px; right: 5px; top: 8.2px; height: 1.6px; background: light-dark(#a3a3a3, var(--text-tertiary)); }
+.xvs-mark[data-v='none'] { border: 1.6px dashed light-dark(#a3a3a3, var(--text-tertiary)); }
 .xvs-mark[data-v='part'] { box-shadow: inset 0 0 0 1.6px var(--ink); background: linear-gradient(90deg, var(--ink) 50%, transparent 50%); }
 .xvs-mark[data-v='figure'] { display: none; }
-.xvs-folded { margin: 17px 0 0; font-size: 14px; color: var(--muted); }
-.xvs-folded .x-mono { display: inline-grid; place-items: center; min-width: 26px; height: 26px; margin-right: 8px; border-radius: 6px; background: #fff; color: var(--ink); font-size: 13px; }
-.xvs-note { margin: 27px 0 0; font-size: 16px; line-height: 1.6; color: var(--muted); max-width: 68ch; }
+.xvs-folded { margin: 17px 0 0; font-size: 14px; color: var(--xvs-soft); }
+.xvs-folded .x-mono { display: inline-grid; place-items: center; min-width: 26px; height: 26px; margin-right: 8px; border-radius: 6px; background: var(--x-raised); color: var(--ink); font-size: 13px; }
+.xvs-note { margin: 27px 0 0; font-size: 16px; line-height: 1.6; color: var(--xvs-soft); max-width: 68ch; }
 .xvs-note strong { color: var(--ink); font-weight: 606; }
 
 /* reading it honestly: the one black room, opening from a rounded card */

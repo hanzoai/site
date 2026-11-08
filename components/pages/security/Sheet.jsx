@@ -1,7 +1,7 @@
 'use client';
 /* Sheet (page-local to /security): the kit's DetailSheet as the native <dialog> its shared CSS expects.
    The shared components/v2/DetailSheet.jsx was reverted to a positioned <div> by merge d490cc53 while
-   DetailSheet.css kept the dialog rules, so the closed panel drew over the page; see docs/requests/security.md.
+   DetailSheet.css kept the dialog rules, so the closed panel drew over the page; see docs/build-notes/requests/security.md.
    showModal() traps focus, Esc and the scrim close with the slide, focus returns to the button. The words stay in the
    server HTML, and read inline with JavaScript off. Same props as DetailSheet: label, kicker, title, children, wide. */
 import { useEffect, useId, useRef, useState } from 'react';

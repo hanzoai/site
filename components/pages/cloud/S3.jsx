@@ -1,12 +1,14 @@
 'use client';
-/* Object Storage, Cloud 3 launch page, round 3 to docs/MASTER.md (the only brief).
-   V2: 8/10 Title first on the 8/5 split with the lede and ask beside it, then the object on one flat quiet stage: it breaks into fourteen shards that fly to fourteen volume servers, survives four going dark and reads back from the ten left (its toolbar and legend sit in the stage's own top row); four facts open on the section's own title and play on one pinned diagram of the binary's four roles; one black room where the figures cut in beside the agent prompt; deck greys, flat surfaces, no springs.
+/* Object Storage, Cloud 3 launch page, round 3 to docs/build-notes/MASTER.md (the only brief).
+   V2: 8/10 Title first on the 8/5 split with the lede and ask beside it, then the object on one flat quiet stage: it breaks into fourteen shards that fly to fourteen volume servers, survives four going dark and reads back from the ten left (phones: shards top-right, readout on its own row, nothing shifts); then the peel: the binary's four roles lift apart into floating layers in 3D beside the four facts, and close again; one black room where "4 can be lost, and it still reads" is the one big figure beside three small ones, then the agent prompt; entrances (s3/S3Enter.jsx): text-mask-film, iris, shutter, cursor-lens, grid-wave; deck greys, flat surfaces, no springs.
+// Signature: peel — one binary lifts apart into its four floating roles in 3D (HTTP gateway, filer, master, volume servers), walks KMS keys, ten data and four parity shards (four dark, still reads) and one binary protocol on those layers, then closes back into one binary
+// Beyond: lose four yourself — in the hero, tap any volume servers dark, up to the four Hanzo says can be lost, and watch the object keep reading
    Persona: Developer storing objects (buckets from code).
    Goal: call the S3 API.
    CTA: "API reference" → https://docs.hanzo.ai/docs/openapi/s3 (data-cta s3.hero, s3.close; the site's sticky ask
    carries the same label from data-thumb).
    Metric: api_key_created.
-   Signature: an object, kept. An object breaks into ten data shards and four parity shards that fly to fourteen volume
+   The hero (kept, approved): an object, kept. An object breaks into ten data shards and four parity shards that fly to fourteen volume
    servers; any four go dark and the object still reads, back from the ten that are left. It runs twice by itself while
    seen (about ten seconds) and rests reading; play, first in the stage's toolbar, replays it. Scale rhythm: the object starts whole and big, shrinks to fourteen shards as
    they leave, and fills back when it reads.
@@ -15,17 +17,19 @@
    loop back.
    Motion (1 signature + 3): idle = the shards flying out, four volumes going dark, the object reading back (the one
    continuous mover, pausable); pointer = a volume you point at fills and names its shard while its line turns ink, the
-   magnetic close; state = tapping volumes dark, Replay, the roles diagram changing per chapter; arrival = the cut-in
-   title, the timed wipe into the black room and the figures cutting in there (never counted); scroll (under half) =
-   the pinned diagram only. Every word and link is Hanzo's. */
+   magnetic close; state = tapping volumes dark, Replay, picking a fact on the peel; arrival = the cut-in title and the
+   figures cutting in in the black room (one reveal style: the line mask); the peel (s3/Peel.jsx) lifts and closes by
+   itself while seen (a 900 ms ease-in-out scene move per state). The pinned chapters (Roles) and the black room's
+   timed wipe are gone. Every word and link is Hanzo's. */
 import { useEffect, useMemo, useState } from 'react';
 import { motion, LayoutGroup } from 'motion/react';
-import { A } from '../../kit';
-import { Paste, useLive } from './Frame';
-import PinnedChapters from '../../v2/PinnedChapters';
-import ClipWipe from '../../v2/ClipWipe';
+import { A, Img } from '../../kit';
+import { useLive } from './Frame';
+import { LeafPaste as Paste } from './close3/Leaf';
 import SpecDrawer from '../../v2/SpecDrawer';
-import LaunchClose, { Arr } from '../../v2/LaunchClose';
+import LaunchClose, { Arr } from './close3/Close';
+import Peel from './s3/Peel';
+import { Shutter, CursorLens, GridWave } from './s3/S3Enter';
 import LineMask from '../../v2/LineMask';
 import LivePause, { usePause } from '../../v2/LivePause';
 import './S3.css';
@@ -124,48 +128,6 @@ function Kept() {
   );
 }
 
-/* ---------- the chapters' object: one binary, four roles ---------- */
-const FACTS = [
-  ['One binary, four roles', 'One binary in four roles: a master that tracks where everything is, volume servers that hold the bytes, a filer for the namespace and the HTTP gateway your code talks to.'],
-  ['Keys from KMS', 'Server-side encryption whose keys are minted by Hanzo KMS rather than read out of a config file.'],
-  ['Ten data shards, four parity', 'Objects are erasure-coded across ten data shards and four parity shards, so four can be lost and the object still reads.'],
-  ['One protocol', 'Every call between the pieces speaks one binary protocol, with no gRPC anywhere: one transport to secure and one to debug.'],
-];
-const ROLES = [['master', 'tracks where everything is'], ['volume servers', 'hold the bytes'], ['filer', 'the namespace'], ['HTTP gateway', 'your code talks to']];
-const DEAD = new Set([2, 6, 11, 13]);
-
-function Roles({ step }) {
-  const lit = (i) => step === 0 || step === 3 || ((step === 1 || step === 2) && i === 1);
-  return (
-    <div className="s3-roles" data-step={step}>
-      <div className="s3-dia">
-        <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-          {[[25, 27], [75, 27], [25, 73], [75, 73]].map(([x, y], i) => <line key={i} x1="50" y1="50" x2={x} y2={y} />)}
-          {step === 3 && [[25, 27, 75, 27], [25, 73, 75, 73], [25, 27, 25, 73], [75, 27, 75, 73]].map(([a, b, c, d], i) => <line key={'p' + i} x1={a} y1={b} x2={c} y2={d} className="proto" />)}
-        </svg>
-        {ROLES.map(([r, d], i) => (
-          <div key={r} className={'s3-role' + (lit(i) ? ' on' : '')} style={{ '--i': i }}>
-            <b>{r}</b><span>{d}</span>
-            {i === 1 && <svg className={'s3-lock' + (step === 1 ? ' on' : '')} viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><rect x="3" y="7" width="10" height="7.5" rx="2" fill="currentColor" /><path d="M5.2 7V5.2a2.8 2.8 0 0 1 5.6 0V7" fill="none" stroke="currentColor" strokeWidth="1.6" /></svg>}
-          </div>
-        ))}
-        <span className="s3-bin">one binary</span>
-      </div>
-      <div className="s3-strip" key={step}>
-        {step === 0 && <p><b>one binary</b> · four roles</p>}
-        {step === 1 && <p><span className="s3-kms">Hanzo KMS</span><i className="s3-arrow" /><b>server-side encryption</b><s>config file</s></p>}
-        {step === 2 && (
-          <div className="s3-cells">
-            {Array.from({ length: N }).map((_, i) => <i key={i} className={(i >= 10 ? 'p' : '') + (DEAD.has(i) ? ' x' : '')} style={DEAD.has(i) ? { '--k': [...DEAD].indexOf(i) } : undefined} />)}
-            <b>✓ still reads</b>
-          </div>
-        )}
-        {step === 3 && <p><b>one binary protocol</b><s>gRPC</s></p>}
-      </div>
-    </div>
-  );
-}
-
 const FIG = [[10, 'data shards'], [4, 'parity shards'], [4, 'can be lost, and it still reads'], [1, 'binary, four roles']];
 
 export default function S3() {
@@ -187,19 +149,20 @@ export default function S3() {
         </div>
       </section>
 
-      <PinnedChapters label="An object, kept" per={52} objH={38}
-        intro={{ title: ['An object,', 'kept'] }}
-        steps={FACTS.map(([t, d]) => ({ t, d }))}
-        visual={(at) => <Roles step={at} />} />
+      <section className="s3-peel-sec" aria-label="An object, kept">
+        <div className="lx-wrap"><Peel /></div>
+      </section>
 
-      <ClipWipe dark className="s3-room">
+      <section className="s3-room lx-dark" data-room="dark">
         <div className="lx-wrap">
-          <SpecDrawer className="s3-spec" rows={FIG.map(([v, l], i) => ({ v: <LineMask as="span" lines={[String(v)]} delay={i * 0.06} inView />, l }))} />
-          <Paste dark name="Object Storage" api="/v1/s3/buckets" prompt="Read https://hanzo.ai/skill.md and use Hanzo Object Storage in my project. Start with: hanzo s3 buckets list" className="s3-paste" />
+          <Shutter><SpecDrawer className="s3-spec" rows={FIG.map(([v, l], i) => ({ v: <LineMask as="span" lines={[String(v)]} delay={i * 0.06} inView />, l }))} /></Shutter>
+          <CursorLens><Paste dark name="Object Storage" api="/v1/s3/buckets" prompt="Read https://hanzo.ai/skill.md and use Hanzo Object Storage in my project. Start with: hanzo s3 buckets list" className="s3-paste" aside={<div className="s3-kai"><Img src="/models/kai.webp" alt="" w={1200} h={1500} /></div>} /></CursorLens>
         </div>
-      </ClipWipe>
+      </section>
 
-      <LaunchClose name="Object Storage" tag="Distributed object storage" seed="s3" data={[10, 4, 4]} ask={['API reference', API]} cta="s3.close" repo={['hanzoai/s3', GH]} stars="4 stars" />
+      <GridWave>
+        <LaunchClose name="Object Storage" tag="Distributed object storage" seed="s3" data={[10, 4, 4]} ask={['API reference', API]} cta="s3.close" repo={['hanzoai/s3', GH]} stars="4 stars" />
+      </GridWave>
     </main>
   );
 }

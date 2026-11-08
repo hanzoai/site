@@ -6,7 +6,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useInView, useReducedMotion } from 'motion/react';
 import { Cta } from '../../kit';
-import { W, H, glider, step } from './life';
+import { W, H, glider, step } from './lifeGrid';
 
 export default function Life({ beside }) {
   const box = useRef(null);

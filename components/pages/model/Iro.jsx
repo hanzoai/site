@@ -8,27 +8,28 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { EASE } from '../../ui';
 import { Img } from '../../kit';
-import { Studio } from './Studio';
+import { Studio, Glyph } from './Studio';
 import Creative, { Scene } from './Creative';
-import { box as frame, film } from '../../v2/Launch';
+import { box as frame, film, focus } from '../../v2/Launch';
 import { useLoop, rng } from './live';
 import usePhoneAsk from '../usePhoneAsk';
 import './Iro.css';
 
 const ASPECTS = [['16:9', 16 / 9], ['1:1', 1], ['21:9', 21 / 9]];
-// fit each aspect inside the 4:3 frame (88% wide, 80% tall at most), as percentages of the frame
-const box = (r) => { const w = Math.min(0.88, 0.6 * r); return { width: w * 100 + '%', height: (w / r / 0.75) * 100 + '%' }; };
+// each aspect fits inside the frame (88% wide, the frame's height less room for the tags), sized in CSS from --r
+const box = (r) => ({ '--r': r });
 const W = 240; // working width in pixels: the noise is computed here and the canvas scales it up
 const STEPS = 50;
 
 function Canvas() {
-  const wrap = useRef(null), cv = useRef(null), stepEl = useRef(null), range = useRef(null);
+  const wrap = useRef(null), cv = useRef(null), stepEl = useRef(null), lineEl = useRef(null), range = useRef(null);
   const [a, setA] = useState(1);
   const aNow = useRef(1);
   aNow.current = a; // an exiting canvas (old aspect) must never take the ref back
   const [play, setPlay] = useState(true);
   const [done, setDone] = useState(false);
   const calm = useReducedMotion();
+  // the server paints Hanzo's own resting frame (hanzo.ai/iro renders STEP 38/50); the run starts once the picture is in
   const S = useRef({ levels: null, noise: null, seed: 7, step: 3, drawn: -1, t: 0, hold: 0, img: null });
 
   // build the working set for an aspect: the picture at five levels of detail, and a noise field
@@ -70,6 +71,7 @@ function Canvas() {
     }
     g.putImageData(out, 0, 0);
     if (stepEl.current) stepEl.current.textContent = String(step);
+    if (lineEl.current) lineEl.current.textContent = `FLOW-MATCHING CONVERGENCE: STEP ${step}/50 · CFG: 7.0`; // Hanzo's readout line, whole, as it reads now
     if (range.current && document.activeElement !== range.current) range.current.value = String(step);
     range.current?.style.setProperty('--f', (((step - 1) / (STEPS - 1)) * 100).toFixed(1) + '%');
   };
@@ -107,13 +109,14 @@ function Canvas() {
           </motion.div>
         </AnimatePresence>
         <p className="ir-tag ir-tl mb-mono">CANVAS: 2048 × 2048 · 16-BIT FLOAT</p>
-        <p className="ir-tag ir-bl mb-mono">FLOW-MATCHING CONVERGENCE: STEP <span ref={stepEl}>3</span>/50 · CFG: 7.0</p>
+        {/* Hanzo's own line, word for word, for readers and the copy check; the readout beside it counts the live step */}
+        <p className="ir-tag ir-bl mb-mono"><span className="x-sr" ref={lineEl}>FLOW-MATCHING CONVERGENCE: STEP 38/50 · CFG: 7.0</span><span aria-hidden="true">FLOW-MATCHING CONVERGENCE: STEP <span className="ir-n" ref={stepEl}>38</span>/50 <span className="ir-cfg">· CFG: 7.0</span></span></p>
       </div>
       <div className="ir-ctl">
         <button type="button" className="mb-chip ir-play" aria-pressed={play} onClick={() => { const s = S.current; if (s.step >= STEPS) { reseed(); s.step = 1; } setPlay(!play); }}>{play ? 'Pause' : 'Play'}</button>
         <label className="ir-range">
           <span className="x-sr">Step</span>
-          <input ref={range} type="range" min="1" max={STEPS} defaultValue="3" onInput={(e) => scrub(+e.target.value)} />
+          <input ref={range} type="range" min="1" max={STEPS} defaultValue="38" onInput={(e) => scrub(+e.target.value)} />
         </label>
         <button type="button" className="mb-chip" onClick={() => { reseed(); S.current.step = 1; setPlay(true); }}>New seed</button>
         <div className="mb-chips ir-asp" role="group" aria-label="Aspect">
@@ -124,11 +127,57 @@ function Canvas() {
   );
 }
 
+
+/* a still of the same flow at one step: each chapter (and the fits tile) shows the picture part-made, so the page shows
+   the image being made instead of one finished picture over and over; it runs up to its step while read */
+const GW = 360, GH = 450;
+function Grain({ step, on, seed }) {
+  const cv = useRef(null);
+  const calm = useReducedMotion();
+  useEffect(() => {
+    const img = new Image();
+    img.src = film('iro', 'webp');
+    let raf = 0, dead = false;
+    img.decode().then(() => {
+      const c = cv.current;
+      if (dead || !c) return;
+      c.width = GW; c.height = GH;
+      const g = c.getContext('2d', { willReadFrequently: true }), tmp = document.createElement('canvas'), r = rng(seed);
+      const N = new Float32Array(GW * GH).map(() => (r() + r() + r() - 1.5) * 1.15);
+      const paint = (k) => {
+        const t = k / STEPS, div = Math.max(1, Math.round(1 + 23 * (1 - t) ** 2)); // coarse shapes first, detail last
+        tmp.width = Math.ceil(GW / div); tmp.height = Math.ceil(GH / div);
+        tmp.getContext('2d').drawImage(img, 0, 0, tmp.width, tmp.height);
+        g.imageSmoothingEnabled = true; g.drawImage(tmp, 0, 0, GW, GH);
+        const d = g.getImageData(0, 0, GW, GH), o = d.data;
+        for (let i = 0; i < o.length; i += 4) { const n = (1 - t) * (128 + N[i >> 2] * 80); o[i] = t * o[i] + n; o[i + 1] = t * o[i + 1] + n; o[i + 2] = t * o[i + 2] + n; }
+        g.putImageData(d, 0, 0);
+      };
+      if (calm || !on) { paint(step); return; }
+      const t0 = performance.now();
+      const run = (now) => { const p = Math.min(1, (now - t0) / 1600); paint(Math.max(1, Math.round(step * (1 - (1 - p) ** 3)))); if (p < 1 && !dead) raf = requestAnimationFrame(run); };
+      raf = requestAnimationFrame(run);
+    }).catch(() => {});
+    return () => { dead = true; cancelAnimationFrame(raf); };
+  }, [on, step, seed, calm]);
+  return <canvas ref={cv} role="img" aria-label={`Step ${step} of ${STEPS}`} />;
+}
+const CAP_STEPS = [26, 34, 42, 50];
+
 // the film settles into a square canvas beside the headline
-const SQUARE = frame((W, H, wide) => {
-  const z = wide ? Math.min(H * 0.76, W * 0.4) : Math.min(W * 0.8, H * 0.42);
-  return wide ? { l: W * 0.7 - z / 2, t: (H - z) / 2, w: z, h: z, r: 16 } : { l: (W - z) / 2, t: H * 0.09, w: z, h: z, r: 16 };
-});
+// (on a phone the square sits just above the headline block (about 270px tall at the foot of the screen, 320px on a 320px-wide phone), so no
+// band of empty paper opens between them; the camera lands Iro's subject in the square wherever it sits)
+const sq = (W, H, wide) => {
+  if (wide) { const z = Math.min(H * 0.76, W * 0.4); return { l: W * 0.7 - z / 2, t: (H - z) / 2, w: z, h: z, r: 16 }; }
+  const head = W < 360 ? 320 : 270, z = Math.min(W * 0.84, H * 0.46, H - head - 88);
+  return { l: (W - z) / 2, t: Math.max(64, H - head - 24 - z), w: z, h: z, r: 16 };
+};
+const SQUARE = frame(sq);
+const aimAt = (W, H, wide) => {
+  if (wide) return null;
+  const q = sq(W, H, false);
+  return focus(0.62, 0.55, q.l + q.w / 2, q.t + q.h / 2, 1.14, [q.l, q.t, q.l + q.w, q.t + q.h])(W, H);
+};
 
 export default function Iro() {
   usePhoneAsk();
@@ -138,8 +187,10 @@ export default function Iro() {
       subject={[0.62, 0.55]}
       shape={SQUARE}
       headClass="ir-head"
-      aim={(W, H, wide) => (wide ? null : [-0.12 * W, -0.25 * H])}
+      aim={aimAt}
       first="demo"
+      capArt={(i, on, base) => <div className="cr-art ir-grain" style={base}><Grain step={CAP_STEPS[i]} on={on} seed={11 + i} /><Glyph k="iro" i={i} /></div>}
+      fitsArt={(seen) => <figure className="cr-fits-art ir-grain"><Grain step={STEPS} on={seen} seed={5} /></figure>}
       demo={
         <Scene slug="iro" className="ir-scene">
           <Studio slug="iro" engine="Hanzo Iro-1 · Flow-matching DiT" specs={[['Typography Exactness', 'Font Locking', 'Locked'], ['Color Space', 'Wide Gamut', 'Display P3'], ['Prompt Adherence', 'Semantic Flow', 'High Precision']]}>

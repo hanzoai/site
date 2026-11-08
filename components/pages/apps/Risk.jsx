@@ -1,6 +1,6 @@
 'use client';
 /* Persona: enterprise buyer (fraud, AML and trust-and-safety leads). Goal: start a sales conversation. CTA: "Talk to us" → /contact-sales. Metric: contact_sales_submit.
-   Risk. V2: 8/10 a first screen of h1 + dial side by side (next section peeking); an unframed gauge decides beside the h1 (needle, reasons, action; no invented digits); one engine with two faces; then one object per screen (rule card, declare stack, request flow, tier ladder) with the words folded in; no voids; deck greys and radii
+   Risk. V2: 8/10 a first screen of h1 + dial side by side (next section peeking); the decision word decodes (the motion-map signature); chapters as rows with their own stepping object; slice D: the ink-spread on "What it decides on" now fires (it watched its own clipped box and never arrived, leaving an empty screen); deck greys and radii
    Signature: the dial that decides, and shows its work. Pick a stage (signup, payment, post-purchase; the stage is a
    field) and signals light; the needle swings to a score and the plane returns an action and its reasons. It never
    declines on its own: past the line it summons a person, the ceiling Hanzo's engine refuses to start above.
@@ -114,6 +114,7 @@ function Hero() {
       <div className="w2-wrap rk-hero-g">
         <div className="rk-hero-copy">
           <DecodeLines as="h1" id="rk-h1" className="w2-display rk-h1" lines={['One risk plane', 'for accounts, payments', 'and agents']} />
+          <p className="rk-lede">Two faces over one engine, at two different stages. Available now — the compliance face, at api.hanzo.ai/v1/aml: monitoring, alerts, cases, rules, sanctions screening, relationship lookback and a retained-record clock. In development — the decide plane, which will score an account, a transaction, a session or an agent and return a decision you can explain, from a model trained on your organization&apos;s own data rather than a pooled model of somebody else&apos;s traffic.</p>
           <motion.div className="rk-hero-act" initial={{ y: 12 }} animate={{ y: 0 }} transition={{ duration: 0.8, ease: EASE, delay: 0.45 }}>
             <Magnetic strength={0.25}><A to="/contact-sales" className="w2-cta" data-thumb="Talk to us" data-cta="risk.hero">Talk to us <i aria-hidden="true">→</i></A></Magnetic>
           </motion.div>
@@ -132,21 +133,21 @@ function Faces() {
     <section className={'w2-sec rk-say' + (live ? ' on' : '')} aria-labelledby="rk-today" ref={ref}>
       <div className="w2-wrap">
         <Decode as="h2" id="rk-today" className="w2-headline rk-today-h" text="Where this is today" />
-        <p className="rk-say-h">Two faces over one engine, at two different stages.</p>
         <OrbitIn><div className="rk-engine">
-          <p className="rk-say-c live" data-enter><b>Available now</b> — the compliance face, at api.hanzo.ai/v1/aml: monitoring, alerts, cases, rules, sanctions screening, relationship lookback and a retained-record clock.</p>
-          <p className="rk-say-c dev" data-enter><b>In development</b> — the decide plane, which will score an account, a transaction, a session or an agent and return a decision you can explain, from a model trained on your organization's own data rather than a pooled model of somebody else's traffic.</p>
+          {/* the two faces as the engine's two sides; Hanzo's full sentence about them is the hero's lede */}
+          <p className="rk-say-c live" data-enter><span className="rk-say-k">Available now</span></p>
+          <p className="rk-say-c dev" data-enter><span className="rk-say-k">In development</span></p>
           <div className="rk-eng-core" aria-hidden="true" data-enter>
             <span className="rk-eng-w live"><i /></span>
             <span className="rk-eng-box x-mono">one engine</span>
             <span className="rk-eng-w dev" />
           </div>
           <Detail className="rk-d-live" label="compliance face" title="compliance face" kicker="/v1/aml">
-            <p>Hanzo Risk is two faces over one engine, and they are not at the same stage. The <strong>compliance face is live</strong> at <strong>api.hanzo.ai/v1/aml</strong>, behind your Hanzo identity: monitoring, alerts, cases, rules, sanctions screening, relationship lookback, and a retained-record plane that keeps a five-year clock.</p>
-            <p>Its source is public and every rule cites the instrument it implements, so what this page claims can be read back out of the code. It is <strong>not open source</strong>: the engine is licensed under the Lux Ecosystem License — free for research and on Lux networks, and licensed separately for commercial use anywhere else.</p>
+            <p><span>Hanzo Risk is two faces over one engine, and they are not at the same stage. The </span><span className="rk-strong">compliance face is live</span><span> at </span><span className="rk-strong">api.hanzo.ai/v1/aml</span><span>, behind your Hanzo identity: monitoring, alerts, cases, rules, sanctions screening, relationship lookback, and a retained-record plane that keeps a five-year clock.</span></p>
+            <p><span>Its source is public and every rule cites the instrument it implements, so what this page claims can be read back out of the code. It is </span><span className="rk-strong">not open source</span><span>: the engine is licensed under the Lux Ecosystem License — free for research and on Lux networks, and licensed separately for commercial use anywhere else.</span></p>
           </Detail>
           <Detail className="rk-d-dev" label="decide plane" title="decide plane" kicker="/v1/risk">
-            <p>The <strong>decide plane</strong> — <strong>/v1/risk</strong>, everything else on this page — and the shared model plane behind both are being built. Every capability below says which of the two it is.</p>
+            <p><span>The </span><span className="rk-strong">decide plane</span><span> — </span><span className="rk-strong">/v1/risk</span><span>, everything else on this page — and the shared model plane behind both are being built. Every capability below says which of the two it is.</span></p>
           </Detail>
         </div></OrbitIn>
       </div>
@@ -268,7 +269,7 @@ function Chapters() {
         <Detail title="Agents are not bots" kicker="In development">
           <p>A user-agent string cannot tell you whether traffic is a scraper or a customer’s agent doing work it was asked to do. The plane will not read one.</p>
           <p>Hanzo runs agents. An agent transacting here has a registration in your organization, a credential of a known class, a live session and metered usage — four facts about our own platform rather than four guesses about a client. Traffic carrying them will be treated as an agent and get the agent policy. Traffic that declares nothing and authenticates as nobody will be in the anonymous lane and bounded like one.</p>
-          <p><strong>Treating a customer’s agent as a bad bot is a lost sale. Treating a bad bot as an agent is a loss. The difference has to be computed, and computing it needs facts only the platform the agent runs on has.</strong></p>
+          <p><span className="rk-strong">Treating a customer’s agent as a bad bot is a lost sale. Treating a bad bot as an agent is a loss. The difference has to be computed, and computing it needs facts only the platform the agent runs on has.</span></p>
         </Detail>
       </>),
     },
@@ -351,9 +352,9 @@ function Model() {
           <span className="rk-pause">{pauseBtn}</span>
         </div>
         <Detail label="POST /v1/event" title="Your data, your model" kicker="In development" wide>
-          <p>Most fraud products score you against a pooled model built from other people’s traffic. Hanzo already holds yours. Analytics, product events and errors arrive through one endpoint — <strong>POST /v1/event</strong> — and are stored as rows scoped to your organization, beside your model usage, in a warehouse Hanzo runs and every tenant shares. That endpoint is live today. Reading those events as features and training on them is what is coming: your users, your products, your normal.</p>
-          <p>The boundary is the hard part, and the commitment is that it will be enforced in the code rather than asserted in a policy. A feature read will not be expressible without a tenant. The organization will come from your verified identity, never from a field a caller can set. Anything shared across organizations will be an <strong>aggregate</strong> — published quantiles, with no organization, no subject and no identifier in the row — and a bucket too few organizations contributed to will not be published at all. The model is meant to be per organization down to its geometry, so that two organizations do not merely keep separate counters; they have separate models.</p>
-          <p>Two of the properties that plane needs are already in the engine’s behavioural model, and it is those that will be carried forward. A score there is attributable by construction: move one input back to its neutral value, score again, and the drop is that input’s contribution — no second model is asked to explain the first. And a statistical judgement may summon a person; it may not decline anything on its own, a ceiling the engine refuses to start above. On the live deployment that model runs in <strong>shadow</strong>: it scores, and it contributes nothing to any transaction’s outcome.</p>
+          <p><span>Most fraud products score you against a pooled model built from other people’s traffic. Hanzo already holds yours. Analytics, product events and errors arrive through one endpoint — </span><span className="rk-strong">POST /v1/event</span><span> — and are stored as rows scoped to your organization, beside your model usage, in a warehouse Hanzo runs and every tenant shares. That endpoint is live today. Reading those events as features and training on them is what is coming: your users, your products, your normal.</span></p>
+          <p><span>The boundary is the hard part, and the commitment is that it will be enforced in the code rather than asserted in a policy. A feature read will not be expressible without a tenant. The organization will come from your verified identity, never from a field a caller can set. Anything shared across organizations will be an </span><span className="rk-strong">aggregate</span><span> — published quantiles, with no organization, no subject and no identifier in the row — and a bucket too few organizations contributed to will not be published at all. The model is meant to be per organization down to its geometry, so that two organizations do not merely keep separate counters; they have separate models.</span></p>
+          <p><span>Two of the properties that plane needs are already in the engine’s behavioural model, and it is those that will be carried forward. A score there is attributable by construction: move one input back to its neutral value, score again, and the drop is that input’s contribution — no second model is asked to explain the first. And a statistical judgement may summon a person; it may not decline anything on its own, a ceiling the engine refuses to start above. On the live deployment that model runs in </span><span className="rk-strong">shadow</span><span>: it scores, and it contributes nothing to any transaction’s outcome.</span></p>
         </Detail>
       </VelocitySkew>
     </section>
@@ -417,7 +418,7 @@ function Platforms() {
         <div className="rk-pair-h">
           <Decode as="h2" className="w2-headline" text="Platforms and marketplaces" />
           <p className="rk-dev">In development.</p>
-          <p className="rk-plat-l">If you run a platform, your risk is your sellers as much as your buyers. Risk will <em>declare</em> a control against a subject — hold a payout, set a reserve, restrict a merchant, block a suspect transaction — and the money plane will read it. Risk will never move money itself.</p>
+          <p className="rk-plat-l"><span>If you run a platform, your risk is your sellers as much as your buyers. Risk will </span><span className="rk-em">declare</span><span> a control against a subject — hold a payout, set a reserve, restrict a merchant, block a suspect transaction — and the money plane will read it. Risk will never move money itself.</span></p>
           <Detail label="That separation is deliberate." title="Platforms and marketplaces" kicker="In development">
             <p>That separation is deliberate. The thing that decides and the thing that pays should not be the same thing, and a control that is a written record rather than a side effect is one you can still account for a year later.</p>
           </Detail>
@@ -491,7 +492,7 @@ function ConnectPlans() {
           ))}
         </ol>
         <div className="rk-tier-d" aria-live={mine ? 'polite' : 'off'}>
-          {TIERS.map(([t, d], i) => <p key={t} className={i === tier ? 'on' : ''} aria-hidden={i !== tier}><b>{t}</b>{d}</p>)}
+          {TIERS.map(([t, d], i) => <p key={t} className={i === tier ? 'on' : ''} aria-hidden={i !== tier}><b>{t}</b><span>{d}</span></p>)}
         </div>
       </div>
     </section>
@@ -510,16 +511,16 @@ function Not() {
             {['There is no report workflow', 'There is no filing clock', 'There is no confidentiality marking on a case'].map((x, i) => <li key={x} className={i === g ? 'on' : ''}>{x}</li>)}
           </ul>
           <Detail label="Three unmet requirements" title="What this is not">
-          <p>Hanzo does not process payments — your processor does, and <A to="/commerce">Hanzo Commerce</A> owns the money plane. There is no dispute-network integration today: Risk assembles the evidence, you submit it. No figure on this page is a customer result, because the decide plane has not carried customer traffic yet. When it has, the numbers here will be ours and measured.</p>
+          <p><span>Hanzo does not process payments — your processor does, and </span><A to="/commerce">Hanzo Commerce</A><span> owns the money plane. There is no dispute-network integration today: Risk assembles the evidence, you submit it. No figure on this page is a customer result, because the decide plane has not carried customer traffic yet. When it has, the numbers here will be ours and measured.</span></p>
           <p>Three unmet requirements decide whether this is enough on its own, and they are named here rather than left to be found. There is no report workflow — no drafting, no approval step, no filing. There is no filing clock, so no deadline is measured anywhere. And there is no confidentiality marking on a case, so nothing in the engine keeps a case note away from the customer. What is here is the detection and the record; the filing is not.</p>
-          <p>Anti-money-laundering compliance and fraud prevention are related jobs, not one job. <strong>/v1/aml</strong> is the compliance face, <strong>/v1/risk</strong> is the decide plane, and one engine serves both. Nearby: <A to="/idv">identity verification</A> for proving who somebody is, <A to="/guard">Guard</A> for what a model is allowed to say, and <A to="/analytics">Analytics</A> for the event plane the model reads.</p>
+          <p><span>Anti-money-laundering compliance and fraud prevention are related jobs, not one job. </span><span className="rk-strong">/v1/aml</span><span> is the compliance face, </span><span className="rk-strong">/v1/risk</span><span> is the decide plane, and one engine serves both. Nearby: </span><A to="/idv">identity verification</A><span> for proving who somebody is, </span><A to="/guard">Guard</A><span> for what a model is allowed to say, and </span><A to="/analytics">Analytics</A><span> for the event plane the model reads.</span></p>
           </Detail>
         </div>
         <div className="rk-next">
           <div className="rk-next-art" aria-hidden="true"><Sigil seed="hanzo-risk" data={[5, 20, 4, 3]} /></div>
           <h2 className="w2-kicker gx-stay rk-next-h">Next</h2>
           {[['Talk to us', 'Tell us which stage is costing you, and help shape what the tiers include.', '/contact-sales'], ['The API', 'One base URL and one key for every Hanzo capability, including this one.', '/api'], ['The engine, source available', 'The monitoring engine underneath the compliance face, under the Lux Ecosystem License. Read it and check the citations; commercial use outside a Lux network is licensed separately.', 'https://github.com/luxfi/aml']].map(([t, d, to], i) => (
-            <A key={t} to={to} className={'rk-next-a' + (i === 0 ? ' first' : '')} {...(i === 0 ? { 'data-cta': 'risk.next' } : {})}><b>{t}</b><span>{d}</span><i aria-hidden="true">→</i></A>
+            <A key={t} to={to} className={'rk-next-a' + (i === 0 ? ' first' : '')} {...(i === 0 ? { 'data-cta': 'risk.next' } : {})}><span className="rk-next-t">{t}</span><span>{d}</span><i aria-hidden="true">→</i></A>
           ))}
         </div>
       </div>

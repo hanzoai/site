@@ -1,4 +1,0 @@
-# Requests from Families B (/blog/*, /customers/*, /agents/*, /compare/*, /help/*, /zen/*, /kai/*)
-
-- **scripts/status.py, every `[slug]` family:** the board names a family row after its folder (`/blog/*` becomes `blog`), so it reads the review, coverage card and gallery of the index page `/blog`. The critics write `docs/review/<family>-family.md`, and our cards are `docs/coverage/<family>-family.md`; please key family rows as `<family>-family` (blog, customers, agents, compare, and the other `[slug]` families) so the family can reach "Ready".
-- **components/Ask.jsx, desktop:** the ask bar is a pill floating over the article at the bottom of the screen, which MASTER 3.2 rule 6 and the banned list ("anything floating over content: a pill bar") rule out on desktop. The blog's hero ask already carries `data-thumb`; on desktop the header's quiet ask could carry it instead of a floating bar.

@@ -16,12 +16,13 @@
    directory previews), state (sheets rise, tab and endpoint pills glide), arrival (headlines cut into their lines).
    Beyond: ask the map. Type a word (CUDA, keys, routing, memory) and the plates whose own Hanzo descriptions use it
    light up in the stack, each with the phrase that matched and a click into its sheet. Built only from Hanzo's words.
+   V2: 8/10 the camera through the stack with words and plates in step (the camera crosses groups only around the switch, the words crossfade), a directory that reads 01-07, shorter planes, and five section entrances (inertia-drag, count-roll, spiral-in, underline-sweep, explode-gather).
    Colour: none. Deck greys, ink and white only. One dark room (the map) and the closing Band.
-   Every word and link is Hanzo's (parity 330/330, 129/129). Coverage: docs/coverage/platform.md. */
+   Every word and link is Hanzo's (parity 330/330, 129/129). Coverage: docs/build-notes/coverage/platform.md. */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { Mark } from '../ui';
-import { A, Band, Tabs, TabPanel, Cta, CodeBlock } from '../kit';
+import { Mark, Copy } from '../ui';
+import { A, Band, Tabs, TabPanel, Cta } from '../kit';
 import Sigil from '../Sigil';
 import IsoStack, { zOf, LIFT } from '../v2/IsoStack';
 import PinChapters from '../v2/PinChapters';
@@ -77,6 +78,15 @@ function Lines({ as: Tag = 'h2', lines, className = '', id, now }) {
   );
 }
 
+/* a command as Hanzo prints it: "$ " and the command in one line of text (the prompt is greyed in CSS); Copy copies the
+   command without the prompt */
+const Cmd = ({ code, className = '' }) => (
+  <figure className={'x-codeblock xpl-cmd ' + className} data-room="dark">
+    <figcaption className="x-codeblock-h"><span /><Copy text={code} /></figcaption>
+    <pre tabIndex={0} aria-label="Code"><code><span className="x-codeblock-l xpl-cmd-l">{'$ ' + code}</span></code></pre>
+  </figure>
+);
+
 const Arrow = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const Go = ({ to, children }) => <A to={to} className="xpl-go"><span>{children}</span><Arrow /></A>;
 
@@ -111,7 +121,7 @@ const Stat = ({ s }) => { const [f, ...r] = s.split(' '); return <><b>{f}</b> <s
 
 /* the journey's timeline, as fractions of its scroll */
 const REST = 0.34; // the stack rests slightly open on the first screen, so its plates read as layers, not one slab
-const T = { heroOut: [0.015, 0.085], wipe: [0.04, 0.15], explode: [0.07, 0.25], map: [0.14, 0.19], intro: [0.15, 0.2, 0.29, 0.33], g0: 0.34, close: [1.5, 1.6] }; // the room no longer closes: the map scrolls away whole and the directory follows (no blank screen)
+const T = { heroOut: [0.015, 0.085], wipe: [0.04, 0.15], explode: [0.07, 0.25], map: [0.075, 0.1], intro: [0.08, 0.115, 0.33, 0.355], g0: 0.34, close: [1.5, 1.6] }; // the room no longer closes: the map scrolls away whole and the directory follows (no blank screen)
 const GLEN = (1 - T.g0 - 0.02) / GROUPS.length;
 const groupAt = (p) => (p < T.g0 ? -1 : Math.min(GROUPS.length - 1, Math.floor((p - T.g0) / GLEN)));
 const zMid = (g, e) => { const b = IN_GROUP[g].map((i) => N - 1 - i); return (zOf(Math.min(...b), e) + zOf(Math.max(...b), e)) / 2; };
@@ -122,8 +132,12 @@ function camAt(p, k) {
   const sw = k * (1 - 0.36 * e); // the whole stack shrinks a little as it opens, so it always fits
   const whole = { y: LIFT * zMid(-1, e) * sw, s: sw, x: 0 };
   if (p < T.g0 - 0.06) return whole;
-  const stops = [whole, ...GROUPS.map((_, g) => ({ y: LIFT * zMid(g, 1) * k * 1.3, s: k * 1.3, x: -60 * k }))];
-  const at = [T.g0 - 0.06, ...GROUPS.map((_, g) => T.g0 + g * GLEN + GLEN * 0.35)];
+  // the camera holds on a group while its words are up and crosses to the next only around the boundary where the words
+  // change (within ±HOP of it), so the plates and the words on the left move in step
+  const grp = GROUPS.map((_, g) => ({ y: LIFT * zMid(g, 1) * k * 1.3, s: k * 1.3, x: -60 * k }));
+  const HOP = 0.015;
+  const stops = [whole], at = [T.g0 - 0.03];
+  GROUPS.forEach((_, g) => { stops.push(grp[g], grp[g]); at.push(T.g0 + g * GLEN + HOP, T.g0 + (g + 1) * GLEN - HOP); });
   let j = at.length - 1;
   while (j > 0 && p < at[j]) j--;
   if (j === at.length - 1) return stops[j];
@@ -172,7 +186,7 @@ function Journey({ openLayer }) {
     camX.set(c.x);
     const gi = groupAt(v);
     setG((o) => (o === gi ? o : gi));
-    const pi = v < 0.12 || v > T.close[1] ? 0 : 1;
+    const pi = v < 0.09 || v > T.close[1] ? 0 : 1;
     setPh((o) => (o === pi ? o : pi));
   };
   useMotionValueEvent(p, 'change', frame);
@@ -252,7 +266,7 @@ function Journey({ openLayer }) {
       <label className="xpl-ask-in">
         <span className="x-sr">Find in the stack</span>
         <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="M10.4 10.4 14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-        <input type="search" value={q} onChange={(ev) => setQ(ev.target.value)} placeholder="Find in the stack" autoComplete="off" spellCheck={false} aria-describedby="xpl-ask-n" />
+        <input type="search" suppressHydrationWarning value={q} onChange={(ev) => setQ(ev.target.value)} placeholder="Find in the stack" autoComplete="off" spellCheck={false} aria-describedby="xpl-ask-n" />
         {q && <button type="button" className="xpl-ask-x" onClick={() => setQ('')} aria-label="Clear"><svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg></button>}
       </label>
       <p id="xpl-ask-n" className="xpl-ask-n" aria-live="polite">{hits ? `${hits.length} / ${N}` : ''}</p>
@@ -288,12 +302,12 @@ function Journey({ openLayer }) {
               <Cta to={KEY_URL} id="platform.hero" thumb>Start building</Cta>
               <Cta to="#stack" kind="quiet" id="platform.stack" onClick={(ev) => { ev.preventDefault(); goTo(0.235); }}>Inspect the stack</Cta>
             </div>
-            <CodeBlock code="docker run -p 8080:8080 ghcr.io/hanzoai/cloud" prompt className="xpl-run" />
+            <Cmd code="docker run -p 8080:8080 ghcr.io/hanzoai/cloud" className="xpl-run" />
           </div>
         </motion.div>
 
         <motion.div ref={art} className="xpl-art" style={pinned ? { opacity: artO } : undefined}>
-          <IsoStack items={ITEMS} explode={e} camX={camX} camY={camY} camScale={camS} tone="light" mark={mark} onPick={openLayer} onHot={onHot} className="xpl-iso" />
+          <IsoStack items={ITEMS} explode={e} camX={camX} camY={camY} camScale={camS} tone="paper" mark={mark} onPick={openLayer} onHot={onHot} className="xpl-iso" />
         </motion.div>
 
         <motion.ul className="xpl-chips" aria-label="What runs on it" style={pinned ? { opacity: chipsO } : undefined}>
@@ -345,7 +359,7 @@ function Journey({ openLayer }) {
             <span>01—11 / owned and connected</span>
             <span>Interactive drawing · not telemetry</span>
             <span className="xpl-zap">
-              <b>ZAP / native interconnect</b>
+              <span className="xpl-zap-t">ZAP / native interconnect</span>
               <span>Agent ↔ tool RPC · MCP bridge · typed service communication</span>
               <A to="https://docs.hanzo.ai/docs/zap">Protocol</A>
               <A to="https://github.com/hanzoai/zap">Source</A>
@@ -380,7 +394,7 @@ function Inspector({ sel, open, onClose, step }) {
         </article>
       ))}
       <div className="xpl-ins-f">
-        <p><span>Select / explore</span> Product · docs · source</p>
+        <p><span>Select / explore</span> <span>Product · docs · source</span></p>
         <div className="xpl-ins-nav">
           <button type="button" className="xpl-chip" onClick={() => step(-1)} aria-label="Previous layer"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M13 8H4M7.5 4.5 4 8l3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
           <button type="button" className="xpl-chip" onClick={() => step(1)} aria-label="Next layer"><Arrow /></button>
@@ -457,7 +471,7 @@ function Reach() {
   }, [seen, live, at]);
   const pick = (i) => { setAt(i); setRun(false); };
   return (
-    <section ref={ref} className="xpl-sec xpl-reach" aria-labelledby="xpl-rc-h">
+    <section ref={ref} className="xpl-sec xpl-reach" aria-labelledby="xpl-rc-h" data-enter="count-roll">
       <div className="xpl-wrap">
         <header className="xpl-head">
           <Lines id="xpl-rc-h" className="xpl-h2" lines={['Intelligence that connects', 'to every layer.']} />
@@ -529,7 +543,7 @@ function Loop() {
           <div className="xpl-links"><Go to="/research">Research</Go><Go to="/benchmarks">Benchmarks</Go><Go to="https://github.com/hanzoai/benchmarks">Harness</Go></div>
           <p className="xpl-body xpl-small">A modular feedback architecture, not a claim of unattended production self-modification. Only candidates that meet the relevant evaluation and release gates are promoted.</p>
         </div>
-        <div ref={ref} className="xpl-ring" style={{ '--at': at }} onPointerLeave={() => setHeld(false)}>
+        <div ref={ref} className="xpl-ring" data-enter="spiral-in" style={{ '--at': at }} onPointerLeave={() => setHeld(false)}>
           <span className="xpl-ring-c" aria-hidden="true" />
           <span className="xpl-ring-arc" aria-hidden="true" />
           <p className="xpl-ring-mid" aria-hidden="true"><b>{LOOP[at][1]}</b><span>{LOOP[at][2]}</span></p>
@@ -540,8 +554,8 @@ function Loop() {
                 <button type="button" aria-pressed={i === at} onClick={() => { setAt(i); setHeld(true); }} onPointerEnter={(ev) => { if (ev.pointerType === 'mouse') { setAt(i); setHeld(true); } }}>
                   <span className="xpl-ring-lab">
                     <span className="xpl-ring-n">{n}</span>
-                    <b>{t}</b>
-                    <small>{s}</small>
+                    <span className="xpl-ring-t">{t}</span>
+                    <span className="xpl-ring-s">{s}</span>
                   </span>
                 </button>
               </li>
@@ -559,7 +573,7 @@ function Loop() {
 /* ---------- the cloud, plane by plane: sticky chapters ---------- */
 const TILES = [['Chat', '/cloud/chat'], ['Bot', '/bot'], ['Search', '/search'], ['Crawl', '/crawl'], ['Studio', '/studio'], ['Console', '/console'], ['Referrals', '/cloud/referrals'], ['Marketplace', '/cloud/marketplace']];
 const NAV = [['GPUs', '/cloud/gpus'], ['Machines', '/machines'], ['Containers', '/cloud/containers'], ['Functions', '/functions'], ['Edge', '/edge'], ['Applications', '/cloud/applications'], ['Clusters', '/cloud/clusters'], ['Kubernetes', '/cloud/kubernetes']];
-const ROWS = [['gateway', 'Ready'], ['payments-api', 'Ready'], ['checkout-web', 'Building'], ['docs-site', 'Ready']];
+const ROWS = [['gateway', 'Ready', 'Every request enters here, so the limiter does too.'], ['payments-api', 'Ready', 'The service the session above is changing.'], ['checkout-web', 'Building', 'A build is running from the last commit on main.'], ['docs-site', 'Ready', 'Static, published by the same pipeline as the rest.']];
 const LADDER = [['Functions', "Scale to zero between calls.", 14], ['Containers', "Your image, deployed and addressable.", 32], ['Sandboxes', "Isolated shells for agents and untrusted code.", 50], ['Machines', "A whole machine, by the second.", 68], ['GPUs', "Accelerators attached to any of them.", 84], ['Kubernetes', "The substrate all of it runs on.", 100]];
 const DEPLOY = [['Containers', "Deploy an image and invoke it. Deployments, triggers, secrets, metrics and logs are all part of the same surface, so a function you ship is a function you can watch."], ['Machines', "A whole machine, by the second."], ['Sandboxes', "Isolated shells for agents and untrusted code."]];
 
@@ -569,29 +583,30 @@ function ConsoleWin() {
     <div className="xpl-win" data-room="dark">
       <div className="xpl-win-bar">
         <span className="xpl-dots" aria-hidden="true"><i /><i /><i /></span>
-        <A to="https://hanzo.team/" className="xpl-win-t"><Mark size={13} /> <span>API Platform</span> <span className="xpl-win-h">— Hanzo</span></A>
+        <A to="https://hanzo.team/" className="xpl-win-t"><Mark size={13} /> <span>API Platform — Hanzo</span></A>
       </div>
       <div className="xpl-win-body">
         <ul className="xpl-win-nav">{NAV.map(([t, h], i) => <li key={t}><A to={h} className={i === 0 ? 'on' : ''}>{t}</A></li>)}</ul>
         <div className="xpl-win-main">
+          <p className="xpl-win-k">Containers — Hanzo</p>
           <ul className="xpl-win-tiles">{TILES.map(([t, h]) => <li key={t}><A to={h}><i aria-hidden="true">{t[0]}</i>{t}</A></li>)}</ul>
           <Tabs id="xpl-work" tabs={DEPLOY.map(([t]) => t)} value={tab} onChange={setTab} label="Kinds of work" className="xpl-tabs" />
           {DEPLOY.map(([t, d], i) => <TabPanel key={t} id="xpl-work" i={i} value={tab} className="xpl-pane"><p>{d}</p></TabPanel>)}
           <ul className="xpl-win-rows">
-            {ROWS.map(([n, s], i) => (
+            {ROWS.map(([n, s, note], i) => (
               <li key={n} className={s === 'Building' ? 'busy' : ''}>
-                <b>{n}</b>
-                <span className="xpl-st"><i aria-hidden="true" />{s}</span>
-                {i === 0 && <small>Every request enters here, so the limiter does too.</small>}
+                <span className="xpl-win-n">{n}</span>
+                <span className="xpl-st"><i aria-hidden="true" /><span>{s}</span></span>
+                <span className="xpl-win-note">{note}</span>
               </li>
             ))}
           </ul>
-          <p className="xpl-ep"><span>api.hanzo.ai</span><b>/v1/functions</b></p>
+          <p className="xpl-ep">api.hanzo.ai/v1/functions</p>
         </div>
       </div>
       <div className="xpl-win-f">
         <A to="/home" className="xpl-go"><span>Open in the console</span><Arrow /></A>
-        <small>Example project. Every name in it is one you would give your own.</small>
+        <span className="xpl-win-cap">Example project. Every name in it is one you would give your own.</span>
       </div>
     </div>
   );
@@ -697,21 +712,27 @@ function Planes() {
 }
 
 /* ---------- one API: one afternoon of calls, replayed, each path typing itself ---------- */
+/* Hanzo's six listed paths (the left column) and its five-beat tour (the right), as hanzo.ai/platform prints them */
+const EPS = ['/v1/models', '/v1/agent', '/v1/function', '/v1/provisioning/sql', '/v1/provisioning/vector', '/v1/s3/buckets'];
 const OPS = [
   { p: '/v1/models', cap: 'Start with the models.', m: 'GET', d: 'Returns the list of available models from the routing table.', tags: ['Models'] },
-  { p: '/v1/agent' }, { p: '/v1/function' }, { p: '/v1/provisioning/sql' }, { p: '/v1/provisioning/vector' }, { p: '/v1/s3/buckets' },
+  { p: '/v1/ai/routes', cap: 'Blend them behind one route.', m: 'POST', d: 'Create a model-route' },
+  { p: '/v1/chat/completions', cap: 'Ask it something.', m: 'POST', d: 'Implements the OpenAI-compatible chat completions API' },
+  { p: '/v1/agent', cap: 'Hand it your own tools.', m: 'POST', d: "Defines an agent in the caller's org: a model, a system prompt (instructions) and a set of tool names." },
   { p: '/v1/billing/usage', cap: "Watch what it cost.", m: 'GET', d: "Every billed call the caller's org made, attributed to a product", tags: ["AI Metrics", "Billing"] },
 ];
 
 /* the call path types itself into a text node, a character at a time (no React state per character) */
 function typing(el, text, alive) {
+  // visual only: the text node always holds the whole path; a clip widens one character at a time over it
   return new Promise((done) => {
     let i = 0;
-    el.textContent = '';
+    el.dataset.typing = '';
+    el.style.setProperty('--n', 0);
     const step = () => {
       if (!alive()) return done(false);
-      el.textContent = text.slice(0, ++i);
-      if (i < text.length) setTimeout(step, 42); else done(true);
+      el.style.setProperty('--n', ++i);
+      if (i < text.length) setTimeout(step, 42); else { delete el.dataset.typing; done(true); }
     };
     setTimeout(step, 160);
   });
@@ -731,7 +752,7 @@ function OneApi() {
     const el = out.current[at];
     if (el) typing(el, OPS[at].p, () => live);
     const t = setTimeout(() => live && setAt((v) => (v + 1) % OPS.length), 2600);
-    return () => { live = false; clearTimeout(t); if (el) el.textContent = OPS[at].p; };
+    return () => { live = false; clearTimeout(t); if (el) { delete el.dataset.typing; el.style.removeProperty('--n'); } };
   }, [at, on, seen]);
   return (
     <section className="xpl-sec xpl-api" aria-labelledby="xpl-api-h">
@@ -741,15 +762,20 @@ function OneApi() {
           <p className="xpl-body">The same key, organization, project, policy and usage ledger behind every path. The interface changes; the system does not.</p>
         </header>
         <div ref={box} className="xpl-term" data-room="dark">
-          <ul className="xpl-eps" style={{ '--at': Math.min(at, 6) }}>
-            <li className="xpl-ep-bg" aria-hidden="true" data-on={at < 6} />
-            {OPS.slice(0, 6).map((o, i) => (
-              <li key={o.p}>
-                <button type="button" className={at === i ? 'on' : ''} aria-pressed={at === i} onClick={() => { setAt(i); setPlay(false); }}>
-                  <span>api.hanzo.ai</span><b>{o.p}</b>
-                </button>
-              </li>
-            ))}
+          <ul className="xpl-eps" style={{ '--at': Math.max(0, EPS.indexOf(OPS[at].p)) }}>
+            <li className="xpl-ep-bg" aria-hidden="true" data-on={EPS.includes(OPS[at].p)} />
+            {EPS.map((p) => {
+              const j = OPS.findIndex((o) => o.p === p);
+              const lit = OPS[at].p === p;
+              return (
+                <li key={p}>
+                  {j < 0 ? <span className="xpl-ep-b"><span className="xpl-ep-h">api.hanzo.ai</span><span className="xpl-ep-p">{p}</span></span>
+                    : <button type="button" className={lit ? 'on' : ''} aria-pressed={lit} onClick={() => { setAt(j); setPlay(false); }}>
+                      <span className="xpl-ep-h">api.hanzo.ai</span><span className="xpl-ep-p">{p}</span>
+                    </button>}
+                </li>
+              );
+            })}
             <li className="xpl-eps-more"><span>api.hanzo.ai/v1/…</span></li>
           </ul>
           <div className="xpl-term-r">
@@ -765,7 +791,7 @@ function OneApi() {
               {OPS.map((o, i) => (
                 <div key={o.p} className={'xpl-step' + (i === at ? ' on' : '')} aria-hidden={i !== at} inert={i !== at}>
                   {o.cap && <p className="xpl-cap">{o.cap}</p>}
-                  <p className="xpl-call">{o.m && <em>{o.m}</em>}<span>api.hanzo.ai</span><b ref={(el) => { out.current[i] = el; }}>{o.p}</b>{i === at && on && <i className="xpl-caret" aria-hidden="true" />}</p>
+                  <p className="xpl-call">{o.m && <em>{o.m}</em>}<span>api.hanzo.ai</span><span className="xpl-call-p" ref={(el) => { out.current[i] = el; }}>{o.p}</span>{i === at && on && <i className="xpl-caret" aria-hidden="true" />}</p>
                   {o.d && <p className="xpl-res">{o.d}</p>}
                   {o.tags && <p className="xpl-tags">{o.tags.map((t) => <span key={t}>{t}</span>)}</p>}
                 </div>
@@ -783,7 +809,7 @@ function OneApi() {
 /* ---------- open: the image we operate is the image you can pull; the object is the terminal you would paste into ---------- */
 function OpenSec() {
   return (
-    <section className="xpl-sec xpl-open" aria-labelledby="xpl-op-h">
+    <section className="xpl-sec xpl-open" aria-labelledby="xpl-op-h" data-enter="underline-sweep">
       <div className="xpl-wrap xpl-op-g">
         <div>
           <Lines id="xpl-op-h" className="xpl-h2 xpl-op-h" lines={['Your cloud should', 'not lock you in.']} />
@@ -791,8 +817,8 @@ function OpenSec() {
           <div className="xpl-links"><Go to="https://docs.hanzo.ai/docs/quickstart">Quickstart</Go><Go to="/open-source">Open source</Go><Go to="https://github.com/hanzoai/cloud">Source</Go></div>
         </div>
         <div className="xpl-tty">
-          <CodeBlock code="curl -fsSL https://hanzo.sh | sh" prompt />
-          <CodeBlock code="hanzo serve cloud" prompt />
+          <Cmd code="curl -fsSL https://hanzo.sh | sh" />
+          <Cmd code="hanzo serve cloud" />
           <p className="xpl-cap-s">Open</p>
         </div>
       </div>
@@ -813,7 +839,7 @@ function Catalog({ about = {} }) {
           <Lines id="xpl-cat-h" className="xpl-h2" lines={['Explore the platform.']} />
           <p className="xpl-body">Every plane, and what is in it.</p>
         </header>
-        <div className="xpl-dir">
+        <div className="xpl-dir" data-enter="inertia-drag">
           <div className="xpl-dir-cols">
             {CAT.map(([n, to, items], i) => (
               <div key={n} className="xpl-dir-g">
@@ -853,39 +879,60 @@ function Proof() {
   return (
     <section className="xpl-sec xpl-proofs" aria-label="View the measurements">
       <div className="xpl-wrap">
-        <div className="xpl-facts">
+        <div className="xpl-facts" data-enter="explode-gather">
           {FACTS.map(([f, h, d, l, to], i) => (
             <div key={h} className={'xpl-fact' + (i ? '' : ' big')}>
-              <p className="xpl-fact-h">{f && <b>{f}</b>} <span>{h}</span></p>
+              <p className="xpl-fact-h">{f ? f + ' ' + h : h}</p>
               <p className="xpl-fact-d">{d}</p>
               <Go to={to}>{l}</Go>
             </div>
           ))}
           <ul className="xpl-pfs">
             {PROOF.map(([f, l, to]) => (
-              <li key={f}><A to={to} className="xpl-pf"><b>{f}</b><span>{l}</span><Arrow /></A></li>
+              <li key={f}><A to={to} className="xpl-pf"><span>{f + ' ' + l}</span><Arrow /></A></li>
             ))}
           </ul>
         </div>
-        <details className="xpl-foot">
-          <summary>GPU targets are parallel hardware backends, not sequential stages.<Arrow /></summary>
-          <p>Zen is generative reasoning; Kai provides decision intelligence. ZAP is a native RPC protocol for supported interconnect paths. Research and evaluation form a gated improvement loop. “Native” describes Hanzo’s architecture surfaces; not every implementation, weight, driver or operating system is owned or open sourced by Hanzo.</p>
-        </details>
+        <p className="xpl-foot">GPU targets are parallel hardware backends, not sequential stages. Zen is generative reasoning; Kai provides decision intelligence. ZAP is a native RPC protocol for supported interconnect paths. Research and evaluation form a gated improvement loop. “Native” describes Hanzo’s architecture surfaces; not every implementation, weight, driver or operating system is owned or open sourced by Hanzo.</p>
       </div>
     </section>
   );
 }
 
+/* ---------- section entrances (MOTION-MAP /platform: inertia-drag, count-roll, spiral-in, underline-sweep,
+   explode-gather), page-local. One observer marks each [data-enter] once with data-in when a quarter of it (or a
+   quarter of the screen) is in view; Platform.css plays the entrance it names. Start states live in the CSS under
+   html.js and prefers-reduced-motion: no-preference, so the server markup is final, JS off and reduced motion show
+   everything at rest. Every entrance is visual only: the text in the page is always Hanzo's final text. ---------- */
+function useEnter(root) {
+  useEffect(() => {
+    const els = [...(root.current?.querySelectorAll('[data-enter]') || [])];
+    if (typeof IntersectionObserver === 'undefined') { els.forEach((el) => { el.dataset.in = ''; }); return; }
+    const timers = [];
+    const io = new IntersectionObserver((es) => es.forEach((e) => {
+      if (!e.isIntersecting || (e.intersectionRatio < 0.25 && e.intersectionRect.height < innerHeight * 0.25)) return;
+      const el = e.target;
+      el.dataset.in = '';
+      io.unobserve(el);
+      timers.push(setTimeout(() => { el.dataset.done = ''; }, 1800));
+    }), { threshold: [0, 0.1, 0.25, 0.5] });
+    els.forEach((el) => io.observe(el));
+    return () => { io.disconnect(); timers.forEach(clearTimeout); };
+  }, [root]);
+}
+
 /* JS off: every scene readable in flow (PLAN-COMPONENTS 2.3 and 2.17) */
-const NOJS = `.xpl .xpl-l>span{transform:none!important}.xpl-jr{height:auto!important;margin-top:0!important}.xpl-jr-dark,.xpl-jr-bg{display:none!important}.xpl-jr-stage{position:relative!important;height:auto!important;overflow:visible!important}.xpl-hero{position:relative!important;inset:auto!important;display:block!important;padding:72px 0 0!important;margin:0 var(--side)!important;opacity:1!important;transform:none!important}.xpl-hero-t{width:auto!important}.xpl-art{position:relative!important;width:100%!important;height:420px!important}.xpl-chips{position:relative!important;bottom:auto!important;opacity:1!important}.xpl-map{position:relative!important;inset:auto!important;opacity:1!important;pointer-events:auto!important;padding:96px var(--side) 72px!important;background:#070708}.xpl-map-room{display:block!important;position:absolute;inset:0}.xpl-bar-t,.xpl-bar-b,.xpl-intro,.xpl-groups{position:relative!important;inset:auto!important;width:auto!important;opacity:1!important;transform:none!important}.xpl-groups{display:block!important}.xpl-grp{opacity:1!important;transform:none!important;margin-top:72px}.pc{height:auto!important}.pc-stage{position:static!important;height:auto!important}.pc-grid{display:flex!important;flex-direction:column;height:auto!important}.pc-idx{display:none!important}.pc-copy{order:calc(var(--i)*2);opacity:1!important;transform:none!important;padding-top:96px}.pc-vis{order:calc(var(--i)*2 + 1);clip-path:none!important;margin-top:40px}.xpl-term-b{display:block!important}.xpl-step{opacity:1!important;transform:none!important;margin-bottom:28px}.v2s{position:static!important;visibility:visible!important}.v2s-scrim{display:none}.v2s-panel{position:static!important;transform:none!important;width:auto!important;margin:0 var(--side);box-shadow:none!important}.xpl-ins[hidden]{display:block!important;margin-bottom:48px}.xpl-cap-p{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;margin-bottom:44px}.xpl-cap-stage{display:block!important}.x-band .x-word,.x-band p,.x-band-act{opacity:1!important;transform:none!important;filter:none!important}[role=tabpanel][hidden]{display:block!important}.xpl-ring{aspect-ratio:auto!important;width:100%!important;margin:44px 0 0!important}.xpl-ring-c,.xpl-ring-arc,.xpl-ring-mid,.xpl-ring-d,.xpl-ring-cap .xpl-play{display:none!important}.xpl-ring li{position:relative!important;left:auto!important;top:auto!important;width:auto!important;height:auto!important;border-top:1px solid rgba(0,0,0,.1)}.xpl-ring li button{position:static!important;transform:none!important;width:auto!important;text-align:left!important;padding:12px 0!important}.xpl-ring small{display:block!important}.xpl-ring-cap{position:static!important;justify-content:flex-start!important;margin-top:17px!important}`;
+const NOJS = `.xpl .xpl-l>span{transform:none!important}.xpl-jr{height:auto!important;margin-top:0!important}.xpl-jr-dark,.xpl-jr-bg{display:none!important}.xpl-jr-stage{position:relative!important;height:auto!important;overflow:visible!important}.xpl-hero{position:relative!important;inset:auto!important;display:block!important;padding:72px 0 0!important;margin:0 var(--side)!important;opacity:1!important;transform:none!important}.xpl-hero-t{width:auto!important}.xpl-art{position:relative!important;width:100%!important;height:420px!important}.xpl-chips{position:relative!important;bottom:auto!important;opacity:1!important}.xpl-map{position:relative!important;inset:auto!important;opacity:1!important;pointer-events:auto!important;padding:96px var(--side) 72px!important;background:#070708}.xpl-map-room{display:block!important;position:absolute;inset:0}.xpl-bar-t,.xpl-bar-b,.xpl-intro,.xpl-groups{position:relative!important;inset:auto!important;width:auto!important;opacity:1!important;transform:none!important}.xpl-groups{display:block!important}.xpl-grp{opacity:1!important;transform:none!important;margin-top:72px}.pc{height:auto!important}.pc-stage{position:static!important;height:auto!important}.pc-grid{display:flex!important;flex-direction:column;height:auto!important}.pc-idx{display:none!important}.pc-copy{order:calc(var(--i)*2);opacity:1!important;transform:none!important;padding-top:96px}.pc-vis{order:calc(var(--i)*2 + 1);clip-path:none!important;opacity:1!important;margin-top:40px}.xpl-term-b{display:block!important}.xpl-step{opacity:1!important;transform:none!important;margin-bottom:28px}.v2s{position:static!important;visibility:visible!important}.v2s-scrim{display:none}.v2s-panel{position:static!important;transform:none!important;width:auto!important;margin:0 var(--side);box-shadow:none!important}.xpl-ins[hidden]{display:block!important;margin-bottom:48px}.xpl-cap-p{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;margin-bottom:44px}.xpl-cap-stage{display:block!important}.x-band .x-word,.x-band p,.x-band-act{opacity:1!important;transform:none!important;filter:none!important}[role=tabpanel][hidden]{display:block!important}.xpl-ring{aspect-ratio:auto!important;width:100%!important;margin:44px 0 0!important}.xpl-ring-c,.xpl-ring-arc,.xpl-ring-mid,.xpl-ring-d,.xpl-ring-cap .xpl-play{display:none!important}.xpl-ring li{position:relative!important;left:auto!important;top:auto!important;width:auto!important;height:auto!important;border-top:1px solid rgba(0,0,0,.1)}.xpl-ring li button{position:static!important;transform:none!important;width:auto!important;text-align:left!important;padding:12px 0!important}.xpl-ring small{display:block!important}.xpl-ring-cap{position:static!important;justify-content:flex-start!important;margin-top:17px!important}`;
 
 export default function Platform({ about }) {
+  const root = useRef(null);
+  useEnter(root);
   const [sel, setSel] = useState(0);
   const [open, setOpen] = useState(false);
   const openLayer = (i) => { setSel(i); setOpen(true); };
   const step = (d) => setSel((s) => (s + d + N) % N);
   return (
-    <main className="xpl" data-ask-name="Hanzo Platform">
+    <main ref={root} className="xpl" data-ask-name="Hanzo Platform">
       <noscript><style>{NOJS}</style></noscript>
       <Journey openLayer={openLayer} />
       <Catalog about={about} />

@@ -55,7 +55,7 @@ export default function FnClose({ name, tag, prompt, api, cta, children }) {
           <div className="knx-paste">
             <p className="kn-title knx-pt">Paste and ship</p>
             <p className="knx-pd">Paste this into any agent. It reads the skill manifest and calls {name} from there.</p>
-            <p className="knx-api"><i>api</i>{api}</p>
+            <p className="knx-api"><i><span>api</span></i><span>{api}</span></p>
             <CodeBlock code={prompt} label="Agent prompt" className="knx-code" />
           </div>
         </div>

@@ -1,7 +1,7 @@
 'use client';
 /* Lines (page-local to /skills): components/v2/A2Lines with one change. A2Lines reads useReducedMotion() during the
    first render, so under reduced motion the server sends translateY(105%) and the client renders none: a hydration
-   mismatch (docs/requests/skills.md). Here the first render always matches the server (masked), and reduced motion
+   mismatch (docs/build-notes/requests/skills.md). Here the first render always matches the server (masked), and reduced motion
    jumps to the final lines with a 0 s transition once mounted. Same props, same A2.css classes. */
 import { useRef } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';

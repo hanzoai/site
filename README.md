@@ -1,57 +1,225 @@
 # hanzo.ai — the redesign
 
-Every page of hanzo.ai, rebuilt on Hanzo's own stack with a motion layer: **Next.js 15 (App Router) · React 19 · Motion 12 · Lenis · WebGL**.
-Hanzo's header, footer, logos, copy, numbers and links are kept as Hanzo ships them; what changes is how the site moves and how pages connect.
+Every page of hanzo.ai, redesigned on Hanzo's own stack: **Next.js 16 (static export) · React 19 · Motion 12**, with
+light and dark mode from Hanzo's own **`@hanzo/appearance`** and **`@hanzo/design`**.
 
-## What is in it
-
-| Part | State | Where |
-|---|---|---|
-| Home | **Redesigned.** Live typing product demo in 3D, model cards that open into their pages, a turning product carousel, a dock of agents, true-speed races, a cost slider, a Pareto plot with a draggable budget line, a commit calendar wave, a throwable repo rail, pricing with rolling prices | `app/page.jsx`, `components/*` |
-| 9 model pages (`/enso` … `/mori`) | **Redesigned hero + open transition**, then Hanzo's page content | `components/ModelPage.jsx` |
-| The open transition | A card's picture lifts off as a WebGL plane, bends like pulled paper while it fills the screen, and lands as the next page's hero; Close runs it back into the card at the same scroll position | `components/Opener.jsx` |
-| Every other page (892 routes from `sitemap.xml`) | **Ported**: Hanzo's server-rendered content, inside the new shell, with blocks that rise into place and in-site links that navigate without reloads | `app/[...slug]/page.jsx`, `components/Ported.jsx`, `content/pages/` |
-
-Ported pages are the floor, not the finish: each page family (models catalogue, cloud, oss, solutions, benchmarks…) gets its own redesigned template in turn, the way the home and model pages did.
+- **897 pages**: every URL in hanzo.ai's sitemap, plus the home page.
+- **Hanzo's words, numbers and links, unchanged.** The redesign changes how pages look and move, not what they say.
+  Wording and prices are Hanzo's to change (see [Prices, plans and checkout links](#prices-plans-and-checkout-links)).
+- **Light and dark** follow the visitor's saved Hanzo choice, or their device setting.
 
 ## Run it
 
+Node 20 or newer. Next.js is 16.4.5 (upgraded from 15.5.4 with the official codemod on 8 Nov; Turbopack is the default
+bundler, Cache Components stays off because the site is a static export, React stays on 19.2.8).
+
 ```bash
-npm install
-npm run build        # static export of every page into out/ (HZ_ONLY=enso,kai,/pricing builds a subset)
-npm run preview      # http://localhost:4181 — serves out/, fetches Hanzo's /public assets from hanzo.ai when missing
+npm ci
 ```
+
+```bash
+npm run dev       # http://localhost:4180, hot reload
+```
+
+```bash
+npm run build     # static export of every page into out/
+```
+
+```bash
+npm run preview   # serves out/ on http://localhost:4181
+```
+
+**`npm run build` reads live figures first.** `prebuild` runs `scripts/live.mjs`. It refreshes `content/live/_*.json`
+from api.hanzo.ai and hanzo.ai: commit calendar, research runs, model rates and plan prices. If any source fails, the
+build stops rather than ship stale numbers. To build from the saved snapshots on purpose (offline, or in CI without
+network), run:
+
+```bash
+HZ_LIVE_OFFLINE=1 npm run build
+```
+
+In dev and preview, any file this repo lacks (Hanzo's own model
+videos, `/images/…`, `/memoji/…`) is fetched from hanzo.ai, so pages look complete before `public/` is merged.
+
+## Folder map
+
+```
+app/                 one folder per route (app/pricing/page.jsx = /pricing). [slug] folders render a page family:
+                     /models/*, /cloud/*, /blog/*, /customers/*, /compare/*, /benchmarks/*, /oss/*, /agents/*,
+                     /solutions/*, /integrations/*, /legal/*, /careers/*, /blockchain/*, /products/*
+app/layout.jsx       the shell for every page: <head>, the appearance boot script, Hanzo's header and footer
+app/globals.css      site-wide tokens and base styles (light values, plus dark as references to Hanzo's tokens)
+app/system.css       shared component styles
+components/          the page code
+  pages/             one file per page or page family (Pricing.jsx, ChatPage.jsx, ModelsPage.jsx, About.jsx…)
+  home/              home page sections
+  kit.jsx, ui.jsx    the shared building blocks every page uses (buttons, links, bands, tabs, sheets, motion helpers)
+  v2/                shared motion components (odometer, line reveal, stages…)
+  Chrome.jsx         Hanzo's header, menus and footer
+  Appearance.jsx     light/dark (see below)
+content/             Hanzo's content, as captured from hanzo.ai
+  pages/             each page's captured HTML (pages.json: titles and descriptions)
+  live/              what hanzo.ai shows today, per page (text and links), plus the _*.json figure snapshots
+  jsonld/, outline/  each page's structured data and its heading outline
+content.js           home data: header, footer, logos, product screens
+lib/                 shared logic: plans.js (prices and checkout links), routes.json (every route), nav.js,
+                     liveSources.mjs (the api.hanzo.ai sources), og/ (social images)
+public/              fonts, logos, customer and author images, hanzo.css (Hanzo's own stylesheet)
+scripts/             build and checking tools (see Scripts)
+docs/                DARK-MODE.md, COPY-RULE.md, MOTION-MAP.md, and build-notes/ (the design process; not needed to run)
+```
+
+## The home page
+
+`app/page.jsx` renders `components/pages/Home.jsx` (James approved this design on 8 Nov). Every section reads in one frame
+at 1470×801: its title and its content fit on one screen. Top to bottom:
+
+| Section | Component | Notes |
+|---|---|---|
+| Hero, typing product demo | `components/Hero.jsx`, `home/HeroScenes.jsx` | The scenes' data is in `home/hero-scenes.json` |
+| Backed by / Trusted by | `Marquee` (`components/Chrome.jsx`) | Logos in `public/logos/` (white in dark, black in light) |
+| Models: the card grid, Enso to Mori | `components/Models.jsx` | The Enso feature card and eight model cards in one frame (`home/wow.css`); each film plays while on screen, a click opens the model's page |
+| Products: a 3D journey, App to Team | `components/home/Platform.jsx`, `home/journey/Journey.jsx`, `home/journey/scene.js` | Pinned; scrolling moves a camera through the nine products in dock order, each a faceted graphite slab carrying its own screen (`public/home/products/<name>-<theme>.webp`, captured from the stage); drag turns one, click opens it, the dock jumps to one. **three.js (0.186.1) loads only by dynamic import**, in its own chunk, when the section comes near; never in the first load. Phones, reduced motion and no WebGL get the dock and stage |
+| Agents, Race, Cheaper, Pareto | `components/Agents.jsx`, `Race.jsx`, `Cheaper.jsx`, `Pareto.jsx` | Figures are worked out on the server (`home/snapshot.js`) and re-read live in the browser (`home/useFigures.js`) |
+| Open source | `components/Open.jsx` | |
+| Pricing | `components/home/Pricing.jsx` | Prices and links from `lib/plans.js` |
+
+The one-frame layout, split headings and lit halftone are in `components/home/wow.css`.
+
+## Light and dark mode
+
+Hanzo's own system, exactly as live hanzo.ai runs it. Full detail: `docs/DARK-MODE.md`.
+
+- **`@hanzo/appearance`** (0.2.14). `app/layout.jsx` puts `bootScript({ base: { theme: 'system' } })` in `<head>`.
+  Before the first paint it replays the visitor's saved choice (`localStorage['hanzo.appearance.painted']`), else follows
+  the device (`prefers-color-scheme`). It sets `light t_light` or `dark t_dark` on `<html>`.
+- **`components/Appearance.jsx`** calls `useAppearance()` once at the root. It applies the choice Hanzo IAM keeps across
+  Hanzo sites, follows the device while the theme is `system`, and syncs across tabs. There is no visible switch,
+  as on live.
+- **Colours come from `@hanzo/design`** (0.5.39, `tokens/colors.css`). Dark is the default (`:root`, `:not(.light)`),
+  light is `.light`. Every dark colour in this repo is a reference to Hanzo's tokens (`var(--foreground)`,
+  `var(--muted)`…), written as `html:not(.light) …` rules beside each page's CSS. Light values are separate, so
+  changing one mode never moves the other.
+- To test: DevTools › Rendering › `prefers-color-scheme`, or Playwright `newContext({ colorScheme: 'dark' })`.
+
+## Prices, plans and checkout links
+
+**Change plan prices and checkout links in one file: `lib/plans.js`.** Every page reads them from there: home, /pricing,
+/bot, /buying-specialist, /dev, /chat, /enso, /benchmarks, /studio, /beta and /agents. The values match Hanzo's billing
+API (`content/live/_pricing.json`, from api.hanzo.ai/v1/billing/plans, 8 Nov 2026).
+
+| What | Where |
+|---|---|
+| Go, Pro, Dev, Max, Ultra monthly prices and their checkout plan ids (`go`, `pro-2x`, `dev-5x`, `max-10x`, `ultra`) | `lib/plans.js` lines 9–16 |
+| Team seats (Standard $20/$25, Premium $100/$125), Enterprise seat ($20/month, 20-seat minimum), the 20% yearly saving | `lib/plans.js` lines 20–25 |
+| Card checkout link (`/pay/confirm/card?plan=…&returnUrl=…`) | `lib/plans.js` line 30 (`checkout`); full-URL form line 32 |
+| Team checkout from /pricing; Team cart from the buying specialist (`/pay/cart?plan=team…`) | `lib/plans.js` lines 34 and 36 |
+
+These prices are **not** plan prices, so they stay where they are shown. Each one is Hanzo's copy:
+
+| What | Where |
+|---|---|
+| Per-token model rates on /pricing (API tab), and the compute, tool and web-call rates | `components/pages/Pricing.jsx` lines 403 (`RATES`), 416 (`GROUPS`), 453 (`TOOLS`) |
+| Volume & Dedicated ("from $5k/mo") | `components/pages/Pricing.jsx` line 134, `components/home/Pricing.jsx` line 124 |
+| Model rates on /models and each model page | `components/pages/models/rates.js` line 6; `content/live/_models.json` (refreshed at build) |
+| Home "cheaper" figures and Pareto plot | `components/home/figures.js`, from `content/live/_models.json` and `_research.json` |
+| /bot FAQ lines that quote prices ($100/mo floor, $800/mo, $15/mo floor) | `components/pages/Bot.jsx` lines 711, 713, 831 |
+| /enterprise offer ($999 a month) | `components/pages/Enterprise.jsx` line 634 |
+| Product pages with their own plan tables: Captable, Dataroom, Sign, Crawl, DNS, Search | `const PLANS` in `components/pages/apps/Captable.jsx` 320, `apps/Dataroom.jsx` 370, `apps/Sign.jsx` 309, `cloud/Crawl.jsx` 330, `cloud/Dns.jsx` 339, `cloud/Search.jsx` 401 |
+| Prices inside blog posts, press releases and benchmarks | each page's own data file; they are dated statements, not live prices |
+
+Other plan links, as live has them. /pricing: Free goes to `/signup`, Enterprise to `/enterprise/start`, API to `/dev`
+and `/contact-sales` (`components/pages/Pricing.jsx`, `planOf` and `cardOf`). Home pricing: Free and Team to `https://hanzo.ai/signup`, API to `https://platform.hanzo.ai`,
+Enterprise and Volume to `/pricing` (`components/home/Pricing.jsx` lines 103–125).
+
+## Hand-offs to Hanzo's real flows
+
+Nine app and checkout pages from Zack's list are designed here: `/pay`, `/pay/cart`, `/pay/confirm/card`, `/signup`,
+`/login`, `/auth/callback`, `/onboarding`, `/docs/quickstart`, `/docs/cli` (code in `components/pages/flow/`). **This
+site never collects a card number, a password or a one-time code.** Each page shows the plan, the total and one action,
+and that action hands off to Hanzo's real system. Every hand-off URL is a named constant in **one file,
+`lib/handoff.js`**. Values marked CONFIRM could not be read from live hanzo.ai when this was built (its app pages were
+unreachable, 8 Nov 2026); Hanzo's team confirms them before launch.
+
+| Constant | Value | Status |
+|---|---|---|
+| `CARD_FORM_URL` | `https://hanzo.ai/pay/confirm/card` with live's own `plan`, `returnUrl` (+ `interval`, `quantity` for Team) | CONFIRM: if this site serves hanzo.ai/pay/*, point it at the origin that renders the real card form (the app, or a Stripe-hosted link), or pay buttons come back here |
+| `IAM_ORIGIN`, `IAM_CLIENT_ID` | `https://hanzo.id`, `hanzo-ai` | from live's own docs |
+| `IAM_AUTHORIZE_URL` | `https://hanzo.id/v1/iam/oauth/authorize` | CONFIRM (live documents the token endpoint `/v1/iam/oauth/token`) |
+| `AUTH_CALLBACK_URL` | `https://hanzo.ai/auth/callback` | this site's callback page |
+| `IAM_GOOGLE` | `provider=google` | CONFIRM: the parameter that opens hanzo.id on Google |
+| `IAM_SIGNUP` | `prompt=create` (OpenID Connect's standard sign-up prompt) | CONFIRM |
+| `AUTH_COMPLETE_URL` | `null` | CONFIRM: where the callback hands the code to finish sign-in. While unset, people go straight to their next step |
+| `API_KEYS_URL`, `DOCS_*_URL`, `PLATFORM_URL` | platform.hanzo.ai/api-keys, docs.hanzo.ai | live's own links |
+
+Plan links: every id a link carries resolves to a real plan (`resolvePlan` in `lib/plans.js`): `go`, `pro-2x`,
+`dev-5x`, `max-10x`, `ultra`, `team`, `team-premium`, and plan names (`plan=pro`) too. A link with no plan, or an
+unknown one, shows a plan picker rather than a dead end. Redirects only follow paths on this site (`safeNext`) and
+return buyers only to hanzo.ai hosts (`safeReturn`). The header's Log in now opens `/login`. The app steps (/pay,
+/pay/cart, /pay/confirm/card, /auth/callback, /onboarding) are `noindex` and left out of the sitemap. Dark check for
+these pages: `PAGES=scripts/flow-pages.txt node scripts/darkcheck.mjs` (0 of 13). Screenshots: `docs/screenshots/zack-pages-3/`.
 
 ## Before it goes live on hanzo.ai
 
-1. **Copy `public/` from the current site** (model media, logos, images). Ported pages reference them by their existing paths.
-2. **App routes are not in this repo**: `/chat`, `/pay/*`, `/signup`, `/login`, dashboards, `/terms`, `/privacy`, `/products`. Links to them point at `https://hanzo.ai/...`. Keep serving them from the app (edge rewrites), or drop `output: 'export'` in `next.config.mjs` and add Next.js `rewrites()` to the app's origin.
-3. **Data is a snapshot from 7 Nov 2026** (the daily commit figures hanzo.ai shows on hover sum to 835,124, while its label says 805,254; the page keeps Hanzo's label): GitHub counts and the commit calendar, pricing tiers, benchmark figures, the Pareto plot. Connect them to their live sources (the same ones the current site uses) before launch.
-4. Ported pages are static: interactive widgets on them (calculators, live charts, forms) render as captured. Each family's redesign restores them.
+1. **Merge `public/` from the current site.** Model videos (`/models/*.webm`), `/images/models/*`, `/memoji/*` and other
+   media are referenced at their existing hanzo.ai paths and are not in this repo.
+2. **App routes are not in this repo:** `/chat` (the app) and dashboards. (`/pay/*`, `/signup`, `/login`, `/auth/callback` and `/onboarding` are designed here and hand off to Hanzo's real checkout and hanzo.id; see [Hand-offs](#hand-offs-to-hanzos-real-flows).) Links point at
+   them as they are today. Serve them from the app with edge rewrites, or drop `output: 'export'` in `next.config.mjs` and
+   add Next.js `rewrites()` to the app's origin.
+3. **Build with network** (no `HZ_LIVE_OFFLINE`), so figures and plan prices are fresh from api.hanzo.ai.
+4. **Browser reads.** The home page also re-reads model rates and research figures from api.hanzo.ai in the visitor's
+   browser (`components/home/useFigures.js`), keeping the build's snapshot if that fails. api.hanzo.ai must allow
+   hanzo.ai's origin (it does today).
 
-## Refresh the content
+## Scripts
 
-```bash
-npm run capture      # re-port every page in sitemap.xml into content/pages/ (or: python3 scripts/capture.py /cloud /oss)
-npm run extract      # re-read the home page's header, footer, logos, product screens from source/home.html
-```
+| Script | What it does |
+|---|---|
+| `node scripts/copycheck.mjs /pricing /about …` | **Compare our copy with live hanzo.ai.** Opens live hanzo.ai and our dev server (`npm run dev`, or `HZ_BASE=…`) in headless Chrome. Lists every line of live text missing from ours in `shots/copycheck/<page>.txt`. "missing 0" means every word is there. Needs Chrome (`CHROME=/path/to/chrome` on Linux). |
+| `node scripts/live.mjs` | Refresh the figure snapshots in `content/live/_*.json` (runs before every build). `--pages /x /y` re-reads those pages' live text. |
+| `npm run capture` / `npm run extract` | Re-capture pages from hanzo.ai into `content/`, and re-read the home's header, footer and logos. |
+| `HZ_BASE=http://localhost:4180 node scripts/darkcheck.mjs` | Dark-mode readability: opens every page in `scripts/copycheck-pages.txt` in dark, and flags visible text under 3:1 contrast against its background. Done means 0 pages. `CHROME=/path/to/chrome` on Linux (run as root it also needs `--no-sandbox`). |
+| `HZ_OLD=… node scripts/lightcheck.mjs /page` | Light mode unchanged: compares every element's computed colours with an older build. |
+| `node --test scripts/*.test.mjs components/**/*.test.mjs` | Unit tests. Tests that open a browser need `CHROME=…`. |
+| `python3 scripts/taste.py <files>` | Flags colours outside Hanzo's palette. |
 
-## Motion rules
+The other scripts in `scripts/` were used during the design work: filming, motion maps, parity reports.
 
-- Transform and opacity only; one easing family (`cubic-bezier(.16,1,.3,1)` for arrivals, `(.76,0,.24,1)` for the open transition); springs for anything the hand moves.
-- Nothing animates off screen: sections pause their animations while out of view.
-- `prefers-reduced-motion`: no smooth scrolling, no flight, no typing; every final state shown at once.
-- Measured on a MacBook Air (8 GB), Chrome, 1470×801: home scrolls at 52 fps with a worst frame of 68 ms; idle 55–60 fps in every section. The current hanzo.ai measures 42 fps, worst frame 283 ms, on the same machine.
+## Known differences from live
 
-## Structure
+Wording and prices follow live hanzo.ai as captured on 8 Nov 2026 (`content/live/`, last figures snapshot
+2026-11-08 03:50 UTC). Where this repo knowingly differs, it is listed here, and nothing was reworded to "fix" it:
 
-```
-app/layout.jsx          the shell: Hanzo's header and footer persist across pages; smooth scroll; the open transition
-app/page.jsx            home
-app/[...slug]/page.jsx  every other route: a model page or a ported page
-components/             home sections, Opener (WebGL), ModelPage, Ported, Chrome (header, footer, marquee, smooth scroll)
-content/pages/          ported page content, one file per route; content/pages.json holds titles and descriptions
-content.js              home data pulled from Hanzo's page (header, footer, logos, product screens, repo cards)
-public/hanzo.css        Hanzo's own stylesheet, so their markup renders exactly
-scripts/                capture.py (port every page), extract.py (home data), serve.mjs (preview)
-```
+- **Buy buttons added by design.** A few pages gained a direct way to buy, worded with Hanzo's own plan name and price
+  (from `lib/plans.js`): home ("Free to start · Go is $8/month, every model"), /chat and /enso ("Go is $8/month…"),
+  /dev ("Get Hanzo Dev, $8/month"), /benchmarks ("Use every model here, Go is $8/month"), /studio ("See plans, from
+  $8/month"), /beta ("Skip the wait, go paid"), /about (a "Try Hanzo" / "Book a call" row). Live does not show these.
+  Remove any you don't want; the rest of each page is unaffected.
+- **Commit total on the home calendar.** hanzo.ai's daily figures sum to 835,124 while its label says 805,254. This
+  site keeps Hanzo's label.
+- **Dark mode was fixed spot by spot, the Hanzo way.** `scripts/darkcheck.mjs` listed 233 unreadable spots on 47 pages
+  on 8 Nov (`docs/build-notes/dark-issues-8nov.json` has the earlier 259); each was fixed with Hanzo's token for its role,
+  in rules under `html:not(.light)` (commits titled "dark tokens: ..."). It now reports 0 of 152 pages. Light mode is
+  unchanged: 795 pages ship byte-identical CSS, and the 103 whose CSS changed show 0 computed-colour differences in
+  `scripts/lightcheck.mjs` at 1470px and 375px. The checker reads text only, so canvases and images were checked by eye
+  (the /enso particle ring was invisible in dark and now draws in `--foreground`). Pages outside
+  `scripts/copycheck-pages.txt` were not run through the checker.
+- **Copy checked against live on 8 Nov: 148 of 152 pages match word for word.** `scripts/copycheck.mjs` was run
+  against live hanzo.ai on the final build (the pages in `scripts/copycheck-pages.txt`). The lines it lists on
+  the other four pages are live demo feeds and sample content that Hanzo updates, so they rotate and are not chased:
+  - **/slack** and **/tag** (3 lines each): the demo workspace's sample channel and items, "slack - karma style
+    (karma.style) · #bug-button-darkmode", "tryon-3d-lookbook" and "karma/storefront".
+  - **/team** (5 lines): the same demo feed, plus "#hanzo-rev · rev (revenue & billing ops)" and "verified org credit
+    grants & billing lease lookup across 93 active sessions".
+  - **/integrations/anthropic-sdk** (1 line): the sample key placeholder "your-hanzo-api-key".
+
+  If live changes any other line later, run `node scripts/copycheck.mjs <page>` and restore it: copy on live always wins.
+
+## Docs
+
+- `docs/DARK-MODE.md`: how dark mode is wired, and how to convert or test a page.
+- `docs/COPY-RULE.md`: the rule this redesign follows: no wording changes, checked with `copycheck.mjs`.
+- `docs/MOTION-MAP.md` (+ `motion-map.json`): each page's one signature interaction, so no two pages move alike.
+- `docs/screenshots/`: the handoff spot-checks (home, /pricing, /chat, /models, /about; light and dark; 1470×801 and 375×812).
+- `docs/build-notes/`: the design process: per-page checklists (`coverage/`), page reviews (`review/`), requests,
+  plans and the earlier README. Not needed to run or change the site.

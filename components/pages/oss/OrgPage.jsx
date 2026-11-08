@@ -20,7 +20,7 @@
    that drags with inertia; state, the row that opens into its card, the sort pill, rows re-flowing as you filter;
    arrival, the name arriving large and settling, the lead's digits rising; scroll, the lead growing as it passes.
    Colour: none of our own (MASTER.md 3.1); organizations differ by their contour, figures and repositories.
-   V2: 8/10 v6: a light, full-width year strip as the hero object (its own face: no black card, no pinned chapters, no dark close), each figure said once with the forge's shares drawn from Hanzo's numbers, zeros in a small line, repositories as numbered rows (72px on phones), siblings named by id, a quiet close with the contour and the ask. */
+   V2: 8/10 v6: a light, full-width year strip as the hero object (its own face: no black card, no pinned chapters, no dark close), each figure said once with the forge's shares drawn from Hanzo's numbers, zeros in a small line, repositories as numbered rows (72px on phones), siblings named by id, a quiet close with the contour and the ask.; slice D: the two text links ("On Hanzo Forge", "Every organization") draw a rule and nudge their arrow on hover, one rule only */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, LayoutGroup, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import useCalm from '../../v2/useCalm';
@@ -48,6 +48,7 @@ function Clock() { return <svg viewBox="0 0 16 16" width="15" height="15" aria-h
 function Bars() { return <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M3 13V8M6.3 13V4M9.7 13V7M13 13V2.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>; }
 function Grid() { return <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z" fill="none" stroke="currentColor" strokeWidth="1.3" /></svg>; }
 function Out() { return <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M5.5 3.5h7v7M12.5 3.5 4 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>; }
+function Arrow() { return <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>; }
 const SORTS = [['listed', 'oss_sort_pushed', Clock], ['stars', 'oss_sort_stars', Star], ['commits', 'oss_sort_commits', Bars]];
 
 /* a year of commits, month by month: bars that rise once; a playhead reads them where the page wants life */
@@ -62,9 +63,12 @@ function Wave({ bars, label = 'Commits a month over the past year', className = 
 }
 
 /* "hanzoai/ui": the organization faint, the repository as the name */
+/* a repository's name: the real text is one piece ("org/repo", Hanzo's own line); the two-tone look (the org part
+   muted) is a visual-only copy laid over it, aria-hidden, so the page's text stays exactly Hanzo's */
 function Name({ name }) {
   const k = name.indexOf('/');
-  return k < 0 ? <>{name}</> : <><span className="xos-org">{name.slice(0, k + 1)}</span>{name.slice(k + 1)}</>;
+  if (k < 0) return <>{name}</>;
+  return <span className="xos-nm"><span className="xos-nm-t">{name}</span><span className="xos-nm-v" aria-hidden="true"><span className="xos-org">{name.slice(0, k + 1)}</span>{name.slice(k + 1)}</span></span>;
 }
 /* "2,107 commits this year": the figure, then Hanzo's words after it */
 function Split({ s }) {
@@ -316,7 +320,7 @@ export default function OrgPage({ doc }) {
             {doc.label && <p className="v2f-kick xos-meta-l">{doc.label}</p>}
             <div className="xos-acts">
               {gh && <Magnetic strength={0.2}><A to={gh.href} className="v2f-btn solid" data-thumb="" data-cta="oss.hero">{gh.label}<Out /></A></Magnetic>}
-              {forge && <A to={forge.href} className="x-arrow xos-link"><span>{forge.label}</span></A>}
+              {forge && <A to={forge.href} className="x-arrow xos-link"><span>{forge.label}</span><Arrow /></A>}
             </div>
           </div>
         </div>
@@ -334,7 +338,7 @@ export default function OrgPage({ doc }) {
                   {ghFigs.filter((f) => f.n > 0).map((f) => <div key={f.label}><dd className="v2f-num"><Digits value={f.value} /></dd><dt>{f.label}</dt></div>)}
                 </dl>
               )}
-              {ghFigs.some((f) => !(f.n > 0)) && <p className="xos-zero">{ghFigs.filter((f) => !(f.n > 0)).map((f) => <span key={f.label}><b>{f.value}</b> {f.label}</span>)}</p>}
+              {ghFigs.some((f) => !(f.n > 0)) && <p className="xos-zero">{ghFigs.filter((f) => !(f.n > 0)).map((f) => <span key={f.label}><b>{f.value}</b> <span>{f.label}</span></span>)}</p>}
             </div>
           </div>
         )}
@@ -356,13 +360,13 @@ export default function OrgPage({ doc }) {
                     return (
                       <div key={f.label}>
                         {k === growIx && forgeRows.length > 1 ? <FamGrow to={1.35}>{v}</FamGrow> : v}
-                        <dt>{f.label}{s && <Share part={s[0]} of={s[1]} />}</dt>
+                        <dt><span>{f.label}</span>{s && <Share part={s[0]} of={s[1]} />}</dt>
                       </div>
                     );
                   })}
                 </dl>
               )}
-              {forgeZero.length > 0 && <p className="xos-zero">{forgeZero.map((f) => <span key={f.label}><b>{f.value}</b> {f.label}</span>)}</p>}
+              {forgeZero.length > 0 && <p className="xos-zero">{forgeZero.map((f) => <span key={f.label}><b>{f.value}</b> <span>{f.label}</span></span>)}</p>}
             </div>
           </div>
         </section>
@@ -463,7 +467,7 @@ export default function OrgPage({ doc }) {
         // card title that cannot land on a differently sized headline)
         <section className="xos-near" aria-label={every ? every.label : doc.name} data-no-morph>
           <div className="v2f-wrap">
-            {every && <p className="xos-near-h"><A to={every.href} className="x-arrow"><span>{every.label}</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A></p>}
+            {every && <p className="xos-near-h"><A to={every.href} className="x-arrow"><span>{every.label}</span><Arrow /></A></p>}
             <FamNext items={near} label={every ? every.label : doc.name} />
           </div>
         </section>

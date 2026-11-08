@@ -52,3 +52,5 @@
   html.js [data-enter='slot-roll']:not([data-in]) .xbe-roll { opacity: 0; transform: translateY(28px); }
   [data-enter='slot-roll'][data-in] .xbe-roll { transition: transform .8s cubic-bezier(.16, 1, .3, 1) calc(var(--r, 0) * 110ms + .25s), opacity .5s linear calc(var(--r, 0) * 110ms + .25s); }
 }
+/* dark (docs/DARK-MODE.md): the blinds are the page's own paper, so they close in the page's dark, not white */
+@media (prefers-reduced-motion: no-preference) { html.js:not(.light) .xbe-blinds i { background: var(--bg); } }

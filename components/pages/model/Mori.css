@@ -33,7 +33,7 @@
   .mr-modes { left: 14px; right: 14px; bottom: 18px; }
   .mr-headwrap { position: static; padding-top: 36px; }
 }
-@media (prefers-reduced-motion: reduce) { .mr-cv { cursor: default; } }
+@media (prefers-reduced-motion: reduce) { .mr-cv { cursor: default; } .mr-shrink { transform: none !important; border-radius: 0 !important; } .mr-card-art { transition: none; } }
 
 /* Mori's own ask is the one solid fill while it is on screen, at every width (the header steps back to an outline
    then: Ask.jsx on desktop, usePhoneAsk in Mori.jsx on phones): white on the film, ink beside the settled cube; hover
@@ -75,7 +75,7 @@ main:has([data-hero='mori']) .cr-band-note a:active { transform: translateY(1px)
 .mr-caps-sh { display: flex; align-items: flex-end; justify-content: space-between; gap: 17px; margin: 0 0 27px; }
 .mr-caps-sh .lv-side { margin: 6px 0 0; }
 .mr-caps-nav { display: flex; align-items: center; gap: 10.5px; }
-.mr-caps-n { font: 606 13px/1 var(--mono); letter-spacing: .14em; color: #737373; min-width: 7ch; text-align: center; }
+.mr-caps-n { font: 606 13px/1 var(--mono); letter-spacing: .14em; color: #737373; min-width: 7ch; text-align: center; white-space: nowrap; }
 .mr-caps-b { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); background: #fff; color: #0a0a0a; cursor: pointer; transition: background-color .15s cubic-bezier(0, 0, .2, 1), transform .09s; }
 .mr-caps-b:disabled { color: #a3a3a3; cursor: default; }
 .mr-caps-b:not(:disabled):active { transform: scale(.97); }
@@ -103,3 +103,34 @@ main:has([data-hero='mori']) .cr-fits { padding-bottom: clamp(44px, 6vw, 72px); 
 main:has([data-hero='mori']) .cr-map { padding-top: clamp(44px, 6vw, 72px); }
 /* type floor on this page: the mono labels rest at 13px, not 12 (the model-card pills keep SPEC.md's 11px) */
 main:has([data-hero='mori']) :is(.lv-crumb, .lv-side, .cr-fit-n, .cr-fit-k, .lv-ch-rail button) { font-size: 13px; }
+
+/* Hanzo's model cards under 1100px: the flagship cell is 340/360px tall but the grid's rows are 220px, so it ran under
+   the next row (shared ModelCards.css, requested in docs/build-notes/requests/mori.md); here its row is given its own height */
+@media (max-width: 1100px) { main:has([data-hero=mori]) .mc-grid { grid-template-rows: 340px; } }
+@media (max-width: 640px) { main:has([data-hero=mori]) .mc-grid { grid-template-rows: 360px; } }
+
+/* dark (docs/DARK-MODE.md): live hanzo.ai/mori in dark, by role, in Hanzo's own tokens. The film, the viewport room and
+   the black art panes are black in both modes and stay. The white rooms take Hanzo's page background; headings its
+   foreground, body its muted foreground, mono labels its tertiary text, hairlines its border; the ink ask is Hanzo's
+   primary (light fill, dark type). Launch.css, Creative.css and ModelCards.css are shared and state light greys as fixed
+   values, so this page restates them under its own root. */
+html:not(.light) main:has([data-hero='mori']) {
+  --ac: var(--foreground); --ac-ink: var(--primary); --ac-soft: var(--x-fill); --ac-line: var(--border-control);
+  & .mc { background: var(--bg); }
+  & .lv-stage[data-hero='mori'] { background: radial-gradient(60% 70% at 50% 0%, rgb(229 229 229 / .09), transparent 70%) var(--bg); }
+  & :is(.lv-lines, .lv-h, .lv-ch-h, .cr-caps-h, .cr-fits-list h3, .mr-card h3, .lv-stats .x-stat-v, .lv-stats .x-stat-l) { color: var(--foreground); }
+  & :is(.lv-lines .lv-ln + .lv-ln, .lv-lede, .lv-p, .lv-ch-b, .lv-stats .x-stat-n, .cr-fit-x, .mr-card p, .mc-sub) { color: var(--muted-foreground); }
+  & :is(.lv-crumb, .lv-side, .cr-fit-n, .cr-fit-k, .lv-ch-rail button, .mr-caps-n) { color: var(--faint); }
+  & :is(.lv-stats, .cr-fits-list, .cr-fits-list li) { border-color: var(--border); }
+  & .lv-stats > .x-stat + .x-stat { border-color: var(--border); }
+  & .lv-crumb span + span::before { color: var(--faint); }
+  & .lv-ch-rail::before { background: var(--border); }
+  & .cr-tab[aria-selected='true'] { color: var(--primary-foreground); }
+  & .mr-caps-b { background: var(--x-raised); border-color: var(--border-control); color: var(--foreground); }
+  & .mr-caps-b:disabled { color: var(--neutral-600); }
+  & [data-cta='mori.hero'].x-btn { background: var(--primary); border-color: var(--primary); color: var(--primary-foreground); }
+}
+@media (hover: hover) {
+  html:not(.light) main:has([data-hero='mori']) .mr-caps-b:not(:disabled):hover { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); }
+  html:not(.light) main:has([data-hero='mori']) [data-cta='mori.hero'].x-btn:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+}

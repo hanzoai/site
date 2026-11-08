@@ -13,6 +13,14 @@ const clean = (s) => (s || '').replace(/\s+/g, ' ').trim();
 const txt = (n) => clean(textOf(n));
 const leaves = (n) => (isN(n) ? n.c.flatMap(leaves) : [clean(n)]).filter(Boolean);
 const kids = (n) => (isN(n) ? n.c.filter(isN) : []);
+// each service of hanzo.ai's shared example project has its own note, which its browser draws (its server copy does
+// not carry them): Hanzo's words from its shared console (live, 8 Nov)
+const ROW_NOTE = {
+  gateway: 'Every request enters here, so the limiter does too.',
+  'payments-api': 'The service the session above is changing.',
+  'checkout-web': 'A build is running from the last commit on main.',
+  'docs-site': 'Static, published by the same pipeline as the rest.',
+};
 const live = (slug) => {
   try { return JSON.parse(fs.readFileSync(path.join(ROOT, 'content', 'live', 'cloud', slug + '.json'), 'utf8')); } catch { return { text: [], links: [] }; }
 };
@@ -50,7 +58,7 @@ function product(root, slug) {
       title: title ? title.c.filter((c) => !isN(c)).map(clean).filter(Boolean) : [doc.name],
       siblings: [...inNav].map((a) => ({ label: txt(a), href: a.a.href, current: a.a['aria-current'] === 'page' })),
       // three kinds of example on hanzo.ai: a project's services, a conversation with the agent, or a CLI session
-      rows: findAll(win, slot('surface-row')).map((b) => ({ name: txt(find(b, slot('surface-name'))), state: txt(findAll(b, (n) => n.t === 'span' && n.a && n.a['data-slot'] === 'text').pop()) })),
+      rows: findAll(win, slot('surface-row')).map((b) => { const name = txt(find(b, slot('surface-name'))); return { name, state: txt(findAll(b, (n) => n.t === 'span' && n.a && n.a['data-slot'] === 'text').pop()), note: ROW_NOTE[name] || '' }; }),
       turns: findAll(win, slot('surface-turn')).map(txt),
       lines: findAll(win, slot('surface-line')).map((b) => { const [g, ...rest] = leaves(b); return { g, text: rest.join(' ') }; }),
       caption: txt(find(win, (n) => n.t === 'p')),

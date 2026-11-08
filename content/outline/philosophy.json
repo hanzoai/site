@@ -4,441 +4,560 @@
 "h1": "The Zen of Hanzo"
 },
 {
-"p": "64 patterns for intelligent systems"
+"p": "64 patterns for exploration, progress, and continuous improvement."
 },
 {
-"p": "The I Ching is a map of change. Its 64 hexagrams describe recurring conditions: creation, resistance, conflict, growth, decay, transformation, completion and renewal."
+"p": "The I Ching describes change through 64 hexagrams—patterns of emergence, discovery, resistance, cooperation, transformation, and renewal. At Hanzo, we use these patterns as inspiration for building intelligent systems and advancing research. Science progresses by asking questions, challenging assumptions, testing ideas, learning from failure, and discovering what becomes possible next. Intelligence grows through that same process. Eight categories. Sixty-four perspectives. Infinite possibilities for discovery."
 },
 {
-"a": "Explore the 64 patterns",
-"href": "#patterns"
+"a": "Explore the patterns",
+"href": "#explore"
 },
 {
-"a": "Build with Hanzo",
-"href": "https://cloud.hanzo.ai"
+"p": "These are modern Hanzo interpretations inspired by the I Ching, not claims about the text’s historical or scientific meaning. The eight categories are Hanzo’s own editorial grouping of the hexagrams in King Wen order."
+},
+{
+"button": "All"
+},
+{
+"button": "Explore"
+},
+{
+"button": "Form"
+},
+{
+"button": "Observe"
+},
+{
+"button": "Experiment"
+},
+{
+"button": "Adapt"
+},
+{
+"button": "Optimize"
+},
+{
+"button": "Transform"
+},
+{
+"button": "Evolve"
+},
+{
+"button": "01"
+},
+{
+"button": "02"
+},
+{
+"button": "03"
+},
+{
+"button": "04"
+},
+{
+"button": "05"
+},
+{
+"button": "06"
+},
+{
+"button": "07"
+},
+{
+"button": "08"
+},
+{
+"button": "09"
+},
+{
+"button": "10"
+},
+{
+"button": "11"
+},
+{
+"button": "12"
+},
+{
+"button": "13"
+},
+{
+"button": "14"
+},
+{
+"button": "15"
+},
+{
+"button": "16"
+},
+{
+"button": "17"
+},
+{
+"button": "18"
+},
+{
+"button": "19"
+},
+{
+"button": "20"
+},
+{
+"button": "21"
+},
+{
+"button": "22"
+},
+{
+"button": "23"
+},
+{
+"button": "24"
+},
+{
+"button": "25"
+},
+{
+"button": "26"
+},
+{
+"button": "27"
+},
+{
+"button": "28"
+},
+{
+"button": "29"
+},
+{
+"button": "30"
+},
+{
+"button": "31"
+},
+{
+"button": "32"
+},
+{
+"button": "33"
+},
+{
+"button": "34"
+},
+{
+"button": "35"
+},
+{
+"button": "36"
+},
+{
+"button": "37"
+},
+{
+"button": "38"
+},
+{
+"button": "39"
+},
+{
+"button": "40"
+},
+{
+"button": "41"
+},
+{
+"button": "42"
+},
+{
+"button": "43"
+},
+{
+"button": "44"
+},
+{
+"button": "45"
+},
+{
+"button": "46"
+},
+{
+"button": "47"
+},
+{
+"button": "48"
+},
+{
+"button": "49"
+},
+{
+"button": "50"
+},
+{
+"button": "51"
+},
+{
+"button": "52"
+},
+{
+"button": "53"
+},
+{
+"button": "54"
+},
+{
+"button": "55"
+},
+{
+"button": "56"
+},
+{
+"button": "57"
+},
+{
+"button": "58"
+},
+{
+"button": "59"
+},
+{
+"button": "60"
+},
+{
+"button": "61"
+},
+{
+"button": "62"
+},
+{
+"button": "63"
+},
+{
+"button": "64"
+},
+{
+"p": "The Creative — Origination"
+},
+{
+"p": "Inventor · Generate new possibilities. Imagine what does not yet exist, then seek a way to test it."
 }
 ],
 [
 {
-"p": "The premise"
+"h2": "I — Explore"
 },
 {
-"h2": "Intelligence is always changing"
+"p": "01–08 · Curiosity, possibility, and the beginning of discovery"
 },
 {
-"p": "No intelligent system remains fixed."
+"p": "Every breakthrough begins with a question. Exploration requires imagination, openness, uncertainty, and the willingness to venture beyond what is already understood."
 },
 {
-"p": "Models learn. Data changes. Infrastructure fails. Organizations grow. Interfaces become dependencies. Successful architectures eventually meet conditions they were never designed to handle."
+"li": "01 The Creative — Origination Inventor · Generate new possibilities. Imagine what does not yet exist, then seek a way to test it. See applications"
 },
 {
-"p": "The goal is not to prevent change. The goal is to build systems capable of changing without losing their integrity."
+"li": "02 The Receptive — Observation Empiricist · Receive evidence without forcing it to fit existing expectations. See applications"
 },
 {
-"p": "That is the Zen of Hanzo."
+"li": "03 Difficulty at the Beginning — Emergence Pioneer · Begin productive work amid uncertainty. Establish the first usable foundations. See applications"
+},
+{
+"li": "04 Youthful Folly — Inquiry Learner · Recognize what is unknown. Ask questions before assuming answers. See applications"
+},
+{
+"li": "05 Waiting — Preparation Strategist · Gather evidence, establish readiness, and recognize when conditions support action. See applications"
+},
+{
+"li": "06 Conflict — Critical Debate Skeptic · Investigate competing explanations. Use disagreement to reveal hidden assumptions. See applications"
+},
+{
+"li": "07 The Army — Coordination Research Lead · Organize people, agents, knowledge, and resources around a shared objective. See applications"
+},
+{
+"li": "08 Holding Together — Collaboration Collaborator · Connect complementary capabilities and align participants around common evidence. See applications"
 }
 ],
 [
 {
-"p": "The synthesis"
+"h2": "II — Form"
 },
 {
-"h2": "Five operating laws"
+"p": "09–16 · Structure, methodology, and collective capability"
 },
 {
-"li": "01 See the system clearly Understand the current condition before prescribing action."
+"p": "Ideas become useful when they acquire structure. Formation transforms possibilities into methods, systems, experiments, and coordinated research programs."
 },
 {
-"li": "02 Separate what changes independently Do not bind together concepts that evolve for different reasons."
+"li": "09 Small Taming — Incremental Progress Iterative Builder · Make small, measurable improvements before attempting larger changes. See applications"
 },
 {
-"li": "03 Compose capability from complete primitives Small components should combine without central coordination or hidden behavior."
+"li": "10 Treading — Methodological Care Methodologist · Proceed with discipline, understand the risks, and respect experimental boundaries. See applications"
 },
 {
-"li": "04 Preserve the user's authority The user should control their models, data, keys, infrastructure and economic participation."
+"li": "11 Peace — Alignment Systems Architect · Align objectives, methods, resources, and interfaces so progress can flow. See applications"
 },
 {
-"li": "05 Design for the next transformation Every completed system is already approaching its next condition."
+"li": "12 Standstill — Reassessment Diagnostician · Recognize stagnation. Identify what prevents learning or execution. See applications"
+},
+{
+"li": "13 Fellowship — Open Cooperation Community Builder · Advance knowledge through shared methods, open inquiry, and collaboration. See applications"
+},
+{
+"li": "14 Great Possession — Stewardship Research Steward · Manage abundant knowledge, compute, talent, and resources responsibly. See applications"
+},
+{
+"li": "15 Modesty — Intellectual Humility Calibrator · Distinguish confidence from certainty. Remain willing to revise conclusions. See applications"
+},
+{
+"li": "16 Enthusiasm — Mobilization Program Director · Convert promising ideas into coordinated initiatives with clear goals. See applications"
 }
 ],
 [
 {
-"p": "The 64 patterns"
+"h2": "III — Observe"
 },
 {
-"h2": "Every hexagram is active"
+"p": "17–24 · Evidence, measurement, understanding, and correction"
 },
 {
-"p": "Each represents a condition that can appear in a model, an application, a company, a network or an entire technological ecosystem. The classical title names the condition. The Hanzo principle defines how we respond."
+"p": "Progress depends on the ability to see reality clearly. Observation connects hypotheses to evidence and makes errors visible before they become embedded in systems."
 },
 {
-"button": "Sequence"
+"li": "17 Following — Responsiveness Adaptive Researcher · Follow reliable evidence when it leads somewhere unexpected. See applications"
 },
 {
-"button": "Matrix"
+"li": "18 Work on the Decayed — Correction Research Maintainer · Identify outdated assumptions, faulty methods, and accumulated technical debt. See applications"
 },
 {
-"button": "Lenses"
+"li": "19 Approach — Accessibility Knowledge Translator · Make complex systems, tools, and findings understandable and usable. See applications"
 },
 {
-"p": "All sixty-four, in the traditional King Wen order."
+"li": "20 Contemplation — Observability Scientific Observer · Study behavior carefully before attempting to change it. See applications"
 },
 {
-"h3": "Origination"
+"li": "21 Biting Through — Rigorous Testing Verifier · Confront inconsistencies directly. Resolve questions with explicit tests and evidence. See applications"
 },
 {
-"p": "Heaven over Heaven"
+"li": "22 Grace — Representation Scientific Communicator · Make discoveries legible through clear models, figures, interfaces, and explanations. See applications"
 },
 {
-"p": "Earth over Earth"
+"li": "23 Splitting Apart — Decomposition Analyst · Break complex problems into components that can be independently examined. See applications"
 },
 {
-"p": "Water over Thunder"
-},
-{
-"p": "Mountain over Water"
-},
-{
-"p": "Water over Heaven"
-},
-{
-"p": "Heaven over Water"
-},
-{
-"p": "Earth over Water"
-},
-{
-"p": "Water over Earth"
-},
-{
-"h3": "Formation"
-},
-{
-"p": "Wind over Heaven"
-},
-{
-"p": "Heaven over Lake"
-},
-{
-"p": "Earth over Heaven"
-},
-{
-"p": "Heaven over Earth"
-},
-{
-"p": "Heaven over Fire"
-},
-{
-"p": "Fire over Heaven"
-},
-{
-"p": "Earth over Mountain"
-},
-{
-"p": "Thunder over Earth"
-},
-{
-"h3": "Correction"
-},
-{
-"p": "Lake over Thunder"
-},
-{
-"p": "Mountain over Wind"
-},
-{
-"p": "Earth over Lake"
-},
-{
-"p": "Wind over Earth"
-},
-{
-"p": "Fire over Thunder"
-},
-{
-"p": "Mountain over Fire"
-},
-{
-"p": "Mountain over Earth"
-},
-{
-"p": "Earth over Thunder"
-},
-{
-"h3": "Power"
-},
-{
-"p": "Heaven over Thunder"
-},
-{
-"p": "Mountain over Heaven"
-},
-{
-"p": "Mountain over Thunder"
-},
-{
-"p": "Lake over Wind"
-},
-{
-"p": "Water over Water"
-},
-{
-"p": "Fire over Fire"
-},
-{
-"p": "Lake over Mountain"
-},
-{
-"p": "Thunder over Wind"
-},
-{
-"h3": "Adaptation"
-},
-{
-"p": "Heaven over Mountain"
-},
-{
-"p": "Thunder over Heaven"
-},
-{
-"p": "Fire over Earth"
-},
-{
-"p": "Earth over Fire"
-},
-{
-"p": "Wind over Fire"
-},
-{
-"p": "Fire over Lake"
-},
-{
-"p": "Water over Mountain"
-},
-{
-"p": "Thunder over Water"
-},
-{
-"h3": "Transformation"
-},
-{
-"p": "Mountain over Lake"
-},
-{
-"p": "Wind over Thunder"
-},
-{
-"p": "Lake over Heaven"
-},
-{
-"p": "Heaven over Wind"
-},
-{
-"p": "Lake over Earth"
-},
-{
-"p": "Earth over Wind"
-},
-{
-"p": "Lake over Water"
-},
-{
-"p": "Water over Wind"
-},
-{
-"h3": "Renewal"
-},
-{
-"p": "Lake over Fire"
-},
-{
-"p": "Fire over Wind"
-},
-{
-"p": "Thunder over Thunder"
-},
-{
-"p": "Mountain over Mountain"
-},
-{
-"p": "Wind over Mountain"
-},
-{
-"p": "Thunder over Lake"
-},
-{
-"p": "Thunder over Fire"
-},
-{
-"p": "Fire over Mountain"
-},
-{
-"h3": "Continuity"
-},
-{
-"p": "Wind over Wind"
-},
-{
-"p": "Lake over Lake"
-},
-{
-"p": "Wind over Water"
-},
-{
-"p": "Water over Lake"
-},
-{
-"p": "Wind over Lake"
-},
-{
-"p": "Thunder over Mountain"
-},
-{
-"p": "Water over Fire"
-},
-{
-"p": "Fire over Water"
+"li": "24 Return — Reproducibility Replication Scientist · Return to reference conditions, repeat experiments, and establish reliable baselines. See applications"
 }
 ],
 [
 {
-"p": "The method"
+"h2": "IV — Experiment"
 },
 {
-"h2": "How we build"
+"p": "25–32 · Testing, computation, uncertainty, and endurance"
 },
 {
-"h3": "Observe"
+"p": "Experiments transform possibilities into evidence. Robust research requires trustworthy inputs, controlled execution, transparent measurements, and resilience when reality differs from prediction."
 },
 {
-"p": "Identify the actual condition of the system."
+"li": "25 Innocence — Unbiased Investigation Experimental Designer · Test hypotheses without manipulating the conditions to favor an expected outcome. See applications"
 },
 {
-"h3": "Separate"
+"li": "26 Great Taming — Accumulated Capability Infrastructure Builder · Develop the instruments, models, datasets, and computational capacity needed for difficult investigations. See applications"
 },
 {
-"p": "Untangle concerns that change for different reasons."
+"li": "27 Nourishment — Input Quality Data Curator · Recognize that the reliability of results depends on the quality of evidence, data, and inputs. See applications"
 },
 {
-"h3": "Reduce"
+"li": "28 Great Exceeding — Stress Testing Reliability Engineer · Explore extreme conditions and discover where existing methods fail. See applications"
 },
 {
-"p": "Find the smallest complete set of concepts."
+"li": "29 The Abyss — Resilience Failure Researcher · Investigate uncertainty, repeated failures, and adverse conditions without losing the research record. See applications"
 },
 {
-"h3": "Compose"
+"li": "30 Clinging Fire — Transparency Measurement Scientist · Illuminate internal behavior through instrumentation, diagnostics, and interpretable measurements. See applications"
 },
 {
-"p": "Combine orthogonal primitives into greater capability."
+"li": "31 Influence — Interaction Systems Scientist · Investigate relationships, feedback, dependencies, and possible causal mechanisms. See applications"
 },
 {
-"h3": "Verify"
-},
-{
-"p": "Measure behavior instead of trusting intention."
-},
-{
-"h3": "Adapt"
-},
-{
-"p": "Respond to evidence without abandoning the foundation."
-},
-{
-"h3": "Distribute"
-},
-{
-"p": "Place data, computation and authority where they belong."
-},
-{
-"h3": "Continue"
-},
-{
-"p": "Treat every completion as the beginning of another cycle."
+"li": "32 Duration — Longitudinal Validity Longitudinal Researcher · Test whether findings remain reliable across time, environments, and changing conditions. See applications"
 }
 ],
 [
 {
-"p": "Across the stack"
+"h2": "V — Adapt"
 },
 {
-"h2": "One philosophy"
+"p": "33–40 · Constraints, resistance, changing conditions, and new directions"
 },
 {
-"a": "Hanzo Models Open and adaptable intelligence across language, vision, audio, code, tools and physical systems.",
-"href": "/models"
+"p": "Research rarely proceeds exactly as planned. Adaptation is the ability to recognize limitations, reconsider assumptions, and change direction without losing what has already been learned."
 },
 {
-"a": "Hanzo Platform One control plane, assembled from services you can take apart.",
-"href": "/platform"
+"li": "33 Retreat — Strategic Withdrawal Research Strategist · Stop unproductive investigations when evidence no longer justifies their cost. See applications"
 },
 {
-"a": "Hanzo Engine Efficient execution built around measurable performance, hardware awareness and composable runtimes.",
-"href": "/engine"
+"li": "34 Great Power — Controlled Capability Safety Engineer · Apply powerful tools with appropriate limits, safeguards, and oversight. See applications"
 },
 {
-"a": "Hanzo Router Model choice treated as a changing systems problem—balancing capability, latency, cost, privacy and availability.",
-"href": "/gateway"
+"li": "35 Progress — Measured Advancement Performance Researcher · Establish whether a new method represents a genuine improvement over its baseline. See applications"
 },
 {
-"a": "Hanzo Network Distributed intelligence designed to reduce centralized dependence and share value with those who contribute compute, models, code and knowledge.",
-"href": "/network"
+"li": "36 Darkening of the Light — Protected Knowledge Research Security Steward · Protect sensitive discoveries, research participants, confidential data, and intellectual property. See applications"
 },
 {
-"a": "Hanzo Open Source Infrastructure that can be inspected, operated, modified and carried forward by the people who depend upon it.",
-"href": "/open-source"
+"li": "37 The Family — Local Responsibility Team Architect · Establish clear ownership, trusted collaboration, and accountable research groups. See applications"
+},
+{
+"li": "38 Opposition — Diverse Perspectives Contrarian Researcher · Explore alternative models, contradictory observations, and competing theories. See applications"
+},
+{
+"li": "39 Obstruction — Constraint Discovery Bottleneck Investigator · Identify the physical, computational, organizational, or methodological limitation preventing progress. See applications"
+},
+{
+"li": "40 Deliverance — Unblocking Problem Solver · Remove unnecessary constraints and restore the ability to investigate and experiment. See applications"
 }
 ],
 [
 {
-"h2": "Build systems that can change"
+"h2": "VI — Optimize"
 },
 {
-"p": "The purpose of a philosophy is not to decorate a company. It is to make difficult decisions clearer."
+"p": "41–48 · Efficiency, leverage, experimental value, and shared foundations"
 },
 {
-"p": "When we design a model, an API, an agent, a database or a network, we return to the same questions:"
+"p": "Research resources are finite. Optimization seeks better results through intelligent allocation of time, compute, energy, capital, instruments, and human attention."
 },
 {
-"li": "Is it understandable?"
+"li": "41 Decrease — Simplification Minimalist · Remove unnecessary complexity while preserving essential scientific capability. See applications"
 },
 {
-"li": "Is it composable?"
+"li": "42 Increase — Leverage Optimization Scientist · Identify improvements that amplify productivity across many experiments or systems. See applications"
 },
 {
-"li": "Is it verifiable?"
+"li": "43 Breakthrough — Evidence-Based Decision Decision Scientist · Make consequential choices when evidence satisfies defined criteria. See applications"
 },
 {
-"li": "Can it operate privately?"
+"li": "44 Coming to Meet — Opportunity Assessment Technology Scout · Evaluate unexpected discoveries, emerging methods, and external innovations before integrating them. See applications"
 },
 {
-"li": "Can the user leave?"
+"li": "45 Gathering Together — Knowledge Integration Knowledge Engineer · Bring complementary datasets, tools, expertise, and discoveries into a coherent research system. See applications"
 },
 {
-"li": "Can it survive failure?"
+"li": "46 Pushing Upward — Scalable Progress Scaling Researcher · Extend validated methods to larger problems without losing correctness or efficiency. See applications"
 },
 {
-"li": "Can it evolve without being destroyed?"
+"li": "47 Oppression — Resource Constraints Resource Optimizer · Continue useful investigation under limited compute, funding, time, or experimental capacity. See applications"
 },
 {
-"li": "Does it increase human agency?"
+"li": "48 The Well — Shared Infrastructure Platform Engineer · Build reusable scientific foundations that support many researchers and disciplines. See applications"
+}
+],
+[
+{
+"h2": "VII — Transform"
 },
 {
-"p": "The Zen of Hanzo is not a promise that systems will remain still. It is a method for building systems that remain whole while everything changes."
+"p": "49–56 · New methods, synthesis, deployment, and transformation"
 },
 {
-"p": "From one line, two forces. From two forces, eight patterns. From eight patterns, sixty-four conditions. From small primitives, unbounded intelligence."
+"p": "Discovery changes what is possible. Transformation converts established knowledge into new architectures, research methods, technologies, and practical capabilities."
 },
 {
-"a": "Explore Hanzo",
-"href": "/"
+"li": "49 Revolution — Paradigm Change Scientific Revolutionary · Replace an established approach when stronger evidence supports a fundamentally better alternative. See applications"
+},
+{
+"li": "50 The Cauldron — Synthesis Interdisciplinary Inventor · Combine methods and insights from different disciplines to create new capabilities. See applications"
+},
+{
+"li": "51 Thunder — Discovery Response Rapid Investigator · Respond constructively to unexpected findings, anomalies, or sudden changes. See applications"
+},
+{
+"li": "52 Keeping Still — Deliberate Restraint Research Guardian · Pause when additional investigation, independent review, or stronger controls are required. See applications"
+},
+{
+"li": "53 Development — Cumulative Discovery Long-Horizon Researcher · Build understanding through successive refinements and validated milestones. See applications"
+},
+{
+"li": "54 The Marrying Maiden — Integration Risk Integration Scientist · Examine compatibility, hidden dependencies, and unintended consequences when combining systems. See applications"
+},
+{
+"li": "55 Abundance — Signal Selection Scientific Synthesist · Extract meaningful findings from abundant observations, experiments, and possibilities. See applications"
+},
+{
+"li": "56 The Wanderer — Portability Transfer Scientist · Move methods and knowledge between laboratories, disciplines, hardware, and organizations. See applications"
+}
+],
+[
+{
+"h2": "VIII — Evolve"
+},
+{
+"p": "57–64 · Dissemination, verification, maturity, and continuous becoming"
+},
+{
+"p": "Every result changes the conditions for future research. Evolution turns discoveries into shared knowledge, mature capabilities, and new questions."
+},
+{
+"li": "57 The Gentle Wind — Composability Scientific Toolsmith · Spread useful capabilities through reusable, interoperable methods and components. See applications"
+},
+{
+"li": "58 The Joyous Lake — Knowledge Exchange Scientific Collaborator · Advance understanding through reciprocal learning, constructive criticism, and open dialogue. See applications"
+},
+{
+"li": "59 Dispersion — Distributed Discovery Research Network Architect · Enable independent researchers and institutions to contribute to a larger body of knowledge. See applications"
+},
+{
+"li": "60 Limitation — Productive Constraints Constraint Designer · Use explicit limits and standards to make research safer, clearer, and more reproducible. See applications"
+},
+{
+"li": "61 Inner Truth — Verifiability Evidence Auditor · Ground claims in traceable observations, documented methods, and reproducible analysis. See applications"
+},
+{
+"li": "62 Small Exceeding — Precision Precision Engineer · Refine small details whose effects can determine scientific or engineering success. See applications"
+},
+{
+"li": "63 After Completion — Operational Maturity Release Steward · Preserve reliability through validation, monitoring, maintenance, and disciplined change. See applications"
+},
+{
+"li": "64 Before Completion — Continuous Becoming Lifelong Explorer · Recognize that every answer creates new questions and every achievement opens new possibilities. See applications"
+}
+],
+[
+{
+"h2": "Intelligence is never finished."
+},
+{
+"p": "A model can become more capable. An experiment can reveal a better question. A failed hypothesis can redirect an entire research program. A discovery in one discipline can transform another."
+},
+{
+"p": "Progress is not a straight line, and intelligence is not a fixed destination."
+},
+{
+"p": "These 64 patterns provide different perspectives for recognizing the condition of a problem and choosing how to proceed."
+},
+{
+"p": "The same principles can inform the development of an AI model, a scientific experiment, a research laboratory, an organization, or an evolving technological ecosystem."
+},
+{
+"p": "Explore. Form. Observe. Experiment. Adapt. Optimize. Transform. Evolve."
+},
+{
+"p": "And begin again."
+},
+{
+"p": "The Zen of Hanzo."
+},
+{
+"a": "Explore Hanzo Science",
+"href": "/science"
 },
 {
 "a": "Read the research",
 "href": "https://papers.hanzo.ai"
 },
 {
-"a": "View the source",
-"href": "https://github.com/hanzoai"
+"a": "Build with Hanzo",
+"href": "https://cloud.hanzo.ai"
 }
 ]
 ]

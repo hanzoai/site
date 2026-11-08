@@ -10,6 +10,7 @@ export default function Compare({ tree, labelledBy, go }) {
   const box = useRef(null);
   const [x, setX] = useState(50);
   const [held, setHeld] = useState(false);
+  const [used, setUsed] = useState(false); // until the visitor takes the handle, a ring breathes from it
   const mine = useRef(false);
   const drag = useRef(false);
   const flat = tree.flatMap(([, list]) => list.map(([, cmd]) => cmd));
@@ -43,7 +44,7 @@ export default function Compare({ tree, labelledBy, go }) {
   const down = (e) => {
     // a mouse may grab anywhere; a finger only by the handle, so a vertical scroll over the panel never moves the divider
     if (e.pointerType !== 'mouse' && !e.target.closest?.('.cli-cmp-h')) return;
-    mine.current = true; drag.current = true; setHeld(true);
+    mine.current = true; setUsed(true); drag.current = true; setHeld(true);
     e.currentTarget.setPointerCapture?.(e.pointerId);
     at(e.clientX);
   };
@@ -51,13 +52,13 @@ export default function Compare({ tree, labelledBy, go }) {
   const up = () => { drag.current = false; setHeld(false); };
   const key = (e) => {
     const step = { ArrowLeft: -5, ArrowDown: -5, ArrowRight: 5, ArrowUp: 5 }[e.key];
-    if (step) { e.preventDefault(); mine.current = true; setX((v) => Math.max(4, Math.min(96, v + step))); }
-    else if (e.key === 'Home') { e.preventDefault(); mine.current = true; setX(4); }
-    else if (e.key === 'End') { e.preventDefault(); mine.current = true; setX(96); }
+    if (step) { e.preventDefault(); mine.current = true; setUsed(true); setX((v) => Math.max(4, Math.min(96, v + step))); }
+    else if (e.key === 'Home') { e.preventDefault(); mine.current = true; setUsed(true); setX(4); }
+    else if (e.key === 'End') { e.preventDefault(); mine.current = true; setUsed(true); setX(96); }
   };
 
   return (
-    <div className={'cli-cmp' + (held ? ' held' : '')} ref={box} style={{ '--x': x + '%' }}
+    <div className={'cli-cmp' + (held ? ' held' : '') + (used ? ' used' : '')} ref={box} style={{ '--x': x + '%' }}
       onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up}>
       <div className="cli-cmp-a" aria-hidden="true">
         <span className="cli-cmp-k x-mono">a pile of flags</span>

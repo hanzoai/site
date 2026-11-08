@@ -3,7 +3,7 @@
    window its demo lives in (studio.hanzo.ai / <model>), the three spec rows, and the live glyph each model's lists
    wear (a tiny loop in that model's medium). Each model arranges them its own way. */
 import { A } from '../../kit';
-import { C } from './creative';
+import { C } from './creativeData';
 
 export function CHead({ slug, dark, split, className = '' }) {
   const d = C[slug];
@@ -34,7 +34,7 @@ export function Studio({ slug, children, specs, engine, className = '' }) {
   return (
     <figure className={'cr-studio ' + className}>
       <div className="mb-panel">
-        <div className="mb-bar"><i /><i /><i /><b>studio.hanzo.ai / <span>{C[slug].code}</span></b><em>{slug}</em><em>example</em></div>
+        <div className="mb-bar"><i /><i /><i /><b><span style={{ color: 'inherit' }}>studio.hanzo.ai /</span> <span>{C[slug].code}</span></b><em>{slug}</em><em>example</em></div>
         {children}
         {engine && <p className="cr-engine mb-mono">{engine}</p>}
         {specs && <Specs rows={specs} />}

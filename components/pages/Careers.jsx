@@ -10,7 +10,7 @@
    Metric: cta_click careers.* leading to a role page.
    Signature: the open roles are a deck of sheets. Scroll and each role rises over the last while the stack behind it
    settles back; click a sheet and it grows to fill the screen in its own white, its title and numeral flying onto the
-   role page's h1 and numeral (synchronized.studio; the site Morph times out, docs/requests/careers.md).
+   role page's h1 and numeral (synchronized.studio; the site Morph times out, docs/build-notes/requests/careers.md).
    Supporting (3): masked kinetic headline, once, from first paint (CSS); the How-we-hire card sliding its steps by
    itself; the perk tile crossfading its Sigil field and numeral to the perk you point at or tap. A Utility page (MASTER
    4.5): the deck is its one delight, entries 0.4s.
@@ -117,7 +117,7 @@ function Marked({ text, know }) {
 /* One role, one sheet. It sticks a little lower than the one before, and settles back as later sheets cover it. */
 /* The sheet opens into its page: the whole sheet grows to fill the screen in its own white, carrying its title and
    numeral, which then land on the role page's h1 and numeral (careers/door.js). The site Morph is skipped here
-   (data-no-morph): it times out today (docs/requests/careers.md). */
+   (data-no-morph): it times out today (docs/build-notes/requests/careers.md). */
 const open = (e, to, router, el) => openSheet(e, hrefOf(to), router, el || e.currentTarget.closest('.xcb-sheet-in'));
 
 function Sheet({ r, i, n, know, progress, on }) {

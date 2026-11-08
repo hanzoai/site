@@ -66,15 +66,15 @@ function useWalk(n, box, ms) {
    already used twice (or was just used) takes the next of Hanzo's nine model films. */
 const FILMS = ['kai', 'enso', 'iro', 'koe', 'koma', 'mori', 'oto', 'uta', 'zen'];
 function spread(list) {
-  // all nine films once before any repeats (a tile keeps its own film when it is still free), then the same again:
-  // a repeat is nine tiles later, never in the same or the next row
-  const used = new Set();
-  return list.map((f0) => {
-    if (used.size === FILMS.length) used.clear();
+  // the first nine tiles use all nine films once (a tile keeps its own film when it is still free); after that the
+  // order repeats, so a repeat is exactly nine tiles later, never in the same or the next row
+  const used = new Set(), out = [];
+  list.forEach((f0, i) => {
+    if (i >= FILMS.length) { out.push(out[i - FILMS.length]); return; }
     const f = f0 && !used.has(f0) ? f0 : FILMS.find((x) => !used.has(x));
-    used.add(f);
-    return f;
+    used.add(f); out.push(f);
   });
+  return out;
 }
 
 function Tile({ it, d, w, k, n }) {
@@ -121,11 +121,14 @@ export default function SolutionsIndex({ doc, data }) {
   const box = useRef(null);
   const r = useWalk(all.length, box, 3800);
   const cur = all[r.at] || all[0];
-  const film = (data[cur.slug] || {}).film || doc.film;
   const [group, setGroup] = useState(null);
   const shown = all.filter((it) => !group || it.group === group);
-  // each solution keeps one picture wherever it appears (the filter never swaps it): assigned once, in the wall's order
+  // each solution keeps one picture wherever it appears (the reel, the wall, the filter, the page it opens into):
+  // assigned once, in the wall's order
   const filmOf = useMemo(() => { const f = spread(all.map((it) => (data[it.slug] || {}).film)); return Object.fromEntries(all.map((it, i) => [it.href, f[i]])); }, [all.length]); // eslint-disable-line react-hooks/exhaustive-deps
+  const film = filmOf[cur.href] || (data[cur.slug] || {}).film || doc.film;
+  // the reserved room takes the film seen longest ago on the wall above it, never one of the last rows
+  const resFilm = useMemo(() => { const f = all.map((it) => filmOf[it.href]); const last = (x) => f.lastIndexOf(x); return [...FILMS].sort((a, b) => last(a) - last(b))[0]; }, [filmOf]); // eslint-disable-line react-hooks/exhaustive-deps
   const words = doc.title.split(' ');
   const lines = [words.slice(0, 2).join(' '), words.slice(2, 4).join(' '), words.slice(4).join(' ')];
   const [ask, other] = doc.actions;
@@ -202,8 +205,8 @@ export default function SolutionsIndex({ doc, data }) {
       {doc.reserved && (
         <section className="xso-res" data-room="dark" data-ask-hide aria-labelledby="xso-res-h">
           <span className="xso-res-film" aria-hidden="true">
-            <Img src={media((data.reserved || {}).film || 'enso', 'webp')} alt="" w={1200} h={1500} />
-            <Film src={media((data.reserved || {}).film || 'enso', 'webm')} w={1200} h={1500} />
+            <Img src={media(resFilm, 'webp')} alt="" w={1200} h={1500} />
+            <Film src={media(resFilm, 'webm')} w={1200} h={1500} />
           </span>
           <span className="xso-res-scrim" aria-hidden="true" />
           <div className="vc-grid xso-res-g">

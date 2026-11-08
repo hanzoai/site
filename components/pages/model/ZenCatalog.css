@@ -1,13 +1,13 @@
 /* Zen catalog (zc-). Deck values only (MASTER 3.1): monochrome, sizes 12/13/14/16/17/21/26/44/52/64/112, weights
    400/497/606 (220 for the largest figures), radii 24 tiles · 20 art cards · 6 chips · full buttons, container 1152,
    13 columns split 5/8, section padding clamp(72px, 11vw, 188px), motion 90/150/300/400/500 ms on ease-emphasis.
-   The Zen5 cards copy docs/refs/hanzo-model-cards/SPEC.md. */
+   The Zen5 cards copy docs/build-notes/refs/hanzo-model-cards/SPEC.md. */
 .zc {
-  --ink: #0a0a0a; --mute: #525252; --quiet: #737373; --line: rgba(0, 0, 0, .1); --tint: #f2f2f2; --track: #d4d4d4;
+  --mute: light-dark(#525252, var(--muted-foreground)); --quiet: light-dark(#737373, var(--text-tertiary)); --line: var(--x-e10); --tint: light-dark(#f2f2f2, var(--muted)); --track: light-dark(#d4d4d4, var(--secondary)); /* --ink is the page's (#0a0a0a in light, Hanzo's foreground in dark) */
   --graphite: #171717; --on-black: #fafafa; --on-black-2: rgba(255, 255, 255, .78); --on-black-3: rgba(255, 255, 255, .55);
   --e: cubic-bezier(.16, 1, .3, 1); --eo: cubic-bezier(0, 0, .2, 1); --eio: cubic-bezier(.4, 0, .2, 1);
   --pad: clamp(72px, 11vw, 188px); --gut: clamp(16px, 4vw, 32px);
-  background: #fff; color: var(--ink);
+  background: var(--bg); color: var(--ink);
 }
 .zc-wrap { width: min(100% - 2 * var(--gut), 1152px); margin-inline: auto; }
 .zc-sec { padding: var(--pad) 0; }
@@ -58,10 +58,10 @@ html:not(.js) .zc-hold { display: none; }
 .zc-quick-t { grid-column: 1 / span 5; }
 .zc-picks { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 27px; }
 .zc-picks .zc-mono { margin-right: 6px; }
-.zc-picks button { min-height: 44px; padding: 0 16px; border-radius: 6px; border: 1px solid var(--line); background: #fff; color: var(--mute); font: 500 14px var(--mono); cursor: pointer; transition: background .15s var(--eo), color .15s var(--eo), border-color .15s var(--eo), transform .09s var(--eo); }
-@media (hover: hover) { .zc-picks button:hover { background: #f5f5f5; color: var(--ink); } }
+.zc-picks button { min-height: 44px; padding: 0 16px; border-radius: 6px; border: 1px solid var(--line); background: var(--x-raised); color: var(--mute); font: 500 14px var(--mono); cursor: pointer; transition: background .15s var(--eo), color .15s var(--eo), border-color .15s var(--eo), transform .09s var(--eo); }
+@media (hover: hover) { .zc-picks button:hover { background: light-dark(#f5f5f5, var(--muted)); color: var(--ink); } }
 .zc-picks button:active { transform: scale(.97); }
-.zc-picks button[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: #fff; }
+.zc-picks button[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: light-dark(#fff, var(--primary-foreground)); }
 .zc-term { grid-column: 6 / -1; margin: 0; min-width: 0; border-radius: 24px; background: var(--graphite); color: var(--on-black-2); overflow: hidden; }
 .zc-term-bar { display: flex; align-items: center; gap: 10px; height: 56px; padding: 0 10px 0 21px; border-bottom: 1px solid rgba(255, 255, 255, .1); font: 500 13px var(--mono); color: var(--on-black-3); }
 .zc-term-bar b { font-weight: 500; color: var(--on-black); }
@@ -69,6 +69,7 @@ html:not(.js) .zc-hold { display: none; }
 .zc-term-copy .x-copy { background: transparent; border-color: rgba(255, 255, 255, .14); color: var(--on-black); }
 .zc-term-copy .x-copy-t { font-size: 13px; }
 .zc-code { margin: 0; padding: 27px; overflow-x: auto; font: 400 14px/1.75 var(--mono); color: var(--on-black-2); }
+.zc-cm { color: var(--on-black-3); }
 .zc-slot { color: var(--on-black); background: rgba(255, 255, 255, .14); border-radius: 4px; padding: 1px 3px; }
 .zc-slot i { display: inline-block; width: 2px; height: 1.1em; margin-left: 1px; vertical-align: -3px; background: var(--on-black); animation: zc-blink 1s steps(2, jump-none) infinite; }
 @keyframes zc-blink { 50% { opacity: 0; } }
@@ -99,7 +100,7 @@ html:not(.js) .zc-hold { display: none; }
 .zc-fa { position: absolute; inset: 0; }
 .zc-fa i { display: block; }
 /* 18 models: 18 marks, the five Zen5 in ink; a wave of light runs through them */
-.zc-fa-18 { display: grid; grid-template-columns: repeat(18, minmax(0, 1fr)); justify-items: center; }
+.zc-fa-18 { display: grid; grid-template-columns: repeat(19, minmax(0, 1fr)); justify-items: center; }
 .zc-fa-18 i { width: 6px; height: 100%; border-radius: 3px; background: var(--track); transform-origin: 50% 100%; animation: zc-wave 3.6s var(--eio) calc(var(--k) * .12s + .6s) infinite; }
 .zc-fa-18 i[data-z] { background: var(--ink); }
 @keyframes zc-wave { 0%, 60%, 100% { opacity: 1; } 30% { opacity: .35; } }
@@ -143,11 +144,11 @@ html:not(.js) .zc-hold { display: none; }
 
 /* 4. the shelf: the SPEC model cards, then the per-token sheet */
 .zc-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 17px; margin: 44px 0 0; }
-.zc-seg { display: inline-flex; gap: 2px; padding: 4px; border-radius: 999px; background: #f5f5f5; max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.zc-seg { display: inline-flex; gap: 2px; padding: 4px; border-radius: 999px; background: light-dark(#f5f5f5, var(--muted)); max-width: 100%; overflow-x: auto; scrollbar-width: none; }
 .zc-seg::-webkit-scrollbar { display: none; }
 .zc-seg button { position: relative; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: var(--mute); font: 500 14px var(--sans); white-space: nowrap; cursor: pointer; transition: color .15s var(--eo), transform .09s var(--eo); }
 /* hover previews where the gliding ink will land: an #ededed pill grows in under the label */
-.zc-seg button::before { content: ''; position: absolute; inset: 0; border-radius: inherit; background: #ededed; opacity: 0; transform: scale(.86); transition: opacity .15s var(--eo), transform .3s var(--e); pointer-events: none; }
+.zc-seg button::before { content: ''; position: absolute; inset: 0; border-radius: inherit; background: light-dark(#ededed, var(--secondary)); opacity: 0; transform: scale(.86); transition: opacity .15s var(--eo), transform .3s var(--e); pointer-events: none; }
 @media (hover: hover) {
   .zc-seg button:hover:not(:disabled):not([aria-pressed='true']) { color: var(--ink); }
   .zc-seg button:hover:not(:disabled):not([aria-pressed='true'])::before { opacity: 1; transform: none; }
@@ -157,7 +158,7 @@ html:not(.js) .zc-hold { display: none; }
 .zc-seg button > span, .zc-seg button > small { position: relative; z-index: 1; }
 .zc-seg button small { font: 500 13px var(--mono); color: var(--mute); font-variant-numeric: tabular-nums; }
 .zc-seg button[data-t] > span { font: 500 12px var(--mono); letter-spacing: .14em; text-transform: uppercase; }
-.zc-seg button[aria-pressed='true'], .zc-seg button[aria-pressed='true'] small { color: #fff; }
+.zc-seg button[aria-pressed='true'], .zc-seg button[aria-pressed='true'] small { color: light-dark(#fff, var(--primary-foreground)); }
 .zc-vh { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .zc-ink { position: absolute; inset: 0; border-radius: 999px; background: var(--ink); }
 
@@ -171,7 +172,7 @@ html:not(.js) .zc-hold { display: none; }
 .zc-grid[data-n='2'] .zc-cell:not([data-big]) { grid-column: span 4; grid-row: span 2; }
 .zc-grid[data-n='3'] .zc-cell:not([data-big]) { grid-column: span 4; }
 .zc-mc { position: relative; display: block; height: 100%; border-radius: 20px; background: #000; color: #fff; text-decoration: none; overflow: hidden; cursor: pointer; transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
-.zc-mc:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; box-shadow: 0 0 0 5px #fff; }
+.zc-mc:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; box-shadow: 0 0 0 5px var(--bg); }
 .zc-mc-art { position: absolute; inset: 0; width: 100%; height: 100%; color: rgba(255, 255, 255, .3); }
 /* Hanzo's Zen media, never filtered or dimmed: the film fades in over its still (600 ms, the SPEC crossfade) */
 .zc-mc-media { display: block; z-index: 0; overflow: hidden; }
@@ -206,7 +207,7 @@ html:not(.js) .zc-hold { display: none; }
 .zc-k-tot { background: var(--track); } .zc-k-act { background: var(--ink); } .zc-k-ctx { background: var(--quiet); }
 .zc-rows { margin: 0; padding: 0; list-style: none; }
 .zc-li { position: relative; border-bottom: 1px solid var(--line); }
-.zc-li::before { content: ''; position: absolute; inset: 0; background: #f5f5f5; clip-path: inset(0 100% 0 0); transition: clip-path .5s var(--e); pointer-events: none; z-index: -1; }
+.zc-li::before { content: ''; position: absolute; inset: 0; background: light-dark(#f5f5f5, var(--muted)); clip-path: inset(0 100% 0 0); transition: clip-path .5s var(--e); pointer-events: none; z-index: -1; }
 @media (hover: hover) and (pointer: fine) { .zc-li:hover::before { clip-path: inset(0 0 0 0); } }
 .zc-rows { position: relative; z-index: 0; }
 .zc-row-n { font-size: 17px; font-weight: 497; }
@@ -222,15 +223,15 @@ html:not(.js) .zc-hold { display: none; }
 .zc-ctx { background: var(--quiet); }
 /* a hovered row lights its bars: the track, total and context step up one grey (opacity overlays) */
 .zc-bar::before, .zc-tot::after, .zc-ctx::after { content: ''; position: absolute; inset: 0; border-radius: inherit; opacity: 0; transition: opacity .3s var(--eo); }
-.zc-bar::before { background: #e4e4e7; }
-.zc-tot::after { background: #a3a3a3; }
+.zc-bar::before { background: light-dark(#e4e4e7, var(--secondary)); }
+.zc-tot::after { background: light-dark(#a3a3a3, var(--muted-foreground)); }
 .zc-ctx::after { background: var(--ink); }
 @media (hover: hover) and (pointer: fine) { .zc-li:hover .zc-bar::before, .zc-li:hover .zc-tot::after, .zc-li:hover .zc-ctx::after { opacity: 1; } }
-.zc-row-x { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; transition: background .15s var(--eo), color .15s var(--eo), transform .09s var(--eo); }
+.zc-row-x { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: var(--x-raised); color: var(--ink); cursor: pointer; transition: background .15s var(--eo), color .15s var(--eo), transform .09s var(--eo); }
 .zc-row-x svg { transition: transform .3s var(--e); }
 .zc-row-x:active { transform: scale(.97); }
-@media (hover: hover) { .zc-row-x:hover { background: #f5f5f5; } }
-.zc-row-x[aria-expanded='true'] { background: var(--ink); border-color: var(--ink); color: #fff; }
+@media (hover: hover) { .zc-row-x:hover { background: light-dark(#f5f5f5, var(--muted)); } }
+.zc-row-x[aria-expanded='true'] { background: var(--ink); border-color: var(--ink); color: light-dark(#fff, var(--primary-foreground)); }
 .zc-row-x[aria-expanded='true'] svg { transform: rotate(45deg); }
 .zc-row-more p { margin: 0; padding: 0 0 27px; max-width: 68ch; font-size: 16px; line-height: 1.6; color: var(--mute); }
 .js .zc-li:not([data-open]) .zc-row-more { display: none; }
@@ -312,3 +313,33 @@ html:not(.js) .zc-hold { display: none; }
   .zc-end-rule span, .zc-seg button::before { animation: none; transition: none; }
   .zc-fa i, .zc-fa i::after, .zc-fa-head, .zc-mc-film, .zc-frame .x-arrow[href="#zen5"] svg { animation: none; transition: none; }
 }
+/* the chosen pick still answers the pointer (its ink lifts a step), and the lede's link thickens */
+@media (hover: hover) {
+  .zc-picks button[aria-pressed='true']:hover { background: light-dark(#262626, var(--primary)); border-color: light-dark(#262626, var(--primary)); color: light-dark(#fff, var(--primary-foreground)); }
+  .zc-lede a:hover { text-decoration-thickness: 2px; }
+}
+/* phone: the sheet is a long column of rows, so a hairline draws across each row in turn (one at a time, 7.5 s round)
+   and the screen is never still; the rows themselves do not move */
+@media (max-width: 899px) and (prefers-reduced-motion: no-preference) {
+  .zc-rows > li { position: relative; }
+  .zc-rows > li::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: var(--ink); transform: scaleX(0); transform-origin: 0 50%; pointer-events: none; animation: zc-line 7.5s var(--e) infinite; }
+  .zc-rows > li:nth-child(2)::after { animation-delay: 1.5s; }
+  .zc-rows > li:nth-child(3)::after { animation-delay: 3s; }
+  .zc-rows > li:nth-child(4)::after { animation-delay: 4.5s; }
+  .zc-rows > li:nth-child(5)::after { animation-delay: 6s; }
+}
+@keyframes zc-line { 0% { transform: scaleX(0); opacity: 1; } 16% { transform: scaleX(1); opacity: 1; } 22%, 100% { transform: scaleX(1); opacity: 0; } }
+
+/* Hanzo's dark hero texture, as measured from live hanzo.ai dark (lead's recipe, 8 Nov): 7px dot grid at ~36% foreground,
+   densest at the left/right edges and toward the bottom, plus live's top glow. Dark only, so bright is untouched. */
+html:not(.light) .zc-stage { position: relative; isolation: isolate; }
+html:not(.light) .zc-stage::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(circle, color-mix(in srgb, var(--foreground) 36%, transparent) 1.5px, transparent 2.1px) 0 0 / 7px 7px;
+  -webkit-mask-image: linear-gradient(90deg, #000, rgba(0, 0, 0, .15) 32%, rgba(0, 0, 0, .15) 64%, #000), linear-gradient(180deg, rgba(0, 0, 0, .25), #000 85%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, #000, rgba(0, 0, 0, .15) 32%, rgba(0, 0, 0, .15) 64%, #000), linear-gradient(180deg, rgba(0, 0, 0, .25), #000 85%);
+  mask-composite: intersect; }
+html:not(.light) .zc-stage::after { content: ''; position: absolute; inset: 0 0 auto; height: 640px; z-index: -1; pointer-events: none;
+  background: radial-gradient(60% 70% at 50% 0%, color-mix(in srgb, var(--foreground) 9%, transparent), transparent 70%); }
+/* dark: the pressed segment carries its own ink fill (same colour as the sliding ink behind it) */
+html:not(.light) .zc-seg button[aria-pressed='true'] { background: var(--ink); }

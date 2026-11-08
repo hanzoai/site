@@ -20,12 +20,12 @@
 //   answer built from Hanzo's own lines.
 // Every word and link is Hanzo's; the field and the stream are drawn, not measured, and show no numbers.
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView } from 'motion/react';
-import { A } from '../../kit';
+import { motion, useInView, useScroll, useTransform, useMotionTemplate, useReducedMotion } from 'motion/react';
+import { useWide } from '../../v2/KeynoteChapters';
+import { A, Film } from '../../kit';
 import { useCalm } from '../../ui';
 import KeynoteStage, { useStagePause } from './SafeStage';
 import KeynoteOpen from '../../v2/KeynoteOpen';
-import KeynoteRoom from '../../v2/KeynoteRoom';
 import KeynoteClose from '../../v2/KeynoteClose';
 import KeynoteLines from '../../v2/KeynoteLines';
 import './Edge.css';
@@ -41,7 +41,8 @@ const PauseIcon = ({ on }) => on
   : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /><rect x="9.4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /></svg>;
 
 /* ---------- the hero: a server on localhost, streaming token by token with the network off ---------- */
-const W = [38, 64, 22, 50, 30, 72, 44, 26, 58, 34, 66, 40, 24, 52, 46, 30];
+// the stream is Hanzo's own words, one token per server-sent event
+const TOKENS = 'There is no request, so there is nothing to be slow. Nothing is uploaded'.split(' ');
 function Local() {
   const ref = useRef(null);
   const seen = useInView(ref, { amount: 0.25 });
@@ -71,8 +72,8 @@ function Local() {
         <div className="eg-sse" aria-hidden="true">
           <p className="eg-sse-k"><span>Token by token</span><b>SSE</b></p>
           <div className="eg-sse-l" key={round}>
-            {W.map((w, i) => (
-              <p key={i} className="eg-ev" style={{ '--i': i }}><span>data:</span><i style={{ width: w + '%' }} /></p>
+            {TOKENS.map((w, i) => (
+              <p key={i} className="eg-ev" style={{ '--i': i }}><span>data:</span><b>{w}</b></p>
             ))}
           </div>
           <p className="eg-sse-f">Weights on disk, tokens out of local memory.</p>
@@ -93,7 +94,7 @@ const KINDS = [['macOS', 'Apple Silicon and Intel'], ['Linux', 'x86 and ARM'], [
 const rnd = (i) => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
 
 function useField(canvas, wrap) {
-  const st = useRef({ pts: [], w: 0, h: 0, dpr: 1, rings: [], t0: 0, mode: 0, last: 0 });
+  const st = useRef({ pts: [], w: 0, h: 0, dpr: 1, rings: [], t0: 0, mode: 0, last: 0, ink: '10, 10, 10', inkAt: 0 });
   useEffect(() => {
     const el = wrap.current, cv = canvas.current;
     if (!el || !cv) return;
@@ -120,10 +121,16 @@ function useField(canvas, wrap) {
       pts.forEach((p) => { p.f /= far; });
       s.pts = pts;
     };
+    // the ink comes from CSS (.eg-cv canvas { color: var(--ink) }), so the field is dark dots on white and light dots on
+    // Hanzo's dark; it is re-read when <html>'s theme class changes
+    const ink = () => { const m = getComputedStyle(cv).color.match(/[\d.]+/g); st.current.ink = m ? m.slice(0, 3).join(', ') : '10, 10, 10'; st.current.inkAt = performance.now(); };
+    ink();
     build();
     const ro = new ResizeObserver(build);
     ro.observe(el);
-    return () => ro.disconnect();
+    const mo = new MutationObserver(ink);
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => { ro.disconnect(); mo.disconnect(); };
   }, [canvas, wrap]);
   return st;
 }
@@ -145,7 +152,7 @@ function draw(s, cv, t, mode, calm) {
       const at = 0.3 + p.f * 2.2;
       const q = Math.min(1, Math.max(0, (e - at) / 0.6));
       if (q > 0 && q < 1) {
-        c.strokeStyle = `rgba(10, 10, 10, ${0.4 * (1 - q)})`;
+        c.strokeStyle = `rgba(${s.ink}, ${0.4 * (1 - q)})`;
         c.beginPath(); c.moveTo(sx, sy); c.lineTo(sx + (p.x - sx) * q, sy + (p.y - sy) * q); c.stroke();
       }
       if (q >= 1) p.lit = 1;
@@ -161,22 +168,27 @@ function draw(s, cv, t, mode, calm) {
     s.rings = s.rings.filter((r) => t - r.b < 1.8);
     for (const r of s.rings) {
       const a = (t - r.b) / 1.8;
-      c.strokeStyle = `rgba(10, 10, 10, ${0.8 * (1 - a) * (1 - a)})`;
+      c.strokeStyle = `rgba(${s.ink}, ${0.8 * (1 - a) * (1 - a)})`;
       c.lineWidth = 1.5;
       c.beginPath(); c.arc(r.p.x, r.p.y, 3 + (1 - (1 - a) * (1 - a)) * 22, 0, Math.PI * 2); c.stroke();
       r.p.lit = Math.max(r.p.lit, 1 - a);
     }
   }
+  const fore = calm ? -1 : s.kind ?? 0; // the kind in front while "Where it runs" shows
+  const small = w < 600;
   for (const p of pts) {
-    const tx = mode === 0 ? p.gx : p.hx, ty = mode === 0 ? p.gy : p.hy;
+    const big = mode === 0 && p.k === fore;
+    const cx = w * (0.2 + p.k * 0.3), cy = h * (small ? 0.34 : 0.5);
+    const tx = mode === 0 ? (big ? cx + (p.gx - cx) * 1.3 : p.gx) : p.hx, ty = mode === 0 ? (big ? cy + (p.gy - cy) * 1.3 : p.gy) : p.hy;
     const k = calm ? 1 : 0.075;
     p.x += (tx - p.x) * k; p.y += (ty - p.y) * k;
     if (mode === 1 && calm) p.lit = rnd(p.hx) > 0.8 ? 1 : 0;
     if (mode !== 2 && mode !== 1) p.lit = 0;
     if (mode === 1 && !calm) p.lit *= 0.985;
     const lit = p.lit;
-    c.fillStyle = `rgba(10, 10, 10, ${0.24 + lit * 0.76})`;
-    c.beginPath(); c.arc(p.x, p.y, mode === 0 ? 2.6 : 2.2 + lit * 1.6, 0, Math.PI * 2); c.fill();
+    const back = mode === 0 && fore >= 0 && !big;
+    c.fillStyle = `rgba(${s.ink}, ${big ? 0.9 : back ? (small ? 0.1 : 0.18) : 0.24 + lit * 0.76})`;
+    c.beginPath(); c.arc(p.x, p.y, mode === 0 ? (big ? 3.4 : 2.2) : 2.2 + lit * 1.6, 0, Math.PI * 2); c.fill();
   }
 }
 
@@ -193,6 +205,16 @@ function Field() {
   const s = useField(canvas, wrap);
   const mode = useRef(0);
   mode.current = at;
+  // "Where it runs": one kind at a time comes forward (its machines gather wider and darken, its label inks)
+  const [kind, setKind] = useState(0);
+  s.current.kind = kind;
+  useEffect(() => {
+    if (at !== 0) return;
+    setKind(0);
+    if (!live) return;
+    const t = setInterval(() => setKind((k) => (k + 1) % 3), 2200);
+    return () => clearInterval(t);
+  }, [at, live]);
   // the next fact every 6.8 s while seen, not paused and not chosen by hand
   useEffect(() => {
     if (!live || mine) return;
@@ -210,8 +232,11 @@ function Field() {
   // reduced motion: each fact's final frame, drawn once
   useEffect(() => {
     if (!calm || !canvas.current) return;
-    const id = setTimeout(() => canvas.current && draw(s.current, canvas.current, performance.now() / 1000, at, true), 60);
-    return () => clearTimeout(id);
+    const paint = () => canvas.current && draw(s.current, canvas.current, performance.now() / 1000, at, true);
+    const id = setTimeout(paint, 60);
+    const mo = new MutationObserver(() => setTimeout(paint, 30));
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => { clearTimeout(id); mo.disconnect(); };
   }, [calm, at, s]);
   return (
     <section className="eg-field" ref={ref} aria-labelledby="eg-field-h" data-paused={hold ? '' : undefined} data-mine={mine ? '' : undefined}>
@@ -221,13 +246,19 @@ function Field() {
         <p className="eg-said" aria-live="polite"><span key={at}>{SAID[at]}</span></p>
       </div>
       <div className="eg-band" data-mode={at} aria-hidden="true">
-        {KINDS.map(([k, d], i) => <p key={k} className="eg-kind" style={{ left: 20 + i * 30 + '%' }}><b>{k}</b><span>{d}</span></p>)}
+        {KINDS.map(([k, d], i) => <p key={k} className={'eg-kind' + (kind === i ? ' on' : '')} style={{ left: 20 + i * 30 + '%' }}><b>{k}</b><span>{d}</span></p>)}
         <p className="eg-repo"><b>Hugging Face repo</b></p>
       </div>
       <div className="eg-cv" ref={wrap} aria-hidden="true">
         <canvas ref={canvas} />
       </div>
-      <div className="kn-wrap kn-grid eg-facts" role="group" aria-label="Where it runs">
+      <div className="kn-wrap kn-grid eg-facts">
+        {/* Hanzo's own picture for these three facts: the Oto film, as on hanzo.ai/edge */}
+        <div className="eg-film" aria-hidden="true">
+          <Film src="/models/oto.webm" poster="/models/oto.webp" w={1200} h={1500} />
+          <span className="eg-film-n kn-fig">{pad(at + 1)} / 03</span>
+        </div>
+        <div className="eg-fact-l" role="group" aria-label="Where it runs">
         {FACTS.map(([t, d], i) => (
           <button key={t} type="button" aria-pressed={at === i} onClick={() => { setAt(i); setMine(true); }} className="eg-fact">
             <span className="eg-fact-bar" aria-hidden="true"><i key={at === i ? 'on' + at : 'off'} /></span>
@@ -236,6 +267,7 @@ function Field() {
             <span className="eg-fact-n kn-fig">{pad(i + 1)} / 03</span>
           </button>
         ))}
+        </div>
       </div>
     </section>
   );
@@ -256,7 +288,7 @@ function Art({ i }) {
   if (i === 1) return <div className="eg-art a1">{['Q4_K', 'Q5_K', 'Q8_0'].map((q, k) => <p key={q} style={{ '--w': 0.5 + k * 0.25 }}><b>{q}</b><i /></p>)}<em>Q4_K_M · about 2.5GB</em></div>;
   if (i === 2) return <div className="eg-art a2">{[['Metal', 'Apple Silicon'], ['CUDA', 'NVIDIA'], ['AVX2', 'AVX-512']].map(([a, b], k) => <p key={a} className={k === 0 ? 'on' : ''}><b>{a}</b><span>{b}</span></p>)}</div>;
   if (i === 3) return <div className="eg-art a3"><p><b className="kn-fig">600M</b><span>zen3-nano</span></p><p><b className="kn-fig">4B</b><span>zen-eco</span></p></div>;
-  if (i === 4) return <div className="eg-art a4">{[54, 30, 72, 40, 62].map((w, k) => <p key={k} style={{ '--d': k * 0.35 + 's' }}><span>data:</span><i style={{ width: w + '%' }} /></p>)}</div>;
+  if (i === 4) return <div className="eg-art a4">{['so a UI', 'starts drawing', 'before', 'generation', 'finishes'].map((w, k) => <p key={k} style={{ '--d': k * 0.35 + 's' }}><span>data:</span><b>{w}</b></p>)}</div>;
   return <div className="eg-art a5"><div><p>prompt</p><p>output</p></div><span><Off /></span></div>;
 }
 
@@ -336,25 +368,70 @@ const WHEN = [
   ['Small hardware', 'ARM64 Linux is a production target. Cortex-A class boards are experimental, and the 600M model is the one that fits them.', ['A 600M model on a single-board computer', 'An ARM server doing batch work on its own', 'Kiosks and appliances with no account to sign in to']],
 ];
 
-function When() {
+/* The dark room opens out of a rounded window as it scrolls in (as the kit's KeynoteRoom does), but hydration-safe:
+   the server and the first render agree, and reduced motion drops the clip only after mount. */
+function Room({ children, className = '' }) {
+  const ref = useRef(null);
+  const reduce = useReducedMotion();
+  const wide = useWide();
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start end', 'start 15%'] });
+  const v = useTransform(p, [0, 1], [wide ? 6 : 2, 0], { clamp: true });
+  const h = useTransform(p, [0, 1], [wide ? 7 : 3, 0], { clamp: true });
+  const r = useTransform(p, [0, 1], [24, 0], { clamp: true });
+  const clip = useMotionTemplate`inset(${v}% ${h}% ${v}% ${h}% round ${r}px)`;
   return (
-    <KeynoteRoom className="kn-sec eg-when">
+    <section ref={ref} className={'knr ' + className} data-room="dark" style={{ position: 'relative', color: '#fafafa', isolation: 'isolate' }}>
+      <motion.div aria-hidden="true" style={{ position: 'absolute', inset: 0, background: '#171717', zIndex: -1, clipPath: ready && reduce ? 'none' : clip }} />
+      {children}
+    </section>
+  );
+}
+
+/* the dark room: Hanzo's four cases, every word readable as a list. Beside them (wide screens) the room's one object:
+   a localhost window with the network off, streaming the uses of the case you are reading (the one nearest the middle
+   of the screen, or the one you point at). */
+function When() {
+  const [at, setAt] = useState(0);
+  const items = useRef([]);
+  const calm = useCalm();
+  useEffect(() => {
+    const els = items.current.filter(Boolean);
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(+e.target.dataset.i); }), { rootMargin: '-45% 0px -45% 0px' });
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+  return (
+    <Room className="kn-sec eg-when">
       <div className="kn-wrap">
         <div className="kn-grid eg-when-h">
           <KeynoteLines className="kn-headline eg-when-t" lines="When to reach for it" />
           <p className="kn-lede eg-when-l">Use Edge when the data cannot leave, the network cannot be relied on, or a per-call bill is the wrong shape. Use Hanzo Engine when you need full precision or many users at once.</p>
         </div>
-        <ol className="eg-cases">
-          {WHEN.map(([t, d, pts], i) => (
-            <li key={t} className="eg-case kn-grid">
-              <span className="eg-case-n kn-fig" aria-hidden="true">{pad(i + 1)}</span>
-              <div className="eg-case-t"><h3 className="eg-case-h">{t}</h3><p>{d}</p></div>
-              <ul>{pts.map((p) => <li key={p}>{p}</li>)}</ul>
-            </li>
-          ))}
-        </ol>
+        <div className="kn-grid eg-cases">
+          <div className="eg-mini-wrap" aria-hidden="true">
+            <div className="eg-mini">
+              <div className="eg-mini-bar"><span className="eg-dots"><i /><i /><i /></span><span className="eg-host">localhost</span><span className="eg-net"><Off /></span></div>
+              <p className="eg-mini-k kn-fig">{pad(at + 1)} / 04</p>
+              <ul key={calm ? 'c' : at}>{WHEN[at][2].map((p, k) => <li key={p} style={{ '--k': k }}><span>data:</span><span>{p}</span></li>)}</ul>
+            </div>
+          </div>
+          <ol className="eg-list">
+            {WHEN.map(([t, d, pts], i) => (
+              <li key={t} ref={(el) => { items.current[i] = el; }} data-i={i} className={'eg-case' + (at === i ? ' on' : '')} onPointerEnter={() => setAt(i)}>
+                <span className="eg-case-n kn-fig" aria-hidden="true">{pad(i + 1)}</span>
+                <div className="eg-case-t">
+                  <h3 className="eg-case-h">{t}</h3>
+                  <p>{d}</p>
+                  <ul>{pts.map((p) => <li key={p}><span>{p}</span></li>)}</ul>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
       </div>
-    </KeynoteRoom>
+    </Room>
   );
 }
 
@@ -389,7 +466,7 @@ export default function Edge() {
         lede="Run a model on the machine in front of you."
         acts={[['View on GitHub', 'https://github.com/hanzoai/edge'], ['View Documentation', 'https://docs.hanzo.ai']]}
         meta={<span>Apache-2.0 · Rust · WebAssembly</span>}
-        from={1.12}
+        from={1.04}
         cta="edge.hero"
       >
         <Local />

@@ -15,7 +15,7 @@ import { Magnetic } from '../../../ui';
 import ModelFilm from '../../../v2/ModelFilm';
 import ModelCards from '../ModelCards';
 import { film } from '../../../v2/Launch';
-import { C } from '../creative';
+import { C } from '../creativeData';
 import './motion.css';
 
 const d = C.uta;
@@ -43,23 +43,41 @@ export function Scrub() {
     if (!s || !v || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     v.preload = 'auto';
     v.src = film('uta', 'webm');
-    let raf = 0, last = -1, idx = 0;
+    let raf = 0, last = -1, idx = 0, idle = 0, drift = 0, seen = false, p0 = 0, off = 0, tt = 0;
     const read = () => { const r = s.getBoundingClientRect(); const run = r.height - innerHeight; return run > 0 ? Math.min(1, Math.max(0, -r.top / run)) : 0; };
-    const tick = () => {
-      raf = 0;
-      const p = read(), D = v.duration || 6, t = p * (D - 0.04);
+    // the film at a point p (0..1) of its run: seek it, and the counter, bar and capability being read follow it
+    const show = (p) => {
+      const D = v.duration || 6, t = p * (D - 0.04);
       if (v.readyState >= 1 && Math.abs(t - last) > 0.016) { v.currentTime = t; last = t; }
       if (bar.current) bar.current.style.transform = `scaleX(${p.toFixed(4)})`;
       if (num.current) num.current.textContent = String(Math.round(p * 179) + 1).padStart(3, '0');
+    };
+    const tick = () => {
+      raf = 0;
+      const p = read();
+      off = 0; show(p); p0 = p;
       const i = Math.min(3, Math.floor(p * 4));
       if (i !== idx) { idx = i; setAt(i); }
+      // at rest the film keeps playing inside the capability being read: a slow loop through its quarter of the
+      // film, so the pinned screen is never still; the next scroll takes the film back to where the scroll is
+      cancelAnimationFrame(drift); drift = 0; clearTimeout(idle);
+      idle = setTimeout(() => { if (seen && !document.hidden) { tt = performance.now(); drift = requestAnimationFrame(roll); } }, 700);
+    };
+    const roll = (now) => {
+      const dt = Math.min(0.05, (now - tt) / 1000); tt = now;
+      const lo = idx / 4, span = 0.25;
+      off = (off + dt * 0.035) % span; // a quarter of the film in about 7 s
+      show(lo + ((p0 - lo + off) % span + span) % span);
+      drift = requestAnimationFrame(roll);
     };
     const go = () => { if (!raf) raf = requestAnimationFrame(tick); };
+    const io = new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen) go(); else { cancelAnimationFrame(drift); drift = 0; clearTimeout(idle); } }, { threshold: 0.2 });
+    io.observe(box.current);
     addEventListener('scroll', go, { passive: true });
     addEventListener('resize', go);
     v.addEventListener('loadedmetadata', go);
     go();
-    return () => { cancelAnimationFrame(raf); removeEventListener('scroll', go); removeEventListener('resize', go); v.removeEventListener('loadedmetadata', go); };
+    return () => { cancelAnimationFrame(raf); cancelAnimationFrame(drift); clearTimeout(idle); io.disconnect(); removeEventListener('scroll', go); removeEventListener('resize', go); v.removeEventListener('loadedmetadata', go); };
   }, []);
   // drag across the film to scrub it: a full width of drag is the whole film
   const drag = (e) => {
@@ -186,6 +204,8 @@ export function Close() {
   const on = useIn(ref, '0px 0px -20% 0px');
   return (
     <section className="x-band ut-band" ref={ref} data-room="dark" data-in={on ? '' : undefined} aria-label="Uta">
+      {/* the band's object: Uta's four stems, faint behind the words, rising and falling like a mix at rest */}
+      <span className="ut-band-stems" aria-hidden="true">{[0, 1, 2, 3].map((i) => <i key={i} style={{ '--i': i }} />)}</span>
       <div className="x-wrap">
         <h2 className="ut-sp" style={{ '--i': 0 }}>Try Uta on your own work</h2>
         <p className="ut-sp" style={{ '--i': 1 }}>Samples of Uta&apos;s own output publish only after blind review, so the pictures here are illustrations. A studio can apply now to test it in its own pipeline.</p>

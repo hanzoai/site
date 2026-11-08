@@ -1,7 +1,7 @@
 'use client';
 /* The page kit: parts every rebuilt page draws on. Each page still composes its own layout and its own signature
    moment; these are the shared grammar (section heads, questions, rolling numbers, ticks, the closing band).
-   HOW TO USE (states and styles live in app/system.css; full list in docs/review/SYSTEM.md):
+   HOW TO USE (states and styles live in app/system.css; full list in docs/build-notes/review/SYSTEM.md):
    - Links and asks: <A to>, <Go to solid>, <More to>, <Band title action to />.
    - <Tabs id="plans" tabs={['Personal','Team','API']} value={i} onChange={setI} /> + <TabPanel id="plans" i={0} value={i}>:
      a gliding pill, arrow keys / Home / End, every panel stays in the HTML.

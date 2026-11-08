@@ -16,35 +16,47 @@ import { A, Cta } from '../../kit';
 import Sigil from '../../Sigil';
 import { FilmPause, usePaused } from '../../v2/ModelFilm';
 import SpecCard from '../../v2/SpecCard';
-import { Field, CopyStatus, useCatalog, rateFrom, money, missing } from './parts';
+import HeroDither from '../HeroDither';
+import { Field, CopyStatus, useCatalog, rateFrom, money } from './parts';
 import './models.css';
 
 const up = (d) => ({ initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
+const FILM = /^\/models\/hanzo\/(enso|kai|koma|zen|iro|oto|koe|uta|mori)\/?$/;
 const SORTS = [['shelf', 'As listed'], ['ctx', 'Context window'], ['rate', 'Output rate']];
 
 export default function ProviderShelf({ doc }) {
-  const cat = useCatalog(doc.cards.some((c) => missing(c.id, c.rate)));
-  const cards = doc.cards.map((c, i) => ({ ...c, n: i, rate: rateFrom(cat, c.id, c.rate) }));
+  const cat = useCatalog(true);
+  // hanzo.ai's shelf is no longer the gateway's list (it shows :free variants the gateway omits and drops models the
+  // gateway still serves), so the shelf is the capture of hanzo.ai's own page; rates still follow api.hanzo.ai
+  const list = doc.cards;
+  const cards = list.map((c, i) => ({ ...c, n: i, rate: rateFrom(cat, c.id, c.rate) }));
   const [sort, setSort] = useState('shelf');
   const [mod, setMod] = useState('all');
-  const mods = useMemo(() => [...new Set(doc.cards.flatMap((c) => c.tags))], [doc.cards]);
+  const mods = useMemo(() => [...new Set(list.flatMap((c) => c.tags))], [list]);
   const shown = cards.filter((c) => mod === 'all' || c.tags.includes(mod)).sort((a, b) => {
     if (sort === 'ctx') return (b.tokens || 0) - (a.tokens || 0) || a.n - b.n;
     if (sort === 'rate') return (a.rate ? a.rate.out : Infinity) - (b.rate ? b.rate.out : Infinity) || a.n - b.n;
     return a.n - b.n;
   });
   const hidden = new Set(cards.filter((c) => !shown.includes(c)).map((c) => c.href));
-  const n = parseInt(doc.count, 10);
+  // Hanzo's count and lede follow its list ("{n} models available"; "Access all {n} {name} models…", "model" for one)
+  const n0 = parseInt(doc.count, 10);
+  const n = list === doc.cards || !Number.isFinite(n0) ? n0 : list.length;
   const word = doc.count.replace(/^\d+\s*/, '');
+  const lede = n === n0 ? doc.lede : doc.lede.replace(/^Access all \d+ (.+?) models? through /, (m, who) => `Access all ${n} ${who} ${n === 1 ? 'model' : 'models'} through `);
   const tokens = cards.map((c) => c.tokens).filter(Boolean);
   const outs = cards.map((c) => c.rate && c.rate.out).filter((v) => v != null);
   const plotted = cards.filter((c) => c.tokens && c.rate).length;
   const paused = usePaused();
+  // Hanzo's own models that have a film (public/models/<slug>.webm) lead the shelf as Hanzo's black cards, Enso first
+  const films = cards.map((c) => ({ ...c, film: (FILM.exec(c.href || '') || [])[1] })).filter((c) => c.film).slice(0, 4);
+  const [hot, setHot] = useState(null);
   const anim = cards.length <= 60; // re-flow by layout only where it stays smooth
   return (
     <main className="xmf xmf-prov">
       <CopyStatus />
       <section className="xmf-launch xmf-maker" aria-labelledby="xmf-h1">
+        <HeroDither />
         <div className="xmf-art" aria-hidden="true">
           <Sigil seed={doc.route} data={[n, Math.max(0, ...tokens), outs.length ? Math.min(...outs) : 0, outs.length ? Math.max(...outs) : 0]} className="xmf-sigil" still={paused} />
         </div>
@@ -54,7 +66,7 @@ export default function ProviderShelf({ doc }) {
               <h1 id="xmf-h1" className={'xmf-name ' + (doc.h1.length <= 24 ? 'm' : 'l')} data-morph-target>
                 <span className="x-line"><motion.span className="x-line-in" initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.08 }}>{doc.h1}</motion.span></span>
               </h1>
-              {doc.lede && <motion.p className="xmf-lede" {...up(0.3)}>{doc.lede}</motion.p>}
+              {lede && <motion.p className="xmf-lede" {...up(0.3)}>{lede}</motion.p>}
               <motion.div className="xmf-acts" {...up(0.42)}>
                 {doc.actions.map((a, i) => <Cta key={a.label} to={a.href} kind={i ? 'link' : 'solid'} id={i ? 'maker.hero.2' : 'maker.hero'} thumb={!i}>{a.label}</Cta>)}
               </motion.div>
@@ -74,19 +86,34 @@ export default function ProviderShelf({ doc }) {
           {doc.guest.code && (
             <motion.div className="xmf-guest" {...up(0.5)}>
               <div className="xmf-guest-h">
-                {doc.guest.title && <b>{doc.guest.title}</b>}
-                {doc.guest.key && <code className="x-mono">{doc.guest.key}</code>}
+                {/* spans, not <b>/<code>: each of Hanzo's lines is one plain leaf of text */}
+                {doc.guest.title && <span className="xmf-guest-t">{doc.guest.title}</span>}
+                {doc.guest.key && <span className="x-mono xmf-guest-k">{doc.guest.key}</span>}
                 {doc.guest.note && <span>{doc.guest.note}</span>}
                 {doc.guest.prompt && <p>{doc.guest.prompt}</p>}
               </div>
               <div className="xmf-term">
-                <div className="xmf-term-h"><span className="x-mono"><i aria-hidden="true" />{doc.guest.label}</span><Copy text={doc.guest.code} /></div>
-                <pre tabIndex={0}><code>{doc.guest.code}</code></pre>
+                <div className="xmf-term-h"><span className="x-mono"><i aria-hidden="true" /><span>{doc.guest.label}</span></span><Copy text={doc.guest.code} /></div>
+                <pre tabIndex={0}><code>{doc.guest.code.split('\n').map((l, i) => <span key={i} className="xmf-term-l">{l || ' '}{'\n'}</span>)}</code></pre>
               </div>
             </motion.div>
           )}
         </div>
       </section>
+
+      {films.length >= 3 && (
+        <section className="xmf-films" aria-label={doc.name}>
+          <div className="x-wrap">
+            <ul data-swipe-own data-cursor="" onPointerLeave={() => setHot(null)}>
+              {films.map((c, i) => (
+                <li key={c.href} onPointerEnter={() => setHot(c.film)}>
+                  <SpecCard to={c.href} slug={c.film} big={!i} play={!i || hot === c.film || (!hot && i === 1)} title={c.name} desc={c.desc} tags={c.ctx ? [c.ctx] : c.tags.slice(0, 1)} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
 
       {plotted > 1 && (
         <section className="xmf-sec xmf-among" aria-labelledby="xmf-among-h">
@@ -125,7 +152,7 @@ export default function ProviderShelf({ doc }) {
             <ul className="xmf-grid">
               {[...shown, ...cards.filter((c) => hidden.has(c.href))].map((c) => (
                 <motion.li key={c.href} layout={anim ? 'position' : false} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} hidden={hidden.has(c.href)}>
-                  <SpecCard className="xmf-row" to={c.href} title={c.name} desc={c.desc} tags={[...(c.ctx ? [c.ctx] : []), ...c.tags]} meta={c.rate ? <b>{`${money(c.rate.in)} → ${money(c.rate.out)}`}</b> : null} />
+                  <SpecCard className="xmf-row" to={c.href} title={c.name} desc={c.desc} tags={[...(c.ctx ? [c.ctx] : []), ...c.tags]} meta={<><span className="xmf-id">{c.mid || c.id}</span>{c.rate ? <b>{`${money(c.rate.in)} → ${money(c.rate.out)}`}</b> : null}</>} />
                 </motion.li>
               ))}
             </ul>

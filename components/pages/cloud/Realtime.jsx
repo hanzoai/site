@@ -1,42 +1,44 @@
 'use client';
-/* Realtime, Cloud 3 launch page (docs/MASTER.md, the only brief).
+/* Realtime, Cloud 3 launch page (docs/build-notes/MASTER.md, the only brief).
    Persona: Developer. Goal: get an API key and open a first stream.
    CTA: "Start Building" → https://platform.hanzo.ai/api-keys (data-cta realtime.hero, realtime.close; data-thumb
    "Start Building", so the site's sticky ask carries the same words). Metric: api_key_created.
-   Signature: the same record landing on three client screens at once (a desktop, a tablet and a phone, three sizes).
-   A record is created, updated, then deleted; each change pulses down the one open stream and lands on every screen in
-   the same instant, except that the delete reaches only the clients whose rule would have let them read it.
-   Beyond: the rule switch. Flip each client's access rule (reads record b, or cannot) and the same create, update and
-   delete replay: a client whose rule cannot read b never sees it arrive, change or leave, Hanzo's "deletes are checked
-   too" played out instead of told.
-   Overload, fixed by presentation (every word stays in the HTML): one idea per screen. The handshake shows one call's
-   words at a time beside the wire, and "The handshake, in full" is a disclosure you open; growth shows one note open at
-   a time beside one tenant map (its figure grows to its moment, the others rest small); the "Two calls" card is a calm
-   strip at section-heading size, so "Get Realtime" is the one big thing at the end.
-   Motion: idle = the three screens, the stream map, the handshake and the tenant map step by themselves (each with a
-   pause); pointer = the use-case rail you throw (drag with inertia, hard stops), a growth figure under the cursor opens
-   its note and changes the tenant map, the card's art drift, the magnetic ask at the close; state = each client's rule
-   switch, the handshake's three calls marking their line in the wire, the disclosure; arrival = the cut-in title, the
-   timed wipe into the black room; scroll = the stage settling big → small, the pinned chapters and "Get Realtime"
-   growing. Tweens only (ease-emphasis 300 ms, ease-in-out 400–500 ms); no springs.
+// Signature: graph — the stream as a living graph: the one store, the API, the access rule, a broker per org, GET /v1/realtime, the grant, the deployment, the subscriptions and three clients settle into place; records travel it, and pointing at a node lights its paths, names them and reads out what that part gives you
+// Beyond: the rule switch — in the hero, flip each client's access rule and replay the create, update and delete to see who hears about record b
+   The hero keeps the same record landing on three client screens at once (a desktop, a tablet and a phone); the
+   rule switch flips who can read record b.
+   Motion (docs/MOTION-MAP.md `graph`): the signature is "What the stream gives you", second screen. The parts of one
+   deployment settle like a physics graph as it comes into view (heavily damped, no bounce); records ride it by
+   themselves (create a, update b, delete b: store → org broker → the stream → clients, and anything about b stops at
+   org b's broker because client 3's rule cannot read it). Pointing at a node, tapping it or focusing it lights its
+   links and names them, and the panel beside it reads that part's words (all eight in the HTML); a mouse can pull a
+   node and the graph settles back. The pinned eight chapters (PinnedChapters + ChapterClients) are gone, and so are the
+   hero's scroll settle and the black room's timed wipe: the h1 cut-in is the page's one reveal.
+   Supporting: the three screens and the rule switch (idle, state), the use-case rail you throw (drag with inertia,
+   hard stops), the handshake's three calls marking their line in the wire, growth one note at a time beside the
+   tenant map, "Get Realtime" growing at the close. Tweens only (ease-emphasis 300 ms, ease-in-out 400–500 ms).
    States differ by fill, weight, dash and a shape, never by hue. Every word and link is Hanzo's; record contents,
    ids and org names are examples.
-   V2: 8/10 Three live clients of three sizes settle under a two-line title beside the one ask; eight pinned chapters
-   over one outlined stream map; use cases on a drag rail; the handshake in the black room one call at a time with the
-   full paragraph behind a disclosure; growth one note at a time beside the tenant map; a calm card strip, then the
-   close. Deck greys, tweens only. */
+   V2: 8/10 three live clients under the two-line title beside the one ask; then the living graph of the stream with
+   its words beside it (rests spaced so no name touches another; phones keep the hub's link names in its panel); the
+   statement and the subscribe call close under it; use cases on a drag rail; the handshake in the black room; growth
+   beside the tenant map; the card drawn as three clients taking one record (the close keeps the one contour); the
+   close. Entrances (realtime/RtEnter.jsx): shrink-to-card, tile-flip, card-deal, vertical-ticker, venetian-type. Deck
+   greys, tweens only. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useMotionValue, animate } from 'motion/react';
 import { A } from '../../kit';
-import { Code, useLive, useSteps } from './Frame';
-import SettleStage from '../../v2/SettleStage';
-import PinnedChapters from '../../v2/PinnedChapters';
-import ClipWipe from '../../v2/ClipWipe';
+import { useCalm } from '../../ui';
+import { useLive, useSteps } from './Frame';
+import { LeafCode as Code } from './close3/Leaf';
 import SpecDrawer from '../../v2/SpecDrawer';
-import LaunchClose, { Arr } from '../../v2/LaunchClose';
+import LaunchClose, { Arr } from './close3/Close';
 import LineMask from '../../v2/LineMask';
 import LivePause, { usePause } from '../../v2/LivePause';
 import RelatedCards from '../../v2/RelatedCards';
+import NoJs from '../../NoJs';
+import RtGraph, { NODES, EVENTS } from './realtime/RtGraph';
+import { ShrinkToCard, FlipVeil, CardDeal, Ticker, Venetian } from './realtime/RtEnter';
 import './Realtime.css';
 
 const KEYS = 'https://platform.hanzo.ai/api-keys';
@@ -97,7 +99,7 @@ function Screens() {
   return (
     <div className="rt-stage" ref={ref} data-paused={paused || undefined}>
       <div className="rt-conn">
-        <b>Live connection</b><span>One open stream</span><span>Records arrive as they change</span>
+        <span className="rt-conn-k">Live connection</span><span>One open stream</span><span>Records arrive as they change</span>
         <span className="rt-acts" aria-hidden="true">{['create', 'update', 'delete'].map((a) => <i key={a} className={a === action ? 'on' : ''}>{a}</i>)}</span>
         <LivePause inline paused={paused} onToggle={pause} className="rt-pause" />
       </div>
@@ -128,211 +130,6 @@ function Screens() {
   );
 }
 
-/* ---------- the chapters' object: the stream, mapped ---------- */
-const MAP = ['GET /v1/realtime', 'subscriptions', 'brokers', 'delete · b', 'one store', 'access rule', 'grant', 'deployment'];
-/* the intro: one open stream, and the rule deciding what goes down it */
-const FLOW = [['messages', 'create', true], ['orders', 'update', false], ['messages', 'update', true], ['messages', 'delete', true], ['orders', 'create', false]];
-
-function Intro({ n }) {
-  const rows = Array.from({ length: 4 }, (_, k) => FLOW[(n + k) % FLOW.length]);
-  return (
-    <div className="rt-p">
-      <p className="rt-net"><i />HTTP 200 · text/event-stream · open</p>
-      <div className="rt-flow">
-        <AnimatePresence initial={false} mode="popLayout">
-          {rows.map(([c, a, ok], k) => (
-            <motion.p key={n + '-' + k} layout className={ok ? 'ok' : 'no'} initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: QUICK }} transition={{ ...ARRIVE, layout: GLIDE }}>
-              <code>event: {c} · {a}</code><span><i aria-hidden="true">{ok ? '✓' : '×'}</i><em>access rule</em></span>
-            </motion.p>
-          ))}
-        </AnimatePresence>
-      </div>
-    </div>
-  );
-}
-
-function Panel({ step, n }) {
-  if (step === 0) {
-    const drop = n % 8 >= 6;
-    const lines = Array.from({ length: 4 }, (_, k) => ['create', 'update', 'update', 'delete'][(n + k) % 4]);
-    return (
-      <div className="rt-p">
-        <p className={'rt-net' + (drop ? ' drop' : '')}><i />{drop ? 'network dropped · reconnecting' : 'HTTP 200 · text/event-stream · open'}</p>
-        <div className="rt-sse">
-          <AnimatePresence initial={false} mode="popLayout">
-            {lines.map((a, k) => <motion.code key={n + '-' + k} layout className={drop ? 'dim' : ''} initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: QUICK }} transition={{ ...ARRIVE, layout: GLIDE }}>event: messages · {a}</motion.code>)}
-          </AnimatePresence>
-        </div>
-      </div>
-    );
-  }
-  if (step === 1) {
-    const one = Math.floor(n / 3) % 2 === 1;
-    return (
-      <div className="rt-p">
-        <div className="rt-chips"><span className={one ? '' : 'on'}>messages</span><span className={one ? 'on' : ''}>orders/ord_42</span><em>stream · still open</em></div>
-        <div className="rt-ev">
-          {[['messages', 'msg_7'], ['orders', 'ord_42'], ['orders', 'ord_43'], ['messages', 'msg_8']].map(([c, id]) => {
-            const heard = one ? id === 'ord_42' : c === 'messages';
-            return <p key={id} className={heard ? 'on' : ''}><b>{c}</b>{id}<em>{heard ? 'heard' : '—'}</em></p>;
-          })}
-        </div>
-      </div>
-    );
-  }
-  if (step === 2) {
-    return (
-      <div className="rt-p">
-        <div className="rt-orgs">
-          {['org a', 'org b'].map((o, k) => (
-            <div key={o} className={'rt-org' + (n % 2 === k ? ' on' : '')}>
-              <p>{o} · broker</p>
-              <code>messages</code>
-              <span className="rt-dots">{[0, 1, 2].map((d) => <i key={d} className={n % 2 === k && d <= n % 3 ? 'on' : ''} />)}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-  if (step === 3) {
-    const sent = n % 3 !== 0;
-    return (
-      <div className="rt-p">
-        <p className="rt-del"><b>delete</b>record b</p>
-        <div className="rt-subs">
-          {[['subscriber 1', true], ['subscriber 2', true], ['subscriber 3', false]].map(([s, can]) => (
-            <p key={s} className={can ? (sent ? 'on' : '') : 'no'}><b>{s}</b><span>{can ? (sent ? 'told · delete b' : '…') : 'rule cannot read b · not told'}</span></p>
-          ))}
-        </div>
-      </div>
-    );
-  }
-  if (step === 4) {
-    return (
-      <div className="rt-p">
-        <div className="rt-same">
-          <span className={'rt-r' + (n % 2 ? ' on' : '')}>API</span>
-          <span className="rt-store">one store</span>
-          <span className={'rt-r' + (n % 2 ? '' : ' on')}>stream</span>
-        </div>
-        <p className="rt-bus"><s>event bus</s> nothing to keep in step</p>
-      </div>
-    );
-  }
-  if (step === 5) {
-    return (
-      <div className="rt-p">
-        <p className="rt-who">identity · usr_123</p>
-        <div className="rt-pred"><code>access rule</code></div>
-        <div className="rt-same two"><span className={'rt-r' + (n % 2 ? ' on' : '')}>guards the API</span><span className={'rt-r' + (n % 2 ? '' : ' on')}>filters the stream</span></div>
-      </div>
-    );
-  }
-  if (step === 6) {
-    const k = n % 8;
-    const left = Math.max(0, 30 - k * 5);
-    return (
-      <div className="rt-p">
-        <ol className="rt-grant">
-          <li className={k >= 0 ? 'on' : ''}><code>POST /v1/realtime/token</code><span>authenticated</span></li>
-          <li className={(k >= 1 ? 'on' : '') + (k >= 5 ? ' spent' : '')}><code>grant</code><span className="lx-num">{k >= 5 ? 'spent' : left + 's'}</span></li>
-          <li className={k >= 5 ? 'on' : ''}><code>EventSource · ?token=grant</code><span>once</span></li>
-        </ol>
-        <p className="rt-bus"><s>token in the URL</s> nothing for a proxy log to keep</p>
-      </div>
-    );
-  }
-  const k = n % 4;
-  return (
-    <div className="rt-p">
-      <div className="rt-lim">
-        <p>deployment · limit 2</p>
-        <div className="rt-slots">{[0, 1].map((s) => <i key={s} className={s < Math.min(2, k + 1) ? 'on' : ''}>{s < Math.min(2, k + 1) ? ['org a', 'org b'][s] : ''}</i>)}</div>
-      </div>
-      <p className={'rt-wait' + (k >= 2 ? ' on' : '')}>org c · waits: counted once for the process</p>
-    </div>
-  );
-}
-
-function StreamMap({ step, intro }) {
-  const [ref, live] = useLive(0.3);
-  const [paused, pause] = usePause();
-  const n = useBeat(live && !paused, 1100);
-  const cur = intro ? -1 : step;
-  return (
-    <div className="rt-map" ref={ref}>
-      <div className="rt-map-h">
-        <span className="rt-live" aria-hidden="true" />
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.code key={cur} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8, transition: QUICK }} transition={ARRIVE}>{cur < 0 ? MAP[0] : MAP[cur]}</motion.code>
-        </AnimatePresence>
-        <LivePause inline dark paused={paused} onToggle={pause} className="rt-mpause" />
-      </div>
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.div key={cur} className="rt-map-b" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: QUICK }} transition={{ duration: 0.4, ease: EASE }}>
-          {cur < 0 ? <Intro n={n} /> : <Panel step={cur} n={n} />}
-        </motion.div>
-      </AnimatePresence>
-    </div>
-  );
-}
-
-/* ---------- the chapters' object: the hero's three clients, pinned; each chapter changes what they show ----------
-   0 one stream (it drops and reopens on its own); 1 client 3 watches one record, not the collection; 2 client 3 sits
-   on another org's broker; 3 a delete reaches only the clients whose rule can read b; 4 API and stream read one store;
-   5 the access rule decides per client; 6 a grant counts down and is spent once; 7 a third org waits on a limit of
-   two. The words are Hanzo's (the chapter titles and the map labels); records and org names are drawn. */
-function ChapterClients({ step, intro }) {
-  const [ref, live] = useLive(0.3);
-  const [paused, pause] = usePause();
-  const n = useBeat(live && !paused, 1100);
-  const s = intro ? -1 : step;
-  const beat = BEATS[n % BEATS.length];
-  const [action, rows0] = beat;
-  const drop = s === 0 && n % 6 >= 4;
-  const left = Math.max(0, 30 - (n % 8) * 5);
-  const conn = s === 0 ? (drop ? 'network dropped · reconnecting' : 'HTTP 200 · text/event-stream · open')
-    : s === 6 ? (n % 8 >= 6 ? 'grant spent · stream open' : 'grant · ' + left + 's') : s === 7 ? 'deployment · limit 2' : s === 4 ? 'one store · API and stream' : 'One open stream';
-  const who = (c) => (s === 2 ? (c < 3 ? 'org a' : 'org b') : s === 7 ? ['org a', 'org b', 'org c'][c - 1] : s === 1 && c === 3 ? 'orders/ord_42' : s === 5 ? (c === 3 ? "rule can't read b" : 'rule reads b') : 'Client ' + c);
-  const rowsFor = (c) => {
-    if (s === 7 && c === 3) return [];
-    if (s === 1 && c === 3) return ['b'];
-    if ((s === 3 || s === 5) && c === 3) return rows0.filter((r) => !r.startsWith('b'));
-    return rows0;
-  };
-  const tag = (c) => (s === 7 && c === 3 ? 'waits' : s === 3 && c === 3 && action === 'delete' ? 'not told' : s === 0 && drop ? 'reconnecting' : 'Connected');
-  return (
-    <div className={'rt-stage rt-cstage' + (drop ? ' drop' : '')} ref={ref} data-step={s} data-paused={paused || undefined}>
-      <div className="rt-conn">
-        <b>{s < 0 ? MAP[0] : MAP[s]}</b><span className="rt-cconn">{conn}</span>
-        <span className="rt-acts" aria-hidden="true">{['create', 'update', 'delete'].map((a) => <i key={a} className={a === action ? 'on' : ''}>{a}</i>)}</span>
-        <LivePause inline paused={paused} onToggle={pause} className="rt-pause" />
-      </div>
-      <div className="rt-screens" aria-hidden="true">
-        {[1, 2, 3].map((c) => {
-          const wait = s === 7 && c === 3;
-          const no = (s === 3 || s === 5) && c === 3;
-          return (
-            <div key={c} className={'rt-screen ' + ['desk', 'tab', 'hand'][c - 1] + (no || wait ? ' no' : '') + (s === 2 && c === 3 ? ' other' : '')}>
-              <div className="rt-top"><span>{who(c)}</span><em>{tag(c)}</em></div>
-              <ul>
-                <AnimatePresence initial={false} mode="popLayout">
-                  {rowsFor(c).map((r) => (
-                    <motion.li key={r[0]} layout className={r.endsWith('*') ? 'upd' : ''} initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, x: 24, transition: ARRIVE }} transition={{ ...ARRIVE, layout: GLIDE }}>
-                      <i>{r[0]}</i><span style={{ width: W[r[0]] }} />
-                    </motion.li>
-                  ))}
-                </AnimatePresence>
-              </ul>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
 const GIVES = [
   ['One stream, server-sent', 'A single long-lived HTTP response carries every update, so nothing special has to sit in front of it. The browser notices a dropped network and reconnects on its own.'],
   ['A collection, or one record', 'Watch a whole collection and hear about everything that lands in it, or watch one record and hear only about that one. Change what you are watching without dropping the stream.'],
@@ -343,6 +140,87 @@ const GIVES = [
   ['A grant, not your token', 'A browser cannot put a header on the request that opens a stream. So you mint a short-lived grant on an ordinary authenticated call and spend it once, within thirty seconds — rather than putting a token that opens every service into a URL that every proxy and access log will keep.'],
   ['Limits belong to the deployment', 'How many streams and how many requests are settings on the deployment and counted once for the process, not copied onto each tenant — so a limit of two means two.'],
 ];
+
+/* ---------- the signature: the stream as a living graph, its words beside it ---------- */
+// the tour: when no hand has chosen, the graph walks its parts one fact at a time
+const TOUR = Array.from({ length: 8 }, (_, f) => NODES.findIndex((n) => n[2] === f)); // the first node of each fact
+
+function useSeen(ref, amount) {
+  const [seen, setSeen] = useState(false);
+  useEffect(() => {
+    const el = ref.current; if (!el) return;
+    const io = new IntersectionObserver(([e]) => setSeen(e.isIntersecting), { threshold: amount });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [ref, amount]);
+  return seen;
+}
+
+function Gives() {
+  const ref = useRef(null);
+  const calm = useCalm();
+  const seen = useSeen(ref, 0.3);
+  const [paused, pause] = usePause();
+  const run = seen && !paused && !calm;
+  const [sel, setSel] = useState(TOUR[0]);
+  const [mine, setMine] = useState(false);
+  const [e, setE] = useState(2); // the server frame: delete b, the change that client 3 is not told about
+  const [evAt, setEvAt] = useState(0);
+  // records: a change every 2.4 s while the graph is seen
+  useEffect(() => {
+    if (!run) return;
+    const id = setTimeout(() => { setE((v) => (v + 1) % EVENTS.length); setEvAt(performance.now()); }, evAt ? 2400 : 500);
+    return () => clearTimeout(id);
+  }, [e, run, evAt]);
+  // the tour: one part every 4.8 s until a hand picks one; a node under the pointer reads out its words meanwhile
+  const [peek, setPeek] = useState(null);
+  const fi = NODES[peek ?? sel][2];
+  useEffect(() => {
+    if (!run || mine || peek !== null) return;
+    const id = setTimeout(() => setSel(TOUR[(NODES[sel][2] + 1) % TOUR.length]), 4800);
+    return () => clearTimeout(id);
+  }, [sel, run, mine, peek]);
+  const pick = (i) => { setSel(i); setMine(true); };
+  const ev = EVENTS[e];
+  return (
+    <section className="lx-sec rt-gives" aria-labelledby="rt-gives-h" ref={ref}>
+      <NoJs css=".rt-facts-in{display:block}.rt-fact{visibility:visible;margin-bottom:32px}.rt-graph-w,.rt-fact-dots{display:none}" />
+      <div className="lx-wrap">
+        <div className="rt-gives-h">
+          <h2 id="rt-gives-h" className="lx-headline">What the stream gives you</h2>
+          <p className="lx-lede">One connection, and the rules you already wrote deciding what goes down it</p>
+        </div>
+        <div className="rt-gives-b">
+          <div className="rt-graph-w" data-paused={paused || undefined}>
+            <div className="rt-graph-bar">
+              <p className="rt-graph-ev" aria-hidden="true"><i />{ev[0]} · record {ev[1]}</p>
+              <LivePause inline paused={paused} onToggle={pause} className="rt-gpause" />
+            </div>
+            <RtGraph sel={sel} onPick={pick} onPeek={setPeek} run={run} calm={calm} ev={ev} evAt={evAt} />
+            <FlipVeil />
+          </div>
+          <div className="rt-facts">
+            {/* every part's words in one cell: the panel is as tall as the longest, so changing part never moves a thing */}
+            <div className="rt-facts-in" aria-live="polite">
+              {GIVES.map(([t, d], i) => (
+                <article key={t} className={'rt-fact' + (i === fi ? ' on' : '')} aria-hidden={i !== fi || undefined}>
+                  <p className="lx-kick">{`${String(i + 1).padStart(2, '0')} / ${String(GIVES.length).padStart(2, '0')}`}</p>
+                  <h3 className="rt-fact-t">{t}</h3>
+                  <p className="rt-fact-d">{d}</p>
+                </article>
+              ))}
+            </div>
+            <ol className="rt-fact-dots" aria-label="What the stream gives you">
+              {GIVES.map(([t], i) => (
+                <li key={t}><button type="button" aria-label={t} aria-current={i === fi || undefined} onClick={() => pick(TOUR[i])}><i /></button></li>
+              ))}
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 /* ---------- use cases: a rail you throw ---------- */
 const USES = [
@@ -390,8 +268,8 @@ function Rail() {
       <div className="rt-rail-v" ref={wrap} data-cursor="" data-swipe-own>
         {/* inertia that stops hard at either end: no elastic overscroll, so nothing springs back */}
         <motion.div className="rt-rail-in" ref={track} style={{ x }} drag="x" dragConstraints={{ left: min, right: 0 }} dragElastic={0} dragTransition={{ power: 0.25, timeConstant: 260 }}>
-          {USES.map(([t, d, k]) => (
-            <article key={t} className="rt-use">
+          {USES.map(([t, d, k], i) => (
+            <article key={t} className="rt-use" style={{ '--i': i }}>
               <Vignette k={k} />
               <h3 className="lx-title">{t}</h3>
               <p>{d}</p>
@@ -451,7 +329,7 @@ function Handshake() {
         <ol className="rt-calls" data-live={mounted || undefined}>
           {CALLS.map(([t, d], i) => (
             <li key={t} className={at === i ? 'on' : ''}>
-              <button type="button" onClick={() => choose(i)} aria-expanded={at === i} aria-controls={'rt-call-' + i}><span className="lx-num">{i + 1}</span><b>{t}</b></button>
+              <button type="button" onClick={() => choose(i)} aria-expanded={at === i} aria-controls={'rt-call-' + i}><span className="lx-num">{i + 1}</span><span className="rt-call-t">{t}</span></button>
               <p id={'rt-call-' + i}>{d}</p>
             </li>
           ))}
@@ -541,14 +419,13 @@ function Grow() {
 }
 
 export default function Realtime() {
-  const steps = GIVES.map(([t, d]) => ({ t, d }));
   return (
     <main className="lx rt" data-cursor="">
-      <section className="rt-hero" data-morph-target data-ask-name="Hanzo Realtime">
+      <ShrinkToCard className="rt-hero" data-morph-target data-ask-name="Hanzo Realtime">
         <div className="lx-wrap">
           <LineMask as="h1" className="lx-display rt-h1" lines={['Your screen updates', 'when the data does']} />
           <div className="rt-hero-grid">
-            <SettleStage from={1.04} lift={24} className="rt-hero-obj"><Screens /></SettleStage>
+            <div className="rt-hero-obj rt-frame"><Screens /></div>
             <div className="rt-hero-r">
               <p className="lx-lede rt-sub">Live record updates</p>
               <A to={KEYS} className="lx-cta" data-thumb="Start Building" data-cta="realtime.hero" data-cursor="">Start Building<Arr /></A>
@@ -556,7 +433,9 @@ export default function Realtime() {
             </div>
           </div>
         </div>
-      </section>
+      </ShrinkToCard>
+
+      <Gives />
 
       <section className="lx-sec rt-say">
         <div className="lx-wrap rt-say-grid">
@@ -565,20 +444,15 @@ export default function Realtime() {
         </div>
       </section>
 
-      <PinnedChapters label="What the stream gives you" per={42} objH={38}
-        intro={{ title: ['What the stream', 'gives you'], lede: 'One connection, and the rules you already wrote deciding what goes down it' }}
-        steps={steps}
-        visual={(at, intro) => <ChapterClients step={at} intro={intro} />} />
-
-      <section className="lx-sec rt-uses">
+      <CardDeal className="lx-sec rt-uses">
         <div className="lx-wrap rt-uses-h">
           <h2 className="lx-headline">Build Interactive Experiences</h2>
           <p className="lx-lede">Hanzo Realtime powers a wide range of applications that demand immediate data updates</p>
         </div>
         <Rail />
-      </section>
+      </CardDeal>
 
-      <ClipWipe dark className="rt-room"><Handshake /></ClipWipe>
+      <section className="rt-room lx-dark" data-room="dark"><Handshake /></section>
 
       <section className="lx-sec rt-grow">
         <div className="lx-wrap">
@@ -587,16 +461,16 @@ export default function Realtime() {
             <p className="lx-lede">The parts that scale, and the parts that are simply not in the way</p>
           </div>
           <Grow />
-          <SpecDrawer className="rt-spec" rows={[{ v: 'No polling', l: 'The client asks once, not every second' }, { v: 'Reconnects itself', l: 'A dropped stream reopens with a fresh grant' }, { v: 'Nothing extra to run', l: 'The same binary that serves the API serves the stream' }]} />
+          <Ticker><SpecDrawer className="rt-spec" rows={[{ v: 'No polling', l: 'The client asks once, not every second' }, { v: 'Reconnects itself', l: 'A dropped stream reopens with a fresh grant' }, { v: 'Nothing extra to run', l: 'The same binary that serves the API serves the stream' }]} /></Ticker>
         </div>
       </section>
 
       <RelatedCards className="rt-open" title="Open a stream" items={[['Subscribe to your first collection', 'https://github.com/hanzoai', 'View on GitHub']]}>
-        <div className="rt-open-l">
-          <h2 className="lx-headline">Two calls and the page keeps itself current</h2>
+        <Venetian className="rt-open-l">
+          <h2 className="lx-headline"><span className="rt-vl">Two calls and the page</span> <span className="rt-vl">keeps itself current</span></h2>
           <p className="lx-lede">Mint a grant, open the stream, name a collection. No credit card to start.</p>
           <div className="rt-open-acts"><A to={KEYS} className="lx-text">Start Building</A><A to={DOCS} className="lx-text">Documentation</A></div>
-        </div>
+        </Venetian>
       </RelatedCards>
 
       <LaunchClose name="Realtime" tag="Realtime channels + presence" seed="realtime" data={[30, 3, 2]} ask={['Start Building', KEYS]} cta="realtime.close" />

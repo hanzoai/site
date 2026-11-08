@@ -4,7 +4,7 @@
    client render under reduced motion, so the hero object's transform differs and React logs a hydration error (the
    red "1 Issue" badge). This copy reads the kit's useCalm() instead (false on the server and the first render, then
    live). Same props, same markup, same CSS. Used by /crawl /dashboards /datastore /dns /edge /engine.
-   Remove it and import KeynoteStage again once docs/requests/reduced-motion-hydration.md lands in the shared file. */
+   Remove it and import KeynoteStage again once docs/build-notes/requests/reduced-motion-hydration.md lands in the shared file. */
 import { createContext, useContext, useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { Magnetic, useCalm } from '../../ui';

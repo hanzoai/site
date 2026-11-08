@@ -15,3 +15,4 @@
   .v2-lw-half + .v2-lw-half, .v2-lw-half > [aria-hidden='true'] { display: none; }
 }
 @media (max-width: 900px) { .v2-lw-i { width: 140px; height: 72px; } .v2-lw-i img { max-width: 104px; max-height: 26px; } .v2-lw-name { font-size: 18px; } }
+html.dark .v2-lw-i img { filter: grayscale(1) brightness(0) invert(1); } /* James 8 Nov: logos white in dark mode */

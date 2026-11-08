@@ -6,7 +6,7 @@
      shared html[data-ask=quiet] rule in app/system.css). Its own attribute, so it never races the shared Ask.
    - Phones (≤ 700px): the shared Ask swaps the header's "Try Hanzo" for the page's own ask only on desktop; here the
      header button carries the page's ask once the hero's ask has gone by, unless the words would not fit the screen.
-   It restores the header on leave. Request filed in docs/requests/founder.md for the shared owner to fold this in.
+   It restores the header on leave. Request filed in docs/build-notes/requests/founder.md for the shared owner to fold this in.
    Usage: call usePhoneAsk() once in the page component. */
 import { useEffect } from 'react';
 import './usePhoneAsk.css';

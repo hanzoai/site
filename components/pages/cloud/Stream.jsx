@@ -21,6 +21,7 @@ import StageHero from '../../v2/StageHero';
 import Finale from '../../v2/Finale';
 import { useWide } from '../../v2/useWide';
 import './Stream.css';
+import ArtCard from './ArtCard';
 
 const GHS = 'https://github.com/hanzoai/stream';
 const CLIENTS = ['kafka-python', 'sarama', 'confluent-kafka', 'franz-go'];
@@ -38,6 +39,7 @@ function Tape() {
       <PauseBtn paused={paused} onClick={toggle} className="dk st2-pause" />
       <div className="st2-clients" aria-hidden="true">
         {CLIENTS.map((c) => <span key={c} className="l2-mono">{c}</span>)}
+        <i aria-hidden="true">→</i>
         <b className="l2-mono">stream.hanzo.ai:9092</b>
       </div>
       <div className="st2-lanes" aria-hidden="true">
@@ -52,7 +54,7 @@ function Tape() {
               ))}
             </div>
             {l === 1 && <span className={'st2-mark l2-mono' + (phase === 1 ? ' down' : '')}>my-service · {phase === 1 ? 'consumer down · offset kept' : phase === 2 ? 'back where it left off' : 'committed offset'}</span>}
-            {l === 2 && bad && <span className="st2-bad l2-mono">INVALID_RECORD</span>}
+            {l === 2 && <span className="st2-bad-slot">{bad && <span className="st2-bad l2-mono">INVALID_RECORD</span>}</span>}
           </div>
         ))}
       </div>
@@ -80,20 +82,23 @@ function Ruler() {
   const [span, setSpan] = useState(3000);
   const [at, setAt] = useState(0);
   const { scrollYProgress: p } = useScroll({ target: sec, offset: ['start start', 'end end'] });
+  // phones (no pin): each record inks as it crosses the middle of the screen, and the committed offset follows
+  const [seenAt, setSeenAt] = useState(0);
+  const [cur, setCur] = useState(0);
+  useEffect(() => {
+    if (pin || calm || !track.current) return;
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { setCur(+e.target.dataset.k); setSeenAt((v) => Math.max(v, +e.target.dataset.k + 1)); } }), { rootMargin: '-48% 0px -48% 0px' });
+    track.current.querySelectorAll('.st2-rec').forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, [pin, calm]);
   const head = (
     <div className="st2-rul-h">
       <h2 className="l2-display m">Your clients, our store</h2>
       <p className="l2-mono st2-range">01 / 06 — 06 / 06</p>
+      <ArtCard slug="mori" className="st2-art" />
+      {!pin && !calm && <p className="st2-commit-m l2-mono" aria-hidden="true">committed offset <b>{String(seenAt).padStart(4, '0')}</b></p>}
     </div>
   );
-  // phones (no pin): each record inks as it crosses the middle of the screen, and the committed offset follows
-  const [seenAt, setSeenAt] = useState(0);
-  useEffect(() => {
-    if (pin || calm || !track.current) return;
-    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setSeenAt((v) => Math.max(v, +e.target.dataset.k + 1)); }), { rootMargin: '-48% 0px -48% 0px' });
-    track.current.querySelectorAll('.st2-rec').forEach((el) => io.observe(el));
-    return () => io.disconnect();
-  }, [pin, calm]);
   const x = useTransform(p, (v) => -Math.min(1, Math.max(0, (v - 0.04) / 0.92)) * span);
   useMotionValueEvent(p, 'change', (v) => {
     const el = track.current;
@@ -107,7 +112,7 @@ function Ruler() {
         <motion.div ref={track} className="st2-track" style={pin ? { x } : undefined} data-swipe-own>
           {pin && head}
           {FACTS.map(([t, d], i) => (
-            <article key={t} data-k={i} className={'st2-rec' + ((pin ? at : seenAt) > i ? ' read' : '')}>
+            <article key={t} data-k={i} className={'st2-rec' + ((pin ? at : seenAt) > i ? ' read' : '') + ((pin ? at - 1 : cur) === i ? ' cur' : '')}>
               <p className="st2-big l2-fig" aria-hidden="true">{String(i + 1).padStart(4, '0')}</p>
               <h3 className="l2-head">{t}</h3>
               <p className="st2-ofs l2-mono"><span>offset {String(i + 1).padStart(4, '0')}</span><span>{String(i + 1).padStart(2, '0')} / 06</span></p>
@@ -121,9 +126,6 @@ function Ruler() {
           ))}
           <ul className="st2-figs">{FIGS.map(([a, b]) => <li key={a}><b>{a}</b><span>{b}</span></li>)}</ul>
         </motion.div>
-        {!pin && !calm && (
-          <p className="st2-commit-m l2-mono" aria-hidden="true">committed offset <b>{String(seenAt).padStart(4, '0')}</b></p>
-        )}
         {pin && (
           <div className="st2-commit" aria-hidden="true">
             <i />
@@ -163,7 +165,7 @@ function Check() {
       <p className="st2-ans" aria-live="polite">
         {!s ? 'Type a Kafka API.' : exact ? <><b>{exact}</b> is one of the twelve, at the versions modern clients negotiate.</> : hits.length ? <>Did you mean {hits.map((h, i) => <button key={h} type="button" onClick={() => setQ(h)}>{h}{i < hits.length - 1 ? '' : ''}</button>)}?</> : <><b>{q.trim()}</b> is not among the twelve APIs Hanzo lists.</>}
       </p>
-      <ul className="st2-apis">{APIS.map((a) => <li key={a} className={hits.includes(a) ? 'on' : ''}>{a}</li>)}</ul>
+      <ul className="st2-apis">{APIS.map((a) => <li key={a}><button type="button" className={hits.includes(a) ? 'on' : ''} aria-pressed={exact === a} onClick={() => { setMine(true); setQ(a); }}>{a}</button></li>)}</ul>
     </div>
   );
 }
@@ -204,17 +206,31 @@ function OneLine() {
   );
 }
 
-/* The close's object: one partition still running, the consumer's committed offset riding it. */
-function MiniTape() {
+/* The close's object: the consumer group itself. Four partitions, each committed offset climbing toward the log's end;
+   now and then one consumer drops, its offset holds, and it comes back where it left off. Not the hero's lanes again. */
+function Group() {
   const [ref, live, , paused, toggle] = useDemo(0.2);
+  const [tick, setTick] = useState(0);
+  useTick(700, live, () => setTick((t) => t + 1));
+  const down = Math.floor(tick / 6) % 4 === 2 ? (Math.floor(tick / 24) % 4) : -1;
   return (
-    <div className="st2-mini" ref={ref}>
+    <div className="st2-grp" ref={ref}>
       <PauseBtn paused={paused} onClick={toggle} />
-      <p className="st2-mini-k l2-mono" aria-hidden="true"><span>partition 0</span><b>stream.hanzo.ai:9092</b></p>
-      <div className={'st2-mini-lane' + (live ? '' : ' still')} aria-hidden="true">
-        <div className="st2-strip">{[0, 1].map((c) => <div key={c} className="st2-run">{Array.from({ length: 12 }).map((_, i) => <i key={i}><b className="l2-mono">{1290 + i}</b></i>)}</div>)}</div>
-        <span className="st2-mark l2-mono">my-service · committed offset</span>
-      </div>
+      <p className="st2-grp-k l2-mono" aria-hidden="true"><span>my-service</span><span className="st2-grp-b">stream.hanzo.ai:9092</span></p>
+      <ol className="st2-grp-rows" aria-hidden="true">
+        {[0, 1, 2, 3].map((l) => {
+          const end = 1290 + l * 41 + tick * (2 + (l % 2));
+          const lag = l === down ? 3 + (tick % 6) * (2 + (l % 2)) : 1 + ((tick + l) % 3);
+          return (
+            <li key={l} className={l === down ? 'down' : ''}>
+              <span>partition {l}</span>
+              <i><em style={{ transform: `scaleX(${Math.max(0.04, 1 - lag / 24)})` }} /></i>
+              <b>{String(end - lag).padStart(4, '0')}</b>
+              <small>{l === down ? 'consumer down · offset kept' : 'committed offset'}</small>
+            </li>
+          );
+        })}
+      </ol>
     </div>
   );
 }
@@ -232,10 +248,10 @@ export default function Stream() {
         head="Point the bootstrap server at it"
         lede="The clients stay as they are. The cluster underneath them goes away."
         ask={['View on GitHub', GHS]}
-        object={<MiniTape />}
+        object={<Group />}
         prompt="Read https://hanzo.ai/skill.md and use Hanzo Stream in my project."
         tag="Event stream"
-        repo={['hanzoai/stream', GHS]}
+        repo={[<span key="r">hanzoai/stream</span>, GHS]}
         stars="4 stars"
       />
     </main>

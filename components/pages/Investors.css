@@ -157,7 +157,7 @@
 .xin-commits { grid-column: 1 / 9; margin-top: 72px; }
 .xin-commits ol { list-style: none; margin: 20px 0 0; padding: 0; }
 .xin-commits a { display: grid; grid-template-columns: 180px minmax(0, 1fr) 140px; gap: 16px; align-items: baseline; min-height: 44px; padding: 12px 0; border-top: 1px solid rgba(0, 0, 0, .1); color: inherit; text-decoration: none; font-size: 16px; }
-@media (hover: hover) { .xin-commits a:hover span:nth-child(2) { text-decoration: underline; text-underline-offset: 3px; } }
+@media (hover: hover) { .xin-commits a:hover > span:nth-child(2) { text-decoration: underline; text-underline-offset: 3px; } }
 .xin-commits a .x-mono { font-size: 13px; color: #0a0a0a; }
 .xin-commits a small { font-size: 13px; color: #737373; text-align: right; }
 .xin-read { grid-column: 9 / 13; align-self: end; display: flex; flex-direction: column; gap: 12px; margin: 0; }
@@ -188,7 +188,7 @@
 .xin-ini { grid-area: i; position: relative; overflow: hidden; display: block; width: 56px; height: 56px; border-radius: 50%; background: #ededed; color: #0a0a0a; }
 .xin-ini > * { display: block; width: 100%; height: 100%; object-fit: cover; }
 .xin-exec b { grid-area: n; font-size: 21px; font-weight: 497; }
-.xin-exec span:not(.xin-ini) { grid-area: r; font-size: 16px; color: #525252; }
+.xin-exec > span:not(.xin-ini) { grid-area: r; font-size: 16px; color: #525252; }
 .xin-exec i { grid-area: x; font-style: normal; color: #737373; transition: transform 300ms cubic-bezier(.16, 1, .3, 1); }
 @media (hover: hover) { .xin-exec:hover i { transform: translate(3px, -3px); color: #0a0a0a; } }
 .xin-gov { display: flex; flex-direction: column; gap: 14px; }
@@ -298,4 +298,75 @@
 .xin-roll-n { gap: 0; }
 .xin-roll-n li { min-width: 44px; }
 .xin-slab:active, .xin-stats a:active, .xin-lead:active, .xin-commits a:active, .xin-wall a:active, .xin-dd-go:active, .xin-exec:active { transform: translateY(1px); transition-duration: 90ms; }
-@media (hover: hover) { .xin-gov-l a:hover { text-decoration: underline; text-underline-offset: 3px; } .xin-backed a:hover .xin-logo-n { color: #0a0a0a !important; } }
+@media (hover: hover) { .xin-gov-l a:hover { text-decoration-thickness: 2px; text-underline-offset: 4px; } .xin-backed a:hover .xin-logo-n { color: #0a0a0a !important; } }
+/* round 9 (8 Nov): on phones the header carries this page's ask in Hanzo's short words (ir@hanzo.ai, set by
+   usePhoneThumb in Investors.jsx). Its button keeps 3px less side padding on this page only, so the label ends inside
+   the 16px gutter and the shared hook does not fall back to "Try Hanzo". */
+@media (max-width: 700px) { body:has(main.xin) header[data-slot=masthead] a[data-x-ask] { padding-inline: 11px; } }
+/* idle motion past the hero (time, not scroll; CSS only; none under reduced motion): the newest day in the heatmap
+   and the newest commit carry a live ring, the wall's logos come up to full ink one at a time, and each slab's
+   Explore arrow nudges toward its page */
+.xin-heat-g i.now { position: relative; outline: 2px solid #0a0a0a; outline-offset: 1px; animation: xin-now 1.8s cubic-bezier(.4, 0, .2, 1) infinite; }
+@keyframes xin-now { 0% { box-shadow: 0 0 0 0 rgba(10, 10, 10, .35); } 100% { box-shadow: 0 0 0 8px rgba(10, 10, 10, 0); } }
+.xin-live { display: inline-block; width: 7px; height: 7px; margin-right: 8px; border-radius: 50%; background: #0a0a0a; vertical-align: 1px; animation: xin-now 1.8s cubic-bezier(.4, 0, .2, 1) infinite; }
+.xin-wall li img, .xin-wall li .xin-logo-n { animation: xin-spot 14.4s cubic-bezier(.4, 0, .2, 1) calc(var(--i, 0) * 1.2s) infinite; }
+@keyframes xin-spot { 0%, 9%, 100% { } 3%, 6% { opacity: 1; color: #0a0a0a; } }
+.xin-slab-go svg { animation: xin-nudge 3.2s cubic-bezier(.4, 0, .2, 1) infinite; }
+.xin-slabs li:nth-child(2) .xin-slab-go svg { animation-delay: .5s; } .xin-slabs li:nth-child(3) .xin-slab-go svg { animation-delay: 1s; }
+@keyframes xin-nudge { 0%, 72%, 100% { transform: none; } 84% { transform: translateX(4px); } }
+@media (hover: hover) { .xin-slab:hover .xin-slab-go svg, .xin-wall a:hover img, .xin-wall a:hover .xin-logo-n { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .xin-heat-g i.now, .xin-live, .xin-wall li img, .xin-wall li .xin-logo-n, .xin-slab-go svg { animation: none !important; } }
+/* the ownership line carries a slow pulse from the holding company down to Hanzo AI, Inc. (51% flows down it) */
+.xin-org-l i { position: relative; overflow: hidden; }
+.xin-org-l i::after { content: ''; position: absolute; left: -2px; right: -2px; top: 0; height: 28px; background: #0a0a0a; border-radius: 2px; transform: translateY(-28px); animation: xin-flow 2.8s cubic-bezier(.4, 0, .2, 1) infinite; }
+@keyframes xin-flow { 0% { transform: translateY(-28px); } 70%, 100% { transform: translateY(200px); } }
+@media (prefers-reduced-motion: reduce) { .xin-org-l i::after { animation: none; display: none; } }
+
+/* dark mode (docs/DARK-MODE.md): Hanzo's own dark tokens only, as live hanzo.ai. The deck kit (company/deck.css,
+   vc-type.css and the page's inline --acc) sets its greys for bright mode only, so this page gives them Hanzo's dark
+   values; the results room (.xin-res) is black in both modes. The live figures and the count-up are untouched. */
+html:not(.light) .xin { --ink: var(--foreground); --ink2: var(--muted-foreground); --muted: var(--text-tertiary); --quiet: var(--x-fill); --card: var(--x-fill); --tile: var(--secondary); --line: var(--border); --acc: var(--primary) !important; --acc-soft: color-mix(in srgb, var(--primary) 12%, var(--bg)); }
+html:not(.light) .xin ::selection { background: var(--white-14); }
+html:not(.light) .xin :focus-visible { outline-color: var(--ink); box-shadow: 0 0 0 5px var(--bg); }
+html:not(.light) .xin [data-room='dark'] :focus-visible { outline-color: var(--text-primary); box-shadow: 0 0 0 5px var(--background); }
+/* surfaces */
+html:not(.light) .xin-roll, html:not(.light) .xin-pin-v, html:not(.light) .xin-slab, html:not(.light) .xin-org-n, html:not(.light) .xin-close-art, html:not(.light) .xin-heat-g i, html:not(.light) .xin-leg i { background: var(--x-fill); }
+html:not(.light) .xin-slabs li:nth-child(2) .xin-slab, html:not(.light) .xin-ini { background: var(--secondary); }
+html:not(.light) .xin-slabs li:nth-child(3) .xin-slab { box-shadow: inset 0 0 0 1px var(--border-strong); }
+html:not(.light) .xin-roll-p { background: var(--secondary); color: var(--ink); }
+html:not(.light) .xin-roll-go { background: var(--primary); color: var(--primary-foreground); }
+html:not(.light) .xin-org-n.ink { background: var(--secondary); color: var(--text-primary); box-shadow: inset 0 0 0 1px var(--border-strong); }
+/* ink type and marks */
+html:not(.light) .xin-roll-k, html:not(.light) .xin-roll-f, html:not(.light) .xin-th-sig, html:not(.light) .xin-big-f b, html:not(.light) .xin-lead-k, html:not(.light) .xin-stat-v, html:not(.light) .xin-commits a .x-mono, html:not(.light) .xin-org-l b, html:not(.light) .xin-ini, html:not(.light) .xin-gov-l a, html:not(.light) .xin-dd-n b, html:not(.light) .xin-dd-list li.on .xin-dd-t, html:not(.light) .xin-dd-go, html:not(.light) .xin-close-art { color: var(--ink); }
+html:not(.light) .xin-roll-n u, html:not(.light) .xin-big-bar > span i, html:not(.light) .xin-heat-g .l4, html:not(.light) .xin-leg .l4, html:not(.light) .xin-dd-bar b, html:not(.light) .xin-live, html:not(.light) .xin-org-l i::after { background: var(--ink); color: var(--x-on-ink); }
+html:not(.light) .xin-heat-g i.now { outline-color: var(--ink); }
+/* greys */
+html:not(.light) .xin-roll-w, html:not(.light) .xin-slab-d, html:not(.light) .xin-lead small, html:not(.light) .xin-stats a > span:first-child, html:not(.light) .xin-exec > span:not(.xin-ini), html:not(.light) .xin-dd-go > span { color: var(--ink2); }
+html:not(.light) .xin-slabs li:nth-child(3) .xin-slab-d { color: var(--text-secondary); }
+html:not(.light) .xin-logo-n, html:not(.light) .xin-stats small, html:not(.light) .xin-heat-m, html:not(.light) .xin-heat-f, html:not(.light) .xin-commits a small, html:not(.light) .xin-read .x-mono, html:not(.light) .xin-exec i, html:not(.light) .xin-dd-n, html:not(.light) .xin-dd-w, html:not(.light) .xin-dd-list li.on .xin-dd-go b { color: var(--muted); }
+html:not(.light) .xin-roll-n i, html:not(.light) .xin-big-bar > span, html:not(.light) .xin-dd-bar { background: var(--border-strong); }
+html:not(.light) .xin-big-bar i.one { background: var(--text-tertiary); }
+html:not(.light) .xin-heat-g .l1, html:not(.light) .xin-leg .l1 { background: var(--secondary); }
+html:not(.light) .xin-heat-g .l2, html:not(.light) .xin-leg .l2 { background: var(--white-30); }
+html:not(.light) .xin-heat-g .l3, html:not(.light) .xin-leg .l3 { background: var(--muted-foreground); }
+html:not(.light) .xin-org-l i { background: linear-gradient(var(--ink), var(--secondary)); }
+/* hairlines */
+html:not(.light) .xin-roll-f2, html:not(.light) .xin-backed, html:not(.light) .xin-stats a, html:not(.light) .xin-commits a, html:not(.light) .xin-built, html:not(.light) .xin-wall, html:not(.light) .xin-wall li, html:not(.light) .xin-exec, html:not(.light) .xin-dd, html:not(.light) .xin-dd-list li, html:not(.light) .xin-close, html:not(.light) .xin-pin-s + .xin-pin-s { border-color: var(--border); }
+html:not(.light) .xin-res .xin-pin-s + .xin-pin-s { border-top-color: var(--white-10); }
+@media (hover: hover) {
+  html:not(.light) .xin-roll-p:hover, html:not(.light) .xin-slabs li:not(:nth-child(3)) .xin-slab:hover { background: var(--white-14); }
+  html:not(.light) .xin-roll-n button:hover i { background: var(--text-tertiary); }
+  html:not(.light) .xin-wall a:hover { background: var(--x-fill); }
+  html:not(.light) .xin-backed a:hover .xin-logo-n, html:not(.light) .xin-wall a:hover .xin-logo-n { color: var(--ink) !important; }
+  html:not(.light) .xin-exec:hover i, html:not(.light) .xin-dd-t:hover, html:not(.light) .xin-dd-go:hover > span { color: var(--ink); }
+}
+/* the idle rings and spotlights in the page's dark ink */
+html:not(.light) .xin-heat-g i.now, html:not(.light) .xin-live { animation-name: xin-now-d; }
+html:not(.light) .xin-wall li img, html:not(.light) .xin-wall li .xin-logo-n { animation-name: xin-spot-d; }
+@keyframes xin-now-d { 0% { box-shadow: 0 0 0 0 var(--white-30); } 100% { box-shadow: 0 0 0 8px transparent; } }
+@keyframes xin-spot-d { 0%, 9%, 100% { } 3%, 6% { opacity: 1; color: var(--foreground); } }
+@media (prefers-reduced-motion: reduce) { html:not(.light) .xin-heat-g i.now, html:not(.light) .xin-live, html:not(.light) .xin-wall li img, html:not(.light) .xin-wall li .xin-logo-n { animation: none !important; } }
+@media (hover: hover) { html:not(.light) .xin-wall a:hover img, html:not(.light) .xin-wall a:hover .xin-logo-n { animation: none; } }
+/* dark: live hanzo.ai's heroes carry a halftone dot field in dark, densest at the edges; light mode draws nothing here */
+html:not(.light) .xin-hero { position: relative; isolation: isolate; }
+html:not(.light) .xin-hero::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(circle, var(--white-20) 1px, transparent 1.6px) 0 0 / 5px 5px; -webkit-mask-image: radial-gradient(ellipse 75% 70% at 45% 45%, transparent 35%, #000 100%); mask-image: radial-gradient(ellipse 75% 70% at 45% 45%, transparent 35%, #000 100%); }

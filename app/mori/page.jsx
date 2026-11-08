@@ -1,4 +1,4 @@
-// V2: 8/10 Apple-grade launch in Hanzo's own black and white: the film lands full-bleed and settles into a cube seen from above whose near edges draw in; four pinned capability chapters, then the turning point-cloud viewport as the one dark room, a tile grid of where it fits, the studio map, the preview, Hanzo's exact model cards and a closing band
+// V2: Apple-grade launch in Hanzo's own black and white: the film lands full-bleed and settles into a cube seen from above whose near edges draw in; the turning point-cloud viewport as the one dark room (it grows out of and shrinks back into a card), the capabilities on a snapping side carousel, where it fits (pixel-resolve), the studio map (dealt), Hanzo's exact model cards (names decode) and a closing band
 // Persona: Creative studio (researcher audience)
 // Goal: request research access
 // CTA: Request access (/research-access?models=mori, data-thumb)

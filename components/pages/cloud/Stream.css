@@ -39,20 +39,20 @@
 .st2-rul:not(.pin) .st2-track > * { scroll-snap-align: start; }
 .st2-rul-h { flex: none; width: min(640px, 80vw); display: flex; flex-direction: column; justify-content: center; padding-right: 48px; }
 .st2-rul-h .l2-display { max-width: 9ch; }
-.st2-range { margin: 28px 0 0; font-size: 14px; color: #525252; }
-.st2-rec { flex: none; width: min(480px, 84vw); min-height: min(560px, 66svh); display: flex; flex-direction: column; padding: 36px; border-radius: 24px; background: #f5f5f5; transition: background .5s var(--ease), color .5s var(--ease); }
+.st2-range { margin: 28px 0 0; font-size: 14px; color: light-dark(#525252, var(--muted-foreground)); }
+.st2-rec { flex: none; width: min(480px, 84vw); min-height: min(560px, 66svh); display: flex; flex-direction: column; padding: 36px; border-radius: 24px; background: light-dark(#f5f5f5, var(--card)); transition: background .5s var(--ease), color .5s var(--ease); }
 .st2-rec:nth-of-type(odd) { margin-top: 6svh; }
-.st2-rec.read { background: #ededed; }
+.st2-rec.read { background: light-dark(#ededed, var(--surface-2)); }
 .st2-big { margin: 0 0 auto; padding-bottom: 32px; font-size: 64px; font-weight: 497; color: transparent; -webkit-text-stroke: 1.5px #a3a3a3; transition: color .6s var(--ease); }
 .st2-rec.read .st2-big { color: var(--ink); -webkit-text-stroke-color: var(--ink); }
-.st2-ofs { display: flex; justify-content: space-between; margin: 14px 0 0; font-size: 13px; color: #404040; }
-.st2-ofs span:last-child { color: #525252; }
+.st2-ofs { display: flex; justify-content: space-between; margin: 14px 0 0; font-size: 13px; color: light-dark(#404040, var(--text-secondary)); }
+.st2-ofs span:last-child { color: light-dark(#525252, var(--muted-foreground)); }
 .st2-rec .l2-body { margin-top: 18px; font-size: 17px; }
 .st2-figs { flex: none; list-style: none; margin: 0 0 0 40px; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 400px)); align-content: center; gap: 48px 40px; }
 .st2-figs li { display: flex; flex-direction: column; gap: 10px; }
 .st2-figs b { font-size: 64px; font-weight: 220; letter-spacing: -.05em; line-height: .95; }
 .st2-figs li:first-child b { color: var(--ink); text-decoration: underline; text-decoration-thickness: .06em; text-underline-offset: .14em; }
-.st2-figs span { font: 500 14px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: #525252; }
+.st2-figs span { font: 500 14px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: light-dark(#525252, var(--muted-foreground)); }
 .st2-commit { position: absolute; left: 0; right: 0; bottom: max(28px, 5svh); display: flex; align-items: center; gap: 14px; padding: 0 24px; pointer-events: none; }
 .st2-commit i { flex: 1; height: 2px; background: repeating-linear-gradient(90deg, var(--hair) 0 2px, transparent 2px 14px); }
 .st2-commit p { margin: 0; font-size: 13px; color: var(--soft); }
@@ -62,19 +62,19 @@
 .st2-code-l { grid-column: 1 / span 5; }
 .st2-code-r { grid-column: 7 / span 6; }
 .st2-code-r .cf-code { border-radius: 24px; }
-.st2-code-r .cf-mark { background: #e4e4e7; color: var(--ink); border-radius: 4px; box-shadow: inset 0 -2px 0 var(--ink); }
-.st2-check { margin-top: 48px; padding: 26px; border-radius: 24px; background: #f5f5f5; }
+.st2-code-r .cf-mark { background: light-dark(#e4e4e7, var(--secondary)); color: var(--ink); border-radius: 4px; box-shadow: inset 0 -2px 0 var(--ink); }
+.st2-check { margin-top: 48px; padding: 26px; border-radius: 24px; background: light-dark(#f5f5f5, var(--card)); }
 .st2-check label { display: flex; flex-direction: column; gap: 14px; }
-.st2-check input { height: 56px; padding: 0 18px; border-radius: 14px; border: 1px solid var(--hair); background: #fff; font: 500 20px/1 var(--mono); color: var(--ink); outline: none; transition: border-color .2s, box-shadow .2s; }
-.st2-check input:focus { border-color: var(--ink); box-shadow: 0 0 0 4px rgba(10, 10, 10, .1); }
+.st2-check input { height: 56px; padding: 0 18px; border-radius: 14px; border: 1px solid var(--hair); background: var(--x-raised); font: 500 20px/1 var(--mono); color: var(--ink); outline: none; transition: border-color .2s, box-shadow .2s; }
+.st2-check input:focus { border-color: var(--ink); box-shadow: 0 0 0 4px light-dark(rgba(10, 10, 10, .1), var(--border)); }
 .st2-ans { min-height: 52px; margin: 16px 0 0; font-size: 17px; line-height: 1.45; color: var(--soft); }
 .st2-ans b { color: var(--ink); }
-.st2-ans button { margin: 0 4px; min-height: 36px; padding: 2px 10px; border: 1px solid rgba(0, 0, 0, .14); border-radius: 8px; background: #fff; color: var(--ink); font: 500 15px/1.6 var(--mono); cursor: pointer; transition: border-color .2s, transform var(--dur-press, .1s) var(--ease); }
+.st2-ans button { margin: 0 4px; min-height: 36px; padding: 2px 10px; border: 1px solid light-dark(rgba(0, 0, 0, .14), var(--border-control)); border-radius: 8px; background: var(--x-raised); color: var(--ink); font: 500 15px/1.6 var(--mono); cursor: pointer; transition: border-color .2s, transform var(--dur-press, .1s) var(--ease); }
 .st2-ans button:active { transform: scale(.98); }
 @media (hover: hover) { .st2-ans button:hover { border-color: var(--ink); } }
 .st2-apis { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
-.st2-apis li { padding: 7px 10px; border-radius: 8px; background: #fff; font: 500 13px/1 var(--mono); color: #525252; transition: background .25s, color .25s; }
-.st2-apis li.on { background: var(--ink); color: #fff; }
+.st2-apis li { padding: 7px 10px; border-radius: 8px; background: var(--x-raised); font: 500 13px/1 var(--mono); color: light-dark(#525252, var(--muted-foreground)); transition: background .25s, color .25s; }
+.st2-apis li.on { background: var(--ink); color: var(--x-on-ink); }
 
 @media (max-width: 900px) {
   .st2-tape { padding-top: 96px; }
@@ -99,7 +99,7 @@
 .st2-rec { min-height: min(440px, 56svh); }
 /* the committed-offset line keeps moving while the tape is pinned: records still arriving (transform only) */
 .st2-commit i { position: relative; overflow: hidden; background: none; }
-.st2-commit i::before { content: ''; position: absolute; inset: 0 -14px 0 0; background: repeating-linear-gradient(90deg, rgba(0, 0, 0, .22) 0 2px, transparent 2px 14px); animation: st2-ants 1.4s linear infinite; }
+.st2-commit i::before { content: ''; position: absolute; inset: 0 -14px 0 0; background: repeating-linear-gradient(90deg, light-dark(rgba(0, 0, 0, .22), var(--border-focus)) 0 2px, transparent 2px 14px); animation: st2-ants 1.4s linear infinite; }
 @keyframes st2-ants { to { transform: translateX(-14px); } }
 @media (prefers-reduced-motion: reduce) { .st2-commit i::before { animation: none; } }
 @media (max-width: 900px) { .st2-big { font-size: 28px; } .st2-figs b { font-size: 28px; } }
@@ -107,14 +107,14 @@
 .st2 .l2-stage { height: 118svh; }
 /* each fact card carries its record strip; hover consumes one record */
 .st2-rec { position: relative; overflow: hidden; transition: background .5s var(--ease), transform .3s cubic-bezier(.16, 1, .3, 1); }
-.st2-recs { margin: auto -36px -36px; padding: 18px 0 22px 36px; border-top: 1px solid rgba(0, 0, 0, .08); overflow: hidden; }
+.st2-recs { margin: auto -36px -36px; padding: 18px 0 22px 36px; border-top: 1px solid var(--line); overflow: hidden; }
 .st2-recs > div { display: flex; gap: 6px; transition: transform .5s cubic-bezier(.16, 1, .3, 1); }
-.st2-recs i { flex: none; display: flex; align-items: flex-end; width: 58px; height: 40px; padding: 6px 7px; border-radius: 8px; background: #fff; border: 1px solid rgba(0, 0, 0, .1); font-style: normal; }
-.st2-recs i b { font-size: 12px; font-weight: 500; color: #525252; }
+.st2-recs i { flex: none; display: flex; align-items: flex-end; width: 58px; height: 40px; padding: 6px 7px; border-radius: 8px; background: var(--x-raised); border: 1px solid var(--x-e10); font-style: normal; }
+.st2-recs i b { font-size: 12px; font-weight: 500; color: light-dark(#525252, var(--muted-foreground)); }
 .st2-recs i.on { background: var(--ink); border-color: var(--ink); }
-.st2-recs i.on b { color: #fafafa; }
+.st2-recs i.on b { color: light-dark(#fafafa, var(--primary-foreground)); }
 .st2-recs i.bad { background: none; border: 1.5px dashed var(--ink); }
-.st2-rec.read .st2-recs i.on { box-shadow: 0 0 0 3px rgba(0, 0, 0, .12); }
+.st2-rec.read .st2-recs i.on { box-shadow: 0 0 0 3px var(--x-e12); }
 @media (hover: hover) { .st2-rec:hover { transform: translateY(-4px); } .st2-rec:hover .st2-recs > div { transform: translateX(-64px); } }
 .st2-rec .l2-body { margin-bottom: 24px; }
 /* the client names read as a caption, not as buttons */
@@ -135,8 +135,8 @@
 .st2-commit-m b { color: #fafafa; font-weight: 606; }
 .st2-rec .st2-big { transition: color .6s var(--ease), -webkit-text-stroke-color .6s var(--ease); }
 .st2-recs i.on { transition: background .4s var(--ease), box-shadow .4s var(--ease); }
-.st2-rec:not(.read) .st2-recs i.on { background: #fff; border-color: rgba(0, 0, 0, .3); }
-.st2-rec:not(.read) .st2-recs i.on b { color: #525252; }
+.st2-rec:not(.read) .st2-recs i.on { background: var(--x-raised); border-color: light-dark(rgba(0, 0, 0, .3), var(--border-selected)); }
+.st2-rec:not(.read) .st2-recs i.on b { color: light-dark(#525252, var(--muted-foreground)); }
 /* the hero: a shorter hold and the title higher in its frame (about 40% of the screen) */
 @media (min-width: 901px) {
   .st2 .l2-stage { height: 104svh; }
@@ -161,3 +161,91 @@
   .st2-rul:not(.pin) .st2-rec { width: 82vw; }
   .st2-mini-k { font-size: 14px; }
 }
+
+/* ---- run 4 (D2): hero clear of the title, the stamp in its own slot, labels over a solid edge ---- */
+.st2-clients { gap: 4px 14px; margin-bottom: 18px; }
+.st2-clients span, .st2-clients i { padding: 0; font-size: 13px; color: #8f8f8f; font-style: normal; }
+.st2-clients b { padding: 0; background: none; color: #f5f5f5; font-weight: 500; }
+.st2-p { left: 0; top: 0; bottom: 0; display: flex; align-items: center; padding: 0 40px 0 6%; border-radius: 0; background: linear-gradient(90deg, #000 72%, transparent); }
+.st2-bad-slot { position: absolute; right: 0; top: 0; bottom: 0; z-index: 3; width: 260px; display: flex; align-items: center; justify-content: flex-end; padding-right: 6%; background: linear-gradient(90deg, transparent, #000 34%); pointer-events: none; }
+.st2-bad { position: static; }
+@keyframes st2-bounce { from { transform: translateX(-24px); opacity: 0; } 30% { transform: translateX(0); opacity: 1; } 75% { opacity: 1; } to { transform: translateX(18px); opacity: 0; } }
+.st2-bad { animation-duration: 2.2s; }
+@media (min-width: 901px) {
+  .st2 .l2-stage.frame .l2-stage-copy { padding-bottom: clamp(72px, 11svh, 120px); }
+  .st2-tape { padding-top: clamp(20px, 3svh, 48px); }
+}
+@media (max-width: 900px) {
+  .st2-p { padding-left: 16px; padding-right: 28px; }
+  .st2-mark { left: 132px; max-width: calc(100% - 144px); white-space: normal; line-height: 1.25; padding: 6px 10px; overflow: visible; }
+  .st2-bad-slot { width: 170px; padding-right: 12px; }
+}
+/* the record on stage: its strip consumes at rest, its offset stands up */
+.st2-rec.cur .st2-recs > div { animation: st2-consume 5.6s steps(1, end) infinite; }
+@keyframes st2-consume { 0% { transform: translateX(0); } 25% { transform: translateX(-64px); } 50% { transform: translateX(-128px); } 75% { transform: translateX(-64px); } }
+.st2-rec .st2-big { transform-origin: left bottom; transition: color .6s var(--ease), -webkit-text-stroke-color .6s var(--ease), transform .6s cubic-bezier(.16, 1, .3, 1); }
+.st2-rec.cur .st2-big { transform: scale(1.5); }
+.st2-recs > div { transition: transform .45s cubic-bezier(.16, 1, .3, 1); }
+@media (hover: hover) { .st2-rec.cur:hover .st2-recs > div { animation-play-state: paused; } }
+@media (prefers-reduced-motion: reduce) { .st2-rec.cur .st2-recs > div { animation: none; } .st2-rec.cur .st2-big { transform: none; } }
+/* phones: the committed offset sits in the heading, never over a record */
+.st2-commit-m { position: static; margin: 16px 0 0; }
+/* the API list: real controls that fill the checker */
+.st2-apis li { padding: 0; background: none; }
+.st2-apis li.on { background: none; padding: 0; }
+.st2-apis button { min-height: 32px; padding: 4px 8px; border: 1px solid transparent; border-radius: 6px; background: none; font: 500 13px/1 var(--mono); color: light-dark(#525252, var(--muted-foreground)); cursor: pointer; transition: background .2s, color .2s, border-color .2s, transform var(--dur-press, .1s) var(--ease); }
+.st2-apis button.on { background: var(--ink); color: var(--x-on-ink); }
+.st2-apis button:active { transform: scale(.96); }
+@media (hover: hover) { .st2-apis button:not(.on):hover { border-color: light-dark(rgba(0, 0, 0, .2), var(--border-focus)); color: var(--ink); background: var(--x-raised); } }
+@media (max-width: 900px) { .st2-apis button { font-size: 14px; min-height: 36px; } }
+/* the close: the consumer group, four committed offsets climbing */
+.st2-grp { position: relative; padding: 22px 24px 18px; border-radius: 24px; background: #0a0a0a; border: 1px solid rgba(255, 255, 255, .12); color: #f5f5f5; }
+.st2-grp-k { display: flex; justify-content: space-between; gap: 12px; margin: 0 56px 16px 0; font-size: 13px; color: #a3a3a3; }
+.st2-grp-k b, .st2-grp-k .st2-grp-b { font-weight: 500; color: #f5f5f5; }
+.st2-grp .l2-pause { top: 12px; right: 12px; }
+.st2-grp-rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.st2-grp-rows li { display: grid; grid-template-columns: 96px 1fr 56px; grid-template-rows: auto auto; align-items: center; column-gap: 14px; padding: 10px 0; border-top: 1px solid rgba(255, 255, 255, .08); font: 500 13px/1.2 var(--mono); }
+.st2-grp-rows span { color: #a3a3a3; }
+.st2-grp-rows i { height: 8px; border-radius: 99px; background: rgba(255, 255, 255, .08); overflow: hidden; }
+.st2-grp-rows em { display: block; height: 100%; border-radius: inherit; background: #f5f5f5; transform-origin: left; transition: transform .6s cubic-bezier(.16, 1, .3, 1); }
+.st2-grp-rows b { text-align: right; font-weight: 606; font-variant-numeric: tabular-nums; }
+.st2-grp-rows small { grid-column: 2 / 4; margin-top: 6px; font-size: 12px; color: #737373; transition: color .3s; }
+.st2-grp-rows li.down em { background: none; box-shadow: inset 0 0 0 1.5px #a3a3a3; }
+.st2-grp-rows li.down small { color: #e4e4e7; }
+@media (max-width: 900px) { .st2-grp-rows li { grid-template-columns: 88px 1fr 48px; font-size: 13px; } .st2-grp-rows small { font-size: 12px; } }
+.st2-p { padding-right: 64px; background: linear-gradient(90deg, #000 calc(100% - 44px), transparent); }
+.st2-bad-slot { background: linear-gradient(90deg, transparent, #000 40px); }
+@media (max-width: 900px) { .st2-p { padding-right: 44px; background: linear-gradient(90deg, #000 calc(100% - 28px), transparent); } .st2-bad-slot { width: 190px; } }
+.st2-grp-rows small { color: #8f8f8f; }
+.st2-rec .st2-big { transform-origin: left top; }
+/* Hanzo's Mori art (live: the black card behind the six facts), kept under the heading (COPY-RULE.md rule 5) */
+.st2-art { margin-top: 28px; }
+/* dark (docs/DARK-MODE.md): the shared l2 frame takes Hanzo's dark on this page; light-dark() keeps bright exactly as it was */
+.st2.l2-page { background: var(--bg); --hair: light-dark(rgba(0, 0, 0, .1), var(--border)); --muted: light-dark(#525252, var(--muted-foreground)); --soft: light-dark(#525252, var(--muted-foreground)); }
+.st2 .l2-obj { background: var(--x-raised); }
+html:not(.light) .st2 .l2-pause:not(.dk) { background: var(--surface-overlay); }
+.st2-code-r .cf-mark { background: light-dark(#e4e4e7, var(--secondary)); }
+/* the code panel carries Hanzo's .light class (color-scheme: light, and Hanzo's light tokens), so its dark is set by an
+   html:not(.light) rule with Hanzo's dark tokens captured on the page root (resolved there, inherited as colours) */
+html:not(.light) .st2.l2-page { --st2-d-card: var(--card); --st2-d-foreground: var(--foreground); --st2-d-border: var(--border); --st2-d-border-selected: var(--border-selected); --st2-d-muted: var(--surface-2); --st2-d-muted-foreground: var(--muted-foreground); --st2-d-text-secondary: var(--text-secondary); --st2-d-secondary: var(--secondary); }
+html:not(.light) .st2.l2-page .cf-code.light { color-scheme: dark; background: var(--st2-d-card); color: var(--st2-d-foreground); border-color: var(--st2-d-border); box-shadow: none; }
+html:not(.light) .st2.l2-page .cf-code.light .cf-code-bar { border-color: var(--st2-d-border); }
+html:not(.light) .st2.l2-page .cf-code.light .cf-code-bar > i { background: var(--st2-d-border-selected); }
+html:not(.light) .st2.l2-page .cf-code.light .cf-code-bar .x-copy { background: var(--st2-d-muted); border-color: var(--st2-d-border); color: var(--st2-d-muted-foreground); }
+html:not(.light) .st2.l2-page .cf-code.light .cf-code-k { color: var(--st2-d-muted-foreground); }
+html:not(.light) .st2.l2-page .cf-code.light .s { color: var(--st2-d-muted-foreground); }
+html:not(.light) .st2.l2-page .cf-code.light .k { color: var(--st2-d-text-secondary); }
+html:not(.light) .st2.l2-page .st2-code-r .cf-mark { background-color: var(--st2-d-secondary); background-image: none; color: var(--st2-d-foreground); box-shadow: inset 0 -2px 0 var(--st2-d-foreground); }
+/* live's dark cards: #0f0f0f with a white 10% hairline (inset, so nothing moves) */
+html:not(.light) .st2-rec, html:not(.light) .st2-check { box-shadow: inset 0 0 0 1px var(--border); }
+/* dark only: Hanzo's hero texture as measured on live hanzo.ai dark (7px dot grid, dots ~36% foreground, densest at the
+   side edges and toward the bottom, plus live's top glow); the pinned stage keeps its own sticky position */
+html:not(.light) .st2 .l2-stage > .l2-stage-pin { isolation: isolate; }
+html:not(.light) .st2 .l2-stage > .l2-stage-pin::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(circle, color-mix(in srgb, var(--foreground) 36%, transparent) 1.5px, transparent 2.1px) 0 0 / 7px 7px;
+  -webkit-mask-image: linear-gradient(90deg, #000, rgba(0, 0, 0, .15) 32%, rgba(0, 0, 0, .15) 64%, #000), linear-gradient(180deg, rgba(0, 0, 0, .25), #000 85%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, #000, rgba(0, 0, 0, .15) 32%, rgba(0, 0, 0, .15) 64%, #000), linear-gradient(180deg, rgba(0, 0, 0, .25), #000 85%);
+  mask-composite: intersect; }
+html:not(.light) .st2 .l2-stage > .l2-stage-pin::after { content: ''; position: absolute; inset: 0 0 auto; height: 640px; z-index: -1; pointer-events: none;
+  background: radial-gradient(60% 70% at 50% 0%, color-mix(in srgb, var(--foreground) 9%, transparent), transparent 70%); }

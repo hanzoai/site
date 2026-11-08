@@ -4,7 +4,7 @@
 "h1": "The complete MCP runtime for coding, decisions, browser, and cloud"
 },
 {
-"p": "Give any model a filesystem, shell, semantic AST code index, Kai sub-10ms decisions, Playwright & Chrome DevTools browser control, issue tracking, persistent memory, and 1,538 typed Hanzo Cloud operations over stdio or streamable HTTP."
+"p": "Give any model a filesystem, shell, semantic AST code index, Kai sub-10ms decisions, Playwright & Chrome DevTools browser control, issue tracking, persistent memory, and 1,700+ typed Hanzo Cloud operations over stdio or streamable HTTP."
 },
 {
 "a": "Browse 260+ tools",
@@ -38,7 +38,7 @@
 "li": "Full-stack agent capabilities, ready out of the box"
 },
 {
-"li": "117 Hanzo Cloud services, 1,538 typed operations"
+"li": "125 Hanzo Cloud services, 1,700+ typed operations"
 },
 {
 "li": "Scoped permissions & Kai safety screening"
@@ -99,7 +99,7 @@
 "p": "tracker_boards, tracker_issues, tracker_create, and tracker_update sync directly with engineering boards, while memory, think, and plan persist architecture context across sessions."
 },
 {
-"h3": "hanzo (117 Cloud services · 1,538 ops)"
+"h3": "hanzo (125 Cloud services · 1,700+ ops)"
 },
 {
 "p": "Direct typed access to Deploy, Sandbox, IAM, KMS, KV, S3, Vector, Search, Crawl, Workflow, Commerce, and Billing — inspectable at docs.hanzo.ai/docs/mcp-tools."

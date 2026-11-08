@@ -1,0 +1,156 @@
+# /investors coverage (MASTER.md part 2, the 18 parts)
+
+Page file: `components/pages/Investors.jsx` (+ `Investors.css`) · gallery: `docs/gallery/investors/` · metric id: `cta_click investors.hero` (one contact click)
+
+Open copy questions for James: "Backed by" logos (MASTER part 1 list; shown as on live, permission not documented here); the aria strings Pause, Replay and Read the source wait for `content/ui-strings.json` approval.
+Shared changes requested (`docs/build-notes/requests/investors.md`): none (the PinScenes cross-fade ghost was avoided with a page-local pinned scene; the global no-JS rule in `app/layout.jsx` reveals hidden figures, so this page hides its counter's inactive figures in its own `<noscript>`).
+Forks this page deleted: the forked `UiBtn`/`Btn` buttons (now the kit's `Cta`); the hand-drawn Pareto scatter; native checkboxes; the infinite logo marquee; the counter's endless loop.
+
+Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
+
+## 1. Strategy and conversion
+- [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
+- [x] One solid fill per viewport; label and href from Hanzo's copy (`lib/cta.js` does not exist yet; labels are the live ones)
+- [x] One h1; the page is clear in 5 seconds
+- [x] No dead or self-looping button; ~~prices from `lib/plans.js`~~ n/a: no prices on this page
+- [x] Open copy questions for James listed, none decided
+
+Done here: "Contact investor relations" (mailto:ir@hanzo.ai) is the only solid in the hero, carried by the site's ask bar after it. The close's one solid is ir@hanzo.ai, the same address. "See the research" and "Book a call" are quiet `Cta`s.
+
+## 2. Information architecture and navigation
+- [x] One `<main id="main">`; skip link reaches it
+- [x] Every link through `A`, `Go`, `More` or `href()`; every card a real link
+- [x] ~~Breadcrumb at depth 2 or more~~ n/a: /investors is depth 1
+- [x] Link parity: 0 removed, 0 unexpected
+
+Done here: The layout's skip link reaches its `#main` mark. Every link goes through the kit's `A` or `Cta`. Parity is 43/43 links.
+
+## 3. First impression and page narrative
+- [x] Sells in 5 s; something moves within 1 s without input
+- [ ] ~~`PageHero`~~ not merged in the kit yet; the hero is page-local and nothing sits above the h1
+- [x] JS off: legible; no `opacity:0` on the LCP element
+- [x] One idea per 100svh; no 3 same-height sections in a row
+- [x] Ends in proof strip, closing room, footer
+- [x] ~~Card-to-page links use Morph~~ n/a: no card opens into a page here (Morph is broken site-wide per the conductor)
+
+Done here: The h1 (`MaskLines now`) and then the lede, asks and counter arrive once the curtain lifts (`useArrived`). The counter starts rolling within a second.
+- With JS off, the h1, lede, both asks and one counter figure show (screenshot), and every pinned scene stacks.
+- The narrative: hero, thesis (pinned), stack (layering slabs), results (pinned black room), commit record, wall, people, Read the source, close.
+
+## 4. Conversion system
+- [x] `<Cta>` only; no raw `.x-btn`
+- [x] Sticky ask in header after the hero (desktop: "Contact investor relations"; phones: the same mailto in Hanzo's shorter words, "ir@hanzo.ai", the close's own label, because the long label does not fit the shared header)
+- [x] ~~Copy button copies exactly the displayed text~~ n/a: no copy control on this page
+- [x] `data-cta` and `data-thumb` on every primary
+
+Done here: The kit's `Cta` is used with `id="investors.hero"` and `thumb`, `investors.research`, `investors.close` and `investors.call`. The ask bar reads `data-thumb="Contact investor relations"` and steps aside while the close's ir@hanzo.ai solid is on screen. Round 9 (8 Nov), measured at 375: after the hero the phone header carries a solid "ir@hanzo.ai" (mailto:ir@hanzo.ai) at y 900, 1600, 3000 and 6000, never "Try Hanzo"; `usePhoneThumb` hands the header that label on phones and the header button keeps 3px less side padding on this page so it ends inside the 16px gutter (right edge 357).
+
+## 5. Trust and proof
+- [x] No logo without documented permission (Backed by listed for James); no seal; no invented number
+- [x] Every figure traces to Hanzo's copy; qualifier beside the number
+- [x] Marquees pause, freeze under reduced motion, hide duplicates (the marquee is gone: a still wall)
+- [x] ~~Privacy link and owner line beside every submit~~ n/a: no form
+
+Done here: Every figure is Hanzo's (16 of 16, 93.7%, 95.6%, 0.8 ms, 3.02×, ~3,665, 732,288, 51%), with "Up to" beside 200× and 400× and "~" beside 3,665. Bars sit on a zero baseline and carry their true value as `--xin-s`, so phones, reduced motion and JS off draw true lengths too: measured 8 Nov at 375 and with reduced motion, LiveCodeBench 93.7/93.1/91.4/80/80/78.3% of the track, Kai 37.5/50/100%, and 400× twice 200× (257 vs 129px at 375).
+
+## 6. Content presentation (copy untouched)
+- [x] No text under 13px (14px phone) except mono capitals
+- [x] Measures held; no orphan word in a heading
+- [x] ~~Tables, FAQ, tabs and code use the kit parts~~ n/a: none on this page
+- [x] `python3 scripts/parity.py /investors`: 0 missing
+
+Done here: Parity is 131/131 text and 43/43 links. Hanzo's 03, 02 and 01 stay as the stack's giant numerals. Lede and body sizes come from `company/deck.css`.
+
+## 7. Visual design system
+- [x] `python3 scripts/taste.py <files>` passes; no literal hex outside the deck ramp
+- [x] No label, tag, badge or pill above a headline
+- [x] Radii 24/16/12/6, shadows and sizes from the deck; never box plus shadow
+- [x] One icon set; no icon in a rounded box
+- [x] Differs from neighbours in hero medium and room order
+
+Done here: `taste.py` passes; colours are the deck's only (#0a0a0a, #525252, #737373, #a3a3a3, #d4d4d4, #f2f2f2, #f5f5f5, #000 and white alpha steps), `--acc` is #0a0a0a; tiles are flat fills with no shadow, one black room (results); the rolling-figure hero card differs from /press (a deck) and /team (a canvas).
+
+## 8. UI component library
+- [x] Every control has hover, press, focus-visible, disabled, loading
+- [x] Focus ring visible on every stop of a Tab crawl
+- [x] ~~Dialogs are native~~ n/a: no dialog
+- [x] ~~Inputs 16px or larger~~ n/a: no input; no bare `:hover` (all inside `@media (hover:hover)`)
+- [x] Forks this page deleted: listed above
+
+Done here: Pause/Replay, counter steps, source arrows and list ticks are real buttons with `aria-pressed`, press .97 at 90 ms; every link presses 1px (slabs, stats, lead, commits, wall, dd rows, execs); the focus ring is 2px ink with a white halo (inverted in the results room); hovers measured 8 Nov: slab fill #e5e5e5 and arrow 4px, stat arrow, commit message underline, wall tile #f5f5f5 with its name to ink, Backed-by names to #0a0a0a, Legal/Security/Press underline 2px, exec arrow.
+
+## 9. Motion and interaction
+- [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
+- [x] At least 3 kinds of movement; scroll-linked is half or less
+- [x] Something moves without input; every control answers
+- [x] Reduced motion shows the final state; no `setInterval`
+- [ ] ~~Sound~~ the shared sound kit is not in yet
+
+Done here: Idle: the counter rolls once through 7 figures with Pause and Replay, the Sigil fields drift, and (round 9) the newest heatmap day and newest commit carry a live ring, the wall's names come up to ink one at a time, each slab's Explore arrow nudges, and a pulse runs down the 51% ownership line; state: steps, ticks, figures rolling in per scene; pointer: arrows and tiles; scroll: the pinned thesis and results and the layering slabs; arrival: line masks. motion.mjs desk 8 Nov: 1 still screen of 14 (was 4; the people screen's Sigils draw only when the portraits fail), CLS 0.002. Reduced motion: 0 running animations and 0 console errors (the counter's Pause/Replay no longer branches on the preference while rendering). Sound: the shared kit is not in yet.
+
+## 10. Media
+- [x] `Pic`/`Img` only (kit `Img` for logos and portraits); sizes set
+- [x] ~~At most 2 videos~~ n/a: no video
+- [x] Nothing missing that this page can fix; alt on every image
+- [x] No dimmed or filtered photo (logos greyscale until hover)
+
+Done here: Logos and portraits use the kit's `Img` with width and height. A failed logo shows its name, and a failed portrait shows the person's own Sigil, not a blank disc. Mirroring /logos and /authors into `public/` belongs to the media owner.
+
+## 11. Mobile and responsive
+- [x] 375×812 and 1470×801 pass with no overlap
+- [x] No horizontal scroll at 320
+- [x] Every target 44px or more (round 2: the 7 counter steps were 36px wide; now 44px each); every hover has a tap path
+- [x] Primary ask above the fold at 375×667
+
+Done here: At 375 the ask ends at y≈428 and the pinned scenes stack, each with its object; the wall is 3 across with fallback names that wrap; the heatmap scrolls inside a fading edge; counter steps measured 44×44 at 375 and 1470; Read the source, Legal and Press are 44px; 320 scrollWidth 320. check.mjs phone flags only the layering slabs (each slab covers the one before by design).
+
+## 12. Accessibility (WCAG 2.2 AA)
+- [x] Contrast measured, text at 4.5:1 or better (#525252 and #737373 on white, white 78% and 55% on black)
+- [x] Pause control on every moving item
+- [x] ~~Forms labelled~~ n/a: no form
+- [x] One h1; no heading skips; names start with visible text
+- [x] Keyboard reaches every control
+
+Done here: The counter announces its label politely, and its steps read figure, name and subject. Focus inside a pinned scene scrolls the page to that scene, and the inactive scenes do not take pointer events.
+
+## 13. Performance and engineering
+- [x] h1 and LCP element in server HTML
+- [x] Only transform, opacity and SVG; every image sized
+- [x] No poller; no third-party request
+- [x] Nothing heavy run on James's laptop (filmed in the cloud)
+
+Done here: The counter runs only while seen and stops after one round. The Sigils pause off screen. The only timer is one `setTimeout` per counter step.
+
+## 14. SEO and machine files
+- [x] Title and description match live
+- [x] Canonical belongs to the shared layout owner
+- [x] `<JsonLd route="/investors">` unchanged
+- [x] Every card is a real link
+
+Done here: `app/investors/page.jsx` keeps Hanzo's title and description and the JsonLd.
+
+## 15. Catalogue and product pages
+- [x] n/a: not a catalogue or model page
+
+Done here: n/a. /investors is a Story page (MASTER 4.4).
+
+## 16. Developer experience
+- [x] n/a: no code on the page
+
+Done here: n/a. The commit record links each commit and is not code to copy.
+
+## 17. States and resilience
+- [x] Figures are a static snapshot ("Forge listing · read Nov 6, 06:04" shown); no loading state needed
+- [x] Blocked media leaves a complete page, no console errors
+- [x] ~~A failed submit~~ n/a: no form
+- [x] A thrown island does not blank the page (Sigil sits inside the layout's boundary)
+
+Done here: With hanzo.ai blocked (this cloud box), the logos show their names and the portraits their Sigils. The ticked list survives a blocked localStorage.
+
+## 18. Measurement and handover
+- [x] `data-cta` on every primary (through `Cta`, which fires `cta_click`)
+- [x] Nothing identifier-bearing before consent; no field value in a payload
+- [x] `V2: 8/10 …` in the page file's top comment
+- [ ] Review read: `docs/build-notes/review/investors.md` was 6/10; every listed fix is done, awaiting re-review
+
+Done here: Reviews read: 6/10 (7 Nov). Round 9 (8 Nov) answers it: commit stats on one line (78,421 / 1,263 / 1,733 / 5,125 / 3,617, measured), bars true at every size and under reduced motion, phone header ask, 44px counter steps, presses and hovers on every link, `--acc` on the deck ink, 0 hydration errors under reduced motion, and the copy check's missing lines restored (Hanzo's kicker and the thesis label as visually hidden text, figures and names in leaf spans). Gallery: `docs/gallery/investors/`.

@@ -10,8 +10,9 @@ import { scrollToY } from '../../../lib/scroll';
 
 const calm = () => typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* Sets data-in on the element once a share of it is on screen. */
-function useArrive(amount = 0.25) {
+/* Sets data-in on the element once a share of it is on screen. `parent` watches the element's parent instead: an
+   element whose own clip-path starts empty never intersects, so the wipe watches its section. */
+function useArrive(amount = 0.25, parent = false) {
   const ref = useRef(null);
   useEffect(() => {
     const el = ref.current;
@@ -19,9 +20,9 @@ function useArrive(amount = 0.25) {
     const io = new IntersectionObserver((es) => {
       if (es.some((e) => e.isIntersecting)) { el.setAttribute('data-in', ''); io.disconnect(); }
     }, { threshold: amount });
-    io.observe(el);
+    io.observe(parent ? el.parentElement : el);
     return () => io.disconnect();
-  }, [amount]);
+  }, [amount, parent]);
   return ref;
 }
 
@@ -33,7 +34,7 @@ export function Glitch({ as: Tag = 'div', className = '', children, ...rest }) {
 
 /* diagonal-wipe: a diagonal clip sweeps across from the top-left corner. */
 export function Wipe({ as: Tag = 'div', className = '', children, ...rest }) {
-  const ref = useArrive(0.2);
+  const ref = useArrive(0.2, true);
   return <Tag ref={ref} className={'mc-dw ' + className} {...rest}>{children}</Tag>;
 }
 
@@ -92,7 +93,9 @@ export function Dissolve({ as: Tag = 'section', className = '', children, ...res
     const g = c.getContext('2d');
     const img = g.createImageData(w, h);
     const n = w * h, r = new Float32Array(n), shade = new Uint8Array(n);
-    for (let i = 0; i < n; i++) { r[i] = Math.random(); shade[i] = 229 + ((Math.random() * 27) | 0); }
+    // grain in the page's own light: near-white in bright, near Hanzo's dark page in dark (its :not(.light) rule)
+    const base = document.documentElement.classList.contains('light') ? 229 : 13;
+    for (let i = 0; i < n; i++) { r[i] = Math.random(); shade[i] = base + ((Math.random() * 27) | 0); }
     const paint = (t) => {
       const d = img.data;
       for (let i = 0, j = 0; i < n; i++, j += 4) {

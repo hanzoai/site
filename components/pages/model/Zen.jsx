@@ -14,6 +14,7 @@ import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'mo
 import { Magnetic } from '../../ui';
 import { A, More, Cta, Img, Stat } from '../../kit';
 import Sigil from '../../Sigil';
+import useScheme from './scheme';
 import { arrows } from './live';
 import { play } from '../../../lib/sound';
 import Launch, { Lines, lerp, film } from '../../v2/Launch';
@@ -232,6 +233,7 @@ function TraceRoom() {
 // entrance 4, glitch-in: the family tiles arrive through a short monochrome glitch, then hold still
 function Family() {
   const [ref, inn] = useEnter(0.3);
+  const scheme = useScheme(); // the fields' ink follows the page: re-keyed so they redraw on a device switch
   return (
     <section ref={ref} className="lv-sec ze-family ze-e-glitch" data-in={inn ? '' : undefined} aria-label="The Zen family">
       <div className="x-wrap">
@@ -239,7 +241,7 @@ function Family() {
           {FAMILY.map(([to, name, line, data], i) => (
             <li key={to} className={i === 0 ? 'big' : ''} style={{ '--d': i }}>
               <A to={to} className="ze-fam-a" data-cursor="">
-                <Sigil seed={to} data={data} className="ze-sig" />
+                <Sigil key={scheme} seed={to} data={data} className="ze-sig" />
                 <span className="ze-fam-n" data-morph>{name}</span>
                 <span className="ze-fam-d">{line}</span>
                 <svg className="ze-fam-go" viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>

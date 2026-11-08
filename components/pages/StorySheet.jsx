@@ -1,6 +1,6 @@
 'use client';
 /* StorySheet (page-owned copy of v2/Unfold for /about: MASTER.md 3.1 says no springs, so the morph is a 600 ms ease-in-out tween;
-   requested upstream in docs/requests/about.md). A card that opens into its own sheet with a shared-element morph: the card's box
+   requested upstream in docs/build-notes/requests/about.md). A card that opens into its own sheet with a shared-element morph: the card's box
    grows into the sheet and folds back into the card on close (synchronized.studio; VISION.md motion 3, "Open").
    Usage:
      <motion.button layoutId="pillar-3" onClick={() => setOpen(3)} aria-haspopup="dialog">…card…</motion.button>

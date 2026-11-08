@@ -1,11 +1,13 @@
 /* One shell for every page: Hanzo's header and footer persist across navigation, so only the page between them changes.
-   HOW TO USE (pages add nothing here; see docs/review/SYSTEM.md):
+   HOW TO USE (pages add nothing here; see docs/build-notes/review/SYSTEM.md):
    - Every page.jsx exports its own `metadata` ({ title, description }) and renders <JsonLd route="/its/path" /> once:
      that gives it its canonical link, share card (Open Graph, X) and schema.org data.
    - Styles load in this order: Hanzo's hanzo.css, globals.css, system.css (tokens and states), then the page's own CSS,
      so a page rule always wins.
    - Layers mounted once here: arrival, progress, morph (page transitions), the phone ask, the sound kit, the phone
      layer. No cursor label: nothing floats over content (MASTER 3.3). */
+import { bootScript } from '@hanzo/appearance/state';
+import '@hanzo/design/tokens/colors.css'; // Hanzo's colour ramps: dark by default, .light for light (hanzo.css carries the same)
 import './globals.css';
 import './system.css';
 import { Smooth, Progress, Header, Footer } from '../components/Chrome';
@@ -16,6 +18,7 @@ import Phone from '../components/Phone';
 import Ask from '../components/Ask';
 import Sound from '../components/Sound';
 import { ARRIVE } from '../components/arrival';
+import Appearance from '../components/Appearance';
 
 export const metadata = {
   metadataBase: new URL('https://hanzo.ai'),
@@ -26,12 +29,23 @@ export const metadata = {
   formatDetection: { telephone: false, email: false, address: false },
   twitter: { card: 'summary_large_image', site: '@hanzoai' },
 };
-export const viewport = { width: 'device-width', initialScale: 1, viewportFit: 'cover', interactiveWidget: 'resizes-content', themeColor: '#ffffff', colorScheme: 'light' };
+// the browser chrome follows the theme: Hanzo's own colours (#0A0A0A dark, as live); light stays our white
+export const viewport = { width: 'device-width', initialScale: 1, viewportFit: 'cover', interactiveWidget: 'resizes-content', themeColor: [{ media: '(prefers-color-scheme: light)', color: '#ffffff' }, { media: '(prefers-color-scheme: dark)', color: '#0A0A0A' }], colorScheme: 'light dark' };
+
+/* Dark mode (docs/DARK-MODE.md): Hanzo's own @hanzo/appearance, as live hanzo.ai runs it. bootScript() replays the
+   choice saved under localStorage "hanzo.appearance.painted" ({ theme: 'light' | 'dark' | 'system', vars }), else the
+   install default "system" (the device's prefers-color-scheme), and puts light/t_light or dark/t_dark, color-scheme and
+   data-scheme on <html> before the first paint. The call is live's own: its output is byte-identical to the script in
+   hanzo.ai's HTML. <Appearance /> (useAppearance() at the root) applies the person's choice after hydration. React never
+   writes these classes (the server sends live's class="t_dark" and suppressHydrationWarning), so hydration keeps them. */
+const BOOT = bootScript({ base: { theme: 'system' } });
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" data-brand="hanzo" className="light t_light" suppressHydrationWarning>
+    <html lang="en" data-brand="hanzo" className="t_dark" suppressHydrationWarning>
       <head>
+        {/* the theme, before anything paints */}
+        <script dangerouslySetInnerHTML={{ __html: BOOT }} />
         {/* Hanzo's own stylesheet: their header, footer and page content render exactly as they ship them */}
         <link rel="stylesheet" href="/hanzo.css" />
         {/* both faces preload, and both use font-display: block, so text paints once in Zen: no visible swap */}
@@ -51,6 +65,7 @@ export default function RootLayout({ children }) {
         <script dangerouslySetInnerHTML={{ __html: ARRIVE }} />
         <Smooth>
           <OpenerProvider>
+            <Appearance />
             <Progress />
             <Morph />
             <Phone />

@@ -11,12 +11,12 @@
    question flow: word-shuffle (its words arrive out of order and swap into place); 3 the dark room: cursor-lens (a
    round lens sweeps across the two sentences magnifying them, then follows the pointer); 4 the counts: card-deal
    (three tiles dealt from one deck onto their places); 5 the close: sticky-stack (the card sticks at the top and the
-   sign-in line and ask stack over it as you scroll).
+   sign-in line and ask rise to park under it as you scroll).
    Beyond: the summary that builds as you answer.
-   V2: 8/10 motion-map: one-question + slot-roll, word-shuffle, cursor-lens, card-deal, sticky-stack
+   V2: 8/10 motion-map: one-question + slot-roll, word-shuffle (each word rises into its own place, out of order), cursor-lens, card-deal, sticky-stack (the sign-in panel parks under the card, never over it)
    Every word is Hanzo's (Next, Previous and Replay from content/ui-strings.json); no figure is invented. */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { A, Cta } from '../kit';
 import '../v2/ProgramScale.css';
 import './Referral.css';
@@ -34,7 +34,7 @@ const STEPS = [
 const useIso = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 
 /* Phones: Hanzo's header carries this page's ask in the same words, as it does on desktop (components/Ask.jsx does it
-   above 700px; see docs/requests/referral.md). */
+   above 700px; see docs/build-notes/requests/referral.md). */
 function usePhoneHeaderAsk() {
   useEffect(() => {
     const mq = matchMedia('(max-width: 700px)');
@@ -157,7 +157,7 @@ function Hero() {
   );
 }
 
-/* ---------- 2. word-shuffle: words arrive out of order and swap into place (FLIP from a shuffled position) ---------- */
+/* ---------- 2. word-shuffle: the words arrive out of order, each rising into its own place ---------- */
 function Shuffle({ text, as: Tag = 'span', className, go }) {
   const box = useRef(null);
   const calm = useReducedMotion();
@@ -166,19 +166,16 @@ function Shuffle({ text, as: Tag = 'span', className, go }) {
     const el = box.current;
     if (!el || !go || ran.current || calm) return;
     ran.current = true;
+    // each word rises into its own place (no word ever crosses another), but they arrive in a shuffled order
     const ws = [...el.querySelectorAll('.xrf-w')];
-    const at = ws.map((w) => { const r = w.getBoundingClientRect(); return [r.left, r.top]; });
     const order = ws.map((_, i) => i);
     for (let i = order.length - 1; i > 0; i--) { const j = (i * 7 + 3) % (i + 1); [order[i], order[j]] = [order[j], order[i]]; }
     if (order.every((v, i) => v === i) && order.length > 1) order.push(order.shift());
     ws.forEach((w, i) => {
-      const [x, y] = at[order[i]], dx = x - at[i][0], dy = y - at[i][1];
-      const d = 120 + order[i] * 70;
       w.animate([
-        { transform: `translate(${dx}px, ${dy + 18}px)`, opacity: 0 },
-        { transform: `translate(${dx}px, ${dy}px)`, opacity: 1, offset: 0.35 },
+        { transform: 'translateY(.6em)', opacity: 0 },
         { transform: 'none', opacity: 1 },
-      ], { duration: 1000, delay: d, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards' });
+      ], { duration: 700, delay: 120 + order[i] * 75, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards' });
     });
   }, [go, calm]);
   const words = text.split(' ');
@@ -272,7 +269,7 @@ function Flow() {
             <span className="x-mono xrf-sum-pill">hanzo.ai/?ref=…</span>
             <ol className="xrf-sum-list">
               {STEPS.map(([t, k], n) => (
-                <li key={k} className={n < done ? 'on' : ''} aria-hidden={n >= done}>
+                <li key={k} className={n < done ? "on" : ""}>
                   <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   <span className="xrf-n x-mono">{String(n + 1).padStart(2, '0')}</span>
                   <span>{t}</span>
@@ -315,7 +312,7 @@ function Which() {
   const seen = on;
   const words = (link) => <>
     <span className="xrf-half a">A referral pays nothing. </span>
-    <span className="xrf-half b">{link ? <A to="/affiliate">Affiliates</A> : <u>Affiliates</u>} are paid on what their referrals spend.</span>
+    <span className="xrf-half b">{link ? <A to="/affiliate">Affiliates</A> : <u>Affiliates</u>} <span>are paid on what their referrals spend.</span></span>
   </>;
   return (
     <section className="xp-sec xp-dark xrf-which" data-room="dark" ref={box} aria-labelledby="xrf-which-h">
@@ -371,18 +368,28 @@ function Deal() {
   );
 }
 
-/* ---------- 5. sticky-stack: the card sticks at the top, and the sign-in line and the ask stack over it ---------- */
+/* ---------- 5. sticky-stack: the card sticks at the top, and the sign-in line and the ask rise to stack under it ---------- */
 function Close() {
+  // the card holds still at the top of a short pinned stage while the sign-in panel rises with the scroll and parks
+  // right under it (never over it); then the two leave together
+  const stage = useRef(null);
+  const rm = useReducedMotion();
+  const [calm, setCalm] = useState(false); // read after hydration, so server and client markup match
+  useEffect(() => setCalm(!!rm), [rm]);
+  const { scrollYProgress } = useScroll({ target: stage, offset: ['start start', 'end end'] });
+  const y = useTransform(scrollYProgress, [0, 0.65], ['30svh', '0svh']);
   return (
     <section className="xrf-stack" aria-labelledby="xrf-signin">
-      <div className="xp-wrap xrf-stack-in">
-        <div className="xrf-sc xrf-sc1"><Card rest small /></div>
-        <div className="xrf-sc xrf-sc2">
-          <p id="xrf-signin" className="xp-head xrf-signin" role="heading" aria-level="2">Sign in and your link, and everyone it brings, is here.</p>
-          <div className="xrf-acts">
-            <Cta to={SIGNUP} id="referral.close" className="xp-cta">Get your link</Cta>
-            <Cta to={LOGIN} kind="link" id="referral.close-signin">Sign in</Cta>
-          </div>
+      <div className="xp-wrap xrf-stack-in" ref={stage}>
+        <div className="xrf-pin">
+          <div className="xrf-sc xrf-sc1"><Card rest small /></div>
+          <motion.div className="xrf-sc xrf-sc2" style={calm ? undefined : { y }}>
+            <p id="xrf-signin" className="xp-head xrf-signin" role="heading" aria-level="2">Sign in and your link, and everyone it brings, is here.</p>
+            <div className="xrf-acts">
+              <Cta to={SIGNUP} id="referral.close" className="xp-cta">Get your link</Cta>
+              <Cta to={LOGIN} kind="link" id="referral.close-signin">Sign in</Cta>
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>

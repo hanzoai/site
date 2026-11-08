@@ -3,7 +3,7 @@
    Why a copy: the shared one reads useReducedMotion() during render and writes a <noscript> inside a client
    component, so under reduced motion its server and client HTML differ and Next shows the red hydration badge.
    Here reduced motion is applied after hydration and JS-off styles go through the shared <NoJs>.
-   Requested for the shared file in docs/requests/research.md; delete this copy once it lands. */
+   Requested for the shared file in docs/build-notes/requests/research.md; delete this copy once it lands. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import NoJs from '../../NoJs';

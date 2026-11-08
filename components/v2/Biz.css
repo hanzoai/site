@@ -1,5 +1,5 @@
 /* The Business group's grammar (owned by the Business 1 chat; usage notes live in components/v2/Biz*.jsx).
-   A page puts .bz on its <main>. Values are Hanzo's brand deck (docs/MASTER.md §3.1), held here as --bz-* tokens until
+   A page puts .bz on its <main>. Values are Hanzo's brand deck (docs/build-notes/MASTER.md §3.1), held here as --bz-* tokens until
    the shared tokens.css lands:
    - Colour: the deck's neutral ramp only (0 hues); highlight with ink, inverted chips, weight and contrast.
    - Type: Zen; weights Air 220 (largest figures), Regular 400, Book 497 (every heading), Medium 606 (UI emphasis).
@@ -18,7 +18,7 @@
   --bz-float: 0 24px 60px -16px rgba(0, 0, 0, .18);
   --bz-out: cubic-bezier(0, 0, .2, 1); --bz-inout: cubic-bezier(.4, 0, .2, 1); --bz-emph: cubic-bezier(.16, 1, .3, 1);
   --g: clamp(16px, 4vw, 32px); --max: 1152px;
-  background: #fff; color: var(--bz-ink); overflow-x: clip;
+  background: var(--x-raised); color: var(--bz-ink); overflow-x: clip;
 }
 .bz-wrap { width: min(100% - 2 * clamp(16px, 4vw, 32px), var(--max)); margin-inline: auto; }
 .bz-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; }
@@ -39,7 +39,7 @@
 .bz-acts .x-btn { height: 48px; padding: 0 24px; font-size: 16px; }
 
 /* hero objects are outlined, not raised (MASTER part 7); cards are flat fills */
-.bz-obj { position: relative; border-radius: 24px; background: #fff; border: 1px solid var(--bz-line); box-shadow: none; overflow: hidden; }
+.bz-obj { position: relative; border-radius: 24px; background: var(--x-raised); border: 1px solid var(--bz-line); box-shadow: none; overflow: hidden; }
 .bz-card { border-radius: 16px; background: var(--bz-card); }
 
 /* the shared code pane (cloud/Frame.jsx Code) in greys on every Business page: 0 UI hues, weight tells parts apart */
@@ -80,17 +80,17 @@
 .bz-ch-meta b { color: var(--bz-ink); font-weight: 606; font-variant-numeric: tabular-nums; }
 
 /* BizSheet: the spec drawer */
-.bz-sheet-btn { display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 22px 0 18px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); background: #fff; color: var(--bz-ink); font: 497 15px/1 var(--sans); cursor: pointer; transition: background-color .15s var(--bz-out), border-color .15s var(--bz-out), transform .09s var(--bz-out); }
+.bz-sheet-btn { display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 22px 0 18px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); background: var(--x-raised); color: var(--bz-ink); font: 497 15px/1 var(--sans); cursor: pointer; transition: background-color .15s var(--bz-out), border-color .15s var(--bz-out), transform .09s var(--bz-out); }
 @media (hover: hover) { .bz-sheet-btn:hover { background-color: var(--bz-room); border-color: rgba(0, 0, 0, .3); } }
 .bz-sheet-btn:active { transform: scale(.97); }
 .bz-sheet-btn svg { color: var(--bz-ink); }
 .bz-sheet-back { position: fixed; inset: 0; z-index: 940; background: rgba(0, 0, 0, .3); opacity: 0; visibility: hidden; transition: opacity .3s var(--bz-out), visibility 0s .3s; }
-.bz-sheet { color: var(--bz-ink); text-align: left; position: fixed; z-index: 950; top: 12px; right: 12px; bottom: 12px; width: min(620px, calc(100vw - 24px)); background: #fff; border-radius: 24px; box-shadow: var(--bz-float); display: flex; flex-direction: column; transform: translateX(calc(100% + 24px)); visibility: hidden; transition: transform .4s var(--bz-inout), visibility 0s .4s; outline: none; }
+.bz-sheet { color: var(--bz-ink); text-align: left; position: fixed; z-index: 950; top: 12px; right: 12px; bottom: 12px; width: min(620px, calc(100vw - 24px)); background: var(--x-raised); border-radius: 24px; box-shadow: var(--bz-float); display: flex; flex-direction: column; transform: translateX(calc(100% + 24px)); visibility: hidden; transition: transform .4s var(--bz-inout), visibility 0s .4s; outline: none; }
 .bz-sheet-wrap[data-open='true'] .bz-sheet-back { opacity: 1; visibility: visible; transition: opacity .3s var(--bz-out); }
 .bz-sheet-wrap[data-open='true'] .bz-sheet { transform: none; visibility: visible; transition: transform .5s var(--bz-emph); }
 .bz-sheet-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 22px 22px 18px 32px; border-bottom: 1px solid var(--bz-line); }
 .bz-sheet-top h2 { font-size: 21px; font-weight: 497; letter-spacing: -.02em; margin: 0 0 6px; }
-.bz-sheet-x { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--bz-line); background: #fff; color: var(--bz-ink); display: grid; place-items: center; cursor: pointer; transition: background-color .15s var(--bz-out), transform .09s var(--bz-out); }
+.bz-sheet-x { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--bz-line); background: var(--x-raised); color: var(--bz-ink); display: grid; place-items: center; cursor: pointer; transition: background-color .15s var(--bz-out), transform .09s var(--bz-out); }
 @media (hover: hover) { .bz-sheet-x:hover { background-color: var(--bz-room); } }
 .bz-sheet-x:active { transform: scale(.97); }
 .bz-sheet-body { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 28px 32px 40px; }
@@ -101,11 +101,11 @@
 @media (hover: hover) { .bz-open-card:hover { background-color: var(--bz-tile); } }
 .bz-open-card:active { transform: scale(.97); }
 .bz-open-card:focus-visible { outline: 2px solid var(--bz-ink); outline-offset: 3px; }
-.bz-open-plus { position: absolute; right: 18px; bottom: 18px; width: 40px; height: 40px; border-radius: 50%; background: #fff; display: grid; place-items: center; color: var(--bz-ink); transition: background-color .15s var(--bz-out), color .15s var(--bz-out); }
+.bz-open-plus { position: absolute; right: 18px; bottom: 18px; width: 40px; height: 40px; border-radius: 50%; background: var(--x-raised); display: grid; place-items: center; color: var(--bz-ink); transition: background-color .15s var(--bz-out), color .15s var(--bz-out); }
 @media (hover: hover) { .bz-open-card:hover .bz-open-plus { background-color: var(--bz-ink); color: #fff; } }
 .bz-open-layer { position: fixed; inset: 0; z-index: 950; display: grid; place-items: center; padding: 24px; }
 .bz-open-back { position: absolute; inset: 0; background: rgba(0, 0, 0, .3); }
-.bz-open-panel { position: relative; width: min(1040px, 100%); max-height: calc(100svh - 48px); overflow: hidden; border-radius: 24px; background: #fff; display: flex; flex-direction: column; box-shadow: var(--bz-float); }
+.bz-open-panel { position: relative; width: min(1040px, 100%); max-height: calc(100svh - 48px); overflow: hidden; border-radius: 24px; background: var(--x-raised); display: flex; flex-direction: column; box-shadow: var(--bz-float); }
 .bz-open-scroll { overflow-y: auto; overscroll-behavior: contain; padding: clamp(28px, 4vw, 56px); }
 .bz-open-x { position: absolute; top: 16px; right: 16px; z-index: 2; }
 

@@ -2,7 +2,8 @@
 /* MagnetGrid (/press signature, motion map `magnet-grid`): the press kit as a field of dots. Hanzo's mark is drawn in
    the field (ink dots inside the mark, grey dots around it). The field bends toward the cursor (or a finger) and a
    click or tap sends a ripple out from that point. On arrival one ripple runs from the mark's centre, then the field
-   rests; it only animates while something is moving (pointer near, ripple alive, dots settling), and only on screen.
+   rests, apart from three slow idle ripples from points of the mark (one every 5.2 s while on screen and untouched,
+   finite like the kit's sheen); it only animates while something is moving (pointer near, ripple alive, dots settling), and only on screen.
    Reduced motion: a still field. JS off: the quiet tile with the mark (the SVG fallback underneath).
    Page-local to /press. */
 import { useEffect, useRef } from 'react';
@@ -35,11 +36,14 @@ export default function MagnetGrid({ className = '', label }) {
         dots.push({ hx: x, hy: y, x, y, m: hit(x, y) });
       }
     };
+    // colours come from CSS so the field follows the page's mode (ink dots on light, light dots on #0d0d0d)
+    let inkC = '#0a0a0a', dotC = '#a3a3a3';
+    const tint = () => { const cs = getComputedStyle(box); inkC = cs.color; dotC = cs.caretColor; };
     const draw = () => {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, W, H);
       for (const d of dots) {
-        ctx.fillStyle = d.m ? '#0a0a0a' : '#a3a3a3';
+        ctx.fillStyle = d.m ? inkC : dotC;
         const s = d.m ? 2.6 : 1.4;
         const bulge = d.b || 0;
         ctx.beginPath(); ctx.arc(d.x, d.y, s + bulge, 0, 6.2832); ctx.fill();
@@ -73,11 +77,23 @@ export default function MagnetGrid({ className = '', label }) {
     const move = (e) => { [ptr.x, ptr.y] = at(e); ptr.on = true; last = performance.now(); kick(); };
     const leave = () => { ptr.on = false; kick(); };
     const down = (e) => { const [x, y] = at(e); rip.push({ x, y, t0: performance.now() }); if (rip.length > 4) rip.shift(); if (e.pointerType !== 'mouse') { ptr.x = x; ptr.y = y; ptr.on = true; last = performance.now(); setTimeout(leave, 500); } kick(); };
-    build(); draw();
-    let arrived = false;
+    tint(); build(); draw();
+    const mo = new MutationObserver(() => { tint(); draw(); }); // the page switched light/dark
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    let arrived = false, idle = 0, idles = 0;
+    const breathe = () => {
+      idle = 0;
+      if (idles >= 3) return;
+      if (seen && !ptr.on && !rip.length) {
+        const ink = dots.filter((d) => d.m);
+        const d = ink[Math.floor(Math.random() * ink.length)];
+        if (d) { rip.push({ x: d.hx, y: d.hy, t0: performance.now() }); idles += 1; kick(); }
+      }
+      idle = setTimeout(breathe, 5200);
+    };
     const io = new IntersectionObserver(([en]) => {
       seen = en.isIntersecting;
-      if (seen && !arrived && !calm) { arrived = true; rip.push({ x: W / 2, y: H / 2, t0: performance.now() + 250 }); }
+      if (seen && !arrived && !calm) { arrived = true; rip.push({ x: W / 2, y: H / 2, t0: performance.now() + 250 }); idle = setTimeout(breathe, 5200); }
       kick();
     }, { threshold: 0.3 });
     io.observe(box);
@@ -88,7 +104,7 @@ export default function MagnetGrid({ className = '', label }) {
       c.addEventListener('pointerleave', leave);
       c.addEventListener('pointerdown', down);
     }
-    return () => { io.disconnect(); ro.disconnect(); cancelAnimationFrame(raf); c.removeEventListener('pointermove', move); c.removeEventListener('pointerleave', leave); c.removeEventListener('pointerdown', down); };
+    return () => { mo.disconnect(); clearTimeout(idle); io.disconnect(); ro.disconnect(); cancelAnimationFrame(raf); c.removeEventListener('pointermove', move); c.removeEventListener('pointerleave', leave); c.removeEventListener('pointerdown', down); };
   }, []);
   return (
     <div ref={wrap} className={'xmg ' + className}>

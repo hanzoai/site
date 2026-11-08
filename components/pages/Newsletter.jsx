@@ -2,22 +2,20 @@
 // Signature: one-question (docs/MOTION-MAP.md). The form asks one thing per screen and slides to the next: the address,
 //   then the check (your answer summarised, Subscribe sends it), then done; the paper beside it writes each answer down
 //   as it builds and folds into an envelope addressed to you.
-// Beyond: the double opt-in drawn before you commit: subscribe, confirm the link, then the first issue; nothing in between.
+// Beyond: the issue drawn before you commit: each line Hanzo promises is a line on the paper (point at one and it lights), your address is written on it as you type, and it folds into an envelope once the confirm link is out.
 /* The Hanzo newsletter.
    Persona: a builder who wants Hanzo's releases in the inbox. Goal: subscribe. CTA: "Subscribe". Metric: lead_submit.
-   V2: 8/10 motion-map: one-question + stretch-scroll, shrink-to-card, noise-dissolve, card-deal, pixel-resolve
-   Sections in order and how each enters (components/pages/newsletter/enter.jsx):
-   1 hero (the one-question form and the paper) stretch-scroll; 2 what each issue carries shrink-to-card;
-   3 the opt-in envelope noise-dissolve; 4 the four steps card-deal; 5 the close pixel-resolve.
-   No pinned scenes. 0 UI hues. The form sends exactly what hanzo.ai sends: POST
+   One screen, read in Hanzo's own order (rule 4, docs/COPY-RULE.md: a simple page stays simple): the title, the lede,
+   the three things an issue carries, the form and the line under it; the paper issue beside them.
+   0 UI hues. The form sends exactly what hanzo.ai sends: POST
    https://api.hanzo.ai/v1/marketing/subscribe {email, source, locale}. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { EASE, Mark } from '../ui';
 import { A, Cta, Tick } from '../kit';
 import Sigil from '../Sigil';
 import LineReveal, { NoJs } from '../v2/LineReveal';
-import { StretchScroll, ShrinkToCard, NoiseDissolve, PixelResolve } from './newsletter/enter';
+import { StretchScroll } from './newsletter/enter';
 import '../v2/ProgramScale.css';
 import './Newsletter.css';
 
@@ -41,7 +39,7 @@ async function subscribe(email) {
 
 /* The paper is the summary: it tilts toward a fine pointer (2.5° max, none on touch or reduced motion), writes the
    address as you type it, stamps itself once you have checked it, and folds into an envelope when it is sent. */
-function Issue({ step, email }) {
+function Issue({ step, email, hot }) {
   const tilt = useRef(null);
   const calm = useReducedMotion();
   const move = (e) => {
@@ -63,7 +61,7 @@ function Issue({ step, email }) {
               <span className="xnl-brand"><Mark size={14} /> Hanzo</span>
             </div>
             <ol className="xnl-lines xnl-bars">
-              {LINES.map((l, i) => <li key={l} style={{ '--i': i }}><span><i style={{ width: [92, 78, 86][i] + '%' }} /><i style={{ width: [54, 40, 22][i] + '%' }} /></span></li>)}
+              {LINES.map((l, i) => <li key={l} className={i === hot ? 'hot' : undefined} style={{ '--i': i }}><span><i style={{ width: [92, 78, 86][i] + '%' }} /><i style={{ width: [54, 40, 22][i] + '%' }} /></span></li>)}
             </ol>
             <p className={'xnl-paper-to' + (email ? ' on' : '')}><span className="x-mono">To</span><b>{email}</b><span className="xnl-paper-stamp"><Mark size={14} /></span></p>
           </motion.div>
@@ -142,132 +140,12 @@ function Ask({ email, setEmail, step, setStep }) {
   );
 }
 
-// the double opt-in, in Hanzo's own words (from the line under the form)
-const PATH = ['Subscribe', 'a link to confirm', 'once or twice a month', 'one-click unsubscribe'];
-
-/* One statement, its words inking in once (55 ms apart) with a caret resting at the end (colour only: no reflow). */
-function Words({ text, on }) {
-  const words = text.split(' ');
-  return (
-    <span className={'xnl-ws' + (on ? ' on' : '')}>
-      {words.map((w, k) => <span key={k} className="xnl-w" style={{ '--k': k }}>{w}{k < words.length - 1 ? ' ' : ''}</span>)}
-      <i className="xnl-caret" aria-hidden="true" style={{ '--n': words.length }} />
-    </span>
-  );
-}
-
-function Row({ text, i }) {
-  const ref = useRef(null);
-  const on = useInView(ref, { once: true, amount: 0.8 });
-  return (
-    <li ref={ref} className={'xnl-st' + (on ? ' on' : '')}>
-      <span className="xnl-st-n x-mono" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-      <p className="xnl-st-t"><Words text={text} on={on} /></p>
-    </li>
-  );
-}
-
-/* What each issue carries: the three statements, said once on the page, beside a drifting contour field (the page's
-   Sigil). The section shrinks into a card as you leave it. */
-function Inside() {
-  return (
-    <ShrinkToCard className="xnl-inside" aria-label="Releases, benchmarks and engineering notes">
-      <div className="xp-wrap xnl-inside-in">
-        <ol className="xnl-sts">{LINES.map((l, i) => <Row key={l} text={l} i={i} />)}</ol>
-      </div>
-    </ShrinkToCard>
-  );
-}
-
-/* The opt-in shown, not labelled: the hero's envelope travels through the four steps. 01 addressed and sealed; 02 the
-   flap opens and the confirm link rises out; 03 the issue rises in its place; 04 its one-click unsubscribe mark rings. */
-function Post({ at }) {
-  return (
-    <div className="xnl-post" data-at={at} aria-hidden="true">
-      <div className="xnl-post-env">
-        <i className="xnl-post-back" />
-        <div className="xnl-post-sheet">
-          <div className="xnl-post-link"><i /><svg viewBox="0 0 16 16" width="16" height="16"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></div>
-          <div className="xnl-post-issue">
-            <span className="xnl-post-mast"><Mark size={12} /></span>
-            <i style={{ width: '66%' }} /><i style={{ width: '52%' }} /><i style={{ width: '60%' }} />
-            <span className="xnl-post-x"><svg viewBox="0 0 16 16" width="12" height="12"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg></span>
-          </div>
-        </div>
-        <i className="xnl-post-front" />
-        <span className="xnl-post-to"><i /><i /></span>
-        <span className="xnl-post-stamp"><Mark size={14} /></span>
-        <i className="xnl-post-flap" />
-      </div>
-    </div>
-  );
-}
-
-/* the closing Subscribe stays on this page: it glides back to the form and puts the cursor in the field */
-function toForm(e) {
-  e.preventDefault();
-  const el = document.getElementById('newsletter-email') || document.getElementById('subscribe');
-  if (!el) return;
-  const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  el.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'center' });
-  setTimeout(() => el.focus({ preventScroll: true }), calm ? 0 : 600);
-}
-
-/* The double opt-in room: the envelope (noise-dissolve), the four steps dealt as cards with one large word above them
-   (card-deal; they walk themselves once, 1.4 s a step, pressing one holds it), then the close (pixel-resolve). */
-function Room({ toAsk }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { amount: 0.4 });
-  const dealt = useInView(ref, { once: true, amount: 0.4 });
-  const calm = useReducedMotion();
-  const [timed, setTimed] = useState(calm ? PATH.length - 1 : 0);
-  const [held, setHeld] = useState(null);
-  const at = held ?? timed;
-  useEffect(() => {
-    if (calm || held != null || !inView || timed >= PATH.length - 1) return;
-    const t = setTimeout(() => setTimed((v) => v + 1), timed === 0 ? 2000 : 1400);
-    return () => clearTimeout(t);
-  }, [inView, timed, held, calm]);
-  return (
-    <section className="xp-dark xnl-path" data-room="dark" aria-labelledby="xnl-path-h">
-      <div className="xp-wrap">
-        <NoiseDissolve className="xnl-s3">
-          <h2 id="xnl-path-h" className="xp-head">We email a link to confirm first.</h2>
-          <Post at={at} />
-        </NoiseDissolve>
-        <div ref={ref} className={'xnl-pathobj xnl-deal' + (dealt ? ' dealt' : '')} style={{ '--at': at, '--n': PATH.length }}>
-          <div className="xnl-big" aria-hidden="true">
-            <AnimatePresence mode="popLayout" initial={false}>
-              <motion.p key={at} className="xnl-big-t" initial={{ y: '105%' }} animate={{ y: 0 }} exit={{ y: '-105%' }} transition={{ duration: 0.5, ease: EASE }}>{PATH[at]}</motion.p>
-            </AnimatePresence>
-          </div>
-          <ol className="xnl-steps">
-            {PATH.map((t, i) => (
-              <li key={t} style={{ '--i': i }}>
-                <button type="button" className={'xnl-step' + (i === at ? ' on' : i < at ? ' done' : '')} aria-current={i === at ? 'step' : undefined} data-sound="tick" onClick={() => setHeld(i)}>
-                  <span className="xnl-n x-mono">{String(i + 1).padStart(2, '0')}</span>
-                  <b>{t}</b>
-                </button>
-              </li>
-            ))}
-          </ol>
-          <span className="xnl-big-n x-mono" aria-hidden="true">{String(at + 1).padStart(2, '0')} / {String(PATH.length).padStart(2, '0')}</span>
-        </div>
-        <PixelResolve className="xnl-s5">
-          <div className="xnl-home">
-            <Cta kind="quiet" id="newsletter.close" data-sound="tap" className="xp-ghost xnl-close" aria-controls="newsletter-email" onClick={(e) => { toAsk(); toForm(e); }}>Subscribe <i aria-hidden="true">↑</i></Cta>
-            <A to="/" className="xnl-mark" aria-label="Hanzo"><Mark size={22} /></A>
-          </div>
-          <div className="xnl-field" aria-hidden="true"><Sigil seed="newsletter-issue" data={[3, 2]} className="xnl-sigil" /></div>
-        </PixelResolve>
-      </div>
-    </section>
-  );
-}
+const check = <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 export default function Newsletter() {
   const [email, setEmail] = useState('');
   const [step, setStep] = useState('ask');
+  const [hot, setHot] = useState(-1);
   return (
     <main className="xp xnl">
       <NoJs />
@@ -277,14 +155,16 @@ export default function Newsletter() {
             <LineReveal as="h1" id="xnl-h1" className="xp-display" lines={['The Hanzo', 'newsletter']} />
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.3 }}>
               <p className="xp-lede xnl-lede">{LEDE}</p>
+              {/* what each issue carries, as Hanzo lists it; pointing at one lights its line on the paper */}
+              <ul className="xnl-list" onPointerLeave={() => setHot(-1)}>
+                {LINES.map((l, i) => <li key={l} style={{ '--i': i }} onPointerEnter={(e) => { if (e.pointerType === 'mouse') setHot(i); }}>{check}{l}</li>)}
+              </ul>
               <Ask email={email} setEmail={setEmail} step={step} setStep={setStep} />
             </motion.div>
           </div>
-          <div className="xnl-art"><Issue step={step} email={email.trim()} /></div>
+          <div className="xnl-art"><Issue step={step} email={email.trim()} hot={hot} /></div>
         </StretchScroll>
       </section>
-      <Inside />
-      <Room toAsk={() => { if (step === 'check') setStep('ask'); }} />
     </main>
   );
 }

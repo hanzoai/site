@@ -1,5 +1,5 @@
 'use client';
-/* Hanzo's black model cards, copied exactly from live hanzo.ai (docs/refs/hanzo-model-cards/SPEC.md): Enso tall on the
+/* Hanzo's black model cards, copied exactly from live hanzo.ai (docs/build-notes/refs/hanzo-model-cards/SPEC.md): Enso tall on the
    left (385×452 at a 1131px content width), Kai Zen Iro Koma over Oto Koe Uta Mori (192×220), 12px gaps; #000 cards
    with 20px radii, the title and its arrow top left at 21px, the description under it, the tag pills at the foot, the
    model's own film over its poster (never filtered or dimmed), and a pointer-follow tilt of up to 3° that settles flat
@@ -24,7 +24,7 @@ function Card({ m, big, here, live, setLive }) {
     if (calm || e.pointerType !== 'mouse') return;
     const r = ref.current.getBoundingClientRect();
     const x = ((e.clientX - r.left) / r.width) * 2 - 1, y = ((e.clientY - r.top) / r.height) * 2 - 1;
-    ref.current.style.transform = `perspective(900px) rotateX(${(y * 3).toFixed(2)}deg) rotateY(${(-x * 3).toFixed(2)}deg)`;
+    ref.current.style.transform = `perspective(900px) rotateX(${(y * 3).toFixed(2)}deg) rotateY(${(-x * 3).toFixed(2)}deg) scale(var(--mc-p, 1))`; // --mc-p: the press still answers under the tilt
   };
   const flat = () => { if (ref.current) ref.current.style.transform = ''; setLive((a) => (a === m.slug ? null : a)); };
   const plays = big || live === m.slug;

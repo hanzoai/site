@@ -1,0 +1,32 @@
+# /dns — James-eye review
+Ready: 2026-11-08 copycheck missing 0 of 67 (COPY-RULE): the CLI commands are plain lines again so "https://hanzo.sh" reads (the "$" is drawn by CSS), install line first; no images on live or ours; usability: Try Hanzo, GitHub, the CLI install and commands, plans to Contact Sales, agent prompt; taste OK, unique OK, check.mjs 0 errors/0 overlaps/no h-scroll at 1470 and 375, reduced motion 0 animations and 0 errors.
+7 Nov, round 1 of this critic. Walked it moving at 1470x801 and 375x812 (phone: isMobile, hasTouch) with Playwright on :4182. At each size I took frames at 0, 1 and 3 s with no input. Then I scrolled one screen at a time with a 1.5 s dwell (a wheel pass, plus a pass stepping exactly one viewport). On desktop I hovered and pressed the "What do you need?" needs. I measured CLS with its sources, horizontal overflow and console output.
+
+Verdict: 7/10
+
+First complaint: "The top's good: it types, the record lands, the query goes off and comes back. And the six chapters each show me something. Then it's a list of use cases, four boxes that all say 'Custom', and loads of white. And on my phone the page jumps while I'm reading."
+
+## The 11 answers
+1. **Does it sell in 5 s and move within 1 s? Yes.** The command `hanzo dns zones records create example.com` types itself at first paint. The `+ api A 192.0.2.24` line lands in the zone file as a diff, and the query walks query → resolver → Hanzo DNS → Cloudflare and returns "ANSWER api.example.com. A 192.0.2.24". A pause control sits beside the caption. Weak point: the 52px "Hanzo DNS" sits small and alone on the left, and the zone panel runs into the right edge of the viewport, so the first screen leans right.
+2. **Does one thing come in as one goes out? Yes, through the chapters; after that it is a document.** The six pinned chapters each change one picture: providers around One API, a parallel query fan-out, a CLI lit a line at a time, the API pipeline, the DNSSEC key turning, and CoreDNS with plugin layers rising. The graphite room's control plane has packets crossing it. After it come the use cases as a three-row text list, then the pricing, then "Get DNS", each over 200–300px of empty white.
+3. **Does every section hold a real visual object? Up to the room, yes.** The use cases hold no object: they are three numbered paragraphs. Pricing is four equal cards, each reading "Custom".
+4. **One ask, nothing floating, and does scale have rhythm? The ask is right; scale is flat after the chapters.** "Try Hanzo" is in the header, the hero has it as an outline beside the GitHub text link, and nothing is fixed over content. In the close, "Deploy to Cloud" is a full-width solid black button (on phone), a second solid beside the header's. Scale: one 52px h1, then 26px heads throughout. The plans' 32px "Custom" four times in a row is the biggest type after the hero.
+5. **Does every hover and press answer? Yes.** Pressing a need lights it in ink, and the lightest plan that covers it becomes the ink tile ("↓ Pro", then "↓ Enterprise" after Edge DNS) while the others step back. That is a real Beyond. Copy on the terminal and the prompt confirms, and the graphite room has its own pause.
+6. **Do overlaps, a font swap or layout shift appear? Yes, on phone.** Phone CLS is 0.18, from one shift at the second screen (sources `dn-path`, the chapter `SECTION.knc right dn-ch`). The hero's query path grows as the walk progresses, and everything below it jumps. Desktop CLS is 0.0002. There is no font swap and no horizontal overflow at either size. On phone, the Edge DNS picture shows a mostly empty grey box with only the CoreDNS bar until its layers rise.
+7. **Which reference does it feel like? apple.com product page.** It has pinned chapters where one panel changes and a sub-nav of 01–06. The chapter pictures are stepped, not scrubbed. It has no count-up or huge-type moment.
+8. **Is it different from its neighbours? Yes.** Zone-as-code with a query walk is DNS's own hero. It shares the pinned-chapter frame (KeynoteChapters) with other cloud pages, but its pictures are its own.
+9. **Are all 18 parts covered? Yes, with one claim to fix.** `docs/build-notes/coverage/dns.md` has 18/18 parts. Its part 15 says "375×812 and 1470×801 pass", which the 0.18 phone CLS contradicts. Fix the shift and the claim stands. I have not capped the page for it, because the card makes no CLS claim at 375.
+10. **Any banned tells? None.** It is greys only and `taste.py` passes on the JSX and CSS. The eyebrow ("PROGRAMMABLE DNS INFRASTRUCTURE") sits below the asks, not above the h1.
+11. **Is the copy untouched? Yes.** Parity is OK: text 113/113, links 4/4. The zone uses documentation-only names (example.com, 192.0.2.0/24), as the header comment says.
+
+Tools: `taste.py components/pages/cloud/Dns.jsx` OK (CSS OK). `parity.py /dns` OK, text 113/113, links 4/4. `unique.py` OK: all signatures unique, and its one failure is Contact.jsx, not this page.
+
+Not counted: a hydration mismatch error and the "1 Issue" badge appear under parallel loads only (_shared.md §3).
+
+## Fixes, in order
+1. **Phone: reserve the path's height.** Give `.dn-path` its full final height from first paint (render all hops and reveal them in place), so the query walk never pushes the chapters. The target is CLS under 0.01 at 375.
+2. **Give the use cases an object.** Each use case is a scene the page already draws: DevOps automation is the CLI line, multi-cloud is the provider ring, and the domain portfolio is many zones. Show one small live picture per row, or one stage that switches as the rows are hovered or scrolled.
+3. **Close the white gaps** before the use cases, the pricing and "Get DNS" (about 200–300px each at 1470). Let "Get DNS" grow into the one big type moment (64px) as it arrives, then settle.
+4. **Pricing rhythm.** The four "Custom" figures are equal. Let the plan the needs pick be the big one and shrink the others to medium, which the Beyond already half does.
+5. **One solid in the close.** Make "Deploy to Cloud" a text link or an outline (as in the hero), so the header's solid is the only fill.
+6. **Hero balance.** Pull the zone panel inside the 1470 grid (its right edge touches the viewport), or give the h1 side its own small/medium details, so the first screen does not lean right.

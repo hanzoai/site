@@ -30,25 +30,25 @@
 .au2-sub .l2-lede { font-size: 20px; }
 .au2-sub .l2-acts { flex-wrap: nowrap; gap: 24px; }
 
-.au2-race { position: relative; margin-top: clamp(28px, 4svh, 44px); border-block: 1px solid var(--hair); background: radial-gradient(rgba(0, 0, 0, .1) 1px, transparent 1.2px) 0 0 / 18px 18px, #fbfbfb; overflow: clip; }
+.au2-race { position: relative; margin-top: clamp(28px, 4svh, 44px); border-block: 1px solid var(--hair); background: radial-gradient(light-dark(rgba(0, 0, 0, .1), var(--border)) 1px, transparent 1.2px) 0 0 / 18px 18px, light-dark(#fbfbfb, var(--x-sunk)); overflow: clip; }
 .au2-ctl { display: flex; align-items: center; gap: 14px; height: 68px; }
 .au2-ctl-t { font-size: 13px; color: var(--soft); }
 .au2-ctl-k { margin-left: auto; font-size: 13px; color: var(--faint); }
-.au2-pub { display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 8px; background: #fff; border: 1px solid var(--hair); font-size: 13px; color: var(--ink); }
+.au2-pub { display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 8px; background: var(--x-raised); border: 1px solid var(--hair); font-size: 13px; color: var(--ink); }
 .au2-pub i { width: 7px; height: 7px; border-radius: 50%; background: var(--ac); animation: au2-blink 2.4s var(--ease) infinite; }
 @keyframes au2-blink { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
-.au2-ctl .l2-pause { position: static; width: 44px; height: 44px; background: #fff; }
-@media (hover: hover) { .au2-ctl .l2-pause:hover { background: #f5f5f5; border-color: #a3a3a3; } }
-.au2-restart { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--ink); background: #fff; color: var(--ink); cursor: pointer; transition: background .2s, color .2s, transform 90ms var(--ease); }
-@media (hover: hover) { .au2-restart:hover { background: var(--ink); color: #fff; } }
+.au2-ctl .l2-pause { position: static; width: 44px; height: 44px; background: var(--x-raised); }
+@media (hover: hover), (pointer: none) { .au2-ctl .l2-pause:hover { background: light-dark(#f5f5f5, var(--x-fill)); border-color: light-dark(#a3a3a3, var(--border-selected)); } }
+.au2-restart { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--ink); background: var(--x-raised); color: var(--ink); cursor: pointer; transition: background .2s, color .2s, transform 90ms var(--ease); }
+@media (hover: hover), (pointer: none) { .au2-restart:hover { background: var(--ink); color: var(--x-on-ink); } }
 .au2-restart:active { transform: scale(.96); }
 .au2-restart:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-.au2-restart.busy { background: var(--ink); color: #fff; cursor: default; }
+.au2-restart.busy { background: var(--ink); color: var(--x-on-ink); cursor: default; }
 .au2-restart.busy svg { animation: au2-spin .8s linear infinite; }
 
 .au2-lanes { position: relative; padding-block: 6px 22px; border-top: 1px solid var(--hair); transform-origin: 50% 40%; }
 .au2-lane { position: relative; padding-block: 14px; transition: background .3s; }
-.au2-lane::before { content: ''; position: absolute; left: 0; right: 0; bottom: 41px; height: 1px; background: #d4d4d4; }
+.au2-lane::before { content: ''; position: absolute; left: 0; right: 0; bottom: 41px; height: 1px; background: light-dark(#d4d4d4, var(--secondary-hover)); }
 .au2-lane.lost { background: rgba(0, 0, 0, .035); }
 .au2-lane-k { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 0 0 12px; }
 .au2-lane-k b { font-size: 17px; font-weight: 606; letter-spacing: -.01em; }
@@ -57,32 +57,32 @@
 .au2-lane-k em { display: none; font-style: normal; color: var(--ink); }
 .au2-nodes { position: relative; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(16px, 2.6vw, 40px); }
 .au2-track { display: none; }
-.au2-node { position: relative; display: flex; align-items: center; gap: 10px; height: 54px; padding: 0 14px; border-radius: 14px; border: 1.5px solid var(--hair); background: #fff; font-size: 16px; font-weight: 500; color: var(--soft); transition: border-color .3s, background .3s, color .3s; }
+.au2-node { position: relative; display: flex; align-items: center; gap: 10px; height: 54px; padding: 0 14px; border-radius: 14px; border: 1.5px solid var(--hair); background: var(--x-raised); font-size: 16px; font-weight: 500; color: var(--soft); transition: border-color .3s, background .3s, color .3s; }
 @media (hover: hover) and (pointer: fine) { .au2-node:hover { border-color: var(--ink); } }
 .au2-nl { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .au2-g { flex: none; color: #a3a3a3; }
 .au2-node.done .au2-g { color: var(--ink); }
-.au2-node.now .au2-g { color: #fff; }
+.au2-node.now .au2-g { color: var(--x-on-ink); }
 .au2-node.now .au2-g circle { stroke-dasharray: 26 14; transform-origin: 8px 8px; animation: au2-spin .9s linear infinite; }
 @keyframes au2-spin { to { transform: rotate(360deg); } }
-.au2-h { position: absolute; top: 50%; width: 9px; height: 9px; margin-top: -4.5px; border-radius: 50%; background: #fff; border: 1.5px solid #d4d4d4; }
+.au2-h { position: absolute; top: 50%; width: 9px; height: 9px; margin-top: -4.5px; border-radius: 50%; background: var(--x-raised); border: 1.5px solid light-dark(#d4d4d4, var(--border-control)); }
 .au2-h.l { left: -5.5px; }
 .au2-h.r { right: -5.5px; }
-.au2-node.done { color: var(--ink); border-color: #a3a3a3; }
-.au2-node.now { color: #fff; background: var(--ink); border-color: var(--ink); }
-.au2-lane.go .au2-node.now { background: #404040; border-color: #404040; }
+.au2-node.done { color: var(--ink); border-color: light-dark(#a3a3a3, var(--border-selected)); }
+.au2-node.now { color: var(--x-on-ink); background: var(--ink); border-color: var(--ink); }
+.au2-lane.go .au2-node.now { background: light-dark(#404040, var(--primary-hover)); border-color: light-dark(#404040, var(--primary-hover)); }
 .au2-edge { position: absolute; left: 100%; top: 50%; width: clamp(16px, 2.6vw, 40px); height: 2px; margin: -1px 0 0 2px; }
 .au2-edge b { display: block; height: 100%; background: var(--ac); transform-origin: 0 50%; transition: transform .45s var(--ease); }
 
 /* the reschedule marker: a hairline across the whole width that draws in ink and names what happened */
 .au2-mark { position: relative; height: 40px; }
 .au2-mark .l2-wrap { position: relative; display: flex; align-items: center; justify-content: center; gap: 14px; height: 100%; }
-.au2-mark-l { position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: #e4e4e7; }
+.au2-mark-l { position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: light-dark(#e4e4e7, var(--secondary)); }
 .au2-mark-l::after { content: ''; position: absolute; inset: 0; background: var(--ink); transform: scaleX(0); transform-origin: 0 50%; transition: transform .3s var(--ease); }
 .au2-mark.on .au2-mark-l::after { transform: scaleX(1); }
 .au2-mark b, .au2-mark span { position: relative; padding: 5px 10px; border-radius: 8px; font-size: 13px; white-space: nowrap; transition: opacity .25s, transform .3s var(--ease); }
-.au2-mark b { background: var(--ink); color: #fff; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; font-size: 12px; }
-.au2-mark span { background: #fff; border: 1px solid var(--hair); color: var(--ink); }
+.au2-mark b { background: var(--ink); color: var(--x-on-ink); font-weight: 500; letter-spacing: .1em; text-transform: uppercase; font-size: 12px; }
+.au2-mark span { background: var(--x-raised); border: 1px solid var(--hair); color: var(--ink); }
 .js .au2-mark:not(.on) b, .js .au2-mark:not(.on) span { opacity: 0; transform: translateY(4px); }
 
 /* the index: closed lines rest small and short; the open one grows and its live object sits beside its title */
@@ -94,12 +94,12 @@
 .au2-list > li.open .au2-row { padding: 22px 0 10px; }
 .au2-row:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; border-radius: 8px; }
 .au2-list .l2-ch-n { margin: 0; color: var(--muted); }
-.au2-t { font-size: 24px; font-weight: 497; letter-spacing: -.02em; line-height: 1.1; color: #525252; transition: font-size .5s var(--ease), color .3s; }
+.au2-t { font-size: 24px; font-weight: 497; letter-spacing: -.02em; line-height: 1.1; color: light-dark(#525252, var(--muted-foreground)); transition: font-size .5s var(--ease), color .3s; }
 .au2-list li.open .au2-t { font-size: 44px; letter-spacing: -.035em; color: var(--ink); }
-@media (hover: hover) { .au2-row:hover .au2-t { color: var(--ink); } .au2-row:hover .au2-x { background: #e4e4e7; } }
+@media (hover: hover), (pointer: none) { .au2-row:hover .au2-t { color: var(--ink); } .au2-row:hover .au2-x { background: light-dark(#e4e4e7, var(--secondary)); } }
 .au2-row:active .au2-x { transform: scale(.94); }
-.au2-x { justify-self: end; width: 44px; height: 44px; padding: 14px; border-radius: 50%; background: #f5f5f5; transition: transform .3s var(--ease), background .3s, color .3s; }
-.au2-list li.open .au2-x { transform: rotate(45deg); background: var(--ink); color: #fff; }
+.au2-x { justify-self: end; width: 44px; height: 44px; padding: 14px; border-radius: 50%; background: light-dark(#f5f5f5, var(--x-fill)); transition: transform .3s var(--ease), background .3s, color .3s; }
+.au2-list li.open .au2-x { transform: rotate(45deg); background: var(--ink); color: var(--x-on-ink); }
 .au2-d { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .5s var(--ease); }
 .au2-list li.open .au2-d { grid-template-rows: 1fr; }
 .au2-d > div { overflow: hidden; }
@@ -107,7 +107,7 @@
 .au2-d-r { align-self: start; }
 .au2-mini { position: relative; min-height: 268px; margin: 20px 0 24px; padding: 20px 20px 22px; border-radius: 20px; background: #0a0a0a; color: #fafafa; }
 .au2-mini .l2-pause { top: 12px; right: 12px; background: #262626; border-color: #404040; color: #fafafa; }
-@media (hover: hover) { .au2-mini .l2-pause:hover { background: #404040; } }
+@media (hover: hover), (pointer: none) { .au2-mini .l2-pause:hover { background: #404040; } }
 
 /* the six live objects (dark plate) */
 .au2-mk { display: flex; justify-content: space-between; gap: 12px; margin: 0 56px 14px 0; font-size: 13px; color: #a3a3a3; }
@@ -173,23 +173,23 @@
 .au2-m5 li.ok { color: #fafafa; background: rgba(255, 255, 255, .1); }
 
 /* pieces: quiet rows that feed a drawn chain */
-.au2-pieces { background: #f5f5f5; }
+.au2-pieces { background: light-dark(#f5f5f5, var(--x-fill)); }
 .au2-pieces-l { grid-column: 1 / span 4; }
 .au2-api { margin: 12px 0 0; font-size: 14px; color: var(--muted); }
 .au2-path { list-style: none; margin: 36px 0 0; padding: 0; display: flex; flex-direction: column; align-items: flex-start; }
 .au2-wire { display: block; margin: 4px 0 4px 18px; color: var(--ink); }
-.au2-step { display: inline-flex; align-items: center; gap: 12px; padding: 12px 18px 12px 14px; border-radius: 14px; background: var(--ink); color: #fff; font-size: 16px; font-weight: 500; }
-.au2-step span { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: #404040; font-size: 13px; color: #fafafa; }
-.au2-board { grid-column: 6 / span 7; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; border-top: 1px solid #d4d4d4; align-self: start; }
-.au2-board li { border-bottom: 1px solid #d4d4d4; }
+.au2-step { display: inline-flex; align-items: center; gap: 12px; padding: 12px 18px 12px 14px; border-radius: 14px; background: var(--ink); color: var(--x-on-ink); font-size: 16px; font-weight: 500; }
+.au2-step span { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: light-dark(#404040, var(--primary-hover)); font-size: 13px; color: light-dark(#fafafa, var(--primary-foreground)); }
+.au2-board { grid-column: 6 / span 7; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; border-top: 1px solid light-dark(#d4d4d4, var(--border-control)); align-self: start; }
+.au2-board li { border-bottom: 1px solid light-dark(#d4d4d4, var(--border-control)); }
 .au2-board button { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 56px; padding: 0 12px; margin: 0 -12px; width: calc(100% + 24px); border: 0; border-radius: 12px; background: none; font: 500 17px/1 var(--sans); color: var(--soft); text-align: left; cursor: pointer; transition: background .2s, color .2s, transform 90ms var(--ease); }
-@media (hover: hover) { .au2-board button:hover { background: #e4e4e7; color: var(--ink); } .au2-board button:hover .au2-ps svg { transform: rotate(90deg); } }
+@media (hover: hover), (pointer: none) { .au2-board button:hover { background: light-dark(#e4e4e7, var(--secondary)); color: var(--ink); } .au2-board button:hover .au2-ps svg { transform: rotate(90deg); } }
 .au2-board button:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
 .au2-board button:active { transform: scale(.98); }
 .au2-board button.on { color: var(--ink); }
 .au2-ps { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; font-size: 13px; color: var(--muted); }
 .au2-ps svg { transition: transform .3s var(--ease); }
-.au2-board button.on .au2-ps { background: var(--ink); color: #fff; }
+.au2-board button.on .au2-ps { background: var(--ink); color: var(--x-on-ink); }
 
 /* the drag canvas (the one dark room): a plane of Auto's parts you pan by mouse, finger or keys */
 .au2-cvs { padding-block: clamp(56px, 7vw, 96px); }
@@ -251,15 +251,17 @@
 .au2-cv-map i { position: absolute; border-radius: 2px; background: #404040; }
 .au2-cv-map b { position: absolute; left: 0; top: 0; border: 1.5px solid #fafafa; border-radius: 3px; }
 .au2-cv-reset { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid #525252; background: #171717; color: #fafafa; cursor: pointer; transition: background .2s, color .2s, transform 90ms var(--ease); }
-@media (hover: hover) { .au2-cv-reset:hover { background: #fafafa; color: #0a0a0a; } .au2-cv-map:hover { border-color: #a3a3a3; } }
+@media (hover: hover), (pointer: none) { .au2-cv-reset:hover { background: #fafafa; color: #0a0a0a; } .au2-cv-map:hover { border-color: #a3a3a3; } }
 .au2-cv-reset:active { transform: scale(.94); }
 .au2-cv-reset:focus-visible { outline: 2px solid #f5f5f7; outline-offset: 2px; }
 
 /* text links on this page: the hover answers with a fill, not only the chevron */
 .au2 .x-arrow { min-height: 44px; padding: 0 12px; margin: 0 -12px; border-radius: 12px; transition: background .2s, transform var(--dur-press, .1s) var(--ease); }
-@media (hover: hover) { .au2 .x-arrow:hover { background: #f5f5f5; } .au2 [data-room='dark'] .x-arrow:hover { background: rgba(255, 255, 255, .1); } }
+@media (hover: hover), (pointer: none) { .au2 .x-arrow:hover { background: light-dark(#f5f5f5, var(--x-fill)); } .au2 [data-room='dark'] .x-arrow:hover { background: rgba(255, 255, 255, .1); } }
+/* the band's repo chip answers with a fill as well as its border */
+@media (hover: hover), (pointer: none) { .au2 a.l2-chip:hover { border-color: currentColor; background: rgba(255, 255, 255, .08); } }
 /* the prompt's copy: once it has really copied, the kit's "Copied" state reads inverted so it is seen */
-.au2 .l2-pr-bar .x-copy[aria-label='Copied'] { background: #f5f5f7; border-color: #f5f5f7; color: #0a0a0a; }
+.au2 .l2-pr-bar .x-copy[aria-label='Copied'] { background: var(--x-fill); border-color: #f5f5f7; color: var(--ink); }
 
 @media (max-width: 900px) {
   .au2-hero { padding-top: 40px; }
@@ -306,3 +308,8 @@
   .au2-node.now .au2-g circle, .au2-restart.busy svg, .au2-pub i, .au2-live, .au2-caret, .js .au2-ws, .au2-cv-wires path, .au2-cv-token { animation: none; }
   .au2-cv-token { transform: translateX(412px); }
 }
+
+/* dark mode (docs/DARK-MODE.md): the launch system's light-room greys (components/v2/x-hamilton/Launch.css .l2-page) are
+   light-only, so on this page they resolve to Hanzo's dark tokens and the page sits on Hanzo's background; the dark
+   rooms and the dark plates keep their own */
+html:not(.light) .au2 { --hair: var(--border); --muted: var(--muted-foreground); --soft: var(--muted-foreground); background: var(--bg); }

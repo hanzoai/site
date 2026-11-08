@@ -119,7 +119,7 @@ function Hero({ doc, chains, all, onChain, alsoRun }) {
       <div className="bz-wrap">
         <h1 id="bci-h1" className="bci-h1 bz-lines now" data-morph-target>
           <span className="bz-line"><span style={{ '--i': 0 }}>{t1}</span></span>
-          {tr.map((t, k) => <span key={k} className="bz-line soft"><span style={{ '--i': k + 1 }}>{t}</span></span>)}
+          {tr.map((t, k) => <Fragment key={k}>{' '}<span className="bz-line soft"><span style={{ '--i': k + 1 }}>{t}</span></span></Fragment>)}
         </h1>
         {doc.chip && <p className="bci-cap x-mono">{doc.chip}</p>}
         <div className="bci-ask">
@@ -145,7 +145,7 @@ function Intro({ doc }) {
           <ul className="bci-cats">{doc.cats.map((c) => <li key={c}>{c}</li>)}</ul>
         </div>
         <dl className="bci-facts">
-          {doc.facts.map(([a, b, c]) => <div key={a}><dt className="x-mono">{a}</dt><dd><b>{b}</b><span>{c}</span></dd></div>)}
+          {doc.facts.map(([a, b, c]) => <div key={a}><dt className="x-mono">{a}</dt><dd><b><span>{b}</span></b><span>{c}</span></dd></div>)}
         </dl>
       </div>
     </section>
@@ -155,7 +155,8 @@ function Intro({ doc }) {
 /* The pieces: a pinned scene. The index scrolls on the right; the stage on the left holds one piece at a time (the
    row at the middle of the screen, or the one under the pointer or focus): its number, name, line and the chains
    its page names, with the reel's last chain marked. Each name morphs into its page's hero when you open it. */
-const FIRST = 8;
+const FIRST = 8; // desktop shows the first 8; phones fold to the first 5 (CSS), and the button opens the rest either way
+const FIRST_PH = 5;
 function Pieces({ b, all, chain, onSeen }) {
   const find = (h) => all.find((p) => bare(p.href) === bare(h));
   const [more, setMore] = useState(false);
@@ -198,7 +199,7 @@ function Pieces({ b, all, chain, onSeen }) {
             </div>
           )}
         </header>
-        <ol className="bci-index" ref={list} onPointerLeave={() => setPoint(-1)}>
+        <ol className={'bci-index' + (more ? ' all' : '')} ref={list} onPointerLeave={() => setPoint(-1)}>
           {b.cards.map((c2, j) => {
             const q = find(c2.href);
             const has = q && chain && names(q.chains, chain);
@@ -206,7 +207,7 @@ function Pieces({ b, all, chain, onSeen }) {
               <li key={c2.name} data-k={j} hidden={j >= FIRST && !more} className={j === k ? 'on' : ''}>
                 <A to={c2.href} className="bci-card" onPointerEnter={(e) => e.pointerType === 'mouse' && setPoint(j)} onFocus={() => setPoint(j)} onBlur={() => setPoint(-1)}>
                   <span className="bci-card-n x-mono" aria-hidden="true">{two(j + 1)}</span>
-                  <b className="bci-card-t" data-morph>{c2.name}</b>
+                  <b className="bci-card-t" data-morph><span>{c2.name}</span></b>
                   <span className="bci-card-d">{c2.text}</span>
                   <span className="bci-card-c x-mono">{q ? <><i className={'bci-dot' + (has ? ' on' : '')} aria-hidden="true" /><b>{q.chains.length}</b> chains on its page</> : ' '}</span>
                   <span className="bci-card-go"><i>{c2.cta}</i><Arrow /></span>
@@ -215,9 +216,9 @@ function Pieces({ b, all, chain, onSeen }) {
             );
           })}
         </ol>
-        {b.cards.length > FIRST && (
-          <button type="button" className="bci-all" aria-expanded={more} onClick={() => setMore(!more)}>
-            <span>{more ? 'Show the first ' + FIRST : `Show all ${b.cards.length} pieces`}</span><i aria-hidden="true" />
+        {b.cards.length > FIRST_PH && (
+          <button type="button" className={'bci-all' + (b.cards.length > FIRST ? '' : ' ph')} aria-expanded={more} onClick={() => setMore(!more)}>
+            <span>{more ? 'Show fewer' : `Show all ${b.cards.length} pieces`}</span><i aria-hidden="true" />
           </button>
         )}
       </div>
@@ -258,7 +259,7 @@ function Groups({ b }) {
             <li key={g.title} className={open === k ? 'on' : lit === k ? 'lit' : ''}>
               <button type="button" aria-expanded={open === k} aria-controls={'bci-g' + k} onClick={() => { setMine(true); setOpen(open === k ? -1 : k); }} onPointerEnter={() => take(k)} onPointerLeave={() => setPeek(-1)}>
                 <span className="x-mono">{two(k + 1)}</span>
-                <b>{g.title}</b>
+                <b><span>{g.title}</span></b>
                 <i aria-hidden="true" />
               </button>
               <p id={'bci-g' + k} className="bci-gtext" hidden={open !== k}>{g.text}</p>
@@ -325,7 +326,7 @@ function Agent({ b }) {
           <BizLines id="bci-agent-h" className="bz-headline" lines={b.title} />
           <p className="bci-tag x-mono">{b.chip}</p>
           <p className="bz-body">{b.lede}</p>
-          <ul className="bci-bul">{b.bullets.map((x, k) => <li key={x}><span className="x-mono" aria-hidden="true">{two(k + 1)}</span>{x}</li>)}</ul>
+          <ul className="bci-bul">{b.bullets.map((x, k) => <li key={x}><span className="x-mono" aria-hidden="true">{two(k + 1)}</span><span>{x}</span></li>)}</ul>
         </div>
         <Streamed code={b.code.text} label={b.file} />
       </div>
@@ -366,7 +367,7 @@ function Matrix({ b, all }) {
         ))}</p>
         <p className="bci-read x-mono" aria-live={mine ? 'polite' : 'off'}>{read}</p>
         <div className="bci-mx" data-swipe-own onPointerLeave={() => setHot(null)} style={{ '--cols': cols.length }}>
-          {hot && <style>{`${r >= 0 ? `.bci-mx .x-table tbody tr:nth-child(${r + 1}) > *, ` : ''}.bci-mx .x-table tr > :nth-child(${c + 2}) { background-color: #f5f5f5; } ${r >= 0 ? `.bci-mx .x-table tbody tr:nth-child(${r + 1}) > :nth-child(${c + 2}) { background-color: #d4d4d4; }` : ''} .bci-mx .x-table thead th:nth-child(${c + 2}) .bci-vh { color: #0a0a0a; font-weight: 606; }`}</style>}
+          {hot && <style>{`${r >= 0 ? `.bci-mx .x-table tbody tr:nth-child(${r + 1}) > *, ` : ''}.bci-mx .x-table tr > :nth-child(${c + 2}) { background-color: light-dark(#f5f5f5, var(--x-fill)); } ${r >= 0 ? `.bci-mx .x-table tbody tr:nth-child(${r + 1}) > :nth-child(${c + 2}) { background-color: light-dark(#d4d4d4, var(--secondary)); }` : ''} .bci-mx .x-table thead th:nth-child(${c + 2}) .bci-vh { color: var(--ink); }`}</style>}
           <DataTable
             caption="Products × chains"
             cols={[{ key: 'p', label: 'Product' }, ...cols.map(([x], j) => ({ key: 'c' + j, label: <span className="bci-vh">{x}</span> })), { key: 'n', label: 'chains', num: true }]}

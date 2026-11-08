@@ -3,7 +3,7 @@
 .ut-pre, .ut-status, .ut-flow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 12px 16px; }
 .ut-pre { border-bottom: 1px solid rgba(255, 255, 255, .08); }
 .ut-pre .mb-mono { margin: 0; }
-.ut-status b { font: 497 15px var(--mono); color: #f5f5f5; }
+.ut-status b, .ut-key { font: 497 15px var(--mono); color: #f5f5f5; }
 .ut-tc { margin-left: auto; font: 500 15px var(--mono); color: #f5f5f5; }
 .ut-of { color: #a3a3a3; }
 .ut-main { display: grid; grid-template-columns: 230px minmax(0, 1fr); border-top: 1px solid rgba(255, 255, 255, .08); border-bottom: 1px solid rgba(255, 255, 255, .08); }
@@ -26,7 +26,7 @@
 .ut-bar i { display: block; height: 100%; background: #f5f5f5; transform-origin: 0 50%; transform: scaleX(0); }
 .ut-cue { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 16px; padding: 14px 16px 16px; border-top: 1px solid rgba(255, 255, 255, .08); align-items: center; }
 .ut-mon { position: relative; margin: 0; aspect-ratio: 16 / 10; border-radius: 12px; overflow: hidden; background: #000; }
-.ut-mon video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ut-mon video, .ut-mon img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .ut-mon figcaption { position: absolute; inset: auto 8px 8px 8px; display: flex; flex-wrap: wrap; gap: 4px; }
 .ut-mon figcaption span { padding: 3px 6px; border-radius: 5px; background: rgba(0, 0, 0, .65); color: #e5e5e5; font-size: 13px; }
 .ut-cue-t p { margin: 0 0 8px; }
@@ -121,3 +121,33 @@
   .ut-mon figcaption span { font-size: 14px; }
   .ut-scene button, .ut-scene [role=tab] { min-height: 44px; }
 }
+/* the studio's own controls, icon-only (their words are the accessible names); a press dips, a hover inks the ring */
+.ut-ico { width: 44px; min-height: 44px; padding: 0; }
+.ut-ico svg { transition: transform .2s var(--ease); }
+@media (hover: hover) { .ut-ico:hover svg { transform: scale(1.12); } }
+
+/* Dark (docs/DARK-MODE.md), dark only so bright is untouched:
+   - the shared Launch frame (v2/Launch.css) and the shared Creative fits paint their type in light-mode greys, so on /uta
+     the type outside the black rooms takes Hanzo's tokens;
+   - the shared model-card shelf (ModelCards.css paints .mc white) takes the page colour;
+   - the studio and the band are black in both modes: their picked chip and solid ask are Hanzo's light primary pill. */
+html:not(.light) .lv:has(> .lv-stage[data-hero='uta']) :is(.lv-lines, .lv-h, .lv-ch-h, .lv-stats .x-stat-v, .lv-stats .x-stat-l, .cr-fits-list h3, .cr-caps-h):not(.lv-room *, [data-room='dark'] *) { color: var(--foreground); }
+html:not(.light) .lv:has(> .lv-stage[data-hero='uta']) :is(.lv-lines .lv-ln + .lv-ln, .lv-crumb, .lv-side, .lv-ch-rail button:not([aria-current]), .cr-fit-n, .cr-fit-k):not(.lv-room *, [data-room='dark'] *) { color: var(--text-tertiary); }
+html:not(.light) .lv:has(> .lv-stage[data-hero='uta']) :is(.lv-lede, .lv-p, .lv-ch-b, .lv-stats .x-stat-n, .cr-fit-x):not(.lv-room *, [data-room='dark'] *) { color: var(--muted-foreground); }
+html:not(.light) .lv:has(> .lv-stage[data-hero='uta']) .lv-ch-rail::before { background: var(--border); }
+html:not(.light) .lv:has(> .lv-stage[data-hero='uta']) .mc { background: var(--bg); }
+html:not(.light) .lv:has(> .lv-stage[data-hero='uta']) :is(.cr-fits-list, .cr-fits-list li) { border-color: var(--border); }
+html:not(.light) .ut-board .mb-chip:is([aria-pressed='true'], [aria-checked='true'], [aria-selected='true']) { background: var(--primary); border-color: var(--primary); color: var(--primary-foreground); }
+html:not(.light) .ut-band .x-btn.solid { background: var(--primary); border-color: var(--primary); color: var(--primary-foreground); }
+
+/* Hanzo's dark hero texture, as measured from live hanzo.ai dark (lead's recipe, 8 Nov): 7px dot grid at ~36% foreground,
+   densest at the left/right edges and toward the bottom, plus live's top glow. Dark only, so bright is untouched. */
+html:not(.light) .lv-stage[data-hero='uta'] .lv-pin { isolation: isolate; }
+html:not(.light) .lv-stage[data-hero='uta'] .lv-pin::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(circle, color-mix(in srgb, var(--foreground) 36%, transparent) 1.5px, transparent 2.1px) 0 0 / 7px 7px;
+  -webkit-mask-image: linear-gradient(90deg, #000, rgba(0, 0, 0, .15) 32%, rgba(0, 0, 0, .15) 64%, #000), linear-gradient(180deg, rgba(0, 0, 0, .25), #000 85%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, #000, rgba(0, 0, 0, .15) 32%, rgba(0, 0, 0, .15) 64%, #000), linear-gradient(180deg, rgba(0, 0, 0, .25), #000 85%);
+  mask-composite: intersect; }
+html:not(.light) .lv-stage[data-hero='uta'] .lv-pin::after { content: ''; position: absolute; inset: 0 0 auto; height: 640px; z-index: -1; pointer-events: none;
+  background: radial-gradient(60% 70% at 50% 0%, color-mix(in srgb, var(--foreground) 9%, transparent), transparent 70%); }

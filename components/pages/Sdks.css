@@ -43,7 +43,7 @@
 .xsd-paste-in { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: 24px; align-items: center; padding: 22px 24px; border-radius: 24px; background: var(--card); }
 .xsd-paste-in p { margin: 0; font-size: 15px; line-height: 1.5; color: var(--soft); }
 .xsd-paste-in .xsd-paste-k { margin-bottom: 4px; font-size: 18px; font-weight: 600; color: var(--ink); }
-.xsd-prompt { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 14px; padding: 10px 10px 10px 16px; border-radius: 16px; background: #fff; border: 1px solid var(--line); }
+.xsd-prompt { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 14px; padding: 10px 10px 10px 16px; border-radius: 16px; background: light-dark(#fff, var(--card)); border: 1px solid var(--line); }
 .xsd-prompt-k { font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
 .xsd-prompt code { font: 400 14px/1.45 var(--mono); overflow-wrap: anywhere; }
 
@@ -65,7 +65,7 @@
 @media (hover: hover) { .xsd-pick-l button:hover { color: var(--ink); transform: translateX(3px); } }
 .xsd-pick-l button[aria-selected='true'] { color: var(--ink); }
 .xsd-pick-l button span:not(.xsd-pick-bg) { position: relative; }
-.xsd-pick-bg { position: absolute; inset: 0; border-radius: 14px; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .1); }
+.xsd-pick-bg { position: absolute; inset: 0; border-radius: 14px; background: light-dark(#fff, var(--card)); box-shadow: 0 1px 3px rgba(0, 0, 0, .1); }
 .xsd-pick-p { min-height: 280px; padding: clamp(22px, 3vw, 36px); border-radius: 28px; border: 1px solid var(--line); }
 .xsd-pick-p h3 { margin: 0; font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 560; letter-spacing: -.04em; }
 .xsd-reg { margin: 6px 0 22px; font-size: 13px; color: var(--faint); }
@@ -93,14 +93,15 @@
 .xsd-inst { color: #fff !important; }
 
 /* the flagship library */
-.xsd-ai-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 14px; }
+.xsd-ai-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 14px; }
+.xsd-lib.lead { grid-row: span 2; } /* the flagship leads; Node and Rust stack beside it, never three in a row */
 .xsd-lib { display: grid; gap: 14px; align-content: start; padding: 24px; border-radius: 26px; background: var(--card); transition: transform .3s var(--ease); }
 @media (hover: hover) { .xsd-lib:hover { transform: translateY(-4px); } }
 .xsd-lib.lead { background: var(--ink); color: #f5f5f7; }
 .xsd-lib-top { display: flex; justify-content: space-between; align-items: center; }
 .xsd-lib h3 { margin: 0; font-size: clamp(1.6rem, 2.6vw, 2.4rem); font-weight: 560; letter-spacing: -.04em; }
 .xsd-lib.lead em { background: #f5f5f7; }
-.xsd-lib:not(.lead) em { background: #fff; }
+.xsd-lib:not(.lead) em { background: light-dark(#fff, var(--card)); }
 .xsd-repo { margin: -6px 0 0; font-size: 13px; color: var(--faint); }
 .xsd-lib p:last-child { margin: 0; font-size: 15px; line-height: 1.55; color: var(--soft); }
 .xsd-lib.lead p:last-child { color: #a1a1a6; }
@@ -108,7 +109,7 @@
 
 /* go modules */
 .xsd-find { display: flex; align-items: center; gap: 0; height: 64px; padding: 0 20px; border-radius: 20px; background: var(--card); border: 1px solid var(--line); font-size: 20px; cursor: text; transition: border-color .2s, box-shadow .2s; }
-.xsd-find:focus-within { border-color: rgba(0, 0, 0, .35); box-shadow: 0 0 0 4px rgba(0, 0, 0, .05); }
+.xsd-find:focus-within { border-color: light-dark(rgba(0, 0, 0, .35), var(--white-40)); box-shadow: 0 0 0 4px rgba(0, 0, 0, .05); }
 .xsd-find > .x-mono:first-child { color: var(--faint); }
 .xsd-find-f { position: relative; flex: 1; min-width: 0; height: 100%; }
 .xsd-find input { width: 100%; height: 100%; border: 0; background: none; font: 500 20px/1 var(--mono); color: var(--ink); outline: none; padding: 0; }
@@ -119,14 +120,15 @@
 .xsd-modlist { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
 .xsd-mod { display: inline-flex; align-items: center; height: 36px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--line); font: 500 13.5px/1 var(--mono); color: var(--ink); text-decoration: none; transition: background .2s, border-color .2s, color .2s; }
 .xsd-mod span { color: var(--faint); transition: color .2s; }
-@media (hover: hover) { .xsd-mod:hover { background: var(--ink); border-color: var(--ink); color: #fff; } }
-@media (hover: hover) { .xsd-mod:hover span { color: #86868b; } }
+@media (hover: hover) { .xsd-mod:hover { background: var(--ink); border-color: var(--ink); color: light-dark(#fff, var(--primary-foreground)); } }
+@media (hover: hover) { .xsd-mod:hover span { color: light-dark(#86868b, var(--text-tertiary)); } }
 .xsd-none { margin: 18px 0 0; font-size: 15px; color: var(--soft); }
 [data-off] .xsd-ph i, [data-off] .xsd-l.chg { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) { .xsd-l.chg, .xsd-pre, .xsd-ph i { animation: none; } .xsd-lib:hover, .xsd-pick-l button:hover { transform: none; } }
 
 @media (max-width: 900px) {
   .xsd-grid, .xsd-paste-in, .xsd-two-in, .xsd-pick, .xsd-ai-grid { grid-template-columns: 1fr; }
+  .xsd-lib.lead { grid-row: auto; }
   .xsd-h1 { font-size: clamp(2.6rem, 12.5vw, 4rem); }
   .xsd-con-top { padding: 10px; }
   .xsd-dia button, .xsd-langs button { height: 44px; }
@@ -239,7 +241,7 @@
   .xsd-code-first .xsd-con, .xsd-code-first .xsd-pre { min-width: 0; max-width: 100%; }
   .xsd-pre { overflow-x: auto; }
   .xsd-con-top { flex-wrap: wrap; row-gap: 8px; }
-  .xsd-mod { min-height: 44px; display: inline-flex; align-items: center; }
+  .xsd-mod, .xsd .x-arrow, .xsd-pkg-a { min-height: 44px; display: inline-flex; align-items: center; }
   .xsd-langs { flex-wrap: wrap; row-gap: 4px; }
   .xsd-langs button { padding: 0 10px; }
   .xsd-words { display: contents; }
@@ -250,6 +252,140 @@
 /* the accent became ink (0 UI hues), so text set on an accent fill reads light: the AI + Agents half, the lead
    library card and the picker's chosen language */
 .xsd-half.dark, .xsd-half.dark h2, .xsd-half.dark h3, .xsd-lib.lead, .xsd-lib.lead h3, .xsd-lib.lead h2 { color: #fafafa; }
-.xsd-pick-l button[aria-selected='true'] { color: #fafafa; }
+.xsd-pick-l button[aria-selected='true'] { color: light-dark(#fafafa, var(--primary-foreground)); }
+/* ---------- the peel (signature): the stack lifts apart in 3D, then closes again ---------- */
+.xsd-peel { padding: clamp(56px, 7vw, 104px) 0 clamp(72px, 8vw, 120px); border-top: 1px solid var(--line); }
+.xsd-peel-grid { align-items: center; row-gap: 32px; }
+.xsd-peel-stage { grid-column: 1 / span 7; min-width: 0; }
+.xsd-peel-side { grid-column: 9 / span 4; min-width: 0; }
+.xsd-peel-scene { --pw: 320px; --ph: 200px; --gap: 104px; position: relative; height: 560px; perspective: 1900px; perspective-origin: 50% 20%; overflow: hidden; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; border-radius: var(--r-hero); background: light-dark(#f5f5f5, var(--muted)); }
+.xsd-peel-scene:active { cursor: grabbing; }
+.xsd-peel-stack { position: absolute; left: 50%; top: 75%; width: var(--pw); height: var(--ph); margin: calc(var(--ph) / -2) 0 0 calc(var(--pw) / -2); transform-style: preserve-3d; transform: translateY(calc((1 - var(--o)) * -60%)) rotateX(56deg) rotateZ(-36deg); }
+.xsd-plate { position: absolute; inset: 0; transform-style: preserve-3d; transform: translateZ(calc(var(--i) * (8px + var(--o) * var(--gap)))); }
+.xsd-plate-f { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-end; text-align: right; gap: 6px; padding: 20px 22px; border-radius: 20px; background: light-dark(#fff, var(--card)); color: light-dark(#0a0a0a, var(--foreground)); border: 1px solid light-dark(rgba(0, 0, 0, .14), var(--white-14)); box-shadow: 5px 7px 0 light-dark(#d4d4d4, var(--white-14)), 0 30px 60px -24px rgba(0, 0, 0, .18); transition: transform .4s cubic-bezier(.16, 1, .3, 1), background-color .3s cubic-bezier(0, 0, .2, 1), color .3s cubic-bezier(0, 0, .2, 1), box-shadow .3s cubic-bezier(0, 0, .2, 1); cursor: pointer; }
+.xsd-plate.p0 .xsd-plate-f { background: light-dark(#ededed, var(--secondary)); }
+.xsd-plate.on .xsd-plate-f { transform: translateZ(calc(var(--o) * 22px)); background: light-dark(#0a0a0a, var(--primary)); color: light-dark(#fafafa, var(--primary-foreground)); border-color: light-dark(#0a0a0a, var(--foreground)); box-shadow: 5px 7px 0 #404040, 0 40px 80px -24px rgba(0, 0, 0, .3); }
+@media (hover: hover) { .xsd-plate:not(.on):hover .xsd-plate-f { border-color: light-dark(rgba(0, 0, 0, .4), var(--white-40)); } }
+.xsd-plate-n { position: absolute; top: 16px; left: 20px; font-size: 12px; letter-spacing: .14em; color: light-dark(#737373, var(--muted-foreground)); }
+.xsd-plate.on .xsd-plate-n, .xsd-plate.on .xsd-plate-s { color: light-dark(#a3a3a3, var(--neutral-500)); }
+.xsd-plate b { display: flex; align-items: baseline; gap: 10px; font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.1; }
+.xsd-plate b i { font: 500 18px/1 var(--mono); font-style: normal; color: light-dark(#737373, var(--muted-foreground)); }
+.xsd-plate.on b i { color: light-dark(#a3a3a3, var(--neutral-500)); }
+.xsd-plate-s { font-size: 13px; color: light-dark(#525252, var(--muted-foreground)); }
+.xsd-plate-c { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px; margin-bottom: 4px; max-width: 80%; }
+.xsd-plate-c em { padding: 3px 7px; border-radius: 6px; background: rgba(0, 0, 0, .06); font: 500 12px/1.2 var(--mono); font-style: normal; }
+.xsd-plate.on .xsd-plate-c em { background: rgba(255, 255, 255, .1); }
+.xsd-peel-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 14px; }
+.xsd-peel-tog { display: inline-flex; align-items: center; gap: 12px; height: 48px; padding: 0 20px 0 16px; border-radius: 999px; border: 1px solid var(--line); background: light-dark(#fff, var(--card)); color: var(--ink); font: 500 15px/1 var(--sans); cursor: pointer; transition: background-color .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) { .xsd-peel-tog:hover { background: light-dark(#f5f5f5, var(--muted)); } }
+.xsd-peel-tog:active { transform: scale(.97); }
+.xsd-peel-tog:focus-visible, .xsd-peel-list button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.xsd-peel-ic { display: grid; gap: 3px; width: 16px; }
+.xsd-peel-ic i { display: block; height: 2px; border-radius: 1px; background: currentColor; transition: transform .3s cubic-bezier(.16, 1, .3, 1); }
+.xsd-peel-tog[aria-pressed='true'] .xsd-peel-ic { gap: 1px; }
+.xsd-peel-tog[aria-pressed='false'] .xsd-peel-ic i:nth-child(1) { transform: translateY(-2px); }
+.xsd-peel-tog[aria-pressed='false'] .xsd-peel-ic i:nth-child(3) { transform: translateY(2px); }
+.xsd-peel-hint { font-size: 13px; color: light-dark(#737373, var(--muted-foreground)); }
+.xsd-peel-list { list-style: none; margin: 0 0 28px; padding: 0; border-bottom: 1px solid var(--line); }
+.xsd-peel-list li { border-top: 1px solid var(--line); }
+.xsd-peel-list button { position: relative; display: flex; align-items: center; gap: 16px; width: 100%; min-height: 52px; padding: 0 4px; border: 0; background: none; text-align: left; font: 497 17px/1.2 var(--sans); color: light-dark(#737373, var(--muted-foreground)); cursor: pointer; transition: color .15s cubic-bezier(0, 0, .2, 1), padding .3s cubic-bezier(.16, 1, .3, 1); }
+.xsd-peel-list button > span { font-size: 12px; letter-spacing: .14em; color: light-dark(#737373, var(--muted-foreground)); }
+.xsd-peel-list button[aria-pressed='true'] { color: var(--ink); padding-left: 14px; }
+.xsd-peel-list button[aria-pressed='true']::before { content: ''; position: absolute; left: 0; top: 14px; bottom: 14px; width: 2px; border-radius: 1px; background: var(--ink); }
+@media (hover: hover) { .xsd-peel-list button:hover { color: var(--ink); } }
+.xsd-peel-says { display: grid; }
+.xsd-say { grid-area: 1 / 1; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; opacity: 0; visibility: hidden; transform: translateY(10px); transition: opacity .3s cubic-bezier(0, 0, .2, 1), transform .4s cubic-bezier(.16, 1, .3, 1), visibility 0s .3s; }
+.xsd-say.on { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+.xsd-say h2 { margin: 0; font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.15; }
+.xsd-say p { margin: 0; font-size: 16px; line-height: 1.6; color: var(--soft); }
+.xsd-say p b { color: var(--ink); font-weight: 497; }
+.xsd-say code { font: 500 .92em/1 var(--mono); padding: 2px 6px; border-radius: 6px; background: rgba(0, 0, 0, .06); color: var(--ink); }
+.xsd-say .xsd-cmd { align-self: stretch; }
+.xsd-say .xsd-cmd code { background: none; padding: 0; color: #fafafa; }
+.xsd-peel-scene.calm .xsd-plate-f, .xsd-peel-scene.calm .xsd-peel-ic i { transition: none; }
+@media (prefers-reduced-motion: reduce) { .xsd-plate-f, .xsd-say, .xsd-peel-list button { transition: none; } }
+@media (max-width: 900px) {
+  .xsd-peel-stage, .xsd-peel-side { grid-column: 1 / -1; }
+  .xsd-peel-scene { --pw: 200px; --ph: 128px; --gap: 74px; height: 380px; }
+  .xsd-plate-f { padding: 12px 14px; gap: 4px; border-radius: 14px; }
+  .xsd-plate b { font-size: 17px; gap: 6px; }
+  .xsd-plate b i { font-size: 13px; }
+  .xsd-plate-n, .xsd-plate-s { font-size: 11px; }
+  .xsd-plate-n { top: 10px; left: 14px; }
+  .xsd-plate-c { display: none; }
+  .xsd-peel-hint { font-size: 14px; }
+  .xsd-peel-list button > span { font-size: 14px; }
+  .xsd-peel-list { margin-bottom: 22px; }
+}
+
 /* h3s rest below the 32px section h2s they sit under */
 .xsd-pick-p h3, .xsd-lib h3 { font-size: clamp(21px, 1.8vw, 26px); font-weight: 497; letter-spacing: -.02em; }
+
+/* idle, the finder types a path and the wall answers: the modules it names stay ink, the rest step back */
+.xsd-modlist .xsd-mod { transition: color .35s cubic-bezier(0, 0, .2, 1), background .2s; }
+.xsd-modlist.ghost .xsd-mod:not(.lit) { color: light-dark(#a3a3a3, var(--neutral-500)); }
+/* the flagship card: the name on top, the line and its install at the foot, so the tall card is composed, not empty */
+.xsd-lib.lead { grid-template-rows: auto auto 1fr auto; }
+.xsd-lib.lead .xsd-cmd { order: 1; background: rgba(255, 255, 255, .08); }
+.xsd-lib.lead p:last-child { align-self: end; max-width: 24ch; font-size: clamp(20px, 1.7vw, 26px); line-height: 1.3; letter-spacing: -.01em; color: #fafafa; }
+@media (max-width: 900px) {
+  .xsd-lib.lead { grid-template-rows: none; }
+  .xsd-lib.lead p:last-child { font-size: 18px; }
+}
+@media (hover: hover) { .xsd-modlist.ghost .xsd-mod:hover { color: var(--ink); } }
+
+/* ---------- section entrances (MOTION-MAP /sdks), played once by useEnter in Sdks.jsx ---------- */
+.xsd-tilt { transform-origin: 50% 0; }
+@media (prefers-reduced-motion: no-preference) {
+  /* 1. scroll-tilt: the picker arrives leaning back on rotateX and levels out (then leans with the scroll's speed) */
+  .js .xsd-pick[data-enter]:not([data-in]) { opacity: 0; transform: perspective(1400px) rotateX(22deg) translateY(40px); }
+  .js .xsd-pick[data-in]:not([data-done]) { transform-origin: 50% 0; animation: xsd-tilt 1s cubic-bezier(.16, 1, .3, 1) both; }
+  @keyframes xsd-tilt { 0% { opacity: 0; transform: perspective(1400px) rotateX(22deg) translateY(40px); } 30% { opacity: 1; } 100% { opacity: 1; transform: none; } }
+
+  /* 2. fold-out: the org rows unfold from their top edge like paper, one after another, as the dark room opens */
+  .js .xsd-table[data-enter]:not([data-in]) .xsd-tr:not(.xsd-th) { opacity: 0; }
+  .js .xsd-table[data-in]:not([data-done]) .xsd-tr:not(.xsd-th) { transform-origin: 50% 0; animation: xsd-fold .7s cubic-bezier(.2, .7, .2, 1) calc(var(--i, 0) * 110ms) both; }
+  @keyframes xsd-fold { 0% { opacity: 0; transform: perspective(900px) rotateX(-82deg); } 35% { opacity: 1; } 100% { opacity: 1; transform: none; } }
+
+  /* 3. inertia-drag: the flagship cards are thrown in from the right, coast and settle with a small give */
+  .js .xsd-ai-grid[data-enter]:not([data-in]) > * { opacity: 0; }
+  .js .xsd-ai-grid[data-in]:not([data-done]) > * { animation: xsd-throw 1.1s cubic-bezier(.06, .8, .18, 1) both; }
+  .js .xsd-ai-grid[data-in] > :nth-child(2) { animation-delay: 70ms; }
+  .js .xsd-ai-grid[data-in] > :nth-child(3) { animation-delay: 140ms; }
+  @keyframes xsd-throw { 0% { opacity: 0; transform: translateX(240px); } 12% { opacity: 1; } 78% { transform: translateX(-6px); } 100% { opacity: 1; transform: none; } }
+
+  /* 4. pendulum: the finder swings in from a pivot above its centre and settles */
+  .js .xsd-find[data-enter]:not([data-in]) { opacity: 0; }
+  .js .xsd-find[data-in]:not([data-done]) { transform-origin: 50% -240px; animation: xsd-swing 1.3s cubic-bezier(.3, .6, .3, 1) both; }
+  @keyframes xsd-swing { 0% { opacity: 0; transform: rotate(-9deg); } 20% { opacity: 1; } 45% { transform: rotate(4deg); } 68% { transform: rotate(-1.6deg); } 86% { transform: rotate(.5deg); } 100% { opacity: 1; transform: none; } }
+
+  /* 5. invert-flash: the close arrives inverted for a beat, flickers once, then holds on paper */
+  .js .xsd-close[data-enter]:not([data-in]) > .a2-wrap { opacity: 0; }
+  .js .xsd-close[data-in]:not([data-done]) { animation: xsd-invert .7s linear both; }
+  @keyframes xsd-invert { 0% { filter: invert(1); } 22% { filter: invert(1); } 34% { filter: invert(0); } 46% { filter: invert(.9); } 58%, 100% { filter: invert(0); } }
+}
+
+/* copy pass (8 Nov): Hanzo's lines as whole lines of text */
+.xsd-dias .xsd-dia-t { font-size: 17px; font-weight: 600; color: var(--ink); }
+@media (max-width: 900px) { .xsd-dias .xsd-dia-t { font-size: 15px; } }
+/* each module is its whole path, as Hanzo prints it; "hanzo.ai/" is set grey by a text-clipped fill (9ch in mono) */
+.xsd-modlist { gap: 6px 22px; }
+.xsd .xsd-mod { font-size: clamp(16px, 1.35vw, 20px); letter-spacing: 0; color: var(--ink); background: linear-gradient(90deg, light-dark(#a3a3a3, var(--neutral-500)) 9ch, currentColor 9ch) no-repeat; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+@media (hover: hover) { .xsd .xsd-mod:hover { color: light-dark(#737373, var(--muted-foreground)); } }
+.xsd-modlist.ghost .xsd-mod:not(.lit) { color: light-dark(#a3a3a3, var(--neutral-500)); }
+@media (max-width: 900px) { .xsd .xsd-mod { font-size: 16px; } }
+
+/* ---------- dark mode (8 Nov): live hanzo.ai's dark palette; every light value stays exact through light-dark() ---------- */
+.a2.xsd { --card: light-dark(#f2f2f2, var(--muted)); --soft: light-dark(#525252, var(--muted-foreground)); --faint: light-dark(#737373, var(--muted-foreground)); --line: light-dark(rgba(0, 0, 0, .1), var(--border)); --acc: light-dark(#0a0a0b, var(--foreground)); }
+/* the install bars and the flagship card stay dark in dark (as live's code blocks), lifted off the page */
+.xsd-cmd { background: light-dark(#0a0a0a, var(--card)); }
+html:not(.light) .xsd-cmd { box-shadow: inset 0 0 0 1px var(--border); }
+.xsd-lib.lead { background: light-dark(#0a0a0b, var(--secondary)); }
+.xsd-lib.lead .xsd-cmd { background: light-dark(rgba(255, 255, 255, .08), var(--muted)); }
+.xsd-lib.lead em { background: light-dark(#f5f5f7, var(--white-14)); color: light-dark(#0a0a0a, var(--primary)); }
+.xsd-lib:not(.lead) em { background: light-dark(#fff, var(--secondary)); }
+.xsd-lang em { background: light-dark(#f5f5f7, var(--secondary)); }
+.xsd-mod:focus-visible { outline-color: var(--ink); }
+html:not(.light) .xsd-con { outline: 1px solid var(--border); outline-offset: -1px; }
+/* dark: the selected dialect / language carries its own fill (same colour as the sliding pill behind it) */
+html:not(.light) .xsd-dia button[aria-selected='true'], html:not(.light) .xsd-pick-l button[aria-selected='true'] { background: var(--acc); }

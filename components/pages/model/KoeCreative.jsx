@@ -12,13 +12,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE } from '../../ui';
-import { A, More, Cta, Img, Film, Band } from '../../kit';
+import { More, Cta, Img, Film, Band } from '../../kit';
 import { useOpener } from '../../Opener';
 import Launch, { Lines, film } from '../../v2/Launch';
 import Chapters from '../../v2/x-cray/Chapters';
 import ModelCards from './ModelCards';
 import { usePaused } from '../../v2/ModelFilm';
-import { C, ORDER, FIELDS } from './creative';
+import { C, ORDER, FIELDS } from './creativeData';
 import { Glyph } from './Studio';
 import { arrows } from './live';
 import KoePanel from './KoePanels';
@@ -90,7 +90,7 @@ function tilt(e) {
   if (e.pointerType !== 'mouse' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const el = e.currentTarget, r = el.getBoundingClientRect();
   const x = ((e.clientX - r.left) / r.width) * 2 - 1, y = ((e.clientY - r.top) / r.height) * 2 - 1;
-  el.style.transform = `perspective(900px) rotateX(${(y * 3).toFixed(2)}deg) rotateY(${(-x * 3).toFixed(2)}deg)`;
+  el.style.transform = `perspective(900px) rotateX(${(y * 3).toFixed(2)}deg) rotateY(${(-x * 3).toFixed(2)}deg) scale(var(--mc-p, 1))`;
 }
 
 function Map() {
@@ -191,7 +191,7 @@ export default function KoeCreative({ shape, aim, over, pos, headClass, demo, fl
         lede={`Samples of ${d.name}'s own output publish only after blind review, so the pictures here are illustrations. A studio can apply now to test it in its own pipeline.`}
         action="Request access"
         to={'/research-access?models=' + SLUG}
-        note={<p className="cr-band-note"><More to="/models">Every model</More><A to="/beta/research">Research preview</A></p>}
+        note={<p className="cr-band-note"><More to="/models">Every model</More><More to="/beta/research">Research preview</More></p>}
       />
     </Launch>
   );

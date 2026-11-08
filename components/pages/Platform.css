@@ -54,7 +54,7 @@
 @media (hover: hover) { .xpl-pill:hover { background: var(--k-ink); color: var(--k-white); border-color: var(--k-ink); } }
 
 /* ================= the journey: hero and map, one camera ================= */
-.xpl-jr { position: relative; height: 480svh; margin-top: calc(-1 * var(--hdr)); }
+.xpl-jr { position: relative; height: 420svh; margin-top: calc(-1 * var(--hdr)); }
 .xpl-jr-dark { position: absolute; left: 0; right: 0; top: calc((100% - 100svh) * .118); bottom: 0; pointer-events: none; }
 .xpl-jr-stage { position: sticky; top: 0; height: 100svh; overflow: hidden; }
 /* the black room: a rounded card inside the gutters that rises and opens past the screen's edges (transform only) */
@@ -71,7 +71,7 @@
 
 .xpl-art { position: absolute; top: 0; bottom: 0; right: 0; width: 52%; z-index: 1; }
 .xpl-iso { position: absolute; inset: 0; --iso-acc: var(--k-ink); }
-.xpl-jr[data-ph='0'] .xpl-iso .iso-plate { box-shadow: 0 0 0 1px rgba(0, 0, 0, .14) inset; }
+.xpl-jr[data-ph='0'] .xpl-iso .iso-plate { box-shadow: 0 0 0 1px light-dark(rgba(0, 0, 0, .14), var(--white-14)) inset; }
 .xpl-jr[data-ph='0'] .xpl-iso .iso-plate:first-child { box-shadow: 0 0 0 1.5px var(--k-ink) inset; }
 .xpl-jr[data-ph='0'] .xpl-iso .iso-plate:first-child .iso-n { color: var(--k-ink); }
 .xpl-jr[data-ph='1'] .xpl-iso { --iso-acc: var(--k-white); }
@@ -121,7 +121,7 @@
 .xpl-hint.off { opacity: 0; }
 .xpl-jr[data-ph='1'] .xpl-bar a, .xpl-jr[data-ph='1'] .xpl-ask { pointer-events: auto; }
 .xpl-zap { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-left: auto; padding: 6px 6px 6px 16px; border-radius: 999px; border: 1px solid var(--k-line-d); text-transform: none; letter-spacing: 0; font: 400 13px/1.3 var(--sans); color: var(--k-on-2); }
-.xpl-zap b { font: 606 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--k-on); }
+.xpl-zap-t { font: 606 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--k-on); }
 .xpl-zap a { display: inline-flex; align-items: center; min-height: 36px; padding: 0 14px; border-radius: 999px; background: rgba(255, 255, 255, .1); color: var(--k-on); text-decoration: none; transition: background-color var(--k-fast) var(--k-out), color var(--k-fast) var(--k-out), transform var(--k-press); }
 .xpl-zap a:active { transform: scale(.97); }
 @media (hover: hover) { .xpl-zap a:hover { background: var(--k-on); color: var(--k-black); } }
@@ -138,9 +138,9 @@
 .xpl-groups { display: grid; align-content: center; justify-content: stretch; }
 .xpl-grp { grid-area: 1 / 1; opacity: 0; transform: translateY(16px); pointer-events: none; transition: opacity var(--k-base) var(--k-out), transform var(--k-slower) var(--k-em); }
 .xpl-grp[data-past='true'] { transform: translateY(-16px); }
-.xpl-grp[data-on='true'] { opacity: 1; transform: none; pointer-events: auto; transition: opacity 300ms 220ms var(--k-out), transform 400ms 220ms var(--k-em); }
+.xpl-grp[data-on='true'] { opacity: 1; transform: none; pointer-events: auto; transition: opacity 300ms var(--k-out), transform 400ms var(--k-em); }
 /* one group at a time: the leaving group is gone in 150 ms, before the arriving one starts (220 ms) */
-.xpl-grp:not([data-on='true']) { transition: opacity 150ms var(--k-out), transform 150ms var(--k-out); }
+.xpl-grp:not([data-on='true']) { transition: opacity 180ms var(--k-out), transform 180ms var(--k-out); }
 /* the planes' chapters hand over the same way */
 @media (min-width: 900px) {
   .xpl-pc .pc-copy:not([data-on='true']) { transition: opacity 150ms ease, transform 150ms ease; }
@@ -298,9 +298,9 @@
 .xpl-ring li button:active .xpl-ring-lab { transform: scale(.97); }
 .xpl-ring-lab { display: block; transition: transform var(--k-press); }
 .xpl-ring-n { display: block; font: 606 12px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--k-dim); }
-.xpl-ring b { display: block; margin-top: 6px; font-size: 17px; font-weight: 497; letter-spacing: -.01em; color: var(--k-dim); white-space: nowrap; transition: color var(--k-base) var(--k-out); }
-.xpl-ring small { display: none; }
-.xpl-ring li.on b { color: var(--k-ink); }
+.xpl-ring-t { display: block; margin-top: 6px; font-size: 17px; font-weight: 497; letter-spacing: -.01em; color: var(--k-dim); white-space: nowrap; transition: color var(--k-base) var(--k-out); }
+.xpl-ring-s { display: none; }
+.xpl-ring li.on .xpl-ring-t { color: var(--k-ink); }
 .xpl-ring-mid { position: absolute; left: 50%; top: 50%; width: 52cqw; margin: 0; transform: translate(-50%, -50%); text-align: center; }
 .xpl-ring-mid b { display: block; font-size: 26px; font-weight: 497; letter-spacing: -.02em; color: var(--k-ink); }
 .xpl-ring-mid span { display: block; margin-top: 6px; font-size: 13px; color: var(--k-body); }
@@ -325,7 +325,7 @@
 .xpl-foot p { margin: 6px 0 0; }
 
 /* ================= planes: sticky chapters ================= */
-.xpl-pc { --pc-acc: var(--k-ink); --pc-per: 52svh; }
+.xpl-pc { --pc-acc: var(--k-ink); --pc-per: 42svh; }
 .xpl-pc .xpl-body { margin-top: 17px; max-width: 44ch; }
 .xpl-pc .xpl-links { margin-top: 17px; gap: 0 20px; }
 .xpl-pc .xpl-go { font-size: 14px; }
@@ -358,8 +358,8 @@
 .xpl-pane p { margin: 0; min-height: 3em; font-size: 13px; line-height: 1.5; color: var(--k-on-2); }
 .xpl-win-rows { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
 .xpl-win-rows li { position: relative; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px; padding: 9px 12px; border-radius: 12px; border: 1px solid var(--k-line-d); }
-.xpl-win-rows b { font: 497 13px/1.4 var(--mono); }
-.xpl-win-rows small { flex-basis: 100%; font-size: 13px; color: var(--k-on-4); }
+.xpl-win-n { font: 497 13px/1.4 var(--mono); }
+.xpl-win-note { flex-basis: 100%; font-size: 13px; color: var(--k-on-4); }
 /* status by shape: Ready a filled dot, Building a turning ring */
 .xpl-st { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--k-on-2); }
 .xpl-st i { width: 8px; height: 8px; border-radius: 50%; background: var(--k-on); }
@@ -369,7 +369,7 @@
 .xpl-ep b { color: var(--k-on); font-weight: 497; }
 .xpl-win-f { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 16px; padding: 8px 17px; border-top: 1px solid var(--k-line-d); }
 .xpl-win-f .xpl-go { color: var(--k-on); font-size: 13px; }
-.xpl-win-f small { font-size: 13px; color: var(--k-on-4); }
+.xpl-win-cap { font-size: 13px; color: var(--k-on-4); }
 
 /* data shapes */
 .xpl-prims { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
@@ -397,9 +397,9 @@
 
 /* anywhere: the control plane above three homes, the homes as rows */
 .xpl-any { padding: 27px; border-radius: 24px; background: var(--k-quiet); }
-.xpl-plane { display: flex; flex-direction: column; align-items: center; gap: 4px; width: fit-content; margin: 0 auto; padding: 14px 27px; border-radius: 16px; background: var(--k-ink); color: var(--k-on); text-align: center; }
+.xpl-plane { display: flex; flex-direction: column; align-items: center; gap: 4px; width: fit-content; margin: 0 auto; padding: 14px 27px; border-radius: 16px; background: var(--k-ink); color: light-dark(#fafafa, var(--primary-foreground)); text-align: center; }
 .xpl-plane b { font-size: 17px; font-weight: 497; }
-.xpl-plane span { font-size: 14px; line-height: 1.4; color: var(--k-on-4); }
+.xpl-plane span { font-size: 14px; line-height: 1.4; color: light-dark(#a3a3a3, var(--neutral-500)); }
 .xpl-wires { display: block; width: 100%; height: 90px; }
 .xpl-wires path { fill: none; stroke: var(--k-track); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
 .xpl-wire-dot { fill: var(--k-ink); animation: xpl-ride 2.7s var(--k-io) infinite; }
@@ -444,11 +444,12 @@
 /* the gliding pill: one element that moves by transform to the call on screen (no spring) */
 .xpl-ep-bg { position: absolute; left: 14px; right: 14px; top: 14px; height: 44px; border-radius: 12px; background: rgba(255, 255, 255, .1); box-shadow: inset 2px 0 0 var(--k-on); transform: translateY(calc(var(--at) * 44px)); transition: transform var(--k-base) var(--k-io), opacity var(--k-fast) var(--k-out); pointer-events: none; }
 .xpl-ep-bg[data-on='false'] { opacity: 0; }
-.xpl-eps button { position: relative; display: flex; width: 100%; align-items: center; height: 44px; padding: 0 12px; border: 0; border-radius: 12px; background: none; color: var(--k-on-4); font: 497 13px/1.3 var(--mono); text-align: left; cursor: pointer; transition: color var(--k-fast) var(--k-out), transform var(--k-press); }
+.xpl-eps button, .xpl-eps .xpl-ep-b { position: relative; display: flex; width: 100%; align-items: center; height: 44px; padding: 0 12px; border: 0; border-radius: 12px; background: none; color: var(--k-on-4); font: 497 13px/1.3 var(--mono); text-align: left; cursor: pointer; transition: color var(--k-fast) var(--k-out), transform var(--k-press); }
 .xpl-eps button:active { transform: scale(.97); }
-.xpl-eps button b { color: var(--k-on-2); font-weight: 497; }
-.xpl-eps button.on b { color: var(--k-on); }
-@media (hover: hover) { .xpl-eps button:hover b { color: var(--k-on); } }
+.xpl-eps button .xpl-ep-p, .xpl-eps .xpl-ep-b .xpl-ep-p { color: var(--k-on-2); font-weight: 497; }
+.xpl-eps .xpl-ep-b { cursor: default; box-sizing: border-box; }
+.xpl-eps button.on .xpl-ep-p { color: var(--k-on); }
+@media (hover: hover) { .xpl-eps button:hover .xpl-ep-p { color: var(--k-on); } }
 .xpl-eps-more { padding: 12px; font: 497 13px/1.3 var(--mono); color: var(--k-on-4); }
 .xpl-term-r { position: relative; display: flex; flex-direction: column; padding: 27px; min-height: 420px; }
 .xpl-term-h { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
@@ -465,7 +466,7 @@
 .xpl-call { display: flex; flex-wrap: wrap; align-items: center; gap: 0 2px; margin: 0; font: 497 32px/1.25 var(--mono); letter-spacing: -.02em; }
 .xpl-call em { margin-right: 12px; padding: 4px 10px; border-radius: 6px; background: var(--k-on); color: var(--k-black); font-style: normal; font-size: 13px; letter-spacing: .04em; }
 .xpl-call span { color: var(--k-on-4); }
-.xpl-call b { color: var(--k-on); font-weight: 497; }
+.xpl-call .xpl-call-p { color: var(--k-on); font-weight: 497; }
 .xpl-caret { display: inline-block; width: .5em; height: 1em; margin-left: 4px; background: var(--k-on); animation: xpl-car 1s steps(1) infinite; }
 @keyframes xpl-car { 50% { opacity: 0; } }
 .xpl-res { margin: 17px 0 0; max-width: 52ch; font-size: 16px; line-height: 1.5; color: var(--k-on-2); }
@@ -572,7 +573,7 @@
   .xpl-chips li { font-size: 14px; }
   .xpl-row { min-height: 64px; }
   .xpl-row-b b { font-size: 21px; }
-  .xpl-row-b em, .xpl-row-n, .xpl-st, .xpl-win-rows small, .xpl-win-f small, .xpl-ep, .xpl-ins-f p, .xpl-win-t, .xpl-win-nav a, .xpl-win-tiles a, .xpl-win-rows b, .xpl-tags span, .xpl-pane p, .xpl-eps button, .xpl-eps-more, .xpl-tile-sd, .xpl-foot, .xpl-zap, .xpl-ring-mid span { font-size: 14px; }
+  .xpl-row-b em, .xpl-row-n, .xpl-st, .xpl-win-note, .xpl-win-cap, .xpl-ep, .xpl-ins-f p, .xpl-win-t, .xpl-win-nav a, .xpl-win-tiles a, .xpl-win-n, .xpl-tags span, .xpl-pane p, .xpl-eps button, .xpl-eps .xpl-ep-b, .xpl-eps-more, .xpl-tile-sd, .xpl-foot, .xpl-zap, .xpl-ring-mid span { font-size: 14px; }
   .xpl-call em { font-size: 14px; }
   .xpl-head, .xpl-lp-g, .xpl-op-g, .xpl-cap-g, .xpl-facts { display: block; }
   .xpl-head { margin-bottom: 44px; }
@@ -592,8 +593,8 @@
   .xpl-ring-d { position: relative; margin: 0; transform: none; }
   .xpl-ring li button { position: static; width: auto; transform: none; padding: 12px 0; text-align: left; }
   .xpl-ring-lab { display: grid; grid-template-columns: 112px 1fr; align-items: baseline; gap: 2px 10px; }
-  .xpl-ring b { margin: 0; }
-  .xpl-ring small { display: block; grid-column: 2; margin: 0; font-size: 14px; color: var(--k-body); }
+  .xpl-ring-t { margin: 0; }
+  .xpl-ring-s { display: block; grid-column: 2; margin: 0; font-size: 14px; color: var(--k-body); }
   .xpl-fact.big { padding-bottom: 27px; border-bottom: 1px solid var(--k-line); }
   .xpl-fact.big .xpl-fact-h b { font-size: 84px; }
   .xpl-pc .xpl-ch-h { max-width: none; }
@@ -621,7 +622,7 @@
   .xpl-eps { display: flex; overflow-x: auto; gap: 4px; padding: 10px; border-right: 0; border-bottom: 1px solid var(--k-line-d); scrollbar-width: none; }
   .xpl-ep-bg { display: none; }
   .xpl-eps li { flex: none; }
-  .xpl-eps button span { display: none; }
+  .xpl-eps button .xpl-ep-h, .xpl-eps .xpl-ep-b .xpl-ep-h { display: none; }
   .xpl-eps button.on { background: rgba(255, 255, 255, .1); }
   .xpl-eps-more { white-space: nowrap; }
   .xpl-term-r { min-height: 380px; padding: 20px; }
@@ -644,3 +645,99 @@
 .xpl .x-codeblock-h > span:empty { display: none; }
 .xpl .x-copy-t { font-size: 13px; }
 @media (max-width: 899px) { .xpl .x-copy-t, .xpl-win-f .xpl-go { font-size: 14px; } }
+
+/* slice D (7 Nov): the directory reads 01-07 left to right, top to bottom; each row's heads share one y; the hover
+   fill stays inside its column */
+.xpl-dir-cols { column-count: auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 20px; row-gap: 44px; align-items: start; }
+.xpl-dir-g + .xpl-dir-g { margin-top: 0; }
+.xpl-dir-h, .xpl-dir-r { margin: 0; padding: 0 8px; }
+.xpl-dir-h { transition: background-color var(--k-fast) var(--k-out), transform var(--k-press); }
+@media (hover: hover) {
+  .xpl-dir-h:hover { background: var(--k-white); }
+  /* the chapter index previews its underline; the docker Copy and the endpoint rows answer the pointer */
+  .xpl-pc .pc-idx button { transition: color var(--k-fast) var(--k-out), background-color var(--k-fast) var(--k-out); border-radius: 8px; }
+  .xpl-pc .pc-idx button:not(.on):hover { background: light-dark(rgba(0, 0, 0, .04), var(--white-06)); }
+  .xpl-run .x-copy { transition: color var(--k-fast) var(--k-out), background-color var(--k-fast) var(--k-out), border-color var(--k-fast) var(--k-out); }
+  .xpl-run .x-copy:hover { color: #fafafa; background: rgba(255, 255, 255, .12); border-color: rgba(255, 255, 255, .32); }
+  .xpl-eps button:not(.on):hover { background: rgba(255, 255, 255, .06); }
+}
+.xpl-run .x-copy { color: #d4d4d4; }
+.xpl .x-band h2 { font-size: clamp(2.6rem, 6vw, 84px); }
+.xpl .x-band .x-btn.solid { background: light-dark(#f5f5f5, var(--primary)); border-color: light-dark(#f5f5f5, var(--primary)); color: light-dark(#000, var(--primary-foreground)); }
+@media (max-width: 899px) {
+  .xpl-dir-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 16px; row-gap: 27px; }
+}
+@media (max-width: 899px) { .xpl-pc .pc-copy, .xpl-pc .pc-copy[data-past='true'] { padding-top: 64px; } .xpl-pc .pc-vis { margin-top: 27px; } }
+
+/* ---------- section entrances (MOTION-MAP /platform), played once by useEnter in Platform.jsx ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  /* 1. inertia-drag: the directory is thrown in from the right, coasts and settles with a small give, column by column */
+  .js .xpl-dir[data-enter]:not([data-in]) .xpl-dir-g, .js .xpl-dir[data-enter]:not([data-in]) .xpl-dir-pv { opacity: 0; transform: translateX(220px); }
+  .js .xpl-dir[data-in]:not([data-done]) .xpl-dir-g, .js .xpl-dir[data-in]:not([data-done]) .xpl-dir-pv { animation: xpl-throw 1.15s cubic-bezier(.06, .8, .18, 1) both; }
+  .js .xpl-dir[data-in] .xpl-dir-g:nth-child(4n + 2) { animation-delay: 50ms; }
+  .js .xpl-dir[data-in] .xpl-dir-g:nth-child(4n + 3) { animation-delay: 100ms; }
+  .js .xpl-dir[data-in] .xpl-dir-g:nth-child(4n) { animation-delay: 150ms; }
+  .js .xpl-dir[data-in] .xpl-dir-pv { animation-delay: 200ms; }
+  @keyframes xpl-throw { 0% { opacity: 0; transform: translateX(220px); } 12% { opacity: 1; } 78% { transform: translateX(-6px); } 100% { opacity: 1; transform: none; } }
+
+  /* 2. count-roll: the capability numbers and the figure roll up into their slots (visual only; the text is final) */
+  .js .xpl-reach[data-enter]:not([data-in]) .xpl-cap-n { opacity: 0; }
+  .js .xpl-reach[data-in]:not([data-done]) .xpl-cap-n { display: inline-block; animation: xpl-roll .6s cubic-bezier(.16, 1, .3, 1) both; }
+  .js .xpl-reach[data-enter]:not([data-in]) .xpl-tile-fig b { opacity: 0; }
+  .js .xpl-reach[data-in]:not([data-done]) .xpl-tile-fig b { display: inline-block; animation: xpl-roll .8s cubic-bezier(.16, 1, .3, 1) .35s both; }
+  .js .xpl-reach[data-in] .xpl-cap-list li:nth-child(2) .xpl-cap-n { animation-delay: 70ms; }
+  .js .xpl-reach[data-in] .xpl-cap-list li:nth-child(3) .xpl-cap-n { animation-delay: 140ms; }
+  .js .xpl-reach[data-in] .xpl-cap-list li:nth-child(4) .xpl-cap-n { animation-delay: 210ms; }
+  .js .xpl-reach[data-in] .xpl-cap-list li:nth-child(5) .xpl-cap-n { animation-delay: 280ms; }
+  @keyframes xpl-roll { 0% { opacity: 1; transform: translateY(.9em); clip-path: inset(0 0 100% 0); } 100% { opacity: 1; transform: none; clip-path: inset(0); } }
+
+  /* 3. spiral-in: the improvement ring turns in from the edge to its place */
+  .js .xpl-ring[data-enter]:not([data-in]) { opacity: 0; }
+  .js .xpl-ring[data-in]:not([data-done]) { animation: xpl-spiral 1.2s cubic-bezier(.2, .7, .2, 1) both; }
+  @keyframes xpl-spiral { 0% { opacity: 0; transform: rotate(-150deg) translateX(38%) scale(.45); } 25% { opacity: 1; } 100% { opacity: 1; transform: none; } }
+
+  /* 4. underline-sweep: a rule sweeps under each line of the heading in turn, then under its three links */
+  .js .xpl-open[data-in]:not([data-done]) .xpl-op-h .xpl-l > span, .js .xpl-open[data-in]:not([data-done]) .xpl-links .xpl-go span { background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 0 2px; animation: xpl-sweep .9s cubic-bezier(.65, 0, .35, 1) both; }
+  .js .xpl-open[data-in] .xpl-op-h .xpl-l:nth-child(2) > span { animation-delay: .18s; }
+  .js .xpl-open[data-in] .xpl-links .xpl-go:nth-child(1) span { animation-delay: .4s; }
+  .js .xpl-open[data-in] .xpl-links .xpl-go:nth-child(2) span { animation-delay: .5s; }
+  .js .xpl-open[data-in] .xpl-links .xpl-go:nth-child(3) span { animation-delay: .6s; }
+  @keyframes xpl-sweep { 0% { background-size: 0 2px; background-position: 0 100%; } 55% { background-size: 100% 2px; background-position: 0 100%; } 56% { background-size: 100% 2px; background-position: 100% 100%; } 100% { background-size: 0 2px; background-position: 100% 100%; } }
+
+  /* 5. explode-gather: the figures start as scattered pieces and gather into the strip */
+  .js .xpl-facts[data-enter]:not([data-in]) > * { opacity: 0; }
+  .js .xpl-facts[data-in]:not([data-done]) > * { animation: xpl-gather .9s cubic-bezier(.16, 1, .3, 1) both; }
+  .js .xpl-facts > :nth-child(1) { --gx: -70px; --gy: -40px; --gr: -6deg; }
+  .js .xpl-facts > :nth-child(2) { --gx: 60px; --gy: -60px; --gr: 5deg; animation-delay: 60ms; }
+  .js .xpl-facts > :nth-child(3) { --gx: 90px; --gy: 30px; --gr: -4deg; animation-delay: 120ms; }
+  .js .xpl-facts > :nth-child(4) { --gx: -40px; --gy: 70px; --gr: 3deg; animation-delay: 180ms; }
+  @keyframes xpl-gather { 0% { opacity: 0; transform: translate(var(--gx), var(--gy)) rotate(var(--gr)) scale(.9); } 40% { opacity: 1; } 100% { opacity: 1; transform: none; } }
+}
+
+/* copy pass (8 Nov): Hanzo's lines as single lines of text */
+.xpl-cmd-l { display: block; }
+.xpl-cmd-l::first-letter { color: rgba(255, 255, 255, .45); }
+.xpl-win-k { margin: 0 0 10px; font: 497 13px/1.4 var(--mono); color: var(--k-on-4); }
+.xpl-call-p[data-typing] { display: inline-block; overflow: hidden; white-space: nowrap; vertical-align: bottom; width: calc(var(--n, 0) * (1ch - .02em)); }
+.xpl-fact-h { display: block; font-size: 26px; font-weight: 220; line-height: 1.1; letter-spacing: -.03em; }
+.xpl-fact.big .xpl-fact-h { font-size: 64px; line-height: 1; letter-spacing: -.04em; }
+.xpl-pf span { font-size: 21px; font-weight: 220; letter-spacing: -.02em; color: var(--k-ink); }
+.xpl-foot { font-size: 13px; }
+@media (max-width: 899px) { .xpl-fact.big .xpl-fact-h { font-size: 44px; } .xpl-fact-h { font-size: 21px; } .xpl-pf span { font-size: 17px; } }
+
+/* ---------- dark mode (8 Nov): live hanzo.ai's dark palette. Every deck token keeps its exact light value and takes
+   Hanzo's dark one through light-dark(); it is set again on the v2 parts that carry their own deck (the stack, the
+   chapters, the sheet). The black rooms (map, console, terminal, commands) stay black in both modes. ---------- */
+.xpl, .xpl .iso, .xpl .pc, .xpl .v2s {
+  --k-white: light-dark(#ffffff, var(--muted)); --k-quiet: light-dark(#f5f5f5, var(--card)); --k-card: light-dark(#f2f2f2, var(--muted)); --k-muted: light-dark(#ededed, var(--secondary)); --k-silver: light-dark(#e4e4e7, var(--secondary)); --k-track: light-dark(#d4d4d4, var(--neutral-700));
+  --k-ink: light-dark(#0a0a0a, var(--foreground)); --k-body: light-dark(#525252, var(--muted-foreground)); --k-dim: light-dark(#737373, var(--muted-foreground)); --k-mid: light-dark(#404040, var(--text-secondary));
+  --k-line: light-dark(rgba(0, 0, 0, .1), var(--border));
+}
+.xpl { background: light-dark(#ffffff, var(--background)); }
+/* the stack in dark: live's smoked plates with a hairline edge, the lit group a step lighter */
+html:not(.light) .xpl .iso-plate { background: linear-gradient(var(--white-05) 1px, transparent 1px) 0 0 / 30px 30px, linear-gradient(90deg, var(--white-05) 1px, transparent 1px) 0 0 / 30px 30px, linear-gradient(135deg, var(--secondary), var(--muted)); }
+html:not(.light) .xpl .iso-plate.lit, html:not(.light) .xpl .iso-plate.match { background: linear-gradient(var(--white-08) 1px, transparent 1px) 0 0 / 30px 30px, linear-gradient(90deg, var(--white-08) 1px, transparent 1px) 0 0 / 30px 30px, linear-gradient(135deg, var(--neutral-700), var(--secondary)); }
+html:not(.light) .xpl .iso-n { color: var(--white-45); }
+html:not(.light) .xpl-jr[data-ph='1'] .xpl-iso { --iso-acc: var(--primary); }
+/* the black rooms lift off the dark page by a hairline, as live's panels do */
+html:not(.light) .xpl-win, html:not(.light) .xpl-term, html:not(.light) .xpl .x-codeblock { outline: 1px solid var(--border); outline-offset: -1px; }

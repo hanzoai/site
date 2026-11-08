@@ -1,6 +1,6 @@
 /* Hanzo's shared system: tokens, component states, the ask bar, accessibility. Loaded once by app/layout.jsx, after
    globals.css and before any page CSS, so a page rule always wins over these defaults.
-   HOW TO USE (full list in docs/review/SYSTEM.md):
+   HOW TO USE (full list in docs/build-notes/review/SYSTEM.md):
    - Colour: the grey and silver deck only (0 UI hues). Use var(--hz-50 … --hz-950), the silvers, or the room tokens
      var(--room-bg / -surface / -ink / -soft / -faint / -line / -fill). Put data-room="dark" on a dark section and every
      room token (and the focus ring, and solid buttons) flips for it. Colour comes only from Hanzo's own media.
@@ -57,6 +57,16 @@
   --x-top: 60px;
   /* layers */
   --x-z-ask: 70; --x-z-sheet: 985; --x-z-skip: 2147483001;
+}
+/* dark mode: the page's room is Hanzo's dark, from @hanzo/design's tokens (Hanzo's own :not(.light) selector); a
+   [data-room=light] section follows the page into the dark, and [data-room=dark] stays as it is */
+html:not(.light), html:not(.light) [data-room=light] {
+  --room-bg: var(--background); --room-surface: var(--muted); --room-raised: var(--card);
+  --room-ink: var(--foreground); --room-soft: var(--muted-foreground); --room-faint: var(--text-tertiary);
+  --room-line: var(--border); --room-line-strong: var(--border-strong);
+  --room-fill: var(--glass); --room-fill-strong: var(--glass-strong);
+  --focus: var(--ring);
+  --btn-solid-bg: var(--primary); --btn-solid-ink: var(--primary-foreground); --btn-solid-hover: var(--primary-hover);
 }
 [data-room=dark] {
   --room-bg: #0a0a0b; --room-surface: #141416; --room-raised: #1c1c1e;
@@ -282,7 +292,7 @@ header[data-slot=masthead] a[data-x-ask] { max-width: 240px; overflow: hidden; t
 header[data-slot=masthead] a[data-x-ask]:active, header[data-slot=masthead] :is(button, a):active { transform: scale(.97); }
 
 /* ---------- header menus: the stage (a preview of the link under the pointer) and the phone sheet ---------- */
-.x-nav-panel { display: flex; align-items: stretch; background: #fff; } /* opaque: nothing of the page shows through */
+.x-nav-panel { display: flex; align-items: stretch; background: var(--x-raised); } /* opaque: nothing of the page shows through */
 .x-nav-grid { flex: 1; min-width: 0; }
 .x-nav-stage { display: none; }
 @media (min-width: 1240px) {
@@ -292,11 +302,14 @@ header[data-slot=masthead] a[data-x-ask]:active, header[data-slot=masthead] :is(
   .x-nav-stage-t b { font-size: 20px; font-weight: 560; letter-spacing: -.02em; line-height: 1.15; }
   .x-nav-stage-t p { margin: 0; font-size: 13.5px; line-height: 1.45; color: var(--hz-500); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   .x-nav-stage-t span { font: 500 11.5px/1.2 var(--mono); color: var(--hz-400); overflow-wrap: anywhere; }
+  /* dark mode: the menu's feature card on Hanzo's dark muted surface */
+  html:not(.light) .x-nav-stage { background: var(--muted); color: var(--foreground); }
+  html:not(.light) .x-nav-stage-t p { color: var(--muted-foreground); } html:not(.light) .x-nav-stage-t span { color: var(--text-tertiary); }
 }
 .x-sheet { display: flex; flex-direction: column; height: 100dvh; padding: 0 20px calc(20px + env(safe-area-inset-bottom)); }
 .x-sheet-top { display: flex; align-items: center; gap: 4px; height: 68px; flex: none; }
 .x-sheet-home { font: 600 21px/1 var(--sans); letter-spacing: -.02em; color: var(--ink); text-decoration: none; margin-right: auto; }
-.x-sheet-s { width: 44px; height: 44px; margin-right: 52px; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--ink); display: grid; place-items: center; cursor: pointer; }
+.x-sheet-s { width: 44px; height: 44px; margin-right: 52px; border-radius: 50%; border: 1px solid var(--line); background: var(--x-raised); color: var(--ink); display: grid; place-items: center; cursor: pointer; }
 .x-sheet-x { top: 12px !important; width: 44px !important; height: 44px !important; }
 .x-sheet-list { flex: 1 0 auto; }
 .x-sheet-b { min-height: 56px; }
@@ -315,7 +328,7 @@ header[data-slot=masthead] a[data-x-ask]:active, header[data-slot=masthead] :is(
 .x-snd:active { transform: scale(.92); }
 .x-snd[aria-pressed='false'] { color: var(--faint); }
 @media (max-width: 700px) { .x-snd-slot { display: none; } }
-.x-sheet-snd { width: 44px; height: 44px; border: 1px solid var(--line); background: #fff; color: var(--ink); margin-right: 8px; }
+.x-sheet-snd { width: 44px; height: 44px; border: 1px solid var(--line); background: var(--x-raised); color: var(--ink); margin-right: 8px; }
 
 /* ---------- the phone ask (components/Ask.jsx): slim and quiet, phones only, only where it covers nothing ---------- */
 .x-ask { position: fixed; left: 12px; right: 12px; bottom: calc(10px + env(safe-area-inset-bottom)); z-index: var(--x-z-ask); height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 18px; border-radius: var(--x-radius-pill); background: var(--room-raised); color: var(--room-ink); border: 1px solid var(--room-line); box-shadow: 0 10px 28px -16px rgba(0, 0, 0, .35); font: 500 15px/1 var(--sans); text-decoration: none; -webkit-tap-highlight-color: transparent; }

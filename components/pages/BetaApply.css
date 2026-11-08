@@ -1,0 +1,134 @@
+/* /beta/apply and /beta/research: one question at a time beside the pass it fills. Grey deck only (app/system.css rooms). */
+.xba { --xba-hdr: 60px; --xba-ease: cubic-bezier(.16, 1, .3, 1); position: relative; padding: 24px 0 0; background: var(--room-bg); color: var(--room-ink); }
+.xba-in { display: grid; grid-template-columns: minmax(280px, 360px) minmax(0, 680px); justify-content: center; align-items: start; gap: clamp(48px, 7vw, 112px); }
+
+/* the pass */
+.xba-pass { position: sticky; top: calc(var(--xba-hdr) + 20px); height: min(640px, calc(100svh - var(--xba-hdr) - 44px)); min-height: 460px; display: flex; flex-direction: column; border-radius: 24px; background: #000; color: #f5f5f7; overflow: hidden; isolation: isolate; }
+.xba-pass-m { position: relative; flex: 1 1 auto; min-height: 112px; overflow: hidden; }
+.xba-film { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 35%; }
+.xba-film.zen { object-position: 50% 12%; }
+.xba-pass-m::after { content: ''; position: absolute; inset: 40% 0 0 0; background: linear-gradient(transparent, #000); pointer-events: none; }
+.xba-pass-b { position: relative; z-index: 1; margin-top: -76px; padding: 0 24px 14px; }
+.xba-pass-t { margin: 0; font-size: 26px; font-weight: 497; line-height: 1.15; letter-spacing: -.02em; }
+.xba-pass-d { margin: 6px 0 0; font-size: 15px; line-height: 1.4; color: #a1a1a6; }
+.xba-lines { list-style: none; margin: 0; padding: 0 10px 10px; display: flex; flex-direction: column; gap: 2px; flex: none; }
+.xba-line { position: relative; width: 100%; display: flex; align-items: baseline; gap: 10px; min-height: 44px; padding: 12px 14px; border: 0; border-radius: 10px; background: transparent; color: #f5f5f7; font: 400 14px/1.35 var(--sans); text-align: left; cursor: pointer; transition: background-color .2s var(--xba-ease), transform .1s var(--xba-ease); -webkit-tap-highlight-color: transparent; }
+.xba-line::after { content: ''; position: absolute; left: 14px; right: 14px; bottom: 0; height: 1px; background: rgba(255, 255, 255, .1); }
+.xba-lines li:last-child .xba-line::after { display: none; }
+@media (hover: hover) { .xba-line:hover { background: rgba(255, 255, 255, .08); } .xba-line:hover .xba-line-k { color: #f5f5f7; } }
+.xba-line:active { transform: translateY(1px); }
+.xba-line.on { background: rgba(255, 255, 255, .12); }
+.xba-line:focus-visible { outline: 2px solid #f5f5f7; outline-offset: -2px; }
+.xba-line-k { flex: none; font-size: 11px; font-weight: 600; letter-spacing: .06em; color: #a1a1a6; transition: color .2s; }
+.xba-line-v { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* the question */
+.xba-form { position: relative; min-width: 0; min-height: calc(100svh - var(--xba-hdr) - 24px); display: flex; flex-direction: column; }
+.xba-top { position: sticky; top: var(--xba-hdr); z-index: 3; display: flex; flex-direction: column; gap: 10px; padding: 8px 0 10px; background: var(--room-bg); }
+.xba-top-r { display: flex; align-items: center; justify-content: space-between; font-size: 13px; color: var(--room-soft); }
+.xba-top-n { display: inline-flex; align-items: center; gap: 10px; }
+.xba-thumb { display: none; width: 24px; height: 24px; border-radius: 50%; object-fit: cover; object-position: 50% 30%; background: #000; }
+.xba-top-p { font-variant-numeric: tabular-nums; }
+.xba-bars { display: flex; gap: 6px; }
+.xba-bars span { flex: 1; height: 4px; border-radius: 999px; background: var(--room-fill-strong); overflow: hidden; }
+.xba-bars i { display: block; height: 100%; border-radius: inherit; background: var(--room-ink); transform-origin: 0 50%; transition: transform .24s ease; }
+.xba-step { flex: 1 0 auto; display: flex; flex-direction: column; gap: 28px; padding: 28px 0 32px; }
+.xba-q { margin: 0; font-size: clamp(32px, 3vw, 44px); font-weight: 497; line-height: 1.08; letter-spacing: -.03em; text-wrap: balance; color: var(--room-ink); }
+.xba-q:focus { outline: none; }
+.xba-cut { display: block; overflow: hidden; padding-bottom: .1em; margin-bottom: -.1em; }
+.xba-cut > span { display: block; }
+.xba-hint { margin: 10px 0 0; font-size: 17px; line-height: 1.4; color: var(--room-soft); }
+
+.xba-opts { display: grid; gap: 10px; }
+.xba-opts.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.xba-opt { display: flex; align-items: center; gap: 14px; min-height: 56px; padding: 12px 16px; border: 1px solid var(--room-line-strong); border-radius: 14px; background: var(--room-bg); color: var(--room-ink); font: 400 17px/1.3 var(--sans); text-align: left; cursor: pointer; scroll-margin: calc(var(--xba-hdr) + 72px) 0 128px; transition: border-color .2s var(--xba-ease), background-color .2s var(--xba-ease), transform .1s var(--xba-ease); -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+.xba-key { flex: none; width: 28px; height: 28px; display: grid; place-items: center; border: 1px solid var(--room-line-strong); border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--room-soft); transition: background-color .2s var(--xba-ease), border-color .2s var(--xba-ease), color .2s var(--xba-ease); }
+.xba-opt-t { flex: 1; min-width: 0; }
+.xba-check { flex: none; opacity: 0; transition: opacity .15s; }
+.xba-check path { stroke-dasharray: 20; stroke-dashoffset: 20; transition: stroke-dashoffset .3s var(--xba-ease); }
+@media (hover: hover) { .xba-opt:hover { border-color: var(--room-ink); } .xba-opt:hover .xba-key { border-color: var(--room-ink); color: var(--room-ink); } }
+.xba-opt:active { transform: scale(.98); transition-duration: 0s; }
+.xba-opt:focus-visible { outline: 2px solid var(--room-ink); outline-offset: 2px; }
+.xba-opt.on { border-color: var(--room-ink); background: var(--room-surface); }
+.xba-opt.on .xba-key { border-color: var(--room-ink); background: var(--room-ink); color: var(--room-bg); }
+.xba-opt.on .xba-check { opacity: 1; }
+.xba-opt.on .xba-check path { stroke-dashoffset: 0; }
+
+.xba-field { display: block; width: 100%; box-sizing: border-box; min-height: 56px; padding: 15px 16px; border: 1px solid transparent; border-radius: 14px; background: var(--room-surface); color: var(--room-ink); font: 400 17px/1.45 var(--sans); outline: none; -webkit-appearance: none; appearance: none; transition: border-color .2s var(--xba-ease), background-color .2s var(--xba-ease); }
+.xba-field.long { min-height: 168px; resize: vertical; }
+.xba-field::placeholder { color: var(--room-faint); opacity: 1; }
+@media (hover: hover) { .xba-field:hover { border-color: var(--room-line-strong); } }
+.xba-field:focus { border-color: var(--room-ink); background: var(--room-bg); }
+
+.xba-acts { position: sticky; bottom: 0; z-index: 3; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding: 14px 0 calc(14px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--room-line); background: var(--room-bg); }
+.xba-acts .x-btn svg { flex: none; }
+.xba-left { margin: 0; font-size: 14px; line-height: 1.3; color: var(--room-soft); text-align: center; }
+.xba-acts-r { display: flex; align-items: center; gap: 10px; }
+.xba-trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+/* hanzo.ai's next step for a signed-out visitor */
+.xba-gate { display: flex; flex-direction: column; gap: 20px; padding: clamp(40px, 9vh, 96px) 0 48px; }
+.xba-gate-p { margin: 0; max-width: 52ch; font-size: 18px; line-height: 1.5; color: var(--room-soft); text-wrap: pretty; }
+.xba-gate-a { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 4px; }
+.xba-quiet { position: relative; min-height: 44px; padding: 0 12px; border: 0; background: none; color: var(--room-ink); font: 500 15px/1 var(--sans); cursor: pointer; transition: transform .1s var(--xba-ease); }
+.xba-quiet::before, .xba-quiet::after { content: ''; position: absolute; left: 12px; right: 12px; bottom: 11px; height: 1px; background: var(--room-line-strong); }
+.xba-quiet::after { background: currentColor; transform: scaleX(0); transform-origin: 0 50%; transition: transform .3s var(--xba-ease); }
+@media (hover: hover) { .xba-quiet:hover::after { transform: scaleX(1); } }
+.xba-quiet:active { transform: translateY(1px); }
+
+@media (max-width: 900px) {
+  .xba { padding-top: 8px; }
+  .xba-in { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .xba-pass { display: none; }
+  .xba-thumb { display: block; }
+  .xba-form { min-height: calc(100svh - var(--xba-hdr) - 8px); }
+  .xba-opts.two { grid-template-columns: minmax(0, 1fr); }
+  .xba-q { font-size: 30px; }
+  .xba-step { gap: 22px; padding: 20px 0 24px; }
+  .xba-opt { min-height: 52px; font-size: 16px; }
+  .xba-gate-p { font-size: 17px; }
+}
+@media (max-width: 420px) {
+  .xba-acts { gap: 8px; }
+  .xba-acts-r { gap: 8px; }
+  .xba-acts .x-btn { padding: 0 14px; }
+  .xba-app svg { display: none; }
+  .xba-left { font-size: 13px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .xba-bars i, .xba-check path, .xba-opt, .xba-line { transition: none; }
+}
+
+/* ---------- the frame (8 Nov): Hanzo's halftone lit from the top right behind the form, the pass lifted off the page ---------- */
+.xba { isolation: isolate; min-height: calc(100svh - var(--xba-hdr)); }
+.xba::before { content: ''; position: absolute; z-index: -1; inset: 0; pointer-events: none; background: radial-gradient(circle, var(--zf-dot) 1px, transparent 1.5px) 0 0 / 12px 12px;
+  -webkit-mask-image: radial-gradient(45% 60% at 100% 0%, #000, transparent 72%); mask-image: radial-gradient(45% 60% at 100% 0%, #000, transparent 72%); opacity: .85; }
+.xba::after { content: ''; position: absolute; z-index: -1; inset: 0; pointer-events: none; background: radial-gradient(40% 50% at 12% 0%, color-mix(in srgb, var(--ink) 6%, transparent), transparent 70%); }
+html.dark .xba::after { background: radial-gradient(40% 50% at 12% 0%, color-mix(in srgb, var(--foreground) 9%, transparent), transparent 70%); }
+.xba-top, .xba-acts { background: transparent; }
+.xba-top::before, .xba-acts::before { content: ''; position: absolute; inset: 0 -12px; z-index: -1; background: color-mix(in srgb, var(--room-bg) 88%, transparent); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.xba-pass { box-shadow: 0 0 0 1px rgba(255, 255, 255, .06), 0 50px 100px -50px rgba(0, 0, 0, .6), 0 2px 8px -2px rgba(0, 0, 0, .1); }
+@media (prefers-reduced-motion: no-preference) {
+  .xba-pass { animation: xba-lift .9s cubic-bezier(.16, 1, .3, 1) both; }
+  @keyframes xba-lift { from { transform: perspective(1400px) rotateY(10deg) translateY(18px); opacity: 0; } }
+}
+
+/* the paid way past the line: a light fast lane at the foot of the dark pass (on a phone, under the progress bars) */
+.xba-paid { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 't i' 'd i'; align-items: center; gap: 2px 12px; text-decoration: none; transition: transform .1s var(--xba-ease), box-shadow .3s var(--xba-ease); -webkit-tap-highlight-color: transparent; }
+.xba-paid-t { grid-area: t; font: 500 15px/1.25 var(--sans); letter-spacing: -.01em; }
+.xba-paid-d { grid-area: d; font-size: 13px; line-height: 1.3; }
+.xba-paid-i { grid-area: i; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; transition: transform .3s var(--xba-ease); }
+@media (hover: hover) { .xba-paid:hover .xba-paid-i { transform: translateX(3px); } }
+.xba-paid:active { transform: scale(.98); }
+.xba-paid:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.xba-paid.on-pass { flex: none; margin: 4px 10px 10px; padding: 12px 12px 12px 16px; border-radius: 16px; background: #f5f5f7; color: #0a0a0b; box-shadow: 0 16px 30px -18px rgba(0, 0, 0, .8); }
+.xba-paid.on-pass .xba-paid-d { color: #515154; }
+.xba-paid.on-pass .xba-paid-i { background: #0a0a0b; color: #f5f5f7; }
+.xba-paid.on-phone { display: none; }
+@media (max-width: 900px) {
+  .xba-paid.on-phone { display: grid; margin-top: 4px; padding: 8px 8px 8px 14px; border-radius: 14px; border: 1px solid var(--room-line-strong); background: var(--room-raised, var(--x-raised)); color: var(--room-ink); }
+  .xba-paid.on-phone .xba-paid-t { font-size: 14px; }
+  .xba-paid.on-phone .xba-paid-d { color: var(--room-soft); font-size: 12.5px; }
+  .xba-paid.on-phone .xba-paid-i { width: 30px; height: 30px; background: var(--room-ink); color: var(--room-bg); }
+  .xba-gate .xba-paid.on-phone { margin-top: 8px; }
+}

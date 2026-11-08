@@ -150,7 +150,7 @@ function Hero({ doc, ask }) {
           <motion.h1 id="xst-h1" className="xst-h1" style={calm ? undefined : { scale: settle }}>
             <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 0.7, ease: EM, delay: 0.2 }}>{doc.name}</motion.span></span>
           </motion.h1>
-          <p className="xst-meta x-mono"><span>{doc.year}</span><i aria-hidden="true" /><span>{doc.kind}</span></p>
+          <p className="xst-meta x-mono"><span>{doc.year} · {doc.kind}</span></p>
           {ask && <Cta to={ask.href} id="customers.hero" size="lg" thumb className="xst-ask">{ask.label}</Cta>}
         </div>
         {bare && doc.figures.length > 0 && <Ledger figures={doc.figures} calm={calm} />}
@@ -203,7 +203,8 @@ function Figures({ doc, mark, onPress }) {
 }
 
 /* one chapter: a full scene that wipes up over the one before it. Its words lift and fade out *before* the next wipe
-   starts (one out, then one in), so the wipe's edge never crosses live words and two paragraphs never splice.
+   starts, and the next chapter's words fade up only as its sheet lands (one out, then one in), so the wipe's edge never
+   crosses live words and two paragraphs never splice.
    Compositions vary by chapter: a (words left, plate right), b (plate left, words right), c (a wide plate over two
    columns of words), d (a wide column of words beside a narrow portrait plate); the picture-less chapter is words only. */
 const LAYS = ['a', 'b', 'c', 'd'];
@@ -213,7 +214,9 @@ function Scene({ s, i, n, p, mark, calm, last, live }) {
   const leave = (v) => c01((t(v) - (i + 0.06)) / 0.14); // gone by i + 0.2, when the next wipe starts
   const clip = useTransform(p, (v) => `inset(${((1 - enter(v)) * 100).toFixed(2)}% 0% 0% 0%)`);
   const words = useTransform(p, (v) => (1 - enter(v)) * 72 - leave(v) * 44);
-  const fade = useTransform(p, (v) => 1 - leave(v));
+  // the words arrive with their sheet: unseen until the wipe is a third of the way up, whole by the time it lands, so
+  // the wipe's edge never slices a headline and a chapter still waiting below is not on the page at all
+  const fade = useTransform(p, (v) => (i ? c01((enter(v) - 0.35) / 0.5) : 1) * (1 - leave(v)));
   const push = useTransform(p, (v) => 1 + (1 - enter(v)) * 0.12 + leave(v) * 0.03);
   return (
     <motion.article className={'xst-scene' + (s.img ? '' : ' bare')} id={'xst-step-' + i} data-step={i} data-lay={s.img ? LAYS[i % LAYS.length] : undefined} data-tone={i % 2 ? 'b' : 'a'} style={i && !calm ? { clipPath: clip } : undefined} aria-labelledby={'xst-st-' + i}>

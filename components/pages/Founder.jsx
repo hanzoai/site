@@ -16,6 +16,9 @@ import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTra
 import { A, Cta, Faq, Field } from '../kit';
 import LineReveal, { NoJs } from '../v2/LineReveal';
 import { SEARCH, ORGS, useBounties, SAY } from './Bounty.github';
+// The open bounties as GitHub listed them when this page was built (the same query hanzo.ai runs): shown from the first
+// paint, and swapped for GitHub's live answer the moment it arrives, so a rate-limited or offline visitor still sees them.
+import SNAP from './founder/bounties.json';
 import { claim, SUPPORT } from './Founder.claim';
 import '../v2/ProgramScale.css';
 import usePhoneAsk from './usePhoneAsk';
@@ -46,8 +49,17 @@ function PullRequest() {
     return () => { live = false; done.current = false; };
   }, [seen, calm]);
   const merged = s === 2;
+  // a fine pointer tilts the card a little (2.5° at most); it lies flat on leave, and never under reduced motion
+  const tilt = (e) => {
+    const el = box.current;
+    if (!el || calm || e.pointerType !== 'mouse' || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty('--ry', (((e.clientX - r.left) / r.width - 0.5) * 5).toFixed(2) + 'deg');
+    el.style.setProperty('--rx', ((0.5 - (e.clientY - r.top) / r.height) * 5).toFixed(2) + 'deg');
+  };
+  const flat = () => { box.current?.style.setProperty('--rx', '0deg'); box.current?.style.setProperty('--ry', '0deg'); };
   return (
-    <div className={'xfo-pr xp-obj' + (seen || calm ? ' go' : '')} ref={box} aria-hidden="true">
+    <div className={'xfo-pr xp-obj' + (seen || calm ? ' go' : '') + (merged ? ' merged' : '')} ref={box} aria-hidden="true" onPointerMove={tilt} onPointerLeave={flat}>
       <div className="xfo-pr-top">{PR_ICON}<span className="xfo-pr-k">Founder Program</span><span className="x-mono">https://github.com/hanzoai/ui/pull/1</span></div>
       <div className="xfo-diff">
         {[['', 72], ['del', 54], ['add', 80], ['add', 46], ['', 62], ['add', 70], ['', 38]].map(([k, w], i) => (
@@ -60,7 +72,7 @@ function PullRequest() {
             <motion.span key={merged ? 'm' : 'o'} className={'xfo-badge' + (merged ? ' merged' : '')} initial={{ y: '110%' }} animate={{ y: 0 }} exit={{ y: '-110%' }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>{PR_ICON}{merged ? 'Merged' : 'Open'}</motion.span>
           </AnimatePresence>
         </span>
-        <span className={'xfo-btn' + (s === 1 ? ' press' : '') + (merged ? ' done' : '')}>{merged ? '✓' : 'Merge'}</span>
+        <span className={'xfo-btn' + (s === 1 ? ' press' : '') + (merged ? ' done' : '')}>{merged ? <svg className="xfo-tick" viewBox="0 0 24 24" width="22" height="22"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg> : 'Merge'}</span>
       </div>
     </div>
   );
@@ -143,7 +155,7 @@ function Scene() {
                 <h3 className="xp-head xfo-lv-n">{n}</h3>
                 <p className="xp-body">{req}</p>
                 <div className="xfo-pour"><motion.i style={{ scaleX: pinned ? (i ? fill2 : fill1) : (lvl >= i ? 1 : 0) }} /></div>
-                <p className="xfo-lv-e"><span aria-hidden="true">✓</span>{e}</p>
+                <p className="xfo-lv-e"><span aria-hidden="true">✓</span><span className="xfo-lv-et">{e}</span></p>
               </li>
             ))}
           </ol>
@@ -171,8 +183,8 @@ function Mine() {
         </div>
         <div className="xfo-mine">
           <div className="xfo-mine-c">
-            <div><span>Merged pull request</span><span className="xfo-st"><button type="button" onClick={() => step(setPrs, prs, -1, 99)} disabled={!prs} aria-label="Fewer merged pull requests">−</button><output className="x-mono" aria-live="polite"><AnimatePresence mode="popLayout" initial={false}><motion.span key={prs} className="xfo-roll" initial={{ y: '70%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-70%', opacity: 0 }} transition={{ duration: 0.2, ease: EASE }}>{prs}</motion.span></AnimatePresence></output><button type="button" onClick={() => step(setPrs, prs, 1, 99)} aria-label="More merged pull requests">+</button></span></div>
-            <div><span>lines merged</span><span className="xfo-st"><button type="button" onClick={() => step(setLines, lines, -250, 100000)} disabled={!lines} aria-label="Fewer lines merged">−</button><output className="x-mono" aria-live="polite"><AnimatePresence mode="popLayout" initial={false}><motion.span key={lines} className="xfo-roll" initial={{ y: '70%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-70%', opacity: 0 }} transition={{ duration: 0.2, ease: EASE }}>{lines.toLocaleString('en-US')}</motion.span></AnimatePresence></output><button type="button" onClick={() => step(setLines, lines, 250, 100000)} aria-label="More lines merged">+</button></span></div>
+            <div><span>Merged pull request</span><span className="xfo-st"><button type="button" data-sound="tick" onClick={() => step(setPrs, prs, -1, 99)} disabled={!prs} aria-label="Fewer merged pull requests">−</button><output className="x-mono" aria-live="polite"><AnimatePresence mode="popLayout" initial={false}><motion.span key={prs} className="xfo-roll" initial={{ y: '70%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-70%', opacity: 0 }} transition={{ duration: 0.2, ease: EASE }}>{prs}</motion.span></AnimatePresence></output><button type="button" data-sound="tick" onClick={() => step(setPrs, prs, 1, 99)} aria-label="More merged pull requests">+</button></span></div>
+            <div><span>lines merged</span><span className="xfo-st"><button type="button" data-sound="tick" onClick={() => step(setLines, lines, -250, 100000)} disabled={!lines} aria-label="Fewer lines merged">−</button><output className="x-mono" aria-live="polite"><AnimatePresence mode="popLayout" initial={false}><motion.span key={lines} className="xfo-roll" initial={{ y: '70%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-70%', opacity: 0 }} transition={{ duration: 0.2, ease: EASE }}>{lines.toLocaleString('en-US')}</motion.span></AnimatePresence></output><button type="button" data-sound="tick" onClick={() => step(setLines, lines, 250, 100000)} aria-label="More lines merged">+</button></span></div>
           </div>
         </div>
       </div>
@@ -184,7 +196,7 @@ function Repos() {
   const st = useBounties();
   const room = useRef(null);
   const lit = useInView(room, { once: true, amount: 0.35 }); // the org names light one at a time, once, as the room enters
-  const items = st.kind === 'ready' ? st.open.items.slice(0, 5) : [];
+  const items = st.kind === 'ready' ? st.open.items.slice(0, 6) : SNAP.items;
   const say = st.kind === 'reading' ? SAY.reading : st.kind === 'unreachable' ? SAY.unreachable : SAY.none;
   return (
     <section ref={room} className={'xp-sec xp-dark xfo-repos' + (lit ? ' lit' : '')} data-room="dark" aria-labelledby="xfo-open-h">
@@ -200,11 +212,12 @@ function Repos() {
             <ul>
               {items.map((it, i) => (
                 <motion.li key={it.url} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], delay: i * 0.06 }}>
-                  <a href={it.url} target="_blank" rel="noopener noreferrer"><span className="x-mono">{`${it.repo}#${it.number}`}</span><b>{it.title}</b><i aria-hidden="true">↗</i></a>
+                  <a href={it.url} target="_blank" rel="noopener noreferrer"><span className="x-mono">{`${it.repo}#${it.number}`}</span><b><span>{it.title}</span></b><i aria-hidden="true">↗</i></a>
                 </motion.li>
               ))}
             </ul>
-          ) : <p className={'xfo-say' + (st.kind === 'reading' ? ' reading' : '')} role={st.kind === 'reading' ? 'status' : undefined} aria-live="polite">{say}</p>}
+          ) : null}
+          {items.length ? <p className="xfo-say" hidden>{SAY.reading}</p> : <p className={'xfo-say' + (st.kind === 'reading' ? ' reading' : '')} role={st.kind === 'reading' ? 'status' : undefined} aria-live="polite">{say}</p>}
           </div>
           <Cta to={SEARCH} kind="quiet" id="founder.bounties" className="xp-ghost xfo-every">Every open bounty</Cta>
         </div>
@@ -264,11 +277,11 @@ function Claim() {
               </motion.div>
             ) : (
               <motion.form key="form" ref={form} className="xfo-form" noValidate onSubmit={send} exit={{ opacity: 0, y: -10, transition: { duration: 0.15 } }}>
-                <Field className="wide" label="Email of your Hanzo account" name="email" type="email" required autoComplete="email" aria-required="true" aria-invalid={bad('email')} error={why('email')} value={f.email} onChange={on('email')} />
+                <Field className="wide" label={<span>Email of your Hanzo account</span>} name="email" type="email" required autoComplete="email" aria-required="true" aria-invalid={bad('email')} error={why('email')} value={f.email} onChange={on('email')} />
                 <Field label="Name" name="name" autoComplete="name" value={f.name} onChange={on('name')} />
-                <Field label="GitHub username" name="github" autoComplete="username" required pattern="[A-Za-z0-9\-]{1,39}" aria-required="true" aria-invalid={bad('github')} error={why('github')} placeholder="octocat" value={f.github} onChange={on('github')} />
-                <Field className="wide" label="Merged pull request" name="pull" type="url" required pattern="https://github\.com/.+/pull/[0-9]+.*" aria-required="true" aria-invalid={bad('pull')} error={why('pull')} placeholder="https://github.com/hanzoai/ui/pull/1" value={f.pull} onChange={on('pull')} />
-                {st === 'refused' && <p className="xfo-refused" ref={out} tabIndex={-1} role="alert">Write to <a href={c.mail}>{SUPPORT}</a> with the address of the pull request.</p>}
+                <Field label={<span>GitHub username</span>} name="github" autoComplete="username" required pattern="[A-Za-z0-9\-]{1,39}" aria-required="true" aria-invalid={bad('github')} error={why('github')} placeholder="octocat" value={f.github} onChange={on('github')} />
+                <Field className="wide" label={<span>Merged pull request</span>} name="pull" type="url" required pattern="https://github\.com/.+/pull/[0-9]+.*" aria-required="true" aria-invalid={bad('pull')} error={why('pull')} placeholder="https://github.com/hanzoai/ui/pull/1" value={f.pull} onChange={on('pull')} />
+                {st === 'refused' && <p className="xfo-refused" ref={out} tabIndex={-1} role="alert"><span>Write to</span> <a href={c.mail}>{SUPPORT}</a> <span>with the address of the pull request.</span></p>}
                 <div className="xfo-send-row">
                   <Cta type="submit" id="founder.claim" busy={st === 'sending'} className="xp-cta xfo-send">Send the claim</Cta>
                   <A to="https://hanzo.ai/privacy" className="xfo-priv">Privacy Policy</A>
@@ -286,7 +299,7 @@ const QA = [
   ['Who grants the Pro time, and when?', 'A Hanzo admin, by hand, once the pull request has merged and you have sent it with the form on this page. Nothing grants it automatically.'],
   ['Which pull requests count?', `One a maintainer merges into a public repository of ${ORGS.join(', ')}. Level 2 is three merged pull requests, or 1,000 lines merged.`],
   ['Does a bounty pay?', 'No. A bounty is an issue scoped for an outside fix, and the points it names are reputation, not money. Its merged fix counts toward a level like any other pull request.'],
-  ['Where do I ask about a claim?', <>Write to <a href={`mailto:${SUPPORT}`}>{SUPPORT}</a> with the address of the pull request.</>],
+  ['Where do I ask about a claim?', <><span>Write to</span> <a href={`mailto:${SUPPORT}`}>{SUPPORT}</a> <span>with the address of the pull request.</span></>],
 ];
 
 export default function Founder() {

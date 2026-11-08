@@ -16,7 +16,7 @@
    chapters whose picture changes (memory, call graph, sandbox); the one dark room holds the memory tiers.
    Beyond: "Tell it something" - write one thing about your project, file it as what happened, what is true or how
    things are done here, and watch it sit in that memory, fading when unused and coming back at full strength when
-   you recall it. Nothing is saved or sent. Greys only (docs/JAMES.md). Every word is Hanzo's, and the editor's text is
+   you recall it. Nothing is saved or sent. Greys only (docs/build-notes/DONE.md). Every word is Hanzo's, and the editor's text is
    Hanzo's own start script from this page. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useMotionValue, useReducedMotion, useScroll, useTransform } from 'motion/react';
@@ -88,9 +88,26 @@ function Editor() {
     let alive = true, h = 0;
     const end = LAST + 6;
     const tick = (v) => { if (!alive) return; setT(v); h = setTimeout(() => tick(v >= end ? 0 : v + 1), v >= end ? 4200 : 520); };
-    tick(0);
+    // the finished picture holds for 1.5 s, then its memories leave in order before the replay (no hard reset)
+    h = setTimeout(() => tick(0), 1500);
     return () => { alive = false; clearTimeout(h); };
   }, [seen, calm, paused]);
+  // each line that carries a memory keeps its text clear of that chip and its dashed lead (the chip can grow on hover)
+  useEffect(() => {
+    const w = ref.current;
+    if (!w) return;
+    const lis = w.querySelectorAll('.ide-lines li'), chips = w.querySelectorAll('.ide-mem');
+    const set = () => MEMS.forEach(([line], i) => {
+      const c = chips[i];
+      if (!c || !lis[line]) return;
+      const lead = parseFloat(getComputedStyle(c, '::before').width) || 0;
+      lis[line].style.setProperty('--mw', Math.ceil(c.offsetWidth + lead + 24) + 'px');
+    });
+    set();
+    const ro = new ResizeObserver(set);
+    chips.forEach((c) => ro.observe(c));
+    return () => ro.disconnect();
+  }, []);
   const cursor = Math.min(t, LAST);
   const hit = t >= LAST + 1 && t < 99 ? true : t === 99;
   return (
@@ -110,15 +127,15 @@ function Editor() {
           <div className="ide-crumbs x-mono"><span>api.hanzo.ai</span><span>/v1/code</span></div>
           <ol className="ide-lines x-mono" aria-hidden="true">
             {SCRIPT_LINES.map((l, i) => (
-              <li key={i} className={(i === cursor && t < 99 ? 'cur' : '') + (hit && IMPACT.includes(i) ? ' hit' : '')}>
+              <li key={i} className={(i === cursor && t < 99 ? 'cur' : '') + (hit && IMPACT.includes(i) ? ' hit' : '') + (MEMS.some((m) => m[0] === i) ? ' m' : '')}>
                 <span className="ide-n">{i + 1}</span>
                 <span className="ide-src"><Shell l={l} /></span>
               </li>
             ))}
           </ol>
           <ul className="ide-mems">
-            {MEMS.map(([line, kind, what]) => (
-              <motion.li key={kind} className={'ide-mem k-' + kind} style={{ top: line * 28 + 'px' }} initial={false} animate={t >= line + 1 ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0, x: 16, scale: 0.94 }} transition={MOVE}>
+            {MEMS.map(([line, kind, what], i) => (
+              <motion.li key={kind} className={'ide-mem k-' + kind} style={{ top: line * 28 + 'px' }} initial={false} animate={t >= line + 1 ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0, x: 16, scale: 0.94 }} transition={t >= line + 1 ? MOVE : { ...MOVE, delay: i * 0.06 }}>
                 <span className="ide-mem-k x-mono">{kind}</span>
                 <span className="ide-mem-w">{what}</span>
               </motion.li>
@@ -128,7 +145,7 @@ function Editor() {
         <aside className="ide-agent">
           <span className="ide-agent-h"><Mark size={13} /> Hanzo</span>
           <ul>
-            {SESSION.map(([p, s], i) => <li key={s} className={'k' + i + (t >= LAST + 2 + i ? ' on' : '')}><span className="ide-p">{p}</span>{s}</li>)}
+            {SESSION.map(([p, s], i) => <li key={s} className={'k' + i + (t >= LAST + 2 + i ? ' on' : '')}><span className="ide-p">{p}</span><span>{s}</span></li>)}
           </ul>
           <A to="https://hanzo.team/" className={'ide-open' + (t >= LAST + 5 ? ' on' : '')}>Open in the console</A>
         </aside>
@@ -149,7 +166,7 @@ function Stage() {
   const copy = useRef(null);
   const obj = useRef(null);
   const sy = useMotionValue(0); // how far the editor rises as you scroll: it rests under the buttons in normal flow (no jump on hydration)
-  const ss = useMotionValue(1); // how much larger it starts (never wider than the screen)
+  const ss = useMotionValue(1); // it starts at its own size: no pop after hydration
   const narrow = useNarrow();
   const calm = useReducedMotion();
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
@@ -161,7 +178,6 @@ function Stage() {
       const c = copy.current, o = obj.current;
       if (!c || !o) return;
       sy.set(Math.max(0, o.offsetTop - 96)); // it rises from under the buttons to just below the header
-      ss.set(Math.min(1.04, (innerWidth - 48) / o.offsetWidth));
     };
     m();
     addEventListener('resize', m);
@@ -170,14 +186,14 @@ function Stage() {
   const k = (v) => (still ? 1 : ramp(v, 0, 0.55));
   const scale = useTransform([p, ss], ([v, s0]) => (still ? 1 : s0 + (1 - s0) * k(v)));
   const y = useTransform([p, sy], ([v, up]) => (still ? 0 : -up * k(v)));
-  const fade = useTransform(p, (v) => (still ? 1 : 1 - ramp(v, 0.04, 0.3))); // functions: an accelerated scroll fade does not clamp
+  const fade = useTransform(p, (v) => (still ? 1 : 1 - ramp(v, 0.03, 0.19))); // gone before the rising editor reaches the words (it meets them at about 0.22); functions: an accelerated scroll fade does not clamp
   const lift = useTransform(p, (v) => (still ? 0 : -160 * ramp(v, 0, 0.3)));
   const cap = useTransform(p, (v) => (still ? 1 : ramp(v, 0.5, 0.62)));
   return (
     <section className="ide-stage" ref={ref} aria-labelledby="ide-h1">
       <div className="ide-stick">
         <motion.div className="a2-wrap ide-copy" style={{ opacity: fade, y: lift }} ref={copy}>
-          <p className="a2-kick"><b>Hanzo IDE</b> · Developers</p>
+          <p className="a2-kick">Hanzo IDE · Developers</p>
           <Lines as="h1" id="ide-h1" className="a2-display ide-h1" lines={['An IDE that remembers', 'your codebase']} now />
           <div className="ide-copy-row">
             <p className="a2-lede">The editor you already know, on a Rust engine that is ours. The agent keeps a memory of your project across sessions, reads the call graph before it changes a line, and runs every tool in a sandbox.</p>
@@ -188,7 +204,7 @@ function Stage() {
           <Editor />
           <motion.div className="ide-under" style={{ opacity: cap }}>
             <p>Open source (Apache 2.0). The VS Code workbench on a Rust engine. Open VSX extensions run as they are.</p>
-            <p>Example project. Every name in it is one you would give your own. <A to="/home">Open in the console</A></p>
+            <p><span>Example project. Every name in it is one you would give your own.</span> <A to="/home">Open in the console</A></p>
           </motion.div>
         </motion.div>
       </div>
@@ -203,15 +219,16 @@ function Planes() {
   // no reduced-motion branch in render (it would differ from the server); CSS shows the final state under reduced motion
   const lift = useTransform(p, [0.2, 1], [0, -120]);
   const tilt = useTransform(p, [0.2, 1], [0, 14]);
+  const seen = useInView(ref, { once: true, amount: 0.5 }); // the engine runs through its parts twice once it is seen
   return (
-    <div className="ide-planes" ref={ref} aria-hidden="true">
+    <div className={'ide-planes' + (seen ? ' go' : '')} ref={ref} aria-hidden="true">
       <motion.div className="ide-plane top" style={{ y: lift, rotateX: tilt }}>
         <span className="ide-plane-k x-mono">VS Code workbench</span>
         <div className="ide-plane-row">{['editor surface', 'extension model', 'keybindings'].map((t) => <span key={t}>{t}</span>)}</div>
       </motion.div>
       <div className="ide-plane bot">
         <span className="ide-plane-k x-mono">Rust</span>
-        <div className="ide-plane-row">{['agent loop', 'memory', 'indexing', 'sandbox'].map((t) => <span key={t}>{t}</span>)}</div>
+        <div className="ide-plane-row">{['agent loop', 'memory', 'indexing', 'sandbox'].map((t, k) => <span key={t} style={{ '--k': k }}>{t}</span>)}</div>
       </div>
     </div>
   );
@@ -243,18 +260,27 @@ const GRAPH = [[50, 50, 0], [24, 26, 1], [78, 24, 1], [20, 72, 1], [80, 74, 1], 
 const EDGES = [[0, 1], [0, 2], [0, 3], [0, 4], [1, 5], [2, 5], [1, 6], [3, 6], [2, 7], [4, 7], [3, 8], [4, 8]];
 
 function Picture({ i }) {
+  // the picture's own animations (the arrival and the short idle loops) wait until it is on screen
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.4 });
+  const go = seen ? ' go' : '';
   if (i === 0) return (
-    <div className="ide-pic ide-pic-mem" key="m">
+    <div className={'ide-pic ide-pic-mem' + go} key="m" ref={ref}>
+      {/* each memory sits in the flow of its own line, after the code: the code gives way (ellipsis), never sits under it */}
       <ol className="ide-pic-code x-mono">
-        {SCRIPT_LINES.map((l, k) => <li key={k}><span>{k + 1}</span><span className="ide-pic-src"><Shell l={l} /></span></li>)}
+        {SCRIPT_LINES.map((l, k) => {
+          const m = MEMS.findIndex(([line]) => line === k);
+          return (
+            <li key={k} className={m >= 0 ? 'm' : ''}><span>{k + 1}</span><span className="ide-pic-src"><Shell l={l} /></span>
+              {m >= 0 && <span className={'ide-pic-chip k-' + MEMS[m][1]} style={{ animationDelay: 0.12 + m * 0.14 + 's', '--k': m }}><span className="x-mono">{MEMS[m][1]}</span><span className="ide-pic-w">{MEMS[m][2]}</span></span>}
+            </li>
+          );
+        })}
       </ol>
-      {MEMS.map(([line, kind, what], k) => (
-        <p key={kind} className={'ide-pic-chip k-' + kind} style={{ top: 28 + line * 34 + 'px', animationDelay: 0.12 + k * 0.14 + 's' }}><span className="x-mono">{kind}</span><span className="ide-pic-w">{what}</span></p>
-      ))}
     </div>
   );
   if (i === 1) return (
-    <div className="ide-pic ide-pic-graph" key="g">
+    <div className={'ide-pic ide-pic-graph' + go} key="g" ref={ref}>
       <svg viewBox="0 0 100 100" preserveAspectRatio="none">
         {EDGES.map(([a, b], k) => <line key={k} x1={GRAPH[a][0]} y1={GRAPH[a][1]} x2={GRAPH[b][0]} y2={GRAPH[b][1]} className={GRAPH[b][2] < 2 ? 'in' : ''} vectorEffect="non-scaling-stroke" />)}
       </svg>
@@ -264,7 +290,7 @@ function Picture({ i }) {
     </div>
   );
   return (
-    <div className="ide-pic ide-pic-safe" key="s">
+    <div className={'ide-pic ide-pic-safe' + go} key="s" ref={ref}>
       <div className="ide-box"><span className="x-mono">sandbox</span><p>tool call</p></div>
       <div className="ide-key"><svg viewBox="0 0 24 24" width="22" height="22"><rect x="5" y="10.5" width="14" height="10" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" fill="none" stroke="currentColor" strokeWidth="1.6" /></svg><span>keychain</span><em>encrypted at rest</em></div>
       <ol className="ide-trail">
@@ -441,7 +467,7 @@ export default function IdePage() {
   return (
     <main className="a2 ide">
       <Stage />
-      <A2Paste name="IDE" text="Read https://hanzo.ai/skill.md and use Hanzo IDE in my project. Start with: hanzo code" />
+      <A2Paste name="IDE" text="Read https://hanzo.ai/skill.md and use Hanzo IDE in my project. Start with: hanzo code" api="/v1/code" />
       <Engine />
       <Promises />
       <Teach />

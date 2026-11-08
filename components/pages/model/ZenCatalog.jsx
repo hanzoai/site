@@ -7,7 +7,7 @@
    over 200svh, each cutting in at 112px Air over a drawing of its own number as data (18 marks, the Zen5 contexts on a
    2M ruler, one cent of a dollar, the Zen5 sizes, 7 capsules), which grows in and then idles; on phone a 64px lead
    figure (with its 18 marks) over a 2-column grid at 32px; the Zen5 shelf of model cards on the SPEC grid (385px
-   repeat(4,192px), rows 220px, the leader spanning both rows) built to docs/refs/hanzo-model-cards/SPEC.md, carrying
+   repeat(4,192px), rows 220px, the leader spanning both rows) built to docs/build-notes/refs/hanzo-model-cards/SPEC.md, carrying
    Hanzo's own Zen media (the leader plays zen.webm over zen.webp, the others hold the still, each framed on its own
    part; every Zen5 page opens on that film, so the Morph lands on the picture you clicked; hover draws the model's size
    bars to scale; on phone the leader sits on top and the others are a snap rail with a 16% peek); the per-token sheet (row hover fills #f5f5f5 and lights its bars); a calm close over a drifting context
@@ -29,6 +29,7 @@ import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useMot
 import { Copy } from '../../ui';
 import { A, Cta, Film, Img } from '../../kit';
 import Sigil from '../../Sigil';
+import usePhoneAsk from '../usePhoneAsk'; // one solid ask per screen at every width (the phone header outlines while "Get API key" shows)
 import './ZenCatalog.css';
 
 // the deck's motion tokens (MASTER 3.1), in seconds; one emphasis curve; no springs
@@ -49,6 +50,15 @@ response = client.chat.completions.create(
 )
 print(response.choices[0].message.content)`;
 
+// each line of the snippet in its own span and each # comment in a grey span of its own, as Hanzo's highlighter splits them
+function Lines({ s }) {
+  return s.split('\n').map((l, i, a) => {
+    const c = l.indexOf('#'), nl = i < a.length - 1 ? '\n' : '';
+    if (c < 0) return <span key={i}>{l + nl}</span>;
+    return <span key={i}>{c > 0 && <span>{l.slice(0, c)}</span>}<span className="zc-cm">{l.slice(c)}</span>{nl}</span>;
+  });
+}
+
 const ROWS = [
   { n: 'Zen5 (Default)', slug: 'zen5', tier: 'pro', d: 'Canonical Zen5 default. a 35B frontier MoE (3B active) (35B total / 3B active per token, released Apr 2026, Apache-2.0). 256K context, agentic-trained, OpenAI + Anthropic API. The everyday Zen5 chat model.', big: '35B', small: '(3B active)', tot: 35, act: 3, ctx: '256K', ck: 256, arch: 'Zen frontier MoE' },
   { n: 'Zen5 Coder', slug: 'zen5-coder', tier: 'pro', d: 'Code-specialized Zen5 tier. 80B sparse MoE tuned for repo-scale code understanding, agentic refactoring, and tool-use coding loops.', big: '80B', small: '(MoE)', tot: 80, act: null, ctx: '256K', ck: 256, arch: 'Zen Coder MoE' },
@@ -58,7 +68,7 @@ const ROWS = [
 ];
 const TIERS = ['ultra max', 'ultra', 'pro max', 'pro', 'starter'];
 const SORTS = [['hanzo', 'Hanzo’s order'], ['size', 'By size'], ['ctx', 'By context']];
-const FIGS = [['18', 'Models'], ['2M', 'Max Context'], ['$0.01/MTok', 'From'], ['MoE + Dense', 'Architectures'], ['7', 'Modalities']];
+const FIGS = [['19', 'Models'], ['2M', 'Max Context'], ['$0.01/MTok', 'From'], ['MoE + Dense', 'Architectures'], ['7', 'Modalities']];
 const MAXP = 284, ctxW = (k) => (Math.log2(k) - 4) / (Math.log2(1024) - 4);
 
 /* desktop with motion allowed: the pinned figures run; phones and reduced motion read the same content as a list */
@@ -104,8 +114,8 @@ function Stage() {
               <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: T.line, ease: EMPH, delay: 0.1 }}>Zen Models</motion.span></span>
               <span className="x-line zc-h1-2"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: T.line, ease: EMPH, delay: 0.16 }}>Complete API Catalog</motion.span></span>
             </h1>
-            <p className="zc-badge"><i aria-hidden="true" />Zen 6 and Zen 6 Flash available now · Zen 7 in research preview</p>
-            <p className="zc-lede">Built for agentic coding and multimodal work. <b>18</b> foundation models from <A to="https://zoo.industries">Zoo Labs Foundation</A> across language, code, vision, image, audio, and retrieval. Zen MoDE (Mixture of Diverse Experts) architecture. From $0.01/MTok.</p>
+            <p className="zc-badge"><i aria-hidden="true" /><span>Zen 6 and Zen 6 Flash available now · Zen 7 in research preview</span></p>
+            <p className="zc-lede"><span>Built for agentic coding and multimodal work.</span> <b>19</b> <span>foundation models from</span> <A to="https://zoo.industries">Zoo Labs Foundation</A> <span>across language, code, vision, image, audio, and retrieval.</span> <span>Zen MoDE (Mixture of Diverse Experts) architecture.</span> <span>From $0.01/MTok.</span></p>
             <div className="zc-acts">
               <Cta to="https://platform.hanzo.ai/api-keys" id="zen-models.hero" thumb>Get API key</Cta>
               <a href="#zen5" className="x-arrow" data-cta="zen-models.hero-explore"><span>Explore Models</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 3v9M4.5 8.5 8 12l3.5-3.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></a>
@@ -163,7 +173,7 @@ function Quick() {
         </div>
         <figure className="zc-term">
           <div className="zc-term-bar"><b>python</b><span className="zc-term-copy"><Copy text={code(typed)} /></span></div>
-          <pre className="zc-code" tabIndex={0} data-lenis-prevent><code>{pre}<span className="zc-slot"><span>{typed}</span><i aria-hidden="true" /></span>{post}</code></pre>
+          <pre className="zc-code" tabIndex={0} data-lenis-prevent><code><Lines s={pre} /><span className="zc-slot"><span>{typed}</span><i aria-hidden="true" /></span><Lines s={post} /></code></pre>
         </figure>
       </div>
     </section>
@@ -180,7 +190,7 @@ const grow = (k, prop = 'scaleX', step = 0.04) => ({
 });
 function FigArt({ i, still = false }) {
   if (i === 0) return (
-    <div className="zc-fa zc-fa-18">{Array.from({ length: 18 }, (_, k) => <motion.i key={k} data-z={k < 5 || undefined} style={{ '--k': k }} {...(still ? {} : grow(k, 'scaleY', 0.025))} />)}</div>
+    <div className="zc-fa zc-fa-18">{Array.from({ length: 19 }, (_, k) => <motion.i key={k} data-z={k < 5 || undefined} style={{ '--k': k }} {...(still ? {} : grow(k, 'scaleY', 0.025))} />)}</div>
   );
   if (i === 1) return (
     <div className="zc-fa zc-fa-ctx">
@@ -255,7 +265,7 @@ function Figures() {
   );
 }
 
-/* the model card of docs/refs/hanzo-model-cards/SPEC.md: black, 20px, art behind, title top left, tag pill bottom left,
+/* the model card of docs/build-notes/refs/hanzo-model-cards/SPEC.md: black, 20px, art behind, title top left, tag pill bottom left,
    a pointer tilt up to 3 degrees that settles flat on leave (fine pointers, never under reduced motion) */
 const tilt = (e) => {
   if (e.pointerType !== 'mouse' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -311,7 +321,7 @@ function Row({ r, seen, i, open, onOpen }) {
   return (
     <motion.li layout className="zc-li" data-open={open || undefined} transition={{ layout: GLIDE }}>
       <div className="zc-row">
-        <b className="zc-row-n">{r.n}</b>
+        <b className="zc-row-n"><span>{r.n}</span></b>
         <span className="zc-row-p"><span className="zc-row-big">{r.big}</span>{r.small && <span className="zc-row-s"> {r.small}</span>}</span>
         <span className="zc-meter" aria-hidden="true">
           <span className="zc-bar"><i className="zc-tot" style={{ transform: `scaleX(${seen ? Math.max(0.015, r.tot / MAXP) : 0})`, transitionDelay: 0.1 + i * 0.06 + 's' }} />{r.act && <i className="zc-act" style={{ transform: `scaleX(${seen ? Math.max(0.012, r.act / MAXP) : 0})`, transitionDelay: 0.4 + i * 0.06 + 's' }} />}</span>
@@ -399,6 +409,7 @@ function Shelf() {
 }
 
 export default function ZenCatalog() {
+  usePhoneAsk();
   return (
     <main className="zc">
       <Stage />
@@ -410,7 +421,7 @@ export default function ZenCatalog() {
         <div className="zc-end-rule" aria-hidden="true"><span /></div>
         <div className="zc-wrap zc-end-in">
           <h2 id="zc-b" className="zc-end-h">Ready to build with Zen?</h2>
-          <p className="zc-lede-d">All 18 Zen models available via OpenAI-compatible API. Start building today.</p>
+          <p className="zc-lede-d">All 19 Zen models available via OpenAI-compatible API. Start building today.</p>
           <div className="zc-acts">
             <Cta to="/signup" id="zen-models.close">Get Started</Cta>
             <Cta to="/dev" kind="link" id="zen-models.close-dev">Try Hanzo Dev</Cta>

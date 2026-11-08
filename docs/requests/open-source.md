@@ -1,5 +1,0 @@
-# Requests from /open-source (round 2, after review 5/10)
-
-1. **Phone header ask (Header / Chrome).** On desktop the header swaps its ask to the page's `data-thumb` ("View on GitHub"), but on phone (375x812) it keeps a solid black "Try Hanzo", so the page shows two different asks (header "Try Hanzo", page band "View on GitHub"). Please let the phone header follow the page's first `[data-thumb]` as the desktop header does. The page has removed its own duplicate on desktop; on phone it keeps the quiet band button until the header follows.
-2. **`components/v2/ProofScale.css:32`** `.pf-btn.solid:hover { background: #2a2a2c; }` is not a deck value. Suggest `#262626`. /open-source overrides it page-locally (`.xos .pf-btn.solid:hover`), other pages using `.pf-btn.solid` still show `#2a2a2c`.
-3. **Cookie card (shared chrome)** covers the hero figures at 1470x801 and the lower 220px on phone until dismissed (critic note; not this page's to change).

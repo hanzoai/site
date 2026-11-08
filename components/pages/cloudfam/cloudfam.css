@@ -239,7 +239,7 @@ button.xcf-note.on { background: var(--k-ink); border-color: var(--k-ink); color
 .xcf-path-hero .b { color: var(--k-ink); }
 .xcf-path-hero .b > span { animation-delay: 120ms; }
 .xcf-path-hero .xcf-pulse { align-self: center; width: 14px; height: 14px; margin-left: 20px; background: var(--k-ink); animation-name: xcf-ping-d; }
-@keyframes xcf-ping-d { 0% { box-shadow: 0 0 0 0 rgba(0, 0, 0, .3); } 80%, 100% { box-shadow: 0 0 0 16px rgba(0, 0, 0, 0); } }
+@keyframes xcf-ping-d { 0% { box-shadow: 0 0 0 0 light-dark(rgba(0, 0, 0, .3), var(--border-selected)); } 80%, 100% { box-shadow: 0 0 0 16px rgba(0, 0, 0, 0); } }
 .xcf-path-w .xcf-fig { align-items: flex-end; text-align: right; color: var(--k-ink); }
 .xcf-path-w .xcf-fig-n span, .xcf-path-w .xcf-fig-l { color: var(--k-dim); }
 .xcf-path-w .xcf-ticks i { background: var(--k-track); }
@@ -327,7 +327,7 @@ button.xcf-note.on { background: var(--k-ink); border-color: var(--k-ink); color
 .xcf-api { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 0; font-size: 14px; color: var(--k-body); }
 .xcf-api .xcf-mono { display: inline-flex; gap: 2px; padding: 8px 14px; border-radius: 999px; background: var(--k-quiet); color: var(--k-ink); }
 .xcf-api-k { margin-right: 8px; color: var(--k-body); }
-.xcf .xcf-copy { height: 44px; padding: 0 18px; border-radius: 999px; background: transparent; color: var(--k-ink); border-color: rgba(0, 0, 0, .3); transition: background-color var(--k-fast) var(--k-out), color var(--k-fast) var(--k-out), border-color var(--k-fast) var(--k-out); }
+.xcf .xcf-copy { height: 44px; padding: 0 18px; border-radius: 999px; background: transparent; color: var(--k-ink); border-color: light-dark(rgba(0, 0, 0, .3), var(--border-selected)); transition: background-color var(--k-fast) var(--k-out), color var(--k-fast) var(--k-out), border-color var(--k-fast) var(--k-out); }
 @media (hover: hover) { .xcf .xcf-copy:hover { background: var(--k-ink); border-color: var(--k-ink); color: var(--k-white); box-shadow: none; } }
 .xcf .xcf-copy[aria-label='Copied'] { background: var(--k-ink); border-color: var(--k-ink); color: var(--k-white); }
 .xcf .x-copy-t { font-size: 13px; }
@@ -438,6 +438,11 @@ button.xcf-note.on { background: var(--k-ink); border-color: var(--k-ink); color
   .xro-head .xro-x { grid-column: 3; grid-row: 1 / 3; }
   .xro-l { font-size: 19px; }
   .xro-body, .xro-boot { grid-template-columns: 1fr; padding: 17px; }
+  /* the opened row's address stays one line (it never splits mid-word); a long path trails off */
+  .xro-bar .xcf-host { min-width: 0; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; overflow-wrap: normal; }
+  .xro-bar .xcf-host > span { display: inline; }
+  /* the Google Cloud room: its words sit inside the black card, not on its edge */
+  .xcf-gc-g { padding-inline: 20px; }
   .xro-bar { padding: 10px 16px; }
   .xro-name { font-size: 32px; }
   .xro-tl { font-size: 14px; }
@@ -521,3 +526,26 @@ button.xcf-note.on { background: var(--k-ink); border-color: var(--k-ink); color
   .xcf-mask > span { animation: none; }
   .xro-p, .xro-pi { transition: none; }
 }
+/* the caption and each service's note share one cell: picking another service never moves the panel */
+.xcf-caps { display: grid; }
+.xcf-caps > .xcf-cap { grid-area: 1 / 1; }
+.xcf-caps > .xcf-cap[hidden] { display: block; visibility: hidden; }
+
+/* dark mode (docs/DARK-MODE.md): the deck's light ladder resolves to Hanzo's dark tokens and the page sits on Hanzo's
+   background like live; the black rooms ([data-room=dark]: the console, the finder, the route) are black in both
+   modes, so inside them the ladder keeps its own values */
+html:not(.light) .xcf {
+  --k-white: var(--x-raised); --k-quiet: var(--x-fill); --k-card: var(--x-fill); --k-muted: var(--secondary);
+  --k-silver: var(--secondary); --k-track: var(--secondary-hover);
+  --k-ink: var(--foreground); --k-body: var(--muted-foreground); --k-dim: var(--text-tertiary); --k-mid: var(--primary-hover);
+  --k-line: var(--border);
+  --k-sheen: linear-gradient(135deg, var(--secondary) 0%, var(--x-fill) 45%, var(--secondary) 70%, var(--x-fill) 100%);
+  background: var(--bg);
+}
+html:not(.light) .xcf [data-room='dark'] {
+  --k-white: #ffffff; --k-quiet: #f5f5f5; --k-card: #f2f2f2; --k-muted: #ededed; --k-silver: #e4e4e7; --k-track: #d4d4d4;
+  --k-ink: #0a0a0a; --k-body: #525252; --k-dim: #737373; --k-mid: #404040; --k-line: rgba(0, 0, 0, .1);
+  --k-sheen: linear-gradient(135deg, #f6f6f6 0%, #e9e9e9 45%, #f6f6f6 70%, #e9e9e9 100%);
+}
+/* the address's quiet host reads as Hanzo's disabled text in dark (the light ladder's track grey sinks into the page) */
+html:not(.light) .xcf-path-hero { color: var(--text-disabled); }

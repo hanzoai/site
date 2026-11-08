@@ -1,6 +1,0 @@
-# /koe: requests for shared files
-
-- **Header (shared chrome):** at 320px the header's "Try Hanzo" is clipped by the right edge (critic, `docs/review/koe.md`). /koe cannot fix the header page-locally without editing it.
-- **Hydration badge:** the critic saw an intermittent hydration-attribute mismatch ("1 Issue") on 2 of 10 loads, not reproduced since. Please check the shared header and HeaderTools attributes that differ between server and client.
-- **Creative family:** /koe now runs on its page-local copy `components/pages/model/KoeCreative.jsx`, because the shared `Creative.jsx` repeats one film in every chapter and in "Where it fits", has outlined hero asks, puts the section captions mid-row and wraps the map tabs on phones. If the family file takes these changes (a per-page `art` prop for chapters and fits, a solid hero ask, captions under headings, one-row scrolling tabs), /koe can return to it.
-- **Morph:** the map and model cards open their pages through the shared opener. A morph that lands the Koe card into /koe's hero within 12px of the h1 belongs in `Opener` and `ModelCards`, not in this page.

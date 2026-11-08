@@ -3,13 +3,14 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, LayoutGroup } from 'motion/react';
 import { EASE, Words } from '../ui';
 import { More } from '../kit';
+import { PLANS, SEATS, checkoutAbs } from '../../lib/plans';
 
-const go = 'https://hanzo.ai/pay/confirm/card?plan=go&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat';
+const go = checkoutAbs(PLANS.go.id);
 const TIERS = {
-  '3x': { name: 'Pro', price: 15, after: 'Everything in Go, plus:', href: 'https://hanzo.ai/pay/confirm/card?plan=pro-2x&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat', desc: 'For serious builders running agents, shipping code, and needing substantially higher limits.', f: ['3x more usage than Go', '3x higher limits than Go', 'Hanzo Bot: 1 bot of your own'] },
-  '5x': { name: 'Dev', price: 45, after: 'Everything in Pro, plus:', desc: 'For serious builders running agents, shipping code, and needing substantially higher limits.', f: ['5x more usage than Go', '5x higher limits than Go', 'Hanzo Bot: 2 bots of your own'] },
-  '15x': { name: 'Max', price: 95, after: 'Everything in Dev, plus:', desc: 'For serious builders running agents, shipping code, and needing substantially higher limits.', f: ['15x more usage than Go', '15x higher limits than Go', 'Hanzo Bot: 5 bots of your own'] },
-  '∞': { name: 'Ultra', price: 195, after: 'Everything in Max, plus:', desc: 'For the biggest workloads. Usage beyond what is included is paid from your prepaid balance at list price', f: ['Highest included usage across every model', 'Continuous usage with no window resets', 'Usage beyond what is included is paid from your prepaid balance at list price', 'Hanzo Bot: 10 bots of your own'] },
+  '3x': { name: PLANS.pro.name, price: PLANS.pro.price, after: 'Everything in Go, plus:', href: checkoutAbs(PLANS.pro.id), desc: 'For serious builders running agents, shipping code, and needing substantially higher limits.', f: ['3x more usage than Go', '3x higher limits than Go', 'Hanzo Bot: 1 bot of your own'] },
+  '5x': { name: PLANS.dev.name, price: PLANS.dev.price, after: 'Everything in Pro, plus:', desc: 'For serious builders running agents, shipping code, and needing substantially higher limits.', f: ['5x more usage than Go', '5x higher limits than Go', 'Hanzo Bot: 2 bots of your own'] },
+  '15x': { name: PLANS.max.name, price: PLANS.max.price, after: 'Everything in Dev, plus:', desc: 'For serious builders running agents, shipping code, and needing substantially higher limits.', f: ['15x more usage than Go', '15x higher limits than Go', 'Hanzo Bot: 5 bots of your own'] },
+  '∞': { name: PLANS.ultra.name, price: PLANS.ultra.price, after: 'Everything in Max, plus:', desc: 'For the biggest workloads. Usage beyond what is included is paid from your prepaid balance at list price', f: ['Highest included usage across every model', 'Continuous usage with no window resets', 'Usage beyond what is included is paid from your prepaid balance at list price', 'Hanzo Bot: 10 bots of your own'] },
 };
 const COMMON = ['Early access to new models and features', 'Train custom models on your data', 'Hanzo Engine to run models on your own hardware', 'Dedicated support'];
 
@@ -42,6 +43,8 @@ function List({ head, items }) {
             <motion.li key={t} layout initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 8 }} transition={{ duration: 0.35, ease: EASE }}>{t}</motion.li>
           ))}
         </AnimatePresence>
+        {/* the rest of Hanzo's list stays in the page, found by search (the full list shows on /pricing) */}
+        {items.slice(3).map((t) => <li key={t} hidden="until-found">{t}</li>)}
       </ul>
     </div>
   );
@@ -97,8 +100,8 @@ export default function Pricing() {
           <motion.div layout className={'x-plans n' + (tab === 'Personal' ? 3 : 2)}>
             <AnimatePresence mode="popLayout" initial={false}>
               {tab === 'Personal' && [
-                <Plan key="free" i={0} name="Free" desc="Chat and build with Hanzo, free." price="Free" unit="" sub="No card needed" cta="Try Hanzo" href="https://hanzo.ai/signup" note="Instant access · Free forever" head="What’s included" items={['Chat on the web with Enso Free and Zen Free', 'Free model requests and Kai decisions included', 'Search the web from chat', 'Write, edit and create content', 'Make code, pages and charts beside the chat', 'Choose how hard it thinks']} />,
-                <Plan key="go" i={1} name="Go" desc="Your everyday AI development toolkit, with access to every model and more included usage." price={8} sub="Billed monthly" cta="Try Hanzo" href={go} note="No commitment · Cancel anytime" head="Everything in Free, plus:" items={['Build apps with Hanzo Dev', 'Connect any MCP server in Hanzo Dev', 'The Hanzo CLI for macOS, Windows and Linux', 'Every model, including Enso Ultra and Kai', 'Usage included on every model', 'Priority inference and priority support', 'Your own agents, working in the background', 'Automations, with daily runs included']} />,
+                <Plan key="free" i={0} name="Free" desc="Chat and build with Hanzo, free." price="Free" unit="" sub="No card needed" cta="Try Hanzo" href="https://hanzo.ai/signup" note="Instant access · Free forever" head="What’s included" items={['Chat on the web with Enso Auto', 'Free model requests and Kai decisions included', 'Search the web from chat', 'Write, edit and create content', 'Make code, pages and charts beside the chat', 'Choose how hard it thinks']} />,
+                <Plan key="go" i={1} name="Go" desc="Your everyday AI development toolkit, with access to every model and more included usage." price={PLANS.go.price} sub="Billed monthly" cta="Try Hanzo" href={go} note="No commitment · Cancel anytime" head="Everything in Free, plus:" items={['Build apps with Hanzo Dev', 'Connect any MCP server in Hanzo Dev', 'The Hanzo CLI for macOS, Windows and Linux', 'Every model, including Enso Ultra and Kai', 'Usage included on every model', 'Priority inference and priority support', 'Your own agents, working in the background', 'Automations, with daily runs included']} />,
                 <Plan key="pro" i={2} solid name={t.name} desc={t.desc} price={t.price} sub="Billed monthly" cta="Try Hanzo" href={t.href || '/pricing'} note="No commitment · Cancel anytime" head={t.after} items={[...t.f, ...COMMON]}
                   top={<Seg opts={['3x', '5x', '15x', '∞']} val={x} set={setX} id="mult" />} />,
               ]}
@@ -108,13 +111,13 @@ export default function Pricing() {
                     <>
                       <div className="x-bill"><Seg opts={['Annual', 'Monthly']} val={bill} set={setBill} id="bill" /><span className="x-save">−20%</span></div>
                       <div className="x-seats">
-                        <div><b>Standard seat</b><span>All Hanzo features, plus more usage than Pro</span><Price v={bill === 'Annual' ? 20 : 25} unit="" /><small>Per seat / month if billed annually. $25 if billed monthly.</small></div>
-                        <div><b>Premium seat</b><span>5x more usage than standard seats</span><Price v={bill === 'Annual' ? 100 : 125} unit="" /><small>Per seat / month if billed annually. $125 if billed monthly.</small></div>
+                        <div><b>Standard seat</b><span>All Hanzo features, plus more usage than Pro</span><Price v={bill === 'Annual' ? SEATS.standard.monthAnnual : SEATS.standard.month} unit="" /><small>{`Per seat / month if billed annually. $${SEATS.standard.month} if billed monthly.`}</small></div>
+                        <div><b>Premium seat</b><span>5x more usage than standard seats</span><Price v={bill === 'Annual' ? SEATS.premium.monthAnnual : SEATS.premium.month} unit="" /><small>{`Per seat / month if billed annually. $${SEATS.premium.month} if billed monthly.`}</small></div>
                       </div>
                     </>
                   )}
                   head="" items={['Add premium seats to raise the team\'s shared usage', 'One shared workspace: chat, meetings, calendar and contacts', 'Single sign-on, roles and an audit log', 'One bill for the whole team', 'Automations, with daily runs included']} />,
-                <Plan key="ent" i={1} name="Enterprise" desc="For large businesses operating at scale" price="Seat price + usage at API rates" unit="" sub="US$20/seat/month, billed annually, 20 seat minimum. Usage cost scales with model and task." cta="Get Enterprise plan" href="/pricing" note="Chat with buying specialist" head="All Team plan features, plus:" items={['Audit logs', 'SCIM provisioning through Hanzo IAM']} />,
+                <Plan key="ent" i={1} name="Enterprise" desc="For large businesses operating at scale" price="Seat price + usage at API rates" unit="" sub={`US$${SEATS.enterprise.monthAnnual}/seat/month, billed annually, ${SEATS.enterprise.min} seat minimum. Usage cost scales with model and task.`} cta="Get Enterprise plan" href="/pricing" note="Chat with buying specialist" head="All Team plan features, plus:" items={['Audit logs', 'SCIM provisioning through Hanzo IAM']} />,
               ]}
               {tab === 'API' && [
                 <Plan key="payg" i={0} solid name="Pay as you go" desc="Direct metered access to all frontier models, coding agents, and tools with zero commitments." price="Pay as you go" unit="" sub="Metered per token & second" cta="Open" href="https://platform.hanzo.ai" head="What’s included" items={['Frontier & open-source models via unified API', 'OpenAI-compatible /v1/chat/completions endpoint', 'Intelligent semantic auto-routing & fallback', 'Prompt caching discounts up to 90%', 'Sandboxed code execution, web search & tools', 'Real-time spend limits, webhooks & usage alerts']} />,

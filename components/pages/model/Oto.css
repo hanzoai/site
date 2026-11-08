@@ -51,3 +51,23 @@
   .ot-sound { margin-left: 0; }
 }
 @media (prefers-reduced-motion: reduce) { .ot-now { animation: none; } }
+
+/* ---------- dark (live hanzo.ai's dark palette, Hanzo's tokens only). The launch kit (v2/Launch.css), Creative.css and
+   ModelCards.css draw their type and rules in fixed light colours; this page sets their dark values, scoped to /oto.
+   Films, the soundstage and the black model cards are black in both modes and are left alone. ---------- */
+html:not(.light) .lv:has(.ot-scene) { --ac: var(--foreground); --ac-ink: var(--foreground); --ac-soft: var(--x-fill); --ac-line: var(--border-control); }
+html:not(.light) .lv:has(.ot-scene) :is(.lv-lines, .lv-h, .lv-ch-h, .cr-caps-h, .cr-fits-list h3) { color: var(--ink); }
+html:not(.light) .lv:has(.ot-scene) .lv-stats :is(.x-stat-v, .x-stat-l) { color: var(--ink); }
+html:not(.light) .lv:has(.ot-scene) :is(.lv-lines .lv-ln + .lv-ln, .lv-crumb, .lv-crumb span + span::before, .lv-side, .lv-ch-rail button, .cr-fit-n, .cr-fit-k) { color: var(--faint); }
+html:not(.light) .lv:has(.ot-scene) .lv-ch-rail button[aria-current] { color: var(--ink); }
+@media (hover: hover) { html:not(.light) .lv:has(.ot-scene) .lv-ch-rail button:hover { color: var(--ink); } }
+html:not(.light) .lv:has(.ot-scene) :is(.lv-lede, .lv-p, .lv-ch-b, .lv-stats .x-stat-n, .cr-fit-x, .mc-sub) { color: var(--soft); }
+html:not(.light) .lv:has(.ot-scene) :is(.lv-stats, .cr-fits-list) { border-top-color: var(--line); }
+html:not(.light) .lv:has(.ot-scene) :is(.lv-stats > .x-stat + .x-stat) { border-left-color: var(--line); }
+html:not(.light) .lv:has(.ot-scene) .cr-fits-list li { border-bottom-color: var(--line); }
+html:not(.light) .lv:has(.ot-scene) .lv-ch-rail::before { background: var(--line); }
+html:not(.light) .lv:has(.ot-scene) .cr-tab[aria-selected='true'] { color: var(--ink); }
+html:not(.light) .lv:has(.ot-scene) .cr-tab-ink { background: var(--x-knob); } /* the selected pill in a track, as Hanzo's dark tabs */
+html:not(.light) .lv:has(.ot-scene) .mc { background: var(--bg); }
+/* the closing band is black in both modes; its solid ask is Hanzo's light primary there */
+html:not(.light) .lv:has(.ot-scene) .x-band .x-btn.solid { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); }

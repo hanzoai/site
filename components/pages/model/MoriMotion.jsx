@@ -25,7 +25,10 @@ function once(el, fn, amount = 0.25) {
 /* 1. shrink-to-card: a wrapper whose room is a card on the way in and on the way out, full bleed while you are in it */
 export function ShrinkCard({ children }) {
   const ref = useRef(null);
-  const still = useReducedMotion();
+  // reduced motion, read after hydration so the server's HTML and the first client render agree
+  const rm = useReducedMotion();
+  const [still, setStill] = useState(false);
+  useEffect(() => setStill(!!rm), [rm]);
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start end', 'end start'] });
   const scale = useTransform(p, [0, 0.3, 0.7, 1], [0.86, 1, 1, 0.84]);
   const radius = useTransform(p, [0, 0.3, 0.7, 1], [32, 0, 0, 32]);

@@ -1,4 +1,4 @@
-/* Cloud 3 launch system, on Hanzo's brand deck (docs/MASTER.md §3, the only values). Imported by every Cloud 3 kit
+/* Cloud 3 launch system, on Hanzo's brand deck (docs/build-notes/MASTER.md §3, the only values). Imported by every Cloud 3 kit
    piece; give the page root `lx`.
    Palette: the deck's neutral ramp only (#0a0a0a ink, #525252 body grey, #737373 quiet text on white, #a3a3a3 only on
    black, #d4d4d4 tracks, #e4e4e7, #ededed / #f2f2f2 / #f5f5f5 rooms and tiles). Colour enters only through Hanzo's media.
@@ -39,7 +39,7 @@
 @keyframes lx-cut { from { transform: translateY(105%); } }
 
 /* the one solid ask (48px), quiet outlined and text secondaries. Hover changes fill or ink; press is .97 for 90ms */
-.lx-cta { display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 24px; border-radius: 999px; background: var(--ink); color: #fff; font: 500 16px/1 var(--sans); text-decoration: none; white-space: nowrap; transition: background-color .15s var(--e-out), transform .15s var(--e-out); touch-action: manipulation; }
+.lx-cta { display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 24px; border-radius: 999px; background: var(--ink); color: var(--x-on-ink); font: 500 16px/1 var(--sans); text-decoration: none; white-space: nowrap; transition: background-color .15s var(--e-out), transform .15s var(--e-out); touch-action: manipulation; }
 .lx-dark .lx-cta { background: #fafafa; color: #0a0a0a; }
 .lx-cta:active { transform: scale(.97); transition-duration: .09s; }
 .lx-ghost { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 22px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); color: var(--ink); background: none; font: 500 16px/1 var(--sans); text-decoration: none; white-space: nowrap; transition: border-color .15s var(--e-out), background-color .15s var(--e-out), transform .15s var(--e-out); touch-action: manipulation; }

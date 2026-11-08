@@ -47,9 +47,9 @@ export function VelocitySkew({ children, className = '' }) {
   const calm = useReducedMotion();
   const { scrollY } = useScroll();
   const v = useVelocity(scrollY);
-  const raw = useTransform(v, [-1400, 0, 1400], [9, 0, -9], { clamp: true });
+  const raw = useTransform(v, [-1800, 0, 1800], [3, 0, -3], { clamp: true }); // a lean, not a lurch: 3° at a fast flick
   const skewY = useSpring(raw, { stiffness: 260, damping: 32, mass: 0.6 });
-  return <motion.div className={'xen ' + className} style={calm ? undefined : { skewY }}>{children}</motion.div>;
+  return <motion.div className={'xen ' + className} style={{ skewY: calm ? 0 : skewY }}>{children}</motion.div>; // same markup either way (no hydration mismatch)
 }
 
 /* orbit-in: items swing into their places along an arc around a far-off centre, one after another. `go` comes from
@@ -73,8 +73,8 @@ export function StackDrop({ children, className = '' }) {
   return (
     <motion.div className={className} initial="off" whileInView="on" viewport={VIEW}>
       {Children.map(children, (c, i) => (
-        <motion.div className="xen xen-sd" variants={{ off: { y: -160, rotate: i % 2 ? 1.5 : -1.5, opacity: 0 }, on: { y: 0, rotate: 0, opacity: 1 } }}
-          transition={calm ? { duration: 0 } : { type: 'spring', stiffness: 420, damping: 24, mass: 0.9, delay: i * 0.2, opacity: { duration: 0.15, delay: i * 0.2 } }}>
+        <motion.div className="xen xen-sd" variants={{ off: { y: -96, rotate: i % 2 ? 1 : -1, opacity: 0 }, on: { y: 0, rotate: 0, opacity: 1 } }}
+          transition={calm ? { duration: 0 } : { type: 'spring', stiffness: 420, damping: 32, mass: 0.9, delay: i * 0.2, opacity: { duration: 0.15, delay: i * 0.2 } }}>
           {c}
         </motion.div>
       ))}

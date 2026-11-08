@@ -1,7 +1,9 @@
 /* The AI buying specialist's facts: Hanzo's seat prices, the brief it sends with every question, and Hanzo's own
    written answers (the quote card, and the answer when the chat endpoint cannot be reached). */
-// Hanzo's seat prices (its pricing page and the specialist's own figures)
-export const P = { std: 240, stdMo: 25, prem: 1200, premMo: 125, ent: 240, save: 20 };
+import { PLANS, SEATS, teamCart } from '../../lib/plans.js';
+
+// Hanzo's seat prices (its pricing page and the specialist's own figures), from lib/plans.js
+export const P = { std: SEATS.standard.year, stdMo: SEATS.standard.month, prem: SEATS.premium.year, premMo: SEATS.premium.month, ent: SEATS.enterprise.year, save: SEATS.saving };
 export const r2 = (v) => Math.round(v * 100) / 100;
 export const usd = (v) => '$' + v.toLocaleString('en-US', { maximumFractionDigits: 2 });
 
@@ -10,12 +12,12 @@ export const BRIEF = (name) => [
   'Authoritative Hanzo Plan & Pricing Catalog (from commerce.hanzo.ai):',
   '1. Personal Plans (individual, monthly self-serve at /pricing?tab=personal):',
   '   - Free ($0/mo): Everyday chat and exploration.',
-  '   - Go ($8/mo): Everyday AI development toolkit, Hanzo Dev, CLI, MCP servers, every model (Enso Ultra, Kai, Zen), background agents, daily automations.',
-  '   - Pro ($15/mo): 3x more usage and higher limits than Go, 1 Hanzo Bot, custom model training, Hanzo Engine.',
-  '   - Dev ($45/mo): 5x more usage and higher limits than Go, 2 Hanzo Bots.',
-  '   - Max ($95/mo): 15x more usage and higher limits than Go, 5 Hanzo Bots.',
-  '   - Ultra ($195/mo): Highest included usage with continuous usage and no window resets, 10 Hanzo Bots, plus automatic prepaid balance reload for overage.',
-  '2. Team Plan (2 to 100 members, self-serve at /pay/cart?plan=team&interval=year&quantity=10):',
+  `   - Go ($${PLANS.go.price}/mo): Everyday AI development toolkit, Hanzo Dev, CLI, MCP servers, every model (Enso Ultra, Kai, Zen), background agents, daily automations.`,
+  `   - Pro ($${PLANS.pro.price}/mo): 3x more usage and higher limits than Go, 1 Hanzo Bot, custom model training, Hanzo Engine.`,
+  `   - Dev ($${PLANS.dev.price}/mo): 5x more usage and higher limits than Go, 2 Hanzo Bots.`,
+  `   - Max ($${PLANS.max.price}/mo): 15x more usage and higher limits than Go, 5 Hanzo Bots.`,
+  `   - Ultra ($${PLANS.ultra.price}/mo): Highest included usage with continuous usage and no window resets, 10 Hanzo Bots, plus automatic prepaid balance reload for overage.`,
+  `2. Team Plan (2 to 100 members, self-serve at ${teamCart(10)}):`,
   `   - Standard Seat: $${P.std / 12}/member/mo billed yearly ($${P.std}/yr) or $${P.stdMo}/member/mo billed monthly. Shared workspace (chat, meetings, calendar, contacts), SSO, roles, audit log, one bill, daily automations.`,
   `   - Premium Seat: $${P.prem / 12}/member/mo billed yearly ($${P.prem.toLocaleString('en-US')}/yr) or $${P.premMo}/member/mo billed monthly. 5x more usage than Standard seats. Mix Standard and Premium seats on one team and one bill.`,
   '3. Enterprise Plan (self-serve for 20 to 500 seats at /enterprise/qualification, or custom contract for >500 seats):',
@@ -40,7 +42,7 @@ export function written(q, name) {
   }
   if (b && b > 1) {
     const yr = b * P.std, mo = b * P.stdMo, ns = Math.max(1, Math.round(0.7 * b)), np = b - ns, mix = ns * P.std + np * P.prem;
-    return { content: [`For a team of **${b} members**, the **Hanzo Team** plan provides the best balance of pooled usage, shared workspaces, and team controls.`, '', 'You have two seat tiers that you can mix on one single bill:', `- **Standard Seat**: **$${sm}/seat/mo** billed annually ($${P.std} upfront) or $${P.stdMo}/mo monthly. Ideal for engineers writing code, using Claude Code / Cursor, and running everyday agentic workflows.`, `- **Premium Seat**: **$${pm}/seat/mo** billed annually ($${P.prem.toLocaleString('en-US')} upfront) or $${P.premMo}/mo monthly. Provides **5× more usage**, higher rate limits, and priority inference across every model.`, '', `### Your Pricing Options for ${b} Seats:`, `- **All Standard (${b} seats)**: **$${b * sm}/mo** billed annually ($${yr}/year), saving $${12 * mo - yr} vs monthly.`, `- **Mixed Setup (${ns} Standard + ${np} Premium)**: **$${r2(mix / 12)}/mo** billed annually ($${mix}/year).`, '', 'Both setups include unified billing, team workspaces, SSO, and shared automations.'].join('\n'), quote: { plan: 'Hanzo Team', seats: b, monthlyTotal: mo, annualTotal: yr, savings: P.save, checkoutUrl: `/pay/cart?plan=team&interval=year&quantity=${b}` } };
+    return { content: [`For a team of **${b} members**, the **Hanzo Team** plan provides the best balance of pooled usage, shared workspaces, and team controls.`, '', 'You have two seat tiers that you can mix on one single bill:', `- **Standard Seat**: **$${sm}/seat/mo** billed annually ($${P.std} upfront) or $${P.stdMo}/mo monthly. Ideal for engineers writing code, using Claude Code / Cursor, and running everyday agentic workflows.`, `- **Premium Seat**: **$${pm}/seat/mo** billed annually ($${P.prem.toLocaleString('en-US')} upfront) or $${P.premMo}/mo monthly. Provides **5× more usage**, higher rate limits, and priority inference across every model.`, '', `### Your Pricing Options for ${b} Seats:`, `- **All Standard (${b} seats)**: **$${b * sm}/mo** billed annually ($${yr}/year), saving $${12 * mo - yr} vs monthly.`, `- **Mixed Setup (${ns} Standard + ${np} Premium)**: **$${r2(mix / 12)}/mo** billed annually ($${mix}/year).`, '', 'Both setups include unified billing, team workspaces, SSO, and shared automations.'].join('\n'), quote: { plan: 'Hanzo Team', seats: b, monthlyTotal: mo, annualTotal: yr, savings: P.save, checkoutUrl: teamCart(b) } };
   }
   if (o.includes('standard') || o.includes('premium') || o.includes('difference') || o.includes('seat')) {
     return { content: ["Here is the exact breakdown between Hanzo's two seat tiers:", '', `### 1. Standard Seat ($${sm}/mo annual / $${P.stdMo} monthly)`, '- **Everything in Hanzo Pro**, plus shared company workspaces.', '- Access to every model (Enso, Zen, Kai, Sonnet, Opus, GPT-5).', '- Hanzo Dev and full CLI tooling (Claude Code, Cursor, Codex acceleration).', '- Pooled limits and unified billing across your team.', '', `### 2. Premium Seat ($${pm}/mo annual / $${P.premMo} monthly)`, '- **5× higher usage allowances** and 5× higher request limits.', '- **Priority inference** during peak frontier model congestion.', '- Early access to unreleased models and experimental agentic harnesses.', '', 'Organizations can **freely mix** Standard and Premium seats on a single team account. For instance, in a 10-person engineering team, you can assign 8 Standard seats and 2 Premium seats for lead researchers.'].join('\n') };

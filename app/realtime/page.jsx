@@ -2,9 +2,9 @@
 // Goal: get an API key and open a first stream
 // CTA: Start Building → https://platform.hanzo.ai/api-keys (data-cta realtime.hero, realtime.close)
 // Metric: api_key_created
-// Signature: the same record landing on three client screens at once — created, updated, deleted — with the delete reaching only clients whose rule can read it
-// Beyond: rule switch — flip each client's access rule and replay the create, update and delete to see who hears about record b
-// V2: 8/10 Three live clients of three sizes settle under a two-line title beside the one ask; eight pinned chapters over one outlined stream map; the handshake one call at a time with the full paragraph behind a disclosure; growth one note at a time beside the tenant map; a calm card strip, then the close
+// Signature: graph — the stream as a living graph: the one store, the API, the access rule, a broker per org, GET /v1/realtime, the grant, the deployment, the subscriptions and three clients settle into place; records travel it, and pointing at a node lights its paths, names them and reads out what that part gives you
+// Beyond: the rule switch — in the hero, flip each client's access rule and replay the create, update and delete to see who hears about record b
+// V2: Three live clients under a two-line title beside the one ask; then the living graph of the stream with its words beside it (no pinned chapters); the statement and subscribe call; the handshake one call at a time; growth one note at a time beside the tenant map; a calm card strip, then the close
 import Realtime from '../../components/pages/cloud/Realtime';
 import JsonLd from '../../components/JsonLd';
 import INDEX from '../../content/pages.json';
