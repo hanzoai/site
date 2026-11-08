@@ -30,8 +30,9 @@ import { A, More, Cta, Tabs, Faq, DataTable, Band, Img } from '../kit';
 import Odometer from '../v2/Odometer';
 import NoJs from '../NoJs';
 import './Pricing.css';
+import { PLANS, checkout, teamCheckout } from '../../lib/plans';
 
-const PAY = (p) => `/pay/confirm/card?plan=${p}&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat`;
+const PAY = (p) => checkout(p);
 const HELP = '/buying-specialist';
 
 /* ---------- small parts ---------- */
@@ -66,16 +67,16 @@ const GO = ['Build apps with Hanzo Dev', 'Connect any MCP server in Hanzo Dev', 
 const COMMON = ['Early access to new models and features', 'Train custom models on your data', 'Hanzo Engine to run models on your own hardware', 'Dedicated support'];
 // to: every rung has its own checkout on Hanzo's page (live, 9 Nov: pro-2x, dev-5x, max-10x, ultra)
 const PRO = [
-  { x: '3x', name: 'Pro', price: 15, to: PAY('pro-2x'), head: 'Everything in Go, plus:', d: 'For serious builders running agents, shipping code, and needing substantially higher limits.', f: ['3x more usage than Go', '3x higher limits than Go', 'Hanzo Bot: 1 bot of your own'] },
-  { x: '5x', name: 'Dev', price: 45, to: PAY('dev-5x'), head: 'Everything in Pro, plus:', d: 'For serious builders running agents, shipping code, and needing substantially higher limits.', f: ['5x more usage than Go', '5x higher limits than Go', 'Hanzo Bot: 2 bots of your own'] },
-  { x: '15x', name: 'Max', price: 95, to: PAY('max-10x'), head: 'Everything in Dev, plus:', d: 'For serious builders running agents, shipping code, and needing substantially higher limits.', f: ['15x more usage than Go', '15x higher limits than Go', 'Hanzo Bot: 5 bots of your own'] },
-  { x: '∞', name: 'Ultra', price: 195, to: PAY('ultra'), head: 'Everything in Max, plus:', d: 'For the biggest workloads. Usage beyond what is included is paid from your prepaid balance at list price', f: ['Highest included usage across every model', 'Continuous usage with no window resets', 'Usage beyond what is included is paid from your prepaid balance at list price', 'Hanzo Bot: 10 bots of your own'] },
+  { x: '3x', name: PLANS.pro.name, price: PLANS.pro.price, to: PAY(PLANS.pro.id), head: 'Everything in Go, plus:', d: 'For serious builders running agents, shipping code, and needing substantially higher limits.', f: ['3x more usage than Go', '3x higher limits than Go', 'Hanzo Bot: 1 bot of your own'] },
+  { x: '5x', name: PLANS.dev.name, price: PLANS.dev.price, to: PAY(PLANS.dev.id), head: 'Everything in Pro, plus:', d: 'For serious builders running agents, shipping code, and needing substantially higher limits.', f: ['5x more usage than Go', '5x higher limits than Go', 'Hanzo Bot: 2 bots of your own'] },
+  { x: '15x', name: PLANS.max.name, price: PLANS.max.price, to: PAY(PLANS.max.id), head: 'Everything in Dev, plus:', d: 'For serious builders running agents, shipping code, and needing substantially higher limits.', f: ['15x more usage than Go', '15x higher limits than Go', 'Hanzo Bot: 5 bots of your own'] },
+  { x: '∞', name: PLANS.ultra.name, price: PLANS.ultra.price, to: PAY(PLANS.ultra.id), head: 'Everything in Max, plus:', d: 'For the biggest workloads. Usage beyond what is included is paid from your prepaid balance at list price', f: ['Highest included usage across every model', 'Continuous usage with no window resets', 'Usage beyond what is included is paid from your prepaid balance at list price', 'Hanzo Bot: 10 bots of your own'] },
 ];
 
 /* the compare sheet: every personal plan's own lines; a line holds from the plan that adds it upward */
 const COLS = [
   { name: 'Free', price: 'No card needed', to: '/signup' },
-  { name: 'Go', price: '$8', to: PAY('go') },
+  { name: PLANS.go.name, price: '$' + PLANS.go.price, to: PAY(PLANS.go.id) },
   ...PRO.map((p) => ({ name: p.name, price: '$' + p.price, to: p.to })),
 ];
 const ROWS = [
@@ -138,7 +139,7 @@ const BUY = 'Chat with buying specialist';
 // one plan, as one state of the panel: every string is Hanzo's (fig rolls; word is a price said in words)
 function planOf(id, s = DEF) {
   if (id === 'free') return { name: 'Free', d: 'Chat and build with Hanzo, free.', word: 'No card needed', cta: ['Try Hanzo', '/signup', 'pricing.free'], note: 'Instant access · Free forever', items: FREE.slice(0, 4), col: 0 };
-  if (id === 'go') return { name: 'Go', d: 'Your everyday AI development toolkit, with access to every model and more included usage.', fig: '$8', sub: 'Billed monthly', cta: ['Try Hanzo', PAY('go'), 'pricing.go'], note: 'No commitment · Cancel anytime', head: 'Everything in Free, plus:', items: GO.slice(0, 4), col: 1 };
+  if (id === 'go') return { name: 'Go', d: 'Your everyday AI development toolkit, with access to every model and more included usage.', fig: '$' + PLANS.go.price, sub: 'Billed monthly', cta: ['Try Hanzo', PAY(PLANS.go.id), 'pricing.go'], note: 'No commitment · Cancel anytime', head: 'Everything in Free, plus:', items: GO.slice(0, 4), col: 1 };
   if (id === 'pro') {
     const i = Math.max(0, PRO.findIndex((q) => q.x === s.x)), q = PRO[i];
     return { name: q.name, ladder: true, d: q.d, fig: '$' + q.price, sub: 'Billed monthly', cta: q.to ? ['Try Hanzo', q.to, 'pricing.' + q.name.toLowerCase()] : [BUY, HELP, 'pricing.help'], note: 'No commitment · Cancel anytime', head: q.head, items: q.f, col: 2 + i };
@@ -267,7 +268,7 @@ function cardOf(id, s) {
   if (id === 'free') return { ...p, word: 'Free', sub: 'No card needed', items: FREE };
   if (id === 'go') return { ...p, items: GO };
   if (id === 'pro') return { ...p, items: [...p.items, ...COMMON], rec: true };
-  if (id === 'team') return { ...p, fig: null, word: 'Standard & Premium seats', sub: 'From 2 members', cta: ['Try Hanzo', `/pay/confirm/card?plan=team${s.bill === 'Annual' ? '&interval=year' : ''}&quantity=2&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat`, 'pricing.team'], note: 'Organizations can mix Standard and Premium seats · Cancel anytime', rec: true };
+  if (id === 'team') return { ...p, fig: null, word: 'Standard & Premium seats', sub: 'From 2 members', cta: ['Try Hanzo', teamCheckout(s.bill === 'Annual'), 'pricing.team'], note: 'Organizations can mix Standard and Premium seats · Cancel anytime', rec: true };
   return p;
 }
 

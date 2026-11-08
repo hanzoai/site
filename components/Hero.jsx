@@ -6,6 +6,7 @@ import A2Pause from './v2/A2Pause';
 import C from '../content';
 import SetupMenu from './SetupMenu';
 import { MORE, SceneLog, ShellLines, PhoneCells, Feed, Chips } from './home/HeroScenes';
+import { PLANS, checkoutAbs } from '../lib/plans';
 
 const PROMPT = 'Build maxpower: every AI I use in one place, and faster at coding.';
 const CMD = 'curl -fsSL https://hanzo.sh | sh';
@@ -308,9 +309,9 @@ export default function Hero() {
             <div className="x-auth-mag">
               <motion.a variants={rise} href="https://hanzo.ai/signup" className="x-auth-b solid" whileTap={{ scale: 0.97 }}>Continue with email</motion.a>
             </div>
-            <motion.a variants={rise} href="https://hanzo.ai/pay/confirm/card?plan=go&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat" className="x-arrow x-hero-price" data-cta="home.hero-go">Free to start · Go is $8/month, every model</motion.a>
+            <motion.a variants={rise} href={checkoutAbs(PLANS.go.id)} className="x-arrow x-hero-price" data-cta="home.hero-go">{`Free to start · Go is $${PLANS.go.price}/month, every model`}</motion.a>
             <motion.p variants={rise} className="x-terms">By continuing, you agree to Hanzo&apos;s <a href="https://hanzo.ai/terms">Terms</a> and <a href="https://hanzo.ai/privacy">Privacy Policy</a>.</motion.p>
-            <motion.p variants={rise} className="xh-go"><a href="https://hanzo.ai/pay/confirm/card?plan=go&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat" data-cta="home.go">Go is $8/month</a></motion.p>
+            <motion.p variants={rise} className="xh-go"><a href={checkoutAbs(PLANS.go.id)} data-cta="home.go">{`Go is $${PLANS.go.price}/month`}</a></motion.p>
           </motion.div>
         </motion.div>
 

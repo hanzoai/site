@@ -27,10 +27,11 @@ import AppLines from '../v2/AppLines';
 import { In, Cascade, Roll } from './dev/enter';
 import useCalm from '../v2/useCalm';
 import './DevPage.css';
+import { PLANS, checkout } from '../../lib/plans';
 
 const OPEN = '/login?next=%2Fdev';
 const DOCS = 'https://docs.hanzo.ai/docs/dev';
-const GO = '/pay/confirm/card?plan=go&returnUrl=https%3A%2F%2Fhanzo.ai%2Fdev'; // Go is the cheapest plan with Hanzo Dev
+const GO = checkout(PLANS.go.id, 'dev'); // Go is the cheapest plan with Hanzo Dev
 // Hanzo's own links end in a text arrow (→), so the kit Cta link carries it as text and drops its drawn one
 // the arrow sits in the label's own text, as Hanzo prints it ("Getting started →"); bare: Hanzo prints no arrow ("Read the docs")
 const Lk = ({ to, children, id, bare }) => <Cta to={to} kind="link" id={id} className="xdv-lk">{bare ? children : children + ' →'}</Cta>;
@@ -657,7 +658,7 @@ export default function DevPage({ release }) {
       <How />
       <Source />
       <Paste />
-      <Band title="Describe the change. Dev ships it." action="Get Hanzo Dev, $8/month" to={GO} note={<><Lk to={OPEN} id="dev.close-open">Open Dev</Lk><Lk to={DOCS} id="dev.close-docs" bare>Read the docs</Lk></>} />
+      <Band title="Describe the change. Dev ships it." action={`Get Hanzo Dev, $${PLANS.go.price}/month`} to={GO} note={<><Lk to={OPEN} id="dev.close-open">Open Dev</Lk><Lk to={DOCS} id="dev.close-docs" bare>Read the docs</Lk></>} />
     </main>
   );
 }

@@ -17,6 +17,7 @@ import '../../v2/Launch.css';
 import ModelCards from './ModelCards';
 import ModelFilm, { usePaused } from '../../v2/ModelFilm';
 import './Enso.css';
+import { PLANS, checkout } from '../../../lib/plans';
 
 /* ---------- entrances (page-local; James's motion map: fold-out, cursor-lens, ink-spread, word-shuffle, orbit-in) ----------
    Each section arrives once, the first time it scrolls in. The final state is the server HTML (JS off reads it all);
@@ -158,8 +159,8 @@ function Form() {
 }
 
 /* GA item 17: the way to buy. Enso ships in every plan; Go ($8/month, "access to every model", /pricing) goes straight to its card checkout. */
-const GO = '/pay/confirm/card?plan=go&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat';
-const Plan = ({ slot }) => <Cta to={GO} kind="link" id={'enso.go-' + slot} className="eo-go">Every model through Enso, Go is $8/month</Cta>;
+const GO = checkout(PLANS.go.id);
+const Plan = ({ slot }) => <Cta to={GO} kind="link" id={'enso.go-' + slot} className="eo-go">{`Every model through Enso, Go is $${PLANS.go.price}/month`}</Cta>;
 
 const TIERS = [
   { name: 'Enso Flash', code: 'enso', inp: '$0.33', out: '$1.65', ctx: true, axis: 0, why: 'at volume', wb: 'https://platform.hanzo.ai/workbench?model=enso', desc: 'For chat, extraction, classification and simple agent steps at volume.' },

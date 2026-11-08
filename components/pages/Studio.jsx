@@ -20,6 +20,7 @@ import A2Lines from './skills/Lines'; // page-local A2Lines: no reduced-motion h
 import A2Paste from '../v2/A2Paste';
 import '../v2/A2.css';
 import './Studio.css';
+import { PLANS } from '../../lib/plans';
 
 const NAME = { iro: 'Iro', koma: 'Koma', mori: 'Mori', oto: 'Oto', koe: 'Koe', uta: 'Uta' };
 // five shots, one per camera move; the stills are the models' own pictures, titled from Hanzo's library
@@ -525,7 +526,7 @@ function Chair() {
           {/* one solid ask and one text link; "Open Studio" (back up into the monitor) waits under the related list */}
           <div className="a2-acts">
             <Cta to="https://studio.hanzo.ai" id="studio.close" thumb className="xst-ask">Launch studio.hanzo.ai</Cta>
-            <More to="/pricing">See plans, from $8/month</More>
+            <More to="/pricing">{`See plans, from $${PLANS.go.price}/month`}</More>
             <More to="/design">Open Hanzo Design</More>
           </div>
           <div className="xst-rel">

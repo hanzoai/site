@@ -24,6 +24,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { Cta, Film, Img } from '../kit';
 import '../v2/ProgramScale.css';
 import './BetaApply.css';
+import { PLANS, checkoutAbs } from '../../lib/plans';
 
 /* hanzo.ai's own definitions, word for word */
 const SPEND = ['$0–$20', '$21–$100', '$101–$200', '$201–$1,000', '$1,001+'];
@@ -303,7 +304,7 @@ function Apply({ program }) {
                 </div>
               </div>
               {/* the paid path, as on /beta: no waitlist, straight to the Go checkout (Zack's GA list, 8 Nov) */}
-              <p className="xba-paid"><a href="https://hanzo.ai/pay/confirm/card?plan=go&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat" data-cta={`beta.${program}.go-paid`}>Skip the wait, go paid</a></p>
+              <p className="xba-paid"><a href={checkoutAbs(PLANS.go.id)} data-cta={`beta.${program}.go-paid`}>Skip the wait, go paid</a></p>
               <label className="xba-trap" aria-hidden="true">
                 <span>Leave this empty</span>
                 <input tabIndex={-1} autoComplete="off" name="website" value={trap} onChange={(e) => setTrap(e.target.value)} />

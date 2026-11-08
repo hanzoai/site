@@ -22,6 +22,7 @@ import { useEnter, useRollIn } from './buying-specialist/enter';
 import '../v2/ProgramScale.css';
 import './BuyingSpecialist.css';
 import './buying-specialist/enter.css';
+import { teamCart } from '../../lib/plans';
 
 const API = 'https://api.hanzo.ai/v1/chat/public';
 const FORM = 'https://api.hanzo.ai/v1/form/public/hanzo.sales-chat/responses';
@@ -85,7 +86,7 @@ function Roll({ v }) {
 /* The one quote object. A chat answer that proposes a plan moves THIS card (plan and seats) instead of printing a
    second card. Team: 2-100 members, annual or monthly. Enterprise: 20-500 seats, billed annually only, so it shows
    one rate and no saving (one square stands for five seats). */
-const teamUrl = (n) => `/pay/cart?plan=team&interval=year&quantity=${n}`;
+const teamUrl = teamCart;
 /* Signature, stamp: whenever a plan is settled (the sheet comes to rest, you let go of the seats, or an answer
    proposes a plan) the plan and its seats land on the quote like a rubber stamp: a short drop, a squash, a settle,
    and the sheet takes the hit. Its words are the sheet's own (the plan's name, "members"). */

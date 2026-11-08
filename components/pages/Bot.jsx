@@ -23,6 +23,7 @@ import { WORKFLOWS, TOOLS } from './Bot.data';
 import { play } from '../../lib/sound';
 import '../v2/AppType.css';
 import './Bot.css';
+import { PLANS as PLAN, checkout } from '../../lib/plans';
 
 const CREW = [['dev', 'Dev', 'Software'], ['qa', 'Qa', 'Quality'], ['cyber', 'Cyber', 'Security'], ['des', 'Des', 'Designer'], ['mark', 'Mark', 'Marketing'], ['su', 'Su', 'Support'], ['doc', 'Doc', 'Docs'], ['opera', 'Opera', 'Operations'], ['sci', 'Sci', 'Research'], ['data', 'Data', 'Analytics'], ['sal', 'Sal', 'Sales'], ['fin', 'Fin', 'Finance'], ['law', 'Law', 'Legal']];
 
@@ -694,10 +695,10 @@ function Install() {
 /* ---------- pricing: the slider is the hero, more bots and the pricing model beneath ---------- */
 const PERKS = ['Early access to new models and features', 'Train custom models on your data', 'Hanzo Engine to run models on your own hardware', 'Dedicated support'];
 const PLANS = [
-  ['Pro', '$15', 1, ['3x more usage than Go', '3x higher limits than Go'], 'pro-2x'],
-  ['Dev', '$45', 2, ['5x more usage than Go', '5x higher limits than Go'], 'dev-5x'],
-  ['Max', '$95', 5, ['15x more usage than Go', '15x higher limits than Go'], 'max-10x'],
-  ['Ultra', '$195', 10, ['Highest included usage across every model', 'Continuous usage with no window resets', 'Usage beyond what is included is paid from your prepaid balance at list price'], 'ultra'],
+  [PLAN.pro.name, '$' + PLAN.pro.price, 1, ['3x more usage than Go', '3x higher limits than Go'], PLAN.pro.id],
+  [PLAN.dev.name, '$' + PLAN.dev.price, 2, ['5x more usage than Go', '5x higher limits than Go'], PLAN.dev.id],
+  [PLAN.max.name, '$' + PLAN.max.price, 5, ['15x more usage than Go', '15x higher limits than Go'], PLAN.max.id],
+  [PLAN.ultra.name, '$' + PLAN.ultra.price, 10, ['Highest included usage across every model', 'Continuous usage with no window resets', 'Usage beyond what is included is paid from your prepaid balance at list price'], PLAN.ultra.id],
 ];
 const planFor = (n) => PLANS.findIndex((p) => p[2] >= n);
 const FEATS = [
@@ -752,7 +753,7 @@ function Pricing() {
                   <h3>{name}</h3>
                   <p className="bt-plan-p"><b className="av-num">{price}</b> <span>/</span> <span>month</span></p>
                   <span className="bt-plan-n x-mono">{bots} ×</span>
-                  <A to={`/pay/confirm/card?plan=${plan}&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat`} className="x-btn" data-cta={'bot-plan-' + name.toLowerCase()}>Get {name}</A>
+                  <A to={checkout(plan)} className="x-btn" data-cta={'bot-plan-' + name.toLowerCase()}>Get {name}</A>
                 </div>
                 <ul className="bt-plan-l">
                   {lines.map((l) => <li key={l}>{l}</li>)}

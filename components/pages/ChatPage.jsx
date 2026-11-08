@@ -27,10 +27,11 @@ import { useDemo } from '../v2/AppDemo';
 import { MODELS } from '../../lib/models';
 import '../v2/AppLines.css'; // the shared v2a type and wrap (it came in with AppLines before the grid replaced the chapters)
 import './ChatPage.css';
+import { PLANS, checkout } from '../../lib/plans';
 
 const OPEN = '/login?next=%2Fchat';
 const DOCS = 'https://docs.hanzo.ai/docs/chat';
-const GO = '/pay/confirm/card?plan=go&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat';
+const GO = checkout(PLANS.go.id);
 const RECENTS = ['Black holes and auroras', 'Email to the landlord', 'Investor update, shorter', 'Three days in Kyoto', 'Code that works, somehow', 'Support reply, API keys', 'Attention, simply', 'Sourdough starter', 'Three emails before lunch', 'Standup, for the absent', 'A fair refund', 'The fundraising deck', 'Interview notes', 'A toast for the team'];
 // Hanzo's own exchange (hanzo.ai home, content/live/index.json)
 const DEMO = [
