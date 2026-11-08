@@ -6,7 +6,7 @@
 .xph-type::after { content: ''; position: absolute; top: .12em; bottom: .08em; left: 100%; width: 2px; margin-left: 3px; background: currentColor; opacity: 0; pointer-events: none; }
 .xph-ven-l { display: block; }
 .xph-fold { perspective: 1600px; }
-.xph-ring[data-enter]::before { content: ''; position: absolute; inset: -6%; border-radius: 50%; background: light-dark(#f5f5f5, #171717); z-index: -1; }
+.xph-ring[data-enter]::before { content: ''; position: absolute; inset: -6%; border-radius: 50%; background: light-dark(#f5f5f5, var(--muted)); z-index: -1; }
 .xph-ring[data-enter] { isolation: isolate; }
 
 @media (prefers-reduced-motion: no-preference) {
