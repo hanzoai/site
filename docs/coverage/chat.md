@@ -31,7 +31,7 @@ Done here: All links go through the kit `Cta` and `A`. The nine model rows in "W
 - [x] Ends in proof strip, `Band`, footer. The model sheet is the proof, then the kit `Band`.
 - [x] Card-to-page links use Morph. The model rows use the WebGL opener (the synchronized.studio move).
 
-Done here:
+Done here: (8 Nov, James: match hanzo.ai/chat) After the hero, the six tools are laid out as Hanzo's page has them: one heading over a three-by-two grid of cards. The pinned dark room is gone; each card keeps its small scene, which plays as it comes into view and again on hover or focus.
 - At 1470×801 the h1 "Ask anything. / Enso picks the model." (52px, single tone, cut in by line mask) sits left.
 - The whole chat window, at 100%, sits right with its composer, rail and lit lane on screen. The conversation starts writing within 1 s of hydration.
 - Order: hero, the six tools pinned in the black room, the model sheet (white), then `Band` (black). The two black rooms are never back to back.
@@ -106,7 +106,7 @@ The composer and search inputs are 16px. Deleted forks: `.cht-open`, `.cht-link`
 - [x] Reduced motion shows the final state; no `setInterval`
 - n/a: sound. The shared sound kit does not exist on main yet.
 
-Done here: (8 Nov) Each chapter's scene lands its payoff within about 1.5 s (same keyframes, shorter delays): Search and code reaches "14 passed", Dev lands its diff, before the next chapter takes over.
+Done here: (8 Nov) Each chapter's scene lands its payoff within about 1.5 s (same keyframes, shorter delays): Search and code reaches "14 passed", Dev lands its diff, before the next chapter takes over. (8 Nov) The tools grid has no scroll pin: each card's scene plays once on view (time) and replays on hover or focus (pointer/state); cards lift on hover and press to .98.
 - Signature (time): Hanzo's conversation writes itself once, Enso scans the lanes and Zen lights. It runs on `AppDemo`'s clock: it starts in view, pauses off screen, rests at its end, and has Pause or Replay.
 - Supporting moves:
   - arrival: the h1 line mask and the window's entry
