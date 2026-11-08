@@ -28,6 +28,7 @@ import LineMask from '../../v2/LineMask';
 import O11yConsole from './O11yConsole';
 import LivePause from '../../v2/LivePause';
 import RelatedCards from '../../v2/RelatedCards';
+import HeroDither from '../HeroDither';
 import { A } from '../../kit';
 import './O11y.css';
 
@@ -296,6 +297,7 @@ export default function O11y() {
   return (
     <main className="lx ob">
       <section className="lx-dark ob-hero" data-room="dark" data-morph-target data-ask-name="Hanzo O11y">
+        <HeroDither />
         <div className="lx-wrap ob-hero-head">
           <LineMask as="h1" className="lx-display ob-h1" lines={['Hanzo O11y']} />
           <div className="ob-hero-r">
