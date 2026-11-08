@@ -182,3 +182,31 @@
   .xct-net-n, .xct-net-u, .xct-cpt { transition-duration: 0s; }
   .xct-h { transition: none; }
 }
+
+/* dark mode (docs/DARK-MODE.md): Hanzo's default; light is html.light, so every rule here sits under html:not(.light)
+   and bright mode is untouched. The deck tokens (shadowed on .vc) take Hanzo's dark tokens through our --x- aliases,
+   which resolve on <html>; the hard-coded whites and black alphas follow. The Visit room stays black. */
+html:not(.light) .xct { --ink: var(--foreground); --ink2: var(--muted-foreground); --muted: var(--faint); --quiet: var(--x-fill); --card: var(--x-fill); --tile: var(--x-knob); --line: var(--x-e10); }
+html:not(.light) .xct ::selection { background: var(--x-knob); }
+html:not(.light) .xct :focus-visible, html:not(.light) .xct .x-go:focus-visible { box-shadow: 0 0 0 5px var(--bg); }
+@media (hover: hover) { html:not(.light) .xct-route .x-btn.solid:hover { background: var(--foreground); border-color: var(--foreground); } }
+html:not(.light) .xct-jack.on { background: var(--x-raised); }
+html:not(.light) .xct-hole { border-color: var(--x-e15); background: var(--x-raised); }
+html:not(.light) .xct-hole i { background: var(--x-knob); }
+html:not(.light) .xct-jack.on .xct-hole, html:not(.light) .xct-jack.lit .xct-hole { border-color: var(--ink); }
+html:not(.light) .xct-jack.lit .xct-hole i, html:not(.light) .xct-jack.on .xct-hole i { background: var(--ink); }
+@media (hover: hover) {
+  html:not(.light) .xct-jack:hover { border-color: var(--x-e15); }
+  html:not(.light) .xct-jack:hover .xct-hole { border-color: var(--ink); }
+  html:not(.light) .xct-back:hover, html:not(.light) .xct-cp:hover { border-color: var(--ink2); }
+}
+html:not(.light) .xct-dots i { background: var(--x-knob); }
+html:not(.light) .xct-dots i.on { background: var(--ink); }
+html:not(.light) .xct-back, html:not(.light) .xct-cp { border-color: var(--x-e15); background: var(--x-raised); }
+html:not(.light) .xct-cp.ok { border-color: var(--ink); }
+html:not(.light) .xct-chip { background: var(--x-raised); }
+html:not(.light) .xct-plate::after { background: linear-gradient(180deg, transparent, var(--x-fill)); }
+html:not(.light) .xcte-tiles i { background: var(--bg); }
+/* the shared Band's solid ask fills with --x-fill (#171717 in dark) under black type; on this page it keeps Hanzo's
+   primary in dark so it reads */
+html:not(.light) .xct .x-band .x-btn.solid { background: var(--primary); border-color: var(--primary); color: var(--primary-foreground); }
