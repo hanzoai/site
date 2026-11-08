@@ -1295,3 +1295,16 @@ html:not(.light) .xbm-shelf .xbm-shelf-l > li.xbm-sr { box-shadow: none; }
 .xbm-harness .xbm-tabs-l > button { padding-top: 12px; }
 .xbm-harness h2.xbm-h-head { font-size: clamp(1.6rem, 2.15vw, 2.15rem); max-width: 36ch; }
 .xbm > .xbm-sec:not(.xbm-hero) { padding-block: clamp(52px, 7.5svh, 92px); }
+@media (max-width: 900px) {
+  .xbm-hero .xbm-stage-hgrid, .xbm-harness .xbm-h-top { grid-template-columns: minmax(0, 1fr); }
+  .xbm-harness h2.xbm-h-head { font-size: 27px; }
+  .xbm-hero .xbm-acts { margin-top: 12px; }
+}
+/* phone: the shelf's heading, then its cards; the views, the ask and the index follow them */
+@media (max-width: 900px) {
+  .xbm-shelf .xbm-shelf-g { display: flex; flex-direction: column; }
+  .xbm-shelf .xbm-shelf-side { display: contents; }
+  .xbm-shelf .xbm-shelf-h { order: 0; }
+  .xbm-shelf .xbm-shelf-main { order: 1; margin-top: 18px; }
+  .xbm-shelf .xbm-views, .xbm-shelf .xbm-shelf-side > .xbm-buy, .xbm-shelf .xbm-shelf-side > .xbm-index { order: 2; }
+}
