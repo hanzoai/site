@@ -21,9 +21,9 @@
 .am2-stage { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(28px, 4vw, 56px); margin-top: clamp(28px, 4svh, 44px); }
 .am2-dock-h { margin: 0 0 14px; font-size: 13px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
 .am2-dock { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
-.am2-dock button { position: relative; width: 100%; min-height: 76px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; padding: 10px 4px; border: 1.5px solid transparent; border-radius: 14px; background: #f5f5f5; font: 500 13px/1.2 var(--sans); color: var(--ink); cursor: pointer; transition: border-color .25s, background .25s, transform 90ms var(--ease); }
-@media (hover: hover), (pointer: none) { .am2-dock button:hover { border-color: #a3a3a3; background: #fff; } }
-.am2-dock button.in { background: #fff; border-color: var(--ink); }
+.am2-dock button { position: relative; width: 100%; min-height: 76px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; padding: 10px 4px; border: 1.5px solid transparent; border-radius: 14px; background: light-dark(#f5f5f5, var(--x-fill)); font: 500 13px/1.2 var(--sans); color: var(--ink); cursor: pointer; transition: border-color .25s, background .25s, transform 90ms var(--ease); }
+@media (hover: hover), (pointer: none) { .am2-dock button:hover { border-color: light-dark(#a3a3a3, var(--border-selected)); background: var(--x-raised); } }
+.am2-dock button.in { background: var(--x-raised); border-color: var(--ink); }
 .am2-dock button:active { transform: scale(.97); }
 .am2-dock button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .am2-dock .am2-em { font-size: 26px; line-height: 1; }
@@ -35,8 +35,8 @@
 .am2-wires { position: absolute; inset: 0; overflow: visible; pointer-events: none; }
 .am2-wires path { fill: none; }
 .am2-wires .on { stroke: var(--ink); stroke-width: 2; stroke-linecap: round; }
-.am2-wires .off { stroke: #a3a3a3; stroke-width: 1.5; stroke-dasharray: 4 5; }
-.am2-pkt { position: absolute; left: 0; top: 0; z-index: 2; width: 9px; height: 9px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 3px #fff; offset-rotate: 0deg; offset-anchor: center; pointer-events: none; opacity: 0; animation: am2-along 1.6s var(--ease) infinite both; }
+.am2-wires .off { stroke: light-dark(#a3a3a3, var(--border-selected)); stroke-width: 1.5; stroke-dasharray: 4 5; }
+.am2-pkt { position: absolute; left: 0; top: 0; z-index: 2; width: 9px; height: 9px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 3px var(--x-raised); offset-rotate: 0deg; offset-anchor: center; pointer-events: none; opacity: 0; animation: am2-along 1.6s var(--ease) infinite both; }
 .am2-pkt.once { animation-iteration-count: 1; animation-fill-mode: both; animation-duration: 1.1s; }
 .am2-stage:not(.live) .am2-pkt { animation-play-state: paused; }
 @keyframes am2-along { 0% { offset-distance: 0%; opacity: 0; } 12% { opacity: 1; } 88% { opacity: 1; } 100% { offset-distance: 100%; opacity: 0; } }
@@ -46,18 +46,18 @@
 .am2-board .p0 { left: 0; top: 0; }
 .am2-board .p1 { left: 35%; top: calc(100% - 116px); }
 .am2-board .p2 { left: 70%; top: 0; }
-.am2-slot { border-radius: 18px; border: 1.5px dashed rgba(0, 0, 0, .2); }
-.am2-node { position: relative; height: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 14px 16px; border-radius: 18px; background: #fff; border: 1.5px solid #d4d4d4; color: var(--ink); text-decoration: none; transition: border-color .25s, transform .25s var(--ease); }
-@media (hover: hover), (pointer: none) { .am2-node:hover { border-color: #737373; transform: translateY(-2px); } }
+.am2-slot { border-radius: 18px; border: 1.5px dashed light-dark(rgba(0, 0, 0, .2), var(--border-strong)); }
+.am2-node { position: relative; height: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 14px 16px; border-radius: 18px; background: var(--x-raised); border: 1.5px solid light-dark(#d4d4d4, var(--border-control)); color: var(--ink); text-decoration: none; transition: border-color .25s, transform .25s var(--ease); }
+@media (hover: hover), (pointer: none) { .am2-node:hover { border-color: light-dark(#737373, var(--text-tertiary)); transform: translateY(-2px); } }
 .am2-node:active { transform: scale(.98); }
 .am2-node:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-.am2-node .am2-em { display: grid; place-items: center; width: 40px; height: 40px; margin-bottom: auto; border-radius: 12px; background: #f5f5f5; font-size: 24px; line-height: 1; }
+.am2-node .am2-em { display: grid; place-items: center; width: 40px; height: 40px; margin-bottom: auto; border-radius: 12px; background: light-dark(#f5f5f5, var(--x-fill)); font-size: 24px; line-height: 1; }
 .am2-node b { font-size: 17px; font-weight: 606; letter-spacing: -.01em; line-height: 1.2; overflow-wrap: normal; }
 .am2-node em { font-size: 13px; font-style: normal; color: var(--muted); }
 .am2-step.p0 .am2-node { border-color: var(--ink); }
-.am2-canvas-foot { display: flex; align-items: center; gap: 16px; margin-top: 14px; padding-top: 10px; border-top: 1px solid #ededed; }
+.am2-canvas-foot { display: flex; align-items: center; gap: 16px; margin-top: 14px; padding-top: 10px; border-top: 1px solid light-dark(#ededed, var(--border)); }
 .am2-canvas-k { font-size: 13px; color: var(--muted); }
-.am2-clock { position: relative; flex: 1; height: 2px; border-radius: 2px; background: #ededed; overflow: hidden; }
+.am2-clock { position: relative; flex: 1; height: 2px; border-radius: 2px; background: light-dark(#ededed, var(--secondary)); overflow: hidden; }
 .am2-clock i { position: absolute; inset: 0; background: var(--ink); transform-origin: 0 50%; animation: am2-fill 1.6s linear forwards; }
 .am2-clock i.mine { animation: none; transform: scaleX(var(--f, 0)); transition: transform .5s var(--ease); }
 .am2-clock i.f1 { --f: .3333; } .am2-clock i.f2 { --f: .6667; } .am2-clock i.f3 { --f: 1; }
@@ -75,45 +75,45 @@
 .am2-view { position: relative; margin-top: 22px; margin-right: calc((100vw - min(100vw - 2 * var(--gut), 1152px)) / -2); }
 .am2-trackx { display: flex; gap: 20px; overflow-x: auto; overflow-y: hidden; padding-right: 48px; scrollbar-width: none; overscroll-behavior-x: contain; }
 .am2-trackx::-webkit-scrollbar { display: none; }
-.am2-panel { flex: none; width: 640px; height: 460px; padding: 20px; border-radius: 22px; background: #fafafa; border: 1px solid #ededed; transition: background .35s, border-color .35s; }
-.am2-panel.on { background: #fff; border-color: #d4d4d4; }
+.am2-panel { flex: none; width: 640px; height: 460px; padding: 20px; border-radius: 22px; background: var(--x-sunk); border: 1px solid light-dark(#ededed, var(--border)); transition: background .35s, border-color .35s; }
+.am2-panel.on { background: var(--x-raised); border-color: light-dark(#d4d4d4, var(--border-control)); }
 .am2-gal.find .am2-trackx { visibility: hidden; }
 .am2-rail-bar { display: flex; gap: 6px; margin-top: 18px; }
-.am2-rail-bar i { width: 14px; height: 3px; border-radius: 2px; background: #d4d4d4; transition: width .35s var(--ease), background .35s; }
+.am2-rail-bar i { width: 14px; height: 3px; border-radius: 2px; background: light-dark(#d4d4d4, var(--secondary-hover)); transition: width .35s var(--ease), background .35s; }
 .am2-rail-bar i.on { width: 36px; background: var(--ink); }
 .am2-count { margin: 10px 0 0; font-size: 13px; color: var(--muted); }
-.am2-find { display: flex; align-items: center; gap: 10px; width: 100%; height: 56px; margin-top: 24px; padding: 0 6px 0 18px; border-radius: 999px; background: #f5f5f5; border: 1.5px solid transparent; color: var(--soft); transition: border-color .2s, background .2s; }
-.am2-find:focus-within { background: #fff; border-color: var(--ink); }
-@media (hover: hover), (pointer: none) { .am2-find:hover { border-color: rgba(0, 0, 0, .2); } }
+.am2-find { display: flex; align-items: center; gap: 10px; width: 100%; height: 56px; margin-top: 24px; padding: 0 6px 0 18px; border-radius: 999px; background: light-dark(#f5f5f5, var(--x-fill)); border: 1.5px solid transparent; color: var(--soft); transition: border-color .2s, background .2s; }
+.am2-find:focus-within { background: var(--x-raised); border-color: var(--ink); }
+@media (hover: hover), (pointer: none) { .am2-find:hover { border-color: light-dark(rgba(0, 0, 0, .2), var(--border-strong)); } }
 .am2-find svg { flex: none; }
 .am2-find input { flex: 1; min-width: 0; height: 100%; border: 0; background: none; font: 500 16px/1 var(--sans); color: var(--ink); outline: none; -webkit-appearance: none; appearance: none; }
 .am2-find input::-webkit-search-cancel-button, .am2-find input::-webkit-search-decoration { -webkit-appearance: none; appearance: none; display: none; }
 .am2-find input::placeholder { color: var(--muted); }
 .am2-clear { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: transparent; color: var(--ink); cursor: pointer; transition: background .2s; }
-@media (hover: hover), (pointer: none) { .am2-clear:hover { background: #e5e5e5; } }
-.am2-clear:active { background: #d4d4d4; }
+@media (hover: hover), (pointer: none) { .am2-clear:hover { background: light-dark(#e5e5e5, var(--secondary)); } }
+.am2-clear:active { background: light-dark(#d4d4d4, var(--secondary-hover)); }
 .am2-clear:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
 
 /* the tray: the board's flow, beside the stage */
-.am2-tray { margin-top: 24px; padding: 16px; border-radius: 20px; background: #f5f5f5; }
+.am2-tray { margin-top: 24px; padding: 16px; border-radius: 20px; background: light-dark(#f5f5f5, var(--x-fill)); }
 .am2-tray-k { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
 .am2-tray-k span { color: var(--ink); }
 .am2-tray ol { list-style: none; margin: 0; padding: 0; }
 .am2-tray li { position: relative; }
-.am2-tray-wire { position: relative; display: block; width: 2px; height: 14px; margin-left: 27px; background: #d4d4d4; }
+.am2-tray-wire { position: relative; display: block; width: 2px; height: 14px; margin-left: 27px; background: light-dark(#d4d4d4, var(--secondary-hover)); }
 .am2-tray li.on .am2-tray-wire { background: var(--ink); }
 .am2-tray-wire b { position: absolute; left: -3px; top: 0; width: 8px; height: 8px; border-radius: 50%; background: var(--ink); opacity: 0; animation: am2-run-y 1s var(--ease) 1 both; }
 .am2-tray li:nth-child(3) .am2-tray-wire b { animation-delay: .35s; }
 @keyframes am2-run-y { 0% { transform: translateY(-4px); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateY(10px); opacity: 0; } }
-.am2-tray-n { display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 12px 0 8px; border-radius: 14px; background: #fff; border: 1.5px solid transparent; font-size: 14px; font-weight: 606; }
+.am2-tray-n { display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 12px 0 8px; border-radius: 14px; background: var(--x-raised); border: 1.5px solid transparent; font-size: 14px; font-weight: 606; }
 .am2-tray li:first-child .am2-tray-n:not(.empty) { border-color: var(--ink); }
-.am2-tray-n.empty { background: transparent; border: 1.5px dashed rgba(0, 0, 0, .2); }
-.am2-tray-n .am2-em { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 10px; background: #f5f5f5; font-size: 18px; line-height: 1; flex: none; }
+.am2-tray-n.empty { background: transparent; border: 1.5px dashed light-dark(rgba(0, 0, 0, .2), var(--border-strong)); }
+.am2-tray-n .am2-em { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 10px; background: light-dark(#f5f5f5, var(--x-fill)); font-size: 18px; line-height: 1; flex: none; }
 .am2-tray-t { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .am2-tray-hold { visibility: hidden; } /* keeps the tray's height while its run is lifted out */
 
 /* the scale moment: the visitor's three places grow into one full-width run with a 64px figure, then settle */
-.am2-big { position: absolute; inset: -20px; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 36px; padding: 32px; border-radius: 28px; background: #fff; border: 1px solid #e4e4e7; cursor: pointer; }
+.am2-big { position: absolute; inset: -20px; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 36px; padding: 32px; border-radius: 28px; background: var(--x-raised); border: 1px solid light-dark(#e4e4e7, var(--border-control)); cursor: pointer; }
 .am2-big-n { font-size: 64px; font-weight: 497; letter-spacing: -.04em; line-height: 1; font-variant-numeric: tabular-nums; }
 .am2-big ol { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; width: min(100%, 960px); }
 .am2-big li { display: flex; align-items: center; flex: 1; min-width: 0; }
@@ -123,24 +123,24 @@
 .am2-big-wire b { position: absolute; left: 0; top: -4px; width: 10px; height: 10px; border-radius: 50%; background: var(--ink); animation: am2-big-run 1.2s var(--ease) .3s 1 both; }
 .am2-big li:nth-child(3) .am2-big-wire b { animation-delay: .8s; }
 @keyframes am2-big-run { 0% { transform: translateX(0); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateX(62px); opacity: 0; } }
-.am2-big-node { flex: 1; min-width: 0; display: flex; align-items: center; gap: 14px; padding: 18px; border-radius: 20px; border: 1.5px solid #d4d4d4; background: #fff; }
+.am2-big-node { flex: 1; min-width: 0; display: flex; align-items: center; gap: 14px; padding: 18px; border-radius: 20px; border: 1.5px solid light-dark(#d4d4d4, var(--border-control)); background: var(--x-raised); }
 .am2-big li:first-child .am2-big-node { border-color: var(--ink); }
-.am2-big-node .am2-em { display: grid; place-items: center; flex: none; width: 56px; height: 56px; border-radius: 16px; background: #f5f5f5; font-size: 32px; filter: none; }
+.am2-big-node .am2-em { display: grid; place-items: center; flex: none; width: 56px; height: 56px; border-radius: 16px; background: light-dark(#f5f5f5, var(--x-fill)); font-size: 32px; filter: none; }
 .am2-big-node b { display: block; font-size: 21px; font-weight: 606; letter-spacing: -.015em; }
 .am2-big-node em { display: block; margin-top: 4px; font-size: 13px; font-style: normal; color: var(--muted); }
 
 /* chips: the stage's index */
 .am2-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.am2-chips button { position: relative; flex: none; display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px; border: 1px solid var(--hair); border-radius: 999px; background: #fff; font: 500 14px/1 var(--sans); color: var(--soft); cursor: pointer; transition: color .25s, border-color .25s, transform 90ms var(--ease); }
-@media (hover: hover), (pointer: none) { .am2-chips button:hover { color: var(--ink); border-color: #a3a3a3; } }
+.am2-chips button { position: relative; flex: none; display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px; border: 1px solid var(--hair); border-radius: 999px; background: var(--x-raised); font: 500 14px/1 var(--sans); color: var(--soft); cursor: pointer; transition: color .25s, border-color .25s, transform 90ms var(--ease); }
+@media (hover: hover), (pointer: none) { .am2-chips button:hover { color: var(--ink); border-color: light-dark(#a3a3a3, var(--border-selected)); } }
 .am2-chips button:active { transform: scale(.97); }
 .am2-chips button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .am2-chips button > :not(.am2-chip-bg) { position: relative; }
 .am2-chips button em { font-size: 12px; font-style: normal; color: var(--faint); }
-.am2-chips button[aria-pressed='true'] { color: #fff; border-color: transparent; }
-.am2-chips button[aria-pressed='true'] em { color: rgba(255, 255, 255, .7); }
+.am2-chips button[aria-pressed='true'] { color: var(--x-on-ink); border-color: transparent; }
+.am2-chips button[aria-pressed='true'] em { color: light-dark(rgba(255, 255, 255, .7), var(--secondary-hover)); }
 .am2-chip-bg { position: absolute; inset: 0; border-radius: 999px; background: var(--ink); }
-.am2-none { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 22px 24px; border-radius: 20px; background: #f5f5f5; }
+.am2-none { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 22px 24px; border-radius: 20px; background: light-dark(#f5f5f5, var(--x-fill)); }
 .am2-none p { margin: 0; max-width: 60ch; font-size: 17px; line-height: 1.5; color: var(--soft); }
 .am2-none b { color: var(--ink); }
 .am2-none-acts { display: flex; gap: 8px; }
@@ -151,18 +151,18 @@
 .am2-panel-h { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
 .am2-panel-h h3 { margin: 0; font-size: 32px; font-weight: 497; letter-spacing: -.03em; line-height: 1.1; }
 .am2-panel-h span { font-size: 12px; letter-spacing: .1em; color: var(--muted); }
-.am2-results { position: absolute; left: 0; top: 0; bottom: 0; right: calc((100vw - min(100vw - 2 * var(--gut), 1152px)) / 2); z-index: 2; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; background: #fff; }
+.am2-results { position: absolute; left: 0; top: 0; bottom: 0; right: calc((100vw - min(100vw - 2 * var(--gut), 1152px)) / 2); z-index: 2; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; background: var(--x-raised); }
 .am2-results .am2-none { margin-bottom: 12px; }
 .am2-card { min-width: 0; }
-.am2-card button { position: relative; width: 100%; height: 100%; display: grid; grid-template-columns: 24px minmax(0, 1fr); align-items: center; column-gap: 8px; padding: 6px 28px 6px 10px; border: 1.5px solid transparent; border-radius: 14px; background: #f5f5f5; color: var(--ink); text-align: left; font: inherit; cursor: pointer; scroll-margin-top: 160px; transition: background .25s, border-color .25s, transform .25s var(--ease); }
+.am2-card button { position: relative; width: 100%; height: 100%; display: grid; grid-template-columns: 24px minmax(0, 1fr); align-items: center; column-gap: 8px; padding: 6px 28px 6px 10px; border: 1.5px solid transparent; border-radius: 14px; background: light-dark(#f5f5f5, var(--x-fill)); color: var(--ink); text-align: left; font: inherit; cursor: pointer; scroll-margin-top: 160px; transition: background .25s, border-color .25s, transform .25s var(--ease); }
 @media (hover: hover), (pointer: none) {
-  .am2-card button:hover { background: #fff; border-color: #a3a3a3; transform: translateY(-2px); }
+  .am2-card button:hover { background: var(--x-raised); border-color: light-dark(#a3a3a3, var(--border-selected)); transform: translateY(-2px); }
   .am2-card button:hover .am2-at { opacity: 1; transform: none; }
 }
 .am2-card button:active { transform: scale(.98); }
 .am2-card button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-.am2-card button.in, .am2-card button:target { background: #fff; border-color: var(--ink); }
-.am2-card button.lit { background: #fff; border-color: var(--ink); animation: am2-lit .9s var(--ease) 2; }
+.am2-card button.in, .am2-card button:target { background: var(--x-raised); border-color: var(--ink); }
+.am2-card button.lit { background: var(--x-raised); border-color: var(--ink); animation: am2-lit .9s var(--ease) 2; }
 @keyframes am2-lit { 50% { transform: translateY(-3px); } }
 .am2 .am2-card button.lit .am2-em { filter: none; }
 .am2-card .am2-em { font-size: 22px; line-height: 1; text-align: center; }
@@ -170,11 +170,11 @@
 .am2-name-t { display: block; font-size: 15px; font-weight: 606; letter-spacing: -.015em; line-height: 1.2; overflow-wrap: normal; word-break: normal; hyphens: manual; }
 .am2-pop { display: block; margin-top: 3px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
 .am2-at { position: absolute; right: 8px; top: 50%; margin-top: -11px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; font-size: 12px; color: var(--muted); opacity: 0; transform: translateX(-4px); transition: opacity .2s, transform .25s var(--ease), background .25s, color .25s; }
-.am2-card button.in .am2-at { opacity: 1; transform: none; background: var(--ink); color: #fff; }
+.am2-card button.in .am2-at { opacity: 1; transform: none; background: var(--ink); color: var(--x-on-ink); }
 @media (hover: none) and (pointer: coarse) { .am2-at { opacity: .55; transform: none; } }
 /* idle: while a panel is the one in view, a soft wave runs across its + marks (each tile's "add me"), one at a time */
 .am2-panel.on li button:not(.in) .am2-at { animation: am2-hint 7s var(--ease) calc(var(--k, 0) * .32s + .8s) infinite; }
-@keyframes am2-hint { 0%, 9%, 100% {} 3.5% { opacity: 1; transform: scale(1.12); background: #e5e5e5; color: var(--ink); } }
+@keyframes am2-hint { 0%, 9%, 100% {} 3.5% { opacity: 1; transform: scale(1.12); background: light-dark(#e5e5e5, var(--secondary)); color: var(--ink); } }
 @media (prefers-reduced-motion: reduce) { .am2-panel.on li button .am2-at { animation: none; } }
 
 /* not here: the gallery's last panel, the page's one dark room */
@@ -295,3 +295,10 @@
   .am2-node { display: grid; grid-template-columns: 44px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 14px; align-content: center; padding: 0 14px; }
   .am2-node .am2-em { grid-row: span 2; width: 44px; height: 44px; margin: 0; font-size: 24px; }
 }
+
+/* dark mode (docs/DARK-MODE.md): the launch system's light-room greys (components/v2/x-hamilton/Launch.css .l2-page) are
+   light-only, so on this page they resolve to Hanzo's dark tokens and the page sits on Hanzo's background; the
+   "not here" room keeps its own */
+html:not(.light) .am2 { --hair: var(--border); --muted: var(--muted-foreground); --soft: var(--muted-foreground); background: var(--bg); }
+html:not(.light) .am2-canvas .l2-pause { background: var(--x-raised); }
+@media (hover: hover) { html:not(.light) .am2-canvas .l2-pause:hover { background: var(--secondary); border-color: var(--border-selected); } }
