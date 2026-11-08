@@ -79,9 +79,8 @@
 .xmo-verb { margin: 0 0 10.5px; font: 500 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #a3a3a3; }
 .xmo-fam-t h3 { margin: 0; color: #fafafa; font-size: 26px; font-weight: 497; letter-spacing: -.02em; }
 .xmo-fam-d { margin: 10.5px 0 0; max-width: 34ch; font-size: 16px; line-height: 1.55; color: rgba(255, 255, 255, .78); }
-.xmo-fam-stat { display: flex; align-items: baseline; gap: 10.5px; margin: 17px 0 0; }
-.xmo-fam-stat b { font-size: 44px; font-weight: 300; letter-spacing: -.03em; line-height: 1; color: #fafafa; font-variant-numeric: tabular-nums; }
-.xmo-fam-stat > span { font-size: 14px; color: rgba(255, 255, 255, .78); }
+/* Hanzo's one line, "11 · Suites won · Kai vs Jev", as hanzo.ai prints it (COPY-RULE, 8 Nov) */
+.xmo-fam-stat { margin: 17px 0 0; font: 500 13px/1.4 var(--mono); letter-spacing: .04em; color: rgba(255, 255, 255, .78); font-variant-numeric: tabular-nums; }
 .xmo-fam-foot { margin: 17px 0 0; font: 500 13px/1.4 var(--mono); color: #a3a3a3; }
 .xmo-fam .xmo-lk { margin-top: 10.5px; color: #fafafa; }
 
