@@ -41,6 +41,7 @@ import BizLines from '../../v2/BizLines';
 import BizSheet from '../../v2/BizSheet';
 import { useEntrance, useSkew, useShuffle } from './LedgerEnter';
 import './Ledger.css';
+import HeroDither from '../HeroDither';
 
 const DOCS = 'https://docs.hanzo.ai/docs/cli/books';
 const GH = 'https://github.com/hanzoai';
@@ -199,6 +200,7 @@ function Book() {
 function Hero() {
   return (
     <section className="ld-hero" aria-labelledby="ld-h1">
+      <HeroDither />
       <div className="bz-wrap ld-hero-grid">
         <BizLines as="h1" id="ld-h1" className="bz-display ld-h1" lines={['Hanzo', 'Ledger']} now delay={0.05} />
         <p className="ld-copy"><span className="bz-lede ld-one">A double-entry ledger you post to over HTTP.</span> <span className="bz-body ld-more">Money here only ever moves: a posting names a source account, a destination account, an amount and an asset. There is no way to write a debit without its credit, because a one-sided entry is not something the API can express.</span></p>
