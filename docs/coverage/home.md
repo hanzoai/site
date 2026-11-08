@@ -44,7 +44,7 @@ Done here: Parity shows 132/132 links. Model cards link to `/<model>`, product n
 - [x] Ends in the Backed-by wall, then `Band`, then the footer
 - [x] Model cards open into their page with the WebGL opener; product names carry `data-morph`
 
-Done here: The order is hero, model cards, platform chapters, agents, one dark room (speed, cost, frontier), open source, Trusted by, pricing, Backed by, then Band (MASTER 4.1).
+Done here: The order is hero, model cards, platform chapters, agents, one dark room (speed, cost, frontier), open source, Trusted by, pricing, Backed by, then Band (MASTER 4.1). (8 Nov, copy rule) The hero plays the rest of hanzo.ai's live hero day after the opening: 33 scenes (chat, Dev runs, Design generations, terminal tabs, the beta) in the desktop app, terminal and phone, and the company log (116 entries) above the app, word for word (components/home/hero-scenes.json, hero-feed.json); the platform carousel steps through each product's other live scenes (components/home/scenes.json). All of them stay in the page, one shown at a time.
 
 ## 4. Conversion system
 - [x] No raw `.x-btn` in home sections (kit `Band` and `More` only). `<Cta>` is not in the kit yet.
@@ -52,7 +52,7 @@ Done here: The order is hero, model cards, platform chapters, agents, one dark r
 - [x] The hero's copy buttons are live's own. The console's kit `Copy` copies exactly the displayed command.
 - [x] `data-cta="home.*"` on every action
 
-Done here: The header's "Try Hanzo" is the one solid ask after the hero. Pricing buttons are quiet outlines aligned on one line (subgrid). 8 Nov: the hero terminal's Copy is a real button that copies exactly `curl -fsSL https://hanzo.sh | sh`, says Copied in a `role=status`, has a hover, a .97 press and a 44px hit area (`data-cta=home.install_copy`).
+Done here: The header's "Try Hanzo" is the one solid ask after the hero. Pricing buttons are quiet outlines aligned on one line (subgrid). 8 Nov: the hero terminal's Copy is a real button that copies exactly `curl -fsSL https://hanzo.sh | sh`, says Copied in a `role=status`, has a hover, a .97 press and a 44px hit area (`data-cta=home.install_copy`). (8 Nov) The priced link "Go is $8/month" (/pay/confirm/card?plan=go&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat) sits under the sign-up group.
 
 ## 5. Trust and proof
 - [x] No seal; no invented number

@@ -30,7 +30,10 @@ function Calendar() {
   const ref = useRef(null);
   const seen = useInView(ref, { once: true, amount: 0.4 });
   const live = useInView(ref, { amount: 0.2 });
-  const calm = useReducedMotion();
+  // read after mount, so the server's HTML and the first client render agree (reduced motion hydrated with a mismatch)
+  const rm = useReducedMotion();
+  const [calm, setCalm] = useState(false);
+  useEffect(() => setCalm(!!rm), [rm]);
   const [hot, setHot] = useState(null);
   const [sweep, setSweep] = useState(-1);
   useEffect(() => {
