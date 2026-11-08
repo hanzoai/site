@@ -287,3 +287,49 @@
 /* Hanzo's example console sits in the Get started column, as on hanzo.ai (it was behind a drawer) */
 .bl2-con { margin: 28px 0 0; }
 .bl2-con .bl2-note { margin-top: 10px; }
+
+/* ---------- dark (docs/DARK-MODE.md): Launch.css's .l2-page has no dark rule, so /billing maps its tokens and its paper
+   surfaces to Hanzo's dark tokens here, on main.bl2. Trays become Hanzo's card, the white cards inside them recess to the
+   page's background. Launch.css shadows Hanzo's --muted on .l2-page, so quiet chips use --surface-1. The meter, the
+   history room and the code stay dark in both modes. Light is untouched: every rule is under html:not(.light). ---------- */
+html:not(.light) .bl2 { --hair: var(--border); --muted: var(--muted-foreground); --soft: var(--muted-foreground); background: var(--bg); }
+html:not(.light) .bl2 .l2-obj { background: var(--x-raised); }
+html:not(.light) .bl2-calc, html:not(.light) .bl2-mach, html:not(.light) .bl2-pv, html:not(.light) .bl2-mf, html:not(.light) .bl2-is { background: var(--x-raised); }
+html:not(.light) .bl2-cc, html:not(.light) .bl2-zone:not(.bl2-meter), html:not(.light) .bl2-pv-rows li, html:not(.light) .bl2-first { background: var(--bg); }
+html:not(.light) .bl2-in label, html:not(.light) .bl2-seg button, html:not(.light) .bl2-chip.preview { color: var(--muted-foreground); }
+html:not(.light) .bl2-in input { accent-color: var(--foreground); }
+html:not(.light) .bl2-ci-h p, html:not(.light) .bl2-ci-k em, html:not(.light) .bl2-ci-f > span:first-child, html:not(.light) .bl2-row-n { color: var(--text-tertiary); }
+html:not(.light) .bl2-seg, html:not(.light) .bl2-ev li, html:not(.light) .bl2-chip, html:not(.light) .bl2-chip.preview { background: var(--surface-1); }
+@media (hover: hover) { html:not(.light) .bl2-seg button:hover:not([aria-pressed='true']) { background: var(--secondary); color: var(--ink); } }
+html:not(.light) .bl2-seg button[aria-pressed='true'] { background: var(--foreground); color: var(--primary-foreground); }
+html:not(.light) .bl2-chip.issued, html:not(.light) .bl2-pv-plan { color: var(--x-on-ink); }
+html:not(.light) .bl2-pv-plan span { color: var(--neutral-600); }
+html:not(.light) .bl2-lines li.hot { background: var(--secondary); }
+html:not(.light) .bl2-pv-rows li:not(.new) .bl2-pv-subs i { background: var(--neutral-600); }
+html:not(.light) .bl2-ib { border-color: var(--border-strong); background: var(--x-raised); }
+@media (hover: hover) { html:not(.light) .bl2-ib:hover:not(:disabled) { background: var(--secondary); } }
+html:not(.light) .bl2-ib:disabled { background: var(--surface-1); border-color: var(--border-control); }
+html:not(.light) .bl2-mf-slots i, html:not(.light) .bl2-is-row::before, html:not(.light) .bl2-is-line, html:not(.light) .bl2-start-r .cf-mark { background: var(--secondary); }
+html:not(.light) .bl2-is-dot { background: var(--surface-1); box-shadow: inset 0 0 0 2px var(--neutral-600); }
+html:not(.light) .bl2-is-s.now .bl2-is-dot { background: var(--ink); box-shadow: 0 0 0 5px var(--secondary); }
+html:not(.light) .bl2-start::before { background: var(--x-raised); }
+/* the closing invoice: a paper card in light; in dark, Hanzo's card in the black room */
+html:not(.light) .bl2-cl { --ac: var(--foreground); --hair: var(--border); --soft: var(--muted-foreground); --muted: var(--text-tertiary); --faint: var(--text-tertiary); color: var(--foreground); background: var(--x-raised); }
+@media (hover: hover) {
+  html:not(.light) .bl2-hero .x-arrow:hover { color: var(--muted-foreground); }
+  html:not(.light) .bl2-start-r .cf-code .x-copy:hover { background: var(--secondary); border-color: var(--border-strong); }
+}
+@media (prefers-reduced-motion: no-preference) { html.js:not(.light) .bl2-px i { background: var(--bg); } }
+/* Launch.css pieces this page uses: the pause, the sheet, the light code card */
+html:not(.light) .bl2 .l2-pause:not(.dk) { background: var(--x-raised); color: var(--foreground); }
+@media (hover: hover) { html:not(.light) .bl2 .l2-pause:not(.dk):hover { background: var(--secondary); border-color: var(--border-strong); } }
+/* an element classed .light gets Hanzo's light palette (tokens/colors.css), so inside it only our html-level tokens
+   (--ink, --soft, --faint, --x-*) still read dark */
+html:not(.light) .bl2 .cf-code.light { background: var(--x-raised); color: var(--ink); }
+html:not(.light) .bl2 .cf-code.light .cf-code-bar > i, html:not(.light) .bl2-start-r .cf-code.light .cf-mark { background: var(--x-knob); }
+html:not(.light) .bl2 .cf-code.light .cf-code-k, html:not(.light) .bl2 .cf-code.light .k { color: var(--soft); }
+html:not(.light) .bl2 .cf-code.light .s, html:not(.light) .bl2 .cf-code.light .c { color: var(--faint); }
+html:not(.light) body:has(main.bl2) .l2-sheet { background: var(--x-raised); }
+html:not(.light) body:has(main.bl2) .l2-sheet-bar { border-bottom-color: var(--border); }
+html:not(.light) body:has(main.bl2) .l2-sheet-bar p { color: var(--muted-foreground); }
+html:not(.light) body:has(main.bl2) .l2-sheet-x { background: var(--secondary); }
