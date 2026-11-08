@@ -1,4 +1,5 @@
 # /identity — James-eye review
+Ready: 2026-11-07 hero is Identity's own (title centred over a fan of three hosted cards, the live one re-hosting and signing in), not /iam's split; the half-finished motion-map CSS written (spotlight Add sign-in room, line-draw, ink-spread, typewriter, stretch, conveyor); client id masked as key + mono bullets and wraps at 375/320; close is the app grid that grows once; copy back to Hanzo's; phone stages stack, bento is a rail; token rows and the log run while seen, pausable; pause glyph aligned in the card bar.
 (7 Nov, round 3, walked at 1470x801, 375x812 and 320 (isMobile, hasTouch) with Playwright Chromium: frames at 0, 1 and 3 s with no input, wheel-scrolled a screen at a time with a 1.5 s dwell, hovered, pressed and tapped the hero, the tiles, the tabs, the hostname form, the method pills and the steps, then loaded again with prefers-reduced-motion. Cookie card dismissed before judging.)
 
 Verdict: 6/10

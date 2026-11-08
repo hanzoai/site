@@ -15,7 +15,7 @@ Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line
 - ~~No dead or self-looping button; prices from `lib/plans.js`~~ n/a: no prices on this page
 - [x] Open copy questions for James listed, none decided
 
-Done here: Header lines Persona/Goal/CTA/Metric/Signature/Beyond in Kata.jsx; one solid: kit Cta "Get API key" (kata.hero, thumb) in the hero, repeated in the kit Band. `lib/cta.js` does not exist yet; the label and href are Hanzo's own from the page.
+Done here: Header lines Persona/Goal/CTA/Metric/Signature/Beyond in Kata.jsx; one solid at a time: kit Cta "Get API key" (kata.hero, thumb) in the hero, repeated in the kit Band; usePhoneAsk outlines the header ask while either is on screen, and its arrival rule starts the header as an outline on .xkt, so one solid shows from the first frame. Round 9 (8 Nov) measured it at 1470 and 375: on arrival and at 1200 ms only the hero's "Get API key" is solid; at the Band only the Band's is (the page marks the kit Band's button `data-cta="kata.band"` and sends the same cta_click, so the hook sees it). `lib/cta.js` does not exist yet; the label and href are Hanzo's own from the page.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -33,7 +33,7 @@ Done here: One <main> inside the layout's #main marker and skip link; links via 
 - [x] Ends in proof strip, `Band`, footer
 - [x] Card-to-page links use Morph; title lands within 12px
 
-Done here: h1 "Test. Repair. Verify." at 52px cuts in by line mask (700 ms, 60 ms apart) and lights word by word with the live session; it moves within 1 s (alive check: moving at 1470x801 and 375x812). JS off: 0 hidden text (4 dial number buttons hidden on purpose). Ends: questions, kit Band, footer.
+Done here: h1 "Test. Repair. Verify." at 52px cuts in by a CSS line mask from the first paint (700 ms, 60 ms apart; nothing absent before hydration) and lights word by word with the live session; round 9: the server paints step 0 of the loop, so the first frame seen is the loop's first frame (no finished session then a wipe), and the hero object rises 24px without fading; it moves within 1 s (alive check: moving at 1470x801 and 375x812). JS off: 0 hidden text (4 dial number buttons hidden on purpose). Ends: questions, kit Band, footer.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -41,7 +41,7 @@ Done here: h1 "Test. Repair. Verify." at 52px cuts in by line mask (700 ms, 60 m
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: Kit Cta only (solid hero, quiet GitHub, plain docs link); the ask bar carries "Get API key" via data-thumb; the A2Paste strip copies exactly the prompt it shows.
+Done here: Kit Cta only (solid hero, quiet GitHub, plain docs link); the header carries "Get API key" after the hero on desktop; on phone the header keeps "Try Hanzo" (outlined while a page ask is on screen): the shared usePhoneAsk keeps Hanzo's label when the swapped one would not fit, so the phone half of this box stays open (request in docs/requests/kata.md); the A2Paste strip copies exactly the prompt it shows.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -66,7 +66,7 @@ Done here: Deck sizes: h1 52, section headings 26, H3 17, lede 21, body 16, figu
 - [ ] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: taste.py passes (deck greys only, no green); brows check 0 labels above a headline; tiles 24, cards 16, no shadows; failing shown by an outline dot and a strike, not a hue. Literal greys in Kata.css still to move onto tokens.
+Done here: taste.py passes (deck greys only, no green); brows check 0 labels above a headline; tiles 24, cards 16, no shadows; failing shown by an outline dot and a strike, not a hue. Round 9: the Read section is one ruled list of 9 rows (group as a 12px mono caption, no boxes), so there are no three equal boxes. Literal greys in Kata.css still to move onto tokens.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
@@ -75,7 +75,7 @@ Done here: taste.py passes (deck greys only, no green); brows check 0 labels abo
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: the hand-written hero and close buttons (now kit Cta and Band), the custom closing section, the capabilities report bar and PASS chips, the invented stack-check title, labels and answer sentence, the green wipe and every green, the 108px and 320px type, springs. listed below
 
-Done here: Chips, Replay and links press to .97 or 1px; focus ring from the system and on Replay; hovers only inside (hover: hover); no inputs.
+Done here: Chips, Replay and links press to .97 or 1px; focus ring from the system and on Replay; hovers only inside (hover: hover); no inputs. Round 9 hovers (measured): Read rows fill #f5f5f5 and show where they go; the dial's chapter index inks its number and darkens its bar; the questions underline their words and slide the plus 4px.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -84,7 +84,7 @@ Done here: Chips, Replay and links press to .97 or 1px; focus ring from the syst
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit
 
-Done here: Signature: the loop headline lit by the live session (time); supporting: pinned dial chapters (state), the room's scrubbed wipe and growing figure (scroll), drawn ticks (arrival); variety.py OK; reduced motion shows the passing state; timeouts only, no setInterval.
+Done here: Signature: the loop headline lit by the live session (time); supporting: pinned dial chapters (state), the room's scrubbed wipe and growing figure (scroll), drawn ticks (arrival); round 9 idle (time, CSS): the board's dots breathe while the suite runs, the failing one rings, the passing row sends a slow wave, the dial's current station rings, the pinned room's command keeps a caret, and the stack check tries itself one group at a time until your first pick (sentences not announced until then). motion.mjs desk: 0 still screens (8 before), CLS 0.004. variety.py OK; reduced motion shows the passing state with 0 running animations and 0 console errors (the page's own Lines and Room replace the shared A2Lines and A2Room, whose render branch failed hydration under reduced motion); timeouts only, no setInterval.
 
 ## 10. Media
 - ~~`Film` and `Pic` only; sizes and posters set~~ n/a: no images or films: the board, terminal, dial and room are drawn in the DOM
@@ -100,7 +100,7 @@ Done here: No media on this page; every visual is drawn in the DOM with Hanzo's 
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: 375x812 and 1470x801: 0 text overlaps; 320 scrollWidth 320; ask bottom at 524px on 375x667; chips, Replay and links 44px or more on phones.
+Done here: 375x812 and 1470x801: 0 text overlaps (round 9: the dial's dots sit on the ring with their labels inside it, 18px clear; check.mjs phone OK, desk only flags the wipe's two stacked layers, which is the clip by design); phone first screen shows 88px of the board inside 375x660 (board top at 572: hero padding 80, grid gap 20, docs link hidden on phone, it repeats the Read list); on desktop the capabilities rise over the empty lower third of the pinned wipe, so no void after "0 failed"; 320 scrollWidth 320; ask bottom at 524px on 375x667; chips, Replay and links 44px or more on phones.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -109,7 +109,7 @@ Done here: 375x812 and 1470x801: 0 text overlaps; 320 scrollWidth 320; ask botto
 - [x] One h1; no heading skips; names start with visible text
 - [x] Keyboard reaches every control
 
-Done here: Text #0a0a0a/#525252 on white and #a3a3a3 or lighter on black; pause control first in the hero box (stops the loop and the cursor); radio groups named; one h1, h2 sections, h3 items; keyboard reaches every control.
+Done here: Text #0a0a0a/#525252/#737373 (unlit h1 words and the idle file name, 4.74:1) on white and #a3a3a3 or lighter on black; pause control first in the hero box (stops the loop and the cursor); radio groups named; one h1, h2 sections, h3 items; keyboard reaches every control.
 
 ## 13. Performance and engineering
 - [x] h1 and LCP element in server HTML
@@ -117,7 +117,7 @@ Done here: Text #0a0a0a/#525252 on white and #a3a3a3 or lighter on black; pause 
 - [x] No poller; no third-party request before consent
 - [x] Nothing heavy run on James's laptop
 
-Done here: h1 and the hero object are in server HTML (passing state); transform, opacity and clip-path only; the loop stops off screen and when paused; budgets not yet measured.
+Done here: h1 and the hero object are in server HTML (the loop's first step; JS off shows the whole session by CSS, 0 hidden text blocks at 1470 and 375); transform, opacity and clip-path only; the loop stops off screen and when paused; budgets not yet measured.
 
 ## 14. SEO and machine files
 - [x] Title and description match live (or are listed for James)
@@ -157,4 +157,4 @@ Done here: No live data, so nothing can fail or load; the stack check has an emp
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/kata.md` verdict 8 or more
 
-Done here: data-cta on kata.hero; the kit Band's button has no data-cta yet (requested); Cta sends cta_click through the system event; V2 line in the header; last review 6/10 was on an older build (green, eyebrows, fold and Band complaints fixed).
+Done here: data-cta on kata.hero; the kit Band's button is marked kata.band by the page (useBandAsk) and sends cta_click until the kit does it (requested); Cta sends cta_click through the system event; V2 line in the header; reviews read: 6/10, then 7/10 (7 Nov); round 9 (8 Nov) answers the 7/10: unlit words #737373, phone board in the first screen, arrival without the reset, one solid at a time, dial labels clear, one ruled Read list, no voids, a terminal beside the questions.

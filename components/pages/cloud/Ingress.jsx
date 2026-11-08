@@ -62,7 +62,7 @@ function Board() {
     <div className="lp-host">
     <LivePause paused={paused} onToggle={togglePause} className="ig-pause" />
     <div className="ig-board" ref={ref} aria-hidden="true">
-      <p className="ig-board-t"><i />hanzoai/ingress</p>
+      <p className="ig-board-t"><i /><span>hanzoai/ingress</span></p>
       <div className="ig-col">
         <p className="ig-k">hostname</p>
         {ROUTES.map(([p], i) => (
@@ -84,9 +84,10 @@ function Board() {
       </div>
       <div className="ig-col">
         <p className="ig-k">backend</p>
-        <div className={'ig-svc' + (req === 0 ? ' hit' : '')}><span className="ig-pods"><i /><i className={down ? 'down' : ''} /><i /></span></div>
+        {/* the pod backends carry Hanzo's own words for what keeps them in rotation, as the static one carries "from disk" */}
+        <div className={'ig-svc' + (req === 0 ? ' hit' : '')}><span className="ig-pods"><i /><i className={down ? 'down' : ''} /><i /></span><span className="ig-disk">health checks</span></div>
         <div className={'ig-svc' + (req === 1 ? ' hit' : '')}><b>static</b><span className="ig-disk">from disk</span></div>
-        <div className={'ig-svc' + (req === 2 ? ' hit' : '')}><span className="ig-pods"><i /><i /></span></div>
+        <div className={'ig-svc' + (req === 2 ? ' hit' : '')}><span className="ig-pods"><i /><i /></span><span className="ig-disk">health checks</span></div>
         <p className={'ig-note' + (down ? ' down' : '')}>{down ? 'out of rotation' : phase === 3 ? 'put back when it recovers' : 'no reload, no dropped connection'}</p>
       </div>
     </div>
@@ -229,7 +230,7 @@ export default function Ingress() {
           <div className="ig-stage-l">
             <ul className="ig-legend">
               <li><i className="dot" aria-hidden="true" />hostname</li>
-              <li><i className="edge" aria-hidden="true" />hanzoai/ingress</li>
+              <li><i className="edge" aria-hidden="true" /><span>hanzoai/ingress</span></li>
               <li><i className="back" aria-hidden="true" />backend</li>
             </ul>
             <p className={'ig-stage-note' + (phase === 1 || phase === 2 ? ' down' : '')} aria-hidden="true">{NOTE[phase]}</p>

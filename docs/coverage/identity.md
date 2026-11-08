@@ -33,7 +33,7 @@ Done here: Parity 55/55 text and 4/4 links; Hanzo's header and footer are untouc
 - [x] Ends in one close in Hanzo's words ("Get Identity" with the ask), then the footer
 - [x] The h1 is the `data-morph-target`, so cards elsewhere open into it
 
-Done here: The first screen is the name, Hanzo's line, the ask, and one live object: the hosted hanzo.id sign-in card (marked Sign-in) signing someone in by itself, password then the six boxes of a second factor, then signed in. The h1 (52px, 40px on phones) cuts in by CSS line mask at first paint, so it moves in under 1 s with no script; a headless JS-off pass found 0 hidden text blocks.
+Done here: Identity's own first screen (C1, 7 Nov), not /iam's split: "Hanzo Identity", Hanzo's line and the ask centred over a fan of three hosted cards; the middle one is live (its address bar rewrites hanzo.id to id.example.com, then it signs someone in: password, the six code boxes, the tick), the cards behind show the same sign-in before (the ways in) and after (every app) and slide out from behind it at 0.45 s. The h1 cuts in by the kit line mask; JS off shows everything (all entrance hiding is gated on `.js`).
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn` in the page
@@ -66,7 +66,7 @@ Done here: Parity 55/55 text and 4/4 links. Section labels sit under their headi
 - ~~One icon set~~ n/a: no icons beyond the kit's
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: Greys from Hanzo's deck only; Add sign-in. Hex literals remain in page CSS because `tokens.css` is not on main yet (listed below).
+Done here: Greys from Hanzo's deck only (`taste.py` OK on Identity.jsx/css). Radii 36 (hosted cards), 24 (tiles, the spot panel). Hex literals remain in page CSS because `tokens.css` is not on main yet.
 
 ## 8. UI component library
 - [x] Every control has hover (inside `@media (hover:hover)`), press .97, focus-visible, disabled
@@ -84,7 +84,7 @@ Done here: Kit `Cta`, `CodeBlock`, `Copy` and Cloud 3's `LivePause`; segmented c
 - [x] Reduced motion shows the final state; no `setInterval` in the page (timers are `setTimeout` chains)
 - [x] Sound only on the listed moments, through the one kit (`lib/sound.js`, wired by `components/Sound.jsx`): the ask taps, tabs, radios and pause toggles tick (radios carry `data-sound="tick"`), copy chimes; the demos loop while seen and never finish, so no done chime
 
-Done here: Signature: the card that never leaves: the first screen pins and the three stages step in beside the same card as it changes. Idle: the card signs someone in on a loop; in the ways-in stage each way lights in turn. State: the large-organization tabs glide (layoutId) with every panel in the HTML; Wear your name redraws the card from your hostname, name and ways in. Scroll: the first screen pins while the title gives way to the three stages. No springs: every move is ease-emphasis at 300 ms.
+Done here: Signature spotlight: the dark Add sign-in room has a dim and an ink copy of its three steps; the ink copy is masked to a light that walks the steps (registered `--id-mx/--id-my` glide 700 ms), follows a fine pointer, lands on a tap, moves with the step buttons and arrow keys. Entrances, page-local and once: line-draw (the room's outline draws, fills black, opens to full width), ink-spread (stages), typewriter ("What it does"), stretch-scroll (tabs panel), conveyor (white-label form and card). Idle: hero sign-in loop, ways in and token claims lighting in turn, the append-only log writing every 2.6 s (all pausable, off under reduced motion). Pointer: hero fan parts and tilts, tiles lean. Scroll-linked: only the stretch.
 
 ## 10. Media
 - ~~`Film` and `Pic` only~~ n/a: no photo or film on Hanzo's page
@@ -92,7 +92,7 @@ Done here: Signature: the card that never leaves: the first screen pins and the 
 - [x] Nothing missing; no image without alt
 - ~~No dimmed photo; 4+ real visuals together~~ n/a: Hanzo's page has no imagery
 
-Done here: Product objects are drawn in HTML and CSS from Hanzo's words; the close carries the product's own Sigil (its figures as data).
+Done here: Every object is drawn from Hanzo's words (hosted cards, client id masked as a key and mono bullet groups, tile drawings, tab diagrams); the close is the nine-app grid that grows once (1.12) and settles; no Hanzo media exists for this page.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -100,7 +100,7 @@ Done here: Product objects are drawn in HTML and CSS from Hanzo's words; the clo
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: At 375: no pin: the card sticks under the header while the three stages scroll beneath it; the bento becomes one column; the tabs wrap; the closing buttons stack. Measured: ask bottom at 409 of 667; pinned scenes stack under 900px, nothing floats over text.
+Done here: At 375: hero fan with the two back cards peeking at the screen edges (section clips x); the spot rows stack label over what it makes; the stages stack words over card (C1 fix; they were squeezed side by side); the bento is a snap rail; tabs a snap rail. `check.mjs` 7 Nov: desk and phone 0 errors, 0 covered, 0 wide.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast: #0a0a0a and #525252 on white and #f5f5f5, #a3a3a3 and white on black
@@ -109,7 +109,7 @@ Done here: At 375: no pin: the card sticks under the header while the three stag
 - [x] One h1; no heading skips
 - [x] Keyboard reaches every control
 
-Done here: The live object is `aria-hidden` with its pause button outside it; tabs and radios carry `aria-selected`/`aria-checked`; `aria-live` where a demo answers.
+Done here: Live objects are `aria-hidden` with their pause buttons outside (hero, stage cards, the log tile's pause sits beside its `aria-hidden` drawing); spot steps are real buttons with `aria-pressed` and arrow-key movement; tabs carry `aria-selected`; the white-label fields have `aria-label` and `aria-invalid`.
 
 ## 13. Performance and engineering
 - [x] h1 and the hero object are in the server HTML
@@ -136,12 +136,12 @@ Done here: `app/identity/page.jsx` unchanged: metadata from `content/pages.json`
 Done here: n/a: a top-level cloud product launch page; its h1 is the `data-morph-target` for cards that open into it.
 
 ## 16. Developer experience
-- [x] One `CodeBlock`; copy equals display
+- ~~One `CodeBlock`; copy equals display~~ n/a: no code on this page
 - ~~Config blocks parse on their own~~ n/a: no config block
 - ~~Terminal pauses and ends on a static frame~~ n/a: no typed terminal
 - [x] No hand-typed version number
 
-Done here: Hanzo's agent prompt use the kit `CodeBlock`, whose Copy copies exactly what is shown.
+Done here: n/a here: Identity has no code block or prompt; the developer path is Add sign-in's three steps and its documentation links.
 
 ## 17. States and resilience
 - [x] Every state looks intended: static copy, reduced motion and JS off checked
@@ -149,7 +149,7 @@ Done here: Hanzo's agent prompt use the kit `CodeBlock`, whose Copy copies exact
 - ~~A failed submit keeps its values~~ n/a: n/a: no form posts anywhere; the page's inputs are in-page demos and nothing is sent
 - [x] A thrown island leaves the page: the shared `app/error.jsx` keeps header and footer
 
-Done here: Wear your name checks the hostname and says "Type a hostname, like auth.example.com." when it is not one, and "Choose at least one way in." when every way is off.
+Done here: White-label: an invalid hostname empties the card's address bar (`aria-invalid` and a dashed field), switching every way off shows an empty dashed slot; reduced motion lands every demo on its final frame (checked with a reduce load 7 Nov).
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary (the kit `Cta` sends `cta_click`); `lib/track.js` is not on main yet
@@ -157,4 +157,4 @@ Done here: Wear your name checks the hostname and says "Type a hostname, like au
 - [x] `V2: 8/10` line in the page file's top comment
 - [x] Review read: no `docs/review/identity.md` yet
 
-Done here: `identity.hero` and `identity.close` on the asks. Gallery: `docs/gallery/identity/` (desktop film and phone stills).
+Done here: `identity.hero`, `identity.mid` and `identity.close` on the asks. Gallery: `docs/gallery/identity/` (earlier film and stills, plus C1 stills `c1-desk-hero.jpg`, `c1-desk-add.jpg`, `c1-phone-hero.jpg`).

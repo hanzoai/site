@@ -1,6 +1,7 @@
 'use client';
 /* Metrics, v2 launch page (Cloud 3).
-   V2: 8/10 the chapters play by themselves (each runs its table once, then rests) and stack under 900px; the black room is Metrics' own console (the chart, set dark: the prompt's query lands on the line and opens its traces; one build, then rest); the line slides by transform; one solid fill per screen.
+   Round 4: the chapters are a stage (each changes the table itself: stacks arrive, the query bar takes over, a column grows per label, the spike opens into its chart and traces, the query folds into a rule, two orgs slide out) and the mode is a split-flap flip board (motion map: flip-board); one sticky table on phones; the Logs link moved into the black room; close h2 52px.
+   Earlier: the chapters play by themselves (each runs its table once, then rests) and stack under 900px; the black room is Metrics' own console (the chart, set dark: the prompt's query lands on the line and opens its traces; one build, then rest); the line slides by transform; one solid fill per screen.
    Signature: the spike that opens. Three series stream across the chart, split by the label you pick; about every six
    seconds a spike rises, the cursor lands on it and the traces for that window open beside it, because they were never
    in a different system. Click the chart to hold a moment and keep its traces open.
@@ -20,7 +21,6 @@ import ClipWipe from '../../v2/ClipWipe';
 import LaunchClose, { Arr } from '../../v2/LaunchClose';
 import LineMask from '../../v2/LineMask';
 import LivePause, { usePause } from '../../v2/LivePause';
-import RelatedCards from '../../v2/RelatedCards';
 import { Copy } from '../../ui';
 import { A } from '../../kit';
 import { play } from '../../../lib/sound';
@@ -149,7 +149,7 @@ function Field({ lead }) {
           <LivePause paused={paused} onToggle={pause} inline className="mt-pause" />
           <span className="mt-host">metrics.hanzo.ai</span>
           <code className="mt-q">rate(http_requests_total[5m])</code>
-          <div className="mt-split" role="group" aria-label="Split by label">
+          <div className="mt-split" role="group" aria-label="Split by label" style={{ '--i': Object.keys(SPLIT).indexOf(split) }}>
             {Object.keys(SPLIT).map((l) => <button key={l} type="button" aria-pressed={split === l} onClick={() => setSplit(l)}>{l}</button>)}
           </div>
           <ul className="mt-legend" aria-label="Series">{series.map((s, k) => <li key={s} className={'s' + k + (hk === k ? ' hl' : '')}><i />{s}</li>)}</ul>
@@ -206,6 +206,18 @@ function useBeat(key, live, calm) {
   return p;
 }
 
+/* The flip board (the page's signature): a departure-board strip of tiles. When the value changes, each tile whose
+   letter changes flips down to the new one, left to right. Padded to a fixed width, so nothing beside it moves. */
+const BOARD = 19; // the longest mode, "org from your token"
+function Flip({ text, n = BOARD, className = '' }) {
+  const s = text.padStart(n, ' ');
+  return (
+    <span className={'mt-board ' + className} role="img" aria-label={text}>
+      {[...s].map((c, j) => <i key={j + ':' + c} className={c === ' ' ? 'sp' : undefined} style={{ '--j': Math.max(0, j - (n - text.length)) }} aria-hidden="true">{c === ' ' ? '' : c}</i>)}
+    </span>
+  );
+}
+
 function Table({ step, on, auto }) {
   const [ref, live, calm] = useLive(0.55); // plays once most of the table is in view, so the reader sees it play
   const p = useBeat(step, live, calm);
@@ -223,7 +235,7 @@ function Table({ step, on, auto }) {
   const rule = step === 4 && p >= 2, scoped = step === 5 && p >= 1;
   const mode = step === 1 ? (alt ? 'builder' : 'PromQL') : rule ? 'kept as a rule' : scoped ? 'org from your token' : 'one query';
   return (
-    <div className="mt-tab" ref={ref} data-step={intro ? 'intro' : step} data-beat={p}>
+    <div className="mt-tab" ref={ref} data-step={intro ? 'intro' : step} data-beat={p} style={step === 2 ? { '--cm': picked.includes('model') ? '.6fr' : '0fr', '--cr': picked.includes('route') ? '1fr' : '0fr', '--ct': picked.includes('tenant') ? '.6fr' : '0fr' } : undefined}>
       <div className="mt-tab-bar">
         <span className="mt-dots" aria-hidden="true"><i /><i /><i /></span>
         <span className="mt-store">Hanzo Datastore</span>
@@ -236,7 +248,7 @@ function Table({ step, on, auto }) {
         ) : (
           <code>{step >= 2 && step <= 4 ? by : ''}rate(http_requests_total[5m]){scoped ? '{tenant="org a"}' : ''}</code>
         )}
-        <span className="mt-mode" key={mode}>{mode}</span>
+        <Flip text={mode} className="mt-mode" />
       </div>
       <div className="mt-grid" role="table" aria-label="Metrics, logs and traces as rows in one column store">
         <div className="mt-row head" role="row">
@@ -253,7 +265,7 @@ function Table({ step, on, auto }) {
           const gone = (step === 5 && ((tenant === 'org b' && p >= 2) || (tenant === 'org c' && p >= 3))) || (intro && kind !== 'metric');
           const grown = step === 3 && i === 0 && p >= 1;
           return (
-            <div key={i} role="row" className={'mt-row' + (hot ? ' hot' : '') + (gone ? ' gone' : '') + (grown ? ' spike' : '')} style={{ '--i': i }}>
+            <div key={i} role="row" className={'mt-row r-' + kind + (hot ? ' hot' : '') + (gone ? ' gone' : '') + (grown ? ' spike' : '')} style={{ '--i': i }}>
               <span role="cell" className="c-kind"><i className={'k-' + kind} />{kind}</span>
               <span role="cell" className="c-name">{name}</span>
               <span role="cell" className="c-value"><b style={{ transform: `scaleX(${grown ? 1 : intro && !hot ? 0.06 : v})` }} /></span>
@@ -263,6 +275,14 @@ function Table({ step, on, auto }) {
             </div>
           );
         })}
+        <div className={'mt-tab-spike' + (step === 3 && p >= 2 ? ' on' : '')} aria-hidden="true">
+          <svg viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M0 30 L18 28 L30 31 L42 27 L50 29 L56 6 L62 28 L74 26 L86 29 L100 27" /></svg>
+          <ol className="mt-fall">
+            {SPANS.map(([n, x, w], k) => (
+              <li key={n} style={{ '--i': k }}><span className="mt-sn">{n}</span><span className="mt-sb"><b style={{ left: x + '%', width: w + '%' }} /></span></li>
+            ))}
+          </ol>
+        </div>
       </div>
     </div>
   );
@@ -297,6 +317,7 @@ function Chapters({ intro, steps, table }) {
   useEffect(() => { setMounted(true); const m = matchMedia('(min-width: 900px)'); const f = () => setWide(m.matches); f(); m.addEventListener('change', f); return () => m.removeEventListener('change', f); }, []);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   useMotionValueEvent(scrollYProgress, 'change', (p) => {
+    if (!wide) return;
     const i = Math.min(total - 1, Math.max(0, Math.floor(p * total * 0.999))) - 1;
     setAt((v) => (v === i ? v : i));
   });
@@ -308,10 +329,17 @@ function Chapters({ intro, steps, table }) {
     window.__lenis ? window.__lenis.scrollTo(y, { duration: calm ? 0 : 1.4, easing: (t) => 1 - Math.pow(1 - t, 4) }) : window.scrollTo({ top: y, behavior: calm ? 'auto' : 'smooth' });
   };
   const pin = mounted && wide;
+  // under 900px nothing pins: one table sticks above the words, and the chapter crossing the middle of the screen drives it
+  useEffect(() => {
+    if (!mounted || wide || !ref.current) return;
+    const arts = [...ref.current.querySelectorAll('.mt-ch-step')];
+    const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && setAt(arts.indexOf(e.target) - 1)), { rootMargin: '-55% 0px -40% 0px' });
+    arts.forEach((a) => io.observe(a));
+    return () => io.disconnect();
+  }, [mounted, wide]);
   const where = (i) => (i < at ? 'past' : i === at ? 'on' : 'next');
   const step = (i, body) => (
     <article key={i} className={'mt-ch-step' + (i < 0 ? ' mt-ch-intro' : '')} data-at={where(i)} inert={pin && i !== at ? true : undefined}>
-      {mounted && !wide && <div className="mt-ch-own">{table(i)}</div>}
       {body}
     </article>
   );
@@ -337,7 +365,7 @@ function Chapters({ intro, steps, table }) {
               ))}
             </nav>
           </div>
-          {(!mounted || wide) && <div className="mt-ch-obj">{table(at)}</div>}
+          <div className="mt-ch-obj">{table(at)}</div>
         </div>
       </div>
     </section>
@@ -359,7 +387,7 @@ const POINTS = [
 const SIDE = [['Metrics', '/metrics'], ['Logs', '/cloud/logs'], ['Dashboards', '/dashboards'], ['O11y', '/o11y'], ['AI Metrics', '/cloud/ai-metrics'], ['Billing', '/billing'], ['Plans & Pricing', '/cloud/plans'], ['Sessions', '/cloud/sessions']];
 const ICONS = ['M2 12l4-4 3 3 5-6', 'M5 2.5h6M3.5 6h9M2 9.5h12v4H2z', 'M2.5 3h11v4h-11zM2.5 9h11v4h-11z', 'M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM1.5 8h13', 'M8 2 2.5 5v6L8 14l5.5-3V5zM2.5 5 8 8l5.5-3M8 8v6', 'M3 3h3v3H3zM10 10h3v3h-3zM6 4.5h3.5v5.5', 'M8 2v4M8 6 4 10M8 6l4 4M4 10v4M12 10v4', 'M8 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6ZM2.5 14c.8-2.6 3-4 5.5-4s4.7 1.4 5.5 4'];
 const CAP = 'The service the session above is changing.';
-const SERVICES = [['gateway', CAP], ['payments-api'], ['checkout-web', 'A build is running from the last commit on main.'], ['docs-site']];
+const SERVICES = [['gateway', CAP], ['payments-api'], ['checkout-web', 'A build is running from the last commit on main.'], ['docs-site', 'Static, published by the same pipeline as the rest.']];
 const LAND = 72; // where a sent query lands on the line (index)
 const RT0 = md(TS + 9, W);
 
@@ -400,12 +428,16 @@ function Room() {
             <div className="mt-paste-box">
               <div className="mt-paste-bar">
                 <span className="mt-paste-k">Agent prompt</span>
-                <span className="mt-api"><i>api</i>/v1/event/insights</span>
+                <span className="mt-api"><i><span>api</span></i><span>/v1/event/insights</span></span>
                 <span className="mt-copy" onClickCapture={send}><Copy text={PROMPT} /></span>
               </div>
-              <pre className="mt-paste-code"><code>{PROMPT}</code><span className="mt-caret" aria-hidden="true" /></pre>
+              <pre className="mt-paste-code"><code><span>{PROMPT}</span></code><span className="mt-caret" aria-hidden="true" /></pre>
             </div>
           </div>
+          <nav className="mt-rel" aria-label="Related capabilities">
+            <p className="mt-rel-k">Related capabilities</p>
+            <A to="/cloud/logs" className="mt-logs"><b>Logs</b><span>Search every line</span><Arr /></A>
+          </nav>
         </div>
         <i className="mt-wire" aria-hidden="true"><b key={sent} className={sent && !calm ? 'go' : ''} /></i>
         <div className="mt-send-r">
@@ -459,7 +491,7 @@ function Room() {
               </div>
             </div>
             <div className="mt-con-foot">
-              <span>api.hanzo.ai<b>/v1/event/insights</b></span>
+              <span><span>api.hanzo.ai</span><b><span>/v1/event/insights</span></b></span>
               <A to="https://hanzo.team/" className="mt-con-open">Open in the console ↗</A>
             </div>
           </div>
@@ -494,8 +526,6 @@ export default function Metrics() {
         table={(at) => <Table step={at} on={on} auto={auto} />} />
 
       <Room />
-
-      <RelatedCards className="mt-rel" items={[['Logs', '/cloud/logs', 'Search every line']]} />
 
       <LaunchClose className="mt-close" name="Metrics" tag="Time-series metrics" seed="metrics" data={[4, 6]} ask={['View on GitHub', GH]} cta="metrics.close" repo={['hanzoai/metrics', GH]} stars="4 stars" />
     </main>

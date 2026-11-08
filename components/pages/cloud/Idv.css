@@ -1,5 +1,14 @@
 /* IDV v2. Greys only (Hanzo's deck): ink, white, the neutral ramp. One dark room: the forge. */
-.iv { --acc: #0a0a0a; --glow: #525252; --card: #f5f5f5; --focus: #0a0a0a; --btn-solid-hover: #262626; }
+.iv { --acc: var(--ink); --glow: var(--iv-6); --card: var(--iv-1); --focus: var(--ink); --btn-solid-hover: light-dark(#262626, var(--primary-hover));
+  /* the page's greys, each with Hanzo's dark token as its partner (@hanzo/design); bright mode keeps the light value exactly */
+  --iv-k: light-dark(#0a0a0a, var(--primary)); --iv-ko: light-dark(#fafafa, var(--primary-foreground)); --iv-7: light-dark(#404040, var(--text-secondary));
+  --iv-6: light-dark(#525252, var(--muted-foreground)); --iv-5: light-dark(#737373, var(--muted-foreground)); --iv-4: light-dark(#a3a3a3, var(--text-tertiary));
+  --iv-3: light-dark(#d4d4d4, var(--text-disabled)); --iv-2: light-dark(#ededed, var(--secondary)); --iv-f2: light-dark(#f2f2f2, var(--background));
+  --iv-1: light-dark(#f5f5f5, var(--muted)); }
+/* dark mode: the shared v2 scale pins its type tokens to bright values on .v2; give them Hanzo's dark ones on this page */
+html:not(.light) .v2.iv { --ink: var(--foreground); --soft: var(--muted-foreground); --faint: var(--muted-foreground); --line: var(--border); }
+/* the shared Paste and ship tag sets #fafafa type on an ink fill; in dark the fill turns light, so the type follows */
+.iv .sp-api i { color: var(--iv-ko); }
 /* the agent prompt's Copy label on its dark code block: white 78% (the deck), not the shared off-deck grey */
 .iv .x-codeblock .x-copy { color: rgba(255, 255, 255, .78); }
 @media (hover: hover) { .iv .x-codeblock .x-copy:hover { color: #fff; } }
@@ -17,34 +26,34 @@
 .iv-lift { position: sticky; top: 96px; }
 
 /* the lede: the first sentence in ink from the first paint, the rest inks in word by word just after load (1.4 s) */
-.iv-lede { margin: 0; max-width: 44ch; font-weight: 400; font-size: 21px; line-height: 1.5; letter-spacing: -.01em; color: #0a0a0a; text-wrap: pretty; }
+.iv-lede { margin: 0; max-width: 44ch; font-weight: 400; font-size: 21px; line-height: 1.5; letter-spacing: -.01em; color: var(--ink); text-wrap: pretty; }
 .js .iv-lede span:not(.on) { opacity: clamp(.22, calc((var(--p) - var(--i)) * 12 + .22), 1); }
 
-.iv-board { border-radius: 28px; background: #f5f5f5; padding: clamp(20px, 2.2vw, 28px); will-change: transform; }
-.iv-vendors { display: flex; flex-wrap: wrap; gap: 4px; padding: 5px; margin-right: 52px; border-radius: 26px; background: #fff; width: max-content; max-width: calc(100% - 52px); box-sizing: border-box; box-shadow: 0 0 0 1px rgba(0, 0, 0, .05); }
-.iv-vendors button { position: relative; flex: none; min-height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: none; font: 500 15px/1 var(--sans); color: #525252; cursor: pointer; transition: background-color 150ms cubic-bezier(0, 0, .2, 1), color 150ms cubic-bezier(0, 0, .2, 1), transform 150ms cubic-bezier(0, 0, .2, 1); }
+.iv-board { border-radius: 28px; background: var(--iv-1); padding: clamp(20px, 2.2vw, 28px); will-change: transform; }
+.iv-vendors { display: flex; flex-wrap: wrap; gap: 4px; padding: 5px; margin-right: 52px; border-radius: 26px; background: var(--x-raised); width: max-content; max-width: calc(100% - 52px); box-sizing: border-box; box-shadow: 0 0 0 1px light-dark(rgba(0, 0, 0, .05), var(--border)); }
+.iv-vendors button { position: relative; flex: none; min-height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: none; font: 500 15px/1 var(--sans); color: var(--iv-6); cursor: pointer; transition: background-color 150ms cubic-bezier(0, 0, .2, 1), color 150ms cubic-bezier(0, 0, .2, 1), transform 150ms cubic-bezier(0, 0, .2, 1); }
 .iv-vendors button:active { transform: scale(.97); transition-duration: 90ms; }
-.iv-vendors button[aria-selected='true'] { color: #fff; }
+.iv-vendors button[aria-selected='true'] { color: var(--x-on-ink); }
 /* a hover tells you how that vendor answers (webhook, polling, refuse), under the tab, without moving anything */
-.iv-v-hint { position: absolute; left: 50%; top: calc(100% + 8px); transform: translate(-50%, -4px); padding: 4px 8px; border-radius: 6px; background: #0a0a0a; color: #fafafa; font: 500 11px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 150ms cubic-bezier(0, 0, .2, 1), transform 150ms cubic-bezier(0, 0, .2, 1); z-index: 2; }
-.iv-vendors button:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 2px; }
-.iv-v-bg { position: absolute; inset: 0; border-radius: 999px; background: #0a0a0a; }
+.iv-v-hint { position: absolute; left: 50%; top: calc(100% + 8px); transform: translate(-50%, -4px); padding: 4px 8px; border-radius: 6px; background: var(--iv-k); color: var(--iv-ko); font: 500 11px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 150ms cubic-bezier(0, 0, .2, 1), transform 150ms cubic-bezier(0, 0, .2, 1); z-index: 2; }
+.iv-vendors button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.iv-v-bg { position: absolute; inset: 0; border-radius: 999px; background: var(--iv-k); }
 .iv-v-t { position: relative; }
 .iv-wire { display: grid; grid-template-columns: minmax(0, 5fr) minmax(32px, 1fr) minmax(0, 5fr); align-items: center; margin-top: clamp(16px, 1.6vw, 24px); min-height: clamp(240px, 19vw, 290px); }
 .iv-calls { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-.iv-calls li { display: flex; align-items: center; gap: 14px; min-height: 52px; padding: 0 18px; border-radius: 16px; background: #fff; font: 500 clamp(14px, 1.15vw, 17px)/1.2 var(--mono); letter-spacing: -.01em; }
-.iv-calls span { color: #737373; font-size: 13px; }
-.iv-line { height: 2px; background: rgba(0, 0, 0, .08); position: relative; }
-.iv-line i { position: absolute; inset: 0; background: #0a0a0a; transform-origin: left; }
+.iv-calls li { display: flex; align-items: center; gap: 14px; min-height: 52px; padding: 0 18px; border-radius: 16px; background: var(--x-raised); font: 500 clamp(14px, 1.15vw, 17px)/1.2 var(--mono); letter-spacing: -.01em; }
+.iv-calls span { color: var(--iv-5); font-size: 13px; }
+.iv-line { height: 2px; background: var(--line); position: relative; }
+.iv-line i { position: absolute; inset: 0; background: var(--iv-k); transform-origin: left; }
 .iv-vslot { height: 100%; }
-.iv-verdict { height: 100%; display: flex; flex-direction: column; justify-content: center; padding: clamp(22px, 2.2vw, 32px); border-radius: 24px; background: #fff; box-sizing: border-box; }
+.iv-verdict { height: 100%; display: flex; flex-direction: column; justify-content: center; padding: clamp(22px, 2.2vw, 32px); border-radius: 24px; background: var(--x-raised); box-sizing: border-box; }
 .iv-vn { margin: 0; font: 497 clamp(32px, 3vw, 44px)/1 var(--sans); letter-spacing: -.045em; }
-.iv-how { margin: 14px 0 20px; font: 500 12px/1 var(--mono); color: #737373; text-transform: uppercase; letter-spacing: .14em; }
+.iv-how { margin: 14px 0 20px; font: 500 12px/1 var(--mono); color: var(--iv-5); text-transform: uppercase; letter-spacing: .14em; }
 .iv-says { display: flex; align-items: center; gap: 10px; margin: 0; font: 497 clamp(17px, 1.6vw, 21px)/1.25 var(--sans); letter-spacing: -.015em; }
-.iv-verdict.poll .iv-says { color: #525252; }
+.iv-verdict.poll .iv-says { color: var(--iv-6); }
 /* the rest: "approved" (what they used to return) is struck; Hanzo's statement of what they do now stays in ink */
-.iv-was { margin: 0 0 8px; font: 500 14px/1 var(--mono); color: #737373; }
-.iv-was span { text-decoration: line-through; text-decoration-thickness: 1px; text-decoration-color: #0a0a0a; }
+.iv-was { margin: 0 0 8px; font: 500 14px/1 var(--mono); color: var(--iv-5); }
+.iv-was span { text-decoration: line-through; text-decoration-thickness: 1px; text-decoration-color: var(--ink); }
 .iv-tk { flex: none; }
 .iv-tk path { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 30; stroke-dashoffset: 0; animation: iv-draw 400ms cubic-bezier(.4, 0, .2, 1) both; }
 @keyframes iv-draw { from { stroke-dashoffset: 30; } }
@@ -53,7 +62,7 @@
    the sides alternate, the surfaces change down the deck, and each sheet has its own big moment. */
 .iv-sheets { padding: clamp(44px, 6vw, 72px) 0 clamp(17px, 2vw, 27px); }
 .iv-mark { display: block; height: 0; }
-.iv-sheet { position: sticky; top: calc(84px + var(--k) * 16px); min-height: var(--iv-h, min(44svh, 400px)); box-sizing: border-box; margin-bottom: 16svh; padding: clamp(32px, 3.6vw, 56px); border-radius: 28px; background: #f5f5f5; box-shadow: 0 -24px 48px -36px rgba(0, 0, 0, .18); transform-origin: 50% 0; }
+.iv-sheet { position: sticky; top: calc(84px + var(--k) * 16px); min-height: var(--iv-h, min(44svh, 400px)); box-sizing: border-box; margin-bottom: 16svh; padding: clamp(32px, 3.6vw, 56px); border-radius: 28px; background: var(--iv-1); box-shadow: 0 -24px 48px -36px rgba(0, 0, 0, .18); transform-origin: 50% 0; }
 .iv-sheet { display: grid; align-content: center; }
 .iv-sheet-in { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; align-items: center; }
 .iv-sheet:last-child { margin-bottom: 0; }
@@ -75,9 +84,9 @@
 .iv-cut > span { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; }
 .iv-cut > span > span { display: block; transition: transform 700ms cubic-bezier(.16, 1, .3, 1); }
 .js .iv-cut:not([data-in]) > span > span { transform: translateY(105%); }
-.iv-sheet.s2 { background: #ededed; }
-.iv-sheet.s4 { background: #f2f2f2; }
-.iv-sheet.s5 { background: #e4e4e7; }
+.iv-sheet.s2 { background: var(--iv-2); }
+.iv-sheet.s4 { background: var(--iv-f2); }
+.iv-sheet.s5 { background: light-dark(#e4e4e7, var(--secondary)); }
 /* 03 is the graphite sheet: the signature resolves on black */
 .iv-sheet.s3 { background: #171717; color: #fafafa; --soft: rgba(255, 255, 255, .78); --faint: #a3a3a3; --acc: #fafafa; }
 .iv-sheet.s3 .iv-o { background: #0a0a0a; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .1); }
@@ -88,10 +97,10 @@
 .iv-sheet.s3 .iv-o-tick[data-on] { color: #fafafa; }
 
 /* sheet objects: flat white tiles, hairlines, ink against hollow */
-.iv-o { margin: 0; padding: 27px; border-radius: 24px; background: #fff; }
-.iv-o-tag { margin: 0 0 17px; font: 500 12px/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #737373; }
-.iv-o-tick { display: flex; align-items: center; gap: 8px; margin: 17px 0 0; font: 497 17px/1.3 var(--sans); color: #a3a3a3; transition: color 300ms cubic-bezier(0, 0, .2, 1); }
-.iv-o-tick[data-on] { color: #0a0a0a; }
+.iv-o { margin: 0; padding: 27px; border-radius: 24px; background: var(--x-raised); }
+.iv-o-tag { margin: 0 0 17px; font: 500 12px/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--iv-5); }
+.iv-o-tick { display: flex; align-items: center; gap: 8px; margin: 17px 0 0; font: 497 17px/1.3 var(--sans); color: var(--iv-4); transition: color 300ms cubic-bezier(0, 0, .2, 1); }
+.iv-o-tick[data-on] { color: var(--ink); }
 .iv-o-tick:not([data-on]) .iv-tk { visibility: hidden; }
 
 /* 01: one huge figure on the bare sheet (no tile): it counts up to 4 once */
@@ -99,47 +108,48 @@
 .iv-o-n { min-width: 1ch; margin: 0; font: 220 clamp(160px, 15vw, 220px)/.86 var(--sans); letter-spacing: -.05em; font-variant-numeric: tabular-nums; }
 .iv-o-cap { margin-top: 17px; }
 
-.iv-o-was { position: relative; display: inline-block; margin: 0; font: 497 26px/1.2 var(--sans); color: #737373; }
-.iv-o-was i { position: absolute; left: -2px; right: -2px; top: 54%; height: 2px; background: #0a0a0a; transform: scaleX(0); transform-origin: left; transition: transform 400ms cubic-bezier(.4, 0, .2, 1); }
+.iv-o-was { position: relative; display: inline-block; margin: 0; font: 497 26px/1.2 var(--sans); color: var(--iv-5); }
+.iv-o-was i { position: absolute; left: -2px; right: -2px; top: 54%; height: 2px; background: var(--iv-k); transform: scaleX(0); transform-origin: left; transition: transform 400ms cubic-bezier(.4, 0, .2, 1); }
 .iv-o-ref[data-s='1'] .iv-o-was i, .iv-o-ref[data-s='2'] .iv-o-was i { transform: none; }
 .iv-o-now { margin: 10px 0 0; font: 497 84px/1 var(--sans); letter-spacing: -.04em; opacity: 0; transform: translateY(16px); transition: opacity 400ms cubic-bezier(.16, 1, .3, 1), transform 400ms cubic-bezier(.16, 1, .3, 1); }
 .iv-o-ref[data-s='2'] .iv-o-now { opacity: 1; transform: none; }
 
-.iv-o-code { display: block; font: 400 19px/1.6 var(--mono); color: #0a0a0a; word-break: break-all; }
+.iv-o-code { display: block; font: 400 19px/1.6 var(--mono); color: var(--ink); word-break: break-all; }
 .iv-o-poll .iv-o-tick { font-size: 26px; letter-spacing: -.02em; }
 .iv-o-poll .iv-o-ticks i { width: 16px; height: 16px; }
-.iv-o-code span { color: #d4d4d4; }
+.iv-o-code span { color: var(--iv-3); }
 
 .iv-o-track { display: flex; align-items: center; gap: 12px; }
 .iv-o-end { flex: none; font: 500 14px/1 var(--mono); }
 .iv-o-ticks { flex: 1; position: relative; display: flex; justify-content: space-around; align-items: center; height: 24px; }
-.iv-o-ticks::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(0, 0, 0, .14); }
-.iv-o-ticks i { position: relative; width: 12px; height: 12px; border-radius: 50%; border: 1px solid #0a0a0a; background: #fff; transition: background-color 300ms cubic-bezier(0, 0, .2, 1), transform 300ms cubic-bezier(.16, 1, .3, 1); }
-.iv-o-ticks i[data-on] { background: #0a0a0a; transform: scale(1.15); }
+.iv-o-ticks::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: light-dark(rgba(0, 0, 0, .14), var(--border-control)); }
+.iv-o-ticks i { position: relative; width: 12px; height: 12px; border-radius: 50%; border: 1px solid var(--ink); background: var(--x-raised); transition: background-color 300ms cubic-bezier(0, 0, .2, 1), transform 300ms cubic-bezier(.16, 1, .3, 1); }
+.iv-o-ticks i[data-on] { background: var(--iv-k); transform: scale(1.15); }
 
-.iv-o-root { display: inline-block; margin: 0 0 10px; padding: 8px 14px; border-radius: 10px; background: #0a0a0a; color: #fafafa; font: 500 14px/1 var(--mono); }
-.iv-o-kms ul { list-style: none; margin: 0; padding: 0 0 0 20px; display: grid; gap: 10px; border-left: 1px solid rgba(0, 0, 0, .14); }
-.iv-o-kms li { position: relative; display: flex; align-items: center; gap: 10px; font: 500 14px/1.3 var(--mono); color: #a3a3a3; transition: color 300ms cubic-bezier(0, 0, .2, 1); }
-.iv-o-kms li i { width: 20px; height: 1px; margin-left: -20px; background: #0a0a0a; transform: scaleX(0); transform-origin: left; transition: transform 400ms cubic-bezier(.4, 0, .2, 1); }
-.iv-o-kms li[data-on] { color: #0a0a0a; }
+.iv-o-root { display: inline-block; margin: 0 0 10px; padding: 8px 14px; border-radius: 10px; background: var(--iv-k); color: var(--iv-ko); font: 500 14px/1 var(--mono); }
+.iv-o-kms ul { list-style: none; margin: 0; padding: 0 0 0 20px; display: grid; gap: 10px; border-left: 1px solid light-dark(rgba(0, 0, 0, .14), var(--border-control)); }
+.iv-o-kms li { position: relative; display: flex; align-items: center; gap: 10px; font: 500 14px/1.3 var(--mono); color: var(--iv-4); transition: color 300ms cubic-bezier(0, 0, .2, 1); }
+.iv-o-kms li i { width: 20px; height: 1px; margin-left: -20px; background: var(--iv-k); transform: scaleX(0); transform-origin: left; transition: transform 400ms cubic-bezier(.4, 0, .2, 1); }
+.iv-o-kms li[data-on] { color: var(--ink); }
 .iv-o-kms li[data-on] i { transform: none; }
 .iv-o-kms li.off span { position: relative; }
-.iv-o-kms li.off[data-on] { color: #737373; }
-.iv-o-kms li.off[data-on] i { background: rgba(0, 0, 0, .14); }
-.iv-o-kms li.off span::after { content: ''; position: absolute; left: 0; right: 0; top: 55%; height: 1px; background: #0a0a0a; transform: scaleX(0); transform-origin: left; transition: transform 400ms cubic-bezier(.4, 0, .2, 1); }
+.iv-o-kms li.off[data-on] { color: var(--iv-5); }
+.iv-o-kms li.off[data-on] i { background: light-dark(rgba(0, 0, 0, .14), var(--border-control)); }
+.iv-o-kms li.off span::after { content: ''; position: absolute; left: 0; right: 0; top: 55%; height: 1px; background: var(--iv-k); transform: scaleX(0); transform-origin: left; transition: transform 400ms cubic-bezier(.4, 0, .2, 1); }
 .iv-o-kms li.off[data-on] span::after { transform: none; }
 
 .iv-o-split { display: grid; grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr); gap: 20px; align-items: center; }
 .iv-o-big { margin: 0; font: 497 26px/1.15 var(--sans); letter-spacing: -.02em; }
 .iv-o-split ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font: 500 14px/1.35 var(--mono); }
-.iv-o-split li { color: #0a0a0a; }
+.iv-o-split li { color: var(--ink); }
 .iv-o-split li[data-on] { opacity: 1; transform: none; }
 .iv-o-split div:last-child li { opacity: .25; transform: translateX(-6px); transition: opacity 300ms cubic-bezier(0, 0, .2, 1), transform 300ms cubic-bezier(.16, 1, .3, 1); }
 .iv-o-split div:last-child li[data-on] { opacity: 1; transform: none; }
-.iv-o-rule { display: block; background: rgba(0, 0, 0, .14); transform: scaleY(0); transform-origin: top; transition: transform 500ms cubic-bezier(.4, 0, .2, 1); }
+.iv-o-rule { display: block; background: light-dark(rgba(0, 0, 0, .14), var(--border-control)); transform: scaleY(0); transform-origin: top; transition: transform 500ms cubic-bezier(.4, 0, .2, 1); }
 .iv-o-split:not([data-s='0']) .iv-o-rule { transform: none; }
 
 /* the forge: the dark room. On a desk-size screen it pins and plays its four states as you scroll. */
+.iv-forge { --iv-m: 16px; }
 .iv-forge-pin { padding: clamp(72px, 8vw, 116px) 0; }
 .iv-forge-q { margin: 0 0 clamp(27px, 3vw, 44px); max-width: 30ch; font: 497 26px/1.2 var(--sans); letter-spacing: -.02em; color: #fafafa; text-wrap: balance; }
 .iv-forge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
@@ -196,13 +206,14 @@
 @media (hover: hover) {
   .iv .gi-more .x-arrow:hover svg { transform: translateX(6px); }
   .iv .gi-more .x-arrow:hover span { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
-  .iv-vendors button:hover:not([aria-selected='true']) { color: #0a0a0a; background: rgba(0, 0, 0, .06); }
+  .iv-vendors button:hover:not([aria-selected='true']) { color: var(--ink); background: light-dark(rgba(0, 0, 0, .06), var(--glass)); }
   .iv-vendors button:hover .iv-v-hint { opacity: 1; transform: translate(-50%, 0); }
   .iv-seg button:hover:not([aria-pressed='true']) { background: rgba(255, 255, 255, .08); }
   .iv-x:hover { color: #fafafa; text-underline-offset: 5px; }
 }
 
 @media (max-width: 900px) {
+  .iv-forge { --iv-m: 8px; }
   .iv-hero { padding: 88px 0 32px; }
   .iv-hero-r { justify-content: flex-start; padding: 0; }
   .iv-hero-g { grid-template-columns: minmax(0, 1fr); margin-top: 20px; gap: 24px; }
@@ -252,6 +263,8 @@
 
 /* the live object's pause control */
 .iv-pause { top: 16px; right: 16px; }
+/* the shared pause control keeps #0a0a0a type; on this page it follows the ink so its glyph shows in dark */
+.iv .iv-pause { color: var(--ink); }
 
 /* phones: no text under 14px except 11-12px mono capitals */
 @media (max-width: 900px) { .iv-l, .iv-code { font-size: 14px; } }
@@ -267,3 +280,12 @@
   .iv-sheet-in { opacity: 1 !important; }
   .iv-o *, .iv-stamp, .iv-tk path { transition: none !important; animation: none !important; }
 }
+
+/* dark: the shared pause puck is white in both modes (LivePause.css); on this page it sits on Hanzo's dark surface,
+   so it takes the dark icon-tile fill (--secondary) under its light glyph, as /kms does */
+html:not(.light) .iv .lx-pause:not([aria-pressed='true']) { background: var(--secondary); color: var(--foreground); }
+
+/* dark: live hanzo.ai's heroes carry a halftone dot field in dark, densest at the edges (the same rule as /investors);
+   light mode draws nothing here */
+html:not(.light) .iv-hero { position: relative; isolation: isolate; }
+html:not(.light) .iv-hero::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(circle, var(--white-20) 1px, transparent 1.6px) 0 0 / 5px 5px; -webkit-mask-image: radial-gradient(ellipse 75% 70% at 45% 45%, transparent 35%, #000 100%), linear-gradient(#000 70%, transparent); -webkit-mask-composite: source-in; mask-image: radial-gradient(ellipse 75% 70% at 45% 45%, transparent 35%, #000 100%), linear-gradient(#000 70%, transparent); mask-composite: intersect; }

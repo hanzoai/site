@@ -376,9 +376,8 @@ function Forge() {
   // the room enters as a rounded card inside the gutters and opens to full width as it is reached (clip-path only;
   // server and first client frame share the same value; reduced motion: full width, in CSS)
   const { scrollYProgress: reach } = useScroll({ target: room, offset: ['start end', 'start 0.15'] });
-  const gut = useTransform(reach, [0, 1], [32, 0]);
-  const rad = useTransform(reach, [0, 1], [28, 0]);
-  const clip = useTransform([gut, rad], ([g, r]) => `inset(0px ${g.toFixed(1)}px round ${r.toFixed(1)}px)`);
+  // the inset stays inside the text gutter (--iv-m: 16px of 24 on a desk, 8px of 16 on a phone), so no word is cut
+  const clip = useTransform(reach, (p) => { const k = (1 - Math.min(1, Math.max(0, p))).toFixed(3); return `inset(0px calc(var(--iv-m) * ${k}) round calc(var(--iv-m) * ${k} * 1.75))`; });
   return (
     <motion.section className="iv-forge v2-dark" data-room="dark" aria-labelledby="iv-forge-h" ref={room} style={{ clipPath: clip }}>
       <div className="iv-forge-pin">

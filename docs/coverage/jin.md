@@ -33,7 +33,7 @@ Done here: One `<main>`; the shell's skip link targets `#main`. Links go through
 - [x] Ends in proof strip, `Band`, footer
 - ~~Card-to-page links use Morph~~ n/a: no cards lead to pages here
 
-Done here: Round 2: the first screen is a title page: the h1 "Research on learning without labels" (52px, CSS line cut-in), byline and ask over the Abstract set as a side note, then Figure 1 full width (a | b | losses and caption), which starts its saccade within a second. Server HTML has 0 `opacity:0` runs in the hero. Rhythm: chapter 2 ("Ours") is the loud one in a quiet `#f5f5f5` room (numeral 112, heading 44, figure across 8 columns); 1 and 3 rest at 26px; 4-6 drop to 21px headings, 44px numerals, smaller figures and tighter padding; then the dark plate, then the close: one proof line (`hanzoai/jin`, `License: Apache-2.0`), the sentence and ask, rows, footer.
+Done here: Round 2: the first screen is a title page: the h1 "Research on learning without labels" (52px, CSS line cut-in), byline and ask over the Abstract set as a side note, then Figure 1 full width (a | b | losses and caption), which starts its saccade within a second. Server HTML has 0 `opacity:0` runs in the hero. Rhythm: chapter 2 ("Ours") is the loud one in a quiet `#f5f5f5` room (numeral 112, heading 44, figure across 8 columns); 1 and 3 rest at 26px; 4-6 drop to 21px headings, 44px numerals, smaller figures and tighter padding; then the dark plate, then the close: one proof line (`hanzoai/jin`, `License: Apache-2.0`), the sentence and ask, rows, footer. Round 3 (verified 7 Nov round 4): chapters 1-6 are one pinned stage on desktop (texts left, the plate right draws each figure out and the next in, a point scrubbed along the round trip), chapter 3 breaks out at full width with numeral 112, chapter 5 at 84, so nothing dwindles; stacked under 900px with figures alternating and a one-line legend strip.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -75,7 +75,7 @@ Done here: taste OK; greys snapped to the deck ramp and `--bz-*` tokens; radii 6
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: listed below
 
-Done here: Pause (fill on hover, press .98, ring), the draggable image (outline on hover, focus ring, arrow keys), close rows (fill) and the sheet button answer; every `:hover` sits in `@media (hover: hover)`. The sheet is the kit `BizSheet` (focus in, Esc, back). Deleted: see the top of this card.
+Done here: Pause (fill on hover, press .98, ring), the draggable image (outline on hover, focus ring, arrow keys), close rows (fill) and the sheet button answer; every `:hover` sits in `@media (hover: hover)`. The sheet is the kit `BizSheet` (focus in, Esc, back). Deleted: see the top of this card. Round 4: Figure 8's loss legend no longer picks up Hanzo's base `.l0/.l1/.l2` grey fill (it read as three light slabs on the black); verified in a browser that every visible control in the close answers a hover (close rows fill and slide their arrow, See Table 1, Read the docs).
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -84,7 +84,7 @@ Done here: Pause (fill on hover, press .98, ring), the draggable image (outline 
 - [x] Reduced motion shows the final state; no `setInterval`
 - ~~Sound only on the listed moments, through the one kit~~ n/a: the page plays no sound of its own
 
-Done here: Signature: Figure 1's saccade (idle); supporting: line cut-ins (arrival), the drag (pointer), the sheet (state), and Figures 2-7 drawing in once at 60% visible (arrival: strokes by `pathLength` 1.1s ease-in-out 50 ms apart, marks and mask cells after, a point travelling the round trip in Figures 3 and 4, UMAP clusters separating in Figure 6); variety OK (drag + svg line draw), 0 Rise. Tweens only. Figures already on screen at load, JS off and reduced motion all show the finished drawing (0 armed figures, 0 running animations under reduced motion after 3.2s).
+Done here: Signature: Figure 1's saccade (idle); supporting: line cut-ins (arrival), the drag (pointer), the sheet (state), and Figures 2-7 drawing in once at 60% visible (arrival: strokes by `pathLength` 1.1s ease-in-out 50 ms apart, marks and mask cells after, a point travelling the round trip in Figures 3 and 4, UMAP clusters separating in Figure 6); variety OK (drag + svg line draw), 0 Rise. Tweens only. Figures already on screen at load, JS off and reduced motion all show the finished drawing (0 armed figures, 0 running animations under reduced motion after 3.2s). Round 4: a drawn figure left alone walks itself through its lettered parts (a, b, c, d, 1.6 s each, lighter than a hover: the rest at 38%), then rests whole, so the pinned plate and the stacked figures never sit dead; Figure 8 makes one saccade by itself when 60% in view (a short shift and back) so its loss trace shows what a drag does, unless a hand gets there first. Both stop under reduced motion.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set
@@ -100,7 +100,7 @@ Done here: Hanzo's `zen.webp` goes through the kit `Img` with width 1200 and hei
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: Filmed at both sizes: width 375/375 and 1470/1470, 0 targets under 44px; the ask sits at ~320px on a phone with Figure 1 under it inside the first 660px; sections stack numeral, text, figure; the image drags by touch.
+Done here: Filmed at both sizes: width 375/375 and 1470/1470, 0 targets under 44px; the ask sits at ~320px on a phone with Figure 1 under it inside the first 660px; sections stack numeral, text, figure; the image drags by touch. Round 4: check.mjs at 375 and 1470: errors 0, wide 0; its "covered" hits are body text scrolling under the sticky running head (by design, it is the chapter bar). The phone header carries "Read the docs" after the hero (shared Ask, verified).
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -157,4 +157,4 @@ Done here: No live data; the page is whole in server HTML. Figure 1: playing, pa
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/<page>.md` verdict 8 or more
 
-Done here: `data-cta="jin.hero"` and `"jin.close"`; `Cta` dispatches `cta_click` with the id only. `docs/review/jin.md` read (6/10); fixes 1-8 done in round 2, fix 9 (shared chrome) in `docs/requests/jin.md`; V2 line updated; awaiting a fresh critic.
+Done here: `data-cta="jin.hero"` and `"jin.close"`; `Cta` dispatches `cta_click` with the id only. `docs/review/jin.md` read (6/10); fixes 1-8 done in round 2, fix 9 (shared chrome) in `docs/requests/jin.md`; V2 line updated; awaiting a fresh critic. Round 4: review round 2 (7/10) fixes 1-3 and 5-10 verified in the round-3 build; fix 4 (phone header ask) is shared and filed in `docs/requests/jin.md`. Proof `docs/gallery/jin/round4-*.jpg`.

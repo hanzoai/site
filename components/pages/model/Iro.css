@@ -2,8 +2,8 @@
 .ir-head { width: min(44%, 560px); }
 .ir-stage { padding: 0; }
 .ir-frame { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: radial-gradient(ellipse at 50% 45%, #171717, #0a0a0a 70%); }
-.ir-frame::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(255, 255, 255, .04) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .04) 1px, transparent 1px); background-size: 32px 32px; }
-.ir-pic { position: absolute; left: 50%; top: 50%; translate: -50% -50%; border-radius: 6px; overflow: hidden; box-shadow: 0 0 0 1px rgba(255, 255, 255, .14), 0 30px 60px -20px rgba(0, 0, 0, .8); background: #000; }
+.ir-frame::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px); background-size: 32px 32px; }
+.ir-pic { position: absolute; left: 50%; top: 50%; translate: -50% -50%; width: min(88cqw, calc((100cqh - 112px) * var(--r))); aspect-ratio: var(--r); border-radius: 6px; overflow: hidden; box-shadow: 0 0 0 1px rgba(255, 255, 255, .14), 0 30px 60px -20px rgba(0, 0, 0, .8); background: #000; }
 .ir-pic canvas, .ir-pic img { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; display: block; }
 .ir-pic img { object-fit: cover; }
 .js .ir-pic img { opacity: 0; transition: opacity 1.1s var(--ease); }
@@ -12,12 +12,17 @@
 .ir-tl { top: 14px; left: 14px; }
 .ir-bl { bottom: 14px; left: 14px; }
 /* round 2: the step count never re-wraps the line, the window fits the screen, the tags sit off the picture on phones */
-.ir-bl span { display: inline-block; min-width: 2ch; text-align: right; font-variant-numeric: tabular-nums; }
+.ir-bl .ir-n { display: inline-block; min-width: 2ch; text-align: right; font-variant-numeric: tabular-nums; }
 .ir-tag { white-space: nowrap; }
-.ir-frame { max-height: calc(100svh - 330px); min-height: 420px; }
+.ir-frame { container-type: size; aspect-ratio: auto; width: 100%; height: max(420px, min(calc(100svh - 330px), 560px)); }
+.ir-bl .ir-cfg { display: inline; min-width: 0; }
+/* phones: a 4:5 window leaves room above and below the picture for both tags, and the CFG reading takes its own line
+   (never cut at the window's edge, never over the picture) */
 @media (max-width: 899px) {
-  .ir-frame { max-height: none; min-height: 0; padding-block: 44px; box-sizing: content-box; }
-  .ir-tag { white-space: normal; max-width: calc(100% - 28px); }
+  .ir-frame { height: auto; aspect-ratio: 4 / 5; }
+  .ir-pic { width: min(88cqw, calc((100cqh - 150px) * var(--r))); }
+  .ir-tag { font-size: 11px; letter-spacing: .08em; }
+  .ir-bl .ir-cfg { display: block; text-align: left; }
 }
 .ir-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; padding: 14px 16px; border-top: 1px solid rgba(255, 255, 255, .08); }
 .ir-play { min-width: 76px; }
@@ -37,3 +42,19 @@
   .ir-asp { margin-left: 0; }
   .ir-range { flex-basis: 100%; order: 3; }
 }
+/* chapters and the fits tile: the flow frozen at its own step */
+.ir-grain canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; }
+.cr-art.ir-grain canvas { transform: translate(var(--x), var(--y)) scale(var(--z)); }
+/* the fits rows run straight into the studio map, no dead paper between */
+.lv:has(> [data-hero=iro]) .cr-fits { padding-bottom: 58px; }
+.lv:has(> [data-hero=iro]) .cr-fits + .cr-map { padding-top: 58px; }
+/* the chapter rail answers hover too: the hairline beside the hovered chapter draws in ink */
+.lv:has(> [data-hero=iro]) .lv-ch-rail button { position: relative; }
+.lv:has(> [data-hero=iro]) .lv-ch-rail button::before { content: ''; position: absolute; left: -18px; top: 4px; bottom: 4px; width: 2px; border-radius: 2px; background: #0a0a0a; transform: scaleY(0); transition: transform .2s cubic-bezier(.16, 1, .3, 1); }
+@media (hover: hover) { .lv:has(> [data-hero=iro]) .lv-ch-rail button:hover::before { transform: scaleY(1); } }
+/* dark (docs/DARK-MODE.md): the rail's hover hairline draws in Hanzo's ink */
+html:not(.light) .lv:has(> [data-hero=iro]) .lv-ch-rail button::before { background: var(--foreground); }
+
+/* dark: the shared Creative.css draws these two headings in #0a0a0a in both modes; on this page they take Hanzo's
+   foreground in dark until the shared file is converted */
+html:not(.light) .lv:has(> .lv-stage[data-hero=iro]) :is(.cr-caps-h, .cr-fits-list h3) { color: var(--foreground); }

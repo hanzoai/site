@@ -66,7 +66,7 @@ Done here: Deck sizes: h1 52, section 26, H3 17, lede 21, body 16; product rende
 - [ ] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: taste.py passes; brows check: 0 labels above a headline; radii 24/16, no shadows on tiles; hand-drawn glyphs (pause, add, recall) until the Lucide set is in the kit; every off-deck grey literal in IdePage.css (#f5f5f7, #16161a, #1b1b20, #1e1e23, #1c1c1f, #48484e, #d1d1d6, #a1a1a6, #6e6e73, #0b0b0c, #86868b, #26262c, #e9e9ec and the #b5b5b5–#c7c7cc family) replaced in the file by deck values (#fafafa, #171717, #262626, #737373, #a3a3a3, #d4d4d4, #e5e5e5, #ededed) in round 5; the chapter code reads at white 55% on #171717 with whole lines. No three equal boxes: memory kinds 5/4/3, related apps as 72px hairline rows.
+Done here: taste.py passes; brows check: 0 labels above a headline; radii 24/16, no shadows on tiles; hand-drawn glyphs (pause, add, recall) until the Lucide set is in the kit; round 9 keeps the Teach room as one sheet in three hairline-divided columns (no fills on the columns, only on the remembered rows); every off-deck grey literal in IdePage.css (#f5f5f7, #16161a, #1b1b20, #1e1e23, #1c1c1f, #48484e, #d1d1d6, #a1a1a6, #6e6e73, #0b0b0c, #86868b, #26262c, #e9e9ec and the #b5b5b5–#c7c7cc family) replaced in the file by deck values (#fafafa, #171717, #262626, #737373, #a3a3a3, #d4d4d4, #e5e5e5, #ededed) in round 5; the chapter code reads at white 55% on #171717 with whole lines. No three equal boxes: memory kinds 5/4/3, related apps as 72px hairline rows.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
@@ -84,7 +84,7 @@ Done here: Buttons press to .97/.98, focus ring from the system; the dark-room r
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit
 
-Done here: Signature: the editor that remembers (time) in the Stage settle (scroll); supporting: exploded planes, pinned chapters, A2Grow statement, typed script; kinds: time, state, pointer, scroll, arrival; variety.py OK; reduced motion shows final states; no setInterval.
+Done here: Signature: the editor that remembers (time) in the Stage settle (scroll); supporting: exploded planes, pinned chapters, A2Grow statement, typed script; kinds: time, state, pointer, scroll, arrival; variety.py OK; reduced motion shows final states (0 running animations, chips at opacity 1, measured); no setInterval. Round 9: the editor holds its finished picture 1.5 s after first paint, then the memories leave in order (60 ms apart) and the agent's session in reverse before the replay, so the first painted frame is the first animated frame; it starts at its own size (no 1.04 pop: .ide-obj 1200px wide at 150 ms and at 1000 ms). The hero words are gone (opacity 0 by 19% of the stage) before the rising editor reaches them. The chapter pictures and the Rust plane play short idle loops (memories recalled in turn, the impact radius pulsing, the audit trail ticking, the engine's four parts lighting in turn), each under 5 s and only once on screen: motion.mjs desk reports 0 still screens (it reported 3 before).
 
 ## 10. Media
 - ~~`Film` and `Pic` only; sizes and posters set~~ n/a: no images or films on this page
@@ -100,7 +100,7 @@ Done here: No media on this page: the editor and the planes are drawn in the DOM
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: 1470x801 and 375x812 checked (no overlap); 320 scrollWidth 320; ask bottom at 520px on 375x667; a phone target crawl of <main> (7 Nov, round 3) finds 0 controls under 44px: View on GitHub, GitHub and Hanzo Cloud now have a 44px box, the app links in the close are 44px rows. Round 5: the memory kinds stack to one column under 900px (the 5/4/3 split is desktop only) and the keychain sits below the sandbox label on phones, re-shot at 375 with no overlap. The gutter memories are no longer focusable (their words are in the caption and the Teach room), so they are not targets.
+Done here: 1470x801 and 375x812 checked (no overlap). Round 9 (8 Nov), measured: in the chapter-01 picture each memory now sits in the flow of its own line, so a chip-bearing line's text ends at or before the chip's left edge minus 12px (1470: 1053 vs 1071, 759 vs 935, 851 vs 995; 375: 243 vs 255, 128 vs 259, 221 vs 245), and in the hero editor the text clears chip plus dashed lead (807 vs 939-64 at 1470, 216 vs 275-24 at 375); the start script's long last line wraps instead of being cut at the panel edge. 320 scrollWidth 320; ask bottom at 540px on 375x667; a phone target crawl of <main> (7 Nov, round 3) finds 0 controls under 44px: View on GitHub, GitHub and Hanzo Cloud now have a 44px box, the app links in the close are 44px rows. Round 5: the memory kinds stack to one column under 900px (the 5/4/3 split is desktop only) and the keychain sits below the sandbox label on phones, re-shot at 375 with no overlap. The gutter memories are no longer focusable (their words are in the caption and the Teach room), so they are not targets.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -109,7 +109,7 @@ Done here: 1470x801 and 375x812 checked (no overlap); 320 scrollWidth 320; ask b
 - [x] One h1; no heading skips; names start with visible text
 - [x] Keyboard reaches every control
 
-Done here: Body and labels use #0a0a0a/#525252/#737373 on white; pause controls on the editor loop and the tier motes; the memory input has an accessible name; one h1, then h2 and h3; every control is a button or link.
+Done here: Body and labels use #0a0a0a/#525252/#737373 on white; pause controls on the editor loop and the tier motes (the chapter and plane idle loops stop by themselves in under 5 s, so they need none); the memory input has an accessible name; one h1, then h2 and h3; every control is a button or link.
 
 ## 13. Performance and engineering
 - [x] h1 and LCP element in server HTML
@@ -157,4 +157,4 @@ Done here: The memory demo has an empty state (an em dash named Nothing yet.); n
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/ide.md` verdict 8 or more
 
-Done here: data-cta on ide.hero; the kit Band's button has no data-cta yet (requested); Cta sends cta_click through the system event; V2 line in the header; reviews read: 6/10, 6/10, 7/10, 6/10 (7 Nov). Round 7 answers the last: phone chapter items end at x 359 at 375 (round 6 had pushed them to 554), memory chips never cover code, the editor rests under the ask in normal flow (first paint and after hydration both at y 490 at 1470, no jump), the h1 cuts in by CSS from the first paint, and the page's own Lines and Room replace the shared A2Lines and A2Room so reduced motion hydrates with 0 errors (measured at 1470 and 375). Round 6 answered the one before it (whole code lines, reduced motion lays the stage flat, less air, hovers, Teach placeholder).
+Done here: data-cta on ide.hero; the kit Band's button has no data-cta yet (requested); Cta sends cta_click through the system event; V2 line in the header; reviews read: 6/10, 6/10, 7/10, 6/10 (7 Nov). Round 9 (8 Nov) answers review round 8: chips can no longer cover code (they sit in the flow of their line in the chapter picture, and the hero lines reserve chip plus lead, measured at 1470 and 375); no arrival pop or wipe (Stage starts at scale 1; the editor holds the finished picture 1.5 s, then the memories leave in order); the stage shadow is the deck's floating shadow with `overflow: clip; overflow-clip-margin: 64px`, so no straight cut at a 1443px scroll; the Teach tiles are one hairline sheet; the kit Band items are re-filed in docs/requests/ide.md. Round 7 answered the one before: phone chapter items end at x 359 at 375 (round 6 had pushed them to 554), the editor rests under the ask in normal flow (top at y 490 at 1470 from first paint), the h1 cuts in by CSS from the first paint, and the page's own Lines and Room replace the shared A2Lines and A2Room so reduced motion hydrates with 0 errors (measured at 1470 and 375). Round 6 answered the one before it (whole code lines, reduced motion lays the stage flat, less air, hovers, Teach placeholder).

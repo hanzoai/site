@@ -33,7 +33,7 @@ Done here: Parity 28/28 text and 2/2 links; Hanzo's header and footer are untouc
 - [x] Ends in one close in Hanzo's words ("Get IDV" with the ask), then the footer
 - [x] The h1 is the `data-morph-target`, so cards elsewhere open into it
 
-Done here: The first screen is the name, the ask and one live object: a switchboard where the same four calls stay put while the vendor under them turns (Jumio, Onfido, a forged callback, Plaid, the rest) and the verdict lane answers each one's honest way: a signed webhook, a forgery refused, a poll to the source, or a refusal until the parsing is written. The h1 (52px, 40px on phones) cuts in by CSS line mask at first paint, so it moves in under 1 s with no script; a headless JS-off pass found 0 hidden text blocks.
+Done here: The first screen is the name, the ask, Hanzo's intro (first sentence in ink at first paint, the rest inked word by word, resting in full ink; it leads on a phone) and one live object: the switchboard where the four calls stay put while the vendor turns (Jumio, Onfido, Plaid, the rest) and the verdict lane answers each one's own way (HMAC-SHA256, polled from the provider, refuse with only "approved" struck). It moves within 1 s, pausable.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn` in the page
@@ -66,7 +66,7 @@ Done here: Parity 28/28 text and 2/2 links. Section labels sit under their headi
 - ~~One icon set~~ n/a: no icons beyond the kit's
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: Greys from Hanzo's deck only; Sign one, forge one. Hex literals remain in page CSS because `tokens.css` is not on main yet (listed below).
+Done here: Greys from Hanzo's deck only (`taste.py` OK); the vendor-tab hover fill is a deck step, not an invented grey. Hex literals remain in page CSS because `tokens.css` is not on main yet.
 
 ## 8. UI component library
 - [x] Every control has hover (inside `@media (hover:hover)`), press .97, focus-visible, disabled
@@ -84,7 +84,7 @@ Done here: Kit `Cta`, `CodeBlock`, `Copy` and Cloud 3's `LivePause`; segmented c
 - [x] Reduced motion shows the final state; no `setInterval` in the page (timers are `setTimeout` chains)
 - [x] Sound only on the listed moments, through the one kit (`lib/sound.js`, wired by `components/Sound.jsx`): the ask taps, tabs, radios and pause toggles tick (radios carry `data-sound="tick"`), copy chimes; the demos loop while seen and never finish, so no done chime
 
-Done here: Signature: a verdict, or nothing. Idle: the vendor turns every few seconds while on screen until you pick one. State: the vendor pill glides (layoutId) and the verdict card swaps; in the dark room the stamp answers accepted, turned away or refused from a real HMAC-SHA256 computed in the browser. Scroll: Hanzo's intro paragraph inks in word by word as you read; the six sheets stick and stack over each other. No springs: every move is ease-emphasis at 300 ms.
+Done here: Signature: a verdict, or nothing. Idle: the vendor turns every 3 s while seen (pausable). Pointer: the board leans 2.5°, a vendor hover previews its verdict and names how it answers. State: the vendor pill glides (layoutId); the forge's three choices recompute a real HMAC-SHA256 and the verdict leads with its word (accepted, polled, refusal). Time: the intro inks in. Arrival: sheet titles cut into their line, the 4 counts up, the hash and the KMS tree draw. Scroll: the six sheets stack (outgoing ones step back with a 16px edge, words kept) and the forge opens from a 16px (8px phone) inset kept inside the text gutter (C1 fix: the old 32px inset cut its heading while opening).
 
 ## 10. Media
 - ~~`Film` and `Pic` only~~ n/a: no photo or film on Hanzo's page
@@ -92,7 +92,7 @@ Done here: Signature: a verdict, or nothing. Idle: the vendor turns every few se
 - [x] Nothing missing; no image without alt
 - ~~No dimmed photo; 4+ real visuals together~~ n/a: Hanzo's page has no imagery
 
-Done here: Product objects are drawn in HTML and CSS from Hanzo's words; the close carries the product's own Sigil (its figures as data).
+Done here: Objects are drawn from Hanzo's words (the switchboard, the counting 4, "approved" struck over "refuses", the full-width hash, the polling dots, the KMS tree, IDV beside Risk, the forge); the close is the shared GetIt with its contour art. No Hanzo media exists for this page.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -100,7 +100,7 @@ Done here: Product objects are drawn in HTML and CSS from Hanzo's words; the clo
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: At 375: the vendor tabs wrap above the four calls, the wire turns vertical and the verdict sits below; the sheets stack with a smaller offset; the forge panes stack. Measured: ask bottom at 274 of 667; pinned scenes stack under 900px, nothing floats over text.
+Done here: At 375: the lede leads, the four vendors sit in two rows of two (none faded), each sheet shows its title and object before its paragraph, the forge reads provider, callback, choices, verdict in order. `check.mjs` 7 Nov: phone OK; desk flags only the stacked sheets covering the sheet beneath, which is the design (the outgoing sheet keeps a 16px edge, no text in it).
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast: #0a0a0a and #525252 on white and #f5f5f5, #a3a3a3 and white on black
@@ -149,7 +149,7 @@ Done here: Hanzo's agent prompt use the kit `CodeBlock`, whose Copy copies exact
 - ~~A failed submit keeps its values~~ n/a: n/a: no form posts anywhere; the page's inputs are in-page demos and nothing is sent
 - [x] A thrown island leaves the page: the shared `app/error.jsx` keeps header and footer
 
-Done here: The forge says "This browser cannot compute an HMAC here." when WebCrypto is unavailable; nothing leaves the page.
+Done here: If WebCrypto is unavailable the forge keeps the server-rendered verdict for the callback as sent (the HMAC values are in the HTML), and nothing leaves the page; the verdict stamp is `aria-live="polite"`.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary (the kit `Cta` sends `cta_click`); `lib/track.js` is not on main yet
@@ -157,4 +157,4 @@ Done here: The forge says "This browser cannot compute an HMAC here." when WebCr
 - [x] `V2: 8/10` line in the page file's top comment
 - [x] Review read: no `docs/review/idv.md` yet
 
-Done here: `idv.hero` and `idv.close` on the asks. Gallery: `docs/gallery/idv/` (desktop film and phone stills).
+Done here: `idv.hero` and `idv.close` on the asks. Gallery: `docs/gallery/idv/` (earlier film and stills plus C1 stills `c1-desk-hero.jpg`, `c1-desk-forge.jpg`, `c1-phone-hero.jpg`). Shared request kept in `docs/requests/cloud2.md` (CodeBlock `overscroll-behavior` under reduced motion).

@@ -1,4 +1,5 @@
 # /kai/guide — James-eye review
+Ready: 2026-11-08 copy check missing 0 of 111 (every mixed line in leaf spans, Jev body lines whole with the model id highlighted), hero thread no longer shifts the page (CLS 0.03 → 0.001), the conversation and code blocks no longer trap the wheel, one solid ask at a time (usePhoneAsk), equal phone chips, idle carry dots on the call shape, last hovers (The runs, tabs, recipes ask); 0 still screens.
 
 Verdict: 7/10
 First complaint: "The hero is lovely, then it turns back into a docs page: a code box, another code box, five paragraphs stacked beside a control panel, then another code box. That's an overload of information, and the terminal I just watched ends on dots, not an answer."

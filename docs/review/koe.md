@@ -1,4 +1,5 @@
 # /koe — James-eye review
+Ready: 2026-11-07 round-2 fixes verified (own picture per chapter and fits, one steady solid ask, h1 kept, every hover answers incl. rail and band links, no booth shadow, phone tabs one row, pause docked, ask clear of the cookie card at 375×667); map-to-cards gap closed, model grid no longer overlaps Enso on phones, pills to SPEC, copy check missing 0; Morph and header clip filed as shared requests
 
 Verdict: 7/10
 First complaint: "It's the same wave over and over. The hero, all four chapters, the 'where it fits' panel and the cards are one film. As I scroll nothing new comes in, and once it settles I can't see a black button telling me what to do."

@@ -33,7 +33,7 @@ Done here: Parity 29/29 text and 2/2 links; Hanzo's header and footer are untouc
 - [x] Ends in one close in Hanzo's words ("Get Ingress" with the ask), then the footer
 - [x] The h1 is the `data-morph-target`, so cards elsewhere open into it
 
-Done here: The first screen is the name, Hanzo's line, the ask, ports 80 and 443 as figures (64px), and one live object: a routing board (titled hanzoai/ingress) where requests arrive at hanzo.ai paths, pass middleware and land on a backend; a pod leaves rotation and comes back; the certificate is issued at load (Let's Encrypt) and only the middle of the loop waits for it. Round 3: the middleware box holds two chips' height, so its label no longer jumps (y 556 at all 12 samples); the board-to-"What happens at the edge" gap is down from about 360px to about 180px. The h1 (52px, 40px on phones) cuts in by CSS line mask at first paint, so it moves in under 1 s with no script; a headless JS-off pass found 0 hidden text blocks (entrance states hide only under `html.js`). Round 2: the empty "What happens at the edge" screen is gone (the h2 rides in the first wipe scene), and the black room enters as a rounded card (inset 32px, radius 28) that opens to full width as it reaches 25% of the viewport.
+Done here: The first screen is the name (its two lines cut in by the kit line mask, visibly in the 0 ms frame), the ports 80 and 443 as figures (64px, grey), Hanzo's line, the ask, and the signature: a turning globe where requests arc in to the one edge and on to a backend, the middle backend leaving rotation and coming back (IngressGlobe.jsx); drag or swipe to spin, arrow keys on focus, pausable. Order after it: What happens at the edge (six facts on a snapping carousel), the routing board, Paste and ship, Chain your own pipeline (dark room), Get Ingress.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn` in the page
@@ -66,7 +66,7 @@ Done here: Parity 29/29 text and 2/2 links. Section labels sit under their headi
 - ~~One icon set~~ n/a: no icons beyond the kit's
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: Greys from Hanzo's deck only; one dark room (the pipeline). Round 3: the hero ask hovers to #262626 (was the shared #2c2c2e) with a 4px arrow nudge, styled page-local. Round 2 swapped the off-deck #f5f5f7, #161617, #2c2c2e for #f5f5f5, #171717, #262626; board tiles are flat (a 2px ring only when hit) and the scene card keeps the floating shadow with no outline. Deck hex literals remain in page CSS because `tokens.css` is not on main yet.
+Done here: Greys from Hanzo's deck only (`taste.py` OK); one dark room (the pipeline). C1: the page CSS's #0a0a0a literals (11) now read `var(--ink)`; the remaining greys wait on `tokens.css`. No floating shadows on tiles (the old chapter-card shadow went with the wipe).
 
 ## 8. UI component library
 - [x] Every control has hover (inside `@media (hover:hover)`), press .97, focus-visible, disabled
@@ -84,7 +84,7 @@ Done here: Kit `Cta`, `CodeBlock`, `Copy` and Cloud 3's `LivePause`. Round 2, th
 - [x] Reduced motion shows the final state; no `setInterval` in the page (timers are `setTimeout` chains)
 - [x] Sound only on the listed moments, through the one kit (`lib/sound.js`, wired by `components/Sound.jsx`): the ask taps, the pause toggle and the middleware chips tick (`aria-pressed`, `data-sound="tick"`), the ↑/↓ reorder buttons and a finished drag tick, copy chimes; the board loops while seen and never finishes, so no done chime
 
-Done here: Signature: the routing board, live. Idle: the board routes a request a second while on screen. Time (round 2): each of the six scenes plays its drawing once as it is wiped in, then rests: the three sources slide up under `networking.k8s.io/v1 Ingress` and `default IngressClass` ticks on; the lock shackle draws and closes, then "Let's Encrypt" and "wildcards included" arrive; the chips arrive 60 ms apart (the `--d` index) and a request passes through the black ones; the hollow pod empties and refills; the four paths type in one after another; 80 and 443 settle. State: middleware chips add and drag-reorder (keyboard arrows too), and a request dot steps down the chain on each change, lighting each row it passes. Scroll: the six scenes wipe up while the section pins; round 3 removed the auto-settle, so the page never moves on its own (probe: scrollTo 3500, 2700, 4100 rest exactly there; a 300px wheel flick from 2400 rests at 2670, no pull-back). Instead the handover is clean mid-wipe: the outgoing text and card fade out over the first 30% of the next wipe (`--out`), the incoming caption and h3 cut in by line mask and the body rises 16px once its wipe passes 50% (`data-t`), so two headings never stack; each drawing starts as its wipe begins, so no card arrives empty. Reduced motion: every drawing is its final frame, scenes stacked.
+Done here: Signature globe (idle turn, pointer/touch drag with inertia, keys). Entrances one per section: side-carousel (facts glide in and snap), stretch-scroll (the board), inertia-drag (the prompt card coasts in and can be thrown), count-roll (pipeline step numbers), curtain-rise (the close). Idle: the globe and the routing board (a request a second; a backend leaves and is put back). Time: each fact's drawing plays once as its card arrives. State: the pipeline's chips toggle (`aria-pressed`), rows reorder by drag or arrows and a request walks the chain. Scroll-linked: only the board's stretch.
 
 ## 10. Media
 - ~~`Film` and `Pic` only~~ n/a: no photo or film on Hanzo's page
@@ -92,7 +92,7 @@ Done here: Signature: the routing board, live. Idle: the board routes a request 
 - [x] Nothing missing; no image without alt
 - ~~No dimmed photo; 4+ real visuals together~~ n/a: Hanzo's page has no imagery
 
-Done here: Product objects are drawn in HTML and CSS from Hanzo's words; the close carries the product's own Sigil (its figures as data).
+Done here: Objects are drawn from Hanzo's words: the globe, six fact drawings, the routing board (C1: the two pod backends now carry Hanzo's "health checks" like the static one carries "from disk", so no tile reads as a loading skeleton), the pipeline, and the shared GetIt contour art at the close.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -100,7 +100,7 @@ Done here: Product objects are drawn in HTML and CSS from Hanzo's words; the clo
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: At 375: the scenes stack one after another with no pin and each drawing plays when half of it is on screen; the board keeps the request path, with the middleware as one compact 13px row between hosts and backends (round 2); the pipeline stacks under its chips and the room is open full width. Measured: ask bottom at 446 of 667; pinned scenes stack under 900px, nothing floats over text.
+Done here: At 375 (C1 fixes): the globe sits on top of its stage with the legend and note under it (they were squeezed beside it and covered by the canvas); each fact is one card, words then drawing, the next card peeking 40px (the 5/6 split had squeezed the text to a word a line and the source pills ran out of their panel); the board's lit row keeps its place so Let's Encrypt never crowds its edge. `check.mjs` 7 Nov: desk and phone 0 errors, 0 covered, 0 wide.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast: #0a0a0a and #525252 on white and #f5f5f5, #a3a3a3 and white on black
@@ -157,4 +157,4 @@ Done here: A headless JS-off pass shows every word; reduced motion stops each de
 - [x] `V2: 8/10` line in the page file's top comment
 - [x] Review read: `docs/review/ingress.md` (round 2, 7/10): fixes 1-4, 6, 7, 8 done page-local; fix 5 (phone header ask) filed in `docs/requests/ingress.md`
 
-Done here: `ingress.hero` and `ingress.close` on the asks. Gallery: `docs/gallery/ingress/` (round 2: `round2-desktop.jpg`, `round2-desktop-pipeline.jpg`, `round2-phone.jpg`; round 3: `round3-desktop-wipe.jpg`, `round3-desktop-edge.jpg`, `round3-phone.jpg`).
+Done here: `ingress.hero` and `ingress.close` on the asks. Gallery: `docs/gallery/ingress/` (earlier rounds plus C1 stills `c1-desk-hero.jpg`, `c1-desk-board.jpg`, `c1-phone-hero.jpg`, `c1-phone-facts.jpg`). Shared asks in `docs/requests/ingress.md` (item 7: GetIt's Deploy to Cloud 44px target).

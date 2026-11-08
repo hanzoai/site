@@ -282,6 +282,32 @@
 .in-flip-k { padding-right: 56px; }
 .in-win-bar .in-pause { margin-left: auto; }
 
+/* dark mode, on Hanzo's tokens: the deck ramp turns over (card --muted, tiles --secondary, ink --foreground);
+   the code room is black in both modes, so it takes the light ramp back */
+html:not(.light) .in {
+  --w0: var(--secondary); --w1: var(--surface-card-quiet); --w3: var(--muted); --w4: var(--muted); --w5: var(--secondary);
+  --s1: var(--secondary); --s2: var(--secondary); --s3: var(--border-strong); --s4: var(--border-selected);
+  --ink: var(--foreground); --soft: var(--muted-foreground); --faint: var(--text-tertiary); --line: var(--border);
+  --glow: var(--muted-foreground); --btn-solid-hover: var(--primary-hover);
+}
+html:not(.light) .in .v2-dark, html:not(.light) .in [data-room='dark'] {
+  --w0: #fff; --w1: #fafafa; --w3: #f5f5f5; --w4: #f2f2f2; --w5: #ededed;
+  --s1: #e9e9e9; --s2: #e4e4e7; --s3: #d4d4d4; --s4: #a3a3a3; --ink: #0a0a0a;
+}
+html:not(.light) .in-kill i::after, html:not(.light) .in-sw::after { background: var(--x-on-ink); }
+/* the labels still invert against what passes under them: over the --secondary track they land a quiet grey,
+   under the pill on near-black */
+html:not(.light) .in-mode-t { color: var(--foreground); }
+@media (hover: hover) { html:not(.light) .in-modes button[aria-checked='false']:hover .in-mode-t { color: var(--primary); } }
+html:not(.light) .in-modes button[aria-checked='true'] .in-mode-t { color: var(--primary); }
+/* the shared pause control draws its icon in #0a0a0a on its own fill; on this page it takes the ink */
+html:not(.light) .in-pause:not([aria-pressed='true']) { color: var(--ink); }
+html:not(.light) .in-row.hi .in-tag { color: var(--x-on-ink); }
+html:not(.light) .in-events p.kill { color: var(--ink); }
+html:not(.light) .in-q { background: var(--background); box-shadow: inset 0 0 0 1px var(--border); color: var(--muted-foreground); }
+html:not(.light) .in-caret { background: var(--foreground); }
+html:not(.light) .in-pa-n { fill: var(--bg); }
+
 @media (prefers-reduced-motion: reduce) {
   .in-caret { animation: none; }
 }
@@ -331,3 +357,12 @@
   .in-get .gi-more a { display: inline-flex; align-items: center; min-height: 44px; }
   .in-get .gi-art { position: relative; right: auto; top: auto; width: 72%; margin: 40px 0 0 auto; opacity: 1; }
 }
+
+/* dark: the shared pause puck is white in both modes (LivePause.css); on this page it sits on Hanzo's dark surface,
+   so it takes the dark icon-tile fill (--secondary) under its light glyph, as /kms does */
+html:not(.light) .in .lx-pause:not([aria-pressed='true']) { background: var(--secondary); color: var(--foreground); }
+
+/* dark: live hanzo.ai's heroes carry a halftone dot field in dark, densest at the edges (the same rule as /investors);
+   light mode draws nothing here */
+html:not(.light) .in-hero { position: relative; isolation: isolate; }
+html:not(.light) .in-hero::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(circle, var(--white-20) 1px, transparent 1.6px) 0 0 / 5px 5px; -webkit-mask-image: radial-gradient(ellipse 75% 70% at 45% 45%, transparent 35%, #000 100%), linear-gradient(#000 70%, transparent); -webkit-mask-composite: source-in; mask-image: radial-gradient(ellipse 75% 70% at 45% 45%, transparent 35%, #000 100%), linear-gradient(#000 70%, transparent); mask-composite: intersect; }

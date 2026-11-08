@@ -25,7 +25,7 @@
 // Metric: api_key_created
 // Signature: live-chat — pick one of the guide's own questions and Kai's answer streams back in its documented response shape
 // Beyond: the request checker, driven by the limit you pick or by your own choices, in the guide's own figures
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Children, Fragment, cloneElement, isValidElement, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { Copy } from '../../ui';
@@ -33,7 +33,20 @@ import { A, Cta, Tabs, TabPanel, CodeBlock } from '../../kit';
 import { check, TRAINED, MAXSTATE, MAXQ } from './kaiLimits';
 import { arrows } from './live';
 import { useRipple, useDropIn, useTiltIn, useLineDraw, useCoverSlide, Outline } from './kaiEntrances';
+import usePhoneAsk from '../usePhoneAsk';
 import './KaiGuide.css';
+
+/* W: every loose run of text in a mixed line sits in its own <span>, and the text inside an inline code, b or mark
+   sits in a <span> too (no visual change). Hanzo's copy check (scripts/copycheck.mjs) reads only leaf span, p, li…
+   elements, so a sentence split around <code> must still arrive as its own leaves, word for word. */
+const leafy = (c) => {
+  if (typeof c === 'string') return c ? <span>{c}</span> : c;
+  if (!isValidElement(c)) return c;
+  if (c.type === Fragment) return Children.map(c.props.children, leafy);
+  if (['code', 'b', 'mark', 'em'].includes(c.type) && typeof c.props.children === 'string') return cloneElement(c, {}, <span>{c.props.children}</span>);
+  return c;
+};
+const W = ({ children }) => <>{Children.map(children, leafy)}</>;
 
 // the deck's motion tokens (MASTER 3.1): durations in seconds, one emphasis curve, no springs
 const T = { press: 0.09, fast: 0.15, base: 0.3, slow: 0.4, slower: 0.5, line: 0.7 };
@@ -212,7 +225,7 @@ function Chat() {
                 <div className="kg-m kg-m-a" data-run={!end || undefined}>
                   <span className="kg-m-h"><code>kai</code></span>
                   <pre><code>{dash(REPLY[a].slice(0, n))}</code></pre>
-                  <p className="kg-m-g">{TYPES[t][2]}</p>
+                  <p className="kg-m-g"><W>{TYPES[t][2]}</W></p>
                 </div>
               </div>
             );
@@ -246,8 +259,8 @@ function Types() {
           {TYPES.map(([n, send, get], i) => (
             <li key={n}>
               <div className="kg-row-n"><span className={'kg-glyph g' + i} aria-hidden="true"><i /><i /><i /><i /></span><h3>{n}</h3></div>
-              <p>{send}</p>
-              <p>{get}</p>
+              <p><W>{send}</W></p>
+              <p><W>{get}</W></p>
             </li>
           ))}
         </ol>
@@ -484,7 +497,7 @@ function Limits() {
             {LIMITS.map(([k, v], i) => (
               <div key={k} id={slug(k)} data-on={open === i || undefined}>
                 <dt><button type="button" aria-expanded={open === i} aria-controls={slug(k) + '-d'} onClick={() => pick(i)}><span>{k}</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></button></dt>
-                <dd id={slug(k) + '-d'}>{v}</dd>
+                <dd id={slug(k) + '-d'}><W>{v}</W></dd>
               </div>
             ))}
           </dl>
@@ -531,7 +544,7 @@ function Recipes() {
         <div className="kg-rx-stack">
           {RECIPES.map(([n, d], i) => (
             <div key={n} className="kg-rx-it" data-on={i === k || undefined} data-pos={i < k ? 'up' : i > k ? 'down' : undefined} aria-hidden={i !== k || undefined}>
-              <span className="kg-rx-m"><code>{n}</code></span>
+              <span className="kg-rx-m"><code><span>{n}</span></code></span>
               <p>{d}</p>
             </div>
           ))}
@@ -540,7 +553,7 @@ function Recipes() {
       <ul className="kg-rec">
         {RECIPES.map(([n], i) => (
           <li key={n} data-on={i === k || undefined}>
-            <button type="button" aria-pressed={i === k} onPointerEnter={(e) => { if (e.pointerType === 'mouse') setK(i); }} onFocus={() => setK(i)} onClick={() => setK(i)}><code>{n}</code></button>
+            <button type="button" aria-pressed={i === k} onPointerEnter={(e) => { if (e.pointerType === 'mouse') setK(i); }} onFocus={() => setK(i)} onClick={() => setK(i)}><code><span>{n}</span></code></button>
           </li>
         ))}
       </ul>
@@ -577,6 +590,20 @@ function Room() {
 function Jev() {
   const box = useRef(null);
   useCoverSlide(box);
+  // the changed model id inside each body line is marked with the CSS Custom Highlight API, so the JSON body stays one
+  // run of text (word for word, as the guide prints it); without the API the line simply shows unmarked
+  useEffect(() => {
+    if (typeof Highlight === 'undefined' || !window.CSS?.highlights || !box.current) return undefined;
+    const was = new Highlight(), now = new Highlight();
+    box.current.querySelectorAll('.kg-js').forEach((el) => {
+      const t = el.firstChild, m = el.dataset.m, at = t?.data?.indexOf(m) ?? -1;
+      if (at < 0) return;
+      const rg = new Range(); rg.setStart(t, at); rg.setEnd(t, at + m.length);
+      (el.closest('[data-s="+"]') ? now : was).add(rg);
+    });
+    CSS.highlights.set('kg-was', was); CSS.highlights.set('kg-now', now);
+    return () => { CSS.highlights.delete('kg-was'); CSS.highlights.delete('kg-now'); };
+  }, []);
   const L = (sign, body) => <span className="kg-dl-l" data-s={sign}><i aria-hidden="true">{sign === '-' ? '−' : sign === '+' ? '+' : ' '}</i>{body}{'\n'}</span>;
   return (
     <section className="kg-jev kg-sec" ref={box} aria-labelledby="kg-j">
@@ -585,20 +612,22 @@ function Jev() {
           <div><h2 id="kg-j" className="kg-h2">Change the URL, the key and the model</h2></div>
           <div className="kg-side"><p className="kg-kick">Coming from Jev</p><p className="kg-lede-s">Kai takes the request body Jev takes. The same endpoint also serves typesafe/jev-1.13 with a Hanzo key, at Jev’s price.</p></div>
         </div>
+        {/* the highlight pseudo-element is written here: the CSS bundler does not parse ::highlight() yet */}
+        <style>{'::highlight(kg-was){color:var(--ink);background-color:var(--brand-tone);text-decoration:line-through;text-decoration-thickness:1px}::highlight(kg-now){color:var(--paper);background-color:var(--ink)}'}</style>
         <div className="kg-jev-d">
           <pre tabIndex={0} data-lenis-prevent><code>
             {L('-', <span className="kg-cm">{'# Jev on OpenRouter'}</span>)}
             {L('+', <span className="kg-cm">{'# Kai on Hanzo: the same body'}</span>)}
-            {L('-', <>{'curl '}<mark>https://openrouter.ai/api/alpha/decisions</mark>{' \\'}</>)}
-            {L('+', <>{'curl '}<mark>https://api.hanzo.ai/v1/decisions</mark>{' \\'}</>)}
-            {L('-', <>{'  -H "Authorization: Bearer $'}<mark>OPENROUTER_API_KEY</mark>{'" \\'}</>)}
-            {L('+', <>{'  -H "Authorization: Bearer $'}<mark>HANZO_API_KEY</mark>{'" \\'}</>)}
+            {L('-', <>{'curl '}<mark><span>https://openrouter.ai/api/alpha/decisions</span></mark>{' \\'}</>)}
+            {L('+', <>{'curl '}<mark><span>https://api.hanzo.ai/v1/decisions</span></mark>{' \\'}</>)}
+            {L('-', <>{'  -H "Authorization: Bearer $'}<mark><span>OPENROUTER_API_KEY</span></mark>{'" \\'}</>)}
+            {L('+', <>{'  -H "Authorization: Bearer $'}<mark><span>HANZO_API_KEY</span></mark>{'" \\'}</>)}
             {L(' ', '  -H "Content-Type: application/json" \\')}
-            {L('-', <>{'  -d \'{"model": "'}<mark>typesafe/jev-1.13</mark>{'", "state": "…", "questions": {…}}\''}</>)}
-            {L('+', <>{'  -d \'{"model": "'}<mark>kai</mark>{'", "state": "…", "questions": {…}}\''}</>)}
+            {L('-', <>{"  -d '"}<span className="kg-js" data-m="typesafe/jev-1.13">{'{"model": "typesafe/jev-1.13", "state": "…", "questions": {…}}'}</span>{"'"}</>)}
+            {L('+', <>{"  -d '"}<span className="kg-js" data-m="kai">{'{"model": "kai", "state": "…", "questions": {…}}'}</span>{"'"}</>)}
           </code></pre>
         </div>
-        <p className="kg-differs">What differs: Kai answers at most <b>100</b> questions a request, refuses a state past <b>32,768</b> tokens with <b>422</b>, and kai-1.3, the default, ignores a noul’s criteria. OpenAI’s Decisions body (<code>input</code> and a list of questions) is refused.</p>
+        <p className="kg-differs"><W>What differs: Kai answers at most <b>100</b> questions a request, refuses a state past <b>32,768</b> tokens with <b>422</b>, and kai-1.3, the default, ignores a noul’s criteria. OpenAI’s Decisions body (<code>input</code> and a list of questions) is refused.</W></p>
       </div>
     </section>
   );
@@ -635,6 +664,7 @@ function End() {
 }
 
 export default function KaiGuide() {
+  usePhoneAsk(); // one solid ask at a time: the header's button outlines while the hero's or the close's ask is on screen
   return (
     <main className="kg">
       <section className="kg-hero" aria-labelledby="kg-h">
@@ -646,7 +676,7 @@ export default function KaiGuide() {
               <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: T.line, ease: EMPH, delay: 0.16 }}>Use Kai</motion.span></span>
             </h1>
             <p className="kg-kick kg-sub">Hanzo decision model · 0 output tokens</p>
-            <p className="kg-lede">Send a state and typed questions to <code>POST /v1/decisions</code> with <code>model: &quot;kai&quot;</code>. Kai answers each question with a probability for every answer it allows, and writes no text.</p>
+            <p className="kg-lede"><W>Send a state and typed questions to <code>POST /v1/decisions</code> with <code>model: &quot;kai&quot;</code>. Kai answers each question with a probability for every answer it allows, and writes no text.</W></p>
             <div className="kg-acts">
               <Cta to="https://platform.hanzo.ai/api-keys" id="kai-guide.hero" thumb>Get an API key</Cta>
               <Cta to="https://docs.hanzo.ai/docs/decisions" kind="link" id="kai-guide.hero-reference">Read the reference</Cta>
@@ -664,7 +694,7 @@ export default function KaiGuide() {
       <section className="kg-proof">
         <div className="kg-wrap kg-proof-g">
           <Bench />
-          <p>On the frozen harness, kai-1.4 averaged 84.4% accuracy against Jev’s 76.6% across the 11 suites it leads, both models on the same questions. <A to="/kai#benchmarks" className="kg-runs">The runs →</A></p>
+          <p><span>On the frozen harness, kai-1.4 averaged 84.4% accuracy against Jev’s 76.6% across the 11 suites it leads, both models on the same questions.</span> <A to="/kai#benchmarks" className="kg-runs">The runs →</A></p>
         </div>
       </section>
 

@@ -1,4 +1,5 @@
 # /investors — James-eye review
+Ready: 2026-11-08 stats roll and settle whole (no split digits), reduced-motion hydration fixed, phone header carries ir@hanzo.ai, idle motion past the hero, 18/18 card. Copy check (content/live capture, hanzo.ai unreachable here): 78 of 79; the one line, the Merges caption "In the past 0 days", is live's counter caught before it loaded, so the page keeps Hanzo's own data for that stat, "In the past year" (components/pages/openSourceData.js). James to confirm.
 Verdict: 6/10
 First complaint: "The numbers are broken. Under 732,288 it says '7' and then '8,421' on the next line, '1' then ',263', tiny. That's the commit record an investor reads. And on my phone every bar is full again: 200× is as long as 400×, and every model in the code chart looks the same."
 

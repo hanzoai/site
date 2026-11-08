@@ -1,4 +1,5 @@
 # /metrics — James-eye review
+Ready: 2026-11-07 the chapters are a stage (stacks arrive, the query bar takes over, a column grows per tick, the spike opens into its chart and traces, the query folds into a rule, two orgs slide out) with a split-flap flip board on the mode; one sticky table on phones instead of seven; ch 03 holds one solid; 320 toolbar stacks; no ellipsis on /v1/event/insights; gliding split pill; Logs moved into the black room; close h2 52px.
 
 Verdict: 7/10
 First complaint: "The chart at the top is lovely, then it's the same grey table for six screens. A row goes bold, a word changes, scroll again. It's a spreadsheet you scroll past, and on the phone I get that table seven times."

@@ -1,4 +1,5 @@
 # /iro — James-eye review
+Ready: 2026-11-07 studio frame spans the stage with the canvas centred, phone tags off the picture and CFG on its own line (4:5 window), slider styling restored, chapters and fits show the flow at its own step (no 9× repeat), phone square sits right above the headline (no white band), card Part 4 corrected, model-card press under the tilt, 44px band links, rail hover, 5% grid hairline; model grid no longer overlaps Enso below 1100px and pills back to SPEC 10px
 Verdict: 6/10
 First complaint: "The canvas is the whole point of the page, and it's shoved to the left with a big empty black hole beside it. It looks broken."
 (walked 7 Nov at `a7497921`, moving, at 1470×801 and 375×812 (isMobile, touch), plus 320×640, 375×667, reduced motion and JS off)

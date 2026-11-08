@@ -6,7 +6,11 @@
 // Signature: spotlight
 // Beyond: Sealed on your machine: type into DATABASE_PASSWORD and real AES-256-GCM under an HKDF-SHA256 key seals it in the browser.
 /* KMS (v2, archetype A Launch).
-   V2: 8/10 Motion map: spotlight — the pinned "What it holds" rule panel is gone; its six rules are six sealed secrets in
+   Round 4 (7-8 Nov): the vault room, the five entrances and the light's masks are styled (they had shipped as markup
+   only); the refused write takes v2's slot instead of covering it; the seal box seals on its own until the field is
+   taken; the dark room's terminal types once; "Example project" reads as one caption; the hero ask's arrow slides in
+   on hover with the button's width held.
+   Motion map: spotlight — the pinned "What it holds" rule panel is gone; its six rules are six sealed secrets in
    a dark vault right under the hero: a light (the cursor, a tap on touch, Tab on a keyboard; left alone it glides cell
    to cell, pausable) unseals what is under it - the rule's title and its picture - and the readout beside it gives
    that rule in full. Sections enter five ways (kms/entrances.jsx): the hero vault's pieces gather like magnets, the
@@ -47,14 +51,14 @@ const noise = (n, s) => Array.from({ length: n }, (_, i) => HEX[(s * 31 + i * 17
 const ROW = 60; // one version row (52px) plus its 8px gap
 
 /* The version stack: three rows that slide by transform inside a fixed box, so the vault never changes height. */
-function Versions({ v, top }) {
+function Versions({ v, top, stale }) {
   // every version that can show stays mounted; each slides to its slot (above the box, 0, 1, 2, below the box)
   const rows = [top, top - 1, top - 2, top - 3];
   return (
     <div className="km-vers-in">
       {rows.map((n) => {
         const i = v - n;
-        const shown = i >= 0 && i <= 2;
+        const shown = i >= 0 && i <= (stale ? 1 : 2); // a refused write takes the third slot, so v2 leaves for it
         return (
           <motion.div
             key={n}
@@ -67,6 +71,13 @@ function Versions({ v, top }) {
           </motion.div>
         );
       })}
+      <AnimatePresence>
+        {stale && (
+          <motion.div className="km-stale" style={{ y: 2 * ROW }} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.45, ease: EASE }}>
+            <span>write replaces v{v - 1} · <b>refused</b></span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -113,14 +124,7 @@ function Vault() {
       </div>
       <div className="km-side">
         <div className="km-vers km-mg" style={gather(3, 0.25)}>
-          <Versions v={v} top={ver + 1} />
-          <AnimatePresence>
-            {t === 5 && (
-              <motion.div className="km-stale" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.45, ease: EASE }}>
-                write replaces v{v - 1} · <b>refused</b>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <Versions v={v} top={ver + 1} stale={t === 5} />
         </div>
         <ul className="km-log km-mg" style={gather(4, 0.25)}>
           {t >= 6 && <li key={'r' + ver} className="in"><i className="a" />read · agent checkout-web</li>}
@@ -140,6 +144,16 @@ function Seal() {
   const [out, setOut] = useState({ ct: '' });
   const [err, setErr] = useState('');
   const master = useRef(null);
+  const [own, setOwn] = useState(false); // the visitor has the field: the idle sealing stops for good
+  const [box, idle, calmSeal] = useLive(0.4);
+  // left alone, the box seals on its own: dots type in at 80 ms each, the ciphertext rolls in under them, a rest, again
+  useEffect(() => {
+    if (own || calmSeal || !idle) return;
+    const n = val.length;
+    const id = setTimeout(() => setVal(n >= 8 ? '' : val + '•'), n >= 8 ? 2400 : n === 0 ? 900 : 80);
+    return () => clearTimeout(id);
+  }, [val, own, idle, calmSeal]);
+  const take = () => { if (!own) { setOwn(true); setVal(''); } };
   useEffect(() => {
     let on = true;
     (async () => {
@@ -162,8 +176,9 @@ function Seal() {
           <p className="v2-body km-seal-d">The organization key stays on the client.</p>
         </div>
         <Pendulum className="km-seal-box v2-obj">
+          <span ref={box} className="km-seal-anchor" aria-hidden="true" />
           <label className="km-seal-k" htmlFor="km-in">DATABASE_PASSWORD</label>
-          <input id="km-in" value={val} onChange={(e) => setVal(e.target.value)} maxLength={200} placeholder="••••••••" spellCheck={false} autoComplete="off" suppressHydrationWarning />
+          <input id="km-in" value={val} onFocus={take} onChange={(e) => { setOwn(true); setVal(e.target.value); }} maxLength={200} placeholder="••••••••" spellCheck={false} autoComplete="off" suppressHydrationWarning />
           <div className="km-seal-chain" aria-hidden="true">
             <span className="off">Argon2id</span><i /><span>HKDF-SHA256</span><i /><span>AES-256-GCM</span>
           </div>
@@ -375,6 +390,8 @@ kms scan`;
 /* The dark room: its tiles lift away in a wave from the cursor as it arrives (grid-wave). */
 function Disk() {
   const [ref, on] = useArrive(0.2);
+  const cli = useRef(null);
+  const typing = useInView(cli, { once: true, amount: 0.4 });
   return (
     <section ref={ref} className="km-disk v2-dark" data-room="dark">
       <GridWave on={on} />
@@ -389,7 +406,7 @@ function Disk() {
             <p className="v2-body">Use it hosted, or run the same binary yourself. The source is MIT and the client is where the encryption happens either way.</p>
             <div className="v2-acts"><Cta to="https://kms.hanzo.ai" id="kms.mid">Open KMS</Cta><Cta to="https://github.com/hanzoai/kms" kind="link" id="kms.view-on-github">View on GitHub</Cta></div>
           </div>
-          <CodeBlock code={CLI} label="terminal" className="km-cli" />
+          <div ref={cli} className={'km-cli-w' + (typing ? ' on' : '')}><CodeBlock code={CLI} label="terminal" className="km-cli" /></div>
         </div>
       </div>
     </section>
@@ -467,7 +484,7 @@ function Ship() {
             {!calm && <i key={'run' + at + (run ? 'r' : 'h')} className={'km-key-run' + (run ? '' : ' held')} aria-hidden="true" />}
           </div>
           <div className="km-ship-cap">
-            <p className="v2-title">Example project. Every name in it is one you would give your own.</p>
+            <p className="v2-body km-cap-s">Example project. Every name in it is one you would give your own.</p>
             <p className="v2-kick acc km-cap">Example project</p>
           </div>
         </div>

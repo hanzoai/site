@@ -34,7 +34,7 @@ export function Studio({ slug, children, specs, engine, className = '' }) {
   return (
     <figure className={'cr-studio ' + className}>
       <div className="mb-panel">
-        <div className="mb-bar"><i /><i /><i /><b>studio.hanzo.ai / <span>{C[slug].code}</span></b><em>{slug}</em><em>example</em></div>
+        <div className="mb-bar"><i /><i /><i /><b><span style={{ color: 'inherit' }}>studio.hanzo.ai /</span> <span>{C[slug].code}</span></b><em>{slug}</em><em>example</em></div>
         {children}
         {engine && <p className="cr-engine mb-mono">{engine}</p>}
         {specs && <Specs rows={specs} />}

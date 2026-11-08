@@ -28,7 +28,7 @@ const pad = (n) => String(n).padStart(2, '0');
 
 function Monitor() {
   const stage = useRef(null), vid = useRef(null), cam = useRef(null), run = useRef(null), track = useRef(null);
-  const sec = useRef(null), cs = useRef(null), shotEl = useRef(null), cut = useRef(null);
+  const sec = useRef(null), cs = useRef(null), cut = useRef(null);
   const S = useRef({ t: 6, drag: false, idle: 0, shot: 0 });
   const [shot, setShot] = useState(0); // the server shows Hanzo's own frame: shot 01 at 00:06.00
   const [play, setPlay] = useState(true);
@@ -43,7 +43,6 @@ function Monitor() {
     if (track.current) { track.current.setAttribute('aria-valuenow', t.toFixed(1)); track.current.setAttribute('aria-valuetext', `00:${pad(Math.floor(t))} · ${SHOTS[k][0]}`); }
     if (k !== s.shot) {
       s.shot = k; setShot(k);
-      if (shotEl.current) shotEl.current.textContent = pad(k + 1);
       cut.current?.animate([{ opacity: 0.85 }, { opacity: 0 }], { duration: 320, easing: 'ease-out' });
     }
   };
@@ -83,7 +82,7 @@ function Monitor() {
         <i className="kf-thirds" aria-hidden="true" />
         <i className="kf-cut" ref={cut} aria-hidden="true" />
         <p className="kf-tag kf-tl mb-mono mb-live">REC · 4K 60FPS</p>
-        <p className="kf-tag kf-tr mb-mono">SHOT <span ref={shotEl}>01</span>/04</p>
+        <p className="kf-tag kf-tr mb-mono"><span>| SHOT 01/04</span></p>
         <p className="kf-tag kf-bl mb-mono">GUIDANCE: 7.5 · LATENT: 1080p</p>
         <p className="kf-tag kf-br mb-mono">CAMERA: ORBITAL 35mm</p>
       </div>
@@ -113,9 +112,8 @@ function Monitor() {
             {SHOTS.map(([n, lens, move, pos], i) => (
               <li key={n} data-on={shot === i ? '' : undefined}>
                 <span className="kf-thumb" style={{ backgroundImage: `url(${film('koma', 'webp')})`, backgroundPosition: pos }} aria-hidden="true" />
-                <b>{n}</b>
-                <span>{lens}</span>
-                <span>{move}</span>
+                <b><span>{n}</span></b>
+                <span>{lens} · {move}</span>
               </li>
             ))}
           </ol>

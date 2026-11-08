@@ -130,7 +130,14 @@
 
 /* a legend letter and its part of the drawing light each other: the rest of the drawing steps back */
 .jn-svg g[data-k] { transition: opacity .3s cubic-bezier(0, 0, .2, 1); }
+.jn-mfig .jn-svg g[data-k] { transition: opacity .45s cubic-bezier(.4, 0, .2, 1); }
 .jn-mfig[data-hot] .jn-svg g[data-k] { opacity: .16; }
+/* the idle walk-through: lighter than a hover, so the figure stays readable while it names its parts */
+.jn-mfig[data-walk]:not([data-hot]) .jn-svg g[data-k] { opacity: .38; }
+.jn-mfig[data-walk="a"]:not([data-hot]) .jn-svg g[data-k="a"], .jn-mfig[data-walk="b"]:not([data-hot]) .jn-svg g[data-k="b"],
+.jn-mfig[data-walk="c"]:not([data-hot]) .jn-svg g[data-k="c"], .jn-mfig[data-walk="d"]:not([data-hot]) .jn-svg g[data-k="d"] { opacity: 1; }
+.jn-mfig li.walk { color: var(--ink); }
+.jn-mfig li.walk b { background: #fff; color: var(--ink); transform: translateY(-2px); }
 .jn-mfig[data-hot="a"] .jn-svg g[data-k="a"], .jn-mfig[data-hot="b"] .jn-svg g[data-k="b"],
 .jn-mfig[data-hot="c"] .jn-svg g[data-k="c"], .jn-mfig[data-hot="d"] .jn-svg g[data-k="d"] { opacity: 1; }
 .jn-svg g[data-k]:not([data-k=""]) { cursor: default; }
@@ -248,7 +255,7 @@
 .jn-trc .l1 { stroke: rgba(255, 255, 255, .55); stroke-dasharray: 5 4; }
 .jn-trc .l2 { stroke: #737373; stroke-dasharray: 1.5 3.5; }
 .jn-trc-k { list-style: none; margin: 14px 0 0; padding: 12px 0 0; border-top: 1px solid rgba(255, 255, 255, .1); display: flex; flex-wrap: wrap; gap: 8px 28px; font-size: 13px; color: #a3a3a3; }
-.jn-trc-k li { display: inline-flex; align-items: center; gap: 10px; transition: color .3s; }
+.jn-trc-k li { display: inline-flex; align-items: center; gap: 10px; background: none; transition: color .3s; } /* Hanzo's base CSS paints a grey fill on any .l0/.l1/.l2 */
 .jn-trc-k li.on { color: #fafafa; }
 .jn-trc-k i { width: 22px; height: 0; border-top: 2px solid #f5f5f5; }
 .jn-trc-k .l1 i { border-top: 2px dashed rgba(255, 255, 255, .55); }
@@ -370,3 +377,43 @@
   .jn-guess, .jn-home, .jn-trace *, .jn-run-bar, .jn-ticks li, .jn-pfig, .jn-svg g[data-k] { transition: none !important; }
   .jn-dlg[open], .jn-dlg.out, .jn-dlg::backdrop { animation: none !important; }
 }
+
+/* ---------- dark mode, on Hanzo's tokens: the paper turns over (the kit's --bz-* greys, then this page's own fills);
+   ink marks stay ink and their labels take the ink's own text colour. "Make the saccade yourself" is black in both
+   modes and keeps its values. ---------- */
+html:not(.light) .bz.jn {
+  --bz-ink: var(--foreground); --bz-muted: var(--muted-foreground); --bz-quiet: var(--text-tertiary); --bz-line: var(--border);
+  --bz-paper: var(--x-raised); --bz-room: var(--x-fill); --bz-card: var(--x-fill); --bz-tile: var(--secondary); --bz-track: var(--border-strong);
+  --acc-soft: var(--secondary);
+}
+html:not(.light) .jn-byline .jn-name, html:not(.light) .jn-hero .jn-pk b, html:not(.light) .jn-hero .jn-lbl.go,
+html:not(.light) .jn-phase, html:not(.light) .jn-mfig li b { color: var(--x-on-ink); }
+html:not(.light) .jn-mfig li.on b, html:not(.light) .jn-mfig li.walk b { background: var(--x-raised); color: var(--ink); }
+html:not(.light) .jn-hero .jn-space { background: var(--x-sunk); }
+html:not(.light) .jn-hero .jn-ax { background: var(--border); }
+html:not(.light) .jn-hero .jn-cl { background: var(--border-strong); }
+html:not(.light) .jn-hero .jn-z { box-shadow: 0 0 0 5px var(--glass-strong); }
+html:not(.light) .jn-track { background: var(--x-fill); }
+html:not(.light) .jn-track i { background: var(--border-selected); }
+html:not(.light) .jn-loss .on i { background: var(--ink); }
+html:not(.light) .jn-ticks li.past { background: var(--soft); }
+html:not(.light) .jn-pause { background: var(--x-raised); }
+@media (hover: hover) { html:not(.light) .jn-pause:hover { background: var(--x-fill); border-color: var(--border-focus); } }
+html:not(.light) .jn-pause.done { background: var(--ink); border-color: var(--ink); color: var(--x-on-ink); }
+@media (hover: hover) { html:not(.light) .jn-pause.done:hover { background: var(--primary-hover); border-color: var(--primary-hover); } }
+html:not(.light) .jn-run { background: var(--x-raised); }
+html:not(.light) .c1::before, html:not(.light) .jn-pfig[data-fig="1"]::before { background: var(--x-fill); }
+html:not(.light) .jn-svg .sg, html:not(.light) .jn-svg .fl { stroke: var(--border-strong); }
+html:not(.light) .jn-svg .fl { fill: var(--border-strong); stroke: none; }
+html:not(.light) .jn-svg .sd { stroke: var(--x-on-ink); stroke-opacity: .55; }
+html:not(.light) .jn-svg .fz, html:not(.light) .jn-svg .fa-soft { fill: var(--secondary); }
+html:not(.light) .jn-svg .fz-soft { fill: var(--x-fill); }
+html:not(.light) .jn-svg .fo, html:not(.light) .jn-svg .jn-scrub { fill: var(--x-raised); }
+html.js:not(.light) .jn-plate { background: var(--x-raised); }
+@media (hover: hover) { html:not(.light) .jn-row:hover { background: var(--x-fill); } }
+html:not(.light) .jn-dlg { background: var(--x-raised); color: var(--ink); }
+
+/* dark: live hanzo.ai's heroes carry a halftone dot field in dark, densest at the edges (the same rule as /investors);
+   light mode draws nothing here */
+html:not(.light) .jn-hero { position: relative; isolation: isolate; }
+html:not(.light) .jn-hero::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(circle, var(--white-20) 1px, transparent 1.6px) 0 0 / 5px 5px; -webkit-mask-image: radial-gradient(ellipse 75% 70% at 45% 45%, transparent 35%, #000 100%), linear-gradient(#000 70%, transparent); -webkit-mask-composite: source-in; mask-image: radial-gradient(ellipse 75% 70% at 45% 45%, transparent 35%, #000 100%), linear-gradient(#000 70%, transparent); mask-composite: intersect; }

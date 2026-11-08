@@ -18,7 +18,10 @@ html:has(main.mt) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
 .mt-pause { grid-area: pause; justify-self: end; }
 .mt-split { grid-area: split; justify-self: start; display: inline-flex; padding: 3px; border-radius: 999px; background: #ededed; }
 .mt-split button { min-height: 36px; padding: 0 14px; border: 0; border-radius: 999px; background: none; font: 500 13px/1 var(--mono); color: #525252; cursor: pointer; transition: color .15s cubic-bezier(0, 0, .2, 1), background-color .3s cubic-bezier(.4, 0, .2, 1), box-shadow .15s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); touch-action: manipulation; }
-.mt-split button[aria-pressed='true'] { background: #fff; color: var(--ink); }
+.mt-split { position: relative; display: inline-grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.mt-split::before { content: ''; position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc((100% - 6px) / 3); border-radius: 999px; background: #fff; transform: translateX(calc(var(--i, 0) * 100%)); transition: transform .3s cubic-bezier(.4, 0, .2, 1); }
+.mt-split button { position: relative; }
+.mt-split button[aria-pressed='true'] { color: var(--ink); }
 .mt-split button:active { transform: scale(.97); transition-duration: .09s; }
 .mt-legend { grid-area: legend; display: flex; gap: 16px; list-style: none; margin: 0; padding: 0; font: 500 13px/1 var(--mono); color: #525252; }
 .mt-legend li { display: inline-flex; align-items: center; gap: 7px; transition: color .15s cubic-bezier(0, 0, .2, 1); }
@@ -88,7 +91,7 @@ html:has(main.mt) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
 .mt-ch-k { margin-top: 12px; color: var(--faint); }
 .mt-ch-d { margin: 16px 0 0; font-size: 16px; line-height: 1.6; color: var(--muted); max-width: 46ch; text-wrap: pretty; }
 /* pinned: one chapter on at a time; the others fade out, then leave (inert in the markup, hidden once faded) */
-.mt-ch[data-pin] { height: calc(var(--n) * 78svh + 100svh); }
+.mt-ch[data-pin] { height: calc(var(--n) * 60svh + 100svh); }
 .mt-ch[data-pin] .mt-ch-stick { position: sticky; top: 0; height: 100svh; padding: 0; display: flex; align-items: center; overflow: hidden; }
 .mt-ch[data-pin] .mt-ch-grid { padding-top: 56px; }
 .mt-ch[data-pin] .mt-ch-steps { gap: 0; }
@@ -156,7 +159,7 @@ html:has(main.mt) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
 .mt-lab { margin-top: 24px; display: grid; gap: 16px; }
 .mt-lab-c { display: flex; gap: 8px; flex-wrap: wrap; }
 .mt-lab-c button { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); background: #fff; font: 500 14px/1 var(--mono); color: #525252; cursor: pointer; transition: background-color .15s cubic-bezier(0, 0, .2, 1), color .15s cubic-bezier(0, 0, .2, 1), border-color .15s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); touch-action: manipulation; }
-.mt-lab-c button[aria-pressed='true'] { background: var(--ink); color: #fff; border-color: var(--ink); }
+.mt-lab-c button[aria-pressed='true'] { background: #fff; color: var(--ink); border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
 .mt-lab-c button:active { transform: scale(.97); transition-duration: .09s; }
 .mt-lab-r { margin: 0; display: grid; gap: 10px; }
 .mt-lab-r div { display: flex; justify-content: space-between; gap: 16px; padding-top: 10px; border-top: 1px solid rgba(0, 0, 0, .1); max-width: 440px; }
@@ -173,7 +176,7 @@ html:has(main.mt) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
 .mt-paste-box { border-radius: 20px; background: #0a0a0a; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12); overflow: hidden; }
 .mt-paste-bar { display: flex; align-items: center; gap: 12px; padding: 6px 6px 6px 18px; border-bottom: 1px solid rgba(255, 255, 255, .1); }
 .mt-paste-k { font: 500 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #a3a3a3; white-space: nowrap; }
-.mt-api { margin-right: auto; min-width: 0; padding: 6px 9px; border-radius: 8px; background: #171717; font: 500 13px/1 var(--mono); color: #d4d4d4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mt-api { margin-right: auto; min-width: 0; padding: 6px 9px; border-radius: 8px; background: #171717; font: 500 13px/1 var(--mono); color: #d4d4d4; overflow-wrap: anywhere; }
 .mt-api i { font-style: normal; margin-right: 6px; color: #a3a3a3; }
 .mt-copy .x-copy { min-width: 44px; min-height: 44px; justify-content: center; background: #171717; border-color: rgba(255, 255, 255, .14); color: #d4d4d4; transition: background-color .15s cubic-bezier(0, 0, .2, 1), color .15s cubic-bezier(0, 0, .2, 1); }
 .mt-paste-code { margin: 0; padding: 20px 22px 24px; font: 400 15px/1.6 var(--mono); color: #e4e4e7; white-space: pre-wrap; word-break: break-word; }
@@ -225,7 +228,8 @@ html:has(main.mt) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
 .mt-svc-l.s3 { border-top: 1.5px dashed #525252; }
 .mt-svc-n { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mt-svc-s { display: inline-flex; align-items: center; font: 400 14px/1 var(--sans); color: #a3a3a3; }
-.mt-svc-s b { width: 10px; height: 10px; margin-right: 7px; border-radius: 50%; border: 2px solid currentColor; border-right-color: transparent; animation: mt-spin 1s linear infinite; }
+.mt-svc-s b { width: 10px; height: 10px; margin-right: 7px; border-radius: 50%; border: 2px solid currentColor; animation: mt-fill-dot 1.6s cubic-bezier(.4, 0, .2, 1) infinite alternate; }
+@keyframes mt-fill-dot { from { box-shadow: inset 0 0 0 0 currentColor; } to { box-shadow: inset 0 0 0 4px currentColor; } }
 @keyframes mt-spin { to { transform: rotate(360deg); } }
 .mt-con-cap { min-height: 44px; }
 .mt-con-cap p { margin: 0; padding: 12px 14px; border-radius: 10px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .1); font-size: 14px; line-height: 1.4; color: #d4d4d4; animation: mt-in .3s cubic-bezier(.16, 1, .3, 1); }
@@ -246,7 +250,6 @@ html:has(main.mt) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
 .mt-note { margin: 16px 0 0; font-size: 14px; color: #a3a3a3; }
 
 /* the related card and the close: no blank runs between rooms or before the footer */
-.mt-rel { padding-top: clamp(56px, 6vw, 96px); }
 /* the close: the repo link answers like a control */
 .mt-close { padding-bottom: clamp(56px, 6vw, 96px); }
 .mt-close .lx-close-repo { margin-left: -10px; padding: 0 10px; border-radius: 999px; transition: background-color .15s cubic-bezier(0, 0, .2, 1), text-decoration-color .15s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); touch-action: manipulation; }
@@ -254,9 +257,9 @@ html:has(main.mt) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
 
 @media (hover: hover) {
   .mt-split button:not([aria-pressed='true']):hover { color: var(--ink); background: rgba(255, 255, 255, .6); }
-  .mt-split button[aria-pressed='true']:hover { box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .14); }
+  .mt-split button[aria-pressed='true']:hover { color: #262626; }
   .mt-lab-c button:not([aria-pressed='true']):hover { border-color: var(--ink); color: var(--ink); }
-  .mt-lab-c button[aria-pressed='true']:hover { background: #262626; border-color: #262626; }
+  .mt-lab-c button[aria-pressed='true']:hover { background: #f5f5f5; }
   .mt-copy .x-copy:hover { background: #262626; color: #fafafa; }
   .mt-con-title:hover { color: #fafafa; background: #171717; }
   .mt-con-ico:hover { color: #fafafa; background: #171717; }
@@ -274,7 +277,7 @@ html:has(main.mt) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
   .mt-tool { padding: 14px; border-radius: 16px; }
   .mt-host { display: none; }
   .mt-q { font-size: 14px; }
-  .mt-split button { padding: 0 9px; min-height: 40px; font-size: 14px; white-space: nowrap; }
+  .mt-split button { padding: 0 9px; min-height: 44px; font-size: 14px; white-space: nowrap; }
   .mt-legend { gap: 12px; font-size: 14px; }
   .mt-stage { grid-template-columns: minmax(0, 1fr); margin-top: 16px; border-radius: 16px; }
   .mt-field { height: 220px; }
@@ -286,7 +289,12 @@ html:has(main.mt) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
   .mt-ch-stick { padding: 40px 0 64px; }
   .mt-ch-grid { grid-template-columns: minmax(0, 1fr); }
   .mt-ch-steps { gap: 48px; }
-  .mt-ch-own { margin-bottom: 20px; }
+  .mt-ch-grid { gap: 32px; align-items: start; }
+  /* the one table sticks under the header; white runs up under the glass header, so no line shows between them */
+  .mt-ch:not([data-pin]) .mt-ch-obj { position: sticky; top: 60px; z-index: 2; order: -1; padding: 8px 0 12px; background: #fff; box-shadow: 0 -60px 0 #fff; }
+  .mt-ch:not([data-pin]) .mt-ch-steps { gap: 30svh; padding-bottom: 20svh; }
+  .mt-ch:not([data-pin]) .mt-ch-step[data-at='next'], .mt-ch:not([data-pin]) .mt-ch-step[data-at='past'] { opacity: .35; }
+  .mt-ch:not([data-pin]) .mt-ch-step { transition: opacity .3s cubic-bezier(0, 0, .2, 1); }
   .mt-ch-it { font-size: 32px; }
   .mt-ch-il { font-size: 17px; margin-top: 12px; }
   .mt-ch-t { font-size: 26px; }
@@ -306,7 +314,8 @@ html:has(main.mt) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
   .mt-row.head { height: 34px; font-size: 12px; }
   .mt-grid .mt-row:nth-child(6), .mt-grid .mt-row:nth-child(8) { display: none; }
   /* chapter three on a phone: the label columns replace name and value, so the tick lands on a column you can see */
-  .mt-tab[data-step='2'] .mt-row { grid-template-columns: 74px 1fr 1fr .8fr; }
+  .mt-tab[data-step='2'] .mt-row { grid-template-columns: 74px .8fr 1.3fr .8fr; } /* /v1/search reads whole at 320 and up */
+  @media (max-width: 360px) { .mt-tab[data-step='2'] .mt-row { gap: 6px; padding: 0 12px; font-size: 12px; grid-template-columns: 64px .8fr 1.3fr .8fr; } .mt-tab[data-step='2'] .mt-row.head { font-size: 11px; letter-spacing: .06em; } }
   .mt-tab[data-step='2'] .mt-row .c-name, .mt-tab[data-step='2'] .mt-row .c-value { display: none; }
   .mt-tab[data-step='2'] .mt-row .c-model, .mt-tab[data-step='2'] .mt-row .c-route { display: block; }
   .mt-lab { gap: 12px; }
@@ -330,3 +339,171 @@ html:has(main.mt) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
   .mt-ch-rail button[aria-current] i::after { transform: scaleX(1); }
   .mt-ch[data-pin] .mt-ch-step { transform: none !important; transition: opacity .01s, visibility 0s; }
 }
+
+/* the Logs link lives in the black room now, a hairline row under the prompt */
+.mt-rel { margin-top: 28px; }
+.mt-rel-k { margin: 0; font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: #a3a3a3; }
+.mt-logs { display: flex; align-items: baseline; gap: 12px; min-height: 44px; margin-top: 12px; padding: 16px 0; border-top: 1px solid rgba(255, 255, 255, .14); color: #fafafa; text-decoration: none; }
+.mt-logs b { font-weight: 600; font-size: 17px; letter-spacing: -.015em; }
+.mt-logs span { color: #a3a3a3; font-size: 14px; }
+.mt-logs svg { align-self: center; margin-left: auto; color: #a3a3a3; transition: transform .3s cubic-bezier(.16, 1, .3, 1), color .15s cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) { .mt-logs:hover svg { transform: translateX(4px); color: #fafafa; } .mt-logs:hover span { color: #d4d4d4; } }
+.mt-logs:active { transform: translateY(1px); }
+.mt-logs:focus-visible { outline: 2px solid #fafafa; outline-offset: 4px; border-radius: 4px; }
+/* the close says it once, under the h1's size */
+.mt-close .lx-close-h { font-size: 52px; }
+@media (max-width: 899px) { .mt-close .lx-close-h { font-size: 40px; } }
+/* 320: the tool card's rows stack and the split tabs shrink to fit */
+@media (max-width: 359px) {
+  .mt-tool { grid-template-areas: 'host pause' 'q q' 'split split' 'legend legend'; }
+  .mt-split { justify-self: stretch; }
+  .mt-split button { padding: 0 6px; font-size: 12px; }
+  .mt-legend { flex-wrap: wrap; gap: 8px 12px; }
+  .mt-q { overflow-wrap: anywhere; }
+}
+
+/* ---------- the flip board: the mode in the query bar is a strip of split-flap tiles; a changed tile flips down ---------- */
+.mt-board { flex: none; display: inline-flex; gap: 2px; perspective: 300px; animation: none; }
+.mt-board i { position: relative; display: inline-grid; place-items: center; width: 13px; height: 22px; border-radius: 3px; background: #0a0a0a; color: #fafafa; font: 500 12px/1 var(--mono); font-style: normal; text-transform: uppercase; transform-origin: 50% 0; backface-visibility: hidden; }
+.mt-board i::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(255, 255, 255, .18); }
+.mt-board i.sp { background: transparent; }
+.mt-board i.sp::after { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .mt-board i:not(.sp) { animation: mt-flap .42s cubic-bezier(.3, .7, .3, 1) both; animation-delay: calc(var(--j) * 28ms); }
+}
+@keyframes mt-flap { 0% { transform: rotateX(-92deg); background: #262626; } 70% { transform: rotateX(10deg); } 100% { transform: none; } }
+
+/* ---------- the stage: each chapter changes the object, not one row ---------- */
+.mt-row:not(.head) { transition: opacity .4s cubic-bezier(0, 0, .2, 1), background-color .3s cubic-bezier(0, 0, .2, 1), transform .6s cubic-bezier(.16, 1, .3, 1); }
+.mt-grid { position: relative; transition: opacity .4s cubic-bezier(0, 0, .2, 1); }
+.mt-tab-q { transition: background-color .4s cubic-bezier(.4, 0, .2, 1), color .4s cubic-bezier(.4, 0, .2, 1), box-shadow .4s cubic-bezier(.4, 0, .2, 1); }
+.mt-tab-q code { transition: color .4s cubic-bezier(.4, 0, .2, 1); }
+/* 01, one store: the three kinds arrive from three stacks (metrics from the left, traces from above, logs from the right) */
+.mt-tab[data-step='0'][data-beat='0'] .mt-row.r-metric, .mt-tab[data-step='0'] .mt-row.r-metric:not(.hot) { transform: translateX(-56px); opacity: .12; }
+.mt-tab[data-step='0'] .mt-row.r-trace:not(.hot) { transform: translateY(-36px); opacity: .12; }
+.mt-tab[data-step='0'] .mt-row.r-log:not(.hot) { transform: translateX(56px); opacity: .12; }
+/* 02, PromQL or the builder: the query bar is the object; the rows step back */
+.mt-tab[data-step='1'] .mt-grid { opacity: .28; }
+.mt-tab[data-step='1'] .mt-tab-q { background: #0a0a0a; color: #fafafa; }
+.mt-tab[data-step='1'] .mt-tab-q code { color: #fafafa; }
+.mt-tab[data-step='1'] .mt-pills i { background: #262626; color: #fafafa; }
+.mt-tab[data-step='1'] .mt-board i { background: #fafafa; color: #0a0a0a; }
+.mt-tab[data-step='1'] .mt-board i::after { background: rgba(0, 0, 0, .14); }
+.mt-tab[data-step='1'] .mt-board i.sp { background: transparent; }
+/* 03, labels: a label column exists only once it is ticked; the grid grows a column per tick */
+@media (min-width: 900px) {
+  .mt-row { transition-property: opacity, background-color, transform, grid-template-columns; }
+  .mt-tab[data-step='2'] .mt-row { grid-template-columns: 96px 1.8fr .9fr var(--cm, .6fr) var(--cr, 1fr) var(--ct, .6fr); }
+  .mt-tab[data-step='2'] .mt-row > span { min-width: 0; }
+}
+/* 04, the number leads somewhere: the spike row opens into its chart and the traces for that window */
+.mt-tab-spike { position: absolute; z-index: 2; left: 1px; right: 1px; top: 94px; bottom: 1px; border-radius: 0 0 23px 23px; display: grid; grid-template-rows: 1fr auto; gap: 14px; padding: 14px 24px 18px; background: #fff; border-top: 1px solid rgba(0, 0, 0, .1); clip-path: inset(0 0 100% 0); visibility: hidden; transition: clip-path .6s cubic-bezier(.16, 1, .3, 1), visibility 0s .6s; }
+.mt-tab-spike.on { clip-path: inset(0); visibility: visible; transition: clip-path .6s cubic-bezier(.16, 1, .3, 1), visibility 0s; }
+.mt-tab-spike svg { width: 100%; height: 100%; min-height: 80px; overflow: visible; }
+.mt-tab-spike svg { clip-path: inset(0 100% 0 0); transition: clip-path 1.1s cubic-bezier(.4, 0, .2, 1) .2s; }
+.mt-tab-spike.on svg { clip-path: inset(0 -2% 0 0); }
+.mt-tab-spike path { fill: none; stroke: #0a0a0a; stroke-width: 2; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.mt-tab-spike.on .mt-sb b { transform: scaleX(1); transition-delay: calc(.5s + var(--i) * 80ms); }
+.mt-tab-spike .mt-fall li { color: var(--ink); }
+/* 05, alerts are saved queries: the query folds down into a kept rule, the rows step back */
+.mt-tab[data-step='4'][data-beat='2'] .mt-grid { opacity: .28; }
+.mt-tab[data-step='4'][data-beat='2'] .mt-tab-q { background: #f5f5f5; box-shadow: inset 0 0 0 1.5px #0a0a0a; }
+@media (prefers-reduced-motion: no-preference) { .mt-tab[data-step='4'][data-beat='2'] .mt-tab-q code { display: inline-block; transform-origin: 50% 0; animation: mt-fold .6s cubic-bezier(.16, 1, .3, 1) both; } }
+@keyframes mt-fold { from { transform: perspective(500px) rotateX(-70deg); opacity: 0; } }
+/* 06, scoped to your org: org b and org c slide out of the table */
+.mt-row.gone { opacity: .06; transform: translateX(40px); }
+/* the chapter words sit right above the rail, not a screen-half away from it */
+.mt-ch[data-pin] .mt-ch-step { align-self: end; }
+/* phones keep the query bar to the query: the board stays on wider screens */
+@media (max-width: 899px) { .mt-board { display: none; } }
+@media (max-width: 899px) {
+  .mt-tab-spike { top: 80px; gap: 8px; padding: 10px 16px 12px; }
+  .mt-tab-spike svg { min-height: 40px; }
+  .mt-tab-spike .mt-fall { gap: 6px; }
+  .mt-tab-spike .mt-fall li { height: 22px; grid-template-columns: 128px 1fr; }
+}
+@media (max-width: 899px) { .mt-tab-spike { border-radius: 0 0 15px 15px; } }
+
+/* ---------- dark mode, on Hanzo's tokens. The launch kit's page tokens turn over on this page; the black room (the
+   prompt and Metrics' own console) is black in both modes and keeps its values. Fills below read our --x-* tokens,
+   because --muted here is the kit's body grey, not Hanzo's fill. ---------- */
+html:not(.light) .lx.mt {
+  --ink: var(--foreground); --acc: var(--foreground); --acc-soft: var(--x-fill); --muted: var(--muted-foreground); --soft: var(--muted-foreground);
+  --faint: var(--text-tertiary); --silver: var(--border-strong); --card: var(--x-fill); --line: var(--border); --bg: var(--background);
+}
+@media (hover: hover) { html:not(.light):has(main.mt) header[data-slot=masthead] a[href='https://hanzo.ai/signup']:hover { background-color: var(--glass); } }
+html:not(.light) .mt-tool, html:not(.light) .mt-stage { background: var(--x-fill); }
+html:not(.light) .mt-host, html:not(.light) .mt-legend, html:not(.light) .mt-split button { color: var(--soft); }
+html:not(.light) .mt-split { background: var(--background); }
+html:not(.light) .mt-split::before { background: var(--x-knob); }
+html:not(.light) .mt-split button[aria-pressed='true'] { color: var(--ink); }
+html:not(.light) .mt-legend .s0 { color: var(--ink); }
+html:not(.light) .mt-legend i { border-top-color: var(--ink); }
+html:not(.light) .mt-legend .s1 i { border-top-color: var(--soft); }
+html:not(.light) .mt-legend .s2 i { border-top-color: var(--faint); }
+html:not(.light) .mt-legend li.hl { color: var(--ink); }
+html:not(.light) .mt-field { color: var(--ink); }
+html:not(.light) .mt-field .mt-plot .grid { stroke: var(--edge); }
+html:not(.light) .mt-field .s0 { stroke: var(--ink); }
+html:not(.light) .mt-field .s1 { stroke: var(--soft); }
+html:not(.light) .mt-field .s2 { stroke: var(--faint); }
+html:not(.light) .mt-cur { border-left-color: var(--ink); }
+html:not(.light) .mt-flag, html:not(.light) .mt-chip { background: var(--ink); color: var(--x-on-ink); }
+html:not(.light) .mt-x { background: var(--border-focus); }
+html:not(.light) .mt-x i { background: var(--bg); box-shadow: 0 0 0 2.5px var(--ink); }
+html:not(.light) .mt-traces { border-color: var(--border); }
+html:not(.light) .mt-stage .mt-tk, html:not(.light) .mt-stage .mt-fall li, html:not(.light) .mt-tab .mt-fall li { color: var(--soft); }
+html:not(.light) .mt-stage .mt-tk b, html:not(.light) .mt-traces.on .mt-fall li, html:not(.light) .mt-tab-spike .mt-fall li { color: var(--ink); }
+html:not(.light) .mt-stage .mt-sb, html:not(.light) .mt-tab .mt-sb { background: var(--secondary); }
+html:not(.light) .mt-stage .mt-sb b, html:not(.light) .mt-tab .mt-sb b { background: var(--faint); }
+html:not(.light) .mt-stage .mt-fall li:nth-child(2) b, html:not(.light) .mt-stage .mt-fall li:nth-child(4) b,
+html:not(.light) .mt-tab .mt-fall li:nth-child(2) b, html:not(.light) .mt-tab .mt-fall li:nth-child(4) b { background: var(--ink); }
+html:not(.light) .mt-traces.rest .mt-sb b { background: var(--border-strong); }
+html:not(.light) .mt-traces.rest .mt-fall li { color: var(--faint); }
+html:not(.light) .mt-ch-rail button[data-at='past'] { color: var(--faint); }
+html:not(.light) .mt-ch-rail i { background: var(--border-strong); }
+html:not(.light) .mt-ch-rail button[data-at='past'] i::after { background: var(--faint); }
+html:not(.light) .mt-tab { background: var(--x-raised); box-shadow: inset 0 0 0 1px var(--border); }
+html:not(.light) .mt-tab-bar, html:not(.light) .mt-tab-q, html:not(.light) .mt-row + .mt-row, html:not(.light) .mt-lab-r div { border-color: var(--border); }
+html:not(.light) .mt-tab .mt-dots i, html:not(.light) .mt-pills i { background: var(--secondary); }
+html:not(.light) .mt-row, html:not(.light) .mt-row.head { color: var(--faint); }
+html:not(.light) .mt-row.hot { color: var(--ink); }
+html:not(.light) .mt-row.spike { background: var(--x-fill); }
+html:not(.light) .k-metric { background: var(--ink); }
+html:not(.light) .k-trace { border-color: var(--ink); }
+html:not(.light) .k-log { background: var(--soft); }
+html:not(.light) .c-value b { background: var(--border-strong); }
+html:not(.light) .mt-row.hot .c-value b { background: var(--ink); }
+html:not(.light) .mt-lab-c button { border-color: var(--border-control); background: var(--x-raised); color: var(--soft); }
+html:not(.light) .mt-lab-c button[aria-pressed='true'] { background: var(--x-raised); color: var(--ink); border-color: var(--ink); }
+html:not(.light) .mt-lab-r dt { color: var(--soft); }
+/* 02: the query bar stays the one black object, edged so it reads on the dark table */
+html:not(.light) .mt-tab[data-step='1'] .mt-tab-q { box-shadow: inset 0 0 0 1px var(--border-strong); }
+html:not(.light) .mt-tab[data-step='4'][data-beat='2'] .mt-tab-q { background: var(--x-fill); box-shadow: inset 0 0 0 1.5px var(--ink); }
+html:not(.light) .mt-tab-spike { background: var(--x-raised); border-top-color: var(--border); }
+html:not(.light) .mt-tab-spike path { stroke: var(--ink); }
+@media (hover: hover) {
+  html:not(.light) .mt-split button:not([aria-pressed='true']):hover { color: var(--ink); background: var(--glass-strong); }
+  html:not(.light) .mt-split button[aria-pressed='true']:hover { color: var(--ink); }
+  html:not(.light) .mt-lab-c button[aria-pressed='true']:hover { background: var(--x-fill); }
+  html:not(.light) .mt-close .lx-close-repo:hover { background: var(--x-fill); }
+}
+@media (max-width: 899px) {
+  html:not(.light) .mt-ch:not([data-pin]) .mt-ch-obj { background: var(--bg); box-shadow: 0 -60px 0 var(--bg); }
+}
+/* the close's art tile reads Hanzo's --muted fill, which on a launch-kit page is the kit's body grey: it takes the fill token */
+html:not(.light) .mt-close .lx-close-art { background: var(--x-fill); }
+/* the shared pause control draws its icon in #0a0a0a on its own fill; in the tool card it takes the ink */
+html:not(.light) .mt-pause:not([aria-pressed='true']) { color: var(--ink); }
+/* the close's Sigil and repo underline are drawn in fixed black by the shared close; on this page they take the ink */
+html:not(.light) .mt-close .lx-close-sigil { color: var(--ink); }
+html:not(.light) .mt-close .lx-close-repo { text-decoration-color: var(--border-selected); }
+
+/* dark: the shared pause puck is white in both modes (LivePause.css); on this page it sits on Hanzo's dark surface,
+   so it takes the dark icon-tile fill (--secondary) under its light glyph, as /kms does */
+html:not(.light) .mt .lx-pause:not([aria-pressed='true']) { background: var(--secondary); color: var(--foreground); }
+
+/* dark: live hanzo.ai's heroes carry a halftone dot field in dark, densest at the edges (the same rule as /investors);
+   light mode draws nothing here */
+html:not(.light) .mt-hero { position: relative; isolation: isolate; }
+html:not(.light) .mt-hero::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(circle, var(--white-20) 1px, transparent 1.6px) 0 0 / 5px 5px; -webkit-mask-image: radial-gradient(ellipse 75% 70% at 45% 45%, transparent 35%, #000 100%), linear-gradient(#000 70%, transparent); -webkit-mask-composite: source-in; mask-image: radial-gradient(ellipse 75% 70% at 45% 45%, transparent 35%, #000 100%), linear-gradient(#000 70%, transparent); mask-composite: intersect; }

@@ -1,4 +1,5 @@
 # /ingress — James-eye review
+Ready: 2026-11-07 fix 1 is moot: the blank-gap wipe is gone (the facts are now a snapping carousel under a draggable globe hero, the motion-map rework); h1 line cut-in visible at 0 ms; no shadowed tiles; #0a0a0a literals → var(--ink); the pod backends carry Hanzo's "health checks" like static's "from disk"; C1 phone fixes (globe above its legend, fact cards stack words over drawing with source pills inside their panel, lit board rows hold still), legend up beside the globe on desktop, dead band under the board trimmed; shared asks (Deploy to Cloud 44px, phone header ask) kept in docs/requests/ingress.md.
 
 Verdict: 7/10
 First complaint: "I scroll to the next fact and the screen goes blank: the old one has gone and the new one hasn't arrived. That's one out, nothing, then one in, five times over. It feels broken, not premium."

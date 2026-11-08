@@ -275,7 +275,7 @@ export function Console({ name, side, api, cap = 'Every request enters here, so 
         )}
       </div>
       <div className="cf-con-foot">
-        <span>{host && 'api.hanzo.ai'}<b>{api}</b></span>
+        <span>{host && <span>api.hanzo.ai</span>}<b><span>{api}</span></b></span>
         <A to="https://hanzo.team/" className="cf-con-open">Open in the console ↗</A>
       </div>
     </div>

@@ -23,7 +23,7 @@ import { A, Img, Cta } from '../kit';
 import Sigil from '../Sigil';
 import MaskLines from './company/MaskLines';
 import useArrived from './company/useArrived';
-import { ECO } from './openSourceData';
+import { H } from './investorsEco';
 import '../v2/vc-type.css';
 import './company/deck.css';
 import usePhoneAsk from './usePhoneAsk';
@@ -32,7 +32,8 @@ import './Investors.css';
 const EASE = [0.16, 1, 0.3, 1];
 // JS off: the hero's lede, asks and counter show, and every pinned scene stacks readable (PLAN 2.3, 2.17)
 const NOJS = { __html: '<style>.xin-roll-f[aria-hidden=true]{display:none!important}.xin-hero-l,.xin-hero-o,.xin-stats li{opacity:1!important;transform:none!important}.xin-pin{height:auto!important}.xin-pin-st{position:static!important;height:auto!important}.xin-pin-g{display:block!important}.xin-pin-s{display:grid!important;padding:48px 0}.xin-pin-s *{opacity:1!important;transform:none!important}</style>' };
-const H = ECO[0];
+// H: Hanzo's commit record as /investors shows it live (investorsEco.js)
+const LAST_DAY = Math.max(...[...H.heat].map((c, i) => (c === '.' ? -1 : i))); // the newest day in the heatmap (Nov 7)
 const Arrow = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 // the seven measured figures: Hanzo's own name for each, its subject, the figure and the page that carries its runs
@@ -56,7 +57,10 @@ function Logo({ src, name }) {
 function Roll({ still = false }) {
   const box = useRef(null);
   const seen = useInView(box, { amount: 0.4 });
-  const calm = useReducedMotion();
+  const calm0 = useReducedMotion();
+  const [ready, setReady] = useState(false); // the server and the first client paint agree (Pause); the preference applies after mount
+  useEffect(() => setReady(true), []);
+  const calm = ready && calm0;
   const [at, setAt] = useState(0);
   const [run, setRun] = useState(true); // false once you hold it, pause it or it has gone round once
   const n = TICK.length;
@@ -115,6 +119,8 @@ function Hero() {
       <noscript dangerouslySetInnerHTML={NOJS} />
       <div className="vc-grid xin-hero-g">
         <div className="xin-hero-t">
+          {/* Hanzo's own kicker, kept word for word but visually hidden: nothing sits above the h1 */}
+          <p className="x-sr">Hanzo Investor Relations</p>
           <MaskLines as="h1" id="xin-h1" now delay={0.05} lines={['The intelligence', 'layer for business.']} className="vc-display xin-h1" />
         </div>
         <motion.div className="xin-hero-l" initial={{ opacity: 0, y: 12 }} animate={ok ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 0.52, ease: EASE, delay: 0.45 }}>
@@ -211,6 +217,7 @@ function Thesis() {
     <Pinned
       label="Hanzo.Thesis · one platform"
       className="xin-thesis"
+      head={<p className="x-sr"><span>Hanzo.Thesis</span> <span>one platform</span></p>}
       scenes={THESIS.map(([t, d], i) => ({
         key: t,
         title: () => <h3 className="vc-display s">{t}</h3>,
@@ -274,8 +281,8 @@ const Interval = ({ on }) => ( // 3.02×, 95% interval 2.06–4.36×, on an axis
   </span>
 );
 const RESULTS = [
-  { key: 'ds', k: 'Research.DecisionSuite', m: 'Kai', v: '16 of 16', t: 'Decision Suite tasks won by Kai', d: <>Each set on <span className="x-mono">Oct 15, 2026</span>, with its public data and the runs of both models.</>, to: '/benchmarks#decision-suite', go: 'Each task and its runs →', vis: (on) => <Dots n={16} lit={16} cols={4} on={on} /> },
-  { key: 'lcb', k: 'Research.LiveCodeBench', m: '175 questions', v: '93.7%', d: <><span className="xin-pin-p">Enso as enso-bench measured it on 2026-07-19, beside each single model on the same questions. Each bar is a run&apos;s accuracy.</span><span className="xin-pin-p">LiveCodeBench&apos;s recent problems: Enso <b className="x-mono">93.7%</b>, 164 of 175 right, against 93.1% for gpt-5.6-sol, the next model on the same questions.</span></>, to: '/enso', vis: (on) => <Bars rows={LCB} max={100} on={on} fmt={(v) => v.toFixed(1) + '%'} /> },
+  { key: 'ds', k: 'Research.DecisionSuite', m: 'Kai', v: '16 of 16', t: 'Decision Suite tasks won by Kai', d: <><span>Each set on</span> <span className="x-mono">Oct 15, 2026,</span> <span>with its public data and the runs of both models.</span></>, to: '/benchmarks#decision-suite', go: 'Each task and its runs →', vis: (on) => <Dots n={16} lit={16} cols={4} on={on} /> },
+  { key: 'lcb', k: 'Research.LiveCodeBench', m: '175 questions', v: '93.7%', d: <><span className="xin-pin-p">Enso as enso-bench measured it on 2026-07-19, beside each single model on the same questions. Each bar is a run&apos;s accuracy.</span><span className="xin-pin-p"><span>LiveCodeBench&apos;s recent problems: Enso</span> <b className="x-mono"><span>93.7%,</span></b> <span>164 of 175 right, against 93.1% for gpt-5.6-sol, the next model on the same questions.</span></span></>, to: '/enso', vis: (on) => <Bars rows={LCB} max={100} on={on} fmt={(v) => v.toFixed(1) + '%'} /> },
   { key: 'gpqa', m: 'Enso Ultra', v: '95.6%', t: 'GPQA Diamond', d: '152 of 159 new questions right, against 93.1% for the best single model on the same questions.', to: '/enso', vis: (on) => <Dots n={159} lit={152} cols={20} on={on} /> },
   { key: 'kai', m: 'Kai', v: '0.8 ms', t: 'One decision, served', d: 'Kai on GPU, each a p50: 0.3 ms cached, 0.4 ms through the runtime, 0.8 ms served over HTTP.', to: '/kai', vis: (on) => <Bars rows={[['cached', 0.3], ['runtime', 0.4], ['HTTP', 0.8]]} max={0.8} on={on} fmt={(v) => v + ' ms'} /> },
   { key: 'dev', m: 'Hanzo Dev', v: '3.02×', t: 'Faster on the same coding tasks', d: 'Over the 42 tasks both agents solved, 95% interval 2.06–4.36×.', to: '/dev', vis: (on) => <Interval on={on} /> },
@@ -296,11 +303,11 @@ function Research() {
       )}
       scenes={RESULTS.map((r) => ({
         key: r.key,
-        pre: <p className="xin-cell-m">{r.k && <span className="x-mono">{r.k}</span>} {r.m}</p>,
+        pre: <p className="xin-cell-m">{r.k && <span className="x-mono">{r.k}</span>} <span>{r.m}</span></p>,
         title: (on) => <RollFig v={r.v} on={on} className="xin-giant" />,
         body: (
           <>
-            {r.t && <b className="xin-cell-t">{r.t}</b>}
+            {r.t && <b className="xin-cell-t"><span>{r.t}</span></b>}
             <span className="xin-cell-d">{r.d}</span>
             {r.go
               ? <A to={r.to} className="xin-go">{r.go}</A>
@@ -313,15 +320,45 @@ function Research() {
   );
 }
 
+/* Hanzo's stat captions count up with their figures, as hanzo.ai's activity cards do (useCount): every number in the
+   caption reads 0 until the cards are seen, then counts to its value in 1.1 s, easing out. The server and reduced
+   motion show the finished words ("In the past 7 days"). */
+function countText(e, r) {
+  if (r >= 1) return e;
+  return e.replace(/\d[\d,]*(?:\.\d+)?/g, (m) => {
+    const t = Number(m.replace(/,/g, ''));
+    if (!Number.isFinite(t)) return m;
+    const a = m.indexOf('.'), n = a >= 0 ? m.length - a - 1 : 0, i = t * r;
+    if (m.includes(',')) return n > 0 ? i.toLocaleString('en-US', { minimumFractionDigits: n, maximumFractionDigits: n }) : Math.round(i).toLocaleString('en-US');
+    return n > 0 ? i.toFixed(n) : String(Math.round(i));
+  });
+}
+function Cap({ s, on }) {
+  const ref = useRef(null);
+  const calm = useReducedMotion();
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (calm) { el.textContent = s; return; }
+    if (!on) { el.textContent = countText(s, 0); return; }
+    const t0 = performance.now();
+    let raf = 0;
+    const tick = (now) => { const n = Math.min(1, (now - t0) / 1100); el.textContent = countText(s, 1 - (1 - n) ** 3); if (n < 1) raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => { cancelAnimationFrame(raf); el.textContent = s; };
+  }, [s, on, calm]);
+  return <span ref={ref}>{s}</span>;
+}
+
 /* ---------- built in public: the commit record ---------- */
 function Public() {
   const cols = Math.ceil(H.heat.length / 7);
   const [lead, ...rest] = H.stats;
   const ref = useRef(null);
-  const seen = useInView(ref, { once: true, amount: 0.4 });
+  const seen = useInView(ref, { once: true, amount: 0.15 }); // hanzo.ai plays its activity cards once 15% of the block is in view (useSeen(.15))
   return (
     <section className="vc-sec xin-pub" aria-labelledby="xin-pub">
-      <div className="vc-grid">
+      <div className="vc-grid" ref={ref}>
         <header className="xin-pub-h">
           <h2 id="xin-pub" className="vc-headline">Built in public. Shipping every day.</h2>
           <p className="vc-body">The cloud, the gateway, the agents and the runtime are developed in the open. This is the public commit record, not a marketing projection.</p>
@@ -331,9 +368,9 @@ function Public() {
           <span className="xin-lead-k">{lead[0]}</span>
           <small>{lead[2]}</small>
         </A>
-        <ul className="xin-stats" ref={ref}>
+        <ul className="xin-stats">
           {rest.map(([k, v, s], i) => (
-            <li key={i}><A to={H.statTo[i + 1]}><span>{k}</span><RollFig v={v} on={seen} className="xin-stat-v" /><small>{s}</small><span className="xin-up"><Up /></span></A></li>
+            <li key={i}><A to={H.statTo[i + 1]}><span>{k}</span><RollFig v={v} on={seen} className="xin-stat-v" /><small><Cap s={s} on={seen} /></small><span className="xin-up"><Up /></span></A></li>
           ))}
         </ul>
         <figure className="xin-heat">
@@ -341,15 +378,15 @@ function Public() {
           <div className="xin-heat-sc">
             <div className="xin-heat-m" aria-hidden="true">{['Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'].map((m, i) => <span key={i}>{m}</span>)}</div>
             <div className="xin-heat-g" role="img" aria-label={H.heatLabel} style={{ '--cols': cols }}>
-              {[...H.heat].map((c, i) => <i key={i} className={c === '.' ? 'x' : 'l' + c} />)}
+              {[...H.heat].map((c, i) => <i key={i} className={(c === '.' ? 'x' : 'l' + c) + (i === LAST_DAY ? ' now' : '')} />)}
             </div>
           </div>
-          <div className="xin-heat-f"><span>Commits a day, from Nov 7, 2025 to Nov 6, 2026</span><span className="xin-leg">Less {[0, 1, 2, 3, 4].map((l) => <i key={l} className={'l' + l} />)} More</span></div>
+          <div className="xin-heat-f"><span>Commits a day, from Nov 8, 2025 to Nov 7, 2026</span><span className="xin-leg">Less {[0, 1, 2, 3, 4].map((l) => <i key={l} className={'l' + l} />)} More</span></div>
         </figure>
         <div className="xin-commits">
           <h3 className="vc-title">Latest commits</h3>
           <ol>
-            {H.commits.map(([repo, msg, when, to]) => <li key={to}><A to={to}><span className="x-mono">{repo}</span><span>{msg}</span><small className="x-mono">{when} UTC</small></A></li>)}
+            {H.commits.map(([repo, msg, when, to], i) => <li key={to}><A to={to}><span className="x-mono">{repo}</span><span>{msg}</span><small className="x-mono">{i === 0 && <i className="xin-live" aria-hidden="true" />}<span>{when}</span> <span>UTC</span></small></A></li>)}
           </ol>
         </div>
         <p className="xin-read"><span className="x-mono">{H.read}</span><A to={H.readTo} className="x-arrow"><span>Read the source</span><Arrow /></A></p>
@@ -366,7 +403,7 @@ function Built() {
       <div className="vc-grid"><h2 id="xin-built-h" className="vc-title xin-built-k">Products Hanzo built and launched</h2></div>
       <div className="vc-grid">
         <ul className="xin-wall">
-          {BUILT.map(([f, nm, to]) => <li key={f}><A to={to} aria-label={nm}><Logo src={'/logos/customers/' + f} name={nm} /></A></li>)}
+          {BUILT.map(([f, nm, to], i) => <li key={f} style={{ '--i': i }}><A to={to} aria-label={nm}><Logo src={'/logos/customers/' + f} name={nm} /></A></li>)}
         </ul>
       </div>
     </section>
@@ -401,7 +438,7 @@ function People() {
         <div className="xin-people-r">
           <div className="xin-execs">
             {[['Antje Worring', 'CEO, Hanzo AI, Inc.', 'https://www.linkedin.com/in/antje-worring/', 'antje-worring'], ['Zach Kelling', 'CTO, Hanzo AI, Inc.', 'https://www.linkedin.com/in/zeekay/', 'zach-kelling']].map(([nm, r, to, slug]) => (
-              <A key={nm} to={to} className="xin-exec"><Face slug={slug} name={nm} /><b>{nm}</b><span>{r}</span><i aria-hidden="true">↗</i></A>
+              <A key={nm} to={to} className="xin-exec"><Face slug={slug} name={nm} /><b><span>{nm}</span></b><span>{r}</span><i aria-hidden="true">↗</i></A>
             ))}
           </div>
           <div className="xin-gov">
@@ -477,7 +514,23 @@ function Close() {
   );
 }
 
+/* On phones "Contact investor relations" is too long for the header, so usePhoneAsk would keep "Try Hanzo" there for
+   the whole scroll. The same ask in Hanzo's shorter words is the close's own label, ir@hanzo.ai (the same mailto), so
+   on phones the hero's ask hands the header that label: after the hero an investor sees ir@hanzo.ai, never Try Hanzo.
+   Runs before usePhoneAsk reads the label. Desktop keeps the full words. */
+function usePhoneThumb() {
+  useEffect(() => {
+    if (!matchMedia('(max-width: 700px)').matches) return undefined;
+    const a = document.querySelector('main.xin [data-cta="investors.hero"]');
+    if (!a) return undefined;
+    const was = a.getAttribute('data-thumb');
+    a.setAttribute('data-thumb', 'ir@hanzo.ai');
+    return () => a.setAttribute('data-thumb', was);
+  }, []);
+}
+
 export default function Investors() {
+  usePhoneThumb();
   usePhoneAsk();
   return (
     <main className="vc xin" style={{ '--acc': '#0a0a0a' }}>

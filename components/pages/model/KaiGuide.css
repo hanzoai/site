@@ -462,3 +462,44 @@ html:not(.js) .kg-rx-top { display: none; }
   .kg-rx-m code, .kg-rx-it, .kg-rx-it p, .kg-end-h .x-line-in, .kg-rl, .kg-rl::before, .kg-sess-req, .kg-shape-w i { transition: none !important; }
   .kg-rx-bar i, .kg-dl dd { animation: none !important; }
 }
+
+/* round 9 (8 Nov): the thread fills from the top like a terminal; it no longer sits at the bottom of its box, where
+   every streamed line pushed the exchange above it up (layout shift 0.03). The scroller follows the newest line. */
+.kg-thread > :first-child { margin-top: 0; }
+/* the checker's two model chips share the row equally on phones */
+@media (max-width: 899px) { .kg-check .kg-models { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* the thread never traps the wheel: once it is at its end, the page scrolls on (a pointer resting on the hero's
+   conversation used to hold the whole page still) */
+.kg-sess-scr { overscroll-behavior: auto; }
+/* the code blocks never trap the wheel either: the kit block contains overscroll on both axes, so a capped block
+   (overflow-y hidden) held the page still under the pointer; vertical wheel now passes on to the page */
+.kg .x-codeblock pre, .kg-jev-d pre { overscroll-behavior-y: auto; }
+/* the shape of one call runs by itself: a dot carries each question across to its answer in turn (time, not scroll;
+   none under reduced motion) */
+.kg-shape-w::before { content: ''; position: absolute; left: 0; top: calc(50% - 3px); width: 6px; height: 6px; border-radius: 50%; background: var(--ink); opacity: 0; animation: kg-carry 3.6s cubic-bezier(.4, 0, .2, 1) infinite; }
+.kg-shape-r:nth-child(5) .kg-shape-w::before { animation-delay: 1.2s; } .kg-shape-r:nth-child(6) .kg-shape-w::before { animation-delay: 2.4s; }
+@keyframes kg-carry { 0% { opacity: 0; transform: translateX(0); } 6% { opacity: 1; } 30% { opacity: 1; transform: translateX(var(--kg-run, 120px)); } 34%, 100% { opacity: 0; transform: translateX(var(--kg-run, 120px)); } }
+.kg-shape-w { container-type: inline-size; }
+.kg-shape-w::before { --kg-run: calc(100cqw - 8px); }
+@media (prefers-reduced-motion: reduce) { .kg-shape-w::before { animation: none; display: none; } }
+/* the last quiet controls answer the pointer: The runs thickens its underline, the language tabs ink, the dark
+   room's quiet ask brightens its outline; presses dip 1px */
+@media (hover: hover) {
+  .kg-runs:hover { text-decoration-thickness: 2px; }
+  .kg-code [role='tab']:not([aria-selected='true']):hover { color: var(--ink); }
+  .kg-room .x-btn:not(.solid):hover { border-color: var(--on-black); background: var(--on-black-band); }
+}
+.kg-runs { transition: transform .09s var(--eo); } .kg-runs:active { transform: translateY(1px); }
+
+/* dark mode (docs/DARK-MODE.md): the page's deck names take Hanzo's own dark tokens, as live hanzo.ai; the session
+   terminal, the record and the dark room keep their black values in both modes. */
+html:not(.light) .kg {
+  --paper: var(--bg); --quiet-room: var(--x-fill); --tile: var(--secondary); --muted-tile: var(--secondary); --brand-tone: var(--secondary); --track: var(--white-22);
+  --ink: var(--foreground); --mute: var(--muted-foreground); --quiet: var(--text-tertiary);
+  --line: var(--border); --line-2: var(--border-control); --fill: var(--glass-strong);
+}
+html:not(.light) .kg-call { --room-fill: var(--glass); }
+html:not(.light) .kg-run i { color: var(--x-on-ink); } /* the slider knob is an ink fill, light in dark like Hanzo's primary */
+/* dark: live hanzo.ai's heroes carry a halftone dot field in dark, densest at the edges; light mode draws nothing here */
+html:not(.light) .kg-hero { position: relative; isolation: isolate; }
+html:not(.light) .kg-hero::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(circle, var(--white-20) 1px, transparent 1.6px) 0 0 / 5px 5px; -webkit-mask-image: radial-gradient(ellipse 75% 70% at 45% 45%, transparent 35%, #000 100%); mask-image: radial-gradient(ellipse 75% 70% at 45% 45%, transparent 35%, #000 100%); }

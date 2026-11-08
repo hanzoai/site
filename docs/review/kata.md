@@ -1,4 +1,5 @@
 # /kata — James-eye review
+Ready: 2026-11-08 unlit words #737373, the board inside the phone first screen (88px), arrival starts the loop (no finished-then-wiped session, h1 by CSS mask), one solid at a time (Band marked kata.band), dial labels clear of their dots, Read as one ruled list with hover destinations, no void after the wipe, a terminal beside the questions, idle motion on every screen (0 still), 0 errors under reduced motion.
 Verdict: 7/10
 First complaint: "Two of my three headline words are so pale I can barely read them, and on the phone I don't see the product at all until I scroll. Then the bottom half turns into three grey boxes of links."
 

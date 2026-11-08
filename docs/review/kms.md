@@ -1,4 +1,5 @@
 # /kms — James-eye review
+Ready: 2026-11-07 refused write takes v2's slot (0px overlap at 375/1470); the spotlight vault room, its light masks and the five entrances are styled (they had shipped as markup only, leaving the rules unstyled and a black grid-wave over the page); Seal seals on its own until taken; the terminal types once; one "Example project" caption; hero ask arrow with no width change; Copy hovers.
 
 Verdict: 7/10
 First complaint: "On my phone the 'write replaces v3 · refused' label lands right on top of the v2 row, so you can't read either one. And the panel next to the six rules keeps wiping itself to an empty white box."

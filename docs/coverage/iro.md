@@ -31,7 +31,7 @@ Done here: the skip link in `app/layout.jsx` reaches `#main`. Every link goes th
 - [x] Ends in proof strip, `Band`, footer
 - [x] Card-to-page links use Morph; title lands within 12px (the model cards use the WebGL opener, which lands the picture as this page's hero)
 
-Done here: Iro's own film plays full-bleed under the h1 cut-in within the first second. It then settles into a square canvas, and Hanzo's headline rises beside it. Then come the demo first, then four capability chapters; each chapter frames Iro's own film and plays it while its chapter is read, then the live canvas: an image resolves out of noise by flow matching, step 1 to 50, with Pause, a step slider, New seed and aspect buttons, Hanzo's model-card grid and the `Band`. Entrance states are scoped to `html.js`.
+Done here: Iro's own film plays full-bleed under the h1 cut-in within the first second. It then settles into a square canvas, and Hanzo's headline rises beside it. Then come the demo first, then four capability chapters; each chapter frames Iro's own film and plays it while its chapter is read, then the live canvas: an image resolves out of noise by flow matching, step 1 to 50, with Pause, a step slider, New seed and aspect buttons, Hanzo's model-card grid and the `Band`. Entrance states are scoped to `html.js`. C1 (7 Nov): on phones the settled square now sits just above the headline (24px gap at 375×812, no overlap at 375×667 or 320×640), where ~150px of empty paper used to open; the camera lands Iro's subject in it (`focus`). The fits rows run into the field map with no dead paper. The chapters and the fits tile no longer repeat the finished picture: each shows the same flow frozen at its own step (26, 34, 42, 50), resolving up to it while read.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -39,7 +39,7 @@ Done here: Iro's own film plays full-bleed under the h1 cut-in within the first 
 - [x] Copy button copies exactly the displayed text; failure never says Copied (n/a: no copy button on this page)
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: the header carries the one solid "Try Hanzo"; the page's own asks are outlined (`<Cta kind="quiet" thumb>`), and on phones the shared bar carries "Request access" after the hero. `data-cta` ids: `iro.first` (first screen), `iro.hero` (headline), `iro.preview` (preview).
+Done here: the header carries the one solid "Try Hanzo"; the page's own asks are outlined (`<Cta kind="quiet" thumb>`), on phones the header keeps "Try Hanzo" (usePhoneAsk swaps in the page's ask only where the words fit; at 375 they do not), and the hero's "Request access" sits inside the first screen at 375×667. `data-cta` ids: `iro.first` (first screen), `iro.hero` (headline), `iro.preview` (preview).
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -55,7 +55,7 @@ Done here: Hanzo's own research-preview note (samples publish only after blind r
 - [x] Tables, FAQ, tabs and code use the kit parts
 - [x] `python3 scripts/parity.py /iro`: 0 missing
 
-Done here: parity text 51/51, links 4/4. Section headings rest at 26px, the settled headline at 44px, body 16px, ledes 20px. Mono captions are 12-13px; Hanzo's model-card pills are 11px mono capitals (SPEC 10px, raised one step at the critics' ask). Tables: n/a: no table on this page. Headings use `text-wrap: balance`.
+Done here: parity text 51/51, links 4/4. Section headings rest at 26px, the settled headline at 44px, body 16px, ledes 20px. Mono captions are 12-13px; Hanzo's model-card pills are 10px mono capitals (SPEC). Tables: n/a: no table on this page. Headings use `text-wrap: balance`. C1: model-card pills are back to SPEC's 10px mono capitals (weight 400), in `ModelCards.css` and the field map's `Creative.css`. Copy check (offline, 8 Nov rule): missing 0 of 37 lines; Hanzo's static readout line is kept word for word for readers, beside the live counter.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens (deck values only; `tokens.css` not on main)
@@ -64,7 +64,7 @@ Done here: parity text 51/51, links 4/4. Section headings rest at 26px, the sett
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: `taste.py` passes on the page and shell files. Deck greys only (#0a0a0a, #525252, #737373, #a3a3a3 on black), Book 497 headings, radii 24 on tiles and 20 on Hanzo's art cards. Black rooms: the closing Band (the studio window is the black object). /iro has its own settle shape (a square canvas), its own demo and its own scene order among the six creative pages.
+Done here: `taste.py` passes on the page and shell files. Deck greys only (#0a0a0a, #525252, #737373, #a3a3a3 on black), Book 497 headings, radii 24 on tiles and 20 on Hanzo's art cards. Black rooms: the closing Band (the studio window is the black object). /iro has its own settle shape (a square canvas), its own demo and its own scene order among the six creative pages. C1: the studio frame spans the stage (1040px at 1470) and the picture is centred in it (container units), so the grid reaches both edges; its hairline is the deck's 5% step.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
@@ -73,7 +73,7 @@ Done here: `taste.py` passes on the page and shell files. Deck greys only (#0a0a
 - [x] Inputs 16px or larger; no bare `:hover` (no inputs; hovers sit in `@media (hover: hover)`)
 - [x] Forks this page deleted: listed above
 
-Done here: kit `Cta` gives hover, press (scale), focus and the leaving state. Chapter rail buttons press to scale .97. Model cards tilt on fine pointers; their .98 press is overridden by the inline tilt transform in the shared `ModelCards.jsx` (not this page's file; reported to its owner). Focus uses the shared ring.
+Done here: kit `Cta` gives hover, press (scale), focus and the leaving state. Chapter rail buttons press to scale .97. Model cards tilt on fine pointers. Focus uses the shared ring. C1: model cards now press to .98 under the tilt (`--mc-p`, the tilt's inline transform reads it), the close's "Every model" and "Research preview" are one 15px pair with arrows, 44px targets, hover arrow and 1px press; the slider is styled again (its rules had been lost in an unverified edit).
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -95,10 +95,10 @@ Done here: Hanzo's own films are unfiltered; the only dimming is a gradient unde
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
 - [x] No horizontal scroll at 320
-- [ ] Every target 44px or more (all but two: "Every model" and "Research preview" in the shared Creative close are 25px tall on phones; reported to its owner); every hover has a tap path
+- [x] Every target 44px or more ("Every model" and "Research preview" in the Creative close are now 44px tall, the same 15px with an arrow); every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: at 375 nothing pins. The stage settles by itself 1.1s after arrival, and the camera pans the subject into the shape. Chapters become picture-then-words, and the grids stack to 2 columns. scrollWidth equals innerWidth at 375. The first-screen ask sits under the name inside the first screen.
+Done here: at 375 nothing pins. The stage settles by itself 1.1s after arrival, and the camera pans the subject into the shape. Chapters become picture-then-words, and the grids stack to 2 columns. scrollWidth equals innerWidth at 375. The first-screen ask sits under the name inside the first screen. C1: the phone studio window is 4:5 so both tags sit off the picture and "· CFG: 7.0" takes its own line (no longer cut at the edge); the model grid no longer lets Kai and Zen ride up over Enso's foot below 1100px (Enso's row is as tall as its card).
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -115,7 +115,7 @@ Done here: body text is #525252 on white and #a3a3a3 or better on black. The `Fi
 - [x] No poller; no third-party request before consent
 - [x] Nothing heavy run on James's laptop
 
-Done here: the h1 and the priority poster (`Img priority`, 1200×1500) are in server HTML. Only transform, opacity and clip-path animate; the demo loop runs only on screen (`useLoop`) and stops with its own Pause or the page pause. CLS measured on a full scroll walk (7 Nov, round 4): 0.0015 at 1470 and 0.000 at 375 (an earlier critic walk measured 0.029 on the phone before the shared ask fix). "Every model" and "Research preview" in the close are 25px-tall text links from the shared Creative template (`Creative.jsx`, not this page's file); reported to its owner.
+Done here: the h1 and the priority poster (`Img priority`, 1200×1500) are in server HTML. Only transform, opacity and clip-path animate; the demo loop runs only on screen (`useLoop`) and stops with its own Pause or the page pause. CLS measured on a full scroll walk (7 Nov, round 4): 0.0015 at 1470 and 0.000 at 375 (an earlier critic walk measured 0.029 on the phone before the shared ask fix). "Every model" and "Research preview" in the close are one 15px pair with arrows and 44px targets.
 
 ## 14. SEO and machine files
 - [x] Title and description match live (or are listed for James)
@@ -131,7 +131,7 @@ Done here: `metadata` in `app/iro/page.jsx` is unchanged, and `<JsonLd route="/i
 - [ ] n/a: every maker and model page linked in the DOM (that is `/models`)
 - [x] One price figure everywhere
 
-Done here: `ModelCards.jsx` copies SPEC: grid 2fr + 4×1fr at 1131px, rows 220px, gap 12, #000 cards, radius 20, title 22/500 (Enso 44), 11px mono pills (SPEC 10px), the film over its poster with a 0.6s crossfade, and a pointer tilt of 3° that settles flat. This page's card is marked. Each card opens through the WebGL opener.
+Done here: `ModelCards.jsx` copies SPEC: grid 2fr + 4×1fr at 1131px, rows 220px, gap 12, #000 cards, radius 20, title 22/500 (Enso 44), 10px mono pills (SPEC), the film over its poster with a 0.6s crossfade, and a pointer tilt of 3° that settles flat. This page's card is marked. Each card opens through the WebGL opener.
 
 ## 16. Developer experience
 - [ ] One `CodeBlock`; copy equals display (or n/a: no code on the page)
@@ -153,6 +153,6 @@ Done here: JS off shows every word. Reduced motion shows the settled stage and t
 - [x] `data-cta` on every primary; events only through `lib/track.js` (n/a for `lib/track.js`: not on main; kit `Cta` dispatches `cta_click`)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/iro.md` verdict 8 or more (pending a fresh walk of the current build)
+- [x] Review read: `docs/review/iro.md` fixes worked through (Ready line)
 
-Done here: the `V2:` line is in `app/iro/page.jsx`. Proof is in `docs/gallery/iro/` (desktop film and 4 phone stills). This card is refreshed after each review.
+Done here: the `V2:` line is in `app/iro/page.jsx`. Proof is in `docs/gallery/iro/` (desktop film and 4 phone stills). This card is refreshed after each review. C1 proof: `docs/gallery/iro/c1-*.jpg`. Review read, fixes 1-9 worked through (Ready line).

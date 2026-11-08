@@ -24,7 +24,7 @@ function Card({ m, big, here, live, setLive }) {
     if (calm || e.pointerType !== 'mouse') return;
     const r = ref.current.getBoundingClientRect();
     const x = ((e.clientX - r.left) / r.width) * 2 - 1, y = ((e.clientY - r.top) / r.height) * 2 - 1;
-    ref.current.style.transform = `perspective(900px) rotateX(${(y * 3).toFixed(2)}deg) rotateY(${(-x * 3).toFixed(2)}deg)`;
+    ref.current.style.transform = `perspective(900px) rotateX(${(y * 3).toFixed(2)}deg) rotateY(${(-x * 3).toFixed(2)}deg) scale(var(--mc-p, 1))`; // --mc-p: the press still answers under the tilt
   };
   const flat = () => { if (ref.current) ref.current.style.transform = ''; setLive((a) => (a === m.slug ? null : a)); };
   const plays = big || live === m.slug;

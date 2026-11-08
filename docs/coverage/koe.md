@@ -31,7 +31,7 @@ Done here: the skip link in `app/layout.jsx` reaches `#main`. Every link goes th
 - [x] Ends in proof strip, `Band`, footer
 - [x] Card-to-page links use Morph; title lands within 12px (the model cards use the WebGL opener, which lands the picture as this page's hero)
 
-Done here: Koe's own film plays full-bleed under the h1 cut-in within the first second. It then settles into a tall voice capsule left of the headline (a pill on phones), and Hanzo's headline rises beside it. On phones the settled pill keeps speaking: the film keeps playing and slowly breathes (scale 1 to 1.1 over 7s), a playhead sweeps it every 6s and a 28-bar level meter moves at its foot (measured 15% of the 375×812 screen changing over 2.5s at rest; 0% once Pause is pressed). Once settled, the h1 "Koe" rests visibly at 52px above the headline on desktop and at 44px in the white band above the pill on phones. Then come four capability chapters, then the demo. Each chapter draws its own booth-derived picture (`KoePanels.jsx`, canvas):
+Done here: Koe's own film plays full-bleed under the h1 cut-in within the first second. It then settles into a tall voice capsule left of the headline (a pill on phones), and Hanzo's headline rises beside it. On phones the settled pill keeps speaking: the film keeps playing and slowly breathes (scale 1 to 1.1 over 7s), a playhead sweeps it every 6s and a 28-bar level meter moves at its foot (measured 15% of the 375×812 screen changing over 2.5s at rest; 0% once Pause is pressed). Once settled, the h1 "Koe" rests visibly at 52px above the headline on desktop and at 44px in the white band above the pill on phones. Then come four capability chapters, then the demo. Each chapter draws its own booth-derived picture (`KoePanels.jsx`, canvas): C1 (7 Nov): the field map runs into Hanzo's model grid with 116px between them (was 323px of empty paper).
 - a pitch contour re-performing over level bars (emotional modulation);
 - two waveforms under one shared envelope (cross-lingual cloning);
 - the mouth shape of each phoneme of "Hanzo" opening on its timeline slot (viseme dubbing);
@@ -61,7 +61,7 @@ Done here: Hanzo's own research-preview note (samples publish only after blind r
 - [x] Tables, FAQ, tabs and code use the kit parts
 - [x] `python3 scripts/parity.py /koe`: 0 missing
 
-Done here: parity text 58/58, links 4/4. Section headings rest at 26px, the settled headline at 44px, body 16px, ledes 20px. Mono captions are 12-13px; Hanzo's model-card pills are 11px mono capitals (SPEC 10px, raised one step at the critics' ask). Tables: n/a: no table on this page. Headings use `text-wrap: balance`.
+Done here: parity text 58/58, links 4/4. Section headings rest at 26px, the settled headline at 44px, body 16px, ledes 20px. Mono captions are 12-13px; Hanzo's model-card pills are 11px mono capitals (SPEC 10px, raised one step at the critics' ask). Tables: n/a: no table on this page. Headings use `text-wrap: balance`. C1: copy check (offline, content/live/koe.json): missing 0 of 44 lines; the studio bar's "studio.hanzo.ai /" is now its own element (shared `Studio.jsx`).
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens (deck values only; `tokens.css` not on main)
@@ -111,7 +111,7 @@ Done here: Hanzo's own films are unfiltered; the only dimming is a gradient unde
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: at 375 nothing pins. The stage settles by itself 1.1s after arrival, and the camera pans the subject into the shape. The pill starts 8px under the × close and ends 28px above the headline (measured at 375×812: pill 136 to 413, headline from 441). Short phones get a slimmer pill, and the ask comes straight under the headline. At 375×667 the solid "Request access" sits at y 373 to 417, clear above the cookie card (top 448). The pause disc docks on the settled pill's right end (desktop: the capsule's foot), not on white. The map's field tabs are one row that scrolls sideways, with the next field peeking, and the chosen field scrolls into view. Chapters become picture-then-words, and the grids stack to 2 columns. scrollWidth equals innerWidth at 375. The first-screen ask sits under the name inside the first screen.
+Done here: at 375 nothing pins. The stage settles by itself 1.1s after arrival, and the camera pans the subject into the shape. The pill starts 8px under the × close and ends 28px above the headline (measured at 375×812: pill 136 to 413, headline from 441). Short phones get a slimmer pill, and the ask comes straight under the headline. At 375×667 the solid "Request access" sits at y 373 to 417, clear above the cookie card (top 448). The pause disc docks on the settled pill's right end (desktop: the capsule's foot), not on white. The map's field tabs are one row that scrolls sideways, with the next field peeking, and the chosen field scrolls into view. Chapters become picture-then-words, and the grids stack to 2 columns. scrollWidth equals innerWidth at 375. The first-screen ask sits under the name inside the first screen. C1: below 1100px Hanzo's model grid no longer lets Kai and Zen ride up over Enso's foot (`ModelCards.css`: Enso's row is as tall as its card).
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -144,7 +144,7 @@ Done here: `metadata` in `app/koe/page.jsx` is unchanged, and `<JsonLd route="/k
 - [ ] n/a: every maker and model page linked in the DOM (that is `/models`)
 - [x] One price figure everywhere
 
-Done here: `ModelCards.jsx` copies SPEC: grid 2fr + 4×1fr at 1131px, rows 220px, gap 12, #000 cards, radius 20, title 22/500 (Enso 44), 11px mono pills (SPEC 10px), the film over its poster with a 0.6s crossfade, and a pointer tilt of 3° that settles flat. This page's card is marked. Each card opens through the WebGL opener.
+Done here: `ModelCards.jsx` copies SPEC: grid 2fr + 4×1fr at 1131px, rows 220px, gap 12, #000 cards, radius 20, title 22/500 (Enso 44), 11px mono pills (SPEC 10px), the film over its poster with a 0.6s crossfade, and a pointer tilt of 3° that settles flat. This page's card is marked. Each card opens through the WebGL opener. C1: model-card pills are SPEC's 10px mono capitals again (weight 400); press scales .98 under the tilt (`--mc-p`).
 
 ## 16. Developer experience
 - [ ] One `CodeBlock`; copy equals display (or n/a: no code on the page)
@@ -168,7 +168,7 @@ Done here: JS off shows every word. Reduced motion shows the calm layout: the fu
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/koe.md` verdict 8 or more (pending a fresh walk of the current build)
 
-Done here: the `V2:` line is in `components/pages/model/Koe.jsx` (and `app/koe/page.jsx`). Proof is in `docs/gallery/koe/`:
+Done here: the `V2:` line is in `components/pages/model/Koe.jsx` (and `app/koe/page.jsx`). Proof is in `docs/gallery/koe/`: C1 proof: `docs/gallery/koe/c1-*.jpg`. Review read; every fix item answered (Ready line); Morph and the 320px header clip are shared requests (`docs/requests/koe.md`).
 - settled first screens: `desktop-1470.png`, `phone-375.png` and `phone-375x667-cookie.png`;
 - two drawn chapter panels: `chapter-2-clone.png` and `chapter-3-visemes.png`;
 - filmed sheets: `d-sheet-01.jpg` and `p-sheet-01.jpg`;
