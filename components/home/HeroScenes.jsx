@@ -13,6 +13,25 @@ const WHO = { vi: 'Vi', kai: 'Kai', des: 'Des', dev: 'Dev', mark: 'Mark', su: 'S
 // scene 0 is the hero's own opening (the prompt, the card, the install); the rest follow it
 export const MORE = SCENES.slice(1);
 
+/* what the company log says when a scene finishes (hanzo.ai's own notes, by kind of scene) */
+const note = (s) => (s.place === 'chat' ? (s.card ? 'maxpower is ready' : null)
+  : s.place === 'dev' ? (s.ship ? 'Deployed maxpower → maxpower.hanzo.app ✓' : 'CI passed ✓')
+    : s.place === 'studio' ? `Des shared ${s.made.length} designs`
+      : s.place === 'tabs' ? `${s.panes.length} agents finished`
+        : s.place === 'beta' ? 'Hanzo Beta is live' : null);
+const NOTES = SCENES.map(note);
+
+/* what maxpower has shipped so far, as chips in the app (hanzo.ai's own labels) */
+const CHIP = { offline: 'Works offline', board: 'Leaderboard: you', run: 'Run all' };
+export function Chips({ at }) {
+  const got = new Set(MORE.slice(0, Math.max(0, at + 1)).map((s) => s.ships).filter(Boolean));
+  return (
+    <div className="xs-chips">
+      {Object.entries(CHIP).map(([k, t]) => <span key={k} className={'xs-chip' + (got.has(k) ? ' on' : '')} aria-hidden={got.has(k) ? undefined : true}>{t}</span>)}
+    </div>
+  );
+}
+
 function Scene({ s }) {
   const ask = s.ask || s.prompt || s.run || s.title;
   return (
@@ -86,13 +105,23 @@ export function PhoneCells({ at }) {
 }
 
 /* what the company is doing: the two latest entries of the day's log, beside the desktop app */
-export function Feed({ i }) {
+const JOINS = FEED.filter((e) => e.joins).length;
+export function Feed({ i, sc = -1 }) {
   const n = FEED.length;
   const a = ((i % n) + n) % n, b = (a + n - 1) % n;
   const signed = FEED.slice(0, a + 1).filter((e) => e.joins).length;
+  const done = sc >= 0 ? NOTES[sc + 1] : null;
   return (
     <div className="xs-feed" role="log" aria-live="off" aria-label="What maxpower’s company is doing">
-      {signed > 0 && <p className="xs-signed"><span>{signed} signed up · demo</span></p>}
+      {/* the sign-up count as the log has it at each step; the current count shows */}
+      <p className="xs-signed">{Array.from({ length: JOINS }, (_, k) => <span key={k} className={k + 1 === signed ? 'on' : ''} aria-hidden={k + 1 === signed ? undefined : true}>{k + 1} signed up · demo</span>)}</p>
+      {/* each scene's closing note, the current one on top */}
+      {NOTES.map((t, k) => (t ? (
+        <div key={'n' + k} className={'xs-ev note' + (done && k === sc + 1 ? ' on a' : '')} aria-hidden={k === sc + 1 ? undefined : true}>
+          <i aria-hidden="true">H</i>
+          <p><span className="xs-ev-t">{t}</span> <span className="xs-ev-l">· maxpower</span></p>
+        </div>
+      ) : null))}
       {FEED.map((e, k) => (
         <div key={k} className={'xs-ev' + (k === a ? ' on a' : k === b ? ' on b' : '')} aria-hidden={k === a ? undefined : true}>
           <i aria-hidden="true">{WHO[e.who] ? WHO[e.who][0] : ''}</i>

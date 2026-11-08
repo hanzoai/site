@@ -5,7 +5,7 @@ import { EASE, Count, fine, Mark, copyText } from './ui';
 import A2Pause from './v2/A2Pause';
 import C from '../content';
 import SetupMenu from './SetupMenu';
-import { MORE, SceneLog, ShellLines, PhoneCells, Feed } from './home/HeroScenes';
+import { MORE, SceneLog, ShellLines, PhoneCells, Feed, Chips } from './home/HeroScenes';
 
 const PROMPT = 'Build maxpower: every AI I use in one place, and faster at coding.';
 const CMD = 'curl -fsSL https://hanzo.sh | sh';
@@ -190,6 +190,7 @@ export default function Hero() {
   const [k, setK] = useState(1);
   // after the opening, the rest of Hanzo's day plays: one scene every 6.5 s, the company log every 1.8 s
   const [sc, setSc] = useState(-1);
+  const [side, setSide] = useState(true);
   const [fd, setFd] = useState(0);
   useEffect(() => {
     if (calm) return;
@@ -309,9 +310,13 @@ export default function Hero() {
           <div className="x-fit" style={{ transform: `scale(${k})` }}>
             <motion.div className="x-3d" style={{ rotateX: rx, rotateY: ry }}>
               {/* the desktop app */}
-              <motion.div className="x-win" initial={{ opacity: 0, z: -260, y: 40 }} animate={{ opacity: 1, z: 0, y: 0 }} transition={{ duration: 1.3, ease: EASE, delay: 0.15 }}>
+              <motion.div className={'x-win' + (side ? '' : ' xs-noside')} initial={{ opacity: 0, z: -260, y: 40 }} animate={{ opacity: 1, z: 0, y: 0 }} transition={{ duration: 1.3, ease: EASE, delay: 0.15 }}>
                 <div className="x-win-bar">
                   <i /><i /><i />
+                  <button type="button" className="xs-sidet" aria-expanded={side} aria-label={side ? 'Close sidebar' : 'Open sidebar'} onClick={() => setSide((v) => !v)}>
+                    <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><rect x="1.8" y="2.8" width="12.4" height="10.4" rx="2.2" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M6 3v10" stroke="currentColor" strokeWidth="1.4" /></svg>
+                    <span className="xs-tip"><span hidden={!side}>Close sidebar</span><span hidden={side}>Open sidebar</span></span>
+                  </button>
                   <a className="x-url" href="/chat">hanzo.ai/chat <span>›</span></a>
                   <a className="x-openapp" href="/chat">Open App ›</a>
                 </div>
@@ -331,6 +336,7 @@ export default function Hero() {
                       <Bubble on={phase >= 2}>Done. maxpower connects your agents, shares one key, and runs them side by side.</Bubble>
                       <AppCard on={phase >= 2} />
                     </div>
+                    <Chips at={sc} />
                     <SceneLog at={sc} />
                     <div className="x-input">
                       <span className="x-plus">+</span>
@@ -391,7 +397,7 @@ export default function Hero() {
               </motion.div>
             </motion.div>
           </div>
-          <Feed i={fd} />
+          <Feed i={fd} sc={sc} />
           <SetupMenu up initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 1.1 }} />
         </motion.div>
       </div>
