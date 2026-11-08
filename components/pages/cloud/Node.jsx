@@ -36,6 +36,7 @@ import { Sheet } from '../../v2/SpecDrawer';
 import LaunchClose, { Arr } from '../../v2/LaunchClose';
 import LineMask from '../../v2/LineMask';
 import LivePause, { usePause } from '../../v2/LivePause';
+import HeroDither from '../HeroDither';
 import './Node.css';
 
 const useIso = typeof window === 'undefined' ? useEffect : useLayoutEffect;
@@ -289,8 +290,9 @@ function Lean({ children }) {
 function Grow({ target, children }) {
   const calm = useReducedMotion();
   const { scrollYProgress } = useScroll({ target, offset: ['start start', 'end end'] });
-  const scale = useTransform(scrollYProgress, [0, 0.16, 0.9, 1], [1, 1.04, 1.04, 1]);
-  return <motion.div className="nd-grow" style={calm ? undefined : { scale }}>{children}</motion.div>;
+  // the style is always the same motion value (so the server and the first client frame match); reduced motion holds it at 1
+  const scale = useTransform(scrollYProgress, [0, 0.16, 0.9, 1], calm ? [1, 1, 1, 1] : [1, 1.04, 1.04, 1]);
+  return <motion.div className="nd-grow" style={{ scale }}>{children}</motion.div>;
 }
 
 /* "A tenth of the block reward": the one big statement; it opens the kit's sheet with the five levels it is shared by.
@@ -365,6 +367,7 @@ export default function Node() {
   return (
     <main className="lx nd">
       <section ref={run} className="nd-run" data-morph-target data-ask-name="Hanzo Node">
+        <HeroDither />
         <div className="lx-wrap nd-run-grid">
           <div className="nd-run-obj">
             <div className="nd-run-stick">

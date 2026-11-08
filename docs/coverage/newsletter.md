@@ -2,7 +2,7 @@
 
 Page file: `components/pages/Newsletter.jsx` · gallery: `docs/gallery/newsletter/` · metric id: `lead_submit`
 
-Open copy questions for James: the form's state lines ("Check your inbox: we sent … a link to confirm.", "Enter an email address like you@example.com.", "Too many tries from here. Try again in an hour.", "We could not reach our mail service. Try again in a minute.") come from the page as it arrived in the 7 Nov snapshot (`4203095f`) and are not in `content/live/newsletter.json`; listed for James. "Read", "Nothing is sent to you until you do.", "The newsletter", "Newsletter", "Three steps" and "Subscribing…" are removed. Also for James: Hanzo's one sentence "We email a link to confirm first, and every issue has a one-click unsubscribe" is shown whole under the field, and re-set (words unchanged) as the dark room's h2 and the step labels "a link to confirm", "once or twice a month", "one-click unsubscribe". Keep or drop the re-cut?
+Open copy questions for James: the form's state lines ("Check your inbox: we sent … a link to confirm.", "Enter an email address like you@example.com.", "Too many tries from here. Try again in an hour.", "We could not reach our mail service. Try again in a minute.") come from the page as it arrived in the 7 Nov snapshot (`4203095f`) and are not in `content/live/newsletter.json`; listed for James. "Read", "Nothing is sent to you until you do.", "The newsletter", "Newsletter", "Three steps" and "Subscribing…" are removed. 8 Nov (docs/COPY-RULE.md): the re-cut is dropped. Hanzo's sentence is shown whole, once, under the field; the dark room that re-set its fragments as a heading and step labels is gone.
 Shared changes requested (`docs/requests/<page>.md`): `docs/requests/affiliate.md` (the header's ask outlines while a page's own ask is on screen, and carries it after the hero; on /newsletter it carries "Subscribe"); `docs/requests/newsletter.md` (the phone header keeps a solid "Try Hanzo"; the kit solid hover `#2c2c2e` is off the ramp).
 Forks this page deleted: the hand-made submit button (now kit `Cta` busy), the label above the h1, the looping retyped paper, box-plus-shadow on the field, paper and envelope, 88px statements and 48px step titles, the invented step words.
 
@@ -32,7 +32,7 @@ Done here: One `<main>` from the layout; links via `A`/`Cta`; parity links 3/3.
 - [ ] Ends in proof strip, `Band`, footer
 - ~~Card-to-page links use Morph; title lands within 12px~~ n/a: no cards that open pages.
 
-Done here: Nothing above the h1. "The Hanzo newsletter" (52px) cuts in by line mask; the paper lands and sets its three items as ink bars once within 2 s (no words: each statement is said exactly once on the page), then rests; it tilts toward a fine pointer (2.5° max) and writes the typed address on itself. Then one pinned scene per idea: the three statements, one at 44px at a time beside a drifting contour card, then the pinned opt-in (one step at 64px). `PageHero` is not in the kit (left open). The page ends on the dark room (the opt-in and a quiet Subscribe) then the footer (left open: no `Band`). JS off: `NoJs` shows final states; the paper's lines are set.
+Done here: Nothing above the h1. 8 Nov: one screen in Hanzo's own order, as live (rule 4, simple pages stay simple): "The Hanzo newsletter" (52px) cuts in by line mask, the lede, Hanzo's three-item checklist rising in under it, the form, and Hanzo's line under it with Privacy; beside them the paper lands and sets its three items as ink bars once within 2 s, then rests; it tilts toward a fine pointer (2.5° max), writes the typed address on itself, and the pointer on a checklist item lights that item's line on it. The page then ends (footer). No pinned scenes, no dark room. JS off: `NoJs` shows final states; the paper's lines are set.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -40,7 +40,7 @@ Done here: Nothing above the h1. "The Hanzo newsletter" (52px) cuts in by line m
 - ~~Copy button copies exactly the displayed text; failure never says Copied~~ n/a: no copy control.
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: Kit `Cta` only; `data-cta` on the submit and the close; no copy control.
+Done here: Kit `Cta` only; `data-cta` on the submit and the send (`newsletter.subscribe`, `newsletter.send`); no copy control.
 
 ## 5. Trust and proof
 - ~~No logo without documented permission; no seal; no invented number~~ n/a: no logos, seals or figures.
@@ -56,7 +56,7 @@ Done here: No figures, logos or seals; the privacy link and the confirm-first, o
 - ~~Tables, FAQ, tabs and code use the kit parts~~ n/a: no table, FAQ, tabs or code.
 - [x] `python3 scripts/parity.py /newsletter`: 0 missing
 
-Done here: Parity 7/7 text. Type from MASTER: h1 52px, lede 21px, field 17px, one statement at 44px at a time (each of the three statements is rendered in exactly one element on the whole page, measured: one visible element each over a full scroll at 1470×801 and 375×812; the counter and three hairlines sit under the mask as its caption); phone rows 26px; dark-room head 26px, the one opt-in step at 64px over 17px rail words (phone: 28px over a numbers-only rail), mono 13px.
+Done here: copycheck missing 0 of 5 (live hanzo.ai, 8 Nov). Type from MASTER: h1 52px, lede 21px, checklist 17px (16px phone), field 17px, terms 14px; each of Hanzo's lines appears once, whole.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
@@ -65,7 +65,7 @@ Done here: Parity 7/7 text. Type from MASTER: h1 52px, lede 21px, field 17px, on
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: `taste.py` passes (greys only; the red is gone); nothing above a headline; no box plus shadow; radii 28 composer, 16, 12, 8 paper; one dark room. The hero object is the paper issue.
+Done here: `taste.py` passes (greys only); nothing above a headline; no box plus shadow; radii 28 composer, 10 checklist hover, 8 paper. The hero object is the paper issue.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
@@ -74,7 +74,7 @@ Done here: `taste.py` passes (greys only; the red is gone); nothing above a head
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: the hand-made submit button (now kit `Cta` busy), the label above the h1, the looping retyped paper, box-plus-shadow on the field, paper and envelope, 88px statements and 48px step titles, the invented step words. listed below
 
-Done here: Kit `Cta` states (hover fill, press .97, focus ring, busy); the dark room's quiet Subscribe fills white 10% and lifts its arrow on hover; Privacy thickens its underline on hover; the four opt-in steps are buttons (hover underline, press .97, white focus ring, `aria-current="step"`); the field pill answers hover and focus; an invalid email marks the pill dashed; the Hanzo mark link has hover, press and focus.
+Done here: Kit `Cta` states (hover fill, press .97, focus ring, busy); each checklist item takes a grey hover and lights its line on the paper; Privacy thickens its underline on hover; the back arrow on the check step answers hover, press and focus; the field pill answers hover and focus; an invalid email marks the pill dashed.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -83,7 +83,7 @@ Done here: Kit `Cta` states (hover fill, press .97, focus ring, busy); the dark 
 - [x] Reduced motion shows the final state; no `setInterval`
 - ~~Sound only on the listed moments, through the one kit~~ n/a: the shared sound kit is not on main yet; nothing page-local plays sound.
 
-Done here: Signature: the paper sets its lines once and folds into an envelope addressed to you on success. Scroll (pinned, desktop): each statement rises into a masked stage at 44px, its weight swelling 280→497 as it lands (absolutely placed in a fixed box, so no reflow), its words ink in 55ms apart and a caret rests blinking at the end (time, idle); the last one leaves upward; its hairline in the caption fills; beside it a black card's contour field (the page's Sigil, seeded per item, drifting and leaning to the mouse) wipes up to the next. Phone: no pin; the card sits on top and each row inks in as it reaches the middle (colour only, weight fixed: CLS 0). State: the opt-in is pinned while scroll walks its four steps (line-mask swap, a gliding marker); left alone in view it also walks itself once (1.4 s a step) and rests on the last; pressing a step holds it. Pointer: the hero paper tilts toward a fine pointer (2.5° max) and writes the typed address on itself. Arrival: line-mask h1. Ease-emphasis, no springs; reduced motion shows the last step and inked words with a still caret.
+Done here: Signature: one question at a time (address, check, sent), the paper writing the address and folding into an envelope addressed to you on success (fixed 640/420px stage, so the swap moves nothing). Arrival: the h1 by line mask, the checklist items rising 120 ms apart, the paper landing and inking its bars. Idle: the paper's contour mast drifts. Pointer: the paper tilts toward a fine pointer (2.5° max) and a checklist item lights its line. State: the one-question track and the envelope. Entrance: stretch-scroll (hero). Reduced motion: no rise, no tilt, bars set.
 
 ## 10. Media
 - ~~`Film` and `Pic` only; sizes and posters set~~ n/a: no images or video; the paper and envelope are DOM with the page's own Sigil masthead.
@@ -99,7 +99,7 @@ Done here: No raster media; the paper's masthead is the page's own Sigil field.
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: 375×812: the field stacks with a full-width Subscribe above the fold; the paper below, inside the gutters; no pinned scene under 900px (a 16:9 contour card over three 26px rows that ink in as they reach the middle); the field is 56px and the form slot holds 230px so success swaps in place; the hero stage has a fixed height (640px desktop, 440px phone) so the paper-to-envelope swap moves nothing (h1 moved 0px at both sizes); the opt-in step words stay on one line at 28px with room for the counter; measured CLS 0.0000 over a full 375×812 wheel scroll (was 0.296), desktop 0.0016; the opt-in stage shows one step at 28px over a numbers-only rail of four 56px targets with the marker gliding along, the counter under the rail; Privacy has a 44px hit area; no horizontal scroll at 320 (measured 0); targets 44px+.
+Done here: 375×812: h1, lede, the checklist and the field with a full-width Subscribe on the first screen; the paper below, fully inside the 16px gutters; the hero stage has a fixed height so the paper-to-envelope swap moves nothing; the header's "Try Hanzo" is outlined on phones (page-local) so the page's Subscribe is the only solid ask; Privacy has a 44px hit area; no horizontal scroll at 320; targets 44px+.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -108,7 +108,7 @@ Done here: 375×812: the field stacks with a full-width Subscribe above the fold
 - [x] One h1; no heading skips; names start with visible text
 - [x] Keyboard reaches every control
 
-Done here: Greys at 4.5:1+ (step words white 55% on #0a0a0a is 7:1); one h1, h2 in the dark room; the field labelled; the error is an alert tied to the field; the result takes focus. The opt-in walk runs once and stops by itself (no pause needed); pressing any step holds it. The big stage word is `aria-hidden` (the rail buttons carry the words).
+Done here: Greys at 4.5:1+; one h1; the checklist is a real list; the field labelled; the error is an alert tied to the field; the result takes focus. Nothing walks by itself, so nothing needs a pause.
 
 ## 13. Performance and engineering
 - [x] h1 and LCP element in server HTML

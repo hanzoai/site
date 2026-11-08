@@ -100,7 +100,7 @@ Done here: No images or films; the hero object is a drawn SVG/DOM cluster board.
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: Probe: hscroll 0 at 1470, 375 and 320; CLS 0; the card stack is a fixed 500px on phones with 48px arrow buttons under it and swipes sideways; hero ask above the fold at 375.
+Done here: Probe: hscroll 0 at 1470, 375 and 320; CLS 0; 8 Nov: drifting tiles stay inside the board at 375 (drift is toward the board centre); the card stack is a fixed 500px on phones with 48px arrow buttons under it and swipes sideways; hero ask above the fold at 375.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -155,6 +155,6 @@ Done here: Loading has nothing to fetch (all copy and samples are in the server 
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/operator.md` (7/10 on the walk before this build; its fixes are in: hero ask and pause answer hover, board tiles drag only with a mouse and stay inside the board, touch scrolls the page and a tap drifts a Kind, "Declare" pins and converges centred in darker greys, the heading shows under reduced motion with no hydration mismatch, "operator up" copies)
+- [x] Review read: `docs/review/operator.md` (7/10 on the walk before this build; its fixes are in: hero ask and pause answer hover, board tiles drag only with a mouse and stay inside the board, touch scrolls the page and a tap drifts a Kind, "Declare" now heads the six-point card stack (the pinned converge was replaced in the motion-map pass), the heading shows under reduced motion with no hydration mismatch, "operator up" copies; 8 Nov: a drifting Kind always moves toward the middle of the board so it never pokes past the edge at 375, the log holds five lines in a 156px panel so it is never two-thirds empty, kms.hanzo.ai breaks after "kms." instead of clipping at 1470)
 
 Done here: `data-cta` on `operator.hero`; `Cta` dispatches `hz-event` cta_click; nothing before consent; `V2:` line in the page file; verdict in `docs/review/operator.md`.

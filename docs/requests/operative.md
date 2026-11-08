@@ -11,3 +11,8 @@ Shared (kit owners, please):
 Kit parts this page waits for: `Terminal` (the docker run that types itself is page-owned until then), `PageHero`.
 
 Note: `<main id="main">` duplicates the layout's `#main` marker div (`app/layout.jsx`); added on request as other pages do, but the layout marker could drop its id once pages own it.
+
+8 Nov (slice C2):
+5. **Phone header ask follows the page ask.** At 375 the header keeps a solid black "Try Hanzo" beside the hero's solid "Get Started": two solid fills, two labels on the first phone screen. Desktop already swaps to the page's thumb ("Get Started") once the hero ask leaves; please do the same on phone.
+6. Item 1 (Band blur) is worked round on this page: the close is page-local (`Close` in Operative.jsx: A2Lines line mask, kit Rise, Magnetic, Cta with `data-cta="operative.band"`). It can go back to kit `Band` once Band drops the blur and takes an id.
+7. check.cjs counts text inside a closed `<details>` (System Requirements, Basic Usage) as overlapping the warning below it; nothing is drawn there. Likely Chrome's `content-visibility: hidden` slot still giving rects.

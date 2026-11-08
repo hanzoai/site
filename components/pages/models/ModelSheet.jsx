@@ -19,7 +19,8 @@ import MaskFig from '../../v2/MaskFig';
 import Sigil from '../../Sigil';
 import ModelFilm, { FilmPause, usePaused } from '../../v2/ModelFilm';
 import SpecCard from '../../v2/SpecCard';
-import { Field, Bill, Codes, Loose, RateBars, Reach, Also, CopyStatus, useCatalog, rateFrom, rateText, money, missing, isLocal } from './parts';
+import HeroDither from '../HeroDither';
+import { Field, Bill, Codes, Loose, RateBars, Reach, Also, CopyStatus, useCatalog, useShelf, rateFrom, rateText, money, isLocal } from './parts';
 import './models.css';
 
 const up = (d) => ({ initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
@@ -76,12 +77,17 @@ function Spec({ g, price, rate, lead }) {
 }
 
 export default function ModelSheet({ doc }) {
-  // api.hanzo.ai is asked only for a rate neither the page nor the snapshot prints
-  const need = missing(doc.id, doc.rate) || doc.siblings.some((s) => missing(s.id, s.rate));
-  const cat = useCatalog(need);
-  const rate = rateFrom(cat, doc.id, doc.rate);
-  const price = doc.price || (rate ? rateText(rate) : DASH);
-  const sibs = doc.siblings.map((s) => ({ ...s, rate: rateFrom(cat, s.id, s.rate) }));
+  // the rate is read from api.hanzo.ai as hanzo.ai reads it (the captured rate is the first paint)
+  const cat = useCatalog(true);
+  // once the gateway has answered without this model, hanzo.ai prints "No published rate" (its own words), whatever
+  // the capture once read
+  const unpriced = !!cat && !cat[doc.id] && !cat[doc.id.replace(/^hanzo\//, '')];
+  const rate = unpriced ? null : rateFrom(cat, doc.id, doc.rate);
+  const price = unpriced ? 'No published rate' : (rate && (doc.rate || !doc.price) ? rateText(rate) : doc.price) || DASH;
+  // the maker's other models as hanzo.ai lists them now (api.hanzo.ai/v1/models), the captured ones until it answers
+  const shelf = useShelf(doc.provider.slug, doc.siblings);
+  const live = shelf !== doc.siblings ? shelf.filter((s) => s.href !== doc.route) : null;
+  const sibs = (live || doc.siblings).map((s) => ({ ...s, rate: rateFrom(cat, s.id, s.rate) }));
   // the hero figure is Hanzo's short form ("1M", "33K": the spec value, else the shelf card's); a sentence-long value
   // ("32,768 tokens (YaRN…)") stays whole in the spec sheet. Never a number Hanzo did not print.
   const ctxFig = doc.ctx && doc.ctx.length <= 6 ? doc.ctx : doc.cardCtx;
@@ -111,7 +117,9 @@ export default function ModelSheet({ doc }) {
   // then the maker's nearest by context and output rate; six at most. Hanzo's other "More from" cards follow as one-line
   // links (Also), the ones without a page here opening hanzo.ai in a new tab and saying so.
   const near = (s) => Math.abs(Math.log10((s.tokens || 1) / (doc.tokens || 1))) + (s.rate && rate ? Math.abs(Math.log10((s.rate.out + 0.01) / (rate.out + 0.01))) : 3);
-  const more = doc.more ? doc.more.cards : [];
+  const cap = doc.more ? doc.more.cards : [];
+  // hanzo.ai's own More from (captured), in its order and words: its list is no longer the gateway's (8 Nov)
+  const more = cap;
   const rail = [
     ...more.filter((c) => isLocal(c.href)),
     ...sibs.filter((s) => isLocal(s.href) && !more.some((c) => c.href === s.href)).sort((a, b) => near(a) - near(b)),
@@ -121,6 +129,7 @@ export default function ModelSheet({ doc }) {
     <main className="xmf xmf-model">
       <CopyStatus />
       <section className="xmf-launch" ref={hero} aria-labelledby="xmf-h1">
+        <HeroDither />
         <div className="x-wrap xmf-launch-g">
           <div className="xmf-launch-t">
             <h1 id="xmf-h1" className={'xmf-name ' + size(doc.name)} data-morph-target>
@@ -222,6 +231,8 @@ export default function ModelSheet({ doc }) {
             <header className="xmf-sh dark">
               <h2>{doc.quick.title}</h2>
               <p className="x-mono xmf-quick-id"><i className="xmf-live" aria-hidden="true" />{doc.id}</p>
+              {/* the rate as hanzo.ai prints it under its samples, with any words that follow it (one line) */}
+              {doc.quick.price && <p className="xmf-quick-price">{price === DASH ? DASH : price + doc.quick.note}</p>}
             </header>
             <Codes samples={doc.quick.samples} keyLink={doc.quick.key} title={doc.quick.title} />
           </div>
@@ -258,7 +269,7 @@ export default function ModelSheet({ doc }) {
                   const sib = sibs.find((x) => x.href === c.href);
                   return (
                     <li key={c.href}>
-                      <SpecCard hush to={c.href} title={c.name} desc={c.desc} tags={c.ctx ? [c.ctx] : []} meta={sib && sib.rate ? <b>{`${money(sib.rate.in)} → ${money(sib.rate.out)}`}</b> : null} />
+                      <SpecCard to={c.href} title={c.name} meta={<span className="xmf-id">{c.mid || c.id || (sib && sib.id)}</span>} desc={c.desc} tags={[...(c.ctx ? [c.ctx] : []), ...(sib && sib.rate ? [`${money(sib.rate.in)} → ${money(sib.rate.out)}`] : [])]} />
                     </li>
                   );
                 })}

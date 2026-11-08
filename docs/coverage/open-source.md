@@ -2,7 +2,7 @@
 
 Page file: `components/pages/OpenSource.jsx` · gallery: `docs/gallery/open-source/` · metric id: `github_click`
 
-Open copy questions for James: none. Decided here: commit totals differ by source (805,254 in Total across Hanzo; per-ecosystem figures elsewhere) and the hero's "37" sits beside the stat "73 organizations"; every figure is shown exactly as Hanzo prints it, nothing summed or derived. Copy rule (conductor, round 2): every visible string, number and aria-label checked against `content/live/open-source.json`, `content/pages/` and `content/ui-strings.json`; the invented ones were removed (pointer hint, "Charter" caption, card index numbers, composed sheet labels and share sentences, typed → ★ ⑂ glyphs now drawn icons, invented aria-labels).
+Open copy questions for James: none. Decided here: commit totals differ by source (803,822 in Total across Hanzo; per-ecosystem figures elsewhere) and the hero's "38" sits beside the stat "73 organizations"; every figure is shown exactly as Hanzo prints it, nothing summed or derived. Copy rule (conductor, round 2): every visible string, number and aria-label checked against `content/live/open-source.json`, `content/pages/` and `content/ui-strings.json`; the invented ones were removed (pointer hint, "Charter" caption, card index numbers, composed sheet labels and share sentences, typed → ★ ⑂ glyphs now drawn icons, invented aria-labels).
 Shared changes requested (`docs/requests/<page>.md`): `docs/requests/open-source.md` (round 2): the phone header ask should read "View on GitHub" like the desktop header, and ProofScale's `.pf-btn.solid:hover` fill `#2a2a2c` is off-deck (overridden page-locally here). Reported to the conductor: `components/Morph.jsx` waits on `requestAnimationFrame` inside the View Transition callback, which Chromium only runs at its 4 s timeout, so every in-site click freezes about 4 s; fix is `setTimeout(ok, 16)`.
 Forks this page deleted: the floating AskBar pill, the cursor "Open" labels, the pinned ecosystem scene (now tabs), the second outlined hero button (now a text link), springs on the tab pills.
 
@@ -31,15 +31,15 @@ Done here: parity 139/139 links. Org cards are `<a href="/oss/<login>">`; the he
 - [x] Ends in proof strip, `Band`, footer
 - [x] Card-to-page links use Morph; title lands within 12px
 
-Done here: the h1 "Building in the open." cuts in by line mask; the sky pulls back from inside Hanzo to all three galaxies within 3 s of arrival with no input; "Open Source First" is a caption under the h1. JS off: 248 text blocks, 0 invisible; every tab panel shows. Order: sky → What we publish → Total → Every organization → Built on → Charter → Contribute (the band). Round 2: the list rise `xos-in` now has an end state (`to { opacity: 1 }`), so Totals, all six charter articles and the Contribute repository list are visible at both sizes (probe: every `.xos-arts > li`, `.xos-total-n > li`, `.xos-lrepos > li` at opacity 1, 1470 and 375); seams between paper sections tightened to 116 + 72px. Org card title morphs into `/oss/hanzoskill`'s h1 (`data-morph` → `data-morph-target`; filmed in `docs/gallery/open-source/click-through.jpg`, with the Morph fix above).
+Done here: 8 Nov: the h1's two lines cut up out of their masks (CSS, 700 ms, 60 ms apart, from the server HTML), then the caption, lede, asks and figures rise 160–360 ms after, so the headline always reads first; the page now ends Contribute → a centred black close room ("Join the Community" by line mask, "Start Contributing", Join Discord, Founder Program) → footer. Earlier: the h1 "Building in the open." cuts in by line mask; the sky pulls back from inside Hanzo to all three galaxies within 3 s of arrival with no input; "Open Source First" is a caption under the h1. JS off: 248 text blocks, 0 invisible; every tab panel shows. Order: sky → What we publish → Total → Every organization → Built on → Charter → Contribute (the band). Round 2: the list rise `xos-in` now has an end state (`to { opacity: 1 }`), so Totals, all six charter articles and the Contribute repository list are visible at both sizes (probe: every `.xos-arts > li`, `.xos-total-n > li`, `.xos-lrepos > li` at opacity 1, 1470 and 375); seams between paper sections tightened to 116 + 72px. Org card title morphs into `/oss/hanzoskill`'s h1 (`data-morph` → `data-morph-target`; filmed in `docs/gallery/open-source/click-through.jpg`, with the Morph fix above).
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn` — `.pf-btn` kit class until `<Cta>` merges
-- [x] Sticky ask in header and bar after the hero, same label — on desktop Hanzo's header carries "View on GitHub" and the in-page band keeps only the name and the live read (no duplicate button); on phone the band keeps the quiet "View on GitHub"
+- [x] Sticky ask in header and bar after the hero, same label — on desktop Hanzo's header carries "View on GitHub" and the in-page band keeps only the name and the live read (no duplicate button); on phone the local band is not shown (one ask per screen; the phone header following the page ask is requested)
 - [x] Copy button copies exactly the displayed text — n/a: no copy button on this page
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: `data-cta="open-source.hero"` with `data-thumb="View on GitHub"`; `data-cta="open-source.band"` with `data-thumb="Start Contributing"` (the hero's comes first, so the header keeps it). `.xos-local-a` is `display:none` from 900px up.
+Done here: `data-cta="open-source.hero"` with `data-thumb="View on GitHub"`; `data-cta="open-source.band"` on the close room's "Start Contributing". `.xos-local-a` is `display:none` from 900px up.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -47,7 +47,7 @@ Done here: `data-cta="open-source.hero"` with `data-thumb="View on GitHub"`; `da
 - [x] Marquees pause, freeze under reduced motion, hide duplicates — n/a: no marquee
 - [x] Privacy link and owner line beside every submit — n/a: no form
 
-Done here: every figure is from `openSourceData.js` (Hanzo's build read of GitHub and the forge) with its own qualifier beside it ("In the past year", "as GitHub counts them"); the dashboard carries "Forge listing · read Nov 6, 06:04". Language shares in the Beyond are Hanzo's percentages, unchanged.
+Done here: every figure is from `openSource/snapshot.js`, written by `openSource/read.mjs` from the very read hanzo.ai's build baked in (api.hanzo.ai/v1/git/activity and GitHub, read Nov 7, 08:16), each with its own qualifier beside it ("In the past year", "as GitHub counts them"); the dashboard carries "Forge listing · read Nov 7, 08:16" and "Commits a day, from Nov 8, 2025 to Nov 7, 2026". On the hanzo.ai origin (the only one the API's CORS admits) `openSource/live.jsx` GETs /v1/git/activity after first paint and refreshes the forge figures it serves with the same meaning (each ecosystem's year of commits and merges, latest commits and their read time, every organization's commits this year and months, the total's commits); day cells, the past 7 days and GitHub figures stay as the build read them. Language shares are Hanzo's percentages, unchanged.
 
 ## 6. Content presentation (copy untouched)
 - [x] No text under 13px (14px phone) except mono capitals
@@ -64,7 +64,7 @@ Done here: parity 417/417 text, 139/139 links. Mono 12px only for captions and f
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: `taste.py` OK. Rhythm on `ProofRhythm.css`: h1 52, section headings 26, one moment per screen: the hero's 1,733 rests at 64px (deck figure size) so the h1 is the one big thing there, and 805,254 counts up at 84 in Total; other figures 44/32. "Built on" shows Hanzo's twelve glyphs once, as a greyscale mark row on a `#f5f5f5` strip (not as 32px tile icons). Tiles are flat `#f5f5f5` fills (no outline, no shadow); only the hero tooltip floats and carries the deck's black shadow. Hero medium: a canvas of every repository, unlike /integrations' hub or /research's papers.
+Done here: `taste.py` OK. Rhythm on `ProofRhythm.css`: h1 52, section headings 26, one moment per screen: the hero's 1,734 rests at 64px (deck figure size) so the h1 is the one big thing there, and 803,822 counts up at 84 in Total; other figures 44/32. "Built on" shows Hanzo's twelve glyphs once, as a greyscale mark row on a `#f5f5f5` strip (not as 32px tile icons). Tiles are flat `#f5f5f5` fills (no outline, no shadow); only the hero tooltip floats and carries the deck's black shadow. Hero medium: a canvas of every repository, unlike /integrations' hub or /research's papers.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
@@ -73,7 +73,7 @@ Done here: `taste.py` OK. Rhythm on `ProofRhythm.css`: h1 52, section headings 2
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: listed below
 
-Done here: tabs, chips, cards, text links and the pause button press at `scale(.97)` in 90 ms; "Star Our Repos", "Join Discord", "Founder Program" and the "Read more" sheet triggers answer hover with a pill fill (`#f2f2f2`, white 14% on black); the closing ask hovers to `#262626`; pointing at a "Built on" credit lights its mark in the row; hovers sit inside `@media (hover: hover)`; focus is a 2px ink ring with a white halo (white with black on the hero). Deleted: the floating ask bar, cursor labels, outlined second button.
+Done here: tabs, chips, cards, text links and the pause button press at `scale(.97)` in 90 ms; "Star Our Repos", "Join Discord", "Founder Program" and the "Read more" sheet triggers answer hover with a pill fill (`#f2f2f2`, white 14% on black); the closing ask hovers to `#262626`; pointing at a "Built on" credit lights its mark in the row, and pointing at a mark lights its credit (fill #ededed, licence chip inverts to ink); an organization card's hover thickens its repositories bar 3x and refills it to its share, and its commits line darkens; hovers sit inside `@media (hover: hover)`; focus is a 2px ink ring with a white halo (white with black on the hero). Deleted: the floating ask bar, cursor labels, outlined second button.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -82,7 +82,7 @@ Done here: tabs, chips, cards, text links and the pause button press at `scale(.
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit — n/a: the sound kit is not merged; nothing plays
 
-Done here: signature the card that opens (Morph). Supporting: the sky (idle: drift and twinkle; arrival: the pull-back), the tab pill gliding at 300 ms ease-emphasis while the heat map re-lights (state), the charter's drawn signature (arrival). Scroll-linked: only the line masks. No springs; hovers 150 ms ease-out, presses 90 ms, arrivals 400–500 ms ease-emphasis. Cards lean up to 2.5° (fine pointers only).
+Done here: signature the card that opens (Morph). Supporting: the sky (idle: drift and twinkle; arrival: the pull-back), the tab pill gliding at 300 ms ease-emphasis while the heat map re-lights (state), the charter's drawn signature (arrival: 1.1 s once the signature line is 60% in view, the Hanzo mark beside it at 24px). The twelve Built-on glyphs are drawn in ink (text presentation where the glyph has one, a flat silhouette otherwise), no colour and no filter; each glyph stays in the page as text. Scroll-linked: only the line masks. No springs; hovers 150 ms ease-out, presses 90 ms, arrivals 400–500 ms ease-emphasis. Cards lean up to 2.5° (fine pointers only).
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set — n/a: the page has no images or film
@@ -98,7 +98,7 @@ Done here: Hanzo has no photographs for this page; its visuals are its own data 
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: `node scripts/phone.mjs /open-source`: OK, width 375/375. At 375 the sky is the top 45svh, the h1 sits at 40px, the ask is full width above the fold; the four counts stack with 1,733 first; tabs span the width. Round 2: "Built on" is two credits a row (was 12 full-width cards); the invented "point at a cluster" hint is gone; the mark row lights only for a mouse (`(hover: hover)`), so a tap never leaves it dimmed.
+Done here: `node scripts/phone.mjs /open-source`: OK, width 375/375. At 375 the sky is the top 45svh, the h1 sits at 40px, the ask is full width above the fold; the four counts stack with 1,734 first; tabs span the width. Round 2: "Built on" is two credits a row (was 12 full-width cards); the invented "point at a cluster" hint is gone; the mark row lights only for a mouse (`(hover: hover)`), so a tap never leaves it dimmed.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better

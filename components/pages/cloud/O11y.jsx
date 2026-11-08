@@ -18,15 +18,17 @@
 // V2: 8/10 motion-map: flip-board + ink-spread, explode-gather, pixel-resolve, sticky-stack, cursor-trail
 // Every word and link is Hanzo's; span names, log lines and the query are examples.
 import { useEffect, useRef, useState } from 'react';
-import { Paste, useLive } from './Frame';
+import { useLive } from './Frame';
+import { Rise, Copy } from '../../ui';
 import SettleStage from '../../v2/SettleStage';
 import { useEnter, InkSpread, PixelResolve, CursorTrail, FlipBoard } from '../o11y/Motion';
 import SpecDrawer from '../../v2/SpecDrawer';
 import LaunchClose, { Arr } from '../../v2/LaunchClose';
 import LineMask from '../../v2/LineMask';
-import LaunchConsole from '../../v2/LaunchConsole';
+import O11yConsole from './O11yConsole';
 import LivePause from '../../v2/LivePause';
 import RelatedCards from '../../v2/RelatedCards';
+import HeroDither from '../HeroDither';
 import { A } from '../../kit';
 import './O11y.css';
 
@@ -236,6 +238,28 @@ const PARTS = [
 const KEEP = [['PromQL', 1, 'q'], ['Any OTel SDK or collector', 5, 'otlp'], ['PagerDuty, Opsgenie, Slack, Teams, email or a webhook', 4, 'routes']];
 const SIDE = [['O11y', '/o11y'], ['Logs', '/cloud/logs'], ['Metrics', '/metrics'], ['Dashboards', '/dashboards'], ['AI Metrics', '/cloud/ai-metrics'], ['Billing', '/billing'], ['Plans & Pricing', '/cloud/plans'], ['Sessions', '/cloud/sessions']];
 
+/* The agent prompt: Frame's Paste markup and classes, with the namespace chip printed whole as hanzo.ai prints it
+   ("api /v1/o11y", one run of mono). */
+const PROMPT = 'Read https://hanzo.ai/skill.md and use Hanzo O11y in my project. Start with: hanzo o11y logs get';
+function ObPaste() {
+  return (
+    <Rise className="cf-paste">
+      <div className="cf-paste-h">
+        <p className="cf-paste-t">Paste and ship</p>
+        <p className="cf-paste-d">Paste this into any agent. It reads the skill manifest and calls O11y from there.</p>
+      </div>
+      <div className="cf-paste-box">
+        <div className="cf-paste-bar">
+          <span className="cf-paste-k">Agent prompt</span>
+          <span className="cf-api">api /v1/o11y</span>
+          <Copy text={PROMPT} />
+        </div>
+        <pre className="cf-paste-code"><code>{PROMPT}</code><span className="cf-caret" aria-hidden="true" /></pre>
+      </div>
+    </Rise>
+  );
+}
+
 /* ---------- the OTLP room: the endpoint, what you keep, the console, and the agent prompt ---------- */
 function Otlp() {
   const [k, setK] = useState(0);
@@ -259,11 +283,11 @@ function Otlp() {
         </div>
       </div>
       <div className="ob-otlp-r">
-        <LaunchConsole light name="O11y" api="/v1/o11y" side={SIDE} />
+        <O11yConsole light name="O11y" api="/v1/o11y" side={SIDE} />
         <p className="ob-note">Example project. Every name in it is one you would give your own.</p>
       </div>
       <div className="ob-otlp-paste">
-        <Paste name="O11y" api="/v1/o11y" prompt="Read https://hanzo.ai/skill.md and use Hanzo O11y in my project. Start with: hanzo o11y logs get" />
+        <ObPaste />
       </div>
     </div>
   );
@@ -273,6 +297,7 @@ export default function O11y() {
   return (
     <main className="lx ob">
       <section className="lx-dark ob-hero" data-room="dark" data-morph-target data-ask-name="Hanzo O11y">
+        <HeroDither />
         <div className="lx-wrap ob-hero-head">
           <LineMask as="h1" className="lx-display ob-h1" lines={['Hanzo O11y']} />
           <div className="ob-hero-r">
@@ -306,7 +331,7 @@ export default function O11y() {
       {/* 5. related and the close, entering by cursor-trail */}
       <CursorTrail>
         <RelatedCards items={[['Logs', '/cloud/logs', 'Search every line'], ['Metrics', '/metrics', 'Time series & SLOs']]} />
-        <LaunchClose name="O11y" tag="Observability suite" seed="o11y" data={[4317, 4318, 4]} ask={[ASK, GH]} cta="o11y.close" repo={['hanzoai/o11y', GH]} stars="4 stars" />
+        <LaunchClose name="O11y" tag="Observability suite" seed="o11y" data={[4317, 4318, 4]} ask={[ASK, GH]} cta="o11y.close" repo={[<span key="r">hanzoai/o11y</span>, GH]} stars="4 stars" />
       </CursorTrail>
     </main>
   );

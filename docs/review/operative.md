@@ -1,6 +1,8 @@
 # /operative — James-eye review
 
 Verdict: 7/10
+Ready: 8 Nov, copycheck missing 0 of 86 (live hanzo.ai). The four System Requirements lines carry Hanzo's "• " bullet as live shows them (they had a drawn check instead); every bold label, port figure and command that sat in <b>/<code> is now a styled span, the provider points are their own leaves, and "View more examples →" is one line, so the copy is all in the page word for word. taste/unique OK; 0 console errors, no overlap at 1470x801 and 375x812 (check hits are the visually-hidden kicker, the sr-only live region and text inside closed <details>). Shared, not this page: kit Band blur and id, phone header ask following the page ask (docs/requests/operative.md).
+Dark: 8 Nov, matches live hanzo.ai in dark side by side (docs/gallery/operative/dark-*.jpg); darkcheck OK, lightcheck OK, copycheck 0. (darkcheck's one remaining line is the selected provider tab's dark label on its light pill, which sits in a sibling span; it reads as live's selected pill.)
 First complaint: "The thing in the hero is meant to be a computer being driven, but most of the time it's an empty box with a cursor floating in the middle of it, a button with nothing on it and five blank keys. It looks like a wireframe, not the product."
 
 Walked 7 Nov 2026 on the dev server at 1470x801 and 375x812 (recorder walk at both sizes, all 14 desktop and 15 phone screen pairs read; hero filmed every 200 ms for 2.4 s; pinned stack scrubbed in 200 px steps from 300 to 4,300; hero hands paused and clicked one by one; press and hover measured on the primary; stack-row hover; Band reveal filmed every 120 ms; reduced motion; JS off at 375; 375x667 fold; a 16-stop tab crawl; parity, taste and unique scripts run).

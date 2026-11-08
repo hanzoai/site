@@ -24,7 +24,7 @@ Done here: Persona (buyer, counsel, any user checking what they agreed to), Goal
 Done here: every heading keeps its id and a copy-link button; the cover index and the rail both jump to any section.
 
 ## 3. First impression and page narrative
-- [x] Sells in 5 s; moves within 1 s (title cut-in; the cover turns through its clauses by itself)
+- [x] Sells in 5 s; moves within 1 s (title cut-in; 8 Nov: the cover no longer turns by itself, a pointer on an index row previews that clause)
 - [x] Nothing above the h1 (dates and the way back are a caption under it)
 - [x] JS off: legible (all text in server HTML; the cover shows its first clause)
 - [x] One idea per 100svh: stage with the cover, then the reading room (a long document reads as a document, MASTER: "Legal: reading column, sticky index, print CSS")
@@ -76,9 +76,9 @@ Done here: no dark room: a calm utility page.
 Done here: copy-link buttons are 44×44 on every pointer and always shown on touch; on hover they scale in (not only fade); the check rides in an ink disc to the button's left, inside the viewport at 375 (x 283–311).
 
 ## 9. Motion and interaction
-- [x] One signature (the reading rail: marker glides 300ms ease-emphasis to your section, line fills, the rail scrolls itself so your row rides a third down), supporting: title cut-in, cover clause mask turn, sigil field; 0 fade-ups
-- [x] Kinds: idle (cover turns, contour drifts), pointer (index rows preview their clause, rail drags), state (marker, find lights and dims), time (cover's timing bar), scroll (rail line, plates); scroll is under half
-- [x] Something moves without input; every control answers; a finger on the cover pauses the turning
+- [x] One signature (the reading rail: marker glides 300ms ease-emphasis to your section, line fills, the rail scrolls itself so your row rides a third down), supporting: title cut-in, cover clause mask turn on hover/focus, sigil field; 0 fade-ups
+- [x] Kinds: idle (contour drifts), pointer (index rows preview their clause, rail drags), state (marker, find lights and dims), scroll (rail line, plates); 8 Nov: no timer, no scroll zoom (COPY-RULE rule 4); scroll is under half
+- [x] Something moves without input; every control answers
 - [x] Reduced motion: cover settled from first paint (CSS), no bar, no stage transform, no hydration error
 - [x] Sound: a chime when a link is copied, through `lib/sound`
 
@@ -98,7 +98,7 @@ Done here: ≤7 canvases (cover contour plus at most 6 sibling contours drawn on
 - [x] Targets 44px or more (rail rows, copy links, find field, cards)
 - [x] n/a primary ask
 
-Done here: the phone shows the index once (the rail's Contents, a 48px summary with a chevron that turns when open, 14px labels); the first clause of Terms starts 1.2 screens down; no sideways scroll at 320 on Terms, Subprocessors, Cookies, Privacy.
+Done here: the phone shows the index once (8 Nov: the cover steps aside on phones, title, dates and lede lead straight to the rail's Contents, which now shows the word "Contents" as live does; a 48px summary with a chevron that turns when open, 14px labels); the first clause of Terms starts 1.2 screens down; no sideways scroll at 320 on Terms, Subprocessors, Cookies, Privacy.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured: prose ink #0a0a0a, muted #525252, inactive plates #737373 (4.7:1)
@@ -153,6 +153,6 @@ Done here: JS off shows the full document; Terms prints to 10 A4 pages with its 
 - [x] `data-cta="legal.contact.<slug>"` on the contact links (n/a `lib/track.js`: not on main)
 - [x] Nothing identifier-bearing
 - [x] `V2:` line in the file's top comment
-- [ ] Review read: `docs/review/legal-family.md` verdict 8 or more (the last walk scored 6; every numbered fix is addressed here; waiting on the re-walk)
+- [x] Ready line in `docs/review/legal-family.md` (8 Nov, no score system); every numbered fix verified in the browser
 
-Done here: the critic's fixes 1–7 are in (tables, rail, numbers, cover, phone index, print, small controls); fix 8 is site-wide and listed for its owners.
+Done here: the critic's fixes 1–7 verified 8 Nov (rail marker visible in 25/25 Terms sections, find "data" 22 hits in 10/25 with 15 rows dimmed, Terms prints 10 A4 pages from page 1, phone copy check at x 283–311 of 375); fix 8 is site-wide, filed in `docs/requests/legal-family.md`.

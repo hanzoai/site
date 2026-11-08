@@ -214,20 +214,16 @@ html.js .mcp-via.mcp-wipe { animation-delay: .42s; }
 .mcp-cfg-copy .a2-headline { margin: 0; }
 .mcp-cfg-copy .a2-body { margin: 20px 0 24px; }
 .mcp-ref { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font: 500 16px/1 var(--sans); color: #fafafa; text-decoration: none; }
-.mcp-ref span { display: inline-block; transition: transform .3s var(--a2-ease); }
-.mcp-ref:active span { transform: translateX(2px); }
-@media (hover: hover) { .mcp-ref:hover span { transform: translateX(5px); } }
+.mcp-ref svg { flex: none; transition: transform .3s var(--a2-ease); }
+.mcp-ref:active svg { transform: translateX(2px); }
+@media (hover: hover) { .mcp-ref:hover svg { transform: translateX(5px); } }
 .mcp-codes { grid-column: 7 / span 6; display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; min-width: 0; }
 .mcp-codes > div { min-width: 0; }
 .mcp-code-c { margin: 0 0 10px; font-size: 13px; line-height: 1.5; color: #a3a3a3; white-space: normal; overflow-wrap: anywhere; }
 /* the bash block: one row per command, each with its own Copy; "$ " and Hanzo's "#" notes are shown, never copied */
 .mcp-sh-rows { list-style: none; margin: 0; padding: 8px 6px; }
 .mcp-sh-rows li { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 6px 6px 6px 12px; border-radius: 10px; }
-.mcp-sh-line { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 18px; font-size: 14px; line-height: 1.5; color: #e5e5e5; }
-.mcp-sh-line code { font: inherit; white-space: nowrap; }
-.mcp-sh-p, .mcp-sh-note { color: #737373; user-select: none; -webkit-user-select: none; }
-.mcp-sh-cmd { white-space: nowrap; }
-.mcp-sh-note { color: #a3a3a3; }
+.mcp-sh-line { flex: 1; min-width: 0; padding-left: 5ch; text-indent: -5ch; font-size: 14px; line-height: 1.5; color: #e5e5e5; white-space: pre-wrap; overflow-wrap: anywhere; }
 .mcp-sh .x-copy { flex: none; }
 .mcp-sh.go li { animation: mcp-sh-step 1.4s calc(var(--k) * 1.3s) ease-in-out 1 both; }
 @keyframes mcp-sh-step { 0%, 100% { background: transparent; } 30%, 70% { background: rgba(255, 255, 255, .07); } }
@@ -312,8 +308,11 @@ main.mcp .x-copy { height: 44px; padding: 0 16px; }
   .mcp-cmp-in { grid-template-columns: minmax(0, 1fr); gap: 20px; }
   .mcp-cmp-l { padding: 20px 16px; }
   .mcp-cmp-side { margin-bottom: 16px; }
-  .mcp-cmp-code { padding: 14px 16px; }
+  .mcp-cmp-code { padding: 14px 12px; }
   .mcp-cmp-code pre { font-size: 13px; }
+  /* the stream's tool names get the wider column so the longest (kai_command_guard) is never cut */
+  .mcp-row { grid-template-columns: minmax(0, 62%) minmax(0, 1fr); }
+  .mcp-tool { font-size: 13px; }
   .mcp-cmp-tools li { padding: 8px 11px; font-size: 13px; }
   .mcp-stream-top { height: 44px; }
   .mcp-pause { top: 0; }
@@ -335,6 +334,9 @@ main.mcp .x-copy { height: 44px; padding: 0 16px; }
   .mcp-art.a1 { grid-template-columns: repeat(13, 10px); gap: 7px; }
   .mcp-art.a1 i { width: 10px; height: 10px; }
   .mcp-art.a2 { min-height: 220px; }
+  /* the gate moves left so Hanzo's two guard names fit inside the panel at 375 and 320 */
+  .mcp-gate { left: 30%; }
+  .mcp-gate span { font-size: 12px; left: 12px; }
   .mcp-doms-head { margin-bottom: 32px; }
   .mcp-doms-t, .mcp-doms-r { grid-column: 1 / -1; }
   .mcp-rail { padding-inline: var(--gut); scroll-padding-inline: var(--gut); gap: 12px; }
@@ -353,9 +355,47 @@ main.mcp .x-copy { height: 44px; padding: 0 16px; }
   .mcp-h1 { font-size: calc((100vw - 32px) / 8.7) !important; }
 }
 @media (max-width: 360px) {
+  /* at 320 the longest .mcp.json line cannot fit at a readable size: it wraps once instead of being cut */
+  .mcp-cmp-l { padding: 18px 12px; }
+  .mcp-cmp-code pre { white-space: pre-wrap; }
   .mcp-art.a0 { padding: 16px 12px; gap: 6px; }
   .mcp-art.a0 span { padding: 8px 10px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .mcp *, .mcp *::before, .mcp *::after { animation: none !important; }
 }
+
+/* ---------- dark (docs/DARK-MODE.md): live hanzo.ai/mcp in dark, by role, in Hanzo's own tokens ----------
+   The stream, the "after" half, the config room and the black domain card are black in both modes and stay. A2.css
+   (shared) states its light greys as fixed values, so this page restates them: Hanzo's foreground for headings, muted
+   foreground for body, tertiary text for captions, its border for hairlines and its muted surface for every quiet fill;
+   ink fills and highlights turn to Hanzo's primary (light fill, dark type), as live's selected pills and asks do. */
+html:not(.light) .a2.mcp {
+  --ink: var(--foreground); --acc: var(--foreground); --acc-soft: var(--x-fill); --soft: var(--muted-foreground);
+  --faint: var(--text-tertiary); --card: var(--x-fill); --line: var(--border);
+  & .mcp-hero { position: relative; background: radial-gradient(60% 70% at 50% 0%, color-mix(in srgb, var(--foreground) 9%, transparent), transparent 70%); }
+  & .mcp-hero .mcp-cap.a2-kick.show, & .mcp-cmp-hint, & .mcp-cmp-code > span, & .mcp-sheet-n, & .mcp-card-n, & .mcp-repo dt { color: var(--faint); }
+  & :is(.mcp-oss, .mcp-f > span:last-child, .mcp-cmp-side, .mcp-cmp-bar, .mcp-sheet-copy .a2-body, .mcp-card p, .mcp-repo > p) { color: var(--muted-foreground); }
+  & .after :is(.mcp-cmp-side, .mcp-cmp-bar), & .mcp-card.d5 :is(p, .mcp-card-n) { color: var(--muted-foreground); }
+  /* before / after: "before" on Hanzo's secondary with a muted code well, "after" stays black */
+  & .mcp-cmp-l.before { background: var(--secondary); }
+  & .before .mcp-cmp-code { background: var(--x-fill); }
+  /* the runtime sheets: muted surfaces, the art on the page's own background inside a hairline */
+  & .mcp-sheet, & .mcp-sheet:nth-child(2), & .mcp-sheet:nth-child(3) { background: var(--x-fill); }
+  & .mcp-sheet-art { background: var(--bg); box-shadow: inset 0 0 0 1px var(--border); }
+  & .mcp-art.a0 span { background: var(--x-fill); animation-name: mcp-call-d; }
+  & .mcp-art.a1 i { background: var(--secondary); animation-name: mcp-svc-d; }
+  & .mcp-gate { background: var(--foreground); }
+  & .mcp-cmds span.stop b { background: var(--neutral-600); }
+  /* domain cards: muted cards, chips on Hanzo's secondary that light up in primary (the black card's own motion) */
+  & .mcp-card-tools i { background: var(--secondary); color: var(--foreground); }
+  & .mcp-card.live .mcp-chips.rest i { animation-name: mcp-chip-d; }
+  & .mcp-card.live .mcp-card-open { animation-name: mcp-ring-d; }
+  & .mcp-card-open { color: var(--x-on-ink); }
+  & .mcp-open-card { background: var(--popover); box-shadow: 0 0 0 1px var(--border), 0 40px 120px -30px rgb(0 0 0 / .6); }
+  & .mcp-open-x { background: var(--secondary); color: var(--foreground); border-color: var(--border-strong); }
+  & .mcp-repo .x-btn:not(.solid) { box-shadow: inset 0 0 0 1px var(--border-strong); }
+}
+@media (hover: hover) { html:not(.light) .a2.mcp .mcp-gh:hover { background: var(--secondary); } }
+@keyframes mcp-call-d { 0%, 8% { background: var(--primary); color: var(--primary-foreground); } 16%, 100% { background: var(--muted); color: var(--foreground); } }
+@keyframes mcp-svc-d { 0%, 70%, 100% { background: var(--secondary); } 80% { background: var(--primary); } }

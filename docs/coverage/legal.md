@@ -2,7 +2,7 @@
 
 Page file: `components/pages/LegalIndex.jsx` (+ `LegalIndex.css`, data `legalData.js`) · gallery: `docs/gallery/legal/` · metric id: document open (`legal.doc.<slug>`)
 
-Open copy questions for James: the pile's stamp "draft · pending counsel" condenses Hanzo's status line ("Status: draft, pending counsel."); the ladder's step numbers 01–04 are ordinal, not claims.
+Open copy questions for James: the stamps repeat Hanzo's own "Status: draft, pending counsel." verbatim; the ladder's step numbers 01–04 are ordinal, not claims.
 Shared changes requested: `docs/requests/templates.md` (covers every Business 2 page). Utility page: no ask (`data-ask="off"`), per MASTER part 4.
 Forks this page deleted: the sheet that popped in front in the same frame (now it leaves on top, then tucks under), stamps on every sheet (top sheet only, wrapping inside it), the floating pause on the fan, `AnimatePresence initial={false}` that cancelled the rows' arrival, the see-through chip bar, the invented "Show"/"Documents" labels, the phone's repeated group label on every row, the cursor label "Open", every spring, the stale colour comments, the shared `Settle` (it read reduced motion during render and broke hydration; a legal-local `Rise` replaces it with the same scale-and-lift).
 
@@ -29,9 +29,9 @@ Done here: parity links 16/16; `#agreements`, `#policies`, `#notices-and-registe
 - [x] JS off legible (a `<noscript>` sheet hides the pause, which would do nothing)
 - [x] Hero pile → statement and status → index → how they fit (ladder) → contact
 - [x] Ends on the contact rows, then footer (Utility: no band)
-- [x] Rows open into their document page (`data-morph` title → the document's h1)
+- [x] Rows open in place (Hanzo's line for the document and its address); the arrow and the address open the document page (`data-morph` title → the document's h1)
 
-Done here: JS off: every word legible, the ladder at full height, no pause button.
+Done here: 8 Nov (COPY-RULE rule 4): the five room entrances are gone, every room is in place at first paint, so the index reads like Hanzo's own. JS off: every word legible, nothing held, no pause button.
 
 ## 4. Conversion system
 - [x] n/a `<Cta>`: no ask on legal pages
@@ -51,7 +51,7 @@ Done here: the page says plainly that the documents are not yet effective, in Ha
 
 ## 6. Content presentation (copy untouched)
 - [x] Phone text 14px+
-- [x] Statement at 32px (26px phone); prose 16–18px
+- [x] Statement at 21px (20px phone); row titles 21px (19px phone); prose 15–16px
 - [x] The index is one ruled list per group, each with a hidden h2 of Hanzo's group title
 - [x] `parity.py /legal`: 0 missing
 
@@ -73,16 +73,16 @@ Done here: gate hues [].
 - [x] No bare `:hover`
 - [x] Forks deleted: listed above
 
-Done here: the sticky chip bar is opaque white (#fff, no blur) and draws its hairline only while stuck under the header.
+Done here: rows fill on hover and the arrow fills ink and moves 3px; a press moves the row 1px; the whole row answers its title link; the sticky chip bar is opaque and draws its hairline only while stuck.
 
 ## 9. Motion and interaction
-- [x] Signature (the dealing pile), supporting: line-mask cut-ins, the stage settle (`Rise`), rows rising once, the ladder; 0 fade-ups
-- [x] Idle (pile; on the index screens a reading lamp lights one row at a time, 1.3s each, once through, the way the pile deals), state (chips, with a tick), arrival (h1, rows rise 16px once in 400ms with 60ms stagger, ladder grows from 25% in view), scroll (settle)
+- [x] Signature: the dealing pile (hero object, pausable); 8 Nov: the index shows every document with Hanzo's line for it at once, as live does (rows-open panels removed for clarity, COPY-RULE rule 4)
+- [x] Idle (pile deals every 2.6s), pointer (rows tint and their arrow moves, the contact sheet shows the address you point at), state (chips re-deal rows 150ms/30ms stagger), arrival (the pile deals from first paint); no scroll-held entrances
 - [x] Moves without input; every control answers
-- [x] Reduced motion: the pile cuts (no travel), rows, ladder and stage sit in their final place from first paint; no springs; no hydration error
+- [x] Reduced motion: the pile cuts (no travel); rows, ladder and contact sit in their final place; no transitions
 - [x] Sound: a tick on a chip, through `lib/sound`
 
-Done here: the deal is two-phase, sampled every 80ms: the top sheet travels out on top to x −110%, −8° (450ms ease-emphasis, z 40), then drops under the pile and the next sheet comes forward 200ms later.
+Done here: the deal is two-phase: the top sheet travels out on top to x −55%, −8° (450ms ease-emphasis, z 40), then tucks under and the next sheet comes forward 200ms later; Policies chip shows 5 rows.
 
 ## 10. Media
 - [x] n/a: no media on the live page
@@ -98,11 +98,11 @@ Done here: n/a.
 - [x] Targets 44px+
 - [x] n/a primary (no ask)
 
-Done here: at 375 the stamp (54–247 × 728–810) sits inside the top sheet (16–278 × 528–833) and the pause sits under the pile (864–909), touching no sheet; at 1470 the pause sits on the pile's top-right corner (y 169–214), clear of every sheet; scroll width 320 at 320.
+Done here: 8 Nov: chips one 64px row that scrolls sideways at 375; the pile's stamp hides on phones (it stays on the status and contact sheets, one line); scroll width 320 at 320 and 375 at 375, 0 nodes past the edge.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured: ink #0a0a0a on white, soft text rgb(72,72,74) (about 9:1)
-- [x] One pause state, shown as a 44px button beside the pile and at the end of the chip bar: it stops the deal and the reading lamp together; keyboard focus on a row puts the lamp out
+- [x] One pause, a 44px button on the pile's corner: it stops the deal (the only loop)
 - [x] n/a forms
 - [x] One h1; hidden h2 per group, then h2 sections
 - [x] Keyboard reaches every row and chip
@@ -153,6 +153,6 @@ Done here: `@media print` in `LegalIndex.css`: no header, footer, cookie note, p
 - [x] `data-cta="legal.doc.<slug>"` on every row (12)
 - [x] Nothing identifier-bearing
 - [x] `V2:` line in `components/pages/LegalIndex.jsx`
-- [ ] Review 8 or more (re-review pending)
+- [x] Ready line (no score system)
 
-Done here: previous review 7/10; its seven fixes addressed.
+Done here: Ready line 8 Nov in `docs/review/legal.md` (no score); the review's fixes addressed, the motion-map pass finished (its row, trail, tile, ring and ink styles were missing).

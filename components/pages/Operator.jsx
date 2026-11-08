@@ -1,7 +1,7 @@
 'use client';
 // Persona: a platform engineer running the stack on Kubernetes.
 // Goal: install the operator.
-// CTA: View on GitHub (operator.hero); the close is Deploy to Cloud in the Band.
+// CTA: View on GitHub (operator.hero), and again under "Get started with Hanzo Operator" (the Band), as hanzo.ai pairs them; Deploy to Cloud sits in Get Operator, as live.
 // Metric: cta_click operator.hero
 // Signature: a card stack of the six points under "Declare the thing, not the thirty objects": flick or drag the top card away (swipe on touch), one idea per card, the next rising from beneath.
 // Beyond: the hero cluster board (approved): drag any resource out of place yourself (or press it) and watch the next sweep revert it, with the log saying so.
@@ -22,6 +22,7 @@ import A2Paste from '../v2/A2Paste';
 import A2Pause from '../v2/A2Pause';
 import NoJs from '../NoJs';
 import { T, EMPH, INOUT } from '../v2/A2Motion';
+import HeroDither from './HeroDither';
 import '../v2/A2.css';
 import './Operator.css';
 
@@ -36,13 +37,13 @@ function useFine() {
   return fine;
 }
 
-function Tile({ k, sub, i, mv, onDrift, fine, box }) {
+function Tile({ k, sub, i, mv, onDrift, fine, box, inward }) {
   return (
     <motion.button type="button" className={'xop-tile' + (fine ? ' fine' : '')} style={{ x: mv.x, y: mv.y }} drag={fine} dragConstraints={box} dragMomentum={false} dragElastic={0}
-      onDragEnd={() => onDrift(i)} onClick={() => { if (Math.abs(mv.x.get()) + Math.abs(mv.y.get()) < 2) { animate(mv.x, i % 2 ? 26 : -26, SPRING); animate(mv.y, 14, SPRING); onDrift(i); } }}
+      onDragEnd={() => onDrift(i)} onClick={() => { if (Math.abs(mv.x.get()) + Math.abs(mv.y.get()) < 2) { const [dx, dy] = inward(i); animate(mv.x, dx * 26, SPRING); animate(mv.y, dy * 14, SPRING); onDrift(i); } }}
       aria-label={'Drift ' + k} whileDrag={{ scale: 1.05, zIndex: 5 }}>
       <span className="xop-tile-k">{k}</span>
-      {sub && <span className="xop-tile-s x-mono">{sub}</span>}
+      {sub && <span className="xop-tile-s x-mono">{sub.startsWith('kms.') ? <>kms.<wbr />{sub.slice(4)}</> : sub}</span>}
       <i aria-hidden="true" />
     </motion.button>
   );
@@ -63,7 +64,13 @@ function Board() {
   const id = useRef(1);
   const fine = useFine();
   const box = useRef(null); // dragged tiles stay inside the board
-  const say = (lines) => setLog((l) => [...lines.map(([t, k]) => ({ id: id.current++, t, k })).reverse(), ...l].slice(0, 7));
+  const say = (lines) => setLog((l) => [...lines.map(([t, k]) => ({ id: id.current++, t, k })).reverse(), ...l].slice(0, 5));
+  // a tile drifts toward the middle of the board, never out past its edge (a right-hand tile goes left, a bottom one up)
+  const inward = (i) => {
+    const g = box.current, el = g?.children[i];
+    if (!el) return [1, 1];
+    return [el.offsetLeft + el.offsetWidth / 2 > g.offsetWidth / 2 ? -1 : 1, el.offsetTop + el.offsetHeight / 2 > g.offsetHeight / 2 ? -1 : 1];
+  };
   const onDrift = (i) => { drifted.current.add(i); say([[KINDS[i][0], 'drift']]); };
   const sweep = (s) => {
     const lines = [];
@@ -84,7 +91,7 @@ function Board() {
     const lap = () => {
       s += 1; setN(s); setLit(s);
       t1 = setTimeout(() => sweep(s), 1100);
-      if (!drifted.current.size) t2 = setTimeout(() => { const i = (s * 3) % KINDS.length; animate(xs[i], s % 2 ? 34 : -30, SPRING); animate(ys[i], s % 3 ? 18 : -16, SPRING); drifted.current.add(i); say([[KINDS[i][0], 'drift']]); }, 2400);
+      if (!drifted.current.size) t2 = setTimeout(() => { const i = (s * 3) % KINDS.length; const [dx, dy] = inward(i); animate(xs[i], dx * (s % 2 ? 34 : 30), SPRING); animate(ys[i], dy * (s % 3 ? 18 : 16), SPRING); drifted.current.add(i); say([[KINDS[i][0], 'drift']]); }, 2400);
       t3 = setTimeout(lap, 4600);
     };
     t3 = setTimeout(lap, 600);
@@ -94,7 +101,7 @@ function Board() {
     <div className={'xop-board' + (paused ? ' a2-paused' : '')} ref={ref}>
       <div className="xop-board-top"><A2Pause paused={paused} onChange={setPaused} label="Pause" /><span className="x-mono"><i className="xop-live" />sweep</span></div>
       <div className="xop-grid" ref={box}>
-        {KINDS.map(([k, sub], i) => <Tile key={k} k={k} sub={sub} i={i} mv={{ x: xs[i], y: ys[i] }} onDrift={onDrift} fine={fine} box={box} />)}
+        {KINDS.map(([k, sub], i) => <Tile key={k} k={k} sub={sub} i={i} mv={{ x: xs[i], y: ys[i] }} onDrift={onDrift} fine={fine} box={box} inward={inward} />)}
         <span className="xop-sweep" key={lit} aria-hidden="true" />
       </div>
       <ol className="xop-log x-mono" aria-live="polite" aria-label="Operator log">
@@ -107,6 +114,7 @@ function Board() {
 function Hero() {
   return (
     <section className="a2-dark xop-hero" data-room="dark" aria-labelledby="xop-h1">
+      <HeroDither />
       <div className="a2-wrap a2-grid xop-hero-grid">
         <div className="xop-hero-copy">
           <MaskLines as="h1" id="xop-h1" className="a2-display xop-h1" lines={['Hanzo', 'Operator']} amount={0.1} />
@@ -217,6 +225,7 @@ function Get() {
           </div>
           <p className="xop-get-meta x-mono"><span><span>License:</span> Apache-2.0</span><A to={GH}>hanzoai</A></p>
           <p className="xop-get-cmd x-mono"><code>operator up</code><Copy text="operator up" /></p>
+          <Cta to="https://platform.hanzo.ai/deploy" id="operator.get" kind="quiet" size="sm">Deploy to Cloud</Cta>
         </div>
       </div>
     </section>
@@ -230,7 +239,7 @@ export default function Operator() {
       <Stack />
       <A2Paste name="Operator" text="Read https://hanzo.ai/skill.md and use Hanzo Operator in my project." />
       <Get />
-      <Band title="Get started with Hanzo Operator" action="Deploy to Cloud" to="https://platform.hanzo.ai/deploy" />
+      <Band title="Get started with Hanzo Operator" action="View on GitHub" to={GH} />
     </main>
   );
 }

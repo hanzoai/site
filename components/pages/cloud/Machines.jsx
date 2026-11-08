@@ -10,8 +10,8 @@
    Order: hero (rack and quote) -> the zoom -> the other machines' specs -> uses -> how renting works -> ownership ->
    paste and ship -> close. Entrances (MachinesEnter.jsx), one each, no other reveal: glitch-in (hero), diagonal-wipe
    (zoom), snap-sections (uses), page-curl (renting), noise-dissolve (ownership).
-   Kept: the rack wake-up, the rolling price and the gliding size pill (layoutId) in the hero; the quote is always
-   Hanzo's 1x H100 figures, labelled "1x H100"; 2x and 4x light their cards and rewrite the request only. Tiles tilt and
+   Kept: the rack wake-up, the rolling price and the gliding size pill (layoutId) in the hero; each size lights its
+   cards, rewrites the request and rolls in its own quote from Hanzo's GPU price list (api.hanzo.ai, as live). Tiles tilt and
    run their diagram, rows fill, the 80 GB count (now on the zoomed card), the closing rack wakes card by card.
    Beyond: the dry-run quote itself - priced for an hour, a working day and a month before anything is created.
    Greys only: the card LED is a grey light. Every word, figure and link is Hanzo's. */
@@ -22,17 +22,33 @@ import { useLive } from './Frame';
 import ShipPrompt from '../../v2/ShipPrompt';
 import LivePause, { usePause } from '../../v2/LivePause';
 import MachinesZoom from './MachinesZoom';
+import HeroDither from '../HeroDither';
 import { Glitch, Snap, Curl, Dissolve } from './MachinesEnter';
 import '../../v2/v2scale.css';
 import './Machines.css';
 
 const EASE = [0.16, 1, 0.3, 1];
 
-// [size label, cards lit]. Copy is word-for-word Hanzo: the live page prints a quote for 1x H100 only, so the big
-// quote is always that one, labelled "1x H100". 2x and 4x (live size labels) light their cards and rewrite the request;
-// the quote dims a little and keeps the 1x figures. Never a derived price, never a dash in the big slot.
+// [size label, cards lit]: Hanzo's three sizes. Each one's quote is hanzo.ai's own: the GPU price list it reads from
+// api.hanzo.ai/v1/pricing (infrastructure.gpu), an hour, a working day (8 h) and all month (730 h), printed as it prints
+// them. GPU0 is that list as read at build: the first paint, and what stays if the request fails.
 const SIZES = [['1x H100', 1], ['2x H100', 2], ['4x H100', 4]];
-const QUOTE = ['1x H100', '80 GB', '$3.48', '$27.84', '$2,540'];
+const GPU0 = [{ gpu: '1x H100', price: 3.48, vram: '80 GB' }, { gpu: '2x H100', price: 6.96, vram: '160 GB' }, { gpu: '4x H100', price: 13.92, vram: '320 GB' }];
+const usd = (v) => '$' + (v >= 100 ? Math.round(v).toLocaleString('en-US') : v.toFixed(2));
+const quoteOf = (g) => [g.vram, usd(g.price), usd(g.price * 8), usd(g.price * 730)];
+let GPU_REQ = null;
+function useGpus() {
+  const [list, setList] = useState(GPU0);
+  useEffect(() => {
+    let gone = false;
+    GPU_REQ ||= fetch('https://api.hanzo.ai/v1/pricing').then((r) => r.json())
+      .then((j) => ((j && j.infrastructure && j.infrastructure.gpu) || []).filter((g) => g && g.gpu && g.vram && Number.isFinite(+g.price)).map((g) => ({ ...g, price: +g.price })))
+      .catch(() => { GPU_REQ = null; return []; });
+    GPU_REQ.then((l) => { if (!gone && l.length) setList(l); });
+    return () => { gone = true; };
+  }, []);
+  return list;
+}
 
 /* The size the hero last showed (chosen, or where the cycle stood when it left the screen): the close remembers it. */
 let lastSize = 0;
@@ -86,16 +102,11 @@ function Rent() {
   const live = seen && !paused;
   const [at, choose] = useCycle(3, 1200, 4000, live);
   const [label, cards] = SIZES[at];
-  const [qFor, vram, hour, day, month] = QUOTE;
-  // the 1x quote rolls in again each time the rack comes back to one card
-  const [round, setRound] = useState(0);
-  const prev = useRef(at);
-  useEffect(() => {
-    if (at === 0 && prev.current !== 0) setRound((r) => r + 1);
-    prev.current = at;
-    setLastSize(at);
-  }, [at]);
-  const t = String(round);
+  const gpus = useGpus();
+  const [vram, hour, day, month] = quoteOf(gpus.find((g) => g.gpu === label) || GPU0[at]);
+  useEffect(() => { setLastSize(at); }, [at]);
+  // each size's quote rolls in as its cards wake
+  const t = String(at);
   return (
     <div className="mc-rent" ref={ref}>
       <Rack on={cards} />
@@ -114,9 +125,9 @@ function Rent() {
           ))}
         </div>
         <pre className="mc-body"><code>{'{ "gpu": '}<b>{'"' + label + '"'}</b>{', "dryRun": true }'}</code></pre>
-        <div className={'mc-quote' + (at ? ' dim' : '')}>
+        <div className="mc-quote">
           <p className="mc-hour"><Roll v={hour} k={'h' + t} /><span>/ h</span></p>
-          <p className="mc-vram"><span className="mc-for">{qFor}</span><Roll v={vram} k={'v' + t} /></p>
+          <p className="mc-vram"><Roll v={vram} k={'v' + t} /></p>
           <dl>
             <div><dt>an hour</dt><dd><Roll v={hour} k={'h2' + t} /></dd></div>
             <div><dt>a working day</dt><dd><Roll v={day} k={'d' + t} /></dd></div>
@@ -124,8 +135,11 @@ function Rent() {
           </dl>
           <p className="mc-rate">On demand, at the price list’s rate as it stands.</p>
         </div>
-        {/* the live quote stays in the page */}
-        <table className="x-sr"><tbody><tr><td>{qFor}</td><td>{vram}</td><td>{hour} / h</td><td>{day}</td><td>{month}</td></tr></tbody></table>
+        {/* every size's quote stays in the page, whichever one is showing */}
+        <table className="x-sr"><tbody>{SIZES.map(([s], i) => {
+          const [v, h, d, m] = quoteOf(gpus.find((g) => g.gpu === s) || GPU0[i]);
+          return <tr key={s}><td>{s}</td><td>{v}</td><td>{h} / h</td><td>{d}</td><td>{m}</td></tr>;
+        })}</tbody></table>
       </div>
     </div>
   );
@@ -330,6 +344,8 @@ function Close() {
   const ref = useRef(null);
   const seen = useInView(ref, { amount: 0.5, once: true });
   const calm = useReducedMotion();
+  const [up, setUp] = useState(false); // reduced motion is known only after mount: the server and first client frame match
+  useEffect(() => setUp(true), []);
   const [label, cards] = SIZES[useLastSize()];
   return (
     <section className="mc-close">
@@ -347,7 +363,7 @@ function Close() {
           </div>
         </div>
         <div className="mc-close-art" ref={ref}>
-          <Rack on={seen || calm ? cards : 0} className="rest" />
+          <Rack on={seen || (up && calm) ? cards : 0} className="rest" />
           <pre className="mc-body mc-close-body" aria-hidden="true"><code>{'{ "gpu": '}<b><Roll v={'"' + label + '"'} k="c" /></b>{', "dryRun": true }'}</code></pre>
         </div>
       </div>
@@ -359,6 +375,7 @@ export default function Machines() {
   return (
     <main className="v2 mc">
       <Glitch as="section" className="mc-hero v2-dark" data-room="dark">
+        <HeroDither />
         <div className="v2-wrap mc-hero-t">
           <h1 className="v2-display mc-h1 mc-gl-t" data-text="Hanzo Machines" data-morph-target="">Hanzo Machines</h1>
           <p className="v2-kick mc-cap">High-Performance Computing</p>
@@ -385,12 +402,14 @@ export default function Machines() {
 
       <ShipPrompt
         name="Machines"
-        api="/v1/compute/machines"
         prompt="Read https://hanzo.ai/skill.md and use Hanzo Machines in my project. Start with: hanzo visor machines list"
         related={[['GPUs', '/cloud/gpus', 'On-demand accelerators'], ['Containers', '/cloud/containers'], ['Functions', '/functions', 'Serverless handlers']]}
         className="mc-ship"
         flip
-      />
+      >
+        {/* Hanzo prints the endpoint as one plain line ("api /v1/compute/machines"), so it is one line here too */}
+        <p className="mc-api">api /v1/compute/machines</p>
+      </ShipPrompt>
 
       <Close />
     </main>

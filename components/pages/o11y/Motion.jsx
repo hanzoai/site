@@ -78,12 +78,16 @@ export function CursorTrail({ children, className = '' }) {
     const size = () => { W = host.offsetWidth; H = host.offsetHeight; c.width = W * dpr; c.height = H * dpr; c.style.width = W + 'px'; c.style.height = H + 'px'; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); };
     size();
     const LIFE = 700;
+    // the trail is the page's ink, read from CSS (the canvas's color is var(--ink)): #0a0a0a in bright, Hanzo's
+    // foreground in dark (docs/DARK-MODE.md)
+    const ink = () => { const m = getComputedStyle(c).color.match(/[\d.]+/g); return m && m.length >= 3 ? m.slice(0, 3).join(', ') : '10, 10, 10'; };
     const draw = (t) => {
       ctx.clearRect(0, 0, W, H);
+      const rgb = ink();
       while (pts.length && t - pts[0].t > LIFE) pts.shift();
       for (let i = 1; i < pts.length; i++) {
         const a = pts[i - 1], b = pts[i], k = 1 - (t - b.t) / LIFE;
-        ctx.strokeStyle = `rgba(10, 10, 10, ${0.4 * k})`;
+        ctx.strokeStyle = `rgba(${rgb}, ${0.4 * k})`;
         ctx.lineWidth = 1 + 3 * k;
         ctx.lineCap = 'round';
         ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();

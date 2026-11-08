@@ -100,7 +100,7 @@ Done here: No media; the stream, sheets, rail and terminal are drawn with Hanzo'
 - [x] Every target 44px or more; every hover has a tap path
 - [ ] Primary ask above the fold at 375×667
 
-Done here: 375x812: h1 40px in 4 lines, stream inside 660, "Browse 260+ tools" bottom at 790px (inside 812; below 667 because the stream now comes first). 320: scrollWidth 320, 0 elements past x=320, the sheet chips tighten under 360px. Phone audit of main a/button finds 0 targets under 44px (CodeBlock Copy raised to 44px page-locally; links 44px min-height). 1470x801: the stacked sheets overlap by design (each covers the last).
+Done here: 375x812: h1 40px in 4 lines, stream inside 660, "Browse 260+ tools" bottom at 790px (inside 812; below 667 because the stream now comes first). 320: scrollWidth 320, 0 elements past x=320 and 0 text cut by its own box (8 Nov: the stream's tool column widens to 62% so kai_command_guard is whole at 13px, the guard gate sits at 30% so kai_injection_screen fits its panel, the compare's .mcp.json wraps its one long line at 320 instead of being cut), the sheet chips tighten under 360px. Phone audit of main a/button finds 0 targets under 44px (CodeBlock Copy raised to 44px page-locally; links 44px min-height). 1470x801: the runtime sheets are plain sections now (no overlap); the domain rail bleeds past the right edge by design and clips inside its own scroller.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better

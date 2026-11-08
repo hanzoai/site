@@ -10,8 +10,10 @@
    landing beside a turning solid, a camera scanning a cube). Order: chapters, fits, studio map, the dark viewport,
    then the model cards, so the two card grids never sit back to back.
    No chapter pane is ever empty: each object rests on its settled frame until its chapter arrives, then draws in.
-   V2: 8/10 Request access is the one solid at both widths; every chapter its own drawn object, never a blank pane; words through the settle; labels fit at 375. */
+   V2: Request access is the one solid at both widths; the capabilities ride a snapping carousel, each card its own drawn object, never a blank pane; words through the settle; labels fit at 375; five page-local entrances (MoriMotion.jsx). */
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import HeroDither from '../HeroDither';
 import { Specs } from './Studio';
 import { MoriFits } from './MoriArt';
 import { ShrinkCard, CapsCarousel, PixelFilters, useEntrances } from './MoriMotion';
@@ -167,7 +169,7 @@ function Viewport() {
       <canvas ref={cv} className="mr-cv" role="img" aria-label="A 3D mesh turning; drag or use the arrow keys to orbit" tabIndex={0} onKeyDown={(e) => { const s = S.current, k = { ArrowLeft: [-0.3, 0], ArrowRight: [0.3, 0], ArrowUp: [0, -0.2], ArrowDown: [0, 0.2] }[e.key]; if (k) { e.preventDefault(); s.yaw += k[0]; s.pitch = Math.max(-1.1, Math.min(1.3, s.pitch + k[1])); } }} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} onPointerLeave={leave} />
       <div className="mr-hud mr-tl">
         <p className="mb-mono">SDF ➔ QUAD MESH: 245,820 TRIS</p>
-        <p className="mb-mono mr-spin"><i ref={deg} aria-hidden="true" />SPINNING · 360°</p>
+        <p className="mb-mono mr-spin"><i ref={deg} aria-hidden="true" /><span>SPINNING · 360°</span></p>
       </div>
       <div className="mr-hud mr-tr">
         <p className="mb-mono">PBR CHANNELS: ALBEDO · NORMAL · ROUGHNESS · METALLIC</p>
@@ -244,11 +246,21 @@ function useMidWords() {
   }, []);
 }
 
+/* live's hero halftone (HeroDither, dark only). The hero is the shared Launch stage, so the dots are portalled into its
+   pinned frame (positioned, so they fill it); z -1 puts them under the film and the headline, over the stage's ground */
+function MoriDither() {
+  const [at, setAt] = useState(null);
+  useEffect(() => { setAt(document.querySelector('.lv-stage[data-hero=mori] .lv-pin')); }, []);
+  return at ? createPortal(<HeroDither />, at) : null;
+}
+
 export default function Mori() {
   usePhoneAsk();
   useMidWords();
   useEntrances();
   return (
+    <>
+    <MoriDither />
     <Creative
       slug="mori"
       shape={HEX}
@@ -276,5 +288,6 @@ export default function Mori() {
         </ShrinkCard>
       }
     />
+    </>
   );
 }

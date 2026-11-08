@@ -19,6 +19,7 @@ import { A, Cta, More, Faq, Film, Img } from '../kit';
 import { NoJs } from '../v2/LineReveal';
 import '../v2/ProgramScale.css';
 import './Learn.css';
+import HeroDither from './HeroDither';
 
 const EASE = [0.16, 1, 0.3, 1];
 const DOCS = 'https://docs.hanzo.ai/docs/';
@@ -94,7 +95,7 @@ function Metro() {
         <motion.span className={'xlr-train' + (rest ? ' rest' : '')} aria-hidden="true" initial={false} animate={{ x: (at / (START.length - 1)) * 100 + '%' }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}><i /></motion.span>
         <div className="xlr-stops" role="tablist" aria-label="Start here" onKeyDown={keys}>
           {START.map(([t], i) => (
-            <button key={t} type="button" role="tab" id={'xlr-t' + i} aria-controls={'xlr-p' + i} aria-selected={at === i} tabIndex={at === i ? 0 : -1} className={i < at ? 'past' : ''} onClick={() => { setAt(i); setMine(true); }}>
+            <button key={t} type="button" role="tab" id={'xlr-t' + i} aria-label={t} aria-controls={'xlr-p' + i} aria-selected={at === i} tabIndex={at === i ? 0 : -1} className={i < at ? 'past' : ''} onClick={() => { setAt(i); setMine(true); }}>
               <i aria-hidden="true" /><span>{t}</span>
             </button>
           ))}
@@ -123,6 +124,7 @@ const TILES = Array.from({ length: 40 }, (_, i) => ({ '--a': (i % 8) + Math.floo
 function Hero() {
   return (
     <section className="xlr-hero" aria-labelledby="xlr-h1">
+      <HeroDither />
       <div className="xp-wrap xlr-hero-wrap">
         <div className="xp-grid xlr-hero-top">
           <div className="xlr-hero-h">
@@ -193,10 +195,6 @@ function Say() {
   return (
     <section className="xp-sec xlr-say" aria-labelledby="xlr-say-k">
       <div className="xp-wrap xp-grid">
-        <div className="xlr-say-top">
-          <span id="xlr-say-k" className="xlr-say-k">{QA[0][0]}</span>
-          <span className="xlr-say-n x-mono" aria-hidden="true">{String(n).padStart(2, '0')} / {N}</span>
-        </div>
         <p className="xlr-say-t" ref={ref} tabIndex={0} onKeyDown={keys} onPointerLeave={() => setHover(null)}>
           {WORDS.map((w, i) => (
             <span key={i}>
@@ -204,6 +202,11 @@ function Say() {
             </span>
           ))}
         </p>
+        {/* the question it answers sits under the statement as its caption, never as a label above it */}
+        <div className="xlr-say-top">
+          <span id="xlr-say-k" className="xlr-say-k">{QA[0][0]}</span>
+          <span className="xlr-say-n x-mono" aria-hidden="true">{String(n).padStart(2, '0')} / {N}</span>
+        </div>
         <div className="xlr-say-more"><More to="/platform">How the platform fits together</More></div>
       </div>
     </section>
@@ -303,7 +306,7 @@ function Rail() {
                 <Img src={TRY_ART[i]} w={1200} h={1500} alt="" />
                 <span className="xlr-card-n xp-fig">{String(i + 1).padStart(2, '0')}</span>
               </span>
-              <b className="xlr-card-t" data-morph>{t}</b>
+              <span className="xlr-card-t" data-morph>{t}</span>
               <span className="xlr-card-d">{d}</span>
               <i aria-hidden="true">→</i>
             </A>
@@ -321,7 +324,7 @@ function Rows({ items }) {
       {items.map(([t, d, h]) => (
         <li key={t + h}>
           <A to={h} className="xlr-row">
-            <b className="xlr-row-t" data-morph>{t}</b>
+            <span className="xlr-row-t" data-morph>{t}</span>
             <span className="xlr-row-d">{d}</span>
             <i aria-hidden="true">→</i>
           </A>
@@ -398,7 +401,7 @@ function Read() {
           <li className="lead" data-e="drift-split">
             <A to={lead[3]} className="xlr-post">
               <time className="x-mono" dateTime={lead[1]}>{lead[1]}</time>
-              <b>{lead[0]}</b>
+              <span className="xlr-post-t">{lead[0]}</span>
               <span>{lead[2]}</span>
             </A>
           </li>
@@ -407,7 +410,7 @@ function Read() {
               <div className="xlr-post has-film">
                 <Loop className="xlr-post-m" src="/learn/kai-640.webm" poster="/models/kai.webp" />
                 <time className="x-mono" dateTime={date}>{date}</time>
-                <A to={h} className="xlr-post-l"><b>{t}</b></A>
+                <A to={h} className="xlr-post-l xlr-post-t">{t}</A>
                 <span>{d}</span>
               </div>
             </li>
@@ -415,7 +418,7 @@ function Read() {
             <li key={h} data-e={k % 2 ? 'drift-r' : 'drift-l'}>
               <A to={h} className="xlr-post">
                 <time className="x-mono" dateTime={date}>{date}</time>
-                <b>{t}</b>
+                <span className="xlr-post-t">{t}</span>
                 <span>{d}</span>
               </A>
             </li>
@@ -425,7 +428,7 @@ function Read() {
           <h2 id="xlr-think-h" className="xp-head">Read the thinking</h2>
           <ul className="xlr-think-grid">
             {THINK.map(([t, d, h]) => (
-              <li key={t}><A to={h} className="xlr-think-a"><b>{t}</b><span>{d}</span><i aria-hidden="true">→</i></A></li>
+              <li key={t}><A to={h} className="xlr-think-a"><span className="xlr-think-t">{t}</span><span className="xlr-think-d">{d}</span><i aria-hidden="true">→</i></A></li>
             ))}
           </ul>
         </div>

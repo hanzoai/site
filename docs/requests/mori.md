@@ -6,3 +6,5 @@
 5. **Band "Request access" hover** (kit `Band`): #f5f5f7 → #fff is barely visible; a clearer fill step (e.g. → `#e4e4e7`) would answer.
 6. **Footer hydration mismatch** raises the dev error badge site-wide (critic note); shared footer owner.
 3. **Ask.jsx re-checks only on scroll and DOM changes.** An ask that fades in by CSS transition after the last scroll leaves the header holding a stale label (a second solid "Request access" beside the page's own). /mori re-dispatches `scroll` on `transitionend` of its stage; a shared `transitionend` listener in Ask.jsx would fix it everywhere.
+7. **Model cards under 1100px** (`components/pages/model/ModelCards.css`). The flagship cell is `height: 340px` (≤1100) / `360px` (≤640) with `grid-row: auto`, but the grid's rows are `grid-auto-rows: 220px`, so the Enso card runs under Kai and Zen (its pills hidden) on every creative page (seen on /iro and /mori at 375). /mori overrides page-locally with `grid-template-rows: 340px` / `360px` on its own `.mc-grid`; the shared file should do the same.
+8. **check.cjs**: no false positives on /mori after the override (8 Nov).

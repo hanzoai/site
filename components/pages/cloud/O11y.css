@@ -137,7 +137,7 @@ html:not(.js) .ob-pane { opacity: 1; }
 
 /* ===== 5. cursor-trail: an ink trail sweeps across once as the close arrives, then follows the pointer ===== */
 .ob-trail { position: relative; }
-.ob-trail-cv { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.ob-trail-cv { position: absolute; inset: 0; z-index: 2; pointer-events: none; color: var(--ink); }
 
 /* the suite: the hero's dark window again, walking the same request through six parts */
 .ob-suite { background: #171717; color: #fafafa; border-radius: 24px; overflow: hidden; }
@@ -417,4 +417,69 @@ html:not(.js) .ob-pane { opacity: 1; }
   .js .ob-ink, .js .ob-px { -webkit-mask-image: none !important; mask-image: none !important; filter: none !important; opacity: 1 !important; }
   .js .ob-board .ob-frag, .js .ob-sig .ob-sig-h span, .js .ob-sig .ob-sig-l { transform: none !important; opacity: 1 !important; }
   .ob-one-lines path, .ob-tab-ink, .ob-pane, .ob-routes li, .ob-tr b, .ob-chart, .ob-log, .ob-ex .lx-fig, .ob-ex-stack span { transition: none !important; }
+}
+
+/* ---------- dark (Hanzo's :not(.light), docs/DARK-MODE.md): every value a token from @hanzo/design, by role ----------
+   The shared .lx kit (components/v2/LaunchType.css, LaunchClose.css, SpecDrawer.css, RelatedCards.css) pins its light
+   ink, greys and tiles in both modes, so the page points them at Hanzo's tokens here (.lx renames --muted and --card, so
+   fills use the foundation's --x-* tokens). The quiet rooms and the stacked cards go to Hanzo's #171717, chips and
+   chosen pills to #262626, type to its foreground and #a3a3a3; the graphite windows, the flip board and the ink paste
+   box stay dark, ringed in Hanzo's white 10% hairline where they sit on a dark surface. The hero stays a black room. */
+html:not(.light) .ob {
+  --ink: var(--foreground); --acc: var(--foreground); --acc-soft: var(--x-fill); --muted: var(--muted-foreground); --soft: var(--muted-foreground);
+  --faint: var(--text-tertiary); --silver: var(--x-knob); --card: var(--x-fill); --line: var(--border); --bg: var(--background);
+}
+html:not(.light) .ob .lx-cta { background: var(--primary); color: var(--primary-foreground); }
+html:not(.light) .ob .lx-ghost { border-color: var(--border-control); }
+html:not(.light) .ob :is(.lx-text, .lx-close-repo) { text-decoration-color: var(--text-disabled); }
+html:not(.light) .ob .cf-api i { background: var(--x-knob) !important; color: var(--foreground) !important; }
+html:not(.light) .ob :focus-visible { outline-color: var(--foreground); box-shadow: 0 0 0 4px var(--background); }
+html:not(.light) .ob :is(.lx-close-art, .lx-rel-card) { background: var(--x-fill); }
+html:not(.light) .ob .lx-close-sigil { color: var(--foreground); }
+html:not(.light) .ob .lx-sheet-panel { color: var(--foreground); --ink: var(--foreground); --soft: var(--muted-foreground); --muted: var(--muted-foreground); --faint: var(--text-tertiary); --line: var(--border); }
+html:not(.light) .ob .lx-sheet-bar { background: var(--surface-overlay); }
+html:not(.light) .ob .lx-sheet-x { color: var(--foreground); }
+@media (hover: hover) {
+  html:not(.light) .ob .lx-cta:hover { background: var(--foreground); }
+  html:not(.light) .ob .lx-ghost:hover { border-color: var(--foreground); background: var(--x-fill); }
+  html:not(.light) .ob .lx-sheet-x:hover { background: var(--x-fill); }
+}
+html:not(.light) .ob :is(.ob-sig-h, .ob-card-h, .ob-keep-a b, .ob-keep-a code, .ob-keep-p, .ob-keep-a li, .ob-keep-c button[aria-pressed='true']) { color: var(--foreground); }
+html:not(.light) .ob :is(.ob-sig-l, .ob-card-k, .ob-card-d, .ob-spec .lx-spec-l, .ob-keep .lx-kick, .ob-keep-c button, .ob-note, .cf-paste-d) { color: var(--muted-foreground); }
+html:not(.light) .ob .ob-otlp { --wipe: var(--x-fill); background: var(--x-fill); }
+html:not(.light) .ob .ob-card { background: var(--x-fill); }
+html:not(.light) .ob .ob-card .ob-suite { background: var(--background); }
+html:not(.light) .ob :is(.ob-board, .ob-card .ob-suite, .cf-paste-box) { box-shadow: inset 0 0 0 1px var(--border); }
+html:not(.light) .ob :is(.ob-keep-a code, .ob-keep-p, .ob-keep-a li, .ob-keep-c button[aria-pressed='true']) { background: var(--x-knob); }
+html:not(.light) .ob .ob-keep-c button { box-shadow: inset 0 0 0 1px var(--border-control); }
+html:not(.light) .ob .ob-keep-c button[aria-pressed='true'] { box-shadow: none; }
+html:not(.light) .ob .ob-otlp-grid[data-keep='otlp'] .ob-spec .lx-spec-v { text-decoration-color: var(--foreground); }
+html:not(.light) .ob .lx-con .cf-con-bar i { border-color: var(--x-e15); }
+html:not(.light) .ob .lx-con .cf-dot.r { border-color: var(--ink); }
+@media (hover: hover) {
+  html:not(.light) .ob .ob-keep-c button[aria-pressed='false']:hover { box-shadow: inset 0 0 0 1px var(--foreground); color: var(--foreground); }
+  html:not(.light) .ob .ob-keep-c button[aria-pressed='true']:hover { box-shadow: inset 0 0 0 1px var(--border-control); }
+  html:not(.light) .ob .lx-close-repo:hover { background: var(--x-fill); }
+  html:not(.light) .ob .lx-con.light .cf-con-title:hover { color: var(--foreground); }
+}
+/* phone: the hero ask stays the quiet hairline it is in bright (the header's "Try Hanzo" is the one solid) */
+@media (max-width: 899px) {
+  html:not(.light) .ob .ob-hero .ob-cta { background: transparent; color: #fafafa; }
+  @media (hover: hover) { html:not(.light) .ob .ob-hero .ob-cta:hover { background: rgba(255, 255, 255, .14); } }
+}
+/* Frame's light console (shared, components/pages/cloud/Frame.css) and RelatedCards' art tile, page-local: Hanzo's
+   card with its hairline, the side rail recessed, the lit row and icon on #262626, type in its foreground and greys.
+   The console's .light class is also Hanzo's light-theme class (hanzo.css), which re-pins Hanzo's tokens light inside
+   it, so these rules use the page's own tokens, already resolved to Hanzo's dark values on main.ob. */
+html:not(.light) .ob .cf-con.light { background: var(--x-raised); color: var(--ink); border-color: var(--line); }
+html:not(.light) .ob .cf-con.light .cf-con-side { background: var(--x-sunk); }
+html:not(.light) .ob :is(.cf-con.light .cf-row-bg, .cf-con.light .cf-con-ico.on, .lx-rel-art) { background: var(--x-knob); }
+html:not(.light) .ob :is(.cf-con.light .cf-name, .cf-con.light .cf-con-ico.on, .cf-con.light .cf-cap p, .cf-con.light .cf-con-foot b, .cf-con.light .cf-con-open, .cf-con.light .cf-sess-step) { color: var(--ink); }
+html:not(.light) .ob :is(.cf-con.light .cf-st, .cf-con.light .cf-con-foot, .cf-con.light .cf-con-title) { color: var(--soft); }
+html:not(.light) .ob .cf-con.light .cf-con-ico { color: var(--faint); }
+html:not(.light) .ob :is(.cf-con.light .cf-tip, .cf-con.light .cf-sess-me) { background: var(--ink); color: var(--x-on-ink); }
+html:not(.light) .ob .cf-con.light .cf-dot.b { background: var(--ink); border-color: var(--ink); }
+@media (hover: hover) {
+  html:not(.light) .ob .cf-con.light .cf-con-ico:hover { color: var(--ink); background: var(--x-knob); }
+  html:not(.light) .ob .cf-con.light .cf-con-open:hover { background: var(--ink); color: var(--x-on-ink); }
 }

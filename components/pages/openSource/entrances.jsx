@@ -95,7 +95,8 @@ export function Cascade({ as: Tag = 'h2', text, className = '', id }) {
   useLayoutEffect(() => arm(ref.current), []);
   let c = 0;
   return (
-    <Tag ref={ref} id={id} className={'xe-cascade ' + className} aria-label={text}>
+    <Tag ref={ref} id={id} className={'xe-cascade ' + className}>
+      <span className="x-sr">{text}</span>
       {text.split(' ').map((w, wi, all) => (
         <span key={wi} className="xe-w" aria-hidden="true">
           {[...w].map((ch, k) => <span key={k} className="xe-l" style={{ '--c': c++ }}>{ch}</span>)}

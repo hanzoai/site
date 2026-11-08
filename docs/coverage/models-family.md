@@ -5,7 +5,7 @@ Page files:
 - `components/pages/models/ProviderShelf.jsx`: the 73 maker shelves, `/models/<maker>`.
 - Shared: `parts.jsx`, `models.css`, `rates.js`, `NoScript.jsx`.
 
-Members checked: `/models/anthropic/claude-opus-5.5`, `/models/hanzo/kai`, `/models/anthropic` (plus `/models/hanzo/enso`, `/models/hanzo/zen6`, `/models/google`, `/models/openai`) · gallery: `docs/gallery/models/family-*` and `docs/gallery/models-family/` · metric id: `api_key_created`
+Members checked: `/models/aion-labs`, `/models/aion-labs/aion-2.0`, `/models/anthropic/claude-opus-5.5`, `/models/hanzo/kai`, `/models/anthropic`, `/models/hanzo` (plus `/models/hanzo/enso`, `/models/hanzo/zen6`, `/models/google`, `/models/openai`) · gallery: `docs/gallery/models/family-*` and `docs/gallery/models-family/` · metric id: `api_key_created`
 
 Open copy questions for James:
 - `/models/enso` still renders Hanzo's captured research report and needs its own room.
@@ -35,7 +35,7 @@ Done here: Hero: Hanzo's CTA pair (solid with `data-thumb`, `data-cta="model.her
 - [x] Breadcrumb at depth 2+ from Hanzo's crumbs, inside the hero object; the maker shelf's beside its count
 - [x] Link parity: 0 removed
 
-Done here: Parity 0 missing on Opus (106/106, 10/10), Kai (209/209, 9/9), Anthropic (56/56, 28/28) and a 43-page sample across makers after this round.
+Done here: Parity 0 missing on Aion Labs (37/37, 10/10), Aion-2.0 (111/111, 9/9), Opus (106/106, 10/10), Kai (209/209, 9/9), Anthropic (56/56, 28/28), Hanzo (80/80, 34/34) and a 43-page sample across makers after this round.
 
 ## 3. First impression and page narrative
 - [x] Sells in 5 s, and something moves within 1 s: the name cuts in, the figures rise (done by about 0.8 s) and the Sigil drifts or the film plays
@@ -45,7 +45,7 @@ Done here: Parity 0 missing on Opus (106/106, 10/10), Kai (209/209, 9/9), Anthro
 - [x] Ends in Hanzo's own close ("Use <model> via Hanzo AI"), then the footer
 - [x] Arrives by Morph from catalogue and sibling cards; no card leaves the site without saying so
 
-Done here: The sibling rail holds only models that have a page here (Hanzo's own "More from" picks first, then the maker's nearest by context and output rate, 6 at most). Hanzo's other "More from" cards follow as one-line rows; those without a page here show ↗, `target="_blank" rel="noopener noreferrer"` and a hidden "(opens in a new tab)", with no Morph promise.
+Done here: The sibling rail holds only models that have a page here (Hanzo's own "More from" picks first, then the maker's nearest by context and output rate, 6 at most). Hanzo's other "More from" cards follow as one-line rows; those without a page here show ↗, `target="_blank" rel="noopener noreferrer"` and a hidden "(opens in a new tab)", with no Morph promise. 8 Nov: the rail cards are SPEC's card exactly (#000, 20px, 220px tall, 22px/500 title, the description at 57px from the top always shown, Zen Mono 10px pills: context and the in → out rate), tilt ±2.7° toward the pointer, flat on leave, no scale or lift.
 
 ## 4. Conversion system
 - [x] `<Cta>` only: hero pair, the local nav (quiet, then solid), the close and the maker hero and close
@@ -109,7 +109,7 @@ Done here: No motion was removed; the shelf's tilt on full-width rows is replace
 - [x] At most two canvases per page
 - [x] No dimmed image
 
-Done here: `/models/hanzo/kai` plays `kai.webm` over `kai.webp` in the hero object, its breadcrumb in white 78%.
+Done here: `/models/hanzo/kai` plays `kai.webm` over `kai.webp` in the hero object, its breadcrumb in white 78%. 8 Nov: `/models/hanzo` leads its shelf with Hanzo's four filmed models (Enso, Kai, hanzo/zen, koma) as SPEC black cards, Enso spanning both rows (2fr 1fr 1fr), each film over its poster; Enso and Kai play, a hovered card takes Kai's turn (two playing at most).
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 with no overlap; no horizontal scroll at 375 or 320
@@ -118,6 +118,7 @@ Done here: `/models/hanzo/kai` plays `kai.webm` over `kai.webp` in the hero obje
 
 Done here:
 - The maker shelf on phones is 72px rows (name and rate, one pill); its contour field starts below the CTA pair, so no line crosses the lede.
+- 8 Nov: the phone maker field is masked to the right (radial), so no line runs behind the guest-key words; no sideways scroll at 320 on all six members checked.
 - The sibling field keeps every dot inside the plot (log context, padded 18% each side, clamped 5–95%) and labels the current model.
 
 ## 12. Accessibility (WCAG 2.2 AA)

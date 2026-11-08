@@ -33,7 +33,7 @@ Done here: `<main id="main">` (the layout's skip-link marker also exists, noted 
 - [x] Ends in proof strip, `Band`, footer
 - [ ] Card-to-page links use Morph; title lands within 12px
 
-Done here: h1 "Hanzo Operative" 52px by line mask, lede line-masked 180 ms after it and bottom-aligned to it on the right (h1 top 164, lede top 175, both bottom 272), acts under the lede; the hands move within 1 s. Pinned scene 400svh: explode over the first 10%, then each of six layers lifts out and opens across the rest, so every scroll step moves something. Gaps between blocks cut to 24–116px. JS off: noscript shows every chapter text. Ends: Get Operative (the box closing again), kit Band, footer.
+Done here: h1 "Hanzo Operative" 52px by line mask, lede line-masked 180 ms after it and bottom-aligned to it on the right (h1 top 164, lede top 175, both bottom 272), acts under the lede; the hands move within 1 s. Pinned scene 400svh: explode over the first 10%, then each of six layers lifts out and opens across the rest, so every scroll step moves something. Gaps between blocks cut to 24–116px. JS off: noscript shows every chapter text. Ends: Get Operative (the six layers pressed back into one box, its docker pull with the image name unbroken), the close band, footer. 8 Nov: the hero rests on hand 01 / 04 with the objective typed, the button labelled and the reading chip showing (server, JS off, reduced motion).
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -41,7 +41,7 @@ Done here: h1 "Hanzo Operative" 52px by line mask, lede line-masked 180 ms after
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: Kit Cta only; the ask bar carries "Get Started" via data-thumb; the install Copy copies exactly the two displayed commands.
+Done here: Kit Cta only; the ask bar carries "Get Started" via data-thumb; the install Copy copies exactly the two displayed commands. The close is page-local (`Close` in Operative.jsx) so "Deploy to Cloud" carries `data-cta="operative.band"`.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -84,15 +84,15 @@ Done here: Walk: 0/14 dead hovers on desktop. Hand tabs preview their hand (ghos
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit
 
-Done here: Signature: the exploded container, now scrubbed across the whole pin (each layer flattens, lifts and opens); supporting: the hands working the desktop (idle), the provider tabs (state, layoutId), the typed docker run (time); pointer: a 2.5° tilt on the hero crate (mouse only), hover previews. variety.py OK (4 techniques). Reduced motion: final state, no tilt. CLS 0.001 desktop, 0.0005 phone (was 0.074).
+Done here: 8 Nov: signature is the live conversation beside the hero desktop (three objectives in Hanzo's words, steps stream while the desktop acts them out); five section entrances (iris, accordion, zoom-through, deal, orbit-in), the iris now watched on its section so it fires (it never opened before); the close headline rises from its line mask, no blur (the kit Band's blur word reveal is not used here); the container stack explodes once as it arrives and a hovered row lifts its slab 28px; supporting: the hands working the desktop (idle), the provider tabs (state, layoutId), the typed docker run (time); pointer: a 2.5° tilt on the hero crate (mouse only), hover previews. variety.py OK (4 techniques). Reduced motion: final state, no tilt. CLS 0.001 desktop, 0.0005 phone (was 0.074).
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set
-- ~~At most 2 videos playing; pause button on loops over 5 s~~ n/a: no video on this page
+- [x] At most 2 videos playing; pause button on loops over 5 s
 - [x] Budgets met; nothing missing; alt on every image
 - [ ] No dimmed or filtered photo; 4+ real visuals together where the page has them
 
-Done here: Hanzo's iro image through kit Img with width, height and sizes (priority on the hero only); alt empty because it is decoration inside a drawn desktop; no filter or dimming.
+Done here: Hanzo's iro image through kit Img with width, height and sizes (priority on the hero only) as the hero wallpaper; the dark room's "Demo Video" window plays Hanzo's Koma film through kit Film (poster, muted, plays only on screen, held by the room's pause), so the two windows no longer show the same picture; no filter or dimming.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -157,4 +157,4 @@ Done here: No live data, so nothing loads or fails.
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/operative.md` verdict 8 or more
 
-Done here: data-cta on operative.hero; the kit Band's button has no data-cta yet (requested); Cta sends cta_click through the system event; V2 line updated for round 2; review read (6/10) and fixes 1–9 worked (gallery round2-*.jpg).
+Done here: data-cta on operative.hero and operative.band (page-local close); Cta sends cta_click through the system event; V2 line updated for round 2; review read (6/10) and fixes 1–9 worked (gallery round2-*.jpg).

@@ -1,6 +1,8 @@
 # /newsletter: James-eye review (critic 4, 7 Nov)
 
 Verdict: 7/10
+Ready: 8 Nov, copycheck missing 0 of 5 (live hanzo.ai). Rule 4 (simple pages stay simple) and rule 1: the page is one screen again in Hanzo's own order, as live (title, lede, the three-item checklist, the form, the line under it), with the paper issue beside it (a checklist item lights its line on the paper); the statements' pinned section and the dark room are gone, and with them the heading and step labels that re-cut Hanzo's sentence into fragments. taste/unique OK; 0 console errors, no overlap at 1470x801 and 375x812. Shared, not this page: phone header ask swap (Ask.jsx), kit Cta solid hover grey.
+Dark: 8 Nov, matches live hanzo.ai in dark side by side (docs/gallery/newsletter/dark-*.jpg); darkcheck OK, lightcheck OK, copycheck 0. (Rules under html:not(.light) in Hanzo's tokens: the sign-up field on --secondary with a white 10% ring as live's, the paper issue on --muted; the paper's black masthead stays black in both modes. Live's newsletter page has no halftone field; its hero glow is drawn.)
 First complaint: "I press Subscribe at the bottom and it opens another tab of the same page. That's broken, not premium. And on my phone the newsletter picture is cut off the side of the screen."
 
 Walked moving at 1470x801 (desktop hover flags on) and 375x812 (touch), plus 320 wide. I wheel-scrolled with a layout-shift observer, took screenshots about 1 s apart, pressed every control and intercepted the form POST (nothing was sent). Parity: `/newsletter: OK text 7/7 links 3/3`.

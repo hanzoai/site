@@ -177,6 +177,10 @@ async function figures() {
     run('_research.json', research, (d) => `${d.repair.length} coding.repair · ${d.latency.length} decision.latency · ${d.gpqa.length} enso.gpqa_diamond runs`),
     run('_models.json', models, (d) => `${d.models.length} models · ${Object.keys(d.names).length} names`),
   ]);
+  // /open-source shows the figures hanzo.ai's own deployed build read (per-org commits this year, contributors, the past
+  // 7 days, latest commits); its reader keeps the last good snapshot on any failure, so this never fails a build either
+  const { spawnSync } = await import('node:child_process');
+  spawnSync(process.execPath, [path.join(ROOT, 'components/pages/openSource/read.mjs')], { stdio: 'inherit' });
   if (failed.length) {
     console.error(`\nLIVE FIGURES FAILED (${failed.length}): the build stops rather than ship stale figures.\n  ${failed.join('\n  ')}\nFix the source, or set HZ_LIVE_OFFLINE=1 to build from the snapshots on purpose.`);
     process.exit(1);

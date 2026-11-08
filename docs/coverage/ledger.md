@@ -28,12 +28,12 @@ Done here: One `<main>`. Parity shows links 3/3 (docs, GitHub, Deploy) through `
 - [x] `PageHero`; nothing above the h1 (n/a for `PageHero`: not merged; `BizLines` has the same line-mask spec)
 - [x] JS off: legible; no `opacity:0` on the LCP element
 - [x] One idea per 100svh; no 3 same-height sections in a row
-- [x] Ends in proof strip, `Band`, footer (a page-local Band: kit `Band` uses `Rise`/`Magnetic`, over the motion budget)
+- [x] Ends in `Band`, footer (proof strip: n/a, Hanzo's ledger page has no proof to strip; a page-local Band: kit `Band` uses `Rise`/`Magnetic`, over the motion budget)
 - [x] Card-to-page links use Morph; title lands within 12px (n/a: no cards lead to pages)
 
 Done here:
 - First screen at 1470×801: "Hanzo Ledger" at 52px cut in by line mask, the lede, the ask and the live book posting by itself in the first second.
-- Order: hero book → three chapters (the 26px "Every cent lands somewhere" heads the pinned stage, not a screen of its own) → dark capability room → splitter (its words ride sticky beside it, so no empty column) → "Get Ledger" receipt strip and Deploy row → closing Band ("Get started with Ledger", lede, the ask) in a black room that opens from a rounded card to full width, then the footer with no gap.
+- Order (8 Nov): hero book → splitter (its words ride sticky beside it on desktop, so no empty column) → "Every cent lands somewhere" and its three plain steps, each scene beside its own words (the middle one mirrored), no pin → dark capability room → "Get Ledger" receipt strip and Deploy row → closing Band ("Get started with Ledger", lede, the ask) in a black room that opens from a rounded card to full width, then the footer with no gap.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -79,12 +79,12 @@ Done here:
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
 - [x] Focus ring visible on every stop of a Tab crawl
-- [x] Dialogs are native, trap focus and return it (`BizSheet`: role=dialog, focus in and back, Esc closes)
+- [x] Dialogs trap focus and return it (`BizSheet` is not a native `<dialog>`: role=dialog with aria-modal, focus in and back, Esc closes; shared component)
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: listed above
 
 Done here:
-- Every `:hover` in `Ledger.css` sits inside `@media (hover: hover)`, including the selected tab (underline) and the slider thumb (grows).
+- Every `:hover` in `Ledger.css` sits inside `@media (hover: hover)`, including the selected tab (underline) and the slider thumb (a 4px ring, no scale).
 - Press is scale .97 / 90ms on the pause, tabs, Copy, the Band ask and the slider thumb; journal rows and accounts are focusable with a 2px ink ring.
 
 ## 9. Motion and interaction
@@ -96,7 +96,7 @@ Done here:
 
 Done here:
 - Signature: the book posts by itself. Pointer: hovering a journal row lights the accounts it touched and the note reads it back ("tx 2 · @users:001 · @merchants:042 · @platform:fees · Σ 0"); an account lights its postings; the film holds still while you read. No cursor labels anywhere.
-- Idle: chapter scenes (also stacked on phone) draw a hairline along each chain entry / retry in turn; the dark-room rows sweep; the split bar carries a flowing band. Time: the split slides from 50 to 95 once when first seen. State: the tab pill glides (`layoutId`, ease-emphasis 300ms; the balance roll is the same tween — no springs). Scroll: pinned chapters, the Band opening.
+- Idle: chapter scenes (also stacked on phone) draw a hairline along each chain entry / retry in turn; the dark-room rows sweep; the split bar carries a flowing band. Time: the split slides from 50 to 95 once when first seen. State: the tab pill glides (`layoutId`, ease-emphasis 300ms; the balance roll is the same tween — no springs). Entrances: stack-drop (the book's layers drop onto it on load), velocity-skew (splitter), spring-snap (each step snaps in from its side on a spring), word-shuffle (dark room), inertia-drag (Get Ledger). The Band opens once.
 - `variety.py`: 2 techniques (layoutId, useScroll). Reduced motion stops every keyframe and skips the slide.
 
 ## 10. Media
@@ -114,7 +114,8 @@ Done here: No Hanzo media on this page; its objects are product UI drawn in HTML
 - [x] Primary ask above the fold at 375×667
 
 Done here:
-- Under 900px nothing pins: `BizChapters` stacks and each chapter's scene sits above its own words; the Numscript copy's sticky is switched off.
+- Under 900px nothing pins: the three steps stack (words, then their scene) and the Numscript copy's sticky is switched off.
+- 8 Nov: with "See the request" open at 1470x801 the sheet's title row sits above the header and the scrim covers the header and the splitter (the sticky column lifts to z 1000 while its sheet is open). check.cjs: 0 console errors and no overlap at every resting screen at 1470x801 and 375x812 (the earlier overlap was the old absolutely stacked chapter scenes left without their pin; they now sit in normal flow).
 - Book rows and accounts answer a tap (pin the reading, tap again to let go). scrollWidth equals the viewport at 320 and 375 (check script).
 
 ## 12. Accessibility (WCAG 2.2 AA)

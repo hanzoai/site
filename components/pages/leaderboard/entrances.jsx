@@ -27,13 +27,14 @@ export function Arrive({ as: T = 'div', e, amount, className = '', children, ...
   return <T ref={ref} className={className} data-ent={e} data-in={inn} {...rest}>{children}</T>;
 }
 
-/* letter-cascade: the heading's letters fall into place one by one. Words stay whole for wrapping; the heading keeps
-   its words as its accessible name. */
+/* letter-cascade: the heading's letters fall into place one by one. Words stay whole for wrapping; the whole line is also
+   in the heading as one visually hidden span (its accessible name, and one line for the copy check). */
 export function Cascade({ as: T = 'h2', text, className = '', id }) {
   const [ref, inn] = useArrive(0.6);
   let k = 0;
   return (
-    <T ref={ref} id={id} className={className} data-ent="cascade" data-in={inn} aria-label={text}>
+    <T ref={ref} id={id} className={className} data-ent="cascade" data-in={inn}>
+      <span className="x-sr">{text}</span>
       {text.split(' ').map((w, wi) => (
         <span key={wi}>
           {wi > 0 && ' '}
