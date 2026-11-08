@@ -78,8 +78,8 @@ at 1470×801: its title and its content fit on one screen. Top to bottom:
 |---|---|---|
 | Hero, typing product demo | `components/Hero.jsx`, `home/HeroScenes.jsx` | The scenes' data is in `home/hero-scenes.json` |
 | Backed by / Trusted by | `Marquee` (`components/Chrome.jsx`) | Logos in `public/logos/` (white in dark, black in light) |
-| Models: a 3D journey, Enso to Mori | `components/Models.jsx`, `components/models/Journey.jsx`, `models/scene.js` | Scrolling moves a camera through the nine models; drag turns one, click opens its page. **three.js (0.186.1) loads only by dynamic import**, in its own chunk, when the section comes near; it is never in the page's first load. Phones, reduced motion and browsers without WebGL get the static card grid |
-| Products: dock and stage | `components/home/Platform.jsx`, `home/platform.css` | |
+| Models: the card grid, Enso to Mori | `components/Models.jsx` | The Enso feature card and eight model cards in one frame (`home/wow.css`); each film plays while on screen, a click opens the model's page |
+| Products: a 3D journey, App to Team | `components/home/Platform.jsx`, `home/journey/Journey.jsx`, `home/journey/scene.js` | Pinned; scrolling moves a camera through the nine products in dock order, each a faceted graphite slab carrying its own screen (`public/home/products/<name>-<theme>.webp`, captured from the stage); drag turns one, click opens it, the dock jumps to one. **three.js (0.186.1) loads only by dynamic import**, in its own chunk, when the section comes near; never in the first load. Phones, reduced motion and no WebGL get the dock and stage |
 | Agents, Race, Cheaper, Pareto | `components/Agents.jsx`, `Race.jsx`, `Cheaper.jsx`, `Pareto.jsx` | Figures are worked out on the server (`home/snapshot.js`) and re-read live in the browser (`home/useFigures.js`) |
 | Open source | `components/Open.jsx` | |
 | Pricing | `components/home/Pricing.jsx` | Prices and links from `lib/plans.js` |

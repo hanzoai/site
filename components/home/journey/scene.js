@@ -1,53 +1,44 @@
-/* The frontier models as a journey through space (home, #models). Loaded only when the section comes near the screen
-   (components/models/Journey.jsx imports this file, and with it three.js, on demand), so the home page's first load
-   carries none of it.
-   Nine faceted, glossy solids sit along a gentle curve over a halftone floor that recedes into a soft horizon. Each
-   wears its model's own artwork (public/models/<slug>.webp) etched into its facets. Scroll moves the camera from one
-   to the next; the one in front can be dragged round and clicked open. Graphite and silver in dark; in light the
-   space turns white and the solids stay graphite. The page's text is never drawn here: it stays HTML. */
+/* The products as a journey through space (home, #products). Loaded only when the section comes near the screen
+   (components/home/Platform.jsx imports Journey.jsx, and with it this file and three.js, on demand), so the home page's
+   first load carries none of it.
+   Nine faceted graphite slabs sit along a gentle curve over a halftone floor that recedes into a soft horizon. Each one
+   carries its product's own screen on its face (public/home/products/<name>-<theme>.webp, captured from the product
+   stage and set in Hanzo monochrome). Scroll moves the camera from one to the next; the one in front can be dragged
+   round and clicked open. In light the space turns white and the slabs stay graphite. The page's text is never drawn
+   here: it stays HTML. */
 // three's own modules (three/src), not its prebuilt bundle: only what this scene uses is shipped, in this one lazy chunk
 import {
   WebGLRenderer, Scene, PerspectiveCamera, Vector3, Vector2, Group, Mesh, MeshStandardMaterial, MeshBasicMaterial, Color,
-  BoxGeometry, BackSide,
-  IcosahedronGeometry, OctahedronGeometry, DodecahedronGeometry, BufferAttribute, BufferGeometry,
-  EdgesGeometry, LineSegments, LineBasicMaterial, LineLoop, Points, ShaderMaterial, TextureLoader, SRGBColorSpace,
-  PMREMGenerator, ACESFilmicToneMapping, Raycaster, CatmullRomCurve3, MathUtils,
+  BoxGeometry, BackSide, Shape, ExtrudeGeometry, BufferAttribute, BufferGeometry, EdgesGeometry, LineSegments,
+  LineBasicMaterial, Points, ShaderMaterial, TextureLoader, SRGBColorSpace, PMREMGenerator, ACESFilmicToneMapping,
+  Raycaster, CatmullRomCurve3, MathUtils,
 } from 'three/src/Three.js';
 
-export const GAP = 13; // distance between two models along the path
+export const GAP = 13; // distance between two products along the path
+const SW = 4.4, SH = SW * 0.508; // a slab's face, the screens' own proportion
 
-// one silhouette per model, all low-poly
-const SHAPES = [
-  () => new IcosahedronGeometry(1.55, 1), // enso
-  () => new OctahedronGeometry(1.5, 0).scale(1, 1.3, 1), // kai, a diamond
-  () => new IcosahedronGeometry(1.5, 1).scale(1.08, 0.82, 1.08), // zen, a pebble
-  () => new DodecahedronGeometry(1.5, 0), // iro
-  () => new IcosahedronGeometry(1.6, 0), // koma
-  () => new OctahedronGeometry(1.5, 1), // oto
-  () => new DodecahedronGeometry(1.45, 1), // koe
-  () => new IcosahedronGeometry(1.5, 1).scale(1, 1.12, 1), // uta
-  () => new OctahedronGeometry(1.6, 2), // mori
-];
-
-// the artwork is projected onto the solid from the front (and mirrored onto the back), so it reads as an etching
-// across the facets; the 4:5 poster is cropped to its centre square
-function etch(geo) {
-  geo = geo.index ? geo.toNonIndexed() : geo;
-  geo.computeBoundingSphere();
-  const R = geo.boundingSphere.radius, p = geo.attributes.position, uv = new Float32Array(p.count * 2);
+// a slab with cut corners and a chamfered rim, so every edge is a facet that catches the light
+function slab(depth) {
+  const w = SW / 2, h = SH / 2, c = 0.34;
+  const s = new Shape();
+  s.moveTo(-w + c, -h); s.lineTo(w - c, -h); s.lineTo(w, -h + c); s.lineTo(w, h - c);
+  s.lineTo(w - c, h); s.lineTo(-w + c, h); s.lineTo(-w, h - c); s.lineTo(-w, -h + c); s.closePath();
+  const geo = new ExtrudeGeometry(s, { depth, bevelEnabled: true, bevelThickness: 0.09, bevelSize: 0.09, bevelSegments: 1, curveSegments: 1 });
+  geo.translate(0, 0, -depth / 2);
+  // the face takes the whole screen: caps get uv from their own extent (the back reads mirrored, like glass)
+  const p = geo.attributes.position, uv = geo.attributes.uv;
   for (let k = 0; k < p.count; k++) {
-    const x = p.getX(k) / (2 * R), y = p.getY(k) / (2 * R), back = p.getZ(k) < 0;
-    uv[k * 2] = 0.5 + (back ? -x : x) * 1.05;
-    uv[k * 2 + 1] = 0.5 + y * 0.84;
+    const back = p.getZ(k) < 0;
+    const u = (p.getX(k) + w) / (2 * w), v = (p.getY(k) + h) / (2 * h);
+    uv.setXY(k, back ? 1 - u : u, v);
   }
-  geo.setAttribute('uv', new BufferAttribute(uv, 2));
   geo.computeVertexNormals();
   return geo;
 }
 
 const PALETTE = {
-  dark: { body: 0x3a3a40, metal: 0.9, rough: 0.3, glow: 1.25, edge: 0xe6e6ea, edgeA: 0.22, ring: 0xffffff, ringA: 0.1, dotA: 0.8, env: 0.9 },
-  light: { body: 0x2a2a2e, metal: 0.72, rough: 0.34, glow: 1.0, edge: 0x0a0a0a, edgeA: 0.3, ring: 0x0a0a0a, ringA: 0.14, dotA: 0.45, env: 0.75 },
+  dark: { body: 0x3a3a40, metal: 0.9, rough: 0.3, screen: 0.95, edge: 0xe6e6ea, edgeA: 0.26, dotA: 0.8, env: 0.9 },
+  light: { body: 0x2a2a2e, metal: 0.72, rough: 0.34, screen: 0.82, edge: 0x0a0a0a, edgeA: 0.3, dotA: 0.45, env: 0.75 },
 };
 
 const FLOOR_VS = `
@@ -87,8 +78,8 @@ function studio() {
   return { room, dispose: () => { box.dispose(); mats.forEach((m) => m.dispose()); } };
 }
 
-export function createScene(canvas, { models, media, theme, onReady }) {
-  const N = models.length;
+export function createScene(canvas, { items, art, theme, onReady }) {
+  const N = items.length;
   const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
   renderer.setClearColor(0x000000, 0);
   renderer.outputColorSpace = SRGBColorSpace;
@@ -104,44 +95,50 @@ export function createScene(canvas, { models, media, theme, onReady }) {
 
   const camera = new PerspectiveCamera(32, 1, 0.1, 160);
 
-  // the path: a soft S through space, one stop per model
-  const stops = models.map((_, i) => new Vector3(Math.sin(i * 1.15) * 1.7, Math.cos(i * 0.85) * 0.45, -i * GAP));
+  // the path: a soft S through space, one stop per product
+  const stops = items.map((_, i) => new Vector3(Math.sin(i * 1.15) * 1.7, Math.cos(i * 0.85) * 0.45, -i * GAP));
   const path = new CatmullRomCurve3(stops, false, 'centripetal');
 
   const loader = new TextureLoader();
   const disposables = [];
   const bodies = [];
-  const holders = models.map((m, i) => {
+  const geo = slab(0.36);
+  const edgesGeo = new EdgesGeometry(geo, 1);
+  disposables.push(geo, edgesGeo);
+  const holders = items.map((it, i) => {
     const holder = new Group();
     holder.position.copy(stops[i]);
     const spin = new Group();
     holder.add(spin);
-    const geo = etch(SHAPES[i % SHAPES.length]());
-    const mat = new MeshStandardMaterial({ flatShading: true, transparent: true, emissive: 0xffffff, emissiveIntensity: 0 });
-    loader.load(media(m.slug, 'webp'), (tex) => {
-      tex.colorSpace = SRGBColorSpace;
-      tex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
-      mat.emissiveMap = tex; mat.needsUpdate = true;
-      disposables.push(tex);
-    });
-    const body = new Mesh(geo, mat);
+    // the face: the product's screen, self-lit like a display under glass; the rim: glossy graphite
+    const face = new MeshStandardMaterial({ roughness: 0.22, metalness: 0.05, envMapIntensity: 0.3, transparent: true, emissive: 0xffffff, emissiveIntensity: 0, color: 0x000000 });
+    const rim = new MeshStandardMaterial({ flatShading: true, transparent: true });
+    const body = new Mesh(geo, [face, rim]);
     body.userData.i = i;
-    const edges = new LineSegments(new EdgesGeometry(geo, 1), new LineBasicMaterial({ transparent: true, depthWrite: false }));
-    // a faint orbit round each solid
-    const ringPts = [];
-    for (let k = 0; k < 128; k++) { const a = (k / 128) * Math.PI * 2; ringPts.push(Math.cos(a) * 2.55, 0, Math.sin(a) * 2.55); }
-    const ringGeo = new BufferGeometry();
-    ringGeo.setAttribute('position', new BufferAttribute(new Float32Array(ringPts), 3));
-    const ring = new LineLoop(ringGeo, new LineBasicMaterial({ transparent: true, depthWrite: false }));
-    ring.rotation.set(1.18 + i * 0.07, 0, 0.32 - (i % 3) * 0.22);
+    const edges = new LineSegments(edgesGeo, new LineBasicMaterial({ transparent: true, depthWrite: false }));
     spin.add(body, edges);
-    holder.add(ring);
-    holder.userData = { spin, body, edges, ring, drag: new Vector2(), vel: new Vector2(), seed: i * 1.7 };
-    disposables.push(geo, mat, edges.geometry, edges.material, ringGeo, ring.material);
+    holder.userData = { spin, body, face, rim, edges, drag: new Vector2(), vel: new Vector2(), seed: i * 1.7, tex: {} };
+    disposables.push(face, rim, edges.material);
     bodies.push(body);
     scene.add(holder);
     return holder;
   });
+
+  // each product's screen, in the theme on show (the other theme loads when the page switches)
+  let themeName = theme;
+  function screens(t) {
+    holders.forEach((h, i) => {
+      const u = h.userData;
+      const use = (tex) => { if (themeName !== t) return; u.face.emissiveMap = tex; u.face.needsUpdate = true; };
+      if (u.tex[t]) { use(u.tex[t]); return; }
+      loader.load(art(items[i], t), (tex) => {
+        tex.colorSpace = SRGBColorSpace;
+        tex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+        u.tex[t] = tex; disposables.push(tex);
+        use(tex);
+      });
+    });
+  }
 
   // the halftone floor: Hanzo's dot field laid flat and receding into the horizon, denser away from the path
   const floorPts = [], floorS = [];
@@ -168,21 +165,20 @@ export function createScene(canvas, { models, media, theme, onReady }) {
   function setTheme(next, ink) {
     pal = PALETTE[next] || PALETTE.dark;
     holders.forEach((h) => {
-      const { body, edges, ring } = h.userData;
-      body.material.color.setHex(pal.body);
-      body.material.metalness = pal.metal;
-      body.material.roughness = pal.rough;
-      body.material.envMapIntensity = pal.env;
+      const { rim, edges } = h.userData;
+      rim.color.setHex(pal.body);
+      rim.metalness = pal.metal;
+      rim.roughness = pal.rough;
+      rim.envMapIntensity = pal.env;
       edges.material.color.setHex(pal.edge);
-      ring.material.color.setHex(pal.ring);
     });
     floorMat.uniforms.uInk.value.set(ink || (next === 'light' ? '#0a0a0a' : '#e5e5e5'));
     floorMat.uniforms.uA.value = pal.dotA;
-    dirty = true;
+    if (next !== themeName) { themeName = next; screens(next); }
   }
 
   // size
-  let W = 1, H = 1, dirty = true;
+  let W = 1, H = 1;
   function resize() {
     const r = canvas.getBoundingClientRect();
     W = Math.max(1, r.width); H = Math.max(1, r.height);
@@ -192,25 +188,24 @@ export function createScene(canvas, { models, media, theme, onReady }) {
     camera.aspect = W / H;
     camera.updateProjectionMatrix();
     floorMat.uniforms.uPR.value = pr * (H / 800);
-    dirty = true;
   }
 
-  // camera along the path; the model in front sits right of centre, clear of the text on the left
+  // camera along the path; the product in front sits right of centre, clear of the text on the left
   const look = new Vector3(), at = new Vector3(), tmp = new Vector3();
   let t = 0, vel = 0;
   function frameCamera(time) {
     const k = MathUtils.clamp(t / (N - 1), 0, 1);
     path.getPoint(k, at);
-    const dist = 11.2;
+    const dist = 11.6;
     const halfW = dist * Math.tan(MathUtils.degToRad(camera.fov / 2)) * camera.aspect;
-    const off = halfW * (camera.aspect > 1.2 ? 0.36 : 0.22);
-    look.set(at.x - off, at.y + 0.05, at.z);
-    camera.position.set(at.x - off + Math.sin(time * 0.21) * 0.12, at.y + 0.85 + Math.sin(time * 0.17) * 0.08, at.z + dist);
+    const off = halfW * (camera.aspect > 1.2 ? 0.33 : 0.2);
+    look.set(at.x - off, at.y + 0.15, at.z);
+    camera.position.set(at.x - off + Math.sin(time * 0.21) * 0.12, at.y + 0.95 + Math.sin(time * 0.17) * 0.08, at.z + dist);
     camera.lookAt(look);
     camera.rotateZ(MathUtils.clamp(-vel * 0.9, -0.08, 0.08)); // a slight bank while travelling
   }
 
-  // drag rotates the model in front; inertia carries it a little further
+  // drag turns the product in front; inertia carries it a little further, then it settles back to face you
   const raycaster = new Raycaster(), ndc = new Vector2();
   function pick(x, y) {
     ndc.set((x / W) * 2 - 1, -(y / H) * 2 + 1);
@@ -220,34 +215,32 @@ export function createScene(canvas, { models, media, theme, onReady }) {
   }
   function drag(i, dx, dy) {
     const h = holders[i];
-    if (!h) return;
-    h.userData.vel.set(dy * 0.006, dx * 0.008);
+    if (h) h.userData.vel.set(dy * 0.006, dx * 0.008);
   }
 
-  // per-frame read-out for the HTML around the canvas: label anchors and the model's screen box
-  const ANCH = [new Vector3(1.05, 0.95, 0.45), new Vector3(1.25, -0.7, 0.35), new Vector3(-1.1, -1.0, 0.5)];
+  // per-frame read-out for the HTML around the canvas: one label anchor (the slab's upper corner) and its screen box
   const out = { t: 0, i: 0, anchors: [], box: null };
+  const ANCH = [new Vector3(SW / 2 - 0.2, SH / 2 - 0.1, 0.2)];
   function readOut(i) {
     const h = holders[i];
     out.anchors.length = 0;
     if (!h) { out.box = null; return out; }
     h.updateMatrixWorld(true);
-    const R = h.userData.body.geometry.boundingSphere.radius;
     ANCH.forEach((a) => {
-      tmp.copy(a).normalize().multiplyScalar(R * 0.92);
+      tmp.copy(a);
       h.userData.spin.localToWorld(tmp);
       tmp.project(camera);
-      out.anchors.push({ x: (tmp.x * 0.5 + 0.5) * W, y: (-tmp.y * 0.5 + 0.5) * H, front: tmp.z < 1 });
+      out.anchors.push({ x: (tmp.x * 0.5 + 0.5) * W, y: (-tmp.y * 0.5 + 0.5) * H });
     });
     tmp.copy(h.position).project(camera);
     const cx = (tmp.x * 0.5 + 0.5) * W, cy = (-tmp.y * 0.5 + 0.5) * H;
     const d = camera.position.distanceTo(h.position);
-    const r = (R / (d * Math.tan(MathUtils.degToRad(camera.fov / 2)))) * (H / 2);
-    out.box = { x: cx - r, y: cy - r, w: r * 2, h: r * 2 };
+    const k = (H / 2) / (d * Math.tan(MathUtils.degToRad(camera.fov / 2)));
+    out.box = { x: cx - (SW / 2) * k, y: cy - (SH / 2) * k, w: SW * k, h: SH * k };
     return out;
   }
 
-  let raf = 0, running = false, last = 0, clock = 0, target = 0, ready = false, firstLoad = 0;
+  let raf = 0, running = false, last = 0, clock = 0, target = 0, ready = false, fade = 0;
   let getTarget = () => 0, onFrame = null;
   function tick(now) {
     raf = running ? requestAnimationFrame(tick) : 0;
@@ -263,27 +256,25 @@ export function createScene(canvas, { models, media, theme, onReady }) {
       const u = h.userData, near = Math.abs(i - t);
       u.drag.x += u.vel.x; u.drag.y += u.vel.y;
       u.vel.multiplyScalar(Math.pow(0.04, dt));
-      u.drag.x *= 1 - Math.min(1, dt * 0.35); // the pitch drifts back upright
+      u.drag.multiplyScalar(1 - Math.min(1, dt * 0.45)); // a turned slab drifts back to face you
       u.spin.rotation.set(
-        Math.sin(clock * 0.31 + u.seed) * 0.16 + u.drag.x,
-        Math.sin(clock * 0.27 + u.seed) * 0.62 + clock * 0.06 + u.drag.y,
-        Math.sin(clock * 0.19 + u.seed) * 0.05,
+        Math.sin(clock * 0.31 + u.seed) * 0.07 - 0.04 + u.drag.x,
+        Math.sin(clock * 0.27 + u.seed) * 0.32 - 0.22 + u.drag.y,
+        Math.sin(clock * 0.19 + u.seed) * 0.025,
       );
-      u.ring.rotation.y = clock * 0.05 + u.seed;
       // far stops fade and the next one drifts in; one already passed fades fast, before it reaches the camera
       const vis = i < t ? MathUtils.clamp(1 - (t - i - 0.08) * 2.6, 0, 1) : MathUtils.clamp(1 - (near - 0.25) * 1.1, 0, 1);
-      const lit = MathUtils.clamp(1 - near * 1.4, 0, 1); // only the model in front glows fully
+      const lit = MathUtils.clamp(1 - near * 1.4, 0, 1); // only the product in front is fully lit
       h.visible = vis > 0.01;
-      u.body.material.opacity = vis;
-      u.body.material.emissiveIntensity = pal.glow * (0.3 + 0.7 * lit) * (firstLoad);
+      u.face.opacity = vis; u.rim.opacity = vis;
+      u.face.emissiveIntensity = pal.screen * (0.35 + 0.65 * lit) * fade;
       u.edges.material.opacity = pal.edgeA * vis;
-      u.ring.material.opacity = pal.ringA * vis * (0.4 + 0.6 * lit);
       h.position.y = stops[i].y + Math.sin(clock * 0.5 + u.seed) * 0.08;
     });
-    firstLoad = Math.min(1, firstLoad + dt * 1.2);
+    fade = Math.min(1, fade + dt * 1.2);
     floorMat.uniforms.uT.value = clock;
     renderer.render(scene, camera);
-    // the text, the labels and the click target follow where the scroll is going; the camera follows them
+    // the text, the label and the click target follow where the scroll is going; the camera follows them
     out.t = t; out.i = Math.round(target);
     if (onFrame) onFrame(readOut(out.i));
     if (!ready) { ready = true; onReady && onReady(); }
@@ -294,6 +285,7 @@ export function createScene(canvas, { models, media, theme, onReady }) {
 
   resize();
   setTheme(theme);
+  screens(theme);
 
   return {
     start, stop, resize, setTheme, pick, drag,
