@@ -13,7 +13,7 @@
 .bt-en [data-enter='ripple']:not(.is-in) .bt-cht { opacity: 0; }
 .bt-en [data-enter='ripple'].is-in:not(.was-in) .bt-chv > * { animation: bte-open .7s cubic-bezier(.16, 1, .3, 1) backwards; }
 .bt-en [data-enter='ripple'].is-in:not(.was-in) .bt-cht { animation: bte-fade .5s ease .25s backwards; }
-.bt-en [data-enter='ripple'].is-in:not(.was-in) .bt-chv::after { content: ''; position: absolute; left: 50%; top: 50%; z-index: 2; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; box-shadow: 0 0 0 2px #0a0a0a; pointer-events: none; animation: bte-ring .9s cubic-bezier(.16, 1, .3, 1) forwards; }
+.bt-en [data-enter='ripple'].is-in:not(.was-in) .bt-chv::after { content: ''; position: absolute; left: 50%; top: 50%; z-index: 2; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; box-shadow: 0 0 0 2px var(--ink); pointer-events: none; animation: bte-ring .9s cubic-bezier(.16, 1, .3, 1) forwards; }
 @keyframes bte-open { from { clip-path: circle(0% at 50% 50%); } to { clip-path: circle(75% at 50% 50%); } }
 @keyframes bte-ring { from { transform: scale(.4); opacity: .9; } to { transform: scale(16); opacity: 0; } }
 @keyframes bte-fade { from { opacity: 0; } }
