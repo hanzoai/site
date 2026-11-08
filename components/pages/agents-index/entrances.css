@@ -32,7 +32,7 @@
 /* ripple: the rings sit behind everything, centred, and run on past the content */
 .agx-ripple { position: relative; overflow: clip; }
 .agx-rings { position: absolute; inset: 0; pointer-events: none; }
-.agx-rings i { position: absolute; left: 50%; top: 50%; width: 120px; height: 120px; margin: -60px 0 0 -60px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .4); opacity: 0; }
+.agx-rings i { position: absolute; left: 50%; top: 50%; width: 120px; height: 120px; margin: -60px 0 0 -60px; border-radius: 50%; box-shadow: inset 0 0 0 1px light-dark(rgba(0, 0, 0, .4), var(--ring)); opacity: 0; }
 .agx-venetian-type { overflow: clip; }
 .agx-stretch-scroll[data-done] .agx-st { transform: scaleY(var(--st, 1)); transform-origin: 50% 0; }
 
