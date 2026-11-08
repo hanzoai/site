@@ -36,6 +36,7 @@ import { Sheet } from '../../v2/SpecDrawer';
 import LaunchClose, { Arr } from '../../v2/LaunchClose';
 import LineMask from '../../v2/LineMask';
 import LivePause, { usePause } from '../../v2/LivePause';
+import HeroDither from '../HeroDither';
 import './Node.css';
 
 const useIso = typeof window === 'undefined' ? useEffect : useLayoutEffect;
@@ -366,6 +367,7 @@ export default function Node() {
   return (
     <main className="lx nd">
       <section ref={run} className="nd-run" data-morph-target data-ask-name="Hanzo Node">
+        <HeroDither />
         <div className="lx-wrap nd-run-grid">
           <div className="nd-run-obj">
             <div className="nd-run-stick">

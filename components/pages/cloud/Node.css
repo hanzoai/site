@@ -326,3 +326,7 @@ html:not(.light) .nd .nd-cmd { box-shadow: inset 0 0 0 1px var(--border); }
 }
 html:not(.light) .nd .nd-mac { box-shadow: inset 0 0 0 1px var(--border); }
 html:not(.light) .nd .cf-paste-box { box-shadow: inset 0 0 0 1px var(--border); }
+/* live's hero halftone (components/pages/HeroDither, dark only): the run section is the hero and the chapters together,
+   so the field covers its first screen, under the machine and the words */
+html:not(.light) .nd .nd-run { position: relative; }
+html:not(.light) .nd .nd-run > .hz-dither { bottom: auto; height: calc(100svh - 40px); }
