@@ -134,7 +134,7 @@ function Reader() {
               <tr key={r.k} className={at === i ? 'on' : ''} onClick={() => pick(i)}>
                 <th scope="row">
                   <button type="button" className="xcp-t-row" onClick={(e) => { e.stopPropagation(); pick(i); }} onFocus={() => pick(i)} aria-pressed={at === i}>
-                    <span className="pf-mono">{pad(i)}</span>{r.k}
+                    <span className="pf-mono">{pad(i)}</span><span>{r.k}</span>
                   </button>
                 </th>
                 {r.c.map((c, j) => <td key={j} className={'xcp-td ' + tone(c) + (j === 0 ? ' me' : '')}><Cell c={c} /></td>)}
@@ -152,7 +152,7 @@ function Reader() {
         {TABLE.map((r, i) => (
           <li key={r.k} className={at === i ? 'on' : ''}>
             <button type="button" className="xcp-card-h" aria-expanded={open === i} onClick={() => { setOpen(open === i ? -1 : i); pick(i); }}>
-              <span className="pf-mono">{pad(i)}</span><b>{r.k}</b><i aria-hidden="true">+</i>
+              <span className="pf-mono">{pad(i)}</span><b><span>{r.k}</span></b><i aria-hidden="true">+</i>
             </button>
             <dl>
               {r.c.map((c, j) => (
