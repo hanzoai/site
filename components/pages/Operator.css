@@ -3,6 +3,7 @@
 /* dark mode: A2's page greys (--soft, --faint, --card, --line) are light values on .a2, so in dark this page points them
    at Hanzo's own tokens (docs/DARK-MODE.md) */
 html:not(.light) .xop { --acc: var(--foreground); --acc-soft: var(--muted); --soft: var(--muted-foreground); --faint: var(--text-tertiary); --card: var(--muted); --line: var(--border); }
+html:not(.light) .xop-hero { position: relative; } /* holds live's hero halftone (HeroDither) */
 
 /* the hero is the first dark room: a control room */
 .xop-hero { padding: clamp(104px, 13vh, 140px) 0 clamp(72px, 8vw, 120px); overflow: hidden; }

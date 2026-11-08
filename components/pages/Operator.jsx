@@ -22,6 +22,7 @@ import A2Paste from '../v2/A2Paste';
 import A2Pause from '../v2/A2Pause';
 import NoJs from '../NoJs';
 import { T, EMPH, INOUT } from '../v2/A2Motion';
+import HeroDither from './HeroDither';
 import '../v2/A2.css';
 import './Operator.css';
 
@@ -113,6 +114,7 @@ function Board() {
 function Hero() {
   return (
     <section className="a2-dark xop-hero" data-room="dark" aria-labelledby="xop-h1">
+      <HeroDither />
       <div className="a2-wrap a2-grid xop-hero-grid">
         <div className="xop-hero-copy">
           <MaskLines as="h1" id="xop-h1" className="a2-display xop-h1" lines={['Hanzo', 'Operator']} amount={0.1} />
