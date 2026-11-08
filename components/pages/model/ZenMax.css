@@ -295,3 +295,7 @@ html:not(.light) .zx-panel { box-shadow: inset 0 0 0 1px var(--border); } /* the
   .zx-rt-fan { clip-path: none; }
 }
 @media (prefers-reduced-motion: reduce) and (max-width: 899px) { .zx-stage-pin { height: auto; min-height: 0; } }
+
+/* Hanzo's halftone dot field behind the hero in dark only, as live hanzo.ai's dark heroes; the film card covers it
+   while it fills the screen, then the dots show around the settled card */
+html:not(.light) .zx-stage-pin::before { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(circle, color-mix(in srgb, var(--foreground) 17%, transparent) 1.7px, transparent 2.2px) 0 0 / 10px 10px; -webkit-mask-image: linear-gradient(90deg, #000, transparent 30%, transparent 66%, #000), linear-gradient(180deg, rgba(0, 0, 0, .3), #000); -webkit-mask-composite: source-in; mask-image: linear-gradient(90deg, #000, transparent 30%, transparent 66%, #000), linear-gradient(180deg, rgba(0, 0, 0, .3), #000); mask-composite: intersect; }
