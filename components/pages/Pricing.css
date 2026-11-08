@@ -340,3 +340,68 @@ html:not(.js) .xpr-bills > li { display: grid !important; }
   .js .xpr .x-band[data-in]:not([data-done]) h2 .x-word { background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 0 3px; animation: xpr-sweep .8s cubic-bezier(.65, 0, .35, 1) calc(.45s + var(--wi, 0) * 70ms) both; }
   @keyframes xpr-sweep { 0% { background-size: 0 3px; background-position: 0 100%; } 55% { background-size: 100% 3px; background-position: 0 100%; } 56% { background-size: 100% 3px; background-position: 100% 100%; } 100% { background-size: 0 3px; background-position: 100% 100%; } }
 }
+
+/* ---------- 9 Nov redesign for clarity: every plan of a tab side by side (as live), Pro recommended ---------- */
+/* the header: the title, Hanzo's line and the tabs centred over the halftone, the cards rising out of it */
+.xpr-top { position: relative; isolation: isolate; padding: clamp(48px, 5.4vw, 80px) 0 0; }
+.xpr-dots { position: absolute; inset: 0 0 auto; z-index: -1; width: 100%; height: min(880px, 100%); pointer-events: none;
+  -webkit-mask-image: linear-gradient(#000 62%, transparent); mask-image: linear-gradient(#000 62%, transparent); }
+.xpr-top .xpr-hero-g { flex-direction: column; align-items: center; justify-content: flex-start; gap: 14px; text-align: center; }
+.xpr-top .xpr-lede { margin: 0; max-width: none; }
+.xpr-top .xpr-tabs { position: static; margin-top: 18px; padding: 0; background: none; box-shadow: none; }
+.xpr-top .xpr-panels { padding-top: clamp(32px, 3.4vw, 48px); }
+
+/* the cards */
+.xpr-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 24px); align-items: stretch; }
+.xpr-cards.n2 { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 960px; margin-inline: auto; }
+.xpr-cards[hidden] { display: none; }
+.xpr-card { position: relative; display: flex; flex-direction: column; min-width: 0; padding: clamp(22px, 2.2vw, 32px); border: 1px solid var(--line); border-radius: 28px; background: rgba(245, 245, 245, .92); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.xpr-card.rec { border-color: rgba(10, 10, 10, .32); background: #fafafa; box-shadow: 0 24px 48px -32px rgba(0, 0, 0, .35); }
+.xpr-c-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 12px; min-height: 40px; }
+.xpr-c-name { margin: 0; font-size: 21px; font-weight: 560; letter-spacing: -.015em; line-height: 1.2; color: var(--ink); }
+.xpr-c-name .xpr-swap { min-width: 4ch; }
+.xpr-c-d { margin: 12px 0 0; min-height: 2.9em; font-size: 15px; line-height: 1.45; color: var(--soft); }
+.xpr-c-d .xpr-swap { display: block; }
+.xpr-c-price { display: flex; flex-direction: column; gap: 4px; min-height: 96px; margin-top: 22px; color: var(--ink); }
+.xpr-c-price .xpr-fig { font-size: clamp(40px, 3.6vw, 52px); font-weight: 560; letter-spacing: -.035em; }
+.xpr-c-price .xpr-word { font-size: clamp(26px, 2.4vw, 34px); font-weight: 560; letter-spacing: -.025em; line-height: 1.1; }
+.xpr-card[data-id='free'] .xpr-c-price .xpr-word { font-size: clamp(40px, 3.6vw, 52px); letter-spacing: -.035em; }
+.xpr-c-sub { font-size: 14px; line-height: 1.45; color: var(--soft); }
+.xpr-c-acts { display: grid; gap: 10px; margin-top: 22px; }
+.xpr-c-acts .xpr-cta { width: 100%; justify-content: center; }
+.xpr-card:not(.rec) .xpr-cta { background: #fff; }
+.xpr-c-acts .xpr-note { margin: 2px 0 0; }
+.xpr-c-inc { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--line); }
+.xpr-c-inc .xpr-head { margin: 0; }
+.xpr-c-inc .xpr-list li { font-size: 14.5px; padding: 5px 0; }
+.xpr-c-seats { grid-template-columns: minmax(0, 1fr); gap: 8px; margin-top: 22px; }
+.xpr-c-seats > div { padding: 16px 18px; background: #fff; border: 1px solid var(--line); }
+.xpr-c-seats .xpr-seat-p { margin: 10px 0 0; font-size: 30px; font-weight: 560; letter-spacing: -.03em; line-height: 1; color: var(--ink); }
+.xpr-card .xpr-seg { background: rgba(0, 0, 0, .06); }
+.xpr-card .xpr-bill { display: inline-flex; align-items: center; gap: 8px; }
+.xpr-card .xpr-save { font: 600 12.5px/1 var(--sans); color: var(--ink); }
+
+/* compare: the personal plans line by line, right under the cards (no drawer) */
+.xpr-compare { padding-top: clamp(48px, 5vw, 72px); }
+.xpr-compare .xpr-cmp { max-height: none; overflow-x: auto; }
+
+@media (max-width: 1100px) {
+  .xpr-cards { grid-template-columns: minmax(0, 1fr); max-width: 560px; margin-inline: auto; }
+  .xpr-cards.n2 { grid-template-columns: minmax(0, 1fr); max-width: 560px; }
+  .xpr-c-d, .xpr-c-price { min-height: 0; }
+}
+@media (max-width: 420px) {
+  .xpr-card { border-radius: 22px; }
+  .xpr-c-top { align-items: flex-start; }
+}
+@media (prefers-reduced-motion: reduce) { .xpr-card { transition: none; } }
+/* one row per part across the cards (subgrid), so names, prices, asks and feature lists sit level side by side */
+@media (min-width: 1101px) {
+  .xpr-cards { grid-template-rows: repeat(6, auto); row-gap: 0; }
+  .xpr-card { display: grid; grid-row: span 6; grid-template-rows: subgrid; align-content: start; }
+  .xpr-c-d, .xpr-c-price { min-height: 0; }
+  .xpr-c-price { justify-content: flex-start; }
+  .xpr-c-gap { min-height: 0; }
+  .xpr-cards.n2 .xpr-c-gap { margin-top: 22px; }
+}
+.xpr-card .xpr-bill .xpr-save { padding: 0; border-radius: 0; background: none; box-shadow: none; font: 600 13px/1 var(--sans); color: var(--ink); }
