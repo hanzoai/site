@@ -913,3 +913,4 @@ html:not(.light) .xbm-sh-x { background: var(--secondary); }
 html:not(.light) .xbm-sh-body { color: var(--muted-foreground); }
 html:not(.light) .xbm-sh-panel::before { background: var(--border-strong); }
 html:not(.light) .xbm-ent[data-ent='sticky-stack'] .xbm-figs-l > li > a { background: var(--bg); }
+.xbm-figs-cta { margin-top: 24px; }

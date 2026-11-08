@@ -283,6 +283,7 @@ function Figures() {
             </li>
           ))}
         </ul>
+        <p className="xbm-figs-cta"><Cta to="/pay/confirm/card?plan=go&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat" kind="link" id="benchmarks.figs">Use every model here, Go is $8/month</Cta></p>
       </div>
     </section>
   );

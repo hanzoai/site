@@ -30,6 +30,7 @@ import './DevPage.css';
 
 const OPEN = '/login?next=%2Fdev';
 const DOCS = 'https://docs.hanzo.ai/docs/dev';
+const GO = '/pay/confirm/card?plan=go&returnUrl=https%3A%2F%2Fhanzo.ai%2Fdev'; // Go is the cheapest plan with Hanzo Dev
 // Hanzo's own links end in a text arrow (→), so the kit Cta link carries it as text and drops its drawn one
 // the arrow sits in the label's own text, as Hanzo prints it ("Getting started →"); bare: Hanzo prints no arrow ("Read the docs")
 const Lk = ({ to, children, id, bare }) => <Cta to={to} kind="link" id={id} className="xdv-lk">{bare ? children : children + ' →'}</Cta>;
@@ -630,7 +631,6 @@ function Source() {
 }
 
 /* ---------- 7. paste and ship, then the closing Band ---------- */
-const GO = '/pay/confirm/card?plan=go&returnUrl=https%3A%2F%2Fhanzo.ai%2Fdev'; // the Go plan, approved by James for the close
 const PASTE = 'Read https://hanzo.ai/skill.md and use Hanzo Dev in my project. Start with: dev';
 function Paste() {
   return (
@@ -657,7 +657,7 @@ export default function DevPage({ release }) {
       <How />
       <Source />
       <Paste />
-      <Band title="Describe the change. Dev ships it." action="Open Dev" to={OPEN} note={<><Cta kind="quiet" to={GO} id="dev.close-go" className="xdv-go">Get Hanzo Dev, $8/month</Cta><Lk to={DOCS} id="dev.close-docs" bare>Read the docs</Lk></>} />
+      <Band title="Describe the change. Dev ships it." action="Get Hanzo Dev, $8/month" to={GO} note={<><Lk to={OPEN} id="dev.close-open">Open Dev</Lk><Lk to={DOCS} id="dev.close-docs" bare>Read the docs</Lk></>} />
     </main>
   );
 }
