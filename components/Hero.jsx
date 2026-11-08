@@ -82,12 +82,14 @@ function Bubble({ children, me, on = true }) {
   );
 }
 
-function AppCard({ on = true }) {
+// hanzo.ai's two app cards: the desktop chat's now reads "App · desktop and mobile" with Preview (8 Nov); the phone's
+// still reads "Mobile + Duo app" with Open
+function AppCard({ on = true, phone = false }) {
   return (
     <motion.div className="x-appcard" initial={false} animate={on ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }} aria-hidden={on ? undefined : true} transition={{ duration: 0.6, ease: EASE }}>
       <span className="x-appicon"><Mark size={13} /></span>
-      <span><b>maxpower</b><small><span>Mobile + Duo app</span></small></span>
-      <span className="x-open">Open</span>
+      <span><b>maxpower</b><small><span>{phone ? 'Mobile + Duo app' : 'App · desktop and mobile'}</span></small></span>
+      <span className="x-open">{phone ? 'Open' : 'Preview'}</span>
     </motion.div>
   );
 }
@@ -379,7 +381,7 @@ export default function Hero() {
                   <div className="x-phone-body">
                     <div className="x-pane" id="phone-chat" role="tabpanel" data-on={tab === 'chat'} inert={tab !== 'chat'}>
                       <Bubble me on={phase >= 1}>{PROMPT}</Bubble>
-                      <AppCard on={phase >= 2} />
+                      <AppCard on={phase >= 2} phone />
                     </div>
                     <div className={'x-pane right' + (sc >= 0 && (MORE[sc].phone || MORE[sc].place === 'studio') ? ' xs-on' : '')} id="phone-dev" role="tabpanel" data-on={tab === 'dev'} inert={tab !== 'dev'}>
                       <PhoneCells at={sc} />
