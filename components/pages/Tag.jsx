@@ -85,7 +85,7 @@ function Moment({ n, archived, setArchived }) {
   if (n.k === 'mention') return (<><Msg m={ASK} p={P} /><Msg m={ANSWER} p={P} /><p className={`${P}-chips`}>{SETUP.chips.map((c) => <span key={c}>{c}</span>)}</p></>);
   if (n.k === 'view') return (
     <div className={`${P}-pv`}>
-      <div><span>{VIEW.before}</span><b style={VIEW.old}>{VIEW.button}</b></div>
+      <div><span>{VIEW.before}</span><b style={VIEW.old}><span>{VIEW.button}</span></b></div>
       <div><span>{VIEW.after}</span><b style={VIEW.fix}>{VIEW.button}</b></div>
       <p>{VIEW.note}</p>
     </div>
