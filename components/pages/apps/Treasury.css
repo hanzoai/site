@@ -204,3 +204,7 @@ html:not(.light) .ts-split, html:not(.light) .ts-get, html:not(.light) .ts-chip 
 @media (min-width: 900px) { html:not(.light) .ts-first-acts .w2-cta { background: var(--ink); color: var(--x-on-ink); } }
 @media (hover: hover) and (min-width: 900px) { html:not(.light) .ts-first-acts .w2-cta:hover { background: var(--primary-hover); } }
 html:not(.light) .ts { --soft: var(--muted-foreground); --faint: var(--text-tertiary); } /* the shared .w2 greys are light-only */
+/* dark only: live hanzo.ai's hero sits on Hanzo's halftone dot field (dense at the edges, thinning toward the top and centre) */
+html:not(.light) .ts-hero { position: relative; }
+html:not(.light) .ts-hero::before { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(circle, color-mix(in srgb, var(--foreground) 17%, transparent) 2px, transparent 2.6px) 0 0 / 10px 10px; -webkit-mask-image: linear-gradient(90deg, #000, transparent 30%, transparent 66%, #000), linear-gradient(180deg, rgba(0, 0, 0, .3), #000); -webkit-mask-composite: source-in; mask-image: linear-gradient(90deg, #000, transparent 30%, transparent 66%, #000), linear-gradient(180deg, rgba(0, 0, 0, .3), #000); mask-composite: intersect; }
+html:not(.light) .ts-hero > * { position: relative; z-index: 1; }

@@ -385,3 +385,7 @@ a.ui-chip:active { transform: scale(.98); }
    dark text tokens; the sent message reads in Hanzo's ink on its accent */
 html:not(.light) .uip { --soft: var(--muted-foreground); --faint: var(--text-tertiary); }
 html:not(.light) .uc-cards .uc-ch .uc-msg.me { color: var(--foreground); }
+/* dark only: live hanzo.ai's hero sits on Hanzo's halftone dot field (dense at the edges, thinning toward the top and centre) */
+html:not(.light) .ui-hero { position: relative; }
+html:not(.light) .ui-hero::before { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(circle, color-mix(in srgb, var(--foreground) 17%, transparent) 2px, transparent 2.6px) 0 0 / 10px 10px; -webkit-mask-image: linear-gradient(90deg, #000, transparent 30%, transparent 66%, #000), linear-gradient(180deg, rgba(0, 0, 0, .3), #000); -webkit-mask-composite: source-in; mask-image: linear-gradient(90deg, #000, transparent 30%, transparent 66%, #000), linear-gradient(180deg, rgba(0, 0, 0, .3), #000); mask-composite: intersect; }
+html:not(.light) .ui-hero > * { position: relative; z-index: 1; }
