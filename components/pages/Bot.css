@@ -608,3 +608,5 @@ html:not(.js) .bt .x-line-in { transform: none !important; }
   .x-band h2.bt-band-h { font-size: 32px; }
   .bt-meet-f .bt-face { --s: 30px !important; }
 }
+/* copy kept whole: the case card's label keeps its quiet grey;  */
+.bt-case-h .bt-case-k { color: inherit; }
