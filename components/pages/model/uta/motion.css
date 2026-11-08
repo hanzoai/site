@@ -3,18 +3,18 @@
 
 /* ---- signature: scroll scrubs the film ---- */
 .ut-scrub { position: relative; height: 260svh; }
-.ut-scrub-pin { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; overflow: hidden; background: #fff; }
+.ut-scrub-pin { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; overflow: hidden; background: var(--bg); }
 .ut-scrub-in { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); gap: 27px; align-items: center; padding-top: 60px; }
 .ut-scrub-l { grid-column: 1 / 7; }
 .ut-scrub-l .lv-side { margin: 10px 0 27px; }
-.ut-caps { list-style: none; margin: 0; padding: 0; border-top: 1px solid rgba(0, 0, 0, .1); display: grid; }
-.ut-caps li { display: grid; grid-template-columns: 44px 1fr; gap: 0 17px; padding: 14px 0; border-bottom: 1px solid rgba(0, 0, 0, .1); }
-.ut-caps-n { font: 606 12px/1.9 var(--mono); letter-spacing: .14em; color: #737373; transition: color .3s cubic-bezier(0, 0, .2, 1); }
-.ut-caps h3 { margin: 0; font-size: 17px; font-weight: 497; line-height: 1.35; color: #737373; transition: color .3s cubic-bezier(0, 0, .2, 1); }
-.ut-caps li[data-on] h3, .ut-caps li[data-on] .ut-caps-n { color: #0a0a0a; }
+.ut-caps { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--x-e10); display: grid; }
+.ut-caps li { display: grid; grid-template-columns: 44px 1fr; gap: 0 17px; padding: 14px 0; border-bottom: 1px solid var(--x-e10); }
+.ut-caps-n { font: 606 12px/1.9 var(--mono); letter-spacing: .14em; color: light-dark(#737373, var(--text-tertiary)); transition: color .3s cubic-bezier(0, 0, .2, 1); }
+.ut-caps h3 { margin: 0; font-size: 17px; font-weight: 497; line-height: 1.35; color: light-dark(#737373, var(--text-tertiary)); transition: color .3s cubic-bezier(0, 0, .2, 1); }
+.ut-caps li[data-on] h3, .ut-caps li[data-on] .ut-caps-n { color: var(--ink); }
 /* the body of the capability being read: all four share one grid cell, only the one being read shows */
 .ut-caps-x { display: grid; margin-top: 17px; padding-left: 61px; }
-.ut-caps-x p { grid-area: 1 / 1; margin: 0; font-size: 15px; line-height: 1.5; color: #525252; opacity: 0; transform: translateY(6px); transition: opacity .35s cubic-bezier(0, 0, .2, 1), transform .35s cubic-bezier(0, 0, .2, 1); }
+.ut-caps-x p { grid-area: 1 / 1; margin: 0; font-size: 15px; line-height: 1.5; color: light-dark(#525252, var(--muted-foreground)); opacity: 0; transform: translateY(6px); transition: opacity .35s cubic-bezier(0, 0, .2, 1), transform .35s cubic-bezier(0, 0, .2, 1); }
 .ut-caps-x p[data-on] { opacity: 1; transform: none; }
 html:not(.js) .ut-caps-x { display: block; }
 html:not(.js) .ut-caps-x p { opacity: 1; transform: none; margin-bottom: 10px; }
@@ -36,8 +36,8 @@ html:not(.js) .ut-caps-x p { opacity: 1; transform: none; margin-bottom: 10px; }
    a grey underside trails the fold a beat behind the sheet */
 .ut-curl { position: absolute; inset: 0; z-index: 3; pointer-events: none; display: none; }
 .ut-curl::before, .ut-curl::after { content: ''; position: absolute; inset: 0; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 100%); }
-.ut-curl::before { background: #e4e4e7; }
-.ut-curl::after { background: #fff; }
+.ut-curl::before { background: light-dark(#e4e4e7, var(--muted)); }
+.ut-curl::after { background: var(--bg); } /* the sheet is the page */
 @media (prefers-reduced-motion: no-preference) {
   .js .ut-curl { display: block; }
   .js .ut-scrub[data-in] .ut-curl::after { animation: ut-curl 1.1s cubic-bezier(.4, 0, .2, 1) both; }
