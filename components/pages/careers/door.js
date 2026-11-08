@@ -36,10 +36,10 @@ export function openSheet(e, href, router, el) {
   const d = document.createElement('div');
   d.setAttribute('data-xcdoor', '');
   const from = `inset(${r.top}px ${innerWidth - r.right}px ${innerHeight - r.bottom}px ${r.left}px round ${rad}px)`;
-  Object.assign(d.style, { position: 'fixed', inset: '0', zIndex: '2000', background: '#fff', pointerEvents: 'none', clipPath: from });
+  Object.assign(d.style, { position: 'fixed', inset: '0', zIndex: '2000', background: 'light-dark(#fff, var(--x-fill))', pointerEvents: 'none', clipPath: from });
   ghost(el.querySelector('.xcb-sheet-t'), d)?.setAttribute('data-t', '');
   const n = ghost(el.querySelector('.xcb-sheet-no'), d);
-  if (n) { n.setAttribute('data-n', ''); n.style.width = 'auto'; n.style.color = '#0a0a0a'; }
+  if (n) { n.setAttribute('data-n', ''); n.style.width = 'auto'; n.style.color = 'var(--ink)'; }
   document.body.appendChild(d);
   const a = d.animate([{ clipPath: from }, { clipPath: 'inset(0px 0px 0px 0px round 0px)' }], { duration: 600, easing: OPEN, fill: 'forwards' });
   d._grow = a.finished.catch(() => {});

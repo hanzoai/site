@@ -1,12 +1,16 @@
 /* /careers index, v3 (prefix xcb-). Ink, greys and white only (JAMES.md 7). The role pages keep Careers.css. */
 .xcb { overflow-x: clip; }
-.xcb ::selection { background: rgba(0, 0, 0, .12); }
-.xcb :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; box-shadow: 0 0 0 5px #fff; }
+/* dark (docs/DARK-MODE.md): company/deck.css pins its greys on .vc; on this page they point at Hanzo's own tokens.
+   --x-fill / --x-raised are read from <html>, where Hanzo's --muted / --card are not shadowed by deck's names. */
+html:not(.light) .vc.xcb { --ink: var(--foreground); --ink2: var(--muted-foreground); --muted: var(--text-tertiary); --quiet: var(--x-sunk); --card: var(--x-fill); --tile: var(--x-fill); --line: var(--border); }
+html:not(.light) .xcb-hire, html:not(.light) .xcb-sheet-in, html:not(.light) .xcb-close-sig { box-shadow: inset 0 0 0 1px var(--border), var(--float); }
+.xcb ::selection { background: light-dark(rgba(0, 0, 0, .12), var(--white-18)); }
+.xcb :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; box-shadow: 0 0 0 5px var(--x-raised); }
 .xcb .xcb-close :focus-visible, .xcb .xcb-hire :focus-visible, .xcb .xcb-sheet.last :focus-visible { outline-color: #fff; box-shadow: 0 0 0 5px #000; }
 .xcb .vc-lede, .xcb .vc-body { color: var(--muted); }
 .xcb-big { height: 48px; padding: 0 24px; font-size: 16px; transition: background-color var(--d-fast) var(--e-out), border-color var(--d-fast) var(--e-out), transform var(--d-press) var(--e-out); }
 .xcb-big:active, .xcb .x-arrow:active { transform: scale(.97); }
-.xcb .x-btn:not(.solid).xcb-big:hover { border-color: rgba(0, 0, 0, .3); }
+.xcb .x-btn:not(.solid).xcb-big:hover { border-color: light-dark(rgba(0, 0, 0, .3), var(--white-30)); }
 .xcb-tap { min-height: 44px; }
 .xcb-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; }
 .xcb-meta { margin: 0; font: 606 12px/1.3 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink2); }
@@ -51,8 +55,8 @@
 .xcb-perk-g { align-items: start; }
 /* word-light: each word of the perks lights from pale grey as you read down (Careers.jsx Perks) */
 .xcb-w { transition: color var(--d-base) var(--e-out); }
-.xcb-w.off { color: #d4d4d4; }
-.xcb-perk-v { grid-column: 1 / 6; position: relative; aspect-ratio: 1; border-radius: 24px; background: #f5f5f5; overflow: hidden; display: grid; place-items: center; color: rgba(0, 0, 0, .4); }
+.xcb-w.off { color: light-dark(#d4d4d4, var(--text-disabled)); }
+.xcb-perk-v { grid-column: 1 / 6; position: relative; aspect-ratio: 1; border-radius: 24px; background: light-dark(#f5f5f5, var(--x-fill)); overflow: hidden; display: grid; place-items: center; color: light-dark(rgba(0, 0, 0, .4), var(--white-40)); }
 .xcb-perk-f { position: absolute; inset: 0; display: grid; place-items: center; }
 .xcb-perk-sig { position: absolute; inset: 0; width: 100%; height: 100%; }
 .xcb-perk-big { position: relative; font: 220 clamp(120px, 16vw, 240px)/.9 var(--sans); letter-spacing: -.03em; color: var(--ink); }
@@ -76,37 +80,37 @@
 .xcb-know button, .xcb-know-x { position: relative; flex: none; height: 44px; padding: 0 14px; border-radius: 999px; border: 0; background: none; font: 500 13px/1 var(--mono); color: var(--ink2); cursor: pointer; transition: color var(--d-fast) var(--e-out), transform var(--d-press) var(--e-out); }
 .xcb-know button > span:not(.xcb-pill) { position: relative; }
 .xcb-know .xcb-pill { position: absolute; inset: 4px 0; border-radius: 999px; background: var(--ink); }
-.xcb-know button[aria-pressed='true'] { color: #fff; }
+.xcb-know button[aria-pressed='true'] { color: var(--x-on-ink); }
 .xcb-know button:active, .xcb-know-x:active { transform: scale(.97); }
 .xcb-know-x { width: 44px; padding: 0; display: grid; place-items: center; border: 1px solid var(--line); }
 .xcb-count { flex: none; margin: 0 0 0 8px; font: 500 15px/1 var(--mono); color: var(--muted); }
 .xcb-count b { font-weight: 600; color: var(--ink); }
 @media (hover: hover) {
   .xcb-know button:not([aria-pressed='true']):hover { color: var(--ink); text-decoration: underline; text-underline-offset: 5px; }
-  .xcb-know-x:hover { color: var(--ink); border-color: rgba(0, 0, 0, .3); }
+  .xcb-know-x:hover { color: var(--ink); border-color: light-dark(rgba(0, 0, 0, .3), var(--white-30)); }
 }
 
 .xcb-deck { list-style: none; margin: 0; padding: 72px 0 0; }
 .xcb-sheet { position: sticky; top: calc(88px + var(--i) * 22px); margin-bottom: 16svh; }
 .xcb-sheet:last-child { margin-bottom: 0; }
-.xcb-sheet-in { position: relative; min-height: min(62svh, 560px); padding: clamp(32px, 4vw, 56px); border-radius: 24px; background: #fff; box-shadow: 0 -12px 40px -24px rgba(0, 0, 0, .18), var(--float); display: flex; flex-direction: column; gap: 32px; transform-origin: 50% 0; transition: opacity .4s var(--ease); overflow: hidden; }
+.xcb-sheet-in { position: relative; min-height: min(62svh, 560px); padding: clamp(32px, 4vw, 56px); border-radius: 24px; background: light-dark(#fff, var(--x-fill)); box-shadow: 0 -12px 40px -24px rgba(0, 0, 0, .18), var(--float); display: flex; flex-direction: column; gap: 32px; transform-origin: 50% 0; transition: opacity .4s var(--ease); overflow: hidden; }
 .xcb-sheet.miss .xcb-sheet-in { opacity: .38; }
 .xcb-sheet-a { flex: 1; display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); grid-template-areas: 'title no' 'tags no' 'desc no'; column-gap: 24px; row-gap: 20px; align-content: start; color: inherit; text-decoration: none; }
-.xcb-sheet-no { grid-area: no; justify-self: end; align-self: start; font: 220 clamp(96px, 13vw, 184px)/.9 var(--sans); letter-spacing: -.03em; color: #d4d4d4; transition: color .5s var(--ease), transform .6s var(--ease); }
+.xcb-sheet-no { grid-area: no; justify-self: end; align-self: start; font: 220 clamp(96px, 13vw, 184px)/.9 var(--sans); letter-spacing: -.03em; color: light-dark(#d4d4d4, var(--text-disabled)); transition: color .5s var(--ease), transform .6s var(--ease); }
 .xcb-sheet-t { grid-area: title; display: block; margin: 0; font-size: clamp(36px, 4.2vw, 64px); font-weight: 497; letter-spacing: -.035em; line-height: 1.02; text-wrap: balance; color: var(--ink); }
 .xcb-sheet-tags { grid-area: tags; display: flex; flex-wrap: wrap; gap: 8px; }
-.xcb-sheet-tags span { height: 32px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 999px; background: #f2f2f2; font: 500 13px/1 var(--mono); color: var(--ink2); }
-.xcb-sheet-tags span:first-child { background: var(--ink); color: #fff; }
+.xcb-sheet-tags span { height: 32px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 999px; background: light-dark(#f2f2f2, var(--secondary)); font: 500 13px/1 var(--mono); color: var(--ink2); }
+.xcb-sheet-tags span:first-child { background: var(--ink); color: var(--x-on-ink); }
 .xcb-sheet-d { grid-area: desc; display: block; max-width: 56ch; font-size: clamp(17px, 1.32vw, 19px); line-height: 1.55; color: var(--muted); }
-.xcb-sheet-d mark { background: rgba(0, 0, 0, .1); color: var(--ink); border-radius: 4px; padding: 0 2px; box-shadow: inset 0 -2px 0 var(--ink); }
+.xcb-sheet-d mark { background: light-dark(rgba(0, 0, 0, .1), var(--white-14)); color: var(--ink); border-radius: 4px; padding: 0 2px; box-shadow: inset 0 -2px 0 var(--ink); }
 .xcb-sheet-act { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; }
-.xcb-cp { margin-left: auto; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--ink2); cursor: pointer; transition: border-color .2s, transform .12s; }
+.xcb-cp { margin-left: auto; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--line); background: var(--x-raised); color: var(--ink2); cursor: pointer; transition: border-color .2s, transform .12s; }
 .xcb-cp:active { transform: scale(.94); }
 .xcb-cp.ok { border-color: var(--ink); color: var(--ink); }
 @media (hover: hover) {
   .xcb-sheet-a:hover .xcb-sheet-no { color: var(--ink); transform: translateY(-6px); }
   .xcb-sheet-a:hover .xcb-sheet-t { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 8px; }
-  .xcb-cp:hover { border-color: rgba(0, 0, 0, .3); color: var(--ink); }
+  .xcb-cp:hover { border-color: light-dark(rgba(0, 0, 0, .3), var(--white-30)); color: var(--ink); }
 }
 .xcb-sheet.last .xcb-sheet-in { background: #000; color: #fafafa; justify-content: space-between; }
 .xcb-sheet-sig { position: absolute; inset: 0 0 0 45%; color: rgba(255, 255, 255, .32); pointer-events: none; }
@@ -121,13 +125,13 @@
 .xcb-int-h { grid-column: 1 / 9; display: flex; flex-direction: column; gap: 28px; margin-bottom: 72px; }
 .xcb-int-h .vc-headline { max-width: 20ch; }
 .xcb-panel { position: relative; display: flex; flex-direction: column; gap: 22px; padding: clamp(32px, 4vw, 56px); border-radius: 24px; overflow: hidden; }
-.xcb-panel.a { grid-column: 1 / 8; background: #f5f5f5; }
+.xcb-panel.a { grid-column: 1 / 8; background: light-dark(#f5f5f5, var(--x-fill)); }
 .xcb-panel.b { grid-column: 8 / 13; border: 1px solid var(--line); }
-.xcb-panel-sig { display: block; height: 180px; margin: calc(-1 * clamp(32px, 4vw, 56px)) calc(-1 * clamp(32px, 4vw, 56px)) 8px; color: rgba(29, 29, 31, .45); border-bottom: 1px solid var(--line); }
+.xcb-panel-sig { display: block; height: 180px; margin: calc(-1 * clamp(32px, 4vw, 56px)) calc(-1 * clamp(32px, 4vw, 56px)) 8px; color: light-dark(rgba(29, 29, 31, .45), var(--white-45)); border-bottom: 1px solid var(--line); }
 .xcb-panel-sig canvas { width: 100%; height: 100%; }
 .xcb-panel-p { list-style: none; margin: -6px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
-.xcb-panel-p li { height: 34px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 999px; background: #fff; border: 1px solid var(--line); font: 500 13px/1 var(--mono); color: var(--ink2); }
-.xcb-panel.b .xcb-panel-p li { background: #f2f2f2; border-color: transparent; }
+.xcb-panel-p li { height: 34px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 999px; background: var(--x-raised); border: 1px solid var(--line); font: 500 13px/1 var(--mono); color: var(--ink2); }
+.xcb-panel.b .xcb-panel-p li { background: light-dark(#f2f2f2, var(--x-fill)); border-color: transparent; }
 .xcb-fig { margin: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: 0 0 22px; border-bottom: 1px solid var(--line); }
 .xcb-fig b { font: 220 clamp(72px, 13vw, 112px)/.9 var(--sans); letter-spacing: -.03em; color: var(--ink); }
 .xcb-fig span { font: 500 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
@@ -179,7 +183,7 @@
   .xcb-hire-n button { font-size: 14px; }
   .xcb-perks-hd { margin-bottom: 0; }
   /* the perk tile stays in view above the list (sticky under the header), so a tap's answer is always on screen */
-  .xcb-perk-v { position: sticky; top: 64px; z-index: 1; aspect-ratio: auto; height: 132px; margin: 24px 0 8px; box-shadow: 0 0 0 12px #fff; }
+  .xcb-perk-v { position: sticky; top: 64px; z-index: 1; aspect-ratio: auto; height: 132px; margin: 24px 0 8px; box-shadow: 0 0 0 12px var(--bg); }
   .xcb-perk-big { font-size: 88px; }
   .xcb-perk-l li { grid-template-columns: 40px minmax(0, 1fr); padding: 28px 0; scroll-margin-top: 220px; }
   .xcb-tools { padding-top: 16px; gap: 4px; }
@@ -188,7 +192,7 @@
   .xcb-sheet-in { min-height: 0; padding: 26px; gap: 24px; border-radius: 24px; }
   /* the numeral takes its own row at the top right, so no title ever runs over it (320 to 900) */
   .xcb-sheet-a { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'no' 'title' 'tags' 'desc'; row-gap: 16px; }
-  .xcb-sheet-no { justify-self: end; margin: -10px -6px -6px 0; font-size: 56px; color: #ededed; }
+  .xcb-sheet-no { justify-self: end; margin: -10px -6px -6px 0; font-size: 56px; color: light-dark(#ededed, var(--text-disabled)); }
   .xcb-sheet-t { position: relative; font-size: clamp(26px, 7.6vw, 30px); overflow-wrap: normal; word-break: keep-all; hyphens: manual; }
   .xcb-sheet-d { font-size: 17px; }
   .xcb-sheet-sig { inset: 30% 0 0 20%; }
