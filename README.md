@@ -3,10 +3,50 @@
 Every page of hanzo.ai, redesigned on Hanzo's own stack: **Next.js 16 (static export) · React 19 · Motion 12**, with
 light and dark mode from Hanzo's own **`@hanzo/appearance`** and **`@hanzo/design`**.
 
-- **897 pages**: every URL in hanzo.ai's sitemap, plus the home page.
+- **897 pages**: every URL in hanzo.ai's sitemap, plus the home page, and **9 new sign-up and checkout pages**
+  (`/pay`, `/signup`, `/login`…) that hand off to Hanzo's real checkout and hanzo.id ([details](#hand-offs-to-hanzos-real-flows)).
 - **Hanzo's words, numbers and links, unchanged.** The redesign changes how pages look and move, not what they say.
-  Wording and prices are Hanzo's to change (see [Prices, plans and checkout links](#prices-plans-and-checkout-links)).
-- **Light and dark** follow the visitor's saved Hanzo choice, or their device setting.
+  Copy was checked against live hanzo.ai: 148 of 152 checked pages match word for word; the other 4 differ only in
+  Hanzo's rotating demo feeds ([details](#known-differences-from-live)).
+- **Light and dark** follow the visitor's saved Hanzo choice, or their device setting. Dark mode was checked on 152
+  pages: 0 unreadable spots.
+- **A 2-minute video walkthrough**, with before/after against live hanzo.ai, is attached to the
+  [v1.0 release](https://github.com/jamessburnss1313-dev/hanzo-site/releases).
+
+| | Home | Pricing | Chat | Models |
+|---|---|---|---|---|
+| **Light** | ![Home, light](docs/screenshots/home-light-1470.jpg) | ![Pricing, light](docs/screenshots/pricing-light-1470.jpg) | ![Chat, light](docs/screenshots/chat-light-1470.jpg) | ![Models, light](docs/screenshots/models-light-1470.jpg) |
+| **Dark** | ![Home, dark](docs/screenshots/home-dark-1470.jpg) | ![Pricing, dark](docs/screenshots/pricing-dark-1470.jpg) | ![Chat, dark](docs/screenshots/chat-dark-1470.jpg) | ![Models, dark](docs/screenshots/models-dark-1470.jpg) |
+
+**Start here**
+
+| You want to… | Go to |
+|---|---|
+| See what changed, page by page | [docs/RELEASE-NOTES.md](docs/RELEASE-NOTES.md) |
+| Run or deploy it | [Run it](#run-it) · [Deploy](#deploy) |
+| Change a price, plan or checkout link | [Prices, plans and checkout links](#prices-plans-and-checkout-links) (one file: `lib/plans.js`) |
+| Understand light and dark | [Light and dark mode](#light-and-dark-mode) |
+| Confirm the sign-up and checkout hand-offs | [Hand-offs to Hanzo's real flows](#hand-offs-to-hanzos-real-flows) (one file: `lib/handoff.js`) |
+| Know where it differs from live | [Known differences from live](#known-differences-from-live) · [Before it goes live](#before-it-goes-live-on-hanzoai) |
+| Know which branch to use | **`main`**. The rest are history: [docs/BRANCHES.md](docs/BRANCHES.md) |
+
+## What changed vs live hanzo.ai
+
+- **Look and motion, everywhere.** Each page has its own layout and one signature interaction, so no two pages move
+  alike. Headers, menus and footers are Hanzo's own, as live.
+- **A new home page.** Every section reads in one screen; the models sit in a card grid; the products section is a
+  scroll-driven 3D journey; live figures (model rates, research runs, commits) are read from api.hanzo.ai.
+- **A clearer /pricing.** Every plan of the chosen tab side by side, with the same plans, prices and links as live.
+- **Dark mode that matches live**, built from Hanzo's own tokens, and light mode kept separate so one never moves the other.
+- **Phones.** Every page was laid out and checked at 375–390px wide.
+- **Next.js 16** (from 15.5), static export.
+- **New: sign-up and checkout pages** (`/pay`, `/pay/cart`, `/pay/confirm/card`, `/signup`, `/login`, `/auth/callback`,
+  `/onboarding`, `/docs/quickstart`, `/docs/cli`). They never collect a card, password or code; each hands off to
+  Hanzo's real system. Hanzo confirms the hand-off URLs marked CONFIRM in `lib/handoff.js` before launch.
+- **Not changed:** wording, prices, plan names, checkout plan ids; the /chat app and dashboards stay in Hanzo's app.
+- A few buy buttons were added by design; they are listed under [Known differences from live](#known-differences-from-live).
+
+Full page-by-page list: [docs/RELEASE-NOTES.md](docs/RELEASE-NOTES.md).
 
 ## Run it
 
@@ -41,6 +81,13 @@ HZ_LIVE_OFFLINE=1 npm run build
 In dev and preview, any file this repo lacks (Hanzo's own model
 videos, `/images/…`, `/memoji/…`) is fetched from hanzo.ai, so pages look complete before `public/` is merged.
 
+## Deploy
+
+`npm run build` writes the whole site as static files to `out/` (`output: 'export'` in `next.config.mjs`,
+`trailingSlash: true`, so `/pricing` is `out/pricing/index.html`). Serve `out/` from any static host or CDN
+(Cloudflare Pages, Vercel, Netlify, S3 + CloudFront, nginx). There is no server to run. Do the steps in
+[Before it goes live](#before-it-goes-live-on-hanzoai) first: merge `public/` media and route the app paths.
+
 ## Folder map
 
 ```
@@ -66,12 +113,13 @@ lib/                 shared logic: plans.js (prices and checkout links), routes.
                      liveSources.mjs (the api.hanzo.ai sources), og/ (social images)
 public/              fonts, logos, customer and author images, hanzo.css (Hanzo's own stylesheet)
 scripts/             build and checking tools (see Scripts)
-docs/                DARK-MODE.md, COPY-RULE.md, MOTION-MAP.md, and build-notes/ (the design process; not needed to run)
+docs/                RELEASE-NOTES.md, BRANCHES.md, DARK-MODE.md, MOTION-MAP.md, screenshots/, and build-notes/
+                     (the design process; not needed to run)
 ```
 
 ## The home page
 
-`app/page.jsx` renders `components/pages/Home.jsx` (James approved this design on 8 Nov). Every section reads in one frame
+`app/page.jsx` renders `components/pages/Home.jsx` (approved on 8 Nov). Every section reads in one frame
 at 1470×801: its title and its content fit on one screen. Top to bottom:
 
 | Section | Component | Notes |
@@ -134,7 +182,7 @@ Enterprise and Volume to `/pricing` (`components/home/Pricing.jsx` lines 103–1
 
 ## Hand-offs to Hanzo's real flows
 
-Nine app and checkout pages from Zack's list are designed here: `/pay`, `/pay/cart`, `/pay/confirm/card`, `/signup`,
+Nine app and checkout pages are designed here: `/pay`, `/pay/cart`, `/pay/confirm/card`, `/signup`,
 `/login`, `/auth/callback`, `/onboarding`, `/docs/quickstart`, `/docs/cli` (code in `components/pages/flow/`). **This
 site never collects a card number, a password or a one-time code.** Each page shows the plan, the total and one action,
 and that action hands off to Hanzo's real system. Every hand-off URL is a named constant in **one file,
@@ -217,9 +265,10 @@ Wording and prices follow live hanzo.ai as captured on 8 Nov 2026 (`content/live
 
 ## Docs
 
-- `docs/DARK-MODE.md`: how dark mode is wired, and how to convert or test a page.
-- `docs/COPY-RULE.md`: the rule this redesign follows: no wording changes, checked with `copycheck.mjs`.
-- `docs/MOTION-MAP.md` (+ `motion-map.json`): each page's one signature interaction, so no two pages move alike.
+- `docs/RELEASE-NOTES.md`: what changed, page by page, in plain English.
+- `docs/BRANCHES.md`: every branch and its status. `main` is the release.
 - `docs/screenshots/`: the handoff spot-checks (home, /pricing, /chat, /models, /about; light and dark; 1470×801 and 375×812).
-- `docs/build-notes/`: the design process: per-page checklists (`coverage/`), page reviews (`review/`), requests,
-  plans and the earlier README. Not needed to run or change the site.
+- `docs/DARK-MODE.md`: how dark mode is wired, and how to convert or test a page.
+- `docs/MOTION-MAP.md` (+ `motion-map.json`): each page's one signature interaction, so no two pages move alike.
+- `docs/build-notes/`: the design process, kept for reference and not needed to run or change the site: the copy rule
+  (`COPY-RULE.md`), per-page checklists (`coverage/`), page reviews (`review/`), requests, plans and the earlier README.
