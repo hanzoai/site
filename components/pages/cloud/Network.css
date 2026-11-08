@@ -346,3 +346,64 @@ html.js .nw-fact.on .nw-fact-d, html.js .nw-fact.on .nw-lend { animation: nw-aft
   .nw-caret { display: none; }
 }
 .nw-how-count { margin: 14px 0 0; color: #525252; font-variant-numeric: tabular-nums; }
+
+/* ---------- dark (Hanzo's :not(.light), docs/DARK-MODE.md): every value a token from @hanzo/design, by role ----------
+   The shared .lx kit (components/v2/LaunchType.css, LaunchClose.css) pins its light ink, greys and tiles in both modes, so
+   the page points them at Hanzo's tokens here (.lx renames --muted and --card, so fills use the foundation's --x-*
+   tokens). The fabric draws in Hanzo's foreground on its background: idle links white 15%, lit links and peers in
+   foreground; tags and tracks on #171717 / #262626; the chapter tile on #171717; ink fills turn light with dark type
+   (Hanzo's primary). The black room (two ends) stays black. */
+html:not(.light) .nw {
+  --ink: var(--foreground); --acc: var(--foreground); --acc-soft: var(--x-fill); --muted: var(--muted-foreground); --soft: var(--muted-foreground);
+  --faint: var(--text-tertiary); --silver: var(--x-knob); --card: var(--x-fill); --line: var(--border); --bg: var(--background);
+}
+html:not(.light) .nw .lx-cta { background: var(--primary); color: var(--primary-foreground); }
+html:not(.light) .nw .lx-ghost { border-color: var(--border-control); }
+html:not(.light) .nw :is(.lx-text, .lx-close-repo) { text-decoration-color: var(--text-disabled); }
+html:not(.light) .nw .cf-api i { background: var(--x-knob) !important; color: var(--foreground) !important; }
+html:not(.light) .nw :focus-visible { outline-color: var(--foreground); box-shadow: 0 0 0 4px var(--background); }
+html:not(.light) .nw :is(.lx-close-art, .lx-rel-card) { background: var(--x-fill); }
+html:not(.light) .nw .lx-close-sigil { color: var(--foreground); }
+html:not(.light) .nw .lx-sheet-panel { color: var(--foreground); --ink: var(--foreground); --soft: var(--muted-foreground); --muted: var(--muted-foreground); --faint: var(--text-tertiary); --line: var(--border); }
+html:not(.light) .nw .lx-sheet-bar { background: var(--surface-overlay); }
+html:not(.light) .nw .lx-sheet-x { color: var(--foreground); }
+@media (hover: hover) {
+  html:not(.light) .nw .lx-cta:hover { background: var(--foreground); }
+  html:not(.light) .nw .lx-ghost:hover { border-color: var(--foreground); background: var(--x-fill); }
+  html:not(.light) .nw .lx-sheet-x:hover { background: var(--x-fill); }
+}
+html:not(.light) .nw :is(.nw-route.pv, .nw-ans.on, .nw-seg button[aria-checked='true'], .nw-seg button[aria-pressed='true'], .nw-peer.peek .nw-tag:not(.hit), .nw-sm .nw-tag.q, .nw-sm .nw-tag.place, .nw-sm-cap b, .nw-sm-cap code, .nw-lend-a code, .nw-fact.on .nw-fact-t button, .nw-fact.on .nw-fact-n, .nw-tag.nm) { color: var(--foreground); }
+html:not(.light) .nw :is(.nw-tag, .nw-seg button, .nw-sm .nw-tag, .nw-sm .nw-tag.x, .nw-sm-cap, .nw-lend-a, .nw-fact-d, .nw-how-count) { color: var(--muted-foreground); }
+html:not(.light) .nw :is(.nw-ask-l, .nw-route, .nw-ans, .nw-region, .nw-fact-t button, .nw-fact-n) { color: var(--text-tertiary); }
+html:not(.light) .nw :is(.nw-pastes, .nw-en-flash, .nw-peer > i) { background: var(--background); }
+html:not(.light) .nw :is(.nw-tag, .nw-seg, .nw-sm) { background: var(--x-fill); }
+html:not(.light) .nw :is(.nw-pick, .nw-sm .nw-tag:not(.x), .nw-sm .nw-tag.q, .nw-sm .nw-tag.place, .nw-region, .nw-peer.peek .nw-tag:not(.hit), .nw-ten i) { background: var(--x-knob); }
+html:not(.light) .nw :is(.nw-sp > i, .nw-sp.dec > i, .nw-tag.nm) { background: var(--x-raised); }
+html:not(.light) .nw .nw-sp.idle > i { background: none; }
+html:not(.light) .nw .nw-cmd { background: var(--background); }
+/* ink fills: Hanzo's primary, light with dark type */
+html:not(.light) .nw :is(.nw-tag.me, .nw-tag.hit, .nw-sm .nw-tag.me, .nw-sm .nw-tag.hit, .nw-packet, .nw-peer.lit > i, .nw-peer.you > i, .nw-sp.you > i, .nw-sp.lit > i, .nw-sp.att > i, .nw-sp.new > i, .nw-root, .nw-ten i.ai, .nw-peer.peek .nw-tag.nm) { background: var(--foreground); }
+html:not(.light) .nw :is(.nw-tag.me, .nw-tag.hit, .nw-sm .nw-tag.me, .nw-sm .nw-tag.hit, .nw-root, .nw-root b, .nw-peer.peek .nw-tag.nm) { color: var(--primary-foreground); }
+/* the fabric's lines and rings */
+html:not(.light) .nw .nw-links line, html:not(.light) .nw .nw-sm-links line { stroke: var(--border-control); }
+html:not(.light) .nw :is(.nw-links line.on, .nw-links line.nb:not(.on), .nw-sm-links line.w2, .nw-sm-links line.w3, .nw-sm-links line.on, .nw-sm-links line.join, .nw-sm-links line.settle, .nw-sm-links line.flow) { stroke: var(--foreground); }
+html:not(.light) .nw :is(.nw-links line.pv:not(.on), .nw-sm-links line.w1) { stroke: var(--text-tertiary); }
+html:not(.light) .nw .nw-peer > i { box-shadow: inset 0 0 0 2px var(--border-control); }
+html:not(.light) .nw :is(.nw-peer.lit > i, .nw-peer.named:not(.peek):not(.lit):not(.you) > i) { box-shadow: inset 0 0 0 2px var(--foreground); }
+html:not(.light) .nw .nw-peer.you > i { box-shadow: none; }
+html:not(.light) .nw .nw-peer.peek > i { box-shadow: inset 0 0 0 4px var(--foreground); }
+html:not(.light) .nw :is(.nw-peer > i::after, .nw-sm[data-st='intro'] .nw-sp:not(.you) > i::after) { border-color: var(--foreground); }
+html:not(.light) .nw :is(.nw-sp.dec > i, .nw-sm .nw-tag.place) { outline-color: var(--foreground); }
+html:not(.light) .nw .nw-sp.idle > i { outline-color: var(--text-tertiary); }
+html:not(.light) .nw .nw-tag.nm { outline-color: var(--border-control); }
+html:not(.light) .nw .nw-peer.peek .nw-tag.nm { outline: 0; }
+html:not(.light) .nw .nw-region { text-decoration-color: var(--foreground); }
+html.js:not(.light) .nw .nw-sm[data-st='intro'] .nw-sp:not(.you) > i { animation-name: nw-found-d; }
+@keyframes nw-found-d { 0%, 18% { box-shadow: inset 0 0 0 2px var(--foreground); } 30%, 100% { box-shadow: inset 0 0 0 2px var(--muted-foreground); } }
+html:not(.light) .nw .nw-pause[aria-pressed='true'] { background: var(--x-raised); color: var(--foreground); border-color: var(--border-control); }
+@media (hover: hover) {
+  html:not(.light) .nw .nw-seg button:not([aria-checked='true']):not([aria-pressed='true']):hover { color: var(--foreground); background: var(--x-knob); }
+  html:not(.light) .nw .nw-fact:not(.on) .nw-fact-t button:hover { color: var(--foreground); }
+  html:not(.light) .nw :is(.nw-pause:hover, .nw-pause[aria-pressed='true']:hover) { background: var(--x-fill); color: var(--foreground); }
+}
+html:not(.light) .nw .nw-pastes .cf-paste-box { box-shadow: inset 0 0 0 1px var(--border); }
