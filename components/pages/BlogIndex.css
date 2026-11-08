@@ -1,5 +1,12 @@
 /* ---------- Blog, v3 (editorial: a front page and its contents). Ink, greys and silvers only (JAMES.md 7). ---------- */
-.xbl { --acc: #0a0a0a; overflow-x: clip; background: #fff; }
+.xbl { --acc: #0a0a0a; overflow-x: clip; background: var(--bg); }
+/* dark (docs/DARK-MODE.md): story.css pins its greys on .v2s; on this page they point at Hanzo's own tokens */
+html:not(.light) .xbl.v2s { --acc: var(--foreground); --ink: var(--foreground); --soft: var(--muted-foreground); --faint: var(--text-tertiary); --hair: var(--border); --tile: var(--x-fill); }
+html:not(.light) .xbl :focus-visible { box-shadow: 0 0 0 5px var(--bg); }
+html:not(.light) .xbl .v2s-btn, html:not(.light) .xbl .xst-pause { background: var(--x-raised); border-color: var(--border-control); color: var(--ink); }
+html:not(.light) .xbl .v2s-btn.solid { background: var(--ink); border-color: var(--ink); color: var(--x-on-ink); }
+@media (hover: hover) { html:not(.light) .xbl .v2s-btn:hover, html:not(.light) .xbl .xst-pause:hover { border-color: var(--white-30); } html:not(.light) .xbl .v2s-btn.solid:hover { background: var(--primary); } }
+html:not(.light) .xbl .v2s-link, html:not(.light) .xbl .v2s-tlink { text-decoration-color: var(--white-30); }
 
 /* 1. masthead and cover (Signature) */
 .xbl-hero { padding: clamp(28px, 4vh, 56px) 0 clamp(28px, 3vw, 44px); }
@@ -25,7 +32,7 @@
   html:has(main.xbl):not([data-xbl-solid]) header[data-slot=masthead] a[data-x-ask] { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
 }
 @media (max-width: 700px) {
-  .xbl-mast-r .x-btn.solid { background: #fff; color: #0a0a0a; border: 1px solid rgba(0, 0, 0, .18); }
+  .xbl-mast-r .x-btn.solid { background: var(--x-raised); color: var(--ink); border: 1px solid light-dark(rgba(0, 0, 0, .18), var(--border-control)); }
   .xbl-mast-r .x-btn.solid:active { transform: scale(.98); }
 }
 .xbl-runin { display: inline; margin-right: .5em; color: var(--ink); }
@@ -48,7 +55,7 @@
 .xbl-plate-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 42%; }
 .xbl-tag { color: var(--ink); }
 .xbl-plate-k { position: absolute; left: 24px; bottom: 20px; font: 500 13px/1 var(--mono); letter-spacing: .1em; color: rgba(255, 255, 255, .72); }
-.xbl-curtain { position: absolute; inset: 0; z-index: 1; background: linear-gradient(135deg, #f6f6f6 0%, #e9e9e9 40%, #f6f6f6 60%, #d4d4d4 100%); }
+.xbl-curtain { position: absolute; inset: 0; z-index: 1; background: linear-gradient(135deg, light-dark(#f6f6f6, var(--x-fill)) 0%, light-dark(#e9e9e9, var(--secondary)) 40%, light-dark(#f6f6f6, var(--x-fill)) 60%, light-dark(#d4d4d4, var(--secondary)) 100%); }
 .xbl-cover > .xst-pause { grid-row: 2; grid-column: 1; align-self: start; margin-top: 10px; }
 .xbl-index { grid-row: 2; grid-column: 2 / -1; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); column-gap: var(--v2-gut); }
 .xbl-index button { position: relative; display: grid; gap: 6px; width: 100%; min-height: 64px; padding: 12px 0 4px; border: 0; border-top: 1px solid var(--hair); background: none; text-align: left; font: inherit; color: var(--faint); cursor: pointer; transition: color .3s var(--ease); }
@@ -64,7 +71,7 @@
 .xbl-here-g .big { grid-column: 1 / 8; grid-row: 1 / 3; }
 .xbl-here-g .small { grid-column: 8 / 13; }
 .xbl-here-a { display: grid; gap: 18px; align-content: start; color: var(--ink); text-decoration: none; }
-.xbl-here-art { position: relative; display: block; aspect-ratio: 16 / 10; border-radius: 20px; overflow: hidden; background: #f5f5f5; }
+.xbl-here-art { position: relative; display: block; aspect-ratio: 16 / 10; border-radius: 20px; overflow: hidden; background: light-dark(#f5f5f5, var(--x-fill)); }
 .xbl-here-g .big .xbl-here-art { aspect-ratio: 4 / 3; }
 .xbl-here-art .x-sigil { position: absolute; inset: 0; width: 100%; height: 100%; color: #0a0a0a; opacity: .9; transition: opacity .5s var(--ease), transform 1.2s var(--ease); }
 @media (hover: hover) { .xbl-here-a:hover .xbl-here-art .x-sigil { opacity: 1; transform: scale(1.03); } .xbl-here-a:hover .xbl-here-t > span { text-decoration: underline; text-underline-offset: .14em; text-decoration-thickness: 2px; } .xbl-here-a:hover .xbl-here-t svg { transform: translateX(6px); } }
@@ -88,7 +95,7 @@
   .xbl-here-g .big .xbl-here-art { aspect-ratio: auto; height: 100%; min-height: 360px; }
 }
 .xbl-toc { position: relative; }
-.xbl-mast-r .x-arrow { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; text-decoration-color: rgba(10, 10, 10, .25); transition: text-decoration-color .2s var(--ease); }
+.xbl-mast-r .x-arrow { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; text-decoration-color: light-dark(rgba(10, 10, 10, .25), var(--white-30)); transition: text-decoration-color .2s var(--ease); }
 .xbl-mast-r .x-arrow svg { transition: transform .25s var(--ease); }
 @media (hover: hover) { .xbl-mast-r .x-arrow:hover { text-decoration-color: currentColor; } .xbl-mast-r .x-arrow:hover svg { transform: translateX(4px); } }
 .xbl-c-head > .xbl-c-h { align-self: end; }
@@ -108,10 +115,10 @@
 .xbl-bar.none { cursor: default; }
 .xbl-bar-n { font: 500 13px/1 var(--mono); color: var(--soft); }
 .xbl-bar-c { position: relative; align-self: stretch; width: 100%; max-width: 32px; }
-.xbl-bar-c i { position: absolute; inset: 0; border-radius: 6px; background: #e5e5e5; transform-origin: 50% 100%; transition: transform 1s var(--ease), background .3s var(--ease); }
-.xbl-bar:hover .xbl-bar-c i { background: #d4d4d4; }
+.xbl-bar-c i { position: absolute; inset: 0; border-radius: 6px; background: light-dark(#e5e5e5, var(--secondary)); transform-origin: 50% 100%; transition: transform 1s var(--ease), background .3s var(--ease); }
+.xbl-bar:hover .xbl-bar-c i { background: light-dark(#d4d4d4, var(--white-20)); }
 .xbl-bar-c i { overflow: hidden; }
-.xbl-bar-c i::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, .85) 50%, transparent 100%); transform: translateY(110%); opacity: 0; }
+.xbl-bar-c i::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 0%, light-dark(rgba(255, 255, 255, .85), var(--white-20)) 50%, transparent 100%); transform: translateY(110%); opacity: 0; }
 .xbl-strip.seen .xbl-bar-c i::after { animation: xbl-sweep 8s cubic-bezier(.65, 0, .35, 1) infinite; animation-delay: calc(1.6s + var(--i) * .14s); } /* idle: a silver light runs across the months, oldest to newest */
 @keyframes xbl-sweep { 0% { transform: translateY(110%); opacity: 0; } 4% { opacity: 1; } 16% { transform: translateY(-110%); opacity: 1; } 17%, 100% { transform: translateY(-110%); opacity: 0; } }
 .xbl-bar.on .xbl-bar-c i::after { background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, .28) 50%, transparent 100%); }
@@ -119,17 +126,17 @@
 .xbl-bar-k { font: 500 13px/1 var(--mono); letter-spacing: .04em; color: var(--faint); }
 .xbl-bar.on .xbl-bar-k, .xbl-bar.on .xbl-bar-n { color: var(--ink); }
 .xbl-bar:focus-visible, .xbl-allbtn:focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; border-radius: 8px; }
-.xbl-allbtn { flex: none; align-self: flex-end; min-height: 44px; padding: 0 16px; margin-left: 10px; border-radius: 999px; border: 1px solid var(--hair); background: #fff; font: 500 14px/1 var(--mono); color: var(--soft); cursor: pointer; }
-@media (hover: hover) { .xbl-allbtn:hover { border-color: rgba(0, 0, 0, .3); color: var(--ink); } }
+.xbl-allbtn { flex: none; align-self: flex-end; min-height: 44px; padding: 0 16px; margin-left: 10px; border-radius: 999px; border: 1px solid var(--hair); background: var(--x-raised); font: 500 14px/1 var(--mono); color: var(--soft); cursor: pointer; }
+@media (hover: hover) { .xbl-allbtn:hover { border-color: light-dark(rgba(0, 0, 0, .3), var(--white-30)); color: var(--ink); } }
 /* active: an ink outline, never a fill (one solid per screen belongs to the header's ask) */
-.xbl-allbtn.on { background: #fff; border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); color: var(--ink); }
+.xbl-allbtn.on { background: var(--x-raised); border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); color: var(--ink); }
 .xbl-allbtn { display: inline-flex; align-items: center; gap: 8px; transition: border-color .2s var(--ease), transform .12s var(--ease); }
 .xbl-allbtn:active { transform: scale(.98); }
 .xbl-allbtn svg { transition: transform .3s var(--ease); }
 @media (hover: hover) { .xbl-allbtn:not(.on):hover svg { transform: translateY(2px); } }
 .xbl-toc { margin-top: clamp(44px, 5vw, 72px); border-top: 2px solid var(--ink); scroll-margin-top: 120px; }
-.xbl-more { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; margin-top: 28px; padding: 0 22px; border-radius: 999px; border: 1px solid var(--hair); background: #fff; font: 500 15px/1 var(--mono); color: var(--ink); cursor: pointer; transition: border-color .2s var(--ease), transform .12s var(--ease); }
-@media (hover: hover) { .xbl-more:hover { border-color: rgba(0, 0, 0, .3); } .xbl-more:hover svg { transform: translateY(2px); } }
+.xbl-more { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; margin-top: 28px; padding: 0 22px; border-radius: 999px; border: 1px solid var(--hair); background: var(--x-raised); font: 500 15px/1 var(--mono); color: var(--ink); cursor: pointer; transition: border-color .2s var(--ease), transform .12s var(--ease); }
+@media (hover: hover) { .xbl-more:hover { border-color: light-dark(rgba(0, 0, 0, .3), var(--white-30)); } .xbl-more:hover svg { transform: translateY(2px); } }
 .xbl-more:active { transform: scale(.98); }
 .xbl-more svg { transition: transform .3s var(--ease); }
 .xbl-month[hidden] { display: none; }
@@ -144,7 +151,7 @@
 .xbl-row-main { display: grid; gap: 10px; }
 .xbl-row-line { display: flex; align-items: baseline; gap: 14px; }
 .xbl-row-line b { font-size: clamp(17px, 1.4vw, 20px); font-weight: 497; line-height: 1.2; letter-spacing: -.02em; max-width: 34ch; transition: transform .5s var(--ease); }
-.xbl-row-line i { flex: 1; min-width: 24px; position: relative; top: -.3em; border-bottom: 1px dotted rgba(0, 0, 0, .25); transform-origin: 0 50%; }
+.xbl-row-line i { flex: 1; min-width: 24px; position: relative; top: -.3em; border-bottom: 1px dotted light-dark(rgba(0, 0, 0, .25), var(--white-30)); transform-origin: 0 50%; }
 .xbl-row-d { flex: none; font: 500 13px/1 var(--mono); color: var(--soft); white-space: nowrap; }
 .xbl-row-p { font-size: 15.5px; line-height: 1.55; color: var(--soft); max-width: 72ch; }
 .xbl-row:hover .xbl-row-line b { transform: translateX(8px); }
@@ -183,7 +190,7 @@
   .xbl-count { font-size: 52px; }
   .xbl-bar-k { font-size: 13px; letter-spacing: -.04em; }
   .xbl-month { grid-template-columns: minmax(0, 1fr); }
-  .xbl-month-h { grid-column: 1; top: 60px; z-index: 1; grid-auto-flow: column; justify-content: space-between; align-items: baseline; padding: 14px 0; background: #fff; border-bottom: 1px solid var(--hair); }
+  .xbl-month-h { grid-column: 1; top: 60px; z-index: 1; grid-auto-flow: column; justify-content: space-between; align-items: baseline; padding: 14px 0; background: var(--bg); border-bottom: 1px solid var(--hair); }
   .xbl-month-h b { font-size: 21px; }
   .xbl-month ol { grid-column: 1; padding-top: 10px; }
   .xbl-row-main { order: 1; } .xbl-row-k { order: 2; }
