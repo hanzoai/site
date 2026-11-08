@@ -41,13 +41,16 @@ export function WordLight({ text, className = '', id }) {
 export function Lens({ lines }) {
   const ref = useRef(null);
   useEffect(() => {
-    const lens = ref.current, host = lens.parentElement.closest('section');
+    const lens = ref.current, host = lens.parentElement.closest('section'), h1 = host.querySelector('h1');
     if (!matchMedia('(pointer: fine)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const move = (e) => {
       const r = lens.getBoundingClientRect();
       lens.style.setProperty('--lx', (e.clientX - r.left) + 'px');
       lens.style.setProperty('--ly', (e.clientY - r.top) + 'px');
-      const inside = e.clientY > r.top - 40 && e.clientY < r.bottom + 40 && e.clientX > r.left - 40 && e.clientX < r.right + 40;
+      // on only over the headline's drawn words (a lens over the blank above or beside them shows an empty disc)
+      const g = document.createRange();
+      g.selectNodeContents(h1);
+      const inside = [...g.getClientRects()].some((q) => e.clientY > q.top && e.clientY < q.bottom && e.clientX > q.left - 8 && e.clientX < q.right + 8);
       lens.toggleAttribute('data-on', inside);
     };
     const leave = () => lens.removeAttribute('data-on');

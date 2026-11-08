@@ -25,7 +25,8 @@
 .xcu-hero-g { row-gap: 28px; align-items: end; }
 .xcu-h1 { grid-column: 1 / -1; }
 .xcu-hero-f { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 24px 48px; }
-.vc.xcu .xcu-lede.xcu-wl { max-width: 30ch; font-size: clamp(26px, 3vw, 44px); line-height: 1.2; color: #0a0a0a; }
+/* the statement is the medium voice under the 52px h1 (JAMES 1: one big thing per screen) */
+.vc.xcu .xcu-lede.xcu-wl { max-width: 34ch; font-size: clamp(22px, 2.3vw, 34px); line-height: 1.25; color: #0a0a0a; }
 .xcu-cases { padding-top: 0; }
 .xcu-plate { position: relative; aspect-ratio: 16 / 8.4; border-radius: 20px; overflow: hidden; background: linear-gradient(160deg, #262626 0%, #0a0a0a 55%, #000000 100%); }
 .xcu-line { position: absolute; z-index: 4; left: clamp(24px, 3vw, 48px); right: clamp(24px, 3vw, 48px); top: 16px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; pointer-events: none; }
@@ -49,7 +50,7 @@
 .xcu-case-top .vc-kick { color: rgba(255, 255, 255, .82); }
 .xcu-mark { display: block; height: 28px; width: auto; max-width: 180px; object-fit: contain; filter: brightness(0) invert(1); background: transparent !important; }
 .xcu-case-in { position: absolute; left: clamp(24px, 3vw, 48px); right: clamp(24px, 3vw, 48px); top: clamp(88px, 8vw, 112px); display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr) auto; column-gap: 24px; align-items: start; }
-.xcu-fig { display: flex; flex-direction: column; gap: 14px; }
+.xcu-fig { display: flex; flex-direction: column; gap: 22px; }
 .xcu-fig b { font: 220 clamp(72px, 13vw, 112px)/.9 var(--sans); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
 .xcu-fig span { font: 606 12px/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: rgba(255, 255, 255, .86); }
 .xcu-case-r { display: flex; flex-direction: column; gap: 12px; }
@@ -84,14 +85,14 @@
 .xcu-row-n h3 { margin: 0; font-size: 21px; font-weight: 497; letter-spacing: -.02em; line-height: 1.15; transition: transform .5s var(--ease); }
 .xcu-kind { font: 606 12px/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--mut); }
 .xcu-row-d { margin: 6px 0 0; font-size: 17px; line-height: 1.55; color: var(--sec); max-width: 44ch; }
-/* each row carries its own figures; they rise out of their masks once, as the row reaches the middle (or is pointed at) */
+/* each row carries its own figures; they rise into place once, as the row comes up the screen (or is pointed at). No
+   mask: a number is either whole or not yet there, never sliced */
 .xcu-row-f { margin: 0; display: flex; flex-direction: column; gap: 14px; }
-.xcu-row-f > div { overflow: hidden; }
 .xcu-row-f dt { font-size: 32px; font-weight: 220; letter-spacing: -.03em; line-height: 1; color: var(--xi); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .xcu-row-f dd { margin: 6px 0 0; font-size: 14px; color: var(--sec); }
-.js .xcu-row-f dt, .js .xcu-row-f dd { transform: translateY(110%); transition: transform .5s cubic-bezier(.16, 1, .3, 1); }
-.js .xcu-row-f dd { transition-delay: 60ms; }
-.js .xcu-row.read .xcu-row-f dt, .js .xcu-row.read .xcu-row-f dd { transform: none; }
+.js .xcu-row-f dt, .js .xcu-row-f dd { opacity: 0; transform: translateY(18px); transition: transform .6s cubic-bezier(.16, 1, .3, 1), opacity .3s cubic-bezier(0, 0, .2, 1); }
+.js .xcu-row-f dd { transition-delay: 70ms; }
+.js .xcu-row.read .xcu-row-f dt, .js .xcu-row.read .xcu-row-f dd { opacity: 1; transform: none; }
 .xcu-row.on .xcu-row-y { color: var(--xi); }
 .xcu-row.on .xcu-row-n h3 { transform: translateX(8px); }
 @media (hover: hover) { .xcu-row:hover::before { opacity: 1; } }
@@ -152,5 +153,23 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .xcu-line u.run { animation: none; transform: scaleX(1); }
-  .xcu-row-f dt, .xcu-row-f dd { transform: none !important; transition: none; }
+  .xcu-row-f dt, .xcu-row-f dd { opacity: 1 !important; transform: none !important; transition: none; }
 }
+
+/* dark mode (docs/DARK-MODE.md): Hanzo's default; light is html.light, so every rule here sits under html:not(.light)
+   and bright mode is untouched. Page and deck tokens take Hanzo's dark tokens through our --x- aliases (they resolve on
+   <html>). The case plate and the closing room are black in both modes and stay as they are. */
+html:not(.light) .xcu { --xi: var(--foreground); --sec: var(--muted-foreground); --mut: var(--faint); --raised: var(--x-fill); --sunk: var(--x-knob); --ink: var(--foreground); --ink2: var(--muted-foreground); --muted: var(--faint); --line: var(--x-e10); }
+html:not(.light) .xcu ::selection { background: var(--x-knob); }
+html:not(.light) .xcu :focus-visible { box-shadow: 0 0 0 5px var(--bg); }
+html:not(.light) .xcu-cta:not(.lt) { color: var(--x-on-ink); }
+@media (hover: hover) { html:not(.light) .xcu-cta:not(.lt):hover { background: var(--muted-foreground); } }
+html:not(.light) .vc.xcu .xcu-lede.xcu-wl { color: var(--xi); }
+html:not(.light) .xcu-index, html:not(.light) .xcu-row { border-color: var(--x-e10); }
+@media (max-width: 899px) {
+  html:not(.light) .xcu-years { background: var(--bg); border-bottom-color: var(--x-e10); }
+  html:not(.light) .js .xcu-row:not(.read) .xcu-row-n h3 { color: var(--mut); }
+}
+/* the builders' logos are dark artwork: in dark they are drawn light, at the same quiet weight */
+html:not(.light) .xcu-wall img { filter: grayscale(1) brightness(0) invert(1); opacity: .6; }
+@media (hover: hover) { html:not(.light) .xcu-wall a:hover img { filter: grayscale(1) brightness(0) invert(1); opacity: 1; } }

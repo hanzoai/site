@@ -1,5 +1,7 @@
 # /customers/[slug] — James-eye review
 
+Ready: 2026-11-08 copycheck missing 0 of 21 (Damon) and 0 of 14 (KANOA) (COPY-RULE): the room's meta now prints Hanzo's line whole ("2020 · CES launch and preorders" / "2015 · Crowdfunding and preorders"), its hairline moved to a lead-in rule; every picture Hanzo shows is referenced (13/13 Damon, 6/6 KANOA; the photos 404 in this sandbox and show their contour plates); chapter words still arrive with their sheet; taste OK, unique OK, parity 37/37 + 2/2 and 26/26 + 2/2, check.mjs 0 errors / 0 overlaps / no h-scroll on both members at 1470 and 375, reduced motion 0 running animations.
+
 Verdict: 7/10
 First complaint: "It shows me the same four numbers twice in a row, once in the black box and again straight underneath. Then it's six screens that all look the same: text on the left, a grey box on the right."
 

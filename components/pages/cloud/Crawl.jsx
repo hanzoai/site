@@ -14,6 +14,8 @@
 //   URL; then the camera pulls back and the crawl spreads through the site link by link, a link toward 169.254.169.254
 //   refused, a 302 toward metadata cut at the hop, and the pages leaving over HTTP and MCP. One scroll value drives every
 //   part through CSS (no per-frame React); phones play the same scene once by itself while seen (pausable), or by tap.
+// Entrances (docs/MOTION-MAP.md, arrive.js arms them below the fold): slot-roll (the Reads words), tile-flip (the four
+//   Returns), pendulum (the plan picker), grow-from-point (the plan sheet, from where you last pressed).
 // Supporting: the Stage hero (the reader starts big and settles), the line-mask titles, the plan ring gliding to the plan
 //   whose allowance you chose, the graphite close opening to full width.
 // Motion kinds: arrival (title cut-in, the stage), idle (the reader crawling by itself), scroll (stage settle and the
@@ -30,9 +32,10 @@ import { useCalm } from '../../ui';
 import { scrollToY } from '../../../lib/scroll';
 import KeynoteStage, { useStagePause } from './SafeStage';
 import KeynoteSpec, { Fig } from '../../v2/KeynoteSpec';
-import KeynoteClose from '../../v2/KeynoteClose';
+import KeynoteClose from './SafeClose';
 import KeynoteLines from '../../v2/KeynoteLines';
 import { useWide } from '../../v2/KeynoteChapters';
+import { useArrivals } from './arrive';
 import './Crawl.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/openapi/crawl/';
@@ -86,6 +89,10 @@ function Reader() {
     return () => clearTimeout(t);
   }, [at, seen, calm, paused, mine]);
   const s = SAMPLES[at];
+  // the last page's Markdown stays on the panel until the new one starts writing (never a blank slab)
+  const last = useRef(at);
+  const [prev, setPrev] = useState(-1);
+  useEffect(() => { if (last.current !== at) { setPrev(last.current); last.current = at; } }, [at]);
   return (
     <div className="kn-obj cr-rd" ref={ref}>
       <div className="cr-rd-bar">
@@ -103,7 +110,10 @@ function Reader() {
         <div className="cr-rd-pipe"><i /></div>
         <div className="cr-rd-md">
           <p className="cr-rd-k">Markdown <span>{s.path}</span></p>
-          <pre>{s.md.map(([k, t], i) => <span key={i} className={'cr-ml ' + k} style={{ animationDelay: 1.15 + i * 0.15 + 's' }}>{t}</span>)}</pre>
+          <div className="cr-rd-mdb">
+            {prev >= 0 && prev !== at && <pre className="cr-rd-prev">{SAMPLES[prev].md.map(([k, t], i) => <span key={i} className={'cr-ml ' + k}>{t}</span>)}</pre>}
+            <pre>{s.md.map(([k, t], i) => <span key={i} className={'cr-ml ' + k} style={{ animationDelay: 1.15 + i * 0.15 + 's' }}>{t}</span>)}</pre>
+          </div>
           <dl className="cr-rd-meta" style={{ animationDelay: 1.3 + s.md.length * 0.15 + 's' }}>
             <div><dt>title</dt><dd>{s.title}</dd></div>
             <div><dt>canonical</dt><dd>example.com{s.path}</dd></div>
@@ -341,7 +351,7 @@ function Fit({ at, set }) {
   const [n, u] = STOPS[at];
   const [name, price, pts] = PLANS[at];
   return (
-    <div className="cr-fit">
+    <div className="cr-fit" data-enter="pendulum">
       <p className="kn-kick" id="cr-fit-k">Which plan covers it</p>
       <div className="cr-fit-out" aria-live="polite">
         <p className="cr-fit-fig"><span className="cr-fit-m"><b className="kn-fig" key={n}>{n}</b></span><span className="cr-fit-u">{u}</span></p>
@@ -378,7 +388,7 @@ function Plans() {
           </div>
           <Fit at={at} set={setAt} />
         </div>
-        <div className="cr-sheet">
+        <div className="cr-sheet" data-enter="grow">
           {PLANS.map(([n, pr, pts, cta, to], i) => (
             <div key={n} className="cr-plan" data-fit={at === i ? '' : undefined}>
               {at === i && <motion.span layoutId="cr-ring" className="cr-ring" transition={{ duration: 0.4, ease: MOVE }} aria-hidden="true" />}
@@ -470,8 +480,10 @@ function Send() {
 }
 
 export default function Crawl() {
+  const root = useRef(null);
+  useArrivals(root);
   return (
-    <main className="kn cr">
+    <main className="kn cr" ref={root}>
       <KeynoteStage
         kick="AI-Ready Web Crawler"
         title={['Hanzo Crawl']}
@@ -495,8 +507,8 @@ export default function Crawl() {
           ['Step 02', <Step k="x" t="Extract" d="The document is reduced to the subtree a reader would call the content, plus the title, description and canonical URL the page claims for itself. If the HTML alone is not enough, this is where a headless browser gets involved." />],
           ['Step 03', <Step k="r" t="Render" d="That subtree becomes Markdown with its structure intact — headings, lists, code and links, with relative URLs resolved against the page. It is the format a model reads best and a person can still diff." />],
           ['Two ways to call it', <><p className="cr-ways" aria-hidden="true"><span><b>HTTP</b>/v1/crawl</span><span><b>MCP</b></span></p><p>Over HTTP at /v1/crawl when your code is doing the asking, or over MCP when a model is.</p></>],
-          ['Reads', <ul className="cr-kinds">{['Static Sites', 'SPAs', 'Documentation', 'E-Commerce', 'Forums', 'REST API'].map((t) => <li key={t}>{t}</li>)}</ul>],
-          ['Returns', <div className="cr-figs">{[['JS', 'Full rendering'], ['Parallel', 'High throughput'], ['LLM', 'Structured extraction'], ['MD', 'Clean Markdown']].map(([a, b]) => <Fig key={a} n={a} u={b} />)}</div>],
+          ['Reads', <ul className="cr-kinds" data-enter="slot">{['Static Sites', 'SPAs', 'Documentation', 'E-Commerce', 'Forums', 'REST API'].map((t) => <li key={t}>{t}</li>)}</ul>],
+          ['Returns', <div className="cr-figs" data-enter="flip">{[['JS', 'Full rendering'], ['Parallel', 'High throughput'], ['LLM', 'Structured extraction'], ['MD', 'Clean Markdown']].map(([a, b]) => <Fig key={a} n={a} u={b} />)}</div>],
         ]}
       />
 

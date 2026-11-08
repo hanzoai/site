@@ -75,15 +75,17 @@ function Window({ os }) {
     (async () => {
       while (alive) {
         if (ask.current) ask.current.textContent = '';
-        setS(0); await wait(first ? 80 : 520);
-        setS(1); await wait(380); // the title bar drops in
-        setS(2); await wait(320); // the sidebar and the run log
-        setS(3); await wait(360); // toolbar and composer
+        if (first) {
+          setS(0); await wait(80);
+          setS(1); await wait(380); // the title bar drops in
+          setS(2); await wait(320); // the sidebar and the run log
+          setS(3); await wait(360); // toolbar and composer
+        } else { setS(3); await wait(700); } // later runs keep the window built and only clear the thread
         setS(4);
         const q = MSGS[0][1];
-        for (let i = 1; i <= q.length && alive; i++) { if (ask.current) ask.current.textContent = q.slice(0, i); await wait(24); }
-        await wait(420); if (!alive) return;
-        setS(5); await wait(1900); // it reads the repo
+        for (let i = 1; i <= q.length && alive; i++) { if (ask.current) ask.current.textContent = q.slice(0, i); await wait(first ? 16 : 24); }
+        await wait(first ? 260 : 420); if (!alive) return;
+        setS(5); await wait(first ? 1500 : 1900); // it reads the repo
         setS(6); await wait(1600); // writes limit.go
         setS(7); await wait(1700); // the test runs
         setS(8); if (first) play('done'); await wait(700); // and passes: a faint chime, the first time only
@@ -105,7 +107,7 @@ function Window({ os }) {
         </button>
         {os === 'mac' && <span className="dk-lights" aria-hidden="true"><i /><i /><i /></span>}
         {os === 'win' && <span className="dk-appi" aria-hidden="true"><Mark size={14} /></span>}
-        <span className="dk-name"><b>Desktop</b> — Hanzo</span>
+        <span className="dk-name">Desktop — Hanzo</span>
         <nav className="dk-tabs" aria-label="Hanzo apps">
           <A to="/desktop" className="on">Desktop</A><A to="/cli">CLI</A><A to="/playground">Playground</A><A to="/cloud/api-keys">API Keys</A>
         </nav>
@@ -186,7 +188,7 @@ function Hero({ os, setOs, mine }) {
               </button>
             ))}
           </div>
-          <p className="dk-note">Example project. Every name in it is one you would give your own. <A to="/home">Open in the console</A></p>
+          <p className="dk-note"><span>Example project. Every name in it is one you would give your own.</span> <A to="/home">Open in the console</A></p>
         </div>
       </div>
     </section>

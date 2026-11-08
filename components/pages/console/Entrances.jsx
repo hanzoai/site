@@ -42,7 +42,7 @@ export function useStickyStack() {
       card.style.transform = rise < 1 ? `translate3d(0, ${((1 - rise) * 96).toFixed(1)}px, 0) scale(${(0.94 + rise * 0.06).toFixed(4)})` : '';
       const cover = clamp((h.bottom - c.top) / Math.max(1, h.height));
       head.style.transform = cover > 0 ? `scale(${(1 - cover * 0.06).toFixed(4)})` : '';
-      head.style.opacity = cover > 0 ? (1 - cover * 0.7).toFixed(3) : '';
+      head.style.opacity = cover > 0 ? Math.max(0, 1 - cover * 1.15).toFixed(3) : '';
     });
     return () => { off(); el.classList.remove('en-stack'); card.style.transform = ''; head.style.transform = ''; head.style.opacity = ''; };
   }, [calm]);

@@ -19,14 +19,17 @@
 
 /* 4. shrink-to-card: driven by scroll in enter.jsx (scale, corners, fill) */
 .en-shrink { transform-origin: 50% 100%; will-change: transform; }
+/* dark: the card the section shrinks into is Hanzo's muted dark surface, not the light grey */
+html:not(.light) .en-shrink { background-color: transparent !important; isolation: isolate; }
+html:not(.light) .en-shrink::before { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: #171717; opacity: var(--shrink-a, 0); pointer-events: none; }
 
 /* 5. page-curl: a grey sheet over the section peels away from its bottom-right corner, its back showing as it folds */
 .en-curl-host { position: relative; }
 .en-curl { position: absolute; inset: 0; z-index: 3; pointer-events: none; display: none; }
 .js .en-curl { display: block; }
 .en-curl i { position: absolute; inset: 0; }
-.en-curl-sheet { background: #f5f5f5; clip-path: polygon(0 0, 100% 0, 100% 100%, 100% 100%, 0 100%); }
-.en-curl-flap { background: linear-gradient(135deg, #fafafa 0%, #e5e5e5 70%, #d4d4d4 100%); clip-path: polygon(100% 100%, 100% 100%, 100% 100%); }
+.en-curl-sheet { background: light-dark(#f5f5f5, #171717); clip-path: polygon(0 0, 100% 0, 100% 100%, 100% 100%, 0 100%); }
+.en-curl-flap { background: linear-gradient(135deg, light-dark(#fafafa, #262626) 0%, light-dark(#e5e5e5, #171717) 70%, light-dark(#d4d4d4, #0f0f0f) 100%); clip-path: polygon(100% 100%, 100% 100%, 100% 100%); }
 .en-curl-host.in .en-curl-sheet { animation: en-curl-sheet 1s cubic-bezier(.65, 0, .35, 1) forwards; }
 .en-curl-host.in .en-curl-flap { animation: en-curl-flap 1s cubic-bezier(.65, 0, .35, 1) forwards; }
 .en-curl-host.in .en-curl { animation: en-curl-done 0s linear 1s forwards; }

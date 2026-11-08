@@ -1,4 +1,5 @@
 # /dev — James-eye review
+Ready: 2026-11-08 copycheck missing 0 of 103 (COPY-RULE): every Hanzo line as its own text, arrows in the labels as Hanzo prints them, Latest release read from GitHub as hanzo.ai does (v0.7.10 fallback), Homebrew line plain; sections in Hanzo's order (race, places, install and sign-in, then models/Kai/proof/sandbox/Gen) so a visitor installs before the deep dive; Get Hanzo Dev $8/month close kept. taste, unique, check.mjs 1470/375 clean.
 Verdict: 7/10
 First complaint: "On the phone there are two black buttons fighting at the top, the cookie box sits on the demo, and there's a red '1 Issue' thing in the corner of every screen. And with motion turned down the race just says 0.00 against 0.00. It doesn't look finished."
 

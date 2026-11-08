@@ -1,5 +1,7 @@
 # /contact-sales — James-eye review
 
+Ready: 2026-11-08 copycheck missing 0 of 16 (COPY-RULE): the route values "enterprise@hanzo.ai" and "Get Hanzo Team" moved out of <b> into plain spans, the launches heading now holds "Products Hanzo built and launched" as one line (the falling letters are an aria-hidden copy that hands over after 1.25s), and Hanzo's 12 customer logos are back in the rail from public/logos/customers (name as type only if a logo fails); taste OK, unique OK, parity 30/30 + 17/17, check.mjs 0 errors / 0 overlaps / no h-scroll at 1470 and 375, reduced motion 0 running animations.
+
 Verdict: 7/10
 First complaint: "The top's nice, the form plays itself, but scroll down and it's a document again: a long list of giant grey numbers, then a screen of logo names floating in white. Nothing comes in as something goes out. It's not premium yet."
 

@@ -31,7 +31,8 @@ import './DevPage.css';
 const OPEN = '/login?next=%2Fdev';
 const DOCS = 'https://docs.hanzo.ai/docs/dev';
 // Hanzo's own links end in a text arrow (→), so the kit Cta link carries it as text and drops its drawn one
-const Lk = ({ to, children, id }) => <Cta to={to} kind="link" id={id} className="xdv-lk">{children} <i className="xdv-ar">→</i></Cta>;
+// the arrow sits in the label's own text, as Hanzo prints it ("Getting started →"); bare: Hanzo prints no arrow ("Read the docs")
+const Lk = ({ to, children, id, bare }) => <Cta to={to} kind="link" id={id} className="xdv-lk">{bare ? children : children + ' →'}</Cta>;
 const useIso = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 /* the kit's demo control reads reduced motion while rendering; render it only once mounted, so the server HTML and the
    first client render agree (a control is no use before scripts anyway) */
@@ -147,7 +148,7 @@ function Session() {
     <div className="xdv-term" ref={box}>
       <div className="xdv-term-bar">
         <i aria-hidden="true" /><i aria-hidden="true" /><i aria-hidden="true" />
-        <b className="x-mono">Hanzo Dev · Coding agent</b>
+        <span className="x-mono xdv-term-t">Hanzo Dev · Coding agent</span>
         <button type="button" className="xdv-info" aria-expanded={info} aria-controls="xdv-demo" onClick={() => setInfo(!info)}>(i)</button>
         <Ctl demo={demo} className="dark xdv-ctl" />
       </div>
@@ -171,7 +172,7 @@ function Session() {
         <File stage={stage} pre={!live} />
       </div>
       <ul className="x-sr">{DIFF.map(([, s], i) => <li key={i}>{s}</li>)}</ul>
-      <div className="xdv-term-foot x-mono"><span>auto</span><span>·</span><span>enso-auto</span><span className="xdv-foot-h">{HIGHLIGHTS[3]}</span><em>@acme/api (main)</em></div>
+      <div className="xdv-term-foot x-mono"><span>auto</span><span>·</span><span>enso-auto</span><span className="xdv-foot-h">{HIGHLIGHTS[3]}</span><span className="xdv-foot-r">@acme/api (main)</span></div>
     </div>
   );
 }
@@ -188,7 +189,7 @@ function Hero() {
           <p className="xdv-lede">Hanzo Dev is a coding agent. It reads your repository, makes the change, runs the tests and shows you the diff — in your terminal, on the web, in the cloud and in Slack.</p>
           <div className="xdv-acts">
             <Cta to={OPEN} id="dev.hero" thumb size="lg">Open Dev</Cta>
-            <Lk to={DOCS} id="dev.docs">Read the docs</Lk>
+            <Lk to={DOCS} id="dev.docs" bare>Read the docs</Lk>
             <Lk to="https://github.com/hanzoai/dev" id="dev.github">Explore GitHub examples</Lk>
           </div>
         </div>
@@ -248,6 +249,7 @@ function Race() {
   // with motion the board starts ready (0.00 s) and races when reached; with reduced motion it shows the finished race
   useEffect(() => { t.set(matchMedia('(prefers-reduced-motion: reduce)').matches ? MAX : 0); }, [calm, t]);
   const demo = useDemo(board, async (sleep) => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { t.set(MAX); return; } // calm: the finished race, never 0.00
     let v = 0;
     t.set(0);
     await sleep(500);
@@ -324,6 +326,7 @@ function Places() {
   const track = useRef(null);
   const x = useMotionValue(0);
   const [lim, setLim] = useState(0);
+  const [pitch, setPitch] = useState(452); // one card and its gap
   const [drag, setDrag] = useState(false);
   useIso(() => {
     const fit = () => {
@@ -331,16 +334,21 @@ function Places() {
       if (!v || !tr) return;
       const wide = matchMedia('(min-width: 900px)').matches;
       setDrag(wide);
-      setLim(wide ? Math.max(0, tr.scrollWidth - v.clientWidth) : 0);
+      const first = tr.firstElementChild;
+      const pt = first ? first.offsetWidth + (parseFloat(getComputedStyle(tr).columnGap) || 12) : 452;
+      setPitch(pt);
+      // the end rounds up to a whole card, so the last stop also lands a card's edge on the gutter
+      setLim(wide ? Math.ceil(Math.max(0, tr.scrollWidth - v.clientWidth) / pt - 0.02) * pt : 0);
       if (!wide) x.set(0);
     };
     fit();
     addEventListener('resize', fit);
     return () => removeEventListener('resize', fit);
   }, [x]);
+  // each step lands a card's left edge on the gutter (gap included), so no card stops cut through its words
   const step = (d) => {
-    const card = track.current?.firstElementChild?.offsetWidth || 400;
-    animate(x, Math.max(-lim, Math.min(0, x.get() - d * (card + 24))), EZ);
+    const at = Math.round(-x.get() / pitch);
+    animate(x, -Math.min(lim, Math.max(0, (at + d) * pitch)), EZ);
   };
   return (
     <section className="v2a-sec xdv-places" aria-labelledby="xdv-pl-h">
@@ -360,13 +368,13 @@ function Places() {
       </div>
       {/* entrance 1 (stack-drop): the four places drop from above and stack onto their places, one after another */}
       <In kind="stack-drop" className="xdv-pl-view" boxRef={view} data-drag={drag ? '' : undefined}>
-        <motion.ul className="xdv-pl" ref={track} style={{ x }} drag={drag ? 'x' : false} dragConstraints={{ left: -lim, right: 0 }} dragElastic={0.08} dragTransition={{ power: 0.35, timeConstant: 320 }}>
+        <motion.ul className="xdv-pl" ref={track} style={{ x }} drag={drag ? 'x' : false} dragConstraints={{ left: -lim, right: 0 }} dragElastic={0.08} dragTransition={{ power: 0.35, timeConstant: 320, modifyTarget: (v) => Math.round(v / pitch) * pitch }}>
           {PLACES.map(([name, tag, d, g], i) => (
             <Play as="li" key={name} className="xdv-pl-card" style={{ '--d': i }}>
               <div className={'xdv-pl-art ' + g} aria-hidden="true"><Scene g={g} /></div>
               <div className="xdv-pl-txt">
                 <h3>{name}</h3>
-                {tag && <code className="xdv-tag">{tag}</code>}
+                {tag && <span className="xdv-tag">{tag}</span>}
                 <p>{d}</p>
               </div>
             </Play>
@@ -447,7 +455,7 @@ function How() {
                   <button type="button" aria-pressed={i === rung} aria-controls="xdv-rung" onClick={() => setRung(i)} onPointerEnter={(e) => { if (e.pointerType === 'mouse') setRung(i); }} onFocus={() => setRung(i)}>
                     {i === rung && <motion.span layoutId="xdv-rung-bg" className="xdv-rung-bg" transition={EZ} />}
                     <span className="xdv-rung-n x-mono">{String(i + 1).padStart(2, '0')}</span>
-                    <b>{name}</b>
+                    <span className="xdv-rung-t">{name}</span>
                   </button>
                 </li>
               ))}
@@ -459,6 +467,17 @@ function How() {
           </div>
         </Sheet>
         <Sheet n={2} kick="Proof" title="Built to be checked." lede="Nothing counts as done because a model said so.">
+          {/* the object: the verifier's ledger for the hero's change, one line per thing it records, each settling in turn
+              (words already on this page: the file, its +1 −1, the exit status, the tests, the diff) */}
+          <Play className="xdv-ledger x-mono" aria-hidden="true">
+            <p className="xdv-led-h"><i /><span>{PROOF[2][0]}</span><em>@acme/api (main)</em></p>
+            <ol>
+              {[['src/retry.ts', '+1 −1'], ['the exit status', '✓'], ['the tests', '✓'], ['the diff', '+1 −1']].map(([k, v], i) => (
+                <li key={k} style={{ '--i': i }}><span className="n">{String(i + 1).padStart(2, '0')}</span><span className="k">{k}</span><span className="v">{v}</span><i className="ok" /></li>
+              ))}
+            </ol>
+            <p className="xdv-led-f">✓ {HIGHLIGHTS[1]}</p>
+          </Play>
           <ul className="xdv-pr">
             {PROOF.map(([name, d]) => (
               <li key={name}>
@@ -500,8 +519,12 @@ const WAYS = [
 ];
 const SIGNIN = 'dev login                 # pick an account: Hanzo is the default\ndev login --hanzo         # straight to your Hanzo account\ndev login --with-api-key  # or paste a Hanzo API key, hidden';
 
-function Setup() {
+/* Dev's latest release: app/dev/page.jsx reads it from GitHub at build; RELEASE is the last one seen (8 Nov) */
+const RELEASE = 'v0.7.10';
+
+function Setup({ release }) {
   const [way, setWay] = useState(0);
+  const tag = release || RELEASE;
   return (
     // entrance 4 (slot-roll): the heading's letters roll up into place like a slot machine
     <In as="section" kind="slot-roll" amount={0.25} className="v2a-sec xdv-setup" id="install" aria-labelledby="xdv-in-h">
@@ -518,7 +541,7 @@ function Setup() {
             <Tabs id="xdv-way" tabs={WAYS.map(([w]) => w)} value={way} onChange={setWay} label="One line, three ways." size="lg" />
             {WAYS.map(([w, c, d], i) => (
               <TabPanel key={w} id="xdv-way" i={i} value={way} className="xdv-way-p">
-                <CodeBlock code={c} label={w} prompt />
+                <CodeBlock code={c} label={w} className="xdv-way-code" />
                 <p>{d}</p>
               </TabPanel>
             ))}
@@ -527,7 +550,7 @@ function Setup() {
             <p className="v2a-title">Then sign in. Hanzo IAM links the machine to your account.</p>
             <CodeBlock code={SIGNIN} label="bash" />
             <div className="xdv-in-links">
-              <Lk to="https://github.com/hanzoai/dev/releases/tag/v0.7.7" id="dev.release">Latest release v0.7.7</Lk>
+              <Lk to={"https://github.com/hanzoai/dev/releases/tag/" + tag} id="dev.release">{"Latest release " + tag}</Lk>
               <Lk to={DOCS} id="dev.start">Getting started</Lk>
             </div>
           </div>
@@ -578,11 +601,11 @@ function Source() {
           <h2 className="v2a-head">Questions &amp; Answers</h2>
           <p className="v2a-folio">Questions</p>
         </div>
-        <div className="xdv-qa-r">
+        <Play className="xdv-qa-r">
           <Faq items={QA} multi />
           <details className="xdv-read">
             <summary>
-              <span><b>The agent, its controller, its source.</b><span>Where to start, what Dev thinks with, and the code.</span></span>
+              <span><span className="xdv-read-t">The agent, its controller, its source.</span><span>Where to start, what Dev thinks with, and the code.</span></span>
               <i aria-hidden="true">+</i>
             </summary>
             <p className="v2a-folio">Read</p>
@@ -600,13 +623,14 @@ function Source() {
               ))}
             </div>
           </details>
-        </div>
+        </Play>
       </div>
     </section>
   );
 }
 
 /* ---------- 7. paste and ship, then the closing Band ---------- */
+const GO = '/pay/confirm/card?plan=go&returnUrl=https%3A%2F%2Fhanzo.ai%2Fdev'; // the Go plan, approved by James for the close
 const PASTE = 'Read https://hanzo.ai/skill.md and use Hanzo Dev in my project. Start with: dev';
 function Paste() {
   return (
@@ -616,23 +640,24 @@ function Paste() {
           <h2 className="v2a-head" id="xdv-paste-h">Paste this into any agent. It reads the skill manifest and calls Dev from there.</h2>
           <p className="v2a-folio">Paste and ship</p>
         </div>
-        <div className="xdv-paste-r"><CodeBlock code={PASTE} label="Agent prompt" /></div>
+        <Play className="xdv-paste-r"><CodeBlock code={PASTE} label="Agent prompt" /></Play>
       </div>
     </section>
   );
 }
 
-export default function DevPage() {
+export default function DevPage({ release }) {
   return (
     <main className="xdv">
       <Hero />
-      <Places />
-      <How />
+      {/* Hanzo's own order: the proof, where it runs, then how to install and sign in, before how it thinks */}
       <Race />
-      <Setup />
+      <Places />
+      <Setup release={release} />
+      <How />
       <Source />
       <Paste />
-      <Band title="Describe the change. Dev ships it." action="Open Dev" to={OPEN} note={<Lk to={DOCS} id="dev.close-docs">Read the docs</Lk>} />
+      <Band title="Describe the change. Dev ships it." action="Open Dev" to={OPEN} note={<><Cta kind="quiet" to={GO} id="dev.close-go" className="xdv-go">Get Hanzo Dev, $8/month</Cta><Lk to={DOCS} id="dev.close-docs" bare>Read the docs</Lk></>} />
     </main>
   );
 }

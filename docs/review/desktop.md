@@ -1,4 +1,5 @@
 # /desktop — James-eye review
+Ready: 2026-11-08 copycheck missing 0 of 37 (COPY-RULE): the window title "Desktop — Hanzo" and the note "Example project. Every name in it is one you would give your own." are their own text again (the console link sits beside the note); live shows no images, none dropped; earlier round: real window leads, no empty file box, loops keep the window built, hovers. taste OK, unique OK, check.mjs 0 errors / 0 overlaps / no h-scroll at 1470 and 375, reduced motion 0 errors. Earlier: 2026-11-07 the window is the real thing and leads the first screen (thread, limit.go, go test, Tests pass; no stripes, no blue or green; the empty file box now waits for its step, the first build runs faster and later loops keep the window built instead of blanking); missing hovers/press added (window tabs, terminal hold and command chips, note toggles). taste OK, parity 59/59 + 9/9, unique OK, check.mjs 0 errors / 0 overlaps / no h-scroll at 1470 and 375, phone CLS 0, reduced motion rests on the finished frame.
 
 Verdict: 6/10
 First complaint: "It's a box of grey stripes pretending to be an app. Show me the real thing, and drop the blue."

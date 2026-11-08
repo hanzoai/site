@@ -11,6 +11,10 @@
    scroll: the rows come apart into column files (read only what the query names), one column's values line up for a
    vector instruction, each column splits into its sorted parts with a contiguous run in ink, and every column shrinks
    by its own codec (deltas, dictionary, general). Phones play the same four states once by themselves, or by tap.
+   What it does: six facts on one sideways rail (snap, drag, arrows), so only the exploded table pins. The industries are
+   a wall the scan passes over, row by row (or the row you point at).
+   Entrances (docs/MOTION-MAP.md, arrive.js arms them below the fold): spiral-in (the fact cards), rack-focus (the
+   industries), squash-land (the port board).
    Supporting: the Stage hero (the query console settles as you scroll, scanning by itself), six pinned facts that scale
    in (words left), and the closing dark room.
    Beyond: "Which way in?": pick how you connect (HTTP, the native protocol, or the MySQL and PostgreSQL wire ports) and
@@ -19,56 +23,67 @@
    Every word and link is Hanzo's; the example table's cells carry no values. */
 import { useEffect, useRef, useState } from 'react';
 import { useScroll, useMotionValueEvent, useInView } from 'motion/react';
-import { useLive } from './Frame';
 import { useCalm } from '../../ui';
+import { useArrivals } from './arrive';
 import { scrollToY } from '../../../lib/scroll';
 import KeynoteStage, { useStagePause } from './SafeStage';
-import KeynoteChapters, { useWide } from '../../v2/KeynoteChapters';
+import { useWide } from '../../v2/KeynoteChapters';
 import KeynoteLines from '../../v2/KeynoteLines';
-import KeynoteClose from '../../v2/KeynoteClose';
+import KeynoteClose from './SafeClose';
 import './Datastore.css';
 
 const COLS = ['ts', 'user_id', 'event', 'country', 'device', 'plan', 'revenue', 'duration_ms', 'referrer', 'path', 'session', 'version'];
-const AUTO = [[], ['country'], ['country', 'device'], ['plan'], []];
+/* Hanzo's own four example queries, in its order; the first is the resting state (hanzo.ai/datastore) */
+const EXAMPLES = [
+  { cols: ['event'], sql: "SELECT count() FROM events WHERE event = 'signup'" },
+  { cols: ['country', 'revenue'], sql: 'SELECT country, sum(revenue) FROM events GROUP BY country' },
+  { cols: ['ts', 'path', 'duration_ms'], sql: 'SELECT path, quantile(0.99)(duration_ms) FROM events WHERE ts > now() - 3600 GROUP BY path' },
+  { cols: ['plan', 'user_id'], sql: 'SELECT plan, uniq(user_id) FROM events GROUP BY plan' },
+];
 const shade = (a, b) => Math.abs(Math.sin(a * 12.9898 + b * 78.233) * 43758.5453) % 1;
 
-/* The hero object: the query console. Press a column and it joins the query; the scan runs down only the named files. */
+/* [ref, live, calm]: live while seen and motion is allowed (hydration-safe: useCalm is false on the first render) */
+function useLive(amount = 0.2) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount });
+  const calm = useCalm();
+  return [ref, seen && !calm, calm];
+}
+
+/* The hero object: the query console, as hanzo.ai runs it. It steps through Hanzo's four example queries (3.2 s each)
+   while seen; press a column and the query becomes yours (SELECT <columns> FROM events), and the scan runs down only
+   the named files. Every example query stays in the page as text; one shows at a time. */
 function Query() {
   const [ref, live, calm] = useLive(0.3);
   const paused = useStagePause();
-  const [extra, setExtra] = useState([]);
-  const [mine, setMine] = useState(false);
-  const [k, setK] = useState(0);
+  const [m, setM] = useState(0);
+  const [mine, setMine] = useState(null);
   useEffect(() => {
     if (mine || !live || calm || paused) return;
-    const t = setTimeout(() => { const n = (k + 1) % AUTO.length; setK(n); setExtra(AUTO[n]); }, 2600);
-    return () => clearTimeout(t);
-  }, [k, mine, live, calm, paused]);
+    const t = setInterval(() => setM((x) => (x + 1) % EXAMPLES.length), 3200);
+    return () => clearInterval(t);
+  }, [mine, live, calm, paused]);
+  const reads = mine ?? EXAMPLES[m].cols;
   const toggle = (c) => {
-    if (c === 'event') return;
-    setMine(true);
-    setExtra((e) => (e.includes(c) ? e.filter((x) => x !== c) : [...e, c]));
+    const cur = mine ?? EXAMPLES[m].cols;
+    setMine(cur.includes(c) ? cur.filter((x) => x !== c) : [...cur, c]);
   };
-  const reads = ['event', ...extra];
-  const sql = extra.length
-    ? `SELECT ${extra.join(', ')}, count() FROM events WHERE event = 'signup' GROUP BY ${extra.join(', ')}`
-    : "SELECT count() FROM events WHERE event = 'signup'";
   return (
     <div className="kn-obj ds-q" ref={ref}>
       <div className="ds-q-bar">
         <i /><i /><i />
         <span className="ds-q-t">events <em>example</em></span>
-        <p className="ds-q-reads">Reads <span className="ds-q-n"><b key={reads.length}>{reads.length}</b></span> of 12 columns</p>
+        <span className="ds-q-reads" key={reads.length}>Reads {reads.length} of 12 columns</span>
       </div>
-      <div className="ds-q-sql">
-        <code aria-live="polite">{sql}</code>
-        <span className="x-sr">SELECT count() FROM events WHERE event = 'signup'</span>
+      <div className="ds-q-sql" aria-live="polite">
+        {EXAMPLES.map((x, i) => <span key={i} className="ds-q-line" hidden={!!mine || i !== m}>{x.sql}</span>)}
+        {mine && <span className="ds-q-line">{`SELECT ${mine.length ? mine.join(', ') : '…'} FROM events`}</span>}
       </div>
       <div className="ds-files" role="group" aria-label="Columns">
         {COLS.map((c, ci) => {
           const on = reads.includes(c);
           return (
-            <button key={c} type="button" className={'ds-file' + (on ? ' on' : '') + (c === 'event' ? ' fixed' : '')} aria-pressed={on} aria-disabled={c === 'event' || undefined} onClick={() => toggle(c)}>
+            <button key={c} type="button" className={'ds-file' + (on ? ' on' : '')} aria-pressed={on} onClick={() => toggle(c)}>
               <span className="ds-name">{c.split('_').map((w, j) => (j ? <span key={j}>_<wbr />{w}</span> : w))}</span>
               <span className="ds-blocks" aria-hidden="true">{Array.from({ length: 10 }).map((_, i) => <i key={i} style={{ opacity: (0.25 + shade(ci, i) * 0.6).toFixed(2) }} />)}</span>
               {on && <span className="ds-beam" aria-hidden="true" />}
@@ -78,7 +93,6 @@ function Query() {
       </div>
       <div className="ds-q-foot">
         <p>Press a column to add it to the query.</p>
-        <span className="x-sr">Reads 1 of 12 columns</span>
       </div>
     </div>
   );
@@ -212,6 +226,79 @@ function ProtoScene() {
 
 const SCENES = [ColScene, ShardScene, RaftScene, DiskScene, ShapeScene, ProtoScene];
 
+/* What it does: six facts on one sideways rail (no second pinned run before the exploded table). Each card's picture
+   plays while the card is seen; the rail snaps card by card, drags with a mouse, and steps with the arrows. */
+function Fact({ i, t, d }) {
+  const ref = useRef(null);
+  const on = useInView(ref, { amount: 0.6 });
+  const S = SCENES[i];
+  return (
+    <li ref={ref} className="ds-fact" style={{ '--k': i }}>
+      <div className="ds-fact-v" data-on={on ? '' : undefined}><S on={on} p={null} /></div>
+      <p className="ds-fact-n kn-fig">{String(i + 1).padStart(2, '0')} / 06</p>
+      <h3 className="kn-title ds-fact-t">{t}</h3>
+      <p className="ds-fact-d">{d}</p>
+    </li>
+  );
+}
+function Facts() {
+  const track = useRef(null);
+  const drag = useRef(null);
+  const [at, setAt] = useState(0);
+  const [ends, setEnds] = useState([true, false]);
+  const read = () => {
+    const el = track.current;
+    if (!el) return;
+    const w = el.firstElementChild?.offsetWidth || 1;
+    setAt(Math.min(DOES.length - 1, Math.round(el.scrollLeft / (w + 24))));
+    setEnds([el.scrollLeft < 8, el.scrollLeft > el.scrollWidth - el.clientWidth - 8]);
+  };
+  const step = (d) => {
+    const el = track.current;
+    const w = el.firstElementChild.offsetWidth + 24;
+    el.scrollBy({ left: d * w, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  };
+  const down = (e) => {
+    if (e.pointerType !== 'mouse' || e.button !== 0) return;
+    const el = track.current;
+    drag.current = { x: e.clientX, l: el.scrollLeft, moved: false };
+    el.setAttribute('data-drag', '');
+  };
+  const move = (e) => {
+    const g = drag.current;
+    if (!g) return;
+    const dx = e.clientX - g.x;
+    if (Math.abs(dx) > 4) g.moved = true;
+    track.current.scrollLeft = g.l - dx;
+  };
+  const up = () => {
+    const g = drag.current;
+    if (!g) return;
+    drag.current = null;
+    const el = track.current;
+    el.removeAttribute('data-drag');
+    const w = el.firstElementChild.offsetWidth + 24;
+    el.scrollTo({ left: Math.round(el.scrollLeft / w) * w, behavior: 'smooth' });
+  };
+  return (
+    <section className="kn-sec ds-facts" aria-labelledby="ds-facts-h">
+      <div className="kn-wrap kn-grid ds-ch-head">
+        <KeynoteLines id="ds-facts-h" className="kn-headline ds-ch-h" lines="What it does" />
+        <p className="kn-lede ds-ch-l">Scan a great many rows. Return a small answer. Do it while the rows are still arriving.</p>
+      </div>
+      <ol ref={track} className="ds-rail" data-enter="spiral" onScroll={read} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerLeave={up}>
+        {DOES.map(([t, d], i) => <Fact key={t} i={i} t={t} d={d} />)}
+      </ol>
+      <div className="kn-wrap ds-rail-ctl">
+        <span className="ds-rail-track" aria-hidden="true"><i style={{ '--at': at }} /></span>
+        <p className="ds-rail-at kn-fig" aria-hidden="true">{String(at + 1).padStart(2, '0')} / 06</p>
+        <button type="button" className="ds-rail-b" aria-label="Previous" disabled={ends[0]} onClick={() => step(-1)}><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M13 8H4M7.5 4.5 4 8l3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
+        <button type="button" className="ds-rail-b" aria-label="Next" disabled={ends[1]} onClick={() => step(1)}><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
+      </div>
+    </section>
+  );
+}
+
 /* The signature: a table pulled apart into its layers as you scroll. */
 const XC = [['ts', 'deltas', 0.3], ['user_id', 'general', 0.52], ['event', 'dictionary', 0.34], ['country', 'dictionary', 0.4], ['device', 'dictionary', 0.32], ['plan', 'dictionary', 0.28], ['revenue', 'general', 0.5], ['duration_ms', 'general', 0.48]];
 const PARTS = 4, PER = 4;
@@ -309,7 +396,17 @@ function Explode() {
 
 const INDUSTRIES = ['Web and app analytics', 'E-commerce and finance', 'Time series', 'Advertising networks and RTB', 'Information security', 'Business intelligence', 'Telecommunications', 'Monitoring and telemetry', 'Online games', 'Internet of Things (IoT)', 'Observability', 'User behavior analytics'];
 
+/* the twelve industries as a wall the scan passes over: one row at a time is read (in order while seen, or the row
+   under the pointer), its blocks light the way the hero's column files do */
 function Who() {
+  const [ref, live] = useLive(0.3);
+  const [at, setAt] = useState(0);
+  const [hot, setHot] = useState(-1);
+  useEffect(() => {
+    if (!live || hot >= 0) return;
+    const t = setTimeout(() => setAt((v) => (v + 1) % INDUSTRIES.length), 1400);
+    return () => clearTimeout(t);
+  }, [at, live, hot]);
   return (
     <section className="kn-sec ds-who">
       <div className="kn-wrap kn-grid ds-who-g">
@@ -317,7 +414,14 @@ function Who() {
           <KeynoteLines className="kn-headline" lines={['What people', 'point it at']} />
           <p className="kn-body">Different industries, the same shape of problem: a great many rows in, a small answer out, asked again a second later.</p>
         </div>
-        <ol className="ds-index">{INDUSTRIES.map((t, i) => <li key={t}><span className="kn-fig">{String(i + 1).padStart(2, '0')}</span>{t}</li>)}</ol>
+        <ol className="ds-index" ref={ref} data-enter="rack" onPointerLeave={() => setHot(-1)}>
+          {INDUSTRIES.map((t, i) => (
+            <li key={t} data-on={(hot >= 0 ? hot : at) === i ? '' : undefined} onPointerEnter={(e) => e.pointerType === 'mouse' && setHot(i)}>
+              <span className="kn-fig">{String(i + 1).padStart(2, '0')}</span><span className="ds-index-t">{t}</span>
+              <i className="ds-index-b" aria-hidden="true">{Array.from({ length: 6 }).map((_, j) => <b key={j} style={{ opacity: (0.2 + shade(i + 7, j) * 0.6).toFixed(2) }} />)}</i>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   );
@@ -359,7 +463,7 @@ function Ways() {
             {WAYS.map(([n], i) => <button key={n} type="button" role="radio" aria-checked={at === i} onClick={() => setAt(i)}>{n}</button>)}
           </div>
         </div>
-        <div className="ds-port" aria-live="polite">
+        <div className="ds-port" aria-live="polite" data-enter="squash">
           <p className="ds-port-k">{name}{port ? ' · port' : ' · wire port'}</p>
           {port ? <Board value={port} /> : <p className="ds-port-w"><span key={name}>{name}</span></p>}
           <p className="ds-port-l">{line}</p>
@@ -371,8 +475,10 @@ function Ways() {
 }
 
 export default function Datastore() {
+  const root = useRef(null);
+  useArrivals(root);
   return (
-    <main className="kn ds">
+    <main className="kn ds" ref={root}>
       <KeynoteStage
         kick="Hanzo Datastore"
         title={['A column store', 'for analytical SQL']}
@@ -384,21 +490,7 @@ export default function Datastore() {
         <Query />
       </KeynoteStage>
 
-      <KeynoteChapters
-        className="ds-ch"
-        side="left"
-        swap="scale"
-        count
-        tall={85}
-        head={
-          <div className="kn-grid ds-ch-head">
-            <KeynoteLines className="kn-headline ds-ch-h" lines="What it does" />
-            <p className="kn-lede ds-ch-l">Scan a great many rows. Return a small answer. Do it while the rows are still arriving.</p>
-          </div>
-        }
-        items={DOES.map(([t, d]) => ({ title: t, body: <p>{d}</p> }))}
-        visual={(i, on, p) => { const S = SCENES[i]; return <S on={on} p={p} />; }}
-      />
+      <Facts />
 
       <Explode />
       <Who />

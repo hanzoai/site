@@ -1,5 +1,7 @@
 # /customers — James-eye review
 
+Ready: 2026-11-07 scale now rests at h1 52 / statement 22–34 (medium, was 44) / section heads 26 / row names 21 / row figures 32, with the plate figure and the close's sliding figures as each screen's one big thing; fixed "Every launch" and the year filter never appearing (a fully clipped box never fired its observer: they now rise when the section enters), row figures fade-rise whole once the row is up the screen instead of showing sliced in their masks, the hero lens only opens over the headline's words (no blank disc), plate figure label spacing; filter 11→3→11, plate doorway and Back, reduced motion 0 running animations. taste OK, parity 72/72 + 10/10, unique OK, check.mjs desktop 0 overlaps, phone 0 errors / no h-scroll; its phone overlap flags are the opaque sticky year rail passing over rows (by design, checked in the screenshots). 500s are the blocked hanzo.ai media.
+
 Verdict: 7/10
 First complaint: "It's all shouting. The headline is huge, the number under it is even bigger, every section heading is massive, and the index names are big too. Where's the small and the medium? One big thing per screen, then let it settle."
 

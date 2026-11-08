@@ -152,8 +152,28 @@ function Every() {
   const [at, setAt] = useState(ORDER[0].id);
   const [read, setRead] = useState(() => new Set());
   const rows = useRef({});
-  useEnterAll(box, '[data-e="curtain"]');
-  useEffect(() => { setRead((r) => (r.has(at) ? r : new Set(r).add(at))); }, [at]);
+  useEnterAll(box, '.xcu-row[data-e="curtain"]');
+  // the heading and the year rail are clipped shut before they rise, so an observer on them never fires (a fully
+  // clipped box has no area): they rise together when the section itself comes into view
+  useEffect(() => {
+    const el = box.current;
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      el.querySelectorAll('#xcu-every-h, .xcu-years').forEach((x) => x.setAttribute('data-in', ''));
+      io.disconnect();
+    }, { rootMargin: '0px 0px -12% 0px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  const see = (id) => setRead((r) => (r.has(id) ? r : new Set(r).add(id)));
+  useEffect(() => { see(at); }, [at]);
+  useEffect(() => {
+    // a row's figures rise once the row is up in the top three quarters of the screen (not only at the middle), so a
+    // number is never left waiting below its row
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) see(e.target.id); }), { rootMargin: '0px 0px -25% 0px' });
+    shown.forEach((l) => rows.current[l.id] && io.observe(rows.current[l.id]));
+    return () => io.disconnect();
+  }, [year]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { setAt(shown[0].id); }, [year]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     // the row crossing the middle of the screen is the one being read: its figures rise into place (once)

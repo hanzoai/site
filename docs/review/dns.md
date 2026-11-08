@@ -1,4 +1,5 @@
 # /dns — James-eye review
+Ready: 2026-11-08 copycheck missing 0 of 67 (COPY-RULE): the CLI commands are plain lines again so "https://hanzo.sh" reads (the "$" is drawn by CSS), install line first; no images on live or ours; usability: Try Hanzo, GitHub, the CLI install and commands, plans to Contact Sales, agent prompt; taste OK, unique OK, check.mjs 0 errors/0 overlaps/no h-scroll at 1470 and 375, reduced motion 0 animations and 0 errors.
 7 Nov, round 1 of this critic. Walked it moving at 1470x801 and 375x812 (phone: isMobile, hasTouch) with Playwright on :4182. At each size I took frames at 0, 1 and 3 s with no input. Then I scrolled one screen at a time with a 1.5 s dwell (a wheel pass, plus a pass stepping exactly one viewport). On desktop I hovered and pressed the "What do you need?" needs. I measured CLS with its sources, horizontal overflow and console output.
 
 Verdict: 7/10

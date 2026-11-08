@@ -205,6 +205,7 @@
 @media (hover: hover) { .cs-cv-mods button:hover { color: #f5f5f5; background: #171717; } }
 .cs-cv-mods button:active { transform: scale(.97); }
 .cs-cv-mods button[aria-pressed='true'] { color: #0a0a0a; background: #f5f5f5; }
+@media (hover: hover) { .cs-cv-mods button[aria-pressed='true']:hover { color: #0a0a0a; background: #e5e5e5; } .cs-key-b:hover { transform: translateY(-1px); } }
 .cs-cv-mods button:focus-visible, .cs-pan .xt-pan-reset:focus-visible { outline: 2px solid #f5f5f5; outline-offset: 2px; }
 .cs-pan .xt-pan-tools { flex: none; display: flex; align-items: center; gap: 6px; padding-left: 10px; border-left: 1px solid rgba(255, 255, 255, .08); }
 .cs-pan .xt-pan-hand { display: grid; place-items: center; width: 44px; height: 44px; color: #737373; }
@@ -365,6 +366,11 @@
 .cs-find-shell .cs-win.md .cs-main { padding: 26px 28px; }
 /* the hero window: no dead pane under short views */
 .cs-win:not(.md) .cs-body { height: 540px; }
+/* ...and each view's object sits in the middle of the pane left under the line that names it, not stuck to the top */
+.cs-hero .cs-vw { display: flex; flex-direction: column; }
+.cs-hero .cs-vw > .cs-v { flex: 1; }
+.cs-hero .cs-v > .cs-vk + * { margin-top: auto; }
+.cs-hero .cs-v > :last-child { margin-bottom: auto; }
 @media (hover: hover) { .cs-rel a:hover { background: var(--bz-room); } }
 .cs-rel a { padding-left: 4px; padding-right: 4px; transition: background-color .15s cubic-bezier(0, 0, .2, 1); }
 
@@ -372,7 +378,7 @@
   .cs-end .bz-wrap { grid-template-columns: minmax(0, 1fr); row-gap: 44px; }
   .cs-find-shell .cs-body, .cs-find-shell .cs-win.md .cs-body { height: auto; }
   .cs-find-shell .cs-main { overflow: visible; }
-  .cs-win:not(.md) .cs-body { height: 404px; }
+  .cs-win:not(.md) .cs-body { height: 452px; }
   /* phone keys card: key and scope on the left (the scope may wrap), the state under them, the button right */
   .cs-win.md .cs-key, .cs-key { grid-template-columns: minmax(0, 1fr) auto; }
   .cs-win.md .cs-key .cs-tag, .cs-key .cs-tag { grid-column: 1; grid-row: 3; justify-self: start; }
@@ -416,8 +422,8 @@
   .cs-key-i, .cs-win.md .cs-key-i { display: none; }
   .cs-key-l b, .cs-win.md .cs-key-l b { font-size: 21px; }
   .cs-key-l span { font-size: 14px; }
-  .cs-key .cs-tag { grid-column: 1; grid-row: 2; justify-self: start; }
-  .cs-key-b { grid-column: 2; grid-row: 1 / span 2; }
+  .cs-key .cs-tag, .cs-win.md .cs-key .cs-tag { grid-column: 1; grid-row: 3; justify-self: start; }
+  .cs-key-b, .cs-win.md .cs-key-b { grid-column: 2; grid-row: 1 / span 3; align-self: center; }
   .cs-key-n, .cs-oidc { font-size: 14px; }
   .cs-use, .cs-win.md .cs-use { grid-template-columns: minmax(0, 1fr); gap: 14px; }
   .cs-use-fig, .cs-win.md .cs-use-fig { display: grid; grid-template-columns: auto 1fr; align-items: end; column-gap: 14px; row-gap: 6px; }
@@ -459,10 +465,14 @@
   .cs-cv-mods button span { display: none; }
   .cs-pan .xt-pan-tools { gap: 2px; padding-left: 4px; }
   .cs-pan .xt-pan-hand { display: none; }
-  .cs-pan .xt-pan-view { height: min(620px, 74svh); }
-  .cs-world { grid-template-columns: repeat(2, 292px); column-gap: 44px; row-gap: 44px; padding: 20px 24px 72px; }
+  /* phone: the six cards are one row you swipe sideways; an up or down finger still scrolls the page */
+  .cs-pan .xt-pan-view { height: 680px; touch-action: pan-y !important; }
+  .cs-world { grid-template-columns: repeat(6, 292px); column-gap: 16px; row-gap: 0; padding: 16px; align-items: start; }
+  .cs-card-win .cs-use-fig { grid-template-columns: auto minmax(0, 1fr); }
+  .cs-card-win .cs-use-b { white-space: nowrap; }
+  .cs-win.md.cs-card-win .cs-tr { height: 40px; }
+  .cs-win.md.cs-card-win .cs-th { height: 32px; }
   .cs-world > :nth-child(3n + 2), .cs-world > :nth-child(3n) { margin-top: 0; margin-bottom: 0; }
-  .cs-world > :nth-child(2n) { margin-top: 116px; margin-bottom: -116px; }
   .cs-card { grid-template-columns: minmax(0, 1fr); gap: 17px; padding: 17px; border-radius: 20px; }
   .cs-card-t { font-size: 21px; }
   .cs-card-d { font-size: 14px; line-height: 1.55; }
@@ -510,3 +520,23 @@
 .cs .cf-code .s { color: #d4d4d4; }
 .cs .cf-code .k { color: #ffffff; font-weight: 606; }
 .cs .cf-mark { background-image: linear-gradient(rgba(255, 255, 255, .2), rgba(255, 255, 255, .2)); }
+/* copy rule: Hanzo's lines stay their own text (the docs row, the peek's lines) */
+.cs-rel a.cs-rel-docs { font-size: 17px; font-weight: 497; }
+.cs-fact-peek > span { display: block; }
+.cs-facts > :first-child .cs-fact-peek { max-height: 13.6em; }
+.cs-facts > :first-child .cs-fact-peek { -webkit-mask-image: linear-gradient(#000 86%, transparent); mask-image: linear-gradient(#000 86%, transparent); }
+
+/* ---------- dark mode (8 Nov, docs/DARK-MODE.md): only under html:not(.light), so bright mode keeps every computed colour.
+   The Business grammar's own tokens take Hanzo's dark values on this page; the dark shell and canvas are black in both. */
+html:not(.light) .cs { --bz-ink: #e5e5e5; --bz-muted: #a3a3a3; --bz-quiet: #858585; --bz-line: rgba(255, 255, 255, .1); --bz-paper: #0d0d0d; --bz-room: #171717; --bz-card: #171717; --bz-tile: #262626; --bz-track: #404040; --card: #171717; background: var(--bg); color: var(--ink); }
+html:not(.light) .cs-find-obj, html:not(.light) .cs-find-x { background: #0f0f0f; }
+html:not(.light) .cs-find-res li.hi .cs-find-i { background: var(--ink); color: #0a0a0a; }
+html:not(.light) .cs-find-obj:focus-within { border-color: rgba(255, 255, 255, .3); }
+@media (hover: hover) { html:not(.light) .cs-find-x:hover, html:not(.light) a.cs-chip:hover { border-color: rgba(255, 255, 255, .3); } }
+html:not(.light) .cs .cf-paste-t, html:not(.light) .cs .bz-title { color: var(--ink); }
+html:not(.light) .cs .cf-paste-k { color: var(--faint); }
+html:not(.light) .cs-end-org { background: #171717; }
+html:not(.light) .cs-end-org ul { background: #0f0f0f; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .1); }
+html:not(.light) .cs-end-org li b { color: var(--ink); }
+html:not(.light) .cs-end-org .cs-ava { background: var(--ink); color: #0a0a0a; }
+html:not(.light) .cs-end-pill { background: #262626; box-shadow: inset 0 0 0 1px var(--ink); }

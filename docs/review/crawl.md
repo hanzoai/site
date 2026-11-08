@@ -1,4 +1,5 @@
 # /crawl — James-eye review
+Ready: 2026-11-08 copycheck missing 0 of 63 (COPY-RULE): "api /v1/crawl" restored as one plain line in the close (SafeClose: api line and repo name each one text element, as on hanzo.ai); no images on live or ours; usability: Read the docs, GitHub, plans, console, agent prompt all present; taste OK, unique OK, check.mjs 0 errors/0 overlaps/no h-scroll at 1470 and 375, reduced motion 0 animations and 0 errors.
 
 Verdict: 7.5/10
 First complaint: "The stepping scene is great, then it turns into a document again. 'How it works' is fetch, extract, render all over again as rows of text with little grey stamps, nothing moves, and there's a big empty white gap before and after it. And on my phone the same paragraph shows up twice."

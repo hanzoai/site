@@ -66,7 +66,7 @@ Done here:
 - [x] `data-cta` and `data-thumb` on every primary
 
 Done here:
-- **Sticky ask.** The page's own ask is not in the header: the sticky header carries the site's solid "Try Hanzo", which this page cannot relabel (requested). The floating pill bar was removed site-wide (d2b5ab8c), so nothing floats over content: a probe of fixed and sticky elements at 1470×801 and 375×812 found only the header, the progress line, the cookie notice and the page's own sticky section heading. The ask "Talk to sales" lives in the card (last step) and in the closing Band.
+- **Sticky ask.** The page's own ask "Talk to sales" lives in the card (last step) and in the closing Band. The shared desktop header swaps to a solid "Talk to sales" once the hero leaves (seen 8 Nov at 1470×801); on phones the shared slim "Talk to sales" bar can rest at the bottom between sections. Nothing page-made floats over content: a probe of fixed and sticky elements found only the header, the progress line, the cookie notice and that shared phone bar. Phone layout shift from the idle demo is now 0 (PerformanceObserver over 7 s at 375×812, 8 Nov; was 0.0136 at 221cf9bb), because the stage height follows the step on screen and the demo chip no longer moves the routes below.
 - **data-cta.** contact-sales.next and contact-sales.submit; the Band's button is the kit's.
 - **Sending state.** The send stays ink (#0a0a0a) with a white turning ring and `aria-busy` (measured: background rgb(10,10,10), ring present).
 
