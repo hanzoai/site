@@ -428,3 +428,25 @@ a.cm-chip:active { transform: scale(.97); }
   .cm-spec dt button > .cm-spec-t { font-size: 17px; }
   .cm-way .cm-way-go { justify-self: start; }
 }
+
+/* ---------- dark (docs/DARK-MODE.md): Biz.css's .bz palette has no dark rule, so /commerce maps it to Hanzo's dark tokens
+   here on main.cm. The flap board, the find room and the config card stay dark in both modes. Light is untouched. ---------- */
+html:not(.light) .cm { --bz-ink: var(--foreground); --bz-muted: var(--muted-foreground); --bz-quiet: var(--text-tertiary); --bz-line: var(--border);
+  --bz-paper: var(--card); --bz-room: var(--muted); --bz-card: var(--muted); --bz-tile: var(--secondary); --bz-track: var(--neutral-600); --acc-soft: var(--secondary);
+  background: var(--bg); }
+/* Biz.css pieces on this page */
+html:not(.light) .cm .bz-sheet-btn { border-color: var(--border-control); }
+@media (hover: hover) { html:not(.light) .cm .bz-sheet-btn:hover { border-color: var(--border-strong); } html:not(.light) .cm .bz-open-card:hover .bz-open-plus { color: var(--x-on-ink); } }
+html:not(.light) .cm .cf-mark, html:not(.light) .cm .cf-code.light .cf-mark { background-color: var(--x-knob); }
+html:not(.light) .cm .cf-code.light .s { color: var(--soft); }
+html:not(.light) .cm .cf-code.light .c { color: var(--faint); }
+/* the page's own pieces */
+html:not(.light) .cm-pause, html:not(.light) .cm-order, html:not(.light) .cm-pv-ep code, html:not(.light) .cm-gw button { background: var(--x-raised); }
+html:not(.light) .cm-pause[aria-pressed='true'] { background: var(--bz-ink); }
+html:not(.light) .cm-gw button[aria-checked='true'] { background: none; }
+html:not(.light) .cm-pause[aria-pressed='true'], html:not(.light) .cm-ep, html:not(.light) .cm-index li.pv .bz-open-plus, html:not(.light) .cm-gw button[aria-checked='true'] { color: var(--x-on-ink); }
+html:not(.light) .cm-order.s2, html:not(.light) .cm-order.s3 { background: var(--bz-ink); color: var(--x-on-ink); }
+html:not(.light) .cm-order.s2 .cm-ep, html:not(.light) .cm-order.s3 .cm-ep { background: var(--bg); color: var(--bz-ink); }
+html:not(.light) .cm-dot, html:not(.light) .cm-nouns { background: var(--bg); }
+html:not(.light) .cm-stops li.on .cm-dot { background: var(--bz-ink); }
+@media (hover: hover) { html:not(.light) .cm-gw button:not([aria-checked='true']):hover, html:not(.light) .cm-pause:not([aria-pressed='true']):hover { background-color: var(--bz-tile); } }
