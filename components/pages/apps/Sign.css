@@ -314,3 +314,35 @@ html.js .sg-acc[data-in] .sg-first-main, html.js .sg-acc[data-in] .sg-first-link
   .sg-f span, .sg-page-h em, .sg-cert span, .sg-track b, .sg-five b, .sg-five em, .sg-langs span, .sg-pad-k, .sg-pop, .sg-desk-k { font-size: 14px; }
   .sg-desk .sg-f span { font-size: 12px; letter-spacing: .02em; }
 }
+
+/* ---------- dark (live hanzo.ai's dark palette, Hanzo's tokens only; bright mode untouched). The page and its kit
+   (v2/Scale.css .w2) fix --acc/--soft/--faint to light values, so their dark values are set here; the close
+   (.w2-dark) keeps its own room colours. Inner fills use our root-resolved tokens (--x-*), since Hanzo's stylesheet
+   redefines --card/--raised on inner elements. ---------- */
+html:not(.light) .sg { --acc: var(--foreground); --acc-ink: var(--primary-foreground); --acc-soft: var(--x-fill); --acc-line: var(--border-selected); --soft: var(--muted-foreground); --faint: var(--text-tertiary); --shadow: 0 0 0 1px var(--border); }
+html:not(.light) .sg .w2-dark { --acc: var(--primary); --acc-ink: var(--primary-foreground); --soft: var(--muted-foreground); --faint: var(--text-tertiary); }
+html:not(.light) .sg :is(.sg-page, .sg-track, .sg-five, .sg-plan.pop) { background: var(--x-raised); box-shadow: 0 0 0 1px var(--border); }
+html:not(.light) .sg .sg-lines i { background: var(--x-knob); }
+html:not(.light) .sg .sg-f path { stroke: var(--ink); }
+html:not(.light) .sg .sg-cert { background: var(--x-raised); }
+html:not(.light) .sg :is(.sg-track i, .sg-five i) { background: var(--x-knob); }
+html:not(.light) .sg .sg-track i.sent { background: var(--x-raised); box-shadow: inset 0 0 0 1.5px var(--soft); }
+html:not(.light) .sg :is(.sg-track i.opened, .sg-five i.opened) { background: var(--soft); }
+html:not(.light) .sg :is(.sg-track i.signed, .sg-five i.signed) { background: var(--acc); }
+html:not(.light) .sg :is(.sg-steps-t, .sg-steps button .sg-step-t, .sg-fork p) { color: var(--soft); }
+html:not(.light) .sg .sg-steps button { color: var(--faint); }
+html:not(.light) .sg .sg-steps button[aria-pressed='true'] { color: var(--soft); }
+html:not(.light) .sg .sg-steps button[aria-pressed='true'] .sg-step-t { color: var(--ink); }
+@media (hover: hover) { html:not(.light) .sg .sg-steps button:hover .sg-step-t { color: var(--ink); } }
+html:not(.light) .sg .sg-tile.acc { background: var(--x-knob); }
+html:not(.light) .sg .sg-tile.acc .w2-pause { background: var(--x-raised); }
+html:not(.light) .sg .sg-pad-acts .w2-ghost { border-color: var(--border-control); }
+html:not(.light) .sg .sg-pad-cert { color: var(--ink); }
+html:not(.light) .sg .sg-run { background: var(--x-fill); }
+html:not(.light) .sg .sg-run button[aria-pressed='true'] { color: var(--ink); background: var(--x-knob); box-shadow: none; }
+@media (hover: hover) { html:not(.light) .sg .sg-run button:not([aria-pressed='true']):hover { background: var(--glass-strong); } }
+html:not(.light) .sg .sg-plan.dim :is(.sg-price b, h3) { color: var(--faint); }
+/* the kit's buttons (v2/Scale.css) are fixed ink pills: in dark they are Hanzo's primary (light fill, dark text) */
+html:not(.light) .sg :is(.w2-cta, .w2-cta.acc, .w2-dark .w2-cta, .w2-dark .w2-cta.acc) { background: var(--primary); color: var(--primary-foreground); }
+html:not(.light) .sg .w2-ghost { border-color: var(--border-control); }
+@media (hover: hover) { html:not(.light) .sg :is(.w2-cta, .w2-dark .w2-cta):hover { background: var(--primary-hover); } html:not(.light) .sg .w2-ghost:hover { border-color: var(--border-selected); background: var(--glass); } }
